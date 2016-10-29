@@ -167,7 +167,7 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect)
 	for (ResponseEffect::ArgumentList::iterator i = list.begin();
 		 i != list.end(); ++i)
 	{
-		int index = i->first;
+		//int index = i->first;
 		ResponseEffect::Argument& arg = i->second;
 		ArgumentItemPtr item;
 

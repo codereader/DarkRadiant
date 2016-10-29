@@ -244,7 +244,7 @@ void Doom3AasFile::parseFromTokens(parser::DefTokeniser& tok)
                 tok.assertNextToken(")");
 
                 // Skip over reachabilities for the moment being
-                std::size_t reachCount = string::convert<std::size_t>(tok.nextToken());
+                /*std::size_t reachCount = */string::convert<std::size_t>(tok.nextToken());
                 tok.assertNextToken("{");
 
                 while (tok.nextToken() != "}")

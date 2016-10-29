@@ -378,7 +378,7 @@ void MenuManager::remove(const std::string& path)
 	else if (parent->getType() == menuBar)
 	{
 		wxMenuBar* parentBar = static_cast<wxMenuBar*>(parent->getWidget());
-		wxMenu* menu = static_cast<wxMenu*>(item->getWidget());
+		static_cast<wxMenu*>(item->getWidget());
 
 		int oldPosition = parent->getMenuPosition(item);
 
@@ -388,7 +388,7 @@ void MenuManager::remove(const std::string& path)
 			item->removeAllChildren();
 			item->setWidget(NULL);
 
-			menu = parentBar->Remove(oldPosition);
+			wxMenu* menu = parentBar->Remove(oldPosition);
 			delete menu;
 		}
 		else

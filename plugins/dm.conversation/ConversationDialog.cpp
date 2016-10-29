@@ -46,7 +46,7 @@ ConversationDialog::ConversationDialog() :
 
 void ConversationDialog::populateWindow()
 {
-	wxPanel* mainPanel = loadNamedPanel(this, "ConvDialogMainPanel");
+	loadNamedPanel(this, "ConvDialogMainPanel");
 
 	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ConvDialogEntityPanel");
 

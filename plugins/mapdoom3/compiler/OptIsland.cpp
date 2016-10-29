@@ -677,7 +677,7 @@ void OptIsland::removeIfColinear(OptVertex* ov)
 
 	// see if they are colinear
 	Vector3 dir1 = v3->v.vertex - v1->v.vertex;
-	float len = dir1.normalise();
+	dir1.normalise();
 
 	Vector3 dir2 = v2->v.vertex - v1->v.vertex;
 

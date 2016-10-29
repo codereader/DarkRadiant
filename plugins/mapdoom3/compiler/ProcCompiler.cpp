@@ -326,8 +326,6 @@ private:
 
         _buildBrush.contentShader = firstSide.material;
         
-        bool mixed = false;
-
         // a brush is only opaque if all sides are opaque
         _buildBrush.opaque = true;
 
@@ -344,7 +342,6 @@ private:
 
             if (flags != contents)
             {
-                mixed = true;
                 contents |= flags;
             }
 
@@ -4503,7 +4500,7 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
     bool overflowed = false;
     _indexFrustumNumber = 0;
     int capPlaneBits = 0;
-    bool callOptimizer = (optimize == SG_OFFLINE);
+    //bool callOptimizer = (optimize == SG_OFFLINE);
 
     // the facing information will be the same for all six projections
     // from a point light, as well as for any directed lights

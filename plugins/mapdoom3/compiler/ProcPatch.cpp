@@ -656,7 +656,6 @@ void ProcPatch::generateNormals()
 	{
 		for (int j = 0; j < _height; ++j)
 		{
-			std::size_t count = 0;
 			const Vector3& base = _vertices[j * _width + i].vertex;
 
 			for (std::size_t k = 0; k < 8; ++k)
@@ -730,13 +729,6 @@ void ProcPatch::generateNormals()
 				}
 
 				sum += norm;
-				count++;
-			}
-
-			if (count == 0)
-			{
-				//idLib::common->Printf("bad normal\n");
-				count = 1;
 			}
 
 			_vertices[j * _width + i].normal = sum;

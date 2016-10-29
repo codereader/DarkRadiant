@@ -68,7 +68,7 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath,
 	q3font::Q3FontInfoPtr buf(new q3font::Q3FontInfo);
 
 	InputStream& stream = file->getInputStream();
-	StreamBase::size_type bytesRead = stream.read(
+	stream.read(
 		reinterpret_cast<StreamBase::byte_type*>(buf.get()),
 		sizeof(q3font::Q3FontInfo)
 	);

@@ -112,7 +112,6 @@ void PatchTesselation::generateNormals()
 	{
 		for (std::size_t j = 0; j < height; j++)
 		{
-			int count = 0;
 			Vector3 base = vertices[j * width + i].vertex;
 
 			for (std::size_t k = 0; k < 8; k++)
@@ -185,12 +184,6 @@ void PatchTesselation::generateNormals()
 				}
 
 				sum += tempNormal;
-				count++;
-			}
-
-			if (count == 0)
-			{
-				count = 1;
 			}
 
 			vertices[j * width + i].normal = sum;
