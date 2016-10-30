@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\libs\scene\InstanceWalkers.cpp" />
     <ClCompile Include="..\..\libs\scene\Node.cpp" />
+    <ClCompile Include="..\..\libs\scene\SelectableNode.cpp" />
     <ClCompile Include="..\..\libs\scene\TraversableNodeSet.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +143,7 @@
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h" />
     <ClInclude Include="..\..\libs\scene\LayerValidityCheckWalker.h" />
     <ClInclude Include="..\..\libs\scene\Node.h" />
+    <ClInclude Include="..\..\libs\scene\SelectableNode.h" />
     <ClInclude Include="..\..\libs\scene\TraversableNodeSet.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />

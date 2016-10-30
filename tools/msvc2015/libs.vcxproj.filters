@@ -135,7 +135,6 @@
     <ClInclude Include="..\..\libs\Transformable.h" />
     <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
-    <ClInclude Include="..\..\libs\SelectableNode.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h">
       <Filter>stream</Filter>

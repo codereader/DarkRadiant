@@ -5,7 +5,7 @@
 #include "itraceable.h"
 #include "imap.h"
 #include "Patch.h"
-#include "SelectableNode.h"
+#include "scene/SelectableNode.h"
 #include "PatchControlInstance.h"
 #include "dragplanes.h"
 

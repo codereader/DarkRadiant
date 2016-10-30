@@ -190,7 +190,6 @@
     <ClInclude Include="..\..\libs\render\VertexNT.h" />
     <ClInclude Include="..\..\libs\RGBAImage.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
-    <ClInclude Include="..\..\libs\SelectableNode.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />

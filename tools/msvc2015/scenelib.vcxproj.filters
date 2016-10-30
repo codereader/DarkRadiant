@@ -15,6 +15,9 @@
     <ClCompile Include="..\..\libs\scene\TraversableNodeSet.cpp">
       <Filter>scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\scene\SelectableNode.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h">
@@ -32,6 +35,9 @@
       <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\scene\BasicRootNode.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\SelectableNode.h">
       <Filter>scene</Filter>
     </ClInclude>
   </ItemGroup>

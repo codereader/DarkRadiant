@@ -4,7 +4,7 @@
 #include "inamespace.h"
 #include "Bounded.h"
 
-#include "SelectableNode.h"
+#include "scene/SelectableNode.h"
 #include "transformlib.h"
 
 #include "NamespaceManager.h"

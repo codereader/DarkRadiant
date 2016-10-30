@@ -6,7 +6,7 @@
 #include "iscenegraph.h"
 
 #include "Brush.h"
-#include "SelectableNode.h"
+#include "scene/SelectableNode.h"
 #include "FaceInstance.h"
 #include "EdgeInstance.h"
 #include "VertexInstance.h"

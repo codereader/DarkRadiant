@@ -9,7 +9,7 @@
 #include "selectionlib.h"
 #include "entitylib.h"
 #include "map/Map.h"
-#include "SelectableNode.h"
+#include "scene/SelectableNode.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/Entity.h"
 
