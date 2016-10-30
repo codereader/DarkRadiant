@@ -34,6 +34,7 @@ public:
 	void deleteAllSelectionGroups() override;
 	void deleteSelectionGroup(std::size_t id) override;
 	ISelectionGroupPtr getSelectionGroup(std::size_t id) override;
+	ISelectionGroupPtr findOrCreateSelectionGroup(std::size_t id) override;
 
 	// Internal methods only accessible through getSelectionGroupManagerInternal()
 
@@ -51,6 +52,8 @@ private:
 
 	std::size_t generateGroupId();
 	void resetNextGroupId();
+
+	void doDeleteSelectionGroup(std::size_t id);
 };
 
 // Internal accessor method to get hold of the implementing subclass

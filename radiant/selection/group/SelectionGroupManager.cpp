@@ -126,6 +126,13 @@ ISelectionGroupPtr SelectionGroupManager::getSelectionGroup(std::size_t id)
 	return found != _groups.end() ? found->second : ISelectionGroupPtr();
 }
 
+ISelectionGroupPtr SelectionGroupManager::findOrCreateSelectionGroup(std::size_t id)
+{
+	SelectionGroupMap::iterator found = _groups.find(id);
+
+	return found != _groups.end() ? found->second : createSelectionGroupInternal(id);
+}
+
 void SelectionGroupManager::setGroupSelected(std::size_t id, bool selected)
 {
 	SelectionGroupMap::iterator found = _groups.find(id);
@@ -143,6 +150,11 @@ void SelectionGroupManager::deleteSelectionGroup(std::size_t id)
 {
 	UndoableCommand cmd("DeleteSelectionGroup");
 
+	doDeleteSelectionGroup(id);
+}
+
+void SelectionGroupManager::doDeleteSelectionGroup(std::size_t id)
+{
 	SelectionGroupMap::iterator found = _groups.find(id);
 
 	if (found == _groups.end())
@@ -162,7 +174,7 @@ void SelectionGroupManager::deleteAllSelectionGroups()
 
 	for (SelectionGroupMap::iterator g = _groups.begin(); g != _groups.end(); )
 	{
-		deleteSelectionGroup((g++)->first);
+		doDeleteSelectionGroup((g++)->first);
 	}
 
 	assert(_groups.empty());

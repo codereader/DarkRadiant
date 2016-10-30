@@ -91,6 +91,9 @@ public:
 	// Tries to get a selection group by ID. Returns an empty ptr if the ID doesn't exist
 	virtual ISelectionGroupPtr getSelectionGroup(std::size_t id) = 0;
 
+	// Unline getSelectionGroup() this will create the group if it doesn't exist
+	virtual ISelectionGroupPtr findOrCreateSelectionGroup(std::size_t id) = 0;
+
 	// Sets the selection status of all members of the given group
 	virtual void setGroupSelected(std::size_t id, bool selected) = 0;
 

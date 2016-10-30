@@ -4,6 +4,8 @@
 #include "BasicUndoMemento.h"
 #include "imap.h"
 #include <stdexcept>
+#include <algorithm>
+#include <iterator>
 
 namespace scene
 {
@@ -33,10 +35,10 @@ void SelectableNode::onInsertIntoScene(IMapRootNode& root)
 	// If the group ID set is not empty, this node was likely removed while
 	// it was still member of one or more groups.
 	// Try to add ourselves to any groups we were assigned to, if the group
-	// is not there anymore, we don't do anything.
+	// is not there anymore, it will be created.
 	for (std::size_t id : _groups)
 	{
-		selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().getSelectionGroup(id);
+		selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().findOrCreateSelectionGroup(id);
 
 		if (group)
 		{
@@ -70,6 +72,10 @@ void SelectableNode::onRemoveFromScene(IMapRootNode& root)
 			if (group)
 			{
 				group->removeNode(getSelf());
+			}
+			else
+			{
+				_groups.erase(_groups.begin());
 			}
 		}
 
@@ -151,7 +157,46 @@ void SelectableNode::importState(const IUndoMementoPtr& state)
 {
 	undoSave();
 
-	_groups = std::static_pointer_cast< undo::BasicUndoMemento<GroupIds> >(state)->data();
+	// Process the incoming set difference
+	GroupIds newGroups = std::static_pointer_cast< undo::BasicUndoMemento<GroupIds> >(state)->data();
+
+	// The set_difference algorithm requires the sets to be sorted
+	std::sort(_groups.begin(), _groups.end());
+	std::sort(newGroups.begin(), newGroups.end());
+
+	GroupIds removedGroups;
+	std::set_difference(_groups.begin(), _groups.end(), newGroups.begin(), newGroups.end(),
+		std::inserter(removedGroups, removedGroups.begin()));
+
+	GroupIds addedGroups;
+	std::set_difference(newGroups.begin(), newGroups.end(), _groups.begin(), _groups.end(),
+		std::inserter(addedGroups, addedGroups.begin()));
+
+	// Remove ourselves from each removed group ID
+	for (GroupIds::value_type id : removedGroups)
+	{
+		selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().getSelectionGroup(id);
+
+		if (group)
+		{
+			group->removeNode(getSelf());
+		}
+	}
+
+	// Add ourselves to each missing group ID
+	for (GroupIds::value_type id : addedGroups)
+	{
+		selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().findOrCreateSelectionGroup(id);
+
+		assert(group);
+		group->addNode(getSelf());
+	}
+
+	// The _groups array should now contain the same elements as the imported ones
+#if _DEBUG
+	std::sort(_groups.begin(), _groups.end());
+	assert(std::equal(_groups.begin(), _groups.end(), newGroups.begin(), newGroups.end()));
+#endif
 
 	// After undoing group assignments, highlight this node for better user feedback
 	setSelected(true, false);
