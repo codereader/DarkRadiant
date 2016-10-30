@@ -2,6 +2,7 @@
 
 #include "scene/Node.h"
 #include "iselectiongroup.h"
+#include "iundo.h"
 
 namespace scene
 {
@@ -14,7 +15,8 @@ namespace scene
  */
 class SelectableNode :
 	public scene::Node,
-	public IGroupSelectable
+	public IGroupSelectable,
+	public IUndoable
 {
 private:
 	// Current selection state
@@ -23,6 +25,8 @@ private:
 	// The groups this node is a member of. The last value in the list 
 	// represents the group this node has been added to most recently
 	GroupIds _groups;
+
+	IUndoStateSaver* _undoStateSaver;
 
 public:
 	SelectableNode();
@@ -51,12 +55,21 @@ public:
 	virtual void setSelected(bool select, bool changeGroupStatus) override;
 	virtual bool isSelected() const override;
 
+	IUndoMementoPtr exportState() const override;
+	void importState(const IUndoMementoPtr& state) override;
+
 protected:
 	/**
      * \brief
      * Invoked when the selection status changes.
      */
 	virtual void onSelectionStatusChange(bool changeGroupStatus);
+
+	virtual void connectUndoSystem(IMapFileChangeTracker& changeTracker) override;
+	virtual void disconnectUndoSystem(IMapFileChangeTracker& changeTracker) override;
+
+private:
+	void undoSave();
 };
 
 } // namespace

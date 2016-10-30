@@ -1,18 +1,22 @@
 #include "SelectableNode.h"
 
 #include "iselection.h"
+#include "BasicUndoMemento.h"
+#include "imap.h"
 #include <stdexcept>
 
 namespace scene
 {
 
 SelectableNode::SelectableNode() :
-	_selected(false)
+	_selected(false),
+	_undoStateSaver(nullptr)
 {}
 
 SelectableNode::SelectableNode(const SelectableNode& other) :
 	scene::Node(other),
-	_selected(false)
+	_selected(false),
+	_undoStateSaver(nullptr)
 {}
 
 SelectableNode::~SelectableNode()
@@ -22,6 +26,8 @@ SelectableNode::~SelectableNode()
 
 void SelectableNode::onInsertIntoScene(IMapRootNode& root)
 {
+	connectUndoSystem(root.getUndoChangeTracker());
+
 	Node::onInsertIntoScene(root);
 
 	// If the group ID set is not empty, this node was likely removed while
@@ -42,6 +48,8 @@ void SelectableNode::onInsertIntoScene(IMapRootNode& root)
 void SelectableNode::onRemoveFromScene(IMapRootNode& root)
 {
 	setSelected(false);
+
+	disconnectUndoSystem(root.getUndoChangeTracker());
 
 	// When a node is removed from the scene with a non-empty group assignment
 	// we do notify the SelectionGroup to remove ourselves, but we keep the ID list
@@ -82,6 +90,8 @@ void SelectableNode::addToGroup(std::size_t groupId)
 {
 	if (std::find(_groups.begin(), _groups.end(), groupId) == _groups.end())
 	{
+		undoSave();
+
 		_groups.push_back(groupId);
 	}
 }
@@ -92,6 +102,8 @@ void SelectableNode::removeFromGroup(std::size_t groupId)
 
 	if (i != _groups.end())
 	{
+		undoSave();
+
 		_groups.erase(i);
 	}
 }
@@ -130,6 +142,21 @@ bool SelectableNode::isSelected() const
 	return _selected;
 }
 
+IUndoMementoPtr SelectableNode::exportState() const
+{
+	return IUndoMementoPtr(new undo::BasicUndoMemento<GroupIds>(_groups));
+}
+
+void SelectableNode::importState(const IUndoMementoPtr& state)
+{
+	undoSave();
+
+	_groups = std::static_pointer_cast< undo::BasicUndoMemento<GroupIds> >(state)->data();
+
+	// After undoing group assignments, highlight this node for better user feedback
+	setSelected(true, false);
+}
+
 void SelectableNode::onSelectionStatusChange(bool changeGroupStatus)
 {
 	bool selected = isSelected();
@@ -146,6 +173,29 @@ void SelectableNode::onSelectionStatusChange(bool changeGroupStatus)
 
 		// Propagate the selection status of this node to all members of the topmost group
 		GlobalSelectionGroupManager().setGroupSelected(mostRecentGroupId, selected);
+	}
+}
+
+void SelectableNode::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+
+	Node::connectUndoSystem(changeTracker);
+}
+
+void SelectableNode::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+	_undoStateSaver = nullptr;
+	GlobalUndoSystem().releaseStateSaver(*this);
+
+	Node::disconnectUndoSystem(changeTracker);
+}
+
+void SelectableNode::undoSave()
+{
+	if (_undoStateSaver != nullptr)
+	{
+		_undoStateSaver->save(*this);
 	}
 }
 

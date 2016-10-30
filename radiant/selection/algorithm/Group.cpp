@@ -436,6 +436,8 @@ void groupSelected()
 	// This will throw exceptions
 	checkGroupSelectedAvailable();
 
+	UndoableCommand cmd("GroupSelected");
+
 	ISelectionGroupPtr group = GlobalSelectionGroupManager().createSelectionGroup();
 
 	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
@@ -483,6 +485,8 @@ void ungroupSelected()
 {
 	// Will throw exceptions if not available
 	checkUngroupSelectedAvailable();
+
+	UndoableCommand cmd("UngroupSelected");
 
 	// Collect all the latest group Ids from all selected nodes
 	std::set<std::size_t> ids;
