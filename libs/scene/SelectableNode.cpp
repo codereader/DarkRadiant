@@ -195,7 +195,7 @@ void SelectableNode::importState(const IUndoMementoPtr& state)
 	// The _groups array should now contain the same elements as the imported ones
 #if _DEBUG
 	std::sort(_groups.begin(), _groups.end());
-	assert(std::equal(_groups.begin(), _groups.end(), newGroups.begin(), newGroups.end()));
+	assert(std::equal(_groups.begin(), _groups.end(), newGroups.begin()));
 #endif
 
 	// After undoing group assignments, highlight this node for better user feedback
