@@ -159,28 +159,28 @@ void StageDef::copyFrom(const IStageDef& other)
 	setOffset(other.getOffset());
 	setOrientationType(other.getOrientationType());
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		setOrientationParm(i, other.getOrientationParm(i));
 	}
 
 	setDistributionType(other.getDistributionType());
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		setDistributionParm(i, other.getDistributionParm(i));
 	}
 
 	setDirectionType(other.getDirectionType());
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		setDirectionParm(i, other.getDirectionParm(i));
 	}
 
 	setCustomPathType(other.getCustomPathType());
 
-	for (int i = 0; i < 7; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
 		setCustomPathParm(i, other.getCustomPathParm(i));
 	}
@@ -743,28 +743,28 @@ bool StageDef::operator==(const IStageDef& other) const
     if (getOffset() != other.getOffset()) return false;
     if (getOrientationType() != other.getOrientationType()) return false;
 
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         if (getOrientationParm(i) != other.getOrientationParm(i)) return false;
     }
 
     if (getDistributionType() != other.getDistributionType()) return false;
 
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         if (getDistributionParm(i) != other.getDistributionParm(i)) return false;
     }
 
     if (getDirectionType() != other.getDirectionType()) return false;
 
-    for (int i = 0; i < 3; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         if (getDirectionParm(i) != other.getDirectionParm(i)) return false;
     }
 
     if (getCustomPathType() != other.getCustomPathType()) return false;
 
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 8; ++i)
     {
         if (getCustomPathParm(i) != other.getCustomPathParm(i)) return false;
     }
