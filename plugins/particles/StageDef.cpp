@@ -604,7 +604,8 @@ std::ostream& operator<<(std::ostream& stream, const StageDef& stage)
 	case StageDef::DISTRIBUTION_SPHERE:
 		stream << "sphere " << stage.getDistributionParm(0) << " "
 							<< stage.getDistributionParm(1) << " "
-							<< stage.getDistributionParm(2) << std::endl;
+							<< stage.getDistributionParm(2) << " "
+							<< stage.getDistributionParm(3) << std::endl;
 		break;
 	};
 
