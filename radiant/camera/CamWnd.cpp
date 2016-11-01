@@ -330,7 +330,7 @@ SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
     float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
 
     // Get the mouse position
-    DeviceVector deviceEpsilon(selectEpsilon / getCamera().width, selectEpsilon / getCamera().height);
+    Vector2 deviceEpsilon(selectEpsilon / getCamera().width, selectEpsilon / getCamera().height);
 
     // Copy the current view and constrain it to a small rectangle
     render::View scissored(_view);

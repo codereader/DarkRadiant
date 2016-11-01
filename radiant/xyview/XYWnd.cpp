@@ -189,7 +189,7 @@ SelectionTestPtr XYWnd::createSelectionTestForPoint(const Vector2& point)
     float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
 
     // Generate the epsilon
-    DeviceVector deviceEpsilon(selectEpsilon / getWidth(), selectEpsilon / getHeight());
+    Vector2 deviceEpsilon(selectEpsilon / getWidth(), selectEpsilon / getHeight());
 
     // Copy the current view and constrain it to a small rectangle
     render::View scissored(_view);
