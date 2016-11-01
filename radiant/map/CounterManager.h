@@ -4,6 +4,7 @@
 #include "iuimanager.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
+#include <sigc++/connection.h>
 #include <map>
 #include <memory>
 
@@ -52,22 +53,25 @@ class CounterManager :
 	typedef std::map<CounterType, CounterPtr> CounterMap;
 	CounterMap _counters;
 
+	sigc::connection _selectionChangedConn;
+
 public:
 	CounterManager();
 
 	virtual ~CounterManager() {}
 
-	ICounter& getCounter(CounterType counter);
+	ICounter& getCounter(CounterType counter) override;
 
 	// ICounter::Observer implementation
-	void countChanged();
+	void countChanged() override;
 
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 protected:
-	void onIdle();
+	void onIdle() override;
 };
 
 } // namespace map

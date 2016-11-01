@@ -159,8 +159,10 @@ public:
 	 *        if no icon is desired.
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
+	 * @description: a description shown when the mouse pointer hovers of this item.
  	 */
-	virtual void addTextElement(const std::string& name, const std::string& icon, int pos) = 0;
+	virtual void addTextElement(const std::string& name, const std::string& icon, int pos,
+								const std::string& description) = 0;
 
 	/**
 	 * Updates the content of the named text element. The name must refer to

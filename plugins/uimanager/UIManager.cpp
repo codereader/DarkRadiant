@@ -1,5 +1,6 @@
 #include "UIManager.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "iregistry.h"
 #include "iradiant.h"
@@ -110,7 +111,8 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 	_statusBarManager.addTextElement(
 		STATUSBAR_COMMAND,
 		"",  // no icon
-		IStatusBarManager::POS_COMMAND
+		IStatusBarManager::POS_COMMAND,
+		_("Describes available Mouse Commands")
 	);
 
 	wxFileSystem::AddHandler(new wxLocalFSHandler);

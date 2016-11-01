@@ -20,7 +20,8 @@ ShaderClipboard::ShaderClipboard() :
 	GlobalUIManager().getStatusBarManager().addTextElement(
 		"ShaderClipBoard",
 		"icon_texture.png",
-		IStatusBarManager::POS_SHADERCLIPBOARD
+		IStatusBarManager::POS_SHADERCLIPBOARD,
+		_("The name of the shader in the clipboard")
 	);
 
 	GlobalUndoSystem().addObserver(this);

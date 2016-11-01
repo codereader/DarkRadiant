@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "iuimanager.h"
+#include "selectionlib.h"
 #include "string/string.h"
 #include "modulesystem/StaticModule.h"
 
@@ -46,6 +47,7 @@ const StringSet& CounterManager::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 	}
 
 	return _dependencies;
@@ -57,17 +59,32 @@ void CounterManager::initialiseModule(const ApplicationContext& ctx)
 	GlobalUIManager().getStatusBarManager().addTextElement(
 		"MapCounters",
 		"",  // no icon
-		IStatusBarManager::POS_BRUSHCOUNT
+		IStatusBarManager::POS_BRUSHCOUNT,
+		_("Number of brushes/patches/entities in this map\n(Number of selected items shown in parentheses)")
 	);
+
+	_selectionChangedConn = GlobalSelectionSystem().signal_selectionChanged().connect(
+		[this] (const ISelectable&) { requestIdleCallback(); }
+	);
+}
+
+void CounterManager::shutdownModule()
+{
+	_selectionChangedConn.disconnect();
 }
 
 void CounterManager::onIdle()
 {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
 	std::string text =
-		(boost::format(_("Brushes: %lu Patches: %lu Entities: %lu")) %
+		(boost::format(_("Brushes: %lu (%lu) Patches: %lu (%lu) Entities: %lu (%lu)")) %
 		_counters[counterBrushes]->get() %
+		info.brushCount %
 		_counters[counterPatches]->get() %
-		_counters[counterEntities]->get()).str();
+		info.patchCount %
+		_counters[counterEntities]->get() %
+		info.entityCount).str();
 
 	GlobalUIManager().getStatusBarManager().setText("MapCounters", text);
 }

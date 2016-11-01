@@ -52,7 +52,7 @@ public:
 		rMessage() << "GridManager::initialiseModule called.\n";
 
 		// Add the grid status bar element
-		GlobalUIManager().getStatusBarManager().addTextElement("GridStatus", "grid_up.png", IStatusBarManager::POS_GRID);
+		GlobalUIManager().getStatusBarManager().addTextElement("GridStatus", "grid_up.png", IStatusBarManager::POS_GRID, _("Current Grid Size"));
 		GlobalUIManager().getStatusBarManager().setText("GridStatus", "-");
 
 		populateGridItems();

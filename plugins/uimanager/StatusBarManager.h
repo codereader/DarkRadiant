@@ -59,7 +59,7 @@ public:
 	/**
 	 * Get the status bar widget, for packing into the main window.
 	 */
-	wxWindow* getStatusBar();
+	wxWindow* getStatusBar() override;
 
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
@@ -70,14 +70,14 @@ public:
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
 	 */
-	void addElement(const std::string& name, wxWindow* widget, int pos);
+	void addElement(const std::string& name, wxWindow* widget, int pos) override;
 
 	/**
 	 * Returns a named status bar widget, previously added by addElement().
 	 *
 	 * @returns: NULL if the named widget does not exist.
 	 */
-	wxWindow* getElement(const std::string& name);
+	wxWindow* getElement(const std::string& name) override;
 
 	/**
 	 * greebo: A specialised method, adding a named text element.
@@ -89,19 +89,20 @@ public:
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
  	 */
-	void addTextElement(const std::string& name, const std::string& icon, int pos);
+	void addTextElement(const std::string& name, const std::string& icon, int pos, 
+						const std::string& description) override;
 
 	/**
 	 * Updates the content of the named text element. The name must refer to
 	 * an element previously added by addTextElement().
 	 */
-    void setText(const std::string& name, const std::string& text, bool immediateUpdate);
+    void setText(const std::string& name, const std::string& text, bool immediateUpdate) override;
 
 	void onRadiantShutdown();
 
 protected:
 	// Gets called when the app is idle - this fills in the status text
-	void onIdle();
+	void onIdle() override;
 
 private:
 	// Returns an integer position which is not used yet.

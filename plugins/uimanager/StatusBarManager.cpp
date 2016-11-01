@@ -57,7 +57,8 @@ wxWindow* StatusBarManager::getElement(const std::string& name)
 	return (found != _elements.end()) ? found->second->toplevel : NULL;
 }
 
-void StatusBarManager::addTextElement(const std::string& name, const std::string& icon, int pos)
+void StatusBarManager::addTextElement(const std::string& name, const std::string& icon, 
+	int pos, const std::string& description)
 {
 	// Get a free position
 	int freePos = getFreePosition(pos);
@@ -65,6 +66,11 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER | wxWANTS_CHARS);
 	textPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 	textPanel->SetName("Statusbarconainer " + name);
+
+	if (!description.empty())
+	{
+		textPanel->SetToolTip(description);
+	}
 
 	if (!icon.empty())
 	{
@@ -75,6 +81,11 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
 	wxStaticText* label = new wxStaticText(textPanel, wxID_ANY, "");
 	textPanel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 1);
+
+	if (!description.empty())
+	{
+		label->SetToolTip(description);
+	}
 
 	StatusBarElementPtr element(new StatusBarElement(textPanel, label));
 
