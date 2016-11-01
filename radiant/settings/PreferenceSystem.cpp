@@ -2,8 +2,6 @@
 
 #include "ipreferencesystem.h"
 #include "itextstream.h"
-#include "imodule.h"
-#include "iregistry.h"
 
 #include "modulesystem/StaticModule.h"
 #include "ui/prefdialog/PrefDialog.h"
@@ -43,13 +41,6 @@ const std::string& PreferenceSystem::getName() const
 const StringSet& PreferenceSystem::getDependencies() const
 {
 	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_RADIANT);
-	}
-
 	return _dependencies;
 }
 
