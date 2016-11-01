@@ -47,12 +47,12 @@ public:
 	/**
 	 * Return the ParticleDef name.
 	 */
-	const std::string& getName() const
+	const std::string& getName() const override
 	{
 		return _name;
 	}
 
-	const std::string& getFilename() const
+	const std::string& getFilename() const override
 	{
 		return _filename;
 	}
@@ -71,42 +71,45 @@ public:
 	}
 
     // IParticleDef implementation
-    sigc::signal<void> signal_changed() const { return _changedSignal; }
+    sigc::signal<void> signal_changed() const override 
+	{ 
+		return _changedSignal;
+	}
 
-	float getDepthHack() const
+	float getDepthHack() const override
 	{
 		return _depthHack;
 	}
 
-	void setDepthHack(float value)
+	void setDepthHack(float value) override
 	{
 		_depthHack = value;
 	}
 
-	std::size_t getNumStages() const
+	std::size_t getNumStages() const override
 	{
 		return _stages.size();
 	}
 
-	const IStageDef& getStage(std::size_t stageNum) const
+	const IStageDef& getStage(std::size_t stageNum) const override
 	{
 		return *_stages[stageNum];
 	}
 
-	IStageDef& getStage(std::size_t stageNum)
+	IStageDef& getStage(std::size_t stageNum) override
 	{
 		return *_stages[stageNum];
 	}
 
-	std::size_t addParticleStage() ;
+	std::size_t addParticleStage() override;
 
-	void removeParticleStage(std::size_t index);
+	void removeParticleStage(std::size_t index) override;
 
-	void swapParticleStages(std::size_t index, std::size_t index2);
+	void swapParticleStages(std::size_t index, std::size_t index2) override;
 
 	void appendStage(const StageDefPtr& stage);
 
-	bool operator==(const IParticleDef& other) const 
+	bool operator==(const IParticleDef& other) const override
 	{
 		// Compare depth hack flag
 		if (getDepthHack() != other.getDepthHack()) return false;
@@ -124,12 +127,12 @@ public:
 		return true;
 	}
 
-	bool operator!=(const IParticleDef& other) const
+	bool operator!=(const IParticleDef& other) const override
 	{
 		return !operator==(other);
 	}
 
-	void copyFrom(const IParticleDef& other);
+	void copyFrom(const IParticleDef& other) override;
 
 	void parseFromTokens(parser::DefTokeniser& tok);
 

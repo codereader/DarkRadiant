@@ -59,6 +59,9 @@ void ParticleDef::copyFrom(const IParticleDef& other)
         stage->signal_changed().connect(_changedSignal.make_slot());
         _stages.push_back(stage);
     }
+
+	// We've changed all the stages, so emit the changed signal now (#4411)
+	_changedSignal.emit();
 }
 
 void ParticleDef::parseFromTokens(parser::DefTokeniser& tok)
