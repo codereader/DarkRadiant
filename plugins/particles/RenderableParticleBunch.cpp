@@ -610,7 +610,6 @@ void RenderableParticleBunch::pushAimedParticles(ParticleRenderInfo& particle, s
         float height = static_cast<float>(velocity.getLength());
 
         aimedParticle.aspect = height / (2 * aimedParticle.size);
-        aimedParticle.size = height * 0.5f;
 
         // Calculate the vertical texture coordinates
         aimedParticle.tWidth = 1.0f / static_cast<float>(numQuads);
