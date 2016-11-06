@@ -151,7 +151,14 @@ void GroupDialog::setPage(const std::string& name)
 
 void GroupDialog::setPage(wxWindow* page)
 {
-	_notebook->SetSelection(_notebook->FindPage(page));
+	if (page == nullptr) return;
+
+	int pageIndex = _notebook->FindPage(page);
+
+	if (pageIndex != wxNOT_FOUND)
+	{
+		_notebook->SetSelection(pageIndex);
+	}
 }
 
 void GroupDialog::togglePage(const std::string& name)
