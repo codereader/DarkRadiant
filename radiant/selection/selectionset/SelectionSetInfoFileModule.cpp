@@ -1,7 +1,7 @@
 #include "SelectionSetInfoFileModule.h"
 
 #include <limits>
-#include "iselectionset.h"
+#include "itextstream.h"
 #include "string/convert.h"
 #include <boost/algorithm/string/replace.hpp>
 #include "parser/DefTokeniser.h"

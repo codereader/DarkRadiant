@@ -1,6 +1,7 @@
 #include "LayerInfoFileModule.h"
 
 #include "ilayer.h"
+#include "ientity.h"
 #include "itextstream.h"
 #include "scenelib.h"
 #include "scene/LayerValidityCheckWalker.h"

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imapinfofile.h"
+#include "iselectionset.h"
 
 namespace selection
 {

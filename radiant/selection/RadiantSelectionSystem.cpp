@@ -5,6 +5,7 @@
 #include "iselectiongroup.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
+#include "ilightnode.h"
 #include "imousetoolmanager.h"
 #include "editable.h"
 #include "Selectors.h"

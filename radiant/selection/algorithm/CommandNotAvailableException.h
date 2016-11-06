@@ -24,7 +24,7 @@ public:
 		_what(msg)
 	{}
 
-	virtual const char* what() const override
+	virtual const char* what() const throw() override
 	{
 		return _what.c_str();
 	}

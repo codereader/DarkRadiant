@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "imap.h"
+#include "iradiant.h"
 #include "itextstream.h"
 #include "imapinfofile.h"
 #include "icommandsystem.h"

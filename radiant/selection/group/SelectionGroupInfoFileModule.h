@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include "iselectiongroup.h"
 #include "imapinfofile.h"
 
 namespace selection

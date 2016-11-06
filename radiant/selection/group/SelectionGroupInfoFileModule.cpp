@@ -2,12 +2,13 @@
 
 #include <limits>
 #include "iselectiongroup.h"
+#include "ientity.h"
 #include "string/convert.h"
 #include <boost/algorithm/string/replace.hpp>
 #include "parser/DefTokeniser.h"
 
 #include "scenelib.h"
-#include "debugging/SceneGraphUtils.h"
+#include "debugging/ScenegraphUtils.h"
 #include "SelectionGroupManager.h"
 
 namespace selection
