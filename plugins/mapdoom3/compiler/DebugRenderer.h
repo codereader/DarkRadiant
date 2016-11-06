@@ -128,7 +128,7 @@ public:
 
 	std::size_t getHighlightFlags() override
 	{
-		return Highlight::None; // never highlighted
+		return Highlight::NoHighlight; // never highlighted
 	}
 
 	void setActiveNode(int nodeId)

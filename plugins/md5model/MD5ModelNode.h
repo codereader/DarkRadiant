@@ -65,7 +65,7 @@ public:
 
 	std::size_t getHighlightFlags() override
 	{
-		return Highlight::None; // models are never highlighted themselves
+		return Highlight::NoHighlight; // models are never highlighted themselves
 	}
 
 	// Returns the name of the currently active skin

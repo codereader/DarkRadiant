@@ -385,7 +385,7 @@ void BrushNode::viewChanged() const {
 
 std::size_t BrushNode::getHighlightFlags()
 {
-	if (!isSelected()) return Highlight::None;
+	if (!isSelected()) return Highlight::NoHighlight;
 
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }

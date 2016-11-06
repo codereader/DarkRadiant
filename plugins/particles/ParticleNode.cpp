@@ -33,7 +33,7 @@ const AABB& ParticleNode::localAABB() const
 
 std::size_t ParticleNode::getHighlightFlags()
 {
-	return Highlight::None;
+	return Highlight::NoHighlight;
 }
 
 const Matrix4& ParticleNode::localToParent() const

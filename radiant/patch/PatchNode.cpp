@@ -377,7 +377,7 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 
 std::size_t PatchNode::getHighlightFlags()
 {
-	if (!isSelected()) return Highlight::None;
+	if (!isSelected()) return Highlight::NoHighlight;
 
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }

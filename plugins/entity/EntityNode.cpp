@@ -254,7 +254,7 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 std::size_t EntityNode::getHighlightFlags()
 {
-	if (!isSelected()) return Highlight::None;
+	if (!isSelected()) return Highlight::NoHighlight;
 
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }

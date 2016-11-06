@@ -71,7 +71,7 @@ public:
 
 	std::size_t getHighlightFlags() override
 	{
-		return Highlight::None;
+		return Highlight::NoHighlight;
 	}
 
 	/** greebo: This sets the camera position to the next/prev leak spot.

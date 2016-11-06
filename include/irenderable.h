@@ -110,7 +110,7 @@ public:
 	{
 		enum Flags
 		{
-			None		= 0,
+			NoHighlight	= 0,
 			Faces		= 1 << 0, /// Highlight faces of subsequently-submitted objects, if supported
 			Primitives	= 1 << 1, /// Highlight primitives of subsequently-submitted objects, if supported
 			GroupMember	= 1 << 2, /// Highlight as member of group, if supported
@@ -172,7 +172,7 @@ public:
 	{
 		enum Flags
 		{
-			None		= 0,
+			NoHighlight = 0,
 			Selected	= 1 << 0,
 			GroupMember	= 1 << 1,
 		};

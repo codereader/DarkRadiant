@@ -50,7 +50,7 @@ namespace map
 
 			std::size_t getHighlightFlags() override
 			{
-				return Highlight::None; // never highlighted
+				return Highlight::NoHighlight; // never highlighted
 			}
 		};
 

@@ -47,7 +47,7 @@ std::size_t TargetLineNode::getHighlightFlags()
 {
     // We don't need to return highlighting, since the render system will use 
     // the result of the parent entity node
-    return Highlight::None;
+    return Highlight::NoHighlight;
 }
 
 const Vector3& TargetLineNode::getOwnerPosition() const

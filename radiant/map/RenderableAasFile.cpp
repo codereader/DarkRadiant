@@ -48,7 +48,7 @@ void RenderableAasFile::renderWireframe(RenderableCollector& collector, const Vo
 
 std::size_t RenderableAasFile::getHighlightFlags()
 {
-	return Highlight::None;
+	return Highlight::NoHighlight;
 }
 
 void RenderableAasFile::setAasFile(const IAasFilePtr& aasFile)

@@ -84,7 +84,7 @@ public:
 
 	std::size_t getHighlightFlags() override
 	{
-		return Highlight::None; // models are never highlighted themselves
+		return Highlight::NoHighlight; // models are never highlighted themselves
 	}
 
 	// Traceable implementation
