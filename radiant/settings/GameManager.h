@@ -63,10 +63,6 @@ private:
 	 */
 	bool settingsValid() const;
 
-	/** greebo: Get the user engine path (is OS-specific)
-	 */
-	std::string getUserEnginePath();
-
 	/** 
 	 * DerSaidin: Adds a path to the VFS search list, skipping any duplicates.
 	 * Note that the order of search paths must be preserved.
@@ -96,25 +92,29 @@ public:
 	 */
 	const std::string& getEnginePath() const;
 
+	/** greebo: Get the user engine path (is OS-specific)
+	*/
+	std::string getUserEnginePath() override;
+
 	/**
 	 * greebo: Gets the mod path (e.g. ~/.doom3/gathers/).
 	 * Returns the mod base path if the mod path itself is empty.
 	 */
-	const std::string& getModPath() const;
+	const std::string& getModPath() const override;
 
 	/**
 	 * greebo: Returns the mod base path (e.g. ~/.doom3/darkmod/),
 	 * can be an empty string if fs_game_base is not set.
 	 */
-	const std::string& getModBasePath() const;
+	const std::string& getModBasePath() const override;
 
 	/** greebo: Accessor method for the fs_game parameter
 	 */
-	const std::string& getFSGame() const;
+	const std::string& getFSGame() const override;
 
 	/** greebo: Accessor method for the fs_game_base parameter
 	 */
-	const std::string& getFSGameBase() const;
+	const std::string& getFSGameBase() const override;
 
 	/** greebo: Initialises the engine path from the settings in the registry.
 	 * 			If nothing is found, the game file is queried.
@@ -123,7 +123,7 @@ public:
 
 	/** greebo: Returns the current Game (shared_ptr).
 	 */
-	virtual IGamePtr currentGame();
+	virtual IGamePtr currentGame() override;
 
 	/** greebo: Loads the game files and the saved settings.
 	 * 			If no saved game setting is found, the user
@@ -136,12 +136,12 @@ public:
 	void loadGameFiles(const std::string& appPath);
 
 	// Returns the sorted game path list
-	virtual const PathList& getVFSSearchPaths() const;
+	virtual const PathList& getVFSSearchPaths() const override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual const std::string& getName() const override;
+	virtual const StringSet& getDependencies() const override;
+	virtual void initialiseModule(const ApplicationContext& ctx) override;
 
 };
 

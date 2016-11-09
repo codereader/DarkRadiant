@@ -55,6 +55,12 @@ class IGameManager :
 	public RegisterableModule
 {
 public:
+	// Returns the user's local engine path, on POSIX systems this might
+	// point to the folder in the home directory, e.g. ~/.doom3/ if it exists.
+	// If no engine directory is found in the home directory, the regular
+	// engine path is returned, e.g. /usr/local/doom3 or c:\games\doom3
+	virtual std::string getUserEnginePath() = 0;
+
 	// Returns the setting for fs_game
 	virtual const std::string& getFSGame() const = 0;
 

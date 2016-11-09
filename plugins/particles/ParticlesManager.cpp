@@ -290,20 +290,30 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 
 	std::string relativePath = PARTICLES_DIR + particle->getFilename();
 
-	fs::path particlesModPath = GlobalGameManager().getModPath();
-	particlesModPath /= PARTICLES_DIR;
+	fs::path targetPath = GlobalGameManager().getModPath();
+
+	if (targetPath.empty())
+	{
+		targetPath = GlobalGameManager().getUserEnginePath();
+		targetPath /= GlobalGameManager().currentGame()->getKeyValue("basegame");
+
+		rMessage() << "No mod base path found, falling back to user base path to save particle file: " << 
+			targetPath.string() << std::endl;
+	}
+
+	targetPath /= PARTICLES_DIR;
 
 	// Ensure the particles folder exists
-	fs::create_directories(particlesModPath);
+	fs::create_directories(targetPath);
 
-	fs::path targetFile = particlesModPath / particle->getFilename();
+	fs::path targetFile = targetPath / particle->getFilename();
 
 	// If the file doesn't exist yet, let's check if we need to inherit stuff first from the VFS
 	if (!fs::exists(targetFile))
 	{
 		ArchiveTextFilePtr inheritFile = GlobalFileSystem().openTextFile(relativePath);
 
-		if (inheritFile != NULL)
+		if (inheritFile)
 		{
 			// There is a file with that name already in the VFS, copy it to the target file
 			TextInputStream& inheritStream = inheritFile->getInputStream();
