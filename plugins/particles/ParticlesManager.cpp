@@ -295,9 +295,8 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	if (targetPath.empty())
 	{
 		targetPath = GlobalGameManager().getUserEnginePath();
-		targetPath /= GlobalGameManager().currentGame()->getKeyValue("basegame");
 
-		rMessage() << "No mod base path found, falling back to user base path to save particle file: " << 
+		rMessage() << "No mod base path found, falling back to user engine path to save particle file: " << 
 			targetPath.string() << std::endl;
 	}
 
