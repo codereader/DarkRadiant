@@ -97,8 +97,6 @@ class Patch :
 	void construct();
 
 public:
-	static int m_CycleCapIndex;// = 0;
-
 	// Constructor
 	Patch(PatchNode& node);
 
@@ -277,7 +275,6 @@ public:
 	void SetTextureRepeat(float s, float t); // call with s=1 t=1 for FIT
 	void CapTexture();
 	void NaturalTexture();
-	void ProjectTexture(int nAxis);
 
 	// Aligns the patch texture along the given side/border - if possible
 	void alignTexture(EAlignType align);

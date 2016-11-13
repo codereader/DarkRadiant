@@ -83,17 +83,6 @@ void capPatch(const cmd::ArgumentList& args)
 	createPatchCaps(GlobalTextureBrowser().getSelectedShader());
 }
 
-void cyclePatchProjection(const cmd::ArgumentList& args)
-{
-	UndoableCommand undo("patchCycleUVProjectionAxis");
-
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.ProjectTexture(Patch::m_CycleCapIndex); });
-
-	Patch::m_CycleCapIndex = (Patch::m_CycleCapIndex == 0) ? 1 : (Patch::m_CycleCapIndex == 1) ? 2 : 0;
-
-	SceneChangeNotify();
-}
-
 void insertPatchColumnsAtEnd(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchInsertColumnsAtEnd");

@@ -45,9 +45,6 @@ inline bool double_valid(double f) {
 
 // ====== Patch Implementation =========================================================================
 
-// Initialise the cycle cap index member variable
-int Patch::m_CycleCapIndex = 0;
-
 	namespace {
 		const std::size_t MAX_PATCH_SUBDIVISIONS = 32;
 	}
@@ -976,37 +973,6 @@ void Patch::SetTextureRepeat(float s, float t)
 	controlPointsChanged();
 }
 
-inline int texture_axis(const Vector3& normal)
-{
-  // axis dominance order: Z, X, Y
-  return (normal.x() >= normal.y()) ? (normal.x() > normal.z()) ? 0 : 2 : (normal.y() > normal.z()) ? 1 : 2;
-}
-
-void Patch::CapTexture() {
-	const PatchControl& p1 = _ctrl[_width];
-	const PatchControl& p2 = _ctrl[_width*(_height-1)];
-	const PatchControl& p3 = _ctrl[(_width*_height)-1];
-
-  Vector3 normal(g_vector3_identity);
-
-  {
-    Vector3 tmp( (p2.vertex - _ctrl[0].vertex).crossProduct(p3.vertex - _ctrl[0].vertex) );
-    if(tmp != g_vector3_identity)
-    {
-      normal += tmp;
-    }
-  }
-  {
-    Vector3 tmp( (p1.vertex - p3.vertex).crossProduct(_ctrl[0].vertex - p3.vertex) );
-    if(tmp != g_vector3_identity)
-    {
-      normal += tmp;
-    }
-  }
-
-  ProjectTexture(texture_axis(normal));
-}
-
 /* uses longest parallel chord to calculate texture coords for each row/col
  * greebo: The default texture scale is used when applying "Natural" texturing.
  * Note: all the comments in this method are by myself, so be careful... ;)
@@ -1444,7 +1410,6 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
     ERROR_MESSAGE("invalid patch-cap type");
     return;
   }
-  CapTexture();
   controlPointsChanged();
 }
 
@@ -1817,63 +1782,6 @@ void Patch::pasteTextureCoordinates(const Patch* otherPatch) {
 			rMessage() << "Error: Cannot copy texture coordinates, patch dimensions must match!\n";
 		}
 	}
-}
-
-/* greebo: This gets called when clicking on the "CAP" button in the surface dialogs.
- *
- * The texture is projected onto either the <x,y>, <y,z>, or <x,z> planes and the result
- * is not stretched in any direction, as the pure components of the vector are translated
- * into texture coordinates. Points on the x-axis that are near to each other get
- * texture coordinates that are "near" to each other.
- *
- * The argument nAxis can be 0,1,2 and determines, which components are taken to
- * calculate the texture coordinates.
- *
- * Note: the default texture scale is used to calculate the texture coordinates.
- */
-void Patch::ProjectTexture(int nAxis) {
-	// Save the undo memento
-	undoSave();
-
-	// Hold the component index of the vector (e.g. 0,1 = x,y or 1,2 = y,z)
-	int s, t;
-
-	switch (nAxis) {
-		case 2:		// Projection onto <x,y> plane
-			s = 0;
-			t = 1;
-		break;
-		case 0:		// Projection onto <y,z> plane
-			s = 1;
-			t = 2;
-		break;
-		case 1:		// Projection onto <x,z> plane
-			s = 0;
-			t = 2;
-		break;
-		default:
-			ERROR_MESSAGE("invalid axis");
-		return;
-	}
-
-	// Retrieve the default scale from the registry
-	float defaultScale = registry::getValue<float>("user/ui/defaultTextureScale");
-
-	/* Calculate the conversion factor between world and texture coordinates
-	 * by using the image width/height.*/
-	float fWidth = 1 / (_shader.getWidth() * defaultScale);
-	float fHeight = 1 / (_shader.getHeight() * -defaultScale);
-
-	// Cycle through all the control points with an iterator
-	for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
-		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument)
-		// and apply the appropriate texture coordinate
-		i->texcoord[0] = i->vertex[s] * fWidth;
-		i->texcoord[1] = i->vertex[t] * fHeight;
-	}
-
-	// Notify the patch about the change
-	controlPointsChanged();
 }
 
 void Patch::alignTexture(EAlignType align)

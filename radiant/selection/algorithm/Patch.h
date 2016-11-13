@@ -18,8 +18,6 @@ void transposePatch(const cmd::ArgumentList& args);
 
 void capPatch(const cmd::ArgumentList& args);
 
-void cyclePatchProjection(const cmd::ArgumentList& args);
-
 void insertPatchColumnsAtEnd(const cmd::ArgumentList& args);
 void insertPatchColumnsAtBeginning(const cmd::ArgumentList& args);
 void insertPatchRowsAtEnd(const cmd::ArgumentList& args);

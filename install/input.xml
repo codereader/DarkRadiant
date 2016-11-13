@@ -128,7 +128,6 @@
 		<shortcut command="RedisperseCols" key="E" modifiers="SHIFT+CONTROL" />
 		<shortcut command="MatrixTranspose" key="M" modifiers="SHIFT+CONTROL" />
 		<shortcut command="CapCurrentCurve" key="C" modifiers="SHIFT" />
-		<shortcut command="CycleCapTexturePatch" key="N" modifiers="SHIFT+CONTROL" />
 		<shortcut command="NextLeakSpot" key="K" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PrevLeakSpot" key="L" modifiers="SHIFT+CONTROL" />
 		<shortcut command="SurfaceInspector" key="S" />

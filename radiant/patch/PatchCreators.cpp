@@ -92,7 +92,6 @@ void Doom3PatchCreator::registerPatchCommands()
 	GlobalCommandSystem().addCommand("RedisperseCols", selection::algorithm::redispersePatchCols);
 	GlobalCommandSystem().addCommand("MatrixTranspose", selection::algorithm::transposePatch);
 	GlobalCommandSystem().addCommand("CapCurrentCurve", selection::algorithm::capPatch);
-	GlobalCommandSystem().addCommand("CycleCapTexturePatch", selection::algorithm::cyclePatchProjection);
 	GlobalCommandSystem().addCommand("ThickenPatch", selection::algorithm::thickenPatches);
 	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::algorithm::stitchTextures);
 	GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge);
