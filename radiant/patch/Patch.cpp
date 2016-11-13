@@ -2537,7 +2537,12 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 					}
 					else
 					{
-						normal = rowTangent[0].crossProduct(colTangent[0]).getNormalised();
+						normal = rowTangent[0].crossProduct(colTangent[0]);
+						
+						if (normal.getLengthSquared() > 0)
+						{
+							normal.normalise();
+						}
 					}
 				}
 			}
