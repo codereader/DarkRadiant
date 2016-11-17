@@ -13,6 +13,8 @@ namespace map
 {
 
 const char* const RKEY_SHOW_AAS_AREA_NUMBERS = "user/ui/aasViewer/showNumbers";
+const char* const RKEY_HIDE_DISTANT_AAS_AREAS = "user/ui/aasViewer/hideDistantAreas";
+const char* const RKEY_AAS_AREA_HIDE_DISTANCE = "user/ui/aasViewer/hideDistance";
 
 // Renderable drawing all the area bounds of the attached AAS file,
 // optionally showing the area numbers too
@@ -31,6 +33,8 @@ private:
     std::list<RenderableSolidAABB> _renderableAabbs;
 
 	bool _renderNumbers;
+	bool _hideDistantAreas;
+	float _hideDistanceSquared;
 
 public:
 	RenderableAasFile();

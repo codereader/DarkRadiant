@@ -47,6 +47,11 @@
     <prefabSelector>
       <insertAsGroup value="1"/>
     </prefabSelector>
+    <aasViewer>
+      <showNumbers value="1" />
+      <hideDistantAreas value="0" />
+      <hideDistance value="800" />
+    </aasViewer>
     <showAllLightRadii value="0"/>
     <alwaysShowLightVertices value="1"/>
     <rotateObjectsIndependently value="0" />

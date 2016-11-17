@@ -84,7 +84,11 @@ void AasControlDialog::createButtons()
 	wxToggleButton* showNumbersButton = new wxToggleButton(_dialogPanel, wxID_ANY, _("Show Area Numbers"));
 	registry::bindWidget(showNumbersButton, map::RKEY_SHOW_AAS_AREA_NUMBERS);
 	
+	wxToggleButton* hideDistantAreasButton = new wxToggleButton(_dialogPanel, wxID_ANY, _("Hide distant Areas"));
+	registry::bindWidget(hideDistantAreasButton, map::RKEY_HIDE_DISTANT_AAS_AREAS);
+
 	_dialogPanel->GetSizer()->Add(showNumbersButton, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
+	_dialogPanel->GetSizer()->Add(hideDistantAreasButton, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
 	_dialogPanel->GetSizer()->Add(_rescanButton, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
 }
 

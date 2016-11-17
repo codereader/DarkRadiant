@@ -9,11 +9,23 @@ namespace map
 {
 
 RenderableAasFile::RenderableAasFile() :
-	_renderNumbers(registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS))
+	_renderNumbers(registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS)),
+	_hideDistantAreas(registry::getValue<bool>(RKEY_HIDE_DISTANT_AAS_AREAS)),
+	_hideDistanceSquared(registry::getValue<float>(RKEY_AAS_AREA_HIDE_DISTANCE))
 {
+	_hideDistanceSquared *= _hideDistanceSquared;
+
 	GlobalRegistry().signalForKey(RKEY_SHOW_AAS_AREA_NUMBERS).connect([this]()
 	{
 		_renderNumbers = registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS);
+		GlobalMainFrame().updateAllWindows();
+	});
+
+	GlobalRegistry().signalForKey(RKEY_HIDE_DISTANT_AAS_AREAS).connect([this]()
+	{
+		_hideDistantAreas = registry::getValue<bool>(RKEY_HIDE_DISTANT_AAS_AREAS);
+		_hideDistanceSquared = registry::getValue<float>(RKEY_AAS_AREA_HIDE_DISTANCE);
+		_hideDistanceSquared *= _hideDistanceSquared;
 		GlobalMainFrame().updateAllWindows();
 	});
 }
@@ -29,8 +41,17 @@ void RenderableAasFile::renderSolid(RenderableCollector& collector, const Volume
 
 	collector.SetState(_normalShader, RenderableCollector::eFullMaterials);
 
+	// Get the camera position for distance clipping
+	Matrix4 invModelView = volume.GetModelview().getFullInverse();
+	Vector3 viewPos = invModelView.t().getProjected();
+
 	for (const RenderableSolidAABB& aabb : _renderableAabbs)
 	{
+		if (_hideDistantAreas && (aabb.getAABB().getOrigin() - viewPos).getLengthSquared() > _hideDistanceSquared)
+		{
+			continue;
+		}
+
 		collector.addRenderable(aabb, Matrix4::getIdentity());
 	}
 
@@ -65,6 +86,11 @@ void RenderableAasFile::render(const RenderInfo& info) const
 	for (std::size_t areaNum = 0; areaNum < _aasFile->getNumAreas(); ++areaNum)
 	{
 		const IAasFile::Area& area = _aasFile->getArea(areaNum);
+
+		if (_hideDistantAreas && (area.center - info.getViewerLocation()).getLengthSquared() > _hideDistanceSquared)
+		{
+			continue;
+		}
 
 		glRasterPos3dv(area.center);
 		GlobalOpenGL().drawString(string::to_string(areaNum));

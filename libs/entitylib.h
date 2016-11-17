@@ -307,6 +307,10 @@ public:
   {
     aabb_draw_solid(m_aabb, info.getFlags());
   }
+  const AABB& getAABB() const
+  {
+	  return m_aabb;
+  }
 };
 
 class RenderableWireframeAABB : public OpenGLRenderable
