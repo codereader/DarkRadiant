@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2016-11-01 16:21+0100\n"
+"POT-Creation-Date: 2016-11-18 18:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -465,7 +465,7 @@ msgstr ""
 msgid "Cannot create cylinder-cap, patch must have a width of 9."
 msgstr ""
 
-#: ..\..\radiant\patch\Patch.cpp:1674
+#: ..\..\radiant\patch\Patch.cpp:1639
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr ""
 
@@ -593,7 +593,7 @@ msgstr ""
 msgid "Cannot create caps, no patches selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Patch.cpp:208
+#: ..\..\radiant\selection\algorithm\Patch.cpp:197
 msgid "Cannot thicken patch. Nothing selected."
 msgstr ""
 
@@ -660,13 +660,13 @@ msgstr ""
 msgid "Cannot scale by zero value."
 msgstr ""
 
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:80
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:96
+#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:81
+#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:97
 msgid "Ungroup Selection"
 msgstr ""
 
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:83
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:90
+#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:84
+#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:91
 msgid "Group Selection"
 msgstr ""
 
@@ -1575,6 +1575,10 @@ msgstr ""
 
 #: ..\..\radiant\ui\aas\AasControlDialog.cpp:84
 msgid "Show Area Numbers"
+msgstr ""
+
+#: ..\..\radiant\ui\aas\AasControlDialog.cpp:87
+msgid "Hide distant Areas"
 msgstr ""
 
 #: ..\..\radiant\ui\about\AboutDialog.cpp:24
@@ -4364,23 +4368,23 @@ msgstr ""
 msgid "Cannot save particle, it has not been registered yet."
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:316
-#: ..\..\plugins\particles\ParticlesManager.cpp:344
+#: ..\..\plugins\particles\ParticlesManager.cpp:325
+#: ..\..\plugins\particles\ParticlesManager.cpp:353
 #, c-format
 msgid "Cannot open file for writing: %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:357
+#: ..\..\plugins\particles\ParticlesManager.cpp:366
 #, c-format
 msgid "Cannot open file for reading: %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:404
+#: ..\..\plugins\particles\ParticlesManager.cpp:413
 #, c-format
 msgid "Could not remove the file %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:418
+#: ..\..\plugins\particles\ParticlesManager.cpp:427
 #, c-format
 msgid "Could not rename the temporary file %s"
 msgstr ""
@@ -5246,50 +5250,46 @@ msgid "Cap Selection"
 msgstr ""
 
 #: xml_file_content.cpp:193
-msgid "Cycle Cap Texture"
-msgstr ""
-
-#: xml_file_content.cpp:194
 msgid "Stitch Patch Textures"
 msgstr ""
 
-#: xml_file_content.cpp:195
+#: xml_file_content.cpp:194
 msgid "Bulge patch"
 msgstr ""
 
-#: xml_file_content.cpp:196
+#: xml_file_content.cpp:195
 msgid "&Curve"
 msgstr ""
 
-#: xml_file_content.cpp:197
+#: xml_file_content.cpp:196
 msgid "Create NURBS Curve"
 msgstr ""
 
-#: xml_file_content.cpp:198
+#: xml_file_content.cpp:197
 msgid "Create CatmullRom Curve"
 msgstr ""
 
-#: xml_file_content.cpp:199
+#: xml_file_content.cpp:198
 msgid "Convert NURBS <-> CatmullRom"
 msgstr ""
 
-#: xml_file_content.cpp:200
+#: xml_file_content.cpp:199
 msgid "Append Curve Control Point"
 msgstr ""
 
-#: xml_file_content.cpp:201
+#: xml_file_content.cpp:200
 msgid "Insert Curve Control Points"
 msgstr ""
 
-#: xml_file_content.cpp:202
+#: xml_file_content.cpp:201
 msgid "Remove Curve Control Points"
 msgstr ""
 
-#: xml_file_content.cpp:203
+#: xml_file_content.cpp:202
 msgid "&Help"
 msgstr ""
 
-#: xml_file_content.cpp:204
+#: xml_file_content.cpp:203
 msgid "&About"
 msgstr ""
 

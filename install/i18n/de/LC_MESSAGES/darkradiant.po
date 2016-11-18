@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2016-11-01 16:21+0100\n"
-"PO-Revision-Date: 2016-11-01 16:32+0100\n"
+"POT-Creation-Date: 2016-11-18 18:32+0100\n"
+"PO-Revision-Date: 2016-11-18 18:36+0100\n"
 "Last-Translator: greebo <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -495,7 +495,7 @@ msgstr "Kann keine Bevel-Caps erzeugen, Patch muss eine Breite von 3 haben"
 msgid "Cannot create cylinder-cap, patch must have a width of 9."
 msgstr "Kann keine Zylinder-Caps erzeugen, Patch muss eine Breite von 9 haben"
 
-#: ..\..\radiant\patch\Patch.cpp:1674
+#: ..\..\radiant\patch\Patch.cpp:1639
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr "Patch ist nicht geeignet für diese Operation."
 
@@ -623,7 +623,7 @@ msgstr "Keines der selektierten Elemente ist Teil einer Gruppe"
 msgid "Cannot create caps, no patches selected."
 msgstr "Kann keine Caps erzeugen, da keine Patches ausgewählt sind."
 
-#: ..\..\radiant\selection\algorithm\Patch.cpp:208
+#: ..\..\radiant\selection\algorithm\Patch.cpp:197
 msgid "Cannot thicken patch. Nothing selected."
 msgstr "Nichts ausgewählt: kann Patch nicht extrudieren."
 
@@ -690,13 +690,13 @@ msgstr "Shader nicht kopiert: bitte ein einzelnes Face oder einen Patch auswähl
 msgid "Cannot scale by zero value."
 msgstr "Kann nicht mit 0 skalieren."
 
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:80
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:96
+#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:81
+#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:97
 msgid "Ungroup Selection"
 msgstr "Gruppierung auflösen"
 
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:83
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:90
+#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:84
+#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:91
 msgid "Group Selection"
 msgstr "Gruppe erstellen"
 
@@ -1616,6 +1616,10 @@ msgstr "Suche AAS Files"
 #: ..\..\radiant\ui\aas\AasControlDialog.cpp:84
 msgid "Show Area Numbers"
 msgstr "AAS-Nummern anzeigen"
+
+#: ..\..\radiant\ui\aas\AasControlDialog.cpp:87
+msgid "Hide distant Areas"
+msgstr "Weit entfernte ausblenden"
 
 #: ..\..\radiant\ui\about\AboutDialog.cpp:24
 msgid "About DarkRadiant"
@@ -4475,23 +4479,23 @@ msgstr "Partikeleditor..."
 msgid "Cannot save particle, it has not been registered yet."
 msgstr "Kann Partikeldefinition nicht speichern, sie wurde nicht registriert."
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:316
-#: ..\..\plugins\particles\ParticlesManager.cpp:344
+#: ..\..\plugins\particles\ParticlesManager.cpp:325
+#: ..\..\plugins\particles\ParticlesManager.cpp:353
 #, c-format
 msgid "Cannot open file for writing: %s"
 msgstr "Kann die Datei nicht im Schreibmodus öffnen: %s"
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:357
+#: ..\..\plugins\particles\ParticlesManager.cpp:366
 #, c-format
 msgid "Cannot open file for reading: %s"
 msgstr "Kann die Datei nicht im Lesemodus öffnen: %s"
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:404
+#: ..\..\plugins\particles\ParticlesManager.cpp:413
 #, c-format
 msgid "Could not remove the file %s"
 msgstr "Kann die Datei nicht entfernen: %s"
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:418
+#: ..\..\plugins\particles\ParticlesManager.cpp:427
 #, c-format
 msgid "Could not rename the temporary file %s"
 msgstr "Konnte die temporäre Datei nicht entfernen: %s"
@@ -5367,50 +5371,46 @@ msgid "Cap Selection"
 msgstr "Cap für Auswahl erstellen"
 
 #: xml_file_content.cpp:193
-msgid "Cycle Cap Texture"
-msgstr "Cap-Textur durchrotieren"
-
-#: xml_file_content.cpp:194
 msgid "Stitch Patch Textures"
 msgstr "Patch-Texturen zusammenfügen"
 
-#: xml_file_content.cpp:195
+#: xml_file_content.cpp:194
 msgid "Bulge patch"
 msgstr "Patch auswölben"
 
-#: xml_file_content.cpp:196
+#: xml_file_content.cpp:195
 msgid "&Curve"
 msgstr "Kurve"
 
-#: xml_file_content.cpp:197
+#: xml_file_content.cpp:196
 msgid "Create NURBS Curve"
 msgstr "NURBS-Kurve erstellen"
 
-#: xml_file_content.cpp:198
+#: xml_file_content.cpp:197
 msgid "Create CatmullRom Curve"
 msgstr "CatmullRom-Kurve erstellen"
 
-#: xml_file_content.cpp:199
+#: xml_file_content.cpp:198
 msgid "Convert NURBS <-> CatmullRom"
 msgstr "Konversion NURBS <-> CatmullRom"
 
-#: xml_file_content.cpp:200
+#: xml_file_content.cpp:199
 msgid "Append Curve Control Point"
 msgstr "Kurvenkontrollpunkt anfügen"
 
-#: xml_file_content.cpp:201
+#: xml_file_content.cpp:200
 msgid "Insert Curve Control Points"
 msgstr "Kurvenkontrollpunkt einfügen"
 
-#: xml_file_content.cpp:202
+#: xml_file_content.cpp:201
 msgid "Remove Curve Control Points"
 msgstr "Kurvenkontrollpunkt entfernen"
 
-#: xml_file_content.cpp:203
+#: xml_file_content.cpp:202
 msgid "&Help"
 msgstr "Hilfe"
 
-#: xml_file_content.cpp:204
+#: xml_file_content.cpp:203
 msgid "&About"
 msgstr "Über DarkRadiant"
 
@@ -6731,6 +6731,9 @@ msgstr "Min:"
 #: xml_file_content.cpp:26
 msgid "Max:"
 msgstr "Max:"
+
+#~ msgid "Cycle Cap Texture"
+#~ msgstr "Cap-Textur durchrotieren"
 
 #~ msgid "Save as Obj"
 #~ msgstr "Als OBJ speichern"
