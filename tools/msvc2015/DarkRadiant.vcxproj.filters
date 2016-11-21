@@ -1212,9 +1212,6 @@
     <ClInclude Include="..\..\radiant\selection\SelectedNodeList.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\SelectionBox.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h">
       <Filter>src\selection</Filter>
     </ClInclude>

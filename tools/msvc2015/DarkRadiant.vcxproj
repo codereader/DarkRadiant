@@ -725,7 +725,6 @@
     <ClInclude Include="..\..\radiant\selection\ScaleManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\SceneWalkers.h" />
     <ClInclude Include="..\..\radiant\selection\SelectedNodeList.h" />
-    <ClInclude Include="..\..\radiant\selection\SelectionBox.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h" />
     <ClInclude Include="..\..\radiant\selection\Selectors.h" />
     <ClInclude Include="..\..\radiant\selection\TransformationVisitors.h" />
