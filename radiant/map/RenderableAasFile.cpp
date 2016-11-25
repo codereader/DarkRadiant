@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "imainframe.h"
+#include "ivolumetest.h"
 
 #include "registry/registry.h"
 
