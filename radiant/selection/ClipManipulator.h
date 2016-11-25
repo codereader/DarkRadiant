@@ -1,13 +1,19 @@
 #pragma once
 
 #include "debugging/debugging.h"
+#include "Manipulator.h"
 
-class ClipManipulator : public Manipulator
+class ClipManipulator : public selection::Manipulator
 {
 public:
   ManipulatorComponent* getActiveComponent() {
     ERROR_MESSAGE("clipper is not manipulatable");
     return 0;
+  }
+
+  Type getType() const
+  {
+	  return Clip;
   }
 
   void setSelected(bool select) {}

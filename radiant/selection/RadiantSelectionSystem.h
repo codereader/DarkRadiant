@@ -89,10 +89,12 @@ private:
 
     sigc::signal<void, const ISelectable&> _sigSelectionChanged;
 
-	EManipulatorMode _defaultManipulatorMode;
-	EManipulatorMode _manipulatorMode;
+	typedef std::map<std::size_t, selection::ManipulatorPtr> Manipulators;
+	Manipulators _manipulators;
+
 	// The currently active manipulator
-	Manipulator* _manipulator;
+	selection::ManipulatorPtr _activeManipulator;
+
 	bool _currentManipulatorModeSupportsComponentEditing;
 
 	// state
@@ -104,11 +106,11 @@ private:
 	std::size_t _countComponent;
 
 	// The possible manipulators
-	TranslateManipulator _translateManipulator;
-	RotateManipulator _rotateManipulator;
-	ScaleManipulator _scaleManipulator;
-	DragManipulator _dragManipulator;
-	ClipManipulator _clipManipulator;
+	std::size_t _translateManipulator;
+	std::size_t _rotateManipulator;
+	std::size_t _scaleManipulator;
+	std::size_t _dragManipulator;
+	std::size_t _clipManipulator;
 
 	// The internal list to keep track of the selected instances (components and primitives)
 	typedef SelectedNodeList SelectionListType;
@@ -151,8 +153,16 @@ public:
 	void SetComponentMode(EComponentMode mode);
 	EComponentMode ComponentMode() const;
 
+	// Returns the ID of the registered manipulator
+	std::size_t registerManipulator(const selection::ManipulatorPtr& manipulator);
+	void unregisterManipulator(const selection::ManipulatorPtr& manipulator);
+
+	void setActiveManipulator(std::size_t manipulatorId);
+
+#if 0
 	void SetManipulatorMode(EManipulatorMode mode);
 	EManipulatorMode ManipulatorMode() const;
+#endif
 
 	std::size_t countSelected() const;
 	std::size_t countSelectedComponents() const;
@@ -252,7 +262,7 @@ private:
 	void toggleTranslateManipulatorMode(bool newState);
 	void toggleRotateManipulatorMode(bool newState);
 	void toggleClipManipulatorMode(bool newState);
-	void toggleManipulatorMode(EManipulatorMode mode, bool newState);
+	void toggleManipulatorMode(std::size_t id, bool newState);
 
 	void activateDefaultMode();
 

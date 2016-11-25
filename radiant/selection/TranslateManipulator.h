@@ -10,7 +10,7 @@
  * Manipulator for performing axis-aligned translations.
  */
 class TranslateManipulator
-: public Manipulator
+: public selection::Manipulator
 {
 private:
   TranslateFree _translateFree;
@@ -33,6 +33,11 @@ public:
 
   // Constructor
   TranslateManipulator(Translatable& translatable, std::size_t segments, float length);
+
+  Type getType() const
+  {
+	  return Translate;
+  }
 
   void UpdateColours();
   bool manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis);

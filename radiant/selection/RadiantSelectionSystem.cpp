@@ -20,6 +20,12 @@
 #include "SelectionMouseTools.h"
 #include "ManipulateMouseTool.h"
 
+#include "DragManipulator.h"
+#include "ClipManipulator.h"
+#include "RotateManipulator.h"
+#include "ScaleManipulator.h"
+#include "TranslateManipulator.h"
+
 #include <functional>
 
 // Initialise the shader pointer
@@ -35,17 +41,17 @@ namespace
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestSceneGraphChange(false),
     _requestWorkZoneRecalculation(true),
-	_defaultManipulatorMode(eDrag),
-	_manipulatorMode(_defaultManipulatorMode),
 	_currentManipulatorModeSupportsComponentEditing(false),
     _undoBegun(false),
     _mode(ePrimitive),
     _componentMode(eDefault),
     _countPrimitive(0),
     _countComponent(0),
-    _translateManipulator(*this, 2, 64),    // initialise the Manipulators with a pointer to self
-    _rotateManipulator(*this, 8, 64),
-    _scaleManipulator(*this, 0, 64),
+	_translateManipulator(0),
+	_rotateManipulator(0),
+	_scaleManipulator(0),
+	_dragManipulator(0),
+	_clipManipulator(0),
     _pivotChanged(false),
     _pivotMoving(false)
 {}
@@ -221,9 +227,63 @@ SelectionSystem::EComponentMode RadiantSelectionSystem::ComponentMode() const {
     return _componentMode;
 }
 
+std::size_t RadiantSelectionSystem::registerManipulator(const selection::ManipulatorPtr& manipulator)
+{
+	std::size_t newId = 0;
+
+	while (_manipulators.find(newId) != _manipulators.end())
+	{
+		++newId;
+
+		if (newId == std::numeric_limits<std::size_t>::max())
+		{
+			throw std::runtime_error("Out of manipulator IDs");
+		}
+	}
+
+	_manipulators.insert(std::make_pair(newId, manipulator));
+
+	if (!_activeManipulator)
+	{
+		_activeManipulator = manipulator;
+	}
+
+	return newId;
+}
+
+void RadiantSelectionSystem::unregisterManipulator(const selection::ManipulatorPtr& manipulator)
+{
+	for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
+	{
+		if (i->second == manipulator)
+		{
+			_manipulators.erase(i);
+			return;
+		}
+	}
+}
+
+void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
+{
+	Manipulators::const_iterator found = _manipulators.find(manipulatorId);
+
+	if (found == _manipulators.end())
+	{
+		rError() << "Cannot activate non-existent manipulator ID " << manipulatorId << std::endl;
+		return;
+	}
+
+	_activeManipulator = found->second;
+
+	pivotChanged();
+}
+
+#if 0
 // Set the current manipulator mode to <mode>
-void RadiantSelectionSystem::SetManipulatorMode(EManipulatorMode mode) {
+void RadiantSelectionSystem::SetManipulatorMode(EManipulatorMode mode)
+{
     _manipulatorMode = mode;
+
     switch(_manipulatorMode) {
         case eTranslate: _manipulator = &_translateManipulator; break;
         case eRotate: _manipulator = &_rotateManipulator; break;
@@ -231,6 +291,7 @@ void RadiantSelectionSystem::SetManipulatorMode(EManipulatorMode mode) {
         case eDrag: _manipulator = &_dragManipulator; break;
         case eClip: _manipulator = &_clipManipulator; break;
     }
+
     pivotChanged();
 }
 
@@ -238,6 +299,7 @@ void RadiantSelectionSystem::SetManipulatorMode(EManipulatorMode mode) {
 SelectionSystem::EManipulatorMode RadiantSelectionSystem::ManipulatorMode() const {
     return _manipulatorMode;
 }
+#endif
 
 // return the number of selected primitives
 std::size_t RadiantSelectionSystem::countSelected() const {
@@ -350,7 +412,7 @@ void RadiantSelectionSystem::setSelectedAll(bool selected)
 		return true;
 	});
 
-    _manipulator->setSelected(selected);
+    _activeManipulator->setSelected(selected);
 }
 
 // Deselect or select all the component instances in the scenegraph and notify the manipulator class as well
@@ -376,7 +438,7 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected)
 		});
 	}
 
-    _manipulator->setSelected(selected);
+	_activeManipulator->setSelected(selected);
 }
 
 // Traverse the current selection and visit them with the given visitor class
@@ -473,7 +535,7 @@ bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const V
     if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
     {
         // Unselect any currently selected manipulators to be sure
-        _manipulator->setSelected(false);
+		_activeManipulator->setSelected(false);
 
         // Test, if the current manipulator can be selected
         if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
@@ -482,14 +544,14 @@ bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const V
             ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(device_point, device_epsilon));
 
             // The manipulator class checks on its own, if any of its components can be selected
-            _manipulator->testSelect(scissored, GetPivot2World());
+			_activeManipulator->testSelect(scissored, GetPivot2World());
         }
 
         // Save the pivot2world matrix
         startMove();
 
         // This is true, if a manipulator could be selected
-        _pivotMoving = _manipulator->isSelected();
+        _pivotMoving = _activeManipulator->isSelected();
 
         // is a manipulator selected / the pivot moving?
         if (_pivotMoving) {
@@ -500,7 +562,7 @@ bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const V
 
             Matrix4 device2manip;
             ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
-            _manipulator->getActiveComponent()->Construct(device2manip, device_point[0], device_point[1]);
+			_activeManipulator->getActiveComponent()->Construct(device2manip, device_point[0], device_point[1]);
 
             _deviceStart = Vector2(device_point[0], device_point[1]);
 
@@ -840,7 +902,7 @@ void RadiantSelectionSystem::scaleSelected(const Vector3& scaling) {
 void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector2& devicePoint)
 {
     // Check, if the active manipulator is selected in the first place
-    if (_manipulator->isSelected()) {
+    if (_activeManipulator->isSelected()) {
         // Initalise the undo system, if not yet done
         if (!_undoBegun) {
             _undoBegun = true;
@@ -874,7 +936,7 @@ void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector
 
         // Get the manipulatable from the currently active manipulator (done by selection test)
         // and call the Transform method (can be anything)
-        _manipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
+		_activeManipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
 
         _requestWorkZoneRecalculation = true;
         _requestSceneGraphChange = false;
@@ -916,7 +978,7 @@ void RadiantSelectionSystem::destroyStatic() {
 void RadiantSelectionSystem::cancelMove() {
 
     // Unselect any currently selected manipulators to be sure
-    _manipulator->setSelected(false);
+	_activeManipulator->setSelected(false);
 
     // Tell all the scene objects to revert their transformations
 	foreachSelected([] (const scene::INodePtr& node)
@@ -1097,7 +1159,7 @@ void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const V
         collector.SetState(_state, RenderableCollector::eWireframeOnly);
         collector.SetState(_state, RenderableCollector::eFullMaterials);
 
-        _manipulator->render(collector, volume, GetPivot2World());
+		_activeManipulator->render(collector, volume, GetPivot2World());
     }
 }
 
@@ -1141,7 +1203,14 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 
     constructStatic();
 
-    SetManipulatorMode(eDrag);
+	// Add manipulators
+	_dragManipulator = registerManipulator(std::make_shared<DragManipulator>());
+	_clipManipulator = registerManipulator(std::make_shared<ClipManipulator>());
+	_translateManipulator = registerManipulator(std::make_shared<TranslateManipulator>(*this, 2, 64));
+	_scaleManipulator = registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
+	_rotateManipulator = registerManipulator(std::make_shared<RotateManipulator>(*this, 8, 64));
+
+	setActiveManipulator(_dragManipulator);
     pivotChanged();
 
     _sigSelectionChanged.connect(
@@ -1214,6 +1283,9 @@ void RadiantSelectionSystem::shutdownModule()
     // are kept after shutdown, causing destruction issues.
     setSelectedAll(false);
     setSelectedAllComponents(false);
+
+	_activeManipulator.reset();
+	_manipulators.clear();
 
     GlobalRenderSystem().detachRenderable(*this);
 

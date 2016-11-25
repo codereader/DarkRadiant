@@ -1,5 +1,8 @@
 #include "Manipulator.h"
 
+namespace selection
+{
+
 const Colour4b& Manipulator::COLOUR_SPHERE()
 {
     static Colour4b _colour(0, 0, 0, 255);
@@ -17,6 +20,8 @@ const Colour4b& Manipulator::COLOUR_SELECTED()
     static Colour4b _colour(255, 255, 0, 255);
     return _colour;
 }
+
+} // namespace
 
 const Colour4b& colourSelected(const Colour4b& colour, bool selected)
 {

@@ -65,15 +65,6 @@ public:
 		eFace,
 	};
 
-	// The possible manipulator modes
-	enum EManipulatorMode {
-		eTranslate,
-		eRotate,
-		eScale,
-		eDrag,
-		eClip,
-	};
-
 	/** greebo: An SelectionSystem::Observer gets notified
 	 * as soon as the selection is changed.
 	 */
@@ -98,8 +89,6 @@ public:
   virtual EMode Mode() const = 0;
   virtual void SetComponentMode(EComponentMode mode) = 0;
   virtual EComponentMode ComponentMode() const = 0;
-  virtual void SetManipulatorMode(EManipulatorMode mode) = 0;
-  virtual EManipulatorMode ManipulatorMode() const = 0;
 
   virtual std::size_t countSelected() const = 0;
   virtual std::size_t countSelectedComponents() const = 0;

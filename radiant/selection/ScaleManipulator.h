@@ -11,7 +11,7 @@
  * The Manipulator for scale operations
  */
 class ScaleManipulator
-: public Manipulator
+: public selection::Manipulator
 {
 private:
   ScaleFree _scaleFree;
@@ -29,6 +29,11 @@ private:
 public:
   // Constructor
   ScaleManipulator(Scalable& scalable, std::size_t segments, float length);
+
+  Type getType() const
+  {
+	  return Scale;
+  }
 
   Pivot2World& getPivot() {
     return _pivot;

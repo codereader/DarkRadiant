@@ -7,6 +7,10 @@
 #include "render/View.h"
 #include "math/Matrix4.h"
 #include "render.h"
+#include <memory>
+
+namespace selection
+{
 
 /**
  * A Manipulator is a renderable object which contains one or more
@@ -17,8 +21,21 @@
 class Manipulator
 {
 public:
+	// Manipulator type enum, user-defined manipulators should return "Custom"
+	enum Type
+	{
+		Drag,
+		Translate,
+		Rotate,
+		Scale,
+		Clip,
+		Custom
+	};
+
 
     virtual ~Manipulator() {}
+
+	virtual Type getType() const = 0;
 
     /**
      * Get the currently-active ManipulatorComponent. This is determined by the
@@ -44,6 +61,9 @@ public:
     static const Colour4b& COLOUR_SPHERE();
     static const Colour4b& COLOUR_SELECTED();
 };
+typedef std::shared_ptr<Manipulator> ManipulatorPtr;
+
+}
 
 // ------------ Helper functions ---------------------------
 

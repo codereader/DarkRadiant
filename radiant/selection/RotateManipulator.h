@@ -13,7 +13,7 @@
  * rotation.
  */
 class RotateManipulator
-: public Manipulator
+: public selection::Manipulator
 {
 private:
   RotateFree _rotateFree;
@@ -42,6 +42,11 @@ public:
 
   // Constructor
   RotateManipulator(Rotatable& rotatable, std::size_t segments, float radius);
+
+  Type getType() const
+  {
+	  return Rotate;
+  }
 
   void UpdateColours();
   void updateCircleTransforms();
