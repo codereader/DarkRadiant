@@ -52,6 +52,7 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
 	_scaleManipulator(0),
 	_dragManipulator(0),
 	_clipManipulator(0),
+	_defaultManipulatorType(selection::Manipulator::Drag),
     _pivotChanged(false),
     _pivotMoving(false)
 {}
@@ -532,13 +533,13 @@ void RadiantSelectionSystem::startMove() {
  */
 bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon)
 {
-    if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
+    if (!nothingSelected() || (_activeManipulator->getType() == selection::Manipulator::Drag && Mode() == eComponent))
     {
         // Unselect any currently selected manipulators to be sure
 		_activeManipulator->setSelected(false);
 
         // Test, if the current manipulator can be selected
-        if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
+        if (!nothingSelected() || (_activeManipulator->getType() == selection::Manipulator::Drag && Mode() == eComponent))
         {
             render::View scissored(view);
             ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(device_point, device_epsilon));
@@ -995,7 +996,7 @@ void RadiantSelectionSystem::cancelMove() {
     pivotChanged();
 
     // greebo: Deselect all faces if we are in brush and drag mode
-    if (Mode() == ePrimitive && ManipulatorMode() == eDrag)
+    if (Mode() == ePrimitive && _activeManipulator->getType() == selection::Manipulator::Drag)
     {
         SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
         GlobalSceneGraph().root()->traverse(faceSelector);
@@ -1029,7 +1030,7 @@ void RadiantSelectionSystem::endMove() {
 
     // greebo: Deselect all faces if we are in brush and drag mode
     if ((Mode() == ePrimitive || Mode() == eGroupPart) &&
-        ManipulatorMode() == eDrag)
+		_activeManipulator->getType() == selection::Manipulator::Drag)
     {
         SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
         GlobalSceneGraph().root()->traverse(faceSelector);
@@ -1049,19 +1050,19 @@ void RadiantSelectionSystem::endMove() {
     {
         std::ostringstream command;
 
-        if (ManipulatorMode() == eTranslate) {
+        if (_activeManipulator->getType() == selection::Manipulator::Translate) {
             command << "translateTool";
             outputTranslation(command);
         }
-        else if (ManipulatorMode() == eRotate) {
+        else if (_activeManipulator->getType() == selection::Manipulator::Rotate) {
             command << "rotateTool";
             outputRotation(command);
         }
-        else if (ManipulatorMode() == eScale) {
+        else if (_activeManipulator->getType() == selection::Manipulator::Scale) {
             command << "scaleTool";
             outputScale(command);
         }
-        else if (ManipulatorMode() == eDrag) {
+        else if (_activeManipulator->getType() == selection::Manipulator::Drag) {
             command << "dragTool";
         }
 
@@ -1211,6 +1212,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	_rotateManipulator = registerManipulator(std::make_shared<RotateManipulator>(*this, 8, 64));
 
 	setActiveManipulator(_dragManipulator);
+	_defaultManipulator = _dragManipulator;
     pivotChanged();
 
     _sigSelectionChanged.connect(
@@ -1346,13 +1348,13 @@ void RadiantSelectionSystem::onIdle()
 
 void RadiantSelectionSystem::toggleDefaultManipulatorMode(bool newState)
 {
-	switch (_defaultManipulatorMode)
+	switch (_defaultManipulatorType)
 	{
-		case eTranslate: toggleTranslateManipulatorMode(true); break;
-		case eRotate: toggleRotateManipulatorMode(true); break;
-		case eScale: break;
-		case eDrag: toggleDragManipulatorMode(true); break;
-		case eClip: toggleClipManipulatorMode(true); break;
+		case selection::Manipulator::Translate: toggleTranslateManipulatorMode(true); break;
+		case selection::Manipulator::Rotate: toggleRotateManipulatorMode(true); break;
+		case selection::Manipulator::Scale: break;
+		case selection::Manipulator::Drag: toggleDragManipulatorMode(true); break;
+		case selection::Manipulator::Clip: toggleClipManipulatorMode(true); break;
 	};
 }
 
@@ -1376,22 +1378,22 @@ void RadiantSelectionSystem::toggleManipulatorMode(EManipulatorMode mode, bool n
 
 void RadiantSelectionSystem::toggleDragManipulatorMode(bool newState)
 {
-	toggleManipulatorMode(eDrag, newState); // pass the call to the generic method
+	toggleManipulatorMode(selection::Manipulator::Drag, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleTranslateManipulatorMode(bool newState)
 {
-	toggleManipulatorMode(eTranslate, newState); // pass the call to the generic method
+	toggleManipulatorMode(selection::Manipulator::Translate, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleRotateManipulatorMode(bool newState)
 {
-	toggleManipulatorMode(eRotate, newState); // pass the call to the generic method
+	toggleManipulatorMode(selection::Manipulator::Rotate, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleClipManipulatorMode(bool newState)
 {
-	if (_manipulatorMode == eClip && _defaultManipulatorMode != eClip)
+	if (_activeManipulator->getType() == selection::Manipulator::Clip && _defaultManipulatorType != selection::Manipulator::Clip)
 	{
 		toggleDefaultManipulatorMode(true);
 	}
@@ -1401,7 +1403,7 @@ void RadiantSelectionSystem::toggleClipManipulatorMode(bool newState)
 
 		activateDefaultMode();
 		GlobalClipper().onClipMode(true);
-		SetManipulatorMode(eClip);
+		setActiveManipulator(_clipManipulator);
 
 		onManipulatorModeChanged();
         onComponentModeChanged();

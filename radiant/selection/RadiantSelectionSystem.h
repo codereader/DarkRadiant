@@ -94,6 +94,7 @@ private:
 
 	// The currently active manipulator
 	selection::ManipulatorPtr _activeManipulator;
+	selection::Manipulator::Type _defaultManipulatorType;
 
 	bool _currentManipulatorModeSupportsComponentEditing;
 
