@@ -1176,9 +1176,6 @@
     <ClInclude Include="..\..\radiant\selection\Manipulatables.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\ManipulatorComponent.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h">
       <Filter>src\selection</Filter>
     </ClInclude>

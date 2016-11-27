@@ -9,7 +9,6 @@
 #include "render.h"
 
 #include "TransformationVisitors.h"
-#include "ManipulatorComponent.h"
 #include "Translatable.h"
 #include "Rotatable.h"
 #include "Scalable.h"

@@ -718,7 +718,6 @@
     <ClInclude Include="..\..\radiant\selection\Device.h" />
     <ClInclude Include="..\..\radiant\selection\Intersection.h" />
     <ClInclude Include="..\..\radiant\selection\Manipulatables.h" />
-    <ClInclude Include="..\..\radiant\selection\ManipulatorComponent.h" />
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h" />
     <ClInclude Include="..\..\radiant\selection\Planes.h" />
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h" />
