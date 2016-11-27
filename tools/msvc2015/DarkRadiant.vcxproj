@@ -372,6 +372,7 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\DragManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\RotateManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp" />
+    <ClCompile Include="..\..\radiant\selection\manipulators\TranslateManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
@@ -448,7 +449,6 @@
     <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
     <ClCompile Include="..\..\radiant\selection\TransformationVisitors.cpp" />
-    <ClCompile Include="..\..\radiant\selection\TranslateManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Curves.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Entity.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\General.cpp" />
@@ -610,6 +610,7 @@
     <ClInclude Include="..\..\radiant\selection\manipulators\DragManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ScaleManipulator.h" />
+    <ClInclude Include="..\..\radiant\selection\manipulators\TranslateManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
@@ -728,7 +729,6 @@
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h" />
     <ClInclude Include="..\..\radiant\selection\Selectors.h" />
     <ClInclude Include="..\..\radiant\selection\TransformationVisitors.h" />
-    <ClInclude Include="..\..\radiant\selection\TranslateManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Curves.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Entity.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\General.h" />

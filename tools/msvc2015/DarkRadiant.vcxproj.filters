@@ -406,9 +406,6 @@
     <ClCompile Include="..\..\radiant\selection\TransformationVisitors.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\TranslateManipulator.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\algorithm\Curves.cpp">
       <Filter>src\selection\algorithm</Filter>
     </ClCompile>
@@ -895,6 +892,9 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\TranslateManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1210,9 +1210,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\TransformationVisitors.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\TranslateManipulator.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\algorithm\Curves.h">
@@ -1813,6 +1810,9 @@
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\manipulators\ScaleManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\TranslateManipulator.h">
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
   </ItemGroup>

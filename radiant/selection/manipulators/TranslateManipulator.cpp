@@ -1,9 +1,13 @@
 #include "TranslateManipulator.h"
-#include "Remap.h"
-#include "Selectors.h"
-#include "BestPoint.h"
+
+#include "../Remap.h"
+#include "../Selectors.h"
+#include "../BestPoint.h"
 
 #include "registry/registry.h"
+
+namespace selection
+{
 
 const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 
@@ -32,7 +36,7 @@ void TranslateManipulator::UpdateColours() {
     _arrowHeadY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
     _arrowZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
     _arrowHeadZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
-    _quadScreen.setColour(colourSelected(selection::ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
+    _quadScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 
 bool TranslateManipulator::manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis) {
@@ -89,7 +93,8 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
     }
 }
 
-void TranslateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world) {
+void TranslateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
+{
     _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
     SelectionPool selector;
@@ -191,7 +196,8 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
     }
 }
 
-TranslateManipulator::Component* TranslateManipulator::getActiveComponent() {
+TranslateManipulator::Component* TranslateManipulator::getActiveComponent()
+{
     if(_selectableX.isSelected())
     {
       _translateAxis.SetAxis(g_vector3_axis_x);
@@ -213,14 +219,16 @@ TranslateManipulator::Component* TranslateManipulator::getActiveComponent() {
     }
 }
 
-void TranslateManipulator::setSelected(bool select) {
+void TranslateManipulator::setSelected(bool select)
+{
     _selectableX.setSelected(select);
     _selectableY.setSelected(select);
     _selectableZ.setSelected(select);
     _selectableScreen.setSelected(select);
 }
 
-bool TranslateManipulator::isSelected() const {
+bool TranslateManipulator::isSelected() const
+{
     return _selectableX.isSelected()
       | _selectableY.isSelected()
       | _selectableZ.isSelected()
@@ -231,4 +239,4 @@ bool TranslateManipulator::isSelected() const {
 ShaderPtr TranslateManipulator::_stateWire;
 ShaderPtr TranslateManipulator::_stateFill;
 
-
+}

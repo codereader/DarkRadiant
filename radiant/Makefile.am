@@ -202,7 +202,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/manipulators/ScaleManipulator.cpp \
 					  selection/group/SelectionGroupManager.cpp \
 					  selection/group/SelectionGroupInfoFileModule.cpp \
-                      selection/TranslateManipulator.cpp \
+                      selection/manipulators/TranslateManipulator.cpp \
                       selection/Intersection.cpp \
                       settings/GameFileLoader.cpp \
                       settings/Game.cpp \
