@@ -158,7 +158,9 @@ public:
 	std::size_t registerManipulator(const selection::ManipulatorPtr& manipulator);
 	void unregisterManipulator(const selection::ManipulatorPtr& manipulator);
 
+	selection::Manipulator::Type getActiveManipulatorType();
 	void setActiveManipulator(std::size_t manipulatorId);
+	void setActiveManipulator(selection::Manipulator::Type manipulatorType);
 
 #if 0
 	void SetManipulatorMode(EManipulatorMode mode);
@@ -263,7 +265,7 @@ private:
 	void toggleTranslateManipulatorMode(bool newState);
 	void toggleRotateManipulatorMode(bool newState);
 	void toggleClipManipulatorMode(bool newState);
-	void toggleManipulatorMode(std::size_t id, bool newState);
+	void toggleManipulatorMode(selection::Manipulator::Type type, bool newState);
 
 	void activateDefaultMode();
 

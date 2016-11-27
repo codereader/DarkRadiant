@@ -13,7 +13,7 @@
  * rotation.
  */
 class RotateManipulator
-: public selection::Manipulator
+: public selection::ManipulatorBase
 {
 private:
   RotateFree _rotateFree;
@@ -55,7 +55,7 @@ public:
 
   void testSelect(const render::View& view, const Matrix4& pivot2world);
 
-  ManipulatorComponent* getActiveComponent();
+  Component* getActiveComponent();
 
   void setSelected(bool select);
   bool isSelected() const;

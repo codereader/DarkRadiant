@@ -11,7 +11,7 @@
  * The Manipulator for scale operations
  */
 class ScaleManipulator
-: public selection::Manipulator
+: public selection::ManipulatorBase
 {
 private:
   ScaleFree _scaleFree;
@@ -43,7 +43,7 @@ public:
 
   void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
   void testSelect(const render::View& view, const Matrix4& pivot2world);
-  ManipulatorComponent* getActiveComponent();
+  Component* getActiveComponent();
 
   void setSelected(bool select);
   bool isSelected() const;

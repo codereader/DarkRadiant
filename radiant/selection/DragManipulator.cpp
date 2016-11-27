@@ -7,7 +7,7 @@
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
-ManipulatorComponent* DragManipulator::getActiveComponent() {
+DragManipulator::Component* DragManipulator::getActiveComponent() {
     return _dragSelectable.isSelected() ? &_freeDrag : &_freeResize;
 }
 

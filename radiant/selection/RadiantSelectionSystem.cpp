@@ -264,6 +264,11 @@ void RadiantSelectionSystem::unregisterManipulator(const selection::ManipulatorP
 	}
 }
 
+selection::Manipulator::Type RadiantSelectionSystem::getActiveManipulatorType()
+{
+	return _activeManipulator->getType();
+}
+
 void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 {
 	Manipulators::const_iterator found = _manipulators.find(manipulatorId);
@@ -277,6 +282,21 @@ void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 	_activeManipulator = found->second;
 
 	pivotChanged();
+}
+
+void RadiantSelectionSystem::setActiveManipulator(selection::Manipulator::Type manipulatorType)
+{
+	for (const Manipulators::value_type& pair : _manipulators)
+	{
+		if (pair.second->getType() == manipulatorType)
+		{
+			_activeManipulator = pair.second;
+			pivotChanged();
+			return;
+		}
+	}
+
+	rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
 }
 
 #if 0
@@ -1211,8 +1231,8 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	_scaleManipulator = registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
 	_rotateManipulator = registerManipulator(std::make_shared<RotateManipulator>(*this, 8, 64));
 
-	setActiveManipulator(_dragManipulator);
-	_defaultManipulator = _dragManipulator;
+	_defaultManipulatorType = selection::Manipulator::Drag;
+	setActiveManipulator(_defaultManipulatorType);
     pivotChanged();
 
     _sigSelectionChanged.connect(
@@ -1358,10 +1378,10 @@ void RadiantSelectionSystem::toggleDefaultManipulatorMode(bool newState)
 	};
 }
 
-void RadiantSelectionSystem::toggleManipulatorMode(EManipulatorMode mode, bool newState)
+void RadiantSelectionSystem::toggleManipulatorMode(selection::Manipulator::Type type, bool newState)
 {
 	// Switch back to the default mode if we're already in <mode>
-	if (_manipulatorMode == mode && _defaultManipulatorMode != mode)
+	if (_activeManipulator->getType() == type && _defaultManipulatorType != type)
 	{
 		toggleDefaultManipulatorMode(true);
 	}
@@ -1370,7 +1390,7 @@ void RadiantSelectionSystem::toggleManipulatorMode(EManipulatorMode mode, bool n
 		_currentManipulatorModeSupportsComponentEditing = true;
 
 		GlobalClipper().onClipMode(false);
-		SetManipulatorMode(mode);
+		setActiveManipulator(type);
 		
 		onManipulatorModeChanged();
 	}
@@ -1519,9 +1539,9 @@ void RadiantSelectionSystem::onManipulatorModeChanged()
 {
 	GlobalEventManager().setToggled("ToggleClipper", GlobalClipper().clipMode());
 	
-	GlobalEventManager().setToggled("MouseTranslate", ManipulatorMode() == eTranslate);
-	GlobalEventManager().setToggled("MouseRotate", ManipulatorMode() == eRotate);
-	GlobalEventManager().setToggled("MouseDrag", ManipulatorMode() == eDrag);
+	GlobalEventManager().setToggled("MouseTranslate", _activeManipulator->getType() == selection::Manipulator::Translate);
+	GlobalEventManager().setToggled("MouseRotate", _activeManipulator->getType() == selection::Manipulator::Rotate);
+	GlobalEventManager().setToggled("MouseDrag", _activeManipulator->getType() == selection::Manipulator::Drag);
 
 	SceneChangeNotify();
 }

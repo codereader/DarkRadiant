@@ -19,7 +19,7 @@ void ScaleManipulator::UpdateColours() {
     _arrowX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
     _arrowY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
     _arrowZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
-    _quadScreen.setColour(colourSelected(Manipulator::COLOUR_SCREEN(), _selectableScreen.isSelected()));
+    _quadScreen.setColour(colourSelected(selection::ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 
 void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) {
@@ -78,7 +78,7 @@ void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot
     }
 }
 
-ManipulatorComponent* ScaleManipulator::getActiveComponent() {
+ScaleManipulator::Component* ScaleManipulator::getActiveComponent() {
     if(_selectableX.isSelected())
     {
       _scaleAxis.SetAxis(g_vector3_axis_x);

@@ -5,7 +5,7 @@
 
 #include "BasicSelectable.h"
 
-class DragManipulator : public selection::Manipulator
+class DragManipulator : public selection::ManipulatorBase
 {
   TranslateFree _freeResize;
   TranslateFree _freeDrag;
@@ -22,7 +22,7 @@ public:
 	  return Drag;
   }
 
-  ManipulatorComponent* getActiveComponent();
+  Component* getActiveComponent();
   void testSelect(const render::View& view, const Matrix4& pivot2world);
 
   void setSelected(bool select);

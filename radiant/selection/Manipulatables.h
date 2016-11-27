@@ -21,7 +21,7 @@
  * The necessary device pointer >> translation vector calculations are performed within Transform()
  */
 
-class RotateFree : public ManipulatorComponent {
+class RotateFree : public selection::Manipulator::Component {
   Vector3 _start;
   Rotatable& _rotatable;
 public:
@@ -30,7 +30,7 @@ public:
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
 };
 
-class RotateAxis : public ManipulatorComponent {
+class RotateAxis : public selection::Manipulator::Component {
   Vector3 _axis;
   Vector3 _start;
   Rotatable& _rotatable;
@@ -46,7 +46,7 @@ public:
   }
 };
 
-class TranslateAxis : public ManipulatorComponent {
+class TranslateAxis : public selection::Manipulator::Component {
   Vector3 _start;
   Vector3 _axis;
   Translatable& _translatable;
@@ -60,7 +60,7 @@ public:
   }
 };
 
-class TranslateFree : public ManipulatorComponent {
+class TranslateFree : public selection::Manipulator::Component {
 private:
   Vector3 _start;
   Translatable& _translatable;
@@ -71,7 +71,7 @@ public:
 };
 
 
-class ScaleAxis : public ManipulatorComponent {
+class ScaleAxis : public selection::Manipulator::Component {
 private:
   Vector3 _start;
   Vector3 _axis;
@@ -86,7 +86,7 @@ public:
   }
 };
 
-class ScaleFree : public ManipulatorComponent {
+class ScaleFree : public selection::Manipulator::Component {
 private:
   Vector3 _start;
   Scalable& _scalable;

@@ -3,12 +3,12 @@
 #include "debugging/debugging.h"
 #include "Manipulator.h"
 
-class ClipManipulator : public selection::Manipulator
+class ClipManipulator : public selection::ManipulatorBase
 {
 public:
-  ManipulatorComponent* getActiveComponent() {
+	Component* getActiveComponent() {
     ERROR_MESSAGE("clipper is not manipulatable");
-    return 0;
+    return nullptr;
   }
 
   Type getType() const

@@ -72,8 +72,8 @@ void RotateManipulator::UpdateColours()
     _circleX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
     _circleY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
     _circleZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
-    _circleScreen.setColour(colourSelected(Manipulator::COLOUR_SCREEN(), _selectableScreen.isSelected()));
-    _circleSphere.setColour(colourSelected(Manipulator::COLOUR_SPHERE(), false));
+    _circleScreen.setColour(colourSelected(selection::ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
+    _circleSphere.setColour(colourSelected(selection::ManipulatorBase::COLOUR_SPHERE(), false));
 }
 
 void RotateManipulator::updateCircleTransforms()
@@ -196,7 +196,7 @@ void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivo
     }
 }
 
-ManipulatorComponent* RotateManipulator::getActiveComponent() {
+RotateManipulator::Component* RotateManipulator::getActiveComponent() {
     if(_selectableX.isSelected()) {
       _rotateAxis.SetAxis(g_vector3_axis_x);
       return &_rotateAxis;

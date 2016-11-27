@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include "imodule.h"
+#include "ivolumetest.h"
 #include <memory>
 #include <sigc++/signal.h>
 
@@ -34,9 +35,76 @@ class Face;
 class Brush;
 class Patch;
 
-namespace selection { struct WorkZone; }
+namespace selection 
+{ 
+	
+struct WorkZone; 
 
-const std::string MODULE_SELECTIONSYSTEM("SelectionSystem");
+/**
+* A Manipulator is a renderable object which contains one or more
+* ManipulatorComponents, each of which can be manipulated by the user. For
+* example, the rotation Manipulator draws several circles which cause rotations
+* around specific axes.
+*/
+class Manipulator
+{
+public:
+	// Manipulator type enum, user-defined manipulators should return "Custom"
+	enum Type
+	{
+		Drag,
+		Translate,
+		Rotate,
+		Scale,
+		Clip,
+		Custom
+	};
+
+	/**
+	* Part of a Manipulator which can be operated upon by the user.
+	*
+	* \see Manipulator
+	*/
+	class Component
+	{
+	public:
+		virtual ~Component() {}
+
+		virtual void Construct(const Matrix4& device2manip, const float x, const float y) = 0;
+
+		// greebo: An abstract Transform() method, the implementation has to decide
+		// which operations are actually called. This may be a translation,
+		// rotation, or anything else.
+		virtual void Transform(const Matrix4& manip2object,
+			const Matrix4& device2manip,
+			const float x,
+			const float y) = 0;
+	};
+
+	virtual ~Manipulator() {}
+
+	virtual Type getType() const = 0;
+
+	/**
+	* Get the currently-active ManipulatorComponent. This is determined by the
+	* most recent selection test.
+	*/
+	virtual Component* getActiveComponent() = 0;
+
+	virtual void testSelect(const render::View& view, const Matrix4& pivot2world) {}
+
+	// This function is responsible for bringing the visual representation
+	// of this manipulator onto the screen
+	virtual void render(RenderableCollector& collector,
+		const VolumeTest& volume,
+		const Matrix4& pivot2world) {}
+
+	virtual void setSelected(bool select) = 0;
+	virtual bool isSelected() const = 0;
+};
+typedef std::shared_ptr<Manipulator> ManipulatorPtr;
+
+}
 
 class SelectionSystem :
 	public RegisterableModule
@@ -82,6 +150,14 @@ public:
 
 	virtual void addObserver(Observer* observer) = 0;
 	virtual void removeObserver(Observer* observer) = 0;
+
+	// Returns the ID of the registered manipulator
+	virtual std::size_t registerManipulator(const selection::ManipulatorPtr& manipulator) = 0;
+	virtual void unregisterManipulator(const selection::ManipulatorPtr& manipulator) = 0;
+
+	virtual selection::Manipulator::Type getActiveManipulatorType() = 0;
+	virtual void setActiveManipulator(std::size_t manipulatorId) = 0;
+	virtual void setActiveManipulator(selection::Manipulator::Type manipulatorType) = 0;
 
 	virtual const SelectionInfo& getSelectionInfo() = 0;
 
@@ -201,6 +277,8 @@ public:
 	 */
 	virtual const selection::WorkZone& getWorkZone() = 0;
 };
+
+const char* const MODULE_SELECTIONSYSTEM("SelectionSystem");
 
 inline SelectionSystem& GlobalSelectionSystem() {
 	// Cache the reference locally

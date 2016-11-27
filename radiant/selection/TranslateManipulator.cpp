@@ -32,7 +32,7 @@ void TranslateManipulator::UpdateColours() {
     _arrowHeadY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
     _arrowZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
     _arrowHeadZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
-    _quadScreen.setColour(colourSelected(Manipulator::COLOUR_SCREEN(), _selectableScreen.isSelected()));
+    _quadScreen.setColour(colourSelected(selection::ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 
 bool TranslateManipulator::manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis) {
@@ -191,7 +191,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
     }
 }
 
-ManipulatorComponent* TranslateManipulator::getActiveComponent() {
+TranslateManipulator::Component* TranslateManipulator::getActiveComponent() {
     if(_selectableX.isSelected())
     {
       _translateAxis.SetAxis(g_vector3_axis_x);

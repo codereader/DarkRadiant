@@ -18,50 +18,18 @@ namespace selection
  * example, the rotation Manipulator draws several circles which cause rotations
  * around specific axes.
  */
-class Manipulator
+class ManipulatorBase :
+	public Manipulator
 {
 public:
-	// Manipulator type enum, user-defined manipulators should return "Custom"
-	enum Type
-	{
-		Drag,
-		Translate,
-		Rotate,
-		Scale,
-		Clip,
-		Custom
-	};
-
-
-    virtual ~Manipulator() {}
-
-	virtual Type getType() const = 0;
-
-    /**
-     * Get the currently-active ManipulatorComponent. This is determined by the
-     * most recent selection test.
-     */
-    virtual ManipulatorComponent* getActiveComponent() = 0;
-
-    virtual void testSelect(const render::View& view, const Matrix4& pivot2world) {}
-
-    // This function is responsible for bringing the visual representation
-    // of this manipulator onto the screen
-    virtual void render(RenderableCollector& collector,
-                        const VolumeTest& volume,
-                        const Matrix4& pivot2world) {}
-
-    virtual void setSelected(bool select) = 0;
-    virtual bool isSelected() const = 0;
+	virtual ~ManipulatorBase() {}
 
 public:
-
     /* Static colours */
     static const Colour4b& COLOUR_SCREEN();
     static const Colour4b& COLOUR_SPHERE();
     static const Colour4b& COLOUR_SELECTED();
 };
-typedef std::shared_ptr<Manipulator> ManipulatorPtr;
 
 }
 
