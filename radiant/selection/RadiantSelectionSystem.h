@@ -106,13 +106,6 @@ private:
 	std::size_t _countPrimitive;
 	std::size_t _countComponent;
 
-	// The possible manipulators
-	std::size_t _translateManipulator;
-	std::size_t _rotateManipulator;
-	std::size_t _scaleManipulator;
-	std::size_t _dragManipulator;
-	std::size_t _clipManipulator;
-
 	// The internal list to keep track of the selected instances (components and primitives)
 	typedef SelectedNodeList SelectionListType;
 	SelectionListType _selection;
@@ -161,11 +154,6 @@ public:
 	selection::Manipulator::Type getActiveManipulatorType();
 	void setActiveManipulator(std::size_t manipulatorId);
 	void setActiveManipulator(selection::Manipulator::Type manipulatorType);
-
-#if 0
-	void SetManipulatorMode(EManipulatorMode mode);
-	EManipulatorMode ManipulatorMode() const;
-#endif
 
 	std::size_t countSelected() const;
 	std::size_t countSelectedComponents() const;

@@ -47,11 +47,6 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
     _componentMode(eDefault),
     _countPrimitive(0),
     _countComponent(0),
-	_translateManipulator(0),
-	_rotateManipulator(0),
-	_scaleManipulator(0),
-	_dragManipulator(0),
-	_clipManipulator(0),
 	_defaultManipulatorType(selection::Manipulator::Drag),
     _pivotChanged(false),
     _pivotMoving(false)
@@ -298,29 +293,6 @@ void RadiantSelectionSystem::setActiveManipulator(selection::Manipulator::Type m
 
 	rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
 }
-
-#if 0
-// Set the current manipulator mode to <mode>
-void RadiantSelectionSystem::SetManipulatorMode(EManipulatorMode mode)
-{
-    _manipulatorMode = mode;
-
-    switch(_manipulatorMode) {
-        case eTranslate: _manipulator = &_translateManipulator; break;
-        case eRotate: _manipulator = &_rotateManipulator; break;
-        case eScale: _manipulator = &_scaleManipulator; break;
-        case eDrag: _manipulator = &_dragManipulator; break;
-        case eClip: _manipulator = &_clipManipulator; break;
-    }
-
-    pivotChanged();
-}
-
-// return the current manipulator mode
-SelectionSystem::EManipulatorMode RadiantSelectionSystem::ManipulatorMode() const {
-    return _manipulatorMode;
-}
-#endif
 
 // return the number of selected primitives
 std::size_t RadiantSelectionSystem::countSelected() const {
@@ -1225,11 +1197,11 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
     constructStatic();
 
 	// Add manipulators
-	_dragManipulator = registerManipulator(std::make_shared<DragManipulator>());
-	_clipManipulator = registerManipulator(std::make_shared<ClipManipulator>());
-	_translateManipulator = registerManipulator(std::make_shared<TranslateManipulator>(*this, 2, 64));
-	_scaleManipulator = registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
-	_rotateManipulator = registerManipulator(std::make_shared<RotateManipulator>(*this, 8, 64));
+	registerManipulator(std::make_shared<DragManipulator>());
+	registerManipulator(std::make_shared<ClipManipulator>());
+	registerManipulator(std::make_shared<TranslateManipulator>(*this, 2, 64));
+	registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
+	registerManipulator(std::make_shared<RotateManipulator>(*this, 8, 64));
 
 	_defaultManipulatorType = selection::Manipulator::Drag;
 	setActiveManipulator(_defaultManipulatorType);
@@ -1423,7 +1395,7 @@ void RadiantSelectionSystem::toggleClipManipulatorMode(bool newState)
 
 		activateDefaultMode();
 		GlobalClipper().onClipMode(true);
-		setActiveManipulator(_clipManipulator);
+		setActiveManipulator(selection::Manipulator::Clip);
 
 		onManipulatorModeChanged();
         onComponentModeChanged();
