@@ -197,6 +197,9 @@
     <Filter Include="src\selection\group">
       <UniqueIdentifier>{182783ec-2373-43f8-a310-0a3e51333300}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\selection\manipulators">
+      <UniqueIdentifier>{d29d1907-07b9-4549-a336-642933e4602b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1164,9 +1167,6 @@
     <ClInclude Include="..\..\radiant\selection\BestPoint.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\ClipManipulator.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Device.h">
       <Filter>src\selection</Filter>
     </ClInclude>
@@ -1811,6 +1811,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h">
       <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\ClipManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

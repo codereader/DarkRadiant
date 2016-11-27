@@ -12,11 +12,6 @@
 #include "wxutil/event/SingleIdleCallback.h"
 #include "Manipulator.h"
 #include "Manipulatables.h"
-#include "TranslateManipulator.h"
-#include "RotateManipulator.h"
-#include "ScaleManipulator.h"
-#include "DragManipulator.h"
-#include "ClipManipulator.h"
 #include "Selectors.h"
 #include "SelectedNodeList.h"
 
