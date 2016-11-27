@@ -22,7 +22,7 @@
 
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
-#include "RotateManipulator.h"
+#include "manipulators/RotateManipulator.h"
 #include "ScaleManipulator.h"
 #include "TranslateManipulator.h"
 
@@ -958,14 +958,14 @@ void RadiantSelectionSystem::constructStatic() {
     _state = GlobalRenderSystem().capture("$POINT");
     TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
     TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
-    RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
+    selection::RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 }
 
 void RadiantSelectionSystem::destroyStatic() {
     _state = ShaderPtr();
     TranslateManipulator::_stateWire = ShaderPtr();
     TranslateManipulator::_stateFill = ShaderPtr();
-    RotateManipulator::_stateOuter = ShaderPtr();
+	selection::RotateManipulator::_stateOuter = ShaderPtr();
 }
 
 void RadiantSelectionSystem::cancelMove() {
@@ -1201,7 +1201,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	registerManipulator(std::make_shared<selection::ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(*this, 2, 64));
 	registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
-	registerManipulator(std::make_shared<RotateManipulator>(*this, 8, 64));
+	registerManipulator(std::make_shared<selection::RotateManipulator>(*this, 8, 64));
 
 	_defaultManipulatorType = selection::Manipulator::Drag;
 	setActiveManipulator(_defaultManipulatorType);

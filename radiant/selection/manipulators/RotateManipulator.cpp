@@ -1,6 +1,10 @@
 #include "RotateManipulator.h"
-#include "Selectors.h"
-#include "BestPoint.h"
+
+#include "../Selectors.h"
+#include "../BestPoint.h"
+
+namespace selection
+{
 
 template<typename remap_policy>
 inline void draw_semicircle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap) {
@@ -235,4 +239,4 @@ bool RotateManipulator::isSelected() const {
 // Initialise the shader of the RotateManipulator class
 ShaderPtr RotateManipulator::_stateOuter;
 
-
+}
