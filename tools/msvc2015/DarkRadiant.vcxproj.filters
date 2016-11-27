@@ -382,9 +382,6 @@
     <ClCompile Include="..\..\radiant\selection\BestPoint.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\DragManipulator.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\Intersection.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
@@ -895,6 +892,9 @@
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.cpp">
       <Filter>src\selection\group</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\DragManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1168,9 +1168,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Device.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\DragManipulator.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Intersection.h">
@@ -1813,6 +1810,9 @@
       <Filter>src\selection\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\manipulators\ClipManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\DragManipulator.h">
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
   </ItemGroup>

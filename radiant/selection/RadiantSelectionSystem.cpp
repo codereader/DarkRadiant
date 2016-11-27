@@ -20,7 +20,7 @@
 #include "SelectionMouseTools.h"
 #include "ManipulateMouseTool.h"
 
-#include "DragManipulator.h"
+#include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
 #include "RotateManipulator.h"
 #include "ScaleManipulator.h"
@@ -1197,7 +1197,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
     constructStatic();
 
 	// Add manipulators
-	registerManipulator(std::make_shared<DragManipulator>());
+	registerManipulator(std::make_shared<selection::DragManipulator>());
 	registerManipulator(std::make_shared<selection::ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(*this, 2, 64));
 	registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));

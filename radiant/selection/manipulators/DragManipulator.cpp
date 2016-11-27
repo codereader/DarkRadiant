@@ -1,9 +1,13 @@
 #include "DragManipulator.h"
-#include "Selectors.h"
-#include "SelectionTest.h"
-#include "Planes.h"
+
+#include "../Selectors.h"
+#include "../SelectionTest.h"
+#include "../Planes.h"
 
 #include "registry/registry.h"
+
+namespace selection
+{
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
@@ -135,12 +139,15 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 	}
 }
 
-void DragManipulator::setSelected(bool select) {
+void DragManipulator::setSelected(bool select) 
+{
     _selected = select;
     _dragSelectable.setSelected(select);
 }
 
-bool DragManipulator::isSelected() const  {
+bool DragManipulator::isSelected() const
+{
 	return _selected || _dragSelectable.isSelected();
 }
 
+}
