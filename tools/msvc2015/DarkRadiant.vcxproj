@@ -371,6 +371,7 @@
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\DragManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorBase.cpp" />
+    <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorComponents.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\RotateManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\TranslateManipulator.cpp" />
@@ -443,7 +444,6 @@
     <ClCompile Include="..\..\radiant\render\debug\SpacePartitionRenderer.cpp" />
     <ClCompile Include="..\..\radiant\selection\BestPoint.cpp" />
     <ClCompile Include="..\..\radiant\selection\Intersection.cpp" />
-    <ClCompile Include="..\..\radiant\selection\Manipulatables.cpp" />
     <ClCompile Include="..\..\radiant\selection\Planes.cpp" />
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp" />
@@ -609,6 +609,7 @@
     <ClInclude Include="..\..\radiant\selection\manipulators\ClipManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\DragManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorBase.h" />
+    <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorComponents.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ScaleManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\TranslateManipulator.h" />
@@ -717,7 +718,6 @@
     <ClInclude Include="..\..\radiant\selection\BestPoint.h" />
     <ClInclude Include="..\..\radiant\selection\Device.h" />
     <ClInclude Include="..\..\radiant\selection\Intersection.h" />
-    <ClInclude Include="..\..\radiant\selection\Manipulatables.h" />
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h" />
     <ClInclude Include="..\..\radiant\selection\Planes.h" />
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h" />

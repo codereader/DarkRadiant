@@ -1,8 +1,12 @@
-#include "math/FloatTools.h"
-#include "Manipulatables.h"
-#include "Intersection.h"
+#include "ManipulatorComponents.h"
 
 #include "igrid.h"
+#include "math/FloatTools.h"
+
+#include "../Intersection.h"
+
+namespace selection
+{
 
 void transform_local2object(Matrix4& object, const Matrix4& local, const Matrix4& local2object)
 {
@@ -125,4 +129,6 @@ void ScaleFree::Transform(const Matrix4& manip2object, const Matrix4& device2man
       start[2] == 0 ? 1 : 1 + delta[2] / start[2]
     );
     _scalable.scale(scale);
+}
+
 }

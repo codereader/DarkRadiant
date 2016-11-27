@@ -198,7 +198,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/Planes.cpp \
                       selection/RadiantSelectionSystem.cpp \
                       selection/manipulators/RotateManipulator.cpp \
-                      selection/Manipulatables.cpp \
+                      selection/manipulators/ManipulatorComponents.cpp \
                       selection/manipulators/ScaleManipulator.cpp \
 					  selection/group/SelectionGroupManager.cpp \
 					  selection/group/SelectionGroupInfoFileModule.cpp \

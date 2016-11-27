@@ -1,7 +1,7 @@
 #include "TransformationVisitors.h"
 
 #include "editable.h"
-#include "Manipulatables.h"
+#include "manipulators/ManipulatorComponents.h"
 #include "transformlib.h"
 #include "registry/registry.h"
 #include "selection/algorithm/General.h"
@@ -26,7 +26,7 @@ void translation_for_pivoted_rotation(Vector3& parent_translation, const Quatern
 
   //rMessage() << "translation: " << translation << "\n";
 
-  translation_local2object(parent_translation, translation, localToParent);
+  selection::translation_local2object(parent_translation, translation, localToParent);
 
   //rMessage() << "parent_translation: " << parent_translation << "\n";
 }
@@ -42,7 +42,7 @@ void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& l
       (-local_pivot) * local_scale
   );
 
-  translation_local2object(parent_translation, translation, localToParent);
+  selection::translation_local2object(parent_translation, translation, localToParent);
 }
 
 // ===================================================================================

@@ -3,7 +3,7 @@
 #include "ManipulatorBase.h"
 #include "../Renderables.h"
 #include "../Pivot2World.h"
-#include "../Manipulatables.h"
+#include "ManipulatorComponents.h"
 #include "../BasicSelectable.h"
 
 namespace selection
@@ -37,7 +37,7 @@ public:
 	// Constructor
 	TranslateManipulator(Translatable& translatable, std::size_t segments, float length);
 
-	Type getType() const
+	Type getType() const override
 	{
 		return Translate;
 	}
@@ -45,12 +45,12 @@ public:
 	void UpdateColours();
 	bool manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis);
 
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
-	void testSelect(const render::View& view, const Matrix4& pivot2world);
-	Component* getActiveComponent();
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) override;
+	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
+	Component* getActiveComponent() override;
 
-	void setSelected(bool select);
-	bool isSelected() const;
-}; // class TranslateManipulator
+	void setSelected(bool select) override;
+	bool isSelected() const override;
+};
 
 }

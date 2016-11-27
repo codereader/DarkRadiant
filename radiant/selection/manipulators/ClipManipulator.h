@@ -10,21 +10,21 @@ class ClipManipulator :
 	public ManipulatorBase
 {
 public:
-	Component* getActiveComponent()
+	Component* getActiveComponent() override
 	{
 		ERROR_MESSAGE("clipper is not manipulatable");
 		return nullptr;
 	}
 
-	Type getType() const
+	Type getType() const override
 	{
 		return Clip;
 	}
 
-	void setSelected(bool select)
+	void setSelected(bool select) override
 	{}
 
-	bool isSelected() const
+	bool isSelected() const override
 	{
 		return false;
 	}

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ManipulatorBase.h"
-#include "../Manipulatables.h"
+#include "ManipulatorComponents.h"
 #include "../Renderables.h"
 #include "../Pivot2World.h"
 #include "../BasicSelectable.h"
@@ -46,7 +46,7 @@ public:
 	// Constructor
 	RotateManipulator(Rotatable& rotatable, std::size_t segments, float radius);
 
-	Type getType() const
+	Type getType() const override
 	{
 		return Rotate;
 	}
@@ -54,14 +54,14 @@ public:
 	void UpdateColours();
 	void updateCircleTransforms();
 
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) override;
 
-	void testSelect(const render::View& view, const Matrix4& pivot2world);
+	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
 
-	Component* getActiveComponent();
+	Component* getActiveComponent() override;
 
-	void setSelected(bool select);
-	bool isSelected() const;
+	void setSelected(bool select) override;
+	bool isSelected() const override;
 };
 
 }

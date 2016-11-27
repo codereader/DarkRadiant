@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ManipulatorBase.h"
-#include "../Manipulatables.h"
+#include "ManipulatorComponents.h"
 
 #include "../BasicSelectable.h"
 
@@ -25,15 +25,15 @@ public:
 		_selected(false)
 	{}
 
-	Type getType() const
+	Type getType() const override
 	{
 		return Drag;
 	}
 
-	Component* getActiveComponent();
-	void testSelect(const render::View& view, const Matrix4& pivot2world);
-	void setSelected(bool select);
-	bool isSelected() const;
+	Component* getActiveComponent() override;
+	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
+	void setSelected(bool select) override;
+	bool isSelected() const override;
 };
 
 }

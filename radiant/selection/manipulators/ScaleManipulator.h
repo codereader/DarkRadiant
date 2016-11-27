@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ManipulatorBase.h"
-#include "../Manipulatables.h"
+#include "ManipulatorComponents.h"
 #include "../Renderables.h"
 #include "../Pivot2World.h"
 
@@ -33,7 +33,7 @@ public:
 	// Constructor
 	ScaleManipulator(Scalable& scalable, std::size_t segments, float length);
 
-	Type getType() const
+	Type getType() const override
 	{
 		return Scale;
 	}
@@ -45,12 +45,12 @@ public:
 
 	void UpdateColours();
 
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
-	void testSelect(const render::View& view, const Matrix4& pivot2world);
-	Component* getActiveComponent();
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) override;
+	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
+	Component* getActiveComponent() override;
 
-	void setSelected(bool select);
-	bool isSelected() const;
+	void setSelected(bool select) override;
+	bool isSelected() const override;
 
 }; // class ScaleManipulator
 
