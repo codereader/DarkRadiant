@@ -397,9 +397,6 @@
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\ScaleManipulator.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
@@ -895,6 +892,9 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\RotateManipulator.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1195,9 +1195,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Renderables.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\ScaleManipulator.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SceneWalkers.h">
@@ -1813,6 +1810,9 @@
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\manipulators\RotateManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\ScaleManipulator.h">
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
   </ItemGroup>

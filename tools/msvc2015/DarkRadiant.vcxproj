@@ -371,6 +371,7 @@
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\DragManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\RotateManipulator.cpp" />
+    <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
@@ -444,7 +445,6 @@
     <ClCompile Include="..\..\radiant\selection\Manipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\Planes.cpp" />
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp" />
-    <ClCompile Include="..\..\radiant\selection\ScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
     <ClCompile Include="..\..\radiant\selection\TransformationVisitors.cpp" />
@@ -609,6 +609,7 @@
     <ClInclude Include="..\..\radiant\selection\manipulators\ClipManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\DragManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\RotateManipulator.h" />
+    <ClInclude Include="..\..\radiant\selection\manipulators\ScaleManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
@@ -722,7 +723,6 @@
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiant\selection\Remap.h" />
     <ClInclude Include="..\..\radiant\selection\Renderables.h" />
-    <ClInclude Include="..\..\radiant\selection\ScaleManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\SceneWalkers.h" />
     <ClInclude Include="..\..\radiant\selection\SelectedNodeList.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h" />

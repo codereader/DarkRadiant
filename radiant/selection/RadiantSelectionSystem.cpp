@@ -23,7 +23,7 @@
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
 #include "manipulators/RotateManipulator.h"
-#include "ScaleManipulator.h"
+#include "manipulators/ScaleManipulator.h"
 #include "TranslateManipulator.h"
 
 #include <functional>
@@ -1200,7 +1200,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	registerManipulator(std::make_shared<selection::DragManipulator>());
 	registerManipulator(std::make_shared<selection::ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(*this, 2, 64));
-	registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
+	registerManipulator(std::make_shared<selection::ScaleManipulator>(*this, 0, 64));
 	registerManipulator(std::make_shared<selection::RotateManipulator>(*this, 8, 64));
 
 	_defaultManipulatorType = selection::Manipulator::Drag;

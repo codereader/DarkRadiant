@@ -1,7 +1,11 @@
 #include "ScaleManipulator.h"
-#include "Remap.h"
-#include "Selectors.h"
-#include "BestPoint.h"
+
+#include "../Remap.h"
+#include "../Selectors.h"
+#include "../BestPoint.h"
+
+namespace selection
+{
 
 // Constructor
 ScaleManipulator::ScaleManipulator(Scalable& scalable, std::size_t segments, float length) :
@@ -19,7 +23,7 @@ void ScaleManipulator::UpdateColours() {
     _arrowX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
     _arrowY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
     _arrowZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
-    _quadScreen.setColour(colourSelected(selection::ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
+    _quadScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 
 void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) {
@@ -35,7 +39,8 @@ void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& 
     collector.addRenderable(_quadScreen, _pivot._viewpointSpace);
 }
 
-void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world) {
+void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
+{
     _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
     SelectionPool selector;
@@ -78,7 +83,8 @@ void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot
     }
 }
 
-ScaleManipulator::Component* ScaleManipulator::getActiveComponent() {
+ScaleManipulator::Component* ScaleManipulator::getActiveComponent()
+{
     if(_selectableX.isSelected())
     {
       _scaleAxis.SetAxis(g_vector3_axis_x);
@@ -98,18 +104,20 @@ ScaleManipulator::Component* ScaleManipulator::getActiveComponent() {
       return &_scaleFree;
 }
 
-void ScaleManipulator::setSelected(bool select) {
+void ScaleManipulator::setSelected(bool select) 
+{
     _selectableX.setSelected(select);
     _selectableY.setSelected(select);
     _selectableZ.setSelected(select);
     _selectableScreen.setSelected(select);
 }
 
-bool ScaleManipulator::isSelected() const {
+bool ScaleManipulator::isSelected() const
+{
     return _selectableX.isSelected()
       | _selectableY.isSelected()
       | _selectableZ.isSelected()
       | _selectableScreen.isSelected();
 }
 
-
+}
