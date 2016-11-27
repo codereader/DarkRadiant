@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Manipulator.h"
+#include "ManipulatorBase.h"
 #include "../Manipulatables.h"
 #include "../Renderables.h"
 #include "../Pivot2World.h"

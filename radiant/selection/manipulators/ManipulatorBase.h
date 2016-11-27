@@ -1,13 +1,7 @@
 #pragma once
 
-#include "ManipulatorComponent.h"
-
-#include "irenderable.h"
-
-#include "render/View.h"
-#include "math/Matrix4.h"
-#include "render.h"
-#include <memory>
+#include "iselection.h"
+#include "render/Colour4b.h"
 
 namespace selection
 {
@@ -33,9 +27,4 @@ public:
 
 }
 
-// ------------ Helper functions ---------------------------
-
 const Colour4b& colourSelected(const Colour4b& colour, bool selected);
-
-
-

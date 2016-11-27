@@ -181,7 +181,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \
-                      selection/Manipulator.cpp \
+                      selection/manipulators/ManipulatorBase.cpp \
                       selection/TransformationVisitors.cpp \
                       selection/algorithm/Transformation.cpp \
                       selection/algorithm/GroupCycle.cpp \

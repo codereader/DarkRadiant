@@ -2,6 +2,7 @@
 
 #include "../Selectors.h"
 #include "../BestPoint.h"
+#include "render/View.h"
 
 namespace selection
 {

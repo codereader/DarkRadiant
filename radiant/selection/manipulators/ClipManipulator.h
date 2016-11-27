@@ -1,7 +1,7 @@
 #pragma once
 
 #include "debugging/debugging.h"
-#include "../Manipulator.h"
+#include "ManipulatorBase.h"
 
 namespace selection
 {

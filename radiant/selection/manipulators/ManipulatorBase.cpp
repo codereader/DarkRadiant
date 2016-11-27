@@ -1,4 +1,4 @@
-#include "Manipulator.h"
+#include "ManipulatorBase.h"
 
 namespace selection
 {

@@ -10,7 +10,6 @@
 #include "selectionlib.h"
 #include "math/Matrix4.h"
 #include "wxutil/event/SingleIdleCallback.h"
-#include "Manipulator.h"
 #include "Manipulatables.h"
 #include "Selectors.h"
 #include "SelectedNodeList.h"

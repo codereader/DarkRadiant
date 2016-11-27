@@ -3,6 +3,7 @@
 #include "../Remap.h"
 #include "../Selectors.h"
 #include "../BestPoint.h"
+#include "render/View.h"
 
 #include "registry/registry.h"
 
