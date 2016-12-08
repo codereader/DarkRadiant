@@ -617,6 +617,7 @@
     <ClInclude Include="..\..\radiant\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
+    <ClInclude Include="..\..\radiant\selection\SelectionPool.h" />
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiant\selection\SingleItemSelector.h" />
@@ -728,7 +729,6 @@
     <ClInclude Include="..\..\radiant\selection\SceneWalkers.h" />
     <ClInclude Include="..\..\radiant\selection\SelectedNodeList.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h" />
-    <ClInclude Include="..\..\radiant\selection\Selectors.h" />
     <ClInclude Include="..\..\radiant\selection\TransformationVisitors.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Curves.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Entity.h" />

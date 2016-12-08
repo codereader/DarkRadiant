@@ -8,7 +8,7 @@
 #include "ilightnode.h"
 #include "imousetoolmanager.h"
 #include "editable.h"
-#include "Selectors.h"
+#include "SelectionPool.h"
 #include "SelectionTest.h"
 #include "SceneWalkers.h"
 #include "patch/PatchSceneWalk.h"
@@ -103,7 +103,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             EntitySelector entityTester(selector, test);
             GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
 
-            for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
             {
                 targetList.push_back(i->second);
             }
@@ -133,12 +133,12 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             }
 
             // Add the first selection crop to the target vector
-            for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
+            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i) {
                 targetList.push_back(i->second);
             }
 
             // Add the secondary crop to the vector (if it has any entries)
-            for (SelectionPool::iterator i = sel2.begin(); i != sel2.end(); ++i) {
+            for (SelectionPool::const_iterator i = sel2.begin(); i != sel2.end(); ++i) {
                 // Check for duplicates
                 SelectablesList::iterator j;
                 for (j = targetList.begin(); j != targetList.end(); ++j) {
@@ -159,7 +159,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
 
             // Add the selection crop to the target vector
-            for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
             {
                 targetList.push_back(i->second);
             }
@@ -171,7 +171,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             ComponentSelector selectionTester(selector, test, componentMode);
             foreachSelected(selectionTester);
 
-            for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
             {
                 targetList.push_back(i->second);
             }
@@ -617,7 +617,7 @@ void RadiantSelectionSystem::SelectPoint(const render::View& view,
             GlobalSceneGraph().foreachVisibleNodeInVolume(scissored, selectionTester);
 
             // Load them all into the vector
-            for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
             {
                 candidates.push_back(i->second);
             }
@@ -757,7 +757,7 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
             GlobalSceneGraph().foreachVisibleNodeInVolume(scissored, selectionTester);
 
             // Load them all into the vector
-            for (SelectionPool::iterator i = pool.begin(); i != pool.end(); ++i)
+            for (SelectionPool::const_iterator i = pool.begin(); i != pool.end(); ++i)
             {
                 candidates.push_back(i->second);
             }

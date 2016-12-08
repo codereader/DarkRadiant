@@ -1197,9 +1197,6 @@
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\Selectors.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\TransformationVisitors.h">
       <Filter>src\selection</Filter>
     </ClInclude>
@@ -1816,6 +1813,9 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\BestSelector.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectionPool.h">
       <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>

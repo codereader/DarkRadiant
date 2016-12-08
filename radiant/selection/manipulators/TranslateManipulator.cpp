@@ -1,7 +1,7 @@
 #include "TranslateManipulator.h"
 
 #include "../Remap.h"
-#include "../Selectors.h"
+#include "../SelectionPool.h"
 #include "../BestPoint.h"
 #include "render/View.h"
 
@@ -152,7 +152,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
     }
 
 	// greebo: If any of the above arrows could be selected, select the first in the SelectionPool
-    if(!selector.failed()) {
+    if(!selector.empty()) {
       (*selector.begin()).second->setSelected(true);
     } else {
     	ISelectable* selectable = NULL;

@@ -1,6 +1,6 @@
 #include "DragManipulator.h"
 
-#include "../Selectors.h"
+#include "../SelectionPool.h"
 #include "../SelectionTest.h"
 #include "../Planes.h"
 #include "../SingleItemSelector.h"
@@ -134,7 +134,7 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 		}
 	}
 
-	for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+	for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
 	{
 		i->second->setSelected(true);
 	}

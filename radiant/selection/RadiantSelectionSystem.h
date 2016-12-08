@@ -10,7 +10,6 @@
 #include "selectionlib.h"
 #include "math/Matrix4.h"
 #include "wxutil/event/SingleIdleCallback.h"
-#include "Selectors.h"
 #include "SelectedNodeList.h"
 
 #include "Translatable.h"
@@ -44,6 +43,11 @@ class RadiantSelectionSystem :
 	// and every selection change.
 	mutable bool _requestSceneGraphChange;
 	mutable bool _requestWorkZoneRecalculation;
+
+	// A simple set that gets filled after the SelectableSortedSet is populated.
+	// greebo: I used this to merge two SelectionPools (entities and primitives)
+	// with a preferred sorting (see RadiantSelectionSystem::testSelectScene)
+	typedef std::list<ISelectable*> SelectablesList;
 
 public:
 	static ShaderPtr _state;

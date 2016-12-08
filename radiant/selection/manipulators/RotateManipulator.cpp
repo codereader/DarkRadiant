@@ -1,6 +1,6 @@
 #include "RotateManipulator.h"
 
-#include "../Selectors.h"
+#include "../SelectionPool.h"
 #include "../BestPoint.h"
 #include "render/View.h"
 
@@ -195,7 +195,7 @@ void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivo
 
     _axisScreen = _pivot._axisScreen;
 
-    if(!selector.failed())
+    if(!selector.empty())
     {
       (*selector.begin()).second->setSelected(true);
     }

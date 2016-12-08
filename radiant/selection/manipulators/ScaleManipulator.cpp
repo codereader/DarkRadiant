@@ -1,7 +1,7 @@
 #include "ScaleManipulator.h"
 
 #include "../Remap.h"
-#include "../Selectors.h"
+#include "../SelectionPool.h"
 #include "../BestPoint.h"
 #include "render/View.h"
 
@@ -78,7 +78,7 @@ void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot
       }
     }
 
-    if(!selector.failed())
+    if(!selector.empty())
     {
       (*selector.begin()).second->setSelected(true);
     }
