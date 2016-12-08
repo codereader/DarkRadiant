@@ -82,7 +82,7 @@ void GenericEntity::testSelect(Selector& selector,
 
 	SelectionIntersection best;
 	aabb_testselect(m_aabb_local, test, best);
-	if(best.valid()) {
+	if(best.isValid()) {
 		selector.addIntersection(best);
 	}
 }

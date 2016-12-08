@@ -25,7 +25,7 @@ void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test)
     {
     	SelectionIntersection best;
 		test.TestPoint(*p, best);
-		if (best.valid())
+		if (best.isValid())
 		{
 			Selector_add(selector, *i, best);
 		}

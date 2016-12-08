@@ -264,7 +264,7 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
 	_d3Group.testSelect(selector, test, best);
 
 	// If the selectionIntersection is non-empty, add the selectable to the SelectionPool
-	if (best.valid()) {
+	if (best.isValid()) {
 		Selector_add(selector, *this, best);
 	}
 }

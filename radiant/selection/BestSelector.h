@@ -53,7 +53,7 @@ public:
 
 	void addIntersection(const SelectionIntersection& intersection) override
 	{
-		assign_if_closer(_curIntersection, intersection);
+		_curIntersection.assignIfCloser(intersection);
 	}
 
 	const std::list<ISelectable*>& getBestSelectables() const

@@ -34,7 +34,7 @@ public:
 
 	void popSelectable() override
 	{
-		if (_intersection.valid())
+		if (_intersection.isValid())
 		{
 			_selected = true;
 		}
@@ -46,7 +46,7 @@ public:
 	{
 		if (_selectable != nullptr && _selectable->isSelected())
 		{
-			assign_if_closer(_intersection, intersection);
+			_intersection.assignIfCloser(intersection);
 		}
 	}
 

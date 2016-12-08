@@ -39,7 +39,7 @@ public:
 		test.TestPoint(control.vertex, best);
 
 		// If there is a control point that can be selected, add the Selectable to the selector
-		if (best.valid())
+		if (best.isValid())
 		{
 			Selector_add(selector, *this, best);
 		}

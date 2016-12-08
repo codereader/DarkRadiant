@@ -629,7 +629,7 @@ void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& l
 
     aabb_testselect(_lightBox, test, best);
 
-    if (best.valid())
+    if (best.isValid())
     {
         selector.addIntersection(best);
     }

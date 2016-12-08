@@ -65,7 +65,7 @@ public:
 	*/
 	void addIntersection(const SelectionIntersection& intersection) override
 	{
-		assign_if_closer(_curIntersection, intersection);
+		_curIntersection.assignIfCloser(intersection);
 	}
 
 	/** greebo: This makes sure that only valid Intersections get added, otherwise
@@ -73,7 +73,7 @@ public:
 	 */
 	void addSelectable(const SelectionIntersection& intersection, ISelectable* selectable)
 	{
-		if (!intersection.valid()) return; // skip invalid intersections
+		if (!intersection.isValid()) return; // skip invalid intersections
 
 		SelectablesMap::iterator existing = _currentSelectables.find(selectable);
 

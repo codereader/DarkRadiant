@@ -115,7 +115,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
       {
         SelectionIntersection best;
         Quad_BestPoint(local2view, eClipCullCW, &_quadScreen.front(), best);
-        if(best.valid())
+        if(best.isValid())
         {
           best = SelectionIntersection(0, 0);
           selector.addSelectable(best, &_selectableScreen);

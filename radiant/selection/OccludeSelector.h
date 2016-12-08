@@ -25,7 +25,7 @@ public:
 
 	void addIntersection(const SelectionIntersection& intersection)
 	{
-		if (SelectionIntersection_closer(intersection, _bestIntersection))
+		if (intersection.isCloserThan(_bestIntersection))
 		{
 			_bestIntersection = intersection;
 			_occluded = true;

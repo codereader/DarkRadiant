@@ -194,7 +194,7 @@ void SpeakerNode::testSelect(Selector& selector, SelectionTest& test)
 
 	SelectionIntersection best;
 	aabb_testselect(m_aabb_local, test, best);
-	if(best.valid()) {
+	if(best.isValid()) {
 		selector.addIntersection(best);
 	}
 }

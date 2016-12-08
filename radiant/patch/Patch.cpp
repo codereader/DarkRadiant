@@ -288,7 +288,7 @@ void Patch::testSelect(Selector& selector, SelectionTest& test)
 		pIndex += _mesh.lenStrips;
 	}
 
-	if (best.valid()) {
+	if (best.isValid()) {
 		selector.addIntersection(best);
 	}
 }

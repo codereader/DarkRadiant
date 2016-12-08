@@ -53,7 +53,7 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test) {
 		SelectionIntersection best;
 		m_edge->testSelect(test, best);
-		if (best.valid()) {
+		if (best.isValid()) {
 			Selector_add(selector, *this, best);
 		}
 	}

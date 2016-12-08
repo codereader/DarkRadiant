@@ -95,7 +95,7 @@ void BrushNode::testSelect(Selector& selector, SelectionTest& test) {
 		}
 	}
 
-	if (best.valid()) {
+	if (best.isValid()) {
 		selector.addIntersection(best);
 	}
 }
