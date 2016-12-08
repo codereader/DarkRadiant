@@ -4,6 +4,7 @@
 #include "../SelectionTest.h"
 #include "../Planes.h"
 #include "../SingleItemSelector.h"
+#include "../BestSelector.h"
 
 #include "registry/registry.h"
 
@@ -116,20 +117,19 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 		ComponentSelector selectionTester(bestSelector, test, GlobalSelectionSystem().ComponentMode());
 		GlobalSelectionSystem().foreachSelected(selectionTester);
 
-		for (std::list<ISelectable*>::iterator i = bestSelector.best().begin();
-			 i != bestSelector.best().end(); ++i)
+		for (ISelectable* selectable : bestSelector.getBestSelectables())
 		{
 			// greebo: Disabled this, it caused the currently selected patch vertices being deselected.
 			if (registry::getValue<bool>(RKEY_TRANSIENT_COMPONENT_SELECTION))
 			{
-				if (!(*i)->isSelected())
+				if (!selectable->isSelected())
 				{
 					GlobalSelectionSystem().setSelectedAllComponents(false);
 				}
 			}
 
 			_selected = false;
-			selector.addSelectable(SelectionIntersection(0, 0), (*i));
+			selector.addSelectable(SelectionIntersection(0, 0), selectable);
 			_dragSelectable.setSelected(true);
 		}
 	}

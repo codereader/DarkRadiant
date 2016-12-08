@@ -601,6 +601,7 @@
     <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\selection\BasicSelectable.h" />
+    <ClInclude Include="..\..\radiant\selection\BestSelector.h" />
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h" />
     <ClInclude Include="..\..\radiant\selection\group\SelectionGroup.h" />
     <ClInclude Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.h" />
