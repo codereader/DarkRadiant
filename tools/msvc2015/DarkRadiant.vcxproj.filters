@@ -1812,6 +1812,9 @@
     <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorComponents.h">
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SingleItemSelector.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

@@ -3,6 +3,7 @@
 #include "../Selectors.h"
 #include "../SelectionTest.h"
 #include "../Planes.h"
+#include "../SingleItemSelector.h"
 
 #include "registry/registry.h"
 
@@ -24,12 +25,12 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
     if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
 	{
 		// Find all entities
-		BooleanSelector entitySelector;
+		SingleItemSelector entitySelector;
 
 		EntitySelector selectionTester(entitySelector, test);
 		GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
 
-    	if (entitySelector.isSelected())
+    	if (entitySelector.hasValidSelectable())
 		{
 			// Found a selectable entity
 			selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
@@ -38,12 +39,12 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 		else
 		{
 			// Find all primitives that are selectable
-			BooleanSelector primitiveSelector;
+			SingleItemSelector primitiveSelector;
 
 			PrimitiveSelector primitiveTester(primitiveSelector, test);
 			GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
 
-			if (primitiveSelector.isSelected())	
+			if (primitiveSelector.hasValidSelectable())
 			{
 				// Found a selectable primitive
 				selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
@@ -53,12 +54,12 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 			{
 				// Entities and worldspawn primitives failed, so check for group children too
 				// Find all group child primitives that are selectable
-				BooleanSelector childPrimitiveSelector;
+				SingleItemSelector childPrimitiveSelector;
 
 				GroupChildPrimitiveSelector childPrimitiveTester(childPrimitiveSelector, test);
 				GlobalSceneGraph().foreachVisibleNodeInVolume(view, childPrimitiveTester);
 
-				if (childPrimitiveSelector.isSelected())	
+				if (childPrimitiveSelector.hasValidSelectable())
 				{
 					// Found a selectable group child primitive
 					selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
@@ -75,12 +76,12 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 	else if (GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
     {
     	// Find all primitives that are selectable
-		BooleanSelector booleanSelector;
+		SingleItemSelector booleanSelector;
 
 		GroupChildPrimitiveSelector childPrimitiveTester(booleanSelector, test);
 		GlobalSceneGraph().foreachVisibleNodeInVolume(view, childPrimitiveTester);
 
-		if (booleanSelector.isSelected())
+		if (booleanSelector.hasValidSelectable())
 		{
 			// Found a selectable primitive
 			selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
@@ -96,14 +97,14 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
     else if (GlobalSelectionSystem().Mode() == SelectionSystem::eEntity)
 	{
     	// Create a boolean selection pool (can have exactly one selectable or none)
-		BooleanSelector booleanSelector;
+		SingleItemSelector booleanSelector;
 
 		// Find the visible entities
 		EntitySelector selectionTester(booleanSelector, test);
 		GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
 
 		// Check, if an entity could be found
-      	if (booleanSelector.isSelected()) {
+      	if (booleanSelector.hasValidSelectable()) {
         	selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
         	_selected = false;
 		}

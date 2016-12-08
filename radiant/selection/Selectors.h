@@ -122,43 +122,6 @@ public:
 
 // =======================================================================================
 
-class BooleanSelector : public Selector {
-  bool _selected;
-  SelectionIntersection _intersection;
-  ISelectable* _selectable;
-public:
-  BooleanSelector() : _selected(false), _selectable(NULL)
-  {
-  }
-
-  void pushSelectable(ISelectable& selectable)
-  {
-    _intersection = SelectionIntersection();
-    _selectable = &selectable;
-  }
-  void popSelectable()
-  {
-    if(_intersection.valid())
-    {
-      _selected = true;
-    }
-    _intersection = SelectionIntersection();
-  }
-  void addIntersection(const SelectionIntersection& intersection)
-  {
-    if(_selectable != NULL && _selectable->isSelected())
-    {
-      assign_if_closer(_intersection, intersection);
-    }
-  }
-
-  bool isSelected() {
-    return _selected;
-  }
-};
-
-// =======================================================================================
-
 class BestSelector : public Selector {
   SelectionIntersection _intersection;
   ISelectable* _selectable;
