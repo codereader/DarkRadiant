@@ -385,9 +385,6 @@
     <ClCompile Include="..\..\radiant\selection\Intersection.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\Planes.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
@@ -895,6 +892,9 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorComponents.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Planes.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1174,9 +1174,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\Planes.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h">
@@ -1817,6 +1814,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SelectionPool.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Planes.h">
+      <Filter>src\selection\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

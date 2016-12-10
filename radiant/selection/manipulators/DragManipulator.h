@@ -3,9 +3,9 @@
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
 
-#include "../SelectionTest.h"
-#include "../SelectionPool.h"
-#include "../BasicSelectable.h"
+#include "selection/SelectionTest.h"
+#include "selection/SelectionPool.h"
+#include "selection/BasicSelectable.h"
 
 namespace selection
 {

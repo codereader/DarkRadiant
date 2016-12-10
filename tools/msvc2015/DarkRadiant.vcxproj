@@ -365,6 +365,7 @@
     <ClCompile Include="..\..\radiant\render\LinearLightList.cpp" />
     <ClCompile Include="..\..\radiant\render\View.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp" />
+    <ClCompile Include="..\..\radiant\selection\algorithm\Planes.cpp" />
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp" />
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupManager.cpp" />
@@ -444,7 +445,6 @@
     <ClCompile Include="..\..\radiant\render\debug\SpacePartitionRenderer.cpp" />
     <ClCompile Include="..\..\radiant\selection\BestPoint.cpp" />
     <ClCompile Include="..\..\radiant\selection\Intersection.cpp" />
-    <ClCompile Include="..\..\radiant\selection\Planes.cpp" />
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
@@ -600,6 +600,7 @@
     <ClInclude Include="..\..\radiant\render\View.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
+    <ClInclude Include="..\..\radiant\selection\algorithm\Planes.h" />
     <ClInclude Include="..\..\radiant\selection\BasicSelectable.h" />
     <ClInclude Include="..\..\radiant\selection\BestSelector.h" />
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h" />
@@ -722,7 +723,6 @@
     <ClInclude Include="..\..\radiant\selection\Device.h" />
     <ClInclude Include="..\..\radiant\selection\Intersection.h" />
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h" />
-    <ClInclude Include="..\..\radiant\selection\Planes.h" />
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiant\selection\Remap.h" />
     <ClInclude Include="..\..\radiant\selection\Renderables.h" />

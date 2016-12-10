@@ -1,10 +1,10 @@
 #include "DragManipulator.h"
 
-#include "../SelectionPool.h"
-#include "../SelectionTest.h"
-#include "../Planes.h"
-#include "../SingleItemSelector.h"
-#include "../BestSelector.h"
+#include "selection/SelectionPool.h"
+#include "selection/SelectionTest.h"
+#include "selection/algorithm/Planes.h"
+#include "selection/SingleItemSelector.h"
+#include "selection/BestSelector.h"
 
 #include "registry/registry.h"
 
@@ -97,7 +97,7 @@ void DragManipulator::testSelectPrimitiveMode(const render::View& view, Selectio
 	}
 
 	// all direct hits failed, check for drag-selectable faces
-	_resizeModeActive = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+	_resizeModeActive = algorithm::testSelectPlanes(selector, test);
 }
 
 void DragManipulator::testSelectGroupPartMode(const render::View& view, SelectionVolume& test, SelectionPool& selector)
@@ -116,7 +116,7 @@ void DragManipulator::testSelectGroupPartMode(const render::View& view, Selectio
 	}
 
 	// Check for selectable faces
-	_resizeModeActive = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+	_resizeModeActive = algorithm::testSelectPlanes(selector, test);
 }
 
 void DragManipulator::testSelectEntityMode(const render::View& view, SelectionVolume& test, SelectionPool& selector)

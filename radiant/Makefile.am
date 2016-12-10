@@ -193,9 +193,9 @@ darkradiant_SOURCES = main.cpp \
                       selection/algorithm/Group.cpp \
                       selection/algorithm/ModelFinder.cpp \
                       selection/algorithm/General.cpp \
+					  selection/algorithm/Planes.cpp \
                       selection/BestPoint.cpp \
                       selection/manipulators/DragManipulator.cpp \
-                      selection/Planes.cpp \
                       selection/RadiantSelectionSystem.cpp \
                       selection/manipulators/RotateManipulator.cpp \
                       selection/manipulators/ManipulatorComponents.cpp \
