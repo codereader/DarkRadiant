@@ -10,70 +10,6 @@ namespace selection
 namespace algorithm
 {
 
-// Considers all front planes of selected planeselectables
-class PlaneSelectableSelectPlanes :
-	public SelectionSystem::Visitor
-{
-	Selector& _selector;
-	SelectionTest& _test;
-	PlaneCallback _selectedPlaneCallback;
-public:
-	PlaneSelectableSelectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) :
-		_selector(selector),
-		_test(test),
-		_selectedPlaneCallback(selectedPlaneCallback)
-	{}
-
-	void visit(const scene::INodePtr& node) const;
-};
-
-// Considers all back planes of selected planeselectables
-class PlaneSelectableSelectReversedPlanes :
-	public SelectionSystem::Visitor
-{
-	Selector& _selector;
-	const SelectedPlanes& _selectedPlanes;
-public:
-	PlaneSelectableSelectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) :
-		_selector(selector),
-		_selectedPlanes(selectedPlanes)
-	{}
-
-	void visit(const scene::INodePtr& node) const;
-};
-
-void PlaneSelectableSelectPlanes::visit(const scene::INodePtr& node) const
-{
-	// Skip hidden nodes
-	if (!node->visible())
-	{
-		return;
-	}
-
-	PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
-
-	if (planeSelectable)
-	{
-		planeSelectable->selectPlanes(_selector, _test, _selectedPlaneCallback);
-	}
-}
-
-void PlaneSelectableSelectReversedPlanes::visit(const scene::INodePtr& node) const
-{
-	// Skip hidden nodes
-	if (!node->visible())
-	{
-		return;
-	}
-
-	PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
-
-	if (planeSelectable)
-	{
-		planeSelectable->selectReversedPlanes(_selector, _selectedPlanes);
-	}
-}
-
 class PlaneLess
 {
 public:
@@ -135,24 +71,44 @@ public:
 	}
 };
 
-void Scene_forEachPlaneSelectable_selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
+void testSelectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
 {
-	PlaneSelectableSelectPlanes walker(selector, test, selectedPlaneCallback);
-	GlobalSelectionSystem().foreachSelected(walker);
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		// Skip hidden nodes
+		if (!node->visible()) return;
+
+		PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
+
+		if (planeSelectable)
+		{
+			planeSelectable->selectPlanes(selector, test, selectedPlaneCallback);
+		}
+	});
 }
 
-void Scene_forEachPlaneSelectable_selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
+void testSelectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
 {
-	PlaneSelectableSelectReversedPlanes walker(selector, selectedPlanes);
-	GlobalSelectionSystem().foreachSelected(walker);
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		// Skip hidden nodes
+		if (!node->visible()) return;
+
+		PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
+
+		if (planeSelectable)
+		{
+			planeSelectable->selectReversedPlanes(selector, selectedPlanes);
+		}
+	});
 }
 
 bool testSelectPlanes(Selector& selector, SelectionTest& test)
 {
 	SelectedPlaneSet selectedPlanes;
 
-	Scene_forEachPlaneSelectable_selectPlanes(selector, test, std::bind(&SelectedPlaneSet::insert, &selectedPlanes, std::placeholders::_1));
-	Scene_forEachPlaneSelectable_selectReversedPlanes(selector, selectedPlanes);
+	testSelectPlanes(selector, test, std::bind(&SelectedPlaneSet::insert, &selectedPlanes, std::placeholders::_1));
+	testSelectReversedPlanes(selector, selectedPlanes);
 
 	return !selectedPlanes.empty();
 }
