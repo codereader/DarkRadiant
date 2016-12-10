@@ -39,6 +39,9 @@ public:
 
 private:
 	void testSelectPrimitiveMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
+	void testSelectGroupPartMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
+	void testSelectEntityMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
+	void testSelectComponentMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
 };
 
 }
