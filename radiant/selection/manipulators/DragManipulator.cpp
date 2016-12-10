@@ -13,34 +13,44 @@ namespace selection
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
+DragManipulator::DragManipulator() :
+	_freeResizeComponent(_resizeTranslatable),
+	_resizeModeActive(false),
+	_freeDragComponent(_dragTranslatable)
+{}
+
+DragManipulator::Type DragManipulator::getType() const
+{
+	return Drag;
+}
+
 DragManipulator::Component* DragManipulator::getActiveComponent() 
 {
-    return _dragSelectable.isSelected() ? &_freeDrag : &_freeResize;
+    return _dragSelectable.isSelected() ? &_freeDragComponent : &_freeResizeComponent;
 }
 
 void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
 {
-    SelectionPool selector;
+	_resizeModeActive = false;
 
+    SelectionPool selector;
     SelectionVolume test(view);
 
-    if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
+	switch (GlobalSelectionSystem().Mode())
 	{
+	case SelectionSystem::ePrimitive:
 		testSelectPrimitiveMode(view, test, selector);
-	}
-	else if (GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
-    {
+		break;
+	case SelectionSystem::eGroupPart:
 		testSelectGroupPartMode(view, test, selector);
-    }
-    // Check for entities that can be selected
-    else if (GlobalSelectionSystem().Mode() == SelectionSystem::eEntity)
-	{
+		break;
+	case SelectionSystem::eEntity:
 		testSelectEntityMode(view, test, selector);
-    }
-    else if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
-    {
+		break;
+	case SelectionSystem::eComponent:
 		testSelectComponentMode(view, test, selector);
-	}
+		break;
+	};
 
 	for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
 	{
@@ -50,8 +60,6 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 
 void DragManipulator::testSelectPrimitiveMode(const render::View& view, SelectionVolume& test, SelectionPool& selector)
 {
-	_selected = false;
-
 	SingleItemSelector itemSelector;
 
 	// First try to select entities (including func_* groups)
@@ -89,13 +97,11 @@ void DragManipulator::testSelectPrimitiveMode(const render::View& view, Selectio
 	}
 
 	// all direct hits failed, check for drag-selectable faces
-	_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+	_resizeModeActive = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
 }
 
 void DragManipulator::testSelectGroupPartMode(const render::View& view, SelectionVolume& test, SelectionPool& selector)
 {
-	_selected = false;
-
 	// Find all primitives that are selectable
 	SingleItemSelector itemSelector;
 
@@ -110,13 +116,11 @@ void DragManipulator::testSelectGroupPartMode(const render::View& view, Selectio
 	}
 
 	// Check for selectable faces
-	_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
+	_resizeModeActive = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
 }
 
 void DragManipulator::testSelectEntityMode(const render::View& view, SelectionVolume& test, SelectionPool& selector)
 {
-	_selected = false;
-
 	// Create a boolean selection pool (can have exactly one selectable or none)
 	SingleItemSelector itemSelector;
 
@@ -142,13 +146,13 @@ void DragManipulator::testSelectComponentMode(const render::View& view, Selectio
 
 	for (ISelectable* selectable : bestSelector.getBestSelectables())
 	{
-		// greebo: Disabled this, it caused the currently selected patch vertices being deselected.
+		// greebo: For transient component selection, clicking an unselected
+		// component will deselect all previously selected components beforehand
 		if (transientComponentSelection && !selectable->isSelected())
 		{
 			GlobalSelectionSystem().setSelectedAllComponents(false);
 		}
 
-		_selected = false;
 		selector.addSelectable(SelectionIntersection(0, 0), selectable);
 		_dragSelectable.setSelected(true);
 	}
@@ -156,13 +160,13 @@ void DragManipulator::testSelectComponentMode(const render::View& view, Selectio
 
 void DragManipulator::setSelected(bool select) 
 {
-    _selected = select;
+    _resizeModeActive = select;
     _dragSelectable.setSelected(select);
 }
 
 bool DragManipulator::isSelected() const
 {
-	return _selected || _dragSelectable.isSelected();
+	return _resizeModeActive || _dragSelectable.isSelected();
 }
 
 }
