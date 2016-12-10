@@ -583,7 +583,11 @@ void Brush::update_faces_wireframe(RenderablePointVector& wire,
                                    const std::size_t* visibleFaceIndices,
                                    std::size_t numVisibleFaces) const
 {
-    assert(numVisibleFaces <= _faceCentroidPoints.size());
+	if (numVisibleFaces > _faceCentroidPoints.size())
+	{
+		wire.clear();
+		return;
+	}
 
     // Assure that the pointvector can carry as many faces as are visible
     wire.resize(numVisibleFaces);
