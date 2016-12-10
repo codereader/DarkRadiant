@@ -13,7 +13,8 @@ namespace selection
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
-DragManipulator::Component* DragManipulator::getActiveComponent() {
+DragManipulator::Component* DragManipulator::getActiveComponent() 
+{
     return _dragSelectable.isSelected() ? &_freeDrag : &_freeResize;
 }
 
@@ -25,54 +26,7 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 
     if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
 	{
-		// Find all entities
-		SingleItemSelector entitySelector;
-
-		EntitySelector selectionTester(entitySelector, test);
-		GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
-
-    	if (entitySelector.hasValidSelectable())
-		{
-			// Found a selectable entity
-			selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
-			_selected = false;
-		}
-		else
-		{
-			// Find all primitives that are selectable
-			SingleItemSelector primitiveSelector;
-
-			PrimitiveSelector primitiveTester(primitiveSelector, test);
-			GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
-
-			if (primitiveSelector.hasValidSelectable())
-			{
-				// Found a selectable primitive
-				selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
-				_selected = false;
-			}
-			else
-			{
-				// Entities and worldspawn primitives failed, so check for group children too
-				// Find all group child primitives that are selectable
-				SingleItemSelector childPrimitiveSelector;
-
-				GroupChildPrimitiveSelector childPrimitiveTester(childPrimitiveSelector, test);
-				GlobalSceneGraph().foreachVisibleNodeInVolume(view, childPrimitiveTester);
-
-				if (childPrimitiveSelector.hasValidSelectable())
-				{
-					// Found a selectable group child primitive
-					selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
-					_selected = false;
-				}
-				else
-				{
-					// all direct hits failed, check for drag-selectable faces
-					_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
-				}
-			}
-		}
+		testSelectPrimitiveMode(view, test, selector);
 	}
 	else if (GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
     {
@@ -138,6 +92,50 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 	{
 		i->second->setSelected(true);
 	}
+}
+
+void DragManipulator::testSelectPrimitiveMode(const render::View& view, SelectionVolume& test, SelectionPool& selector)
+{
+	SingleItemSelector itemSelector;
+
+	// First try to select entities (including func_* groups)
+	EntitySelector selectionTester(itemSelector, test);
+	GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
+
+	_selected = false;
+
+	if (itemSelector.hasValidSelectable())
+	{
+		// Found a selectable entity
+		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+		return;
+	}
+	
+	// Find all worldspawn primitives
+	PrimitiveSelector primitiveTester(itemSelector, test);
+	GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
+
+	if (itemSelector.hasValidSelectable())
+	{
+		// Found a selectable primitive
+		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+		return;
+	}
+
+	// Entities and worldspawn primitives failed, so check for group children too
+	// Find all group child primitives that are selectable
+	GroupChildPrimitiveSelector childPrimitiveTester(itemSelector, test);
+	GlobalSceneGraph().foreachVisibleNodeInVolume(view, childPrimitiveTester);
+
+	if (itemSelector.hasValidSelectable())
+	{
+		// Found a selectable group child primitive
+		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+		return;
+	}
+
+	// all direct hits failed, check for drag-selectable faces
+	_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
 }
 
 void DragManipulator::setSelected(bool select) 

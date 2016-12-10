@@ -3,6 +3,8 @@
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
 
+#include "../SelectionTest.h"
+#include "../SelectionPool.h"
 #include "../BasicSelectable.h"
 
 namespace selection
@@ -34,6 +36,9 @@ public:
 	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
 	void setSelected(bool select) override;
 	bool isSelected() const override;
+
+private:
+	void testSelectPrimitiveMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
 };
 
 }
