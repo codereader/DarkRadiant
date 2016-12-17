@@ -218,7 +218,6 @@ private:
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
 
 	// Command targets used to connect to the event system
-	void toggleDefaultManipulatorMode(bool newState);
 	void toggleManipulatorMode(Manipulator::Type type, bool newState);
 
 	void activateDefaultMode();

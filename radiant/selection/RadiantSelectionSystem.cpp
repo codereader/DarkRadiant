@@ -1341,24 +1341,12 @@ void RadiantSelectionSystem::onIdle()
     }
 }
 
-void RadiantSelectionSystem::toggleDefaultManipulatorMode(bool newState)
-{
-	switch (_defaultManipulatorType)
-	{
-		case Manipulator::Translate: toggleManipulatorMode(Manipulator::Translate, true); break;
-		case Manipulator::Rotate: toggleManipulatorMode(Manipulator::Rotate, true); break;
-		case Manipulator::Scale: break;
-		case Manipulator::Drag: toggleManipulatorMode(Manipulator::Drag, true); break;
-		case Manipulator::Clip: toggleManipulatorMode(Manipulator::Clip, true); break;
-	};
-}
-
 void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type, bool newState)
 {
 	// Switch back to the default mode if we're already in <mode>
 	if (_activeManipulator->getType() == type && _defaultManipulatorType != type)
 	{
-		toggleDefaultManipulatorMode(true);
+		toggleManipulatorMode(_defaultManipulatorType, true);
 	}
 	else // we're not in <mode> yet
 	{
@@ -1402,7 +1390,7 @@ void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode, bool newSt
 	{
 		if (!_currentManipulatorModeSupportsComponentEditing)
 		{
-			toggleDefaultManipulatorMode(true);
+			toggleManipulatorMode(_defaultManipulatorType, true);
 		}
 
 		SetMode(eComponent);
