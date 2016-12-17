@@ -223,9 +223,6 @@ private:
 	void toggleEntityMode(bool newState);
 	void toggleGroupPartMode(bool newState);
 
-	void toggleVertexComponentMode(bool newState);
-	void toggleFaceComponentMode(bool newState);
-	void toggleEdgeComponentMode(bool newState);
 	void toggleComponentMode(EComponentMode mode, bool newState);
 
 	void onManipulatorModeChanged();

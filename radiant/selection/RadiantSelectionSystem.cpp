@@ -1231,9 +1231,9 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().addToggle("MouseDrag", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Drag, std::placeholders::_1));
 	GlobalEventManager().setToggled("MouseDrag", true);
 
-	GlobalEventManager().addToggle("DragVertices", std::bind(&RadiantSelectionSystem::toggleVertexComponentMode, this, std::placeholders::_1));
-	GlobalEventManager().addToggle("DragEdges", std::bind(&RadiantSelectionSystem::toggleEdgeComponentMode, this, std::placeholders::_1));
-	GlobalEventManager().addToggle("DragFaces", std::bind(&RadiantSelectionSystem::toggleFaceComponentMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("DragVertices", std::bind(&RadiantSelectionSystem::toggleComponentMode, this, eVertex, std::placeholders::_1));
+	GlobalEventManager().addToggle("DragEdges", std::bind(&RadiantSelectionSystem::toggleComponentMode, this, eEdge, std::placeholders::_1));
+	GlobalEventManager().addToggle("DragFaces", std::bind(&RadiantSelectionSystem::toggleComponentMode, this, eFace, std::placeholders::_1));
 	GlobalEventManager().addToggle("DragEntities", std::bind(&RadiantSelectionSystem::toggleEntityMode, this, std::placeholders::_1));
 	GlobalEventManager().addToggle("SelectionModeGroupPart", std::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, std::placeholders::_1));
 
@@ -1393,21 +1393,6 @@ void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode, bool newSt
 	}
 
 	onComponentModeChanged();
-}
-
-void RadiantSelectionSystem::toggleVertexComponentMode(bool newState)
-{
-	toggleComponentMode(eVertex, newState); // pass the call to the generic method
-}
-
-void RadiantSelectionSystem::toggleFaceComponentMode(bool newState)
-{
-	toggleComponentMode(eFace, newState); // pass the call to the generic method
-}
-
-void RadiantSelectionSystem::toggleEdgeComponentMode(bool newState)
-{
-	toggleComponentMode(eEdge, newState); // pass the call to the generic method
 }
 
 void RadiantSelectionSystem::toggleEntityMode(bool newState)
