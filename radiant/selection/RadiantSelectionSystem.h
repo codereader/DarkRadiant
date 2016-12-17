@@ -16,6 +16,9 @@
 #include "Scalable.h"
 #include "Rotatable.h"
 
+namespace selection
+{
+
 class RadiantSelectionSystem :
 	public SelectionSystem,
 	public Translatable,
@@ -36,7 +39,7 @@ class RadiantSelectionSystem :
 	Vector3 _scale;
 
 	// The 3D volume surrounding the most recent selection.
-	selection::WorkZone _workZone;
+	WorkZone _workZone;
 
 	// When this is set to TRUE, the idle callback will emit a scenegraph change call
 	// This is to avoid massive calls to GlobalSceneGraph().sceneChanged() on each
@@ -56,12 +59,12 @@ private:
 
     sigc::signal<void, const ISelectable&> _sigSelectionChanged;
 
-	typedef std::map<std::size_t, selection::ManipulatorPtr> Manipulators;
+	typedef std::map<std::size_t, ManipulatorPtr> Manipulators;
 	Manipulators _manipulators;
 
 	// The currently active manipulator
-	selection::ManipulatorPtr _activeManipulator;
-	selection::Manipulator::Type _defaultManipulatorType;
+	ManipulatorPtr _activeManipulator;
+	Manipulator::Type _defaultManipulatorType;
 
 	bool _currentManipulatorModeSupportsComponentEditing;
 
@@ -115,12 +118,12 @@ public:
 	EComponentMode ComponentMode() const;
 
 	// Returns the ID of the registered manipulator
-	std::size_t registerManipulator(const selection::ManipulatorPtr& manipulator);
-	void unregisterManipulator(const selection::ManipulatorPtr& manipulator);
+	std::size_t registerManipulator(const ManipulatorPtr& manipulator);
+	void unregisterManipulator(const ManipulatorPtr& manipulator);
 
-	selection::Manipulator::Type getActiveManipulatorType();
+	Manipulator::Type getActiveManipulatorType();
 	void setActiveManipulator(std::size_t manipulatorId);
-	void setActiveManipulator(selection::Manipulator::Type manipulatorType);
+	void setActiveManipulator(Manipulator::Type manipulatorType);
 
 	std::size_t countSelected() const;
 	std::size_t countSelectedComponents() const;
@@ -178,7 +181,7 @@ public:
 	void endMove();
 	void freezeTransforms();
 
-	const selection::WorkZone& getWorkZone();
+	const WorkZone& getWorkZone();
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -220,7 +223,7 @@ private:
 	void toggleTranslateManipulatorMode(bool newState);
 	void toggleRotateManipulatorMode(bool newState);
 	void toggleClipManipulatorMode(bool newState);
-	void toggleManipulatorMode(selection::Manipulator::Type type, bool newState);
+	void toggleManipulatorMode(Manipulator::Type type, bool newState);
 
 	void activateDefaultMode();
 
@@ -243,3 +246,5 @@ private:
 
 	void onMapEvent(IMap::MapEvent ev);
 };
+
+}
