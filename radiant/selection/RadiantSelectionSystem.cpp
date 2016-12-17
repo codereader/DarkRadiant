@@ -44,7 +44,6 @@ namespace
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestSceneGraphChange(false),
     _requestWorkZoneRecalculation(true),
-	_currentManipulatorModeSupportsComponentEditing(false),
     _undoBegun(false),
     _mode(ePrimitive),
     _componentMode(eDefault),
@@ -1352,15 +1351,11 @@ void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type, bool 
 	{
 		if (type == Manipulator::Clip)
 		{
-			_currentManipulatorModeSupportsComponentEditing = false;
-
 			activateDefaultMode();
 			GlobalClipper().onClipMode(true);
 		}
 		else
 		{
-			_currentManipulatorModeSupportsComponentEditing = true;
-
 			GlobalClipper().onClipMode(false);
 		}
 
@@ -1388,7 +1383,7 @@ void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode, bool newSt
 	}
 	else if (countSelected() != 0)
 	{
-		if (!_currentManipulatorModeSupportsComponentEditing)
+		if (!_activeManipulator->supportsComponentManipulation())
 		{
 			toggleManipulatorMode(_defaultManipulatorType, true);
 		}

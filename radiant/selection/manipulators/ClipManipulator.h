@@ -28,6 +28,11 @@ public:
 	{
 		return false;
 	}
+
+	bool supportsComponentManipulation() const override
+	{
+		return false;
+	}
 };
 
 }

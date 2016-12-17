@@ -18,6 +18,12 @@ class ManipulatorBase :
 public:
 	virtual ~ManipulatorBase() {}
 
+	// By default, manipulators can operate on components too (Clipper can't)
+	virtual bool supportsComponentManipulation() const override
+	{
+		return true;
+	}
+
 public:
     /* Static colours */
     static const Colour4b& COLOUR_SCREEN();

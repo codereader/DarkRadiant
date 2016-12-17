@@ -101,6 +101,9 @@ public:
 
 	virtual void setSelected(bool select) = 0;
 	virtual bool isSelected() const = 0;
+
+	// Manipulators should indicate whether component editing is supported or not
+	virtual bool supportsComponentManipulation() const = 0;
 };
 typedef std::shared_ptr<Manipulator> ManipulatorPtr;
 

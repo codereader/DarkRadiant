@@ -66,8 +66,6 @@ private:
 	ManipulatorPtr _activeManipulator;
 	Manipulator::Type _defaultManipulatorType;
 
-	bool _currentManipulatorModeSupportsComponentEditing;
-
 	// state
 	bool _undoBegun;
 	EMode _mode;
