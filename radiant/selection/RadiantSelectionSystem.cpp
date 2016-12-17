@@ -549,7 +549,8 @@ bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const V
         _pivotMoving = _activeManipulator->isSelected();
 
         // is a manipulator selected / the pivot moving?
-        if (_pivotMoving) {
+        if (_pivotMoving)
+		{
             Pivot2World pivot;
             pivot.update(GetPivot2World(), view.GetModelview(), view.GetProjection(), view.GetViewport());
 
@@ -559,7 +560,7 @@ bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const V
             ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 			_activeManipulator->getActiveComponent()->Construct(device2manip, device_point[0], device_point[1]);
 
-            _deviceStart = Vector2(device_point[0], device_point[1]);
+			_deviceStart = device_point;
 
             _undoBegun = false;
         }
