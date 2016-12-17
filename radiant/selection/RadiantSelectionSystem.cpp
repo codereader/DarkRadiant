@@ -1226,10 +1226,10 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
         sigc::mem_fun(this, &RadiantSelectionSystem::keyChanged)
     );
 
-	GlobalEventManager().addToggle("ToggleClipper", std::bind(&RadiantSelectionSystem::toggleClipManipulatorMode, this, std::placeholders::_1));
-	GlobalEventManager().addToggle("MouseTranslate", std::bind(&RadiantSelectionSystem::toggleTranslateManipulatorMode, this, std::placeholders::_1));
-	GlobalEventManager().addToggle("MouseRotate", std::bind(&RadiantSelectionSystem::toggleRotateManipulatorMode, this, std::placeholders::_1));
-	GlobalEventManager().addToggle("MouseDrag", std::bind(&RadiantSelectionSystem::toggleDragManipulatorMode, this, std::placeholders::_1));
+	GlobalEventManager().addToggle("ToggleClipper", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Clip, std::placeholders::_1));
+	GlobalEventManager().addToggle("MouseTranslate", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Translate, std::placeholders::_1));
+	GlobalEventManager().addToggle("MouseRotate", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Rotate, std::placeholders::_1));
+	GlobalEventManager().addToggle("MouseDrag", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Drag, std::placeholders::_1));
 	GlobalEventManager().setToggled("MouseDrag", true);
 
 	GlobalEventManager().addToggle("DragVertices", std::bind(&RadiantSelectionSystem::toggleVertexComponentMode, this, std::placeholders::_1));
@@ -1345,11 +1345,11 @@ void RadiantSelectionSystem::toggleDefaultManipulatorMode(bool newState)
 {
 	switch (_defaultManipulatorType)
 	{
-		case Manipulator::Translate: toggleTranslateManipulatorMode(true); break;
-		case Manipulator::Rotate: toggleRotateManipulatorMode(true); break;
+		case Manipulator::Translate: toggleManipulatorMode(Manipulator::Translate, true); break;
+		case Manipulator::Rotate: toggleManipulatorMode(Manipulator::Rotate, true); break;
 		case Manipulator::Scale: break;
-		case Manipulator::Drag: toggleDragManipulatorMode(true); break;
-		case Manipulator::Clip: toggleClipManipulatorMode(true); break;
+		case Manipulator::Drag: toggleManipulatorMode(Manipulator::Drag, true); break;
+		case Manipulator::Clip: toggleManipulatorMode(Manipulator::Clip, true); break;
 	};
 }
 
@@ -1362,46 +1362,23 @@ void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type, bool 
 	}
 	else // we're not in <mode> yet
 	{
-		_currentManipulatorModeSupportsComponentEditing = true;
+		if (type == Manipulator::Clip)
+		{
+			_currentManipulatorModeSupportsComponentEditing = false;
 
-		GlobalClipper().onClipMode(false);
+			activateDefaultMode();
+			GlobalClipper().onClipMode(true);
+		}
+		else
+		{
+			_currentManipulatorModeSupportsComponentEditing = true;
+
+			GlobalClipper().onClipMode(false);
+		}
+
 		setActiveManipulator(type);
-		
 		onManipulatorModeChanged();
-	}
-}
-
-void RadiantSelectionSystem::toggleDragManipulatorMode(bool newState)
-{
-	toggleManipulatorMode(Manipulator::Drag, newState); // pass the call to the generic method
-}
-
-void RadiantSelectionSystem::toggleTranslateManipulatorMode(bool newState)
-{
-	toggleManipulatorMode(Manipulator::Translate, newState); // pass the call to the generic method
-}
-
-void RadiantSelectionSystem::toggleRotateManipulatorMode(bool newState)
-{
-	toggleManipulatorMode(Manipulator::Rotate, newState); // pass the call to the generic method
-}
-
-void RadiantSelectionSystem::toggleClipManipulatorMode(bool newState)
-{
-	if (_activeManipulator->getType() == Manipulator::Clip && _defaultManipulatorType != Manipulator::Clip)
-	{
-		toggleDefaultManipulatorMode(true);
-	}
-	else
-	{
-		_currentManipulatorModeSupportsComponentEditing = false;
-
-		activateDefaultMode();
-		GlobalClipper().onClipMode(true);
-		setActiveManipulator(Manipulator::Clip);
-
-		onManipulatorModeChanged();
-        onComponentModeChanged();
+		onComponentModeChanged();
 	}
 }
 

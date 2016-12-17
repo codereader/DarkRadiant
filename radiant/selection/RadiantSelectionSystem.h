@@ -219,10 +219,6 @@ private:
 
 	// Command targets used to connect to the event system
 	void toggleDefaultManipulatorMode(bool newState);
-	void toggleDragManipulatorMode(bool newState);
-	void toggleTranslateManipulatorMode(bool newState);
-	void toggleRotateManipulatorMode(bool newState);
-	void toggleClipManipulatorMode(bool newState);
 	void toggleManipulatorMode(Manipulator::Type type, bool newState);
 
 	void activateDefaultMode();
