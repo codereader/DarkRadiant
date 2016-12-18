@@ -119,9 +119,10 @@ public:
 	std::size_t registerManipulator(const ManipulatorPtr& manipulator);
 	void unregisterManipulator(const ManipulatorPtr& manipulator);
 
-	Manipulator::Type getActiveManipulatorType();
-	void setActiveManipulator(std::size_t manipulatorId);
-	void setActiveManipulator(Manipulator::Type manipulatorType);
+	Manipulator::Type getActiveManipulatorType() override;
+	const ManipulatorPtr& getActiveManipulator() override;
+	void setActiveManipulator(std::size_t manipulatorId) override;
+	void setActiveManipulator(Manipulator::Type manipulatorType) override;
 
 	std::size_t countSelected() const;
 	std::size_t countSelectedComponents() const;
@@ -168,6 +169,10 @@ public:
 	void outputRotation(std::ostream& ostream);
 	void outputScale(std::ostream& ostream);
 
+	void onManipulationStart() override;
+	void onManipulationChanged() override;
+	void onManipulationEnd() override;
+
 	void rotateSelected(const Quaternion& rotation);
 	void translateSelected(const Vector3& translation);
 	void scaleSelected(const Vector3& scaling);
@@ -192,7 +197,7 @@ public:
 		return Highlight::NoHighlight; // never highlighted
 	}
 
-	const Matrix4& GetPivot2World() const;
+	const Matrix4& getPivot2World() const override;
 
 	static void constructStatic();
 	static void destroyStatic();

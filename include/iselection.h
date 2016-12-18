@@ -159,6 +159,9 @@ public:
 	virtual void unregisterManipulator(const selection::ManipulatorPtr& manipulator) = 0;
 
 	virtual selection::Manipulator::Type getActiveManipulatorType() = 0;
+
+	// Returns the currently active Manipulator, which is always non-null
+	virtual const selection::ManipulatorPtr& getActiveManipulator() = 0;
 	virtual void setActiveManipulator(std::size_t manipulatorId) = 0;
 	virtual void setActiveManipulator(selection::Manipulator::Type manipulatorType) = 0;
 
@@ -257,8 +260,14 @@ public:
     virtual void rotateSelected(const Quaternion& rotation) = 0;
     virtual void scaleSelected(const Vector3& scaling) = 0;
     
+	virtual const Matrix4& getPivot2World() const = 0;
     virtual void pivotChanged() const = 0;
     
+	// Feedback events invoked by the ManipulationMouseTool
+	virtual void onManipulationStart() = 0;
+	virtual void onManipulationChanged() = 0;
+	virtual void onManipulationEnd() = 0;
+
     virtual bool SelectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon) = 0;
     virtual void SelectPoint(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;
     virtual void SelectArea(const render::View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;

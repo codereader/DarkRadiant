@@ -266,6 +266,11 @@ Manipulator::Type RadiantSelectionSystem::getActiveManipulatorType()
 	return _activeManipulator->getType();
 }
 
+const ManipulatorPtr& RadiantSelectionSystem::getActiveManipulator()
+{
+	return _activeManipulator;
+}
+
 void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 {
 	Manipulators::const_iterator found = _manipulators.find(manipulatorId);
@@ -519,7 +524,7 @@ void RadiantSelectionSystem::foreachPatch(const std::function<void(Patch&)>& fun
 
 // Start a move, the current pivot point is saved as a start point
 void RadiantSelectionSystem::startMove() {
-    _pivot2worldStart = GetPivot2World();
+    _pivot2worldStart = getPivot2World();
 }
 
 /* greebo: This is called by the ManipulateObserver class on the mouseDown event. It checks, if a manipulator
@@ -539,7 +544,7 @@ bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const V
             ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
 
             // The manipulator class checks on its own, if any of its components can be selected
-			_activeManipulator->testSelect(scissored, GetPivot2World());
+			_activeManipulator->testSelect(scissored, getPivot2World());
         }
 
         // Save the pivot2world matrix
@@ -552,7 +557,7 @@ bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const V
         if (_pivotMoving)
 		{
             Pivot2World pivot;
-            pivot.update(GetPivot2World(), view.GetModelview(), view.GetProjection(), view.GetViewport());
+            pivot.update(getPivot2World(), view.GetModelview(), view.GetProjection(), view.GetViewport());
 
             _manip2pivotStart = _pivot2worldStart.getFullInverse().getMultipliedBy(pivot._worldSpace);
 
@@ -868,6 +873,33 @@ void RadiantSelectionSystem::outputScale(std::ostream& ostream) {
     ostream << " -scale " << _scale.x() << " " << _scale.y() << " " << _scale.z();
 }
 
+void RadiantSelectionSystem::onManipulationStart()
+{
+	_pivotMoving = true;
+	_pivot2worldStart = getPivot2World();
+}
+
+void RadiantSelectionSystem::onManipulationChanged()
+{
+	_requestWorkZoneRecalculation = true;
+	_requestSceneGraphChange = false;
+
+	GlobalSceneGraph().sceneChanged();
+
+	requestIdleCallback();
+}
+
+void RadiantSelectionSystem::onManipulationEnd()
+{
+	_pivotMoving = false;
+
+	// The selection bounds have possibly changed, request an idle callback
+	_requestWorkZoneRecalculation = true;
+	_requestSceneGraphChange = true;
+
+	requestIdleCallback();
+}
+
 // Shortcut call for an instantly applied rotation of the current selection
 void RadiantSelectionSystem::rotateSelected(const Quaternion& rotation) {
     // Apply the transformation and freeze the changes
@@ -949,7 +981,7 @@ void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, con
 }
 
 // Lets the ConstructPivot() method do the work and returns the result that is stored in the member variable
-const Matrix4& RadiantSelectionSystem::GetPivot2World() const
+const Matrix4& RadiantSelectionSystem::getPivot2World() const
 {
     // Questionable const design - almost everything needs to be declared const here...
     const_cast<RadiantSelectionSystem*>(this)->ConstructPivot();
@@ -1155,7 +1187,7 @@ void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const V
         collector.SetState(_state, RenderableCollector::eWireframeOnly);
         collector.SetState(_state, RenderableCollector::eFullMaterials);
 
-		_activeManipulator->render(collector, volume, GetPivot2World());
+		_activeManipulator->render(collector, volume, getPivot2World());
     }
 }
 

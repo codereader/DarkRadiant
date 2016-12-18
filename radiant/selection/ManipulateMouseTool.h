@@ -2,6 +2,7 @@
 
 #include "imousetool.h"
 #include "render/View.h"
+#include "math/Vector2.h"
 
 class SelectionSystem;
 
@@ -23,6 +24,14 @@ private:
 
     SelectionSystem& _selectionSystem;
 
+	Matrix4 _pivot2worldStart;
+	bool _manipulationActive;
+
+	Matrix4 _manip2pivotStart;
+
+	Vector2 _deviceStart;
+	bool _undoBegun;
+
 public:
     ManipulateMouseTool(SelectionSystem& selectionSystem);
 
@@ -38,6 +47,14 @@ public:
 
     virtual unsigned int getPointerMode() override;
     virtual unsigned int getRefreshMode() override;
+
+private:
+	bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);
+	void handleMouseMove(const render::View& view, const Vector2& devicePoint);
+	void freezeTransforms();
+	void endMove();
+	void cancelMove();
+	bool nothingSelected() const;
 };
 
 }
