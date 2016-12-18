@@ -44,7 +44,6 @@ namespace
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestSceneGraphChange(false),
     _requestWorkZoneRecalculation(true),
-    _undoBegun(false),
     _mode(ePrimitive),
     _componentMode(eDefault),
     _countPrimitive(0),
@@ -527,55 +526,6 @@ void RadiantSelectionSystem::startMove() {
     _pivot2worldStart = getPivot2World();
 }
 
-/* greebo: This is called by the ManipulateObserver class on the mouseDown event. It checks, if a manipulator
- * can be selected where the mouse is pointing to.
- */
-bool RadiantSelectionSystem::SelectManipulator(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon)
-{
-    if (!nothingSelected() || (_activeManipulator->getType() == Manipulator::Drag && Mode() == eComponent))
-    {
-        // Unselect any currently selected manipulators to be sure
-		_activeManipulator->setSelected(false);
-
-        // Test, if the current manipulator can be selected
-        if (!nothingSelected() || (_activeManipulator->getType() == Manipulator::Drag && Mode() == eComponent))
-        {
-            render::View scissored(view);
-            ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
-
-            // The manipulator class checks on its own, if any of its components can be selected
-			_activeManipulator->testSelect(scissored, getPivot2World());
-        }
-
-        // Save the pivot2world matrix
-        startMove();
-
-        // This is true, if a manipulator could be selected
-        _pivotMoving = _activeManipulator->isSelected();
-
-        // is a manipulator selected / the pivot moving?
-        if (_pivotMoving)
-		{
-            Pivot2World pivot;
-            pivot.update(getPivot2World(), view.GetModelview(), view.GetProjection(), view.GetViewport());
-
-            _manip2pivotStart = _pivot2worldStart.getFullInverse().getMultipliedBy(pivot._worldSpace);
-
-            Matrix4 device2manip;
-            ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
-			_activeManipulator->getActiveComponent()->Construct(device2manip, device_point[0], device_point[1]);
-
-			_deviceStart = device_point;
-
-            _undoBegun = false;
-        }
-
-        SceneChangeNotify();
-    }
-
-    return _pivotMoving;
-}
-
 // Hub function for "deselect all", this passes the deselect call to the according functions
 void RadiantSelectionSystem::deselectAll() {
     if (Mode() == eComponent) {
@@ -860,19 +810,6 @@ void RadiantSelectionSystem::scale(const Vector3& scaling) {
     }
 }
 
-// Dump the translation, rotation, scale to the output stream
-void RadiantSelectionSystem::outputTranslation(std::ostream& ostream) {
-    ostream << " -xyz " << _translation.x() << " " << _translation.y() << " " << _translation.z();
-}
-
-void RadiantSelectionSystem::outputRotation(std::ostream& ostream) {
-    ostream << " -eulerXYZ " << _rotation.x() << " " << _rotation.y() << " " << _rotation.z();
-}
-
-void RadiantSelectionSystem::outputScale(std::ostream& ostream) {
-    ostream << " -scale " << _scale.x() << " " << _scale.y() << " " << _scale.z();
-}
-
 void RadiantSelectionSystem::onManipulationStart()
 {
 	_pivotMoving = true;
@@ -924,57 +861,6 @@ void RadiantSelectionSystem::scaleSelected(const Vector3& scaling) {
     freezeTransforms();
 }
 
-/* greebo: This "moves" the current selection. It calculates the device manipulation matrix
- * and passes it to the currently active Manipulator.
- */
-void RadiantSelectionSystem::MoveSelected(const render::View& view, const Vector2& devicePoint)
-{
-    // Check, if the active manipulator is selected in the first place
-    if (_activeManipulator->isSelected()) {
-        // Initalise the undo system, if not yet done
-        if (!_undoBegun) {
-            _undoBegun = true;
-            GlobalUndoSystem().start();
-        }
-
-        Matrix4 device2manip;
-        ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
-
-        Vector2 constrainedDevicePoint(devicePoint);
-
-        // Constrain the movement to the axes, if the modifier is held
-        if (wxGetKeyState(WXK_SHIFT))
-        {
-            // Get the movement delta relative to the start point
-            Vector2 delta = devicePoint - _deviceStart;
-
-            // Set the "minor" value of the movement to zero
-            if (fabs(delta[0]) > fabs(delta[1])) {
-                // X axis is major, reset the y-value to the start
-                delta[1] = 0;
-            }
-            else {
-                // Y axis is major, reset the x-value to the start
-                delta[0] = 0;
-            }
-
-            // Add the modified delta to the start point, constrained to one axis
-            constrainedDevicePoint = _deviceStart + delta;
-        }
-
-        // Get the manipulatable from the currently active manipulator (done by selection test)
-        // and call the Transform method (can be anything)
-		_activeManipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
-
-        _requestWorkZoneRecalculation = true;
-        _requestSceneGraphChange = false;
-
-		GlobalSceneGraph().sceneChanged();
-
-        requestIdleCallback();
-    }
-}
-
 // greebo: This just passes the call on to renderSolid, the manipulators are wireframes anyway
 void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
     renderSolid(collector, volume);
@@ -1003,42 +889,6 @@ void RadiantSelectionSystem::destroyStatic() {
 	RotateManipulator::_stateOuter = ShaderPtr();
 }
 
-void RadiantSelectionSystem::cancelMove() {
-
-    // Unselect any currently selected manipulators to be sure
-	_activeManipulator->setSelected(false);
-
-    // Tell all the scene objects to revert their transformations
-	foreachSelected([] (const scene::INodePtr& node)
-	{
-		ITransformablePtr transform = Node_getTransformable(node);
-
-		if (transform != NULL)
-		{
-			transform->revertTransform();
-		}
-	});
-
-    _pivotMoving = false;
-    pivotChanged();
-
-    // greebo: Deselect all faces if we are in brush and drag mode
-    if (Mode() == ePrimitive && _activeManipulator->getType() == Manipulator::Drag)
-    {
-        SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
-        GlobalSceneGraph().root()->traverse(faceSelector);
-    }
-
-    if (_undoBegun) {
-        // Cancel the undo operation, if one has been begun
-        GlobalUndoSystem().cancel();
-        _undoBegun = false;
-    }
-
-    // Update the views
-    SceneChangeNotify();
-}
-
 // This actually applies the transformation to the objects
 void RadiantSelectionSystem::freezeTransforms()
 {
@@ -1049,55 +899,6 @@ void RadiantSelectionSystem::freezeTransforms()
     _requestSceneGraphChange = true;
 
     requestIdleCallback();
-}
-
-// End the move, this freezes the current transforms
-void RadiantSelectionSystem::endMove() {
-    freezeTransforms();
-
-    // greebo: Deselect all faces if we are in brush and drag mode
-    if ((Mode() == ePrimitive || Mode() == eGroupPart) &&
-		_activeManipulator->getType() == Manipulator::Drag)
-    {
-        SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
-        GlobalSceneGraph().root()->traverse(faceSelector);
-    }
-
-    // Remove all degenerated brushes from the scene graph (should emit a warning)
-    foreachSelected(RemoveDegenerateBrushWalker());
-
-    _pivotMoving = false;
-    pivotChanged();
-
-    // Update the views
-    SceneChangeNotify();
-
-    // If we started an undoable operation, end it now and tell the console what happened
-    if (_undoBegun)
-    {
-        std::ostringstream command;
-
-        if (_activeManipulator->getType() == Manipulator::Translate) {
-            command << "translateTool";
-            outputTranslation(command);
-        }
-        else if (_activeManipulator->getType() == Manipulator::Rotate) {
-            command << "rotateTool";
-            outputRotation(command);
-        }
-        else if (_activeManipulator->getType() == Manipulator::Scale) {
-            command << "scaleTool";
-            outputScale(command);
-        }
-        else if (_activeManipulator->getType() == Manipulator::Drag) {
-            command << "dragTool";
-        }
-
-        _undoBegun = false;
-
-        // Finish the undo move
-        GlobalUndoSystem().finish(command.str());
-    }
 }
 
 const WorkZone& RadiantSelectionSystem::getWorkZone()

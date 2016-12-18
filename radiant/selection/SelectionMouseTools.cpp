@@ -83,7 +83,7 @@ DragSelectionMouseTool::Result DragSelectionMouseTool::onCancel(IInteractiveView
     _dragSelectionRect = selection::Rectangle();
 
     // Update the views
-    GlobalSelectionSystem().cancelMove();
+	SceneChangeNotify();
 
     return Result::Finished;
 }

@@ -67,7 +67,6 @@ private:
 	Manipulator::Type _defaultManipulatorType;
 
 	// state
-	bool _undoBegun;
 	EMode _mode;
 	EComponentMode _componentMode;
 
@@ -153,8 +152,6 @@ public:
 
 	void startMove();
 
-	bool SelectManipulator(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon);
-
 	void deselectAll();
 
 	void SelectPoint(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon, EModifier modifier, bool face);
@@ -165,10 +162,6 @@ public:
 	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scaling);
 
-	void outputTranslation(std::ostream& ostream);
-	void outputRotation(std::ostream& ostream);
-	void outputScale(std::ostream& ostream);
-
 	void onManipulationStart() override;
 	void onManipulationChanged() override;
 	void onManipulationEnd() override;
@@ -177,11 +170,6 @@ public:
 	void translateSelected(const Vector3& translation);
 	void scaleSelected(const Vector3& scaling);
 
-	void MoveSelected(const render::View& view, const Vector2& devicePoint);
-
-	void cancelMove();
-
-	void endMove();
 	void freezeTransforms();
 
 	const WorkZone& getWorkZone();

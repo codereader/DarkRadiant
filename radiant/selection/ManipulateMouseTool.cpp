@@ -138,8 +138,6 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 
 			_undoBegun = false;
 		}
-
-		//SceneChangeNotify();
 	}
 
 	return _manipulationActive;
