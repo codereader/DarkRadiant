@@ -46,7 +46,7 @@ bool TranslateManipulator::manipulator_show_axis(const Pivot2World& pivot, const
     return fabs(pivot._axisScreen.dot(axis)) < 0.95;
 }
 
-void TranslateManipulator::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world)
+void TranslateManipulator::render(RenderableCollector& collector, const VolumeTest& volume)
 {
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 

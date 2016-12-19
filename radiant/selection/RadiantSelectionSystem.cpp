@@ -887,15 +887,17 @@ void RadiantSelectionSystem::recalculatePivot2World()
 /* greebo: Renders the currently active manipulator by setting the render state and
  * calling the manipulator's render method
  */
-void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
-    if (!nothingSelected()) {
+void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+    if (!nothingSelected())
+	{
         collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
         collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 
         collector.SetState(_state, RenderableCollector::eWireframeOnly);
         collector.SetState(_state, RenderableCollector::eFullMaterials);
 
-		_activeManipulator->render(collector, volume, getPivot2World());
+		_activeManipulator->render(collector, volume);
     }
 }
 

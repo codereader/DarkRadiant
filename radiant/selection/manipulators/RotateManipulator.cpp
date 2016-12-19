@@ -120,7 +120,7 @@ void RotateManipulator::updateCircleTransforms()
     }
 }
 
-void RotateManipulator::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world)
+void RotateManipulator::render(RenderableCollector& collector, const VolumeTest& volume)
 {
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
     updateCircleTransforms();

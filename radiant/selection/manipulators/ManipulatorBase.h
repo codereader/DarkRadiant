@@ -24,6 +24,10 @@ public:
 		return true;
 	}
 
+	// No visual representation by default
+	virtual void render(RenderableCollector& collector, const VolumeTest& volume) override
+	{}
+
 public:
     /* Static colours */
     static const Colour4b& COLOUR_SCREEN();

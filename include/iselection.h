@@ -93,11 +93,8 @@ public:
 
 	virtual void testSelect(const render::View& view, const Matrix4& pivot2world) {}
 
-	// This function is responsible for bringing the visual representation
-	// of this manipulator onto the screen
-	virtual void render(RenderableCollector& collector,
-		const VolumeTest& volume,
-		const Matrix4& pivot2world) {}
+	// Renders the manipulator's visual representation to the scene
+	virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;
 
 	virtual void setSelected(bool select) = 0;
 	virtual bool isSelected() const = 0;
