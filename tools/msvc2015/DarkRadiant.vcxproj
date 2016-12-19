@@ -370,6 +370,7 @@
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupManager.cpp" />
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
+    <ClCompile Include="..\..\radiant\selection\ManipulationPivot.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\DragManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorBase.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorComponents.cpp" />

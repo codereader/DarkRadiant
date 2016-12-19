@@ -24,8 +24,6 @@ class RadiantSelectionSystem :
 {
 	ManipulationPivot _pivot;
 
-	Matrix4 _manip2pivotStart;
-
 	typedef std::list<Observer*> ObserverList;
 	ObserverList _observers;
 

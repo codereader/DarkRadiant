@@ -895,6 +895,9 @@
     <ClCompile Include="..\..\radiant\selection\algorithm\Planes.cpp">
       <Filter>src\selection\algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\ManipulationPivot.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">

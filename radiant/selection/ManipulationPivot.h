@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Matrix4.h"
+#include "math/Vector3.h"
 
 namespace selection
 {
@@ -25,47 +26,23 @@ private:
 
 public:
 	// Returns the pivot-to-world transform
-	const Matrix4& getMatrix4() const
-	{
-		return _pivot2World;
-	}
+	const Matrix4& getMatrix4() const;
 
 	// Returns the position of the pivot point relative to origin
-	const Vector3& getVector3() const
-	{
-		return _pivot2World.t().getVector3();
-	}
+	const Vector3& getVector3() const;
 
-	void setFromMatrix(const Matrix4& newPivot2World)
-	{
-		_pivot2World = newPivot2World;
-	}
+	void setFromMatrix(const Matrix4& newPivot2World);
 
 	// Call this before an operation is started, such that later
 	// transformations can be applied on top of the correct starting point
-	void beginOperation()
-	{
-		_pivot2WorldStart = _pivot2World;
-	}
+	void beginOperation();
 
 	// Reverts the matrix to the state it had at the beginning of the operation
-	void revertToStart()
-	{
-		_pivot2World = _pivot2WorldStart;
-	}
+	void revertToStart();
 
-	void endOperation()
-	{
-		_pivot2WorldStart = _pivot2World;
-	}
+	void endOperation();
 
-	void applyTranslation(const Vector3& translation)
-	{
-		// We apply translations on top of the starting point
-		revertToStart();
-
-		_pivot2World.translateBy(translation);
-	}
+	void applyTranslation(const Vector3& translation);
 };
 
 }
