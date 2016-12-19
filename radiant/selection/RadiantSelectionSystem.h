@@ -163,8 +163,8 @@ public:
 
 	const Matrix4& getPivot2World() override;
 
-	static void constructStatic();
-	static void destroyStatic();
+	static void captureShaders();
+	static void releaseShaders();
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const override;

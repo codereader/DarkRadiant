@@ -185,7 +185,7 @@ bool RadiantSelectionSystem::nothingSelected() const
 
 void RadiantSelectionSystem::pivotChanged()  
 {
-	const_cast<RadiantSelectionSystem&>(*this)._pivot.setNeedsRecalculation(true);
+	_pivot.setNeedsRecalculation(true);
     SceneChangeNotify();
 }
 
@@ -849,7 +849,7 @@ const Matrix4& RadiantSelectionSystem::getPivot2World()
     return _pivot.getMatrix4();
 }
 
-void RadiantSelectionSystem::constructStatic()
+void RadiantSelectionSystem::captureShaders()
 {
     _state = GlobalRenderSystem().capture("$POINT");
     TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
@@ -858,7 +858,7 @@ void RadiantSelectionSystem::constructStatic()
 	RotateManipulator::_pivotPointShader = GlobalRenderSystem().capture("$POINT");
 }
 
-void RadiantSelectionSystem::destroyStatic()
+void RadiantSelectionSystem::releaseShaders()
 {
     _state.reset();
     TranslateManipulator::_stateWire.reset();
@@ -942,7 +942,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    constructStatic();
+	captureShaders();
 
 	_pivot.initialise();
 
@@ -1032,7 +1032,7 @@ void RadiantSelectionSystem::shutdownModule()
 
     GlobalRenderSystem().detachRenderable(*this);
 
-    destroyStatic();
+    releaseShaders();
 }
 
 void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& selectable)
