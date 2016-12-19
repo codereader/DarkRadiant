@@ -1,11 +1,11 @@
 #pragma once
 
 #include "ManipulatorBase.h"
-#include "../Renderables.h"
-#include "../Pivot2World.h"
+#include "selection/Renderables.h"
+#include "selection/Pivot2World.h"
 #include "ManipulatorComponents.h"
-#include "../BasicSelectable.h"
-#include "../ManipulationPivot.h"
+#include "selection/BasicSelectable.h"
+#include "selection/ManipulationPivot.h"
 
 namespace selection
 {
@@ -17,6 +17,8 @@ class TranslateManipulator :
 	public ManipulatorBase
 {
 private:
+	ManipulationPivot& _pivot;
+
 	SelectionTranslator _translator;
 	TranslateFree _translateFree;
 	TranslateAxis _translateAxis;
@@ -32,8 +34,6 @@ private:
 	selection::BasicSelectable _selectableZ;
 	selection::BasicSelectable _selectableScreen;
 	Pivot2World _pivot2World;
-
-	ManipulationPivot& _pivot;
 public:
 	static ShaderPtr _stateWire;
 	static ShaderPtr _stateFill;

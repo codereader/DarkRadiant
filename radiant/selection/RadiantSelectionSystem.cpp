@@ -814,6 +814,9 @@ void RadiantSelectionSystem::onManipulationStart()
 {
 	_pivotMoving = true;
 	_pivot2worldStart = getPivot2World();
+
+	// Save the pivot state now that the transformation is starting
+	_pivot.beginOperation();
 }
 
 void RadiantSelectionSystem::onManipulationChanged()
@@ -829,6 +832,7 @@ void RadiantSelectionSystem::onManipulationChanged()
 void RadiantSelectionSystem::onManipulationEnd()
 {
 	_pivotMoving = false;
+	_pivot.endOperation();
 
 	// The selection bounds have possibly changed, request an idle callback
 	_requestWorkZoneRecalculation = true;
@@ -1036,7 +1040,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
     constructStatic();
 
 	// Add manipulators
-	registerManipulator(std::make_shared<DragManipulator>());
+	registerManipulator(std::make_shared<DragManipulator>(_pivot));
 	registerManipulator(std::make_shared<ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64));
 	registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));

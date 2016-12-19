@@ -6,6 +6,7 @@
 #include "selection/SelectionTest.h"
 #include "selection/SelectionPool.h"
 #include "selection/BasicSelectable.h"
+#include "selection/ManipulationPivot.h"
 
 namespace selection
 {
@@ -33,6 +34,8 @@ class DragManipulator :
 	public ManipulatorBase
 {
 private:
+	ManipulationPivot& _pivot;
+
 	// Resize component
 	TranslateFree _freeResizeComponent;
 	ResizeTranslatable _resizeTranslatable;
@@ -46,7 +49,7 @@ private:
 	BasicSelectable _dragSelectable;
 
 public:
-	DragManipulator();
+	DragManipulator(ManipulationPivot& pivot);
 
 	Type getType() const override;
 	Component* getActiveComponent() override;

@@ -14,12 +14,13 @@ const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrai
 
 // Constructor
 TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t segments, float length) :
+	_pivot(pivot),
+	_translator(std::bind(&ManipulationPivot::applyTranslation, &_pivot, std::placeholders::_1)),
     _translateFree(_translator),
     _translateAxis(_translator),
     _arrowHeadX(3 * 2 * (segments << 3)),
     _arrowHeadY(3 * 2 * (segments << 3)),
-    _arrowHeadZ(3 * 2 * (segments << 3)),
-	_pivot(pivot)
+    _arrowHeadZ(3 * 2 * (segments << 3))
 {
     draw_arrowline(length, &_arrowX.front(), 0);
     draw_arrowhead(segments, length, &_arrowHeadX._vertices.front(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());

@@ -11,6 +11,7 @@
 #include "Translatable.h"
 #include "Rotatable.h"
 #include "Scalable.h"
+#include <functional>
 
 namespace selection
 {
@@ -143,6 +144,18 @@ class ResizeTranslatable :
 class SelectionTranslator : 
 	public Translatable
 {
+public:
+	typedef std::function<void(const Vector3&)> TranslationCallback;
+
+private:
+	TranslationCallback _onTranslation;
+
+public:
+
+	SelectionTranslator(const TranslationCallback& onTranslation) :
+		_onTranslation(onTranslation)
+	{}
+
 	void translate(const Vector3& translation) override
 	{
 		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
@@ -152,6 +165,12 @@ class SelectionTranslator :
 		else 
 		{
 			Scene_Translate_Selected(GlobalSceneGraph(), translation);
+		}
+
+		// Invoke the feedback function
+		if (_onTranslation)
+		{
+			_onTranslation(translation);
 		}
 	}
 };

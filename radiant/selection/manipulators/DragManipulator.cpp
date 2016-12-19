@@ -13,10 +13,12 @@ namespace selection
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
-DragManipulator::DragManipulator() :
+DragManipulator::DragManipulator(ManipulationPivot& pivot) :
+	_pivot(pivot),
 	_freeResizeComponent(_resizeTranslatable),
 	_resizeModeActive(false),
-	_freeDragComponent(_dragTranslatable)
+	_freeDragComponent(_dragTranslatable),
+	_dragTranslatable(SelectionTranslator::TranslationCallback())
 {}
 
 DragManipulator::Type DragManipulator::getType() const
