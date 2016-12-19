@@ -190,6 +190,9 @@ public:
 	void translate(const Vector3& translation) override
 	{
 		_pivot.applyTranslation(translation);
+
+		// User is placing the pivot manually, so let's keep it that way
+		_pivot.setUserLocked(true);
 	}
 };
 

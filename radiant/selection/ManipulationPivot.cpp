@@ -14,7 +14,8 @@ namespace
 ManipulationPivot::ManipulationPivot() :
 	_entityPivotIsOrigin(false),
 	_needsRecalculation(true),
-	_operationActive(false)
+	_operationActive(false),
+	_userLocked(false)
 {}
 
 void ManipulationPivot::initialise()
@@ -29,7 +30,7 @@ void ManipulationPivot::initialise()
 // Returns the pivot-to-world transform
 const Matrix4& ManipulationPivot::getMatrix4()
 {
-	if (_needsRecalculation && !_operationActive)
+	if (_needsRecalculation && !_operationActive && !_userLocked)
 	{
 		updateFromSelection();
 	}
@@ -40,7 +41,7 @@ const Matrix4& ManipulationPivot::getMatrix4()
 // Returns the position of the pivot point relative to origin
 const Vector3& ManipulationPivot::getVector3()
 {
-	if (_needsRecalculation && !_operationActive)
+	if (_needsRecalculation && !_operationActive && !_userLocked)
 	{
 		updateFromSelection();
 	}
@@ -56,6 +57,11 @@ void ManipulationPivot::setFromMatrix(const Matrix4& newPivot2World)
 void ManipulationPivot::setNeedsRecalculation(bool needsRecalculation)
 {
 	_needsRecalculation = needsRecalculation;
+}
+
+void ManipulationPivot::setUserLocked(bool locked)
+{
+	_userLocked = locked;
 }
 
 // Call this before an operation is started, such that later
@@ -89,6 +95,7 @@ void ManipulationPivot::applyTranslation(const Vector3& translation)
 void ManipulationPivot::updateFromSelection()
 {
 	_needsRecalculation = false;
+	_userLocked = false;
 
 	Vector3 objectPivot;
 

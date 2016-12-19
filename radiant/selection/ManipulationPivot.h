@@ -33,6 +33,9 @@ private:
 	// During operations, we want to block pivot recalculations
 	bool _operationActive;
 
+	// "User has modified pivot"-flag, used to block pivot recalculations
+	bool _userLocked;
+
 public:
 	ManipulationPivot();
 
@@ -49,6 +52,10 @@ public:
 	// Set the dirty flag of the matrix, this will trigger 
 	// an updateFromSelection() next time getMatrix4() is called
 	void setNeedsRecalculation(bool needsRecalculation);
+
+	// If the user has placed the pivot manually, we want to refrain
+	// from recalculating it automatically.
+	void setUserLocked(bool locked);
 
 	// Call this before an operation is started, such that later
 	// transformations can be applied on top of the correct starting point

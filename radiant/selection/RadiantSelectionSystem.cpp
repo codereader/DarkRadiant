@@ -278,6 +278,9 @@ void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 
 	_activeManipulator = found->second;
 
+	// Release the user lock when switching manipulators
+	_pivot.setUserLocked(false);
+
 	pivotChanged();
 }
 
@@ -288,6 +291,10 @@ void RadiantSelectionSystem::setActiveManipulator(Manipulator::Type manipulatorT
 		if (pair.second->getType() == manipulatorType)
 		{
 			_activeManipulator = pair.second;
+
+			// Release the user lock when switching manipulators
+			_pivot.setUserLocked(false);
+
 			pivotChanged();
 			return;
 		}
@@ -349,6 +356,12 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 
     _requestWorkZoneRecalculation = true;
     _requestSceneGraphChange = true;
+
+	// When everything is deselected, release the pivot user lock
+	if (_selection.empty())
+	{
+		_pivot.setUserLocked(false);
+	}
 }
 
 // greebo: This should be called "onComponentSelectionChanged", as it is a similar function of the above one
@@ -382,6 +395,11 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
 
     _requestWorkZoneRecalculation = true;
     _requestSceneGraphChange = true;
+
+	if (_componentSelection.empty())
+	{
+		_pivot.setUserLocked(false);
+	}
 }
 
 // Returns the last instance in the list (if the list is not empty)
@@ -830,7 +848,7 @@ void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, con
 const Matrix4& RadiantSelectionSystem::getPivot2World() const
 {
     // Questionable const design - almost everything needs to be declared const here...
-    const_cast<RadiantSelectionSystem*>(this)->recalculatePivot2World();
+    //const_cast<RadiantSelectionSystem*>(this)->recalculatePivot2World();
 
     return const_cast<RadiantSelectionSystem*>(this)->_pivot.getMatrix4();
 }
