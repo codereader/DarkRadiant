@@ -142,7 +142,6 @@ public:
 	void onManipulationChanged() override;
 	void onManipulationEnd() override;
 
-	void rotateSelected(const Quaternion& rotation);
 	void translateSelected(const Vector3& translation);
 	void scaleSelected(const Vector3& scaling);
 

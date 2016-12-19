@@ -780,26 +780,6 @@ void RadiantSelectionSystem::onManipulationEnd()
 	requestIdleCallback();
 }
 
-// Shortcut call for an instantly applied rotation of the current selection
-void RadiantSelectionSystem::rotateSelected(const Quaternion& rotation)
-{
-	// Perform the rotation according to the current mode
-	if (Mode() == eComponent)
-	{
-		Scene_Rotate_Component_Selected(GlobalSceneGraph(), rotation, _pivot.getVector3());
-	}
-	else
-	{
-		// Cycle through the selections and rotate them
-		foreachSelected(RotateSelected(rotation, _pivot.getVector3()));
-	}
-
-	// Update the views
-	SceneChangeNotify();
-    
-    freezeTransforms();
-}
-
 // Shortcut call for an instantly applied translation of the current selection
 void RadiantSelectionSystem::translateSelected(const Vector3& translation)
 {

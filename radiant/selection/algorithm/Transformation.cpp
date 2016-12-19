@@ -20,6 +20,8 @@
 #include "map/algorithm/Clone.h"
 #include "scene/BasicRootNode.h"
 #include "debugging/debugging.h"
+#include "selection/TransformationVisitors.h"
+#include "selection/SceneWalkers.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -29,6 +31,27 @@ namespace selection
 namespace algorithm
 {
 
+void rotateSelected(const Quaternion& rotation)
+{
+	// Perform the rotation according to the current mode
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
+		Scene_Rotate_Component_Selected(GlobalSceneGraph(), rotation, 
+			GlobalSelectionSystem().getPivot2World().t().getVector3());
+	}
+	else
+	{
+		// Cycle through the selections and rotate them
+		GlobalSelectionSystem().foreachSelected(RotateSelected(rotation,
+			GlobalSelectionSystem().getPivot2World().t().getVector3()));
+	}
+
+	// Update the views
+	SceneChangeNotify();
+
+	GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
+}
+
 // greebo: see header for documentation
 void rotateSelected(const Vector3& eulerXYZ)
 {
@@ -36,7 +59,7 @@ void rotateSelected(const Vector3& eulerXYZ)
 	command += string::to_string(eulerXYZ);
 	UndoableCommand undo(command.c_str());
 
-	GlobalSelectionSystem().rotateSelected(Quaternion::createForEulerXYZDegrees(eulerXYZ));
+	rotateSelected(Quaternion::createForEulerXYZDegrees(eulerXYZ));
 }
 
 // greebo: see header for documentation
@@ -439,24 +462,20 @@ void rotateSelectionAboutAxis(axis_t axis, float deg)
 {
 	if (fabs(deg) == 90.0f)
 	{
-		GlobalSelectionSystem().rotateSelected(
-			quaternion_for_axis90(axis, (deg > 0) ? eSignPositive : eSignNegative));
+		rotateSelected(quaternion_for_axis90(axis, (deg > 0) ? eSignPositive : eSignNegative));
 	}
 	else
 	{
 		switch(axis)
 		{
 		case 0:
-			GlobalSelectionSystem().rotateSelected(
-				Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
+			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
 			break;
 		case 1:
-			GlobalSelectionSystem().rotateSelected(
-				Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
+			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
 			break;
 		case 2:
-			GlobalSelectionSystem().rotateSelected(
-				Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
+			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
 			break;
 		}
 	}

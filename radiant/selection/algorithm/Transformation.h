@@ -15,6 +15,11 @@ namespace
 	const std::string RKEY_OFFSET_CLONED_OBJECTS = "user/ui/offsetClonedObjects";
 }
 
+/**
+ * Applies the given quaternion to the current selection.
+ */
+void rotateSelected(const Quaternion& rotation);
+
 /** greebo: Rotates the current selection about the
 	* 			specified rotation angles.
 	*
