@@ -521,11 +521,6 @@ void RadiantSelectionSystem::foreachPatch(const std::function<void(Patch&)>& fun
     }
 }
 
-// Start a move, the current pivot point is saved as a start point
-void RadiantSelectionSystem::startMove() {
-    _pivot2worldStart = getPivot2World();
-}
-
 // Hub function for "deselect all", this passes the deselect call to the according functions
 void RadiantSelectionSystem::deselectAll() {
     if (Mode() == eComponent) {
@@ -745,7 +740,6 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
 void RadiantSelectionSystem::onManipulationStart()
 {
 	_pivotMoving = true;
-	_pivot2worldStart = getPivot2World();
 
 	// Save the pivot state now that the transformation is starting
 	_pivot.beginOperation();
@@ -779,12 +773,12 @@ void RadiantSelectionSystem::rotateSelected(const Quaternion& rotation)
 	// Perform the rotation according to the current mode
 	if (Mode() == eComponent)
 	{
-		Scene_Rotate_Component_Selected(GlobalSceneGraph(), rotation, _pivot2world.t().getVector3());
+		Scene_Rotate_Component_Selected(GlobalSceneGraph(), rotation, _pivot.getVector3());
 	}
 	else
 	{
 		// Cycle through the selections and rotate them
-		foreachSelected(RotateSelected(rotation, _pivot2world.t().getVector3()));
+		foreachSelected(RotateSelected(rotation, _pivot.getVector3()));
 	}
 
 	// Update the views
@@ -818,11 +812,11 @@ void RadiantSelectionSystem::scaleSelected(const Vector3& scaling)
 	// Pass the scale to the according traversor
 	if (Mode() == eComponent)
 	{
-		Scene_Scale_Component_Selected(GlobalSceneGraph(), scaling, _pivot2world.t().getVector3());
+		Scene_Scale_Component_Selected(GlobalSceneGraph(), scaling, _pivot.getVector3());
 	}
 	else
 	{
-		Scene_Scale_Selected(GlobalSceneGraph(), scaling, _pivot2world.t().getVector3());
+		Scene_Scale_Selected(GlobalSceneGraph(), scaling, _pivot.getVector3());
 	}
 
 	// Update the scene views
@@ -842,7 +836,7 @@ const Matrix4& RadiantSelectionSystem::getPivot2World() const
     // Questionable const design - almost everything needs to be declared const here...
     const_cast<RadiantSelectionSystem*>(this)->recalculatePivot2World();
 
-    return _pivot2world;
+    return _pivot.getMatrix4();
 }
 
 void RadiantSelectionSystem::constructStatic() {
@@ -944,10 +938,8 @@ void RadiantSelectionSystem::recalculatePivot2World()
         //vector3_snap(objectPivot, GlobalGrid().getGridSize());
 
         // The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot
-        _pivot2world = Matrix4::getTranslation(objectPivot);
-
-		// Save this to our ManipulationPivot
-		_pivot.setFromMatrix(_pivot2world);
+		// Save this to our ManipulationPivot class
+		_pivot.setFromMatrix(Matrix4::getTranslation(objectPivot));
     }
 }
 /* greebo: Renders the currently active manipulator by setting the render state and

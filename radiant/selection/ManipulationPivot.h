@@ -9,6 +9,8 @@ namespace selection
  * Represents the anchor point for manipulation operations
  * in the scene. Usually this is defined by the origin of the
  * current selection AABB.
+ *
+ * Use the getMatrix4() method to acquire a pivot-to-world matrix.
  */
 class ManipulationPivot
 {
@@ -22,11 +24,13 @@ private:
 	Matrix4 _pivot2WorldStart;
 
 public:
+	// Returns the pivot-to-world transform
 	const Matrix4& getMatrix4() const
 	{
 		return _pivot2World;
 	}
 
+	// Returns the position of the pivot point relative to origin
 	const Vector3& getVector3() const
 	{
 		return _pivot2World.t().getVector3();

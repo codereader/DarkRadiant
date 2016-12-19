@@ -24,8 +24,6 @@ class RadiantSelectionSystem :
 {
 	ManipulationPivot _pivot;
 
-	mutable Matrix4 _pivot2world;
-	Matrix4 _pivot2worldStart;
 	Matrix4 _manip2pivotStart;
 
 	typedef std::list<Observer*> ObserverList;
@@ -142,8 +140,6 @@ public:
 	void foreachBrush(const std::function<void(Brush&)>& functor);
 	void foreachFace(const std::function<void(Face&)>& functor);
 	void foreachPatch(const std::function<void(Patch&)>& functor);
-
-	void startMove();
 
 	void deselectAll();
 
