@@ -219,6 +219,7 @@ void ManipulateMouseTool::endMove()
 
 	_manipulationActive = false;
 	_selectionSystem.pivotChanged();
+	activeManipulator->setSelected(false);
 
 	// Update the views
 	SceneChangeNotify();
