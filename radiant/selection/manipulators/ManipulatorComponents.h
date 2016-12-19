@@ -152,28 +152,9 @@ private:
 	TranslationCallback _onTranslation;
 
 public:
+	SelectionTranslator(const TranslationCallback& onTranslation);
 
-	SelectionTranslator(const TranslationCallback& onTranslation) :
-		_onTranslation(onTranslation)
-	{}
-
-	void translate(const Vector3& translation) override
-	{
-		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
-		{
-			Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
-		}
-		else 
-		{
-			Scene_Translate_Selected(GlobalSceneGraph(), translation);
-		}
-
-		// Invoke the feedback function
-		if (_onTranslation)
-		{
-			_onTranslation(translation);
-		}
-	}
+	void translate(const Vector3& translation) override;
 };
 
 class TranslatablePivot :
@@ -183,17 +164,9 @@ private:
 	ManipulationPivot& _pivot;
 
 public:
-	TranslatablePivot(ManipulationPivot& pivot) :
-		_pivot(pivot)
-	{}
+	TranslatablePivot(ManipulationPivot& pivot);
 
-	void translate(const Vector3& translation) override
-	{
-		_pivot.applyTranslation(translation);
-
-		// User is placing the pivot manually, so let's keep it that way
-		_pivot.setUserLocked(true);
-	}
+	void translate(const Vector3& translation) override;
 };
 
 // ===============================================================================

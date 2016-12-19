@@ -131,4 +131,40 @@ void ScaleFree::Transform(const Matrix4& manip2object, const Matrix4& device2man
     _scalable.scale(scale);
 }
 
+SelectionTranslator::SelectionTranslator(const TranslationCallback& onTranslation) :
+	_onTranslation(onTranslation)
+{}
+
+void SelectionTranslator::translate(const Vector3& translation)
+{
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
+		Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
+	}
+	else
+	{
+		Scene_Translate_Selected(GlobalSceneGraph(), translation);
+	}
+
+	// Invoke the feedback function
+	if (_onTranslation)
+	{
+		_onTranslation(translation);
+	}
+}
+
+TranslatablePivot::TranslatablePivot(ManipulationPivot& pivot) :
+	_pivot(pivot)
+{}
+
+void TranslatablePivot::translate(const Vector3& translation)
+{
+	Vector3 translationSnapped = translation.getSnapped(GlobalGrid().getGridSize());
+
+	_pivot.applyTranslation(translationSnapped);
+
+	// User is placing the pivot manually, so let's keep it that way
+	_pivot.setUserLocked(true);
+}
+
 }
