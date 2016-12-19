@@ -742,30 +742,6 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
     }
 }
 
-// Applies the translation vector <translation> to the current selection
-void RadiantSelectionSystem::translate(const Vector3& translation) {
-    // Check if we have anything to do at all
-    if (!nothingSelected()) {
-        // Store the translation vector, so that the outputTranslation member method can access it
-        _translation = translation;
-
-        // Get the current pivot matrix and multiply it by the translation matrix defined by <translation>.
-        _pivot2world = _pivot2worldStart;
-        _pivot2world.translateBy(translation);
-
-        // Call the according scene graph traversors and pass the translation vector
-        if (Mode() == eComponent) {
-            Scene_Translate_Component_Selected(GlobalSceneGraph(), _translation);
-        }
-        else {
-            Scene_Translate_Selected(GlobalSceneGraph(), _translation);
-        }
-
-        // Update the scene so that the changes are made visible
-        SceneChangeNotify();
-    }
-}
-
 // Applies the rotation vector <rotation> to the current selection
 void RadiantSelectionSystem::rotate(const Quaternion& rotation)
 {
@@ -850,10 +826,21 @@ void RadiantSelectionSystem::rotateSelected(const Quaternion& rotation) {
 }
 
 // Shortcut call for an instantly applied translation of the current selection
-void RadiantSelectionSystem::translateSelected(const Vector3& translation) {
+void RadiantSelectionSystem::translateSelected(const Vector3& translation)
+{
     // Apply the transformation and freeze the changes
-    startMove();
-    translate(translation);
+	if (Mode() == eComponent)
+	{
+		Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
+	}
+	else
+	{
+		Scene_Translate_Selected(GlobalSceneGraph(), translation);
+	}
+
+	// Update the scene so that the changes are made visible
+	SceneChangeNotify();
+
     freezeTransforms();
 }
 

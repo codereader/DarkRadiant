@@ -22,7 +22,6 @@ namespace selection
 
 class RadiantSelectionSystem :
 	public SelectionSystem,
-	public Translatable,
 	public Rotatable,
 	public Scalable,
 	public Renderable,
@@ -37,7 +36,6 @@ class RadiantSelectionSystem :
 	typedef std::list<Observer*> ObserverList;
 	ObserverList _observers;
 
-	Vector3 _translation;
 	Quaternion _rotation;
 	Vector3 _scale;
 
@@ -161,7 +159,6 @@ public:
 	void SelectArea(const render::View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face);
 
 	// These are the "callbacks" that are used by the Manipulatables
-	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scaling);
 
