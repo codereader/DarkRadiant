@@ -22,7 +22,6 @@ namespace selection
 
 class RadiantSelectionSystem :
 	public SelectionSystem,
-	public Rotatable,
 	public Scalable,
 	public Renderable,
 	protected wxutil::SingleIdleCallback
@@ -36,7 +35,6 @@ class RadiantSelectionSystem :
 	typedef std::list<Observer*> ObserverList;
 	ObserverList _observers;
 
-	Quaternion _rotation;
 	Vector3 _scale;
 
 	// The 3D volume surrounding the most recent selection.
@@ -159,7 +157,6 @@ public:
 	void SelectArea(const render::View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face);
 
 	// These are the "callbacks" that are used by the Manipulatables
-	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scaling);
 
 	void onManipulationStart() override;

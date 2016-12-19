@@ -742,30 +742,6 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
     }
 }
 
-// Applies the rotation vector <rotation> to the current selection
-void RadiantSelectionSystem::rotate(const Quaternion& rotation)
-{
-    // Check if there is anything to do
-    if (nothingSelected()) return;
-
-    // Store the quaternion internally
-    _rotation = rotation;
-
-    // Perform the rotation according to the current mode
-    if (Mode() == eComponent)
-    {
-        Scene_Rotate_Component_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());
-    }
-    else
-    {
-  	    // Cycle through the selections and rotate them
-        foreachSelected(RotateSelected(rotation, _pivot2world.t().getVector3()));
-    }
-
-    // Update the views
-    SceneChangeNotify();
-}
-
 // Applies the scaling vector <scaling> to the current selection, this is called by the according ManipulatorComponents
 void RadiantSelectionSystem::scale(const Vector3& scaling) {
     // Check if anything is selected
@@ -818,10 +794,22 @@ void RadiantSelectionSystem::onManipulationEnd()
 }
 
 // Shortcut call for an instantly applied rotation of the current selection
-void RadiantSelectionSystem::rotateSelected(const Quaternion& rotation) {
-    // Apply the transformation and freeze the changes
-    startMove();
-    rotate(rotation);
+void RadiantSelectionSystem::rotateSelected(const Quaternion& rotation)
+{
+	// Perform the rotation according to the current mode
+	if (Mode() == eComponent)
+	{
+		Scene_Rotate_Component_Selected(GlobalSceneGraph(), rotation, _pivot2world.t().getVector3());
+	}
+	else
+	{
+		// Cycle through the selections and rotate them
+		foreachSelected(RotateSelected(rotation, _pivot2world.t().getVector3()));
+	}
+
+	// Update the views
+	SceneChangeNotify();
+    
     freezeTransforms();
 }
 
@@ -1031,7 +1019,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	registerManipulator(std::make_shared<ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64));
 	registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
-	registerManipulator(std::make_shared<RotateManipulator>(*this, 8, 64));
+	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64));
 
 	_defaultManipulatorType = Manipulator::Drag;
 	setActiveManipulator(_defaultManipulatorType);

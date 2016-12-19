@@ -5,6 +5,7 @@
 #include "../Renderables.h"
 #include "../Pivot2World.h"
 #include "../BasicSelectable.h"
+#include "selection/ManipulationPivot.h"
 
 namespace selection
 {
@@ -16,9 +17,12 @@ namespace selection
  * rotation.
  */
 class RotateManipulator : 
-	public ManipulatorBase
+	public ManipulatorBase,
+	public Rotatable
 {
 private:
+	ManipulationPivot& _pivot;
+
 	RotateFree _rotateFree;
 	RotateAxis _rotateAxis;
 	Vector3 _axisScreen;
@@ -27,12 +31,12 @@ private:
 	RenderableSemiCircle _circleZ;
 	RenderableCircle _circleScreen;
 	RenderableCircle _circleSphere;
-	selection::BasicSelectable _selectableX;
-	selection::BasicSelectable _selectableY;
-	selection::BasicSelectable _selectableZ;
-	selection::BasicSelectable _selectableScreen;
-	selection::BasicSelectable _selectableSphere;
-	Pivot2World _pivot;
+	BasicSelectable _selectableX;
+	BasicSelectable _selectableY;
+	BasicSelectable _selectableZ;
+	BasicSelectable _selectableScreen;
+	BasicSelectable _selectableSphere;
+	Pivot2World _pivot2World;
 	Matrix4 _local2worldX;
 	Matrix4 _local2worldY;
 	Matrix4 _local2worldZ;
@@ -44,7 +48,7 @@ public:
 	static ShaderPtr _stateOuter;
 
 	// Constructor
-	RotateManipulator(Rotatable& rotatable, std::size_t segments, float radius);
+	RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius);
 
 	Type getType() const override
 	{
@@ -62,6 +66,8 @@ public:
 
 	void setSelected(bool select) override;
 	bool isSelected() const override;
+
+	void rotate(const Quaternion& rotation) override;
 };
 
 }

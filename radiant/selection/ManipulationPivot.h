@@ -27,6 +27,11 @@ public:
 		return _pivot2World;
 	}
 
+	const Vector3& getVector3() const
+	{
+		return _pivot2World.t().getVector3();
+	}
+
 	void setFromMatrix(const Matrix4& newPivot2World)
 	{
 		_pivot2World = newPivot2World;
