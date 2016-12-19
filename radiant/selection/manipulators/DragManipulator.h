@@ -42,7 +42,7 @@ private:
 
 	// Drag component
 	TranslateFree _freeDragComponent;
-	DragTranslatable _dragTranslatable;
+	SelectionTranslator _dragTranslatable;
 	BasicSelectable _dragSelectable;
 
 public:

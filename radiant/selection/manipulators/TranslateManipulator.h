@@ -5,6 +5,7 @@
 #include "../Pivot2World.h"
 #include "ManipulatorComponents.h"
 #include "../BasicSelectable.h"
+#include "../ManipulationPivot.h"
 
 namespace selection
 {
@@ -16,6 +17,7 @@ class TranslateManipulator :
 	public ManipulatorBase
 {
 private:
+	SelectionTranslator _translator;
 	TranslateFree _translateFree;
 	TranslateAxis _translateAxis;
 	RenderableArrowLine _arrowX;
@@ -29,13 +31,15 @@ private:
 	selection::BasicSelectable _selectableY;
 	selection::BasicSelectable _selectableZ;
 	selection::BasicSelectable _selectableScreen;
-	Pivot2World _pivot;
+	Pivot2World _pivot2World;
+
+	ManipulationPivot& _pivot;
 public:
 	static ShaderPtr _stateWire;
 	static ShaderPtr _stateFill;
 
 	// Constructor
-	TranslateManipulator(Translatable& translatable, std::size_t segments, float length);
+	TranslateManipulator(ManipulationPivot& pivot, std::size_t segments, float length);
 
 	Type getType() const override
 	{

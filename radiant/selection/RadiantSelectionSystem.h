@@ -15,6 +15,7 @@
 #include "Translatable.h"
 #include "Scalable.h"
 #include "Rotatable.h"
+#include "ManipulationPivot.h"
 
 namespace selection
 {
@@ -27,6 +28,8 @@ class RadiantSelectionSystem :
 	public Renderable,
 	protected wxutil::SingleIdleCallback
 {
+	ManipulationPivot _pivot;
+
 	mutable Matrix4 _pivot2world;
 	Matrix4 _pivot2worldStart;
 	Matrix4 _manip2pivotStart;
@@ -78,7 +81,7 @@ private:
 	SelectionListType _selection;
 	SelectionListType _componentSelection;
 
-	void ConstructPivot();
+	void recalculatePivot2World();
 	mutable bool _pivotChanged;
 	bool _pivotMoving;
 

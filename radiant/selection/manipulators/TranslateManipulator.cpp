@@ -13,12 +13,13 @@ namespace selection
 const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 
 // Constructor
-TranslateManipulator::TranslateManipulator(Translatable& translatable, std::size_t segments, float length) :
-    _translateFree(translatable),
-    _translateAxis(translatable),
+TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t segments, float length) :
+    _translateFree(_translator),
+    _translateAxis(_translator),
     _arrowHeadX(3 * 2 * (segments << 3)),
     _arrowHeadY(3 * 2 * (segments << 3)),
-    _arrowHeadZ(3 * 2 * (segments << 3))
+    _arrowHeadZ(3 * 2 * (segments << 3)),
+	_pivot(pivot)
 {
     draw_arrowline(length, &_arrowX.front(), 0);
     draw_arrowhead(segments, length, &_arrowHeadX._vertices.front(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
@@ -44,73 +45,74 @@ bool TranslateManipulator::manipulator_show_axis(const Pivot2World& pivot, const
     return fabs(pivot._axisScreen.dot(axis)) < 0.95;
 }
 
-void TranslateManipulator::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) {
-    _pivot.update(pivot2world, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+void TranslateManipulator::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world)
+{
+    _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
     // temp hack
     UpdateColours();
 
-    Vector3 x = _pivot._worldSpace.x().getVector3().getNormalised();
-    bool show_x = manipulator_show_axis(_pivot, x);
+    Vector3 x = _pivot2World._worldSpace.x().getVector3().getNormalised();
+    bool show_x = manipulator_show_axis(_pivot2World, x);
 
-    Vector3 y = _pivot._worldSpace.y().getVector3().getNormalised();
-    bool show_y = manipulator_show_axis(_pivot, y);
+    Vector3 y = _pivot2World._worldSpace.y().getVector3().getNormalised();
+    bool show_y = manipulator_show_axis(_pivot2World, y);
 
-    Vector3 z = _pivot._worldSpace.z().getVector3().getNormalised();
-    bool show_z = manipulator_show_axis(_pivot, z);
+    Vector3 z = _pivot2World._worldSpace.z().getVector3().getNormalised();
+    bool show_z = manipulator_show_axis(_pivot2World, z);
 
     collector.SetState(_stateWire, RenderableCollector::eWireframeOnly);
     collector.SetState(_stateWire, RenderableCollector::eFullMaterials);
 
     if(show_x)
     {
-      collector.addRenderable(_arrowX, _pivot._worldSpace);
+      collector.addRenderable(_arrowX, _pivot2World._worldSpace);
     }
     if(show_y)
     {
-      collector.addRenderable(_arrowY, _pivot._worldSpace);
+      collector.addRenderable(_arrowY, _pivot2World._worldSpace);
     }
     if(show_z)
     {
-      collector.addRenderable(_arrowZ, _pivot._worldSpace);
+      collector.addRenderable(_arrowZ, _pivot2World._worldSpace);
     }
 
-    collector.addRenderable(_quadScreen, _pivot._viewplaneSpace);
+    collector.addRenderable(_quadScreen, _pivot2World._viewplaneSpace);
 
     collector.SetState(_stateFill, RenderableCollector::eWireframeOnly);
     collector.SetState(_stateFill, RenderableCollector::eFullMaterials);
 
     if(show_x)
     {
-      collector.addRenderable(_arrowHeadX, _pivot._worldSpace);
+      collector.addRenderable(_arrowHeadX, _pivot2World._worldSpace);
     }
     if(show_y)
     {
-      collector.addRenderable(_arrowHeadY, _pivot._worldSpace);
+      collector.addRenderable(_arrowHeadY, _pivot2World._worldSpace);
     }
     if(show_z)
     {
-      collector.addRenderable(_arrowHeadZ, _pivot._worldSpace);
+      collector.addRenderable(_arrowHeadZ, _pivot2World._worldSpace);
     }
 }
 
 void TranslateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
 {
-    _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
+    _pivot2World.update(_pivot.getMatrix4(), view.GetModelview(), view.GetProjection(), view.GetViewport());
 
     SelectionPool selector;
 
-    Vector3 x = _pivot._worldSpace.x().getVector3().getNormalised();
-    bool show_x = manipulator_show_axis(_pivot, x);
+    Vector3 x = _pivot2World._worldSpace.x().getVector3().getNormalised();
+    bool show_x = manipulator_show_axis(_pivot2World, x);
 
-    Vector3 y = _pivot._worldSpace.y().getVector3().getNormalised();
-    bool show_y = manipulator_show_axis(_pivot, y);
+    Vector3 y = _pivot2World._worldSpace.y().getVector3().getNormalised();
+    bool show_y = manipulator_show_axis(_pivot2World, y);
 
-    Vector3 z = _pivot._worldSpace.z().getVector3().getNormalised();
-    bool show_z = manipulator_show_axis(_pivot, z);
+    Vector3 z = _pivot2World._worldSpace.z().getVector3().getNormalised();
+    bool show_z = manipulator_show_axis(_pivot2World, z);
 
     {
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._viewpointSpace));
+		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._viewpointSpace));
 
       {
         SelectionIntersection best;
@@ -124,7 +126,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
     }
 
     {
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._worldSpace));
+		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._worldSpace));
 
       if(show_x)
       {
@@ -159,7 +161,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
 
     	if (registry::getValue<bool>(RKEY_TRANSLATE_CONSTRAINED)) {
 	    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence
-	    	Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._worldSpace));
+	    	Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._worldSpace));
 
 	    	// Get the (relative?) distance from the mouse pointer to the manipulator
 	    	Vector3 delta = local2view.t().getProjected();

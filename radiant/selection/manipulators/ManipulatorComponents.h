@@ -140,7 +140,7 @@ class ResizeTranslatable :
 	}
 };
 
-class DragTranslatable : 
+class SelectionTranslator : 
 	public Translatable
 {
 	void translate(const Vector3& translation) override

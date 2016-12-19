@@ -1818,6 +1818,9 @@
     <ClInclude Include="..\..\radiant\selection\algorithm\Planes.h">
       <Filter>src\selection\algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\ManipulationPivot.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

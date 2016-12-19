@@ -608,6 +608,7 @@
     <ClInclude Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\selection\group\SelectionGroupManager.h" />
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
+    <ClInclude Include="..\..\radiant\selection\ManipulationPivot.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ClipManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\DragManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorBase.h" />

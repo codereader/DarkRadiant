@@ -866,11 +866,11 @@ void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, con
     renderSolid(collector, volume);
 }
 
-// Lets the ConstructPivot() method do the work and returns the result that is stored in the member variable
+// Lets the recalculatePivot2World() method do the work and returns the result that is stored in the member variable
 const Matrix4& RadiantSelectionSystem::getPivot2World() const
 {
     // Questionable const design - almost everything needs to be declared const here...
-    const_cast<RadiantSelectionSystem*>(this)->ConstructPivot();
+    const_cast<RadiantSelectionSystem*>(this)->recalculatePivot2World();
 
     return _pivot2world;
 }
@@ -913,7 +913,7 @@ void RadiantSelectionSystem::keyChanged()
 {
     if (!nothingSelected()) {
         pivotChanged();
-        ConstructPivot();
+        recalculatePivot2World();
     }
 }
 
@@ -921,7 +921,7 @@ void RadiantSelectionSystem::keyChanged()
  * It cycles through all selected objects and creates its AABB. The origin point of the AABB
  * is basically the pivot point. Pivot2World is therefore a translation from (0,0,0) to the calculated origin.
  */
-void RadiantSelectionSystem::ConstructPivot()
+void RadiantSelectionSystem::recalculatePivot2World()
 {
     if (!_pivotChanged || _pivotMoving)
         return;
@@ -975,6 +975,9 @@ void RadiantSelectionSystem::ConstructPivot()
 
         // The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot
         _pivot2world = Matrix4::getTranslation(objectPivot);
+
+		// Save this to our ManipulationPivot
+		_pivot.setFromMatrix(_pivot2world);
     }
 }
 /* greebo: Renders the currently active manipulator by setting the render state and
@@ -1035,7 +1038,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	// Add manipulators
 	registerManipulator(std::make_shared<DragManipulator>());
 	registerManipulator(std::make_shared<ClipManipulator>());
-	registerManipulator(std::make_shared<TranslateManipulator>(*this, 2, 64));
+	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64));
 	registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
 	registerManipulator(std::make_shared<RotateManipulator>(*this, 8, 64));
 
