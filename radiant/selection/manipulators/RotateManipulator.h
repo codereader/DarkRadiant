@@ -7,6 +7,7 @@
 #include "selection/Pivot2World.h"
 #include "selection/BasicSelectable.h"
 #include "selection/ManipulationPivot.h"
+#include "render.h"
 
 namespace selection
 {
@@ -23,20 +24,24 @@ class RotateManipulator :
 {
 private:
 	ManipulationPivot& _pivot;
+	TranslatablePivot _pivotTranslatable;
 
 	RotateFree _rotateFree;
 	RotateAxis _rotateAxis;
+	TranslateFree _translatePivot;
 	Vector3 _axisScreen;
 	RenderableSemiCircle _circleX;
 	RenderableSemiCircle _circleY;
 	RenderableSemiCircle _circleZ;
 	RenderableCircle _circleScreen;
 	RenderableCircle _circleSphere;
+	RenderablePointVector _pivotPoint;
 	BasicSelectable _selectableX;
 	BasicSelectable _selectableY;
 	BasicSelectable _selectableZ;
 	BasicSelectable _selectableScreen;
 	BasicSelectable _selectableSphere;
+	BasicSelectable _selectablePivotPoint;
 	Pivot2World _pivot2World;
 	Matrix4 _local2worldX;
 	Matrix4 _local2worldY;
@@ -47,6 +52,7 @@ private:
 
 public:
 	static ShaderPtr _stateOuter;
+	static ShaderPtr _pivotPointShader;
 
 	// Constructor
 	RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius);

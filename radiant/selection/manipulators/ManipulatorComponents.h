@@ -7,10 +7,11 @@
 
 #include "render.h"
 
-#include "../TransformationVisitors.h"
+#include "selection/TransformationVisitors.h"
 #include "Translatable.h"
 #include "Rotatable.h"
 #include "Scalable.h"
+#include "selection/ManipulationPivot.h"
 #include <functional>
 
 namespace selection
@@ -172,6 +173,23 @@ public:
 		{
 			_onTranslation(translation);
 		}
+	}
+};
+
+class TranslatablePivot :
+	public Translatable
+{
+private:
+	ManipulationPivot& _pivot;
+
+public:
+	TranslatablePivot(ManipulationPivot& pivot) :
+		_pivot(pivot)
+	{}
+
+	void translate(const Vector3& translation) override
+	{
+		_pivot.applyTranslation(translation);
 	}
 };
 

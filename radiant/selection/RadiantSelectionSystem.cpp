@@ -820,8 +820,8 @@ void RadiantSelectionSystem::scaleSelected(const Vector3& scaling)
     freezeTransforms();
 }
 
-// greebo: This just passes the call on to renderSolid, the manipulators are wireframes anyway
-void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
+{
     renderSolid(collector, volume);
 }
 
@@ -834,18 +834,22 @@ const Matrix4& RadiantSelectionSystem::getPivot2World() const
     return _pivot.getMatrix4();
 }
 
-void RadiantSelectionSystem::constructStatic() {
+void RadiantSelectionSystem::constructStatic()
+{
     _state = GlobalRenderSystem().capture("$POINT");
     TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
     TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
     RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
+	RotateManipulator::_pivotPointShader = GlobalRenderSystem().capture("$POINT");
 }
 
-void RadiantSelectionSystem::destroyStatic() {
-    _state = ShaderPtr();
-    TranslateManipulator::_stateWire = ShaderPtr();
-    TranslateManipulator::_stateFill = ShaderPtr();
-	RotateManipulator::_stateOuter = ShaderPtr();
+void RadiantSelectionSystem::destroyStatic()
+{
+    _state.reset();
+    TranslateManipulator::_stateWire.reset();
+    TranslateManipulator::_stateFill.reset();
+	RotateManipulator::_stateOuter.reset();
+	RotateManipulator::_pivotPointShader.reset();
 }
 
 // This actually applies the transformation to the objects
@@ -1020,6 +1024,9 @@ void RadiantSelectionSystem::shutdownModule()
     // are kept after shutdown, causing destruction issues.
     setSelectedAll(false);
     setSelectedAllComponents(false);
+
+	// In pathological cases this list might contain remnants, clear it
+	_selection.clear();
 
 	_activeManipulator.reset();
 	_manipulators.clear();

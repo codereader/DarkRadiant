@@ -58,13 +58,16 @@ inline void draw_semicircle(const std::size_t segments, const float radius, Vert
 // Constructor
 RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius) :
 	_pivot(pivot),
+	_pivotTranslatable(_pivot),
     _rotateFree(*this),
     _rotateAxis(*this),
+	_translatePivot(_pivotTranslatable),
     _circleX((segments << 2) + 1),
     _circleY((segments << 2) + 1),
     _circleZ((segments << 2) + 1),
     _circleScreen(segments<<3),
-    _circleSphere(segments<<3)
+    _circleSphere(segments<<3),
+	_pivotPoint(GL_POINTS)
 {
 	draw_semicircle(segments, radius, &_circleX.front(), RemapYZX());
     draw_semicircle(segments, radius, &_circleY.front(), RemapZXY());
@@ -72,6 +75,8 @@ RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segme
 
 	draw_circle(segments, radius * 1.15f, &_circleScreen.front(), RemapXYZ());
     draw_circle(segments, radius, &_circleSphere.front(), RemapXYZ());
+
+	_pivotPoint.push_back(VertexCb(Vertex3f(0,0,0), ManipulatorBase::COLOUR_SPHERE()));
 }
 
 void RotateManipulator::UpdateColours()
@@ -81,6 +86,7 @@ void RotateManipulator::UpdateColours()
     _circleZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
     _circleScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
     _circleSphere.setColour(colourSelected(ManipulatorBase::COLOUR_SPHERE(), false));
+	_pivotPoint.setColour(colourSelected(ManipulatorBase::COLOUR_SPHERE(), _selectablePivotPoint.isSelected()));
 }
 
 void RotateManipulator::updateCircleTransforms()
@@ -146,6 +152,10 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
     {
       collector.addRenderable(_circleZ, _local2worldZ);
     }
+
+	collector.SetState(_pivotPointShader, RenderableCollector::eWireframeOnly);
+	collector.SetState(_pivotPointShader, RenderableCollector::eFullMaterials);
+	collector.addRenderable(_pivotPoint, _pivot2World._worldSpace);
 }
 
 void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
@@ -155,57 +165,70 @@ void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivo
 
     SelectionPool selector;
 
-    {
-      {
-        Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldX));
+	if (view.TestPoint(_pivot.getVector3()))
+	{
+		selector.addSelectable(SelectionIntersection(0, 0), &_selectablePivotPoint);
+	}
+	else
+	{
+		{
+			{
+				Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldX));
 
-        SelectionIntersection best;
-        LineStrip_BestPoint(local2view, &_circleX.front(), _circleX.size(), best);
-        selector.addSelectable(best, &_selectableX);
-      }
+				SelectionIntersection best;
+				LineStrip_BestPoint(local2view, &_circleX.front(), _circleX.size(), best);
+				selector.addSelectable(best, &_selectableX);
+			}
 
-      {
-		  Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldY));
+			{
+				Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldY));
 
-        SelectionIntersection best;
-        LineStrip_BestPoint(local2view, &_circleY.front(), _circleY.size(), best);
-        selector.addSelectable(best, &_selectableY);
-      }
+				SelectionIntersection best;
+				LineStrip_BestPoint(local2view, &_circleY.front(), _circleY.size(), best);
+				selector.addSelectable(best, &_selectableY);
+			}
 
-      {
-		  Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldZ));
+			{
+				Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldZ));
 
-        SelectionIntersection best;
-        LineStrip_BestPoint(local2view, &_circleZ.front(), _circleZ.size(), best);
-        selector.addSelectable(best, &_selectableZ);
-      }
-    }
+				SelectionIntersection best;
+				LineStrip_BestPoint(local2view, &_circleZ.front(), _circleZ.size(), best);
+				selector.addSelectable(best, &_selectableZ);
+			}
+		}
 
-    {
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._viewpointSpace));
+		{
+			Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._viewpointSpace));
 
-      {
-        SelectionIntersection best;
-        LineLoop_BestPoint(local2view, &_circleScreen.front(), _circleScreen.size(), best);
-        selector.addSelectable(best, &_selectableScreen);
-      }
+			{
+				SelectionIntersection best;
+				LineLoop_BestPoint(local2view, &_circleScreen.front(), _circleScreen.size(), best);
+				selector.addSelectable(best, &_selectableScreen);
+			}
 
-      {
-        SelectionIntersection best;
-        Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.front(), _circleSphere.size(), best);
-        selector.addSelectable(best, &_selectableSphere);
-      }
-    }
+			{
+				SelectionIntersection best;
+				Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.front(), _circleSphere.size(), best);
+				selector.addSelectable(best, &_selectableSphere);
+			}
+		}
+	}
 
     _axisScreen = _pivot2World._axisScreen;
 
-    if(!selector.empty())
+    if (!selector.empty())
     {
-      (*selector.begin()).second->setSelected(true);
+		selector.begin()->second->setSelected(true);
     }
 }
 
-RotateManipulator::Component* RotateManipulator::getActiveComponent() {
+RotateManipulator::Component* RotateManipulator::getActiveComponent()
+{
+	if (_selectablePivotPoint.isSelected())
+	{
+		return &_translatePivot;
+	}
+
     if(_selectableX.isSelected()) {
       _rotateAxis.SetAxis(g_vector3_axis_x);
       return &_rotateAxis;
@@ -226,19 +249,23 @@ RotateManipulator::Component* RotateManipulator::getActiveComponent() {
       return &_rotateFree;
 }
 
-void RotateManipulator::setSelected(bool select)  {
+void RotateManipulator::setSelected(bool select)
+{
     _selectableX.setSelected(select);
     _selectableY.setSelected(select);
     _selectableZ.setSelected(select);
     _selectableScreen.setSelected(select);
+	_selectablePivotPoint.setSelected(select);
 }
 
-bool RotateManipulator::isSelected() const {
-    return _selectableX.isSelected()
-      | _selectableY.isSelected()
-      | _selectableZ.isSelected()
-      | _selectableScreen.isSelected()
-      | _selectableSphere.isSelected();
+bool RotateManipulator::isSelected() const
+{
+    return _selectableX.isSelected() || 
+		_selectableY.isSelected() ||
+		_selectableZ.isSelected() || 
+		_selectableScreen.isSelected() || 
+		_selectableSphere.isSelected() ||
+		_selectablePivotPoint.isSelected();
 }
 
 void RotateManipulator::rotate(const Quaternion& rotation)
@@ -257,7 +284,8 @@ void RotateManipulator::rotate(const Quaternion& rotation)
 	SceneChangeNotify();
 }
 
-// Initialise the shader of the RotateManipulator class
+// Static members
 ShaderPtr RotateManipulator::_stateOuter;
+ShaderPtr RotateManipulator::_pivotPointShader;
 
 }
