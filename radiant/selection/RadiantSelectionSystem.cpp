@@ -799,25 +799,6 @@ void RadiantSelectionSystem::translateSelected(const Vector3& translation)
     freezeTransforms();
 }
 
-// Shortcut call for an instantly applied scaling of the current selection
-void RadiantSelectionSystem::scaleSelected(const Vector3& scaling)
-{
-	// Pass the scale to the according traversor
-	if (Mode() == eComponent)
-	{
-		Scene_Scale_Component_Selected(GlobalSceneGraph(), scaling, _pivot.getVector3());
-	}
-	else
-	{
-		Scene_Scale_Selected(GlobalSceneGraph(), scaling, _pivot.getVector3());
-	}
-
-	// Update the scene views
-	SceneChangeNotify();
-
-    freezeTransforms();
-}
-
 void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
 {
     renderSolid(collector, volume);

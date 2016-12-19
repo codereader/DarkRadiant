@@ -254,7 +254,6 @@ public:
     virtual SelectionChangedSignal signal_selectionChanged() const = 0;
 
     virtual void translateSelected(const Vector3& translation) = 0;
-    virtual void scaleSelected(const Vector3& scaling) = 0;
     
 	virtual const Matrix4& getPivot2World() = 0;
     virtual void pivotChanged() = 0;

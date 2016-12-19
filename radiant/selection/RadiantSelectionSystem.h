@@ -143,7 +143,6 @@ public:
 	void onManipulationEnd() override;
 
 	void translateSelected(const Vector3& translation);
-	void scaleSelected(const Vector3& scaling);
 
 	void freezeTransforms();
 

@@ -71,11 +71,27 @@ void scaleSelected(const Vector3& scaleXYZ)
 	{
 		std::string command("scaleSelected: ");
 		command += string::to_string(scaleXYZ);
-		UndoableCommand undo(command.c_str());
+		UndoableCommand undo(command);
 
-		GlobalSelectionSystem().scaleSelected(scaleXYZ);
+		// Pass the scale to the according traversor
+		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+		{
+			Scene_Scale_Component_Selected(GlobalSceneGraph(), scaleXYZ, 
+				GlobalSelectionSystem().getPivot2World().t().getVector3());
+		}
+		else
+		{
+			Scene_Scale_Selected(GlobalSceneGraph(), scaleXYZ, 
+				GlobalSelectionSystem().getPivot2World().t().getVector3());
+		}
+
+		// Update the scene views
+		SceneChangeNotify();
+
+		GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
 	}
-	else {
+	else 
+	{
 		wxutil::Messagebox::ShowError(_("Cannot scale by zero value."));
 	}
 }
@@ -522,7 +538,7 @@ void mirrorSelection(int axis)
 	Vector3 flip(1, 1, 1);
 	flip[axis] = -1;
 
-	GlobalSelectionSystem().scaleSelected(flip);
+	scaleSelected(flip);
 }
 
 void mirrorSelectionX(const cmd::ArgumentList& args)
