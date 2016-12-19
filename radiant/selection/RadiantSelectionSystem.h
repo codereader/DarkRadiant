@@ -142,10 +142,6 @@ public:
 	void onManipulationChanged() override;
 	void onManipulationEnd() override;
 
-	void translateSelected(const Vector3& translation);
-
-	void freezeTransforms();
-
 	const WorkZone& getWorkZone();
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;

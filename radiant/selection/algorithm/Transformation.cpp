@@ -318,6 +318,24 @@ Vector3 AxisBase_axisForDirection(const AxisBase& axes, ENudgeDirection directio
 	return Vector3(0, 0, 0);
 }
 
+void translateSelected(const Vector3& translation)
+{
+	// Apply the transformation and freeze the changes
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
+		Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
+	}
+	else
+	{
+		Scene_Translate_Selected(GlobalSceneGraph(), translation);
+	}
+
+	// Update the scene so that the changes are made visible
+	SceneChangeNotify();
+
+	GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
+}
+
 // Specialised overload, called by the general nudgeSelected() routine
 void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 {
@@ -330,7 +348,7 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
         GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Drag ||
         GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Clip)
     {
-        GlobalSelectionSystem().translateSelected(nudge);
+        translateSelected(nudge);
 
         // In clip mode, update the clipping plane
         if (GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Clip)
@@ -381,7 +399,7 @@ void nudgeByAxis(int nDim, float fNudge)
 	Vector3 translate(0, 0, 0);
 	translate[nDim] = fNudge;
 
-	GlobalSelectionSystem().translateSelected(translate);
+	translateSelected(translate);
 }
 
 void moveSelectedAlongZ(float amount)

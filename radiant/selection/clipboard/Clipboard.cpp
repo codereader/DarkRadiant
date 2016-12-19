@@ -8,6 +8,7 @@
 #include "camera/GlobalCamera.h"
 #include "brush/FaceInstance.h"
 #include "selection/algorithm/General.h"
+#include "selection/algorithm/Transformation.h"
 
 namespace selection
 {
@@ -35,7 +36,7 @@ void copy(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		selection::algorithm::pickShaderFromSelection(args);
+		algorithm::pickShaderFromSelection(args);
 	}
 }
 
@@ -48,7 +49,7 @@ void paste(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		selection::algorithm::pasteShaderToSelection(args);
+		algorithm::pasteShaderToSelection(args);
 	}
 }
 
@@ -61,11 +62,11 @@ void pasteToCamera(const cmd::ArgumentList& args)
 	pasteToMap();
 
 	// Work out the delta
-	Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
+	Vector3 mid = algorithm::getCurrentSelectionCenter();
 	Vector3 delta = camWnd->getCameraOrigin().getSnapped(GlobalGrid().getGridSize()) - mid;
 
 	// Move to camera
-	GlobalSelectionSystem().translateSelected(delta);
+	algorithm::translateSelected(delta);
 }
 
 } // namespace

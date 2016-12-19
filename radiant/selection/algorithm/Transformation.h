@@ -47,6 +47,11 @@ void scaleSelected(const Vector3& scaleXYZ);
  */
 void cloneSelected(const cmd::ArgumentList& args);
 
+/**
+ * Moves the current selection by the given translation vector.
+ */
+void translateSelected(const Vector3& translation);
+
 enum ENudgeDirection
 {
 	eNudgeUp		= 1,

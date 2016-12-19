@@ -780,25 +780,6 @@ void RadiantSelectionSystem::onManipulationEnd()
 	requestIdleCallback();
 }
 
-// Shortcut call for an instantly applied translation of the current selection
-void RadiantSelectionSystem::translateSelected(const Vector3& translation)
-{
-    // Apply the transformation and freeze the changes
-	if (Mode() == eComponent)
-	{
-		Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
-	}
-	else
-	{
-		Scene_Translate_Selected(GlobalSceneGraph(), translation);
-	}
-
-	// Update the scene so that the changes are made visible
-	SceneChangeNotify();
-
-    freezeTransforms();
-}
-
 void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
 {
     renderSolid(collector, volume);
@@ -826,18 +807,6 @@ void RadiantSelectionSystem::releaseShaders()
     TranslateManipulator::_stateFill.reset();
 	RotateManipulator::_stateOuter.reset();
 	RotateManipulator::_pivotPointShader.reset();
-}
-
-// This actually applies the transformation to the objects
-void RadiantSelectionSystem::freezeTransforms()
-{
-	GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
-    
-    // The selection bounds have possibly changed, request an idle callback
-    _requestWorkZoneRecalculation = true;
-    _requestSceneGraphChange = true;
-
-    requestIdleCallback();
 }
 
 const WorkZone& RadiantSelectionSystem::getWorkZone()
