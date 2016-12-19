@@ -183,7 +183,7 @@ bool RadiantSelectionSystem::nothingSelected() const
            (Mode() == eGroupPart && _countPrimitive == 0);
 }
 
-void RadiantSelectionSystem::pivotChanged() const  
+void RadiantSelectionSystem::pivotChanged()  
 {
 	const_cast<RadiantSelectionSystem&>(*this)._pivot.setNeedsRecalculation(true);
     SceneChangeNotify();
@@ -321,21 +321,26 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     
     _selectionInfo.totalCount += delta;
 
-    if (Node_getPatch(node) != NULL) {
+    if (Node_isPatch(node))
+	{
         _selectionInfo.patchCount += delta;
     }
-    else if (Node_getBrush(node) != NULL) {
+    else if (Node_isBrush(node))
+	{
         _selectionInfo.brushCount += delta;
     }
-    else {
+    else 
+	{
         _selectionInfo.entityCount += delta;
     }
 
     // If the selectable is selected, add it to the local selection list, otherwise remove it
-    if (isSelected) {
+    if (isSelected)
+	{
         _selection.append(node);
     }
-    else {
+    else
+	{
         _selection.erase(node);
     }
 
@@ -839,12 +844,9 @@ void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, con
 }
 
 // Lets the recalculatePivot2World() method do the work and returns the result that is stored in the member variable
-const Matrix4& RadiantSelectionSystem::getPivot2World() const
+const Matrix4& RadiantSelectionSystem::getPivot2World()
 {
-    // Questionable const design - almost everything needs to be declared const here...
-    //const_cast<RadiantSelectionSystem*>(this)->recalculatePivot2World();
-
-    return const_cast<RadiantSelectionSystem*>(this)->_pivot.getMatrix4();
+    return _pivot.getMatrix4();
 }
 
 void RadiantSelectionSystem::constructStatic()

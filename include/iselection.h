@@ -257,8 +257,8 @@ public:
     virtual void rotateSelected(const Quaternion& rotation) = 0;
     virtual void scaleSelected(const Vector3& scaling) = 0;
     
-	virtual const Matrix4& getPivot2World() const = 0;
-    virtual void pivotChanged() const = 0;
+	virtual const Matrix4& getPivot2World() = 0;
+    virtual void pivotChanged() = 0;
     
 	// Feedback events invoked by the ManipulationMouseTool
 	virtual void onManipulationStart() = 0;

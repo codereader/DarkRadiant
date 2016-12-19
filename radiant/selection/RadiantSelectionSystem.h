@@ -84,7 +84,7 @@ public:
 
 	void onSceneBoundsChanged();
 
-	void pivotChanged() const;
+	void pivotChanged() override;
 
   	void pivotChangedSelection(const ISelectable& selectable);
 
@@ -161,7 +161,7 @@ public:
 		return Highlight::NoHighlight; // never highlighted
 	}
 
-	const Matrix4& getPivot2World() const override;
+	const Matrix4& getPivot2World() override;
 
 	static void constructStatic();
 	static void destroyStatic();
