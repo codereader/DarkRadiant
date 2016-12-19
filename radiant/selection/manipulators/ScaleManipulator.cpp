@@ -1,17 +1,19 @@
 #include "ScaleManipulator.h"
 
-#include "../Remap.h"
-#include "../SelectionPool.h"
-#include "../BestPoint.h"
+#include "selection/Remap.h"
+#include "selection/SelectionPool.h"
+#include "selection/BestPoint.h"
+#include "selection/TransformationVisitors.h"
 #include "render/View.h"
 
 namespace selection
 {
 
 // Constructor
-ScaleManipulator::ScaleManipulator(Scalable& scalable, std::size_t segments, float length) :
-    _scaleFree(scalable),
-    _scaleAxis(scalable)
+ScaleManipulator::ScaleManipulator(ManipulationPivot& pivot, std::size_t segments, float length) :
+	_pivot(pivot),
+    _scaleFree(*this),
+    _scaleAxis(*this)
 {
     draw_arrowline(length, &_arrowX.front(), 0);
     draw_arrowline(length, &_arrowY.front(), 1);
@@ -27,27 +29,28 @@ void ScaleManipulator::UpdateColours() {
     _quadScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 
-void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) {
-    _pivot.update(pivot2world, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world)
+{
+    _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
     // temp hack
     UpdateColours();
 
-    collector.addRenderable(_arrowX, _pivot._worldSpace);
-    collector.addRenderable(_arrowY, _pivot._worldSpace);
-    collector.addRenderable(_arrowZ, _pivot._worldSpace);
+    collector.addRenderable(_arrowX, _pivot2World._worldSpace);
+    collector.addRenderable(_arrowY, _pivot2World._worldSpace);
+    collector.addRenderable(_arrowZ, _pivot2World._worldSpace);
 
-    collector.addRenderable(_quadScreen, _pivot._viewpointSpace);
+    collector.addRenderable(_quadScreen, _pivot2World._viewpointSpace);
 }
 
 void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
 {
-    _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
+    _pivot2World.update(_pivot.getMatrix4(), view.GetModelview(), view.GetProjection(), view.GetViewport());
 
     SelectionPool selector;
 
     {
-      Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._worldSpace));
+      Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._worldSpace));
 
     {
         SelectionIntersection best;
@@ -69,7 +72,7 @@ void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot
     }
 
     {
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._viewpointSpace));
+		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._viewpointSpace));
 
       {
         SelectionIntersection best;
@@ -119,6 +122,22 @@ bool ScaleManipulator::isSelected() const
       | _selectableY.isSelected()
       | _selectableZ.isSelected()
       | _selectableScreen.isSelected();
+}
+
+void ScaleManipulator::scale(const Vector3& scaling)
+{
+	// Pass the scale to the according traversor
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
+		Scene_Scale_Component_Selected(GlobalSceneGraph(), scaling, _pivot.getVector3());
+	}
+	else
+	{
+		Scene_Scale_Selected(GlobalSceneGraph(), scaling, _pivot.getVector3());
+	}
+
+	// Update the scene views
+	SceneChangeNotify();
 }
 
 }

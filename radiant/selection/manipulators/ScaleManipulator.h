@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Scalable.h"
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
-#include "../Renderables.h"
-#include "../Pivot2World.h"
-
-#include "../BasicSelectable.h"
+#include "selection/Renderables.h"
+#include "selection/Pivot2World.h"
+#include "selection/ManipulationPivot.h"
+#include "selection/BasicSelectable.h"
 
 namespace selection
 {
@@ -14,9 +15,12 @@ namespace selection
  * The Manipulator for scale operations
  */
 class ScaleManipulator : 
-	public ManipulatorBase
+	public ManipulatorBase,
+	public Scalable
 {
 private:
+	ManipulationPivot& _pivot;
+
 	ScaleFree _scaleFree;
 	ScaleAxis _scaleAxis;
 	RenderableArrowLine _arrowX;
@@ -27,20 +31,15 @@ private:
 	selection::BasicSelectable _selectableY;
 	selection::BasicSelectable _selectableZ;
 	selection::BasicSelectable _selectableScreen;
-	Pivot2World _pivot;
+	Pivot2World _pivot2World;
 
 public:
 	// Constructor
-	ScaleManipulator(Scalable& scalable, std::size_t segments, float length);
+	ScaleManipulator(ManipulationPivot& pivot, std::size_t segments, float length);
 
 	Type getType() const override
 	{
 		return Scale;
-	}
-
-	Pivot2World& getPivot()
-	{
-		return _pivot;
 	}
 
 	void UpdateColours();
@@ -51,6 +50,8 @@ public:
 
 	void setSelected(bool select) override;
 	bool isSelected() const override;
+
+	void scale(const Vector3& scaling) override;
 
 }; // class ScaleManipulator
 

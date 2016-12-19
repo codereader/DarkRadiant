@@ -742,26 +742,6 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
     }
 }
 
-// Applies the scaling vector <scaling> to the current selection, this is called by the according ManipulatorComponents
-void RadiantSelectionSystem::scale(const Vector3& scaling) {
-    // Check if anything is selected
-    if (!nothingSelected()) {
-        // Store the scaling vector internally
-        _scale = scaling;
-
-        // Pass the scale to the according traversor
-        if (Mode() == eComponent) {
-            Scene_Scale_Component_Selected(GlobalSceneGraph(), _scale, _pivot2world.t().getVector3());
-        }
-        else {
-            Scene_Scale_Selected(GlobalSceneGraph(), _scale, _pivot2world.t().getVector3());
-        }
-
-        // Update the scene views
-        SceneChangeNotify();
-    }
-}
-
 void RadiantSelectionSystem::onManipulationStart()
 {
 	_pivotMoving = true;
@@ -833,10 +813,21 @@ void RadiantSelectionSystem::translateSelected(const Vector3& translation)
 }
 
 // Shortcut call for an instantly applied scaling of the current selection
-void RadiantSelectionSystem::scaleSelected(const Vector3& scaling) {
-    // Apply the transformation and freeze the changes
-    startMove();
-    scale(scaling);
+void RadiantSelectionSystem::scaleSelected(const Vector3& scaling)
+{
+	// Pass the scale to the according traversor
+	if (Mode() == eComponent)
+	{
+		Scene_Scale_Component_Selected(GlobalSceneGraph(), scaling, _pivot2world.t().getVector3());
+	}
+	else
+	{
+		Scene_Scale_Selected(GlobalSceneGraph(), scaling, _pivot2world.t().getVector3());
+	}
+
+	// Update the scene views
+	SceneChangeNotify();
+
     freezeTransforms();
 }
 
@@ -1010,7 +1001,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
 
 void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) 
 {
-    rMessage() << "RadiantSelectionSystem::initialiseModule called." << std::endl;
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
 
     constructStatic();
 
@@ -1018,7 +1009,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	registerManipulator(std::make_shared<DragManipulator>(_pivot));
 	registerManipulator(std::make_shared<ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64));
-	registerManipulator(std::make_shared<ScaleManipulator>(*this, 0, 64));
+	registerManipulator(std::make_shared<ScaleManipulator>(_pivot, 0, 64));
 	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64));
 
 	_defaultManipulatorType = Manipulator::Drag;

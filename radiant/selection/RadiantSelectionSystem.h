@@ -12,9 +12,6 @@
 #include "wxutil/event/SingleIdleCallback.h"
 #include "SelectedNodeList.h"
 
-#include "Translatable.h"
-#include "Scalable.h"
-#include "Rotatable.h"
 #include "ManipulationPivot.h"
 
 namespace selection
@@ -22,7 +19,6 @@ namespace selection
 
 class RadiantSelectionSystem :
 	public SelectionSystem,
-	public Scalable,
 	public Renderable,
 	protected wxutil::SingleIdleCallback
 {
@@ -34,8 +30,6 @@ class RadiantSelectionSystem :
 
 	typedef std::list<Observer*> ObserverList;
 	ObserverList _observers;
-
-	Vector3 _scale;
 
 	// The 3D volume surrounding the most recent selection.
 	WorkZone _workZone;
@@ -155,9 +149,6 @@ public:
 
 	void SelectPoint(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon, EModifier modifier, bool face);
 	void SelectArea(const render::View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face);
-
-	// These are the "callbacks" that are used by the Manipulatables
-	void scale(const Vector3& scaling);
 
 	void onManipulationStart() override;
 	void onManipulationChanged() override;

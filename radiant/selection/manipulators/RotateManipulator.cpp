@@ -1,7 +1,8 @@
 #include "RotateManipulator.h"
 
-#include "../SelectionPool.h"
-#include "../BestPoint.h"
+#include "selection/SelectionPool.h"
+#include "selection/BestPoint.h"
+#include "selection/TransformationVisitors.h"
 #include "render/View.h"
 
 namespace selection

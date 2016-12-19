@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Rotatable.h"
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
-#include "../Renderables.h"
-#include "../Pivot2World.h"
-#include "../BasicSelectable.h"
+#include "selection/Renderables.h"
+#include "selection/Pivot2World.h"
+#include "selection/BasicSelectable.h"
 #include "selection/ManipulationPivot.h"
 
 namespace selection
