@@ -67,10 +67,6 @@ private:
 	SelectionListType _selection;
 	SelectionListType _componentSelection;
 
-	void recalculatePivot2World();
-	mutable bool _pivotChanged;
-	bool _pivotMoving;
-
 	// The coordinates of the mouse pointer when the manipulation starts
 	Vector2 _deviceStart;
 

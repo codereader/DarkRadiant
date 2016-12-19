@@ -43,9 +43,7 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
     _componentMode(eDefault),
     _countPrimitive(0),
     _countComponent(0),
-	_defaultManipulatorType(Manipulator::Drag),
-    _pivotChanged(false),
-    _pivotMoving(false)
+	_defaultManipulatorType(Manipulator::Drag)
 {}
 
 const SelectionInfo& RadiantSelectionSystem::getSelectionInfo() {
@@ -187,7 +185,6 @@ bool RadiantSelectionSystem::nothingSelected() const
 
 void RadiantSelectionSystem::pivotChanged() const  
 {
-    _pivotChanged = true;
 	const_cast<RadiantSelectionSystem&>(*this)._pivot.setNeedsRecalculation(true);
     SceneChangeNotify();
 }
@@ -753,8 +750,6 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
 
 void RadiantSelectionSystem::onManipulationStart()
 {
-	_pivotMoving = true;
-
 	// Save the pivot state now that the transformation is starting
 	_pivot.beginOperation();
 }
@@ -771,7 +766,6 @@ void RadiantSelectionSystem::onManipulationChanged()
 
 void RadiantSelectionSystem::onManipulationEnd()
 {
-	_pivotMoving = false;
 	_pivot.endOperation();
 
 	// The selection bounds have possibly changed, request an idle callback
@@ -891,22 +885,6 @@ const WorkZone& RadiantSelectionSystem::getWorkZone()
     return _workZone;
 }
 
-/* greebo: This calculates and constructs the pivot point of the selection.
- * It cycles through all selected objects and creates its AABB. The origin point of the AABB
- * is basically the pivot point. Pivot2World is therefore a translation from (0,0,0) to the calculated origin.
- */
-void RadiantSelectionSystem::recalculatePivot2World()
-{
-    if (!_pivotChanged || _pivotMoving)
-        return;
-
-    _pivotChanged = false;
-
-    if (!nothingSelected())
-    {
-		_pivot.updateFromSelection();
-    }
-}
 /* greebo: Renders the currently active manipulator by setting the render state and
  * calling the manipulator's render method
  */
