@@ -76,8 +76,6 @@ private:
 
 	bool nothingSelected() const;
 
-	void keyChanged();
-
 public:
 
 	RadiantSelectionSystem();

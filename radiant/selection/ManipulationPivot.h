@@ -24,7 +24,14 @@ private:
 	// operation, they are applied on top of the pivot2WorldStart.
 	Matrix4 _pivot2WorldStart;
 
+	// Use a single Entity's "origin" keyvalue as pivot
+	bool _entityPivotIsOrigin;
+
 public:
+	ManipulationPivot();
+
+	void initialise();
+
 	// Returns the pivot-to-world transform
 	const Matrix4& getMatrix4() const;
 
@@ -43,6 +50,13 @@ public:
 	void endOperation();
 
 	void applyTranslation(const Vector3& translation);
+
+	// Rescans the selection and calculates the pivot afresh,
+	// respecting the currently active settings
+	void updateFromSelection();
+
+private:
+	void onRegistryKeyChanged();
 };
 
 }

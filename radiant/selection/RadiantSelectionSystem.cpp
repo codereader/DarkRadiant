@@ -34,11 +34,6 @@ namespace selection
 // Initialise the shader pointer
 ShaderPtr RadiantSelectionSystem::_state;
 
-namespace 
-{
-    const std::string RKEY_ROTATION_PIVOT = "user/ui/rotationPivotIsOrigin";
-}
-
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
@@ -873,14 +868,6 @@ const WorkZone& RadiantSelectionSystem::getWorkZone()
     return _workZone;
 }
 
-void RadiantSelectionSystem::keyChanged()
-{
-    if (!nothingSelected()) {
-        pivotChanged();
-        recalculatePivot2World();
-    }
-}
-
 /* greebo: This calculates and constructs the pivot point of the selection.
  * It cycles through all selected objects and creates its AABB. The origin point of the AABB
  * is basically the pivot point. Pivot2World is therefore a translation from (0,0,0) to the calculated origin.
@@ -892,54 +879,9 @@ void RadiantSelectionSystem::recalculatePivot2World()
 
     _pivotChanged = false;
 
-    Vector3 objectPivot;
-
     if (!nothingSelected())
     {
-		if (_selectionInfo.entityCount == 1 && _selectionInfo.totalCount == 1 &&
-			Node_getLightNode(ultimateSelected()))
-		{
-			// When a single light is selected, use the origin for rotation
-			objectPivot = Node_getLightNode(ultimateSelected())->getSelectAABB().origin;
-		}
-        else if (_selectionInfo.entityCount == 1 && _selectionInfo.totalCount == 1 &&
-            registry::getValue<bool>(RKEY_ROTATION_PIVOT))
-        {
-            // Test, if a single entity is selected
-            scene::INodePtr node = ultimateSelected();
-            Entity* entity = Node_getEntity(node);
-
-            if (entity != NULL)
-            {
-                objectPivot = string::convert<Vector3>(
-                    entity->getKeyValue("origin")
-                );
-            }
-        }
-        else {
-            // Create a local variable where the aabb information is stored
-            AABB bounds;
-
-            // Traverse through the selection and update the <bounds> variable
-            if (Mode() == eComponent)
-            {
-                bounds = algorithm::getCurrentComponentSelectionBounds();
-            }
-            else
-			{
-				bounds = algorithm::getCurrentSelectionBounds();
-            }
-
-            // the <bounds> variable now contains the AABB of the selection, retrieve the origin
-            objectPivot = bounds.origin;
-        }
-
-        // Snap the pivot point to the grid (greebo: disabled this (issue #231))
-        //vector3_snap(objectPivot, GlobalGrid().getGridSize());
-
-        // The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot
-		// Save this to our ManipulationPivot class
-		_pivot.setFromMatrix(Matrix4::getTranslation(objectPivot));
+		_pivot.updateFromSelection();
     }
 }
 /* greebo: Renders the currently active manipulator by setting the render state and
@@ -997,6 +939,8 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 
     constructStatic();
 
+	_pivot.initialise();
+
 	// Add manipulators
 	registerManipulator(std::make_shared<DragManipulator>(_pivot));
 	registerManipulator(std::make_shared<ClipManipulator>());
@@ -1018,10 +962,6 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 
     GlobalGrid().signal_gridChanged().connect(
         sigc::mem_fun(this, &RadiantSelectionSystem::pivotChanged)
-    );
-
-    GlobalRegistry().signalForKey(RKEY_ROTATION_PIVOT).connect(
-        sigc::mem_fun(this, &RadiantSelectionSystem::keyChanged)
     );
 
 	GlobalEventManager().addToggle("ToggleClipper", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Clip, std::placeholders::_1));
