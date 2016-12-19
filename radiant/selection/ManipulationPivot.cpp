@@ -12,7 +12,9 @@ namespace
 }
 
 ManipulationPivot::ManipulationPivot() :
-	_entityPivotIsOrigin(false)
+	_entityPivotIsOrigin(false),
+	_needsRecalculation(true),
+	_operationActive(false)
 {}
 
 void ManipulationPivot::initialise()
@@ -25,14 +27,24 @@ void ManipulationPivot::initialise()
 }
 
 // Returns the pivot-to-world transform
-const Matrix4& ManipulationPivot::getMatrix4() const
+const Matrix4& ManipulationPivot::getMatrix4()
 {
+	if (_needsRecalculation && !_operationActive)
+	{
+		updateFromSelection();
+	}
+
 	return _pivot2World;
 }
 
 // Returns the position of the pivot point relative to origin
-const Vector3& ManipulationPivot::getVector3() const
+const Vector3& ManipulationPivot::getVector3()
 {
+	if (_needsRecalculation && !_operationActive)
+	{
+		updateFromSelection();
+	}
+
 	return _pivot2World.t().getVector3();
 }
 
@@ -41,11 +53,17 @@ void ManipulationPivot::setFromMatrix(const Matrix4& newPivot2World)
 	_pivot2World = newPivot2World;
 }
 
+void ManipulationPivot::setNeedsRecalculation(bool needsRecalculation)
+{
+	_needsRecalculation = needsRecalculation;
+}
+
 // Call this before an operation is started, such that later
 // transformations can be applied on top of the correct starting point
 void ManipulationPivot::beginOperation()
 {
 	_pivot2WorldStart = _pivot2World;
+	_operationActive = true;
 }
 
 // Reverts the matrix to the state it had at the beginning of the operation
@@ -57,6 +75,7 @@ void ManipulationPivot::revertToStart()
 void ManipulationPivot::endOperation()
 {
 	_pivot2WorldStart = _pivot2World;
+	_operationActive = false;
 }
 
 void ManipulationPivot::applyTranslation(const Vector3& translation)
@@ -69,6 +88,8 @@ void ManipulationPivot::applyTranslation(const Vector3& translation)
 
 void ManipulationPivot::updateFromSelection()
 {
+	_needsRecalculation = false;
+
 	Vector3 objectPivot;
 
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();

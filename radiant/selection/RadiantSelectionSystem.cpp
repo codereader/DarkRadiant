@@ -188,6 +188,7 @@ bool RadiantSelectionSystem::nothingSelected() const
 void RadiantSelectionSystem::pivotChanged() const  
 {
     _pivotChanged = true;
+	const_cast<RadiantSelectionSystem&>(*this)._pivot.setNeedsRecalculation(true);
     SceneChangeNotify();
 }
 
@@ -831,7 +832,7 @@ const Matrix4& RadiantSelectionSystem::getPivot2World() const
     // Questionable const design - almost everything needs to be declared const here...
     const_cast<RadiantSelectionSystem*>(this)->recalculatePivot2World();
 
-    return _pivot.getMatrix4();
+    return const_cast<RadiantSelectionSystem*>(this)->_pivot.getMatrix4();
 }
 
 void RadiantSelectionSystem::constructStatic()
