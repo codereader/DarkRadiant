@@ -138,7 +138,7 @@ class ResizeTranslatable :
 {
 	void translate(const Vector3& translation) override
 	{
-		Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
+		GlobalSelectionSystem().foreachSelectedComponent(TranslateComponentSelected(translation));
 	}
 };
 

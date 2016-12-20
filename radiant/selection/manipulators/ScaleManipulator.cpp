@@ -129,11 +129,11 @@ void ScaleManipulator::scale(const Vector3& scaling)
 	// Pass the scale to the according traversor
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
-		Scene_Scale_Component_Selected(GlobalSceneGraph(), scaling, _pivot.getVector3());
+		GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaling, _pivot.getVector3()));
 	}
 	else
 	{
-		Scene_Scale_Selected(GlobalSceneGraph(), scaling, _pivot.getVector3());
+		GlobalSelectionSystem().foreachSelected(ScaleSelected(scaling, _pivot.getVector3()));
 	}
 
 	// Update the scene views

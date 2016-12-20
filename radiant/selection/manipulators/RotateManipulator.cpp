@@ -273,7 +273,8 @@ void RotateManipulator::rotate(const Quaternion& rotation)
 	// Perform the rotation according to the current mode
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
-		Scene_Rotate_Component_Selected(GlobalSceneGraph(), rotation, _pivot.getVector3());
+		GlobalSelectionSystem().foreachSelectedComponent(
+			RotateComponentSelected(rotation, _pivot.getVector3()));
 	}
 	else
 	{

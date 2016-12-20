@@ -139,11 +139,12 @@ void SelectionTranslator::translate(const Vector3& translation)
 {
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
-		Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
+		GlobalSelectionSystem().foreachSelectedComponent(TranslateComponentSelected(translation));
 	}
 	else
 	{
-		Scene_Translate_Selected(GlobalSceneGraph(), translation);
+		// Cycle through the selected items and apply the translation
+		GlobalSelectionSystem().foreachSelected(TranslateSelected(translation));
 	}
 
 	// Invoke the feedback function

@@ -36,8 +36,8 @@ void rotateSelected(const Quaternion& rotation)
 	// Perform the rotation according to the current mode
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
-		Scene_Rotate_Component_Selected(GlobalSceneGraph(), rotation, 
-			GlobalSelectionSystem().getPivot2World().t().getVector3());
+		GlobalSelectionSystem().foreachSelectedComponent(
+			RotateComponentSelected(rotation, GlobalSelectionSystem().getPivot2World().t().getVector3()));
 	}
 	else
 	{
@@ -76,13 +76,13 @@ void scaleSelected(const Vector3& scaleXYZ)
 		// Pass the scale to the according traversor
 		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 		{
-			Scene_Scale_Component_Selected(GlobalSceneGraph(), scaleXYZ, 
-				GlobalSelectionSystem().getPivot2World().t().getVector3());
+			GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaleXYZ, 
+				GlobalSelectionSystem().getPivot2World().t().getVector3()));
 		}
 		else
 		{
-			Scene_Scale_Selected(GlobalSceneGraph(), scaleXYZ, 
-				GlobalSelectionSystem().getPivot2World().t().getVector3());
+			GlobalSelectionSystem().foreachSelected(ScaleSelected(scaleXYZ, 
+				GlobalSelectionSystem().getPivot2World().t().getVector3()));
 		}
 
 		// Update the scene views
@@ -323,11 +323,12 @@ void translateSelected(const Vector3& translation)
 	// Apply the transformation and freeze the changes
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
-		Scene_Translate_Component_Selected(GlobalSceneGraph(), translation);
+		GlobalSelectionSystem().foreachSelectedComponent(TranslateComponentSelected(translation));
 	}
 	else
 	{
-		Scene_Translate_Selected(GlobalSceneGraph(), translation);
+		// Cycle through the selected items and apply the translation
+		GlobalSelectionSystem().foreachSelected(TranslateSelected(translation));
 	}
 
 	// Update the scene so that the changes are made visible
