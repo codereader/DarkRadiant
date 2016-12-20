@@ -6,13 +6,13 @@
 #include "registry/registry.h"
 #include "selection/algorithm/General.h"
 
-// greebo: The implementation of those geometric helper functions
-
+// greebo: This is needed e.g. to calculate the translation vector of a rotation transformation
 Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld)
 {
 	return localToWorld.getFullInverse().transformPoint(world_pivot);
 }
 
+// greebo: Calculates the translation vector of a rotation about a pivot point,
 void translation_for_pivoted_rotation(Vector3& parent_translation, const Quaternion& local_rotation,
 									  const Vector3& world_pivot, const Matrix4& localToWorld,
 									  const Matrix4& localToParent)
@@ -31,6 +31,7 @@ void translation_for_pivoted_rotation(Vector3& parent_translation, const Quatern
   //rMessage() << "parent_translation: " << parent_translation << "\n";
 }
 
+// greebo: Calculates the translation vector of a scale transformation based on a pivot point,
 void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& local_scale,
 									const Vector3& world_pivot, const Matrix4& localToWorld,
 									const Matrix4& localToParent)
