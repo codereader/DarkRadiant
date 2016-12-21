@@ -297,7 +297,7 @@ void RenderablePicoSurface::testSelect(Selector& selector,
 		);
 
 		// Add the intersection to the selector if it is valid
-		if(result.valid()) {
+		if(result.isValid()) {
 			selector.addIntersection(result);
 		}
 	}

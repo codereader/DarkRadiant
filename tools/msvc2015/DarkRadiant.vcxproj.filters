@@ -197,6 +197,9 @@
     <Filter Include="src\selection\group">
       <UniqueIdentifier>{182783ec-2373-43f8-a310-0a3e51333300}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\selection\manipulators">
+      <UniqueIdentifier>{d29d1907-07b9-4549-a336-642933e4602b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -379,28 +382,10 @@
     <ClCompile Include="..\..\radiant\selection\BestPoint.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\DragManipulator.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\Intersection.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\Manipulatables.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\Manipulator.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\Planes.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\RotateManipulator.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\ScaleManipulator.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp">
@@ -410,9 +395,6 @@
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\TransformationVisitors.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\TranslateManipulator.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\algorithm\Curves.cpp">
@@ -892,6 +874,30 @@
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.cpp">
       <Filter>src\selection\group</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\DragManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\RotateManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\TranslateManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorBase.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorComponents.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\algorithm\Planes.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\ManipulationPivot.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1164,31 +1170,13 @@
     <ClInclude Include="..\..\radiant\selection\BestPoint.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\ClipManipulator.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Device.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\DragManipulator.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Intersection.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\Manipulatables.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\Manipulator.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\ManipulatorComponent.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\Planes.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h">
@@ -1200,12 +1188,6 @@
     <ClInclude Include="..\..\radiant\selection\Renderables.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\RotateManipulator.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\ScaleManipulator.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SceneWalkers.h">
       <Filter>src\selection</Filter>
     </ClInclude>
@@ -1215,13 +1197,7 @@
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\Selectors.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\TransformationVisitors.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\TranslateManipulator.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\algorithm\Curves.h">
@@ -1811,6 +1787,42 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h">
       <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\ClipManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\DragManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\RotateManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\ScaleManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\TranslateManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorBase.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorComponents.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SingleItemSelector.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\BestSelector.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectionPool.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\algorithm\Planes.h">
+      <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\ManipulationPivot.h">
+      <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

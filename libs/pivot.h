@@ -167,57 +167,6 @@ inline void ConstructDevice2Manip(Matrix4& device2manip, const Matrix4& object2w
   device2manip.invertFull();
 }
 
-inline void Pivot2World_worldSpace(Matrix4& manip2world, const Matrix4& pivot2world, const Matrix4& modelview, const Matrix4& projection, const Matrix4& viewport)
-{
-  manip2world = pivot2world;
-
-  Matrix4 pivot2screen;
-  ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
-
-  Matrix4 scale;
-  pivot_scale(scale, pivot2screen);
-  manip2world.multiplyBy(scale);
-  pivot_perspective(scale, pivot2screen);
-  manip2world.multiplyBy(scale);
-}
-
-inline void Pivot2World_viewpointSpace(Matrix4& manip2world, Vector3& axis, const Matrix4& pivot2world, const Matrix4& modelview, const Matrix4& projection, const Matrix4& viewport)
-{
-  manip2world = pivot2world;
-
-  Matrix4 pivot2screen;
-  ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
-
-  Matrix4 scale;
-  pivot_scale(scale, pivot2screen);
-  manip2world.multiplyBy(scale);
-
-  billboard_viewpointOriented(scale, pivot2screen);
-  axis = scale.z().getVector3();
-  manip2world.multiplyBy(scale);
-
-  pivot_perspective(scale, pivot2screen);
-  manip2world.multiplyBy(scale);
-}
-
-inline void Pivot2World_viewplaneSpace(Matrix4& manip2world, const Matrix4& pivot2world, const Matrix4& modelview, const Matrix4& projection, const Matrix4& viewport)
-{
-  manip2world = pivot2world;
-
-  Matrix4 pivot2screen;
-  ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
-
-  Matrix4 scale;
-  pivot_scale(scale, pivot2screen);
-  manip2world.multiplyBy(scale);
-
-  billboard_viewplaneOriented(scale, pivot2screen);
-  manip2world.multiplyBy(scale);
-
-  pivot_perspective(scale, pivot2screen);
-  manip2world.multiplyBy(scale);
-}
-
 const Colour4b g_colour_x(255, 0, 0, 255);
 const Colour4b g_colour_y(0, 255, 0, 255);
 const Colour4b g_colour_z(0, 0, 255, 255);

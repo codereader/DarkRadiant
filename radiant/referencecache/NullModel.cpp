@@ -52,7 +52,7 @@ void NullModel::testSelect(Selector& selector, SelectionTest& test, const Matrix
 	SelectionIntersection best;
 	aabb_testselect(_aabbLocal, test, best);
 
-	if(best.valid()) {
+	if(best.isValid()) {
 		selector.addIntersection(best);
 	}
 }

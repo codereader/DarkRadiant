@@ -1,8 +1,12 @@
-#include "math/FloatTools.h"
-#include "Manipulatables.h"
-#include "Intersection.h"
+#include "ManipulatorComponents.h"
 
 #include "igrid.h"
+#include "math/FloatTools.h"
+
+#include "../Intersection.h"
+
+namespace selection
+{
 
 void transform_local2object(Matrix4& object, const Matrix4& local, const Matrix4& local2object)
 {
@@ -125,4 +129,43 @@ void ScaleFree::Transform(const Matrix4& manip2object, const Matrix4& device2man
       start[2] == 0 ? 1 : 1 + delta[2] / start[2]
     );
     _scalable.scale(scale);
+}
+
+SelectionTranslator::SelectionTranslator(const TranslationCallback& onTranslation) :
+	_onTranslation(onTranslation)
+{}
+
+void SelectionTranslator::translate(const Vector3& translation)
+{
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
+		GlobalSelectionSystem().foreachSelectedComponent(TranslateComponentSelected(translation));
+	}
+	else
+	{
+		// Cycle through the selected items and apply the translation
+		GlobalSelectionSystem().foreachSelected(TranslateSelected(translation));
+	}
+
+	// Invoke the feedback function
+	if (_onTranslation)
+	{
+		_onTranslation(translation);
+	}
+}
+
+TranslatablePivot::TranslatablePivot(ManipulationPivot& pivot) :
+	_pivot(pivot)
+{}
+
+void TranslatablePivot::translate(const Vector3& translation)
+{
+	Vector3 translationSnapped = translation.getSnapped(GlobalGrid().getGridSize());
+
+	_pivot.applyTranslation(translationSnapped);
+
+	// User is placing the pivot manually, so let's keep it that way
+	_pivot.setUserLocked(true);
+}
+
 }

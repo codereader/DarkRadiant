@@ -211,7 +211,7 @@ void Clipper::splitClip() {
 }
 
 bool Clipper::clipMode() const {
-	return GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip;
+	return GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Clip;
 }
 
 void Clipper::onClipMode(bool enabled) {

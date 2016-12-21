@@ -2,8 +2,8 @@
 
 #include "math/Vector3.h"
 #include "iselectiontest.h"
-#include "Manipulatables.h"
 #include "render/VertexNCb.h"
+#include "render/VertexCb.h"
 
 /* greebo: These are functions that are needed for selection test (which points are nearest to what and something)
  */

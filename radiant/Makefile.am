@@ -181,7 +181,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \
-                      selection/Manipulator.cpp \
+                      selection/manipulators/ManipulatorBase.cpp \
                       selection/TransformationVisitors.cpp \
                       selection/algorithm/Transformation.cpp \
                       selection/algorithm/GroupCycle.cpp \
@@ -193,16 +193,17 @@ darkradiant_SOURCES = main.cpp \
                       selection/algorithm/Group.cpp \
                       selection/algorithm/ModelFinder.cpp \
                       selection/algorithm/General.cpp \
+					  selection/algorithm/Planes.cpp \
                       selection/BestPoint.cpp \
-                      selection/DragManipulator.cpp \
-                      selection/Planes.cpp \
+					  selection/ManipulationPivot.cpp \
+                      selection/manipulators/DragManipulator.cpp \
                       selection/RadiantSelectionSystem.cpp \
-                      selection/RotateManipulator.cpp \
-                      selection/Manipulatables.cpp \
-                      selection/ScaleManipulator.cpp \
+                      selection/manipulators/RotateManipulator.cpp \
+                      selection/manipulators/ManipulatorComponents.cpp \
+                      selection/manipulators/ScaleManipulator.cpp \
 					  selection/group/SelectionGroupManager.cpp \
 					  selection/group/SelectionGroupInfoFileModule.cpp \
-                      selection/TranslateManipulator.cpp \
+                      selection/manipulators/TranslateManipulator.cpp \
                       selection/Intersection.cpp \
                       settings/GameFileLoader.cpp \
                       settings/Game.cpp \

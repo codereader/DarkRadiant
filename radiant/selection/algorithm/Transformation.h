@@ -15,6 +15,11 @@ namespace
 	const std::string RKEY_OFFSET_CLONED_OBJECTS = "user/ui/offsetClonedObjects";
 }
 
+/**
+ * Applies the given quaternion to the current selection.
+ */
+void rotateSelected(const Quaternion& rotation);
+
 /** greebo: Rotates the current selection about the
 	* 			specified rotation angles.
 	*
@@ -41,6 +46,11 @@ void scaleSelected(const Vector3& scaleXYZ);
  * when you hit the space bar).
  */
 void cloneSelected(const cmd::ArgumentList& args);
+
+/**
+ * Moves the current selection by the given translation vector.
+ */
+void translateSelected(const Vector3& translation);
 
 enum ENudgeDirection
 {

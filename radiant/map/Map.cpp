@@ -46,6 +46,7 @@
 #include "ui/prefabselector/PrefabSelector.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
+#include "selection/algorithm/Transformation.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
@@ -724,7 +725,7 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
         GlobalBrush().setTextureLock(true);
 
         // Translate the selection to the given point
-        GlobalSelectionSystem().translateSelected(targetCoords);
+        selection::algorithm::translateSelected(targetCoords);
 
         // Revert to previous state
         GlobalBrush().setTextureLock(prevTexLockState);

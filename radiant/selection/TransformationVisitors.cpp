@@ -1,18 +1,18 @@
 #include "TransformationVisitors.h"
 
 #include "editable.h"
-#include "Manipulatables.h"
+#include "manipulators/ManipulatorComponents.h"
 #include "transformlib.h"
 #include "registry/registry.h"
 #include "selection/algorithm/General.h"
 
-// greebo: The implementation of those geometric helper functions
-
+// greebo: This is needed e.g. to calculate the translation vector of a rotation transformation
 Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld)
 {
 	return localToWorld.getFullInverse().transformPoint(world_pivot);
 }
 
+// greebo: Calculates the translation vector of a rotation about a pivot point,
 void translation_for_pivoted_rotation(Vector3& parent_translation, const Quaternion& local_rotation,
 									  const Vector3& world_pivot, const Matrix4& localToWorld,
 									  const Matrix4& localToParent)
@@ -26,11 +26,12 @@ void translation_for_pivoted_rotation(Vector3& parent_translation, const Quatern
 
   //rMessage() << "translation: " << translation << "\n";
 
-  translation_local2object(parent_translation, translation, localToParent);
+  selection::translation_local2object(parent_translation, translation, localToParent);
 
   //rMessage() << "parent_translation: " << parent_translation << "\n";
 }
 
+// greebo: Calculates the translation vector of a scale transformation based on a pivot point,
 void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& local_scale,
 									const Vector3& world_pivot, const Matrix4& localToWorld,
 									const Matrix4& localToParent)
@@ -42,7 +43,7 @@ void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& l
       (-local_pivot) * local_scale
   );
 
-  translation_local2object(parent_translation, translation, localToParent);
+  selection::translation_local2object(parent_translation, translation, localToParent);
 }
 
 // ===================================================================================
@@ -155,54 +156,4 @@ void ScaleComponentSelected::visit(const scene::INodePtr& node) const {
       transform->setScale(m_scale);
       transform->setTranslation(parent_translation);
     }
-}
-
-// ============ Scene Traversors ================================
-
-// greebo: these could be implemented into the RadiantSelectionSystem class as well, if you ask me
-
-/* greebo: This is called when a selected item is to be translated
- * This basically cycles through all selected objects with a translation
- * visitor class (which derives from SelectionSystem::Visitor)
- */
-void Scene_Translate_Selected(scene::Graph& graph, const Vector3& translation) {
-  // Check if there is anything to do
-  if(GlobalSelectionSystem().countSelected() != 0) {
-  	// Cycle through the selected items and apply the translation
-  	GlobalSelectionSystem().foreachSelected(TranslateSelected(translation));
-  }
-}
-
-// The same as Scene_Translate_Selected, just that components are translated
-void Scene_Translate_Component_Selected(scene::Graph& graph, const Vector3& translation) {
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    GlobalSelectionSystem().foreachSelectedComponent(TranslateComponentSelected(translation));
-  }
-}
-
-// The same as Scene_Rotate_Selected, just that components are rotated
-void Scene_Rotate_Component_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot) {
-  if(GlobalSelectionSystem().countSelectedComponents() != 0)
-  {
-    GlobalSelectionSystem().foreachSelectedComponent(RotateComponentSelected(rotation, world_pivot));
-  }
-}
-/* greebo: This is called when a selected item is to be scaled
- * This basically cycles through all selected objects with a scale
- * visitor class (which derives from SelectionSystem::Visitor)
- */
-void Scene_Scale_Selected(scene::Graph& graph, const Vector3& scaling, const Vector3& world_pivot) {
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    GlobalSelectionSystem().foreachSelected(ScaleSelected(scaling, world_pivot));
-  }
-}
-
-// The same as Scene_Scale_Selected, just that components are scaled
-void Scene_Scale_Component_Selected(scene::Graph& graph, const Vector3& scaling, const Vector3& world_pivot) {
-  if(GlobalSelectionSystem().countSelectedComponents() != 0)
-  {
-    GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaling, world_pivot));
-  }
 }

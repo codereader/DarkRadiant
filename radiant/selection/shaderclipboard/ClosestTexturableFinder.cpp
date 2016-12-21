@@ -56,8 +56,7 @@ bool ClosestTexturableFinder::pre(const scene::INodePtr& node)
 				(*i)->testSelect(_selectionTest, intersection);
 
 				// Any intersection found / is it better than the previous one?
-				if (intersection.valid() &&
-					SelectionIntersection_closer(intersection, _bestIntersection))
+				if (intersection.isValid() && intersection.isCloserThan(_bestIntersection))
 				{
 					// Yes, store this as new best intersection
 					_bestIntersection = intersection;

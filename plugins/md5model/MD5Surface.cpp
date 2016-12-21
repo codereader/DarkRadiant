@@ -168,7 +168,7 @@ void MD5Surface::testSelect(Selector& selector,
 	  best
 	);
 
-	if(best.valid()) {
+	if(best.isValid()) {
 		selector.addIntersection(best);
 	}
 }

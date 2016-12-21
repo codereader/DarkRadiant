@@ -7,33 +7,7 @@
 #include "math/Matrix4.h"
 #include "math/Quaternion.h"
 
-/* greebo: These are the visitor classes that apply the actual transformations to
- * the visited instance
- *
- * Included: Translation, Rotation, Scale
- */
-
-// =========== Helper functions ====================================================
-
-/* greebo: This is needed e.g. to calculate the translation vector of a rotation transformation
- * It combines the local and the world pivot point, it seems
- */
-Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld);
-
-/* greebo: This calculates the translation vector of a rotation with a pivot point,
- * but I'm not sure about this :)
- */
-void translation_for_pivoted_rotation(Vector3& parent_translation, const Quaternion& local_rotation,
-										const Vector3& world_pivot,	const Matrix4& localToWorld,
-										const Matrix4& localToParent);
-
-/* greebo: This calculates the translation vector of a scale transformation with a pivot point,
- */
-void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& local_scale,
-									const Vector3& world_pivot, const Matrix4& localToWorld,
-									const Matrix4& localToParent);
-
-// =========== Translation, Scale & Rotation ==========================================
+// Visitor classes applying the actual transformation to the visited node.
 
 /* greebo: Visitor classes that apply a transformation to the instance passed to visit()
  *
@@ -52,7 +26,7 @@ public:
 
 	// The visitor function that applies the actual transformation to the instance
 	void visit(const scene::INodePtr& node) const;
-}; // class TranslateSelected
+};
 
 // -------------------------------------------------------------------------------
 
@@ -133,17 +107,3 @@ public:
 	// This actually applies the change to the node
   	void visit(const scene::INodePtr& node) const;
 };
-
-// =============================================================================
-
-/* greebo: This is called when a selected item is to be transformed
- * This basically cycles through all selected objects passing the instance to the
- * visitor class (which derives from SelectionSystem::Visitor)
- */
-void Scene_Translate_Selected(scene::Graph& graph, const Vector3& translation);
-void Scene_Translate_Component_Selected(scene::Graph& graph, const Vector3& translation);
-
-void Scene_Rotate_Component_Selected(scene::Graph& graph, const Quaternion& rotation, const Vector3& world_pivot);
-
-void Scene_Scale_Selected(scene::Graph& graph, const Vector3& scaling, const Vector3& world_pivot);
-void Scene_Scale_Component_Selected(scene::Graph& graph, const Vector3& scaling, const Vector3& world_pivot);

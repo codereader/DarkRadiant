@@ -210,7 +210,7 @@ void FaceInstance::testSelect(SelectionTest& test, SelectionIntersection& best) 
 void FaceInstance::testSelect(Selector& selector, SelectionTest& test) {
 	SelectionIntersection best;
 	testSelect(test, best);
-	if (best.valid()) {
+	if (best.isValid()) {
 		Selector_add(selector, m_selectable, best);
 	}
 }
@@ -219,7 +219,7 @@ void FaceInstance::testSelect_centroid(Selector& selector, SelectionTest& test) 
 	if (m_face->contributes()) {
 		SelectionIntersection best;
 		m_face->testSelect_centroid(test, best);
-		if (best.valid()) {
+		if (best.isValid()) {
 			Selector_add(selector, m_selectable, best);
 		}
 	}

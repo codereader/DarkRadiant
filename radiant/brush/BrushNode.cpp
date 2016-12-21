@@ -4,6 +4,7 @@
 #include "ifilter.h"
 #include "iradiant.h"
 #include "icounter.h"
+#include "iclipper.h"
 #include "ientity.h"
 #include "math/Frustum.h"
 #include <functional>
@@ -94,7 +95,7 @@ void BrushNode::testSelect(Selector& selector, SelectionTest& test) {
 		}
 	}
 
-	if (best.valid()) {
+	if (best.isValid()) {
 		selector.addIntersection(best);
 	}
 }
@@ -374,7 +375,7 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 }
 
 void BrushNode::renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const {
-	if (GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip && isSelected()) {
+	if (GlobalClipper().clipMode() && isSelected()) {
 		m_clipPlane.render(collector, volume, localToWorld());
 	}
 }

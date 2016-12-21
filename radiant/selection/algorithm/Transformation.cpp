@@ -20,6 +20,8 @@
 #include "map/algorithm/Clone.h"
 #include "scene/BasicRootNode.h"
 #include "debugging/debugging.h"
+#include "selection/TransformationVisitors.h"
+#include "selection/SceneWalkers.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -29,6 +31,27 @@ namespace selection
 namespace algorithm
 {
 
+void rotateSelected(const Quaternion& rotation)
+{
+	// Perform the rotation according to the current mode
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
+		GlobalSelectionSystem().foreachSelectedComponent(
+			RotateComponentSelected(rotation, GlobalSelectionSystem().getPivot2World().t().getVector3()));
+	}
+	else
+	{
+		// Cycle through the selections and rotate them
+		GlobalSelectionSystem().foreachSelected(RotateSelected(rotation,
+			GlobalSelectionSystem().getPivot2World().t().getVector3()));
+	}
+
+	// Update the views
+	SceneChangeNotify();
+
+	GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
+}
+
 // greebo: see header for documentation
 void rotateSelected(const Vector3& eulerXYZ)
 {
@@ -36,7 +59,7 @@ void rotateSelected(const Vector3& eulerXYZ)
 	command += string::to_string(eulerXYZ);
 	UndoableCommand undo(command.c_str());
 
-	GlobalSelectionSystem().rotateSelected(Quaternion::createForEulerXYZDegrees(eulerXYZ));
+	rotateSelected(Quaternion::createForEulerXYZDegrees(eulerXYZ));
 }
 
 // greebo: see header for documentation
@@ -48,11 +71,27 @@ void scaleSelected(const Vector3& scaleXYZ)
 	{
 		std::string command("scaleSelected: ");
 		command += string::to_string(scaleXYZ);
-		UndoableCommand undo(command.c_str());
+		UndoableCommand undo(command);
 
-		GlobalSelectionSystem().scaleSelected(scaleXYZ);
+		// Pass the scale to the according traversor
+		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+		{
+			GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaleXYZ, 
+				GlobalSelectionSystem().getPivot2World().t().getVector3()));
+		}
+		else
+		{
+			GlobalSelectionSystem().foreachSelected(ScaleSelected(scaleXYZ, 
+				GlobalSelectionSystem().getPivot2World().t().getVector3()));
+		}
+
+		// Update the scene views
+		SceneChangeNotify();
+
+		GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
 	}
-	else {
+	else 
+	{
 		wxutil::Messagebox::ShowError(_("Cannot scale by zero value."));
 	}
 }
@@ -279,6 +318,25 @@ Vector3 AxisBase_axisForDirection(const AxisBase& axes, ENudgeDirection directio
 	return Vector3(0, 0, 0);
 }
 
+void translateSelected(const Vector3& translation)
+{
+	// Apply the transformation and freeze the changes
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	{
+		GlobalSelectionSystem().foreachSelectedComponent(TranslateComponentSelected(translation));
+	}
+	else
+	{
+		// Cycle through the selected items and apply the translation
+		GlobalSelectionSystem().foreachSelected(TranslateSelected(translation));
+	}
+
+	// Update the scene so that the changes are made visible
+	SceneChangeNotify();
+
+	GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
+}
+
 // Specialised overload, called by the general nudgeSelected() routine
 void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 {
@@ -287,14 +345,14 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 	Vector3 view_direction(-axes.z);
 	Vector3 nudge(AxisBase_axisForDirection(axes, direction) * amount);
 
-	if (GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eTranslate ||
-        GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eDrag ||
-        GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip)
+	if (GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Translate ||
+        GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Drag ||
+        GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Clip)
     {
-        GlobalSelectionSystem().translateSelected(nudge);
+        translateSelected(nudge);
 
         // In clip mode, update the clipping plane
-        if (GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip)
+        if (GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Clip)
         {
             GlobalClipper().update();
         }
@@ -342,7 +400,7 @@ void nudgeByAxis(int nDim, float fNudge)
 	Vector3 translate(0, 0, 0);
 	translate[nDim] = fNudge;
 
-	GlobalSelectionSystem().translateSelected(translate);
+	translateSelected(translate);
 }
 
 void moveSelectedAlongZ(float amount)
@@ -439,24 +497,20 @@ void rotateSelectionAboutAxis(axis_t axis, float deg)
 {
 	if (fabs(deg) == 90.0f)
 	{
-		GlobalSelectionSystem().rotateSelected(
-			quaternion_for_axis90(axis, (deg > 0) ? eSignPositive : eSignNegative));
+		rotateSelected(quaternion_for_axis90(axis, (deg > 0) ? eSignPositive : eSignNegative));
 	}
 	else
 	{
 		switch(axis)
 		{
 		case 0:
-			GlobalSelectionSystem().rotateSelected(
-				Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
+			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
 			break;
 		case 1:
-			GlobalSelectionSystem().rotateSelected(
-				Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
+			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
 			break;
 		case 2:
-			GlobalSelectionSystem().rotateSelected(
-				Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
+			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
 			break;
 		}
 	}
@@ -503,7 +557,7 @@ void mirrorSelection(int axis)
 	Vector3 flip(1, 1, 1);
 	flip[axis] = -1;
 
-	GlobalSelectionSystem().scaleSelected(flip);
+	scaleSelected(flip);
 }
 
 void mirrorSelectionX(const cmd::ArgumentList& args)

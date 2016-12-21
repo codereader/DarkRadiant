@@ -76,7 +76,7 @@ public:
 		SelectionIntersection best;
 		test.TestPoint(_vertex, best);
 
-		if (best.valid()) {
+		if (best.isValid()) {
 			// Add the selectable to the given selector > this should trigger the callbacks
 			Selector_add(selector, *this, best);
 		}
@@ -126,7 +126,7 @@ public:
 		Vector3 testVertex = _origin + _vertex;
 		test.TestPoint(testVertex, best);
 
-		if (best.valid()) {
+		if (best.isValid()) {
 			// Add the selectable to the given selector > this should trigger the callbacks
 			Selector_add(selector, *this, best);
 		}

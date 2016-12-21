@@ -2,65 +2,74 @@
 
 #include <cstddef>
 
-#include "math/Vector3.h"
+#include "math/FloatTools.h"
 #include "inode.h"
 #include "iselection.h"
-#include <memory>
 #include <memory>
 #include <functional>
 
 class SelectionIntersection
 {
-  float m_depth;
-  float m_distance;
+private:
+	float _depth;
+	float _distance;
 public:
-  SelectionIntersection() : m_depth(1), m_distance(2)
-  {
-  }
-  SelectionIntersection(float depth, float distance) : m_depth(depth), m_distance(distance)
-  {
-  }
-  bool operator<(const SelectionIntersection& other) const
-  {
-    if(m_distance != other.m_distance)
-    {
-      return m_distance < other.m_distance;
-    }
-    if(m_depth != other.m_depth)
-    {
-      return m_depth < other.m_depth;
-    }
-    return false;
-  }
-  bool equalEpsilon(const SelectionIntersection& other, float distanceEpsilon, float depthEpsilon) const
-  {
-    return float_equal_epsilon(m_distance, other.m_distance, distanceEpsilon)
-      && float_equal_epsilon(m_depth, other.m_depth, depthEpsilon);
-  }
-  float depth() const
-  {
-    return m_depth;
-  }
-  bool valid() const
-  {
-    return depth() < 1;
-  }
+	SelectionIntersection() : 
+		_depth(1), 
+		_distance(2)
+	{}
+
+	SelectionIntersection(float depth, float distance) : 
+		_depth(depth), 
+		_distance(distance)
+	{}
+
+	bool operator<(const SelectionIntersection& other) const
+	{
+		if (_distance != other._distance)
+		{
+			return _distance < other._distance;
+		}
+
+		if (_depth != other._depth)
+		{
+			return _depth < other._depth;
+		}
+
+		return false;
+	}
+
+	bool equalEpsilon(const SelectionIntersection& other, float distanceEpsilon, float depthEpsilon) const
+	{
+		return float_equal_epsilon(_distance, other._distance, distanceEpsilon) && 
+			   float_equal_epsilon(_depth, other._depth, depthEpsilon);
+	}
+
+	float depth() const
+	{
+		return _depth;
+	}
+	
+	bool isValid() const
+	{
+		return depth() < 1;
+	}
+
+	// returns true if self is closer than other
+	bool isCloserThan(const SelectionIntersection& other) const
+	{
+		return *this < other;
+	}
+
+	// assigns other to *this if other is closer than *this
+	void assignIfCloser(const SelectionIntersection& other)
+	{
+		if (other.isCloserThan(*this))
+		{
+			*this = other;
+		}
+	}
 };
-
-// returns true if self is closer than other
-inline bool SelectionIntersection_closer(const SelectionIntersection& self, const SelectionIntersection& other)
-{
-  return self < other;
-}
-
-// assigns other to best if other is closer than best
-inline void assign_if_closer(SelectionIntersection& best, const SelectionIntersection& other)
-{
-  if(SelectionIntersection_closer(other, best))
-  {
-    best = other;
-  }
-}
 
 /**
  * greebo: A helper class allowing to traverse a sequence of Vector3
