@@ -5,6 +5,7 @@
 #include "imapformat.h"
 #include "inamespace.h"
 #include "imapresource.h"
+#include "iscenegraph.h"
 #include "icommandsystem.h"
 #include "imodule.h"
 #include "math/Vector3.h"
@@ -19,7 +20,8 @@ class TextInputStream;
 namespace map {
 
 class Map :
-	public IMap
+	public IMap,
+	public scene::Graph::Observer
 {
 	// The map name
 	std::string _mapName;
@@ -60,6 +62,10 @@ public:
 	virtual const std::string& getName() const override;
 	virtual const StringSet& getDependencies() const override;
 	virtual void initialiseModule(const ApplicationContext& ctx) override;
+	virtual void shutdownModule() override;
+
+	// Gets called when a node is removed from the scenegraph
+	virtual void onSceneNodeErase(const scene::INodePtr& node) override;
 
 	/** greebo: Returns true if the map has not been named yet.
 	 */

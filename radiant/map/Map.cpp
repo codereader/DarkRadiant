@@ -151,6 +151,15 @@ bool Map::isUnnamed() const {
     return _mapName == _(MAP_UNNAMED_STRING);
 }
 
+void Map::onSceneNodeErase(const scene::INodePtr& node)
+{
+	// Detect when worldspawn is removed from the map
+	if (node == _worldSpawnNode)
+	{
+		_worldSpawnNode.reset();
+	}
+}
+
 void Map::setWorldspawn(const scene::INodePtr& node)
 {
     _worldSpawnNode = node;
@@ -966,6 +975,7 @@ const StringSet& Map::getDependencies() const
 	{
         _dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_GAMEMANAGER);
+		_dependencies.insert(MODULE_SCENEGRAPH);
     }
 
     return _dependencies;
@@ -984,6 +994,8 @@ void Map::initialiseModule(const ApplicationContext& ctx)
         sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantShutdown)
     );
 
+	GlobalSceneGraph().addSceneObserver(this);
+
     // Add the Map-related commands to the EventManager
     registerCommands();
 
@@ -991,6 +1003,11 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     GlobalMapPosition().initialise();
 
 	MapFileManager::registerFileTypes();
+}
+
+void Map::shutdownModule()
+{
+	GlobalSceneGraph().removeSceneObserver(this);
 }
 
 // Creates the static module instance
