@@ -2,44 +2,84 @@
 
 #include "itextstream.h"
 
-namespace ui {
+namespace ui
+{
+
+ColourScheme::ColourScheme() 
+{}
 
 /*	ColourScheme Constructor
  *  Builds the colourscheme structure and passes the found <colour> tags to the ColourItem constructor
  *  All the found <colour> items are stored in a vector of ColourItems
  */
-ColourScheme::ColourScheme(xml::Node& schemeNode) {
+ColourScheme::ColourScheme(const xml::Node& schemeNode)
+{
 	_readOnly = (schemeNode.getAttributeValue("readonly") == "1");
 
 	// Select all <colour> nodes from the tree
 	xml::NodeList colourNodes = schemeNode.getNamedChildren("colour");
 
-	if (colourNodes.size() > 0) {
-		// Assign the name of this scheme
-		_name = schemeNode.getAttributeValue("name");
-
-		// Cycle through all found colour tags and add them to this scheme
-		for (unsigned int i = 0; i < colourNodes.size(); i++) {
-			std::string colourName = colourNodes[i].getAttributeValue("name");
-			_colours[colourName] = ColourItem(colourNodes[i]);
-		}
-
+	if (colourNodes.empty())
+	{
+		rMessage() << "ColourScheme: No scheme items found." << std::endl;
+		return;
 	}
-	else {
-		rMessage() << "ColourScheme: No scheme items found.\n";
+
+	// Assign the name of this scheme
+	_name = schemeNode.getAttributeValue("name");
+
+	// Cycle through all found colour tags and add them to this scheme
+	for (const xml::Node& colourNode : colourNodes)
+	{
+		std::string colourName = colourNode.getAttributeValue("name");
+
+		_colours[colourName] = ColourItem(colourNode);
 	}
 }
 
-/* Returns the specified colour object
- */
-ColourItem& ColourScheme::getColour(const std::string& colourName) {
+ColourItemMap& ColourScheme::getColourMap()
+{
+	return _colours;
+}
+
+ColourItem& ColourScheme::getColour(const std::string& colourName)
+{
 	ColourItemMap::iterator it = _colours.find(colourName);
-	if (it != _colours.end()) {
+
+	if (it != _colours.end())
+	{
 		return it->second;
 	}
-	else {
-		rMessage() << "ColourScheme: Colour " << colourName.c_str() << " doesn't exist!\n";
-		return _emptyColour;
+
+	rMessage() << "ColourScheme: Colour " << colourName << " doesn't exist!" << std::endl;
+
+	return _emptyColour;
+}
+
+const std::string& ColourScheme::getName() const
+{
+	return _name;
+}
+
+bool ColourScheme::isReadOnly() const
+{
+	return _readOnly;
+}
+
+void ColourScheme::setReadOnly(bool isReadOnly)
+{
+	_readOnly = isReadOnly;
+}
+
+void ColourScheme::mergeMissingItemsFromScheme(const ColourScheme& other)
+{
+	for (const ColourItemMap::value_type& otherPair : other._colours)
+	{
+		// Insert any ColourItems from the other mapping into this scheme
+		if (_colours.find(otherPair.first) == _colours.end())
+		{
+			_colours.insert(otherPair);
+		}
 	}
 }
 

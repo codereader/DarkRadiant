@@ -146,8 +146,6 @@ void ColourSchemeManager::saveColourSchemes()
 
 void ColourSchemeManager::loadColourSchemes()
 {
-	std::string schemeName = "";
-
 	// load from XMLRegistry
 	rMessage() << "ColourSchemeManager: Loading colour schemes..." << std::endl;
 
@@ -156,36 +154,45 @@ void ColourSchemeManager::loadColourSchemes()
 		"user/ui/colourschemes/colourscheme[@version='" + COLOURSCHEME_VERSION + "']"
 	);
 
-	if (!schemeNodes.empty())
-	{
-		// Cycle through all found scheme nodes
-		for (std::size_t i = 0; i < schemeNodes.size(); i++)
-		{
-			schemeName = schemeNodes[i].getAttributeValue("name");
-
-			// If the scheme is already in the list, skip it
-			if (!schemeExists(schemeName))
-			{
-				// Construct the ColourScheme class from the xml::node
-				_colourSchemes[schemeName] = ColourScheme(schemeNodes[i]);
-
-				// Check, if this is the currently active scheme
-				if (schemeNodes[i].getAttributeValue("active") == "1")
-				{
-					_activeScheme = schemeName;
-				}
-			}
-		}
-
-		// If there isn't any active scheme yet, take the last one as active scheme
-		if (_activeScheme.empty() && !schemeNodes.empty())
-		{
-			_activeScheme = schemeName;
-		}
-	}
-	else
+	if (schemeNodes.empty())
 	{
 		rMessage() << "ColourSchemeManager: No schemes found..." << std::endl;
+		return;
+	}
+
+	std::string schemeName = "";
+
+	// Cycle through all found scheme nodes
+	for (const xml::Node& node : schemeNodes)
+	{
+		schemeName = node.getAttributeValue("name");
+
+		// If the scheme is already in the list, skip it
+		if (!schemeExists(schemeName))
+		{
+			// Construct the ColourScheme class from the xml::node
+			_colourSchemes[schemeName] = ColourScheme(node);
+
+			// Check, if this is the currently active scheme
+			if (node.getAttributeValue("active") == "1")
+			{
+				_activeScheme = schemeName;
+			}
+		}
+		else if (node.getAttributeValue("readonly") == "1")
+		{
+			// Scheme exists, but we have a factory-defined scheme
+			// try to merge any missing items into the existing scheme
+			ColourScheme readOnlyScheme(node);
+
+			_colourSchemes[schemeName].mergeMissingItemsFromScheme(readOnlyScheme);
+		}
+	}
+
+	// If there isn't any active scheme yet, take the last one as active scheme
+	if (_activeScheme.empty() && !schemeNodes.empty())
+	{
+		_activeScheme = schemeName;
 	}
 }
 
