@@ -1,5 +1,6 @@
 #include "CamWnd.h"
 
+#include "igl.h"
 #include "ibrush.h"
 #include "iclipper.h"
 #include "iuimanager.h"

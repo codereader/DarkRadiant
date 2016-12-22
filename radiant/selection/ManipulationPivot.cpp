@@ -1,5 +1,7 @@
 #include "ManipulationPivot.h"
 
+#include "ilightnode.h"
+#include "registry/registry.h"
 #include "algorithm/General.h"
 #include "selectionlib.h"
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iselectiontest.h"
 #include "iregistry.h"
 #include "irenderable.h"
 #include "iselection.h"

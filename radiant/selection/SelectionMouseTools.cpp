@@ -1,5 +1,6 @@
 #include "SelectionMouseTools.h"
 
+#include "iscenegraph.h"
 #include "i18n.h"
 #include "iuimanager.h"
 #include "registry/registry.h"

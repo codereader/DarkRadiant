@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vertex3f.h"
 #include "Colour4b.h"
 
 /// Vertex with a 4-byte colour value (0 - 255)

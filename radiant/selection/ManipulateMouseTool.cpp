@@ -1,5 +1,6 @@
 #include "ManipulateMouseTool.h"
 
+#include <wx/utils.h>
 #include "i18n.h"
 #include "iundo.h"
 #include "iscenegraph.h"

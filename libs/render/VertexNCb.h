@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vertex3f.h"
 #include "Colour4b.h"
 
 /// 3-element vertex with a 4-byte colour and a normal vector
