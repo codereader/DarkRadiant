@@ -240,9 +240,12 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_VECTOR:
-			case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
 				// Create a new string argument item
 				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
+				break;
+			case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
+				// Create a new sound shader argument item
+				item = CommandArgumentItemPtr(new SoundShaderArgument(argPanel, argInfo));
 				break;
 			case conversation::ArgumentInfo::ARGTYPE_ACTOR:
 				// Create a new actor argument item

@@ -9,6 +9,7 @@ class wxStaticText;
 class wxTextCtrl;
 class wxCheckBox;
 class wxChoice;
+class wxPanel;
 
 namespace ui
 {
@@ -120,6 +121,26 @@ public:
 	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
 	virtual void setValueFromString(const std::string& value);
+};
+
+/**
+* greebo: This is an item querying a sound shader
+*/
+class SoundShaderArgument :
+	public StringArgument
+{
+private:
+	wxPanel* _soundShaderPanel;
+
+public:
+	SoundShaderArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
+
+	virtual wxWindow* getEditWidget() override;
+	virtual std::string getValue() override;
+	virtual void setValueFromString(const std::string& value) override;
+
+private:
+	void pickSoundShader();
 };
 
 } // namespace ui
