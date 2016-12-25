@@ -50,6 +50,9 @@ public:
     // Call this if your text columns get squashed and are not sized correctly
     void TriggerColumnSizeEvent(const wxDataViewItem& item = wxDataViewItem());
 
+	// Expands the first level of all the top-level items
+	void ExpandTopLevelItems();
+
 	// Adds a column to search when the user starts typing
 	void AddSearchColumn(const TreeModel::Column& column);
 

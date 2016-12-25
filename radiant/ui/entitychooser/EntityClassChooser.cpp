@@ -265,13 +265,7 @@ void EntityClassChooser::setTreeViewModel()
 	_treeView->AssociateModel(_treeStore.get());
 
 	// Expand the first layer
-	wxDataViewItemArray children;
-	_treeStore->GetChildren(_treeStore->GetRoot(), children);
-
-	std::for_each(children.begin(), children.end(), [&] (const wxDataViewItem& item)
-	{
-		_treeView->Expand(item);
-	});
+	_treeView->ExpandTopLevelItems();
 
     // Pre-select the given class if requested by setSelectedEntityClass()
     if (!_classToHighlight.empty())

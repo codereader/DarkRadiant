@@ -76,6 +76,22 @@ void TreeView::TriggerColumnSizeEvent(const wxDataViewItem& item)
     });
 }
 
+void TreeView::ExpandTopLevelItems()
+{
+	TreeModel* model = dynamic_cast<TreeModel*>(GetModel());
+
+	if (model == nullptr) return;
+
+	// Expand the first layer
+	wxDataViewItemArray children;
+	model->GetChildren(model->GetRoot(), children);
+
+	std::for_each(children.begin(), children.end(), [&](const wxDataViewItem& item)
+	{
+		Expand(item);
+	});
+}
+
 void TreeView::AddSearchColumn(const TreeModel::Column& column)
 {
 	// Only text columns are supported right now
