@@ -1,5 +1,6 @@
 #include "CommandArgumentItem.h"
 
+#include "ianimationchooser.h"
 #include "idialogmanager.h"
 #include "iresourcechooser.h"
 #include "iuimanager.h"
@@ -180,6 +181,60 @@ void SoundShaderArgument::pickSoundShader()
 	if (!picked.empty())
 	{
 		setValueFromString(picked);
+	}
+
+	chooser->destroyDialog();
+}
+
+AnimationArgument::AnimationArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+	StringArgument(parent, argInfo)
+{
+	_animPanel = new wxPanel(parent);
+
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+	_animPanel->SetSizer(hbox);
+
+	_entry->SetMinSize(wxSize(100, -1));
+	_entry->Reparent(_animPanel);
+
+	hbox->Add(_entry, 1, wxEXPAND);
+
+	// Create the icon button to open the ShaderChooser
+	wxButton* selectButton = new wxBitmapButton(_animPanel, wxID_ANY,
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
+	selectButton->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev)
+	{
+		pickAnimation();
+	});
+
+	hbox->Add(selectButton, 0, wxLEFT, 6);
+}
+
+wxWindow* AnimationArgument::getEditWidget()
+{
+	return _animPanel;
+}
+
+std::string AnimationArgument::getValue()
+{
+	return _entry->GetValue().ToStdString();
+}
+
+void AnimationArgument::setValueFromString(const std::string& value)
+{
+	_entry->SetValue(value);
+}
+
+void AnimationArgument::pickAnimation()
+{
+	IAnimationChooser* chooser = GlobalDialogManager().createAnimationChooser(wxGetTopLevelParent(_entry));
+
+	IAnimationChooser::Result result = chooser->runDialog("", getValue());
+
+	if (!result.cancelled())
+	{
+		setValueFromString(result.anim);
 	}
 
 	chooser->destroyDialog();

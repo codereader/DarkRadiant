@@ -143,4 +143,24 @@ private:
 	void pickSoundShader();
 };
 
+/**
+* greebo: This is an item querying an animation
+*/
+class AnimationArgument :
+	public StringArgument
+{
+private:
+	wxPanel* _animPanel;
+
+public:
+	AnimationArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
+
+	virtual wxWindow* getEditWidget() override;
+	virtual std::string getValue() override;
+	virtual void setValueFromString(const std::string& value) override;
+
+private:
+	void pickAnimation();
+};
+
 } // namespace ui

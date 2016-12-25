@@ -252,7 +252,7 @@ CommandArgumentItemPtr CommandEditor::createCommandArgumentItem(const conversati
 	// so let's detect the "Anim" title of the argument and construct an animation picker in this case
 	if (argInfo.title == "Anim")
 	{
-		// TODO
+		return std::make_shared<AnimationArgument>(parent, argInfo);
 	}
 
 	switch (argInfo.type)
