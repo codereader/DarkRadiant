@@ -17,8 +17,6 @@ namespace ui
 /**
  * greebo: This class provides the UI elements to inspect a given
  * sound shader with playback option.
- *
- * Use the GtkWidget* cast operator to pack this into a parent container.
  */
 class SoundShaderPreview :
 	public wxPanel

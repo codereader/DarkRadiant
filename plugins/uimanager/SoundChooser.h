@@ -1,10 +1,11 @@
 #pragma once
 
+#include "iresourcechooser.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/TreeModel.h"
 #include "wxutil/TreeView.h"
 
-#include "ui/common/SoundShaderPreview.h"
+#include "SoundShaderPreview.h"
 #include <memory>
 #include <string>
 
@@ -15,7 +16,8 @@ namespace ui
  * Dialog for listing and selection of sound shaders.
  */
 class SoundChooser :
-	public wxutil::DialogBase
+	public wxutil::DialogBase,
+	public IResourceChooser
 {
 public:
 	// Treemodel definition
@@ -72,7 +74,7 @@ public:
 	/**
 	 * Constructor creates widgets.
 	 */
-	SoundChooser();
+	SoundChooser(wxWindow* parent = nullptr);
 
 	// Retrieve the selected sound shader
 	const std::string& getSelectedShader() const;
@@ -83,7 +85,9 @@ public:
 	virtual int ShowModal();
 
 	// Run the dialog and return the selected shader - this will be empty if the user clicks cancel
-	static std::string ChooseSound(const std::string& preSelectedShader = std::string());
+	virtual std::string chooseResource(const std::string& preselected = std::string()) override;
+
+	virtual void destroyDialog() override;
 };
 
 } // namespace

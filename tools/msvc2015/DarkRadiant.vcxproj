@@ -487,8 +487,6 @@
     <ClCompile Include="..\..\radiant\ui\common\ShaderChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ShaderDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ShaderSelector.cpp" />
-    <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp" />
-    <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\TexturePreviewCombo.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\AddPropertyDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\AnglePropertyEditor.cpp" />
@@ -775,8 +773,6 @@
     <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderSelector.h" />
-    <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h" />
-    <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />
     <ClInclude Include="..\..\radiant\ui\common\TexturePreviewCombo.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\AddPropertyDialog.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\AnglePropertyEditor.h" />

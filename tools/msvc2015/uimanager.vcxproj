@@ -320,6 +320,8 @@
     <ClCompile Include="..\..\plugins\uimanager\GroupDialog.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\MenuItem.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\MenuManager.cpp" />
+    <ClCompile Include="..\..\plugins\uimanager\SoundChooser.cpp" />
+    <ClCompile Include="..\..\plugins\uimanager\SoundShaderPreview.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\StatusBarManager.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\ToolbarManager.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\UIManager.cpp" />
@@ -334,6 +336,8 @@
     <ClInclude Include="..\..\plugins\uimanager\LocalBitmapArtProvider.h" />
     <ClInclude Include="..\..\plugins\uimanager\MenuItem.h" />
     <ClInclude Include="..\..\plugins\uimanager\MenuManager.h" />
+    <ClInclude Include="..\..\plugins\uimanager\SoundChooser.h" />
+    <ClInclude Include="..\..\plugins\uimanager\SoundShaderPreview.h" />
     <ClInclude Include="..\..\plugins\uimanager\StatusBarManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\ToolbarManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\UIManager.h" />

@@ -74,6 +74,7 @@
 #include "irender.h"
 #include "irenderable.h"
 #include "irendersystemfactory.h"
+#include "iresourcechooser.h"
 #include "iscenegraph.h"
 #include "iscenegraphfactory.h"
 #include "iscript.h"

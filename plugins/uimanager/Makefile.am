@@ -19,6 +19,8 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        colourscheme/ColourScheme.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
+					   SoundChooser.cpp \
+					   SoundShaderPreview.cpp \
                        StatusBarManager.cpp \
                        DialogManager.cpp \
                        ToolbarManager.cpp \

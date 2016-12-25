@@ -20,17 +20,19 @@ public:
 
 	// Create a new dialog
 	IDialogPtr createDialog(const std::string& title,
-							wxWindow* parent = NULL);
+							wxWindow* parent = nullptr) override;
 
 	IDialogPtr createMessageBox(const std::string& title,
 								const std::string& text,
 								IDialog::MessageType type,
-								wxWindow* parent = NULL);
+								wxWindow* parent = nullptr) override;
 
 	IFileChooserPtr createFileChooser(const std::string& title, bool open, 
-		const std::string& pattern, const std::string& defaultExt);
+		const std::string& pattern, const std::string& defaultExt) override;
 
-	IDirChooserPtr createDirChooser(const std::string& title);
+	IDirChooserPtr createDirChooser(const std::string& title) override;
+
+	IResourceChooser* createSoundShaderChooser(wxWindow* parent) override;
 
 private:
 	void cleanupOldDialogs();

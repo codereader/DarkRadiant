@@ -508,12 +508,6 @@
     <ClCompile Include="..\..\radiant\ui\common\ShaderSelector.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp">
-      <Filter>src\ui\common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp">
-      <Filter>src\ui\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\common\TexturePreviewCombo.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
@@ -1327,12 +1321,6 @@
       <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\ShaderSelector.h">
-      <Filter>src\ui\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h">
-      <Filter>src\ui\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h">
       <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\TexturePreviewCombo.h">

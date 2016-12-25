@@ -6,6 +6,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/FileChooser.h"
 #include "wxutil/DirChooser.h"
+#include "SoundChooser.h"
 
 namespace ui
 {
@@ -75,6 +76,11 @@ void DialogManager::cleanupOldDialogs()
 			++i;
 		}
 	}
+}
+
+IResourceChooser* DialogManager::createSoundShaderChooser(wxWindow* parent)
+{
+	return new SoundChooser(parent);
 }
 
 } // namespace ui

@@ -136,8 +136,8 @@ public:
 };
 
 // Constructor
-SoundChooser::SoundChooser() :
-	DialogBase(_("Choose sound")),
+SoundChooser::SoundChooser(wxWindow* parent) :
+	DialogBase(_("Choose sound"), parent),
 	_treeStore(NULL),
 	_treeView(NULL),
 	_preview(new SoundShaderPreview(this)),
@@ -290,25 +290,26 @@ int SoundChooser::ShowModal()
 	return returnCode;
 }
 
-std::string SoundChooser::ChooseSound(const std::string& preSelectedShader)
+std::string SoundChooser::chooseResource(const std::string& preselected)
 {
-	SoundChooser* chooser = new SoundChooser;
-
-	if (!preSelectedShader.empty())
+	if (!preselected.empty())
 	{
-		chooser->setSelectedShader(preSelectedShader);
+		setSelectedShader(preselected);
 	}
 
 	std::string selectedShader;
 
-	if (chooser->ShowModal() == wxID_OK)
+	if (ShowModal() == wxID_OK)
 	{
-		selectedShader = chooser->getSelectedShader();
+		selectedShader = getSelectedShader();
 	}
 
-	chooser->Destroy();
-
 	return selectedShader;
+}
+
+void SoundChooser::destroyDialog()
+{
+	Destroy();
 }
 
 } // namespace

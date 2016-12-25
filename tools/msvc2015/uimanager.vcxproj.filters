@@ -43,6 +43,12 @@
     <ClCompile Include="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.cpp">
       <Filter>src\colourscheme</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\SoundChooser.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\SoundShaderPreview.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\uimanager\DialogManager.h">
@@ -79,6 +85,12 @@
       <Filter>src\colourscheme</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\LocalBitmapArtProvider.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\SoundChooser.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\SoundShaderPreview.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

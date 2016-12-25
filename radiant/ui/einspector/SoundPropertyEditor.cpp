@@ -1,7 +1,8 @@
 #include "SoundPropertyEditor.h"
 #include "PropertyEditorFactory.h"
-#include "ui/common/SoundChooser.h"
 
+#include "iresourcechooser.h"
+#include "idialogmanager.h"
 #include "i18n.h"
 #include "ientity.h"
 
@@ -25,15 +26,19 @@ SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, Entity* entity,
 
 void SoundPropertyEditor::onBrowseButtonClick()
 {
+	IResourceChooser* chooser = GlobalDialogManager().createSoundShaderChooser(wxGetTopLevelParent(getWidget()));
+
 	// Use a SoundChooser dialog to get a selection from the user
-	std::string selection = SoundChooser::ChooseSound(getKeyValue(_key));
+	std::string picked = chooser->chooseResource(getKeyValue(_key));
 
 	// Selection will be empy if user clicked cancel or X
-	if (!selection.empty())
+	if (!picked.empty())
 	{
 		// Apply the change to the entity
-		setKeyValue(_key, selection);
+		setKeyValue(_key, picked);
 	}
+
+	chooser->destroyDialog();
 }
 
 } // namespace ui

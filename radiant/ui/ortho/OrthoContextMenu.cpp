@@ -5,6 +5,8 @@
 #include "ibrush.h"
 #include "isound.h"
 #include "ieventmanager.h"
+#include "iresourcechooser.h"
+#include "idialogmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
@@ -21,7 +23,6 @@
 #include "selection/algorithm/ModelFinder.h"
 #include "selection/algorithm/Entity.h"
 #include "ui/modelselector/ModelSelector.h"
-#include "ui/common/SoundChooser.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
 #include "math/AABB.h"
@@ -356,8 +357,12 @@ void OrthoContextMenu::callbackAddSpeaker()
     // Initialise the speaker with suitable values
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
     {
-        // Display the Sound Chooser to get a sound shader from the user
-		std::string soundShader = SoundChooser::ChooseSound();
+		IResourceChooser* chooser = GlobalDialogManager().createSoundShaderChooser();
+
+		// Use a SoundChooser dialog to get a selection from the user
+		std::string soundShader = chooser->chooseResource();
+
+		chooser->destroyDialog();
 
         if (soundShader.empty())
         {
