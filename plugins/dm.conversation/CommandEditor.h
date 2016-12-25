@@ -33,6 +33,12 @@ public:
 	// Pass the parent window, the command and the conversation to edit
 	CommandEditor(wxWindow* parent, conversation::ConversationCommand& command, const conversation::Conversation& conv);
 
+	// The Command we're working on (working copy)
+	conversation::ConversationCommand& getCommand();
+
+	// Return the conversation we're defined on
+	const conversation::Conversation& getConversation();
+
 private:
 	void populateWindow();
 	void updateWidgets();
@@ -43,7 +49,7 @@ private:
 
 	void createArgumentWidgets(int commandTypeID);
 
-	void upateWaitUntilFinished(int commandTypeID);
+	void updateWaitUntilFinished(int commandTypeID);
 
 	void onSave(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);

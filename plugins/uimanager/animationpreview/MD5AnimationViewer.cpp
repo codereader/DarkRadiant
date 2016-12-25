@@ -255,7 +255,7 @@ void MD5AnimationViewer::handleAnimSelectionChange()
 		return;
 	}
 
-	wxDataViewItem item = _modelTreeView->GetSelection();
+	wxDataViewItem item = _animTreeView->GetSelection();
 
 	if (!item.IsOk())
 	{

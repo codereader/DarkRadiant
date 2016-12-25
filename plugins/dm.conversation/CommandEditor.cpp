@@ -52,6 +52,16 @@ CommandEditor::CommandEditor(wxWindow* parent, conversation::ConversationCommand
 	updateWidgets();
 }
 
+conversation::ConversationCommand& CommandEditor::getCommand()
+{
+	return _command;
+}
+
+const conversation::Conversation& CommandEditor::getConversation()
+{
+	return _conversation;
+}
+
 void CommandEditor::updateWidgets()
 {
 	// Select the actor passed from the command
@@ -86,7 +96,7 @@ void CommandEditor::updateWidgets()
 	findNamedObject<wxCheckBox>(this, "ConvCmdEditorWaitUntilFinished")->SetValue(_command.waitUntilFinished);
 
 	// Update the sensitivity of the correct flag
-	upateWaitUntilFinished(_command.type);
+	updateWaitUntilFinished(_command.type);
 }
 
 void CommandEditor::save()
@@ -168,10 +178,10 @@ void CommandEditor::commandTypeChanged()
 	createArgumentWidgets(newCommandTypeID);
 
 	// Update the sensitivity of the correct flag
-	upateWaitUntilFinished(newCommandTypeID);
+	updateWaitUntilFinished(newCommandTypeID);
 }
 
-void CommandEditor::upateWaitUntilFinished(int commandTypeID)
+void CommandEditor::updateWaitUntilFinished(int commandTypeID)
 {
 	// Update the sensitivity of the correct flag
 	try
@@ -252,31 +262,31 @@ CommandArgumentItemPtr CommandEditor::createCommandArgumentItem(const conversati
 	// so let's detect the "Anim" title of the argument and construct an animation picker in this case
 	if (argInfo.title == "Anim")
 	{
-		return std::make_shared<AnimationArgument>(parent, argInfo);
+		return std::make_shared<AnimationArgument>(*this, parent, argInfo);
 	}
 
 	switch (argInfo.type)
 	{
 	case conversation::ArgumentInfo::ARGTYPE_BOOL:
 		// Create a new bool argument item
-		return std::make_shared<BooleanArgument>(parent, argInfo);
+		return std::make_shared<BooleanArgument>(*this, parent, argInfo);
 	case conversation::ArgumentInfo::ARGTYPE_INT:
 	case conversation::ArgumentInfo::ARGTYPE_FLOAT:
 	case conversation::ArgumentInfo::ARGTYPE_STRING:
 		// Create a new string argument item
-		return std::make_shared<StringArgument>(parent, argInfo);
+		return std::make_shared<StringArgument>(*this, parent, argInfo);
 	case conversation::ArgumentInfo::ARGTYPE_VECTOR:
 		// Create a new string argument item
-		return std::make_shared<StringArgument>(parent, argInfo);
+		return std::make_shared<StringArgument>(*this, parent, argInfo);
 	case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
 		// Create a new sound shader argument item
-		return std::make_shared<SoundShaderArgument>(parent, argInfo);
+		return std::make_shared<SoundShaderArgument>(*this, parent, argInfo);
 	case conversation::ArgumentInfo::ARGTYPE_ACTOR:
 		// Create a new actor argument item
-		return std::make_shared<ActorArgument>(parent, argInfo, _conversation.actors);
+		return std::make_shared<ActorArgument>(*this, parent, argInfo, _conversation.actors);
 	case conversation::ArgumentInfo::ARGTYPE_ENTITY:
 		// Create a new string argument item
-		return std::make_shared<StringArgument>(parent, argInfo);
+		return std::make_shared<StringArgument>(*this, parent, argInfo);
 	default:
 		rError() << "Unknown command argument type: " << argInfo.type << std::endl;
 		break;

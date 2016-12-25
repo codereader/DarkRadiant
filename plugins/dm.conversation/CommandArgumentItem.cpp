@@ -19,6 +19,9 @@
 
 #include <boost/format.hpp>
 
+#include "CommandEditor.h"
+#include "ActorNodeFinder.h"
+
 namespace ui
 {
 
@@ -27,8 +30,9 @@ namespace
 	const char* const FOLDER_ICON = "folder16.png";
 }
 
-CommandArgumentItem::CommandArgumentItem(wxWindow* parent, 
+CommandArgumentItem::CommandArgumentItem(CommandEditor& owner, wxWindow* parent,
 		const conversation::ArgumentInfo& argInfo) :
+	_owner(owner),
 	_argInfo(argInfo)
 {
 	// Pack the label into an eventbox
@@ -53,9 +57,9 @@ wxWindow* CommandArgumentItem::getHelpWidget()
 }
 
 // StringArgument
-StringArgument::StringArgument(wxWindow* parent, 
+StringArgument::StringArgument(CommandEditor& owner, wxWindow* parent,
 		const conversation::ArgumentInfo& argInfo) :
-	CommandArgumentItem(parent, argInfo)
+	CommandArgumentItem(owner, parent, argInfo)
 {
 	_entry = new wxTextCtrl(parent, wxID_ANY);
 }
@@ -76,8 +80,8 @@ void StringArgument::setValueFromString(const std::string& value)
 }
 
 // Boolean argument
-BooleanArgument::BooleanArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
-	 CommandArgumentItem(parent, argInfo)
+BooleanArgument::BooleanArgument(CommandEditor& owner, wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+	 CommandArgumentItem(owner, parent, argInfo)
 {
 	_checkButton = new wxCheckBox(parent, wxID_ANY, argInfo.title);
 }
@@ -98,10 +102,11 @@ void BooleanArgument::setValueFromString(const std::string& value)
 }
 
 // Actor Argument
-ActorArgument::ActorArgument(wxWindow* parent, 
+ActorArgument::ActorArgument(CommandEditor& owner, 
+		wxWindow* parent,
 		const conversation::ArgumentInfo& argInfo,
 		const conversation::Conversation::ActorMap& actors) :
-	CommandArgumentItem(parent, argInfo)
+	CommandArgumentItem(owner, parent, argInfo)
 {
 	_comboBox = new wxChoice(parent, wxID_ANY);
 
@@ -132,8 +137,9 @@ wxWindow* ActorArgument::getEditWidget()
 	return _comboBox;
 }
 
-SoundShaderArgument::SoundShaderArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
-	StringArgument(parent, argInfo)
+SoundShaderArgument::SoundShaderArgument(CommandEditor& owner, 
+		wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+	StringArgument(owner, parent, argInfo)
 {
 	_soundShaderPanel = new wxPanel(parent);
 
@@ -148,6 +154,8 @@ SoundShaderArgument::SoundShaderArgument(wxWindow* parent, const conversation::A
 	// Create the icon button to open the ShaderChooser
 	wxButton* selectShaderButton = new wxBitmapButton(_soundShaderPanel, wxID_ANY,
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
+	selectShaderButton->SetToolTip(_("Browse Sound Shaders"));
 
 	selectShaderButton->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev)
 	{
@@ -186,8 +194,9 @@ void SoundShaderArgument::pickSoundShader()
 	chooser->destroyDialog();
 }
 
-AnimationArgument::AnimationArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
-	StringArgument(parent, argInfo)
+AnimationArgument::AnimationArgument(CommandEditor& owner, 
+		wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+	StringArgument(owner, parent, argInfo)
 {
 	_animPanel = new wxPanel(parent);
 
@@ -199,9 +208,11 @@ AnimationArgument::AnimationArgument(wxWindow* parent, const conversation::Argum
 
 	hbox->Add(_entry, 1, wxEXPAND);
 
-	// Create the icon button to open the ShaderChooser
+	// Create the icon button to open the
 	wxButton* selectButton = new wxBitmapButton(_animPanel, wxID_ANY,
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
+	selectButton->SetToolTip(_("Browse Animations"));
 
 	selectButton->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev)
 	{
@@ -228,9 +239,31 @@ void AnimationArgument::setValueFromString(const std::string& value)
 
 void AnimationArgument::pickAnimation()
 {
+	// Find out which actor we're talking about
+	int actorId = _owner.getCommand().actor;
+	std::string preselectModel = std::string();
+
+	if (actorId != -1 && _owner.getConversation().actors.find(actorId) != _owner.getConversation().actors.end())
+	{
+		std::string actorName = _owner.getConversation().actors.find(actorId)->second;
+
+		// Try to find the entity in the current map
+		scene::ActorNodeFinder finder(actorName);
+		GlobalSceneGraph().root()->traverse(finder);
+
+		if (finder.getFoundNode())
+		{
+			// Found the corresponding entity, get the model name
+			Entity* entity = Node_getEntity(finder.getFoundNode());
+			assert(entity != nullptr);
+
+			preselectModel = entity->getKeyValue("model");
+		}
+	}
+
 	IAnimationChooser* chooser = GlobalDialogManager().createAnimationChooser(wxGetTopLevelParent(_entry));
 
-	IAnimationChooser::Result result = chooser->runDialog("", getValue());
+	IAnimationChooser::Result result = chooser->runDialog(preselectModel, getValue());
 
 	if (!result.cancelled())
 	{

@@ -14,16 +14,22 @@ class wxPanel;
 namespace ui
 {
 
+class CommandEditor;
+
 class CommandArgumentItem
 {
 protected:
+	// The reference to the editor instance, some arguments need this 
+	// for cross-referencing actors and commands
+	CommandEditor& _owner;
+
 	// The argument this row is referring to
 	const conversation::ArgumentInfo& _argInfo;
 	wxStaticText* _labelBox;
 	wxStaticText* _descBox;
 
 public:
-	CommandArgumentItem(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
+	CommandArgumentItem(CommandEditor& owner, wxWindow* parent, const conversation::ArgumentInfo& argInfo);
 
 	// destructor
 	virtual ~CommandArgumentItem() {}
@@ -60,7 +66,7 @@ protected:
 	wxTextCtrl* _entry;
 
 public:
-	StringArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
+	StringArgument(CommandEditor& owner, wxWindow* parent, const conversation::ArgumentInfo& argInfo);
 
 	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
@@ -74,8 +80,8 @@ class FloatArgument :
 	public StringArgument
 {
 public:
-	FloatArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
-		StringArgument(parent, argInfo)
+	FloatArgument(CommandEditor& owner, wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+		StringArgument(owner, parent, argInfo)
 	{}
 };
 
@@ -86,8 +92,8 @@ class VectorArgument :
 	public StringArgument
 {
 public:
-	VectorArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
-		StringArgument(parent, argInfo)
+	VectorArgument(CommandEditor& owner, wxWindow* parent, const conversation::ArgumentInfo& argInfo) :
+		StringArgument(owner, parent, argInfo)
 	{}
 };
 
@@ -97,7 +103,7 @@ class BooleanArgument :
 protected:
 	wxCheckBox* _checkButton;
 public:
-	BooleanArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
+	BooleanArgument(CommandEditor& owner, wxWindow* parent, const conversation::ArgumentInfo& argInfo);
 
 	virtual wxWindow* getEditWidget();
 	virtual std::string getValue();
@@ -114,7 +120,7 @@ protected:
 	wxChoice* _comboBox;
 public:
 	// Pass the reference to the helper class
-	ActorArgument(wxWindow* parent, 
+	ActorArgument(CommandEditor& owner, wxWindow* parent,
 		const conversation::ArgumentInfo& argInfo,
 		const conversation::Conversation::ActorMap& actors);
 
@@ -133,7 +139,7 @@ private:
 	wxPanel* _soundShaderPanel;
 
 public:
-	SoundShaderArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
+	SoundShaderArgument(CommandEditor& owner, wxWindow* parent, const conversation::ArgumentInfo& argInfo);
 
 	virtual wxWindow* getEditWidget() override;
 	virtual std::string getValue() override;
@@ -153,7 +159,7 @@ private:
 	wxPanel* _animPanel;
 
 public:
-	AnimationArgument(wxWindow* parent, const conversation::ArgumentInfo& argInfo);
+	AnimationArgument(CommandEditor& owner, wxWindow* parent, const conversation::ArgumentInfo& argInfo);
 
 	virtual wxWindow* getEditWidget() override;
 	virtual std::string getValue() override;
