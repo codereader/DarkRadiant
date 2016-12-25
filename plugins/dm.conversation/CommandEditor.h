@@ -49,6 +49,8 @@ private:
 	void onCancel(wxCommandEvent& ev);
 
 	void onCommandTypeChange(wxCommandEvent& ev);
+
+	CommandArgumentItemPtr createCommandArgumentItem(const conversation::ArgumentInfo& argInfo, wxWindow* parent);
 };
 
 } // namespace ui

@@ -216,51 +216,11 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 		}
 
 		// Setup the table with default spacings
-		typedef conversation::ConversationCommandInfo::ArgumentInfoList::const_iterator ArgumentIter;
-
-		int index = 1;
-
-		for (ArgumentIter i = cmdInfo.arguments.begin();
-			 i != cmdInfo.arguments.end(); ++i, ++index)
+		for (const conversation::ArgumentInfo& argInfo : cmdInfo.arguments)
 		{
-			const conversation::ArgumentInfo& argInfo = *i;
+			CommandArgumentItemPtr item = createCommandArgumentItem(argInfo, argPanel);
 
-			CommandArgumentItemPtr item;
-
-			switch (argInfo.type)
-			{
-			case conversation::ArgumentInfo::ARGTYPE_BOOL:
-				// Create a new bool argument item
-				item = CommandArgumentItemPtr(new BooleanArgument(argPanel, argInfo));
-				break;
-			case conversation::ArgumentInfo::ARGTYPE_INT:
-			case conversation::ArgumentInfo::ARGTYPE_FLOAT:
-			case conversation::ArgumentInfo::ARGTYPE_STRING:
-				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
-				break;
-			case conversation::ArgumentInfo::ARGTYPE_VECTOR:
-				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
-				break;
-			case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
-				// Create a new sound shader argument item
-				item = CommandArgumentItemPtr(new SoundShaderArgument(argPanel, argInfo));
-				break;
-			case conversation::ArgumentInfo::ARGTYPE_ACTOR:
-				// Create a new actor argument item
-				item = CommandArgumentItemPtr(new ActorArgument(argPanel, argInfo, _conversation.actors));
-				break;
-			case conversation::ArgumentInfo::ARGTYPE_ENTITY:
-				// Create a new string argument item
-				item = CommandArgumentItemPtr(new StringArgument(argPanel, argInfo));
-				break;
-			default:
-				rError() << "Unknown command argument type: " << argInfo.type << std::endl;
-				break;
-			};
-
-			if (item != NULL)
+			if (item)
 			{
 				_argumentItems.push_back(item);
 
@@ -284,6 +244,45 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 	mainPanel->Fit();
 	mainPanel->Layout();
 	Fit();
+}
+
+CommandArgumentItemPtr CommandEditor::createCommandArgumentItem(const conversation::ArgumentInfo& argInfo, wxWindow* parent)
+{
+	// Unfortunately we don't have a type declaration for animation in the .def file (didn't think about that back then)
+	// so let's detect the "Anim" title of the argument and construct an animation picker in this case
+	if (argInfo.title == "Anim")
+	{
+		// TODO
+	}
+
+	switch (argInfo.type)
+	{
+	case conversation::ArgumentInfo::ARGTYPE_BOOL:
+		// Create a new bool argument item
+		return std::make_shared<BooleanArgument>(parent, argInfo);
+	case conversation::ArgumentInfo::ARGTYPE_INT:
+	case conversation::ArgumentInfo::ARGTYPE_FLOAT:
+	case conversation::ArgumentInfo::ARGTYPE_STRING:
+		// Create a new string argument item
+		return std::make_shared<StringArgument>(parent, argInfo);
+	case conversation::ArgumentInfo::ARGTYPE_VECTOR:
+		// Create a new string argument item
+		return std::make_shared<StringArgument>(parent, argInfo);
+	case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
+		// Create a new sound shader argument item
+		return std::make_shared<SoundShaderArgument>(parent, argInfo);
+	case conversation::ArgumentInfo::ARGTYPE_ACTOR:
+		// Create a new actor argument item
+		return std::make_shared<ActorArgument>(parent, argInfo, _conversation.actors);
+	case conversation::ArgumentInfo::ARGTYPE_ENTITY:
+		// Create a new string argument item
+		return std::make_shared<StringArgument>(parent, argInfo);
+	default:
+		rError() << "Unknown command argument type: " << argInfo.type << std::endl;
+		break;
+	};
+
+	return CommandArgumentItemPtr();
 }
 
 void CommandEditor::onSave(wxCommandEvent& ev)
