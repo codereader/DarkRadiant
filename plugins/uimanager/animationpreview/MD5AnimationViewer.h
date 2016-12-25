@@ -68,6 +68,9 @@ private:
 	// Animation preview widget
 	AnimationPreviewPtr _preview;
 
+	std::string _modelToSelect;
+	std::string _animToSelect;
+
 protected:
 	MD5AnimationViewer(wxWindow* parent, RunMode runMode);
 
@@ -82,12 +85,18 @@ public:
 				bool isExplicit);
 
 	std::string getSelectedModel();
+	void setSelectedModel(const std::string& model);
+
 	std::string getSelectedAnim();
+	void setSelectedAnim(const std::string& anim);
 
 private:
 	// callbacks
 	void _onModelSelChanged(wxDataViewEvent& ev);
+	void handleModelSelectionChange();
+
 	void _onAnimSelChanged(wxDataViewEvent& ev);
+	void handleAnimSelectionChange();
 
 	wxWindow* createListPane(wxWindow* parent);
 	wxWindow* createModelTreeView(wxWindow* parent);

@@ -50,6 +50,21 @@ MD5AnimationViewer::MD5AnimationViewer(wxWindow* parent, RunMode runMode) :
 
 	// Populate with model names
 	populateModelList();
+
+	Bind(wxEVT_IDLE, [&](wxIdleEvent& ev)
+	{
+		ev.Skip();
+
+		if (!_modelToSelect.empty())
+		{
+			setSelectedModel(_modelToSelect);
+		}
+
+		if (!_animToSelect.empty())
+		{
+			setSelectedAnim(_animToSelect);
+		}
+	});
 }
 
 void MD5AnimationViewer::Show(const cmd::ArgumentList& args)
@@ -124,6 +139,11 @@ wxWindow* MD5AnimationViewer::createAnimTreeView(wxWindow* parent)
 
 void MD5AnimationViewer::_onModelSelChanged(wxDataViewEvent& ev)
 {
+	handleModelSelectionChange();
+}
+
+void MD5AnimationViewer::handleModelSelectionChange()
+{
 	IModelDefPtr modelDef = getSelectedModelDef();
 
 	if (!modelDef)
@@ -155,6 +175,26 @@ std::string MD5AnimationViewer::getSelectedModel()
 	return static_cast<std::string>(row[_modelColumns.name]);
 }
 
+void MD5AnimationViewer::setSelectedModel(const std::string& model)
+{
+	if (IsShownOnScreen())
+	{
+		wxDataViewItem item = _modelList->FindString(model, _modelColumns.name);
+
+		if (item.IsOk())
+		{
+			_modelTreeView->Select(item);
+			_modelTreeView->EnsureVisible(item);
+			handleModelSelectionChange();
+		}
+
+		_modelToSelect.clear();
+		return;
+	}
+
+	_modelToSelect = model;
+}
+
 std::string MD5AnimationViewer::getSelectedAnim()
 {
 	wxDataViewItem item = _animTreeView->GetSelection();
@@ -166,6 +206,26 @@ std::string MD5AnimationViewer::getSelectedAnim()
 
 	wxutil::TreeModel::Row row(item, *_animList);
 	return static_cast<std::string>(row[_animColumns.name]);
+}
+
+void MD5AnimationViewer::setSelectedAnim(const std::string& anim)
+{
+	if (IsShownOnScreen())
+	{
+		wxDataViewItem item = _animList->FindString(anim, _animColumns.name);
+
+		if (item.IsOk())
+		{
+			_animTreeView->Select(item);
+			_animTreeView->EnsureVisible(item);
+			handleAnimSelectionChange();
+		}
+
+		_animToSelect.clear();
+		return;
+	}
+
+	_animToSelect = anim;
 }
 
 IModelDefPtr MD5AnimationViewer::getSelectedModelDef()
@@ -182,6 +242,11 @@ IModelDefPtr MD5AnimationViewer::getSelectedModelDef()
 
 void MD5AnimationViewer::_onAnimSelChanged(wxDataViewEvent& ev)
 {
+	handleAnimSelectionChange();
+}
+
+void MD5AnimationViewer::handleAnimSelectionChange()
+{
 	IModelDefPtr modelDef = getSelectedModelDef();
 
 	if (!modelDef) 
@@ -190,7 +255,7 @@ void MD5AnimationViewer::_onAnimSelChanged(wxDataViewEvent& ev)
 		return;
 	}
 
-	wxDataViewItem item = ev.GetItem();
+	wxDataViewItem item = _modelTreeView->GetSelection();
 
 	if (!item.IsOk())
 	{
@@ -227,6 +292,8 @@ void MD5AnimationViewer::populateModelList()
 	GlobalEntityClassManager().forEachModelDef(*this);
 
 	_modelPopulator.forEachNode(*this);
+
+	_modelTreeView->ExpandTopLevelItems();
 }
 
 void MD5AnimationViewer::populateAnimationList()

@@ -12,7 +12,15 @@ MD5AnimationChooser::Result MD5AnimationChooser::runDialog(const std::string& pr
 {
 	MD5AnimationChooser::Result result;
 
-	// TODO: Pre-select
+	if (!preselectModel.empty())
+	{
+		setSelectedModel(preselectModel);
+	}
+
+	if (!preselectAnim.empty())
+	{
+		setSelectedAnim(preselectAnim);
+	}
 
 	if (MD5AnimationViewer::ShowModal() == wxID_OK)
 	{
