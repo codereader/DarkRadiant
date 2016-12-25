@@ -143,8 +143,6 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/TopLevelFrame.cpp \
                       ui/mousetool/BindToolDialog.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
-					  ui/animationpreview/AnimationPreview.cpp \
-					  ui/animationpreview/MD5AnimationViewer.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
                       xyview/tools/BrushCreatorTool.cpp \

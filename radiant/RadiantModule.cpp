@@ -43,7 +43,6 @@
 #include "ui/transform/TransformDialog.h"
 #include "ui/mapinfo/MapInfoDialog.h"
 #include "ui/layers/LayerControlDialog.h"
-#include "ui/animationpreview/MD5AnimationViewer.h"
 #include "ui/commandlist/CommandList.h"
 #include "ui/findshader/FindShader.h"
 #include "ui/filterdialog/FilterDialog.h"
@@ -290,7 +289,6 @@ void RadiantModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::ShowDialog);
     GlobalCommandSystem().addCommand("MouseToolMappingDialog", ui::ToolMappingDialog::ShowDialog);
 
-	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
 	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::ShowDialog);
 	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
@@ -315,7 +313,6 @@ void RadiantModule::registerUICommands()
 	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
     GlobalEventManager().addCommand("MouseToolMappingDialog", "MouseToolMappingDialog");
 
-	GlobalEventManager().addCommand("AnimationPreview", "AnimationPreview");
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
 	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
 	GlobalEventManager().addCommand("About", "About");

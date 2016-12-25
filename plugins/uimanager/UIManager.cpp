@@ -13,6 +13,7 @@
 #include "FilterMenu.h"
 #include "wxutil/dialog/MessageBox.h"
 
+#include "animationpreview/MD5AnimationViewer.h"
 #include "LocalBitmapArtProvider.h"
 
 #include <wx/artprov.h>
@@ -99,6 +100,9 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 	_menuManager.loadFromRegistry();
 	_toolbarManager.initialise();
 	ColourSchemeManager::Instance().loadColourSchemes();
+
+	GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
+	GlobalEventManager().addCommand("AnimationPreview", "AnimationPreview");
 
 	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
 	GlobalEventManager().addCommand("EditColourScheme", "EditColourScheme");

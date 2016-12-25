@@ -8,6 +8,9 @@
     <Filter Include="src\colourscheme">
       <UniqueIdentifier>{b52d34de-9458-4ecc-b8e0-703be385ce0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\animationpreview">
+      <UniqueIdentifier>{76d19dfa-2eef-475e-a743-e99b86aa0d2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\uimanager\DialogManager.cpp">
@@ -48,6 +51,12 @@
     </ClCompile>
     <ClCompile Include="..\..\plugins\uimanager\SoundShaderPreview.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\animationpreview\AnimationPreview.cpp">
+      <Filter>src\animationpreview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp">
+      <Filter>src\animationpreview</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +101,12 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\SoundShaderPreview.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\animationpreview\AnimationPreview.h">
+      <Filter>src\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.h">
+      <Filter>src\animationpreview</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

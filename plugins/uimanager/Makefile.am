@@ -16,6 +16,8 @@ uimanager_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                       $(top_builddir)/libs/xmlutil/libxmlutil.la
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
+					   animationpreview/MD5AnimationViewer.cpp \
+					   animationpreview/AnimationPreview.cpp \
                        colourscheme/ColourScheme.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \

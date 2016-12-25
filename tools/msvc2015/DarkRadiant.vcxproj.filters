@@ -161,9 +161,6 @@
     <Filter Include="src\log">
       <UniqueIdentifier>{553b5fe4-8c45-46e9-8be9-f75585fbf389}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ui\animationpreview">
-      <UniqueIdentifier>{5126dce8-2912-4f37-b8d1-de97aa22d26f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\patch\algorithm">
       <UniqueIdentifier>{7aa0eb77-486c-4e46-ba6a-3915c7b3e3cb}</UniqueIdentifier>
     </Filter>
@@ -738,12 +735,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp">
       <Filter>src\map\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp">
-      <Filter>src\ui\animationpreview</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp">
-      <Filter>src\ui\animationpreview</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\render\LinearLightList.cpp">
       <Filter>src\render</Filter>
@@ -1604,12 +1595,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h">
       <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h">
-      <Filter>src\ui\animationpreview</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h">
-      <Filter>src\ui\animationpreview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\precompiled.h">
       <Filter>src</Filter>
