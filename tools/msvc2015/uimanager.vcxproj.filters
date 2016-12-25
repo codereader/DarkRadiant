@@ -58,6 +58,9 @@
     <ClCompile Include="..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp">
       <Filter>src\animationpreview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\animationpreview\MD5AnimationChooser.cpp">
+      <Filter>src\animationpreview</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\uimanager\DialogManager.h">
@@ -106,6 +109,9 @@
       <Filter>src\animationpreview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.h">
+      <Filter>src\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\animationpreview\MD5AnimationChooser.h">
       <Filter>src\animationpreview</Filter>
     </ClInclude>
   </ItemGroup>

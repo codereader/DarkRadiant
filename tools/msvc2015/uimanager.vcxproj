@@ -316,6 +316,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\uimanager\animationpreview\AnimationPreview.cpp" />
+    <ClCompile Include="..\..\plugins\uimanager\animationpreview\MD5AnimationChooser.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\DialogManager.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\FilterMenu.cpp" />
@@ -333,6 +334,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\uimanager\animationpreview\AnimationPreview.h" />
+    <ClInclude Include="..\..\plugins\uimanager\animationpreview\MD5AnimationChooser.h" />
     <ClInclude Include="..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.h" />
     <ClInclude Include="..\..\plugins\uimanager\DialogManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\FilterMenu.h" />

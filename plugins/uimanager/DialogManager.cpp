@@ -7,6 +7,7 @@
 #include "wxutil/FileChooser.h"
 #include "wxutil/DirChooser.h"
 #include "SoundChooser.h"
+#include "animationpreview/MD5AnimationChooser.h"
 
 namespace ui
 {
@@ -81,6 +82,11 @@ void DialogManager::cleanupOldDialogs()
 IResourceChooser* DialogManager::createSoundShaderChooser(wxWindow* parent)
 {
 	return new SoundChooser(parent);
+}
+
+IAnimationChooser* DialogManager::createAnimationChooser(wxWindow* parent)
+{
+	return new MD5AnimationChooser(parent);
 }
 
 } // namespace ui

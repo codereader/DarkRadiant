@@ -12,31 +12,41 @@
 namespace ui
 {
 
-MD5AnimationViewer::MD5AnimationViewer() :
-	wxutil::DialogBase(_("MD5 Animation Viewer")),
+MD5AnimationViewer::MD5AnimationViewer(wxWindow* parent, RunMode runMode) :
+	wxutil::DialogBase(_("MD5 Animation Viewer"), parent),
+	_runMode(runMode),
 	_modelList(new wxutil::TreeModel(_modelColumns)),
 	_modelPopulator(_modelList),
 	_animList(new wxutil::TreeModel(_animColumns, true))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
+	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition,
 		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
-    splitter->SetMinimumPaneSize(10); // disallow unsplitting
+	splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
-	// Preview goes to the right
+									  // Preview goes to the right
 	_preview.reset(new AnimationPreview(splitter));
 
 	splitter->SplitVertically(createListPane(splitter), _preview->getWidget());
 
 	GetSizer()->Add(splitter, 1, wxEXPAND | wxALL, 12);
-	GetSizer()->Add(CreateStdDialogButtonSizer(wxCLOSE), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
-	SetAffirmativeId(wxID_CLOSE);
 
-	FitToScreen(0.8f, 0.6f);
+	if (_runMode == RunMode::Selection)
+	{
+		GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
+		SetAffirmativeId(wxID_OK);
+	}
+	else
+	{
+		GetSizer()->Add(CreateStdDialogButtonSizer(wxCLOSE), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
+		SetAffirmativeId(wxID_CLOSE);
+	}
+
+	FitToScreen(0.8f, 0.7f);
 
 	// Set the default size of the window
-	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.2f));
+	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.25f));
 
 	// Populate with model names
 	populateModelList();
@@ -44,7 +54,7 @@ MD5AnimationViewer::MD5AnimationViewer() :
 
 void MD5AnimationViewer::Show(const cmd::ArgumentList& args)
 {
-	MD5AnimationViewer* viewer = new MD5AnimationViewer;
+	MD5AnimationViewer* viewer = new MD5AnimationViewer(nullptr, RunMode::ViewOnly);
 
 	viewer->ShowModal();
 	viewer->Destroy();
@@ -114,7 +124,7 @@ wxWindow* MD5AnimationViewer::createAnimTreeView(wxWindow* parent)
 
 void MD5AnimationViewer::_onModelSelChanged(wxDataViewEvent& ev)
 {
-	IModelDefPtr modelDef = getSelectedModel();
+	IModelDefPtr modelDef = getSelectedModelDef();
 
 	if (!modelDef)
 	{
@@ -131,23 +141,48 @@ void MD5AnimationViewer::_onModelSelChanged(wxDataViewEvent& ev)
 	populateAnimationList();
 }
 
-IModelDefPtr MD5AnimationViewer::getSelectedModel()
+std::string MD5AnimationViewer::getSelectedModel()
 {
 	wxDataViewItem item = _modelTreeView->GetSelection();
 
 	if (!item.IsOk())
 	{
-		return IModelDefPtr();
+		return std::string();
 	}
 
 	wxutil::TreeModel::Row row(item, *_modelList);
 
-	return GlobalEntityClassManager().findModel(row[_modelColumns.name]);
+	return static_cast<std::string>(row[_modelColumns.name]);
+}
+
+std::string MD5AnimationViewer::getSelectedAnim()
+{
+	wxDataViewItem item = _animTreeView->GetSelection();
+
+	if (!item.IsOk())
+	{
+		return std::string();
+	}
+
+	wxutil::TreeModel::Row row(item, *_animList);
+	return static_cast<std::string>(row[_animColumns.name]);
+}
+
+IModelDefPtr MD5AnimationViewer::getSelectedModelDef()
+{
+	std::string modelDefName = getSelectedModel();
+
+	if (modelDefName.empty())
+	{
+		return IModelDefPtr();
+	}
+
+	return GlobalEntityClassManager().findModel(modelDefName);
 }
 
 void MD5AnimationViewer::_onAnimSelChanged(wxDataViewEvent& ev)
 {
-	IModelDefPtr modelDef = getSelectedModel();
+	IModelDefPtr modelDef = getSelectedModelDef();
 
 	if (!modelDef) 
 	{
@@ -198,7 +233,7 @@ void MD5AnimationViewer::populateAnimationList()
 {
 	_animList->Clear();
 
-	IModelDefPtr modelDef = getSelectedModel();
+	IModelDefPtr modelDef = getSelectedModelDef();
 
 	if (!modelDef) return;
 

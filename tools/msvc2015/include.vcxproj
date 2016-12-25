@@ -109,6 +109,7 @@
     <ClInclude Include="..\..\include\GLProgramAttributes.h" />
     <ClInclude Include="..\..\include\i18n.h" />
     <ClInclude Include="..\..\include\iaasfile.h" />
+    <ClInclude Include="..\..\include\ianimationchooser.h" />
     <ClInclude Include="..\..\include\iarchive.h" />
     <ClInclude Include="..\..\include\ibrush.h" />
     <ClInclude Include="..\..\include\icamera.h" />

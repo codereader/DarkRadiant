@@ -42,7 +42,15 @@ public:
 		{}
 	};
 
+	enum class RunMode
+	{
+		ViewOnly,	// viewing purposes, provides just an OK button
+		Selection,	// selection purposes
+	};
+
 private:
+	RunMode _runMode;
+
 	ModelListColumns _modelColumns;
 
 	// Liststore for the model list, and its selection object
@@ -60,9 +68,10 @@ private:
 	// Animation preview widget
 	AnimationPreviewPtr _preview;
 
-public:
-	MD5AnimationViewer();
+protected:
+	MD5AnimationViewer(wxWindow* parent, RunMode runMode);
 
+public:
 	static void Show(const cmd::ArgumentList& args);
 
 	void visit(const IModelDefPtr& modelDef);
@@ -72,9 +81,8 @@ public:
 				const std::string& path,
 				bool isExplicit);
 
-protected:
-	// Override BlockingTransientWindow::_postShow()
-	void _postShow();
+	std::string getSelectedModel();
+	std::string getSelectedAnim();
 
 private:
 	// callbacks
@@ -89,7 +97,7 @@ private:
 	void populateModelList();
 	void populateAnimationList();
 
-	IModelDefPtr getSelectedModel();
+	IModelDefPtr getSelectedModelDef();
 };
 
 }

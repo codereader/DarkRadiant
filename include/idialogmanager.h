@@ -89,7 +89,8 @@ typedef std::shared_ptr<IFileChooser> IFileChooserPtr;
 class IDirChooser;
 typedef std::shared_ptr<IDirChooser> IDirChooserPtr;
 
-class IResourceChooser;
+class IResourceChooser;  // defined in iresourcechooser.h
+class IAnimationChooser; // defined in ianimationchooser.h
 
 class IDialogManager
 {
@@ -150,9 +151,14 @@ public:
 	virtual IDirChooserPtr createDirChooser(const std::string& title) = 0;
 
 	// Creates and returns a new Dialog class for selecting a sound shader.
-	// It's the responsibility of the client code to call Destroy() on the returned object.
+	// It's the responsibility of the client code to call destroyDialog() on the returned object.
 	// Optionally specify a parent window the dialog should be a child of.
 	virtual IResourceChooser* createSoundShaderChooser(wxWindow* parent = nullptr) = 0;
+
+	// Creates and returns a new Dialog class for selecting an MD5 anim.
+	// It's the responsibility of the client code to call destroyDialog() on the returned object.
+	// Optionally specify a parent window the dialog should be a child of.
+	virtual IAnimationChooser* createAnimationChooser(wxWindow* parent = nullptr) = 0;
 };
 
 } // namespace ui

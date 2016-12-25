@@ -33,6 +33,7 @@ public:
 	IDirChooserPtr createDirChooser(const std::string& title) override;
 
 	IResourceChooser* createSoundShaderChooser(wxWindow* parent) override;
+	IAnimationChooser* createAnimationChooser(wxWindow* parent) override;
 
 private:
 	void cleanupOldDialogs();
