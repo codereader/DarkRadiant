@@ -675,6 +675,12 @@ void CamWnd::Cam_Draw()
 
 		render::RenderableCollectionWalker::collectRenderablesInScene(renderer, _view);
 
+		// Render any active mousetools
+		for (const ActiveMouseTools::value_type& i : _activeMouseTools)
+		{
+			i.second->render(GlobalRenderSystem(), renderer, _view);
+		}
+
         renderer.render(_camera.modelview, _camera.projection);
     }
 

@@ -1314,6 +1314,13 @@ void XYWnd::draw()
         render::RenderableCollectionWalker::collectRenderablesInScene(renderer,
                                                                       _view);
 
+
+		// Render any active mousetools
+		for (const ActiveMouseTools::value_type& i : _activeMouseTools)
+		{
+			i.second->render(GlobalRenderSystem(), renderer, _view);
+		}
+
         // Second pass (GL calls)
         renderer.render(_modelView, _projection);
     }
