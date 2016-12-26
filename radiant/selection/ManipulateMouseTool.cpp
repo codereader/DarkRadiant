@@ -21,7 +21,9 @@ namespace
 
 ManipulateMouseTool::ManipulateMouseTool(SelectionSystem& selectionSystem) :
     _selectEpsilon(registry::getValue<float>(RKEY_SELECT_EPSILON)),
-    _selectionSystem(selectionSystem)
+    _selectionSystem(selectionSystem),
+	_manipulationActive(false),
+	_undoBegun(false)
 {}
 
 const std::string& ManipulateMouseTool::getName()
