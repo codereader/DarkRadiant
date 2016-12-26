@@ -4,9 +4,12 @@
 #include "string/string.h"
 
 #include <boost/format.hpp>
+#include <boost/algorithm/string/join.hpp>
 #include <boost/regex.hpp>
 
 #include "CommandEditor.h"
+#include "ActorNodeFinder.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <wx/button.h>
 #include <wx/sizer.h>
@@ -102,6 +105,10 @@ void ConversationEditor::populateWindow()
 	_delActorButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onDeleteActor), NULL, this);
 	_delActorButton->Enable(false);
 
+	_validateActorsButton = findNamedObject<wxButton>(this, "ConvEditorValidateActorsButton");
+	_validateActorsButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationEditor::onValidateActors), NULL, this);
+	_validateActorsButton->Enable(false);
+
 	// Command Panel
 	wxPanel* commandPanel = findNamedObject<wxPanel>(this, "ConvEditorCommandPanel");
 	
@@ -160,6 +167,8 @@ void ConversationEditor::updateWidgets()
 
 	updateCmdActionSensitivity(false);
 	_delActorButton->Enable(false);
+
+	_validateActorsButton->Enable(!_conversation.actors.empty());
 
 	// Name
 	findNamedObject<wxTextCtrl>(this, "ConvEditorNameEntry")->SetValue(_conversation.name);
@@ -430,6 +439,33 @@ void ConversationEditor::onDeleteActor(wxCommandEvent& ev)
 
 	// Update the widgets
 	updateWidgets();
+}
+
+void ConversationEditor::onValidateActors(wxCommandEvent& ev)
+{
+	std::vector<std::string> errors;
+
+	for (const conversation::Conversation::ActorMap::value_type& i : _conversation.actors)
+	{
+		scene::ActorNodeFinder finder(i.second);
+		GlobalSceneGraph().root()->traverse(finder);
+
+		if (!finder.getFoundNode())
+		{
+			errors.push_back((boost::format(_("The actor %s cannot be found in the current map.")) % i.second).str());
+		}
+	}
+
+	if (!errors.empty())
+	{
+		std::string message = boost::algorithm::join(errors, "\n");
+		wxutil::Messagebox::Show(_("Actors missing"), message, IDialog::MESSAGE_ERROR, this);
+	}
+	else
+	{
+		std::string message = _("All actors are correctly referring to entities in the map.");
+		wxutil::Messagebox::Show(_("Actors OK"), message, IDialog::MESSAGE_CONFIRM, this);
+	}
 }
 
 void ConversationEditor::onActorEdited(wxDataViewEvent& ev)

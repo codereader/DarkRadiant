@@ -58,6 +58,7 @@ private:
 
 	wxButton* _addActorButton;
 	wxButton* _delActorButton;
+	wxButton* _validateActorsButton;
 
 	wxButton* _addCmdButton;
 	wxButton* _delCmdButton;
@@ -104,6 +105,7 @@ private:
 
 	void onAddActor(wxCommandEvent& ev);
 	void onDeleteActor(wxCommandEvent& ev);
+	void onValidateActors(wxCommandEvent& ev);
 	void onActorEdited(wxDataViewEvent& ev);
 
 	void onAddCommand(wxCommandEvent& ev);

@@ -156,6 +156,16 @@
 									<default>0</default>
 								</object>
 							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND|wxTOP</flag>
+								<border>6</border>
+								<object class="wxButton" name="ConvEditorValidateActorsButton">
+									<size>80,-1</size>
+									<label>Validate all</label>
+									<default>0</default>
+								</object>
+							</object>
 						</object>
 					</object>
 				</object>
