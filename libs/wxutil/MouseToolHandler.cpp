@@ -212,8 +212,10 @@ void MouseToolHandler::handleCaptureLost(const ui::MouseToolPtr& tool)
 
     if (tool->getPointerMode() & ui::MouseTool::PointerMode::Capture)
     {
-        // Send the capture lost event, which should make the tool to cancel the operation
+        // Send the capture lost event, which should make the tool cancel the operation
         tool->onMouseCaptureLost(getInteractiveView());
+
+		handleViewRefresh(tool->getRefreshMode());
 
         // Clear the tool when the capture is lost
         clearActiveMouseTool(tool);
@@ -307,6 +309,7 @@ KeyEventFilter::Result MouseToolHandler::handleEscapeKeyPress()
         case ui::MouseTool::Result::Finished:
             // Tool is done
             clearActiveMouseTool(tool);
+			handleViewRefresh(tool->getRefreshMode());
             result = KeyEventFilter::Result::KeyProcessed;
             break;
 
