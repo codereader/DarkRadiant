@@ -21,8 +21,10 @@ Document::Document(const Document& other) :
 	_xmlDoc(other._xmlDoc)
 {}
 
-Document::~Document() {
-	if (_xmlDoc != NULL) {
+Document::~Document() 
+{
+	if (_xmlDoc != nullptr)
+	{
 		// Free the xml document memory
 		xmlFreeDoc(_xmlDoc);
 	}
@@ -40,7 +42,10 @@ Document Document::create()
 	return Document(doc);
 }
 
-void Document::addTopLevelNode(const std::string& name) {
+void Document::addTopLevelNode(const std::string& name)
+{
+	std::lock_guard<std::mutex> lock(_lock);
+
 	if (!isValid()) {
 		return; // is not Valid, place an assertion here?
 	}
@@ -62,8 +67,10 @@ void Document::addTopLevelNode(const std::string& name) {
 	xmlFree(emptyStr);
 }
 
-Node Document::getTopLevelNode() const {
-	if (!isValid()) {
+Node Document::getTopLevelNode() const
+{
+	if (!isValid())
+	{
 		// Invalid Document, return a NULL node
 		return Node(NULL);
 	}
@@ -73,6 +80,8 @@ Node Document::getTopLevelNode() const {
 
 void Document::importDocument(Document& other, Node& importNode)
 {
+	std::lock_guard<std::mutex> lock(_lock);
+
 	// Locate the top-level node(s) of the other document
 	xml::NodeList topLevelNodes = other.findXPath("/*");
 
@@ -102,13 +111,18 @@ void Document::importDocument(Document& other, Node& importNode)
 	}
 }
 
-void Document::copyNodes(const NodeList& nodeList) {
-	if (!isValid() || _xmlDoc->children == NULL) {
+void Document::copyNodes(const NodeList& nodeList)
+{
+	std::lock_guard<std::mutex> lock(_lock);
+
+	if (!isValid() || _xmlDoc->children == NULL)
+	{
 		return; // is not Valid, place an assertion here?
 	}
 
 	// Copy the child nodes one by one
-	for (std::size_t i = 0; i < nodeList.size(); i++) {
+	for (std::size_t i = 0; i < nodeList.size(); i++)
+	{
 		// Copy the node
 		xmlNodePtr node = xmlCopyNode(nodeList[i].getNodePtr(), 1);
 		// Add this node to the top level node of this document
@@ -116,13 +130,16 @@ void Document::copyNodes(const NodeList& nodeList) {
 	}
 }
 
-bool Document::isValid() const {
-	return _xmlDoc != NULL;
+bool Document::isValid() const
+{
+	return _xmlDoc != nullptr;
 }
 
 // Evaluate an XPath expression and return matching Nodes.
 NodeList Document::findXPath(const std::string& path) const
 {
+	std::lock_guard<std::mutex> lock(_lock);
+
     // Set up the XPath context
     xmlXPathContextPtr context = xmlXPathNewContext(_xmlDoc);
 
@@ -158,7 +175,10 @@ NodeList Document::findXPath(const std::string& path) const
 }
 
 // Saves the file to the disk via xmlSaveFormatFile
-void Document::saveToFile(const std::string& filename) const {
+void Document::saveToFile(const std::string& filename) const
+{
+	std::lock_guard<std::mutex> lock(_lock);
+
 	xmlSaveFormatFile(filename.c_str(), _xmlDoc, 1);
 }
 

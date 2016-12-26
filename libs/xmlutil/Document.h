@@ -1,7 +1,8 @@
-#ifndef DOCUMENT_H_
-#define DOCUMENT_H_
+#pragma once
 
 #include "Node.h"
+
+#include <mutex>
 
 typedef struct _xmlDoc xmlDoc;
 typedef xmlDoc *xmlDocPtr;
@@ -23,9 +24,10 @@ namespace xml
 class Document
 {
 private:
-
-    // Contained xmlDocPtr.
+	// Contained xmlDocPtr.
     xmlDocPtr _xmlDoc;
+
+	mutable std::mutex _lock;
 
 public:
     // Construct a Document using the provided xmlDocPtr.
@@ -70,5 +72,3 @@ public:
 };
 
 }
-
-#endif /*DOCUMENT_H_*/
