@@ -76,9 +76,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\dm.conversation\dm.conversation.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

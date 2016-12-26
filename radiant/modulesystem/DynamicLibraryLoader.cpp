@@ -10,7 +10,7 @@ namespace module {
 		const char* const SYMBOL_REGISTER_MODULE = "RegisterModule";
 
 		// Modules have to export a symbol of this type, which gets called during DLL loading
-		typedef void (DARKRADIANT_DLLEXPORT *RegisterModulesFunc)(IModuleRegistry& registry);
+		typedef void (*RegisterModulesFunc)(IModuleRegistry& registry);
 	}
 
 DynamicLibraryLoader::DynamicLibraryLoader(DynamicLibraryPtr library,

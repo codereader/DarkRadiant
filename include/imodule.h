@@ -326,7 +326,12 @@ namespace module {
 // Platform-specific definition which needs to be defined both
 // in the plugins and the main binary.
 #if defined(WIN32)
-	#define DARKRADIANT_DLLEXPORT __stdcall
+	#if defined(_MSC_VER)
+		// In VC++ we use this to export symbols instead of using .def files
+		#define DARKRADIANT_DLLEXPORT __declspec(dllexport) __stdcall
+	#else
+		#define DARKRADIANT_DLLEXPORT __stdcall 
+	#endif
 #else
 	#define DARKRADIANT_DLLEXPORT
 #endif

@@ -1,7 +1,0 @@
-; mapdoom3.def : Declares the module parameters for the DLL.
-
-LIBRARY      "MAPDOOM3"
-
-EXPORTS
-    ; Explicit exports can go here
-	RegisterModule @1
