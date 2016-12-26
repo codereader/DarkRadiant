@@ -5,6 +5,10 @@
 #include <list>
 #include "imousetoolevent.h"
 
+class RenderSystem;
+class RenderableCollector;
+class VolumeTest;
+
 namespace ui
 {
 
@@ -120,6 +124,12 @@ public:
     // overlay rendering (glOrtho).
     virtual void renderOverlay()
     {}
+
+	// For in-scene rendering of active mousetools they need implement this method.
+	// Any needed shaders should be acquired on-demand from the attached rendersystem.
+	// Renderable objects need to be submitted to the given RenderableCollector.
+	virtual void render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
+	{}
 };
 typedef std::shared_ptr<MouseTool> MouseToolPtr;
 
