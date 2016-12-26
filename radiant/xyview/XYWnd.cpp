@@ -258,6 +258,7 @@ void XYWnd::forceRedraw()
         return;
     }
 
+	_wxGLWidget->Refresh(false);
     _wxGLWidget->Update();
 }
 

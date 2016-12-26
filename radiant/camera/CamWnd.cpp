@@ -1109,6 +1109,7 @@ void CamWnd::forceRedraw()
         return;
     }
 
+	_wxGLWidget->Refresh(false);
     _wxGLWidget->Update();
 }
 
