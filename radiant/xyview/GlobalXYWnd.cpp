@@ -20,6 +20,7 @@
 #include "tools/CameraAngleTool.h"
 #include "tools/CameraMoveTool.h"
 #include "tools/MoveViewTool.h"
+#include "tools/MeasurementTool.h"
 
 #include <functional>
 
@@ -676,6 +677,7 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
     toolGroup.registerMouseTool(std::make_shared<CameraAngleTool>());
     toolGroup.registerMouseTool(std::make_shared<CameraMoveTool>());
     toolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
+	toolGroup.registerMouseTool(std::make_shared<MeasurementTool>());
 }
 
 void XYWndManager::shutdownModule()

@@ -122,7 +122,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 
 	_freezePointer.connectMouseEvents(
-		wxutil::FreezePointer::MouseEventFunction(),
+		std::bind(&XYWnd::onGLMouseButtonPress, this, std::placeholders::_1),
 		std::bind(&XYWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
 
     updateProjection();

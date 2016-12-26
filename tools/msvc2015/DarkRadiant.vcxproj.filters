@@ -883,6 +883,9 @@
     <ClCompile Include="..\..\radiant\selection\ManipulationPivot.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp">
+      <Filter>src\xyview\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1796,6 +1799,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\ManipulationPivot.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xyview\tools\MeasurementTool.h">
+      <Filter>src\xyview\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

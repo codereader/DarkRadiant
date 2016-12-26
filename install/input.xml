@@ -12,6 +12,7 @@
       <tool name="ClipperTool" button="LMB" modifiers="" />
       <tool name="MoveViewTool" button="RMB" modifiers="" />
       <tool name="ZoomTool" button="RMB" modifiers="SHIFT" />
+      <tool name="MeasurementTool" button="MMB" modifiers="CONTROL+ALT" />
     </mouseToolMapping>
     <!-- ID 1 = camera -->
     <mouseToolMapping name="CameraView" id="1">

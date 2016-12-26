@@ -147,6 +147,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/aas/AasControlDialog.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
                       xyview/tools/ClipperTool.cpp \
+					  xyview/tools/MeasurementTool.cpp \
                       xyview/XYWnd.cpp \
 					  xyview/FloatingOrthoView.cpp \
                       xyview/GlobalXYWnd.cpp \

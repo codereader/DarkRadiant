@@ -555,6 +555,7 @@
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp" />
+    <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
     <ClCompile Include="..\..\radiant\referencecache\ModelCache.cpp" />
     <ClCompile Include="..\..\radiant\referencecache\NullModel.cpp" />
@@ -848,6 +849,7 @@
     <ClInclude Include="..\..\radiant\xyview\tools\CameraAngleTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\CameraMoveTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ClipperTool.h" />
+    <ClInclude Include="..\..\radiant\xyview\tools\MeasurementTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\MoveViewTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\XYMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
