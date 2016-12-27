@@ -1,7 +1,9 @@
 #include "MeasurementTool.h"
 
+#include "i18n.h"
 #include "iclipper.h"
 #include "iuimanager.h"
+#include "math/Matrix4.h"
 #include "XYMouseToolEvent.h"
 #include "selectionlib.h"
 #include "string/convert.h"

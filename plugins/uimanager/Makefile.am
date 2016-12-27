@@ -13,6 +13,7 @@ uimanager_la_LDFLAGS = -module -avoid-version \
                        $(GL_LIBS)
 uimanager_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                       $(top_builddir)/libs/math/libmath.la \
+                      $(top_builddir)/libs/scene/libscenegraph.la \
                       $(top_builddir)/libs/xmlutil/libxmlutil.la
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
