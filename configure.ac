@@ -136,7 +136,7 @@ BOOST_TEST
 # Boost.Python if required
 if test "$python_scripting" = 'yes'
 then
-    AC_CHECK_PROGS([PYTHON_CONFIG], [python2-config], [])
+    AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
     if test ! -z "$PYTHON_CONFIG"
     then
         PYTHON_LIBS=`$PYTHON_CONFIG --libs`
