@@ -1,4 +1,4 @@
-# Maintainer: Matthias Baumann <greebo@angua.at>
+# Maintainer: codereader <greebo@angua.at>
 pkgname=darkradiant
 pkgver=2.1.1
 pkgrel=0
