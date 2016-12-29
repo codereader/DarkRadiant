@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "isound.h"
+#include "itextstream.h"
 #include "iuimanager.h"
 #include <iostream>
 
@@ -104,6 +105,8 @@ void SoundShaderPreview::update()
 					_treeView->Select(row.getItem());
 				}
 			}
+
+			handleSelectionChange();
 		}
 		else
 		{
@@ -129,6 +132,11 @@ std::string SoundShaderPreview::getSelectedSoundFile()
 }
 
 void SoundShaderPreview::onSelectionChanged(wxDataViewEvent& ev)
+{
+	handleSelectionChange();
+}
+
+void SoundShaderPreview::handleSelectionChange()
 {
 	std::string selectedFile = getSelectedSoundFile();
 

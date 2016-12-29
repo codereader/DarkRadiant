@@ -74,6 +74,8 @@ private:
 	void onPlay(wxCommandEvent& ev);
 	void onStop(wxCommandEvent& ev);
 	void onSelectionChanged(wxDataViewEvent& ev);
+
+	void handleSelectionChange();
 };
 
 } // namespace ui
