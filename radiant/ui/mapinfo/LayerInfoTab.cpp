@@ -1,5 +1,6 @@
 #include "LayerInfoTab.h"
 
+#include "ilayer.h"
 #include "i18n.h"
 #include "iradiant.h"
 #include "icounter.h"

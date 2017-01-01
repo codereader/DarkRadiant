@@ -5,6 +5,7 @@
 #include "ieventmanager.h"
 #include "ilayer.h"
 #include "imainframe.h"
+#include "iselection.h"
 
 #include "registry/registry.h"
 

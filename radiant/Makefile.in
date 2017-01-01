@@ -154,6 +154,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	ui/mapinfo/darkradiant-EntityInfoTab.$(OBJEXT) \
 	ui/mapinfo/darkradiant-ShaderInfoTab.$(OBJEXT) \
 	ui/mapinfo/darkradiant-ModelInfoTab.$(OBJEXT) \
+	ui/mapinfo/darkradiant-LayerInfoTab.$(OBJEXT) \
 	ui/mediabrowser/darkradiant-MediaBrowser.$(OBJEXT) \
 	ui/particles/darkradiant-ParticlesChooser.$(OBJEXT) \
 	ui/brush/darkradiant-QuerySidesDialog.$(OBJEXT) \
@@ -239,6 +240,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	layers/darkradiant-LayerInfoFileModule.$(OBJEXT) \
 	layers/darkradiant-LayerCommandTarget.$(OBJEXT) \
 	layers/darkradiant-LayerSystem.$(OBJEXT) \
+	layers/darkradiant-LayerUsageBreakdown.$(OBJEXT) \
 	modulesystem/darkradiant-DynamicLibrary.$(OBJEXT) \
 	modulesystem/darkradiant-ApplicationContextImpl.$(OBJEXT) \
 	modulesystem/darkradiant-DynamicLibraryLoader.$(OBJEXT) \
@@ -892,6 +894,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mapinfo/EntityInfoTab.cpp \
                       ui/mapinfo/ShaderInfoTab.cpp \
                       ui/mapinfo/ModelInfoTab.cpp \
+					  ui/mapinfo/LayerInfoTab.cpp \
                       ui/mediabrowser/MediaBrowser.cpp \
                       ui/particles/ParticlesChooser.cpp \
                       ui/brush/QuerySidesDialog.cpp \
@@ -977,6 +980,7 @@ darkradiant_SOURCES = main.cpp \
 					  layers/LayerInfoFileModule.cpp \
                       layers/LayerCommandTarget.cpp \
                       layers/LayerSystem.cpp \
+					  layers/LayerUsageBreakdown.cpp \
                       modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
                       modulesystem/DynamicLibraryLoader.cpp \
@@ -1368,6 +1372,9 @@ ui/mapinfo/darkradiant-ShaderInfoTab.$(OBJEXT):  \
 ui/mapinfo/darkradiant-ModelInfoTab.$(OBJEXT):  \
 	ui/mapinfo/$(am__dirstamp) \
 	ui/mapinfo/$(DEPDIR)/$(am__dirstamp)
+ui/mapinfo/darkradiant-LayerInfoTab.$(OBJEXT):  \
+	ui/mapinfo/$(am__dirstamp) \
+	ui/mapinfo/$(DEPDIR)/$(am__dirstamp)
 ui/mediabrowser/$(am__dirstamp):
 	@$(MKDIR_P) ui/mediabrowser
 	@: > ui/mediabrowser/$(am__dirstamp)
@@ -1756,6 +1763,8 @@ layers/darkradiant-LayerCommandTarget.$(OBJEXT):  \
 	layers/$(am__dirstamp) layers/$(DEPDIR)/$(am__dirstamp)
 layers/darkradiant-LayerSystem.$(OBJEXT): layers/$(am__dirstamp) \
 	layers/$(DEPDIR)/$(am__dirstamp)
+layers/darkradiant-LayerUsageBreakdown.$(OBJEXT):  \
+	layers/$(am__dirstamp) layers/$(DEPDIR)/$(am__dirstamp)
 modulesystem/$(am__dirstamp):
 	@$(MKDIR_P) modulesystem
 	@: > modulesystem/$(am__dirstamp)
@@ -2199,6 +2208,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@layers/$(DEPDIR)/darkradiant-LayerCommandTarget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@layers/$(DEPDIR)/darkradiant-LayerInfoFileModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@layers/$(DEPDIR)/darkradiant-LayerSystem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@layers/$(DEPDIR)/darkradiant-LayerUsageBreakdown.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@log/$(DEPDIR)/darkradiant-COutRedirector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@log/$(DEPDIR)/darkradiant-Console.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@log/$(DEPDIR)/darkradiant-LogFile.Po@am__quote@
@@ -2363,6 +2373,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mainframe/$(DEPDIR)/darkradiant-SplitPaneLayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mainframe/$(DEPDIR)/darkradiant-TopLevelFrame.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mapinfo/$(DEPDIR)/darkradiant-EntityInfoTab.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/mapinfo/$(DEPDIR)/darkradiant-LayerInfoTab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mapinfo/$(DEPDIR)/darkradiant-MapInfoDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mapinfo/$(DEPDIR)/darkradiant-ModelInfoTab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/mapinfo/$(DEPDIR)/darkradiant-ShaderInfoTab.Po@am__quote@
@@ -3137,6 +3148,20 @@ ui/mapinfo/darkradiant-ModelInfoTab.obj: ui/mapinfo/ModelInfoTab.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mapinfo/ModelInfoTab.cpp' object='ui/mapinfo/darkradiant-ModelInfoTab.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mapinfo/darkradiant-ModelInfoTab.obj `if test -f 'ui/mapinfo/ModelInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/ModelInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/ModelInfoTab.cpp'; fi`
+
+ui/mapinfo/darkradiant-LayerInfoTab.o: ui/mapinfo/LayerInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mapinfo/darkradiant-LayerInfoTab.o -MD -MP -MF ui/mapinfo/$(DEPDIR)/darkradiant-LayerInfoTab.Tpo -c -o ui/mapinfo/darkradiant-LayerInfoTab.o `test -f 'ui/mapinfo/LayerInfoTab.cpp' || echo '$(srcdir)/'`ui/mapinfo/LayerInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/mapinfo/$(DEPDIR)/darkradiant-LayerInfoTab.Tpo ui/mapinfo/$(DEPDIR)/darkradiant-LayerInfoTab.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mapinfo/LayerInfoTab.cpp' object='ui/mapinfo/darkradiant-LayerInfoTab.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mapinfo/darkradiant-LayerInfoTab.o `test -f 'ui/mapinfo/LayerInfoTab.cpp' || echo '$(srcdir)/'`ui/mapinfo/LayerInfoTab.cpp
+
+ui/mapinfo/darkradiant-LayerInfoTab.obj: ui/mapinfo/LayerInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mapinfo/darkradiant-LayerInfoTab.obj -MD -MP -MF ui/mapinfo/$(DEPDIR)/darkradiant-LayerInfoTab.Tpo -c -o ui/mapinfo/darkradiant-LayerInfoTab.obj `if test -f 'ui/mapinfo/LayerInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/LayerInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/LayerInfoTab.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/mapinfo/$(DEPDIR)/darkradiant-LayerInfoTab.Tpo ui/mapinfo/$(DEPDIR)/darkradiant-LayerInfoTab.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/mapinfo/LayerInfoTab.cpp' object='ui/mapinfo/darkradiant-LayerInfoTab.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/mapinfo/darkradiant-LayerInfoTab.obj `if test -f 'ui/mapinfo/LayerInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/LayerInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/LayerInfoTab.cpp'; fi`
 
 ui/mediabrowser/darkradiant-MediaBrowser.o: ui/mediabrowser/MediaBrowser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/mediabrowser/darkradiant-MediaBrowser.o -MD -MP -MF ui/mediabrowser/$(DEPDIR)/darkradiant-MediaBrowser.Tpo -c -o ui/mediabrowser/darkradiant-MediaBrowser.o `test -f 'ui/mediabrowser/MediaBrowser.cpp' || echo '$(srcdir)/'`ui/mediabrowser/MediaBrowser.cpp
@@ -4327,6 +4352,20 @@ layers/darkradiant-LayerSystem.obj: layers/LayerSystem.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='layers/LayerSystem.cpp' object='layers/darkradiant-LayerSystem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o layers/darkradiant-LayerSystem.obj `if test -f 'layers/LayerSystem.cpp'; then $(CYGPATH_W) 'layers/LayerSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/layers/LayerSystem.cpp'; fi`
+
+layers/darkradiant-LayerUsageBreakdown.o: layers/LayerUsageBreakdown.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT layers/darkradiant-LayerUsageBreakdown.o -MD -MP -MF layers/$(DEPDIR)/darkradiant-LayerUsageBreakdown.Tpo -c -o layers/darkradiant-LayerUsageBreakdown.o `test -f 'layers/LayerUsageBreakdown.cpp' || echo '$(srcdir)/'`layers/LayerUsageBreakdown.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) layers/$(DEPDIR)/darkradiant-LayerUsageBreakdown.Tpo layers/$(DEPDIR)/darkradiant-LayerUsageBreakdown.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='layers/LayerUsageBreakdown.cpp' object='layers/darkradiant-LayerUsageBreakdown.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o layers/darkradiant-LayerUsageBreakdown.o `test -f 'layers/LayerUsageBreakdown.cpp' || echo '$(srcdir)/'`layers/LayerUsageBreakdown.cpp
+
+layers/darkradiant-LayerUsageBreakdown.obj: layers/LayerUsageBreakdown.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT layers/darkradiant-LayerUsageBreakdown.obj -MD -MP -MF layers/$(DEPDIR)/darkradiant-LayerUsageBreakdown.Tpo -c -o layers/darkradiant-LayerUsageBreakdown.obj `if test -f 'layers/LayerUsageBreakdown.cpp'; then $(CYGPATH_W) 'layers/LayerUsageBreakdown.cpp'; else $(CYGPATH_W) '$(srcdir)/layers/LayerUsageBreakdown.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) layers/$(DEPDIR)/darkradiant-LayerUsageBreakdown.Tpo layers/$(DEPDIR)/darkradiant-LayerUsageBreakdown.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='layers/LayerUsageBreakdown.cpp' object='layers/darkradiant-LayerUsageBreakdown.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o layers/darkradiant-LayerUsageBreakdown.obj `if test -f 'layers/LayerUsageBreakdown.cpp'; then $(CYGPATH_W) 'layers/LayerUsageBreakdown.cpp'; else $(CYGPATH_W) '$(srcdir)/layers/LayerUsageBreakdown.cpp'; fi`
 
 modulesystem/darkradiant-DynamicLibrary.o: modulesystem/DynamicLibrary.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT modulesystem/darkradiant-DynamicLibrary.o -MD -MP -MF modulesystem/$(DEPDIR)/darkradiant-DynamicLibrary.Tpo -c -o modulesystem/darkradiant-DynamicLibrary.o `test -f 'modulesystem/DynamicLibrary.cpp' || echo '$(srcdir)/'`modulesystem/DynamicLibrary.cpp

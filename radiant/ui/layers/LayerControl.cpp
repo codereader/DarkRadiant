@@ -13,6 +13,7 @@
 #include <wx/tglbtn.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
 
 #include "layers/LayerSystem.h"
 #include "LayerControlDialog.h"

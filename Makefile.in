@@ -83,7 +83,7 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
 	$(srcdir)/config.h.in \
 	$(top_srcdir)/install/darkradiant.desktop.in AUTHORS NEWS \
-	README compile config.guess config.rpath config.sub depcomp \
+	compile config.guess config.rpath config.sub depcomp \
 	install-sh missing ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/boost.m4 \

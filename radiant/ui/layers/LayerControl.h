@@ -2,6 +2,7 @@
 
 #include <wx/event.h>
 #include <memory>
+#include <wx/colour.h>
 
 class wxWindow;
 class wxButton;
