@@ -385,6 +385,7 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
     <ClCompile Include="..\..\radiant\brush\Brush.cpp" />
     <ClCompile Include="..\..\radiant\brush\BrushModule.cpp" />
@@ -629,6 +630,7 @@
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
+    <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
     <ClInclude Include="..\..\radiant\brush\Brush.h" />
     <ClInclude Include="..\..\radiant\brush\BrushClipPlane.h" />

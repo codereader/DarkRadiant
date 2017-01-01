@@ -889,6 +889,9 @@
     <ClCompile Include="..\..\radiant\layers\LayerUsageBreakdown.cpp">
       <Filter>src\layers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp">
+      <Filter>src\ui\mapinfo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1808,6 +1811,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h">
       <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h">
+      <Filter>src\ui\mapinfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

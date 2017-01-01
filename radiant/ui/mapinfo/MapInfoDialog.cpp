@@ -8,6 +8,7 @@
 #include "EntityInfoTab.h"
 #include "ShaderInfoTab.h"
 #include "ModelInfoTab.h"
+#include "LayerInfoTab.h"
 
 #include <wx/artprov.h>
 #include <wx/sizer.h>
@@ -54,6 +55,9 @@ void MapInfoDialog::populateWindow()
 
 	ShaderInfoTab* shaderTab = new ShaderInfoTab(_notebook);
 	addTab(shaderTab, shaderTab->getLabel(), shaderTab->getIconName());
+
+	LayerInfoTab* layerTab = new LayerInfoTab(_notebook);
+	addTab(layerTab, layerTab->getLabel(), layerTab->getIconName());
 }
 
 void MapInfoDialog::addTab(wxWindow* panel, const std::string& label, const std::string& icon)
