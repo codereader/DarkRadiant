@@ -76,6 +76,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mapinfo/EntityInfoTab.cpp \
                       ui/mapinfo/ShaderInfoTab.cpp \
                       ui/mapinfo/ModelInfoTab.cpp \
+					  ui/mapinfo/LayerInfoTab.cpp \
                       ui/mediabrowser/MediaBrowser.cpp \
                       ui/particles/ParticlesChooser.cpp \
                       ui/brush/QuerySidesDialog.cpp \
@@ -161,6 +162,7 @@ darkradiant_SOURCES = main.cpp \
 					  layers/LayerInfoFileModule.cpp \
                       layers/LayerCommandTarget.cpp \
                       layers/LayerSystem.cpp \
+					  layers/LayerUsageBreakdown.cpp \
                       modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
                       modulesystem/DynamicLibraryLoader.cpp \
