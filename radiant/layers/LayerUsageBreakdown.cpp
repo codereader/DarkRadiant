@@ -1,15 +1,16 @@
 #include "LayerUsageBreakdown.h"
 
+#include "iscenegraph.h"
+#include "ientity.h"
+#include "iselection.h"
+#include "scenelib.h"
+
 namespace scene
 {
 
-LayerUsageBreakdown LayerUsageBreakdown::CreateFromSelection()
+namespace
 {
-	LayerUsageBreakdown bd;
-
-	InitialiseVector(bd);
-
-	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	void addNodeMapping(LayerUsageBreakdown& bd, const scene::INodePtr& node)
 	{
 		scene::LayerList layers = node->getLayers();
 
@@ -20,6 +21,40 @@ LayerUsageBreakdown LayerUsageBreakdown::CreateFromSelection()
 			// Increase the counter of the corresponding layer slot by one
 			bd[layerId]++;
 		}
+	}
+}
+
+LayerUsageBreakdown LayerUsageBreakdown::CreateFromScene(bool includeHidden)
+{
+	LayerUsageBreakdown bd;
+
+	InitialiseVector(bd);
+
+	GlobalSceneGraph().foreachNode([&](const scene::INodePtr& node)
+	{
+		// Filter out any hidden nodes, unless we want them
+		if (!includeHidden && !node->visible()) return false;
+
+		// Consider only entities and primitives
+		if (!Node_isPrimitive(node) && !Node_isEntity(node)) return true;
+
+		addNodeMapping(bd, node);
+
+		return true;
+	});
+
+	return bd;
+}
+
+LayerUsageBreakdown LayerUsageBreakdown::CreateFromSelection()
+{
+	LayerUsageBreakdown bd;
+
+	InitialiseVector(bd);
+
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		addNodeMapping(bd, node);
 	});
 
 	return bd;

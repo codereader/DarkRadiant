@@ -24,7 +24,13 @@ private:
 	{}
 
 public:
+	// Creates the layer summary based on the current selection
 	static LayerUsageBreakdown CreateFromSelection();
+
+	// Creates the layer summary based on the nodes in the GlobalScenegraph
+	// NOTE: only primitives and entities are considered.
+	// If includeHidden is set to true, currently invisible items are added
+	static LayerUsageBreakdown CreateFromScene(bool includeHidden);
 
 private:
 	// Makes sure the vector is large enough to host all layer IDs
