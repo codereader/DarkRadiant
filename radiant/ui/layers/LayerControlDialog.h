@@ -7,6 +7,7 @@
 
 #include <wx/panel.h>
 #include <memory>
+#include <sigc++/connection.h>
 
 class wxButton;
 class wxFlexGridSizer;
@@ -33,6 +34,9 @@ private:
 	wxButton* _showAllLayers;
 	wxButton* _hideAllLayers;
 
+	bool _rescanSelectionOnIdle;
+	sigc::connection _selectionChangedSignal;
+
 public:
 	LayerControlDialog();
 
@@ -56,15 +60,20 @@ private:
 	static LayerControlDialogPtr& InstancePtr();
 
 	// TransientWindow events
-	void _preShow();
+	void _preShow() override;
+	void _postHide() override;
 
 	void populateWindow();
+
+	// Update the usage colours on the controls
+	void updateLayerUsage();
 
 	// Creates the option buttons
 	void createButtons();
 
 	void onShowAllLayers(wxCommandEvent& ev);
 	void onHideAllLayers(wxCommandEvent& ev);
+	void onIdle();
 };
 
 } // namespace ui

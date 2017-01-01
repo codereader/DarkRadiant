@@ -886,6 +886,9 @@
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp">
       <Filter>src\xyview\tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\layers\LayerUsageBreakdown.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1802,6 +1805,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\tools\MeasurementTool.h">
       <Filter>src\xyview\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h">
+      <Filter>src\layers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

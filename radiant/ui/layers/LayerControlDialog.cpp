@@ -15,8 +15,10 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/scrolwin.h>
+#include <functional>
 
 #include "layers/LayerSystem.h"
+#include "layers/LayerUsageBreakdown.h"
 
 namespace ui
 {
@@ -29,12 +31,15 @@ namespace
 
 LayerControlDialog::LayerControlDialog() :
 	TransientWindow(_("Layers"), GlobalMainFrame().getWxTopLevelWindow(), true),
-	_dialogPanel(NULL),
-	_controlContainer(NULL),
-	_showAllLayers(NULL),
-	_hideAllLayers(NULL)
+	_dialogPanel(nullptr),
+	_controlContainer(nullptr),
+	_showAllLayers(nullptr),
+	_hideAllLayers(nullptr),
+	_rescanSelectionOnIdle(false)
 {
 	populateWindow();
+
+	Bind(wxEVT_IDLE, [&](wxIdleEvent&) { onIdle(); });
 
 	InitialiseWindowPosition(230, 400, RKEY_WINDOW_STATE);
     SetMinClientSize(wxSize(230, 200));
@@ -49,8 +54,8 @@ void LayerControlDialog::populateWindow()
 	
 	_dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_controlContainer = new wxFlexGridSizer(1, 3, 3, 3);
-	_controlContainer->AddGrowableCol(1);
+	_controlContainer = new wxFlexGridSizer(1, 4, 3, 3);
+	_controlContainer->AddGrowableCol(2);
 
     _dialogPanel->GetSizer()->Add(_controlContainer, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
 
@@ -115,15 +120,15 @@ void LayerControlDialog::refresh()
 
 	_controlContainer->SetRows(static_cast<int>(_layerControls.size()));
 
-	int c = 0;
 	for (LayerControls::iterator i = _layerControls.begin();
-		 i != _layerControls.end(); ++i, ++c)
+		 i != _layerControls.end(); ++i)
 	{
 		_controlContainer->Add((*i)->getToggle(), 0);
+		_controlContainer->Add((*i)->getStatusWidget(), 0, wxEXPAND | wxTOP | wxBOTTOM, 1);
 		_controlContainer->Add((*i)->getLabelButton(), 0, wxEXPAND);
 		_controlContainer->Add((*i)->getButtons(), 0, wxEXPAND);
 
-        if (c == 0)
+        if (i == _layerControls.begin())
         {
             // Prevent setting the focus on the buttons at the bottom which lets the scrollbar 
             // of the window jump around (#4089), set the focus on the first button.
@@ -140,11 +145,13 @@ void LayerControlDialog::refresh()
 void LayerControlDialog::update()
 {
 	// Broadcast the update() call
-	for (LayerControls::iterator i = _layerControls.begin();
-		 i != _layerControls.end(); ++i)
+	for (const LayerControlPtr& control : _layerControls)
 	{
-		(*i)->update();
+		control->update();
 	}
+
+	// Update usage next time round
+	_rescanSelectionOnIdle = true;
 
 	// Update the show/hide all button sensitiveness
     std::size_t numVisible;
@@ -164,6 +171,28 @@ void LayerControlDialog::update()
 
 	_showAllLayers->Enable(numHidden > 0);
 	_hideAllLayers->Enable(numVisible > 0);
+}
+
+void LayerControlDialog::updateLayerUsage()
+{
+	_rescanSelectionOnIdle = false;
+
+	// Scan the selection and get the histogram
+	scene::LayerUsageBreakdown breakDown = scene::LayerUsageBreakdown::CreateFromSelection();
+
+	for (const LayerControlPtr& control : _layerControls)
+	{
+		assert(breakDown.size() > control->getLayerId());
+
+		control->updateUsageStatusWidget(breakDown[control->getLayerId()]);
+	}
+}
+
+void LayerControlDialog::onIdle()
+{
+	if (!_rescanSelectionOnIdle) return;
+
+	updateLayerUsage();
 }
 
 void LayerControlDialog::toggle(const cmd::ArgumentList& args)
@@ -218,8 +247,7 @@ LayerControlDialog& LayerControlDialog::Instance()
 
 		// Register this instance with GlobalRadiant() at once
 		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &LayerControlDialog::onRadiantShutdown)
-        );
+            sigc::mem_fun(*instancePtr, &LayerControlDialog::onRadiantShutdown));
 	}
 
 	return *instancePtr;
@@ -230,8 +258,19 @@ void LayerControlDialog::_preShow()
 {
 	TransientWindow::_preShow();
 
+	_selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect([this](const ISelectable&)
+	{
+		_rescanSelectionOnIdle = true;
+	});
+
 	// Re-populate the dialog
 	refresh();
+}
+
+void LayerControlDialog::_postHide()
+{
+	_selectionChangedSignal.disconnect();
+	_rescanSelectionOnIdle = false;
 }
 
 void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)

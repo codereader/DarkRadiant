@@ -29,13 +29,25 @@ namespace
 }
 
 LayerControl::LayerControl(wxWindow* parent, int layerID) :
-	_layerID(layerID)
+	_layerID(layerID),
+	_activeColour(0,0,0),
+	_inactiveColour(90,90,90,1)
 {
 	// Create the toggle button
 	_toggle = new wxBitmapToggleButton(parent, wxID_ANY, 
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_LAYER_VISIBLE));
 	_toggle->SetMaxSize(wxSize(30, -1));
 	_toggle->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(LayerControl::onToggle), NULL, this);
+
+	Vector3 selColour = ColourSchemes().getColour("selected_brush");
+	_activeColour = wxColour(static_cast<unsigned char>(selColour[0] * 255),
+		static_cast<unsigned char>(selColour[1] * 255),
+		static_cast<unsigned char>(selColour[2] * 255));
+
+	_statusWidget = new wxStaticText(parent, wxID_ANY, "");
+	_statusWidget->SetMinSize(wxSize(5, -1));
+	_statusWidget->SetToolTip(_("Indicates whether anything among the current selection is part of this layer."));
+	_statusWidget->SetBackgroundColour(_inactiveColour);
 
 	// Create the label
 	_labelButton = new wxButton(parent, wxID_ANY);
@@ -66,6 +78,11 @@ LayerControl::LayerControl(wxWindow* parent, int layerID) :
 wxButton* LayerControl::getLabelButton()
 {
 	return _labelButton;
+}
+
+wxWindow* LayerControl::getStatusWidget()
+{
+	return _statusWidget;
 }
 
 wxSizer* LayerControl::getButtons()
@@ -111,7 +128,21 @@ void LayerControl::update()
 	// Don't allow selection of hidden layers
 	_labelButton->Enable(layerIsVisible);
 
+	// Clear usage status
+	_statusWidget->SetBackgroundColour(_inactiveColour);
+
 	_updateActive = false;
+}
+
+int LayerControl::getLayerId() const
+{
+	return _layerID;
+}
+
+void LayerControl::updateUsageStatusWidget(std::size_t numUsedObjectsInLayer)
+{
+	_statusWidget->SetBackgroundColour(numUsedObjectsInLayer > 0 ? _activeColour : _inactiveColour);
+	_statusWidget->Refresh(true);
 }
 
 void LayerControl::onToggle(wxCommandEvent& ev)
