@@ -10,18 +10,17 @@ modification which is available at http://www.thedarkmod.com
 DarkRadiant is built on Windows using *Microsoft Visual C++ 2015*. 
 The free Community Edition can be obtained here:
 
-*VC++ 2015:* https://www.visualstudio.com/en-us/downloads
-           (Choose Visual Studio Community)
+*VC++ 2015:* https://www.visualstudio.com/en-us/downloads (Choose Visual Studio Community)
 
 Since DarkRadiant uses a couple of open-source libraries that are not available on
 Windows by default, you will also need to download and install the
 dependencies. 7-Zip packages of the dependencies are available at the following
 URL(s). [Get 7-zip here](http://www.7-zip.org/)
 
-32-bit only builds:
+*32-bit only builds:*
 https://github.com/codereader/DarkRadiant/releases/download/2.1.0/w32deps.7z
 
-64-bit builds:
+*64-bit builds:*
 https://github.com/codereader/DarkRadiant/releases/download/2.1.0/w32deps.7z
 https://github.com/codereader/DarkRadiant/releases/download/2.1.0/w64deps.7z
 
@@ -29,7 +28,7 @@ Note that 64-bit builds need the 32-bit dependencies in addition to their own
 64-bit dependencies.
 
 The dependencies packages need to be extracted into the main DarkRadiant
-source directory, i.e. alongside the include/ and radiant/ directories.
+source directory, i.e. alongside the **include/** and **radiant/** directories.
 
 ## Build
 
@@ -37,8 +36,9 @@ The main Visual C++ solution file is:
 
 Visual Studio 2015: **tools/msvc2015/DarkRadiant.sln**
 
-Open this file with Visual Studio and start a build by right-clicking on the
-top-level "Solution 'DarkRadiant'" item and choosing Build Solution.
+Open this file with Visual Studio and start a build by right-clicking on the top-level 
+"Solution 'DarkRadiant'" item and choosing Build Solution. The DarkRadiant.exe file will be 
+placed into the **install/** folder.
 
 # Compiling on Linux
 
