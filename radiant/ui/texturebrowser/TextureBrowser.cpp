@@ -833,7 +833,7 @@ void TextureBrowser::onSeekInMediaBrowser()
         if (shader != NULL)
         {
             // Focus the MediaBrowser selection to the given shader
-            GlobalGroupDialog().setPage("mediabrowser");
+            GlobalGroupDialog().setPage(MediaBrowser::GROUPDIALOG_TAB_NAME);
             MediaBrowser::getInstance().setSelection(shader->getName());
         }
     }

@@ -21,7 +21,6 @@
 
 #include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
-#include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "textool/TexTool.h"
 #include "ui/overlay/OverlayDialog.h"

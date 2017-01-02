@@ -52,6 +52,8 @@ public:
 
 	class PopulatorFinishedEvent; // wxEvent type
 
+	static std::string GROUPDIALOG_TAB_NAME;
+
 private:
 	wxFrame* _tempParent;
 
@@ -107,11 +109,6 @@ public:
 	 */
 	static MediaBrowser& getInstance();
 
-	/** Return the main widget for packing into
-	 * the groupdialog or other parent container.
-	 */
-	wxWindow* getWidget();
-
 	/** Constructor creates widgets.
 	 */
 	MediaBrowser();
@@ -146,7 +143,7 @@ private:
 	void registerCommandsAndPreferences();
 
 	/**
-	* greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
+	* greebo: Command target for toggling the mediabrowser tab in the groupdialog.
 	*/
 	void Toggle(const cmd::ArgumentList& args);
 };

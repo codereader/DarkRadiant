@@ -326,13 +326,15 @@ public:
     }
 };
 
+std::string MediaBrowser::GROUPDIALOG_TAB_NAME = "mediabrowser";
+
 // Constructor
 MediaBrowser::MediaBrowser() : 
-	_tempParent(NULL),
-	_mainWidget(NULL),
-	_treeView(NULL),
-	_treeStore(NULL),
-	_preview(NULL),
+	_tempParent(nullptr),
+	_mainWidget(nullptr),
+	_treeView(nullptr),
+	_treeStore(nullptr),
+	_preview(nullptr),
 	_isPopulated(false)
 {}
 
@@ -413,13 +415,6 @@ void MediaBrowser::construct()
 		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), nullptr, this);
 }
 
-wxWindow* MediaBrowser::getWidget()
-{
-	construct();
-
-	return _mainWidget;
-}
-
 /* Tree query functions */
 
 bool MediaBrowser::isDirectorySelected()
@@ -454,15 +449,20 @@ void MediaBrowser::onRadiantStartup()
 		populate();
 	}
 
+	if (_mainWidget == nullptr)
+	{
+		construct();
+	}
+
 	/* Construct the Group Dialog. This is the tabbed window that contains
 	* a number of pages - usually Entities, Textures and possibly Console.
 	*/
 	// Add the Media Browser page
 	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
 
-	mediaBrowserPage->name = "mediabrowser";
+	mediaBrowserPage->name = GROUPDIALOG_TAB_NAME;
 	mediaBrowserPage->windowLabel = _("Media");
-	mediaBrowserPage->page = getWidget();
+	mediaBrowserPage->page = _mainWidget;
 	mediaBrowserPage->tabIcon = "folder16.png";
 	mediaBrowserPage->tabLabel = _("Media");
 	mediaBrowserPage->position = IGroupDialog::Page::Position::MediaBrowser;
@@ -661,7 +661,7 @@ void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 
 void MediaBrowser::Toggle(const cmd::ArgumentList& args)
 {
-	GlobalGroupDialog().togglePage("mediabrowser");
+	GlobalGroupDialog().togglePage(GROUPDIALOG_TAB_NAME);
 }
 
 void MediaBrowser::registerCommandsAndPreferences()
@@ -720,6 +720,7 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 
 void MediaBrowser::shutdownModule()
 {
+	GlobalMaterialManager().detach(*this);
 }
 
 // Static module

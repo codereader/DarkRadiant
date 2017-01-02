@@ -12,7 +12,6 @@
 
 #include "log/Console.h"
 #include "xyview/GlobalXYWnd.h"
-#include "ui/mediabrowser/MediaBrowser.h"
 #include "camera/GlobalCamera.h"
 
 #include "registry/registry.h"
