@@ -9,58 +9,6 @@ namespace fs = boost::filesystem;
 #include <string>
 #include <stdexcept>
 
-#if 0
-inline bool directory_good(Directory* directory)
-{
-  return directory != 0;
-}
-
-inline Directory* directory_open(const std::string& name)
-{
-  return g_dir_open(name.c_str(), 0, 0);
-}
-
-inline void directory_close(Directory* directory)
-{
-  g_dir_close(directory);
-}
-
-inline const char* directory_read_and_increment(Directory* directory)
-{
-  return g_dir_read_name(directory);
-}
-#endif
-
-// greebo: Moved this from GtkRadiant's cmdlib.h to here
-// some easy portability crap
-
-#define access_owner_read 0400
-#define access_owner_write 0200
-#define access_owner_execute 0100
-#define access_owner_rw_ 0600
-#define access_owner_r_x 0500
-#define access_owner__wx 0300
-#define access_owner_rwx 0700
-
-#define access_group_read 0040
-#define access_group_write 0020
-#define access_group_execute 0010
-#define access_group_rw_ 0060
-#define access_group_r_x 0050
-#define access_group__wx 0030
-#define access_group_rwx 0070
-
-#define access_others_read 0004
-#define access_others_write 0002
-#define access_others_execute 0001
-#define access_others_rw_ 0006
-#define access_others_r_x 0005
-#define access_others__wx 0003
-#define access_others_rwx 0007
-
-#define access_rwxrwxr_x (access_owner_rwx | access_group_rwx | access_others_r_x)
-#define access_rwxrwxrwx (access_owner_rwx | access_group_rwx | access_others_rwx)
-
 namespace os
 {
 
@@ -95,34 +43,9 @@ inline void foreachItemInDirectory(const std::string& path, const std::function<
 
 		functor(candidate);
 	}
-#if 0
-	Directory* dir = directory_open(path);
-
-	if (directory_good(dir)) {
-		for (;;) {
-			const char* name = directory_read_and_increment(dir);
-			if (name == 0) {
-				break;
-			}
-
-			functor(name);
-		}
-
-		directory_close(dir);
-	}
-    else {
-        throw DirectoryNotFoundException(
-            "Directory_forEach(): invalid directory '" + path + "'"
-        );
-    }
-#endif
 }
 
 } // namespace
-
-#ifdef WIN32
-
-#include <direct.h>
 
 namespace os
 {
@@ -137,39 +60,35 @@ namespace os
  */
 inline bool makeDirectory(const std::string& name)
 {
-	int mkVal = _mkdir(name.c_str());
-    if (mkVal == -1)
-    {
-        int err;
-        _get_errno(&err);
+	try
+	{
+		fs::path path(name);
 
-        if (err == EEXIST)
-        {
-            return true;
-        }
-        else
-        {
-            rConsoleError() << "os::makeDirectory(" << name << ") failed with error "
-                      << err << std::endl;
-            return false;
-        }
-    }
-    return true;
+		// Create the directory 
+		if (fs::create_directory(path))
+		{
+			// Directory has been created, set permissions
+			rConsole() << "Directory " << path << " created succesfully." << std::endl;
+
+			// Set permissions to rwxrwxr_x
+			fs::permissions(path, fs::add_perms |
+				fs::owner_exe | fs::owner_write | fs::owner_read |
+				fs::group_exe | fs::group_write | fs::group_read |
+				fs::others_exe | fs::others_read);
+		}
+		
+		// Directory already exists or has been created successfully
+		return true;
+	}
+	catch (fs::filesystem_error& ex)
+	{
+		rConsoleError() << "os::makeDirectory(" << name << ") failed with error "
+			<< ex.what() << " (" << ex.code().value() << ")" << std::endl;
+
+		// Directory creation failed
+		return false;
+	}
 }
 
 } // namespace os
 
-#else // POSIX
-
-#include <sys/stat.h>
-
-namespace os {
-
-// returns true if succeeded in creating directory
-inline bool makeDirectory(const std::string& name) {
-	return mkdir(name.c_str(), access_rwxrwxr_x) != -1;
-}
-
-} // namespace os
-
-#endif
