@@ -36,6 +36,8 @@ private:
 
 	bool _rescanSelectionOnIdle;
 	sigc::connection _selectionChangedSignal;
+	sigc::connection _layersChangedSignal;
+	sigc::connection _layerVisibilityChangedSignal;
 
 public:
 	LayerControlDialog();

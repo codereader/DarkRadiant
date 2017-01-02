@@ -36,6 +36,9 @@ private:
 	// The ID of the active layer
 	int _activeLayer;
 
+	sigc::signal<void> _layersChangedSignal;
+	sigc::signal<void> _layerVisibilityChangedSignal;
+
 public:
 	LayerSystem();
 
@@ -120,6 +123,9 @@ public:
 
 	// Selects/unselects an entire layer
 	void setSelected(int layerID, bool selected);
+
+	sigc::signal<void> signal_layersChanged() override;
+	sigc::signal<void> signal_layerVisibilityChanged() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

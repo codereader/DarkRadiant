@@ -9,6 +9,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include "ui/layers/LayerOrthoContextMenuItem.h"
+#include "ui/layers/LayerControlDialog.h"
 
 namespace ui
 {
@@ -47,34 +48,35 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+	// Register LayerControlDialog
+	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", LayerControlDialog::toggle);
+	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
+
 	// Create a new menu item connected to the CreateNewLayer command
-	_layerMenuItems.push_back(
-		std::make_shared<wxutil::CommandMenuItem>(
-			new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON), "CreateNewLayer"));
+	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::CommandMenuItem>(
+			new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON), "CreateNewLayer"),
+		IOrthoContextMenu::SECTION_LAYER
+	);
 
 	// Add the orthocontext menu's layer actions
-	_layerMenuItems.push_back(
-		std::make_shared<LayerOrthoContextMenuItem>(_(ADD_TO_LAYER_TEXT), LayerOrthoContextMenuItem::AddToLayer));
+	GlobalOrthoContextMenu().addItem(
+		std::make_shared<LayerOrthoContextMenuItem>(_(ADD_TO_LAYER_TEXT), LayerOrthoContextMenuItem::AddToLayer),
+		IOrthoContextMenu::SECTION_LAYER
+	);
 
-	_layerMenuItems.push_back(
-		std::make_shared<LayerOrthoContextMenuItem>(_(MOVE_TO_LAYER_TEXT), LayerOrthoContextMenuItem::MoveToLayer));
+	GlobalOrthoContextMenu().addItem(
+		std::make_shared<LayerOrthoContextMenuItem>(_(MOVE_TO_LAYER_TEXT), LayerOrthoContextMenuItem::MoveToLayer),
+		IOrthoContextMenu::SECTION_LAYER
+	);
 
-	_layerMenuItems.push_back(
-		std::make_shared<LayerOrthoContextMenuItem>(_(REMOVE_FROM_LAYER_TEXT), LayerOrthoContextMenuItem::RemoveFromLayer));
-
-	for (const IMenuItemPtr& item : _layerMenuItems)
-	{
-		GlobalOrthoContextMenu().addItem(item, IOrthoContextMenu::SECTION_LAYER);
-	}
+	GlobalOrthoContextMenu().addItem(
+		std::make_shared<LayerOrthoContextMenuItem>(_(REMOVE_FROM_LAYER_TEXT), LayerOrthoContextMenuItem::RemoveFromLayer),
+		IOrthoContextMenu::SECTION_LAYER
+	);
 }
 
 void UserInterfaceModule::shutdownModule()
 {
-	// Remove layer items again
-	for (const IMenuItemPtr& item : _layerMenuItems)
-	{
-		GlobalOrthoContextMenu().removeItem(item);
-	}
 }
 
 // Static module registration

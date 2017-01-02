@@ -16,9 +16,6 @@ namespace ui
 class UserInterfaceModule :
 	public RegisterableModule
 {
-private:
-	std::vector<IMenuItemPtr> _layerMenuItems;
-
 public:
 	// RegisterableModule
 	const std::string & getName() const override;

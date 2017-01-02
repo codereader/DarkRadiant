@@ -22,8 +22,6 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/EntryAbortedException.h"
 
-#include "ui/layers/LayerControlDialog.h"
-
 #include <functional>
 
 namespace scene
@@ -141,7 +139,8 @@ void LayerSystem::reset()
 	_layerVisibility[DEFAULT_LAYER] = true;
 
 	// Update the LayerControlDialog
-	ui::LayerControlDialog::Instance().refresh();
+	_layersChangedSignal.emit();
+	_layerVisibilityChangedSignal.emit();
 }
 
 bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName)
@@ -271,7 +270,8 @@ void LayerSystem::updateSceneGraphVisibility() {
 	GlobalSceneGraph().root()->traverseChildren(walker);
 }
 
-void LayerSystem::onLayerVisibilityChanged() {
+void LayerSystem::onLayerVisibilityChanged()
+{
 	// Update all nodes
 	updateSceneGraphVisibility();
 
@@ -279,7 +279,7 @@ void LayerSystem::onLayerVisibilityChanged() {
 	SceneChangeNotify();
 
 	// Update the LayerControlDialog
-	ui::LayerControlDialog::Instance().update();
+	_layerVisibilityChangedSignal.emit();
 }
 
 void LayerSystem::addSelectionToLayer(int layerID) {
@@ -394,6 +394,16 @@ void LayerSystem::setSelected(int layerID, bool selected) {
     }
 }
 
+sigc::signal<void> LayerSystem::signal_layersChanged()
+{
+	return _layersChangedSignal;
+}
+
+sigc::signal<void> LayerSystem::signal_layerVisibilityChanged()
+{
+	return _layerVisibilityChangedSignal;
+}
+
 int LayerSystem::getLayerID(const std::string& name) const {
 	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); i++) {
 		if (i->second == name) {
@@ -471,10 +481,9 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 	createLayer(_(DEFAULT_LAYER_NAME));
 
 	// Add command targets for the first 10 layer IDs here
-	for (int i = 0; i < 10; i++) {
-		_commandTargets.push_back(
-			LayerCommandTargetPtr(new LayerCommandTarget(i))
-		);
+	for (int i = 0; i < 10; i++)
+	{
+		_commandTargets.push_back(std::make_shared<LayerCommandTarget>(i));
 	}
 
 	// Register the "create layer" command
@@ -482,9 +491,6 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 		std::bind(&LayerSystem::createLayerCmd, this, std::placeholders::_1), 
         cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
 	IEventPtr ev = GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
-
-	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", ui::LayerControlDialog::toggle);
-	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
 
 	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &LayerSystem::onMapEvent)
@@ -534,9 +540,10 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 		// Attempt to create the layer, this will return -1 if the operation fails
 		int layerID = createLayer(layerName);
 
-		if (layerID != -1) {
+		if (layerID != -1)
+		{
 			// Success, break the loop
-			ui::LayerControlDialog::Instance().refresh();
+			_layersChangedSignal.emit();
 			break;
 		}
 		else {
