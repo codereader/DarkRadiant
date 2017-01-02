@@ -206,7 +206,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
     registerUICommands();
 
 	ui::TexTool::registerCommands();
-	ui::MediaBrowser::registerCommandsAndPreferences();
     
 	selection::algorithm::registerCommands();
 	brush::algorithm::registerCommands();

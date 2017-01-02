@@ -33,6 +33,7 @@
 #include "ui/common/TexturePreviewCombo.h"
 
 #include "debugging/ScopedDebugTimer.h"
+#include "modulesystem/StaticModule.h"
 
 #include <functional>
 #include <boost/algorithm/string/predicate.hpp>
@@ -337,12 +338,12 @@ MediaBrowser::MediaBrowser() :
 
 void MediaBrowser::construct()
 {
-	if (_mainWidget != NULL)
+	if (_mainWidget != nullptr)
 	{
 		return;
 	}
 
-	_tempParent = new wxFrame(NULL, wxID_ANY, "");
+	_tempParent = new wxFrame(nullptr, wxID_ANY, "");
 	_tempParent->Hide();
 
 	_treeStore = new wxutil::TreeModel(_columns);
@@ -370,11 +371,11 @@ void MediaBrowser::construct()
 
 	// Connect up the selection changed callback
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), NULL, this);
-	_treeView->Connect(wxEVT_PAINT, wxPaintEventHandler(MediaBrowser::_onExpose), NULL, this);
+		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), nullptr, this);
+	_treeView->Connect(wxEVT_PAINT, wxPaintEventHandler(MediaBrowser::_onExpose), nullptr, this);
 
 	_treeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
-		wxDataViewEventHandler(MediaBrowser::_onContextMenu), NULL, this);
+		wxDataViewEventHandler(MediaBrowser::_onContextMenu), nullptr, this);
 
 	// Add the info pane
 	_preview = new TexturePreviewCombo(_mainWidget);
@@ -409,7 +410,7 @@ void MediaBrowser::construct()
 
 	// Connect the finish callback to load the treestore
 	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
-		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), NULL, this);
+		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), nullptr, this);
 
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(*this, &MediaBrowser::onRadiantShutdown)
@@ -454,29 +455,6 @@ void MediaBrowser::onRadiantShutdown()
 	_tempParent->Destroy();
 
 	GlobalMaterialManager().detach(*this);
-
-	// Delete the singleton instance on shutdown
-	getInstancePtr().reset();
-}
-
-/** Return the singleton instance.
- */
-MediaBrowser& MediaBrowser::getInstance()
-{
-	MediaBrowserPtr& instancePtr = getInstancePtr();
-
-	if (instancePtr == NULL)
-	{
-		instancePtr.reset(new MediaBrowser);
-	}
-
-	return *instancePtr;
-}
-
-MediaBrowserPtr& MediaBrowser::getInstancePtr()
-{
-	static MediaBrowserPtr _instancePtr;
-	return _instancePtr;
 }
 
 // Set the selection in the treeview
@@ -507,16 +485,6 @@ void MediaBrowser::setSelection(const std::string& selection)
 		_treeView->EnsureVisible(item);
 		handleSelectionChange();
 	}
-}
-
-void MediaBrowser::reloadMedia()
-{
-	// Remove all items and clear the "isPopulated" flag
-	_treeStore->Clear();
-	_isPopulated = false;
-
-	// Trigger an "expose" event
-	_treeView->Refresh();
 }
 
 void MediaBrowser::init()
@@ -585,7 +553,7 @@ void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFi
 	_treeView->AssociateModel(_treeStore.get());
 }
 
-/* gtkutil::PopupMenu callbacks */
+/* wxutil::PopupMenu callbacks */
 
 void MediaBrowser::_onLoadInTexView()
 {
@@ -687,7 +655,7 @@ void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 	handleSelectionChange();
 }
 
-void MediaBrowser::toggle(const cmd::ArgumentList& args)
+void MediaBrowser::Toggle(const cmd::ArgumentList& args)
 {
 	GlobalGroupDialog().togglePage("mediabrowser");
 }
@@ -698,8 +666,47 @@ void MediaBrowser::registerCommandsAndPreferences()
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
 	page.appendCheckBox(_("Load media tree at startup"), RKEY_MEDIA_BROWSER_PRELOAD);
 
-	GlobalCommandSystem().addCommand("ToggleMediaBrowser", toggle);
+	GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowser::Toggle));
 	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
+}
+
+const std::string& MediaBrowser::getName() const
+{
+	static std::string _name("MediaBrowser");
+	return _name;
+}
+
+const StringSet& MediaBrowser::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	registerCommandsAndPreferences();
+}
+
+void MediaBrowser::shutdownModule()
+{
+}
+
+// Static module
+module::StaticModule<MediaBrowser> mediaBrowserModule;
+
+MediaBrowser& MediaBrowser::getInstance()
+{
+	return *mediaBrowserModule.getModule();
 }
 
 } // namespace

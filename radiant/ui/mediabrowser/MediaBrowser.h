@@ -20,9 +20,6 @@ namespace ui
 
 class TexturePreviewCombo;
 
-class MediaBrowser;
-typedef std::shared_ptr<MediaBrowser> MediaBrowserPtr;
-
 /**
  * \brief Media Browser page of the group dialog.
  *
@@ -30,7 +27,7 @@ typedef std::shared_ptr<MediaBrowser> MediaBrowserPtr;
  * into the texture window or applying directly to map geometry.
  */
 class MediaBrowser : 
-	public sigc::trackable,
+	public RegisterableModule,
 	public wxEvtHandler,
 	public ModuleObserver // to monitor the MaterialManager module
 {
@@ -104,10 +101,6 @@ private:
 
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
-	/** Return the singleton instance.
-	 */
-	static MediaBrowserPtr& getInstancePtr();
-
 public:
 
 	/** Return the singleton instance.
@@ -119,7 +112,7 @@ public:
 	 */
 	wxWindow* getWidget();
 
-	/** Constructor creates GTK widgets.
+	/** Constructor creates widgets.
 	 */
 	MediaBrowser();
 
@@ -132,20 +125,10 @@ public:
 	 */
 	void setSelection(const std::string& selection);
 
-	/** greebo: Rebuilds the media tree from scratch (call this after
-	 * 			a "RefreshShaders" command.
-	 */
-	void reloadMedia();
-
 	/**
 	 * greebo: Handles the media tree preload
 	 */
 	static void init();
-
-	/**
-	 * greebo: Registers the preference page and the commands
-	 */
-	static void registerCommandsAndPreferences();
 
 	// ModuleObserver implementation, these are called when the MaterialManager
 	// is emitting realise signals
@@ -155,10 +138,21 @@ public:
 	// Radiant Event Listener
 	void onRadiantShutdown();
 
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
+
+private:
 	/**
-	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
+	* greebo: Registers the preference page and the commands
+	*/
+	void registerCommandsAndPreferences();
+
+	/**
+	* greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
+	*/
+	void Toggle(const cmd::ArgumentList& args);
 };
 
 }
