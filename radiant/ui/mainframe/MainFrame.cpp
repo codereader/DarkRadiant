@@ -359,21 +359,6 @@ void MainFrame::create()
 	// Create the topmost window first
 	createTopLevelWindow();
 
-	/* Construct the Group Dialog. This is the tabbed window that contains
-     * a number of pages - usually Entities, Textures and possibly Console.
-     */
-	// Add the Media Browser page
-	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
-
-	mediaBrowserPage->name = "mediabrowser";
-	mediaBrowserPage->windowLabel = _("Media");
-	mediaBrowserPage->page = MediaBrowser::getInstance().getWidget();
-	mediaBrowserPage->tabIcon = "folder16.png";
-	mediaBrowserPage->tabLabel = _("Media");
-	mediaBrowserPage->position = IGroupDialog::Page::Position::MediaBrowser;
-
-	GlobalGroupDialog().addPage(mediaBrowserPage);
-
     // Add the console
 	IGroupDialog::PagePtr consolePage(new IGroupDialog::Page);
 

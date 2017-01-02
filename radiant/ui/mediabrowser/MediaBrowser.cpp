@@ -411,10 +411,6 @@ void MediaBrowser::construct()
 	// Connect the finish callback to load the treestore
 	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
 		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), nullptr, this);
-
-	GlobalRadiant().signal_radiantShutdown().connect(
-        sigc::mem_fun(*this, &MediaBrowser::onRadiantShutdown)
-    );
 }
 
 wxWindow* MediaBrowser::getWidget()
@@ -448,6 +444,30 @@ std::string MediaBrowser::getSelectedName()
 	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
 	
 	return row[_columns.fullName];
+}
+
+void MediaBrowser::onRadiantStartup()
+{
+	// Check for pre-loading the textures
+	if (registry::getValue<bool>(RKEY_MEDIA_BROWSER_PRELOAD))
+	{
+		populate();
+	}
+
+	/* Construct the Group Dialog. This is the tabbed window that contains
+	* a number of pages - usually Entities, Textures and possibly Console.
+	*/
+	// Add the Media Browser page
+	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
+
+	mediaBrowserPage->name = "mediabrowser";
+	mediaBrowserPage->windowLabel = _("Media");
+	mediaBrowserPage->page = getWidget();
+	mediaBrowserPage->tabIcon = "folder16.png";
+	mediaBrowserPage->tabLabel = _("Media");
+	mediaBrowserPage->position = IGroupDialog::Page::Position::MediaBrowser;
+
+	GlobalGroupDialog().addPage(mediaBrowserPage);
 }
 
 void MediaBrowser::onRadiantShutdown()
@@ -485,22 +505,6 @@ void MediaBrowser::setSelection(const std::string& selection)
 		_treeView->EnsureVisible(item);
 		handleSelectionChange();
 	}
-}
-
-void MediaBrowser::init()
-{
-	// Create the widgets now
-	getInstance().construct();
-
-	// Check for pre-loading the textures
-	if (registry::getValue<bool>(RKEY_MEDIA_BROWSER_PRELOAD))
-	{
-		getInstance().populate();
-	}
-
-	// Attach to the MaterialManager to get notified on unrealise/realise
-	// events, in which case we're reloading the media tree
-	GlobalMaterialManager().attach(getInstance());
 }
 
 void MediaBrowser::realise()
@@ -685,6 +689,8 @@ const StringSet& MediaBrowser::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_SHADERSYSTEM);
+		_dependencies.insert(MODULE_UIMANAGER);
 	}
 
 	return _dependencies;
@@ -695,6 +701,21 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	registerCommandsAndPreferences();
+
+	// Create the widgets
+	construct();
+
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(*this, &MediaBrowser::onRadiantStartup)
+	);
+
+	GlobalRadiant().signal_radiantShutdown().connect(
+		sigc::mem_fun(*this, &MediaBrowser::onRadiantShutdown)
+	);
+
+	// Attach to the MaterialManager to get notified on unrealise/realise
+	// events, in which case we're reloading the media tree
+	GlobalMaterialManager().attach(*this);
 }
 
 void MediaBrowser::shutdownModule()

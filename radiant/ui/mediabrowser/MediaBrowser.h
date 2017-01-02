@@ -125,18 +125,10 @@ public:
 	 */
 	void setSelection(const std::string& selection);
 
-	/**
-	 * greebo: Handles the media tree preload
-	 */
-	static void init();
-
 	// ModuleObserver implementation, these are called when the MaterialManager
 	// is emitting realise signals
 	void unrealise();
 	void realise();
-
-	// Radiant Event Listener
-	void onRadiantShutdown();
 
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
@@ -144,6 +136,10 @@ public:
 	void shutdownModule() override;
 
 private:
+	// Radiant Event Listener
+	void onRadiantStartup();
+	void onRadiantShutdown();
+
 	/**
 	* greebo: Registers the preference page and the commands
 	*/

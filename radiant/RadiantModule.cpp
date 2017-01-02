@@ -242,9 +242,6 @@ void RadiantModule::postModuleInitialisation()
 
 	wxutil::MultiMonitor::printMonitorInfo();
 
-	// Initialise the mediabrowser
-    ui::MediaBrowser::init();
-
     // Initialise the mainframe
     GlobalMainFrame().construct();
 
