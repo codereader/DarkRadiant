@@ -21,10 +21,8 @@
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/EntryAbortedException.h"
-#include "wxutil/menu/CommandMenuItem.h"
 
 #include "ui/layers/LayerControlDialog.h"
-#include "ui/layers/LayerOrthoContextMenuItem.h"
 
 #include <functional>
 
@@ -34,14 +32,6 @@ namespace scene
 namespace
 {
 	const char* const DEFAULT_LAYER_NAME = N_("Default");
-
-	const char* const LAYER_ICON = "layers.png";
-	const char* const CREATE_LAYER_TEXT = N_("Create Layer...");
-
-	const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
-	const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
-	const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
-
 	const int DEFAULT_LAYER = 0;
 }
 
@@ -453,7 +443,8 @@ int LayerSystem::getLowestUnusedLayerID() {
 }
 
 // RegisterableModule implementation
-const std::string& LayerSystem::getName() const {
+const std::string& LayerSystem::getName() const 
+{
 	static std::string _name(MODULE_LAYERSYSTEM);
 	return _name;
 }
@@ -466,8 +457,6 @@ const StringSet& LayerSystem::getDependencies() const
 	{
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 	}
 
@@ -500,28 +489,6 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &LayerSystem::onMapEvent)
 	);
-
-	// Create a new menu item connected to the CreateNewLayer command
-	wxutil::CommandMenuItemPtr menuItem(new wxutil::CommandMenuItem(
-		new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON),
-		"CreateNewLayer")
-	);
-
-	GlobalOrthoContextMenu().addItem(menuItem, ui::IOrthoContextMenu::SECTION_LAYER);
-
-	// Add the ortho context menu items
-	ui::LayerOrthoContextMenuItemPtr addMenu(new ui::LayerOrthoContextMenuItem(
-		_(ADD_TO_LAYER_TEXT), ui::LayerOrthoContextMenuItem::AddToLayer));
-
-	ui::LayerOrthoContextMenuItemPtr moveMenu(new ui::LayerOrthoContextMenuItem(
-		_(MOVE_TO_LAYER_TEXT), ui::LayerOrthoContextMenuItem::MoveToLayer));
-
-	ui::LayerOrthoContextMenuItemPtr removeMenu(new ui::LayerOrthoContextMenuItem(
-		_(REMOVE_FROM_LAYER_TEXT), ui::LayerOrthoContextMenuItem::RemoveFromLayer));
-
-	GlobalOrthoContextMenu().addItem(addMenu, ui::IOrthoContextMenu::SECTION_LAYER);
-	GlobalOrthoContextMenu().addItem(moveMenu, ui::IOrthoContextMenu::SECTION_LAYER);
-	GlobalOrthoContextMenu().addItem(removeMenu, ui::IOrthoContextMenu::SECTION_LAYER);
 
 	GlobalMapInfoFileManager().registerInfoFileModule(
 		std::make_shared<LayerInfoFileModule>()
