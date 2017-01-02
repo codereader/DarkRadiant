@@ -201,7 +201,7 @@ void LayerControlDialog::toggle(const cmd::ArgumentList& args)
 	Instance().ToggleVisibility();
 }
 
-void LayerControlDialog::init()
+void LayerControlDialog::onRadiantStartup()
 {
 	// Lookup the stored window information in the registry
 	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
@@ -241,7 +241,7 @@ LayerControlDialog& LayerControlDialog::Instance()
 {
 	LayerControlDialogPtr& instancePtr = InstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new LayerControlDialog);

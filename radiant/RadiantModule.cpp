@@ -252,8 +252,6 @@ void RadiantModule::postModuleInitialisation()
 	// Initialise the shaderclipboard
 	GlobalShaderClipboard().clear();
 
-	ui::LayerControlDialog::init();
-
 	// Broadcast the startup event
     broadcastStartupEvent();
 

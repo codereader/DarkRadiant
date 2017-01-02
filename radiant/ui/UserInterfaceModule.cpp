@@ -60,19 +60,25 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 
 	// Add the orthocontext menu's layer actions
 	GlobalOrthoContextMenu().addItem(
-		std::make_shared<LayerOrthoContextMenuItem>(_(ADD_TO_LAYER_TEXT), LayerOrthoContextMenuItem::AddToLayer),
+		std::make_shared<LayerOrthoContextMenuItem>(_(ADD_TO_LAYER_TEXT), 
+			LayerOrthoContextMenuItem::AddToLayer),
 		IOrthoContextMenu::SECTION_LAYER
 	);
 
 	GlobalOrthoContextMenu().addItem(
-		std::make_shared<LayerOrthoContextMenuItem>(_(MOVE_TO_LAYER_TEXT), LayerOrthoContextMenuItem::MoveToLayer),
+		std::make_shared<LayerOrthoContextMenuItem>(_(MOVE_TO_LAYER_TEXT), 
+			LayerOrthoContextMenuItem::MoveToLayer),
 		IOrthoContextMenu::SECTION_LAYER
 	);
 
 	GlobalOrthoContextMenu().addItem(
-		std::make_shared<LayerOrthoContextMenuItem>(_(REMOVE_FROM_LAYER_TEXT), LayerOrthoContextMenuItem::RemoveFromLayer),
+		std::make_shared<LayerOrthoContextMenuItem>(_(REMOVE_FROM_LAYER_TEXT), 
+			LayerOrthoContextMenuItem::RemoveFromLayer),
 		IOrthoContextMenu::SECTION_LAYER
 	);
+
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::ptr_fun(LayerControlDialog::onRadiantStartup));
 }
 
 void UserInterfaceModule::shutdownModule()

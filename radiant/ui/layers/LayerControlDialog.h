@@ -53,8 +53,8 @@ public:
 	// Command target (registered in the event manager)
 	static void toggle(const cmd::ArgumentList& args);
 
-	// Called during mainframe construction
-	static void init();
+	// Checks if dialog should be shown after startup
+	static void onRadiantStartup();
 
 	static LayerControlDialog& Instance();
 
