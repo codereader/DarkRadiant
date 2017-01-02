@@ -8,7 +8,7 @@ class wxWindow;
 class wxButton;
 class wxToggleButton;
 class wxSizer;
-class wxStaticText;
+class wxPanel;
 
 namespace ui
 {
@@ -28,7 +28,7 @@ private:
 	int _layerID;
 
 	wxToggleButton* _toggle;
-	wxStaticText* _statusWidget;
+	wxPanel* _statusWidget;
 	wxButton* _labelButton;
 	wxButton* _deleteButton;
 	wxButton* _renameButton;

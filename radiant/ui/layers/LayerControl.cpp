@@ -13,7 +13,7 @@
 #include <wx/tglbtn.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/stattext.h>
+#include <wx/panel.h>
 
 #include "layers/LayerSystem.h"
 #include "LayerControlDialog.h"
@@ -45,7 +45,7 @@ LayerControl::LayerControl(wxWindow* parent, int layerID) :
 		static_cast<unsigned char>(selColour[1] * 255),
 		static_cast<unsigned char>(selColour[2] * 255));
 
-	_statusWidget = new wxStaticText(parent, wxID_ANY, "");
+	_statusWidget = new wxPanel(parent, wxID_ANY);
 	_statusWidget->SetMinSize(wxSize(5, -1));
 	_statusWidget->SetToolTip(_("Indicates whether anything among the current selection is part of this layer."));
 	_statusWidget->SetBackgroundColour(_inactiveColour);
