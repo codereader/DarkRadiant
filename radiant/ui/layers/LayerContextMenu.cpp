@@ -28,15 +28,21 @@ void LayerContextMenu::populate()
     });
 
 	// Clear all existing items
-	for (MenuItemIdToLayerMapping::iterator i = _menuItemMapping.begin();
-		i != _menuItemMapping.end(); ++i)
+	for (const MenuItemIdToLayerMapping::value_type& i : _menuItemMapping)
 	{
-		if (GetParent() != NULL)
+		wxMenu* parentMenu = GetParent();
+
+#ifdef __WXGTK__
+		// wxMSW and wxGTK are doing it differently (see comments in createMenuItems() below)
+		parentMenu = this;
+#endif
+
+		if (parentMenu != nullptr)
 		{
-			GetParent()->Disconnect(i->first, wxEVT_MENU, wxCommandEventHandler(LayerContextMenu::onActivate), NULL, this);
+			parentMenu->Disconnect(i.first, wxEVT_MENU, wxCommandEventHandler(LayerContextMenu::onActivate), nullptr, this);
 		}
 
-		Remove(i->first);
+		Remove(i.first);
 	}
 
 	_menuItemMapping.clear();
@@ -47,22 +53,30 @@ void LayerContextMenu::populate()
 
 void LayerContextMenu::createMenuItems()
 {
-	for (SortedLayerMap::const_iterator i = _sortedLayers.begin();
-		i != _sortedLayers.end(); ++i)
+	for (const SortedLayerMap::value_type& i : _sortedLayers)
 	{
 		// Create a new menuitem
-		wxMenuItem* menuItem = new wxutil::IconTextMenuItem(i->first, LAYER_ICON);
+		wxMenuItem* menuItem = new wxutil::IconTextMenuItem(i.first, LAYER_ICON);
 
 		// Add it to the parent menu
 		Append(menuItem);
 
 		// remember the layer id for this item
-		_menuItemMapping[menuItem->GetId()] = i->second;
+		_menuItemMapping[menuItem->GetId()] = i.second;
+
+		wxMenu* parentMenu = GetParent();
+
+#ifdef __WXGTK__
+		// wxMSW and wxGTK are doing it differently (which is always great):
+		// in MSW the parent menu (of this class) is firing the events, whereas
+		// in GTK+ the submenu (this class) itself is doing that. So let's do an IFDEF
+		parentMenu = this;
+#endif
 
 		// If we're packed to a parent menu (ourselves acting as submenu), connect the event to the parent
-		if (GetParent() != NULL)
+		if (parentMenu != nullptr)
 		{
-			GetParent()->Connect(menuItem->GetId(), wxEVT_MENU, wxCommandEventHandler(LayerContextMenu::onActivate), NULL, this);
+			parentMenu->Connect(menuItem->GetId(), wxEVT_MENU, wxCommandEventHandler(LayerContextMenu::onActivate), NULL, this);
 		}
 	}
 }
