@@ -42,7 +42,7 @@ void LayerContextMenu::populate()
 			parentMenu->Disconnect(i.first, wxEVT_MENU, wxCommandEventHandler(LayerContextMenu::onActivate), nullptr, this);
 		}
 
-		Remove(i.first);
+		Delete(i.first);
 	}
 
 	_menuItemMapping.clear();
