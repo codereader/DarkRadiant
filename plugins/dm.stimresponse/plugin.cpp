@@ -14,6 +14,7 @@
 
 #include "debugging/debugging.h"
 #include "StimResponseEditor.h"
+#include "ResponseEffectTypes.h"
 
 /**
  * Module to register the menu commands for the Stim/Response Editor class.
@@ -23,15 +24,18 @@ class StimResponseModule :
 {
 public:
 	// RegisterableModule implementation
-	virtual const std::string& getName() const {
+	virtual const std::string& getName() const override
+	{
 		static std::string _name("StimResponseEditor");
 		return _name;
 	}
 
-	virtual const StringSet& getDependencies() const {
+	const StringSet& getDependencies() const override
+	{
 		static StringSet _dependencies;
 
-		if (_dependencies.empty()) {
+		if (_dependencies.empty())
+		{
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
@@ -40,8 +44,9 @@ public:
 		return _dependencies;
 	}
 
-	virtual void initialiseModule(const ApplicationContext& ctx) {
-		rMessage() << "StimResponseModule::initialiseModule called.\n";
+	void initialiseModule(const ApplicationContext& ctx) override
+	{
+		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 		// Add the callback event
 		GlobalCommandSystem().addCommand("StimResponseEditor", ui::StimResponseEditor::ShowDialog);
@@ -56,10 +61,17 @@ public:
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name
 	}
+
+	void shutdownModule() override
+	{
+		// Free any resources, the effect types map holds eclass pointers
+		ResponseEffectTypes::Clear();
+	}
 };
 typedef std::shared_ptr<StimResponseModule> StimResponseModulePtr;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
+{
 	registry.registerModule(StimResponseModulePtr(new StimResponseModule));
 
 	// Initialise the streams using the given application context

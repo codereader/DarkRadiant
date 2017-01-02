@@ -15,11 +15,18 @@ class ResponseEffectTypes
 {
 	// The actual map where all the name => EClassPtr associations are stored.
 	ResponseEffectTypeMap _effectTypes;
-public:
+
 	ResponseEffectTypes();
 
+	static std::shared_ptr<ResponseEffectTypes>& InstancePtr();
+
+public:
 	// Contains the static instance of this class
 	static ResponseEffectTypes& Instance();
+
+	// Frees the static instance of this class
+	// Any calls to Instance() after this call will instantiate a new singleton
+	static void Clear();
 
 	/** greebo: Returns the entityclass pointer for the given name.
 	 */
