@@ -129,6 +129,10 @@ void TexTool::_preHide()
 
 	GlobalUndoSystem().removeObserver(this);
 	GlobalSelectionSystem().removeObserver(this);
+
+	// Clear items to prevent us from running into stale references
+	// when the textool is shown again
+	_items.clear();
 }
 
 // Pre-show callback
@@ -716,6 +720,11 @@ void TexTool::drawGrid() {
 
 void TexTool::onGLDraw()
 {
+	if (_updateNeeded)
+	{
+		return; // stop here, wait for the next idle event to refresh
+	}
+
 	// Initialise the viewport
 	glViewport(0, 0, _windowDims[0], _windowDims[1]);
 	glMatrixMode(GL_PROJECTION);
