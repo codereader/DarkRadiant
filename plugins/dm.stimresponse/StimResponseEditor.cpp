@@ -35,7 +35,7 @@ namespace
 StimResponseEditor::StimResponseEditor() :
 	DialogBase(_(WINDOW_TITLE)),
 	_notebook(new wxNotebook(this, wxID_ANY)),
-	_entity(NULL),
+	_entity(nullptr),
 	_stimEditor(new StimEditor(_notebook, _stimTypes)),
 	_responseEditor(new ResponseEditor(_notebook, _stimTypes)),
 	_customStimEditor(new CustomStimEditor(_notebook, _stimTypes))
@@ -111,7 +111,8 @@ void StimResponseEditor::populateWindow()
 	_notebook->AddPage(_customStimEditor, _("Custom Stims"), false, imageId);
 	_customStimPageNum = _notebook->FindPage(_customStimEditor);
 
-	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, wxBookCtrlEventHandler(StimResponseEditor::onPageChanged), NULL, this);
+	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
+		wxBookCtrlEventHandler(StimResponseEditor::onPageChanged), nullptr, this);
 
 	// Pack everything into the main window
 	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
@@ -130,8 +131,15 @@ void StimResponseEditor::onPageChanged(wxBookCtrlEvent& ev)
 {
 	// The stim type list might have changed using the CustomStimEditor,
 	// so let's update the controls when switching pages
-	_stimEditor->reloadStimTypes();
-	_responseEditor->reloadStimTypes();
+	if (_stimEditor != nullptr)
+	{
+		_stimEditor->reloadStimTypes();
+	}
+
+	if (_responseEditor != nullptr)
+	{
+		_responseEditor->reloadStimTypes();
+	}
 }
 
 void StimResponseEditor::rescanSelection()
@@ -181,6 +189,17 @@ void StimResponseEditor::save()
 
 	// Save the custom stim types to the storage entity
 	_stimTypes.save();
+}
+
+bool StimResponseEditor::Destroy()
+{
+	// We experience crashes in Linux/GTK during dialog destruction when GTK+ 
+	// apparently starts sending out the notebook page changed event right 
+	// before removing the pages.
+	_notebook->Disconnect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
+		wxBookCtrlEventHandler(StimResponseEditor::onPageChanged), nullptr, this);
+
+	return wxutil::DialogBase::Destroy();
 }
 
 // Static command target

@@ -60,6 +60,9 @@ public:
 	// Command target to toggle the dialog
 	static void ShowDialog(const cmd::ArgumentList& args);
 
+	// Get notified when the dialog is not needed anymore
+	virtual bool Destroy() override;
+
 private:
 	/** greebo: Saves the current working set to the entity
 	 */
