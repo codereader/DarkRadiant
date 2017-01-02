@@ -37,7 +37,7 @@ void ResponseEditor::setEntity(const SREntityPtr& entity)
 	// Pass the call to the base class
 	ClassEditor::setEntity(entity);
 
-	if (entity != NULL)
+	if (entity)
 	{
 		wxutil::TreeModel::Ptr responseStore = _entity->getResponseStore();
 		_list->AssociateModel(responseStore.get());
@@ -216,13 +216,13 @@ void ResponseEditor::createEffectWidgets()
 
 	// Connect the signals
 	_effectWidgets.view->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-        wxDataViewEventHandler(ResponseEditor::onEffectSelectionChange), NULL, this);
+        wxDataViewEventHandler(ResponseEditor::onEffectSelectionChange), nullptr, this);
 
 	_effectWidgets.view->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED, 
-		wxDataViewEventHandler(ResponseEditor::onEffectItemActivated), NULL, this);
+		wxDataViewEventHandler(ResponseEditor::onEffectItemActivated), nullptr, this);
 	
 	_effectWidgets.view->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
-		wxDataViewEventHandler(ResponseEditor::onContextMenu), NULL, this);
+		wxDataViewEventHandler(ResponseEditor::onEffectItemContextMenu), nullptr, this);
 
 	// View Columns
 	_effectWidgets.view->AppendTextColumn("#", StimResponse::getColumns().index.getColumnIndex(), 
@@ -461,18 +461,9 @@ int ResponseEditor::getEffectIdFromSelection()
 	}
 }
 
-void ResponseEditor::openContextMenu(wxutil::TreeView* view)
+void ResponseEditor::openSRListContextMenu()
 {
-	// Check the treeview this remove call is targeting
-	if (view == _list)
-	{
-		_list->PopupMenu(_contextMenu.menu.get());
-	}
-	else if (view == _effectWidgets.view)
-	{
-		updateEffectContextMenu();
-		_effectWidgets.view->PopupMenu(_effectWidgets.contextMenu.get());
-	}
+	_list->PopupMenu(_contextMenu.menu.get());
 }
 
 void ResponseEditor::selectionChanged()
@@ -502,6 +493,13 @@ void ResponseEditor::addSR()
 
 	// Select the newly created response
 	selectId(id);
+}
+
+void ResponseEditor::onEffectItemContextMenu(wxDataViewEvent& ev)
+{
+	updateEffectContextMenu();
+
+	_effectWidgets.view->PopupMenu(_effectWidgets.contextMenu.get());
 }
 
 // Button click events on TreeViews

@@ -108,7 +108,7 @@ private:
 	 */
 	virtual void selectionChanged();
 
-	void openContextMenu(wxutil::TreeView* view);
+	void openSRListContextMenu() override;
 
 	/** greebo: Creates all the widgets
 	 */
@@ -117,9 +117,6 @@ private:
 	// Context menu callbacks
 	void onContextMenuAdd(wxCommandEvent& ev);
 	void onContextMenuDelete(wxCommandEvent& ev);
-	void onContextMenuEffectUp(wxCommandEvent& ev);
-	void onContextMenuEffectDown(wxCommandEvent& ev);
-	void onContextMenuEdit(wxCommandEvent& ev);
 
 	void onEffectMenuDelete(wxCommandEvent& ev);
 	void onEffectMenuEdit(wxCommandEvent& ev);
@@ -129,6 +126,9 @@ private:
 
 	// To catch double-clicks in the response effect list
 	void onEffectItemActivated(wxDataViewEvent& ev);
+
+	// Context menu handler for effects view
+	void onEffectItemContextMenu(wxDataViewEvent& ev);
 
 	// Callback for Stim/Response and effect selection changes
 	void onEffectSelectionChange(wxDataViewEvent& ev);

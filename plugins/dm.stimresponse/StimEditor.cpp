@@ -358,9 +358,9 @@ void StimEditor::checkBoxToggled(wxCheckBox* toggleButton)
 	}
 }
 
-void StimEditor::openContextMenu(wxutil::TreeView* view)
+void StimEditor::openSRListContextMenu()
 {
-	view->PopupMenu(_contextMenu.menu.get());
+	_list->PopupMenu(_contextMenu.menu.get());
 }
 
 void StimEditor::addSR()

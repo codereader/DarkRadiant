@@ -125,7 +125,7 @@ private:
 	 */
 	virtual void selectionChanged();
 
-	void openContextMenu(wxutil::TreeView* view);
+	void openSRListContextMenu() override;
 
 	/** greebo: Creates all the widgets
 	 */

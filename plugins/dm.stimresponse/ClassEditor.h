@@ -147,11 +147,10 @@ protected:
 	 */
 	virtual void selectionChanged() = 0;
 
-	/** greebo: Opens the context menu. The treeview widget this event
-	 * 			has been happening on gets passed so that the correct
-	 * 			menu can be displayed (in the case of multiple possible treeviews).
+	/** 
+	 * greebo: Opens the context menu. Needs to be implemented by subclasses.
 	 */
-	virtual void openContextMenu(wxutil::TreeView* view) = 0;
+	virtual void openSRListContextMenu() = 0;
 
 	// Callback for Stim/Response selection changes
 	void onSRSelectionChange(wxDataViewEvent& ev);

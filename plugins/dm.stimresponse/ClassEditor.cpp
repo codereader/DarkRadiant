@@ -354,12 +354,8 @@ std::string ClassEditor::getStimTypeIdFromSelector(wxComboBox* comboBox)
 
 void ClassEditor::onContextMenu(wxDataViewEvent& ev)
 {
-	wxutil::TreeView* view = dynamic_cast<wxutil::TreeView*>(ev.GetEventObject());
-
-	assert(view != NULL);
-
 	// Call the subclass implementation
-	openContextMenu(view);
+	openSRListContextMenu();
 }
 
 void ClassEditor::onStimTypeSelect(wxCommandEvent& ev)
