@@ -3,6 +3,7 @@
 #include <vector>
 #include "irender.h"
 #include "imap.h"
+#include "imodule.h"
 #include "icommandsystem.h"
 #include "irenderable.h"
 #include "math/Vector3.h"
@@ -11,6 +12,7 @@ namespace map
 {
 
 class PointFile :
+	public RegisterableModule,
 	public Renderable,
 	public OpenGLRenderable
 {
@@ -24,7 +26,7 @@ class PointFile :
 	// GL display list pointer for rendering the point path
 	int _displayList;
 
-	static ShaderPtr _renderstate;
+	ShaderPtr _renderstate;
 
 public:
 	// Constructor
@@ -32,15 +34,6 @@ public:
 
 	// Destructor
 	virtual ~PointFile() {}
-
-	/** greebo: Accessor method containing the singleton instance.
-	 */
-	static PointFile& Instance();
-
-	/** greebo: This releases the shader and detaches this class from
-	 * 			the shadercache.
-	 */
-	void destroy();
 
 	// Query whether the point path is currently visible
 	bool isVisible() const;
@@ -84,17 +77,21 @@ public:
 	 */
 	void clear();
 
-	// Registers the events to the EventManager
-	static void registerCommands();
-
-	// Static command targets, these re-route the call to the static instance
-	static void nextLeakSpot(const cmd::ArgumentList& args);
-	static void prevLeakSpot(const cmd::ArgumentList& args);
-
-	// Toggles visibility of the point file line
-	static void toggle(const cmd::ArgumentList& args);
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
+	// Registers the events to the EventManager
+	void registerCommands();
+
+	// command targets
+	// Toggles visibility of the point file line
+	void toggle(const cmd::ArgumentList& args);
+	void nextLeakSpot(const cmd::ArgumentList& args);
+	void prevLeakSpot(const cmd::ArgumentList& args);
+
 	// Parse the current pointfile and read the vectors into the point list
 	void parse();
 

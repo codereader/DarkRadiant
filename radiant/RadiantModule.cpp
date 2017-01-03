@@ -19,7 +19,6 @@
 
 #include "scene/Node.h"
 
-#include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "textool/TexTool.h"
@@ -200,8 +199,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 	// Reset the node id count
   	scene::Node::resetIds();
 
-    map::PointFile::Instance().registerCommands();
-
     registerUICommands();
 
 	ui::TexTool::registerCommands();
@@ -222,8 +219,6 @@ void RadiantModule::shutdownModule()
 	rMessage() << "RadiantModule::shutdownModule called." << std::endl;
 
 	GlobalFileSystem().shutdown();
-
-	map::PointFile::Instance().destroy();
 
     _radiantShutdown.clear();
 }

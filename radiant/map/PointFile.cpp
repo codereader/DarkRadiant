@@ -18,27 +18,20 @@
 #include "xyview/GlobalXYWnd.h"
 #include <boost/format.hpp>
 
+#include "modulesystem/StaticModule.h"
+
 #ifdef MessageBox
 #undef MessageBox
 #endif
 
-namespace map {
+namespace map
+{
 
 // Constructor
 PointFile::PointFile() :
 	_curPos(_points.begin()),
 	_displayList(0)
-{
-	_renderstate = GlobalRenderSystem().capture("$POINTFILE");
-	GlobalRenderSystem().attachRenderable(*this);
-
-	GlobalMap().signal_mapEvent().connect(sigc::mem_fun(*this, &PointFile::onMapEvent));
-}
-
-void PointFile::destroy() {
-	GlobalRenderSystem().detachRenderable(*this);
-	_renderstate = ShaderPtr();
-}
+{}
 
 void PointFile::onMapEvent(IMap::MapEvent ev)
 {
@@ -46,16 +39,15 @@ void PointFile::onMapEvent(IMap::MapEvent ev)
 	{
 		clear();
 	}
-}
-
-// Static accessor method
-PointFile& PointFile::Instance() {
-	static PointFile _instance;
-	return _instance;
+	else if (ev == IMap::MapSaved)
+	{
+		clear();
+	}
 }
 
 // Query whether the point path is currently visible
-bool PointFile::isVisible() const {
+bool PointFile::isVisible() const
+{
 	return _displayList != 0;
 }
 
@@ -63,10 +55,11 @@ bool PointFile::isVisible() const {
  * Toggle the status of the pointfile rendering. If the pointfile must be
  * shown, the file is parsed automatically.
  */
-void PointFile::show(bool show) {
-
+void PointFile::show(bool show) 
+{
 	// Update the status if required
-	if(show && _displayList == 0) {
+	if(show && _displayList == 0)
+	{
 		// Parse the pointfile from disk
 		parse();
 		if (_points.size() > 0) {
@@ -89,15 +82,18 @@ void PointFile::show(bool show) {
 /*
  * OpenGL render function (back-end).
  */
-void PointFile::render(const RenderInfo& info) const {
+void PointFile::render(const RenderInfo& info) const
+{
 	glCallList(_displayList);
 }
 
 /*
  * Solid renderable submission function (front-end)
  */
-void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
-	if(isVisible()) {
+void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
+{
+	if (isVisible())
+	{
 		collector.SetState(_renderstate, RenderableCollector::eWireframeOnly);
 		collector.SetState(_renderstate, RenderableCollector::eFullMaterials);
 		collector.addRenderable(*this, Matrix4::getIdentity());
@@ -107,13 +103,14 @@ void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 /*
  * Wireframe renderable submission function (front-end).
  */
-void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
 	renderSolid(collector, volume);
 }
 
 // Parse the current pointfile and read the vectors into the point list
-void PointFile::parse() {
-
+void PointFile::parse()
+{
 	// Pointfile is the same as the map file but with a .lin extension
 	// instead of .map
 	std::string mapName = GlobalMap().getMapName();
@@ -121,7 +118,9 @@ void PointFile::parse() {
 
 	// Open the pointfile and get its input stream if possible
 	std::ifstream inFile(pfName.c_str());
-	if (!inFile) {
+
+	if (!inFile) 
+	{
 		wxutil::Messagebox::ShowError(
 			(boost::format(_("Could not open pointfile: %s")) % pfName).str());
 		return;
@@ -137,7 +136,8 @@ void PointFile::parse() {
 }
 
 // create the display list at the end
-void PointFile::generateDisplayList() {
+void PointFile::generateDisplayList() 
+{
 	_displayList = glGenLists(1);
 
 	glNewList (_displayList,  GL_COMPILE);
@@ -155,11 +155,9 @@ void PointFile::generateDisplayList() {
 	glEndList();
 }
 
-// Static shader
-ShaderPtr PointFile::_renderstate;
-
 // advance camera to previous point
-void PointFile::advance(bool forward) {
+void PointFile::advance(bool forward) 
+{
 	if (!isVisible()) {
 		return;
 	}
@@ -200,30 +198,78 @@ void PointFile::advance(bool forward) {
 	SceneChangeNotify();
 }
 
-void PointFile::nextLeakSpot(const cmd::ArgumentList& args) {
-	Instance().advance(true);
+void PointFile::nextLeakSpot(const cmd::ArgumentList& args)
+{
+	advance(true);
 }
 
-void PointFile::prevLeakSpot(const cmd::ArgumentList& args) {
-	Instance().advance(false);
+void PointFile::prevLeakSpot(const cmd::ArgumentList& args)
+{
+	advance(false);
 }
 
-void PointFile::clear() {
+void PointFile::clear()
+{
 	show(false);
 }
 
-void PointFile::toggle(const cmd::ArgumentList& args) {
-	Instance().show(!Instance().isVisible());
+void PointFile::toggle(const cmd::ArgumentList& args)
+{
+	show(!isVisible());
 }
 
-void PointFile::registerCommands() {
-	GlobalCommandSystem().addCommand("TogglePointfile", toggle);
-	GlobalCommandSystem().addCommand("NextLeakSpot", nextLeakSpot);
-	GlobalCommandSystem().addCommand("PrevLeakSpot", prevLeakSpot);
+void PointFile::registerCommands()
+{
+	GlobalCommandSystem().addCommand("TogglePointfile", sigc::mem_fun(*this, &PointFile::toggle));
+	GlobalCommandSystem().addCommand("NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot));
+	GlobalCommandSystem().addCommand("PrevLeakSpot", sigc::mem_fun(*this, &PointFile::prevLeakSpot));
 
 	GlobalEventManager().addCommand("TogglePointfile", "TogglePointfile");
 	GlobalEventManager().addCommand("NextLeakSpot", "NextLeakSpot");
 	GlobalEventManager().addCommand("PrevLeakSpot", "PrevLeakSpot");
 }
+
+// RegisterableModule implementation
+const std::string& PointFile::getName() const
+{
+	static std::string _name("PointFile");
+	return _name;
+}
+
+const StringSet& PointFile::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_RENDERSYSTEM);
+		_dependencies.insert(MODULE_MAP);
+	}
+
+	return _dependencies;
+}
+
+void PointFile::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called" << std::endl;
+
+	registerCommands();
+
+	_renderstate = GlobalRenderSystem().capture("$POINTFILE");
+
+	GlobalRenderSystem().attachRenderable(*this);
+
+	GlobalMap().signal_mapEvent().connect(sigc::mem_fun(*this, &PointFile::onMapEvent));
+}
+
+void PointFile::shutdownModule()
+{
+	GlobalRenderSystem().detachRenderable(*this);
+	_renderstate.reset();
+}
+
+module::StaticModule<PointFile> pointFileModule;
 
 } // namespace map

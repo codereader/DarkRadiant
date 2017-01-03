@@ -32,7 +32,6 @@
 #include "scene/BasicRootNode.h"
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
-#include "map/PointFile.h"
 #include "map/RootNode.h"
 #include "map/MapResource.h"
 #include "map/algorithm/Clone.h"
@@ -446,7 +445,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
     // Store the map positions into the worldspawn spawnargs
     GlobalMapPosition().savePositions();
 
-    PointFile::Instance().clear();
+	signal_mapEvent().emit(IMap::MapSaved);
 
     wxutil::ScopeTimer timer("map save");
 
