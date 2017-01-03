@@ -358,3 +358,8 @@ void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx)
 
     initialise();
 }
+
+void Doom3FileSystem::shutdownModule()
+{
+	shutdown();
+}

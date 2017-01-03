@@ -8,7 +8,6 @@
 #include "iregistry.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
-#include "ifilesystem.h"
 #include "iuimanager.h"
 #include "ieclass.h"
 #include "ipreferencesystem.h"
@@ -217,8 +216,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 void RadiantModule::shutdownModule()
 {
 	rMessage() << "RadiantModule::shutdownModule called." << std::endl;
-
-	GlobalFileSystem().shutdown();
 
     _radiantShutdown.clear();
 }
