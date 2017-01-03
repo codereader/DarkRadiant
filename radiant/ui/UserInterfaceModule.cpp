@@ -5,6 +5,7 @@
 #include "iorthocontextmenu.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
+#include "wxutil/MultiMonitor.h"
 
 #include "modulesystem/StaticModule.h"
 
@@ -24,6 +25,7 @@
 #include "ui/filterdialog/FilterDialog.h"
 #include "ui/mousetool/ToolMappingDialog.h"
 #include "ui/about/AboutDialog.h"
+#include "textool/TexTool.h"
 
 namespace ui
 {
@@ -61,6 +63,8 @@ const StringSet& UserInterfaceModule::getDependencies() const
 void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	wxutil::MultiMonitor::printMonitorInfo();
 
 	registerUICommands();
 
@@ -103,25 +107,27 @@ void UserInterfaceModule::shutdownModule()
 
 void UserInterfaceModule::registerUICommands()
 {
-	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::ShowProjectSettings);
-	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::ShowPrefDialog);
+	TexTool::registerCommands();
 
-	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
-	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
-	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
-	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
-	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::toggle);
-	GlobalCommandSystem().addCommand("TransformDialog", ui::TransformDialog::toggle);
+	GlobalCommandSystem().addCommand("ProjectSettings", PrefDialog::ShowProjectSettings);
+	GlobalCommandSystem().addCommand("Preferences", PrefDialog::ShowPrefDialog);
+
+	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);
+	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
+	GlobalCommandSystem().addCommand("SurfaceInspector", SurfaceInspector::toggle);
+	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
+	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
+	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
 
 	GlobalCommandSystem().addCommand("FindBrush", DoFind);
 
-	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ui::ToolMappingDialog::ShowDialog);
+	GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
+	GlobalCommandSystem().addCommand("EditFiltersDialog", FilterDialog::ShowDialog);
+	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);
 
-	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::ShowDialog);
-	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::ShowDialog);
-	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
+	GlobalCommandSystem().addCommand("FindReplaceTextures", FindAndReplaceShader::ShowDialog);
+	GlobalCommandSystem().addCommand("ShowCommandList", CommandList::ShowDialog);
+	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 
 	// ----------------------- Bind Events ---------------------------------------
 

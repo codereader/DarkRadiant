@@ -20,12 +20,8 @@
 
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
-#include "textool/TexTool.h"
-#include "ui/splash/Splash.h"
-#include "wxutil/FileChooser.h"
 #include "ui/mru/MRU.h"
 #include "map/Map.h"
-#include "wxutil/MultiMonitor.h"
 #include "brush/csg/CSG.h"
 
 #include "modulesystem/StaticModule.h"
@@ -183,9 +179,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 	// Reset the node id count
   	scene::Node::resetIds();
 
-    ui::TexTool::registerCommands();
-    
-	selection::algorithm::registerCommands();
+    selection::algorithm::registerCommands();
 	brush::algorithm::registerCommands();
 
 	GlobalCommandSystem().addCommand("Exit", exitCmd);
@@ -208,8 +202,6 @@ void RadiantModule::postModuleInitialisation()
 {
 	// Construct the MRU commands and menu structure, load the recently used files
 	GlobalMRU().initialise();
-
-	wxutil::MultiMonitor::printMonitorInfo();
 
     // Initialise the mainframe
     GlobalMainFrame().construct();
