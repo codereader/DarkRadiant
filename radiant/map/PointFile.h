@@ -7,24 +7,21 @@
 #include "icommandsystem.h"
 #include "irenderable.h"
 #include "math/Vector3.h"
+#include "render.h"
 
 namespace map 
 {
 
 class PointFile :
 	public RegisterableModule,
-	public Renderable,
-	public OpenGLRenderable
+	public Renderable
 {
+private:
 	// Vector of point coordinates
-	typedef std::vector<Vector3> VectorList;
-	VectorList _points;
-
+	RenderablePointVector _points;
+	
 	// Holds the current position in the point file chain
-	VectorList::iterator _curPos;
-
-	// GL display list pointer for rendering the point path
-	int _displayList;
+	std::size_t _curPos;
 
 	ShaderPtr _renderstate;
 
@@ -39,17 +36,6 @@ public:
 	bool isVisible() const;
 
   	/*
-	 * Toggle the status of the pointfile rendering. If the pointfile must be
-	 * shown, the file is parsed automatically.
-	 */
-	void show(bool show);
-
-	/*
-	 * OpenGL render function (back-end).
-	 */
-	void render(const RenderInfo& info) const;
-
-	/*
 	 * Solid renderable submission function (front-end)
 	 */
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -67,16 +53,6 @@ public:
 		return Highlight::NoHighlight;
 	}
 
-	/** greebo: This sets the camera position to the next/prev leak spot.
-	 *
-	 * @forward: pass true to set to the next leak spot, false for the previous
-	 */
-	void advance(bool forward);
-
-	/** greebo: Clears the point file vector and hides it, if applicable.
-	 */
-	void clear();
-
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
@@ -86,6 +62,23 @@ private:
 	// Registers the events to the EventManager
 	void registerCommands();
 
+	/*
+	 * Toggle the status of the pointfile rendering. If the pointfile must be
+	 * shown, the file is parsed automatically.
+	 */
+	void show(bool show);
+
+	/**
+	 * greebo: Clears the point file vector, which is the same as hiding it.
+	 */
+	void clear();
+
+	/** 
+	 * greebo: This sets the camera position to the next/prev leak spot.
+	 * @forward: pass true to set to the next leak spot, false for the previous
+	 */
+	void advance(bool forward);
+
 	// command targets
 	// Toggles visibility of the point file line
 	void toggle(const cmd::ArgumentList& args);
@@ -94,9 +87,6 @@ private:
 
 	// Parse the current pointfile and read the vectors into the point list
 	void parse();
-
-	// Generates the OpenGL displaylist from the point vector
-	void generateDisplayList();
 
 	void onMapEvent(IMap::MapEvent ev);
 };

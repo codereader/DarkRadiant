@@ -29,80 +29,53 @@ namespace map
 
 // Constructor
 PointFile::PointFile() :
-	_curPos(_points.begin()),
-	_displayList(0)
+	_points(GL_LINE_STRIP),
+	_curPos(0)
 {}
 
 void PointFile::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IMap::MapUnloading)
-	{
-		clear();
-	}
-	else if (ev == IMap::MapSaved)
+	if (ev == IMap::MapUnloading || ev == IMap::MapSaved)
 	{
 		clear();
 	}
 }
 
-// Query whether the point path is currently visible
 bool PointFile::isVisible() const
 {
-	return _displayList != 0;
+	return !_points.empty();
 }
 
-/*
- * Toggle the status of the pointfile rendering. If the pointfile must be
- * shown, the file is parsed automatically.
- */
 void PointFile::show(bool show) 
 {
 	// Update the status if required
-	if(show && _displayList == 0)
+	if (show)
 	{
 		// Parse the pointfile from disk
 		parse();
-		if (_points.size() > 0) {
-			generateDisplayList();
-		}
 	}
-	else if(!show && _displayList != 0) {
-		glDeleteLists (_displayList, 1);
-		_displayList = 0;
+	else
+	{
 		_points.clear();
 	}
 
 	// Regardless whether hide or show, we reset the current position
-	_curPos = _points.begin();
+	_curPos = 0;
 
 	// Redraw the scene
 	SceneChangeNotify();
 }
 
-/*
- * OpenGL render function (back-end).
- */
-void PointFile::render(const RenderInfo& info) const
-{
-	glCallList(_displayList);
-}
-
-/*
- * Solid renderable submission function (front-end)
- */
 void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
 {
 	if (isVisible())
 	{
 		collector.SetState(_renderstate, RenderableCollector::eWireframeOnly);
 		collector.SetState(_renderstate, RenderableCollector::eFullMaterials);
-		collector.addRenderable(*this, Matrix4::getIdentity());
+		collector.addRenderable(_points, Matrix4::getIdentity());
 	}
 }
 
-/*
- * Wireframe renderable submission function (front-end).
- */
 void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	renderSolid(collector, volume);
@@ -128,51 +101,36 @@ void PointFile::parse()
 
 	// Pointfile is a list of float vectors, one per line, with components
 	// separated by spaces.
-	while (inFile.good()) {
+	while (inFile.good())
+	{
 		float x, y, z;
 		inFile >> x; inFile >> y; inFile >> z;
-		_points.push_back(Vector3(x, y, z));
+		_points.push_back(VertexCb(Vertex3f(x, y, z), Colour4b(255,0,0,1)));
 	}
-}
-
-// create the display list at the end
-void PointFile::generateDisplayList() 
-{
-	_displayList = glGenLists(1);
-
-	glNewList (_displayList,  GL_COMPILE);
-
-	glBegin(GL_LINE_STRIP);
-	for (VectorList::iterator i = _points.begin();
-		 i != _points.end();
-		 ++i)
-	{
-		glVertex3dv(*i);
-	}
-	glEnd();
-	glLineWidth (1);
-
-	glEndList();
 }
 
 // advance camera to previous point
 void PointFile::advance(bool forward) 
 {
-	if (!isVisible()) {
+	if (!isVisible())
+	{
 		return;
 	}
 
-	if (forward) {
-		if (_curPos+2 == _points.end())	{
+	if (forward)
+	{
+		if (_curPos + 2 >= _points.size())	
+		{
 			rMessage() << "End of pointfile" << std::endl;
 			return;
 		}
 
 		_curPos++;
 	}
-	else {
-		// Backward movement
-		if (_curPos == _points.begin()) {
+	else // Backward movement
+	{
+		if (_curPos == 0)
+		{
 			rMessage() << "Start of pointfile" << std::endl;
 			return;
 		}
@@ -181,17 +139,21 @@ void PointFile::advance(bool forward)
 	}
 
 	ui::CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-	if (cam == NULL) return;
-	ui::CamWnd& camwnd = *cam;
 
-	camwnd.setCameraOrigin(*_curPos);
-	GlobalXYWnd().getActiveXY()->setOrigin(*_curPos);
+	if (!cam) return;
+
+	cam->setCameraOrigin(_points[_curPos].vertex);
+
+	GlobalXYWnd().getActiveXY()->setOrigin(_points[_curPos].vertex);
+
 	{
-		Vector3 dir((*(_curPos+1) - camwnd.getCameraOrigin()).getNormalised());
-		Vector3 angles(camwnd.getCameraAngles());
-		angles[ui::CAMERA_YAW] = static_cast<double>(radians_to_degrees(atan2(dir[1], dir[0])));
-        angles[ui::CAMERA_PITCH] = static_cast<double>(radians_to_degrees(asin(dir[2])));
-		camwnd.setCameraAngles(angles);
+		Vector3 dir((_points[_curPos+1].vertex - cam->getCameraOrigin()).getNormalised());
+		Vector3 angles(cam->getCameraAngles());
+
+		angles[ui::CAMERA_YAW] = radians_to_degrees(atan2(dir[1], dir[0]));
+        angles[ui::CAMERA_PITCH] = radians_to_degrees(asin(dir[2]));
+
+		cam->setCameraAngles(angles);
 	}
 
 	// Redraw the scene
