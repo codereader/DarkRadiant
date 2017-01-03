@@ -230,12 +230,6 @@ void RadiantModule::shutdownModule()
 
 void RadiantModule::postModuleInitialisation()
 {
-	// Create the empty Settings node and set the title to empty.
-	GlobalPreferenceSystem().getPage(_("Game"));
-
-	IPreferencePage& settingsPage = GlobalPreferenceSystem().getPage(_("Settings"));
-	settingsPage.setTitle("");
-
 	// Construct the MRU commands and menu structure, load the recently used files
 	GlobalMRU().initialise();
 

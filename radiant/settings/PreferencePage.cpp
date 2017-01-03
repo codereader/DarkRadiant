@@ -117,6 +117,11 @@ void PreferencePage::foreachItem(const std::function<void(const PreferenceItemBa
 	}
 }
 
+bool PreferencePage::isEmpty() const
+{
+	return _items.empty();
+}
+
 void PreferencePage::appendCheckBox(const std::string& label, const std::string& registryKey)
 {
 	_items.push_back(std::make_shared<PreferenceCheckbox>(label, registryKey));

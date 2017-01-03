@@ -69,6 +69,9 @@ public:
 	// Hit the functor with each item on this page
 	void foreachItem(const std::function<void(const PreferenceItemBasePtr&)>& functor) const;
 	
+	// Returns TRUE if this page doesn't hold any items
+	bool isEmpty() const;
+
 	// IPreferencePage implementation
 	void appendCheckBox(const std::string& label, const std::string& registryKey) override;
 
