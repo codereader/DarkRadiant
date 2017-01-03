@@ -59,7 +59,6 @@ const char* APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 const char* SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
 const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
 
-const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
 const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
 
 const char* const SELECT_ITEMS = N_("Select elements using this shader");
@@ -443,20 +442,6 @@ std::string MediaBrowser::getSelectedName()
 
 void MediaBrowser::onRadiantStartup()
 {
-	// Check for pre-loading the textures
-	if (registry::getValue<bool>(RKEY_MEDIA_BROWSER_PRELOAD))
-	{
-		populate();
-	}
-
-	if (_mainWidget == nullptr)
-	{
-		construct();
-	}
-
-	/* Construct the Group Dialog. This is the tabbed window that contains
-	* a number of pages - usually Entities, Textures and possibly Console.
-	*/
 	// Add the Media Browser page
 	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
 
@@ -468,13 +453,12 @@ void MediaBrowser::onRadiantStartup()
 	mediaBrowserPage->position = IGroupDialog::Page::Position::MediaBrowser;
 
 	GlobalGroupDialog().addPage(mediaBrowserPage);
-}
 
-void MediaBrowser::onRadiantShutdown()
-{
-	_tempParent->Destroy();
-
-	GlobalMaterialManager().detach(*this);
+	if (_tempParent != nullptr)
+	{
+		_tempParent->Destroy();
+		_tempParent = nullptr;
+	}
 }
 
 // Set the selection in the treeview
@@ -659,19 +643,9 @@ void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 	handleSelectionChange();
 }
 
-void MediaBrowser::Toggle(const cmd::ArgumentList& args)
+void MediaBrowser::togglePage(const cmd::ArgumentList& args)
 {
 	GlobalGroupDialog().togglePage(GROUPDIALOG_TAB_NAME);
-}
-
-void MediaBrowser::registerCommandsAndPreferences()
-{
-	// Add a page to the given group
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
-	page.appendCheckBox(_("Load media tree at startup"), RKEY_MEDIA_BROWSER_PRELOAD);
-
-	GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowser::Toggle));
-	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
 }
 
 const std::string& MediaBrowser::getName() const
@@ -688,7 +662,6 @@ const StringSet& MediaBrowser::getDependencies() const
 	{
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_SHADERSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
 	}
@@ -700,17 +673,17 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	registerCommandsAndPreferences();
+	GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowser::togglePage));
+	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
 
-	// Create the widgets
+	// We need to create the liststore and widgets before attaching ourselves
+	// to the material manager as observer, as the attach() call below
+	// will trigger a realise() callback, which trigger population
 	construct();
 
+	// The startup event will add this page to the group dialog tab
 	GlobalRadiant().signal_radiantStarted().connect(
 		sigc::mem_fun(*this, &MediaBrowser::onRadiantStartup)
-	);
-
-	GlobalRadiant().signal_radiantShutdown().connect(
-		sigc::mem_fun(*this, &MediaBrowser::onRadiantShutdown)
 	);
 
 	// Attach to the MaterialManager to get notified on unrealise/realise

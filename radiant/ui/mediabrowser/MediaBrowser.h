@@ -135,17 +135,11 @@ public:
 private:
 	// Radiant Event Listener
 	void onRadiantStartup();
-	void onRadiantShutdown();
-
-	/**
-	* greebo: Registers the preference page and the commands
-	*/
-	void registerCommandsAndPreferences();
 
 	/**
 	* greebo: Command target for toggling the mediabrowser tab in the groupdialog.
 	*/
-	void Toggle(const cmd::ArgumentList& args);
+	void togglePage(const cmd::ArgumentList& args);
 };
 
 }
