@@ -22,6 +22,9 @@ public:
 	const StringSet & getDependencies() const override;
 	void initialiseModule(const ApplicationContext & ctx) override;
 	void shutdownModule() override;
+
+private:
+	void registerUICommands();
 };
 
 }

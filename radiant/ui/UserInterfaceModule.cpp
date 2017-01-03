@@ -10,6 +10,20 @@
 
 #include "ui/layers/LayerOrthoContextMenuItem.h"
 #include "ui/layers/LayerControlDialog.h"
+#include "ui/overlay/OverlayDialog.h"
+#include "ui/prefdialog/PrefDialog.h"
+#include "log/Console.h"
+#include "ui/lightinspector/LightInspector.h"
+#include "ui/patch/PatchInspector.h"
+#include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/transform/TransformDialog.h"
+#include "ui/findshader/FindShader.h"
+#include "map/FindMapElements.h"
+#include "ui/mapinfo/MapInfoDialog.h"
+#include "ui/commandlist/CommandList.h"
+#include "ui/filterdialog/FilterDialog.h"
+#include "ui/mousetool/ToolMappingDialog.h"
+#include "ui/about/AboutDialog.h"
 
 namespace ui
 {
@@ -48,6 +62,8 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+	registerUICommands();
+
 	// Register LayerControlDialog
 	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", LayerControlDialog::toggle);
 	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
@@ -83,6 +99,53 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 
 void UserInterfaceModule::shutdownModule()
 {
+}
+
+void UserInterfaceModule::registerUICommands()
+{
+	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::ShowProjectSettings);
+	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::ShowPrefDialog);
+
+	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
+	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
+	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
+	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
+	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::toggle);
+	GlobalCommandSystem().addCommand("TransformDialog", ui::TransformDialog::toggle);
+
+	GlobalCommandSystem().addCommand("FindBrush", DoFind);
+
+	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::ShowDialog);
+	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::ShowDialog);
+	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ui::ToolMappingDialog::ShowDialog);
+
+	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::ShowDialog);
+	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::ShowDialog);
+	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
+
+	// ----------------------- Bind Events ---------------------------------------
+
+	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
+
+	GlobalEventManager().addCommand("Preferences", "Preferences");
+
+	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
+
+	GlobalEventManager().addCommand("ToggleLightInspector", "ToggleLightInspector");
+	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
+	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");
+	GlobalEventManager().addCommand("OverlayDialog", "OverlayDialog");
+	GlobalEventManager().addCommand("TransformDialog", "TransformDialog");
+
+	GlobalEventManager().addCommand("FindBrush", "FindBrush");
+
+	GlobalEventManager().addCommand("MapInfo", "MapInfo");
+	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
+	GlobalEventManager().addCommand("MouseToolMappingDialog", "MouseToolMappingDialog");
+
+	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
+	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
+	GlobalEventManager().addCommand("About", "About");
 }
 
 // Static module registration
