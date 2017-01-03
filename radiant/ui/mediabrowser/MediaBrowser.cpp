@@ -325,8 +325,6 @@ public:
     }
 };
 
-std::string MediaBrowser::GROUPDIALOG_TAB_NAME = "mediabrowser";
-
 // Constructor
 MediaBrowser::MediaBrowser() : 
 	_tempParent(nullptr),
@@ -427,25 +425,12 @@ bool MediaBrowser::isDirectorySelected()
 	return row[_columns.isFolder].getBool();
 }
 
-std::string MediaBrowser::getSelectedName()
-{
-	// Get the selected value
-	wxDataViewItem item = _treeView->GetSelection();
-
-	if (!item.IsOk()) return ""; // nothing selected
-
-	// Cast to TreeModel::Row and get the full name
-	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
-	
-	return row[_columns.fullName];
-}
-
 void MediaBrowser::onRadiantStartup()
 {
 	// Add the Media Browser page
 	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
 
-	mediaBrowserPage->name = GROUPDIALOG_TAB_NAME;
+	mediaBrowserPage->name = getGroupDialogTabName();
 	mediaBrowserPage->windowLabel = _("Media");
 	mediaBrowserPage->page = _mainWidget;
 	mediaBrowserPage->tabIcon = "folder16.png";
@@ -459,6 +444,27 @@ void MediaBrowser::onRadiantStartup()
 		_tempParent->Destroy();
 		_tempParent = nullptr;
 	}
+}
+
+std::string MediaBrowser::getSelection()
+{
+	if (!_isPopulated)
+	{
+		return std::string();
+	}
+
+	// Get the selected value
+	wxDataViewItem item = _treeView->GetSelection();
+
+	if (!item.IsOk())
+	{
+		return std::string(); // nothing selected
+	}
+
+	// Cast to TreeModel::Row and get the full name
+	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+
+	return row[_columns.fullName];
 }
 
 // Set the selection in the treeview
@@ -547,7 +553,7 @@ void MediaBrowser::_onLoadInTexView()
 {
 	// Use a TextureDirectoryLoader functor to search the directory. This
 	// may throw an exception if cancelled by user.
-	TextureDirectoryLoader loader(getSelectedName());
+	TextureDirectoryLoader loader(getSelection());
 
 	try
 	{
@@ -571,14 +577,14 @@ bool MediaBrowser::_testLoadInTexView()
 void MediaBrowser::_onApplyToSel()
 {
 	// Pass shader name to the selection system
-	selection::algorithm::applyShaderToSelection(getSelectedName());
+	selection::algorithm::applyShaderToSelection(getSelection());
 }
 
 // Check if a single non-directory texture is selected (used by multiple menu
 // options).
 bool MediaBrowser::_testSingleTexSel()
 {
-	if (!isDirectorySelected() && !getSelectedName().empty())
+	if (!isDirectorySelected() && !getSelection().empty())
 		return true;
 	else
 		return false;
@@ -586,7 +592,7 @@ bool MediaBrowser::_testSingleTexSel()
 
 void MediaBrowser::_onShowShaderDefinition()
 {
-	std::string shaderName = getSelectedName();
+	std::string shaderName = getSelection();
 
 	// Construct a shader view and pass the shader name
 	ShaderDefinitionView::ShowDialog(shaderName);
@@ -594,7 +600,7 @@ void MediaBrowser::_onShowShaderDefinition()
 
 void MediaBrowser::_onSelectItems(bool select)
 {
-    std::string shaderName = getSelectedName();
+    std::string shaderName = getSelection();
 
     if (select)
     {
@@ -627,8 +633,8 @@ void MediaBrowser::handleSelectionChange()
 	// Update the preview if a texture is selected
 	if (!isDirectorySelected())
 	{
-		_preview->SetTexture(getSelectedName());
-		GlobalShaderClipboard().setSource(getSelectedName());
+		_preview->SetTexture(getSelection());
+		GlobalShaderClipboard().setSource(getSelection());
 	}
 	else
 	{
@@ -645,7 +651,7 @@ void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 
 void MediaBrowser::togglePage(const cmd::ArgumentList& args)
 {
-	GlobalGroupDialog().togglePage(GROUPDIALOG_TAB_NAME);
+	GlobalGroupDialog().togglePage(getGroupDialogTabName());
 }
 
 const std::string& MediaBrowser::getName() const
@@ -678,7 +684,7 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 
 	// We need to create the liststore and widgets before attaching ourselves
 	// to the material manager as observer, as the attach() call below
-	// will trigger a realise() callback, which trigger population
+	// will invoke a realise() callback, which triggers a population
 	construct();
 
 	// The startup event will add this page to the group dialog tab
@@ -698,10 +704,5 @@ void MediaBrowser::shutdownModule()
 
 // Static module
 module::StaticModule<MediaBrowser> mediaBrowserModule;
-
-MediaBrowser& MediaBrowser::getInstance()
-{
-	return *mediaBrowserModule.getModule();
-}
 
 } // namespace

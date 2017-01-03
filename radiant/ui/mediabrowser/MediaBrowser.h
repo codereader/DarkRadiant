@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imediabrowser.h"
 #include "iradiant.h"
 #include "imodule.h"
 #include "icommandsystem.h"
@@ -27,7 +28,7 @@ class TexturePreviewCombo;
  * into the texture window or applying directly to map geometry.
  */
 class MediaBrowser : 
-	public RegisterableModule,
+	public IMediaBrowser,
 	public wxEvtHandler,
 	public ModuleObserver // to monitor the MaterialManager module
 {
@@ -51,8 +52,6 @@ public:
 	};
 
 	class PopulatorFinishedEvent; // wxEvent type
-
-	static std::string GROUPDIALOG_TAB_NAME;
 
 private:
 	wxFrame* _tempParent;
@@ -96,7 +95,6 @@ private:
 
 	/* Tree selection query functions */
 	bool isDirectorySelected(); // is a directory selected
-	std::string getSelectedName(); // return name of selection
 
 	// Populates the treeview
 	void populate();
@@ -104,14 +102,12 @@ private:
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 public:
-
-	/** Return the singleton instance.
-	 */
-	static MediaBrowser& getInstance();
-
 	/** Constructor creates widgets.
 	 */
 	MediaBrowser();
+
+	// Returns the currently selected item, or an empty string if nothing is selected
+	std::string getSelection() override;
 
 	/** Set the given path as the current selection, highlighting it
 	 * in the tree view.
@@ -120,12 +116,12 @@ public:
 	 * The fullname of the item to select, or the empty string if there
 	 * should be no selection.
 	 */
-	void setSelection(const std::string& selection);
+	void setSelection(const std::string& selection) override;
 
 	// ModuleObserver implementation, these are called when the MaterialManager
 	// is emitting realise signals
-	void unrealise();
-	void realise();
+	void unrealise() override;
+	void realise() override;
 
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;

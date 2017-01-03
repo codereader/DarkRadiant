@@ -7,6 +7,7 @@
 #include "igroupdialog.h"
 #include "iradiant.h"
 #include "ipreferencesystem.h"
+#include "imediabrowser.h"
 
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/GLWidget.h"
@@ -18,7 +19,6 @@
 #include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
-#include "ui/mediabrowser/MediaBrowser.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <functional>
@@ -833,8 +833,8 @@ void TextureBrowser::onSeekInMediaBrowser()
         if (shader != NULL)
         {
             // Focus the MediaBrowser selection to the given shader
-            GlobalGroupDialog().setPage(MediaBrowser::GROUPDIALOG_TAB_NAME);
-            MediaBrowser::getInstance().setSelection(shader->getName());
+            GlobalGroupDialog().setPage(GlobalMediaBrowser().getGroupDialogTabName());
+            GlobalMediaBrowser().setSelection(shader->getName());
         }
     }
 

@@ -4,7 +4,7 @@
 #include "iselectiontest.h"
 #include "iscenegraph.h"
 #include "iuimanager.h"
-#include "ui/mediabrowser/MediaBrowser.h"
+#include "imediabrowser.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ClosestTexturableFinder.h"
 
@@ -69,22 +69,24 @@ Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 	return returnValue;
 }
 
-void ShaderClipboard::updateMediaBrowsers() {
+void ShaderClipboard::updateMediaBrowsers()
+{
 	// Avoid nasty loopbacks
 	_updatesDisabled = true;
 
 	// Set the active shader in the Texture window as well
 	GlobalTextureBrowser().setSelectedShader(_source.getShader());
+
 	std::string sourceShader = _source.getShader();
-	ui::MediaBrowser::getInstance().setSelection(sourceShader);
+	GlobalMediaBrowser().setSelection(sourceShader);
 
 	_updatesDisabled = false;
 
 	updateStatusText();
 }
 
-void ShaderClipboard::updateStatusText() {
-
+void ShaderClipboard::updateStatusText()
+{
 	std::string statusText;
 
 	if (!_source.empty()) {
