@@ -7,6 +7,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 #include <wx/menu.h>
 #include <wx/menuitem.h>
@@ -18,81 +19,83 @@
 namespace ui
 {
 
-namespace 
-{
-	typedef std::vector<std::string> StringVector;
-}
-
 int MenuItem::_nextMenuItemId = 100;
 
 MenuItem::MenuItem(const MenuItemPtr& parent) :
-	_parent(MenuItemWeakPtr(parent)),
-	_widget(NULL),
+	_parent(parent ? MenuItemWeakPtr(parent) : MenuItemWeakPtr()),
+	_widget(nullptr),
 	_type(menuNothing),
 	_constructed(false)
-{
-	if (parent == NULL) {
-		_type = menuRoot;
-	}
-	else if (parent->isRoot()) {
-		_type = menuBar;
-	}
-}
+{}
 
 MenuItem::~MenuItem()
 {
 	disconnectEvent();
 }
 
-std::string MenuItem::getName() const {
+std::string MenuItem::getName() const
+{
 	return _name;
 }
 
-void MenuItem::setName(const std::string& name) {
+void MenuItem::setName(const std::string& name) 
+{
 	_name = name;
 }
 
-bool MenuItem::isRoot() const {
+bool MenuItem::isRoot() const
+{
 	return (_type == menuRoot);
 }
 
-MenuItemPtr MenuItem::parent() const {
+MenuItemPtr MenuItem::parent() const
+{
 	return _parent.lock();
 }
 
-void MenuItem::setParent(const MenuItemPtr& parent) {
+void MenuItem::setParent(const MenuItemPtr& parent)
+{
 	_parent = parent;
 }
 
-void MenuItem::setCaption(const std::string& caption) {
+void MenuItem::setCaption(const std::string& caption) 
+{
 	_caption = caption;
 }
 
-std::string MenuItem::getCaption() const {
+std::string MenuItem::getCaption() const
+{
 	return _caption;
 }
 
-void MenuItem::setIcon(const std::string& icon) {
+void MenuItem::setIcon(const std::string& icon)
+{
 	_icon = icon;
 }
 
-bool MenuItem::isEmpty() const {
+bool MenuItem::isEmpty() const 
+{
 	return (_type != menuItem);
 }
 
-eMenuItemType MenuItem::getType() const {
+eMenuItemType MenuItem::getType() const
+{
 	return _type;
 }
 
-void MenuItem::setType(eMenuItemType type) {
+void MenuItem::setType(eMenuItemType type)
+{
 	_type = type;
 }
 
-std::size_t MenuItem::numChildren() const {
+std::size_t MenuItem::numChildren() const 
+{
 	return _children.size();
 }
 
-void MenuItem::addChild(const MenuItemPtr& newChild) {
+void MenuItem::addChild(const MenuItemPtr& newChild)
+{
+	newChild->setParent(shared_from_this());
 	_children.push_back(newChild);
 }
 
@@ -102,6 +105,7 @@ void MenuItem::removeChild(const MenuItemPtr& child)
 	{
 		if (*i == child)
 		{
+			child->setParent(MenuItemPtr());
 			_children.erase(i);
 			return;
 		}
@@ -110,6 +114,11 @@ void MenuItem::removeChild(const MenuItemPtr& child)
 
 void MenuItem::removeAllChildren()
 {
+	for (const MenuItemPtr& child : _children)
+	{
+		child->setParent(MenuItemPtr());
+	}
+
 	_children.clear();
 }
 
@@ -196,97 +205,36 @@ wxObject* MenuItem::getWidget()
 MenuItemPtr MenuItem::find(const std::string& menuPath)
 {
 	// Split the path and analyse it
-	StringVector parts;
+	std::list<std::string> parts;
 	boost::algorithm::split(parts, menuPath, boost::algorithm::is_any_of("/"));
 
 	// Any path items at all?
-	if (!parts.empty()) {
-		MenuItemPtr child;
+	if (parts.empty()) return MenuItemPtr();
 
-		// Path is not empty, try to find the first item among the item's children
-		for (std::size_t i = 0; i < _children.size(); i++) {
-			if (_children[i]->getName() == parts[0]) {
-				child = _children[i];
-				break;
-			}
-		}
+	// Path is not empty, try to find the first item among the item's children
+	for (const MenuItemPtr& candidate : _children)
+	{
+		if (candidate->getName() == parts.front())
+		{
+			// Remove the first part, it has been processed
+			parts.pop_front();
 
-		// The topmost name seems to be part of the children, pass the call
-		if (child != NULL) {
 			// Is this the end of the path (no more items)?
-			if (parts.size() == 1) {
+			if (parts.empty()) 
+			{
 				// Yes, return the found item
-				return child;
+				return candidate;
 			}
-			else {
-				// No, pass the query down the hierarchy
-				std::string childPath("");
-				for (std::size_t i = 1; i < parts.size(); i++) {
-					childPath += (childPath != "") ? "/" : "";
-					childPath += parts[i];
-				}
-				return child->find(childPath);
-			}
+			
+			// No, pass the query down the hierarchy
+			std::string childPath = boost::algorithm::join(parts, "/");
+
+			return candidate->find(childPath);
 		}
 	}
 
-	// Nothing found, return NULL pointer
+	// Nothing found
 	return MenuItemPtr();
-}
-
-void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
-	std::string nodeName = node.getName();
-
-	setName(node.getAttributeValue("name"));
-
-	// Put the caption through gettext before passing it to setCaption
-	setCaption(_(node.getAttributeValue("caption").c_str()));
-
-	if (nodeName == "menuItem") {
-		_type = menuItem;
-		// Get the EventPtr according to the event
-		setEvent(node.getAttributeValue("command"));
-		setIcon(node.getAttributeValue("icon"));
-	}
-	else if (nodeName == "menuSeparator") {
-		_type = menuSeparator;
-	}
-	else if (nodeName == "subMenu") {
-		_type = menuFolder;
-
-		xml::NodeList subNodes = node.getChildren();
-		for (std::size_t i = 0; i < subNodes.size(); i++) {
-			if (subNodes[i].getName() != "text" && subNodes[i].getName() != "comment") {
-				// Allocate a new child menuitem with a pointer to <self>
-				MenuItemPtr newChild = MenuItemPtr(new MenuItem(thisItem));
-				// Let the child parse the subnode
-				newChild->parseNode(subNodes[i], newChild);
-
-				// Add the child to the list
-				_children.push_back(newChild);
-			}
-		}
-	}
-	else if (nodeName == "menu") {
-		_type = menuBar;
-
-		xml::NodeList subNodes = node.getChildren();
-		for (std::size_t i = 0; i < subNodes.size(); i++) {
-			if (subNodes[i].getName() != "text" && subNodes[i].getName() != "comment") {
-				// Allocate a new child menuitem with a pointer to <self>
-				MenuItemPtr newChild = MenuItemPtr(new MenuItem(thisItem));
-				// Let the child parse the subnode
-				newChild->parseNode(subNodes[i], newChild);
-
-				// Add the child to the list
-				_children.push_back(newChild);
-			}
-		}
-	}
-	else {
-		_type = menuNothing;
-		rError() << "MenuItem: Unknown node found: " << nodeName << std::endl;
-	}
 }
 
 void MenuItem::construct()
@@ -447,6 +395,79 @@ void MenuItem::setWidget(wxObject* object)
 
 	_widget = object;
 	_constructed = true;
+}
+
+eMenuItemType MenuItem::GetTypeForXmlNode(const xml::Node& node)
+{
+	std::string nodeName = node.getName();
+
+	if (nodeName == "menuItem")
+	{
+		return menuItem;
+	}
+	else if (nodeName == "menuSeparator")
+	{
+		return menuSeparator;
+	}
+	else if (nodeName == "subMenu")
+	{
+		return menuFolder;
+	}
+	else if (nodeName == "menu")
+	{
+		return menuBar;
+	}
+	else
+	{
+		rError() << "MenuItem: Unknown node found: " << node.getName() << std::endl;
+		return menuNothing;
+	}
+}
+
+MenuItemPtr MenuItem::CreateFromNode(const xml::Node& node)
+{
+	MenuItemPtr item = std::make_shared<MenuItem>();
+
+	item->setName(node.getAttributeValue("name"));
+
+	// Put the caption through gettext before passing it to setCaption
+	item->setCaption(_(node.getAttributeValue("caption").c_str()));
+
+	// Parse type name
+	item->setType(GetTypeForXmlNode(node));
+
+	if (item->getType() == menuItem)
+	{
+		// Get the EventPtr according to the event
+		item->setEvent(node.getAttributeValue("command"));
+		item->setIcon(node.getAttributeValue("icon"));
+	}
+	else if (item->getType() == menuNothing)
+	{
+		return MenuItemPtr();
+	}
+
+	// Parse subnodes
+	xml::NodeList childNodes = node.getChildren();
+
+	for (const xml::Node& childNode : childNodes)
+	{
+		if (childNode.getName() == "text" || childNode.getName() == "comment")
+		{
+			continue;
+		}
+		
+		// Allocate a new child item
+		MenuItemPtr childItem = CreateFromNode(childNode);
+
+		// Add the child to the list
+		if (childItem)
+		{
+			item->addChild(childItem);
+		}
+	}
+
+	return item;
 }
 
 } // namespace ui

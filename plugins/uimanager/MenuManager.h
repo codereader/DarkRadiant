@@ -30,20 +30,11 @@ public:
 	// Constructor, initialises the menu from the registry
 	MenuManager();
 
-	/** greebo: Retrieves the menuitem widget specified by the path.
-	 *
-	 * Example: get("main/file/open") delivers the widget for the "Open..." command.
-	 *
-	 * @returns: the widget, or NULL, if no the path hasn't been found.
-	 */
-	wxObject* get(const std::string& path);
+	wxMenuBar* getMenuBar(const std::string& name) override;
 
-	/** greebo: Shows/hides the menuitem under the given path.
-	 *
-	 * @path: the path to the item (e.g. "main/view/cameraview")
-	 * @visible: FALSE, if the widget should be hidden, TRUE otherwise
-	 */
-	void setVisibility(const std::string& path, bool visible);
+	wxObject* get(const std::string& path) override;
+
+	void setVisibility(const std::string& path, bool visible) override;
 
 	/** greebo: Adds a new item as child under the given path.
 	 *
@@ -59,7 +50,7 @@ public:
 					ui::eMenuItemType type,
 					const std::string& caption,
 					const std::string& icon,
-					const std::string& eventName);
+					const std::string& eventName) override;
 
 	/** greebo: Inserts a new menuItem as sibling _before_ the given insertPath.
 	 *
@@ -74,12 +65,12 @@ public:
 						ui::eMenuItemType type,
 						const std::string& caption,
 						const std::string& icon,
-						const std::string& eventName);
+						const std::string& eventName) override;
 
 	/**
 	 * Removes an entire menu subtree.
 	 */
-	void remove(const std::string& path);
+	void remove(const std::string& path) override;
 
 	/** greebo: Loads all the menu items from the registry, called upon initialisation.
 	 */

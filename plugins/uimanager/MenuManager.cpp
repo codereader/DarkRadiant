@@ -25,30 +25,28 @@ MenuManager::MenuManager() :
 	_root(new MenuItem(MenuItemPtr())) // Allocate the root item (type is set automatically)
 {}
 
-void MenuManager::clear() {
-	_root = MenuItemPtr();
+void MenuManager::clear()
+{
+	_root.reset();
 }
 
-void MenuManager::loadFromRegistry() {
+void MenuManager::loadFromRegistry()
+{
 	xml::NodeList menuNodes = GlobalRegistry().findXPath(RKEY_MENU_ROOT);
 
-	if (!menuNodes.empty()) {
-		for (std::size_t i = 0; i < menuNodes.size(); i++) {
-			std::string name = menuNodes[i].getAttributeValue("name");
-
-			// Allocate a new MenuItem with root as parent
-			MenuItemPtr menubar = MenuItemPtr(new MenuItem(_root));
-			menubar->setName(name);
-
-			// Populate the root menuitem using the current node
-			menubar->parseNode(menuNodes[i], menubar);
-
-			// Add the menubar as child of the root (child is already parented to _root)
+	if (!menuNodes.empty())
+	{
+		for (const xml::Node& menuNode : menuNodes)
+		{
+			MenuItemPtr menubar = MenuItem::CreateFromNode(menuNode);
+			
+			// Add the menubar as child of the root
 			_root->addChild(menubar);
 		}
 	}
-	else {
-		rError() << "MenuManager: Could not find menu root in registry.\n";
+	else 
+	{
+		rError() << "MenuManager: Could not find menu root in registry." << std::endl;
 	}
 }
 
@@ -80,6 +78,23 @@ void MenuManager::setVisibility(const std::string& path, bool visible)
 	else {
 		rError() << "MenuManager: Warning: Menu " << path << " not found!\n";
 	}
+}
+
+wxMenuBar* MenuManager::getMenuBar(const std::string& name)
+{
+	// Sanity check for empty menu
+	if (!_root) return nullptr;
+
+	MenuItemPtr menuBarItem = _root->find(name);
+
+	if (menuBarItem)
+	{
+		return dynamic_cast<wxMenuBar*>(menuBarItem->getWidget());
+	}
+	
+	rError() << "MenuManager: Warning: Menubar with name " << name << " not found!" << std::endl;
+
+	return nullptr;
 }
 
 wxObject* MenuManager::get(const std::string& path)

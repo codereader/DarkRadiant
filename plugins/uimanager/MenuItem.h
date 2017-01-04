@@ -20,7 +20,8 @@ class MenuItem;
 typedef std::shared_ptr<MenuItem> MenuItemPtr;
 typedef std::weak_ptr<MenuItem> MenuItemWeakPtr;
 
-class MenuItem
+class MenuItem :
+	public std::enable_shared_from_this<MenuItem>
 {
 	// The parent of this MenuItem (weak reference to avoid circular ownership)
 	MenuItemWeakPtr _parent;
@@ -52,7 +53,7 @@ class MenuItem
 
 public:
 	// Constructor, needs a name and a parent specified
-	MenuItem(const MenuItemPtr& parent);
+	MenuItem(const MenuItemPtr& parent = MenuItemPtr());
 
 	// Destructor disconnects the widget from the event
 	~MenuItem();
@@ -116,19 +117,19 @@ public:
 	// Tries to (recursively) locate the menuitem by looking up the path
 	MenuItemPtr find(const std::string& menuPath);
 
-	/** greebo: Takes the given xml::Node and populates this item recursively.
-	 * 			Pass the MenuItemPtr to this object when calling it, so that
-	 * 			the item can pass it to its children.
-	 * 			At least I don't know of any other method right now to
-	 * 			create a "self" shared_ptr from itself.
+	/**
+	 * Parses the given XML node recursively and creates all items from the 
+	 * information it finds. Returns the constructed MenuItem.
 	 */
-	void parseNode(xml::Node& node, const MenuItemPtr& thisItem);
+	static MenuItemPtr CreateFromNode(const xml::Node& node);
 
 private:
 	/** greebo: This constructs the actual widgets. This is invoked as soon
 	 * 			as the first getWidget of this object is requested.
 	 */
 	void construct();
+
+	static eMenuItemType GetTypeForXmlNode(const xml::Node& node);
 };
 
 } // namespace ui

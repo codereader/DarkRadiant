@@ -7,6 +7,7 @@
 class wxWindow;
 class wxObject;
 class wxToolBar;
+class wxMenuBar;
 
 class IColourSchemeManager {
 public:
@@ -40,6 +41,11 @@ public:
     /** Destructor
 	 */
     virtual ~IMenuManager() {}
+
+	/**
+	 * Returns the constructed menu bar, ready for packing into a parent container.
+	 */
+	virtual wxMenuBar* getMenuBar(const std::string& name) = 0;
 
 	/** greebo: Retrieves the menuitem widget specified by the path.
 	 *
