@@ -11,6 +11,9 @@
     <Filter Include="src\animationpreview">
       <UniqueIdentifier>{76d19dfa-2eef-475e-a743-e99b86aa0d2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\menu">
+      <UniqueIdentifier>{be0c6eeb-cb4b-494a-a99b-7db2abeec7ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\uimanager\DialogManager.cpp">
@@ -20,12 +23,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\uimanager\GroupDialog.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\uimanager\MenuItem.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\uimanager\MenuManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\uimanager\StatusBarManager.cpp">
@@ -61,6 +58,12 @@
     <ClCompile Include="..\..\plugins\uimanager\animationpreview\MD5AnimationChooser.cpp">
       <Filter>src\animationpreview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\menu\MenuItem.cpp">
+      <Filter>src\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\menu\MenuManager.cpp">
+      <Filter>src\menu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\uimanager\DialogManager.h">
@@ -70,12 +73,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\GroupDialog.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\uimanager\MenuItem.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\uimanager\MenuManager.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\StatusBarManager.h">
@@ -113,6 +110,12 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\animationpreview\MD5AnimationChooser.h">
       <Filter>src\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuItem.h">
+      <Filter>src\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuManager.h">
+      <Filter>src\menu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

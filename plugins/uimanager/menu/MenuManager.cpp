@@ -18,7 +18,6 @@ namespace
 	// The menu root key in the registry
 	const std::string RKEY_MENU_ROOT = "user/ui/menu";
 	const std::string TYPE_ITEM = "item";
-	typedef std::vector<std::string> StringVector;
 }
 
 MenuManager::MenuManager() :

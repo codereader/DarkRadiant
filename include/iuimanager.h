@@ -33,8 +33,6 @@ namespace ui
 	};
 } // namespace ui
 
-/** greebo: Implementation documentation: see MenuManager.h.
- */
 class IMenuManager
 {
 public:
