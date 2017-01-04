@@ -9,6 +9,9 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/join.hpp>
+
+#include "MenuBar.h"
 
 namespace ui 
 {
@@ -16,17 +19,15 @@ namespace ui
 namespace 
 {
 	// The menu root key in the registry
-	const std::string RKEY_MENU_ROOT = "user/ui/menu";
-	const std::string TYPE_ITEM = "item";
+	const char* const RKEY_MENU_ROOT = "user/ui/menu";
 }
 
-MenuManager::MenuManager() :
-	_root(new MenuItem(MenuItemPtr())) // Allocate the root item (type is set automatically)
+MenuManager::MenuManager()
 {}
 
 void MenuManager::clear()
 {
-	_root.reset();
+	_menuBars.clear();
 }
 
 void MenuManager::loadFromRegistry()
@@ -37,10 +38,10 @@ void MenuManager::loadFromRegistry()
 	{
 		for (const xml::Node& menuNode : menuNodes)
 		{
-			MenuItemPtr menubar = MenuItem::CreateFromNode(menuNode);
+			MenuElementPtr menubar = MenuElement::CreateFromNode(menuNode);
 			
 			// Add the menubar as child of the root
-			_root->addChild(menubar);
+			_menuBars.push_back(menubar);
 		}
 	}
 	else 
@@ -52,9 +53,11 @@ void MenuManager::loadFromRegistry()
 void MenuManager::setVisibility(const std::string& path, bool visible)
 {
 	// Sanity check for empty menu
-	if (_root == NULL) return;
+	if (_menuBars.empty()) return;
 
-	MenuItemPtr foundMenu = _root->find(path);
+	// TODO
+#if 0
+	MenuElementPtr foundMenu = _root->find(path);
 
 	if (foundMenu != NULL)
 	{
@@ -77,41 +80,66 @@ void MenuManager::setVisibility(const std::string& path, bool visible)
 	else {
 		rError() << "MenuManager: Warning: Menu " << path << " not found!\n";
 	}
+#endif
 }
 
 wxMenuBar* MenuManager::getMenuBar(const std::string& name)
 {
 	// Sanity check for empty menu
-	if (!_root) return nullptr;
-
-	MenuItemPtr menuBarItem = _root->find(name);
-
-	if (menuBarItem)
+	for (const MenuElementPtr& menuBar : _menuBars)
 	{
-		return dynamic_cast<wxMenuBar*>(menuBarItem->getWidget());
-	}
-	
-	rError() << "MenuManager: Warning: Menubar with name " << name << " not found!" << std::endl;
+		assert(std::dynamic_pointer_cast<MenuBar>(menuBar));
 
+		if (menuBar->getName() == name)
+		{
+			return std::static_pointer_cast<MenuBar>(menuBar)->getWidget();
+		}
+	}
+
+	rError() << "MenuManager: Warning: Menubar with name " << name << " not found!" << std::endl;
 	return nullptr;
 }
 
 wxObject* MenuManager::get(const std::string& path)
 {
+	// Split the path and analyse it
+	std::list<std::string> parts;
+	boost::algorithm::split(parts, path, boost::algorithm::is_any_of("/"));
+
 	// Sanity check for empty menu
-	if (_root == NULL) return NULL;
+	if (parts.empty()) return nullptr;
 
-	MenuItemPtr foundMenu = _root->find(path);
+	// Path is not empty, try to find the first item among the item's children
+	for (const MenuElementPtr& candidate : _menuBars)
+	{
+		if (candidate->getName() == parts.front())
+		{
+			// Remove the first part, it has been processed
+			parts.pop_front();
 
-	if (foundMenu != NULL)
-	{
-		return foundMenu->getWidget();
+			// Is this the end of the path (no more items)?
+			if (parts.empty())
+			{
+				// Yes, return the found item
+				return candidate->getWidget();
+			}
+
+			// No, pass the query down the hierarchy
+			std::string childPath = boost::algorithm::join(parts, "/");
+
+			MenuElementPtr child = candidate->find(childPath);
+
+			if (child)
+			{
+				return child->getWidget();
+			}
+
+			rError() << "MenuManager: Warning: Menu " << path << " not found!" << std::endl;
+			return nullptr;
+		}
 	}
-	else
-	{
-		//rError() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
-		return NULL;
-	}
+
+	return nullptr;
 }
 
 wxObject* MenuManager::add(const std::string& insertPath,
@@ -121,15 +149,19 @@ wxObject* MenuManager::add(const std::string& insertPath,
 							const std::string& icon,
 							const std::string& eventName)
 {
+	return new wxMenu;
+	return nullptr;
+	// TODO
+#if 0
 	// Sanity check for empty menu
 	if (_root == NULL) return NULL;
 
-	MenuItemPtr found = _root->find(insertPath);
+	MenuElementPtr found = _root->find(insertPath);
 
 	if (found != NULL)
 	{
 		// Allocate a new MenuItem
-		MenuItemPtr newItem = MenuItemPtr(new MenuItem(found));
+		MenuElementPtr newItem = MenuElementPtr(new MenuElement(found));
 
 		newItem->setName(name);
 		newItem->setCaption(caption);
@@ -197,7 +229,7 @@ wxObject* MenuManager::add(const std::string& insertPath,
 	else if (insertPath.empty())
 	{
 		// We have a new top-level menu item, create it as child of root
-		MenuItemPtr newItem = MenuItemPtr(new MenuItem(_root));
+		MenuElementPtr newItem = MenuElementPtr(new MenuElement(_root));
 
 		newItem->setName(name);
 		newItem->setCaption(caption);
@@ -215,6 +247,7 @@ wxObject* MenuManager::add(const std::string& insertPath,
 	}
 
 	return NULL;
+#endif
 }
 
 wxObject* MenuManager::insert(const std::string& insertPath,
@@ -224,10 +257,13 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 						 const std::string& icon,
 						 const std::string& eventName)
 {
+	return nullptr;
+	// TODO
+#if 0
 	// Sanity check for empty menu
 	if (_root == NULL) return NULL;
 
-	MenuItemPtr found = _root->find(insertPath);
+	MenuElementPtr found = _root->find(insertPath);
 
 	if (found != NULL)
 	{
@@ -237,7 +273,7 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 			int position = found->parent()->getMenuPosition(found);
 
 			// Allocate a new MenuItem
-			MenuItemPtr newItem = MenuItemPtr(new MenuItem(found->parent()));
+			MenuElementPtr newItem = MenuElementPtr(new MenuElement(found->parent()));
 			found->parent()->addChild(newItem);
 
 			// Load the properties into the new child
@@ -336,18 +372,21 @@ wxObject* MenuManager::insert(const std::string& insertPath,
 		rError() << "MenuManager: Could not find insertPath: " << insertPath << std::endl;
 		return NULL;
 	}
+#endif
 }
 
 void MenuManager::remove(const std::string& path)
 {
+	// TODO
+#if 0
 	// Sanity check for empty menu
 	if (_root == NULL) return;
 
-	MenuItemPtr item = _root->find(path);
+	MenuElementPtr item = _root->find(path);
 
 	if (item == NULL) return; // nothing to do
 
-	MenuItemPtr parent = item->parent();
+	MenuElementPtr parent = item->parent();
 
 	if (parent == NULL) return; // no parent ?
 
@@ -413,6 +452,7 @@ void MenuManager::remove(const std::string& path)
 
 	// Remove the found item from the parent menu item
 	parent->removeChild(item);
+#endif
 }
 
 } // namespace ui

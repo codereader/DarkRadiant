@@ -2,7 +2,7 @@
 
 #include <string>
 #include "iuimanager.h"
-#include "MenuItem.h"
+#include "MenuElement.h"
 
 /** greebo: The MenuManager takes care of adding and inserting the
  * 			menuitems at the given paths.
@@ -23,8 +23,8 @@ namespace ui {
 class MenuManager :
 	public IMenuManager
 {
-	// The root item containing the menubars as children
-	MenuItemPtr _root;
+	// All known menubars
+	std::list<MenuElementPtr> _menuBars;
 
 public:
 	// Constructor, initialises the menu from the registry

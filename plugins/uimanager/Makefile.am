@@ -22,8 +22,12 @@ uimanager_la_SOURCES = GroupDialog.cpp \
                        colourscheme/ColourScheme.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
+					   menu/MenuBar.cpp \
+					   menu/MenuElement.cpp \
+					   menu/MenuFolder.cpp \
 					   menu/MenuItem.cpp \
 					   menu/MenuManager.cpp \
+					   menu/MenuSeparator.cpp \
 					   SoundChooser.cpp \
 					   SoundShaderPreview.cpp \
                        StatusBarManager.cpp \

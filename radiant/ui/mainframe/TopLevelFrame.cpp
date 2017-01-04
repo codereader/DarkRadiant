@@ -23,7 +23,7 @@ TopLevelFrame::TopLevelFrame() :
 
 	wxMenuBar* menuBar = createMenuBar();
 
-	if (menuBar != NULL)
+	if (menuBar != nullptr)
 	{
 		SetMenuBar(menuBar);
 	}
@@ -83,7 +83,7 @@ wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
 {
 	ToolbarMap::const_iterator found = _toolbars.find(type);
 
-	return (found != _toolbars.end()) ? found->second.get() : NULL;
+	return (found != _toolbars.end()) ? found->second.get() : nullptr;
 }
 
 wxMenuBar* TopLevelFrame::createMenuBar()
@@ -92,7 +92,7 @@ wxMenuBar* TopLevelFrame::createMenuBar()
     FiltersMenu::addItemsToMainMenu();
 
     // Return the "main" menubar from the UIManager
-	return dynamic_cast<wxMenuBar*>(GlobalUIManager().getMenuManager().get("main"));
+	return GlobalUIManager().getMenuManager().getMenuBar("main");
 }
 
 wxBoxSizer* TopLevelFrame::getMainContainer()

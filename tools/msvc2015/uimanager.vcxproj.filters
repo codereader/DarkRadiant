@@ -58,10 +58,22 @@
     <ClCompile Include="..\..\plugins\uimanager\animationpreview\MD5AnimationChooser.cpp">
       <Filter>src\animationpreview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\menu\MenuManager.cpp">
+      <Filter>src\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\menu\MenuElement.cpp">
+      <Filter>src\menu</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\plugins\uimanager\menu\MenuItem.cpp">
       <Filter>src\menu</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\uimanager\menu\MenuManager.cpp">
+    <ClCompile Include="..\..\plugins\uimanager\menu\MenuBar.cpp">
+      <Filter>src\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\menu\MenuSeparator.cpp">
+      <Filter>src\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\uimanager\menu\MenuFolder.cpp">
       <Filter>src\menu</Filter>
     </ClCompile>
   </ItemGroup>
@@ -111,10 +123,22 @@
     <ClInclude Include="..\..\plugins\uimanager\animationpreview\MD5AnimationChooser.h">
       <Filter>src\animationpreview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuManager.h">
+      <Filter>src\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuElement.h">
+      <Filter>src\menu</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\menu\MenuItem.h">
       <Filter>src\menu</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\uimanager\menu\MenuManager.h">
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuBar.h">
+      <Filter>src\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuSeparator.h">
+      <Filter>src\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuFolder.h">
       <Filter>src\menu</Filter>
     </ClInclude>
   </ItemGroup>

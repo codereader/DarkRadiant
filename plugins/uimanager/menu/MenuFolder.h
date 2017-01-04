@@ -1,20 +1,19 @@
 #pragma once
 
 #include "MenuElement.h"
-
-#include <wx/menuitem.h>
+#include <wx/menu.h>
 
 namespace ui
 {
 
-class MenuItem :
+class MenuFolder :
 	public MenuElement
 {
 private:
-	wxMenuItem* _menuItem;
+	wxMenu* _menu;
 
 public:
-	virtual wxMenuItem* getWidget() override;
+	virtual wxMenu* getWidget() override;
 
 protected:
 	virtual void constructWidget() override;
