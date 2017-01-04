@@ -12,6 +12,8 @@
 #include <boost/algorithm/string/join.hpp>
 
 #include "MenuBar.h"
+#include "MenuFolder.h"
+#include "MenuRootElement.h"
 
 namespace ui 
 {
@@ -22,16 +24,20 @@ namespace
 	const char* const RKEY_MENU_ROOT = "user/ui/menu";
 }
 
-MenuManager::MenuManager()
+MenuManager::MenuManager() :
+	_root(new MenuRootElement())
 {}
 
 void MenuManager::clear()
 {
-	_menuBars.clear();
+	_root.reset();
 }
 
 void MenuManager::loadFromRegistry()
 {
+	// Clear existing elements first
+	_root.reset(new MenuRootElement());
+
 	xml::NodeList menuNodes = GlobalRegistry().findXPath(RKEY_MENU_ROOT);
 
 	if (!menuNodes.empty())
@@ -41,7 +47,7 @@ void MenuManager::loadFromRegistry()
 			MenuElementPtr menubar = MenuElement::CreateFromNode(menuNode);
 			
 			// Add the menubar as child of the root
-			_menuBars.push_back(menubar);
+			_root->addChild(menubar);
 		}
 	}
 	else 
@@ -53,92 +59,49 @@ void MenuManager::loadFromRegistry()
 void MenuManager::setVisibility(const std::string& path, bool visible)
 {
 	// Sanity check for empty menu
-	if (_menuBars.empty()) return;
+	if (!_root) return;
 
-	// TODO
-#if 0
-	MenuElementPtr foundMenu = _root->find(path);
+	MenuElementPtr element = _root->find(path);
 
-	if (foundMenu != NULL)
+	if (element)
 	{
-		// Get the Widget* and set the visibility
-		wxMenuItem* menuitem = dynamic_cast<wxMenuItem*>(foundMenu->getWidget());
+		element->setIsVisible(visible);
 
-		if (menuitem == NULL)
-		{
-			return;
-		}
+		// The corresponding menu should be reconstructed
+		MenuElementPtr parentMenu = findParentMenu(element);
 
-		if (visible)
+		if (parentMenu)
 		{
-			menuitem->Enable(true);
-		}
-		else {
-			menuitem->Enable(false);
+			//parentMenu->deconstruct();
 		}
 	}
-	else {
-		rError() << "MenuManager: Warning: Menu " << path << " not found!\n";
-	}
-#endif
 }
 
 wxMenuBar* MenuManager::getMenuBar(const std::string& name)
 {
-	// Sanity check for empty menu
-	for (const MenuElementPtr& menuBar : _menuBars)
+	MenuElementPtr menuBar = _root->find(name);
+	
+	if (menuBar)
 	{
 		assert(std::dynamic_pointer_cast<MenuBar>(menuBar));
 
-		if (menuBar->getName() == name)
-		{
-			return std::static_pointer_cast<MenuBar>(menuBar)->getWidget();
-		}
+		return std::static_pointer_cast<MenuBar>(menuBar)->getWidget();
 	}
-
+	
 	rError() << "MenuManager: Warning: Menubar with name " << name << " not found!" << std::endl;
 	return nullptr;
 }
 
 wxObject* MenuManager::get(const std::string& path)
 {
-	// Split the path and analyse it
-	std::list<std::string> parts;
-	boost::algorithm::split(parts, path, boost::algorithm::is_any_of("/"));
+	MenuElementPtr element = _root->find(path);
 
-	// Sanity check for empty menu
-	if (parts.empty()) return nullptr;
-
-	// Path is not empty, try to find the first item among the item's children
-	for (const MenuElementPtr& candidate : _menuBars)
+	if (element)
 	{
-		if (candidate->getName() == parts.front())
-		{
-			// Remove the first part, it has been processed
-			parts.pop_front();
-
-			// Is this the end of the path (no more items)?
-			if (parts.empty())
-			{
-				// Yes, return the found item
-				return candidate->getWidget();
-			}
-
-			// No, pass the query down the hierarchy
-			std::string childPath = boost::algorithm::join(parts, "/");
-
-			MenuElementPtr child = candidate->find(childPath);
-
-			if (child)
-			{
-				return child->getWidget();
-			}
-
-			rError() << "MenuManager: Warning: Menu " << path << " not found!" << std::endl;
-			return nullptr;
-		}
+		return element->getWidget();
 	}
 
+	rError() << "MenuManager: Warning: Menu " << path << " not found!" << std::endl;
 	return nullptr;
 }
 
@@ -453,6 +416,23 @@ void MenuManager::remove(const std::string& path)
 	// Remove the found item from the parent menu item
 	parent->removeChild(item);
 #endif
+}
+
+MenuElementPtr MenuManager::findParentMenu(const MenuElementPtr& element)
+{
+	if (!element) return MenuElementPtr();
+
+	MenuElementPtr parent = element->getParent();
+
+	while (parent)
+	{
+		if (std::dynamic_pointer_cast<MenuFolder>(parent))
+		{
+			return parent;
+		}
+	}
+
+	return MenuElementPtr();
 }
 
 } // namespace ui

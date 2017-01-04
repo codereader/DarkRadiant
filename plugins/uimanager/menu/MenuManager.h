@@ -23,8 +23,9 @@ namespace ui {
 class MenuManager :
 	public IMenuManager
 {
-	// All known menubars
-	std::list<MenuElementPtr> _menuBars;
+private:
+	// All menubars are child of this root item
+	MenuElementPtr _root;
 
 public:
 	// Constructor, initialises the menu from the registry
@@ -80,6 +81,10 @@ public:
 	 * Clears all references to GtkWidgets etc.
 	 */
 	void clear();
+
+private:
+	// Returns the parent menu (== MenuFolder) for the given element
+	MenuElementPtr findParentMenu(const MenuElementPtr& element);
 };
 
 } // namespace ui

@@ -50,6 +50,8 @@ protected:
 	// Stays false until the widgets are actually created.
 	bool _constructed;
 
+	bool _isVisible;
+
 	static int _nextMenuItemId;
 
 public:
@@ -71,6 +73,9 @@ public:
 	// Returns the pointer to the parent (is NULL for the root item)
 	MenuElementPtr getParent() const;
 	void setParent(const MenuElementPtr& parent);
+
+	bool isVisible() const;
+	void setIsVisible(bool visible);
 
 	/** greebo: Adds the given MenuElement to the list of children.
 	 *
@@ -116,6 +121,12 @@ public:
 
 	void setWidget(wxObject* object);
 
+	// Destroys the wxWidget instantiation of this element and all children
+	// (which also nullifies the widget pointers). Next time
+	// the getWidget() method is called the widgets will be reconstructed.
+	// Subclasses should override this
+	virtual void deconstruct() = 0;
+
 	// Tries to (recursively) locate the MenuElement by looking up the path
 	MenuElementPtr find(const std::string& menuPath);
 
@@ -127,9 +138,14 @@ public:
 
 protected:
 	// Instantiates this all current child elements recursively as wxObjects
-	// to be overridden by subclasses, this default implementaton here 
-	// just constructs all children
-	virtual void constructWidget();
+	// to be overridden by subclasses
+	virtual void constructWidget() = 0;
+
+	// This default implementaton here does as exepected: constructs all children
+	virtual void constructChildren();
+
+	// This default implementation passes the deconstruct() call to all children
+	virtual void deconstructChildren();
 
 private:
 	/** greebo: This constructs the actual widgets. This is invoked as soon

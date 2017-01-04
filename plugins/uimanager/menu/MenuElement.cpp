@@ -29,7 +29,8 @@ MenuElement::MenuElement(const MenuElementPtr& parent) :
 	_parent(parent ? MenuElementWeakPtr(parent) : MenuElementWeakPtr()),
 	_widget(nullptr),
 	_type(menuNothing),
-	_constructed(false)
+	_constructed(false),
+	_isVisible(true)
 {}
 
 MenuElement::~MenuElement()
@@ -95,6 +96,16 @@ void MenuElement::setType(eMenuItemType type)
 std::size_t MenuElement::numChildren() const 
 {
 	return _children.size();
+}
+
+bool MenuElement::isVisible() const
+{
+	return _isVisible;
+}
+
+void MenuElement::setIsVisible(bool visible)
+{
+	_isVisible = visible;
 }
 
 void MenuElement::addChild(const MenuElementPtr& newChild)
@@ -465,11 +476,19 @@ MenuElementPtr MenuElement::CreateFromNode(const xml::Node& node)
 	return item;
 }
 
-void MenuElement::constructWidget()
+void MenuElement::constructChildren()
 {
 	for (const MenuElementPtr& child : _children)
 	{
 		child->constructWidget();
+	}
+}
+
+void MenuElement::deconstructChildren()
+{
+	for (const MenuElementPtr& child : _children)
+	{
+		child->deconstruct();
 	}
 }
 

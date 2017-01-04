@@ -5,6 +5,10 @@
 namespace ui
 {
 
+MenuBar::MenuBar() :
+	_menuBar(nullptr)
+{}
+
 wxMenuBar* MenuBar::getWidget()
 {
 	if (_menuBar == nullptr)
@@ -19,13 +23,24 @@ void MenuBar::constructWidget()
 {
 	if (_menuBar != nullptr)
 	{
-		MenuElement::constructWidget();
+		MenuElement::constructChildren();
 		return;
 	}
 
 	_menuBar = new wxMenuBar;
 
-	MenuElement::constructWidget();
+	MenuElement::constructChildren();
+}
+
+void MenuBar::deconstruct()
+{
+	MenuElement::deconstructChildren();
+
+	if (_menuBar != nullptr)
+	{
+		delete _menuBar;
+		_menuBar = nullptr;
+	}
 }
 
 }

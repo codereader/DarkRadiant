@@ -353,6 +353,7 @@
     <ClInclude Include="..\..\plugins\uimanager\menu\MenuFolder.h" />
     <ClInclude Include="..\..\plugins\uimanager\menu\MenuItem.h" />
     <ClInclude Include="..\..\plugins\uimanager\menu\MenuManager.h" />
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuRootElement.h" />
     <ClInclude Include="..\..\plugins\uimanager\menu\MenuSeparator.h" />
     <ClInclude Include="..\..\plugins\uimanager\SoundChooser.h" />
     <ClInclude Include="..\..\plugins\uimanager\SoundShaderPreview.h" />

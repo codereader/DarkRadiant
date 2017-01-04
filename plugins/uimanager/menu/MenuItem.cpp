@@ -9,6 +9,10 @@
 namespace ui
 {
 
+MenuItem::MenuItem() :
+	_menuItem(nullptr)
+{}
+
 wxMenuItem* MenuItem::getWidget()
 {
 	if (_menuItem == nullptr)
@@ -23,7 +27,13 @@ void MenuItem::constructWidget()
 {
 	if (_menuItem != nullptr)
 	{
-		MenuElement::constructWidget();
+		MenuElement::constructChildren();
+		return;
+	}
+
+	if (!isVisible())
+	{
+		MenuElement::constructChildren();
 		return;
 	}
 
@@ -76,7 +86,24 @@ void MenuItem::constructWidget()
 		menu->Enable(_menuItem->GetId(), false);
 	}
 
-	MenuElement::constructWidget();
+	MenuElement::constructChildren();
+}
+
+void MenuItem::deconstruct()
+{
+	// Destruct children first
+	MenuElement::deconstructChildren();
+
+	if (_menuItem != nullptr)
+	{
+		if (_menuItem->GetMenu() != nullptr)
+		{
+			_menuItem->GetMenu()->Remove(_menuItem);
+		}
+
+		delete _menuItem;
+		_menuItem = nullptr;
+	}
 }
 
 }

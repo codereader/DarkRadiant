@@ -13,7 +13,10 @@ private:
 	wxMenuItem* _separator;
 
 public:
+	MenuSeparator();
+
 	virtual wxMenuItem* getWidget() override;
+	virtual void deconstruct() override;
 
 protected:
 	virtual void constructWidget() override;

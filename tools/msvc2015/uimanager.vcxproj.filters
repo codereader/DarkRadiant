@@ -141,6 +141,9 @@
     <ClInclude Include="..\..\plugins\uimanager\menu\MenuFolder.h">
       <Filter>src\menu</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\uimanager\menu\MenuRootElement.h">
+      <Filter>src\menu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\uimanager\uimanager.def">
