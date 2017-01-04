@@ -20,7 +20,7 @@ public:
 	}
 
 protected:
-	void constructWidget() override
+	void construct() override
 	{}
 
 	void deconstruct() override

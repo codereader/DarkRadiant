@@ -67,12 +67,12 @@ void MenuManager::setVisibility(const std::string& path, bool visible)
 	{
 		element->setIsVisible(visible);
 
-		// The corresponding menu should be reconstructed
-		MenuElementPtr parentMenu = findParentMenu(element);
+		// The corresponding top level menu needs reconstruction
+		MenuElementPtr parentMenu = findTopLevelMenu(element);
 
 		if (parentMenu)
 		{
-			//parentMenu->deconstruct();
+			parentMenu->setNeedsRefresh(true);
 		}
 	}
 }
@@ -418,18 +418,22 @@ void MenuManager::remove(const std::string& path)
 #endif
 }
 
-MenuElementPtr MenuManager::findParentMenu(const MenuElementPtr& element)
+MenuElementPtr MenuManager::findTopLevelMenu(const MenuElementPtr& element)
 {
-	if (!element) return MenuElementPtr();
+	MenuElementPtr candidate = element;
 
-	MenuElementPtr parent = element->getParent();
-
-	while (parent)
+	while (candidate)
 	{
-		if (std::dynamic_pointer_cast<MenuFolder>(parent))
+		MenuElementPtr parent = candidate->getParent();
+
+		if (candidate &&
+			std::dynamic_pointer_cast<MenuFolder>(candidate) &&
+			std::dynamic_pointer_cast<MenuBar>(parent))
 		{
-			return parent;
+			return candidate;
 		}
+
+		candidate = parent;
 	}
 
 	return MenuElementPtr();

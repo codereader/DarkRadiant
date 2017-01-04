@@ -52,6 +52,10 @@ protected:
 
 	bool _isVisible;
 
+	// Checked if anything in this item or below has changed
+	// and needs reconstruction the next time the menu is opened
+	bool _needsRefresh;
+
 	static int _nextMenuItemId;
 
 public:
@@ -116,16 +120,13 @@ public:
 	void connectEvent();
 	void disconnectEvent();
 
+	bool needsRefresh();
+	void setNeedsRefresh(bool needsRefresh);
+
 	// Use this to get the corresponding wx menu widget out of this item.
 	virtual wxObject* getWidget() = 0;
 
 	void setWidget(wxObject* object);
-
-	// Destroys the wxWidget instantiation of this element and all children
-	// (which also nullifies the widget pointers). Next time
-	// the getWidget() method is called the widgets will be reconstructed.
-	// Subclasses should override this
-	virtual void deconstruct() = 0;
 
 	// Tries to (recursively) locate the MenuElement by looking up the path
 	MenuElementPtr find(const std::string& menuPath);
@@ -137,22 +138,23 @@ public:
 	static MenuElementPtr CreateFromNode(const xml::Node& node);
 
 protected:
+	void setNeedsRefreshRecursively(bool needsRefresh);
+
 	// Instantiates this all current child elements recursively as wxObjects
 	// to be overridden by subclasses
-	virtual void constructWidget() = 0;
+	virtual void construct() = 0;
+
+	// Destroys the wxWidget instantiation of this element and all children
+	// (which also nullifies the widget pointers). Next time
+	// the getWidget() method is called the widgets will be reconstructed.
+	// Subclasses should override this
+	virtual void deconstruct() = 0;
 
 	// This default implementaton here does as exepected: constructs all children
 	virtual void constructChildren();
 
 	// This default implementation passes the deconstruct() call to all children
 	virtual void deconstructChildren();
-
-private:
-	/** greebo: This constructs the actual widgets. This is invoked as soon
-	 * 			as the first getWidget of this object is requested.
-	 * DEPRECATED
-	 */
-	void construct();
 };
 
 } // namespace ui

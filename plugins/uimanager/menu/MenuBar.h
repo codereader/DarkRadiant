@@ -17,10 +17,12 @@ public:
 
 	virtual wxMenuBar* getWidget() override;
 
+protected:
+	virtual void construct() override;
 	virtual void deconstruct() override;
 
-protected:
-	virtual void constructWidget() override;
+private:
+	MenuElementPtr findMenu(wxMenu* menu);
 };
 
 }

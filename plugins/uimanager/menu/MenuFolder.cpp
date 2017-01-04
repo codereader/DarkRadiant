@@ -19,13 +19,21 @@ wxMenu* MenuFolder::getWidget()
 {
 	if (_menu == nullptr)
 	{
-		constructWidget();
+		construct();
 	}
 
 	return _menu;
 }
 
-void MenuFolder::constructWidget()
+void MenuFolder::refresh()
+{
+	deconstructChildren();
+	constructChildren();
+
+	setNeedsRefreshRecursively(false);
+}
+
+void MenuFolder::construct()
 {
 	if (_menu != nullptr)
 	{
@@ -70,7 +78,7 @@ void MenuFolder::deconstruct()
 	{
 		if (_parentItem->GetMenu() != nullptr)
 		{
-			// This is a submenu, we can just rely on the parent item deleting the _menu object
+			// This is a submenu, remove the item we're attached to first
 			_parentItem->GetMenu()->Delete(_parentItem);
 		}
 		else
@@ -80,9 +88,6 @@ void MenuFolder::deconstruct()
 		}
 
 		_parentItem = nullptr;
-
-		// Parent item deleted the _menu already in its destructor
-		_menu = nullptr;
 	}
 
 	if (_menu != nullptr)
@@ -102,11 +107,13 @@ void MenuFolder::deconstruct()
 				}
 			}
 		}
-		
-		// Regardless of whether we have a bar attached, we need to delete the menu
-		delete _menu;
-		_menu = nullptr;
 	}
+
+	// Regardless what happened before, we need to delete the menu ourselves
+	// (Any parent item didn't delete the _menu in its destructor
+	// as wxWidgets nullified the submenu member before deleting it)
+	delete _menu;
+	_menu = nullptr;
 }
 
 }

@@ -17,13 +17,13 @@ wxMenuItem* MenuItem::getWidget()
 {
 	if (_menuItem == nullptr)
 	{
-		constructWidget();
+		construct();
 	}
 
 	return _menuItem;
 }
 
-void MenuItem::constructWidget()
+void MenuItem::construct()
 {
 	if (_menuItem != nullptr)
 	{

@@ -30,7 +30,8 @@ MenuElement::MenuElement(const MenuElementPtr& parent) :
 	_widget(nullptr),
 	_type(menuNothing),
 	_constructed(false),
-	_isVisible(true)
+	_isVisible(true),
+	_needsRefresh(false)
 {}
 
 MenuElement::~MenuElement()
@@ -206,6 +207,7 @@ int MenuElement::getMenuPosition(const MenuElementPtr& child)
 	return -1; // not found or wrong type
 }
 
+#if 0
 wxObject* MenuElement::getWidget()
 {
 	// Check for toggle, allocate the Gtk::Widget*
@@ -216,6 +218,7 @@ wxObject* MenuElement::getWidget()
 
 	return _widget;
 }
+#endif
 
 MenuElementPtr MenuElement::find(const std::string& menuPath)
 {
@@ -252,9 +255,9 @@ MenuElementPtr MenuElement::find(const std::string& menuPath)
 	return MenuElementPtr();
 }
 
+#if 0
 void MenuElement::construct()
 {
-#if 0
 	if (_type == menuBar)
 	{
 		wxMenuBar* menuBar = new wxMenuBar;
@@ -371,8 +374,8 @@ void MenuElement::construct()
 	}
 
 	_constructed = true;
-#endif
 }
+#endif
 
 void MenuElement::connectEvent()
 {
@@ -403,6 +406,16 @@ void MenuElement::disconnectEvent()
 			ev->disconnectMenuItem(item);
 		}
 	}
+}
+
+bool MenuElement::needsRefresh()
+{
+	return _needsRefresh;
+}
+
+void MenuElement::setNeedsRefresh(bool needsRefresh)
+{
+	_needsRefresh = needsRefresh;
 }
 
 void MenuElement::setWidget(wxObject* object)
@@ -476,11 +489,21 @@ MenuElementPtr MenuElement::CreateFromNode(const xml::Node& node)
 	return item;
 }
 
+void MenuElement::setNeedsRefreshRecursively(bool needsRefresh)
+{
+	setNeedsRefresh(needsRefresh);
+
+	for (const MenuElementPtr& child : _children)
+	{
+		child->setNeedsRefreshRecursively(needsRefresh);
+	}
+}
+
 void MenuElement::constructChildren()
 {
 	for (const MenuElementPtr& child : _children)
 	{
-		child->constructWidget();
+		child->construct();
 	}
 }
 

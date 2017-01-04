@@ -16,14 +16,16 @@ wxMenuItem* MenuSeparator::getWidget()
 {
 	if (_separator == nullptr)
 	{
-		constructWidget();
+		construct();
 	}
 
 	return _separator;
 }
 
-void MenuSeparator::constructWidget()
+void MenuSeparator::construct()
 {
+	_needsRefresh = false;
+
 	if (_separator != nullptr)
 	{
 		MenuElement::constructChildren();

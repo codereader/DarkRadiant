@@ -21,8 +21,12 @@ public:
 
 	virtual wxMenu* getWidget() override;
 
+	// Empties this menu and rebuilds the wxWidget objects
+	// Clears the needsRefresh flag on this object and all children
+	void refresh();
+
 protected:
-	virtual void constructWidget() override;
+	virtual void construct() override;
 	virtual void deconstruct() override;
 };
 

@@ -83,8 +83,8 @@ public:
 	void clear();
 
 private:
-	// Returns the parent menu (== MenuFolder) for the given element
-	MenuElementPtr findParentMenu(const MenuElementPtr& element);
+	// Returns the top level menu (== MenuFolder) this element is part of
+	MenuElementPtr findTopLevelMenu(const MenuElementPtr& element);
 };
 
 } // namespace ui
