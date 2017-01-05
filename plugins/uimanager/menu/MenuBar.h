@@ -15,7 +15,7 @@ private:
 public:
 	MenuBar();
 
-	virtual wxMenuBar* getWidget() override;
+	virtual wxMenuBar* getMenuBar();
 
 protected:
 	virtual void construct() override;

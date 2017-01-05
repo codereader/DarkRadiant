@@ -14,7 +14,7 @@ MenuBar::MenuBar() :
 	_menuBar(nullptr)
 {}
 
-wxMenuBar* MenuBar::getWidget()
+wxMenuBar* MenuBar::getMenuBar()
 {
 	if (_menuBar == nullptr)
 	{
@@ -64,7 +64,9 @@ MenuElementPtr MenuBar::findMenu(wxMenu* menu)
 {
 	for (const MenuElementPtr& candidate : _children)
 	{
-		if (candidate->getWidget() == menu)
+		if (!std::dynamic_pointer_cast<MenuFolder>(candidate)) continue;
+
+		if (std::static_pointer_cast<MenuFolder>(candidate)->getMenu() == menu)
 		{
 			return candidate;
 		}

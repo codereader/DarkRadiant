@@ -3,14 +3,6 @@
 #include "itextstream.h"
 #include "iregistry.h"
 
-#include <wx/menu.h>
-#include <wx/menuitem.h>
-
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/join.hpp>
-
 #include "MenuBar.h"
 #include "MenuFolder.h"
 #include "MenuRootElement.h"
@@ -87,25 +79,10 @@ wxMenuBar* MenuManager::getMenuBar(const std::string& name)
 	{
 		assert(std::dynamic_pointer_cast<MenuBar>(menuBar));
 
-		return std::static_pointer_cast<MenuBar>(menuBar)->getWidget();
+		return std::static_pointer_cast<MenuBar>(menuBar)->getMenuBar();
 	}
 	
 	rError() << "MenuManager: Warning: Menubar with name " << name << " not found!" << std::endl;
-	return nullptr;
-}
-
-wxObject* MenuManager::get(const std::string& path)
-{
-	if (!_root) return nullptr; // root has already been removed
-
-	MenuElementPtr element = _root->find(path);
-
-	if (element)
-	{
-		return element->getWidget();
-	}
-
-	rError() << "MenuManager: Warning: Menu " << path << " not found!" << std::endl;
 	return nullptr;
 }
 
@@ -395,6 +372,13 @@ void MenuManager::insert(const std::string& insertPath,
 		return NULL;
 	}
 #endif
+}
+
+bool MenuManager::exists(const std::string& path)
+{
+	if (!_root) return false; // root has already been removed
+
+	return _root->find(path) != nullptr;
 }
 
 void MenuManager::remove(const std::string& path)

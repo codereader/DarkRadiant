@@ -19,11 +19,6 @@ public:
 		deconstructChildren();
 	}
 
-	wxObject* getWidget() override
-	{
-		return nullptr;
-	}
-
 protected:
 	void construct() override
 	{}

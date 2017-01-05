@@ -13,7 +13,7 @@ MenuItem::MenuItem() :
 	_menuItem(nullptr)
 {}
 
-wxMenuItem* MenuItem::getWidget()
+wxMenuItem* MenuItem::getMenuItem()
 {
 	if (_menuItem == nullptr)
 	{
@@ -46,7 +46,7 @@ void MenuItem::construct()
 		return;
 	}
 
-	wxMenu* menu = std::static_pointer_cast<MenuFolder>(parent)->getWidget();
+	wxMenu* menu = std::static_pointer_cast<MenuFolder>(parent)->getMenu();
 
 	std::string caption = _caption;
 

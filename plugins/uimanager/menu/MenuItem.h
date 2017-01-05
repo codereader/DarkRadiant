@@ -16,7 +16,7 @@ private:
 public:
 	MenuItem();
 
-	virtual wxMenuItem* getWidget() override;
+	virtual wxMenuItem* getMenuItem();
 
 protected:
 	virtual void construct() override;

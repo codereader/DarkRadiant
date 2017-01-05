@@ -5,7 +5,6 @@
 
 // Forward declarations
 class wxWindow;
-class wxObject;
 class wxToolBar;
 class wxMenuBar;
 
@@ -45,14 +44,6 @@ public:
 	 */
 	virtual wxMenuBar* getMenuBar(const std::string& name) = 0;
 
-	/** greebo: Retrieves the menuitem widget specified by the path.
-	 *
-	 * Example: get("main/file/open") delivers the widget for the "Open..." command.
-	 *
-	 * @returns: the widget, or NULL, if no the path hasn't been found.
-	 */
-	virtual wxObject* get(const std::string& path) = 0;
-
 	/** greebo: Shows/hides the menuitem under the given path.
 	 *
 	 * @path: the path to the item (e.g. "main/view/cameraview")
@@ -90,6 +81,9 @@ public:
 							  const std::string& caption,
 							  const std::string& icon,
 							  const std::string& eventName) = 0;
+
+	// Returns true if the given path exists
+	virtual bool exists(const std::string& path) = 0;
 
 	/**
 	 * Removes an entire path from the menus.

@@ -12,14 +12,16 @@
 #include <functional>
 #include <memory>
 
-namespace ui {
+namespace ui 
+{
 
-	namespace {
-		const std::string MENU_LAYOUTS_PARENT = "main/view";
-		const std::string MENU_LAYOUTS = "layouts";
-		const std::string MENU_LAYOUTS_PATH = MENU_LAYOUTS_PARENT + "/" + MENU_LAYOUTS;
-		const std::string MENU_LAYOUTS_INSERT_BEFORE = "main/view/camera";
-	}
+namespace 
+{
+	const std::string MENU_LAYOUTS_PARENT = "main/view";
+	const std::string MENU_LAYOUTS = "layouts";
+	const std::string MENU_LAYOUTS_PATH = MENU_LAYOUTS_PARENT + "/" + MENU_LAYOUTS;
+	const std::string MENU_LAYOUTS_INSERT_BEFORE = "main/view/camera";
+}
 
 /**
  * This little class represents a "command target", providing
@@ -46,7 +48,7 @@ public:
 		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 		// Add a new folder, if not existing yet
-		if (menuManager.get(MENU_LAYOUTS_PATH) == NULL)
+		if (!menuManager.exists(MENU_LAYOUTS_PATH))
 		{
 			menuManager.insert(
 				MENU_LAYOUTS_INSERT_BEFORE,
@@ -75,9 +77,9 @@ public:
 	void activateLayout(const cmd::ArgumentList& args)
 	{
 		GlobalMainFrame().setActiveLayoutName(_layoutName);
-        wxutil::Messagebox::Show("Restart required",
-                                 "Restart DarkRadiant to apply changes",
-                                 ui::IDialog::MESSAGE_CONFIRM);
+        wxutil::Messagebox::Show(_("Restart required"),
+                                 _("Restart DarkRadiant to apply changes"),
+                                 IDialog::MESSAGE_CONFIRM);
 	}
 };
 typedef std::shared_ptr<LayoutCommand> LayoutCommandPtr;

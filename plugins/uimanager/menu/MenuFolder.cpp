@@ -15,7 +15,7 @@ MenuFolder::MenuFolder() :
 	_parentItem(nullptr)
 {}
 
-wxMenu* MenuFolder::getWidget()
+wxMenu* MenuFolder::getMenu()
 {
 	if (_menu == nullptr)
 	{
@@ -56,12 +56,12 @@ void MenuFolder::construct()
 
 		if (std::dynamic_pointer_cast<MenuBar>(parent))
 		{
-			wxMenuBar* bar = std::static_pointer_cast<MenuBar>(parent)->getWidget();
+			wxMenuBar* bar = std::static_pointer_cast<MenuBar>(parent)->getMenuBar();
 			bar->Append(_menu, getCaption());
 		}
 		else if (std::dynamic_pointer_cast<MenuFolder>(parent))
 		{
-			wxMenu* parentMenu = std::static_pointer_cast<MenuFolder>(parent)->getWidget();
+			wxMenu* parentMenu = std::static_pointer_cast<MenuFolder>(parent)->getMenu();
 			_parentItem = parentMenu->AppendSubMenu(_menu, getCaption());
 		}
 	}

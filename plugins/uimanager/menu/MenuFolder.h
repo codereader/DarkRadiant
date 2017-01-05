@@ -19,7 +19,7 @@ private:
 public:
 	MenuFolder();
 
-	virtual wxMenu* getWidget() override;
+	virtual wxMenu* getMenu();
 
 	// Empties this menu and rebuilds the wxWidget objects
 	// Clears the needsRefresh flag on this object and all children

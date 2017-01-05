@@ -36,19 +36,14 @@ protected:
 	// The icon name
 	std::string _icon;
 
-	// The associated event
+	// The associated event name
 	std::string _event;
-
-	wxObject* _widget;
 
 	// The children of this MenuElement
 	typedef std::vector<MenuElementPtr> MenuElementList;
 	MenuElementList _children;
 
 	eMenuItemType _type;
-
-	// Stays false until the widgets are actually created.
-	bool _constructed;
 
 	bool _isVisible;
 
@@ -122,16 +117,8 @@ public:
 	std::string getEvent() const;
 	void setEvent(const std::string& eventName);
 
-	void connectEvent();
-	void disconnectEvent();
-
 	bool needsRefresh();
 	void setNeedsRefresh(bool needsRefresh);
-
-	// Use this to get the corresponding wx menu widget out of this item.
-	virtual wxObject* getWidget() = 0;
-
-	void setWidget(wxObject* object);
 
 	// Tries to (recursively) locate the MenuElement by looking up the path
 	MenuElementPtr find(const std::string& menuPath);

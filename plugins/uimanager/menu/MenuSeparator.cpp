@@ -12,7 +12,7 @@ MenuSeparator::MenuSeparator() :
 	_separator(nullptr)
 {}
 
-wxMenuItem* MenuSeparator::getWidget()
+wxMenuItem* MenuSeparator::getMenuItem()
 {
 	if (_separator == nullptr)
 	{
@@ -43,7 +43,7 @@ void MenuSeparator::construct()
 			return;
 		}
 
-		wxMenu* menu = std::static_pointer_cast<MenuFolder>(parent)->getWidget();
+		wxMenu* menu = std::static_pointer_cast<MenuFolder>(parent)->getMenu();
 
 		_separator = menu->AppendSeparator();
 	}
