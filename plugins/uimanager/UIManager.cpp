@@ -128,10 +128,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 void UIManager::shutdownModule()
 {
-    // Free the XmlResources instance
-    // (I intermittently hit debug heap breakpoints when wx is 
-    //  deleting XRC XML resource memory, so let's attempt to fix that this way.)
-    //delete wxXmlResource::Set(nullptr);
+	_menuManager.clear();
 }
 
 } // namespace ui
