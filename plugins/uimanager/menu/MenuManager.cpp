@@ -105,15 +105,38 @@ wxObject* MenuManager::get(const std::string& path)
 	return nullptr;
 }
 
-wxObject* MenuManager::add(const std::string& insertPath,
+void MenuManager::add(const std::string& insertPath,
 							const std::string& name,
 							eMenuItemType type,
 							const std::string& caption,
 							const std::string& icon,
 							const std::string& eventName)
 {
-	return new wxMenu;
-	return nullptr;
+	MenuElementPtr parent = _root->find(insertPath);
+
+	if (!parent)
+	{
+		rWarning() << "Cannot insert element at non-existent parent " << insertPath << std::endl;
+		return;
+	}
+
+	MenuElementPtr element = MenuElement::CreateForType(type);
+
+	element->setName(name);
+	element->setCaption(caption);
+	element->setIcon(icon);
+	element->setEvent(eventName);
+
+	parent->addChild(element);
+
+	// The corresponding top level menu needs reconstruction
+	MenuElementPtr parentMenu = findTopLevelMenu(element);
+
+	if (parentMenu)
+	{
+		parentMenu->setNeedsRefresh(true);
+	}
+
 	// TODO
 #if 0
 	// Sanity check for empty menu

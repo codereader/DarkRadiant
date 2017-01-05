@@ -489,6 +489,33 @@ MenuElementPtr MenuElement::CreateFromNode(const xml::Node& node)
 	return item;
 }
 
+MenuElementPtr MenuElement::CreateForType(eMenuItemType type)
+{
+	MenuElementPtr item;
+
+	switch (type)
+	{
+	case menuItem:
+		item = std::make_shared<MenuItem>();
+		break;
+	case menuBar:
+		item = std::make_shared<MenuBar>();
+		break;
+	case menuFolder:
+		item = std::make_shared<MenuFolder>();
+		break;
+	case menuSeparator:
+		item = std::make_shared<MenuSeparator>();
+		break;
+	default:
+		rError() << "MenuElement: Cannot create node for type " << type << std::endl;
+	};
+
+	item->setType(type);
+
+	return item;
+}
+
 void MenuElement::setNeedsRefreshRecursively(bool needsRefresh)
 {
 	setNeedsRefresh(needsRefresh);

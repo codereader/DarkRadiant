@@ -48,7 +48,7 @@ void MenuFolder::construct()
 
 		if (!parent)
 		{
-			rWarning() << "Cannot construct separator without a parent menu" << std::endl;
+			rWarning() << "Cannot construct menu without a parent " << std::endl;
 			return;
 		}
 

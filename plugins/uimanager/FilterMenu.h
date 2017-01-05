@@ -1,7 +1,9 @@
 #pragma once
 
+#include <map>
 #include "ifiltermenu.h"
 #include "ifilter.h"
+#include "wxutil/menu/PopupMenu.h"
 
 namespace ui
 {
@@ -10,26 +12,19 @@ namespace ui
  * registers the relevant menuitems on demand.
  *
  * Construct a FiltersMenu instance to generate a new Filter Menu which
- * can be packed into a parent container widget using the GtkWidget* operator.
+ * can be packed into a parent container widget using the getMenuWidget().
  */
 class FilterMenu :
 	public IFilterMenu,
 	public IFilterVisitor
 {
 private:
-	wxMenu* _menu;
+	std::map<std::string, wxMenuItem*> _filterItems;
 
-	// Static counter to create unique menu bar widgets
-	static std::size_t _counter;
-
-	// The path of this menu
-	std::string _path;
-
-	// The target path used for population
-	std::string _targetPath;
+	wxutil::PopupMenu* _menu;
 
 public:
-	// Constructs the filters submenu including menu bar
+	// Constructs the filter items
 	FilterMenu();
 
 	~FilterMenu();

@@ -68,11 +68,8 @@ public:
 	 * @caption: the display string of the menu item (incl. mnemonic)
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
-	 *
-	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
-	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual wxObject* add(const std::string& insertPath,
+	virtual void add(const std::string& insertPath,
 						   const std::string& name,
 						   ui::eMenuItemType type,
 						   const std::string& caption,

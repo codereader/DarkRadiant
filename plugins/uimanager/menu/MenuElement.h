@@ -137,6 +137,11 @@ public:
 	 */
 	static MenuElementPtr CreateFromNode(const xml::Node& node);
 
+	/**
+	 * Constructs a menu element for the given type
+	 */
+	static MenuElementPtr CreateForType(eMenuItemType type);
+
 protected:
 	void setNeedsRefreshRecursively(bool needsRefresh);
 

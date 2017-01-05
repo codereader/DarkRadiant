@@ -46,7 +46,7 @@ public:
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
 	 */
-	wxObject* add(const std::string& insertPath,
+	void add(const std::string& insertPath,
 					const std::string& name,
 					ui::eMenuItemType type,
 					const std::string& caption,

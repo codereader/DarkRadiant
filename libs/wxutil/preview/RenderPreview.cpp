@@ -48,7 +48,8 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _timer(this),
     _previewWidth(0),
     _previewHeight(0),
-    _filtersMenu(GlobalUIManager().createFilterMenu())
+    _filtersMenu(GlobalUIManager().createFilterMenu()),
+	_filterTool(nullptr)
 {
 	Connect(wxEVT_TIMER, wxTimerEventHandler(RenderPreview::_onFrame), NULL, this);
 
@@ -96,6 +97,8 @@ void RenderPreview::setupToolbars(bool enableAnimation)
     wxToolBarToolBase* filterTool = filterToolbar->AddTool(wxID_ANY, _("Filters"),
                                                            wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "iconFilter16.png"),
                                                            _("Filters"), wxITEM_DROPDOWN);
+
+	// By setting it as dropdown menu the toolitem will take ownership and delete the menu on destruction
     filterToolbar->SetDropdownMenu(filterTool->GetId(), filterSubmenu);
 
     filterToolbar->Realize();
@@ -134,7 +137,7 @@ void RenderPreview::connectToolbarSignals()
 
 RenderPreview::~RenderPreview()
 {
-    _timer.Stop();
+	_timer.Stop();
 }
 
 void RenderPreview::updateActiveRenderModeButton()
