@@ -14,6 +14,11 @@ public:
 		setType(menuRoot);
 	}
 
+	~MenuRootElement()
+	{
+		deconstructChildren();
+	}
+
 	wxObject* getWidget() override
 	{
 		return nullptr;

@@ -1,6 +1,7 @@
 #include "MenuBar.h"
 
 #include <wx/menu.h>
+#include <wx/frame.h>
 
 #include "MenuFolder.h"
 
@@ -54,6 +55,13 @@ void MenuBar::deconstruct()
 
 	if (_menuBar != nullptr)
 	{
+		// Any parent frame needs to know about the destruction beforehand
+		// deleting the wxMenuBar object doesn't notify its parent
+		if (_menuBar->GetFrame())
+		{
+			_menuBar->GetFrame()->SetMenuBar(nullptr);
+		}
+
 		delete _menuBar;
 		_menuBar = nullptr;
 	}
