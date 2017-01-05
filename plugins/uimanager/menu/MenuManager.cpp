@@ -79,6 +79,8 @@ void MenuManager::setVisibility(const std::string& path, bool visible)
 
 wxMenuBar* MenuManager::getMenuBar(const std::string& name)
 {
+	if (!_root) return nullptr; // root has already been removed
+
 	MenuElementPtr menuBar = _root->find(name);
 	
 	if (menuBar)
@@ -94,6 +96,8 @@ wxMenuBar* MenuManager::getMenuBar(const std::string& name)
 
 wxObject* MenuManager::get(const std::string& path)
 {
+	if (!_root) return nullptr; // root has already been removed
+
 	MenuElementPtr element = _root->find(path);
 
 	if (element)
@@ -112,6 +116,8 @@ void MenuManager::add(const std::string& insertPath,
 							const std::string& icon,
 							const std::string& eventName)
 {
+	if (!_root) return; // root has already been removed
+
 	MenuElementPtr parent = _root->find(insertPath);
 
 	if (!parent)
@@ -243,6 +249,8 @@ void MenuManager::insert(const std::string& insertPath,
 						 const std::string& icon,
 						 const std::string& eventName)
 {
+	if (!_root) return; // root has already been removed
+
 	MenuElementPtr insertBefore = _root->find(insertPath);
 
 	if (!insertBefore || !insertBefore->getParent())
@@ -391,6 +399,31 @@ void MenuManager::insert(const std::string& insertPath,
 
 void MenuManager::remove(const std::string& path)
 {
+	if (!_root) return; // root has already been removed
+
+	MenuElementPtr element = _root->find(path);
+
+	if (!element)
+	{
+		return; // no warning, some code just tries to remove stuff unconditionally
+	}
+
+	if (!element->getParent())
+	{
+		rWarning() << "Cannot remove item without a parent " << path << std::endl;
+		return;
+	}
+
+	element->getParent()->removeChild(element);
+
+	// The corresponding top level menu needs reconstruction
+	MenuElementPtr parentMenu = findTopLevelMenu(element);
+
+	if (parentMenu)
+	{
+		parentMenu->setNeedsRefresh(true);
+	}
+
 	// TODO
 #if 0
 	// Sanity check for empty menu

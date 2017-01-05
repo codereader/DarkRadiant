@@ -136,9 +136,13 @@ void MenuElement::removeChild(const MenuElementPtr& child)
 	{
 		if (*i == child)
 		{
+			// Deconstruct the child before removal
+			child->deconstruct();
+
+			// Release from parent and remove from the list
 			child->setParent(MenuElementPtr());
 			_children.erase(i);
-			return;
+			break;
 		}
 	}
 }

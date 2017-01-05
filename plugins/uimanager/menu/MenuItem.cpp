@@ -96,6 +96,17 @@ void MenuItem::deconstruct()
 
 	if (_menuItem != nullptr)
 	{
+		// Try to lookup the event name
+		if (!_event.empty())
+		{
+			IEventPtr event = GlobalEventManager().findEvent(_event);
+
+			if (event)
+			{
+				event->disconnectMenuItem(_menuItem);
+			}
+		}
+
 		if (_menuItem->GetMenu() != nullptr)
 		{
 			_menuItem->GetMenu()->Remove(_menuItem);
