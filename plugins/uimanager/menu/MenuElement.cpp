@@ -12,6 +12,8 @@
 #include <wx/menu.h>
 #include <wx/menuitem.h>
 
+#include <limits>
+#include <iterator>
 #include <iostream>
 
 #include "MenuBar.h"
@@ -111,8 +113,21 @@ void MenuElement::setIsVisible(bool visible)
 
 void MenuElement::addChild(const MenuElementPtr& newChild)
 {
+	addChild(newChild, std::numeric_limits<int>::max());
+}
+
+void MenuElement::addChild(const MenuElementPtr& newChild, int pos)
+{
 	newChild->setParent(shared_from_this());
-	_children.push_back(newChild);
+
+	if (pos >= _children.size() || pos == std::numeric_limits<int>::max())
+	{
+		_children.push_back(newChild);
+	}
+	else
+	{
+		_children.insert(_children.begin() + pos, newChild);
+	}	
 }
 
 void MenuElement::removeChild(const MenuElementPtr& child)
@@ -150,6 +165,15 @@ void MenuElement::setEvent(const std::string& eventName)
 
 int MenuElement::getMenuPosition(const MenuElementPtr& child)
 {
+	return static_cast<int>(std::distance(_children.begin(), 
+		std::find(_children.begin(), _children.end(), child)));
+
+#if 0
+	for (std::size_t pos = 0; pos < _children.size(); ++i)
+	{
+
+	}
+
 	if (!_constructed)
 	{
 		construct();
@@ -205,6 +229,7 @@ int MenuElement::getMenuPosition(const MenuElementPtr& child)
 	}
 
 	return -1; // not found or wrong type
+#endif
 }
 
 #if 0

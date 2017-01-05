@@ -236,14 +236,42 @@ void MenuManager::add(const std::string& insertPath,
 #endif
 }
 
-wxObject* MenuManager::insert(const std::string& insertPath,
+void MenuManager::insert(const std::string& insertPath,
 						 const std::string& name,
 						 eMenuItemType type,
 						 const std::string& caption,
 						 const std::string& icon,
 						 const std::string& eventName)
 {
-	return nullptr;
+	MenuElementPtr insertBefore = _root->find(insertPath);
+
+	if (!insertBefore || !insertBefore->getParent())
+	{
+		rWarning() << "Cannot insert before non-existent item or item doesn't have a parent" 
+			<< insertPath << std::endl;
+		return;
+	}
+
+	MenuElementPtr element = MenuElement::CreateForType(type);
+
+	element->setName(name);
+	element->setCaption(caption);
+	element->setIcon(icon);
+	element->setEvent(eventName);
+
+	// Get the Menu position of the child widget
+	int position = insertBefore->getParent()->getMenuPosition(insertBefore);
+
+	insertBefore->getParent()->addChild(element, position);
+
+	// The corresponding top level menu needs reconstruction
+	MenuElementPtr parentMenu = findTopLevelMenu(element);
+
+	if (parentMenu)
+	{
+		parentMenu->setNeedsRefresh(true);
+	}
+
 	// TODO
 #if 0
 	// Sanity check for empty menu

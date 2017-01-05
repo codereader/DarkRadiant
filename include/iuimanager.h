@@ -83,11 +83,8 @@ public:
 	 * @caption: the display string including mnemonic
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
-	 *
-	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
-	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual wxObject* insert(const std::string& insertPath,
+	virtual void insert(const std::string& insertPath,
 							  const std::string& name,
 							  ui::eMenuItemType type,
 							  const std::string& caption,

@@ -81,11 +81,16 @@ public:
 	bool isVisible() const;
 	void setIsVisible(bool visible);
 
-	/** greebo: Adds the given MenuElement to the list of children.
-	 *
-	 *  Note: the new child is NOT reparented, the calling function must to this.
+	/**
+	 * greebo: Adds the given MenuElement at the end of the child list.
 	 */
 	void addChild(const MenuElementPtr& newChild);
+
+	/**
+	* greebo: Adds the given MenuElement to the list of children.
+	* @pos: the position this element is inserted at.
+	*/
+	void addChild(const MenuElementPtr& newChild, int pos);
 
 	/**
 	 * Removes the given child from this menu item.

@@ -61,7 +61,7 @@ public:
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
 	 */
-	wxObject* insert(const std::string& insertPath,
+	void insert(const std::string& insertPath,
 						const std::string& name,
 						ui::eMenuItemType type,
 						const std::string& caption,
