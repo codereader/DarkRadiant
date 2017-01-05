@@ -23,6 +23,7 @@ protected:
 
 private:
 	MenuElementPtr findMenu(wxMenu* menu);
+	void onMenuOpen(wxMenuEvent& ev);
 };
 
 }

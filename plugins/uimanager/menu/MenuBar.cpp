@@ -2,7 +2,9 @@
 
 #include <wx/menu.h>
 #include <wx/frame.h>
+#include <wx/wupdlock.h>
 
+#include <sigc++/bind.h>
 #include "MenuFolder.h"
 
 namespace ui
@@ -35,16 +37,7 @@ void MenuBar::construct()
 	_menuBar = new wxMenuBar;
 
 	// Set up the listener ensuring that the opened menu is up to date
-	_menuBar->Bind(wxEVT_MENU_OPEN, [&](wxMenuEvent& ev)
-	{
-		MenuElementPtr menu = findMenu(ev.GetMenu());
-
-		if (menu && menu->needsRefresh() && std::dynamic_pointer_cast<MenuFolder>(menu))
-		{
-			// Rebuild this entire menu
-			std::static_pointer_cast<MenuFolder>(menu)->refresh();
-		}
-	});
+	_menuBar->Bind(wxEVT_MENU_OPEN, sigc::mem_fun(this, &MenuBar::onMenuOpen));
 
 	MenuElement::constructChildren();
 }
@@ -78,6 +71,20 @@ MenuElementPtr MenuBar::findMenu(wxMenu* menu)
 	}
 
 	return MenuElementPtr();
+}
+
+void MenuBar::onMenuOpen(wxMenuEvent& ev)
+{
+	// Block redraws for the moment being
+	wxWindowUpdateLocker noUpdates(_menuBar);
+
+	MenuElementPtr menu = findMenu(ev.GetMenu());
+
+	if (menu && menu->needsRefresh() && std::dynamic_pointer_cast<MenuFolder>(menu))
+	{
+		// Rebuild this entire menu
+		std::static_pointer_cast<MenuFolder>(menu)->refresh();
+	}
 }
 
 }
