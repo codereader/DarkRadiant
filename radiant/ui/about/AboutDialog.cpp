@@ -42,27 +42,34 @@ void AboutDialog::populateWindow()
 {
 	loadNamedPanel(this, "AboutDialogPanel");
 
-	std::string date = __DATE__;
-	std::string time = __TIME__;
-
-	bool showBuildTime = registry::getValue<bool>(RKEY_SHOW_BUILD_TIME);
-	std::string buildDate = (showBuildTime) ? date + " " + time : date;
-
 	wxStaticText* appTitle = findNamedObject<wxStaticText>(this, "AboutDialogAppTitle");
 	wxFont appTitleFont = appTitle->GetFont().Bold();
 	appTitleFont.SetPointSize(appTitleFont.GetPointSize() + 4);
 	appTitle->SetFont(appTitleFont);
 	appTitle->SetLabel(RADIANT_APPNAME_FULL());
-	
+
+	wxStaticText* buildDateText = findNamedObject<wxStaticText>(this, "AboutDialogBuildDate");
+
+#if WIN32
+	std::string date = __DATE__;
+	std::string time = __TIME__;
+
+	bool showBuildTime = registry::getValue<bool>(RKEY_SHOW_BUILD_TIME);
+	std::string buildDate = (showBuildTime) ? date + " " + time : date;
 	std::string buildDateStr = (boost::format(_("Build date: %s")) % buildDate).str();
 
-	findNamedObject<wxStaticText>(this, "AboutDialogBuildDate")->SetLabel(buildDateStr);
+	buildDateText->SetLabel(buildDateStr);
+#else
+	wxSizer* sizer = buildDateText->GetContainingSizer();
+	buildDateText->Destroy();
+	sizer->Layout();
+#endif
 
 	std::string wxVersion = (boost::format(_("Version: %d.%d.%d")) %
 		wxMAJOR_VERSION %
 		wxMINOR_VERSION %
 		wxRELEASE_NUMBER).str();
-
+	
 	findNamedObject<wxStaticText>(this, "AboutDialogWxWidgetsVersion")->SetLabel(wxVersion);
 
 	// If anybody knows a better method to convert glubyte* to char*, please tell me...
