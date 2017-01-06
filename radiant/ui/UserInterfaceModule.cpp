@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "ilayer.h"
 #include "iorthocontextmenu.h"
+#include "ieventmanager.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"

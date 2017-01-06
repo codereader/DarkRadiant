@@ -143,6 +143,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	render/darkradiant-RenderSystemFactory.$(OBJEXT) \
 	render/darkradiant-View.$(OBJEXT) \
 	render/debug/darkradiant-SpacePartitionRenderer.$(OBJEXT) \
+	ui/darkradiant-UserInterfaceModule.$(OBJEXT) \
 	ui/entitychooser/darkradiant-EntityClassChooser.$(OBJEXT) \
 	ui/entitychooser/darkradiant-EntityClassTreePopulator.$(OBJEXT) \
 	ui/prefabselector/darkradiant-PrefabPopulator.$(OBJEXT) \
@@ -883,6 +884,7 @@ darkradiant_SOURCES = main.cpp \
 					  render/RenderSystemFactory.cpp \
 					  render/View.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
+					  ui/UserInterfaceModule.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
                       ui/entitychooser/EntityClassTreePopulator.cpp \
                       ui/prefabselector/PrefabPopulator.cpp \
@@ -1309,6 +1311,14 @@ render/debug/$(DEPDIR)/$(am__dirstamp):
 render/debug/darkradiant-SpacePartitionRenderer.$(OBJEXT):  \
 	render/debug/$(am__dirstamp) \
 	render/debug/$(DEPDIR)/$(am__dirstamp)
+ui/$(am__dirstamp):
+	@$(MKDIR_P) ui
+	@: > ui/$(am__dirstamp)
+ui/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) ui/$(DEPDIR)
+	@: > ui/$(DEPDIR)/$(am__dirstamp)
+ui/darkradiant-UserInterfaceModule.$(OBJEXT): ui/$(am__dirstamp) \
+	ui/$(DEPDIR)/$(am__dirstamp)
 ui/entitychooser/$(am__dirstamp):
 	@$(MKDIR_P) ui/entitychooser
 	@: > ui/entitychooser/$(am__dirstamp)
@@ -2145,6 +2155,7 @@ mostlyclean-compile:
 	-rm -f test/*.$(OBJEXT)
 	-rm -f textool/*.$(OBJEXT)
 	-rm -f textool/item/*.$(OBJEXT)
+	-rm -f ui/*.$(OBJEXT)
 	-rm -f ui/aas/*.$(OBJEXT)
 	-rm -f ui/about/*.$(OBJEXT)
 	-rm -f ui/brush/*.$(OBJEXT)
@@ -2323,6 +2334,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@textool/item/$(DEPDIR)/darkradiant-FaceVertexItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@textool/item/$(DEPDIR)/darkradiant-PatchItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@textool/item/$(DEPDIR)/darkradiant-PatchVertexItem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@ui/$(DEPDIR)/darkradiant-UserInterfaceModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/aas/$(DEPDIR)/darkradiant-AasControl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/aas/$(DEPDIR)/darkradiant-AasControlDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@ui/about/$(DEPDIR)/darkradiant-AboutDialog.Po@am__quote@
@@ -2994,6 +3006,20 @@ render/debug/darkradiant-SpacePartitionRenderer.obj: render/debug/SpacePartition
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='render/debug/SpacePartitionRenderer.cpp' object='render/debug/darkradiant-SpacePartitionRenderer.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o render/debug/darkradiant-SpacePartitionRenderer.obj `if test -f 'render/debug/SpacePartitionRenderer.cpp'; then $(CYGPATH_W) 'render/debug/SpacePartitionRenderer.cpp'; else $(CYGPATH_W) '$(srcdir)/render/debug/SpacePartitionRenderer.cpp'; fi`
+
+ui/darkradiant-UserInterfaceModule.o: ui/UserInterfaceModule.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/darkradiant-UserInterfaceModule.o -MD -MP -MF ui/$(DEPDIR)/darkradiant-UserInterfaceModule.Tpo -c -o ui/darkradiant-UserInterfaceModule.o `test -f 'ui/UserInterfaceModule.cpp' || echo '$(srcdir)/'`ui/UserInterfaceModule.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/$(DEPDIR)/darkradiant-UserInterfaceModule.Tpo ui/$(DEPDIR)/darkradiant-UserInterfaceModule.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/UserInterfaceModule.cpp' object='ui/darkradiant-UserInterfaceModule.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/darkradiant-UserInterfaceModule.o `test -f 'ui/UserInterfaceModule.cpp' || echo '$(srcdir)/'`ui/UserInterfaceModule.cpp
+
+ui/darkradiant-UserInterfaceModule.obj: ui/UserInterfaceModule.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/darkradiant-UserInterfaceModule.obj -MD -MP -MF ui/$(DEPDIR)/darkradiant-UserInterfaceModule.Tpo -c -o ui/darkradiant-UserInterfaceModule.obj `if test -f 'ui/UserInterfaceModule.cpp'; then $(CYGPATH_W) 'ui/UserInterfaceModule.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/UserInterfaceModule.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ui/$(DEPDIR)/darkradiant-UserInterfaceModule.Tpo ui/$(DEPDIR)/darkradiant-UserInterfaceModule.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ui/UserInterfaceModule.cpp' object='ui/darkradiant-UserInterfaceModule.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ui/darkradiant-UserInterfaceModule.obj `if test -f 'ui/UserInterfaceModule.cpp'; then $(CYGPATH_W) 'ui/UserInterfaceModule.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/UserInterfaceModule.cpp'; fi`
 
 ui/entitychooser/darkradiant-EntityClassChooser.o: ui/entitychooser/EntityClassChooser.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ui/entitychooser/darkradiant-EntityClassChooser.o -MD -MP -MF ui/entitychooser/$(DEPDIR)/darkradiant-EntityClassChooser.Tpo -c -o ui/entitychooser/darkradiant-EntityClassChooser.o `test -f 'ui/entitychooser/EntityClassChooser.cpp' || echo '$(srcdir)/'`ui/entitychooser/EntityClassChooser.cpp
@@ -5990,6 +6016,8 @@ distclean-generic:
 	-rm -f textool/$(am__dirstamp)
 	-rm -f textool/item/$(DEPDIR)/$(am__dirstamp)
 	-rm -f textool/item/$(am__dirstamp)
+	-rm -f ui/$(DEPDIR)/$(am__dirstamp)
+	-rm -f ui/$(am__dirstamp)
 	-rm -f ui/aas/$(DEPDIR)/$(am__dirstamp)
 	-rm -f ui/aas/$(am__dirstamp)
 	-rm -f ui/about/$(DEPDIR)/$(am__dirstamp)
@@ -6060,7 +6088,7 @@ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
 	clean-libtool mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) map/infofile/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/group/$(DEPDIR) selection/manipulators/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) map/infofile/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/group/$(DEPDIR) selection/manipulators/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -6106,7 +6134,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) map/infofile/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/group/$(DEPDIR) selection/manipulators/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) map/infofile/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/group/$(DEPDIR) selection/manipulators/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
