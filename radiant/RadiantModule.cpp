@@ -4,28 +4,22 @@
 #include <iostream>
 #include <ctime>
 
-#include "ifiletypes.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
 #include "iuimanager.h"
-#include "ieclass.h"
-#include "ipreferencesystem.h"
 #include "ieventmanager.h"
-#include "iclipper.h"
 #include "i18n.h"
 #include "imainframe.h"
 
 #include "scene/Node.h"
 
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mru/MRU.h"
-#include "map/Map.h"
-#include "brush/csg/CSG.h"
 
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"
+#include "brush/csg/CSG.h"
 
 #include "ui/modelselector/ModelSelector.h"
 #include "EventRateLimiter.h"
@@ -162,11 +156,7 @@ const StringSet& RadiantModule::getDependencies() const
     {
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_CLIPPER);
 	}
 
 	return _dependencies;
@@ -174,16 +164,13 @@ const StringSet& RadiantModule::getDependencies() const
 
 void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << "RadiantModule::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Reset the node id count
   	scene::Node::resetIds();
 
     selection::algorithm::registerCommands();
 	brush::algorithm::registerCommands();
-
-	GlobalCommandSystem().addCommand("Exit", exitCmd);
-	GlobalEventManager().addCommand("Exit", "Exit");
 
     // Subscribe for the post-module init event
     module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
@@ -192,7 +179,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 
 void RadiantModule::shutdownModule()
 {
-	rMessage() << "RadiantModule::shutdownModule called." << std::endl;
+	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
 	_radiantStarted.clear();
     _radiantShutdown.clear();
@@ -224,13 +211,6 @@ void RadiantModule::postModuleInitialisation()
     time_t localtime;
     time(&localtime);
     rMessage() << "Startup complete at " << ctime(&localtime) << std::endl;
-}
-
-void RadiantModule::exitCmd(const cmd::ArgumentList& args)
-{
-    // Just tell the main application window to close, which will invoke
-    // appropriate event handlers.
-    GlobalMainFrame().getWxTopLevelWindow()->Close(false /* don't force */);
 }
 
 // Define the static Radiant module

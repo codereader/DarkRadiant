@@ -107,6 +107,8 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	);
 	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
 
+
+
 #ifdef WIN32
 	HMODULE lib = LoadLibrary(L"dwmapi.dll");
 
@@ -141,6 +143,16 @@ void MainFrame::shutdownModule()
 	rMessage() << "MainFrame::shutdownModule called." << std::endl;
 
 	disableScreenUpdates();
+}
+
+void MainFrame::exitCmd(const cmd::ArgumentList& args)
+{
+	// Just tell the main application window to close, which will invoke
+	// appropriate event handlers.
+	if (getWxTopLevelWindow() != nullptr)
+	{
+		getWxTopLevelWindow()->Close(false /* don't force */);
+	}
 }
 
 void MainFrame::keyChanged()

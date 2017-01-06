@@ -66,6 +66,8 @@ public:
 private:
 	void create();
 
+	void exitCmd(const cmd::ArgumentList& args);
+
 	void removeLayout();
 
 	// Save/Restore the window position as saved to the registry
