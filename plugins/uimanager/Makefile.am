@@ -15,19 +15,23 @@ uimanager_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                       $(top_builddir)/libs/math/libmath.la \
                       $(top_builddir)/libs/scene/libscenegraph.la \
                       $(top_builddir)/libs/xmlutil/libxmlutil.la
-uimanager_la_SOURCES = MenuItem.cpp \
-                       GroupDialog.cpp \
+uimanager_la_SOURCES = GroupDialog.cpp \
 					   animationpreview/MD5AnimationChooser.cpp \
 					   animationpreview/MD5AnimationViewer.cpp \
 					   animationpreview/AnimationPreview.cpp \
                        colourscheme/ColourScheme.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
+					   menu/MenuBar.cpp \
+					   menu/MenuElement.cpp \
+					   menu/MenuFolder.cpp \
+					   menu/MenuItem.cpp \
+					   menu/MenuManager.cpp \
+					   menu/MenuSeparator.cpp \
 					   SoundChooser.cpp \
 					   SoundShaderPreview.cpp \
                        StatusBarManager.cpp \
                        DialogManager.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
-                       FilterMenu.cpp \
-                       MenuManager.cpp
+                       FilterMenu.cpp

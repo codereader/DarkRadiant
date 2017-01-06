@@ -61,9 +61,10 @@ public:
 	virtual void removeObserver(Observer& observer);
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
 	void initPakFile(ArchiveLoader& archiveModule, const std::string& filename);

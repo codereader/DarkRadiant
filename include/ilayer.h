@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include "imodule.h"
+#include <sigc++/signal.h>
 
 namespace scene
 {
@@ -178,6 +179,17 @@ public:
 	 * should be de-selected.
 	 */
 	virtual void setSelected(int layerID, bool selected) = 0;
+
+	/**
+	 * A signal for client code to get notified about layer creation,
+	 * addition, removal.
+	 */
+	virtual sigc::signal<void> signal_layersChanged() = 0;
+
+	/**
+	 *
+	 */
+	virtual sigc::signal<void> signal_layerVisibilityChanged() = 0;
 };
 
 } // namespace scene

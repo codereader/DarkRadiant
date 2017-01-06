@@ -5,8 +5,8 @@
 
 // Forward declarations
 class wxWindow;
-class wxObject;
 class wxToolBar;
+class wxMenuBar;
 
 class IColourSchemeManager {
 public:
@@ -32,8 +32,6 @@ namespace ui
 	};
 } // namespace ui
 
-/** greebo: Implementation documentation: see MenuManager.h.
- */
 class IMenuManager
 {
 public:
@@ -41,13 +39,10 @@ public:
 	 */
     virtual ~IMenuManager() {}
 
-	/** greebo: Retrieves the menuitem widget specified by the path.
-	 *
-	 * Example: get("main/file/open") delivers the widget for the "Open..." command.
-	 *
-	 * @returns: the widget, or NULL, if no the path hasn't been found.
+	/**
+	 * Returns the constructed menu bar, ready for packing into a parent container.
 	 */
-	virtual wxObject* get(const std::string& path) = 0;
+	virtual wxMenuBar* getMenuBar(const std::string& name) = 0;
 
 	/** greebo: Shows/hides the menuitem under the given path.
 	 *
@@ -64,11 +59,8 @@ public:
 	 * @caption: the display string of the menu item (incl. mnemonic)
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
-	 *
-	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
-	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual wxObject* add(const std::string& insertPath,
+	virtual void add(const std::string& insertPath,
 						   const std::string& name,
 						   ui::eMenuItemType type,
 						   const std::string& caption,
@@ -82,16 +74,16 @@ public:
 	 * @caption: the display string including mnemonic
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
-	 *
-	 * @returns: the menu item wxObject, which might be a wxMenuItem, or 
-	 * a wxMenu or wxMenuBar pointer.
 	 */
-	virtual wxObject* insert(const std::string& insertPath,
+	virtual void insert(const std::string& insertPath,
 							  const std::string& name,
 							  ui::eMenuItemType type,
 							  const std::string& caption,
 							  const std::string& icon,
 							  const std::string& eventName) = 0;
+
+	// Returns true if the given path exists
+	virtual bool exists(const std::string& path) = 0;
 
 	/**
 	 * Removes an entire path from the menus.

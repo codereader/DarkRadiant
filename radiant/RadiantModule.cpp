@@ -4,51 +4,23 @@
 #include <iostream>
 #include <ctime>
 
-#include "ifiletypes.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
-#include "ifilesystem.h"
 #include "iuimanager.h"
-#include "ieclass.h"
-#include "ipreferencesystem.h"
 #include "ieventmanager.h"
-#include "iclipper.h"
 #include "i18n.h"
 #include "imainframe.h"
 
 #include "scene/Node.h"
 
-#include "map/PointFile.h"
-#include "ui/texturebrowser/TextureBrowser.h"
-#include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
-#include "textool/TexTool.h"
-#include "ui/overlay/OverlayDialog.h"
-#include "ui/prefdialog/PrefDialog.h"
-#include "ui/splash/Splash.h"
-#include "wxutil/FileChooser.h"
 #include "ui/mru/MRU.h"
-#include "map/Map.h"
-#include "wxutil/MultiMonitor.h"
-#include "brush/csg/CSG.h"
 
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"
+#include "brush/csg/CSG.h"
 
-#include "log/Console.h"
-#include "ui/lightinspector/LightInspector.h"
-#include "ui/patch/PatchInspector.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
-#include "ui/transform/TransformDialog.h"
-#include "ui/mapinfo/MapInfoDialog.h"
-#include "ui/layers/LayerControlDialog.h"
-#include "ui/commandlist/CommandList.h"
-#include "ui/findshader/FindShader.h"
-#include "ui/filterdialog/FilterDialog.h"
-#include "ui/mousetool/ToolMappingDialog.h"
-#include "ui/about/AboutDialog.h"
-#include "map/FindMapElements.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "EventRateLimiter.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
@@ -184,11 +156,7 @@ const StringSet& RadiantModule::getDependencies() const
     {
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_CLIPPER);
 	}
 
 	return _dependencies;
@@ -196,23 +164,13 @@ const StringSet& RadiantModule::getDependencies() const
 
 void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << "RadiantModule::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Reset the node id count
   	scene::Node::resetIds();
 
-    map::PointFile::Instance().registerCommands();
-
-    registerUICommands();
-
-	ui::TexTool::registerCommands();
-	ui::MediaBrowser::registerCommandsAndPreferences();
-    
-	selection::algorithm::registerCommands();
+    selection::algorithm::registerCommands();
 	brush::algorithm::registerCommands();
-
-	GlobalCommandSystem().addCommand("Exit", exitCmd);
-	GlobalEventManager().addCommand("Exit", "Exit");
 
     // Subscribe for the post-module init event
     module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
@@ -221,38 +179,22 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 
 void RadiantModule::shutdownModule()
 {
-	rMessage() << "RadiantModule::shutdownModule called." << std::endl;
+	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
-	GlobalFileSystem().shutdown();
-
-	map::PointFile::Instance().destroy();
-
+	_radiantStarted.clear();
     _radiantShutdown.clear();
 }
 
 void RadiantModule::postModuleInitialisation()
 {
-	// Create the empty Settings node and set the title to empty.
-	GlobalPreferenceSystem().getPage(_("Game"));
-
-	IPreferencePage& settingsPage = GlobalPreferenceSystem().getPage(_("Settings"));
-	settingsPage.setTitle("");
-
 	// Construct the MRU commands and menu structure, load the recently used files
 	GlobalMRU().initialise();
-
-	wxutil::MultiMonitor::printMonitorInfo();
-
-	// Initialise the mediabrowser
-    ui::MediaBrowser::init();
 
     // Initialise the mainframe
     GlobalMainFrame().construct();
 
 	// Initialise the shaderclipboard
 	GlobalShaderClipboard().clear();
-
-	ui::LayerControlDialog::init();
 
 	// Broadcast the startup event
     broadcastStartupEvent();
@@ -269,60 +211,6 @@ void RadiantModule::postModuleInitialisation()
     time_t localtime;
     time(&localtime);
     rMessage() << "Startup complete at " << ctime(&localtime) << std::endl;
-}
-
-void RadiantModule::registerUICommands()
-{
-	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::ShowProjectSettings);
-	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::ShowPrefDialog);
-
-	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
-	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
-	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
-	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
-	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::toggle);
-	GlobalCommandSystem().addCommand("TransformDialog", ui::TransformDialog::toggle);
-
-	GlobalCommandSystem().addCommand("FindBrush", DoFind);
-	
-	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::ShowDialog);
-    GlobalCommandSystem().addCommand("MouseToolMappingDialog", ui::ToolMappingDialog::ShowDialog);
-
-	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::ShowDialog);
-	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::ShowDialog);
-	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
-
-	// ----------------------- Bind Events ---------------------------------------
-
-	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
-
-	GlobalEventManager().addCommand("Preferences", "Preferences");
-
-	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
-
-	GlobalEventManager().addCommand("ToggleLightInspector",	"ToggleLightInspector");
-	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
-	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");
-	GlobalEventManager().addCommand("OverlayDialog", "OverlayDialog");
-	GlobalEventManager().addCommand("TransformDialog", "TransformDialog");
-
-	GlobalEventManager().addCommand("FindBrush", "FindBrush");
-	
-	GlobalEventManager().addCommand("MapInfo", "MapInfo");
-	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
-    GlobalEventManager().addCommand("MouseToolMappingDialog", "MouseToolMappingDialog");
-
-	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
-	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
-	GlobalEventManager().addCommand("About", "About");
-}
-
-void RadiantModule::exitCmd(const cmd::ArgumentList& args)
-{
-    // Just tell the main application window to close, which will invoke
-    // appropriate event handlers.
-    GlobalMainFrame().getWxTopLevelWindow()->Close(false /* don't force */);
 }
 
 // Define the static Radiant module

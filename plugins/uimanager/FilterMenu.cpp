@@ -1,60 +1,56 @@
 #include "FilterMenu.h"
 
 #include "iuimanager.h"
-#include "string/convert.h"
-#include "i18n.h"
+#include "ieventmanager.h"
 #include <wx/menu.h>
+
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {
 
 namespace
 {
-	// These are used for the general-purpose Filter Menu:
-	const char* const FILTERS_MENU_BAR = "filters";
-	const char* const FILTERS_MENU_FOLDER = "allfilters";
-	const char* const FILTERS_MENU_CAPTION = N_("_Filters");
-
 	const char* const MENU_ICON = "iconFilter16.png";
 }
 
-std::size_t FilterMenu::_counter = 0;
-
-FilterMenu::FilterMenu()
+FilterMenu::FilterMenu() :
+	_menu(new wxutil::PopupMenu)
 {
-	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-
-	// Create a unique name for the menu
-	_path = FILTERS_MENU_BAR + string::to_string(_counter++);
-
-	// Menu not yet constructed, do it now
-	_menu = dynamic_cast<wxMenu*>(menuManager.add("", _path,
-					menuFolder, _(FILTERS_MENU_CAPTION), "", ""));
-	assert(_menu != NULL);
-
-	_targetPath = _path;
-
 	// Visit the filters in the FilterSystem to populate the menu
 	GlobalFilterSystem().forEachFilter(*this);
 }
 
 FilterMenu::~FilterMenu()
 {
-	GlobalUIManager().getMenuManager().remove(_path);
+	for (auto i : _filterItems)
+	{
+		IEventPtr event = GlobalEventManager().findEvent(i.first);
+
+		if (event)
+		{
+			event->disconnectMenuItem(i.second);
+		}
+	}
+
+	_menu = nullptr;
 }
 
-// Visitor function
 void FilterMenu::visit(const std::string& filterName)
 {
-	// Get the menu manager
-	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
+	wxMenuItem* item = _menu->Append(new wxutil::IconTextMenuItem(filterName, MENU_ICON));
+	item->SetCheckable(true);
 
 	std::string eventName = GlobalFilterSystem().getFilterEventName(filterName);
 
-	// Create the menu item
-	menuManager.add(_targetPath, _targetPath + "_" + filterName,
-					menuItem, filterName,
-					MENU_ICON, eventName);
+	IEventPtr event = GlobalEventManager().findEvent(eventName);
+
+	if (event)
+	{
+		event->connectMenuItem(item);
+	}
+
+	_filterItems.insert(std::make_pair(eventName, item));
 }
 
 wxMenu* FilterMenu::getMenuWidget()

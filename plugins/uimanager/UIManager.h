@@ -5,7 +5,7 @@
 #include "iuimanager.h"
 #include "idialogmanager.h"
 
-#include "MenuManager.h"
+#include "menu/MenuManager.h"
 #include "ToolbarManager.h"
 #include "StatusBarManager.h"
 #include "DialogManager.h"

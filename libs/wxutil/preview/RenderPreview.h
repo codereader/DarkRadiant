@@ -16,6 +16,8 @@
 #include "render/SceneRenderWalker.h"
 #include "render/NopVolumeTest.h"
 
+class wxToolBarToolBase;
+
 namespace wxutil
 {
 
@@ -117,6 +119,7 @@ protected:
 
     // The filters menu
     ui::IFilterMenuPtr _filtersMenu;
+	wxToolBarToolBase* _filterTool;
 
 protected:
     const scene::GraphPtr& getScene();

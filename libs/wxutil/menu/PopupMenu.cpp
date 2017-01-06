@@ -84,4 +84,12 @@ void PopupMenu::_onItemClick(wxCommandEvent& ev)
 	}
 }
 
+void PopupMenu::foreachMenuItem(const std::function<void(const ui::IMenuItemPtr&)>& functor)
+{
+	for (const ui::IMenuItemPtr& item : _menuItems)
+	{
+		functor(item);
+	}
+}
+
 } // namespace

@@ -131,15 +131,17 @@ uimanager_la_DEPENDENCIES = $(top_builddir)/libs/wxutil/libwxutil.la \
 	$(top_builddir)/libs/scene/libscenegraph.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am__dirstamp = $(am__leading_dot)dirstamp
-am_uimanager_la_OBJECTS = MenuItem.lo GroupDialog.lo \
+am_uimanager_la_OBJECTS = GroupDialog.lo \
 	animationpreview/MD5AnimationChooser.lo \
 	animationpreview/MD5AnimationViewer.lo \
 	animationpreview/AnimationPreview.lo \
 	colourscheme/ColourScheme.lo \
 	colourscheme/ColourSchemeEditor.lo \
-	colourscheme/ColourSchemeManager.lo SoundChooser.lo \
+	colourscheme/ColourSchemeManager.lo menu/MenuBar.lo \
+	menu/MenuElement.lo menu/MenuFolder.lo menu/MenuItem.lo \
+	menu/MenuManager.lo menu/MenuSeparator.lo SoundChooser.lo \
 	SoundShaderPreview.lo StatusBarManager.lo DialogManager.lo \
-	ToolbarManager.lo UIManager.lo FilterMenu.lo MenuManager.lo
+	ToolbarManager.lo UIManager.lo FilterMenu.lo
 uimanager_la_OBJECTS = $(am_uimanager_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -426,22 +428,26 @@ uimanager_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                       $(top_builddir)/libs/scene/libscenegraph.la \
                       $(top_builddir)/libs/xmlutil/libxmlutil.la
 
-uimanager_la_SOURCES = MenuItem.cpp \
-                       GroupDialog.cpp \
+uimanager_la_SOURCES = GroupDialog.cpp \
 					   animationpreview/MD5AnimationChooser.cpp \
 					   animationpreview/MD5AnimationViewer.cpp \
 					   animationpreview/AnimationPreview.cpp \
                        colourscheme/ColourScheme.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
+					   menu/MenuBar.cpp \
+					   menu/MenuElement.cpp \
+					   menu/MenuFolder.cpp \
+					   menu/MenuItem.cpp \
+					   menu/MenuManager.cpp \
+					   menu/MenuSeparator.cpp \
 					   SoundChooser.cpp \
 					   SoundShaderPreview.cpp \
                        StatusBarManager.cpp \
                        DialogManager.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
-                       FilterMenu.cpp \
-                       MenuManager.cpp
+                       FilterMenu.cpp
 
 all: all-am
 
@@ -539,6 +545,22 @@ colourscheme/ColourSchemeEditor.lo: colourscheme/$(am__dirstamp) \
 	colourscheme/$(DEPDIR)/$(am__dirstamp)
 colourscheme/ColourSchemeManager.lo: colourscheme/$(am__dirstamp) \
 	colourscheme/$(DEPDIR)/$(am__dirstamp)
+menu/$(am__dirstamp):
+	@$(MKDIR_P) menu
+	@: > menu/$(am__dirstamp)
+menu/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) menu/$(DEPDIR)
+	@: > menu/$(DEPDIR)/$(am__dirstamp)
+menu/MenuBar.lo: menu/$(am__dirstamp) menu/$(DEPDIR)/$(am__dirstamp)
+menu/MenuElement.lo: menu/$(am__dirstamp) \
+	menu/$(DEPDIR)/$(am__dirstamp)
+menu/MenuFolder.lo: menu/$(am__dirstamp) \
+	menu/$(DEPDIR)/$(am__dirstamp)
+menu/MenuItem.lo: menu/$(am__dirstamp) menu/$(DEPDIR)/$(am__dirstamp)
+menu/MenuManager.lo: menu/$(am__dirstamp) \
+	menu/$(DEPDIR)/$(am__dirstamp)
+menu/MenuSeparator.lo: menu/$(am__dirstamp) \
+	menu/$(DEPDIR)/$(am__dirstamp)
 
 uimanager.la: $(uimanager_la_OBJECTS) $(uimanager_la_DEPENDENCIES) $(EXTRA_uimanager_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(uimanager_la_LINK) -rpath $(modulesdir) $(uimanager_la_OBJECTS) $(uimanager_la_LIBADD) $(LIBS)
@@ -549,6 +571,8 @@ mostlyclean-compile:
 	-rm -f animationpreview/*.lo
 	-rm -f colourscheme/*.$(OBJEXT)
 	-rm -f colourscheme/*.lo
+	-rm -f menu/*.$(OBJEXT)
+	-rm -f menu/*.lo
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -556,8 +580,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DialogManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FilterMenu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupDialog.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SoundChooser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SoundShaderPreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StatusBarManager.Plo@am__quote@
@@ -569,6 +591,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@colourscheme/$(DEPDIR)/ColourScheme.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@colourscheme/$(DEPDIR)/ColourSchemeEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@colourscheme/$(DEPDIR)/ColourSchemeManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@menu/$(DEPDIR)/MenuBar.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@menu/$(DEPDIR)/MenuElement.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@menu/$(DEPDIR)/MenuFolder.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@menu/$(DEPDIR)/MenuItem.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@menu/$(DEPDIR)/MenuManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@menu/$(DEPDIR)/MenuSeparator.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -601,6 +629,7 @@ clean-libtool:
 	-rm -rf .libs _libs
 	-rm -rf animationpreview/.libs animationpreview/_libs
 	-rm -rf colourscheme/.libs colourscheme/_libs
+	-rm -rf menu/.libs menu/_libs
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -721,6 +750,8 @@ distclean-generic:
 	-rm -f animationpreview/$(am__dirstamp)
 	-rm -f colourscheme/$(DEPDIR)/$(am__dirstamp)
 	-rm -f colourscheme/$(am__dirstamp)
+	-rm -f menu/$(DEPDIR)/$(am__dirstamp)
+	-rm -f menu/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -731,7 +762,7 @@ clean-am: clean-generic clean-libtool clean-modulesLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) animationpreview/$(DEPDIR) colourscheme/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) animationpreview/$(DEPDIR) colourscheme/$(DEPDIR) menu/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -777,7 +808,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) animationpreview/$(DEPDIR) colourscheme/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) animationpreview/$(DEPDIR) colourscheme/$(DEPDIR) menu/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

@@ -21,10 +21,6 @@
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/EntryAbortedException.h"
-#include "wxutil/menu/CommandMenuItem.h"
-
-#include "ui/layers/LayerControlDialog.h"
-#include "ui/layers/LayerOrthoContextMenuItem.h"
 
 #include <functional>
 
@@ -34,14 +30,6 @@ namespace scene
 namespace
 {
 	const char* const DEFAULT_LAYER_NAME = N_("Default");
-
-	const char* const LAYER_ICON = "layers.png";
-	const char* const CREATE_LAYER_TEXT = N_("Create Layer...");
-
-	const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
-	const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
-	const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
-
 	const int DEFAULT_LAYER = 0;
 }
 
@@ -151,7 +139,8 @@ void LayerSystem::reset()
 	_layerVisibility[DEFAULT_LAYER] = true;
 
 	// Update the LayerControlDialog
-	ui::LayerControlDialog::Instance().refresh();
+	_layersChangedSignal.emit();
+	_layerVisibilityChangedSignal.emit();
 }
 
 bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName)
@@ -281,7 +270,8 @@ void LayerSystem::updateSceneGraphVisibility() {
 	GlobalSceneGraph().root()->traverseChildren(walker);
 }
 
-void LayerSystem::onLayerVisibilityChanged() {
+void LayerSystem::onLayerVisibilityChanged()
+{
 	// Update all nodes
 	updateSceneGraphVisibility();
 
@@ -289,7 +279,7 @@ void LayerSystem::onLayerVisibilityChanged() {
 	SceneChangeNotify();
 
 	// Update the LayerControlDialog
-	ui::LayerControlDialog::Instance().update();
+	_layerVisibilityChangedSignal.emit();
 }
 
 void LayerSystem::addSelectionToLayer(int layerID) {
@@ -404,6 +394,16 @@ void LayerSystem::setSelected(int layerID, bool selected) {
     }
 }
 
+sigc::signal<void> LayerSystem::signal_layersChanged()
+{
+	return _layersChangedSignal;
+}
+
+sigc::signal<void> LayerSystem::signal_layerVisibilityChanged()
+{
+	return _layerVisibilityChangedSignal;
+}
+
 int LayerSystem::getLayerID(const std::string& name) const {
 	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); i++) {
 		if (i->second == name) {
@@ -453,7 +453,8 @@ int LayerSystem::getLowestUnusedLayerID() {
 }
 
 // RegisterableModule implementation
-const std::string& LayerSystem::getName() const {
+const std::string& LayerSystem::getName() const 
+{
 	static std::string _name(MODULE_LAYERSYSTEM);
 	return _name;
 }
@@ -466,8 +467,6 @@ const StringSet& LayerSystem::getDependencies() const
 	{
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 	}
 
@@ -482,10 +481,9 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 	createLayer(_(DEFAULT_LAYER_NAME));
 
 	// Add command targets for the first 10 layer IDs here
-	for (int i = 0; i < 10; i++) {
-		_commandTargets.push_back(
-			LayerCommandTargetPtr(new LayerCommandTarget(i))
-		);
+	for (int i = 0; i < 10; i++)
+	{
+		_commandTargets.push_back(std::make_shared<LayerCommandTarget>(i));
 	}
 
 	// Register the "create layer" command
@@ -494,34 +492,9 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
         cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
 	IEventPtr ev = GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
 
-	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", ui::LayerControlDialog::toggle);
-	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
-
 	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &LayerSystem::onMapEvent)
 	);
-
-	// Create a new menu item connected to the CreateNewLayer command
-	wxutil::CommandMenuItemPtr menuItem(new wxutil::CommandMenuItem(
-		new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON),
-		"CreateNewLayer")
-	);
-
-	GlobalOrthoContextMenu().addItem(menuItem, ui::IOrthoContextMenu::SECTION_LAYER);
-
-	// Add the ortho context menu items
-	ui::LayerOrthoContextMenuItemPtr addMenu(new ui::LayerOrthoContextMenuItem(
-		_(ADD_TO_LAYER_TEXT), ui::LayerOrthoContextMenuItem::AddToLayer));
-
-	ui::LayerOrthoContextMenuItemPtr moveMenu(new ui::LayerOrthoContextMenuItem(
-		_(MOVE_TO_LAYER_TEXT), ui::LayerOrthoContextMenuItem::MoveToLayer));
-
-	ui::LayerOrthoContextMenuItemPtr removeMenu(new ui::LayerOrthoContextMenuItem(
-		_(REMOVE_FROM_LAYER_TEXT), ui::LayerOrthoContextMenuItem::RemoveFromLayer));
-
-	GlobalOrthoContextMenu().addItem(addMenu, ui::IOrthoContextMenu::SECTION_LAYER);
-	GlobalOrthoContextMenu().addItem(moveMenu, ui::IOrthoContextMenu::SECTION_LAYER);
-	GlobalOrthoContextMenu().addItem(removeMenu, ui::IOrthoContextMenu::SECTION_LAYER);
 
 	GlobalMapInfoFileManager().registerInfoFileModule(
 		std::make_shared<LayerInfoFileModule>()
@@ -567,9 +540,10 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 		// Attempt to create the layer, this will return -1 if the operation fails
 		int layerID = createLayer(layerName);
 
-		if (layerID != -1) {
+		if (layerID != -1)
+		{
 			// Success, break the loop
-			ui::LayerControlDialog::Instance().refresh();
+			_layersChangedSignal.emit();
 			break;
 		}
 		else {

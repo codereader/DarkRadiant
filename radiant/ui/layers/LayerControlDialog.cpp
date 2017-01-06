@@ -201,7 +201,7 @@ void LayerControlDialog::toggle(const cmd::ArgumentList& args)
 	Instance().ToggleVisibility();
 }
 
-void LayerControlDialog::init()
+void LayerControlDialog::onRadiantStartup()
 {
 	// Lookup the stored window information in the registry
 	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
@@ -241,7 +241,7 @@ LayerControlDialog& LayerControlDialog::Instance()
 {
 	LayerControlDialogPtr& instancePtr = InstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new LayerControlDialog);
@@ -264,12 +264,22 @@ void LayerControlDialog::_preShow()
 		_rescanSelectionOnIdle = true;
 	});
 
+	// Layer creation/addition/removal triggers a refresh
+	_layersChangedSignal = GlobalLayerSystem().signal_layersChanged().connect(
+		sigc::mem_fun(this, &LayerControlDialog::refresh));
+
+	// Visibility change doesn't repopulate the dialog
+	_layerVisibilityChangedSignal = GlobalLayerSystem().signal_layerVisibilityChanged().connect(
+		sigc::mem_fun(this, &LayerControlDialog::update));
+
 	// Re-populate the dialog
 	refresh();
 }
 
 void LayerControlDialog::_postHide()
 {
+	_layersChangedSignal.disconnect();
+	_layerVisibilityChangedSignal.disconnect();
 	_selectionChangedSignal.disconnect();
 	_rescanSelectionOnIdle = false;
 }

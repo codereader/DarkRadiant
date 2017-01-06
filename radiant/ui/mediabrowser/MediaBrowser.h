@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imediabrowser.h"
 #include "iradiant.h"
 #include "imodule.h"
 #include "icommandsystem.h"
@@ -20,9 +21,6 @@ namespace ui
 
 class TexturePreviewCombo;
 
-class MediaBrowser;
-typedef std::shared_ptr<MediaBrowser> MediaBrowserPtr;
-
 /**
  * \brief Media Browser page of the group dialog.
  *
@@ -30,7 +28,7 @@ typedef std::shared_ptr<MediaBrowser> MediaBrowserPtr;
  * into the texture window or applying directly to map geometry.
  */
 class MediaBrowser : 
-	public sigc::trackable,
+	public IMediaBrowser,
 	public wxEvtHandler,
 	public ModuleObserver // to monitor the MaterialManager module
 {
@@ -97,31 +95,19 @@ private:
 
 	/* Tree selection query functions */
 	bool isDirectorySelected(); // is a directory selected
-	std::string getSelectedName(); // return name of selection
 
 	// Populates the treeview
 	void populate();
 
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
-	/** Return the singleton instance.
-	 */
-	static MediaBrowserPtr& getInstancePtr();
-
 public:
-
-	/** Return the singleton instance.
-	 */
-	static MediaBrowser& getInstance();
-
-	/** Return the main widget for packing into
-	 * the groupdialog or other parent container.
-	 */
-	wxWindow* getWidget();
-
-	/** Constructor creates GTK widgets.
+	/** Constructor creates widgets.
 	 */
 	MediaBrowser();
+
+	// Returns the currently selected item, or an empty string if nothing is selected
+	std::string getSelection() override;
 
 	/** Set the given path as the current selection, highlighting it
 	 * in the tree view.
@@ -130,35 +116,26 @@ public:
 	 * The fullname of the item to select, or the empty string if there
 	 * should be no selection.
 	 */
-	void setSelection(const std::string& selection);
-
-	/** greebo: Rebuilds the media tree from scratch (call this after
-	 * 			a "RefreshShaders" command.
-	 */
-	void reloadMedia();
-
-	/**
-	 * greebo: Handles the media tree preload
-	 */
-	static void init();
-
-	/**
-	 * greebo: Registers the preference page and the commands
-	 */
-	static void registerCommandsAndPreferences();
+	void setSelection(const std::string& selection) override;
 
 	// ModuleObserver implementation, these are called when the MaterialManager
 	// is emitting realise signals
-	void unrealise();
-	void realise();
+	void unrealise() override;
+	void realise() override;
 
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
+
+private:
 	// Radiant Event Listener
-	void onRadiantShutdown();
+	void onRadiantStartup();
 
 	/**
-	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
+	* greebo: Command target for toggling the mediabrowser tab in the groupdialog.
+	*/
+	void togglePage(const cmd::ArgumentList& args);
 };
 
 }

@@ -33,6 +33,7 @@
 #include "ui/common/TexturePreviewCombo.h"
 
 #include "debugging/ScopedDebugTimer.h"
+#include "modulesystem/StaticModule.h"
 
 #include <functional>
 #include <boost/algorithm/string/predicate.hpp>
@@ -58,7 +59,6 @@ const char* APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 const char* SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
 const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
 
-const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
 const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
 
 const char* const SELECT_ITEMS = N_("Select elements using this shader");
@@ -327,22 +327,22 @@ public:
 
 // Constructor
 MediaBrowser::MediaBrowser() : 
-	_tempParent(NULL),
-	_mainWidget(NULL),
-	_treeView(NULL),
-	_treeStore(NULL),
-	_preview(NULL),
+	_tempParent(nullptr),
+	_mainWidget(nullptr),
+	_treeView(nullptr),
+	_treeStore(nullptr),
+	_preview(nullptr),
 	_isPopulated(false)
 {}
 
 void MediaBrowser::construct()
 {
-	if (_mainWidget != NULL)
+	if (_mainWidget != nullptr)
 	{
 		return;
 	}
 
-	_tempParent = new wxFrame(NULL, wxID_ANY, "");
+	_tempParent = new wxFrame(nullptr, wxID_ANY, "");
 	_tempParent->Hide();
 
 	_treeStore = new wxutil::TreeModel(_columns);
@@ -370,11 +370,11 @@ void MediaBrowser::construct()
 
 	// Connect up the selection changed callback
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), NULL, this);
-	_treeView->Connect(wxEVT_PAINT, wxPaintEventHandler(MediaBrowser::_onExpose), NULL, this);
+		wxTreeEventHandler(MediaBrowser::_onSelectionChanged), nullptr, this);
+	_treeView->Connect(wxEVT_PAINT, wxPaintEventHandler(MediaBrowser::_onExpose), nullptr, this);
 
 	_treeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
-		wxDataViewEventHandler(MediaBrowser::_onContextMenu), NULL, this);
+		wxDataViewEventHandler(MediaBrowser::_onContextMenu), nullptr, this);
 
 	// Add the info pane
 	_preview = new TexturePreviewCombo(_mainWidget);
@@ -409,18 +409,7 @@ void MediaBrowser::construct()
 
 	// Connect the finish callback to load the treestore
 	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
-		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), NULL, this);
-
-	GlobalRadiant().signal_radiantShutdown().connect(
-        sigc::mem_fun(*this, &MediaBrowser::onRadiantShutdown)
-    );
-}
-
-wxWindow* MediaBrowser::getWidget()
-{
-	construct();
-
-	return _mainWidget;
+		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), nullptr, this);
 }
 
 /* Tree query functions */
@@ -436,47 +425,46 @@ bool MediaBrowser::isDirectorySelected()
 	return row[_columns.isFolder].getBool();
 }
 
-std::string MediaBrowser::getSelectedName()
+void MediaBrowser::onRadiantStartup()
 {
+	// Add the Media Browser page
+	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
+
+	mediaBrowserPage->name = getGroupDialogTabName();
+	mediaBrowserPage->windowLabel = _("Media");
+	mediaBrowserPage->page = _mainWidget;
+	mediaBrowserPage->tabIcon = "folder16.png";
+	mediaBrowserPage->tabLabel = _("Media");
+	mediaBrowserPage->position = IGroupDialog::Page::Position::MediaBrowser;
+
+	GlobalGroupDialog().addPage(mediaBrowserPage);
+
+	if (_tempParent != nullptr)
+	{
+		_tempParent->Destroy();
+		_tempParent = nullptr;
+	}
+}
+
+std::string MediaBrowser::getSelection()
+{
+	if (!_isPopulated)
+	{
+		return std::string();
+	}
+
 	// Get the selected value
 	wxDataViewItem item = _treeView->GetSelection();
 
-	if (!item.IsOk()) return ""; // nothing selected
+	if (!item.IsOk())
+	{
+		return std::string(); // nothing selected
+	}
 
 	// Cast to TreeModel::Row and get the full name
 	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
-	
+
 	return row[_columns.fullName];
-}
-
-void MediaBrowser::onRadiantShutdown()
-{
-	_tempParent->Destroy();
-
-	GlobalMaterialManager().detach(*this);
-
-	// Delete the singleton instance on shutdown
-	getInstancePtr().reset();
-}
-
-/** Return the singleton instance.
- */
-MediaBrowser& MediaBrowser::getInstance()
-{
-	MediaBrowserPtr& instancePtr = getInstancePtr();
-
-	if (instancePtr == NULL)
-	{
-		instancePtr.reset(new MediaBrowser);
-	}
-
-	return *instancePtr;
-}
-
-MediaBrowserPtr& MediaBrowser::getInstancePtr()
-{
-	static MediaBrowserPtr _instancePtr;
-	return _instancePtr;
 }
 
 // Set the selection in the treeview
@@ -507,32 +495,6 @@ void MediaBrowser::setSelection(const std::string& selection)
 		_treeView->EnsureVisible(item);
 		handleSelectionChange();
 	}
-}
-
-void MediaBrowser::reloadMedia()
-{
-	// Remove all items and clear the "isPopulated" flag
-	_treeStore->Clear();
-	_isPopulated = false;
-
-	// Trigger an "expose" event
-	_treeView->Refresh();
-}
-
-void MediaBrowser::init()
-{
-	// Create the widgets now
-	getInstance().construct();
-
-	// Check for pre-loading the textures
-	if (registry::getValue<bool>(RKEY_MEDIA_BROWSER_PRELOAD))
-	{
-		getInstance().populate();
-	}
-
-	// Attach to the MaterialManager to get notified on unrealise/realise
-	// events, in which case we're reloading the media tree
-	GlobalMaterialManager().attach(getInstance());
 }
 
 void MediaBrowser::realise()
@@ -585,13 +547,13 @@ void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFi
 	_treeView->AssociateModel(_treeStore.get());
 }
 
-/* gtkutil::PopupMenu callbacks */
+/* wxutil::PopupMenu callbacks */
 
 void MediaBrowser::_onLoadInTexView()
 {
 	// Use a TextureDirectoryLoader functor to search the directory. This
 	// may throw an exception if cancelled by user.
-	TextureDirectoryLoader loader(getSelectedName());
+	TextureDirectoryLoader loader(getSelection());
 
 	try
 	{
@@ -615,14 +577,14 @@ bool MediaBrowser::_testLoadInTexView()
 void MediaBrowser::_onApplyToSel()
 {
 	// Pass shader name to the selection system
-	selection::algorithm::applyShaderToSelection(getSelectedName());
+	selection::algorithm::applyShaderToSelection(getSelection());
 }
 
 // Check if a single non-directory texture is selected (used by multiple menu
 // options).
 bool MediaBrowser::_testSingleTexSel()
 {
-	if (!isDirectorySelected() && !getSelectedName().empty())
+	if (!isDirectorySelected() && !getSelection().empty())
 		return true;
 	else
 		return false;
@@ -630,7 +592,7 @@ bool MediaBrowser::_testSingleTexSel()
 
 void MediaBrowser::_onShowShaderDefinition()
 {
-	std::string shaderName = getSelectedName();
+	std::string shaderName = getSelection();
 
 	// Construct a shader view and pass the shader name
 	ShaderDefinitionView::ShowDialog(shaderName);
@@ -638,7 +600,7 @@ void MediaBrowser::_onShowShaderDefinition()
 
 void MediaBrowser::_onSelectItems(bool select)
 {
-    std::string shaderName = getSelectedName();
+    std::string shaderName = getSelection();
 
     if (select)
     {
@@ -671,8 +633,8 @@ void MediaBrowser::handleSelectionChange()
 	// Update the preview if a texture is selected
 	if (!isDirectorySelected())
 	{
-		_preview->SetTexture(getSelectedName());
-		GlobalShaderClipboard().setSource(getSelectedName());
+		_preview->SetTexture(getSelection());
+		GlobalShaderClipboard().setSource(getSelection());
 	}
 	else
 	{
@@ -687,19 +649,60 @@ void MediaBrowser::_onSelectionChanged(wxTreeEvent& ev)
 	handleSelectionChange();
 }
 
-void MediaBrowser::toggle(const cmd::ArgumentList& args)
+void MediaBrowser::togglePage(const cmd::ArgumentList& args)
 {
-	GlobalGroupDialog().togglePage("mediabrowser");
+	GlobalGroupDialog().togglePage(getGroupDialogTabName());
 }
 
-void MediaBrowser::registerCommandsAndPreferences()
+const std::string& MediaBrowser::getName() const
 {
-	// Add a page to the given group
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
-	page.appendCheckBox(_("Load media tree at startup"), RKEY_MEDIA_BROWSER_PRELOAD);
+	static std::string _name("MediaBrowser");
+	return _name;
+}
 
-	GlobalCommandSystem().addCommand("ToggleMediaBrowser", toggle);
+const StringSet& MediaBrowser::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_SHADERSYSTEM);
+		_dependencies.insert(MODULE_UIMANAGER);
+	}
+
+	return _dependencies;
+}
+
+void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowser::togglePage));
 	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
+
+	// We need to create the liststore and widgets before attaching ourselves
+	// to the material manager as observer, as the attach() call below
+	// will invoke a realise() callback, which triggers a population
+	construct();
+
+	// The startup event will add this page to the group dialog tab
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(*this, &MediaBrowser::onRadiantStartup)
+	);
+
+	// Attach to the MaterialManager to get notified on unrealise/realise
+	// events, in which case we're reloading the media tree
+	GlobalMaterialManager().attach(*this);
 }
+
+void MediaBrowser::shutdownModule()
+{
+	GlobalMaterialManager().detach(*this);
+}
+
+// Static module
+module::StaticModule<MediaBrowser> mediaBrowserModule;
 
 } // namespace

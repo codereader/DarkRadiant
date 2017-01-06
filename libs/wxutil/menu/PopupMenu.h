@@ -77,6 +77,9 @@ public:
 	 * displayed.
 	 */
 	virtual void show(wxWindow* parent);
+
+protected:
+	virtual void foreachMenuItem(const std::function<void(const ui::IMenuItemPtr&)>& functor);
 };
 typedef std::shared_ptr<PopupMenu> PopupMenuPtr;
 

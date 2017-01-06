@@ -3,6 +3,7 @@
 #include "imousetoolmanager.h"
 #include "ieventmanager.h"
 #include "iselection.h"
+#include "iuimanager.h"
 #include "itextstream.h"
 #include "xmlutil/Node.h"
 
@@ -574,6 +575,7 @@ const StringSet& GlobalCameraManager::getDependencies() const
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
         _dependencies.insert(MODULE_MOUSETOOLMANAGER);
+		_dependencies.insert(MODULE_UIMANAGER);
 	}
 
 	return _dependencies;

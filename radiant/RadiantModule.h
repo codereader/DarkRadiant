@@ -1,8 +1,6 @@
 #pragma once
 
 #include "iradiant.h"
-#include "icommandsystem.h"
-
 #include <memory>
 
 namespace radiant
@@ -46,11 +44,6 @@ public:
 
 	// Stuff to be done after the modules have been loaded
 	void postModuleInitialisation();
-
-	void registerUICommands();
-
-	// Target method bound to the "Exit" command
-	static void exitCmd(const cmd::ArgumentList& args);
 };
 typedef std::shared_ptr<RadiantModule> RadiantModulePtr;
 

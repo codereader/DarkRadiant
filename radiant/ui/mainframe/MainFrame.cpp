@@ -12,7 +12,6 @@
 
 #include "log/Console.h"
 #include "xyview/GlobalXYWnd.h"
-#include "ui/mediabrowser/MediaBrowser.h"
 #include "camera/GlobalCamera.h"
 
 #include "registry/registry.h"
@@ -108,6 +107,8 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	);
 	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
 
+
+
 #ifdef WIN32
 	HMODULE lib = LoadLibrary(L"dwmapi.dll");
 
@@ -142,6 +143,16 @@ void MainFrame::shutdownModule()
 	rMessage() << "MainFrame::shutdownModule called." << std::endl;
 
 	disableScreenUpdates();
+}
+
+void MainFrame::exitCmd(const cmd::ArgumentList& args)
+{
+	// Just tell the main application window to close, which will invoke
+	// appropriate event handlers.
+	if (getWxTopLevelWindow() != nullptr)
+	{
+		getWxTopLevelWindow()->Close(false /* don't force */);
+	}
 }
 
 void MainFrame::keyChanged()
@@ -358,21 +369,6 @@ void MainFrame::create()
 {
 	// Create the topmost window first
 	createTopLevelWindow();
-
-	/* Construct the Group Dialog. This is the tabbed window that contains
-     * a number of pages - usually Entities, Textures and possibly Console.
-     */
-	// Add the Media Browser page
-	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
-
-	mediaBrowserPage->name = "mediabrowser";
-	mediaBrowserPage->windowLabel = _("Media");
-	mediaBrowserPage->page = MediaBrowser::getInstance().getWidget();
-	mediaBrowserPage->tabIcon = "folder16.png";
-	mediaBrowserPage->tabLabel = _("Media");
-	mediaBrowserPage->position = IGroupDialog::Page::Position::MediaBrowser;
-
-	GlobalGroupDialog().addPage(mediaBrowserPage);
 
     // Add the console
 	IGroupDialog::PagePtr consolePage(new IGroupDialog::Page);
