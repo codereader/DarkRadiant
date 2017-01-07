@@ -243,7 +243,7 @@ public:
 			const Winding& winding = (*i)->getFace().getWinding();
 
 			// Create a new decal patch
-			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
+			scene::INodePtr patchNode = GlobalPatchCreator(PatchDefType::Def3).createPatch();
 
 			if (patchNode == NULL) {
 				wxutil::Messagebox::ShowError(_("Could not create patch."));

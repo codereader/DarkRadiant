@@ -200,7 +200,7 @@ PatchControl ScriptPatchNode::_emptyPatchControl;
 ScriptSceneNode PatchInterface::createPatchDef2()
 {
 	// Create a new patch and return the script scene node
-	scene::INodePtr node = GlobalPatchCreator(DEF2).createPatch();
+	scene::INodePtr node = GlobalPatchCreator(PatchDefType::Def2).createPatch();
 
 	// Add the node to the buffer otherwise it will be deleted immediately,
 	// as ScriptSceneNodes are using weak_ptrs.
@@ -212,7 +212,7 @@ ScriptSceneNode PatchInterface::createPatchDef2()
 ScriptSceneNode PatchInterface::createPatchDef3()
 {
 	// Create a new patch and return the script scene node
-	scene::INodePtr node = GlobalPatchCreator(DEF3).createPatch();
+	scene::INodePtr node = GlobalPatchCreator(PatchDefType::Def3).createPatch();
 
 	// Add the node to the buffer otherwise it will be deleted immediately,
 	// as ScriptSceneNodes are using weak_ptrs.

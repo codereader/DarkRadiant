@@ -36,7 +36,7 @@ patchDef3
 */
 scene::INodePtr PatchDef3Parser::parse(parser::DefTokeniser& tok) const
 {
-	scene::INodePtr node = GlobalPatchCreator(DEF3).createPatch();
+	scene::INodePtr node = GlobalPatchCreator(PatchDefType::Def3).createPatch();
 
 	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 	assert(patchNode != NULL);

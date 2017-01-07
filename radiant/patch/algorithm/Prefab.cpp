@@ -31,7 +31,7 @@ void constructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab e
 {
 	GlobalSelectionSystem().setSelectedAll(false);
 
-	scene::INodePtr node(GlobalPatchCreator(DEF2).createPatch());
+	scene::INodePtr node(GlobalPatchCreator(PatchDefType::Def2).createPatch());
 	GlobalMap().findOrInsertWorldspawn()->addChildNode(node);
 
 	Patch* patch = Node_getPatch(node);
@@ -266,7 +266,7 @@ void createCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, con
 	assert(parent != NULL);
 
 	{
-		scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
+		scene::INodePtr cap(GlobalPatchCreator(PatchDefType::Def2).createPatch());
 		parent->addChildNode(cap);
 
 		Patch* capPatch = Node_getPatch(cap);
@@ -288,7 +288,7 @@ void createCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, con
 	}
 
 	{
-		scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
+		scene::INodePtr cap(GlobalPatchCreator(PatchDefType::Def2).createPatch());
 		parent->addChildNode(cap);
 
 		Patch* capPatch = Node_getPatch(cap);

@@ -36,7 +36,7 @@ scene::INodePtr Doom3PatchCreator::createPatch()
 // RegisterableModule implementation
 const std::string& Doom3PatchCreator::getName() const
 {
-	static std::string _name(MODULE_PATCH + DEF3);
+	static std::string _name(MODULE_PATCHDEF3);
 	return _name;
 }
 
@@ -152,7 +152,7 @@ scene::INodePtr Doom3PatchDef2Creator::createPatch()
 // RegisterableModule implementation
 const std::string& Doom3PatchDef2Creator::getName() const
 {
-	static std::string _name(MODULE_PATCH + DEF2);
+	static std::string _name(MODULE_PATCHDEF2);
 	return _name;
 }
 

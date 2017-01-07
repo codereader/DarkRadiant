@@ -20,7 +20,7 @@ namespace algorithm
 void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams, int axis)
 {
 	// Get a shortcut to the patchcreator
-	PatchCreator& patchCreator = GlobalPatchCreator(DEF2);
+	PatchCreator& patchCreator = GlobalPatchCreator(PatchDefType::Def2);
 
 	// Create a new patch node
 	scene::INodePtr node(patchCreator.createPatch());

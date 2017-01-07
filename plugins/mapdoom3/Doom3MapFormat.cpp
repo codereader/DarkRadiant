@@ -39,8 +39,8 @@ const StringSet& Doom3MapFormat::getDependencies() const
 		_dependencies.insert(MODULE_ECLASSMANAGER);
 		_dependencies.insert(MODULE_LAYERSYSTEM);
 		_dependencies.insert(MODULE_BRUSHCREATOR);
-		_dependencies.insert(MODULE_PATCH + DEF2);
-		_dependencies.insert(MODULE_PATCH + DEF3);
+		_dependencies.insert(MODULE_PATCHDEF2);
+		_dependencies.insert(MODULE_PATCHDEF3);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_MAPFORMATMANAGER);
 	}
