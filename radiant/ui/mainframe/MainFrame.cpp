@@ -107,7 +107,8 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	);
 	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
 
-
+	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
+	GlobalEventManager().addCommand("Exit", "Exit");
 
 #ifdef WIN32
 	HMODULE lib = LoadLibrary(L"dwmapi.dll");
