@@ -226,16 +226,23 @@ inline Patch* Node_getPatch(const scene::INodePtr& node)
 	return NULL;
 }
 
-const std::string MODULE_PATCH("PatchModule");
-const std::string DEF2("Def2");
-const std::string DEF3("Def3");
+const char* const MODULE_PATCHDEF2 = "PatchModuleDef2";
+const char* const MODULE_PATCHDEF3 = "PatchModuleDef3";
+
+enum class PatchDefType
+{
+	Def2,
+	Def3,
+};
 
 // Acquires the PatchCreator of the given type ("Def2", "Def3")
-inline PatchCreator& GlobalPatchCreator(const std::string& defType)
+inline PatchCreator& GlobalPatchCreator(PatchDefType type)
 {
 	std::shared_ptr<PatchCreator> _patchCreator(
 		std::static_pointer_cast<PatchCreator>(
-			module::GlobalModuleRegistry().getModule(MODULE_PATCH + defType) // e.g. "PatchModuleDef2"
+			module::GlobalModuleRegistry().getModule(
+				type == PatchDefType::Def2 ? MODULE_PATCHDEF2 : MODULE_PATCHDEF3
+			)
 		)
 	);
 
