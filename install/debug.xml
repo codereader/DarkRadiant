@@ -3,9 +3,6 @@
 		<!-- <discardEntityClass value="func_static" /> -->
 		<!-- <entityRange start="0" end="100" /> -->
 	</mapdoom3>
-	<ui>
-		<debugEventManager value="0" />
-	</ui>
 	<automatedTest>
 		<runTest value="0" />
 		<testMap value="/home/greebo/.doom3/darkmod/maps/brush_test.map" />

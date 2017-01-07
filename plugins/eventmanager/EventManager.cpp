@@ -34,18 +34,15 @@
 namespace ui
 {
 
-	namespace
-    {
-		const std::string RKEY_DEBUG = "debug/ui/debugEventManager";
-	}
-
 // RegisterableModule implementation
-const std::string& EventManager::getName() const {
+const std::string& EventManager::getName() const
+{
 	static std::string _name(MODULE_EVENTMANAGER);
 	return _name;
 }
 
-const StringSet& EventManager::getDependencies() const {
+const StringSet& EventManager::getDependencies() const
+{
 	static StringSet _dependencies;
 
 	if (_dependencies.empty())
@@ -58,28 +55,19 @@ const StringSet& EventManager::getDependencies() const {
 
 void EventManager::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << "EventManager::initialiseModule called." << std::endl;
-
-	_debugMode = registry::getValue<bool>(RKEY_DEBUG);
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Deactivate the empty event, so it's safe to return it as NullEvent
 	_emptyEvent->setEnabled(false);
 
-    _shortcutFilter.reset(new ui::GlobalKeyEventFilter(*this));
+    _shortcutFilter.reset(new GlobalKeyEventFilter(*this));
 
-	if (_debugMode)
-    {
-		rMessage() << "EventManager intitialised in debug mode." << std::endl;
-	}
-	else 
-    {
-		rMessage() << "EventManager successfully initialised." << std::endl;
-	}
+	rMessage() << getName() << " successfully initialised." << std::endl;
 }
 
 void EventManager::shutdownModule()
 {
-	rMessage() << "EventManager: shutting down." << std::endl;
+	rMessage() << getName() << "::shutdownModule called" << std::endl;
     _shortcutFilter.reset();
 
 	saveEventListToRegistry();
@@ -91,8 +79,7 @@ void EventManager::shutdownModule()
 // Constructor
 EventManager::EventManager() :
 	_emptyEvent(new Event()),
-	_emptyAccelerator(0, 0, _emptyEvent),
-	_debugMode(false)
+	_emptyAccelerator(0, 0, _emptyEvent)
 {}
 
 IAccelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr)
@@ -199,7 +186,7 @@ IEventPtr EventManager::addCommand(const std::string& name, const std::string& s
 	return _emptyEvent;
 }
 
-IEventPtr EventManager::addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback)
+IEventPtr EventManager::addKeyEvent(const std::string& name, const KeyStateChangeCallback& keyStateChangeCallback)
 {
 	if (!alreadyRegistered(name))
 	{
@@ -341,10 +328,6 @@ void EventManager::disconnectToolbar(wxToolBar* toolbar)
 // Loads the default shortcuts from the registry
 void EventManager::loadAccelerators()
 {
-	if (_debugMode) {
-        rConsole() << "EventManager: Loading accelerators..." << std::endl;
-	}
-
 	// Register all custom statements as events too to make them shortcut-bindable
 	// before going ahead
 	GlobalCommandSystem().foreachStatement([&] (const std::string& statementName)
@@ -353,10 +336,6 @@ void EventManager::loadAccelerators()
 	}, true); // custom statements only
 
 	xml::NodeList shortcutSets = GlobalRegistry().findXPath("user/ui/input//shortcuts");
-
-	if (_debugMode) {
-        rConsole() << "Found " << shortcutSets.size() << " sets." << std::endl;
-	}
 
 	// If we have two sets of shortcuts, delete the default ones
 	if (shortcutSets.size() > 1) {
@@ -374,12 +353,6 @@ void EventManager::loadAccelerators()
 		{
 			const std::string key = shortcutList[i].getAttributeValue("key");
 			const std::string cmd = shortcutList[i].getAttributeValue("command");
-
-			if (_debugMode) 
-			{
-				rConsole() << "Looking up command: " << cmd << std::endl;
-				rConsole() << "Key is: >> " << key << " << " << std::endl;
-			}
 
 			// Try to lookup the command
 			IEventPtr event = findEvent(cmd);
@@ -418,13 +391,12 @@ void EventManager::loadAccelerators()
 	}
 }
 
-void EventManager::foreachEvent(IEventVisitor& eventVisitor) {
+void EventManager::foreachEvent(IEventVisitor& eventVisitor)
+{
 	// Cycle through the event and pass them to the visitor class
-	for (EventMap::iterator i = _events.begin(); i != _events.end(); i++) {
-		const std::string eventName = i->first;
-		IEventPtr event = i->second;
-
-		eventVisitor.visit(eventName, event);
+	for (const EventMap::value_type& pair : _events)
+	{
+		eventVisitor.visit(pair.first, pair.second);
 	}
 }
 
@@ -432,8 +404,7 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor) {
 IAccelerator& EventManager::findAccelerator(const IEventPtr& event)
 {
 	// Cycle through the accelerators and check for matches
-    AcceleratorList::iterator end = _accelerators.end();
-    for (AcceleratorList::iterator i = _accelerators.begin(); i != end; ++i)
+    for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); ++i)
     {
 		if (i->match(event))
         {

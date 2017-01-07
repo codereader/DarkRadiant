@@ -36,9 +36,7 @@ private:
 	IEventPtr _emptyEvent;
 	Accelerator _emptyAccelerator;
 
-	bool _debugMode;
-
-    ui::GlobalKeyEventFilterPtr _shortcutFilter;
+    GlobalKeyEventFilterPtr _shortcutFilter;
 
 public:
 	// RegisterableModule implementation
@@ -66,7 +64,7 @@ public:
 	// Add a command and specify the statement to execute when triggered
 	IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp);
 
-	IEventPtr addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback);
+	IEventPtr addKeyEvent(const std::string& name, const KeyStateChangeCallback& keyStateChangeCallback);
 	IEventPtr addWidgetToggle(const std::string& name);
 	IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey);
 	IEventPtr addToggle(const std::string& name, const ToggleCallback& onToggled);
