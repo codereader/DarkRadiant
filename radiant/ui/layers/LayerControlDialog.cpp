@@ -154,8 +154,8 @@ void LayerControlDialog::update()
 	_rescanSelectionOnIdle = true;
 
 	// Update the show/hide all button sensitiveness
-    std::size_t numVisible;
-    std::size_t numHidden;
+    std::size_t numVisible = 0;
+    std::size_t numHidden = 0;
 
     GlobalLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
     {
