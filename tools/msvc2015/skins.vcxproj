@@ -314,9 +314,6 @@
     <ClCompile Include="..\..\plugins\skins\Doom3SkinCache.cpp" />
     <ClCompile Include="..\..\plugins\skins\skincache.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\skins\skins.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

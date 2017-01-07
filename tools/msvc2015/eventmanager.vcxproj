@@ -339,9 +339,6 @@
     <ClInclude Include="..\..\plugins\eventmanager\WidgetToggle.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\plugins\eventmanager\eventmanager.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="xmlutillib.vcxproj">
       <Project>{a15efb56-927f-411d-a57b-0328321456a2}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

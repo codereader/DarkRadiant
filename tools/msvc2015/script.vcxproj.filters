@@ -169,9 +169,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\script\script.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

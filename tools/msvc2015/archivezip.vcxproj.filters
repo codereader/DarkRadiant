@@ -40,9 +40,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\archivezip\archivezip.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

@@ -329,9 +329,6 @@
     <ClInclude Include="..\..\plugins\model\RenderablePicoSurface.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\plugins\model\model.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="picomodellib.vcxproj">
       <Project>{8050cfb1-20cc-40fd-8d74-0901c9ca2be8}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

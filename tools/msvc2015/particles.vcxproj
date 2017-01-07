@@ -340,9 +340,6 @@
     <ClCompile Include="..\..\plugins\particles\RenderableParticleStage.cpp" />
     <ClCompile Include="..\..\plugins\particles\StageDef.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\particles\particles.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

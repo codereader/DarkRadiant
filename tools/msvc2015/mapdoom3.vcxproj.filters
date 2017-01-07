@@ -208,9 +208,4 @@
       <Filter>src\aas</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\mapdoom3\mapdoom3.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

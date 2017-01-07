@@ -31,9 +31,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\commandsystem\commandsystem.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

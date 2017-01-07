@@ -76,9 +76,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\dm.editing\dm.editing.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

@@ -319,9 +319,6 @@
     <ClInclude Include="..\..\plugins\vfspk3\UnixPath.h" />
     <ClInclude Include="..\..\plugins\vfspk3\vfspk3.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\vfspk3\vfspk3.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

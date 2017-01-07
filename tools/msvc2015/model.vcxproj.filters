@@ -40,9 +40,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\model\model.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

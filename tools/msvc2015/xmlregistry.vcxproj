@@ -324,9 +324,6 @@
     <ClInclude Include="..\..\plugins\xmlregistry\XMLRegistry.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\plugins\xmlregistry\xmlregistry.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="mathlib.vcxproj">
       <Project>{3c9fb5aa-7118-476e-b33d-d3ac1c8412bb}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

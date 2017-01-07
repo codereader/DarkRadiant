@@ -70,9 +70,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\eventmanager\eventmanager.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

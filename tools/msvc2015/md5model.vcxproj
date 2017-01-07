@@ -337,9 +337,6 @@
     <ClCompile Include="..\..\plugins\md5model\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\plugins\md5model\md5model.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="scenelib.vcxproj">
       <Project>{f7408b46-e4a9-470c-9731-9a1564247385}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

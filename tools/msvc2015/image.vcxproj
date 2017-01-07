@@ -348,9 +348,6 @@
     <ClInclude Include="..\..\plugins\image\ImageTypeLoader.h" />
     <ClInclude Include="..\..\plugins\image\TGALoader.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\image\image.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

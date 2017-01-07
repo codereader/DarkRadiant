@@ -325,9 +325,6 @@
     <ClCompile Include="..\..\plugins\eclassmgr\EClassManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\plugins\eclassmgr\eclassmgr.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="mathlib.vcxproj">
       <Project>{3c9fb5aa-7118-476e-b33d-d3ac1c8412bb}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

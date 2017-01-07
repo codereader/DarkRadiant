@@ -28,9 +28,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\eclassmgr\eclassmgr.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

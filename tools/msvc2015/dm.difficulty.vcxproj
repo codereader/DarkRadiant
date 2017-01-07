@@ -343,9 +343,6 @@
     <ClInclude Include="..\..\plugins\dm.difficulty\Setting.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\plugins\dm.difficulty\dm.difficulty.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="wxutillib.vcxproj">
       <Project>{b6d4b38a-0c39-42cd-8193-75979e1f4d68}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

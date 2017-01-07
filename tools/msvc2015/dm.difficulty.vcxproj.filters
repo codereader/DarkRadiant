@@ -58,9 +58,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\dm.difficulty\dm.difficulty.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

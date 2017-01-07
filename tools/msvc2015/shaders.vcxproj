@@ -353,9 +353,6 @@
     <ClInclude Include="..\..\plugins\shaders\textures\HeightmapCreator.h" />
     <ClInclude Include="..\..\plugins\shaders\textures\TextureManipulator.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\shaders\shaders.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

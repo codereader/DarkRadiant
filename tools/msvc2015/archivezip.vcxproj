@@ -320,9 +320,6 @@
     <ClCompile Include="..\..\plugins\archivezip\ZipArchive.cpp" />
     <ClCompile Include="..\..\plugins\archivezip\zlibstream.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\archivezip\archivezip.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

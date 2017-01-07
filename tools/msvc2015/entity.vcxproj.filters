@@ -277,9 +277,4 @@
       <Filter>src\target</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\entity\entity.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

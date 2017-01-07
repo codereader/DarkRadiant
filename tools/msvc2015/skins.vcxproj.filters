@@ -22,9 +22,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\skins\skins.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

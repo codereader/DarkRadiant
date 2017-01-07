@@ -322,9 +322,6 @@
     <ClCompile Include="..\..\plugins\commandsystem\CommandSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\plugins\commandsystem\commandsystem.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="xmlutillib.vcxproj">
       <Project>{a15efb56-927f-411d-a57b-0328321456a2}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

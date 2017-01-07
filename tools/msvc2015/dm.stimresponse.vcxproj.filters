@@ -109,9 +109,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\dm.stimresponse\dm.stimresponse.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

@@ -419,9 +419,6 @@
     <ClInclude Include="..\..\plugins\entity\target\TargetManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\plugins\entity\entity.def" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="scenelib.vcxproj">
       <Project>{f7408b46-e4a9-470c-9731-9a1564247385}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

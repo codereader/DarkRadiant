@@ -61,9 +61,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\md5model\md5model.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

@@ -79,9 +79,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\particles\particles.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

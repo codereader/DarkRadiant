@@ -145,9 +145,4 @@
       <Filter>src\menu</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\uimanager\uimanager.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

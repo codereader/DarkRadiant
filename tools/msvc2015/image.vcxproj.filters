@@ -46,9 +46,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\image\image.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

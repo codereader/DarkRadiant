@@ -328,9 +328,6 @@
     <ClCompile Include="..\..\plugins\fonts\GlyphSet.cpp" />
     <ClCompile Include="..\..\plugins\fonts\plugin.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\fonts\fonts.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

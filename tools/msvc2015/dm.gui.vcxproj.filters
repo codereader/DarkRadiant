@@ -124,9 +124,4 @@
       <Filter>src\gui</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\dm.gui\dm.gui.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

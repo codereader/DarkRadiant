@@ -16,9 +16,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\filetypes\filetypes.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

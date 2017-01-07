@@ -16,9 +16,4 @@
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\grid\grid.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

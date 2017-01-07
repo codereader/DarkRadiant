@@ -25,9 +25,4 @@
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\undo\undo.def">
-      <Filter>src</Filter>
-    </None>
-  </ItemGroup>
 </Project>

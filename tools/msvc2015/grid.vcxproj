@@ -314,9 +314,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\plugins\grid\GridItem.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\plugins\grid\grid.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
