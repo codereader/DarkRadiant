@@ -90,3 +90,11 @@ such as audio support and the Dark Mod-specific plugins.
 A more detailed compilation guide can be found on The Dark Mod's wiki:
 
 http://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compilation_Guide
+
+# Contact / Discussion
+
+All discussion is ongoing primarily at [The Dark Mod Forums](http://forums.thedarkmod.com/forum/51-darkradiant-feedback-and-development/), where you can get in touch with knowledgeable people 
+and discuss changes or issues. If you happen to run into a bug, you're encouraged to report it to us, especially when running into
+application crashes (see also [How to record a crashdump](http://wiki.thedarkmod.com/index.php?title=Save_a_Memory_Dump_for_debugging_Crashes)). 
+
+The issue tracker for DarkRadiant is also run by the Dark Mod folks: [DarkRadiant Bugtracker](http://bugs.thedarkmod.com/view_all_bug_page.php?project_id=1).
