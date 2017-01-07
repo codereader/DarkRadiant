@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ieventmanager.h"
+#include "EventManager.h"
 
 #include "xmlutil/Node.h"
 
@@ -24,12 +24,12 @@ class SaveEventVisitor :
     // The node containing all the <shortcut> tags
     xml::Node _shortcutsNode;
 
-    IEventManager* _eventManager;
+    EventManager& _eventManager;
 
 public:
-    SaveEventVisitor(const std::string& rootKey, IEventManager* eventManager) :
+    SaveEventVisitor(const std::string& rootKey, EventManager& eventManager) :
         _rootKey(rootKey),
-        _shortcutsNode(NULL),
+        _shortcutsNode(nullptr),
         _eventManager(eventManager)
     {
         // Remove any existing shortcut definitions
@@ -44,7 +44,7 @@ public:
         if (eventName.empty()) return;
 
         // Try to find an accelerator connected to this event
-        Accelerator& accelerator = static_cast<Accelerator&>(_eventManager->findAccelerator(event));
+		Accelerator& accelerator = _eventManager.findAccelerator(event);
 
         unsigned int keyVal = accelerator.getKey();
 

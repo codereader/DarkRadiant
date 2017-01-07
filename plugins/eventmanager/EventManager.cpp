@@ -82,49 +82,37 @@ EventManager::EventManager() :
 	_emptyAccelerator(0, 0, _emptyEvent)
 {}
 
-IAccelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr)
+Accelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr)
 {
 	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
     unsigned int modifierFlags = wxutil::Modifier::GetStateFromModifierString(modifierStr);
 
-	Accelerator accel(keyVal, modifierFlags, _emptyEvent);
-
 	// Add a new Accelerator to the list
-	_accelerators.push_back(accel);
+	_accelerators.push_back(Accelerator(keyVal, modifierFlags, _emptyEvent));
 
 	// return the reference to the last accelerator in the list
-	AcceleratorList::reverse_iterator i = _accelerators.rbegin();
-
-	return (*i);
+	return _accelerators.back();
 }
 
-IAccelerator& EventManager::addAccelerator(wxKeyEvent& ev)
+Accelerator& EventManager::addAccelerator(wxKeyEvent& ev)
 {
 	int keyCode = ev.GetKeyCode();
 	unsigned int modifierFlags = wxutil::Modifier::GetStateForKeyEvent(ev);
 
-	// Create a new accelerator with the given arguments
-	Accelerator accel(keyCode, modifierFlags, _emptyEvent);
-
-	// Add a new Accelerator to the list
-	_accelerators.push_back(accel);
+	// Create a new accelerator with the given arguments and add it
+	_accelerators.push_back(Accelerator(keyCode, modifierFlags, _emptyEvent));
 
 	// return the reference to the last accelerator in the list
-	return *_accelerators.rbegin();
+	return _accelerators.back();
 }
 
-IEventPtr EventManager::findEvent(const std::string& name) {
+IEventPtr EventManager::findEvent(const std::string& name) 
+{
 	// Try to lookup the command
-	EventMap::iterator i = _events.find(name);
+	const EventMap::iterator& found = _events.find(name);
 
-	if (i != _events.end()) {
-		// Return the pointer to the command
-		return i->second;
-	}
-	else {
-		// Nothing found, return the NullEvent
-		return _emptyEvent;
-	}
+	// if nothing found, return the NullEvent
+	return found != _events.end() ? found->second : _emptyEvent;
 }
 
 IEventPtr EventManager::findEvent(wxKeyEvent& ev)
@@ -139,112 +127,126 @@ IEventPtr EventManager::findEvent(wxKeyEvent& ev)
 std::string EventManager::getEventName(const IEventPtr& event)
 {
 	// Try to lookup the given eventptr
-	for (EventMap::iterator i = _events.begin(); i != _events.end(); i++) {
-		if (i->second == event) {
-			return i->first;
+	for (const EventMap::value_type& pair : _events)
+	{
+		if (pair.second == event)
+		{
+			return pair.first;
 		}
 	}
 
-	return "";
+	return std::string();
 }
 
 std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu)
 {
-	std::string returnValue = "";
-
 	IAccelerator& accelerator = findAccelerator(event);
 
     return static_cast<Accelerator&>(accelerator).getAcceleratorString(forMenu);
 }
 
-// Checks if the eventName is already registered and writes to rMessage, if so
-bool EventManager::alreadyRegistered(const std::string& eventName) {
+// Checks if the eventName is already registered and writes to rWarning, if so
+bool EventManager::alreadyRegistered(const std::string& eventName)
+{
 	// Try to find the command and see if it's already registered
 	IEventPtr foundEvent = findEvent(eventName);
 
-	if (foundEvent->empty()) {
+	if (foundEvent->empty())
+	{
 		return false;
 	}
-	else {
-		rWarning() << "EventManager: Event " << eventName
-			<< " already registered!" << std::endl;
-		return true;
-	}
+	
+	rWarning() << "EventManager: Event " << eventName << " already registered!" << std::endl;
+	return true;
 }
 
 // Add the given command to the internal list
-IEventPtr EventManager::addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp) {
-
-	if (!alreadyRegistered(name)) {
-		// Add the command to the list
-		_events[name] = IEventPtr(new Statement(statement, reactOnKeyUp));
-
-		// Return the pointer to the newly created event
-		return _events[name];
+IEventPtr EventManager::addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp)
+{
+	if (alreadyRegistered(name))
+	{
+		return _emptyEvent;
 	}
 
-	return _emptyEvent;
+	// Add the command to the list
+	IEventPtr event = std::make_shared<Statement>(statement, reactOnKeyUp);
+
+	_events[name] = event;
+
+	// Return the pointer to the newly created event
+	return event;
 }
 
 IEventPtr EventManager::addKeyEvent(const std::string& name, const KeyStateChangeCallback& keyStateChangeCallback)
 {
-	if (!alreadyRegistered(name))
+	if (alreadyRegistered(name))
 	{
-		// Add the new keyevent to the list (implicitly cast onto Event&)
-		_events[name] = IEventPtr(new KeyEvent(keyStateChangeCallback));
-
-		// Return the pointer to the newly created event
-		return _events[name];
+		return _emptyEvent;
 	}
+	
+	IEventPtr event = std::make_shared<KeyEvent>(keyStateChangeCallback);
 
-	return _emptyEvent;
+	// Add the new keyevent to the list
+	_events[name] = event;
+
+	// Return the pointer to the newly created event
+	return event;
 }
 
 IEventPtr EventManager::addWidgetToggle(const std::string& name) {
 
-	if (!alreadyRegistered(name)) {
-		// Add the command to the list (implicitly cast the pointer on Event&)
-		_events[name] = IEventPtr(new WidgetToggle());
-
-		// Return the pointer to the newly created event
-		return _events[name];
+	if (alreadyRegistered(name))
+	{
+		return _emptyEvent;
 	}
+	
+	IEventPtr event = std::make_shared<WidgetToggle>();
 
-	return _emptyEvent;
+	// Add the command to the list
+	_events[name] = event;
+
+	// Return the pointer to the newly created event
+	return event;
 }
 
 IEventPtr EventManager::addRegistryToggle(const std::string& name, const std::string& registryKey)
 {
-	if (!alreadyRegistered(name)) {
-		// Add the command to the list (implicitly cast the pointer on Event&)
-		_events[name] = IEventPtr(new RegistryToggle(registryKey));
-
-		// Return the pointer to the newly created event
-		return _events[name];
+	if (alreadyRegistered(name))
+	{
+		return _emptyEvent;
 	}
 
-	return _emptyEvent;
+	IEventPtr event = std::make_shared<RegistryToggle>(registryKey);
+		
+	// Add the command to the list 
+	_events[name] = event;
+	
+	// Return the pointer to the newly created event
+	return event;
 }
 
 IEventPtr EventManager::addToggle(const std::string& name, const ToggleCallback& onToggled)
 {
-	if (!alreadyRegistered(name)) {
-		// Add the command to the list (implicitly cast the pointer on Event&)
-		_events[name] = IEventPtr(new Toggle(onToggled));
-
-		// Return the pointer to the newly created event
-		return _events[name];
+	if (alreadyRegistered(name))
+	{
+		return _emptyEvent;
 	}
 
-	return _emptyEvent;
+	IEventPtr event = std::make_shared<Toggle>(onToggled);
+
+	// Add the command to the list
+	_events[name] = event;
+
+	// Return the pointer to the newly created event
+	return event;
 }
 
 void EventManager::setToggled(const std::string& name, const bool toggled)
 {
 	// Check could be placed here by boost::shared_ptr's dynamic_pointer_cast
-	if (!findEvent(name)->setToggled(toggled)) {
-		rWarning() << "EventManager: Event " << name
-			<< " is not a Toggle." << std::endl;
+	if (!findEvent(name)->setToggled(toggled))
+	{
+		rWarning() << "EventManager: Event " << name << " is not a Toggle." << std::endl;
 	}
 }
 
@@ -293,19 +295,23 @@ void EventManager::disconnectAccelerator(const std::string& command)
 	}
 }
 
-void EventManager::disableEvent(const std::string& eventName) {
+void EventManager::disableEvent(const std::string& eventName) 
+{
 	findEvent(eventName)->setEnabled(false);
 }
 
-void EventManager::enableEvent(const std::string& eventName) {
+void EventManager::enableEvent(const std::string& eventName) 
+{
 	findEvent(eventName)->setEnabled(true);
 }
 
-void EventManager::removeEvent(const std::string& eventName) {
+void EventManager::removeEvent(const std::string& eventName) 
+{
 	// Try to lookup the command
 	EventMap::iterator i = _events.find(eventName);
 
-	if (i != _events.end()) {
+	if (i != _events.end()) 
+	{
 		// Remove all accelerators beforehand
 		disconnectAccelerator(eventName);
 
@@ -338,7 +344,8 @@ void EventManager::loadAccelerators()
 	xml::NodeList shortcutSets = GlobalRegistry().findXPath("user/ui/input//shortcuts");
 
 	// If we have two sets of shortcuts, delete the default ones
-	if (shortcutSets.size() > 1) {
+	if (shortcutSets.size() > 1)
+	{
 		GlobalRegistry().deleteXPath("user/ui/input//shortcuts[@name='default']");
 	}
 
@@ -349,10 +356,10 @@ void EventManager::loadAccelerators()
 	{
 		rMessage() << "EventManager: Shortcuts found in Registry: " << shortcutList.size() << std::endl;
 
-		for (std::size_t i = 0; i < shortcutList.size(); i++)
+		for (const xml::Node& shortcutNode : shortcutList)
 		{
-			const std::string key = shortcutList[i].getAttributeValue("key");
-			const std::string cmd = shortcutList[i].getAttributeValue("command");
+			const std::string key = shortcutNode.getAttributeValue("key");
+			const std::string cmd = shortcutNode.getAttributeValue("command");
 
 			// Try to lookup the command
 			IEventPtr event = findEvent(cmd);
@@ -364,7 +371,7 @@ void EventManager::loadAccelerators()
 				if (!event->empty())
 				{
 					// Get the modifier string (e.g. "SHIFT+ALT")
-					const std::string modifierStr = shortcutList[i].getAttributeValue("modifiers");
+					const std::string modifierStr = shortcutNode.getAttributeValue("modifiers");
 
 					if (!duplicateAccelerator(key, modifierStr, event))
 					{
@@ -401,7 +408,7 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 }
 
 // Tries to locate an accelerator, that is connected to the given command
-IAccelerator& EventManager::findAccelerator(const IEventPtr& event)
+Accelerator& EventManager::findAccelerator(const IEventPtr& event)
 {
 	// Cycle through the accelerators and check for matches
     for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); ++i)
@@ -423,7 +430,7 @@ void EventManager::saveEventListToRegistry()
 
 	// The visitor class to save each event definition into the registry
 	// Note: the SaveEventVisitor automatically wipes all the existing shortcuts from the registry
-	SaveEventVisitor visitor(rootKey, this);
+	SaveEventVisitor visitor(rootKey, *this);
 
 	foreachEvent(visitor);
 }
@@ -443,10 +450,10 @@ bool EventManager::duplicateAccelerator(const std::string& key,
 {
 	AcceleratorList accelList = findAccelerator(key, modifiers);
 
-	for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
+	for (const Accelerator& accel : accelList)
     {
 		// If one of the accelerators in the list matches the event, return true
-		if (i->match(event))
+		if (accel.match(event))
         {
 			return true;
 		}
