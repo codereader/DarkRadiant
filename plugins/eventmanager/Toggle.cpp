@@ -158,7 +158,7 @@ void Toggle::disconnectToolItem(wxToolBarToolBase* item)
 {
 	if (_toolItems.find(item) == _toolItems.end())
 	{
-		rWarning() << "Cannot disconnect from unconnected tool item." << std::endl;
+		//rWarning() << "Cannot disconnect from unconnected tool item." << std::endl;
 		return;
 	}
 
