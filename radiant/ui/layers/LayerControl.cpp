@@ -168,7 +168,6 @@ void LayerControl::onDelete(wxCommandEvent& ev)
 		scene::getLayerSystem().deleteLayer(
 			scene::getLayerSystem().getLayerName(_layerID)
 		);
-		LayerControlDialog::Instance().refresh();
 	}
 }
 
@@ -198,9 +197,8 @@ void LayerControl::onRename(wxCommandEvent& ev)
 
 		if (success)
 		{
-			// Reload the widgets, we're done here
-			update();
-			break;
+			// Stop here, the control might already have been destroyed
+			return;
 		}
 		else
 		{

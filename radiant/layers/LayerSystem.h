@@ -38,6 +38,7 @@ private:
 
 	sigc::signal<void> _layersChangedSignal;
 	sigc::signal<void> _layerVisibilityChangedSignal;
+	sigc::signal<void> _nodeMembershipChangedSignal;
 
 public:
 	LayerSystem();
@@ -126,6 +127,7 @@ public:
 
 	sigc::signal<void> signal_layersChanged() override;
 	sigc::signal<void> signal_layerVisibilityChanged() override;
+	sigc::signal<void> signal_nodeMembershipChanged() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
@@ -138,8 +140,14 @@ public:
 private:
 	void onMapEvent(IMap::MapEvent ev);
 
+	// Internal event emitter
+	void onLayersChanged();
+
 	// Internal event, updates the scenegraph
 	void onLayerVisibilityChanged();
+
+	// Internal event emitter
+	void onNodeMembershipChanged();
 
 	// Updates the visibility state of the entire scenegraph
 	void updateSceneGraphVisibility();

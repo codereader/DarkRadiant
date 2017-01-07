@@ -110,7 +110,7 @@ void LayerControlDialog::refresh()
     {
         // Create a new layercontrol for each visited layer
         // Store the object in a sorted container
-        sortedControls[layerName] = LayerControlPtr(new LayerControl(_dialogPanel, layerID));
+        sortedControls[layerName] = std::make_shared<LayerControl>(_dialogPanel, layerID);
     });
 
     // Assign all controls to the target vector, alphabetically sorted
@@ -121,19 +121,18 @@ void LayerControlDialog::refresh()
 
 	_controlContainer->SetRows(static_cast<int>(_layerControls.size()));
 
-	for (LayerControls::iterator i = _layerControls.begin();
-		 i != _layerControls.end(); ++i)
+	for (const LayerControlPtr& control : _layerControls)
 	{
-		_controlContainer->Add((*i)->getToggle(), 0);
-		_controlContainer->Add((*i)->getStatusWidget(), 0, wxEXPAND | wxTOP | wxBOTTOM, 1);
-		_controlContainer->Add((*i)->getLabelButton(), 0, wxEXPAND);
-		_controlContainer->Add((*i)->getButtons(), 0, wxEXPAND);
+		_controlContainer->Add(control->getToggle(), 0);
+		_controlContainer->Add(control->getStatusWidget(), 0, wxEXPAND | wxTOP | wxBOTTOM, 1);
+		_controlContainer->Add(control->getLabelButton(), 0, wxEXPAND);
+		_controlContainer->Add(control->getButtons(), 0, wxEXPAND);
 
-        if (i == _layerControls.begin())
+        if (control == _layerControls.front())
         {
             // Prevent setting the focus on the buttons at the bottom which lets the scrollbar 
             // of the window jump around (#4089), set the focus on the first button.
-            (*i)->getLabelButton()->SetFocus();
+			control->getLabelButton()->SetFocus();
         }
 	}
 
@@ -272,12 +271,19 @@ void LayerControlDialog::_preShow()
 	_layerVisibilityChangedSignal = GlobalLayerSystem().signal_layerVisibilityChanged().connect(
 		sigc::mem_fun(this, &LayerControlDialog::update));
 
+	// Node membership triggers a selection rescan
+	_nodeLayerMembershipChangedSignal = GlobalLayerSystem().signal_nodeMembershipChanged().connect([this]()
+	{
+		_rescanSelectionOnIdle = true;
+	});
+
 	// Re-populate the dialog
 	refresh();
 }
 
 void LayerControlDialog::_postHide()
 {
+	_nodeLayerMembershipChangedSignal.disconnect();
 	_layersChangedSignal.disconnect();
 	_layerVisibilityChangedSignal.disconnect();
 	_selectionChangedSignal.disconnect();

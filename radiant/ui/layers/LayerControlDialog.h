@@ -38,6 +38,7 @@ private:
 	sigc::connection _selectionChangedSignal;
 	sigc::connection _layersChangedSignal;
 	sigc::connection _layerVisibilityChangedSignal;
+	sigc::connection _nodeLayerMembershipChangedSignal;
 
 public:
 	LayerControlDialog();

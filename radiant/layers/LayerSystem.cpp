@@ -65,6 +65,9 @@ int LayerSystem::createLayer(const std::string& name, int layerID)
 	// Set the newly created layer to "visible"
 	_layerVisibility[result.first->first] = true;
 
+	// Layers have changed
+	onLayersChanged();
+
 	// Return the ID of the inserted layer
 	return result.first->first;
 }
@@ -115,9 +118,12 @@ void LayerSystem::deleteLayer(const std::string& name)
 		_activeLayer = DEFAULT_LAYER;
 	}
 
-	// Fire the visibility changed event to
-	// update the scenegraph and redraw the views
-	onLayerVisibilityChanged();
+	// Layers have changed
+	onLayersChanged();
+
+	// Nodes might have switched to default, fire the visibility 
+	// changed event, update the scenegraph and redraw the views
+	onNodeMembershipChanged();
 }
 
 void LayerSystem::foreachLayer(const LayerVisitFunc& visitor)
@@ -158,6 +164,9 @@ bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName)
 
 	// Rename that layer
 	i->second = newLayerName;
+
+	// Fire the update signal
+	onLayersChanged();
 
 	return true;
 }
@@ -265,18 +274,31 @@ void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible)
 	setLayerVisibility(layerID, visible);
 }
 
-void LayerSystem::updateSceneGraphVisibility() {
+void LayerSystem::updateSceneGraphVisibility()
+{
 	UpdateNodeVisibilityWalker walker;
 	GlobalSceneGraph().root()->traverseChildren(walker);
+
+	// Redraw
+	SceneChangeNotify();
+}
+
+void LayerSystem::onLayersChanged()
+{
+	_layersChangedSignal.emit();
+}
+
+void LayerSystem::onNodeMembershipChanged()
+{
+	_nodeMembershipChangedSignal.emit();
+
+	updateSceneGraphVisibility();
 }
 
 void LayerSystem::onLayerVisibilityChanged()
 {
-	// Update all nodes
+	// Update all nodes and views
 	updateSceneGraphVisibility();
-
-	// Redraw
-	SceneChangeNotify();
 
 	// Update the LayerControlDialog
 	_layerVisibilityChangedSignal.emit();
@@ -292,7 +314,7 @@ void LayerSystem::addSelectionToLayer(int layerID) {
 	AddToLayerWalker walker(layerID);
 	GlobalSelectionSystem().foreachSelected(walker);
 
-	updateSceneGraphVisibility();
+	onNodeMembershipChanged();
 }
 
 void LayerSystem::addSelectionToLayer(const std::string& layerName) {
@@ -333,7 +355,7 @@ void LayerSystem::moveSelectionToLayer(int layerID) {
 	MoveToLayerWalker walker(layerID);
 	GlobalSelectionSystem().foreachSelected(walker);
 
-	updateSceneGraphVisibility();
+	onNodeMembershipChanged();
 }
 
 void LayerSystem::removeSelectionFromLayer(const std::string& layerName) {
@@ -360,12 +382,13 @@ void LayerSystem::removeSelectionFromLayer(int layerID) {
 	RemoveFromLayerWalker walker(layerID);
 	GlobalSelectionSystem().foreachSelected(walker);
 
-	updateSceneGraphVisibility();
+	onNodeMembershipChanged();
 }
 
-bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
+bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node)
+{
 	// Get the list of layers the node is associated with
-	// greebo: TODO: Check if returning the LayerList by value is taxing.
+	// greebo: FIXME: Check if returning the LayerList by value is taxing.
 	LayerList layers = node->getLayers();
 
 	// We start with the assumption that a node is hidden
@@ -373,8 +396,10 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
 
 	// Cycle through the Node's layers, and show the node as soon as
 	// a visible layer is found.
-	for (LayerList::const_iterator i = layers.begin(); i != layers.end(); i++) {
-		if (_layerVisibility[*i]) {
+	for (int layerId : layers)
+	{
+		if (_layerVisibility[layerId])
+		{
 			// The layer is visible, set the visibility to true and quit
 			node->disable(Node::eLayered);
 			return true;
@@ -385,7 +410,8 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
 	return false;
 }
 
-void LayerSystem::setSelected(int layerID, bool selected) {
+void LayerSystem::setSelected(int layerID, bool selected)
+{
 	SetLayerSelectedWalker walker(layerID, selected);
 
     if (GlobalSceneGraph().root())
@@ -404,7 +430,13 @@ sigc::signal<void> LayerSystem::signal_layerVisibilityChanged()
 	return _layerVisibilityChangedSignal;
 }
 
-int LayerSystem::getLayerID(const std::string& name) const {
+sigc::signal<void> LayerSystem::signal_nodeMembershipChanged()
+{
+	return _nodeMembershipChangedSignal;
+}
+
+int LayerSystem::getLayerID(const std::string& name) const
+{
 	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); i++) {
 		if (i->second == name) {
 			// Name found, return the ID
@@ -415,7 +447,8 @@ int LayerSystem::getLayerID(const std::string& name) const {
 	return -1;
 }
 
-std::string LayerSystem::getLayerName(int layerID) const {
+std::string LayerSystem::getLayerName(int layerID) const 
+{
 	LayerMap::const_iterator found = _layers.find(layerID);
 
 	if (found != _layers.end()) {
@@ -431,7 +464,8 @@ bool LayerSystem::layerExists(int layerID) const
 	return _layers.find(layerID) != _layers.end();
 }
 
-int LayerSystem::getHighestLayerID() const {
+int LayerSystem::getHighestLayerID() const
+{
 	if (_layers.size() == 0) {
 		// Empty layer map, just return DEFAULT_LAYER
 		return DEFAULT_LAYER;
@@ -441,7 +475,8 @@ int LayerSystem::getHighestLayerID() const {
 	return _layers.rbegin()->first;
 }
 
-int LayerSystem::getLowestUnusedLayerID() {
+int LayerSystem::getLowestUnusedLayerID()
+{
 	for (int i = 0; i < INT_MAX; i++) {
 		if (_layers.find(i) == _layers.end()) {
 			// Found a free ID
@@ -543,7 +578,6 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 		if (layerID != -1)
 		{
 			// Success, break the loop
-			_layersChangedSignal.emit();
 			break;
 		}
 		else {

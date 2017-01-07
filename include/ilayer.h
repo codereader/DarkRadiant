@@ -182,14 +182,23 @@ public:
 
 	/**
 	 * A signal for client code to get notified about layer creation,
-	 * addition, removal.
+	 * renamings and removal.
 	 */
 	virtual sigc::signal<void> signal_layersChanged() = 0;
 
 	/**
-	 *
+	 * Fired whenever visibility of a layer has been changed.
 	 */
 	virtual sigc::signal<void> signal_layerVisibilityChanged() = 0;
+
+	/**
+	 * Public signal to get notified about layer membership changes,
+	 * e.g. when a node has been added to a layer, or moved to a new one.
+	 * Since scene::INodes can be added or removed from layers directly,
+	 * without the LayerSystem knowing about this, it is sometimes the
+	 * responsibility of that algorithm code to emit this signal itself.
+	 */
+	virtual sigc::signal<void> signal_nodeMembershipChanged() = 0;
 };
 
 } // namespace scene
