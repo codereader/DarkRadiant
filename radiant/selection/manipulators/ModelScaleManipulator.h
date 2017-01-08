@@ -31,14 +31,17 @@ private:
 	RenderableArrowLine _arrowZ;
 	RenderableQuad _quadScreen;
 
-	selection::BasicSelectable _selectableScreen;
-
 	Pivot2World _pivot2World;
 
 	std::list<RenderableSolidAABB> _renderableAabbs;
+	RenderablePointVector _renderableCornerPoints;
+
+	std::map<ISelectable*, scene::INodePtr> _candidates;
+	scene::INodePtr _curManipulatable;
 	
 public:
 	static ShaderPtr _lineShader;
+	static ShaderPtr _pointShader;
 
 	ModelScaleManipulator(ManipulationPivot& pivot);
 
