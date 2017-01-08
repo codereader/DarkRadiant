@@ -155,4 +155,21 @@ std::string PicoModelNode::getSkin() const
 	return _skin;
 }
 
+void PicoModelNode::_onTransformationChanged()
+{
+	if (getTransformationType() & TransformationType::Scale)
+	{
+		_picoModel->evaluateScale(getScale());
+	}
+}
+
+void PicoModelNode::_applyTransformation()
+{
+	if (getTransformationType() & TransformationType::Scale)
+	{
+		_picoModel->evaluateScale(getScale());
+		_picoModel->freezeScale();
+	}
+}
+
 } // namespace model

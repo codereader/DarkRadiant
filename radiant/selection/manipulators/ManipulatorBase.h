@@ -15,7 +15,13 @@ namespace selection
 class ManipulatorBase :
 	public Manipulator
 {
+private:
+	std::size_t _id;
 public:
+	ManipulatorBase() :
+		_id(0)
+	{}
+
 	virtual ~ManipulatorBase() {}
 
 	// By default, manipulators can operate on components too (Clipper can't)
@@ -29,6 +35,16 @@ public:
 	{}
 
 public:
+	std::size_t getId() const override
+	{
+		return _id;
+	}
+
+	void setId(std::size_t id) override
+	{
+		_id = id;
+	}
+
     /* Static colours */
     static const Colour4b& COLOUR_SCREEN();
     static const Colour4b& COLOUR_SPHERE();

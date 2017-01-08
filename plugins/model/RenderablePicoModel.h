@@ -41,6 +41,9 @@ private:
 		// The (shared) surface object
 		RenderablePicoSurfacePtr surface;
 
+		// The (unmodified) surface object
+		RenderablePicoSurfacePtr originalSurface;
+
 		// The name of the material (with skin applied)
 		// The default material name is stored on the surface
 		std::string activeMaterial;
@@ -53,7 +56,8 @@ private:
 
 		// Constructor
 		Surface(const RenderablePicoSurfacePtr& surface_) :
-			surface(surface_)
+			surface(surface_),
+			originalSurface(surface)
 		{}
 	};
 
@@ -200,6 +204,12 @@ public:
 	const SurfaceList& getSurfaces() const {
 		return _surfVec;
 	}
+
+	// TransformationChanged, apply the given scale to the "working copy"
+	void evaluateScale(const Vector3& scale);
+
+	// Freeze transform, move the applied scale to the original model
+	void freezeScale();
 };
 typedef std::shared_ptr<RenderablePicoModel> RenderablePicoModelPtr;
 

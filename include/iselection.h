@@ -57,6 +57,7 @@ public:
 		Rotate,
 		Scale,
 		Clip,
+		ModelScale,
 		Custom
 	};
 
@@ -82,6 +83,10 @@ public:
 	};
 
 	virtual ~Manipulator() {}
+
+	// ID and Type management
+	virtual std::size_t getId() const = 0;
+	virtual void setId(std::size_t id) = 0;
 
 	virtual Type getType() const = 0;
 

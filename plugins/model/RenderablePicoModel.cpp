@@ -53,6 +53,7 @@ RenderablePicoModel::RenderablePicoModel(const RenderablePicoModel& other) :
 	for (std::size_t i = 0; i < other._surfVec.size(); ++i)
 	{
 		_surfVec[i].surface = other._surfVec[i].surface;
+		_surfVec[i].originalSurface = other._surfVec[i].originalSurface;
 		_surfVec[i].activeMaterial = _surfVec[i].surface->getDefaultMaterial();
 	}
 }
@@ -305,6 +306,31 @@ std::string RenderablePicoModel::getModelPath() const
 void RenderablePicoModel::setModelPath(const std::string& modelPath)
 {
 	_modelPath = modelPath;
+}
+
+void RenderablePicoModel::evaluateScale(const Vector3& scale)
+{
+	// Apply the scale to each surface
+	for (Surface& surf : _surfVec)
+	{
+		// Are we still using the original surface? If yes,
+		// it's now time to create a working copy
+		if (surf.surface == surf.originalSurface)
+		{
+			// Copy-construct the surface
+			surf.surface = std::make_shared<RenderablePicoSurface>(*surf.originalSurface);
+		}
+
+		// Apply the scale, on top of the original surface, this should save us from
+		// reverting the transformation each time the scale changes
+		surf.surface->applyScale(scale, *(surf.originalSurface));
+	}
+}
+
+// Freeze transform, move the applied scale to the original model
+void RenderablePicoModel::freezeScale()
+{
+	// TODO
 }
 
 } // namespace

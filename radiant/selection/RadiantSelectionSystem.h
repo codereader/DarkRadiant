@@ -179,8 +179,11 @@ protected:
 private:
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
 
+	std::size_t getManipulatorIdForType(Manipulator::Type type);
+
 	// Command targets used to connect to the event system
 	void toggleManipulatorMode(Manipulator::Type type, bool newState);
+	void toggleManipulatorModeById(std::size_t manipId, bool newState);
 
 	void activateDefaultMode();
 

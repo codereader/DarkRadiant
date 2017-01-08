@@ -8,6 +8,7 @@
 #include "render/VectorLightList.h"
 #include "RenderablePicoModel.h"
 #include "scene/Node.h"
+#include "Transformable.h"
 
 namespace model {
 
@@ -17,7 +18,8 @@ class PicoModelNode :
 	public SelectionTestable,
 	public LitObject,
 	public SkinnedModel,
-	public ITraceable
+	public ITraceable,
+	public Transformable
 {
 private:
 	// The actual model
@@ -89,6 +91,10 @@ public:
 
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection);
+
+protected:
+	virtual void _onTransformationChanged() override;
+	virtual void _applyTransformation() override;
 
 private:
 	// Instance render function

@@ -36,6 +36,9 @@ public:
 	// Gets called by the attached Entity when the "skin" spawnarg changes
 	void skinChanged(const std::string& value);
 
+	// Called when "dr_model_scale" changes
+	void modelScaleChanged(const std::string& value);
+
 	// Returns the reference to the "singleton" model node
 	const scene::INodePtr& getNode() const;
 

@@ -375,6 +375,7 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\DragManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorBase.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorComponents.cpp" />
+    <ClCompile Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\RotateManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\TranslateManipulator.cpp" />
@@ -615,6 +616,7 @@
     <ClInclude Include="..\..\radiant\selection\manipulators\DragManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorBase.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorComponents.h" />
+    <ClInclude Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ScaleManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\TranslateManipulator.h" />

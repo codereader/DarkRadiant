@@ -895,6 +895,9 @@
     <ClCompile Include="..\..\radiant\ui\UserInterfaceModule.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1820,6 +1823,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\UserInterfaceModule.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
