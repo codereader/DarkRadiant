@@ -90,6 +90,21 @@ void ModelScaleManipulator::render(RenderableCollector& collector, const VolumeT
 {
 	_pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
+	collector.SetState(_lineShader, RenderableCollector::eWireframeOnly);
+	collector.SetState(_lineShader, RenderableCollector::eFullMaterials);
+
+	_renderableAabbs.clear();
+	
+	foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
+	{
+		_renderableAabbs.push_back(RenderableSolidAABB(node->worldAABB()));
+	});
+
+	for (const RenderableSolidAABB& aabb : _renderableAabbs)
+	{
+		collector.addRenderable(aabb, Matrix4::getIdentity());
+	}
+
 	//collector.addRenderable(_arrowX, _pivot2World._worldSpace);
 	//collector.addRenderable(_arrowY, _pivot2World._worldSpace);
 	//collector.addRenderable(_arrowZ, _pivot2World._worldSpace);
@@ -101,20 +116,31 @@ void ModelScaleManipulator::scale(const Vector3& scaling)
 {
 	rMessage() << "Scale: " << scaling << std::endl;
 
+	foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
+	{
+		// Apply the scaling spawnarg to this entity
+		entity->setKeyValue("dr_model_scale", string::to_string(scaling));
+	});
+
+	// Update the scene views
+	SceneChangeNotify();
+}
+
+void ModelScaleManipulator::foreachSelectedTransformable(
+	const std::function<void(const scene::INodePtr&, Entity*)>& functor)
+{
 	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
 	{
 		Entity* entity = Node_getEntity(node);
 
 		if (entity && entity->isModel())
 		{
-			// Apply the scaling spawnarg to this entity
-			entity->setKeyValue("dr_model_scale", string::to_string(scaling));
+			functor(node, entity);
 		}
 	});
-
-	// Update the scene views
-	SceneChangeNotify();
 }
+
+ShaderPtr ModelScaleManipulator::_lineShader;
 
 }
 

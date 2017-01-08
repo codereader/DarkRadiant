@@ -798,6 +798,7 @@ void RadiantSelectionSystem::captureShaders()
     TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
     RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 	RotateManipulator::_pivotPointShader = GlobalRenderSystem().capture("$POINT");
+	ModelScaleManipulator::_lineShader = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 }
 
 void RadiantSelectionSystem::releaseShaders()

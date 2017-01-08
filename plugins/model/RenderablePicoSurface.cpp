@@ -418,6 +418,8 @@ void RenderablePicoSurface::applyScale(const Vector3& scale, const RenderablePic
 		_vertices[i].normal = invTranspScale.transformPoint(originalSurface._vertices[i].normal);
 	}
 
+	calculateTangents();
+
 	glDeleteLists(_dlRegular, 1);
 	glDeleteLists(_dlProgramNoVCol, 1);
 	glDeleteLists(_dlProgramVcol, 1);

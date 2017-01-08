@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
 
@@ -7,6 +8,10 @@
 #include "selection/ManipulationPivot.h"
 #include "selection/Pivot2World.h"
 #include "selection/BasicSelectable.h"
+
+#include "entitylib.h"
+
+class Entity;
 
 namespace selection
 {
@@ -30,7 +35,11 @@ private:
 
 	Pivot2World _pivot2World;
 
+	std::list<RenderableSolidAABB> _renderableAabbs;
+	
 public:
+	static ShaderPtr _lineShader;
+
 	ModelScaleManipulator(ManipulationPivot& pivot);
 
 	Type getType() const override;
@@ -41,6 +50,10 @@ public:
 	void render(RenderableCollector& collector, const VolumeTest& volume) override;
 
 	void scale(const Vector3& scaling) override;
+
+private:
+	void foreachSelectedTransformable(
+		const std::function<void(const scene::INodePtr&, Entity*)>& functor);
 };
 
 }
