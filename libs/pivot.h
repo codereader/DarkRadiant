@@ -129,10 +129,13 @@ inline Matrix4 constructObject2Device(const Matrix4& object2world, const Matrix4
 	return object2world.getPremultipliedBy(world2view).getPremultipliedBy(view2device);
 }
 
-inline void ConstructDevice2Object(Matrix4& device2object, const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device)
+/**
+ * Returns the full inverse of the object2device matrix, which transforms device coords
+ * into object coordinates.
+ */
+inline Matrix4 constructDevice2Object(const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device)
 {
-	device2object = constructObject2Device(object2world, world2view, view2device);
-	device2object.invertFull();
+	return constructObject2Device(object2world, world2view, view2device).getFullInverse();
 }
 
 //! S =  ( Inverse(Object2Screen *post ScaleOf(Object2Screen) ) *post Object2Screen
