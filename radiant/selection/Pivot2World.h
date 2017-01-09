@@ -25,8 +25,7 @@ private:
 	{
 		_worldSpace = pivot2world;
 
-		Matrix4 pivot2screen;
-		ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
+		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
 		Matrix4 scale;
 		pivot_scale(scale, pivot2screen);
@@ -39,8 +38,7 @@ private:
 	{
 		_viewpointSpace = pivot2world;
 
-		Matrix4 pivot2screen;
-		ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
+		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
 		Matrix4 scale;
 		pivot_scale(scale, pivot2screen);
@@ -58,8 +56,7 @@ private:
 	{
 		_viewplaneSpace = pivot2world;
 
-		Matrix4 pivot2screen;
-		ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
+		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
 		Matrix4 scale;
 		pivot_scale(scale, pivot2screen);

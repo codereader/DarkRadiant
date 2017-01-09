@@ -108,26 +108,31 @@ inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2
 #endif
 }
 
-
-inline void ConstructObject2Screen(Matrix4& object2screen, const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device, const Matrix4& device2screen)
+/**
+ * greebo: Returns a single matrix which transforms object coordinates to screen coordinates,
+ * which is basically the same pipeline a vertex is sent through by openGL.
+ * The 4 input matrices are just concatenated by multiplication, like this:
+ * object2screen = device2screen * view2device * world2view * object2world
+ */
+inline Matrix4 constructObject2Screen(const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device, const Matrix4& device2screen)
 {
-  object2screen = device2screen;
-  object2screen.multiplyBy(view2device);
-  object2screen.multiplyBy(world2view);
-  object2screen.multiplyBy(object2world);
+	return object2world.getPremultipliedBy(world2view).getPremultipliedBy(view2device).getPremultipliedBy(device2screen);
 }
 
-inline void ConstructObject2Device(Matrix4& object2screen, const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device)
+/**
+ * greebo: Returns a matrix that transforming object coordinates to device coordinates [-1..+1].
+ * The three input matrices are concatenated like this:
+ * object2device = view2device * world2view * object2world
+ */
+inline Matrix4 constructObject2Device(const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device)
 {
-  object2screen = view2device;
-  object2screen.multiplyBy(world2view);
-  object2screen.multiplyBy(object2world);
+	return object2world.getPremultipliedBy(world2view).getPremultipliedBy(view2device);
 }
 
 inline void ConstructDevice2Object(Matrix4& device2object, const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device)
 {
-  ConstructObject2Device(device2object, object2world, world2view, view2device);
-  device2object.invertFull();
+	device2object = constructObject2Device(object2world, world2view, view2device);
+	device2object.invertFull();
 }
 
 //! S =  ( Inverse(Object2Screen *post ScaleOf(Object2Screen) ) *post Object2Screen
@@ -153,10 +158,9 @@ inline void pivot_perspective(Matrix4& scale, const Matrix4& pivot2screen)
 
 inline void ConstructDevice2Manip(Matrix4& device2manip, const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device, const Matrix4& device2screen)
 {
-  Matrix4 pivot2screen;
-  ConstructObject2Screen(pivot2screen, object2world, world2view, view2device, device2screen);
+	Matrix4 pivot2screen = constructObject2Screen(object2world, world2view, view2device, device2screen);
 
-  ConstructObject2Device(device2manip, object2world, world2view, view2device);
+	device2manip = constructObject2Device(object2world, world2view, view2device);
 
   Matrix4 scale;
   pivot_scale(scale, pivot2screen);
