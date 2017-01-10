@@ -27,8 +27,8 @@ private:
 
 		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
-		Matrix4 scale;
-		pivot_scale(scale, pivot2screen);
+		Matrix4 scale = calculatePivotScale(pivot2screen);
+
 		_worldSpace.multiplyBy(scale);
 		pivot_perspective(scale, pivot2screen);
 		_worldSpace.multiplyBy(scale);
@@ -40,8 +40,8 @@ private:
 
 		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
-		Matrix4 scale;
-		pivot_scale(scale, pivot2screen);
+		Matrix4 scale = calculatePivotScale(pivot2screen);
+
 		_viewpointSpace.multiplyBy(scale);
 
 		billboard_viewpointOriented(scale, pivot2screen);
@@ -58,8 +58,8 @@ private:
 
 		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
-		Matrix4 scale;
-		pivot_scale(scale, pivot2screen);
+		Matrix4 scale = calculatePivotScale(pivot2screen);
+		
 		_viewplaneSpace.multiplyBy(scale);
 
 		billboard_viewplaneOriented(scale, pivot2screen);

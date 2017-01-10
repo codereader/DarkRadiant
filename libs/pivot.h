@@ -139,17 +139,13 @@ inline Matrix4 constructDevice2Object(const Matrix4& object2world, const Matrix4
 }
 
 //! S =  ( Inverse(Object2Screen *post ScaleOf(Object2Screen) ) *post Object2Screen
-inline void pivot_scale(Matrix4& scale, const Matrix4& pivot2screen)
+inline Matrix4 calculatePivotScale(const Matrix4& pivot2screen)
 {
-  Matrix4 pre_scale(Matrix4::getIdentity());
-  pre_scale[0] = static_cast<float>(pivot2screen.x().getVector3().getLength());
-  pre_scale[5] = static_cast<float>(pivot2screen.y().getVector3().getLength());
-  pre_scale[10] = static_cast<float>(pivot2screen.z().getVector3().getLength());
-
-  scale = pivot2screen;
-  scale.multiplyBy(pre_scale);
-  scale.invertFull();
-  scale.multiplyBy(pivot2screen);
+	// Extract the scale of the pivot2screen (object2screen) matrix and 
+	// store that in another matrix
+	Matrix4 pre_scale = Matrix4::getScale(pivot2screen.getScale());
+	
+	return pivot2screen.getMultipliedBy(pre_scale).getFullInverse().getMultipliedBy(pivot2screen);
 }
 
 // scale by (inverse) W
@@ -165,8 +161,7 @@ inline void ConstructDevice2Manip(Matrix4& device2manip, const Matrix4& object2w
 
 	device2manip = constructObject2Device(object2world, world2view, view2device);
 
-  Matrix4 scale;
-  pivot_scale(scale, pivot2screen);
+	Matrix4 scale = calculatePivotScale(pivot2screen);
   device2manip.multiplyBy(scale);
   pivot_perspective(scale, pivot2screen);
   device2manip.multiplyBy(scale);
