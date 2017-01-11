@@ -45,7 +45,11 @@ public:
 		_id = id;
 	}
 
-    /* Static colours */
+	/* Static colours */
+	static const Colour4b& COLOUR_X();
+	static const Colour4b& COLOUR_Y();
+	static const Colour4b& COLOUR_Z();
+
     static const Colour4b& COLOUR_SCREEN();
     static const Colour4b& COLOUR_SPHERE();
     static const Colour4b& COLOUR_SELECTED();

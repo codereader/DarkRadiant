@@ -33,12 +33,12 @@ TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t
 }
 
 void TranslateManipulator::UpdateColours() {
-    _arrowX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
-    _arrowHeadX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
-    _arrowY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
-    _arrowHeadY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
-    _arrowZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
-    _arrowHeadZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
+    _arrowX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
+    _arrowHeadX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
+    _arrowY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
+    _arrowHeadY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
+    _arrowZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
+    _arrowHeadZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
     _quadScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 

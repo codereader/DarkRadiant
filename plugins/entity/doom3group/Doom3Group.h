@@ -3,7 +3,7 @@
 #include "Bounded.h"
 #include "editable.h"
 #include "entitylib.h"
-#include "pivot.h"
+#include "render/RenderablePivot.h"
 
 #include "../ModelKey.h"
 #include "../OriginKey.h"
@@ -39,7 +39,7 @@ class Doom3Group
 	RotationKey m_rotationKey;
 	RotationMatrix m_rotation;
 
-	RenderablePivot m_renderOrigin;
+	render::RenderablePivot m_renderOrigin;
 
 	mutable AABB m_curveBounds;
 

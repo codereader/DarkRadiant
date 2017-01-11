@@ -149,6 +149,9 @@
     <ClInclude Include="..\..\libs\UndoFileChangeTracker.h" />
     <ClInclude Include="..\..\libs\SurfaceShader.h" />
     <ClInclude Include="..\..\libs\ThreadedDefLoader.h" />
+    <ClInclude Include="..\..\libs\render\RenderablePivot.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -81,9 +81,9 @@ RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segme
 
 void RotateManipulator::UpdateColours()
 {
-    _circleX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
-    _circleY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
-    _circleZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
+    _circleX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
+	_circleY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
+	_circleZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
     _circleScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
     _circleSphere.setColour(colourSelected(ManipulatorBase::COLOUR_SPHERE(), false));
 	_pivotPoint.setColour(colourSelected(ManipulatorBase::COLOUR_SPHERE(), _selectablePivotPoint.isSelected()));
