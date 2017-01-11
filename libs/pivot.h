@@ -138,14 +138,36 @@ inline Matrix4 constructDevice2Object(const Matrix4& object2world, const Matrix4
 	return constructObject2Device(object2world, world2view, view2device).getFullInverse();
 }
 
-//! S =  ( Inverse(Object2Screen *post ScaleOf(Object2Screen) ) *post Object2Screen
-inline Matrix4 calculatePivotScale(const Matrix4& pivot2screen)
+/**
+ * greebo: The old code here was set up to calculate the scale out of the
+ * pivot2screen (== object2screen) matrix and invert it like this:
+ *
+ //! S =  ( Inverse(Object2Screen *post ScaleOf(Object2Screen) ) *post Object2Screen
+ *
+ * Since the matrices are square and invertible, the above equation is equal to
+ *
+ * S = Inverse(Scaleof(Object2Screen)) *post Inverse(Object2Screen) *post Object2Screen
+ *
+ * the right two matrices cancel each other out to the identity transform, so all that remains is
+ *
+ * S = Inverse(ScaleOf(Object2Screen))
+ *
+ * The scale of the object2screen matrix can be extracted easily, and the inverse of a pure scale
+ * matrix is basically inverting its diagonals, so the above can be equally constructed without 
+ * inverting the whole 4x4 matrix.
+ **/
+inline Matrix4 getInverseScale(const Matrix4& transform)
 {
-	// Extract the scale of the pivot2screen (object2screen) matrix and 
+#if 1
+	return Matrix4::getScale(transform.getScale().getInversed());
+#else 
+	// Old code like described above
+	// Extract the scale of the pivot2screen (transform) matrix and 
 	// store that in another matrix
-	Matrix4 pre_scale = Matrix4::getScale(pivot2screen.getScale());
+	Matrix4 pre_scale = Matrix4::getScale(transform.getScale());
 	
-	return pivot2screen.getMultipliedBy(pre_scale).getFullInverse().getMultipliedBy(pivot2screen);
+	return transform.getMultipliedBy(pre_scale).getFullInverse().getMultipliedBy(transform);
+#endif
 }
 
 // scale by (inverse) W
@@ -161,7 +183,7 @@ inline void ConstructDevice2Manip(Matrix4& device2manip, const Matrix4& object2w
 
 	device2manip = constructObject2Device(object2world, world2view, view2device);
 
-	Matrix4 scale = calculatePivotScale(pivot2screen);
+	Matrix4 scale = getInverseScale(pivot2screen);
   device2manip.multiplyBy(scale);
   pivot_perspective(scale, pivot2screen);
   device2manip.multiplyBy(scale);
