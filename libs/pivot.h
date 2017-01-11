@@ -171,24 +171,34 @@ inline Matrix4 getInverseScale(const Matrix4& transform)
 }
 
 // scale by (inverse) W
-inline void pivot_perspective(Matrix4& scale, const Matrix4& pivot2screen)
+inline Matrix4 getPerspectiveScale(const Matrix4& pivot2screen)
 {
-  scale = Matrix4::getIdentity();
-  scale[0] = scale[5] = scale[10] = pivot2screen[15];
+	double tw = pivot2screen.tw();
+	return Matrix4::getScale(Vector3(tw, tw, tw));
 }
 
-inline void ConstructDevice2Manip(Matrix4& device2manip, const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device, const Matrix4& device2screen)
+/**
+ * Returns a transform that is converting device coordinates to local object space (manipulator space)
+ *
+ * Not entirely sure what the algorithm is, but it's starting with the device2object matrix,
+ * multiplying it by the scale taken from the object2screen transform, and adding the perspective
+ * division on top of that:
+ *
+ * device2manip = ScaleByInverseW * Scale(object2screen) * device2Object
+ */
+inline Matrix4 constructDevice2Manip(const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device, const Matrix4& device2screen)
 {
 	Matrix4 pivot2screen = constructObject2Screen(object2world, world2view, view2device, device2screen);
 
-	device2manip = constructObject2Device(object2world, world2view, view2device);
+	Matrix4 device2manip = constructObject2Device(object2world, world2view, view2device);
 
 	Matrix4 scale = getInverseScale(pivot2screen);
-  device2manip.multiplyBy(scale);
-  pivot_perspective(scale, pivot2screen);
-  device2manip.multiplyBy(scale);
+	device2manip.multiplyBy(scale);
 
-  device2manip.invertFull();
+	scale = getPerspectiveScale(pivot2screen);
+	device2manip.multiplyBy(scale);
+
+	return device2manip.getFullInverse();
 }
 
 const Colour4b g_colour_x(255, 0, 0, 255);

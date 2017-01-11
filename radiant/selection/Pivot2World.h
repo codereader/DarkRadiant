@@ -30,7 +30,7 @@ private:
 		Matrix4 scale = getInverseScale(pivot2screen);
 
 		_worldSpace.multiplyBy(scale);
-		pivot_perspective(scale, pivot2screen);
+		scale = getPerspectiveScale(pivot2screen);
 		_worldSpace.multiplyBy(scale);
 	}
 
@@ -48,7 +48,7 @@ private:
 		_axisScreen = scale.z().getVector3();
 		_viewpointSpace.multiplyBy(scale);
 
-		pivot_perspective(scale, pivot2screen);
+		scale = getPerspectiveScale(pivot2screen);
 		_viewpointSpace.multiplyBy(scale);
 	}
 
@@ -65,7 +65,7 @@ private:
 		billboard_viewplaneOriented(scale, pivot2screen);
 		_viewplaneSpace.multiplyBy(scale);
 
-		pivot_perspective(scale, pivot2screen);
+		scale = getPerspectiveScale(pivot2screen);
 		_viewplaneSpace.multiplyBy(scale);
 	}
 };

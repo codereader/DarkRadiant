@@ -133,8 +133,7 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 
 			_manip2pivotStart = _pivot2worldStart.getFullInverse().getMultipliedBy(pivot._worldSpace);
 
-			Matrix4 device2manip;
-			ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
+			Matrix4 device2manip = constructDevice2Manip(_pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 			activeManipulator->getActiveComponent()->Construct(device2manip, devicePoint.x(), devicePoint.y());
 
 			_deviceStart = devicePoint;
@@ -161,8 +160,7 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 		GlobalUndoSystem().start();
 	}
 
-	Matrix4 device2manip;
-	ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
+	Matrix4 device2manip = constructDevice2Manip(_pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
 	Vector2 constrainedDevicePoint(devicePoint);
 
