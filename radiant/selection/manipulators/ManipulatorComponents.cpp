@@ -63,6 +63,25 @@ Vector3 ManipulatorComponentBase::getSphereIntersection(const Matrix4& pivot2wor
 	return intersectionPoint;
 }
 
+Vector3 ManipulatorComponentBase::getAxisConstrained(const Vector3& direction, const Vector3& axis)
+{
+	// Subtract anything that points along the axis from the direction vector
+	// after this step, the direction vector is perpendicular to axis.
+	return (direction - axis*direction.dot(axis)).getNormalised();
+}
+
+Vector3::ElementType ManipulatorComponentBase::getAngleForAxis(const Vector3& a, const Vector3& b, const Vector3& axis)
+{
+	if (axis.dot(a.crossProduct(b)) > 0.0)
+	{
+		return a.angle(b);
+	}
+	else
+	{
+		return -a.angle(b);
+	}
+}
+
 // ===============================================================================================
 
 void RotateFree::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
@@ -86,18 +105,23 @@ void RotateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, c
 
 void RotateAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
-    /*point_on_sphere(_start, device2manip, x, y);
-    constrain_to_axis(_start, _axis);*/
+	_start = getSphereIntersection(pivot2world, view, devicePoint);
+
+	// Constrain the start vector to an axis
+	_start = getAxisConstrained(_start, _axis);
 }
 
 /// \brief Converts current position to a normalised vector orthogonal to axis.
 void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
-    /*Vector3 current;
-    point_on_sphere(current, device2manip, x, y);
-    constrain_to_axis(current, _axis);
+	Vector3 current = getSphereIntersection(pivot2world, view, devicePoint);
 
-	_rotatable.rotate(Quaternion::createForAxisAngle(_axis, angle_for_axis(_start, current, _axis)));*/
+	// Constrain the start vector to an axis
+	current = getAxisConstrained(current, _axis);
+
+	Vector3::ElementType angle = getAngleForAxis(_start, current, _axis);
+
+	_rotatable.rotate(Quaternion::createForAxisAngle(_axis, angle));
 }
 
 // ===============================================================================================

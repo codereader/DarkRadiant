@@ -36,6 +36,19 @@ protected:
 	 * located at the pivot space origin. If the Ray misses the sphere, its nearest point will be returned.
 	 */
 	Vector3 getSphereIntersection(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint);
+
+	/**
+	 * Constrains the given direction in terms of the given axis.
+	 * The output will be stripped of anything that points along axis (i.e. it will be orthogonal to axis), 
+	 * and it will be normalised before it's returned.
+	 */
+	Vector3 getAxisConstrained(const Vector3& direction, const Vector3& axis);
+
+	/**
+	 * Returns the angle in radians between the given vectors a,b which must be orthogonal
+	 * to the given axis. If axis*(a x b) is negative, the angle is returned negative too.
+	 */
+	Vector3::ElementType getAngleForAxis(const Vector3& a, const Vector3& b, const Vector3& axis);
 };
 
 /* greebo: The following are specialised manipulatables that provide the methods as described in the ABC.
@@ -61,8 +74,9 @@ public:
 };
 
 class RotateAxis : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
+private:
 	Vector3 _axis;
 	Vector3 _start;
 	Rotatable& _rotatable;
@@ -78,7 +92,7 @@ public:
 
 	void SetAxis(const Vector3& axis)
 	{
-		_axis = axis;
+		_axis = axis.getNormalised();
 	}
 };
 
