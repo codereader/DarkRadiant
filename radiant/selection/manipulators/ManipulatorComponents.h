@@ -17,6 +17,21 @@
 namespace selection
 {
 
+class ManipulatorComponentBase :
+	public Manipulator::Component
+{
+public:
+	virtual ~ManipulatorComponentBase()
+	{}
+
+protected:
+	/**
+	 * Transform the device coordinates to a point in pivot space, 
+	 * located on the plane going through pivot space origin, orthogonal to the view direction
+	 */
+	Vector3 getPlaneProjectedPoint(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint);
+};
+
 /* greebo: The following are specialised manipulatables that provide the methods as described in the ABC.
  * They basically prepare and constraing the transformations of the three base movements above (Translatable, etc.)
  *
@@ -34,8 +49,8 @@ public:
 		_rotatable(rotatable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 };
 
 class RotateAxis : 
@@ -49,10 +64,10 @@ public:
 		_rotatable(rotatable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 
 	/// \brief Converts current position to a normalised vector orthogonal to axis.
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 
 	void SetAxis(const Vector3& axis)
 	{
@@ -70,8 +85,8 @@ public:
 		_translatable(translatable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 
 	void SetAxis(const Vector3& axis) 
 	{
@@ -80,7 +95,7 @@ public:
 };
 
 class TranslateFree : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
 private:
 	Vector3 _start;
@@ -90,8 +105,8 @@ public:
 		_translatable(translatable) 
 	{}
 	
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 };
 
 
@@ -107,8 +122,8 @@ public:
 		_scalable(scalable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 
 	void SetAxis(const Vector3& axis)
 	{
@@ -127,8 +142,8 @@ public:
 		_scalable(scalable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 };
 
 // ========= Translatables ===============================================

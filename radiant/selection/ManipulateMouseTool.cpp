@@ -137,8 +137,10 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 
 			_manip2pivotStart = _pivot2worldStart.getFullInverse().getMultipliedBy(pivot._worldSpace);
 
-			Matrix4 device2manip = constructDevice2Manip(_pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
-			activeManipulator->getActiveComponent()->Construct(device2manip, devicePoint.x(), devicePoint.y());
+			//Matrix4 device2pivot = constructDevice2Pivot(_pivot2worldStart, view);
+			//Matrix4 device2manip = constructDevice2Manip(_pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
+
+			activeManipulator->getActiveComponent()->beginTransformation(_pivot2worldStart, view, devicePoint);
 
 			_deviceStart = devicePoint;
 
@@ -164,12 +166,11 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 		GlobalUndoSystem().start();
 	}
 
-#if _DEBUG
-	Matrix4 pivot2device = constructPivot2Device(_pivot2worldStart, view);
-	
-	Vector4 pivotDev = pivot2device.transform(Vector4(0,0,0,1));
-
 	Matrix4 device2pivot = constructDevice2Pivot(_pivot2worldStart, view);
+	Matrix4 pivot2device = constructPivot2Device(_pivot2worldStart, view);
+
+#if _DEBUG
+	Vector4 pivotDev = pivot2device.transform(Vector4(0,0,0,1));
 
 	_debugText = (boost::format("\nPivotDevice x,y,z,w = (%5.3lf %5.3lf %5.3lf %5.3lf)") % pivotDev.x() % pivotDev.y() % pivotDev.z() % pivotDev.w()).str();
 
@@ -212,9 +213,9 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 		constrainedDevicePoint = _deviceStart + delta;
 	}
 
-	// Get the manipulatable from the currently active manipulator (done by selection test)
-	// and call the Transform method (can be anything)
-	activeManipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint.x(), constrainedDevicePoint.y());
+	// Get the component of the currently active manipulator (done by selection test)
+	// and call the transform method
+	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, constrainedDevicePoint);
 
 	_selectionSystem.onManipulationChanged();
 }

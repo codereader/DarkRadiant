@@ -2,6 +2,7 @@
 
 #include "igrid.h"
 #include "math/FloatTools.h"
+#include "pivot.h"
 
 #include "../Intersection.h"
 
@@ -18,81 +19,111 @@ void translation_local2object(Vector3& object, const Vector3& local, const Matri
 	object = local2object.getTranslatedBy(local).getMultipliedBy(local2object.getFullInverse()).translation();
 }
 
-// ===============================================================================================
+Vector3 ManipulatorComponentBase::getPlaneProjectedPoint(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+	Matrix4 device2pivot = constructDevice2Pivot(pivot2world, view);
 
-void RotateFree::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_sphere(_start, device2manip, x, y);
-    _start.normalise();
+	// greebo: We need to know the z-distance (or depth) of the pivot plane in device coordinates.
+	// x and y are defined by the mouse clicks, but we need the third depth component to pass into the
+	// device2pivot matrix. Lucky, this value can be extracted from the pivot2device matrix itself,
+	// because the distance of that plane in device space is stored in the tz matrix component.
+	// The trick is to invert the device2pivot matrix to get the tz value, to get a complete 4D point
+	// to transform back into pivot space.
+	Matrix4 pivot2device = constructPivot2Device(pivot2world, view);
+
+	// This is now the complete 4D point to transform back into pivot space
+	Vector4 point(devicePoint.x(), devicePoint.y(), pivot2device.tz(), 1);
+
+	// Running the point through the device2pivot matrix will give us the mouse coordinates relative to pivot origin
+	return device2pivot.transform(point).getProjected();
 }
 
-void RotateFree::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
-    Vector3 current;
+// ===============================================================================================
 
-    point_on_sphere(current, device2manip, x, y);
-    current.normalise();
+void RotateFree::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+    //point_on_sphere(_start, device2manip, x, y);
+    //_start.normalise();
+}
 
-	// call the Rotatable with its transform method
-    _rotatable.rotate(Quaternion::createForUnitVectors(_start, current));
+void RotateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+ //   Vector3 current;
+
+ //   point_on_sphere(current, device2manip, x, y);
+ //   current.normalise();
+
+	//// call the Rotatable with its transform method
+ //   _rotatable.rotate(Quaternion::createForUnitVectors(_start, current));
 }
 
 // ===============================================================================================
 
-void RotateAxis::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_sphere(_start, device2manip, x, y);
-    constrain_to_axis(_start, _axis);
+void RotateAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+    /*point_on_sphere(_start, device2manip, x, y);
+    constrain_to_axis(_start, _axis);*/
 }
 
 /// \brief Converts current position to a normalised vector orthogonal to axis.
-void RotateAxis::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
-    Vector3 current;
+void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+    /*Vector3 current;
     point_on_sphere(current, device2manip, x, y);
     constrain_to_axis(current, _axis);
 
-	_rotatable.rotate(Quaternion::createForAxisAngle(_axis, angle_for_axis(_start, current, _axis)));
+	_rotatable.rotate(Quaternion::createForAxisAngle(_axis, angle_for_axis(_start, current, _axis)));*/
 }
 
 // ===============================================================================================
 
-void TranslateAxis::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_axis(_start, _axis, device2manip, x, y);
+void TranslateAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+    /*point_on_axis(_start, _axis, device2manip, x, y);*/
 }
 
-void TranslateAxis::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
-    Vector3 current;
+void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+    /*Vector3 current;
     point_on_axis(current, _axis, device2manip, x, y);
     current = _axis * distance_for_axis(_start, current, _axis);
 
     translation_local2object(current, current, manip2object);
     current.snap(GlobalGrid().getGridSize());
 
-    _translatable.translate(current);
+    _translatable.translate(current);*/
 }
 
 // ===============================================================================================
 
-void TranslateFree::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_plane(_start, device2manip, x, y);
+void TranslateFree::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+	// Transform the device coordinates to a point in pivot space 
+	// The point is part of the plane going through pivot space origin, orthogonal to the view direction
+	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void TranslateFree::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
-    Vector3 current;
-    point_on_plane(current, device2manip, x, y);
-    current = current - _start;
+void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+    Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
+    Vector3 diff = current - _start;
 
-    translation_local2object(current, current, manip2object);
-    current.snap(GlobalGrid().getGridSize());
+    //translation_local2object(current, current, manip2object);
+	diff.snap(GlobalGrid().getGridSize());
 
-    _translatable.translate(current);
+    _translatable.translate(diff);
 }
 
 // ===============================================================================================
 
-void ScaleAxis::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_axis(_start, _axis, device2manip, x, y);
+void ScaleAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+    //point_on_axis(_start, _axis, device2manip, x, y);
 }
 
-void ScaleAxis::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
-    Vector3 current;
+void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+ /*   Vector3 current;
     point_on_axis(current, _axis, device2manip, x, y);
     Vector3 delta = current - _start;
 
@@ -105,17 +136,19 @@ void ScaleAxis::Transform(const Matrix4& manip2object, const Matrix4& device2man
       start[1] == 0 ? 1 : 1 + delta[1] / start[1],
       start[2] == 0 ? 1 : 1 + delta[2] / start[2]
     );
-    _scalable.scale(scale);
+    _scalable.scale(scale);*/
 }
 
 // ===============================================================================================
 
-void ScaleFree::Construct(const Matrix4& device2manip, const float x, const float y) {
-    point_on_plane(_start, device2manip, x, y);
+void ScaleFree::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) 
+{
+    //point_on_plane(_start, device2manip, x, y);
 }
 
-void ScaleFree::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
-    Vector3 current;
+void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+    /*Vector3 current;
     point_on_plane(current, device2manip, x, y);
     Vector3 delta = current - _start;
 
@@ -128,7 +161,7 @@ void ScaleFree::Transform(const Matrix4& manip2object, const Matrix4& device2man
       start[1] == 0 ? 1 : 1 + delta[1] / start[1],
       start[2] == 0 ? 1 : 1 + delta[2] / start[2]
     );
-    _scalable.scale(scale);
+    _scalable.scale(scale);*/
 }
 
 SelectionTranslator::SelectionTranslator(const TranslationCallback& onTranslation) :
