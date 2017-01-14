@@ -134,7 +134,7 @@ public:
 
 
 class ScaleAxis : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
 private:
 	Vector3 _start;
@@ -155,7 +155,7 @@ public:
 };
 
 class ScaleFree : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
 private:
 	Vector3 _start;

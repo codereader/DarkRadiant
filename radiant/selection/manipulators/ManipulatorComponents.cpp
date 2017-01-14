@@ -160,7 +160,6 @@ void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view
     Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
     Vector3 diff = current - _start;
 
-    //translation_local2object(current, current, manip2object);
 	diff.snap(GlobalGrid().getGridSize());
 
     _translatable.translate(diff);
@@ -170,50 +169,58 @@ void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view
 
 void ScaleAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
-    //point_on_axis(_start, _axis, device2manip, x, y);
+	// Transform the device coordinates to a point in pivot space 
+	// The point is part of the plane going through pivot space origin, orthogonal to the view direction
+	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
 void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
- /*   Vector3 current;
-    point_on_axis(current, _axis, device2manip, x, y);
-    Vector3 delta = current - _start;
+	// Get the regular difference between the starting point and the current mouse point
+	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
+	Vector3 diff = current - _start;
 
-    translation_local2object(delta, delta, manip2object);
-    delta.snap(GlobalGrid().getGridSize());
+	// Project this diff vector to our constraining axis
+	Vector3 axisProjected = _axis * diff.dot(_axis);
+
+	axisProjected.snap(GlobalGrid().getGridSize());
 
 	Vector3 start(_start.getSnapped(GlobalGrid().getGridSize()));
+
     Vector3 scale(
-      start[0] == 0 ? 1 : 1 + delta[0] / start[0],
-      start[1] == 0 ? 1 : 1 + delta[1] / start[1],
-      start[2] == 0 ? 1 : 1 + delta[2] / start[2]
+      start[0] == 0 ? 1 : 1 + axisProjected[0] / start[0],
+      start[1] == 0 ? 1 : 1 + axisProjected[1] / start[1],
+      start[2] == 0 ? 1 : 1 + axisProjected[2] / start[2]
     );
-    _scalable.scale(scale);*/
+
+    _scalable.scale(scale);
 }
 
 // ===============================================================================================
 
 void ScaleFree::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) 
 {
-    //point_on_plane(_start, device2manip, x, y);
+	// Transform the device coordinates to a point in pivot space 
+	// The point is part of the plane going through pivot space origin, orthogonal to the view direction
+	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
 void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
-    /*Vector3 current;
-    point_on_plane(current, device2manip, x, y);
-    Vector3 delta = current - _start;
+	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
+	Vector3 diff = current - _start;
 
-    translation_local2object(delta, delta, manip2object);
-    delta.snap(GlobalGrid().getGridSize());
+	diff.snap(GlobalGrid().getGridSize());
 
     Vector3 start(_start.getSnapped(GlobalGrid().getGridSize()));
+
     Vector3 scale(
-      start[0] == 0 ? 1 : 1 + delta[0] / start[0],
-      start[1] == 0 ? 1 : 1 + delta[1] / start[1],
-      start[2] == 0 ? 1 : 1 + delta[2] / start[2]
+      start[0] == 0 ? 1 : 1 + diff[0] / start[0],
+      start[1] == 0 ? 1 : 1 + diff[1] / start[1],
+      start[2] == 0 ? 1 : 1 + diff[2] / start[2]
     );
-    _scalable.scale(scale);*/
+
+    _scalable.scale(scale);
 }
 
 SelectionTranslator::SelectionTranslator(const TranslationCallback& onTranslation) :
