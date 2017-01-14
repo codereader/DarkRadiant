@@ -79,19 +79,22 @@ void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, c
 
 void TranslateAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
-    /*point_on_axis(_start, _axis, device2manip, x, y);*/
+	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
 void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
-    /*Vector3 current;
-    point_on_axis(current, _axis, device2manip, x, y);
-    current = _axis * distance_for_axis(_start, current, _axis);
+	// Get the regular difference between the starting point and the current mouse point
+	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
+	Vector3 diff = current - _start;
 
-    translation_local2object(current, current, manip2object);
-    current.snap(GlobalGrid().getGridSize());
+	// Project this diff vector to our constraining axis
+	Vector3 axisProjected = _axis * diff.dot(_axis);
+	
+	// Snap and apply translation
+	axisProjected.snap(GlobalGrid().getGridSize());
 
-    _translatable.translate(current);*/
+	_translatable.translate(axisProjected);
 }
 
 // ===============================================================================================

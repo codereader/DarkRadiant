@@ -75,8 +75,10 @@ public:
 	}
 };
 
-class TranslateAxis : public Manipulator::Component
+class TranslateAxis : 
+	public ManipulatorComponentBase
 {
+private:
 	Vector3 _start;
 	Vector3 _axis;
 	Translatable& _translatable;
@@ -90,7 +92,7 @@ public:
 
 	void SetAxis(const Vector3& axis) 
 	{
-		_axis = axis;
+		_axis = axis.getNormalised();
 	}
 };
 
