@@ -32,6 +32,10 @@ private:
 	Vector2 _deviceStart;
 	bool _undoBegun;
 
+#if _DEBUG
+	std::string _debugText;
+#endif
+
 public:
     ManipulateMouseTool(SelectionSystem& selectionSystem);
 
@@ -47,6 +51,8 @@ public:
 
     virtual unsigned int getPointerMode() override;
     virtual unsigned int getRefreshMode() override;
+
+	void renderOverlay() override;
 
 private:
 	bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);
