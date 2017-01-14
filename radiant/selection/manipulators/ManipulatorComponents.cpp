@@ -2,9 +2,8 @@
 
 #include "igrid.h"
 #include "math/FloatTools.h"
+#include "math/Ray.h"
 #include "pivot.h"
-
-#include "../Intersection.h"
 
 namespace selection
 {

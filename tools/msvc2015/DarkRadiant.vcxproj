@@ -446,7 +446,6 @@
     <ClCompile Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.cpp" />
     <ClCompile Include="..\..\radiant\render\debug\SpacePartitionRenderer.cpp" />
     <ClCompile Include="..\..\radiant\selection\BestPoint.cpp" />
-    <ClCompile Include="..\..\radiant\selection\Intersection.cpp" />
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
@@ -725,7 +724,6 @@
     <ClInclude Include="..\..\radiant\render\debug\SpacePartitionRenderer.h" />
     <ClInclude Include="..\..\radiant\selection\BestPoint.h" />
     <ClInclude Include="..\..\radiant\selection\Device.h" />
-    <ClInclude Include="..\..\radiant\selection\Intersection.h" />
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h" />
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiant\selection\Remap.h" />

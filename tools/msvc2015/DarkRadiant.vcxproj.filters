@@ -379,9 +379,6 @@
     <ClCompile Include="..\..\radiant\selection\BestPoint.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\Intersection.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
@@ -1171,9 +1168,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Device.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\Intersection.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h">
