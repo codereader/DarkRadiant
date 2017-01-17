@@ -132,14 +132,6 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 		// is a manipulator selected / the pivot moving?
 		if (_manipulationActive)
 		{
-			selection::Pivot2World pivot;
-			pivot.update(pivot2World, view.GetModelview(), view.GetProjection(), view.GetViewport());
-
-			_manip2pivotStart = _pivot2worldStart.getFullInverse().getMultipliedBy(pivot._worldSpace);
-
-			//Matrix4 device2pivot = constructDevice2Pivot(_pivot2worldStart, view);
-			//Matrix4 device2manip = constructDevice2Manip(_pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
-
 			activeManipulator->getActiveComponent()->beginTransformation(_pivot2worldStart, view, devicePoint);
 
 			_deviceStart = devicePoint;
@@ -166,10 +158,10 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 		GlobalUndoSystem().start();
 	}
 
+#if _DEBUG
 	Matrix4 device2pivot = constructDevice2Pivot(_pivot2worldStart, view);
 	Matrix4 pivot2device = constructPivot2Device(_pivot2worldStart, view);
 
-#if _DEBUG
 	Vector4 pivotDev = pivot2device.transform(Vector4(0,0,0,1));
 
 	_debugText = (boost::format("\nPivotDevice x,y,z,w = (%5.3lf %5.3lf %5.3lf %5.3lf)") % pivotDev.x() % pivotDev.y() % pivotDev.z() % pivotDev.w()).str();
@@ -186,8 +178,6 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 	worldPosH = device2pivot.transform(pivotDev).getProjected();
 	_debugText += (boost::format("\nTest reversal x,y,z = (%5.3lf %5.3lf %5.3lf)") % worldPosH.x() % worldPosH.y() % worldPosH.z()).str();
 #endif
-
-	Matrix4 device2manip = constructDevice2Manip(_pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
 	Vector2 constrainedDevicePoint(devicePoint);
 

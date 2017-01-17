@@ -27,8 +27,6 @@ private:
 	Matrix4 _pivot2worldStart;
 	bool _manipulationActive;
 
-	Matrix4 _manip2pivotStart;
-
 	Vector2 _deviceStart;
 	bool _undoBegun;
 

@@ -158,32 +158,6 @@ inline Matrix4 getPerspectiveScale(const Matrix4& pivot2screen)
 }
 
 /**
- * Returns a transform that is converting device coordinates to local object space (manipulator space)
- *
- * Not entirely sure what the algorithm is, but it's starting with the device2object matrix,
- * multiplying it by the scale taken from the object2screen transform, and adding the perspective
- * division on top of that:
- *
- * device2manip = ScaleByInverseW * Scale(object2screen) * device2Object
- *
- * DEPRECATED
- */
-inline Matrix4 constructDevice2Manip(const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device, const Matrix4& device2screen)
-{
-	Matrix4 pivot2screen = constructObject2Screen(object2world, world2view, view2device, device2screen);
-
-	Matrix4 device2manip = constructObject2Device(object2world, world2view, view2device);
-
-	Matrix4 scale = getInverseScale(pivot2screen);
-	device2manip.multiplyBy(scale);
-
-	scale = getPerspectiveScale(pivot2screen);
-	device2manip.multiplyBy(scale);
-
-	return device2manip.getFullInverse();
-}
-
-/**
  * greebo: Replacement for the above constructDevice2Manip. This produces a matrix
  * that is converting pivot space coordinates into normalised device coords.
  * The tz value of this matrix and its inverse can be used to convert mouse click coords 

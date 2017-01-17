@@ -24,7 +24,7 @@ Vector3 ManipulatorComponentBase::getPlaneProjectedPoint(const Matrix4& pivot2wo
 
 	// greebo: We need to know the z-distance (or depth) of the pivot plane in device coordinates.
 	// x and y are defined by the mouse clicks, but we need the third depth component to pass into the
-	// device2pivot matrix. Lucky, this value can be extracted from the pivot2device matrix itself,
+	// device2pivot matrix. Luckily, this value can be extracted from the pivot2device matrix itself,
 	// because the distance of that plane in device space is stored in the tz matrix component.
 	// The trick is to invert the device2pivot matrix to get the tz value, to get a complete 4D point
 	// to transform back into pivot space.
