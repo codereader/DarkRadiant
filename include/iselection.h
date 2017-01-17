@@ -73,7 +73,7 @@ public:
 
 		/**
 		 * Called when the user successfully activates this component. The calling code provides
-		 * information about the view we're operating, the starting device coords and the
+		 * information about the view we're operating in, the starting device coords and the
 		 * location of the current selection pivot.
 		 */
 		virtual void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) = 0;
@@ -82,8 +82,10 @@ public:
 		 * Called during mouse movement, the component is asked to calculate the deltas and distances
 		 * it needs to perform the translation/rotation/scale/whatever the operator does on the selected objects.
 		 * The pivot2world transform relates to the original pivot location at the time the transformation started.
+		 * The constrained flag indicates the user is holding down the corresponding key during movement, 
+		 * usually the SHIFT key. It's up to the component to decide how to handle the constraint.
 		 */
-		virtual void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) = 0;
+		virtual void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) = 0;
 	};
 
 	virtual ~Manipulator() {}

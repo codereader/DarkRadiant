@@ -182,30 +182,11 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 	Vector2 constrainedDevicePoint(devicePoint);
 
 	// Constrain the movement to the axes, if the modifier is held
-	if (wxGetKeyState(WXK_SHIFT))
-	{
-		// Get the movement delta relative to the start point
-		Vector2 delta = devicePoint - _deviceStart;
-
-		// Set the "minor" value of the movement to zero
-		if (fabs(delta[0]) > fabs(delta[1]))
-		{
-			// X axis is major, reset the y-value to the start
-			delta[1] = 0;
-		}
-		else
-		{
-			// Y axis is major, reset the x-value to the start
-			delta[0] = 0;
-		}
-
-		// Add the modified delta to the start point, constrained to one axis
-		constrainedDevicePoint = _deviceStart + delta;
-	}
+	bool constrainedFlag = wxGetKeyState(WXK_SHIFT);
 
 	// Get the component of the currently active manipulator (done by selection test)
 	// and call the transform method
-	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, constrainedDevicePoint);
+	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, devicePoint, constrainedFlag);
 
 	_selectionSystem.onManipulationChanged();
 }

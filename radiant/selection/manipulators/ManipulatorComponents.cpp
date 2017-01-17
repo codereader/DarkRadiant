@@ -89,7 +89,7 @@ void RotateFree::beginTransformation(const Matrix4& pivot2world, const VolumeTes
     _start.normalise();
 }
 
-void RotateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+void RotateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
 {
 	Vector3 current = getSphereIntersection(pivot2world, view, devicePoint);
 	current.normalise();
@@ -111,7 +111,7 @@ void RotateAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTes
 }
 
 /// \brief Converts current position to a normalised vector orthogonal to axis.
-void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
 {
 	Vector3 current = getSphereIntersection(pivot2world, view, devicePoint);
 
@@ -130,7 +130,7 @@ void TranslateAxis::beginTransformation(const Matrix4& pivot2world, const Volume
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
 {
 	// Get the regular difference between the starting point and the current mouse point
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
@@ -154,10 +154,22 @@ void TranslateFree::beginTransformation(const Matrix4& pivot2world, const Volume
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
 {
     Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
     Vector3 diff = current - _start;
+
+	if (constrained)
+	{
+		// Locate the index of the component carrying the largest abs value
+		int largestIndex = fabs(diff.y()) > fabs(diff.x()) ?
+			(fabs(diff.z()) > fabs(diff.y()) ? 2 : 1) :
+			(fabs(diff.z()) > fabs(diff.x()) ? 2 : 0);
+
+		// Zero out the other two components
+		diff[(largestIndex + 1) % 3] = 0;
+		diff[(largestIndex + 2) % 3] = 0;
+	}
 
 	diff.snap(GlobalGrid().getGridSize());
 
@@ -173,7 +185,7 @@ void ScaleAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
 {
 	// Get the regular difference between the starting point and the current mouse point
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
@@ -204,7 +216,7 @@ void ScaleFree::beginTransformation(const Matrix4& pivot2world, const VolumeTest
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
 {
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 	Vector3 diff = current - _start;
