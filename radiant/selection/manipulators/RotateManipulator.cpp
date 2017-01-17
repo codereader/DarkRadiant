@@ -1,9 +1,11 @@
 #include "RotateManipulator.h"
 
+#include "igl.h"
 #include "selection/SelectionPool.h"
 #include "selection/BestPoint.h"
 #include "selection/TransformationVisitors.h"
 #include "render/View.h"
+#include <boost/format.hpp>
 
 namespace selection
 {
@@ -156,6 +158,22 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
 	collector.SetState(_pivotPointShader, RenderableCollector::eWireframeOnly);
 	collector.SetState(_pivotPointShader, RenderableCollector::eFullMaterials);
 	collector.addRenderable(_pivotPoint, _pivot2World._worldSpace);
+
+	collector.addRenderable(*this, Matrix4::getIdentity());
+}
+
+void RotateManipulator::render(const RenderInfo& info) const
+{
+	if (_selectableX.isSelected() || _selectableY.isSelected() || 
+		_selectableZ.isSelected() || _selectableScreen.isSelected())
+	{
+		glColor3d(0.75, 0, 0);
+
+		glRasterPos3dv(_pivot2World._worldSpace.t().getVector3() - Vector3(10, 10, 10));
+
+		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
+		GlobalOpenGL().drawString((boost::format("Rotate: %3.2lf degrees") % angle).str());
+	}
 }
 
 void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
@@ -256,6 +274,11 @@ void RotateManipulator::setSelected(bool select)
     _selectableZ.setSelected(select);
     _selectableScreen.setSelected(select);
 	_selectablePivotPoint.setSelected(select);
+
+	if (!select)
+	{
+		_rotateAxis.resetCurAngle();
+	}
 }
 
 bool RotateManipulator::isSelected() const

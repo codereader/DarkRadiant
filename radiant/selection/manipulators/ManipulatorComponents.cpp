@@ -125,6 +125,8 @@ void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, c
 		angle = float_snapped(angle, 5 * c_DEG2RADMULT);
 	}
 
+	_curAngle = angle;
+
 	_rotatable.rotate(Quaternion::createForAxisAngle(_axis, angle));
 }
 

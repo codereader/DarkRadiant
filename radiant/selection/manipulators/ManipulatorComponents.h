@@ -80,9 +80,13 @@ private:
 	Vector3 _axis;
 	Vector3 _start;
 	Rotatable& _rotatable;
+
+	// The most recently calculated angle for rendering purposes
+	Vector3::ElementType _curAngle;
 public:
 	RotateAxis(Rotatable& rotatable) :
-		_rotatable(rotatable) 
+		_rotatable(rotatable),
+		_curAngle(0)
 	{}
 
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
@@ -93,6 +97,16 @@ public:
 	void SetAxis(const Vector3& axis)
 	{
 		_axis = axis.getNormalised();
+	}
+
+	void resetCurAngle()
+	{
+		_curAngle = 0;
+	}
+
+	Vector3::ElementType getCurAngle() const
+	{
+		return _curAngle;
 	}
 };
 
