@@ -183,6 +183,30 @@ public:
 	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
 };
 
+class ModelScaleComponent :
+	public ManipulatorComponentBase
+{
+private:
+	// The pivot point (the opposite corner to the one we're dragging)
+	Matrix4 _scalePivot2World;
+
+	// The moving point at the beginning of the operation
+	Vector3 _start;
+
+	// The node carrying the model
+	scene::INodePtr _entityNode;
+
+public:
+	ModelScaleComponent()
+	{}
+
+	void setEntityNode(const scene::INodePtr& node);
+	void setScalePivot(const Vector3& scalePivot);
+
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+};
+
 // ========= Translatables ===============================================
 
 class ResizeTranslatable : 

@@ -17,19 +17,13 @@ namespace selection
 {
 
 class ModelScaleManipulator :
-	public ManipulatorBase,
-	public Scalable
+	public ManipulatorBase
 {
 private:
 	ManipulationPivot& _pivot;
 
 	// Resize component
-	ScaleFree _scaleFree;
-
-	RenderableArrowLine _arrowX;
-	RenderableArrowLine _arrowY;
-	RenderableArrowLine _arrowZ;
-	RenderableQuad _quadScreen;
+	ModelScaleComponent _scaleComponent;
 
 	Pivot2World _pivot2World;
 
@@ -51,8 +45,6 @@ public:
 	void setSelected(bool select) override;
 	bool isSelected() const override;
 	void render(RenderableCollector& collector, const VolumeTest& volume) override;
-
-	void scale(const Vector3& scaling) override;
 
 private:
 	void foreachSelectedTransformable(

@@ -13,14 +13,8 @@ namespace selection
 
 ModelScaleManipulator::ModelScaleManipulator(ManipulationPivot& pivot) :
 	_pivot(pivot),
-	_scaleFree(*this),
 	_renderableCornerPoints(GL_POINTS)
 {
-	draw_arrowline(64, &_arrowX.front(), 0);
-	draw_arrowline(64, &_arrowY.front(), 1);
-	draw_arrowline(64, &_arrowZ.front(), 2);
-
-	draw_quad(16, &_quadScreen.front());
 }
 
 ModelScaleManipulator::Type ModelScaleManipulator::getType() const
@@ -30,7 +24,7 @@ ModelScaleManipulator::Type ModelScaleManipulator::getType() const
 
 ModelScaleManipulator::Component* ModelScaleManipulator::getActiveComponent()
 {
-	return &_scaleFree;
+	return &_scaleComponent;
 }
 
 void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
@@ -38,14 +32,13 @@ void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& 
 	_pivot2World.update(_pivot.getMatrix4(), view.GetModelview(), view.GetProjection(), view.GetViewport());
 
 	_curManipulatable.reset();
+	_scaleComponent.setEntityNode(scene::INodePtr());
+	_scaleComponent.setScalePivot(Vector3(0, 0, 0));
 
-	BestSelector selector;
-	SelectionVolume volume(view);
-	SelectionIntersection best;
-	scene::INodePtr candidate;
-	
 	foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
 	{
+		if (_curManipulatable) return; // already done here
+
 		const AABB& aabb = node->worldAABB();
 		
 		Vector3 points[8];
@@ -55,7 +48,18 @@ void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& 
 		{
 			if (view.TestPoint(points[i]))
 			{
-				candidate = node;
+				rMessage() << "Got the point " << points[i] << std::endl;
+				_curManipulatable = node;
+
+				// We use the opposite corner as scale pivot
+				Vector3 scalePivot = aabb.origin * 2 - points[i];
+
+				_scaleComponent.setEntityNode(node);
+				_scaleComponent.setScalePivot(scalePivot);
+
+				rMessage() << "Got a node to manipulate: " << _curManipulatable << std::endl;
+
+				break;
 			}
 #if 0
 			SelectionIntersection intersection;
@@ -69,12 +73,6 @@ void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& 
 #endif
 		}
 	});
-
-	if (candidate)
-	{
-		_curManipulatable = candidate;
-		rMessage() << "Got a node to manipulate: " << _curManipulatable << std::endl;
-	}
 
 #if 0
 	{
@@ -167,22 +165,6 @@ void ModelScaleManipulator::render(RenderableCollector& collector, const VolumeT
 	//collector.addRenderable(_arrowZ, _pivot2World._worldSpace);
 
 	//collector.addRenderable(_quadScreen, _pivot2World._viewpointSpace);
-}
-
-void ModelScaleManipulator::scale(const Vector3& scaling)
-{
-	rMessage() << "Scale: " << scaling << std::endl;
-
-	if (_curManipulatable)
-	{
-		Entity* entity = Node_getEntity(_curManipulatable);
-
-		// Apply the scaling spawnarg to this entity
-		entity->setKeyValue("dr_model_scale", string::to_string(scaling));
-	}
-
-	// Update the scene views
-	SceneChangeNotify();
 }
 
 void ModelScaleManipulator::foreachSelectedTransformable(

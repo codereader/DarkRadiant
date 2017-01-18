@@ -241,6 +241,71 @@ void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, co
     _scalable.scale(scale);
 }
 
+void ModelScaleComponent::setEntityNode(const scene::INodePtr& node)
+{
+	_entityNode = node;
+}
+
+void ModelScaleComponent::setScalePivot(const Vector3& scalePivot)
+{
+	_scalePivot2World = Matrix4::getTranslation(scalePivot);
+}
+
+void ModelScaleComponent::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
+{
+	// We ignore the incoming pivot2world matrix, since we have our own pivot which is set 
+	// by the owning Manipulator class
+	_start = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
+
+	rMessage() << " Starting Point " << _start << std::endl;
+}
+
+void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+{
+	Vector3 current = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
+
+	Vector3 diff = current - _start;
+
+	rMessage() << " Current Point " << current << " diff is " << diff << std::endl;
+
+	// TODO: Constrain to axis (_start - _scalePivot) if flag is set
+
+	// TODO: Check for negative scale
+
+	//Vector3 scalePivot = _scalePivot2World.t().getVector3();
+
+	// In Orthographic views it's entirely possible that the starting point
+	// is in the same plane as the pivot, so check for zero divisions
+	double xScale = _start[0] != 0 ? fabs(current[0]) / fabs(_start[0]) : 1;
+	double yScale = _start[1] != 0 ? fabs(current[1]) / fabs(_start[1]) : 1;
+	double zScale = _start[2] != 0 ? fabs(current[2]) / fabs(_start[2]) : 1;
+
+	Vector3 scale(xScale, yScale, zScale);
+	Vector3 translation = ((_start * scale) - _start) * 0.5;
+
+	//translation.set(0, 0, 0);
+
+	rMessage() << " Current Scale: " << scale << ", Translation " << translation << std::endl;
+
+
+	// Apply the translation
+	ITransformablePtr transformable = Node_getTransformable(_entityNode);
+
+	if (transformable)
+	{
+		transformable->setType(TRANSFORM_PRIMITIVE);
+		transformable->setTranslation(translation);
+	}
+
+	// Apply the scale to the model beneath the entity
+	Entity* entity = Node_getEntity(_entityNode);
+
+	// Apply the scaling spawnarg to this entity
+	entity->setKeyValue("dr_model_scale", string::to_string(scale));
+
+	SceneChangeNotify();
+}
+
 SelectionTranslator::SelectionTranslator(const TranslationCallback& onTranslation) :
 	_onTranslation(onTranslation)
 {}

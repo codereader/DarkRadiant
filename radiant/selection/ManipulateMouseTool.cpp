@@ -328,6 +328,7 @@ void ManipulateMouseTool::renderOverlay()
 
 void ManipulateMouseTool::render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
 {
+#if 0
 	if (nothingSelected()) return;
 
 	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
@@ -346,6 +347,7 @@ void ManipulateMouseTool::render(RenderSystem& renderSystem, RenderableCollector
 	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
 
 	activeManipulator->render(collector, volume);
+#endif
 }
 
 }
