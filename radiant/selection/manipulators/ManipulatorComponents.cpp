@@ -257,36 +257,43 @@ void ModelScaleComponent::beginTransformation(const Matrix4& pivot2world, const 
 	// by the owning Manipulator class
 	_start = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
 
-	rMessage() << " Starting Point " << _start << std::endl;
+	assert(_entityNode);
+
+	Entity* entity = Node_getEntity(_entityNode);
+
+	_startOrigin = string::convert<Vector3>(entity->getKeyValue("origin"));
 }
 
 void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
 {
 	Vector3 current = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
 
-	Vector3 diff = current - _start;
-
-	rMessage() << " Current Point " << current << " diff is " << diff << std::endl;
-
-	// TODO: Constrain to axis (_start - _scalePivot) if flag is set
-
-	// TODO: Check for negative scale
-
-	//Vector3 scalePivot = _scalePivot2World.t().getVector3();
-
 	// In Orthographic views it's entirely possible that the starting point
 	// is in the same plane as the pivot, so check for zero divisions
-	double xScale = _start[0] != 0 ? fabs(current[0]) / fabs(_start[0]) : 1;
-	double yScale = _start[1] != 0 ? fabs(current[1]) / fabs(_start[1]) : 1;
-	double zScale = _start[2] != 0 ? fabs(current[2]) / fabs(_start[2]) : 1;
+	Vector3 scale(
+		_start[0] != 0 ? fabs(current[0]) / fabs(_start[0]) : 1,
+		_start[1] != 0 ? fabs(current[1]) / fabs(_start[1]) : 1,
+		_start[2] != 0 ? fabs(current[2]) / fabs(_start[2]) : 1
+	);
 
-	Vector3 scale(xScale, yScale, zScale);
-	Vector3 translation = ((_start * scale) - _start) * 0.5;
+	// Default to uniform scale, use to the value deviating most from the 1.0 scale
+	if (!constrained)
+	{
+		Vector3 delta = scale - Vector3(1.0, 1.0, 1.0);
 
-	//translation.set(0, 0, 0);
+		int largestIndex = fabs(delta.y()) > fabs(delta.x()) ?
+			(fabs(delta.z()) > fabs(delta.y()) ? 2 : 1) :
+			(fabs(delta.z()) > fabs(delta.x()) ? 2 : 0);
 
-	rMessage() << " Current Scale: " << scale << ", Translation " << translation << std::endl;
+		scale.x() = scale.y() = scale.z() = scale[largestIndex];
+	}
 
+	// Calculate the origin relative to the pivot
+	Vector3 relOrigin = _startOrigin - _scalePivot2World.t().getVector3();
+
+	Vector3 relOriginScaled = relOrigin * scale;
+
+	Vector3 translation = relOriginScaled - relOrigin;
 
 	// Apply the translation
 	ITransformablePtr transformable = Node_getTransformable(_entityNode);

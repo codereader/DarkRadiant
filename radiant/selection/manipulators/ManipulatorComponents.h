@@ -196,6 +196,9 @@ private:
 	// The node carrying the model
 	scene::INodePtr _entityNode;
 
+	// The original entity origin point
+	Vector3 _startOrigin;
+
 public:
 	ModelScaleComponent()
 	{}
