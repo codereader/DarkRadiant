@@ -310,6 +310,8 @@ void RenderablePicoModel::setModelPath(const std::string& modelPath)
 
 void RenderablePicoModel::evaluateScale(const Vector3& scale)
 {
+	_localAABB = AABB();
+
 	// Apply the scale to each surface
 	for (Surface& surf : _surfVec)
 	{
@@ -324,13 +326,20 @@ void RenderablePicoModel::evaluateScale(const Vector3& scale)
 		// Apply the scale, on top of the original surface, this should save us from
 		// reverting the transformation each time the scale changes
 		surf.surface->applyScale(scale, *(surf.originalSurface));
+
+		// Extend the model AABB to include the surface's AABB
+		_localAABB.includeAABB(surf.surface->getAABB());
 	}
 }
 
 // Freeze transform, move the applied scale to the original model
 void RenderablePicoModel::freezeScale()
 {
-	// TODO
+	// Apply the scale to each surface
+	for (Surface& surf : _surfVec)
+	{
+		
+	}
 }
 
 } // namespace

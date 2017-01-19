@@ -407,6 +407,8 @@ void RenderablePicoSurface::applyScale(const Vector3& scale, const RenderablePic
 		return;
 	}
 
+	_localAABB = AABB();
+
 	Matrix4 scaleMatrix = Matrix4::getScale(scale);
 	Matrix4 invTranspScale = Matrix4::getScale(Vector3(1/scale.x(), 1/scale.y(), 1/scale.z()));
 
@@ -416,6 +418,9 @@ void RenderablePicoSurface::applyScale(const Vector3& scale, const RenderablePic
 	{
 		_vertices[i].vertex = scaleMatrix.transformPoint(originalSurface._vertices[i].vertex);
 		_vertices[i].normal = invTranspScale.transformPoint(originalSurface._vertices[i].normal);
+
+		// Expand the AABB to include this new vertex
+		_localAABB.includePoint(_vertices[i].vertex);
 	}
 
 	calculateTangents();

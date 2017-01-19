@@ -48,7 +48,6 @@ void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& 
 		{
 			if (view.TestPoint(points[i]))
 			{
-				rMessage() << "Got the point " << points[i] << std::endl;
 				_curManipulatable = node;
 
 				// We use the opposite corner as scale pivot
@@ -57,61 +56,10 @@ void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& 
 				_scaleComponent.setEntityNode(node);
 				_scaleComponent.setScalePivot(scalePivot);
 
-				rMessage() << "Got a node to manipulate: " << _curManipulatable << std::endl;
-
 				break;
 			}
-#if 0
-			SelectionIntersection intersection;
-			volume.TestPoint(points[i], intersection);
-
-			if (intersection.isValid() && intersection < best)
-			{
-				best = intersection;
-				candidate = node;
-			}
-#endif
 		}
 	});
-
-#if 0
-	{
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._worldSpace));
-
-		{
-			SelectionIntersection best;
-			Line_BestPoint(local2view, &_arrowX.front(), best);
-			selector.addSelectable(best, &_selectableX);
-		}
-
-		{
-			SelectionIntersection best;
-			Line_BestPoint(local2view, &_arrowY.front(), best);
-			selector.addSelectable(best, &_selectableY);
-		}
-
-		{
-			SelectionIntersection best;
-			Line_BestPoint(local2view, &_arrowZ.front(), best);
-			selector.addSelectable(best, &_selectableZ);
-		}
-	}
-
-	{
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._viewpointSpace));
-
-		{
-			SelectionIntersection best;
-			Quad_BestPoint(local2view, eClipCullCW, &_quadScreen.front(), best);
-			selector.addSelectable(best, &_selectableScreen);
-		}
-	}
-
-	if (!selector.empty())
-	{
-		(*selector.begin()).second->setSelected(true);
-	}
-#endif
 }
 
 void ModelScaleManipulator::setSelected(bool select)
@@ -159,12 +107,6 @@ void ModelScaleManipulator::render(RenderableCollector& collector, const VolumeT
 	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
 
 	collector.addRenderable(_renderableCornerPoints, Matrix4::getIdentity());
-
-	//collector.addRenderable(_arrowX, _pivot2World._worldSpace);
-	//collector.addRenderable(_arrowY, _pivot2World._worldSpace);
-	//collector.addRenderable(_arrowZ, _pivot2World._worldSpace);
-
-	//collector.addRenderable(_quadScreen, _pivot2World._viewpointSpace);
 }
 
 void ModelScaleManipulator::foreachSelectedTransformable(
