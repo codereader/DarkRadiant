@@ -44,6 +44,9 @@ public:
 
 	virtual ~PicoModelNode();
 
+	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
+	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
+
 	// ModelNode implementation
 	virtual const IModel& getIModel() const;
 	virtual IModel& getIModel();

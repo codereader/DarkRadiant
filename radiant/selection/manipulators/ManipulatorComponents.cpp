@@ -305,10 +305,18 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 	}
 
 	// Apply the scale to the model beneath the entity
-	Entity* entity = Node_getEntity(_entityNode);
+	_entityNode->foreachNode([&](const scene::INodePtr& node)
+	{
+		ITransformablePtr transformable = Node_getTransformable(node);
 
-	// Apply the scaling spawnarg to this entity
-	entity->setKeyValue("dr_model_scale", string::to_string(scale));
+		if (transformable)
+		{
+			transformable->setType(TRANSFORM_PRIMITIVE);
+			transformable->setScale(scale);
+		}
+
+		return true;
+	});
 
 	SceneChangeNotify();
 }
