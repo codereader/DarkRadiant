@@ -47,12 +47,6 @@ private:
 		// The (unmodified) surface object
 		RenderablePicoSurfacePtr originalSurface;
 
-		// The current working scale
-		Vector3 scaleTransformed;
-
-		// The scale for this surface (is 1,1,1 for an unmodified one)
-		Vector3 scale;
-
 		// The name of the material (with skin applied)
 		// The default material name is stored on the surface
 		std::string activeMaterial;
@@ -60,17 +54,13 @@ private:
 		// The shader this surface is using
 		ShaderPtr shader;
 
-		Surface() :
-			scaleTransformed(1,1,1),
-			scale(1,1,1)
+		Surface()
 		{}
 
 		// Constructor
 		Surface(const RenderablePicoSurfacePtr& surface_) :
 			surface(surface_),
-			originalSurface(surface),
-			scaleTransformed(1, 1, 1),
-			scale(1, 1, 1)
+			originalSurface(surface)
 		{}
 	};
 
@@ -79,6 +69,12 @@ private:
 
 	// Vector of renderable surfaces for this model
 	SurfaceList _surfVec;
+
+	// The current working scale
+	Vector3 _scaleTransformed;
+
+	// The scale for this model (is 1,1,1 for an unmodified one)
+	Vector3 _scale;
 
 	// Local AABB for this model
 	AABB _localAABB;
@@ -109,6 +105,8 @@ private:
 	void captureShaders();
 
 	void undoSave();
+
+	void applyScaleToSurfaces();
 
 public:
 

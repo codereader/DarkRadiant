@@ -16,8 +16,9 @@ namespace model
 {
 
 // Constructor
-RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
-										 const std::string& fExt) :
+RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fExt) :
+	_scaleTransformed(1,1,1),
+	_scale(1,1,1),
 	_undoStateSaver(nullptr),
 	_mapFileChangeTracker(nullptr)
 {
@@ -48,6 +49,8 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
 
 RenderablePicoModel::RenderablePicoModel(const RenderablePicoModel& other) :
 	_surfVec(other._surfVec.size()),
+	_scaleTransformed(other._scaleTransformed),
+	_scale(other._scale), // use scale of other model
 	_localAABB(other._localAABB),
 	_filename(other._filename),
 	_modelPath(other._modelPath),
@@ -57,7 +60,8 @@ RenderablePicoModel::RenderablePicoModel(const RenderablePicoModel& other) :
 	// Copy the other model's surfaces, but not its shaders, revert to default
 	for (std::size_t i = 0; i < other._surfVec.size(); ++i)
 	{
-		_surfVec[i].surface = other._surfVec[i].surface;
+		// Copy-construct the other surface, inheriting any applied scale
+		_surfVec[i].surface = std::make_shared<RenderablePicoSurface>(*(other._surfVec[i].surface));
 		_surfVec[i].originalSurface = other._surfVec[i].originalSurface;
 		_surfVec[i].activeMaterial = _surfVec[i].surface->getDefaultMaterial();
 	}
@@ -150,23 +154,26 @@ void RenderablePicoModel::render(const RenderInfo& info) const
 	}
 }
 
-std::string RenderablePicoModel::getFilename() const {
+std::string RenderablePicoModel::getFilename() const 
+{
 	return _filename;
 }
 
-void RenderablePicoModel::setFilename(const std::string& name) {
+void RenderablePicoModel::setFilename(const std::string& name)
+{
 	_filename = name;
 }
 
 // Return vertex count of this model
-int RenderablePicoModel::getVertexCount() const {
+int RenderablePicoModel::getVertexCount() const 
+{
 	int sum = 0;
-	for (SurfaceList::const_iterator i = _surfVec.begin();
-		 i != _surfVec.end();
-		 ++i)
+
+	for (const Surface& s : _surfVec)
 	{
-		sum += i->surface->getNumVertices();
+		sum += s.surface->getNumVertices();
 	}
+
 	return sum;
 }
 
@@ -175,11 +182,9 @@ int RenderablePicoModel::getPolyCount() const
 {
 	int sum = 0;
 
-	for (SurfaceList::const_iterator i = _surfVec.begin();
-		 i != _surfVec.end();
-		 ++i)
+	for (const Surface& s : _surfVec)
 	{
-		sum += i->surface->getNumTriangles();
+		sum += s.surface->getNumTriangles();
 	}
 
 	return sum;
@@ -334,13 +339,17 @@ void RenderablePicoModel::setModelPath(const std::string& modelPath)
 
 void RenderablePicoModel::revertScale()
 {
-	for (Surface& surf : _surfVec)
-	{
-		surf.scaleTransformed = surf.scale;
-	}
+	_scaleTransformed = _scale;
 }
 
 void RenderablePicoModel::evaluateScale(const Vector3& scale)
+{
+	_scaleTransformed *= scale;
+
+	applyScaleToSurfaces();
+}
+
+void RenderablePicoModel::applyScaleToSurfaces()
 {
 	_localAABB = AABB();
 
@@ -355,11 +364,9 @@ void RenderablePicoModel::evaluateScale(const Vector3& scale)
 			surf.surface = std::make_shared<RenderablePicoSurface>(*surf.originalSurface);
 		}
 
-		surf.scaleTransformed *= scale;
-
 		// Apply the scale, on top of the original surface, this should save us from
 		// reverting the transformation each time the scale changes
-		surf.surface->applyScale(surf.scaleTransformed, *(surf.originalSurface));
+		surf.surface->applyScale(_scaleTransformed, *(surf.originalSurface));
 
 		// Extend the model AABB to include the surface's AABB
 		_localAABB.includeAABB(surf.surface->getAABB());
@@ -372,10 +379,7 @@ void RenderablePicoModel::freezeScale()
 	undoSave();
 
 	// Apply the scale to each surface
-	for (Surface& surf : _surfVec)
-	{
-		surf.scale = surf.scaleTransformed;
-	}
+	_scale = _scaleTransformed;
 }
 
 void RenderablePicoModel::undoSave()
@@ -388,17 +392,17 @@ void RenderablePicoModel::undoSave()
 
 IUndoMementoPtr RenderablePicoModel::exportState() const
 {
-	// TODO
-	return IUndoMementoPtr(new undo::BasicUndoMemento<Vector3>(Vector3(0,0,0)));
+	return IUndoMementoPtr(new undo::BasicUndoMemento<Vector3>(_scale));
 }
 
 void RenderablePicoModel::importState(const IUndoMementoPtr& state)
 {
 	undoSave();
 
-	undo::BasicUndoMemento<Vector3>& memento = *std::static_pointer_cast< undo::BasicUndoMemento<Vector3> >(state);
+	_scale = std::static_pointer_cast< undo::BasicUndoMemento<Vector3> >(state)->data();
+	_scaleTransformed = _scale;
 
-	// TODO
+	applyScaleToSurfaces();
 }
 
 } // namespace
