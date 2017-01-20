@@ -65,9 +65,6 @@ void EntityNode::construct()
 	_skinKeyObserver.setCallback(std::bind(&ModelKey::skinChanged, &_modelKey, std::placeholders::_1));
 	addKeyObserver("skin", _skinKeyObserver);
 
-	_modelScaleKeyObserver.setCallback(std::bind(&ModelKey::modelScaleChanged, &_modelKey, std::placeholders::_1));
-	addKeyObserver("dr_model_scale", _modelScaleKeyObserver);
-
 	_shaderParms.addKeyObservers();
 }
 

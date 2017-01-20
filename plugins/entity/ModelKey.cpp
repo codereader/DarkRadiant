@@ -135,18 +135,3 @@ void ModelKey::skinChanged(const std::string& value)
 		skinned->skinChanged(value);
 	}
 }
-
-void ModelKey::modelScaleChanged(const std::string& value)
-{
-	if (_modelNode)
-	{
-		ITransformablePtr transformable = Node_getTransformable(_modelNode);
-
-		if (transformable)
-		{
-			transformable->setType(TransformModifierType::TRANSFORM_PRIMITIVE);
-			transformable->setScale(string::convert<Vector3>(value));
-		}
-	}
-}
-

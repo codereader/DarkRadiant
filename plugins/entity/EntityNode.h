@@ -60,7 +60,6 @@ protected:
 	ModelKey _modelKey;
 	KeyObserverDelegate _modelKeyObserver;
 	KeyObserverDelegate _skinKeyObserver;
-	KeyObserverDelegate _modelScaleKeyObserver;
 
 	// A helper class managing the collection of KeyObservers attached to the Doom3Entity
 	KeyObserverMap _keyObservers;
