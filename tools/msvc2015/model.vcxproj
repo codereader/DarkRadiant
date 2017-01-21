@@ -323,6 +323,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\model\PicoModelLoader.h" />
+    <ClInclude Include="..\..\plugins\model\PicoModelModule.h" />
     <ClInclude Include="..\..\plugins\model\PicoModelNode.h" />
     <ClInclude Include="..\..\plugins\model\plugin.h" />
     <ClInclude Include="..\..\plugins\model\RenderablePicoModel.h" />

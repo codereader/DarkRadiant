@@ -94,9 +94,11 @@ typedef std::weak_ptr<IModel> IModelWeakPtr;
  *         derives from this class. Use a cast on this class to
  *         identify model nodes in the scene.
  */
-class ModelNode {
+class ModelNode
+{
 public:
-    virtual ~ModelNode() {}
+    virtual ~ModelNode()
+	{}
 
 	// Returns the contained IModel
 	virtual const IModel& getIModel() const = 0;
@@ -120,6 +122,35 @@ public:
 };
 typedef std::shared_ptr<IModelExporter> IModelExporterPtr;
 
+/**
+ * Importer interface for models. An importer must be able
+ * to load a model (node) from the VFS.
+ */
+class IModelImporter
+{
+public:
+	// Returns the uppercase file extension this exporter is suitable for
+	virtual const std::string& getExtension() const = 0;
+
+	/**
+	* greebo: Returns a newly created model node for the given model name.
+	*
+	* @modelName: This is usually the value of the "model" spawnarg of entities.
+	*
+	* @returns: the newly created modelnode (can be NULL if the model was not found).
+	*/
+	virtual scene::INodePtr loadModel(const std::string& modelName) = 0;
+
+	/**
+	* Load a model from the VFS, and return the IModel subclass for it.
+	*
+	* @returns: the IModelPtr containing the renderable model or
+	*           NULL if the model loader could not load the file.
+	*/
+	virtual model::IModelPtr loadModelFromPath(const std::string& path) = 0;
+};
+typedef std::shared_ptr<IModelImporter> IModelImporterPtr;
+
 class IModelFormatManager :
 	public RegisterableModule
 {
@@ -127,59 +158,36 @@ public:
 	virtual ~IModelFormatManager()
 	{}
 
+	// Register/unregister an importer class
+	virtual void registerImporter(const IModelImporterPtr& importer) = 0;
+	virtual void unregisterImporter(const IModelImporterPtr& importer) = 0;
+
+	// Find an importer for the given extension, returns the NullModelLoader if nothing found
+	// Passing in an empty extension will return the NullModelLoader as well
+	virtual IModelImporterPtr getImporter(const std::string& extension) = 0;
+
 	// Register/unregister an exporter class
 	virtual void registerExporter(const IModelExporterPtr& exporter) = 0;
 	virtual void unregisterExporter(const IModelExporterPtr& exporter) = 0;
+
+	// Find an exporter for the given extension, returns empty if nothing found
+	virtual IModelExporterPtr getExporter(const std::string& extension) = 0;
 };
 
 } // namespace model
 
 // Utility methods
-inline bool Node_isModel(const scene::INodePtr& node) {
-	return std::dynamic_pointer_cast<model::ModelNode>(node) != NULL;
+inline bool Node_isModel(const scene::INodePtr& node) 
+{
+	return std::dynamic_pointer_cast<model::ModelNode>(node) != nullptr;
 }
 
-inline model::ModelNodePtr Node_getModel(const scene::INodePtr& node) {
+inline model::ModelNodePtr Node_getModel(const scene::INodePtr& node)
+{
 	return std::dynamic_pointer_cast<model::ModelNode>(node);
 }
 
 const char* const MODULE_MODELFORMATMANAGER("ModelFormatManager");
-const std::string MODULE_MODELLOADER("ModelLoader"); // fileType is appended ("ModeLoaderASE")
-
-/** Model loader module API interface.
- */
-class ModelLoader :
-	public RegisterableModule
-{
-public:
-	/**
-	 * greebo: Returns a newly created model node for the given model name.
-	 *
-	 * @modelName: This is usually the value of the "model" spawnarg of entities.
-	 *
-	 * @returns: the newly created modelnode (can be NULL if the model was not found).
-	 */
-	virtual scene::INodePtr loadModel(const std::string& modelName) = 0;
-
-	/**
-	 * Load a model from the VFS, and return the IModel subclass for it.
-	 *
-	 * @returns: the IModelPtr containing the renderable model or
-	 *           NULL if the model loader could not load the file.
-	 */
-	virtual model::IModelPtr loadModelFromPath(const std::string& path) = 0;
-};
-typedef std::shared_ptr<ModelLoader> ModelLoaderPtr;
-
-// Acquires the PatchCreator of the given type ("ASE", "NULL", "3DS", etc.)
-inline ModelLoader& GlobalModelLoader(const std::string& fileType) {
-	ModelLoaderPtr _modelLoader(
-		std::static_pointer_cast<ModelLoader>(
-			module::GlobalModuleRegistry().getModule(MODULE_MODELLOADER + fileType) // e.g. "ModeLoaderASE"
-		)
-	);
-	return *_modelLoader;
-}
 
 inline model::IModelFormatManager& GlobalModelFormatManager()
 {

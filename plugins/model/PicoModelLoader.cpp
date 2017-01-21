@@ -1,7 +1,6 @@
 #include "PicoModelLoader.h"
 
 #include "ifilesystem.h"
-#include "ifiletypes.h"
 #include "iarchive.h"
 #include "imodelcache.h"
 
@@ -31,12 +30,17 @@ namespace {
 
 PicoModelLoader::PicoModelLoader(const picoModule_t* module, const std::string& extension) :
 	_module(module),
-	_extension(extension),
-	_moduleName("ModelLoader" + extension) // e.g. ModelLoaderASE
+	_extension(boost::algorithm::to_upper_copy(extension))
 {}
 
+const std::string& PicoModelLoader::getExtension() const
+{
+	return _extension;
+}
+
 // Returns a new ModelNode for the given model name
-scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
+scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) 
+{
 	// Initialise the paths, this is all needed for realisation
 	std::string path = rootPath(modelName);
 	std::string name = os::getRelativePath(modelName, path);
@@ -46,7 +50,7 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
 	// Try to load the model from the given VFS path
 	IModelPtr model = GlobalModelCache().getModel(name);
 
-	if (model == NULL)
+	if (!model)
 	{
 		rError() << "PicoModelLoader: Could not load model << " << modelName << std::endl;
 		return scene::INodePtr();
@@ -56,10 +60,10 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
 	RenderablePicoModelPtr picoModel =
 		std::dynamic_pointer_cast<RenderablePicoModel>(model);
 
-	if (picoModel != NULL)
+	if (picoModel)
 	{
 		// Load was successful, construct a modelnode using this resource
-		return PicoModelNodePtr(new PicoModelNode(picoModel));
+		return std::make_shared<PicoModelNode>(picoModel);
 	}
 	else
 	{
@@ -75,7 +79,7 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
 	// Open an ArchiveFile to load
 	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
 
-	if (file == NULL)
+	if (!file)
 	{
 		rError() << "Failed to load model " << name << std::endl;
 		return IModelPtr();
@@ -95,7 +99,8 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
 	);
 
 	// greebo: Check if the model load was successful
-	if (model == NULL || model->numSurfaces == 0) {
+	if (!model || model->numSurfaces == 0)
+	{
 		// Model is either NULL or has no surfaces, this must've failed
 		return IModelPtr();
 	}
@@ -103,44 +108,14 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
 	RenderablePicoModelPtr modelObj(
 		new RenderablePicoModel(model, fExt)
 	);
+
 	// Set the filename
 	modelObj->setFilename(os::getFilename(file->getName()));
 	modelObj->setModelPath(name);
 
 	PicoFreeModel(model);
+
 	return modelObj;
-}
-
-// RegisterableModule implementation
-const std::string& PicoModelLoader::getName() const
-{
-	return _moduleName; // e.g. ModelLoaderASE
-}
-
-const StringSet& PicoModelLoader::getDependencies() const
-{
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_FILETYPES);
-	}
-
-	return _dependencies;
-}
-
-void PicoModelLoader::initialiseModule(const ApplicationContext& ctx)
-{
-	rMessage() << "PicoModelLoader: " << getName() << " initialised." << std::endl;
-
-	std::string extLower = boost::to_lower_copy(_extension);
-	std::string filter("*." + extLower);
-
-	// Register the model file extension in the FileTypRegistry
-	GlobalFiletypes().registerPattern("model", FileTypePattern(_module->displayName, extLower, filter));
-	GlobalFiletypes().registerModule("model", extLower, getName());
 }
 
 } // namespace model
