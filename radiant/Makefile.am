@@ -251,9 +251,9 @@ darkradiant_SOURCES = main.cpp \
                       log/StringLogDevice.cpp \
                       log/LogStreamBuf.cpp \
                       log/LogFile.cpp \
-                      referencecache/ModelCache.cpp \
-                      referencecache/NullModel.cpp \
-                      referencecache/NullModelNode.cpp 
+                      model/ModelCache.cpp \
+                      model/NullModel.cpp \
+                      model/NullModelNode.cpp 
 
 TESTS = facePlaneTest
 check_PROGRAMS = facePlaneTest

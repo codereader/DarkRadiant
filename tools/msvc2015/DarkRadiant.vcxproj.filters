@@ -152,9 +152,6 @@
     <Filter Include="src\xyview">
       <UniqueIdentifier>{c770bd9e-5b03-48c4-8410-e4db36fd6057}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\referencecache">
-      <UniqueIdentifier>{8cecf758-bd34-441e-97c9-9cb0ce3b46eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\layers">
       <UniqueIdentifier>{49a229c1-445c-4b3b-94d5-6b637f47d65b}</UniqueIdentifier>
     </Filter>
@@ -196,6 +193,9 @@
     </Filter>
     <Filter Include="src\selection\manipulators">
       <UniqueIdentifier>{d29d1907-07b9-4549-a336-642933e4602b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\model">
+      <UniqueIdentifier>{d4ec4e26-57e8-4f14-b256-14521d12ef43}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -688,15 +688,6 @@
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp">
       <Filter>src\xyview</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\referencecache\ModelCache.cpp">
-      <Filter>src\referencecache</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\referencecache\NullModel.cpp">
-      <Filter>src\referencecache</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\referencecache\NullModelNode.cpp">
-      <Filter>src\referencecache</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\layers\LayerCommandTarget.cpp">
       <Filter>src\layers</Filter>
     </ClCompile>
@@ -894,6 +885,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.cpp">
       <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\model\ModelCache.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\model\NullModel.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\model\NullModelNode.cpp">
+      <Filter>src\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1533,18 +1533,6 @@
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h">
       <Filter>src\xyview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\referencecache\ModelCache.h">
-      <Filter>src\referencecache</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\referencecache\NullModel.h">
-      <Filter>src\referencecache</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\referencecache\NullModelLoader.h">
-      <Filter>src\referencecache</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\referencecache\NullModelNode.h">
-      <Filter>src\referencecache</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h">
       <Filter>src\layers</Filter>
     </ClInclude>
@@ -1820,6 +1808,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.h">
       <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\ModelCache.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\NullModel.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\NullModelLoader.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\NullModelNode.h">
+      <Filter>src\model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

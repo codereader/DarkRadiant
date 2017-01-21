@@ -345,6 +345,9 @@
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp" />
+    <ClCompile Include="..\..\radiant\model\ModelCache.cpp" />
+    <ClCompile Include="..\..\radiant\model\NullModel.cpp" />
+    <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
@@ -560,9 +563,6 @@
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
-    <ClCompile Include="..\..\radiant\referencecache\ModelCache.cpp" />
-    <ClCompile Include="..\..\radiant\referencecache\NullModel.cpp" />
-    <ClCompile Include="..\..\radiant\referencecache\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerCommandTarget.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerSystem.cpp" />
     <ClCompile Include="..\..\radiant\log\Console.cpp" />
@@ -591,6 +591,10 @@
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h" />
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h" />
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h" />
+    <ClInclude Include="..\..\radiant\model\ModelCache.h" />
+    <ClInclude Include="..\..\radiant\model\NullModel.h" />
+    <ClInclude Include="..\..\radiant\model\NullModelLoader.h" />
+    <ClInclude Include="..\..\radiant\model\NullModelNode.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
@@ -861,10 +865,6 @@
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
-    <ClInclude Include="..\..\radiant\referencecache\ModelCache.h" />
-    <ClInclude Include="..\..\radiant\referencecache\NullModel.h" />
-    <ClInclude Include="..\..\radiant\referencecache\NullModelLoader.h" />
-    <ClInclude Include="..\..\radiant\referencecache\NullModelNode.h" />
     <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h" />
     <ClInclude Include="..\..\radiant\layers\LayerCommandTarget.h" />
     <ClInclude Include="..\..\radiant\layers\LayerSystem.h" />
