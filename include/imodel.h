@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IMODEL_H)
-#define INCLUDED_IMODEL_H
+#pragma once
 
 #include "Bounded.h"
 #include "irender.h"
@@ -128,6 +106,32 @@ public:
 };
 typedef std::shared_ptr<ModelNode> ModelNodePtr;
 
+/**
+* Exporter Interface for models (meshes).
+*/
+class IModelExporter
+{
+public:
+	virtual ~IModelExporter()
+	{}
+
+	// Returns the uppercase file extension this exporter is suitable for
+	virtual const std::string& getExtension() const = 0;
+};
+typedef std::shared_ptr<IModelExporter> IModelExporterPtr;
+
+class IModelFormatManager :
+	public RegisterableModule
+{
+public:
+	virtual ~IModelFormatManager()
+	{}
+
+	// Register/unregister an exporter class
+	virtual void registerExporter(const IModelExporterPtr& exporter) = 0;
+	virtual void unregisterExporter(const IModelExporterPtr& exporter) = 0;
+};
+
 } // namespace model
 
 // Utility methods
@@ -139,6 +143,7 @@ inline model::ModelNodePtr Node_getModel(const scene::INodePtr& node) {
 	return std::dynamic_pointer_cast<model::ModelNode>(node);
 }
 
+const char* const MODULE_MODELFORMATMANAGER("ModelFormatManager");
 const std::string MODULE_MODELLOADER("ModelLoader"); // fileType is appended ("ModeLoaderASE")
 
 /** Model loader module API interface.
@@ -176,4 +181,12 @@ inline ModelLoader& GlobalModelLoader(const std::string& fileType) {
 	return *_modelLoader;
 }
 
-#endif /* _IMODEL_H_ */
+inline model::IModelFormatManager& GlobalModelFormatManager()
+{
+	std::shared_ptr<model::IModelFormatManager> _modelFormatManager(
+		std::static_pointer_cast<model::IModelFormatManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_MODELFORMATMANAGER)
+			)
+	);
+	return *_modelFormatManager;
+}

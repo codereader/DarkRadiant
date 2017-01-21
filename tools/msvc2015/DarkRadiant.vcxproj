@@ -346,6 +346,7 @@
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelCache.cpp" />
+    <ClCompile Include="..\..\radiant\model\ModelFormatManager.cpp" />
     <ClCompile Include="..\..\radiant\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
@@ -592,6 +593,7 @@
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h" />
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiant\model\ModelCache.h" />
+    <ClInclude Include="..\..\radiant\model\ModelFormatManager.h" />
     <ClInclude Include="..\..\radiant\model\NullModel.h" />
     <ClInclude Include="..\..\radiant\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiant\model\NullModelNode.h" />
