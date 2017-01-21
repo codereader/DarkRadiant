@@ -221,9 +221,7 @@ public:
 	/**
 	 * Return the list of RenderablePicoSurface objects.
 	 */
-	const SurfaceList& getSurfaces() const {
-		return _surfVec;
-	}
+	const SurfaceList& getSurfaces() const;
 
 	// Revert to base scale
 	void revertScale();
@@ -231,7 +229,7 @@ public:
 	// TransformationChanged, apply the given scale to the "working copy"
 	void evaluateScale(const Vector3& scale);
 
-	// Freeze transform, move the applied scale to the original model
+	// Freeze transform, store new base scale
 	void freezeScale();
 
 	// Undoable implementation

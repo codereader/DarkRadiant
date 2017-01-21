@@ -327,6 +327,11 @@ bool RenderablePicoModel::getIntersection(const Ray& ray, Vector3& intersection,
 	}
 }
 
+const RenderablePicoModel::SurfaceList& RenderablePicoModel::getSurfaces() const
+{
+	return _surfVec;
+}
+
 std::string RenderablePicoModel::getModelPath() const
 {
 	return _modelPath;
