@@ -1093,12 +1093,12 @@ void Map::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelN
 	// Open a temporary file to write the model
 	int i = 100;
 
-	boost::filesystem::path filenameWithoutExt = boost::filesystem::change_extension(modelKeyValue, "");
+	boost::filesystem::path filenameWithoutExt = boost::filesystem::change_extension(modelKeyValue.filename(), "");
 
 	std::string generatedFilename = (filenameWithoutExt.string() + "_" + string::to_string(i) + "." + extension);
 	boost::filesystem::path targetFile = targetPath / generatedFilename;
 
-	while (boost::filesystem::exists(targetFile) && ++i < INT_MAX);
+	while (boost::filesystem::exists(targetFile) && ++i < INT_MAX)
 	{
 		generatedFilename = (filenameWithoutExt.string() + "_" + string::to_string(i) + "." + extension);
 		targetFile = targetPath / generatedFilename;
@@ -1106,7 +1106,7 @@ void Map::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelN
 
 	modelPath /= generatedFilename;
 
-	boost::filesystem::path tempFile = targetPath / ("_" + targetPath.filename().string());
+	boost::filesystem::path tempFile = targetPath / ("_" + generatedFilename);
 
 	std::ofstream tempStream(tempFile.string().c_str());
 
@@ -1130,9 +1130,6 @@ void Map::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelN
 		{
 			rError() << "Could not remove the file " << targetFile.string() << std::endl
 				<< e.what() << std::endl;
-
-			throw std::runtime_error(
-				(boost::format(_("Could not remove the file %s")) % targetFile.string()).str());
 		}
 	}
 
@@ -1144,12 +1141,10 @@ void Map::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelN
 	{
 		rError() << "Could not rename the temporary file " << tempFile.string() << std::endl
 			<< e.what() << std::endl;
-
-		throw std::runtime_error(
-			(boost::format(_("Could not rename the temporary file %s")) % tempFile.string()).str());
 	}
 
-	entity->setKeyValue("model", modelPath.string());
+	std::string newModelKey = boost::algorithm::replace_all_copy(modelPath.string(), "\\", "/");
+	entity->setKeyValue("model", newModelKey);
 }
 
 // Creates the static module instance
