@@ -10,6 +10,7 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include "PicoModelLoader.h"
+#include "AseExporter.h"
 
 typedef unsigned char byte;
 
@@ -108,6 +109,8 @@ public:
 				}
 			}
 		}
+
+		GlobalModelFormatManager().registerExporter(std::make_shared<AseExporter>());
 	}
 };
 
