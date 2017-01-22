@@ -30,8 +30,9 @@ public:
 	// Accessor to the singleton instance
 	static NullModelNodePtr InstancePtr();
 
-	virtual const IModel& getIModel() const;
-	virtual IModel& getIModel();
+	const IModel& getIModel() const override;
+	IModel& getIModel() override;
+	bool hasModifiedScale() override;
 
 	void testSelect(Selector& selector, SelectionTest& test);
 

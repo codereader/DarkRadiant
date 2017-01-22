@@ -410,4 +410,9 @@ void RenderablePicoModel::importState(const IUndoMementoPtr& state)
 	applyScaleToSurfaces();
 }
 
+const Vector3& RenderablePicoModel::getScale() const
+{
+	return _scale;
+}
+
 } // namespace

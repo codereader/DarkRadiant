@@ -232,6 +232,9 @@ private:
 
 	void loadMapResourceFromPath(const std::string& path);
 
+	void saveScaledModels();
+	void saveScaledModel(const scene::INodePtr& entity, const model::ModelNodePtr& childModel);
+
 }; // class Map
 
 } // namespace map

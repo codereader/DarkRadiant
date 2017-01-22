@@ -44,6 +44,11 @@ IModel& NullModelNode::getIModel()
 	return *_nullModel;
 }
 
+bool NullModelNode::hasModifiedScale()
+{
+	return false;
+}
+
 void NullModelNode::testSelect(Selector& selector, SelectionTest& test) {
 	_nullModel->testSelect(selector, test, localToWorld());
 }

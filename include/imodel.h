@@ -105,6 +105,10 @@ public:
 
 	// Returns the contained IModel
 	virtual IModel& getIModel() = 0;
+
+	// Returns true if this model's scale has been modified
+	// and needs to be written to file
+	virtual bool hasModifiedScale() = 0;
 };
 typedef std::shared_ptr<ModelNode> ModelNodePtr;
 
@@ -119,6 +123,12 @@ public:
 
 	// Returns the uppercase file extension this exporter is suitable for
 	virtual const std::string& getExtension() const = 0;
+
+	// Adds the given Surface to the exporter's queue
+	virtual void addSurface(const IModelSurface& surface) = 0;
+
+	// Export the model file to the given stream
+	virtual void exportToStream(std::ostream& stream) = 0;
 };
 typedef std::shared_ptr<IModelExporter> IModelExporterPtr;
 

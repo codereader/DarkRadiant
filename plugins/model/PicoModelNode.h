@@ -48,8 +48,9 @@ public:
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ModelNode implementation
-	virtual const IModel& getIModel() const;
-	virtual IModel& getIModel();
+	const IModel& getIModel() const override;
+	IModel& getIModel() override;
+	bool hasModifiedScale() override;
 
 	// SkinnedModel implementation
 	// Skin changed notify

@@ -40,6 +40,11 @@ model::IModel& MD5ModelNode::getIModel() {
 	return *_model;
 }
 
+bool MD5ModelNode::hasModifiedScale()
+{
+	return false; // not supported
+}
+
 void MD5ModelNode::lightsChanged()
 {
 	_lightList->setDirty();

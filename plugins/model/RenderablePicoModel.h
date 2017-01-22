@@ -235,6 +235,9 @@ public:
 	// Undoable implementation
 	IUndoMementoPtr exportState() const override;
 	void importState(const IUndoMementoPtr& state) override;
+
+	// Returns the current base scale of this model
+	const Vector3& getScale() const;
 };
 typedef std::shared_ptr<RenderablePicoModel> RenderablePicoModelPtr;
 

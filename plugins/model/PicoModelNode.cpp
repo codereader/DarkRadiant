@@ -52,6 +52,11 @@ IModel& PicoModelNode::getIModel()
 	return *_picoModel;
 }
 
+bool PicoModelNode::hasModifiedScale()
+{
+	return _picoModel->getScale() != Vector3(1, 1, 1);
+}
+
 const AABB& PicoModelNode::localAABB() const {
 	return _picoModel->localAABB();
 }
