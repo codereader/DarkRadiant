@@ -1040,8 +1040,6 @@ void Map::saveScaledModels()
 			{
 				saveScaledModel(node, childModel);
 			}
-
-			return false; // no further traversal
 		}
 
 		return true;
@@ -1084,18 +1082,18 @@ void Map::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelN
 			targetPath.string() << std::endl;
 	}
 
-	targetPath /= "models";
-	targetPath /= "map_specific";
-	targetPath /= "scaled";
+	boost::filesystem::path modelPath = "models/map_specific/scaled";
+
+	targetPath /= modelPath;
 
 	boost::filesystem::create_directories(targetPath);
 
-	boost::filesystem::path modelPath = entity->getKeyValue("model");
+	boost::filesystem::path modelKeyValue = entity->getKeyValue("model");
 
 	// Open a temporary file to write the model
 	int i = 100;
 
-	boost::filesystem::path filenameWithoutExt = boost::filesystem::change_extension(modelPath, "");
+	boost::filesystem::path filenameWithoutExt = boost::filesystem::change_extension(modelKeyValue, "");
 
 	std::string generatedFilename = (filenameWithoutExt.string() + "_" + string::to_string(i) + "." + extension);
 	boost::filesystem::path targetFile = targetPath / generatedFilename;
@@ -1105,6 +1103,8 @@ void Map::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelN
 		generatedFilename = (filenameWithoutExt.string() + "_" + string::to_string(i) + "." + extension);
 		targetFile = targetPath / generatedFilename;
 	}
+
+	modelPath /= generatedFilename;
 
 	boost::filesystem::path tempFile = targetPath / ("_" + targetPath.filename().string());
 
@@ -1148,6 +1148,8 @@ void Map::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelN
 		throw std::runtime_error(
 			(boost::format(_("Could not rename the temporary file %s")) % tempFile.string()).str());
 	}
+
+	entity->setKeyValue("model", modelPath.string());
 }
 
 // Creates the static module instance
