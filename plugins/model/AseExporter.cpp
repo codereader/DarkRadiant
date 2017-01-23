@@ -49,7 +49,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 {
 	// Header / scene block
 	stream << "*3DSMAX_ASCIIEXPORT	200" << std::endl;
-	stream << "*COMMENT \"Dark Radiant ASCII Scene Export(*.ase) v0.7\"" << std::endl;
+	stream << "*COMMENT \"DarkRadiant ASCII Scene Export(*.ase)\"" << std::endl;
 	stream << "*SCENE{" << std::endl;
 	stream << "\t*SCENE_FILENAME \"" << GlobalMapModule().getMapName() << "\"" << std::endl;
 	stream << "\t*SCENE_FIRSTFRAME 0" << std::endl;
@@ -117,7 +117,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 		stream << "*GEOMOBJECT {" << std::endl;
 
 		stream << "\t*NODE_NAME \"mesh" << m << "\"" << std::endl;
-		stream << "\t\t*NODE_TM {" << std::endl;
+		stream << "\t*NODE_TM {" << std::endl;
 		stream << "\t\t*NODE_NAME \"mesh" << m << "\"" << std::endl;
 		stream << "\t\t*INHERIT_POS 0 0 0" << std::endl;
 		stream << "\t\t*INHERIT_ROT 0 0 0" << std::endl;
@@ -141,7 +141,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 		stream << "\t\t*MESH_NUMFACES " << (surface.indices.size() / 3) << std::endl;
 
 		// Vertices
-		stream << "\t\t*MESH_VERTEX_LIST{" << std::endl;
+		stream << "\t\t*MESH_VERTEX_LIST {" << std::endl;
 
 		for (std::size_t v = 0; v < surface.vertices.size(); ++v)
 		{
