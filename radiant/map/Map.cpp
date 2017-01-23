@@ -438,7 +438,11 @@ bool Map::save(const MapFormatPtr& mapFormat)
     _saveInProgress = true;
 
     // Disable screen updates for the scope of this function
-    ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Saving Map"));
+    ui::ScreenUpdateBlocker blocker(_("Processing..."), "");
+
+	blocker.setMessage(_("Preprocessing"));
+
+	signal_mapEvent().emit(IMap::MapSaving);
 
 	// write out scaled models
 	saveScaledModels();
@@ -449,12 +453,14 @@ bool Map::save(const MapFormatPtr& mapFormat)
     // Store the map positions into the worldspawn spawnargs
     GlobalMapPosition().savePositions();
 
-	signal_mapEvent().emit(IMap::MapSaved);
+	wxutil::ScopeTimer timer("map save");
 
-    wxutil::ScopeTimer timer("map save");
+	blocker.setMessage(_("Saving Map"));
 
     // Save the actual map resource
     bool success = _resource->save(mapFormat);
+
+	signal_mapEvent().emit(IMap::MapSaved);
 
     // Remove the saved camera position
     removeCameraPosition();
