@@ -50,7 +50,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 	// Header / scene block
 	stream << "*3DSMAX_ASCIIEXPORT	200" << std::endl;
 	stream << "*COMMENT \"DarkRadiant ASCII Scene Export(*.ase)\"" << std::endl;
-	stream << "*SCENE{" << std::endl;
+	stream << "*SCENE {" << std::endl;
 	stream << "\t*SCENE_FILENAME \"" << GlobalMapModule().getMapName() << "\"" << std::endl;
 	stream << "\t*SCENE_FIRSTFRAME 0" << std::endl;
 	stream << "\t*SCENE_LASTFRAME 100" << std::endl;
@@ -84,7 +84,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 		stream << "\t\t*MATERIAL_SELFILLUM 0.0000" << std::endl;
 		stream << "\t\t*MATERIAL_FALLOFF In" << std::endl;
 		stream << "\t\t*MATERIAL_XP_TYPE Filter" << std::endl;
-		stream << "\t\t*MAP_DIFFUSE{" << std::endl;
+		stream << "\t\t*MAP_DIFFUSE {" << std::endl;
 		stream << "\t\t\t*MAP_NAME \"" << _surfaces[m].materialName << "\"" << std::endl;
 		stream << "\t\t\t*MAP_CLASS \"Bitmap\"" << std::endl;
 		stream << "\t\t\t*MAP_SUBNO 1" << std::endl;
