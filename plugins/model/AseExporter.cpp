@@ -88,7 +88,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 		stream << "\t\t\t*MAP_NAME \"" << _surfaces[m].materialName << "\"" << std::endl;
 		stream << "\t\t\t*MAP_CLASS \"Bitmap\"" << std::endl;
 		stream << "\t\t\t*MAP_SUBNO 1" << std::endl;
-		stream << "\t\t\t* MAP_AMOUNT 1.0000" << std::endl;
+		stream << "\t\t\t*MAP_AMOUNT 1.0000" << std::endl;
 		stream << "\t\t\t*BITMAP \"\\\\purgatory\\purgatory\\doom\\base\\" << aseMaterial << "\"" << std::endl;
 		stream << "\t\t\t*MAP_TYPE Screen" << std::endl;
 		stream << "\t\t\t*UVW_U_OFFSET 0.0000" << std::endl;
@@ -101,7 +101,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 		stream << "\t\t\t*UVW_NOUSE_AMT 1.0000" << std::endl;
 		stream << "\t\t\t*UVW_NOISE_SIZE 1.0000" << std::endl;
 		stream << "\t\t\t*UVW_NOISE_LEVEL 1" << std::endl;
-		stream << "\t\t\t* UVW_NOISE_PHASE 0.0000" << std::endl;
+		stream << "\t\t\t*UVW_NOISE_PHASE 0.0000" << std::endl;
 		stream << "\t\t\t*BITMAP_FILTER Pyramidal" << std::endl;
 		stream << "\t\t}" << std::endl;
 		stream << "\t}" << std::endl;
