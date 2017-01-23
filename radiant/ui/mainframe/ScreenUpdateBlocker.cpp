@@ -104,6 +104,9 @@ void ScreenUpdateBlocker::setProgress(float progress)
 	_gauge->SetValue(static_cast<int>(progress * 100));
 
 	_pulseAllowed = false;
+
+	Refresh();
+	Update();
 }
 
 void ScreenUpdateBlocker::setMessage(const std::string& message)
@@ -118,6 +121,9 @@ void ScreenUpdateBlocker::setMessage(const std::string& message)
 		Fit();
 		CenterOnParent();
 	}
+
+	Refresh();
+	Update();
 }
 
 void ScreenUpdateBlocker::onMainWindowFocus(wxFocusEvent& ev)
