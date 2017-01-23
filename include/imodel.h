@@ -112,6 +112,9 @@ public:
 };
 typedef std::shared_ptr<ModelNode> ModelNodePtr;
 
+class IModelExporter;
+typedef std::shared_ptr<IModelExporter> IModelExporterPtr;
+
 /**
 * Exporter Interface for models (meshes).
 */
@@ -120,6 +123,11 @@ class IModelExporter
 public:
 	virtual ~IModelExporter()
 	{}
+
+	// Virtual constructor idiom. Use this method to generate a new
+	// instance of the implementing subclass. This way the model format manager
+	// can create a fresh instance of this exporter on demand.
+	virtual IModelExporterPtr clone() = 0;
 
 	// Returns the uppercase file extension this exporter is suitable for
 	virtual const std::string& getExtension() const = 0;
@@ -130,11 +138,13 @@ public:
 	// Export the model file to the given stream
 	virtual void exportToStream(std::ostream& stream) = 0;
 };
-typedef std::shared_ptr<IModelExporter> IModelExporterPtr;
 
 /**
  * Importer interface for models. An importer must be able
  * to load a model (node) from the VFS.
+ * The importer instance shouldn't maintain an internal state,
+ * such that the same instance can be used to load several models,
+ * from different client code.
  */
 class IModelImporter
 {

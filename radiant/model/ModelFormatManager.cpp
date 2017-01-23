@@ -102,7 +102,8 @@ IModelExporterPtr ModelFormatManager::getExporter(const std::string& extension)
 
 	ExporterMap::const_iterator found = _exporters.find(extensionUpper);
 
-	return found != _exporters.end() ? found->second : IModelExporterPtr();
+	// Return a cloned instance if we found a matching exporter
+	return found != _exporters.end() ? found->second->clone() : IModelExporterPtr();
 }
 
 module::StaticModule<ModelFormatManager> _staticModelFormatManagerModule;

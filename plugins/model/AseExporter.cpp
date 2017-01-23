@@ -12,6 +12,11 @@ namespace model
 AseExporter::AseExporter()
 {}
 
+IModelExporterPtr AseExporter::clone()
+{
+	return std::make_shared<AseExporter>();
+}
+
 const std::string& AseExporter::getExtension() const
 {
 	static std::string _extension("ASE");

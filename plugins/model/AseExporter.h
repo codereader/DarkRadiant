@@ -39,6 +39,8 @@ private:
 public:
 	AseExporter();
 
+	IModelExporterPtr clone() override;
+
 	// Returns the uppercase file extension this exporter is suitable for
 	const std::string& getExtension() const override;
 
