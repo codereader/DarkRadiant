@@ -254,6 +254,7 @@ darkradiant_SOURCES = main.cpp \
                       model/ModelCache.cpp \
 					  model/ModelFormatManager.cpp \
                       model/NullModel.cpp \
+					  model/ScaledModelExporter.cpp \
                       model/NullModelNode.cpp 
 
 TESTS = facePlaneTest

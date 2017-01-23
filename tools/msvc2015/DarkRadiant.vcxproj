@@ -349,6 +349,7 @@
     <ClCompile Include="..\..\radiant\model\ModelFormatManager.cpp" />
     <ClCompile Include="..\..\radiant\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
+    <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
@@ -597,6 +598,7 @@
     <ClInclude Include="..\..\radiant\model\NullModel.h" />
     <ClInclude Include="..\..\radiant\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiant\model\NullModelNode.h" />
+    <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />

@@ -442,10 +442,15 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
 	blocker.setMessage(_("Preprocessing"));
 
-	signal_mapEvent().emit(IMap::MapSaving);
-
-	// write out scaled models
-	saveScaledModels();
+	try
+	{
+		signal_mapEvent().emit(IMap::MapSaving);
+	}
+	catch (std::runtime_error& ex)
+	{
+		wxutil::Messagebox::ShowError(
+			(boost::format(_("Failure running map pre-save event:\n%s")) % ex.what()).str());
+	}
 
     // Store the camview position into worldspawn
     saveCameraPosition();
@@ -995,7 +1000,8 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
     // Register for the startup event
-    _startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);
+    _startupMapLoader.reset(new StartupMapLoader);
+
     GlobalRadiant().signal_radiantStarted().connect(
         sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantStartup)
     );
@@ -1011,146 +1017,16 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     // Add the map position commands to the EventManager
     GlobalMapPosition().initialise();
 
+	_scaledModelExporter.initialise();
+
 	MapFileManager::registerFileTypes();
 }
 
 void Map::shutdownModule()
 {
+	_scaledModelExporter.shutdown();
+
 	GlobalSceneGraph().removeSceneObserver(this);
-}
-
-void Map::saveScaledModels()
-{
-	// Find any models with modified scale
-	GlobalSceneGraph().foreachNode([&](const scene::INodePtr& node)
-	{
-		if (Node_isEntity(node))
-		{
-			// Find any model nodes below that one
-			model::ModelNodePtr childModel;
-
-			node->foreachNode([&](const scene::INodePtr& child)
-			{
-				model::ModelNodePtr candidate = Node_getModel(child);
-
-				if (candidate && candidate->hasModifiedScale())
-				{
-					childModel = candidate;
-				}
-
-				return true;
-			});
-
-			// Do we have a model with modified scale?
-			if (childModel)
-			{
-				saveScaledModel(node, childModel);
-			}
-		}
-
-		return true;
-	});
-}
-
-void Map::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelNodePtr& modelNode)
-{
-	std::string extension = "ase";
-
-	// Save the scaled model as ASE
-	model::IModelExporterPtr exporter = GlobalModelFormatManager().getExporter(extension);
-
-	if (!exporter)
-	{
-		rError() << "Cannot save out scaled models, no exporter found." << std::endl;
-		return;
-	}
-
-	// Push the geometry into the exporter
-	model::IModel& model = modelNode->getIModel();
-
-	for (int s = 0; s < model.getSurfaceCount(); ++s)
-	{
-		const model::IModelSurface& surface = model.getSurface(s);
-
-		exporter->addSurface(surface);
-	}
-
-	// Get the current model file name
-	Entity* entity = Node_getEntity(entityNode);
-
-	boost::filesystem::path targetPath = GlobalGameManager().getModPath();
-
-	if (targetPath.empty())
-	{
-		targetPath = GlobalGameManager().getUserEnginePath();
-
-		rMessage() << "No mod base path found, falling back to user engine path to save model file: " <<
-			targetPath.string() << std::endl;
-	}
-
-	boost::filesystem::path modelPath = "models/map_specific/scaled";
-
-	targetPath /= modelPath;
-
-	boost::filesystem::create_directories(targetPath);
-
-	boost::filesystem::path modelKeyValue = entity->getKeyValue("model");
-
-	// Open a temporary file to write the model
-	int i = 100;
-
-	boost::filesystem::path filenameWithoutExt = boost::filesystem::change_extension(modelKeyValue.filename(), "");
-
-	std::string generatedFilename = (filenameWithoutExt.string() + "_" + string::to_string(i) + "." + extension);
-	boost::filesystem::path targetFile = targetPath / generatedFilename;
-
-	while (boost::filesystem::exists(targetFile) && ++i < INT_MAX)
-	{
-		generatedFilename = (filenameWithoutExt.string() + "_" + string::to_string(i) + "." + extension);
-		targetFile = targetPath / generatedFilename;
-	}
-
-	modelPath /= generatedFilename;
-
-	boost::filesystem::path tempFile = targetPath / ("_" + generatedFilename);
-
-	std::ofstream tempStream(tempFile.string().c_str());
-
-	if (!tempStream.is_open())
-	{
-		throw std::runtime_error(
-			(boost::format(_("Cannot open file for writing: %s")) % tempFile.string()).str());
-	}
-
-	exporter->exportToStream(tempStream);
-
-	tempStream.close();
-
-	if (boost::filesystem::exists(targetFile))
-	{
-		try
-		{
-			boost::filesystem::remove(targetFile);
-		}
-		catch (boost::filesystem::filesystem_error& e)
-		{
-			rError() << "Could not remove the file " << targetFile.string() << std::endl
-				<< e.what() << std::endl;
-		}
-	}
-
-	try
-	{
-		boost::filesystem::rename(tempFile, targetFile);
-	}
-	catch (boost::filesystem::filesystem_error& e)
-	{
-		rError() << "Could not rename the temporary file " << tempFile.string() << std::endl
-			<< e.what() << std::endl;
-	}
-
-	std::string newModelKey = boost::algorithm::replace_all_copy(modelPath.string(), "\\", "/");
-	entity->setKeyValue("model", newModelKey);
 }
 
 // Creates the static module instance

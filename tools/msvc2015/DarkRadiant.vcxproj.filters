@@ -898,6 +898,9 @@
     <ClCompile Include="..\..\radiant\model\ModelFormatManager.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1825,6 +1828,9 @@
       <Filter>src\model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ModelFormatManager.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h">
       <Filter>src\model</Filter>
     </ClInclude>
   </ItemGroup>
