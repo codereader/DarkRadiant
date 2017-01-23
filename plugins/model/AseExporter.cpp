@@ -173,7 +173,8 @@ void AseExporter::exportToStream(std::ostream& stream)
 		{
 			const TexCoord2f& tex = surface.vertices[v].texcoord;
 			
-			stream << "\t\t\t*MESH_TVERT " << v << "\t" << tex.x() << "\t" << tex.y() << "\t0.0000" << std::endl;
+			// Invert the T coordinate
+			stream << "\t\t\t*MESH_TVERT " << v << "\t" << tex.x() << "\t" << (-tex.y()) << "\t0.0000" << std::endl;
 		}
 
 		stream << "\t\t}" << std::endl;

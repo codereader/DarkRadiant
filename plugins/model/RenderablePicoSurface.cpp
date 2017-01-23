@@ -341,9 +341,13 @@ ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
 
 	ModelPolygon poly;
 
-	poly.a = _vertices[_indices[polygonIndex*3]];
+	// For some reason, the PicoSurfaces are loaded such that the triangles have clockwise winding
+	// The common convention is to use CCW winding direction, so reverse the index order
+	// ASE models define tris in the usual CCW order, but it appears that the pm_ase.c file
+	// reverses the vertex indices during parsing.
+	poly.c = _vertices[_indices[polygonIndex*3]];
 	poly.b = _vertices[_indices[polygonIndex*3 + 1]];
-	poly.c = _vertices[_indices[polygonIndex*3 + 2]];
+	poly.a = _vertices[_indices[polygonIndex*3 + 2]];
 
 	return poly;
 }
@@ -417,7 +421,7 @@ void RenderablePicoSurface::applyScale(const Vector3& scale, const RenderablePic
 	for (std::size_t i = 0; i < _vertices.size(); ++i)
 	{
 		_vertices[i].vertex = scaleMatrix.transformPoint(originalSurface._vertices[i].vertex);
-		_vertices[i].normal = invTranspScale.transformPoint(originalSurface._vertices[i].normal);
+		_vertices[i].normal = invTranspScale.transformPoint(originalSurface._vertices[i].normal).getNormalised();
 
 		// Expand the AABB to include this new vertex
 		_localAABB.includePoint(_vertices[i].vertex);
