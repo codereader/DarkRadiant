@@ -1,11 +1,6 @@
 #include "ModelScaleManipulator.h"
 
-#include "selection/Remap.h"
-#include "selection/BestPoint.h"
-#include "selection/BestSelector.h"
-#include "selection/SelectionTest.h"
 #include "render/View.h"
-#include "string/convert.h"
 #include "debugging/ScenegraphUtils.h"
 
 namespace selection
@@ -29,8 +24,6 @@ ModelScaleManipulator::Component* ModelScaleManipulator::getActiveComponent()
 
 void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
 {
-	_pivot2World.update(_pivot.getMatrix4(), view.GetModelview(), view.GetProjection(), view.GetViewport());
-
 	_curManipulatable.reset();
 	_scaleComponent.setEntityNode(scene::INodePtr());
 	_scaleComponent.setScalePivot(Vector3(0, 0, 0));
@@ -74,8 +67,6 @@ bool ModelScaleManipulator::isSelected() const
 
 void ModelScaleManipulator::render(RenderableCollector& collector, const VolumeTest& volume)
 {
-	_pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
-
 	_renderableAabbs.clear();
 	_renderableCornerPoints.clear();
 	

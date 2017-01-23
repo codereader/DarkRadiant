@@ -25,12 +25,9 @@ private:
 	// Resize component
 	ModelScaleComponent _scaleComponent;
 
-	Pivot2World _pivot2World;
-
 	std::list<RenderableSolidAABB> _renderableAabbs;
 	RenderablePointVector _renderableCornerPoints;
 
-	std::map<ISelectable*, scene::INodePtr> _candidates;
 	scene::INodePtr _curManipulatable;
 	
 public:
