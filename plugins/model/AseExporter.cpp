@@ -36,11 +36,15 @@ void AseExporter::addSurface(const IModelSurface& incoming)
 	{
 		ModelPolygon poly = incoming.getPolygon(i);
 
-		// The UniqueVertexBuffer will only insert vertices we don't already have
-		// but it will always return a valid index
-		surface.indices.push_back(surface.uniqueVertexBuffer.insert(poly.a));
-		surface.indices.push_back(surface.uniqueVertexBuffer.insert(poly.b));
-		surface.indices.push_back(surface.uniqueVertexBuffer.insert(poly.c));
+		unsigned int indexStart = static_cast<unsigned int>(surface.vertices.size());
+		
+		surface.vertices.push_back(poly.a);
+		surface.vertices.push_back(poly.b);
+		surface.vertices.push_back(poly.c);
+
+		surface.indices.push_back(indexStart);
+		surface.indices.push_back(indexStart+1);
+		surface.indices.push_back(indexStart+2);
 	}
 }
 

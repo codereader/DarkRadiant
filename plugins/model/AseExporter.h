@@ -14,24 +14,11 @@ private:
 	{
 		std::string materialName;
 
+		// The vertices of this surface
 		std::vector<ArbitraryMeshVertex> vertices;
-
-		// The buffer that will hold the vertices
-		UniqueVertexBuffer<ArbitraryMeshVertex> uniqueVertexBuffer;
 
 		// The indices connecting the vertices to triangles
 		IndexBuffer indices;
-
-		Surface() :
-			uniqueVertexBuffer(vertices)
-		{}
-
-		Surface(const Surface& other) :
-			materialName(other.materialName),
-			vertices(other.vertices),
-			uniqueVertexBuffer(vertices),
-			indices(other.indices)
-		{}
 	};
 
 	std::vector<Surface> _surfaces;
