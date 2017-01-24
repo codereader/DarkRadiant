@@ -25,6 +25,7 @@ public:
 	// Redefine the path list to be of type std::vector
 	typedef std::vector<std::string> PathList;
 
+	std::string getUserEnginePath();
 	std::string getModPath();
 	std::string getModBasePath();
 	std::string getFSGame();
