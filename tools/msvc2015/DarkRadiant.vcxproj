@@ -345,6 +345,11 @@
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp" />
+    <ClCompile Include="..\..\radiant\model\ModelCache.cpp" />
+    <ClCompile Include="..\..\radiant\model\ModelFormatManager.cpp" />
+    <ClCompile Include="..\..\radiant\model\NullModel.cpp" />
+    <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
+    <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
@@ -375,6 +380,7 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\DragManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorBase.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ManipulatorComponents.cpp" />
+    <ClCompile Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\RotateManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\TranslateManipulator.cpp" />
@@ -445,7 +451,6 @@
     <ClCompile Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.cpp" />
     <ClCompile Include="..\..\radiant\render\debug\SpacePartitionRenderer.cpp" />
     <ClCompile Include="..\..\radiant\selection\BestPoint.cpp" />
-    <ClCompile Include="..\..\radiant\selection\Intersection.cpp" />
     <ClCompile Include="..\..\radiant\selection\RadiantSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectedNodeList.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
@@ -560,9 +565,6 @@
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
-    <ClCompile Include="..\..\radiant\referencecache\ModelCache.cpp" />
-    <ClCompile Include="..\..\radiant\referencecache\NullModel.cpp" />
-    <ClCompile Include="..\..\radiant\referencecache\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerCommandTarget.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerSystem.cpp" />
     <ClCompile Include="..\..\radiant\log\Console.cpp" />
@@ -591,6 +593,12 @@
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h" />
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h" />
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h" />
+    <ClInclude Include="..\..\radiant\model\ModelCache.h" />
+    <ClInclude Include="..\..\radiant\model\ModelFormatManager.h" />
+    <ClInclude Include="..\..\radiant\model\NullModel.h" />
+    <ClInclude Include="..\..\radiant\model\NullModelLoader.h" />
+    <ClInclude Include="..\..\radiant\model\NullModelNode.h" />
+    <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
@@ -615,6 +623,7 @@
     <ClInclude Include="..\..\radiant\selection\manipulators\DragManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorBase.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ManipulatorComponents.h" />
+    <ClInclude Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\ScaleManipulator.h" />
     <ClInclude Include="..\..\radiant\selection\manipulators\TranslateManipulator.h" />
@@ -723,7 +732,6 @@
     <ClInclude Include="..\..\radiant\render\debug\SpacePartitionRenderer.h" />
     <ClInclude Include="..\..\radiant\selection\BestPoint.h" />
     <ClInclude Include="..\..\radiant\selection\Device.h" />
-    <ClInclude Include="..\..\radiant\selection\Intersection.h" />
     <ClInclude Include="..\..\radiant\selection\Pivot2World.h" />
     <ClInclude Include="..\..\radiant\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiant\selection\Remap.h" />
@@ -861,10 +869,6 @@
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
-    <ClInclude Include="..\..\radiant\referencecache\ModelCache.h" />
-    <ClInclude Include="..\..\radiant\referencecache\NullModel.h" />
-    <ClInclude Include="..\..\radiant\referencecache\NullModelLoader.h" />
-    <ClInclude Include="..\..\radiant\referencecache\NullModelNode.h" />
     <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h" />
     <ClInclude Include="..\..\radiant\layers\LayerCommandTarget.h" />
     <ClInclude Include="..\..\radiant\layers\LayerSystem.h" />

@@ -13,8 +13,7 @@ FileTypeRegistry::FileTypeRegistry()
 	registerPattern("*", FileTypePattern(_("All Files"), "*", "*.*"));
 }
 
-void FileTypeRegistry::registerPattern(const std::string& fileType, 
-									   const FileTypePattern& pattern)
+void FileTypeRegistry::registerPattern(const std::string& fileType, const FileTypePattern& pattern)
 {
 	// Convert the file extension to lowercase
 	std::string fileTypeLower = boost::algorithm::to_lower_copy(fileType);
@@ -36,13 +35,10 @@ void FileTypeRegistry::registerPattern(const std::string& fileType,
 	boost::algorithm::to_lower(patternLocal.extension);
 	boost::algorithm::to_lower(patternLocal.pattern);
 
-	// Don't accept pre-filled module association
-	patternLocal.associatedModule.clear();
-
 	// Check if the pattern is already associated
-	for (FileTypePatterns::const_iterator p = patternList.begin(); p != patternList.end(); ++p)
+	for (const FileTypePattern& pattern : patternList)
 	{
-		if (p->extension == patternLocal.extension)
+		if (pattern.extension == patternLocal.extension)
 		{
 			// Ignore this pattern
 			return;
@@ -56,89 +52,9 @@ void FileTypeRegistry::registerPattern(const std::string& fileType,
 FileTypePatterns FileTypeRegistry::getPatternsForType(const std::string& fileType)
 {
 	// Convert the file extension to lowercase and try to find the matching list
-	FileTypes::iterator i = _fileTypes.find(boost::algorithm::to_lower_copy(fileType));
+	FileTypes::const_iterator i = _fileTypes.find(boost::algorithm::to_lower_copy(fileType));
 
 	return i != _fileTypes.end() ? i->second : FileTypePatterns();
-}
-
-bool FileTypeRegistry::registerModule(const std::string& fileType, 
-									  const std::string& extension,
-									  const std::string& moduleName)
-{
-	// Convert the file extension to lowercase and try to find the matching list
-	FileTypes::iterator i = _fileTypes.find(boost::algorithm::to_lower_copy(fileType));
-
-	if (i == _fileTypes.end())
-	{
-		return false;
-	}
-
-	FileTypePatterns& patterns = i->second;
-
-	std::string extLower = boost::algorithm::to_lower_copy(extension);
-
-	// Check if the pattern is already associated with a module
-	for (FileTypePatterns::iterator p = patterns.begin(); p != patterns.end(); ++p)
-	{
-		if (p->extension == extLower)
-		{
-			if (p->associatedModule.empty())
-			{
-				// Found module, and it's not associated yet, go ahead
-				p->associatedModule = moduleName;
-				return true;
-			}
-			else
-			{
-				// Already associated, return false
-				return false;
-			}
-		}
-	}
-
-	return false; // extension not found
-}
-
-void FileTypeRegistry::unregisterModule(const std::string& moduleName)
-{
-	// Iterate over all file types and patterns and remove any matching module associations
-	for (FileTypes::iterator i = _fileTypes.begin(); i != _fileTypes.end(); ++i)
-	{
-		for (FileTypePatterns::iterator p = i->second.begin(); p != i->second.end(); ++p)
-		{
-			if (p->associatedModule == moduleName)
-			{
-				p->associatedModule.clear();
-			}
-		}
-	}
-}
-
-std::string FileTypeRegistry::findModule(const std::string& fileType, 
-										 const std::string& extension)
-{
-	// Convert the file extension to lowercase and try to find the matching list
-	FileTypes::iterator i = _fileTypes.find(boost::algorithm::to_lower_copy(fileType));
-
-	if (i == _fileTypes.end())
-	{
-		return "";
-	}
-
-	std::string extLower = boost::algorithm::to_lower_copy(extension);
-
-	FileTypePatterns& patterns = i->second;
-	
-	for (FileTypePatterns::const_iterator p = patterns.begin(); p != patterns.end(); ++p)
-	{
-		if (p->extension == extLower)
-		{
-			// Extension matches, return module name (even if it's empty)
-			return p->associatedModule;
-		}
-	}
-
-	return ""; // nothing found
 }
 
 const std::string& FileTypeRegistry::getName() const
@@ -161,7 +77,7 @@ void FileTypeRegistry::initialiseModule(const ApplicationContext& ctx)
 // This will be called by the DarkRadiant main binary's ModuleRegistry
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-	registry.registerModule(FileTypeRegistryPtr(new FileTypeRegistry));
+	registry.registerModule(std::make_shared<FileTypeRegistry>());
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

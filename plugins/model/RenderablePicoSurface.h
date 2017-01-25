@@ -75,6 +75,11 @@ public:
 	RenderablePicoSurface(picoSurface_t* surf, const std::string& fExt);
 
 	/**
+	 * Copy-constructor.
+	 */
+	RenderablePicoSurface(const RenderablePicoSurface& other);
+
+	/**
 	 * Destructor.
 	 */
 	~RenderablePicoSurface();
@@ -96,8 +101,6 @@ public:
 	 */
 	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld,
 						   const ShaderPtr& shader, const IRenderEntity& entity);
-
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	/**
 	 * Render function from OpenGLRenderable
@@ -131,8 +134,7 @@ public:
 	// the exact point in the given Vector3, returns false if no intersection was found.
 	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
 
-private:
-	void captureShader();
+	void applyScale(const Vector3& scale, const RenderablePicoSurface& originalSurface);
 };
 typedef std::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
 

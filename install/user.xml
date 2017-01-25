@@ -247,6 +247,7 @@
       <toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.png"/>
       <toggletoolbutton name="resize" action="MouseDrag" tooltip="Resize" icon="select_mouseresize.png"/>
       <toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.png"/>
+      <toggletoolbutton name="modelscaler" action="ToggleModelScaleManipulator" tooltip="Model Scaler" icon="select_mousescale.png"/>      
       <separator/>
       <toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.png"/>
       <toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.png"/>

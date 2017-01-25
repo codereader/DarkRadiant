@@ -10,13 +10,17 @@
 #include "imodelsurface.h"
 #include "VolumeIntersectionValue.h"
 #include "math/Ray.h"
+#include "BasicUndoMemento.h"
 
 namespace model
 {
 
 // Constructor
-RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
-										 const std::string& fExt)
+RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fExt) :
+	_scaleTransformed(1,1,1),
+	_scale(1,1,1),
+	_undoStateSaver(nullptr),
+	_mapFileChangeTracker(nullptr)
 {
 	// Get the number of surfaces to create
 	int nSurf = PicoGetModelNumSurfaces(mod);
@@ -45,16 +49,41 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
 
 RenderablePicoModel::RenderablePicoModel(const RenderablePicoModel& other) :
 	_surfVec(other._surfVec.size()),
+	_scaleTransformed(other._scaleTransformed),
+	_scale(other._scale), // use scale of other model
 	_localAABB(other._localAABB),
 	_filename(other._filename),
-	_modelPath(other._modelPath)
+	_modelPath(other._modelPath),
+	_undoStateSaver(nullptr),
+	_mapFileChangeTracker(nullptr)
 {
 	// Copy the other model's surfaces, but not its shaders, revert to default
 	for (std::size_t i = 0; i < other._surfVec.size(); ++i)
 	{
-		_surfVec[i].surface = other._surfVec[i].surface;
+		// Copy-construct the other surface, inheriting any applied scale
+		_surfVec[i].surface = std::make_shared<RenderablePicoSurface>(*(other._surfVec[i].surface));
+		_surfVec[i].originalSurface = other._surfVec[i].originalSurface;
 		_surfVec[i].activeMaterial = _surfVec[i].surface->getDefaultMaterial();
 	}
+}
+
+void RenderablePicoModel::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+	assert(_undoStateSaver == nullptr);
+
+	// Keep a reference around, we need it when faces are changing
+	_mapFileChangeTracker = &changeTracker;
+
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+}
+
+void RenderablePicoModel::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+	assert(_undoStateSaver != nullptr);
+
+	_mapFileChangeTracker = nullptr;
+	_undoStateSaver = nullptr;
+	GlobalUndoSystem().releaseStateSaver(*this);
 }
 
 // Front end renderable submission
@@ -125,23 +154,26 @@ void RenderablePicoModel::render(const RenderInfo& info) const
 	}
 }
 
-std::string RenderablePicoModel::getFilename() const {
+std::string RenderablePicoModel::getFilename() const 
+{
 	return _filename;
 }
 
-void RenderablePicoModel::setFilename(const std::string& name) {
+void RenderablePicoModel::setFilename(const std::string& name)
+{
 	_filename = name;
 }
 
 // Return vertex count of this model
-int RenderablePicoModel::getVertexCount() const {
+int RenderablePicoModel::getVertexCount() const 
+{
 	int sum = 0;
-	for (SurfaceList::const_iterator i = _surfVec.begin();
-		 i != _surfVec.end();
-		 ++i)
+
+	for (const Surface& s : _surfVec)
 	{
-		sum += i->surface->getNumVertices();
+		sum += s.surface->getNumVertices();
 	}
+
 	return sum;
 }
 
@@ -150,11 +182,9 @@ int RenderablePicoModel::getPolyCount() const
 {
 	int sum = 0;
 
-	for (SurfaceList::const_iterator i = _surfVec.begin();
-		 i != _surfVec.end();
-		 ++i)
+	for (const Surface& s : _surfVec)
 	{
-		sum += i->surface->getNumTriangles();
+		sum += s.surface->getNumTriangles();
 	}
 
 	return sum;
@@ -297,6 +327,11 @@ bool RenderablePicoModel::getIntersection(const Ray& ray, Vector3& intersection,
 	}
 }
 
+const RenderablePicoModel::SurfaceList& RenderablePicoModel::getSurfaces() const
+{
+	return _surfVec;
+}
+
 std::string RenderablePicoModel::getModelPath() const
 {
 	return _modelPath;
@@ -305,6 +340,79 @@ std::string RenderablePicoModel::getModelPath() const
 void RenderablePicoModel::setModelPath(const std::string& modelPath)
 {
 	_modelPath = modelPath;
+}
+
+void RenderablePicoModel::revertScale()
+{
+	_scaleTransformed = _scale;
+}
+
+void RenderablePicoModel::evaluateScale(const Vector3& scale)
+{
+	_scaleTransformed *= scale;
+
+	applyScaleToSurfaces();
+}
+
+void RenderablePicoModel::applyScaleToSurfaces()
+{
+	_localAABB = AABB();
+
+	// Apply the scale to each surface
+	for (Surface& surf : _surfVec)
+	{
+		// Are we still using the original surface? If yes,
+		// it's now time to create a working copy
+		if (surf.surface == surf.originalSurface)
+		{
+			// Copy-construct the surface
+			surf.surface = std::make_shared<RenderablePicoSurface>(*surf.originalSurface);
+		}
+
+		// Apply the scale, on top of the original surface, this should save us from
+		// reverting the transformation each time the scale changes
+		surf.surface->applyScale(_scaleTransformed, *(surf.originalSurface));
+
+		// Extend the model AABB to include the surface's AABB
+		_localAABB.includeAABB(surf.surface->getAABB());
+	}
+}
+
+// Freeze transform, move the applied scale to the original model
+void RenderablePicoModel::freezeScale()
+{
+	undoSave();
+
+	// Apply the scale to each surface
+	_scale = _scaleTransformed;
+}
+
+void RenderablePicoModel::undoSave()
+{
+	if (_undoStateSaver != nullptr)
+	{
+		_undoStateSaver->save(*this);
+	}
+}
+
+IUndoMementoPtr RenderablePicoModel::exportState() const
+{
+	return IUndoMementoPtr(new undo::BasicUndoMemento<Vector3>(_scale));
+}
+
+void RenderablePicoModel::importState(const IUndoMementoPtr& state)
+{
+	undoSave();
+
+	_scale = std::static_pointer_cast< undo::BasicUndoMemento<Vector3> >(state)->data();
+	_scaleTransformed = _scale;
+
+	applyScaleToSurfaces();
+}
+
+const Vector3& RenderablePicoModel::getScale() const
+{
+	return _scale;
 }
 
 } // namespace

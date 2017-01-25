@@ -23,9 +23,9 @@ ScaleManipulator::ScaleManipulator(ManipulationPivot& pivot, std::size_t segment
 }
 
 void ScaleManipulator::UpdateColours() {
-    _arrowX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
-    _arrowY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
-    _arrowZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
+    _arrowX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
+    _arrowY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
+    _arrowZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
     _quadScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 

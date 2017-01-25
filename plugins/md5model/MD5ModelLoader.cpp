@@ -4,7 +4,6 @@
 #include "ishaders.h"
 #include "imodelcache.h"
 #include "ifilesystem.h"
-#include "ifiletypes.h"
 #include "archivelib.h"
 #include "os/path.h"
 
@@ -13,15 +12,22 @@
 namespace md5
  {
 
-	namespace
+namespace
+{
+	// name may be absolute or relative
+	inline std::string rootPath(const std::string& name)
 	{
-		// name may be absolute or relative
-		inline std::string rootPath(const std::string& name) {
-			return GlobalFileSystem().findRoot(
-				path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
-			);
-		}
-	} // namespace
+		return GlobalFileSystem().findRoot(
+			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
+		);
+	}
+} // namespace
+
+const std::string& MD5ModelLoader::getExtension() const
+{
+	static std::string _ext("MD5MESH");
+	return _ext;
+}
 
 scene::INodePtr MD5ModelLoader::loadModel(const std::string& modelName)
 {
@@ -99,38 +105,6 @@ model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name)
 		rError() << "Failed to load model " << name << std::endl;
 		return model::IModelPtr(); // delete the model
 	}
-}
-
-// RegisterableModule implementation
-const std::string& MD5ModelLoader::getName() const
-{
-	static std::string _name("ModelLoaderMD5MESH");
-	return _name;
-}
-
-const StringSet& MD5ModelLoader::getDependencies() const
-{
-	static StringSet _dependencies;
-
-	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_FILETYPES);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-	}
-
-	return _dependencies;
-}
-
-void MD5ModelLoader::initialiseModule(const ApplicationContext& ctx)
-{
-	rMessage() << "MD5Model::initialiseModule called." << std::endl;
-
-	std::string extLower = "md5mesh";
-	std::string filter = "*." + extLower;
-
-	// Register the model file extension in the FileTypRegistry
-	GlobalFiletypes().registerPattern("model", FileTypePattern("MD5 Meshes", extLower, filter));
-	GlobalFiletypes().registerModule("model", extLower, getName());
 }
 
 } // namespace md5

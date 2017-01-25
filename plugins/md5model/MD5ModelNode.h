@@ -32,8 +32,9 @@ public:
 	virtual ~MD5ModelNode();
 
 	// ModelNode implementation
-	virtual const model::IModel& getIModel() const;
-	virtual model::IModel& getIModel();
+	const model::IModel& getIModel() const override;
+	model::IModel& getIModel() override;
+	bool hasModifiedScale() override;
 
 	void lightsChanged();
 

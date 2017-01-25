@@ -204,7 +204,7 @@ darkradiant_SOURCES = main.cpp \
 					  selection/group/SelectionGroupManager.cpp \
 					  selection/group/SelectionGroupInfoFileModule.cpp \
                       selection/manipulators/TranslateManipulator.cpp \
-                      selection/Intersection.cpp \
+                      selection/manipulators/ModelScaleManipulator.cpp \
                       settings/GameFileLoader.cpp \
                       settings/Game.cpp \
                       settings/GameManager.cpp \
@@ -252,9 +252,11 @@ darkradiant_SOURCES = main.cpp \
                       log/StringLogDevice.cpp \
                       log/LogStreamBuf.cpp \
                       log/LogFile.cpp \
-                      referencecache/ModelCache.cpp \
-                      referencecache/NullModel.cpp \
-                      referencecache/NullModelNode.cpp 
+                      model/ModelCache.cpp \
+					  model/ModelFormatManager.cpp \
+                      model/NullModel.cpp \
+					  model/ScaledModelExporter.cpp \
+                      model/NullModelNode.cpp 
 
 TESTS = facePlaneTest
 check_PROGRAMS = facePlaneTest

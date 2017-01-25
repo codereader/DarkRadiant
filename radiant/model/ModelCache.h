@@ -21,17 +21,13 @@ public:
 	ModelCache();
 
 	// greebo: For documentation, see the abstract base class.
-	virtual scene::INodePtr getModelNode(const std::string& modelPath);
+	scene::INodePtr getModelNode(const std::string& modelPath) override;
 
 	// greebo: For documentation, see the abstract base class.
-	virtual IModelPtr getModel(const std::string& modelPath);
-
-	// greebo: Get a model loader for the given type (file extension).
-	// This returns never NULL, there is always the NullModelLoader available.
-	virtual ModelLoaderPtr getModelLoaderForType(const std::string& type);
+	IModelPtr getModel(const std::string& modelPath) override;
 
 	// Clears the cache
-	virtual void clear();
+	void clear() override;
 
 	// Command target: this reloads all models in the map
 	void refreshModels(const cmd::ArgumentList& args);
@@ -39,10 +35,10 @@ public:
 	void refreshSelectedModels(const cmd::ArgumentList& args);
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 };
 
 } // namespace model

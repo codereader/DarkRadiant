@@ -9,7 +9,7 @@
 #include "scene/TraversableNodeSet.h"
 #include "transformlib.h"
 #include "selectionlib.h"
-#include "pivot.h"
+#include "render/RenderablePivot.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
 #include "../KeyObserverDelegate.h"
@@ -36,7 +36,7 @@ private:
     AngleKey _angleKey;
 	float _angle;
 
-    RenderablePivot _renderOrigin;
+    render::RenderablePivot _renderOrigin;
 
 	AABB _localAABB;
 

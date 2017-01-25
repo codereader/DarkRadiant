@@ -5,6 +5,7 @@
 #include "scene/Node.h"
 #include "ifilter.h"
 #include "modelskin.h"
+#include "itransformable.h"
 #include <boost/algorithm/string/replace.hpp>
 
 ModelKey::ModelKey(scene::INode& parentNode) :

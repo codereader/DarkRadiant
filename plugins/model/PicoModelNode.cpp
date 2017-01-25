@@ -28,6 +28,20 @@ PicoModelNode::~PicoModelNode() {
 	GlobalRenderSystem().detachLitObject(*this);
 }
 
+void PicoModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+	_picoModel->connectUndoSystem(root.getUndoChangeTracker());
+	
+	Node::onInsertIntoScene(root);
+}
+
+void PicoModelNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+	_picoModel->disconnectUndoSystem(root.getUndoChangeTracker());
+
+	Node::onRemoveFromScene(root);
+}
+
 const IModel& PicoModelNode::getIModel() const
 {
 	return *_picoModel;
@@ -36,6 +50,11 @@ const IModel& PicoModelNode::getIModel() const
 IModel& PicoModelNode::getIModel() 
 {
 	return *_picoModel;
+}
+
+bool PicoModelNode::hasModifiedScale()
+{
+	return _picoModel->getScale() != Vector3(1, 1, 1);
 }
 
 const AABB& PicoModelNode::localAABB() const {
@@ -153,6 +172,25 @@ void PicoModelNode::skinChanged(const std::string& newSkinName)
 std::string PicoModelNode::getSkin() const
 {
 	return _skin;
+}
+
+void PicoModelNode::_onTransformationChanged()
+{
+	if (getTransformationType() & TransformationType::Scale)
+	{
+		_picoModel->revertScale();
+		_picoModel->evaluateScale(getScale());
+	}
+}
+
+void PicoModelNode::_applyTransformation()
+{
+	if (getTransformationType() & TransformationType::Scale)
+	{
+		_picoModel->revertScale();
+		_picoModel->evaluateScale(getScale());
+		_picoModel->freezeScale();
+	}
 }
 
 } // namespace model

@@ -6,6 +6,7 @@
 #include "iscenegraph.h"
 #include "idialogmanager.h"
 #include "ieventmanager.h"
+#include "imodel.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "iselectiongroup.h"
@@ -437,7 +438,19 @@ bool Map::save(const MapFormatPtr& mapFormat)
     _saveInProgress = true;
 
     // Disable screen updates for the scope of this function
-    ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Saving Map"));
+    ui::ScreenUpdateBlocker blocker(_("Processing..."), "");
+
+	blocker.setMessage(_("Preprocessing"));
+
+	try
+	{
+		signal_mapEvent().emit(IMap::MapSaving);
+	}
+	catch (std::runtime_error& ex)
+	{
+		wxutil::Messagebox::ShowError(
+			(boost::format(_("Failure running map pre-save event:\n%s")) % ex.what()).str());
+	}
 
     // Store the camview position into worldspawn
     saveCameraPosition();
@@ -445,12 +458,14 @@ bool Map::save(const MapFormatPtr& mapFormat)
     // Store the map positions into the worldspawn spawnargs
     GlobalMapPosition().savePositions();
 
-	signal_mapEvent().emit(IMap::MapSaved);
+	wxutil::ScopeTimer timer("map save");
 
-    wxutil::ScopeTimer timer("map save");
+	blocker.setMessage(_("Saving Map"));
 
     // Save the actual map resource
     bool success = _resource->save(mapFormat);
+
+	signal_mapEvent().emit(IMap::MapSaved);
 
     // Remove the saved camera position
     removeCameraPosition();
@@ -985,7 +1000,8 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
     // Register for the startup event
-    _startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);
+    _startupMapLoader.reset(new StartupMapLoader);
+
     GlobalRadiant().signal_radiantStarted().connect(
         sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantStartup)
     );
@@ -1001,11 +1017,15 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     // Add the map position commands to the EventManager
     GlobalMapPosition().initialise();
 
+	_scaledModelExporter.initialise();
+
 	MapFileManager::registerFileTypes();
 }
 
 void Map::shutdownModule()
 {
+	_scaledModelExporter.shutdown();
+
 	GlobalSceneGraph().removeSceneObserver(this);
 }
 

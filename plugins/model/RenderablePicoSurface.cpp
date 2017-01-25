@@ -1,5 +1,6 @@
 #include "RenderablePicoSurface.h"
 
+#include "itextstream.h"
 #include "modelskin.h"
 #include "math/Frustum.h"
 #include "math/Ray.h"
@@ -60,18 +61,20 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
     _vertices.resize(nVerts);
     _indices.resize(_nIndices);
 
-    // Stream in the vertex data from the raw struct, expanding the local AABB
+	// Stream in the vertex data from the raw struct, expanding the local AABB
     // to include each vertex.
     for (int vNum = 0; vNum < nVerts; ++vNum) {
 
     	// Get the vertex position and colour
 		Vertex3f vertex(PicoGetSurfaceXYZ(surf, vNum));
+		
+		Normal3f normal = PicoGetSurfaceNormal(surf, vNum);
 
 		// Expand the AABB to include this new vertex
     	_localAABB.includePoint(vertex);
 
     	_vertices[vNum].vertex = vertex;
-    	_vertices[vNum].normal = Normal3f(PicoGetSurfaceNormal(surf, vNum));
+    	_vertices[vNum].normal = normal;
     	_vertices[vNum].texcoord = TexCoord2f(PicoGetSurfaceST(surf, 0, vNum));
     	_vertices[vNum].colour =
     		getColourVector(PicoGetSurfaceColor(surf, 0, vNum));
@@ -86,6 +89,19 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	calculateTangents();
 
 	// Construct the DLs
+	createDisplayLists();
+}
+
+RenderablePicoSurface::RenderablePicoSurface(const RenderablePicoSurface& other) :
+	_shaderName(other._shaderName),
+	_vertices(other._vertices),
+	_indices(other._indices),
+	_nIndices(other._nIndices),
+	_localAABB(other._localAABB),
+	_dlRegular(0),
+	_dlProgramVcol(0),
+	_dlProgramNoVCol(0)
+{
 	createDisplayLists();
 }
 
@@ -325,9 +341,13 @@ ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
 
 	ModelPolygon poly;
 
-	poly.a = _vertices[_indices[polygonIndex*3]];
+	// For some reason, the PicoSurfaces are loaded such that the triangles have clockwise winding
+	// The common convention is to use CCW winding direction, so reverse the index order
+	// ASE models define tris in the usual CCW order, but it appears that the pm_ase.c file
+	// reverses the vertex indices during parsing.
+	poly.c = _vertices[_indices[polygonIndex*3]];
 	poly.b = _vertices[_indices[polygonIndex*3 + 1]];
-	poly.c = _vertices[_indices[polygonIndex*3 + 2]];
+	poly.a = _vertices[_indices[polygonIndex*3 + 2]];
 
 	return poly;
 }
@@ -381,6 +401,39 @@ bool RenderablePicoSurface::getIntersection(const Ray& ray, Vector3& intersectio
 	{
 		return false;
 	}
+}
+
+void RenderablePicoSurface::applyScale(const Vector3& scale, const RenderablePicoSurface& originalSurface)
+{
+	if (scale.x() == 0 || scale.y() == 0 || scale.z() == 0)
+	{
+		rMessage() << "RenderablePicoSurface: Cannot apply scale with a zero diagonal element" << std::endl;
+		return;
+	}
+
+	_localAABB = AABB();
+
+	Matrix4 scaleMatrix = Matrix4::getScale(scale);
+	Matrix4 invTranspScale = Matrix4::getScale(Vector3(1/scale.x(), 1/scale.y(), 1/scale.z()));
+
+	assert(originalSurface.getNumVertices() == getNumVertices());
+
+	for (std::size_t i = 0; i < _vertices.size(); ++i)
+	{
+		_vertices[i].vertex = scaleMatrix.transformPoint(originalSurface._vertices[i].vertex);
+		_vertices[i].normal = invTranspScale.transformPoint(originalSurface._vertices[i].normal).getNormalised();
+
+		// Expand the AABB to include this new vertex
+		_localAABB.includePoint(_vertices[i].vertex);
+	}
+
+	calculateTangents();
+
+	glDeleteLists(_dlRegular, 1);
+	glDeleteLists(_dlProgramNoVCol, 1);
+	glDeleteLists(_dlProgramVcol, 1);
+
+	createDisplayLists();
 }
 
 } // namespace model

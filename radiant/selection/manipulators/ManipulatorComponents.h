@@ -17,6 +17,40 @@
 namespace selection
 {
 
+class ManipulatorComponentBase :
+	public Manipulator::Component
+{
+public:
+	virtual ~ManipulatorComponentBase()
+	{}
+
+protected:
+	/**
+	 * Transform the device coordinates to a point in pivot space, 
+	 * located on the plane going through pivot space origin, orthogonal to the view direction
+	 */
+	Vector3 getPlaneProjectedPoint(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint);
+
+	/**
+	 * Returns the intersection point of the Ray defined by the given devicepoint with a sphere 
+	 * located at the pivot space origin. If the Ray misses the sphere, its nearest point will be returned.
+	 */
+	Vector3 getSphereIntersection(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint);
+
+	/**
+	 * Constrains the given direction in terms of the given axis.
+	 * The output will be stripped of anything that points along axis (i.e. it will be orthogonal to axis), 
+	 * and it will be normalised before it's returned.
+	 */
+	Vector3 getAxisConstrained(const Vector3& direction, const Vector3& axis);
+
+	/**
+	 * Returns the angle in radians between the given vectors a,b which must be orthogonal
+	 * to the given axis. If axis*(a x b) is negative, the angle is returned negative too.
+	 */
+	Vector3::ElementType getAngleForAxis(const Vector3& a, const Vector3& b, const Vector3& axis);
+};
+
 /* greebo: The following are specialised manipulatables that provide the methods as described in the ABC.
  * They basically prepare and constraing the transformations of the three base movements above (Translatable, etc.)
  *
@@ -25,8 +59,9 @@ namespace selection
  */
 
 class RotateFree : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
+private:
 	Vector3 _start;
 	Rotatable& _rotatable;
 public:
@@ -34,34 +69,51 @@ public:
 		_rotatable(rotatable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
 };
 
 class RotateAxis : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
+private:
 	Vector3 _axis;
 	Vector3 _start;
 	Rotatable& _rotatable;
+
+	// The most recently calculated angle for rendering purposes
+	Vector3::ElementType _curAngle;
 public:
 	RotateAxis(Rotatable& rotatable) :
-		_rotatable(rotatable) 
+		_rotatable(rotatable),
+		_curAngle(0)
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 
 	/// \brief Converts current position to a normalised vector orthogonal to axis.
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
 
 	void SetAxis(const Vector3& axis)
 	{
-		_axis = axis;
+		_axis = axis.getNormalised();
+	}
+
+	void resetCurAngle()
+	{
+		_curAngle = 0;
+	}
+
+	Vector3::ElementType getCurAngle() const
+	{
+		return _curAngle;
 	}
 };
 
-class TranslateAxis : public Manipulator::Component
+class TranslateAxis : 
+	public ManipulatorComponentBase
 {
+private:
 	Vector3 _start;
 	Vector3 _axis;
 	Translatable& _translatable;
@@ -70,17 +122,17 @@ public:
 		_translatable(translatable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
 
 	void SetAxis(const Vector3& axis) 
 	{
-		_axis = axis;
+		_axis = axis.getNormalised();
 	}
 };
 
 class TranslateFree : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
 private:
 	Vector3 _start;
@@ -90,13 +142,13 @@ public:
 		_translatable(translatable) 
 	{}
 	
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
 };
 
 
 class ScaleAxis : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
 private:
 	Vector3 _start;
@@ -107,8 +159,8 @@ public:
 		_scalable(scalable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
 
 	void SetAxis(const Vector3& axis)
 	{
@@ -117,7 +169,7 @@ public:
 };
 
 class ScaleFree : 
-	public Manipulator::Component
+	public ManipulatorComponentBase
 {
 private:
 	Vector3 _start;
@@ -127,8 +179,35 @@ public:
 		_scalable(scalable) 
 	{}
 
-	void Construct(const Matrix4& device2manip, const float x, const float y) override;
-	void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) override;
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+};
+
+class ModelScaleComponent :
+	public ManipulatorComponentBase
+{
+private:
+	// The pivot point (the opposite corner to the one we're dragging)
+	Matrix4 _scalePivot2World;
+
+	// The moving point at the beginning of the operation
+	Vector3 _start;
+
+	// The node carrying the model
+	scene::INodePtr _entityNode;
+
+	// The original entity origin point
+	Vector3 _startOrigin;
+
+public:
+	ModelScaleComponent()
+	{}
+
+	void setEntityNode(const scene::INodePtr& node);
+	void setScalePivot(const Vector3& scalePivot);
+
+	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
 };
 
 // ========= Translatables ===============================================

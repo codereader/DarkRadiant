@@ -11,6 +11,7 @@
 #include "math/Vector3.h"
 
 #include "StartupMapLoader.h"
+#include "model/ScaledModelExporter.h"
 
 #include <sigc++/signal.h>
 #include <wx/stopwatch.h>
@@ -40,6 +41,7 @@ class Map :
 
 	// A local helper object, observing the radiant module
 	StartupMapLoaderPtr _startupMapLoader;
+	ScaledModelExporter _scaledModelExporter;
 
     // Map save timer, for displaying "changes from last n minutes will be lost"
     // messages

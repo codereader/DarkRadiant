@@ -1,5 +1,7 @@
 #pragma once
 
+#include "iundo.h"
+#include "mapfile.h"
 #include "imodel.h"
 #include "picomodel.h"
 #include "math/AABB.h"
@@ -30,8 +32,9 @@ namespace model
  * a RenderablePicoModel involves rendering all of its surfaces, submitting 
  * their geometry via OpenGL calls.
  */
-class RenderablePicoModel
-: public IModel
+class RenderablePicoModel : 
+	public IModel,
+	public IUndoable
 {
 private:
 	// greebo: RenderablePicoSurfaces are shared objects, the actual shaders 
@@ -40,6 +43,9 @@ private:
 	{
 		// The (shared) surface object
 		RenderablePicoSurfacePtr surface;
+
+		// The (unmodified) surface object
+		RenderablePicoSurfacePtr originalSurface;
 
 		// The name of the material (with skin applied)
 		// The default material name is stored on the surface
@@ -53,7 +59,8 @@ private:
 
 		// Constructor
 		Surface(const RenderablePicoSurfacePtr& surface_) :
-			surface(surface_)
+			surface(surface_),
+			originalSurface(surface)
 		{}
 	};
 
@@ -62,6 +69,12 @@ private:
 
 	// Vector of renderable surfaces for this model
 	SurfaceList _surfVec;
+
+	// The current working scale
+	Vector3 _scaleTransformed;
+
+	// The scale for this model (is 1,1,1 for an unmodified one)
+	Vector3 _scale;
 
 	// Local AABB for this model
 	AABB _localAABB;
@@ -78,6 +91,10 @@ private:
 	// We need to keep a reference for skin swapping
 	RenderSystemWeakPtr _renderSystem;
 
+	// Undoable stuff
+	IUndoStateSaver* _undoStateSaver;
+	IMapFileChangeTracker* _mapFileChangeTracker;
+
 private:
 
 	// Update the list of materials by querying each surface for its current
@@ -86,6 +103,10 @@ private:
 
 	// Ensure all shaders for the active materials
 	void captureShaders();
+
+	void undoSave();
+
+	void applyScaleToSurfaces();
 
 public:
 
@@ -101,6 +122,9 @@ public:
 	 * but make it possible to assign custom skins to the surfaces.
 	 */
 	RenderablePicoModel(const RenderablePicoModel& other);
+
+	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+	void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
 	/**
 	 * Front-end render function used by the main collector.
@@ -197,9 +221,23 @@ public:
 	/**
 	 * Return the list of RenderablePicoSurface objects.
 	 */
-	const SurfaceList& getSurfaces() const {
-		return _surfVec;
-	}
+	const SurfaceList& getSurfaces() const;
+
+	// Revert to base scale
+	void revertScale();
+
+	// TransformationChanged, apply the given scale to the "working copy"
+	void evaluateScale(const Vector3& scale);
+
+	// Freeze transform, store new base scale
+	void freezeScale();
+
+	// Undoable implementation
+	IUndoMementoPtr exportState() const override;
+	void importState(const IUndoMementoPtr& state) override;
+
+	// Returns the current base scale of this model
+	const Vector3& getScale() const;
 };
 typedef std::shared_ptr<RenderablePicoModel> RenderablePicoModelPtr;
 

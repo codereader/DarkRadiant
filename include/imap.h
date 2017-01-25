@@ -66,6 +66,7 @@ public:
 		MapLoaded,      // emitted when the current map is done loading
 		MapUnloading,   // emitted just before a map is unloaded from memory
 		MapUnloaded,    // emitted after a map has been unloaded
+		MapSaving,		// emitted before a map is about to be saved (changes are possible)
 		MapSaved,		// emitted right after a map has been saved
 	};
 

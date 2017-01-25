@@ -5,7 +5,6 @@
 #include "imodel.h"
 #include "imd5model.h"
 #include "imd5anim.h"
-#include "ifiletypes.h"
 #include "iselection.h"
 #include "ieventmanager.h"
 #include "iparticles.h"
@@ -101,29 +100,6 @@ ModelCache::ModelCache() :
 	_enabled(true)
 {}
 
-ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type)
-{
-	// Get the module name from the Filetype registry
-	std::string moduleName = GlobalFiletypes().findModule("model", type);
-
-	if (!moduleName.empty())
-	{
-		ModelLoaderPtr modelLoader = std::static_pointer_cast<ModelLoader>(
-			module::GlobalModuleRegistry().getModule(moduleName)
-		);
-
-		if (modelLoader != NULL) {
-			return modelLoader;
-		}
-		else {
-			rError()	<< "ERROR: Model type incorrectly registered: \""
-				<< moduleName << "\"" << std::endl;
-		}
-	}
-
-	return NullModelLoader::InstancePtr();
-}
-
 scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 {
 	// Check if we have a reference to a modeldef
@@ -148,7 +124,7 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 	}
 
 	// Get a suitable model loader
-	ModelLoaderPtr modelLoader = getModelLoaderForType(type);
+	IModelImporterPtr modelLoader = GlobalModelFormatManager().getImporter(type);
 
 	// Try to construct a model node using the suitable loader
 	scene::INodePtr node = modelLoader->loadModel(actualModelPath);
@@ -195,12 +171,14 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 		return node;
 	}
 
-	// The model load failed, let's return the NullModel
-	// This call should never fail, i.e. the returned model is non-NULL
-	return NullModelLoader::InstancePtr()->loadModel(actualModelPath);
+	// The model load failed, let's return a NullModel
+	IModelImporterPtr nullModelLoader = GlobalModelFormatManager().getImporter("");
+
+	return nullModelLoader->loadModel(actualModelPath);
 }
 
-IModelPtr ModelCache::getModel(const std::string& modelPath) {
+IModelPtr ModelCache::getModel(const std::string& modelPath)
+{
 	// Try to lookup the existing model
 	ModelMap::iterator found = _modelMap.find(modelPath);
 
@@ -215,11 +193,11 @@ IModelPtr ModelCache::getModel(const std::string& modelPath) {
 	std::string type = modelPath.substr(modelPath.rfind(".") + 1);
 
 	// Find a suitable model loader
-	ModelLoaderPtr modelLoader = getModelLoaderForType(type);
+	IModelImporterPtr modelLoader = GlobalModelFormatManager().getImporter(type);
 
 	IModelPtr model = modelLoader->loadModelFromPath(modelPath);
 
-	if (model != NULL)
+	if (model)
 	{
 		// Model successfully loaded, insert a reference into the map
 		_modelMap.insert(ModelMap::value_type(modelPath, model));
@@ -228,7 +206,8 @@ IModelPtr ModelCache::getModel(const std::string& modelPath) {
 	return model;
 }
 
-void ModelCache::clear() {
+void ModelCache::clear()
+{
 	// greebo: Disable the modelcache. During map::clear(), the nodes
 	// get cleared, which might trigger a loopback to insert().
 	_enabled = false;
@@ -289,18 +268,19 @@ void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)
 }
 
 // RegisterableModule implementation
-const std::string& ModelCache::getName() const {
+const std::string& ModelCache::getName() const 
+{
 	static std::string _name("ModelCache");
 	return _name;
 }
 
-const StringSet& ModelCache::getDependencies() const {
+const StringSet& ModelCache::getDependencies() const 
+{
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_MODELLOADER + "ASE");
-		_dependencies.insert(MODULE_MODELLOADER + "LWO");
-		_dependencies.insert(MODULE_MODELLOADER + "MD5MESH");
+	if (_dependencies.empty()) 
+	{
+		_dependencies.insert(MODULE_MODELFORMATMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 	}
@@ -308,8 +288,9 @@ const StringSet& ModelCache::getDependencies() const {
 	return _dependencies;
 }
 
-void ModelCache::initialiseModule(const ApplicationContext& ctx) {
-	rMessage() << "ModelCache::initialiseModule called.\n";
+void ModelCache::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	GlobalCommandSystem().addCommand(
 		"RefreshModels",
@@ -319,11 +300,13 @@ void ModelCache::initialiseModule(const ApplicationContext& ctx) {
 		"RefreshSelectedModels",
 		std::bind(&ModelCache::refreshSelectedModels, this, std::placeholders::_1)
 	);
+
 	GlobalEventManager().addCommand("RefreshModels", "RefreshModels");
 	GlobalEventManager().addCommand("RefreshSelectedModels", "RefreshSelectedModels");
 }
 
-void ModelCache::shutdownModule() {
+void ModelCache::shutdownModule()
+{
 	clear();
 }
 

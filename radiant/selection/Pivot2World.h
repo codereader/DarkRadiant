@@ -25,13 +25,12 @@ private:
 	{
 		_worldSpace = pivot2world;
 
-		Matrix4 pivot2screen;
-		ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
+		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
-		Matrix4 scale;
-		pivot_scale(scale, pivot2screen);
+		Matrix4 scale = getInverseScale(pivot2screen);
+
 		_worldSpace.multiplyBy(scale);
-		pivot_perspective(scale, pivot2screen);
+		scale = getPerspectiveScale(pivot2screen);
 		_worldSpace.multiplyBy(scale);
 	}
 
@@ -39,18 +38,17 @@ private:
 	{
 		_viewpointSpace = pivot2world;
 
-		Matrix4 pivot2screen;
-		ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
+		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
-		Matrix4 scale;
-		pivot_scale(scale, pivot2screen);
+		Matrix4 scale = getInverseScale(pivot2screen);
+
 		_viewpointSpace.multiplyBy(scale);
 
 		billboard_viewpointOriented(scale, pivot2screen);
 		_axisScreen = scale.z().getVector3();
 		_viewpointSpace.multiplyBy(scale);
 
-		pivot_perspective(scale, pivot2screen);
+		scale = getPerspectiveScale(pivot2screen);
 		_viewpointSpace.multiplyBy(scale);
 	}
 
@@ -58,17 +56,16 @@ private:
 	{
 		_viewplaneSpace = pivot2world;
 
-		Matrix4 pivot2screen;
-		ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
+		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
-		Matrix4 scale;
-		pivot_scale(scale, pivot2screen);
+		Matrix4 scale = getInverseScale(pivot2screen);
+		
 		_viewplaneSpace.multiplyBy(scale);
 
 		billboard_viewplaneOriented(scale, pivot2screen);
 		_viewplaneSpace.multiplyBy(scale);
 
-		pivot_perspective(scale, pivot2screen);
+		scale = getPerspectiveScale(pivot2screen);
 		_viewplaneSpace.multiplyBy(scale);
 	}
 };

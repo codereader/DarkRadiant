@@ -22,6 +22,9 @@
     <ClCompile Include="..\..\plugins\model\RenderablePicoSurface.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\model\AseExporter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\model\PicoModelLoader.h">
@@ -37,6 +40,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\model\RenderablePicoSurface.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\model\PicoModelModule.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\model\AseExporter.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

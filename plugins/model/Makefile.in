@@ -130,8 +130,9 @@ model_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/picomodel/libpicomodel.la \
 	$(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/scene/libscenegraph.la
-am_model_la_OBJECTS = PicoModelNode.lo RenderablePicoModel.lo \
-	PicoModelLoader.lo RenderablePicoSurface.lo plugin.lo
+am_model_la_OBJECTS = AseExporter.lo PicoModelNode.lo \
+	RenderablePicoModel.lo PicoModelLoader.lo \
+	RenderablePicoSurface.lo plugin.lo
 model_la_OBJECTS = $(am_model_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -410,7 +411,8 @@ model_la_LIBADD = $(top_builddir)/libs/picomodel/libpicomodel.la \
 				  $(top_builddir)/libs/math/libmath.la \
 				  $(top_builddir)/libs/scene/libscenegraph.la
 
-model_la_SOURCES = PicoModelNode.cpp \
+model_la_SOURCES = AseExporter.cpp \
+                   PicoModelNode.cpp \
                    RenderablePicoModel.cpp \
                    PicoModelLoader.cpp \
                    RenderablePicoSurface.cpp \
@@ -495,6 +497,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AseExporter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PicoModelLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PicoModelNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderablePicoModel.Plo@am__quote@

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "irender.h"
 #include "Rotatable.h"
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
@@ -20,7 +21,8 @@ namespace selection
  */
 class RotateManipulator : 
 	public ManipulatorBase,
-	public Rotatable
+	public Rotatable,
+	public OpenGLRenderable
 {
 private:
 	ManipulationPivot& _pivot;
@@ -66,6 +68,7 @@ public:
 	void updateCircleTransforms();
 
 	void render(RenderableCollector& collector, const VolumeTest& volume) override;
+	void render(const RenderInfo& info) const;
 
 	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
 

@@ -8,7 +8,8 @@ model_la_LDFLAGS = -module -avoid-version \
 model_la_LIBADD = $(top_builddir)/libs/picomodel/libpicomodel.la \
 				  $(top_builddir)/libs/math/libmath.la \
 				  $(top_builddir)/libs/scene/libscenegraph.la
-model_la_SOURCES = PicoModelNode.cpp \
+model_la_SOURCES = AseExporter.cpp \
+                   PicoModelNode.cpp \
                    RenderablePicoModel.cpp \
                    PicoModelLoader.cpp \
                    RenderablePicoSurface.cpp \

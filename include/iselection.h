@@ -57,6 +57,7 @@ public:
 		Rotate,
 		Scale,
 		Clip,
+		ModelScale,
 		Custom
 	};
 
@@ -70,18 +71,28 @@ public:
 	public:
 		virtual ~Component() {}
 
-		virtual void Construct(const Matrix4& device2manip, const float x, const float y) = 0;
+		/**
+		 * Called when the user successfully activates this component. The calling code provides
+		 * information about the view we're operating in, the starting device coords and the
+		 * location of the current selection pivot.
+		 */
+		virtual void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) = 0;
 
-		// greebo: An abstract Transform() method, the implementation has to decide
-		// which operations are actually called. This may be a translation,
-		// rotation, or anything else.
-		virtual void Transform(const Matrix4& manip2object,
-			const Matrix4& device2manip,
-			const float x,
-			const float y) = 0;
+		/**
+		 * Called during mouse movement, the component is asked to calculate the deltas and distances
+		 * it needs to perform the translation/rotation/scale/whatever the operator does on the selected objects.
+		 * The pivot2world transform relates to the original pivot location at the time the transformation started.
+		 * The constrained flag indicates the user is holding down the corresponding key during movement, 
+		 * usually the SHIFT key. It's up to the component to decide how to handle the constraint.
+		 */
+		virtual void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) = 0;
 	};
 
 	virtual ~Manipulator() {}
+
+	// ID and Type management
+	virtual std::size_t getId() const = 0;
+	virtual void setId(std::size_t id) = 0;
 
 	virtual Type getType() const = 0;
 

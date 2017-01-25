@@ -22,11 +22,6 @@ struct FileTypePattern
 	// The mask pattern ("*.map")
 	std::string pattern;
 
-	// The module associated with this specific extension
-	// This is initially empty, will be filled when
-	// GlobalFiletypes().registerModule() is called.
-	std::string associatedModule;
-
 	// Constructor with optional initialisation parameters
 	FileTypePattern(const std::string& name_ = "", 
 					const std::string& extension_ = "", 
@@ -73,40 +68,6 @@ public:
 	 * @returns: a list of FileTypePatterns containing extension, display name, etc.
 	 */
 	virtual FileTypePatterns getPatternsForType(const std::string& fileType) = 0;
-
-	/**
-	 * Registers the named module with the extension for the given fileType.
-	 *
-	 * Example: Associate the module "ModelLoaderASE" with the "ase" extension 
-	 * for the "model" filetype.
-	 *
-	 * Only a single module can be registered for a file type/extension combo 
-	 * at any time.
-	 *
-	 * @returns: TRUE if the module could be registered, FALSE if the filetype/extension
-	 * combination is already "in use" or the file type is not registered at all.
-	 */
-	virtual bool registerModule(const std::string& fileType, 
-								const std::string& extension,
-								const std::string& moduleName) = 0;
-
-	/**
-	 * Removes the module from all filetypes - usually done at module shutdown.
-	 */
-	virtual void unregisterModule(const std::string& moduleName) = 0;
-
-	/**
-	 * Find the name of the module which is able to handle the given extension.
-	 *
-	 * Note that Map Loader Modules are handled slightly differently - they don't
-	 * add themselves directly to a specific extension, but register in the 
-	 * GlobalMapFormatManager(). The Map loading algorithm is querying the format
-	 * manager for any module that is capable of loading the map, so findModule() 
-	 * isn't necessary here. The main purpose of findModule() is to deliver
-	 * a ModelLoader for a specific model file extension, e.g. "ase" or "lwo".
-	 */
-	virtual std::string findModule(const std::string& fileType, 
-								   const std::string& extension) = 0;
 };
 
 inline IFileTypeRegistry& GlobalFiletypes()

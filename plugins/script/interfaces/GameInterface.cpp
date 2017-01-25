@@ -16,6 +16,11 @@ std::string ScriptGame::getKeyValue(const std::string& key) const
 
 // -----------------------------------------------
 
+std::string GameInterface::getUserEnginePath()
+{
+	return GlobalGameManager().getUserEnginePath();
+}
+
 std::string GameInterface::getModPath()
 {
 	return GlobalGameManager().getModPath();
@@ -59,6 +64,7 @@ void GameInterface::registerInterface(boost::python::object& nspace)
 
 	// Add the module declaration to the given python namespace
 	nspace["GlobalGameManager"] = boost::python::class_<GameInterface>("GlobalGameManager")
+		.def("getUserEnginePath", &GameInterface::getUserEnginePath)
 		.def("getModPath", &GameInterface::getModPath)
 		.def("getModBasePath", &GameInterface::getModBasePath)
 		.def("getFSGame", &GameInterface::getFSGame)

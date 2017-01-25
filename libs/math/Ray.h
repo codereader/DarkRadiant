@@ -251,4 +251,30 @@ public:
 
 		return POINT; // I is in T
 	}
+
+	/**
+	 * Tries to find the intersection point of this Ray with the sphere given by its
+	 * origin and radius. The intersection will be written to the given Vector3.
+	 * Returns false if the Ray misses the sphere, in which case the intersection will
+	 * be returned as the Ray's nearest point to the sphere.
+	 * Taken from GtkRadiant's sphere_intersect_ray() function. 
+	 */
+	bool intersectSphere(const Vector3& sphereOrigin, double radius, Vector3& intersection) const
+	{
+		intersection = sphereOrigin - origin;
+
+		const double a = intersection.dot(direction);
+		const double d = radius * radius - (intersection.dot(intersection) - a * a);
+
+		if (d > 0)
+		{
+			intersection = origin + direction * (a - sqrt(d));
+			return true;
+		}
+		else
+		{
+			intersection = origin + direction*a;
+			return false;
+		}
+	}
 };

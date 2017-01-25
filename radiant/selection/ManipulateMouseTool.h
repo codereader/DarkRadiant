@@ -1,5 +1,6 @@
 #pragma once
 
+#include "irender.h"
 #include "imousetool.h"
 #include "render/View.h"
 #include "math/Vector2.h"
@@ -27,10 +28,14 @@ private:
 	Matrix4 _pivot2worldStart;
 	bool _manipulationActive;
 
-	Matrix4 _manip2pivotStart;
-
 	Vector2 _deviceStart;
 	bool _undoBegun;
+
+#if _DEBUG
+	std::string _debugText;
+#endif
+
+	ShaderPtr _pointShader;
 
 public:
     ManipulateMouseTool(SelectionSystem& selectionSystem);
@@ -47,6 +52,9 @@ public:
 
     virtual unsigned int getPointerMode() override;
     virtual unsigned int getRefreshMode() override;
+
+	void renderOverlay() override;
+	void render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume) override;
 
 private:
 	bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);

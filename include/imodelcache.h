@@ -1,13 +1,11 @@
-#ifndef IMODELCACHE_H_
-#define IMODELCACHE_H_
+#pragma once
 
 #include "imodule.h"
 #include "imodel.h"
 #include "inode.h"
 
-const std::string MODULE_MODELCACHE("ModelCache");
-
-namespace model {
+namespace model 
+{
 
 /** Modelcache interface.
  */
@@ -34,26 +32,16 @@ public:
 	 */
 	virtual IModelPtr getModel(const std::string& modelPath) = 0;
 
-	/**
-	 * greebo: Utility function to get the ModelLoader for a certain type.
-	 *
-	 * @type: The model type (usually the file extension, e.g. lwo, ase).
-	 */
-	virtual ModelLoaderPtr getModelLoaderForType(const std::string& type) = 0;
-
 	// Clears the modelcache
 	virtual void clear() = 0;
 };
 
 } // namespace model
 
-#if defined(__GNUC__) && __GNUC__ >= 4
-#define INLINE_VISIBILITY __attribute__ ((visibility ("hidden")))
-#else
-#define INLINE_VISIBILITY
-#endif
+const char* const MODULE_MODELCACHE("ModelCache");
 
-inline INLINE_VISIBILITY model::IModelCache& GlobalModelCache() {
+inline model::IModelCache& GlobalModelCache()
+{
 	static model::IModelCache& _modelCache(
 		*std::static_pointer_cast<model::IModelCache>(
 			module::GlobalModuleRegistry().getModule(MODULE_MODELCACHE)
@@ -61,5 +49,3 @@ inline INLINE_VISIBILITY model::IModelCache& GlobalModelCache() {
 	);
 	return _modelCache;
 }
-
-#endif /* IMODELCACHE_H_ */

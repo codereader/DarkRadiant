@@ -1,5 +1,4 @@
-#ifndef NULLMODELLOADER_H_
-#define NULLMODELLOADER_H_
+#pragma once
 
 #include "imodel.h"
 #include "ifilesystem.h"
@@ -8,9 +7,11 @@
 
 #include "NullModelNode.h"
 
-namespace model {
+namespace model
+{
 
-namespace {
+namespace 
+{
 	// name may be absolute or relative
 	inline std::string rootPath(const std::string& name) {
 		return GlobalFileSystem().findRoot(
@@ -23,10 +24,18 @@ class NullModelLoader;
 typedef std::shared_ptr<NullModelLoader> NullModelLoaderPtr;
 
 class NullModelLoader :
-	public ModelLoader
+	public IModelImporter
 {
 public:
-	virtual scene::INodePtr loadModel(const std::string& modelName) {
+	// NullModelLoader returns an empty extension
+	const std::string& getExtension() const override
+	{
+		static std::string _ext;
+		return _ext;
+	}
+
+	scene::INodePtr loadModel(const std::string& modelName) override
+	{
 		// Initialise the paths, this is all needed for realisation
 		std::string path = rootPath(modelName);
 		std::string name = os::getRelativePath(modelName, path);
@@ -43,37 +52,12 @@ public:
 	}
 
   	// Required function, not implemented.
-	IModelPtr loadModelFromPath(const std::string& name) {
+	IModelPtr loadModelFromPath(const std::string& name) override
+	{
 		NullModelPtr model(new NullModel);
 		model->setModelPath(name);
 		return model;
 	}
-
-	// RegisterableModule implementation
-	virtual const std::string& getName() const {
-		static std::string _name(MODULE_MODELLOADER + "NULL");
-		return _name;
-	}
-
-	virtual const StringSet& getDependencies() const {
-		static StringSet _dependencies; // no dependencies
-		return _dependencies;
-	}
-
-	virtual void initialiseModule(const ApplicationContext& ctx) {
-		rMessage() << getName().c_str() << "::initialiseModule called.\n";
-	}
-
-	static NullModelLoader& Instance() {
-		return *InstancePtr();
-	}
-
-	static NullModelLoaderPtr& InstancePtr() {
-		static NullModelLoaderPtr _instancePtr(new NullModelLoader);
-		return _instancePtr;
-	}
 };
 
 } // namespace model
-
-#endif /*NULLMODELLOADER_H_*/

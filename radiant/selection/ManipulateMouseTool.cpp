@@ -10,6 +10,10 @@
 #include "Pivot2World.h"
 #include "SelectionTest.h"
 #include "SceneWalkers.h"
+#include <boost/format.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
 {
@@ -128,14 +132,7 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 		// is a manipulator selected / the pivot moving?
 		if (_manipulationActive)
 		{
-			selection::Pivot2World pivot;
-			pivot.update(pivot2World, view.GetModelview(), view.GetProjection(), view.GetViewport());
-
-			_manip2pivotStart = _pivot2worldStart.getFullInverse().getMultipliedBy(pivot._worldSpace);
-
-			Matrix4 device2manip;
-			ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
-			activeManipulator->getActiveComponent()->Construct(device2manip, devicePoint.x(), devicePoint.y());
+			activeManipulator->getActiveComponent()->beginTransformation(_pivot2worldStart, view, devicePoint);
 
 			_deviceStart = devicePoint;
 
@@ -161,36 +158,35 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 		GlobalUndoSystem().start();
 	}
 
-	Matrix4 device2manip;
-	ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
+#if _DEBUG
+	Matrix4 device2pivot = constructDevice2Pivot(_pivot2worldStart, view);
+	Matrix4 pivot2device = constructPivot2Device(_pivot2worldStart, view);
+
+	Vector4 pivotDev = pivot2device.transform(Vector4(0,0,0,1));
+
+	_debugText = (boost::format("\nPivotDevice x,y,z,w = (%5.3lf %5.3lf %5.3lf %5.3lf)") % pivotDev.x() % pivotDev.y() % pivotDev.z() % pivotDev.w()).str();
+
+	_debugText += (boost::format("\nStart x,y = (%5.3lf %5.3lf)") % _deviceStart.x() % _deviceStart.y()).str();
+	_debugText += (boost::format("\nCurrent x,y = (%5.3lf %5.3lf)") % devicePoint.x() % devicePoint.y()).str();
+
+	double pivotDistanceDeviceSpace = pivot2device.tz();
+
+	Vector3 worldPosH = device2pivot.transform(Vector4(devicePoint.x(), devicePoint.y(), pivotDistanceDeviceSpace, 1)).getProjected();
+
+	_debugText += (boost::format("\nDev2Pivot x,y,z = (%5.3lf %5.3lf %5.3lf)") % worldPosH.x() % worldPosH.y() % worldPosH.z()).str();
+
+	worldPosH = device2pivot.transform(pivotDev).getProjected();
+	_debugText += (boost::format("\nTest reversal x,y,z = (%5.3lf %5.3lf %5.3lf)") % worldPosH.x() % worldPosH.y() % worldPosH.z()).str();
+#endif
 
 	Vector2 constrainedDevicePoint(devicePoint);
 
 	// Constrain the movement to the axes, if the modifier is held
-	if (wxGetKeyState(WXK_SHIFT))
-	{
-		// Get the movement delta relative to the start point
-		Vector2 delta = devicePoint - _deviceStart;
+	bool constrainedFlag = wxGetKeyState(WXK_SHIFT);
 
-		// Set the "minor" value of the movement to zero
-		if (fabs(delta[0]) > fabs(delta[1]))
-		{
-			// X axis is major, reset the y-value to the start
-			delta[1] = 0;
-		}
-		else
-		{
-			// Y axis is major, reset the x-value to the start
-			delta[0] = 0;
-		}
-
-		// Add the modified delta to the start point, constrained to one axis
-		constrainedDevicePoint = _deviceStart + delta;
-	}
-
-	// Get the manipulatable from the currently active manipulator (done by selection test)
-	// and call the Transform method (can be anything)
-	activeManipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint.x(), constrainedDevicePoint.y());
+	// Get the component of the currently active manipulator (done by selection test)
+	// and call the transform method
+	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, devicePoint, constrainedFlag);
 
 	_selectionSystem.onManipulationChanged();
 }
@@ -314,6 +310,44 @@ bool ManipulateMouseTool::nothingSelected() const
 	default:
 		return false;
 	};
+}
+
+void ManipulateMouseTool::renderOverlay()
+{
+#if _DEBUG
+	std::vector<std::string> lines;
+	boost::algorithm::split(lines, _debugText, boost::algorithm::is_any_of("\n"));
+
+	for (std::size_t i = 0; i < lines.size(); ++i)
+	{
+		glRasterPos3f(1.0f, 15.0f + (12.0f*lines.size() - 1) - 12.0f*i, 0.0f);
+		GlobalOpenGL().drawString(lines[i]);
+	}
+#endif
+}
+
+void ManipulateMouseTool::render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
+{
+#if 0
+	if (nothingSelected()) return;
+
+	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
+
+	if (!activeManipulator) return;
+
+	if (!_pointShader)
+	{
+		_pointShader = renderSystem.capture("$POINT");
+	}
+
+	collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+
+	collector.SetState(_pointShader, RenderableCollector::eWireframeOnly);
+	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
+
+	activeManipulator->render(collector, volume);
+#endif
 }
 
 }
