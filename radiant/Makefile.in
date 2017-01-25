@@ -282,7 +282,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	selection/group/darkradiant-SelectionGroupManager.$(OBJEXT) \
 	selection/group/darkradiant-SelectionGroupInfoFileModule.$(OBJEXT) \
 	selection/manipulators/darkradiant-TranslateManipulator.$(OBJEXT) \
-	selection/darkradiant-Intersection.$(OBJEXT) \
+	selection/manipulators/darkradiant-ModelScaleManipulator.$(OBJEXT) \
 	settings/darkradiant-GameFileLoader.$(OBJEXT) \
 	settings/darkradiant-Game.$(OBJEXT) \
 	settings/darkradiant-GameManager.$(OBJEXT) \
@@ -330,9 +330,11 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	log/darkradiant-StringLogDevice.$(OBJEXT) \
 	log/darkradiant-LogStreamBuf.$(OBJEXT) \
 	log/darkradiant-LogFile.$(OBJEXT) \
-	referencecache/darkradiant-ModelCache.$(OBJEXT) \
-	referencecache/darkradiant-NullModel.$(OBJEXT) \
-	referencecache/darkradiant-NullModelNode.$(OBJEXT)
+	model/darkradiant-ModelCache.$(OBJEXT) \
+	model/darkradiant-ModelFormatManager.$(OBJEXT) \
+	model/darkradiant-NullModel.$(OBJEXT) \
+	model/darkradiant-ScaledModelExporter.$(OBJEXT) \
+	model/darkradiant-NullModelNode.$(OBJEXT)
 darkradiant_OBJECTS = $(am_darkradiant_OBJECTS)
 darkradiant_DEPENDENCIES =  \
 	$(top_builddir)/libs/scene/libscenegraph.la \
@@ -1023,7 +1025,7 @@ darkradiant_SOURCES = main.cpp \
 					  selection/group/SelectionGroupManager.cpp \
 					  selection/group/SelectionGroupInfoFileModule.cpp \
                       selection/manipulators/TranslateManipulator.cpp \
-                      selection/Intersection.cpp \
+                      selection/manipulators/ModelScaleManipulator.cpp \
                       settings/GameFileLoader.cpp \
                       settings/Game.cpp \
                       settings/GameManager.cpp \
@@ -1071,9 +1073,11 @@ darkradiant_SOURCES = main.cpp \
                       log/StringLogDevice.cpp \
                       log/LogStreamBuf.cpp \
                       log/LogFile.cpp \
-                      referencecache/ModelCache.cpp \
-                      referencecache/NullModel.cpp \
-                      referencecache/NullModelNode.cpp 
+                      model/ModelCache.cpp \
+					  model/ModelFormatManager.cpp \
+                      model/NullModel.cpp \
+					  model/ScaledModelExporter.cpp \
+                      model/NullModelNode.cpp 
 
 facePlaneTest_SOURCES = test/facePlaneTest.cpp \
                         brush/FacePlane.cpp
@@ -1935,8 +1939,9 @@ selection/group/darkradiant-SelectionGroupInfoFileModule.$(OBJEXT):  \
 selection/manipulators/darkradiant-TranslateManipulator.$(OBJEXT):  \
 	selection/manipulators/$(am__dirstamp) \
 	selection/manipulators/$(DEPDIR)/$(am__dirstamp)
-selection/darkradiant-Intersection.$(OBJEXT):  \
-	selection/$(am__dirstamp) selection/$(DEPDIR)/$(am__dirstamp)
+selection/manipulators/darkradiant-ModelScaleManipulator.$(OBJEXT):  \
+	selection/manipulators/$(am__dirstamp) \
+	selection/manipulators/$(DEPDIR)/$(am__dirstamp)
 settings/$(am__dirstamp):
 	@$(MKDIR_P) settings
 	@: > settings/$(am__dirstamp)
@@ -2089,21 +2094,22 @@ log/darkradiant-LogStreamBuf.$(OBJEXT): log/$(am__dirstamp) \
 	log/$(DEPDIR)/$(am__dirstamp)
 log/darkradiant-LogFile.$(OBJEXT): log/$(am__dirstamp) \
 	log/$(DEPDIR)/$(am__dirstamp)
-referencecache/$(am__dirstamp):
-	@$(MKDIR_P) referencecache
-	@: > referencecache/$(am__dirstamp)
-referencecache/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) referencecache/$(DEPDIR)
-	@: > referencecache/$(DEPDIR)/$(am__dirstamp)
-referencecache/darkradiant-ModelCache.$(OBJEXT):  \
-	referencecache/$(am__dirstamp) \
-	referencecache/$(DEPDIR)/$(am__dirstamp)
-referencecache/darkradiant-NullModel.$(OBJEXT):  \
-	referencecache/$(am__dirstamp) \
-	referencecache/$(DEPDIR)/$(am__dirstamp)
-referencecache/darkradiant-NullModelNode.$(OBJEXT):  \
-	referencecache/$(am__dirstamp) \
-	referencecache/$(DEPDIR)/$(am__dirstamp)
+model/$(am__dirstamp):
+	@$(MKDIR_P) model
+	@: > model/$(am__dirstamp)
+model/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) model/$(DEPDIR)
+	@: > model/$(DEPDIR)/$(am__dirstamp)
+model/darkradiant-ModelCache.$(OBJEXT): model/$(am__dirstamp) \
+	model/$(DEPDIR)/$(am__dirstamp)
+model/darkradiant-ModelFormatManager.$(OBJEXT): model/$(am__dirstamp) \
+	model/$(DEPDIR)/$(am__dirstamp)
+model/darkradiant-NullModel.$(OBJEXT): model/$(am__dirstamp) \
+	model/$(DEPDIR)/$(am__dirstamp)
+model/darkradiant-ScaledModelExporter.$(OBJEXT):  \
+	model/$(am__dirstamp) model/$(DEPDIR)/$(am__dirstamp)
+model/darkradiant-NullModelNode.$(OBJEXT): model/$(am__dirstamp) \
+	model/$(DEPDIR)/$(am__dirstamp)
 
 darkradiant$(EXEEXT): $(darkradiant_OBJECTS) $(darkradiant_DEPENDENCIES) $(EXTRA_darkradiant_DEPENDENCIES) 
 	@rm -f darkradiant$(EXEEXT)
@@ -2135,11 +2141,11 @@ mostlyclean-compile:
 	-rm -f map/*.$(OBJEXT)
 	-rm -f map/algorithm/*.$(OBJEXT)
 	-rm -f map/infofile/*.$(OBJEXT)
+	-rm -f model/*.$(OBJEXT)
 	-rm -f modulesystem/*.$(OBJEXT)
 	-rm -f namespace/*.$(OBJEXT)
 	-rm -f patch/*.$(OBJEXT)
 	-rm -f patch/algorithm/*.$(OBJEXT)
-	-rm -f referencecache/*.$(OBJEXT)
 	-rm -f render/*.$(OBJEXT)
 	-rm -f render/backend/*.$(OBJEXT)
 	-rm -f render/backend/glprogram/*.$(OBJEXT)
@@ -2251,6 +2257,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@map/infofile/$(DEPDIR)/darkradiant-InfoFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/infofile/$(DEPDIR)/darkradiant-InfoFileExporter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@map/infofile/$(DEPDIR)/darkradiant-InfoFileManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@model/$(DEPDIR)/darkradiant-ModelCache.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@model/$(DEPDIR)/darkradiant-ModelFormatManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@model/$(DEPDIR)/darkradiant-NullModel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@model/$(DEPDIR)/darkradiant-NullModelNode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@model/$(DEPDIR)/darkradiant-ScaledModelExporter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@modulesystem/$(DEPDIR)/darkradiant-ApplicationContextImpl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@modulesystem/$(DEPDIR)/darkradiant-DynamicLibrary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@modulesystem/$(DEPDIR)/darkradiant-DynamicLibraryLoader.Po@am__quote@
@@ -2267,9 +2278,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@patch/$(DEPDIR)/darkradiant-PatchTesselation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/algorithm/$(DEPDIR)/darkradiant-General.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@patch/algorithm/$(DEPDIR)/darkradiant-Prefab.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@referencecache/$(DEPDIR)/darkradiant-ModelCache.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@referencecache/$(DEPDIR)/darkradiant-NullModel.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@referencecache/$(DEPDIR)/darkradiant-NullModelNode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@render/$(DEPDIR)/darkradiant-LinearLightList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@render/$(DEPDIR)/darkradiant-OpenGLModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@render/$(DEPDIR)/darkradiant-OpenGLRenderSystem.Po@am__quote@
@@ -2285,7 +2293,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@render/backend/glprogram/$(DEPDIR)/darkradiant-GenericVFPProgram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@render/debug/$(DEPDIR)/darkradiant-SpacePartitionRenderer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-BestPoint.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-Intersection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-ManipulateMouseTool.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-ManipulationPivot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/$(DEPDIR)/darkradiant-RadiantSelectionSystem.Po@am__quote@
@@ -2310,6 +2317,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@selection/manipulators/$(DEPDIR)/darkradiant-DragManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/manipulators/$(DEPDIR)/darkradiant-ManipulatorBase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/manipulators/$(DEPDIR)/darkradiant-ManipulatorComponents.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@selection/manipulators/$(DEPDIR)/darkradiant-ModelScaleManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/manipulators/$(DEPDIR)/darkradiant-RotateManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/manipulators/$(DEPDIR)/darkradiant-ScaleManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@selection/manipulators/$(DEPDIR)/darkradiant-TranslateManipulator.Po@am__quote@
@@ -4953,19 +4961,19 @@ selection/manipulators/darkradiant-TranslateManipulator.obj: selection/manipulat
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/manipulators/darkradiant-TranslateManipulator.obj `if test -f 'selection/manipulators/TranslateManipulator.cpp'; then $(CYGPATH_W) 'selection/manipulators/TranslateManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/manipulators/TranslateManipulator.cpp'; fi`
 
-selection/darkradiant-Intersection.o: selection/Intersection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-Intersection.o -MD -MP -MF selection/$(DEPDIR)/darkradiant-Intersection.Tpo -c -o selection/darkradiant-Intersection.o `test -f 'selection/Intersection.cpp' || echo '$(srcdir)/'`selection/Intersection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-Intersection.Tpo selection/$(DEPDIR)/darkradiant-Intersection.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/Intersection.cpp' object='selection/darkradiant-Intersection.o' libtool=no @AMDEPBACKSLASH@
+selection/manipulators/darkradiant-ModelScaleManipulator.o: selection/manipulators/ModelScaleManipulator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/manipulators/darkradiant-ModelScaleManipulator.o -MD -MP -MF selection/manipulators/$(DEPDIR)/darkradiant-ModelScaleManipulator.Tpo -c -o selection/manipulators/darkradiant-ModelScaleManipulator.o `test -f 'selection/manipulators/ModelScaleManipulator.cpp' || echo '$(srcdir)/'`selection/manipulators/ModelScaleManipulator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/manipulators/$(DEPDIR)/darkradiant-ModelScaleManipulator.Tpo selection/manipulators/$(DEPDIR)/darkradiant-ModelScaleManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/manipulators/ModelScaleManipulator.cpp' object='selection/manipulators/darkradiant-ModelScaleManipulator.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-Intersection.o `test -f 'selection/Intersection.cpp' || echo '$(srcdir)/'`selection/Intersection.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/manipulators/darkradiant-ModelScaleManipulator.o `test -f 'selection/manipulators/ModelScaleManipulator.cpp' || echo '$(srcdir)/'`selection/manipulators/ModelScaleManipulator.cpp
 
-selection/darkradiant-Intersection.obj: selection/Intersection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/darkradiant-Intersection.obj -MD -MP -MF selection/$(DEPDIR)/darkradiant-Intersection.Tpo -c -o selection/darkradiant-Intersection.obj `if test -f 'selection/Intersection.cpp'; then $(CYGPATH_W) 'selection/Intersection.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Intersection.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/$(DEPDIR)/darkradiant-Intersection.Tpo selection/$(DEPDIR)/darkradiant-Intersection.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/Intersection.cpp' object='selection/darkradiant-Intersection.obj' libtool=no @AMDEPBACKSLASH@
+selection/manipulators/darkradiant-ModelScaleManipulator.obj: selection/manipulators/ModelScaleManipulator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT selection/manipulators/darkradiant-ModelScaleManipulator.obj -MD -MP -MF selection/manipulators/$(DEPDIR)/darkradiant-ModelScaleManipulator.Tpo -c -o selection/manipulators/darkradiant-ModelScaleManipulator.obj `if test -f 'selection/manipulators/ModelScaleManipulator.cpp'; then $(CYGPATH_W) 'selection/manipulators/ModelScaleManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/manipulators/ModelScaleManipulator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) selection/manipulators/$(DEPDIR)/darkradiant-ModelScaleManipulator.Tpo selection/manipulators/$(DEPDIR)/darkradiant-ModelScaleManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='selection/manipulators/ModelScaleManipulator.cpp' object='selection/manipulators/darkradiant-ModelScaleManipulator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/darkradiant-Intersection.obj `if test -f 'selection/Intersection.cpp'; then $(CYGPATH_W) 'selection/Intersection.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Intersection.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o selection/manipulators/darkradiant-ModelScaleManipulator.obj `if test -f 'selection/manipulators/ModelScaleManipulator.cpp'; then $(CYGPATH_W) 'selection/manipulators/ModelScaleManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/manipulators/ModelScaleManipulator.cpp'; fi`
 
 settings/darkradiant-GameFileLoader.o: settings/GameFileLoader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT settings/darkradiant-GameFileLoader.o -MD -MP -MF settings/$(DEPDIR)/darkradiant-GameFileLoader.Tpo -c -o settings/darkradiant-GameFileLoader.o `test -f 'settings/GameFileLoader.cpp' || echo '$(srcdir)/'`settings/GameFileLoader.cpp
@@ -5625,47 +5633,75 @@ log/darkradiant-LogFile.obj: log/LogFile.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o log/darkradiant-LogFile.obj `if test -f 'log/LogFile.cpp'; then $(CYGPATH_W) 'log/LogFile.cpp'; else $(CYGPATH_W) '$(srcdir)/log/LogFile.cpp'; fi`
 
-referencecache/darkradiant-ModelCache.o: referencecache/ModelCache.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT referencecache/darkradiant-ModelCache.o -MD -MP -MF referencecache/$(DEPDIR)/darkradiant-ModelCache.Tpo -c -o referencecache/darkradiant-ModelCache.o `test -f 'referencecache/ModelCache.cpp' || echo '$(srcdir)/'`referencecache/ModelCache.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) referencecache/$(DEPDIR)/darkradiant-ModelCache.Tpo referencecache/$(DEPDIR)/darkradiant-ModelCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='referencecache/ModelCache.cpp' object='referencecache/darkradiant-ModelCache.o' libtool=no @AMDEPBACKSLASH@
+model/darkradiant-ModelCache.o: model/ModelCache.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-ModelCache.o -MD -MP -MF model/$(DEPDIR)/darkradiant-ModelCache.Tpo -c -o model/darkradiant-ModelCache.o `test -f 'model/ModelCache.cpp' || echo '$(srcdir)/'`model/ModelCache.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-ModelCache.Tpo model/$(DEPDIR)/darkradiant-ModelCache.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/ModelCache.cpp' object='model/darkradiant-ModelCache.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o referencecache/darkradiant-ModelCache.o `test -f 'referencecache/ModelCache.cpp' || echo '$(srcdir)/'`referencecache/ModelCache.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-ModelCache.o `test -f 'model/ModelCache.cpp' || echo '$(srcdir)/'`model/ModelCache.cpp
 
-referencecache/darkradiant-ModelCache.obj: referencecache/ModelCache.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT referencecache/darkradiant-ModelCache.obj -MD -MP -MF referencecache/$(DEPDIR)/darkradiant-ModelCache.Tpo -c -o referencecache/darkradiant-ModelCache.obj `if test -f 'referencecache/ModelCache.cpp'; then $(CYGPATH_W) 'referencecache/ModelCache.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/ModelCache.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) referencecache/$(DEPDIR)/darkradiant-ModelCache.Tpo referencecache/$(DEPDIR)/darkradiant-ModelCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='referencecache/ModelCache.cpp' object='referencecache/darkradiant-ModelCache.obj' libtool=no @AMDEPBACKSLASH@
+model/darkradiant-ModelCache.obj: model/ModelCache.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-ModelCache.obj -MD -MP -MF model/$(DEPDIR)/darkradiant-ModelCache.Tpo -c -o model/darkradiant-ModelCache.obj `if test -f 'model/ModelCache.cpp'; then $(CYGPATH_W) 'model/ModelCache.cpp'; else $(CYGPATH_W) '$(srcdir)/model/ModelCache.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-ModelCache.Tpo model/$(DEPDIR)/darkradiant-ModelCache.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/ModelCache.cpp' object='model/darkradiant-ModelCache.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o referencecache/darkradiant-ModelCache.obj `if test -f 'referencecache/ModelCache.cpp'; then $(CYGPATH_W) 'referencecache/ModelCache.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/ModelCache.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-ModelCache.obj `if test -f 'model/ModelCache.cpp'; then $(CYGPATH_W) 'model/ModelCache.cpp'; else $(CYGPATH_W) '$(srcdir)/model/ModelCache.cpp'; fi`
 
-referencecache/darkradiant-NullModel.o: referencecache/NullModel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT referencecache/darkradiant-NullModel.o -MD -MP -MF referencecache/$(DEPDIR)/darkradiant-NullModel.Tpo -c -o referencecache/darkradiant-NullModel.o `test -f 'referencecache/NullModel.cpp' || echo '$(srcdir)/'`referencecache/NullModel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) referencecache/$(DEPDIR)/darkradiant-NullModel.Tpo referencecache/$(DEPDIR)/darkradiant-NullModel.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='referencecache/NullModel.cpp' object='referencecache/darkradiant-NullModel.o' libtool=no @AMDEPBACKSLASH@
+model/darkradiant-ModelFormatManager.o: model/ModelFormatManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-ModelFormatManager.o -MD -MP -MF model/$(DEPDIR)/darkradiant-ModelFormatManager.Tpo -c -o model/darkradiant-ModelFormatManager.o `test -f 'model/ModelFormatManager.cpp' || echo '$(srcdir)/'`model/ModelFormatManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-ModelFormatManager.Tpo model/$(DEPDIR)/darkradiant-ModelFormatManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/ModelFormatManager.cpp' object='model/darkradiant-ModelFormatManager.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o referencecache/darkradiant-NullModel.o `test -f 'referencecache/NullModel.cpp' || echo '$(srcdir)/'`referencecache/NullModel.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-ModelFormatManager.o `test -f 'model/ModelFormatManager.cpp' || echo '$(srcdir)/'`model/ModelFormatManager.cpp
 
-referencecache/darkradiant-NullModel.obj: referencecache/NullModel.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT referencecache/darkradiant-NullModel.obj -MD -MP -MF referencecache/$(DEPDIR)/darkradiant-NullModel.Tpo -c -o referencecache/darkradiant-NullModel.obj `if test -f 'referencecache/NullModel.cpp'; then $(CYGPATH_W) 'referencecache/NullModel.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/NullModel.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) referencecache/$(DEPDIR)/darkradiant-NullModel.Tpo referencecache/$(DEPDIR)/darkradiant-NullModel.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='referencecache/NullModel.cpp' object='referencecache/darkradiant-NullModel.obj' libtool=no @AMDEPBACKSLASH@
+model/darkradiant-ModelFormatManager.obj: model/ModelFormatManager.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-ModelFormatManager.obj -MD -MP -MF model/$(DEPDIR)/darkradiant-ModelFormatManager.Tpo -c -o model/darkradiant-ModelFormatManager.obj `if test -f 'model/ModelFormatManager.cpp'; then $(CYGPATH_W) 'model/ModelFormatManager.cpp'; else $(CYGPATH_W) '$(srcdir)/model/ModelFormatManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-ModelFormatManager.Tpo model/$(DEPDIR)/darkradiant-ModelFormatManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/ModelFormatManager.cpp' object='model/darkradiant-ModelFormatManager.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o referencecache/darkradiant-NullModel.obj `if test -f 'referencecache/NullModel.cpp'; then $(CYGPATH_W) 'referencecache/NullModel.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/NullModel.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-ModelFormatManager.obj `if test -f 'model/ModelFormatManager.cpp'; then $(CYGPATH_W) 'model/ModelFormatManager.cpp'; else $(CYGPATH_W) '$(srcdir)/model/ModelFormatManager.cpp'; fi`
 
-referencecache/darkradiant-NullModelNode.o: referencecache/NullModelNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT referencecache/darkradiant-NullModelNode.o -MD -MP -MF referencecache/$(DEPDIR)/darkradiant-NullModelNode.Tpo -c -o referencecache/darkradiant-NullModelNode.o `test -f 'referencecache/NullModelNode.cpp' || echo '$(srcdir)/'`referencecache/NullModelNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) referencecache/$(DEPDIR)/darkradiant-NullModelNode.Tpo referencecache/$(DEPDIR)/darkradiant-NullModelNode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='referencecache/NullModelNode.cpp' object='referencecache/darkradiant-NullModelNode.o' libtool=no @AMDEPBACKSLASH@
+model/darkradiant-NullModel.o: model/NullModel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-NullModel.o -MD -MP -MF model/$(DEPDIR)/darkradiant-NullModel.Tpo -c -o model/darkradiant-NullModel.o `test -f 'model/NullModel.cpp' || echo '$(srcdir)/'`model/NullModel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-NullModel.Tpo model/$(DEPDIR)/darkradiant-NullModel.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/NullModel.cpp' object='model/darkradiant-NullModel.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o referencecache/darkradiant-NullModelNode.o `test -f 'referencecache/NullModelNode.cpp' || echo '$(srcdir)/'`referencecache/NullModelNode.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-NullModel.o `test -f 'model/NullModel.cpp' || echo '$(srcdir)/'`model/NullModel.cpp
 
-referencecache/darkradiant-NullModelNode.obj: referencecache/NullModelNode.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT referencecache/darkradiant-NullModelNode.obj -MD -MP -MF referencecache/$(DEPDIR)/darkradiant-NullModelNode.Tpo -c -o referencecache/darkradiant-NullModelNode.obj `if test -f 'referencecache/NullModelNode.cpp'; then $(CYGPATH_W) 'referencecache/NullModelNode.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/NullModelNode.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) referencecache/$(DEPDIR)/darkradiant-NullModelNode.Tpo referencecache/$(DEPDIR)/darkradiant-NullModelNode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='referencecache/NullModelNode.cpp' object='referencecache/darkradiant-NullModelNode.obj' libtool=no @AMDEPBACKSLASH@
+model/darkradiant-NullModel.obj: model/NullModel.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-NullModel.obj -MD -MP -MF model/$(DEPDIR)/darkradiant-NullModel.Tpo -c -o model/darkradiant-NullModel.obj `if test -f 'model/NullModel.cpp'; then $(CYGPATH_W) 'model/NullModel.cpp'; else $(CYGPATH_W) '$(srcdir)/model/NullModel.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-NullModel.Tpo model/$(DEPDIR)/darkradiant-NullModel.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/NullModel.cpp' object='model/darkradiant-NullModel.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o referencecache/darkradiant-NullModelNode.obj `if test -f 'referencecache/NullModelNode.cpp'; then $(CYGPATH_W) 'referencecache/NullModelNode.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/NullModelNode.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-NullModel.obj `if test -f 'model/NullModel.cpp'; then $(CYGPATH_W) 'model/NullModel.cpp'; else $(CYGPATH_W) '$(srcdir)/model/NullModel.cpp'; fi`
+
+model/darkradiant-ScaledModelExporter.o: model/ScaledModelExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-ScaledModelExporter.o -MD -MP -MF model/$(DEPDIR)/darkradiant-ScaledModelExporter.Tpo -c -o model/darkradiant-ScaledModelExporter.o `test -f 'model/ScaledModelExporter.cpp' || echo '$(srcdir)/'`model/ScaledModelExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-ScaledModelExporter.Tpo model/$(DEPDIR)/darkradiant-ScaledModelExporter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/ScaledModelExporter.cpp' object='model/darkradiant-ScaledModelExporter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-ScaledModelExporter.o `test -f 'model/ScaledModelExporter.cpp' || echo '$(srcdir)/'`model/ScaledModelExporter.cpp
+
+model/darkradiant-ScaledModelExporter.obj: model/ScaledModelExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-ScaledModelExporter.obj -MD -MP -MF model/$(DEPDIR)/darkradiant-ScaledModelExporter.Tpo -c -o model/darkradiant-ScaledModelExporter.obj `if test -f 'model/ScaledModelExporter.cpp'; then $(CYGPATH_W) 'model/ScaledModelExporter.cpp'; else $(CYGPATH_W) '$(srcdir)/model/ScaledModelExporter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-ScaledModelExporter.Tpo model/$(DEPDIR)/darkradiant-ScaledModelExporter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/ScaledModelExporter.cpp' object='model/darkradiant-ScaledModelExporter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-ScaledModelExporter.obj `if test -f 'model/ScaledModelExporter.cpp'; then $(CYGPATH_W) 'model/ScaledModelExporter.cpp'; else $(CYGPATH_W) '$(srcdir)/model/ScaledModelExporter.cpp'; fi`
+
+model/darkradiant-NullModelNode.o: model/NullModelNode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-NullModelNode.o -MD -MP -MF model/$(DEPDIR)/darkradiant-NullModelNode.Tpo -c -o model/darkradiant-NullModelNode.o `test -f 'model/NullModelNode.cpp' || echo '$(srcdir)/'`model/NullModelNode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-NullModelNode.Tpo model/$(DEPDIR)/darkradiant-NullModelNode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/NullModelNode.cpp' object='model/darkradiant-NullModelNode.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-NullModelNode.o `test -f 'model/NullModelNode.cpp' || echo '$(srcdir)/'`model/NullModelNode.cpp
+
+model/darkradiant-NullModelNode.obj: model/NullModelNode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT model/darkradiant-NullModelNode.obj -MD -MP -MF model/$(DEPDIR)/darkradiant-NullModelNode.Tpo -c -o model/darkradiant-NullModelNode.obj `if test -f 'model/NullModelNode.cpp'; then $(CYGPATH_W) 'model/NullModelNode.cpp'; else $(CYGPATH_W) '$(srcdir)/model/NullModelNode.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) model/$(DEPDIR)/darkradiant-NullModelNode.Tpo model/$(DEPDIR)/darkradiant-NullModelNode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='model/NullModelNode.cpp' object='model/darkradiant-NullModelNode.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o model/darkradiant-NullModelNode.obj `if test -f 'model/NullModelNode.cpp'; then $(CYGPATH_W) 'model/NullModelNode.cpp'; else $(CYGPATH_W) '$(srcdir)/model/NullModelNode.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -5976,6 +6012,8 @@ distclean-generic:
 	-rm -f map/algorithm/$(am__dirstamp)
 	-rm -f map/infofile/$(DEPDIR)/$(am__dirstamp)
 	-rm -f map/infofile/$(am__dirstamp)
+	-rm -f model/$(DEPDIR)/$(am__dirstamp)
+	-rm -f model/$(am__dirstamp)
 	-rm -f modulesystem/$(DEPDIR)/$(am__dirstamp)
 	-rm -f modulesystem/$(am__dirstamp)
 	-rm -f namespace/$(DEPDIR)/$(am__dirstamp)
@@ -5984,8 +6022,6 @@ distclean-generic:
 	-rm -f patch/$(am__dirstamp)
 	-rm -f patch/algorithm/$(DEPDIR)/$(am__dirstamp)
 	-rm -f patch/algorithm/$(am__dirstamp)
-	-rm -f referencecache/$(DEPDIR)/$(am__dirstamp)
-	-rm -f referencecache/$(am__dirstamp)
 	-rm -f render/$(DEPDIR)/$(am__dirstamp)
 	-rm -f render/$(am__dirstamp)
 	-rm -f render/backend/$(DEPDIR)/$(am__dirstamp)
@@ -6088,7 +6124,7 @@ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
 	clean-libtool mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) map/infofile/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/group/$(DEPDIR) selection/manipulators/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) map/infofile/$(DEPDIR) model/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/group/$(DEPDIR) selection/manipulators/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -6134,7 +6170,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) map/infofile/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) referencecache/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/group/$(DEPDIR) selection/manipulators/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) brush/$(DEPDIR) brush/csg/$(DEPDIR) brush/export/$(DEPDIR) camera/$(DEPDIR) clipper/$(DEPDIR) layers/$(DEPDIR) log/$(DEPDIR) map/$(DEPDIR) map/algorithm/$(DEPDIR) map/infofile/$(DEPDIR) model/$(DEPDIR) modulesystem/$(DEPDIR) namespace/$(DEPDIR) patch/$(DEPDIR) patch/algorithm/$(DEPDIR) render/$(DEPDIR) render/backend/$(DEPDIR) render/backend/glprogram/$(DEPDIR) render/debug/$(DEPDIR) selection/$(DEPDIR) selection/algorithm/$(DEPDIR) selection/clipboard/$(DEPDIR) selection/group/$(DEPDIR) selection/manipulators/$(DEPDIR) selection/selectionset/$(DEPDIR) selection/shaderclipboard/$(DEPDIR) settings/$(DEPDIR) test/$(DEPDIR) textool/$(DEPDIR) textool/item/$(DEPDIR) ui/$(DEPDIR) ui/aas/$(DEPDIR) ui/about/$(DEPDIR) ui/brush/$(DEPDIR) ui/commandlist/$(DEPDIR) ui/common/$(DEPDIR) ui/einspector/$(DEPDIR) ui/entitychooser/$(DEPDIR) ui/filterdialog/$(DEPDIR) ui/findshader/$(DEPDIR) ui/layers/$(DEPDIR) ui/lightinspector/$(DEPDIR) ui/mainframe/$(DEPDIR) ui/mapinfo/$(DEPDIR) ui/mediabrowser/$(DEPDIR) ui/menu/$(DEPDIR) ui/modelselector/$(DEPDIR) ui/mousetool/$(DEPDIR) ui/mru/$(DEPDIR) ui/ortho/$(DEPDIR) ui/overlay/$(DEPDIR) ui/particles/$(DEPDIR) ui/patch/$(DEPDIR) ui/prefabselector/$(DEPDIR) ui/prefdialog/$(DEPDIR) ui/splash/$(DEPDIR) ui/surfaceinspector/$(DEPDIR) ui/texturebrowser/$(DEPDIR) ui/transform/$(DEPDIR) xyview/$(DEPDIR) xyview/tools/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

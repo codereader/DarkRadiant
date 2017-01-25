@@ -1,9 +1,12 @@
 #include "ManipulatorComponents.h"
 
+#include "ientity.h"
+#include "itransformable.h"
 #include "igrid.h"
 #include "math/FloatTools.h"
 #include "math/Ray.h"
 #include "pivot.h"
+#include "string/convert.h"
 
 namespace selection
 {

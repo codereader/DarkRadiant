@@ -1,7 +1,10 @@
 #include "ScaledModelExporter.h"
 
+#include <fstream>
+#include "i18n.h"
 #include "itextstream.h"
 #include "igame.h"
+#include "ientity.h"
 #include "iscenegraph.h"
 #include "os/path.h"
 #include <boost/filesystem.hpp>
