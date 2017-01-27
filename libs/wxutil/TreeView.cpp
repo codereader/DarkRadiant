@@ -92,6 +92,11 @@ void TreeView::ExpandTopLevelItems()
 	});
 }
 
+void TreeView::ResetSortingOnAllColumns()
+{
+	ResetAllSortColumns();
+}
+
 void TreeView::AddSearchColumn(const TreeModel::Column& column)
 {
 	// Only text columns are supported right now

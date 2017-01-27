@@ -1243,6 +1243,9 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
     // a chance to disconnect the list store might contain remnants
     _keyValueIterMap.clear();
     _kvStore->Clear();
+
+	// Reset the sorting when changing entities
+	_keyValueTreeView->ResetSortingOnAllColumns();
     
     // Attach to new entity if it is non-NULL
     if (newEntity)

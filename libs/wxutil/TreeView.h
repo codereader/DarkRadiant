@@ -53,6 +53,9 @@ public:
 	// Expands the first level of all the top-level items
 	void ExpandTopLevelItems();
 
+	// Removes any sort keys
+	void ResetSortingOnAllColumns();
+
 	// Adds a column to search when the user starts typing
 	void AddSearchColumn(const TreeModel::Column& column);
 
