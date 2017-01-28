@@ -49,7 +49,7 @@ Nurail: Used pm_md3.c (Randy Reddig) as a template.
 #endif
 
 /* md2 model format */
-#define MD2_MAGIC				"IDP2"
+static const char* MD2_MAGIC =  "IDP2";
 #define MD2_VERSION				8
 
 #define MD2_NUMVERTEXNORMALS	162
@@ -315,8 +315,11 @@ static int _md2_canload( PM_PARAMS_CANLOAD )
 	md2 = (md2_t*) buffer;
 
 	/* check md2 magic */
-	if( *((int*) md2->magic) != *((int*) MD2_MAGIC) )
+	if (md2->magic[0] != MD2_MAGIC[0] || md2->magic[1] != MD2_MAGIC[1] ||
+		md2->magic[2] != MD2_MAGIC[2] || md2->magic[3] != MD2_MAGIC[3])
+    {
 		return PICO_PMV_ERROR_IDENT;
+    }
 
 	/* check md2 version */
 	if( _pico_little_long( md2->version ) != MD2_VERSION )
@@ -359,7 +362,9 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 	md2	= (md2_t*) buffer;
 
 	/* check ident and version */
-	if( *((int*) md2->magic) != *((int*) MD2_MAGIC) || _pico_little_long( md2->version ) != MD2_VERSION )
+	if (md2->magic[0] != MD2_MAGIC[0] || md2->magic[1] != MD2_MAGIC[1] ||
+		md2->magic[2] != MD2_MAGIC[2] || md2->magic[3] != MD2_MAGIC[3] || 
+		_pico_little_long(md2->version) != MD2_VERSION)
 	{
 		/* not an md2 file (todo: set error) */
 		_pico_printf( PICO_ERROR, "%s is not an MD2 File!", fileName );

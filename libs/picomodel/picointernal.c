@@ -46,6 +46,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* dependencies */
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "picointernal.h"
 
 

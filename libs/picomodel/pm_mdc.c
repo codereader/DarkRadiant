@@ -43,7 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "picointernal.h"
 
 /* mdc model format */
-#define MDC_MAGIC			"IDPC"
+static const char* MDC_MAGIC = "IDPC";
 #define MDC_VERSION			2
 
 /* mdc vertex scale */
@@ -431,8 +431,11 @@ static int _mdc_canload( PM_PARAMS_CANLOAD )
 	mdc	= (mdc_t*) buffer;
 
 	/* check mdc magic */
-	if( *((int*) mdc->magic) != *((int*) MDC_MAGIC) )
+    if (mdc->magic[0] != MDC_MAGIC[0] || mdc->magic[1] != MDC_MAGIC[1] ||
+		mdc->magic[2] != MDC_MAGIC[2] || mdc->magic[3] != MDC_MAGIC[3])
+    {
 		return PICO_PMV_ERROR_IDENT;
+    }
 
 	/* check mdc version */
 	if( _pico_little_long( mdc->version ) != MDC_VERSION )
@@ -483,7 +486,9 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 	mdc	= (mdc_t*) buffer;
 
 	/* check ident and version */
-	if( *((int*) mdc->magic) != *((int*) MDC_MAGIC) || _pico_little_long( mdc->version ) != MDC_VERSION )
+    if (mdc->magic[0] != MDC_MAGIC[0] || mdc->magic[1] != MDC_MAGIC[1] ||
+		mdc->magic[2] != MDC_MAGIC[2] || mdc->magic[3] != MDC_MAGIC[3] || 
+		_pico_little_long( mdc->version ) != MDC_VERSION)
 	{
 		/* not an mdc file (todo: set error) */
 		return NULL;
