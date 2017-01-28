@@ -29,18 +29,18 @@ FaceInstanceSet FaceInstance::_selectedFaceInstances;
 
 FaceInstance::FaceInstance(Face& face, const SelectionChangedSlot& observer) :
 	m_face(&face),
+	m_selectionChanged(observer),
 	m_selectable(std::bind(&FaceInstance::selectedChanged, this, std::placeholders::_1)),
 	m_selectableVertices(observer),
-	m_selectableEdges(observer),
-	m_selectionChanged(observer)
+	m_selectableEdges(observer)
 {}
 
 FaceInstance::FaceInstance(const FaceInstance& other) :
 	m_face(other.m_face),
+	m_selectionChanged(other.m_selectionChanged),
 	m_selectable(std::bind(&FaceInstance::selectedChanged, this, std::placeholders::_1)),
 	m_selectableVertices(other.m_selectableVertices),
-	m_selectableEdges(other.m_selectableEdges),
-	m_selectionChanged(other.m_selectionChanged)
+	m_selectableEdges(other.m_selectableEdges)
 {}
 
 FaceInstance& FaceInstance::operator=(const FaceInstance& other) {

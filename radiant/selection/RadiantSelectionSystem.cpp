@@ -36,11 +36,11 @@ ShaderPtr RadiantSelectionSystem::_state;
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestSceneGraphChange(false),
     _requestWorkZoneRecalculation(true),
+    _defaultManipulatorType(Manipulator::Drag),
     _mode(ePrimitive),
     _componentMode(eDefault),
     _countPrimitive(0),
-    _countComponent(0),
-	_defaultManipulatorType(Manipulator::Drag)
+    _countComponent(0)
 {}
 
 const SelectionInfo& RadiantSelectionSystem::getSelectionInfo() {

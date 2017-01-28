@@ -90,32 +90,40 @@ const char* LINK_NAME =
 ;
 
 /// brief Returns the filename of the executable belonging to the current process, or 0 if not found.
-char* getexename(char *buf, char* argv[]) {
-	/* Now read the symbolic link */
+std::string getexename(char* argv[])
+{
+    char buf[PATH_MAX];
+    
+	// Now read the symbolic link
 	int ret = readlink(LINK_NAME, buf, PATH_MAX);
 
-	if (ret == -1) {
-		rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'";
+	if (ret == -1)
+    {
+		rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'\n";
+        
 		const char* path = realpath(argv[0], buf);
-		if (path == NULL) {
-			/* In case of an error, leave the handling up to the caller */
-			return "";
+        
+		if (path == nullptr)
+        {
+			// In case of an error, leave the handling up to the caller
+			return std::string();
 		}
 	}
 
 	/* Ensure proper NUL termination */
-	buf[ret] = 0;
+	buf[ret] = '\0';
 
 	/* delete the program name */
 	*(strrchr(buf, '/')) = '\0';
 
 	// NOTE: we build app path with a trailing '/'
 	// it's a general convention in Radiant to have the slash at the end of directories
-	if (buf[strlen(buf)-1] != '/') {
+	if (buf[strlen(buf)-1] != '/')
+    {
 		strcat(buf, "/");
 	}
 
-	return buf;
+	return std::string(buf);
 }
 
 void ApplicationContextImpl::initialise(int argc, char* argv[]) {
@@ -141,8 +149,8 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
     _homePath = home;
 
 	{
-		char real[PATH_MAX];
-		_appPath = getexename(real, argv);
+		_appPath = getexename(argv);
+        rConsole() << "App Path is " << _appPath << std::endl;
 		ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
 	}
 

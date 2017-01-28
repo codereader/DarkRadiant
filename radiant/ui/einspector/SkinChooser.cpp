@@ -29,9 +29,9 @@ namespace
 // Constructor
 SkinChooser::SkinChooser() :
 	DialogBase(_(WINDOW_TITLE)),
-	_lastSkin(""),
-	_treeStore(NULL),
-	_treeView(NULL)
+	_treeStore(nullptr),
+	_treeView(nullptr),
+	_lastSkin("")
 {
 	FitToScreen(0.6f, 0.6f);
 

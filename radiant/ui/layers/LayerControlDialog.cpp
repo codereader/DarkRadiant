@@ -182,7 +182,7 @@ void LayerControlDialog::updateLayerUsage()
 
 	for (const LayerControlPtr& control : _layerControls)
 	{
-		assert(breakDown.size() > control->getLayerId());
+		assert(static_cast<int>(breakDown.size()) > control->getLayerId());
 
 		control->updateUsageStatusWidget(breakDown[control->getLayerId()]);
 	}
