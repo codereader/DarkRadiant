@@ -2,7 +2,6 @@
 #include "Doom3PrefabFormat.h"
 #include "Quake4MapFormat.h"
 #include "Quake3MapFormat.h"
-#include "compiler/Doom3MapCompiler.h"
 #include "aas/Doom3AasFileLoader.h"
 
 #include "imapformat.h"
@@ -14,7 +13,6 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 	registry.registerModule(std::make_shared<map::Doom3MapFormat>());
 	registry.registerModule(std::make_shared<map::Quake4MapFormat>());
 	registry.registerModule(std::make_shared<map::Doom3PrefabFormat>());
-	registry.registerModule(std::make_shared<map::Doom3MapCompiler>());
 	registry.registerModule(std::make_shared<map::Quake3MapFormat>());
     registry.registerModule(std::make_shared<map::Doom3AasFileLoader>());
 
