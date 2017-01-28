@@ -1404,16 +1404,17 @@ int PicoGetHashTableSize( void )
 #define HASH_NORMAL_EPSILON					0.02f
 #endif
 
-// djb2 Hash function taken from http://www.cse.yorku.ca/~oz/hash.html
-unsigned int calculateHash(unsigned char* str)
+// djb2 Hash function adapted from http://www.cse.yorku.ca/~oz/hash.html
+unsigned int calculateHash(unsigned char* str, size_t len)
 {
 	unsigned int hash = 5381;
-	int c;
-
-	while (c = *str++)
-	{
-		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-	}
+	int c, i;
+    
+    for (i = 0; i < len; ++i)
+    {
+        c = str[i];
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
 
 	return hash;
 }
@@ -1421,8 +1422,8 @@ unsigned int calculateHash(unsigned char* str)
 unsigned int PicoVertexCoordGenerateHash( picoVec3_t xyz )
 {
 	unsigned int hash = 0;
-	// Allocate bytes for the 3 doubles plus the trailing 0
-	unsigned char buffer[sizeof(picoVec3_t) + 1];
+	// Allocate bytes for the 3 doubles
+	unsigned char buffer[sizeof(picoVec3_t)];
 
 #ifndef HASH_USE_EPSILON
 	hash += ~(*((unsigned int*) &xyz[ 0 ]) << 15);
@@ -1442,9 +1443,8 @@ unsigned int PicoVertexCoordGenerateHash( picoVec3_t xyz )
 	/* greebo: Copy the memory occupied by the floor'ed doubles 
 	   to the unsigned char array and hash them */
 	memcpy(buffer, &xyz_epsilonspace[0], sizeof(picoVec3_t));
-	buffer[sizeof(picoVec3_t)] = '\0';
 
-	hash = calculateHash(buffer);
+	hash = calculateHash(buffer, sizeof(picoVec3_t));
 	
 /*  greebo: This was the previous, compiler-warning-producing code
 
@@ -1547,8 +1547,15 @@ picoVertexCombinationHash_t *PicoFindVertexCombinationInHashTable( picoVertexCom
 #endif
 
 		/* check color */
-		if( *((int*) vertexCombinationHash->vcd.color) != *((int*) color) )
+        if (vertexCombinationHash->vcd.color[0] != color[0] ||
+            vertexCombinationHash->vcd.color[1] != color[1] ||
+            vertexCombinationHash->vcd.color[2] != color[2] ||
+            vertexCombinationHash->vcd.color[3] != color[3])
+		/* greebo: Old code:
+           if( *((int*) vertexCombinationHash->vcd.color) != *((int*) color) )*/
+        {
 			continue;
+        }
 
 		/* gotcha */
 		return vertexCombinationHash;
