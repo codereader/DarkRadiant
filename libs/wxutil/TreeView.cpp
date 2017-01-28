@@ -94,7 +94,17 @@ void TreeView::ExpandTopLevelItems()
 
 void TreeView::ResetSortingOnAllColumns()
 {
+#if wxCHECK_VERSION(3, 1, 0)
 	ResetAllSortColumns();
+#else
+	// We don't have ResetAllSortColumns in wxWidgets 3.0.x
+	wxDataViewColumn* col = GetSortingColumn();
+
+	if (col != nullptr)
+	{
+		col->UnsetAsSortKey();
+	}
+#endif
 }
 
 void TreeView::AddSearchColumn(const TreeModel::Column& column)
