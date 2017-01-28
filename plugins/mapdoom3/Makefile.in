@@ -90,15 +90,15 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = plugins/mapdoom3
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/boost.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/wxwin.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cxx_compile_stdcxx.m4 \
+	$(top_srcdir)/m4/boost.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/m4/wxwin.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -143,11 +143,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_mapdoom3_la_OBJECTS = Doom3MapFormat.lo Doom3PrefabFormat.lo \
 	Quake3MapFormat.lo Quake3MapReader.lo Quake4MapFormat.lo \
 	Quake4MapReader.lo Doom3MapReader.lo mapdoom3.lo \
-	Doom3MapWriter.lo compiler/Doom3MapCompiler.lo \
-	compiler/OptIsland.lo compiler/ProcCompiler.lo \
-	compiler/ProcFile.lo compiler/ProcPatch.lo \
-	compiler/ProcWinding.lo compiler/ProcLight.lo \
-	compiler/Surface.lo aas/Doom3AasFile.lo \
+	Doom3MapWriter.lo aas/Doom3AasFile.lo \
 	aas/Doom3AasFileLoader.lo aas/Doom3AasFileSettings.lo \
 	primitiveparsers/BrushDef.lo primitiveparsers/BrushDef3.lo \
 	primitiveparsers/Patch.lo primitiveparsers/PatchDef2.lo \
@@ -286,6 +282,7 @@ GREP = @GREP@
 HAS_MSGFMT = @HAS_MSGFMT@
 HAS_MSGMERGE = @HAS_MSGMERGE@
 HAS_XGETTEXT = @HAS_XGETTEXT@
+HAVE_CXX11 = @HAVE_CXX11@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -453,17 +450,9 @@ mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       Doom3MapReader.cpp \
                       mapdoom3.cpp \
                       Doom3MapWriter.cpp \
-                      compiler/Doom3MapCompiler.cpp \
-                      compiler/OptIsland.cpp \
-                      compiler/ProcCompiler.cpp \
-                      compiler/ProcFile.cpp \
-                      compiler/ProcPatch.cpp \
-                      compiler/ProcWinding.cpp \
-                      compiler/ProcLight.cpp \
-                      compiler/Surface.cpp \
-					  aas/Doom3AasFile.cpp \
-					  aas/Doom3AasFileLoader.cpp \
-					  aas/Doom3AasFileSettings.cpp \
+                      aas/Doom3AasFile.cpp \
+                      aas/Doom3AasFileLoader.cpp \
+                      aas/Doom3AasFileSettings.cpp \
                       primitiveparsers/BrushDef.cpp \
                       primitiveparsers/BrushDef3.cpp \
                       primitiveparsers/Patch.cpp \
@@ -538,28 +527,6 @@ clean-modulesLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
-compiler/$(am__dirstamp):
-	@$(MKDIR_P) compiler
-	@: > compiler/$(am__dirstamp)
-compiler/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) compiler/$(DEPDIR)
-	@: > compiler/$(DEPDIR)/$(am__dirstamp)
-compiler/Doom3MapCompiler.lo: compiler/$(am__dirstamp) \
-	compiler/$(DEPDIR)/$(am__dirstamp)
-compiler/OptIsland.lo: compiler/$(am__dirstamp) \
-	compiler/$(DEPDIR)/$(am__dirstamp)
-compiler/ProcCompiler.lo: compiler/$(am__dirstamp) \
-	compiler/$(DEPDIR)/$(am__dirstamp)
-compiler/ProcFile.lo: compiler/$(am__dirstamp) \
-	compiler/$(DEPDIR)/$(am__dirstamp)
-compiler/ProcPatch.lo: compiler/$(am__dirstamp) \
-	compiler/$(DEPDIR)/$(am__dirstamp)
-compiler/ProcWinding.lo: compiler/$(am__dirstamp) \
-	compiler/$(DEPDIR)/$(am__dirstamp)
-compiler/ProcLight.lo: compiler/$(am__dirstamp) \
-	compiler/$(DEPDIR)/$(am__dirstamp)
-compiler/Surface.lo: compiler/$(am__dirstamp) \
-	compiler/$(DEPDIR)/$(am__dirstamp)
 aas/$(am__dirstamp):
 	@$(MKDIR_P) aas
 	@: > aas/$(am__dirstamp)
@@ -595,8 +562,6 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f aas/*.$(OBJEXT)
 	-rm -f aas/*.lo
-	-rm -f compiler/*.$(OBJEXT)
-	-rm -f compiler/*.lo
 	-rm -f primitiveparsers/*.$(OBJEXT)
 	-rm -f primitiveparsers/*.lo
 
@@ -615,14 +580,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@aas/$(DEPDIR)/Doom3AasFile.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@aas/$(DEPDIR)/Doom3AasFileLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@aas/$(DEPDIR)/Doom3AasFileSettings.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/Doom3MapCompiler.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/OptIsland.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/ProcCompiler.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/ProcFile.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/ProcLight.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/ProcPatch.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/ProcWinding.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@compiler/$(DEPDIR)/Surface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@primitiveparsers/$(DEPDIR)/BrushDef.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@primitiveparsers/$(DEPDIR)/BrushDef3.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@primitiveparsers/$(DEPDIR)/Patch.Plo@am__quote@
@@ -659,7 +616,6 @@ mostlyclean-libtool:
 clean-libtool:
 	-rm -rf .libs _libs
 	-rm -rf aas/.libs aas/_libs
-	-rm -rf compiler/.libs compiler/_libs
 	-rm -rf primitiveparsers/.libs primitiveparsers/_libs
 
 ID: $(am__tagged_files)
@@ -779,8 +735,6 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f aas/$(DEPDIR)/$(am__dirstamp)
 	-rm -f aas/$(am__dirstamp)
-	-rm -f compiler/$(DEPDIR)/$(am__dirstamp)
-	-rm -f compiler/$(am__dirstamp)
 	-rm -f primitiveparsers/$(DEPDIR)/$(am__dirstamp)
 	-rm -f primitiveparsers/$(am__dirstamp)
 
@@ -793,7 +747,7 @@ clean-am: clean-generic clean-libtool clean-modulesLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) aas/$(DEPDIR) compiler/$(DEPDIR) primitiveparsers/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) aas/$(DEPDIR) primitiveparsers/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -839,7 +793,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) aas/$(DEPDIR) compiler/$(DEPDIR) primitiveparsers/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) aas/$(DEPDIR) primitiveparsers/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
