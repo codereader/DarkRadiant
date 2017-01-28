@@ -81,6 +81,9 @@ std::mutex& ApplicationContextImpl::getStreamLock() const
 #include <pwd.h>
 #include <unistd.h>
 
+namespace
+{
+
 const char* LINK_NAME =
 #if defined (__linux__)
   "/proc/self/exe"
@@ -90,7 +93,7 @@ const char* LINK_NAME =
 ;
 
 /// brief Returns the filename of the executable belonging to the current process, or 0 if not found.
-std::string getexename(char* argv[])
+std::string getExecutablePath(char* argv[])
 {
     char buf[PATH_MAX];
     
@@ -126,6 +129,8 @@ std::string getexename(char* argv[])
 	return std::string(buf);
 }
 
+}
+
 void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 	// Give away unnecessary root privileges.
 	// Important: must be done before calling gtk_init().
@@ -149,9 +154,8 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
     _homePath = home;
 
 	{
-		_appPath = getexename(argv);
-        rConsole() << "App Path is " << _appPath << std::endl;
-		ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
+		_appPath = getExecutablePath(argv);
+        ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
 	}
 
 	// Initialise the relative paths

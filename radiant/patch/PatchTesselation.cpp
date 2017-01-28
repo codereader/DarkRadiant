@@ -121,8 +121,8 @@ void PatchTesselation::generateNormals()
 
 				for (std::size_t dist = 1; dist <= 3; dist++)
 				{
-					int x = i + neighbors[k][0] * dist;
-					int y = j + neighbors[k][1] * dist;
+					int x = static_cast<int>(i) + neighbors[k][0] * dist;
+					int y = static_cast<int>(j) + neighbors[k][1] * dist;
 
 					if (wrapWidth)
 					{
@@ -130,7 +130,7 @@ void PatchTesselation::generateNormals()
 						{
 							x = width - 1 + x;
 						}
-						else if (x >= width)
+						else if (x >= static_cast<int>(width))
 						{
 							x = 1 + x - width;
 						}
@@ -142,13 +142,13 @@ void PatchTesselation::generateNormals()
 						{
 							y = height - 1 + y;
 						}
-						else if (y >= height)
+						else if (y >= static_cast<int>(height))
 						{
 							y = 1 + y - height;
 						}
 					}
 
-					if (x < 0 || x >= width || y < 0 || y >= height)
+					if (x < 0 || x >= static_cast<int>(width) || y < 0 || y >= static_cast<int>(height))
 					{
 						break;					// edge of patch
 					}
@@ -347,20 +347,20 @@ void PatchTesselation::expandMesh()
 
 void PatchTesselation::resizeExpandedMesh(int newHeight, int newWidth)
 {
-	if (newHeight <= _maxHeight && newWidth <= _maxWidth)
+	if (newHeight <= static_cast<int>(_maxHeight) && newWidth <= static_cast<int>(_maxWidth))
 	{
 		return;
 	}
 
-	if (newHeight * newWidth > _maxHeight * _maxWidth)
+	if (newHeight * newWidth > static_cast<int>(_maxHeight * _maxWidth))
 	{
 		vertices.resize(newHeight * newWidth);
 	}
 
 	// space out verts for new height and width
-	for (int j = _maxHeight - 1; j >= 0; j--)
+	for (int j = static_cast<int>(_maxHeight) - 1; j >= 0; j--)
 	{
-		for (int i = _maxWidth - 1; i >= 0; i--)
+		for (int i = static_cast<int>(_maxWidth) - 1; i >= 0; i--)
 		{
 			vertices[j*newWidth + i] = vertices[j*_maxWidth + i];
 		}
@@ -555,7 +555,7 @@ void PatchTesselation::subdivideMesh()
 			lerpVert(vertices[i*_maxWidth + j + 1], vertices[i*_maxWidth + j + 2], next);
 			lerpVert(prev, next, mid);
 
-			for (int k = width - 1; k > j + 3; k--)
+			for (int k = static_cast<int>(width) - 1; k > static_cast<int>(j) + 3; k--)
 			{
 				vertices[i*_maxWidth + k] = vertices[i*_maxWidth + k - 2];
 			}
@@ -571,7 +571,7 @@ void PatchTesselation::subdivideMesh()
 	// vertical subdivisions
 	for (std::size_t j = 0; j + 2 < height; j += 2)
 	{
-		int i;
+		std::size_t i;
 
 		// check subdivided midpoints against control points
 		for (i = 0; i < width; i++)
@@ -620,7 +620,7 @@ void PatchTesselation::subdivideMesh()
 			lerpVert(vertices[(j + 1)*_maxWidth + i], vertices[(j + 2)*_maxWidth + i], next);
 			lerpVert(prev, next, mid);
 
-			for (int k = height - 1; k > j + 3; k--)
+			for (int k = static_cast<int>(height) - 1; k > static_cast<int>(j) + 3; k--)
 			{
 				vertices[k*_maxWidth + i] = vertices[(k - 2)*_maxWidth + i];
 			}

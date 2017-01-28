@@ -119,30 +119,28 @@ void RenderablePatchVectorsNTB::render(const RenderInfo& info) const
 
 	glBegin(GL_LINES);
 
-	for (int j = 0; j < _tess.vertices.size(); j++)
+	for (const ArbitraryMeshVertex& v : _tess.vertices)
 	{
-		const ArbitraryMeshVertex& v = _tess.vertices[j];
-
 		Vector3 end;
 
 		glColor3f(0, 0, 1);
-		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+		glVertex3dv(v.vertex);
 		VectorMA(v.vertex, 5, v.normal, end);
-		glVertex3dv(static_cast<double*>(end));
+		glVertex3dv(end);
 
 		glColor3f(1, 0, 0);
-		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+		glVertex3dv(v.vertex);
 		VectorMA(v.vertex, 5, v.tangent, end);
-		glVertex3dv(static_cast<double*>(end));
+		glVertex3dv(end);
 
 		glColor3f(0, 1, 0);
-		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+		glVertex3dv(v.vertex);
 		VectorMA(v.vertex, 5, v.bitangent, end);
-		glVertex3dv(static_cast<double*>(end));
+		glVertex3dv(end);
 
 		glColor3f(1, 1, 1);
-		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
-		glVertex3dv(static_cast<double*>(Vector3(v.vertex)));
+		glVertex3dv(v.vertex);
+		glVertex3dv(v.vertex);
 	}
 
 	glEnd();
