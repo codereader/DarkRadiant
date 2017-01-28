@@ -71,7 +71,7 @@ void LayerUsageBreakdown::InitialiseVector(LayerUsageBreakdown& bd)
 
 	GlobalLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
 	{
-		if (layerId >= bd.size())
+		if (layerId >= static_cast<int>(bd.size()))
 		{
 			bd.resize(layerId+1, 0);
 		}

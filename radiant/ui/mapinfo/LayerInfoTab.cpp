@@ -58,7 +58,7 @@ void LayerInfoTab::populateTab()
 	// Populate the liststore with the layer-to-nodecount information
 	GlobalLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
 	{
-		if (layerId >= bd.size()) return;
+		if (layerId >= static_cast<int>(bd.size())) return;
 
 		wxutil::TreeModel::Row row = _listStore->AddItem();
 

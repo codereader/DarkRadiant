@@ -52,8 +52,7 @@ inline bool double_valid(double f) {
 // Constructor
 Patch::Patch(PatchNode& node) :
 	_node(node),
-	_shader(texdef_name_default()),
-	_undoStateSaver(NULL),
+	_undoStateSaver(nullptr),
 	_solidRenderable(_mesh),
 	_wireframeRenderable(_mesh),
 	_fixedWireframeRenderable(_mesh),
@@ -61,7 +60,8 @@ Patch::Patch(PatchNode& node) :
 	_renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
 	_renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
 	_transformChanged(false),
-	_tesselationChanged(true)
+	_tesselationChanged(true),
+	_shader(texdef_name_default())
 {
 	construct();
 }
@@ -73,8 +73,7 @@ Patch::Patch(const Patch& other, PatchNode& node) :
 	Snappable(other),
 	IUndoable(other),
 	_node(node),
-	_shader(other._shader.getMaterialName()),
-	_undoStateSaver(NULL),
+	_undoStateSaver(nullptr),
 	_solidRenderable(_mesh),
 	_wireframeRenderable(_mesh),
 	_fixedWireframeRenderable(_mesh),
@@ -82,7 +81,8 @@ Patch::Patch(const Patch& other, PatchNode& node) :
 	_renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
 	_renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
 	_transformChanged(false),
-	_tesselationChanged(true)
+	_tesselationChanged(true),
+	_shader(other._shader.getMaterialName())
 {
 	// Initalise the default values
 	construct();
