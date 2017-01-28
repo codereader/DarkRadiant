@@ -334,7 +334,7 @@ static int _md2_canload( PM_PARAMS_CANLOAD )
 static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 {
 	int				i, j;
-	short			tot_numVerts;
+	/*short			tot_numVerts; -- silence compiler warning */
 	index_LUT_t		*p_index_LUT;
 	md2Triangle_t	*p_md2Triangle;
 
@@ -511,7 +511,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 	}
 
 	/* Fill in Look Up Table, and allocate/fill Linked List from vert array as needed for dup STs per Vert. */
-	tot_numVerts = md2->numXYZ;
+	/* tot_numVerts = md2->numXYZ; -- silence compiler warning */
 	for (i = 0; i < md2->numTris; i++) {
 		p_md2Triangle = (md2Triangle_t *) (bb + md2->ofsTris + (sizeof(md2Triangle_t) * i));
 		for (j = 0; j < 3; j++) {

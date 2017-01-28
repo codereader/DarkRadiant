@@ -215,6 +215,7 @@ static void FreeObjVertexData( TObjVertexData *vertexData )
 	}
 }
 
+#if 0 // greebo: function is not called right now, comment out
 static int _obj_mtl_load( picoModel_t *model )
 {
 	picoShader_t *curShader = NULL;
@@ -477,6 +478,7 @@ static int _obj_mtl_load( picoModel_t *model )
 	/* return with success */
 	return 1;
 }
+#endif
 
 /* _obj_load:
  *  loads a wavefront obj model file.

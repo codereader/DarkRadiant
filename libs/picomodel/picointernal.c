@@ -970,7 +970,7 @@ int _pico_parse_check( picoParser_t *p, int allowLFs, char *str )
 		return 0;
 	if (!strcmp(p->token,str))
 		return 1;
-		return 0;
+    return 0;
 }
 
 int _pico_parse_checki( picoParser_t *p, int allowLFs, char *str )
@@ -979,7 +979,7 @@ int _pico_parse_checki( picoParser_t *p, int allowLFs, char *str )
 		return 0;
 	if (!_pico_stricmp(p->token,str))
 		return 1;
-		return 0;
+    return 0;
 }
 
 int _pico_parse_int( picoParser_t *p, int *out )

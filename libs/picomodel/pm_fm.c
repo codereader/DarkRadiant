@@ -197,7 +197,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 {
 	int				i, j, dups, dup_index;
 	int				fm_file_pos;
-	short			tot_numVerts;
+	/*short			tot_numVerts; -- silence compiler warning */
 	index_LUT_t		*p_index_LUT, *p_index_LUT2, *p_index_LUT3;
 	index_DUP_LUT_t	*p_index_LUT_DUPS;
 
@@ -431,7 +431,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 	}
 
 	// Fill in Look Up Table, and allocate/fill Linked List from vert array as needed for dup STs per Vert.
-	tot_numVerts = fm_head->numXYZ;
+	/* tot_numVerts = fm_head->numXYZ; -- silence compiler warning */
 	dups = 0;
 	triangle = tri_verts;
 
@@ -642,7 +642,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 	// Free malloc'ed LUTs
  	_pico_free(p_index_LUT);
 	_pico_free(p_index_LUT_DUPS);
-
+    
 	/* return the new pico model */
 	return picoModel;
 
