@@ -30,6 +30,9 @@ AC_PROG_CXX
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 
+# We require a C++11-compliant compiler, without nonstandard extensions
+AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
+
 # Optional features
 AC_ARG_ENABLE([debug],
               [AS_HELP_STRING([--enable-debug],
