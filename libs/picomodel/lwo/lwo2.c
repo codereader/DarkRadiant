@@ -292,6 +292,9 @@ int lwValidateObject( char *filename, picoMemStream_t *fp, unsigned int *failID,
 
    if ( id != ID_FORM ) {
       if ( failpos ) *failpos = 12;
+      
+      formsize++; /* silence compiler warning about unused variable */
+          
       return PICO_PMV_ERROR_SIZE;
    }
 

@@ -10,6 +10,7 @@ Ernie Wright  17 Sep 00
 
 #include "../picointernal.h"
 #include "lwo2.h"
+#include <stdint.h>
 
 /* disable warnings */
 #ifdef WIN32
@@ -550,7 +551,7 @@ int lwGetPolygons5( picoMemStream_t *fp, int cksize, lwPolygonList *plist, int p
          bp += 2;
       }
       j -= 1;
-      pp->surf = ( lwSurface * ) j;
+      pp->surf = ( lwSurface * ) (intptr_t) j;
 
       pp++;
       pv += nv;
@@ -720,6 +721,7 @@ int lwValidateObject5( char *filename, picoMemStream_t *fp, unsigned int *failID
 
    if ( id != ID_FORM || type != ID_LWOB ) {
       if ( failpos ) *failpos = 12;
+      formsize++; /* silence compiler warning about unused variable */
       return PICO_PMV_ERROR_IDENT;
    }
 
