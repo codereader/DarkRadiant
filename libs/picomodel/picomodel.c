@@ -1404,9 +1404,25 @@ int PicoGetHashTableSize( void )
 #define HASH_NORMAL_EPSILON					0.02f
 #endif
 
+// djb2 Hash function taken from http://www.cse.yorku.ca/~oz/hash.html
+unsigned int calculateHash(unsigned char* str)
+{
+	unsigned int hash = 5381;
+	int c;
+
+	while (c = *str++)
+	{
+		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+	}
+
+	return hash;
+}
+
 unsigned int PicoVertexCoordGenerateHash( picoVec3_t xyz )
 {
 	unsigned int hash = 0;
+	// Allocate bytes for the 3 doubles plus the trailing 0
+	unsigned char buffer[sizeof(picoVec3_t) + 1];
 
 #ifndef HASH_USE_EPSILON
 	hash += ~(*((unsigned int*) &xyz[ 0 ]) << 15);
@@ -1423,12 +1439,22 @@ unsigned int PicoVertexCoordGenerateHash( picoVec3_t xyz )
 	xyz_epsilonspace[ 1 ] = (double)floor(xyz_epsilonspace[ 1 ]);
 	xyz_epsilonspace[ 2 ] = (double)floor(xyz_epsilonspace[ 2 ]);
 
+	/* greebo: Copy the memory occupied by the floor'ed doubles 
+	   to the unsigned char array and hash them */
+	memcpy(buffer, &xyz_epsilonspace[0], sizeof(picoVec3_t));
+	buffer[sizeof(picoVec3_t)] = '\0';
+
+	hash = calculateHash(buffer);
+	
+/*  greebo: This was the previous, compiler-warning-producing code
+
 	hash += ~(*((unsigned int*) &xyz_epsilonspace[ 0 ]) << 15);
 	hash ^= (*((unsigned int*) &xyz_epsilonspace[ 0 ]) >> 10);
 	hash += (*((unsigned int*) &xyz_epsilonspace[ 1 ]) << 3);
 	hash ^= (*((unsigned int*) &xyz_epsilonspace[ 1 ]) >> 6);
 	hash += ~(*((unsigned int*) &xyz_epsilonspace[ 2 ]) << 11);
 	hash ^= (*((unsigned int*) &xyz_epsilonspace[ 2 ]) >> 16);
+*/
 #endif
 
 	//hash = hash & (HASHTABLE_SIZE-1);
