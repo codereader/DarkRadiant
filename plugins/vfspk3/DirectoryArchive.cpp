@@ -58,7 +58,6 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 	// For cutting off the base path
 	std::size_t rootLen = _root.length();
 
-	typedef fs::recursive_directory_iterator DirIter;
 	for (fs::recursive_directory_iterator it(start); it != fs::recursive_directory_iterator(); ++it)
 	{
 		// Get the candidate

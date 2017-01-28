@@ -301,6 +301,8 @@ void AutoMapSaver::onMapEvent(IMap::MapEvent ev)
 	case IMap::MapUnloaded:
 		clearChanges();
 		break;
+    default:
+        break;
 	};
 }
 

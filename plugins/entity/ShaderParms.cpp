@@ -27,7 +27,7 @@ ShaderParms::ShaderParms(KeyObserverMap& keyObserverMap, ColourKey& colourKey) :
 
 float ShaderParms::getParmValue(int parmNum) const
 {
-	assert(parmNum >= 0 && parmNum < MAX_ENTITY_SHADERPARMS);
+	assert(parmNum >= 0 && parmNum < static_cast<int>(MAX_ENTITY_SHADERPARMS));
 
 	// For parm0..parm2, use the colour keyobserver to retrieve the value
 	return parmNum > 2 ? _parmValues[parmNum] : static_cast<float>(_colourKey.getColour()[parmNum]);
@@ -43,7 +43,7 @@ void ShaderParms::addKeyObservers()
 
 void ShaderParms::removeKeyObservers()
 {
-	for (int i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
+	for (std::size_t i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
 	{
 		_keyObserverMap.erase("shaderParm" + string::to_string(i), _shaderParmObservers[i]);
 	}

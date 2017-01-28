@@ -20,7 +20,7 @@ private:
 	std::string _commandLine;
 
 	int _frameRate;
-	int _numAnimatedComponents;
+	std::size_t _numAnimatedComponents;
 
 	std::vector<Joint> _joints;
 

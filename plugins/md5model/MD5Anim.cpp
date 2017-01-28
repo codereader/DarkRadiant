@@ -8,7 +8,7 @@ namespace md5
 
 MD5Anim::MD5Anim() :
 	_frameRate(0),
-	_numAnimatedComponents(-1)
+	_numAnimatedComponents(0)
 {}
 
 void MD5Anim::parseJointHierarchy(parser::DefTokeniser& tok)
@@ -31,7 +31,7 @@ void MD5Anim::parseJointHierarchy(parser::DefTokeniser& tok)
 		_joints[i].firstKey = string::convert<std::size_t>(tok.nextToken());
 
 		// Some sanity checks
-		assert(_joints[i].parentId == -1 || (_joints[i].parentId >= 0 && _joints[i].parentId < _joints.size()));
+		assert(_joints[i].parentId == -1 || (_joints[i].parentId >= 0 && _joints[i].parentId < static_cast<int>(_joints.size())));
 		assert(_joints[i].animComponents < Joint::INVALID_COMPONENT);
 
 		// Add this joint as child to its parent joint
@@ -172,7 +172,7 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 		_frameRate = string::convert<int>(tok.nextToken());
 
 		tok.assertNextToken("numAnimatedComponents");
-		_numAnimatedComponents = string::convert<int>(tok.nextToken());
+		_numAnimatedComponents = string::convert<std::size_t>(tok.nextToken());
 
 		// Parse hierarchy block
 		parseJointHierarchy(tok);

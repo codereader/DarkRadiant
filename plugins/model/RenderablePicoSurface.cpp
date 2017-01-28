@@ -83,7 +83,9 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
     // Stream in the index data
     picoIndex_t* ind = PicoGetSurfaceIndexes(surf, 0);
     for (unsigned int i = 0; i < _nIndices; i++)
+    {
     	_indices[i] = ind[i];
+    }
 
 	// Calculate the tangent and bitangent vectors
 	calculateTangents();

@@ -115,7 +115,7 @@ void MenuElement::addChild(const MenuElementPtr& newChild, int pos)
 {
 	newChild->setParent(shared_from_this());
 
-	if (pos >= _children.size() || pos == std::numeric_limits<int>::max())
+	if (pos >= static_cast<int>(_children.size()) || pos == std::numeric_limits<int>::max())
 	{
 		_children.push_back(newChild);
 	}

@@ -250,7 +250,7 @@ const ArbitraryMeshVertex& MD5Surface::getVertex(int vertexIndex) const
 
 model::ModelPolygon MD5Surface::getPolygon(int polygonIndex) const
 {
-	assert(polygonIndex >= 0 && polygonIndex*3 < _indices.size());
+	assert(polygonIndex >= 0 && polygonIndex*3 < static_cast<int>(_indices.size()));
 
 	model::ModelPolygon poly;
 

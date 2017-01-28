@@ -526,6 +526,8 @@ std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& con
 				actionStr = (boost::format(_("Make Objective %d not mandatory")) % objNum).str();
 			}
 			break;
+        default:
+            break;
 		};
 
 		str += actionStr;

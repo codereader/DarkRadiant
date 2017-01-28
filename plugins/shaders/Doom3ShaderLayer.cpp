@@ -222,7 +222,7 @@ float Doom3ShaderLayer::getAlphaTest() const
 
 TexturePtr Doom3ShaderLayer::getFragmentMap(int index)
 {
-	if (index < 0 || index >= _fragmentMaps.size())
+	if (index < 0 || index >= static_cast<int>(_fragmentMaps.size()))
 	{
 		return TexturePtr();
 	}

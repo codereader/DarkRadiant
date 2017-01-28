@@ -53,7 +53,9 @@ void SpecifierEditCombo::setSpecifier(SpecifierPtr spec)
     // If the SpecifierPtr is null (because the Component object does not have a
     // specifier for this slot), create a default None specifier.
     if (!spec)
-        spec = SpecifierPtr(new Specifier());
+    {
+        spec = std::make_shared<Specifier>();
+    }
 
 	// I copied and pasted this from the StimResponseEditor, the SelectionFinder
 	// could be cleaned up a bit.
