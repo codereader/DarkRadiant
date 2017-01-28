@@ -11,9 +11,6 @@
     <Filter Include="src\primitivewriters">
       <UniqueIdentifier>{76e389ef-7864-4fbf-aa1f-d2afd91ba985}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\compiler">
-      <UniqueIdentifier>{f6fd3c0c-b85a-44fd-9149-fa840615ac31}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\aas">
       <UniqueIdentifier>{48df04ae-bfe5-475d-91e7-972f10239051}</UniqueIdentifier>
     </Filter>
@@ -60,51 +57,6 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\mapdoom3\Quake4MapReader.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcFile.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\PlaneSet.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcWinding.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcLight.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\BspTree.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcBrush.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\DebugRenderer.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\LeakFile.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\TriangleHash.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\OptIsland.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\OptUtils.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\Surface.h">
-      <Filter>src\compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcPatch.h">
-      <Filter>src\compiler</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\mapdoom3\Quake3MapFormat.h">
       <Filter>src</Filter>
@@ -167,30 +119,6 @@
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\Quake4MapReader.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.cpp">
-      <Filter>src\compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.cpp">
-      <Filter>src\compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcLight.cpp">
-      <Filter>src\compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcWinding.cpp">
-      <Filter>src\compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\compiler\OptIsland.cpp">
-      <Filter>src\compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\compiler\Surface.cpp">
-      <Filter>src\compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcFile.cpp">
-      <Filter>src\compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcPatch.cpp">
-      <Filter>src\compiler</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\Quake3MapFormat.cpp">
       <Filter>src</Filter>

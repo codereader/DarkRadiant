@@ -24,17 +24,9 @@ mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       Doom3MapReader.cpp \
                       mapdoom3.cpp \
                       Doom3MapWriter.cpp \
-                      compiler/Doom3MapCompiler.cpp \
-                      compiler/OptIsland.cpp \
-                      compiler/ProcCompiler.cpp \
-                      compiler/ProcFile.cpp \
-                      compiler/ProcPatch.cpp \
-                      compiler/ProcWinding.cpp \
-                      compiler/ProcLight.cpp \
-                      compiler/Surface.cpp \
-					  aas/Doom3AasFile.cpp \
-					  aas/Doom3AasFileLoader.cpp \
-					  aas/Doom3AasFileSettings.cpp \
+                      aas/Doom3AasFile.cpp \
+                      aas/Doom3AasFileLoader.cpp \
+                      aas/Doom3AasFileSettings.cpp \
                       primitiveparsers/BrushDef.cpp \
                       primitiveparsers/BrushDef3.cpp \
                       primitiveparsers/Patch.cpp \
