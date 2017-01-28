@@ -8,6 +8,16 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_GNU_GETTEXT_VERSION(0.18.1)
 AM_GNU_GETTEXT([external])
 
+# greebo: Require that the gettext binaries are available
+AC_CHECK_PROG(HAS_MSGFMT, msgfmt, [yes], [no])
+AC_CHECK_PROG(HAS_MSGMERGE, msgmerge, [yes], [no])
+AC_CHECK_PROG(HAS_XGETTEXT, xgettext, [yes], [no])
+
+if test x"$HAS_MSGFMT" == x"no" || test x"$HAS_MSGMERGE" == x"no" || test x"$HAS_XGETTEXT" == x"no"
+then
+	AC_MSG_ERROR([Please make sure msgfmt, msgmerge and xgettext are available (probably through the gettext package).])
+fi
+
 # Save user flags
 USER_CFLAGS=$CFLAGS
 USER_CXXFLAGS=$CXXFLAGS
