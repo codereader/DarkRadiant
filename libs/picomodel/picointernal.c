@@ -351,7 +351,7 @@ void _pico_expand_bounds( picoVec3_t p, picoVec3_t mins, picoVec3_t maxs )
 	int i;
 	for (i=0; i<3; i++)
 	{
-		float value = p[i];
+		double value = p[i];
 		if (value < mins[i]) mins[i] = value;
 		if (value > maxs[i]) maxs[i] = value;
 	}
@@ -1293,7 +1293,7 @@ void _pico_free_memstream( picoMemStream_t *s )
 /* _pico_memstream_read:
  *  reads data from a pico memorystream into a buffer.
  */
-int _pico_memstream_read( picoMemStream_t *s, void *buffer, int len )
+int _pico_memstream_read( picoMemStream_t *s, void *buffer, size_t len )
 {
 	int ret = 1;
 
@@ -1337,7 +1337,7 @@ int _pico_memstream_getc( picoMemStream_t *s )
  */
 int _pico_memstream_seek( picoMemStream_t *s, long offset, int origin )
 {
-	int overflow;
+	intptr_t overflow;
 
 	/* sanity check */
 	if (s == NULL)
@@ -1350,7 +1350,7 @@ int _pico_memstream_seek( picoMemStream_t *s, long offset, int origin )
 		if (overflow > 0)
 		{
 			s->curPos = s->buffer + s->bufSize;
-			return offset - overflow;
+			return (int)(offset - overflow);
 		}
 		return 0;
 	}
@@ -1361,7 +1361,7 @@ int _pico_memstream_seek( picoMemStream_t *s, long offset, int origin )
 		if (overflow > 0)
 		{
 			s->curPos = s->buffer + s->bufSize;
-			return offset - overflow;
+			return (int)(offset - overflow);
 		}
 		return 0;
 	}
@@ -1372,7 +1372,7 @@ int _pico_memstream_seek( picoMemStream_t *s, long offset, int origin )
 		if (overflow > 0)
 		{
 			s->curPos = s->buffer;
-			return offset - overflow;
+			return (int)(offset - overflow);
 		}
 		return 0;
 	}
@@ -1389,5 +1389,5 @@ long _pico_memstream_tell( picoMemStream_t *s )
 	if (s == NULL)
 		return -1;
 
-	return s->curPos - s->buffer;
+	return (long)(s->curPos - s->buffer);
 }

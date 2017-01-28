@@ -454,7 +454,8 @@ added to the lwTagList array.
 int lwGetTags( picoMemStream_t *fp, int cksize, lwTagList *tlist )
 {
    char *buf, *bp;
-   int i, len, ntags;
+   int i, ntags;
+   size_t len;
 
    if ( cksize == 0 ) return 1;
 

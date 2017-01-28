@@ -193,7 +193,7 @@ int 			_pico_parse_vec4_def( picoParser_t *p, picoVec4_t out, picoVec4_t def);
 /* pico memory stream */
 picoMemStream_t	*_pico_new_memstream( picoByte_t *buffer, int bufSize );
 void 			_pico_free_memstream( picoMemStream_t *s );
-int				_pico_memstream_read( picoMemStream_t *s, void *buffer, int len );
+int				_pico_memstream_read( picoMemStream_t *s, void *buffer, size_t len );
 int				_pico_memstream_getc( picoMemStream_t *s );
 int				_pico_memstream_seek( picoMemStream_t *s, long offset, int origin );
 long			_pico_memstream_tell( picoMemStream_t *s );

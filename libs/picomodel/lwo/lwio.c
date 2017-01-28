@@ -418,7 +418,7 @@ char *sgetS0( unsigned char **bp )
 {
    char *s;
    unsigned char *buf = *bp;
-   int len;
+   size_t len;
 
    if ( flen == FLEN_ERROR ) return NULL;
 
@@ -436,7 +436,7 @@ char *sgetS0( unsigned char **bp )
    }
 
    memcpy( s, buf, len );
-   flen += len;
+   flen += (int)len;
    *bp += len;
    return s;
 }
