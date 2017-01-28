@@ -739,6 +739,9 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 			{
 				return 0; // no sense in comparing icons
 			}
+			
+            default:
+                return 0; // default case
 		};
 	}
 

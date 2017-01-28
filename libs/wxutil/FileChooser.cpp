@@ -188,7 +188,7 @@ std::string FileChooser::getSelectedMapFormat()
 {
 	int index = _dialog->GetFilterIndex();
 
-	if (index >=0 && index < _fileFilters.size())
+	if (index >=0 && index < static_cast<int>(_fileFilters.size()))
 	{
 		return _fileFilters[index].mapFormatName;
 	}
