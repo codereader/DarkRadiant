@@ -70,10 +70,11 @@ void OpenGLModule::sharedContextCreated()
 			reinterpret_cast<const char*>(glewGetErrorString(err));
 	}
 
+	// Initialise the font before firing the extension initialised signal
+	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 12));
+
 	GlobalRenderSystem().extensionsInitialised();
 	GlobalRenderSystem().realise();
-
-	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 12));
 }
 
 void OpenGLModule::sharedContextDestroyed()
