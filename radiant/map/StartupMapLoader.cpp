@@ -1,6 +1,8 @@
 #include "StartupMapLoader.h"
 
 #include "imodule.h"
+#include "igl.h"
+#include "irender.h"
 #include "iregistry.h"
 #include "Map.h"
 #include "ui/mru/MRU.h"
@@ -10,7 +12,8 @@
 #include "os/file.h"
 #include <boost/filesystem.hpp>
 
-namespace map {
+namespace map 
+{
 
 void StartupMapLoader::onRadiantStartup()
 {
@@ -20,13 +23,8 @@ void StartupMapLoader::onRadiantStartup()
         module::ModuleRegistry::Instance().getApplicationContext().getCmdLineArgs()
     );
 
-    for (ApplicationContext::ArgumentList::const_iterator i = args.begin();
-         i != args.end();
-         ++i)
+    for (const std::string& candidate : args)
     {
-		// Investigate the i-th argument
-		std::string candidate = *i;
-
 		if (os::getExtension(candidate) != "map") continue;
 
 		// We have a map file, check if it exists (and where)
@@ -35,7 +33,8 @@ void StartupMapLoader::onRadiantStartup()
 		boost::filesystem::path fullMapPath = mapsPath / candidate;
 
 		// First, look in the regular maps path
-		if (boost::filesystem::exists(fullMapPath)) {
+		if (boost::filesystem::exists(fullMapPath))
+		{
 			mapToLoad = fullMapPath.string();
 			break;
 		}
@@ -43,24 +42,46 @@ void StartupMapLoader::onRadiantStartup()
 		// Second, check for mod-relative paths
 		fullMapPath = mapsPath.remove_leaf().remove_leaf() / candidate;
 
-		if (boost::filesystem::exists(fullMapPath)) {
+		if (boost::filesystem::exists(fullMapPath))
+		{
 			mapToLoad = fullMapPath.string();
 			break;
 		}
 	}
 
-	if (!mapToLoad.empty()) {
-		GlobalMap().load(mapToLoad);
+	if (!mapToLoad.empty())
+	{
+		loadMapSafe(mapToLoad);
 	}
-	else {
+	else
+	{
 		std::string lastMap = GlobalMRU().getLastMapName();
-		if (GlobalMRU().loadLastMap() && !lastMap.empty() && os::fileOrDirExists(lastMap)) {
-			GlobalMap().load(lastMap);
+
+		if (GlobalMRU().loadLastMap() && !lastMap.empty() && os::fileOrDirExists(lastMap))
+		{
+			loadMapSafe(lastMap);
 		}
-		else {
+		else
+		{
 			GlobalMap().createNew();
 		}
 	}
+}
+
+void StartupMapLoader::loadMapSafe(const std::string& mapToLoad)
+{
+	// Check if we have a valid openGL context, otherwise postpone the load
+	if (GlobalOpenGL().wxContextValid())
+	{
+		GlobalMap().load(mapToLoad);
+		return;
+	}
+
+	// No valid context, subscribe to the extensionsInitialised signal
+	GlobalRenderSystem().signal_extensionsInitialised().connect([mapToLoad]()
+	{
+		GlobalMap().load(mapToLoad);
+	});
 }
 
 void StartupMapLoader::onRadiantShutdown()
