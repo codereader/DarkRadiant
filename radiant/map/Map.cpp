@@ -48,7 +48,6 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Transformation.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
 #include "RenderableAasFile.h"
@@ -413,9 +412,6 @@ void Map::load(const std::string& filename) {
 
     // Move the view to a start position
     gotoStartPosition();
-
-    // Clear the shaderclipboard, the references are most probably invalid now
-    GlobalShaderClipboard().clear();
 
     // Let the filtersystem update the filtered status of all instances
     GlobalFilterSystem().update();

@@ -169,8 +169,9 @@ sigc::signal<void> ShaderClipboard::signal_sourceChanged() const
 
 void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IMap::MapUnloading)
+	if (ev == IMap::MapUnloading || ev == IMap::MapLoaded)
 	{
+		// Clear the shaderclipboard, the references are most probably invalid now
 		clear();
 	}
 }
