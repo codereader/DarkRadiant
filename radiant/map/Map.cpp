@@ -194,7 +194,7 @@ MapFormatPtr Map::getFormatForFile(const std::string& filename)
     std::string gameType = GlobalGameManager().currentGame()->getKeyValue("type");
 
     MapFormatPtr mapFormat = GlobalMapFormatManager().getMapFormatForGameType(
-        gameType, path_get_extension(filename.c_str()));
+        gameType, os::getExtension(filename));
 
     ASSERT_MESSAGE(mapFormat != NULL, "map format not found for file " + filename);
 

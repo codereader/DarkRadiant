@@ -137,18 +137,6 @@ inline const char* path_get_filename_start(const char* path)
   return path;
 }
 
-/// \brief Returns a pointer to the first character of the file extension of \p path, or "" if not found.
-/// O(n)
-inline const char* path_get_extension(const char* path)
-{
-  const char* last_period = strrchr(path_get_filename_start(path), '.');
-  if(last_period != 0)
-  {
-    return ++last_period;
-  }
-  return "";
-}
-
 /** General utility functions for OS-related tasks
  */
 namespace os
