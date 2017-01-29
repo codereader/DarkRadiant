@@ -33,6 +33,7 @@
 #include "scene/BasicRootNode.h"
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
+#include "map/StartupMapLoader.h"
 #include "map/RootNode.h"
 #include "map/MapResource.h"
 #include "map/algorithm/Clone.h"
@@ -100,6 +101,9 @@ void Map::loadMapResourceFromPath(const std::string& path)
 
     // Take the new node and insert it as map root
     GlobalSceneGraph().setRoot(_resource->getNode());
+
+	// Traverse the scenegraph and find the worldspawn
+	findWorldspawn();
 
     // Associate the Scenegaph with the global RenderSystem
     // This usually takes a while since all editor textures are loaded - display a dialog to inform the user
@@ -398,9 +402,6 @@ void Map::load(const std::string& filename) {
         wxutil::ScopeTimer timer("map load");
 
 		loadMapResourceFromPath(_mapName);
-
-        // Traverse the scenegraph and find the worldspawn
-		findWorldspawn();
     }
 
     rMessage() << "--- LoadMapFile ---\n";
@@ -412,11 +413,6 @@ void Map::load(const std::string& filename) {
 
     // Move the view to a start position
     gotoStartPosition();
-
-    // Load the stored map positions from the worldspawn entity
-    GlobalMapPosition().loadPositions();
-    // Remove them, so that the user doesn't get bothered with them
-    GlobalMapPosition().removePositions();
 
     // Clear the shaderclipboard, the references are most probably invalid now
     GlobalShaderClipboard().clear();
@@ -455,10 +451,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
     // Store the camview position into worldspawn
     saveCameraPosition();
 
-    // Store the map positions into the worldspawn spawnargs
-    GlobalMapPosition().savePositions();
-
-	wxutil::ScopeTimer timer("map save");
+    wxutil::ScopeTimer timer("map save");
 
 	blocker.setMessage(_("Saving Map"));
 
@@ -469,9 +462,6 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     // Remove the saved camera position
     removeCameraPosition();
-
-    // Remove the map positions again after saving
-    GlobalMapPosition().removePositions();
 
     if (success)
     {
@@ -1001,21 +991,12 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 
     // Register for the startup event
     _startupMapLoader.reset(new StartupMapLoader);
+	_mapPositionManager.reset(new MapPositionManager);
 
-    GlobalRadiant().signal_radiantStarted().connect(
-        sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantStartup)
-    );
-    GlobalRadiant().signal_radiantShutdown().connect(
-        sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantShutdown)
-    );
-
-	GlobalSceneGraph().addSceneObserver(this);
+    GlobalSceneGraph().addSceneObserver(this);
 
     // Add the Map-related commands to the EventManager
     registerCommands();
-
-    // Add the map position commands to the EventManager
-    GlobalMapPosition().initialise();
 
 	_scaledModelExporter.initialise();
 
@@ -1027,6 +1008,9 @@ void Map::shutdownModule()
 	_scaledModelExporter.shutdown();
 
 	GlobalSceneGraph().removeSceneObserver(this);
+
+	_startupMapLoader.reset();
+	_mapPositionManager.reset();
 }
 
 // Creates the static module instance

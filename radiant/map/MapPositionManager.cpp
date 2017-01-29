@@ -1,17 +1,18 @@
 #include "MapPositionManager.h"
 
+#include "ientity.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "icommandsystem.h"
-#include "map/Map.h"
-#include "entitylib.h"
 #include "string/string.h"
 #include <functional>
 
-namespace map {
+namespace map
+{
 
-	namespace {
+	namespace
+	{
 		const std::string SAVE_COMMAND_ROOT = "SavePosition";
 		const std::string LOAD_COMMAND_ROOT = "LoadPosition";
 
@@ -20,13 +21,16 @@ namespace map {
 
 // Constructor
 MapPositionManager::MapPositionManager()
-{}
+{
+	GlobalMapModule().signal_mapEvent().connect(
+		sigc::mem_fun(this, &MapPositionManager::onMapEvent)
+	);
 
-void MapPositionManager::initialise() {
 	// Create the MapPosition objects and add the commands to the eventmanager
-	for (unsigned int i = 1; i <= MAX_POSITIONS; i++) {
+	for (unsigned int i = 1; i <= MAX_POSITIONS; i++)
+	{
 		// Allocate a new MapPosition object and store the shared_ptr
-		_positions[i] = MapPositionPtr(new MapPosition(i));
+		_positions[i] = std::make_shared<MapPosition>(i);
 
 		// Add the load/save commands to the eventmanager and point it to the member
 		GlobalCommandSystem().addCommand(
@@ -48,51 +52,88 @@ void MapPositionManager::initialise() {
 			LOAD_COMMAND_ROOT + string::to_string(i)
 		);
 	}
-
 }
 
-void MapPositionManager::loadPositions() {
+void MapPositionManager::loadPositions()
+{
 	// Find the worldspawn node
-	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
+	const scene::INodePtr& wsNode = GlobalMapModule().getWorldspawn();
 
-	if (worldspawn != NULL) {
-		for (unsigned int i = 1; i <= MAX_POSITIONS; i++) {
-			if (_positions[i] != NULL) {
+	if (!wsNode) return;
+
+	Entity* worldspawn = Node_getEntity(wsNode);
+
+	if (worldspawn != nullptr) 
+	{
+		for (unsigned int i = 1; i <= MAX_POSITIONS; ++i)
+		{
+			if (_positions[i])
+			{
 				_positions[i]->load(worldspawn);
 			}
 		}
 	}
-	else {
+	else
+	{
 		rError() << "MapPositionManager: Could not locate worldspawn entity.\n";
 	}
 }
 
-void MapPositionManager::savePositions() {
+void MapPositionManager::savePositions()
+{
 	// Find the worldspawn node
-	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
+	const scene::INodePtr& wsNode = GlobalMapModule().getWorldspawn();
 
-	for (unsigned int i = 1; i <= MAX_POSITIONS; i++) {
-		if (_positions[i] != NULL) {
+	if (!wsNode) return;
+
+	Entity* worldspawn = Node_getEntity(wsNode);
+
+	for (unsigned int i = 1; i <= MAX_POSITIONS; ++i)
+	{
+		if (_positions[i])
+		{
 			_positions[i]->save(worldspawn);
 		}
 	}
 }
 
-void MapPositionManager::removePositions() {
+void MapPositionManager::removePositions()
+{
 	// Find the worldspawn node
-	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
+	const scene::INodePtr& wsNode = GlobalMapModule().getWorldspawn();
 
-	for (unsigned int i = 1; i <= MAX_POSITIONS; i++) {
-		if (_positions[i] != NULL) {
+	if (!wsNode) return;
+
+	Entity* worldspawn = Node_getEntity(wsNode);
+
+	for (unsigned int i = 1; i <= MAX_POSITIONS; ++i) 
+	{
+		if (_positions[i])
+		{
 			_positions[i]->remove(worldspawn);
 		}
 	}
 }
 
-// The home of the static instance
-MapPositionManager& GlobalMapPosition() {
-	static MapPositionManager _instance;
-	return _instance;
+void MapPositionManager::onMapEvent(IMap::MapEvent ev)
+{
+	if (ev == IMap::MapSaving)
+	{
+		// Store the map positions into the worldspawn spawnargs
+		savePositions();
+	}
+	else if (ev == IMap::MapSaved)
+	{
+		// Remove the map positions again after saving
+		removePositions();
+	}
+	else if (ev == IMap::MapLoaded)
+	{
+		// Load the stored map positions from the worldspawn entity
+		loadPositions();
+		// Remove them, so that the user doesn't get bothered with them
+		removePositions();
+	}
 }
 
 } // namespace map

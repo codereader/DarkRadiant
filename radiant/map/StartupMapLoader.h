@@ -5,9 +5,12 @@
 
 namespace map {
 
-class StartupMapLoader: public sigc::trackable
+class StartupMapLoader : 
+	public sigc::trackable
 {
 public:
+	StartupMapLoader();
+
 	// This gets called as soon as the mainframe starts up
 	void onRadiantStartup();
 

@@ -4,6 +4,7 @@
 #include "igl.h"
 #include "irender.h"
 #include "iregistry.h"
+#include "iradiant.h"
 #include "Map.h"
 #include "ui/mru/MRU.h"
 #include "modulesystem/ModuleRegistry.h"
@@ -14,6 +15,16 @@
 
 namespace map 
 {
+
+StartupMapLoader::StartupMapLoader()
+{
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(*this, &StartupMapLoader::onRadiantStartup)
+	);
+	GlobalRadiant().signal_radiantShutdown().connect(
+		sigc::mem_fun(*this, &StartupMapLoader::onRadiantShutdown)
+	);
+}
 
 void StartupMapLoader::onRadiantStartup()
 {

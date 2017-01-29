@@ -10,7 +10,6 @@
 #include "imodule.h"
 #include "math/Vector3.h"
 
-#include "StartupMapLoader.h"
 #include "model/ScaledModelExporter.h"
 
 #include <sigc++/signal.h>
@@ -18,7 +17,11 @@
 
 class TextInputStream;
 
-namespace map {
+namespace map
+{
+
+class MapPositionManager;
+class StartupMapLoader;
 
 class Map :
 	public IMap,
@@ -40,8 +43,9 @@ class Map :
 	bool _saveInProgress;
 
 	// A local helper object, observing the radiant module
-	StartupMapLoaderPtr _startupMapLoader;
+	std::unique_ptr<StartupMapLoader> _startupMapLoader;
 	ScaledModelExporter _scaledModelExporter;
+	std::unique_ptr<MapPositionManager> _mapPositionManager;
 
     // Map save timer, for displaying "changes from last n minutes will be lost"
     // messages

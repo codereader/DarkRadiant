@@ -1,13 +1,14 @@
-#ifndef MAPPOSITIONMANAGER_H_
-#define MAPPOSITIONMANAGER_H_
+#pragma once
 
 #include <map>
+#include "imap.h"
 #include "MapPosition.h"
 
 namespace map {
 
 class MapPositionManager
 {
+private:
 	// The position map (with a key as integer)
 	typedef std::map<unsigned int, MapPositionPtr> PositionMap;
 
@@ -28,15 +29,8 @@ public:
 	 */
 	void removePositions();
 
-	/** greebo: This adds all the commands
-	 * to the Eventmanager (SavePosition1, LoadPosition1, etc.);
-	 */
-	void initialise();
+private:
+	void onMapEvent(IMap::MapEvent ev);
 };
 
-// The accessor function of the MapPositionManager
-MapPositionManager& GlobalMapPosition();
-
 } // namespace map
-
-#endif /*MAPPOSITIONMANAGER_H_*/
