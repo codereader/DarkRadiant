@@ -376,7 +376,7 @@ scene::INodePtr Map::createWorldspawn()
 		GlobalEntityClassManager().findOrInsert("worldspawn", true)));
 
 	// We want the world spawn entity to go for the pole position
-	GlobalSceneGraph().root()->addChildNode(worldspawn);
+	GlobalSceneGraph().root()->addChildNodeToFront(worldspawn);
 
 	return worldspawn;
 }
