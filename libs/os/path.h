@@ -39,31 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define OS_CASE_INSENSITIVE
 #endif
 
-/// \brief Returns true if \p path is lexicographically sorted before \p other.
-/// If both \p path and \p other refer to the same file, neither will be sorted before the other.
-/// O(n)
-inline bool path_less(const char* path, const char* other)
-{
-#if defined(OS_CASE_INSENSITIVE)
-  return string_less_nocase(path, other);
-#else
-  return string_less(path, other);
-#endif
-}
-
-/// \brief Returns <0 if \p path is lexicographically less than \p other.
-/// Returns >0 if \p path is lexicographically greater than \p other.
-/// Returns 0 if both \p path and \p other refer to the same file.
-/// O(n)
-inline int path_compare(const char* path, const char* other)
-{
-#if defined(OS_CASE_INSENSITIVE)
-  return string_compare_nocase(path, other);
-#else
-  return string_compare(path, other);
-#endif
-}
-
 /// \brief Returns true if the first \p n bytes of \p path and \p other form paths that refer to the same file or directory.
 /// If the paths are UTF-8 encoded, [\p path, \p path + \p n) must be a complete path.
 /// O(n)
