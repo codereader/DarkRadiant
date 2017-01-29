@@ -65,7 +65,14 @@ namespace os
 /// \brief Returns true if the file or directory identified by \p path exists.
 inline bool fileOrDirExists(const std::string& path)
 {
-  return file_accessible(path.c_str(), FileAccess::Exists);
+	try
+	{
+		return boost::filesystem::exists(path);
+	}
+	catch (boost::filesystem::filesystem_error&)
+	{
+		return false;
+	}
 }
 
 // Returns the file size in bytes, or static_cast<uintmax_t>(-1)
