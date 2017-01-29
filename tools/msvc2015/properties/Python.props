@@ -6,6 +6,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DarkRadiantRoot)\w32deps\python\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>HAVE_ACOSH;HAVE_ASINH;HAVE_ATANH;HAVE_LOG1P;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\python\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
