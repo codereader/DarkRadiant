@@ -113,30 +113,6 @@ inline const char* path_remove_directory(const char* path)
   return "";
 }
 
-/// \brief Returns a pointer to the first character of the filename component of \p path.
-/// O(n)
-inline const char* path_get_filename_start(const char* path)
-{
-  {
-    const char* last_forward_slash = strrchr(path, '/');
-    if(last_forward_slash != 0)
-    {
-      return last_forward_slash + 1;
-    }
-  }
-
-  // not strictly necessary,since paths should not contain '\'
-  {
-    const char* last_backward_slash = strrchr(path, '\\');
-    if(last_backward_slash != 0)
-    {
-      return last_backward_slash + 1;
-    }
-  }
-
-  return path;
-}
-
 /** General utility functions for OS-related tasks
  */
 namespace os

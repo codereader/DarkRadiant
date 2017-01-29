@@ -525,7 +525,7 @@ bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
     if (_saveInProgress) return false; // safeguard
 
     // Disable screen updates for the scope of this function
-    ui::ScreenUpdateBlocker blocker(_("Processing..."), path_get_filename_start(filename.c_str()));
+    ui::ScreenUpdateBlocker blocker(_("Processing..."), os::getFilename(filename));
 
     _saveInProgress = true;
 
@@ -553,7 +553,7 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
     if (_saveInProgress) return false; // safeguard
 
     // Disable screen updates for the scope of this function
-    ui::ScreenUpdateBlocker blocker(_("Processing..."), path_get_filename_start(filename.c_str()));
+    ui::ScreenUpdateBlocker blocker(_("Processing..."), os::getFilename(filename));
 
     _saveInProgress = true;
 
