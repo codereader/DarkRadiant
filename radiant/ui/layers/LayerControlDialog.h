@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imap.h"
 #include "iradiant.h"
 #include "icommandsystem.h"
 #include "wxutil/window/TransientWindow.h"
@@ -39,6 +40,7 @@ private:
 	sigc::connection _layersChangedSignal;
 	sigc::connection _layerVisibilityChangedSignal;
 	sigc::connection _nodeLayerMembershipChangedSignal;
+	sigc::connection _mapEventSignal;
 
 public:
 	LayerControlDialog();
@@ -77,6 +79,8 @@ private:
 	void onShowAllLayers(wxCommandEvent& ev);
 	void onHideAllLayers(wxCommandEvent& ev);
 	void onIdle();
+
+	void onMapEvent(IMap::MapEvent ev);
 };
 
 } // namespace ui

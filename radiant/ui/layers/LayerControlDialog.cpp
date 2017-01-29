@@ -277,12 +277,17 @@ void LayerControlDialog::_preShow()
 		_rescanSelectionOnIdle = true;
 	});
 
+	_mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
+		sigc::mem_fun(this, &LayerControlDialog::onMapEvent)
+	);
+
 	// Re-populate the dialog
 	refresh();
 }
 
 void LayerControlDialog::_postHide()
 {
+	_mapEventSignal.disconnect();
 	_nodeLayerMembershipChangedSignal.disconnect();
 	_layersChangedSignal.disconnect();
 	_layerVisibilityChangedSignal.disconnect();
@@ -304,6 +309,15 @@ void LayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
     {
         GlobalLayerSystem().setLayerVisibility(layerID, false);
     });
+}
+
+void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
+{
+	if (ev == IMap::MapLoaded)
+	{
+		// Rebuild the dialog once a map is loaded
+		refresh();
+	}
 }
 
 } // namespace ui

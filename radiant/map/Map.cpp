@@ -43,7 +43,6 @@
 #include "map/algorithm/Skins.h"
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
-#include "ui/layers/LayerControlDialog.h"
 #include "ui/prefabselector/PrefabSelector.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
@@ -415,9 +414,6 @@ void Map::load(const std::string& filename) {
 
     // Let the filtersystem update the filtered status of all instances
     GlobalFilterSystem().update();
-
-    // Update the layer control dialog
-    ui::LayerControlDialog::Instance().refresh();
 
     // Clear the modified flag
     setModified(false);
