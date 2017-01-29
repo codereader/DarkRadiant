@@ -196,7 +196,7 @@ bool MapResource::saveBackup()
 		fs::path auxFile = fullpath;
 		auxFile.replace_extension(_infoFileExt);
 
-		if (file_writeable(fullpath.string().c_str()))
+		if (os::fileIsWritable(fullpath.string()))
 		{
 			fs::path backup = fullpath;
 			backup.replace_extension(".bak");
@@ -520,7 +520,7 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 bool MapResource::checkIsWriteable(const boost::filesystem::path& path)
 {
 	// Check writeability of the given file
-	if (boost::filesystem::exists(path) && !file_writeable(path.string().c_str()))
+	if (boost::filesystem::exists(path) && !os::fileIsWritable(path))
 	{
 		// File is write-protected
 		rError() << "File is write-protected." << std::endl;

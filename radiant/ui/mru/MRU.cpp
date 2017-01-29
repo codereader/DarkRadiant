@@ -92,7 +92,7 @@ void MRU::loadMap(const std::string& fileName)
 {
 	if (GlobalMap().askForSave(_("Open Map")))
 	{
-		if (file_readable(fileName.c_str()))
+		if (os::fileIsReadable(fileName))
 		{
 			// Shut down the current map
 			GlobalMap().freeMap();

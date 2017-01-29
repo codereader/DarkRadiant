@@ -150,7 +150,7 @@ void FixupMap::replaceShader(const std::string& oldShader, const std::string& ne
 void FixupMap::loadFixupFile()
 {
 	// Sanity-check the file
-	if (!os::fileOrDirExists(_filename) || !file_readable(_filename.c_str()))
+	if (!os::fileOrDirExists(_filename) || !os::fileIsReadable(_filename))
 	{
 		wxutil::Messagebox::Show(_("File not readable"),
 			_("The specified file doesn't exist."), ui::IDialog::MESSAGE_ERROR);

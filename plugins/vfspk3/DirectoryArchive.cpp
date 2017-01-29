@@ -39,10 +39,11 @@ ArchiveTextFilePtr DirectoryArchive::openTextFile(const std::string& name) {
 	return ArchiveTextFilePtr();
 }
 
-bool DirectoryArchive::containsFile(const std::string& name) {
+bool DirectoryArchive::containsFile(const std::string& name)
+{
 	UnixPath path(_root);
 	path.push_filename(name);
-	return file_readable(path.c_str());
+	return os::fileIsReadable(path);
 }
 
 #include <iostream>
