@@ -89,18 +89,6 @@ inline bool path_is_absolute(const char* path)
 #endif
 }
 
-/// \brief Returns true if \p path is a directory.
-/// O(n)
-inline bool path_is_directory(const char* path)
-{
-  std::size_t length = strlen(path);
-  if(length > 0)
-  {
-    return path[length-1] == '/';
-  }
-  return false;
-}
-
 /// \brief Returns a pointer to the first character of the component of \p path following the first directory component.
 /// O(n)
 inline const char* path_remove_directory(const char* path)
@@ -228,4 +216,13 @@ namespace os
         lastSlash = trimmed.rfind('/');
         return trimmed.substr(lastSlash + 1);
     }
+
+	/**
+	 * Returns true if the given string qualifies as path to a directory,
+	 * which is equal to the path string ending with the slash '/' character.
+	 */
+	inline bool isDirectory(const std::string& path)
+	{
+		return !path.empty() && path.back() == '/';
+	}
 }

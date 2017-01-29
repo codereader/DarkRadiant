@@ -5,6 +5,7 @@
 
 #include "pkzip.h"
 #include "zlibstream.h"
+#include "os/path.h"
 
 #include "DeflatedArchiveFile.h"
 #include "DeflatedArchiveTextFile.h"
@@ -179,17 +180,22 @@ bool ZipArchive::read_record() {
 
 	m_istream.seek(extras + comment, FileInputStream::cur);
 
-	if (path_is_directory(path.c_str())) {
+	if (os::isDirectory(path))
+	{
 		m_filesystem[path] = 0;
 	}
-	else {
+	else
+	{
 		ZipFileSystem::entry_type& file = m_filesystem[path];
-		if (!file.is_directory()) {
+
+		if (!file.is_directory())
+		{
 			rMessage() << "Warning: zip archive "
 				<< m_name << " contains duplicated file: "
 				<< path << std::endl;
 		}
-		else {
+		else 
+		{
 			file = new ZipRecord(position,
 								 compressed_size,
 								 uncompressed_size,
