@@ -62,6 +62,11 @@ typedef struct aseSubMaterial_s
 	int subMtlId;
 	picoShader_t* shader;
 
+	float uOffset; /* UVW_U_OFFSET */
+	float vOffset; /* UVW_V_OFFSET */
+	float uScale;  /* UVW_U_TILING */
+	float vScale;  /* UVW_V_TILING */
+	float uvAngle; /* UVW_ANGLE */
 } aseSubMaterial_t;
 
 typedef struct aseMaterial_s
@@ -147,6 +152,13 @@ static aseSubMaterial_t* _ase_add_submaterial( aseMaterial_t **list, int mtlIdPa
 {
 	aseMaterial_t *parent = _ase_get_material( *list,  mtlIdParent );
 	aseSubMaterial_t *subMtl = _pico_calloc( 1, sizeof ( aseSubMaterial_t ) );
+
+	/* Initialise some values */
+	subMtl->uOffset = 0.0f;
+	subMtl->vOffset = 0.0f;
+	subMtl->uScale = 1.0f;
+	subMtl->vScale = 1.0f;
+	subMtl->uvAngle = 0.0f;
 
 	if ( !parent )
 	{
@@ -470,16 +482,35 @@ static void _ase_submit_triangles( picoModel_t* model , aseMaterial_t* materials
 		{
 			picoVec3_t* xyz[3];
 			picoVec3_t* normal[3];
-			picoVec2_t* st[3];
+			picoVec2_t* stRef[3];
+			picoVec2_t st[3];
 			picoColor_t* color[3];
 			picoIndex_t smooth[3];
+			double u,v;
+
+			double materialSin = sin(subMtl->uvAngle);
+			double materialCos = cos(subMtl->uvAngle);
+
 			int j;
 			/* we pull the data from the vertex, color and texcoord arrays using the face index data */
 			for ( j = 0 ; j < 3 ; j ++ )
 			{
 				xyz[j]    = &vertices[(*i).indices[j]].xyz;
 				normal[j] = &vertices[(*i).indices[j]].normal;
-				st[j]     = &texcoords[(*i).indices[j + 3]].texcoord;
+
+				/* Old code
+				st[j][0] = texcoords[(*i).indices[j + 3]].texcoord[0];
+				st[j][1] = texcoords[(*i).indices[j + 3]].texcoord[1];
+				*/
+
+				/* greebo: Apply shift, scale and rotation */
+				u = texcoords[(*i).indices[j + 3]].texcoord[0] * subMtl->uScale + subMtl->uOffset;
+				v = texcoords[(*i).indices[j + 3]].texcoord[1] * subMtl->vScale + subMtl->vOffset;
+
+				st[j][0] = u * materialCos + v * materialSin;
+				st[j][1] = u * -materialSin + v * materialCos;
+
+				stRef[j] = &st[j];
 
 				if( colors != NULL && (*i).indices[j + 6] >= 0 )
 				{
@@ -495,7 +526,7 @@ static void _ase_submit_triangles( picoModel_t* model , aseMaterial_t* materials
 			}
 
 			/* submit the triangle to the model */
-			PicoAddTriangleToModel ( model , xyz , normal , 1 , st , 1 , color , subMtl->shader, smooth );
+			PicoAddTriangleToModel ( model , xyz , normal , 1 , stRef, 1 , color , subMtl->shader, smooth );
 		}
 	}
 }
@@ -925,7 +956,11 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			picoColor_t			ambientColor, diffuseColor, specularColor;
 			char				*mapname = NULL;
 			int					subMtlId, subMaterialLevel = -1;
-
+			float				uOffset = 0.0f;
+			float				vOffset = 0.0f;
+			float				uScale = 1.0f;
+			float				vScale = 1.0f;
+			float				uvAngle = 0;
 
 			/* get material index */
 			_pico_parse_int( p,&index );
@@ -977,6 +1012,14 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					PicoSetShaderMapName( shader, mapname );
 
 					subMaterial = _ase_add_submaterial( &materials, index, subMtlId, shader );
+
+					// Assign offsets
+					subMaterial->uOffset = uOffset;
+					subMaterial->vOffset = vOffset;
+					subMaterial->uScale = uScale;
+					subMaterial->vScale = vScale;
+					subMaterial->uvAngle = uvAngle;
+
 					subMaterialLevel = -1;
 				}
 
@@ -1120,6 +1163,59 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 							_pico_parse_skip_rest( p );
 							continue;
 						}
+
+						if (!_pico_stricmp(p->token, "*uvw_u_offset"))
+						{
+							if (!_pico_parse_float(p, &uOffset))
+								_ase_error_return("Material UVW_U_OFFSET error");
+
+							// Negate the u offset value
+							uOffset = -uOffset;
+
+							/* skip rest and continue with next token */
+							_pico_parse_skip_rest(p);
+							continue;
+						}
+
+						if (!_pico_stricmp(p->token, "*uvw_v_offset"))
+						{
+							if (!_pico_parse_float(p, &vOffset))
+								_ase_error_return("Material UVW_V_OFFSET error");
+
+							/* skip rest and continue with next token */
+							_pico_parse_skip_rest(p);
+							continue;
+						}
+
+						if (!_pico_stricmp(p->token, "*uvw_u_tiling"))
+						{
+							if (!_pico_parse_float(p, &uScale))
+								_ase_error_return("Material UVW_U_TILING error");
+
+							/* skip rest and continue with next token */
+							_pico_parse_skip_rest(p);
+							continue;
+						}
+
+						if (!_pico_stricmp(p->token, "*uvw_v_tiling"))
+						{
+							if (!_pico_parse_float(p, &vScale))
+								_ase_error_return("Material UVW_V_TILING error");
+
+							/* skip rest and continue with next token */
+							_pico_parse_skip_rest(p);
+							continue;
+						}
+
+						if (!_pico_stricmp(p->token, "*uvw_angle"))
+						{
+							if (!_pico_parse_float(p, &uvAngle))
+								_ase_error_return("Material UVW_ANGLE error");
+
+							/* skip rest and continue with next token */
+							_pico_parse_skip_rest(p);
+							continue;
+						}
 					}
 				}
 				/* end map_diffuse block */
@@ -1137,7 +1233,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 				}
 
 				/* set material name */
-        shadername_convert(materialName);
+				shadername_convert(materialName);
 				PicoSetShaderName( shader,materialName );
 
 				/* set shader's transparency */
@@ -1161,58 +1257,65 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 				/* set material map name */
 				PicoSetShaderMapName( shader, mapname );
 
-        /* extract shadername from bitmap path */
-        if(mapname != NULL)
-        {
-          char* p = mapname;
+				/* extract shadername from bitmap path */
+				if(mapname != NULL)
+				{
+					char* p = mapname;
 
-          /* convert to shader-name format */
-          shadername_convert(mapname);
-          {
-            /* remove extension */
-            char* last_period = strrchr(p, '.');
-            if(last_period != NULL)
-            {
-              *last_period = '\0';
-            }
-          }
+					/* convert to shader-name format */
+					shadername_convert(mapname);
+					{
+						/* remove extension */
+						char* last_period = strrchr(p, '.');
+						if (last_period != NULL)
+						{
+							*last_period = '\0';
+						}
+					}
 
-          /* find game root */
-          for(; *p != '\0'; ++p)
-          {
-            if(_pico_strnicmp(p, "quake", 5) == 0 || _pico_strnicmp(p, "doom", 4) == 0)
-            {
-              break;
-            }
-          }
-          /* root-relative */
-          for(; *p != '\0'; ++p)
-          {
-            if(*p == '/')
-            {
-              ++p;
-              break;
-            }
-          }
-          /* game-relative */
-          for(; *p != '\0'; ++p)
-          {
-            if(*p == '/')
-            {
-              ++p;
-              break;
-            }
-          }
+					/* find game root */
+					for(; *p != '\0'; ++p)
+					{
+						if (_pico_strnicmp(p, "quake", 5) == 0 || _pico_strnicmp(p, "doom", 4) == 0)
+						{
+							break;
+						}
+					}
+					/* root-relative */
+					for (; *p != '\0'; ++p)
+					{
+						if (*p == '/')
+						{
+							++p;
+							break;
+						}
+					}
+					/* game-relative */
+					for (; *p != '\0'; ++p)
+					{
+						if (*p == '/')
+						{
+							++p;
+							break;
+						}
+					}
 
-          if(*p != '\0')
-          {
-				    /* set material name */
-				    PicoSetShaderName( shader,p );
-          }
-        }
+					if (*p != '\0')
+					{
+						/* set material name */
+						PicoSetShaderName(shader, p);
+					}
+				}
 
-        /* this is just a material with 1 submaterial */
+				/* this is just a material with 1 submaterial */
 				subMaterial = _ase_add_submaterial( &materials, index, 0, shader );
+
+				// Assign offsets
+				subMaterial->uOffset = uOffset;
+				subMaterial->vOffset = vOffset;
+				subMaterial->uScale = uScale;
+				subMaterial->vScale = vScale;
+				subMaterial->uvAngle = uvAngle;
 			}
 
 			/* ydnar: free mapname */
