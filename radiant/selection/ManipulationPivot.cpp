@@ -1,5 +1,6 @@
 #include "ManipulationPivot.h"
 
+#include "igrid.h"
 #include "ilightnode.h"
 #include "registry/registry.h"
 #include "algorithm/General.h"
