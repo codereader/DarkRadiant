@@ -11,10 +11,12 @@ namespace selection
 namespace
 {
 	const std::string RKEY_ENTITY_PIVOT_IS_ORIGIN = "user/ui/rotationPivotIsOrigin";
+	const std::string RKEY_SNAP_ROTATION_PIVOT_TO_GRID = "user/ui/snapRotationPivotToGrid";
 }
 
 ManipulationPivot::ManipulationPivot() :
 	_entityPivotIsOrigin(false),
+	_snapPivotToGrid(false),
 	_needsRecalculation(true),
 	_operationActive(false),
 	_userLocked(false)
@@ -23,8 +25,12 @@ ManipulationPivot::ManipulationPivot() :
 void ManipulationPivot::initialise()
 {
 	_entityPivotIsOrigin = registry::getValue<bool>(RKEY_ENTITY_PIVOT_IS_ORIGIN);
+	_snapPivotToGrid = registry::getValue<bool>(RKEY_SNAP_ROTATION_PIVOT_TO_GRID);
 
 	GlobalRegistry().signalForKey(RKEY_ENTITY_PIVOT_IS_ORIGIN).connect(
+		sigc::mem_fun(this, &ManipulationPivot::onRegistryKeyChanged)
+	);
+	GlobalRegistry().signalForKey(RKEY_SNAP_ROTATION_PIVOT_TO_GRID).connect(
 		sigc::mem_fun(this, &ManipulationPivot::onRegistryKeyChanged)
 	);
 }
@@ -92,6 +98,12 @@ void ManipulationPivot::applyTranslation(const Vector3& translation)
 	revertToStart();
 
 	_pivot2World.translateBy(translation);
+
+	if (_snapPivotToGrid)
+	{
+		// The resulting pivot should be grid-snapped
+		_pivot2World.t().getVector3().snap(GlobalGrid().getGridSize());
+	}
 }
 
 void ManipulationPivot::updateFromSelection()
@@ -139,8 +151,10 @@ void ManipulationPivot::updateFromSelection()
 		objectPivot = bounds.origin;
 	}
 
-	// Snap the pivot point to the grid (greebo: disabled this (issue #231))
-	//vector3_snap(objectPivot, GlobalGrid().getGridSize());
+	if (_snapPivotToGrid)
+	{
+		objectPivot.snap(GlobalGrid().getGridSize());
+	}
 
 	// The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot
 	setFromMatrix(Matrix4::getTranslation(objectPivot));
@@ -149,6 +163,7 @@ void ManipulationPivot::updateFromSelection()
 void ManipulationPivot::onRegistryKeyChanged()
 {
 	_entityPivotIsOrigin = registry::getValue<bool>(RKEY_ENTITY_PIVOT_IS_ORIGIN);
+	_snapPivotToGrid = registry::getValue<bool>(RKEY_SNAP_ROTATION_PIVOT_TO_GRID);
 
 	GlobalSelectionSystem().pivotChanged();
 }

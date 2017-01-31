@@ -27,6 +27,9 @@ private:
 	// Use a single Entity's "origin" keyvalue as pivot
 	bool _entityPivotIsOrigin;
 
+	// Whether to snap the pivot to grid after movement
+	bool _snapPivotToGrid;
+
 	// "dirty" flag
 	bool _needsRecalculation;
 

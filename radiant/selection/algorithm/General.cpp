@@ -1124,6 +1124,7 @@ void registerCommands()
 	GlobalEventManager().addCommand("PasteToCamera", "PasteToCamera");
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
+	GlobalEventManager().addRegistryToggle("ToggleSnapRotationPivot", "user/ui/snapRotationPivotToGrid");
 	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", RKEY_OFFSET_CLONED_OBJECTS);
 
 	GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");

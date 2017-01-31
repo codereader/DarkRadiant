@@ -56,6 +56,7 @@
     <alwaysShowLightVertices value="1"/>
     <rotateObjectsIndependently value="0" />
     <rotationPivotIsOrigin value="0" />
+    <snapRotationPivotToGrid value="0" />
     <selectionEpsilon value="8.0" />
     <dragResizeEntitiesSymmetrically value="1" />
     <transientComponentSelection value="1" />
@@ -227,6 +228,7 @@
       <toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.png"/>
       <toggletoolbutton name="freeobjectrotation" action="ToggleFreeObjectRotation" tooltip="Rotate Objects independently" icon="free_model_rotation.png" />
       <toggletoolbutton name="togglerotationpivot" action="ToggleRotationPivot" tooltip="Rotate func_* Entities around origin" icon="rotation_pivot_origin.png" />
+      <toggletoolbutton name="togglesnaprotationpivot" action="ToggleSnapRotationPivot" tooltip="Snap Rotation Pivot to Grid" icon="snap_rotation_pivot.png" />
       <toggletoolbutton name="dragresizesymm" action="ToggleDragResizeEntitiesSymmetrically" tooltip="Drag-resize entities symmetrically (leave origin unchanged)" icon="dragresize_symm.png" />
       <toggletoolbutton name="offsetclones" action="ToggleOffsetClones" tooltip="Offset cloned objects by one grid unit to the right and downwards." icon="offset_clone.png" />
       <separator/>
