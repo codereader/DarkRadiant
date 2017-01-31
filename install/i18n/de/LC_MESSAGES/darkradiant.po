@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-01-27 15:51+0100\n"
-"PO-Revision-Date: 2017-01-27 15:58+0100\n"
+"POT-Creation-Date: 2017-01-31 20:02+0100\n"
+"PO-Revision-Date: 2017-01-31 20:03+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -244,14 +244,14 @@ msgstr "Brushnummer:"
 msgid "Map Info File Version invalid"
 msgstr "Ungültige Map Info File Verson"
 
-#: ..\..\radiant\map\Map.cpp:63
+#: ..\..\radiant\map\Map.cpp:62
 msgid "unnamed.map"
 msgstr "unbenannt.map"
 
-#: ..\..\radiant\map\Map.cpp:107
-#: ..\..\radiant\map\Map.cpp:441
-#: ..\..\radiant\map\Map.cpp:546
-#: ..\..\radiant\map\Map.cpp:574
+#: ..\..\radiant\map\Map.cpp:109
+#: ..\..\radiant\map\Map.cpp:429
+#: ..\..\radiant\map\Map.cpp:528
+#: ..\..\radiant\map\Map.cpp:556
 #: ..\..\radiant\model\ModelCache.cpp:224
 #: ..\..\radiant\model\ModelCache.cpp:240
 #: ..\..\radiant\RadiantModule.cpp:106
@@ -259,15 +259,15 @@ msgstr "unbenannt.map"
 msgid "Processing..."
 msgstr "Vorgang läuft..."
 
-#: ..\..\radiant\map\Map.cpp:107
+#: ..\..\radiant\map\Map.cpp:109
 msgid "Loading textures..."
 msgstr "Lade Texturen..."
 
-#: ..\..\radiant\map\Map.cpp:443
+#: ..\..\radiant\map\Map.cpp:431
 msgid "Preprocessing"
 msgstr "Vorverarbeitung"
 
-#: ..\..\radiant\map\Map.cpp:452
+#: ..\..\radiant\map\Map.cpp:440
 #, c-format
 msgid ""
 "Failure running map pre-save event:\n"
@@ -276,15 +276,15 @@ msgstr ""
 "Fehler beim Aufruf des Pre-Save Events:\n"
 "%s"
 
-#: ..\..\radiant\map\Map.cpp:463
+#: ..\..\radiant\map\Map.cpp:448
 msgid "Saving Map"
 msgstr "Speichere Map"
 
-#: ..\..\radiant\map\Map.cpp:505
+#: ..\..\radiant\map\Map.cpp:487
 msgid "Importing..."
 msgstr "Importiere..."
 
-#: ..\..\radiant\map\Map.cpp:600
+#: ..\..\radiant\map\Map.cpp:582
 #, c-format
 msgid ""
 "Save changes to map \"%s\"\n"
@@ -293,17 +293,17 @@ msgstr ""
 "Sollen die Änderungen an der Map \"%s\"\n"
 "vor dem Schließen gespeichert werden?"
 
-#: ..\..\radiant\map\Map.cpp:608
+#: ..\..\radiant\map\Map.cpp:590
 #, c-format
 msgid "%d minutes"
 msgstr "%d Minuten"
 
-#: ..\..\radiant\map\Map.cpp:612
+#: ..\..\radiant\map\Map.cpp:594
 #, c-format
 msgid "%d seconds"
 msgstr "%d Sekunden"
 
-#: ..\..\radiant\map\Map.cpp:616
+#: ..\..\radiant\map\Map.cpp:598
 #, c-format
 msgid ""
 "If you don't save, changes from the last %s\n"
@@ -312,40 +312,40 @@ msgstr ""
 "Wenn Du nicht sicherst, gehen die Änderungen\n"
 "der letzten %s verloren."
 
-#: ..\..\radiant\map\Map.cpp:674
+#: ..\..\radiant\map\Map.cpp:656
 msgid "Save Map"
 msgstr "Map speichern"
 
-#: ..\..\radiant\map\Map.cpp:714
+#: ..\..\radiant\map\Map.cpp:696
 msgid "Save Copy As..."
 msgstr "Speichere Kopie als..."
 
-#: ..\..\radiant\map\Map.cpp:805
+#: ..\..\radiant\map\Map.cpp:787
 msgid "New Map"
 msgstr "Neue Map"
 
-#: ..\..\radiant\map\Map.cpp:814
+#: ..\..\radiant\map\Map.cpp:796
 #: ..\..\radiant\ui\mru\MRU.cpp:93
 msgid "Open Map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:818
+#: ..\..\radiant\map\Map.cpp:800
 msgid "Open map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:832
+#: ..\..\radiant\map\Map.cpp:814
 msgid "Import map"
 msgstr "Map importieren"
 
-#: ..\..\radiant\map\Map.cpp:861
+#: ..\..\radiant\map\Map.cpp:843
 msgid "Export selection"
 msgstr "Auswahl exportieren"
 
-#: ..\..\radiant\map\Map.cpp:876
+#: ..\..\radiant\map\Map.cpp:858
 msgid "Save selected as Prefab"
 msgstr "Auswahl als Prefab speichern"
 
-#: ..\..\radiant\map\Map.cpp:957
+#: ..\..\radiant\map\Map.cpp:939
 #, c-format
 msgid ""
 "Failure reading map from clipboard:\n"
@@ -2904,7 +2904,7 @@ msgstr "Kamera verschieben"
 #: ..\..\radiant\xyview\tools\ClipperTool.cpp:21
 #: xml_file_content.cpp:150
 #: xml_file_content.cpp:13
-#: xml_file_content.cpp:17
+#: xml_file_content.cpp:18
 msgid "Clipper"
 msgstr "Clipper"
 
@@ -3992,7 +3992,7 @@ msgstr "Missionsziel %d obligatorisch machen"
 msgid "Make Objective %d not mandatory"
 msgstr "Missionsziel %d nicht obligatorisch machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:535
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:537
 msgid "This condition is not valid or complete yet."
 msgstr "Diese Bedingung ist noch nicht gültig oder vollständig."
 
@@ -5102,7 +5102,7 @@ msgid "Nudge Down"
 msgstr "Verschiebe nach unten"
 
 #: xml_file_content.cpp:108
-#: xml_file_content.cpp:15
+#: xml_file_content.cpp:16
 msgid "Rotate"
 msgstr "Drehen"
 
@@ -5764,34 +5764,38 @@ msgid "Rotate func_* Entities around origin"
 msgstr "Drehe func_*-Entities um deren Ursprung"
 
 #: xml_file_content.cpp:12
+msgid "Snap Rotation Pivot to Grid"
+msgstr "Rotationspivot am Raster ausrichten"
+
+#: xml_file_content.cpp:13
 msgid "Drag-resize entities symmetrically (leave origin unchanged)"
 msgstr "Symmetrisches Verändern von Entities beim Ziehen (Ursprung bleibt unverändert)"
 
-#: xml_file_content.cpp:13
+#: xml_file_content.cpp:14
 msgid "Offset cloned objects by one grid unit to the right and downwards."
 msgstr "Duplizierte Objekte um eine Rastereinheit nach rechts unten verschieben"
 
-#: xml_file_content.cpp:14
+#: xml_file_content.cpp:15
 msgid "Translate"
 msgstr "Translahieren"
 
-#: xml_file_content.cpp:16
+#: xml_file_content.cpp:17
 msgid "Resize"
 msgstr "Größe ändern"
 
-#: xml_file_content.cpp:18
+#: xml_file_content.cpp:19
 msgid "Model Scaler"
 msgstr "Modell-Skalierung"
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:20
 msgid "Hide Unused"
 msgstr "Nicht Benutztes verbergen"
 
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:21
 msgid "Toggle Grid"
 msgstr "Raster anzeigen/verbergen"
 
-#: xml_file_content.cpp:21
+#: xml_file_content.cpp:22
 msgid "Center Pivot when scaling faces"
 msgstr "Pivotpunkt beim Skalieren von Faces zentrieren"
 

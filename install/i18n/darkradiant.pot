@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-01-27 15:51+0100\n"
+"POT-Creation-Date: 2017-01-31 20:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -234,98 +234,98 @@ msgstr ""
 msgid "Map Info File Version invalid"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:63
+#: ..\..\radiant\map\Map.cpp:62
 msgid "unnamed.map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:107 ..\..\radiant\map\Map.cpp:441
-#: ..\..\radiant\map\Map.cpp:546 ..\..\radiant\map\Map.cpp:574
+#: ..\..\radiant\map\Map.cpp:109 ..\..\radiant\map\Map.cpp:429
+#: ..\..\radiant\map\Map.cpp:528 ..\..\radiant\map\Map.cpp:556
 #: ..\..\radiant\model\ModelCache.cpp:224
 #: ..\..\radiant\model\ModelCache.cpp:240 ..\..\radiant\RadiantModule.cpp:106
 #: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:321
 msgid "Processing..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:107
+#: ..\..\radiant\map\Map.cpp:109
 msgid "Loading textures..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:443
+#: ..\..\radiant\map\Map.cpp:431
 msgid "Preprocessing"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:452
+#: ..\..\radiant\map\Map.cpp:440
 #, c-format
 msgid ""
 "Failure running map pre-save event:\n"
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:463
+#: ..\..\radiant\map\Map.cpp:448
 msgid "Saving Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:505
+#: ..\..\radiant\map\Map.cpp:487
 msgid "Importing..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:600
+#: ..\..\radiant\map\Map.cpp:582
 #, c-format
 msgid ""
 "Save changes to map \"%s\"\n"
 "before closing?"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:608
+#: ..\..\radiant\map\Map.cpp:590
 #, c-format
 msgid "%d minutes"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:612
+#: ..\..\radiant\map\Map.cpp:594
 #, c-format
 msgid "%d seconds"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:616
+#: ..\..\radiant\map\Map.cpp:598
 #, c-format
 msgid ""
 "If you don't save, changes from the last %s\n"
 "will be lost."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:674
+#: ..\..\radiant\map\Map.cpp:656
 msgid "Save Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:714
+#: ..\..\radiant\map\Map.cpp:696
 msgid "Save Copy As..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:805
+#: ..\..\radiant\map\Map.cpp:787
 msgid "New Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:814 ..\..\radiant\ui\mru\MRU.cpp:93
+#: ..\..\radiant\map\Map.cpp:796 ..\..\radiant\ui\mru\MRU.cpp:93
 msgid "Open Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:818
+#: ..\..\radiant\map\Map.cpp:800
 msgid "Open map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:832
+#: ..\..\radiant\map\Map.cpp:814
 msgid "Import map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:861
+#: ..\..\radiant\map\Map.cpp:843
 msgid "Export selection"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:876
+#: ..\..\radiant\map\Map.cpp:858
 msgid "Save selected as Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:957
+#: ..\..\radiant\map\Map.cpp:939
 #, c-format
 msgid ""
 "Failure reading map from clipboard:\n"
@@ -2824,7 +2824,7 @@ msgid "Drag Camera"
 msgstr ""
 
 #: ..\..\radiant\xyview\tools\ClipperTool.cpp:21 xml_file_content.cpp:150
-#: xml_file_content.cpp:13 xml_file_content.cpp:17
+#: xml_file_content.cpp:13 xml_file_content.cpp:18
 msgid "Clipper"
 msgstr ""
 
@@ -3904,7 +3904,7 @@ msgstr ""
 msgid "Make Objective %d not mandatory"
 msgstr ""
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:535
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:537
 msgid "This condition is not valid or complete yet."
 msgstr ""
 
@@ -4980,7 +4980,7 @@ msgstr ""
 msgid "Nudge Down"
 msgstr ""
 
-#: xml_file_content.cpp:108 xml_file_content.cpp:15
+#: xml_file_content.cpp:108 xml_file_content.cpp:16
 msgid "Rotate"
 msgstr ""
 
@@ -5641,34 +5641,38 @@ msgid "Rotate func_* Entities around origin"
 msgstr ""
 
 #: xml_file_content.cpp:12
-msgid "Drag-resize entities symmetrically (leave origin unchanged)"
+msgid "Snap Rotation Pivot to Grid"
 msgstr ""
 
 #: xml_file_content.cpp:13
-msgid "Offset cloned objects by one grid unit to the right and downwards."
+msgid "Drag-resize entities symmetrically (leave origin unchanged)"
 msgstr ""
 
 #: xml_file_content.cpp:14
+msgid "Offset cloned objects by one grid unit to the right and downwards."
+msgstr ""
+
+#: xml_file_content.cpp:15
 msgid "Translate"
 msgstr ""
 
-#: xml_file_content.cpp:16
+#: xml_file_content.cpp:17
 msgid "Resize"
 msgstr ""
 
-#: xml_file_content.cpp:18
+#: xml_file_content.cpp:19
 msgid "Model Scaler"
 msgstr ""
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:20
 msgid "Hide Unused"
 msgstr ""
 
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:21
 msgid "Toggle Grid"
 msgstr ""
 
-#: xml_file_content.cpp:21
+#: xml_file_content.cpp:22
 msgid "Center Pivot when scaling faces"
 msgstr ""
 
