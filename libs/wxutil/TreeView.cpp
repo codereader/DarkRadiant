@@ -94,7 +94,7 @@ void TreeView::ExpandTopLevelItems()
 
 void TreeView::ResetSortingOnAllColumns()
 {
-#if wxCHECK_VERSION(3, 1, 0)
+#if wxCHECK_VERSION(3, 1, 0) && defined(__WXMSW__ )
 	ResetAllSortColumns();
 #else
 	// We don't have ResetAllSortColumns in wxWidgets 3.0.x
