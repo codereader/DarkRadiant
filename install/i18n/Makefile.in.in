@@ -70,7 +70,7 @@ POFILES = @POFILES@
 GMOFILES = @GMOFILES@
 UPDATEPOFILES = @UPDATEPOFILES@
 DUMMYPOFILES = @DUMMYPOFILES@
-DISTFILES.common = Makefile.in.in remove-potcdate.sin \
+DISTFILES.common = Makefile.in.in \
 $(DISTFILES.common.extra1) $(DISTFILES.common.extra2) $(DISTFILES.common.extra3)
 DISTFILES = $(DISTFILES.common) Makevars POTFILES.in \
 $(POFILES) $(GMOFILES) \
@@ -155,7 +155,7 @@ stamp-po: $(srcdir)/$(DOMAIN).pot
 # The determination of whether the package xyz is a GNU one is based on the
 # heuristic whether some file in the top level directory mentions "GNU xyz".
 # If GNU 'find' is available, we avoid grepping through monster files.
-$(DOMAIN).pot-update: $(POTFILES) $(srcdir)/POTFILES.in remove-potcdate.sed
+$(DOMAIN).pot-update: $(POTFILES) $(srcdir)/POTFILES.in
 	package_gnu="$(PACKAGE_GNU)"; \
 	test -n "$$package_gnu" || { \
 	  if { if (LC_ALL=C find --version) 2>/dev/null | grep GNU >/dev/null; then \
@@ -206,8 +206,8 @@ $(DOMAIN).pot-update: $(POTFILES) $(srcdir)/POTFILES.in remove-potcdate.sed
 	    rm -f $(DOMAIN).1po; \
 	  fi; \
 	  if test -f $(srcdir)/$(DOMAIN).pot; then \
-	    sed -f remove-potcdate.sed < $(srcdir)/$(DOMAIN).pot > $(DOMAIN).1po && \
-	    sed -f remove-potcdate.sed < $(DOMAIN).po > $(DOMAIN).2po && \
+	    cat < $(srcdir)/$(DOMAIN).pot > $(DOMAIN).1po && \
+	    cat < $(DOMAIN).po > $(DOMAIN).2po && \
 	    if cmp $(DOMAIN).1po $(DOMAIN).2po >/dev/null 2>&1; then \
 	      rm -f $(DOMAIN).1po $(DOMAIN).2po $(DOMAIN).po; \
 	    else \
@@ -227,7 +227,7 @@ $(srcdir)/$(DOMAIN).pot:
 
 # This target rebuilds a PO file if $(DOMAIN).pot has changed.
 # Note that a PO file is not touched if it doesn't need to be changed.
-$(POFILES): $(POFILESDEPS)
+$(POFILES): $(POFILESDEPS) gather-po-files
 	@lang=`echo $@ | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
 	if test -f "$(srcdir)/$${lang}.po"; then \
 	  test -f $(srcdir)/$(DOMAIN).pot || $(MAKE) $(srcdir)/$(DOMAIN).pot; \
@@ -374,7 +374,6 @@ check: all
 info dvi ps pdf html tags TAGS ctags CTAGS ID:
 
 mostlyclean:
-	rm -f remove-potcdate.sed
 	rm -f stamp-poT
 	rm -f core core.* $(DOMAIN).po $(DOMAIN).1po $(DOMAIN).2po *.new.po
 	rm -fr *.o
@@ -419,6 +418,16 @@ dist2: stamp-po $(DISTFILES)
 	  fi; \
 	done
 
+# Custom target added to gather the .po files in the top-level directory and
+# with the correct names. The Win32 gettext implementation keeps them next to
+# the .mo files.
+gather-po-files:
+	for dir in *; do \
+		if test -d $${dir}; then \
+			cp $${dir}/LC_MESSAGES/darkradiant.po $${dir}.po; \
+		fi; \
+	done
+	
 update-po: Makefile
 	$(MAKE) $(DOMAIN).pot-update
 	test -z "$(UPDATEPOFILES)" || $(MAKE) $(UPDATEPOFILES)
@@ -465,7 +474,7 @@ update-po: Makefile
 
 $(DUMMYPOFILES):
 
-update-gmo: Makefile $(GMOFILES)
+update-gmo: Makefile gather-po-files $(GMOFILES)
 	@:
 
 # Recreate Makefile by invoking config.status. Explicitly invoke the shell,
