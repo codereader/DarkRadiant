@@ -497,15 +497,14 @@ static void _ase_submit_triangles( picoModel_t* model , aseMaterial_t* materials
 			{
 				xyz[j]    = &vertices[(*i).indices[j]].xyz;
 				normal[j] = &vertices[(*i).indices[j]].normal;
-
 				/* Old code
-				st[j][0] = texcoords[(*i).indices[j + 3]].texcoord[0];
-				st[j][1] = texcoords[(*i).indices[j + 3]].texcoord[1];
+				st[j]     = &texcoords[(*i).indices[j + 3]].texcoord;
 				*/
 
 				/* greebo: Apply shift, scale and rotation */
-				u = texcoords[(*i).indices[j + 3]].texcoord[0] * subMtl->uScale + subMtl->uOffset;
-				v = texcoords[(*i).indices[j + 3]].texcoord[1] * subMtl->vScale + subMtl->vOffset;
+				/* Also check for NULL texcoords pointer, some models surfaces don't have any tverts */
+				u = texcoords != NULL ? texcoords[(*i).indices[j + 3]].texcoord[0] * subMtl->uScale + subMtl->uOffset : 0.0;
+				v = texcoords != NULL ? texcoords[(*i).indices[j + 3]].texcoord[1] * subMtl->vScale + subMtl->vOffset : 0.0;
 
 				st[j][0] = u * materialCos + v * materialSin;
 				st[j][1] = u * -materialSin + v * materialCos;
