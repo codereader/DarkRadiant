@@ -148,7 +148,7 @@ void AnimationPreview::setupSceneGraph()
 {
 	RenderPreview::setupSceneGraph();
 
-    _root.reset(new scene::BasicRootNode);
+    _root = std::make_shared<scene::BasicRootNode>();
 
 	_entity = GlobalEntityCreator().createEntity(
 		GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS)

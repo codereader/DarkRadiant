@@ -8,7 +8,7 @@ namespace scene
 
 GraphPtr SceneGraphFactory::createSceneGraph()
 {
-	return GraphPtr(new SceneGraph);
+	return std::make_shared<SceneGraph>();
 }
 
 const std::string& SceneGraphFactory::getName() const

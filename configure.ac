@@ -176,6 +176,11 @@ AC_CHECK_LIB([dl], [main],
              [AC_MSG_ERROR([DL library not found])])
 AC_SUBST([DL_LIBS])
 
+AC_CHECK_LIB([intl], [main],
+             [INTL_LIBS='-lintl'],
+             [AC_MSG_ERROR([intl library not found])])
+AC_SUBST([INTL_LIBS])
+
 # Dependent Boost headers
 AC_CHECK_HEADER([boost/serialization/access.hpp], [],
                 [AC_MSG_ERROR([Boost.Serialization headers not found])])
