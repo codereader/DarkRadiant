@@ -130,7 +130,7 @@ void ModelPreview::setupSceneGraph()
 
     try
     {
-        _rootNode.reset(new scene::BasicRootNode);
+        _rootNode = std::make_shared<scene::BasicRootNode>();
 
         _entity = GlobalEntityCreator().createEntity(
             GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
