@@ -1,10 +1,7 @@
-#ifndef ISCRIPT_H_
-#define ISCRIPT_H_
+#pragma once
 
 #include "imodule.h"
-
-// Forward decl.
-namespace boost { namespace python { class object; } }
+#include <boost/python/object_fwd.hpp>
 
 namespace script
 {
@@ -76,5 +73,3 @@ inline IScriptingSystem& GlobalScriptingSystem() {
 	);
 	return _scriptingSystem;
 }
-
-#endif /*ISCRIPT_H_*/
