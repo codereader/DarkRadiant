@@ -876,7 +876,7 @@ void Map::rename(const std::string& filename) {
 
 void Map::importSelected(std::istream& in)
 {
-    scene::INodePtr root(new scene::BasicRootNode);
+    scene::INodePtr root = std::make_shared<scene::BasicRootNode>();
 
     // Instantiate the default import filter
     class MapImportFilter :

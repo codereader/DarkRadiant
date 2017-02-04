@@ -3,6 +3,8 @@
 
 #include "ParseException.h"
 
+#include <iostream>
+#include <ios>
 #include <string>
 #include <boost/tokenizer.hpp>
 

@@ -17,6 +17,7 @@
 #include <wx/app.h>
 #include <wx/cmdline.h>
 
+#include <libintl.h>
 #include <exception>
 
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
