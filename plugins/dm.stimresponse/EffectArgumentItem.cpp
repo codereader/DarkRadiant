@@ -120,7 +120,7 @@ StimTypeArgument::StimTypeArgument(wxWindow* parent,
 
 	StimType stimType = _stimTypes.get(string::convert<int>(arg.value));
 
-	wxutil::ChoiceHelper::SelectItemByStoredString(_comboBox, stimType.name);
+	wxutil::ChoiceHelper::SelectComboItemByStoredString(_comboBox, stimType.name);
 }
 
 std::string StimTypeArgument::getValue()

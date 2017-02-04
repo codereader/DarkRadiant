@@ -53,7 +53,7 @@ AC_ARG_ENABLE([python],
 if [[ "$darkmod_plugins" != 'no' ]]
 then
     # Enable conditional directories (used by plugins/Makefile.am)
-    #sr_plugin="dm.stimresponse"
+    sr_plugin="dm.stimresponse"
     obj_plugin="dm.objectives"
     difficulty_plugin="dm.difficulty"
     conv_plugin="dm.conversation"
