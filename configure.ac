@@ -4,6 +4,21 @@ AM_SILENT_RULES([yes])
 
 AC_CONFIG_MACRO_DIR([m4])
 
+# Get info about the OS we're on
+AC_CANONICAL_HOST
+
+build_linux=no
+build_osx=no
+
+case $host_os in
+  linux*)
+        build_linux=yes
+        ;;
+  darwin* )
+        build_osx=yes
+        ;;
+esac
+
 # Initialise Gettext
 AM_GNU_GETTEXT_VERSION(0.18.1)
 AM_GNU_GETTEXT([external])
@@ -98,19 +113,11 @@ if test "$wxWin" != 1; then
         ])
 fi
 
-# GTK etc
+# Support libraries
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 PKG_CHECK_MODULES([LIBSIGC], [sigc++-2.0])
 PKG_CHECK_MODULES([PNG], [libpng])
 PKG_CHECK_MODULES([FTGL], [ftgl])
-
-# GTKSourceView
-#PKG_CHECK_MODULES([GTKSOURCEVIEWMM],
-#                  [gtksourceviewmm-2.0],
-#                  [AC_DEFINE([HAVE_GTKSOURCEVIEW],
-#                             [],
-#                             [Define if GtkSourceView is available])],
-#                 [true])
 
 # GLEW
 AC_CHECK_HEADER([GL/glew.h], [], [AC_MSG_ERROR([GLEW not found])])
@@ -119,15 +126,20 @@ AC_CHECK_LIB([GLEW], [main],
              [AC_MSG_ERROR([GLEW not found])])
 AC_SUBST([GLEW_LIBS])
 
-# OpenGL and GLU
-AC_CANONICAL_HOST
+# In OSX, OpenGL and GLU are handled through the -framework OpenGL switch
+# In Linux we need to check for the libs
+if test "$build_osx" != "no"; then
+    [GL_LIBS='-framework OpenGL']
+    
+    # We need the libintl library in OSX
+    AC_CHECK_LIB([intl], [main],
+                [INTL_LIBS='-lintl'],
+                [AC_MSG_ERROR([intl library not found])])
+    AC_SUBST([INTL_LIBS])
+fi
 
-case $host_os in
-  darwin* )
-	[GL_LIBS='-framework OpenGL']
-	;;
-  *)
-	AC_CHECK_LIB([GL], [main],
+if test "$build_linux" != "no"; then
+    AC_CHECK_LIB([GL], [main],
              [GL_LIBS='-lGL'],
              [AC_MSG_ERROR([GL library not found.])])
 	AC_CHECK_LIB([GLU], [gluBuild2DMipmaps],
@@ -135,8 +147,7 @@ case $host_os in
              [AC_MSG_ERROR([GLU library not found.])])
 	AC_SUBST([GL_LIBS])
 	AC_SUBST([GLU_LIBS])
-	;;
-esac
+fi
 
 # Boost
 BOOST_REQUIRE([1.46.1])
@@ -175,11 +186,6 @@ AC_CHECK_LIB([dl], [main],
              [DL_LIBS='-ldl'],
              [AC_MSG_ERROR([DL library not found])])
 AC_SUBST([DL_LIBS])
-
-AC_CHECK_LIB([intl], [main],
-             [INTL_LIBS='-lintl'],
-             [AC_MSG_ERROR([intl library not found])])
-AC_SUBST([INTL_LIBS])
 
 # Dependent Boost headers
 AC_CHECK_HEADER([boost/serialization/access.hpp], [],
