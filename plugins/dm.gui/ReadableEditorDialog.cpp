@@ -20,6 +20,7 @@
 #include "itextstream.h"
 
 // Modules
+#include "iundo.h"
 #include "imainframe.h"
 #include "ientity.h"
 #include "imap.h"
@@ -359,6 +360,8 @@ bool ReadableEditorDialog::initControlsFromEntity()
 bool ReadableEditorDialog::save()
 {
 	_saveInProgress = true;
+
+	UndoableCommand cmd("editReadable");
 
 	// Name
 	_entity->setKeyValue("inv_name", _nameEntry->GetValue().ToStdString());
