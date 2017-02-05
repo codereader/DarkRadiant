@@ -16,6 +16,7 @@
 
 #include "registry/registry.h"
 #include "string/string.h"
+#include "os/path.h"
 #include "i18n.h"
 #include "itextstream.h"
 
@@ -522,8 +523,17 @@ std::string ReadableEditorDialog::constructStoragePath()
 	}
 	else
 	{
-		// We are exporting a previously imported XData definition. Retrieve engine path and append _xdFilename
-		storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + _xdFilename;
+		// We are exporting a previously imported XData definition. 
+		// The _xdFilename itself can be a VFS path or an absolute path, depending on the user's settings
+		if (path_is_absolute(_xdFilename.c_str()))
+		{
+			storagePath = _xdFilename;
+		}
+		else
+		{
+			// Retrieve engine path and append _xdFilename
+			storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + _xdFilename;
+		}
 	}
 
 	return storagePath;
