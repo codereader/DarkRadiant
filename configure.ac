@@ -198,9 +198,16 @@ AC_CHECK_HEADER([AL/alut.h],
 AC_CHECK_LIB([vorbisfile], [ov_clear],
              [VORBIS_LIBS='-lvorbisfile'],
              [sound_module=''])
-AC_CHECK_LIB([openal], [alGetError],
+
+# Use the OpenAL framework in OSX
+if test "$build_osx" != "no"; then
+    [AL_LIBS='-framework OpenAL']
+else
+    AC_CHECK_LIB([openal], [alGetError],
              [AL_LIBS='-lopenal'],
              [sound_module=''])
+fi
+
 AC_CHECK_LIB([alut], [main],
              [ALUT_LIBS='-lalut'],
              [sound_module=''],
