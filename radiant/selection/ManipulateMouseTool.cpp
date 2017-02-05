@@ -158,7 +158,7 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 		GlobalUndoSystem().start();
 	}
 
-#if _DEBUG
+#ifdef _DEBUG
 	Matrix4 device2pivot = constructDevice2Pivot(_pivot2worldStart, view);
 	Matrix4 pivot2device = constructPivot2Device(_pivot2worldStart, view);
 
@@ -314,7 +314,7 @@ bool ManipulateMouseTool::nothingSelected() const
 
 void ManipulateMouseTool::renderOverlay()
 {
-#if _DEBUG
+#ifdef _DEBUG
 	std::vector<std::string> lines;
 	boost::algorithm::split(lines, _debugText, boost::algorithm::is_any_of("\n"));
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/choice.h>
+#include <wx/combobox.h>
 #include "string/convert.h"
 
 namespace wxutil
@@ -63,6 +64,24 @@ public:
 			if (data->GetData().ToStdString() == str)
 			{
 				choice->SetSelection(i);
+				return;
+			}
+		}
+	}
+
+	// Selects the item whose attached string is equal to <str>
+	static void SelectComboItemByStoredString(wxComboBox* combo, const wxString& str)
+	{
+		combo->SetSelection(wxNOT_FOUND);
+
+		// Get the iter into the liststore pointing at the correct STIM_YYYY type
+		for (unsigned int i = 0; i < combo->GetCount(); ++i)
+		{
+			wxStringClientData* data = static_cast<wxStringClientData*>(combo->GetClientObject(i));
+
+			if (data->GetData().ToStdString() == str)
+			{
+				combo->SetSelection(i);
 				return;
 			}
 		}

@@ -7,14 +7,15 @@
 #include "i18n.h"
 #include "EffectEditor.h"
 
-#include "wxutil/ChoiceHelper.h"
-
+#include <wx/combobox.h>
 #include <wx/bmpcbox.h>
 #include <wx/button.h>
 #include <wx/menu.h>
 #include <wx/spinctrl.h>
 #include <wx/textctrl.h>
 #include <wx/checkbox.h>
+
+#include "wxutil/ChoiceHelper.h"
 
 namespace ui
 {
@@ -75,7 +76,7 @@ void ResponseEditor::update()
 
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
 		std::string typeToFind = sr.get("type");
-		wxutil::ChoiceHelper::SelectItemByStoredString (_type, typeToFind);
+		wxutil::ChoiceHelper:: SelectComboItemByStoredString (_type, typeToFind);
 		
 		// Active
 		_propertyWidgets.active->SetValue(sr.get("state") == "1");
@@ -147,14 +148,18 @@ void ResponseEditor::populatePage(wxWindow* parent)
 	wxPanel* editingPanel = loadNamedPanel(parent, "ResponseEditorMainPanel");
 	packEditingPane(editingPanel);
 
+#ifdef USE_BMP_COMBO_BOX
 	// Response property section
 	_type = findNamedObject<wxBitmapComboBox>(this, "ResponseEditorTypeCombo");
+#else
+	// Response property section
+	wxControl* typeBox = findNamedObject<wxControl>(this, "ResponseEditorTypeCombo");
 
-#ifndef USE_BMP_COMBO_BOX
 	// Replace the bitmap combo with an ordinary one
-	wxComboBox* combo = new wxComboBox(_type->GetParent(), wxID_ANY);
-	_type->GetContainingSizer()->Add(combo, 1, wxEXPAND);
-	_type->Destroy();
+	wxComboBox* combo = new wxComboBox(typeBox->GetParent(), wxID_ANY);
+	typeBox->GetContainingSizer()->Add(combo, 1, wxEXPAND);
+	typeBox->Destroy();
+
 	_type = combo;
 	_type->SetName("ResponseEditorTypeCombo");
 #endif

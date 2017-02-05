@@ -230,7 +230,7 @@ void BrushNode::translate(const Vector3& translation)
 }
 
 scene::INodePtr BrushNode::clone() const {
-	return scene::INodePtr(new BrushNode(*this));
+	return std::make_shared<BrushNode>(*this);
 }
 
 void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)

@@ -1,8 +1,11 @@
-#ifndef WAV_FILE_LOADER_H_
-#define WAV_FILE_LOADER_H_
+#pragma once
 
 #include <stdexcept>
+#ifdef __APPLE__
+#include <OpenAL/al.h>
+#else
 #include <AL/al.h>
+#endif
 
 class InputStream;
 
@@ -157,5 +160,3 @@ public:
 };
 
 } // namespace sound
-
-#endif /* WAV_FILE_LOADER_H_ */

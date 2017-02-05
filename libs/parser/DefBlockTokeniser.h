@@ -1,8 +1,9 @@
-#ifndef DEF_BLOCK_TOKENISER_H_
-#define DEF_BLOCK_TOKENISER_H_
+#pragma once
 
 #include "ParseException.h"
 
+#include <ios>
+#include <iostream>
 #include <string>
 #include <ctype.h>
 #include <boost/tokenizer.hpp>
@@ -446,5 +447,3 @@ public:
 };
 
 } // namespace parser
-
-#endif /* DEF_BLOCK_TOKENISER_H_ */

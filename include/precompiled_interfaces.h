@@ -77,7 +77,6 @@
 #include "iresourcechooser.h"
 #include "iscenegraph.h"
 #include "iscenegraphfactory.h"
-#include "iscript.h"
 #include "iselectable.h"
 #include "iselection.h"
 #include "iselectiongroup.h"

@@ -19,7 +19,7 @@ class wxSpinDoubleEvent;
 class wxBoxSizer;
 
 // There's a bug in the MSW implementation of wxBitmapComboBox, don't use it in 3.0.0
-#if (wxMAJOR_VERSION >= 3) && (wxMINOR_VERSION >= 0) && (wxRELEASE_NUMBER > 0)
+#if (wxMAJOR_VERSION >= 3) && (wxMINOR_VERSION >= 0) && (wxRELEASE_NUMBER > 0) && defined(__WXMSW__)
 #define USE_BMP_COMBO_BOX
 #endif
 

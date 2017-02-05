@@ -6,7 +6,7 @@ plugins_LTLIBRARIES = dm_objectives.la
 
 dm_objectives_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                           $(top_builddir)/libs/xmlutil/libxmlutil.la
-dm_objectives_la_LDFLAGS = -module -avoid-version -Wl,-z,defs \
+dm_objectives_la_LDFLAGS = -module -avoid-version \
                            $(BOOST_REGEX_LIBS) $(WX_LIBS) $(XML_LIBS)
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
                      objectives.cpp \

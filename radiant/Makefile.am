@@ -20,6 +20,7 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
                       $(BOOST_SYSTEM_LIBS) \
                       $(BOOST_REGEX_LIBS) \
                       $(DL_LIBS) \
+                      $(INTL_LIBS) \
                       $(WX_LIBS)
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/wxutil/libwxutil.la \

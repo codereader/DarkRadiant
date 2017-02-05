@@ -68,7 +68,7 @@ void BrushModuleImpl::toggleTextureLock() {
 
 scene::INodePtr BrushModuleImpl::createBrush()
 {
-	scene::INodePtr node(new BrushNode);
+	scene::INodePtr node = std::make_shared<BrushNode>();
 
 	// Move it to the active layer
 	node->moveToLayer(GlobalLayerSystem().getActiveLayer());

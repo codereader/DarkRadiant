@@ -31,7 +31,7 @@ private:
 	Vector2 _deviceStart;
 	bool _undoBegun;
 
-#if _DEBUG
+#ifdef _DEBUG
 	std::string _debugText;
 #endif
 

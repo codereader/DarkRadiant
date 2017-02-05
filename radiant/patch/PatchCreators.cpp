@@ -22,7 +22,7 @@ scene::INodePtr Doom3PatchCreator::createPatch()
 {
 	// Note the true as function argument:
 	// this means that patchDef3 = true in the PatchNode constructor.
-	scene::INodePtr node(new PatchNode(true));
+	scene::INodePtr node = std::make_shared<PatchNode>(true);
 
 	// Determine the layer patches should be created in
 	int layer = GlobalLayerSystem().getActiveLayer();
@@ -138,7 +138,7 @@ void Doom3PatchCreator::registerPatchCommands()
 scene::INodePtr Doom3PatchDef2Creator::createPatch()
 {
 	// The PatchNodeDoom3 constructor takes false == patchDef2
-	scene::INodePtr node(new PatchNode(false));
+	scene::INodePtr node = std::make_shared<PatchNode>(false);
 
 	// Determine the layer patches should be created in
 	int layer = GlobalLayerSystem().getActiveLayer();

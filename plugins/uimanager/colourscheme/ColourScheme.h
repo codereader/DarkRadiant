@@ -31,7 +31,7 @@ public:
     {}
 };
 
-typedef std::map<const std::string, ColourItem> ColourItemMap;
+typedef std::map<std::string, ColourItem> ColourItemMap;
 
 /*  A colourscheme is basically a collection of ColourItems
  */

@@ -69,14 +69,18 @@ void StimEditor::setEntity(const SREntityPtr& entity)
 
 void StimEditor::setupEditingPanel()
 {
+#ifdef USE_BMP_COMBO_BOX
 	// Type Selector
 	_type = findNamedObject<wxBitmapComboBox>(this, "StimEditorTypeCombo");
+#else
+	// Response property section
+	wxControl* typeBox = findNamedObject<wxControl>(this, "StimEditorTypeCombo");
 
-#ifndef USE_BMP_COMBO_BOX
 	// Replace the bitmap combo with an ordinary one
-	wxComboBox* combo = new wxComboBox(_type->GetParent(), wxID_ANY);
-	_type->GetContainingSizer()->Add(combo, 1, wxEXPAND);
-	_type->Destroy();
+	wxComboBox* combo = new wxComboBox(typeBox->GetParent(), wxID_ANY);
+	typeBox->GetContainingSizer()->Add(combo, 1, wxEXPAND);
+	typeBox->Destroy();
+
 	_type = combo;
 	_type->SetName("StimEditorTypeCombo");
 #endif
@@ -431,7 +435,7 @@ void StimEditor::update()
 		std::string typeToFind = sr.get("type");
 
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
-		wxutil::ChoiceHelper::SelectItemByStoredString (_type, typeToFind);
+		wxutil::ChoiceHelper::SelectComboItemByStoredString(_type, typeToFind);
 
 		// Active
 		_propertyWidgets.active->SetValue(sr.get("state") == "1");
