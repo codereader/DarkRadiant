@@ -24,12 +24,20 @@ wxMenuBar* MenuBar::getMenuBar()
 	return _menuBar;
 }
 
+void MenuBar::ensureMenusConstructed()
+{
+	construct();
+}
+
 void MenuBar::construct()
 {
 	_needsRefresh = false;
 
 	if (_menuBar != nullptr)
 	{
+		// Block redraws for the moment being
+		wxWindowUpdateLocker noUpdates(_menuBar);
+
 		MenuElement::constructChildren();
 		return;
 	}

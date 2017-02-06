@@ -120,6 +120,14 @@ void MenuManager::add(const std::string& insertPath,
 		parentMenu->setNeedsRefresh(true);
 	}
 
+	// When inserting a new menu in a menubar, make sure it is constructed
+	if (element->getParent() &&
+		std::dynamic_pointer_cast<MenuBar>(element->getParent()) &&
+		std::static_pointer_cast<MenuBar>(element->getParent())->getMenuBar() != nullptr)
+	{
+		std::static_pointer_cast<MenuBar>(element->getParent())->ensureMenusConstructed();
+	}
+
 	// TODO
 #if 0
 	// Sanity check for empty menu
@@ -255,6 +263,14 @@ void MenuManager::insert(const std::string& insertPath,
 	if (parentMenu)
 	{
 		parentMenu->setNeedsRefresh(true);
+	}
+
+	// When inserting a new menu in a menubar, make sure it is constructed
+	if (element->getParent() && 
+		std::dynamic_pointer_cast<MenuBar>(element->getParent()) &&
+		std::static_pointer_cast<MenuBar>(element->getParent())->getMenuBar() != nullptr)
+	{
+		std::static_pointer_cast<MenuBar>(element->getParent())->ensureMenusConstructed();
 	}
 
 	// TODO

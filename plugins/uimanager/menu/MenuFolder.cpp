@@ -43,7 +43,7 @@ void MenuFolder::construct()
 
 	if (isVisible())
 	{
-		// Get the parent menu
+		// Get the parent element
 		MenuElementPtr parent = getParent();
 
 		if (!parent)
@@ -57,7 +57,10 @@ void MenuFolder::construct()
 		if (std::dynamic_pointer_cast<MenuBar>(parent))
 		{
 			wxMenuBar* bar = std::static_pointer_cast<MenuBar>(parent)->getMenuBar();
-			bar->Append(_menu, getCaption());
+
+			// Create the menu folder at the correct position
+			int pos = std::static_pointer_cast<MenuBar>(parent)->getMenuPosition(shared_from_this());
+			bar->Insert(pos, _menu, getCaption());
 		}
 		else if (std::dynamic_pointer_cast<MenuFolder>(parent))
 		{
