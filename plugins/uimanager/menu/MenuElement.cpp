@@ -28,7 +28,6 @@ int MenuElement::_nextMenuItemId = 100;
 
 MenuElement::MenuElement(const MenuElementPtr& parent) :
 	_parent(parent ? MenuElementWeakPtr(parent) : MenuElementWeakPtr()),
-	_type(menuNothing),
 	_isVisible(true),
 	_needsRefresh(false)
 {}
@@ -44,11 +43,6 @@ std::string MenuElement::getName() const
 void MenuElement::setName(const std::string& name) 
 {
 	_name = name;
-}
-
-bool MenuElement::isRoot() const
-{
-	return (_type == menuRoot);
 }
 
 MenuElementPtr MenuElement::getParent() const
@@ -74,21 +68,6 @@ std::string MenuElement::getCaption() const
 void MenuElement::setIcon(const std::string& icon)
 {
 	_icon = icon;
-}
-
-bool MenuElement::isEmpty() const 
-{
-	return (_type != menuItem);
-}
-
-eMenuItemType MenuElement::getType() const
-{
-	return _type;
-}
-
-void MenuElement::setType(eMenuItemType type)
-{
-	_type = type;
 }
 
 std::size_t MenuElement::numChildren() const 
@@ -223,8 +202,6 @@ MenuElementPtr MenuElement::CreateFromNode(const xml::Node& node)
 	{
 		item = std::make_shared<MenuItem>();
 
-		item->setType(menuItem);
-
 		// Get the EventPtr according to the event
 		item->setEvent(node.getAttributeValue("command"));
 		item->setIcon(node.getAttributeValue("icon"));
@@ -296,8 +273,6 @@ MenuElementPtr MenuElement::CreateForType(eMenuItemType type)
 	default:
 		rError() << "MenuElement: Cannot create node for type " << type << std::endl;
 	};
-
-	item->setType(type);
 
 	return item;
 }

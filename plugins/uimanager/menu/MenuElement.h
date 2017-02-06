@@ -43,8 +43,6 @@ protected:
 	typedef std::vector<MenuElementPtr> MenuElementList;
 	MenuElementList _children;
 
-	eMenuItemType _type;
-
 	bool _isVisible;
 
 	// Checked if anything in this item or below has changed
@@ -65,9 +63,6 @@ public:
 	void setName(const std::string& name);
 
 	void setIcon(const std::string& icon);
-
-	// Returns TRUE if this item has no parent item
-	bool isRoot() const;
 
 	// Returns the pointer to the parent (is NULL for the root item)
 	MenuElementPtr getParent() const;
@@ -99,16 +94,9 @@ public:
 	 */
 	int getMenuPosition(const MenuElementPtr& child);
 
-	// Returns the type of this item node
-	eMenuItemType getType() const;
-	void setType(eMenuItemType type);
-
 	// Gets/sets the caption of this item
 	void setCaption(const std::string& caption);
 	std::string getCaption() const;
-
-	// Returns TRUE if this has no actual event assigned
-	bool isEmpty() const;
 
 	// Returns the number of child items
 	std::size_t numChildren() const;
