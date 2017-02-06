@@ -72,7 +72,7 @@ void ScaledModelExporter::saveScaledModels()
 
 void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelNodePtr& modelNode)
 {
-	std::string outputExtension = "ase";
+	std::string outputExtension = "lwo";
 
 	// Save the scaled model as ASE
 	model::IModelExporterPtr exporter = GlobalModelFormatManager().getExporter(outputExtension);

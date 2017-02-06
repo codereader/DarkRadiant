@@ -316,6 +316,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\model\AseExporter.cpp" />
+    <ClCompile Include="..\..\plugins\model\Lwo2Exporter.cpp" />
     <ClCompile Include="..\..\plugins\model\PicoModelLoader.cpp" />
     <ClCompile Include="..\..\plugins\model\PicoModelNode.cpp" />
     <ClCompile Include="..\..\plugins\model\plugin.cpp" />
@@ -324,6 +325,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\model\AseExporter.h" />
+    <ClInclude Include="..\..\plugins\model\Lwo2Exporter.h" />
     <ClInclude Include="..\..\plugins\model\PicoModelLoader.h" />
     <ClInclude Include="..\..\plugins\model\PicoModelModule.h" />
     <ClInclude Include="..\..\plugins\model\PicoModelNode.h" />
