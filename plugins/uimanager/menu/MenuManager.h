@@ -85,6 +85,9 @@ public:
 	void clear();
 
 private:
+	void handleElementAdded(const MenuElementPtr& element);
+	void handleElementRemoved(const MenuElementPtr& element);
+
 	// Returns the top level menu (== MenuFolder) this element is part of
 	MenuElementPtr findTopLevelMenu(const MenuElementPtr& element);
 };

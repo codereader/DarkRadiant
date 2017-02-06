@@ -112,21 +112,7 @@ void MenuManager::add(const std::string& insertPath,
 
 	parent->addChild(element);
 
-	// The corresponding top level menu needs reconstruction
-	MenuElementPtr parentMenu = findTopLevelMenu(element);
-
-	if (parentMenu)
-	{
-		parentMenu->setNeedsRefresh(true);
-	}
-
-	// When inserting a new menu in a menubar, make sure it is constructed
-	if (element->getParent() &&
-		std::dynamic_pointer_cast<MenuBar>(element->getParent()) &&
-		std::static_pointer_cast<MenuBar>(element->getParent())->getMenuBar() != nullptr)
-	{
-		std::static_pointer_cast<MenuBar>(element->getParent())->ensureMenusConstructed();
-	}
+	handleElementAdded(element);
 
 	// TODO
 #if 0
@@ -257,21 +243,7 @@ void MenuManager::insert(const std::string& insertPath,
 
 	insertBefore->getParent()->addChild(element, position);
 
-	// The corresponding top level menu needs reconstruction
-	MenuElementPtr parentMenu = findTopLevelMenu(element);
-
-	if (parentMenu)
-	{
-		parentMenu->setNeedsRefresh(true);
-	}
-
-	// When inserting a new menu in a menubar, make sure it is constructed
-	if (element->getParent() && 
-		std::dynamic_pointer_cast<MenuBar>(element->getParent()) &&
-		std::static_pointer_cast<MenuBar>(element->getParent())->getMenuBar() != nullptr)
-	{
-		std::static_pointer_cast<MenuBar>(element->getParent())->ensureMenusConstructed();
-	}
+	handleElementAdded(element);
 
 	// TODO
 #if 0
@@ -416,13 +388,7 @@ void MenuManager::remove(const std::string& path)
 
 	element->getParent()->removeChild(element);
 
-	// The corresponding top level menu needs reconstruction
-	MenuElementPtr parentMenu = findTopLevelMenu(element);
-
-	if (parentMenu)
-	{
-		parentMenu->setNeedsRefresh(true);
-	}
+	handleElementRemoved(element);
 
 	// TODO
 #if 0
@@ -500,6 +466,36 @@ void MenuManager::remove(const std::string& path)
 	// Remove the found item from the parent menu item
 	parent->removeChild(item);
 #endif
+}
+
+void MenuManager::handleElementAdded(const MenuElementPtr& element)
+{
+	// The corresponding top level menu needs reconstruction
+	MenuElementPtr parentMenu = findTopLevelMenu(element);
+
+	if (parentMenu)
+	{
+		parentMenu->setNeedsRefresh(true);
+	}
+
+	// When inserting a new menu in a menubar, make sure it is constructed
+	if (element->getParent() &&
+		std::dynamic_pointer_cast<MenuBar>(element->getParent()) &&
+		std::static_pointer_cast<MenuBar>(element->getParent())->getMenuBar() != nullptr)
+	{
+		std::static_pointer_cast<MenuBar>(element->getParent())->ensureMenusConstructed();
+	}
+}
+
+void MenuManager::handleElementRemoved(const MenuElementPtr& element)
+{
+	// The corresponding top level menu needs reconstruction
+	MenuElementPtr parentMenu = findTopLevelMenu(element);
+
+	if (parentMenu)
+	{
+		parentMenu->setNeedsRefresh(true);
+	}
 }
 
 MenuElementPtr MenuManager::findTopLevelMenu(const MenuElementPtr& element)
