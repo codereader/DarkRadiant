@@ -220,7 +220,8 @@ AC_SUBST([AL_LIBS])
 
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
-WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type -Wno-inconsistent-missing-override -Wno-potentially-evaluated-expression"
+WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type"
+# clang: -Wno-inconsistent-missing-override -Wno-potentially-evaluated-expression
 CFLAGS="$USER_CFLAGS $WARNING_FLAGS $WX_CFLAGS"
 CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS $WX_CXXFLAGS_ONLY"
 CPPFLAGS="$USER_CPPFLAGS -DPOSIX $WX_CPPFLAGS $LIBSIGC_CFLAGS -DWXINTL_NO_GETTEXT_MACRO"

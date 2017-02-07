@@ -307,6 +307,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
+INTL_LIBS = @INTL_LIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 JPEG_LIBS = @JPEG_LIBS@
 LD = @LD@
@@ -449,7 +450,7 @@ plugins_LTLIBRARIES = dm_objectives.la
 dm_objectives_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                           $(top_builddir)/libs/xmlutil/libxmlutil.la
 
-dm_objectives_la_LDFLAGS = -module -avoid-version -Wl,-z,defs \
+dm_objectives_la_LDFLAGS = -module -avoid-version \
                            $(BOOST_REGEX_LIBS) $(WX_LIBS) $(XML_LIBS)
 
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
