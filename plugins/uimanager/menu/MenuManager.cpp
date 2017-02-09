@@ -187,15 +187,13 @@ void MenuManager::handleElementAdded(const MenuElementPtr& element)
 		parentMenu->setNeedsRefresh(true);
 	}
 
-#if 0
 	// When inserting a new menu in a menubar, make sure it is constructed
 	if (element->getParent() &&
 		std::dynamic_pointer_cast<MenuBar>(element->getParent()) &&
-		std::static_pointer_cast<MenuBar>(element->getParent())->getMenuBar() != nullptr)
+		std::static_pointer_cast<MenuBar>(element->getParent())->isConstructed())
 	{
-		std::static_pointer_cast<MenuBar>(element->getParent())->ensureMenusConstructed();
+		std::static_pointer_cast<MenuBar>(element->getParent())->setNeedsRefresh(true);
 	}
-#endif
 }
 
 void MenuManager::handleElementRemoved(const MenuElementPtr& element)

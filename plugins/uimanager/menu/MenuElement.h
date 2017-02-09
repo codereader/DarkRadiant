@@ -106,7 +106,7 @@ public:
 	void setEvent(const std::string& eventName);
 
 	bool needsRefresh();
-	void setNeedsRefresh(bool needsRefresh);
+	virtual void setNeedsRefresh(bool needsRefresh);
 
 	// Tries to (recursively) locate the MenuElement by looking up the path
 	MenuElementPtr find(const std::string& menuPath);

@@ -80,7 +80,7 @@ public:
 	void loadFromRegistry();
 
 	/**
-	 * Clears all references to GtkWidgets etc.
+	 * Clears all references to widgets etc.
 	 */
 	void clear();
 
