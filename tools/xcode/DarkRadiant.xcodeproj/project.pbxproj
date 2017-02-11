@@ -821,6 +821,7 @@
 		3AF745711E4F861B003465B5 /* XYRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYRenderer.h; sourceTree = "<group>"; };
 		3AF745721E4F861B003465B5 /* XYWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XYWnd.cpp; sourceTree = "<group>"; };
 		3AF745731E4F861B003465B5 /* XYWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYWnd.h; sourceTree = "<group>"; };
+		3AF7465F1E4F8A36003465B5 /* ftgl.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ftgl.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -842,6 +843,7 @@
 		3ADBCC681E4E4B7C00CA94F6 = {
 			isa = PBXGroup;
 			children = (
+				3AF7465F1E4F8A36003465B5 /* ftgl.xcconfig */,
 				3AEDE3CE1E4F04E9005A8641 /* sigc++.xcconfig */,
 				3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */,
 				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,

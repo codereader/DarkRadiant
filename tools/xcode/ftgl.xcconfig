@@ -1,0 +1,10 @@
+//
+//  ftgl.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 11.02.17.
+//
+//
+FTGL_HEADER_SEARCH_PATHS = "/opt/local/include/freetype2"
+FTGL_LIBRARY_SEARCH_PATHS = "/opt/local/lib"
+FTGL_LINKFLAGS = ""

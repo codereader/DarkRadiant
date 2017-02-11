@@ -7,5 +7,5 @@
 //
 #include "sigc++.xcconfig"
 
-DR_BASE_CPLUSPLUSFLAGS = ""
+DR_BASE_CPLUSPLUSFLAGS = "-DPOSIX"
 DR_BASE_HEADER_SEARCH_PATHS =  $(SIGCPP_HEADER_SEARCH_PATHS) "$(SRCROOT)/../../include" "$(SRCROOT)/../../libs"
