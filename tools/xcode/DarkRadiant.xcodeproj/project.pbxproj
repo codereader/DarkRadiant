@@ -151,7 +151,6 @@
 		3AF745FC1E4F861B003465B5 /* PreferencePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7447B1E4F861B003465B5 /* PreferencePage.cpp */; };
 		3AF745FD1E4F861B003465B5 /* PreferenceSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7447D1E4F861B003465B5 /* PreferenceSystem.cpp */; };
 		3AF745FE1E4F861B003465B5 /* Win32Registry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7447F1E4F861B003465B5 /* Win32Registry.cpp */; };
-		3AF745FF1E4F861B003465B5 /* facePlaneTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744821E4F861B003465B5 /* facePlaneTest.cpp */; };
 		3AF746001E4F861B003465B5 /* BrushItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744851E4F861B003465B5 /* BrushItem.cpp */; };
 		3AF746011E4F861B003465B5 /* FaceItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744871E4F861B003465B5 /* FaceItem.cpp */; };
 		3AF746021E4F861B003465B5 /* FaceVertexItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744891E4F861B003465B5 /* FaceVertexItem.cpp */; };
@@ -612,7 +611,6 @@
 		3AF7447E1E4F861B003465B5 /* PreferenceSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceSystem.h; sourceTree = "<group>"; };
 		3AF7447F1E4F861B003465B5 /* Win32Registry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Win32Registry.cpp; sourceTree = "<group>"; };
 		3AF744801E4F861B003465B5 /* Win32Registry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Win32Registry.h; sourceTree = "<group>"; };
-		3AF744821E4F861B003465B5 /* facePlaneTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = facePlaneTest.cpp; sourceTree = "<group>"; };
 		3AF744851E4F861B003465B5 /* BrushItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BrushItem.cpp; sourceTree = "<group>"; };
 		3AF744861E4F861B003465B5 /* BrushItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrushItem.h; sourceTree = "<group>"; };
 		3AF744871E4F861B003465B5 /* FaceItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FaceItem.cpp; sourceTree = "<group>"; };
@@ -893,7 +891,6 @@
 				3AF743ED1E4F861A003465B5 /* render */,
 				3AF744121E4F861A003465B5 /* selection */,
 				3AF744701E4F861B003465B5 /* settings */,
-				3AF744811E4F861B003465B5 /* test */,
 				3AF744831E4F861B003465B5 /* textool */,
 				3AF744971E4F861B003465B5 /* ui */,
 				3AF745601E4F861B003465B5 /* xyview */,
@@ -1460,15 +1457,6 @@
 			);
 			name = settings;
 			path = ../../../radiant/settings;
-			sourceTree = "<group>";
-		};
-		3AF744811E4F861B003465B5 /* test */ = {
-			isa = PBXGroup;
-			children = (
-				3AF744821E4F861B003465B5 /* facePlaneTest.cpp */,
-			);
-			name = test;
-			path = ../../../radiant/test;
 			sourceTree = "<group>";
 		};
 		3AF744831E4F861B003465B5 /* textool */ = {
@@ -2152,7 +2140,6 @@
 				3AF745811E4F861B003465B5 /* Winding.cpp in Sources */,
 				3AF745A41E4F861B003465B5 /* MapFormatManager.cpp in Sources */,
 				3AF7462A1E4F861B003465B5 /* FindShader.cpp in Sources */,
-				3AF745FF1E4F861B003465B5 /* facePlaneTest.cpp in Sources */,
 				3AF746171E4F861B003465B5 /* BooleanPropertyEditor.cpp in Sources */,
 				3AF746151E4F861B003465B5 /* AddPropertyDialog.cpp in Sources */,
 				3AF745E81E4F861B003465B5 /* ModelScaleManipulator.cpp in Sources */,

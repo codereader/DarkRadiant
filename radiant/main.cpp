@@ -80,7 +80,7 @@ public:
         language::LanguageManager().init(_context);
 #endif
 
-#ifdef POSIX
+#if defined(POSIX) && !defined(__APPLE__)
         // greebo: not sure if this is needed
         // Other POSIX gettext initialisation
         setlocale(LC_ALL, "");
