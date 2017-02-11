@@ -1,0 +1,11 @@
+//
+//  Base.xcconfig
+//  Settings shared by all targets
+//
+//  Created by greebo on 11/02/17.
+//
+//
+#include "sigc++.xcconfig"
+
+DR_BASE_CPLUSPLUSFLAGS = ""
+DR_BASE_HEADER_SEARCH_PATHS =  $(SIGCPP_HEADER_SEARCH_PATHS) "$(SRCROOT)/../../include" "$(SRCROOT)/../../libs"

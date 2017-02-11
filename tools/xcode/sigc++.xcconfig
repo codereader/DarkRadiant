@@ -1,0 +1,10 @@
+//
+//  sigc++.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 11/02/17.
+//
+//
+SIGCPP_HEADER_SEARCH_PATHS = "/opt/local/include/sigc++-2.0" "/opt/local/lib/sigc++-2.0/include"
+SIGCPP_LIBRARY_SEARCH_PATHS = "/opt/local/lib"
+SIGCPP_LINKFLAGS = "-lsigc-2.0"
