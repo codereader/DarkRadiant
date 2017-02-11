@@ -246,6 +246,29 @@
 		3AF7465C1E4F861C003465B5 /* ClipperTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7456A1E4F861B003465B5 /* ClipperTool.cpp */; };
 		3AF7465D1E4F861C003465B5 /* MeasurementTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7456C1E4F861B003465B5 /* MeasurementTool.cpp */; };
 		3AF7465E1E4F861C003465B5 /* XYWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745721E4F861B003465B5 /* XYWnd.cpp */; };
+		3AF7468C1E4FAD01003465B5 /* AABB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7466F1E4FAD01003465B5 /* AABB.cpp */; };
+		3AF7468D1E4FAD01003465B5 /* AABB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746701E4FAD01003465B5 /* AABB.h */; };
+		3AF7468E1E4FAD01003465B5 /* curve.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746711E4FAD01003465B5 /* curve.h */; };
+		3AF7468F1E4FAD01003465B5 /* FloatTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746721E4FAD01003465B5 /* FloatTools.h */; };
+		3AF746901E4FAD01003465B5 /* Frustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF746731E4FAD01003465B5 /* Frustum.cpp */; };
+		3AF746911E4FAD01003465B5 /* Frustum.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746741E4FAD01003465B5 /* Frustum.h */; };
+		3AF746921E4FAD01003465B5 /* Line.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746751E4FAD01003465B5 /* Line.h */; };
+		3AF746931E4FAD01003465B5 /* lrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746761E4FAD01003465B5 /* lrint.h */; };
+		3AF746941E4FAD01003465B5 /* Matrix4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF746791E4FAD01003465B5 /* Matrix4.cpp */; };
+		3AF746951E4FAD01003465B5 /* Matrix4.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF7467A1E4FAD01003465B5 /* Matrix4.h */; };
+		3AF746961E4FAD01003465B5 /* pi.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF7467B1E4FAD01003465B5 /* pi.h */; };
+		3AF746971E4FAD01003465B5 /* Plane3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7467C1E4FAD01003465B5 /* Plane3.cpp */; };
+		3AF746981E4FAD01003465B5 /* Plane3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF7467D1E4FAD01003465B5 /* Plane3.h */; };
+		3AF746991E4FAD01003465B5 /* Quaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7467E1E4FAD01003465B5 /* Quaternion.cpp */; };
+		3AF7469A1E4FAD01003465B5 /* Quaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF7467F1E4FAD01003465B5 /* Quaternion.h */; };
+		3AF7469B1E4FAD01003465B5 /* Ray.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746801E4FAD01003465B5 /* Ray.h */; };
+		3AF7469C1E4FAD01003465B5 /* Segment.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746811E4FAD01003465B5 /* Segment.h */; };
+		3AF746A11E4FAD01003465B5 /* Vector2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746871E4FAD01003465B5 /* Vector2.h */; };
+		3AF746A21E4FAD01003465B5 /* Vector3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746881E4FAD01003465B5 /* Vector3.h */; };
+		3AF746A31E4FAD01003465B5 /* Vector4.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746891E4FAD01003465B5 /* Vector4.h */; };
+		3AF746A41E4FAD01003465B5 /* Viewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF7468A1E4FAD01003465B5 /* Viewer.h */; };
+		3AF746A51E4FAD01003465B5 /* ViewProjection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF7468B1E4FAD01003465B5 /* ViewProjection.h */; };
+		3AF746A61E4FAD39003465B5 /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -820,6 +843,29 @@
 		3AF745721E4F861B003465B5 /* XYWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XYWnd.cpp; sourceTree = "<group>"; };
 		3AF745731E4F861B003465B5 /* XYWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYWnd.h; sourceTree = "<group>"; };
 		3AF7465F1E4F8A36003465B5 /* ftgl.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ftgl.xcconfig; sourceTree = "<group>"; };
+		3AF746641E4FACC9003465B5 /* libmathlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmathlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AF7466F1E4FAD01003465B5 /* AABB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AABB.cpp; path = ../../../libs/math/AABB.cpp; sourceTree = "<group>"; };
+		3AF746701E4FAD01003465B5 /* AABB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AABB.h; path = ../../../libs/math/AABB.h; sourceTree = "<group>"; };
+		3AF746711E4FAD01003465B5 /* curve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = curve.h; path = ../../../libs/math/curve.h; sourceTree = "<group>"; };
+		3AF746721E4FAD01003465B5 /* FloatTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FloatTools.h; path = ../../../libs/math/FloatTools.h; sourceTree = "<group>"; };
+		3AF746731E4FAD01003465B5 /* Frustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Frustum.cpp; path = ../../../libs/math/Frustum.cpp; sourceTree = "<group>"; };
+		3AF746741E4FAD01003465B5 /* Frustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Frustum.h; path = ../../../libs/math/Frustum.h; sourceTree = "<group>"; };
+		3AF746751E4FAD01003465B5 /* Line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Line.h; path = ../../../libs/math/Line.h; sourceTree = "<group>"; };
+		3AF746761E4FAD01003465B5 /* lrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lrint.h; path = ../../../libs/math/lrint.h; sourceTree = "<group>"; };
+		3AF746791E4FAD01003465B5 /* Matrix4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Matrix4.cpp; path = ../../../libs/math/Matrix4.cpp; sourceTree = "<group>"; };
+		3AF7467A1E4FAD01003465B5 /* Matrix4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Matrix4.h; path = ../../../libs/math/Matrix4.h; sourceTree = "<group>"; };
+		3AF7467B1E4FAD01003465B5 /* pi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pi.h; path = ../../../libs/math/pi.h; sourceTree = "<group>"; };
+		3AF7467C1E4FAD01003465B5 /* Plane3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Plane3.cpp; path = ../../../libs/math/Plane3.cpp; sourceTree = "<group>"; };
+		3AF7467D1E4FAD01003465B5 /* Plane3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plane3.h; path = ../../../libs/math/Plane3.h; sourceTree = "<group>"; };
+		3AF7467E1E4FAD01003465B5 /* Quaternion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quaternion.cpp; path = ../../../libs/math/Quaternion.cpp; sourceTree = "<group>"; };
+		3AF7467F1E4FAD01003465B5 /* Quaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quaternion.h; path = ../../../libs/math/Quaternion.h; sourceTree = "<group>"; };
+		3AF746801E4FAD01003465B5 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ray.h; path = ../../../libs/math/Ray.h; sourceTree = "<group>"; };
+		3AF746811E4FAD01003465B5 /* Segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Segment.h; path = ../../../libs/math/Segment.h; sourceTree = "<group>"; };
+		3AF746871E4FAD01003465B5 /* Vector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector2.h; path = ../../../libs/math/Vector2.h; sourceTree = "<group>"; };
+		3AF746881E4FAD01003465B5 /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector3.h; path = ../../../libs/math/Vector3.h; sourceTree = "<group>"; };
+		3AF746891E4FAD01003465B5 /* Vector4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector4.h; path = ../../../libs/math/Vector4.h; sourceTree = "<group>"; };
+		3AF7468A1E4FAD01003465B5 /* Viewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Viewer.h; path = ../../../libs/math/Viewer.h; sourceTree = "<group>"; };
+		3AF7468B1E4FAD01003465B5 /* ViewProjection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewProjection.h; path = ../../../libs/math/ViewProjection.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -827,11 +873,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AF746A61E4FAD39003465B5 /* libmathlib.a in Frameworks */,
 				3AF7430B1E4F7A2B003465B5 /* OpenGL.framework in Frameworks */,
 				3AF743091E4F7A0B003465B5 /* IOKit.framework in Frameworks */,
 				3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */,
 				3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */,
 				3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF746611E4FACC9003465B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -847,8 +901,10 @@
 				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,
 				3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */,
 				3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */,
+				3AF746651E4FACC9003465B5 /* mathlib */,
 				3ADBCC9E1E4E4EDC00CA94F6 /* Frameworks */,
 				3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */,
+				3AF746641E4FACC9003465B5 /* libmathlib.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1931,7 +1987,63 @@
 			path = tools;
 			sourceTree = "<group>";
 		};
+		3AF746651E4FACC9003465B5 /* mathlib */ = {
+			isa = PBXGroup;
+			children = (
+				3AF7466F1E4FAD01003465B5 /* AABB.cpp */,
+				3AF746701E4FAD01003465B5 /* AABB.h */,
+				3AF746711E4FAD01003465B5 /* curve.h */,
+				3AF746721E4FAD01003465B5 /* FloatTools.h */,
+				3AF746731E4FAD01003465B5 /* Frustum.cpp */,
+				3AF746741E4FAD01003465B5 /* Frustum.h */,
+				3AF746751E4FAD01003465B5 /* Line.h */,
+				3AF746761E4FAD01003465B5 /* lrint.h */,
+				3AF746791E4FAD01003465B5 /* Matrix4.cpp */,
+				3AF7467A1E4FAD01003465B5 /* Matrix4.h */,
+				3AF7467B1E4FAD01003465B5 /* pi.h */,
+				3AF7467C1E4FAD01003465B5 /* Plane3.cpp */,
+				3AF7467D1E4FAD01003465B5 /* Plane3.h */,
+				3AF7467E1E4FAD01003465B5 /* Quaternion.cpp */,
+				3AF7467F1E4FAD01003465B5 /* Quaternion.h */,
+				3AF746801E4FAD01003465B5 /* Ray.h */,
+				3AF746811E4FAD01003465B5 /* Segment.h */,
+				3AF746871E4FAD01003465B5 /* Vector2.h */,
+				3AF746881E4FAD01003465B5 /* Vector3.h */,
+				3AF746891E4FAD01003465B5 /* Vector4.h */,
+				3AF7468A1E4FAD01003465B5 /* Viewer.h */,
+				3AF7468B1E4FAD01003465B5 /* ViewProjection.h */,
+			);
+			path = mathlib;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		3AF746621E4FACC9003465B5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AF746A41E4FAD01003465B5 /* Viewer.h in Headers */,
+				3AF7469B1E4FAD01003465B5 /* Ray.h in Headers */,
+				3AF746981E4FAD01003465B5 /* Plane3.h in Headers */,
+				3AF746A51E4FAD01003465B5 /* ViewProjection.h in Headers */,
+				3AF7469C1E4FAD01003465B5 /* Segment.h in Headers */,
+				3AF746A11E4FAD01003465B5 /* Vector2.h in Headers */,
+				3AF746951E4FAD01003465B5 /* Matrix4.h in Headers */,
+				3AF746931E4FAD01003465B5 /* lrint.h in Headers */,
+				3AF746921E4FAD01003465B5 /* Line.h in Headers */,
+				3AF746A21E4FAD01003465B5 /* Vector3.h in Headers */,
+				3AF746961E4FAD01003465B5 /* pi.h in Headers */,
+				3AF7468E1E4FAD01003465B5 /* curve.h in Headers */,
+				3AF746911E4FAD01003465B5 /* Frustum.h in Headers */,
+				3AF746A31E4FAD01003465B5 /* Vector4.h in Headers */,
+				3AF7468F1E4FAD01003465B5 /* FloatTools.h in Headers */,
+				3AF7469A1E4FAD01003465B5 /* Quaternion.h in Headers */,
+				3AF7468D1E4FAD01003465B5 /* AABB.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -1951,6 +2063,23 @@
 			productReference = 3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */;
 			productType = "com.apple.product-type.tool";
 		};
+		3AF746631E4FACC9003465B5 /* mathlib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AF7466C1E4FACC9003465B5 /* Build configuration list for PBXNativeTarget "mathlib" */;
+			buildPhases = (
+				3AF746601E4FACC9003465B5 /* Sources */,
+				3AF746611E4FACC9003465B5 /* Frameworks */,
+				3AF746621E4FACC9003465B5 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mathlib;
+			productName = mathlib;
+			productReference = 3AF746641E4FACC9003465B5 /* libmathlib.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1960,6 +2089,10 @@
 				LastUpgradeCheck = 0820;
 				TargetAttributes = {
 					3AEDE3991E4EEA1F005A8641 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
+					3AF746631E4FACC9003465B5 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
 					};
@@ -1978,6 +2111,7 @@
 			projectRoot = "";
 			targets = (
 				3AEDE3991E4EEA1F005A8641 /* DarkRadiant */,
+				3AF746631E4FACC9003465B5 /* mathlib */,
 			);
 		};
 /* End PBXProject section */
@@ -2224,6 +2358,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AF746601E4FACC9003465B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AF746941E4FAD01003465B5 /* Matrix4.cpp in Sources */,
+				3AF746901E4FAD01003465B5 /* Frustum.cpp in Sources */,
+				3AF746971E4FAD01003465B5 /* Plane3.cpp in Sources */,
+				3AF746991E4FAD01003465B5 /* Quaternion.cpp in Sources */,
+				3AF7468C1E4FAD01003465B5 /* AABB.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -2334,6 +2480,101 @@
 			};
 			name = Release;
 		};
+		3AF7466D1E4FACC9003465B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AF7466E1E4FACC9003465B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2354,6 +2595,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		3AF7466C1E4FACC9003465B5 /* Build configuration list for PBXNativeTarget "mathlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AF7466D1E4FACC9003465B5 /* Debug */,
+				3AF7466E1E4FACC9003465B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
