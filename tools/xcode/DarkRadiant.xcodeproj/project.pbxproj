@@ -1034,6 +1034,12 @@
 		3AEBE4A51E50E4E80062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
 		3AEBE4A61E50E5030062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
 		3AEBE4A71E50E5200062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AEBE4B01E50E9E50062D9AF /* colours.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4A91E50E8D20062D9AF /* colours.xml */; };
+		3AEBE4B11E50E9E50062D9AF /* commandsystem.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AA1E50E8D20062D9AF /* commandsystem.xml */; };
+		3AEBE4B21E50E9E50062D9AF /* debug.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AB1E50E8E10062D9AF /* debug.xml */; };
+		3AEBE4B31E50E9E50062D9AF /* input.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AC1E50E8F00062D9AF /* input.xml */; };
+		3AEBE4B41E50E9E50062D9AF /* menu.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AD1E50E8F00062D9AF /* menu.xml */; };
+		3AEBE4B51E50E9E50062D9AF /* user.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AE1E50E8FC0062D9AF /* user.xml */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1307,6 +1313,21 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		3AEBE4AF1E50E9BA0062D9AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Resources;
+			dstSubfolderSpec = 16;
+			files = (
+				3AEBE4B01E50E9E50062D9AF /* colours.xml in CopyFiles */,
+				3AEBE4B11E50E9E50062D9AF /* commandsystem.xml in CopyFiles */,
+				3AEBE4B21E50E9E50062D9AF /* debug.xml in CopyFiles */,
+				3AEBE4B31E50E9E50062D9AF /* input.xml in CopyFiles */,
+				3AEBE4B41E50E9E50062D9AF /* menu.xml in CopyFiles */,
+				3AEBE4B51E50E9E50062D9AF /* user.xml in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3981E4EEA1F005A8641 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -2565,6 +2586,12 @@
 		3AEBE46F1E50E2F70062D9AF /* StimTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StimTypes.cpp; path = ../../plugins/dm.stimresponse/StimTypes.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE4701E50E2F70062D9AF /* StimTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StimTypes.h; path = ../../plugins/dm.stimresponse/StimTypes.h; sourceTree = SOURCE_ROOT; };
 		3AEBE49D1E50E41F0062D9AF /* dm.editing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = dm.editing.xcconfig; sourceTree = "<group>"; };
+		3AEBE4A91E50E8D20062D9AF /* colours.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = colours.xml; path = ../../install/colours.xml; sourceTree = SOURCE_ROOT; };
+		3AEBE4AA1E50E8D20062D9AF /* commandsystem.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = commandsystem.xml; path = ../../install/commandsystem.xml; sourceTree = SOURCE_ROOT; };
+		3AEBE4AB1E50E8E10062D9AF /* debug.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = debug.xml; path = ../../install/debug.xml; sourceTree = SOURCE_ROOT; };
+		3AEBE4AC1E50E8F00062D9AF /* input.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = input.xml; path = ../../install/input.xml; sourceTree = SOURCE_ROOT; };
+		3AEBE4AD1E50E8F00062D9AF /* menu.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = menu.xml; path = ../../install/menu.xml; sourceTree = SOURCE_ROOT; };
+		3AEBE4AE1E50E8FC0062D9AF /* user.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = user.xml; path = ../../install/user.xml; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -5108,6 +5135,19 @@
 			path = ../../../plugins/dm.objectives/util;
 			sourceTree = "<group>";
 		};
+		3AEBE4A81E50E8A10062D9AF /* xml */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE4A91E50E8D20062D9AF /* colours.xml */,
+				3AEBE4AA1E50E8D20062D9AF /* commandsystem.xml */,
+				3AEBE4AB1E50E8E10062D9AF /* debug.xml */,
+				3AEBE4AC1E50E8F00062D9AF /* input.xml */,
+				3AEBE4AD1E50E8F00062D9AF /* menu.xml */,
+				3AEBE4AE1E50E8FC0062D9AF /* user.xml */,
+			);
+			name = xml;
+			sourceTree = "<group>";
+		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
 			children = (
@@ -5134,6 +5174,7 @@
 				3AF744701E4F861B003465B5 /* settings */,
 				3AF744831E4F861B003465B5 /* textool */,
 				3AF744971E4F861B003465B5 /* ui */,
+				3AEBE4A81E50E8A10062D9AF /* xml */,
 				3AF745601E4F861B003465B5 /* xyview */,
 			);
 			path = DarkRadiant;
@@ -7547,6 +7588,7 @@
 				3AEDE3961E4EEA1F005A8641 /* Sources */,
 				3AEDE3971E4EEA1F005A8641 /* Frameworks */,
 				3AEDE3981E4EEA1F005A8641 /* CopyFiles */,
+				3AEBE4AF1E50E9BA0062D9AF /* CopyFiles */,
 			);
 			buildRules = (
 			);
