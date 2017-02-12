@@ -314,6 +314,13 @@
 		3A01240B1E503D4D00A62BC1 /* white.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232F1E503D3200A62BC1 /* white.bmp */; };
 		3A01240C1E503D4D00A62BC1 /* wireframe.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123301E503D3200A62BC1 /* wireframe.png */; };
 		3A01240D1E503D4D00A62BC1 /* wireframeMode16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123311E503D3200A62BC1 /* wireframeMode16.png */; };
+		3A0124251E50489D00A62BC1 /* RegistryTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0124201E50489D00A62BC1 /* RegistryTree.cpp */; };
+		3A0124261E50489D00A62BC1 /* RegistryTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0124211E50489D00A62BC1 /* RegistryTree.h */; };
+		3A0124271E50489D00A62BC1 /* XMLRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0124221E50489D00A62BC1 /* XMLRegistry.cpp */; };
+		3A0124281E50489D00A62BC1 /* XMLRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0124231E50489D00A62BC1 /* XMLRegistry.h */; };
+		3A0124291E50489D00A62BC1 /* XMLRegistryModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */; };
+		3A01242B1E50527B00A62BC1 /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
+		3A01242C1E50527B00A62BC1 /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1134,6 +1141,13 @@
 		3A01232F1E503D3200A62BC1 /* white.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = white.bmp; path = ../../../install/bitmaps/white.bmp; sourceTree = "<group>"; };
 		3A0123301E503D3200A62BC1 /* wireframe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframe.png; path = ../../../install/bitmaps/wireframe.png; sourceTree = "<group>"; };
 		3A0123311E503D3200A62BC1 /* wireframeMode16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframeMode16.png; path = ../../../install/bitmaps/wireframeMode16.png; sourceTree = "<group>"; };
+		3A0124151E50484100A62BC1 /* xmlregistry.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = xmlregistry.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A0124201E50489D00A62BC1 /* RegistryTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegistryTree.cpp; path = ../../../plugins/xmlregistry/RegistryTree.cpp; sourceTree = "<group>"; };
+		3A0124211E50489D00A62BC1 /* RegistryTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistryTree.h; path = ../../../plugins/xmlregistry/RegistryTree.h; sourceTree = "<group>"; };
+		3A0124221E50489D00A62BC1 /* XMLRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistry.cpp; path = ../../../plugins/xmlregistry/XMLRegistry.cpp; sourceTree = "<group>"; };
+		3A0124231E50489D00A62BC1 /* XMLRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLRegistry.h; path = ../../../plugins/xmlregistry/XMLRegistry.h; sourceTree = "<group>"; };
+		3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistryModule.cpp; path = ../../../plugins/xmlregistry/XMLRegistryModule.cpp; sourceTree = "<group>"; };
+		3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xmlregistry.xcconfig; sourceTree = "<group>"; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1739,6 +1753,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3A0124121E50484100A62BC1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A01242B1E50527B00A62BC1 /* libwxutil.a in Frameworks */,
+				3A01242C1E50527B00A62BC1 /* libxmlutil.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2170,13 +2193,35 @@
 				3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */,
 				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,
 				3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */,
+				3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */,
 			);
 			name = Configuration;
+			sourceTree = "<group>";
+		};
+		3A0124101E50481E00A62BC1 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				3A0124161E50484100A62BC1 /* xmlregistry */,
+			);
+			name = Modules;
+			sourceTree = "<group>";
+		};
+		3A0124161E50484100A62BC1 /* xmlregistry */ = {
+			isa = PBXGroup;
+			children = (
+				3A0124201E50489D00A62BC1 /* RegistryTree.cpp */,
+				3A0124211E50489D00A62BC1 /* RegistryTree.h */,
+				3A0124221E50489D00A62BC1 /* XMLRegistry.cpp */,
+				3A0124231E50489D00A62BC1 /* XMLRegistry.h */,
+				3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */,
+			);
+			path = xmlregistry;
 			sourceTree = "<group>";
 		};
 		3ADBCC681E4E4B7C00CA94F6 = {
 			isa = PBXGroup;
 			children = (
+				3A0124101E50481E00A62BC1 /* Modules */,
 				3A01240F1E50426500A62BC1 /* Configuration */,
 				3A01240E1E50420C00A62BC1 /* Libraries */,
 				3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */,
@@ -2186,6 +2231,7 @@
 				3AF746AB1E4FADF3003465B5 /* libxmlutil.a */,
 				3A011FC31E50275700A62BC1 /* libwxutil.a */,
 				3A0120731E502F7800A62BC1 /* libscene.a */,
+				3A0124151E50484100A62BC1 /* xmlregistry.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3379,6 +3425,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3A0124131E50484100A62BC1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A0124261E50489D00A62BC1 /* RegistryTree.h in Headers */,
+				3A0124281E50489D00A62BC1 /* XMLRegistry.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3452,6 +3507,23 @@
 			productReference = 3A0120731E502F7800A62BC1 /* libscene.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		3A0124141E50484100A62BC1 /* xmlregistry */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3A01241D1E50484200A62BC1 /* Build configuration list for PBXNativeTarget "xmlregistry" */;
+			buildPhases = (
+				3A0124111E50484100A62BC1 /* Sources */,
+				3A0124121E50484100A62BC1 /* Frameworks */,
+				3A0124131E50484100A62BC1 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = xmlregistry;
+			productName = xmlregistry;
+			productReference = 3A0124151E50484100A62BC1 /* xmlregistry.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -3519,6 +3591,10 @@
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
 					};
+					3A0124141E50484100A62BC1 = {
+						CreatedOnToolsVersion = 8.2.1;
+						ProvisioningStyle = Automatic;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -3550,6 +3626,7 @@
 				3AF746AA1E4FADF3003465B5 /* xmlutil */,
 				3A011FC21E50275700A62BC1 /* wxutil */,
 				3A0120721E502F7800A62BC1 /* scene */,
+				3A0124141E50484100A62BC1 /* xmlregistry */,
 			);
 		};
 /* End PBXProject section */
@@ -3597,6 +3674,16 @@
 				3A0120901E50300A00A62BC1 /* SelectableNode.cpp in Sources */,
 				3A01208B1E50300A00A62BC1 /* InstanceWalkers.cpp in Sources */,
 				3A01208E1E50300A00A62BC1 /* Node.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3A0124111E50484100A62BC1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A0124291E50489D00A62BC1 /* XMLRegistryModule.cpp in Sources */,
+				3A0124271E50489D00A62BC1 /* XMLRegistry.cpp in Sources */,
+				3A0124251E50489D00A62BC1 /* RegistryTree.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4055,6 +4142,105 @@
 			};
 			name = Release;
 		};
+		3A01241E1E50484200A62BC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3A01241F1E50484200A62BC1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3ADBCC6D1E4E4B7C00CA94F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -4369,6 +4555,15 @@
 			buildConfigurations = (
 				3A01207B1E502F7800A62BC1 /* Debug */,
 				3A01207C1E502F7800A62BC1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3A01241D1E50484200A62BC1 /* Build configuration list for PBXNativeTarget "xmlregistry" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A01241E1E50484200A62BC1 /* Debug */,
+				3A01241F1E50484200A62BC1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
