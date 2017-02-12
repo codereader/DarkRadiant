@@ -617,6 +617,14 @@
 		3AEBE08C1E50D77A0062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
 		3AEBE08D1E50D78B0062D9AF /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
 		3AEBE08E1E50D7AC0062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
+		3AEBE0A61E50D86D0062D9AF /* Octree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE09F1E50D86D0062D9AF /* Octree.cpp */; };
+		3AEBE0A71E50D86D0062D9AF /* Octree.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0A01E50D86D0062D9AF /* Octree.h */; };
+		3AEBE0A81E50D86D0062D9AF /* OctreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0A11E50D86D0062D9AF /* OctreeNode.h */; };
+		3AEBE0A91E50D86D0062D9AF /* SceneGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0A21E50D86D0062D9AF /* SceneGraph.cpp */; };
+		3AEBE0AA1E50D86D0062D9AF /* SceneGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0A31E50D86D0062D9AF /* SceneGraph.h */; };
+		3AEBE0AB1E50D86D0062D9AF /* SceneGraphFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0A41E50D86D0062D9AF /* SceneGraphFactory.cpp */; };
+		3AEBE0AC1E50D86D0062D9AF /* SceneGraphFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0A51E50D86D0062D9AF /* SceneGraphFactory.h */; };
+		3AEBE0AD1E50D89B0062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1745,6 +1753,14 @@
 		3AEBE0721E50D70B0062D9AF /* StageDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StageDef.cpp; path = ../../plugins/particles/StageDef.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0731E50D70B0062D9AF /* StageDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StageDef.h; path = ../../plugins/particles/StageDef.h; sourceTree = SOURCE_ROOT; };
 		3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = particles.xcconfig; sourceTree = "<group>"; };
+		3AEBE0941E50D8270062D9AF /* scenegraph.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = scenegraph.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE09F1E50D86D0062D9AF /* Octree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Octree.cpp; path = ../../plugins/scenegraph/Octree.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0A01E50D86D0062D9AF /* Octree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Octree.h; path = ../../plugins/scenegraph/Octree.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0A11E50D86D0062D9AF /* OctreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OctreeNode.h; path = ../../plugins/scenegraph/OctreeNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0A21E50D86D0062D9AF /* SceneGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneGraph.cpp; path = ../../plugins/scenegraph/SceneGraph.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0A31E50D86D0062D9AF /* SceneGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneGraph.h; path = ../../plugins/scenegraph/SceneGraph.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0A41E50D86D0062D9AF /* SceneGraphFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneGraphFactory.cpp; path = ../../plugins/scenegraph/SceneGraphFactory.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0A51E50D86D0062D9AF /* SceneGraphFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneGraphFactory.h; path = ../../plugins/scenegraph/SceneGraphFactory.h; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -2513,6 +2529,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE0911E50D8270062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0AD1E50D89B0062D9AF /* libscene.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2972,6 +2996,7 @@
 				3AEBDF1F1E50C6F10062D9AF /* md5model */,
 				3AEBE0351E50D0400062D9AF /* model */,
 				3AEBE0511E50D6C60062D9AF /* particles */,
+				3AEBE0951E50D8270062D9AF /* scenegraph */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -3021,6 +3046,7 @@
 				3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */,
 				3AEBE0341E50D0400062D9AF /* model.dylib */,
 				3AEBE0501E50D6C60062D9AF /* particles.dylib */,
+				3AEBE0941E50D8270062D9AF /* scenegraph.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3549,6 +3575,20 @@
 			);
 			name = editor;
 			path = ../../../plugins/particles/editor;
+			sourceTree = "<group>";
+		};
+		3AEBE0951E50D8270062D9AF /* scenegraph */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE09F1E50D86D0062D9AF /* Octree.cpp */,
+				3AEBE0A01E50D86D0062D9AF /* Octree.h */,
+				3AEBE0A11E50D86D0062D9AF /* OctreeNode.h */,
+				3AEBE0A21E50D86D0062D9AF /* SceneGraph.cpp */,
+				3AEBE0A31E50D86D0062D9AF /* SceneGraph.h */,
+				3AEBE0A41E50D86D0062D9AF /* SceneGraphFactory.cpp */,
+				3AEBE0A51E50D86D0062D9AF /* SceneGraphFactory.h */,
+			);
+			path = scenegraph;
 			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -5043,6 +5083,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE0921E50D8270062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0AA1E50D86D0062D9AF /* SceneGraph.h in Headers */,
+				3AEBE0AC1E50D86D0062D9AF /* SceneGraphFactory.h in Headers */,
+				3AEBE0A81E50D86D0062D9AF /* OctreeNode.h in Headers */,
+				3AEBE0A71E50D86D0062D9AF /* Octree.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5439,6 +5490,23 @@
 			productReference = 3AEBE0501E50D6C60062D9AF /* particles.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBE0931E50D8270062D9AF /* scenegraph */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBE09C1E50D8270062D9AF /* Build configuration list for PBXNativeTarget "scenegraph" */;
+			buildPhases = (
+				3AEBE0901E50D8270062D9AF /* Sources */,
+				3AEBE0911E50D8270062D9AF /* Frameworks */,
+				3AEBE0921E50D8270062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = scenegraph;
+			productName = scenegraph;
+			productReference = 3AEBE0941E50D8270062D9AF /* scenegraph.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -5564,6 +5632,9 @@
 					3AEBE04F1E50D6C60062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBE0931E50D8270062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -5614,6 +5685,7 @@
 				3AEBDFF21E50CAEE0062D9AF /* picomodel */,
 				3AEBE0331E50D0400062D9AF /* model */,
 				3AEBE04F1E50D6C60062D9AF /* particles */,
+				3AEBE0931E50D8270062D9AF /* scenegraph */,
 			);
 		};
 /* End PBXProject section */
@@ -5930,6 +6002,16 @@
 				3AEBE07B1E50D70B0062D9AF /* ParticleParameter.cpp in Sources */,
 				3AEBE0801E50D70B0062D9AF /* ParticlesManager.cpp in Sources */,
 				3AEBE0861E50D70B0062D9AF /* RenderableParticleStage.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE0901E50D8270062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0A61E50D86D0062D9AF /* Octree.cpp in Sources */,
+				3AEBE0AB1E50D86D0062D9AF /* SceneGraphFactory.cpp in Sources */,
+				3AEBE0A91E50D86D0062D9AF /* SceneGraph.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8129,6 +8211,97 @@
 			};
 			name = Release;
 		};
+		3AEBE09D1E50D8270062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBE09E1E50D8270062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -8607,6 +8780,14 @@
 			buildConfigurations = (
 				3AEBE0591E50D6C60062D9AF /* Debug */,
 				3AEBE05A1E50D6C60062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3AEBE09C1E50D8270062D9AF /* Build configuration list for PBXNativeTarget "scenegraph" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBE09D1E50D8270062D9AF /* Debug */,
+				3AEBE09E1E50D8270062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBE0331E50D0400062D9AF"
-               BuildableName = "model.dylib"
-               BlueprintName = "model"
+               BlueprintIdentifier = "3AEBE0931E50D8270062D9AF"
+               BuildableName = "libscenegraph.dylib"
+               BlueprintName = "scenegraph"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE0331E50D0400062D9AF"
-            BuildableName = "model.dylib"
-            BlueprintName = "model"
+            BlueprintIdentifier = "3AEBE0931E50D8270062D9AF"
+            BuildableName = "libscenegraph.dylib"
+            BlueprintName = "scenegraph"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE0331E50D0400062D9AF"
-            BuildableName = "model.dylib"
-            BlueprintName = "model"
+            BlueprintIdentifier = "3AEBE0931E50D8270062D9AF"
+            BuildableName = "libscenegraph.dylib"
+            BlueprintName = "scenegraph"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -109,6 +109,11 @@
 			<key>orderHint</key>
 			<integer>4</integer>
 		</dict>
+		<key>scenegraph.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>24</integer>
+		</dict>
 		<key>wxutil.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -248,6 +253,11 @@
 			<true/>
 		</dict>
 		<key>3AEBE04F1E50D6C60062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE0931E50D8270062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
