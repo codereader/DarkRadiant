@@ -625,6 +625,62 @@
 		3AEBE0AB1E50D86D0062D9AF /* SceneGraphFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0A41E50D86D0062D9AF /* SceneGraphFactory.cpp */; };
 		3AEBE0AC1E50D86D0062D9AF /* SceneGraphFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0A51E50D86D0062D9AF /* SceneGraphFactory.h */; };
 		3AEBE0AD1E50D89B0062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
+		3AEBE0F41E50D9200062D9AF /* BrushInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0BE1E50D9200062D9AF /* BrushInterface.cpp */; };
+		3AEBE0F51E50D9200062D9AF /* BrushInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0BF1E50D9200062D9AF /* BrushInterface.h */; };
+		3AEBE0F61E50D9200062D9AF /* CommandSystemInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0C01E50D9200062D9AF /* CommandSystemInterface.cpp */; };
+		3AEBE0F71E50D9200062D9AF /* CommandSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0C11E50D9200062D9AF /* CommandSystemInterface.h */; };
+		3AEBE0F81E50D9200062D9AF /* DialogInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0C21E50D9200062D9AF /* DialogInterface.cpp */; };
+		3AEBE0F91E50D9200062D9AF /* DialogInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0C31E50D9200062D9AF /* DialogInterface.h */; };
+		3AEBE0FA1E50D9200062D9AF /* EClassInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0C41E50D9200062D9AF /* EClassInterface.cpp */; };
+		3AEBE0FB1E50D9200062D9AF /* EClassInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0C51E50D9200062D9AF /* EClassInterface.h */; };
+		3AEBE0FC1E50D9200062D9AF /* EntityInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0C61E50D9200062D9AF /* EntityInterface.cpp */; };
+		3AEBE0FD1E50D9200062D9AF /* EntityInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0C71E50D9200062D9AF /* EntityInterface.h */; };
+		3AEBE0FE1E50D9200062D9AF /* FileSystemInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0C81E50D9200062D9AF /* FileSystemInterface.cpp */; };
+		3AEBE0FF1E50D9200062D9AF /* FileSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0C91E50D9200062D9AF /* FileSystemInterface.h */; };
+		3AEBE1001E50D9200062D9AF /* GameInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0CA1E50D9200062D9AF /* GameInterface.cpp */; };
+		3AEBE1011E50D9200062D9AF /* GameInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0CB1E50D9200062D9AF /* GameInterface.h */; };
+		3AEBE1021E50D9200062D9AF /* GridInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0CC1E50D9200062D9AF /* GridInterface.cpp */; };
+		3AEBE1031E50D9200062D9AF /* GridInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0CD1E50D9200062D9AF /* GridInterface.h */; };
+		3AEBE1041E50D9200062D9AF /* MapInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0CE1E50D9200062D9AF /* MapInterface.cpp */; };
+		3AEBE1051E50D9200062D9AF /* MapInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0CF1E50D9200062D9AF /* MapInterface.h */; };
+		3AEBE1061E50D9200062D9AF /* MathInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0D01E50D9200062D9AF /* MathInterface.cpp */; };
+		3AEBE1071E50D9200062D9AF /* MathInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0D11E50D9200062D9AF /* MathInterface.h */; };
+		3AEBE1081E50D9200062D9AF /* ModelInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0D21E50D9200062D9AF /* ModelInterface.cpp */; };
+		3AEBE1091E50D9200062D9AF /* ModelInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0D31E50D9200062D9AF /* ModelInterface.h */; };
+		3AEBE10A1E50D9200062D9AF /* PatchInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0D41E50D9200062D9AF /* PatchInterface.cpp */; };
+		3AEBE10B1E50D9200062D9AF /* PatchInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0D51E50D9200062D9AF /* PatchInterface.h */; };
+		3AEBE10C1E50D9200062D9AF /* RadiantInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0D61E50D9200062D9AF /* RadiantInterface.cpp */; };
+		3AEBE10D1E50D9200062D9AF /* RadiantInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0D71E50D9200062D9AF /* RadiantInterface.h */; };
+		3AEBE10E1E50D9200062D9AF /* RegistryInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0D81E50D9200062D9AF /* RegistryInterface.h */; };
+		3AEBE10F1E50D9200062D9AF /* SceneGraphInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0D91E50D9200062D9AF /* SceneGraphInterface.h */; };
+		3AEBE1101E50D9200062D9AF /* SelectionInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0DA1E50D9200062D9AF /* SelectionInterface.cpp */; };
+		3AEBE1111E50D9200062D9AF /* SelectionInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0DB1E50D9200062D9AF /* SelectionInterface.h */; };
+		3AEBE1121E50D9200062D9AF /* SelectionSetInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0DC1E50D9200062D9AF /* SelectionSetInterface.cpp */; };
+		3AEBE1131E50D9200062D9AF /* SelectionSetInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0DD1E50D9200062D9AF /* SelectionSetInterface.h */; };
+		3AEBE1141E50D9200062D9AF /* ShaderSystemInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0DE1E50D9200062D9AF /* ShaderSystemInterface.cpp */; };
+		3AEBE1151E50D9200062D9AF /* ShaderSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0DF1E50D9200062D9AF /* ShaderSystemInterface.h */; };
+		3AEBE1161E50D9200062D9AF /* SkinInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0E01E50D9200062D9AF /* SkinInterface.cpp */; };
+		3AEBE1171E50D9200062D9AF /* SkinInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0E11E50D9200062D9AF /* SkinInterface.h */; };
+		3AEBE1181E50D9200062D9AF /* SoundInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0E21E50D9200062D9AF /* SoundInterface.cpp */; };
+		3AEBE1191E50D9200062D9AF /* SoundInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0E31E50D9200062D9AF /* SoundInterface.h */; };
+		3AEBE11A1E50D9200062D9AF /* precompiled.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0E61E50D9200062D9AF /* precompiled.cpp */; };
+		3AEBE11B1E50D9200062D9AF /* precompiled.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0E71E50D9200062D9AF /* precompiled.h */; };
+		3AEBE11C1E50D9200062D9AF /* PythonConsoleWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0E81E50D9200062D9AF /* PythonConsoleWriter.h */; };
+		3AEBE11D1E50D9200062D9AF /* SceneNodeBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0E91E50D9200062D9AF /* SceneNodeBuffer.cpp */; };
+		3AEBE11E1E50D9200062D9AF /* SceneNodeBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0EA1E50D9200062D9AF /* SceneNodeBuffer.h */; };
+		3AEBE11F1E50D9200062D9AF /* ScriptCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0EB1E50D9200062D9AF /* ScriptCommand.cpp */; };
+		3AEBE1201E50D9200062D9AF /* ScriptCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0EC1E50D9200062D9AF /* ScriptCommand.h */; };
+		3AEBE1211E50D9200062D9AF /* ScriptingSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0ED1E50D9200062D9AF /* ScriptingSystem.cpp */; };
+		3AEBE1221E50D9200062D9AF /* ScriptingSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0EE1E50D9200062D9AF /* ScriptingSystem.h */; };
+		3AEBE1231E50D9200062D9AF /* ScriptMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0EF1E50D9200062D9AF /* ScriptMenu.cpp */; };
+		3AEBE1241E50D9200062D9AF /* ScriptMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0F01E50D9200062D9AF /* ScriptMenu.h */; };
+		3AEBE1251E50D9200062D9AF /* ScriptModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0F11E50D9200062D9AF /* ScriptModule.cpp */; };
+		3AEBE1261E50D9200062D9AF /* ScriptWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0F21E50D9200062D9AF /* ScriptWindow.cpp */; };
+		3AEBE1271E50D9200062D9AF /* ScriptWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0F31E50D9200062D9AF /* ScriptWindow.h */; };
+		3AEBE12B1E50DB950062D9AF /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBE12A1E50DB950062D9AF /* Python.framework */; };
+		3AEBE12C1E50DBA80062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
+		3AEBE12D1E50DBAC0062D9AF /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
+		3AEBE12E1E50DBBE0062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1761,6 +1817,62 @@
 		3AEBE0A31E50D86D0062D9AF /* SceneGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneGraph.h; path = ../../plugins/scenegraph/SceneGraph.h; sourceTree = SOURCE_ROOT; };
 		3AEBE0A41E50D86D0062D9AF /* SceneGraphFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneGraphFactory.cpp; path = ../../plugins/scenegraph/SceneGraphFactory.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0A51E50D86D0062D9AF /* SceneGraphFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneGraphFactory.h; path = ../../plugins/scenegraph/SceneGraphFactory.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0B21E50D8D50062D9AF /* script.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = script.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE0BE1E50D9200062D9AF /* BrushInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushInterface.cpp; path = ../../plugins/script/interfaces/BrushInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0BF1E50D9200062D9AF /* BrushInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushInterface.h; path = ../../plugins/script/interfaces/BrushInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0C01E50D9200062D9AF /* CommandSystemInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandSystemInterface.cpp; path = ../../plugins/script/interfaces/CommandSystemInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0C11E50D9200062D9AF /* CommandSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandSystemInterface.h; path = ../../plugins/script/interfaces/CommandSystemInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0C21E50D9200062D9AF /* DialogInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DialogInterface.cpp; path = ../../plugins/script/interfaces/DialogInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0C31E50D9200062D9AF /* DialogInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogInterface.h; path = ../../plugins/script/interfaces/DialogInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0C41E50D9200062D9AF /* EClassInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassInterface.cpp; path = ../../plugins/script/interfaces/EClassInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0C51E50D9200062D9AF /* EClassInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassInterface.h; path = ../../plugins/script/interfaces/EClassInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0C61E50D9200062D9AF /* EntityInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityInterface.cpp; path = ../../plugins/script/interfaces/EntityInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0C71E50D9200062D9AF /* EntityInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityInterface.h; path = ../../plugins/script/interfaces/EntityInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0C81E50D9200062D9AF /* FileSystemInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileSystemInterface.cpp; path = ../../plugins/script/interfaces/FileSystemInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0C91E50D9200062D9AF /* FileSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemInterface.h; path = ../../plugins/script/interfaces/FileSystemInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0CA1E50D9200062D9AF /* GameInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameInterface.cpp; path = ../../plugins/script/interfaces/GameInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0CB1E50D9200062D9AF /* GameInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameInterface.h; path = ../../plugins/script/interfaces/GameInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0CC1E50D9200062D9AF /* GridInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridInterface.cpp; path = ../../plugins/script/interfaces/GridInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0CD1E50D9200062D9AF /* GridInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridInterface.h; path = ../../plugins/script/interfaces/GridInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0CE1E50D9200062D9AF /* MapInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapInterface.cpp; path = ../../plugins/script/interfaces/MapInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0CF1E50D9200062D9AF /* MapInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapInterface.h; path = ../../plugins/script/interfaces/MapInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0D01E50D9200062D9AF /* MathInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MathInterface.cpp; path = ../../plugins/script/interfaces/MathInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0D11E50D9200062D9AF /* MathInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MathInterface.h; path = ../../plugins/script/interfaces/MathInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0D21E50D9200062D9AF /* ModelInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelInterface.cpp; path = ../../plugins/script/interfaces/ModelInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0D31E50D9200062D9AF /* ModelInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelInterface.h; path = ../../plugins/script/interfaces/ModelInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0D41E50D9200062D9AF /* PatchInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchInterface.cpp; path = ../../plugins/script/interfaces/PatchInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0D51E50D9200062D9AF /* PatchInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchInterface.h; path = ../../plugins/script/interfaces/PatchInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0D61E50D9200062D9AF /* RadiantInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RadiantInterface.cpp; path = ../../plugins/script/interfaces/RadiantInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0D71E50D9200062D9AF /* RadiantInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RadiantInterface.h; path = ../../plugins/script/interfaces/RadiantInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0D81E50D9200062D9AF /* RegistryInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistryInterface.h; path = ../../plugins/script/interfaces/RegistryInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0D91E50D9200062D9AF /* SceneGraphInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneGraphInterface.h; path = ../../plugins/script/interfaces/SceneGraphInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0DA1E50D9200062D9AF /* SelectionInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionInterface.cpp; path = ../../plugins/script/interfaces/SelectionInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0DB1E50D9200062D9AF /* SelectionInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionInterface.h; path = ../../plugins/script/interfaces/SelectionInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0DC1E50D9200062D9AF /* SelectionSetInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionSetInterface.cpp; path = ../../plugins/script/interfaces/SelectionSetInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0DD1E50D9200062D9AF /* SelectionSetInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionSetInterface.h; path = ../../plugins/script/interfaces/SelectionSetInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0DE1E50D9200062D9AF /* ShaderSystemInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderSystemInterface.cpp; path = ../../plugins/script/interfaces/ShaderSystemInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0DF1E50D9200062D9AF /* ShaderSystemInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderSystemInterface.h; path = ../../plugins/script/interfaces/ShaderSystemInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0E01E50D9200062D9AF /* SkinInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinInterface.cpp; path = ../../plugins/script/interfaces/SkinInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0E11E50D9200062D9AF /* SkinInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinInterface.h; path = ../../plugins/script/interfaces/SkinInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0E21E50D9200062D9AF /* SoundInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundInterface.cpp; path = ../../plugins/script/interfaces/SoundInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0E31E50D9200062D9AF /* SoundInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundInterface.h; path = ../../plugins/script/interfaces/SoundInterface.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0E61E50D9200062D9AF /* precompiled.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = precompiled.cpp; path = ../../plugins/script/precompiled.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0E71E50D9200062D9AF /* precompiled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = precompiled.h; path = ../../plugins/script/precompiled.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0E81E50D9200062D9AF /* PythonConsoleWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PythonConsoleWriter.h; path = ../../plugins/script/PythonConsoleWriter.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0E91E50D9200062D9AF /* SceneNodeBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneNodeBuffer.cpp; path = ../../plugins/script/SceneNodeBuffer.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0EA1E50D9200062D9AF /* SceneNodeBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneNodeBuffer.h; path = ../../plugins/script/SceneNodeBuffer.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0EB1E50D9200062D9AF /* ScriptCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScriptCommand.cpp; path = ../../plugins/script/ScriptCommand.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0EC1E50D9200062D9AF /* ScriptCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScriptCommand.h; path = ../../plugins/script/ScriptCommand.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0ED1E50D9200062D9AF /* ScriptingSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScriptingSystem.cpp; path = ../../plugins/script/ScriptingSystem.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0EE1E50D9200062D9AF /* ScriptingSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScriptingSystem.h; path = ../../plugins/script/ScriptingSystem.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0EF1E50D9200062D9AF /* ScriptMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScriptMenu.cpp; path = ../../plugins/script/ScriptMenu.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0F01E50D9200062D9AF /* ScriptMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScriptMenu.h; path = ../../plugins/script/ScriptMenu.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0F11E50D9200062D9AF /* ScriptModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScriptModule.cpp; path = ../../plugins/script/ScriptModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0F21E50D9200062D9AF /* ScriptWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScriptWindow.cpp; path = ../../plugins/script/ScriptWindow.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0F31E50D9200062D9AF /* ScriptWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScriptWindow.h; path = ../../plugins/script/ScriptWindow.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1281E50D9570062D9AF /* script.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = script.xcconfig; sourceTree = "<group>"; };
+		3AEBE1291E50D9F30062D9AF /* boost_python.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = boost_python.xcconfig; sourceTree = "<group>"; };
+		3AEBE12A1E50DB950062D9AF /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -2537,6 +2649,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE0AF1E50D8D50062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE12E1E50DBBE0062D9AF /* CoreFoundation.framework in Frameworks */,
+				3AEBE12D1E50DBAC0062D9AF /* libwxutil.a in Frameworks */,
+				3AEBE12C1E50DBA80062D9AF /* libmathlib.a in Frameworks */,
+				3AEBE12B1E50DB950062D9AF /* Python.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2973,6 +3096,8 @@
 				3AEBE0491E50D2F30062D9AF /* model.xcconfig */,
 				3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */,
 				3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */,
+				3AEBE1281E50D9570062D9AF /* script.xcconfig */,
+				3AEBE1291E50D9F30062D9AF /* boost_python.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -2997,6 +3122,7 @@
 				3AEBE0351E50D0400062D9AF /* model */,
 				3AEBE0511E50D6C60062D9AF /* particles */,
 				3AEBE0951E50D8270062D9AF /* scenegraph */,
+				3AEBE0B31E50D8D50062D9AF /* script */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -3047,12 +3173,14 @@
 				3AEBE0341E50D0400062D9AF /* model.dylib */,
 				3AEBE0501E50D6C60062D9AF /* particles.dylib */,
 				3AEBE0941E50D8270062D9AF /* scenegraph.dylib */,
+				3AEBE0B21E50D8D50062D9AF /* script.dylib */,
 			);
 			sourceTree = "<group>";
 		};
 		3ADBCC9E1E4E4EDC00CA94F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3AEBE12A1E50DB950062D9AF /* Python.framework */,
 				3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */,
 				3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */,
 				3AF743081E4F7A0B003465B5 /* IOKit.framework */,
@@ -3590,6 +3718,74 @@
 			);
 			path = scenegraph;
 			sourceTree = "<group>";
+		};
+		3AEBE0B31E50D8D50062D9AF /* script */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE0BD1E50D9200062D9AF /* interfaces */,
+				3AEBE0E61E50D9200062D9AF /* precompiled.cpp */,
+				3AEBE0E71E50D9200062D9AF /* precompiled.h */,
+				3AEBE0E81E50D9200062D9AF /* PythonConsoleWriter.h */,
+				3AEBE0E91E50D9200062D9AF /* SceneNodeBuffer.cpp */,
+				3AEBE0EA1E50D9200062D9AF /* SceneNodeBuffer.h */,
+				3AEBE0EB1E50D9200062D9AF /* ScriptCommand.cpp */,
+				3AEBE0EC1E50D9200062D9AF /* ScriptCommand.h */,
+				3AEBE0ED1E50D9200062D9AF /* ScriptingSystem.cpp */,
+				3AEBE0EE1E50D9200062D9AF /* ScriptingSystem.h */,
+				3AEBE0EF1E50D9200062D9AF /* ScriptMenu.cpp */,
+				3AEBE0F01E50D9200062D9AF /* ScriptMenu.h */,
+				3AEBE0F11E50D9200062D9AF /* ScriptModule.cpp */,
+				3AEBE0F21E50D9200062D9AF /* ScriptWindow.cpp */,
+				3AEBE0F31E50D9200062D9AF /* ScriptWindow.h */,
+			);
+			path = script;
+			sourceTree = "<group>";
+		};
+		3AEBE0BD1E50D9200062D9AF /* interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE0BE1E50D9200062D9AF /* BrushInterface.cpp */,
+				3AEBE0BF1E50D9200062D9AF /* BrushInterface.h */,
+				3AEBE0C01E50D9200062D9AF /* CommandSystemInterface.cpp */,
+				3AEBE0C11E50D9200062D9AF /* CommandSystemInterface.h */,
+				3AEBE0C21E50D9200062D9AF /* DialogInterface.cpp */,
+				3AEBE0C31E50D9200062D9AF /* DialogInterface.h */,
+				3AEBE0C41E50D9200062D9AF /* EClassInterface.cpp */,
+				3AEBE0C51E50D9200062D9AF /* EClassInterface.h */,
+				3AEBE0C61E50D9200062D9AF /* EntityInterface.cpp */,
+				3AEBE0C71E50D9200062D9AF /* EntityInterface.h */,
+				3AEBE0C81E50D9200062D9AF /* FileSystemInterface.cpp */,
+				3AEBE0C91E50D9200062D9AF /* FileSystemInterface.h */,
+				3AEBE0CA1E50D9200062D9AF /* GameInterface.cpp */,
+				3AEBE0CB1E50D9200062D9AF /* GameInterface.h */,
+				3AEBE0CC1E50D9200062D9AF /* GridInterface.cpp */,
+				3AEBE0CD1E50D9200062D9AF /* GridInterface.h */,
+				3AEBE0CE1E50D9200062D9AF /* MapInterface.cpp */,
+				3AEBE0CF1E50D9200062D9AF /* MapInterface.h */,
+				3AEBE0D01E50D9200062D9AF /* MathInterface.cpp */,
+				3AEBE0D11E50D9200062D9AF /* MathInterface.h */,
+				3AEBE0D21E50D9200062D9AF /* ModelInterface.cpp */,
+				3AEBE0D31E50D9200062D9AF /* ModelInterface.h */,
+				3AEBE0D41E50D9200062D9AF /* PatchInterface.cpp */,
+				3AEBE0D51E50D9200062D9AF /* PatchInterface.h */,
+				3AEBE0D61E50D9200062D9AF /* RadiantInterface.cpp */,
+				3AEBE0D71E50D9200062D9AF /* RadiantInterface.h */,
+				3AEBE0D81E50D9200062D9AF /* RegistryInterface.h */,
+				3AEBE0D91E50D9200062D9AF /* SceneGraphInterface.h */,
+				3AEBE0DA1E50D9200062D9AF /* SelectionInterface.cpp */,
+				3AEBE0DB1E50D9200062D9AF /* SelectionInterface.h */,
+				3AEBE0DC1E50D9200062D9AF /* SelectionSetInterface.cpp */,
+				3AEBE0DD1E50D9200062D9AF /* SelectionSetInterface.h */,
+				3AEBE0DE1E50D9200062D9AF /* ShaderSystemInterface.cpp */,
+				3AEBE0DF1E50D9200062D9AF /* ShaderSystemInterface.h */,
+				3AEBE0E01E50D9200062D9AF /* SkinInterface.cpp */,
+				3AEBE0E11E50D9200062D9AF /* SkinInterface.h */,
+				3AEBE0E21E50D9200062D9AF /* SoundInterface.cpp */,
+				3AEBE0E31E50D9200062D9AF /* SoundInterface.h */,
+			);
+			name = interfaces;
+			path = ../../plugins/script/interfaces;
+			sourceTree = SOURCE_ROOT;
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
@@ -5094,6 +5290,40 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE0B01E50D8D50062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE1221E50D9200062D9AF /* ScriptingSystem.h in Headers */,
+				3AEBE0F91E50D9200062D9AF /* DialogInterface.h in Headers */,
+				3AEBE1111E50D9200062D9AF /* SelectionInterface.h in Headers */,
+				3AEBE11E1E50D9200062D9AF /* SceneNodeBuffer.h in Headers */,
+				3AEBE0FF1E50D9200062D9AF /* FileSystemInterface.h in Headers */,
+				3AEBE1011E50D9200062D9AF /* GameInterface.h in Headers */,
+				3AEBE10B1E50D9200062D9AF /* PatchInterface.h in Headers */,
+				3AEBE10D1E50D9200062D9AF /* RadiantInterface.h in Headers */,
+				3AEBE0F51E50D9200062D9AF /* BrushInterface.h in Headers */,
+				3AEBE1091E50D9200062D9AF /* ModelInterface.h in Headers */,
+				3AEBE1201E50D9200062D9AF /* ScriptCommand.h in Headers */,
+				3AEBE1131E50D9200062D9AF /* SelectionSetInterface.h in Headers */,
+				3AEBE10E1E50D9200062D9AF /* RegistryInterface.h in Headers */,
+				3AEBE1151E50D9200062D9AF /* ShaderSystemInterface.h in Headers */,
+				3AEBE1071E50D9200062D9AF /* MathInterface.h in Headers */,
+				3AEBE1171E50D9200062D9AF /* SkinInterface.h in Headers */,
+				3AEBE1031E50D9200062D9AF /* GridInterface.h in Headers */,
+				3AEBE10F1E50D9200062D9AF /* SceneGraphInterface.h in Headers */,
+				3AEBE1051E50D9200062D9AF /* MapInterface.h in Headers */,
+				3AEBE1191E50D9200062D9AF /* SoundInterface.h in Headers */,
+				3AEBE0F71E50D9200062D9AF /* CommandSystemInterface.h in Headers */,
+				3AEBE11B1E50D9200062D9AF /* precompiled.h in Headers */,
+				3AEBE1271E50D9200062D9AF /* ScriptWindow.h in Headers */,
+				3AEBE11C1E50D9200062D9AF /* PythonConsoleWriter.h in Headers */,
+				3AEBE0FB1E50D9200062D9AF /* EClassInterface.h in Headers */,
+				3AEBE1241E50D9200062D9AF /* ScriptMenu.h in Headers */,
+				3AEBE0FD1E50D9200062D9AF /* EntityInterface.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5507,6 +5737,23 @@
 			productReference = 3AEBE0941E50D8270062D9AF /* scenegraph.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBE0B11E50D8D50062D9AF /* script */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBE0BA1E50D8D60062D9AF /* Build configuration list for PBXNativeTarget "script" */;
+			buildPhases = (
+				3AEBE0AE1E50D8D50062D9AF /* Sources */,
+				3AEBE0AF1E50D8D50062D9AF /* Frameworks */,
+				3AEBE0B01E50D8D50062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = script;
+			productName = script;
+			productReference = 3AEBE0B21E50D8D50062D9AF /* script.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -5635,6 +5882,9 @@
 					3AEBE0931E50D8270062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBE0B11E50D8D50062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -5686,6 +5936,7 @@
 				3AEBE0331E50D0400062D9AF /* model */,
 				3AEBE04F1E50D6C60062D9AF /* particles */,
 				3AEBE0931E50D8270062D9AF /* scenegraph */,
+				3AEBE0B11E50D8D50062D9AF /* script */,
 			);
 		};
 /* End PBXProject section */
@@ -6012,6 +6263,38 @@
 				3AEBE0A61E50D86D0062D9AF /* Octree.cpp in Sources */,
 				3AEBE0AB1E50D86D0062D9AF /* SceneGraphFactory.cpp in Sources */,
 				3AEBE0A91E50D86D0062D9AF /* SceneGraph.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE0AE1E50D8D50062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE10C1E50D9200062D9AF /* RadiantInterface.cpp in Sources */,
+				3AEBE0FA1E50D9200062D9AF /* EClassInterface.cpp in Sources */,
+				3AEBE1021E50D9200062D9AF /* GridInterface.cpp in Sources */,
+				3AEBE0FC1E50D9200062D9AF /* EntityInterface.cpp in Sources */,
+				3AEBE1251E50D9200062D9AF /* ScriptModule.cpp in Sources */,
+				3AEBE1081E50D9200062D9AF /* ModelInterface.cpp in Sources */,
+				3AEBE1121E50D9200062D9AF /* SelectionSetInterface.cpp in Sources */,
+				3AEBE0F81E50D9200062D9AF /* DialogInterface.cpp in Sources */,
+				3AEBE1141E50D9200062D9AF /* ShaderSystemInterface.cpp in Sources */,
+				3AEBE1101E50D9200062D9AF /* SelectionInterface.cpp in Sources */,
+				3AEBE1261E50D9200062D9AF /* ScriptWindow.cpp in Sources */,
+				3AEBE11F1E50D9200062D9AF /* ScriptCommand.cpp in Sources */,
+				3AEBE0F61E50D9200062D9AF /* CommandSystemInterface.cpp in Sources */,
+				3AEBE11D1E50D9200062D9AF /* SceneNodeBuffer.cpp in Sources */,
+				3AEBE1061E50D9200062D9AF /* MathInterface.cpp in Sources */,
+				3AEBE1041E50D9200062D9AF /* MapInterface.cpp in Sources */,
+				3AEBE11A1E50D9200062D9AF /* precompiled.cpp in Sources */,
+				3AEBE10A1E50D9200062D9AF /* PatchInterface.cpp in Sources */,
+				3AEBE0FE1E50D9200062D9AF /* FileSystemInterface.cpp in Sources */,
+				3AEBE1161E50D9200062D9AF /* SkinInterface.cpp in Sources */,
+				3AEBE1181E50D9200062D9AF /* SoundInterface.cpp in Sources */,
+				3AEBE1001E50D9200062D9AF /* GameInterface.cpp in Sources */,
+				3AEBE1211E50D9200062D9AF /* ScriptingSystem.cpp in Sources */,
+				3AEBE0F41E50D9200062D9AF /* BrushInterface.cpp in Sources */,
+				3AEBE1231E50D9200062D9AF /* ScriptMenu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8302,6 +8585,97 @@
 			};
 			name = Release;
 		};
+		3AEBE0BB1E50D8D60062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBE1281E50D9570062D9AF /* script.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBE0BC1E50D8D60062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBE1281E50D9570062D9AF /* script.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -8788,6 +9162,14 @@
 			buildConfigurations = (
 				3AEBE09D1E50D8270062D9AF /* Debug */,
 				3AEBE09E1E50D8270062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3AEBE0BA1E50D8D60062D9AF /* Build configuration list for PBXNativeTarget "script" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBE0BB1E50D8D60062D9AF /* Debug */,
+				3AEBE0BC1E50D8D60062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

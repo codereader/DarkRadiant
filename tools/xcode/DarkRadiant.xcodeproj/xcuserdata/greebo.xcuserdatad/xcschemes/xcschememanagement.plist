@@ -114,6 +114,11 @@
 			<key>orderHint</key>
 			<integer>24</integer>
 		</dict>
+		<key>script.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>25</integer>
+		</dict>
 		<key>wxutil.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -258,6 +263,11 @@
 			<true/>
 		</dict>
 		<key>3AEBE0931E50D8270062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE0B11E50D8D50062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
