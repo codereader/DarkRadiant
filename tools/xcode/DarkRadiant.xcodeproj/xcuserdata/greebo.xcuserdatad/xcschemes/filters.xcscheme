@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBDDC71E50BE540062D9AF"
-               BuildableName = "eventmanager.dylib"
-               BlueprintName = "eventmanager"
+               BlueprintIdentifier = "3AEBDE1F1E50C0190062D9AF"
+               BuildableName = "libfilters.dylib"
+               BlueprintName = "filters"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDDC71E50BE540062D9AF"
-            BuildableName = "eventmanager.dylib"
-            BlueprintName = "eventmanager"
+            BlueprintIdentifier = "3AEBDE1F1E50C0190062D9AF"
+            BuildableName = "libfilters.dylib"
+            BlueprintName = "filters"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDDC71E50BE540062D9AF"
-            BuildableName = "eventmanager.dylib"
-            BlueprintName = "eventmanager"
+            BlueprintIdentifier = "3AEBDE1F1E50C0190062D9AF"
+            BuildableName = "libfilters.dylib"
+            BlueprintName = "filters"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

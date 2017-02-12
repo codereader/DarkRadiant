@@ -44,6 +44,16 @@
 			<key>orderHint</key>
 			<integer>12</integer>
 		</dict>
+		<key>filetypes.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>13</integer>
+		</dict>
+		<key>filters.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>14</integer>
+		</dict>
 		<key>mathlib.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -123,6 +133,16 @@
 			<true/>
 		</dict>
 		<key>3AEBDDC71E50BE540062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDE0C1E50BFB80062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDE1F1E50C0190062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
