@@ -129,6 +129,11 @@
 			<key>orderHint</key>
 			<integer>27</integer>
 		</dict>
+		<key>sound.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>28</integer>
+		</dict>
 		<key>wxutil.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -288,6 +293,11 @@
 			<true/>
 		</dict>
 		<key>3AEBE1841E50DC8E0062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE19D1E50DD620062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
