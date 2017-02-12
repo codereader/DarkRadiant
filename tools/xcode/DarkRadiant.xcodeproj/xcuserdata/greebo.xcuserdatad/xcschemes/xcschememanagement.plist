@@ -134,6 +134,21 @@
 			<key>orderHint</key>
 			<integer>28</integer>
 		</dict>
+		<key>uimanager.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>29</integer>
+		</dict>
+		<key>undo.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>30</integer>
+		</dict>
+		<key>vfspk3.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>31</integer>
+		</dict>
 		<key>wxutil.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -298,6 +313,21 @@
 			<true/>
 		</dict>
 		<key>3AEBE19D1E50DD620062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE1C31E50DF1A0062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE1D21E50DF260062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE1E11E50DF300062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>

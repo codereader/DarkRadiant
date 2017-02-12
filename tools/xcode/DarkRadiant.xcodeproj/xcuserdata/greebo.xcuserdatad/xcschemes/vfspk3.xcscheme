@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBE19D1E50DD620062D9AF"
-               BuildableName = "sound.dylib"
-               BlueprintName = "sound"
+               BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
+               BuildableName = "libvfspk3.dylib"
+               BlueprintName = "vfspk3"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE19D1E50DD620062D9AF"
-            BuildableName = "sound.dylib"
-            BlueprintName = "sound"
+            BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
+            BuildableName = "libvfspk3.dylib"
+            BlueprintName = "vfspk3"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE19D1E50DD620062D9AF"
-            BuildableName = "sound.dylib"
-            BlueprintName = "sound"
+            BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
+            BuildableName = "libvfspk3.dylib"
+            BlueprintName = "vfspk3"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
