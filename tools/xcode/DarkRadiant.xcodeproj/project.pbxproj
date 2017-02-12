@@ -321,6 +321,10 @@
 		3A0124291E50489D00A62BC1 /* XMLRegistryModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */; };
 		3A01242B1E50527B00A62BC1 /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
 		3A01242C1E50527B00A62BC1 /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AEBDC841E5067300062D9AF /* pkzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC781E50669C0062D9AF /* pkzip.cpp */; };
+		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
+		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
+		3AEBDC871E50673D0062D9AF /* zlibstream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7E1E50669C0062D9AF /* zlibstream.cpp */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1147,6 +1151,19 @@
 		3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistryModule.cpp; path = ../../plugins/xmlregistry/XMLRegistryModule.cpp; sourceTree = SOURCE_ROOT; };
 		3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xmlregistry.xcconfig; sourceTree = "<group>"; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
+		3AEBDC691E50667D0062D9AF /* archivezip.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
+		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
+		3AEBDC781E50669C0062D9AF /* pkzip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pkzip.cpp; path = ../../plugins/archivezip/pkzip.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDC791E50669C0062D9AF /* pkzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pkzip.h; path = ../../plugins/archivezip/pkzip.h; sourceTree = SOURCE_ROOT; };
+		3AEBDC7A1E50669C0062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/archivezip/plugin.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDC7B1E50669C0062D9AF /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plugin.h; path = ../../plugins/archivezip/plugin.h; sourceTree = SOURCE_ROOT; };
+		3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZipArchive.cpp; path = ../../plugins/archivezip/ZipArchive.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDC7D1E50669C0062D9AF /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = ../../plugins/archivezip/ZipArchive.h; sourceTree = SOURCE_ROOT; };
+		3AEBDC7E1E50669C0062D9AF /* zlibstream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = zlibstream.cpp; path = ../../plugins/archivezip/zlibstream.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDC7F1E50669C0062D9AF /* zlibstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlibstream.h; path = ../../plugins/archivezip/zlibstream.h; sourceTree = SOURCE_ROOT; };
+		3AEBDC881E5067630062D9AF /* zlib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = zlib.xcconfig; sourceTree = "<group>"; };
+		3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = archivezip.xcconfig; sourceTree = "<group>"; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -1760,6 +1777,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDC661E50667D0062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2190,6 +2214,8 @@
 				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,
 				3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */,
 				3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */,
+				3AEBDC881E5067630062D9AF /* zlib.xcconfig */,
+				3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -2197,6 +2223,7 @@
 		3A0124101E50481E00A62BC1 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				3AEBDC6A1E50667D0062D9AF /* archivezip */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -2228,6 +2255,7 @@
 				3A011FC31E50275700A62BC1 /* libwxutil.a */,
 				3A0120731E502F7800A62BC1 /* libscene.a */,
 				3A0124151E50484100A62BC1 /* xmlregistry.dylib */,
+				3AEBDC691E50667D0062D9AF /* archivezip.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2242,6 +2270,23 @@
 				3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3AEBDC6A1E50667D0062D9AF /* archivezip */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */,
+				3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */,
+				3AEBDC781E50669C0062D9AF /* pkzip.cpp */,
+				3AEBDC791E50669C0062D9AF /* pkzip.h */,
+				3AEBDC7A1E50669C0062D9AF /* plugin.cpp */,
+				3AEBDC7B1E50669C0062D9AF /* plugin.h */,
+				3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */,
+				3AEBDC7D1E50669C0062D9AF /* ZipArchive.h */,
+				3AEBDC7E1E50669C0062D9AF /* zlibstream.cpp */,
+				3AEBDC7F1E50669C0062D9AF /* zlibstream.h */,
+			);
+			path = archivezip;
 			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -3476,6 +3521,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDC671E50667D0062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3566,6 +3618,23 @@
 			productReference = 3A0124151E50484100A62BC1 /* xmlregistry.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBDC681E50667D0062D9AF /* archivezip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDC711E50667D0062D9AF /* Build configuration list for PBXNativeTarget "archivezip" */;
+			buildPhases = (
+				3AEBDC651E50667D0062D9AF /* Sources */,
+				3AEBDC661E50667D0062D9AF /* Frameworks */,
+				3AEBDC671E50667D0062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = archivezip;
+			productName = archivezip;
+			productReference = 3AEBDC691E50667D0062D9AF /* archivezip.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -3637,6 +3706,9 @@
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
 					};
+					3AEBDC681E50667D0062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -3669,6 +3741,7 @@
 				3A011FC21E50275700A62BC1 /* wxutil */,
 				3A0120721E502F7800A62BC1 /* scene */,
 				3A0124141E50484100A62BC1 /* xmlregistry */,
+				3AEBDC681E50667D0062D9AF /* archivezip */,
 			);
 		};
 /* End PBXProject section */
@@ -3726,6 +3799,17 @@
 				3A0124291E50489D00A62BC1 /* XMLRegistryModule.cpp in Sources */,
 				3A0124271E50489D00A62BC1 /* XMLRegistry.cpp in Sources */,
 				3A0124251E50489D00A62BC1 /* RegistryTree.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDC651E50667D0062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDC871E50673D0062D9AF /* zlibstream.cpp in Sources */,
+				3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */,
+				3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */,
+				3AEBDC841E5067300062D9AF /* pkzip.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4299,6 +4383,97 @@
 			};
 			name = Release;
 		};
+		3AEBDC721E50667D0062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDC731E50667D0062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -4618,6 +4793,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		3AEBDC711E50667D0062D9AF /* Build configuration list for PBXNativeTarget "archivezip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDC721E50667D0062D9AF /* Debug */,
+				3AEBDC731E50667D0062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */ = {
 			isa = XCConfigurationList;

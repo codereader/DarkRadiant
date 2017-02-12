@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0820"
+   LastUpgradeVersion = "0710"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3A0124141E50484100A62BC1"
-               BuildableName = "xmlregistry.dylib"
-               BlueprintName = "xmlregistry"
+               BlueprintIdentifier = "3AEBDC681E50667D0062D9AF"
+               BuildableName = "libarchivezip.dylib"
+               BlueprintName = "archivezip"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3A0124141E50484100A62BC1"
-            BuildableName = "xmlregistry.dylib"
-            BlueprintName = "xmlregistry"
+            BlueprintIdentifier = "3AEBDC681E50667D0062D9AF"
+            BuildableName = "libarchivezip.dylib"
+            BlueprintName = "archivezip"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3A0124141E50484100A62BC1"
-            BuildableName = "xmlregistry.dylib"
-            BlueprintName = "xmlregistry"
+            BlueprintIdentifier = "3AEBDC681E50667D0062D9AF"
+            BuildableName = "libarchivezip.dylib"
+            BlueprintName = "archivezip"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

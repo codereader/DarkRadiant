@@ -1,0 +1,10 @@
+//
+//  zlib.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 2/12/17.
+//
+//
+ZLIB_HEADER_SEARCH_PATHS = "/opt/local/include"
+ZLIB_LIBRARY_SEARCH_PATHS = "/opt/local/lib"
+ZLIB_LINKFLAGS = "-lz"
