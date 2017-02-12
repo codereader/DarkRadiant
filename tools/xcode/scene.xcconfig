@@ -1,0 +1,15 @@
+//
+//  scene.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 12.02.17.
+//
+//
+#include "base.xcconfig"
+
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) $(DR_BASE_CPLUSPLUSFLAGS)
+HEADER_SEARCH_PATHS = $(DR_BASE_HEADER_SEARCH_PATHS)
+LIBRARY_SEARCH_PATHS = $(DR_BASE_LIBRARY_SEARCH_PATHS)
+OTHER_LDFLAGS = $(DR_BASE_LINKFLAGS)
+
+FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks"

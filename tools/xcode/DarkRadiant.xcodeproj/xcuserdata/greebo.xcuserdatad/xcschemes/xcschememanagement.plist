@@ -14,6 +14,11 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>scene.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>wxutil.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -28,6 +33,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>3A011FC21E50275700A62BC1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3A0120721E502F7800A62BC1</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -1,0 +1,10 @@
+//
+//  glew.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 12.02.17.
+//
+//
+GLEW_HEADER_SEARCH_PATHS = "/opt/local/include"
+GLEW_LIBRARY_SEARCH_PATHS = "/opt/local/lib"
+GLEW_LINKFLAGS = "-lGLEW"
