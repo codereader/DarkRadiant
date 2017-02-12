@@ -541,15 +541,23 @@ void Manager::loadGameFiles(const std::string& appPath)
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
 	GameFileLoader gameFileLoader(_games, gamePath);
-	os::foreachItemInDirectory(gamePath, gameFileLoader);
+    
+    try
+    {
+        os::foreachItemInDirectory(gamePath, gameFileLoader);
 
-	rMessage() << "GameManager: Found game definitions: " << std::endl;
-	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
-	{
-		rMessage() << "  " << i->first << std::endl;
-	}
+        rMessage() << "GameManager: Found game definitions: " << std::endl;
+        for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
+        {
+            rMessage() << "  " << i->first << std::endl;
+        }
 
-	rMessage() << std::endl;
+        rMessage() << std::endl;
+    }
+    catch (os::DirectoryNotFoundException&)
+    {
+        rError() << "Could not find directory with game files in " << gamePath << std::endl;
+    }
 }
 
 } // namespace game
