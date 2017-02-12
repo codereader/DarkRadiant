@@ -244,6 +244,20 @@
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AEBE04F1E50D6C60062D9AF"
+               BuildableName = "libparticles.dylib"
+               BlueprintName = "particles"
+               ReferencedContainer = "container:DarkRadiant.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

@@ -590,6 +590,33 @@
 		3AEBE0471E50D27F0062D9AF /* libpicomodel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */; };
 		3AEBE0481E50D2860062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
 		3AEBE04B1E50D6840062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
+		3AEBE0741E50D70B0062D9AF /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE05C1E50D70B0062D9AF /* ParticleEditor.cpp */; };
+		3AEBE0751E50D70B0062D9AF /* ParticleEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE05D1E50D70B0062D9AF /* ParticleEditor.h */; };
+		3AEBE0761E50D70B0062D9AF /* ParticleEditorModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE05E1E50D70B0062D9AF /* ParticleEditorModule.h */; };
+		3AEBE0771E50D70B0062D9AF /* ParticleDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0611E50D70B0062D9AF /* ParticleDef.cpp */; };
+		3AEBE0781E50D70B0062D9AF /* ParticleDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0621E50D70B0062D9AF /* ParticleDef.h */; };
+		3AEBE0791E50D70B0062D9AF /* ParticleNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0631E50D70B0062D9AF /* ParticleNode.cpp */; };
+		3AEBE07A1E50D70B0062D9AF /* ParticleNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0641E50D70B0062D9AF /* ParticleNode.h */; };
+		3AEBE07B1E50D70B0062D9AF /* ParticleParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0651E50D70B0062D9AF /* ParticleParameter.cpp */; };
+		3AEBE07C1E50D70B0062D9AF /* ParticleParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0661E50D70B0062D9AF /* ParticleParameter.h */; };
+		3AEBE07D1E50D70B0062D9AF /* ParticleQuad.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0671E50D70B0062D9AF /* ParticleQuad.h */; };
+		3AEBE07E1E50D70B0062D9AF /* ParticleRenderInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0681E50D70B0062D9AF /* ParticleRenderInfo.h */; };
+		3AEBE07F1E50D70B0062D9AF /* particles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0691E50D70B0062D9AF /* particles.cpp */; };
+		3AEBE0801E50D70B0062D9AF /* ParticlesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE06A1E50D70B0062D9AF /* ParticlesManager.cpp */; };
+		3AEBE0811E50D70B0062D9AF /* ParticlesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE06B1E50D70B0062D9AF /* ParticlesManager.h */; };
+		3AEBE0821E50D70B0062D9AF /* RenderableParticle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE06C1E50D70B0062D9AF /* RenderableParticle.cpp */; };
+		3AEBE0831E50D70B0062D9AF /* RenderableParticle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE06D1E50D70B0062D9AF /* RenderableParticle.h */; };
+		3AEBE0841E50D70B0062D9AF /* RenderableParticleBunch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE06E1E50D70B0062D9AF /* RenderableParticleBunch.cpp */; };
+		3AEBE0851E50D70B0062D9AF /* RenderableParticleBunch.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE06F1E50D70B0062D9AF /* RenderableParticleBunch.h */; };
+		3AEBE0861E50D70B0062D9AF /* RenderableParticleStage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0701E50D70B0062D9AF /* RenderableParticleStage.cpp */; };
+		3AEBE0871E50D70B0062D9AF /* RenderableParticleStage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0711E50D70B0062D9AF /* RenderableParticleStage.h */; };
+		3AEBE0881E50D70B0062D9AF /* StageDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0721E50D70B0062D9AF /* StageDef.cpp */; };
+		3AEBE0891E50D70B0062D9AF /* StageDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0731E50D70B0062D9AF /* StageDef.h */; };
+		3AEBE08A1E50D7700062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
+		3AEBE08B1E50D7740062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
+		3AEBE08C1E50D77A0062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
+		3AEBE08D1E50D78B0062D9AF /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
+		3AEBE08E1E50D7AC0062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1687,13 +1714,37 @@
 		3AEBE0121E50CB120062D9AF /* pm_ms3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_ms3d.c; path = ../../libs/picomodel/pm_ms3d.c; sourceTree = SOURCE_ROOT; };
 		3AEBE0131E50CB120062D9AF /* pm_obj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_obj.c; path = ../../libs/picomodel/pm_obj.c; sourceTree = SOURCE_ROOT; };
 		3AEBE0141E50CB120062D9AF /* pm_terrain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_terrain.c; path = ../../libs/picomodel/pm_terrain.c; sourceTree = SOURCE_ROOT; };
-		3AEBE0341E50D0400062D9AF /* libmodel.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmodel.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE0341E50D0400062D9AF /* model.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = model.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE03F1E50D25E0062D9AF /* RenderablePicoModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoModel.cpp; path = ../../../plugins/model/RenderablePicoModel.cpp; sourceTree = "<group>"; };
 		3AEBE0401E50D25E0062D9AF /* RenderablePicoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoModel.h; path = ../../../plugins/model/RenderablePicoModel.h; sourceTree = "<group>"; };
 		3AEBE0411E50D25E0062D9AF /* RenderablePicoSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoSurface.cpp; path = ../../../plugins/model/RenderablePicoSurface.cpp; sourceTree = "<group>"; };
 		3AEBE0421E50D25E0062D9AF /* RenderablePicoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoSurface.h; path = ../../../plugins/model/RenderablePicoSurface.h; sourceTree = "<group>"; };
 		3AEBE0491E50D2F30062D9AF /* model.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = model.xcconfig; sourceTree = "<group>"; };
 		3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = picomodel.xcconfig; sourceTree = "<group>"; };
+		3AEBE0501E50D6C60062D9AF /* particles.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = particles.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE05C1E50D70B0062D9AF /* ParticleEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleEditor.cpp; path = ../../plugins/particles/editor/ParticleEditor.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE05D1E50D70B0062D9AF /* ParticleEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleEditor.h; path = ../../plugins/particles/editor/ParticleEditor.h; sourceTree = SOURCE_ROOT; };
+		3AEBE05E1E50D70B0062D9AF /* ParticleEditorModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleEditorModule.h; path = ../../plugins/particles/editor/ParticleEditorModule.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0611E50D70B0062D9AF /* ParticleDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleDef.cpp; path = ../../plugins/particles/ParticleDef.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0621E50D70B0062D9AF /* ParticleDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleDef.h; path = ../../plugins/particles/ParticleDef.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0631E50D70B0062D9AF /* ParticleNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleNode.cpp; path = ../../plugins/particles/ParticleNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0641E50D70B0062D9AF /* ParticleNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleNode.h; path = ../../plugins/particles/ParticleNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0651E50D70B0062D9AF /* ParticleParameter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleParameter.cpp; path = ../../plugins/particles/ParticleParameter.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0661E50D70B0062D9AF /* ParticleParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleParameter.h; path = ../../plugins/particles/ParticleParameter.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0671E50D70B0062D9AF /* ParticleQuad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleQuad.h; path = ../../plugins/particles/ParticleQuad.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0681E50D70B0062D9AF /* ParticleRenderInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleRenderInfo.h; path = ../../plugins/particles/ParticleRenderInfo.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0691E50D70B0062D9AF /* particles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = particles.cpp; path = ../../plugins/particles/particles.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE06A1E50D70B0062D9AF /* ParticlesManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticlesManager.cpp; path = ../../plugins/particles/ParticlesManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE06B1E50D70B0062D9AF /* ParticlesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticlesManager.h; path = ../../plugins/particles/ParticlesManager.h; sourceTree = SOURCE_ROOT; };
+		3AEBE06C1E50D70B0062D9AF /* RenderableParticle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderableParticle.cpp; path = ../../plugins/particles/RenderableParticle.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE06D1E50D70B0062D9AF /* RenderableParticle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableParticle.h; path = ../../plugins/particles/RenderableParticle.h; sourceTree = SOURCE_ROOT; };
+		3AEBE06E1E50D70B0062D9AF /* RenderableParticleBunch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderableParticleBunch.cpp; path = ../../plugins/particles/RenderableParticleBunch.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE06F1E50D70B0062D9AF /* RenderableParticleBunch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableParticleBunch.h; path = ../../plugins/particles/RenderableParticleBunch.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0701E50D70B0062D9AF /* RenderableParticleStage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderableParticleStage.cpp; path = ../../plugins/particles/RenderableParticleStage.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0711E50D70B0062D9AF /* RenderableParticleStage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableParticleStage.h; path = ../../plugins/particles/RenderableParticleStage.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0721E50D70B0062D9AF /* StageDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StageDef.cpp; path = ../../plugins/particles/StageDef.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0731E50D70B0062D9AF /* StageDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StageDef.h; path = ../../plugins/particles/StageDef.h; sourceTree = SOURCE_ROOT; };
+		3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = particles.xcconfig; sourceTree = "<group>"; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -2450,6 +2501,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE04D1E50D6C60062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE08E1E50D7AC0062D9AF /* OpenGL.framework in Frameworks */,
+				3AEBE08D1E50D78B0062D9AF /* libwxutil.a in Frameworks */,
+				3AEBE08C1E50D77A0062D9AF /* CoreFoundation.framework in Frameworks */,
+				3AEBE08B1E50D7740062D9AF /* libscene.a in Frameworks */,
+				3AEBE08A1E50D7700062D9AF /* libmathlib.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2885,6 +2948,7 @@
 				3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */,
 				3AEBE0491E50D2F30062D9AF /* model.xcconfig */,
 				3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */,
+				3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -2907,6 +2971,7 @@
 				3AEBDEBC1E50C6400062D9AF /* mapdoom3 */,
 				3AEBDF1F1E50C6F10062D9AF /* md5model */,
 				3AEBE0351E50D0400062D9AF /* model */,
+				3AEBE0511E50D6C60062D9AF /* particles */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -2954,7 +3019,8 @@
 				3AEBDEBB1E50C6400062D9AF /* mapdoom3.dylib */,
 				3AEBDF1E1E50C6F10062D9AF /* md5model.dylib */,
 				3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */,
-				3AEBE0341E50D0400062D9AF /* libmodel.dylib */,
+				3AEBE0341E50D0400062D9AF /* model.dylib */,
+				3AEBE0501E50D6C60062D9AF /* particles.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3445,6 +3511,44 @@
 				3AEBE0421E50D25E0062D9AF /* RenderablePicoSurface.h */,
 			);
 			path = model;
+			sourceTree = "<group>";
+		};
+		3AEBE0511E50D6C60062D9AF /* particles */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE05B1E50D70B0062D9AF /* editor */,
+				3AEBE0611E50D70B0062D9AF /* ParticleDef.cpp */,
+				3AEBE0621E50D70B0062D9AF /* ParticleDef.h */,
+				3AEBE0631E50D70B0062D9AF /* ParticleNode.cpp */,
+				3AEBE0641E50D70B0062D9AF /* ParticleNode.h */,
+				3AEBE0651E50D70B0062D9AF /* ParticleParameter.cpp */,
+				3AEBE0661E50D70B0062D9AF /* ParticleParameter.h */,
+				3AEBE0671E50D70B0062D9AF /* ParticleQuad.h */,
+				3AEBE0681E50D70B0062D9AF /* ParticleRenderInfo.h */,
+				3AEBE0691E50D70B0062D9AF /* particles.cpp */,
+				3AEBE06A1E50D70B0062D9AF /* ParticlesManager.cpp */,
+				3AEBE06B1E50D70B0062D9AF /* ParticlesManager.h */,
+				3AEBE06C1E50D70B0062D9AF /* RenderableParticle.cpp */,
+				3AEBE06D1E50D70B0062D9AF /* RenderableParticle.h */,
+				3AEBE06E1E50D70B0062D9AF /* RenderableParticleBunch.cpp */,
+				3AEBE06F1E50D70B0062D9AF /* RenderableParticleBunch.h */,
+				3AEBE0701E50D70B0062D9AF /* RenderableParticleStage.cpp */,
+				3AEBE0711E50D70B0062D9AF /* RenderableParticleStage.h */,
+				3AEBE0721E50D70B0062D9AF /* StageDef.cpp */,
+				3AEBE0731E50D70B0062D9AF /* StageDef.h */,
+			);
+			path = particles;
+			sourceTree = "<group>";
+		};
+		3AEBE05B1E50D70B0062D9AF /* editor */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE05C1E50D70B0062D9AF /* ParticleEditor.cpp */,
+				3AEBE05D1E50D70B0062D9AF /* ParticleEditor.h */,
+				3AEBE05E1E50D70B0062D9AF /* ParticleEditorModule.h */,
+			);
+			name = editor;
+			path = ../../../plugins/particles/editor;
 			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -4920,6 +5024,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE04E1E50D6C60062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0871E50D70B0062D9AF /* RenderableParticleStage.h in Headers */,
+				3AEBE0781E50D70B0062D9AF /* ParticleDef.h in Headers */,
+				3AEBE0851E50D70B0062D9AF /* RenderableParticleBunch.h in Headers */,
+				3AEBE07C1E50D70B0062D9AF /* ParticleParameter.h in Headers */,
+				3AEBE0811E50D70B0062D9AF /* ParticlesManager.h in Headers */,
+				3AEBE0751E50D70B0062D9AF /* ParticleEditor.h in Headers */,
+				3AEBE07D1E50D70B0062D9AF /* ParticleQuad.h in Headers */,
+				3AEBE0891E50D70B0062D9AF /* StageDef.h in Headers */,
+				3AEBE07A1E50D70B0062D9AF /* ParticleNode.h in Headers */,
+				3AEBE0831E50D70B0062D9AF /* RenderableParticle.h in Headers */,
+				3AEBE0761E50D70B0062D9AF /* ParticleEditorModule.h in Headers */,
+				3AEBE07E1E50D70B0062D9AF /* ParticleRenderInfo.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5296,7 +5419,24 @@
 			);
 			name = model;
 			productName = model;
-			productReference = 3AEBE0341E50D0400062D9AF /* libmodel.dylib */;
+			productReference = 3AEBE0341E50D0400062D9AF /* model.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		3AEBE04F1E50D6C60062D9AF /* particles */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBE0581E50D6C60062D9AF /* Build configuration list for PBXNativeTarget "particles" */;
+			buildPhases = (
+				3AEBE04C1E50D6C60062D9AF /* Sources */,
+				3AEBE04D1E50D6C60062D9AF /* Frameworks */,
+				3AEBE04E1E50D6C60062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = particles;
+			productName = particles;
+			productReference = 3AEBE0501E50D6C60062D9AF /* particles.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -5421,6 +5561,9 @@
 					3AEBE0331E50D0400062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBE04F1E50D6C60062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -5470,6 +5613,7 @@
 				3AEBDF1D1E50C6F10062D9AF /* md5model */,
 				3AEBDFF21E50CAEE0062D9AF /* picomodel */,
 				3AEBE0331E50D0400062D9AF /* model */,
+				3AEBE04F1E50D6C60062D9AF /* particles */,
 			);
 		};
 /* End PBXProject section */
@@ -5769,6 +5913,23 @@
 			files = (
 				3AEBE0451E50D25E0062D9AF /* RenderablePicoSurface.cpp in Sources */,
 				3AEBE0431E50D25E0062D9AF /* RenderablePicoModel.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE04C1E50D6C60062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0791E50D70B0062D9AF /* ParticleNode.cpp in Sources */,
+				3AEBE0741E50D70B0062D9AF /* ParticleEditor.cpp in Sources */,
+				3AEBE07F1E50D70B0062D9AF /* particles.cpp in Sources */,
+				3AEBE0771E50D70B0062D9AF /* ParticleDef.cpp in Sources */,
+				3AEBE0881E50D70B0062D9AF /* StageDef.cpp in Sources */,
+				3AEBE0841E50D70B0062D9AF /* RenderableParticleBunch.cpp in Sources */,
+				3AEBE0821E50D70B0062D9AF /* RenderableParticle.cpp in Sources */,
+				3AEBE07B1E50D70B0062D9AF /* ParticleParameter.cpp in Sources */,
+				3AEBE0801E50D70B0062D9AF /* ParticlesManager.cpp in Sources */,
+				3AEBE0861E50D70B0062D9AF /* RenderableParticleStage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7811,7 +7972,6 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -7861,7 +8021,97 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3AEBE0591E50D6C60062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBE05A1E50D6C60062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -8351,6 +8601,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		3AEBE0581E50D6C60062D9AF /* Build configuration list for PBXNativeTarget "particles" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBE0591E50D6C60062D9AF /* Debug */,
+				3AEBE05A1E50D6C60062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */ = {
 			isa = XCConfigurationList;

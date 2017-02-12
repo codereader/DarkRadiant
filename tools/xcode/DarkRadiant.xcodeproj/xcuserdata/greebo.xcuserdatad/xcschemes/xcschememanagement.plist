@@ -94,6 +94,11 @@
 			<key>orderHint</key>
 			<integer>21</integer>
 		</dict>
+		<key>particles.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>23</integer>
+		</dict>
 		<key>picomodel.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -238,6 +243,11 @@
 			<true/>
 		</dict>
 		<key>3AEBE0331E50D0400062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE04F1E50D6C60062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
