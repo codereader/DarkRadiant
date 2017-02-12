@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-               BuildableName = "vfspk3.dylib"
-               BlueprintName = "vfspk3"
+               BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
+               BuildableName = "libdm.difficulty.dylib"
+               BlueprintName = "dm.difficulty"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-            BuildableName = "vfspk3.dylib"
-            BlueprintName = "vfspk3"
+            BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
+            BuildableName = "libdm.difficulty.dylib"
+            BlueprintName = "dm.difficulty"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-            BuildableName = "vfspk3.dylib"
-            BlueprintName = "vfspk3"
+            BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
+            BuildableName = "libdm.difficulty.dylib"
+            BlueprintName = "dm.difficulty"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

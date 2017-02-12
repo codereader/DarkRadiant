@@ -337,7 +337,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1C31E50DF1A0062D9AF"
-               BuildableName = "libuimanager.dylib"
+               BuildableName = "uimanager.dylib"
                BlueprintName = "uimanager"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -351,7 +351,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1D21E50DF260062D9AF"
-               BuildableName = "libundo.dylib"
+               BuildableName = "undo.dylib"
                BlueprintName = "undo"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -365,8 +365,92 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-               BuildableName = "libvfspk3.dylib"
+               BuildableName = "vfspk3.dylib"
                BlueprintName = "vfspk3"
+               ReferencedContainer = "container:DarkRadiant.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AEBE26F1E50E1520062D9AF"
+               BuildableName = "libdm.conversation.dylib"
+               BlueprintName = "dm.conversation"
+               ReferencedContainer = "container:DarkRadiant.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
+               BuildableName = "libdm.difficulty.dylib"
+               BlueprintName = "dm.difficulty"
+               ReferencedContainer = "container:DarkRadiant.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AEBE28D1E50E1650062D9AF"
+               BuildableName = "libdm.editing.dylib"
+               BlueprintName = "dm.editing"
+               ReferencedContainer = "container:DarkRadiant.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AEBE29C1E50E16F0062D9AF"
+               BuildableName = "libdm.gui.dylib"
+               BlueprintName = "dm.gui"
+               ReferencedContainer = "container:DarkRadiant.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AEBE2AB1E50E1780062D9AF"
+               BuildableName = "libdm.objectives.dylib"
+               BlueprintName = "dm.objectives"
+               ReferencedContainer = "container:DarkRadiant.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
+               BuildableName = "libdm.stimresponse.dylib"
+               BlueprintName = "dm.stimresponse"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

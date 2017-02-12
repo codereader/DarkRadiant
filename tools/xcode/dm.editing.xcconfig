@@ -1,0 +1,19 @@
+//
+//  dm.editing.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 2/12/17.
+//
+//
+#include "base.xcconfig"
+#include "glew.xcconfig"
+
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) $(DR_BASE_CPLUSPLUSFLAGS)
+
+HEADER_SEARCH_PATHS = $(DR_BASE_HEADER_SEARCH_PATHS) $(GLEW_HEADER_SEARCH_PATHS)
+
+LIBRARY_SEARCH_PATHS = $(DR_BASE_LIBRARY_SEARCH_PATHS) $(GLEW_LIBRARY_SEARCH_PATHS)
+
+OTHER_LDFLAGS = $(DR_BASE_LINKFLAGS) $(GLEW_LINKFLAGS)
+
+FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks"

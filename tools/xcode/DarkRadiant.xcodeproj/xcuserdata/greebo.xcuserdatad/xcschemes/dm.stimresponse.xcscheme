@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-               BuildableName = "vfspk3.dylib"
-               BlueprintName = "vfspk3"
+               BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
+               BuildableName = "libdm.stimresponse.dylib"
+               BlueprintName = "dm.stimresponse"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-            BuildableName = "vfspk3.dylib"
-            BlueprintName = "vfspk3"
+            BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
+            BuildableName = "libdm.stimresponse.dylib"
+            BlueprintName = "dm.stimresponse"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-            BuildableName = "vfspk3.dylib"
-            BlueprintName = "vfspk3"
+            BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
+            BuildableName = "libdm.stimresponse.dylib"
+            BlueprintName = "dm.stimresponse"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
