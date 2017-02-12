@@ -24,6 +24,11 @@
 			<key>orderHint</key>
 			<integer>8</integer>
 		</dict>
+		<key>eclasstree.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>9</integer>
+		</dict>
 		<key>mathlib.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -83,6 +88,11 @@
 			<true/>
 		</dict>
 		<key>3AEBDCA91E509D8B0062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDCC41E509E3E0062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>

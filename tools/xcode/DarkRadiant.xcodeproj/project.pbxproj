@@ -333,6 +333,13 @@
 		3AEBDCBE1E509DC30062D9AF /* eclass_doom3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCB81E509DC30062D9AF /* eclass_doom3.cpp */; };
 		3AEBDCBF1E509DC30062D9AF /* EClassManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCB91E509DC30062D9AF /* EClassManager.cpp */; };
 		3AEBDCC01E509DC30062D9AF /* EClassManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCBA1E509DC30062D9AF /* EClassManager.h */; };
+		3AEBDCD71E509E730062D9AF /* EClassTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCD01E509E730062D9AF /* EClassTree.cpp */; };
+		3AEBDCD81E509E730062D9AF /* EClassTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCD11E509E730062D9AF /* EClassTree.h */; };
+		3AEBDCD91E509E730062D9AF /* EClassTreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCD21E509E730062D9AF /* EClassTreeBuilder.cpp */; };
+		3AEBDCDA1E509E730062D9AF /* EClassTreeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCD31E509E730062D9AF /* EClassTreeBuilder.h */; };
+		3AEBDCDB1E509E730062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCD61E509E730062D9AF /* plugin.cpp */; };
+		3AEBDCDC1E509ECC0062D9AF /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
+		3AEBDCDF1E50A8350062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1187,6 +1194,14 @@
 		3AEBDCB81E509DC30062D9AF /* eclass_doom3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclass_doom3.cpp; path = ../../plugins/eclassmgr/eclass_doom3.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCB91E509DC30062D9AF /* EClassManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassManager.cpp; path = ../../plugins/eclassmgr/EClassManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCBA1E509DC30062D9AF /* EClassManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassManager.h; path = ../../plugins/eclassmgr/EClassManager.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eclasstree.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDCD01E509E730062D9AF /* EClassTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassTree.cpp; path = ../../plugins/eclasstree/EClassTree.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCD11E509E730062D9AF /* EClassTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassTree.h; path = ../../plugins/eclasstree/EClassTree.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCD21E509E730062D9AF /* EClassTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassTreeBuilder.cpp; path = ../../plugins/eclasstree/EClassTreeBuilder.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCD31E509E730062D9AF /* EClassTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassTreeBuilder.h; path = ../../plugins/eclasstree/EClassTreeBuilder.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCD61E509E730062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/eclasstree/plugin.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCDD1E50A7380062D9AF /* eclasstree.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = eclasstree.xcconfig; sourceTree = "<group>"; };
+		3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -1822,6 +1837,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDCC21E509E3E0062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDCDF1E50A8350062D9AF /* CoreFoundation.framework in Frameworks */,
+				3AEBDCDC1E509ECC0062D9AF /* libwxutil.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2254,6 +2278,7 @@
 				3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */,
 				3AEBDC881E5067630062D9AF /* zlib.xcconfig */,
 				3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */,
+				3AEBDCDD1E50A7380062D9AF /* eclasstree.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -2261,6 +2286,7 @@
 		3A0124101E50481E00A62BC1 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				3AEBDCC61E509E3E0062D9AF /* eclasstree */,
 				3AEBDCAB1E509D8B0062D9AF /* eclassmgr */,
 				3AEBDC8F1E5069840062D9AF /* commandsystem */,
 				3AEBDC6A1E50667D0062D9AF /* archivezip */,
@@ -2298,12 +2324,14 @@
 				3AEBDC691E50667D0062D9AF /* archivezip.dylib */,
 				3AEBDC8E1E5069840062D9AF /* commandsystem.dylib */,
 				3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */,
+				3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */,
 			);
 			sourceTree = "<group>";
 		};
 		3ADBCC9E1E4E4EDC00CA94F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */,
 				3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */,
 				3AF743081E4F7A0B003465B5 /* IOKit.framework */,
 				3AF743061E4F7A06003465B5 /* Cocoa.framework */,
@@ -2356,6 +2384,18 @@
 				3AEBDCBA1E509DC30062D9AF /* EClassManager.h */,
 			);
 			path = eclassmgr;
+			sourceTree = "<group>";
+		};
+		3AEBDCC61E509E3E0062D9AF /* eclasstree */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDCD01E509E730062D9AF /* EClassTree.cpp */,
+				3AEBDCD11E509E730062D9AF /* EClassTree.h */,
+				3AEBDCD21E509E730062D9AF /* EClassTreeBuilder.cpp */,
+				3AEBDCD31E509E730062D9AF /* EClassTreeBuilder.h */,
+				3AEBDCD61E509E730062D9AF /* plugin.cpp */,
+			);
+			path = eclasstree;
 			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -3614,6 +3654,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDCC31E509E3E0062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDCD81E509E730062D9AF /* EClassTree.h in Headers */,
+				3AEBDCDA1E509E730062D9AF /* EClassTreeBuilder.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3755,6 +3804,23 @@
 			productReference = 3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBDCC41E509E3E0062D9AF /* eclasstree */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDCCD1E509E3E0062D9AF /* Build configuration list for PBXNativeTarget "eclasstree" */;
+			buildPhases = (
+				3AEBDCC11E509E3E0062D9AF /* Sources */,
+				3AEBDCC21E509E3E0062D9AF /* Frameworks */,
+				3AEBDCC31E509E3E0062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = eclasstree;
+			productName = eclasstree;
+			productReference = 3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -3835,6 +3901,9 @@
 					3AEBDCA91E509D8B0062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBDCC41E509E3E0062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -3870,6 +3939,7 @@
 				3AEBDC681E50667D0062D9AF /* archivezip */,
 				3AEBDC8D1E5069840062D9AF /* commandsystem */,
 				3AEBDCA91E509D8B0062D9AF /* eclassmgr */,
+				3AEBDCC41E509E3E0062D9AF /* eclasstree */,
 			);
 		};
 /* End PBXProject section */
@@ -3956,6 +4026,16 @@
 				3AEBDCBF1E509DC30062D9AF /* EClassManager.cpp in Sources */,
 				3AEBDCBB1E509DC30062D9AF /* Doom3EntityClass.cpp in Sources */,
 				3AEBDCBE1E509DC30062D9AF /* eclass_doom3.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDCC11E509E3E0062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDCDB1E509E730062D9AF /* plugin.cpp in Sources */,
+				3AEBDCD91E509E730062D9AF /* EClassTreeBuilder.cpp in Sources */,
+				3AEBDCD71E509E730062D9AF /* EClassTree.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4802,6 +4882,97 @@
 			};
 			name = Release;
 		};
+		3AEBDCCE1E509E3E0062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBDCDD1E50A7380062D9AF /* eclasstree.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDCCF1E509E3E0062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBDCDD1E50A7380062D9AF /* eclasstree.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -5129,6 +5300,7 @@
 				3AEBDC731E50667D0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBDC961E5069840062D9AF /* Build configuration list for PBXNativeTarget "commandsystem" */ = {
 			isa = XCConfigurationList;
@@ -5137,6 +5309,7 @@
 				3AEBDC981E5069840062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBDCB21E509D8B0062D9AF /* Build configuration list for PBXNativeTarget "eclassmgr" */ = {
 			isa = XCConfigurationList;
@@ -5145,6 +5318,16 @@
 				3AEBDCB41E509D8B0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AEBDCCD1E509E3E0062D9AF /* Build configuration list for PBXNativeTarget "eclasstree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDCCE1E509E3E0062D9AF /* Debug */,
+				3AEBDCCF1E509E3E0062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */ = {
 			isa = XCConfigurationList;

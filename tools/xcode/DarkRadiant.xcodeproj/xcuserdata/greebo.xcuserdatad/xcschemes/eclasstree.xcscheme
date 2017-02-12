@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBDCA91E509D8B0062D9AF"
-               BuildableName = "eclassmgr.dylib"
-               BlueprintName = "eclassmgr"
+               BlueprintIdentifier = "3AEBDCC41E509E3E0062D9AF"
+               BuildableName = "eclasstree.dylib"
+               BlueprintName = "eclasstree"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDCA91E509D8B0062D9AF"
-            BuildableName = "eclassmgr.dylib"
-            BlueprintName = "eclassmgr"
+            BlueprintIdentifier = "3AEBDCC41E509E3E0062D9AF"
+            BuildableName = "eclasstree.dylib"
+            BlueprintName = "eclasstree"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDCA91E509D8B0062D9AF"
-            BuildableName = "eclassmgr.dylib"
-            BlueprintName = "eclassmgr"
+            BlueprintIdentifier = "3AEBDCC41E509E3E0062D9AF"
+            BuildableName = "eclasstree.dylib"
+            BlueprintName = "eclasstree"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
