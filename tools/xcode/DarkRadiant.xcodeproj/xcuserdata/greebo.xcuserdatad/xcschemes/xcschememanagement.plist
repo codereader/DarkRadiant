@@ -34,6 +34,11 @@
 			<key>orderHint</key>
 			<integer>10</integer>
 		</dict>
+		<key>entitylist.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>11</integer>
+		</dict>
 		<key>mathlib.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -103,6 +108,11 @@
 			<true/>
 		</dict>
 		<key>3AEBDCE31E50A8980062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDDA31E50B0910062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -426,6 +426,15 @@
 		3AEBDD9D1E50ABEB0062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
 		3AEBDD9E1E50AC120062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
 		3AEBDD9F1E50AC190062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AEBDDBB1E50B1030062D9AF /* EntityList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDAF1E50B0EE0062D9AF /* EntityList.cpp */; };
+		3AEBDDBC1E50B1030062D9AF /* EntityList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDB01E50B0EE0062D9AF /* EntityList.h */; };
+		3AEBDDBD1E50B1030062D9AF /* EntityListModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDB11E50B0EE0062D9AF /* EntityListModule.cpp */; };
+		3AEBDDBE1E50B1030062D9AF /* GraphTreeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDB21E50B0EE0062D9AF /* GraphTreeModel.cpp */; };
+		3AEBDDBF1E50B1030062D9AF /* GraphTreeModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDB31E50B0EE0062D9AF /* GraphTreeModel.h */; };
+		3AEBDDC01E50B1030062D9AF /* GraphTreeModelPopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDB41E50B0EE0062D9AF /* GraphTreeModelPopulator.h */; };
+		3AEBDDC11E50B1030062D9AF /* GraphTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDB51E50B0EE0062D9AF /* GraphTreeNode.h */; };
+		3AEBDDC21E50B1500062D9AF /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
+		3AEBDDC31E50B16D0062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1367,6 +1376,14 @@
 		3AEBDD471E50AB640062D9AF /* TargetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetManager.cpp; path = ../../plugins/entity/target/TargetManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDD481E50AB640062D9AF /* TargetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetManager.h; path = ../../plugins/entity/target/TargetManager.h; sourceTree = SOURCE_ROOT; };
 		3AEBDD491E50AB640062D9AF /* VertexInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexInstance.h; path = ../../plugins/entity/VertexInstance.h; sourceTree = SOURCE_ROOT; };
+		3AEBDDA41E50B0910062D9AF /* entitylist.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = entitylist.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDDAF1E50B0EE0062D9AF /* EntityList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityList.cpp; path = ../../plugins/entitylist/EntityList.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDDB01E50B0EE0062D9AF /* EntityList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityList.h; path = ../../plugins/entitylist/EntityList.h; sourceTree = SOURCE_ROOT; };
+		3AEBDDB11E50B0EE0062D9AF /* EntityListModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityListModule.cpp; path = ../../plugins/entitylist/EntityListModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDDB21E50B0EE0062D9AF /* GraphTreeModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphTreeModel.cpp; path = ../../plugins/entitylist/GraphTreeModel.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDDB31E50B0EE0062D9AF /* GraphTreeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphTreeModel.h; path = ../../plugins/entitylist/GraphTreeModel.h; sourceTree = SOURCE_ROOT; };
+		3AEBDDB41E50B0EE0062D9AF /* GraphTreeModelPopulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphTreeModelPopulator.h; path = ../../plugins/entitylist/GraphTreeModelPopulator.h; sourceTree = SOURCE_ROOT; };
+		3AEBDDB51E50B0EE0062D9AF /* GraphTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphTreeNode.h; path = ../../plugins/entitylist/GraphTreeNode.h; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -2022,6 +2039,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDDA11E50B0910062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDDC31E50B16D0062D9AF /* CoreFoundation.framework in Frameworks */,
+				3AEBDDC21E50B1500062D9AF /* libwxutil.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2463,6 +2489,7 @@
 				3AEBDCAB1E509D8B0062D9AF /* eclassmgr */,
 				3AEBDCC61E509E3E0062D9AF /* eclasstree */,
 				3AEBDCE51E50A8980062D9AF /* entity */,
+				3AEBDDA51E50B0910062D9AF /* entitylist */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -2499,6 +2526,7 @@
 				3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */,
 				3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */,
 				3AEBDCE41E50A8980062D9AF /* entity.dylib */,
+				3AEBDDA41E50B0910062D9AF /* entitylist.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2723,6 +2751,20 @@
 			name = target;
 			path = ../../plugins/entity/target;
 			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDDA51E50B0910062D9AF /* entitylist */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDDAF1E50B0EE0062D9AF /* EntityList.cpp */,
+				3AEBDDB01E50B0EE0062D9AF /* EntityList.h */,
+				3AEBDDB11E50B0EE0062D9AF /* EntityListModule.cpp */,
+				3AEBDDB21E50B0EE0062D9AF /* GraphTreeModel.cpp */,
+				3AEBDDB31E50B0EE0062D9AF /* GraphTreeModel.h */,
+				3AEBDDB41E50B0EE0062D9AF /* GraphTreeModelPopulator.h */,
+				3AEBDDB51E50B0EE0062D9AF /* GraphTreeNode.h */,
+			);
+			path = entitylist;
+			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
@@ -4044,6 +4086,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDDA21E50B0910062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDDBC1E50B1030062D9AF /* EntityList.h in Headers */,
+				3AEBDDC11E50B1030062D9AF /* GraphTreeNode.h in Headers */,
+				3AEBDDC01E50B1030062D9AF /* GraphTreeModelPopulator.h in Headers */,
+				3AEBDDBF1E50B1030062D9AF /* GraphTreeModel.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4219,6 +4272,23 @@
 			productReference = 3AEBDCE41E50A8980062D9AF /* entity.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBDDA31E50B0910062D9AF /* entitylist */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDDAC1E50B0910062D9AF /* Build configuration list for PBXNativeTarget "entitylist" */;
+			buildPhases = (
+				3AEBDDA01E50B0910062D9AF /* Sources */,
+				3AEBDDA11E50B0910062D9AF /* Frameworks */,
+				3AEBDDA21E50B0910062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = entitylist;
+			productName = entitylist;
+			productReference = 3AEBDDA41E50B0910062D9AF /* entitylist.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -4305,6 +4375,9 @@
 					3AEBDCE31E50A8980062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBDDA31E50B0910062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -4342,6 +4415,7 @@
 				3AEBDCA91E509D8B0062D9AF /* eclassmgr */,
 				3AEBDCC41E509E3E0062D9AF /* eclasstree */,
 				3AEBDCE31E50A8980062D9AF /* entity */,
+				3AEBDDA31E50B0910062D9AF /* entitylist */,
 			);
 		};
 /* End PBXProject section */
@@ -4479,6 +4553,16 @@
 				3AEBDD541E50AB640062D9AF /* CurveNURBS.cpp in Sources */,
 				3AEBDD711E50AB640062D9AF /* Light.cpp in Sources */,
 				3AEBDD4D1E50AB640062D9AF /* Curve.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDDA01E50B0910062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDDBD1E50B1030062D9AF /* EntityListModule.cpp in Sources */,
+				3AEBDDBE1E50B1030062D9AF /* GraphTreeModel.cpp in Sources */,
+				3AEBDDBB1E50B1030062D9AF /* EntityList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5507,6 +5591,97 @@
 			};
 			name = Release;
 		};
+		3AEBDDAD1E50B0910062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDDAE1E50B0910062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -5871,6 +6046,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		3AEBDDAC1E50B0910062D9AF /* Build configuration list for PBXNativeTarget "entitylist" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDDAD1E50B0910062D9AF /* Debug */,
+				3AEBDDAE1E50B0910062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */ = {
 			isa = XCConfigurationList;
