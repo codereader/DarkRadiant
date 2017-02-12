@@ -497,6 +497,92 @@
 		3AEBDEB31E50C3660062D9AF /* ddslib.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEB01E50C35D0062D9AF /* ddslib.h */; };
 		3AEBDEB41E50C3850062D9AF /* libdds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDEA31E50C3330062D9AF /* libdds.a */; };
 		3AEBDEB51E50C39A0062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AEBDEF21E50C68D0062D9AF /* Doom3AasFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEC71E50C68D0062D9AF /* Doom3AasFile.cpp */; };
+		3AEBDEF31E50C68D0062D9AF /* Doom3AasFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEC81E50C68D0062D9AF /* Doom3AasFile.h */; };
+		3AEBDEF41E50C68D0062D9AF /* Doom3AasFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEC91E50C68D0062D9AF /* Doom3AasFileLoader.cpp */; };
+		3AEBDEF51E50C68D0062D9AF /* Doom3AasFileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDECA1E50C68D0062D9AF /* Doom3AasFileLoader.h */; };
+		3AEBDEF61E50C68D0062D9AF /* Doom3AasFileSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDECB1E50C68D0062D9AF /* Doom3AasFileSettings.cpp */; };
+		3AEBDEF71E50C68D0062D9AF /* Doom3AasFileSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDECC1E50C68D0062D9AF /* Doom3AasFileSettings.h */; };
+		3AEBDEF81E50C68D0062D9AF /* Util.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDECD1E50C68D0062D9AF /* Util.h */; };
+		3AEBDEF91E50C68D0062D9AF /* Doom3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDECE1E50C68D0062D9AF /* Doom3MapFormat.cpp */; };
+		3AEBDEFA1E50C68D0062D9AF /* Doom3MapFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDECF1E50C68D0062D9AF /* Doom3MapFormat.h */; };
+		3AEBDEFB1E50C68D0062D9AF /* Doom3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDED01E50C68D0062D9AF /* Doom3MapReader.cpp */; };
+		3AEBDEFC1E50C68D0062D9AF /* Doom3MapReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDED11E50C68D0062D9AF /* Doom3MapReader.h */; };
+		3AEBDEFD1E50C68D0062D9AF /* Doom3MapWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDED21E50C68D0062D9AF /* Doom3MapWriter.cpp */; };
+		3AEBDEFE1E50C68D0062D9AF /* Doom3MapWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDED31E50C68D0062D9AF /* Doom3MapWriter.h */; };
+		3AEBDEFF1E50C68D0062D9AF /* Doom3PrefabFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDED41E50C68D0062D9AF /* Doom3PrefabFormat.cpp */; };
+		3AEBDF001E50C68D0062D9AF /* Doom3PrefabFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDED51E50C68D0062D9AF /* Doom3PrefabFormat.h */; };
+		3AEBDF011E50C68D0062D9AF /* mapdoom3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDED81E50C68D0062D9AF /* mapdoom3.cpp */; };
+		3AEBDF021E50C68D0062D9AF /* BrushDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEDA1E50C68D0062D9AF /* BrushDef.cpp */; };
+		3AEBDF031E50C68D0062D9AF /* BrushDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEDB1E50C68D0062D9AF /* BrushDef.h */; };
+		3AEBDF041E50C68D0062D9AF /* BrushDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEDC1E50C68D0062D9AF /* BrushDef3.cpp */; };
+		3AEBDF051E50C68D0062D9AF /* BrushDef3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEDD1E50C68D0062D9AF /* BrushDef3.h */; };
+		3AEBDF061E50C68D0062D9AF /* Patch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEDE1E50C68D0062D9AF /* Patch.cpp */; };
+		3AEBDF071E50C68D0062D9AF /* Patch.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEDF1E50C68D0062D9AF /* Patch.h */; };
+		3AEBDF081E50C68D0062D9AF /* PatchDef2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEE01E50C68D0062D9AF /* PatchDef2.cpp */; };
+		3AEBDF091E50C68D0062D9AF /* PatchDef2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE11E50C68D0062D9AF /* PatchDef2.h */; };
+		3AEBDF0A1E50C68D0062D9AF /* PatchDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEE21E50C68D0062D9AF /* PatchDef3.cpp */; };
+		3AEBDF0B1E50C68D0062D9AF /* PatchDef3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE31E50C68D0062D9AF /* PatchDef3.h */; };
+		3AEBDF0C1E50C68D0062D9AF /* BrushDef3Exporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE51E50C68D0062D9AF /* BrushDef3Exporter.h */; };
+		3AEBDF0D1E50C68D0062D9AF /* BrushDefExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE61E50C68D0062D9AF /* BrushDefExporter.h */; };
+		3AEBDF0E1E50C68D0062D9AF /* PatchDefExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE71E50C68D0062D9AF /* PatchDefExporter.h */; };
+		3AEBDF0F1E50C68D0062D9AF /* Quake3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEE81E50C68D0062D9AF /* Quake3MapFormat.cpp */; };
+		3AEBDF101E50C68D0062D9AF /* Quake3MapFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE91E50C68D0062D9AF /* Quake3MapFormat.h */; };
+		3AEBDF111E50C68D0062D9AF /* Quake3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEEA1E50C68D0062D9AF /* Quake3MapReader.cpp */; };
+		3AEBDF121E50C68D0062D9AF /* Quake3MapReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEEB1E50C68D0062D9AF /* Quake3MapReader.h */; };
+		3AEBDF131E50C68D0062D9AF /* Quake3MapWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEEC1E50C68D0062D9AF /* Quake3MapWriter.h */; };
+		3AEBDF141E50C68D0062D9AF /* Quake4MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEED1E50C68D0062D9AF /* Quake4MapFormat.cpp */; };
+		3AEBDF151E50C68D0062D9AF /* Quake4MapFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEEE1E50C68D0062D9AF /* Quake4MapFormat.h */; };
+		3AEBDF161E50C68D0062D9AF /* Quake4MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEEF1E50C68D0062D9AF /* Quake4MapReader.cpp */; };
+		3AEBDF171E50C68D0062D9AF /* Quake4MapReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEF01E50C68D0062D9AF /* Quake4MapReader.h */; };
+		3AEBDF181E50C68D0062D9AF /* Quake4MapWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEF11E50C68D0062D9AF /* Quake4MapWriter.h */; };
+		3AEBDF191E50C6DB0062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
+		3AEBDF6D1E50C7290062D9AF /* MD5Anim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF3A1E50C71E0062D9AF /* MD5Anim.cpp */; };
+		3AEBDF6E1E50C7290062D9AF /* MD5Anim.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF3B1E50C71E0062D9AF /* MD5Anim.h */; };
+		3AEBDF6F1E50C7290062D9AF /* MD5AnimationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF3C1E50C71E0062D9AF /* MD5AnimationCache.cpp */; };
+		3AEBDF701E50C7290062D9AF /* MD5AnimationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF3D1E50C71E0062D9AF /* MD5AnimationCache.h */; };
+		3AEBDF711E50C7290062D9AF /* MD5DataStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF3E1E50C71E0062D9AF /* MD5DataStructures.h */; };
+		3AEBDF721E50C7290062D9AF /* MD5Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF3F1E50C71E0062D9AF /* MD5Model.cpp */; };
+		3AEBDF731E50C7290062D9AF /* MD5Model.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF401E50C71E0062D9AF /* MD5Model.h */; };
+		3AEBDF741E50C7290062D9AF /* MD5ModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF411E50C71E0062D9AF /* MD5ModelLoader.cpp */; };
+		3AEBDF751E50C7290062D9AF /* MD5ModelLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF421E50C71E0062D9AF /* MD5ModelLoader.h */; };
+		3AEBDF761E50C7290062D9AF /* MD5ModelNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF431E50C71E0062D9AF /* MD5ModelNode.cpp */; };
+		3AEBDF771E50C7290062D9AF /* MD5ModelNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF441E50C71E0062D9AF /* MD5ModelNode.h */; };
+		3AEBDF781E50C7290062D9AF /* MD5Skeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF451E50C71E0062D9AF /* MD5Skeleton.cpp */; };
+		3AEBDF791E50C7290062D9AF /* MD5Skeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF461E50C71E0062D9AF /* MD5Skeleton.h */; };
+		3AEBDF7A1E50C7290062D9AF /* MD5Surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF471E50C71E0062D9AF /* MD5Surface.cpp */; };
+		3AEBDF7B1E50C7290062D9AF /* MD5Surface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF481E50C71E0062D9AF /* MD5Surface.h */; };
+		3AEBDF7C1E50C7290062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF491E50C71E0062D9AF /* plugin.cpp */; };
+		3AEBDF7D1E50C7290062D9AF /* RenderableMD5Skeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF4A1E50C71E0062D9AF /* RenderableMD5Skeleton.h */; };
+		3AEBDF9A1E50C7A10062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
+		3AEBDF9B1E50C7A10062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
+		3AEBDF9C1E50C7B80062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
+		3AEBE0151E50CB120062D9AF /* clip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFF91E50CB120062D9AF /* clip.c */; };
+		3AEBE0161E50CB120062D9AF /* envelope.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFA1E50CB120062D9AF /* envelope.c */; };
+		3AEBE0171E50CB120062D9AF /* list.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFB1E50CB120062D9AF /* list.c */; };
+		3AEBE0181E50CB120062D9AF /* lwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFC1E50CB120062D9AF /* lwio.c */; };
+		3AEBE0191E50CB120062D9AF /* lwo2.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFD1E50CB120062D9AF /* lwo2.c */; };
+		3AEBE01A1E50CB120062D9AF /* lwo2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDFFE1E50CB120062D9AF /* lwo2.h */; };
+		3AEBE01B1E50CB120062D9AF /* lwob.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFF1E50CB120062D9AF /* lwob.c */; };
+		3AEBE01C1E50CB120062D9AF /* pntspols.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0001E50CB120062D9AF /* pntspols.c */; };
+		3AEBE01D1E50CB120062D9AF /* surface.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0011E50CB120062D9AF /* surface.c */; };
+		3AEBE01E1E50CB120062D9AF /* vecmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0021E50CB120062D9AF /* vecmath.c */; };
+		3AEBE01F1E50CB120062D9AF /* vmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0031E50CB120062D9AF /* vmap.c */; };
+		3AEBE0201E50CB120062D9AF /* picointernal.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0061E50CB120062D9AF /* picointernal.c */; };
+		3AEBE0211E50CB120062D9AF /* picointernal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0071E50CB120062D9AF /* picointernal.h */; };
+		3AEBE0221E50CB120062D9AF /* picomodel.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0081E50CB120062D9AF /* picomodel.c */; };
+		3AEBE0231E50CB120062D9AF /* picomodules.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0091E50CB120062D9AF /* picomodules.c */; };
+		3AEBE0241E50CB120062D9AF /* pm_3ds.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00A1E50CB120062D9AF /* pm_3ds.c */; };
+		3AEBE0251E50CB120062D9AF /* pm_ase.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00B1E50CB120062D9AF /* pm_ase.c */; };
+		3AEBE0261E50CB120062D9AF /* pm_fm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00C1E50CB120062D9AF /* pm_fm.c */; };
+		3AEBE0271E50CB120062D9AF /* pm_fm.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE00D1E50CB120062D9AF /* pm_fm.h */; };
+		3AEBE0281E50CB120062D9AF /* pm_lwo.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00E1E50CB120062D9AF /* pm_lwo.c */; };
+		3AEBE0291E50CB120062D9AF /* pm_md2.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00F1E50CB120062D9AF /* pm_md2.c */; };
+		3AEBE02A1E50CB120062D9AF /* pm_md3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0101E50CB120062D9AF /* pm_md3.c */; };
+		3AEBE02B1E50CB120062D9AF /* pm_mdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0111E50CB120062D9AF /* pm_mdc.c */; };
+		3AEBE02C1E50CB120062D9AF /* pm_ms3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0121E50CB120062D9AF /* pm_ms3d.c */; };
+		3AEBE02D1E50CB120062D9AF /* pm_obj.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0131E50CB120062D9AF /* pm_obj.c */; };
+		3AEBE02E1E50CB120062D9AF /* pm_terrain.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0141E50CB120062D9AF /* pm_terrain.c */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1508,6 +1594,92 @@
 		3AEBDEAE1E50C34F0062D9AF /* ddslib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ddslib.cpp; path = ../../../libs/ddslib/ddslib.cpp; sourceTree = "<group>"; };
 		3AEBDEB01E50C35D0062D9AF /* ddslib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ddslib.h; path = ../../../libs/ddslib.h; sourceTree = "<group>"; };
 		3AEBDEB61E50C3AD0062D9AF /* image.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = image.xcconfig; sourceTree = "<group>"; };
+		3AEBDEBB1E50C6400062D9AF /* mapdoom3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mapdoom3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDEC71E50C68D0062D9AF /* Doom3AasFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFile.cpp; path = ../../plugins/mapdoom3/aas/Doom3AasFile.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEC81E50C68D0062D9AF /* Doom3AasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFile.h; path = ../../plugins/mapdoom3/aas/Doom3AasFile.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEC91E50C68D0062D9AF /* Doom3AasFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileLoader.cpp; path = ../../plugins/mapdoom3/aas/Doom3AasFileLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDECA1E50C68D0062D9AF /* Doom3AasFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileLoader.h; path = ../../plugins/mapdoom3/aas/Doom3AasFileLoader.h; sourceTree = SOURCE_ROOT; };
+		3AEBDECB1E50C68D0062D9AF /* Doom3AasFileSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileSettings.cpp; path = ../../plugins/mapdoom3/aas/Doom3AasFileSettings.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDECC1E50C68D0062D9AF /* Doom3AasFileSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileSettings.h; path = ../../plugins/mapdoom3/aas/Doom3AasFileSettings.h; sourceTree = SOURCE_ROOT; };
+		3AEBDECD1E50C68D0062D9AF /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Util.h; path = ../../plugins/mapdoom3/aas/Util.h; sourceTree = SOURCE_ROOT; };
+		3AEBDECE1E50C68D0062D9AF /* Doom3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapFormat.cpp; path = ../../plugins/mapdoom3/Doom3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDECF1E50C68D0062D9AF /* Doom3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapFormat.h; path = ../../plugins/mapdoom3/Doom3MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AEBDED01E50C68D0062D9AF /* Doom3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapReader.cpp; path = ../../plugins/mapdoom3/Doom3MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDED11E50C68D0062D9AF /* Doom3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapReader.h; path = ../../plugins/mapdoom3/Doom3MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AEBDED21E50C68D0062D9AF /* Doom3MapWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapWriter.cpp; path = ../../plugins/mapdoom3/Doom3MapWriter.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDED31E50C68D0062D9AF /* Doom3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapWriter.h; path = ../../plugins/mapdoom3/Doom3MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AEBDED41E50C68D0062D9AF /* Doom3PrefabFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3PrefabFormat.cpp; path = ../../plugins/mapdoom3/Doom3PrefabFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDED51E50C68D0062D9AF /* Doom3PrefabFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3PrefabFormat.h; path = ../../plugins/mapdoom3/Doom3PrefabFormat.h; sourceTree = SOURCE_ROOT; };
+		3AEBDED81E50C68D0062D9AF /* mapdoom3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mapdoom3.cpp; path = ../../plugins/mapdoom3/mapdoom3.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEDA1E50C68D0062D9AF /* BrushDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef.cpp; path = ../../plugins/mapdoom3/primitiveparsers/BrushDef.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEDB1E50C68D0062D9AF /* BrushDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef.h; path = ../../plugins/mapdoom3/primitiveparsers/BrushDef.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEDC1E50C68D0062D9AF /* BrushDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef3.cpp; path = ../../plugins/mapdoom3/primitiveparsers/BrushDef3.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEDD1E50C68D0062D9AF /* BrushDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3.h; path = ../../plugins/mapdoom3/primitiveparsers/BrushDef3.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEDE1E50C68D0062D9AF /* Patch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Patch.cpp; path = ../../plugins/mapdoom3/primitiveparsers/Patch.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEDF1E50C68D0062D9AF /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Patch.h; path = ../../plugins/mapdoom3/primitiveparsers/Patch.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEE01E50C68D0062D9AF /* PatchDef2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef2.cpp; path = ../../plugins/mapdoom3/primitiveparsers/PatchDef2.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEE11E50C68D0062D9AF /* PatchDef2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef2.h; path = ../../plugins/mapdoom3/primitiveparsers/PatchDef2.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEE21E50C68D0062D9AF /* PatchDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef3.cpp; path = ../../plugins/mapdoom3/primitiveparsers/PatchDef3.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEE31E50C68D0062D9AF /* PatchDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef3.h; path = ../../plugins/mapdoom3/primitiveparsers/PatchDef3.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEE51E50C68D0062D9AF /* BrushDef3Exporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3Exporter.h; path = ../../plugins/mapdoom3/primitivewriters/BrushDef3Exporter.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEE61E50C68D0062D9AF /* BrushDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDefExporter.h; path = ../../plugins/mapdoom3/primitivewriters/BrushDefExporter.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEE71E50C68D0062D9AF /* PatchDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDefExporter.h; path = ../../plugins/mapdoom3/primitivewriters/PatchDefExporter.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEE81E50C68D0062D9AF /* Quake3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapFormat.cpp; path = ../../plugins/mapdoom3/Quake3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEE91E50C68D0062D9AF /* Quake3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapFormat.h; path = ../../plugins/mapdoom3/Quake3MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEEA1E50C68D0062D9AF /* Quake3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapReader.cpp; path = ../../plugins/mapdoom3/Quake3MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEEB1E50C68D0062D9AF /* Quake3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapReader.h; path = ../../plugins/mapdoom3/Quake3MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEEC1E50C68D0062D9AF /* Quake3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapWriter.h; path = ../../plugins/mapdoom3/Quake3MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEED1E50C68D0062D9AF /* Quake4MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapFormat.cpp; path = ../../plugins/mapdoom3/Quake4MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEEE1E50C68D0062D9AF /* Quake4MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapFormat.h; path = ../../plugins/mapdoom3/Quake4MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEEF1E50C68D0062D9AF /* Quake4MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapReader.cpp; path = ../../plugins/mapdoom3/Quake4MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDEF01E50C68D0062D9AF /* Quake4MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapReader.h; path = ../../plugins/mapdoom3/Quake4MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AEBDEF11E50C68D0062D9AF /* Quake4MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapWriter.h; path = ../../plugins/mapdoom3/Quake4MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF1E1E50C6F10062D9AF /* md5model.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = md5model.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDF3A1E50C71E0062D9AF /* MD5Anim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Anim.cpp; path = ../../plugins/md5model/MD5Anim.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDF3B1E50C71E0062D9AF /* MD5Anim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Anim.h; path = ../../plugins/md5model/MD5Anim.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF3C1E50C71E0062D9AF /* MD5AnimationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5AnimationCache.cpp; path = ../../plugins/md5model/MD5AnimationCache.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDF3D1E50C71E0062D9AF /* MD5AnimationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5AnimationCache.h; path = ../../plugins/md5model/MD5AnimationCache.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF3E1E50C71E0062D9AF /* MD5DataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5DataStructures.h; path = ../../plugins/md5model/MD5DataStructures.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF3F1E50C71E0062D9AF /* MD5Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Model.cpp; path = ../../plugins/md5model/MD5Model.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDF401E50C71E0062D9AF /* MD5Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Model.h; path = ../../plugins/md5model/MD5Model.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF411E50C71E0062D9AF /* MD5ModelLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5ModelLoader.cpp; path = ../../plugins/md5model/MD5ModelLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDF421E50C71E0062D9AF /* MD5ModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5ModelLoader.h; path = ../../plugins/md5model/MD5ModelLoader.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF431E50C71E0062D9AF /* MD5ModelNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5ModelNode.cpp; path = ../../plugins/md5model/MD5ModelNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDF441E50C71E0062D9AF /* MD5ModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5ModelNode.h; path = ../../plugins/md5model/MD5ModelNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF451E50C71E0062D9AF /* MD5Skeleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Skeleton.cpp; path = ../../plugins/md5model/MD5Skeleton.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDF461E50C71E0062D9AF /* MD5Skeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Skeleton.h; path = ../../plugins/md5model/MD5Skeleton.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF471E50C71E0062D9AF /* MD5Surface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Surface.cpp; path = ../../plugins/md5model/MD5Surface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDF481E50C71E0062D9AF /* MD5Surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Surface.h; path = ../../plugins/md5model/MD5Surface.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF491E50C71E0062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/md5model/plugin.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDF4A1E50C71E0062D9AF /* RenderableMD5Skeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableMD5Skeleton.h; path = ../../plugins/md5model/RenderableMD5Skeleton.h; sourceTree = SOURCE_ROOT; };
+		3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = md5model.xcconfig; sourceTree = "<group>"; };
+		3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpicomodel.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDFF91E50CB120062D9AF /* clip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = clip.c; path = ../../libs/picomodel/lwo/clip.c; sourceTree = SOURCE_ROOT; };
+		3AEBDFFA1E50CB120062D9AF /* envelope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = envelope.c; path = ../../libs/picomodel/lwo/envelope.c; sourceTree = SOURCE_ROOT; };
+		3AEBDFFB1E50CB120062D9AF /* list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = list.c; path = ../../libs/picomodel/lwo/list.c; sourceTree = SOURCE_ROOT; };
+		3AEBDFFC1E50CB120062D9AF /* lwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lwio.c; path = ../../libs/picomodel/lwo/lwio.c; sourceTree = SOURCE_ROOT; };
+		3AEBDFFD1E50CB120062D9AF /* lwo2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lwo2.c; path = ../../libs/picomodel/lwo/lwo2.c; sourceTree = SOURCE_ROOT; };
+		3AEBDFFE1E50CB120062D9AF /* lwo2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lwo2.h; path = ../../libs/picomodel/lwo/lwo2.h; sourceTree = SOURCE_ROOT; };
+		3AEBDFFF1E50CB120062D9AF /* lwob.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lwob.c; path = ../../libs/picomodel/lwo/lwob.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0001E50CB120062D9AF /* pntspols.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pntspols.c; path = ../../libs/picomodel/lwo/pntspols.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0011E50CB120062D9AF /* surface.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = surface.c; path = ../../libs/picomodel/lwo/surface.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0021E50CB120062D9AF /* vecmath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vecmath.c; path = ../../libs/picomodel/lwo/vecmath.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0031E50CB120062D9AF /* vmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = vmap.c; path = ../../libs/picomodel/lwo/vmap.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0061E50CB120062D9AF /* picointernal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = picointernal.c; path = ../../libs/picomodel/picointernal.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0071E50CB120062D9AF /* picointernal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = picointernal.h; path = ../../libs/picomodel/picointernal.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0081E50CB120062D9AF /* picomodel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = picomodel.c; path = ../../libs/picomodel/picomodel.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0091E50CB120062D9AF /* picomodules.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = picomodules.c; path = ../../libs/picomodel/picomodules.c; sourceTree = SOURCE_ROOT; };
+		3AEBE00A1E50CB120062D9AF /* pm_3ds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_3ds.c; path = ../../libs/picomodel/pm_3ds.c; sourceTree = SOURCE_ROOT; };
+		3AEBE00B1E50CB120062D9AF /* pm_ase.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_ase.c; path = ../../libs/picomodel/pm_ase.c; sourceTree = SOURCE_ROOT; };
+		3AEBE00C1E50CB120062D9AF /* pm_fm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_fm.c; path = ../../libs/picomodel/pm_fm.c; sourceTree = SOURCE_ROOT; };
+		3AEBE00D1E50CB120062D9AF /* pm_fm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pm_fm.h; path = ../../libs/picomodel/pm_fm.h; sourceTree = SOURCE_ROOT; };
+		3AEBE00E1E50CB120062D9AF /* pm_lwo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_lwo.c; path = ../../libs/picomodel/pm_lwo.c; sourceTree = SOURCE_ROOT; };
+		3AEBE00F1E50CB120062D9AF /* pm_md2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_md2.c; path = ../../libs/picomodel/pm_md2.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0101E50CB120062D9AF /* pm_md3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_md3.c; path = ../../libs/picomodel/pm_md3.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0111E50CB120062D9AF /* pm_mdc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_mdc.c; path = ../../libs/picomodel/pm_mdc.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0121E50CB120062D9AF /* pm_ms3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_ms3d.c; path = ../../libs/picomodel/pm_ms3d.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0131E50CB120062D9AF /* pm_obj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_obj.c; path = ../../libs/picomodel/pm_obj.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0141E50CB120062D9AF /* pm_terrain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_terrain.c; path = ../../libs/picomodel/pm_terrain.c; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -2229,6 +2401,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDEB81E50C6400062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDF191E50C6DB0062D9AF /* libmathlib.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDF1B1E50C6F10062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDF9C1E50C7B80062D9AF /* OpenGL.framework in Frameworks */,
+				3AEBDF9A1E50C7A10062D9AF /* libmathlib.a in Frameworks */,
+				3AEBDF9B1E50C7A10062D9AF /* libscene.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDFF01E50CAEE0062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2638,6 +2835,7 @@
 			children = (
 				3AEBDEA41E50C3330062D9AF /* dds */,
 				3AF746651E4FACC9003465B5 /* mathlib */,
+				3AEBDFF71E50CAF50062D9AF /* picomodel */,
 				3A0120741E502F7800A62BC1 /* scene */,
 				3A011FC41E50275700A62BC1 /* wxutil */,
 				3AF746AC1E4FADF3003465B5 /* xmlutil */,
@@ -2660,6 +2858,7 @@
 				3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */,
 				3AEBDC881E5067630062D9AF /* zlib.xcconfig */,
 				3AEBDEB61E50C3AD0062D9AF /* image.xcconfig */,
+				3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -2679,6 +2878,8 @@
 				3AEBDE3F1E50C0B50062D9AF /* fonts */,
 				3AEBDE651E50C1410062D9AF /* grid */,
 				3AEBDE7A1E50C29B0062D9AF /* image */,
+				3AEBDEBC1E50C6400062D9AF /* mapdoom3 */,
+				3AEBDF1F1E50C6F10062D9AF /* md5model */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -2723,6 +2924,9 @@
 				3AEBDE641E50C1410062D9AF /* grid.dylib */,
 				3AEBDE791E50C29B0062D9AF /* image.dylib */,
 				3AEBDEA31E50C3330062D9AF /* libdds.a */,
+				3AEBDEBB1E50C6400062D9AF /* mapdoom3.dylib */,
+				3AEBDF1E1E50C6F10062D9AF /* md5model.dylib */,
+				3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3063,6 +3267,145 @@
 				3AEBDEAE1E50C34F0062D9AF /* ddslib.cpp */,
 			);
 			path = dds;
+			sourceTree = "<group>";
+		};
+		3AEBDEBC1E50C6400062D9AF /* mapdoom3 */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDEC61E50C68D0062D9AF /* aas */,
+				3AEBDECE1E50C68D0062D9AF /* Doom3MapFormat.cpp */,
+				3AEBDECF1E50C68D0062D9AF /* Doom3MapFormat.h */,
+				3AEBDED01E50C68D0062D9AF /* Doom3MapReader.cpp */,
+				3AEBDED11E50C68D0062D9AF /* Doom3MapReader.h */,
+				3AEBDED21E50C68D0062D9AF /* Doom3MapWriter.cpp */,
+				3AEBDED31E50C68D0062D9AF /* Doom3MapWriter.h */,
+				3AEBDED41E50C68D0062D9AF /* Doom3PrefabFormat.cpp */,
+				3AEBDED51E50C68D0062D9AF /* Doom3PrefabFormat.h */,
+				3AEBDED81E50C68D0062D9AF /* mapdoom3.cpp */,
+				3AEBDED91E50C68D0062D9AF /* primitiveparsers */,
+				3AEBDEE41E50C68D0062D9AF /* primitivewriters */,
+				3AEBDEE81E50C68D0062D9AF /* Quake3MapFormat.cpp */,
+				3AEBDEE91E50C68D0062D9AF /* Quake3MapFormat.h */,
+				3AEBDEEA1E50C68D0062D9AF /* Quake3MapReader.cpp */,
+				3AEBDEEB1E50C68D0062D9AF /* Quake3MapReader.h */,
+				3AEBDEEC1E50C68D0062D9AF /* Quake3MapWriter.h */,
+				3AEBDEED1E50C68D0062D9AF /* Quake4MapFormat.cpp */,
+				3AEBDEEE1E50C68D0062D9AF /* Quake4MapFormat.h */,
+				3AEBDEEF1E50C68D0062D9AF /* Quake4MapReader.cpp */,
+				3AEBDEF01E50C68D0062D9AF /* Quake4MapReader.h */,
+				3AEBDEF11E50C68D0062D9AF /* Quake4MapWriter.h */,
+			);
+			path = mapdoom3;
+			sourceTree = "<group>";
+		};
+		3AEBDEC61E50C68D0062D9AF /* aas */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDEC71E50C68D0062D9AF /* Doom3AasFile.cpp */,
+				3AEBDEC81E50C68D0062D9AF /* Doom3AasFile.h */,
+				3AEBDEC91E50C68D0062D9AF /* Doom3AasFileLoader.cpp */,
+				3AEBDECA1E50C68D0062D9AF /* Doom3AasFileLoader.h */,
+				3AEBDECB1E50C68D0062D9AF /* Doom3AasFileSettings.cpp */,
+				3AEBDECC1E50C68D0062D9AF /* Doom3AasFileSettings.h */,
+				3AEBDECD1E50C68D0062D9AF /* Util.h */,
+			);
+			name = aas;
+			path = ../../../plugins/mapdoom3/aas;
+			sourceTree = "<group>";
+		};
+		3AEBDED91E50C68D0062D9AF /* primitiveparsers */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDEDA1E50C68D0062D9AF /* BrushDef.cpp */,
+				3AEBDEDB1E50C68D0062D9AF /* BrushDef.h */,
+				3AEBDEDC1E50C68D0062D9AF /* BrushDef3.cpp */,
+				3AEBDEDD1E50C68D0062D9AF /* BrushDef3.h */,
+				3AEBDEDE1E50C68D0062D9AF /* Patch.cpp */,
+				3AEBDEDF1E50C68D0062D9AF /* Patch.h */,
+				3AEBDEE01E50C68D0062D9AF /* PatchDef2.cpp */,
+				3AEBDEE11E50C68D0062D9AF /* PatchDef2.h */,
+				3AEBDEE21E50C68D0062D9AF /* PatchDef3.cpp */,
+				3AEBDEE31E50C68D0062D9AF /* PatchDef3.h */,
+			);
+			name = primitiveparsers;
+			path = ../../plugins/mapdoom3/primitiveparsers;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDEE41E50C68D0062D9AF /* primitivewriters */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDEE51E50C68D0062D9AF /* BrushDef3Exporter.h */,
+				3AEBDEE61E50C68D0062D9AF /* BrushDefExporter.h */,
+				3AEBDEE71E50C68D0062D9AF /* PatchDefExporter.h */,
+			);
+			name = primitivewriters;
+			path = ../../plugins/mapdoom3/primitivewriters;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDF1F1E50C6F10062D9AF /* md5model */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDF3A1E50C71E0062D9AF /* MD5Anim.cpp */,
+				3AEBDF3B1E50C71E0062D9AF /* MD5Anim.h */,
+				3AEBDF3C1E50C71E0062D9AF /* MD5AnimationCache.cpp */,
+				3AEBDF3D1E50C71E0062D9AF /* MD5AnimationCache.h */,
+				3AEBDF3E1E50C71E0062D9AF /* MD5DataStructures.h */,
+				3AEBDF3F1E50C71E0062D9AF /* MD5Model.cpp */,
+				3AEBDF401E50C71E0062D9AF /* MD5Model.h */,
+				3AEBDF411E50C71E0062D9AF /* MD5ModelLoader.cpp */,
+				3AEBDF421E50C71E0062D9AF /* MD5ModelLoader.h */,
+				3AEBDF431E50C71E0062D9AF /* MD5ModelNode.cpp */,
+				3AEBDF441E50C71E0062D9AF /* MD5ModelNode.h */,
+				3AEBDF451E50C71E0062D9AF /* MD5Skeleton.cpp */,
+				3AEBDF461E50C71E0062D9AF /* MD5Skeleton.h */,
+				3AEBDF471E50C71E0062D9AF /* MD5Surface.cpp */,
+				3AEBDF481E50C71E0062D9AF /* MD5Surface.h */,
+				3AEBDF491E50C71E0062D9AF /* plugin.cpp */,
+				3AEBDF4A1E50C71E0062D9AF /* RenderableMD5Skeleton.h */,
+			);
+			path = md5model;
+			sourceTree = "<group>";
+		};
+		3AEBDFF71E50CAF50062D9AF /* picomodel */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDFF81E50CB120062D9AF /* lwo */,
+				3AEBE0061E50CB120062D9AF /* picointernal.c */,
+				3AEBE0071E50CB120062D9AF /* picointernal.h */,
+				3AEBE0081E50CB120062D9AF /* picomodel.c */,
+				3AEBE0091E50CB120062D9AF /* picomodules.c */,
+				3AEBE00A1E50CB120062D9AF /* pm_3ds.c */,
+				3AEBE00B1E50CB120062D9AF /* pm_ase.c */,
+				3AEBE00C1E50CB120062D9AF /* pm_fm.c */,
+				3AEBE00D1E50CB120062D9AF /* pm_fm.h */,
+				3AEBE00E1E50CB120062D9AF /* pm_lwo.c */,
+				3AEBE00F1E50CB120062D9AF /* pm_md2.c */,
+				3AEBE0101E50CB120062D9AF /* pm_md3.c */,
+				3AEBE0111E50CB120062D9AF /* pm_mdc.c */,
+				3AEBE0121E50CB120062D9AF /* pm_ms3d.c */,
+				3AEBE0131E50CB120062D9AF /* pm_obj.c */,
+				3AEBE0141E50CB120062D9AF /* pm_terrain.c */,
+			);
+			name = picomodel;
+			sourceTree = "<group>";
+		};
+		3AEBDFF81E50CB120062D9AF /* lwo */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDFF91E50CB120062D9AF /* clip.c */,
+				3AEBDFFA1E50CB120062D9AF /* envelope.c */,
+				3AEBDFFB1E50CB120062D9AF /* list.c */,
+				3AEBDFFC1E50CB120062D9AF /* lwio.c */,
+				3AEBDFFD1E50CB120062D9AF /* lwo2.c */,
+				3AEBDFFE1E50CB120062D9AF /* lwo2.h */,
+				3AEBDFFF1E50CB120062D9AF /* lwob.c */,
+				3AEBE0001E50CB120062D9AF /* pntspols.c */,
+				3AEBE0011E50CB120062D9AF /* surface.c */,
+				3AEBE0021E50CB120062D9AF /* vecmath.c */,
+				3AEBE0031E50CB120062D9AF /* vmap.c */,
+			);
+			name = lwo;
+			path = ../../libs/picomodel/lwo;
 			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -4474,6 +4817,61 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDEB91E50C6400062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDF0E1E50C68D0062D9AF /* PatchDefExporter.h in Headers */,
+				3AEBDF181E50C68D0062D9AF /* Quake4MapWriter.h in Headers */,
+				3AEBDF0C1E50C68D0062D9AF /* BrushDef3Exporter.h in Headers */,
+				3AEBDF131E50C68D0062D9AF /* Quake3MapWriter.h in Headers */,
+				3AEBDEFA1E50C68D0062D9AF /* Doom3MapFormat.h in Headers */,
+				3AEBDEF71E50C68D0062D9AF /* Doom3AasFileSettings.h in Headers */,
+				3AEBDF071E50C68D0062D9AF /* Patch.h in Headers */,
+				3AEBDF031E50C68D0062D9AF /* BrushDef.h in Headers */,
+				3AEBDF051E50C68D0062D9AF /* BrushDef3.h in Headers */,
+				3AEBDEF51E50C68D0062D9AF /* Doom3AasFileLoader.h in Headers */,
+				3AEBDF151E50C68D0062D9AF /* Quake4MapFormat.h in Headers */,
+				3AEBDEFE1E50C68D0062D9AF /* Doom3MapWriter.h in Headers */,
+				3AEBDF0B1E50C68D0062D9AF /* PatchDef3.h in Headers */,
+				3AEBDF001E50C68D0062D9AF /* Doom3PrefabFormat.h in Headers */,
+				3AEBDF101E50C68D0062D9AF /* Quake3MapFormat.h in Headers */,
+				3AEBDF121E50C68D0062D9AF /* Quake3MapReader.h in Headers */,
+				3AEBDF171E50C68D0062D9AF /* Quake4MapReader.h in Headers */,
+				3AEBDEFC1E50C68D0062D9AF /* Doom3MapReader.h in Headers */,
+				3AEBDEF81E50C68D0062D9AF /* Util.h in Headers */,
+				3AEBDF091E50C68D0062D9AF /* PatchDef2.h in Headers */,
+				3AEBDEF31E50C68D0062D9AF /* Doom3AasFile.h in Headers */,
+				3AEBDF0D1E50C68D0062D9AF /* BrushDefExporter.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDF1C1E50C6F10062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDF711E50C7290062D9AF /* MD5DataStructures.h in Headers */,
+				3AEBDF7B1E50C7290062D9AF /* MD5Surface.h in Headers */,
+				3AEBDF7D1E50C7290062D9AF /* RenderableMD5Skeleton.h in Headers */,
+				3AEBDF6E1E50C7290062D9AF /* MD5Anim.h in Headers */,
+				3AEBDF791E50C7290062D9AF /* MD5Skeleton.h in Headers */,
+				3AEBDF701E50C7290062D9AF /* MD5AnimationCache.h in Headers */,
+				3AEBDF751E50C7290062D9AF /* MD5ModelLoader.h in Headers */,
+				3AEBDF731E50C7290062D9AF /* MD5Model.h in Headers */,
+				3AEBDF771E50C7290062D9AF /* MD5ModelNode.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDFF11E50CAEE0062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0271E50CB120062D9AF /* pm_fm.h in Headers */,
+				3AEBE0211E50CB120062D9AF /* picointernal.h in Headers */,
+				3AEBE01A1E50CB120062D9AF /* lwo2.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4785,6 +5183,57 @@
 			productReference = 3AEBDEA31E50C3330062D9AF /* libdds.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		3AEBDEBA1E50C6400062D9AF /* mapdoom3 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDEC31E50C6400062D9AF /* Build configuration list for PBXNativeTarget "mapdoom3" */;
+			buildPhases = (
+				3AEBDEB71E50C6400062D9AF /* Sources */,
+				3AEBDEB81E50C6400062D9AF /* Frameworks */,
+				3AEBDEB91E50C6400062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mapdoom3;
+			productName = mapdoom3;
+			productReference = 3AEBDEBB1E50C6400062D9AF /* mapdoom3.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		3AEBDF1D1E50C6F10062D9AF /* md5model */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDF261E50C6F10062D9AF /* Build configuration list for PBXNativeTarget "md5model" */;
+			buildPhases = (
+				3AEBDF1A1E50C6F10062D9AF /* Sources */,
+				3AEBDF1B1E50C6F10062D9AF /* Frameworks */,
+				3AEBDF1C1E50C6F10062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = md5model;
+			productName = md5model;
+			productReference = 3AEBDF1E1E50C6F10062D9AF /* md5model.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		3AEBDFF21E50CAEE0062D9AF /* picomodel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDFF41E50CAEE0062D9AF /* Build configuration list for PBXNativeTarget "picomodel" */;
+			buildPhases = (
+				3AEBDFEF1E50CAEE0062D9AF /* Sources */,
+				3AEBDFF01E50CAEE0062D9AF /* Frameworks */,
+				3AEBDFF11E50CAEE0062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = picomodel;
+			productName = picomodel;
+			productReference = 3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -4895,6 +5344,15 @@
 					3AEBDEA21E50C3330062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBDEBA1E50C6400062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					3AEBDF1D1E50C6F10062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					3AEBDFF21E50CAEE0062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -4940,6 +5398,9 @@
 				3AEBDE631E50C1410062D9AF /* grid */,
 				3AEBDE781E50C29B0062D9AF /* image */,
 				3AEBDEA21E50C3330062D9AF /* dds */,
+				3AEBDEBA1E50C6400062D9AF /* mapdoom3 */,
+				3AEBDF1D1E50C6F10062D9AF /* md5model */,
+				3AEBDFF21E50CAEE0062D9AF /* picomodel */,
 			);
 		};
 /* End PBXProject section */
@@ -5161,6 +5622,75 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AEBDEB21E50C3620062D9AF /* ddslib.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDEB71E50C6400062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDEF91E50C68D0062D9AF /* Doom3MapFormat.cpp in Sources */,
+				3AEBDF0F1E50C68D0062D9AF /* Quake3MapFormat.cpp in Sources */,
+				3AEBDEFB1E50C68D0062D9AF /* Doom3MapReader.cpp in Sources */,
+				3AEBDF041E50C68D0062D9AF /* BrushDef3.cpp in Sources */,
+				3AEBDEFD1E50C68D0062D9AF /* Doom3MapWriter.cpp in Sources */,
+				3AEBDEF21E50C68D0062D9AF /* Doom3AasFile.cpp in Sources */,
+				3AEBDF141E50C68D0062D9AF /* Quake4MapFormat.cpp in Sources */,
+				3AEBDEFF1E50C68D0062D9AF /* Doom3PrefabFormat.cpp in Sources */,
+				3AEBDF161E50C68D0062D9AF /* Quake4MapReader.cpp in Sources */,
+				3AEBDF111E50C68D0062D9AF /* Quake3MapReader.cpp in Sources */,
+				3AEBDF021E50C68D0062D9AF /* BrushDef.cpp in Sources */,
+				3AEBDF0A1E50C68D0062D9AF /* PatchDef3.cpp in Sources */,
+				3AEBDF081E50C68D0062D9AF /* PatchDef2.cpp in Sources */,
+				3AEBDF061E50C68D0062D9AF /* Patch.cpp in Sources */,
+				3AEBDF011E50C68D0062D9AF /* mapdoom3.cpp in Sources */,
+				3AEBDEF61E50C68D0062D9AF /* Doom3AasFileSettings.cpp in Sources */,
+				3AEBDEF41E50C68D0062D9AF /* Doom3AasFileLoader.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDF1A1E50C6F10062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDF761E50C7290062D9AF /* MD5ModelNode.cpp in Sources */,
+				3AEBDF721E50C7290062D9AF /* MD5Model.cpp in Sources */,
+				3AEBDF7C1E50C7290062D9AF /* plugin.cpp in Sources */,
+				3AEBDF7A1E50C7290062D9AF /* MD5Surface.cpp in Sources */,
+				3AEBDF741E50C7290062D9AF /* MD5ModelLoader.cpp in Sources */,
+				3AEBDF781E50C7290062D9AF /* MD5Skeleton.cpp in Sources */,
+				3AEBDF6F1E50C7290062D9AF /* MD5AnimationCache.cpp in Sources */,
+				3AEBDF6D1E50C7290062D9AF /* MD5Anim.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDFEF1E50CAEE0062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0221E50CB120062D9AF /* picomodel.c in Sources */,
+				3AEBE02E1E50CB120062D9AF /* pm_terrain.c in Sources */,
+				3AEBE0241E50CB120062D9AF /* pm_3ds.c in Sources */,
+				3AEBE0231E50CB120062D9AF /* picomodules.c in Sources */,
+				3AEBE01C1E50CB120062D9AF /* pntspols.c in Sources */,
+				3AEBE02A1E50CB120062D9AF /* pm_md3.c in Sources */,
+				3AEBE0191E50CB120062D9AF /* lwo2.c in Sources */,
+				3AEBE0171E50CB120062D9AF /* list.c in Sources */,
+				3AEBE01D1E50CB120062D9AF /* surface.c in Sources */,
+				3AEBE0261E50CB120062D9AF /* pm_fm.c in Sources */,
+				3AEBE01E1E50CB120062D9AF /* vecmath.c in Sources */,
+				3AEBE01F1E50CB120062D9AF /* vmap.c in Sources */,
+				3AEBE0291E50CB120062D9AF /* pm_md2.c in Sources */,
+				3AEBE02D1E50CB120062D9AF /* pm_obj.c in Sources */,
+				3AEBE0151E50CB120062D9AF /* clip.c in Sources */,
+				3AEBE0201E50CB120062D9AF /* picointernal.c in Sources */,
+				3AEBE02C1E50CB120062D9AF /* pm_ms3d.c in Sources */,
+				3AEBE01B1E50CB120062D9AF /* lwob.c in Sources */,
+				3AEBE0181E50CB120062D9AF /* lwio.c in Sources */,
+				3AEBE0281E50CB120062D9AF /* pm_lwo.c in Sources */,
+				3AEBE02B1E50CB120062D9AF /* pm_mdc.c in Sources */,
+				3AEBE0251E50CB120062D9AF /* pm_ase.c in Sources */,
+				3AEBE0161E50CB120062D9AF /* envelope.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6913,6 +7443,269 @@
 			};
 			name = Release;
 		};
+		3AEBDEC41E50C6400062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDEC51E50C6400062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3AEBDF271E50C6F10062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDF281E50C6F10062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3AEBDFF51E50CAEE0062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDFF61E50CAEE0062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -7349,6 +8142,32 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		3AEBDEC31E50C6400062D9AF /* Build configuration list for PBXNativeTarget "mapdoom3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDEC41E50C6400062D9AF /* Debug */,
+				3AEBDEC51E50C6400062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AEBDF261E50C6F10062D9AF /* Build configuration list for PBXNativeTarget "md5model" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDF271E50C6F10062D9AF /* Debug */,
+				3AEBDF281E50C6F10062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AEBDFF41E50CAEE0062D9AF /* Build configuration list for PBXNativeTarget "picomodel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDFF51E50CAEE0062D9AF /* Debug */,
+				3AEBDFF61E50CAEE0062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */ = {
 			isa = XCConfigurationList;
