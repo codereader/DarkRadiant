@@ -39,6 +39,11 @@
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
+		<key>eventmanager.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>12</integer>
+		</dict>
 		<key>mathlib.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -113,6 +118,11 @@
 			<true/>
 		</dict>
 		<key>3AEBDDA31E50B0910062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDDC71E50BE540062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>

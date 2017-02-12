@@ -118,6 +118,20 @@
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AEBDDC71E50BE540062D9AF"
+               BuildableName = "eventmanager.dylib"
+               BlueprintName = "eventmanager"
+               ReferencedContainer = "container:DarkRadiant.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
