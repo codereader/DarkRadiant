@@ -1,0 +1,11 @@
+//
+//  boost.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 11.02.17.
+//
+//
+BOOST_OTHER_CPLUSPLUSFLAGS =
+BOOST_HEADER_SEARCH_PATHS = "/opt/local/include"
+BOOST_LIBRARY_SEARCH_PATHS = "/opt/local/lib"
+BOOST_LINKFLAGS = "-lboost_filesystem"
