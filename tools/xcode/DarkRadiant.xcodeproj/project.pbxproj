@@ -1040,6 +1040,12 @@
 		3AEBE4B31E50E9E50062D9AF /* input.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AC1E50E8F00062D9AF /* input.xml */; };
 		3AEBE4B41E50E9E50062D9AF /* menu.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AD1E50E8F00062D9AF /* menu.xml */; };
 		3AEBE4B51E50E9E50062D9AF /* user.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AE1E50E8FC0062D9AF /* user.xml */; };
+		3AEBE4BF1E50F0350062D9AF /* darkmod.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4B81E50EFEB0062D9AF /* darkmod.game */; };
+		3AEBE4C01E50F0350062D9AF /* doom3-demo.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4B91E50EFEB0062D9AF /* doom3-demo.game */; };
+		3AEBE4C11E50F0350062D9AF /* doom3.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BA1E50EFEB0062D9AF /* doom3.game */; };
+		3AEBE4C21E50F0350062D9AF /* quake3.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BB1E50EFEB0062D9AF /* quake3.game */; };
+		3AEBE4C31E50F0350062D9AF /* quake4.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BC1E50EFEB0062D9AF /* quake4.game */; };
+		3AEBE4C41E50F0350062D9AF /* xreal.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BD1E50EFEB0062D9AF /* xreal.game */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1325,6 +1331,21 @@
 				3AEBE4B31E50E9E50062D9AF /* input.xml in CopyFiles */,
 				3AEBE4B41E50E9E50062D9AF /* menu.xml in CopyFiles */,
 				3AEBE4B51E50E9E50062D9AF /* user.xml in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE4BE1E50F01D0062D9AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Resources/games;
+			dstSubfolderSpec = 16;
+			files = (
+				3AEBE4BF1E50F0350062D9AF /* darkmod.game in CopyFiles */,
+				3AEBE4C01E50F0350062D9AF /* doom3-demo.game in CopyFiles */,
+				3AEBE4C11E50F0350062D9AF /* doom3.game in CopyFiles */,
+				3AEBE4C21E50F0350062D9AF /* quake3.game in CopyFiles */,
+				3AEBE4C31E50F0350062D9AF /* quake4.game in CopyFiles */,
+				3AEBE4C41E50F0350062D9AF /* xreal.game in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2592,6 +2613,12 @@
 		3AEBE4AC1E50E8F00062D9AF /* input.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = input.xml; path = ../../install/input.xml; sourceTree = SOURCE_ROOT; };
 		3AEBE4AD1E50E8F00062D9AF /* menu.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = menu.xml; path = ../../install/menu.xml; sourceTree = SOURCE_ROOT; };
 		3AEBE4AE1E50E8FC0062D9AF /* user.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = user.xml; path = ../../install/user.xml; sourceTree = SOURCE_ROOT; };
+		3AEBE4B81E50EFEB0062D9AF /* darkmod.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = darkmod.game; path = ../../install/games/darkmod.game; sourceTree = SOURCE_ROOT; };
+		3AEBE4B91E50EFEB0062D9AF /* doom3-demo.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "doom3-demo.game"; path = "../../install/games/doom3-demo.game"; sourceTree = SOURCE_ROOT; };
+		3AEBE4BA1E50EFEB0062D9AF /* doom3.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = doom3.game; path = ../../install/games/doom3.game; sourceTree = SOURCE_ROOT; };
+		3AEBE4BB1E50EFEB0062D9AF /* quake3.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = quake3.game; path = ../../install/games/quake3.game; sourceTree = SOURCE_ROOT; };
+		3AEBE4BC1E50EFEB0062D9AF /* quake4.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = quake4.game; path = ../../install/games/quake4.game; sourceTree = SOURCE_ROOT; };
+		3AEBE4BD1E50EFEB0062D9AF /* xreal.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = xreal.game; path = ../../install/games/xreal.game; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -5148,10 +5175,33 @@
 			name = xml;
 			sourceTree = "<group>";
 		};
+		3AEBE4B61E50EFAD0062D9AF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE4B71E50EFD60062D9AF /* games */,
+				3A0122531E503C4D00A62BC1 /* bitmaps */,
+				3AEBE4A81E50E8A10062D9AF /* xml */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		3AEBE4B71E50EFD60062D9AF /* games */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE4B81E50EFEB0062D9AF /* darkmod.game */,
+				3AEBE4B91E50EFEB0062D9AF /* doom3-demo.game */,
+				3AEBE4BA1E50EFEB0062D9AF /* doom3.game */,
+				3AEBE4BB1E50EFEB0062D9AF /* quake3.game */,
+				3AEBE4BC1E50EFEB0062D9AF /* quake4.game */,
+				3AEBE4BD1E50EFEB0062D9AF /* xreal.game */,
+			);
+			name = games;
+			sourceTree = "<group>";
+		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
 			children = (
-				3A0122531E503C4D00A62BC1 /* bitmaps */,
+				3AEBE4B61E50EFAD0062D9AF /* Resources */,
 				3AF7430F1E4F861A003465B5 /* brush */,
 				3AF743371E4F861A003465B5 /* camera */,
 				3AF7434C1E4F861A003465B5 /* clipper */,
@@ -5174,7 +5224,6 @@
 				3AF744701E4F861B003465B5 /* settings */,
 				3AF744831E4F861B003465B5 /* textool */,
 				3AF744971E4F861B003465B5 /* ui */,
-				3AEBE4A81E50E8A10062D9AF /* xml */,
 				3AF745601E4F861B003465B5 /* xyview */,
 			);
 			path = DarkRadiant;
@@ -7589,6 +7638,7 @@
 				3AEDE3971E4EEA1F005A8641 /* Frameworks */,
 				3AEDE3981E4EEA1F005A8641 /* CopyFiles */,
 				3AEBE4AF1E50E9BA0062D9AF /* CopyFiles */,
+				3AEBE4BE1E50F01D0062D9AF /* CopyFiles */,
 			);
 			buildRules = (
 			);
