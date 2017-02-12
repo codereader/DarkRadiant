@@ -54,6 +54,16 @@
 			<key>orderHint</key>
 			<integer>14</integer>
 		</dict>
+		<key>fonts.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>15</integer>
+		</dict>
+		<key>grid.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>16</integer>
+		</dict>
 		<key>mathlib.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -143,6 +153,16 @@
 			<true/>
 		</dict>
 		<key>3AEBDE1F1E50C0190062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDE3D1E50C0B50062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDE631E50C1410062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>

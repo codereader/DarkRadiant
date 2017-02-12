@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBDE1F1E50C0190062D9AF"
-               BuildableName = "filters.dylib"
-               BlueprintName = "filters"
+               BlueprintIdentifier = "3AEBDE3D1E50C0B50062D9AF"
+               BuildableName = "fonts.dylib"
+               BlueprintName = "fonts"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDE1F1E50C0190062D9AF"
-            BuildableName = "filters.dylib"
-            BlueprintName = "filters"
+            BlueprintIdentifier = "3AEBDE3D1E50C0B50062D9AF"
+            BuildableName = "fonts.dylib"
+            BlueprintName = "fonts"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDE1F1E50C0190062D9AF"
-            BuildableName = "filters.dylib"
-            BlueprintName = "filters"
+            BlueprintIdentifier = "3AEBDE3D1E50C0B50062D9AF"
+            BuildableName = "fonts.dylib"
+            BlueprintName = "fonts"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

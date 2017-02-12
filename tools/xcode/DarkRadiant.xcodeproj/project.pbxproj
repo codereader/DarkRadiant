@@ -467,6 +467,19 @@
 		3AEBDE371E50C05F0062D9AF /* XMLFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE311E50C05F0062D9AF /* XMLFilter.cpp */; };
 		3AEBDE381E50C05F0062D9AF /* XMLFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE321E50C05F0062D9AF /* XMLFilter.h */; };
 		3AEBDE391E50C0810062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AEBDE551E50C0F40062D9AF /* FontInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE491E50C0F40062D9AF /* FontInfo.h */; };
+		3AEBDE561E50C0F40062D9AF /* FontLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE4A1E50C0F40062D9AF /* FontLoader.cpp */; };
+		3AEBDE571E50C0F40062D9AF /* FontLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE4B1E50C0F40062D9AF /* FontLoader.h */; };
+		3AEBDE581E50C0F40062D9AF /* FontManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE4C1E50C0F40062D9AF /* FontManager.cpp */; };
+		3AEBDE591E50C0F40062D9AF /* FontManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE4D1E50C0F40062D9AF /* FontManager.h */; };
+		3AEBDE5A1E50C0F40062D9AF /* GlyphInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE4E1E50C0F40062D9AF /* GlyphInfo.cpp */; };
+		3AEBDE5B1E50C0F40062D9AF /* GlyphInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE4F1E50C0F40062D9AF /* GlyphInfo.h */; };
+		3AEBDE5C1E50C0F40062D9AF /* GlyphSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE501E50C0F40062D9AF /* GlyphSet.cpp */; };
+		3AEBDE5D1E50C0F40062D9AF /* GlyphSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE511E50C0F40062D9AF /* GlyphSet.h */; };
+		3AEBDE5E1E50C0F40062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE541E50C0F40062D9AF /* plugin.cpp */; };
+		3AEBDE5F1E50C1240062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AEBDE731E50C1810062D9AF /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE6F1E50C1770062D9AF /* Grid.cpp */; };
+		3AEBDE741E50C1890062D9AF /* GridItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE701E50C1770062D9AF /* GridItem.h */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1447,6 +1460,20 @@
 		3AEBDE2E1E50C05F0062D9AF /* InstanceUpdateWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceUpdateWalker.h; path = ../../plugins/filters/InstanceUpdateWalker.h; sourceTree = SOURCE_ROOT; };
 		3AEBDE311E50C05F0062D9AF /* XMLFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLFilter.cpp; path = ../../plugins/filters/XMLFilter.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE321E50C05F0062D9AF /* XMLFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLFilter.h; path = ../../plugins/filters/XMLFilter.h; sourceTree = SOURCE_ROOT; };
+		3AEBDE3E1E50C0B50062D9AF /* fonts.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fonts.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDE491E50C0F40062D9AF /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontInfo.h; path = ../../plugins/fonts/FontInfo.h; sourceTree = SOURCE_ROOT; };
+		3AEBDE4A1E50C0F40062D9AF /* FontLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontLoader.cpp; path = ../../plugins/fonts/FontLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDE4B1E50C0F40062D9AF /* FontLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontLoader.h; path = ../../plugins/fonts/FontLoader.h; sourceTree = SOURCE_ROOT; };
+		3AEBDE4C1E50C0F40062D9AF /* FontManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontManager.cpp; path = ../../plugins/fonts/FontManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDE4D1E50C0F40062D9AF /* FontManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontManager.h; path = ../../plugins/fonts/FontManager.h; sourceTree = SOURCE_ROOT; };
+		3AEBDE4E1E50C0F40062D9AF /* GlyphInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlyphInfo.cpp; path = ../../plugins/fonts/GlyphInfo.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDE4F1E50C0F40062D9AF /* GlyphInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlyphInfo.h; path = ../../plugins/fonts/GlyphInfo.h; sourceTree = SOURCE_ROOT; };
+		3AEBDE501E50C0F40062D9AF /* GlyphSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlyphSet.cpp; path = ../../plugins/fonts/GlyphSet.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDE511E50C0F40062D9AF /* GlyphSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlyphSet.h; path = ../../plugins/fonts/GlyphSet.h; sourceTree = SOURCE_ROOT; };
+		3AEBDE541E50C0F40062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/fonts/plugin.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDE641E50C1410062D9AF /* grid.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = grid.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDE6F1E50C1770062D9AF /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Grid.cpp; path = ../../plugins/grid/Grid.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDE701E50C1770062D9AF /* GridItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridItem.h; path = ../../plugins/grid/GridItem.h; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -2136,6 +2163,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDE3B1E50C0B50062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDE5F1E50C1240062D9AF /* libxmlutil.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDE611E50C1410062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2581,6 +2623,8 @@
 				3AEBDDC91E50BE540062D9AF /* eventmanager */,
 				3AEBDE0E1E50BFB80062D9AF /* filetypes */,
 				3AEBDE211E50C0190062D9AF /* filters */,
+				3AEBDE3F1E50C0B50062D9AF /* fonts */,
+				3AEBDE651E50C1410062D9AF /* grid */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -2621,6 +2665,8 @@
 				3AEBDDC81E50BE540062D9AF /* eventmanager.dylib */,
 				3AEBDE0D1E50BFB80062D9AF /* filetypes.dylib */,
 				3AEBDE201E50C0190062D9AF /* filters.dylib */,
+				3AEBDE3E1E50C0B50062D9AF /* fonts.dylib */,
+				3AEBDE641E50C1410062D9AF /* grid.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2907,6 +2953,32 @@
 				3AEBDE321E50C05F0062D9AF /* XMLFilter.h */,
 			);
 			path = filters;
+			sourceTree = "<group>";
+		};
+		3AEBDE3F1E50C0B50062D9AF /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDE491E50C0F40062D9AF /* FontInfo.h */,
+				3AEBDE4A1E50C0F40062D9AF /* FontLoader.cpp */,
+				3AEBDE4B1E50C0F40062D9AF /* FontLoader.h */,
+				3AEBDE4C1E50C0F40062D9AF /* FontManager.cpp */,
+				3AEBDE4D1E50C0F40062D9AF /* FontManager.h */,
+				3AEBDE4E1E50C0F40062D9AF /* GlyphInfo.cpp */,
+				3AEBDE4F1E50C0F40062D9AF /* GlyphInfo.h */,
+				3AEBDE501E50C0F40062D9AF /* GlyphSet.cpp */,
+				3AEBDE511E50C0F40062D9AF /* GlyphSet.h */,
+				3AEBDE541E50C0F40062D9AF /* plugin.cpp */,
+			);
+			path = fonts;
+			sourceTree = "<group>";
+		};
+		3AEBDE651E50C1410062D9AF /* grid */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDE6F1E50C1770062D9AF /* Grid.cpp */,
+				3AEBDE701E50C1770062D9AF /* GridItem.h */,
+			);
+			path = grid;
 			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -4277,6 +4349,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDE3C1E50C0B50062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDE5D1E50C0F40062D9AF /* GlyphSet.h in Headers */,
+				3AEBDE571E50C0F40062D9AF /* FontLoader.h in Headers */,
+				3AEBDE5B1E50C0F40062D9AF /* GlyphInfo.h in Headers */,
+				3AEBDE551E50C0F40062D9AF /* FontInfo.h in Headers */,
+				3AEBDE591E50C0F40062D9AF /* FontManager.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDE621E50C1410062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDE741E50C1890062D9AF /* GridItem.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4520,6 +4612,40 @@
 			productReference = 3AEBDE201E50C0190062D9AF /* filters.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBDE3D1E50C0B50062D9AF /* fonts */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDE461E50C0B50062D9AF /* Build configuration list for PBXNativeTarget "fonts" */;
+			buildPhases = (
+				3AEBDE3A1E50C0B50062D9AF /* Sources */,
+				3AEBDE3B1E50C0B50062D9AF /* Frameworks */,
+				3AEBDE3C1E50C0B50062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = fonts;
+			productName = fonts;
+			productReference = 3AEBDE3E1E50C0B50062D9AF /* fonts.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		3AEBDE631E50C1410062D9AF /* grid */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDE6C1E50C1410062D9AF /* Build configuration list for PBXNativeTarget "grid" */;
+			buildPhases = (
+				3AEBDE601E50C1410062D9AF /* Sources */,
+				3AEBDE611E50C1410062D9AF /* Frameworks */,
+				3AEBDE621E50C1410062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = grid;
+			productName = grid;
+			productReference = 3AEBDE641E50C1410062D9AF /* grid.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -4618,6 +4744,12 @@
 					3AEBDE1F1E50C0190062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBDE3D1E50C0B50062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					3AEBDE631E50C1410062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -4659,6 +4791,8 @@
 				3AEBDDC71E50BE540062D9AF /* eventmanager */,
 				3AEBDE0C1E50BFB80062D9AF /* filetypes */,
 				3AEBDE1F1E50C0190062D9AF /* filters */,
+				3AEBDE3D1E50C0B50062D9AF /* fonts */,
+				3AEBDE631E50C1410062D9AF /* grid */,
 			);
 		};
 /* End PBXProject section */
@@ -4839,6 +4973,26 @@
 				3AEBDE331E50C05F0062D9AF /* BasicFilterSystem.cpp in Sources */,
 				3AEBDE351E50C05F0062D9AF /* filters.cpp in Sources */,
 				3AEBDE371E50C05F0062D9AF /* XMLFilter.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDE3A1E50C0B50062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDE5E1E50C0F40062D9AF /* plugin.cpp in Sources */,
+				3AEBDE581E50C0F40062D9AF /* FontManager.cpp in Sources */,
+				3AEBDE5C1E50C0F40062D9AF /* GlyphSet.cpp in Sources */,
+				3AEBDE561E50C0F40062D9AF /* FontLoader.cpp in Sources */,
+				3AEBDE5A1E50C0F40062D9AF /* GlyphInfo.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDE601E50C1410062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDE731E50C1810062D9AF /* Grid.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6231,6 +6385,188 @@
 			};
 			name = Release;
 		};
+		3AEBDE471E50C0B50062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDE481E50C0B50062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3AEBDE6D1E50C1410062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDE6E1E50C1410062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -6625,6 +6961,22 @@
 			buildConfigurations = (
 				3AEBDE291E50C0190062D9AF /* Debug */,
 				3AEBDE2A1E50C0190062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3AEBDE461E50C0B50062D9AF /* Build configuration list for PBXNativeTarget "fonts" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDE471E50C0B50062D9AF /* Debug */,
+				3AEBDE481E50C0B50062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3AEBDE6C1E50C1410062D9AF /* Build configuration list for PBXNativeTarget "grid" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDE6D1E50C1410062D9AF /* Debug */,
+				3AEBDE6E1E50C1410062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
