@@ -19,6 +19,11 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
+		<key>dds.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>18</integer>
+		</dict>
 		<key>eclassmgr.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -63,6 +68,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>16</integer>
+		</dict>
+		<key>image.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>17</integer>
 		</dict>
 		<key>mathlib.xcscheme</key>
 		<dict>
@@ -163,6 +173,16 @@
 			<true/>
 		</dict>
 		<key>3AEBDE631E50C1410062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDE781E50C29B0062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDEA21E50C3330062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>

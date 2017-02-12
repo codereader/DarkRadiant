@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBDE631E50C1410062D9AF"
-               BuildableName = "grid.dylib"
-               BlueprintName = "grid"
+               BlueprintIdentifier = "3AEBDEA21E50C3330062D9AF"
+               BuildableName = "libdds.a"
+               BlueprintName = "dds"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDE631E50C1410062D9AF"
-            BuildableName = "grid.dylib"
-            BlueprintName = "grid"
+            BlueprintIdentifier = "3AEBDEA21E50C3330062D9AF"
+            BuildableName = "libdds.a"
+            BlueprintName = "dds"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDE631E50C1410062D9AF"
-            BuildableName = "grid.dylib"
-            BlueprintName = "grid"
+            BlueprintIdentifier = "3AEBDEA21E50C3330062D9AF"
+            BuildableName = "libdds.a"
+            BlueprintName = "dds"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
