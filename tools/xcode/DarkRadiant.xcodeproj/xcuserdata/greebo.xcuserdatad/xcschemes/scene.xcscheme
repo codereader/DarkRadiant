@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEDE3991E4EEA1F005A8641"
-               BuildableName = "DarkRadiant"
-               BlueprintName = "DarkRadiant"
+               BlueprintIdentifier = "3A0120721E502F7800A62BC1"
+               BuildableName = "libscene.a"
+               BlueprintName = "scene"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,15 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEDE3991E4EEA1F005A8641"
-            BuildableName = "DarkRadiant"
-            BlueprintName = "DarkRadiant"
-            ReferencedContainer = "container:DarkRadiant.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -51,16 +42,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEDE3991E4EEA1F005A8641"
-            BuildableName = "DarkRadiant"
-            BlueprintName = "DarkRadiant"
+            BlueprintIdentifier = "3A0120721E502F7800A62BC1"
+            BuildableName = "libscene.a"
+            BlueprintName = "scene"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -70,16 +60,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEDE3991E4EEA1F005A8641"
-            BuildableName = "DarkRadiant"
-            BlueprintName = "DarkRadiant"
+            BlueprintIdentifier = "3A0120721E502F7800A62BC1"
+            BuildableName = "libscene.a"
+            BlueprintName = "scene"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
