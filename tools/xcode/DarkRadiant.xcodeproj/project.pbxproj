@@ -583,6 +583,13 @@
 		3AEBE02C1E50CB120062D9AF /* pm_ms3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0121E50CB120062D9AF /* pm_ms3d.c */; };
 		3AEBE02D1E50CB120062D9AF /* pm_obj.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0131E50CB120062D9AF /* pm_obj.c */; };
 		3AEBE02E1E50CB120062D9AF /* pm_terrain.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0141E50CB120062D9AF /* pm_terrain.c */; };
+		3AEBE0431E50D25E0062D9AF /* RenderablePicoModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE03F1E50D25E0062D9AF /* RenderablePicoModel.cpp */; };
+		3AEBE0441E50D25E0062D9AF /* RenderablePicoModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0401E50D25E0062D9AF /* RenderablePicoModel.h */; };
+		3AEBE0451E50D25E0062D9AF /* RenderablePicoSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0411E50D25E0062D9AF /* RenderablePicoSurface.cpp */; };
+		3AEBE0461E50D25E0062D9AF /* RenderablePicoSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0421E50D25E0062D9AF /* RenderablePicoSurface.h */; };
+		3AEBE0471E50D27F0062D9AF /* libpicomodel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */; };
+		3AEBE0481E50D2860062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
+		3AEBE04B1E50D6840062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1680,6 +1687,13 @@
 		3AEBE0121E50CB120062D9AF /* pm_ms3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_ms3d.c; path = ../../libs/picomodel/pm_ms3d.c; sourceTree = SOURCE_ROOT; };
 		3AEBE0131E50CB120062D9AF /* pm_obj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_obj.c; path = ../../libs/picomodel/pm_obj.c; sourceTree = SOURCE_ROOT; };
 		3AEBE0141E50CB120062D9AF /* pm_terrain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_terrain.c; path = ../../libs/picomodel/pm_terrain.c; sourceTree = SOURCE_ROOT; };
+		3AEBE0341E50D0400062D9AF /* libmodel.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmodel.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE03F1E50D25E0062D9AF /* RenderablePicoModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoModel.cpp; path = ../../../plugins/model/RenderablePicoModel.cpp; sourceTree = "<group>"; };
+		3AEBE0401E50D25E0062D9AF /* RenderablePicoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoModel.h; path = ../../../plugins/model/RenderablePicoModel.h; sourceTree = "<group>"; };
+		3AEBE0411E50D25E0062D9AF /* RenderablePicoSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoSurface.cpp; path = ../../../plugins/model/RenderablePicoSurface.cpp; sourceTree = "<group>"; };
+		3AEBE0421E50D25E0062D9AF /* RenderablePicoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoSurface.h; path = ../../../plugins/model/RenderablePicoSurface.h; sourceTree = "<group>"; };
+		3AEBE0491E50D2F30062D9AF /* model.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = model.xcconfig; sourceTree = "<group>"; };
+		3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = picomodel.xcconfig; sourceTree = "<group>"; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -2426,6 +2440,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE0311E50D0400062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE04B1E50D6840062D9AF /* libmathlib.a in Frameworks */,
+				3AEBE0481E50D2860062D9AF /* OpenGL.framework in Frameworks */,
+				3AEBE0471E50D27F0062D9AF /* libpicomodel.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2859,6 +2883,8 @@
 				3AEBDC881E5067630062D9AF /* zlib.xcconfig */,
 				3AEBDEB61E50C3AD0062D9AF /* image.xcconfig */,
 				3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */,
+				3AEBE0491E50D2F30062D9AF /* model.xcconfig */,
+				3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -2880,6 +2906,7 @@
 				3AEBDE7A1E50C29B0062D9AF /* image */,
 				3AEBDEBC1E50C6400062D9AF /* mapdoom3 */,
 				3AEBDF1F1E50C6F10062D9AF /* md5model */,
+				3AEBE0351E50D0400062D9AF /* model */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -2927,6 +2954,7 @@
 				3AEBDEBB1E50C6400062D9AF /* mapdoom3.dylib */,
 				3AEBDF1E1E50C6F10062D9AF /* md5model.dylib */,
 				3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */,
+				3AEBE0341E50D0400062D9AF /* libmodel.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3406,6 +3434,17 @@
 			);
 			name = lwo;
 			path = ../../libs/picomodel/lwo;
+			sourceTree = "<group>";
+		};
+		3AEBE0351E50D0400062D9AF /* model */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE03F1E50D25E0062D9AF /* RenderablePicoModel.cpp */,
+				3AEBE0401E50D25E0062D9AF /* RenderablePicoModel.h */,
+				3AEBE0411E50D25E0062D9AF /* RenderablePicoSurface.cpp */,
+				3AEBE0421E50D25E0062D9AF /* RenderablePicoSurface.h */,
+			);
+			path = model;
 			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -4872,6 +4911,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE0321E50D0400062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0441E50D25E0062D9AF /* RenderablePicoModel.h in Headers */,
+				3AEBE0461E50D25E0062D9AF /* RenderablePicoSurface.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5234,6 +5282,23 @@
 			productReference = 3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		3AEBE0331E50D0400062D9AF /* model */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBE03C1E50D0410062D9AF /* Build configuration list for PBXNativeTarget "model" */;
+			buildPhases = (
+				3AEBE0301E50D0400062D9AF /* Sources */,
+				3AEBE0311E50D0400062D9AF /* Frameworks */,
+				3AEBE0321E50D0400062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = model;
+			productName = model;
+			productReference = 3AEBE0341E50D0400062D9AF /* libmodel.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -5353,6 +5418,9 @@
 					3AEBDFF21E50CAEE0062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBE0331E50D0400062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -5401,6 +5469,7 @@
 				3AEBDEBA1E50C6400062D9AF /* mapdoom3 */,
 				3AEBDF1D1E50C6F10062D9AF /* md5model */,
 				3AEBDFF21E50CAEE0062D9AF /* picomodel */,
+				3AEBE0331E50D0400062D9AF /* model */,
 			);
 		};
 /* End PBXProject section */
@@ -5691,6 +5760,15 @@
 				3AEBE02B1E50CB120062D9AF /* pm_mdc.c in Sources */,
 				3AEBE0251E50CB120062D9AF /* pm_ase.c in Sources */,
 				3AEBE0161E50CB120062D9AF /* envelope.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE0301E50D0400062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE0451E50D25E0062D9AF /* RenderablePicoSurface.cpp in Sources */,
+				3AEBE0431E50D25E0062D9AF /* RenderablePicoModel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7627,6 +7705,7 @@
 		};
 		3AEBDFF51E50CAEE0062D9AF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -7671,6 +7750,7 @@
 		};
 		3AEBDFF61E50CAEE0062D9AF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -7694,6 +7774,99 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3AEBE03D1E50D0410062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBE0491E50D2F30062D9AF /* model.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBE03E1E50D0410062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEBE0491E50D2F30062D9AF /* model.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -8168,6 +8341,16 @@
 				3AEBDFF61E50CAEE0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AEBE03C1E50D0410062D9AF /* Build configuration list for PBXNativeTarget "model" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBE03D1E50D0410062D9AF /* Debug */,
+				3AEBE03E1E50D0410062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */ = {
 			isa = XCConfigurationList;

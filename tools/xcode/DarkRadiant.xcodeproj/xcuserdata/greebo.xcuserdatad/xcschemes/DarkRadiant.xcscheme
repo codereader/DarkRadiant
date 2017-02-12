@@ -238,8 +238,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBDF2C1E50C7040062D9AF"
-               BuildableName = "model.dylib"
+               BlueprintIdentifier = "3AEBE0331E50D0400062D9AF"
+               BuildableName = "libmodel.dylib"
                BlueprintName = "model"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
