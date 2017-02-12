@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBDC681E50667D0062D9AF"
-               BuildableName = "archivezip.dylib"
-               BlueprintName = "archivezip"
+               BlueprintIdentifier = "3AEBDC8D1E5069840062D9AF"
+               BuildableName = "libcommandsystem.dylib"
+               BlueprintName = "commandsystem"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDC681E50667D0062D9AF"
-            BuildableName = "archivezip.dylib"
-            BlueprintName = "archivezip"
+            BlueprintIdentifier = "3AEBDC8D1E5069840062D9AF"
+            BuildableName = "libcommandsystem.dylib"
+            BlueprintName = "commandsystem"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBDC681E50667D0062D9AF"
-            BuildableName = "archivezip.dylib"
-            BlueprintName = "archivezip"
+            BlueprintIdentifier = "3AEBDC8D1E5069840062D9AF"
+            BuildableName = "libcommandsystem.dylib"
+            BlueprintName = "commandsystem"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
