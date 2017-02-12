@@ -327,6 +327,12 @@
 		3AEBDC871E50673D0062D9AF /* zlibstream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7E1E50669C0062D9AF /* zlibstream.cpp */; };
 		3AEBDCA31E506C930062D9AF /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC9B1E5069A60062D9AF /* CommandSystem.cpp */; };
 		3AEBDCA51E509CEE0062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AEBDCBB1E509DC30062D9AF /* Doom3EntityClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCB51E509DC30062D9AF /* Doom3EntityClass.cpp */; };
+		3AEBDCBC1E509DC30062D9AF /* Doom3EntityClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCB61E509DC30062D9AF /* Doom3EntityClass.h */; };
+		3AEBDCBD1E509DC30062D9AF /* Doom3ModelDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCB71E509DC30062D9AF /* Doom3ModelDef.h */; };
+		3AEBDCBE1E509DC30062D9AF /* eclass_doom3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCB81E509DC30062D9AF /* eclass_doom3.cpp */; };
+		3AEBDCBF1E509DC30062D9AF /* EClassManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCB91E509DC30062D9AF /* EClassManager.cpp */; };
+		3AEBDCC01E509DC30062D9AF /* EClassManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCBA1E509DC30062D9AF /* EClassManager.h */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1174,6 +1180,13 @@
 		3AEBDC9D1E5069A60062D9AF /* CommandTokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandTokeniser.h; path = ../../plugins/commandsystem/CommandTokeniser.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC9E1E5069A60062D9AF /* Executable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Executable.h; path = ../../plugins/commandsystem/Executable.h; sourceTree = SOURCE_ROOT; };
 		3AEBDCA11E5069A60062D9AF /* Statement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Statement.h; path = ../../plugins/commandsystem/Statement.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eclassmgr.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDCB51E509DC30062D9AF /* Doom3EntityClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3EntityClass.cpp; path = ../../plugins/eclassmgr/Doom3EntityClass.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCB61E509DC30062D9AF /* Doom3EntityClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3EntityClass.h; path = ../../plugins/eclassmgr/Doom3EntityClass.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCB71E509DC30062D9AF /* Doom3ModelDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3ModelDef.h; path = ../../plugins/eclassmgr/Doom3ModelDef.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCB81E509DC30062D9AF /* eclass_doom3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclass_doom3.cpp; path = ../../plugins/eclassmgr/eclass_doom3.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCB91E509DC30062D9AF /* EClassManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassManager.cpp; path = ../../plugins/eclassmgr/EClassManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCBA1E509DC30062D9AF /* EClassManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassManager.h; path = ../../plugins/eclassmgr/EClassManager.h; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -1802,6 +1815,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDCA71E509D8B0062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2241,6 +2261,7 @@
 		3A0124101E50481E00A62BC1 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				3AEBDCAB1E509D8B0062D9AF /* eclassmgr */,
 				3AEBDC8F1E5069840062D9AF /* commandsystem */,
 				3AEBDC6A1E50667D0062D9AF /* archivezip */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
@@ -2276,6 +2297,7 @@
 				3A0124151E50484100A62BC1 /* xmlregistry.dylib */,
 				3AEBDC691E50667D0062D9AF /* archivezip.dylib */,
 				3AEBDC8E1E5069840062D9AF /* commandsystem.dylib */,
+				3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2321,6 +2343,19 @@
 				3AEBDCA11E5069A60062D9AF /* Statement.h */,
 			);
 			path = commandsystem;
+			sourceTree = "<group>";
+		};
+		3AEBDCAB1E509D8B0062D9AF /* eclassmgr */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDCB51E509DC30062D9AF /* Doom3EntityClass.cpp */,
+				3AEBDCB61E509DC30062D9AF /* Doom3EntityClass.h */,
+				3AEBDCB71E509DC30062D9AF /* Doom3ModelDef.h */,
+				3AEBDCB81E509DC30062D9AF /* eclass_doom3.cpp */,
+				3AEBDCB91E509DC30062D9AF /* EClassManager.cpp */,
+				3AEBDCBA1E509DC30062D9AF /* EClassManager.h */,
+			);
+			path = eclassmgr;
 			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -3569,6 +3604,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDCA81E509D8B0062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDCBC1E509DC30062D9AF /* Doom3EntityClass.h in Headers */,
+				3AEBDCBD1E509DC30062D9AF /* Doom3ModelDef.h in Headers */,
+				3AEBDCC01E509DC30062D9AF /* EClassManager.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3693,6 +3738,23 @@
 			productReference = 3AEBDC8E1E5069840062D9AF /* commandsystem.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBDCA91E509D8B0062D9AF /* eclassmgr */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDCB21E509D8B0062D9AF /* Build configuration list for PBXNativeTarget "eclassmgr" */;
+			buildPhases = (
+				3AEBDCA61E509D8B0062D9AF /* Sources */,
+				3AEBDCA71E509D8B0062D9AF /* Frameworks */,
+				3AEBDCA81E509D8B0062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = eclassmgr;
+			productName = eclassmgr;
+			productReference = 3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -3770,6 +3832,9 @@
 					3AEBDC8D1E5069840062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBDCA91E509D8B0062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -3804,6 +3869,7 @@
 				3A0124141E50484100A62BC1 /* xmlregistry */,
 				3AEBDC681E50667D0062D9AF /* archivezip */,
 				3AEBDC8D1E5069840062D9AF /* commandsystem */,
+				3AEBDCA91E509D8B0062D9AF /* eclassmgr */,
 			);
 		};
 /* End PBXProject section */
@@ -3880,6 +3946,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AEBDCA31E506C930062D9AF /* CommandSystem.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDCA61E509D8B0062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDCBF1E509DC30062D9AF /* EClassManager.cpp in Sources */,
+				3AEBDCBB1E509DC30062D9AF /* Doom3EntityClass.cpp in Sources */,
+				3AEBDCBE1E509DC30062D9AF /* eclass_doom3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4635,6 +4711,97 @@
 			};
 			name = Release;
 		};
+		3AEBDCB31E509D8B0062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDCB41E509D8B0062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -4968,6 +5135,14 @@
 			buildConfigurations = (
 				3AEBDC971E5069840062D9AF /* Debug */,
 				3AEBDC981E5069840062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3AEBDCB21E509D8B0062D9AF /* Build configuration list for PBXNativeTarget "eclassmgr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDCB31E509D8B0062D9AF /* Debug */,
+				3AEBDCB41E509D8B0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

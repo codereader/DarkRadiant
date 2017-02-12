@@ -19,6 +19,11 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
+		<key>eclassmgr.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
+		</dict>
 		<key>mathlib.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -73,6 +78,11 @@
 			<true/>
 		</dict>
 		<key>3AEBDC8D1E5069840062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDCA91E509D8B0062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
