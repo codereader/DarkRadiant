@@ -340,6 +340,92 @@
 		3AEBDCDB1E509E730062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCD61E509E730062D9AF /* plugin.cpp */; };
 		3AEBDCDC1E509ECC0062D9AF /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
 		3AEBDCDF1E50A8350062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
+		3AEBDD4A1E50AB640062D9AF /* AngleKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCEF1E50AB640062D9AF /* AngleKey.cpp */; };
+		3AEBDD4B1E50AB640062D9AF /* AngleKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCF01E50AB640062D9AF /* AngleKey.h */; };
+		3AEBDD4C1E50AB640062D9AF /* ColourKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCF11E50AB640062D9AF /* ColourKey.h */; };
+		3AEBDD4D1E50AB640062D9AF /* Curve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCF31E50AB640062D9AF /* Curve.cpp */; };
+		3AEBDD4E1E50AB640062D9AF /* Curve.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCF41E50AB640062D9AF /* Curve.h */; };
+		3AEBDD4F1E50AB640062D9AF /* CurveCatmullRom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCF51E50AB640062D9AF /* CurveCatmullRom.cpp */; };
+		3AEBDD501E50AB640062D9AF /* CurveCatmullRom.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCF61E50AB640062D9AF /* CurveCatmullRom.h */; };
+		3AEBDD511E50AB640062D9AF /* CurveControlPointFunctors.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCF71E50AB640062D9AF /* CurveControlPointFunctors.h */; };
+		3AEBDD521E50AB640062D9AF /* CurveEditInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCF81E50AB640062D9AF /* CurveEditInstance.cpp */; };
+		3AEBDD531E50AB640062D9AF /* CurveEditInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCF91E50AB640062D9AF /* CurveEditInstance.h */; };
+		3AEBDD541E50AB640062D9AF /* CurveNURBS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCFA1E50AB640062D9AF /* CurveNURBS.cpp */; };
+		3AEBDD551E50AB640062D9AF /* CurveNURBS.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCFB1E50AB640062D9AF /* CurveNURBS.h */; };
+		3AEBDD561E50AB640062D9AF /* RenderableCurve.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCFC1E50AB640062D9AF /* RenderableCurve.h */; };
+		3AEBDD571E50AB640062D9AF /* Doom3Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCFD1E50AB640062D9AF /* Doom3Entity.cpp */; };
+		3AEBDD581E50AB640062D9AF /* Doom3Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDCFE1E50AB640062D9AF /* Doom3Entity.h */; };
+		3AEBDD591E50AB640062D9AF /* Doom3Group.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD001E50AB640062D9AF /* Doom3Group.cpp */; };
+		3AEBDD5A1E50AB640062D9AF /* Doom3Group.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD011E50AB640062D9AF /* Doom3Group.h */; };
+		3AEBDD5B1E50AB640062D9AF /* Doom3GroupNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD021E50AB640062D9AF /* Doom3GroupNode.cpp */; };
+		3AEBDD5C1E50AB640062D9AF /* Doom3GroupNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD031E50AB640062D9AF /* Doom3GroupNode.h */; };
+		3AEBDD5D1E50AB640062D9AF /* EclassModelNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD051E50AB640062D9AF /* EclassModelNode.cpp */; };
+		3AEBDD5E1E50AB640062D9AF /* EclassModelNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD061E50AB640062D9AF /* EclassModelNode.h */; };
+		3AEBDD5F1E50AB640062D9AF /* EntityCreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD071E50AB640062D9AF /* EntityCreator.cpp */; };
+		3AEBDD601E50AB640062D9AF /* EntityCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD081E50AB640062D9AF /* EntityCreator.h */; };
+		3AEBDD611E50AB640062D9AF /* EntityNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD091E50AB640062D9AF /* EntityNode.cpp */; };
+		3AEBDD621E50AB640062D9AF /* EntityNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD0A1E50AB640062D9AF /* EntityNode.h */; };
+		3AEBDD631E50AB640062D9AF /* EntitySettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD0B1E50AB640062D9AF /* EntitySettings.cpp */; };
+		3AEBDD641E50AB640062D9AF /* EntitySettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD0C1E50AB640062D9AF /* EntitySettings.h */; };
+		3AEBDD651E50AB640062D9AF /* GenericEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD0E1E50AB640062D9AF /* GenericEntity.cpp */; };
+		3AEBDD661E50AB640062D9AF /* GenericEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD0F1E50AB640062D9AF /* GenericEntity.h */; };
+		3AEBDD671E50AB640062D9AF /* GenericEntityNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD101E50AB640062D9AF /* GenericEntityNode.cpp */; };
+		3AEBDD681E50AB640062D9AF /* GenericEntityNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD111E50AB640062D9AF /* GenericEntityNode.h */; };
+		3AEBDD691E50AB640062D9AF /* RenderableArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD121E50AB640062D9AF /* RenderableArrow.h */; };
+		3AEBDD6A1E50AB640062D9AF /* KeyObserverDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD131E50AB640062D9AF /* KeyObserverDelegate.h */; };
+		3AEBDD6B1E50AB640062D9AF /* KeyObserverMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD141E50AB640062D9AF /* KeyObserverMap.h */; };
+		3AEBDD6C1E50AB640062D9AF /* KeyValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD151E50AB640062D9AF /* KeyValue.cpp */; };
+		3AEBDD6D1E50AB640062D9AF /* KeyValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD161E50AB640062D9AF /* KeyValue.h */; };
+		3AEBDD6E1E50AB640062D9AF /* KeyValueObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD171E50AB640062D9AF /* KeyValueObserver.cpp */; };
+		3AEBDD6F1E50AB640062D9AF /* KeyValueObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD181E50AB640062D9AF /* KeyValueObserver.h */; };
+		3AEBDD701E50AB640062D9AF /* Doom3LightRadius.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD1A1E50AB640062D9AF /* Doom3LightRadius.h */; };
+		3AEBDD711E50AB640062D9AF /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD1B1E50AB640062D9AF /* Light.cpp */; };
+		3AEBDD721E50AB640062D9AF /* Light.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD1C1E50AB640062D9AF /* Light.h */; };
+		3AEBDD731E50AB640062D9AF /* LightNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD1D1E50AB640062D9AF /* LightNode.cpp */; };
+		3AEBDD741E50AB640062D9AF /* LightNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD1E1E50AB640062D9AF /* LightNode.h */; };
+		3AEBDD751E50AB640062D9AF /* LightShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD1F1E50AB640062D9AF /* LightShader.h */; };
+		3AEBDD761E50AB640062D9AF /* Renderables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD201E50AB640062D9AF /* Renderables.cpp */; };
+		3AEBDD771E50AB640062D9AF /* Renderables.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD211E50AB640062D9AF /* Renderables.h */; };
+		3AEBDD781E50AB640062D9AF /* RenderableVertices.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD221E50AB640062D9AF /* RenderableVertices.h */; };
+		3AEBDD791E50AB640062D9AF /* ModelKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD251E50AB640062D9AF /* ModelKey.cpp */; };
+		3AEBDD7A1E50AB640062D9AF /* ModelKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD261E50AB640062D9AF /* ModelKey.h */; };
+		3AEBDD7B1E50AB640062D9AF /* NameKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD271E50AB640062D9AF /* NameKey.h */; };
+		3AEBDD7C1E50AB640062D9AF /* NameKeyObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD281E50AB640062D9AF /* NameKeyObserver.cpp */; };
+		3AEBDD7D1E50AB640062D9AF /* NameKeyObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD291E50AB640062D9AF /* NameKeyObserver.h */; };
+		3AEBDD7E1E50AB640062D9AF /* NamespaceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD2A1E50AB640062D9AF /* NamespaceManager.cpp */; };
+		3AEBDD7F1E50AB640062D9AF /* NamespaceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD2B1E50AB640062D9AF /* NamespaceManager.h */; };
+		3AEBDD801E50AB650062D9AF /* OriginKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD2C1E50AB640062D9AF /* OriginKey.h */; };
+		3AEBDD811E50AB650062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD2D1E50AB640062D9AF /* plugin.cpp */; };
+		3AEBDD821E50AB650062D9AF /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD2E1E50AB640062D9AF /* plugin.h */; };
+		3AEBDD831E50AB650062D9AF /* precompiled.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD2F1E50AB640062D9AF /* precompiled.cpp */; };
+		3AEBDD841E50AB650062D9AF /* precompiled.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD301E50AB640062D9AF /* precompiled.h */; };
+		3AEBDD851E50AB650062D9AF /* RotationKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD311E50AB640062D9AF /* RotationKey.cpp */; };
+		3AEBDD861E50AB650062D9AF /* RotationKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD321E50AB640062D9AF /* RotationKey.h */; };
+		3AEBDD871E50AB650062D9AF /* RotationMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD331E50AB640062D9AF /* RotationMatrix.cpp */; };
+		3AEBDD881E50AB650062D9AF /* RotationMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD341E50AB640062D9AF /* RotationMatrix.h */; };
+		3AEBDD891E50AB650062D9AF /* ShaderParms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD351E50AB640062D9AF /* ShaderParms.cpp */; };
+		3AEBDD8A1E50AB650062D9AF /* ShaderParms.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD361E50AB640062D9AF /* ShaderParms.h */; };
+		3AEBDD8B1E50AB650062D9AF /* SpeakerNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD381E50AB640062D9AF /* SpeakerNode.cpp */; };
+		3AEBDD8C1E50AB650062D9AF /* SpeakerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD391E50AB640062D9AF /* SpeakerNode.h */; };
+		3AEBDD8D1E50AB650062D9AF /* SpeakerRenderables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD3A1E50AB640062D9AF /* SpeakerRenderables.cpp */; };
+		3AEBDD8E1E50AB650062D9AF /* SpeakerRenderables.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD3B1E50AB640062D9AF /* SpeakerRenderables.h */; };
+		3AEBDD8F1E50AB650062D9AF /* RenderableTargetLines.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD3D1E50AB640062D9AF /* RenderableTargetLines.h */; };
+		3AEBDD901E50AB650062D9AF /* Target.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD3E1E50AB640062D9AF /* Target.h */; };
+		3AEBDD911E50AB650062D9AF /* TargetableNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD3F1E50AB640062D9AF /* TargetableNode.cpp */; };
+		3AEBDD921E50AB650062D9AF /* TargetableNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD401E50AB640062D9AF /* TargetableNode.h */; };
+		3AEBDD931E50AB650062D9AF /* TargetKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD411E50AB640062D9AF /* TargetKey.cpp */; };
+		3AEBDD941E50AB650062D9AF /* TargetKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD421E50AB640062D9AF /* TargetKey.h */; };
+		3AEBDD951E50AB650062D9AF /* TargetKeyCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD431E50AB640062D9AF /* TargetKeyCollection.cpp */; };
+		3AEBDD961E50AB650062D9AF /* TargetKeyCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD441E50AB640062D9AF /* TargetKeyCollection.h */; };
+		3AEBDD971E50AB650062D9AF /* TargetLineNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD451E50AB640062D9AF /* TargetLineNode.cpp */; };
+		3AEBDD981E50AB650062D9AF /* TargetLineNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD461E50AB640062D9AF /* TargetLineNode.h */; };
+		3AEBDD991E50AB650062D9AF /* TargetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDD471E50AB640062D9AF /* TargetManager.cpp */; };
+		3AEBDD9A1E50AB650062D9AF /* TargetManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD481E50AB640062D9AF /* TargetManager.h */; };
+		3AEBDD9B1E50AB650062D9AF /* VertexInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDD491E50AB640062D9AF /* VertexInstance.h */; };
+		3AEBDD9C1E50ABEB0062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
+		3AEBDD9D1E50ABEB0062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
+		3AEBDD9E1E50AC120062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
+		3AEBDD9F1E50AC190062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -847,7 +933,6 @@
 
 /* Begin PBXFileReference section */
 		3A011FBD1E5020D800A62BC1 /* libxml2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libxml2.xcconfig; sourceTree = "<group>"; };
-		3A011FBE1E5021A300A62BC1 /* xmlutil.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = xmlutil.xcconfig; sourceTree = "<group>"; };
 		3A011FC31E50275700A62BC1 /* libwxutil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwxutil.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A011FCE1E50278400A62BC1 /* ChoiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChoiceHelper.h; path = ../../libs/wxutil/ChoiceHelper.h; sourceTree = SOURCE_ROOT; };
 		3A011FCF1E50278400A62BC1 /* clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipboard.cpp; path = ../../libs/wxutil/clipboard.cpp; sourceTree = SOURCE_ROOT; };
@@ -935,7 +1020,6 @@
 		3A0120871E50300A00A62BC1 /* SelectableNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectableNode.h; path = ../../libs/scene/SelectableNode.h; sourceTree = SOURCE_ROOT; };
 		3A0120881E50300A00A62BC1 /* TraversableNodeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TraversableNodeSet.cpp; path = ../../libs/scene/TraversableNodeSet.cpp; sourceTree = SOURCE_ROOT; };
 		3A0120891E50300A00A62BC1 /* TraversableNodeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TraversableNodeSet.h; path = ../../libs/scene/TraversableNodeSet.h; sourceTree = SOURCE_ROOT; };
-		3A0120941E50302400A62BC1 /* scene.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = scene.xcconfig; sourceTree = "<group>"; };
 		3A0120961E50359200A62BC1 /* glew.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = glew.xcconfig; sourceTree = "<group>"; };
 		3A0122541E503C5B00A62BC1 /* _black.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = _black.bmp; path = ../../install/bitmaps/_black.bmp; sourceTree = SOURCE_ROOT; };
 		3A0122561E503D3000A62BC1 /* _cubiclight.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = _cubiclight.bmp; path = ../../install/bitmaps/_cubiclight.bmp; sourceTree = SOURCE_ROOT; };
@@ -1164,7 +1248,6 @@
 		3A0124221E50489D00A62BC1 /* XMLRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistry.cpp; path = ../../plugins/xmlregistry/XMLRegistry.cpp; sourceTree = SOURCE_ROOT; };
 		3A0124231E50489D00A62BC1 /* XMLRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLRegistry.h; path = ../../plugins/xmlregistry/XMLRegistry.h; sourceTree = SOURCE_ROOT; };
 		3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistryModule.cpp; path = ../../plugins/xmlregistry/XMLRegistryModule.cpp; sourceTree = SOURCE_ROOT; };
-		3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = xmlregistry.xcconfig; sourceTree = "<group>"; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
 		3AEBDC691E50667D0062D9AF /* archivezip.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
@@ -1200,8 +1283,90 @@
 		3AEBDCD21E509E730062D9AF /* EClassTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassTreeBuilder.cpp; path = ../../plugins/eclasstree/EClassTreeBuilder.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCD31E509E730062D9AF /* EClassTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassTreeBuilder.h; path = ../../plugins/eclasstree/EClassTreeBuilder.h; sourceTree = SOURCE_ROOT; };
 		3AEBDCD61E509E730062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/eclasstree/plugin.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDCDD1E50A7380062D9AF /* eclasstree.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = eclasstree.xcconfig; sourceTree = "<group>"; };
 		3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		3AEBDCE41E50A8980062D9AF /* entity.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = entity.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDCEF1E50AB640062D9AF /* AngleKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AngleKey.cpp; path = ../../plugins/entity/AngleKey.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCF01E50AB640062D9AF /* AngleKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AngleKey.h; path = ../../plugins/entity/AngleKey.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCF11E50AB640062D9AF /* ColourKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColourKey.h; path = ../../plugins/entity/ColourKey.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCF31E50AB640062D9AF /* Curve.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Curve.cpp; path = ../../plugins/entity/curve/Curve.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCF41E50AB640062D9AF /* Curve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Curve.h; path = ../../plugins/entity/curve/Curve.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCF51E50AB640062D9AF /* CurveCatmullRom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CurveCatmullRom.cpp; path = ../../plugins/entity/curve/CurveCatmullRom.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCF61E50AB640062D9AF /* CurveCatmullRom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveCatmullRom.h; path = ../../plugins/entity/curve/CurveCatmullRom.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCF71E50AB640062D9AF /* CurveControlPointFunctors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveControlPointFunctors.h; path = ../../plugins/entity/curve/CurveControlPointFunctors.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCF81E50AB640062D9AF /* CurveEditInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CurveEditInstance.cpp; path = ../../plugins/entity/curve/CurveEditInstance.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCF91E50AB640062D9AF /* CurveEditInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveEditInstance.h; path = ../../plugins/entity/curve/CurveEditInstance.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCFA1E50AB640062D9AF /* CurveNURBS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CurveNURBS.cpp; path = ../../plugins/entity/curve/CurveNURBS.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCFB1E50AB640062D9AF /* CurveNURBS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveNURBS.h; path = ../../plugins/entity/curve/CurveNURBS.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCFC1E50AB640062D9AF /* RenderableCurve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableCurve.h; path = ../../plugins/entity/curve/RenderableCurve.h; sourceTree = SOURCE_ROOT; };
+		3AEBDCFD1E50AB640062D9AF /* Doom3Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3Entity.cpp; path = ../../plugins/entity/Doom3Entity.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDCFE1E50AB640062D9AF /* Doom3Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3Entity.h; path = ../../plugins/entity/Doom3Entity.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD001E50AB640062D9AF /* Doom3Group.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3Group.cpp; path = ../../plugins/entity/doom3group/Doom3Group.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD011E50AB640062D9AF /* Doom3Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3Group.h; path = ../../plugins/entity/doom3group/Doom3Group.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD021E50AB640062D9AF /* Doom3GroupNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3GroupNode.cpp; path = ../../plugins/entity/doom3group/Doom3GroupNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD031E50AB640062D9AF /* Doom3GroupNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3GroupNode.h; path = ../../plugins/entity/doom3group/Doom3GroupNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD051E50AB640062D9AF /* EclassModelNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EclassModelNode.cpp; path = ../../plugins/entity/eclassmodel/EclassModelNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD061E50AB640062D9AF /* EclassModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EclassModelNode.h; path = ../../plugins/entity/eclassmodel/EclassModelNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD071E50AB640062D9AF /* EntityCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityCreator.cpp; path = ../../plugins/entity/EntityCreator.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD081E50AB640062D9AF /* EntityCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityCreator.h; path = ../../plugins/entity/EntityCreator.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD091E50AB640062D9AF /* EntityNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityNode.cpp; path = ../../plugins/entity/EntityNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD0A1E50AB640062D9AF /* EntityNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityNode.h; path = ../../plugins/entity/EntityNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD0B1E50AB640062D9AF /* EntitySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntitySettings.cpp; path = ../../plugins/entity/EntitySettings.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD0C1E50AB640062D9AF /* EntitySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntitySettings.h; path = ../../plugins/entity/EntitySettings.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD0E1E50AB640062D9AF /* GenericEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenericEntity.cpp; path = ../../plugins/entity/generic/GenericEntity.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD0F1E50AB640062D9AF /* GenericEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericEntity.h; path = ../../plugins/entity/generic/GenericEntity.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD101E50AB640062D9AF /* GenericEntityNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenericEntityNode.cpp; path = ../../plugins/entity/generic/GenericEntityNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD111E50AB640062D9AF /* GenericEntityNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericEntityNode.h; path = ../../plugins/entity/generic/GenericEntityNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD121E50AB640062D9AF /* RenderableArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableArrow.h; path = ../../plugins/entity/generic/RenderableArrow.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD131E50AB640062D9AF /* KeyObserverDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyObserverDelegate.h; path = ../../plugins/entity/KeyObserverDelegate.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD141E50AB640062D9AF /* KeyObserverMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyObserverMap.h; path = ../../plugins/entity/KeyObserverMap.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD151E50AB640062D9AF /* KeyValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValue.cpp; path = ../../plugins/entity/KeyValue.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD161E50AB640062D9AF /* KeyValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyValue.h; path = ../../plugins/entity/KeyValue.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD171E50AB640062D9AF /* KeyValueObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValueObserver.cpp; path = ../../plugins/entity/KeyValueObserver.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD181E50AB640062D9AF /* KeyValueObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyValueObserver.h; path = ../../plugins/entity/KeyValueObserver.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD1A1E50AB640062D9AF /* Doom3LightRadius.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3LightRadius.h; path = ../../plugins/entity/light/Doom3LightRadius.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD1B1E50AB640062D9AF /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Light.cpp; path = ../../plugins/entity/light/Light.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD1C1E50AB640062D9AF /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Light.h; path = ../../plugins/entity/light/Light.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD1D1E50AB640062D9AF /* LightNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightNode.cpp; path = ../../plugins/entity/light/LightNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD1E1E50AB640062D9AF /* LightNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightNode.h; path = ../../plugins/entity/light/LightNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD1F1E50AB640062D9AF /* LightShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightShader.h; path = ../../plugins/entity/light/LightShader.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD201E50AB640062D9AF /* Renderables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Renderables.cpp; path = ../../plugins/entity/light/Renderables.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD211E50AB640062D9AF /* Renderables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Renderables.h; path = ../../plugins/entity/light/Renderables.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD221E50AB640062D9AF /* RenderableVertices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableVertices.h; path = ../../plugins/entity/light/RenderableVertices.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD251E50AB640062D9AF /* ModelKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelKey.cpp; path = ../../plugins/entity/ModelKey.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD261E50AB640062D9AF /* ModelKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelKey.h; path = ../../plugins/entity/ModelKey.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD271E50AB640062D9AF /* NameKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NameKey.h; path = ../../plugins/entity/NameKey.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD281E50AB640062D9AF /* NameKeyObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NameKeyObserver.cpp; path = ../../plugins/entity/NameKeyObserver.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD291E50AB640062D9AF /* NameKeyObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NameKeyObserver.h; path = ../../plugins/entity/NameKeyObserver.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD2A1E50AB640062D9AF /* NamespaceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NamespaceManager.cpp; path = ../../plugins/entity/NamespaceManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD2B1E50AB640062D9AF /* NamespaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NamespaceManager.h; path = ../../plugins/entity/NamespaceManager.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD2C1E50AB640062D9AF /* OriginKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OriginKey.h; path = ../../plugins/entity/OriginKey.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD2D1E50AB640062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/entity/plugin.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD2E1E50AB640062D9AF /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plugin.h; path = ../../plugins/entity/plugin.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD2F1E50AB640062D9AF /* precompiled.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = precompiled.cpp; path = ../../plugins/entity/precompiled.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD301E50AB640062D9AF /* precompiled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = precompiled.h; path = ../../plugins/entity/precompiled.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD311E50AB640062D9AF /* RotationKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RotationKey.cpp; path = ../../plugins/entity/RotationKey.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD321E50AB640062D9AF /* RotationKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotationKey.h; path = ../../plugins/entity/RotationKey.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD331E50AB640062D9AF /* RotationMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RotationMatrix.cpp; path = ../../plugins/entity/RotationMatrix.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD341E50AB640062D9AF /* RotationMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotationMatrix.h; path = ../../plugins/entity/RotationMatrix.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD351E50AB640062D9AF /* ShaderParms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderParms.cpp; path = ../../plugins/entity/ShaderParms.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD361E50AB640062D9AF /* ShaderParms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderParms.h; path = ../../plugins/entity/ShaderParms.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD381E50AB640062D9AF /* SpeakerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpeakerNode.cpp; path = ../../plugins/entity/speaker/SpeakerNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD391E50AB640062D9AF /* SpeakerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeakerNode.h; path = ../../plugins/entity/speaker/SpeakerNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD3A1E50AB640062D9AF /* SpeakerRenderables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpeakerRenderables.cpp; path = ../../plugins/entity/speaker/SpeakerRenderables.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD3B1E50AB640062D9AF /* SpeakerRenderables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeakerRenderables.h; path = ../../plugins/entity/speaker/SpeakerRenderables.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD3D1E50AB640062D9AF /* RenderableTargetLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableTargetLines.h; path = ../../plugins/entity/target/RenderableTargetLines.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD3E1E50AB640062D9AF /* Target.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Target.h; path = ../../plugins/entity/target/Target.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD3F1E50AB640062D9AF /* TargetableNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetableNode.cpp; path = ../../plugins/entity/target/TargetableNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD401E50AB640062D9AF /* TargetableNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetableNode.h; path = ../../plugins/entity/target/TargetableNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD411E50AB640062D9AF /* TargetKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetKey.cpp; path = ../../plugins/entity/target/TargetKey.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD421E50AB640062D9AF /* TargetKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetKey.h; path = ../../plugins/entity/target/TargetKey.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD431E50AB640062D9AF /* TargetKeyCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetKeyCollection.cpp; path = ../../plugins/entity/target/TargetKeyCollection.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD441E50AB640062D9AF /* TargetKeyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetKeyCollection.h; path = ../../plugins/entity/target/TargetKeyCollection.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD451E50AB640062D9AF /* TargetLineNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetLineNode.cpp; path = ../../plugins/entity/target/TargetLineNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD461E50AB640062D9AF /* TargetLineNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetLineNode.h; path = ../../plugins/entity/target/TargetLineNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD471E50AB640062D9AF /* TargetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetManager.cpp; path = ../../plugins/entity/target/TargetManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBDD481E50AB640062D9AF /* TargetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetManager.h; path = ../../plugins/entity/target/TargetManager.h; sourceTree = SOURCE_ROOT; };
+		3AEBDD491E50AB640062D9AF /* VertexInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexInstance.h; path = ../../plugins/entity/VertexInstance.h; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -1846,6 +2011,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDCE11E50A8980062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDD9F1E50AC190062D9AF /* libxmlutil.a in Frameworks */,
+				3AEBDD9E1E50AC120062D9AF /* OpenGL.framework in Frameworks */,
+				3AEBDD9C1E50ABEB0062D9AF /* libmathlib.a in Frameworks */,
+				3AEBDD9D1E50ABEB0062D9AF /* libscene.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2253,10 +2429,10 @@
 		3A01240E1E50420C00A62BC1 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3AF746651E4FACC9003465B5 /* mathlib */,
 				3A0120741E502F7800A62BC1 /* scene */,
 				3A011FC41E50275700A62BC1 /* wxutil */,
 				3AF746AC1E4FADF3003465B5 /* xmlutil */,
-				3AF746651E4FACC9003465B5 /* mathlib */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -2264,21 +2440,17 @@
 		3A01240F1E50426500A62BC1 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				3A0120961E50359200A62BC1 /* glew.xcconfig */,
-				3A0120941E50302400A62BC1 /* scene.xcconfig */,
-				3A01206D1E50279E00A62BC1 /* wxutil.xcconfig */,
-				3A011FBE1E5021A300A62BC1 /* xmlutil.xcconfig */,
-				3A011FBD1E5020D800A62BC1 /* libxml2.xcconfig */,
-				3AF746C81E4FAF3D003465B5 /* boost.xcconfig */,
-				3AF7465F1E4F8A36003465B5 /* ftgl.xcconfig */,
-				3AEDE3CE1E4F04E9005A8641 /* sigc++.xcconfig */,
-				3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */,
-				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,
-				3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */,
-				3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */,
-				3AEBDC881E5067630062D9AF /* zlib.xcconfig */,
 				3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */,
-				3AEBDCDD1E50A7380062D9AF /* eclasstree.xcconfig */,
+				3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */,
+				3AF746C81E4FAF3D003465B5 /* boost.xcconfig */,
+				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,
+				3AF7465F1E4F8A36003465B5 /* ftgl.xcconfig */,
+				3A0120961E50359200A62BC1 /* glew.xcconfig */,
+				3A011FBD1E5020D800A62BC1 /* libxml2.xcconfig */,
+				3AEDE3CE1E4F04E9005A8641 /* sigc++.xcconfig */,
+				3A01206D1E50279E00A62BC1 /* wxutil.xcconfig */,
+				3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */,
+				3AEBDC881E5067630062D9AF /* zlib.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -2286,10 +2458,11 @@
 		3A0124101E50481E00A62BC1 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDCC61E509E3E0062D9AF /* eclasstree */,
-				3AEBDCAB1E509D8B0062D9AF /* eclassmgr */,
-				3AEBDC8F1E5069840062D9AF /* commandsystem */,
 				3AEBDC6A1E50667D0062D9AF /* archivezip */,
+				3AEBDC8F1E5069840062D9AF /* commandsystem */,
+				3AEBDCAB1E509D8B0062D9AF /* eclassmgr */,
+				3AEBDCC61E509E3E0062D9AF /* eclasstree */,
+				3AEBDCE51E50A8980062D9AF /* entity */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -2325,6 +2498,7 @@
 				3AEBDC8E1E5069840062D9AF /* commandsystem.dylib */,
 				3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */,
 				3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */,
+				3AEBDCE41E50A8980062D9AF /* entity.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2397,6 +2571,158 @@
 			);
 			path = eclasstree;
 			sourceTree = "<group>";
+		};
+		3AEBDCE51E50A8980062D9AF /* entity */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDCEF1E50AB640062D9AF /* AngleKey.cpp */,
+				3AEBDCF01E50AB640062D9AF /* AngleKey.h */,
+				3AEBDCF11E50AB640062D9AF /* ColourKey.h */,
+				3AEBDCF21E50AB640062D9AF /* curve */,
+				3AEBDCFD1E50AB640062D9AF /* Doom3Entity.cpp */,
+				3AEBDCFE1E50AB640062D9AF /* Doom3Entity.h */,
+				3AEBDCFF1E50AB640062D9AF /* doom3group */,
+				3AEBDD041E50AB640062D9AF /* eclassmodel */,
+				3AEBDD071E50AB640062D9AF /* EntityCreator.cpp */,
+				3AEBDD081E50AB640062D9AF /* EntityCreator.h */,
+				3AEBDD091E50AB640062D9AF /* EntityNode.cpp */,
+				3AEBDD0A1E50AB640062D9AF /* EntityNode.h */,
+				3AEBDD0B1E50AB640062D9AF /* EntitySettings.cpp */,
+				3AEBDD0C1E50AB640062D9AF /* EntitySettings.h */,
+				3AEBDD0D1E50AB640062D9AF /* generic */,
+				3AEBDD131E50AB640062D9AF /* KeyObserverDelegate.h */,
+				3AEBDD141E50AB640062D9AF /* KeyObserverMap.h */,
+				3AEBDD151E50AB640062D9AF /* KeyValue.cpp */,
+				3AEBDD161E50AB640062D9AF /* KeyValue.h */,
+				3AEBDD171E50AB640062D9AF /* KeyValueObserver.cpp */,
+				3AEBDD181E50AB640062D9AF /* KeyValueObserver.h */,
+				3AEBDD191E50AB640062D9AF /* light */,
+				3AEBDD251E50AB640062D9AF /* ModelKey.cpp */,
+				3AEBDD261E50AB640062D9AF /* ModelKey.h */,
+				3AEBDD271E50AB640062D9AF /* NameKey.h */,
+				3AEBDD281E50AB640062D9AF /* NameKeyObserver.cpp */,
+				3AEBDD291E50AB640062D9AF /* NameKeyObserver.h */,
+				3AEBDD2A1E50AB640062D9AF /* NamespaceManager.cpp */,
+				3AEBDD2B1E50AB640062D9AF /* NamespaceManager.h */,
+				3AEBDD2C1E50AB640062D9AF /* OriginKey.h */,
+				3AEBDD2D1E50AB640062D9AF /* plugin.cpp */,
+				3AEBDD2E1E50AB640062D9AF /* plugin.h */,
+				3AEBDD2F1E50AB640062D9AF /* precompiled.cpp */,
+				3AEBDD301E50AB640062D9AF /* precompiled.h */,
+				3AEBDD311E50AB640062D9AF /* RotationKey.cpp */,
+				3AEBDD321E50AB640062D9AF /* RotationKey.h */,
+				3AEBDD331E50AB640062D9AF /* RotationMatrix.cpp */,
+				3AEBDD341E50AB640062D9AF /* RotationMatrix.h */,
+				3AEBDD351E50AB640062D9AF /* ShaderParms.cpp */,
+				3AEBDD361E50AB640062D9AF /* ShaderParms.h */,
+				3AEBDD371E50AB640062D9AF /* speaker */,
+				3AEBDD3C1E50AB640062D9AF /* target */,
+				3AEBDD491E50AB640062D9AF /* VertexInstance.h */,
+			);
+			path = entity;
+			sourceTree = "<group>";
+		};
+		3AEBDCF21E50AB640062D9AF /* curve */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDCF31E50AB640062D9AF /* Curve.cpp */,
+				3AEBDCF41E50AB640062D9AF /* Curve.h */,
+				3AEBDCF51E50AB640062D9AF /* CurveCatmullRom.cpp */,
+				3AEBDCF61E50AB640062D9AF /* CurveCatmullRom.h */,
+				3AEBDCF71E50AB640062D9AF /* CurveControlPointFunctors.h */,
+				3AEBDCF81E50AB640062D9AF /* CurveEditInstance.cpp */,
+				3AEBDCF91E50AB640062D9AF /* CurveEditInstance.h */,
+				3AEBDCFA1E50AB640062D9AF /* CurveNURBS.cpp */,
+				3AEBDCFB1E50AB640062D9AF /* CurveNURBS.h */,
+				3AEBDCFC1E50AB640062D9AF /* RenderableCurve.h */,
+			);
+			name = curve;
+			path = ../../plugins/entity/curve;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDCFF1E50AB640062D9AF /* doom3group */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDD001E50AB640062D9AF /* Doom3Group.cpp */,
+				3AEBDD011E50AB640062D9AF /* Doom3Group.h */,
+				3AEBDD021E50AB640062D9AF /* Doom3GroupNode.cpp */,
+				3AEBDD031E50AB640062D9AF /* Doom3GroupNode.h */,
+			);
+			name = doom3group;
+			path = ../../plugins/entity/doom3group;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDD041E50AB640062D9AF /* eclassmodel */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDD051E50AB640062D9AF /* EclassModelNode.cpp */,
+				3AEBDD061E50AB640062D9AF /* EclassModelNode.h */,
+			);
+			name = eclassmodel;
+			path = ../../plugins/entity/eclassmodel;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDD0D1E50AB640062D9AF /* generic */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDD0E1E50AB640062D9AF /* GenericEntity.cpp */,
+				3AEBDD0F1E50AB640062D9AF /* GenericEntity.h */,
+				3AEBDD101E50AB640062D9AF /* GenericEntityNode.cpp */,
+				3AEBDD111E50AB640062D9AF /* GenericEntityNode.h */,
+				3AEBDD121E50AB640062D9AF /* RenderableArrow.h */,
+			);
+			name = generic;
+			path = ../../plugins/entity/generic;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDD191E50AB640062D9AF /* light */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDD1A1E50AB640062D9AF /* Doom3LightRadius.h */,
+				3AEBDD1B1E50AB640062D9AF /* Light.cpp */,
+				3AEBDD1C1E50AB640062D9AF /* Light.h */,
+				3AEBDD1D1E50AB640062D9AF /* LightNode.cpp */,
+				3AEBDD1E1E50AB640062D9AF /* LightNode.h */,
+				3AEBDD1F1E50AB640062D9AF /* LightShader.h */,
+				3AEBDD201E50AB640062D9AF /* Renderables.cpp */,
+				3AEBDD211E50AB640062D9AF /* Renderables.h */,
+				3AEBDD221E50AB640062D9AF /* RenderableVertices.h */,
+			);
+			name = light;
+			path = ../../plugins/entity/light;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDD371E50AB640062D9AF /* speaker */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDD381E50AB640062D9AF /* SpeakerNode.cpp */,
+				3AEBDD391E50AB640062D9AF /* SpeakerNode.h */,
+				3AEBDD3A1E50AB640062D9AF /* SpeakerRenderables.cpp */,
+				3AEBDD3B1E50AB640062D9AF /* SpeakerRenderables.h */,
+			);
+			name = speaker;
+			path = ../../plugins/entity/speaker;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBDD3C1E50AB640062D9AF /* target */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBDD3D1E50AB640062D9AF /* RenderableTargetLines.h */,
+				3AEBDD3E1E50AB640062D9AF /* Target.h */,
+				3AEBDD3F1E50AB640062D9AF /* TargetableNode.cpp */,
+				3AEBDD401E50AB640062D9AF /* TargetableNode.h */,
+				3AEBDD411E50AB640062D9AF /* TargetKey.cpp */,
+				3AEBDD421E50AB640062D9AF /* TargetKey.h */,
+				3AEBDD431E50AB640062D9AF /* TargetKeyCollection.cpp */,
+				3AEBDD441E50AB640062D9AF /* TargetKeyCollection.h */,
+				3AEBDD451E50AB640062D9AF /* TargetLineNode.cpp */,
+				3AEBDD461E50AB640062D9AF /* TargetLineNode.h */,
+				3AEBDD471E50AB640062D9AF /* TargetManager.cpp */,
+				3AEBDD481E50AB640062D9AF /* TargetManager.h */,
+			);
+			name = target;
+			path = ../../plugins/entity/target;
+			sourceTree = SOURCE_ROOT;
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
@@ -3663,6 +3989,61 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBDCE21E50A8980062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDD561E50AB640062D9AF /* RenderableCurve.h in Headers */,
+				3AEBDD5C1E50AB640062D9AF /* Doom3GroupNode.h in Headers */,
+				3AEBDD751E50AB640062D9AF /* LightShader.h in Headers */,
+				3AEBDD9A1E50AB650062D9AF /* TargetManager.h in Headers */,
+				3AEBDD601E50AB640062D9AF /* EntityCreator.h in Headers */,
+				3AEBDD8E1E50AB650062D9AF /* SpeakerRenderables.h in Headers */,
+				3AEBDD501E50AB640062D9AF /* CurveCatmullRom.h in Headers */,
+				3AEBDD8A1E50AB650062D9AF /* ShaderParms.h in Headers */,
+				3AEBDD8C1E50AB650062D9AF /* SpeakerNode.h in Headers */,
+				3AEBDD7B1E50AB640062D9AF /* NameKey.h in Headers */,
+				3AEBDD921E50AB650062D9AF /* TargetableNode.h in Headers */,
+				3AEBDD511E50AB640062D9AF /* CurveControlPointFunctors.h in Headers */,
+				3AEBDD5A1E50AB640062D9AF /* Doom3Group.h in Headers */,
+				3AEBDD961E50AB650062D9AF /* TargetKeyCollection.h in Headers */,
+				3AEBDD7D1E50AB640062D9AF /* NameKeyObserver.h in Headers */,
+				3AEBDD821E50AB650062D9AF /* plugin.h in Headers */,
+				3AEBDD6F1E50AB640062D9AF /* KeyValueObserver.h in Headers */,
+				3AEBDD7A1E50AB640062D9AF /* ModelKey.h in Headers */,
+				3AEBDD551E50AB640062D9AF /* CurveNURBS.h in Headers */,
+				3AEBDD4E1E50AB640062D9AF /* Curve.h in Headers */,
+				3AEBDD701E50AB640062D9AF /* Doom3LightRadius.h in Headers */,
+				3AEBDD781E50AB640062D9AF /* RenderableVertices.h in Headers */,
+				3AEBDD901E50AB650062D9AF /* Target.h in Headers */,
+				3AEBDD6A1E50AB640062D9AF /* KeyObserverDelegate.h in Headers */,
+				3AEBDD7F1E50AB640062D9AF /* NamespaceManager.h in Headers */,
+				3AEBDD641E50AB640062D9AF /* EntitySettings.h in Headers */,
+				3AEBDD4C1E50AB640062D9AF /* ColourKey.h in Headers */,
+				3AEBDD4B1E50AB640062D9AF /* AngleKey.h in Headers */,
+				3AEBDD5E1E50AB640062D9AF /* EclassModelNode.h in Headers */,
+				3AEBDD6B1E50AB640062D9AF /* KeyObserverMap.h in Headers */,
+				3AEBDD801E50AB650062D9AF /* OriginKey.h in Headers */,
+				3AEBDD861E50AB650062D9AF /* RotationKey.h in Headers */,
+				3AEBDD8F1E50AB650062D9AF /* RenderableTargetLines.h in Headers */,
+				3AEBDD691E50AB640062D9AF /* RenderableArrow.h in Headers */,
+				3AEBDD881E50AB650062D9AF /* RotationMatrix.h in Headers */,
+				3AEBDD941E50AB650062D9AF /* TargetKey.h in Headers */,
+				3AEBDD621E50AB640062D9AF /* EntityNode.h in Headers */,
+				3AEBDD531E50AB640062D9AF /* CurveEditInstance.h in Headers */,
+				3AEBDD6D1E50AB640062D9AF /* KeyValue.h in Headers */,
+				3AEBDD581E50AB640062D9AF /* Doom3Entity.h in Headers */,
+				3AEBDD721E50AB640062D9AF /* Light.h in Headers */,
+				3AEBDD9B1E50AB650062D9AF /* VertexInstance.h in Headers */,
+				3AEBDD771E50AB640062D9AF /* Renderables.h in Headers */,
+				3AEBDD661E50AB640062D9AF /* GenericEntity.h in Headers */,
+				3AEBDD841E50AB650062D9AF /* precompiled.h in Headers */,
+				3AEBDD981E50AB650062D9AF /* TargetLineNode.h in Headers */,
+				3AEBDD741E50AB640062D9AF /* LightNode.h in Headers */,
+				3AEBDD681E50AB640062D9AF /* GenericEntityNode.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3821,6 +4202,23 @@
 			productReference = 3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBDCE31E50A8980062D9AF /* entity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBDCEC1E50A8980062D9AF /* Build configuration list for PBXNativeTarget "entity" */;
+			buildPhases = (
+				3AEBDCE01E50A8980062D9AF /* Sources */,
+				3AEBDCE11E50A8980062D9AF /* Frameworks */,
+				3AEBDCE21E50A8980062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = entity;
+			productName = entity;
+			productReference = 3AEBDCE41E50A8980062D9AF /* entity.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -3904,6 +4302,9 @@
 					3AEBDCC41E509E3E0062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBDCE31E50A8980062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -3940,6 +4341,7 @@
 				3AEBDC8D1E5069840062D9AF /* commandsystem */,
 				3AEBDCA91E509D8B0062D9AF /* eclassmgr */,
 				3AEBDCC41E509E3E0062D9AF /* eclasstree */,
+				3AEBDCE31E50A8980062D9AF /* entity */,
 			);
 		};
 /* End PBXProject section */
@@ -4036,6 +4438,47 @@
 				3AEBDCDB1E509E730062D9AF /* plugin.cpp in Sources */,
 				3AEBDCD91E509E730062D9AF /* EClassTreeBuilder.cpp in Sources */,
 				3AEBDCD71E509E730062D9AF /* EClassTree.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBDCE01E50A8980062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBDD5B1E50AB640062D9AF /* Doom3GroupNode.cpp in Sources */,
+				3AEBDD811E50AB650062D9AF /* plugin.cpp in Sources */,
+				3AEBDD631E50AB640062D9AF /* EntitySettings.cpp in Sources */,
+				3AEBDD931E50AB650062D9AF /* TargetKey.cpp in Sources */,
+				3AEBDD951E50AB650062D9AF /* TargetKeyCollection.cpp in Sources */,
+				3AEBDD671E50AB640062D9AF /* GenericEntityNode.cpp in Sources */,
+				3AEBDD991E50AB650062D9AF /* TargetManager.cpp in Sources */,
+				3AEBDD6E1E50AB640062D9AF /* KeyValueObserver.cpp in Sources */,
+				3AEBDD731E50AB640062D9AF /* LightNode.cpp in Sources */,
+				3AEBDD971E50AB650062D9AF /* TargetLineNode.cpp in Sources */,
+				3AEBDD4F1E50AB640062D9AF /* CurveCatmullRom.cpp in Sources */,
+				3AEBDD7C1E50AB640062D9AF /* NameKeyObserver.cpp in Sources */,
+				3AEBDD651E50AB640062D9AF /* GenericEntity.cpp in Sources */,
+				3AEBDD8D1E50AB650062D9AF /* SpeakerRenderables.cpp in Sources */,
+				3AEBDD8B1E50AB650062D9AF /* SpeakerNode.cpp in Sources */,
+				3AEBDD6C1E50AB640062D9AF /* KeyValue.cpp in Sources */,
+				3AEBDD5D1E50AB640062D9AF /* EclassModelNode.cpp in Sources */,
+				3AEBDD571E50AB640062D9AF /* Doom3Entity.cpp in Sources */,
+				3AEBDD761E50AB640062D9AF /* Renderables.cpp in Sources */,
+				3AEBDD591E50AB640062D9AF /* Doom3Group.cpp in Sources */,
+				3AEBDD871E50AB650062D9AF /* RotationMatrix.cpp in Sources */,
+				3AEBDD851E50AB650062D9AF /* RotationKey.cpp in Sources */,
+				3AEBDD5F1E50AB640062D9AF /* EntityCreator.cpp in Sources */,
+				3AEBDD891E50AB650062D9AF /* ShaderParms.cpp in Sources */,
+				3AEBDD4A1E50AB640062D9AF /* AngleKey.cpp in Sources */,
+				3AEBDD611E50AB640062D9AF /* EntityNode.cpp in Sources */,
+				3AEBDD911E50AB650062D9AF /* TargetableNode.cpp in Sources */,
+				3AEBDD791E50AB640062D9AF /* ModelKey.cpp in Sources */,
+				3AEBDD7E1E50AB640062D9AF /* NamespaceManager.cpp in Sources */,
+				3AEBDD521E50AB640062D9AF /* CurveEditInstance.cpp in Sources */,
+				3AEBDD831E50AB650062D9AF /* precompiled.cpp in Sources */,
+				3AEBDD541E50AB640062D9AF /* CurveNURBS.cpp in Sources */,
+				3AEBDD711E50AB640062D9AF /* Light.cpp in Sources */,
+				3AEBDD4D1E50AB640062D9AF /* Curve.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4401,7 +4844,7 @@
 		};
 		3A01207B1E502F7800A62BC1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3A0120941E50302400A62BC1 /* scene.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4452,7 +4895,7 @@
 		};
 		3A01207C1E502F7800A62BC1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3A0120941E50302400A62BC1 /* scene.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4496,7 +4939,7 @@
 		};
 		3A01241E1E50484200A62BC1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4549,7 +4992,7 @@
 		};
 		3A01241F1E50484200A62BC1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3A01242A1E50491600A62BC1 /* xmlregistry.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4595,7 +5038,7 @@
 		};
 		3ADBCC6D1E4E4B7C00CA94F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 			};
@@ -4603,7 +5046,7 @@
 		};
 		3ADBCC6E1E4E4B7C00CA94F6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 			};
@@ -4884,7 +5327,7 @@
 		};
 		3AEBDCCE1E509E3E0062D9AF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEBDCDD1E50A7380062D9AF /* eclasstree.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -4933,7 +5376,98 @@
 		};
 		3AEBDCCF1E509E3E0062D9AF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEBDCDD1E50A7380062D9AF /* eclasstree.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3AEBDCED1E50A8980062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBDCEE1E50A8980062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -5161,7 +5695,7 @@
 		};
 		3AF746B41E4FADF3003465B5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3A011FBE1E5021A300A62BC1 /* xmlutil.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -5212,7 +5746,7 @@
 		};
 		3AF746B51E4FADF3003465B5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3A011FBE1E5021A300A62BC1 /* xmlutil.xcconfig */;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -5325,6 +5859,15 @@
 			buildConfigurations = (
 				3AEBDCCE1E509E3E0062D9AF /* Debug */,
 				3AEBDCCF1E509E3E0062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AEBDCEC1E50A8980062D9AF /* Build configuration list for PBXNativeTarget "entity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBDCED1E50A8980062D9AF /* Debug */,
+				3AEBDCEE1E50A8980062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

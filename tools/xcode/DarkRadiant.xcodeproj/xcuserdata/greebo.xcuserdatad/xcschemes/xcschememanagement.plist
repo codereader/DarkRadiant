@@ -29,6 +29,11 @@
 			<key>orderHint</key>
 			<integer>9</integer>
 		</dict>
+		<key>entity.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
 		<key>mathlib.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -93,6 +98,11 @@
 			<true/>
 		</dict>
 		<key>3AEBDCC41E509E3E0062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBDCE31E50A8980062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
