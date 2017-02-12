@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBE0B11E50D8D50062D9AF"
-               BuildableName = "script.dylib"
-               BlueprintName = "script"
+               BlueprintIdentifier = "3AEBE1841E50DC8E0062D9AF"
+               BuildableName = "libskins.dylib"
+               BlueprintName = "skins"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE0B11E50D8D50062D9AF"
-            BuildableName = "script.dylib"
-            BlueprintName = "script"
+            BlueprintIdentifier = "3AEBE1841E50DC8E0062D9AF"
+            BuildableName = "libskins.dylib"
+            BlueprintName = "skins"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3AEBE0B11E50D8D50062D9AF"
-            BuildableName = "script.dylib"
-            BlueprintName = "script"
+            BlueprintIdentifier = "3AEBE1841E50DC8E0062D9AF"
+            BuildableName = "libskins.dylib"
+            BlueprintName = "skins"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

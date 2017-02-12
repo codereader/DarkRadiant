@@ -681,6 +681,43 @@
 		3AEBE12C1E50DBA80062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
 		3AEBE12D1E50DBAC0062D9AF /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
 		3AEBE12E1E50DBBE0062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
+		3AEBE1601E50DC1C0062D9AF /* CameraCubeMapDecl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE13E1E50DC1C0062D9AF /* CameraCubeMapDecl.cpp */; };
+		3AEBE1611E50DC1C0062D9AF /* CameraCubeMapDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE13F1E50DC1C0062D9AF /* CameraCubeMapDecl.h */; };
+		3AEBE1621E50DC1C0062D9AF /* CShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1401E50DC1C0062D9AF /* CShader.cpp */; };
+		3AEBE1631E50DC1C0062D9AF /* CShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1411E50DC1C0062D9AF /* CShader.h */; };
+		3AEBE1641E50DC1C0062D9AF /* Doom3ShaderLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1421E50DC1C0062D9AF /* Doom3ShaderLayer.cpp */; };
+		3AEBE1651E50DC1C0062D9AF /* Doom3ShaderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1431E50DC1C0062D9AF /* Doom3ShaderLayer.h */; };
+		3AEBE1661E50DC1C0062D9AF /* Doom3ShaderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1441E50DC1C0062D9AF /* Doom3ShaderSystem.cpp */; };
+		3AEBE1671E50DC1C0062D9AF /* Doom3ShaderSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1451E50DC1C0062D9AF /* Doom3ShaderSystem.h */; };
+		3AEBE1681E50DC1C0062D9AF /* MapExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1481E50DC1C0062D9AF /* MapExpression.cpp */; };
+		3AEBE1691E50DC1C0062D9AF /* MapExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1491E50DC1C0062D9AF /* MapExpression.h */; };
+		3AEBE16A1E50DC1C0062D9AF /* NamedBindable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE14A1E50DC1C0062D9AF /* NamedBindable.h */; };
+		3AEBE16B1E50DC1C0062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE14B1E50DC1C0062D9AF /* plugin.cpp */; };
+		3AEBE16C1E50DC1C0062D9AF /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE14C1E50DC1C0062D9AF /* plugin.h */; };
+		3AEBE16D1E50DC1C0062D9AF /* ShaderDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE14D1E50DC1C0062D9AF /* ShaderDefinition.h */; };
+		3AEBE16E1E50DC1C0062D9AF /* ShaderExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE14E1E50DC1C0062D9AF /* ShaderExpression.cpp */; };
+		3AEBE16F1E50DC1C0062D9AF /* ShaderExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE14F1E50DC1C0062D9AF /* ShaderExpression.h */; };
+		3AEBE1701E50DC1C0062D9AF /* ShaderFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1501E50DC1C0062D9AF /* ShaderFileLoader.cpp */; };
+		3AEBE1711E50DC1C0062D9AF /* ShaderFileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1511E50DC1C0062D9AF /* ShaderFileLoader.h */; };
+		3AEBE1721E50DC1C0062D9AF /* ShaderLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1521E50DC1C0062D9AF /* ShaderLibrary.cpp */; };
+		3AEBE1731E50DC1C0062D9AF /* ShaderLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1531E50DC1C0062D9AF /* ShaderLibrary.h */; };
+		3AEBE1741E50DC1C0062D9AF /* ShaderNameCompareFunctor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1541E50DC1C0062D9AF /* ShaderNameCompareFunctor.h */; };
+		3AEBE1751E50DC1C0062D9AF /* ShaderTemplate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1551E50DC1C0062D9AF /* ShaderTemplate.cpp */; };
+		3AEBE1761E50DC1C0062D9AF /* ShaderTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1561E50DC1C0062D9AF /* ShaderTemplate.h */; };
+		3AEBE1771E50DC1C0062D9AF /* TableDefinition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1571E50DC1C0062D9AF /* TableDefinition.cpp */; };
+		3AEBE1781E50DC1C0062D9AF /* TableDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1581E50DC1C0062D9AF /* TableDefinition.h */; };
+		3AEBE1791E50DC1C0062D9AF /* CubeMapTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE15A1E50DC1C0062D9AF /* CubeMapTexture.h */; };
+		3AEBE17A1E50DC1C0062D9AF /* GLTextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE15B1E50DC1C0062D9AF /* GLTextureManager.cpp */; };
+		3AEBE17B1E50DC1C0062D9AF /* GLTextureManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE15C1E50DC1C0062D9AF /* GLTextureManager.h */; };
+		3AEBE17C1E50DC1C0062D9AF /* HeightmapCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE15D1E50DC1C0062D9AF /* HeightmapCreator.h */; };
+		3AEBE17D1E50DC1C0062D9AF /* TextureManipulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE15E1E50DC1C0062D9AF /* TextureManipulator.cpp */; };
+		3AEBE17E1E50DC1C0062D9AF /* TextureManipulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE15F1E50DC1C0062D9AF /* TextureManipulator.h */; };
+		3AEBE17F1E50DC6E0062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AEBE1801E50DC790062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
+		3AEBE1961E50DCAE0062D9AF /* Doom3ModelSkin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1901E50DCAE0062D9AF /* Doom3ModelSkin.h */; };
+		3AEBE1971E50DCAE0062D9AF /* Doom3SkinCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1911E50DCAE0062D9AF /* Doom3SkinCache.cpp */; };
+		3AEBE1981E50DCAE0062D9AF /* Doom3SkinCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE1921E50DCAE0062D9AF /* Doom3SkinCache.h */; };
+		3AEBE1991E50DCAE0062D9AF /* skincache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE1951E50DCAE0062D9AF /* skincache.cpp */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1873,6 +1910,43 @@
 		3AEBE1281E50D9570062D9AF /* script.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = script.xcconfig; sourceTree = "<group>"; };
 		3AEBE1291E50D9F30062D9AF /* boost_python.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = boost_python.xcconfig; sourceTree = "<group>"; };
 		3AEBE12A1E50DB950062D9AF /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
+		3AEBE1331E50DBF80062D9AF /* shaders.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shaders.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE13E1E50DC1C0062D9AF /* CameraCubeMapDecl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CameraCubeMapDecl.cpp; path = ../../plugins/shaders/CameraCubeMapDecl.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE13F1E50DC1C0062D9AF /* CameraCubeMapDecl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraCubeMapDecl.h; path = ../../plugins/shaders/CameraCubeMapDecl.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1401E50DC1C0062D9AF /* CShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CShader.cpp; path = ../../plugins/shaders/CShader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1411E50DC1C0062D9AF /* CShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CShader.h; path = ../../plugins/shaders/CShader.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1421E50DC1C0062D9AF /* Doom3ShaderLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3ShaderLayer.cpp; path = ../../plugins/shaders/Doom3ShaderLayer.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1431E50DC1C0062D9AF /* Doom3ShaderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3ShaderLayer.h; path = ../../plugins/shaders/Doom3ShaderLayer.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1441E50DC1C0062D9AF /* Doom3ShaderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3ShaderSystem.cpp; path = ../../plugins/shaders/Doom3ShaderSystem.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1451E50DC1C0062D9AF /* Doom3ShaderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3ShaderSystem.h; path = ../../plugins/shaders/Doom3ShaderSystem.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1481E50DC1C0062D9AF /* MapExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapExpression.cpp; path = ../../plugins/shaders/MapExpression.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1491E50DC1C0062D9AF /* MapExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapExpression.h; path = ../../plugins/shaders/MapExpression.h; sourceTree = SOURCE_ROOT; };
+		3AEBE14A1E50DC1C0062D9AF /* NamedBindable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NamedBindable.h; path = ../../plugins/shaders/NamedBindable.h; sourceTree = SOURCE_ROOT; };
+		3AEBE14B1E50DC1C0062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/shaders/plugin.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE14C1E50DC1C0062D9AF /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plugin.h; path = ../../plugins/shaders/plugin.h; sourceTree = SOURCE_ROOT; };
+		3AEBE14D1E50DC1C0062D9AF /* ShaderDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderDefinition.h; path = ../../plugins/shaders/ShaderDefinition.h; sourceTree = SOURCE_ROOT; };
+		3AEBE14E1E50DC1C0062D9AF /* ShaderExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderExpression.cpp; path = ../../plugins/shaders/ShaderExpression.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE14F1E50DC1C0062D9AF /* ShaderExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderExpression.h; path = ../../plugins/shaders/ShaderExpression.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1501E50DC1C0062D9AF /* ShaderFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderFileLoader.cpp; path = ../../plugins/shaders/ShaderFileLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1511E50DC1C0062D9AF /* ShaderFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderFileLoader.h; path = ../../plugins/shaders/ShaderFileLoader.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1521E50DC1C0062D9AF /* ShaderLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderLibrary.cpp; path = ../../plugins/shaders/ShaderLibrary.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1531E50DC1C0062D9AF /* ShaderLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderLibrary.h; path = ../../plugins/shaders/ShaderLibrary.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1541E50DC1C0062D9AF /* ShaderNameCompareFunctor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderNameCompareFunctor.h; path = ../../plugins/shaders/ShaderNameCompareFunctor.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1551E50DC1C0062D9AF /* ShaderTemplate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderTemplate.cpp; path = ../../plugins/shaders/ShaderTemplate.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1561E50DC1C0062D9AF /* ShaderTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderTemplate.h; path = ../../plugins/shaders/ShaderTemplate.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1571E50DC1C0062D9AF /* TableDefinition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TableDefinition.cpp; path = ../../plugins/shaders/TableDefinition.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1581E50DC1C0062D9AF /* TableDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableDefinition.h; path = ../../plugins/shaders/TableDefinition.h; sourceTree = SOURCE_ROOT; };
+		3AEBE15A1E50DC1C0062D9AF /* CubeMapTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CubeMapTexture.h; path = ../../plugins/shaders/textures/CubeMapTexture.h; sourceTree = SOURCE_ROOT; };
+		3AEBE15B1E50DC1C0062D9AF /* GLTextureManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLTextureManager.cpp; path = ../../plugins/shaders/textures/GLTextureManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE15C1E50DC1C0062D9AF /* GLTextureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLTextureManager.h; path = ../../plugins/shaders/textures/GLTextureManager.h; sourceTree = SOURCE_ROOT; };
+		3AEBE15D1E50DC1C0062D9AF /* HeightmapCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeightmapCreator.h; path = ../../plugins/shaders/textures/HeightmapCreator.h; sourceTree = SOURCE_ROOT; };
+		3AEBE15E1E50DC1C0062D9AF /* TextureManipulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureManipulator.cpp; path = ../../plugins/shaders/textures/TextureManipulator.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE15F1E50DC1C0062D9AF /* TextureManipulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureManipulator.h; path = ../../plugins/shaders/textures/TextureManipulator.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1851E50DC8E0062D9AF /* skins.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = skins.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE1901E50DCAE0062D9AF /* Doom3ModelSkin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3ModelSkin.h; path = ../../plugins/skins/Doom3ModelSkin.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1911E50DCAE0062D9AF /* Doom3SkinCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3SkinCache.cpp; path = ../../plugins/skins/Doom3SkinCache.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE1921E50DCAE0062D9AF /* Doom3SkinCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3SkinCache.h; path = ../../plugins/skins/Doom3SkinCache.h; sourceTree = SOURCE_ROOT; };
+		3AEBE1951E50DCAE0062D9AF /* skincache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = skincache.cpp; path = ../../plugins/skins/skincache.cpp; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -2660,6 +2734,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE1301E50DBF80062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE1801E50DC790062D9AF /* OpenGL.framework in Frameworks */,
+				3AEBE17F1E50DC6E0062D9AF /* libxmlutil.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE1821E50DC8E0062D9AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEDE3971E4EEA1F005A8641 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3123,6 +3213,8 @@
 				3AEBE0511E50D6C60062D9AF /* particles */,
 				3AEBE0951E50D8270062D9AF /* scenegraph */,
 				3AEBE0B31E50D8D50062D9AF /* script */,
+				3AEBE1341E50DBF80062D9AF /* shaders */,
+				3AEBE1861E50DC8E0062D9AF /* skins */,
 				3A0124161E50484100A62BC1 /* xmlregistry */,
 			);
 			name = Modules;
@@ -3174,6 +3266,8 @@
 				3AEBE0501E50D6C60062D9AF /* particles.dylib */,
 				3AEBE0941E50D8270062D9AF /* scenegraph.dylib */,
 				3AEBE0B21E50D8D50062D9AF /* script.dylib */,
+				3AEBE1331E50DBF80062D9AF /* shaders.dylib */,
+				3AEBE1851E50DC8E0062D9AF /* skins.dylib */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3786,6 +3880,64 @@
 			name = interfaces;
 			path = ../../plugins/script/interfaces;
 			sourceTree = SOURCE_ROOT;
+		};
+		3AEBE1341E50DBF80062D9AF /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE13E1E50DC1C0062D9AF /* CameraCubeMapDecl.cpp */,
+				3AEBE13F1E50DC1C0062D9AF /* CameraCubeMapDecl.h */,
+				3AEBE1401E50DC1C0062D9AF /* CShader.cpp */,
+				3AEBE1411E50DC1C0062D9AF /* CShader.h */,
+				3AEBE1421E50DC1C0062D9AF /* Doom3ShaderLayer.cpp */,
+				3AEBE1431E50DC1C0062D9AF /* Doom3ShaderLayer.h */,
+				3AEBE1441E50DC1C0062D9AF /* Doom3ShaderSystem.cpp */,
+				3AEBE1451E50DC1C0062D9AF /* Doom3ShaderSystem.h */,
+				3AEBE1481E50DC1C0062D9AF /* MapExpression.cpp */,
+				3AEBE1491E50DC1C0062D9AF /* MapExpression.h */,
+				3AEBE14A1E50DC1C0062D9AF /* NamedBindable.h */,
+				3AEBE14B1E50DC1C0062D9AF /* plugin.cpp */,
+				3AEBE14C1E50DC1C0062D9AF /* plugin.h */,
+				3AEBE14D1E50DC1C0062D9AF /* ShaderDefinition.h */,
+				3AEBE14E1E50DC1C0062D9AF /* ShaderExpression.cpp */,
+				3AEBE14F1E50DC1C0062D9AF /* ShaderExpression.h */,
+				3AEBE1501E50DC1C0062D9AF /* ShaderFileLoader.cpp */,
+				3AEBE1511E50DC1C0062D9AF /* ShaderFileLoader.h */,
+				3AEBE1521E50DC1C0062D9AF /* ShaderLibrary.cpp */,
+				3AEBE1531E50DC1C0062D9AF /* ShaderLibrary.h */,
+				3AEBE1541E50DC1C0062D9AF /* ShaderNameCompareFunctor.h */,
+				3AEBE1551E50DC1C0062D9AF /* ShaderTemplate.cpp */,
+				3AEBE1561E50DC1C0062D9AF /* ShaderTemplate.h */,
+				3AEBE1571E50DC1C0062D9AF /* TableDefinition.cpp */,
+				3AEBE1581E50DC1C0062D9AF /* TableDefinition.h */,
+				3AEBE1591E50DC1C0062D9AF /* textures */,
+			);
+			path = shaders;
+			sourceTree = "<group>";
+		};
+		3AEBE1591E50DC1C0062D9AF /* textures */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE15A1E50DC1C0062D9AF /* CubeMapTexture.h */,
+				3AEBE15B1E50DC1C0062D9AF /* GLTextureManager.cpp */,
+				3AEBE15C1E50DC1C0062D9AF /* GLTextureManager.h */,
+				3AEBE15D1E50DC1C0062D9AF /* HeightmapCreator.h */,
+				3AEBE15E1E50DC1C0062D9AF /* TextureManipulator.cpp */,
+				3AEBE15F1E50DC1C0062D9AF /* TextureManipulator.h */,
+			);
+			name = textures;
+			path = ../../plugins/shaders/textures;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBE1861E50DC8E0062D9AF /* skins */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE1901E50DCAE0062D9AF /* Doom3ModelSkin.h */,
+				3AEBE1911E50DCAE0062D9AF /* Doom3SkinCache.cpp */,
+				3AEBE1921E50DCAE0062D9AF /* Doom3SkinCache.h */,
+				3AEBE1951E50DCAE0062D9AF /* skincache.cpp */,
+			);
+			path = skins;
+			sourceTree = "<group>";
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
@@ -5324,6 +5476,40 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AEBE1311E50DBF80062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE16F1E50DC1C0062D9AF /* ShaderExpression.h in Headers */,
+				3AEBE16D1E50DC1C0062D9AF /* ShaderDefinition.h in Headers */,
+				3AEBE1761E50DC1C0062D9AF /* ShaderTemplate.h in Headers */,
+				3AEBE17E1E50DC1C0062D9AF /* TextureManipulator.h in Headers */,
+				3AEBE1691E50DC1C0062D9AF /* MapExpression.h in Headers */,
+				3AEBE16C1E50DC1C0062D9AF /* plugin.h in Headers */,
+				3AEBE1741E50DC1C0062D9AF /* ShaderNameCompareFunctor.h in Headers */,
+				3AEBE1791E50DC1C0062D9AF /* CubeMapTexture.h in Headers */,
+				3AEBE17B1E50DC1C0062D9AF /* GLTextureManager.h in Headers */,
+				3AEBE1711E50DC1C0062D9AF /* ShaderFileLoader.h in Headers */,
+				3AEBE1611E50DC1C0062D9AF /* CameraCubeMapDecl.h in Headers */,
+				3AEBE1651E50DC1C0062D9AF /* Doom3ShaderLayer.h in Headers */,
+				3AEBE17C1E50DC1C0062D9AF /* HeightmapCreator.h in Headers */,
+				3AEBE1731E50DC1C0062D9AF /* ShaderLibrary.h in Headers */,
+				3AEBE16A1E50DC1C0062D9AF /* NamedBindable.h in Headers */,
+				3AEBE1631E50DC1C0062D9AF /* CShader.h in Headers */,
+				3AEBE1781E50DC1C0062D9AF /* TableDefinition.h in Headers */,
+				3AEBE1671E50DC1C0062D9AF /* Doom3ShaderSystem.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE1831E50DC8E0062D9AF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE1961E50DCAE0062D9AF /* Doom3ModelSkin.h in Headers */,
+				3AEBE1981E50DCAE0062D9AF /* Doom3SkinCache.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AF746621E4FACC9003465B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5754,6 +5940,40 @@
 			productReference = 3AEBE0B21E50D8D50062D9AF /* script.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AEBE1321E50DBF80062D9AF /* shaders */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBE13B1E50DBF80062D9AF /* Build configuration list for PBXNativeTarget "shaders" */;
+			buildPhases = (
+				3AEBE12F1E50DBF80062D9AF /* Sources */,
+				3AEBE1301E50DBF80062D9AF /* Frameworks */,
+				3AEBE1311E50DBF80062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = shaders;
+			productName = shaders;
+			productReference = 3AEBE1331E50DBF80062D9AF /* shaders.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		3AEBE1841E50DC8E0062D9AF /* skins */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AEBE18D1E50DC8E0062D9AF /* Build configuration list for PBXNativeTarget "skins" */;
+			buildPhases = (
+				3AEBE1811E50DC8E0062D9AF /* Sources */,
+				3AEBE1821E50DC8E0062D9AF /* Frameworks */,
+				3AEBE1831E50DC8E0062D9AF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = skins;
+			productName = skins;
+			productReference = 3AEBE1851E50DC8E0062D9AF /* skins.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */;
@@ -5885,6 +6105,12 @@
 					3AEBE0B11E50D8D50062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					3AEBE1321E50DBF80062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					3AEBE1841E50DC8E0062D9AF = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEDE3991E4EEA1F005A8641 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -5937,6 +6163,8 @@
 				3AEBE04F1E50D6C60062D9AF /* particles */,
 				3AEBE0931E50D8270062D9AF /* scenegraph */,
 				3AEBE0B11E50D8D50062D9AF /* script */,
+				3AEBE1321E50DBF80062D9AF /* shaders */,
+				3AEBE1841E50DC8E0062D9AF /* skins */,
 			);
 		};
 /* End PBXProject section */
@@ -6295,6 +6523,35 @@
 				3AEBE1211E50D9200062D9AF /* ScriptingSystem.cpp in Sources */,
 				3AEBE0F41E50D9200062D9AF /* BrushInterface.cpp in Sources */,
 				3AEBE1231E50D9200062D9AF /* ScriptMenu.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE12F1E50DBF80062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE16B1E50DC1C0062D9AF /* plugin.cpp in Sources */,
+				3AEBE1771E50DC1C0062D9AF /* TableDefinition.cpp in Sources */,
+				3AEBE1661E50DC1C0062D9AF /* Doom3ShaderSystem.cpp in Sources */,
+				3AEBE1751E50DC1C0062D9AF /* ShaderTemplate.cpp in Sources */,
+				3AEBE17A1E50DC1C0062D9AF /* GLTextureManager.cpp in Sources */,
+				3AEBE1621E50DC1C0062D9AF /* CShader.cpp in Sources */,
+				3AEBE1701E50DC1C0062D9AF /* ShaderFileLoader.cpp in Sources */,
+				3AEBE16E1E50DC1C0062D9AF /* ShaderExpression.cpp in Sources */,
+				3AEBE1721E50DC1C0062D9AF /* ShaderLibrary.cpp in Sources */,
+				3AEBE1681E50DC1C0062D9AF /* MapExpression.cpp in Sources */,
+				3AEBE1641E50DC1C0062D9AF /* Doom3ShaderLayer.cpp in Sources */,
+				3AEBE1601E50DC1C0062D9AF /* CameraCubeMapDecl.cpp in Sources */,
+				3AEBE17D1E50DC1C0062D9AF /* TextureManipulator.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE1811E50DC8E0062D9AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AEBE1971E50DCAE0062D9AF /* Doom3SkinCache.cpp in Sources */,
+				3AEBE1991E50DCAE0062D9AF /* skincache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8676,6 +8933,188 @@
 			};
 			name = Release;
 		};
+		3AEBE13C1E50DBF80062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBE13D1E50DBF80062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3AEBE18E1E50DC8E0062D9AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AEBE18F1E50DC8E0062D9AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3AEDE39F1E4EEA1F005A8641 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
@@ -9170,6 +9609,22 @@
 			buildConfigurations = (
 				3AEBE0BB1E50D8D60062D9AF /* Debug */,
 				3AEBE0BC1E50D8D60062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3AEBE13B1E50DBF80062D9AF /* Build configuration list for PBXNativeTarget "shaders" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBE13C1E50DBF80062D9AF /* Debug */,
+				3AEBE13D1E50DBF80062D9AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		3AEBE18D1E50DC8E0062D9AF /* Build configuration list for PBXNativeTarget "skins" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AEBE18E1E50DC8E0062D9AF /* Debug */,
+				3AEBE18F1E50DC8E0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};

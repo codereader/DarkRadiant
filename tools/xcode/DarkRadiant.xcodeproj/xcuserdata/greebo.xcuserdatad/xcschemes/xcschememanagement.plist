@@ -119,6 +119,16 @@
 			<key>orderHint</key>
 			<integer>25</integer>
 		</dict>
+		<key>shaders.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>26</integer>
+		</dict>
+		<key>skins.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>27</integer>
+		</dict>
 		<key>wxutil.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -268,6 +278,16 @@
 			<true/>
 		</dict>
 		<key>3AEBE0B11E50D8D50062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE1321E50DBF80062D9AF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3AEBE1841E50DC8E0062D9AF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
