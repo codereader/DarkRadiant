@@ -382,7 +382,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 #if defined(POSIX) && defined(PKGLIBDIR)
    _scriptPath = std::string(PKGLIBDIR) + "/scripts/";
 #else
-	_scriptPath = ctx.getApplicationPath() + "scripts/";
+	_scriptPath = ctx.getRuntimeDataPath() + "scripts/";
 #endif
 
 	// start the python interpreter

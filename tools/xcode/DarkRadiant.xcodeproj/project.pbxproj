@@ -1067,8 +1067,6 @@
 		3AEBE5221E522A510062D9AF /* filterdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F51E5229DC0062D9AF /* filterdialog.xrc */; };
 		3AEBE5231E522A510062D9AF /* filtereditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F71E5229DC0062D9AF /* filtereditor.xrc */; };
 		3AEBE5241E522A510062D9AF /* findandreplacedialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F91E5229DC0062D9AF /* findandreplacedialog.xrc */; };
-		3AEBE5251E522A510062D9AF /* FreeMono.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */; };
-		3AEBE5261E522A510062D9AF /* FreeSans.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */; };
 		3AEBE5271E522A510062D9AF /* lightinspector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FE1E5229DC0062D9AF /* lightinspector.xrc */; };
 		3AEBE5281E522A510062D9AF /* modelselector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5001E5229DC0062D9AF /* modelselector.xrc */; };
 		3AEBE5291E522A510062D9AF /* objectivecomponentsdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5021E5229DC0062D9AF /* objectivecomponentsdialog.xrc */; };
@@ -1083,6 +1081,23 @@
 		3AEBE5321E522A510062D9AF /* renderpreview.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */; };
 		3AEBE5331E522A510062D9AF /* responseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */; };
 		3AEBE5341E522A510062D9AF /* stimeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */; };
+		3AEBE5531E5233030062D9AF /* dialogtest.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5431E5232250062D9AF /* dialogtest.py */; };
+		3AEBE5541E5233030062D9AF /* init.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5441E5232250062D9AF /* init.py */; };
+		3AEBE5551E5233030062D9AF /* patchtest.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5451E5232250062D9AF /* patchtest.py */; };
+		3AEBE5561E5233030062D9AF /* test.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5461E5232250062D9AF /* test.py */; };
+		3AEBE5581E52334E0062D9AF /* FreeMono.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */; };
+		3AEBE5591E52334E0062D9AF /* FreeSans.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */; };
+		3AEBE55B1E5233880062D9AF /* ase_export.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5381E5232250062D9AF /* ase_export.py */; };
+		3AEBE55C1E5233880062D9AF /* ase_export_blend.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5391E5232250062D9AF /* ase_export_blend.py */; };
+		3AEBE55D1E5233880062D9AF /* check_for_invalid_visportals.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */; };
+		3AEBE55E1E5233880062D9AF /* convert_to_ase_and_replace.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53B1E5232250062D9AF /* convert_to_ase_and_replace.py */; };
+		3AEBE55F1E5233880062D9AF /* example.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53C1E5232250062D9AF /* example.py */; };
+		3AEBE5601E5233880062D9AF /* export_obj.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53D1E5232250062D9AF /* export_obj.py */; };
+		3AEBE5611E5233880062D9AF /* patchsplitter.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53E1E5232250062D9AF /* patchsplitter.py */; };
+		3AEBE5621E5233880062D9AF /* select_all_models_of_type.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53F1E5232250062D9AF /* select_all_models_of_type.py */; };
+		3AEBE5631E5233880062D9AF /* shift_textures_randomly.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5401E5232250062D9AF /* shift_textures_randomly.py */; };
+		3AEBE5641E5233880062D9AF /* shift_textures_upwards_randomly.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5411E5232250062D9AF /* shift_textures_upwards_randomly.py */; };
+		3AEBE5651E5233880062D9AF /* test_targets.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5421E5232250062D9AF /* test_targets.py */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1403,8 +1418,6 @@
 				3AEBE5221E522A510062D9AF /* filterdialog.xrc in CopyFiles */,
 				3AEBE5231E522A510062D9AF /* filtereditor.xrc in CopyFiles */,
 				3AEBE5241E522A510062D9AF /* findandreplacedialog.xrc in CopyFiles */,
-				3AEBE5251E522A510062D9AF /* FreeMono.ttf in CopyFiles */,
-				3AEBE5261E522A510062D9AF /* FreeSans.ttf in CopyFiles */,
 				3AEBE5271E522A510062D9AF /* lightinspector.xrc in CopyFiles */,
 				3AEBE5281E522A510062D9AF /* modelselector.xrc in CopyFiles */,
 				3AEBE5291E522A510062D9AF /* objectivecomponentsdialog.xrc in CopyFiles */,
@@ -1419,6 +1432,50 @@
 				3AEBE5321E522A510062D9AF /* renderpreview.xrc in CopyFiles */,
 				3AEBE5331E522A510062D9AF /* responseeditor.xrc in CopyFiles */,
 				3AEBE5341E522A510062D9AF /* stimeditor.xrc in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE5471E5232DB0062D9AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Resources/scripts;
+			dstSubfolderSpec = 16;
+			files = (
+				3AEBE5531E5233030062D9AF /* dialogtest.py in CopyFiles */,
+				3AEBE5541E5233030062D9AF /* init.py in CopyFiles */,
+				3AEBE5551E5233030062D9AF /* patchtest.py in CopyFiles */,
+				3AEBE5561E5233030062D9AF /* test.py in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE5571E5233380062D9AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Resources/ui/fonts;
+			dstSubfolderSpec = 16;
+			files = (
+				3AEBE5581E52334E0062D9AF /* FreeMono.ttf in CopyFiles */,
+				3AEBE5591E52334E0062D9AF /* FreeSans.ttf in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE55A1E52336F0062D9AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Resources/scripts/commands;
+			dstSubfolderSpec = 16;
+			files = (
+				3AEBE55B1E5233880062D9AF /* ase_export.py in CopyFiles */,
+				3AEBE55C1E5233880062D9AF /* ase_export_blend.py in CopyFiles */,
+				3AEBE55D1E5233880062D9AF /* check_for_invalid_visportals.py in CopyFiles */,
+				3AEBE55E1E5233880062D9AF /* convert_to_ase_and_replace.py in CopyFiles */,
+				3AEBE55F1E5233880062D9AF /* example.py in CopyFiles */,
+				3AEBE5601E5233880062D9AF /* export_obj.py in CopyFiles */,
+				3AEBE5611E5233880062D9AF /* patchsplitter.py in CopyFiles */,
+				3AEBE5621E5233880062D9AF /* select_all_models_of_type.py in CopyFiles */,
+				3AEBE5631E5233880062D9AF /* shift_textures_randomly.py in CopyFiles */,
+				3AEBE5641E5233880062D9AF /* shift_textures_upwards_randomly.py in CopyFiles */,
+				3AEBE5651E5233880062D9AF /* test_targets.py in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2728,6 +2785,22 @@
 		3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = renderpreview.xrc; path = ../../install/ui/renderpreview.xrc; sourceTree = SOURCE_ROOT; };
 		3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = responseeditor.xrc; path = ../../install/ui/responseeditor.xrc; sourceTree = SOURCE_ROOT; };
 		3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = stimeditor.xrc; path = ../../install/ui/stimeditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5361E5232250062D9AF /* scripts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = scripts; path = ../../install/scripts; sourceTree = SOURCE_ROOT; };
+		3AEBE5381E5232250062D9AF /* ase_export.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = ase_export.py; path = ../../install/scripts/commands/ase_export.py; sourceTree = SOURCE_ROOT; };
+		3AEBE5391E5232250062D9AF /* ase_export_blend.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = ase_export_blend.py; path = ../../install/scripts/commands/ase_export_blend.py; sourceTree = SOURCE_ROOT; };
+		3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = check_for_invalid_visportals.py; path = ../../install/scripts/commands/check_for_invalid_visportals.py; sourceTree = SOURCE_ROOT; };
+		3AEBE53B1E5232250062D9AF /* convert_to_ase_and_replace.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = convert_to_ase_and_replace.py; path = ../../install/scripts/commands/convert_to_ase_and_replace.py; sourceTree = SOURCE_ROOT; };
+		3AEBE53C1E5232250062D9AF /* example.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = example.py; path = ../../install/scripts/commands/example.py; sourceTree = SOURCE_ROOT; };
+		3AEBE53D1E5232250062D9AF /* export_obj.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = export_obj.py; path = ../../install/scripts/commands/export_obj.py; sourceTree = SOURCE_ROOT; };
+		3AEBE53E1E5232250062D9AF /* patchsplitter.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = patchsplitter.py; path = ../../install/scripts/commands/patchsplitter.py; sourceTree = SOURCE_ROOT; };
+		3AEBE53F1E5232250062D9AF /* select_all_models_of_type.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = select_all_models_of_type.py; path = ../../install/scripts/commands/select_all_models_of_type.py; sourceTree = SOURCE_ROOT; };
+		3AEBE5401E5232250062D9AF /* shift_textures_randomly.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = shift_textures_randomly.py; path = ../../install/scripts/commands/shift_textures_randomly.py; sourceTree = SOURCE_ROOT; };
+		3AEBE5411E5232250062D9AF /* shift_textures_upwards_randomly.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = shift_textures_upwards_randomly.py; path = ../../install/scripts/commands/shift_textures_upwards_randomly.py; sourceTree = SOURCE_ROOT; };
+		3AEBE5421E5232250062D9AF /* test_targets.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = test_targets.py; path = ../../install/scripts/commands/test_targets.py; sourceTree = SOURCE_ROOT; };
+		3AEBE5431E5232250062D9AF /* dialogtest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = dialogtest.py; path = ../../install/scripts/dialogtest.py; sourceTree = SOURCE_ROOT; };
+		3AEBE5441E5232250062D9AF /* init.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = init.py; path = ../../install/scripts/init.py; sourceTree = SOURCE_ROOT; };
+		3AEBE5451E5232250062D9AF /* patchtest.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = patchtest.py; path = ../../install/scripts/patchtest.py; sourceTree = SOURCE_ROOT; };
+		3AEBE5461E5232250062D9AF /* test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = test.py; path = ../../install/scripts/test.py; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -5299,6 +5372,7 @@
 			children = (
 				3A0122531E503C4D00A62BC1 /* bitmaps */,
 				3AEBE4B71E50EFD60062D9AF /* games */,
+				3AEBE5351E5232070062D9AF /* scripts */,
 				3AEBE4E31E5229AB0062D9AF /* ui */,
 				3AEBE4A81E50E8A10062D9AF /* xml */,
 			);
@@ -5359,6 +5433,38 @@
 			);
 			name = fonts;
 			path = ../../../install/ui/fonts;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AEBE5351E5232070062D9AF /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE5361E5232250062D9AF /* scripts */,
+				3AEBE5371E5232250062D9AF /* commands */,
+				3AEBE5431E5232250062D9AF /* dialogtest.py */,
+				3AEBE5441E5232250062D9AF /* init.py */,
+				3AEBE5451E5232250062D9AF /* patchtest.py */,
+				3AEBE5461E5232250062D9AF /* test.py */,
+			);
+			name = scripts;
+			sourceTree = "<group>";
+		};
+		3AEBE5371E5232250062D9AF /* commands */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE5381E5232250062D9AF /* ase_export.py */,
+				3AEBE5391E5232250062D9AF /* ase_export_blend.py */,
+				3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */,
+				3AEBE53B1E5232250062D9AF /* convert_to_ase_and_replace.py */,
+				3AEBE53C1E5232250062D9AF /* example.py */,
+				3AEBE53D1E5232250062D9AF /* export_obj.py */,
+				3AEBE53E1E5232250062D9AF /* patchsplitter.py */,
+				3AEBE53F1E5232250062D9AF /* select_all_models_of_type.py */,
+				3AEBE5401E5232250062D9AF /* shift_textures_randomly.py */,
+				3AEBE5411E5232250062D9AF /* shift_textures_upwards_randomly.py */,
+				3AEBE5421E5232250062D9AF /* test_targets.py */,
+			);
+			name = commands;
+			path = ../../../install/scripts/commands;
 			sourceTree = SOURCE_ROOT;
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -7808,6 +7914,9 @@
 				3AEBE4AF1E50E9BA0062D9AF /* CopyFiles */,
 				3AEBE4BE1E50F01D0062D9AF /* CopyFiles */,
 				3AEBE5191E522A330062D9AF /* CopyFiles */,
+				3AEBE5471E5232DB0062D9AF /* CopyFiles */,
+				3AEBE5571E5233380062D9AF /* CopyFiles */,
+				3AEBE55A1E52336F0062D9AF /* CopyFiles */,
 			);
 			buildRules = (
 			);
