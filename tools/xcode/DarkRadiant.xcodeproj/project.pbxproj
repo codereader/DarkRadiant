@@ -1056,6 +1056,33 @@
 		3AEBE4E01E50F0D20062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE4CE1E50F0BD0062D9AF /* plugin.cpp */; };
 		3AEBE4E11E50F0D20062D9AF /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE4CF1E50F0BD0062D9AF /* plugin.h */; };
 		3AEBE4E21E5227F20062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
+		3AEBE51A1E522A510062D9AF /* aboutdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4E51E5229DC0062D9AF /* aboutdialog.xrc */; };
+		3AEBE51B1E522A510062D9AF /* addpropertydialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4E71E5229DC0062D9AF /* addpropertydialog.xrc */; };
+		3AEBE51C1E522A510062D9AF /* camwnd.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4E91E5229DC0062D9AF /* camwnd.xrc */; };
+		3AEBE51D1E522A510062D9AF /* conversationcmdeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4EB1E5229DC0062D9AF /* conversationcmdeditor.xrc */; };
+		3AEBE51E1E522A510062D9AF /* conversationdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4ED1E5229DC0062D9AF /* conversationdialog.xrc */; };
+		3AEBE51F1E522A510062D9AF /* conversationeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4EF1E5229DC0062D9AF /* conversationeditor.xrc */; };
+		3AEBE5201E522A510062D9AF /* difficultyeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F11E5229DC0062D9AF /* difficultyeditor.xrc */; };
+		3AEBE5211E522A510062D9AF /* entityclasschooser.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F31E5229DC0062D9AF /* entityclasschooser.xrc */; };
+		3AEBE5221E522A510062D9AF /* filterdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F51E5229DC0062D9AF /* filterdialog.xrc */; };
+		3AEBE5231E522A510062D9AF /* filtereditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F71E5229DC0062D9AF /* filtereditor.xrc */; };
+		3AEBE5241E522A510062D9AF /* findandreplacedialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F91E5229DC0062D9AF /* findandreplacedialog.xrc */; };
+		3AEBE5251E522A510062D9AF /* FreeMono.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */; };
+		3AEBE5261E522A510062D9AF /* FreeSans.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */; };
+		3AEBE5271E522A510062D9AF /* lightinspector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FE1E5229DC0062D9AF /* lightinspector.xrc */; };
+		3AEBE5281E522A510062D9AF /* modelselector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5001E5229DC0062D9AF /* modelselector.xrc */; };
+		3AEBE5291E522A510062D9AF /* objectivecomponentsdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5021E5229DC0062D9AF /* objectivecomponentsdialog.xrc */; };
+		3AEBE52A1E522A510062D9AF /* objectiveconditionsdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5041E5229DC0062D9AF /* objectiveconditionsdialog.xrc */; };
+		3AEBE52B1E522A510062D9AF /* objectiveseditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5061E5229DC0062D9AF /* objectiveseditor.xrc */; };
+		3AEBE52C1E522A510062D9AF /* overlaydialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5081E5229DC0062D9AF /* overlaydialog.xrc */; };
+		3AEBE52D1E522A510062D9AF /* particleeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE50A1E5229DC0062D9AF /* particleeditor.xrc */; };
+		3AEBE52E1E522A510062D9AF /* patchcreatedialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE50C1E5229DC0062D9AF /* patchcreatedialog.xrc */; };
+		3AEBE52F1E522A510062D9AF /* patchinspector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE50E1E5229DC0062D9AF /* patchinspector.xrc */; };
+		3AEBE5301E522A510062D9AF /* patchthickendialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5101E5229DC0062D9AF /* patchthickendialog.xrc */; };
+		3AEBE5311E522A510062D9AF /* readableeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5121E5229DC0062D9AF /* readableeditor.xrc */; };
+		3AEBE5321E522A510062D9AF /* renderpreview.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */; };
+		3AEBE5331E522A510062D9AF /* responseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */; };
+		3AEBE5341E522A510062D9AF /* stimeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1356,6 +1383,42 @@
 				3AEBE4C21E50F0350062D9AF /* quake3.game in CopyFiles */,
 				3AEBE4C31E50F0350062D9AF /* quake4.game in CopyFiles */,
 				3AEBE4C41E50F0350062D9AF /* xreal.game in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AEBE5191E522A330062D9AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Resources/ui;
+			dstSubfolderSpec = 16;
+			files = (
+				3AEBE51A1E522A510062D9AF /* aboutdialog.xrc in CopyFiles */,
+				3AEBE51B1E522A510062D9AF /* addpropertydialog.xrc in CopyFiles */,
+				3AEBE51C1E522A510062D9AF /* camwnd.xrc in CopyFiles */,
+				3AEBE51D1E522A510062D9AF /* conversationcmdeditor.xrc in CopyFiles */,
+				3AEBE51E1E522A510062D9AF /* conversationdialog.xrc in CopyFiles */,
+				3AEBE51F1E522A510062D9AF /* conversationeditor.xrc in CopyFiles */,
+				3AEBE5201E522A510062D9AF /* difficultyeditor.xrc in CopyFiles */,
+				3AEBE5211E522A510062D9AF /* entityclasschooser.xrc in CopyFiles */,
+				3AEBE5221E522A510062D9AF /* filterdialog.xrc in CopyFiles */,
+				3AEBE5231E522A510062D9AF /* filtereditor.xrc in CopyFiles */,
+				3AEBE5241E522A510062D9AF /* findandreplacedialog.xrc in CopyFiles */,
+				3AEBE5251E522A510062D9AF /* FreeMono.ttf in CopyFiles */,
+				3AEBE5261E522A510062D9AF /* FreeSans.ttf in CopyFiles */,
+				3AEBE5271E522A510062D9AF /* lightinspector.xrc in CopyFiles */,
+				3AEBE5281E522A510062D9AF /* modelselector.xrc in CopyFiles */,
+				3AEBE5291E522A510062D9AF /* objectivecomponentsdialog.xrc in CopyFiles */,
+				3AEBE52A1E522A510062D9AF /* objectiveconditionsdialog.xrc in CopyFiles */,
+				3AEBE52B1E522A510062D9AF /* objectiveseditor.xrc in CopyFiles */,
+				3AEBE52C1E522A510062D9AF /* overlaydialog.xrc in CopyFiles */,
+				3AEBE52D1E522A510062D9AF /* particleeditor.xrc in CopyFiles */,
+				3AEBE52E1E522A510062D9AF /* patchcreatedialog.xrc in CopyFiles */,
+				3AEBE52F1E522A510062D9AF /* patchinspector.xrc in CopyFiles */,
+				3AEBE5301E522A510062D9AF /* patchthickendialog.xrc in CopyFiles */,
+				3AEBE5311E522A510062D9AF /* readableeditor.xrc in CopyFiles */,
+				3AEBE5321E522A510062D9AF /* renderpreview.xrc in CopyFiles */,
+				3AEBE5331E522A510062D9AF /* responseeditor.xrc in CopyFiles */,
+				3AEBE5341E522A510062D9AF /* stimeditor.xrc in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2638,6 +2701,33 @@
 		3AEBE4CD1E50F0BD0062D9AF /* PicoModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PicoModelNode.h; path = ../../plugins/model/PicoModelNode.h; sourceTree = SOURCE_ROOT; };
 		3AEBE4CE1E50F0BD0062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/model/plugin.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE4CF1E50F0BD0062D9AF /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plugin.h; path = ../../plugins/model/plugin.h; sourceTree = SOURCE_ROOT; };
+		3AEBE4E51E5229DC0062D9AF /* aboutdialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = aboutdialog.xrc; path = ../../install/ui/aboutdialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4E71E5229DC0062D9AF /* addpropertydialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = addpropertydialog.xrc; path = ../../install/ui/addpropertydialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4E91E5229DC0062D9AF /* camwnd.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = camwnd.xrc; path = ../../install/ui/camwnd.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4EB1E5229DC0062D9AF /* conversationcmdeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = conversationcmdeditor.xrc; path = ../../install/ui/conversationcmdeditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4ED1E5229DC0062D9AF /* conversationdialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = conversationdialog.xrc; path = ../../install/ui/conversationdialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4EF1E5229DC0062D9AF /* conversationeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = conversationeditor.xrc; path = ../../install/ui/conversationeditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4F11E5229DC0062D9AF /* difficultyeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = difficultyeditor.xrc; path = ../../install/ui/difficultyeditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4F31E5229DC0062D9AF /* entityclasschooser.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = entityclasschooser.xrc; path = ../../install/ui/entityclasschooser.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4F51E5229DC0062D9AF /* filterdialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = filterdialog.xrc; path = ../../install/ui/filterdialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4F71E5229DC0062D9AF /* filtereditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = filtereditor.xrc; path = ../../install/ui/filtereditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4F91E5229DC0062D9AF /* findandreplacedialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = findandreplacedialog.xrc; path = ../../install/ui/findandreplacedialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FreeMono.ttf; path = ../../install/ui/fonts/FreeMono.ttf; sourceTree = SOURCE_ROOT; };
+		3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FreeSans.ttf; path = ../../install/ui/fonts/FreeSans.ttf; sourceTree = SOURCE_ROOT; };
+		3AEBE4FE1E5229DC0062D9AF /* lightinspector.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = lightinspector.xrc; path = ../../install/ui/lightinspector.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5001E5229DC0062D9AF /* modelselector.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = modelselector.xrc; path = ../../install/ui/modelselector.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5021E5229DC0062D9AF /* objectivecomponentsdialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = objectivecomponentsdialog.xrc; path = ../../install/ui/objectivecomponentsdialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5041E5229DC0062D9AF /* objectiveconditionsdialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = objectiveconditionsdialog.xrc; path = ../../install/ui/objectiveconditionsdialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5061E5229DC0062D9AF /* objectiveseditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = objectiveseditor.xrc; path = ../../install/ui/objectiveseditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5081E5229DC0062D9AF /* overlaydialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = overlaydialog.xrc; path = ../../install/ui/overlaydialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE50A1E5229DC0062D9AF /* particleeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = particleeditor.xrc; path = ../../install/ui/particleeditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE50C1E5229DC0062D9AF /* patchcreatedialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = patchcreatedialog.xrc; path = ../../install/ui/patchcreatedialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE50E1E5229DC0062D9AF /* patchinspector.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = patchinspector.xrc; path = ../../install/ui/patchinspector.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5101E5229DC0062D9AF /* patchthickendialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = patchthickendialog.xrc; path = ../../install/ui/patchthickendialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5121E5229DC0062D9AF /* readableeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = readableeditor.xrc; path = ../../install/ui/readableeditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = renderpreview.xrc; path = ../../install/ui/renderpreview.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = responseeditor.xrc; path = ../../install/ui/responseeditor.xrc; sourceTree = SOURCE_ROOT; };
+		3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = stimeditor.xrc; path = ../../install/ui/stimeditor.xrc; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -5207,8 +5297,9 @@
 		3AEBE4B61E50EFAD0062D9AF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBE4B71E50EFD60062D9AF /* games */,
 				3A0122531E503C4D00A62BC1 /* bitmaps */,
+				3AEBE4B71E50EFD60062D9AF /* games */,
+				3AEBE4E31E5229AB0062D9AF /* ui */,
 				3AEBE4A81E50E8A10062D9AF /* xml */,
 			);
 			name = Resources;
@@ -5226,6 +5317,49 @@
 			);
 			name = games;
 			sourceTree = "<group>";
+		};
+		3AEBE4E31E5229AB0062D9AF /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE4E51E5229DC0062D9AF /* aboutdialog.xrc */,
+				3AEBE4E71E5229DC0062D9AF /* addpropertydialog.xrc */,
+				3AEBE4E91E5229DC0062D9AF /* camwnd.xrc */,
+				3AEBE4EB1E5229DC0062D9AF /* conversationcmdeditor.xrc */,
+				3AEBE4ED1E5229DC0062D9AF /* conversationdialog.xrc */,
+				3AEBE4EF1E5229DC0062D9AF /* conversationeditor.xrc */,
+				3AEBE4F11E5229DC0062D9AF /* difficultyeditor.xrc */,
+				3AEBE4F31E5229DC0062D9AF /* entityclasschooser.xrc */,
+				3AEBE4F51E5229DC0062D9AF /* filterdialog.xrc */,
+				3AEBE4F71E5229DC0062D9AF /* filtereditor.xrc */,
+				3AEBE4F91E5229DC0062D9AF /* findandreplacedialog.xrc */,
+				3AEBE4FA1E5229DC0062D9AF /* fonts */,
+				3AEBE4FE1E5229DC0062D9AF /* lightinspector.xrc */,
+				3AEBE5001E5229DC0062D9AF /* modelselector.xrc */,
+				3AEBE5021E5229DC0062D9AF /* objectivecomponentsdialog.xrc */,
+				3AEBE5041E5229DC0062D9AF /* objectiveconditionsdialog.xrc */,
+				3AEBE5061E5229DC0062D9AF /* objectiveseditor.xrc */,
+				3AEBE5081E5229DC0062D9AF /* overlaydialog.xrc */,
+				3AEBE50A1E5229DC0062D9AF /* particleeditor.xrc */,
+				3AEBE50C1E5229DC0062D9AF /* patchcreatedialog.xrc */,
+				3AEBE50E1E5229DC0062D9AF /* patchinspector.xrc */,
+				3AEBE5101E5229DC0062D9AF /* patchthickendialog.xrc */,
+				3AEBE5121E5229DC0062D9AF /* readableeditor.xrc */,
+				3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */,
+				3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */,
+				3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */,
+			);
+			name = ui;
+			sourceTree = "<group>";
+		};
+		3AEBE4FA1E5229DC0062D9AF /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */,
+				3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */,
+			);
+			name = fonts;
+			path = ../../../install/ui/fonts;
+			sourceTree = SOURCE_ROOT;
 		};
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
@@ -7673,6 +7807,7 @@
 				3AEDE3981E4EEA1F005A8641 /* CopyFiles */,
 				3AEBE4AF1E50E9BA0062D9AF /* CopyFiles */,
 				3AEBE4BE1E50F01D0062D9AF /* CopyFiles */,
+				3AEBE5191E522A330062D9AF /* CopyFiles */,
 			);
 			buildRules = (
 			);
