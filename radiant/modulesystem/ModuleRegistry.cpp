@@ -52,6 +52,14 @@ void ModuleRegistry::loadModules()
 void ModuleRegistry::unloadModules()
 {
 	_uninitialisedModules.clear();
+    
+    // greebo: It's entirely possible that the clear() method will clear the
+    // last shared_ptr of a module. Module might still call this class' moduleExists()
+    // method which in turn refers to a semi-destructed ModulesMap instance.
+    // So, copy the contents to a temporary map before clearing it out.
+    ModulesMap tempMap;
+    tempMap.swap(_initialisedModules);
+    
 	_initialisedModules.clear();
 
     // We need to delete all pending objects before unloading modules
