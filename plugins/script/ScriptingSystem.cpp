@@ -485,6 +485,8 @@ void ScriptingSystem::shutdownModule()
 
 	// Clear the buffer so that nodes finally get destructed
 	SceneNodeBuffer::Instance().clear();
+    
+    _commands.clear();
 
 	_scriptPath.clear();
 
