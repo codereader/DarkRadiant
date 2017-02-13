@@ -22,3 +22,6 @@ LIBRARY_SEARCH_PATHS = $(DR_BASE_LIBRARY_SEARCH_PATHS)
 OTHER_LDFLAGS = $(DR_BASE_LINKFLAGS)
 
 FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks"
+
+// Some headers are named the same, we don't want Xcode to decide which one will be included
+USE_HEADERMAP = NO

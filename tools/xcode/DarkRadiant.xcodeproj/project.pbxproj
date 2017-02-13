@@ -1046,6 +1046,16 @@
 		3AEBE4C21E50F0350062D9AF /* quake3.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BB1E50EFEB0062D9AF /* quake3.game */; };
 		3AEBE4C31E50F0350062D9AF /* quake4.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BC1E50EFEB0062D9AF /* quake4.game */; };
 		3AEBE4C41E50F0350062D9AF /* xreal.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BD1E50EFEB0062D9AF /* xreal.game */; };
+		3AEBE4D91E50F0C50062D9AF /* AseExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE4C51E50F0BD0062D9AF /* AseExporter.cpp */; };
+		3AEBE4DA1E50F0C50062D9AF /* AseExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE4C61E50F0BD0062D9AF /* AseExporter.h */; };
+		3AEBE4DB1E50F0D20062D9AF /* PicoModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE4C91E50F0BD0062D9AF /* PicoModelLoader.cpp */; };
+		3AEBE4DC1E50F0D20062D9AF /* PicoModelLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE4CA1E50F0BD0062D9AF /* PicoModelLoader.h */; };
+		3AEBE4DD1E50F0D20062D9AF /* PicoModelModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE4CB1E50F0BD0062D9AF /* PicoModelModule.h */; };
+		3AEBE4DE1E50F0D20062D9AF /* PicoModelNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE4CC1E50F0BD0062D9AF /* PicoModelNode.cpp */; };
+		3AEBE4DF1E50F0D20062D9AF /* PicoModelNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE4CD1E50F0BD0062D9AF /* PicoModelNode.h */; };
+		3AEBE4E01E50F0D20062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE4CE1E50F0BD0062D9AF /* plugin.cpp */; };
+		3AEBE4E11E50F0D20062D9AF /* plugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE4CF1E50F0BD0062D9AF /* plugin.h */; };
+		3AEBE4E21E5227F20062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -2174,10 +2184,10 @@
 		3AEBE0131E50CB120062D9AF /* pm_obj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_obj.c; path = ../../libs/picomodel/pm_obj.c; sourceTree = SOURCE_ROOT; };
 		3AEBE0141E50CB120062D9AF /* pm_terrain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_terrain.c; path = ../../libs/picomodel/pm_terrain.c; sourceTree = SOURCE_ROOT; };
 		3AEBE0341E50D0400062D9AF /* model.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = model.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBE03F1E50D25E0062D9AF /* RenderablePicoModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoModel.cpp; path = ../../../plugins/model/RenderablePicoModel.cpp; sourceTree = "<group>"; };
-		3AEBE0401E50D25E0062D9AF /* RenderablePicoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoModel.h; path = ../../../plugins/model/RenderablePicoModel.h; sourceTree = "<group>"; };
-		3AEBE0411E50D25E0062D9AF /* RenderablePicoSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoSurface.cpp; path = ../../../plugins/model/RenderablePicoSurface.cpp; sourceTree = "<group>"; };
-		3AEBE0421E50D25E0062D9AF /* RenderablePicoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoSurface.h; path = ../../../plugins/model/RenderablePicoSurface.h; sourceTree = "<group>"; };
+		3AEBE03F1E50D25E0062D9AF /* RenderablePicoModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoModel.cpp; path = ../../plugins/model/RenderablePicoModel.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0401E50D25E0062D9AF /* RenderablePicoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoModel.h; path = ../../plugins/model/RenderablePicoModel.h; sourceTree = SOURCE_ROOT; };
+		3AEBE0411E50D25E0062D9AF /* RenderablePicoSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoSurface.cpp; path = ../../plugins/model/RenderablePicoSurface.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE0421E50D25E0062D9AF /* RenderablePicoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoSurface.h; path = ../../plugins/model/RenderablePicoSurface.h; sourceTree = SOURCE_ROOT; };
 		3AEBE0491E50D2F30062D9AF /* model.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = model.xcconfig; sourceTree = "<group>"; };
 		3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = picomodel.xcconfig; sourceTree = "<group>"; };
 		3AEBE0501E50D6C60062D9AF /* particles.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = particles.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2619,6 +2629,15 @@
 		3AEBE4BB1E50EFEB0062D9AF /* quake3.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = quake3.game; path = ../../install/games/quake3.game; sourceTree = SOURCE_ROOT; };
 		3AEBE4BC1E50EFEB0062D9AF /* quake4.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = quake4.game; path = ../../install/games/quake4.game; sourceTree = SOURCE_ROOT; };
 		3AEBE4BD1E50EFEB0062D9AF /* xreal.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = xreal.game; path = ../../install/games/xreal.game; sourceTree = SOURCE_ROOT; };
+		3AEBE4C51E50F0BD0062D9AF /* AseExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AseExporter.cpp; path = ../../plugins/model/AseExporter.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE4C61E50F0BD0062D9AF /* AseExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AseExporter.h; path = ../../plugins/model/AseExporter.h; sourceTree = SOURCE_ROOT; };
+		3AEBE4C91E50F0BD0062D9AF /* PicoModelLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PicoModelLoader.cpp; path = ../../plugins/model/PicoModelLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE4CA1E50F0BD0062D9AF /* PicoModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PicoModelLoader.h; path = ../../plugins/model/PicoModelLoader.h; sourceTree = SOURCE_ROOT; };
+		3AEBE4CB1E50F0BD0062D9AF /* PicoModelModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PicoModelModule.h; path = ../../plugins/model/PicoModelModule.h; sourceTree = SOURCE_ROOT; };
+		3AEBE4CC1E50F0BD0062D9AF /* PicoModelNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PicoModelNode.cpp; path = ../../plugins/model/PicoModelNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE4CD1E50F0BD0062D9AF /* PicoModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PicoModelNode.h; path = ../../plugins/model/PicoModelNode.h; sourceTree = SOURCE_ROOT; };
+		3AEBE4CE1E50F0BD0062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/model/plugin.cpp; sourceTree = SOURCE_ROOT; };
+		3AEBE4CF1E50F0BD0062D9AF /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plugin.h; path = ../../plugins/model/plugin.h; sourceTree = SOURCE_ROOT; };
 		3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = wxwidgets.xcconfig; sourceTree = "<group>"; };
 		3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DarkRadiant; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
@@ -3369,6 +3388,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AEBE4E21E5227F20062D9AF /* libscene.a in Frameworks */,
 				3AEBE04B1E50D6840062D9AF /* libmathlib.a in Frameworks */,
 				3AEBE0481E50D2860062D9AF /* OpenGL.framework in Frameworks */,
 				3AEBE0471E50D27F0062D9AF /* libpicomodel.a in Frameworks */,
@@ -4542,6 +4562,15 @@
 		3AEBE0351E50D0400062D9AF /* model */ = {
 			isa = PBXGroup;
 			children = (
+				3AEBE4C51E50F0BD0062D9AF /* AseExporter.cpp */,
+				3AEBE4C61E50F0BD0062D9AF /* AseExporter.h */,
+				3AEBE4C91E50F0BD0062D9AF /* PicoModelLoader.cpp */,
+				3AEBE4CA1E50F0BD0062D9AF /* PicoModelLoader.h */,
+				3AEBE4CB1E50F0BD0062D9AF /* PicoModelModule.h */,
+				3AEBE4CC1E50F0BD0062D9AF /* PicoModelNode.cpp */,
+				3AEBE4CD1E50F0BD0062D9AF /* PicoModelNode.h */,
+				3AEBE4CE1E50F0BD0062D9AF /* plugin.cpp */,
+				3AEBE4CF1E50F0BD0062D9AF /* plugin.h */,
 				3AEBE03F1E50D25E0062D9AF /* RenderablePicoModel.cpp */,
 				3AEBE0401E50D25E0062D9AF /* RenderablePicoModel.h */,
 				3AEBE0411E50D25E0062D9AF /* RenderablePicoSurface.cpp */,
@@ -6667,6 +6696,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AEBE0441E50D25E0062D9AF /* RenderablePicoModel.h in Headers */,
+				3AEBE4E11E50F0D20062D9AF /* plugin.h in Headers */,
+				3AEBE4DF1E50F0D20062D9AF /* PicoModelNode.h in Headers */,
+				3AEBE4DD1E50F0D20062D9AF /* PicoModelModule.h in Headers */,
+				3AEBE4DA1E50F0C50062D9AF /* AseExporter.h in Headers */,
+				3AEBE4DC1E50F0D20062D9AF /* PicoModelLoader.h in Headers */,
 				3AEBE0461E50D25E0062D9AF /* RenderablePicoSurface.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8160,8 +8194,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AEBE4E01E50F0D20062D9AF /* plugin.cpp in Sources */,
 				3AEBE0451E50D25E0062D9AF /* RenderablePicoSurface.cpp in Sources */,
+				3AEBE4D91E50F0C50062D9AF /* AseExporter.cpp in Sources */,
+				3AEBE4DE1E50F0D20062D9AF /* PicoModelNode.cpp in Sources */,
 				3AEBE0431E50D25E0062D9AF /* RenderablePicoModel.cpp in Sources */,
+				3AEBE4DB1E50F0D20062D9AF /* PicoModelLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
