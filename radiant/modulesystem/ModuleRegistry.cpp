@@ -60,7 +60,7 @@ void ModuleRegistry::unloadModules()
     ModulesMap tempMap;
     tempMap.swap(_initialisedModules);
     
-	_initialisedModules.clear();
+	tempMap.clear();
 
     // We need to delete all pending objects before unloading modules
     // wxWidgets needs a chance to delete them before memory access is denied
