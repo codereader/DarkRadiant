@@ -116,6 +116,15 @@ void SelectionSetManager::onRadiantStartup()
 		wxCommandEventHandler(SelectionSetManager::onDeleteAllSetsClicked), NULL, this);
 
 	toolbar->Realize();
+    
+#ifdef __WXOSX__
+    // Weird workaround to stop an empty area from being drawn
+    // where the label and combobox are supposed to be
+    label->Hide();
+    label->Show();
+    _toolMenu->Hide();
+    _toolMenu->Show();
+#endif
 }
 
 sigc::signal<void> SelectionSetManager::signal_selectionSetsChanged() const
