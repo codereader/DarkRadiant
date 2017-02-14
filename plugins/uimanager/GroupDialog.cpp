@@ -281,6 +281,9 @@ wxWindow* GroupDialog::addPage(const PagePtr& page)
 	page->page->Reparent(_notebook.get());
 	_notebook->InsertPage(insertPosition, page->page, page->tabLabel, false, imageId);
 
+    // Call Show() on the tab content again, otherwise it ends up invisible in OSX
+    page->page->Show();
+    
 	// Add this page by copy to the local list
 	_pages.insert(std::make_pair(page->position, Page(*page)));
 
