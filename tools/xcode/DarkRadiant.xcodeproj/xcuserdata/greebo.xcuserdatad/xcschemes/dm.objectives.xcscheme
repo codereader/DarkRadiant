@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE2AB1E50E1780062D9AF"
-               BuildableName = "libdm.objectives.dylib"
+               BuildableName = "dm.objectives.dylib"
                BlueprintName = "dm.objectives"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE2AB1E50E1780062D9AF"
-            BuildableName = "libdm.objectives.dylib"
+            BuildableName = "dm.objectives.dylib"
             BlueprintName = "dm.objectives"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE2AB1E50E1780062D9AF"
-            BuildableName = "libdm.objectives.dylib"
+            BuildableName = "dm.objectives.dylib"
             BlueprintName = "dm.objectives"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

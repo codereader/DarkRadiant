@@ -379,7 +379,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE26F1E50E1520062D9AF"
-               BuildableName = "libdm.conversation.dylib"
+               BuildableName = "dm.conversation.dylib"
                BlueprintName = "dm.conversation"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -393,7 +393,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
-               BuildableName = "libdm.difficulty.dylib"
+               BuildableName = "dm.difficulty.dylib"
                BlueprintName = "dm.difficulty"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -407,7 +407,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE28D1E50E1650062D9AF"
-               BuildableName = "libdm.editing.dylib"
+               BuildableName = "dm.editing.dylib"
                BlueprintName = "dm.editing"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -421,7 +421,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE29C1E50E16F0062D9AF"
-               BuildableName = "libdm.gui.dylib"
+               BuildableName = "dm.gui.dylib"
                BlueprintName = "dm.gui"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -435,7 +435,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE2AB1E50E1780062D9AF"
-               BuildableName = "libdm.objectives.dylib"
+               BuildableName = "dm.objectives.dylib"
                BlueprintName = "dm.objectives"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -449,7 +449,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
-               BuildableName = "libdm.stimresponse.dylib"
+               BuildableName = "dm.stimresponse.dylib"
                BlueprintName = "dm.stimresponse"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>

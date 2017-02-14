@@ -2785,7 +2785,6 @@
 		3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = renderpreview.xrc; path = ../../install/ui/renderpreview.xrc; sourceTree = SOURCE_ROOT; };
 		3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = responseeditor.xrc; path = ../../install/ui/responseeditor.xrc; sourceTree = SOURCE_ROOT; };
 		3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = stimeditor.xrc; path = ../../install/ui/stimeditor.xrc; sourceTree = SOURCE_ROOT; };
-		3AEBE5361E5232250062D9AF /* scripts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = scripts; path = ../../install/scripts; sourceTree = SOURCE_ROOT; };
 		3AEBE5381E5232250062D9AF /* ase_export.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = ase_export.py; path = ../../install/scripts/commands/ase_export.py; sourceTree = SOURCE_ROOT; };
 		3AEBE5391E5232250062D9AF /* ase_export_blend.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = ase_export_blend.py; path = ../../install/scripts/commands/ase_export_blend.py; sourceTree = SOURCE_ROOT; };
 		3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = check_for_invalid_visportals.py; path = ../../install/scripts/commands/check_for_invalid_visportals.py; sourceTree = SOURCE_ROOT; };
@@ -5438,7 +5437,6 @@
 		3AEBE5351E5232070062D9AF /* scripts */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBE5361E5232250062D9AF /* scripts */,
 				3AEBE5371E5232250062D9AF /* commands */,
 				3AEBE5431E5232250062D9AF /* dialogtest.py */,
 				3AEBE5441E5232250062D9AF /* init.py */,
@@ -12686,6 +12684,7 @@
 				3AEBE05A1E50D6C60062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE09C1E50D8270062D9AF /* Build configuration list for PBXNativeTarget "scenegraph" */ = {
 			isa = XCConfigurationList;
@@ -12694,6 +12693,7 @@
 				3AEBE09E1E50D8270062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE0BA1E50D8D60062D9AF /* Build configuration list for PBXNativeTarget "script" */ = {
 			isa = XCConfigurationList;
@@ -12702,6 +12702,7 @@
 				3AEBE0BC1E50D8D60062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE13B1E50DBF80062D9AF /* Build configuration list for PBXNativeTarget "shaders" */ = {
 			isa = XCConfigurationList;
@@ -12710,6 +12711,7 @@
 				3AEBE13D1E50DBF80062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE18D1E50DC8E0062D9AF /* Build configuration list for PBXNativeTarget "skins" */ = {
 			isa = XCConfigurationList;
@@ -12718,6 +12720,7 @@
 				3AEBE18F1E50DC8E0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE1A61E50DD620062D9AF /* Build configuration list for PBXNativeTarget "sound" */ = {
 			isa = XCConfigurationList;
@@ -12726,6 +12729,7 @@
 				3AEBE1A81E50DD620062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE1CC1E50DF1A0062D9AF /* Build configuration list for PBXNativeTarget "uimanager" */ = {
 			isa = XCConfigurationList;
@@ -12734,6 +12738,7 @@
 				3AEBE1CE1E50DF1A0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE1DB1E50DF260062D9AF /* Build configuration list for PBXNativeTarget "undo" */ = {
 			isa = XCConfigurationList;
@@ -12742,6 +12747,7 @@
 				3AEBE1DD1E50DF260062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE1EA1E50DF310062D9AF /* Build configuration list for PBXNativeTarget "vfspk3" */ = {
 			isa = XCConfigurationList;
@@ -12750,6 +12756,7 @@
 				3AEBE1EC1E50DF310062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE2781E50E1520062D9AF /* Build configuration list for PBXNativeTarget "dm.conversation" */ = {
 			isa = XCConfigurationList;
@@ -12758,6 +12765,7 @@
 				3AEBE27A1E50E1520062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE2871E50E15C0062D9AF /* Build configuration list for PBXNativeTarget "dm.difficulty" */ = {
 			isa = XCConfigurationList;
@@ -12766,6 +12774,7 @@
 				3AEBE2891E50E15C0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE2961E50E1660062D9AF /* Build configuration list for PBXNativeTarget "dm.editing" */ = {
 			isa = XCConfigurationList;
@@ -12774,6 +12783,7 @@
 				3AEBE2981E50E1660062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE2A51E50E16F0062D9AF /* Build configuration list for PBXNativeTarget "dm.gui" */ = {
 			isa = XCConfigurationList;
@@ -12782,6 +12792,7 @@
 				3AEBE2A71E50E16F0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE2B41E50E1780062D9AF /* Build configuration list for PBXNativeTarget "dm.objectives" */ = {
 			isa = XCConfigurationList;
@@ -12790,6 +12801,7 @@
 				3AEBE2B61E50E1780062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEBE2C31E50E1800062D9AF /* Build configuration list for PBXNativeTarget "dm.stimresponse" */ = {
 			isa = XCConfigurationList;
@@ -12798,6 +12810,7 @@
 				3AEBE2C51E50E1800062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3AEDE39E1E4EEA1F005A8641 /* Build configuration list for PBXNativeTarget "DarkRadiant" */ = {
 			isa = XCConfigurationList;
