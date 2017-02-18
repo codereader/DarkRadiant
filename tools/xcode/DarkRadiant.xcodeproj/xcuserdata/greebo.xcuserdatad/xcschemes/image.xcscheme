@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDE781E50C29B0062D9AF"
-               BuildableName = "image.dylib"
+               BuildableName = "image.so"
                BlueprintName = "image"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDE781E50C29B0062D9AF"
-            BuildableName = "image.dylib"
+            BuildableName = "image.so"
             BlueprintName = "image"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDE781E50C29B0062D9AF"
-            BuildableName = "image.dylib"
+            BuildableName = "image.so"
             BlueprintName = "image"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

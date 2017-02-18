@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-               BuildableName = "vfspk3.dylib"
+               BuildableName = "vfspk3.so"
                BlueprintName = "vfspk3"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-            BuildableName = "vfspk3.dylib"
+            BuildableName = "vfspk3.so"
             BlueprintName = "vfspk3"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-            BuildableName = "vfspk3.dylib"
+            BuildableName = "vfspk3.so"
             BlueprintName = "vfspk3"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

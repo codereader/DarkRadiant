@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE0931E50D8270062D9AF"
-               BuildableName = "scenegraph.dylib"
+               BuildableName = "scenegraph.so"
                BlueprintName = "scenegraph"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE0931E50D8270062D9AF"
-            BuildableName = "scenegraph.dylib"
+            BuildableName = "scenegraph.so"
             BlueprintName = "scenegraph"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE0931E50D8270062D9AF"
-            BuildableName = "scenegraph.dylib"
+            BuildableName = "scenegraph.so"
             BlueprintName = "scenegraph"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
-               BuildableName = "dm.difficulty.dylib"
+               BuildableName = "dm.difficulty.so"
                BlueprintName = "dm.difficulty"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
-            BuildableName = "dm.difficulty.dylib"
+            BuildableName = "dm.difficulty.so"
             BlueprintName = "dm.difficulty"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
-            BuildableName = "dm.difficulty.dylib"
+            BuildableName = "dm.difficulty.so"
             BlueprintName = "dm.difficulty"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDC8D1E5069840062D9AF"
-               BuildableName = "commandsystem.dylib"
+               BuildableName = "commandsystem.so"
                BlueprintName = "commandsystem"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDC8D1E5069840062D9AF"
-            BuildableName = "commandsystem.dylib"
+            BuildableName = "commandsystem.so"
             BlueprintName = "commandsystem"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDC8D1E5069840062D9AF"
-            BuildableName = "commandsystem.dylib"
+            BuildableName = "commandsystem.so"
             BlueprintName = "commandsystem"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

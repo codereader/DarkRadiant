@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE0B11E50D8D50062D9AF"
-               BuildableName = "script.dylib"
+               BuildableName = "script.so"
                BlueprintName = "script"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE0B11E50D8D50062D9AF"
-            BuildableName = "script.dylib"
+            BuildableName = "script.so"
             BlueprintName = "script"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE0B11E50D8D50062D9AF"
-            BuildableName = "script.dylib"
+            BuildableName = "script.so"
             BlueprintName = "script"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

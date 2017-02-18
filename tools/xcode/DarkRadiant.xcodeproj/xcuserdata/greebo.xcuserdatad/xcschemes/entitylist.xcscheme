@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDDA31E50B0910062D9AF"
-               BuildableName = "entitylist.dylib"
+               BuildableName = "entitylist.so"
                BlueprintName = "entitylist"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDDA31E50B0910062D9AF"
-            BuildableName = "entitylist.dylib"
+            BuildableName = "entitylist.so"
             BlueprintName = "entitylist"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDDA31E50B0910062D9AF"
-            BuildableName = "entitylist.dylib"
+            BuildableName = "entitylist.so"
             BlueprintName = "entitylist"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

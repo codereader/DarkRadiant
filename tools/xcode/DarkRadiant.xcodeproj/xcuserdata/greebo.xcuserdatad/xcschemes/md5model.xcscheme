@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDF1D1E50C6F10062D9AF"
-               BuildableName = "md5model.dylib"
+               BuildableName = "md5model.so"
                BlueprintName = "md5model"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDF1D1E50C6F10062D9AF"
-            BuildableName = "md5model.dylib"
+            BuildableName = "md5model.so"
             BlueprintName = "md5model"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDF1D1E50C6F10062D9AF"
-            BuildableName = "md5model.dylib"
+            BuildableName = "md5model.so"
             BlueprintName = "md5model"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

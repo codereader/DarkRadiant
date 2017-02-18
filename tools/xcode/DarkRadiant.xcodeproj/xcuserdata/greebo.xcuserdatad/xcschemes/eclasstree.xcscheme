@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDCC41E509E3E0062D9AF"
-               BuildableName = "eclasstree.dylib"
+               BuildableName = "eclasstree.so"
                BlueprintName = "eclasstree"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDCC41E509E3E0062D9AF"
-            BuildableName = "eclasstree.dylib"
+            BuildableName = "eclasstree.so"
             BlueprintName = "eclasstree"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDCC41E509E3E0062D9AF"
-            BuildableName = "eclasstree.dylib"
+            BuildableName = "eclasstree.so"
             BlueprintName = "eclasstree"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

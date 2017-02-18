@@ -24,8 +24,6 @@ Loader::Loader(const std::string& path) :
 	_path(path),
 #if defined(WIN32)
 	  _ext(".dll")
-#elif defined(__APPLE__) // TODO: Makefile is using .so at the moment
-	  _ext(".dylib")
 #elif defined(POSIX)
 	  _ext(".so")
 #endif

@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3A0124141E50484100A62BC1"
-               BuildableName = "xmlregistry.dylib"
+               BuildableName = "xmlregistry.so"
                BlueprintName = "xmlregistry"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDC681E50667D0062D9AF"
-               BuildableName = "archivezip.dylib"
+               BuildableName = "archivezip.so"
                BlueprintName = "archivezip"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -57,7 +57,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDC8D1E5069840062D9AF"
-               BuildableName = "commandsystem.dylib"
+               BuildableName = "commandsystem.so"
                BlueprintName = "commandsystem"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -71,7 +71,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDCA91E509D8B0062D9AF"
-               BuildableName = "eclassmgr.dylib"
+               BuildableName = "eclassmgr.so"
                BlueprintName = "eclassmgr"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -85,7 +85,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDCC41E509E3E0062D9AF"
-               BuildableName = "eclasstree.dylib"
+               BuildableName = "eclasstree.so"
                BlueprintName = "eclasstree"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -99,7 +99,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDCE31E50A8980062D9AF"
-               BuildableName = "entity.dylib"
+               BuildableName = "entity.so"
                BlueprintName = "entity"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -113,7 +113,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDDA31E50B0910062D9AF"
-               BuildableName = "entitylist.dylib"
+               BuildableName = "entitylist.so"
                BlueprintName = "entitylist"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -127,7 +127,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDDC71E50BE540062D9AF"
-               BuildableName = "eventmanager.dylib"
+               BuildableName = "eventmanager.so"
                BlueprintName = "eventmanager"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -141,7 +141,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDE0C1E50BFB80062D9AF"
-               BuildableName = "filetypes.dylib"
+               BuildableName = "filetypes.so"
                BlueprintName = "filetypes"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -155,7 +155,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDE1F1E50C0190062D9AF"
-               BuildableName = "filters.dylib"
+               BuildableName = "filters.so"
                BlueprintName = "filters"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -169,7 +169,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDE3D1E50C0B50062D9AF"
-               BuildableName = "fonts.dylib"
+               BuildableName = "fonts.so"
                BlueprintName = "fonts"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -183,7 +183,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDE631E50C1410062D9AF"
-               BuildableName = "grid.dylib"
+               BuildableName = "grid.so"
                BlueprintName = "grid"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -197,7 +197,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDE781E50C29B0062D9AF"
-               BuildableName = "image.dylib"
+               BuildableName = "image.so"
                BlueprintName = "image"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -211,7 +211,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDEBA1E50C6400062D9AF"
-               BuildableName = "mapdoom3.dylib"
+               BuildableName = "mapdoom3.so"
                BlueprintName = "mapdoom3"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -225,7 +225,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDF1D1E50C6F10062D9AF"
-               BuildableName = "md5model.dylib"
+               BuildableName = "md5model.so"
                BlueprintName = "md5model"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -239,7 +239,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE0331E50D0400062D9AF"
-               BuildableName = "model.dylib"
+               BuildableName = "model.so"
                BlueprintName = "model"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -253,7 +253,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE04F1E50D6C60062D9AF"
-               BuildableName = "particles.dylib"
+               BuildableName = "particles.so"
                BlueprintName = "particles"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -267,7 +267,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE0931E50D8270062D9AF"
-               BuildableName = "scenegraph.dylib"
+               BuildableName = "scenegraph.so"
                BlueprintName = "scenegraph"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -281,7 +281,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE0B11E50D8D50062D9AF"
-               BuildableName = "script.dylib"
+               BuildableName = "script.so"
                BlueprintName = "script"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -295,7 +295,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1321E50DBF80062D9AF"
-               BuildableName = "shaders.dylib"
+               BuildableName = "shaders.so"
                BlueprintName = "shaders"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -309,7 +309,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1841E50DC8E0062D9AF"
-               BuildableName = "skins.dylib"
+               BuildableName = "skins.so"
                BlueprintName = "skins"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -323,7 +323,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE19D1E50DD620062D9AF"
-               BuildableName = "sound.dylib"
+               BuildableName = "sound.so"
                BlueprintName = "sound"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -337,7 +337,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1C31E50DF1A0062D9AF"
-               BuildableName = "uimanager.dylib"
+               BuildableName = "uimanager.so"
                BlueprintName = "uimanager"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -351,7 +351,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1D21E50DF260062D9AF"
-               BuildableName = "undo.dylib"
+               BuildableName = "undo.so"
                BlueprintName = "undo"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -365,7 +365,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1E11E50DF300062D9AF"
-               BuildableName = "vfspk3.dylib"
+               BuildableName = "vfspk3.so"
                BlueprintName = "vfspk3"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -379,7 +379,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE26F1E50E1520062D9AF"
-               BuildableName = "dm.conversation.dylib"
+               BuildableName = "dm.conversation.so"
                BlueprintName = "dm.conversation"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -393,7 +393,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE27E1E50E15B0062D9AF"
-               BuildableName = "dm.difficulty.dylib"
+               BuildableName = "dm.difficulty.so"
                BlueprintName = "dm.difficulty"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -407,7 +407,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE28D1E50E1650062D9AF"
-               BuildableName = "dm.editing.dylib"
+               BuildableName = "dm.editing.so"
                BlueprintName = "dm.editing"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -421,7 +421,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE29C1E50E16F0062D9AF"
-               BuildableName = "dm.gui.dylib"
+               BuildableName = "dm.gui.so"
                BlueprintName = "dm.gui"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -435,7 +435,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE2AB1E50E1780062D9AF"
-               BuildableName = "dm.objectives.dylib"
+               BuildableName = "dm.objectives.so"
                BlueprintName = "dm.objectives"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -449,7 +449,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
-               BuildableName = "dm.stimresponse.dylib"
+               BuildableName = "dm.stimresponse.so"
                BlueprintName = "dm.stimresponse"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>

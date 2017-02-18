@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDE631E50C1410062D9AF"
-               BuildableName = "grid.dylib"
+               BuildableName = "grid.so"
                BlueprintName = "grid"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDE631E50C1410062D9AF"
-            BuildableName = "grid.dylib"
+            BuildableName = "grid.so"
             BlueprintName = "grid"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDE631E50C1410062D9AF"
-            BuildableName = "grid.dylib"
+            BuildableName = "grid.so"
             BlueprintName = "grid"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

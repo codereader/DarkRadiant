@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE1321E50DBF80062D9AF"
-               BuildableName = "shaders.dylib"
+               BuildableName = "shaders.so"
                BlueprintName = "shaders"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE1321E50DBF80062D9AF"
-            BuildableName = "shaders.dylib"
+            BuildableName = "shaders.so"
             BlueprintName = "shaders"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE1321E50DBF80062D9AF"
-            BuildableName = "shaders.dylib"
+            BuildableName = "shaders.so"
             BlueprintName = "shaders"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

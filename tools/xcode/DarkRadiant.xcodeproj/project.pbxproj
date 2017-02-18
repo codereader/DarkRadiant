@@ -2022,14 +2022,14 @@
 		3A01232F1E503D3200A62BC1 /* white.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = white.bmp; path = ../../install/bitmaps/white.bmp; sourceTree = SOURCE_ROOT; };
 		3A0123301E503D3200A62BC1 /* wireframe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframe.png; path = ../../install/bitmaps/wireframe.png; sourceTree = SOURCE_ROOT; };
 		3A0123311E503D3200A62BC1 /* wireframeMode16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframeMode16.png; path = ../../install/bitmaps/wireframeMode16.png; sourceTree = SOURCE_ROOT; };
-		3A0124151E50484100A62BC1 /* xmlregistry.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = xmlregistry.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A0124151E50484100A62BC1 /* xmlregistry.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = xmlregistry.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A0124201E50489D00A62BC1 /* RegistryTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegistryTree.cpp; path = ../../plugins/xmlregistry/RegistryTree.cpp; sourceTree = SOURCE_ROOT; };
 		3A0124211E50489D00A62BC1 /* RegistryTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistryTree.h; path = ../../plugins/xmlregistry/RegistryTree.h; sourceTree = SOURCE_ROOT; };
 		3A0124221E50489D00A62BC1 /* XMLRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistry.cpp; path = ../../plugins/xmlregistry/XMLRegistry.cpp; sourceTree = SOURCE_ROOT; };
 		3A0124231E50489D00A62BC1 /* XMLRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLRegistry.h; path = ../../plugins/xmlregistry/XMLRegistry.h; sourceTree = SOURCE_ROOT; };
 		3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistryModule.cpp; path = ../../plugins/xmlregistry/XMLRegistryModule.cpp; sourceTree = SOURCE_ROOT; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
-		3AEBDC691E50667D0062D9AF /* archivezip.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC781E50669C0062D9AF /* pkzip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pkzip.cpp; path = ../../plugins/archivezip/pkzip.cpp; sourceTree = SOURCE_ROOT; };
@@ -2042,7 +2042,7 @@
 		3AEBDC7F1E50669C0062D9AF /* zlibstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlibstream.h; path = ../../plugins/archivezip/zlibstream.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC881E5067630062D9AF /* zlib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = zlib.xcconfig; sourceTree = "<group>"; };
 		3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = archivezip.xcconfig; sourceTree = "<group>"; };
-		3AEBDC8E1E5069840062D9AF /* commandsystem.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = commandsystem.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDC8E1E5069840062D9AF /* commandsystem.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = commandsystem.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC991E5069A60062D9AF /* CaseInsensitiveCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaseInsensitiveCompare.h; path = ../../plugins/commandsystem/CaseInsensitiveCompare.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC9A1E5069A60062D9AF /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Command.h; path = ../../plugins/commandsystem/Command.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC9B1E5069A60062D9AF /* CommandSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandSystem.cpp; path = ../../plugins/commandsystem/CommandSystem.cpp; sourceTree = SOURCE_ROOT; };
@@ -2050,21 +2050,21 @@
 		3AEBDC9D1E5069A60062D9AF /* CommandTokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandTokeniser.h; path = ../../plugins/commandsystem/CommandTokeniser.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC9E1E5069A60062D9AF /* Executable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Executable.h; path = ../../plugins/commandsystem/Executable.h; sourceTree = SOURCE_ROOT; };
 		3AEBDCA11E5069A60062D9AF /* Statement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Statement.h; path = ../../plugins/commandsystem/Statement.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eclassmgr.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDCAA1E509D8B0062D9AF /* eclassmgr.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eclassmgr.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDCB51E509DC30062D9AF /* Doom3EntityClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3EntityClass.cpp; path = ../../plugins/eclassmgr/Doom3EntityClass.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCB61E509DC30062D9AF /* Doom3EntityClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3EntityClass.h; path = ../../plugins/eclassmgr/Doom3EntityClass.h; sourceTree = SOURCE_ROOT; };
 		3AEBDCB71E509DC30062D9AF /* Doom3ModelDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3ModelDef.h; path = ../../plugins/eclassmgr/Doom3ModelDef.h; sourceTree = SOURCE_ROOT; };
 		3AEBDCB81E509DC30062D9AF /* eclass_doom3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = eclass_doom3.cpp; path = ../../plugins/eclassmgr/eclass_doom3.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCB91E509DC30062D9AF /* EClassManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassManager.cpp; path = ../../plugins/eclassmgr/EClassManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCBA1E509DC30062D9AF /* EClassManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassManager.h; path = ../../plugins/eclassmgr/EClassManager.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eclasstree.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDCC51E509E3E0062D9AF /* eclasstree.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eclasstree.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDCD01E509E730062D9AF /* EClassTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassTree.cpp; path = ../../plugins/eclasstree/EClassTree.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCD11E509E730062D9AF /* EClassTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassTree.h; path = ../../plugins/eclasstree/EClassTree.h; sourceTree = SOURCE_ROOT; };
 		3AEBDCD21E509E730062D9AF /* EClassTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassTreeBuilder.cpp; path = ../../plugins/eclasstree/EClassTreeBuilder.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCD31E509E730062D9AF /* EClassTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassTreeBuilder.h; path = ../../plugins/eclasstree/EClassTreeBuilder.h; sourceTree = SOURCE_ROOT; };
 		3AEBDCD61E509E730062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/eclasstree/plugin.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		3AEBDCE41E50A8980062D9AF /* entity.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = entity.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDCE41E50A8980062D9AF /* entity.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = entity.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDCEF1E50AB640062D9AF /* AngleKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AngleKey.cpp; path = ../../plugins/entity/AngleKey.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDCF01E50AB640062D9AF /* AngleKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AngleKey.h; path = ../../plugins/entity/AngleKey.h; sourceTree = SOURCE_ROOT; };
 		3AEBDCF11E50AB640062D9AF /* ColourKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColourKey.h; path = ../../plugins/entity/ColourKey.h; sourceTree = SOURCE_ROOT; };
@@ -2147,7 +2147,7 @@
 		3AEBDD471E50AB640062D9AF /* TargetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetManager.cpp; path = ../../plugins/entity/target/TargetManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDD481E50AB640062D9AF /* TargetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetManager.h; path = ../../plugins/entity/target/TargetManager.h; sourceTree = SOURCE_ROOT; };
 		3AEBDD491E50AB640062D9AF /* VertexInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexInstance.h; path = ../../plugins/entity/VertexInstance.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDA41E50B0910062D9AF /* entitylist.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = entitylist.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDDA41E50B0910062D9AF /* entitylist.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = entitylist.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDDAF1E50B0EE0062D9AF /* EntityList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityList.cpp; path = ../../plugins/entitylist/EntityList.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDDB01E50B0EE0062D9AF /* EntityList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityList.h; path = ../../plugins/entitylist/EntityList.h; sourceTree = SOURCE_ROOT; };
 		3AEBDDB11E50B0EE0062D9AF /* EntityListModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityListModule.cpp; path = ../../plugins/entitylist/EntityListModule.cpp; sourceTree = SOURCE_ROOT; };
@@ -2155,7 +2155,7 @@
 		3AEBDDB31E50B0EE0062D9AF /* GraphTreeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphTreeModel.h; path = ../../plugins/entitylist/GraphTreeModel.h; sourceTree = SOURCE_ROOT; };
 		3AEBDDB41E50B0EE0062D9AF /* GraphTreeModelPopulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphTreeModelPopulator.h; path = ../../plugins/entitylist/GraphTreeModelPopulator.h; sourceTree = SOURCE_ROOT; };
 		3AEBDDB51E50B0EE0062D9AF /* GraphTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphTreeNode.h; path = ../../plugins/entitylist/GraphTreeNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDC81E50BE540062D9AF /* eventmanager.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eventmanager.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDDC81E50BE540062D9AF /* eventmanager.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eventmanager.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDDD31E50BF110062D9AF /* Accelerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Accelerator.cpp; path = ../../plugins/eventmanager/Accelerator.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDDD41E50BF110062D9AF /* Accelerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Accelerator.h; path = ../../plugins/eventmanager/Accelerator.h; sourceTree = SOURCE_ROOT; };
 		3AEBDDD51E50BF110062D9AF /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = ../../plugins/eventmanager/Event.h; sourceTree = SOURCE_ROOT; };
@@ -2176,17 +2176,17 @@
 		3AEBDDE61E50BF110062D9AF /* Toggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Toggle.h; path = ../../plugins/eventmanager/Toggle.h; sourceTree = SOURCE_ROOT; };
 		3AEBDDE71E50BF110062D9AF /* WidgetToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WidgetToggle.cpp; path = ../../plugins/eventmanager/WidgetToggle.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDDE81E50BF110062D9AF /* WidgetToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WidgetToggle.h; path = ../../plugins/eventmanager/WidgetToggle.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE0D1E50BFB80062D9AF /* filetypes.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = filetypes.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDE0D1E50BFB80062D9AF /* filetypes.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = filetypes.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDE181E50BFF00062D9AF /* FileTypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileTypeRegistry.cpp; path = ../../plugins/filetypes/FileTypeRegistry.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE191E50BFF00062D9AF /* FileTypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTypeRegistry.h; path = ../../plugins/filetypes/FileTypeRegistry.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE201E50C0190062D9AF /* filters.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = filters.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDE201E50C0190062D9AF /* filters.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = filters.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDE2B1E50C05F0062D9AF /* BasicFilterSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicFilterSystem.cpp; path = ../../plugins/filters/BasicFilterSystem.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE2C1E50C05F0062D9AF /* BasicFilterSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicFilterSystem.h; path = ../../plugins/filters/BasicFilterSystem.h; sourceTree = SOURCE_ROOT; };
 		3AEBDE2D1E50C05F0062D9AF /* filters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = filters.cpp; path = ../../plugins/filters/filters.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE2E1E50C05F0062D9AF /* InstanceUpdateWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceUpdateWalker.h; path = ../../plugins/filters/InstanceUpdateWalker.h; sourceTree = SOURCE_ROOT; };
 		3AEBDE311E50C05F0062D9AF /* XMLFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLFilter.cpp; path = ../../plugins/filters/XMLFilter.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE321E50C05F0062D9AF /* XMLFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLFilter.h; path = ../../plugins/filters/XMLFilter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE3E1E50C0B50062D9AF /* fonts.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fonts.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDE3E1E50C0B50062D9AF /* fonts.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fonts.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDE491E50C0F40062D9AF /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontInfo.h; path = ../../plugins/fonts/FontInfo.h; sourceTree = SOURCE_ROOT; };
 		3AEBDE4A1E50C0F40062D9AF /* FontLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontLoader.cpp; path = ../../plugins/fonts/FontLoader.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE4B1E50C0F40062D9AF /* FontLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontLoader.h; path = ../../plugins/fonts/FontLoader.h; sourceTree = SOURCE_ROOT; };
@@ -2197,10 +2197,10 @@
 		3AEBDE501E50C0F40062D9AF /* GlyphSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlyphSet.cpp; path = ../../plugins/fonts/GlyphSet.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE511E50C0F40062D9AF /* GlyphSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlyphSet.h; path = ../../plugins/fonts/GlyphSet.h; sourceTree = SOURCE_ROOT; };
 		3AEBDE541E50C0F40062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/fonts/plugin.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE641E50C1410062D9AF /* grid.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = grid.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDE641E50C1410062D9AF /* grid.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = grid.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDE6F1E50C1770062D9AF /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Grid.cpp; path = ../../plugins/grid/Grid.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE701E50C1770062D9AF /* GridItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridItem.h; path = ../../plugins/grid/GridItem.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE791E50C29B0062D9AF /* image.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = image.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDE791E50C29B0062D9AF /* image.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = image.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDE841E50C2DA0062D9AF /* dds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dds.cpp; path = ../../plugins/image/dds.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDE851E50C2DA0062D9AF /* dds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dds.h; path = ../../plugins/image/dds.h; sourceTree = SOURCE_ROOT; };
 		3AEBDE861E50C2DA0062D9AF /* DDSImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DDSImage.cpp; path = ../../plugins/image/DDSImage.cpp; sourceTree = SOURCE_ROOT; };
@@ -2217,7 +2217,7 @@
 		3AEBDEAE1E50C34F0062D9AF /* ddslib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ddslib.cpp; path = ../../../libs/ddslib/ddslib.cpp; sourceTree = "<group>"; };
 		3AEBDEB01E50C35D0062D9AF /* ddslib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ddslib.h; path = ../../../libs/ddslib.h; sourceTree = "<group>"; };
 		3AEBDEB61E50C3AD0062D9AF /* image.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = image.xcconfig; sourceTree = "<group>"; };
-		3AEBDEBB1E50C6400062D9AF /* mapdoom3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mapdoom3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDEBB1E50C6400062D9AF /* mapdoom3.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mapdoom3.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDEC71E50C68D0062D9AF /* Doom3AasFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFile.cpp; path = ../../plugins/mapdoom3/aas/Doom3AasFile.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDEC81E50C68D0062D9AF /* Doom3AasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFile.h; path = ../../plugins/mapdoom3/aas/Doom3AasFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDEC91E50C68D0062D9AF /* Doom3AasFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileLoader.cpp; path = ../../plugins/mapdoom3/aas/Doom3AasFileLoader.cpp; sourceTree = SOURCE_ROOT; };
@@ -2257,7 +2257,7 @@
 		3AEBDEEF1E50C68D0062D9AF /* Quake4MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapReader.cpp; path = ../../plugins/mapdoom3/Quake4MapReader.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDEF01E50C68D0062D9AF /* Quake4MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapReader.h; path = ../../plugins/mapdoom3/Quake4MapReader.h; sourceTree = SOURCE_ROOT; };
 		3AEBDEF11E50C68D0062D9AF /* Quake4MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapWriter.h; path = ../../plugins/mapdoom3/Quake4MapWriter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF1E1E50C6F10062D9AF /* md5model.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = md5model.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBDF1E1E50C6F10062D9AF /* md5model.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = md5model.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDF3A1E50C71E0062D9AF /* MD5Anim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Anim.cpp; path = ../../plugins/md5model/MD5Anim.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDF3B1E50C71E0062D9AF /* MD5Anim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Anim.h; path = ../../plugins/md5model/MD5Anim.h; sourceTree = SOURCE_ROOT; };
 		3AEBDF3C1E50C71E0062D9AF /* MD5AnimationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5AnimationCache.cpp; path = ../../plugins/md5model/MD5AnimationCache.cpp; sourceTree = SOURCE_ROOT; };
@@ -2303,14 +2303,14 @@
 		3AEBE0121E50CB120062D9AF /* pm_ms3d.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_ms3d.c; path = ../../libs/picomodel/pm_ms3d.c; sourceTree = SOURCE_ROOT; };
 		3AEBE0131E50CB120062D9AF /* pm_obj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_obj.c; path = ../../libs/picomodel/pm_obj.c; sourceTree = SOURCE_ROOT; };
 		3AEBE0141E50CB120062D9AF /* pm_terrain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pm_terrain.c; path = ../../libs/picomodel/pm_terrain.c; sourceTree = SOURCE_ROOT; };
-		3AEBE0341E50D0400062D9AF /* model.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = model.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE0341E50D0400062D9AF /* model.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = model.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE03F1E50D25E0062D9AF /* RenderablePicoModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoModel.cpp; path = ../../plugins/model/RenderablePicoModel.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0401E50D25E0062D9AF /* RenderablePicoModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoModel.h; path = ../../plugins/model/RenderablePicoModel.h; sourceTree = SOURCE_ROOT; };
 		3AEBE0411E50D25E0062D9AF /* RenderablePicoSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderablePicoSurface.cpp; path = ../../plugins/model/RenderablePicoSurface.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0421E50D25E0062D9AF /* RenderablePicoSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderablePicoSurface.h; path = ../../plugins/model/RenderablePicoSurface.h; sourceTree = SOURCE_ROOT; };
 		3AEBE0491E50D2F30062D9AF /* model.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = model.xcconfig; sourceTree = "<group>"; };
 		3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = picomodel.xcconfig; sourceTree = "<group>"; };
-		3AEBE0501E50D6C60062D9AF /* particles.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = particles.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE0501E50D6C60062D9AF /* particles.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = particles.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE05C1E50D70B0062D9AF /* ParticleEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParticleEditor.cpp; path = ../../plugins/particles/editor/ParticleEditor.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE05D1E50D70B0062D9AF /* ParticleEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleEditor.h; path = ../../plugins/particles/editor/ParticleEditor.h; sourceTree = SOURCE_ROOT; };
 		3AEBE05E1E50D70B0062D9AF /* ParticleEditorModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParticleEditorModule.h; path = ../../plugins/particles/editor/ParticleEditorModule.h; sourceTree = SOURCE_ROOT; };
@@ -2334,7 +2334,7 @@
 		3AEBE0721E50D70B0062D9AF /* StageDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StageDef.cpp; path = ../../plugins/particles/StageDef.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0731E50D70B0062D9AF /* StageDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StageDef.h; path = ../../plugins/particles/StageDef.h; sourceTree = SOURCE_ROOT; };
 		3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = particles.xcconfig; sourceTree = "<group>"; };
-		3AEBE0941E50D8270062D9AF /* scenegraph.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = scenegraph.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE0941E50D8270062D9AF /* scenegraph.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = scenegraph.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE09F1E50D86D0062D9AF /* Octree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Octree.cpp; path = ../../plugins/scenegraph/Octree.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0A01E50D86D0062D9AF /* Octree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Octree.h; path = ../../plugins/scenegraph/Octree.h; sourceTree = SOURCE_ROOT; };
 		3AEBE0A11E50D86D0062D9AF /* OctreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OctreeNode.h; path = ../../plugins/scenegraph/OctreeNode.h; sourceTree = SOURCE_ROOT; };
@@ -2342,7 +2342,7 @@
 		3AEBE0A31E50D86D0062D9AF /* SceneGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneGraph.h; path = ../../plugins/scenegraph/SceneGraph.h; sourceTree = SOURCE_ROOT; };
 		3AEBE0A41E50D86D0062D9AF /* SceneGraphFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneGraphFactory.cpp; path = ../../plugins/scenegraph/SceneGraphFactory.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0A51E50D86D0062D9AF /* SceneGraphFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneGraphFactory.h; path = ../../plugins/scenegraph/SceneGraphFactory.h; sourceTree = SOURCE_ROOT; };
-		3AEBE0B21E50D8D50062D9AF /* script.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = script.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE0B21E50D8D50062D9AF /* script.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = script.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE0BE1E50D9200062D9AF /* BrushInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushInterface.cpp; path = ../../plugins/script/interfaces/BrushInterface.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0BF1E50D9200062D9AF /* BrushInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushInterface.h; path = ../../plugins/script/interfaces/BrushInterface.h; sourceTree = SOURCE_ROOT; };
 		3AEBE0C01E50D9200062D9AF /* CommandSystemInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandSystemInterface.cpp; path = ../../plugins/script/interfaces/CommandSystemInterface.cpp; sourceTree = SOURCE_ROOT; };
@@ -2398,7 +2398,7 @@
 		3AEBE1281E50D9570062D9AF /* script.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = script.xcconfig; sourceTree = "<group>"; };
 		3AEBE1291E50D9F30062D9AF /* boost_python.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = boost_python.xcconfig; sourceTree = "<group>"; };
 		3AEBE12A1E50DB950062D9AF /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
-		3AEBE1331E50DBF80062D9AF /* shaders.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shaders.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE1331E50DBF80062D9AF /* shaders.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shaders.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE13E1E50DC1C0062D9AF /* CameraCubeMapDecl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CameraCubeMapDecl.cpp; path = ../../plugins/shaders/CameraCubeMapDecl.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE13F1E50DC1C0062D9AF /* CameraCubeMapDecl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraCubeMapDecl.h; path = ../../plugins/shaders/CameraCubeMapDecl.h; sourceTree = SOURCE_ROOT; };
 		3AEBE1401E50DC1C0062D9AF /* CShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CShader.cpp; path = ../../plugins/shaders/CShader.cpp; sourceTree = SOURCE_ROOT; };
@@ -2430,12 +2430,12 @@
 		3AEBE15D1E50DC1C0062D9AF /* HeightmapCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeightmapCreator.h; path = ../../plugins/shaders/textures/HeightmapCreator.h; sourceTree = SOURCE_ROOT; };
 		3AEBE15E1E50DC1C0062D9AF /* TextureManipulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureManipulator.cpp; path = ../../plugins/shaders/textures/TextureManipulator.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE15F1E50DC1C0062D9AF /* TextureManipulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureManipulator.h; path = ../../plugins/shaders/textures/TextureManipulator.h; sourceTree = SOURCE_ROOT; };
-		3AEBE1851E50DC8E0062D9AF /* skins.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = skins.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE1851E50DC8E0062D9AF /* skins.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = skins.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE1901E50DCAE0062D9AF /* Doom3ModelSkin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3ModelSkin.h; path = ../../plugins/skins/Doom3ModelSkin.h; sourceTree = SOURCE_ROOT; };
 		3AEBE1911E50DCAE0062D9AF /* Doom3SkinCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3SkinCache.cpp; path = ../../plugins/skins/Doom3SkinCache.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE1921E50DCAE0062D9AF /* Doom3SkinCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3SkinCache.h; path = ../../plugins/skins/Doom3SkinCache.h; sourceTree = SOURCE_ROOT; };
 		3AEBE1951E50DCAE0062D9AF /* skincache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = skincache.cpp; path = ../../plugins/skins/skincache.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBE19E1E50DD620062D9AF /* sound.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sound.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE19E1E50DD620062D9AF /* sound.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sound.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE1A91E50DD8C0062D9AF /* OggFileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OggFileStream.h; path = ../../plugins/sound/OggFileStream.h; sourceTree = SOURCE_ROOT; };
 		3AEBE1AA1E50DD8C0062D9AF /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cpp; path = ../../plugins/sound/sound.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE1AB1E50DD8C0062D9AF /* SoundFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundFileLoader.h; path = ../../plugins/sound/SoundFileLoader.h; sourceTree = SOURCE_ROOT; };
@@ -2448,9 +2448,9 @@
 		3AEBE1B21E50DD8C0062D9AF /* WavFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WavFileLoader.h; path = ../../plugins/sound/WavFileLoader.h; sourceTree = SOURCE_ROOT; };
 		3AEBE1BD1E50DDDE0062D9AF /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		3AEBE1BF1E50DDFB0062D9AF /* sound.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = sound.xcconfig; sourceTree = "<group>"; };
-		3AEBE1C41E50DF1A0062D9AF /* uimanager.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = uimanager.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBE1D31E50DF260062D9AF /* undo.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = undo.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBE1E21E50DF300062D9AF /* vfspk3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vfspk3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE1C41E50DF1A0062D9AF /* uimanager.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = uimanager.so; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE1D31E50DF260062D9AF /* undo.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = undo.so; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE1E21E50DF300062D9AF /* vfspk3.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vfspk3.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE1EE1E50DF9B0062D9AF /* AnimationPreview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationPreview.cpp; path = ../../plugins/uimanager/animationpreview/AnimationPreview.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE1EF1E50DF9B0062D9AF /* AnimationPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationPreview.h; path = ../../plugins/uimanager/animationpreview/AnimationPreview.h; sourceTree = SOURCE_ROOT; };
 		3AEBE1F01E50DF9B0062D9AF /* MD5AnimationChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5AnimationChooser.cpp; path = ../../plugins/uimanager/animationpreview/MD5AnimationChooser.cpp; sourceTree = SOURCE_ROOT; };
@@ -2508,12 +2508,12 @@
 		3AEBE2591E50DFDF0062D9AF /* vfspk3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vfspk3.cpp; path = ../../plugins/vfspk3/vfspk3.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE25A1E50DFDF0062D9AF /* vfspk3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vfspk3.h; path = ../../plugins/vfspk3/vfspk3.h; sourceTree = SOURCE_ROOT; };
 		3AEBE26A1E50E08C0062D9AF /* uimanager.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = uimanager.xcconfig; sourceTree = "<group>"; };
-		3AEBE2701E50E1520062D9AF /* dm.conversation.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.conversation.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBE27F1E50E15B0062D9AF /* dm.difficulty.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.difficulty.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBE28E1E50E1650062D9AF /* dm.editing.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.editing.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBE29D1E50E16F0062D9AF /* dm.gui.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.gui.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBE2AC1E50E1780062D9AF /* dm.objectives.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.objectives.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.stimresponse.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE2701E50E1520062D9AF /* dm.conversation.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.conversation.so; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE27F1E50E15B0062D9AF /* dm.difficulty.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.difficulty.so; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE28E1E50E1650062D9AF /* dm.editing.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.editing.so; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE29D1E50E16F0062D9AF /* dm.gui.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.gui.so; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE2AC1E50E1780062D9AF /* dm.objectives.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.objectives.so; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = dm.stimresponse.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE2C61E50E21D0062D9AF /* ActorNodeFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorNodeFinder.h; path = ../../plugins/dm.conversation/ActorNodeFinder.h; sourceTree = SOURCE_ROOT; };
 		3AEBE2C71E50E21D0062D9AF /* CommandArgumentItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandArgumentItem.cpp; path = ../../plugins/dm.conversation/CommandArgumentItem.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE2C81E50E21D0062D9AF /* CommandArgumentItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandArgumentItem.h; path = ../../plugins/dm.conversation/CommandArgumentItem.h; sourceTree = SOURCE_ROOT; };
@@ -4206,38 +4206,38 @@
 				3A0120731E502F7800A62BC1 /* libscene.a */,
 				3A011FC31E50275700A62BC1 /* libwxutil.a */,
 				3AF746AB1E4FADF3003465B5 /* libxmlutil.a */,
-				3AEBDC691E50667D0062D9AF /* archivezip.dylib */,
-				3AEBDC8E1E5069840062D9AF /* commandsystem.dylib */,
-				3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */,
-				3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */,
-				3AEBDCE41E50A8980062D9AF /* entity.dylib */,
-				3AEBDDA41E50B0910062D9AF /* entitylist.dylib */,
-				3AEBDDC81E50BE540062D9AF /* eventmanager.dylib */,
-				3AEBDE0D1E50BFB80062D9AF /* filetypes.dylib */,
-				3AEBDE201E50C0190062D9AF /* filters.dylib */,
-				3AEBDE3E1E50C0B50062D9AF /* fonts.dylib */,
-				3AEBDE641E50C1410062D9AF /* grid.dylib */,
-				3AEBDE791E50C29B0062D9AF /* image.dylib */,
-				3AEBDEBB1E50C6400062D9AF /* mapdoom3.dylib */,
-				3AEBDF1E1E50C6F10062D9AF /* md5model.dylib */,
-				3AEBE0341E50D0400062D9AF /* model.dylib */,
-				3AEBE0501E50D6C60062D9AF /* particles.dylib */,
-				3AEBE0941E50D8270062D9AF /* scenegraph.dylib */,
-				3AEBE0B21E50D8D50062D9AF /* script.dylib */,
-				3AEBE1331E50DBF80062D9AF /* shaders.dylib */,
-				3AEBE1851E50DC8E0062D9AF /* skins.dylib */,
-				3AEBE19E1E50DD620062D9AF /* sound.dylib */,
-				3AEBE1C41E50DF1A0062D9AF /* uimanager.dylib */,
-				3AEBE1D31E50DF260062D9AF /* undo.dylib */,
-				3AEBE1E21E50DF300062D9AF /* vfspk3.dylib */,
-				3A0124151E50484100A62BC1 /* xmlregistry.dylib */,
+				3AEBDC691E50667D0062D9AF /* archivezip.so */,
+				3AEBDC8E1E5069840062D9AF /* commandsystem.so */,
+				3AEBDCAA1E509D8B0062D9AF /* eclassmgr.so */,
+				3AEBDCC51E509E3E0062D9AF /* eclasstree.so */,
+				3AEBDCE41E50A8980062D9AF /* entity.so */,
+				3AEBDDA41E50B0910062D9AF /* entitylist.so */,
+				3AEBDDC81E50BE540062D9AF /* eventmanager.so */,
+				3AEBDE0D1E50BFB80062D9AF /* filetypes.so */,
+				3AEBDE201E50C0190062D9AF /* filters.so */,
+				3AEBDE3E1E50C0B50062D9AF /* fonts.so */,
+				3AEBDE641E50C1410062D9AF /* grid.so */,
+				3AEBDE791E50C29B0062D9AF /* image.so */,
+				3AEBDEBB1E50C6400062D9AF /* mapdoom3.so */,
+				3AEBDF1E1E50C6F10062D9AF /* md5model.so */,
+				3AEBE0341E50D0400062D9AF /* model.so */,
+				3AEBE0501E50D6C60062D9AF /* particles.so */,
+				3AEBE0941E50D8270062D9AF /* scenegraph.so */,
+				3AEBE0B21E50D8D50062D9AF /* script.so */,
+				3AEBE1331E50DBF80062D9AF /* shaders.so */,
+				3AEBE1851E50DC8E0062D9AF /* skins.so */,
+				3AEBE19E1E50DD620062D9AF /* sound.so */,
+				3AEBE1C41E50DF1A0062D9AF /* uimanager.so */,
+				3AEBE1D31E50DF260062D9AF /* undo.so */,
+				3AEBE1E21E50DF300062D9AF /* vfspk3.so */,
+				3A0124151E50484100A62BC1 /* xmlregistry.so */,
 				3ADBCC9E1E4E4EDC00CA94F6 /* Frameworks */,
-				3AEBE2701E50E1520062D9AF /* dm.conversation.dylib */,
-				3AEBE27F1E50E15B0062D9AF /* dm.difficulty.dylib */,
-				3AEBE28E1E50E1650062D9AF /* dm.editing.dylib */,
-				3AEBE29D1E50E16F0062D9AF /* dm.gui.dylib */,
-				3AEBE2AC1E50E1780062D9AF /* dm.objectives.dylib */,
-				3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.dylib */,
+				3AEBE2701E50E1520062D9AF /* dm.conversation.so */,
+				3AEBE27F1E50E15B0062D9AF /* dm.difficulty.so */,
+				3AEBE28E1E50E1650062D9AF /* dm.editing.so */,
+				3AEBE29D1E50E16F0062D9AF /* dm.gui.so */,
+				3AEBE2AC1E50E1780062D9AF /* dm.objectives.so */,
+				3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.so */,
 			);
 			sourceTree = "<group>";
 		};
@@ -7355,7 +7355,7 @@
 			);
 			name = xmlregistry;
 			productName = xmlregistry;
-			productReference = 3A0124151E50484100A62BC1 /* xmlregistry.dylib */;
+			productReference = 3A0124151E50484100A62BC1 /* xmlregistry.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDC681E50667D0062D9AF /* archivezip */ = {
@@ -7372,7 +7372,7 @@
 			);
 			name = archivezip;
 			productName = archivezip;
-			productReference = 3AEBDC691E50667D0062D9AF /* archivezip.dylib */;
+			productReference = 3AEBDC691E50667D0062D9AF /* archivezip.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDC8D1E5069840062D9AF /* commandsystem */ = {
@@ -7389,7 +7389,7 @@
 			);
 			name = commandsystem;
 			productName = commandsystem;
-			productReference = 3AEBDC8E1E5069840062D9AF /* commandsystem.dylib */;
+			productReference = 3AEBDC8E1E5069840062D9AF /* commandsystem.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDCA91E509D8B0062D9AF /* eclassmgr */ = {
@@ -7406,7 +7406,7 @@
 			);
 			name = eclassmgr;
 			productName = eclassmgr;
-			productReference = 3AEBDCAA1E509D8B0062D9AF /* eclassmgr.dylib */;
+			productReference = 3AEBDCAA1E509D8B0062D9AF /* eclassmgr.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDCC41E509E3E0062D9AF /* eclasstree */ = {
@@ -7423,7 +7423,7 @@
 			);
 			name = eclasstree;
 			productName = eclasstree;
-			productReference = 3AEBDCC51E509E3E0062D9AF /* eclasstree.dylib */;
+			productReference = 3AEBDCC51E509E3E0062D9AF /* eclasstree.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDCE31E50A8980062D9AF /* entity */ = {
@@ -7440,7 +7440,7 @@
 			);
 			name = entity;
 			productName = entity;
-			productReference = 3AEBDCE41E50A8980062D9AF /* entity.dylib */;
+			productReference = 3AEBDCE41E50A8980062D9AF /* entity.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDDA31E50B0910062D9AF /* entitylist */ = {
@@ -7457,7 +7457,7 @@
 			);
 			name = entitylist;
 			productName = entitylist;
-			productReference = 3AEBDDA41E50B0910062D9AF /* entitylist.dylib */;
+			productReference = 3AEBDDA41E50B0910062D9AF /* entitylist.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDDC71E50BE540062D9AF /* eventmanager */ = {
@@ -7474,7 +7474,7 @@
 			);
 			name = eventmanager;
 			productName = eventmanager;
-			productReference = 3AEBDDC81E50BE540062D9AF /* eventmanager.dylib */;
+			productReference = 3AEBDDC81E50BE540062D9AF /* eventmanager.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDE0C1E50BFB80062D9AF /* filetypes */ = {
@@ -7491,7 +7491,7 @@
 			);
 			name = filetypes;
 			productName = filetypes;
-			productReference = 3AEBDE0D1E50BFB80062D9AF /* filetypes.dylib */;
+			productReference = 3AEBDE0D1E50BFB80062D9AF /* filetypes.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDE1F1E50C0190062D9AF /* filters */ = {
@@ -7508,7 +7508,7 @@
 			);
 			name = filters;
 			productName = filters;
-			productReference = 3AEBDE201E50C0190062D9AF /* filters.dylib */;
+			productReference = 3AEBDE201E50C0190062D9AF /* filters.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDE3D1E50C0B50062D9AF /* fonts */ = {
@@ -7525,7 +7525,7 @@
 			);
 			name = fonts;
 			productName = fonts;
-			productReference = 3AEBDE3E1E50C0B50062D9AF /* fonts.dylib */;
+			productReference = 3AEBDE3E1E50C0B50062D9AF /* fonts.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDE631E50C1410062D9AF /* grid */ = {
@@ -7542,7 +7542,7 @@
 			);
 			name = grid;
 			productName = grid;
-			productReference = 3AEBDE641E50C1410062D9AF /* grid.dylib */;
+			productReference = 3AEBDE641E50C1410062D9AF /* grid.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDE781E50C29B0062D9AF /* image */ = {
@@ -7559,7 +7559,7 @@
 			);
 			name = image;
 			productName = image;
-			productReference = 3AEBDE791E50C29B0062D9AF /* image.dylib */;
+			productReference = 3AEBDE791E50C29B0062D9AF /* image.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDEA21E50C3330062D9AF /* dds */ = {
@@ -7593,7 +7593,7 @@
 			);
 			name = mapdoom3;
 			productName = mapdoom3;
-			productReference = 3AEBDEBB1E50C6400062D9AF /* mapdoom3.dylib */;
+			productReference = 3AEBDEBB1E50C6400062D9AF /* mapdoom3.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDF1D1E50C6F10062D9AF /* md5model */ = {
@@ -7610,7 +7610,7 @@
 			);
 			name = md5model;
 			productName = md5model;
-			productReference = 3AEBDF1E1E50C6F10062D9AF /* md5model.dylib */;
+			productReference = 3AEBDF1E1E50C6F10062D9AF /* md5model.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDFF21E50CAEE0062D9AF /* picomodel */ = {
@@ -7644,7 +7644,7 @@
 			);
 			name = model;
 			productName = model;
-			productReference = 3AEBE0341E50D0400062D9AF /* model.dylib */;
+			productReference = 3AEBE0341E50D0400062D9AF /* model.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE04F1E50D6C60062D9AF /* particles */ = {
@@ -7661,7 +7661,7 @@
 			);
 			name = particles;
 			productName = particles;
-			productReference = 3AEBE0501E50D6C60062D9AF /* particles.dylib */;
+			productReference = 3AEBE0501E50D6C60062D9AF /* particles.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE0931E50D8270062D9AF /* scenegraph */ = {
@@ -7678,7 +7678,7 @@
 			);
 			name = scenegraph;
 			productName = scenegraph;
-			productReference = 3AEBE0941E50D8270062D9AF /* scenegraph.dylib */;
+			productReference = 3AEBE0941E50D8270062D9AF /* scenegraph.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE0B11E50D8D50062D9AF /* script */ = {
@@ -7695,7 +7695,7 @@
 			);
 			name = script;
 			productName = script;
-			productReference = 3AEBE0B21E50D8D50062D9AF /* script.dylib */;
+			productReference = 3AEBE0B21E50D8D50062D9AF /* script.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE1321E50DBF80062D9AF /* shaders */ = {
@@ -7712,7 +7712,7 @@
 			);
 			name = shaders;
 			productName = shaders;
-			productReference = 3AEBE1331E50DBF80062D9AF /* shaders.dylib */;
+			productReference = 3AEBE1331E50DBF80062D9AF /* shaders.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE1841E50DC8E0062D9AF /* skins */ = {
@@ -7729,7 +7729,7 @@
 			);
 			name = skins;
 			productName = skins;
-			productReference = 3AEBE1851E50DC8E0062D9AF /* skins.dylib */;
+			productReference = 3AEBE1851E50DC8E0062D9AF /* skins.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE19D1E50DD620062D9AF /* sound */ = {
@@ -7746,7 +7746,7 @@
 			);
 			name = sound;
 			productName = sound;
-			productReference = 3AEBE19E1E50DD620062D9AF /* sound.dylib */;
+			productReference = 3AEBE19E1E50DD620062D9AF /* sound.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE1C31E50DF1A0062D9AF /* uimanager */ = {
@@ -7763,7 +7763,7 @@
 			);
 			name = uimanager;
 			productName = uimanager;
-			productReference = 3AEBE1C41E50DF1A0062D9AF /* uimanager.dylib */;
+			productReference = 3AEBE1C41E50DF1A0062D9AF /* uimanager.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE1D21E50DF260062D9AF /* undo */ = {
@@ -7780,7 +7780,7 @@
 			);
 			name = undo;
 			productName = undo;
-			productReference = 3AEBE1D31E50DF260062D9AF /* undo.dylib */;
+			productReference = 3AEBE1D31E50DF260062D9AF /* undo.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE1E11E50DF300062D9AF /* vfspk3 */ = {
@@ -7797,7 +7797,7 @@
 			);
 			name = vfspk3;
 			productName = vfspk3;
-			productReference = 3AEBE1E21E50DF300062D9AF /* vfspk3.dylib */;
+			productReference = 3AEBE1E21E50DF300062D9AF /* vfspk3.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE26F1E50E1520062D9AF /* dm.conversation */ = {
@@ -7814,7 +7814,7 @@
 			);
 			name = dm.conversation;
 			productName = dm.conversation;
-			productReference = 3AEBE2701E50E1520062D9AF /* dm.conversation.dylib */;
+			productReference = 3AEBE2701E50E1520062D9AF /* dm.conversation.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE27E1E50E15B0062D9AF /* dm.difficulty */ = {
@@ -7831,7 +7831,7 @@
 			);
 			name = dm.difficulty;
 			productName = dm.difficulty;
-			productReference = 3AEBE27F1E50E15B0062D9AF /* dm.difficulty.dylib */;
+			productReference = 3AEBE27F1E50E15B0062D9AF /* dm.difficulty.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE28D1E50E1650062D9AF /* dm.editing */ = {
@@ -7848,7 +7848,7 @@
 			);
 			name = dm.editing;
 			productName = dm.editing;
-			productReference = 3AEBE28E1E50E1650062D9AF /* dm.editing.dylib */;
+			productReference = 3AEBE28E1E50E1650062D9AF /* dm.editing.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE29C1E50E16F0062D9AF /* dm.gui */ = {
@@ -7865,7 +7865,7 @@
 			);
 			name = dm.gui;
 			productName = dm.gui;
-			productReference = 3AEBE29D1E50E16F0062D9AF /* dm.gui.dylib */;
+			productReference = 3AEBE29D1E50E16F0062D9AF /* dm.gui.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE2AB1E50E1780062D9AF /* dm.objectives */ = {
@@ -7882,7 +7882,7 @@
 			);
 			name = dm.objectives;
 			productName = dm.objectives;
-			productReference = 3AEBE2AC1E50E1780062D9AF /* dm.objectives.dylib */;
+			productReference = 3AEBE2AC1E50E1780062D9AF /* dm.objectives.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBE2BA1E50E17F0062D9AF /* dm.stimresponse */ = {
@@ -7899,7 +7899,7 @@
 			);
 			name = dm.stimresponse;
 			productName = dm.stimresponse;
-			productReference = 3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.dylib */;
+			productReference = 3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEDE3991E4EEA1F005A8641 /* DarkRadiant */ = {
@@ -8106,7 +8106,8 @@
 				3AF746AA1E4FADF3003465B5 /* xmlutil */,
 				3A011FC21E50275700A62BC1 /* wxutil */,
 				3A0120721E502F7800A62BC1 /* scene */,
-				3A0124141E50484100A62BC1 /* xmlregistry */,
+				3AEBDEA21E50C3330062D9AF /* dds */,
+				3AEBDFF21E50CAEE0062D9AF /* picomodel */,
 				3AEBDC681E50667D0062D9AF /* archivezip */,
 				3AEBDC8D1E5069840062D9AF /* commandsystem */,
 				3AEBDCA91E509D8B0062D9AF /* eclassmgr */,
@@ -8119,10 +8120,8 @@
 				3AEBDE3D1E50C0B50062D9AF /* fonts */,
 				3AEBDE631E50C1410062D9AF /* grid */,
 				3AEBDE781E50C29B0062D9AF /* image */,
-				3AEBDEA21E50C3330062D9AF /* dds */,
 				3AEBDEBA1E50C6400062D9AF /* mapdoom3 */,
 				3AEBDF1D1E50C6F10062D9AF /* md5model */,
-				3AEBDFF21E50CAEE0062D9AF /* picomodel */,
 				3AEBE0331E50D0400062D9AF /* model */,
 				3AEBE04F1E50D6C60062D9AF /* particles */,
 				3AEBE0931E50D8270062D9AF /* scenegraph */,
@@ -8133,6 +8132,7 @@
 				3AEBE1C31E50DF1A0062D9AF /* uimanager */,
 				3AEBE1D21E50DF260062D9AF /* undo */,
 				3AEBE1E11E50DF300062D9AF /* vfspk3 */,
+				3A0124141E50484100A62BC1 /* xmlregistry */,
 				3AEBE26F1E50E1520062D9AF /* dm.conversation */,
 				3AEBE27E1E50E15B0062D9AF /* dm.difficulty */,
 				3AEBE28D1E50E1650062D9AF /* dm.editing */,
@@ -9218,6 +9218,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -9271,6 +9272,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -9329,6 +9331,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -9378,6 +9381,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -9420,6 +9424,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -9469,6 +9474,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -9511,6 +9517,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -9560,6 +9567,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -9602,6 +9610,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -9651,6 +9660,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -9693,6 +9703,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -9742,6 +9753,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -9784,6 +9796,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -9833,6 +9846,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -9875,6 +9889,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -9924,6 +9939,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -9966,6 +9982,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10015,6 +10032,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10057,6 +10075,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10106,6 +10125,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10148,6 +10168,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10197,6 +10218,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10239,6 +10261,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10288,6 +10311,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10330,6 +10354,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10379,6 +10404,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10508,6 +10534,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10557,6 +10584,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10599,6 +10627,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10648,6 +10677,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10773,6 +10803,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10822,6 +10853,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10864,6 +10896,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -10913,6 +10946,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -10955,6 +10989,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11004,6 +11039,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11046,6 +11082,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11095,6 +11132,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11137,6 +11175,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11186,6 +11225,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11228,6 +11268,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11277,6 +11318,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11319,6 +11361,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11368,6 +11411,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11410,6 +11454,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11459,6 +11504,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11501,6 +11547,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11550,6 +11597,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11592,6 +11640,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11641,6 +11690,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11683,6 +11733,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11732,6 +11783,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11774,6 +11826,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11823,6 +11876,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11865,6 +11919,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -11914,6 +11969,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -11956,6 +12012,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -12005,6 +12062,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -12047,6 +12105,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -12096,6 +12155,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -12138,6 +12198,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
@@ -12187,6 +12248,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;

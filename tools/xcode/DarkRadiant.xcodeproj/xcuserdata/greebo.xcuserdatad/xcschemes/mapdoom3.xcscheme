@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBDEBA1E50C6400062D9AF"
-               BuildableName = "mapdoom3.dylib"
+               BuildableName = "mapdoom3.so"
                BlueprintName = "mapdoom3"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDEBA1E50C6400062D9AF"
-            BuildableName = "mapdoom3.dylib"
+            BuildableName = "mapdoom3.so"
             BlueprintName = "mapdoom3"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBDEBA1E50C6400062D9AF"
-            BuildableName = "mapdoom3.dylib"
+            BuildableName = "mapdoom3.so"
             BlueprintName = "mapdoom3"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
-               BuildableName = "dm.stimresponse.dylib"
+               BuildableName = "dm.stimresponse.so"
                BlueprintName = "dm.stimresponse"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
-            BuildableName = "dm.stimresponse.dylib"
+            BuildableName = "dm.stimresponse.so"
             BlueprintName = "dm.stimresponse"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEBE2BA1E50E17F0062D9AF"
-            BuildableName = "dm.stimresponse.dylib"
+            BuildableName = "dm.stimresponse.so"
             BlueprintName = "dm.stimresponse"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
