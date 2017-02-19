@@ -48,3 +48,4 @@ tools/msvc2015/DarkRadiant.VC.db
 
 # Mac OS X Stuff
 .DS_Store
+tools/xcode/DarkRadiant.xcodeproj/xcuserdata
