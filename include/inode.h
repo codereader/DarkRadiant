@@ -241,6 +241,9 @@ public:
 	// not by the UndoSystem itself, at least not yet.
 	virtual void onPostUndo() {}
 	virtual void onPostRedo() {}
+    
+    // Called during recursive transform changed, but only by INodes themselves
+    virtual void transformChangedLocal() = 0;
 };
 
 } // namespace scene

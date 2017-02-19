@@ -148,7 +148,7 @@ public:
 
 	const Matrix4& localToWorld() const;
 
-	void transformChangedLocal();
+	void transformChangedLocal() override;
 
 	void transformChanged();
 
