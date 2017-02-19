@@ -459,9 +459,9 @@ void Node::transformChanged()
 	transformChangedLocal();
 
 	// Next, traverse the children and notify them
-	_children.foreachNode([] (const scene::INodePtr& child)->bool
+	_children.foreachNode([this] (const scene::INodePtr& child)->bool
 	{
-		std::dynamic_pointer_cast<Node>(child)->transformChangedLocal();
+		child->transformChangedLocal();
 		return true;
 	});
 

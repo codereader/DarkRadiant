@@ -31,6 +31,8 @@ std::string ApplicationContextImpl::getRuntimeDataPath() const
 {
 #if defined(POSIX) && defined (PKGDATADIR)
     return std::string(PKGDATADIR) + "/";
+#elif defined(__APPLE__)
+    return std::string("Resources/");
 #else
     return getApplicationPath();
 #endif

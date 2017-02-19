@@ -57,8 +57,15 @@ void Loader::loadModules(const std::string& root) {
 
     // Get standardised paths
     std::string stdRoot = os::standardPathWithSlash(root);
+    
+#if defined(DR_MODULES_NEXT_TO_APP)
+    // Xcode output goes to the application folder right now
+    std::string modulesPath = stdRoot;
+    std::string pluginsPath = stdRoot;
+#else
     std::string modulesPath = stdRoot + MODULES_DIR;
     std::string pluginsPath = stdRoot + PLUGINS_DIR;
+#endif
 
     // Load modules and plugins
 	Loader modulesLoader(modulesPath);
@@ -66,15 +73,18 @@ void Loader::loadModules(const std::string& root) {
 
 	os::foreachItemInDirectory(modulesPath, modulesLoader);
 
-    // Plugins are optional, so catch the exception
-    try
-	{
-    	os::foreachItemInDirectory(pluginsPath, pluginsLoader);
-    }
-    catch (os::DirectoryNotFoundException&)
-	{
-        rConsole() << "Loader::loadModules(): plugins directory '"
+    if (pluginsPath != modulesPath)
+    {
+        // Plugins are optional, so catch the exception
+        try
+        {
+            os::foreachItemInDirectory(pluginsPath, pluginsLoader);
+        }
+        catch (os::DirectoryNotFoundException&)
+        {
+            rConsole() << "Loader::loadModules(): plugins directory '"
                   << pluginsPath << "' not found." << std::endl;
+        }
     }
 }
 

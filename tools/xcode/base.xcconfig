@@ -1,0 +1,30 @@
+//
+//  Base.xcconfig
+//  Settings shared by all targets
+//
+//  Created by greebo on 11/02/17.
+//
+//
+#include "sigc++.xcconfig"
+#include "libxml2.xcconfig"
+#include "boost.xcconfig"
+#include "wxwidgets.xcconfig"
+
+DR_BASE_CPLUSPLUSFLAGS = $(BOOST_OTHER_CPLUSPLUSFLAGS) $(WXWIDGETS_OTHER_CPLUSPLUSFLAGS) "-DPOSIX" "-Wno-potentially-evaluated-expression" "-Wno-documentation"
+DR_BASE_HEADER_SEARCH_PATHS =  $(LIBXML2_HEADER_SEARCH_PATHS) $(SIGCPP_HEADER_SEARCH_PATHS) $(BOOST_HEADER_SEARCH_PATHS) $(WXWIDGETS_HEADER_SEARCH_PATHS) "$(SRCROOT)/../../include" "$(SRCROOT)/../../libs"
+DR_BASE_LIBRARY_SEARCH_PATHS = $(BOOST_LIBRARY_SEARCH_PATHS) $(LIBXML2_LIBRARY_SEARCH_PATHS) $(SIGCPP_LIBRARY_SEARCH_PATHS) $(WXWIDGETS_LIBRARY_SEARCH_PATHS)
+DR_BASE_LINKFLAGS = $(BOOST_LINKFLAGS) $(LIBXML2_LINKFLAGS) $(SIGCPP_LINKFLAGS) $(WXWIDGETS_LINKFLAGS)
+
+// Apply the basic set for the targets just using base alone
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) $(DR_BASE_CPLUSPLUSFLAGS)
+HEADER_SEARCH_PATHS = $(DR_BASE_HEADER_SEARCH_PATHS)
+LIBRARY_SEARCH_PATHS = $(DR_BASE_LIBRARY_SEARCH_PATHS)
+OTHER_LDFLAGS = $(DR_BASE_LINKFLAGS)
+
+FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks"
+
+// Some headers are named the same, we don't want Xcode to decide which one will be included
+USE_HEADERMAP = NO
+
+// Use the regular C++11 standard
+CLANG_CXX_LANGUAGE_STANDARD = c++0x

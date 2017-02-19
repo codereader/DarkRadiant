@@ -81,7 +81,6 @@ void AutoMapSaver::clearChanges()
 
 void AutoMapSaver::startTimer()
 {
-	assert(_timer);
 	if (!_timer) return;
 
 	_timer->Start(_interval * 1000);
@@ -89,7 +88,6 @@ void AutoMapSaver::startTimer()
 
 void AutoMapSaver::stopTimer()
 {
-	assert(_timer);
 	if (!_timer) return;
 
 	_timer->Stop();

@@ -315,6 +315,9 @@ void GroupDialog::updatePageTitle(int pageNumber)
 void GroupDialog::onPageSwitch(wxBookCtrlEvent& ev)
 {
 	updatePageTitle(ev.GetSelection());
+    
+    // Be sure to skip the event, otherwise pages stay hidden
+    ev.Skip();
 }
 
 } // namespace ui

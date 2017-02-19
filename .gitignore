@@ -45,3 +45,7 @@ testsuite.ilk
 tools/msvc2015/DarkRadiant.VC.db
 *.iobj
 *.ipdb
+
+# Mac OS X Stuff
+.DS_Store
+xcuserdata

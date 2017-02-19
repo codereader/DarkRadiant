@@ -1,0 +1,10 @@
+//
+//  libxml2.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 12.02.17.
+//
+//
+LIBXML2_HEADER_SEARCH_PATHS = "/opt/local/include/libxml2"
+LIBXML2_LIBRARY_SEARCH_PATHS = "/opt/local/lib"
+LIBXML2_LINKFLAGS = "-lxml2"

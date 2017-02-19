@@ -1,14 +1,15 @@
 #pragma once
 
+#include "Transformable.h"
 #include "iselectiontest.h"
 #include "irender.h"
 #include "itraceable.h"
 #include "modelskin.h"
 #include "irenderable.h"
+#include "pivot.h"
 #include "render/VectorLightList.h"
 #include "RenderablePicoModel.h"
 #include "scene/Node.h"
-#include "Transformable.h"
 
 namespace model {
 
@@ -19,7 +20,7 @@ class PicoModelNode :
 	public LitObject,
 	public SkinnedModel,
 	public ITraceable,
-	public Transformable
+    public Transformable
 {
 private:
 	// The actual model

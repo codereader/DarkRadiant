@@ -221,7 +221,11 @@ AC_SUBST([AL_LIBS])
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
 WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type"
-# clang: -Wno-inconsistent-missing-override -Wno-potentially-evaluated-expression
+
+if test "$build_osx" != "no"; then
+    WARNING_FLAGS="$WARNING_FLAGS -Wno-inconsistent-missing-override -Wno-potentially-evaluated-expression"
+fi
+
 CFLAGS="$USER_CFLAGS $WARNING_FLAGS $WX_CFLAGS"
 CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS $WX_CXXFLAGS_ONLY"
 CPPFLAGS="$USER_CPPFLAGS -DPOSIX $WX_CPPFLAGS $LIBSIGC_CFLAGS -DWXINTL_NO_GETTEXT_MACRO"

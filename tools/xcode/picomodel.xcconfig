@@ -1,0 +1,14 @@
+//
+//  picomodel.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 2/12/17.
+//
+//
+// Apply empty set for the targets just using base alone
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS)
+HEADER_SEARCH_PATHS = "$(SRCROOT)/../../libs"
+LIBRARY_SEARCH_PATHS =
+OTHER_LDFLAGS = 
+
+FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks"

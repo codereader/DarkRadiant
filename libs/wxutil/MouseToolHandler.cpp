@@ -103,6 +103,16 @@ void MouseToolHandler::onGLMouseButtonPress(wxMouseEvent& ev)
 
 void MouseToolHandler::onGLMouseMove(wxMouseEvent& ev)
 {
+    // Skip this event if any of the active mouse tools is in capture mode
+    // the call here still arrives on OSX even during capture
+    for (const ActiveMouseTools::value_type& pair : _activeMouseTools)
+    {
+        if (pair.second->getPointerMode() & ui::MouseTool::PointerMode::Capture)
+        {
+            return; // skip
+        }
+    }
+    
     Vector2 position(ev.GetX(), ev.GetY());
 
     sendMoveEventToInactiveTools(ev.GetX(), ev.GetY());
