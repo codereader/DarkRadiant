@@ -58,7 +58,7 @@ void Loader::loadModules(const std::string& root) {
     // Get standardised paths
     std::string stdRoot = os::standardPathWithSlash(root);
     
-#if defined(__APPLE__)
+#if defined(DR_MODULES_NEXT_TO_APP)
     // Xcode output goes to the application folder right now
     std::string modulesPath = stdRoot;
     std::string pluginsPath = stdRoot;
