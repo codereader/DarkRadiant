@@ -25,3 +25,6 @@ FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks"
 
 // Some headers are named the same, we don't want Xcode to decide which one will be included
 USE_HEADERMAP = NO
+
+// Use the regular C++11 standard
+CLANG_CXX_LANGUAGE_STANDARD = c++0x
