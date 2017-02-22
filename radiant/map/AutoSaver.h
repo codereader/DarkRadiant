@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "iregistry.h"
 #include "imodule.h"
 #include "imap.h"

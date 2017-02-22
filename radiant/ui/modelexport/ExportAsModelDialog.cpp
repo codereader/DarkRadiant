@@ -4,6 +4,7 @@
 #include "imodel.h"
 #include "iselection.h"
 #include "ifiletypes.h"
+#include "igame.h"
 
 #include <stdexcept>
 #include <sigc++/functors/mem_fun.h>

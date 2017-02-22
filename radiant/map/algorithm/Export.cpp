@@ -1,6 +1,8 @@
 #include "Export.h"
 
 #include <stdexcept>
+#include "i18n.h"
+#include "ifilesystem.h"
 #include "iundo.h"
 #include "itextstream.h"
 
@@ -9,8 +11,10 @@
 #include "selection/algorithm/Entity.h"
 #include "selection/algorithm/General.h"
 #include "model/ModelExporter.h"
+#include "registry/registry.h"
 #include "Traverse.h"
 #include "Models.h"
+#include <boost/algorithm/string/case_conv.hpp>
 
 namespace map
 {

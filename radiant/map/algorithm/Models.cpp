@@ -8,6 +8,7 @@
 #include "ientity.h"
 #include "imodel.h"
 #include "imodelcache.h"
+#include "iscenegraph.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include "icommandsystem.h"
+
 namespace map
 {
 

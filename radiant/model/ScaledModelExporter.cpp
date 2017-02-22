@@ -10,6 +10,7 @@
 #include "iscenegraph.h"
 #include "os/fs.h"
 #include "os/path.h"
+#include "registry/registry.h"
 #include <boost/format.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/case_conv.hpp>

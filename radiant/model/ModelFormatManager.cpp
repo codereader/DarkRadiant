@@ -1,5 +1,6 @@
 #include "ModelFormatManager.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "ifiletypes.h"
 #include "ipreferencesystem.h"

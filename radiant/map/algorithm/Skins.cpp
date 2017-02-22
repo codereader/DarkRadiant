@@ -1,5 +1,6 @@
 #include "Skins.h"
 
+#include "iscenegraph.h"
 #include "modelskin.h"
 
 namespace map
