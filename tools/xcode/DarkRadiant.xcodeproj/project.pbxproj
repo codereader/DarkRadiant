@@ -321,6 +321,53 @@
 		3A0124291E50489D00A62BC1 /* XMLRegistryModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */; };
 		3A01242B1E50527B00A62BC1 /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
 		3A01242C1E50527B00A62BC1 /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AE2103D1E5980AF00F5A0A6 /* archivezip.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDC691E50667D0062D9AF /* archivezip.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2103E1E5980AF00F5A0A6 /* commandsystem.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDC8E1E5069840062D9AF /* commandsystem.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2103F1E5980AF00F5A0A6 /* eclassmgr.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDCAA1E509D8B0062D9AF /* eclassmgr.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210401E5980AF00F5A0A6 /* eclasstree.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDCC51E509E3E0062D9AF /* eclasstree.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210411E5980AF00F5A0A6 /* entity.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDCE41E50A8980062D9AF /* entity.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210421E5980AF00F5A0A6 /* entitylist.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDDA41E50B0910062D9AF /* entitylist.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210431E5980AF00F5A0A6 /* eventmanager.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDDC81E50BE540062D9AF /* eventmanager.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210441E5980AF00F5A0A6 /* filetypes.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE0D1E50BFB80062D9AF /* filetypes.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210451E5980AF00F5A0A6 /* filters.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE201E50C0190062D9AF /* filters.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210461E5980AF00F5A0A6 /* fonts.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE3E1E50C0B50062D9AF /* fonts.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210471E5980AF00F5A0A6 /* grid.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE641E50C1410062D9AF /* grid.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210481E5980AF00F5A0A6 /* image.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE791E50C29B0062D9AF /* image.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210491E5980AF00F5A0A6 /* mapdoom3.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDEBB1E50C6400062D9AF /* mapdoom3.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2104A1E5980AF00F5A0A6 /* md5model.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDF1E1E50C6F10062D9AF /* md5model.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2104B1E5980AF00F5A0A6 /* model.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0341E50D0400062D9AF /* model.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2104C1E5980AF00F5A0A6 /* particles.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0501E50D6C60062D9AF /* particles.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2104D1E5980AF00F5A0A6 /* scenegraph.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0941E50D8270062D9AF /* scenegraph.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2104E1E5980AF00F5A0A6 /* script.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0B21E50D8D50062D9AF /* script.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2104F1E5980B000F5A0A6 /* shaders.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE1331E50DBF80062D9AF /* shaders.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210501E5980B000F5A0A6 /* skins.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE1851E50DC8E0062D9AF /* skins.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210511E5980B000F5A0A6 /* sound.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE19E1E50DD620062D9AF /* sound.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210521E5980B000F5A0A6 /* uimanager.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE1C41E50DF1A0062D9AF /* uimanager.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210531E5980B000F5A0A6 /* undo.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE1D31E50DF260062D9AF /* undo.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210541E5980B000F5A0A6 /* vfspk3.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE1E21E50DF300062D9AF /* vfspk3.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210551E5980B000F5A0A6 /* xmlregistry.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0124151E50484100A62BC1 /* xmlregistry.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2701E50E1520062D9AF /* dm.conversation.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210571E59811500F5A0A6 /* dm.difficulty.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE27F1E50E15B0062D9AF /* dm.difficulty.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210581E59811500F5A0A6 /* dm.editing.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE28E1E50E1650062D9AF /* dm.editing.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE210591E59811500F5A0A6 /* dm.gui.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE29D1E50E16F0062D9AF /* dm.gui.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2105A1E59811500F5A0A6 /* dm.objectives.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2AC1E50E1780062D9AF /* dm.objectives.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2105B1E59811500F5A0A6 /* dm.stimresponse.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2105D1E59814F00F5A0A6 /* DarkRadiant in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AE2117C1E59918100F5A0A6 /* dialogtest.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5431E5232250062D9AF /* dialogtest.py */; };
+		3AE2117D1E59918100F5A0A6 /* init.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5441E5232250062D9AF /* init.py */; };
+		3AE2117E1E59918100F5A0A6 /* patchtest.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5451E5232250062D9AF /* patchtest.py */; };
+		3AE2117F1E59918100F5A0A6 /* test.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5461E5232250062D9AF /* test.py */; };
+		3AE211811E59922100F5A0A6 /* ase_export.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5381E5232250062D9AF /* ase_export.py */; };
+		3AE211821E59922100F5A0A6 /* ase_export_blend.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5391E5232250062D9AF /* ase_export_blend.py */; };
+		3AE211831E59922100F5A0A6 /* check_for_invalid_visportals.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */; };
+		3AE211841E59922100F5A0A6 /* convert_to_ase_and_replace.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53B1E5232250062D9AF /* convert_to_ase_and_replace.py */; };
+		3AE211851E59922100F5A0A6 /* example.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53C1E5232250062D9AF /* example.py */; };
+		3AE211861E59922100F5A0A6 /* export_obj.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53D1E5232250062D9AF /* export_obj.py */; };
+		3AE211871E59922100F5A0A6 /* patchsplitter.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53E1E5232250062D9AF /* patchsplitter.py */; };
+		3AE211881E59922100F5A0A6 /* select_all_models_of_type.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53F1E5232250062D9AF /* select_all_models_of_type.py */; };
+		3AE211891E59922100F5A0A6 /* shift_textures_randomly.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5401E5232250062D9AF /* shift_textures_randomly.py */; };
+		3AE2118A1E59922100F5A0A6 /* shift_textures_upwards_randomly.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5411E5232250062D9AF /* shift_textures_upwards_randomly.py */; };
+		3AE2118B1E59922100F5A0A6 /* test_targets.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5421E5232250062D9AF /* test_targets.py */; };
 		3AEBDC841E5067300062D9AF /* pkzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC781E50669C0062D9AF /* pkzip.cpp */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
@@ -1098,6 +1145,266 @@
 		3AEBE5631E5233880062D9AF /* shift_textures_randomly.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5401E5232250062D9AF /* shift_textures_randomly.py */; };
 		3AEBE5641E5233880062D9AF /* shift_textures_upwards_randomly.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5411E5232250062D9AF /* shift_textures_upwards_randomly.py */; };
 		3AEBE5651E5233880062D9AF /* test_targets.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5421E5232250062D9AF /* test_targets.py */; };
+		3AF474791E634D2B006B26C2 /* _cubiclight.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122561E503D3000A62BC1 /* _cubiclight.bmp */; };
+		3AF4747A1E634D2B006B26C2 /* _currentrender.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122571E503D3100A62BC1 /* _currentrender.bmp */; };
+		3AF4747B1E634D2B006B26C2 /* _flat.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122581E503D3100A62BC1 /* _flat.bmp */; };
+		3AF4747C1E634D2B006B26C2 /* _fog.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122591E503D3100A62BC1 /* _fog.bmp */; };
+		3AF4747D1E634D2B006B26C2 /* _nofalloff.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01225A1E503D3100A62BC1 /* _nofalloff.bmp */; };
+		3AF4747E1E634D2B006B26C2 /* _pointlight1.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01225B1E503D3100A62BC1 /* _pointlight1.bmp */; };
+		3AF4747F1E634D2B006B26C2 /* _pointlight2.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01225C1E503D3100A62BC1 /* _pointlight2.bmp */; };
+		3AF474801E634D2B006B26C2 /* _pointlight3.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01225D1E503D3100A62BC1 /* _pointlight3.bmp */; };
+		3AF474811E634D2B006B26C2 /* _quadratic.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01225E1E503D3100A62BC1 /* _quadratic.bmp */; };
+		3AF474821E634D2B006B26C2 /* _scratch.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01225F1E503D3100A62BC1 /* _scratch.bmp */; };
+		3AF474831E634D2B006B26C2 /* _spotlight.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122601E503D3100A62BC1 /* _spotlight.bmp */; };
+		3AF474841E634D2B006B26C2 /* _white.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122611E503D3100A62BC1 /* _white.bmp */; };
+		3AF474851E634D2B006B26C2 /* active_layer_invisible.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122621E503D3100A62BC1 /* active_layer_invisible.png */; };
+		3AF474861E634D2B006B26C2 /* active_layer_visible.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122631E503D3100A62BC1 /* active_layer_visible.png */; };
+		3AF474871E634D2B006B26C2 /* arrow_down.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122641E503D3100A62BC1 /* arrow_down.png */; };
+		3AF474881E634D2B006B26C2 /* arrow_e24.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122651E503D3100A62BC1 /* arrow_e24.png */; };
+		3AF474891E634D2B006B26C2 /* arrow_left.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122661E503D3100A62BC1 /* arrow_left.png */; };
+		3AF4748A1E634D2B006B26C2 /* arrow_n24.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122671E503D3100A62BC1 /* arrow_n24.png */; };
+		3AF4748B1E634D2B006B26C2 /* arrow_ne24.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122681E503D3100A62BC1 /* arrow_ne24.png */; };
+		3AF4748C1E634D2B006B26C2 /* arrow_nw24.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122691E503D3100A62BC1 /* arrow_nw24.png */; };
+		3AF4748D1E634D2B006B26C2 /* arrow_right.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01226A1E503D3100A62BC1 /* arrow_right.png */; };
+		3AF4748E1E634D2B006B26C2 /* arrow_s24.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01226B1E503D3100A62BC1 /* arrow_s24.png */; };
+		3AF4748F1E634D2B006B26C2 /* arrow_se24.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01226C1E503D3100A62BC1 /* arrow_se24.png */; };
+		3AF474901E634D2B006B26C2 /* arrow_sw24.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01226D1E503D3100A62BC1 /* arrow_sw24.png */; };
+		3AF474911E634D2B006B26C2 /* arrow_up.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01226E1E503D3100A62BC1 /* arrow_up.png */; };
+		3AF474921E634D2B006B26C2 /* arrow_w24.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01226F1E503D3100A62BC1 /* arrow_w24.png */; };
+		3AF474931E634D2B006B26C2 /* axes.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122701E503D3100A62BC1 /* axes.png */; };
+		3AF474941E634D2B006B26C2 /* bgimage16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122711E503D3100A62BC1 /* bgimage16.png */; };
+		3AF474951E634D2B006B26C2 /* black.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122721E503D3100A62BC1 /* black.bmp */; };
+		3AF474961E634D2B006B26C2 /* book.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122731E503D3100A62BC1 /* book.png */; };
+		3AF474971E634D2B006B26C2 /* brush_flipx.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122741E503D3100A62BC1 /* brush_flipx.png */; };
+		3AF474981E634D2B006B26C2 /* brush_flipy.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122751E503D3100A62BC1 /* brush_flipy.png */; };
+		3AF474991E634D2B006B26C2 /* brush_flipz.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122761E503D3100A62BC1 /* brush_flipz.png */; };
+		3AF4749A1E634D2B006B26C2 /* brush_rotatex.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122771E503D3100A62BC1 /* brush_rotatex.png */; };
+		3AF4749B1E634D2B006B26C2 /* brush_rotatey.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122781E503D3100A62BC1 /* brush_rotatey.png */; };
+		3AF4749C1E634D2B006B26C2 /* brush_rotatez.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122791E503D3100A62BC1 /* brush_rotatez.png */; };
+		3AF4749D1E634D2B006B26C2 /* cap_bevel.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01227A1E503D3100A62BC1 /* cap_bevel.png */; };
+		3AF4749E1E634D2B006B26C2 /* cap_cylinder.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01227B1E503D3100A62BC1 /* cap_cylinder.png */; };
+		3AF4749F1E634D2B006B26C2 /* cap_endcap.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01227C1E503D3100A62BC1 /* cap_endcap.png */; };
+		3AF474A01E634D2B006B26C2 /* cap_ibevel.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01227D1E503D3100A62BC1 /* cap_ibevel.png */; };
+		3AF474A11E634D2B006B26C2 /* cap_iendcap.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01227E1E503D3100A62BC1 /* cap_iendcap.png */; };
+		3AF474A21E634D2B006B26C2 /* check.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01227F1E503D3100A62BC1 /* check.png */; };
+		3AF474A31E634D2B006B26C2 /* cmenu_add_entity.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122801E503D3100A62BC1 /* cmenu_add_entity.png */; };
+		3AF474A41E634D2B006B26C2 /* cmenu_add_light.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122811E503D3100A62BC1 /* cmenu_add_light.png */; };
+		3AF474A51E634D2B006B26C2 /* cmenu_add_model.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122821E503D3100A62BC1 /* cmenu_add_model.png */; };
+		3AF474A61E634D2B006B26C2 /* cmenu_add_prefab.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122831E503D3100A62BC1 /* cmenu_add_prefab.png */; };
+		3AF474A71E634D2B006B26C2 /* cmenu_convert_static.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122841E503D3100A62BC1 /* cmenu_convert_static.png */; };
+		3AF474A81E634D2B006B26C2 /* cmenu_merge_entities.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122851E503D3100A62BC1 /* cmenu_merge_entities.png */; };
+		3AF474A91E634D2B006B26C2 /* cmenu_revert_worldspawn.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122861E503D3100A62BC1 /* cmenu_revert_worldspawn.png */; };
+		3AF474AA1E634D2B006B26C2 /* compile.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122871E503D3100A62BC1 /* compile.png */; };
+		3AF474AB1E634D2B006B26C2 /* create_decals.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122881E503D3100A62BC1 /* create_decals.png */; };
+		3AF474AC1E634D2B006B26C2 /* curve_append_point.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122891E503D3100A62BC1 /* curve_append_point.png */; };
+		3AF474AD1E634D2B006B26C2 /* curve_cap.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01228A1E503D3100A62BC1 /* curve_cap.png */; };
+		3AF474AE1E634D2B006B26C2 /* curve_convert.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01228B1E503D3100A62BC1 /* curve_convert.png */; };
+		3AF474AF1E634D2B006B26C2 /* curve_create.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01228C1E503D3100A62BC1 /* curve_create.png */; };
+		3AF474B01E634D2B006B26C2 /* curve_insert_points.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01228D1E503D3100A62BC1 /* curve_insert_points.png */; };
+		3AF474B11E634D2B006B26C2 /* curve_remove_points.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01228E1E503D3100A62BC1 /* curve_remove_points.png */; };
+		3AF474B21E634D2B006B26C2 /* darkradiant_icon_64x64.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01228F1E503D3100A62BC1 /* darkradiant_icon_64x64.png */; };
+		3AF474B31E634D2B006B26C2 /* darksplash.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122901E503D3100A62BC1 /* darksplash.png */; };
+		3AF474B41E634D2B006B26C2 /* delete.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122911E503D3100A62BC1 /* delete.png */; };
+		3AF474B51E634D2B006B26C2 /* dontselectcurve.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122921E503D3100A62BC1 /* dontselectcurve.bmp */; };
+		3AF474B61E634D2B006B26C2 /* dontselectmodel.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122931E503D3100A62BC1 /* dontselectmodel.bmp */; };
+		3AF474B71E634D2B006B26C2 /* dragresize_symm.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122941E503D3100A62BC1 /* dragresize_symm.png */; };
+		3AF474B81E634D2B006B26C2 /* edit.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122951E503D3100A62BC1 /* edit.png */; };
+		3AF474B91E634D2B006B26C2 /* editcolour16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122961E503D3100A62BC1 /* editcolour16.png */; };
+		3AF474BA1E634D2B006B26C2 /* ellipsis.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122971E503D3100A62BC1 /* ellipsis.png */; };
+		3AF474BB1E634D2B006B26C2 /* empty.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122981E503D3100A62BC1 /* empty.png */; };
+		3AF474BC1E634D2B006B26C2 /* farClipIn.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122991E503D3100A62BC1 /* farClipIn.png */; };
+		3AF474BD1E634D2B006B26C2 /* farClipOut.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01229A1E503D3100A62BC1 /* farClipOut.png */; };
+		3AF474BE1E634D2B006B26C2 /* file_open.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01229B1E503D3100A62BC1 /* file_open.png */; };
+		3AF474BF1E634D2B006B26C2 /* file_save.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01229C1E503D3100A62BC1 /* file_save.png */; };
+		3AF474C01E634D2B006B26C2 /* floorSelected.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01229D1E503D3100A62BC1 /* floorSelected.png */; };
+		3AF474C11E634D2B006B26C2 /* folder16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01229E1E503D3100A62BC1 /* folder16.png */; };
+		3AF474C21E634D2B006B26C2 /* free_model_rotation.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01229F1E503D3100A62BC1 /* free_model_rotation.png */; };
+		3AF474C31E634D2B006B26C2 /* grid_down.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A01E503D3100A62BC1 /* grid_down.png */; };
+		3AF474C41E634D2B006B26C2 /* grid_snap.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A11E503D3100A62BC1 /* grid_snap.png */; };
+		3AF474C51E634D2B006B26C2 /* grid_toggle.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A21E503D3100A62BC1 /* grid_toggle.png */; };
+		3AF474C61E634D2B006B26C2 /* grid_up.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A31E503D3100A62BC1 /* grid_up.png */; };
+		3AF474C71E634D2B006B26C2 /* group_selection.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A41E503D3100A62BC1 /* group_selection.png */; };
+		3AF474C81E634D2B006B26C2 /* helpicon.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A51E503D3100A62BC1 /* helpicon.png */; };
+		3AF474C91E634D2B006B26C2 /* icon_ai.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A61E503D3100A62BC1 /* icon_ai.png */; };
+		3AF474CA1E634D2B006B26C2 /* icon_angle.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A71E503D3100A62BC1 /* icon_angle.png */; };
+		3AF474CB1E634D2B006B26C2 /* icon_bool.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A81E503D3100A62BC1 /* icon_bool.png */; };
+		3AF474CC1E634D2B006B26C2 /* icon_classname.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122A91E503D3100A62BC1 /* icon_classname.png */; };
+		3AF474CD1E634D2B006B26C2 /* icon_color.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122AA1E503D3100A62BC1 /* icon_color.png */; };
+		3AF474CE1E634D2B006B26C2 /* icon_colour.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122AB1E503D3100A62BC1 /* icon_colour.png */; };
+		3AF474CF1E634D2B006B26C2 /* icon_entity.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122AC1E503D3100A62BC1 /* icon_entity.png */; };
+		3AF474D01E634D2B006B26C2 /* icon_float.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122AD1E503D3100A62BC1 /* icon_float.png */; };
+		3AF474D11E634D2B006B26C2 /* icon_int.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122AE1E503D3100A62BC1 /* icon_int.png */; };
+		3AF474D21E634D2B006B26C2 /* icon_model.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122AF1E503D3100A62BC1 /* icon_model.png */; };
+		3AF474D31E634D2B006B26C2 /* icon_script.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B01E503D3100A62BC1 /* icon_script.png */; };
+		3AF474D41E634D2B006B26C2 /* icon_skin.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B11E503D3100A62BC1 /* icon_skin.png */; };
+		3AF474D51E634D2B006B26C2 /* icon_sound.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B21E503D3100A62BC1 /* icon_sound.png */; };
+		3AF474D61E634D2B006B26C2 /* icon_text.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B31E503D3100A62BC1 /* icon_text.png */; };
+		3AF474D71E634D2B006B26C2 /* icon_texture.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B41E503D3100A62BC1 /* icon_texture.png */; };
+		3AF474D81E634D2B006B26C2 /* icon_vector3.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B51E503D3100A62BC1 /* icon_vector3.png */; };
+		3AF474D91E634D2B006B26C2 /* icon.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B61E503D3100A62BC1 /* icon.bmp */; };
+		3AF474DA1E634D2B006B26C2 /* iconConsole16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B71E503D3100A62BC1 /* iconConsole16.png */; };
+		3AF474DB1E634D2B006B26C2 /* iconDrawBBox.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B81E503D3100A62BC1 /* iconDrawBBox.png */; };
+		3AF474DC1E634D2B006B26C2 /* iconFilter16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122B91E503D3100A62BC1 /* iconFilter16.png */; };
+		3AF474DD1E634D2B006B26C2 /* layer.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122BA1E503D3100A62BC1 /* layer.png */; };
+		3AF474DE1E634D2B006B26C2 /* layers.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122BB1E503D3100A62BC1 /* layers.png */; };
+		3AF474DF1E634D2B006B26C2 /* lightingMode.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122BC1E503D3100A62BC1 /* lightingMode.png */; };
+		3AF474E01E634D2B006B26C2 /* logo_old.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122BD1E503D3100A62BC1 /* logo_old.bmp */; };
+		3AF474E11E634D2B006B26C2 /* logo.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122BE1E503D3100A62BC1 /* logo.png */; };
+		3AF474E21E634D2B006B26C2 /* loop.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122BF1E503D3100A62BC1 /* loop.png */; };
+		3AF474E31E634D2B006B26C2 /* make_visportal.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C01E503D3100A62BC1 /* make_visportal.png */; };
+		3AF474E41E634D2B006B26C2 /* media-playback-pause.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C11E503D3100A62BC1 /* media-playback-pause.png */; };
+		3AF474E51E634D2B006B26C2 /* media-playback-start-ltr.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C21E503D3100A62BC1 /* media-playback-start-ltr.png */; };
+		3AF474E61E634D2B006B26C2 /* media-playback-stop.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C31E503D3100A62BC1 /* media-playback-stop.png */; };
+		3AF474E71E634D2B006B26C2 /* model16green.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C41E503D3100A62BC1 /* model16green.png */; };
+		3AF474E81E634D2B006B26C2 /* model16red.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C51E503D3100A62BC1 /* model16red.png */; };
+		3AF474E91E634D2B006B26C2 /* modify_edges.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C61E503D3100A62BC1 /* modify_edges.png */; };
+		3AF474EA1E634D2B006B26C2 /* modify_faces.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C71E503D3100A62BC1 /* modify_faces.png */; };
+		3AF474EB1E634D2B006B26C2 /* modify_vertices.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C81E503D3100A62BC1 /* modify_vertices.png */; };
+		3AF474EC1E634D2B006B26C2 /* monsterclip16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122C91E503D3100A62BC1 /* monsterclip16.png */; };
+		3AF474ED1E634D2B006B26C2 /* noFalloff.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122CA1E503D3100A62BC1 /* noFalloff.bmp */; };
+		3AF474EE1E634D2B006B26C2 /* notex.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122CB1E503D3100A62BC1 /* notex.bmp */; };
+		3AF474EF1E634D2B006B26C2 /* objectives16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122CC1E503D3100A62BC1 /* objectives16.png */; };
+		3AF474F01E634D2B006B26C2 /* offset_clone.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122CD1E503D3100A62BC1 /* offset_clone.png */; };
+		3AF474F11E634D2B006B26C2 /* particle16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122CE1E503D3100A62BC1 /* particle16.png */; };
+		3AF474F21E634D2B006B26C2 /* patch_bend.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122CF1E503D3100A62BC1 /* patch_bend.bmp */; };
+		3AF474F31E634D2B006B26C2 /* patch_drilldown.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D01E503D3100A62BC1 /* patch_drilldown.bmp */; };
+		3AF474F41E634D2B006B26C2 /* patch_insdel.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D11E503D3100A62BC1 /* patch_insdel.bmp */; };
+		3AF474F51E634D2B006B26C2 /* patch_showboundingbox.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D21E503D3100A62BC1 /* patch_showboundingbox.bmp */; };
+		3AF474F61E634D2B006B26C2 /* patch_weld.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D31E503D3100A62BC1 /* patch_weld.bmp */; };
+		3AF474F71E634D2B006B26C2 /* patch_wireframe.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D41E503D3100A62BC1 /* patch_wireframe.bmp */; };
+		3AF474F81E634D2B006B26C2 /* player_start16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D51E503D3100A62BC1 /* player_start16.png */; };
+		3AF474F91E634D2B006B26C2 /* pointfile16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D61E503D3100A62BC1 /* pointfile16.png */; };
+		3AF474FA1E634D2B006B26C2 /* pointLight32.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D71E503D3100A62BC1 /* pointLight32.png */; };
+		3AF474FB1E634D2B006B26C2 /* popup_selection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D81E503D3100A62BC1 /* popup_selection.bmp */; };
+		3AF474FC1E634D2B006B26C2 /* projLight32.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122D91E503D3100A62BC1 /* projLight32.png */; };
+		3AF474FD1E634D2B006B26C2 /* recprop.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122DA1E503D3100A62BC1 /* recprop.png */; };
+		3AF474FE1E634D2B006B26C2 /* refresh.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122DB1E503D3100A62BC1 /* refresh.png */; };
+		3AF474FF1E634D2B006B26C2 /* rotation_pivot_origin.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122DC1E503D3100A62BC1 /* rotation_pivot_origin.png */; };
+		3AF475001E634D2B006B26C2 /* scalelockx.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122DD1E503D3100A62BC1 /* scalelockx.bmp */; };
+		3AF475011E634D2B006B26C2 /* scalelocky.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122DE1E503D3100A62BC1 /* scalelocky.bmp */; };
+		3AF475021E634D2B006B26C2 /* scalelockz.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122DF1E503D3100A62BC1 /* scalelockz.bmp */; };
+		3AF475031E634D2B006B26C2 /* select_entities.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E01E503D3100A62BC1 /* select_entities.png */; };
+		3AF475041E634D2B006B26C2 /* select_group_parts.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E11E503D3100A62BC1 /* select_group_parts.png */; };
+		3AF475051E634D2B006B26C2 /* select_mouseresize.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E21E503D3100A62BC1 /* select_mouseresize.png */; };
+		3AF475061E634D2B006B26C2 /* select_mouserotate.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E31E503D3100A62BC1 /* select_mouserotate.png */; };
+		3AF475071E634D2B006B26C2 /* select_mousescale.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E41E503D3100A62BC1 /* select_mousescale.png */; };
+		3AF475081E634D2B006B26C2 /* select_mousetranslate.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E51E503D3100A62BC1 /* select_mousetranslate.png */; };
+		3AF475091E634D2B006B26C2 /* selection_csgmerge.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E61E503D3100A62BC1 /* selection_csgmerge.png */; };
+		3AF4750A1E634D2B006B26C2 /* selection_csgsubtract.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E71E503D3100A62BC1 /* selection_csgsubtract.png */; };
+		3AF4750B1E634D2B006B26C2 /* selection_makehollow.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E81E503D3100A62BC1 /* selection_makehollow.png */; };
+		3AF4750C1E634D2B006B26C2 /* selection_makeroom.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122E91E503D3100A62BC1 /* selection_makeroom.png */; };
+		3AF4750D1E634D2B006B26C2 /* selection_selectcompletetall.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122EA1E503D3100A62BC1 /* selection_selectcompletetall.png */; };
+		3AF4750E1E634D2B006B26C2 /* selection_selectinside.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122EB1E503D3100A62BC1 /* selection_selectinside.png */; };
+		3AF4750F1E634D2B006B26C2 /* selection_selectpartialtall.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122EC1E503D3100A62BC1 /* selection_selectpartialtall.png */; };
+		3AF475101E634D2B006B26C2 /* selection_selecttouching.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122ED1E503D3100A62BC1 /* selection_selecttouching.png */; };
+		3AF475111E634D2B006B26C2 /* shadernotex.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122EE1E503D3100A62BC1 /* shadernotex.bmp */; };
+		3AF475121E634D2B006B26C2 /* show_entities.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122EF1E503D3100A62BC1 /* show_entities.bmp */; };
+		3AF475131E634D2B006B26C2 /* skin16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F01E503D3100A62BC1 /* skin16.png */; };
+		3AF475141E634D2B006B26C2 /* snap_rotation_pivot.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F11E503D3100A62BC1 /* snap_rotation_pivot.png */; };
+		3AF475151E634D2B006B26C2 /* solidMode16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F21E503D3100A62BC1 /* solidMode16.png */; };
+		3AF475161E634D2B006B26C2 /* sr_icon_communication.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F31E503D3100A62BC1 /* sr_icon_communication.png */; };
+		3AF475171E634D2B006B26C2 /* sr_icon_custom.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F41E503D3100A62BC1 /* sr_icon_custom.png */; };
+		3AF475181E634D2B006B26C2 /* sr_icon_damage.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F51E503D3100A62BC1 /* sr_icon_damage.png */; };
+		3AF475191E634D2B006B26C2 /* sr_icon_fire.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F61E503D3100A62BC1 /* sr_icon_fire.png */; };
+		3AF4751A1E634D2B006B26C2 /* sr_icon_flash.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F71E503D3100A62BC1 /* sr_icon_flash.png */; };
+		3AF4751B1E634D2B006B26C2 /* sr_icon_frob.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F81E503D3100A62BC1 /* sr_icon_frob.png */; };
+		3AF4751C1E634D2B006B26C2 /* sr_icon_gas.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122F91E503D3100A62BC1 /* sr_icon_gas.png */; };
+		3AF4751D1E634D2B006B26C2 /* sr_icon_healing.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122FA1E503D3100A62BC1 /* sr_icon_healing.png */; };
+		3AF4751E1E634D2B006B26C2 /* sr_icon_holy.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122FB1E503D3100A62BC1 /* sr_icon_holy.png */; };
+		3AF4751F1E634D2B006B26C2 /* sr_icon_invite.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122FC1E503D3100A62BC1 /* sr_icon_invite.png */; };
+		3AF475201E634D2B006B26C2 /* sr_icon_kill.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122FD1E503D3100A62BC1 /* sr_icon_kill.png */; };
+		3AF475211E634D2B006B26C2 /* sr_icon_knockout.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122FE1E503D3100A62BC1 /* sr_icon_knockout.png */; };
+		3AF475221E634D2B006B26C2 /* sr_icon_light.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122FF1E503D3100A62BC1 /* sr_icon_light.png */; };
+		3AF475231E634D2B006B26C2 /* sr_icon_magic.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123001E503D3100A62BC1 /* sr_icon_magic.png */; };
+		3AF475241E634D2B006B26C2 /* sr_icon_random.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123011E503D3100A62BC1 /* sr_icon_random.png */; };
+		3AF475251E634D2B006B26C2 /* sr_icon_readable.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123021E503D3100A62BC1 /* sr_icon_readable.png */; };
+		3AF475261E634D2B006B26C2 /* sr_icon_restore.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123031E503D3100A62BC1 /* sr_icon_restore.png */; };
+		3AF475271E634D2B006B26C2 /* sr_icon_shield.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123041E503D3100A62BC1 /* sr_icon_shield.png */; };
+		3AF475281E634D2B006B26C2 /* sr_icon_sound.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123051E503D3100A62BC1 /* sr_icon_sound.png */; };
+		3AF475291E634D2B006B26C2 /* sr_icon_target_reached.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123061E503D3100A62BC1 /* sr_icon_target_reached.png */; };
+		3AF4752A1E634D2B006B26C2 /* sr_icon_thief.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123071E503D3100A62BC1 /* sr_icon_thief.png */; };
+		3AF4752B1E634D2B006B26C2 /* sr_icon_timer.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123081E503D3100A62BC1 /* sr_icon_timer.png */; };
+		3AF4752C1E634D2B006B26C2 /* sr_icon_touch.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123091E503D3100A62BC1 /* sr_icon_touch.png */; };
+		3AF4752D1E634D2B006B26C2 /* sr_icon_trigger.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01230A1E503D3100A62BC1 /* sr_icon_trigger.png */; };
+		3AF4752E1E634D2B006B26C2 /* sr_icon_visual.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01230B1E503D3100A62BC1 /* sr_icon_visual.png */; };
+		3AF4752F1E634D2B006B26C2 /* sr_icon_water.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01230C1E503D3100A62BC1 /* sr_icon_water.png */; };
+		3AF475301E634D2B006B26C2 /* sr_response_inactive.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01230D1E503D3100A62BC1 /* sr_response_inactive.png */; };
+		3AF475311E634D2B006B26C2 /* sr_response_inherited_inactive.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01230E1E503D3100A62BC1 /* sr_response_inherited_inactive.png */; };
+		3AF475321E634D2B006B26C2 /* sr_response_inherited.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01230F1E503D3100A62BC1 /* sr_response_inherited.png */; };
+		3AF475331E634D2B006B26C2 /* sr_response.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123101E503D3100A62BC1 /* sr_response.png */; };
+		3AF475341E634D2B006B26C2 /* sr_stim_inactive.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123111E503D3100A62BC1 /* sr_stim_inactive.png */; };
+		3AF475351E634D2B006B26C2 /* sr_stim_inherited_inactive.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123121E503D3100A62BC1 /* sr_stim_inherited_inactive.png */; };
+		3AF475361E634D2B006B26C2 /* sr_stim_inherited.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123131E503D3100A62BC1 /* sr_stim_inherited.png */; };
+		3AF475371E634D2B006B26C2 /* sr_stim.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123141E503D3100A62BC1 /* sr_stim.png */; };
+		3AF475381E634D2B006B26C2 /* stimresponse.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123151E503D3100A62BC1 /* stimresponse.png */; };
+		3AF475391E634D2B006B26C2 /* tex_flips.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123161E503D3100A62BC1 /* tex_flips.png */; };
+		3AF4753A1E634D2B006B26C2 /* tex_flipt.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123171E503D3100A62BC1 /* tex_flipt.png */; };
+		3AF4753B1E634D2B006B26C2 /* textool_facescale_pivot.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123181E503D3100A62BC1 /* textool_facescale_pivot.png */; };
+		3AF4753C1E634D2B006B26C2 /* textool_merge.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123191E503D3100A62BC1 /* textool_merge.png */; };
+		3AF4753D1E634D2B006B26C2 /* textool_select_related.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01231A1E503D3100A62BC1 /* textool_select_related.png */; };
+		3AF4753E1E634D2B006B26C2 /* texture_lock.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01231B1E503D3100A62BC1 /* texture_lock.png */; };
+		3AF4753F1E634D2B006B26C2 /* texture_pick.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01231C1E503D3100A62BC1 /* texture_pick.png */; };
+		3AF475401E634D2B006B26C2 /* textureApplyToSelection16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01231D1E503D3100A62BC1 /* textureApplyToSelection16.png */; };
+		3AF475411E634D2B006B26C2 /* textureLoadInTexWindow16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01231E1E503D3100A62BC1 /* textureLoadInTexWindow16.png */; };
+		3AF475421E634D2B006B26C2 /* textureMode16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01231F1E503D3100A62BC1 /* textureMode16.png */; };
+		3AF475431E634D2B006B26C2 /* textures_popup.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123201E503D3100A62BC1 /* textures_popup.bmp */; };
+		3AF475441E634D2B006B26C2 /* texwindow_findandreplace.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123211E503D3100A62BC1 /* texwindow_findandreplace.png */; };
+		3AF475451E634D2B006B26C2 /* texwindow_flushandreload.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123221E503D3100A62BC1 /* texwindow_flushandreload.png */; };
+		3AF475461E634D2B006B26C2 /* texwindow_hideunused.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123231E503D3100A62BC1 /* texwindow_hideunused.png */; };
+		3AF475471E634D2B006B26C2 /* texwindow_uniformsize.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123241E503D3100A62BC1 /* texwindow_uniformsize.png */; };
+		3AF475481E634D2B006B26C2 /* ungroup_selection.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123251E503D3100A62BC1 /* ungroup_selection.png */; };
+		3AF475491E634D2B006B26C2 /* unrecprop.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123261E503D3100A62BC1 /* unrecprop.png */; };
+		3AF4754A1E634D2B006B26C2 /* view_cameratoggle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123271E503D3100A62BC1 /* view_cameratoggle.bmp */; };
+		3AF4754B1E634D2B006B26C2 /* view_cameraupdate.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123281E503D3100A62BC1 /* view_cameraupdate.bmp */; };
+		3AF4754C1E634D2B006B26C2 /* view_change.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123291E503D3200A62BC1 /* view_change.png */; };
+		3AF4754D1E634D2B006B26C2 /* view_clipper.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232A1E503D3200A62BC1 /* view_clipper.png */; };
+		3AF4754E1E634D2B006B26C2 /* view_cubicclipping.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232B1E503D3200A62BC1 /* view_cubicclipping.png */; };
+		3AF4754F1E634D2B006B26C2 /* view_entity.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232C1E503D3200A62BC1 /* view_entity.bmp */; };
+		3AF475501E634D2B006B26C2 /* view_show_lightradii.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232D1E503D3200A62BC1 /* view_show_lightradii.png */; };
+		3AF475511E634D2B006B26C2 /* view_show_speakerradii.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232E1E503D3200A62BC1 /* view_show_speakerradii.png */; };
+		3AF475521E634D2B006B26C2 /* white.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232F1E503D3200A62BC1 /* white.bmp */; };
+		3AF475531E634D2B006B26C2 /* wireframe.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123301E503D3200A62BC1 /* wireframe.png */; };
+		3AF475541E634D2B006B26C2 /* wireframeMode16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123311E503D3200A62BC1 /* wireframeMode16.png */; };
+		3AF475551E634D2B006B26C2 /* _black.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0122541E503C5B00A62BC1 /* _black.bmp */; };
+		3AF475571E634D70006B26C2 /* aboutdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4E51E5229DC0062D9AF /* aboutdialog.xrc */; };
+		3AF475581E634D70006B26C2 /* addpropertydialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4E71E5229DC0062D9AF /* addpropertydialog.xrc */; };
+		3AF475591E634D70006B26C2 /* camwnd.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4E91E5229DC0062D9AF /* camwnd.xrc */; };
+		3AF4755A1E634D70006B26C2 /* conversationcmdeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4EB1E5229DC0062D9AF /* conversationcmdeditor.xrc */; };
+		3AF4755B1E634D70006B26C2 /* conversationdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4ED1E5229DC0062D9AF /* conversationdialog.xrc */; };
+		3AF4755C1E634D70006B26C2 /* conversationeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4EF1E5229DC0062D9AF /* conversationeditor.xrc */; };
+		3AF4755D1E634D70006B26C2 /* difficultyeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F11E5229DC0062D9AF /* difficultyeditor.xrc */; };
+		3AF4755E1E634D70006B26C2 /* entityclasschooser.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F31E5229DC0062D9AF /* entityclasschooser.xrc */; };
+		3AF4755F1E634D70006B26C2 /* filterdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F51E5229DC0062D9AF /* filterdialog.xrc */; };
+		3AF475601E634D70006B26C2 /* filtereditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F71E5229DC0062D9AF /* filtereditor.xrc */; };
+		3AF475611E634D70006B26C2 /* findandreplacedialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F91E5229DC0062D9AF /* findandreplacedialog.xrc */; };
+		3AF475621E634D70006B26C2 /* FreeMono.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */; };
+		3AF475631E634D70006B26C2 /* FreeSans.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */; };
+		3AF475641E634D70006B26C2 /* lightinspector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FE1E5229DC0062D9AF /* lightinspector.xrc */; };
+		3AF475651E634D70006B26C2 /* modelselector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5001E5229DC0062D9AF /* modelselector.xrc */; };
+		3AF475661E634D70006B26C2 /* objectivecomponentsdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5021E5229DC0062D9AF /* objectivecomponentsdialog.xrc */; };
+		3AF475671E634D70006B26C2 /* objectiveconditionsdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5041E5229DC0062D9AF /* objectiveconditionsdialog.xrc */; };
+		3AF475681E634D70006B26C2 /* objectiveseditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5061E5229DC0062D9AF /* objectiveseditor.xrc */; };
+		3AF475691E634D70006B26C2 /* overlaydialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5081E5229DC0062D9AF /* overlaydialog.xrc */; };
+		3AF4756A1E634D70006B26C2 /* particleeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE50A1E5229DC0062D9AF /* particleeditor.xrc */; };
+		3AF4756B1E634D70006B26C2 /* patchcreatedialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE50C1E5229DC0062D9AF /* patchcreatedialog.xrc */; };
+		3AF4756C1E634D70006B26C2 /* patchinspector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE50E1E5229DC0062D9AF /* patchinspector.xrc */; };
+		3AF4756D1E634D70006B26C2 /* patchthickendialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5101E5229DC0062D9AF /* patchthickendialog.xrc */; };
+		3AF4756E1E634D70006B26C2 /* readableeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5121E5229DC0062D9AF /* readableeditor.xrc */; };
+		3AF4756F1E634D70006B26C2 /* renderpreview.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */; };
+		3AF475701E634D70006B26C2 /* responseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */; };
+		3AF475711E634D70006B26C2 /* stimeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */; };
+		3AF475731E634D95006B26C2 /* darkmod.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4B81E50EFEB0062D9AF /* darkmod.game */; };
+		3AF475741E634D95006B26C2 /* doom3-demo.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4B91E50EFEB0062D9AF /* doom3-demo.game */; };
+		3AF475751E634D95006B26C2 /* doom3.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BA1E50EFEB0062D9AF /* doom3.game */; };
+		3AF475761E634D95006B26C2 /* quake3.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BB1E50EFEB0062D9AF /* quake3.game */; };
+		3AF475771E634D95006B26C2 /* quake4.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BC1E50EFEB0062D9AF /* quake4.game */; };
+		3AF475781E634D95006B26C2 /* xreal.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BD1E50EFEB0062D9AF /* xreal.game */; };
+		3AF4757A1E634DC0006B26C2 /* colours.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4A91E50E8D20062D9AF /* colours.xml */; };
+		3AF4757B1E634DC0006B26C2 /* commandsystem.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AA1E50E8D20062D9AF /* commandsystem.xml */; };
+		3AF4757C1E634DC0006B26C2 /* debug.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AB1E50E8E10062D9AF /* debug.xml */; };
+		3AF4757D1E634DC0006B26C2 /* input.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AC1E50E8F00062D9AF /* input.xml */; };
+		3AF4757E1E634DC0006B26C2 /* menu.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AD1E50E8F00062D9AF /* menu.xml */; };
+		3AF4757F1E634DC0006B26C2 /* user.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AE1E50E8FC0062D9AF /* user.xml */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -1371,6 +1678,319 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		3AE2103C1E59808E00F5A0A6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */,
+				3AE210571E59811500F5A0A6 /* dm.difficulty.so in CopyFiles */,
+				3AE210581E59811500F5A0A6 /* dm.editing.so in CopyFiles */,
+				3AE210591E59811500F5A0A6 /* dm.gui.so in CopyFiles */,
+				3AE2105A1E59811500F5A0A6 /* dm.objectives.so in CopyFiles */,
+				3AE2105B1E59811500F5A0A6 /* dm.stimresponse.so in CopyFiles */,
+				3AE2103D1E5980AF00F5A0A6 /* archivezip.so in CopyFiles */,
+				3AE2103E1E5980AF00F5A0A6 /* commandsystem.so in CopyFiles */,
+				3AE2103F1E5980AF00F5A0A6 /* eclassmgr.so in CopyFiles */,
+				3AE210401E5980AF00F5A0A6 /* eclasstree.so in CopyFiles */,
+				3AE210411E5980AF00F5A0A6 /* entity.so in CopyFiles */,
+				3AE210421E5980AF00F5A0A6 /* entitylist.so in CopyFiles */,
+				3AE210431E5980AF00F5A0A6 /* eventmanager.so in CopyFiles */,
+				3AE210441E5980AF00F5A0A6 /* filetypes.so in CopyFiles */,
+				3AE210451E5980AF00F5A0A6 /* filters.so in CopyFiles */,
+				3AE210461E5980AF00F5A0A6 /* fonts.so in CopyFiles */,
+				3AE210471E5980AF00F5A0A6 /* grid.so in CopyFiles */,
+				3AE210481E5980AF00F5A0A6 /* image.so in CopyFiles */,
+				3AE210491E5980AF00F5A0A6 /* mapdoom3.so in CopyFiles */,
+				3AE2104A1E5980AF00F5A0A6 /* md5model.so in CopyFiles */,
+				3AE2104B1E5980AF00F5A0A6 /* model.so in CopyFiles */,
+				3AE2104C1E5980AF00F5A0A6 /* particles.so in CopyFiles */,
+				3AE2104D1E5980AF00F5A0A6 /* scenegraph.so in CopyFiles */,
+				3AE2104E1E5980AF00F5A0A6 /* script.so in CopyFiles */,
+				3AE2104F1E5980B000F5A0A6 /* shaders.so in CopyFiles */,
+				3AE210501E5980B000F5A0A6 /* skins.so in CopyFiles */,
+				3AE210511E5980B000F5A0A6 /* sound.so in CopyFiles */,
+				3AE210521E5980B000F5A0A6 /* uimanager.so in CopyFiles */,
+				3AE210531E5980B000F5A0A6 /* undo.so in CopyFiles */,
+				3AE210541E5980B000F5A0A6 /* vfspk3.so in CopyFiles */,
+				3AE210551E5980B000F5A0A6 /* xmlregistry.so in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AE2105C1E59813C00F5A0A6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				3AE2105D1E59814F00F5A0A6 /* DarkRadiant in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AE210611E5987FA00F5A0A6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Resources/bitmaps;
+			dstSubfolderSpec = 1;
+			files = (
+				3AF474791E634D2B006B26C2 /* _cubiclight.bmp in CopyFiles */,
+				3AF4747A1E634D2B006B26C2 /* _currentrender.bmp in CopyFiles */,
+				3AF4747B1E634D2B006B26C2 /* _flat.bmp in CopyFiles */,
+				3AF4747C1E634D2B006B26C2 /* _fog.bmp in CopyFiles */,
+				3AF4747D1E634D2B006B26C2 /* _nofalloff.bmp in CopyFiles */,
+				3AF4747E1E634D2B006B26C2 /* _pointlight1.bmp in CopyFiles */,
+				3AF4747F1E634D2B006B26C2 /* _pointlight2.bmp in CopyFiles */,
+				3AF474801E634D2B006B26C2 /* _pointlight3.bmp in CopyFiles */,
+				3AF474811E634D2B006B26C2 /* _quadratic.bmp in CopyFiles */,
+				3AF474821E634D2B006B26C2 /* _scratch.bmp in CopyFiles */,
+				3AF474831E634D2B006B26C2 /* _spotlight.bmp in CopyFiles */,
+				3AF474841E634D2B006B26C2 /* _white.bmp in CopyFiles */,
+				3AF474851E634D2B006B26C2 /* active_layer_invisible.png in CopyFiles */,
+				3AF474861E634D2B006B26C2 /* active_layer_visible.png in CopyFiles */,
+				3AF474871E634D2B006B26C2 /* arrow_down.png in CopyFiles */,
+				3AF474881E634D2B006B26C2 /* arrow_e24.png in CopyFiles */,
+				3AF474891E634D2B006B26C2 /* arrow_left.png in CopyFiles */,
+				3AF4748A1E634D2B006B26C2 /* arrow_n24.png in CopyFiles */,
+				3AF4748B1E634D2B006B26C2 /* arrow_ne24.png in CopyFiles */,
+				3AF4748C1E634D2B006B26C2 /* arrow_nw24.png in CopyFiles */,
+				3AF4748D1E634D2B006B26C2 /* arrow_right.png in CopyFiles */,
+				3AF4748E1E634D2B006B26C2 /* arrow_s24.png in CopyFiles */,
+				3AF4748F1E634D2B006B26C2 /* arrow_se24.png in CopyFiles */,
+				3AF474901E634D2B006B26C2 /* arrow_sw24.png in CopyFiles */,
+				3AF474911E634D2B006B26C2 /* arrow_up.png in CopyFiles */,
+				3AF474921E634D2B006B26C2 /* arrow_w24.png in CopyFiles */,
+				3AF474931E634D2B006B26C2 /* axes.png in CopyFiles */,
+				3AF474941E634D2B006B26C2 /* bgimage16.png in CopyFiles */,
+				3AF474951E634D2B006B26C2 /* black.bmp in CopyFiles */,
+				3AF474961E634D2B006B26C2 /* book.png in CopyFiles */,
+				3AF474971E634D2B006B26C2 /* brush_flipx.png in CopyFiles */,
+				3AF474981E634D2B006B26C2 /* brush_flipy.png in CopyFiles */,
+				3AF474991E634D2B006B26C2 /* brush_flipz.png in CopyFiles */,
+				3AF4749A1E634D2B006B26C2 /* brush_rotatex.png in CopyFiles */,
+				3AF4749B1E634D2B006B26C2 /* brush_rotatey.png in CopyFiles */,
+				3AF4749C1E634D2B006B26C2 /* brush_rotatez.png in CopyFiles */,
+				3AF4749D1E634D2B006B26C2 /* cap_bevel.png in CopyFiles */,
+				3AF4749E1E634D2B006B26C2 /* cap_cylinder.png in CopyFiles */,
+				3AF4749F1E634D2B006B26C2 /* cap_endcap.png in CopyFiles */,
+				3AF474A01E634D2B006B26C2 /* cap_ibevel.png in CopyFiles */,
+				3AF474A11E634D2B006B26C2 /* cap_iendcap.png in CopyFiles */,
+				3AF474A21E634D2B006B26C2 /* check.png in CopyFiles */,
+				3AF474A31E634D2B006B26C2 /* cmenu_add_entity.png in CopyFiles */,
+				3AF474A41E634D2B006B26C2 /* cmenu_add_light.png in CopyFiles */,
+				3AF474A51E634D2B006B26C2 /* cmenu_add_model.png in CopyFiles */,
+				3AF474A61E634D2B006B26C2 /* cmenu_add_prefab.png in CopyFiles */,
+				3AF474A71E634D2B006B26C2 /* cmenu_convert_static.png in CopyFiles */,
+				3AF474A81E634D2B006B26C2 /* cmenu_merge_entities.png in CopyFiles */,
+				3AF474A91E634D2B006B26C2 /* cmenu_revert_worldspawn.png in CopyFiles */,
+				3AF474AA1E634D2B006B26C2 /* compile.png in CopyFiles */,
+				3AF474AB1E634D2B006B26C2 /* create_decals.png in CopyFiles */,
+				3AF474AC1E634D2B006B26C2 /* curve_append_point.png in CopyFiles */,
+				3AF474AD1E634D2B006B26C2 /* curve_cap.png in CopyFiles */,
+				3AF474AE1E634D2B006B26C2 /* curve_convert.png in CopyFiles */,
+				3AF474AF1E634D2B006B26C2 /* curve_create.png in CopyFiles */,
+				3AF474B01E634D2B006B26C2 /* curve_insert_points.png in CopyFiles */,
+				3AF474B11E634D2B006B26C2 /* curve_remove_points.png in CopyFiles */,
+				3AF474B21E634D2B006B26C2 /* darkradiant_icon_64x64.png in CopyFiles */,
+				3AF474B31E634D2B006B26C2 /* darksplash.png in CopyFiles */,
+				3AF474B41E634D2B006B26C2 /* delete.png in CopyFiles */,
+				3AF474B51E634D2B006B26C2 /* dontselectcurve.bmp in CopyFiles */,
+				3AF474B61E634D2B006B26C2 /* dontselectmodel.bmp in CopyFiles */,
+				3AF474B71E634D2B006B26C2 /* dragresize_symm.png in CopyFiles */,
+				3AF474B81E634D2B006B26C2 /* edit.png in CopyFiles */,
+				3AF474B91E634D2B006B26C2 /* editcolour16.png in CopyFiles */,
+				3AF474BA1E634D2B006B26C2 /* ellipsis.png in CopyFiles */,
+				3AF474BB1E634D2B006B26C2 /* empty.png in CopyFiles */,
+				3AF474BC1E634D2B006B26C2 /* farClipIn.png in CopyFiles */,
+				3AF474BD1E634D2B006B26C2 /* farClipOut.png in CopyFiles */,
+				3AF474BE1E634D2B006B26C2 /* file_open.png in CopyFiles */,
+				3AF474BF1E634D2B006B26C2 /* file_save.png in CopyFiles */,
+				3AF474C01E634D2B006B26C2 /* floorSelected.png in CopyFiles */,
+				3AF474C11E634D2B006B26C2 /* folder16.png in CopyFiles */,
+				3AF474C21E634D2B006B26C2 /* free_model_rotation.png in CopyFiles */,
+				3AF474C31E634D2B006B26C2 /* grid_down.png in CopyFiles */,
+				3AF474C41E634D2B006B26C2 /* grid_snap.png in CopyFiles */,
+				3AF474C51E634D2B006B26C2 /* grid_toggle.png in CopyFiles */,
+				3AF474C61E634D2B006B26C2 /* grid_up.png in CopyFiles */,
+				3AF474C71E634D2B006B26C2 /* group_selection.png in CopyFiles */,
+				3AF474C81E634D2B006B26C2 /* helpicon.png in CopyFiles */,
+				3AF474C91E634D2B006B26C2 /* icon_ai.png in CopyFiles */,
+				3AF474CA1E634D2B006B26C2 /* icon_angle.png in CopyFiles */,
+				3AF474CB1E634D2B006B26C2 /* icon_bool.png in CopyFiles */,
+				3AF474CC1E634D2B006B26C2 /* icon_classname.png in CopyFiles */,
+				3AF474CD1E634D2B006B26C2 /* icon_color.png in CopyFiles */,
+				3AF474CE1E634D2B006B26C2 /* icon_colour.png in CopyFiles */,
+				3AF474CF1E634D2B006B26C2 /* icon_entity.png in CopyFiles */,
+				3AF474D01E634D2B006B26C2 /* icon_float.png in CopyFiles */,
+				3AF474D11E634D2B006B26C2 /* icon_int.png in CopyFiles */,
+				3AF474D21E634D2B006B26C2 /* icon_model.png in CopyFiles */,
+				3AF474D31E634D2B006B26C2 /* icon_script.png in CopyFiles */,
+				3AF474D41E634D2B006B26C2 /* icon_skin.png in CopyFiles */,
+				3AF474D51E634D2B006B26C2 /* icon_sound.png in CopyFiles */,
+				3AF474D61E634D2B006B26C2 /* icon_text.png in CopyFiles */,
+				3AF474D71E634D2B006B26C2 /* icon_texture.png in CopyFiles */,
+				3AF474D81E634D2B006B26C2 /* icon_vector3.png in CopyFiles */,
+				3AF474D91E634D2B006B26C2 /* icon.bmp in CopyFiles */,
+				3AF474DA1E634D2B006B26C2 /* iconConsole16.png in CopyFiles */,
+				3AF474DB1E634D2B006B26C2 /* iconDrawBBox.png in CopyFiles */,
+				3AF474DC1E634D2B006B26C2 /* iconFilter16.png in CopyFiles */,
+				3AF474DD1E634D2B006B26C2 /* layer.png in CopyFiles */,
+				3AF474DE1E634D2B006B26C2 /* layers.png in CopyFiles */,
+				3AF474DF1E634D2B006B26C2 /* lightingMode.png in CopyFiles */,
+				3AF474E01E634D2B006B26C2 /* logo_old.bmp in CopyFiles */,
+				3AF474E11E634D2B006B26C2 /* logo.png in CopyFiles */,
+				3AF474E21E634D2B006B26C2 /* loop.png in CopyFiles */,
+				3AF474E31E634D2B006B26C2 /* make_visportal.png in CopyFiles */,
+				3AF474E41E634D2B006B26C2 /* media-playback-pause.png in CopyFiles */,
+				3AF474E51E634D2B006B26C2 /* media-playback-start-ltr.png in CopyFiles */,
+				3AF474E61E634D2B006B26C2 /* media-playback-stop.png in CopyFiles */,
+				3AF474E71E634D2B006B26C2 /* model16green.png in CopyFiles */,
+				3AF474E81E634D2B006B26C2 /* model16red.png in CopyFiles */,
+				3AF474E91E634D2B006B26C2 /* modify_edges.png in CopyFiles */,
+				3AF474EA1E634D2B006B26C2 /* modify_faces.png in CopyFiles */,
+				3AF474EB1E634D2B006B26C2 /* modify_vertices.png in CopyFiles */,
+				3AF474EC1E634D2B006B26C2 /* monsterclip16.png in CopyFiles */,
+				3AF474ED1E634D2B006B26C2 /* noFalloff.bmp in CopyFiles */,
+				3AF474EE1E634D2B006B26C2 /* notex.bmp in CopyFiles */,
+				3AF474EF1E634D2B006B26C2 /* objectives16.png in CopyFiles */,
+				3AF474F01E634D2B006B26C2 /* offset_clone.png in CopyFiles */,
+				3AF474F11E634D2B006B26C2 /* particle16.png in CopyFiles */,
+				3AF474F21E634D2B006B26C2 /* patch_bend.bmp in CopyFiles */,
+				3AF474F31E634D2B006B26C2 /* patch_drilldown.bmp in CopyFiles */,
+				3AF474F41E634D2B006B26C2 /* patch_insdel.bmp in CopyFiles */,
+				3AF474F51E634D2B006B26C2 /* patch_showboundingbox.bmp in CopyFiles */,
+				3AF474F61E634D2B006B26C2 /* patch_weld.bmp in CopyFiles */,
+				3AF474F71E634D2B006B26C2 /* patch_wireframe.bmp in CopyFiles */,
+				3AF474F81E634D2B006B26C2 /* player_start16.png in CopyFiles */,
+				3AF474F91E634D2B006B26C2 /* pointfile16.png in CopyFiles */,
+				3AF474FA1E634D2B006B26C2 /* pointLight32.png in CopyFiles */,
+				3AF474FB1E634D2B006B26C2 /* popup_selection.bmp in CopyFiles */,
+				3AF474FC1E634D2B006B26C2 /* projLight32.png in CopyFiles */,
+				3AF474FD1E634D2B006B26C2 /* recprop.png in CopyFiles */,
+				3AF474FE1E634D2B006B26C2 /* refresh.png in CopyFiles */,
+				3AF474FF1E634D2B006B26C2 /* rotation_pivot_origin.png in CopyFiles */,
+				3AF475001E634D2B006B26C2 /* scalelockx.bmp in CopyFiles */,
+				3AF475011E634D2B006B26C2 /* scalelocky.bmp in CopyFiles */,
+				3AF475021E634D2B006B26C2 /* scalelockz.bmp in CopyFiles */,
+				3AF475031E634D2B006B26C2 /* select_entities.png in CopyFiles */,
+				3AF475041E634D2B006B26C2 /* select_group_parts.png in CopyFiles */,
+				3AF475051E634D2B006B26C2 /* select_mouseresize.png in CopyFiles */,
+				3AF475061E634D2B006B26C2 /* select_mouserotate.png in CopyFiles */,
+				3AF475071E634D2B006B26C2 /* select_mousescale.png in CopyFiles */,
+				3AF475081E634D2B006B26C2 /* select_mousetranslate.png in CopyFiles */,
+				3AF475091E634D2B006B26C2 /* selection_csgmerge.png in CopyFiles */,
+				3AF4750A1E634D2B006B26C2 /* selection_csgsubtract.png in CopyFiles */,
+				3AF4750B1E634D2B006B26C2 /* selection_makehollow.png in CopyFiles */,
+				3AF4750C1E634D2B006B26C2 /* selection_makeroom.png in CopyFiles */,
+				3AF4750D1E634D2B006B26C2 /* selection_selectcompletetall.png in CopyFiles */,
+				3AF4750E1E634D2B006B26C2 /* selection_selectinside.png in CopyFiles */,
+				3AF4750F1E634D2B006B26C2 /* selection_selectpartialtall.png in CopyFiles */,
+				3AF475101E634D2B006B26C2 /* selection_selecttouching.png in CopyFiles */,
+				3AF475111E634D2B006B26C2 /* shadernotex.bmp in CopyFiles */,
+				3AF475121E634D2B006B26C2 /* show_entities.bmp in CopyFiles */,
+				3AF475131E634D2B006B26C2 /* skin16.png in CopyFiles */,
+				3AF475141E634D2B006B26C2 /* snap_rotation_pivot.png in CopyFiles */,
+				3AF475151E634D2B006B26C2 /* solidMode16.png in CopyFiles */,
+				3AF475161E634D2B006B26C2 /* sr_icon_communication.png in CopyFiles */,
+				3AF475171E634D2B006B26C2 /* sr_icon_custom.png in CopyFiles */,
+				3AF475181E634D2B006B26C2 /* sr_icon_damage.png in CopyFiles */,
+				3AF475191E634D2B006B26C2 /* sr_icon_fire.png in CopyFiles */,
+				3AF4751A1E634D2B006B26C2 /* sr_icon_flash.png in CopyFiles */,
+				3AF4751B1E634D2B006B26C2 /* sr_icon_frob.png in CopyFiles */,
+				3AF4751C1E634D2B006B26C2 /* sr_icon_gas.png in CopyFiles */,
+				3AF4751D1E634D2B006B26C2 /* sr_icon_healing.png in CopyFiles */,
+				3AF4751E1E634D2B006B26C2 /* sr_icon_holy.png in CopyFiles */,
+				3AF4751F1E634D2B006B26C2 /* sr_icon_invite.png in CopyFiles */,
+				3AF475201E634D2B006B26C2 /* sr_icon_kill.png in CopyFiles */,
+				3AF475211E634D2B006B26C2 /* sr_icon_knockout.png in CopyFiles */,
+				3AF475221E634D2B006B26C2 /* sr_icon_light.png in CopyFiles */,
+				3AF475231E634D2B006B26C2 /* sr_icon_magic.png in CopyFiles */,
+				3AF475241E634D2B006B26C2 /* sr_icon_random.png in CopyFiles */,
+				3AF475251E634D2B006B26C2 /* sr_icon_readable.png in CopyFiles */,
+				3AF475261E634D2B006B26C2 /* sr_icon_restore.png in CopyFiles */,
+				3AF475271E634D2B006B26C2 /* sr_icon_shield.png in CopyFiles */,
+				3AF475281E634D2B006B26C2 /* sr_icon_sound.png in CopyFiles */,
+				3AF475291E634D2B006B26C2 /* sr_icon_target_reached.png in CopyFiles */,
+				3AF4752A1E634D2B006B26C2 /* sr_icon_thief.png in CopyFiles */,
+				3AF4752B1E634D2B006B26C2 /* sr_icon_timer.png in CopyFiles */,
+				3AF4752C1E634D2B006B26C2 /* sr_icon_touch.png in CopyFiles */,
+				3AF4752D1E634D2B006B26C2 /* sr_icon_trigger.png in CopyFiles */,
+				3AF4752E1E634D2B006B26C2 /* sr_icon_visual.png in CopyFiles */,
+				3AF4752F1E634D2B006B26C2 /* sr_icon_water.png in CopyFiles */,
+				3AF475301E634D2B006B26C2 /* sr_response_inactive.png in CopyFiles */,
+				3AF475311E634D2B006B26C2 /* sr_response_inherited_inactive.png in CopyFiles */,
+				3AF475321E634D2B006B26C2 /* sr_response_inherited.png in CopyFiles */,
+				3AF475331E634D2B006B26C2 /* sr_response.png in CopyFiles */,
+				3AF475341E634D2B006B26C2 /* sr_stim_inactive.png in CopyFiles */,
+				3AF475351E634D2B006B26C2 /* sr_stim_inherited_inactive.png in CopyFiles */,
+				3AF475361E634D2B006B26C2 /* sr_stim_inherited.png in CopyFiles */,
+				3AF475371E634D2B006B26C2 /* sr_stim.png in CopyFiles */,
+				3AF475381E634D2B006B26C2 /* stimresponse.png in CopyFiles */,
+				3AF475391E634D2B006B26C2 /* tex_flips.png in CopyFiles */,
+				3AF4753A1E634D2B006B26C2 /* tex_flipt.png in CopyFiles */,
+				3AF4753B1E634D2B006B26C2 /* textool_facescale_pivot.png in CopyFiles */,
+				3AF4753C1E634D2B006B26C2 /* textool_merge.png in CopyFiles */,
+				3AF4753D1E634D2B006B26C2 /* textool_select_related.png in CopyFiles */,
+				3AF4753E1E634D2B006B26C2 /* texture_lock.png in CopyFiles */,
+				3AF4753F1E634D2B006B26C2 /* texture_pick.png in CopyFiles */,
+				3AF475401E634D2B006B26C2 /* textureApplyToSelection16.png in CopyFiles */,
+				3AF475411E634D2B006B26C2 /* textureLoadInTexWindow16.png in CopyFiles */,
+				3AF475421E634D2B006B26C2 /* textureMode16.png in CopyFiles */,
+				3AF475431E634D2B006B26C2 /* textures_popup.bmp in CopyFiles */,
+				3AF475441E634D2B006B26C2 /* texwindow_findandreplace.png in CopyFiles */,
+				3AF475451E634D2B006B26C2 /* texwindow_flushandreload.png in CopyFiles */,
+				3AF475461E634D2B006B26C2 /* texwindow_hideunused.png in CopyFiles */,
+				3AF475471E634D2B006B26C2 /* texwindow_uniformsize.png in CopyFiles */,
+				3AF475481E634D2B006B26C2 /* ungroup_selection.png in CopyFiles */,
+				3AF475491E634D2B006B26C2 /* unrecprop.png in CopyFiles */,
+				3AF4754A1E634D2B006B26C2 /* view_cameratoggle.bmp in CopyFiles */,
+				3AF4754B1E634D2B006B26C2 /* view_cameraupdate.bmp in CopyFiles */,
+				3AF4754C1E634D2B006B26C2 /* view_change.png in CopyFiles */,
+				3AF4754D1E634D2B006B26C2 /* view_clipper.png in CopyFiles */,
+				3AF4754E1E634D2B006B26C2 /* view_cubicclipping.png in CopyFiles */,
+				3AF4754F1E634D2B006B26C2 /* view_entity.bmp in CopyFiles */,
+				3AF475501E634D2B006B26C2 /* view_show_lightradii.png in CopyFiles */,
+				3AF475511E634D2B006B26C2 /* view_show_speakerradii.png in CopyFiles */,
+				3AF475521E634D2B006B26C2 /* white.bmp in CopyFiles */,
+				3AF475531E634D2B006B26C2 /* wireframe.png in CopyFiles */,
+				3AF475541E634D2B006B26C2 /* wireframeMode16.png in CopyFiles */,
+				3AF475551E634D2B006B26C2 /* _black.bmp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AE2117B1E59915E00F5A0A6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Resources/scripts;
+			dstSubfolderSpec = 1;
+			files = (
+				3AE2117C1E59918100F5A0A6 /* dialogtest.py in CopyFiles */,
+				3AE2117D1E59918100F5A0A6 /* init.py in CopyFiles */,
+				3AE2117E1E59918100F5A0A6 /* patchtest.py in CopyFiles */,
+				3AE2117F1E59918100F5A0A6 /* test.py in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AE211801E59920700F5A0A6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Resources/scripts/commands;
+			dstSubfolderSpec = 1;
+			files = (
+				3AE211811E59922100F5A0A6 /* ase_export.py in CopyFiles */,
+				3AE211821E59922100F5A0A6 /* ase_export_blend.py in CopyFiles */,
+				3AE211831E59922100F5A0A6 /* check_for_invalid_visportals.py in CopyFiles */,
+				3AE211841E59922100F5A0A6 /* convert_to_ase_and_replace.py in CopyFiles */,
+				3AE211851E59922100F5A0A6 /* example.py in CopyFiles */,
+				3AE211861E59922100F5A0A6 /* export_obj.py in CopyFiles */,
+				3AE211871E59922100F5A0A6 /* patchsplitter.py in CopyFiles */,
+				3AE211881E59922100F5A0A6 /* select_all_models_of_type.py in CopyFiles */,
+				3AE211891E59922100F5A0A6 /* shift_textures_randomly.py in CopyFiles */,
+				3AE2118A1E59922100F5A0A6 /* shift_textures_upwards_randomly.py in CopyFiles */,
+				3AE2118B1E59922100F5A0A6 /* test_targets.py in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEBE4AF1E50E9BA0062D9AF /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1709,6 +2329,72 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AF475561E634D4A006B26C2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Resources/ui;
+			dstSubfolderSpec = 1;
+			files = (
+				3AF475571E634D70006B26C2 /* aboutdialog.xrc in CopyFiles */,
+				3AF475581E634D70006B26C2 /* addpropertydialog.xrc in CopyFiles */,
+				3AF475591E634D70006B26C2 /* camwnd.xrc in CopyFiles */,
+				3AF4755A1E634D70006B26C2 /* conversationcmdeditor.xrc in CopyFiles */,
+				3AF4755B1E634D70006B26C2 /* conversationdialog.xrc in CopyFiles */,
+				3AF4755C1E634D70006B26C2 /* conversationeditor.xrc in CopyFiles */,
+				3AF4755D1E634D70006B26C2 /* difficultyeditor.xrc in CopyFiles */,
+				3AF4755E1E634D70006B26C2 /* entityclasschooser.xrc in CopyFiles */,
+				3AF4755F1E634D70006B26C2 /* filterdialog.xrc in CopyFiles */,
+				3AF475601E634D70006B26C2 /* filtereditor.xrc in CopyFiles */,
+				3AF475611E634D70006B26C2 /* findandreplacedialog.xrc in CopyFiles */,
+				3AF475621E634D70006B26C2 /* FreeMono.ttf in CopyFiles */,
+				3AF475631E634D70006B26C2 /* FreeSans.ttf in CopyFiles */,
+				3AF475641E634D70006B26C2 /* lightinspector.xrc in CopyFiles */,
+				3AF475651E634D70006B26C2 /* modelselector.xrc in CopyFiles */,
+				3AF475661E634D70006B26C2 /* objectivecomponentsdialog.xrc in CopyFiles */,
+				3AF475671E634D70006B26C2 /* objectiveconditionsdialog.xrc in CopyFiles */,
+				3AF475681E634D70006B26C2 /* objectiveseditor.xrc in CopyFiles */,
+				3AF475691E634D70006B26C2 /* overlaydialog.xrc in CopyFiles */,
+				3AF4756A1E634D70006B26C2 /* particleeditor.xrc in CopyFiles */,
+				3AF4756B1E634D70006B26C2 /* patchcreatedialog.xrc in CopyFiles */,
+				3AF4756C1E634D70006B26C2 /* patchinspector.xrc in CopyFiles */,
+				3AF4756D1E634D70006B26C2 /* patchthickendialog.xrc in CopyFiles */,
+				3AF4756E1E634D70006B26C2 /* readableeditor.xrc in CopyFiles */,
+				3AF4756F1E634D70006B26C2 /* renderpreview.xrc in CopyFiles */,
+				3AF475701E634D70006B26C2 /* responseeditor.xrc in CopyFiles */,
+				3AF475711E634D70006B26C2 /* stimeditor.xrc in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF475721E634D81006B26C2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Resources/games;
+			dstSubfolderSpec = 1;
+			files = (
+				3AF475731E634D95006B26C2 /* darkmod.game in CopyFiles */,
+				3AF475741E634D95006B26C2 /* doom3-demo.game in CopyFiles */,
+				3AF475751E634D95006B26C2 /* doom3.game in CopyFiles */,
+				3AF475761E634D95006B26C2 /* quake3.game in CopyFiles */,
+				3AF475771E634D95006B26C2 /* quake4.game in CopyFiles */,
+				3AF475781E634D95006B26C2 /* xreal.game in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF475791E634DA2006B26C2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Resources;
+			dstSubfolderSpec = 1;
+			files = (
+				3AF4757A1E634DC0006B26C2 /* colours.xml in CopyFiles */,
+				3AF4757B1E634DC0006B26C2 /* commandsystem.xml in CopyFiles */,
+				3AF4757C1E634DC0006B26C2 /* debug.xml in CopyFiles */,
+				3AF4757D1E634DC0006B26C2 /* input.xml in CopyFiles */,
+				3AF4757E1E634DC0006B26C2 /* menu.xml in CopyFiles */,
+				3AF4757F1E634DC0006B26C2 /* user.xml in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -2028,7 +2714,11 @@
 		3A0124221E50489D00A62BC1 /* XMLRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistry.cpp; path = ../../plugins/xmlregistry/XMLRegistry.cpp; sourceTree = SOURCE_ROOT; };
 		3A0124231E50489D00A62BC1 /* XMLRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLRegistry.h; path = ../../plugins/xmlregistry/XMLRegistry.h; sourceTree = SOURCE_ROOT; };
 		3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistryModule.cpp; path = ../../plugins/xmlregistry/XMLRegistryModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AAAC7201E617F700019C4F2 /* package_bundle.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = package_bundle.sh; sourceTree = SOURCE_ROOT; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
+		3AE20CD31E59687300F5A0A6 /* DarkRadiantApp.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiantApp.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AE20CD51E59687300F5A0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3AE2105E1E5986D600F5A0A6 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
@@ -4195,8 +4885,9 @@
 			isa = PBXGroup;
 			children = (
 				3A01240F1E50426500A62BC1 /* Configuration */,
-				3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */,
+				3AE20CD41E59687300F5A0A6 /* Bundle */,
 				3A01240E1E50420C00A62BC1 /* Libraries */,
+				3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */,
 				3A0124101E50481E00A62BC1 /* Modules */,
 				3AEBE26B1E50E0EA0062D9AF /* Plugins */,
 				3AEDE39A1E4EEA1F005A8641 /* DarkRadiant */,
@@ -4238,12 +4929,14 @@
 				3AEBE29D1E50E16F0062D9AF /* dm.gui.so */,
 				3AEBE2AC1E50E1780062D9AF /* dm.objectives.so */,
 				3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.so */,
+				3AE20CD31E59687300F5A0A6 /* DarkRadiantApp.bundle */,
 			);
 			sourceTree = "<group>";
 		};
 		3ADBCC9E1E4E4EDC00CA94F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3AE2105E1E5986D600F5A0A6 /* libz.tbd */,
 				3AEBE1BD1E50DDDE0062D9AF /* OpenAL.framework */,
 				3AEBE12A1E50DB950062D9AF /* Python.framework */,
 				3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */,
@@ -4255,6 +4948,16 @@
 				3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3AE20CD41E59687300F5A0A6 /* Bundle */ = {
+			isa = PBXGroup;
+			children = (
+				3AAAC7201E617F700019C4F2 /* package_bundle.sh */,
+				3AE20CD51E59687300F5A0A6 /* Info.plist */,
+			);
+			name = Bundle;
+			path = "DarkRadiant App";
 			sourceTree = "<group>";
 		};
 		3AEBDC6A1E50667D0062D9AF /* archivezip */ = {
@@ -7358,6 +8061,30 @@
 			productReference = 3A0124151E50484100A62BC1 /* xmlregistry.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		3AE20CD21E59687300F5A0A6 /* DarkRadiantApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AE20CD81E59687300F5A0A6 /* Build configuration list for PBXNativeTarget "DarkRadiantApp" */;
+			buildPhases = (
+				3AE20CD11E59687300F5A0A6 /* Resources */,
+				3AE2103C1E59808E00F5A0A6 /* CopyFiles */,
+				3AE2105C1E59813C00F5A0A6 /* CopyFiles */,
+				3AE210611E5987FA00F5A0A6 /* CopyFiles */,
+				3AE2117B1E59915E00F5A0A6 /* CopyFiles */,
+				3AE211801E59920700F5A0A6 /* CopyFiles */,
+				3AF475561E634D4A006B26C2 /* CopyFiles */,
+				3AF475721E634D81006B26C2 /* CopyFiles */,
+				3AF475791E634DA2006B26C2 /* CopyFiles */,
+				3AE2118C1E5992F300F5A0A6 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DarkRadiantApp;
+			productName = "DarkRadiant App";
+			productReference = 3AE20CD31E59687300F5A0A6 /* DarkRadiantApp.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 		3AEBDC681E50667D0062D9AF /* archivezip */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEBDC711E50667D0062D9AF /* Build configuration list for PBXNativeTarget "archivezip" */;
@@ -7979,6 +8706,9 @@
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
 					};
+					3AE20CD21E59687300F5A0A6 = {
+						CreatedOnToolsVersion = 7.1;
+					};
 					3AEBDC681E50667D0062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
@@ -8101,6 +8831,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				3AE20CD21E59687300F5A0A6 /* DarkRadiantApp */,
 				3AEDE3991E4EEA1F005A8641 /* DarkRadiant */,
 				3AF746631E4FACC9003465B5 /* mathlib */,
 				3AF746AA1E4FADF3003465B5 /* xmlutil */,
@@ -8142,6 +8873,32 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3AE20CD11E59687300F5A0A6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3AE2118C1E5992F300F5A0A6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "cd $SRCROOT\n./package_bundle.sh";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3A011FBF1E50275700A62BC1 /* Sources */ = {
@@ -9211,6 +9968,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9264,6 +10022,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9300,6 +10059,99 @@
 			};
 			name = Release;
 		};
+		3AE20CD61E59687300F5A0A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "DarkRadiant App/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brokenglass.DarkRadiant-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		3AE20CD71E59687300F5A0A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "DarkRadiant App/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.brokenglass.DarkRadiant-App";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 		3AEBDC721E50667D0062D9AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */;
@@ -9322,6 +10174,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9342,6 +10195,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -9371,6 +10228,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9385,6 +10243,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -9413,6 +10275,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9462,6 +10325,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9504,6 +10368,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9553,6 +10418,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9595,6 +10461,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9644,6 +10511,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9686,6 +10554,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9735,6 +10604,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9777,6 +10647,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9826,6 +10697,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9868,6 +10740,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9917,6 +10790,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -9959,6 +10833,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10008,6 +10883,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10050,6 +10926,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10099,6 +10976,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10141,6 +11019,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10190,6 +11069,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10232,6 +11112,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10281,6 +11162,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10323,6 +11205,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10372,6 +11255,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10499,6 +11383,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10548,6 +11433,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10590,6 +11476,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10639,6 +11526,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10762,6 +11650,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10811,6 +11700,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10853,6 +11743,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10902,6 +11793,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10944,6 +11836,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10993,6 +11886,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11035,6 +11929,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11084,6 +11979,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11126,6 +12022,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11175,6 +12072,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11217,6 +12115,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11266,6 +12165,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11308,6 +12208,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11357,6 +12258,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11399,6 +12301,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11448,6 +12351,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11490,6 +12394,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11539,6 +12444,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11581,6 +12487,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11630,6 +12537,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11672,6 +12580,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11721,6 +12630,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11763,6 +12673,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11812,6 +12723,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11854,6 +12766,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11903,6 +12816,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11945,6 +12859,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -11994,6 +12909,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -12036,6 +12952,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -12085,6 +13002,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -12127,6 +13045,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -12176,6 +13095,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -12236,6 +13156,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "@executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -12278,6 +13199,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "@executable_path";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -12506,6 +13428,15 @@
 			buildConfigurations = (
 				3ADBCC6D1E4E4B7C00CA94F6 /* Debug */,
 				3ADBCC6E1E4E4B7C00CA94F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AE20CD81E59687300F5A0A6 /* Build configuration list for PBXNativeTarget "DarkRadiantApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AE20CD61E59687300F5A0A6 /* Debug */,
+				3AE20CD71E59687300F5A0A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
