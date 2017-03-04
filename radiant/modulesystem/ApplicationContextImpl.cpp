@@ -17,7 +17,7 @@
 #include <windows.h>
 #endif
 
-#include <wx/msgout.h>
+//#include <wx/msgout.h>
 
 namespace radiant
 {
@@ -27,7 +27,7 @@ namespace radiant
  */
 std::string ApplicationContextImpl::getApplicationPath() const
 {
-    wxMessageOutputDebug().Output(wxString("Application Path is ") + _appPath);
+    //wxMessageOutputDebug().Output(wxString("Application Path is ") + _appPath);
 	return _appPath;
 }
 
@@ -36,6 +36,8 @@ std::string ApplicationContextImpl::getRuntimeDataPath() const
 #if defined(POSIX) && defined (PKGDATADIR)
     return std::string(PKGDATADIR) + "/";
 #elif defined(__APPLE__)
+    // The Resources are in the Bundle folder Contents/Resources/, whereas the
+    // application binary is located in Contents/MacOS/
     return getApplicationPath() + "../Resources/";
 #else
     return getApplicationPath();
@@ -49,7 +51,7 @@ std::string ApplicationContextImpl::getSettingsPath() const
 
 std::string ApplicationContextImpl::getBitmapsPath() const
 {
-    wxMessageOutputDebug().Output(wxString("RTD Path is ") + getRuntimeDataPath());
+    //wxMessageOutputDebug().Output(wxString("RTD Path is ") + getRuntimeDataPath());
 	return getRuntimeDataPath() + "bitmaps/";
 }
 

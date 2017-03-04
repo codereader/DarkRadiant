@@ -1377,8 +1377,6 @@
 		3AF4755F1E634D70006B26C2 /* filterdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F51E5229DC0062D9AF /* filterdialog.xrc */; };
 		3AF475601E634D70006B26C2 /* filtereditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F71E5229DC0062D9AF /* filtereditor.xrc */; };
 		3AF475611E634D70006B26C2 /* findandreplacedialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4F91E5229DC0062D9AF /* findandreplacedialog.xrc */; };
-		3AF475621E634D70006B26C2 /* FreeMono.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */; };
-		3AF475631E634D70006B26C2 /* FreeSans.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */; };
 		3AF475641E634D70006B26C2 /* lightinspector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FE1E5229DC0062D9AF /* lightinspector.xrc */; };
 		3AF475651E634D70006B26C2 /* modelselector.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5001E5229DC0062D9AF /* modelselector.xrc */; };
 		3AF475661E634D70006B26C2 /* objectivecomponentsdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5021E5229DC0062D9AF /* objectivecomponentsdialog.xrc */; };
@@ -1405,6 +1403,8 @@
 		3AF4757D1E634DC0006B26C2 /* input.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AC1E50E8F00062D9AF /* input.xml */; };
 		3AF4757E1E634DC0006B26C2 /* menu.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AD1E50E8F00062D9AF /* menu.xml */; };
 		3AF4757F1E634DC0006B26C2 /* user.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AE1E50E8FC0062D9AF /* user.xml */; };
+		3AF475811E6B174E006B26C2 /* FreeMono.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */; };
+		3AF475821E6B174E006B26C2 /* FreeSans.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -2346,8 +2346,6 @@
 				3AF4755F1E634D70006B26C2 /* filterdialog.xrc in CopyFiles */,
 				3AF475601E634D70006B26C2 /* filtereditor.xrc in CopyFiles */,
 				3AF475611E634D70006B26C2 /* findandreplacedialog.xrc in CopyFiles */,
-				3AF475621E634D70006B26C2 /* FreeMono.ttf in CopyFiles */,
-				3AF475631E634D70006B26C2 /* FreeSans.ttf in CopyFiles */,
 				3AF475641E634D70006B26C2 /* lightinspector.xrc in CopyFiles */,
 				3AF475651E634D70006B26C2 /* modelselector.xrc in CopyFiles */,
 				3AF475661E634D70006B26C2 /* objectivecomponentsdialog.xrc in CopyFiles */,
@@ -2392,6 +2390,17 @@
 				3AF4757D1E634DC0006B26C2 /* input.xml in CopyFiles */,
 				3AF4757E1E634DC0006B26C2 /* menu.xml in CopyFiles */,
 				3AF4757F1E634DC0006B26C2 /* user.xml in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AF475801E6B172D006B26C2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Resources/ui/fonts;
+			dstSubfolderSpec = 1;
+			files = (
+				3AF475811E6B174E006B26C2 /* FreeMono.ttf in CopyFiles */,
+				3AF475821E6B174E006B26C2 /* FreeSans.ttf in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8074,6 +8083,7 @@
 				3AF475561E634D4A006B26C2 /* CopyFiles */,
 				3AF475721E634D81006B26C2 /* CopyFiles */,
 				3AF475791E634DA2006B26C2 /* CopyFiles */,
+				3AF475801E6B172D006B26C2 /* CopyFiles */,
 				3AE2118C1E5992F300F5A0A6 /* ShellScript */,
 			);
 			buildRules = (
