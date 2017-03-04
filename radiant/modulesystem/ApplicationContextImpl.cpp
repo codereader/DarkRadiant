@@ -11,10 +11,13 @@
 #include "log/LogStream.h"
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem.hpp>
 
 #if defined(WIN32)
 #include <windows.h>
 #endif
+
+#include <wx/msgout.h>
 
 namespace radiant
 {
@@ -24,6 +27,7 @@ namespace radiant
  */
 std::string ApplicationContextImpl::getApplicationPath() const
 {
+    wxMessageOutputDebug().Output(wxString("Application Path is ") + _appPath);
 	return _appPath;
 }
 
@@ -32,7 +36,7 @@ std::string ApplicationContextImpl::getRuntimeDataPath() const
 #if defined(POSIX) && defined (PKGDATADIR)
     return std::string(PKGDATADIR) + "/";
 #elif defined(__APPLE__)
-    return std::string("Resources/");
+    return getApplicationPath() + "../Resources/";
 #else
     return getApplicationPath();
 #endif
@@ -45,6 +49,7 @@ std::string ApplicationContextImpl::getSettingsPath() const
 
 std::string ApplicationContextImpl::getBitmapsPath() const
 {
+    wxMessageOutputDebug().Output(wxString("RTD Path is ") + getRuntimeDataPath());
 	return getRuntimeDataPath() + "bitmaps/";
 }
 
@@ -77,19 +82,53 @@ std::mutex& ApplicationContextImpl::getStreamLock() const
 // ============== OS-Specific Implementations go here ===================
 
 // ================ POSIX ====================
-#if defined(POSIX)
+#if defined(POSIX) || defined(__APPLE__)
 
 #include <stdlib.h>
 #include <pwd.h>
 #include <unistd.h>
-
+#ifdef __APPLE__
+#include <libproc.h>
+#endif
+    
 namespace
 {
 
+#ifdef __APPLE__
+
+// greebo: In OSX, we use the proc_pidpath() function
+// to determine the absolute path of this PID
+std::string getExecutablePath(char* argv[])
+{
+    pid_t pid = getpid();
+    
+    char pathBuf[PROC_PIDPATHINFO_MAXSIZE];
+    int ret = proc_pidpath(pid, pathBuf, sizeof(pathBuf));
+    
+    if (ret > 0)
+    {
+        // Success
+        boost::filesystem::path execPath = std::string(pathBuf);
+        boost::filesystem::path appPath = execPath.remove_leaf();
+
+        rConsole() << "Application path: " << appPath << std::endl;
+        
+        return appPath.string();
+    }
+    
+    // Error, terminate the app
+    rConsoleError() << "ApplicationContextImpl: could not get app path: "
+        << strerror(errno) << std::endl;
+    
+    throw std::runtime_error("ApplicationContextImpl: could not get app path");
+}
+    
+#else // generic POSIX
+    
 const char* LINK_NAME =
 #if defined (__linux__)
   "/proc/self/exe"
-#else // FreeBSD and OSX
+#else // FreeBSD
   "/proc/curproc/file"
 #endif
 ;
@@ -130,10 +169,13 @@ std::string getExecutablePath(char* argv[])
 
 	return std::string(buf);
 }
+    
+#endif
 
 }
 
-void ApplicationContextImpl::initialise(int argc, char* argv[]) {
+void ApplicationContextImpl::initialise(int argc, char* argv[])
+{
 	// Give away unnecessary root privileges.
 	// Important: must be done before calling gtk_init().
 	char *loginname;
@@ -155,11 +197,9 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
     os::makeDirectory(home);
     _homePath = home;
 
-	{
-		_appPath = getExecutablePath(argv);
-        ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
-	}
-
+	_appPath = getExecutablePath(argv);
+    ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
+	
 	// Initialise the relative paths
 	initPaths();
 }
