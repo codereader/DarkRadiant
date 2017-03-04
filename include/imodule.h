@@ -328,9 +328,10 @@ namespace module {
 #if defined(WIN32)
 	#if defined(_MSC_VER)
 		// In VC++ we use this to export symbols instead of using .def files
-		#define DARKRADIANT_DLLEXPORT __declspec(dllexport) __stdcall
+		// Note: don't use __stdcall since this is adding stack bytes to the function name
+		#define DARKRADIANT_DLLEXPORT __declspec(dllexport)
 	#else
-		#define DARKRADIANT_DLLEXPORT __stdcall 
+		#define DARKRADIANT_DLLEXPORT 
 	#endif
 #else
 	#define DARKRADIANT_DLLEXPORT
