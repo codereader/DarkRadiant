@@ -20,11 +20,6 @@
 namespace ui
 {
 
-namespace
-{
-	const char* const LABEL_RESPONSE_EFFECTS = N_("Response Effects");
-}
-
 ResponseEditor::ResponseEditor(wxWindow* parent, StimTypes& stimTypes) :
 	ClassEditor(parent, stimTypes)
 {

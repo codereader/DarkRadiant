@@ -179,8 +179,6 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 	_debugText += (boost::format("\nTest reversal x,y,z = (%5.3lf %5.3lf %5.3lf)") % worldPosH.x() % worldPosH.y() % worldPosH.z()).str();
 #endif
 
-	Vector2 constrainedDevicePoint(devicePoint);
-
 	// Constrain the movement to the axes, if the modifier is held
 	bool constrainedFlag = wxGetKeyState(WXK_SHIFT);
 
