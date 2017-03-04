@@ -51,22 +51,22 @@ public:
 	static LightNodePtr Create(const IEntityClassPtr& eclass);
 
 	// RenderEntity implementation
-	virtual float getShaderParm(int parmNum) const;
+	virtual float getShaderParm(int parmNum) const override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
+	virtual const AABB& localAABB() const override;
 
 	// override scene::Inode methods to deselect the child components
 	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Snappable implementation
-	virtual void snapto(float snap);
+	virtual void snapto(float snap) override;
 
 	/** greebo: Returns the AABB of the small diamond representation.
 	 *	(use this to select the light against an AABB selectiontest like CompleteTall or similar).
 	 */
-	AABB getSelectAABB();
+	AABB getSelectAABB() override;
 
 	/*greebo: This is a callback function that gets connected in the constructor
 	* Don't know exactly what it does, but it seems to notify the shader cache that the light has moved or
@@ -81,14 +81,14 @@ public:
 	 *
 	 * If one or more components is/are selected, ONLY those are snapped to the grid.
 	 */
-	void snapComponents(float snap);
+	void snapComponents(float snap) override;
 
 	// PlaneSelectable implementation
-	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);
-	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes);
+	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) override;
+	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) override;
 
 	// Test the light volume for selection, this just passes the call on to the contained Light class
-	void testSelect(Selector& selector, SelectionTest& test);
+	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	// greebo: Returns true if drag planes or the light center is selected (both are components)
 	bool isSelectedComponents() const override;
@@ -102,9 +102,9 @@ public:
 	 * distinguishes between projected and point lights and stretches the AABB accordingly.
 	 */
 	// ComponentEditable implementation
-	const AABB& getSelectedComponentsBounds() const;
+	const AABB& getSelectedComponentsBounds() const override;
 
-	scene::INodePtr clone() const;
+	scene::INodePtr clone() const override;
 
 	void selectedChangedComponent(const ISelectable& selectable);
 
@@ -117,12 +117,12 @@ public:
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
 	// RendererLight implementation
-    const Vector3& worldOrigin() const;
-    Matrix4 getLightTextureTransformation() const;
-    const ShaderPtr& getShader() const;
-	bool intersectsAABB(const AABB& other) const;
+    const Vector3& worldOrigin() const override;
+    Matrix4 getLightTextureTransformation() const override;
+    const ShaderPtr& getShader() const override;
+	bool intersectsAABB(const AABB& other) const override;
 
-	Vector3 getLightOrigin() const;
+	Vector3 getLightOrigin() const override;
 	const Matrix4& rotation() const;
 
     // Returns the original "origin" value
@@ -138,7 +138,7 @@ protected:
     void _applyTransformation() override;
 
 	// Override EntityNode::construct()
-	void construct();
+	void construct() override;
 
 private:
 	void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;

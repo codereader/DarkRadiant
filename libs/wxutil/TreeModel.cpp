@@ -623,7 +623,7 @@ unsigned int TreeModel::GetChildren(const wxDataViewItem& item, wxDataViewItemAr
 		children.Add((*iter)->item);
 	}
 
-	return owningNode->children.size();
+	return static_cast<unsigned int>(owningNode->children.size());
 }
 
 wxDataViewItem TreeModel::GetRoot()

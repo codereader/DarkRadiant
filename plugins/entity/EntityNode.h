@@ -85,37 +85,37 @@ public:
 	virtual ~EntityNode();
 
 	// IEntityNode implementation
-	Entity& getEntity();
-	virtual void refreshModel();
+	Entity& getEntity() override;
+	virtual void refreshModel() override;
 
 	// RenderEntity implementation
-	virtual float getShaderParm(int parmNum) const;
-	virtual const Vector3& getDirection() const;
+	virtual float getShaderParm(int parmNum) const override;
+	virtual const Vector3& getDirection() const override;
 
 	// SelectionTestable implementation
-	virtual void testSelect(Selector& selector, SelectionTest& test);
+	virtual void testSelect(Selector& selector, SelectionTest& test) override;
 
 	// Namespaced implementation
 	// Gets/sets the namespace of this named object
-	std::string getName() const;
-	void setNamespace(INamespace* space);
-	INamespace* getNamespace() const;
-	void connectNameObservers();
-	void disconnectNameObservers();
-	void changeName(const std::string& newName);
+	std::string getName() const override;
+	void setNamespace(INamespace* space) override;
+	INamespace* getNamespace() const override;
+	void connectNameObservers() override;
+	void disconnectNameObservers() override;
+	void changeName(const std::string& newName) override;
 
-	void attachNames();
-	void detachNames();
+	void attachNames() override;
+	void detachNames() override;
 
 	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Sets/clears render entity references on child nodes
-	virtual void onChildAdded(const scene::INodePtr& child);
-	virtual void onChildRemoved(const scene::INodePtr& child);
+	virtual void onChildAdded(const scene::INodePtr& child) override;
+	virtual void onChildRemoved(const scene::INodePtr& child) override;
 
-	virtual std::string name() const;
-	Type getNodeType() const;
+	virtual std::string name() const override;
+	Type getNodeType() const override;
 
 	// Renderable implementation, can be overridden by subclasses
 	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -133,11 +133,11 @@ public:
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
 
-	const ShaderPtr& getWireShader() const;
+	const ShaderPtr& getWireShader() const override;
 	const ShaderPtr& getFillShader() const;
 
-	virtual void onPostUndo();
-	virtual void onPostRedo();
+	virtual void onPostUndo() override;
+	virtual void onPostRedo() override;
 
 protected:
 	virtual void onModelKeyChanged(const std::string& value);

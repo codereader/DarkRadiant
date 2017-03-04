@@ -84,12 +84,12 @@ public:
 	static unsigned long getNewId();
 
     // Default name for generic nodes
-    std::string name() const { return "node"; }
+    std::string name() const override { return "node"; }
 
-	void setSceneGraph(const GraphPtr& sceneGraph);
+	void setSceneGraph(const GraphPtr& sceneGraph) override;
 
-	bool isRoot() const;
-	void setIsRoot(bool isRoot);
+	bool isRoot() const override;
+	void setIsRoot(bool isRoot) override;
 
 	void enable(unsigned int state) override;
 	void disable(unsigned int state) override;
@@ -102,34 +102,35 @@ public:
 	void setForcedVisibility(bool forceVisible, bool includeChildren) override;
 
 	// Layered implementation
-	virtual void addToLayer(int layerId);
-    virtual void removeFromLayer(int layerId);
-	virtual void moveToLayer(int layerId);
-    virtual LayerList getLayers() const;
-	virtual void assignToLayers(const LayerList& newLayers);
+	virtual void addToLayer(int layerId) override;
+    virtual void removeFromLayer(int layerId) override;
+	virtual void moveToLayer(int layerId) override;
+    virtual LayerList getLayers() const override;
+	virtual void assignToLayers(const LayerList& newLayers) override;
 
 	virtual void addChildNode(const INodePtr& node) override;
 	virtual void addChildNodeToFront(const INodePtr& node) override;
 	virtual void removeChildNode(const INodePtr& node) override;
 	virtual bool hasChildNodes() const override;
 
-	virtual void traverse(NodeVisitor& visitor);
-	virtual void traverseChildren(NodeVisitor& visitor) const;
-	virtual bool foreachNode(const VisitorFunc& functor) const;
+	virtual void traverse(NodeVisitor& visitor) override;
+	virtual void traverseChildren(NodeVisitor& visitor) const override;
+	virtual bool foreachNode(const VisitorFunc& functor) const override;
 
-	virtual void setParent(const INodePtr& parent);
-	virtual scene::INodePtr getParent() const;
+	virtual void setParent(const INodePtr& parent) override;
+	virtual scene::INodePtr getParent() const override;
 
-	const AABB& worldAABB() const;
+	const AABB& worldAABB() const override;
 
 	const AABB& childBounds() const;
 
-	virtual void boundsChanged();
+	virtual void boundsChanged() override;
 
 	/**
 	 * Return the filtered status of this Instance.
 	 */
-	virtual bool isFiltered() const {
+	virtual bool isFiltered() const override
+    {
 		return (_state & eFiltered) != 0;
 	}
 
@@ -137,7 +138,8 @@ public:
 	 * Set the filtered status of this Node. Setting filtered to true will
 	 * prevent the node from being rendered.
 	 */
-	virtual void setFiltered(bool filtered) {
+	virtual void setFiltered(bool filtered) override
+    {
 		if (filtered) {
 			_state |= eFiltered;
 		}
@@ -146,11 +148,11 @@ public:
 		}
 	}
 
-	const Matrix4& localToWorld() const;
+	const Matrix4& localToWorld() const override;
 
 	void transformChangedLocal() override;
 
-	void transformChanged();
+	void transformChanged() override;
 
 	void setTransformChangedCallback(const Callback& callback);
 
@@ -164,7 +166,7 @@ public:
 	virtual void onRemoveFromScene(IMapRootNode& root) override;
 
 	// Returns TRUE if this node is inserted in the scene, FALSE otherwise
-	bool inScene() const
+	bool inScene() const override
 	{
 		return _instantiated;
 	}
@@ -177,7 +179,7 @@ public:
 	scene::Path getPath();
 
 	// Returns a shared reference to this node
-	scene::INodePtr getSelf();
+	scene::INodePtr getSelf() override;
 
 	IRenderEntity* getRenderEntity() const override
 	{
@@ -192,7 +194,7 @@ public:
 
 	// Base renderable implementation
 	virtual RenderSystemPtr getRenderSystem() const;
-	virtual void setRenderSystem(const RenderSystemPtr& renderSystem);
+	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 protected:
 	// Method for subclasses to check whether this node is forcedly visible

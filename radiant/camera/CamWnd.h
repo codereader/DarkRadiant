@@ -101,7 +101,7 @@ public:
 	void update();
 
 	// The callback when the scene gets changed
-	void onSceneGraphChange();
+	void onSceneGraphChange() override;
 
 	static void captureStates();
 	static void releaseStates();
@@ -129,9 +129,9 @@ public:
 	wxutil::GLWidget* getwxGLWidget() const { return _wxGLWidget; }
 	wxWindow* getMainWidget() const;
 
-	void enableFreeMove();
-	void disableFreeMove();
-	bool freeMoveEnabled() const;
+	void enableFreeMove() override;
+	void disableFreeMove() override;
+	bool freeMoveEnabled() const override;
 
 	void jumpToObject(SelectionTest& selectionTest);
 

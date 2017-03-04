@@ -58,19 +58,19 @@ public:
 		return Highlight::NoHighlight; // never highlighted
 	}
 
-	std::string name() const;
-	Type getNodeType() const;
+	std::string name() const override;
+	Type getNodeType() const override;
 
 	void setName(const std::string& name);
 
 	// Override scene::Node methods
-	virtual void onChildAdded(const scene::INodePtr& child);
-	virtual void onChildRemoved(const scene::INodePtr& child);
+	virtual void onChildAdded(const scene::INodePtr& child) override;
+	virtual void onChildRemoved(const scene::INodePtr& child) override;
 
     virtual void onInsertIntoScene(IMapRootNode& root) override;
     virtual void onRemoveFromScene(IMapRootNode& root) override;
 
-	const AABB& localAABB() const
+	const AABB& localAABB() const override
 	{
 		return _emptyAABB;
 	}

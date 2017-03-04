@@ -84,7 +84,7 @@ public:
 
 	/** greebo: Returns the name of this class
 	 */
-	std::string getMapName() const;
+	std::string getMapName() const override;
 
 	/**
 	 * greebo: Saves the current map, doesn't ask for any filenames,

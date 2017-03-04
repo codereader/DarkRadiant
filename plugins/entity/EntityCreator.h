@@ -18,10 +18,10 @@ public:
     ITargetManagerPtr createTargetManager() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
+	virtual const std::string& getName() const override;
+	virtual const StringSet& getDependencies() const override;
+	virtual void initialiseModule(const ApplicationContext& ctx) override;
+	virtual void shutdownModule() override;
 };
 typedef std::shared_ptr<Doom3EntityCreator> Doom3EntityCreatorPtr;
 

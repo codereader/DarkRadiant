@@ -83,7 +83,7 @@ void AutoMapSaver::startTimer()
 {
 	if (!_timer) return;
 
-	_timer->Start(_interval * 1000);
+	_timer->Start(static_cast<int>(_interval * 1000));
 }
 
 void AutoMapSaver::stopTimer()

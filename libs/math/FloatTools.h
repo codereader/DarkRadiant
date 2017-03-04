@@ -65,7 +65,7 @@ inline Element float_mid(const Element& self, const Element& other)
 template<typename Element>
 inline int float_to_integer(const Element& f)
 {
-  return lrint(f);
+  return static_cast<int>(lrint(f));
 }
 
 /// \brief Returns \p f rounded to the nearest multiple of \p snap.
