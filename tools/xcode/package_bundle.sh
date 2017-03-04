@@ -1,6 +1,6 @@
 echo Building Package in $TARGET_BUILD_DIR
 cd $TARGET_BUILD_DIR
-cd DarkRadiant.bundle
+cd DarkRadiant.app
 cd Contents
 cd MacOS
 

@@ -1405,6 +1405,7 @@
 		3AF4757F1E634DC0006B26C2 /* user.xml in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4AE1E50E8FC0062D9AF /* user.xml */; };
 		3AF475811E6B174E006B26C2 /* FreeMono.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FB1E5229DC0062D9AF /* FreeMono.ttf */; };
 		3AF475821E6B174E006B26C2 /* FreeSans.ttf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4FC1E5229DC0062D9AF /* FreeSans.ttf */; };
+		3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3AF475D01E6B247B006B26C2 /* darkradiant.icns */; };
 		3AF743031E4F79DA003465B5 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743021E4F79DA003465B5 /* AudioToolbox.framework */; };
 		3AF743051E4F79FC003465B5 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743041E4F79FC003465B5 /* Carbon.framework */; };
 		3AF743071E4F7A06003465B5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF743061E4F7A06003465B5 /* Cocoa.framework */; };
@@ -2994,7 +2995,7 @@
 		3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLRegistryModule.cpp; path = ../../plugins/xmlregistry/XMLRegistryModule.cpp; sourceTree = SOURCE_ROOT; };
 		3AAAC7201E617F700019C4F2 /* package_bundle.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = package_bundle.sh; sourceTree = SOURCE_ROOT; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
-		3AE20CD31E59687300F5A0A6 /* DarkRadiant.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiant.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AE20CD51E59687300F5A0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3AE2105E1E5986D600F5A0A6 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3773,6 +3774,7 @@
 		3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DarkRadiant.xcconfig; sourceTree = "<group>"; };
 		3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = base.xcconfig; sourceTree = "<group>"; };
 		3AEDE3CE1E4F04E9005A8641 /* sigc++.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "sigc++.xcconfig"; sourceTree = "<group>"; };
+		3AF475D01E6B247B006B26C2 /* darkradiant.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = darkradiant.icns; path = ../darkradiant.icns; sourceTree = "<group>"; };
 		3AF743021E4F79DA003465B5 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		3AF743041E4F79FC003465B5 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		3AF743061E4F7A06003465B5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -5207,7 +5209,7 @@
 				3AEBE29D1E50E16F0062D9AF /* dm.gui.so */,
 				3AEBE2AC1E50E1780062D9AF /* dm.objectives.so */,
 				3AEBE2BB1E50E17F0062D9AF /* dm.stimresponse.so */,
-				3AE20CD31E59687300F5A0A6 /* DarkRadiant.bundle */,
+				3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -5231,6 +5233,7 @@
 		3AE20CD41E59687300F5A0A6 /* Bundle */ = {
 			isa = PBXGroup;
 			children = (
+				3AF475D01E6B247B006B26C2 /* darkradiant.icns */,
 				3AAAC7201E617F700019C4F2 /* package_bundle.sh */,
 				3AE20CD51E59687300F5A0A6 /* Info.plist */,
 			);
@@ -8352,6 +8355,7 @@
 				3AF475721E634D81006B26C2 /* CopyFiles */,
 				3AF475791E634DA2006B26C2 /* CopyFiles */,
 				3AF475801E6B172D006B26C2 /* CopyFiles */,
+				3AF475CF1E6B2467006B26C2 /* Resources */,
 				3AE2118C1E5992F300F5A0A6 /* ShellScript */,
 			);
 			buildRules = (
@@ -8398,7 +8402,7 @@
 			);
 			name = DarkRadiant;
 			productName = "DarkRadiant App";
-			productReference = 3AE20CD31E59687300F5A0A6 /* DarkRadiant.bundle */;
+			productReference = 3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */;
 			productType = "com.apple.product-type.bundle";
 		};
 		3AEBDC681E50667D0062D9AF /* archivezip */ = {
@@ -9189,6 +9193,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3AF475CF1E6B2467006B26C2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		3AE2118C1E5992F300F5A0A6 /* ShellScript */ = {
@@ -10604,7 +10619,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = bundle;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
@@ -10647,7 +10662,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = bundle;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
