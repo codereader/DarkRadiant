@@ -1682,7 +1682,7 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolderSpec = 6;
 			files = (
 				3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */,
 				3AE210571E59811500F5A0A6 /* dm.difficulty.so in CopyFiles */,

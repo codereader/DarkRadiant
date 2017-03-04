@@ -118,7 +118,7 @@ done
 fetchLibraries $APP $BINDIR
 
 # Patch all plugins
-for plugin in `ls ../PlugIns/*.so`
+for plugin in `ls *.so`
 do
     echo Patching $plugin... 
     
