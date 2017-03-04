@@ -1,13 +1,15 @@
+# This script takes copies the .dylib files DarkRadiant is depending on to the bundle's MacOS folder.
+# Secondly, it's fixing up the dylib references in all the binaries recursively, replacing
+# the hardcoded /opt/local/* paths with @executable_path, making use of otool and install_name_tool
+
 echo Building Package in $TARGET_BUILD_DIR
 cd $TARGET_BUILD_DIR
-cd DarkRadiant.app
-cd Contents
-cd MacOS
+cd DarkRadiant.app/Contents/MacOS
 
 # Copy wxwidgets dependencies
 WXLIBPOSTFIX=*wx*3.0.0.dylib
 APP=DarkRadiantMain
-     
+
 WXLIBDIR=/opt/local/Library/Frameworks/wxWidgets.framework/Versions/wxWidgets/3.0/lib/
 BINDIR=./
 LIBDEFDIR=/opt/local/Library/Frameworks/wxWidgets.framework/Versions/wxWidgets/3.0/lib/
