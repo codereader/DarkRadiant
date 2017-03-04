@@ -1,12 +1,12 @@
 echo Building Package in $TARGET_BUILD_DIR
 cd $TARGET_BUILD_DIR
-cd DarkRadiantApp.bundle
+cd DarkRadiant.bundle
 cd Contents
 cd MacOS
 
 # Copy wxwidgets dependencies
 WXLIBPOSTFIX=*wx*3.0.0.dylib
-APP=DarkRadiant
+APP=DarkRadiantMain
      
 WXLIBDIR=/opt/local/Library/Frameworks/wxWidgets.framework/Versions/wxWidgets/3.0/lib/
 BINDIR=./
