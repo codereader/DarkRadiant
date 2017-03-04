@@ -45,11 +45,8 @@ namespace ui {
 
 /* CONSTANTS */
 
-namespace {
-
-    const int TREEVIEW_MIN_WIDTH = 220;
-    const int TREEVIEW_MIN_HEIGHT = 60;
-
+namespace
+{
     const char* const PROPERTY_NODES_XPATH = "/entityInspector//property";
 
 	const std::string RKEY_ROOT = "user/ui/entityInspector/";

@@ -21,7 +21,7 @@ private:
 
 private:
 
-	void onBrowseButtonClick();
+	void onBrowseButtonClick() override;
 
 public:
 
@@ -41,7 +41,7 @@ public:
 		return PropertyEditorPtr(new SkinPropertyEditor(parent, entity, name, options));
 	}
 
-	std::string runDialog(Entity* entity, const std::string& key);
+	std::string runDialog(Entity* entity, const std::string& key) override;
 };
 
 } // namespace
