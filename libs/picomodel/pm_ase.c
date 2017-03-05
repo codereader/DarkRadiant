@@ -954,7 +954,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			float				transValue = 0.0f, shineValue = 1.0f;
 			picoColor_t			ambientColor, diffuseColor, specularColor;
 			char				*mapname = NULL;
-			int					subMtlId, subMaterialLevel = -1;
+			int					subMtlId = -1, subMaterialLevel = -1;
 			float				uOffset = 0.0f;
 			float				vOffset = 0.0f;
 			float				uScale = 1.0f;

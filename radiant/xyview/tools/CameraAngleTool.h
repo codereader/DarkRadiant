@@ -65,7 +65,7 @@ public:
         try
         {
             // We only operate on XY view events, so attempt to cast
-            dynamic_cast<XYMouseToolEvent&>(ev);
+            dynamic_cast<XYMouseToolEvent&>(ev).getScale();
             return Result::Finished;
         }
         catch (std::bad_cast&)

@@ -188,7 +188,7 @@ void SoundPlayer::play(ArchiveFile& file)
 														: AL_FORMAT_STEREO16;
 
 			// Get the sample Rate
-			ALsizei freq = (vorbisInfo->rate);
+			ALsizei freq = static_cast<ALsizei>(vorbisInfo->rate);
 			//rConsole() << "Sample rate is " << freq << std::endl;
 
 			long bytes;

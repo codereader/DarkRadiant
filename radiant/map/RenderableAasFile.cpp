@@ -86,7 +86,7 @@ void RenderableAasFile::render(const RenderInfo& info) const
 	// Render the area numbers
 	for (std::size_t areaNum = 0; areaNum < _aasFile->getNumAreas(); ++areaNum)
 	{
-		const IAasFile::Area& area = _aasFile->getArea(areaNum);
+		const IAasFile::Area& area = _aasFile->getArea(static_cast<int>(areaNum));
 
 		if (_hideDistantAreas && (area.center - info.getViewerLocation()).getLengthSquared() > _hideDistanceSquared)
 		{
@@ -113,7 +113,7 @@ void RenderableAasFile::constructRenderables()
 
 	for (std::size_t areaNum = 0; areaNum < _aasFile->getNumAreas(); ++areaNum)
 	{
-		const IAasFile::Area& area = _aasFile->getArea(areaNum);
+		const IAasFile::Area& area = _aasFile->getArea(static_cast<int>(areaNum));
 
 		_renderableAabbs.push_back(RenderableSolidAABB(area.bounds));
 	}

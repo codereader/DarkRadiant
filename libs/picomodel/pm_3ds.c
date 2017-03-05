@@ -650,7 +650,7 @@ static int DoNextEditorDataChunk (T3dsLoaderPers *pers, long endofs)
 #endif
 		}
 		/* skip unknown chunk */
-		pers->cofs = nextofs;
+		pers->cofs = (int)nextofs;
 		if (pers->cofs >= pers->maxofs) break;
 	}
 	return 1;
@@ -707,7 +707,7 @@ static int DoNextChunk (T3dsLoaderPers *pers, int endofs)
 			continue;
 		}
 		/* skip unknown chunk */
-		pers->cofs = nextofs;
+		pers->cofs = (int)nextofs;
 		if (pers->cofs >= pers->maxofs) break;
 	}
 	return 1;

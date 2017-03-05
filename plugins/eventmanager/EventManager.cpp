@@ -326,7 +326,7 @@ void EventManager::disconnectToolbar(wxToolBar* toolbar)
 	{
 		for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
 		{
-			pair.second->disconnectToolItem(const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(tool)));
+			pair.second->disconnectToolItem(const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(static_cast<int>(tool))));
 		}
 	});
 }

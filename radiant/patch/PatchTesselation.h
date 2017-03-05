@@ -56,7 +56,7 @@ private:
 	void subdivideMeshFixed(std::size_t subdivX, std::size_t subdivY);
 	void collapseMesh();
 	void expandMesh();
-	void resizeExpandedMesh(int newHeight, int newWidth);
+    void resizeExpandedMesh(std::size_t newHeight, std::size_t newWidth);
 	void putOnCurve();
 	void removeLinearColumnsRows();
 

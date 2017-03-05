@@ -108,7 +108,7 @@ MouseTool::Result MeasurementTool::onMouseUp(Event& ev)
     try
     {
         // We only operate on XY view events, so attempt to cast
-        dynamic_cast<XYMouseToolEvent&>(ev);
+        dynamic_cast<XYMouseToolEvent&>(ev).getScale();
 
 		// We continue until the user hits ESC
         return Result::Continued;

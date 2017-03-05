@@ -136,31 +136,31 @@ public:
     {
         boost::optional<std::string> keySuffix;
 
-        if (keySuffix = suffixedKey(key, DEF_ATTACH))
+        if ((keySuffix = suffixedKey(key, DEF_ATTACH)))
         {
             _objects[*keySuffix].className = value;
         }
-        else if (keySuffix = suffixedKey(key, NAME_ATTACH))
+        else if ((keySuffix = suffixedKey(key, NAME_ATTACH)))
         {
             _objects[*keySuffix].name = value;
         }
-        else if (keySuffix = suffixedKey(key, POS_ATTACH))
+        else if ((keySuffix = suffixedKey(key, POS_ATTACH)))
         {
             _objects[*keySuffix].posName = value;
         }
-        else if (keySuffix = suffixedKey(key, ATTACH_POS_NAME))
+        else if ((keySuffix = suffixedKey(key, ATTACH_POS_NAME)))
         {
             _positions[*keySuffix].name = value;
         }
-        else if (keySuffix = suffixedKey(key, ATTACH_POS_ORIGIN))
+        else if ((keySuffix = suffixedKey(key, ATTACH_POS_ORIGIN)))
         {
             _positions[*keySuffix].origin = string::convert<Vector3>(value);
         }
-        else if (keySuffix = suffixedKey(key, ATTACH_POS_ANGLES))
+        else if ((keySuffix = suffixedKey(key, ATTACH_POS_ANGLES)))
         {
             _positions[*keySuffix].angles = string::convert<Vector3>(value);
         }
-        else if (keySuffix = suffixedKey(key, ATTACH_POS_JOINT))
+        else if ((keySuffix = suffixedKey(key, ATTACH_POS_JOINT)))
         {
             _positions[*keySuffix].joint = value;
         }

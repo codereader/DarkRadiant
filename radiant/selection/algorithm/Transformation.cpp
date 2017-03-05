@@ -342,7 +342,7 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 {
 	AxisBase axes(AxisBase_forViewType(viewtype));
 
-	Vector3 view_direction(-axes.z);
+	//Vector3 view_direction(-axes.z);
 	Vector3 nudge(AxisBase_axisForDirection(axes, direction) * amount);
 
 	if (GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Translate ||

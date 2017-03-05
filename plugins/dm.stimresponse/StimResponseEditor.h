@@ -55,7 +55,7 @@ public:
 	StimResponseEditor();
 
 	// override DialogBase
-	int ShowModal();
+	int ShowModal() override;
 
 	// Command target to toggle the dialog
 	static void ShowDialog(const cmd::ArgumentList& args);
