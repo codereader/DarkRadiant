@@ -108,7 +108,29 @@ Accelerator& EventManager::addAccelerator(wxKeyEvent& ev)
 
 void EventManager::resetAcceleratorBindings()
 {
+	// Select the stock mappings
+	std::string xPathQuery = "user/ui/input/shortcuts[@name='default']//shortcut";
 
+	xml::NodeList shortcutList = GlobalRegistry().findXPath(xPathQuery);
+
+	if (shortcutList.empty())
+	{
+		// No accelerator definitions found!
+		rWarning() << "EventManager: No default shortcut definitions found..." << std::endl;
+		return;
+	}
+
+	// Disconnect all accelerators from all events
+	for (EventMap::value_type& pair : _events)
+	{
+		pair.second->disconnectAccelerators();
+	}
+
+	_accelerators.clear();
+
+	rMessage() << "EventManager: Default shortcuts found in Registry: " << shortcutList.size() << std::endl;
+
+	loadAcceleratorFromList(shortcutList);
 }
 
 IEventPtr EventManager::findEvent(const std::string& name) 
