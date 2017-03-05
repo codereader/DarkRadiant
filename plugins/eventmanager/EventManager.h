@@ -6,6 +6,7 @@
 #include <map>
 #include <list>
 
+#include "xmlutil/Node.h"
 #include "Accelerator.h"
 
 #include "GlobalKeyEventFilter.h"
@@ -52,6 +53,8 @@ public:
 
 	std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) override;
 
+	void resetAcceleratorBindings() override;
+
 	// Checks if the eventName is already registered and writes to rMessage, if so
 	bool alreadyRegistered(const std::string& eventName);
 
@@ -88,7 +91,6 @@ public:
 	std::string getEventStr(wxKeyEvent& ev) override;
 
 private:
-
 	void saveEventListToRegistry();
 
 	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr);
@@ -97,6 +99,8 @@ private:
 
 	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
 	AcceleratorList findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
+
+	void loadAcceleratorFromList(const xml::NodeList& shortcutList);
 
 	bool isModifier(wxKeyEvent& ev);
 };
