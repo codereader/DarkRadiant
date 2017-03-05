@@ -79,8 +79,6 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
     {
 		ZipRecord* file = i->second.file();
 
-        FileInputStream::size_type position = 0;
-
         {
             // Guard against concurrent access
             std::lock_guard<std::mutex> lock(_streamLock);

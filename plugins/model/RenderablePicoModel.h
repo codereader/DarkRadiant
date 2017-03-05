@@ -148,12 +148,13 @@ public:
 	 * model selector but not the main renderer, which uses the front-end render
 	 * method.
 	 */
-	void render(const RenderInfo& info) const;
+	void render(const RenderInfo& info) const override;
 
 	/**
 	 * Return the number of surfaces in this model.
 	 */
-	int getSurfaceCount() const {
+	int getSurfaceCount() const override
+    {
 		return static_cast<int>(_surfVec.size());
 	}
 
@@ -161,41 +162,42 @@ public:
 	 * Return the number of vertices in this model, by summing the vertex
 	 * counts for each surface.
 	 */
-	int getVertexCount() const;
+	int getVertexCount() const override;
 
 	/** Return the polycount (tricount) of this model by summing the surface
 	 * polycounts.
 	 */
 
-	int getPolyCount() const;
+	int getPolyCount() const override;
 
-	const IModelSurface& getSurface(unsigned surfaceNum) const;
+	const IModelSurface& getSurface(unsigned surfaceNum) const override;
 
 	/**
 	 * Return the enclosing AABB for this model.
 	 */
-	const AABB& localAABB() const {
+	const AABB& localAABB() const override
+    {
 		return _localAABB;
 	}
 
 	/** Return the list of active materials for this model.
 	 */
-	const std::vector<std::string>& getActiveMaterials() const;
+	const std::vector<std::string>& getActiveMaterials() const override;
 
 	// Sets the filename this model was loaded from
 	void setFilename(const std::string& name);
 
 	// Returns the filename this model was loaded from
-	virtual std::string getFilename() const;
+	virtual std::string getFilename() const override;
 
 	// Returns the VFS path to the model file
-	virtual std::string getModelPath() const;
+	virtual std::string getModelPath() const override;
 
 	void setModelPath(const std::string& modelPath);
 
 	/** Apply the given skin to this model.
 	 */
-	void applySkin(const ModelSkin& skin);
+	void applySkin(const ModelSkin& skin) override;
 
 	/**
 	 * Selection test. Test each surface against the SelectionTest object and

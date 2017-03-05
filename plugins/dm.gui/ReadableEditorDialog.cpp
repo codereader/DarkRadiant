@@ -46,9 +46,6 @@ namespace
 	const char* const NO_ENTITY_ERROR = N_("Cannot run Readable Editor on this selection.\n"
 		"Please select a single XData entity.");
 
-	const char* const LABEL_PAGE_RELATED = N_("Page Editing:");
-	const char* const LABEL_GENERAL_PROPERTIES = N_("General Properties:");
-
 	enum MenuItemId
 	{
 		InsertWholePage = 1,

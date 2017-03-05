@@ -218,7 +218,7 @@ public:
 
 		int getInteger() const
 		{
-			return getVariant().GetInteger();
+			return static_cast<int>(getVariant().GetInteger());
 		}
 
 		double getDouble() const
@@ -435,30 +435,31 @@ public:
 
 	// Base class implementation / overrides
 
-	virtual bool HasDefaultCompare() const;
-	virtual unsigned int GetColumnCount() const;
+	virtual bool HasDefaultCompare() const override;
+	virtual unsigned int GetColumnCount() const override;
 
     // return type as reported by wxVariant
-    virtual wxString GetColumnType(unsigned int col) const;
+    virtual wxString GetColumnType(unsigned int col) const override;
 
     // get value into a wxVariant
     virtual void GetValue(wxVariant &variant,
-                          const wxDataViewItem &item, unsigned int col) const;
+                          const wxDataViewItem &item, unsigned int col) const override;
 	virtual bool SetValue(const wxVariant &variant,
                           const wxDataViewItem &item,
-                          unsigned int col);
+                          unsigned int col) override;
 
-	virtual bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const;
+	virtual bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const override;
 
-	virtual wxDataViewItem GetParent(const wxDataViewItem &item) const;
-    virtual bool IsContainer(const wxDataViewItem& item) const;
+	virtual wxDataViewItem GetParent(const wxDataViewItem &item) const override;
+    virtual bool IsContainer(const wxDataViewItem& item) const override;
 
-	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;
+	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const override;
 	virtual wxDataViewItem GetRoot();
 
-	virtual bool IsListModel() const;
+	virtual bool IsListModel() const override;
 
-	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2, unsigned int column, bool ascending) const;
+	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
+                        unsigned int column, bool ascending) const override;
 
 protected:
 	// Returns a reference to the actual rootnode, only allowed for use in subclasses

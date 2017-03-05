@@ -87,7 +87,7 @@ public:
 	// IPropertyEditor implementation
 	wxPanel* getWidget() override;
 
-	virtual void updateFromEntity()
+	virtual void updateFromEntity() override
 	{
 		// nothing by default, override in subclasses if needed
 	}

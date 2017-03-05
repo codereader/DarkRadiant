@@ -61,7 +61,7 @@ public:
 	~RenderableParticle();
 
 	// Time is in msecs
-	void update(const Matrix4& viewRotation);
+	void update(const Matrix4& viewRotation) override;
 
 	// Front-end render methods
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -79,14 +79,14 @@ public:
 		return Highlight::NoHighlight; // never highlighted
 	}
 
-	const IParticleDefPtr& getParticleDef() const;
-	void setParticleDef(const IParticleDefPtr& def);
+	const IParticleDefPtr& getParticleDef() const override;
+	void setParticleDef(const IParticleDefPtr& def) override;
 
-	void setMainDirection(const Vector3& direction);
-	void setEntityColour(const Vector3& colour);
+	void setMainDirection(const Vector3& direction) override;
+	void setEntityColour(const Vector3& colour) override;
 
 	// Updates bounds from stages and returns the value
-	const AABB& getBounds();
+	const AABB& getBounds() override;
 
 private:
 	void calculateBounds();

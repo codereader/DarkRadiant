@@ -13,8 +13,6 @@ namespace ui
 
 namespace
 {
-    const int BINDTOOLDIALOG_DEFAULT_SIZE_X = 300;
-    const int BINDTOOLDIALOG_DEFAULT_SIZE_Y = 250;
     const char* const TOOLMAPPING_WINDOW_TITLE = N_("Select new Binding: %s");
 }
 

@@ -119,7 +119,7 @@ void PatchTesselation::generateNormals()
 				around[k] = Vector3(0, 0, 0);
 				good[k] = false;
 
-				for (std::size_t dist = 1; dist <= 3; dist++)
+				for (int dist = 1; dist <= 3; dist++)
 				{
 					int x = static_cast<int>(i) + neighbors[k][0] * dist;
 					int y = static_cast<int>(j) + neighbors[k][1] * dist;
@@ -128,11 +128,11 @@ void PatchTesselation::generateNormals()
 					{
 						if (x < 0)
 						{
-							x = width - 1 + x;
+							x = static_cast<int>(width) - 1 + x;
 						}
 						else if (x >= static_cast<int>(width))
 						{
-							x = 1 + x - width;
+							x = 1 + x - static_cast<int>(width);
 						}
 					}
 
@@ -140,11 +140,11 @@ void PatchTesselation::generateNormals()
 					{
 						if (y < 0)
 						{
-							y = height - 1 + y;
+							y = static_cast<int>(height) - 1 + y;
 						}
 						else if (y >= static_cast<int>(height))
 						{
-							y = 1 + y - height;
+							y = 1 + y - static_cast<int>(height);
 						}
 					}
 
@@ -335,9 +335,9 @@ void PatchTesselation::expandMesh()
 
 	if (width != _maxWidth)
 	{
-		for (int j = height - 1; j >= 0; j--)
+		for (int j = static_cast<int>(height) - 1; j >= 0; j--)
 		{
-			for (int i = width - 1; i >= 0; i--)
+			for (int i = static_cast<int>(width) - 1; i >= 0; i--)
 			{
 				vertices[j*_maxWidth + i] = vertices[j*width + i];
 			}
@@ -345,14 +345,14 @@ void PatchTesselation::expandMesh()
 	}
 }
 
-void PatchTesselation::resizeExpandedMesh(int newHeight, int newWidth)
+void PatchTesselation::resizeExpandedMesh(std::size_t newHeight, std::size_t newWidth)
 {
-	if (newHeight <= static_cast<int>(_maxHeight) && newWidth <= static_cast<int>(_maxWidth))
+	if (newHeight <= _maxHeight && newWidth <= _maxWidth)
 	{
 		return;
 	}
 
-	if (newHeight * newWidth > static_cast<int>(_maxHeight * _maxWidth))
+	if (newHeight * newWidth > _maxHeight * _maxWidth)
 	{
 		vertices.resize(newHeight * newWidth);
 	}

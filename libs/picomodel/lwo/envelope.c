@@ -61,7 +61,7 @@ lwEnvelope *lwGetEnvelope( picoMemStream_t *fp, int cksize )
    /* remember where we started */
 
    set_flen( 0 );
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
 
    /* index */
 
@@ -158,7 +158,7 @@ lwEnvelope *lwGetEnvelope( picoMemStream_t *fp, int cksize )
 
       /* end of the ENVL chunk? */
 
-      rlen = _pico_memstream_tell( fp ) - pos;
+      rlen = (int)_pico_memstream_tell( fp ) - pos;
       if ( cksize < rlen ) goto Fail;
       if ( cksize == rlen ) break;
 

@@ -74,22 +74,23 @@ public:
 	virtual ~BrushNode();
 
 	// IBrushNode implementtation
-	virtual Brush& getBrush();
-	virtual IBrush& getIBrush();
+	virtual Brush& getBrush() override;
+	virtual IBrush& getIBrush() override;
 
-	std::string name() const {
+	std::string name() const  override
+    {
 		return "Brush";
 	}
 
-	Type getNodeType() const;
+	Type getNodeType() const override;
 
 	void lightsChanged();
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
+	virtual const AABB& localAABB() const override;
 
 	// SelectionTestable implementation
-	virtual void testSelect(Selector& selector, SelectionTest& test);
+	virtual void testSelect(Selector& selector, SelectionTest& test) override;
 
 	// ComponentSelectionTestable
 	bool isSelectedComponents() const override;
@@ -102,43 +103,43 @@ public:
     virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ComponentEditable implementation
-	const AABB& getSelectedComponentsBounds() const;
+	const AABB& getSelectedComponentsBounds() const override;
 
 	void selectedChangedComponent(const ISelectable& selectable);
 
 	// PlaneSelectable implementation
-	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);
-	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes);
+	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) override;
+	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) override;
 
 	// Snappable implementation
-	virtual void snapto(float snap);
+	virtual void snapto(float snap) override;
 
 	// ComponentSnappable implementation
-	void snapComponents(float snap);
+	void snapComponents(float snap) override;
 
 	// Translatable implementation
-	virtual void translate(const Vector3& translation);
+	virtual void translate(const Vector3& translation) override;
 
 	// Allocates a new node on the heap (via copy construction)
-	scene::INodePtr clone() const;
+	scene::INodePtr clone() const override;
 
 	// BrushObserver implementation
-	void clear();
-	void reserve(std::size_t size);
-	void push_back(Face& face);
-	void pop_back();
-	void erase(std::size_t index);
-	void connectivityChanged();
-	void edge_clear();
-	void edge_push_back(SelectableEdge& edge);
-	void vertex_clear();
-	void vertex_push_back(SelectableVertex& vertex);
-	void DEBUG_verify();
+	void clear() override;
+	void reserve(std::size_t size) override;
+	void push_back(Face& face) override;
+	void pop_back() override;
+	void erase(std::size_t index) override;
+	void connectivityChanged() override;
+	void edge_clear() override;
+	void edge_push_back(SelectableEdge& edge) override;
+	void vertex_clear() override;
+	void vertex_push_back(SelectableVertex& vertex) override;
+	void DEBUG_verify() override;
 
 	// LitObject implementation
-	bool intersectsLight(const RendererLight& light) const;
-	void insertLight(const RendererLight& light);
-	void clearLights();
+	bool intersectsLight(const RendererLight& light) const override;
+	void insertLight(const RendererLight& light) override;
+	void clearLights() override;
 
 	// Renderable implementation
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -152,7 +153,7 @@ public:
 	void evaluateTransform();
 
 	// Traceable implementation
-	bool getIntersection(const Ray& ray, Vector3& intersection);
+	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
 	// Update call, issued by the FilterSystem on potential shader visibility changes
 	void updateFaceVisibility();

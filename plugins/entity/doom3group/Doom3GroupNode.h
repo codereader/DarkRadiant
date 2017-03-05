@@ -50,20 +50,20 @@ public:
 	virtual ~Doom3GroupNode();
 
 	// CurveNode implementation
-	virtual bool hasEmptyCurve();
-	virtual void appendControlPoints(unsigned int numPoints);
-	virtual void removeSelectedControlPoints();
-	virtual void insertControlPointsAtSelected();
-	virtual void convertCurveType();
+	virtual bool hasEmptyCurve() override;
+	virtual void appendControlPoints(unsigned int numPoints) override;
+	virtual void removeSelectedControlPoints() override;
+	virtual void insertControlPointsAtSelected() override;
+	virtual void convertCurveType() override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
+	virtual const AABB& localAABB() const override;
 
 	/** greebo: Tests the contained Doom3Group for selection.
 	 *
 	 * Note: This can be successful in vertex mode only, func_statics do not use this method.
 	 */
-	void testSelect(Selector& selector, SelectionTest& test);
+	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	// ComponentSelectionTestable implementation
 	bool isSelectedComponents() const override;
@@ -76,23 +76,23 @@ public:
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ComponentEditable implementation
-	const AABB& getSelectedComponentsBounds() const;
+	const AABB& getSelectedComponentsBounds() const override;
 
 	// ComponentSnappable implementation
-	void snapComponents(float snap);
+	void snapComponents(float snap) override;
 
 	// Snappable implementation
-	virtual void snapto(float snap);
+	virtual void snapto(float snap) override;
 
 	void selectionChangedComponent(const ISelectable& selectable);
 
-	scene::INodePtr clone() const;
+	scene::INodePtr clone() const override;
 
 	/** greebo: Call this right before map save to let the child
 	 * brushes have their origin recalculated.
 	 */
-	void addOriginToChildren();
-	void removeOriginFromChildren();
+	void addOriginToChildren() override;
+	void removeOriginFromChildren() override;
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -116,10 +116,10 @@ protected:
     void _applyTransformation() override;
 
 	// Model Key changed signal
-	void onModelKeyChanged(const std::string& value);
+	void onModelKeyChanged(const std::string& value) override;
 
 	// Override EntityNode::construct()
-	virtual void construct();
+	virtual void construct() override;
 
 private:
 	void evaluateTransform();

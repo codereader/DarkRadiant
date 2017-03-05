@@ -66,7 +66,7 @@ public:
 		const AABB& other(node->worldAABB());
 
 		for (unsigned int i = 0; i < 3; ++i) {
-			if (fabsf(box.origin[i] - other.origin[i]) > (box.extents[i] + other.extents[i])) {
+            if (std::abs(box.origin[i] - other.origin[i]) > (box.extents[i] + other.extents[i])) {
 				return false;
 			}
 		}
@@ -96,7 +96,7 @@ public:
 		}
 
 		for (unsigned int i = 0; i < 3; ++i) {
-			if (fabsf(box.origin[i] - other.origin[i]) > (box.extents[i] - other.extents[i])) {
+			if (std::abs(box.origin[i] - other.origin[i]) > (box.extents[i] - other.extents[i])) {
 				return false;
 			}
 		}

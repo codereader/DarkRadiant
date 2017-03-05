@@ -92,11 +92,11 @@ public:
 
 	/** greebo: Sets the new entity (is called by the StimResponseEditor class)
 	 */
-	virtual void setEntity(const SREntityPtr& entity);
+	virtual void setEntity(const SREntityPtr& entity) override;
 
 	/** greebo: Updates the widgets (e.g. after a selection change)
 	 */
-	void update();
+	void update() override;
 
 private:
 	/** greebo: Retrieves the formatted timer string h:m:s:ms
@@ -105,17 +105,17 @@ private:
 
 	/** greebo: Adds a new stim to the list
 	 */
-	void addSR();
+	void addSR() override;
 
 	/** greebo: Gets called when a spinbutton changes, overrides the
 	 * 			method from the base class.
 	 */
-	void spinButtonChanged(wxSpinCtrl* ctrl);
+	void spinButtonChanged(wxSpinCtrl* ctrl) override;
 
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.
 	 */
-	void checkBoxToggled(wxCheckBox* toggleButton);
+	void checkBoxToggled(wxCheckBox* toggleButton) override;
 
 	/** greebo: As the name states, this creates the context menu widgets.
 	 */
@@ -123,7 +123,7 @@ private:
 
 	/** greebo: Gets called when the stim selection gets changed
 	 */
-	virtual void selectionChanged();
+	virtual void selectionChanged() override;
 
 	void openSRListContextMenu() override;
 

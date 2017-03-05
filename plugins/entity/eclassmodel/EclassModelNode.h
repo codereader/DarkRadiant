@@ -55,12 +55,12 @@ public:
     virtual ~EclassModelNode();
 
 	// Snappable implementation
-	virtual void snapto(float snap);
+	virtual void snapto(float snap) override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
+	virtual const AABB& localAABB() const override;
 
-	scene::INodePtr clone() const;
+	scene::INodePtr clone() const override;
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -80,7 +80,7 @@ protected:
     void _applyTransformation() override;
 
 	// Override EntityNode::construct()
-	void construct();
+	void construct() override;
 
 private:
     void translate(const Vector3& translation);

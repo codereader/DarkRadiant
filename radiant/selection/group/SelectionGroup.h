@@ -76,7 +76,7 @@ public:
 		});
 	}
 
-	std::size_t size() const
+	std::size_t size() const override
 	{
 		return _nodes.size();
 	}

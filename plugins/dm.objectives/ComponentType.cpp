@@ -2,6 +2,7 @@
 #include "util/ObjectivesException.h"
 #include "i18n.h"
 #include <algorithm>
+#include "string/convert.h"
 
 namespace objectives
 {
@@ -166,7 +167,7 @@ ComponentType ComponentType::getComponentType(int id)
 	if (i != getMap().end())
 		return i->second;
 	else
-		throw ObjectivesException("Invalid ComponentType ID: " + id);
+    throw ObjectivesException("Invalid ComponentType ID: " + string::to_string(id));
 }
 
 }

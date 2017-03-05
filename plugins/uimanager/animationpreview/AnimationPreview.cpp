@@ -57,7 +57,7 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 
 	try
 	{
-		dynamic_cast<const md5::IMD5Model&>(model->getIModel());
+		dynamic_cast<const md5::IMD5Model&>(model->getIModel()).getAnim();
 	}
 	catch (std::bad_cast&)
 	{

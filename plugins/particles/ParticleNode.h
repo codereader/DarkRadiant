@@ -28,11 +28,11 @@ public:
 	// Construct the node giving a renderable particle 
 	ParticleNode(const RenderableParticlePtr& particle);
 
-	std::string name() const;
-	Type getNodeType() const;
+	std::string name() const override;
+	Type getNodeType() const override;
 
-	IRenderableParticlePtr getParticle() const;
-	const AABB& localAABB() const;
+	IRenderableParticlePtr getParticle() const override;
+	const AABB& localAABB() const override;
 	std::size_t getHighlightFlags() override;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -41,7 +41,7 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	// ITransformNode
-	const Matrix4& localToParent() const;
+	const Matrix4& localToParent() const override;
 
 private:
 	void update(const VolumeTest& viewVolume) const;

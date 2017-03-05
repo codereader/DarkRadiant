@@ -43,21 +43,21 @@ public:
 	const MD5ModelPtr& getModel() const;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
+	virtual const AABB& localAABB() const override;
 
-	virtual std::string name() const;
-	Type getNodeType() const;
+	virtual std::string name() const override;
+	Type getNodeType() const override;
 
 	// SelectionTestable implementation
-	void testSelect(Selector& selector, SelectionTest& test);
+	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	// Traceable implementation
-	bool getIntersection(const Ray& ray, Vector3& intersection);
+	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
 	// LitObject implementation
-	bool intersectsLight(const RendererLight& light) const;
-	void insertLight(const RendererLight& light);
-	void clearLights();
+	bool intersectsLight(const RendererLight& light) const override;
+	void insertLight(const RendererLight& light) override;
+	void clearLights() override;
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -70,8 +70,8 @@ public:
 	}
 
 	// Returns the name of the currently active skin
-	virtual std::string getSkin() const;
-	void skinChanged(const std::string& newSkinName);
+	virtual std::string getSkin() const override;
+	void skinChanged(const std::string& newSkinName) override;
 
 private:
 	void render(RenderableCollector& collector, const VolumeTest& volume, 

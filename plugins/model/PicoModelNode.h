@@ -55,12 +55,12 @@ public:
 
 	// SkinnedModel implementation
 	// Skin changed notify
-	void skinChanged(const std::string& newSkinName);
+	void skinChanged(const std::string& newSkinName) override;
 	// Returns the name of the currently active skin
-	std::string getSkin() const;
+	std::string getSkin() const override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
+	virtual const AABB& localAABB() const override;
 
 	// Lights changed function
 	void lightsChanged()
@@ -69,20 +69,20 @@ public:
 	}
 
 	// SelectionTestable implementation
-	void testSelect(Selector& selector, SelectionTest& test);
+	void testSelect(Selector& selector, SelectionTest& test) override;
 
-	virtual std::string name() const;
-	Type getNodeType() const;
+	virtual std::string name() const override;
+	Type getNodeType() const override;
 
 	const RenderablePicoModelPtr& getModel() const;
 	void setModel(const RenderablePicoModelPtr& model);
 
 	// LitObject test function
-	bool intersectsLight(const RendererLight& light) const;
+	bool intersectsLight(const RendererLight& light) const override;
 	// Add a light to this model instance
-	void insertLight(const RendererLight& light);
+	void insertLight(const RendererLight& light) override;
 	// Clear all lights from this model instance
-	void clearLights();
+	void clearLights() override;
 
 	// Renderable implementation
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -95,7 +95,7 @@ public:
 	}
 
 	// Traceable implementation
-	bool getIntersection(const Ray& ray, Vector3& intersection);
+	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
 protected:
 	virtual void _onTransformationChanged() override;

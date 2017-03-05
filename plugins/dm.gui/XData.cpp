@@ -70,7 +70,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 				ss << file.rdbuf();
 				std::string OutString = ss.str();
 				file.close();
-				int DefLength = getDefLength(OutString.substr(_definitionStart));
+                std::size_t DefLength = getDefLength(OutString.substr(_definitionStart));
 				if (DefLength == 0)		//If the definitionlength can't be obtained, the merge fails.
 					return MergeFailed;
 				OutString.erase(_definitionStart, DefLength);

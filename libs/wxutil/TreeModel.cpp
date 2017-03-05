@@ -623,7 +623,7 @@ unsigned int TreeModel::GetChildren(const wxDataViewItem& item, wxDataViewItemAr
 		children.Add((*iter)->item);
 	}
 
-	return owningNode->children.size();
+	return static_cast<unsigned int>(owningNode->children.size());
 }
 
 wxDataViewItem TreeModel::GetRoot()
@@ -668,82 +668,80 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 	}
 
 	// When clicking on the dataviewctrl headers, we need to support some default algorithm
-	if (column >= 0)
-	{
-		// implement a few comparison types
-		switch (_columns[column].type)
-		{
-			case Column::String:
-			{
-				return ascending ? 
-                    node1->values[column].GetString().CmpNoCase(node2->values[column].GetString()) :
-                    node2->values[column].GetString().CmpNoCase(node1->values[column].GetString());
-			}
+    
+    // implement a few comparison types
+    switch (_columns[column].type)
+    {
+        case Column::String:
+        {
+            return ascending ? 
+                node1->values[column].GetString().CmpNoCase(node2->values[column].GetString()) :
+                node2->values[column].GetString().CmpNoCase(node1->values[column].GetString());
+        }
 
-			case Column::IconText:
-			{
-				wxDataViewIconText val1;
-				val1 << node1->values[column];
+        case Column::IconText:
+        {
+            wxDataViewIconText val1;
+            val1 << node1->values[column];
 
-				wxDataViewIconText val2;
-				val2 << node2->values[column];
+            wxDataViewIconText val2;
+            val2 << node2->values[column];
 
-                return ascending ? val1.GetText().CmpNoCase(val2.GetText()) :
-                    val2.GetText().CmpNoCase(val1.GetText());
-			}
+            return ascending ? val1.GetText().CmpNoCase(val2.GetText()) :
+                val2.GetText().CmpNoCase(val1.GetText());
+        }
 
-			case Column::Double:
-			{
-				double val1 = node1->values[column].GetDouble();
-				double val2 = node2->values[column].GetDouble();
+        case Column::Double:
+        {
+            double val1 = node1->values[column].GetDouble();
+            double val2 = node2->values[column].GetDouble();
 
-				if (val1 == val2) return 0;
+            if (val1 == val2) return 0;
 
-				return ascending ? (val1 < val2 ? -1 : 1) :
-								   (val2 < val1 ? -1 : 1);
-			}
+            return ascending ? (val1 < val2 ? -1 : 1) :
+                               (val2 < val1 ? -1 : 1);
+        }
 
-			case Column::Integer:
-			{
-				long val1 = node1->values[column].GetInteger();
-				long val2 = node2->values[column].GetInteger();
+        case Column::Integer:
+        {
+            long val1 = node1->values[column].GetInteger();
+            long val2 = node2->values[column].GetInteger();
 
-				if (val1 == val2) return 0;
+            if (val1 == val2) return 0;
 
-				return ascending ? (val1 < val2 ? -1 : 1) :
-								   (val2 < val1 ? -1 : 1);
-			}
+            return ascending ? (val1 < val2 ? -1 : 1) :
+                               (val2 < val1 ? -1 : 1);
+        }
 
-			case Column::Boolean:
-			{
-				bool val1 = node1->values[column].GetBool();
-				bool val2 = node2->values[column].GetBool();
+        case Column::Boolean:
+        {
+            bool val1 = node1->values[column].GetBool();
+            bool val2 = node2->values[column].GetBool();
 
-				if (val1 == val2) return 0;
+            if (val1 == val2) return 0;
 
-				return ascending ? (!val1 ? -1 : 1) : (val1 ? -1 : 1);
-			}
+            return ascending ? (!val1 ? -1 : 1) : (val1 ? -1 : 1);
+        }
 
-			case Column::Pointer:
-			{
-				void* val1 = node1->values[column].GetVoidPtr();
-				void* val2 = node2->values[column].GetVoidPtr();
+        case Column::Pointer:
+        {
+            void* val1 = node1->values[column].GetVoidPtr();
+            void* val2 = node2->values[column].GetVoidPtr();
 
-				if (val1 == val2) return 0;
+            if (val1 == val2) return 0;
 
-				return ascending ? (val1 < val2 ? -1 : 1) :
-								   (val2 < val1 ? -1 : 1);
-			}
+            return ascending ? (val1 < val2 ? -1 : 1) :
+                               (val2 < val1 ? -1 : 1);
+        }
 
-			case Column::Icon:
-			{
-				return 0; // no sense in comparing icons
-			}
-			
-            default:
-                return 0; // default case
-		};
-	}
+        case Column::Icon:
+        {
+            return 0; // no sense in comparing icons
+        }
+        
+        default:
+            return 0; // default case
+    };
 
 	return 0;
 }

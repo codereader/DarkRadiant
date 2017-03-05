@@ -59,27 +59,27 @@ public:
 	// Patch::Observer implementation
 	void allocate(std::size_t size);
 
-	std::string name() const;
-	Type getNodeType() const;
+	std::string name() const override;
+	Type getNodeType() const override;
 
 	void lightsChanged();
 
 	// Bounded implementation
-	const AABB& localAABB() const;
+	const AABB& localAABB() const override;
 
 	// IPatchNode implementation
-	Patch& getPatchInternal();
-	IPatch& getPatch();
+	Patch& getPatchInternal() override;
+	IPatch& getPatch() override;
 
 	// Snappable implementation
-	virtual void snapto(float snap);
+	virtual void snapto(float snap) override;
 
 	// Test the Patch instance for selection (SelectionTestable)
-	void testSelect(Selector& selector, SelectionTest& test);
+	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	// Check if the drag planes pass the given selection test (and select them of course and call the callback)
-	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);
-  	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes);
+	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) override;
+  	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) override;
 
 	// Returns true if any of the patch components is selected
 	bool isSelectedComponents() const override;
@@ -95,10 +95,10 @@ public:
     virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Traceable implementation
-	bool getIntersection(const Ray& ray, Vector3& intersection);
+	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
 	// Create the axis aligned bounding box of the selected components
-	const AABB& getSelectedComponentsBounds() const;
+	const AABB& getSelectedComponentsBounds() const override;
 
 	// Sets all Control Instances to selected = <selected>
   	void selectCtrl(bool selected);
@@ -110,20 +110,20 @@ public:
 	bool hasVisibleMaterial() const;
 
 	// greebo: snaps all the _selected_ components to the grid (should be called "snapSelectedComponents")
-	void snapComponents(float snap);
+	void snapComponents(float snap) override;
 
 	// Returns true if any of the Control Vertices is selected
 	bool selectedVertices();
 
 	// Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
-	scene::INodePtr clone() const;
+	scene::INodePtr clone() const override;
 
 	// greebo: This gets called by the ObservedSelectable as soon as its selection state changes
 	// (see ObservedSelectable and PatchControlInstance)
 	void selectedChangedComponent(const ISelectable& selectable);
 
 	// LitObject implementation
-	bool intersectsLight(const RendererLight& light) const;
+	bool intersectsLight(const RendererLight& light) const override;
 
 	// Renderable implementation
 

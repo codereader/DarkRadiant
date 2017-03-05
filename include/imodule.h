@@ -333,6 +333,8 @@ namespace module {
 	#else
 		#define DARKRADIANT_DLLEXPORT 
 	#endif
+#elif defined(__APPLE__)
+    #define DARKRADIANT_DLLEXPORT __attribute__((visibility("default")))
 #else
 	#define DARKRADIANT_DLLEXPORT
 #endif

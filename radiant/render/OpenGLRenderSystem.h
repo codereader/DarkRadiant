@@ -65,33 +65,33 @@ public:
 
     /* RenderSystem implementation */
 
-	ShaderPtr capture(const std::string& name);
+	ShaderPtr capture(const std::string& name) override;
 	void render(RenderStateFlags globalstate,
 				const Matrix4& modelview,
 				const Matrix4& projection,
-				const Vector3& viewer);
-	void realise();
-	void unrealise();
+				const Vector3& viewer) override;
+	void realise() override;
+	void unrealise() override;
 
     GLProgramFactory& getGLProgramFactory();
 
-	std::size_t getTime() const;
-	void setTime(std::size_t milliSeconds);
+	std::size_t getTime() const override;
+	void setTime(std::size_t milliSeconds) override;
 
-    ShaderProgram getCurrentShaderProgram() const;
-    void setShaderProgram(ShaderProgram prog);
+    ShaderProgram getCurrentShaderProgram() const override;
+    void setShaderProgram(ShaderProgram prog) override;
 
-	void extensionsInitialised();
-	sigc::signal<void> signal_extensionsInitialised();
+	void extensionsInitialised() override;
+	sigc::signal<void> signal_extensionsInitialised() override;
 
-	LightList& attachLitObject(LitObject& cullable);
-	void detachLitObject(LitObject& cullable);
-	void litObjectChanged(LitObject& cullable);
+	LightList& attachLitObject(LitObject& cullable) override;
+	void detachLitObject(LitObject& cullable) override;
+	void litObjectChanged(LitObject& cullable) override;
 
     // Attach and detach light sources
-	void attachLight(RendererLight& light);
-	void detachLight(RendererLight& light);
-	void lightChanged(RendererLight& light);
+	void attachLight(RendererLight& light) override;
+	void detachLight(RendererLight& light) override;
+	void lightChanged(RendererLight& light) override;
 
 	typedef std::set<const Renderable*> Renderables;
 	Renderables m_renderables;
@@ -102,9 +102,9 @@ public:
 	void eraseSortedState(const OpenGLStates::key_type& key) override;
 
 	// renderables
-	void attachRenderable(const Renderable& renderable);
-	void detachRenderable(const Renderable& renderable);
-	void forEachRenderable(const RenderableCallback& callback) const;
+	void attachRenderable(const Renderable& renderable) override;
+	void detachRenderable(const Renderable& renderable) override;
+	void forEachRenderable(const RenderableCallback& callback) const override;
 
 	// RegisterableModule implementation
     virtual const std::string& getName() const override;

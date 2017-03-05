@@ -116,7 +116,7 @@ public:
     void positionView(const Vector3& position);
     const Vector3& getOrigin();
     void setOrigin(const Vector3& origin);
-    void scroll(int x, int y);
+    void scroll(int x, int y) override;
     Vector4 getWindowCoordinates();
 
     void draw();
@@ -125,38 +125,38 @@ public:
     void drawGrid();
 
     Vector3 convertXYToWorld(int x, int y);
-    void snapToGrid(Vector3& point);
+    void snapToGrid(Vector3& point) override;
 
     void mouseToPoint(int x, int y, Vector3& point);
 
     void beginMove();
     void endMove();
 
-    void zoomIn();
-    void zoomOut();
+    void zoomIn() override;
+    void zoomOut() override;
 
     void setActive(bool b);
     bool isActive() const;
 
-    void setCursorType(IOrthoView::CursorType type);
+    void setCursorType(IOrthoView::CursorType type) override;
 
     void updateModelview();
     void updateProjection();
 
     virtual void setViewType(EViewType n);
-    EViewType getViewType() const;
+    EViewType getViewType() const override;
 
     void setScale(float f);
-    float getScale() const;
+    float getScale() const override;
 
     int getWidth() const;
     int getHeight() const;
 
     // greebo: CameraObserver implementation; gets called when the camera is moved
-    void cameraMoved();
+    void cameraMoved() override;
 
     // greebo: This gets called upon scene change
-    void onSceneGraphChange();
+    void onSceneGraphChange() override;
 
 protected:
     // Disconnects all widgets and unsubscribes as observer

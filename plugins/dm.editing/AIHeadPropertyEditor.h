@@ -38,7 +38,7 @@ public:
 								const std::string& key,
 								const std::string& options) override;
 
-	std::string runDialog(Entity* entity, const std::string& key);
+	std::string runDialog(Entity* entity, const std::string& key) override;
 
 private:
 	void onChooseButton(wxCommandEvent& ev);

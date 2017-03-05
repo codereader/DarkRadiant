@@ -264,7 +264,7 @@ char *getS0( picoMemStream_t *fp )
 
    if ( flen == FLEN_ERROR ) return NULL;
 
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
    for ( i = 1; ; i++ ) {
       c = _pico_memstream_getc( fp );
       if ( c <= 0 ) break;

@@ -157,10 +157,10 @@ public:
     void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func);
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
-	void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
 	/* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views

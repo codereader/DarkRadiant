@@ -21,9 +21,6 @@ namespace ui
 
 namespace
 {
-	// Constants
-    const int NUM_COLUMNS = 3;
-
 	const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
 }
 

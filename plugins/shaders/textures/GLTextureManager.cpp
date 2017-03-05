@@ -8,9 +8,8 @@
 #include "TextureManipulator.h"
 #include "parser/DefTokeniser.h"
 
-namespace {
-    const int MAX_TEXTURE_QUALITY = 3;
-
+namespace
+{
     const std::string SHADER_NOT_FOUND = "notex.bmp";
 }
 
