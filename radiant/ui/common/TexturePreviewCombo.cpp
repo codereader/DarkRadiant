@@ -73,6 +73,8 @@ void TexturePreviewCombo::refreshInfoTable()
     _infoTable->Append(_("Shader"), shader->getName());
     _infoTable->Append(_("Defined in"), shader->getShaderFileName());
     _infoTable->Append(_("Description"), shader->getDescription());
+    
+    _infoTable->TriggerColumnSizeEvent();
 }
 
 // Popup menu callbacks
