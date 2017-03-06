@@ -26,7 +26,7 @@ CommandList::CommandList() :
 	// Create all the widgets
 	populateWindow();
 
-	FitToScreen(0.3f, 0.7f);
+	FitToScreen(0.4f, 0.7f);
 }
 
 void CommandList::reloadList()
@@ -38,6 +38,8 @@ void CommandList::reloadList()
 
 	// Cycle through all the events and create the according list items
 	GlobalEventManager().foreachEvent(populator);
+    
+    _treeView->TriggerColumnSizeEvent();
 }
 
 void CommandList::populateWindow()
