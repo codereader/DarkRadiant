@@ -1476,7 +1476,6 @@
 		3AF745B21E4F861B003465B5 /* ScaledModelExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743BB1E4F861A003465B5 /* ScaledModelExporter.cpp */; };
 		3AF745B31E4F861B003465B5 /* ApplicationContextImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743BE1E4F861A003465B5 /* ApplicationContextImpl.cpp */; };
 		3AF745B41E4F861B003465B5 /* DynamicLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743C01E4F861A003465B5 /* DynamicLibrary.cpp */; };
-		3AF745B51E4F861B003465B5 /* DynamicLibraryLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743C21E4F861A003465B5 /* DynamicLibraryLoader.cpp */; };
 		3AF745B61E4F861B003465B5 /* ModuleLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743C41E4F861A003465B5 /* ModuleLoader.cpp */; };
 		3AF745B71E4F861B003465B5 /* ModuleRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743C61E4F861A003465B5 /* ModuleRegistry.cpp */; };
 		3AF745B81E4F861B003465B5 /* ComplexName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743CA1E4F861A003465B5 /* ComplexName.cpp */; };
@@ -4048,8 +4047,6 @@
 		3AF743BF1E4F861A003465B5 /* ApplicationContextImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApplicationContextImpl.h; path = ../../radiant/modulesystem/ApplicationContextImpl.h; sourceTree = SOURCE_ROOT; };
 		3AF743C01E4F861A003465B5 /* DynamicLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DynamicLibrary.cpp; path = ../../radiant/modulesystem/DynamicLibrary.cpp; sourceTree = SOURCE_ROOT; };
 		3AF743C11E4F861A003465B5 /* DynamicLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicLibrary.h; path = ../../radiant/modulesystem/DynamicLibrary.h; sourceTree = SOURCE_ROOT; };
-		3AF743C21E4F861A003465B5 /* DynamicLibraryLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DynamicLibraryLoader.cpp; path = ../../radiant/modulesystem/DynamicLibraryLoader.cpp; sourceTree = SOURCE_ROOT; };
-		3AF743C31E4F861A003465B5 /* DynamicLibraryLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicLibraryLoader.h; path = ../../radiant/modulesystem/DynamicLibraryLoader.h; sourceTree = SOURCE_ROOT; };
 		3AF743C41E4F861A003465B5 /* ModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModuleLoader.cpp; path = ../../radiant/modulesystem/ModuleLoader.cpp; sourceTree = SOURCE_ROOT; };
 		3AF743C51E4F861A003465B5 /* ModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModuleLoader.h; path = ../../radiant/modulesystem/ModuleLoader.h; sourceTree = SOURCE_ROOT; };
 		3AF743C61E4F861A003465B5 /* ModuleRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModuleRegistry.cpp; path = ../../radiant/modulesystem/ModuleRegistry.cpp; sourceTree = SOURCE_ROOT; };
@@ -6966,8 +6963,6 @@
 				3AF743BF1E4F861A003465B5 /* ApplicationContextImpl.h */,
 				3AF743C01E4F861A003465B5 /* DynamicLibrary.cpp */,
 				3AF743C11E4F861A003465B5 /* DynamicLibrary.h */,
-				3AF743C21E4F861A003465B5 /* DynamicLibraryLoader.cpp */,
-				3AF743C31E4F861A003465B5 /* DynamicLibraryLoader.h */,
 				3AF743C41E4F861A003465B5 /* ModuleLoader.cpp */,
 				3AF743C51E4F861A003465B5 /* ModuleLoader.h */,
 				3AF743C61E4F861A003465B5 /* ModuleRegistry.cpp */,
@@ -10089,7 +10084,6 @@
 				3AF745BD1E4F861B003465B5 /* Patch.cpp in Sources */,
 				3AF745E61E4F861B003465B5 /* ManipulatorBase.cpp in Sources */,
 				3AF745821E4F861B003465B5 /* Camera.cpp in Sources */,
-				3AF745B51E4F861B003465B5 /* DynamicLibraryLoader.cpp in Sources */,
 				3AF746481E4F861C003465B5 /* ParticlesChooser.cpp in Sources */,
 				3AF745AC1E4F861B003465B5 /* RootNode.cpp in Sources */,
 				3AF746271E4F861B003465B5 /* EntityClassTreePopulator.cpp in Sources */,
