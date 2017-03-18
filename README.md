@@ -75,7 +75,8 @@ set of packages might be:
 
 To build DarkRadiant the standard Autotools build process is used:
 
-```./autogen.sh
+```
+./autogen.sh
 ./configure
 make
 sudo make install
@@ -84,6 +85,31 @@ sudo make install
 The available configure options are listed with `./configure --help`. There are
 options for debug builds, and enabling or disabling various optional components
 such as audio support and the Dark Mod-specific plugins.
+
+# Compiling on OS X
+
+## Prerequisites
+
+To compile DarkRadiant, a number of libraries (with development headers) are
+required. You can obtain them by using [MacPorts](https://distfiles.macports.org/MacPorts/):
+
+Install MacPorts, then open a fresh console and issue these commands:
+
+```
+sudo port install jpeg wxwidgets-3.0 pkgconfig libsigcxx2 freetype ftgl glew
+sudo port install boost libxml2 freealut libvorbis libogg openal
+```
+
+## Build
+
+Start Xcode and open the project file in `tools/xcode/DarkRadiant.xcodeproj`.
+Hit CMD-B to start the build, the output files will be placed to a folder
+similar to this:
+
+`~/Library/Developer/Xcode/DerivedData/DarkRadiant-somethingsomething/Build/Products/Release`
+
+The `DarkRadiant.app` package in that folder can be launched right away or
+copied to some location of your preference.
 
 # More Information
 

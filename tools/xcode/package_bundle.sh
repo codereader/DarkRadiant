@@ -1,4 +1,4 @@
-# This script takes copies the .dylib files DarkRadiant is depending on to the bundle's MacOS folder.
+# This script copies the .dylib files DarkRadiant is depending on to the bundle's MacOS folder.
 # Secondly, it's fixing up the dylib references in all the binaries recursively, replacing
 # the hardcoded /opt/local/* paths with @executable_path, making use of otool and install_name_tool
 
@@ -102,8 +102,8 @@ done
 
 echo Patching Main Executable $APP
 
-pwd
-otool -L $APP
+#pwd
+#otool -L $APP
 
 # Replace the 3.0 version references with 3.0.0 ones
 fileRegex=(\(libwx_[A-Za-z_]+-\)\([0-9]\.[0-9]\)\.dylib)

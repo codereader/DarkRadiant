@@ -38,6 +38,18 @@ EntityList::EntityList() :
 	// Connect the window position tracker
 	InitialiseWindowPosition(300, 800, RKEY_WINDOW_STATE);
 }
+    
+EntityList::~EntityList()
+{
+    // In OSX we might receive callbacks during shutdown, so disable any events
+    if (_treeView != nullptr)
+    {
+        _treeView->Disconnect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+                       wxDataViewEventHandler(EntityList::onSelection), NULL, this);
+        _treeView->Disconnect(wxEVT_DATAVIEW_ITEM_EXPANDED,
+                       wxDataViewEventHandler(EntityList::onRowExpand), NULL, this);
+    }
+}
 
 void EntityList::populateWindow()
 {
@@ -158,6 +170,13 @@ void EntityList::_preHide()
 
 	// De-register self from the SelectionSystem
 	GlobalSelectionSystem().removeObserver(this);
+    
+    // Unselect everything when hiding the dialog
+    _callbackActive = true;
+    
+    _treeView->UnselectAll();
+    
+    _callbackActive = false;
 }
 
 // Pre-show callback

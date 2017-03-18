@@ -93,6 +93,8 @@ private:
 	void _preShow();
 
 public:
+    ~EntityList();
+    
 	/** greebo: Shuts down this dialog, safely disconnects it
 	 * 			from the EventManager and the SelectionSystem.
 	 * 			Saves the window information to the Registry.
