@@ -39,6 +39,8 @@ void ModuleRegistry::loadModules()
 {
     ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
 
+	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
+
     // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
 #if defined(POSIX) && defined(PKGLIBDIR)
     // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
@@ -83,6 +85,15 @@ void ModuleRegistry::registerModule(const RegisterableModulePtr& module)
 			"ModuleRegistry: module " + module->getName() +
 			" registered after initialisation."
 		);
+	}
+
+	// Check the compatibility level of this module against our internal one
+	if (module->getCompatibilityLevel() != getCompatibilityLevel())
+	{
+		rError() << "ModuleRegistry: Incompatible module rejected: " << module->getName() << 
+			" (module level: " << module->getCompatibilityLevel() << ", registry level: " << 
+			getCompatibilityLevel() << ")" << std::endl;
+		return;
 	}
 
 	// Add this module to the list of uninitialised ones
@@ -237,6 +248,11 @@ sigc::signal<void> ModuleRegistry::signal_allModulesInitialised() const
 sigc::signal<void> ModuleRegistry::signal_allModulesUninitialised() const
 {
     return _sigAllModulesUninitialised;
+}
+
+std::size_t ModuleRegistry::getCompatibilityLevel() const
+{
+	return MODULE_COMPATIBILITY_LEVEL;
 }
 
 std::string ModuleRegistry::getModuleList(const std::string& separator)

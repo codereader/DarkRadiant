@@ -66,6 +66,8 @@ public:
     sigc::signal<void> signal_allModulesInitialised() const override;
     sigc::signal<void> signal_allModulesUninitialised() const override;
 
+	std::size_t getCompatibilityLevel() const override;
+
     /// Invoked by RadiantApp to set the application context
 	void setContext(ApplicationContext& context)
     {

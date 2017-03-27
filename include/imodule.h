@@ -18,16 +18,27 @@
 /** greebo: These registry keys can be used application-wide during runtime
  *          to retrieve the various paths.
  */
-namespace
-{
-	const char* const RKEY_APP_PATH = "user/paths/appPath";
-	const char* const RKEY_HOME_PATH = "user/paths/homePath";
-	const char* const RKEY_SETTINGS_PATH = "user/paths/settingsPath";
-	const char* const RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
-	const char* const RKEY_ENGINE_PATH = "user/paths/enginePath";
-	const char* const RKEY_MAP_PATH = "user/paths/mapPath";
-	const char* const RKEY_PREFAB_PATH = "user/paths/prefabPath";
-}
+const char* const RKEY_APP_PATH = "user/paths/appPath";
+const char* const RKEY_HOME_PATH = "user/paths/homePath";
+const char* const RKEY_SETTINGS_PATH = "user/paths/settingsPath";
+const char* const RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
+const char* const RKEY_ENGINE_PATH = "user/paths/enginePath";
+const char* const RKEY_MAP_PATH = "user/paths/mapPath";
+const char* const RKEY_PREFAB_PATH = "user/paths/prefabPath";
+
+/**
+ * greebo: Compatibility level: a number inlined into all the modules and returned 
+ * by their RegisterableModule::getCompatibilityLevel() method.
+ *
+ * This number should be changed each time the set of module/plugin files (.so/.dll/.dylib) 
+ * is modified, especially when files are going to be removed from a DarkRadiant release.
+ * The number will be checked by the ModuleRegistry against the internally stored one
+ * to detect outdated binaries and reject their registration.
+ *
+ * As long as no external module/plugin files are removed this number is safe to stay 
+ * as it is. Keep this number compatible to std::size_t, i.e. unsigned.
+ */
+#define MODULE_COMPATIBILITY_LEVEL 20170327
 
 // A function taking an error title and an error message string, invoked in debug builds
 // for things like ASSERT_MESSAGE and ERROR_MESSAGE
@@ -126,7 +137,13 @@ typedef std::set<std::string> StringSet;
  */
 class RegisterableModule: public sigc::trackable
 {
+private:
+	const std::size_t _compatibilityLevel;
+
 public:
+	RegisterableModule() :
+		_compatibilityLevel(MODULE_COMPATIBILITY_LEVEL)
+	{}
 
     /**
 	 * Destructor
@@ -173,6 +190,16 @@ public:
 	 */
 	virtual void shutdownModule() {
 		// Empty default implementation
+	}
+
+	// Internally queried by the ModuleRegistry. To protect against leftover
+	// binaries containing outdated moudles from being loaded and registered
+	// the compatibility level is compared with the one in the ModuleRegistry.
+	// Old modules with mismatching numbers will be rejected.
+	// Function is intentionally non-virtual and inlined.
+	std::size_t getCompatibilityLevel() const
+	{
+		return _compatibilityLevel;
 	}
 };
 
@@ -274,10 +301,16 @@ public:
     * Invoked when all modules have been shut down (i.e. after shutdownModule()).
     */
     virtual sigc::signal<void> signal_allModulesUninitialised() const = 0;
+
+	// The compatibility level this Registry instance was compiled against.
+	// Old module registrations will be rejected by the registry anyway,
+	// on top of that they can actively query this number from the registry
+	// to check whether they are being loaded into an incompatible binary.
+	virtual std::size_t getCompatibilityLevel() const = 0;
 };
 
-namespace module {
-
+namespace module
+{
 	/**
 	 * \namespace module
 	 * Types and functions implementing the module registry system.
@@ -318,8 +351,17 @@ namespace module {
 	/**
 	 * Global accessor method for the ModuleRegistry.
 	 */
-	inline IModuleRegistry& GlobalModuleRegistry() {
+	inline IModuleRegistry& GlobalModuleRegistry() 
+	{
 		return RegistryReference::Instance().getRegistry();
+	}
+
+	// Small helper function to check compatibility levels,
+	// this should be used by all RegisterModule entry points in modules
+	// to avoid registering against mismatching main application binaries.
+	inline bool checkModuleCompatibility(IModuleRegistry& registry)
+	{
+		return registry.getCompatibilityLevel() == MODULE_COMPATIBILITY_LEVEL;
 	}
 }
 
