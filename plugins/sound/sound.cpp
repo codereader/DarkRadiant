@@ -4,7 +4,10 @@
 #include "itextstream.h"
 #include "debugging/debugging.h"
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
+{
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(sound::SoundManagerPtr(new sound::SoundManager));
 
 	// Initialise the streams using the given application context

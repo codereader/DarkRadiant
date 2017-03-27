@@ -390,7 +390,10 @@ AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefi
 
 } // namespace cmd
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
+{
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(cmd::CommandSystemPtr(new cmd::CommandSystem));
 
 	// Initialise the streams using the given application context

@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(std::make_shared<image::Doom3ImageLoader>());
 
 	// Initialise the streams using the given application context

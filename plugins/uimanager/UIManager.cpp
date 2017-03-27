@@ -135,6 +135,8 @@ void UIManager::shutdownModule()
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(ui::UIManagerPtr(new ui::UIManager));
 
 	// Initialise the streams using the given application context

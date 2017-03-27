@@ -129,6 +129,8 @@ typedef std::shared_ptr<GuiModule> GuiModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(GuiModulePtr(new GuiModule));
 
 	// Initialize the streams using the given application context

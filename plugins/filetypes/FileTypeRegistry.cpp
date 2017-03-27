@@ -77,6 +77,8 @@ void FileTypeRegistry::initialiseModule(const ApplicationContext& ctx)
 // This will be called by the DarkRadiant main binary's ModuleRegistry
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(std::make_shared<FileTypeRegistry>());
 
 	// Initialise the streams using the given application context

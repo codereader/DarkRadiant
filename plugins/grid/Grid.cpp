@@ -255,6 +255,8 @@ typedef std::shared_ptr<GridManager> GridManagerPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(GridManagerPtr(new GridManager));
 
 	// Initialise the streams using the given application context

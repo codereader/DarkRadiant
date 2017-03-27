@@ -24,7 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Doom3ShaderSystem.h"
 #include "itextstream.h"
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(shaders::Doom3ShaderSystemPtr(new shaders::Doom3ShaderSystem));
 
 	// Initialise the streams using the given application context

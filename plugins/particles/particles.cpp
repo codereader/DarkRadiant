@@ -9,6 +9,8 @@
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(particles::ParticlesManagerPtr(new particles::ParticlesManager));
 	registry.registerModule(ui::ParticleEditorModulePtr(new ui::ParticleEditorModule));
 

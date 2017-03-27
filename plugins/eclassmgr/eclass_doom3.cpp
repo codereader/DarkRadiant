@@ -22,7 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 #include "EClassManager.h"
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(eclass::EClassManagerPtr(new eclass::EClassManager));
 
 	// Initialise the streams using the given application context

@@ -79,7 +79,10 @@ public:
 };
 typedef std::shared_ptr<ObjectivesEditorModule> ObjectivesEditorModulePtr;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(ObjectivesEditorModulePtr(new ObjectivesEditorModule));
 
 	// Initialise the streams using the given application context

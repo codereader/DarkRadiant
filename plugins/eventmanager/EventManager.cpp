@@ -578,6 +578,8 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
     registry.registerModule(std::make_shared<ui::EventManager>());
     registry.registerModule(std::make_shared<ui::MouseToolManager>());
 

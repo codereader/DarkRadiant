@@ -4,6 +4,8 @@
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(fonts::FontManagerPtr(new fonts::FontManager));
 
 	// Initialise the streams using the given application context

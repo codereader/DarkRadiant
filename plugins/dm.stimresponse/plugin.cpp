@@ -72,6 +72,8 @@ typedef std::shared_ptr<StimResponseModule> StimResponseModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(StimResponseModulePtr(new StimResponseModule));
 
 	// Initialise the streams using the given application context

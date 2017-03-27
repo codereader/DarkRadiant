@@ -346,6 +346,8 @@ void SceneGraphModule::initialiseModule(const ApplicationContext& ctx)
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(scene::SceneGraphModulePtr(new scene::SceneGraphModule));
 	registry.registerModule(scene::SceneGraphFactoryPtr(new scene::SceneGraphFactory));
 

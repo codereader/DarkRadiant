@@ -67,7 +67,10 @@ public:
 };
 typedef std::shared_ptr<ArchivePK4API> ArchivePK4APIPtr;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(ArchivePK4APIPtr(new ArchivePK4API));
 
 	// Initialise the streams using the given application context

@@ -52,6 +52,8 @@ void EntityListModule::shutdownModule()
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(EntityListModulePtr(new EntityListModule));
 
 	// Initialise the streams using the given application context

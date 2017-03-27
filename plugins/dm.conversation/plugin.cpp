@@ -54,7 +54,10 @@ public:
 };
 typedef std::shared_ptr<ConversationEditorModule> ConversationEditorModulePtr;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(ConversationEditorModulePtr(new ConversationEditorModule));
 
 	// Initialise the streams using the given application context

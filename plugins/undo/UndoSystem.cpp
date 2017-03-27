@@ -404,7 +404,10 @@ typedef std::shared_ptr<RadiantUndoSystem> RadiantUndoSystemPtr;
 
 } // namespace undo
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(undo::RadiantUndoSystemPtr(new undo::RadiantUndoSystem));
 
 	// Initialise the streams using the given application context

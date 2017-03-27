@@ -69,6 +69,8 @@ typedef std::shared_ptr<DifficultyEditorModule> DifficultyEditorModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(DifficultyEditorModulePtr(new DifficultyEditorModule));
 
 	// Initialise the streams using the given application context

@@ -8,6 +8,8 @@
 // DarkRadiant module entry point
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(std::make_shared<model::PicoModelModule>());
 
 	// Initialise the streams using the given application context

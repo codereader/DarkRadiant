@@ -42,6 +42,8 @@ public:
 // DarkRadiant module entry point
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	if (!module::checkModuleCompatibility(registry)) return;
+
 	registry.registerModule(std::make_shared<md5::MD5Module>());
 	registry.registerModule(std::make_shared<md5::MD5AnimationCache>());
 
