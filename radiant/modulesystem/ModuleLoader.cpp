@@ -20,6 +20,12 @@ namespace
 	const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory
 	const std::string MODULES_DIR = "modules/"; ///< name of modules directory
 
+#if defined(WIN32)
+	const std::string MODULE_FILE_EXTENSION = ".dll";
+#elif defined(POSIX)
+	const std::string MODULE_FILE_EXTENSION = ".so";
+#endif
+
 	// This is the name of the entry point symbol in the module
 	const char* const SYMBOL_REGISTER_MODULE = "RegisterModule";
 
@@ -27,21 +33,11 @@ namespace
 	typedef void(*RegisterModulesFunc)(IModuleRegistry& registry);
 }
 
-// Constructor sets platform-specific extension to match
-Loader::Loader(const std::string& path) :
-	_path(path),
-#if defined(WIN32)
-	  _ext(".dll")
-#elif defined(POSIX)
-	  _ext(".so")
-#endif
-{}
-
 // Functor operator, gets invoked on directory traversal
-void Loader::operator() (const boost::filesystem::path& file) const
+void Loader::processModuleFile(const boost::filesystem::path& file)
 {
 	// Check for the correct extension of the visited file
-	if (boost::algorithm::to_lower_copy(file.extension().string()) != _ext) return;
+	if (boost::algorithm::to_lower_copy(file.extension().string()) != MODULE_FILE_EXTENSION) return;
 
 	std::string fullName = file.string();
 	rMessage() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
@@ -109,13 +105,10 @@ void Loader::LoadModules(const std::string& root)
     std::string pluginsPath = stdRoot + PLUGINS_DIR;
 #endif
 
-    // Load modules and plugins
-	Loader modulesLoader(modulesPath);
-	Loader pluginsLoader(pluginsPath);
-
+    // Load modules first, then plugins
 	try
 	{
-		os::foreachItemInDirectory(modulesPath, modulesLoader);
+		os::foreachItemInDirectory(modulesPath, processModuleFile);
 	}
 	catch (os::DirectoryNotFoundException&)
 	{
@@ -128,7 +121,7 @@ void Loader::LoadModules(const std::string& root)
         // Plugins are optional, so catch the exception
         try
         {
-            os::foreachItemInDirectory(pluginsPath, pluginsLoader);
+            os::foreachItemInDirectory(pluginsPath, processModuleFile);
         }
         catch (os::DirectoryNotFoundException&)
         {

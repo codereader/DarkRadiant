@@ -17,27 +17,19 @@ namespace module {
 class Loader
 {
 private:
-	// The path of the directory the loader is searching
-	const std::string _path;
-
-	// The filename extension which indicates a module (platform-specific)
-	const std::string _ext;
-
 	// This list contains all the allocated dynamic libraries
 	static DynamicLibraryList _dynamicLibraryList;
 
 public:
-	// Constructor, pass the path it should search for modules in
-	Loader(const std::string& path);
-
-	// File functor, gets called with each file's name in the searched folder
-	void operator() (const boost::filesystem::path& fileName) const;
-
 	// Static loader algorithm, searches plugins/ and modules/ for .dll/.so files
 	static void LoadModules(const std::string& root);
 
 	// Frees the list of DLLs
 	static void UnloadModules();
+
+private:
+	// File functor, gets called with each file's name in the searched folder
+	static void processModuleFile(const boost::filesystem::path& fileName);
 };
 
 } // namespace module
