@@ -167,7 +167,6 @@ darkradiant_SOURCES = main.cpp \
 					  layers/LayerUsageBreakdown.cpp \
                       modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
-                      modulesystem/DynamicLibraryLoader.cpp \
                       modulesystem/ModuleLoader.cpp \
                       modulesystem/ModuleRegistry.cpp \
                       selection/SelectedNodeList.cpp \

@@ -430,7 +430,6 @@
     <ClCompile Include="..\..\radiant\map\algorithm\Traverse.cpp" />
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp" />
     <ClCompile Include="..\..\radiant\modulesystem\DynamicLibrary.cpp" />
-    <ClCompile Include="..\..\radiant\modulesystem\DynamicLibraryLoader.cpp" />
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp" />
     <ClCompile Include="..\..\radiant\modulesystem\ModuleRegistry.cpp" />
     <ClCompile Include="..\..\radiant\namespace\Namespace.cpp" />
@@ -698,7 +697,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\WorldspawnArgFinder.h" />
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h" />
     <ClInclude Include="..\..\radiant\modulesystem\DynamicLibrary.h" />
-    <ClInclude Include="..\..\radiant\modulesystem\DynamicLibraryLoader.h" />
     <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h" />
     <ClInclude Include="..\..\radiant\modulesystem\ModuleRegistry.h" />
     <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h" />

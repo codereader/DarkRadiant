@@ -16,6 +16,7 @@ namespace module {
  */
 class Loader
 {
+private:
 	// The path of the directory the loader is searching
 	const std::string _path;
 
@@ -33,10 +34,10 @@ public:
 	void operator() (const boost::filesystem::path& fileName) const;
 
 	// Static loader algorithm, searches plugins/ and modules/ for .dll/.so files
-	static void loadModules(const std::string& root);
+	static void LoadModules(const std::string& root);
 
 	// Frees the list of DLLs
-	static void unloadModules();
+	static void UnloadModules();
 };
 
 } // namespace module

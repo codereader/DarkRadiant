@@ -7,17 +7,25 @@
 #include "os/dir.h"
 #include "os/path.h"
 
-#include "DynamicLibraryLoader.h"
+#include "ModuleRegistry.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
-namespace module {
+namespace module
+{
 
-	namespace {
-		const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory
-		const std::string MODULES_DIR = "modules/"; ///< name of modules directory
-	}
+namespace
+{
+	const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory
+	const std::string MODULES_DIR = "modules/"; ///< name of modules directory
+
+	// This is the name of the entry point symbol in the module
+	const char* const SYMBOL_REGISTER_MODULE = "RegisterModule";
+
+	// Modules have to export a symbol of this type, which gets called during DLL loading
+	typedef void(*RegisterModulesFunc)(IModuleRegistry& registry);
+}
 
 // Constructor sets platform-specific extension to match
 Loader::Loader(const std::string& path) :
@@ -33,28 +41,62 @@ Loader::Loader(const std::string& path) :
 void Loader::operator() (const boost::filesystem::path& file) const
 {
 	// Check for the correct extension of the visited file
-	if (boost::algorithm::to_lower_copy(file.extension().string()) == _ext)
+	if (boost::algorithm::to_lower_copy(file.extension().string()) != _ext) return;
+
+	std::string fullName = file.string();
+	rMessage() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
+
+	// Create the encapsulator class
+	DynamicLibraryPtr library = std::make_shared<DynamicLibrary>(fullName);
+
+	// greebo: Try to find our entry point and invoke it and add the library to the list
+	// on success. If the load fails, the shared pointer won't be added and
+	// self-destructs at the end of this scope.
+	if (library->failed())
 	{
-		std::string fullName = file.string();
-		rMessage() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
+		rError() << "WARNING: Failed to load module " << library->getName() << ":" << std::endl;
 
-		// Create the encapsulator class
-		DynamicLibraryPtr library(new DynamicLibrary(fullName));
+#ifdef __linux__
+		rConsoleError() << dlerror() << std::endl;
+#endif
+		return;
+	}
 
-		// greebo: Invoke the library loader, which will add the library to the list
-		// on success. If the load fails, the shared pointer doesn't get added and
-		// self-destructs at the end of this scope.
-		DynamicLibraryLoader(library, _dynamicLibraryList);
+	// Library was successfully loaded, lookup the symbol
+	DynamicLibrary::FunctionPointer funcPtr(
+		library->findSymbol(SYMBOL_REGISTER_MODULE)
+	);
+
+	if (funcPtr == nullptr)
+	{
+		// Symbol lookup error
+		rError() << "WARNING: Could not find symbol " << SYMBOL_REGISTER_MODULE
+			<< " in module " << library->getName() << ":" << std::endl;
+		return;
+	}
+
+	// Brute-force conversion of the pointer to the desired type
+	RegisterModulesFunc regFunc = reinterpret_cast<RegisterModulesFunc>(funcPtr);
+
+	try
+	{
+		// Call the symbol and pass a reference to the ModuleRegistry
+		// This method might throw a ModuleCompatibilityException in its
+		// module::performDefaultInitialisation() routine.
+		regFunc(ModuleRegistry::Instance());
+
+		// Add the library to the static list (for later reference)
+		_dynamicLibraryList.push_back(library);
+	}
+	catch (module::ModuleCompatibilityException&)
+	{
+		// Report this error and don't add the module to the _dynamicLibraryList
+		rError() << "Compatibility mismatch loading library " << library->getName() << std::endl;
 	}
 }
 
-/** Load all of the modules in the DarkRadiant install directory. Modules
- * are loaded from modules/ and plugins/.
- *
- * @root: The root directory to search.
- */
-void Loader::loadModules(const std::string& root) {
-
+void Loader::LoadModules(const std::string& root)
+{
     // Get standardised paths
     std::string stdRoot = os::standardPathWithSlash(root);
     
@@ -71,7 +113,15 @@ void Loader::loadModules(const std::string& root) {
 	Loader modulesLoader(modulesPath);
 	Loader pluginsLoader(pluginsPath);
 
-	os::foreachItemInDirectory(modulesPath, modulesLoader);
+	try
+	{
+		os::foreachItemInDirectory(modulesPath, modulesLoader);
+	}
+	catch (os::DirectoryNotFoundException&)
+	{
+		rConsole() << "Loader::loadModules(): modules directory '"
+			<< modulesPath << "' not found." << std::endl;
+	}
 
     if (pluginsPath != modulesPath)
     {
@@ -88,7 +138,7 @@ void Loader::loadModules(const std::string& root) {
     }
 }
 
-void Loader::unloadModules()
+void Loader::UnloadModules()
 {
 	while (!_dynamicLibraryList.empty())
 	{

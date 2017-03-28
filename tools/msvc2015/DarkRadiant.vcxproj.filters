@@ -316,9 +316,6 @@
     <ClCompile Include="..\..\radiant\modulesystem\DynamicLibrary.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\modulesystem\DynamicLibraryLoader.cpp">
-      <Filter>src\modulesystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
@@ -1072,9 +1069,6 @@
       <Filter>src\modulesystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\DynamicLibrary.h">
-      <Filter>src\modulesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modulesystem\DynamicLibraryLoader.h">
       <Filter>src\modulesystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h">
