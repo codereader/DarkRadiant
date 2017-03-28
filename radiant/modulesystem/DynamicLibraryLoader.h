@@ -1,5 +1,4 @@
-#ifndef DYNAMICLIBRARYLOADER_H_
-#define DYNAMICLIBRARYLOADER_H_
+#pragma once
 
 #include "DynamicLibrary.h"
 
@@ -21,5 +20,3 @@ public:
 };
 
 } // namespace module
-
-#endif /*DYNAMICLIBRARYLOADER_H_*/

@@ -12,7 +12,6 @@
 #include "iundo.h"
 #include "i18n.h"
 
-#include "debugging/debugging.h"
 #include "StimResponseEditor.h"
 #include "ResponseEffectTypes.h"
 
@@ -72,16 +71,7 @@ typedef std::shared_ptr<StimResponseModule> StimResponseModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 {
-	if (!module::checkModuleCompatibility(registry)) return;
+	module::performDefaultInitialisation(registry);
 
 	registry.registerModule(StimResponseModulePtr(new StimResponseModule));
-
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

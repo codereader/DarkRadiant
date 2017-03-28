@@ -1,5 +1,4 @@
-#ifndef _DEBUGGING_FUNCTIONS_H_
-#define _DEBUGGING_FUNCTIONS_H_
+#pragma once
 
 /// \brief Debugging macros for fatal error/assert messages.
 
@@ -7,14 +6,7 @@
 #define DEBUG_ASSERTS
 #endif
 
-#include "imodule.h" // for the ErrorHandlingFunction typedef
-
-// This method holds a function pointer which can do some error display (like popups)
-inline ErrorHandlingFunction& GlobalErrorHandler()
-{
-	static ErrorHandlingFunction _func;
-	return _func;
-}
+#include "imodule.h" // for GlobalErrorHandler() 
 
 #if defined(DEBUG_ASSERTS)
 
@@ -52,5 +44,3 @@ inline ErrorHandlingFunction& GlobalErrorHandler()
 #define DEBUGGER_BREAKPOINT()
 
 #endif
-
-#endif /* _DEBUGGING_FUNCTIONS_H_ */

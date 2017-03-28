@@ -346,17 +346,8 @@ void SceneGraphModule::initialiseModule(const ApplicationContext& ctx)
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-	if (!module::checkModuleCompatibility(registry)) return;
+	module::performDefaultInitialisation(registry);
 
 	registry.registerModule(scene::SceneGraphModulePtr(new scene::SceneGraphModule));
 	registry.registerModule(scene::SceneGraphFactoryPtr(new scene::SceneGraphFactory));
-
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

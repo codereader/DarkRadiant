@@ -6,10 +6,13 @@
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
 #include <mutex>
+#include <stdexcept>
 
 #include <string>
 #include <set>
 #include <vector>
+
+#include "itextstream.h"
 
 /**
  * \defgroup module Module system
@@ -43,6 +46,14 @@ const char* const RKEY_PREFAB_PATH = "user/paths/prefabPath";
 // A function taking an error title and an error message string, invoked in debug builds
 // for things like ASSERT_MESSAGE and ERROR_MESSAGE
 typedef std::function<void (const std::string&, const std::string&)> ErrorHandlingFunction;
+
+// This method holds a function pointer which can do some error display (like popups)
+// Each module binary has its own copy of this, it's initialised in performDefaultInitialisation()
+inline ErrorHandlingFunction& GlobalErrorHandler()
+{
+	static ErrorHandlingFunction _func;
+	return _func;
+}
 
 /**
  * Provider for various information that may be required by modules during
@@ -356,12 +367,52 @@ namespace module
 		return RegistryReference::Instance().getRegistry();
 	}
 
-	// Small helper function to check compatibility levels,
-	// this should be used by all RegisterModule entry points in modules
-	// to avoid registering against mismatching main application binaries.
-	inline bool checkModuleCompatibility(IModuleRegistry& registry)
+	// Exception thrown if the module being loaded is incompatible with the main binary
+	class ModuleCompatibilityException : 
+		public std::runtime_error
 	{
-		return registry.getCompatibilityLevel() == MODULE_COMPATIBILITY_LEVEL;
+	public:
+		ModuleCompatibilityException(const std::string& msg) :
+			std::runtime_error(msg)
+		{}
+	};
+
+	// greebo: This should be called once by each module at load time to initialise
+	// the OutputStreamHolders
+	inline void initialiseStreams(const ApplicationContext& ctx)
+	{
+		GlobalOutputStream().setStream(ctx.getOutputStream());
+		GlobalWarningStream().setStream(ctx.getWarningStream());
+		GlobalErrorStream().setStream(ctx.getErrorStream());
+
+#ifndef NDEBUG
+		GlobalDebugStream().setStream(ctx.getOutputStream());
+#endif
+
+		// Set up the mutex for thread-safe logging
+		GlobalOutputStream().setLock(ctx.getStreamLock());
+		GlobalWarningStream().setLock(ctx.getStreamLock());
+		GlobalErrorStream().setLock(ctx.getStreamLock());
+		GlobalDebugStream().setLock(ctx.getStreamLock());
+	}
+
+	// Helper method initialising a few references and checking a module's
+	// compatibility level with the one reported by the ModuleRegistry
+	inline void performDefaultInitialisation(IModuleRegistry& registry)
+	{
+		if (registry.getCompatibilityLevel() != MODULE_COMPATIBILITY_LEVEL)
+		{
+			throw ModuleCompatibilityException("Compatibility level mismatch");
+		}
+
+		// Initialise the streams using the given application context
+		initialiseStreams(registry.getApplicationContext());
+
+		// Remember the reference to the ModuleRegistry
+		RegistryReference::Instance().setRegistry(registry);
+
+		// Set up the assertion handler
+		GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 	}
 }
 
