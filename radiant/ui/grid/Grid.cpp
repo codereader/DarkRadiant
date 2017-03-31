@@ -17,11 +17,14 @@
 #include "GridItem.h"
 #include <functional>
 
-	namespace {
-		const std::string RKEY_DEFAULT_GRID_SIZE = "user/ui/grid/defaultGridPower";
-		const std::string RKEY_GRID_LOOK_MAJOR = "user/ui/grid/majorGridLook";
-		const std::string RKEY_GRID_LOOK_MINOR = "user/ui/grid/minorGridLook";
-	}
+#include "modulesystem/StaticModule.h"
+
+namespace
+{
+	const std::string RKEY_DEFAULT_GRID_SIZE = "user/ui/grid/defaultGridPower";
+	const std::string RKEY_GRID_LOOK_MAJOR = "user/ui/grid/majorGridLook";
+	const std::string RKEY_GRID_LOOK_MINOR = "user/ui/grid/minorGridLook";
+}
 
 class GridManager :
 	public IGridManager
@@ -253,9 +256,4 @@ public:
 }; // class GridManager
 typedef std::shared_ptr<GridManager> GridManagerPtr;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
-{
-	module::performDefaultInitialisation(registry);
-
-	registry.registerModule(GridManagerPtr(new GridManager));
-}
+module::StaticModule<GridManager> staticGridManagerModule;

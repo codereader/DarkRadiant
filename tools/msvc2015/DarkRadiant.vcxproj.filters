@@ -197,6 +197,9 @@
     <Filter Include="src\model">
       <UniqueIdentifier>{d4ec4e26-57e8-4f14-b256-14521d12ef43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\grid">
+      <UniqueIdentifier>{26ca745d-bd90-4d70-beb3-89010a45515f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -897,6 +900,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp">
       <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\grid\Grid.cpp">
+      <Filter>src\ui\grid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1826,6 +1832,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h">
       <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\grid\GridItem.h">
+      <Filter>src\ui\grid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

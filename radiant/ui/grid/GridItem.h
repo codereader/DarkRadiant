@@ -1,5 +1,4 @@
-#ifndef GRIDITEM_H_
-#define GRIDITEM_H_
+#pragma once
 
 #include "igrid.h"
 
@@ -18,7 +17,8 @@ public:
 	{}
 
 	// Returns the gridsize of this item
-	GridSize getGridSize() const {
+	GridSize getGridSize() const
+	{
 		return _gridSize;
 	}
 
@@ -29,5 +29,3 @@ public:
 	}
 
 }; // class GridItem
-
-#endif /*GRIDITEM_H_*/
