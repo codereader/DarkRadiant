@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <iostream>
 #include "ApplicationContextImpl.h"
-#include "ModuleLoader.h"
 
 #include <wx/app.h>
 #include <boost/format.hpp>

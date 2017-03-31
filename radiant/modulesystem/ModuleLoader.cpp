@@ -106,31 +106,30 @@ void ModuleLoader::loadModules(const std::string& root)
 #endif
 
     // Load modules first, then plugins
+	loadModulesFromPath(modulesPath);
+
+	// Plugins are optional
+    if (pluginsPath != modulesPath)
+    {
+		loadModulesFromPath(pluginsPath);
+    }
+}
+
+void ModuleLoader::loadModulesFromPath(const std::string& path)
+{
+	// In case the folder is non-existent, catch the exception
 	try
 	{
-		os::foreachItemInDirectory(modulesPath, 
-			std::bind(&ModuleLoader::processModuleFile, this, std::placeholders::_1));
+		os::foreachItemInDirectory(path, [&](const boost::filesystem::path& file)
+		{
+			processModuleFile(file);
+		});
 	}
 	catch (os::DirectoryNotFoundException&)
 	{
 		rConsole() << "ModuleLoader::loadModules(): modules directory '"
-			<< modulesPath << "' not found." << std::endl;
+			<< path << "' not found." << std::endl;
 	}
-
-    if (pluginsPath != modulesPath)
-    {
-        // Plugins are optional, so catch the exception
-        try
-        {
-            os::foreachItemInDirectory(pluginsPath, 
-				std::bind(&ModuleLoader::processModuleFile, this, std::placeholders::_1));
-        }
-        catch (os::DirectoryNotFoundException&)
-        {
-            rConsole() << "ModuleLoader::loadModules(): plugins directory '"
-                  << pluginsPath << "' not found." << std::endl;
-        }
-    }
 }
 
 void ModuleLoader::unloadModules()

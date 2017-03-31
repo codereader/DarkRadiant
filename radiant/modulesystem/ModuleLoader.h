@@ -29,6 +29,8 @@ public:
 	void unloadModules();
 
 private:
+	void loadModulesFromPath(const std::string& path);
+
 	// File functor, gets called with each file's name in the searched folder
 	void processModuleFile(const boost::filesystem::path& fileName);
 };
