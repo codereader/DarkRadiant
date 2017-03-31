@@ -2,8 +2,12 @@
 
 #include "igrid.h"
 
+namespace ui
+{
+
 class GridItem
 {
+private:
 	// The grid size this item is representing
 	GridSize _gridSize;
 
@@ -29,3 +33,5 @@ public:
 	}
 
 }; // class GridItem
+
+}
