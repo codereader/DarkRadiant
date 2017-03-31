@@ -8,7 +8,7 @@
 #include "log/LogStream.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/ApplicationContextImpl.h"
-#include "ui/Splash/Splash.h"
+#include "ui/splash/Splash.h"
 #include <sigc++/functors/mem_fun.h>
 
 #ifndef POSIX

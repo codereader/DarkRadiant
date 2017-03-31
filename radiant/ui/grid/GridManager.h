@@ -2,6 +2,7 @@
 
 #include "GridItem.h"
 #include "icommandsystem.h"
+#include "ipreferencesystem.h"
 #include <list>
 
 namespace ui
