@@ -44,10 +44,10 @@ void ModuleRegistry::loadModules()
     // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
 #if defined(POSIX) && defined(PKGLIBDIR)
     // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
-    Loader::LoadModules(PKGLIBDIR);
+	_loader.loadModules(PKGLIBDIR);
 #else
     // Load modules from application-relative path
-    Loader::LoadModules(_context->getApplicationPath());
+    _loader.loadModules(_context->getApplicationPath());
 #endif
 }
 
@@ -71,7 +71,7 @@ void ModuleRegistry::unloadModules()
         wxTheApp->ProcessIdle();
     }
 
-	Loader::UnloadModules();
+	_loader.unloadModules();
 }
 
 void ModuleRegistry::registerModule(const RegisterableModulePtr& module)

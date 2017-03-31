@@ -34,7 +34,7 @@ namespace
 }
 
 // Functor operator, gets invoked on directory traversal
-void Loader::processModuleFile(const boost::filesystem::path& file)
+void ModuleLoader::processModuleFile(const boost::filesystem::path& file)
 {
 	// Check for the correct extension of the visited file
 	if (boost::algorithm::to_lower_copy(file.extension().string()) != MODULE_FILE_EXTENSION) return;
@@ -91,7 +91,7 @@ void Loader::processModuleFile(const boost::filesystem::path& file)
 	}
 }
 
-void Loader::LoadModules(const std::string& root)
+void ModuleLoader::loadModules(const std::string& root)
 {
     // Get standardised paths
     std::string stdRoot = os::standardPathWithSlash(root);
@@ -108,11 +108,12 @@ void Loader::LoadModules(const std::string& root)
     // Load modules first, then plugins
 	try
 	{
-		os::foreachItemInDirectory(modulesPath, processModuleFile);
+		os::foreachItemInDirectory(modulesPath, 
+			std::bind(&ModuleLoader::processModuleFile, this, std::placeholders::_1));
 	}
 	catch (os::DirectoryNotFoundException&)
 	{
-		rConsole() << "Loader::loadModules(): modules directory '"
+		rConsole() << "ModuleLoader::loadModules(): modules directory '"
 			<< modulesPath << "' not found." << std::endl;
 	}
 
@@ -121,17 +122,18 @@ void Loader::LoadModules(const std::string& root)
         // Plugins are optional, so catch the exception
         try
         {
-            os::foreachItemInDirectory(pluginsPath, processModuleFile);
+            os::foreachItemInDirectory(pluginsPath, 
+				std::bind(&ModuleLoader::processModuleFile, this, std::placeholders::_1));
         }
         catch (os::DirectoryNotFoundException&)
         {
-            rConsole() << "Loader::loadModules(): plugins directory '"
+            rConsole() << "ModuleLoader::loadModules(): plugins directory '"
                   << pluginsPath << "' not found." << std::endl;
         }
     }
 }
 
-void Loader::UnloadModules()
+void ModuleLoader::unloadModules()
 {
 	while (!_dynamicLibraryList.empty())
 	{
@@ -142,8 +144,5 @@ void Loader::UnloadModules()
 		lib.reset();
 	}
 }
-
-// Initialise the static DLL list
-DynamicLibraryList Loader::_dynamicLibraryList;
 
 } // namespace module

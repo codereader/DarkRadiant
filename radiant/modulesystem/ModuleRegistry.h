@@ -4,7 +4,10 @@
 #include <list>
 #include "imodule.h"
 
-namespace module {
+#include "ModuleLoader.h"
+
+namespace module 
+{
 
 /** greebo: This is the actual implementation of the ModuleRegistry as defined in imodule.h.
  *          See the imodule.h file for a detailed documentation of the public methods.
@@ -12,6 +15,7 @@ namespace module {
 class ModuleRegistry :
 	public IModuleRegistry
 {
+private:
     typedef std::map<std::string, RegisterableModulePtr> ModulesMap;
 
 	// This is where the uninitialised modules go after registration
@@ -35,6 +39,9 @@ class ModuleRegistry :
     // Signals fired after ALL modules have been initialised or shut down.
     sigc::signal<void> _sigAllModulesInitialised;
     sigc::signal<void> _sigAllModulesUninitialised;
+
+	// Dynamic library loader
+	ModuleLoader _loader;
 
 	// Private constructor
 	ModuleRegistry();
