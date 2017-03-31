@@ -39,3 +39,5 @@ Name: "{userdesktop}\DarkRadiant"; Filename: "{app}\darkradiant.exe"; Tasks: des
 [InstallDelete]
 ; Remove the legacy WaveFront plugin before installation
 Type: files; Name: {app}\plugins\wavefront.dll;
+; Grid module has been removed
+Type: files; Name: {app}\modules\grid.dll;
