@@ -8,6 +8,8 @@
 #include "log/LogStream.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/ApplicationContextImpl.h"
+#include "ui/Splash/Splash.h"
+#include <sigc++/functors/mem_fun.h>
 
 #ifndef POSIX
 #include "settings/LanguageManager.h"
@@ -139,9 +141,14 @@ private:
         // (emits a warning if the file already exists (due to a previous startup failure))
         applog::PIDFile pidFile(PID_FILENAME);
 
-        module::ModuleRegistry::Instance().loadModules();
-        
-        module::ModuleRegistry::Instance().initialiseModules();
+#ifndef __linux__
+		// We skip the splash screen in Linux, but the other platforms will show a progress bar
+		// Connect the progress callback to the Splash instance.
+		module::ModuleRegistry::Instance().signal_moduleInitialisationProgress().connect(
+			sigc::mem_fun(ui::Splash::Instance(), &ui::Splash::setProgressAndText));
+#endif
+
+        module::ModuleRegistry::Instance().loadAndInitialiseModules();
 
         // Scope ends here, PIDFile is deleted by its destructor
 	}

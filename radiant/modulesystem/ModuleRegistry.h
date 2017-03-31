@@ -38,7 +38,8 @@ private:
 
     // Signals fired after ALL modules have been initialised or shut down.
     sigc::signal<void> _sigAllModulesInitialised;
-    sigc::signal<void> _sigAllModulesUninitialised;
+	sigc::signal<void> _sigAllModulesUninitialised;
+	ProgressSignal _sigModuleInitialisationProgress;
 
 	// Dynamic library loader
 	ModuleLoader _loader;
@@ -52,11 +53,8 @@ public:
 	// Registers the given module
     void registerModule(const RegisterableModulePtr& module) override;
 
-    // Search for modules and plugins in the application's subfolders
-    void loadModules();
-
 	// Initialise all registered modules
-    void initialiseModules() override;
+    void loadAndInitialiseModules() override;
 
 	// Shutdown all modules
     void shutdownModules() override;
@@ -71,6 +69,7 @@ public:
     const ApplicationContext& getApplicationContext() const override;
 
     sigc::signal<void> signal_allModulesInitialised() const override;
+	ProgressSignal signal_moduleInitialisationProgress() const override;
     sigc::signal<void> signal_allModulesUninitialised() const override;
 
 	std::size_t getCompatibilityLevel() const override;

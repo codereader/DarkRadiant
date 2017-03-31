@@ -1,7 +1,5 @@
 #include "ModuleRegistry.h"
 
-#include "ui/splash/Splash.h"
-
 #include "i18n.h"
 #include "itextstream.h"
 #include <stdexcept>
@@ -33,22 +31,6 @@ ModuleRegistry::~ModuleRegistry()
     // Some modules might need to call this instance during their own destruction,
     // so it's better not to rely on the shared_ptr to destruct them.
     unloadModules();
-}
-
-void ModuleRegistry::loadModules()
-{
-    ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
-
-	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
-
-    // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-#if defined(POSIX) && defined(PKGLIBDIR)
-    // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
-	_loader.loadModules(PKGLIBDIR);
-#else
-    // Load modules from application-relative path
-    _loader.loadModules(_context->getApplicationPath());
-#endif
 }
 
 void ModuleRegistry::unloadModules()
@@ -146,7 +128,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.9f;
 
-	ui::Splash::Instance().setProgressAndText(
+	_sigModuleInitialisationProgress.emit(
 		(boost::format(_("Initialising Module: %s")) % name).str(),
 		_progress);
 
@@ -156,15 +138,28 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 }
 
 // Initialise all registered modules
-void ModuleRegistry::initialiseModules()
+void ModuleRegistry::loadAndInitialiseModules()
 {
 	if (_modulesInitialised)
     {
 		throw std::runtime_error("ModuleRegistry::initialiseModule called twice.");
 	}
 
+	_sigModuleInitialisationProgress.emit(_("Searching for Modules"), 0.0f);
+
+	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
+
+	// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
+#if defined(POSIX) && defined(PKGLIBDIR)
+	// Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
+	_loader.loadModules(PKGLIBDIR);
+#else
+	// Load modules from application-relative path
+	_loader.loadModules(_context->getApplicationPath());
+#endif
+
 	_progress = 0.1f;
-	ui::Splash::Instance().setProgressAndText(_("Initialising Modules"), _progress);
+	_sigModuleInitialisationProgress.emit(_("Initialising Modules"), _progress);
 
 	for (ModulesMap::iterator i = _uninitialisedModules.begin();
 		 i != _uninitialisedModules.end(); ++i)
@@ -178,7 +173,7 @@ void ModuleRegistry::initialiseModules()
 	_modulesInitialised = true;
 
     _progress = 1.0f;
-    ui::Splash::Instance().setProgressAndText(_("Modules initialised"), _progress);
+	_sigModuleInitialisationProgress.emit(_("Modules initialised"), _progress);
 
 	// Fire the signal now, this will destroy the Splash dialog as well
 	_sigAllModulesInitialised.emit();
@@ -243,6 +238,11 @@ const ApplicationContext& ModuleRegistry::getApplicationContext() const
 sigc::signal<void> ModuleRegistry::signal_allModulesInitialised() const
 {
     return _sigAllModulesInitialised;
+}
+
+ModuleRegistry::ProgressSignal ModuleRegistry::signal_moduleInitialisationProgress() const
+{
+	return _sigModuleInitialisationProgress;
 }
 
 sigc::signal<void> ModuleRegistry::signal_allModulesUninitialised() const

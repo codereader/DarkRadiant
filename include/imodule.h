@@ -244,9 +244,9 @@ public:
  *
  * \ingroup module
  */
-class IModuleRegistry {
+class IModuleRegistry 
+{
 public:
-
     /**
 	 * Destructor
 	 */
@@ -266,7 +266,7 @@ public:
 	 * is invoked once, at application startup, with any subsequent attempts
 	 * to invoke this method throwing a logic_error.
 	 */
-	virtual void initialiseModules() = 0;
+	virtual void loadAndInitialiseModules() = 0;
 
 	/**
 	 * All the RegisterableModule::shutdownModule() routines are getting
@@ -307,6 +307,15 @@ public:
      * Invoked when all modules have been initialised.
      */
     virtual sigc::signal<void> signal_allModulesInitialised() const = 0;
+
+	/**
+	 * Progress function called during module loading and intialisation.
+	 * The string value will carry a message about what is currently in progress.
+	 * The float value passed to the signal indicates the overall progress and
+	 * will be in the range [0.0f..1.0f].
+	 */
+	typedef sigc::signal<void, const std::string&, float> ProgressSignal;
+	virtual ProgressSignal signal_moduleInitialisationProgress() const = 0;
 
     /**
     * Invoked when all modules have been shut down (i.e. after shutdownModule()).
