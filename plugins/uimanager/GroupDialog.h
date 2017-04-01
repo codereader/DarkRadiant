@@ -100,11 +100,6 @@ public:
 	void reparentNotebook(wxWindow* newParent);
 	void reparentNotebookToSelf();
 
-	/** greebo: Safely disconnects this window from
-	 * 			the eventmanager and saves the window position.
-	 */
-	void onRadiantShutdown();
-
 	/**
 	 * Retrieve the static GroupDialog instance.
 	 */
@@ -115,6 +110,14 @@ public:
 	static void toggle();
 
 private:
+	/** greebo: Safely disconnects this window from
+	* 			the eventmanager and saves the window position.
+	*/
+	void onRadiantShutdown();
+
+	// Shows the most recently active page
+	void onRadiantStartup();
+
 	// This is where the static shared_ptr of the singleton instance is held.
 	static GroupDialogPtr& InstancePtr();
 
