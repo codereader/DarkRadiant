@@ -30,6 +30,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
 #include "brush/Face.h"
+#include "brush/Brush.h"
 
 namespace ui
 {
@@ -705,6 +706,13 @@ void SurfaceInspector::_preShow()
 	GlobalSelectionSystem().addObserver(this);
 	GlobalUndoSystem().addObserver(this);
 
+	// Get notified about face shader changes
+	_brushFaceShaderChanged = Brush::signal_faceShaderChanged().connect(
+		[this] { _updateNeeded = true; });
+
+	_faceTexDefChanged = Face::signal_texdefChanged().connect(
+		[this] { _updateNeeded = true; });
+
 	// Re-scan the selection
 	doUpdate();
 }
@@ -719,6 +727,9 @@ void SurfaceInspector::_postShow()
 void SurfaceInspector::_preHide()
 {
 	TransientWindow::_preHide();
+
+	_faceTexDefChanged.disconnect();
+	_brushFaceShaderChanged.disconnect();
 
 	GlobalUndoSystem().removeObserver(this);
 	GlobalSelectionSystem().removeObserver(this);

@@ -9,6 +9,7 @@
 #include "wxutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
 
+#include <sigc++/connection.h>
 #include <memory>
 
 namespace wxutil { class ControlButton; }
@@ -29,10 +30,10 @@ class SurfaceInspector;
 typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
 /// Inspector for properties of a surface and its applied texture
-class SurfaceInspector
-: public wxutil::TransientWindow,
-  public SelectionSystem::Observer,
-  public UndoSystem::Observer
+class SurfaceInspector : 
+	public wxutil::TransientWindow,
+	public SelectionSystem::Observer,
+	public UndoSystem::Observer
 {
 	struct ManipulatorRow
 	{
@@ -89,6 +90,9 @@ class SurfaceInspector
 	bool _callbackActive;
 
 	bool _updateNeeded;
+
+	sigc::connection _brushFaceShaderChanged;
+	sigc::connection _faceTexDefChanged;
 
 public:
 
