@@ -205,7 +205,7 @@ void SplitPaneLayout::deconstructLayout()
 	GlobalXYWndManager().destroyViews();
 
 	// Delete the CamWnd
-	_camWnd = CamWndPtr();
+	_camWnd.reset();
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
@@ -214,9 +214,7 @@ void SplitPaneLayout::deconstructLayout()
 	GlobalGroupDialog().removePage("textures");
 
 	// Destroy the widgets, so it gets removed from the main container
-	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
-	topLevelParent->RemoveChild(_splitPane.horizPane);
-	_splitPane.horizPane->Destroy();
+	delete _splitPane.horizPane;
 	
 	_splitPane.clear();
 }

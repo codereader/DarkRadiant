@@ -118,7 +118,7 @@ void EmbeddedLayout::deactivate()
     GlobalXYWndManager().destroyViews();
 
     // Delete the CamWnd
-    _camWnd = CamWndPtr();
+    _camWnd.reset();
 
     // Give the notebook back to the GroupDialog
     GlobalGroupDialog().reparentNotebookToSelf();
@@ -132,13 +132,11 @@ void EmbeddedLayout::deactivate()
     _posHPane.disconnect();
     _posGroupCamPane.disconnect();
 
-    wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
-    topLevelParent->RemoveChild(_horizPane);
-    _horizPane->Destroy();
+	delete _horizPane;
 
     // Those two have been deleted by the above, so NULL the references
-    _horizPane = NULL;
-    _groupCamPane = NULL;
+    _horizPane = nullptr;
+    _groupCamPane = nullptr;
 }
 
 void EmbeddedLayout::maximiseCameraSize()

@@ -121,17 +121,15 @@ void RegularLayout::deactivate()
 	GlobalXYWndManager().destroyViews();
 
 	// Delete the CamWnd
-	_camWnd = CamWndPtr();
+	_camWnd.reset();
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
 
-	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
-	topLevelParent->RemoveChild(_regular.horizPane);
-	_regular.horizPane->Destroy();
+	delete _regular.horizPane;
 
-	_regular.horizPane = NULL;
-	_regular.texCamPane = NULL;
+	_regular.horizPane = nullptr;
+	_regular.texCamPane = nullptr;
 }
 
 void RegularLayout::maximiseCameraSize()
