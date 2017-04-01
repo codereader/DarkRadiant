@@ -11,28 +11,24 @@ namespace ce
 
 // Constructor
 TextSpecifierPanel::TextSpecifierPanel() :
-	_entry(NULL)
+	_entry(nullptr)
 {}
 
 TextSpecifierPanel::TextSpecifierPanel(wxWindow* parent) :
 	_entry(new wxTextCtrl(parent, wxID_ANY))
 {
-	_entry->Connect(wxEVT_TEXT, wxCommandEventHandler(TextSpecifierPanel::onEntryChanged), NULL, this);
+	_entry->Connect(wxEVT_TEXT, wxCommandEventHandler(TextSpecifierPanel::onEntryChanged), nullptr, this);
 }
 
 TextSpecifierPanel::~TextSpecifierPanel()
 {
-	if (_entry != NULL)
-	{
-		_entry->GetParent()->RemoveChild(_entry);
-		_entry->Destroy();
-		_entry = NULL;
-	}
+	delete _entry;
+	_entry = nullptr;
 }
 
 wxWindow* TextSpecifierPanel::getWidget()
 {
-	if (_entry == NULL)
+	if (_entry == nullptr)
 	{
 		throw std::runtime_error("Cannot pack a SpecifierPanel created by its default constructor.");
 	}
@@ -43,14 +39,14 @@ wxWindow* TextSpecifierPanel::getWidget()
 // Set the displayed value
 void TextSpecifierPanel::setValue(const std::string& value)
 {
-	assert(_entry != NULL);
+	assert(_entry != nullptr);
 	_entry->SetValue(value);
 }
 
 // Get the edited value
 std::string TextSpecifierPanel::getValue() const
 {
-	assert(_entry != NULL);
+	assert(_entry != nullptr);
 	return _entry->GetValue().ToStdString();
 }
 
