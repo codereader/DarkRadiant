@@ -93,6 +93,7 @@ class SurfaceInspector :
 
 	sigc::connection _brushFaceShaderChanged;
 	sigc::connection _faceTexDefChanged;
+	sigc::connection _patchTextureChanged;
 
 public:
 

@@ -17,6 +17,7 @@
 #include "brush/TexDef.h"
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
+#include <sigc++/signal.h>
 
 // Enable to render the vertex normal/tangent/bitangent vectors in the cam view
 #define DEBUG_PATCH_NTB_VECTORS 0
@@ -354,6 +355,9 @@ public:
 	// Calculate the intersection of the given ray with the full patch mesh, 
 	// returns true on intersection and fills in the out variable
 	bool getIntersection(const Ray& ray, Vector3& intersection);
+
+	// Static signal holder, signal is emitted after any patch texture has changed
+	static sigc::signal<void>& signal_patchTextureChanged();
 
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change

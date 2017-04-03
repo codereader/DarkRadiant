@@ -15,7 +15,6 @@
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/patch/PatchInspector.h"
 #include "selection/algorithm/Shader.h"
 
@@ -2755,7 +2754,7 @@ void Patch::textureChanged()
 		(*i++)->onPatchTextureChanged();
 	}
 
-	ui::SurfaceInspector::update(); // Triggers TexTool and PatchInspector update
+	signal_patchTextureChanged().emit();
 }
 
 void Patch::attachObserver(Observer* observer)
@@ -2766,4 +2765,10 @@ void Patch::attachObserver(Observer* observer)
 void Patch::detachObserver(Observer* observer)
 {
 	_observers.erase(observer);
+}
+
+sigc::signal<void>& Patch::signal_patchTextureChanged()
+{
+	static sigc::signal<void> _sigPatchTextureChanged;
+	return _sigPatchTextureChanged;
 }

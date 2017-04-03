@@ -31,6 +31,7 @@
 #include "selection/algorithm/Shader.h"
 #include "brush/Face.h"
 #include "brush/Brush.h"
+#include "patch/Patch.h"
 
 namespace ui
 {
@@ -713,6 +714,9 @@ void SurfaceInspector::_preShow()
 	_faceTexDefChanged = Face::signal_texdefChanged().connect(
 		[this] { _updateNeeded = true; });
 
+	_patchTextureChanged = Patch::signal_patchTextureChanged().connect(
+		[this] { _updateNeeded = true; });
+
 	// Re-scan the selection
 	doUpdate();
 }
@@ -728,6 +732,7 @@ void SurfaceInspector::_preHide()
 {
 	TransientWindow::_preHide();
 
+	_patchTextureChanged.disconnect();
 	_faceTexDefChanged.disconnect();
 	_brushFaceShaderChanged.disconnect();
 
