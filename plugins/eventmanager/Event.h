@@ -6,7 +6,7 @@
 #include <iostream>
 #include <wx/menuitem.h>
 #include <wx/toolbar.h>
-#include <boost/regex.hpp>
+#include <regex>
 
 namespace ui
 {
@@ -109,8 +109,8 @@ protected:
         std::string prevHelp = tool->GetShortHelp().ToStdString();
 
         // Use a regex to cut off the trailing " (Ctrl-X)"
-        boost::regex expr("\\s\\(.+\\)$");
-        return boost::regex_replace(prevHelp, expr, "");
+        std::regex expr("\\s\\(.+\\)$");
+        return std::regex_replace(prevHelp, expr, "");
     }
 };
 

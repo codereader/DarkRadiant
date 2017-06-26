@@ -10,7 +10,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/regex.hpp>
+#include <regex>
 
 namespace fs = boost::filesystem;
 
@@ -184,8 +184,8 @@ std::string ScaledModelExporter::generateUniqueModelFilename(
 	std::string modelFilename = os::getFilename(modelPath.string());
 
 	// Remove any previously existing "_scaledN" suffix
-	boost::regex expr("_scaled\\d+\\.");
-	modelFilename = boost::regex_replace(modelFilename, expr, ".");
+	std::regex expr("_scaled\\d+\\.");
+	modelFilename = std::regex_replace(modelFilename, expr, ".");
 
 	std::string filenameNoExt = fs::change_extension(modelFilename, "").string();
 

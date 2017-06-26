@@ -6,7 +6,7 @@
 #include "gamelib.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
-#include <boost/regex.hpp>
+#include <regex>
 
 // Constructor
 SRPropertyLoader::SRPropertyLoader(
@@ -43,10 +43,10 @@ void SRPropertyLoader::parseAttribute(
 
 		// Construct a regex with the number as match variable
 		std::string exprStr = "^" + prefix + _keys[i].key + "_([0-9])+$";
-		boost::regex expr(exprStr);
-		boost::smatch matches;
+		std::regex expr(exprStr);
+		std::smatch matches;
 
-		if (boost::regex_match(key, matches, expr)) {
+		if (std::regex_match(key, matches, expr)) {
 			// Retrieve the S/R index number
 			int index = string::convert<int>(matches[1]);
 
@@ -82,10 +82,10 @@ void SRPropertyLoader::parseAttribute(
 		// (with the optional postfix "_argN" or "_state")
 		std::string exprStr =
 			"^" + prefix + responseEffectPrefix + "([0-9]+)_([0-9]+)(_arg[0-9]+|_state)*$";
-		boost::regex expr(exprStr);
-		boost::smatch matches;
+		std::regex expr(exprStr);
+		std::smatch matches;
 
-		if (boost::regex_match(key, matches, expr)) {
+		if (std::regex_match(key, matches, expr)) {
 			// The response index
 			int index = string::convert<int>(matches[1]);
 			// The effect index

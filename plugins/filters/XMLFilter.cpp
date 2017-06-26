@@ -3,7 +3,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "ifilter.h"
-#include <boost/regex.hpp>
+#include <regex>
 #include <boost/algorithm/string/erase.hpp>
 
 namespace filters {
@@ -36,9 +36,9 @@ bool XMLFilter::isVisible(const FilterRule::Type type, const std::string& name) 
 
 		// If we have a rule for this item, use boost's regex to match the query name
 		// against the "match" parameter
-		boost::regex ex(ruleIter->match);
+		std::regex ex(ruleIter->match);
 
-		if (boost::regex_match(name, ex))
+		if (std::regex_match(name, ex))
 		{
 			// Overwrite the visible flag with the value from the rule.
 			visible = ruleIter->show;
@@ -66,18 +66,18 @@ bool XMLFilter::isEntityVisible(const FilterRule::Type type, const Entity& entit
 
 		if (type == FilterRule::TYPE_ENTITYCLASS)
 		{
-			boost::regex ex(ruleIter->match);
+			std::regex ex(ruleIter->match);
 
-			if (boost::regex_match(eclass->getName(), ex))
+			if (std::regex_match(eclass->getName(), ex))
 			{
 				visible = ruleIter->show;
 			}
 		}
 		else if (type == FilterRule::TYPE_ENTITYKEYVALUE)
 		{
-			boost::regex ex(ruleIter->match);
+			std::regex ex(ruleIter->match);
 
-			if (boost::regex_match(entity.getKeyValue(ruleIter->entityKey), ex))
+			if (std::regex_match(entity.getKeyValue(ruleIter->entityKey), ex))
 			{
 				visible = ruleIter->show;
 			}

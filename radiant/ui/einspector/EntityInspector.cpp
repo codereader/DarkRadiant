@@ -40,7 +40,7 @@
 
 #include <functional>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/regex.hpp>
+#include <regex>
 
 namespace ui {
 
@@ -1077,10 +1077,10 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
 		if (i->first.empty()) continue; // safety check
 
 		// Try to match the entity key against the regex (i->first)
-		boost::regex expr(i->first);
-		boost::smatch matches;
+		std::regex expr(i->first);
+		std::smatch matches;
 
-		if (!boost::regex_match(key, matches, expr)) continue;
+		if (!std::regex_match(key, matches, expr)) continue;
 
 		// We have a match
 		returnValue.type = i->second.type;
