@@ -175,6 +175,11 @@ void RegularLayout::restoreStateFromPath(const std::string& path)
 	}
 }
 
+void RegularLayout::restoreStateFromRegistry()
+{
+	restoreStateFromPath(RKEY_REGULAR_ROOT);
+}
+
 void RegularLayout::saveStateToPath(const std::string& path)
 {
 	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");

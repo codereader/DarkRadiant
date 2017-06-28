@@ -360,6 +360,11 @@ void SplitPaneLayout::toggleFullscreenCameraView()
 	}
 }
 
+void SplitPaneLayout::restoreStateFromRegistry()
+{
+	restoreStateFromPath(RKEY_SPLITPANE_ROOT);
+}
+
 SplitPaneLayout::Position SplitPaneLayout::getCameraPositionFromRegistry()
 {
 	int value = registry::getValue<int>(RKEY_SPLITPANE_CAMPOS);

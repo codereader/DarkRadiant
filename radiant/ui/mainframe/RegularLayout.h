@@ -38,10 +38,11 @@ class RegularLayout :
 
 public:
 	// IMainFrameLayout implementation
-	virtual std::string getName();
-	virtual void activate();
-	virtual void deactivate();
-	virtual void toggleFullscreenCameraView();
+	std::string getName() override;
+	void activate() override;
+	void deactivate() override;
+	void toggleFullscreenCameraView() override;
+	void restoreStateFromRegistry() override;
 
 	// The creation function, needed by the mainframe layout manager
 	static RegularLayoutPtr CreateRegularLeftInstance();

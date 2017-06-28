@@ -176,6 +176,11 @@ void EmbeddedLayout::restoreStateFromPath(const std::string& path)
     }
 }
 
+void EmbeddedLayout::restoreStateFromRegistry()
+{
+	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
+}
+
 void EmbeddedLayout::saveStateToPath(const std::string& path)
 {
     GlobalRegistry().createKeyWithName(path, "pane", "horizontal");

@@ -131,10 +131,15 @@ void FloatingLayout::toggleFullscreenCameraView()
 	_floatingCamWnd->ShowFullScreen(!_floatingCamWnd->IsFullScreen());
 }
 
+void FloatingLayout::restoreStateFromRegistry()
+{
+	// nothing yet
+}
+
 // The creation function, needed by the mainframe layout manager
 FloatingLayoutPtr FloatingLayout::CreateInstance()
 {
-	return FloatingLayoutPtr(new FloatingLayout);
+	return std::make_shared<FloatingLayout>();
 }
 
 } // namespace ui
