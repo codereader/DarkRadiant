@@ -25,7 +25,7 @@ class RadiantSelectionSystem :
 {
 	ManipulationPivot _pivot;
 
-	typedef std::list<Observer*> ObserverList;
+	typedef std::set<Observer*> ObserverList;
 	ObserverList _observers;
 
 	// The 3D volume surrounding the most recent selection.
