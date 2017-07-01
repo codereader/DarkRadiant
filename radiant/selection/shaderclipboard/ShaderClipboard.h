@@ -1,16 +1,17 @@
 #pragma once
 
-#include "iundo.h"
 #include "imap.h"
 #include "Texturable.h"
 #include <sigc++/signal.h>
+#include <sigc++/trackable.h>
 
 namespace selection 
 {
 
 class ShaderClipboard :
-	public UndoSystem::Observer
+	public sigc::trackable
 {
+private:
 	// The source and target Texturables
 	Texturable _source;
 
@@ -53,11 +54,10 @@ public:
 	 */
 	void clear();
 
-	// UndoSystem::Observer implementation
-	void postUndo();
-	void postRedo();
-
 private:
+	// UndoSystem callbacks
+	void onUndoRedoOperation();
+
 	void onMapEvent(IMap::MapEvent ev);
 
 	/** greebo: Updates the shader information in the status bar.
