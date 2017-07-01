@@ -7,6 +7,7 @@
 #include "math/AABB.h"
 #include "ishaders.h"
 #include "iradiant.h"
+#include "iselection.h"
 #include "iundo.h"
 #include "iregistry.h"
 #include <sigc++/connection.h>

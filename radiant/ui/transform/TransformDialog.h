@@ -4,6 +4,7 @@
 #include <map>
 #include "icommandsystem.h"
 #include "iradiant.h"
+#include "iselection.h"
 #include "wxutil/window/TransientWindow.h"
 #include <wx/panel.h>
 #include <sigc++/connection.h>

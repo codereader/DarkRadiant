@@ -8,6 +8,7 @@
 #include "iuimanager.h"
 #include "iradiant.h"
 #include "imainframe.h"
+#include "iselection.h"
 
 #include <wx/tglbtn.h>
 #include <wx/clrpicker.h>
