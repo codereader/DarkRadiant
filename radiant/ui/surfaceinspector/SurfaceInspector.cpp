@@ -15,6 +15,7 @@
 #include "itextstream.h"
 #include "iuimanager.h"
 #include "imainframe.h"
+#include "iundo.h"
 
 #include "wxutil/ControlButton.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -618,18 +619,6 @@ void SurfaceInspector::doUpdate()
 	ui::PatchInspector::Instance().queueUpdate();
 }
 
-void SurfaceInspector::postUndo()
-{
-	// Update the SurfaceInspector after an undo operation
-	doUpdate();
-}
-
-void SurfaceInspector::postRedo()
-{
-	// Update the SurfaceInspector after a redo operation
-	doUpdate();
-}
-
 void SurfaceInspector::fitTexture()
 {
 	double repeatX = _fitTexture.width->GetValue();
@@ -702,12 +691,17 @@ void SurfaceInspector::_preShow()
 	_brushFaceShaderChanged.disconnect();
 	_faceTexDefChanged.disconnect();
 	_patchTextureChanged.disconnect();
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 
 	// Register self to the SelSystem to get notified upon selection changes.
 	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
 		[this] (const ISelectable&) { doUpdate(); });
 
-	GlobalUndoSystem().addObserver(this);
+	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
+	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
 
 	// Get notified about face shader changes
 	_brushFaceShaderChanged = Brush::signal_faceShaderChanged().connect(
@@ -738,8 +732,8 @@ void SurfaceInspector::_preHide()
 	_patchTextureChanged.disconnect();
 	_faceTexDefChanged.disconnect();
 	_brushFaceShaderChanged.disconnect();
-
-	GlobalUndoSystem().removeObserver(this);
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 }
 
 } // namespace ui

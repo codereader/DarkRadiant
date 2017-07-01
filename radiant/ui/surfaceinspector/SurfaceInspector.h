@@ -3,12 +3,12 @@
 #include <map>
 #include "icommandsystem.h"
 #include "iregistry.h"
-#include "iundo.h"
 #include "iradiant.h"
 #include "wxutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
 
 #include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 #include <memory>
 
 namespace wxutil { class ControlButton; }
@@ -31,7 +31,7 @@ typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector : 
 	public wxutil::TransientWindow,
-	public UndoSystem::Observer
+	public sigc::trackable
 {
 	struct ManipulatorRow
 	{
@@ -93,6 +93,8 @@ class SurfaceInspector :
 	sigc::connection _faceTexDefChanged;
 	sigc::connection _patchTextureChanged;
 	sigc::connection _selectionChanged;
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
 
 public:
 
@@ -113,10 +115,6 @@ public:
 	static void toggle(const cmd::ArgumentList& args);
 
 	void onRadiantShutdown();
-
-	// UndoSystem::Observer implementation
-	void postUndo();
-	void postRedo();
 
 private:
 	void doUpdate();
