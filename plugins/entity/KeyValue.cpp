@@ -1,8 +1,10 @@
 #include "KeyValue.h"
 
 #include <functional>
+#include "iundo.h"
 
-namespace entity {
+namespace entity 
+{
 
 KeyValue::KeyValue(const std::string& value, const std::string& empty) :
 	_value(value),
@@ -68,25 +70,28 @@ void KeyValue::notify()
 	}
 }
 
-void KeyValue::importState(const std::string& string) {
+void KeyValue::importState(const std::string& string) 
+{
 	// Add ourselves to the Undo event observers, to get notified after all this has been finished
-	GlobalUndoSystem().addObserver(this);
+	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &KeyValue::onUndoRedoOperationFinished));
+	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &KeyValue::onUndoRedoOperationFinished));
 
 	_value = string;
 	notify();
 }
 
-void KeyValue::postUndo() {
-	GlobalUndoSystem().removeObserver(this);
+void KeyValue::onUndoRedoOperationFinished()
+{
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
+
 	notify();
 }
 
-void KeyValue::postRedo() {
-	GlobalUndoSystem().removeObserver(this);
-	notify();
-}
-
-void KeyValue::onNameChange(const std::string& oldName, const std::string& newName) {
+void KeyValue::onNameChange(const std::string& oldName, const std::string& newName)
+{
 	assert(oldName == _value); // The old name should match
 
 	// Just assign the new name to this keyvalue
