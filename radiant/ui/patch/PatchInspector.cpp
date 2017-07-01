@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "iuimanager.h"
 #include "imainframe.h"
+#include "iundo.h"
 
 #include <wx/sizer.h>
 #include <wx/panel.h>
@@ -76,18 +77,6 @@ void PatchInspector::onRadiantShutdown()
 	// Destroy the window 
 	SendDestroyEvent();
 	InstancePtr().reset();
-}
-
-void PatchInspector::postUndo()
-{
-	// Update the PatchInspector after an undo operation
-	queueUpdate();
-}
-
-void PatchInspector::postRedo()
-{
-	// Update the PatchInspector after a redo operation
-	queueUpdate();
 }
 
 PatchInspector& PatchInspector::Instance()
@@ -267,7 +256,9 @@ void PatchInspector::_preHide()
 	setPatch(PatchNodePtr());
 
 	// A hidden PatchInspector doesn't need to listen for events
-	GlobalUndoSystem().removeObserver(this);
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
+
 	GlobalSelectionSystem().removeObserver(this);
 }
 
@@ -276,9 +267,16 @@ void PatchInspector::_preShow()
 {
 	TransientWindow::_preShow();
 
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
+
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
-	GlobalUndoSystem().addObserver(this);
+	
+	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &PatchInspector::queueUpdate));
+	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &PatchInspector::queueUpdate));
 
 	// Check for selection changes before showing the dialog again
 	rescanSelection();
