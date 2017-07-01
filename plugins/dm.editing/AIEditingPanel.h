@@ -2,10 +2,10 @@
 
 #include <map>
 #include "ientity.h"
-#include "iundo.h"
 #include <memory>
 
 #include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 #include <wx/event.h>
 
 class ISelectable;
@@ -25,7 +25,7 @@ class SpawnargLinkedSpinButton;
 
 class AIEditingPanel : 
 	public Entity::Observer,
-	public UndoSystem::Observer,
+	public sigc::trackable,
 	public wxEvtHandler
 {
 private:
@@ -46,6 +46,9 @@ private:
 	LabelMap _labels;
 
 	Entity* _entity;
+
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
 
 public:
 	AIEditingPanel();

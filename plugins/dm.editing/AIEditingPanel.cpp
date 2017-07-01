@@ -6,6 +6,7 @@
 #include "itextstream.h"
 #include "ientityinspector.h"
 #include "iradiant.h"
+#include "iundo.h"
 #include "igroupdialog.h"
 #include "iuimanager.h"
 #include "selectionlib.h"
@@ -274,14 +275,18 @@ void AIEditingPanel::onRadiantStartup()
 
 	// Delete the temporary parent
 	Instance()._tempParent->Destroy();
-	Instance()._tempParent = NULL;
+	Instance()._tempParent = nullptr;
 
-	GlobalUndoSystem().addObserver(InstancePtr().get());
+	Instance()._undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(Instance(), &AIEditingPanel::updateWidgetsFromSelection));
+	Instance()._redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(Instance(), &AIEditingPanel::updateWidgetsFromSelection));
 }
 
 void AIEditingPanel::onRadiantShutdown()
 {
-	GlobalUndoSystem().removeObserver(this);
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 
 	_selectionChangedSignal.disconnect();
 }
