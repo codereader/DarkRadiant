@@ -9,6 +9,7 @@
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "igame.h"
+#include "iundo.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
 #include "itextstream.h"
@@ -147,7 +148,10 @@ void EntityInspector::construct()
 
 	// Observe the Undo system for undo/redo operations, to refresh the
 	// keyvalues when this happens
-	GlobalUndoSystem().addObserver(this);
+	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
+	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
 
 	// initialise the properties
 	loadPropertyMap();
@@ -352,6 +356,9 @@ void EntityInspector::onRadiantStartup()
 
 void EntityInspector::onRadiantShutdown()
 {
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
+
     // Remove all previously stored pane information
 	_panedPosition.saveToPath(RKEY_PANE_STATE);
 
@@ -360,19 +367,10 @@ void EntityInspector::onRadiantShutdown()
     _currentPropertyEditor.reset();
 }
 
-void EntityInspector::postUndo()
+void EntityInspector::onUndoRedoOperation()
 {
 	// Clear the previous entity (detaches this class as observer)
-	changeSelectedEntity(NULL);
-
-	// Now rescan the selection and update the stores
-    requestIdleCallback();
-}
-
-void EntityInspector::postRedo()
-{
-	// Clear the previous entity (detaches this class as observer)
-	changeSelectedEntity(NULL);
+	changeSelectedEntity(nullptr);
 
 	// Now rescan the selection and update the stores
     requestIdleCallback();

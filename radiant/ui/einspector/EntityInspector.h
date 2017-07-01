@@ -7,7 +7,6 @@
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "ientity.h"
-#include "iundo.h"
 #include "string/string.h"
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/PanedPosition.h"
@@ -16,6 +15,7 @@
 
 #include <wx/event.h>
 #include <wx/icon.h>
+#include <sigc++/connection.h>
 
 #include <map>
 #include <boost/algorithm/string/predicate.hpp>
@@ -45,7 +45,6 @@ class EntityInspector :
  	public SelectionSystem::Observer,
     public wxutil::SingleIdleCallback,
     public Entity::Observer,
-	public UndoSystem::Observer,
 	public std::enable_shared_from_this<EntityInspector>
 {
 public:
@@ -147,6 +146,9 @@ private:
 	typedef std::map<std::string, PropertyParms> PropertyParmMap;
 	PropertyParmMap _propertyTypes;
 
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
+
 private:
 
     // Utility functions to construct the Gtk components
@@ -216,6 +218,9 @@ private:
     // Update tree view contents and property editor
     void updateGUIElements();
 
+	// Gets called after an undo operation
+	void onUndoRedoOperation();
+
 protected:
     // Called when the app is idle
     void onIdle();
@@ -238,12 +243,7 @@ public:
 	void onRadiantStartup();
 	void onRadiantShutdown();
 
-	// Gets called after an undo operation
-	void postUndo();
-	// Gets called after a redo operation
-	void postRedo();
-
-    /* Entity::Observer implementation */
+	/* Entity::Observer implementation */
     void onKeyInsert(const std::string& key, EntityKeyValue& value);
     void onKeyChange(const std::string& key, const std::string& value);
     void onKeyErase(const std::string& key, EntityKeyValue& value);
