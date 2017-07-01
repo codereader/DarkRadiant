@@ -630,12 +630,6 @@ void SurfaceInspector::postRedo()
 	doUpdate();
 }
 
-// Gets notified upon selection change
-void SurfaceInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
-{
-	doUpdate();
-}
-
 void SurfaceInspector::fitTexture()
 {
 	double repeatX = _fitTexture.width->GetValue();
@@ -703,8 +697,16 @@ void SurfaceInspector::_preShow()
 {
 	TransientWindow::_preShow();
 
+	// Disconnect everything, in some cases we get two consecutive Show() calls in wxGTK
+	_selectionChanged.disconnect();
+	_brushFaceShaderChanged.disconnect();
+	_faceTexDefChanged.disconnect();
+	_patchTextureChanged.disconnect();
+
 	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
+	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+		[this] (const ISelectable&) { doUpdate(); });
+
 	GlobalUndoSystem().addObserver(this);
 
 	// Get notified about face shader changes
@@ -732,12 +734,12 @@ void SurfaceInspector::_preHide()
 {
 	TransientWindow::_preHide();
 
+	_selectionChanged.disconnect();
 	_patchTextureChanged.disconnect();
 	_faceTexDefChanged.disconnect();
 	_brushFaceShaderChanged.disconnect();
 
 	GlobalUndoSystem().removeObserver(this);
-	GlobalSelectionSystem().removeObserver(this);
 }
 
 } // namespace ui

@@ -2,7 +2,6 @@
 
 #include <map>
 #include "icommandsystem.h"
-#include "iselection.h"
 #include "iregistry.h"
 #include "iundo.h"
 #include "iradiant.h"
@@ -32,7 +31,6 @@ typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector : 
 	public wxutil::TransientWindow,
-	public SelectionSystem::Observer,
 	public UndoSystem::Observer
 {
 	struct ManipulatorRow
@@ -94,6 +92,7 @@ class SurfaceInspector :
 	sigc::connection _brushFaceShaderChanged;
 	sigc::connection _faceTexDefChanged;
 	sigc::connection _patchTextureChanged;
+	sigc::connection _selectionChanged;
 
 public:
 
@@ -109,12 +108,6 @@ public:
 	/** greebo: Gets called when the default texscale registry key changes
 	 */
 	void keyChanged();
-
-	/** greebo: SelectionSystem::Observer implementation. Gets called by
-	 * the SelectionSystem upon selection change to allow updating of the
-	 * texture properties.
-	 */
-	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 	// Command target to toggle the dialog
 	static void toggle(const cmd::ArgumentList& args);
