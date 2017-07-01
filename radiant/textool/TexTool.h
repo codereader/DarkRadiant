@@ -8,8 +8,8 @@
 #include "ishaders.h"
 #include "iradiant.h"
 #include "iundo.h"
-#include "iselection.h"
 #include "iregistry.h"
+#include <sigc++/connection.h>
 
 #include "TexToolItem.h"
 
@@ -32,7 +32,6 @@ typedef std::shared_ptr<TexTool> TexToolPtr;
 
 class TexTool
 : public wxutil::TransientWindow,
-  public SelectionSystem::Observer,
   public UndoSystem::Observer
 {
 private:
@@ -86,6 +85,8 @@ private:
 
 	// For idle callbacks
 	bool _updateNeeded;
+
+	sigc::connection _selectionChanged;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -205,11 +206,6 @@ public:
 	 * the public member methods like toggle() and shutdown().
 	 */
 	static TexTool& Instance();
-
-	/** greebo: SelectionSystem::Observer implementation. Gets called by
-	 * the SelectionSystem upon selection change to allow updating.
-	 */
-	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 	// UndoSystem::Observer
 	void postUndo();

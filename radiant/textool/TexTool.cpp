@@ -128,7 +128,8 @@ void TexTool::_preHide()
 	TransientWindow::_preHide();
 
 	GlobalUndoSystem().removeObserver(this);
-	GlobalSelectionSystem().removeObserver(this);
+
+	_selectionChanged.disconnect();
 
 	// Clear items to prevent us from running into stale references
 	// when the textool is shown again
@@ -140,8 +141,12 @@ void TexTool::_preShow()
 {
 	TransientWindow::_preShow();
 
+	_selectionChanged.disconnect();
+
 	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
+	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+		[this](const ISelectable&) { queueUpdate(); });
+
 	GlobalUndoSystem().addObserver(this);
 
 	// Trigger an update of the current selection
@@ -284,11 +289,6 @@ void TexTool::onIdle(wxIdleEvent& ev)
 void TexTool::queueUpdate()
 {
 	_updateNeeded = true;
-}
-
-void TexTool::selectionChanged(const scene::INodePtr& node, bool isComponent)
-{
-	queueUpdate();
 }
 
 void TexTool::flipSelected(int axis) {
