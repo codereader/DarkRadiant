@@ -1,7 +1,6 @@
 #pragma once
 
 #include "icommandsystem.h"
-#include "iundo.h"
 #include "iradiant.h"
 #include "ui/common/ShaderSelector.h"
 #include "wxutil/window/TransientWindow.h"
@@ -10,6 +9,7 @@
 #include <map>
 #include <string>
 #include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 
 /* FORWARD DECLS */
 class Entity;
@@ -24,11 +24,11 @@ namespace ui
 class LightInspector;
 typedef std::shared_ptr<LightInspector> LightInspectorPtr;
 
-class LightInspector
-: public wxutil::TransientWindow,
-  public ShaderSelector::Client,
-  public UndoSystem::Observer,
-  private wxutil::XmlResourceBasedWidget
+class LightInspector : 
+	public wxutil::TransientWindow,
+	public ShaderSelector::Client,
+	public sigc::trackable,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
 	// Projected light flag
@@ -49,6 +49,8 @@ private:
 	bool _updateActive;
 
 	sigc::connection _selectionChanged;
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -103,10 +105,6 @@ public:
 
 	// Update the sensitivity of the widgets
 	void update();
-
-	// UndoSystem::Observer implementation
-	void postUndo();
-	void postRedo();
 
 	// Safely disconnects this dialog from all the systems
 	// and saves the window size/position to the registry

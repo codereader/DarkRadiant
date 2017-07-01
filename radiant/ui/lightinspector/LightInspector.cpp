@@ -9,6 +9,7 @@
 #include "iradiant.h"
 #include "imainframe.h"
 #include "iselection.h"
+#include "iundo.h"
 
 #include <wx/tglbtn.h>
 #include <wx/clrpicker.h>
@@ -226,18 +227,6 @@ void LightInspector::update()
     }
 }
 
-void LightInspector::postUndo()
-{
-	// Update the LightInspector after an undo operation
-	update();
-}
-
-void LightInspector::postRedo()
-{
-	// Update the LightInspector after a redo operation
-	update();
-}
-
 // Pre-hide callback
 void LightInspector::_preHide()
 {
@@ -245,7 +234,9 @@ void LightInspector::_preHide()
 
 	// Remove as observer, an invisible inspector doesn't need to receive events
 	_selectionChanged.disconnect();
-	GlobalUndoSystem().removeObserver(this);
+
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 }
 
 // Pre-show callback
@@ -254,9 +245,14 @@ void LightInspector::_preShow()
 	TransientWindow::_preShow();
 
 	_selectionChanged.disconnect();
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 
 	// Register self as observer to receive events
-	GlobalUndoSystem().addObserver(this);
+	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &LightInspector::update));
+	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &LightInspector::update));
 
 	// Register self to the SelSystem to get notified upon selection changes.
 	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
