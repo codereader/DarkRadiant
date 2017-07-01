@@ -263,20 +263,19 @@ void TraversableNodeSet::importState(const IUndoMementoPtr& state)
 	if (!_undoInsertBuffer.empty())
 	{
 		// Register to get notified when the undo operation is complete
-		GlobalUndoSystem().addObserver(this);
+		_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+			sigc::mem_fun(this, &TraversableNodeSet::onUndoRedoOperationFinished));
+		_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+			sigc::mem_fun(this, &TraversableNodeSet::onUndoRedoOperationFinished));
 	}
 }
 
-void TraversableNodeSet::postUndo()
+void TraversableNodeSet::onUndoRedoOperationFinished()
 {
-	processInsertBuffer();
-	GlobalUndoSystem().removeObserver(this);
-}
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 
-void TraversableNodeSet::postRedo()
-{
 	processInsertBuffer();
-	GlobalUndoSystem().removeObserver(this);
 }
 
 void TraversableNodeSet::processInsertBuffer()
