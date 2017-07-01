@@ -59,6 +59,9 @@ class RadiantUndoSystem :
 	typedef std::set<Tracker*> Trackers;
 	Trackers _trackers;
 
+	sigc::signal<void> _signalPostUndo;
+	sigc::signal<void> _signalPostRedo;
+
 public:
 	// Constructor
 	RadiantUndoSystem() :
@@ -149,6 +152,8 @@ public:
 			observer->postUndo();
 		}
 
+		_signalPostUndo.emit();
+
 		// Trigger the onPostUndo event on all scene nodes
 		GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
 		{
@@ -181,6 +186,8 @@ public:
 			Observer* observer = *(i++);
 			observer->postRedo();
 		}
+
+		_signalPostRedo.emit();
 
 		// Trigger the onPostRedo event on all scene nodes
 		GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
@@ -223,6 +230,17 @@ public:
 		{
 			_observers.erase(i);
 		}
+	}
+
+	sigc::signal<void>& signal_postUndo() override
+	{
+		return _signalPostUndo;
+	}
+
+	// Emitted after a redo operation is fully completed, allows objects to refresh their state
+	sigc::signal<void>& signal_postRedo() override
+	{
+		return _signalPostRedo;
 	}
 
 	void attachTracker(Tracker& tracker)
