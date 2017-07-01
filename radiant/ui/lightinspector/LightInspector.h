@@ -1,6 +1,5 @@
 #pragma once
 
-#include "iselection.h"
 #include "icommandsystem.h"
 #include "iundo.h"
 #include "iradiant.h"
@@ -10,6 +9,7 @@
 
 #include <map>
 #include <string>
+#include <sigc++/connection.h>
 
 /* FORWARD DECLS */
 class Entity;
@@ -26,7 +26,6 @@ typedef std::shared_ptr<LightInspector> LightInspectorPtr;
 
 class LightInspector
 : public wxutil::TransientWindow,
-  public SelectionSystem::Observer,
   public ShaderSelector::Client,
   public UndoSystem::Observer,
   private wxutil::XmlResourceBasedWidget
@@ -46,8 +45,10 @@ private:
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _valueMap;
 
-	// Disables GTK callbacks if set to TRUE (during widget updates)
+	// Disables callbacks if set to TRUE (during widget updates)
 	bool _updateActive;
+
+	sigc::connection _selectionChanged;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.

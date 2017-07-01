@@ -70,8 +70,6 @@ void TransformDialog::onRadiantShutdown()
 		Hide();
 	}
 
-	GlobalSelectionSystem().removeObserver(this);
-
 	// Destroy the window
 	SendDestroyEvent();
 	InstancePtr().reset();
@@ -226,7 +224,7 @@ void TransformDialog::_preHide()
 {
 	TransientWindow::_preHide();
 
-	GlobalSelectionSystem().removeObserver(this);
+	_selectionChanged.disconnect();
 }
 
 // Pre-show callback
@@ -234,8 +232,11 @@ void TransformDialog::_preShow()
 {
 	TransientWindow::_preShow();
 
+	_selectionChanged.disconnect();
+
 	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
+	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+		[this](const ISelectable&) { update(); });
 
 	// Update the widget values
 	update();
@@ -253,11 +254,6 @@ void TransformDialog::update()
 
 	_scalePanel->Enable(scaleSensitive);
 	_scalePanel->Enable(scaleSensitive);
-}
-
-void TransformDialog::selectionChanged(const scene::INodePtr& node, bool isComponent)
-{
-	update();
 }
 
 void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)

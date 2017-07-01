@@ -243,7 +243,7 @@ void LightInspector::_preHide()
 	TransientWindow::_preHide();
 
 	// Remove as observer, an invisible inspector doesn't need to receive events
-	GlobalSelectionSystem().removeObserver(this);
+	_selectionChanged.disconnect();
 	GlobalUndoSystem().removeObserver(this);
 }
 
@@ -252,16 +252,16 @@ void LightInspector::_preShow()
 {
 	TransientWindow::_preShow();
 
+	_selectionChanged.disconnect();
+
 	// Register self as observer to receive events
 	GlobalUndoSystem().addObserver(this);
-	GlobalSelectionSystem().addObserver(this);
+
+	// Register self to the SelSystem to get notified upon selection changes.
+	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+		[this](const ISelectable&) { update(); });
 
 	// Update the widgets before showing
-	update();
-}
-
-void LightInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
-{
 	update();
 }
 
