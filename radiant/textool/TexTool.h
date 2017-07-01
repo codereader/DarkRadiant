@@ -8,9 +8,9 @@
 #include "ishaders.h"
 #include "iradiant.h"
 #include "iselection.h"
-#include "iundo.h"
 #include "iregistry.h"
 #include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 
 #include "TexToolItem.h"
 
@@ -31,9 +31,9 @@ namespace
 class TexTool;
 typedef std::shared_ptr<TexTool> TexToolPtr;
 
-class TexTool
-: public wxutil::TransientWindow,
-  public UndoSystem::Observer
+class TexTool : 
+	public wxutil::TransientWindow,
+	public sigc::trackable
 {
 private:
 	// GL widget
@@ -88,6 +88,8 @@ private:
 	bool _updateNeeded;
 
 	sigc::connection _selectionChanged;
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -194,6 +196,9 @@ private:
 	// The keyboard callback to catch the ESC key
 	void onKeyPress(wxKeyEvent& ev);
 
+	// UndoSystem event handler
+	void onUndoRedoOperation();
+
 public:
 	TexTool();
 
@@ -207,10 +212,6 @@ public:
 	 * the public member methods like toggle() and shutdown().
 	 */
 	static TexTool& Instance();
-
-	// UndoSystem::Observer
-	void postUndo();
-	void postRedo();
 
 	/** greebo: Updates the GL window
 	 */

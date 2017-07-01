@@ -127,7 +127,8 @@ void TexTool::_preHide()
 {
 	TransientWindow::_preHide();
 
-	GlobalUndoSystem().removeObserver(this);
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 
 	_selectionChanged.disconnect();
 
@@ -142,23 +143,23 @@ void TexTool::_preShow()
 	TransientWindow::_preShow();
 
 	_selectionChanged.disconnect();
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 
 	// Register self to the SelSystem to get notified upon selection changes.
 	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
 		[this](const ISelectable&) { queueUpdate(); });
 
-	GlobalUndoSystem().addObserver(this);
+	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
+	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
 
 	// Trigger an update of the current selection
 	queueUpdate();
 }
 
-void TexTool::postUndo()
-{
-	queueUpdate();
-}
-
-void TexTool::postRedo()
+void TexTool::onUndoRedoOperation()
 {
 	queueUpdate();
 }
