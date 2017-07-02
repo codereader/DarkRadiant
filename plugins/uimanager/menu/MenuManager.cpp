@@ -140,10 +140,7 @@ void MenuManager::insert(const std::string& insertPath,
 	element->setIcon(icon);
 	element->setEvent(eventName);
 
-	// Get the Menu position of the child widget
-	int position = insertBefore->getParent()->getMenuPosition(insertBefore);
-
-	insertBefore->getParent()->addChild(element, position);
+	insertBefore->getParent()->insertChild(element, insertBefore);
 
 	handleElementAdded(element);
 }

@@ -87,21 +87,14 @@ void MenuElement::setIsVisible(bool visible)
 
 void MenuElement::addChild(const MenuElementPtr& newChild)
 {
-	addChild(newChild, std::numeric_limits<int>::max());
+	newChild->setParent(shared_from_this());
+	_children.push_back(newChild);
 }
 
-void MenuElement::addChild(const MenuElementPtr& newChild, int pos)
+void MenuElement::insertChild(const MenuElementPtr& newChild, const MenuElementPtr& insertBefore)
 {
 	newChild->setParent(shared_from_this());
-
-	if (pos >= static_cast<int>(_children.size()) || pos == std::numeric_limits<int>::max())
-	{
-		_children.push_back(newChild);
-	}
-	else
-	{
-		_children.insert(_children.begin() + pos, newChild);
-	}	
+	_children.insert(std::find(_children.begin(), _children.end(), insertBefore), newChild);
 }
 
 void MenuElement::removeChild(const MenuElementPtr& child)
@@ -141,10 +134,20 @@ void MenuElement::setEvent(const std::string& eventName)
 	_event = eventName;
 }
 
-int MenuElement::getMenuPosition(const MenuElementPtr& child)
+int MenuElement::getMenuPosition(const MenuElementPtr& child, bool includeHidden)
 {
-	return static_cast<int>(std::distance(_children.begin(), 
-		std::find(_children.begin(), _children.end(), child)));
+	int pos = 0;
+
+	for (const MenuElementPtr& candidate : _children)
+	{
+		if (!candidate->isVisible()) continue; // skip hidden items
+		
+		if (candidate == child) break;
+		
+		++pos;
+	}
+
+	return pos;
 }
 
 MenuElementPtr MenuElement::find(const std::string& menuPath)

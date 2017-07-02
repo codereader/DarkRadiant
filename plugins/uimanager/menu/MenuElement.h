@@ -78,9 +78,9 @@ public:
 
 	/**
 	* greebo: Adds the given MenuElement to the list of children.
-	* @pos: the position this element is inserted at.
+	* @pos: the element this element is inserted before.
 	*/
-	void addChild(const MenuElementPtr& newChild, int pos);
+	void insertChild(const MenuElementPtr& newChild, const MenuElementPtr& insertBefore);
 
 	/**
 	 * Removes the given child from this menu item.
@@ -90,9 +90,10 @@ public:
 	// Removes all child nodes
 	void removeAllChildren();
 
-	/** greebo: Tries to find the GtkMenu position index of the given child.
+	/** 
+	 * greebo: Returns the index/position of the given child. Hidden elements do not count.
 	 */
-	int getMenuPosition(const MenuElementPtr& child);
+	int getMenuPosition(const MenuElementPtr& child, bool includeHidden = false);
 
 	// Gets/sets the caption of this item
 	void setCaption(const std::string& caption);

@@ -59,13 +59,15 @@ void MenuFolder::construct()
 			wxMenuBar* bar = std::static_pointer_cast<MenuBar>(parent)->getMenuBar();
 
 			// Create the menu folder at the correct position
-			int pos = std::static_pointer_cast<MenuBar>(parent)->getMenuPosition(shared_from_this());
+			int pos = parent->getMenuPosition(shared_from_this());
 			bar->Insert(pos, _menu, getCaption());
 		}
 		else if (std::dynamic_pointer_cast<MenuFolder>(parent))
 		{
 			wxMenu* parentMenu = std::static_pointer_cast<MenuFolder>(parent)->getMenu();
-			_parentItem = parentMenu->AppendSubMenu(_menu, getCaption());
+
+			int pos = parent->getMenuPosition(shared_from_this());
+			_parentItem = parentMenu->Insert(pos, wxID_ANY, getCaption(), _menu);
 		}
 	}
 
