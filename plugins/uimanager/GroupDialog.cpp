@@ -129,9 +129,6 @@ std::string GroupDialog::getPageName()
 // Display the named page
 void GroupDialog::setPage(const std::string& name)
 {
-	// Force a Pageswitch to ensure the texture browser is properly redrawn.
-	setPage(_pages[0].page);
-
 	// Now search for the correct page.
 	for (Pages::value_type& i : _pages)
 	{
