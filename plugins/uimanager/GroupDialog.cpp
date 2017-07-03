@@ -299,8 +299,30 @@ wxWindow* GroupDialog::addPage(const PagePtr& page)
 		}
 	}
 
+	// greebo: Workaround to resolve #4551 in wxGTK:
+	// In Window Layouts with the GroupDialog in its own Window
+	// the attempt to Reparent() the page widget to the wxNotebook fails
+	// and the page gets cramped into the upper left corner.
+	// I can't figure the heck out why this happens, but it works when
+	// inserting a wxPanel and reparenting the page to that instead.
+#if false
+	// non-working code, stuff gets cramped into the upper left corner as if wrongly parented
 	page->page->Reparent(_notebook.get());
 	_notebook->InsertPage(insertPosition, page->page, page->tabLabel, false, imageId);
+#else
+	// Instantiate an intermediate wxPanel with the wxNotebook as parent
+	wxPanel* temp = new wxPanel(_notebook.get(), wxID_ANY);
+	temp->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	// Reparent the page widget to the panel
+	page->page->Reparent(temp);
+	temp->GetSizer()->Add(page->page, 1, wxEXPAND);
+
+	// We need to store the panel as page widget for switching functionality
+	page->page = temp;
+
+	_notebook->InsertPage(insertPosition, temp, page->tabLabel, false, imageId);
+#endif
 
 	// Add this page by copy to the local list
 	_pages.insert(std::make_pair(page->position, Page(*page)));
