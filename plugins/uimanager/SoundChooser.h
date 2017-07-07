@@ -67,6 +67,7 @@ private:
 
 	// callbacks
 	void _onSelectionChange(wxDataViewEvent& ev);
+	void _onItemActivated(wxDataViewEvent& ev);
     void _onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 public:

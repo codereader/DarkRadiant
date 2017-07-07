@@ -176,6 +176,8 @@ wxWindow* SoundChooser::createTreeView(wxWindow* parent)
 	// Get selection and connect the changed callback
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(SoundChooser::_onSelectionChange), NULL, this);
+	_treeView->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED,
+		wxDataViewEventHandler(SoundChooser::_onItemActivated), NULL, this);
 
 	return _treeView;
 }
@@ -253,6 +255,11 @@ void SoundChooser::handleSelectionChange()
 void SoundChooser::_onSelectionChange(wxDataViewEvent& ev)
 {
     handleSelectionChange();
+}
+
+void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
+{
+	_preview->playRandomSoundFile();
 }
 
 void SoundChooser::setTreeViewModel()

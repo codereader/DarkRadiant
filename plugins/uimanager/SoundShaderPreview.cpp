@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "iuimanager.h"
 #include <iostream>
+#include <cstdlib>
 
 #include <wx/artprov.h>
 #include <wx/stattext.h>
@@ -30,6 +31,9 @@ SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 	// Connect the "changed" signal
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(SoundShaderPreview::onSelectionChanged), NULL, this);
+
+	_treeView->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED,
+		wxDataViewEventHandler(SoundShaderPreview::onItemActivated), NULL, this);
 
 	GetSizer()->Add(_treeView, 1, wxEXPAND);
 	GetSizer()->Add(createControlPanel(this), 0, wxALIGN_BOTTOM | wxLEFT, 12);
@@ -69,6 +73,24 @@ void SoundShaderPreview::setSoundShader(const std::string& soundShader)
 {
 	_soundShader = soundShader;
 	update();
+}
+
+void SoundShaderPreview::playRandomSoundFile()
+{
+	if (_soundShader.empty() || !_listStore) return;
+
+	// Select a random file from the list
+	wxDataViewItemArray children;
+	unsigned int numFiles = _listStore->GetChildren(_listStore->GetRoot(), children);
+
+	if (numFiles > 0)
+	{
+		int selected = rand() % numFiles;
+		_treeView->Select(children[selected]);
+		handleSelectionChange();
+
+		playSelectedFile();
+	}
 }
 
 void SoundShaderPreview::update()
@@ -136,6 +158,11 @@ void SoundShaderPreview::onSelectionChanged(wxDataViewEvent& ev)
 	handleSelectionChange();
 }
 
+void SoundShaderPreview::onItemActivated(wxDataViewEvent& ev)
+{
+	playSelectedFile();
+}
+
 void SoundShaderPreview::handleSelectionChange()
 {
 	std::string selectedFile = getSelectedSoundFile();
@@ -145,6 +172,11 @@ void SoundShaderPreview::handleSelectionChange()
 }
 
 void SoundShaderPreview::onPlay(wxCommandEvent& ev)
+{
+	playSelectedFile();
+}
+
+void SoundShaderPreview::playSelectedFile()
 {
 	_statusLabel->SetLabel("");
 
