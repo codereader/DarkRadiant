@@ -30,42 +30,58 @@ void SoundManager::forEachShader(std::function<void(const ISoundShader&)> f)
 
 bool SoundManager::playSound(const std::string& fileName)
 {
+	return playSound(fileName, false);
+}
+
+bool SoundManager::playSound(const std::string& fileName, bool loopSound)
+{
 	// Make a copy of the filename
 	std::string name = fileName;
 
 	// Try to open the file as it is
 	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
     rConsole() << "Trying: " << name << std::endl;
-	if (file != NULL) {
+
+	if (file) 
+	{
 		// File found, play it
         rConsole() << "Found file: " << name << std::endl;
-		if (_soundPlayer) _soundPlayer->play(*file);
+		if (_soundPlayer) _soundPlayer->play(*file, loopSound);
 		return true;
 	}
 
 	std::string root = name;
+
 	// File not found, try to strip the extension
-	if (name.rfind(".") != std::string::npos) {
+	if (name.rfind(".") != std::string::npos)
+	{
 		root = name.substr(0, name.rfind("."));
 	}
 
 	// Try to open the .ogg variant
 	name = root + ".ogg";
+
     rConsole() << "Trying: " << name << std::endl;
+
 	file = GlobalFileSystem().openFile(name);
-	if (file != NULL) {
+
+	if (file) 
+	{
         rConsole() << "Found file: " << name << std::endl;
-		if (_soundPlayer) _soundPlayer->play(*file);
+		if (_soundPlayer) _soundPlayer->play(*file, loopSound);
 		return true;
 	}
 
 	// Try to open the file with .wav extension
 	name = root + ".wav";
     rConsole() << "Trying: " << name << std::endl;
+
 	file = GlobalFileSystem().openFile(name);
-	if (file != NULL) {
+
+	if (file)
+	{
         rConsole() << "Found file: " << name << std::endl;
-		if (_soundPlayer) _soundPlayer->play(*file);
+		if (_soundPlayer) _soundPlayer->play(*file, loopSound);
 		return true;
 	}
 

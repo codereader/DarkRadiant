@@ -38,6 +38,13 @@ SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 	GetSizer()->Add(_treeView, 1, wxEXPAND);
 	GetSizer()->Add(createControlPanel(this), 0, wxALIGN_BOTTOM | wxLEFT, 12);
 
+	// Attach to the close event
+	Bind(wxEVT_DESTROY, [&](wxWindowDestroyEvent& ev)
+	{
+		GlobalSoundManager().stopSound();
+		ev.Skip();
+	});
+
 	// Trigger the initial update of the widgets
 	update();
 }
@@ -50,20 +57,26 @@ wxSizer* SoundShaderPreview::createControlPanel(wxWindow* parent)
 	_playButton = new wxButton(parent, wxID_ANY, _("Play"));
 	_playButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-start-ltr.png"));
 
+	_playLoopedButton = new wxButton(parent, wxID_ANY, _("Play and loop"));
+	_playLoopedButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "loop.png"));
+
 	_stopButton = new wxButton(parent, wxID_ANY, _("Stop"));
 	_stopButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-stop.png"));
 
 	_playButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SoundShaderPreview::onPlay), NULL, this);
+	_playLoopedButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SoundShaderPreview::onPlayLooped), NULL, this);
 	_stopButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SoundShaderPreview::onStop), NULL, this);
 
-	_playButton->SetMinSize(wxSize(80, -1));
-	_stopButton->SetMinSize(wxSize(80, -1));
+	_playButton->SetMinSize(wxSize(120, -1));
+	_playLoopedButton->SetMinSize(wxSize(120, -1));
+	_stopButton->SetMinSize(wxSize(120, -1));
 
 	_statusLabel = new wxStaticText(parent, wxID_ANY, "");
 	_statusLabel->Wrap(100);
 
 	vbox->Add(_statusLabel, 0, wxEXPAND | wxBOTTOM, 12);
 	vbox->Add(_playButton, 0, wxBOTTOM, 6);
+	vbox->Add(_playLoopedButton, 0, wxBOTTOM, 6);
 	vbox->Add(_stopButton, 0);
 
 	return vbox;
@@ -89,7 +102,7 @@ void SoundShaderPreview::playRandomSoundFile()
 		_treeView->Select(children[selected]);
 		handleSelectionChange();
 
-		playSelectedFile();
+		playSelectedFile(false);
 	}
 }
 
@@ -160,7 +173,7 @@ void SoundShaderPreview::onSelectionChanged(wxDataViewEvent& ev)
 
 void SoundShaderPreview::onItemActivated(wxDataViewEvent& ev)
 {
-	playSelectedFile();
+	playSelectedFile(false);
 }
 
 void SoundShaderPreview::handleSelectionChange()
@@ -169,14 +182,20 @@ void SoundShaderPreview::handleSelectionChange()
 
 	// Set the sensitivity of the playbutton accordingly
 	_playButton->Enable(!selectedFile.empty());
+	_playLoopedButton->Enable(!selectedFile.empty());
 }
 
 void SoundShaderPreview::onPlay(wxCommandEvent& ev)
 {
-	playSelectedFile();
+	playSelectedFile(false);
 }
 
-void SoundShaderPreview::playSelectedFile()
+void SoundShaderPreview::onPlayLooped(wxCommandEvent& ev)
+{
+	playSelectedFile(true);
+}
+
+void SoundShaderPreview::playSelectedFile(bool loop)
 {
 	_statusLabel->SetLabel("");
 
@@ -185,7 +204,7 @@ void SoundShaderPreview::playSelectedFile()
 	if (!selectedFile.empty())
 	{
 		// Pass the call to the sound manager
-		if (!GlobalSoundManager().playSound(selectedFile))
+		if (!GlobalSoundManager().playSound(selectedFile, loop))
 		{
 			_statusLabel->SetLabel(_("Error: File not found."));
 		}

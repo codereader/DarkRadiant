@@ -47,7 +47,7 @@ public:
 	/** greebo: Call this with the ArchiveFile object containing
 	 * 			the file to be played.
 	 */
-	virtual void play(ArchiveFile& file);
+	virtual void play(ArchiveFile& file, bool loopSound);
 
 	/** greebo: Stops the playback immediately.
 	 */
@@ -62,6 +62,9 @@ protected:
 
 	// This is called periodically to check whether the buffer can be cleared
 	void onTimerIntervalReached(wxTimerEvent& ev);
+
+	void createBufferDataFromOgg(ArchiveFile& file);
+	void createBufferDataFromWav(ArchiveFile& file);
 };
 
 } // namespace sound

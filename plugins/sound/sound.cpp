@@ -7,5 +7,5 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	module::performDefaultInitialisation(registry);
 
-	registry.registerModule(sound::SoundManagerPtr(new sound::SoundManager));
+	registry.registerModule(std::make_shared<sound::SoundManager>());
 }

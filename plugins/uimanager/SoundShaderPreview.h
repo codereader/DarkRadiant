@@ -28,6 +28,7 @@ private:
 	wxutil::TreeView* _treeView;
 
 	wxButton* _playButton;
+	wxButton* _playLoopedButton;
 	wxButton* _stopButton;
 	wxStaticText* _statusLabel;
 
@@ -78,11 +79,12 @@ private:
 
 	// Callbacks
 	void onPlay(wxCommandEvent& ev);
+	void onPlayLooped(wxCommandEvent& ev);
 	void onStop(wxCommandEvent& ev);
 	void onSelectionChanged(wxDataViewEvent& ev);
 	void onItemActivated(wxDataViewEvent& ev);
 
-	void playSelectedFile();
+	void playSelectedFile(bool loop);
 	void handleSelectionChange();
 };
 
