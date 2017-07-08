@@ -49,3 +49,8 @@ tools/msvc2015/DarkRadiant.VC.db
 # Mac OS X Stuff
 .DS_Store
 xcuserdata
+Makefile.in
+/config.h.in
+/configure
+/ltmain.sh
+/aclocal.m4
