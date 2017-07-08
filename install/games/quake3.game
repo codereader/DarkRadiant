@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <game
   type="quake3"
-  index="99"
+  index="20"
   name="Quake 3"
   enginepath_win32="C:/games/quake3/"
   enginepath_linux="/usr/local/games/quake3/"

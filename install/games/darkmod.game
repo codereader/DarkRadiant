@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <game
   type="doom3"
-  index="99"
+  index="10"
   name="The Dark Mod 2.0 (Standalone)"
   enginepath_win32="C:/games/darkmod/"
   enginepath_linux="/usr/local/games/darkmod/"
