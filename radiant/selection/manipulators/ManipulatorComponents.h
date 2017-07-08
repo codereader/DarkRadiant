@@ -70,7 +70,7 @@ public:
 	{}
 
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
-	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 };
 
 class RotateAxis : 
@@ -92,7 +92,7 @@ public:
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 
 	/// \brief Converts current position to a normalised vector orthogonal to axis.
-	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 
 	void SetAxis(const Vector3& axis)
 	{
@@ -123,7 +123,7 @@ public:
 	{}
 
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
-	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 
 	void SetAxis(const Vector3& axis) 
 	{
@@ -143,7 +143,7 @@ public:
 	{}
 	
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
-	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 };
 
 
@@ -160,7 +160,7 @@ public:
 	{}
 
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
-	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 
 	void SetAxis(const Vector3& axis)
 	{
@@ -180,7 +180,7 @@ public:
 	{}
 
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
-	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 };
 
 class ModelScaleComponent :
@@ -207,7 +207,7 @@ public:
 	void setScalePivot(const Vector3& scalePivot);
 
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
-	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained) override;
+	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 };
 
 // ========= Translatables ===============================================

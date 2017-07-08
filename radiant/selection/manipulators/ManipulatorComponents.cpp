@@ -92,7 +92,7 @@ void RotateFree::beginTransformation(const Matrix4& pivot2world, const VolumeTes
     _start.normalise();
 }
 
-void RotateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void RotateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	Vector3 current = getSphereIntersection(pivot2world, view, devicePoint);
 	current.normalise();
@@ -114,7 +114,7 @@ void RotateAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTes
 }
 
 /// \brief Converts current position to a normalised vector orthogonal to axis.
-void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	Vector3 current = getSphereIntersection(pivot2world, view, devicePoint);
 
@@ -123,7 +123,7 @@ void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, c
 
 	Vector3::ElementType angle = getAngleForAxis(_start, current, _axis);
 
-	if (constrained)
+	if (constraintFlags & Constraint::Type1)
 	{
 		angle = float_snapped(angle, 5 * c_DEG2RADMULT);
 	}
@@ -140,7 +140,7 @@ void TranslateAxis::beginTransformation(const Matrix4& pivot2world, const Volume
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	// Get the regular difference between the starting point and the current mouse point
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
@@ -164,12 +164,12 @@ void TranslateFree::beginTransformation(const Matrix4& pivot2world, const Volume
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
     Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
     Vector3 diff = current - _start;
 
-	if (constrained)
+	if (constraintFlags & Constraint::Type1)
 	{
 		// Locate the index of the component carrying the largest abs value
 		int largestIndex = fabs(diff.y()) > fabs(diff.x()) ?
@@ -195,7 +195,7 @@ void ScaleAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	// Get the regular difference between the starting point and the current mouse point
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
@@ -226,7 +226,7 @@ void ScaleFree::beginTransformation(const Matrix4& pivot2world, const VolumeTest
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 	Vector3 diff = current - _start;
@@ -267,7 +267,7 @@ void ModelScaleComponent::beginTransformation(const Matrix4& pivot2world, const 
 	_startOrigin = string::convert<Vector3>(entity->getKeyValue("origin"));
 }
 
-void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	Vector3 current = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
 
@@ -280,7 +280,7 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 	);
 
 	// Default to uniform scale, use to the value deviating most from the 1.0 scale
-	if (!constrained)
+	if (!(constraintFlags & Constraint::Type1))
 	{
 		Vector3 delta = scale - Vector3(1.0, 1.0, 1.0);
 

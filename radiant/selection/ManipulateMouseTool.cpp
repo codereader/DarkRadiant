@@ -179,12 +179,15 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 	_debugText += (boost::format("\nTest reversal x,y,z = (%5.3lf %5.3lf %5.3lf)") % worldPosH.x() % worldPosH.y() % worldPosH.z()).str();
 #endif
 
-	// Constrain the movement to the axes, if the modifier is held
-	bool constrainedFlag = wxGetKeyState(WXK_SHIFT);
+	// Query keyboard modifier state and pass them as flags
+	int constraintFlag = selection::Manipulator::Component::Constraint::Unconstrained;
+	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::Manipulator::Component::Constraint::Type1 : 0;
+	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? selection::Manipulator::Component::Constraint::Type2 : 0;
+	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::Manipulator::Component::Constraint::Type3 : 0;
 
 	// Get the component of the currently active manipulator (done by selection test)
 	// and call the transform method
-	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, devicePoint, constrainedFlag);
+	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, devicePoint, constraintFlag);
 
 	_selectionSystem.onManipulationChanged();
 }
