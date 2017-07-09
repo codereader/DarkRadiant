@@ -1,10 +1,10 @@
-#ifndef REGISTRYTREE_H_
-#define REGISTRYTREE_H_
+#pragma once
 
 #include "xmlutil/Document.h"
 
 class RegistryTree
 {
+private:
 	// The top level node name ("darkradiant")
 	std::string _topLevelNode;
 	std::string _defaultImportNode;
@@ -62,12 +62,10 @@ public:
 	// Dump the tree to std::out for debugging purposes
 	void dump() const;
 
+private:
 	/* Checks whether the key is an absolute or a relative path
 	 * Absolute paths are returned unchanged, a prefix with the
 	 * toplevel node (e.g. "/darkradiant") is appended to the relative ones.
 	 */
 	std::string prepareKey(const std::string& key);
-
-}; // class RegistryTree
-
-#endif /*REGISTRYTREE_H_*/
+};
