@@ -19,9 +19,6 @@ XMLRegistry::XMLRegistry() :
     _shutdown(false)
 {}
 
-XMLRegistry::~XMLRegistry()
-{}
-
 void XMLRegistry::saveToDisk()
 {
     rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed." << std::endl;
@@ -158,7 +155,7 @@ std::string XMLRegistry::getAttribute(const std::string& path,
 
 	if (nodeList.empty())
 	{
-		return "";
+		return std::string();
 	}
 
 	return nodeList[0].getAttributeValue(attrName);
@@ -178,8 +175,7 @@ std::string XMLRegistry::get(const std::string& key)
 		return wxutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	
-    //rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
-	return "";
+	return std::string();
 }
 
 void XMLRegistry::set(const std::string& key, const std::string& value) 
@@ -212,12 +208,28 @@ void XMLRegistry::import(const std::string& importFilePath, const std::string& p
 void XMLRegistry::emitSignalForKey(const std::string& changedKey)
 {
     // Do not default-construct a signal, just emit if there is one already
-    KeySignals::iterator i = _keySignals.find(changedKey);
+    KeySignals::const_iterator i = _keySignals.find(changedKey);
 
     if (i != _keySignals.end())
     {
         i->second.emit();
     }
+}
+
+void XMLRegistry::loadUserFileFromSettingsPath(const ApplicationContext& ctx, 
+	const std::string& filename, const std::string& baseXPath)
+{
+	std::string userSettingsFile = ctx.getSettingsPath() + filename;
+
+	if (os::fileOrDirExists(userSettingsFile))
+	{
+		import(userSettingsFile, baseXPath, Registry::treeUser);
+	}
+	else
+	{
+		rMessage() << "XMLRegistry: file " << filename << " not present in " 
+			<< ctx.getSettingsPath() << std::endl;
+	}
 }
 
 // RegisterableModule implementation
@@ -240,8 +252,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 	// Load the XML files from the runtime data directory
 	std::string base = ctx.getRuntimeDataPath();
 
-    rConsole() << "XMLRegistry: looking for XML files under "
-              << base << std::endl;
+    rConsole() << "XMLRegistry: looking for XML files in " << base << std::endl;
 
 	try
     {
@@ -264,38 +275,11 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	// Load user preferences, these overwrite any values that have defined before
-	// The called method also checks for any upgrades that have to be performed
-	const std::string userSettingsFile = ctx.getSettingsPath() + "user.xml";
-
-	if (os::fileOrDirExists(userSettingsFile))
-    {
-		import(userSettingsFile, "", Registry::treeUser);
-	}
-    else 
-    {
-        rMessage() << "XMLRegistry: no user.xml in " << userSettingsFile << std::endl;
-    }
-
-	const std::string userColoursFile = ctx.getSettingsPath() + "colours.xml";
-
-	if (os::fileOrDirExists(userColoursFile)) 
-    {
-		import(userColoursFile, "user/ui", Registry::treeUser);
-	}
-
-	const std::string userInputFile = ctx.getSettingsPath() + "input.xml";
-
-	if (os::fileOrDirExists(userInputFile))
-    {
-		import(userInputFile, "user/ui", Registry::treeUser);
-	}
-
-	const std::string userFilterFile = ctx.getSettingsPath() + "filters.xml";
-
-	if (os::fileOrDirExists(userFilterFile))
-    {
-		import(userFilterFile, "user/ui/filtersystem", Registry::treeUser);
-	}
+	
+	loadUserFileFromSettingsPath(ctx, "user.xml", "");
+	loadUserFileFromSettingsPath(ctx, "colours.xml", "user/ui");
+	loadUserFileFromSettingsPath(ctx, "input.xml", "user/ui");
+	loadUserFileFromSettingsPath(ctx, "filters.xml", "user/ui/filtersystem");
 
 	// Now the registry is up and running, tell the context to emit
 	// the the relevant paths to the XMLRegistry
