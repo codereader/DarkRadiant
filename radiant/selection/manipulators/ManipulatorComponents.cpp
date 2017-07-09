@@ -149,8 +149,12 @@ void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view
 	// Project this diff vector to our constraining axis
 	Vector3 axisProjected = _axis * diff.dot(_axis);
 	
-	// Snap and apply translation
-	axisProjected.snap(GlobalGrid().getGridSize());
+	// Snap to grid if the constraint flag is set
+	if (constraintFlags & Constraint::Grid)
+	{
+		// Snap and apply translation
+		axisProjected.snap(GlobalGrid().getGridSize());
+	}
 
 	_translatable.translate(axisProjected);
 }
@@ -181,7 +185,11 @@ void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view
 		diff[(largestIndex + 2) % 3] = 0;
 	}
 
-	diff.snap(GlobalGrid().getGridSize());
+	// Snap to grid if the constraint flag is set
+	if (constraintFlags & Constraint::Grid)
+	{
+		diff.snap(GlobalGrid().getGridSize());
+	}
 
     _translatable.translate(diff);
 }
@@ -204,10 +212,15 @@ void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, co
 	// Project this diff vector to our constraining axis
 	Vector3 axisProjected = _axis * diff.dot(_axis);
 
-	axisProjected.snap(GlobalGrid().getGridSize());
+	Vector3 start = _start;
 
-	Vector3 start(_start.getSnapped(GlobalGrid().getGridSize()));
-
+	// Snap to grid if the constraint flag is set
+	if (constraintFlags & Constraint::Grid)
+	{
+		diff.snap(GlobalGrid().getGridSize());
+		start.snap(GlobalGrid().getGridSize());
+	}
+	
     Vector3 scale(
       start[0] == 0 ? 1 : 1 + axisProjected[0] / start[0],
       start[1] == 0 ? 1 : 1 + axisProjected[1] / start[1],
@@ -231,9 +244,14 @@ void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, co
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 	Vector3 diff = current - _start;
 
-	diff.snap(GlobalGrid().getGridSize());
+	Vector3 start = _start;
 
-    Vector3 start(_start.getSnapped(GlobalGrid().getGridSize()));
+	// Snap to grid if the constraint flag is set
+	if (constraintFlags & Constraint::Grid)
+	{
+		diff.snap(GlobalGrid().getGridSize());
+		start.snap(GlobalGrid().getGridSize());
+	}
 
     Vector3 scale(
       start[0] == 0 ? 1 : 1 + diff[0] / start[0],
@@ -353,9 +371,9 @@ TranslatablePivot::TranslatablePivot(ManipulationPivot& pivot) :
 
 void TranslatablePivot::translate(const Vector3& translation)
 {
-	Vector3 translationSnapped = translation.getSnapped(GlobalGrid().getGridSize());
+	//Vector3 translationSnapped = translation.getSnapped(GlobalGrid().getGridSize());
 
-	_pivot.applyTranslation(translationSnapped);
+	_pivot.applyTranslation(translation);
 
 	// User is placing the pivot manually, so let's keep it that way
 	_pivot.setUserLocked(true);

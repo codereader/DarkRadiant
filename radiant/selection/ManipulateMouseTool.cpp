@@ -182,8 +182,10 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 	// Query keyboard modifier state and pass them as flags
 	int constraintFlag = selection::Manipulator::Component::Constraint::Unconstrained;
 	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::Manipulator::Component::Constraint::Type1 : 0;
-	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? selection::Manipulator::Component::Constraint::Type2 : 0;
 	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::Manipulator::Component::Constraint::Type3 : 0;
+
+	// Grid constraint is ON by default, unless CTRL is held
+	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::Manipulator::Component::Constraint::Grid;
 
 	// Get the component of the currently active manipulator (done by selection test)
 	// and call the transform method

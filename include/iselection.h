@@ -84,7 +84,7 @@ public:
 			{
 				Unconstrained = 0,	// no keyboard modifier held
 				Type1 = 1 << 0,		// usually: shift held down
-				Type2 = 1 << 1,		// usually: ctrl held down
+				Grid =  1 << 1,		// usually: ctrl NOT held down
 				Type3 = 1 << 2,		// usually: alt held down
 			};
 		};
