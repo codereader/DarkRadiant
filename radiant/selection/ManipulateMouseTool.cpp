@@ -275,6 +275,22 @@ void ManipulateMouseTool::cancelMove()
 		{
 			transform->revertTransform();
 		}
+
+		// In case of entities, we need to inform the child nodes as well
+		if (Node_getEntity(node))
+		{
+			node->foreachNode([&](const scene::INodePtr& child)
+			{
+				ITransformablePtr transform = Node_getTransformable(child);
+
+				if (transform)
+				{
+					transform->revertTransform();
+				}
+
+				return true;
+			});
+		}
 	});
 
 	_manipulationActive = false;

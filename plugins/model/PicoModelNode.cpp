@@ -104,7 +104,7 @@ void PicoModelNode::insertLight(const RendererLight& light)
 }
 
 // Clear all lights from this model instance
-void PicoModelNode::clearLights() 
+void PicoModelNode::clearLights()
 {
 	_lights.clear();
 }
@@ -137,14 +137,14 @@ bool PicoModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 
 // Renderable submission
 void PicoModelNode::submitRenderables(RenderableCollector& collector,
-									  const VolumeTest& volume,
-									  const Matrix4& localToWorld,
-									  const IRenderEntity& entity) const
+	const VolumeTest& volume,
+	const Matrix4& localToWorld,
+	const IRenderEntity& entity) const
 {
 	// Test the model's intersection volume, if it intersects pass on the
 	// render call
 	if (volume.TestAABB(_picoModel->localAABB(), localToWorld) != VOLUME_OUTSIDE)
-    {
+	{
 		// Submit the lights
 		collector.setLights(_lights);
 
@@ -176,10 +176,18 @@ std::string PicoModelNode::getSkin() const
 
 void PicoModelNode::_onTransformationChanged()
 {
+	// Always revert to our original state before evaluating
 	if (getTransformationType() & TransformationType::Scale)
 	{
 		_picoModel->revertScale();
 		_picoModel->evaluateScale(getScale());
+	}
+	else if (getTransformationType() == TransformationType::NoTransform)
+	{
+		// Transformation has been changed but no transform mode is set,
+		// so the reason we got here is a cancelTransform() call, revert everything
+		_picoModel->revertScale();
+		_picoModel->evaluateScale(Vector3(1,1,1));
 	}
 }
 
