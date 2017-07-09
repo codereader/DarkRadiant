@@ -289,6 +289,11 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 {
 	Vector3 current = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
 
+	if (constraintFlags & Component::Constraint::Grid)
+	{
+		current.snap(GlobalGrid().getGridSize());
+	}
+
 	// In Orthographic views it's entirely possible that the starting point
 	// is in the same plane as the pivot, so check for zero divisions
 	Vector3 scale(
@@ -371,8 +376,6 @@ TranslatablePivot::TranslatablePivot(ManipulationPivot& pivot) :
 
 void TranslatablePivot::translate(const Vector3& translation)
 {
-	//Vector3 translationSnapped = translation.getSnapped(GlobalGrid().getGridSize());
-
 	_pivot.applyTranslation(translation);
 
 	// User is placing the pivot manually, so let's keep it that way
