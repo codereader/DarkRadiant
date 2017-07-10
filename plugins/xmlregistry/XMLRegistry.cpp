@@ -16,9 +16,23 @@ XMLRegistry::XMLRegistry() :
     _shutdown(false)
 {}
 
+void XMLRegistry::shutdown()
+{
+	rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed." << std::endl;
+
+	saveToDisk();
+
+	_shutdown = true;
+}
+
 void XMLRegistry::saveToDisk()
 {
-    rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed." << std::endl;
+	// Save the user tree to the settings path, this contains all
+	// settings that have been modified during runtime
+	if (!get(RKEY_SKIP_REGISTRY_SAVE).empty())
+	{
+		return;
+	}
 
 	// Make a deep copy of the user tree by copy-constructing it
 	RegistryTree copiedTree(_userTree);
@@ -30,42 +44,34 @@ void XMLRegistry::saveToDisk()
 	copiedTree.deleteXPath(RKEY_BITMAPS_PATH);
 
     // Application-relative on other OS
-	std::string settingsPath =
-		module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
+	std::string settingsPath = module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
 
-	// Save the user tree to the settings path, this contains all
-	// settings that have been modified during runtime
-	if (get(RKEY_SKIP_REGISTRY_SAVE).empty())
-    {
-		// Replace the version tag and set it to the current DarkRadiant version
-		copiedTree.deleteXPath("user//version");
-		copiedTree.set("user/version", RADIANT_VERSION);
+	// Replace the version tag and set it to the current DarkRadiant version
+	copiedTree.deleteXPath("user//version");
+	copiedTree.set("user/version", RADIANT_VERSION);
 
-		// Export the user-defined filter definitions to a separate file
-		copiedTree.exportToFile("user/ui/filtersystem/filters", settingsPath + "filters.xml");
-		copiedTree.deleteXPath("user/ui/filtersystem/filters");
+	// Export the user-defined filter definitions to a separate file
+	copiedTree.exportToFile("user/ui/filtersystem/filters", settingsPath + "filters.xml");
+	copiedTree.deleteXPath("user/ui/filtersystem/filters");
 
-		// Export the colour schemes and remove them from the registry
-		copiedTree.exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
-		copiedTree.deleteXPath("user/ui/colourschemes");
+	// Export the colour schemes and remove them from the registry
+	copiedTree.exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
+	copiedTree.deleteXPath("user/ui/colourschemes");
 
-		// Export the input definitions into the user's settings folder and remove them as well
-		copiedTree.exportToFile("user/ui/input", settingsPath + "input.xml");
-		copiedTree.deleteXPath("user/ui/input");
+	// Export the input definitions into the user's settings folder and remove them as well
+	copiedTree.exportToFile("user/ui/input", settingsPath + "input.xml");
+	copiedTree.deleteXPath("user/ui/input");
 
-		// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
-		copiedTree.deleteXPath("user/*[@transient='1']");
+	// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
+	copiedTree.deleteXPath("user/*[@transient='1']");
 
-		// Remove any remaining upgradePaths (from older registry files)
-		copiedTree.deleteXPath("user/upgradePaths");
-		// Remove legacy <interface> node
-		copiedTree.deleteXPath("user/ui/interface");
+	// Remove any remaining upgradePaths (from older registry files)
+	copiedTree.deleteXPath("user/upgradePaths");
+	// Remove legacy <interface> node
+	copiedTree.deleteXPath("user/ui/interface");
 
-		// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
-		copiedTree.exportToFile("user", settingsPath + "user.xml");
-	}
-
-    _shutdown = true;
+	// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
+	copiedTree.exportToFile("user", settingsPath + "user.xml");
 }
 
 xml::NodeList XMLRegistry::findXPath(const std::string& path)
@@ -287,5 +293,5 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 
     // Subscribe to the post-module-shutdown signal to save changes to disk
     module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(
-        sigc::mem_fun(this, &XMLRegistry::saveToDisk));
+        sigc::mem_fun(this, &XMLRegistry::shutdown));
 }

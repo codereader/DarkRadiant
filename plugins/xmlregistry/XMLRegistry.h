@@ -99,6 +99,9 @@ public:
 	// Dumps the current registry to std::out, for debugging purposes
 	void dump() const override;
 
+	// Exports the user-tree to XML files in the user's settings path
+	void saveToDisk() override;
+
 	/* Saves a specified path from the user tree to the file <filename>.
 	 * Use "-" as <filename> if you want to write to std::out.
 	 */
@@ -118,6 +121,6 @@ private:
 	void emitSignalForKey(const std::string& changedKey);
 
     // Invoked after all modules have been uninitialised
-    void saveToDisk();
+    void shutdown();
 };
 typedef std::shared_ptr<XMLRegistry> XMLRegistryPtr;
