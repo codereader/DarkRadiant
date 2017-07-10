@@ -8,13 +8,20 @@
 #include "wxutil/IConv.h"
 
 // Constructor
-RegistryTree::RegistryTree(const std::string& topLevelNode) :
-	_topLevelNode(topLevelNode),
+RegistryTree::RegistryTree() :
+	_topLevelNode(TOPLEVEL_NODE_NAME),
 	_defaultImportNode(std::string("/") + _topLevelNode),
 	_tree(xml::Document::create())
 {
 	// Create the base XML structure with the <darkradiant> top-level tag
 	_tree.addTopLevelNode(_topLevelNode);
+}
+
+RegistryTree::RegistryTree(const RegistryTree& other) :
+	_topLevelNode(other._topLevelNode),
+	_defaultImportNode(other._defaultImportNode),
+	_tree(xml::Document::clone(other._tree)) // copy-construct
+{
 }
 
 std::string RegistryTree::prepareKey(const std::string& key)

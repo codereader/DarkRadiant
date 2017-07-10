@@ -12,9 +12,6 @@
 #include "wxutil/IConv.h"
 
 XMLRegistry::XMLRegistry() :
-	_topLevelNode("darkradiant"),
-	_standardTree(_topLevelNode),
-	_userTree(_topLevelNode),
 	_queryCounter(0),
     _shutdown(false)
 {}
@@ -23,11 +20,14 @@ void XMLRegistry::saveToDisk()
 {
     rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed." << std::endl;
 
+	// Make a deep copy of the user tree by copy-constructing it
+	RegistryTree copiedTree(_userTree);
+
 	// Don't save these paths into the xml files.
-	deleteXPath(RKEY_APP_PATH);
-	deleteXPath(RKEY_HOME_PATH);
-	deleteXPath(RKEY_SETTINGS_PATH);
-	deleteXPath(RKEY_BITMAPS_PATH);
+	copiedTree.deleteXPath(RKEY_APP_PATH);
+	copiedTree.deleteXPath(RKEY_HOME_PATH);
+	copiedTree.deleteXPath(RKEY_SETTINGS_PATH);
+	copiedTree.deleteXPath(RKEY_BITMAPS_PATH);
 
     // Application-relative on other OS
 	std::string settingsPath =
@@ -38,31 +38,31 @@ void XMLRegistry::saveToDisk()
 	if (get(RKEY_SKIP_REGISTRY_SAVE).empty())
     {
 		// Replace the version tag and set it to the current DarkRadiant version
-		deleteXPath("user//version");
-		set("user/version", RADIANT_VERSION);
+		copiedTree.deleteXPath("user//version");
+		copiedTree.set("user/version", RADIANT_VERSION);
 
 		// Export the user-defined filter definitions to a separate file
-		exportToFile("user/ui/filtersystem/filters", settingsPath + "filters.xml");
-		deleteXPath("user/ui/filtersystem/filters");
+		copiedTree.exportToFile("user/ui/filtersystem/filters", settingsPath + "filters.xml");
+		copiedTree.deleteXPath("user/ui/filtersystem/filters");
 
 		// Export the colour schemes and remove them from the registry
-		exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
-		deleteXPath("user/ui/colourschemes");
+		copiedTree.exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
+		copiedTree.deleteXPath("user/ui/colourschemes");
 
 		// Export the input definitions into the user's settings folder and remove them as well
-		exportToFile("user/ui/input", settingsPath + "input.xml");
-		deleteXPath("user/ui/input");
+		copiedTree.exportToFile("user/ui/input", settingsPath + "input.xml");
+		copiedTree.deleteXPath("user/ui/input");
 
 		// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
-		deleteXPath("user/*[@transient='1']");
+		copiedTree.deleteXPath("user/*[@transient='1']");
 
 		// Remove any remaining upgradePaths (from older registry files)
-		deleteXPath("user/upgradePaths");
+		copiedTree.deleteXPath("user/upgradePaths");
 		// Remove legacy <interface> node
-		deleteXPath("user/ui/interface");
+		copiedTree.deleteXPath("user/ui/interface");
 
 		// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
-		exportToFile("user", settingsPath + "user.xml");
+		copiedTree.exportToFile("user", settingsPath + "user.xml");
 	}
 
     _shutdown = true;

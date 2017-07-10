@@ -2,6 +2,8 @@
 
 #include "xmlutil/Document.h"
 
+const char* const TOPLEVEL_NODE_NAME = "darkradiant";
+
 class RegistryTree
 {
 private:
@@ -13,8 +15,11 @@ private:
 	xml::Document _tree;
 
 public:
-	// Constructor, pass the name of the toplevel node to it
-	RegistryTree(const std::string& topLevelNode);
+	// Constructor, creates a default XML document
+	RegistryTree();
+
+	// Copy-Construct this tree, creates a deep copy of the other tree
+	RegistryTree(const RegistryTree& other);
 
 	// Returns a list of nodes matching the given <xpath>
 	xml::NodeList findXPath(const std::string& xPath);

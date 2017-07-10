@@ -36,9 +36,6 @@ private:
     typedef std::map<const std::string, sigc::signal<void> > KeySignals;
     mutable KeySignals _keySignals;
 
-	// The default import node and toplevel node
-	std::string _topLevelNode;
-
 	// The "install" tree, is basically treated as read-only
 	RegistryTree _standardTree;
 
