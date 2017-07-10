@@ -42,6 +42,18 @@ Document Document::create()
 	return Document(doc);
 }
 
+Document Document::clone(const Document& source)
+{
+	if (source._xmlDoc == nullptr)
+	{
+		// Nothing to clone, create an empty doc
+		return Document(nullptr);
+	}
+
+	// Create a deep copy of the other doc
+	return Document(xmlCopyDoc(source._xmlDoc, 1));
+}
+
 void Document::addTopLevelNode(const std::string& name)
 {
 	std::lock_guard<std::mutex> lock(_lock);
