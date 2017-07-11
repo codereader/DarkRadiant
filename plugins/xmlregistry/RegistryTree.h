@@ -2,6 +2,9 @@
 
 #include "xmlutil/Document.h"
 
+namespace registry
+{
+
 const char* const TOPLEVEL_NODE_NAME = "darkradiant";
 
 class RegistryTree
@@ -74,3 +77,5 @@ private:
 	 */
 	std::string prepareKey(const std::string& key);
 };
+
+}

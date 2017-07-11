@@ -1,4 +1,4 @@
-#include "XMLRegistry.h"		// The Abstract Base Class
+#include "XMLRegistry.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -10,6 +10,9 @@
 #include "version.h"
 #include "string/string.h"
 #include "wxutil/IConv.h"
+
+namespace registry
+{
 
 XMLRegistry::XMLRegistry() :
 	_queryCounter(0),
@@ -314,8 +317,10 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
     module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(
         sigc::mem_fun(this, &XMLRegistry::shutdown));
 
-	_autosaver.reset(new registry::Autosaver([this]() 
+	_autosaver.reset(new Autosaver([this]() 
 	{
 		return _changesSinceLastSave > 0;
 	}));
+}
+
 }

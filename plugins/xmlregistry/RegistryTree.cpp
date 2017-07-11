@@ -7,7 +7,9 @@
 
 #include "wxutil/IConv.h"
 
-// Constructor
+namespace registry
+{
+
 RegistryTree::RegistryTree() :
 	_topLevelNode(TOPLEVEL_NODE_NAME),
 	_defaultImportNode(std::string("/") + _topLevelNode),
@@ -306,4 +308,6 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 void RegistryTree::dump() const
 {
 	_tree.saveToFile("-");
+}
+
 }

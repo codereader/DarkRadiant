@@ -28,14 +28,17 @@
 #include "RegistryTree.h"
 #include "Autosaver.h"
 
+namespace registry
+{
+
 class XMLRegistry :
 	public Registry
 {
 private:
-    // The map of registry key signals. There is one signal per key, but a
-    // signal can of course be connected to multiple slots.
-    typedef std::map<const std::string, sigc::signal<void> > KeySignals;
-    mutable KeySignals _keySignals;
+	// The map of registry key signals. There is one signal per key, but a
+	// signal can of course be connected to multiple slots.
+	typedef std::map<const std::string, sigc::signal<void> > KeySignals;
+	mutable KeySignals _keySignals;
 
 	// The "install" tree, is basically treated as read-only
 	RegistryTree _standardTree;
@@ -50,13 +53,13 @@ private:
 	// Change tracking counter, is reset when saveToDisk() is called
 	unsigned int _changesSinceLastSave;
 
-    // TRUE if the registry has already been saved to disk
-    // At this point no more write operations should be made
-    // to the registry
-    bool _shutdown;
+	// TRUE if the registry has already been saved to disk
+	// At this point no more write operations should be made
+	// to the registry
+	bool _shutdown;
 
-	// The autosaver
-	std::unique_ptr<registry::Autosaver> _autosaver;
+	// Auto-save helper
+	std::unique_ptr<Autosaver> _autosaver;
 
 public:
 	/* Constructor:
@@ -84,8 +87,8 @@ public:
 
 	// Set the value of the given attribute at the specified <path>.
 	void setAttribute(const std::string& path,
-					  const std::string& attrName,
-					  const std::string& attrValue) override;
+		const std::string& attrName,
+		const std::string& attrValue) override;
 
 	// Loads the string value of the given attribute of the node at <path>.
 	std::string getAttribute(const std::string& path, const std::string& attrName) override;
@@ -114,7 +117,7 @@ public:
 	 */
 	void exportToFile(const std::string& key, const std::string& filename) override;
 
-    sigc::signal<void> signalForKey(const std::string& key) const override;
+	sigc::signal<void> signalForKey(const std::string& key) const override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;
@@ -127,7 +130,9 @@ private:
 
 	void emitSignalForKey(const std::string& changedKey);
 
-    // Invoked after all modules have been uninitialised
-    void shutdown();
+	// Invoked after all modules have been uninitialised
+	void shutdown();
 };
 typedef std::shared_ptr<XMLRegistry> XMLRegistryPtr;
+
+}

@@ -9,5 +9,5 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	module::performDefaultInitialisation(registry);
 
-	registry.registerModule(XMLRegistryPtr(new XMLRegistry));
+	registry.registerModule(std::make_shared<registry::XMLRegistry>());
 }
