@@ -13,6 +13,7 @@
 
 XMLRegistry::XMLRegistry() :
 	_queryCounter(0),
+	_changesSinceLastSave(0),
     _shutdown(false)
 {}
 
@@ -23,6 +24,7 @@ void XMLRegistry::shutdown()
 	saveToDisk();
 
 	_shutdown = true;
+	_autosaver.reset();
 }
 
 void XMLRegistry::saveToDisk()
@@ -72,6 +74,8 @@ void XMLRegistry::saveToDisk()
 
 	// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
 	copiedTree.exportToFile("user", settingsPath + "user.xml");
+
+	_changesSinceLastSave = 0;
 }
 
 xml::NodeList XMLRegistry::findXPath(const std::string& path)
@@ -121,6 +125,11 @@ void XMLRegistry::deleteXPath(const std::string& path)
 	// Add the toplevel node to the path if required
 	xml::NodeList nodeList = findXPath(path);
 
+	if (!nodeList.empty())
+	{
+		_changesSinceLastSave++;
+	}
+
 	for (xml::Node& node : nodeList)
     {
 		// unlink and delete the node
@@ -134,6 +143,8 @@ xml::Node XMLRegistry::createKeyWithName(const std::string& path,
 {
     assert(!_shutdown);
 
+	_changesSinceLastSave++;
+
 	// The key will be created in the user tree (the default tree is read-only)
 	return _userTree.createKeyWithName(path, key, name);
 }
@@ -142,6 +153,8 @@ xml::Node XMLRegistry::createKey(const std::string& key)
 {
     assert(!_shutdown);
 
+	_changesSinceLastSave++;
+
 	return _userTree.createKey(key);
 }
 
@@ -149,6 +162,8 @@ void XMLRegistry::setAttribute(const std::string& path,
 	const std::string& attrName, const std::string& attrValue)
 {
     assert(!_shutdown);
+
+	_changesSinceLastSave++;
 
 	_userTree.setAttribute(path, attrName, attrValue);
 }
@@ -192,6 +207,8 @@ void XMLRegistry::set(const std::string& key, const std::string& value)
 	// Convert the string to UTF-8 before storing it into the RegistryTree
 	_userTree.set(key, wxutil::IConv::localeToUTF8(value));
 
+	_changesSinceLastSave++;
+
 	// Notify the observers
 	emitSignalForKey(key);
 }
@@ -209,6 +226,8 @@ void XMLRegistry::import(const std::string& importFilePath, const std::string& p
 			_standardTree.importFromFile(importFilePath, parentKey);
 			break;
 	}
+
+	_changesSinceLastSave++;
 }
 
 void XMLRegistry::emitSignalForKey(const std::string& changedKey)
@@ -294,4 +313,9 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
     // Subscribe to the post-module-shutdown signal to save changes to disk
     module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(
         sigc::mem_fun(this, &XMLRegistry::shutdown));
+
+	_autosaver.reset(new registry::Autosaver([this]() 
+	{
+		return _changesSinceLastSave > 0;
+	}));
 }

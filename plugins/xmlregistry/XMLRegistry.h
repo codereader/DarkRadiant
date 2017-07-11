@@ -26,6 +26,7 @@
 
 #include "imodule.h"
 #include "RegistryTree.h"
+#include "Autosaver.h"
 
 class XMLRegistry :
 	public Registry
@@ -46,10 +47,16 @@ private:
 	// The query counter for some statistics :)
 	unsigned int _queryCounter;
 
+	// Change tracking counter, is reset when saveToDisk() is called
+	unsigned int _changesSinceLastSave;
+
     // TRUE if the registry has already been saved to disk
     // At this point no more write operations should be made
     // to the registry
     bool _shutdown;
+
+	// The autosaver
+	std::unique_ptr<registry::Autosaver> _autosaver;
 
 public:
 	/* Constructor:

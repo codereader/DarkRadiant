@@ -24,5 +24,8 @@
     <ClInclude Include="..\..\plugins\xmlregistry\XMLRegistry.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\xmlregistry\Autosaver.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

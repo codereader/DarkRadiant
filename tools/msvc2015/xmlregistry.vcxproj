@@ -320,6 +320,7 @@
     <ClCompile Include="..\..\plugins\xmlregistry\XMLRegistryModule.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\xmlregistry\Autosaver.h" />
     <ClInclude Include="..\..\plugins\xmlregistry\RegistryTree.h" />
     <ClInclude Include="..\..\plugins\xmlregistry\XMLRegistry.h" />
   </ItemGroup>

@@ -300,7 +300,7 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 	// Save the whole document to the specified filename
 	targetDoc.saveToFile(filename);
 
-	rMessage() << "XMLRegistry: Saved " << key << " to " << filename << std::endl;
+	// rMessage() << "XMLRegistry: Saved " << key << " to " << filename << std::endl;
 }
 
 void RegistryTree::dump() const
