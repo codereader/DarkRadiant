@@ -8,7 +8,7 @@ if not exist b2.exe goto :error
 
 mkdir stage
 
-b2 toolset=msvc variant=release,debug link=static threading=multi address-model=64 stage /boost/python /boost/filesystem /boost/regex /boost/system
+b2 toolset=msvc variant=release,debug link=static threading=multi address-model=64 stage /boost/python /boost/filesystem /boost/system
 
 start stage
 
