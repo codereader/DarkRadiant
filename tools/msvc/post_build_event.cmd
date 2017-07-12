@@ -1,9 +1,11 @@
 del ..\..\install\*.dll
+del ..\..\install\python*.zip
 
 copy ..\..\w32deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w32deps\openal\bin\wrap_oal.dll ..\..\install /Y
 copy ..\..\w32deps\glew\bin\glew32.dll ..\..\install /Y
-copy ..\..\w32deps\python\bin\python*.dll ..\..\install /Y
+copy ..\..\w32deps\python\bin\python3*.dll ..\..\install /Y
+copy ..\..\w32deps\python\bin\python3*.zip ..\..\install /Y
 
 @rem Copy wxWidgets libraries (32 bit)
 

@@ -54,3 +54,4 @@ Makefile.in
 /configure
 /ltmain.sh
 /aclocal.m4
+/install/*.zip
