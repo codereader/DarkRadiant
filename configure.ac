@@ -161,7 +161,7 @@ BOOST_SMART_PTR
 BOOST_TOKENIZER
 
 # These ones require libraries too
-BOOST_REGEX
+# BOOST_REGEX # no longer needed, using std::regex now
 BOOST_FILESYSTEM
 BOOST_SYSTEM
 BOOST_TEST
