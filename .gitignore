@@ -55,3 +55,5 @@ Makefile.in
 /ltmain.sh
 /aclocal.m4
 /install/*.zip
+/tools/msvc/.vs
+/tools/msvc/DarkRadiant.VC.db
