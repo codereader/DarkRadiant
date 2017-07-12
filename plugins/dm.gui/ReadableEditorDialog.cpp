@@ -1202,11 +1202,11 @@ void ReadableEditorDialog::checkGuiLayout()
 	if (dialog.run() == ui::IDialog::RESULT_YES)
 	{
 		XData::PageLayout layoutBefore = _xData->getPageLayout();
-		std::string guiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
+		std::string selectedGuiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
 
-		if (!guiName.empty())
+		if (!selectedGuiName.empty())
 		{
-			_guiEntry->SetValue(guiName);
+			_guiEntry->SetValue(selectedGuiName);
 			_runningGuiLayoutCheck = false;
 			updateGuiView();
 			return;

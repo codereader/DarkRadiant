@@ -1408,8 +1408,9 @@ int PicoGetHashTableSize( void )
 unsigned int calculateHash(unsigned char* str, size_t len)
 {
 	unsigned int hash = 5381;
-	int c, i;
-    
+	int c;
+	size_t i;
+
     for (i = 0; i < len; ++i)
     {
         c = str[i];

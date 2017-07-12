@@ -264,11 +264,11 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			std::string timeStr = tokeniser.nextToken();
 
 			// Check the time for validity
-			std::size_t time = string::convert<std::size_t>(
+			std::size_t onTime = string::convert<std::size_t>(
                 timeStr, std::numeric_limits<std::size_t>::max()
             );
 
-			if (time == std::numeric_limits<std::size_t>::max())
+			if (onTime == std::numeric_limits<std::size_t>::max())
 			{
 				rWarning() << "Invalid time encountered in onTime event in "
 					<< name << ": " << timeStr << std::endl;
@@ -279,7 +279,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 			script->constructFromTokens(tokeniser);
 
-			_timedEvents.insert(TimedEventMap::value_type(time, script));
+			_timedEvents.insert(TimedEventMap::value_type(onTime, script));
 		}
 		else if (token == "onnamedevent")
 		{
@@ -399,25 +399,25 @@ void GuiWindowDef::update(const std::size_t timeStep, bool updateChildren)
 	}
 }
 
-void GuiWindowDef::initTime(const std::size_t time, bool updateChildren)
+void GuiWindowDef::initTime(const std::size_t toTime, bool updateChildren)
 {
-	this->time = time;
+	this->time = toTime;
 
 	if (updateChildren)
 	{
 		for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
 		{
-			(*i)->initTime(time, updateChildren);
+			(*i)->initTime(toTime, updateChildren);
 		}
 	}
 }
 
-GuiWindowDefPtr GuiWindowDef::findWindowDef(const std::string& name)
+GuiWindowDefPtr GuiWindowDef::findWindowDef(const std::string& windowName)
 {
 	// First look at all direct children
 	for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
-		if ((*i)->name == name)
+		if ((*i)->name == windowName)
 		{
 			return (*i);
 		}
@@ -426,7 +426,7 @@ GuiWindowDefPtr GuiWindowDef::findWindowDef(const std::string& name)
 	// Not found, ask each child to search for the windowDef
 	for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
-		GuiWindowDefPtr window = (*i)->findWindowDef(name);
+		GuiWindowDefPtr window = (*i)->findWindowDef(windowName);
 
 		if (window != NULL) return window;
 	}
