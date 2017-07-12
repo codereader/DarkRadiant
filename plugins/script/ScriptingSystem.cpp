@@ -62,7 +62,7 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 
 	if (_initialised) {
 		// Add the interface at once, all the others are already added
-		iface->registerInterface(_mainNamespace);
+		iface->registerInterface(_mainObjects->mainNamespace);
 	}
 }
 
@@ -93,8 +93,8 @@ void ScriptingSystem::executeScriptFile(const std::string& filename) {
 		// Attempt to run the specified script
 		boost::python::object ignored = boost::python::exec_file(
             filePath.c_str(),
-			_mainNamespace,
-			_globals
+			_mainObjects->mainNamespace,
+			_mainObjects->globals
 		);
 	}
     catch (std::invalid_argument& e) // thrown when the file doesn't exist
@@ -129,8 +129,8 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 		// Attempt to run the specified script
 		boost::python::object ignored = boost::python::exec(
 			scriptString.c_str(),
-			_mainNamespace,
-			_globals
+			_mainObjects->mainNamespace,
+			_mainObjects->globals
 		);
 	}
 	catch (const boost::python::error_already_set&)
@@ -159,7 +159,7 @@ void ScriptingSystem::initialise()
 			// Handle each interface in its own try/catch block
 			try
 			{
-				i->second->registerInterface(_mainNamespace);
+				i->second->registerInterface(_mainObjects->mainNamespace);
 			}
 			catch (const boost::python::error_already_set&)
 			{
@@ -235,7 +235,7 @@ void ScriptingSystem::executeCommand(const std::string& name) {
 	}
 
 	// Set the execution flag in the global namespace
-	_globals["__executeCommand__"] = true;
+	_mainObjects->globals["__executeCommand__"] = true;
 
 	// Execute the script file behind this command
 	executeScriptFile(found->second->getFilename());
@@ -254,7 +254,7 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 		// Attempt to run the specified script
 		boost::python::object ignored = boost::python::exec_file(
 			(_scriptPath + scriptFilename).c_str(),
-			_mainNamespace,
+			_mainObjects->mainNamespace,
 			locals	// pass the new dictionary for the locals
 		);
 
@@ -391,8 +391,10 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << ": Python interpreter initialised." << std::endl;
 
 	// Initialise the boost::python objects
-	_mainModule = boost::python::import("__main__");
-	_mainNamespace = _mainModule.attr("__dict__");
+	_mainObjects.reset(new BoostPythonMainObjects);
+
+	_mainObjects->mainModule = boost::python::import("__main__");
+	_mainObjects->mainNamespace = _mainObjects->mainModule.attr("__dict__");
 
 	try {
 		// Construct the console writer interface
@@ -400,7 +402,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 		consoleWriter.def("write", &PythonConsoleWriter::write);
 
 		// Declare the interface to python
-		_mainNamespace["PythonConsoleWriter"] = consoleWriter;
+		_mainObjects->mainNamespace["PythonConsoleWriter"] = consoleWriter;
 
 		// Redirect stdio output to our local ConsoleWriter instances
 		boost::python::import("sys").attr("stderr") = boost::python::ptr(&_errorWriter);
@@ -416,7 +418,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	// Declare the std::vector<std::string> object to Python, this is used several times
-	_mainNamespace["StringVector"] = boost::python::class_< std::vector<std::string> >("StringVector")
+	_mainObjects->mainNamespace["StringVector"] = boost::python::class_< std::vector<std::string> >("StringVector")
 		.def(boost::python::vector_indexing_suite<std::vector<std::string>, true>())
 	;
 
@@ -494,6 +496,9 @@ void ScriptingSystem::shutdownModule()
 	_interfaces.clear();
 
 	_initialised = false;
+
+	// Clear the boost::python::objects
+	_mainObjects.reset();
 
 	Py_Finalize();
 }
