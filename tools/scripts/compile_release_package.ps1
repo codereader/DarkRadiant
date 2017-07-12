@@ -45,21 +45,21 @@ $pdbFilenameTemplate = "darkradiant-{0}-$target.pdb.7z"
 if ($target -eq "x86")
 {
     $platform = "Win32"
-    $copyFilesCmd = ".\copy_install_files.cmd"
     $issFile = "..\innosetup\darkradiant.iss"
     $portablePath = "DarkRadiant_install"
+	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.10.25008\x86\Microsoft.VC150.CRT"
 } 
 else
 {
     $platform = "x64"
-    $copyFilesCmd = ".\copy_install_files.x64.cmd"
     $issFile = "..\innosetup\darkradiant.x64.iss"
     $portablePath = "DarkRadiant_install.x64"
+	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.10.25008\x64\Microsoft.VC150.CRT"
 }
 
 if (-not $skipbuild)
 {
-	Start-Process "msbuild" -ArgumentList ("..\msvc2015\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
+	Start-Process "msbuild" -ArgumentList ("..\msvc\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
 }
 
 # Copy files to portable files folder
@@ -83,7 +83,7 @@ $excludes = @('*.exp', '*.lib', '*.iobj', '*.ipdb', '*.suo', '*.pgd', '*.fbp', '
 Get-ChildItem $installFolder -Recurse -Exclude $excludes | Copy-Item -Destination { Join-Path $portableFilesFolder $_.FullName.Substring($installFolder.FullName.Length) }
 
 # Copy the VC++ redist files
-$vcFolder = Get-Item "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT" -Erroraction SilentlyContinue
+$vcFolder = Get-Item $redistSource -Erroraction SilentlyContinue
 
 if ($vcFolder -ne $null)
 {
