@@ -41,7 +41,7 @@ void StartupMapLoader::onRadiantStartup()
 		// We have a map file, check if it exists (and where)
 
 		// First, look if we have an absolute map path
-		if (boost::filesystem::exists(candidate))
+		if (os::fileOrDirExists(candidate))
 		{
 			mapToLoad = candidate;
 			break;
@@ -52,7 +52,7 @@ void StartupMapLoader::onRadiantStartup()
 		boost::filesystem::path fullMapPath = mapsPath / candidate;
 
 		// Next, look in the regular maps path
-		if (boost::filesystem::exists(fullMapPath))
+		if (os::fileOrDirExists(fullMapPath.string()))
 		{
 			mapToLoad = fullMapPath.string();
 			break;
@@ -61,7 +61,7 @@ void StartupMapLoader::onRadiantStartup()
 		// Check for mod-relative paths too
 		fullMapPath = mapsPath.remove_leaf().remove_leaf() / candidate;
 
-		if (boost::filesystem::exists(fullMapPath))
+		if (os::fileOrDirExists(fullMapPath.string()))
 		{
 			mapToLoad = fullMapPath.string();
 			break;

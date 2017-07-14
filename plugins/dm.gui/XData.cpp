@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/convenience.hpp>
+#include "os/file.h"
 
 namespace XData
 {
@@ -19,7 +20,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 	// Ensure the parent path exists
 	boost::filesystem::create_directories(parent);
 
-	if (boost::filesystem::exists(Path))
+	if (os::fileOrDirExists(Path.string()))
 	{
 		switch (cmd)
 		{

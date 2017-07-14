@@ -34,6 +34,7 @@
 
 #include <wx/frame.h>
 
+#include "os/file.h"
 #include "os/path.h"
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
@@ -84,7 +85,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename) {
 
         // Prevent calling exec_file with a non-existent file, we would
         // get crashes during Py_Finalize later on.
-        if (!boost::filesystem::exists(filePath))
+        if (!os::fileOrDirExists(filePath))
         { 
             rError() << "Error: File " << filePath << " doesn't exist." << std::endl;
             return;

@@ -26,6 +26,7 @@
 
 #include "../ParticlesManager.h"
 
+#include "os/file.h"
 #include "os/path.h"
 #include "util/ScopedBoolLock.h"
 
@@ -1506,7 +1507,7 @@ std::string ParticleEditor::queryParticleFile()
     boost::filesystem::path modParticlesPath = GlobalGameManager().getModPath();
     modParticlesPath /= "particles";
 
-    if (!boost::filesystem::exists(modParticlesPath))
+    if (!os::fileOrDirExists(modParticlesPath.string()))
     {
         rMessage() << "Ensuring mod particles path: " << modParticlesPath << std::endl;
         boost::filesystem::create_directories(modParticlesPath);

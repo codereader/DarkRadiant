@@ -16,6 +16,7 @@
 
 #include "registry/registry.h"
 #include "string/string.h"
+#include "os/file.h"
 #include "os/path.h"
 #include "i18n.h"
 #include "itextstream.h"
@@ -373,7 +374,7 @@ bool ReadableEditorDialog::save()
 	// Get the storage path and check its validity
 	std::string storagePath = constructStoragePath();
 
-	if (!_useDefaultFilename && !boost::filesystem::exists(storagePath))
+	if (!_useDefaultFilename && !os::fileOrDirExists(storagePath))
 	{
 		// The file does not exist, so we have imported a definition contained inside a PK4.
 		wxutil::Messagebox::ShowError(

@@ -122,7 +122,7 @@ void AutoMapSaver::saveSnapshot()
 	std::string mapName = os::filename_from_path(fullPath.filename());
 
 	// Check if the folder exists and create it if necessary
-	if (boost::filesystem::exists(snapshotPath) || os::makeDirectory(snapshotPath.string()))
+	if (os::fileOrDirExists(snapshotPath.string()) || os::makeDirectory(snapshotPath.string()))
 	{
 		// Reset the size counter of the snapshots folder
 		std::size_t folderSize = 0;
