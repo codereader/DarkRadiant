@@ -39,18 +39,26 @@ void StartupMapLoader::onRadiantStartup()
 		if (os::getExtension(candidate) != "map") continue;
 
 		// We have a map file, check if it exists (and where)
+
+		// First, look if we have an absolute map path
+		if (boost::filesystem::exists(candidate))
+		{
+			mapToLoad = candidate;
+			break;
+		}
+
 		boost::filesystem::path mapsPath = GlobalRegistry().get(RKEY_MAP_PATH);
 
 		boost::filesystem::path fullMapPath = mapsPath / candidate;
 
-		// First, look in the regular maps path
+		// Next, look in the regular maps path
 		if (boost::filesystem::exists(fullMapPath))
 		{
 			mapToLoad = fullMapPath.string();
 			break;
 		}
 
-		// Second, check for mod-relative paths
+		// Check for mod-relative paths too
 		fullMapPath = mapsPath.remove_leaf().remove_leaf() / candidate;
 
 		if (boost::filesystem::exists(fullMapPath))
