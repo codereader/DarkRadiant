@@ -289,17 +289,22 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 {
 	Vector3 current = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
 
+	Vector3 start = _start;
+
 	if (constraintFlags & Component::Constraint::Grid)
 	{
+		// When grid snapping is on, snap the starting point too
+		// otherwise we don't detect the zero-axis-movements below
+		start.snap(GlobalGrid().getGridSize());
 		current.snap(GlobalGrid().getGridSize());
 	}
 
 	// In Orthographic views it's entirely possible that the starting point
 	// is in the same plane as the pivot, so check for zero divisions
 	Vector3 scale(
-		_start[0] != 0 ? fabs(current[0]) / fabs(_start[0]) : 1,
-		_start[1] != 0 ? fabs(current[1]) / fabs(_start[1]) : 1,
-		_start[2] != 0 ? fabs(current[2]) / fabs(_start[2]) : 1
+		start[0] != 0 ? fabs(current[0]) / fabs(start[0]) : 1,
+		start[1] != 0 ? fabs(current[1]) / fabs(start[1]) : 1,
+		start[2] != 0 ? fabs(current[2]) / fabs(start[2]) : 1
 	);
 
 	// Default to uniform scale, use to the value deviating most from the 1.0 scale
