@@ -259,7 +259,32 @@ void SoundChooser::_onSelectionChange(wxDataViewEvent& ev)
 
 void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
 {
-	_preview->playRandomSoundFile();
+	wxDataViewItem item = ev.GetItem();
+
+	if (item.IsOk())
+	{
+		wxutil::TreeModel::Row row(item, *_treeStore);
+
+		bool isFolder = row[_columns.isFolder].getBool();
+
+		if (isFolder)
+		{
+			// In case we double-click a folder, toggle its expanded state
+			if (_treeView->IsExpanded(item))
+			{
+				_treeView->Collapse(item);
+			}
+			else
+			{
+				_treeView->Expand(item);
+			}
+
+			return;
+		}
+
+		// It's a regular item, try to play it back
+		_preview->playRandomSoundFile();
+	}
 }
 
 void SoundChooser::setTreeViewModel()
