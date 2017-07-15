@@ -28,7 +28,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 		case Merge:
 			{
 			//Check if definition already exists and return DefinitionExists. If it does not, append the definition to the file.
-				std::fstream file(Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
+				std::fstream file(Path.string(), std::ios_base::in | std::ios_base::out | std::ios_base::app);
 				if (!file.is_open())
 					return OpenFailed;
 				std::stringstream ss;
@@ -65,7 +65,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 			{
 			//Find the old definition in the target file and delete it. Append the new definition.
 			//_definitionStart has been set in the first iteration of this method.
-				std::fstream file(Path, std::ios_base::in);
+				std::fstream file(Path.string(), std::ios_base::in);
 				if (!file.is_open())
 					return OpenFailed;
 				std::stringstream ss;
@@ -80,7 +80,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 					+ generateXDataDef()
 					+ std::string( (_definitionStart == OutString.size()) ? "" : "\n\n\n" );		//No new lines at the end of file
 				OutString.insert(_definitionStart, insString);
-				file.open(Path, std::ios_base::out | std::ios_base::trunc);
+				file.open(Path.string(), std::ios_base::out | std::ios_base::trunc);
 				if (!file.is_open())
 					return OpenFailed;
 				file << OutString;
@@ -93,7 +93,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 			//Warn if the definition in the target file does not match the current definition: return DefinitionMisMatch
 			//else overwrite existing file.
 				std::string DefName;
-				std::ifstream file(Path, std::ios_base::in);
+				std::ifstream file(Path.string(), std::ios_base::in);
 				if (!file.is_open())
 					return OpenFailed;
 				try	{ DefName = getDefinitionNameFromXD(file); }
@@ -117,7 +117,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 	}
 
 	//Write the definition into the file.
-	std::ofstream file(Path, std::ios_base::out | std::ios_base::trunc);
+	std::ofstream file(Path.string(), std::ios_base::out | std::ios_base::trunc);
 	if (!file.is_open())
 		return OpenFailed;
 	file << generateXDataDef();
