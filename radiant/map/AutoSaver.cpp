@@ -25,10 +25,6 @@
 
 #include <wx/frame.h>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/convenience.hpp>
-#include <boost/filesystem/exception.hpp>
-
 namespace map 
 {
 
@@ -41,9 +37,6 @@ namespace
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_FOLDER = "user/ui/map/snapshotFolder";
 	const char* RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE = "user/ui/map/maxSnapshotFolderSize";
 	const char* GKEY_MAP_EXTENSION = "/mapFormat/fileExtension";
-
-	// Filesystem path typedef
-	typedef boost::filesystem::path Path;
 }
 
 AutoMapSaver::AutoMapSaver() :
@@ -111,10 +104,10 @@ void AutoMapSaver::saveSnapshot()
 	}
 
 	// Construct the boost::path class out of the full map path (throws on fail)
-	Path fullPath = GlobalMap().getMapName();
+	fs::path fullPath = GlobalMap().getMapName();
 
 	// Append the the snapshot folder to the path
-	Path snapshotPath = fullPath;
+	fs::path snapshotPath = fullPath;
 	snapshotPath.remove_filename();
 	snapshotPath /= GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 
@@ -217,7 +210,7 @@ void AutoMapSaver::checkSave()
 			{
 				saveSnapshot();
 			}
-			catch (boost::filesystem::filesystem_error& f) 
+			catch (fs::filesystem_error& f) 
 			{
 				rError() << "AutoSaver::saveSnapshot: " << f.what() << std::endl;
 			}

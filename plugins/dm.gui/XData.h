@@ -1,12 +1,10 @@
-#ifndef XDATA_H
-#define XDATA_H
+#pragma once
 
 #include <string>
 #include <vector>
 #include <iostream>
 #include "i18n.h"
 #include <memory>
-#include "boost/filesystem/fstream.hpp"
 
 #include "parser/DefTokeniser.h"
 
@@ -143,7 +141,7 @@ private:
 
 	// Returns the definition-name found in the file or "" if multiple definitions where found.
 	// Used by the xport()-method in the overwrite-command for checking for a DefinitionMatch or MultipleDefinitions.
-	const std::string getDefinitionNameFromXD(boost::filesystem::ifstream& file) const;
+	const std::string getDefinitionNameFromXD(std::ifstream& file) const;
 
 	// Used to jump out of a definition. Can lead to undefined behavior on Syntax-errors.
 	void jumpOutOfBrackets(parser::DefTokeniser& tok, int currentDepth) const;
@@ -238,5 +236,3 @@ public:
 typedef std::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
 
 } //namespace XData
-
-#endif /* XDATA_H */
