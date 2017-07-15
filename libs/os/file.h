@@ -1,7 +1,7 @@
 #pragma once
 
 #include "itextstream.h"
-#include <boost/filesystem/operations.hpp>
+#include "fs.h"
 #include "debugging/debugging.h"
 
 /// \file
@@ -56,7 +56,7 @@ inline bool fileIsReadable(const std::string& path)
 }
 
 /// \brief Returns true if the file or directory identified by \p path exists and may be opened for reading.
-inline bool fileIsReadable(const boost::filesystem::path& path)
+inline bool fileIsReadable(const fs::path& path)
 {
 	return detail::checkFileAccess(path.string(), detail::FileAccess::Read);
 }
@@ -68,7 +68,7 @@ inline bool fileIsWritable(const std::string& path)
 }
 
 /// \brief Returns true if the file or directory identified by \p path exists and may be opened for writing.
-inline bool fileIsWritable(const boost::filesystem::path& path)
+inline bool fileIsWritable(const fs::path& path)
 {
 	return detail::checkFileAccess(path.string(), detail::FileAccess::Write);
 }
@@ -78,9 +78,9 @@ inline bool fileOrDirExists(const std::string& path)
 {
 	try
 	{
-		return boost::filesystem::exists(path);
+		return fs::exists(path);
 	}
-	catch (boost::filesystem::filesystem_error&)
+	catch (fs::filesystem_error&)
 	{
 		return false;
 	}
@@ -91,9 +91,9 @@ inline std::size_t getFileSize(const std::string& path)
 {
 	try
 	{
-		return static_cast<std::size_t>(boost::filesystem::file_size(path));
+		return static_cast<std::size_t>(fs::file_size(path));
 	}
-	catch (boost::filesystem::filesystem_error& err)
+	catch (fs::filesystem_error& err)
 	{
 		rError() << "Error checking filesize: " << err.what() << std::endl;
 		return static_cast<std::size_t>(-1);

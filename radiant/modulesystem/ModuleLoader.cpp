@@ -34,7 +34,7 @@ namespace
 }
 
 // Functor operator, gets invoked on directory traversal
-void ModuleLoader::processModuleFile(const boost::filesystem::path& file)
+void ModuleLoader::processModuleFile(const fs::path& file)
 {
 	// Check for the correct extension of the visited file
 	if (boost::algorithm::to_lower_copy(file.extension().string()) != MODULE_FILE_EXTENSION) return;
@@ -120,7 +120,7 @@ void ModuleLoader::loadModulesFromPath(const std::string& path)
 	// In case the folder is non-existent, catch the exception
 	try
 	{
-		os::foreachItemInDirectory(path, [&](const boost::filesystem::path& file)
+		os::foreachItemInDirectory(path, [&](const fs::path& file)
 		{
 			processModuleFile(file);
 		});

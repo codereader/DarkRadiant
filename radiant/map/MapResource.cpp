@@ -21,6 +21,7 @@
 #include "debugging/debugging.h"
 #include "os/path.h"
 #include "os/file.h"
+#include "os/fs.h"
 #include "map/algorithm/Traverse.h"
 #include "stream/textfilestream.h"
 #include "scenelib.h"
@@ -36,8 +37,6 @@
 #include "algorithm/MapExporter.h"
 #include "infofile/InfoFileExporter.h"
 #include "algorithm/ChildPrimitives.h"
-
-namespace fs = boost::filesystem;
 
 namespace map
 {
@@ -517,7 +516,7 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 	}
 }
 
-bool MapResource::checkIsWriteable(const boost::filesystem::path& path)
+bool MapResource::checkIsWriteable(const fs::path& path)
 {
 	// Check writeability of the given file
 	if (os::fileOrDirExists(path.string()) && !os::fileIsWritable(path))

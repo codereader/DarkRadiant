@@ -2,13 +2,12 @@
 
 /// \file
 /// \brief OS directory-listing object.
-#include <boost/filesystem.hpp>
+#include "fs.h"
+#include "itextstream.h"
 
 #include <string>
 #include <stdexcept>
 #include <functional>
-
-namespace fs = boost::filesystem;
 
 namespace os
 {
@@ -62,11 +61,19 @@ inline bool makeDirectory(const std::string& name)
 			// Directory has been created, set permissions
 			rConsole() << "Directory " << dirPath << " created succesfully." << std::endl;
 
+#ifdef DR_USE_STD_FILESYSTEM
+			// Set permissions to rwxrwxr_x
+			fs::permissions(dirPath, fs::perms::add_perms |
+				fs::perms::owner_exec | fs::perms::owner_write | fs::perms::owner_read |
+				fs::perms::group_exec | fs::perms::group_write | fs::perms::group_read |
+				fs::perms::others_exec | fs::perms::others_read);
+#else
 			// Set permissions to rwxrwxr_x
 			fs::permissions(dirPath, fs::add_perms |
 				fs::owner_exe  | fs::owner_write | fs::owner_read |
 				fs::group_exe  | fs::group_write | fs::group_read |
 				fs::others_exe | fs::others_read);
+#endif
 		}
 		
 		// Directory already exists or has been created successfully

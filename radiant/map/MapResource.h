@@ -7,7 +7,7 @@
 #include "imap.h"
 #include <set>
 #include "RootNode.h"
-#include <boost/filesystem.hpp>
+#include "os/fs.h"
 
 namespace map
 {
@@ -72,7 +72,7 @@ private:
 	// function is then called with the opened stream. Throws std::runtime_error on stream open failure.
 	void openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor);
 
-	static bool checkIsWriteable(const boost::filesystem::path& path);
+	static bool checkIsWriteable(const fs::path& path);
 };
 // Resource pointer types
 typedef std::shared_ptr<MapResource> MapResourcePtr;

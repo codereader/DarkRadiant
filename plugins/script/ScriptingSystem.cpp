@@ -34,13 +34,11 @@
 
 #include <wx/frame.h>
 
+#include "os/fs.h"
 #include "os/file.h"
 #include "os/path.h"
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-
-namespace fs = boost::filesystem;
 
 namespace script {
 
@@ -339,7 +337,7 @@ void ScriptingSystem::reloadScripts()
 		if (extension != "py") continue;
 
 		// Script file found, construct a new command
-		loadCommandScript(os::getRelativePath(candidate.string(), _scriptPath));
+		loadCommandScript(os::getRelativePath(candidate.generic_string(), _scriptPath));
 	}
 
 	rMessage() << "ScriptModule: Found " << _commands.size() << " commands." << std::endl;

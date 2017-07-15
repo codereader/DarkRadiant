@@ -25,8 +25,6 @@
 #include <regex>
 #include <boost/algorithm/string/predicate.hpp>
 
-namespace fs = boost::filesystem;
-
 namespace particles
 {
 
@@ -343,7 +341,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	fs::path tempFile = targetFile;
 
 	tempFile.remove_filename();
-	tempFile /= "_" + os::filename_from_path(targetFile);
+	tempFile /= "_" + targetFile.filename().string();
 
 	std::ofstream tempStream(tempFile.string().c_str());
 

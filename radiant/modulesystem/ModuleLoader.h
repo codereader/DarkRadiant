@@ -4,7 +4,7 @@
 #include <vector>
 #include "imodule.h"
 #include "DynamicLibrary.h"
-#include <boost/filesystem.hpp>
+#include "os/fs.h"
 
 namespace module
 {
@@ -32,7 +32,7 @@ private:
 	void loadModulesFromPath(const std::string& path);
 
 	// File functor, gets called with each file's name in the searched folder
-	void processModuleFile(const boost::filesystem::path& fileName);
+	void processModuleFile(const fs::path& fileName);
 };
 
 } // namespace module
