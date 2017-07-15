@@ -184,23 +184,6 @@ void MenuManager::handleElementAdded(const MenuElementPtr& element)
 		parentMenu->setNeedsRefresh(true);
 	}
 
-#ifdef __linux__
-	// In Linux, we don't receive the wxEVT_MENU_OPEN event on the MenuFolder
-	// Option 1 is to add the event handler to the wxFrame housing the wxMenuBar
-	//          but we don't always know what wxFrame that is (it's added later)
-	// Option 2 is to mark the whole menu as "needs refresh" => let's go with this
-    while (parentMenu)
-    {
-    	if (std::dynamic_pointer_cast<MenuBar>(parentMenu))
-    	{
-    		std::static_pointer_cast<MenuBar>(parentMenu)->setNeedsRefresh(true);
-    		break;
-    	}
-
-    	parentMenu = parentMenu->getParent();
-    }
-#endif
-
 	// When inserting a new menu in a menubar, make sure it is constructed
 	if (element->getParent() &&
 		std::dynamic_pointer_cast<MenuBar>(element->getParent()) &&
