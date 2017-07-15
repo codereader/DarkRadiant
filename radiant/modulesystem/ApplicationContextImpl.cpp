@@ -5,13 +5,13 @@
 #include "debugging/debugging.h"
 #include "itextstream.h"
 #include "iregistry.h"
+#include "os/fs.h"
 #include "os/path.h"
 #include "os/dir.h"
 #include "log/PopupErrorHandler.h"
 #include "log/LogStream.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem.hpp>
 
 #if defined(WIN32)
 #include <windows.h>
@@ -110,8 +110,8 @@ std::string getExecutablePath(char* argv[])
     if (ret > 0)
     {
         // Success
-        boost::filesystem::path execPath = std::string(pathBuf);
-        boost::filesystem::path appPath = execPath.remove_leaf();
+        fs::path execPath = std::string(pathBuf);
+        fs::path appPath = execPath.remove_leaf();
 
         rConsole() << "Application path: " << appPath << std::endl;
         

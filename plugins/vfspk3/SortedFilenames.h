@@ -1,7 +1,5 @@
 #pragma once
 
-#include <boost/filesystem.hpp>
-
 /**
  * greebo: SortedFilenames is based on a std::set
  *         container with special sorting.

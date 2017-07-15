@@ -8,7 +8,6 @@
 #include "iscenegraph.h"
 #include "os/fs.h"
 #include "os/path.h"
-#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <regex>

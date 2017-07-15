@@ -28,7 +28,6 @@
 
 #include <functional>
 #include <boost/format.hpp>
-#include <boost/filesystem.hpp>
 
 #include "infofile/InfoFile.h"
 #include "string/string.h"

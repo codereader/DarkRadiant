@@ -11,7 +11,6 @@
 
 #include "os/path.h"
 #include "os/file.h"
-#include <boost/filesystem.hpp>
 
 namespace map 
 {
@@ -47,20 +46,11 @@ void StartupMapLoader::onRadiantStartup()
 			break;
 		}
 
-		boost::filesystem::path mapsPath = GlobalRegistry().get(RKEY_MAP_PATH);
+		fs::path mapsPath = GlobalRegistry().get(RKEY_MAP_PATH);
 
-		boost::filesystem::path fullMapPath = mapsPath / candidate;
+		fs::path fullMapPath = mapsPath / candidate;
 
 		// Next, look in the regular maps path
-		if (os::fileOrDirExists(fullMapPath.string()))
-		{
-			mapToLoad = fullMapPath.string();
-			break;
-		}
-
-		// Check for mod-relative paths too
-		fullMapPath = mapsPath.remove_leaf().remove_leaf() / candidate;
-
 		if (os::fileOrDirExists(fullMapPath.string()))
 		{
 			mapToLoad = fullMapPath.string();

@@ -11,9 +11,6 @@
 #include "selectionlib.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem.hpp>
-
 #include "registry/registry.h"
 #include "string/string.h"
 #include "os/file.h"
