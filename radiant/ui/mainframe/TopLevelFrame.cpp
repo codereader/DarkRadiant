@@ -77,6 +77,12 @@ TopLevelFrame::TopLevelFrame() :
 
     // Redirect scroll events to the window below the cursor
     _scrollEventFilter.reset(new wxutil::ScrollEventPropagationFilter);
+
+#if (wxMAJOR_VERSION >= 3) && (wxMINOR_VERSION < 1)
+	// In wxWidgets < 3.1.0 we don't receive the wxEVT_MENU_OPEN event on 
+	// the menu itself (only on the toplevel frame), so let's propagate it
+	Connect(wxEVT_MENU_OPEN, wxMenuEventHandler(TopLevelFrame::onMenuOpenClose), nullptr, this);
+#endif
 }
 
 wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
@@ -98,6 +104,17 @@ wxMenuBar* TopLevelFrame::createMenuBar()
 wxBoxSizer* TopLevelFrame::getMainContainer()
 {
 	return _mainContainer;
+}
+
+void TopLevelFrame::onMenuOpenClose(wxMenuEvent& ev)
+{
+	if (GetMenuBar() != nullptr)
+	{
+		if (!GetMenuBar()->HandleWindowEvent(ev))
+		{
+			ev.Skip();
+		}
+	}
 }
 
 } // namespace
