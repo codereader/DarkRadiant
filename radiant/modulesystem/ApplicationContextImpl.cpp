@@ -38,7 +38,16 @@ std::string ApplicationContextImpl::getRuntimeDataPath() const
 #elif defined(__APPLE__)
     // The Resources are in the Bundle folder Contents/Resources/, whereas the
     // application binary is located in Contents/MacOS/
-    return getApplicationPath() + "../Resources/";
+    std::string path = getApplicationPath() + "../Resources/";
+    
+    // When launching the app from Xcode, the Resources/ folder
+    // is next to the binary
+    if (!fs::exists(path))
+    {
+        path = getApplicationPath() + "Resources/";
+    }
+    
+    return path;
 #else
     return getApplicationPath();
 #endif
