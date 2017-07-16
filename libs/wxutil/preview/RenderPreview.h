@@ -58,8 +58,10 @@ private:
     void onSizeAllocate(wxSizeEvent& ev);
     void filtersChanged();
     void onRenderModeChanged(wxCommandEvent& ev);
+	void onGridButtonClick(wxCommandEvent& ev);
 
     void drawTime();
+	void drawGrid();
 
     // Called each frame by wxTimer
     void _onFrame(wxTimerEvent& ev);
@@ -82,6 +84,8 @@ private:
     bool _initialised;
 
     FreezePointer _freezePointer;
+
+	bool _renderGrid;
 
 protected:
     // The backend rendersystem instance

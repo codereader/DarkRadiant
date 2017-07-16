@@ -191,6 +191,9 @@
       <window xPosition="0" yPosition="0" width="1000" height="830" />
       <splitPos position="500" />
     </particleEditor>
+    <renderPreview>
+      <showGrid value="1" />
+    </renderPreview>
     <camera>
       <toggleFreeMove value="1" />
       <enableCubicClipping value="1" />

@@ -10,6 +10,7 @@
 
 #include "math/AABB.h"
 #include "util/ScopedBoolLock.h"
+#include "registry/registry.h"
 
 #include "../GLWidget.h"
 #include <wx/sizer.h>
@@ -30,12 +31,15 @@ namespace
     const std::string BOTTOM_BOX("bottomBox");
     const std::string PAUSE_BUTTON("pauseButton");
     const std::string STOP_BUTTON("stopButton");
+
+	const std::string RKEY_RENDERPREVIEW_SHOWGRID("ui/renderPreview/showGrid");
 }
 
 RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _mainPanel(loadNamedPanel(parent, "RenderPreviewPanel")),
 	_glWidget(new wxutil::GLWidget(_mainPanel, std::bind(&RenderPreview::drawPreview, this), "RenderPreview")),
     _initialised(false),
+	_renderGrid(registry::getValue<bool>(RKEY_RENDERPREVIEW_SHOWGRID)),
     _renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
     _sceneWalker(_renderer, _volumeTest),
     _viewOrigin(0, 0, 0),
@@ -116,6 +120,13 @@ void RenderPreview::setupToolbars(bool enableAnimation)
                            wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
 
     updateActiveRenderModeButton();
+
+	wxToolBar* utilToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewUtilToolbar");
+
+	utilToolbar->Connect(getToolBarToolByLabel(utilToolbar, "gridButton")->GetId(),
+		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onGridButtonClick), NULL, this);
+
+	utilToolbar->ToggleTool(getToolBarToolByLabel(utilToolbar, "gridButton")->GetId(), _renderGrid);
 }
 
 void RenderPreview::connectToolbarSignals()
@@ -449,7 +460,19 @@ void RenderPreview::drawPreview()
         return;
     }
 
-    // Front-end render phase, collect OpenGLRenderable objects from the scene
+	// Set the projection and modelview matrices
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixd(projection);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixd(_volumeTest.GetModelview());
+
+	if (_renderGrid)
+	{
+		drawGrid();
+	}
+
+	// Front-end render phase, collect OpenGLRenderable objects from the scene
     getScene()->foreachVisibleNodeInVolume(_volumeTest, _sceneWalker);
 
     RenderStateFlags flags = getRenderFlagsFill();
@@ -616,6 +639,15 @@ void RenderPreview::onRenderModeChanged(wxCommandEvent& ev)
     }
 }
 
+void RenderPreview::onGridButtonClick(wxCommandEvent& ev)
+{
+	_renderGrid = (ev.GetInt() != 0);
+
+	registry::setValue<bool>(RKEY_RENDERPREVIEW_SHOWGRID, _renderGrid);
+
+	queueDraw();
+}
+
 void RenderPreview::onStartPlaybackClick(wxCommandEvent& ev)
 {
 	startPlayback();
@@ -680,6 +712,39 @@ void RenderPreview::onSizeAllocate(wxSizeEvent& ev)
 {
 	_previewWidth = ev.GetSize().GetWidth();
     _previewHeight = ev.GetSize().GetHeight();
+}
+
+void RenderPreview::drawGrid()
+{
+	static float GRID_MAX_DIM = 512.0f;
+	static float GRID_STEP = 16.0f;
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_TEXTURE_1D);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+
+	glLineWidth(1);
+	glColor3f(0.7f, 0.7f, 0.7f);
+
+	glBegin(GL_LINES);
+
+	for (float x = -GRID_MAX_DIM; x < GRID_MAX_DIM; x += GRID_STEP)
+	{
+		Vector3 start(x, -GRID_MAX_DIM, 0);
+		Vector3 end(x, GRID_MAX_DIM, 0);
+
+		Vector3 start2(GRID_MAX_DIM, x, 0);
+		Vector3 end2(-GRID_MAX_DIM, x, 0);
+
+		glVertex2dv(start);
+		glVertex2dv(end);
+
+		glVertex2dv(start2);
+		glVertex2dv(end2);
+	}
+
+	glEnd();
 }
 
 void RenderPreview::drawTime()
