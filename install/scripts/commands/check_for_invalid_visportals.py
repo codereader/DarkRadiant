@@ -3,7 +3,7 @@
 
 Tracker item: #4397 (http://bugs.thedarkmod.com/view.php?id=4397)
 Author: greebo
-Version: 1.0
+Version: 1.1
 """
 
 __commandName__ = 'check_invalid_visportals' # should not contain spaces
@@ -27,6 +27,7 @@ def execute():
     class VisportalResults(object):
         numVisportals = 0
         invalidPortals = []
+        portalsNotChildOfWorldspawn = []
     
     results = VisportalResults()
     visportalShader = 'textures/editor/visportal'
@@ -37,6 +38,12 @@ def execute():
                 brush = node.getBrush()
                 if brush.hasShader(visportalShader):
                     results.numVisportals += 1
+
+                    # Check the parent of this brush (must be child of worldspawn)
+                    if brush.getParent().isEntity():
+                        if brush.getParent().getEntity().getKeyValue('classname') != 'worldspawn':
+                            results.invalidPortals.append(brush)
+                            results.portalsNotChildOfWorldspawn.append(brush)
                     
                     if not testVisportalBrush(brush, visportalShader):
                         results.invalidPortals.append(brush)
@@ -61,6 +68,9 @@ def execute():
         for brush in results.invalidPortals:
             brush.setSelected(1)
         
+        if len(results.portalsNotChildOfWorldspawn) > 0:
+            msg += '%d visportal brushes are not parented to worldspawn\n' % (len(results.portalsNotChildOfWorldspawn))
+
         msg += 'The problematic visportals have been highlighted.'
     
     GlobalDialogManager.createMessageBox('Visportal Test Results', msg, Dialog.CONFIRM).run()
