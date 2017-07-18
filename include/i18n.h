@@ -8,9 +8,16 @@
 #endif 
 
 #include <wx/intl.h>
+#include <string>
 
 // Custom translation macros
-#define _(s)	(wxGetTranslation((s)).ToStdString())
+
+inline std::string _(const char* s)
+{
+	return wxGetTranslation((s)).ToStdString();
+}
+
+//#define _(s)	(wxGetTranslation((s)).ToStdString())
 #define N_(str)	str
 
 #ifndef C_

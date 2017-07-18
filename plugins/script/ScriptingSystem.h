@@ -3,6 +3,7 @@
 #include <boost/python.hpp>
 #include <map>
 #include <vector>
+#include <pybind11/pybind11.h>
 
 #include "iscript.h"
 #include "PythonConsoleWriter.h"
@@ -10,6 +11,8 @@
 
 #include "ScriptCommand.h"
 #include "ScriptMenu.h"
+
+namespace py = pybind11;
 
 namespace script {
 
@@ -90,6 +93,8 @@ public:
 
 private:
 	bool interfaceExists(const std::string& name);
+
+	void addInterfacesToModule(py::module& mod);
 
 	void reloadScripts();
 

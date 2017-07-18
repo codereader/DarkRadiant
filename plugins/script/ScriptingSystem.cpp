@@ -1,5 +1,8 @@
 #include "ScriptingSystem.h"
 
+#include <pybind11/pybind11.h>
+#include <pybind11/embed.h>
+
 #include "i18n.h"
 #include "itextstream.h"
 #include "iradiant.h"
@@ -37,8 +40,69 @@
 #include "os/fs.h"
 #include "os/file.h"
 #include "os/path.h"
+#include <functional>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
+class DarkRadiantModule
+{
+private:
+	static std::unique_ptr<py::module> _module;
+	static std::function<void(py::module&)> _registrationCallback;
+
+public:
+	static py::module& GetModule()
+	{
+		assert(_module);
+		return *_module;
+	}
+
+	static void SetRegistrationCallback(const std::function<void(py::module&)>& func)
+	{
+		_registrationCallback = func;
+	}
+
+	static void Clear()
+	{
+		_module.reset();
+	}
+
+	// Endpoint called by the Python interface to acquire the module
+	static PyObject* pybind11_init_wrapper()
+	{
+		_module.reset(new py::module("darkradiant"));
+
+		try
+		{
+			// Acquire modules here (through callback?)
+			if (_registrationCallback)
+			{
+				_registrationCallback(*_module);
+			}
+
+			_module->def("log", [](const char* text)
+			{
+				rMessage() << text << std::endl;
+			});
+
+            return _module->ptr();
+        } 
+		catch (pybind11::error_already_set &e)
+		{                            
+            e.clear();                                                        
+            PyErr_SetString(PyExc_ImportError, e.what());                     
+            return nullptr;                                                   
+        } 
+		catch (const std::exception &e)
+		{                                   
+            PyErr_SetString(PyExc_ImportError, e.what());                     
+            return nullptr;                                                   
+        }
+	}
+};
+
+std::unique_ptr<py::module> DarkRadiantModule::_module;
+std::function<void(py::module&)> DarkRadiantModule::_registrationCallback;
 
 namespace script {
 
@@ -59,9 +123,12 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 	// Try to insert
 	_interfaces.push_back(NamedInterface(name, iface));
 
-	if (_initialised) {
+	if (_initialised) 
+	{
 		// Add the interface at once, all the others are already added
 		iface->registerInterface(_mainObjects->mainNamespace);
+
+
 	}
 }
 
@@ -148,6 +215,41 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 	_errorBuffer.clear();
 
 	return result;
+}
+
+void ScriptingSystem::addInterfacesToModule(py::module& mod)
+{
+	// Add the registered interfaces
+	try
+	{
+		for (NamedInterface& i : _interfaces)
+		{
+			// Handle each interface in its own try/catch block
+			try
+			{
+				i.second->registerInterface(mod);
+			}
+			catch (const boost::python::error_already_set&)
+			{
+				rError() << "Error while initialising interface "
+					<< i.first << ": " << std::endl;
+
+				PyErr_Print();
+				PyErr_Clear();
+
+				rMessage() << std::endl;
+			}
+		}
+	}
+	catch (const boost::python::error_already_set&)
+	{
+		// Dump the error to the console, this will invoke the PythonConsoleWriter
+		PyErr_Print();
+		PyErr_Clear();
+
+		// Python is usually not appending line feeds...
+		rMessage() << std::endl;
+	}
 }
 
 void ScriptingSystem::initialise()
@@ -374,22 +476,75 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 
 	// Subscribe to get notified as soon as Radiant is fully initialised
 	GlobalRadiant().signal_radiantStarted().connect(
-        sigc::mem_fun(this, &ScriptingSystem::initialise)
-    );
+		sigc::mem_fun(this, &ScriptingSystem::initialise)
+	);
 
 	// Construct the script path
 #if defined(POSIX) && defined(PKGLIBDIR)
-   _scriptPath = std::string(PKGLIBDIR) + "/scripts/";
+	_scriptPath = std::string(PKGLIBDIR) + "/scripts/";
 #else
 	_scriptPath = ctx.getRuntimeDataPath() + "scripts/";
 #endif
 
+	// When Python asks for the object, let's register our interfaces to the py::module
+	DarkRadiantModule::SetRegistrationCallback(std::bind(&ScriptingSystem::addInterfacesToModule, this, std::placeholders::_1));
+
+	// Register the darkradiant module to Python
+	int result = PyImport_AppendInittab("darkradiant", DarkRadiantModule::pybind11_init_wrapper);
+
+	if (result == -1)
+	{
+		rError() << "Could not initialise Python module" << std::endl;
+		return;
+	}
+
+	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
+	addInterface("Math", std::make_shared<MathInterface>());
+	addInterface("GameManager", std::make_shared<GameInterface>());
+	addInterface("CommandSystem", std::make_shared<CommandSystemInterface>());
+	addInterface("SceneGraph", std::make_shared<SceneGraphInterface>());
+	addInterface("GlobalRegistry", std::make_shared<RegistryInterface>());
+	addInterface("GlobalEntityClassManager", std::make_shared<EClassManagerInterface>());
+	addInterface("GlobalSelectionSystem", std::make_shared<SelectionInterface>());
+	addInterface("Brush", std::make_shared<BrushInterface>());
+	addInterface("Patch", std::make_shared<PatchInterface>());
+	addInterface("Entity", std::make_shared<EntityInterface>());
+	addInterface("Radiant", std::make_shared<RadiantInterface>());
+	addInterface("Map", std::make_shared<MapInterface>());
+	addInterface("FileSystem", std::make_shared<FileSystemInterface>());
+	addInterface("Grid", std::make_shared<GridInterface>());
+	addInterface("ShaderSystem", std::make_shared<ShaderSystemInterface>());
+	addInterface("Model", std::make_shared<ModelInterface>());
+	addInterface("ModelSkinCacheInterface", std::make_shared<ModelSkinCacheInterface>());
+	addInterface("SoundManager", std::make_shared<SoundManagerInterface>());
+	addInterface("DialogInterface", std::make_shared<DialogManagerInterface>());
+	addInterface("SelectionSetInterface", std::make_shared<SelectionSetInterface>());
+
+	py::initialize_interpreter();
+
+	{
+		try
+		{
+			py::exec("import darkradiant as dr\ndr.log('First Test')\ndr.GlobalCommandSystem.execute('clear')");
+		}
+		catch (const py::error_already_set& ex)
+		{
+			rError() << ex.what() << std::endl;
+
+			// Dump the error to the console, this will invoke the PythonConsoleWriter
+			PyErr_Print();
+			PyErr_Clear();
+		}
+	}
+
+	py::finalize_interpreter();
+
+#if 0
 	// start the python interpreter
 	Py_Initialize();
 
 	rMessage() << getName() << ": Python interpreter initialised." << std::endl;
 
-	// Initialise the boost::python objects
 	_mainObjects.reset(new BoostPythonMainObjects);
 
 	_mainObjects->mainModule = boost::python::import("__main__");
@@ -442,6 +597,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	addInterface("SoundManager", SoundManagerInterfacePtr(new SoundManagerInterface));
 	addInterface("DialogInterface", DialogManagerInterfacePtr(new DialogManagerInterface));
 	addInterface("SelectionSetInterface", SelectionSetInterfacePtr(new SelectionSetInterface));
+#endif
 
 	GlobalCommandSystem().addCommand(
 		"RunScript",
@@ -484,6 +640,7 @@ void ScriptingSystem::shutdownModule()
 
 	_scriptMenu = ui::ScriptMenuPtr();
 
+#if 0
 	// Clear the buffer so that nodes finally get destructed
 	SceneNodeBuffer::Instance().clear();
     
@@ -500,6 +657,7 @@ void ScriptingSystem::shutdownModule()
 	_mainObjects.reset();
 
 	Py_Finalize();
+#endif
 }
 
 } // namespace script

@@ -1,5 +1,4 @@
-#ifndef _COMMANDSYSTEM_INTERFACE_H_
-#define _COMMANDSYSTEM_INTERFACE_H_
+#pragma once
 
 #include <boost/python.hpp>
 #include "iscript.h"
@@ -16,9 +15,9 @@ public:
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
+
+	void registerInterface(pybind11::module& scope) override;
 };
 typedef std::shared_ptr<CommandSystemInterface> CommandSystemInterfacePtr;
 
 } // namespace script
-
-#endif /* _COMMANDSYSTEM_INTERFACE_H_ */

@@ -3,6 +3,9 @@
 #include "imodule.h"
 #include <boost/python/object_fwd.hpp>
 
+// Forward-declare the stuff in <pybind11/pybind11.h>
+namespace pybind11 { class module; }
+
 namespace script
 {
 
@@ -27,6 +30,13 @@ public:
 	 * add its interface to the Python context.
 	 */
 	virtual void registerInterface(boost::python::object& nspace) = 0;
+
+	/**
+	* This method is called by the Scripting System to let this class
+	* add its objects to the Python context.
+	*/
+	virtual void registerInterface(pybind11::module& scope)
+	{}
 };
 typedef std::shared_ptr<IScriptInterface> IScriptInterfacePtr;
 
