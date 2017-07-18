@@ -54,6 +54,17 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog) :
 	FindWindowById(wxID_OK, this)->Enable(false);
 }
 
+bool GuiSelector::Destroy()
+{
+	// Prevent the page switch event from firing after window destruction
+	// In wxGTK the window might not be destroyed right away (only later in an idle event)
+	// which will trigger page switch events and inadvertently change our GUI selection.
+	_notebook->Disconnect(wxEVT_NOTEBOOK_PAGE_CHANGED,
+		wxBookCtrlEventHandler(GuiSelector::onPageSwitch), NULL, this);
+
+	return wxutil::DialogBase::Destroy();
+}
+
 std::string GuiSelector::Run(bool twoSided, ReadableEditorDialog* editorDialog)
 {
 	GuiSelector* dialog = new GuiSelector(twoSided, editorDialog);

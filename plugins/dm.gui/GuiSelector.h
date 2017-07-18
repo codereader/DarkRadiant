@@ -65,6 +65,9 @@ public:
 	void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
 			   const std::string& path, bool isExplicit);
 
+	// Disconnect all events when the dialog is destroyed
+	virtual bool Destroy() override;
+
 private:
 	GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog);
 
