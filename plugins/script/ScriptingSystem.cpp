@@ -49,6 +49,7 @@ class DarkRadiantModule
 {
 private:
 	static std::unique_ptr<py::module> _module;
+	static std::unique_ptr<py::dict> _globals;
 	static std::function<void(py::module&, py::dict&)> _registrationCallback;
 
 public:
@@ -69,14 +70,18 @@ public:
 
 	static py::dict& GetGlobals()
 	{
-		static py::dict _globals;
-		return _globals;
+		if (!_globals)
+		{
+			_globals.reset(new py::dict);
+		}
+
+		return *_globals;
 	}
 
 	static void Clear()
 	{
 		_module.reset();
-		GetGlobals().clear();
+		_globals.reset();
 	}
 
 	// Endpoint called by the Python interface to acquire the module
@@ -107,6 +112,7 @@ public:
 };
 
 std::unique_ptr<py::module> DarkRadiantModule::_module;
+std::unique_ptr<py::dict> DarkRadiantModule::_globals;
 std::function<void(py::module&, py::dict&)> DarkRadiantModule::_registrationCallback;
 
 namespace script {
@@ -189,7 +195,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename)
 
 ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptString)
 {
-	ExecutionResultPtr result(new ExecutionResult);
+	ExecutionResultPtr result = std::make_shared<ExecutionResult>();
 
 	result->errorOccurred = false;
 
@@ -200,22 +206,14 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 	try
 	{
 		// Attempt to run the specified script
-		py::exec(scriptString, DarkRadiantModule::GetModule());
-#if 0
-		boost::python::object ignored = boost::python::exec(
-			scriptString.c_str(),
-			_mainObjects->mainNamespace,
-			_mainObjects->globals
-		);
-#endif
+		py::exec(scriptString);
 	}
-	catch (const boost::python::error_already_set&)
+	catch (py::error_already_set& ex)
 	{
+		_errorBuffer.append(ex.what());
 		result->errorOccurred = true;
 
-		// Dump the error to the console, this will invoke the PythonConsoleWriter
-		PyErr_Print();
-		PyErr_Clear();
+		rError() << "Error executing script: " << ex.what() << std::endl;
 	}
 
 	result->output += _outputBuffer + "\n";
@@ -261,17 +259,7 @@ void ScriptingSystem::initialise()
 			py::module::import("sys").attr("stderr") = &_errorWriter;
 			py::module::import("sys").attr("stdout") = &_outputWriter;
 
-			py::dict copy(py::globals());
-
-			py::dict globals = py::globals();
-			globals["Tork"] = "Tork";
-
-			for (auto it : globals)
-			{
-				copy[it.first] = it.second;
-			}
-
-			py::exec("import darkradiant as dr\nfrom darkradiant import *\nGlobalCommandSystem.execute(Tork)\nprint('This is a test')", copy);
+			//py::exec("import darkradiant as dr\nfrom darkradiant import *\nGlobalCommandSystem.execute(Tork)\nprint('This is a test')", copy);
 		}
 		catch (const py::error_already_set& ex)
 		{
