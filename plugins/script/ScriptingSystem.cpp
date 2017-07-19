@@ -94,6 +94,14 @@ public:
 				_registrationCallback(GetModule(), GetGlobals());
 			}
 
+			py::object main = py::module::import("__main__");
+			py::dict globals = main.attr("__dict__").cast<py::dict>();
+
+			for (auto& i : globals)
+			{
+				GetGlobals()[i.first] = i.second;
+			}
+
             return _module->ptr();
         } 
 		catch (py::error_already_set& e)
@@ -203,8 +211,11 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 
 	try
 	{
+		std::string fullScript = "import darkradiant as DR\nfrom darkradiant import *\n";
+		fullScript.append(scriptString);
+
 		// Attempt to run the specified script
-		py::exec(scriptString);
+		py::exec(fullScript, DarkRadiantModule::GetGlobals());
 	}
 	catch (py::error_already_set& ex)
 	{
@@ -248,6 +259,9 @@ void ScriptingSystem::initialise()
 	{
 		try
 		{
+			// Import the darkradiant module
+			py::module::import("darkradiant");
+
 			// Construct the console writer interface
 			PythonConsoleWriterClass consoleWriter(DarkRadiantModule::GetModule(), "PythonConsoleWriter");
 			consoleWriter.def(py::init<bool, std::string&>());
@@ -264,37 +278,6 @@ void ScriptingSystem::initialise()
 			rError() << ex.what() << std::endl;
 		}
 	}
-
-#if 0
-	// Add the registered interfaces
-	try {
-		for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
-			// Handle each interface in its own try/catch block
-			try
-			{
-				i->second->registerInterface(_mainObjects->mainNamespace);
-			}
-			catch (const boost::python::error_already_set&)
-			{
-				rError() << "Error while initialising interface "
-					<< i->first << ": " << std::endl;
-
-				PyErr_Print();
-				PyErr_Clear();
-
-				rMessage() << std::endl;
-			}
-		}
-	}
-	catch (const boost::python::error_already_set&) {
-		// Dump the error to the console, this will invoke the PythonConsoleWriter
-		PyErr_Print();
-		PyErr_Clear();
-
-		// Python is usually not appending line feeds...
-		rMessage() << std::endl;
-	}
-#endif
 
 	_initialised = true;
 

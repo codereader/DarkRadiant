@@ -7,6 +7,7 @@
 #include "iselection.h"
 #include "debugging/ScenegraphUtils.h"
 
+#include <pybind11/pybind11.h>
 #include <boost/python.hpp>
 
 namespace script {
@@ -117,25 +118,27 @@ class SceneNodeVisitorWrapper :
 	public boost::python::wrapper<scene::NodeVisitor>
 {
 public:
-    bool pre(const scene::INodePtr& node) {
+	using NodeVisitor::NodeVisitor;
+
+    bool pre(const scene::INodePtr& node) override
+	{
 		// Wrap this method to python
-		return this->get_override("pre")(ScriptSceneNode(node));
+		PYBIND11_OVERLOAD_PURE(
+			int,			/* Return type */
+			NodeVisitor,    /* Parent class */
+			pre,			/* Name of function in C++ (must match Python name) */
+			ScriptSceneNode(node)			/* Argument(s) */
+		);
 	}
 
-	void post(const scene::INodePtr& node) {
-		if (this->get_override("post")) {
-			// Call the overriden method
-            this->get_override("post")(ScriptSceneNode(node));
-		}
-		else {
-			// No override, call base class default
-			scene::NodeVisitor::post(node);
-		}
-	}
-
-	void post_default(const scene::INodePtr& node) {
-		// Default method: Just call the base class
-		scene::NodeVisitor::post(node);
+	void post(const scene::INodePtr& node) override
+	{
+		PYBIND11_OVERLOAD(
+			void,			/* Return type */
+			NodeVisitor,    /* Parent class */
+			post,			/* Name of function in C++ (must match Python name) */
+			ScriptSceneNode(node)			/* Argument(s) */
+		);
 	}
 };
 
@@ -143,12 +146,54 @@ class SceneGraphInterface :
 	public IScriptInterface
 {
 public:
-	ScriptSceneNode root() {
+	ScriptSceneNode root() 
+	{
 		return ScriptSceneNode(GlobalSceneGraph().root());
 	}
 
+	void registerInterface(py::module& scope, py::dict& globals) override
+	{
+		// Expose the scene::Node interface
+		py::class_<ScriptSceneNode> sceneNode(scope, "SceneNode");
+
+		sceneNode.def(py::init<const scene::INodePtr&>());
+		sceneNode.def("addToContainer", &ScriptSceneNode::addToContainer);
+		sceneNode.def("removeFromParent", &ScriptSceneNode::removeFromParent);
+		sceneNode.def("getWorldAABB", &ScriptSceneNode::getWorldAABB, py::return_value_policy::reference);
+		sceneNode.def("isNull", &ScriptSceneNode::isNull);
+		sceneNode.def("getParent", &ScriptSceneNode::getParent);
+		sceneNode.def("getNodeType", &ScriptSceneNode::getNodeType);
+		sceneNode.def("traverse", &ScriptSceneNode::traverse);
+		sceneNode.def("traverseChildren", &ScriptSceneNode::traverseChildren);
+		sceneNode.def("setSelected", &ScriptSceneNode::setSelected);
+		sceneNode.def("invertSelected", &ScriptSceneNode::invertSelected);
+		sceneNode.def("isSelected", &ScriptSceneNode::isSelected);
+
+		py::class_<scene::NodeVisitor, SceneNodeVisitorWrapper> visitor(scope, "SceneNodeVisitor");
+		visitor.def(py::init<>());
+		visitor.def("pre", &scene::NodeVisitor::pre);
+		visitor.def("post", &scene::NodeVisitor::post);
+
+#if 0
+		// Expose the scene::NodeVisitor interface
+		nspace["SceneNodeVisitor"] =
+			boost::python::class_<SceneNodeVisitorWrapper, boost::noncopyable>("SceneNodeVisitor")
+			.def("pre", boost::python::pure_virtual(&scene::NodeVisitor::pre))
+			.def("post", &scene::NodeVisitor::post, &SceneNodeVisitorWrapper::post_default) // respect default impl.
+			;
+#endif
+		// Add the module declaration to the given python namespace
+		py::class_<SceneGraphInterface> sceneGraphInterface(scope, "SceneGraph");
+		sceneGraphInterface.def("root", &SceneGraphInterface::root);
+		
+		// Now point the Python variable "GlobalSceneGraph" to this instance
+		globals["GlobalSceneGraph"] = this;
+	}
+
+#if 0
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace) {
+	void registerInterface(boost::python::object& nspace)
+	{
 		// Expose the scene::Node interface
 		nspace["SceneNode"] = boost::python::class_<ScriptSceneNode>(
 			"SceneNode", boost::python::init<const scene::INodePtr&>())
@@ -181,6 +226,7 @@ public:
 		// Now point the Python variable "GlobalSceneGraph" to this instance
 		nspace["GlobalSceneGraph"] = boost::python::ptr(this);
 	}
+#endif
 };
 typedef std::shared_ptr<SceneGraphInterface> SceneGraphInterfacePtr;
 
