@@ -1,8 +1,8 @@
 #include "ModelInterface.h"
 
+#include <pybind11/pybind11.h>
 #include "imodelsurface.h"
 #include "modelskin.h"
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace script
 {
@@ -136,54 +136,44 @@ ScriptModelNode ScriptModelNode::getModel(const ScriptSceneNode& node) {
                            : ScriptSceneNode(scene::INodePtr()));
 }
 
-void ModelInterface::registerInterface(boost::python::object& nspace)
+void ModelInterface::registerInterface(py::module& scope, py::dict& globals)
 {
-	nspace["ArbitraryMeshVertex"] = boost::python::class_<ArbitraryMeshVertex>("ArbitraryMeshVertex")
-		.def_readwrite("texcoord", &ArbitraryMeshVertex::texcoord)
-		.def_readwrite("normal", &ArbitraryMeshVertex::normal)
-		.def_readwrite("vertex", &ArbitraryMeshVertex::vertex)
-		.def_readwrite("tangent", &ArbitraryMeshVertex::tangent)
-		.def_readwrite("bitangent", &ArbitraryMeshVertex::bitangent)
-		.def_readwrite("colour", &ArbitraryMeshVertex::colour)
-	;
+	py::class_<ArbitraryMeshVertex> vertex(scope, "ArbitraryMeshVertex");
 
-	nspace["ModelPolygon"] = boost::python::class_<model::ModelPolygon>("ModelPolygon")
-		.def_readonly("a", &model::ModelPolygon::a)
-		.def_readonly("b", &model::ModelPolygon::b)
-		.def_readonly("c", &model::ModelPolygon::c)
-	;
+	vertex.def_readwrite("texcoord", &ArbitraryMeshVertex::texcoord);
+	vertex.def_readwrite("normal", &ArbitraryMeshVertex::normal);
+	vertex.def_readwrite("vertex", &ArbitraryMeshVertex::vertex);
+	vertex.def_readwrite("tangent", &ArbitraryMeshVertex::tangent);
+	vertex.def_readwrite("bitangent", &ArbitraryMeshVertex::bitangent);
+	vertex.def_readwrite("colour", &ArbitraryMeshVertex::colour);
+
+	py::class_<model::ModelPolygon> poly(scope, "ModelPolygon");
+
+	poly.def_readonly("a", &model::ModelPolygon::a);
+	poly.def_readonly("b", &model::ModelPolygon::b);
+	poly.def_readonly("c", &model::ModelPolygon::c);
 
 	// Add the ModelSurface interface
-	nspace["ModelSurface"] = boost::python::class_<ScriptModelSurface>(
-		"ModelSurface", boost::python::init<const model::IModelSurface&>() )
-		.def("getNumVertices", &ScriptModelSurface::getNumVertices)
-		.def("getNumTriangles", &ScriptModelSurface::getNumTriangles)
-		.def("getVertex", &ScriptModelSurface::getVertex,
-			boost::python::return_value_policy<boost::python::copy_const_reference>())
-		.def("getPolygon", &ScriptModelSurface::getPolygon)
-		.def("getDefaultMaterial", &ScriptModelSurface::getDefaultMaterial)
-	;
+	py::class_<ScriptModelSurface> surface(scope, "ModelSurface");
+
+	surface.def(py::init<const model::IModelSurface&>());
+	surface.def("getNumVertices", &ScriptModelSurface::getNumVertices);
+	surface.def("getNumTriangles", &ScriptModelSurface::getNumTriangles);
+	surface.def("getVertex", &ScriptModelSurface::getVertex, py::return_value_policy::reference);
+	surface.def("getPolygon", &ScriptModelSurface::getPolygon);
+	surface.def("getDefaultMaterial", &ScriptModelSurface::getDefaultMaterial);
 
 	// Add the ModelNode interface
-	nspace["ModelNode"] = boost::python::class_<ScriptModelNode,
-		boost::python::bases<ScriptSceneNode> >("ModelNode", boost::python::init<const scene::INodePtr&>() )
-		.def("getFilename", &ScriptModelNode::getFilename)
-		.def("getModelPath", &ScriptModelNode::getModelPath)
-		.def("getSurfaceCount", &ScriptModelNode::getSurfaceCount)
-		.def("getVertexCount", &ScriptModelNode::getVertexCount)
-		.def("getPolyCount", &ScriptModelNode::getPolyCount)
-		.def("getActiveMaterials", &ScriptModelNode::getActiveMaterials)
-		.def("getSurface", &ScriptModelNode::getSurface)
-	;
+	py::class_<ScriptModelNode, ScriptSceneNode> modelNode(scope, "ModelNode");
 
-	// Add the "isModel" and "getModel" methods to all ScriptSceneNodes
-	boost::python::object sceneNode = nspace["SceneNode"];
-
-	boost::python::objects::add_to_namespace(sceneNode,
-		"isModel", boost::python::make_function(&ScriptModelNode::isModel));
-
-	boost::python::objects::add_to_namespace(sceneNode,
-		"getModel", boost::python::make_function(&ScriptModelNode::getModel));
+	modelNode.def(py::init<const scene::INodePtr&>());
+	modelNode.def("getFilename", &ScriptModelNode::getFilename);
+	modelNode.def("getModelPath", &ScriptModelNode::getModelPath);
+	modelNode.def("getSurfaceCount", &ScriptModelNode::getSurfaceCount);
+	modelNode.def("getVertexCount", &ScriptModelNode::getVertexCount);
+	modelNode.def("getPolyCount", &ScriptModelNode::getPolyCount);
+	modelNode.def("getActiveMaterials", &ScriptModelNode::getActiveMaterials);
+	modelNode.def("getSurface", &ScriptModelNode::getSurface);
 }
 
 } // namespace script

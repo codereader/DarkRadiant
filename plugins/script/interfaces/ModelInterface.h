@@ -1,7 +1,5 @@
-#ifndef _MODEL_INTERFACE_H_
-#define _MODEL_INTERFACE_H_
+#pragma once
 
-#include <boost/python.hpp>
 #include "iscript.h"
 
 #include "imodel.h"
@@ -27,7 +25,6 @@ public:
 	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
 	model::ModelPolygon getPolygon(int polygonIndex) const;
 	std::string getDefaultMaterial() const;
-	std::string getActiveMaterial() const;
 };
 
 class ScriptModelNode :
@@ -64,10 +61,7 @@ class ModelInterface :
 {
 public:
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<ModelInterface> ModelInterfacePtr;
 
 } // namespace script
-
-#endif /* _MODEL_INTERFACE_H_ */

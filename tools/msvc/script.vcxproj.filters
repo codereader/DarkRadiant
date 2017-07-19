@@ -168,5 +168,8 @@
     <ClCompile Include="..\..\plugins\script\precompiled.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\SceneGraphInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

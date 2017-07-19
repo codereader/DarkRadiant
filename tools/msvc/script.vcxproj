@@ -348,6 +348,7 @@
     <ClInclude Include="..\..\plugins\script\interfaces\SoundInterface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\plugins\script\interfaces\SceneGraphInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
