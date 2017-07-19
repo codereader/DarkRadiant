@@ -48,7 +48,7 @@ public:
 	ScriptingSystem();
 
 	// Adds a script interface to this system
-	void addInterface(const std::string& name, const IScriptInterfacePtr& iface);
+	void addInterface(const std::string& name, const IScriptInterfacePtr& iface) override;
 
 	// (Re)loads all scripts from the scripts/ folder
 	void reloadScriptsCmd(const cmd::ArgumentList& args);
@@ -69,19 +69,19 @@ public:
 	void runScriptCommand(const cmd::ArgumentList& args);
 
 	// Executes a script file
-	void executeScriptFile(const std::string& filename);
+	void executeScriptFile(const std::string& filename) override;
 
 	// Execute the given python script string
-	ExecutionResultPtr executeString(const std::string& scriptString);
+	ExecutionResultPtr executeString(const std::string& scriptString) override;
 
 	// Runs the named command (or rather the .py file behind it)
 	void executeCommand(const std::string& name);
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
-	void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
 	void executeScriptFile(const std::string& filename, bool setExecuteCommandAttr);

@@ -30,7 +30,8 @@ public:
 	 * This method gets invoked by the Scripting System to let this class
 	 * add its interface to the Python context.
 	 */
-	virtual void registerInterface(boost::python::object& nspace) = 0;
+	virtual void registerInterface(boost::python::object& nspace)
+	{}
 
 	/**
 	* This method is called by the Scripting System to let this class
@@ -72,10 +73,11 @@ public:
 typedef std::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
 
 // String identifier for the script module
-const std::string MODULE_SCRIPTING_SYSTEM("ScriptingSystem");
+const char* const MODULE_SCRIPTING_SYSTEM("ScriptingSystem");
 
 // This is the accessor for the scripting system
-inline IScriptingSystem& GlobalScriptingSystem() {
+inline IScriptingSystem& GlobalScriptingSystem()
+{
 	// Cache the reference locally
 	static IScriptingSystem& _scriptingSystem(
 		*std::static_pointer_cast<IScriptingSystem>(

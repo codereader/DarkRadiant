@@ -5,7 +5,8 @@
 
 namespace py = pybind11;
 
-namespace script {
+namespace script 
+{
 
 /**
  * greebo: A small helper class for redirecting Python's StdIo output
