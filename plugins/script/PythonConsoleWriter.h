@@ -1,8 +1,9 @@
-#ifndef _PYTHON_CONSOLE_WRITER_H_
-#define _PYTHON_CONSOLE_WRITER_H_
+#pragma once
 
 #include "itextstream.h"
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+
+namespace py = pybind11;
 
 namespace script {
 
@@ -12,8 +13,9 @@ namespace script {
  *
  * The output is duplicated to a given string.
  */
-class PythonConsoleWriter {
-
+class PythonConsoleWriter 
+{
+private:
 	// whether to write to output or error stream
 	bool _isErrorLogger;
 
@@ -33,16 +35,16 @@ public:
 
 		// Python doesn't send entire lines, it may send single characters,
 		// so don't add std::endl each time
-		if (_isErrorLogger) {
+		if (_isErrorLogger)
+		{
 			rError() << msg;
 		}
-		else {
+		else
+		{
 			rMessage() << msg;
 		}
     }
 };
-typedef boost::python::class_<PythonConsoleWriter> PythonConsoleWriterClass;
+typedef py::class_<PythonConsoleWriter> PythonConsoleWriterClass;
 
 } // namespace script
-
-#endif /* _PYTHON_CONSOLE_WRITER_H_ */

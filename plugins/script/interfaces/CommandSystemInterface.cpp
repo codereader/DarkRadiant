@@ -22,7 +22,7 @@ void CommandSystemInterface::removeCommand(const std::string& name) {
 	GlobalCommandSystem().removeCommand(name);
 }
 
-void CommandSystemInterface::registerInterface(pybind11::module& scope)
+void CommandSystemInterface::registerInterface(pybind11::module& scope, py::dict& globals)
 {
 	pybind11::class_<CommandSystemInterface> commandSys(scope, "CommandSystem");
 

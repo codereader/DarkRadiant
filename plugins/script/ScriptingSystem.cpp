@@ -2,6 +2,7 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
+#include <pybind11/attr.h>
 
 #include "i18n.h"
 #include "itextstream.h"
@@ -48,52 +49,56 @@ class DarkRadiantModule
 {
 private:
 	static std::unique_ptr<py::module> _module;
-	static std::function<void(py::module&)> _registrationCallback;
+	static std::function<void(py::module&, py::dict&)> _registrationCallback;
 
 public:
 	static py::module& GetModule()
 	{
-		assert(_module);
+		if (!_module)
+		{
+			_module.reset(new py::module("darkradiant"));
+		}
+
 		return *_module;
 	}
 
-	static void SetRegistrationCallback(const std::function<void(py::module&)>& func)
+	static void SetRegistrationCallback(const std::function<void(py::module&, py::dict&)>& func)
 	{
 		_registrationCallback = func;
+	}
+
+	static py::dict& GetGlobals()
+	{
+		static py::dict _globals;
+		return _globals;
 	}
 
 	static void Clear()
 	{
 		_module.reset();
+		GetGlobals().clear();
 	}
 
 	// Endpoint called by the Python interface to acquire the module
 	static PyObject* pybind11_init_wrapper()
 	{
-		_module.reset(new py::module("darkradiant"));
-
 		try
 		{
 			// Acquire modules here (through callback?)
 			if (_registrationCallback)
 			{
-				_registrationCallback(*_module);
+				_registrationCallback(GetModule(), GetGlobals());
 			}
-
-			_module->def("log", [](const char* text)
-			{
-				rMessage() << text << std::endl;
-			});
 
             return _module->ptr();
         } 
-		catch (pybind11::error_already_set &e)
+		catch (py::error_already_set& e)
 		{                            
             e.clear();                                                        
             PyErr_SetString(PyExc_ImportError, e.what());                     
             return nullptr;                                                   
         } 
-		catch (const std::exception &e)
+		catch (const std::exception& e)
 		{                                   
             PyErr_SetString(PyExc_ImportError, e.what());                     
             return nullptr;                                                   
@@ -102,7 +107,7 @@ public:
 };
 
 std::unique_ptr<py::module> DarkRadiantModule::_module;
-std::function<void(py::module&)> DarkRadiantModule::_registrationCallback;
+std::function<void(py::module&, py::dict&)> DarkRadiantModule::_registrationCallback;
 
 namespace script {
 
@@ -128,7 +133,7 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 		// Add the interface at once, all the others are already added
 		iface->registerInterface(_mainObjects->mainNamespace);
 
-
+		iface->registerInterface(DarkRadiantModule::GetModule(), DarkRadiantModule::GetGlobals());
 	}
 }
 
@@ -143,7 +148,8 @@ bool ScriptingSystem::interfaceExists(const std::string& name) {
 	return false;
 }
 
-void ScriptingSystem::executeScriptFile(const std::string& filename) {
+void ScriptingSystem::executeScriptFile(const std::string& filename) 
+{
 	try
 	{
         std::string filePath = _scriptPath + filename;
@@ -156,27 +162,28 @@ void ScriptingSystem::executeScriptFile(const std::string& filename) {
             return;
         }
 
+		py::dict locals;
+		locals["__executeCommand__"] = true;
+
 		// Attempt to run the specified script
+		py::eval_file(filePath, py::globals(), locals);
+
+#if 0
 		boost::python::object ignored = boost::python::exec_file(
             filePath.c_str(),
 			_mainObjects->mainNamespace,
 			_mainObjects->globals
 		);
+#endif
 	}
-    catch (std::invalid_argument& e) // thrown when the file doesn't exist
+    catch (std::invalid_argument& e)
     {
         rError() << "Error trying to execute file " << filename << ": " << e.what() << std::endl;
     }
-	catch (const boost::python::error_already_set&) {
-		rError() << "Error while executing file: "
-					<< filename << ": " << std::endl;
-
-		// Dump the error to the console, this will invoke the PythonConsoleWriter
-		PyErr_Print();
-		PyErr_Clear();
-
-		// Python is usually not appending line feeds...
-		rMessage() << std::endl;
+	catch (const py::error_already_set& ex)
+	{
+		rError() << "Error while executing file: " << filename << ": " << std::endl;
+		rError() << ex.what() << std::endl;
 	}
 }
 
@@ -193,11 +200,14 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 	try
 	{
 		// Attempt to run the specified script
+		py::exec(scriptString, DarkRadiantModule::GetModule());
+#if 0
 		boost::python::object ignored = boost::python::exec(
 			scriptString.c_str(),
 			_mainObjects->mainNamespace,
 			_mainObjects->globals
 		);
+#endif
 	}
 	catch (const boost::python::error_already_set&)
 	{
@@ -217,43 +227,59 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 	return result;
 }
 
-void ScriptingSystem::addInterfacesToModule(py::module& mod)
+void ScriptingSystem::addInterfacesToModule(py::module& mod, py::dict& globals)
 {
 	// Add the registered interfaces
-	try
+	for (NamedInterface& i : _interfaces)
 	{
-		for (NamedInterface& i : _interfaces)
+		// Handle each interface in its own try/catch block
+		try
 		{
-			// Handle each interface in its own try/catch block
-			try
-			{
-				i.second->registerInterface(mod);
-			}
-			catch (const boost::python::error_already_set&)
-			{
-				rError() << "Error while initialising interface "
-					<< i.first << ": " << std::endl;
-
-				PyErr_Print();
-				PyErr_Clear();
-
-				rMessage() << std::endl;
-			}
+			i.second->registerInterface(mod, globals);
 		}
-	}
-	catch (const boost::python::error_already_set&)
-	{
-		// Dump the error to the console, this will invoke the PythonConsoleWriter
-		PyErr_Print();
-		PyErr_Clear();
-
-		// Python is usually not appending line feeds...
-		rMessage() << std::endl;
+		catch (const py::error_already_set& ex)
+		{
+			rError() << "Error while initialising interface " << i.first << ": " << std::endl;
+			rError() << ex.what() << std::endl;
+		}
 	}
 }
 
 void ScriptingSystem::initialise()
 {
+	py::initialize_interpreter();
+
+	{
+		try
+		{
+			// Construct the console writer interface
+			PythonConsoleWriterClass consoleWriter(DarkRadiantModule::GetModule(), "PythonConsoleWriter");
+			consoleWriter.def(py::init<bool, std::string&>());
+			consoleWriter.def("write", &PythonConsoleWriter::write);
+
+			// Redirect stdio output to our local ConsoleWriter instances
+			py::module::import("sys").attr("stderr") = &_errorWriter;
+			py::module::import("sys").attr("stdout") = &_outputWriter;
+
+			py::dict copy(py::globals());
+
+			py::dict globals = py::globals();
+			globals["Tork"] = "Tork";
+
+			for (auto it : globals)
+			{
+				copy[it.first] = it.second;
+			}
+
+			py::exec("import darkradiant as dr\nfrom darkradiant import *\nGlobalCommandSystem.execute(Tork)\nprint('This is a test')", copy);
+		}
+		catch (const py::error_already_set& ex)
+		{
+			rError() << ex.what() << std::endl;
+		}
+	}
+
+#if 0
 	// Add the registered interfaces
 	try {
 		for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
@@ -282,11 +308,15 @@ void ScriptingSystem::initialise()
 		// Python is usually not appending line feeds...
 		rMessage() << std::endl;
 	}
+#endif
 
 	_initialised = true;
 
 	// Start the init script
 	executeScriptFile("init.py");
+
+	// Search script folder for commands
+	reloadScripts();
 
 	// Add the scripting widget to the groupdialog
 	IGroupDialog::PagePtr page(new IGroupDialog::Page);
@@ -335,8 +365,10 @@ void ScriptingSystem::executeCommand(const std::string& name) {
 		return;
 	}
 
+#if 0
 	// Set the execution flag in the global namespace
 	_mainObjects->globals["__executeCommand__"] = true;
+#endif
 
 	// Execute the script file behind this command
 	executeScriptFile(found->second->getFilename());
@@ -347,29 +379,33 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 	try
 	{
 		// Create a new dictionary for the initialisation routine
-		boost::python::dict locals;
+		py::dict locals;
 
 		// Disable the flag for initialisation, just for sure
 		locals["__executeCommand__"] = false;
 
 		// Attempt to run the specified script
+		py::eval_file((_scriptPath + scriptFilename), py::globals(), locals);
+
+#if 0
 		boost::python::object ignored = boost::python::exec_file(
 			(_scriptPath + scriptFilename).c_str(),
 			_mainObjects->mainNamespace,
 			locals	// pass the new dictionary for the locals
 		);
+#endif
 
 		std::string cmdName;
 		std::string cmdDisplayName;
 
-		if (locals.has_key("__commandName__"))
+		if (locals.contains("__commandName__"))
 		{
-			cmdName = boost::python::extract<std::string>(locals["__commandName__"]);
+			cmdName = locals["__commandName__"].cast<std::string>();
 		}
 
-		if (locals.has_key("__commandDisplayName__"))
+		if (locals.contains("__commandDisplayName__"))
 		{
-			cmdDisplayName = boost::python::extract<std::string>(locals["__commandDisplayName__"]);
+			cmdDisplayName = locals["__commandDisplayName__"].cast<std::string>();
 		}
 
 		if (!cmdName.empty())
@@ -388,27 +424,23 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 			);
 
 			// Result.second is TRUE if the insert succeeded
-			if (result.second) {
+			if (result.second) 
+			{
 				rMessage() << "Registered script file " << scriptFilename
 					<< " as " << cmdName << std::endl;
 			}
-			else {
+			else 
+			{
 				rError() << "Error in " << scriptFilename << ": Script command "
 					<< cmdName << " has already been registered in "
 					<< _commands[cmdName]->getFilename() << std::endl;
 			}
 		}
 	}
-	catch (const boost::python::error_already_set&) {
-		rError() << "Script file " << scriptFilename
-			<< " is not a valid command." << std::endl;
-
-		// Dump the error to the console, this will invoke the PythonConsoleWriter
-		PyErr_Print();
-		PyErr_Clear();
-
-		// Python is usually not appending line feeds...
-		rMessage() << std::endl;
+	catch (const py::error_already_set& ex)
+	{
+		rError() << "Script file " << scriptFilename << " is not a valid command:" << std::endl;
+		rError() << ex.what() << std::endl;
 	}
 }
 
@@ -487,7 +519,8 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 #endif
 
 	// When Python asks for the object, let's register our interfaces to the py::module
-	DarkRadiantModule::SetRegistrationCallback(std::bind(&ScriptingSystem::addInterfacesToModule, this, std::placeholders::_1));
+	DarkRadiantModule::SetRegistrationCallback(
+		std::bind(&ScriptingSystem::addInterfacesToModule, this, std::placeholders::_1, std::placeholders::_2));
 
 	// Register the darkradiant module to Python
 	int result = PyImport_AppendInittab("darkradiant", DarkRadiantModule::pybind11_init_wrapper);
@@ -519,25 +552,6 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	addInterface("SoundManager", std::make_shared<SoundManagerInterface>());
 	addInterface("DialogInterface", std::make_shared<DialogManagerInterface>());
 	addInterface("SelectionSetInterface", std::make_shared<SelectionSetInterface>());
-
-	py::initialize_interpreter();
-
-	{
-		try
-		{
-			py::exec("import darkradiant as dr\ndr.log('First Test')\ndr.GlobalCommandSystem.execute('clear')");
-		}
-		catch (const py::error_already_set& ex)
-		{
-			rError() << ex.what() << std::endl;
-
-			// Dump the error to the console, this will invoke the PythonConsoleWriter
-			PyErr_Print();
-			PyErr_Clear();
-		}
-	}
-
-	py::finalize_interpreter();
 
 #if 0
 	// start the python interpreter
@@ -616,9 +630,6 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 		cmd::ARGTYPE_STRING
 	);
 
-	// Search script folder for commands
-	reloadScripts();
-
 	// Bind the reloadscripts command to the menu
 	GlobalEventManager().addCommand("ReloadScripts", "ReloadScripts");
 
@@ -658,6 +669,22 @@ void ScriptingSystem::shutdownModule()
 
 	Py_Finalize();
 #endif
+
+	_initialised = false;
+
+	// Clear the buffer so that nodes finally get destructed
+	SceneNodeBuffer::Instance().clear();
+
+	_commands.clear();
+
+	_scriptPath.clear();
+
+	// Free all interfaces
+	_interfaces.clear();
+
+	DarkRadiantModule::Clear();
+
+	py::finalize_interpreter();
 }
 
 } // namespace script

@@ -94,7 +94,7 @@ public:
 private:
 	bool interfaceExists(const std::string& name);
 
-	void addInterfacesToModule(py::module& mod);
+	void addInterfacesToModule(py::module& mod, py::dict&);
 
 	void reloadScripts();
 

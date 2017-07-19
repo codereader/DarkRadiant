@@ -16,7 +16,7 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
 
-	void registerInterface(pybind11::module& scope) override;
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
 typedef std::shared_ptr<CommandSystemInterface> CommandSystemInterfacePtr;
 
