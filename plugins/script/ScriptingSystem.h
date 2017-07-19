@@ -1,6 +1,5 @@
 #pragma once
 
-#include <boost/python.hpp>
 #include <map>
 #include <vector>
 #include <pybind11/pybind11.h>
@@ -14,7 +13,8 @@
 
 namespace py = pybind11;
 
-namespace script {
+namespace script 
+{
 
 // Forward declaration
 class StartupListener;
@@ -35,14 +35,6 @@ private:
 	typedef std::pair<std::string, IScriptInterfacePtr> NamedInterface;
 	typedef std::vector<NamedInterface> Interfaces;
 	Interfaces _interfaces;
-
-	struct BoostPythonMainObjects
-	{
-		boost::python::object mainModule;
-		boost::python::object mainNamespace;
-		boost::python::dict globals;
-	};
-	std::unique_ptr<BoostPythonMainObjects> _mainObjects;
 
 	// The path where the script files are hosted
 	std::string _scriptPath;
@@ -92,6 +84,8 @@ public:
 	void shutdownModule();
 
 private:
+	void executeScriptFile(const std::string& filename, bool setExecuteCommandAttr);
+
 	bool interfaceExists(const std::string& name);
 
 	void addInterfacesToModule(py::module& mod, py::dict&);

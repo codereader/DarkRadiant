@@ -43,7 +43,6 @@
 #include "os/path.h"
 #include <functional>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 class DarkRadiantModule
 {
@@ -137,8 +136,6 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 	if (_initialised) 
 	{
 		// Add the interface at once, all the others are already added
-		iface->registerInterface(_mainObjects->mainNamespace);
-
 		iface->registerInterface(DarkRadiantModule::GetModule(), DarkRadiantModule::GetGlobals());
 	}
 }
@@ -154,7 +151,12 @@ bool ScriptingSystem::interfaceExists(const std::string& name) {
 	return false;
 }
 
-void ScriptingSystem::executeScriptFile(const std::string& filename) 
+void ScriptingSystem::executeScriptFile(const std::string& filename)
+{
+	executeScriptFile(filename, false);
+}
+
+void ScriptingSystem::executeScriptFile(const std::string& filename, bool setExecuteCommandAttr)
 {
 	try
 	{
@@ -169,18 +171,14 @@ void ScriptingSystem::executeScriptFile(const std::string& filename)
         }
 
 		py::dict locals;
-		locals["__executeCommand__"] = true;
+
+		if (setExecuteCommandAttr)
+		{
+			locals["__executeCommand__"] = true;
+		}
 
 		// Attempt to run the specified script
 		py::eval_file(filePath, py::globals(), locals);
-
-#if 0
-		boost::python::object ignored = boost::python::exec_file(
-            filePath.c_str(),
-			_mainObjects->mainNamespace,
-			_mainObjects->globals
-		);
-#endif
 	}
     catch (std::invalid_argument& e)
     {
@@ -319,27 +317,32 @@ void ScriptingSystem::initialise()
 	GlobalGroupDialog().addPage(page);
 }
 
-void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args) {
+void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args)
+{
 	// Start the test script
 	if (args.empty()) return;
 
 	executeScriptFile(args[0].getString());
 }
 
-void ScriptingSystem::runScriptCommand(const cmd::ArgumentList& args) {
+void ScriptingSystem::runScriptCommand(const cmd::ArgumentList& args) 
+{
 	// Start the test script
 	if (args.empty()) return;
 
 	executeCommand(args[0].getString());
 }
 
-void ScriptingSystem::reloadScriptsCmd(const cmd::ArgumentList& args) {
+void ScriptingSystem::reloadScriptsCmd(const cmd::ArgumentList& args) 
+{
 	reloadScripts();
 }
 
-void ScriptingSystem::executeCommand(const std::string& name) {
+void ScriptingSystem::executeCommand(const std::string& name)
+{
 	// Sanity check
-	if (!_initialised) {
+	if (!_initialised)
+	{
 		rError() << "Cannot execute script command " << name
 			<< ", ScriptingSystem not initialised yet." << std::endl;
 		return;
@@ -348,18 +351,14 @@ void ScriptingSystem::executeCommand(const std::string& name) {
 	// Lookup the name
 	ScriptCommandMap::iterator found = _commands.find(name);
 
-	if (found == _commands.end()) {
+	if (found == _commands.end())
+	{
 		rError() << "Couldn't find command " << name << std::endl;
 		return;
 	}
 
-#if 0
-	// Set the execution flag in the global namespace
-	_mainObjects->globals["__executeCommand__"] = true;
-#endif
-
 	// Execute the script file behind this command
-	executeScriptFile(found->second->getFilename());
+	executeScriptFile(found->second->getFilename(), true);
 }
 
 void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
@@ -373,15 +372,7 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 		locals["__executeCommand__"] = false;
 
 		// Attempt to run the specified script
-		py::eval_file((_scriptPath + scriptFilename), py::globals(), locals);
-
-#if 0
-		boost::python::object ignored = boost::python::exec_file(
-			(_scriptPath + scriptFilename).c_str(),
-			_mainObjects->mainNamespace,
-			locals	// pass the new dictionary for the locals
-		);
-#endif
+		py::eval_file(_scriptPath + scriptFilename, py::globals(), locals);
 
 		std::string cmdName;
 		std::string cmdDisplayName;
@@ -404,7 +395,7 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 			}
 
 			// Successfully retrieved the command
-			ScriptCommandPtr cmd(new ScriptCommand(cmdName, cmdDisplayName, scriptFilename));
+			ScriptCommandPtr cmd = std::make_shared<ScriptCommand>(cmdName, cmdDisplayName, scriptFilename);
 
 			// Try to register this named command
 			std::pair<ScriptCommandMap::iterator, bool> result = _commands.insert(
@@ -440,7 +431,8 @@ void ScriptingSystem::reloadScripts()
 	// Initialise the search's starting point
 	fs::path start = fs::path(_scriptPath) / "commands/";
 
-	if (!fs::exists(start)) {
+	if (!fs::exists(start))
+	{
 		rWarning() << "Couldn't find scripts folder: " << start.string() << std::endl;
 		return;
 	}
@@ -467,7 +459,7 @@ void ScriptingSystem::reloadScripts()
 	// Re-create the script menu
 	_scriptMenu.reset();
 
-	_scriptMenu = ui::ScriptMenuPtr(new ui::ScriptMenu(_commands));
+	_scriptMenu = std::make_shared<ui::ScriptMenu>(_commands);
 }
 
 // RegisterableModule implementation
@@ -542,63 +534,10 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	addInterface("SelectionSetInterface", std::make_shared<SelectionSetInterface>());
 
 #if 0
-	// start the python interpreter
-	Py_Initialize();
-
-	rMessage() << getName() << ": Python interpreter initialised." << std::endl;
-
-	_mainObjects.reset(new BoostPythonMainObjects);
-
-	_mainObjects->mainModule = boost::python::import("__main__");
-	_mainObjects->mainNamespace = _mainObjects->mainModule.attr("__dict__");
-
-	try {
-		// Construct the console writer interface
-		PythonConsoleWriterClass consoleWriter("PythonConsoleWriter", boost::python::init<bool, std::string&>());
-		consoleWriter.def("write", &PythonConsoleWriter::write);
-
-		// Declare the interface to python
-		_mainObjects->mainNamespace["PythonConsoleWriter"] = consoleWriter;
-
-		// Redirect stdio output to our local ConsoleWriter instances
-		boost::python::import("sys").attr("stderr") = boost::python::ptr(&_errorWriter);
-		boost::python::import("sys").attr("stdout") = boost::python::ptr(&_outputWriter);
-	}
-	catch (const boost::python::error_already_set&) {
-		// Dump the error to the console, this will invoke the PythonConsoleWriter
-		PyErr_Print();
-		PyErr_Clear();
-
-		// Python is usually not appending line feeds...
-		rMessage() << std::endl;
-	}
-
 	// Declare the std::vector<std::string> object to Python, this is used several times
 	_mainObjects->mainNamespace["StringVector"] = boost::python::class_< std::vector<std::string> >("StringVector")
 		.def(boost::python::vector_indexing_suite<std::vector<std::string>, true>())
 	;
-
-	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
-	addInterface("Math", MathInterfacePtr(new MathInterface));
-	addInterface("GameManager", GameInterfacePtr(new GameInterface));
-	addInterface("CommandSystem", CommandSystemInterfacePtr(new CommandSystemInterface));
-	addInterface("SceneGraph", SceneGraphInterfacePtr(new SceneGraphInterface));
-	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
-	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
-	addInterface("GlobalSelectionSystem", SelectionInterfacePtr(new SelectionInterface));
-	addInterface("Brush", BrushInterfacePtr(new BrushInterface));
-	addInterface("Patch", PatchInterfacePtr(new PatchInterface));
-	addInterface("Entity", EntityInterfacePtr(new EntityInterface));
-	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
-	addInterface("Map", MapInterfacePtr(new MapInterface));
-	addInterface("FileSystem", FileSystemInterfacePtr(new FileSystemInterface));
-	addInterface("Grid", GridInterfacePtr(new GridInterface));
-	addInterface("ShaderSystem", ShaderSystemInterfacePtr(new ShaderSystemInterface));
-	addInterface("Model", ModelInterfacePtr(new ModelInterface));
-	addInterface("ModelSkinCacheInterface", ModelSkinCacheInterfacePtr(new ModelSkinCacheInterface));
-	addInterface("SoundManager", SoundManagerInterfacePtr(new SoundManagerInterface));
-	addInterface("DialogInterface", DialogManagerInterfacePtr(new DialogManagerInterface));
-	addInterface("SelectionSetInterface", SelectionSetInterfacePtr(new SelectionSetInterface));
 #endif
 
 	GlobalCommandSystem().addCommand(
@@ -638,25 +577,6 @@ void ScriptingSystem::shutdownModule()
 	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
 	_scriptMenu = ui::ScriptMenuPtr();
-
-#if 0
-	// Clear the buffer so that nodes finally get destructed
-	SceneNodeBuffer::Instance().clear();
-    
-    _commands.clear();
-
-	_scriptPath.clear();
-
-	// Free all interfaces
-	_interfaces.clear();
-
-	_initialised = false;
-
-	// Clear the boost::python::objects
-	_mainObjects.reset();
-
-	Py_Finalize();
-#endif
 
 	_initialised = false;
 
