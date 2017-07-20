@@ -1,14 +1,12 @@
-#ifndef _RADIANT_INTERFACE_H_
-#define _RADIANT_INTERFACE_H_
-
-#include <boost/python.hpp>
+#pragma once
 
 #include "iradiant.h"
 #include "iscript.h"
 
 #include "EntityInterface.h"
 
-namespace script {
+namespace script 
+{
 
 /**
  * greebo: This class registers the base set of interfaces, like
@@ -22,10 +20,7 @@ public:
 	ScriptEntityNode findEntityByClassname(const std::string& name);
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<RadiantInterface> RadiantInterfacePtr;
 
 } // namespace script
-
-#endif /* _RADIANT_INTERFACE_H_ */

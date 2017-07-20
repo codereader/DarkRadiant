@@ -1,11 +1,15 @@
 #include "RadiantInterface.h"
 
+#include <pybind11/pybind11.h>
+
 #include "iscenegraph.h"
 #include "entitylib.h"
 
-namespace script {
+namespace script 
+{
 
-ScriptEntityNode RadiantInterface::findEntityByClassname(const std::string& name) {
+ScriptEntityNode RadiantInterface::findEntityByClassname(const std::string& name)
+{
 	EntityNodeFindByClassnameWalker walker(name);
 	GlobalSceneGraph().root()->traverse(walker);
 
@@ -13,13 +17,13 @@ ScriptEntityNode RadiantInterface::findEntityByClassname(const std::string& name
 	return ScriptEntityNode(walker.getEntityNode());
 }
 
-void RadiantInterface::registerInterface(boost::python::object& nspace) {
-	nspace["Radiant"] = boost::python::class_<RadiantInterface>("Radiant")
-		.def("findEntityByClassname", &RadiantInterface::findEntityByClassname)
-	;
+void RadiantInterface::registerInterface(py::module& scope, py::dict& globals)
+{
+	py::class_<RadiantInterface> radiant(scope, "RadiantInterface");
+	radiant.def("findEntityByClassname", &RadiantInterface::findEntityByClassname);
 
 	// Point the radiant variable to this
-	nspace["Radiant"] = boost::python::ptr(this);
+	globals["Radiant"] = this;
 }
 
 } // namespace script
