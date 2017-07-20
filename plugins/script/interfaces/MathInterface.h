@@ -1,10 +1,9 @@
-#ifndef _MATH_INTERFACE_H_
-#define _MATH_INTERFACE_H_
+#pragma once
 
-#include <boost/python.hpp>
 #include "iscript.h"
 
-namespace script {
+namespace script 
+{
 
 // ========== Math objects ==========
 
@@ -13,10 +12,7 @@ class MathInterface :
 {
 public:
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<MathInterface> MathInterfacePtr;
 
 } // namespace script
-
-#endif /* _MATH_INTERFACE_H_ */
