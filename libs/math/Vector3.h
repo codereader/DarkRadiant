@@ -136,10 +136,11 @@ public:
     }
 
     template<typename OtherElement>
-    void operator+= (const BasicVector3<OtherElement>& other) {
+    BasicVector3<Element>& operator+= (const BasicVector3<OtherElement>& other) {
         _v[0] += static_cast<Element>(other.x());
         _v[1] += static_cast<Element>(other.y());
         _v[2] += static_cast<Element>(other.z());
+		return *this;
     }
 
     /*  Define the substraction operators - and -= with any other BasicVector3 of type OtherElement
@@ -155,10 +156,11 @@ public:
     }
 
     template<typename OtherElement>
-    void operator-= (const BasicVector3<OtherElement>& other) {
+	BasicVector3<Element>& operator-= (const BasicVector3<OtherElement>& other) {
         _v[0] -= static_cast<Element>(other.x());
         _v[1] -= static_cast<Element>(other.y());
         _v[2] -= static_cast<Element>(other.z());
+		return *this;
     }
 
     /*  Define the multiplication operators * and *= with another Vector3 of type OtherElement
@@ -179,10 +181,11 @@ public:
     }
 
     template<typename OtherElement>
-    void operator*= (const BasicVector3<OtherElement>& other) {
+	BasicVector3<Element>& operator*= (const BasicVector3<OtherElement>& other) {
         _v[0] *= static_cast<Element>(other.x());
         _v[1] *= static_cast<Element>(other.y());
         _v[2] *= static_cast<Element>(other.z());
+		return *this;
     }
 
     /*  Define the multiplications * and *= with a scalar
@@ -198,11 +201,12 @@ public:
     }
 
     template<typename OtherElement>
-    void operator*= (const OtherElement& other) {
+	BasicVector3<Element>& operator*= (const OtherElement& other) {
         Element factor = static_cast<Element>(other);
         _v[0] *= factor;
         _v[1] *= factor;
         _v[2] *= factor;
+		return *this;
     }
 
     /*  Define the division operators / and /= with another Vector3 of type OtherElement
@@ -218,10 +222,11 @@ public:
     }
 
     template<typename OtherElement>
-    void operator/= (const BasicVector3<OtherElement>& other) {
+	BasicVector3<Element>& operator/= (const BasicVector3<OtherElement>& other) {
         _v[0] /= static_cast<Element>(other.x());
         _v[1] /= static_cast<Element>(other.y());
         _v[2] /= static_cast<Element>(other.z());
+		return *this;
     }
 
     /*  Define the scalar divisions / and /=
@@ -237,11 +242,12 @@ public:
     }
 
     template<typename OtherElement>
-    void operator/= (const OtherElement& other) {
+	BasicVector3<Element>& operator/= (const OtherElement& other) {
         Element divisor = static_cast<Element>(other);
         _v[0] /= divisor;
         _v[1] /= divisor;
         _v[2] /= divisor;
+		return *this;
     }
 
     /*

@@ -153,9 +153,10 @@ public:
 	}
 
 	template<typename OtherElement>
-	void operator+= (const BasicVector2<OtherElement>& other) {
+	BasicVector2<Element>& operator+= (const BasicVector2<OtherElement>& other) {
 		_v[0] += static_cast<Element>(other.x());
 		_v[1] += static_cast<Element>(other.y());
+		return *this;
 	}
 
 	/*	Define the substraction operators - and -= with any other BasicVector2 of type OtherElement
@@ -170,9 +171,10 @@ public:
 	}
 
 	template<typename OtherElement>
-	void operator-= (const BasicVector2<OtherElement>& other) {
+	BasicVector2<Element>& operator-= (const BasicVector2<OtherElement>& other) {
 		_v[0] -= static_cast<Element>(other.x());
 		_v[1] -= static_cast<Element>(other.y());
+		return *this;
 	}
 
 	/*	Define the multiplication operators * and *= with another Vector2 of type OtherElement
@@ -192,9 +194,10 @@ public:
 	}
 
 	template<typename OtherElement>
-	void operator*= (const BasicVector2<OtherElement>& other) {
+	BasicVector2<Element>& operator*= (const BasicVector2<OtherElement>& other) {
 		_v[0] *= static_cast<Element>(other.x());
 		_v[1] *= static_cast<Element>(other.y());
+		return *this;
 	}
 
 
@@ -210,10 +213,11 @@ public:
 	}
 
 	template<typename OtherElement>
-	void operator*= (const OtherElement& other) {
+	BasicVector2<Element>& operator*= (const OtherElement& other) {
 		Element factor = static_cast<Element>(other);
 		_v[0] *= factor;
 		_v[1] *= factor;
+		return *this;
 	}
 
 	/*	Define the division operators / and /= with another Vector2 of type OtherElement
@@ -228,9 +232,10 @@ public:
 	}
 
 	template<typename OtherElement>
-	void operator/= (const BasicVector2<OtherElement>& other) {
+	BasicVector2<Element>& operator/= (const BasicVector2<OtherElement>& other) {
 		_v[0] /= static_cast<Element>(other.x());
 		_v[1] /= static_cast<Element>(other.y());
+		return *this;
 	}
 
 	/*	Define the scalar divisions / and /=
@@ -245,10 +250,11 @@ public:
 	}
 
 	template<typename OtherElement>
-	void operator/= (const OtherElement& other) {
+	BasicVector2<Element>& operator/= (const OtherElement& other) {
 		Element divisor = static_cast<Element>(other);
 		_v[0] /= divisor;
 		_v[1] /= divisor;
+		return *this;
 	}
 
 	/** Cast to std::string
