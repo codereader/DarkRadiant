@@ -1,13 +1,12 @@
-#ifndef _GAME_INTERFACE_H_
-#define _GAME_INTERFACE_H_
+#pragma once
 
-#include <boost/python.hpp>
 #include "iscript.h"
 
 #include "igame.h"
 #include <vector>
 
-namespace script {
+namespace script 
+{
 
 class ScriptGame
 {
@@ -34,10 +33,7 @@ public:
 	PathList getVFSSearchPaths();
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<GameInterface> GameInterfacePtr;
 
 } // namespace script
-
-#endif /* _GAME_INTERFACE_H_ */

@@ -1,8 +1,9 @@
 #include "GameInterface.h"
 
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <pybind11/pybind11.h>
 
-namespace script {
+namespace script 
+{
 
 ScriptGame::ScriptGame(const game::IGamePtr& game) :
 	_game(game)
@@ -12,7 +13,6 @@ std::string ScriptGame::getKeyValue(const std::string& key) const
 {
 	return (_game != NULL) ? _game->getKeyValue(key) : "";
 }
-
 
 // -----------------------------------------------
 
@@ -41,11 +41,13 @@ std::string GameInterface::getFSGameBase()
 	return GlobalGameManager().getFSGameBase();
 }
 
-ScriptGame GameInterface::currentGame() {
+ScriptGame GameInterface::currentGame() 
+{
 	return ScriptGame(GlobalGameManager().currentGame());
 }
 
-GameInterface::PathList GameInterface::getVFSSearchPaths() {
+GameInterface::PathList GameInterface::getVFSSearchPaths()
+{
 	game::IGameManager::PathList paths = GlobalGameManager().getVFSSearchPaths();
 
 	PathList pathVector;
@@ -55,26 +57,26 @@ GameInterface::PathList GameInterface::getVFSSearchPaths() {
 }
 
 // IScriptInterface implementation
-void GameInterface::registerInterface(boost::python::object& nspace)
+void GameInterface::registerInterface(py::module& scope, py::dict& globals)
 {
 	// Add the Game object declaration
-	nspace["Game"] = boost::python::class_<ScriptGame>("Game", boost::python::init<const game::IGamePtr&>())
-		.def("getKeyValue", &ScriptGame::getKeyValue)
-	;
+	py::class_<ScriptGame> game(scope, "Game");
+	game.def(py::init<const game::IGamePtr&>());
+	game.def("getKeyValue", &ScriptGame::getKeyValue);
 
 	// Add the module declaration to the given python namespace
-	nspace["GlobalGameManager"] = boost::python::class_<GameInterface>("GlobalGameManager")
-		.def("getUserEnginePath", &GameInterface::getUserEnginePath)
-		.def("getModPath", &GameInterface::getModPath)
-		.def("getModBasePath", &GameInterface::getModBasePath)
-		.def("getFSGame", &GameInterface::getFSGame)
-		.def("getFSGameBase", &GameInterface::getFSGameBase)
-		.def("currentGame", &GameInterface::currentGame)
-		.def("getVFSSearchPaths", &GameInterface::getVFSSearchPaths)
-	;
+	py::class_<GameInterface> gameManager(scope, "GameManager");
+
+	gameManager.def("getUserEnginePath", &GameInterface::getUserEnginePath);
+	gameManager.def("getModPath", &GameInterface::getModPath);
+	gameManager.def("getModBasePath", &GameInterface::getModBasePath);
+	gameManager.def("getFSGame", &GameInterface::getFSGame);
+	gameManager.def("getFSGameBase", &GameInterface::getFSGameBase);
+	gameManager.def("currentGame", &GameInterface::currentGame);
+	gameManager.def("getVFSSearchPaths", &GameInterface::getVFSSearchPaths);
 
 	// Now point the Python variable "GlobalGameManager" to this instance
-	nspace["GlobalGameManager"] = boost::python::ptr(this);
+	globals["GlobalGameManager"] = this;
 }
 
 } // namespace script
