@@ -90,6 +90,8 @@ class Walker(SelectionVisitor) :
 visitor = Walker()
 GlobalSelectionSystem.foreachSelected(visitor)
 
+print('Map name is ' + GlobalMap.getMapName())
+
 # Try to find the map's worldspawn
 worldspawn = GlobalMap.getWorldSpawn()
 

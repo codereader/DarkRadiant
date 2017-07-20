@@ -1,16 +1,14 @@
-#ifndef _MAP_INTERFACE_H_
-#define _MAP_INTERFACE_H_
-
-#include <boost/python.hpp>
+#pragma once
 
 #include "iscript.h"
 
 #include "SceneGraphInterface.h"
 
-namespace script {
+namespace script
+{
 
 /**
- * greebo: This class provides the script interface for the GlobalEntityClassManager module.
+ * greebo: This class provides the script interface for the GlobalMap module.
  */
 class MapInterface :
 	public IScriptInterface
@@ -20,10 +18,7 @@ public:
 	std::string getMapName();
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<MapInterface> MapInterfacePtr;
 
 } // namespace script
-
-#endif /* _MAP_INTERFACE_H_ */

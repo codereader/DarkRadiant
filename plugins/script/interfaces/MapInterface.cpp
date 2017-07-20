@@ -1,8 +1,11 @@
 #include "MapInterface.h"
 
+#include <pybind11/pybind11.h>
+
 #include "imap.h"
 
-namespace script {
+namespace script 
+{
 
 ScriptSceneNode MapInterface::getWorldSpawn()
 {
@@ -15,15 +18,16 @@ std::string MapInterface::getMapName()
 }
 
 // IScriptInterface implementation
-void MapInterface::registerInterface(boost::python::object& nspace) {
+void MapInterface::registerInterface(py::module& scope, py::dict& globals)
+{
 	// Add the module declaration to the given python namespace
-	nspace["GlobalMap"] = boost::python::class_<MapInterface>("GlobalMap")
-		.def("getWorldSpawn", &MapInterface::getWorldSpawn)
-		.def("getMapName", &MapInterface::getMapName)
-	;
+	py::class_<MapInterface> map(scope, "Map");
+
+	map.def("getWorldSpawn", &MapInterface::getWorldSpawn);
+	map.def("getMapName", &MapInterface::getMapName);
 
 	// Now point the Python variable "GlobalMap" to this instance
-	nspace["GlobalMap"] = boost::python::ptr(this);
+	globals["GlobalMap"] = this;
 }
 
 } // namespace script
