@@ -1,7 +1,4 @@
-#ifndef _SCRIPT_DIALOG_INTERFACE_H_
-#define _SCRIPT_DIALOG_INTERFACE_H_
-
-#include <boost/python.hpp>
+#pragma once
 
 #include "iscript.h"
 #include "idialogmanager.h"
@@ -80,10 +77,7 @@ public:
 	ScriptDialog createMessageBox(const std::string& title, const std::string& text, ui::IDialog::MessageType type);
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<DialogManagerInterface> DialogManagerInterfacePtr;
 
 } // namespace script
-
-#endif /* _SCRIPT_DIALOG_INTERFACE_H_ */

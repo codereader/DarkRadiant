@@ -1,8 +1,7 @@
 #include "DialogInterface.h"
 
+#include <pybind11/pybind11.h>
 #include "iuimanager.h"
-
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace script
 {
@@ -20,58 +19,46 @@ ScriptDialog DialogManagerInterface::createMessageBox(const std::string& title,
 }
 
 // IScriptInterface implementation
-void DialogManagerInterface::registerInterface(boost::python::object& nspace)
+void DialogManagerInterface::registerInterface(py::module& scope, py::dict& globals)
 {
-	// Add the module declaration to the given python namespace
-	nspace["GlobalDialogManager"] = boost::python::class_<DialogManagerInterface>("GlobalDialogManager")
-		.def("createDialog", &DialogManagerInterface::createDialog)
-		.def("createMessageBox", &DialogManagerInterface::createMessageBox)
-	;
+	py::class_<DialogManagerInterface> dialogMgr(scope, "GlobalDialogManager");
+	dialogMgr.def("createDialog", &DialogManagerInterface::createDialog);
+	dialogMgr.def("createMessageBox", &DialogManagerInterface::createMessageBox);
 
 	// Now point the Python variable "GlobalDialogManager" to this instance
-	nspace["GlobalDialogManager"] = boost::python::ptr(this);
+	globals["GlobalDialogManager"] = this;
 
 	// Add the declaration for the IDialog class
-	boost::python::class_<ScriptDialog> dialog("Dialog",
-		boost::python::init<const ui::IDialogPtr&>());
+	py::class_<ScriptDialog> dialog(scope, "Dialog");
+	dialog.def(py::init<const ui::IDialogPtr&>());
 
 	// Add the methods to the dialog object
-	dialog
-		.def("setTitle", &ScriptDialog::setTitle)
-		.def("run", &ScriptDialog::run)
-		.def("addLabel", &ScriptDialog::addLabel)
-		.def("addComboBox", &ScriptDialog::addComboBox)
-		.def("addEntryBox", &ScriptDialog::addEntryBox)
-		.def("addPathEntry", &ScriptDialog::addPathEntry)
-		.def("addSpinButton", &ScriptDialog::addSpinButton)
-		.def("addCheckbox", &ScriptDialog::addCheckbox)
-		.def("getElementValue", &ScriptDialog::getElementValue)
-		.def("setElementValue", &ScriptDialog::setElementValue)
-	;
-
-	// Register the dialog class name
-	nspace["Dialog"] = dialog;
-
-	// Switch to the Dialog's class scope
-	boost::python::scope dialogScope( dialog );
+	dialog.def("setTitle", &ScriptDialog::setTitle);
+	dialog.def("run", &ScriptDialog::run);
+	dialog.def("addLabel", &ScriptDialog::addLabel);
+	dialog.def("addComboBox", &ScriptDialog::addComboBox);
+	dialog.def("addEntryBox", &ScriptDialog::addEntryBox);
+	dialog.def("addPathEntry", &ScriptDialog::addPathEntry);
+	dialog.def("addSpinButton", &ScriptDialog::addSpinButton);
+	dialog.def("addCheckbox", &ScriptDialog::addCheckbox);
+	dialog.def("getElementValue", &ScriptDialog::getElementValue);
+	dialog.def("setElementValue", &ScriptDialog::setElementValue);
 
 	// Expose the enums in the Dialog's scope
-	boost::python::enum_<ui::IDialog::Result>("Result")
+	py::enum_<ui::IDialog::Result>(scope, "Result")
 		.value("CANCELLED", ui::IDialog::RESULT_CANCELLED)
 		.value("OK", ui::IDialog::RESULT_OK)
 		.value("NO", ui::IDialog::RESULT_NO)
 		.value("YES", ui::IDialog::RESULT_YES)
-		.export_values()
-	;
+		.export_values();
 
-	boost::python::enum_<ui::IDialog::MessageType>("MessageType")
+	py::enum_<ui::IDialog::MessageType>(scope, "MessageType")
 		.value("CONFIRM", ui::IDialog::MESSAGE_CONFIRM)
 		.value("ASK", ui::IDialog::MESSAGE_ASK)
 		.value("WARNING", ui::IDialog::MESSAGE_WARNING)
 		.value("ERROR", ui::IDialog::MESSAGE_ERROR)
 		.value("YESNOCANCEL", ui::IDialog::MESSAGE_YESNOCANCEL)
-		.export_values()
-	;
+		.export_values();
 }
 
 
