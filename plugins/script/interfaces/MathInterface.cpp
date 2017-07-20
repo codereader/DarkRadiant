@@ -9,6 +9,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "render/Vertex3f.h"
+#include "string/convert.h"
 
 namespace script {
 
@@ -38,9 +39,14 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	// Most important operators
 	vec3.def(py::self + py::self);		// __add__
 	vec3.def(py::self - py::self);		// __sub__
-	vec3.def(py::self += py::self);
-	vec3.def(py::self -= py::self);
+	vec3.def(py::self += py::self);		// __iadd__
+	vec3.def(py::self -= py::self);		// __isub__
 	vec3.def(py::self < py::self);	// __lt__
+	vec3.def("__repr__", [](const Vector3& vec) 
+	{ 
+		return "(" + string::to_string(vec.x()) + " " + string::to_string(vec.y()) + 
+			" " + string::to_string(vec.z()) + ")";
+	});
 
 	// Register Vertex3f, which extends Vector3
 	py::class_<Vertex3f, Vector3> vertex3f(scope, "Vertex3f");
@@ -66,6 +72,10 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	vec2.def(py::self += py::self);
 	vec2.def(py::self -= py::self);
 	vec2.def(py::self < py::self);	// __lt__
+	vec2.def("__repr__", [](const Vector2& vec)
+	{
+		return "(" + string::to_string(vec.x()) + " " + string::to_string(vec.y()) + ")";
+	});
 
 	// Add the Vector4 class
 	py::class_<Vector4> vec4(scope, "Vector4");
@@ -85,6 +95,11 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	vec4.def(py::self - py::self);		// __sub__
 	vec4.def(py::self += py::self);
 	vec4.def(py::self -= py::self);
+	vec4.def("__repr__", [](const Vector4& vec)
+	{
+		return "(" + string::to_string(vec.x()) + " " + string::to_string(vec.y()) + " " + 
+			string::to_string(vec.z()) + " " + string::to_string(vec.w()) + ")";
+	});
 
 	// Add the Vector4 and Quaternion with the same interface
 	scope.add_object("Quaternion", vec4);

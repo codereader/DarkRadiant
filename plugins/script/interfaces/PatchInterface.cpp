@@ -1,197 +1,187 @@
 #include "PatchInterface.h"
 
+#include <pybind11/pybind11.h>
+#include <pybind11/stl_bind.h>
+
 #include "ipatch.h"
 #include "itextstream.h"
+
 #include "../SceneNodeBuffer.h"
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-namespace script {
-
-class ScriptPatchNode :
-	public ScriptSceneNode
+namespace script 
 {
-	static const std::string _emptyShader;
-	static PatchControl _emptyPatchControl;
-public:
-	ScriptPatchNode(const scene::INodePtr& node) :
-		ScriptSceneNode((node != NULL && Node_isPatch(node)) ? node : scene::INodePtr())
-	{}
 
-	// Checks if the given SceneNode structure is a PatchNode
-	static bool isPatch(const ScriptSceneNode& node) {
-		return Node_isPatch(node);
-	}
+ScriptPatchNode::ScriptPatchNode(const scene::INodePtr& node) :
+	ScriptSceneNode((node != NULL && Node_isPatch(node)) ? node : scene::INodePtr())
+{}
 
-	// "Cast" service for Python, returns a ScriptPatchNode.
-	// The returned node is non-NULL if the cast succeeded
-	static ScriptPatchNode getPatch(const ScriptSceneNode& node) {
-		// Try to cast the node onto a patch
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(
-			static_cast<scene::INodePtr>(node)
-		);
+bool ScriptPatchNode::isPatch(const ScriptSceneNode& node)
+{
+	return Node_isPatch(node);
+}
 
-		// Construct a patchNode (contained node may be NULL)
-		return (patchNode != NULL) ? ScriptPatchNode(node) : ScriptPatchNode(scene::INodePtr());
-	}
+ScriptPatchNode ScriptPatchNode::getPatch(const ScriptSceneNode& node) 
+{
+	// Try to cast the node onto a patch
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(
+		static_cast<scene::INodePtr>(node)
+	);
 
-	// Resizes the patch to the given dimensions
-	void setDims(std::size_t width, std::size_t height)
+	// Construct a patchNode (contained node may be NULL)
+	return (patchNode != NULL) ? ScriptPatchNode(node) : ScriptPatchNode(scene::INodePtr());
+}
+
+void ScriptPatchNode::setDims(std::size_t width, std::size_t height)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
+
+	patchNode->getPatch().setDims(width, height);
+}
+
+std::size_t ScriptPatchNode::getWidth() const
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return 0;
+
+	return patchNode->getPatch().getWidth();
+}
+
+std::size_t ScriptPatchNode::getHeight() const
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return 0;
+
+	return patchNode->getPatch().getHeight();
+}
+
+PatchMesh ScriptPatchNode::getTesselatedPatchMesh() const
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return PatchMesh();
+
+	return patchNode->getPatch().getTesselatedPatchMesh();
+}
+
+PatchControl& ScriptPatchNode::ctrlAt(std::size_t row, std::size_t col)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return _emptyPatchControl;
+
+	IPatch& patch = patchNode->getPatch();
+
+	if (row > patch.getHeight() || col > patch.getWidth())
 	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return;
-
-		patchNode->getPatch().setDims(width, height);
+		rError() << "One or more patch control indices out of bounds: " << row << "," << col << std::endl;
+		return _emptyPatchControl;
 	}
 
-	// Get the patch dimensions
-	std::size_t getWidth() const
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return 0;
+	return patchNode->getPatch().ctrlAt(row, col);
+}
 
-		return patchNode->getPatch().getWidth();
-	}
+void ScriptPatchNode::insertColumns(std::size_t colIndex)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
 
-	std::size_t getHeight() const
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return 0;
+	return patchNode->getPatch().insertColumns(colIndex);
+}
 
-		return patchNode->getPatch().getHeight();
-	}
+void ScriptPatchNode::insertRows(std::size_t rowIndex)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
 
-	PatchMesh getTesselatedPatchMesh() const
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return PatchMesh();
+	return patchNode->getPatch().insertRows(rowIndex);
+}
 
-		return patchNode->getPatch().getTesselatedPatchMesh();
-	}
+void ScriptPatchNode::removePoints(bool columns, std::size_t index)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
 
-	// Return a defined patch control vertex at <row>,<col>
-	PatchControl& ctrlAt(std::size_t row, std::size_t col)
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return _emptyPatchControl;
+	return patchNode->getPatch().removePoints(columns, index);
+}
 
-		IPatch& patch = patchNode->getPatch();
+void ScriptPatchNode::appendPoints(bool columns, bool beginning)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
 
-		if (row > patch.getHeight() || col > patch.getWidth())
-		{
-			rError() << "One or more patch control indices out of bounds: " << row << "," << col << std::endl;
-			return _emptyPatchControl;
-		}
+	return patchNode->getPatch().appendPoints(columns, beginning);
+}
 
-		return patchNode->getPatch().ctrlAt(row, col);
-	}
+bool ScriptPatchNode::isValid() const
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return false;
 
- 	void insertColumns(std::size_t colIndex)
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return;
+	return patchNode->getPatch().isValid();
+}
 
-		return patchNode->getPatch().insertColumns(colIndex);
-	}
+bool ScriptPatchNode::isDegenerate() const
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return true;
 
- 	void insertRows(std::size_t rowIndex)
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return;
+	return patchNode->getPatch().isDegenerate();
+}
 
-		return patchNode->getPatch().insertRows(rowIndex);
-	}
+void ScriptPatchNode::controlPointsChanged()
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
 
- 	void removePoints(bool columns, std::size_t index)
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return;
+	patchNode->getPatch().controlPointsChanged();
+}
 
-		return patchNode->getPatch().removePoints(columns, index);
-	}
+const std::string& ScriptPatchNode::getShader() const
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return _emptyShader;
 
- 	void appendPoints(bool columns, bool beginning)
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return;
+	return patchNode->getPatch().getShader();
+}
 
-		return patchNode->getPatch().appendPoints(columns, beginning);
-	}
+void ScriptPatchNode::setShader(const std::string& name)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
 
-	// Check if the patch has invalid control points or width/height are zero
-	bool isValid() const
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return false;
+	patchNode->getPatch().setShader(name);
+}
 
-		return patchNode->getPatch().isValid();
-	}
+bool ScriptPatchNode::hasVisibleMaterial()
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return false;
 
-	// Check whether all control vertices are in the same 3D spot (with minimal tolerance)
-	bool isDegenerate() const
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return true;
+	return patchNode->getPatch().hasVisibleMaterial();
+}
 
-		return patchNode->getPatch().isDegenerate();
-	}
+bool ScriptPatchNode::subdivisionsFixed() const
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return false;
 
-	void controlPointsChanged()
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return;
+	return patchNode->getPatch().subdivisionsFixed();
+}
 
-		patchNode->getPatch().controlPointsChanged();
-	}
+Subdivisions ScriptPatchNode::getSubdivisions() const
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return Subdivisions();
 
-	// Shader handling
-	const std::string& getShader() const
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return _emptyShader;
+	return patchNode->getPatch().getSubdivisions();
+}
 
-		return patchNode->getPatch().getShader();
-	}
+void ScriptPatchNode::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions)
+{
+	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
+	if (patchNode == NULL) return;
 
-	void setShader(const std::string& name)
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return;
-
-		patchNode->getPatch().setShader(name);
-	}
-
-	bool hasVisibleMaterial()
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return false;
-
-		return patchNode->getPatch().hasVisibleMaterial();
-	}
-
-	bool subdivisionsFixed() const
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return false;
-
-		return patchNode->getPatch().subdivisionsFixed();
-	}
-
-	Subdivisions getSubdivisions() const
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return Subdivisions();
-
-		return patchNode->getPatch().getSubdivisions();
-	}
-
-	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions)
-	{
-		IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return;
-
-		patchNode->getPatch().setFixedSubdivisions(isFixed, divisions);
-	}
-};
+	patchNode->getPatch().setFixedSubdivisions(isFixed, divisions);
+}
 
 // Initialise static members
 const std::string ScriptPatchNode::_emptyShader;
@@ -221,84 +211,70 @@ ScriptSceneNode PatchInterface::createPatchDef3()
 	return ScriptSceneNode(node);
 }
 
-void PatchInterface::registerInterface(boost::python::object& nspace) {
-	nspace["PatchControl"] = boost::python::class_<PatchControl>("PatchControl")
-		.def_readwrite("vertex", &PatchControl::vertex)
-		.def_readwrite("texcoord", &PatchControl::texcoord)
-	;
+void PatchInterface::registerInterface(py::module& scope, py::dict& globals) 
+{
+	py::class_<PatchControl> patchControl(scope, "PatchMeshControl");
+	patchControl.def_readwrite("vertex", &PatchControl::vertex);
+	patchControl.def_readwrite("texcoord", &PatchControl::texcoord);
 
-	nspace["Subdivisions"] = boost::python::class_<Subdivisions>("Subdivisions",
-		boost::python::init<unsigned int, unsigned int>())
-		.def(boost::python::init<const Subdivisions&>())
-		// greebo: Pick the correct overload - this is hard to read, but it is necessary
-		.def("x", static_cast<unsigned int& (Subdivisions::*)()>(&Subdivisions::x),
-			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-		.def("y", static_cast<unsigned int& (Subdivisions::*)()>(&Subdivisions::y),
-			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-	;
+	py::class_<Subdivisions> subdivisions(scope, "Subdivisions");
+	subdivisions.def(py::init<unsigned int, unsigned int>());
+	subdivisions.def(py::init<const Subdivisions&>());
 
-	nspace["PatchMeshVertex"] = boost::python::class_<VertexNT>("PatchMeshVertex",
-		boost::python::init<>())
-		.def_readwrite("vertex", &VertexNT::vertex)
-		.def_readwrite("texcoord", &VertexNT::texcoord)
-		.def_readwrite("normal", &VertexNT::normal)
-	;
+	// greebo: Pick the correct overload - this is hard to read, but it is necessary
+	subdivisions.def("x", static_cast<unsigned int& (Subdivisions::*)()>(&Subdivisions::x), 
+		py::return_value_policy::reference);
+	subdivisions.def("y", static_cast<unsigned int& (Subdivisions::*)()>(&Subdivisions::y), 
+		py::return_value_policy::reference);
+
+	py::class_<VertexNT> patchVertex(scope, "PatchMeshVertex");
+
+	patchVertex.def(py::init<>());
+	patchVertex.def_readwrite("vertex", &VertexNT::vertex);
+	patchVertex.def_readwrite("texcoord", &VertexNT::texcoord);
+	patchVertex.def_readwrite("normal", &VertexNT::normal);
 
 	// Declare the VertexNT vector
-	boost::python::class_<std::vector<VertexNT> >("PatchMeshVertices")
-		.def(boost::python::vector_indexing_suite<std::vector<VertexNT>, true>())
-	;
+	py::bind_vector< std::vector<VertexNT> >(scope, "PatchMeshVertices");
 
-	nspace["PatchMesh"] = boost::python::class_<PatchMesh>("PatchMesh",
-		boost::python::init<>())
-		.def_readonly("width", &PatchMesh::width)
-		.def_readonly("height", &PatchMesh::height)
-		.def_readonly("vertices", &PatchMesh::vertices)
-	;
+	py::class_<PatchMesh> patchMesh(scope, "PatchMesh");
+	patchMesh.def(py::init<>());
+	patchMesh.def_readonly("width", &PatchMesh::width);
+	patchMesh.def_readonly("height", &PatchMesh::height);
+	patchMesh.def_readonly("vertices", &PatchMesh::vertices);
 
 	// Define a PatchNode interface
-	nspace["PatchNode"] = boost::python::class_<ScriptPatchNode,
-		boost::python::bases<ScriptSceneNode> >("PatchNode", boost::python::init<const scene::INodePtr&>() )
-		.def("setDims", &ScriptPatchNode::setDims)
-		.def("getWidth", &ScriptPatchNode::getWidth)
-		.def("getHeight", &ScriptPatchNode::getHeight)
-		.def("ctrlAt", &ScriptPatchNode::ctrlAt,
-			boost::python::return_internal_reference<>())
-		.def("insertColumns", &ScriptPatchNode::insertColumns)
-		.def("insertRows", &ScriptPatchNode::insertRows)
-		.def("removePoints", &ScriptPatchNode::removePoints)
-		.def("appendPoints", &ScriptPatchNode::appendPoints)
-		.def("isValid", &ScriptPatchNode::isValid)
-		.def("isDegenerate", &ScriptPatchNode::isDegenerate)
-		.def("getShader", &ScriptPatchNode::getShader,
-			boost::python::return_value_policy<boost::python::copy_const_reference>())
-		.def("setShader", &ScriptPatchNode::setShader)
-		.def("hasVisibleMaterial", &ScriptPatchNode::hasVisibleMaterial)
-		.def("subdivionsFixed", &ScriptPatchNode::subdivisionsFixed) // typo used to be there in previous releases, leave it in there for compatibility reasons
-		.def("subdivisionsFixed", &ScriptPatchNode::subdivisionsFixed)
-		.def("getSubdivisions", &ScriptPatchNode::getSubdivisions)
-		.def("setFixedSubdivisions", &ScriptPatchNode::setFixedSubdivisions)
-		.def("controlPointsChanged", &ScriptPatchNode::controlPointsChanged)
-		.def("getTesselatedPatchMesh", &ScriptPatchNode::getTesselatedPatchMesh)
-	;
+	py::class_<ScriptPatchNode, ScriptSceneNode> patchNode(scope, "PatchNode");
 
-	// Add the "isPatch" and "getPatch" method to all ScriptSceneNodes
-	boost::python::object sceneNode = nspace["SceneNode"];
-
-	boost::python::objects::add_to_namespace(sceneNode,
-		"isPatch", boost::python::make_function(&ScriptPatchNode::isPatch));
-
-	boost::python::objects::add_to_namespace(sceneNode,
-		"getPatch", boost::python::make_function(&ScriptPatchNode::getPatch));
+	patchNode.def(py::init<const scene::INodePtr&>());
+	patchNode.def("setDims", &ScriptPatchNode::setDims);
+	patchNode.def("getWidth", &ScriptPatchNode::getWidth);
+	patchNode.def("getHeight", &ScriptPatchNode::getHeight);
+	patchNode.def("ctrlAt", &ScriptPatchNode::ctrlAt, py::return_value_policy::reference_internal);
+	patchNode.def("insertColumns", &ScriptPatchNode::insertColumns);
+	patchNode.def("insertRows", &ScriptPatchNode::insertRows);
+	patchNode.def("removePoints", &ScriptPatchNode::removePoints);
+	patchNode.def("appendPoints", &ScriptPatchNode::appendPoints);
+	patchNode.def("isValid", &ScriptPatchNode::isValid);
+	patchNode.def("isDegenerate", &ScriptPatchNode::isDegenerate);
+	patchNode.def("getShader", &ScriptPatchNode::getShader, py::return_value_policy::reference);
+	patchNode.def("setShader", &ScriptPatchNode::setShader);
+	patchNode.def("hasVisibleMaterial", &ScriptPatchNode::hasVisibleMaterial);
+	patchNode.def("subdivionsFixed", &ScriptPatchNode::subdivisionsFixed); // typo used to be there in previous releases, leave it in there for compatibility reasons
+	patchNode.def("subdivisionsFixed", &ScriptPatchNode::subdivisionsFixed);
+	patchNode.def("getSubdivisions", &ScriptPatchNode::getSubdivisions);
+	patchNode.def("setFixedSubdivisions", &ScriptPatchNode::setFixedSubdivisions);
+	patchNode.def("controlPointsChanged", &ScriptPatchNode::controlPointsChanged);
+	patchNode.def("getTesselatedPatchMesh", &ScriptPatchNode::getTesselatedPatchMesh);
 
 	// Define the GlobalPatchCreator interface
-	nspace["GlobalPatchCreator"] = boost::python::class_<PatchInterface>("GlobalPatchCreator")
-		.def("createPatchDef2", &PatchInterface::createPatchDef2)
-		.def("createPatchDef3", &PatchInterface::createPatchDef3)
-	;
+	py::class_<PatchInterface> patchCreator(scope, "PatchCreator");
+
+	patchCreator.def("createPatchDef2", &PatchInterface::createPatchDef2);
+	patchCreator.def("createPatchDef3", &PatchInterface::createPatchDef3);
 
 	// Now point the Python variable "GlobalPatchCreator" to this instance
-	nspace["GlobalPatchCreator"] = boost::python::ptr(this);
+	globals["GlobalPatchCreator"] = this;
 }
 
 } // namespace script

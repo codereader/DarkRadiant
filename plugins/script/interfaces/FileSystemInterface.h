@@ -28,7 +28,7 @@ class FileVisitorWrapper :
     public VirtualFileSystemVisitor
 {
 public:
-	void visit(const std::string& filename)
+	void visit(const std::string& filename) override
 	{
 		// Wrap this method to python
 		PYBIND11_OVERLOAD_PURE(

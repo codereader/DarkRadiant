@@ -213,6 +213,10 @@ GlobalSceneGraph.root().traverse(walker)
 #	modelskin = GlobalModelSkinCache.capture(skin)
 #	print('Skin found: ' + modelskin.getName())
 
+v = Vector3(6,6,6)
+v += Vector3(10,10,10)
+print(v)
+
 # Test patch manipulation
 class PatchManipulator(SceneNodeVisitor) :
 	def pre(self, node):

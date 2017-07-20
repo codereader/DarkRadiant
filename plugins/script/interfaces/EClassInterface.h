@@ -50,7 +50,7 @@ class EntityClassVisitorWrapper :
 	public EntityClassVisitor
 {
 public:
-    void visit(const IEntityClassPtr& eclass)
+    void visit(const IEntityClassPtr& eclass) override
 	{
 		// Wrap this method to python
 		PYBIND11_OVERLOAD_PURE(
@@ -67,7 +67,7 @@ class ModelDefVisitorWrapper :
 	public ModelDefVisitor
 {
 public:
-    void visit(const IModelDefPtr& modelDef) 
+    void visit(const IModelDefPtr& modelDef) override
 	{
 		// Wrap this method to python
 		PYBIND11_OVERLOAD_PURE(

@@ -8,6 +8,7 @@
 #include "ModelInterface.h"
 #include "BrushInterface.h"
 #include "EntityInterface.h"
+#include "PatchInterface.h"
 
 namespace script 
 {
@@ -147,6 +148,10 @@ void SceneGraphInterface::registerInterface(py::module& scope, py::dict& globals
 	// Add the "is/get" entity methods
 	sceneNode.def("isEntity", &ScriptEntityNode::isEntity);
 	sceneNode.def("getEntity", &ScriptEntityNode::getEntity);
+
+	// Add the "is/get" patch methods
+	sceneNode.def("isPatch", &ScriptPatchNode::isPatch);
+	sceneNode.def("getPatch", &ScriptPatchNode::getPatch);
 
 	py::class_<scene::NodeVisitor, SceneNodeVisitorWrapper> visitor(scope, "SceneNodeVisitor");
 	visitor.def(py::init<>());
