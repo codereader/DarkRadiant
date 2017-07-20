@@ -1,65 +1,73 @@
 #include "SelectionInterface.h"
 
-namespace script {
+namespace script 
+{
 
-const SelectionInfo& SelectionInterface::getSelectionInfo() {
+const SelectionInfo& SelectionInterface::getSelectionInfo() 
+{
 	return GlobalSelectionSystem().getSelectionInfo();
 }
 
-void SelectionInterface::foreachSelected(const SelectionSystem::Visitor& visitor) {
+void SelectionInterface::foreachSelected(const SelectionSystem::Visitor& visitor)
+{
 	GlobalSelectionSystem().foreachSelected(visitor);
 }
 
-void SelectionInterface::foreachSelectedComponent(const SelectionSystem::Visitor& visitor) {
+void SelectionInterface::foreachSelectedComponent(const SelectionSystem::Visitor& visitor)
+{
 	GlobalSelectionSystem().foreachSelectedComponent(visitor);
 }
 
-void SelectionInterface::setSelectedAll(bool selected) {
+void SelectionInterface::setSelectedAll(bool selected)
+{
 	GlobalSelectionSystem().setSelectedAll(selected);
 }
 
-void SelectionInterface::setSelectedAllComponents(bool selected) {
+void SelectionInterface::setSelectedAllComponents(bool selected)
+{
 	GlobalSelectionSystem().setSelectedAllComponents(selected);
 }
 
-ScriptSceneNode SelectionInterface::ultimateSelected() {
+ScriptSceneNode SelectionInterface::ultimateSelected()
+{
 	return GlobalSelectionSystem().ultimateSelected();
 }
 
-ScriptSceneNode SelectionInterface::penultimateSelected() {
+ScriptSceneNode SelectionInterface::penultimateSelected() 
+{
 	return GlobalSelectionSystem().penultimateSelected();
 }
 
 // IScriptInterface implementation
-void SelectionInterface::registerInterface(boost::python::object& nspace) {
+void SelectionInterface::registerInterface(py::module& scope, py::dict& globals)
+{
 	// Expose the SelectionInfo structure
-	nspace["SelectionInfo"] = boost::python::class_<SelectionInfo>("SelectionInfo", boost::python::init<>())
-		.def_readonly("totalCount", &SelectionInfo::totalCount)
-		.def_readonly("patchCount", &SelectionInfo::patchCount)
-		.def_readonly("brushCount", &SelectionInfo::brushCount)
-		.def_readonly("entityCount", &SelectionInfo::entityCount)
-		.def_readonly("componentCount", &SelectionInfo::componentCount)
-	;
+	py::class_<SelectionInfo> selInfo(scope, "SelectionInformation");
+	selInfo.def(py::init<>());
+	selInfo.def_readonly("totalCount", &SelectionInfo::totalCount);
+	selInfo.def_readonly("patchCount", &SelectionInfo::patchCount);
+	selInfo.def_readonly("brushCount", &SelectionInfo::brushCount);
+	selInfo.def_readonly("entityCount", &SelectionInfo::entityCount);
+	selInfo.def_readonly("componentCount", &SelectionInfo::componentCount);
 
 	// Expose the SelectionSystem::Visitor interface
-	nspace["SelectionVisitor"] = boost::python::class_<SelectionVisitorWrapper, boost::noncopyable>("SelectionVisitor")
-		.def("visit", boost::python::pure_virtual(&SelectionSystem::Visitor::visit))
-	;
+	py::class_<SelectionSystem::Visitor, SelectionVisitorWrapper> visitor(scope, "SelectionVisitor");
+	visitor.def(py::init<>());
+	visitor.def("visit", &SelectionSystem::Visitor::visit);
 
 	// Add the module declaration to the given python namespace
-	nspace["GlobalSelectionSystem"] = boost::python::class_<SelectionInterface>("GlobalSelectionSystem")
-		.def("getSelectionInfo", &SelectionInterface::getSelectionInfo,
-			boost::python::return_value_policy<boost::python::copy_const_reference>())
-		.def("foreachSelected", &SelectionInterface::foreachSelected)
-		.def("foreachSelectedComponent", &SelectionInterface::foreachSelectedComponent)
-		.def("setSelectedAll", &SelectionInterface::setSelectedAll)
-		.def("setSelectedAllComponents", &SelectionInterface::setSelectedAllComponents)
-		.def("ultimateSelected", &SelectionInterface::ultimateSelected)
-		.def("penultimateSelected", &SelectionInterface::penultimateSelected)
-	;
+	py::class_<SelectionInterface> selSys(scope, "SelectionSystem");
+
+	selSys.def("getSelectionInfo", &SelectionInterface::getSelectionInfo, py::return_value_policy::reference);
+	selSys.def("foreachSelected", &SelectionInterface::foreachSelected);
+	selSys.def("foreachSelectedComponent", &SelectionInterface::foreachSelectedComponent);
+	selSys.def("setSelectedAll", &SelectionInterface::setSelectedAll);
+	selSys.def("setSelectedAllComponents", &SelectionInterface::setSelectedAllComponents);
+	selSys.def("ultimateSelected", &SelectionInterface::ultimateSelected);
+	selSys.def("penultimateSelected", &SelectionInterface::penultimateSelected);
 
 	// Now point the Python variable "GlobalSelectionSystem" to this instance
-	nspace["GlobalSelectionSystem"] = boost::python::ptr(this);
+	globals["GlobalSelectionSystem"] = this;
 }
 
 } // namespace script

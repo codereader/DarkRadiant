@@ -1,7 +1,6 @@
-#ifndef _SELECTION_INTERFACE_H_
-#define _SELECTION_INTERFACE_H_
+#pragma once
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
 #include "iscript.h"
 #include "selectionlib.h"
@@ -9,19 +8,25 @@
 
 #include "SceneGraphInterface.h"
 
-namespace script {
+namespace script 
+{
 
 // ========== Selection Handling ==========
 
 // Wrap around the SelectionSystem::Visitor interface
 class SelectionVisitorWrapper :
-	public SelectionSystem::Visitor,
-	public boost::python::wrapper<SelectionSystem::Visitor>
+	public SelectionSystem::Visitor
 {
 public:
-    void visit(const scene::INodePtr& node) const {
+    void visit(const scene::INodePtr& node) const override
+	{
 		// Wrap this method to python
-		this->get_override("visit")(ScriptSceneNode(node));
+		PYBIND11_OVERLOAD_PURE(
+			void,			/* Return type */
+			SelectionSystem::Visitor,    /* Parent class */
+			visit,			/* Name of function in C++ (must match Python name) */
+			ScriptSceneNode(node)			/* Argument(s) */
+		);
 	}
 };
 
@@ -42,10 +47,7 @@ public:
 	ScriptSceneNode penultimateSelected();
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<SelectionInterface> SelectionInterfacePtr;
 
 } // namespace script
-
-#endif /* _SELECTION_INTERFACE_H_ */
