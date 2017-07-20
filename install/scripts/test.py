@@ -136,14 +136,14 @@ for path in vfsPaths:
 	print(path)
 
 # Test FileSystem (VFS)
-#class TestFileVisitor(FileVisitor) :
-#	def visit(self, filename):
-#		print('Found file: ' + filename)
-#
-#filevisitor = TestFileVisitor()
-#GlobalFileSystem.forEachFile('skins/', 'skin', filevisitor, 99)
+class TestFileVisitor(FileVisitor) :
+	def visit(self, filename):
+		print('Found file: ' + filename)
 
-filecontents = GlobalFileSystem.readTextFile('skins/tdm_ai_elemental_fire.skin');
+filevisitor = TestFileVisitor()
+GlobalFileSystem.forEachFile('skins/', 'skin', filevisitor, 99)
+
+filecontents = GlobalFileSystem.readTextFile('skins/tdm_ai_guard_citywatch.skin');
 print(filecontents)
 
 # Test the Grid Interface

@@ -1,11 +1,12 @@
 #pragma once
 
-#include <boost/python.hpp>
-#include "iscript.h"
+#include <pybind11/pybind11.h>
 
+#include "iscript.h"
 #include "ifilesystem.h"
 
-namespace script {
+namespace script
+{
 
 /**
 * Adaptor interface for a VFS traversor object.
@@ -24,14 +25,18 @@ public:
 
 // Scripts will derive from this class
 class FileVisitorWrapper :
-    public VirtualFileSystemVisitor,
-    public boost::python::wrapper<VirtualFileSystemVisitor>
+    public VirtualFileSystemVisitor
 {
 public:
 	void visit(const std::string& filename)
 	{
 		// Wrap this method to python
-		this->get_override("visit")(filename);
+		PYBIND11_OVERLOAD_PURE(
+			void,			/* Return type */
+			VirtualFileSystemVisitor,    /* Parent class */
+			visit,			/* Name of function in C++ (must match Python name) */
+			filename		/* Argument(s) */
+		);
 	}
 };
 
@@ -57,8 +62,7 @@ public:
 	std::string findRoot(const std::string& name);
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<FileSystemInterface> FileSystemInterfacePtr;
 
 } // namespace script

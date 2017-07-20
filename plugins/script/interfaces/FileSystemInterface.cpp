@@ -4,7 +4,8 @@
 #include "iarchive.h"
 #include "itextstream.h"
 
-namespace script {
+namespace script
+{
 
 void FileSystemInterface::forEachFile(const std::string& basedir,
                                       const std::string& extension, 
@@ -31,7 +32,8 @@ std::string FileSystemInterface::readTextFile(const std::string& filename)
 	char buffer[READSIZE];
 	std::size_t bytesRead = READSIZE;
 
-	do {
+	do 
+	{
 		bytesRead = istream.read(buffer, READSIZE);
 
 		// Copy the stuff to the string
@@ -42,36 +44,38 @@ std::string FileSystemInterface::readTextFile(const std::string& filename)
 	return text;
 }
 
-int FileSystemInterface::getFileCount(const std::string& filename) {
+int FileSystemInterface::getFileCount(const std::string& filename)
+{
 	return GlobalFileSystem().getFileCount(filename);
 }
 
-std::string FileSystemInterface::findFile(const std::string& name) {
+std::string FileSystemInterface::findFile(const std::string& name)
+{
 	return GlobalFileSystem().findFile(name);
 }
 
-std::string FileSystemInterface::findRoot(const std::string& name) {
+std::string FileSystemInterface::findRoot(const std::string& name)
+{
 	return GlobalFileSystem().findRoot(name);
 }
 
-void FileSystemInterface::registerInterface(boost::python::object& nspace) {
+void FileSystemInterface::registerInterface(py::module& scope, py::dict& globals) 
+{
 	// Expose the FileVisitor interface
-	nspace["FileVisitor"] =
-		boost::python::class_<FileVisitorWrapper, boost::noncopyable>("FileVisitor")
-		.def("visit", boost::python::pure_virtual(&FileVisitorWrapper::visit))
-	;
+	py::class_<VirtualFileSystemVisitor, FileVisitorWrapper> visitor(scope, "FileVisitor");
+	visitor.def(py::init<>());
+	visitor.def("visit", &VirtualFileSystemVisitor::visit);
 
 	// Add the VFS module declaration to the given python namespace
-	nspace["GlobalFileSystem"] = boost::python::class_<FileSystemInterface>("GlobalFileSystem")
-		.def("forEachFile", &FileSystemInterface::forEachFile)
-		.def("findFile", &FileSystemInterface::findFile)
-		.def("findRoot", &FileSystemInterface::findRoot)
-		.def("readTextFile", &FileSystemInterface::readTextFile)
-		.def("getFileCount", &FileSystemInterface::getFileCount)
-	;
+	py::class_<FileSystemInterface> filesystem(scope, "FileSystem");
+	filesystem.def("forEachFile", &FileSystemInterface::forEachFile);
+	filesystem.def("findFile", &FileSystemInterface::findFile);
+	filesystem.def("findRoot", &FileSystemInterface::findRoot);
+	filesystem.def("readTextFile", &FileSystemInterface::readTextFile);
+	filesystem.def("getFileCount", &FileSystemInterface::getFileCount);
 
 	// Now point the Python variable "GlobalFileSystem" to this instance
-	nspace["GlobalFileSystem"] = boost::python::ptr(this);
+	globals["GlobalFileSystem"] = this;
 }
 
 } // namespace script
