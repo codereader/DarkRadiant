@@ -1,10 +1,9 @@
-#ifndef _GRID_INTERFACE_H_
-#define _GRID_INTERFACE_H_
+#pragma once
 
-#include <boost/python.hpp>
 #include "iscript.h"
 
-namespace script {
+namespace script 
+{
 
 /**
  * greebo: This class provides the script interface for the GlobalGrid module.
@@ -21,10 +20,7 @@ public:
 	void gridUp();
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<GridInterface> GridInterfacePtr;
 
 } // namespace script
-
-#endif /* _GRID_INTERFACE_H_ */
