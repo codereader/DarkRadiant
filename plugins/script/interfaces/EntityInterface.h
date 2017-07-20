@@ -1,7 +1,5 @@
-#ifndef _ENTITY_INTERFACE_H_
-#define _ENTITY_INTERFACE_H_
+#pragma once
 
-#include <boost/python.hpp>
 #include "iscript.h"
 
 #include "ientity.h"
@@ -9,7 +7,8 @@
 #include "EClassInterface.h"
 #include "SceneGraphInterface.h"
 
-namespace script {
+namespace script 
+{
 
 // Visitor object
 class EntityVisitor
@@ -48,13 +47,18 @@ public:
 
 // Wrap around the EntityClassVisitor interface
 class EntityVisitorWrapper :
-    public EntityVisitor,
-    public boost::python::wrapper<EntityVisitor>
+    public EntityVisitor
 {
 public:
-	void visit(const std::string& key, const std::string& value) {
+	void visit(const std::string& key, const std::string& value) override
+	{
 		// Wrap this method to python
-		this->get_override("visit")(key, value);
+		PYBIND11_OVERLOAD_PURE(
+			void,			/* Return type */
+			EntityVisitor,  /* Parent class */
+			visit,			/* Name of function in C++ (must match Python name) */
+			key, value		/* Argument(s) */
+		);
 	}
 };
 
@@ -73,10 +77,7 @@ public:
 	ScriptSceneNode createEntity(const std::string& eclassName);
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<EntityInterface> EntityInterfacePtr;
 
 } // namespace script
-
-#endif /* _ENTITY_INTERFACE_H_ */

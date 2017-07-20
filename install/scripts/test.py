@@ -118,7 +118,7 @@ if not worldspawn.isNull():
 	keyvalues = worldspawnent.getKeyValuePairs('t')
 
 	for kv in keyvalues:
-		print('Keyvalue ' + kv.first + ' = ' + kv.second)
+		print('Keyvalue ' + kv[0] + ' = ' + kv[1])
 
 # Test the commandsystem
 GlobalCommandSystem.execute('texscale "0 0.1"')

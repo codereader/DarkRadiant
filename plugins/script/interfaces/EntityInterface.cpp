@@ -1,13 +1,15 @@
 #include "EntityInterface.h"
 
+#include <pybind11/stl_bind.h>
+
 #include "ientity.h"
 #include "ieclass.h"
 #include "itextstream.h"
 
 #include "../SceneNodeBuffer.h"
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-namespace script {
+namespace script 
+{
 
 // Constructor, checks if the passed node is actually an entity
 ScriptEntityNode::ScriptEntityNode(const scene::INodePtr& node) :
@@ -117,56 +119,42 @@ ScriptSceneNode EntityInterface::createEntity(const std::string& eclassName) {
 	return ScriptSceneNode(node);
 }
 
-void EntityInterface::registerInterface(boost::python::object& nspace) {
+void EntityInterface::registerInterface(py::module& scope, py::dict& globals) 
+{
 	// Add the EntityNode interface
-	nspace["EntityNode"] = boost::python::class_<ScriptEntityNode,
-		boost::python::bases<ScriptSceneNode> >("EntityNode", boost::python::init<const scene::INodePtr&>() )
-		.def("getKeyValue", &ScriptEntityNode::getKeyValue)
-		.def("setKeyValue", &ScriptEntityNode::setKeyValue)
-		.def("forEachKeyValue", &ScriptEntityNode::forEachKeyValue)
-		.def("isInherited", &ScriptEntityNode::isInherited)
-		.def("getEntityClass", &ScriptEntityNode::getEntityClass)
-		.def("isModel", &ScriptEntityNode::isModel)
-		.def("isOfType", &ScriptEntityNode::isOfType)
-		.def("getKeyValuePairs", &ScriptEntityNode::getKeyValuePairs)
-	;
+	py::class_<ScriptEntityNode, ScriptSceneNode> entityNode(scope, "EntityNode");
+	entityNode.def(py::init<const scene::INodePtr&>());
+	entityNode.def("getKeyValue", &ScriptEntityNode::getKeyValue);
+	entityNode.def("setKeyValue", &ScriptEntityNode::setKeyValue);
+	entityNode.def("forEachKeyValue", &ScriptEntityNode::forEachKeyValue);
+	entityNode.def("isInherited", &ScriptEntityNode::isInherited);
+	entityNode.def("getEntityClass", &ScriptEntityNode::getEntityClass);
+	entityNode.def("isModel", &ScriptEntityNode::isModel);
+	entityNode.def("isOfType", &ScriptEntityNode::isOfType);
+	entityNode.def("getKeyValuePairs", &ScriptEntityNode::getKeyValuePairs);
 
 	// Declare a KeyValuePair (pair of strings)
-	boost::python::class_< std::pair<std::string, std::string> >(
-		"EntityKeyValuePair", boost::python::init<std::string, std::string>())
-		.def_readwrite("first", &std::pair<std::string, std::string>::first)
-		.def_readwrite("second", &std::pair<std::string, std::string>::second)
-	;
+	py::class_< std::pair<std::string, std::string> > kvPair(scope, "EntityKeyValuePair");
+	kvPair.def_readwrite("first", &std::pair<std::string, std::string>::first);
+	kvPair.def_readwrite("second", &std::pair<std::string, std::string>::second);
 
 	// Declare the KeyValuePairs vector
-	boost::python::class_<Entity::KeyValuePairs>("EntityKeyValuePairs")
-		.def(boost::python::vector_indexing_suite<Entity::KeyValuePairs, true>())
-	;
-
-	// Add the "isEntity" and "getEntity" method to all ScriptSceneNodes
-	boost::python::object sceneNode = nspace["SceneNode"];
-
-	boost::python::objects::add_to_namespace(sceneNode,
-		"isEntity", boost::python::make_function(&ScriptEntityNode::isEntity));
-
-	boost::python::objects::add_to_namespace(sceneNode,
-		"getEntity", boost::python::make_function(&ScriptEntityNode::getEntity));
+	py::bind_vector<Entity::KeyValuePairs>(scope, "EntityKeyValuePairs");
 
 	// Expose the Entity::Visitor interface
-	nspace["EntityVisitor"] =
-		boost::python::class_<EntityVisitorWrapper, boost::noncopyable>("EntityVisitor")
-		.def("visit", boost::python::pure_virtual(&EntityVisitorWrapper::visit))
-	;
+	py::class_<EntityVisitor, EntityVisitorWrapper> visitor(scope, "EntityVisitor");
+	visitor.def(py::init<>());
+	visitor.def("visit", &EntityVisitor::visit);
 
 	// Add the EntityCreator module declaration to the given python namespace
-	nspace["GlobalEntityCreator"] = boost::python::class_<EntityInterface>("GlobalEntityCreator")
-		// Add both overloads to createEntity
-		.def("createEntity", static_cast<ScriptSceneNode (EntityInterface::*)(const std::string&)>(&EntityInterface::createEntity))
-		.def("createEntity", static_cast<ScriptSceneNode (EntityInterface::*)(const ScriptEntityClass&)>(&EntityInterface::createEntity))
-	;
+	py::class_<EntityInterface> entityCreator(scope, "EntityCreator");
+
+	// Add both overloads to createEntity
+	entityCreator.def("createEntity", static_cast<ScriptSceneNode(EntityInterface::*)(const std::string&)>(&EntityInterface::createEntity));
+	entityCreator.def("createEntity", static_cast<ScriptSceneNode(EntityInterface::*)(const ScriptEntityClass&)>(&EntityInterface::createEntity));
 
 	// Now point the Python variable "GlobalEntityCreator" to this instance
-	nspace["GlobalEntityCreator"] = boost::python::ptr(this);
+	globals["GlobalEntityCreator"] = this;
 }
 
 } // namespace script
