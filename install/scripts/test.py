@@ -16,20 +16,17 @@ print(eclass.getAttribute('editor_usage').getValue())
 if not eclass.isNull():
 	shooter = GlobalEntityCreator.createEntity(eclass)
 
-modelDef = GlobalEntityClassManager.findModel('builderforger')
-print('ModelDef mesh for builderforger = ' + modelDef.mesh)
+modelDef = GlobalEntityClassManager.findModel('tdm_ai_citywatch')
+print('ModelDef mesh for tdm_ai_citywatch = ' + modelDef.mesh)
 
 # Test iterating over C++ std::map
-#for anim in modelDef.anims:
-#	print(anim.key())
-#	print(' = ')
-#	print(anim.data())
-#	print('')
+for anim in modelDef.anims:
+	print(anim + " = " + modelDef.anims[anim])
 
 # Test implementing a eclass visitor interface
 #class TestVisitor(EntityClassVisitor) :
 #	def visit(self, eclass):
-#		print eclass.getAttribute('editor_usage').getValue()
+#		print(eclass.getAttribute('editor_usage').getValue())
 
 #eclassVisitor = TestVisitor()
 #GlobalEntityClassManager.forEachEntityClass(eclassVisitor)

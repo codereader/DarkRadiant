@@ -249,7 +249,7 @@ void BrushInterface::registerInterface(py::module& scope, py::dict& globals)
 	brush.def("setDetailFlag", &ScriptBrushNode::setDetailFlag);
 
 	// Define the BrushCreator interface
-	py::class_<BrushInterface> brushCreator(scope, "GlobalBrushCreator");
+	py::class_<BrushInterface> brushCreator(scope, "BrushCreator");
 	brushCreator.def("createBrush", &BrushInterface::createBrush);
 
 	// Now point the Python variable "GlobalBrushCreator" to this instance

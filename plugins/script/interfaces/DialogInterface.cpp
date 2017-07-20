@@ -21,7 +21,7 @@ ScriptDialog DialogManagerInterface::createMessageBox(const std::string& title,
 // IScriptInterface implementation
 void DialogManagerInterface::registerInterface(py::module& scope, py::dict& globals)
 {
-	py::class_<DialogManagerInterface> dialogMgr(scope, "GlobalDialogManager");
+	py::class_<DialogManagerInterface> dialogMgr(scope, "DialogManager");
 	dialogMgr.def("createDialog", &DialogManagerInterface::createDialog);
 	dialogMgr.def("createMessageBox", &DialogManagerInterface::createMessageBox);
 

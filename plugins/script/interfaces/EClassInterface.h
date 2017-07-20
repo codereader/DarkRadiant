@@ -1,12 +1,12 @@
-#ifndef _ECLASS_INTERFACE_H_
-#define _ECLASS_INTERFACE_H_
-
-#include <boost/python.hpp>
+#pragma once
 
 #include "ieclass.h"
 #include "iscript.h"
 
-namespace script {
+#include <pybind11/pybind11.h>
+
+namespace script 
+{
 
 /**
  * This class represents a single EntityDef / EntityClass for script.
@@ -47,25 +47,35 @@ public:
 
 // Wrap around the EntityClassVisitor interface
 class EntityClassVisitorWrapper :
-	public EntityClassVisitor,
-	public boost::python::wrapper<EntityClassVisitor>
+	public EntityClassVisitor
 {
 public:
-    void visit(const IEntityClassPtr& eclass) {
+    void visit(const IEntityClassPtr& eclass)
+	{
 		// Wrap this method to python
-		this->get_override("visit")(ScriptEntityClass(eclass));
+		PYBIND11_OVERLOAD_PURE(
+			void,					/* Return type */
+			EntityClassVisitor,		/* Parent class */
+			visit,					/* Name of function in C++ (must match Python name) */
+			ScriptEntityClass(eclass) /* Argument(s) */
+		);
 	}
 };
 
-// Wrap around the EntityClassVisitor interface
+// Wrap around the ModelDefVisitor interface
 class ModelDefVisitorWrapper :
-	public ModelDefVisitor,
-	public boost::python::wrapper<ModelDefVisitor>
+	public ModelDefVisitor
 {
 public:
-    void visit(const IModelDefPtr& modelDef) {
+    void visit(const IModelDefPtr& modelDef) 
+	{
 		// Wrap this method to python
-		this->get_override("visit")(*modelDef);
+		PYBIND11_OVERLOAD_PURE(
+			void,				/* Return type */
+			ModelDefVisitor,	/* Parent class */
+			visit,				/* Name of function in C++ (must match Python name) */
+			*modelDef			/* Argument(s) */
+		);
 	}
 };
 
@@ -86,10 +96,7 @@ public:
 	void forEachModelDef(ModelDefVisitor& visitor);
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<EClassManagerInterface> EClassManagerInterfacePtr;
 
 } // namespace script
-
-#endif /* _ECLASS_INTERFACE_H_ */
