@@ -6,6 +6,7 @@
 #include "debugging/ScenegraphUtils.h"
 
 #include "ModelInterface.h"
+#include "BrushInterface.h"
 
 namespace script 
 {
@@ -137,6 +138,10 @@ void SceneGraphInterface::registerInterface(py::module& scope, py::dict& globals
 	// Add the "isModel" and "getModel" methods to all ScriptSceneNodes
 	sceneNode.def("isModel", &ScriptModelNode::isModel);
 	sceneNode.def("getModel", &ScriptModelNode::getModel);
+
+	// Add the "is/get" brush methods
+	sceneNode.def("isBrush", &ScriptBrushNode::isBrush);
+	sceneNode.def("getBrush", &ScriptBrushNode::getBrush);
 
 	py::class_<scene::NodeVisitor, SceneNodeVisitorWrapper> visitor(scope, "SceneNodeVisitor");
 	visitor.def(py::init<>());
