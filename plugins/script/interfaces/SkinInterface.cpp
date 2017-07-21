@@ -1,8 +1,11 @@
 #include "SkinInterface.h"
 
+#include <pybind11/pybind11.h>
+
 #include "modelskin.h"
 
-namespace script {
+namespace script
+{
 
 ScriptModelSkin ModelSkinCacheInterface::capture(const std::string& name)
 {
@@ -24,25 +27,24 @@ void ModelSkinCacheInterface::refresh()
 	GlobalModelSkinCache().refresh();
 }
 
-void ModelSkinCacheInterface::registerInterface(boost::python::object& nspace)
+void ModelSkinCacheInterface::registerInterface(py::module& scope, py::dict& globals)
 {
 	// Declare the model skin
-	nspace["ScriptModelSkin"] = boost::python::class_<ScriptModelSkin>(
-		"ScriptModelSkin", boost::python::init<ModelSkin&>())
-		.def("getName", &ScriptModelSkin::getName)
-		.def("getRemap", &ScriptModelSkin::getRemap)
-	;
+	py::class_<ScriptModelSkin> skin(scope, "ModelSkin");
+	skin.def(py::init<ModelSkin&>());
+	skin.def("getName", &ScriptModelSkin::getName);
+	skin.def("getRemap", &ScriptModelSkin::getRemap);
 
 	// Add the module declaration to the given python namespace
-	nspace["GlobalModelSkinCache"] = boost::python::class_<ModelSkinCacheInterface>("GlobalModelSkinCache")
-		.def("getAllSkins", &ModelSkinCacheInterface::getAllSkins)
-		.def("capture", &ModelSkinCacheInterface::capture)
-		.def("getSkinsForModel", &ModelSkinCacheInterface::getSkinsForModel)
-		.def("refresh", &ModelSkinCacheInterface::refresh)
-	;
+	py::class_<ModelSkinCacheInterface> cache(scope, "ModelSkinCache");
+
+	cache.def("getAllSkins", &ModelSkinCacheInterface::getAllSkins);
+	cache.def("capture", &ModelSkinCacheInterface::capture);
+	cache.def("getSkinsForModel", &ModelSkinCacheInterface::getSkinsForModel);
+	cache.def("refresh", &ModelSkinCacheInterface::refresh);
 
 	// Now point the Python variable "GlobalModelSkinCache" to this instance
-	nspace["GlobalModelSkinCache"] = boost::python::ptr(this);
+	globals["GlobalModelSkinCache"] = this;
 }
 
 } // namespace script

@@ -1,12 +1,11 @@
-#ifndef _MODELSKINCACHE_INTERFACE_H_
-#define _MODELSKINCACHE_INTERFACE_H_
+#pragma once
 
-#include <boost/python.hpp>
 #include "iscript.h"
 
 #include "modelskin.h"
 
-namespace script {
+namespace script 
+{
 
 // Wrapper class to represent a ModelSkin object in Python
 class ScriptModelSkin
@@ -43,10 +42,7 @@ public:
 	void refresh();
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<ModelSkinCacheInterface> ModelSkinCacheInterfacePtr;
 
 } // namespace script
-
-#endif /* _MODELSKINCACHE_INTERFACE_H_ */

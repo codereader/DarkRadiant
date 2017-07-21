@@ -3,6 +3,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
 #include <pybind11/attr.h>
+#include <pybind11/stl_bind.h>
 
 #include "i18n.h"
 #include "itextstream.h"
@@ -270,6 +271,9 @@ void ScriptingSystem::initialise()
 			// Redirect stdio output to our local ConsoleWriter instances
 			py::module::import("sys").attr("stderr") = &_errorWriter;
 			py::module::import("sys").attr("stdout") = &_outputWriter;
+
+			// String vector is used in multiple places
+			py::bind_vector< std::vector<std::string> >(DarkRadiantModule::GetModule(), "StringList");
 
 			//py::exec("import darkradiant as dr\nfrom darkradiant import *\nGlobalCommandSystem.execute(Tork)\nprint('This is a test')", copy);
 		}
