@@ -1,5 +1,7 @@
 #include "PythonModule.h"
 
+#include "itextstream.h"
+
 namespace script
 {
 
@@ -73,16 +75,16 @@ PyObject* PythonModule::InitModuleImpl()
 		py::object main = py::module::import("__main__");
 		py::dict globals = main.attr("__dict__").cast<py::dict>();
 
-		for (auto& i : globals)
+		for (auto i = globals.begin(); i != globals.end(); ++i)
 		{
-			GetGlobals()[i.first] = i.second;
+			GetGlobals()[(*i).first] = (*i).second;
 		}
 
 		return _module->ptr();
 	}
 	catch (py::error_already_set& e)
 	{
-		e.clear();
+		//e.clear();
 		PyErr_SetString(PyExc_ImportError, e.what());
 		return nullptr;
 	}

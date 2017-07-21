@@ -3,6 +3,7 @@
 #include "inode.h"
 #include "iscript.h"
 #include "iscenegraph.h"
+#include "math/AABB.h"
 
 #include <pybind11/pybind11.h>
 

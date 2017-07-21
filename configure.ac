@@ -173,10 +173,14 @@ then
     if test ! -z "$PYTHON_CONFIG"
     then
         PYTHON_LIBS=`$PYTHON_CONFIG --libs`
-
-        BOOST_PYTHON
+        PYTHON_CPPFLAGS=`$PYTHON_CONFIG --includes`
+        
+        # pybind11.h is including Python.h, need to help it find the Python.h header
+        CPPFLAGS="$USER_CPPFLAGS $PYTHON_CPPFLAGS"
+	AC_CHECK_HEADER([pybind11/pybind11.h], [], [AC_MSG_ERROR([Missing pybind11.h, please install the pybind11 package])])
         script_module='script'
         AC_SUBST([script_module])
+        AC_SUBST([PYTHON_CPPFLAGS])
         AC_SUBST([PYTHON_LIBS])
     fi
 fi

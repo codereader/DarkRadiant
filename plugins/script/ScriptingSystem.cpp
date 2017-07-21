@@ -1,9 +1,9 @@
 #include "ScriptingSystem.h"
 
 #include <pybind11/pybind11.h>
-#include <pybind11/embed.h>
 #include <pybind11/attr.h>
 #include <pybind11/stl_bind.h>
+#include <pybind11/eval.h>
 
 #include "i18n.h"
 #include "itextstream.h"
@@ -146,7 +146,7 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 		fullScript.append(scriptString);
 
 		// Attempt to run the specified script
-		py::exec(fullScript, PythonModule::GetGlobals());
+		py::eval<py::eval_statements>(fullScript, PythonModule::GetGlobals());
 	}
 	catch (py::error_already_set& ex)
 	{
@@ -185,7 +185,12 @@ void ScriptingSystem::addInterfacesToModule(py::module& mod, py::dict& globals)
 
 void ScriptingSystem::initialise()
 {
+	// The initialize_interpreter() function is available in 2.2.x upwards
+#if (PYBIND11_VERSION_MAJOR == 2) && (PYBIND11_VERSION_MINOR <= 1)
+	Py_Initialize();
+#else
 	py::initialize_interpreter();
+#endif
 
 	{
 		try
@@ -287,7 +292,7 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 		locals["__executeCommand__"] = false;
 
 		// Attempt to run the specified script
-		py::eval_file(_scriptPath + scriptFilename, py::globals(), locals);
+		py::eval_file(_scriptPath + scriptFilename, PythonModule::GetGlobals(), locals);
 
 		std::string cmdName;
 		std::string cmdDisplayName;
@@ -494,7 +499,12 @@ void ScriptingSystem::shutdownModule()
 
 	PythonModule::Clear();
 
+	// The finalize_interpreter() function is available in 2.2.x upwards
+#if (PYBIND11_VERSION_MAJOR == 2) && (PYBIND11_VERSION_MINOR <= 1)
+	Py_Finalize();
+#else
 	py::finalize_interpreter();
+#endif
 }
 
 } // namespace script

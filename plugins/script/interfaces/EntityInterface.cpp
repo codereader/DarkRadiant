@@ -119,6 +119,22 @@ ScriptSceneNode EntityInterface::createEntity(const std::string& eclassName) {
 	return ScriptSceneNode(node);
 }
 
+struct EntityKeyValuePair :
+	public std::pair<std::string, std::string>
+{
+	using std::pair<std::string, std::string>::pair;
+
+	std::string left()
+	{
+		return first;
+	}
+
+	std::string right()
+	{
+		return second;
+	}
+};
+
 void EntityInterface::registerInterface(py::module& scope, py::dict& globals) 
 {
 	// Add the EntityNode interface
@@ -132,11 +148,6 @@ void EntityInterface::registerInterface(py::module& scope, py::dict& globals)
 	entityNode.def("isModel", &ScriptEntityNode::isModel);
 	entityNode.def("isOfType", &ScriptEntityNode::isOfType);
 	entityNode.def("getKeyValuePairs", &ScriptEntityNode::getKeyValuePairs);
-
-	// Declare a KeyValuePair (pair of strings)
-	py::class_< std::pair<std::string, std::string> > kvPair(scope, "EntityKeyValuePair");
-	kvPair.def_readwrite("first", &std::pair<std::string, std::string>::first);
-	kvPair.def_readwrite("second", &std::pair<std::string, std::string>::second);
 
 	// Declare the KeyValuePairs vector
 	py::bind_vector<Entity::KeyValuePairs>(scope, "EntityKeyValuePairs");

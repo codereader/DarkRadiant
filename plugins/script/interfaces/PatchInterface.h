@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iscript.h"
+#include "ipatch.h"
 
 #include "SceneGraphInterface.h"
 

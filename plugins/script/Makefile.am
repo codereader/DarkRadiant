@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
               $(XML_CFLAGS) \
-              $(BOOST_PYTHON_CPPFLAGS) \
+              $(PYTHON_CPPFLAGS) \
               -DPKGLIBDIR='"$(pkglibdir)"'
 
 modulesdir = $(pkglibdir)/modules
@@ -9,7 +9,6 @@ modules_LTLIBRARIES = script.la
 script_la_LDFLAGS = -module -avoid-version \
                     $(BOOST_SYSTEM_LIBS) \
                     $(BOOST_FILESYSTEM_LIBS) \
-                    $(BOOST_PYTHON_LIBS) \
                     $(PYTHON_LIBS) \
                     $(WX_LIBS)
 script_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
