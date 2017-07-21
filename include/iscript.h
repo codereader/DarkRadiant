@@ -1,7 +1,6 @@
 #pragma once
 
 #include "imodule.h"
-#include <boost/python/object_fwd.hpp>
 
 // Forward-declare the stuff in <pybind11/pybind11.h>
 namespace pybind11 { class module; class dict; }
@@ -26,24 +25,17 @@ class IScriptInterface
 {
 public:
     virtual ~IScriptInterface() {}
-	/**
-	 * This method gets invoked by the Scripting System to let this class
-	 * add its interface to the Python context.
-	 */
-	virtual void registerInterface(boost::python::object& nspace)
-	{}
 
 	/**
 	* This method is called by the Scripting System to let this class
 	* add its objects to the Python context.
 	*/
-	virtual void registerInterface(py::module& scope, py::dict& globals)
-	{}
+	virtual void registerInterface(py::module& scope, py::dict& globals) = 0;
 };
 typedef std::shared_ptr<IScriptInterface> IScriptInterfacePtr;
 
 /**
- * DarkRadiant's Scripting System, based on boost::python. It's possible
+ * DarkRadiant's Scripting System, based on pybind11. It's possible
  * to expose additional interfaces by using the addInterface() method.
  */
 class IScriptingSystem :
