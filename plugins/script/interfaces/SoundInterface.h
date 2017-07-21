@@ -1,12 +1,10 @@
-#ifndef _SOUND_INTERFACE_H_
-#define _SOUND_INTERFACE_H_
-
-#include <boost/python.hpp>
+#pragma once
 
 #include "isound.h"
 #include "iscript.h"
 
-namespace script {
+namespace script
+{
 
 class ScriptSoundRadii
 {
@@ -24,24 +22,24 @@ public:
 		return _radii;
 	}
 
-	void setMin(float min, bool inMetres)
+	void setMin(float min, int inMetres)
 	{
-		_radii.setMin(min, inMetres);
+		_radii.setMin(min, static_cast<bool>(inMetres));
 	}
 
-	void setMax (float max, bool inMetres)
+	void setMax(float max, int inMetres)
 	{
-		_radii.setMax(max, inMetres);
+		_radii.setMax(max, static_cast<bool>(inMetres));
 	}
 
-	float getMin(bool inMetres) const
+	float getMin(int inMetres) const
 	{
-		return _radii.getMin(inMetres);
+		return _radii.getMin(static_cast<bool>(inMetres));
 	}
 
-	float getMax(bool inMetres) const
+	float getMax(int inMetres) const
 	{
-		return _radii.getMax(inMetres);
+		return _radii.getMax(static_cast<bool>(inMetres));
 	}
 };
 
@@ -94,10 +92,7 @@ public:
 	void stopSound();
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<SoundManagerInterface> SoundManagerInterfacePtr;
 
 } // namespace script
-
-#endif /* _SOUND_INTERFACE_H_ */

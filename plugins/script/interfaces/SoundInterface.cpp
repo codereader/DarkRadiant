@@ -1,6 +1,9 @@
 #include "SoundInterface.h"
 
-namespace script {
+#include <pybind11/pybind11.h>
+
+namespace script
+{
 
 ScriptSoundShader SoundManagerInterface::getSoundShader(const std::string& shaderName)
 {
@@ -18,35 +21,35 @@ void SoundManagerInterface::stopSound()
 }
 
 // IScriptInterface implementation
-void SoundManagerInterface::registerInterface(boost::python::object& nspace)
+void SoundManagerInterface::registerInterface(py::module& scope, py::dict& globals)
 {
 	// Add the declaration for SoundRadii
-	nspace["SoundRadii"] = boost::python::class_<ScriptSoundRadii>("SoundRadii")
-		.def(boost::python::init<const SoundRadii&>())
-		.def("setMin", &ScriptSoundRadii::setMin)
-		.def("setMax", &ScriptSoundRadii::setMax)
-		.def("getMin", &ScriptSoundRadii::getMin)
-		.def("getMax", &ScriptSoundRadii::getMax)
-	;
+	py::class_<ScriptSoundRadii> radii(scope, "SoundRadii");
+
+	radii.def(py::init<const SoundRadii&>());
+	radii.def("setMin", &ScriptSoundRadii::setMin);
+	radii.def("setMax", &ScriptSoundRadii::setMax);
+	radii.def("getMin", &ScriptSoundRadii::getMin);
+	radii.def("getMax", &ScriptSoundRadii::getMax);
 
 	// Add the declaration for a SoundShader
-	nspace["SoundShader"] = boost::python::class_<ScriptSoundShader>(
-		"SoundShader", boost::python::init<const ISoundShaderPtr&>())
-		.def("isNull", &ScriptSoundShader::isNull)
-		.def("getName", &ScriptSoundShader::getName)
-		.def("getRadii", &ScriptSoundShader::getRadii)
-		.def("getSoundFileList", &ScriptSoundShader::getSoundFileList)
-	;
+	py::class_<ScriptSoundShader> shader(scope, "SoundShader");
+
+	shader.def(py::init<const ISoundShaderPtr&>());
+	shader.def("isNull", &ScriptSoundShader::isNull);
+	shader.def("getName", &ScriptSoundShader::getName);
+	shader.def("getRadii", &ScriptSoundShader::getRadii);
+	shader.def("getSoundFileList", &ScriptSoundShader::getSoundFileList);
 
 	// Add the module declaration to the given python namespace
-	nspace["GlobalSoundManager"] = boost::python::class_<SoundManagerInterface>("GlobalSoundManager")
-		.def("getSoundShader", &SoundManagerInterface::getSoundShader)
-		.def("playSound", &SoundManagerInterface::playSound)
-		.def("stopSound", &SoundManagerInterface::stopSound)
-	;
+	py::class_<SoundManagerInterface> soundManager(scope, "SoundManager");
+
+	soundManager.def("getSoundShader", &SoundManagerInterface::getSoundShader);
+	soundManager.def("playSound", &SoundManagerInterface::playSound);
+	soundManager.def("stopSound", &SoundManagerInterface::stopSound);
 
 	// Now point the Python variable "GlobalSoundManager" to this instance
-	nspace["GlobalSoundManager"] = boost::python::ptr(this);
+	globals["GlobalSoundManager"] = this;
 }
 
 } // namespace script

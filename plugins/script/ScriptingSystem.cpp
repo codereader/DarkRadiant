@@ -273,7 +273,7 @@ void ScriptingSystem::initialise()
 			py::module::import("sys").attr("stdout") = &_outputWriter;
 
 			// String vector is used in multiple places
-			py::bind_vector< std::vector<std::string> >(DarkRadiantModule::GetModule(), "StringList");
+			py::bind_vector< std::vector<std::string> >(DarkRadiantModule::GetModule(), "StringVector");
 
 			//py::exec("import darkradiant as dr\nfrom darkradiant import *\nGlobalCommandSystem.execute(Tork)\nprint('This is a test')", copy);
 		}
@@ -520,27 +520,20 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	addInterface("DialogInterface", std::make_shared<DialogManagerInterface>());
 	addInterface("SelectionSetInterface", std::make_shared<SelectionSetInterface>());
 
-#if 0
-	// Declare the std::vector<std::string> object to Python, this is used several times
-	_mainObjects->mainNamespace["StringVector"] = boost::python::class_< std::vector<std::string> >("StringVector")
-		.def(boost::python::vector_indexing_suite<std::vector<std::string>, true>())
-	;
-#endif
-
 	GlobalCommandSystem().addCommand(
 		"RunScript",
-		boost::bind(&ScriptingSystem::runScriptFile, this, _1),
+		std::bind(&ScriptingSystem::runScriptFile, this, std::placeholders::_1),
 		cmd::ARGTYPE_STRING
 	);
 
 	GlobalCommandSystem().addCommand(
 		"ReloadScripts",
-		boost::bind(&ScriptingSystem::reloadScriptsCmd, this, _1)
+		std::bind(&ScriptingSystem::reloadScriptsCmd, this, std::placeholders::_1)
 	);
 
 	GlobalCommandSystem().addCommand(
 		"RunScriptCommand",
-		boost::bind(&ScriptingSystem::runScriptCommand, this, _1),
+		std::bind(&ScriptingSystem::runScriptCommand, this, std::placeholders::_1),
 		cmd::ARGTYPE_STRING
 	);
 
