@@ -40,8 +40,8 @@ public:
 	void foreachSelected(const SelectionSystem::Visitor& visitor);
 	void foreachSelectedComponent(const SelectionSystem::Visitor& visitor);
 
-	void setSelectedAll(bool selected);
-	void setSelectedAllComponents(bool selected);
+	void setSelectedAll(int selected);
+	void setSelectedAllComponents(int selected);
 
 	ScriptSceneNode ultimateSelected();
 	ScriptSceneNode penultimateSelected();
