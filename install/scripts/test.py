@@ -265,3 +265,45 @@ if selSet.empty():
 
 print('')
 
+soundshader = GlobalSoundManager.getSoundShader('tdm_ai_lady_alertdown_to_idle')
+
+if not soundshader.isNull():
+	print('Name of this sound shader: ' + soundshader.getName())
+
+	radii = soundshader.getRadii()
+
+	print('Minimum radius in meters: ' + str(radii.getMin(1)))
+	print('Maximum radius in meters: ' + str(radii.getMax(1)))
+
+	fileList = soundshader.getSoundFileList()
+	for i in range(0, len(fileList)):
+		print(' Sound file used by this shader: ' + fileList[i])
+
+	if (len(fileList) > 0):
+		GlobalSoundManager.playSound(fileList[0])
+
+# Test SelectionGroup interface
+group = GlobalSelectionGroupManager.createSelectionGroup()
+
+print('Created group with ID: ' + str(group.getId()))
+
+# Test traversing the current selection
+class GroupAdder(SelectionVisitor) :
+	def visit(self, node):
+		group.addNode(node)
+
+visitor = Walker()
+GlobalSelectionSystem.foreachSelected(visitor)
+
+print('The group contains now ' + str(group.size()) + ' items')
+
+# Deselect the group
+GlobalSelectionGroupManager.setGroupSelected(group.getId(), 0)
+
+# List nodes in this group
+class SelectionGroupWalker(SelectionGroupVisitor) :
+	def visit(self, node):
+		print('Group Member: ' + node.getNodeType())
+
+gropWalker = SelectionGroupWalker();
+group.foreachNode(gropWalker)

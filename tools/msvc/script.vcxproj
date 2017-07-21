@@ -319,6 +319,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\script\interfaces\SelectionGroupInterface.h" />
     <ClInclude Include="..\..\plugins\script\precompiled.h" />
     <ClInclude Include="..\..\plugins\script\PythonConsoleWriter.h" />
     <ClInclude Include="..\..\plugins\script\SceneNodeBuffer.h" />
@@ -349,6 +350,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\script\interfaces\SceneGraphInterface.cpp" />
+    <ClCompile Include="..\..\plugins\script\interfaces\SelectionGroupInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

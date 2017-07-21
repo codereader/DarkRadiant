@@ -91,6 +91,9 @@
     <ClInclude Include="..\..\plugins\script\precompiled.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\SelectionGroupInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\script\SceneNodeBuffer.cpp">
@@ -169,6 +172,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\script\interfaces\SceneGraphInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\SelectionGroupInterface.cpp">
       <Filter>src\interfaces</Filter>
     </ClCompile>
   </ItemGroup>

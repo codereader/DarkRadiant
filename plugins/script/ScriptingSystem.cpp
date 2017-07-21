@@ -33,6 +33,7 @@
 #include "interfaces/SoundInterface.h"
 #include "interfaces/DialogInterface.h"
 #include "interfaces/SelectionSetInterface.h"
+#include "interfaces/SelectionGroupInterface.h"
 
 #include "ScriptWindow.h"
 #include "SceneNodeBuffer.h"
@@ -519,6 +520,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	addInterface("SoundManager", std::make_shared<SoundManagerInterface>());
 	addInterface("DialogInterface", std::make_shared<DialogManagerInterface>());
 	addInterface("SelectionSetInterface", std::make_shared<SelectionSetInterface>());
+	addInterface("SelectionGroupInterface", std::make_shared<SelectionGroupInterface>());
 
 	GlobalCommandSystem().addCommand(
 		"RunScript",
