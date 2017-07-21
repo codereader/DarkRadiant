@@ -57,6 +57,7 @@
     <rotateObjectsIndependently value="0" />
     <rotationPivotIsOrigin value="0" />
     <snapRotationPivotToGrid value="0" />
+    <defaultPivotLocationIgnoresLightVolumes value="1" />
     <selectionEpsilon value="8.0" />
     <dragResizeEntitiesSymmetrically value="1" />
     <transientComponentSelection value="1" />
