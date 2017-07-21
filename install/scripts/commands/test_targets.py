@@ -14,12 +14,15 @@ __commandDisplayName__ = 'Test for Missing Targets' # should not contain spaces
 def execute():
     g_targets = {} # entityname : [targets]
     g_missing = {} # entityname : [missingtargets]
-    class TargetFinder(SceneNodeVisitor):
+
+    import darkradiant as dr
+
+    class TargetFinder(dr.SceneNodeVisitor):
         def pre(self, node):
             if node.isEntity():
                 n = node.getEntity()
                 name = n.getKeyValue('name')
-                targs = [t.second for t in n.getKeyValuePairs('target')]
+                targs = [t[1] for t in n.getKeyValuePairs('target')]
                 g_targets[name] = targs
             return 1
     # Instantiate a new walker object and get list of entities/targets
@@ -40,7 +43,7 @@ def execute():
     msg = '%d entities found with %d targets' % (len(entities), targetcount) + '\n\n'
     if not g_missing:
         msg += 'No missing targets found'
-        GlobalDialogManager.createMessageBox('Missing targets', msg, Dialog.CONFIRM).run()
+        GlobalDialogManager.createMessageBox('Missing targets', msg, dr.Dialog.CONFIRM).run()
     else:
         msg += 'Missing targets:\n'
         for ent in g_missing.keys():
@@ -49,8 +52,8 @@ def execute():
         print(msg) # output to console
         msg += "\nThe list of missing targets has been printed to the console."
         msg += "\n\nDo you want to select all entities with missing targets?"
-        response = GlobalDialogManager.createMessageBox('Missing targets', msg, Dialog.ASK).run()
-        if response == Dialog.YES:
+        response = GlobalDialogManager.createMessageBox('Missing targets', msg, dr.Dialog.ASK).run()
+        if response == dr.Dialog.YES:
             class Selector(SceneNodeVisitor):
                 def pre(self, node):
                     if node.isEntity() and node.getEntity().getKeyValue('name') in g_missing.keys():

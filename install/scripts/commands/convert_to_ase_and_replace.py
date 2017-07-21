@@ -28,24 +28,26 @@ def execute():
     author = "Richard Bartlett, some additions by greebo"
     version = "0.7"
 
+    import darkradiant as dr
+
     # Check if we have a valid selection
 
     selectionInfo = GlobalSelectionSystem.getSelectionInfo()
 
     # Don't allow empty selections or selected components only
     if selectionInfo.totalCount == 0 or selectionInfo.totalCount == selectionInfo.componentCount:
-        errMsg = GlobalDialogManager.createMessageBox('No selection', 'Nothing selected, cannot run exporter.', Dialog.ERROR)
+        errMsg = GlobalDialogManager.createMessageBox('No selection', 'Nothing selected, cannot run exporter.', dr.Dialog.ERROR)
         errMsg.run()
         return
 
     if selectionInfo.entityCount != 1:
-        errMsg = GlobalDialogManager.createMessageBox('Wrong selection', 'Please select exactly one func_static.', Dialog.ERROR)
+        errMsg = GlobalDialogManager.createMessageBox('Wrong selection', 'Please select exactly one func_static.', dr.Dialog.ERROR)
         errMsg.run()
         return
 
     if not GlobalRegistry.get('user/scripts/aseExport/initialUserWarning') == '1':
         GlobalRegistry.set('user/scripts/aseExport/initialUserWarning', '1')
-        warningMsg = GlobalDialogManager.createMessageBox('Careful', 'This option will export the selected func_static to ASE and replace your entity with the newly created model.\nThe currently selected func_static will be DELETED. You can undo this operation, but know what you''re doing!', Dialog.WARNING)
+        warningMsg = GlobalDialogManager.createMessageBox('Careful', 'This option will export the selected func_static to ASE and replace your entity with the newly created model.\nThe currently selected func_static will be DELETED. You can undo this operation, but know what you''re doing!', dr.Dialog.WARNING)
         warningMsg.run()
 
     shaderlist = []
@@ -117,7 +119,7 @@ def execute():
         return
 
     # Traversor class to visit child primitives of entities
-    class nodeVisitor(SceneNodeVisitor):
+    class nodeVisitor(dr.SceneNodeVisitor):
         def pre(self, scenenode):
             # Brush?
             if scenenode.isBrush():
@@ -129,7 +131,8 @@ def execute():
             # Traverse all child nodes, regardless of type
             return 1
 
-    class dataCollector(SelectionVisitor):
+    class dataCollector(dr.SelectionVisitor):
+        from darkradiant import Vector3
         fs_origin = Vector3(0,0,0)
         fs = 0
 
@@ -138,6 +141,7 @@ def execute():
                 processPrimitive(scenenode)
             elif scenenode.isEntity():
                 import re
+                from darkradiant import Vector3
 
                 # greebo: Found an entity, this could be a func_static or similar
                 # Traverse children of this entity using a new walker
@@ -175,7 +179,7 @@ def execute():
     pathHandle = dialog.addPathEntry("Save path:", True)
     dialog.setElementValue(pathHandle, GlobalRegistry.get('user/scripts/aseExport/recentPath'))
 
-    if dialog.run() == Dialog.OK:
+    if dialog.run() == dr.Dialog.OK:
         fullpath = dialog.getElementValue(pathHandle) + '/' + dialog.getElementValue(fileHandle)
         if not fullpath.endswith('.ase'):
             fullpath = fullpath + '.ase'
@@ -187,8 +191,8 @@ def execute():
         try:
             file = open(fullpath, 'r')
             file.close()
-            prompt = GlobalDialogManager.createMessageBox('Warning', 'The file ' + fullpath + ' already exists. Do you wish to overwrite it?', Dialog.ASK)
-            if prompt.run() == Dialog.YES:
+            prompt = GlobalDialogManager.createMessageBox('Warning', 'The file ' + fullpath + ' already exists. Do you wish to overwrite it?', dr.Dialog.ASK)
+            if prompt.run() == dr.Dialog.YES:
                 overwrite = True
             else:
                 overwrite = False

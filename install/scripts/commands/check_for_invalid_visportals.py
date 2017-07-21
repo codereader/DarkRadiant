@@ -32,7 +32,9 @@ def execute():
     results = VisportalResults()
     visportalShader = 'textures/editor/visportal'
     
-    class VisportalChecker(SceneNodeVisitor):
+    import darkradiant as dr
+
+    class VisportalChecker(dr.SceneNodeVisitor):
         def pre(self, node):
             if node.isBrush():
                 brush = node.getBrush()
@@ -73,7 +75,7 @@ def execute():
 
         msg += 'The problematic visportals have been highlighted.'
     
-    GlobalDialogManager.createMessageBox('Visportal Test Results', msg, Dialog.CONFIRM).run()
+    GlobalDialogManager.createMessageBox('Visportal Test Results', msg, dr.Dialog.CONFIRM).run()
 
 if __executeCommand__:
     execute()

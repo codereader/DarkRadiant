@@ -28,13 +28,15 @@ def execute():
     author = "Richard Bartlett, some additions by greebo and tels"
     version = "0.71"
 
+    import darkradiant as dr
+
     # Check if we have a valid selection
     #import time
     selectionInfo = GlobalSelectionSystem.getSelectionInfo()
 
     # Don't allow empty selections or selected components only
     if selectionInfo.totalCount == 0 or selectionInfo.totalCount == selectionInfo.componentCount:
-        errMsg = GlobalDialogManager.createMessageBox('No selection', 'Nothing selected, cannot run exporter.', Dialog.ERROR)
+        errMsg = GlobalDialogManager.createMessageBox('No selection', 'Nothing selected, cannot run exporter.', dr.Dialog.ERROR)
         errMsg.run()
         return
 
@@ -192,7 +194,7 @@ def execute():
         return
 
     # Traversor class to visit child primitives of entities
-    class nodeVisitor(SceneNodeVisitor):
+    class nodeVisitor(dr.SceneNodeVisitor):
         def pre(self, scenenode):
             # Brush?
             if scenenode.isBrush():
@@ -204,7 +206,7 @@ def execute():
             # Traverse all child nodes, regardless of type
             return 1
 
-    class dataCollector(SelectionVisitor):
+    class dataCollector(dr.SelectionVisitor):
         def visit(self, scenenode):
 
             if scenenode.isBrush() or scenenode.isPatch():
@@ -238,7 +240,7 @@ def execute():
     # Add a Spin Button for blending and one for random height
     #blendHeightHandle = dialog.addSpinButton("Level of blending in percent",0,1,0.05,2)
     #blendRandomnessHandle = dialog.addSpinButton("Randomness",0,1,0.05,2)
-    if dialog.run() == Dialog.OK:
+    if dialog.run() == dr.Dialog.OK:
         fullpath = dialog.getElementValue(pathHandle) + '/' + dialog.getElementValue(fileHandle)
         if not fullpath.endswith('.ase'):
             fullpath = fullpath + '.ase'
@@ -252,8 +254,8 @@ def execute():
         try:
             file = open(fullpath, 'r')
             file.close()
-            prompt = GlobalDialogManager.createMessageBox('Warning', 'The file ' + fullpath + ' already exists. Do you wish to overwrite it?', Dialog.ASK)
-            if prompt.run() == Dialog.YES:
+            prompt = GlobalDialogManager.createMessageBox('Warning', 'The file ' + fullpath + ' already exists. Do you wish to overwrite it?', dr.Dialog.ASK)
+            if prompt.run() == dr.Dialog.YES:
                 overwrite = True
             else:
                 overwrite = False

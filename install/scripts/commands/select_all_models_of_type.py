@@ -8,7 +8,9 @@ def execute():
 	# Collect all currently selected models
 	selectedModelNames = {}
 
-	class Walker(SelectionVisitor) :
+	import darkradiant as dr
+
+	class Walker(dr.SelectionVisitor) :
 		def visit(self, node):
 			# Try to "cast" the node to an entity
 			entity = node.getEntity()
@@ -23,7 +25,7 @@ def execute():
 	print('Unique models currently selected: ' + str(len(selectedModelNames)))
 
 	# Now traverse the scenegraph, selecting all of the same names
-	class SceneWalker(SceneNodeVisitor) :
+	class SceneWalker(dr.SceneNodeVisitor) :
 		def pre(self, node):
 
 			# Try to "cast" the node to an entity

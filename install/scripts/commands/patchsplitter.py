@@ -12,6 +12,7 @@ def execute():
     class Vert:
         """Holds coords for one patch control vertex."""
         def __init__(self, vertex, texcoord):
+            from darkradiant import Vector3, Vector2
             self.vertex = Vector3(vertex)
             self.texcoord = Vector2(texcoord)
 
@@ -252,8 +253,10 @@ def execute():
     patch.setSelected(True)
     newpatch.setSelected(True)
 
+import darkradiant as dr
+
 if __executeCommand__:    
     try:
         execute()
     except Exception as e:
-        GlobalDialogManager.createMessageBox('Patch Splitter', str(e), Dialog.ERROR).run()
+        GlobalDialogManager.createMessageBox('Patch Splitter', str(e), dr.Dialog.ERROR).run()
