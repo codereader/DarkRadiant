@@ -1,11 +1,12 @@
 #pragma once
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
 
 #include "ishaders.h"
 #include "iscript.h"
 
-namespace script {
+namespace script
+{
 
 /**
  * This class represents a single Shader as seen by the Python script.
@@ -69,14 +70,18 @@ public:
 
 // Wrap around the EntityClassVisitor interface
 class ShaderVisitorWrapper :
-	public ShaderVisitor,
-	public boost::python::wrapper<ShaderVisitor>
+	public ShaderVisitor
 {
 public:
-    void visit(const MaterialPtr& shader)
+    void visit(const MaterialPtr& shader) override
     {
 		// Wrap this method to python
-		this->get_override("visit")(ScriptShader(shader));
+		PYBIND11_OVERLOAD_PURE(
+			void,			/* Return type */
+			ShaderVisitor,    /* Parent class */
+			visit,			/* Name of function in C++ (must match Python name) */
+			ScriptShader(shader)			/* Argument(s) */
+		);
 	}
 };
 
@@ -91,8 +96,7 @@ public:
 	ScriptShader getMaterialForName(const std::string& name);
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<ShaderSystemInterface> ShaderSystemInterfacePtr;
 
 } // namespace script

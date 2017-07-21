@@ -31,43 +31,46 @@ void ShaderSystemInterface::foreachShader(ShaderVisitor& visitor)
 	// Note: foreachShader only traverses the loaded materials, use a small adaptor to traverse all known
 	ShaderNameToShaderWrapper adaptor(visitor);
 
-	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameToShaderWrapper::visit, &adaptor, _1));
+	GlobalMaterialManager().foreachShaderName(
+		std::bind(&ShaderNameToShaderWrapper::visit, &adaptor, std::placeholders::_1));
 }
 
-ScriptShader ShaderSystemInterface::getMaterialForName(const std::string& name) {
+ScriptShader ShaderSystemInterface::getMaterialForName(const std::string& name)
+{
 	return ScriptShader(GlobalMaterialManager().getMaterialForName(name));
 }
 
 // IScriptInterface implementation
-void ShaderSystemInterface::registerInterface(boost::python::object& nspace) {
+void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globals) 
+{
 	// Add the declaration for a Shader object
-	nspace["Shader"] = boost::python::class_<ScriptShader>(
-		"Shader", boost::python::init<const MaterialPtr&>())
-		.def("getName", &ScriptShader::getName)
-		.def("getShaderFileName", &ScriptShader::getShaderFileName)
-		.def("getDescription", &ScriptShader::getDescription)
-		.def("getDefinition", &ScriptShader::getDefinition)
-		.def("isVisible", &ScriptShader::isVisible)
-		.def("isAmbientLight", &ScriptShader::isAmbientLight)
-		.def("isBlendLight", &ScriptShader::isBlendLight)
-		.def("isFogLight", &ScriptShader::isFogLight)
-		.def("isNull", &ScriptShader::isNull)
-	;
+	py::class_<ScriptShader> shader(scope, "Shader");
+
+	shader.def(py::init<const MaterialPtr&>());
+	shader.def("getName", &ScriptShader::getName);
+	shader.def("getShaderFileName", &ScriptShader::getShaderFileName);
+	shader.def("getDescription", &ScriptShader::getDescription);
+	shader.def("getDefinition", &ScriptShader::getDefinition);
+	shader.def("isVisible", &ScriptShader::isVisible);
+	shader.def("isAmbientLight", &ScriptShader::isAmbientLight);
+	shader.def("isBlendLight", &ScriptShader::isBlendLight);
+	shader.def("isFogLight", &ScriptShader::isFogLight);
+	shader.def("isNull", &ScriptShader::isNull);
 
 	// Expose the ShaderVisitor interface
-	nspace["ShaderVisitor"] =
-		boost::python::class_<ShaderVisitorWrapper, boost::noncopyable>("ShaderVisitor")
-		.def("visit", boost::python::pure_virtual(&ShaderVisitorWrapper::visit))
-	;
+
+	py::class_<ShaderVisitor, ShaderVisitorWrapper> visitor(scope, "ShaderVisitor");
+	visitor.def(py::init<>());
+	visitor.def("visit", &ShaderVisitor::visit);
 
 	// Add the module declaration to the given python namespace
-	nspace["GlobalMaterialManager"] = boost::python::class_<ShaderSystemInterface>("GlobalMaterialManager")
-		.def("foreachShader", &ShaderSystemInterface::foreachShader)
-		.def("getMaterialForName", &ShaderSystemInterface::getMaterialForName)
-	;
+	py::class_<ShaderSystemInterface> materialManager(scope, "MaterialManager");
+
+	materialManager.def("foreachShader", &ShaderSystemInterface::foreachShader);
+	materialManager.def("getMaterialForName", &ShaderSystemInterface::getMaterialForName);
 
 	// Now point the Python variable "GlobalMaterialManager" to this instance
-	nspace["GlobalMaterialManager"] = boost::python::ptr(this);
+	globals["GlobalMaterialManager"] = this;
 }
 
 } // namespace script
