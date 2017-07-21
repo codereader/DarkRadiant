@@ -45,14 +45,14 @@ void DialogManagerInterface::registerInterface(py::module& scope, py::dict& glob
 	dialog.def("setElementValue", &ScriptDialog::setElementValue);
 
 	// Expose the enums in the Dialog's scope
-	py::enum_<ui::IDialog::Result>(scope, "Result")
+	py::enum_<ui::IDialog::Result>(dialog, "Result")
 		.value("CANCELLED", ui::IDialog::RESULT_CANCELLED)
 		.value("OK", ui::IDialog::RESULT_OK)
 		.value("NO", ui::IDialog::RESULT_NO)
 		.value("YES", ui::IDialog::RESULT_YES)
 		.export_values();
 
-	py::enum_<ui::IDialog::MessageType>(scope, "MessageType")
+	py::enum_<ui::IDialog::MessageType>(dialog, "MessageType")
 		.value("CONFIRM", ui::IDialog::MESSAGE_CONFIRM)
 		.value("ASK", ui::IDialog::MESSAGE_ASK)
 		.value("WARNING", ui::IDialog::MESSAGE_WARNING)

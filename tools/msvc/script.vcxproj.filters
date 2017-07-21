@@ -94,6 +94,9 @@
     <ClInclude Include="..\..\plugins\script\interfaces\SelectionGroupInterface.h">
       <Filter>src\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\script\PythonModule.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\script\SceneNodeBuffer.cpp">
@@ -176,6 +179,9 @@
     </ClCompile>
     <ClCompile Include="..\..\plugins\script\interfaces\SelectionGroupInterface.cpp">
       <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\PythonModule.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

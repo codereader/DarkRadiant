@@ -322,6 +322,7 @@
     <ClInclude Include="..\..\plugins\script\interfaces\SelectionGroupInterface.h" />
     <ClInclude Include="..\..\plugins\script\precompiled.h" />
     <ClInclude Include="..\..\plugins\script\PythonConsoleWriter.h" />
+    <ClInclude Include="..\..\plugins\script\PythonModule.h" />
     <ClInclude Include="..\..\plugins\script\SceneNodeBuffer.h" />
     <ClInclude Include="..\..\plugins\script\ScriptCommand.h" />
     <ClInclude Include="..\..\plugins\script\ScriptingSystem.h" />
@@ -357,6 +358,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\script\PythonModule.cpp" />
     <ClCompile Include="..\..\plugins\script\SceneNodeBuffer.cpp" />
     <ClCompile Include="..\..\plugins\script\ScriptCommand.cpp" />
     <ClCompile Include="..\..\plugins\script\ScriptingSystem.cpp" />

@@ -20,6 +20,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
                ScriptMenu.cpp \
                ScriptWindow.cpp \
                SceneNodeBuffer.cpp \
+               PythonModule.cpp \
                interfaces/DialogInterface.cpp \
                interfaces/EClassInterface.cpp \
                interfaces/BrushInterface.cpp \

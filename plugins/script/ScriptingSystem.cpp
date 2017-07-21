@@ -35,6 +35,8 @@
 #include "interfaces/SelectionSetInterface.h"
 #include "interfaces/SelectionGroupInterface.h"
 
+#include "PythonModule.h"
+
 #include "ScriptWindow.h"
 #include "SceneNodeBuffer.h"
 
@@ -46,85 +48,8 @@
 #include <functional>
 #include <boost/algorithm/string/case_conv.hpp>
 
-class DarkRadiantModule
+namespace script 
 {
-private:
-	static std::unique_ptr<py::module> _module;
-	static std::unique_ptr<py::dict> _globals;
-	static std::function<void(py::module&, py::dict&)> _registrationCallback;
-
-public:
-	static py::module& GetModule()
-	{
-		if (!_module)
-		{
-			_module.reset(new py::module("darkradiant"));
-		}
-
-		return *_module;
-	}
-
-	static void SetRegistrationCallback(const std::function<void(py::module&, py::dict&)>& func)
-	{
-		_registrationCallback = func;
-	}
-
-	static py::dict& GetGlobals()
-	{
-		if (!_globals)
-		{
-			_globals.reset(new py::dict);
-		}
-
-		return *_globals;
-	}
-
-	static void Clear()
-	{
-		_module.reset();
-		_globals.reset();
-	}
-
-	// Endpoint called by the Python interface to acquire the module
-	static PyObject* pybind11_init_wrapper()
-	{
-		try
-		{
-			// Acquire modules here (through callback?)
-			if (_registrationCallback)
-			{
-				_registrationCallback(GetModule(), GetGlobals());
-			}
-
-			py::object main = py::module::import("__main__");
-			py::dict globals = main.attr("__dict__").cast<py::dict>();
-
-			for (auto& i : globals)
-			{
-				GetGlobals()[i.first] = i.second;
-			}
-
-            return _module->ptr();
-        } 
-		catch (py::error_already_set& e)
-		{                            
-            e.clear();                                                        
-            PyErr_SetString(PyExc_ImportError, e.what());                     
-            return nullptr;                                                   
-        } 
-		catch (const std::exception& e)
-		{                                   
-            PyErr_SetString(PyExc_ImportError, e.what());                     
-            return nullptr;                                                   
-        }
-	}
-};
-
-std::unique_ptr<py::module> DarkRadiantModule::_module;
-std::unique_ptr<py::dict> DarkRadiantModule::_globals;
-std::function<void(py::module&, py::dict&)> DarkRadiantModule::_registrationCallback;
-
-namespace script {
 
 ScriptingSystem::ScriptingSystem() :
 	_outputWriter(false, _outputBuffer),
@@ -146,14 +71,17 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 	if (_initialised) 
 	{
 		// Add the interface at once, all the others are already added
-		iface->registerInterface(DarkRadiantModule::GetModule(), DarkRadiantModule::GetGlobals());
+		iface->registerInterface(PythonModule::GetModule(), PythonModule::GetGlobals());
 	}
 }
 
-bool ScriptingSystem::interfaceExists(const std::string& name) {
+bool ScriptingSystem::interfaceExists(const std::string& name)
+{
 	// Traverse the interface list
-	for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
-		if (i->first == name) {
+	for (const NamedInterface& i : _interfaces)
+	{
+		if (i.first == name)
+		{
 			return true;
 		}
 	}
@@ -188,7 +116,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename, bool setExe
 		}
 
 		// Attempt to run the specified script
-		py::eval_file(filePath, py::globals(), locals);
+		py::eval_file(filePath, PythonModule::GetGlobals(), locals);
 	}
     catch (std::invalid_argument& e)
     {
@@ -213,11 +141,12 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 
 	try
 	{
-		std::string fullScript = "import darkradiant as DR\nfrom darkradiant import *\n";
+		std::string fullScript = "import " + std::string(PythonModule::NAME()) + " as DR\n"
+			"from " + std::string(PythonModule::NAME()) + " import *\n";
 		fullScript.append(scriptString);
 
 		// Attempt to run the specified script
-		py::exec(fullScript, DarkRadiantModule::GetGlobals());
+		py::exec(fullScript, PythonModule::GetGlobals());
 	}
 	catch (py::error_already_set& ex)
 	{
@@ -262,10 +191,10 @@ void ScriptingSystem::initialise()
 		try
 		{
 			// Import the darkradiant module
-			py::module::import("darkradiant");
+			py::module::import(PythonModule::NAME());
 
 			// Construct the console writer interface
-			PythonConsoleWriterClass consoleWriter(DarkRadiantModule::GetModule(), "PythonConsoleWriter");
+			PythonConsoleWriterClass consoleWriter(PythonModule::GetModule(), "PythonConsoleWriter");
 			consoleWriter.def(py::init<bool, std::string&>());
 			consoleWriter.def("write", &PythonConsoleWriter::write);
 
@@ -274,9 +203,7 @@ void ScriptingSystem::initialise()
 			py::module::import("sys").attr("stdout") = &_outputWriter;
 
 			// String vector is used in multiple places
-			py::bind_vector< std::vector<std::string> >(DarkRadiantModule::GetModule(), "StringVector");
-
-			//py::exec("import darkradiant as dr\nfrom darkradiant import *\nGlobalCommandSystem.execute(Tork)\nprint('This is a test')", copy);
+			py::bind_vector< std::vector<std::string> >(PythonModule::GetModule(), "StringVector");
 		}
 		catch (const py::error_already_set& ex)
 		{
@@ -457,10 +384,12 @@ const std::string& ScriptingSystem::getName() const
 	return _name;
 }
 
-const StringSet& ScriptingSystem::getDependencies() const {
+const StringSet& ScriptingSystem::getDependencies() const
+{
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
@@ -487,17 +416,8 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 #endif
 
 	// When Python asks for the object, let's register our interfaces to the py::module
-	DarkRadiantModule::SetRegistrationCallback(
+	PythonModule::RegisterToPython(
 		std::bind(&ScriptingSystem::addInterfacesToModule, this, std::placeholders::_1, std::placeholders::_2));
-
-	// Register the darkradiant module to Python
-	int result = PyImport_AppendInittab("darkradiant", DarkRadiantModule::pybind11_init_wrapper);
-
-	if (result == -1)
-	{
-		rError() << "Could not initialise Python module" << std::endl;
-		return;
-	}
 
 	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
 	addInterface("Math", std::make_shared<MathInterface>());
@@ -558,7 +478,7 @@ void ScriptingSystem::shutdownModule()
 {
 	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
-	_scriptMenu = ui::ScriptMenuPtr();
+	_scriptMenu.reset();
 
 	_initialised = false;
 
@@ -572,7 +492,7 @@ void ScriptingSystem::shutdownModule()
 	// Free all interfaces
 	_interfaces.clear();
 
-	DarkRadiantModule::Clear();
+	PythonModule::Clear();
 
 	py::finalize_interpreter();
 }
