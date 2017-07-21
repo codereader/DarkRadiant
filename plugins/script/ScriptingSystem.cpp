@@ -5,6 +5,14 @@
 #include <pybind11/stl_bind.h>
 #include <pybind11/eval.h>
 
+#if (PYBIND11_VERSION_MAJOR > 2) || (PYBIND11_VERSION_MAJOR == 2 && PYBIND11_VERSION_MINOR >= 2)
+#define DR_PYBIND_HAS_EMBED_H
+#endif
+
+#ifdef DR_PYBIND_HAS_EMBED_H
+#include <pybind11/embed.h>
+#endif
+
 #include "i18n.h"
 #include "itextstream.h"
 #include "iradiant.h"
@@ -185,11 +193,11 @@ void ScriptingSystem::addInterfacesToModule(py::module& mod, py::dict& globals)
 
 void ScriptingSystem::initialise()
 {
-	// The initialize_interpreter() function is available in 2.2.x upwards
-#if (PYBIND11_VERSION_MAJOR == 2) && (PYBIND11_VERSION_MINOR <= 1)
-	Py_Initialize();
-#else
+	// The finalize_interpreter() function is not available in older versions
+#ifdef DR_PYBIND_HAS_EMBED_H
 	py::initialize_interpreter();
+#else
+	Py_Initialize();
 #endif
 
 	{
@@ -499,11 +507,11 @@ void ScriptingSystem::shutdownModule()
 
 	PythonModule::Clear();
 
-	// The finalize_interpreter() function is available in 2.2.x upwards
-#if (PYBIND11_VERSION_MAJOR == 2) && (PYBIND11_VERSION_MINOR <= 1)
-	Py_Finalize();
-#else
+	// The finalize_interpreter() function is not available in older versions
+#ifdef DR_PYBIND_HAS_EMBED_H
 	py::finalize_interpreter();
+#else 
+	Py_Finalize();
 #endif
 }
 
