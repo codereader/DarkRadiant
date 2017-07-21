@@ -1,11 +1,12 @@
-#ifndef _SELECTION_SET_INTERFACE_H_
-#define _SELECTION_SET_INTERFACE_H_
+#pragma once
 
-#include <boost/python.hpp>
+#include <pybind11/pybind11.h>
+
 #include "iscript.h"
 #include "iselectionset.h"
 
-namespace script {
+namespace script
+{
 
 // ========== SelectionSet Handling ==========
 
@@ -28,14 +29,18 @@ public:
 
 // Wrap around the ISelectionSetManager::Visitor interface
 class SelectionSetVisitorWrapper :
-	public selection::ISelectionSetManager::Visitor,
-	public boost::python::wrapper<selection::ISelectionSetManager::Visitor>
+	public selection::ISelectionSetManager::Visitor
 {
 public:
-    void visit(const selection::ISelectionSetPtr& set)
+    void visit(const selection::ISelectionSetPtr& set) override
 	{
 		// Wrap this method to python
-		this->get_override("visit")(ScriptSelectionSet(set));
+		PYBIND11_OVERLOAD_PURE(
+			void,			/* Return type */
+			selection::ISelectionSetManager::Visitor,    /* Parent class */
+			visit,			/* Name of function in C++ (must match Python name) */
+			ScriptSelectionSet(set)			/* Argument(s) */
+		);
 	}
 };
 
@@ -51,10 +56,7 @@ public:
 	ScriptSelectionSet findSelectionSet(const std::string& name);
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace);
+	void registerInterface(py::module& scope, py::dict& globals) override;
 };
-typedef std::shared_ptr<SelectionSetInterface> SelectionSetInterfacePtr;
 
 } // namespace script
-
-#endif /* _SELECTION_SET_INTERFACE_H_ */

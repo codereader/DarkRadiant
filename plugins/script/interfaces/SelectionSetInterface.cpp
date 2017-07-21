@@ -67,36 +67,36 @@ ScriptSelectionSet SelectionSetInterface::findSelectionSet(const std::string& na
 }
 
 // IScriptInterface implementation
-void SelectionSetInterface::registerInterface(boost::python::object& nspace)
+void SelectionSetInterface::registerInterface(py::module& scope, py::dict& globals)
 {
 	// Expose the SelectionSystem::Visitor interface
-	nspace["SelectionSetVisitor"] = boost::python::class_<SelectionSetVisitorWrapper, boost::noncopyable>("SelectionSetVisitor")
-		.def("visit", boost::python::pure_virtual(&selection::ISelectionSetManager::Visitor::visit))
-	;
+	py::class_<selection::ISelectionSetManager::Visitor, SelectionSetVisitorWrapper> visitor(scope, "SelectionSetVisitor");
+
+	visitor.def(py::init<>());
+	visitor.def("visit", &selection::ISelectionSetManager::Visitor::visit);
 
 	// Add SelectionSet declaration
-	nspace["SelectionSet"] = boost::python::class_<ScriptSelectionSet>("SelectionSet",
-		boost::python::init<const selection::ISelectionSetPtr&>())
-		.def("getName", &ScriptSelectionSet::getName,
-			boost::python::return_value_policy<boost::python::copy_const_reference>())
-		.def("empty", &ScriptSelectionSet::empty)
-		.def("clear", &ScriptSelectionSet::clear)
-		.def("select", &ScriptSelectionSet::select)
-		.def("deselect", &ScriptSelectionSet::deselect)
-		.def("assignFromCurrentScene", &ScriptSelectionSet::assignFromCurrentScene)
-	;
+	py::class_<ScriptSelectionSet> selectionSet(scope, "SelectionSet");
+
+	selectionSet.def(py::init<const selection::ISelectionSetPtr&>());
+	selectionSet.def("getName", &ScriptSelectionSet::getName, py::return_value_policy::reference);
+	selectionSet.def("empty", &ScriptSelectionSet::empty);
+	selectionSet.def("clear", &ScriptSelectionSet::clear);
+	selectionSet.def("select", &ScriptSelectionSet::select);
+	selectionSet.def("deselect", &ScriptSelectionSet::deselect);
+	selectionSet.def("assignFromCurrentScene", &ScriptSelectionSet::assignFromCurrentScene);
 
 	// Add the module declaration to the given python namespace
-	nspace["GlobalSelectionSetManager"] = boost::python::class_<SelectionSetInterface>("GlobalSelectionSetManager")
-		.def("foreachSelectionSet", &SelectionSetInterface::foreachSelectionSet)
-		.def("createSelectionSet", &SelectionSetInterface::createSelectionSet)
-		.def("deleteSelectionSet", &SelectionSetInterface::deleteSelectionSet)
-		.def("deleteAllSelectionSets", &SelectionSetInterface::deleteAllSelectionSets)
-		.def("findSelectionSet", &SelectionSetInterface::findSelectionSet)
-	;
+	py::class_<SelectionSetInterface> selectionSetManager(scope, "SelectionSetManager");
+
+	selectionSetManager.def("foreachSelectionSet", &SelectionSetInterface::foreachSelectionSet);
+	selectionSetManager.def("createSelectionSet", &SelectionSetInterface::createSelectionSet);
+	selectionSetManager.def("deleteSelectionSet", &SelectionSetInterface::deleteSelectionSet);
+	selectionSetManager.def("deleteAllSelectionSets", &SelectionSetInterface::deleteAllSelectionSets);
+	selectionSetManager.def("findSelectionSet", &SelectionSetInterface::findSelectionSet);
 
 	// Now point the Python variable "GlobalSelectionSetManager" to this instance
-	nspace["GlobalSelectionSetManager"] = boost::python::ptr(this);
+	globals["GlobalSelectionSetManager"] = this;
 }
 
 } // namespace script
