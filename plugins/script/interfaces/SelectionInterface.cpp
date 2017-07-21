@@ -18,14 +18,14 @@ void SelectionInterface::foreachSelectedComponent(const SelectionSystem::Visitor
 	GlobalSelectionSystem().foreachSelectedComponent(visitor);
 }
 
-void SelectionInterface::setSelectedAll(bool selected)
+void SelectionInterface::setSelectedAll(int selected)
 {
-	GlobalSelectionSystem().setSelectedAll(selected);
+	GlobalSelectionSystem().setSelectedAll(static_cast<bool>(selected));
 }
 
-void SelectionInterface::setSelectedAllComponents(bool selected)
+void SelectionInterface::setSelectedAllComponents(int selected)
 {
-	GlobalSelectionSystem().setSelectedAllComponents(selected);
+	GlobalSelectionSystem().setSelectedAllComponents(static_cast<bool>(selected));
 }
 
 ScriptSceneNode SelectionInterface::ultimateSelected()

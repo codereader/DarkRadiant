@@ -38,8 +38,8 @@ public:
 	void insertColumns(std::size_t colIndex);
 	void insertRows(std::size_t rowIndex);
 
-	void removePoints(bool columns, std::size_t index);
-	void appendPoints(bool columns, bool beginning);
+	void removePoints(int columns, std::size_t index);
+	void appendPoints(int columns, int beginning);
 
 	// Check if the patch has invalid control points or width/height are zero
 	bool isValid() const;
@@ -57,7 +57,7 @@ public:
 
 	bool subdivisionsFixed() const;
 	Subdivisions getSubdivisions() const;
-	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions);
+	void setFixedSubdivisions(int isFixed, const Subdivisions& divisions);
 };
 
 class PatchInterface :

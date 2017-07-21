@@ -95,20 +95,20 @@ void ScriptPatchNode::insertRows(std::size_t rowIndex)
 	return patchNode->getPatch().insertRows(rowIndex);
 }
 
-void ScriptPatchNode::removePoints(bool columns, std::size_t index)
+void ScriptPatchNode::removePoints(int columns, std::size_t index)
 {
 	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 	if (patchNode == NULL) return;
 
-	return patchNode->getPatch().removePoints(columns, index);
+	return patchNode->getPatch().removePoints(static_cast<bool>(columns), index);
 }
 
-void ScriptPatchNode::appendPoints(bool columns, bool beginning)
+void ScriptPatchNode::appendPoints(int columns, int beginning)
 {
 	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 	if (patchNode == NULL) return;
 
-	return patchNode->getPatch().appendPoints(columns, beginning);
+	return patchNode->getPatch().appendPoints(static_cast<bool>(columns), static_cast<bool>(beginning));
 }
 
 bool ScriptPatchNode::isValid() const
@@ -175,12 +175,12 @@ Subdivisions ScriptPatchNode::getSubdivisions() const
 	return patchNode->getPatch().getSubdivisions();
 }
 
-void ScriptPatchNode::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions)
+void ScriptPatchNode::setFixedSubdivisions(int isFixed, const Subdivisions& divisions)
 {
 	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(_node.lock());
 	if (patchNode == NULL) return;
 
-	patchNode->getPatch().setFixedSubdivisions(isFixed, divisions);
+	patchNode->getPatch().setFixedSubdivisions(static_cast<bool>(isFixed), divisions);
 }
 
 // Initialise static members

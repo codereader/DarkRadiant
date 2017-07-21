@@ -90,7 +90,7 @@ bool ScriptSceneNode::isSelected()
 	return (selectable != NULL) ? selectable->isSelected() : false;
 }
 
-void ScriptSceneNode::setSelected(bool selected)
+void ScriptSceneNode::setSelected(int selected)
 {
 	scene::INodePtr node = _node.lock();
 	if (node == NULL) return;
@@ -98,7 +98,7 @@ void ScriptSceneNode::setSelected(bool selected)
 	ISelectablePtr selectable = Node_getSelectable(node);
 
 	if (selectable != NULL) {
-		selectable->setSelected(selected);
+		selectable->setSelected(static_cast<bool>(selected));
 	}
 }
 

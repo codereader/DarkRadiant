@@ -40,7 +40,7 @@ public:
 
 	bool isSelected();
 
-	void setSelected(bool selected);
+	void setSelected(int selected);
 
 	void invertSelected();
 };
