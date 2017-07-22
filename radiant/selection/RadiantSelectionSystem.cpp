@@ -1,5 +1,6 @@
 #include "RadiantSelectionSystem.h"
 
+#include "i18n.h"
 #include "iundo.h"
 #include "igrid.h"
 #include "iselectiongroup.h"
