@@ -62,6 +62,8 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
 OpenGLRenderSystem::~OpenGLRenderSystem()
 {
+	// The static default rendersystem won't use this, it will detach itself
+	// in the shutdownModule() method.
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
 	{
 		GlobalMaterialManager().detach(*this);
@@ -475,7 +477,8 @@ void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) c
 }
 
 // RegisterableModule implementation
-const std::string& OpenGLRenderSystem::getName() const {
+const std::string& OpenGLRenderSystem::getName() const
+{
 	static std::string _name(MODULE_RENDERSYSTEM);
 	return _name;
 }
@@ -484,7 +487,8 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty()) 
+	{
 		_dependencies.insert(MODULE_SHADERSYSTEM);
 		_dependencies.insert(MODULE_OPENGL);
 	}
@@ -494,7 +498,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 
 void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << "ShaderCache::initialiseModule called.\n";
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	GlobalMaterialManager().attach(*this);
 
@@ -505,6 +509,7 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 
 void OpenGLRenderSystem::shutdownModule()
 {
+	GlobalMaterialManager().detach(*this);
 }
 
 // Define the static ShaderCache module
