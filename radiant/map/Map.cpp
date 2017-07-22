@@ -36,7 +36,6 @@
 #include "map/StartupMapLoader.h"
 #include "map/RootNode.h"
 #include "map/MapResource.h"
-#include "map/algorithm/Clone.h"
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
