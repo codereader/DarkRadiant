@@ -1,6 +1,7 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
               $(XML_CFLAGS) \
               $(PYTHON_CPPFLAGS) \
+              $(PYBIND11_CPPFLAGS) \
               -DPKGLIBDIR='"$(pkglibdir)"'
 
 modulesdir = $(pkglibdir)/modules

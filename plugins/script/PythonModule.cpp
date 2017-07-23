@@ -24,6 +24,11 @@ void PythonModule::RegisterToPython(const ModuleRegistrationCallback& callback)
 {
 	_registrationCallback = callback;
 
+        rMessage() << "Registering darkradiant module to Python using pybind11 version " << 
+            PYBIND11_VERSION_MAJOR << "." << 
+            PYBIND11_VERSION_MINOR << "." << 
+            PYBIND11_VERSION_PATCH << std::endl;
+        
 	// Register the darkradiant module to Python
 	int result = PyImport_AppendInittab(NAME(), InitModule);
 

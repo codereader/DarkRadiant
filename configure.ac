@@ -65,6 +65,10 @@ AC_ARG_ENABLE([python],
               [python_scripting=$enableval],
               [python_scripting='yes'])
 
+AC_ARG_WITH(pybind11,
+            [--with-pybind11=/path/to/pybind11/include pybind11 include path to use (optional)],
+            pybind11_include_path="$withval")
+              
 if [[ "$darkmod_plugins" != 'no' ]]
 then
     # Enable conditional directories (used by plugins/Makefile.am)
@@ -157,7 +161,6 @@ BOOST_BIND
 BOOST_FOREACH
 BOOST_FORMAT
 BOOST_FUNCTION
-BOOST_SMART_PTR
 BOOST_TOKENIZER
 
 # These ones require libraries too
@@ -174,14 +177,25 @@ then
     then
         PYTHON_LIBS=`$PYTHON_CONFIG --libs`
         PYTHON_CPPFLAGS=`$PYTHON_CONFIG --includes`
+        PYBIND11_CPPFLAGS=``
+        
+        # Add the path to the pybind11 library if we got one from the arguments
+        if test "x$pybind11_include_path" != x ; then
+           PYBIND11_CPPFLAGS="-I$pybind11_include_path"
+        fi
         
         # pybind11.h is including Python.h, need to help it find the Python.h header
-        CPPFLAGS="$USER_CPPFLAGS $PYTHON_CPPFLAGS"
-	AC_CHECK_HEADER([pybind11/pybind11.h], [], [AC_MSG_ERROR([Missing pybind11.h, please install the pybind11 package])])
+        CPPFLAGS="$USER_CPPFLAGS $PYTHON_CPPFLAGS $PYBIND11_CPPFLAGS"
+        
+	AC_CHECK_HEADER([pybind11/pybind11.h], [], 
+	     [AC_MSG_ERROR([Missing pybind11.h, please install the pybind11 package for your system. \
+If there's no pybind11 package for your distribution, please download it from the pybind11 \
+website and specify the path to the include folder using --with-pybind11=/path/to/pybind11/include])])
         script_module='script'
         AC_SUBST([script_module])
         AC_SUBST([PYTHON_CPPFLAGS])
         AC_SUBST([PYTHON_LIBS])
+        AC_SUBST([PYBIND11_CPPFLAGS])
     fi
 fi
 
