@@ -57,3 +57,4 @@ Makefile.in
 /install/*.zip
 /tools/msvc/.vs
 /tools/msvc/DarkRadiant.VC.db
+/tools/innosetup/*.zip
