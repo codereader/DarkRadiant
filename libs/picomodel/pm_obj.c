@@ -664,7 +664,7 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD )
 			picoVec3_t normals[ 4 ];
 			picoVec2_t coords [ 4 ];
 
-			int iv [ 4 ], has_v;
+			int iv [ 4 ], has_v = 0;
 			int ivt[ 4 ], has_vt = 0;
 			int ivn[ 4 ], has_vn = 0;
 			int have_quad = 0;

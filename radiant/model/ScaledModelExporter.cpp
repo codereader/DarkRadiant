@@ -6,13 +6,11 @@
 #include "igame.h"
 #include "ientity.h"
 #include "iscenegraph.h"
+#include "os/fs.h"
 #include "os/path.h"
-#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/regex.hpp>
-
-namespace fs = boost::filesystem;
+#include <regex>
 
 namespace map
 {
@@ -181,13 +179,13 @@ void ScaledModelExporter::exportModel(const model::IModelExporterPtr& exporter,
 std::string ScaledModelExporter::generateUniqueModelFilename(
 	const fs::path& outputPath, const fs::path& modelPath, const std::string& outputExtension)
 {
-	std::string modelFilename = os::getFilename(modelPath.string());
+	std::string modelFilename = modelPath.filename().string();
 
 	// Remove any previously existing "_scaledN" suffix
-	boost::regex expr("_scaled\\d+\\.");
-	modelFilename = boost::regex_replace(modelFilename, expr, ".");
+	std::regex expr("_scaled\\d+\\.");
+	modelFilename = std::regex_replace(modelFilename, expr, ".");
 
-	std::string filenameNoExt = fs::change_extension(modelFilename, "").string();
+	std::string filenameNoExt = os::replaceExtension(modelFilename, "");
 
 	int i = 0;
 
@@ -205,7 +203,7 @@ std::string ScaledModelExporter::generateUniqueModelFilename(
 	throw new std::runtime_error("Could not generate a unique model filename.");
 }
 
-boost::filesystem::path ScaledModelExporter::getWritableGamePath()
+fs::path ScaledModelExporter::getWritableGamePath()
 {
 	fs::path targetPath = GlobalGameManager().getModPath();
 

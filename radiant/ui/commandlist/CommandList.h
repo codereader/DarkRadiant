@@ -74,6 +74,7 @@ private:
 	void onClose(wxCommandEvent& ev);
 	void onClear(wxCommandEvent& ev);
 	void onAssign(wxCommandEvent& ev);
+	void onResetToDefault(wxCommandEvent& ev);
 
 	// The callback to catch the double click on a treeview row
 	void onItemDoubleClicked(wxDataViewEvent& ev);

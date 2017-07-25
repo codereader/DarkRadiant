@@ -97,6 +97,12 @@ namespace selection
 	Vector3 getCurrentSelectionCenter();
 
 	// Returns the AABB of the current selection (invalid bounds if nothing is selected).
+	// Use the bool to specify whether you want to have the light volumes calculated in 
+	// in their entirety.
+	AABB getCurrentSelectionBounds(bool considerLightVolumes);
+
+	// Returns the AABB of the current selection (invalid bounds if nothing is selected).
+	// This will call getCurrentSelectionBounds(true) in its implementation.
 	AABB getCurrentSelectionBounds();
 
 	// Calculates the axis-aligned bounding box of the selection components.

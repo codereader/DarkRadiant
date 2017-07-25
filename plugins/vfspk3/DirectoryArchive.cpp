@@ -7,8 +7,6 @@
 #include "os/fs.h"
 #include <vector>
 
-namespace fs = boost::filesystem;
-
 DirectoryArchive::DirectoryArchive(const std::string& root) :
 	_root(root)
 {}
@@ -63,15 +61,15 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 	{
 		// Get the candidate
 		const fs::path& candidate = *it;
-        std::string candidateStr = os::string_from_path(candidate);
+        std::string candidateStr = candidate.generic_string();
 
 		if (fs::is_directory(candidate))
 		{
 			// Check if we should traverse further
-			if (visitor.directory(candidateStr.substr(rootLen), it.level()+1))
+			if (visitor.directory(candidateStr.substr(rootLen), os::getDepth(it)+1))
 			{
 				// Visitor returned true, prevent going deeper into it
-				it.no_push();
+				os::disableRecursionPending(it);
 			}
 		}
 		else

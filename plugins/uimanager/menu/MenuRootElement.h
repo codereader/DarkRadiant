@@ -10,9 +10,7 @@ class MenuRootElement :
 {
 public:
 	MenuRootElement()
-	{
-		setType(menuRoot);
-	}
+	{}
 
 	~MenuRootElement()
 	{

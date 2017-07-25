@@ -11,11 +11,9 @@
 #include "selectionlib.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem.hpp>
-
 #include "registry/registry.h"
 #include "string/string.h"
+#include "os/file.h"
 #include "os/path.h"
 #include "i18n.h"
 #include "itextstream.h"
@@ -45,9 +43,6 @@ namespace
 
 	const char* const NO_ENTITY_ERROR = N_("Cannot run Readable Editor on this selection.\n"
 		"Please select a single XData entity.");
-
-	const char* const LABEL_PAGE_RELATED = N_("Page Editing:");
-	const char* const LABEL_GENERAL_PROPERTIES = N_("General Properties:");
 
 	enum MenuItemId
 	{
@@ -376,7 +371,7 @@ bool ReadableEditorDialog::save()
 	// Get the storage path and check its validity
 	std::string storagePath = constructStoragePath();
 
-	if (!_useDefaultFilename && !boost::filesystem::exists(storagePath))
+	if (!_useDefaultFilename && !os::fileOrDirExists(storagePath))
 	{
 		// The file does not exist, so we have imported a definition contained inside a PK4.
 		wxutil::Messagebox::ShowError(
@@ -1205,11 +1200,11 @@ void ReadableEditorDialog::checkGuiLayout()
 	if (dialog.run() == ui::IDialog::RESULT_YES)
 	{
 		XData::PageLayout layoutBefore = _xData->getPageLayout();
-		std::string guiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
+		std::string selectedGuiName = GuiSelector::Run(_xData->getPageLayout() == XData::TwoSided, this);
 
-		if (!guiName.empty())
+		if (!selectedGuiName.empty())
 		{
-			_guiEntry->SetValue(guiName);
+			_guiEntry->SetValue(selectedGuiName);
 			_runningGuiLayoutCheck = false;
 			updateGuiView();
 			return;

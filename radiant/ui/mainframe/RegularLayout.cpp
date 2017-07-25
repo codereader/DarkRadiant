@@ -121,17 +121,15 @@ void RegularLayout::deactivate()
 	GlobalXYWndManager().destroyViews();
 
 	// Delete the CamWnd
-	_camWnd = CamWndPtr();
+	_camWnd.reset();
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
 
-	wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
-	topLevelParent->RemoveChild(_regular.horizPane);
-	_regular.horizPane->Destroy();
+	delete _regular.horizPane;
 
-	_regular.horizPane = NULL;
-	_regular.texCamPane = NULL;
+	_regular.horizPane = nullptr;
+	_regular.texCamPane = nullptr;
 }
 
 void RegularLayout::maximiseCameraSize()
@@ -175,6 +173,11 @@ void RegularLayout::restoreStateFromPath(const std::string& path)
 	{
 		_regular.posTexCamPane.loadFromPath(path + "/pane[@name='texcam']");
 	}
+}
+
+void RegularLayout::restoreStateFromRegistry()
+{
+	restoreStateFromPath(RKEY_REGULAR_ROOT);
 }
 
 void RegularLayout::saveStateToPath(const std::string& path)

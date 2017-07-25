@@ -44,15 +44,15 @@ public:
 	static GenericEntityNodePtr Create(const IEntityClassPtr& eclass);
 
 	// Snappable implementation
-	virtual void snapto(float snap);
+	virtual void snapto(float snap) override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
+	virtual const AABB& localAABB() const override;
 
 	// SelectionTestable implementation
-	void testSelect(Selector& selector, SelectionTest& test);
+	void testSelect(Selector& selector, SelectionTest& test) override;
 
-	scene::INodePtr clone() const;
+	scene::INodePtr clone() const override;
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -61,7 +61,7 @@ public:
     SolidAAABBRenderMode getSolidAABBRenderMode() const;
 
 	// Override EntityNode::getDirection()
-	const Vector3& getDirection() const;
+	const Vector3& getDirection() const override;
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
@@ -79,7 +79,7 @@ protected:
     void _applyTransformation() override;
 
 	// Override EntityNode::construct()
-	void construct();
+	void construct() override;
 };
 
 } // namespace entity

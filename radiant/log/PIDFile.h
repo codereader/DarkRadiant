@@ -1,11 +1,10 @@
-#ifndef _PID_FILE_H_
-#define _PID_FILE_H_
+#pragma once
 
 #include "wxutil/dialog/MessageBox.h"
 #include "settings/PreferenceSystem.h"
 #include "modulesystem/ModuleRegistry.h"
 
-#include <boost/filesystem.hpp>
+#include "os/file.h"
 #include <boost/algorithm/string/replace.hpp>
 
 #define PID_FILENAME "darkradiant.pid"
@@ -37,7 +36,7 @@ public:
 			removePIDFile();
 
 #ifndef _DEBUG
-			boost::filesystem::path path = registry.getApplicationContext().getSettingsPath();
+			fs::path path = registry.getApplicationContext().getSettingsPath();
 			path /= "darkradiant.log";
 			std::string logPath = path.string();
 			boost::algorithm::replace_all(logPath, "\\\\", "\\");
@@ -77,5 +76,3 @@ private:
 };
 
 } // namespace applog
-
-#endif /* _PID_FILE_H_ */

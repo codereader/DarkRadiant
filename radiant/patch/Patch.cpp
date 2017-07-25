@@ -15,7 +15,6 @@
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/patch/PatchInspector.h"
 #include "selection/algorithm/Shader.h"
 
@@ -1925,8 +1924,8 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
   vStart[y] = aabb.origin[y] - aabb.extents[y];
   vStart[z] = aabb.origin[z];
 
-  float xAdj = fabsf((vStart[x] - (aabb.origin[x] + aabb.extents[x])) / (float)(_width - 1));
-  float yAdj = fabsf((vStart[y] - (aabb.origin[y] + aabb.extents[y])) / (float)(_height - 1));
+  float xAdj = std::abs((vStart[x] - (aabb.origin[x] + aabb.extents[x])) / (float)(_width - 1));
+  float yAdj = std::abs((vStart[y] - (aabb.origin[y] + aabb.extents[y])) / (float)(_height - 1));
 
   Vector3 vTmp;
   vTmp[z] = vStart[z];
@@ -2755,7 +2754,7 @@ void Patch::textureChanged()
 		(*i++)->onPatchTextureChanged();
 	}
 
-	ui::SurfaceInspector::update(); // Triggers TexTool and PatchInspector update
+	signal_patchTextureChanged().emit();
 }
 
 void Patch::attachObserver(Observer* observer)
@@ -2766,4 +2765,10 @@ void Patch::attachObserver(Observer* observer)
 void Patch::detachObserver(Observer* observer)
 {
 	_observers.erase(observer);
+}
+
+sigc::signal<void>& Patch::signal_patchTextureChanged()
+{
+	static sigc::signal<void> _sigPatchTextureChanged;
+	return _sigPatchTextureChanged;
 }

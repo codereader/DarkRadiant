@@ -12,10 +12,8 @@
 #include <stdexcept>
 #include "registry/registry.h"
 #include "modulesystem/ModuleRegistry.h"
-#include <boost/filesystem.hpp>
+#include "os/fs.h"
 #include <boost/algorithm/string/case_conv.hpp>
-
-namespace fs = boost::filesystem;
 
 namespace language
 {

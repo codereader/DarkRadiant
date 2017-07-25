@@ -11,7 +11,6 @@
 
 #include "os/path.h"
 #include "os/file.h"
-#include <boost/filesystem.hpp>
 
 namespace map 
 {
@@ -39,21 +38,20 @@ void StartupMapLoader::onRadiantStartup()
 		if (os::getExtension(candidate) != "map") continue;
 
 		// We have a map file, check if it exists (and where)
-		boost::filesystem::path mapsPath = GlobalRegistry().get(RKEY_MAP_PATH);
 
-		boost::filesystem::path fullMapPath = mapsPath / candidate;
-
-		// First, look in the regular maps path
-		if (boost::filesystem::exists(fullMapPath))
+		// First, look if we have an absolute map path
+		if (os::fileOrDirExists(candidate))
 		{
-			mapToLoad = fullMapPath.string();
+			mapToLoad = candidate;
 			break;
 		}
 
-		// Second, check for mod-relative paths
-		fullMapPath = mapsPath.remove_leaf().remove_leaf() / candidate;
+		fs::path mapsPath = GlobalRegistry().get(RKEY_MAP_PATH);
 
-		if (boost::filesystem::exists(fullMapPath))
+		fs::path fullMapPath = mapsPath / candidate;
+
+		// Next, look in the regular maps path
+		if (os::fileOrDirExists(fullMapPath.string()))
 		{
 			mapToLoad = fullMapPath.string();
 			break;

@@ -20,9 +20,6 @@ namespace ui
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Edit Response Effect");
-	const int WINDOW_MIN_WIDTH = 300;
-	const int WINDOW_MIN_HEIGHT = 50;
-
 	// The name of the _SELF entity as parsed by the response scripts
 	const char* const GKEY_ENTITY_SELF = "/stimResponseSystem/selfEntity";
 }

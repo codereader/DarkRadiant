@@ -5,6 +5,7 @@
 
 #include "pkzip.h"
 #include "zlibstream.h"
+#include "os/fs.h"
 #include "os/path.h"
 
 #include "DeflatedArchiveFile.h"
@@ -12,11 +13,14 @@
 
 ZipArchive::ZipArchive(const std::string& name) :
 	m_name(name),
+	_containingFolder(os::standardPathWithSlash(fs::path(name).remove_filename())),
 	m_istream(name)
 {
-	if (!m_istream.failed()) {
-		if (!read_pkzip()) {
-			rError() << "ERROR: invalid zip-file " << name.c_str() << '\n';
+	if (!m_istream.failed())
+	{
+		if (!read_pkzip())
+		{
+			rError() << "ERROR: invalid zip-file " << name << std::endl;
 		}
 	}
 }
@@ -79,8 +83,6 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
     {
 		ZipRecord* file = i->second.file();
 
-        FileInputStream::size_type position = 0;
-
         {
             // Guard against concurrent access
             std::lock_guard<std::mutex> lock(_streamLock);
@@ -101,14 +103,14 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 			case ZipRecord::eStored:
 				return ArchiveTextFilePtr(new StoredArchiveTextFile(name,
 					m_name,
-					m_name,
+					_containingFolder,
 					m_istream.tell(),
 					file->m_stream_size));
 
 			case ZipRecord::eDeflated:
 				return ArchiveTextFilePtr(new DeflatedArchiveTextFile(name,
 					m_name,
-					m_name,
+					_containingFolder,
 					m_istream.tell(),
 					file->m_stream_size));
 		}

@@ -65,8 +65,8 @@ private:
     SpeakerNode(const SpeakerNode& other);
     void translate(const Vector3& translation);
     void rotate(const Quaternion& rotation);
-    void revertTransform();
-    void freezeTransform();
+    void revertTransform() override;
+    void freezeTransform() override;
     void updateTransform();
     void updateAABB();
     void originChanged();
@@ -86,14 +86,14 @@ public:
     ~SpeakerNode();
 
     // Snappable implementation
-    void snapto(float snap);
+    void snapto(float snap) override;
 
     // Bounded implementation
-    const AABB& localAABB() const;
+    const AABB& localAABB() const override;
 
     // PlaneSelectable implementation
-    void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);
-    void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes);
+    void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) override;
+    void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) override;
 
     // ComponentSelectionTestable implementation
     bool isSelectedComponents() const override;
@@ -102,9 +102,9 @@ public:
     void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
 
     // SelectionTestable implementation
-    void testSelect(Selector& selector, SelectionTest& test);
+    void testSelect(Selector& selector, SelectionTest& test) override;
 
-    scene::INodePtr clone() const;
+    scene::INodePtr clone() const override;
 
     // Renderable implementation
     void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -122,7 +122,7 @@ protected:
     void _applyTransformation() override;
 
     // Called after the constructor is done, overrides EntityNode
-    void construct();
+    void construct() override;
 
 private:
     void evaluateTransform();

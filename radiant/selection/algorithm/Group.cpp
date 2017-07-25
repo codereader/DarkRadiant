@@ -215,9 +215,17 @@ bool curSelectionIsSuitableForReparent()
 		return false;
 	}
 
-	Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+	scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
+	Entity* entity = Node_getEntity(lastSelected);
 
-	if (entity == NULL)
+	// Reject non-entities or models
+	if (entity == nullptr || entity->isModel())
+	{
+		return false;
+	}
+
+	// Accept only group nodes as parent
+	if (!Node_getGroupNode(lastSelected))
 	{
 		return false;
 	}
@@ -232,7 +240,7 @@ void parentSelection(const cmd::ArgumentList& args)
 	if (!curSelectionIsSuitableForReparent())
 	{
 		wxutil::Messagebox::ShowError(_("Cannot reparent primitives to entity. "
-						 "Please select at least one brush/patch and exactly one entity."
+						 "Please select at least one brush/patch and exactly one func_* entity. "
 						 "(The entity has to be selected last.)"));
 		return;
 	}

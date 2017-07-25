@@ -7,7 +7,7 @@ namespace wxutil
 {
 
 ConsoleView::ConsoleView(wxWindow* parent) :
-	wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2),
+	wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2|wxTE_READONLY),
 	_errorAttr(*wxRED),
 	_warningAttr(wxColour(128, 128, 0)),
 	_standardAttr(*wxBLACK)

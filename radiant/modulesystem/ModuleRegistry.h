@@ -4,7 +4,10 @@
 #include <list>
 #include "imodule.h"
 
-namespace module {
+#include "ModuleLoader.h"
+
+namespace module 
+{
 
 /** greebo: This is the actual implementation of the ModuleRegistry as defined in imodule.h.
  *          See the imodule.h file for a detailed documentation of the public methods.
@@ -12,6 +15,7 @@ namespace module {
 class ModuleRegistry :
 	public IModuleRegistry
 {
+private:
     typedef std::map<std::string, RegisterableModulePtr> ModulesMap;
 
 	// This is where the uninitialised modules go after registration
@@ -34,7 +38,11 @@ class ModuleRegistry :
 
     // Signals fired after ALL modules have been initialised or shut down.
     sigc::signal<void> _sigAllModulesInitialised;
-    sigc::signal<void> _sigAllModulesUninitialised;
+	sigc::signal<void> _sigAllModulesUninitialised;
+	ProgressSignal _sigModuleInitialisationProgress;
+
+	// Dynamic library loader
+	ModuleLoader _loader;
 
 	// Private constructor
 	ModuleRegistry();
@@ -45,11 +53,8 @@ public:
 	// Registers the given module
     void registerModule(const RegisterableModulePtr& module) override;
 
-    // Search for modules and plugins in the application's subfolders
-    void loadModules();
-
 	// Initialise all registered modules
-    void initialiseModules() override;
+    void loadAndInitialiseModules() override;
 
 	// Shutdown all modules
     void shutdownModules() override;
@@ -64,7 +69,10 @@ public:
     const ApplicationContext& getApplicationContext() const override;
 
     sigc::signal<void> signal_allModulesInitialised() const override;
+	ProgressSignal signal_moduleInitialisationProgress() const override;
     sigc::signal<void> signal_allModulesUninitialised() const override;
+
+	std::size_t getCompatibilityLevel() const override;
 
     /// Invoked by RadiantApp to set the application context
 	void setContext(ApplicationContext& context)

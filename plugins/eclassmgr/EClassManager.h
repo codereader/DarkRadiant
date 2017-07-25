@@ -67,8 +67,8 @@ public:
     void unrealise() override;
 
     // VFS::Observer implementation
-    virtual void onFileSystemInitialise();
-    virtual void onFileSystemShutdown();
+    virtual void onFileSystemInitialise() override;
+    virtual void onFileSystemShutdown() override;
 
     // Find the modeldef with the given name
     virtual IModelDefPtr findModel(const std::string& name) override;

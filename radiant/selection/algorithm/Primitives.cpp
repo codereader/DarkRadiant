@@ -16,6 +16,7 @@
 #include "brush/export/CollisionModel.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "map/Map.h"
+#include "os/fs.h"
 #include "gamelib.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -25,9 +26,6 @@
 #include "scenelib.h"
 #include "selectionlib.h"
 
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/convenience.hpp>
-#include <boost/filesystem/exception.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
 
@@ -50,9 +48,6 @@ namespace
 	const std::string ERRSTR_WRONG_SELECTION =
 			"Can't export, create and select a func_* entity\
 				containing the collision hull primitives.";
-
-	// Filesystem path typedef
-	typedef boost::filesystem::path Path;
 }
 
 void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor)
@@ -183,8 +178,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 
 			try {
 				// create the new autosave filename by changing the extension
-				Path cmPath = modelPath;
-				cmPath.replace_extension(newExtension);
+				fs::path cmPath = os::replaceExtension(modelPath, newExtension);
 
 				// Open the stream to the output file
 				std::ofstream outfile(cmPath.string().c_str());
@@ -202,7 +196,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 						(boost::format("Couldn't save to file: %s") % cmPath.string()).str());
 				}
 			}
-			catch (boost::filesystem::filesystem_error f) {
+			catch (fs::filesystem_error f) {
 				rError() << "CollisionModel: " << f.what() << std::endl;
 			}
 

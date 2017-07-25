@@ -28,7 +28,6 @@ int MenuElement::_nextMenuItemId = 100;
 
 MenuElement::MenuElement(const MenuElementPtr& parent) :
 	_parent(parent ? MenuElementWeakPtr(parent) : MenuElementWeakPtr()),
-	_type(menuNothing),
 	_isVisible(true),
 	_needsRefresh(false)
 {}
@@ -44,11 +43,6 @@ std::string MenuElement::getName() const
 void MenuElement::setName(const std::string& name) 
 {
 	_name = name;
-}
-
-bool MenuElement::isRoot() const
-{
-	return (_type == menuRoot);
 }
 
 MenuElementPtr MenuElement::getParent() const
@@ -76,21 +70,6 @@ void MenuElement::setIcon(const std::string& icon)
 	_icon = icon;
 }
 
-bool MenuElement::isEmpty() const 
-{
-	return (_type != menuItem);
-}
-
-eMenuItemType MenuElement::getType() const
-{
-	return _type;
-}
-
-void MenuElement::setType(eMenuItemType type)
-{
-	_type = type;
-}
-
 std::size_t MenuElement::numChildren() const 
 {
 	return _children.size();
@@ -108,21 +87,14 @@ void MenuElement::setIsVisible(bool visible)
 
 void MenuElement::addChild(const MenuElementPtr& newChild)
 {
-	addChild(newChild, std::numeric_limits<int>::max());
+	newChild->setParent(shared_from_this());
+	_children.push_back(newChild);
 }
 
-void MenuElement::addChild(const MenuElementPtr& newChild, int pos)
+void MenuElement::insertChild(const MenuElementPtr& newChild, const MenuElementPtr& insertBefore)
 {
 	newChild->setParent(shared_from_this());
-
-	if (pos >= static_cast<int>(_children.size()) || pos == std::numeric_limits<int>::max())
-	{
-		_children.push_back(newChild);
-	}
-	else
-	{
-		_children.insert(_children.begin() + pos, newChild);
-	}	
+	_children.insert(std::find(_children.begin(), _children.end(), insertBefore), newChild);
 }
 
 void MenuElement::removeChild(const MenuElementPtr& child)
@@ -162,10 +134,20 @@ void MenuElement::setEvent(const std::string& eventName)
 	_event = eventName;
 }
 
-int MenuElement::getMenuPosition(const MenuElementPtr& child)
+int MenuElement::getMenuPosition(const MenuElementPtr& child, bool includeHidden)
 {
-	return static_cast<int>(std::distance(_children.begin(), 
-		std::find(_children.begin(), _children.end(), child)));
+	int pos = 0;
+
+	for (const MenuElementPtr& candidate : _children)
+	{
+		if (!candidate->isVisible()) continue; // skip hidden items
+		
+		if (candidate == child) break;
+		
+		++pos;
+	}
+
+	return pos;
 }
 
 MenuElementPtr MenuElement::find(const std::string& menuPath)
@@ -222,8 +204,6 @@ MenuElementPtr MenuElement::CreateFromNode(const xml::Node& node)
 	if (nodeName == "menuItem")
 	{
 		item = std::make_shared<MenuItem>();
-
-		item->setType(menuItem);
 
 		// Get the EventPtr according to the event
 		item->setEvent(node.getAttributeValue("command"));
@@ -296,8 +276,6 @@ MenuElementPtr MenuElement::CreateForType(eMenuItemType type)
 	default:
 		rError() << "MenuElement: Cannot create node for type " << type << std::endl;
 	};
-
-	item->setType(type);
 
 	return item;
 }

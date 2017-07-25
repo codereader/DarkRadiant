@@ -13,8 +13,6 @@
 #include <iostream>
 #include <mutex>
 
-#include "imodule.h"
-
 /// \brief A read-only character-stream.
 // OrbWeaver: merged functionality from TextStreambufAdaptor onto this class
 // directly.
@@ -241,27 +239,3 @@ inline TemporaryThreadsafeStream rConsoleError()
         GlobalErrorStream().getStreamLock()
     );
 }
-
-namespace module
-{
-
-// greebo: This is called once by each module at load time to initialise
-// the OutputStreamHolders above.
-inline void initialiseStreams(const ApplicationContext& ctx)
-{
-	GlobalOutputStream().setStream(ctx.getOutputStream());
-	GlobalWarningStream().setStream(ctx.getWarningStream());
-	GlobalErrorStream().setStream(ctx.getErrorStream());
-
-#ifndef NDEBUG
-    GlobalDebugStream().setStream(ctx.getOutputStream());
-#endif
-
-    // Set up the mutex for thread-safe logging
-    GlobalOutputStream().setLock(ctx.getStreamLock());
-    GlobalWarningStream().setLock(ctx.getStreamLock());
-    GlobalErrorStream().setLock(ctx.getStreamLock());
-    GlobalDebugStream().setLock(ctx.getStreamLock());
-}
-
-} // namespace module

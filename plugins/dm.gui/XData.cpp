@@ -2,8 +2,10 @@
 
 #include "i18n.h"
 #include "itextstream.h"
+#include <fstream>
 #include <boost/lexical_cast.hpp>
-#include <boost/filesystem/convenience.hpp>
+#include "os/fs.h"
+#include "os/file.h"
 
 namespace XData
 {
@@ -12,21 +14,21 @@ namespace XData
 //->export:
 FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 {
-	boost::filesystem::path Path(filename);
+	fs::path Path(filename);
 
-	boost::filesystem::path parent = Path.parent_path();
+	fs::path parent = Path.parent_path();
 
 	// Ensure the parent path exists
-	boost::filesystem::create_directories(parent);
+	fs::create_directories(parent);
 
-	if (boost::filesystem::exists(Path))
+	if (os::fileOrDirExists(Path.string()))
 	{
 		switch (cmd)
 		{
 		case Merge:
 			{
 			//Check if definition already exists and return DefinitionExists. If it does not, append the definition to the file.
-				boost::filesystem::fstream file(Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
+				std::fstream file(Path.string(), std::ios_base::in | std::ios_base::out | std::ios_base::app);
 				if (!file.is_open())
 					return OpenFailed;
 				std::stringstream ss;
@@ -63,14 +65,14 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 			{
 			//Find the old definition in the target file and delete it. Append the new definition.
 			//_definitionStart has been set in the first iteration of this method.
-				boost::filesystem::fstream file(Path, std::ios_base::in);
+				std::fstream file(Path.string(), std::ios_base::in);
 				if (!file.is_open())
 					return OpenFailed;
 				std::stringstream ss;
 				ss << file.rdbuf();
 				std::string OutString = ss.str();
 				file.close();
-				int DefLength = getDefLength(OutString.substr(_definitionStart));
+                std::size_t DefLength = getDefLength(OutString.substr(_definitionStart));
 				if (DefLength == 0)		//If the definitionlength can't be obtained, the merge fails.
 					return MergeFailed;
 				OutString.erase(_definitionStart, DefLength);
@@ -78,7 +80,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 					+ generateXDataDef()
 					+ std::string( (_definitionStart == OutString.size()) ? "" : "\n\n\n" );		//No new lines at the end of file
 				OutString.insert(_definitionStart, insString);
-				file.open(Path, std::ios_base::out | std::ios_base::trunc);
+				file.open(Path.string(), std::ios_base::out | std::ios_base::trunc);
 				if (!file.is_open())
 					return OpenFailed;
 				file << OutString;
@@ -91,7 +93,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 			//Warn if the definition in the target file does not match the current definition: return DefinitionMisMatch
 			//else overwrite existing file.
 				std::string DefName;
-				boost::filesystem::ifstream file(Path, std::ios_base::in);
+				std::ifstream file(Path.string(), std::ios_base::in);
 				if (!file.is_open())
 					return OpenFailed;
 				try	{ DefName = getDefinitionNameFromXD(file); }
@@ -115,7 +117,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 	}
 
 	//Write the definition into the file.
-	boost::filesystem::ofstream file(Path, std::ios_base::out | std::ios_base::trunc);
+	std::ofstream file(Path.string(), std::ios_base::out | std::ios_base::trunc);
 	if (!file.is_open())
 		return OpenFailed;
 	file << generateXDataDef();
@@ -175,7 +177,7 @@ const std::size_t XData::getDefLength(const std::string& def) const
 	return 0;	//no appropriate bracketstructure was found.
 }
 
-const std::string XData::getDefinitionNameFromXD(boost::filesystem::ifstream& file) const
+const std::string XData::getDefinitionNameFromXD(std::ifstream& file) const
 {
 	std::string ReturnString;
 	parser::BasicDefTokeniser<std::istream> tok(file);

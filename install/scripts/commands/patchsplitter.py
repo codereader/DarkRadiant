@@ -193,7 +193,7 @@ def execute():
         lineType, lineNum = None, None
         while (not lineType) and mintolerance <= tolerance <= maxtolerance:
             try:
-                print 'Patch Splitter: Trying to identify selected verts with tolerance %0.2f' % tolerance
+                print('Patch Splitter: Trying to identify selected verts with tolerance %0.2f' % tolerance)
                 lineType, lineNum = attemptGetVertsLine(patch, tolerance) # has side effects that can't be fixed till search \
             except TooManyVerts:                                          # \ is finished, as the fix clears the user's selection
                 tolerance /= 2.0
@@ -221,7 +221,7 @@ def execute():
     
     # STEP 2: Work out what row or column is selected
     lineType, lineNum = getSelectedVertsLine(patch, patchdata)
-    print 'RESULT: ', lineType, lineNum
+    print('RESULT: ', lineType, lineNum)
     
     # STEP 3: Split the patch
     newpatch = clonePatch(patch)

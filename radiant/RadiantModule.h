@@ -31,16 +31,16 @@ public:
     sigc::signal<void> signal_radiantStarted() const override;
     sigc::signal<void> signal_radiantShutdown() const override;
 
-    ThreadManager& getThreadManager();
+    ThreadManager& getThreadManager() override;
 	void performLongRunningOperation(
 		const std::function<void(ILongRunningOperation&)>& operationFunc,
-		const std::string& title);
+		const std::string& title) override;
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
-	void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 	// Stuff to be done after the modules have been loaded
 	void postModuleInitialisation();

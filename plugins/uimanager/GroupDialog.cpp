@@ -15,6 +15,7 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
+#include "registry/registry.h"
 #include "LocalBitmapArtProvider.h"
 
 namespace ui
@@ -24,6 +25,7 @@ namespace
 {
 	const std::string RKEY_ROOT = "user/ui/groupDialog/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+	const std::string RKEY_LAST_SHOWN_PAGE = RKEY_ROOT + "lastShownPage";
 
 	const char* const WINDOW_TITLE = N_("Entity");
 }
@@ -54,6 +56,10 @@ void GroupDialog::construct()
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(*InstancePtr(), &GroupDialog::onRadiantShutdown)
     );
+
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(*InstancePtr(), &GroupDialog::onRadiantStartup)
+	);
 }
 
 void GroupDialog::reparentNotebook(wxWindow* newParent)
@@ -111,7 +117,7 @@ std::string GroupDialog::getPageName()
 	{
 		if (i.second.page == curPage)
 		{
-			// Found page. Set it to active if it is not already active.
+			// Found the page
 			return i.second.name;
 		}
 	}
@@ -123,9 +129,6 @@ std::string GroupDialog::getPageName()
 // Display the named page
 void GroupDialog::setPage(const std::string& name)
 {
-	// Force a Pageswitch to ensure the texture browser is properly redrawn.
-	setPage(_pages[0].page);
-
 	// Now search for the correct page.
 	for (Pages::value_type& i : _pages)
 	{
@@ -223,9 +226,27 @@ void GroupDialog::_postShow()
 {
 	TransientWindow::_postShow();
 
+	// Activate the most recently shown page
+	std::string lastShownPage = registry::getValue<std::string>(RKEY_LAST_SHOWN_PAGE);
+
+	if (!lastShownPage.empty())
+	{
+		setPage(lastShownPage);
+	}
+
 	// Unset the focus widget for this window to avoid the cursor
 	// from jumping into any entry fields
 	this->SetFocus();
+}
+
+void GroupDialog::onRadiantStartup()
+{
+	std::string lastShownPage = registry::getValue<std::string>(RKEY_LAST_SHOWN_PAGE);	
+	
+	if (!lastShownPage.empty())
+	{
+		setPage(lastShownPage);
+	}
 }
 
 void GroupDialog::onRadiantShutdown()
@@ -235,7 +256,7 @@ void GroupDialog::onRadiantShutdown()
 		Hide();
 	}
 
-    // Safely disconnect from the notebook before shutting down
+	// Safely disconnect from the notebook before shutting down
     _notebook->Disconnect(wxEVT_NOTEBOOK_PAGE_CHANGED,
                           wxBookCtrlEventHandler(GroupDialog::onPageSwitch), NULL, this);
 
@@ -284,6 +305,18 @@ wxWindow* GroupDialog::addPage(const PagePtr& page)
 	// Add this page by copy to the local list
 	_pages.insert(std::make_pair(page->position, Page(*page)));
 
+	// During the startup phase (when pages are added) we want to activate the 
+	// newly added page if it was the active one during the last shutdown.
+	if (this->IsShownOnScreen())
+	{
+		std::string lastShownPage = registry::getValue<std::string>(RKEY_LAST_SHOWN_PAGE);
+
+		if (!lastShownPage.empty() && page->name == lastShownPage)
+		{
+			setPage(lastShownPage);
+		}
+	}
+
 	return page->page;
 }
 
@@ -306,15 +339,32 @@ void GroupDialog::removePage(const std::string& name)
 
 void GroupDialog::updatePageTitle(int pageNumber)
 {
-	if (pageNumber >= 0 && pageNumber < static_cast<int>(_pages.size()))
+	if (pageNumber < 0) return;
+
+	// Look up the page in the _pages dictionary by the page widget
+	wxWindow* win = _notebook->GetPage(static_cast<size_t>(pageNumber));
+
+	if (win == nullptr) return;
+
+	for (const Pages::value_type& page : _pages)
 	{
-		SetTitle(_pages[pageNumber].windowLabel);
+		if (page.second.page == win)
+		{
+			SetTitle(page.second.windowLabel);
+			break;
+		}
 	}
 }
 
 void GroupDialog::onPageSwitch(wxBookCtrlEvent& ev)
 {
 	updatePageTitle(ev.GetSelection());
+    
+	// Store the page's name into the registry for later retrieval
+	registry::setValue(RKEY_LAST_SHOWN_PAGE, getPageName());
+
+    // Be sure to skip the event, otherwise pages stay hidden
+    ev.Skip();
 }
 
 } // namespace ui

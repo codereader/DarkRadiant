@@ -8,7 +8,7 @@ if not exist b2.exe goto :error
 
 mkdir stage
 
-b2 toolset=msvc variant=release,debug link=static threading=multi stage /boost/python /boost/filesystem /boost/regex /boost/system
+b2 toolset=msvc variant=release,debug link=static threading=multi stage --with-python --with-system --with-filesystem
 
 start stage
 
@@ -19,7 +19,7 @@ echo Please launch this file in the boost folder you downloaded and extracted fr
 echo Run the bootstrap.bat file to generate the b2.exe file needed for the build process.
 echo __________________________________________________________________________________________
 echo Example: 
-echo   cd c:\Downloads\boost_1_61_0\
+echo   cd c:\Downloads\boost_1_64_0\
 echo   c:\Games\DarkRadiant\tools\scripts\build_boost_libs.cmd
 goto :eof
 

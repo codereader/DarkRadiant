@@ -4,8 +4,11 @@
 #include "ObservedUndoable.h"
 #include "string/string.h"
 #include <vector>
+#include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 
-namespace entity {
+namespace entity
+{
 
 /// \brief A key/value pair of strings.
 ///
@@ -13,14 +16,17 @@ namespace entity {
 /// - Provides undo support through the global undo system.
 class KeyValue :
 	public EntityKeyValue,
-	public UndoSystem::Observer
+	public sigc::trackable
 {
+private:
 	typedef std::vector<KeyObserver*> KeyObservers;
 	KeyObservers _observers;
 
 	std::string _value;
 	std::string _emptyValue;
 	undo::ObservedUndoable<std::string> _undo;
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
 
 public:
 	KeyValue(const std::string& value, const std::string& empty);
@@ -45,10 +51,10 @@ public:
 	// NameObserver implementation
 	void onNameChange(const std::string& oldName, const std::string& newName);
 
+private:
 	// Gets called after a undo/redo operation is fully completed.
 	// This triggers a keyobserver refresh, to allow for reconnection to Namespaces and such.
-	void postUndo();
-	void postRedo();
+	void onUndoRedoOperationFinished();
 };
 
 } // namespace entity

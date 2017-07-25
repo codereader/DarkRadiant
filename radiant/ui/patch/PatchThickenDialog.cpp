@@ -12,9 +12,6 @@
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Patch Thicken");
-
-	const float DEFAULT_THICKNESS = 16.0f;
-	const bool DEFAULT_CREATE_SEAMS = TRUE;
 }
 
 namespace ui

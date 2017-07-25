@@ -235,8 +235,11 @@ int PrefabSelector::ShowModal()
 		// Populate the tree
 		populatePrefabs();
 	}
-	else
+	else if (!_lastPrefab.empty()) 
 	{
+		// #4490: Only preselect if path is not empty, wxGTK will buffer that
+		// and call ExpandAncestors() on a stale wxDataViewItem in its internal idle routine
+
 		// Preselect the item, tree is already loaded
 		// Find and select the classname
 		wxDataViewItem preselectItem = _treeStore->FindString(_lastPrefab, _columns.vfspath);
@@ -395,6 +398,7 @@ void PrefabSelector::populatePrefabs()
 
 	row[_columns.filename] = wxVariant(wxDataViewIconText(_("Loading..."), prefabIcon));
 	row[_columns.isFolder] = false;
+	row[_columns.vfspath] = "__loadingnode__"; // to pevent that item from being found
 	row.SendItemAdded();
 
     _populator.reset(new PrefabPopulator(_columns, this, getPrefabFolder()));

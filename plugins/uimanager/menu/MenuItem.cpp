@@ -74,7 +74,8 @@ void MenuItem::construct()
 
 	_menuItem->SetCheckable(event && event->isToggle());
 
-	menu->Append(_menuItem);
+	int pos = parent->getMenuPosition(shared_from_this());
+	menu->Insert(pos, _menuItem);
 
 	if (event)
 	{

@@ -12,6 +12,7 @@
 #include "os/dir.h"
 #include "os/path.h"
 #include "os/fs.h"
+#include "string/convert.h"
 
 #include "GameFileLoader.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -97,10 +98,12 @@ void Manager::constructPreferences()
 	IPreferencePage& page = GetPreferenceSystem().getPage(_("Game"));
 
 	ComboBoxValueList gameList;
-	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
+
+	for (const GamePtr& game : _sortedGames)
 	{
-		gameList.push_back(i->second->getKeyValue("name"));
+		gameList.push_back(game->getKeyValue("name"));
 	}
+
 	page.appendCombo(_("Select a Game:"), RKEY_GAME_TYPE, gameList, true);
 	page.appendPathEntry(_("Engine Path"), RKEY_ENGINE_PATH, true);
 	page.appendEntry(_("Mod (fs_game)"), RKEY_FS_GAME);
@@ -111,20 +114,21 @@ void Manager::initialise(const std::string& appPath)
 {
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles(appPath);
-   if (_games.empty())
-   {
-      // No game types available, bail out, the program would crash anyway on
-      // module load
-      wxutil::Messagebox::ShowFatalError(
-		  _("GameManager: No valid game files found, can't continue."), NULL
-      );
-   }
+
+	if (_games.empty())
+	{
+		// No game types available, bail out, the program would crash anyway on
+		// module load
+		wxutil::Messagebox::ShowFatalError(
+			_("GameManager: No valid game files found, can't continue."), NULL
+		);
+	}
 
 	// Add the settings widgets to the Preference Dialog, we might need it
 	constructPreferences();
 
 	// Find the user's selected game from the XML registry, and attempt to find
-   // it in the set of available games.
+	// it in the set of available games.
 	std::string gameType = GlobalRegistry().get(RKEY_GAME_TYPE);
 	GameMap::iterator i = _games.find(gameType);
 
@@ -132,7 +136,16 @@ void Manager::initialise(const std::string& appPath)
    {
 		// We have at least one game type available, select the first
 		// Store the name of the only game into the Registry
-		GlobalRegistry().set(RKEY_GAME_TYPE, _games.begin()->first);
+		rMessage() << "No game selected, will choose the highest ranked one." << std::endl;
+
+		if (_sortedGames.empty())
+		{
+			wxutil::Messagebox::ShowFatalError(
+				"GameManager: Sorted game list is empty, can't continue.", nullptr
+			);
+		}
+
+		GlobalRegistry().set(RKEY_GAME_TYPE, _sortedGames.front()->getName());
 	}
 
 	// Load the value from the registry, there should be one selected at this point
@@ -541,15 +554,41 @@ void Manager::loadGameFiles(const std::string& appPath)
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
 	GameFileLoader gameFileLoader(_games, gamePath);
-	os::foreachItemInDirectory(gamePath, gameFileLoader);
+    
+    try
+    {
+        os::foreachItemInDirectory(gamePath, gameFileLoader);
 
-	rMessage() << "GameManager: Found game definitions: " << std::endl;
-	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
-	{
-		rMessage() << "  " << i->first << std::endl;
-	}
+        rMessage() << "GameManager: Found game definitions: " << std::endl;
 
-	rMessage() << std::endl;
+        for (GameMap::value_type& pair : _games)
+        {
+            rMessage() << "  " << pair.first << std::endl;
+        }
+
+		// Populate the sorted games list
+		_sortedGames.clear();
+		
+		// Sort the games by their index
+		std::multimap<int, GamePtr> sortedGameMap;
+
+		for (const GameMap::value_type& pair : _games)
+		{
+			int index = string::convert<int>(pair.second->getKeyValue("index"), 9999);
+			sortedGameMap.insert(std::make_pair(index, pair.second));
+		}
+
+		for (const auto& pair : sortedGameMap)
+		{
+			_sortedGames.push_back(pair.second);
+		}
+
+        rMessage() << std::endl;
+    }
+    catch (os::DirectoryNotFoundException&)
+    {
+        rError() << "Could not find directory with game files in " << gamePath << std::endl;
+    }
 }
 
 } // namespace game

@@ -14,6 +14,12 @@ MenuBar::MenuBar() :
 	_menuBar(nullptr)
 {}
 
+MenuBar::~MenuBar()
+{
+	// When destroyed, make sure to unsubscribe from any idle events
+	setNeedsRefresh(false);
+}
+
 wxMenuBar* MenuBar::getMenuBar()
 {
 	if (_menuBar == nullptr)
@@ -24,12 +30,40 @@ wxMenuBar* MenuBar::getMenuBar()
 	return _menuBar;
 }
 
+bool MenuBar::isConstructed()
+{
+	return _menuBar != nullptr;
+}
+
+void MenuBar::setNeedsRefresh(bool needsRefresh)
+{
+	MenuElement::setNeedsRefresh(needsRefresh);
+
+	// Let's get notified on idle events
+	if (_menuBar == nullptr || _menuBar->GetFrame() == nullptr)
+	{
+		return;
+	}
+
+	if (needsRefresh)
+	{
+		_menuBar->GetFrame()->Connect(wxEVT_IDLE, wxIdleEventHandler(MenuBar::onIdle), nullptr, this);
+	}
+	else
+	{
+		_menuBar->GetFrame()->Disconnect(wxEVT_IDLE, wxIdleEventHandler(MenuBar::onIdle), nullptr, this);
+	}
+}
+
 void MenuBar::construct()
 {
 	_needsRefresh = false;
 
 	if (_menuBar != nullptr)
 	{
+		// Block redraws for the moment being
+		wxWindowUpdateLocker noUpdates(_menuBar);
+
 		MenuElement::constructChildren();
 		return;
 	}
@@ -86,6 +120,25 @@ void MenuBar::onMenuOpen(wxMenuEvent& ev)
 	{
 		// Rebuild this entire menu
 		std::static_pointer_cast<MenuFolder>(menu)->refresh();
+	}
+}
+
+void MenuBar::onIdle(wxIdleEvent& ev)
+{
+	if (!needsRefresh())
+	{
+		ev.Skip();
+		return;
+	}
+
+	// Unsubscribe from idle events
+	setNeedsRefresh(false);
+
+	construct();
+
+	if (_menuBar != nullptr && _menuBar->GetFrame() != nullptr)
+	{
+		_menuBar->Refresh();
 	}
 }
 

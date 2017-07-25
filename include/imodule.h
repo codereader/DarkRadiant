@@ -6,10 +6,13 @@
 #include <sigc++/trackable.h>
 #include <sigc++/signal.h>
 #include <mutex>
+#include <stdexcept>
 
 #include <string>
 #include <set>
 #include <vector>
+
+#include "itextstream.h"
 
 /**
  * \defgroup module Module system
@@ -18,20 +21,39 @@
 /** greebo: These registry keys can be used application-wide during runtime
  *          to retrieve the various paths.
  */
-namespace
-{
-	const char* const RKEY_APP_PATH = "user/paths/appPath";
-	const char* const RKEY_HOME_PATH = "user/paths/homePath";
-	const char* const RKEY_SETTINGS_PATH = "user/paths/settingsPath";
-	const char* const RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
-	const char* const RKEY_ENGINE_PATH = "user/paths/enginePath";
-	const char* const RKEY_MAP_PATH = "user/paths/mapPath";
-	const char* const RKEY_PREFAB_PATH = "user/paths/prefabPath";
-}
+const char* const RKEY_APP_PATH = "user/paths/appPath";
+const char* const RKEY_HOME_PATH = "user/paths/homePath";
+const char* const RKEY_SETTINGS_PATH = "user/paths/settingsPath";
+const char* const RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
+const char* const RKEY_ENGINE_PATH = "user/paths/enginePath";
+const char* const RKEY_MAP_PATH = "user/paths/mapPath";
+const char* const RKEY_PREFAB_PATH = "user/paths/prefabPath";
+
+/**
+ * greebo: Compatibility level: a number inlined into all the modules and returned 
+ * by their RegisterableModule::getCompatibilityLevel() method.
+ *
+ * This number should be changed each time the set of module/plugin files (.so/.dll/.dylib) 
+ * is modified, especially when files are going to be removed from a DarkRadiant release.
+ * The number will be checked by the ModuleRegistry against the internally stored one
+ * to detect outdated binaries and reject their registration.
+ *
+ * As long as no external module/plugin files are removed this number is safe to stay 
+ * as it is. Keep this number compatible to std::size_t, i.e. unsigned.
+ */
+#define MODULE_COMPATIBILITY_LEVEL 20170327
 
 // A function taking an error title and an error message string, invoked in debug builds
 // for things like ASSERT_MESSAGE and ERROR_MESSAGE
 typedef std::function<void (const std::string&, const std::string&)> ErrorHandlingFunction;
+
+// This method holds a function pointer which can do some error display (like popups)
+// Each module binary has its own copy of this, it's initialised in performDefaultInitialisation()
+inline ErrorHandlingFunction& GlobalErrorHandler()
+{
+	static ErrorHandlingFunction _func;
+	return _func;
+}
 
 /**
  * Provider for various information that may be required by modules during
@@ -126,7 +148,13 @@ typedef std::set<std::string> StringSet;
  */
 class RegisterableModule: public sigc::trackable
 {
+private:
+	const std::size_t _compatibilityLevel;
+
 public:
+	RegisterableModule() :
+		_compatibilityLevel(MODULE_COMPATIBILITY_LEVEL)
+	{}
 
     /**
 	 * Destructor
@@ -174,6 +202,16 @@ public:
 	virtual void shutdownModule() {
 		// Empty default implementation
 	}
+
+	// Internally queried by the ModuleRegistry. To protect against leftover
+	// binaries containing outdated moudles from being loaded and registered
+	// the compatibility level is compared with the one in the ModuleRegistry.
+	// Old modules with mismatching numbers will be rejected.
+	// Function is intentionally non-virtual and inlined.
+	std::size_t getCompatibilityLevel() const
+	{
+		return _compatibilityLevel;
+	}
 };
 
 /**
@@ -206,9 +244,9 @@ public:
  *
  * \ingroup module
  */
-class IModuleRegistry {
+class IModuleRegistry 
+{
 public:
-
     /**
 	 * Destructor
 	 */
@@ -228,7 +266,7 @@ public:
 	 * is invoked once, at application startup, with any subsequent attempts
 	 * to invoke this method throwing a logic_error.
 	 */
-	virtual void initialiseModules() = 0;
+	virtual void loadAndInitialiseModules() = 0;
 
 	/**
 	 * All the RegisterableModule::shutdownModule() routines are getting
@@ -270,14 +308,29 @@ public:
      */
     virtual sigc::signal<void> signal_allModulesInitialised() const = 0;
 
+	/**
+	 * Progress function called during module loading and intialisation.
+	 * The string value will carry a message about what is currently in progress.
+	 * The float value passed to the signal indicates the overall progress and
+	 * will be in the range [0.0f..1.0f].
+	 */
+	typedef sigc::signal<void, const std::string&, float> ProgressSignal;
+	virtual ProgressSignal signal_moduleInitialisationProgress() const = 0;
+
     /**
     * Invoked when all modules have been shut down (i.e. after shutdownModule()).
     */
     virtual sigc::signal<void> signal_allModulesUninitialised() const = 0;
+
+	// The compatibility level this Registry instance was compiled against.
+	// Old module registrations will be rejected by the registry anyway,
+	// on top of that they can actively query this number from the registry
+	// to check whether they are being loaded into an incompatible binary.
+	virtual std::size_t getCompatibilityLevel() const = 0;
 };
 
-namespace module {
-
+namespace module
+{
 	/**
 	 * \namespace module
 	 * Types and functions implementing the module registry system.
@@ -318,8 +371,57 @@ namespace module {
 	/**
 	 * Global accessor method for the ModuleRegistry.
 	 */
-	inline IModuleRegistry& GlobalModuleRegistry() {
+	inline IModuleRegistry& GlobalModuleRegistry() 
+	{
 		return RegistryReference::Instance().getRegistry();
+	}
+
+	// Exception thrown if the module being loaded is incompatible with the main binary
+	class ModuleCompatibilityException : 
+		public std::runtime_error
+	{
+	public:
+		ModuleCompatibilityException(const std::string& msg) :
+			std::runtime_error(msg)
+		{}
+	};
+
+	// greebo: This should be called once by each module at load time to initialise
+	// the OutputStreamHolders
+	inline void initialiseStreams(const ApplicationContext& ctx)
+	{
+		GlobalOutputStream().setStream(ctx.getOutputStream());
+		GlobalWarningStream().setStream(ctx.getWarningStream());
+		GlobalErrorStream().setStream(ctx.getErrorStream());
+
+#ifndef NDEBUG
+		GlobalDebugStream().setStream(ctx.getOutputStream());
+#endif
+
+		// Set up the mutex for thread-safe logging
+		GlobalOutputStream().setLock(ctx.getStreamLock());
+		GlobalWarningStream().setLock(ctx.getStreamLock());
+		GlobalErrorStream().setLock(ctx.getStreamLock());
+		GlobalDebugStream().setLock(ctx.getStreamLock());
+	}
+
+	// Helper method initialising a few references and checking a module's
+	// compatibility level with the one reported by the ModuleRegistry
+	inline void performDefaultInitialisation(IModuleRegistry& registry)
+	{
+		if (registry.getCompatibilityLevel() != MODULE_COMPATIBILITY_LEVEL)
+		{
+			throw ModuleCompatibilityException("Compatibility level mismatch");
+		}
+
+		// Initialise the streams using the given application context
+		initialiseStreams(registry.getApplicationContext());
+
+		// Remember the reference to the ModuleRegistry
+		RegistryReference::Instance().setRegistry(registry);
+
+		// Set up the assertion handler
+		GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 	}
 }
 
@@ -328,10 +430,13 @@ namespace module {
 #if defined(WIN32)
 	#if defined(_MSC_VER)
 		// In VC++ we use this to export symbols instead of using .def files
-		#define DARKRADIANT_DLLEXPORT __declspec(dllexport) __stdcall
+		// Note: don't use __stdcall since this is adding stack bytes to the function name
+		#define DARKRADIANT_DLLEXPORT __declspec(dllexport)
 	#else
-		#define DARKRADIANT_DLLEXPORT __stdcall 
+		#define DARKRADIANT_DLLEXPORT 
 	#endif
+#elif defined(__APPLE__)
+    #define DARKRADIANT_DLLEXPORT __attribute__((visibility("default")))
 #else
 	#define DARKRADIANT_DLLEXPORT
 #endif

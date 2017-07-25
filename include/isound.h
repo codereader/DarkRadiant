@@ -1,5 +1,4 @@
-#ifndef ISOUND_H_
-#define ISOUND_H_
+#pragma once
 
 #include "imodule.h"
 #include "ModResource.h"
@@ -78,7 +77,7 @@ public:
 };
 typedef std::shared_ptr<ISoundShader> ISoundShaderPtr;
 
-const std::string MODULE_SOUNDMANAGER("SoundManager");
+const char* const MODULE_SOUNDMANAGER("SoundManager");
 
 /// Sound manager interface.
 class ISoundManager :
@@ -94,12 +93,22 @@ public:
      */
     virtual ISoundShaderPtr getSoundShader(const std::string& shaderName) = 0;
 
-    /** greebo: Plays the given sound file (defined by its VFS path).
+    /** 
+	 * greebo: Plays the given sound file (defined by its VFS path).
      *
      * @returns: TRUE, if the sound file was found at the given VFS path,
      *           FALSE otherwise
      */
     virtual bool playSound(const std::string& fileName) = 0;
+
+	/** 
+	 * greebo: Plays the given sound file (defined by its VFS path).
+	 * Will loop the sound if the given flag is set to TRUE.
+	 *
+	 * @returns: TRUE, if the sound file was found at the given VFS path,
+	 *           FALSE otherwise
+	 */
+	virtual bool playSound(const std::string& fileName, bool loopSound) = 0;
 
     /** greebo: Stops the currently played sound.
      */
@@ -107,7 +116,8 @@ public:
 };
 
 // Accessor method
-inline ISoundManager& GlobalSoundManager() {
+inline ISoundManager& GlobalSoundManager() 
+{
     // Cache the reference locally
     static ISoundManager& _soundManager(
         *std::static_pointer_cast<ISoundManager>(
@@ -116,5 +126,3 @@ inline ISoundManager& GlobalSoundManager() {
     );
     return _soundManager;
 }
-
-#endif /*ISOUND_H_*/

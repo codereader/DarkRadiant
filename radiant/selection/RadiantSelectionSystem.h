@@ -25,7 +25,7 @@ class RadiantSelectionSystem :
 {
 	ManipulationPivot _pivot;
 
-	typedef std::list<Observer*> ObserverList;
+	typedef std::set<Observer*> ObserverList;
 	ObserverList _observers;
 
 	// The 3D volume surrounding the most recent selection.
@@ -81,7 +81,7 @@ public:
 	 * information about the current selection (brush count,
 	 * entity count, etc.)
 	 */
-	const SelectionInfo& getSelectionInfo();
+	const SelectionInfo& getSelectionInfo() override;
 
 	void onSceneBoundsChanged();
 
@@ -89,61 +89,61 @@ public:
 
   	void pivotChangedSelection(const ISelectable& selectable);
 
-	void addObserver(Observer* observer);
-	void removeObserver(Observer* observer);
+	void addObserver(Observer* observer) override;
+	void removeObserver(Observer* observer) override;
 
-	void SetMode(EMode mode);
-	EMode Mode() const;
+	void SetMode(EMode mode) override;
+	EMode Mode() const override;
 
-	void SetComponentMode(EComponentMode mode);
-	EComponentMode ComponentMode() const;
+	void SetComponentMode(EComponentMode mode) override;
+	EComponentMode ComponentMode() const override;
 
 	// Returns the ID of the registered manipulator
-	std::size_t registerManipulator(const ManipulatorPtr& manipulator);
-	void unregisterManipulator(const ManipulatorPtr& manipulator);
+	std::size_t registerManipulator(const ManipulatorPtr& manipulator) override;
+	void unregisterManipulator(const ManipulatorPtr& manipulator) override;
 
 	Manipulator::Type getActiveManipulatorType() override;
 	const ManipulatorPtr& getActiveManipulator() override;
 	void setActiveManipulator(std::size_t manipulatorId) override;
 	void setActiveManipulator(Manipulator::Type manipulatorType) override;
 
-	std::size_t countSelected() const;
-	std::size_t countSelectedComponents() const;
+	std::size_t countSelected() const override;
+	std::size_t countSelectedComponents() const override;
 
-	void onSelectedChanged(const scene::INodePtr& node, const ISelectable& selectable);
-	void onComponentSelection(const scene::INodePtr& node, const ISelectable& selectable);
+	void onSelectedChanged(const scene::INodePtr& node, const ISelectable& selectable) override;
+	void onComponentSelection(const scene::INodePtr& node, const ISelectable& selectable) override;
 
-    SelectionChangedSignal signal_selectionChanged() const
+    SelectionChangedSignal signal_selectionChanged() const override
     {
         return _sigSelectionChanged;
     }
 
-	scene::INodePtr ultimateSelected();
-	scene::INodePtr penultimateSelected();
+	scene::INodePtr ultimateSelected() override;
+	scene::INodePtr penultimateSelected() override;
 
-	void setSelectedAll(bool selected);
-	void setSelectedAllComponents(bool selected);
+	void setSelectedAll(bool selected) override;
+	void setSelectedAllComponents(bool selected) override;
 
-	void foreachSelected(const Visitor& visitor);
-	void foreachSelectedComponent(const Visitor& visitor);
+	void foreachSelected(const Visitor& visitor) override;
+	void foreachSelectedComponent(const Visitor& visitor) override;
 
-	void foreachSelected(const std::function<void(const scene::INodePtr&)>& functor);
-	void foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor);
+	void foreachSelected(const std::function<void(const scene::INodePtr&)>& functor) override;
+	void foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor) override;
 
-	void foreachBrush(const std::function<void(Brush&)>& functor);
-	void foreachFace(const std::function<void(Face&)>& functor);
-	void foreachPatch(const std::function<void(Patch&)>& functor);
+	void foreachBrush(const std::function<void(Brush&)>& functor) override;
+	void foreachFace(const std::function<void(Face&)>& functor) override;
+	void foreachPatch(const std::function<void(Patch&)>& functor) override;
 
 	void deselectAll();
 
-	void SelectPoint(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon, EModifier modifier, bool face);
-	void SelectArea(const render::View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face);
+	void SelectPoint(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon, EModifier modifier, bool face) override;
+	void SelectArea(const render::View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face) override;
 
 	void onManipulationStart() override;
 	void onManipulationChanged() override;
 	void onManipulationEnd() override;
 
-	const WorkZone& getWorkZone();
+	const WorkZone& getWorkZone() override;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -169,7 +169,7 @@ public:
 
 protected:
 	// Called when the app is idle to recalculate the workzone (if necessary)
-	virtual void onIdle();
+	virtual void onIdle() override;
 
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,

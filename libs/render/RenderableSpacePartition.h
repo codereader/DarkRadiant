@@ -131,7 +131,7 @@ public:
 		}
 	}
 
-	void render(const RenderInfo& info) const
+	void render(const RenderInfo& info) const override
 	{
 		if (_spacePartition != NULL)
 		{

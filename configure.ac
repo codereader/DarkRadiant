@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [2.1.1])
+AC_INIT([darkradiant], [2.3.1])
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 
@@ -161,7 +161,7 @@ BOOST_SMART_PTR
 BOOST_TOKENIZER
 
 # These ones require libraries too
-BOOST_REGEX
+# BOOST_REGEX # no longer needed, using std::regex now
 BOOST_FILESYSTEM
 BOOST_SYSTEM
 BOOST_TEST
@@ -220,7 +220,12 @@ AC_SUBST([AL_LIBS])
 
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
-WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type -Wno-inconsistent-missing-override -Wno-potentially-evaluated-expression"
+WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type"
+
+if test "$build_osx" != "no"; then
+    WARNING_FLAGS="$WARNING_FLAGS -Wno-inconsistent-missing-override -Wno-potentially-evaluated-expression"
+fi
+
 CFLAGS="$USER_CFLAGS $WARNING_FLAGS $WX_CFLAGS"
 CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS $WX_CXXFLAGS_ONLY"
 CPPFLAGS="$USER_CPPFLAGS -DPOSIX $WX_CPPFLAGS $LIBSIGC_CFLAGS -DWXINTL_NO_GETTEXT_MACRO"
@@ -266,7 +271,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/filetypes/Makefile
                  plugins/filters/Makefile
                  plugins/fonts/Makefile
-                 plugins/grid/Makefile
                  plugins/image/Makefile
                  plugins/mapdoom3/Makefile
                  plugins/md5model/Makefile

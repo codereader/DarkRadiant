@@ -1,10 +1,15 @@
-#ifndef REGISTRYTREE_H_
-#define REGISTRYTREE_H_
+#pragma once
 
 #include "xmlutil/Document.h"
 
+namespace registry
+{
+
+const char* const TOPLEVEL_NODE_NAME = "darkradiant";
+
 class RegistryTree
 {
+private:
 	// The top level node name ("darkradiant")
 	std::string _topLevelNode;
 	std::string _defaultImportNode;
@@ -13,8 +18,11 @@ class RegistryTree
 	xml::Document _tree;
 
 public:
-	// Constructor, pass the name of the toplevel node to it
-	RegistryTree(const std::string& topLevelNode);
+	// Constructor, creates a default XML document
+	RegistryTree();
+
+	// Copy-Construct this tree, creates a deep copy of the other tree
+	RegistryTree(const RegistryTree& other);
 
 	// Returns a list of nodes matching the given <xpath>
 	xml::NodeList findXPath(const std::string& xPath);
@@ -62,12 +70,12 @@ public:
 	// Dump the tree to std::out for debugging purposes
 	void dump() const;
 
+private:
 	/* Checks whether the key is an absolute or a relative path
 	 * Absolute paths are returned unchanged, a prefix with the
 	 * toplevel node (e.g. "/darkradiant") is appended to the relative ones.
 	 */
 	std::string prepareKey(const std::string& key);
+};
 
-}; // class RegistryTree
-
-#endif /*REGISTRYTREE_H_*/
+}

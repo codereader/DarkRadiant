@@ -9,6 +9,7 @@
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "igame.h"
+#include "iundo.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
 #include "itextstream.h"
@@ -39,17 +40,14 @@
 
 #include <functional>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/regex.hpp>
+#include <regex>
 
 namespace ui {
 
 /* CONSTANTS */
 
-namespace {
-
-    const int TREEVIEW_MIN_WIDTH = 220;
-    const int TREEVIEW_MIN_HEIGHT = 60;
-
+namespace
+{
     const char* const PROPERTY_NODES_XPATH = "/entityInspector//property";
 
 	const std::string RKEY_ROOT = "user/ui/entityInspector/";
@@ -150,7 +148,10 @@ void EntityInspector::construct()
 
 	// Observe the Undo system for undo/redo operations, to refresh the
 	// keyvalues when this happens
-	GlobalUndoSystem().addObserver(this);
+	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
+	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
 
 	// initialise the properties
 	loadPropertyMap();
@@ -355,6 +356,9 @@ void EntityInspector::onRadiantStartup()
 
 void EntityInspector::onRadiantShutdown()
 {
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
+
     // Remove all previously stored pane information
 	_panedPosition.saveToPath(RKEY_PANE_STATE);
 
@@ -363,19 +367,10 @@ void EntityInspector::onRadiantShutdown()
     _currentPropertyEditor.reset();
 }
 
-void EntityInspector::postUndo()
+void EntityInspector::onUndoRedoOperation()
 {
 	// Clear the previous entity (detaches this class as observer)
-	changeSelectedEntity(NULL);
-
-	// Now rescan the selection and update the stores
-    requestIdleCallback();
-}
-
-void EntityInspector::postRedo()
-{
-	// Clear the previous entity (detaches this class as observer)
-	changeSelectedEntity(NULL);
+	changeSelectedEntity(nullptr);
 
 	// Now rescan the selection and update the stores
     requestIdleCallback();
@@ -1082,10 +1077,10 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
 		if (i->first.empty()) continue; // safety check
 
 		// Try to match the entity key against the regex (i->first)
-		boost::regex expr(i->first);
-		boost::smatch matches;
+		std::regex expr(i->first);
+		std::smatch matches;
 
-		if (!boost::regex_match(key, matches, expr)) continue;
+		if (!std::regex_match(key, matches, expr)) continue;
 
 		// We have a match
 		returnValue.type = i->second.type;

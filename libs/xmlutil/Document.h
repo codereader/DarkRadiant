@@ -37,7 +37,7 @@ public:
 	// Use the isValid() method to check if the load was successful.
 	Document(const std::string& filename);
 
-	// Copy constructor
+	// Copy constructor (note: does not create an actual copy of the internal xmlDoc)
 	Document(const Document& other);
 
 	// Destructor, frees the xmlDocPtr
@@ -45,6 +45,9 @@ public:
 
 	// Creates a new xml::Document object (allocates a new xmlDoc)
 	static Document create();
+
+	// Creates a deep copy of the given Document
+	static Document clone(const Document& source);
 
 	// Add a new toplevel node with the given name to this Document
 	void addTopLevelNode(const std::string& name);

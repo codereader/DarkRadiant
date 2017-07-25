@@ -126,10 +126,13 @@ public:
 	 * @returns: the pointer to the newly created accelerator object */
 	virtual IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
 
-	// The same as above, but with GDK event values as argument (event->keyval, event->state)
+	// The same as above, but with event values as argument (event->keyval, event->state)
 	virtual IAccelerator& addAccelerator(wxKeyEvent& ev) = 0;
 	virtual IAccelerator& findAccelerator(const IEventPtr& event) = 0;
 	virtual std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) = 0;
+
+	// Loads all accelerator bindings from the defaults in the stock input.xml
+	virtual void resetAcceleratorBindings() = 0;
 
 	// Add a command and specify the statement to execute when triggered
 	virtual IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp = false) = 0;

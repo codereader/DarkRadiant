@@ -1,6 +1,5 @@
 #include "XMLRegistry.h"
-#include "itextstream.h"
-#include "debugging/debugging.h"
+#include "imodule.h"
 
 /**
  * greebo: This is the module entry point which the main binary will look for.
@@ -8,14 +7,7 @@
  */
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 {
-	registry.registerModule(XMLRegistryPtr(new XMLRegistry));
+	module::performDefaultInitialisation(registry);
 
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
+	registry.registerModule(std::make_shared<registry::XMLRegistry>());
 }

@@ -13,6 +13,7 @@
 #include "FacePlane.h"
 #include <memory>
 #include <boost/noncopyable.hpp>
+#include <sigc++/signal.h>
 #include "selection/algorithm/Shader.h"
 
 const double GRID_MIN = 0.125;
@@ -206,5 +207,8 @@ public:
 	}
 
 	void updateFaceVisibility();
+
+	// Signal for external code to get notified each time the texdef of any face changes
+	static sigc::signal<void>& signal_texdefChanged();
 
 }; // class Face

@@ -1,9 +1,9 @@
-#ifndef IGROUPNODE_H_
-#define IGROUPNODE_H_
+#pragma once
 
 #include "inode.h"
 
-namespace scene {
+namespace scene
+{
 
 /** greebo: This is used to identify group entities right before
  * and after map save/load.
@@ -11,9 +11,11 @@ namespace scene {
  * It provides methods to add/substract the origin to/from
  * their child primitives.
  */
-class GroupNode {
+class GroupNode
+{
 public:
     virtual ~GroupNode() {}
+
 	/** greebo: This is called right before saving
 	 * to move the child brushes of the Doom3Group
 	 * according to its origin.
@@ -27,10 +29,9 @@ typedef std::shared_ptr<GroupNode> GroupNodePtr;
 
 /** greebo: Cast a node onto a GroupNode pointer
  *
- * @returns: NULL, if failed, the pointer to the class otherwise.
+ * @returns: an empty pointer on failure, the pointer to the class otherwise.
  */
-inline scene::GroupNodePtr Node_getGroupNode(scene::INodePtr node) {
+inline scene::GroupNodePtr Node_getGroupNode(const scene::INodePtr& node) 
+{
 	return std::dynamic_pointer_cast<scene::GroupNode>(node);
 }
-
-#endif /*IGROUPNODE_H_*/

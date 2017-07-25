@@ -59,6 +59,10 @@ public:
 	// Dumps the whole XML content to std::out for debugging purposes
 	virtual void dump() const = 0;
 
+	// Exports the data which has been modified during this session 
+	// to XML files in the user's settings path
+	virtual void saveToDisk() = 0;
+
 	// Saves the specified node and all its children into the file <filename>
 	virtual void exportToFile(const std::string& key, const std::string& filename = "-") = 0;
 

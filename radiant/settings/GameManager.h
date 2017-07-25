@@ -1,5 +1,4 @@
-#ifndef GAMEMANAGER_H_
-#define GAMEMANAGER_H_
+#pragma once
 
 #include <string>
 #include <map>
@@ -21,10 +20,15 @@ public:
 	// The map containing the named Game objects
 	typedef std::map<std::string, GamePtr> GameMap;
 
+	// A map sorted by game index, for display order and priority
+	typedef std::vector<GamePtr> SortedGames;
+
 private:
 
    // Map of named games
 	GameMap _games;
+	// Map of indexed games
+	SortedGames _sortedGames;
 
     // The name of the current game, e.g. "Doom 3"
 	std::string _currentGameName;
@@ -146,5 +150,3 @@ public:
 };
 
 } // namespace game
-
-#endif /*GAMEMANAGER_H_*/

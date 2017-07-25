@@ -1,8 +1,6 @@
 #pragma once
 
-#include "iselection.h"
 #include "icommandsystem.h"
-#include "iundo.h"
 #include "iradiant.h"
 #include "ui/common/ShaderSelector.h"
 #include "wxutil/window/TransientWindow.h"
@@ -10,6 +8,8 @@
 
 #include <map>
 #include <string>
+#include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 
 /* FORWARD DECLS */
 class Entity;
@@ -24,12 +24,11 @@ namespace ui
 class LightInspector;
 typedef std::shared_ptr<LightInspector> LightInspectorPtr;
 
-class LightInspector
-: public wxutil::TransientWindow,
-  public SelectionSystem::Observer,
-  public ShaderSelector::Client,
-  public UndoSystem::Observer,
-  private wxutil::XmlResourceBasedWidget
+class LightInspector : 
+	public wxutil::TransientWindow,
+	public ShaderSelector::Client,
+	public sigc::trackable,
+	private wxutil::XmlResourceBasedWidget
 {
 private:
 	// Projected light flag
@@ -46,8 +45,12 @@ private:
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _valueMap;
 
-	// Disables GTK callbacks if set to TRUE (during widget updates)
+	// Disables callbacks if set to TRUE (during widget updates)
 	bool _updateActive;
+
+	sigc::connection _selectionChanged;
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -92,9 +95,6 @@ private:
 
 public:
 
-	// Gets called by the SelectionSystem when the selection is changed
-	void selectionChanged(const scene::INodePtr& node, bool isComponent);
-
 	/** Toggle the visibility of the dialog instance, constructing it if necessary.
 	 */
 	static void toggleInspector(const cmd::ArgumentList& args);
@@ -105,10 +105,6 @@ public:
 
 	// Update the sensitivity of the widgets
 	void update();
-
-	// UndoSystem::Observer implementation
-	void postUndo();
-	void postRedo();
 
 	// Safely disconnects this dialog from all the systems
 	// and saves the window size/position to the registry

@@ -101,7 +101,7 @@ parameters.
 
 static int add_tvel( float pos[], float vel[], lwEnvelope **elist, int *nenvs )
 {
-   lwEnvelope *env;
+   lwEnvelope *env = NULL;
    lwKey *key0, *key1;
    int i;
 
@@ -219,7 +219,7 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj )
    /* remember where we started */
 
    set_flen( 0 );
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
 
    /* name */
 
@@ -692,7 +692,7 @@ lwObject *lwGetObject5( char *filename, picoMemStream_t *fp, unsigned int *failI
 Fail:
    if ( failID ) *failID = id;
    if ( fp ) {
-      if ( failpos ) *failpos = _pico_memstream_tell( fp );
+      if ( failpos ) *failpos = (int)_pico_memstream_tell( fp );
    }
    lwFreeObject( object );
    return NULL;

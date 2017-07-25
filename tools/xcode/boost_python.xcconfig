@@ -1,0 +1,11 @@
+//
+//  boost_python.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 2/12/17.
+//
+//
+BOOST_PYTHON_CPLUSPLUSFLAGS =
+BOOST_PYTHON_HEADER_SEARCH_PATHS = "/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7" "/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7"
+BOOST_PYTHON_LIBRARY_SEARCH_PATHS = "/opt/local/lib"
+BOOST_PYTHON_LINKFLAGS = "-lboost_python-mt"

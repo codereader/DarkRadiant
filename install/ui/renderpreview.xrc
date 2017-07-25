@@ -59,7 +59,7 @@
 						<flag>wxEXPAND</flag>
 						<border>5</border>
 						<object class="wxToolBar" name="RenderPreviewFilterToolbar">
-							<style>wxTB_HORIZONTAL|wxTB_HORZ_TEXT</style>
+							<style>wxTB_HORIZONTAL|wxTB_HORZ_TEXT|wxTB_NODIVIDER</style>
 							<bitmapsize></bitmapsize>
 							<margins></margins>
 							<packing>1</packing>
@@ -71,8 +71,8 @@
 						<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
 						<border>3</border>
 						<object class="wxToolBar" name="RenderPreviewRenderModeToolbar">
-							<style>wxTB_HORIZONTAL</style>
-							<bitmapsize></bitmapsize>
+							<style>wxTB_HORIZONTAL|wxTB_NODIVIDER</style>
+							<bitmapsize>20,20</bitmapsize>
 							<margins></margins>
 							<packing>1</packing>
 							<separation>5</separation>
@@ -89,6 +89,25 @@
 								<longhelp></longhelp>
 								<bitmap stock_id="darkradiant:lightingMode.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 								<radio>1</radio>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
+						<border>3</border>
+						<object class="wxToolBar" name="RenderPreviewUtilToolbar">
+							<style>wxTB_HORIZONTAL|wxTB_NODIVIDER</style>
+							<bitmapsize>20,20</bitmapsize>
+							<margins></margins>
+							<packing>1</packing>
+							<separation>5</separation>
+							<object class="tool" name="gridButton">
+								<label>gridButton</label>
+								<tooltip>Toggle a 16 unit wide Grid</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:grid_toggle.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<toggle>1</toggle>
 							</object>
 						</object>
 					</object>

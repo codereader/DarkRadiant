@@ -3,7 +3,7 @@
 #include "os/path.h"
 #include "string/convert.h"
 
-#include <boost/regex.hpp>
+#include <regex>
 
 #include "itextstream.h"
 #include "FontManager.h"
@@ -16,10 +16,10 @@ void FontLoader::operator()(const std::string& filename)
 	// Construct the full VFS path
 	std::string fullPath = os::standardPath(_basePath + filename);
 
-	boost::regex expr("^/?(.*)/.*_(\\d{2})\\.dat$", boost::regex::icase);
-	boost::smatch matches;
+	std::regex expr("^/?(.*)/.*_(\\d{2})\\.dat$", std::regex::icase);
+	std::smatch matches;
 
-	if (boost::regex_match(filename, matches, expr))
+	if (std::regex_match(filename, matches, expr))
 	{
 		// Get the font name and resolution from the match
 		std::string fontname = matches[1];

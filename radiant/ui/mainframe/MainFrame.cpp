@@ -228,6 +228,22 @@ void MainFrame::construct()
 		}
 	}
 
+#ifdef __linux__
+	// #4526: In Linux, do another restore after the top level window has been shown
+	// After startup, GTK emits onSizeAllocate events which trigger a Layout() sequence
+	// messing up the pane positions, so do the restore() one more time after the main
+	// window came up.
+	_topLevelWindow->Bind(wxEVT_SHOW, [&](wxShowEvent& ev)
+	{
+		if (_currentLayout && ev.IsShown())
+		{
+			_currentLayout->restoreStateFromRegistry();
+		}
+
+		ev.Skip();
+	});
+#endif
+
 	// register the commands
 	GlobalMainFrameLayoutManager().registerCommands();
 

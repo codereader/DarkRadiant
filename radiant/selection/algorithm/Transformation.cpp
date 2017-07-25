@@ -1,5 +1,7 @@
 #include "Transformation.h"
 
+#include <functional>
+
 #include "i18n.h"
 #include <string>
 #include <map>
@@ -159,32 +161,36 @@ public:
 		if (Node_isSelected(node))
 		{
 			// Clone the current node
-			scene::INodePtr clone = map::Node_Clone(node);
+			scene::INodePtr clone = map::cloneNodeIncludingDescendants(node,
+				sigc::mem_fun(*this, &SelectionCloner::postProcessClonedNode));
 
 			// Add the cloned node and its parent to the list
 			_cloned.insert(Map::value_type(clone, node->getParent()));
 
 			// Insert this node in the root
 			_cloneRoot->addChildNode(clone);
+		}
+	}
 
-			// Collect and add the group IDs of the source node
-			std::shared_ptr<IGroupSelectable> groupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+	void postProcessClonedNode(const scene::INodePtr& sourceNode, const scene::INodePtr& clonedNode)
+	{
+		// Collect and add the group IDs of the source node
+		std::shared_ptr<IGroupSelectable> groupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(sourceNode);
 
-			if (groupSelectable)
+		if (groupSelectable)
+		{
+			const IGroupSelectable::GroupIds& groupIds = groupSelectable->getGroupIds();
+
+			// Get the Groups the source node was assigned to, and add the
+			// cloned node to the mapped group, one by one, keeping the order intact
+			for (std::size_t id : groupIds)
 			{
-				const IGroupSelectable::GroupIds& groupIds = groupSelectable->getGroupIds();
+				// Try to insert the ID, ignore if already exists
+				// Get a new mapping for the given group ID
+				const ISelectionGroupPtr& mappedGroup = getMappedGroup(id);
 
-				// Get the Groups the source node was assigned to, and add the
-				// cloned node to the mapped group, one by one, keeping the order intact
-				for (std::size_t id : groupIds)
-				{
-					// Try to insert the ID, ignore if already exists
-					// Get a new mapping for the given group ID
-					const ISelectionGroupPtr& mappedGroup = getMappedGroup(id);
-
-					// Assign the new group ID to this clone
-					mappedGroup->addNode(clone);
-				}
+				// Assign the new group ID to this clone
+				mappedGroup->addNode(clonedNode);
 			}
 		}
 	}
@@ -342,7 +348,7 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 {
 	AxisBase axes(AxisBase_forViewType(viewtype));
 
-	Vector3 view_direction(-axes.z);
+	//Vector3 view_direction(-axes.z);
 	Vector3 nudge(AxisBase_axisForDirection(axes, direction) * amount);
 
 	if (GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Translate ||

@@ -34,7 +34,8 @@ class ZipArchive :
 	public Archive
 {
 	ZipFileSystem m_filesystem;
-	std::string m_name;
+	std::string m_name;				// the full path to this Zip
+	std::string _containingFolder;  // the folder this Zip is located in
 	FileInputStream m_istream;
     std::mutex _streamLock;
 

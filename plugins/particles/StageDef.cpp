@@ -551,7 +551,7 @@ Vector4 StageDef::parseVector4(parser::DefTokeniser& tok)
 
 std::ostream& operator<<(std::ostream& stream, const StageDef& stage)
 {
-	std::size_t prevPrecision = stream.precision();
+	std::streamsize prevPrecision = stream.precision();
 
 	// Three post-comma digits precision
 	stream.precision(3);

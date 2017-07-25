@@ -77,14 +77,7 @@ void FileTypeRegistry::initialiseModule(const ApplicationContext& ctx)
 // This will be called by the DarkRadiant main binary's ModuleRegistry
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	module::performDefaultInitialisation(registry);
+
 	registry.registerModule(std::make_shared<FileTypeRegistry>());
-
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

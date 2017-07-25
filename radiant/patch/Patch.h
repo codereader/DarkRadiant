@@ -17,6 +17,7 @@
 #include "brush/TexDef.h"
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
+#include <sigc++/signal.h>
 
 // Enable to render the vertex normal/tangent/bitangent vectors in the cam view
 #define DEBUG_PATCH_NTB_VECTORS 0
@@ -120,7 +121,7 @@ public:
 	const Matrix4& localToParent() const;
 
 	// Return the interally stored AABB
-	const AABB& localAABB() const;
+	const AABB& localAABB() const override;
 
 	// Render functions: solid mode, wireframe mode and components
 	void render_solid(RenderableCollector& collector, const VolumeTest& volume, 
@@ -163,7 +164,7 @@ public:
 	bool isDegenerate() const override;
 
 	// Snaps the control points to the grid
-	void snapto(float snap);
+	void snapto(float snap) override;
 
 	// Gets the shader name or sets the shader to <name>
 	const std::string& getShader() const override;
@@ -331,10 +332,10 @@ public:
 	void undoSave();
 
 	// Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
-	IUndoMementoPtr exportState() const;
+	IUndoMementoPtr exportState() const override;
 
 	// Revert the state of this patch to the one that has been saved in the UndoMemento
-	void importState(const IUndoMementoPtr& state);
+	void importState(const IUndoMementoPtr& state) override;
 
 	/** greebo: Gets whether this patch is a patchDef3 (fixed tesselation)
 	 */
@@ -354,6 +355,9 @@ public:
 	// Calculate the intersection of the given ray with the full patch mesh, 
 	// returns true on intersection and fills in the out variable
 	bool getIntersection(const Ray& ray, Vector3& intersection);
+
+	// Static signal holder, signal is emitted after any patch texture has changed
+	static sigc::signal<void>& signal_patchTextureChanged();
 
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change

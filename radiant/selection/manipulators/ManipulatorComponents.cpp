@@ -92,7 +92,7 @@ void RotateFree::beginTransformation(const Matrix4& pivot2world, const VolumeTes
     _start.normalise();
 }
 
-void RotateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void RotateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	Vector3 current = getSphereIntersection(pivot2world, view, devicePoint);
 	current.normalise();
@@ -114,7 +114,7 @@ void RotateAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTes
 }
 
 /// \brief Converts current position to a normalised vector orthogonal to axis.
-void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	Vector3 current = getSphereIntersection(pivot2world, view, devicePoint);
 
@@ -123,7 +123,7 @@ void RotateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, c
 
 	Vector3::ElementType angle = getAngleForAxis(_start, current, _axis);
 
-	if (constrained)
+	if (constraintFlags & Constraint::Type1)
 	{
 		angle = float_snapped(angle, 5 * c_DEG2RADMULT);
 	}
@@ -140,7 +140,7 @@ void TranslateAxis::beginTransformation(const Matrix4& pivot2world, const Volume
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	// Get the regular difference between the starting point and the current mouse point
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
@@ -149,8 +149,12 @@ void TranslateAxis::transform(const Matrix4& pivot2world, const VolumeTest& view
 	// Project this diff vector to our constraining axis
 	Vector3 axisProjected = _axis * diff.dot(_axis);
 	
-	// Snap and apply translation
-	axisProjected.snap(GlobalGrid().getGridSize());
+	// Snap to grid if the constraint flag is set
+	if (constraintFlags & Constraint::Grid)
+	{
+		// Snap and apply translation
+		axisProjected.snap(GlobalGrid().getGridSize());
+	}
 
 	_translatable.translate(axisProjected);
 }
@@ -164,12 +168,12 @@ void TranslateFree::beginTransformation(const Matrix4& pivot2world, const Volume
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
     Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
     Vector3 diff = current - _start;
 
-	if (constrained)
+	if (constraintFlags & Constraint::Type1)
 	{
 		// Locate the index of the component carrying the largest abs value
 		int largestIndex = fabs(diff.y()) > fabs(diff.x()) ?
@@ -181,7 +185,11 @@ void TranslateFree::transform(const Matrix4& pivot2world, const VolumeTest& view
 		diff[(largestIndex + 2) % 3] = 0;
 	}
 
-	diff.snap(GlobalGrid().getGridSize());
+	// Snap to grid if the constraint flag is set
+	if (constraintFlags & Constraint::Grid)
+	{
+		diff.snap(GlobalGrid().getGridSize());
+	}
 
     _translatable.translate(diff);
 }
@@ -195,7 +203,7 @@ void ScaleAxis::beginTransformation(const Matrix4& pivot2world, const VolumeTest
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	// Get the regular difference between the starting point and the current mouse point
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
@@ -204,10 +212,15 @@ void ScaleAxis::transform(const Matrix4& pivot2world, const VolumeTest& view, co
 	// Project this diff vector to our constraining axis
 	Vector3 axisProjected = _axis * diff.dot(_axis);
 
-	axisProjected.snap(GlobalGrid().getGridSize());
+	Vector3 start = _start;
 
-	Vector3 start(_start.getSnapped(GlobalGrid().getGridSize()));
-
+	// Snap to grid if the constraint flag is set
+	if (constraintFlags & Constraint::Grid)
+	{
+		diff.snap(GlobalGrid().getGridSize());
+		start.snap(GlobalGrid().getGridSize());
+	}
+	
     Vector3 scale(
       start[0] == 0 ? 1 : 1 + axisProjected[0] / start[0],
       start[1] == 0 ? 1 : 1 + axisProjected[1] / start[1],
@@ -226,14 +239,19 @@ void ScaleFree::beginTransformation(const Matrix4& pivot2world, const VolumeTest
 	_start = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 }
 
-void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void ScaleFree::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	Vector3 current = getPlaneProjectedPoint(pivot2world, view, devicePoint);
 	Vector3 diff = current - _start;
 
-	diff.snap(GlobalGrid().getGridSize());
+	Vector3 start = _start;
 
-    Vector3 start(_start.getSnapped(GlobalGrid().getGridSize()));
+	// Snap to grid if the constraint flag is set
+	if (constraintFlags & Constraint::Grid)
+	{
+		diff.snap(GlobalGrid().getGridSize());
+		start.snap(GlobalGrid().getGridSize());
+	}
 
     Vector3 scale(
       start[0] == 0 ? 1 : 1 + diff[0] / start[0],
@@ -267,20 +285,30 @@ void ModelScaleComponent::beginTransformation(const Matrix4& pivot2world, const 
 	_startOrigin = string::convert<Vector3>(entity->getKeyValue("origin"));
 }
 
-void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, bool constrained)
+void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
 	Vector3 current = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
+
+	Vector3 start = _start;
+
+	if (constraintFlags & Component::Constraint::Grid)
+	{
+		// When grid snapping is on, snap the starting point too
+		// otherwise we don't detect the zero-axis-movements below
+		start.snap(GlobalGrid().getGridSize());
+		current.snap(GlobalGrid().getGridSize());
+	}
 
 	// In Orthographic views it's entirely possible that the starting point
 	// is in the same plane as the pivot, so check for zero divisions
 	Vector3 scale(
-		_start[0] != 0 ? fabs(current[0]) / fabs(_start[0]) : 1,
-		_start[1] != 0 ? fabs(current[1]) / fabs(_start[1]) : 1,
-		_start[2] != 0 ? fabs(current[2]) / fabs(_start[2]) : 1
+		start[0] != 0 ? fabs(current[0]) / fabs(start[0]) : 1,
+		start[1] != 0 ? fabs(current[1]) / fabs(start[1]) : 1,
+		start[2] != 0 ? fabs(current[2]) / fabs(start[2]) : 1
 	);
 
 	// Default to uniform scale, use to the value deviating most from the 1.0 scale
-	if (!constrained)
+	if (!(constraintFlags & Constraint::Type1))
 	{
 		Vector3 delta = scale - Vector3(1.0, 1.0, 1.0);
 
@@ -353,9 +381,7 @@ TranslatablePivot::TranslatablePivot(ManipulationPivot& pivot) :
 
 void TranslatablePivot::translate(const Vector3& translation)
 {
-	Vector3 translationSnapped = translation.getSnapped(GlobalGrid().getGridSize());
-
-	_pivot.applyTranslation(translationSnapped);
+	_pivot.applyTranslation(translation);
 
 	// User is placing the pivot manually, so let's keep it that way
 	_pivot.setUserLocked(true);

@@ -12,7 +12,8 @@
 #include "brush/BrushNode.h"
 #include <boost/format.hpp>
 
-namespace selection {
+namespace selection 
+{
 
 ShaderClipboard::ShaderClipboard() :
 	_updatesDisabled(false)
@@ -24,13 +25,17 @@ ShaderClipboard::ShaderClipboard() :
 		_("The name of the shader in the clipboard")
 	);
 
-	GlobalUndoSystem().addObserver(this);
+	GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
+	GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
 
 	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &ShaderClipboard::onMapEvent));
 }
 
-void ShaderClipboard::clear() {
+void ShaderClipboard::clear() 
+{
 	_source.clear();
 
 	_updatesDisabled = true;
@@ -41,16 +46,7 @@ void ShaderClipboard::clear() {
 	_updatesDisabled = false;
 }
 
-void ShaderClipboard::postUndo()
-{
-	// Check if the source is still valid
-	if (!_source.checkValid())
-	{
-		clear();
-	}
-}
-
-void ShaderClipboard::postRedo()
+void ShaderClipboard::onUndoRedoOperation()
 {
 	// Check if the source is still valid
 	if (!_source.checkValid())
@@ -179,7 +175,8 @@ void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 } // namespace selection
 
 // global accessor function
-selection::ShaderClipboard& GlobalShaderClipboard() {
+selection::ShaderClipboard& GlobalShaderClipboard()
+{
 	static selection::ShaderClipboard _instance;
 
 	return _instance;

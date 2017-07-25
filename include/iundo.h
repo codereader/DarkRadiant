@@ -6,6 +6,7 @@
 #include "imodule.h"
 #include <cstddef>
 #include <memory>
+#include <sigc++/signal.h>
 
 class IMapFileChangeTracker;
 
@@ -71,18 +72,11 @@ public:
 	virtual void redo() = 0;
 	virtual void clear() = 0;
 
-	class Observer {
-	public:
-	    virtual ~Observer() {}
-		// Gets called after an undo operation is fully completed, allows objects to refresh their state
-		virtual void postUndo() = 0;
-		// Gets called after a redo operation is fully completed, allows objects to refresh their state
-		virtual void postRedo() = 0;
-	};
+	// Emitted after an undo operation is fully completed, allows objects to refresh their state
+	virtual sigc::signal<void>& signal_postUndo() = 0;
 
-	// Adds/removes an observer, which gets called on certain events
-	virtual void addObserver(Observer* observer) = 0;
-	virtual void removeObserver(Observer* observer) = 0;
+	// Emitted after a redo operation is fully completed, allows objects to refresh their state
+	virtual sigc::signal<void>& signal_postRedo() = 0;
 
 	// greebo: This finishes the current operation and removes
 	// it immediately from the stack, therefore it never existed.

@@ -1,10 +1,12 @@
 #include "RadiantSelectionSystem.h"
 
+#include "i18n.h"
 #include "iundo.h"
 #include "igrid.h"
 #include "iselectiongroup.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
+#include "ipreferencesystem.h"
 #include "imousetoolmanager.h"
 #include "SelectionPool.h"
 #include "SelectionTest.h"
@@ -47,34 +49,26 @@ const SelectionInfo& RadiantSelectionSystem::getSelectionInfo() {
     return _selectionInfo;
 }
 
-void RadiantSelectionSystem::addObserver(Observer* observer) {
-    if (observer != NULL) {
+void RadiantSelectionSystem::addObserver(Observer* observer)
+{
+    if (observer != nullptr)
+	{
         // Add the passed observer to the list
-        _observers.push_back(observer);
+        _observers.insert(observer);
     }
 }
 
-void RadiantSelectionSystem::removeObserver(Observer* observer) {
-    // Cycle through the list of observers and call the moved method
-    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i) {
-        Observer* registered = *i;
-
-        if (registered == observer) {
-            _observers.erase(i);
-            return; // Don't continue the loop, the iterator is obsolete
-        }
-    }
+void RadiantSelectionSystem::removeObserver(Observer* observer)
+{
+	_observers.erase(observer);
 }
 
-void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool isComponent) {
-
+void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool isComponent)
+{
     // Cycle through the list of observers and call the moved method
-    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i) {
-        Observer* observer = *i;
-
-        if (observer != NULL) {
-            observer->selectionChanged(node, isComponent);
-        }
+    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); )
+	{
+        (*i++)->selectionChanged(node, isComponent);
     }
 }
 
@@ -373,8 +367,7 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
     int delta = selectable.isSelected() ? +1 : -1;
 
     _countComponent += delta;
-    _sigSelectionChanged(selectable);
-
+    
     _selectionInfo.totalCount += delta;
     _selectionInfo.componentCount += delta;
 
@@ -385,6 +378,9 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
     else {
         _componentSelection.erase(node);
     }
+
+	// Moved here, since the _selectionInfo struct needs to be up to date
+	_sigSelectionChanged(selectable);
 
     // Notify observers, TRUE => this is a component selection change
     notifyObservers(node, true);
@@ -865,6 +861,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
         _dependencies.insert(MODULE_SCENEGRAPH);
         _dependencies.insert(MODULE_MOUSETOOLMANAGER);
 		_dependencies.insert(MODULE_MAP);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
     }
 
     return _dependencies;
@@ -923,6 +920,11 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalCommandSystem().addCommand("UnSelectSelection", std::bind(&RadiantSelectionSystem::deselectCmd, this, std::placeholders::_1));
 	GlobalEventManager().addCommand("UnSelectSelection", "UnSelectSelection");
+
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
+
+	page.appendCheckBox(_("Ignore light volume bounds when calculating default rotation pivot location"), 
+		ManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
 
     // Connect the bounds changed caller
     GlobalSceneGraph().signal_boundsChanged().connect(

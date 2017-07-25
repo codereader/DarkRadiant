@@ -49,7 +49,7 @@ public:
 	 * @returns: the ID of the layer of -1 if the layer could not
 	 *           be created (e.g. due to a name conflict).
 	 */
-	int createLayer(const std::string& name);
+	int createLayer(const std::string& name) override;
 
 	/**
 	 * greebo: Overload: Creates a new layer with the given name and the given ID.
@@ -57,19 +57,19 @@ public:
 	 * @returns: the ID of the layer of -1 if the layer could not
 	 *           be created (e.g. due to a name/ID conflict).
 	 */
-	int createLayer(const std::string& name, int layerID);
+	int createLayer(const std::string& name, int layerID) override;
 
 	/**
 	 * greebo: Deletes the named layer. All nodes are removed
 	 *         from this layer before deletion.
 	 */
-	void deleteLayer(const std::string& name);
+	void deleteLayer(const std::string& name) override;
 
 	/**
 	 * greebo: Resets the layer system into its ground state. Deletes all
 	 *         layers except for layer #0 which is renamed to "Default".
 	 */
-	void reset();
+	void reset() override;
 
 	/**
 	 * greebo: Visits each layer using the given visitor.
@@ -77,62 +77,62 @@ public:
     void foreachLayer(const LayerVisitFunc& visitor) override;
 
 	// Returns the ID of the named layer, or -1 if name doesn't exist
-	int getLayerID(const std::string& name) const;
-	std::string getLayerName(int layerID) const;
+	int getLayerID(const std::string& name) const override;
+	std::string getLayerName(int layerID) const override;
 
 	// Check for layer existence
-	bool layerExists(int layerID) const;
+	bool layerExists(int layerID) const override;
 
 	// Renames the given layer and returns TRUE on success
-	bool renameLayer(int layerID, const std::string& newLayerName);
+	bool renameLayer(int layerID, const std::string& newLayerName) override;
 
 	// Returns the ID of the first visible layer or -1 if all are hidden.
-	int getFirstVisibleLayer() const;
+	int getFirstVisibleLayer() const override;
 
 	// Active layers
-	int getActiveLayer() const;
-	void setActiveLayer(int layerID);
+	int getActiveLayer() const override;
+	void setActiveLayer(int layerID) override;
 
 	// Returns true if the given layer is visible
-	bool layerIsVisible(const std::string& layerName);
-	bool layerIsVisible(int layerID);
+	bool layerIsVisible(const std::string& layerName) override;
+	bool layerIsVisible(int layerID) override;
 
 	// Sets the visibility state of the given layer to <visible>
-	void setLayerVisibility(const std::string& layerName, bool visible);
-	void setLayerVisibility(int layerID, bool visible);
+	void setLayerVisibility(const std::string& layerName, bool visible) override;
+	void setLayerVisibility(int layerID, bool visible) override;
 
 	/**
 	 * greebo: Traverses the selection and adds each node to the given layer.
 	 */
-	void addSelectionToLayer(const std::string& layerName);
-	void addSelectionToLayer(int layerID);
+	void addSelectionToLayer(const std::string& layerName) override;
+	void addSelectionToLayer(int layerID) override;
 
 	/**
 	 * greebo: Moves all selected nodes to the given layer. This implicitly
 	 *         removes the nodes from all other layers.
 	 */
-	void moveSelectionToLayer(const std::string& layerName);
-	void moveSelectionToLayer(int layerID);
+	void moveSelectionToLayer(const std::string& layerName) override;
+	void moveSelectionToLayer(int layerID) override;
 
 	/**
 	 * greebo: Removes the selected nodes from the given layers.
 	 */
-	void removeSelectionFromLayer(const std::string& layerName);
-	void removeSelectionFromLayer(int layerID);
+	void removeSelectionFromLayer(const std::string& layerName) override;
+	void removeSelectionFromLayer(int layerID) override;
 
-	bool updateNodeVisibility(const scene::INodePtr& node);
+	bool updateNodeVisibility(const scene::INodePtr& node) override;
 
 	// Selects/unselects an entire layer
-	void setSelected(int layerID, bool selected);
+	void setSelected(int layerID, bool selected) override;
 
 	sigc::signal<void> signal_layersChanged() override;
 	sigc::signal<void> signal_layerVisibilityChanged() override;
 	sigc::signal<void> signal_nodeMembershipChanged() override;
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
 
 	// Command target
 	void createLayerCmd(const cmd::ArgumentList& args);

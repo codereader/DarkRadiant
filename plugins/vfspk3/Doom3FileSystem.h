@@ -30,35 +30,35 @@ public:
 	// Constructor
 	Doom3FileSystem();
 
-	void initDirectory(const std::string& path);
-	void initialise();
-	void shutdown();
+	void initDirectory(const std::string& path) override;
+	void initialise() override;
+	void shutdown() override;
 
-	int getFileCount(const std::string& filename);
-	ArchiveFilePtr openFile(const std::string& filename);
-	ArchiveTextFilePtr openTextFile(const std::string& filename);
+	int getFileCount(const std::string& filename) override;
+	ArchiveFilePtr openFile(const std::string& filename) override;
+	ArchiveTextFilePtr openTextFile(const std::string& filename) override;
 
-    ArchiveFilePtr openFileInAbsolutePath(const std::string& filename);
-    ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename);
+    ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) override;
+    ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) override;
 
-	std::size_t loadFile(const std::string& filename, void **buffer);
-	void freeFile(void *p);
+	std::size_t loadFile(const std::string& filename, void **buffer) override;
+	void freeFile(void *p) override;
 
 	// Call the specified callback function for each file matching extension
 	// inside basedir.
     void forEachFile(const std::string& basedir, const std::string& extension,
-                     const VisitorFunc& visitorFunc, std::size_t depth);
+                     const VisitorFunc& visitorFunc, std::size_t depth) override;
 
     void forEachFileInAbsolutePath(const std::string& path,
                                    const std::string& extension,
                                    const VisitorFunc& visitorFunc,
-                                   std::size_t depth = 1);
+                                   std::size_t depth = 1) override;
 
-	std::string findFile(const std::string& name);
-	std::string findRoot(const std::string& name);
+	std::string findFile(const std::string& name) override;
+	std::string findRoot(const std::string& name) override;
 
-	virtual void addObserver(Observer& observer);
-	virtual void removeObserver(Observer& observer);
+	virtual void addObserver(Observer& observer) override;
+	virtual void removeObserver(Observer& observer) override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

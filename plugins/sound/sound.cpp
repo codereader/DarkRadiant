@@ -1,18 +1,11 @@
 #include "SoundManager.h"
 
 #include "ifilesystem.h"
-#include "itextstream.h"
-#include "debugging/debugging.h"
+#include "imodule.h"
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	registry.registerModule(sound::SoundManagerPtr(new sound::SoundManager));
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
+{
+	module::performDefaultInitialisation(registry);
 
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
+	registry.registerModule(std::make_shared<sound::SoundManager>());
 }

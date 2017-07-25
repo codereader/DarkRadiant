@@ -45,7 +45,8 @@ void MenuSeparator::construct()
 
 		wxMenu* menu = std::static_pointer_cast<MenuFolder>(parent)->getMenu();
 
-		_separator = menu->AppendSeparator();
+		int pos = parent->getMenuPosition(shared_from_this());
+		_separator = menu->InsertSeparator(pos);
 	}
 
 	MenuElement::constructChildren();

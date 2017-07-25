@@ -58,10 +58,10 @@ public:
 	void toggleFullscreenCameraView(const cmd::ArgumentList& args);
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
-	void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
 	void create();

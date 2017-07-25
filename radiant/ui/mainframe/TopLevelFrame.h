@@ -37,6 +37,8 @@ public:
 
 private:
 	wxMenuBar* createMenuBar();
+
+	void onMenuOpenClose(wxMenuEvent& ev);
 };
 
 } // namespace

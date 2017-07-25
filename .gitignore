@@ -45,3 +45,16 @@ testsuite.ilk
 tools/msvc2015/DarkRadiant.VC.db
 *.iobj
 *.ipdb
+
+# Mac OS X Stuff
+.DS_Store
+xcuserdata
+Makefile.in
+/config.h.in
+/configure
+/ltmain.sh
+/aclocal.m4
+/install/*.zip
+/tools/msvc/.vs
+/tools/msvc/DarkRadiant.VC.db
+/tools/innosetup/*.zip

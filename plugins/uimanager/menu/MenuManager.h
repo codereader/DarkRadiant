@@ -80,11 +80,14 @@ public:
 	void loadFromRegistry();
 
 	/**
-	 * Clears all references to GtkWidgets etc.
+	 * Clears all references to widgets etc.
 	 */
 	void clear();
 
 private:
+	void handleElementAdded(const MenuElementPtr& element);
+	void handleElementRemoved(const MenuElementPtr& element);
+
 	// Returns the top level menu (== MenuFolder) this element is part of
 	MenuElementPtr findTopLevelMenu(const MenuElementPtr& element);
 };

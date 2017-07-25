@@ -68,7 +68,7 @@ LogStreamBuf::int_type LogStreamBuf::sync()
 
 void LogStreamBuf::writeToBuffer()
 {
-	int_type charsToWrite = pptr() - pbase();
+	int_type charsToWrite = static_cast<int_type>(pptr() - pbase());
 
 	if (pbase() != pptr()) 
     {

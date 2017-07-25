@@ -2,11 +2,12 @@
 
 #include <string>
 #include <map>
-#include "iselection.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
+#include "iselection.h"
 #include "wxutil/window/TransientWindow.h"
 #include <wx/panel.h>
+#include <sigc++/connection.h>
 
 namespace wxutil { class ControlButton; }
 
@@ -25,9 +26,8 @@ namespace ui
 class TransformDialog;
 typedef std::shared_ptr<TransformDialog> TransformDialogPtr;
 
-class TransformDialog
-: public wxutil::TransientWindow,
-  public SelectionSystem::Observer
+class TransformDialog : 
+	public wxutil::TransientWindow
 {
 private:
 	// The entry fields
@@ -49,6 +49,8 @@ private:
 
 	wxPanel* _rotatePanel;
 	wxPanel* _scalePanel;
+
+	sigc::connection _selectionChanged;
 
 private:
 
@@ -77,9 +79,6 @@ private:
 	void onClickSmaller(wxCommandEvent& ev, EntryRow* row);
 	void onClickLarger(wxCommandEvent& ev, EntryRow* row);
 
-	// The callback ensuring that the step changes are written to the registry
-	void onStepChanged();
-
 public:
 	// Constructor
 	TransformDialog();
@@ -88,12 +87,6 @@ public:
 	 * Constructs the instance and calls toggle() when invoked.
 	 */
 	static TransformDialog& Instance();
-
-	/** greebo: SelectionSystem::Observer implementation. Gets called by
-	 * the SelectionSystem upon selection change to allow updating of the
-	 * widget sensitivity.
-	 */
-	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 	/** greebo: Safely disconnects this dialog from all systems
 	 * 			(EventManager) also saves the window state to the registry.

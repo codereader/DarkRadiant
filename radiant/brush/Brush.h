@@ -8,6 +8,7 @@
 #include "RenderableWireFrame.h"
 #include "Translatable.h"
 
+#include <sigc++/signal.h>
 #include <boost/noncopyable.hpp>
 
 class RenderableCollector;
@@ -129,7 +130,7 @@ private:
 	// ----
 
 	DetailFlag _detailFlag;
-
+	
 public:
 	// Public constants
 	static const std::size_t PRISM_MIN_SIDES;
@@ -302,6 +303,9 @@ public:
 
 	// Calculate the intersection of the given ray with this brush, returns true on intersection and fills in the out variable
 	bool getIntersection(const Ray& ray, Vector3& intersection);
+
+	// Signal for external code to get notified each time any face of any brush changes
+	static sigc::signal<void>& signal_faceShaderChanged();
 
 private:
 	void edge_push_back(FaceVertexId faceVertex);

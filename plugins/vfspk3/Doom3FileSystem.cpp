@@ -70,7 +70,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     // Traverse the directory using the filename list as functor
     try
     {
-		os::foreachItemInDirectory(path, [&] (const boost::filesystem::path& file)
+		os::foreachItemInDirectory(path, [&] (const fs::path& file)
 		{
 			// Just insert the name, it will get sorted correctly.
 			filenameList.insert(file.filename().string());

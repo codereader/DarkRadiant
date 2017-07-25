@@ -390,15 +390,9 @@ AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefi
 
 } // namespace cmd
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
+{
+	module::performDefaultInitialisation(registry);
+
 	registry.registerModule(cmd::CommandSystemPtr(new cmd::CommandSystem));
-
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

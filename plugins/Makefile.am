@@ -8,7 +8,6 @@ SUBDIRS = eventmanager \
           filetypes \
           filters \
           fonts \
-          grid \
           image \
           mapdoom3 \
           md5model \

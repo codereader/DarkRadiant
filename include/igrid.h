@@ -1,5 +1,4 @@
-#ifndef IGRID_H_
-#define IGRID_H_
+#pragma once
 
 /* greebo: The interface of the grid system
  *
@@ -9,7 +8,8 @@
 #include "imodule.h"
 #include <sigc++/signal.h>
 
-enum GridSize {
+enum GridSize
+{
 	GRID_0125 = -3,
 	GRID_025 = -2,
 	GRID_05 = -1,
@@ -26,7 +26,8 @@ enum GridSize {
 
 
 // grid renderings
-enum GridLook {
+enum GridLook
+{
 	GRIDLOOK_LINES,
 	GRIDLOOK_DOTLINES,
 	GRIDLOOK_MOREDOTLINES,
@@ -36,12 +37,14 @@ enum GridLook {
 	GRIDLOOK_SQUARES,
 };
 
-const std::string MODULE_GRID("Grid");
+const char* const MODULE_GRID("Grid");
 
 class IGridManager :
 	public RegisterableModule
 {
 public:
+	virtual ~IGridManager() {}
+
 	virtual void setGridSize(GridSize gridSize) = 0;
 	virtual float getGridSize() const = 0;
 
@@ -59,7 +62,8 @@ public:
 }; // class IGridManager
 
 // This is the accessor for the grid module
-inline IGridManager& GlobalGrid() {
+inline IGridManager& GlobalGrid()
+{
 	// Cache the reference locally
 	static IGridManager& _grid(
 		*std::static_pointer_cast<IGridManager>(
@@ -68,5 +72,3 @@ inline IGridManager& GlobalGrid() {
 	);
 	return _grid;
 }
-
-#endif /*IGRID_H_*/

@@ -86,7 +86,7 @@ lwClip *lwGetClip( picoMemStream_t *fp, int cksize )
    /* remember where we started */
 
    set_flen( 0 );
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
 
    /* index */
 
@@ -151,7 +151,7 @@ lwClip *lwGetClip( picoMemStream_t *fp, int cksize )
 
    /* end of the CLIP chunk? */
 
-   rlen = _pico_memstream_tell( fp ) - pos;
+   rlen = (int)_pico_memstream_tell( fp ) - pos;
    if ( cksize < rlen ) goto Fail;
    if ( cksize == rlen )
       return clip;
@@ -238,7 +238,7 @@ lwClip *lwGetClip( picoMemStream_t *fp, int cksize )
 
       /* end of the CLIP chunk? */
 
-      rlen = _pico_memstream_tell( fp ) - pos;
+      rlen = (int)_pico_memstream_tell( fp ) - pos;
       if ( cksize < rlen ) goto Fail;
       if ( cksize == rlen ) break;
 

@@ -30,7 +30,7 @@ private:
 
 public:
     virtual std::size_t     getNumPlanes() const override;
-    virtual const Plane3&   getPlane(std::size_t planeNum) const;
+    virtual const Plane3&   getPlane(std::size_t planeNum) const override;
 
     virtual std::size_t     getNumVertices() const override;
     virtual const Vector3&	getVertex(std::size_t vertexNum) const override;

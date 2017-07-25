@@ -11,7 +11,6 @@
 #include "Face.h"
 #include "FixedWinding.h"
 #include "math/Ray.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
 
 #include <functional>
 
@@ -460,8 +459,8 @@ void Brush::onFaceShaderChanged()
 {
     onFacePlaneChanged();
 
-    // Queue an UI update of the texture tools
-    ui::SurfaceInspector::update();
+    // Queue an UI update of the texture tools if any of them is listening
+	signal_faceShaderChanged().emit();
 }
 
 void Brush::onFaceConnectivityChanged()
@@ -912,6 +911,12 @@ bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 	intersection = ray.origin + direction * tEnter;
 	
 	return true;
+}
+
+sigc::signal<void>& Brush::signal_faceShaderChanged()
+{
+	static sigc::signal<void> _sigFaceShaderChanged;
+	return _sigFaceShaderChanged;
 }
 
 void Brush::edge_push_back(FaceVertexId faceVertex) {

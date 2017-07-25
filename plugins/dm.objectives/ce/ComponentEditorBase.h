@@ -40,12 +40,8 @@ public:
 	virtual ~ComponentEditorBase()
 	{
 		// When destroyed, remove the panel from its parent
-        if (_panel != nullptr)
-		{
-			_panel->GetParent()->RemoveChild(_panel);
-			_panel->Destroy();
-            _panel = nullptr;
-		}
+		delete _panel;
+		_panel = nullptr;
 	}
 
 	virtual wxWindow* getWidget() override

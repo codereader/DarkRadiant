@@ -67,6 +67,7 @@ private:
 
 	// callbacks
 	void _onSelectionChange(wxDataViewEvent& ev);
+	void _onItemActivated(wxDataViewEvent& ev);
     void _onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 public:
@@ -82,7 +83,7 @@ public:
 	// Set the selected sound shader, and focuses the treeview to the new selection
 	void setSelectedShader(const std::string& shader);
 
-	virtual int ShowModal();
+	virtual int ShowModal() override;
 
 	// Run the dialog and return the selected shader - this will be empty if the user clicks cancel
 	virtual std::string chooseResource(const std::string& preselected = std::string()) override;

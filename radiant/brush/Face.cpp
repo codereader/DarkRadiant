@@ -11,7 +11,6 @@
 #include "Brush.h"
 #include "BrushNode.h"
 #include "BrushModule.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
 
 // The structure that is saved in the undostack
 class Face::SavedState :
@@ -377,8 +376,8 @@ void Face::texdefChanged()
     revertTexdef();
     EmitTextureCoordinates();
 
-    // Update the Texture Tools
-    ui::SurfaceInspector::update();
+    // Fire the signal to update the Texture Tools
+	signal_texdefChanged().emit();
 }
 
 const TextureProjection& Face::getProjection() const
@@ -606,4 +605,10 @@ void Face::normaliseTexture() {
 void Face::updateFaceVisibility()
 {
     _faceIsVisible = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();
+}
+
+sigc::signal<void>& Face::signal_texdefChanged()
+{
+	static sigc::signal<void> _sigTexdefChanged;
+	return _sigTexdefChanged;
 }

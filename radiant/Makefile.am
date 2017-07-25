@@ -85,6 +85,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/overlay/OverlayDialog.cpp \
                       ui/overlay/Overlay.cpp \
                       ui/splash/Splash.cpp \
+					  ui/grid/GridManager.cpp \
                       ui/mru/MRUMenuItem.cpp \
                       ui/mru/MRU.cpp \
                       ui/layers/LayerControl.cpp \
@@ -167,7 +168,6 @@ darkradiant_SOURCES = main.cpp \
 					  layers/LayerUsageBreakdown.cpp \
                       modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
-                      modulesystem/DynamicLibraryLoader.cpp \
                       modulesystem/ModuleLoader.cpp \
                       modulesystem/ModuleRegistry.cpp \
                       selection/SelectedNodeList.cpp \

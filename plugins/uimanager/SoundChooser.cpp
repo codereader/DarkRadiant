@@ -176,6 +176,8 @@ wxWindow* SoundChooser::createTreeView(wxWindow* parent)
 	// Get selection and connect the changed callback
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(SoundChooser::_onSelectionChange), NULL, this);
+	_treeView->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED,
+		wxDataViewEventHandler(SoundChooser::_onItemActivated), NULL, this);
 
 	return _treeView;
 }
@@ -253,6 +255,36 @@ void SoundChooser::handleSelectionChange()
 void SoundChooser::_onSelectionChange(wxDataViewEvent& ev)
 {
     handleSelectionChange();
+}
+
+void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
+{
+	wxDataViewItem item = ev.GetItem();
+
+	if (item.IsOk())
+	{
+		wxutil::TreeModel::Row row(item, *_treeStore);
+
+		bool isFolder = row[_columns.isFolder].getBool();
+
+		if (isFolder)
+		{
+			// In case we double-click a folder, toggle its expanded state
+			if (_treeView->IsExpanded(item))
+			{
+				_treeView->Collapse(item);
+			}
+			else
+			{
+				_treeView->Expand(item);
+			}
+
+			return;
+		}
+
+		// It's a regular item, try to play it back
+		_preview->playRandomSoundFile();
+	}
 }
 
 void SoundChooser::setTreeViewModel()

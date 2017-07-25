@@ -38,6 +38,11 @@ public:
 	 * its state.
 	 */
 	virtual void toggleFullscreenCameraView() = 0;
+
+	/**
+	 * Loads and applies the stored state from the registry.
+	 */
+	virtual void restoreStateFromRegistry() = 0;
 };
 typedef std::shared_ptr<IMainFrameLayout> IMainFrameLayoutPtr;
 

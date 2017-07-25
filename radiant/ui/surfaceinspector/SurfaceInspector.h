@@ -2,13 +2,13 @@
 
 #include <map>
 #include "icommandsystem.h"
-#include "iselection.h"
 #include "iregistry.h"
-#include "iundo.h"
 #include "iradiant.h"
 #include "wxutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
 
+#include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 #include <memory>
 
 namespace wxutil { class ControlButton; }
@@ -29,10 +29,9 @@ class SurfaceInspector;
 typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
 /// Inspector for properties of a surface and its applied texture
-class SurfaceInspector
-: public wxutil::TransientWindow,
-  public SelectionSystem::Observer,
-  public UndoSystem::Observer
+class SurfaceInspector : 
+	public wxutil::TransientWindow,
+	public sigc::trackable
 {
 	struct ManipulatorRow
 	{
@@ -90,6 +89,13 @@ class SurfaceInspector
 
 	bool _updateNeeded;
 
+	sigc::connection _brushFaceShaderChanged;
+	sigc::connection _faceTexDefChanged;
+	sigc::connection _patchTextureChanged;
+	sigc::connection _selectionChanged;
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
+
 public:
 
 	// Constructor
@@ -105,20 +111,10 @@ public:
 	 */
 	void keyChanged();
 
-	/** greebo: SelectionSystem::Observer implementation. Gets called by
-	 * the SelectionSystem upon selection change to allow updating of the
-	 * texture properties.
-	 */
-	void selectionChanged(const scene::INodePtr& node, bool isComponent);
-
 	// Command target to toggle the dialog
 	static void toggle(const cmd::ArgumentList& args);
 
 	void onRadiantShutdown();
-
-	// UndoSystem::Observer implementation
-	void postUndo();
-	void postRedo();
 
 private:
 	void doUpdate();

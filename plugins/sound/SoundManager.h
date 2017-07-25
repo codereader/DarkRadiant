@@ -44,6 +44,7 @@ public:
 	void forEachShader(std::function<void(const ISoundShader&)>) override;
 	ISoundShaderPtr getSoundShader(const std::string& shaderName) override;
 	virtual bool playSound(const std::string& fileName) override;
+	virtual bool playSound(const std::string& fileName, bool loopSound) override;
 	virtual void stopSound() override;
 
 	// RegisterableModule implementation

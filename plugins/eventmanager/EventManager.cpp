@@ -106,6 +106,33 @@ Accelerator& EventManager::addAccelerator(wxKeyEvent& ev)
 	return _accelerators.back();
 }
 
+void EventManager::resetAcceleratorBindings()
+{
+	// Select the stock mappings
+	std::string xPathQuery = "user/ui/input/shortcuts[@name='default']//shortcut";
+
+	xml::NodeList shortcutList = GlobalRegistry().findXPath(xPathQuery);
+
+	if (shortcutList.empty())
+	{
+		// No accelerator definitions found!
+		rWarning() << "EventManager: No default shortcut definitions found..." << std::endl;
+		return;
+	}
+
+	// Disconnect all accelerators from all events
+	for (EventMap::value_type& pair : _events)
+	{
+		pair.second->disconnectAccelerators();
+	}
+
+	_accelerators.clear();
+
+	rMessage() << "EventManager: Default shortcuts found in Registry: " << shortcutList.size() << std::endl;
+
+	loadAcceleratorFromList(shortcutList);
+}
+
 IEventPtr EventManager::findEvent(const std::string& name) 
 {
 	// Try to lookup the command
@@ -326,7 +353,7 @@ void EventManager::disconnectToolbar(wxToolBar* toolbar)
 	{
 		for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
 		{
-			pair.second->disconnectToolItem(const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(tool)));
+			pair.second->disconnectToolItem(const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(static_cast<int>(tool))));
 		}
 	});
 }
@@ -336,65 +363,66 @@ void EventManager::loadAccelerators()
 {
 	// Register all custom statements as events too to make them shortcut-bindable
 	// before going ahead
-	GlobalCommandSystem().foreachStatement([&] (const std::string& statementName)
+	GlobalCommandSystem().foreachStatement([&](const std::string& statementName)
 	{
 		addCommand(statementName, statementName, false);
 	}, true); // custom statements only
 
 	xml::NodeList shortcutSets = GlobalRegistry().findXPath("user/ui/input//shortcuts");
 
-	// If we have two sets of shortcuts, delete the default ones
-	if (shortcutSets.size() > 1)
-	{
-		GlobalRegistry().deleteXPath("user/ui/input//shortcuts[@name='default']");
-	}
+	// If we have two sets of shortcuts, don't select the stock ones
+	std::string xPathQuery = shortcutSets.size() > 1 ?
+		"user/ui/input/shortcuts[not(@name)]//shortcut" : // find all without name attribute
+		"user/ui/input/shortcuts//shortcut"; // find all shortcuts
 
-	// Find all accelerators
-	xml::NodeList shortcutList = GlobalRegistry().findXPath("user/ui/input/shortcuts//shortcut");
+	xml::NodeList shortcutList = GlobalRegistry().findXPath(xPathQuery);
 
-	if (!shortcutList.empty())
-	{
-		rMessage() << "EventManager: Shortcuts found in Registry: " << shortcutList.size() << std::endl;
-
-		for (const xml::Node& shortcutNode : shortcutList)
-		{
-			const std::string key = shortcutNode.getAttributeValue("key");
-			const std::string cmd = shortcutNode.getAttributeValue("command");
-
-			// Try to lookup the command
-			IEventPtr event = findEvent(cmd);
-
-			// Check for a non-empty key string
-			if (!key.empty())
-			{
-				 // Check for valid command definitions were found
-				if (!event->empty())
-				{
-					// Get the modifier string (e.g. "SHIFT+ALT")
-					const std::string modifierStr = shortcutNode.getAttributeValue("modifiers");
-
-					if (!duplicateAccelerator(key, modifierStr, event))
-					{
-						// Create the accelerator object
-						IAccelerator& accelerator = addAccelerator(key, modifierStr);
-
-						// Connect the newly created accelerator to the command
-                        event->connectAccelerator(accelerator);
-                        static_cast<Accelerator&>(accelerator).setEvent(event);
-					}
-				}
-				else
-				{
-					rWarning() << "EventManager: Cannot load shortcut definition (command invalid): " 
-						<< cmd << std::endl;
-				}
-			}
-		}
-	}
-	else 
+	if (shortcutList.empty())
 	{
 		// No accelerator definitions found!
 		rWarning() << "EventManager: No shortcut definitions found..." << std::endl;
+		return;
+	}
+
+	rMessage() << "EventManager: Shortcuts found in Registry: " << shortcutList.size() << std::endl;
+
+	loadAcceleratorFromList(shortcutList);
+}
+
+void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
+{
+	for (const xml::Node& shortcutNode : shortcutList)
+	{
+		const std::string key = shortcutNode.getAttributeValue("key");
+		const std::string cmd = shortcutNode.getAttributeValue("command");
+
+		// Try to lookup the command
+		IEventPtr event = findEvent(cmd);
+
+		// Check for a non-empty key string
+		if (key.empty()) continue;
+
+		// Check for valid command definitions were found
+		if (!event->empty())
+		{
+			// Get the modifier string (e.g. "SHIFT+ALT")
+			const std::string modifierStr = shortcutNode.getAttributeValue("modifiers");
+
+			if (!duplicateAccelerator(key, modifierStr, event))
+			{
+				// Create the accelerator object
+				IAccelerator& accelerator = addAccelerator(key, modifierStr);
+
+				// Connect the newly created accelerator to the command
+                event->connectAccelerator(accelerator);
+                static_cast<Accelerator&>(accelerator).setEvent(event);
+			}
+		}
+		else
+		{
+			rWarning() << "EventManager: Cannot load shortcut definition (command invalid): " 
+				<< cmd << std::endl;
+		}
 	}
 }
 
@@ -550,15 +578,8 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	module::performDefaultInitialisation(registry);
+
     registry.registerModule(std::make_shared<ui::EventManager>());
     registry.registerModule(std::make_shared<ui::MouseToolManager>());
-
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

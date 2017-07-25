@@ -7,6 +7,8 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 
+#include "wxutil/dialog/MessageBox.h"
+
 #include "CommandListPopulator.h"
 #include "ShortcutChooser.h"
 
@@ -26,7 +28,7 @@ CommandList::CommandList() :
 	// Create all the widgets
 	populateWindow();
 
-	FitToScreen(0.3f, 0.7f);
+	FitToScreen(0.4f, 0.7f);
 }
 
 void CommandList::reloadList()
@@ -38,6 +40,8 @@ void CommandList::reloadList()
 
 	// Cycle through all the events and create the according list items
 	GlobalEventManager().foreachEvent(populator);
+    
+    _treeView->TriggerColumnSizeEvent();
 }
 
 void CommandList::populateWindow()
@@ -84,6 +88,11 @@ void CommandList::populateWindow()
 	_clearButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onClear), NULL, this);
 	_clearButton->Enable(false);
 
+	// Create the clear shortcut button
+	wxButton* resetButton = new wxButton(this, wxID_ANY, _("Reset to Default"));
+	resetButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(CommandList::onResetToDefault), NULL, this);
+
+	buttonVBox->Add(resetButton, 0, wxEXPAND | wxBOTTOM, 12);
 	buttonVBox->Add(_clearButton, 0, wxEXPAND | wxBOTTOM, 6);
 	buttonVBox->Add(_assignButton, 0, wxEXPAND | wxBOTTOM, 6);
 	buttonVBox->Add(closeButton, 0, wxEXPAND);
@@ -165,6 +174,21 @@ void CommandList::onClear(wxCommandEvent& ev)
 	{
 		// Disconnect the event and update the list
 		GlobalEventManager().disconnectAccelerator(commandName);
+		reloadList();
+		updateButtonState();
+	}
+}
+
+void CommandList::onResetToDefault(wxCommandEvent& ev)
+{
+	IDialog::Result result = wxutil::Messagebox::Show(_("Reset to default?"),
+		_("Really clear all bindings and reload\nthem from the default settings?"), IDialog::MESSAGE_ASK);
+
+	if (result == IDialog::RESULT_YES)
+	{
+		// Reset and reload
+		GlobalEventManager().resetAcceleratorBindings();
+
 		reloadList();
 		updateButtonState();
 	}

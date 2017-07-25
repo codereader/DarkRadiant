@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameManager.h"
-#include <boost/filesystem.hpp>
+#include "os/fs.h"
 
 namespace game
 {
@@ -19,7 +19,7 @@ public:
 	GameFileLoader(Manager::GameMap& games, const std::string& path);
 
 	// Main functor () function, gets called with the file
-	void operator() (const boost::filesystem::path& file);
+	void operator() (const fs::path& file);
 };
 
 } // namespace game

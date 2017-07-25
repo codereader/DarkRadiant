@@ -69,14 +69,7 @@ typedef std::shared_ptr<DifficultyEditorModule> DifficultyEditorModulePtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
+	module::performDefaultInitialisation(registry);
+
 	registry.registerModule(DifficultyEditorModulePtr(new DifficultyEditorModule));
-
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

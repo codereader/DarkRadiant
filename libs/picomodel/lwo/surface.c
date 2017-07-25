@@ -109,7 +109,7 @@ int lwGetTHeader( picoMemStream_t *fp, int hsz, lwTexture *tex )
    /* remember where we started */
 
    set_flen( 0 );
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
 
    /* ordinal string */
 
@@ -177,7 +177,7 @@ int lwGetTHeader( picoMemStream_t *fp, int hsz, lwTexture *tex )
       if ( 6 != get_flen() ) return 0;
    }
 
-   set_flen( _pico_memstream_tell( fp ) - pos );
+   set_flen( (int)_pico_memstream_tell( fp ) - pos );
    return 1;
 }
 
@@ -196,7 +196,7 @@ int lwGetTMap( picoMemStream_t *fp, int tmapsz, lwTMap *tmap )
    unsigned short sz;
    int rlen, pos, i;
 
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
    id = getU4( fp );
    sz = getU2( fp );
    if ( 0 > get_flen() ) return 0;
@@ -266,7 +266,7 @@ int lwGetTMap( picoMemStream_t *fp, int tmapsz, lwTMap *tmap )
       if ( 6 != get_flen() ) return 0;
    }
 
-   set_flen( _pico_memstream_tell( fp ) - pos );
+   set_flen( (int)_pico_memstream_tell( fp ) - pos );
    return 1;
 }
 
@@ -284,7 +284,7 @@ int lwGetImageMap( picoMemStream_t *fp, int rsz, lwTexture *tex )
    unsigned short sz;
    int rlen, pos;
 
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
    id = getU4( fp );
    sz = getU2( fp );
    if ( 0 > get_flen() ) return 0;
@@ -375,7 +375,7 @@ int lwGetImageMap( picoMemStream_t *fp, int rsz, lwTexture *tex )
       if ( 6 != get_flen() ) return 0;
    }
 
-   set_flen( _pico_memstream_tell( fp ) - pos );
+   set_flen( (int)_pico_memstream_tell( fp ) - pos );
    return 1;
 }
 
@@ -393,7 +393,7 @@ int lwGetProcedural( picoMemStream_t *fp, int rsz, lwTexture *tex )
    unsigned short sz;
    int rlen, pos;
 
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
    id = getU4( fp );
    sz = getU2( fp );
    if ( 0 > get_flen() ) return 0;
@@ -450,7 +450,7 @@ int lwGetProcedural( picoMemStream_t *fp, int rsz, lwTexture *tex )
       if ( 6 != get_flen() ) return 0;
    }
 
-   set_flen( _pico_memstream_tell( fp ) - pos );
+   set_flen( (int)_pico_memstream_tell( fp ) - pos );
    return 1;
 }
 
@@ -468,7 +468,7 @@ int lwGetGradient( picoMemStream_t *fp, int rsz, lwTexture *tex )
    unsigned short sz;
    int rlen, pos, i, j, nkeys;
 
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
    id = getU4( fp );
    sz = getU2( fp );
    if ( 0 > get_flen() ) return 0;
@@ -548,7 +548,7 @@ int lwGetGradient( picoMemStream_t *fp, int rsz, lwTexture *tex )
       if ( 6 != get_flen() ) return 0;
    }
 
-   set_flen( _pico_memstream_tell( fp ) - pos );
+   set_flen( (int)_pico_memstream_tell( fp ) - pos );
    return 1;
 }
 
@@ -618,7 +618,7 @@ lwPlugin *lwGetShader( picoMemStream_t *fp, int bloksz )
    shdr = _pico_calloc( 1, sizeof( lwPlugin ));
    if ( !shdr ) return NULL;
 
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
    set_flen( 0 );
    hsz = getU2( fp );
    shdr->ord = getS0( fp );
@@ -682,7 +682,7 @@ lwPlugin *lwGetShader( picoMemStream_t *fp, int bloksz )
       if ( 6 != get_flen() ) goto Fail;
    }
 
-   set_flen( _pico_memstream_tell( fp ) - pos );
+   set_flen( (int)_pico_memstream_tell( fp ) - pos );
    return shdr;
 
 Fail:
@@ -838,7 +838,7 @@ lwSurface *lwGetSurface( picoMemStream_t *fp, int cksize )
    /* remember where we started */
 
    set_flen( 0 );
-   pos = _pico_memstream_tell( fp );
+   pos = (int)_pico_memstream_tell( fp );
 
    /* names */
 

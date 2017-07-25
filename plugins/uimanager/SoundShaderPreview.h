@@ -28,6 +28,7 @@ private:
 	wxutil::TreeView* _treeView;
 
 	wxButton* _playButton;
+	wxButton* _playLoopedButton;
 	wxButton* _stopButton;
 	wxStaticText* _statusLabel;
 
@@ -55,6 +56,12 @@ public:
 	 */
 	void setSoundShader(const std::string& soundShader);
 
+	/**
+	 * Provided a sound shader is assigned, this will pick
+	 * a random file from the list and start its playback.
+	 */
+	void playRandomSoundFile();
+
 private:
 	/** greebo: Returns the currently selected sound file (file list)
 	 *
@@ -72,9 +79,12 @@ private:
 
 	// Callbacks
 	void onPlay(wxCommandEvent& ev);
+	void onPlayLooped(wxCommandEvent& ev);
 	void onStop(wxCommandEvent& ev);
 	void onSelectionChanged(wxDataViewEvent& ev);
+	void onItemActivated(wxDataViewEvent& ev);
 
+	void playSelectedFile(bool loop);
 	void handleSelectionChange();
 };
 

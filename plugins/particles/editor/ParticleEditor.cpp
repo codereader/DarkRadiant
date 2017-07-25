@@ -26,10 +26,11 @@
 
 #include "../ParticlesManager.h"
 
+#include "os/fs.h"
+#include "os/file.h"
 #include "os/path.h"
 #include "util/ScopedBoolLock.h"
 
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
@@ -1025,7 +1026,7 @@ void ParticleEditor::updateWidgetsFromParticle()
     updateWidgetsFromStage();
 
     // Update outfile label
-    boost::filesystem::path outFile = GlobalGameManager().getModPath();
+    fs::path outFile = GlobalGameManager().getModPath();
     outFile /= PARTICLES_DIR;
     outFile /= _currentDef->getFilename();
 
@@ -1503,13 +1504,13 @@ std::string ParticleEditor::queryParticleFile()
     // Get the filename we should save this particle into
     wxutil::FileChooser chooser(this, _("Select .prt file"), false, "particle", ".prt");
 
-    boost::filesystem::path modParticlesPath = GlobalGameManager().getModPath();
+    fs::path modParticlesPath = GlobalGameManager().getModPath();
     modParticlesPath /= "particles";
 
-    if (!boost::filesystem::exists(modParticlesPath))
+    if (!os::fileOrDirExists(modParticlesPath.string()))
     {
         rMessage() << "Ensuring mod particles path: " << modParticlesPath << std::endl;
-        boost::filesystem::create_directories(modParticlesPath);
+        fs::create_directories(modParticlesPath);
     }
 
     // Point the file chooser to that new file

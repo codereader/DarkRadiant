@@ -3,15 +3,15 @@
 
 [Setup]
 AppName=DarkRadiant
-AppVerName=DarkRadiant 2.2.0pre4 x64
+AppVerName=DarkRadiant 2.3.1pre1 x64
 AppPublisher=The Dark Mod
 AppPublisherURL=http://www.thedarkmod.com
 AppSupportURL=http://www.thedarkmod.com
 AppUpdatesURL=http://www.thedarkmod.com
 DefaultDirName={pf}\DarkRadiant
-DefaultGroupName=DarkRadiant 2.2.0pre4 x64
+DefaultGroupName=DarkRadiant 2.3.1pre1 x64
 OutputDir=.
-OutputBaseFilename=darkradiant-2.2.0pre4-x64
+OutputBaseFilename=darkradiant-2.3.1pre1-x64
 Compression=lzma
 SolidCompression=yes
 ArchitecturesAllowed=x64
@@ -26,8 +26,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\..\install\darkradiant.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\install\*"; Excludes: "*.pdb,*.exp,*.lib,*.in,*.fbp,*.iobj,*.ipdb"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\x64\Microsoft.VC140.CRT\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.10.25008\x64\Microsoft.VC150.CRT\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.10.25008\x64\Microsoft.VC150.CRT\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -38,3 +38,5 @@ Name: "{userdesktop}\DarkRadiant"; Filename: "{app}\darkradiant.exe"; Tasks: des
 [InstallDelete]
 ; Remove the legacy WaveFront plugin before installation
 Type: files; Name: {app}\plugins\wavefront.dll;
+; Grid module has been removed
+Type: files; Name: {app}\modules\grid.dll;

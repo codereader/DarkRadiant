@@ -15,6 +15,7 @@
 #include "itextstream.h"
 #include "iuimanager.h"
 #include "imainframe.h"
+#include "iundo.h"
 
 #include "wxutil/ControlButton.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -30,6 +31,8 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
 #include "brush/Face.h"
+#include "brush/Brush.h"
+#include "patch/Patch.h"
 
 namespace ui
 {
@@ -616,24 +619,6 @@ void SurfaceInspector::doUpdate()
 	ui::PatchInspector::Instance().queueUpdate();
 }
 
-void SurfaceInspector::postUndo()
-{
-	// Update the SurfaceInspector after an undo operation
-	doUpdate();
-}
-
-void SurfaceInspector::postRedo()
-{
-	// Update the SurfaceInspector after a redo operation
-	doUpdate();
-}
-
-// Gets notified upon selection change
-void SurfaceInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
-{
-	doUpdate();
-}
-
 void SurfaceInspector::fitTexture()
 {
 	double repeatX = _fitTexture.width->GetValue();
@@ -701,9 +686,32 @@ void SurfaceInspector::_preShow()
 {
 	TransientWindow::_preShow();
 
+	// Disconnect everything, in some cases we get two consecutive Show() calls in wxGTK
+	_selectionChanged.disconnect();
+	_brushFaceShaderChanged.disconnect();
+	_faceTexDefChanged.disconnect();
+	_patchTextureChanged.disconnect();
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
+
 	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
-	GlobalUndoSystem().addObserver(this);
+	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+		[this] (const ISelectable&) { doUpdate(); });
+
+	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
+	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
+
+	// Get notified about face shader changes
+	_brushFaceShaderChanged = Brush::signal_faceShaderChanged().connect(
+		[this] { _updateNeeded = true; });
+
+	_faceTexDefChanged = Face::signal_texdefChanged().connect(
+		[this] { _updateNeeded = true; });
+
+	_patchTextureChanged = Patch::signal_patchTextureChanged().connect(
+		[this] { _updateNeeded = true; });
 
 	// Re-scan the selection
 	doUpdate();
@@ -720,8 +728,12 @@ void SurfaceInspector::_preHide()
 {
 	TransientWindow::_preHide();
 
-	GlobalUndoSystem().removeObserver(this);
-	GlobalSelectionSystem().removeObserver(this);
+	_selectionChanged.disconnect();
+	_patchTextureChanged.disconnect();
+	_faceTexDefChanged.disconnect();
+	_brushFaceShaderChanged.disconnect();
+	_undoHandler.disconnect();
+	_redoHandler.disconnect();
 }
 
 } // namespace ui

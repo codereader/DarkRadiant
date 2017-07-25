@@ -1,6 +1,6 @@
 #include "MD5Skeleton.h"
 
-#include <cmath>
+#include <cstdlib>
 
 namespace md5
 {
@@ -17,7 +17,7 @@ namespace
 		double cosHalfTheta = qa.w() * qb.w() + qa.x() * qb.x() + qa.y() * qb.y() + qa.z() * qb.z();
 
 		// if qa=qb or qa=-qb then theta = 0 and we can return qa
-		if (abs(cosHalfTheta) > 1.0)
+        if (std::abs(cosHalfTheta) > 1.0)
 		{
  			return qb;
 		}

@@ -213,7 +213,7 @@ unsigned int TreeModelFilter::GetChildren(const wxDataViewItem& item, wxDataView
 		}
 	});
 
-	return children.size();
+	return static_cast<int>(children.size());
 }
 
 } // namespace

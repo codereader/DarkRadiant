@@ -1,4 +1,4 @@
-#include "XMLRegistry.h"		// The Abstract Base Class
+#include "XMLRegistry.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -11,64 +11,74 @@
 #include "string/string.h"
 #include "wxutil/IConv.h"
 
+namespace registry
+{
+
 XMLRegistry::XMLRegistry() :
-	_topLevelNode("darkradiant"),
-	_standardTree(_topLevelNode),
-	_userTree(_topLevelNode),
 	_queryCounter(0),
+	_changesSinceLastSave(0),
     _shutdown(false)
 {}
 
-XMLRegistry::~XMLRegistry()
-{}
+void XMLRegistry::shutdown()
+{
+	rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed." << std::endl;
+
+	saveToDisk();
+
+	_shutdown = true;
+	_autosaver.reset();
+}
 
 void XMLRegistry::saveToDisk()
 {
-    rMessage() << "XMLRegistry Shutdown: " << _queryCounter << " queries processed." << std::endl;
-
-	// Don't save these paths into the xml files.
-	deleteXPath(RKEY_APP_PATH);
-	deleteXPath(RKEY_HOME_PATH);
-	deleteXPath(RKEY_SETTINGS_PATH);
-	deleteXPath(RKEY_BITMAPS_PATH);
-
-    // Application-relative on other OS
-	std::string settingsPath =
-		module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
-
 	// Save the user tree to the settings path, this contains all
 	// settings that have been modified during runtime
-	if (get(RKEY_SKIP_REGISTRY_SAVE).empty())
-    {
-		// Replace the version tag and set it to the current DarkRadiant version
-		deleteXPath("user//version");
-		set("user/version", RADIANT_VERSION);
-
-		// Export the user-defined filter definitions to a separate file
-		exportToFile("user/ui/filtersystem/filters", settingsPath + "filters.xml");
-		deleteXPath("user/ui/filtersystem/filters");
-
-		// Export the colour schemes and remove them from the registry
-		exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
-		deleteXPath("user/ui/colourschemes");
-
-		// Export the input definitions into the user's settings folder and remove them as well
-		exportToFile("user/ui/input", settingsPath + "input.xml");
-		deleteXPath("user/ui/input");
-
-		// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
-		deleteXPath("user/*[@transient='1']");
-
-		// Remove any remaining upgradePaths (from older registry files)
-		deleteXPath("user/upgradePaths");
-		// Remove legacy <interface> node
-		deleteXPath("user/ui/interface");
-
-		// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
-		exportToFile("user", settingsPath + "user.xml");
+	if (!get(RKEY_SKIP_REGISTRY_SAVE).empty())
+	{
+		return;
 	}
 
-    _shutdown = true;
+	// Make a deep copy of the user tree by copy-constructing it
+	RegistryTree copiedTree(_userTree);
+
+	// Don't save these paths into the xml files.
+	copiedTree.deleteXPath(RKEY_APP_PATH);
+	copiedTree.deleteXPath(RKEY_HOME_PATH);
+	copiedTree.deleteXPath(RKEY_SETTINGS_PATH);
+	copiedTree.deleteXPath(RKEY_BITMAPS_PATH);
+
+    // Application-relative on other OS
+	std::string settingsPath = module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
+
+	// Replace the version tag and set it to the current DarkRadiant version
+	copiedTree.deleteXPath("user//version");
+	copiedTree.set("user/version", RADIANT_VERSION);
+
+	// Export the user-defined filter definitions to a separate file
+	copiedTree.exportToFile("user/ui/filtersystem/filters", settingsPath + "filters.xml");
+	copiedTree.deleteXPath("user/ui/filtersystem/filters");
+
+	// Export the colour schemes and remove them from the registry
+	copiedTree.exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
+	copiedTree.deleteXPath("user/ui/colourschemes");
+
+	// Export the input definitions into the user's settings folder and remove them as well
+	copiedTree.exportToFile("user/ui/input", settingsPath + "input.xml");
+	copiedTree.deleteXPath("user/ui/input");
+
+	// Delete all nodes marked as "transient", they are NOT exported into the user's xml file
+	copiedTree.deleteXPath("user/*[@transient='1']");
+
+	// Remove any remaining upgradePaths (from older registry files)
+	copiedTree.deleteXPath("user/upgradePaths");
+	// Remove legacy <interface> node
+	copiedTree.deleteXPath("user/ui/interface");
+
+	// Save the remaining /darkradiant/user tree to user.xml so that the current settings are preserved
+	copiedTree.exportToFile("user", settingsPath + "user.xml");
+
+	_changesSinceLastSave = 0;
 }
 
 xml::NodeList XMLRegistry::findXPath(const std::string& path)
@@ -118,6 +128,11 @@ void XMLRegistry::deleteXPath(const std::string& path)
 	// Add the toplevel node to the path if required
 	xml::NodeList nodeList = findXPath(path);
 
+	if (!nodeList.empty())
+	{
+		_changesSinceLastSave++;
+	}
+
 	for (xml::Node& node : nodeList)
     {
 		// unlink and delete the node
@@ -131,6 +146,8 @@ xml::Node XMLRegistry::createKeyWithName(const std::string& path,
 {
     assert(!_shutdown);
 
+	_changesSinceLastSave++;
+
 	// The key will be created in the user tree (the default tree is read-only)
 	return _userTree.createKeyWithName(path, key, name);
 }
@@ -139,6 +156,8 @@ xml::Node XMLRegistry::createKey(const std::string& key)
 {
     assert(!_shutdown);
 
+	_changesSinceLastSave++;
+
 	return _userTree.createKey(key);
 }
 
@@ -146,6 +165,8 @@ void XMLRegistry::setAttribute(const std::string& path,
 	const std::string& attrName, const std::string& attrValue)
 {
     assert(!_shutdown);
+
+	_changesSinceLastSave++;
 
 	_userTree.setAttribute(path, attrName, attrValue);
 }
@@ -158,7 +179,7 @@ std::string XMLRegistry::getAttribute(const std::string& path,
 
 	if (nodeList.empty())
 	{
-		return "";
+		return std::string();
 	}
 
 	return nodeList[0].getAttributeValue(attrName);
@@ -178,8 +199,7 @@ std::string XMLRegistry::get(const std::string& key)
 		return wxutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	
-    //rMessage() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
-	return "";
+	return std::string();
 }
 
 void XMLRegistry::set(const std::string& key, const std::string& value) 
@@ -189,6 +209,8 @@ void XMLRegistry::set(const std::string& key, const std::string& value)
 	// Create or set the value in the user tree, the default tree stays untouched
 	// Convert the string to UTF-8 before storing it into the RegistryTree
 	_userTree.set(key, wxutil::IConv::localeToUTF8(value));
+
+	_changesSinceLastSave++;
 
 	// Notify the observers
 	emitSignalForKey(key);
@@ -207,17 +229,35 @@ void XMLRegistry::import(const std::string& importFilePath, const std::string& p
 			_standardTree.importFromFile(importFilePath, parentKey);
 			break;
 	}
+
+	_changesSinceLastSave++;
 }
 
 void XMLRegistry::emitSignalForKey(const std::string& changedKey)
 {
     // Do not default-construct a signal, just emit if there is one already
-    KeySignals::iterator i = _keySignals.find(changedKey);
+    KeySignals::const_iterator i = _keySignals.find(changedKey);
 
     if (i != _keySignals.end())
     {
         i->second.emit();
     }
+}
+
+void XMLRegistry::loadUserFileFromSettingsPath(const ApplicationContext& ctx, 
+	const std::string& filename, const std::string& baseXPath)
+{
+	std::string userSettingsFile = ctx.getSettingsPath() + filename;
+
+	if (os::fileOrDirExists(userSettingsFile))
+	{
+		import(userSettingsFile, baseXPath, Registry::treeUser);
+	}
+	else
+	{
+		rMessage() << "XMLRegistry: file " << filename << " not present in " 
+			<< ctx.getSettingsPath() << std::endl;
+	}
 }
 
 // RegisterableModule implementation
@@ -240,8 +280,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 	// Load the XML files from the runtime data directory
 	std::string base = ctx.getRuntimeDataPath();
 
-    rConsole() << "XMLRegistry: looking for XML files under "
-              << base << std::endl;
+    rConsole() << "XMLRegistry: looking for XML files in " << base << std::endl;
 
 	try
     {
@@ -264,38 +303,11 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	// Load user preferences, these overwrite any values that have defined before
-	// The called method also checks for any upgrades that have to be performed
-	const std::string userSettingsFile = ctx.getSettingsPath() + "user.xml";
-
-	if (os::fileOrDirExists(userSettingsFile))
-    {
-		import(userSettingsFile, "", Registry::treeUser);
-	}
-    else 
-    {
-        rMessage() << "XMLRegistry: no user.xml in " << userSettingsFile << std::endl;
-    }
-
-	const std::string userColoursFile = ctx.getSettingsPath() + "colours.xml";
-
-	if (os::fileOrDirExists(userColoursFile)) 
-    {
-		import(userColoursFile, "user/ui", Registry::treeUser);
-	}
-
-	const std::string userInputFile = ctx.getSettingsPath() + "input.xml";
-
-	if (os::fileOrDirExists(userInputFile))
-    {
-		import(userInputFile, "user/ui", Registry::treeUser);
-	}
-
-	const std::string userFilterFile = ctx.getSettingsPath() + "filters.xml";
-
-	if (os::fileOrDirExists(userFilterFile))
-    {
-		import(userFilterFile, "user/ui/filtersystem", Registry::treeUser);
-	}
+	
+	loadUserFileFromSettingsPath(ctx, "user.xml", "");
+	loadUserFileFromSettingsPath(ctx, "colours.xml", "user/ui");
+	loadUserFileFromSettingsPath(ctx, "input.xml", "user/ui");
+	loadUserFileFromSettingsPath(ctx, "filters.xml", "user/ui/filtersystem");
 
 	// Now the registry is up and running, tell the context to emit
 	// the the relevant paths to the XMLRegistry
@@ -303,5 +315,12 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 
     // Subscribe to the post-module-shutdown signal to save changes to disk
     module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(
-        sigc::mem_fun(this, &XMLRegistry::saveToDisk));
+        sigc::mem_fun(this, &XMLRegistry::shutdown));
+
+	_autosaver.reset(new Autosaver([this]() 
+	{
+		return _changesSinceLastSave > 0;
+	}));
+}
+
 }

@@ -24,8 +24,8 @@ public:
 	// Alternative constructor, uses the given nullModel
 	NullModelNode(const NullModelPtr& nullModel);
 
-	std::string name() const;
-	Type getNodeType() const;
+	std::string name() const override;
+	Type getNodeType() const override;
 
 	// Accessor to the singleton instance
 	static NullModelNodePtr InstancePtr();
@@ -34,7 +34,7 @@ public:
 	IModel& getIModel() override;
 	bool hasModifiedScale() override;
 
-	void testSelect(Selector& selector, SelectionTest& test);
+	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -46,7 +46,7 @@ public:
 	}
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
+	virtual const AABB& localAABB() const override;
 };
 
 } // namespace model

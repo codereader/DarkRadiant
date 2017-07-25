@@ -4,6 +4,8 @@
 #include "iundo.h"
 #include <list>
 #include <boost/noncopyable.hpp>
+#include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 
 class IMapFileChangeTracker;
 
@@ -24,7 +26,7 @@ class Node;
 class TraversableNodeSet :
 	public IUndoable,
 	public boost::noncopyable,
-	public UndoSystem::Observer
+	public sigc::trackable
 {
 public:
 	typedef std::list<INodePtr> NodeList;
@@ -39,6 +41,9 @@ private:
 
 	// A list collecting nodes for insertion in postUndo/postRedo
 	NodeList _undoInsertBuffer;
+
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
 
 public:
 	// Default constructor, creates an empty set
@@ -91,13 +96,12 @@ public:
 	IUndoMementoPtr exportState() const;
 	void importState(const IUndoMementoPtr& state);
 
-	// UndoSystem::Observer implementation
-	void postUndo();
-	void postRedo();
-
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 private:
+	// UndoSystem event handler
+	void onUndoRedoOperationFinished();
+
 	// Sends the current state to the undosystem
 	void undoSave();
 

@@ -222,10 +222,10 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 		// Another block, a group of statements, enter recursion
 		while (tokeniser.hasMoreTokens() && _curLevel == blockLevel)
 		{
-			std::string token = tokeniser.nextToken();
-			boost::algorithm::to_lower(token);
+			std::string nextToken = tokeniser.nextToken();
+			boost::algorithm::to_lower(nextToken);
 
-			switchOnToken(token, tokeniser);
+			switchOnToken(nextToken, tokeniser);
 		}
 	}
 	else if (token == "set")

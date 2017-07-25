@@ -1,13 +1,10 @@
 #include "ModuleRegistry.h"
 
-#include "ui/splash/Splash.h"
-
 #include "i18n.h"
 #include "itextstream.h"
 #include <stdexcept>
 #include <iostream>
 #include "ApplicationContextImpl.h"
-#include "ModuleLoader.h"
 
 #include <wx/app.h>
 #include <boost/format.hpp>
@@ -35,24 +32,18 @@ ModuleRegistry::~ModuleRegistry()
     unloadModules();
 }
 
-void ModuleRegistry::loadModules()
-{
-    ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
-
-    // Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-#if defined(POSIX) && defined(PKGLIBDIR)
-    // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
-    Loader::loadModules(PKGLIBDIR);
-#else
-    // Load modules from application-relative path
-    Loader::loadModules(_context->getApplicationPath());
-#endif
-}
-
 void ModuleRegistry::unloadModules()
 {
 	_uninitialisedModules.clear();
-	_initialisedModules.clear();
+    
+    // greebo: It's entirely possible that the clear() method will clear the
+    // last shared_ptr of a module. Module might still call this class' moduleExists()
+    // method which in turn refers to a semi-destructed ModulesMap instance.
+    // So, copy the contents to a temporary map before clearing it out.
+    ModulesMap tempMap;
+    tempMap.swap(_initialisedModules);
+    
+	tempMap.clear();
 
     // We need to delete all pending objects before unloading modules
     // wxWidgets needs a chance to delete them before memory access is denied
@@ -61,7 +52,7 @@ void ModuleRegistry::unloadModules()
         wxTheApp->ProcessIdle();
     }
 
-	Loader::unloadModules();
+	_loader.unloadModules();
 }
 
 void ModuleRegistry::registerModule(const RegisterableModulePtr& module)
@@ -75,6 +66,15 @@ void ModuleRegistry::registerModule(const RegisterableModulePtr& module)
 			"ModuleRegistry: module " + module->getName() +
 			" registered after initialisation."
 		);
+	}
+
+	// Check the compatibility level of this module against our internal one
+	if (module->getCompatibilityLevel() != getCompatibilityLevel())
+	{
+		rError() << "ModuleRegistry: Incompatible module rejected: " << module->getName() << 
+			" (module level: " << module->getCompatibilityLevel() << ", registry level: " << 
+			getCompatibilityLevel() << ")" << std::endl;
+		return;
 	}
 
 	// Add this module to the list of uninitialised ones
@@ -127,7 +127,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.9f;
 
-	ui::Splash::Instance().setProgressAndText(
+	_sigModuleInitialisationProgress.emit(
 		(boost::format(_("Initialising Module: %s")) % name).str(),
 		_progress);
 
@@ -137,15 +137,28 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 }
 
 // Initialise all registered modules
-void ModuleRegistry::initialiseModules()
+void ModuleRegistry::loadAndInitialiseModules()
 {
 	if (_modulesInitialised)
     {
 		throw std::runtime_error("ModuleRegistry::initialiseModule called twice.");
 	}
 
+	_sigModuleInitialisationProgress.emit(_("Searching for Modules"), 0.0f);
+
+	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
+
+	// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
+#if defined(POSIX) && defined(PKGLIBDIR)
+	// Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
+	_loader.loadModules(PKGLIBDIR);
+#else
+	// Load modules from application-relative path
+	_loader.loadModules(_context->getApplicationPath());
+#endif
+
 	_progress = 0.1f;
-	ui::Splash::Instance().setProgressAndText(_("Initialising Modules"), _progress);
+	_sigModuleInitialisationProgress.emit(_("Initialising Modules"), _progress);
 
 	for (ModulesMap::iterator i = _uninitialisedModules.begin();
 		 i != _uninitialisedModules.end(); ++i)
@@ -159,7 +172,7 @@ void ModuleRegistry::initialiseModules()
 	_modulesInitialised = true;
 
     _progress = 1.0f;
-    ui::Splash::Instance().setProgressAndText(_("Modules initialised"), _progress);
+	_sigModuleInitialisationProgress.emit(_("Modules initialised"), _progress);
 
 	// Fire the signal now, this will destroy the Splash dialog as well
 	_sigAllModulesInitialised.emit();
@@ -226,9 +239,19 @@ sigc::signal<void> ModuleRegistry::signal_allModulesInitialised() const
     return _sigAllModulesInitialised;
 }
 
+ModuleRegistry::ProgressSignal ModuleRegistry::signal_moduleInitialisationProgress() const
+{
+	return _sigModuleInitialisationProgress;
+}
+
 sigc::signal<void> ModuleRegistry::signal_allModulesUninitialised() const
 {
     return _sigAllModulesUninitialised;
+}
+
+std::size_t ModuleRegistry::getCompatibilityLevel() const
+{
+	return MODULE_COMPATIBILITY_LEVEL;
 }
 
 std::string ModuleRegistry::getModuleList(const std::string& separator)

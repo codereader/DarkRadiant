@@ -4,8 +4,10 @@
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "iradiant.h"
-#include "iundo.h"
 #include "ipatch.h"
+
+#include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/event/SingleIdleCallback.h"
@@ -29,12 +31,12 @@ namespace ui
 class PatchInspector;
 typedef std::shared_ptr<PatchInspector> PatchInspectorPtr;
 
-class PatchInspector
-: public wxutil::TransientWindow,
-  public SelectionSystem::Observer,
-  public UndoSystem::Observer,
-  public IPatch::Observer,
-  private wxutil::XmlResourceBasedWidget
+class PatchInspector : 
+	public wxutil::TransientWindow,
+	public SelectionSystem::Observer,
+	public IPatch::Observer,
+	private wxutil::XmlResourceBasedWidget,
+	public sigc::trackable
 {
 private:
 	wxChoice* _rowCombo;
@@ -63,6 +65,9 @@ private:
 	// If this is set to TRUE, the GTK callbacks will be disabled
 	bool _updateActive;
 	bool _updateNeeded;
+
+	sigc::connection _undoHandler;
+	sigc::connection _redoHandler;
 
 private:
 
@@ -137,10 +142,6 @@ public:
 	 * Also saves the window state to the registry.
 	 */
 	void onRadiantShutdown();
-
-	// UndoSystem::Observer implementation
-	void postUndo();
-	void postRedo();
 
 	// Patch::Observer
 	void onPatchControlPointsChanged();

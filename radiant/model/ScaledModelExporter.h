@@ -4,9 +4,7 @@
 #include "imodel.h"
 #include "imap.h"
 #include <sigc++/connection.h>
-#include <boost/filesystem.hpp>
-
-namespace fs = boost::filesystem;
+#include "os/fs.h"
 
 namespace map
 {

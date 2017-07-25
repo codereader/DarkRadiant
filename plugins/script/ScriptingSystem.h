@@ -33,9 +33,13 @@ private:
 	typedef std::vector<NamedInterface> Interfaces;
 	Interfaces _interfaces;
 
-	boost::python::object _mainModule;
-	boost::python::object _mainNamespace;
-	boost::python::dict _globals;
+	struct BoostPythonMainObjects
+	{
+		boost::python::object mainModule;
+		boost::python::object mainNamespace;
+		boost::python::dict globals;
+	};
+	std::unique_ptr<BoostPythonMainObjects> _mainObjects;
 
 	// The path where the script files are hosted
 	std::string _scriptPath;

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <game
-  index="99"
+  index="16"
   name="Doom 3 Demo"
   enginepath_win32="C:/games/doom3/"
   enginepath_linux="/usr/local/games/doom3-demo/"

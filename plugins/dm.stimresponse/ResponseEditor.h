@@ -50,17 +50,17 @@ public:
 
 	/** greebo: Sets the new entity (updates the treeviews)
 	 */
-	virtual void setEntity(const SREntityPtr& entity);
+	virtual void setEntity(const SREntityPtr& entity) override;
 
 	/** greebo: Updates the widgets (e.g. after a selection change)
 	 */
-	void update();
+	void update() override;
 
 private:
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.
 	 */
-	void checkBoxToggled(wxCheckBox* toggleButton);
+	void checkBoxToggled(wxCheckBox* toggleButton) override;
 
 	/** greebo: Adds a new response effect to the list.
 	 */
@@ -98,7 +98,7 @@ private:
 
 	/** greebo: Adds a new default response to the entity
 	 */
-	void addSR();
+	void addSR() override;
 
 	// Widget creator helpers
 	void createContextMenu();
@@ -106,7 +106,7 @@ private:
 
 	/** greebo: Gets called when the response selection gets changed
 	 */
-	virtual void selectionChanged();
+	virtual void selectionChanged() override;
 
 	void openSRListContextMenu() override;
 

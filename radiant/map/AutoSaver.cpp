@@ -25,10 +25,6 @@
 
 #include <wx/frame.h>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/convenience.hpp>
-#include <boost/filesystem/exception.hpp>
-
 namespace map 
 {
 
@@ -41,9 +37,6 @@ namespace
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_FOLDER = "user/ui/map/snapshotFolder";
 	const char* RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE = "user/ui/map/maxSnapshotFolderSize";
 	const char* GKEY_MAP_EXTENSION = "/mapFormat/fileExtension";
-
-	// Filesystem path typedef
-	typedef boost::filesystem::path Path;
 }
 
 AutoMapSaver::AutoMapSaver() :
@@ -81,15 +74,13 @@ void AutoMapSaver::clearChanges()
 
 void AutoMapSaver::startTimer()
 {
-	assert(_timer);
 	if (!_timer) return;
 
-	_timer->Start(_interval * 1000);
+	_timer->Start(static_cast<int>(_interval * 1000));
 }
 
 void AutoMapSaver::stopTimer()
 {
-	assert(_timer);
 	if (!_timer) return;
 
 	_timer->Stop();
@@ -113,18 +104,18 @@ void AutoMapSaver::saveSnapshot()
 	}
 
 	// Construct the boost::path class out of the full map path (throws on fail)
-	Path fullPath = GlobalMap().getMapName();
+	fs::path fullPath = GlobalMap().getMapName();
 
 	// Append the the snapshot folder to the path
-	Path snapshotPath = fullPath;
+	fs::path snapshotPath = fullPath;
 	snapshotPath.remove_filename();
 	snapshotPath /= GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 
 	// Retrieve the mapname
-	std::string mapName = os::filename_from_path(fullPath.filename());
+	std::string mapName = fullPath.filename().string();
 
 	// Check if the folder exists and create it if necessary
-	if (boost::filesystem::exists(snapshotPath) || os::makeDirectory(snapshotPath.string()))
+	if (os::fileOrDirExists(snapshotPath.string()) || os::makeDirectory(snapshotPath.string()))
 	{
 		// Reset the size counter of the snapshots folder
 		std::size_t folderSize = 0;
@@ -219,7 +210,7 @@ void AutoMapSaver::checkSave()
 			{
 				saveSnapshot();
 			}
-			catch (boost::filesystem::filesystem_error& f) 
+			catch (fs::filesystem_error& f) 
 			{
 				rError() << "AutoSaver::saveSnapshot: " << f.what() << std::endl;
 			}

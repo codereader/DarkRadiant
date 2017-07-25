@@ -68,11 +68,18 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node&
 	else if (nodeName == "toolbutton" || nodeName == "toggletoolbutton")
 	{
 		// Found a button, load the values that are shared by both types
-		const std::string name 		= node.getAttributeValue("name");
-		const std::string icon 		= node.getAttributeValue("icon");
-		const std::string tooltip 	= _(node.getAttributeValue("tooltip").c_str());
-		const std::string action 	= node.getAttributeValue("action");
+		std::string name 		= node.getAttributeValue("name");
+		std::string icon 		= node.getAttributeValue("icon");
+		std::string tooltip 	= _(node.getAttributeValue("tooltip").c_str());
+		std::string action 	= node.getAttributeValue("action");
 
+        // Don't assign a label to the tool item since OSX is painting
+        // the first few characters over the bitmap
+        if (!icon.empty())
+        {
+            name.clear();
+        }
+        
 		if (nodeName == "toolbutton")
 		{
 			// Create a new ToolButton and assign the right callback

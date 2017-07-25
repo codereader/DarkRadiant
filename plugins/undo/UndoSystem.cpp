@@ -40,11 +40,7 @@ namespace
 class RadiantUndoSystem : 
 	public UndoSystem
 {
-	// The operation Observers which get notified on certain events
-	// This is not a set to retain the order of the observers
-	typedef std::list<Observer*> Observers;
-	Observers _observers;
-
+private:
 	static const std::size_t MAX_UNDO_LEVELS = 16384;
 
 	// The undo and redo stacks
@@ -58,6 +54,9 @@ class RadiantUndoSystem :
 
 	typedef std::set<Tracker*> Trackers;
 	Trackers _trackers;
+
+	sigc::signal<void> _signalPostUndo;
+	sigc::signal<void> _signalPostRedo;
 
 public:
 	// Constructor
@@ -81,23 +80,23 @@ public:
 		return &_undoables[&undoable];
 	}
 
-    IUndoStateSaver* getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker)
+    IUndoStateSaver* getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker) override
     {
         auto result = _undoables.insert(std::make_pair(&undoable, UndoStackFiller(tracker)));
         return &(result.first->second);
     }
 
-	void releaseStateSaver(IUndoable& undoable)
+	void releaseStateSaver(IUndoable& undoable) override
 	{
 		_undoables.erase(&undoable);
 	}
 
-	std::size_t size() const
+	std::size_t size() const override
 	{
 		return _undoStack.size();
 	}
 
-	void start()
+	void start() override
 	{
 		_redoStack.clear();
 		if (_undoStack.size() == _undoLevels)
@@ -110,7 +109,7 @@ public:
 
 	// greebo: This finishes the current operation and
 	// removes it instantly from the stack
-	void cancel()
+	void cancel() override
 	{
 		// Try to add the last operation as "temp"
 		if (finishUndo("$TEMPORARY"))
@@ -120,13 +119,14 @@ public:
 		}
 	}
 
-	void finish(const std::string& command) {
+	void finish(const std::string& command) override
+	{
 		if (finishUndo(command)) {
 			rMessage() << command << std::endl;
 		}
 	}
 
-	void undo()
+	void undo() override
 	{
 		if (_undoStack.empty())
 		{
@@ -143,11 +143,7 @@ public:
 		finishRedo(operation->getName());
 		_undoStack.pop_back();
 
-		for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */)
-		{
-			Observer* observer = *(i++);
-			observer->postUndo();
-		}
+		_signalPostUndo.emit();
 
 		// Trigger the onPostUndo event on all scene nodes
 		GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
@@ -159,7 +155,7 @@ public:
 		GlobalSceneGraph().sceneChanged();
 	}
 
-	void redo()
+	void redo() override
 	{
 		if (_redoStack.empty())
 		{
@@ -176,11 +172,7 @@ public:
 		finishUndo(operation->getName());
 		_redoStack.pop_back();
 
-		for (Observers::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */)
-		{
-			Observer* observer = *(i++);
-			observer->postRedo();
-		}
+		_signalPostRedo.emit();
 
 		// Trigger the onPostRedo event on all scene nodes
 		GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
@@ -192,7 +184,7 @@ public:
 		GlobalSceneGraph().sceneChanged();
 	}
 
-	void clear()
+	void clear() override
 	{
 		setActiveUndoStack(NULL);
 		_undoStack.clear();
@@ -203,48 +195,37 @@ public:
 		// there are some "persistent" observers like EntityInspector and ShaderClipboard
 	}
 
-	void addObserver(Observer* observer)
+	sigc::signal<void>& signal_postUndo() override
 	{
-		// Ensure no observer is added twice
-		assert(std::find(_observers.begin(), _observers.end(), observer) == _observers.end());
-
-		// Observers are added to the end of the list
-		_observers.push_back(observer);
+		return _signalPostUndo;
 	}
 
-	void removeObserver(Observer* observer)
+	// Emitted after a redo operation is fully completed, allows objects to refresh their state
+	sigc::signal<void>& signal_postRedo() override
 	{
-		Observers::iterator i = std::find(_observers.begin(), _observers.end(), observer);
-
-		// Ensure that the observer is actually registered
-		assert(i != _observers.end());
-
-		if (i != _observers.end())
-		{
-			_observers.erase(i);
-		}
+		return _signalPostRedo;
 	}
 
-	void attachTracker(Tracker& tracker)
+	void attachTracker(Tracker& tracker) override
 	{
 		ASSERT_MESSAGE(_trackers.find(&tracker) == _trackers.end(), "undo tracker already attached");
 		_trackers.insert(&tracker);
 	}
 
-	void detachTracker(Tracker& tracker)
+	void detachTracker(Tracker& tracker) override
 	{
 		ASSERT_MESSAGE(_trackers.find(&tracker) != _trackers.end(), "undo tracker cannot be detached");
 		_trackers.erase(&tracker);
 	}
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const
+	virtual const std::string& getName() const override
 	{
 		static std::string _name(MODULE_UNDOSYSTEM);
 		return _name;
 	}
 
-	virtual const StringSet& getDependencies() const
+	virtual const StringSet& getDependencies() const override
 	{
 		static StringSet _dependencies;
 
@@ -261,7 +242,7 @@ public:
 		return _dependencies;
 	}
 
-	virtual void initialiseModule(const ApplicationContext& ctx)
+	virtual void initialiseModule(const ApplicationContext& ctx) override
 	{
 		rMessage() << "UndoSystem::initialiseModule called" << std::endl;
 
@@ -404,15 +385,9 @@ typedef std::shared_ptr<RadiantUndoSystem> RadiantUndoSystemPtr;
 
 } // namespace undo
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	module::performDefaultInitialisation(registry);
+
 	registry.registerModule(undo::RadiantUndoSystemPtr(new undo::RadiantUndoSystem));
-
-	// Initialise the streams using the given application context
-	module::initialiseStreams(registry.getApplicationContext());
-
-	// Remember the reference to the ModuleRegistry
-	module::RegistryReference::Instance().setRegistry(registry);
-
-	// Set up the assertion handler
-	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

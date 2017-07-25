@@ -80,7 +80,10 @@ void ShaderDefinitionView::update()
 	definition += material->getDefinition();
 	definition += "\n\r}";
 
+	// Value Updates are only possible when read-only is false
+	_view->SetReadOnly(false);
 	_view->SetValue(definition);
+	_view->SetReadOnly(true);
 }
 
 void ShaderDefinitionView::ShowDialog(const std::string& shaderName)
