@@ -1,6 +1,7 @@
 #include "Lwo2Exporter.h"
 
 #include <vector>
+#include <iomanip>
 #include "itextstream.h"
 #include "imodelsurface.h"
 #include "imap.h"
@@ -31,8 +32,8 @@ public:
 private:
 	Type _chunkType;
 
-	// The number of bytes used for subchunks
-	unsigned int _childChunkSizeBytes;
+	// The number of bytes used for the size info of this chunk
+	unsigned int _sizeDescriptorByteCount;
 
 public:
 	std::string identifier; // the 4-byte ID
@@ -55,13 +56,13 @@ public:
 	{
 		// FORM sub-chunks are normal chunks and have 4 bytes size info
 		// whereas subchunks of e.g. CLIP use 2 bytes of size info
-		_childChunkSizeBytes = _chunkType == Type::Chunk ? 4 : 2;
+		_sizeDescriptorByteCount = _chunkType == Type::Chunk ? 4 : 2;
 	}
 
 	// Copy ctor
 	Chunk(const Chunk& other) :
 		_chunkType(other._chunkType),
-		_childChunkSizeBytes(other._childChunkSizeBytes),
+		_sizeDescriptorByteCount(other._sizeDescriptorByteCount),
 		identifier(other.identifier),
 		stream(std::ios_base::in | std::ios_base::out | std::ios_base::binary),
 		subChunks(other.subChunks)
@@ -83,7 +84,7 @@ public:
 			for (const Chunk::Ptr& chunk : subChunks)
 			{
 				totalSize += 4; // ID (4 bytes)
-				totalSize += _childChunkSizeBytes; // Subchunk Size Info (can be 4 or 2 bytes)
+				totalSize += chunk->_sizeDescriptorByteCount; // Subchunk Size Info (can be 4 or 2 bytes)
 
 				// While the child chunk size itself doesn't include padding, we need to respect
 				// it when calculating the size of this parent chunk
@@ -119,6 +120,7 @@ public:
 		flushBuffer();
 
 		output.write(identifier.c_str(), identifier.length());
+		output.flush();
 
 		if (_chunkType == Type::Chunk)
 		{
@@ -126,23 +128,32 @@ public:
 		}
 		else
 		{
-			stream::writeBigEndian<uint16_t>(output, getContentSize());
+			output.write(identifier.c_str(), identifier.length());
+			//stream::writeBigEndian<uint16_t>(output, getContentSize());
 		}
+
+		output.flush();
 
 		// Write the direct contents of this chunk
 		stream.seekg(0, std::stringstream::beg);
 		output << stream.rdbuf();
+
+		output.flush();
 
 		// Write all subchunks
 		for (const Chunk::Ptr& chunk : subChunks)
 		{
 			chunk->writeToStream(output);
 
+			output.flush();
+
 			// Add the padding byte after the chunk
 			if (chunk->getContentSize() % 2 == 1)
 			{
 				output.write("\0", 1);
 			}
+
+			output.flush();
 		}
 	}
 };
@@ -340,16 +351,19 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		// Define the BLOK subchunk
 		Chunk::Ptr blok = surf->addChunk("BLOK", Chunk::Type::SubChunk);
 
-		// Use the same name as the surface
-		writeString(blok->stream, surface.materialName);
+		// Add the IMAP subchunk
+		Chunk::Ptr imap = blok->addChunk("IMAP", Chunk::Type::SubChunk);
+
+		// Use the same name as the surface as ordinal string
+		writeString(imap->stream, surface.materialName);
 
 		// PROJ
-		Chunk::Ptr blokProj = blok->addChunk("PROJ", Chunk::Type::SubChunk);
-		stream::writeBigEndian<uint16_t>(blokProj->stream, 5); // UV-mapped projection
+		Chunk::Ptr imapProj = imap->addChunk("PROJ", Chunk::Type::SubChunk);
+		stream::writeBigEndian<uint16_t>(imapProj->stream, 5); // UV-mapped projection
 
 		// VMAP 
-		Chunk::Ptr blokVmap = blok->addChunk("VMAP", Chunk::Type::SubChunk);
-		writeString(blokVmap->stream, uvmapName);
+		Chunk::Ptr imapVmap = imap->addChunk("VMAP", Chunk::Type::SubChunk);
+		writeString(imapVmap->stream, uvmapName);
 
 		// Reposition the vertex index
 		vertexIdxStart += surface.vertices.size();
