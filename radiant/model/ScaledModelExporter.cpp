@@ -131,7 +131,14 @@ void ScaledModelExporter::exportModel(const model::IModelExporterPtr& exporter,
 	// Open a temporary file (leading underscore)
 	fs::path tempFile = targetPath / ("_" + modelFilename);
 
-	std::ofstream tempStream(tempFile.string().c_str());
+	std::ofstream::openmode mode = std::ofstream::out;
+
+	if (exporter->getFileFormat() == model::IModelExporter::Format::Binary)
+	{
+		mode |= std::ios::binary;
+	}
+
+	std::ofstream tempStream(tempFile.string().c_str(), mode);
 
 	if (!tempStream.is_open())
 	{

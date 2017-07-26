@@ -4,8 +4,7 @@
 #include "itextstream.h"
 #include "imodelsurface.h"
 #include "imap.h"
-#include <boost/iostreams/stream.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
+#include "bytestreamutils.h"
 
 namespace model
 {
@@ -21,7 +20,7 @@ struct Chunk;
 struct Chunk
 {
 public:
-	typedef boost::iostreams::back_insert_device<std::string> Device;
+	typedef std::shared_ptr<Chunk> Ptr;
 
 	enum class Type
 	{
@@ -43,19 +42,16 @@ public:
 	std::string contents;
 
 	// Child chunks
-	std::vector<Chunk> subChunks;
-
-private:
-	Device _device;
+	std::vector<Chunk::Ptr> subChunks;
 
 public:
-	boost::iostreams::stream<Device> stream;
+	//boost::iostreams::stream<Device> stream;
+	std::stringstream stream;
 
 	Chunk(const std::string& identifier_, Type type) :
 		_chunkType(type),
 		identifier(identifier_),
-		_device(contents),
-		stream(_device)
+		stream(std::ios_base::in | std::ios_base::out | std::ios_base::binary)
 	{
 		// FORM sub-chunks are normal chunks and have 4 bytes size info
 		// whereas subchunks of e.g. CLIP use 2 bytes of size info
@@ -67,8 +63,7 @@ public:
 		_chunkType(other._chunkType),
 		_childChunkSizeBytes(other._childChunkSizeBytes),
 		identifier(other.identifier),
-		_device(contents),
-		stream(_device),
+		stream(std::ios_base::in | std::ios_base::out | std::ios_base::binary),
 		subChunks(other.subChunks)
 	{}
 
@@ -78,17 +73,22 @@ public:
 	{
 		unsigned int totalSize = 0;
 
-		// Start with the size of the contents
-		totalSize += static_cast<unsigned int>(contents.size());
+		// Start with the size of the contents 
+		// (don't use seek as we don't know if the client still wants to write stuff)
+		totalSize += static_cast<unsigned int>(stream.str().length());
 
 		if (!subChunks.empty())
 		{
 			// Sum up the size of the subchunks
-			for (const Chunk& chunk : subChunks)
+			for (const Chunk::Ptr& chunk : subChunks)
 			{
 				totalSize += 4; // ID (4 bytes)
 				totalSize += _childChunkSizeBytes; // Subchunk Size Info (can be 4 or 2 bytes)
-				totalSize += chunk.getContentSize(); // ID
+
+				// While the child chunk size itself doesn't include padding, we need to respect
+				// it when calculating the size of this parent chunk
+				unsigned int childChunkSize = chunk->getContentSize();
+				totalSize += childChunkSize + (childChunkSize % 2); // add 1 padding byte if odd
 			}
 		}
 
@@ -97,10 +97,53 @@ public:
 	}
 
 	// Adds the specified empty Chunk and returns its reference
-	Chunk& addChunk(const std::string& identifier_, Type type)
+	Chunk::Ptr addChunk(const std::string& identifier_, Type type)
 	{
-		subChunks.push_back(Chunk(identifier_, type));
+		subChunks.push_back(std::make_shared<Chunk>(identifier_, type));
 		return subChunks.back();
+	}
+
+	void flushBuffer()
+	{
+		stream.flush();
+
+		for (const Chunk::Ptr& chunk : subChunks)
+		{
+			chunk->flushBuffer();
+		}
+	}
+
+	void writeToStream(std::ostream& output)
+	{
+		// Flush all buffers before writing to the output stream
+		flushBuffer();
+
+		output.write(identifier.c_str(), identifier.length());
+
+		if (_chunkType == Type::Chunk)
+		{
+			stream::writeBigEndian<uint32_t>(output, getContentSize());
+		}
+		else
+		{
+			stream::writeBigEndian<uint16_t>(output, getContentSize());
+		}
+
+		// Write the direct contents of this chunk
+		stream.seekg(0, std::stringstream::beg);
+		output << stream.rdbuf();
+
+		// Write all subchunks
+		for (const Chunk::Ptr& chunk : subChunks)
+		{
+			chunk->writeToStream(output);
+
+			// Add the padding byte after the chunk
+			if (chunk->getContentSize() % 2 == 1)
+			{
+				output.write("\0", 1);
+			}
+		}
 	}
 };
 
@@ -151,33 +194,98 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	Chunk fileChunk("FORM", Chunk::Type::Chunk);
 
 	// The data of the FORM file contains just the LWO2 id and the collection of chunks
-	fileChunk.stream << "LWO2";
+	fileChunk.stream.write("LWO2", 4);
 
 	// Assemble the list of regular Chunks, these all use 4 bytes for size info
 
 	// TAGS
-	Chunk& tags = fileChunk.addChunk("TAGS", Chunk::Type::Chunk);
+	Chunk::Ptr tags = fileChunk.addChunk("TAGS", Chunk::Type::Chunk);
 	
-	tags.stream << '\0'; // empty string as first tag name
+	// Export all material names as tags
+	if (!_surfaces.empty())
+	{
+		for (const Surface& surface : _surfaces)
+		{
+			// Include the nul character at the end
+			tags->stream.write(surface.materialName.c_str(), surface.materialName.length() + 1);
+		}
+	}
+	else
+	{
+		tags->stream.write("\0", 1); // empty string as first tag name
+	}
 
 	// Create a single layer for the geometry
-	Chunk& layr = fileChunk.addChunk("LAYR", Chunk::Type::Chunk);
+	Chunk::Ptr layr = fileChunk.addChunk("LAYR", Chunk::Type::Chunk);
 
 	// LAYR{ number[U2], flags[U2], pivot[VEC12], name[S0], parent[U2] ? }
 
-	layr.stream << uint16_t(0); // number[U2]
-	layr.stream << uint16_t(0); // flags[U2]
-	layr.stream << float(0) << float(0) << float(0); // pivot[VEC12]
-	layr.stream << '\0'; // name[S0]
+	stream::writeBigEndian<uint16_t>(layr->stream, 0); // number[U2]
+	stream::writeBigEndian<uint16_t>(layr->stream, 0); // flags[U2]
+
+	// pivot[VEC12]
+	stream::writeBigEndian<float>(layr->stream, 0);
+	stream::writeBigEndian<float>(layr->stream, 0);
+	stream::writeBigEndian<float>(layr->stream, 0);
+
+	layr->stream.write("\0", 1); // name[S0]
 	// no parent index
 
-	// PNTS
-	Chunk& pnts = fileChunk.addChunk("PNTS", Chunk::Type::Chunk);
+	// Create the chunks for PNTS, POLS, PTAG
+	Chunk::Ptr pnts = fileChunk.addChunk("PNTS", Chunk::Type::Chunk);
+	Chunk::Ptr pols = fileChunk.addChunk("POLS", Chunk::Type::Chunk);
+	Chunk::Ptr ptag = fileChunk.addChunk("PTAG", Chunk::Type::Chunk);
+
+	// We only ever export FACE polygons
+	pols->stream.write("FACE", 4);
+	ptag->stream.write("SURF", 4); // we tag the surfaces
 
 	// Load all vertex coordinates into this chunk
+	for (std::size_t surfNum = 0; surfNum < _surfaces.size(); ++surfNum)
+	{
+		Surface& surface = _surfaces[surfNum];
 
+		for (const ArbitraryMeshVertex& vertex : surface.vertices)
+		{
+			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.x()));
+			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.y()));
+			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.z()));
+		}
 
-	rMessage() << "Buffer size is " << fileChunk.contents.size() << std::endl;
+		int16_t numVerts = 3; // we export triangles
+
+		for (std::size_t i = 0; i + 2 < surface.indices.size(); i += 3)
+		{
+			std::size_t polyNum = i / 3;
+
+			stream::writeBigEndian<uint16_t>(pols->stream, numVerts);
+
+			// Fixme: Index type is VX, handle cases larger than FF00
+			stream::writeBigEndian<uint16_t>(pols->stream, surface.indices[i+0]);
+			stream::writeBigEndian<uint16_t>(pols->stream, surface.indices[i+1]);
+			stream::writeBigEndian<uint16_t>(pols->stream, surface.indices[i+2]);
+
+			// Fixme: Index type is VX, handle cases larger than FF00
+			stream::writeBigEndian<uint16_t>(ptag->stream, polyNum);
+			stream::writeBigEndian<uint16_t>(ptag->stream, surfNum);
+		}
+
+		// Write the SURF chunk for the surface
+		Chunk::Ptr surf = fileChunk.addChunk("SURF", Chunk::Type::Chunk);
+
+		if (!surface.materialName.empty())
+		{
+			surf->stream.write(surface.materialName.c_str(), surface.materialName.length() + 1);
+		}
+		else
+		{
+			surf->stream.write("\0", 1);
+		}
+
+		surf->stream.write("\0", 1); // empty parent name
+	}
+
+	fileChunk.writeToStream(stream);
 }
 
 }

@@ -129,6 +129,14 @@ public:
 	// can create a fresh instance of this exporter on demand.
 	virtual IModelExporterPtr clone() = 0;
 
+	enum class Format
+	{
+		Text,	// Exporter writes text-based format
+		Binary, // Exporter exports to a binary stream
+	};
+
+	virtual Format getFileFormat() const = 0;
+
 	// Returns the uppercase file extension this exporter is suitable for
 	virtual const std::string& getExtension() const = 0;
 
