@@ -247,25 +247,43 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	layr->stream.write("\0", 1); // name[S0]
 	// no parent index
 
-	// Create the chunks for PNTS, POLS, PTAG
+	// Create the chunks for PNTS, POLS, PTAG, VMAP
 	Chunk::Ptr pnts = fileChunk.addChunk("PNTS", Chunk::Type::Chunk);
 	Chunk::Ptr pols = fileChunk.addChunk("POLS", Chunk::Type::Chunk);
 	Chunk::Ptr ptag = fileChunk.addChunk("PTAG", Chunk::Type::Chunk);
+	Chunk::Ptr vmap = fileChunk.addChunk("VMAP", Chunk::Type::Chunk);
 
 	// We only ever export FACE polygons
 	pols->stream.write("FACE", 4);
 	ptag->stream.write("SURF", 4); // we tag the surfaces
+
+	// VMAP { type[ID4], dimension[U2], name[S0], ...) }
+	vmap->stream.write("TXUV", 4);		// "TXUV"
+	stream::writeBigEndian<uint16_t>(vmap->stream, 2); // dimension
+	std::string uvmapName = "UVMap";
+	vmap->stream.write(uvmapName.c_str(), uvmapName.length() + 1);
+
+	std::size_t vertexIdxStart = 0;
 
 	// Load all vertex coordinates into this chunk
 	for (std::size_t surfNum = 0; surfNum < _surfaces.size(); ++surfNum)
 	{
 		Surface& surface = _surfaces[surfNum];
 
-		for (const ArbitraryMeshVertex& vertex : surface.vertices)
+		for (std::size_t v = 0; v < surface.vertices.size(); ++v)
 		{
+			const ArbitraryMeshVertex& vertex = surface.vertices[v];
+			std::size_t vertNum = vertexIdxStart + v;
+
+			// "The LightWave coordinate system is left-handed, with +X to the right or east, +Y upward, and +Z forward or north."
 			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.x()));
-			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.y()));
 			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.z()));
+			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.y()));
+
+			// Write the UV map data
+			writeVariableIndex(vmap->stream, vertNum);
+			stream::writeBigEndian<float>(vmap->stream, static_cast<float>(vertex.texcoord.x()));
+			stream::writeBigEndian<float>(vmap->stream, static_cast<float>(vertex.texcoord.y()));
 		}
 
 		int16_t numVerts = 3; // we export triangles
@@ -276,12 +294,12 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 
 			stream::writeBigEndian<uint16_t>(pols->stream, numVerts); // [U2]
 
-			// Fixme: Index type is VX, handle cases larger than FF00
-			writeVariableIndex(pols->stream, surface.indices[i+0]); // [VX]
-			writeVariableIndex(pols->stream, surface.indices[i+1]); // [VX]
-			writeVariableIndex(pols->stream, surface.indices[i+2]); // [VX]
+			// The three vertices defining this polygon
+			writeVariableIndex(pols->stream, vertexIdxStart + surface.indices[i+0]); // [VX]
+			writeVariableIndex(pols->stream, vertexIdxStart + surface.indices[i+1]); // [VX]
+			writeVariableIndex(pols->stream, vertexIdxStart + surface.indices[i+2]); // [VX]
 
-			// Fixme: Index type is VX, handle cases larger than FF00
+			// The surface mapping in the PTAG
 			writeVariableIndex(ptag->stream, polyNum); // [VX]
 			stream::writeBigEndian<uint16_t>(ptag->stream, static_cast<uint16_t>(surfNum)); // [U2]
 		}
@@ -299,6 +317,9 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		}
 
 		surf->stream.write("\0", 1); // empty parent name
+
+		// Reposition the vertex index
+		vertexIdxStart += surface.vertices.size();
 	}
 
 	fileChunk.writeToStream(stream);
