@@ -163,6 +163,33 @@ void writeVariableIndex(std::ostream& stream, std::size_t index)
 	}
 }
 
+// Writes and S0 datatype to the given stream
+void writeString(std::ostream& stream, const std::string& str)
+{
+	// LWO2 requires the following "Names or other character strings 
+	// are written as a series of ASCII character values followed by 
+	// a zero (or null) byte. If the length of the string including the 
+	// null terminating byte is odd, an extra null is added so that the 
+	// data that follows will begin on an even byte boundary."
+	std::size_t len = str.length();
+
+	// An empty string is a null-terminating byte plus the extra null
+	if (len == 0)
+	{
+		stream.write("\0\0", 2);
+		return;
+	}
+
+	// Write the string including the null-terminator
+	stream.write(str.c_str(), len + 1);
+
+	// Handle the extra padding byte
+	if ((len + 1) % 2 == 1)
+	{
+		stream.write("\0", 1);
+	}
+}
+
 }
 
 Lwo2Exporter::Lwo2Exporter()
@@ -222,13 +249,12 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	{
 		for (const Surface& surface : _surfaces)
 		{
-			// Include the nul character at the end
-			tags->stream.write(surface.materialName.c_str(), surface.materialName.length() + 1);
+			writeString(tags->stream, surface.materialName);
 		}
 	}
 	else
 	{
-		tags->stream.write("\0", 1); // empty string as first tag name
+		writeString(tags->stream, "");
 	}
 
 	// Create a single layer for the geometry
@@ -244,7 +270,7 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	stream::writeBigEndian<float>(layr->stream, 0);
 	stream::writeBigEndian<float>(layr->stream, 0);
 
-	layr->stream.write("\0", 1); // name[S0]
+	writeString(layr->stream, ""); // name[S0]
 	// no parent index
 
 	// Create the chunks for PNTS, POLS, PTAG, VMAP
@@ -260,8 +286,9 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	// VMAP { type[ID4], dimension[U2], name[S0], ...) }
 	vmap->stream.write("TXUV", 4);		// "TXUV"
 	stream::writeBigEndian<uint16_t>(vmap->stream, 2); // dimension
+	
 	std::string uvmapName = "UVMap";
-	vmap->stream.write(uvmapName.c_str(), uvmapName.length() + 1);
+	writeString(vmap->stream, uvmapName);
 
 	std::size_t vertexIdxStart = 0;
 
@@ -307,16 +334,22 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		// Write the SURF chunk for the surface
 		Chunk::Ptr surf = fileChunk.addChunk("SURF", Chunk::Type::Chunk);
 
-		if (!surface.materialName.empty())
-		{
-			surf->stream.write(surface.materialName.c_str(), surface.materialName.length() + 1);
-		}
-		else
-		{
-			surf->stream.write("\0", 1);
-		}
+		writeString(surf->stream, surface.materialName);
+		writeString(surf->stream, ""); // empty parent name
 
-		surf->stream.write("\0", 1); // empty parent name
+		// Define the BLOK subchunk
+		Chunk::Ptr blok = surf->addChunk("BLOK", Chunk::Type::SubChunk);
+
+		// Use the same name as the surface
+		writeString(blok->stream, surface.materialName);
+
+		// PROJ
+		Chunk::Ptr blokProj = blok->addChunk("PROJ", Chunk::Type::SubChunk);
+		stream::writeBigEndian<uint16_t>(blokProj->stream, 5); // UV-mapped projection
+
+		// VMAP 
+		Chunk::Ptr blokVmap = blok->addChunk("VMAP", Chunk::Type::SubChunk);
+		writeString(blokVmap->stream, uvmapName);
 
 		// Reposition the vertex index
 		vertexIdxStart += surface.vertices.size();
