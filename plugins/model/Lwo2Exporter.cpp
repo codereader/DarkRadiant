@@ -147,6 +147,22 @@ public:
 	}
 };
 
+void writeVariableIndex(std::ostream& stream, std::size_t index)
+{
+	// LWO2 defines the variable index VX data type which is
+	// 32 bit as soon as the index value is greater than 0xFF00, otherwise 16 bit
+	if (index < 0xFF00)
+	{
+		stream::writeBigEndian<uint16_t>(stream, static_cast<uint16_t>(index));
+	}
+	else
+	{
+		// According to the specs, for values greater than 0xFF00:
+		// "the index is written as an unsigned four byte integer with bits 24-31 set"
+		stream::writeBigEndian<uint32_t>(stream, static_cast<uint32_t>(index) | 0xFF000000);
+	}
+}
+
 }
 
 Lwo2Exporter::Lwo2Exporter()
@@ -258,16 +274,16 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		{
 			std::size_t polyNum = i / 3;
 
-			stream::writeBigEndian<uint16_t>(pols->stream, numVerts);
+			stream::writeBigEndian<uint16_t>(pols->stream, numVerts); // [U2]
 
 			// Fixme: Index type is VX, handle cases larger than FF00
-			stream::writeBigEndian<uint16_t>(pols->stream, surface.indices[i+0]);
-			stream::writeBigEndian<uint16_t>(pols->stream, surface.indices[i+1]);
-			stream::writeBigEndian<uint16_t>(pols->stream, surface.indices[i+2]);
+			writeVariableIndex(pols->stream, surface.indices[i+0]); // [VX]
+			writeVariableIndex(pols->stream, surface.indices[i+1]); // [VX]
+			writeVariableIndex(pols->stream, surface.indices[i+2]); // [VX]
 
 			// Fixme: Index type is VX, handle cases larger than FF00
-			stream::writeBigEndian<uint16_t>(ptag->stream, polyNum);
-			stream::writeBigEndian<uint16_t>(ptag->stream, surfNum);
+			writeVariableIndex(ptag->stream, polyNum); // [VX]
+			stream::writeBigEndian<uint16_t>(ptag->stream, static_cast<uint16_t>(surfNum)); // [U2]
 		}
 
 		// Write the SURF chunk for the surface
