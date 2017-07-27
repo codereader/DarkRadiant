@@ -120,7 +120,9 @@ public:
 		flushBuffer();
 
 		output.write(identifier.c_str(), identifier.length());
+#ifdef _DEBUG
 		output.flush();
+#endif
 
 		if (_chunkType == Type::Chunk)
 		{
@@ -131,20 +133,25 @@ public:
 			stream::writeBigEndian<uint16_t>(output, getContentSize());
 		}
 
+#ifdef _DEBUG
 		output.flush();
-
+#endif
 		// Write the direct contents of this chunk
 		std::string str = stream.str();
 		output.write(str.c_str(), str.length());
 
+#ifdef _DEBUG
 		output.flush();
+#endif
 
 		// Write all subchunks
 		for (const Chunk::Ptr& chunk : subChunks)
 		{
 			chunk->writeToStream(output);
 
+#ifdef _DEBUG
 			output.flush();
+#endif
 
 			// Add the padding byte after the chunk
 			if (chunk->getContentSize() % 2 == 1)
@@ -152,7 +159,9 @@ public:
 				output.write("\0", 1);
 			}
 
+#ifdef _DEBUG
 			output.flush();
+#endif
 		}
 	}
 };
@@ -317,13 +326,17 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.z()));
 			stream::writeBigEndian<float>(pnts->stream, static_cast<float>(vertex.vertex.y()));
 
-			// Write the UV map data
+			// Write the UV map data (invert the T axis)
 			writeVariableIndex(vmap->stream, vertNum);
 			stream::writeBigEndian<float>(vmap->stream, static_cast<float>(vertex.texcoord.x()));
-			stream::writeBigEndian<float>(vmap->stream, static_cast<float>(vertex.texcoord.y()));
+			stream::writeBigEndian<float>(vmap->stream, 1.0f - static_cast<float>(vertex.texcoord.y()));
 		}
 
 		int16_t numVerts = 3; // we export triangles
+
+		// LWO2 sez: "When writing POLS, the vertex list for each polygon should begin 
+		// at a convex vertex and proceed clockwise as seen from the visible side of the polygon"
+		// DarkRadiant uses CCW windings, so reverse the index ordering
 
 		for (std::size_t i = 0; i + 2 < surface.indices.size(); i += 3)
 		{
@@ -331,10 +344,10 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 
 			stream::writeBigEndian<uint16_t>(pols->stream, numVerts); // [U2]
 
-			// The three vertices defining this polygon
-			writeVariableIndex(pols->stream, vertexIdxStart + surface.indices[i+0]); // [VX]
-			writeVariableIndex(pols->stream, vertexIdxStart + surface.indices[i+1]); // [VX]
+			// The three vertices defining this polygon (reverse indices to produce LWO2 windings)
 			writeVariableIndex(pols->stream, vertexIdxStart + surface.indices[i+2]); // [VX]
+			writeVariableIndex(pols->stream, vertexIdxStart + surface.indices[i+1]); // [VX]
+			writeVariableIndex(pols->stream, vertexIdxStart + surface.indices[i+0]); // [VX]
 
 			// The surface mapping in the PTAG
 			writeVariableIndex(ptag->stream, polyNum); // [VX]
