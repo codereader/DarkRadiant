@@ -128,15 +128,14 @@ public:
 		}
 		else
 		{
-			output.write(identifier.c_str(), identifier.length());
-			//stream::writeBigEndian<uint16_t>(output, getContentSize());
+			stream::writeBigEndian<uint16_t>(output, getContentSize());
 		}
 
 		output.flush();
 
 		// Write the direct contents of this chunk
-		stream.seekg(0, std::stringstream::beg);
-		output << stream.rdbuf();
+		std::string str = stream.str();
+		output.write(str.c_str(), str.length());
 
 		output.flush();
 
@@ -353,17 +352,38 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 
 		// Add the IMAP subchunk
 		Chunk::Ptr imap = blok->addChunk("IMAP", Chunk::Type::SubChunk);
+		{
+			// Use the same name as the surface as ordinal string
+			writeString(imap->stream, surface.materialName);
 
-		// Use the same name as the surface as ordinal string
-		writeString(imap->stream, surface.materialName);
+			Chunk::Ptr imapChan = imap->addChunk("CHAN", Chunk::Type::SubChunk);
+			imapChan->stream.write("COLR", 4);
+
+			Chunk::Ptr imapEnab = imap->addChunk("ENAB", Chunk::Type::SubChunk);
+			stream::writeBigEndian<uint16_t>(imapEnab->stream, 1);
+		}
+
+		// TMAP
+		Chunk::Ptr blokTmap = blok->addChunk("TMAP", Chunk::Type::SubChunk);
+		{
+			Chunk::Ptr tmapSize = blokTmap->addChunk("SIZE", Chunk::Type::SubChunk);
+			stream::writeBigEndian<float>(tmapSize->stream, 1.0f);
+			stream::writeBigEndian<float>(tmapSize->stream, 1.0f);
+			stream::writeBigEndian<float>(tmapSize->stream, 1.0f);
+			writeVariableIndex(tmapSize->stream, 0);
+		}
 
 		// PROJ
-		Chunk::Ptr imapProj = imap->addChunk("PROJ", Chunk::Type::SubChunk);
-		stream::writeBigEndian<uint16_t>(imapProj->stream, 5); // UV-mapped projection
+		Chunk::Ptr blokProj = blok->addChunk("PROJ", Chunk::Type::SubChunk);
+		stream::writeBigEndian<uint16_t>(blokProj->stream, 5); // UV-mapped projection
+
+		// AXIS
+		Chunk::Ptr blokAxis = blok->addChunk("AXIS", Chunk::Type::SubChunk);
+		stream::writeBigEndian<uint16_t>(blokAxis->stream, 2); // Z axis
 
 		// VMAP 
-		Chunk::Ptr imapVmap = imap->addChunk("VMAP", Chunk::Type::SubChunk);
-		writeString(imapVmap->stream, uvmapName);
+		Chunk::Ptr blokVmap = blok->addChunk("VMAP", Chunk::Type::SubChunk);
+		writeString(blokVmap->stream, uvmapName);
 
 		// Reposition the vertex index
 		vertexIdxStart += surface.vertices.size();
