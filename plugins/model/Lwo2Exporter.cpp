@@ -310,6 +310,7 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	writeString(vmap->stream, uvmapName);
 
 	std::size_t vertexIdxStart = 0;
+	std::size_t polyNum = 0; // poly index is used across all surfaces
 
 	// Load all vertex coordinates into this chunk
 	for (std::size_t surfNum = 0; surfNum < _surfaces.size(); ++surfNum)
@@ -340,8 +341,6 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 
 		for (std::size_t i = 0; i + 2 < surface.indices.size(); i += 3)
 		{
-			std::size_t polyNum = i / 3;
-
 			stream::writeBigEndian<uint16_t>(pols->stream, numVerts); // [U2]
 
 			// The three vertices defining this polygon (reverse indices to produce LWO2 windings)
@@ -352,6 +351,8 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 			// The surface mapping in the PTAG
 			writeVariableIndex(ptag->stream, polyNum); // [VX]
 			stream::writeBigEndian<uint16_t>(ptag->stream, static_cast<uint16_t>(surfNum)); // [U2]
+
+			++polyNum;
 		}
 
 		// Write the SURF chunk for the surface
