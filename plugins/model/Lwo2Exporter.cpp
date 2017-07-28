@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "imodelsurface.h"
 #include "imap.h"
+#include "math/AABB.h"
 #include "bytestreamutils.h"
 
 namespace model
@@ -294,6 +295,7 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 
 	// Create the chunks for PNTS, POLS, PTAG, VMAP
 	Chunk::Ptr pnts = fileChunk.addChunk("PNTS", Chunk::Type::Chunk);
+	Chunk::Ptr bbox = fileChunk.addChunk("BBOX", Chunk::Type::Chunk);
 	Chunk::Ptr pols = fileChunk.addChunk("POLS", Chunk::Type::Chunk);
 	Chunk::Ptr ptag = fileChunk.addChunk("PTAG", Chunk::Type::Chunk);
 	Chunk::Ptr vmap = fileChunk.addChunk("VMAP", Chunk::Type::Chunk);
@@ -312,7 +314,9 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	std::size_t vertexIdxStart = 0;
 	std::size_t polyNum = 0; // poly index is used across all surfaces
 
-	// Load all vertex coordinates into this chunk
+	AABB bounds;
+
+	// Write all surface data
 	for (std::size_t surfNum = 0; surfNum < _surfaces.size(); ++surfNum)
 	{
 		Surface& surface = _surfaces[surfNum];
@@ -331,6 +335,9 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 			writeVariableIndex(vmap->stream, vertNum);
 			stream::writeBigEndian<float>(vmap->stream, static_cast<float>(vertex.texcoord.x()));
 			stream::writeBigEndian<float>(vmap->stream, 1.0f - static_cast<float>(vertex.texcoord.y()));
+
+			// Accumulate the BBOX
+			bounds.includePoint(vertex.vertex);
 		}
 
 		int16_t numVerts = 3; // we export triangles
@@ -402,6 +409,18 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		// Reposition the vertex index
 		vertexIdxStart += surface.vertices.size();
 	}
+
+	// Write the bounds now that we know all the points
+	Vector3 min = bounds.origin - bounds.extents;
+	Vector3 max = bounds.origin + bounds.extents;
+
+	stream::writeBigEndian<float>(bbox->stream, static_cast<float>(min.x()));
+	stream::writeBigEndian<float>(bbox->stream, static_cast<float>(min.y()));
+	stream::writeBigEndian<float>(bbox->stream, static_cast<float>(min.z()));
+
+	stream::writeBigEndian<float>(bbox->stream, static_cast<float>(max.x()));
+	stream::writeBigEndian<float>(bbox->stream, static_cast<float>(max.y()));
+	stream::writeBigEndian<float>(bbox->stream, static_cast<float>(max.z()));
 
 	fileChunk.writeToStream(stream);
 }
