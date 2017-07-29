@@ -104,6 +104,7 @@ void Lwo2Exporter::addSurface(const IModelSurface& incoming)
 // Export the model file to the given stream
 void Lwo2Exporter::exportToStream(std::ostream& stream)
 {
+	// The encompassing FORM chunk
 	Lwo2Chunk fileChunk("FORM", Lwo2Chunk::Type::Chunk);
 
 	// The data of the FORM file contains just the LWO2 id and the collection of chunks
@@ -112,7 +113,7 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	// Assemble the list of regular Chunks, these all use 4 bytes for size info
 
 	// TAGS
-	Lwo2Chunk::Ptr tags = fileChunk.addChunk("TAGS", Lwo2Chunk::Type::Chunk);
+	Lwo2Chunk::Ptr tags = fileChunk.addChunk("TAGS");
 	
 	// Export all material names as tags
 	if (!_surfaces.empty())
@@ -128,7 +129,7 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	}
 
 	// Create a single layer for the geometry
-	Lwo2Chunk::Ptr layr = fileChunk.addChunk("LAYR", Lwo2Chunk::Type::Chunk);
+	Lwo2Chunk::Ptr layr = fileChunk.addChunk("LAYR");
 
 	// LAYR{ number[U2], flags[U2], pivot[VEC12], name[S0], parent[U2] ? }
 
@@ -144,11 +145,11 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	// no parent index
 
 	// Create the chunks for PNTS, POLS, PTAG, VMAP
-	Lwo2Chunk::Ptr pnts = fileChunk.addChunk("PNTS", Lwo2Chunk::Type::Chunk);
-	Lwo2Chunk::Ptr bbox = fileChunk.addChunk("BBOX", Lwo2Chunk::Type::Chunk);
-	Lwo2Chunk::Ptr pols = fileChunk.addChunk("POLS", Lwo2Chunk::Type::Chunk);
-	Lwo2Chunk::Ptr ptag = fileChunk.addChunk("PTAG", Lwo2Chunk::Type::Chunk);
-	Lwo2Chunk::Ptr vmap = fileChunk.addChunk("VMAP", Lwo2Chunk::Type::Chunk);
+	Lwo2Chunk::Ptr pnts = fileChunk.addChunk("PNTS");
+	Lwo2Chunk::Ptr bbox = fileChunk.addChunk("BBOX");
+	Lwo2Chunk::Ptr pols = fileChunk.addChunk("POLS");
+	Lwo2Chunk::Ptr ptag = fileChunk.addChunk("PTAG");
+	Lwo2Chunk::Ptr vmap = fileChunk.addChunk("VMAP");
 
 	// We only ever export FACE polygons
 	pols->stream.write("FACE", 4);
@@ -213,13 +214,13 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		}
 
 		// Write the SURF chunk for the surface
-		Lwo2Chunk::Ptr surf = fileChunk.addChunk("SURF", Lwo2Chunk::Type::Chunk);
+		Lwo2Chunk::Ptr surf = fileChunk.addChunk("SURF");
 
 		stream::writeString(surf->stream, surface.materialName);
 		stream::writeString(surf->stream, ""); // empty parent name
 
 		// Define the base surface colour as <1.0, 1.0, 1.0>
-		Lwo2Chunk::Ptr colr = surf->addChunk("COLR", Lwo2Chunk::Type::SubChunk);
+		Lwo2Chunk::Ptr colr = surf->addSubChunk("COLR");
 		
 		stream::writeBigEndian<float>(colr->stream, 1.0f);
 		stream::writeBigEndian<float>(colr->stream, 1.0f);
@@ -227,25 +228,25 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		stream::writeVariableIndex(colr->stream, 0);
 
 		// Define the BLOK subchunk
-		Lwo2Chunk::Ptr blok = surf->addChunk("BLOK", Lwo2Chunk::Type::SubChunk);
+		Lwo2Chunk::Ptr blok = surf->addSubChunk("BLOK");
 
 		// Add the IMAP subchunk
-		Lwo2Chunk::Ptr imap = blok->addChunk("IMAP", Lwo2Chunk::Type::SubChunk);
+		Lwo2Chunk::Ptr imap = blok->addSubChunk("IMAP");
 		{
 			// Use the same name as the surface as ordinal string
 			stream::writeString(imap->stream, surface.materialName);
 
-			Lwo2Chunk::Ptr imapChan = imap->addChunk("CHAN", Lwo2Chunk::Type::SubChunk);
+			Lwo2Chunk::Ptr imapChan = imap->addSubChunk("CHAN");
 			imapChan->stream.write("COLR", 4);
 
-			Lwo2Chunk::Ptr imapEnab = imap->addChunk("ENAB", Lwo2Chunk::Type::SubChunk);
+			Lwo2Chunk::Ptr imapEnab = imap->addSubChunk("ENAB");
 			stream::writeBigEndian<uint16_t>(imapEnab->stream, 1);
 		}
 
 		// TMAP
-		Lwo2Chunk::Ptr blokTmap = blok->addChunk("TMAP", Lwo2Chunk::Type::SubChunk);
+		Lwo2Chunk::Ptr blokTmap = blok->addSubChunk("TMAP");
 		{
-			Lwo2Chunk::Ptr tmapSize = blokTmap->addChunk("SIZE", Lwo2Chunk::Type::SubChunk);
+			Lwo2Chunk::Ptr tmapSize = blokTmap->addSubChunk("SIZE");
 			stream::writeBigEndian<float>(tmapSize->stream, 1.0f);
 			stream::writeBigEndian<float>(tmapSize->stream, 1.0f);
 			stream::writeBigEndian<float>(tmapSize->stream, 1.0f);
@@ -253,15 +254,15 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		}
 
 		// PROJ
-		Lwo2Chunk::Ptr blokProj = blok->addChunk("PROJ", Lwo2Chunk::Type::SubChunk);
+		Lwo2Chunk::Ptr blokProj = blok->addSubChunk("PROJ");
 		stream::writeBigEndian<uint16_t>(blokProj->stream, 5); // UV-mapped projection
 
 		// AXIS
-		Lwo2Chunk::Ptr blokAxis = blok->addChunk("AXIS", Lwo2Chunk::Type::SubChunk);
+		Lwo2Chunk::Ptr blokAxis = blok->addSubChunk("AXIS");
 		stream::writeBigEndian<uint16_t>(blokAxis->stream, 2); // Z axis
 
 		// VMAP 
-		Lwo2Chunk::Ptr blokVmap = blok->addChunk("VMAP", Lwo2Chunk::Type::SubChunk);
+		Lwo2Chunk::Ptr blokVmap = blok->addSubChunk("VMAP");
 		stream::writeString(blokVmap->stream, uvmapName);
 
 		// Reposition the vertex index

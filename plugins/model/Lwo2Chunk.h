@@ -43,8 +43,14 @@ public:
 	// excluding this Chunk's ID (4 bytes) and Size info (4 bytes)
 	unsigned int getContentSize() const;
 
-	// Adds the specified empty Chunk and returns its reference
+	// Adds a Chunk or Subchunk to this one, according to the type
 	Lwo2Chunk::Ptr addChunk(const std::string& identifier_, Type type);
+
+	// Adds a Chunk (size type U4) to this one
+	Lwo2Chunk::Ptr addChunk(const std::string& identifier_);
+
+	// Adds a Chunk (size type U2) to this one
+	Lwo2Chunk::Ptr addSubChunk(const std::string& identifier_);
 
 	void flushBuffer();
 

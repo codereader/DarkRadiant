@@ -48,6 +48,17 @@ Lwo2Chunk::Ptr Lwo2Chunk::addChunk(const std::string& identifier_, Type type)
 	return subChunks.back();
 }
 
+Lwo2Chunk::Ptr Lwo2Chunk::addChunk(const std::string& identifier_)
+{
+	return addChunk(identifier_, Type::Chunk);
+}
+
+// Adds a Chunk (size type U2) to this one
+Lwo2Chunk::Ptr Lwo2Chunk::addSubChunk(const std::string& identifier_)
+{
+	return addChunk(identifier_, Type::SubChunk);
+}
+
 void Lwo2Chunk::flushBuffer()
 {
 	stream.flush();
