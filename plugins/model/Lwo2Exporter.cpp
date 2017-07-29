@@ -368,6 +368,14 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		writeString(surf->stream, surface.materialName);
 		writeString(surf->stream, ""); // empty parent name
 
+		// Define the base surface colour as <1.0, 1.0, 1.0>
+		Chunk::Ptr colr = surf->addChunk("COLR", Chunk::Type::SubChunk);
+		
+		stream::writeBigEndian<float>(colr->stream, 1.0f);
+		stream::writeBigEndian<float>(colr->stream, 1.0f);
+		stream::writeBigEndian<float>(colr->stream, 1.0f);
+		writeVariableIndex(colr->stream, 0);
+
 		// Define the BLOK subchunk
 		Chunk::Ptr blok = surf->addChunk("BLOK", Chunk::Type::SubChunk);
 
