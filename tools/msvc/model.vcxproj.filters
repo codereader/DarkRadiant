@@ -28,6 +28,9 @@
     <ClCompile Include="..\..\plugins\model\Lwo2Exporter.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\model\Lwo2Chunk.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\model\PicoModelLoader.h">
@@ -52,6 +55,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\model\Lwo2Exporter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\model\Lwo2Chunk.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

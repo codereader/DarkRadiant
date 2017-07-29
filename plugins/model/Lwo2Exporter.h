@@ -1,7 +1,7 @@
 #pragma once
 
-
 #include "imodel.h"
+#include <vector>
 #include "render.h"
 
 namespace model
