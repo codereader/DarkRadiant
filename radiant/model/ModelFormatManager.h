@@ -35,6 +35,9 @@ public:
 	void unregisterExporter(const IModelExporterPtr& exporter) override;
 
 	IModelExporterPtr getExporter(const std::string& extension) override;
+
+private:
+	void postModuleInitialisation();
 };
 
 }

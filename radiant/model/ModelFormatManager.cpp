@@ -1,6 +1,7 @@
 #include "ModelFormatManager.h"
 
 #include "itextstream.h"
+#include "ipreferencesystem.h"
 #include <boost/algorithm/string/case_conv.hpp>
 
 #include "modulesystem/StaticModule.h"
@@ -25,6 +26,28 @@ void ModelFormatManager::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	_nullModelLoader.reset(new NullModelLoader);
+
+	module::ModuleRegistry::Instance().signal_allModulesInitialised().connect(
+		sigc::mem_fun(this, &ModelFormatManager::postModuleInitialisation)
+	);
+}
+
+void ModelFormatManager::postModuleInitialisation()
+{
+	if (!_exporters.empty())
+	{
+		// Construct and Register the patch-related preferences
+		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Model Export"));
+
+		ComboBoxValueList choices;
+
+		for (const ExporterMap::value_type& pair : _exporters)
+		{
+			choices.push_back(pair.first);
+		}
+
+		page.appendCombo(_("Export Format for scaled Models"), RKEY_DEFAULT_MODEL_EXPORT_FORMAT, choices, true);
+	}
 }
 
 void ModelFormatManager::registerImporter(const IModelImporterPtr& importer)

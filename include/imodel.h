@@ -215,6 +215,9 @@ inline model::ModelNodePtr Node_getModel(const scene::INodePtr& node)
 	return std::dynamic_pointer_cast<model::ModelNode>(node);
 }
 
+// Contains the default format used for exporting scaled models
+const char* const RKEY_DEFAULT_MODEL_EXPORT_FORMAT = "user/ui/map/defaultScaledModelExportFormat";
+
 const char* const MODULE_MODELFORMATMANAGER("ModelFormatManager");
 
 inline model::IModelFormatManager& GlobalModelFormatManager()

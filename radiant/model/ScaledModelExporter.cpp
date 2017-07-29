@@ -10,6 +10,7 @@
 #include "os/path.h"
 #include <boost/format.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <regex>
 
 namespace map
@@ -70,7 +71,12 @@ void ScaledModelExporter::saveScaledModels()
 
 void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelNodePtr& modelNode)
 {
-	std::string outputExtension = "lwo";
+	// Request the default format from the preferences
+	std::string outputExtension = registry::getValue<std::string>(RKEY_DEFAULT_MODEL_EXPORT_FORMAT);
+	boost::algorithm::to_lower(outputExtension);
+
+	rMessage() << "Model format used for export: " << outputExtension << 
+		" (this can be changed in the preferences)" << std::endl;
 
 	// Save the scaled model as ASE
 	model::IModelExporterPtr exporter = GlobalModelFormatManager().getExporter(outputExtension);
