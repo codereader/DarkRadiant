@@ -33,6 +33,8 @@ public:
 		return Format::Text;
 	}
 
+	const std::string& getDisplayName() const override;
+
 	// Returns the uppercase file extension this exporter is suitable for
 	const std::string& getExtension() const override;
 

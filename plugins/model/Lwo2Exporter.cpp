@@ -70,13 +70,18 @@ IModelExporterPtr Lwo2Exporter::clone()
 	return std::make_shared<Lwo2Exporter>();
 }
 
+const std::string& Lwo2Exporter::getDisplayName() const
+{
+	static std::string _extension("Lightwave Object File (.lwo)");
+	return _extension;
+}
+
 const std::string& Lwo2Exporter::getExtension() const
 {
 	static std::string _extension("LWO");
 	return _extension;
 }
 
-// Adds the given Surface to the exporter's queue
 void Lwo2Exporter::addSurface(const IModelSurface& incoming)
 {
 	_surfaces.push_back(Surface());
@@ -101,7 +106,6 @@ void Lwo2Exporter::addSurface(const IModelSurface& incoming)
 	}
 }
 
-// Export the model file to the given stream
 void Lwo2Exporter::exportToStream(std::ostream& stream)
 {
 	// The encompassing FORM chunk

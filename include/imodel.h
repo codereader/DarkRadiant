@@ -137,6 +137,9 @@ public:
 
 	virtual Format getFileFormat() const = 0;
 
+	// The display name for referencing this exporter in the GUI
+	virtual const std::string& getDisplayName() const = 0;
+
 	// Returns the uppercase file extension this exporter is suitable for
 	virtual const std::string& getExtension() const = 0;
 

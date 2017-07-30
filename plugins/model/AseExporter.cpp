@@ -17,13 +17,18 @@ IModelExporterPtr AseExporter::clone()
 	return std::make_shared<AseExporter>();
 }
 
+const std::string& AseExporter::getDisplayName() const
+{
+	static std::string _extension("ASCII Scene Export (.ase)");
+	return _extension;
+}
+
 const std::string& AseExporter::getExtension() const
 {
 	static std::string _extension("ASE");
 	return _extension;
 }
 
-// Adds the given Surface to the exporter's queue
 void AseExporter::addSurface(const IModelSurface& incoming)
 {
 	_surfaces.push_back(Surface());
@@ -48,7 +53,6 @@ void AseExporter::addSurface(const IModelSurface& incoming)
 	}
 }
 
-// Export the model file to the given stream
 void AseExporter::exportToStream(std::ostream& stream)
 {
 	// Header / scene block
