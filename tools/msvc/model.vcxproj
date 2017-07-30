@@ -328,6 +328,7 @@
     <ClInclude Include="..\..\plugins\model\AseExporter.h" />
     <ClInclude Include="..\..\plugins\model\Lwo2Chunk.h" />
     <ClInclude Include="..\..\plugins\model\Lwo2Exporter.h" />
+    <ClInclude Include="..\..\plugins\model\ModelExporterBase.h" />
     <ClInclude Include="..\..\plugins\model\PicoModelLoader.h" />
     <ClInclude Include="..\..\plugins\model\PicoModelModule.h" />
     <ClInclude Include="..\..\plugins\model\PicoModelNode.h" />

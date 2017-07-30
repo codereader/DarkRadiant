@@ -82,30 +82,6 @@ const std::string& Lwo2Exporter::getExtension() const
 	return _extension;
 }
 
-void Lwo2Exporter::addSurface(const IModelSurface& incoming)
-{
-	_surfaces.push_back(Surface());
-
-	Surface& surface = _surfaces.back();
-	surface.materialName = incoming.getDefaultMaterial();
-
-	// Pull in all the triangles of that mesh
-	for (int i = 0; i < incoming.getNumTriangles(); ++i)
-	{
-		ModelPolygon poly = incoming.getPolygon(i);
-
-		unsigned int indexStart = static_cast<unsigned int>(surface.vertices.size());
-
-		surface.vertices.push_back(poly.a);
-		surface.vertices.push_back(poly.b);
-		surface.vertices.push_back(poly.c);
-
-		surface.indices.push_back(indexStart);
-		surface.indices.push_back(indexStart + 1);
-		surface.indices.push_back(indexStart + 2);
-	}
-}
-
 void Lwo2Exporter::exportToStream(std::ostream& stream)
 {
 	// The encompassing FORM chunk
@@ -122,9 +98,9 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	// Export all material names as tags
 	if (!_surfaces.empty())
 	{
-		for (const Surface& surface : _surfaces)
+		for (const Surfaces::value_type& pair : _surfaces)
 		{
-			stream::writeString(tags->stream, surface.materialName);
+			stream::writeString(tags->stream, pair.second.materialName);
 		}
 	}
 	else
@@ -172,9 +148,10 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	AABB bounds;
 
 	// Write all surface data
-	for (std::size_t surfNum = 0; surfNum < _surfaces.size(); ++surfNum)
+	std::size_t surfNum = 0;
+	for (Surfaces::value_type& pair : _surfaces)
 	{
-		Surface& surface = _surfaces[surfNum];
+		Surface& surface = pair.second;
 
 		for (std::size_t v = 0; v < surface.vertices.size(); ++v)
 		{
@@ -271,6 +248,8 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 
 		// Reposition the vertex index
 		vertexIdxStart += surface.vertices.size();
+
+		++surfNum;
 	}
 
 	// Write the bounds now that we know all the points

@@ -60,5 +60,8 @@
     <ClInclude Include="..\..\plugins\model\Lwo2Chunk.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\model\ModelExporterBase.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
