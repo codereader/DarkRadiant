@@ -340,6 +340,7 @@
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp" />
+    <ClCompile Include="..\..\radiant\map\algorithm\ModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFile.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp" />
@@ -588,6 +589,7 @@
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
+    <ClInclude Include="..\..\radiant\map\algorithm\ModelExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiant\map\infofile\InfoFile.h" />
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h" />

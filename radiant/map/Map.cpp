@@ -39,6 +39,7 @@
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
+#include "map/algorithm/ModelExporter.h"
 #include "map/algorithm/Skins.h"
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
@@ -767,6 +768,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
+	GlobalCommandSystem().addCommand("ExportSelectedAsModel", sigc::mem_fun(*this, &Map::exportSelectedAsModel));
 
     GlobalEventManager().addCommand("NewMap", "NewMap");
     GlobalEventManager().addCommand("OpenMap", "OpenMap");
@@ -778,6 +780,7 @@ void Map::registerCommands()
     GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
     GlobalEventManager().addCommand("SaveSelected", "SaveSelected");
 	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
+	GlobalEventManager().addCommand("ExportSelectedAsModel", "ExportSelectedAsModel");
 }
 
 // Static command targets
@@ -954,6 +957,18 @@ void Map::exportSelected(std::ostream& out)
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
+}
+
+void Map::exportSelectedAsModel(const cmd::ArgumentList& args)
+{
+	// Instantiate a ModelExporter to do the footwork
+	ModelExporter exporter;
+
+	// Collect exportables
+	// Call the traverseSelected function to hit the exporter with each node
+	traverseSelected(GlobalSceneGraph().root(), exporter);
+
+
 }
 
 // RegisterableModule implementation

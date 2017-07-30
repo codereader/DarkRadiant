@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\libs\parser\Tokeniser.h" />
     <ClInclude Include="..\..\libs\picomodel.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
+    <ClInclude Include="..\..\libs\PolygonBuffer.h" />
     <ClInclude Include="..\..\libs\RandomOrigin.h" />
     <ClInclude Include="..\..\libs\registry\adaptors.h" />
     <ClInclude Include="..\..\libs\registry\buffer.h" />

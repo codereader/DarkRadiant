@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\libs\render\RenderablePivot.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\PolygonBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
