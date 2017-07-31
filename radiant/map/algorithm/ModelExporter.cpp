@@ -31,7 +31,7 @@ bool ModelExporter::pre(const scene::INodePtr& node)
 		{
 			const model::IModelSurface& surface = model.getSurface(s);
 
-			_exporter->addSurface(surface);
+			_exporter->addSurface(surface, node->localToWorld());
 		}
 	}
 

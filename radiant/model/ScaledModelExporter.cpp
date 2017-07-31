@@ -94,7 +94,7 @@ void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, con
 	{
 		const model::IModelSurface& surface = model.getSurface(s);
 
-		exporter->addSurface(surface);
+		exporter->addSurface(surface, Matrix4::getIdentity());
 	}
 
 	// Get the current model file name

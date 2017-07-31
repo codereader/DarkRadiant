@@ -8,6 +8,7 @@
 /* Forward decls */
 class AABB;
 class ModelSkin;
+class Matrix4;
 
 namespace model
 {
@@ -144,7 +145,9 @@ public:
 	virtual const std::string& getExtension() const = 0;
 
 	// Adds the given Surface to the exporter's queue
-	virtual void addSurface(const IModelSurface& surface) = 0;
+	// The given transform is applied to the surface before the vertices are added to the queue.
+	// Note: Scaling components of the matrix are not treated separately here.
+	virtual void addSurface(const IModelSurface& surface, const Matrix4& localToWorld) = 0;
 
 	// Export the model file to the given stream
 	virtual void exportToStream(std::ostream& stream) = 0;
