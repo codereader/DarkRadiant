@@ -215,6 +215,9 @@ public:
 	static void saveMap(const cmd::ArgumentList& args);
 	static void saveMapAs(const cmd::ArgumentList& args);
 
+	// Exports the selection as static mesh, querying options from the user
+	void exportSelectedAsModel(const cmd::ArgumentList& args);
+
 	/** greebo: Queries a filename from the user and saves a copy
 	 *          of the current map to the specified filename.
 	 */

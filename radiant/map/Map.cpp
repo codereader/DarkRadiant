@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include <ostream>
+#include <fstream>
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "idialogmanager.h"
@@ -39,6 +40,7 @@
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
+#include "map/algorithm/ModelExporter.h"
 #include "map/algorithm/Skins.h"
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
@@ -767,6 +769,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
+	GlobalCommandSystem().addCommand("ExportSelectedAsModel", sigc::mem_fun(*this, &Map::exportSelectedAsModel));
 
     GlobalEventManager().addCommand("NewMap", "NewMap");
     GlobalEventManager().addCommand("OpenMap", "OpenMap");
@@ -778,6 +781,7 @@ void Map::registerCommands()
     GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
     GlobalEventManager().addCommand("SaveSelected", "SaveSelected");
 	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
+	GlobalEventManager().addCommand("ExportSelectedAsModel", "ExportSelectedAsModel");
 }
 
 // Static command targets
@@ -954,6 +958,36 @@ void Map::exportSelected(std::ostream& out)
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
+}
+
+void Map::exportSelectedAsModel(const cmd::ArgumentList& args)
+{
+	// TODO: Query the output filename
+	std::string outputFile = "C:\\data\\tdm\\darkmod\\models\\scene.ase";
+	std::ofstream stream(outputFile.c_str());
+
+	// Request the default format from the preferences
+	std::string outputExtension = registry::getValue<std::string>(RKEY_DEFAULT_MODEL_EXPORT_FORMAT);
+	boost::algorithm::to_lower(outputExtension);
+
+	rMessage() << "Model format used for export: " << outputExtension <<
+		" (this can be changed in the preferences)" << std::endl;
+
+	// Save the scaled model as ASE
+	model::IModelExporterPtr expFormat = GlobalModelFormatManager().getExporter(outputExtension);
+
+	// Instantiate a ModelExporter to do the footwork
+	ModelExporter exporter(expFormat);
+
+	// Collect exportables
+	// Call the traverseSelected function to hit the exporter with each node
+	traverseSelected(GlobalSceneGraph().root(), exporter);
+
+	rMessage() << "Exporting selection to file " << outputFile << std::endl;
+
+	exporter.writeToStream(stream);
+
+	stream.close();
 }
 
 // RegisterableModule implementation
