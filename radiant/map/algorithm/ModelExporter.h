@@ -22,6 +22,10 @@ public:
 	void post(const scene::INodePtr& node) override;
 
 	void writeToStream(std::ostream& stream);
+
+private:
+	void processBrush(const scene::INodePtr& node);
+	void processPatch(const scene::INodePtr& node);
 };
 
 }
