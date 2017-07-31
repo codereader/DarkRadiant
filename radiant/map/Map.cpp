@@ -962,10 +962,6 @@ void Map::exportSelected(std::ostream& out)
 
 void Map::exportSelectedAsModel(const cmd::ArgumentList& args)
 {
-	// TODO: Query the output filename
-	std::string outputFile = "C:\\data\\tdm\\darkmod\\models\\scene.ase";
-	std::ofstream stream(outputFile.c_str());
-
 	// Request the default format from the preferences
 	std::string outputExtension = registry::getValue<std::string>(RKEY_DEFAULT_MODEL_EXPORT_FORMAT);
 	boost::algorithm::to_lower(outputExtension);
@@ -975,6 +971,18 @@ void Map::exportSelectedAsModel(const cmd::ArgumentList& args)
 
 	// Save the scaled model as ASE
 	model::IModelExporterPtr expFormat = GlobalModelFormatManager().getExporter(outputExtension);
+
+	// TODO: Query the output filename
+	std::string outputFile = "C:\\data\\tdm\\darkmod\\models\\scene." + outputExtension;
+
+	std::ios::openmode mode = std::ios::out;
+
+	if (expFormat->getFileFormat() == model::IModelExporter::Format::Binary)
+	{
+		mode |= std::ios::binary;
+	}
+
+	std::ofstream stream(outputFile.c_str(), mode);
 
 	// Instantiate a ModelExporter to do the footwork
 	ModelExporter exporter(expFormat);

@@ -181,6 +181,13 @@ void parseFromStream(CharVector& buffer, int level, Chunk& parsedChunk)
 
 		if (chunk.id == "FORM")
 		{
+			// LWO doesn't have the correct size?
+			if (dataSize + 4 + 4 != buffer.size())
+			{
+				std::cout << "ERROR: FORM Size Value + 8 Bytes is not the same as the file size." << std::endl;
+				assert(false);
+			}
+
 			// Read the LWO2 tag
 			char lwo2[5];
 			stream.read(lwo2, 4);

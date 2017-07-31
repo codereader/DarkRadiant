@@ -4,6 +4,8 @@
 #include "irender.h"
 #include "inode.h"
 #include "imodule.h"
+#include "imodelsurface.h"
+#include <vector>
 
 /* Forward decls */
 class AABB;
@@ -12,8 +14,6 @@ class Matrix4;
 
 namespace model
 {
-
-class IModelSurface; // see imodelsurface.h
 
 typedef std::vector<std::string> StringList;
 
@@ -148,6 +148,12 @@ public:
 	// The given transform is applied to the surface before the vertices are added to the queue.
 	// Note: Scaling components of the matrix are not treated separately here.
 	virtual void addSurface(const IModelSurface& surface, const Matrix4& localToWorld) = 0;
+
+	// Adds the given set of polygons to the named surface
+	// The given transform is applied to the surface before the vertices are added to the queue.
+	// Note: Scaling components of the matrix are not treated separately here.
+	virtual void addPolygons(const std::string& materialName, 
+		const std::vector<ModelPolygon>& polys, const Matrix4& localToWorld) = 0;
 
 	// Export the model file to the given stream
 	virtual void exportToStream(std::ostream& stream) = 0;
