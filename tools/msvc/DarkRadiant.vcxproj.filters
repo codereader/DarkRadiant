@@ -904,8 +904,8 @@
     <ClCompile Include="..\..\radiant\ui\grid\GridManager.cpp">
       <Filter>src\ui\grid</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\ModelExporter.cpp">
-      <Filter>src\map\algorithm</Filter>
+    <ClCompile Include="..\..\radiant\model\ModelExporter.cpp">
+      <Filter>src\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1842,8 +1842,8 @@
     <ClInclude Include="..\..\radiant\ui\grid\GridManager.h">
       <Filter>src\ui\grid</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\ModelExporter.h">
-      <Filter>src\map\algorithm</Filter>
+    <ClInclude Include="..\..\radiant\model\ModelExporter.h">
+      <Filter>src\model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

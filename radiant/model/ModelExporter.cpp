@@ -1,16 +1,21 @@
 #include "ModelExporter.h"
 
+#include "i18n.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "itextstream.h"
 #include "imodel.h"
+#include "os/fs.h"
+#include <stdexcept>
+#include <fstream>
 
-namespace map
+namespace model
 {
 
 namespace
 {
 
+// Adapter methods to convert brush vertices to ArbitraryMeshVertex type
 ArbitraryMeshVertex convertWindingVertex(const WindingVertex& in)
 {
 	ArbitraryMeshVertex out;
@@ -25,6 +30,7 @@ ArbitraryMeshVertex convertWindingVertex(const WindingVertex& in)
 	return out;
 }
 
+// Adapter methods to convert patch vertices to ArbitraryMeshVertex type
 ArbitraryMeshVertex convertPatchVertex(const VertexNT& in)
 {
 	ArbitraryMeshVertex out;
@@ -150,16 +156,64 @@ void ModelExporter::processBrush(const scene::INodePtr& node)
 	}
 }
 
-void ModelExporter::post(const scene::INodePtr& node) 
+void ModelExporter::ExportToPath(const model::IModelExporterPtr& exporter,
+	const std::string& outputPath, const std::string& filename)
 {
+	fs::path targetPath = outputPath;
 
-}
+	// Open a temporary file (leading underscore)
+	fs::path tempFile = targetPath / ("_" + filename);
 
-void ModelExporter::writeToStream(std::ostream& stream)
-{
-	if (!_exporter) return;
+	std::ofstream::openmode mode = std::ofstream::out;
 
-	_exporter->exportToStream(stream);
+	if (exporter->getFileFormat() == model::IModelExporter::Format::Binary)
+	{
+		mode |= std::ios::binary;
+	}
+
+	std::ofstream tempStream(tempFile.string().c_str(), mode);
+
+	if (!tempStream.is_open())
+	{
+		throw std::runtime_error(
+			(boost::format(_("Cannot open file for writing: %s")) % tempFile.string()).str());
+	}
+
+	exporter->exportToStream(tempStream);
+
+	tempStream.close();
+
+	// The full OS path to the output file
+	targetPath /= filename;
+
+	if (fs::exists(targetPath))
+	{
+		try
+		{
+			fs::remove(targetPath);
+		}
+		catch (fs::filesystem_error& e)
+		{
+			rError() << "Could not remove the file " << targetPath.string() << std::endl
+				<< e.what() << std::endl;
+
+			throw std::runtime_error(
+				(boost::format(_("Could not remove the file: %s")) % tempFile.string()).str());
+		}
+	}
+
+	try
+	{
+		fs::rename(tempFile, targetPath);
+	}
+	catch (fs::filesystem_error& e)
+	{
+		rError() << "Could not rename the temporary file " << tempFile.string() << std::endl
+			<< e.what() << std::endl;
+
+		throw std::runtime_error(
+			(boost::format(_("Could not rename the temporary file: %s")) % tempFile.string()).str());
+	}
 }
 
 }

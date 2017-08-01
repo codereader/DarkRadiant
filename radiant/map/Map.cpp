@@ -40,7 +40,7 @@
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
-#include "map/algorithm/ModelExporter.h"
+#include "model/ModelExporter.h"
 #include "map/algorithm/Skins.h"
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
@@ -969,33 +969,23 @@ void Map::exportSelectedAsModel(const cmd::ArgumentList& args)
 	rMessage() << "Model format used for export: " << outputExtension <<
 		" (this can be changed in the preferences)" << std::endl;
 
-	// Save the scaled model as ASE
+	// Save the scaled model
 	model::IModelExporterPtr expFormat = GlobalModelFormatManager().getExporter(outputExtension);
 
-	// TODO: Query the output filename
-	std::string outputFile = "C:\\data\\tdm\\darkmod\\models\\scene." + outputExtension;
-
-	std::ios::openmode mode = std::ios::out;
-
-	if (expFormat->getFileFormat() == model::IModelExporter::Format::Binary)
-	{
-		mode |= std::ios::binary;
-	}
-
-	std::ofstream stream(outputFile.c_str(), mode);
-
 	// Instantiate a ModelExporter to do the footwork
-	ModelExporter exporter(expFormat);
+	model::ModelExporter exporter(expFormat);
 
 	// Collect exportables
 	// Call the traverseSelected function to hit the exporter with each node
 	traverseSelected(GlobalSceneGraph().root(), exporter);
 
+	// TODO: Query the output filename
+	std::string outputFile = "scene." + outputExtension;
+	std::string outputPath = "C:\\data\\tdm\\darkmod\\models\\";
+
 	rMessage() << "Exporting selection to file " << outputFile << std::endl;
 
-	exporter.writeToStream(stream);
-
-	stream.close();
+	model::ModelExporter::ExportToPath(expFormat, outputPath, outputFile);
 }
 
 // RegisterableModule implementation
