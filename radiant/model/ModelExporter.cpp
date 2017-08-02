@@ -50,7 +50,9 @@ ArbitraryMeshVertex convertPatchVertex(const VertexNT& in)
 ModelExporter::ModelExporter(const model::IModelExporterPtr& exporter) :
 	_exporter(exporter),
 	_skipCaulk(false),
-	_caulkMaterial(registry::getValue<std::string>(RKEY_CLIPPER_CAULK_SHADER))
+	_caulkMaterial(registry::getValue<std::string>(RKEY_CLIPPER_CAULK_SHADER)),
+	_centerObjects(false),
+	_centerTransform(Matrix4::getIdentity())
 {
 	if (!_exporter)
 	{
@@ -59,42 +61,74 @@ ModelExporter::ModelExporter(const model::IModelExporterPtr& exporter) :
 	}
 }
 
-void ModelExporter::setSkipCaulkMaterial(bool shouldSkipCaulk)
+void ModelExporter::setSkipCaulkMaterial(bool skipCaulk)
 {
-	_skipCaulk = shouldSkipCaulk;
+	_skipCaulk = skipCaulk;
+}
+
+void ModelExporter::setCenterObjects(bool centerObjects)
+{
+	_centerObjects = centerObjects;
 }
 
 bool ModelExporter::pre(const scene::INodePtr& node)
 {
 	if (!_exporter) return false;
 
-	if (Node_isModel(node))
-	{
-		model::ModelNodePtr modelNode = Node_getModel(node);
-
-		// Push the geometry into the exporter
-		model::IModel& model = modelNode->getIModel();
-
-		for (int s = 0; s < model.getSurfaceCount(); ++s)
-		{
-			const model::IModelSurface& surface = model.getSurface(s);
-
-			if (isExportableMaterial(surface.getDefaultMaterial()))
-			{
-				_exporter->addSurface(surface, node->localToWorld());
-			}
-		}
-	}
-	else if (Node_isBrush(node))
-	{
-		processBrush(node);
-	}
-	else if (Node_isPatch(node))
-	{
-		processPatch(node);
-	}
+	_nodes.push_back(node);
 
 	return true;
+}
+
+void ModelExporter::processNodes()
+{
+	AABB bounds = calculateModelBounds();
+
+	if (_centerObjects)
+	{
+		_centerTransform = Matrix4::getTranslation(-bounds.origin);
+	}
+
+	for (const scene::INodePtr& node : _nodes)
+	{
+		if (Node_isModel(node))
+		{
+			model::ModelNodePtr modelNode = Node_getModel(node);
+
+			// Push the geometry into the exporter
+			model::IModel& model = modelNode->getIModel();
+
+			for (int s = 0; s < model.getSurfaceCount(); ++s)
+			{
+				const model::IModelSurface& surface = model.getSurface(s);
+
+				if (isExportableMaterial(surface.getDefaultMaterial()))
+				{
+					_exporter->addSurface(surface, node->localToWorld().getMultipliedBy(_centerTransform));
+				}
+			}
+		}
+		else if (Node_isBrush(node))
+		{
+			processBrush(node);
+		}
+		else if (Node_isPatch(node))
+		{
+			processPatch(node);
+		}
+	}
+}
+
+AABB ModelExporter::calculateModelBounds()
+{
+	AABB bounds;
+
+	for (const scene::INodePtr& node : _nodes)
+	{
+		bounds.includeAABB(node->worldAABB());
+	}
+
+	return bounds;
 }
 
 void ModelExporter::processPatch(const scene::INodePtr& node)
@@ -131,7 +165,7 @@ void ModelExporter::processPatch(const scene::INodePtr& node)
 		}
 	}
 
-	_exporter->addPolygons(materialName, polys, node->localToWorld());
+	_exporter->addPolygons(materialName, polys, node->localToWorld().getMultipliedBy(_centerTransform));
 }
 
 void ModelExporter::processBrush(const scene::INodePtr& node)
@@ -170,7 +204,7 @@ void ModelExporter::processBrush(const scene::INodePtr& node)
 			polys.push_back(poly);
 		}
 
-		_exporter->addPolygons(materialName, polys, node->localToWorld());
+		_exporter->addPolygons(materialName, polys, node->localToWorld().getMultipliedBy(_centerTransform));
 	}
 }
 

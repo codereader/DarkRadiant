@@ -979,6 +979,10 @@ void Map::exportSelectedAsModel(const cmd::ArgumentList& args)
 	// Call the traverseSelected function to hit the exporter with each node
 	traverseSelected(GlobalSceneGraph().root(), exporter);
 
+	exporter.setCenterObjects(true);
+
+	exporter.processNodes();
+
 	// TODO: Query the output filename
 	std::string outputFile = "scene." + outputExtension;
 	std::string outputPath = "C:\\data\\tdm\\darkmod\\models\\";
