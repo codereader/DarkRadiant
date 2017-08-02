@@ -1,12 +1,8 @@
-#ifndef ICLIPPER_H_
-#define ICLIPPER_H_
+#pragma once
 
 #include "imodule.h"
 #include "iorthoview.h"
 #include "math/Vector3.h"
-
-/** Abstract base class for the clipper module
- */
 
 // The possible split modes
 enum EBrushSplit {
@@ -39,7 +35,8 @@ struct BrushSplitType {
 
 class ClipPoint;
 
-const std::string MODULE_CLIPPER("Clipper");
+const char* const MODULE_CLIPPER("Clipper");
+const char* const RKEY_CLIPPER_CAULK_SHADER("user/ui/clipper/caulkTexture");
 
 /* greebo: This is the interface the clipper module has to provide.
  */
@@ -89,8 +86,9 @@ public:
 	virtual void update() = 0;
 };
 
-// This is the accessor for the registry
-inline IClipper& GlobalClipper() {
+// The accessor for the clipper module
+inline IClipper& GlobalClipper() 
+{
 	// Cache the reference locally
 	static IClipper&  _clipper(
 		*std::static_pointer_cast<IClipper>(
@@ -99,5 +97,3 @@ inline IClipper& GlobalClipper() {
 	);
 	return _clipper;
 }
-
-#endif /*ICLIPPER_H_*/

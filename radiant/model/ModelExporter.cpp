@@ -2,10 +2,12 @@
 
 #include "i18n.h"
 #include "ibrush.h"
+#include "iclipper.h" // for caulk shader registry key
 #include "ipatch.h"
 #include "itextstream.h"
 #include "imodel.h"
 #include "os/fs.h"
+#include "registry/registry.h"
 #include <stdexcept>
 #include <fstream>
 
@@ -46,13 +48,20 @@ ArbitraryMeshVertex convertPatchVertex(const VertexNT& in)
 }
 
 ModelExporter::ModelExporter(const model::IModelExporterPtr& exporter) :
-	_exporter(exporter)
+	_exporter(exporter),
+	_skipCaulk(false),
+	_caulkMaterial(registry::getValue<std::string>(RKEY_CLIPPER_CAULK_SHADER))
 {
 	if (!_exporter)
 	{
 		rError() << "Cannot save out scaled models, no exporter found." << std::endl;
 		return;
 	}
+}
+
+void ModelExporter::setSkipCaulkMaterial(bool shouldSkipCaulk)
+{
+	_skipCaulk = shouldSkipCaulk;
 }
 
 bool ModelExporter::pre(const scene::INodePtr& node)
@@ -70,7 +79,10 @@ bool ModelExporter::pre(const scene::INodePtr& node)
 		{
 			const model::IModelSurface& surface = model.getSurface(s);
 
-			_exporter->addSurface(surface, node->localToWorld());
+			if (isExportableMaterial(surface.getDefaultMaterial()))
+			{
+				_exporter->addSurface(surface, node->localToWorld());
+			}
 		}
 	}
 	else if (Node_isBrush(node))
@@ -92,6 +104,9 @@ void ModelExporter::processPatch(const scene::INodePtr& node)
 	if (patch == nullptr) return;
 
 	const std::string& materialName = patch->getShader();
+
+	if (!isExportableMaterial(materialName)) return;
+
 	PatchMesh mesh = patch->getTesselatedPatchMesh();
 
 	std::vector<model::ModelPolygon> polys;
@@ -130,6 +145,9 @@ void ModelExporter::processBrush(const scene::INodePtr& node)
 		const IFace& face = brush->getFace(b);
 
 		const std::string& materialName = face.getShader();
+
+		if (!isExportableMaterial(materialName)) continue;
+
 		const IWinding& winding = face.getWinding();
 
 		std::vector<model::ModelPolygon> polys;
@@ -154,6 +172,11 @@ void ModelExporter::processBrush(const scene::INodePtr& node)
 
 		_exporter->addPolygons(materialName, polys, node->localToWorld());
 	}
+}
+
+bool ModelExporter::isExportableMaterial(const std::string& materialName)
+{
+	return !_skipCaulk || materialName != _caulkMaterial;
 }
 
 void ModelExporter::ExportToPath(const model::IModelExporterPtr& exporter,

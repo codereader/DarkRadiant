@@ -14,8 +14,14 @@ class ModelExporter :
 private:
 	model::IModelExporterPtr _exporter;
 
+	bool _skipCaulk;
+	std::string _caulkMaterial;
+
 public:
 	ModelExporter(const model::IModelExporterPtr& exporter);
+
+	// Define whether the exporter should ignore caulked surfaces
+	void setSkipCaulkMaterial(bool shouldSkipCaulk);
 
 	bool pre(const scene::INodePtr& node) override;
 
@@ -30,6 +36,8 @@ public:
 		const std::string& outputPath, const std::string& filename);
 
 private:
+	bool isExportableMaterial(const std::string& materialName);
+
 	void processBrush(const scene::INodePtr& node);
 	void processPatch(const scene::INodePtr& node);
 };
