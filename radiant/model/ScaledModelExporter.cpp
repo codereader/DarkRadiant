@@ -1,7 +1,9 @@
 #include "ScaledModelExporter.h"
 
+#include <map>
 #include <fstream>
 #include "i18n.h"
+#include "iundo.h"
 #include "itextstream.h"
 #include "igame.h"
 #include "ientity.h"
@@ -40,35 +42,40 @@ void ScaledModelExporter::onMapEvent(IMap::MapEvent ev)
 
 void ScaledModelExporter::saveScaledModels()
 {
+	std::map<scene::INodePtr, model::ModelNodePtr> nodesToProcess;
+
 	// Find any models with modified scale
 	GlobalSceneGraph().foreachNode([&](const scene::INodePtr& node)
 	{
 		if (Node_isEntity(node))
 		{
 			// Find any model nodes below that one
-			model::ModelNodePtr childModel;
-
 			node->foreachNode([&](const scene::INodePtr& child)
 			{
 				model::ModelNodePtr candidate = Node_getModel(child);
 
 				if (candidate && candidate->hasModifiedScale())
 				{
-					childModel = candidate;
+					nodesToProcess.insert(std::make_pair(node, candidate));
 				}
 
 				return true;
 			});
-
-			// Do we have a model with modified scale?
-			if (childModel)
-			{
-				saveScaledModel(node, childModel);
-			}
 		}
 
 		return true;
 	});
+
+	// Do we have any models with modified scale?
+	if (!nodesToProcess.empty())
+	{
+		UndoableCommand scaleModels("saveScaledModels");
+
+		for (auto& pair : nodesToProcess)
+		{
+			saveScaledModel(pair.first, pair.second);
+		}
+	}
 }
 
 void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelNodePtr& modelNode)
