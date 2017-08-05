@@ -58,6 +58,7 @@ void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& 
 void ModelScaleManipulator::setSelected(bool select)
 {
 	_curManipulatable.reset();
+	_scaleComponent.setEntityNode(scene::INodePtr());
 }
 
 bool ModelScaleManipulator::isSelected() const

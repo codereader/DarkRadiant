@@ -278,9 +278,9 @@ void ModelScaleComponent::beginTransformation(const Matrix4& pivot2world, const 
 	// by the owning Manipulator class
 	_start = getPlaneProjectedPoint(_scalePivot2World, view, devicePoint);
 
-	assert(_entityNode);
+	assert(!_entityNode.expired());
 
-	Entity* entity = Node_getEntity(_entityNode);
+	Entity* entity = Node_getEntity(_entityNode.lock());
 
 	_startOrigin = string::convert<Vector3>(entity->getKeyValue("origin"));
 }
@@ -327,7 +327,10 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 	Vector3 translation = relOriginScaled - relOrigin;
 
 	// Apply the translation
-	ITransformablePtr transformable = Node_getTransformable(_entityNode);
+	assert(!_entityNode.expired());
+
+	scene::INodePtr entityNode = _entityNode.lock();
+	ITransformablePtr transformable = Node_getTransformable(entityNode);
 
 	if (transformable)
 	{
@@ -336,7 +339,7 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 	}
 
 	// Apply the scale to the model beneath the entity
-	_entityNode->foreachNode([&](const scene::INodePtr& node)
+	entityNode->foreachNode([&](const scene::INodePtr& node)
 	{
 		ITransformablePtr transformable = Node_getTransformable(node);
 

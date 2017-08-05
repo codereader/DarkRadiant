@@ -194,7 +194,7 @@ private:
 	Vector3 _start;
 
 	// The node carrying the model
-	scene::INodePtr _entityNode;
+	scene::INodeWeakPtr _entityNode;
 
 	// The original entity origin point
 	Vector3 _startOrigin;
