@@ -163,6 +163,7 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
     GlobalCounters().getCounter(counterEntities).increment();
 
 	_entity.connectUndoSystem(root.getUndoChangeTracker());
+	_modelKey.connectUndoSystem(root.getUndoChangeTracker());
 
 	SelectableNode::onInsertIntoScene(root);
     TargetableNode::onInsertIntoScene(root);
@@ -173,6 +174,7 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
     TargetableNode::onRemoveFromScene(root);
 	SelectableNode::onRemoveFromScene(root);
 
+	_modelKey.disconnectUndoSystem(root.getUndoChangeTracker());
 	_entity.disconnectUndoSystem(root.getUndoChangeTracker());
 
     GlobalCounters().getCounter(counterEntities).decrement();

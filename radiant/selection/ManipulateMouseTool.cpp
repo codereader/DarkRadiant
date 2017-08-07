@@ -250,6 +250,10 @@ void ManipulateMouseTool::endMove()
 		{
 			command << "dragTool";
 		}
+		else if (activeManipulator->getType() == selection::Manipulator::ModelScale)
+		{
+			command << "modelScaleTool";
+		}
 
 		_undoBegun = false;
 

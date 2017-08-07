@@ -1,5 +1,6 @@
 #include "ModelKey.h"
 
+#include <functional>
 #include "imodelcache.h"
 #include "ifiletypes.h"
 #include "scene/Node.h"
@@ -10,12 +11,13 @@
 
 ModelKey::ModelKey(scene::INode& parentNode) :
 	_parentNode(parentNode),
-	_active(true)
+	_active(true),
+	_undo(_model, std::bind(&ModelKey::importState, this, std::placeholders::_1))
 {}
 
 const scene::INodePtr& ModelKey::getNode() const
 {
-	return _modelNode;
+	return _model.node;
 }
 
 void ModelKey::setActive(bool active)
@@ -25,7 +27,7 @@ void ModelKey::setActive(bool active)
 
 void ModelKey::refreshModel()
 {
-	if (!_modelNode) return;
+	if (!_model.node) return;
 
     attachModelNodeKeepinSkin();
 }
@@ -38,13 +40,15 @@ void ModelKey::modelChanged(const std::string& value)
 	// Sanitise the keyvalue - must use forward slashes
 	std::string newModelName = boost::algorithm::replace_all_copy(value, "\\", "/");
 
-	if (newModelName == _modelPath)
+	if (newModelName == _model.path)
 	{
 		return; // new name is the same as we have now
 	}
 
+	_undo.save();
+
 	// Now store the new modelpath
-    _modelPath = newModelName;
+    _model.path = newModelName;
 
 	// Call the attach routine, keeping the skin (#4142)
 	attachModelNodeKeepinSkin();
@@ -53,30 +57,30 @@ void ModelKey::modelChanged(const std::string& value)
 void ModelKey::attachModelNode()
 {
 	// Remove the old model node first
-	if (_modelNode != NULL)
+	if (_model.node != NULL)
 	{
-		_parentNode.removeChildNode(_modelNode);
+		_parentNode.removeChildNode(_model.node);
 	}
 
-	if (_modelPath.empty())
+	if (_model.path.empty())
 	{
 		// Empty "model" spawnarg, clear the pointer and exit
-		_modelNode = scene::INodePtr();
+		_model.node = scene::INodePtr();
 		return;
 	}
 
 	// We have a non-empty model key, send the request to
 	// the model cache to acquire a new child node
-	_modelNode = GlobalModelCache().getModelNode(_modelPath);
+	_model.node = GlobalModelCache().getModelNode(_model.path);
 
 	// The model loader should not return NULL, but a sanity check is always ok
-	if (_modelNode)
+	if (_model.node)
 	{
 		// Add the model node as child of the entity node
-		_parentNode.addChildNode(_modelNode);
+		_parentNode.addChildNode(_model.node);
 
 		// Assign the model node to the same layers as the parent entity
-		_modelNode->assignToLayers(_parentNode.getLayers());
+		_model.node->assignToLayers(_parentNode.getLayers());
 
 		// Inherit the parent node's visibility. This should do the trick to resolve #2709
 		// but is not as heavy on performance as letting the Filtersystem check the whole subgraph
@@ -87,31 +91,31 @@ void ModelKey::attachModelNode()
         // Check the layered flag as first measure (#4141)
         if (_parentNode.checkStateFlag(scene::Node::eLayered))
         {
-            _modelNode->enable(scene::Node::eLayered);
+            _model.node->enable(scene::Node::eLayered);
         }
 
-		_modelNode->setFiltered(_parentNode.isFiltered());
+		_model.node->setFiltered(_parentNode.isFiltered());
 
 		if (_parentNode.excluded())
 		{
-			_modelNode->enable(scene::Node::eExcluded);
+			_model.node->enable(scene::Node::eExcluded);
 		}
 	}
 }
 
 void ModelKey::attachModelNodeKeepinSkin()
 {
-    if (_modelNode)
+    if (_model.node)
     {
         // Check if we have a skinnable model and remember the skin
-	    SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+	    SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
 
 	    std::string skin = skinned ? skinned->getSkin() : "";
 	
 	    attachModelNode();
 	
 	    // Reset the skin to the previous value if we have a model
-	    skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+	    skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
 
 	    if (skinned)
 	    {
@@ -128,10 +132,26 @@ void ModelKey::attachModelNodeKeepinSkin()
 void ModelKey::skinChanged(const std::string& value)
 {
 	// Check if we have a skinnable model
-	SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+	SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
 
 	if (skinned)
 	{
 		skinned->skinChanged(value);
 	}
+}
+
+void ModelKey::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+	_undo.connectUndoSystem(changeTracker);
+}
+
+void ModelKey::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+{
+	_undo.disconnectUndoSystem(changeTracker);
+}
+
+void ModelKey::importState(const ModelNodeAndPath& data)
+{
+	_model.path = data.path;
+	_model.node = data.node;
 }
