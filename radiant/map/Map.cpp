@@ -38,6 +38,7 @@
 #include "map/RootNode.h"
 #include "map/MapResource.h"
 #include "map/algorithm/Merge.h"
+#include "map/algorithm/Export.h"
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
 #include "model/ModelExporter.h"
@@ -769,7 +770,8 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
-	GlobalCommandSystem().addCommand("ExportSelectedAsModel", sigc::mem_fun(*this, &Map::exportSelectedAsModel));
+	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
+		cmd::Signature(cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING, cmd::ARGTYPE_INT, cmd::ARGTYPE_INT));
 
     GlobalEventManager().addCommand("NewMap", "NewMap");
     GlobalEventManager().addCommand("OpenMap", "OpenMap");
@@ -960,40 +962,9 @@ void Map::exportSelected(std::ostream& out)
     exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
 }
 
-void Map::exportSelectedAsModel(const cmd::ArgumentList& args)
-{
-	// Request the default format from the preferences
-	std::string outputExtension = registry::getValue<std::string>(RKEY_DEFAULT_MODEL_EXPORT_FORMAT);
-	boost::algorithm::to_lower(outputExtension);
-
-	rMessage() << "Model format used for export: " << outputExtension <<
-		" (this can be changed in the preferences)" << std::endl;
-
-	// Save the scaled model
-	model::IModelExporterPtr expFormat = GlobalModelFormatManager().getExporter(outputExtension);
-
-	// Instantiate a ModelExporter to do the footwork
-	model::ModelExporter exporter(expFormat);
-
-	// Collect exportables
-	// Call the traverseSelected function to hit the exporter with each node
-	traverseSelected(GlobalSceneGraph().root(), exporter);
-
-	exporter.setCenterObjects(true);
-
-	exporter.processNodes();
-
-	// TODO: Query the output filename
-	std::string outputFile = "scene." + outputExtension;
-	std::string outputPath = "C:\\data\\tdm\\darkmod\\models\\";
-
-	rMessage() << "Exporting selection to file " << outputFile << std::endl;
-
-	model::ModelExporter::ExportToPath(expFormat, outputPath, outputFile);
-}
-
 // RegisterableModule implementation
-const std::string& Map::getName() const {
+const std::string& Map::getName() const
+{
     static std::string _name(MODULE_MAP);
     return _name;
 }

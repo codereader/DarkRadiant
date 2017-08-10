@@ -145,6 +145,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/RegularLayout.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
                       ui/mainframe/TopLevelFrame.cpp \
+                      ui/modelexport/ExportAsModelDialog.cpp \
                       ui/mousetool/BindToolDialog.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
@@ -232,6 +233,7 @@ darkradiant_SOURCES = main.cpp \
                       map/algorithm/Traverse.cpp \
 					  map/algorithm/MapExporter.cpp \
                       map/algorithm/MapImporter.cpp \
+                      map/algorithm/Export.cpp \
                       map/CounterManager.cpp \
                       map/RegionManager.cpp \
                       map/PointFile.cpp \

@@ -36,6 +36,9 @@ public:
 
 	IModelExporterPtr getExporter(const std::string& extension) override;
 
+	void foreachImporter(const std::function<void(const IModelImporterPtr&)>& functor) override;
+	void foreachExporter(const std::function<void(const IModelExporterPtr&)>& functor) override;
+
 private:
 	void postModuleInitialisation();
 };

@@ -338,6 +338,7 @@
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\AasFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp" />
+    <ClCompile Include="..\..\radiant\map\algorithm\Export.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp" />
@@ -394,6 +395,7 @@
     <ClCompile Include="..\..\radiant\ui\grid\GridManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
+    <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
     <ClCompile Include="..\..\radiant\brush\Brush.cpp" />
     <ClCompile Include="..\..\radiant\brush\BrushModule.cpp" />
@@ -587,6 +589,7 @@
     <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\AasFileManager.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
+    <ClInclude Include="..\..\radiant\map\algorithm\Export.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Skins.h" />
@@ -645,6 +648,7 @@
     <ClInclude Include="..\..\radiant\ui\grid\GridManager.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
+    <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
     <ClInclude Include="..\..\radiant\brush\Brush.h" />
     <ClInclude Include="..\..\radiant\brush\BrushClipPlane.h" />

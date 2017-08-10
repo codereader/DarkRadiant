@@ -12,6 +12,7 @@
 		<menuSeparator />
 		<menuItem name="saveSelected" caption="&amp;Save selected as Map..." command="SaveSelected" />
 		<menuItem name="saveSelectedPrefab" caption="&amp;Save selected as prefab..." command="SaveSelectedAsPrefab" />
+		<menuItem name="exportSelectedAsModel" caption="&amp;Export selected as model..." command="ExportSelectedAsModelDialog" />
 		<menuItem name="createCM" caption="Save selected as Collision Model..." command="BrushExportCM" />
 		<menuItem name="saveRegion" caption="Save &amp;region..." command="SaveRegion" />
 		<menuSeparator />

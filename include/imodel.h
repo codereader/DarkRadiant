@@ -212,6 +212,12 @@ public:
 
 	// Find an exporter for the given extension, returns empty if nothing found
 	virtual IModelExporterPtr getExporter(const std::string& extension) = 0;
+
+	// Calls the functor with each registered model importer as argument
+	virtual void foreachImporter(const std::function<void(const IModelImporterPtr&)>& functor) = 0;
+
+	// Calls the functor with each registered model exporter as argument
+	virtual void foreachExporter(const std::function<void(const IModelExporterPtr&)>& functor) = 0;
 };
 
 } // namespace model

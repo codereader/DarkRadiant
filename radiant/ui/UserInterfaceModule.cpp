@@ -27,6 +27,7 @@
 #include "ui/mousetool/ToolMappingDialog.h"
 #include "ui/about/AboutDialog.h"
 #include "textool/TexTool.h"
+#include "modelexport/ExportAsModelDialog.h"
 
 namespace ui
 {
@@ -129,6 +130,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("FindReplaceTextures", FindAndReplaceShader::ShowDialog);
 	GlobalCommandSystem().addCommand("ShowCommandList", CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
+	GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
 
 	// ----------------------- Bind Events ---------------------------------------
 
@@ -153,6 +155,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
 	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
 	GlobalEventManager().addCommand("About", "About");
+	GlobalEventManager().addCommand("ExportSelectedAsModelDialog", "ExportSelectedAsModelDialog");
 }
 
 // Static module registration

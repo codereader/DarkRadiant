@@ -129,6 +129,22 @@ IModelExporterPtr ModelFormatManager::getExporter(const std::string& extension)
 	return found != _exporters.end() ? found->second->clone() : IModelExporterPtr();
 }
 
+void ModelFormatManager::foreachImporter(const std::function<void(const IModelImporterPtr&)>& functor)
+{
+	for (const ImporterMap::value_type& pair : _importers)
+	{
+		functor(pair.second);
+	}
+}
+
+void ModelFormatManager::foreachExporter(const std::function<void(const IModelExporterPtr&)>& functor)
+{
+	for (const ExporterMap::value_type& pair : _exporters)
+	{
+		functor(pair.second);
+	}
+}
+
 module::StaticModule<ModelFormatManager> _staticModelFormatManagerModule;
 
 }
