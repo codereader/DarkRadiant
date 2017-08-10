@@ -1,5 +1,6 @@
 #include "Export.h"
 
+#include <stdexcept>
 #include "itextstream.h"
 #include "model/ModelExporter.h"
 #include "Traverse.h"
@@ -76,7 +77,14 @@ void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 		options.skipCaulk = (args[3].getInt() != 0);
 	}
 
-	exportSelectedAsModel(options);
+	try
+	{
+		exportSelectedAsModel(options);
+	}
+	catch (std::runtime_error& ex)
+	{
+		rError() << "Failed to export model: " << ex.what() << std::endl;
+	}
 }
 
 }

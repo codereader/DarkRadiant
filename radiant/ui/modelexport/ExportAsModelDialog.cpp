@@ -4,6 +4,7 @@
 #include "imodel.h"
 #include "iselection.h"
 
+#include <stdexcept>
 #include <sigc++/functors/mem_fun.h>
 #include <wx/checkbox.h>
 #include <wx/filepicker.h>
@@ -73,10 +74,17 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 		return;
 	}
 
-	map::algorithm::exportSelectedAsModel(options);
+	try
+	{
+		map::algorithm::exportSelectedAsModel(options);
 
-	// Close the dialog
-	EndModal(wxID_OK);
+		// Close the dialog
+		EndModal(wxID_OK);
+	}
+	catch (std::runtime_error& ex)
+	{
+		wxutil::Messagebox::Show(_("Export failed"), ex.what(), IDialog::MessageType::MESSAGE_ERROR);
+	}
 }
 
 void ExportAsModelDialog::onCancel(wxCommandEvent& ev)

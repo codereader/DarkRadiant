@@ -15,7 +15,8 @@ struct ModelExportOptions
 };
 
 /**
- * Exports the selection as model using the given options
+ * Exports the selection as model using the given options.
+ * Will throw a std::runtime_error on failure.
  */
 void exportSelectedAsModel(const ModelExportOptions& options);
 

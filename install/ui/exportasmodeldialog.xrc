@@ -44,7 +44,7 @@
 								<option>0</option>
 								<flag>wxALL|wxEXPAND</flag>
 								<border>5</border>
-								<object class="wxChoice" name="PatchInspExportDialogFormatChoice">
+								<object class="wxChoice" name="ExportDialogFormatChoice">
 									<selection>0</selection>
 									<content>
 										<item>ASCII Scene Export (.ase)</item>
@@ -64,7 +64,7 @@
 								<option>0</option>
 								<flag>wxALL|wxEXPAND</flag>
 								<border>5</border>
-								<object class="wxFilePickerCtrl" name="m_filePicker1">
+								<object class="wxFilePickerCtrl" name="ExportDialogFilePicker">
 									<value></value>
 									<message>Select a file</message>
 									<wildcard>*.*</wildcard>
