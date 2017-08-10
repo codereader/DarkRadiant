@@ -42,8 +42,10 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 	exporter.processNodes();
 
 	// Extract the output filename
-	std::string outputFile = os::getFilename(options.outputFilename);
-	std::string outputPath = os::getContainingDir(options.outputFilename);
+	std::string absOutputPath = os::standardPath(options.outputFilename);
+
+	std::string outputFile = os::getFilename(absOutputPath);
+	std::string outputPath = os::getDirectory(absOutputPath);
 
 	rMessage() << "Exporting selection to file " << outputPath << outputFile << std::endl;
 

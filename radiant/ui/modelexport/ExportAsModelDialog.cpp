@@ -46,6 +46,7 @@ void ExportAsModelDialog::populateWindow()
 	cancelButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &ExportAsModelDialog::onCancel));
 
 	wxChoice* formatChoice = findNamedObject<wxChoice>(this, "ExportDialogFormatChoice");
+	formatChoice->Clear();
 
 	// Push the available formats to the wxChoice control
 	GlobalModelFormatManager().foreachExporter([&](const model::IModelExporterPtr& exporter)
@@ -53,6 +54,9 @@ void ExportAsModelDialog::populateWindow()
 		// Store the exporter extension as client data
 		formatChoice->Append(exporter->getDisplayName(), new wxStringClientData(exporter->getExtension()));
 	});
+
+	// Select the first format for starters
+	formatChoice->Select(0);
 
 	Layout();
 	Fit();
@@ -65,7 +69,7 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 
 	options.centerObjects = findNamedObject<wxCheckBox>(this, "ExportDialogCenterObjects")->GetValue();
 	options.skipCaulk = findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->GetValue();
-	options.outputFilename = findNamedObject<wxFilePickerCtrl>(this, "ExportDialogFilePicker")->GetFileName().GetFullPath();
+	options.outputFilename = findNamedObject<wxFilePickerCtrl>(this, "ExportDialogFilePicker")->GetPath();
 	options.outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
 
 	if (options.outputFilename.empty())
