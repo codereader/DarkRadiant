@@ -23,7 +23,7 @@
       <autoSaveInterval value="5" />
       <autoSaveSnapshots value="0" />
       <snapshotFolder value="snapshots/" />
-      <maxSnapshotFolderSize value="100" />
+      <maxSnapshotFolderSize value="1024" />
       <loadStatusInterleave value="50" />
       <saveStatusInterleave value="50" />
       <defaultScaledModelExportFormat value="ase" />
