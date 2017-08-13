@@ -164,6 +164,9 @@ void RenderableParticleBunch::render(const RenderInfo& info) const
     glColorPointer(4, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].colour));
 
     glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_quads.size())*4);
+
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 const AABB& RenderableParticleBunch::getBounds()
