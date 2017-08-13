@@ -20,10 +20,13 @@
 
 #include <limits.h>
 #include "string/string.h"
+#include "string/convert.h"
 #include "map/Map.h"
 #include "modulesystem/ApplicationContextImpl.h"
 #include "modulesystem/StaticModule.h"
+#include "wxutil/dialog/MessageBox.h"
 
+#include <boost/format.hpp>
 #include <wx/frame.h>
 
 namespace map 
@@ -37,6 +40,7 @@ namespace
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_ENABLED = "user/ui/map/autoSaveSnapshots";
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_FOLDER = "user/ui/map/snapshotFolder";
 	const char* RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE = "user/ui/map/maxSnapshotFolderSize";
+	const char* RKEY_AUTOSAVE_SNAPSHOT_FOLDER_SIZE_HISTORY = "user/ui/map/snapshotFolderSizeHistory";
 	const char* GKEY_MAP_EXTENSION = "/mapFormat/fileExtension";
 
 	std::string constructSnapshotName(const fs::path& snapshotPath, const std::string& mapName, int num)
@@ -139,7 +143,7 @@ void AutoMapSaver::saveSnapshot()
 		// Dump to map to the next available filename
 		GlobalMap().saveDirect(filename);
 
-		handleSnapshotSizeLimit(existingSnapshots, snapshotPath);
+		handleSnapshotSizeLimit(existingSnapshots, snapshotPath, mapName);
 	}
 	else 
 	{
@@ -148,7 +152,8 @@ void AutoMapSaver::saveSnapshot()
 	}
 }
 
-void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& existingSnapshots, const fs::path& snapshotPath)
+void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& existingSnapshots, 
+	const fs::path& snapshotPath, const std::string& mapName)
 {
 	std::size_t maxSnapshotFolderSize =
 		registry::getValue<std::size_t>(RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
@@ -167,19 +172,43 @@ void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& exi
 		folderSize += os::getFileSize(pair.second);
 	}
 
+	std::size_t maxSize = maxSnapshotFolderSize * 1024 * 1024;
+
+	// The key containing the previously calculated size
+	std::string mapKey = RKEY_AUTOSAVE_SNAPSHOT_FOLDER_SIZE_HISTORY;
+	mapKey += "/map[@name='" + mapName + "']";
+
 	// Display a warning, if the folder size exceeds the limit
-	if (folderSize > maxSnapshotFolderSize * 1024 * 1024)
+	if (folderSize > maxSize)
 	{
+		std::size_t prevSize = string::convert<std::size_t>(GlobalRegistry().getAttribute(mapKey, "size"), 0);
+
+		// Save the size for the next time we hit it
+		GlobalRegistry().deleteXPath(mapKey);
+
+		// Create a new key and store the size
+		GlobalRegistry().createKeyWithName(RKEY_AUTOSAVE_SNAPSHOT_FOLDER_SIZE_HISTORY, "map", mapName);
+		GlobalRegistry().setAttribute(mapKey, "size", string::to_string(folderSize));
+
+		// Now should we display a message?
+		if (prevSize > maxSize)
+		{
+			rMessage() << "User has already been notified about the snapshot size exceeding limits." << std::endl;
+			return;
+		}
+
 		rMessage() << "AutoSaver: The snapshot files in " << snapshotPath << 
 			" take up more than " << maxSnapshotFolderSize << " MB. You might consider cleaning it up." << std::endl;
 
-		// Remember that we notified the user
 		// Notify the user
-		// TODO
+		wxutil::Messagebox::Show(_("Snapshot Folder Size Warning"),
+			(boost::format(_("The snapshots saved for this map are exceeding the configured size limit."
+				"\nConsider cleaning up the folder %s")) % snapshotPath).str(), ui::IDialog::MessageType::MESSAGE_WARNING);
 	}
 	else
 	{
-		// TODO: Clear the notification flag
+		// Folder size is within limits (again), delete the size info from the registry
+		GlobalRegistry().deleteXPath(mapKey);
 	}
 }
 

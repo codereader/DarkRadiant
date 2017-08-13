@@ -78,7 +78,7 @@ private:
 		const fs::path& snapshotPath, const std::string& mapName);
 
 	void handleSnapshotSizeLimit(const std::map<int, std::string>& existingSnapshots,
-		const fs::path& snapshotPath);
+		const fs::path& snapshotPath, const std::string& mapName);
 
 }; // class AutoMapSaver
 
