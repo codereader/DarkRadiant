@@ -150,6 +150,11 @@ public:
 		return _glState;
 	}
 
+	const OpenGLState& state() const
+	{
+		return _glState;
+	}
+
 	OpenGLState* statePtr()
 	{
 		return &_glState;

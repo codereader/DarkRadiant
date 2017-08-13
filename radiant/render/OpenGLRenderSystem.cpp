@@ -195,6 +195,25 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	glHint(GL_FOG_HINT, GL_NICEST);
     glDisable(GL_FOG);
 
+#if 0
+	std::size_t count = 0 ;
+
+	for (OpenGLStates::iterator i = _state_sorted.begin();
+		i != _state_sorted.end();
+		++i)
+	{
+		// Render the OpenGLShaderPass
+		if (!i->second->empty())
+		{
+			count++;
+		}
+	}
+
+	rMessage() << "R1 " << count << " of " << _state_sorted.size() << "\n";
+
+	std::size_t curObject = 0;
+#endif
+
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
@@ -203,9 +222,14 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 		i != _state_sorted.end();
 		++i)
 	{
-        // Render the OpenGLShaderPass
+		// Render the OpenGLShaderPass
         if (!i->second->empty())
         {
+#if 0
+			rMessage() << curObject << " " << (*i->second);
+			curObject++;
+#endif
+
             i->second->render(current, globalstate, viewer, _time);
         }
 	}

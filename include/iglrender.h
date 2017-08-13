@@ -65,7 +65,18 @@ private:
     // Sort position
     SortPosition _sortPos;
 
+	std::string _name;
+
 public:
+	const std::string& getName() const
+	{
+		return _name;
+	}
+
+	void setName(const std::string& name)
+	{
+		_name = name;
+	}
 
     /// Return the glColor for this state
     const Colour4& getColour() const

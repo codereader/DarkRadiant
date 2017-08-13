@@ -55,10 +55,13 @@ public:
 	void render(const RenderInfo& info) const
 	{
         glEnableClientState(GL_COLOR_ARRAY);
+
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexNCb), &_vertices.front().colour);
 		glVertexPointer(3, GL_DOUBLE, sizeof(VertexNCb), &_vertices.front().vertex);
 		glNormalPointer(GL_DOUBLE, sizeof(VertexNCb), &_vertices.front().normal);
 		glDrawArrays(GL_TRIANGLES, 0, GLsizei(_vertices.size()));
+
+		glDisableClientState(GL_COLOR_ARRAY);
 	}
 
 	void setColour(const Colour4b& colour)

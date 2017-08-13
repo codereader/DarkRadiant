@@ -746,6 +746,11 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
 // Stream insertion operator
 std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self)
 {
+	if (!self.state().getName().empty())
+	{
+		st << "Name: " << self.state().getName() << ": ";
+	}
+
     const MaterialPtr& material = self._owner.getMaterial();
 
     st << (material ? material->getName() : "null material") << " - ";
