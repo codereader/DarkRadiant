@@ -247,15 +247,15 @@ void ModelExporter::ExportToPath(const model::IModelExporterPtr& exporter,
 	{
 		try
 		{
-			fs::remove(targetPath);
+			fs::rename(targetPath, targetPath.string() + ".bak");
 		}
 		catch (fs::filesystem_error& e)
 		{
-			rError() << "Could not remove the file " << targetPath.string() << std::endl
+			rError() << "Could not rename the existing file to .bak: " << targetPath.string() << std::endl
 				<< e.what() << std::endl;
 
 			throw std::runtime_error(
-				(boost::format(_("Could not remove the file: %s")) % tempFile.string()).str());
+				(boost::format(_("Could not rename the existing file to .bak: %s")) % tempFile.string()).str());
 		}
 	}
 

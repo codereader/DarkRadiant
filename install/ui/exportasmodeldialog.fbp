@@ -808,7 +808,7 @@
                         </object>
                         <object class="sizeritem" expanded="1">
                             <property name="border">12</property>
-                            <property name="flag">wxALIGN_RIGHT|wxLEFT|wxRIGHT|wxTOP</property>
+                            <property name="flag">wxALIGN_RIGHT|wxLEFT|wxTOP</property>
                             <property name="proportion">0</property>
                             <object class="wxBoxSizer" expanded="0">
                                 <property name="minimum_size"></property>

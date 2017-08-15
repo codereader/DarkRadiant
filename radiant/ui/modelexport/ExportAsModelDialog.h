@@ -18,11 +18,16 @@ public:
 
 	static void ShowDialog(const cmd::ArgumentList& args);
 
+protected:
+	bool _onDeleteEvent() override;
+
 private:
 	void populateWindow();
 
 	void onExport(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
+
+	void saveOptionsToRegistry();
 };
 
 }

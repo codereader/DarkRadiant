@@ -110,7 +110,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_RIGHT|wxLEFT|wxRIGHT|wxTOP</flag>
+						<flag>wxALIGN_RIGHT|wxLEFT|wxTOP</flag>
 						<border>12</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>

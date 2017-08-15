@@ -11,6 +11,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 
+#include "registry/registry.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/ChoiceHelper.h"
 #include "map/algorithm/Export.h"
@@ -21,6 +22,11 @@ namespace ui
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Model Export");
+
+	const char* RKEY_MODEL_EXPORT_SKIP_CAULK = "user/ui/exportAsModel/skipCaulk";
+	const char* RKEY_MODEL_EXPORT_CENTER_OBJECTS = "user/ui/exportAsModel/centerObjects";
+	const char* RKEY_MODEL_EXPORT_OUTPUT_PATH = "user/ui/exportAsModel/outputPath";
+	const char* RKEY_MODEL_EXPORT_OUTPUT_FORMAT = "user/ui/exportAsModel/outputFormat";
 }
 
 ExportAsModelDialog::ExportAsModelDialog(wxWindow* parent) :
@@ -58,6 +64,22 @@ void ExportAsModelDialog::populateWindow()
 	// Select the first format for starters
 	formatChoice->Select(0);
 
+	std::string recentFormat = registry::getValue<std::string>(RKEY_MODEL_EXPORT_OUTPUT_FORMAT);
+	std::string recentPath = registry::getValue<std::string>(RKEY_MODEL_EXPORT_OUTPUT_PATH);
+
+	if (!recentFormat.empty())
+	{
+		wxutil::ChoiceHelper::SelectItemByStoredString(formatChoice, recentFormat);
+	}
+
+	findNamedObject<wxFilePickerCtrl>(this, "ExportDialogFilePicker")->SetPath(recentPath);
+
+	bool skipCaulk = registry::getValue<bool>(RKEY_MODEL_EXPORT_SKIP_CAULK);
+	findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->SetValue(skipCaulk);
+
+	bool centerObjects = registry::getValue<bool>(RKEY_MODEL_EXPORT_CENTER_OBJECTS);
+	findNamedObject<wxCheckBox>(this, "ExportDialogCenterObjects")->SetValue(centerObjects);
+
 	Layout();
 	Fit();
 	CenterOnScreen();
@@ -78,6 +100,8 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 		return;
 	}
 
+	saveOptionsToRegistry();
+
 	try
 	{
 		map::algorithm::exportSelectedAsModel(options);
@@ -93,8 +117,34 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 
 void ExportAsModelDialog::onCancel(wxCommandEvent& ev)
 {
+	// Remember stuff even when cancel is pressed
+	saveOptionsToRegistry();
+
 	// destroy dialog without saving
 	EndModal(wxID_CANCEL);
+}
+
+bool ExportAsModelDialog::_onDeleteEvent()
+{
+	// Remember stuff even when X is pressed
+	saveOptionsToRegistry();
+
+	return DialogBase::_onDeleteEvent();
+}
+
+void ExportAsModelDialog::saveOptionsToRegistry()
+{
+	registry::setValue(RKEY_MODEL_EXPORT_OUTPUT_FORMAT, 
+		wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice")));
+
+	registry::setValue(RKEY_MODEL_EXPORT_OUTPUT_PATH, 
+		findNamedObject<wxFilePickerCtrl>(this, "ExportDialogFilePicker")->GetPath());
+
+	registry::setValue(RKEY_MODEL_EXPORT_SKIP_CAULK, 
+		findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->GetValue());
+
+	registry::setValue(RKEY_MODEL_EXPORT_CENTER_OBJECTS, 
+		findNamedObject<wxCheckBox>(this, "ExportDialogCenterObjects")->GetValue());
 }
 
 void ExportAsModelDialog::ShowDialog(const cmd::ArgumentList& args)
