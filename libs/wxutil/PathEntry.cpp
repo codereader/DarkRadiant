@@ -15,8 +15,26 @@
 namespace wxutil
 {
 
+PathEntry::PathEntry(wxWindow* parent, const std::string& fileType) :
+	PathEntry(parent, false, fileType, std::string())
+{}
+
 PathEntry::PathEntry(wxWindow* parent, bool foldersOnly) :
-	wxPanel(parent, wxID_ANY)
+	PathEntry(parent, foldersOnly, std::string(), std::string())
+{}
+
+PathEntry::PathEntry(wxWindow* parent, const char* fileType) :
+	PathEntry(parent, std::string(fileType), std::string())
+{}
+
+PathEntry::PathEntry(wxWindow* parent, const std::string& fileType, const std::string& defaultExt) :
+	PathEntry(parent, false, fileType, defaultExt)
+{}
+
+PathEntry::PathEntry(wxWindow* parent, bool foldersOnly, const std::string& fileType, const std::string& defaultExt) :
+	wxPanel(parent, wxID_ANY),
+	_fileType(fileType),
+	_defaultExt(defaultExt)
 {
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -65,11 +83,16 @@ wxTextCtrl* PathEntry::getEntryWidget()
 	return _entry;
 }
 
+void PathEntry::setDefaultExtension(const std::string& defaultExt)
+{
+	_defaultExt = defaultExt;
+}
+
 void PathEntry::onBrowseFiles(wxCommandEvent& ev)
 {
 	wxWindow* topLevel = wxGetTopLevelParent(this);
 
-    wxutil::FileChooser fileChooser(topLevel, _("Choose File"), true);
+    FileChooser fileChooser(topLevel, _("Choose File"), true, _fileType, _defaultExt);
 
 	fileChooser.setCurrentPath(getValue());
 
@@ -90,7 +113,7 @@ void PathEntry::onBrowseFolders(wxCommandEvent& ev)
 {
 	wxWindow* topLevel = wxGetTopLevelParent(this);
 
-    wxutil::DirChooser dirChooser(topLevel, _("Choose Directory"));
+    DirChooser dirChooser(topLevel, _("Choose Directory"));
 
 	std::string curEntry = getValue();
 
