@@ -11,6 +11,7 @@
 #include "MultiMonitor.h"
 #include "dialog/MessageBox.h"
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
 #include <wx/app.h>
 
@@ -21,15 +22,8 @@ FileChooser::FileChooser(const std::string& title,
 						 bool open,
 						 const std::string& fileType,
 						 const std::string& defaultExt) :
-	_dialog(new wxFileDialog(GlobalMainFrame().getWxTopLevelWindow(), title, wxEmptyString, 
-			 wxEmptyString, wxFileSelectorDefaultWildcardStr, getStyle(open))),
-	_title(title),
-	_fileType(fileType),
-	_defaultExt(defaultExt),
-	_open(open)
-{
-	construct();
-}
+	FileChooser(GlobalMainFrame().getWxTopLevelWindow(), title, open, fileType, defaultExt)
+{}
 
 FileChooser::FileChooser(wxWindow* parentWindow,
 						 const std::string& title,
@@ -64,6 +58,9 @@ void FileChooser::construct()
 	{
 		_title = _open ? _("Open File") : _("Save File");
 	}
+
+	// Make default extension lowercase
+	boost::algorithm::to_lower(_defaultExt);
 
 	int defaultFormatIdx = 0;
 	int curFormatIdx = 0;
@@ -107,7 +104,15 @@ void FileChooser::construct()
 			filter.caption = i->name + " (" + i->pattern + ")";
 			filter.filter = i->pattern;
 
+			// Pre-select the filter matching the default extension
+			if (i->extension == _defaultExt)
+			{
+				defaultFormatIdx = curFormatIdx;
+			}
+
 			_fileFilters.push_back(filter);
+
+			++curFormatIdx;
 		}
 	}
 
