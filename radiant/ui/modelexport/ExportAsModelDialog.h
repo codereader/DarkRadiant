@@ -26,6 +26,7 @@ private:
 
 	void onExport(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
+	void onFormatSelection(wxCommandEvent& ev);
 
 	void saveOptionsToRegistry();
 };

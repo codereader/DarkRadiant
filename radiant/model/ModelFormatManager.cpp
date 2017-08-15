@@ -1,6 +1,7 @@
 #include "ModelFormatManager.h"
 
 #include "itextstream.h"
+#include "ifiletypes.h"
 #include "ipreferencesystem.h"
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -47,6 +48,18 @@ void ModelFormatManager::postModuleInitialisation()
 		}
 
 		page.appendCombo(_("Export Format for scaled Models"), RKEY_DEFAULT_MODEL_EXPORT_FORMAT, choices, true);
+
+		// Register all exporter extensions to the FileTypeRegistry
+
+		for (const ExporterMap::value_type& pair : _exporters)
+		{
+			std::string extLower = boost::algorithm::to_lower_copy(pair.second->getExtension());
+
+			GlobalFiletypes().registerPattern("modelexport", FileTypePattern(
+				pair.second->getDisplayName(), 
+				extLower,
+				"*." + extLower));
+		}
 	}
 }
 

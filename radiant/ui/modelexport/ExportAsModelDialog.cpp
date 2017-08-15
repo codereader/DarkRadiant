@@ -14,6 +14,7 @@
 #include "registry/registry.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/ChoiceHelper.h"
+#include "wxutil/PathEntry.h"
 #include "map/algorithm/Export.h"
 
 namespace ui
@@ -54,6 +55,8 @@ void ExportAsModelDialog::populateWindow()
 	wxChoice* formatChoice = findNamedObject<wxChoice>(this, "ExportDialogFormatChoice");
 	formatChoice->Clear();
 
+	formatChoice->Bind(wxEVT_CHOICE, sigc::mem_fun(this, &ExportAsModelDialog::onFormatSelection));
+
 	// Push the available formats to the wxChoice control
 	GlobalModelFormatManager().foreachExporter([&](const model::IModelExporterPtr& exporter)
 	{
@@ -72,7 +75,16 @@ void ExportAsModelDialog::populateWindow()
 		wxutil::ChoiceHelper::SelectItemByStoredString(formatChoice, recentFormat);
 	}
 
-	findNamedObject<wxFilePickerCtrl>(this, "ExportDialogFilePicker")->SetPath(recentPath);
+	// Replace the filepicker control with our own PathEntry
+	wxWindow* existing = findNamedObject<wxWindow>(this, "ExportDialogFilePicker");
+
+	wxutil::PathEntry* pathEntry = new wxutil::PathEntry(existing->GetParent(), "modelexport");
+	pathEntry->setValue(recentPath);
+	pathEntry->SetName("ExportDialogFilePicker");
+	pathEntry->setDefaultExtension(recentFormat);
+
+	existing->GetContainingSizer()->Replace(existing, pathEntry);
+	existing->Destroy();
 
 	bool skipCaulk = registry::getValue<bool>(RKEY_MODEL_EXPORT_SKIP_CAULK);
 	findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->SetValue(skipCaulk);
@@ -91,7 +103,7 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 
 	options.centerObjects = findNamedObject<wxCheckBox>(this, "ExportDialogCenterObjects")->GetValue();
 	options.skipCaulk = findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->GetValue();
-	options.outputFilename = findNamedObject<wxFilePickerCtrl>(this, "ExportDialogFilePicker")->GetPath();
+	options.outputFilename = findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->getValue();
 	options.outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
 
 	if (options.outputFilename.empty())
@@ -124,6 +136,17 @@ void ExportAsModelDialog::onCancel(wxCommandEvent& ev)
 	EndModal(wxID_CANCEL);
 }
 
+void ExportAsModelDialog::onFormatSelection(wxCommandEvent& ev)
+{
+	std::string selectedFormat = wxutil::ChoiceHelper::GetSelectedStoredString(
+		findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
+
+	if (!selectedFormat.empty())
+	{
+		findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->setDefaultExtension(selectedFormat);
+	}
+}
+
 bool ExportAsModelDialog::_onDeleteEvent()
 {
 	// Remember stuff even when X is pressed
@@ -138,7 +161,7 @@ void ExportAsModelDialog::saveOptionsToRegistry()
 		wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice")));
 
 	registry::setValue(RKEY_MODEL_EXPORT_OUTPUT_PATH, 
-		findNamedObject<wxFilePickerCtrl>(this, "ExportDialogFilePicker")->GetPath());
+		findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->getValue());
 
 	registry::setValue(RKEY_MODEL_EXPORT_SKIP_CAULK, 
 		findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->GetValue());
