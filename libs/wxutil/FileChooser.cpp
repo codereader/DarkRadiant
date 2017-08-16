@@ -70,7 +70,7 @@ void FileChooser::construct()
 
 	for (FileTypePatterns::const_iterator i = patterns.begin(); i != patterns.end(); ++i)
 	{
-		if (!_open && _fileType == "map")
+		if (!_open && _fileType == filetype::TYPE_MAP)
 		{
 			std::set<map::MapFormatPtr> formats = GlobalMapFormatManager().getMapFormatList(i->extension);
 

@@ -18,8 +18,8 @@ namespace map
 MapFileManager::MapFileManager()
 {
 	// Load the default values
-	_lastDirs["map"] = GlobalRegistry().get(RKEY_MAP_PATH);
-	_lastDirs["prefab"] = GlobalRegistry().get(RKEY_PREFAB_PATH);
+	_lastDirs[filetype::TYPE_MAP] = GlobalRegistry().get(RKEY_MAP_PATH);
+	_lastDirs[filetype::TYPE_PREFAB] = GlobalRegistry().get(RKEY_PREFAB_PATH);
 }
 
 // Instance owner method
@@ -32,9 +32,9 @@ MapFileManager& MapFileManager::getInstance()
 void MapFileManager::registerFileTypes()
 {
 	// Register the map file extension in the FileTypeRegistry
-	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Map"), "map", "*.map"));
-	GlobalFiletypes().registerPattern("region", FileTypePattern(_("Region"), "reg", "*.reg"));
-	GlobalFiletypes().registerPattern("prefab", FileTypePattern(_("Prefab"), "pfb", "*.pfb"));
+	GlobalFiletypes().registerPattern(filetype::TYPE_MAP, FileTypePattern(_("Map"), "map", "*.map"));
+	GlobalFiletypes().registerPattern(filetype::TYPE_REGION, FileTypePattern(_("Region"), "reg", "*.reg"));
+	GlobalFiletypes().registerPattern(filetype::TYPE_PREFAB, FileTypePattern(_("Prefab"), "pfb", "*.pfb"));
 }
 
 // Utility method to select a map file

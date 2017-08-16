@@ -55,7 +55,7 @@ void PrefabPopulator::visitFile(const std::string& filename)
 wxThread::ExitCode PrefabPopulator::Entry()
 {
     // Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
-    FileTypePatterns patterns = GlobalFiletypes().getPatternsForType("prefab");
+    FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_PREFAB);
 
     std::string defaultExt = "";
 

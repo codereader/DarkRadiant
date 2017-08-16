@@ -19,7 +19,7 @@ IModelExporterPtr AseExporter::clone()
 
 const std::string& AseExporter::getDisplayName() const
 {
-	static std::string _extension("ASCII Scene Export (.ase)");
+	static std::string _extension("ASCII Scene Export");
 	return _extension;
 }
 

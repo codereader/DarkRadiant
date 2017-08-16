@@ -55,7 +55,7 @@ void ModelFormatManager::postModuleInitialisation()
 		{
 			std::string extLower = boost::algorithm::to_lower_copy(pair.second->getExtension());
 
-			GlobalFiletypes().registerPattern("modelexport", FileTypePattern(
+			GlobalFiletypes().registerPattern(filetype::TYPE_MODEL_EXPORT, FileTypePattern(
 				pair.second->getDisplayName(), 
 				extLower,
 				"*." + extLower));

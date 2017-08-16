@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "imodel.h"
 #include "iselection.h"
+#include "ifiletypes.h"
 
 #include <stdexcept>
 #include <sigc++/functors/mem_fun.h>
@@ -10,6 +11,7 @@
 #include <wx/filepicker.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
+#include <boost/algorithm/string/case_conv.hpp>
 
 #include "registry/registry.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -60,8 +62,12 @@ void ExportAsModelDialog::populateWindow()
 	// Push the available formats to the wxChoice control
 	GlobalModelFormatManager().foreachExporter([&](const model::IModelExporterPtr& exporter)
 	{
+		// Generate the display name "<exporterName> (.<ext>)"
+		std::string displayName = exporter->getDisplayName();
+		displayName += " (." + boost::algorithm::to_lower_copy(exporter->getExtension()) + ")";
+
 		// Store the exporter extension as client data
-		formatChoice->Append(exporter->getDisplayName(), new wxStringClientData(exporter->getExtension()));
+		formatChoice->Append(displayName, new wxStringClientData(exporter->getExtension()));
 	});
 
 	// Select the first format for starters
@@ -78,7 +84,7 @@ void ExportAsModelDialog::populateWindow()
 	// Replace the filepicker control with our own PathEntry
 	wxWindow* existing = findNamedObject<wxWindow>(this, "ExportDialogFilePicker");
 
-	wxutil::PathEntry* pathEntry = new wxutil::PathEntry(existing->GetParent(), "modelexport");
+	wxutil::PathEntry* pathEntry = new wxutil::PathEntry(existing->GetParent(), filetype::TYPE_MODEL_EXPORT);
 	pathEntry->setValue(recentPath);
 	pathEntry->SetName("ExportDialogFilePicker");
 	pathEntry->setDefaultExtension(recentFormat);

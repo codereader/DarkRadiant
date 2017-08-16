@@ -72,7 +72,7 @@ IModelExporterPtr Lwo2Exporter::clone()
 
 const std::string& Lwo2Exporter::getDisplayName() const
 {
-	static std::string _extension("Lightwave Object File (.lwo)");
+	static std::string _extension("Lightwave Object File");
 	return _extension;
 }
 

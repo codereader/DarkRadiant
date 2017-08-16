@@ -655,7 +655,7 @@ bool Map::saveAs()
     if (_saveInProgress) return false; // safeguard
 
     MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(false, _("Save Map"), "map", getMapName());
+        MapFileManager::getMapFileSelection(false, _("Save Map"), filetype::TYPE_MAP, getMapName());
 
 	if (!fileInfo.fullPath.empty())
 	{
@@ -695,7 +695,7 @@ bool Map::saveCopyAs()
     }
 
 	MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(false, _("Save Copy As..."), "map", _lastCopyMapName);
+        MapFileManager::getMapFileSelection(false, _("Save Copy As..."), filetype::TYPE_MAP, _lastCopyMapName);
 
 	if (!fileInfo.fullPath.empty())
 	{
@@ -713,7 +713,7 @@ bool Map::saveCopyAs()
 void Map::loadPrefabAt(const Vector3& targetCoords)
 {
     /*MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(true, _("Load Prefab"), "prefab");*/
+        MapFileManager::getMapFileSelection(true, _("Load Prefab"), filetype::TYPE_PREFAB);*/
 
 	ui::PrefabSelector::Result result = ui::PrefabSelector::ChoosePrefab();
 
@@ -802,7 +802,7 @@ void Map::openMap(const cmd::ArgumentList& args)
         return;
 
     // Get the map file name to load
-    MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), "map");
+    MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
 
     if (!fileInfo.fullPath.empty())
 	{
@@ -816,7 +816,7 @@ void Map::openMap(const cmd::ArgumentList& args)
 void Map::importMap(const cmd::ArgumentList& args)
 {
     MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(true, _("Import map"), "map");
+        MapFileManager::getMapFileSelection(true, _("Import map"), filetype::TYPE_MAP);
 
     if (!fileInfo.fullPath.empty())
     {
@@ -845,7 +845,7 @@ void Map::saveMap(const cmd::ArgumentList& args)
 void Map::exportMap(const cmd::ArgumentList& args)
 {
     MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(false, _("Export selection"), "map");
+        MapFileManager::getMapFileSelection(false, _("Export selection"), filetype::TYPE_MAP);
 
 	if (!fileInfo.fullPath.empty())
 	{
@@ -860,7 +860,7 @@ void Map::loadPrefab(const cmd::ArgumentList& args) {
 void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args)
 {
     MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(false, _("Save selected as Prefab"), "prefab");
+        MapFileManager::getMapFileSelection(false, _("Save selected as Prefab"), filetype::TYPE_PREFAB);
 
 	if (!fileInfo.fullPath.empty())
     {
