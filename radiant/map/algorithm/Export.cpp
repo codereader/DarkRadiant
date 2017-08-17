@@ -97,15 +97,8 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 		
 		Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
 
-#if 0
 		// It's possible that the export overwrote a model we're already using in this map, refresh it
-		IEntityNodePtr entityNode = std::dynamic_pointer_cast<IEntityNode>(modelNode);
-
-		if (entityNode)
-		{
-			entityNode->refreshModel();
-		}
-#endif
+		GlobalCommandSystem().executeCommand("RefreshSelectedModels");
 	}
 	catch (selection::algorithm::EntityCreationException&)
 	{
