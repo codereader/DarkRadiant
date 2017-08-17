@@ -15,26 +15,28 @@
 namespace wxutil
 {
 
-PathEntry::PathEntry(wxWindow* parent, const std::string& fileType) :
-	PathEntry(parent, false, fileType, std::string())
+PathEntry::PathEntry(wxWindow* parent, const std::string& fileType, bool open) :
+	PathEntry(parent, false, open, fileType, std::string())
 {}
 
 PathEntry::PathEntry(wxWindow* parent, bool foldersOnly) :
-	PathEntry(parent, foldersOnly, std::string(), std::string())
+	PathEntry(parent, foldersOnly, true, std::string(), std::string())
 {}
 
-PathEntry::PathEntry(wxWindow* parent, const char* fileType) :
-	PathEntry(parent, std::string(fileType), std::string())
+PathEntry::PathEntry(wxWindow* parent, const char* fileType, bool open) :
+	PathEntry(parent, std::string(fileType), open, std::string())
 {}
 
-PathEntry::PathEntry(wxWindow* parent, const std::string& fileType, const std::string& defaultExt) :
-	PathEntry(parent, false, fileType, defaultExt)
+PathEntry::PathEntry(wxWindow* parent, const std::string& fileType, bool open, const std::string& defaultExt) :
+	PathEntry(parent, false, open, fileType, defaultExt)
 {}
 
-PathEntry::PathEntry(wxWindow* parent, bool foldersOnly, const std::string& fileType, const std::string& defaultExt) :
+PathEntry::PathEntry(wxWindow* parent, bool foldersOnly, bool open, 
+					 const std::string& fileType, const std::string& defaultExt) :
 	wxPanel(parent, wxID_ANY),
 	_fileType(fileType),
-	_defaultExt(defaultExt)
+	_defaultExt(defaultExt),
+	_open(open)
 {
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -92,7 +94,7 @@ void PathEntry::onBrowseFiles(wxCommandEvent& ev)
 {
 	wxWindow* topLevel = wxGetTopLevelParent(this);
 
-    FileChooser fileChooser(topLevel, _("Choose File"), true, _fileType, _defaultExt);
+    FileChooser fileChooser(topLevel, _("Choose File"), _open, _fileType, _defaultExt);
 
 	fileChooser.setCurrentPath(getValue());
 

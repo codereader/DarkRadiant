@@ -30,9 +30,13 @@ protected:
 	// in the FileChooser dialog
 	std::string _defaultExt;
 
+	// Whether we're opening the FileChooser in open or save mode
+	bool _open;
+
 private:
 	// Private shared constructor
-	PathEntry(wxWindow* parent, bool foldersOnly, const std::string& fileType, const std::string& defaultExt);
+	PathEntry(wxWindow* parent, bool foldersOnly, bool open,
+		const std::string& fileType, const std::string& defaultExt);
 
 public:
 	/**
@@ -47,21 +51,24 @@ public:
 	 * matching the given filetype. The filetype is used to populate
 	 * the filter dropdown with the corresponding options registered 
 	 * in the FileTypeRegistry.
+	 * The open flag indicates whether the FileChooser should be in 
+	 * open or save mode.
 	 */
-	explicit PathEntry(wxWindow* parent, const std::string& fileType);
+	explicit PathEntry(wxWindow* parent, const std::string& fileType, bool open);
 
 	// Same constructor as above but accepting const char* to avoid
 	// the char* being converted to bool even though it's marked explicit
-	explicit PathEntry(wxWindow* parent, const char* fileType);
+	explicit PathEntry(wxWindow* parent, const char* fileType, bool open);
 
 	/**
 	* Construct a new Path Entry which browses for files
 	* matching the given filetype. The filetype is used to populate
 	* the filter dropdown with the corresponding options registered
 	* in the FileTypeRegistry. The dropdown matching the default extension
-	* is preselected by default.
+	* is preselected by default. The open flag indicates whether the 
+	* FileChooser should be in open or save mode.
 	*/
-	explicit PathEntry(wxWindow* parent, const std::string& fileType, const std::string& defaultExt);
+	explicit PathEntry(wxWindow* parent, const std::string& fileType, bool open, const std::string& defaultExt);
 
 	// Set the selected path, this does not fire the EV_PATH_ENTRY_CHANGED event
 	void setValue(const std::string& val);

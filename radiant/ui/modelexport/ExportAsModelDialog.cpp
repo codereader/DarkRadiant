@@ -13,6 +13,9 @@
 #include <wx/sizer.h>
 #include <boost/algorithm/string/case_conv.hpp>
 
+#include "os/path.h"
+#include "os/file.h"
+#include "os/dir.h"
 #include "registry/registry.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/ChoiceHelper.h"
@@ -76,6 +79,26 @@ void ExportAsModelDialog::populateWindow()
 	std::string recentFormat = registry::getValue<std::string>(RKEY_MODEL_EXPORT_OUTPUT_FORMAT);
 	std::string recentPath = registry::getValue<std::string>(RKEY_MODEL_EXPORT_OUTPUT_PATH);
 
+	// Default to the models path of the current mod or game
+	if (recentPath.empty())
+	{
+		recentPath = GlobalGameManager().getModPath();
+
+		if (recentPath.empty())
+		{
+			recentPath = GlobalGameManager().getUserEnginePath();
+		}
+
+		recentPath = os::standardPathWithSlash(recentPath) + "models/";
+
+		if (!os::fileOrDirExists(recentPath))
+		{
+			rMessage() << "Creating default model output folder: " << recentPath << std::endl;
+
+			os::makeDirectory(recentPath);
+		}
+	}
+
 	if (!recentFormat.empty())
 	{
 		wxutil::ChoiceHelper::SelectItemByStoredString(formatChoice, recentFormat);
@@ -84,10 +107,11 @@ void ExportAsModelDialog::populateWindow()
 	// Replace the filepicker control with our own PathEntry
 	wxWindow* existing = findNamedObject<wxWindow>(this, "ExportDialogFilePicker");
 
-	wxutil::PathEntry* pathEntry = new wxutil::PathEntry(existing->GetParent(), filetype::TYPE_MODEL_EXPORT);
+	wxutil::PathEntry* pathEntry = new wxutil::PathEntry(existing->GetParent(), 
+		filetype::TYPE_MODEL_EXPORT, false, recentFormat);
+
 	pathEntry->setValue(recentPath);
 	pathEntry->SetName("ExportDialogFilePicker");
-	pathEntry->setDefaultExtension(recentFormat);
 
 	existing->GetContainingSizer()->Replace(existing, pathEntry);
 	existing->Destroy();
