@@ -8,6 +8,8 @@
 #include "iregistry.h"
 #include "imainframe.h"
 #include "imodel.h"
+#include "modelskin.h"
+#include "imodelcache.h"
 #include "i18n.h"
 
 #include <cstdlib>
@@ -82,8 +84,11 @@ ModelSelector::ModelSelector() :
     findNamedObject<wxButton>(this, "ModelSelectorCancelButton")->Connect(
         wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onCancel), NULL, this);
 
-	findNamedObject<wxButton>(this, "ModelSelectorReloadButton")->Connect(
+	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Connect(
 		wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onReloadModels), NULL, this);
+
+	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onReloadSkins), NULL, this);
 
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(ModelSelector::_onDeleteEvent), NULL, this);
 
@@ -100,6 +105,13 @@ ModelSelector::ModelSelector() :
             TreeModelPopulationFinishedHandler(ModelSelector::onTreeStorePopulationFinished), NULL, this);
     Connect(wxutil::EV_TREEMODEL_POPULATION_PROGRESS,
             TreeModelPopulationProgressHandler(ModelSelector::onTreeStorePopulationProgress), NULL, this);
+
+	// Connect to the model cache event to get notified on reloads
+	_modelsReloadedConn = GlobalModelCache().signal_modelsReloaded().connect(
+		sigc::mem_fun(this, &ModelSelector::onSkinsOrModelsReloaded));
+
+	_skinsReloadedConn = GlobalModelSkinCache().signal_skinsReloaded().connect(
+		sigc::mem_fun(this, &ModelSelector::onSkinsOrModelsReloaded));
 }
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)
@@ -161,6 +173,9 @@ void ModelSelector::onRadiantShutdown()
 {
     rMessage() << "ModelSelector shutting down." << std::endl;
 
+	_modelsReloadedConn.disconnect();
+	_skinsReloadedConn.disconnect();
+
 	// Model references are kept by this class, release them before shutting down
 	_treeView.reset();
     _treeStore.reset(nullptr);
@@ -210,7 +225,8 @@ void ModelSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationF
 	_populator.reset();
     _progressItem = wxDataViewItem();
 
-	findNamedObject<wxButton>(this, "ModelSelectorReloadButton")->Enable(true);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(true);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(true);
 }
 
 void ModelSelector::preSelectModel()
@@ -304,10 +320,24 @@ ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel,
     return Instance().showAndBlock(curModel, showOptions, showSkins);
 }
 
-void ModelSelector::Refresh()
+void ModelSelector::onIdleReloadTree(wxIdleEvent& ev)
+{
+	Disconnect(wxEVT_IDLE, wxIdleEventHandler(ModelSelector::onIdleReloadTree), nullptr, this);
+
+	populateModels();
+}
+
+void ModelSelector::onSkinsOrModelsReloaded()
 {
     // Clear the flag, this triggers a new population next time the dialog is shown
-    Instance()._populated = false;
+    _populated = false;
+
+	// In the case we're already shown, post a refresh event when the app is idle
+	// We might be called from a worker thread, so don't deadlock the app
+	if (IsShownOnScreen())
+	{
+		Connect(wxEVT_IDLE, wxIdleEventHandler(ModelSelector::onIdleReloadTree), nullptr, this);
+	}
 }
 
 // Helper function to create the TreeView
@@ -450,11 +480,25 @@ void ModelSelector::onCancel(wxCommandEvent& ev)
 
 void ModelSelector::onReloadModels(wxCommandEvent& ev)
 {
-	findNamedObject<wxButton>(this, "ModelSelectorReloadButton")->Enable(false);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
+
+	// Remember the selected model before reloading
+	_preselectedModel = getSelectedValue(_columns.vfspath);
 
 	_populated = false;
-
 	populateModels();
+}
+
+void ModelSelector::onReloadSkins(wxCommandEvent& ev)
+{
+	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
+
+	_preselectedModel = getSelectedValue(_columns.vfspath);
+
+	// When this is done, the skins reloaded signal is fired
+	GlobalModelSkinCache().refresh();
 }
 
 } // namespace ui

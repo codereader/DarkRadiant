@@ -2,6 +2,8 @@
 
 #include "MaterialsList.h"
 
+#include <sigc++/connection.h>
+
 #include "modelskin.h"
 #include "iradiant.h"
 #include "iuimanager.h"
@@ -113,6 +115,9 @@ private:
     wxIcon _modelIcon;
     wxDataViewItem _progressItem;
 
+	sigc::connection _modelsReloadedConn;
+	sigc::connection _skinsReloadedConn;
+
 private:
 	// Private constructor, creates widgets
 	ModelSelector();
@@ -147,12 +152,17 @@ private:
 	void onOK(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
 	void onReloadModels(wxCommandEvent& ev);
+	void onReloadSkins(wxCommandEvent& ev);
+	void onIdleReloadTree(wxIdleEvent& ev);
     void onTreeStorePopulationProgress(wxutil::TreeModel::PopulationProgressEvent& ev);
     void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	// Update the info table with information from the currently-selected model, and
 	// update the displayed model.
 	void onSelectionChanged(wxDataViewEvent& ev);
+
+	// Connected to the ModelCache/SkinCache signal, fires after the refresh commands are done
+	void onSkinsOrModelsReloaded();
 
 protected:
 	void _onDeleteEvent(wxCloseEvent& ev);
@@ -173,10 +183,7 @@ public:
 	static ModelSelectorResult chooseModel(
 			const std::string& curModel = "", bool showOptions = true, bool showSkins = true);
 
-	// greebo: Lets the modelselector repopulate its treeview next time the dialog is shown.
-	static void Refresh();
-
-    // Starts the background population thread
+	// Starts the background population thread
     static void Populate();
 
 	void onRadiantShutdown();

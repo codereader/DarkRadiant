@@ -11,12 +11,15 @@ namespace model
 class ModelCache :
 	public IModelCache
 {
+private:
 	// The container maps model names to instances
 	typedef std::map<std::string, IModelPtr> ModelMap;
 	ModelMap _modelMap;
 
 	// Flag to disable the cache on demand (used during clear())
 	bool _enabled;
+
+	sigc::signal<void> _sigModelsReloaded;
 
 public:
 	ModelCache();
@@ -30,6 +33,9 @@ public:
 	// Clear methods
 	void removeModel(const std::string& modelPath) override;
 	void clear() override;
+
+	// Public events
+	sigc::signal<void> signal_modelsReloaded() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

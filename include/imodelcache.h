@@ -3,6 +3,7 @@
 #include "imodule.h"
 #include "imodel.h"
 #include "inode.h"
+#include <sigc++/signal.h>
 
 namespace model 
 {
@@ -37,6 +38,9 @@ public:
 
 	// Clears the modelcache
 	virtual void clear() = 0;
+
+	/// Signal emitted after models are reloaded
+	virtual sigc::signal<void> signal_modelsReloaded() = 0;
 };
 
 } // namespace model

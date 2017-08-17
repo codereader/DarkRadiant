@@ -39,6 +39,8 @@ class Doom3SkinCache :
 	// Empty Doom3ModelSkin to return if a named skin is not found
 	Doom3ModelSkin _nullSkin;
 
+	sigc::signal<void> _sigSkinsReloaded;
+
 public:
 	/* Constructor.
 	 */
@@ -61,6 +63,9 @@ public:
 	 * greebo: Clears and reloads all skins.
 	 */
 	void refresh() override;
+
+	// Public events
+	sigc::signal<void> signal_skinsReloaded() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

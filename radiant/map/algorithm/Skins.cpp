@@ -1,7 +1,6 @@
 #include "Skins.h"
 
 #include "modelskin.h"
-#include "ui/modelselector/ModelSelector.h"
 
 namespace map
 {
@@ -11,6 +10,7 @@ namespace algorithm
 
 void reloadSkins(const cmd::ArgumentList& args)
 {
+	// This will emit a signal refreshing the ModelSelector too
     GlobalModelSkinCache().refresh();
 
 	GlobalSceneGraph().foreachNode([] (const scene::INodePtr& node)->bool
@@ -26,9 +26,6 @@ void reloadSkins(const cmd::ArgumentList& args)
 
         return true; // traverse further
 	});
-
-    // Refresh the ModelSelector too
-    ui::ModelSelector::Refresh();
 }
 
 } // namespace

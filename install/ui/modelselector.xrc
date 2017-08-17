@@ -74,8 +74,17 @@
 					<object class="sizeritem">
 						<option>0</option>
 						<flag>wxRIGHT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ModelSelectorReloadSkinsButton">
+							<label>Reload Skins</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxRIGHT</flag>
 						<border>24</border>
-						<object class="wxButton" name="ModelSelectorReloadButton">
+						<object class="wxButton" name="ModelSelectorReloadModelsButton">
 							<label>Reload Models</label>
 							<default>0</default>
 						</object>

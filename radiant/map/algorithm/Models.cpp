@@ -7,8 +7,8 @@
 #include "iselection.h"
 #include "ientity.h"
 #include "imodel.h"
+#include "imodelcache.h"
 
-#include "ui/modelselector/ModelSelector.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 
 namespace map
@@ -99,8 +99,8 @@ void refreshModels()
 	ModelRefreshWalker walker;
 	GlobalSceneGraph().root()->traverse(walker);
 
-	// greebo: Reload the modelselector too
-	ui::ModelSelector::Refresh(); // TODO: replace with signal
+	// Send the signal to the UI
+	GlobalModelCache().signal_modelsReloaded().emit();
 }
 
 void refreshSelectedModels()

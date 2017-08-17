@@ -160,6 +160,11 @@ void ModelCache::clear()
 	_enabled = true;
 }
 
+sigc::signal<void> ModelCache::signal_modelsReloaded()
+{
+	return _sigModelsReloaded;
+}
+
 // RegisterableModule implementation
 const std::string& ModelCache::getName() const 
 {
