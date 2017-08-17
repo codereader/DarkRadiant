@@ -7,6 +7,7 @@
 #include "itextstream.h"
 #include "imodel.h"
 #include "os/fs.h"
+#include "entitylib.h"
 #include "registry/registry.h"
 #include <stdexcept>
 #include <fstream>
@@ -73,7 +74,8 @@ void ModelExporter::setCenterObjects(bool centerObjects)
 
 bool ModelExporter::pre(const scene::INodePtr& node)
 {
-	if (!_exporter) return false;
+	// Skip worldspawn
+	if (Node_isWorldspawn(node)) return true;
 
 	_nodes.push_back(node);
 
