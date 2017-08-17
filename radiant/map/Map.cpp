@@ -771,7 +771,10 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
-		cmd::Signature(cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING, cmd::ARGTYPE_INT, cmd::ARGTYPE_INT));
+		cmd::Signature(cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING, 
+					   cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, 
+					   cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, 
+					   cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL));
 
     GlobalEventManager().addCommand("NewMap", "NewMap");
     GlobalEventManager().addCommand("OpenMap", "OpenMap");

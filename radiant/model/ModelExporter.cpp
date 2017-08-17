@@ -80,6 +80,11 @@ bool ModelExporter::pre(const scene::INodePtr& node)
 	return true;
 }
 
+const Matrix4& ModelExporter::getCenterTransform()
+{
+	return _centerTransform;
+}
+
 void ModelExporter::processNodes()
 {
 	AABB bounds = calculateModelBounds();

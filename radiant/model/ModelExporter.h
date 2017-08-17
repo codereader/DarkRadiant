@@ -42,6 +42,11 @@ public:
 	// Processes the nodes previously collected in the pre() method
 	void processNodes();
 
+	// Returns the transformation matrix used to put the model at the desired place
+	// This can be identity if centerobjects is false, or a translation matrix
+	// moving the model parts towards the world origin
+	const Matrix4& getCenterTransform();
+
 	/**
 	 * Performs the actual export using the given exporter (which has 
 	 * already accumulated all geometry to be exported).

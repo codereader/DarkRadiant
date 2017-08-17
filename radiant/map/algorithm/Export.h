@@ -8,10 +8,11 @@ namespace algorithm
 
 struct ModelExportOptions
 {
-	std::string outputFilename; // full export path
-	std::string outputFormat;	// model exporter extension
-	bool skipCaulk;				// whether to skip caulk
-	bool centerObjects;			// whether to center objects
+	std::string outputFilename;		// full export path
+	std::string outputFormat;		// model exporter extension
+	bool skipCaulk;					// whether to skip caulk
+	bool centerObjects;				// whether to center objects
+	bool replaceSelectionWithModel;	// delete the selection and put the exported model in its place
 };
 
 /**

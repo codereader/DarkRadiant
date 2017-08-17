@@ -106,6 +106,15 @@
 									<checked>0</checked>
 								</object>
 							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxTOP</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="ExportDialogReplaceWithModel">
+									<label>Replace selection with exported model</label>
+									<checked>0</checked>
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">
