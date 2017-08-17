@@ -1,100 +1,25 @@
 #include "ModelCache.h"
 
-#include "i18n.h"
 #include "ifilesystem.h"
 #include "imodel.h"
 #include "imd5model.h"
 #include "imd5anim.h"
-#include "iselection.h"
 #include "ieventmanager.h"
 #include "iparticles.h"
 #include "iparticlenode.h"
 
 #include <iostream>
-#include <set>
 #include "os/path.h"
 #include "os/file.h"
 
 #include "modulesystem/StaticModule.h"
-#include "ui/modelselector/ModelSelector.h"
-#include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "NullModelLoader.h"
 #include <functional>
 
-namespace model {
+#include "map/algorithm/Models.h"
 
-namespace {
-
-	class ModelRefreshWalker :
-		public scene::NodeVisitor
-	{
-	public:
-		bool pre(const scene::INodePtr& node) {
-			IEntityNodePtr entity = std::dynamic_pointer_cast<IEntityNode>(node);
-
-			if (entity != NULL) {
-				entity->refreshModel();
-				return false;
-			}
-
-			return true;
-		}
-	};
-
-	class ModelFinder :
-		public SelectionSystem::Visitor,
-		public scene::NodeVisitor
-	{
-	public:
-		typedef std::set<IEntityNodePtr> Entities;
-		typedef std::set<std::string> ModelPaths;
-
-	private:
-		// All the model path of the selected modelnodes
-		mutable ModelPaths _modelNames;
-		// All the selected entities with modelnodes as child
-		mutable Entities _entities;
-
-	public:
-		bool pre(const scene::INodePtr& node)
-		{
-			ModelNodePtr model = Node_getModel(node);
-
-			if (model != NULL)
-			{
-				_modelNames.insert(model->getIModel().getModelPath());
-
-				IEntityNodePtr ent =
-					std::dynamic_pointer_cast<IEntityNode>(node->getParent());
-
-				if (ent != NULL)
-				{
-					_entities.insert(ent);
-				}
-
-				return false;
-			}
-
-			return true;
-		}
-
-		void visit(const scene::INodePtr& node) const
-		{
-			node->traverse(*const_cast<ModelFinder*>(this));
-		}
-
-		const Entities& getEntities() const
-		{
-			return _entities;
-		}
-
-		const ModelPaths& getModelPaths() const
-		{
-			return _modelNames;
-		}
-	};
-
-} // namespace
+namespace model 
+{
 
 ModelCache::ModelCache() :
 	_enabled(true)
@@ -108,7 +33,7 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 	// The actual model path (is usually the same as the incoming modelPath)
 	std::string actualModelPath(modelPath);
 
-	if (modelDef != NULL)
+	if (modelDef)
 	{
 		// We have a valid modelDef, override the model path
 		actualModelPath = modelDef->mesh;
@@ -206,6 +131,23 @@ IModelPtr ModelCache::getModel(const std::string& modelPath)
 	return model;
 }
 
+void ModelCache::removeModel(const std::string& modelPath)
+{
+	// greebo: Disable the modelcache. During map::clear(), the nodes
+	// get cleared, which might trigger a loopback to insert().
+	_enabled = false;
+
+	ModelMap::iterator found = _modelMap.find(modelPath);
+
+	if (found != _modelMap.end())
+	{
+		_modelMap.erase(found);
+	}
+
+	// Allow usage of the modelnodemap again.
+	_enabled = true;
+}
+
 void ModelCache::clear()
 {
 	// greebo: Disable the modelcache. During map::clear(), the nodes
@@ -216,55 +158,6 @@ void ModelCache::clear()
 
 	// Allow usage of the modelnodemap again.
 	_enabled = true;
-}
-
-void ModelCache::refreshModels(const cmd::ArgumentList& args)
-{
-	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Models"));
-
-	// Clear the model cache
-	clear();
-
-	// Update all model nodes
-	ModelRefreshWalker walker;
-	GlobalSceneGraph().root()->traverse(walker);
-
-	// greebo: Reload the modelselector too
-	ui::ModelSelector::Refresh();
-}
-
-void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)
-{
-	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Models"));
-
-	// Find all models in the current selection
-	ModelFinder walker;
-	GlobalSelectionSystem().foreachSelected(walker);
-
-	// Remove the selected models from the cache
-	ModelFinder::ModelPaths models = walker.getModelPaths();
-
-	for (ModelFinder::ModelPaths::const_iterator i = models.begin();
-		 i != models.end(); ++i)
-	{
-		ModelMap::iterator found = _modelMap.find(*i);
-
-		if (found != _modelMap.end())
-		{
-			_modelMap.erase(found);
-		}
-	}
-
-	// Traverse the entities and submit a refresh call
-	ModelFinder::Entities entities = walker.getEntities();
-
-	for (ModelFinder::Entities::const_iterator i = entities.begin();
-		 i != entities.end(); ++i)
-	{
-		(*i)->refreshModel();
-	}
 }
 
 // RegisterableModule implementation
@@ -282,7 +175,6 @@ const StringSet& ModelCache::getDependencies() const
 	{
 		_dependencies.insert(MODULE_MODELFORMATMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 	}
 
 	return _dependencies;
@@ -292,14 +184,10 @@ void ModelCache::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	GlobalCommandSystem().addCommand(
-		"RefreshModels",
-		std::bind(&ModelCache::refreshModels, this, std::placeholders::_1)
-	);
-	GlobalCommandSystem().addCommand(
-		"RefreshSelectedModels",
-		std::bind(&ModelCache::refreshSelectedModels, this, std::placeholders::_1)
-	);
+	GlobalCommandSystem().addCommand("RefreshModels", 
+		std::bind(&ModelCache::refreshModels, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("RefreshSelectedModels", 
+		std::bind(&ModelCache::refreshSelectedModels, this, std::placeholders::_1));
 
 	GlobalEventManager().addCommand("RefreshModels", "RefreshModels");
 	GlobalEventManager().addCommand("RefreshSelectedModels", "RefreshSelectedModels");
@@ -308,6 +196,16 @@ void ModelCache::initialiseModule(const ApplicationContext& ctx)
 void ModelCache::shutdownModule()
 {
 	clear();
+}
+
+void ModelCache::refreshModels(const cmd::ArgumentList& args)
+{
+	map::algorithm::refreshModels();
+}
+
+void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)
+{
+	map::algorithm::refreshSelectedModels();
 }
 
 // The static module

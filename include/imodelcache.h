@@ -32,6 +32,9 @@ public:
 	 */
 	virtual IModelPtr getModel(const std::string& modelPath) = 0;
 
+	// Clears a specific model from the cache
+	virtual void removeModel(const std::string& modelPath) = 0;
+
 	// Clears the modelcache
 	virtual void clear() = 0;
 };

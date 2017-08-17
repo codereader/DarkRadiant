@@ -10,6 +10,7 @@
 #include "selection/algorithm/General.h"
 #include "model/ModelExporter.h"
 #include "Traverse.h"
+#include "Models.h"
 
 namespace map
 {
@@ -98,7 +99,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 		Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
 
 		// It's possible that the export overwrote a model we're already using in this map, refresh it
-		GlobalCommandSystem().executeCommand("RefreshSelectedModels");
+		refreshSelectedModels();
 	}
 	catch (selection::algorithm::EntityCreationException&)
 	{
