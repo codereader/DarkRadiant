@@ -82,6 +82,9 @@ ModelSelector::ModelSelector() :
     findNamedObject<wxButton>(this, "ModelSelectorCancelButton")->Connect(
         wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onCancel), NULL, this);
 
+	findNamedObject<wxButton>(this, "ModelSelectorReloadButton")->Connect(
+		wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onReloadModels), NULL, this);
+
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(ModelSelector::_onDeleteEvent), NULL, this);
 
 	FitToScreen(0.8f, 0.8f);
@@ -204,7 +207,10 @@ void ModelSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationF
 
     // Set the flag, we're done
     _populated = true;
+	_populator.reset();
     _progressItem = wxDataViewItem();
+
+	findNamedObject<wxButton>(this, "ModelSelectorReloadButton")->Enable(true);
 }
 
 void ModelSelector::preSelectModel()
@@ -440,6 +446,15 @@ void ModelSelector::onOK(wxCommandEvent& ev)
 void ModelSelector::onCancel(wxCommandEvent& ev)
 {
     cancelDialog();
+}
+
+void ModelSelector::onReloadModels(wxCommandEvent& ev)
+{
+	findNamedObject<wxButton>(this, "ModelSelectorReloadButton")->Enable(false);
+
+	_populated = false;
+
+	populateModels();
 }
 
 } // namespace ui

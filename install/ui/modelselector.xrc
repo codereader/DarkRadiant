@@ -73,6 +73,15 @@
 					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>0</option>
+						<flag>wxRIGHT</flag>
+						<border>24</border>
+						<object class="wxButton" name="ModelSelectorReloadButton">
+							<label>Reload Models</label>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
 						<flag></flag>
 						<border>6</border>
 						<object class="wxButton" name="ModelSelectorCancelButton">

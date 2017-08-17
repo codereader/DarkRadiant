@@ -146,6 +146,7 @@ private:
 	// wx callbacks
 	void onOK(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
+	void onReloadModels(wxCommandEvent& ev);
     void onTreeStorePopulationProgress(wxutil::TreeModel::PopulationProgressEvent& ev);
     void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
