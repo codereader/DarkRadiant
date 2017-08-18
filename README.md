@@ -46,7 +46,6 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libglew-dev 
 * libboost-dev 
 * libboost-filesystem-dev 
-* libboost-python-dev 
 * libboost-test-dev 
 * libalut-dev 
 * libvorbis-dev
