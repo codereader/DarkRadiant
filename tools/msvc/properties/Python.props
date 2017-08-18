@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(DarkRadiantRoot)\w32deps\python\include;$(DarkRadiantRoot)\w32deps\pybind11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DarkRadiantRoot)\w32deps\python\include;$(DarkRadiantRoot)\libs\pybind;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_ACOSH;HAVE_ASINH;HAVE_ATANH;HAVE_LOG1P;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
