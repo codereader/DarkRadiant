@@ -187,15 +187,28 @@ then
         # pybind11.h is including Python.h, need to help it find the Python.h header
         CPPFLAGS="$USER_CPPFLAGS $PYTHON_CPPFLAGS $PYBIND11_CPPFLAGS"
         
-	AC_CHECK_HEADER([pybind11/pybind11.h], [], 
-	     [AC_MSG_ERROR([Missing pybind11.h, please install the pybind11 package for your system. \
-If there's no pybind11 package for your distribution, please download it from the pybind11 \
-website and specify the path to the include folder using --with-pybind11=/path/to/pybind11/include])])
+        AC_MSG_NOTICE([Checking for pybind11 headers...])
+        found_local_pybind11=no
+        
+        # Check for a system-provided pybind11, otherwise fall back on
+        # the pybind11 headers we ship in the libs/pybind folder
+	AC_CHECK_HEADER([pybind11/pybind11.h], [found_local_pybind11=yes], [found_local_pybind11=no])
+	
+	if test "$found_local_pybind11" = 'yes'
+	then
+            AC_MSG_NOTICE([Using the system-provided pybind11 headers])
+        else
+            AC_MSG_NOTICE([Using the pybind11 headers shipped with the sources])
+	fi
+	
+	AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [test "$found_local_pybind11" = 'yes'])
+        
         script_module='script'
         AC_SUBST([script_module])
         AC_SUBST([PYTHON_CPPFLAGS])
         AC_SUBST([PYTHON_LIBS])
         AC_SUBST([PYBIND11_CPPFLAGS])
+        AC_SUBST([SYSTEM_HAS_PYBIND11]) # Used by Makefile.am in plugins/script/
     fi
 fi
 

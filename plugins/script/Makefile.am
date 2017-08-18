@@ -1,3 +1,9 @@
+
+# If system doesn't provide pybind11, fall back to the pybind11 headers we ship in the libs/pybind folder
+if !SYSTEM_HAS_PYBIND11
+PYBIND11_CPPFLAGS += -I$(top_srcdir)/libs/pybind
+endif
+
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
               $(XML_CFLAGS) \
               $(PYTHON_CPPFLAGS) \
