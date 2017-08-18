@@ -56,6 +56,7 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 
     // No colour changing
     glDisableClientState(GL_COLOR_ARRAY);
+
     if (info.checkFlag(RENDER_VERTEX_COLOUR))
     {
         glColor3f(1, 1, 1);
@@ -83,6 +84,11 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
     }
 
     _vertexBuf.renderAllBatches(GL_QUAD_STRIP, info.checkFlag(RENDER_BUMP));
+
+	if (!info.checkFlag(RENDER_BUMP))
+	{
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	}
 }
 
 void RenderablePatchSolid::queueUpdate()

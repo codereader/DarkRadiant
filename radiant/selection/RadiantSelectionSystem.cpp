@@ -1,10 +1,12 @@
 #include "RadiantSelectionSystem.h"
 
+#include "i18n.h"
 #include "iundo.h"
 #include "igrid.h"
 #include "iselectiongroup.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
+#include "ipreferencesystem.h"
 #include "imousetoolmanager.h"
 #include "SelectionPool.h"
 #include "SelectionTest.h"
@@ -859,6 +861,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
         _dependencies.insert(MODULE_SCENEGRAPH);
         _dependencies.insert(MODULE_MOUSETOOLMANAGER);
 		_dependencies.insert(MODULE_MAP);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
     }
 
     return _dependencies;
@@ -917,6 +920,11 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalCommandSystem().addCommand("UnSelectSelection", std::bind(&RadiantSelectionSystem::deselectCmd, this, std::placeholders::_1));
 	GlobalEventManager().addCommand("UnSelectSelection", "UnSelectSelection");
+
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
+
+	page.appendCheckBox(_("Ignore light volume bounds when calculating default rotation pivot location"), 
+		ManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
 
     // Connect the bounds changed caller
     GlobalSceneGraph().signal_boundsChanged().connect(

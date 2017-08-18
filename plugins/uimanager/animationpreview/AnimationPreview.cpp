@@ -142,6 +142,8 @@ void AnimationPreview::setAnim(const md5::IMD5AnimPtr& anim)
 	// Set the animation to play
 	model::ModelNodePtr model = Node_getModel(_model);
 	dynamic_cast<md5::IMD5Model&>(model->getIModel()).setAnim(_anim);
+
+	queueDraw();
 }
 
 void AnimationPreview::setupSceneGraph()

@@ -70,6 +70,17 @@ public:
 	virtual FileTypePatterns getPatternsForType(const std::string& fileType) = 0;
 };
 
+namespace filetype
+{
+
+// Some well-known file type constants
+const char* const TYPE_MAP = "map";
+const char* const TYPE_PREFAB = "prefab";
+const char* const TYPE_REGION = "region";
+const char* const TYPE_MODEL_EXPORT = "modelexport";
+
+}
+
 inline IFileTypeRegistry& GlobalFiletypes()
 {
 	// Cache the reference locally

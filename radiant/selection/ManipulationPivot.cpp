@@ -9,16 +9,15 @@
 namespace selection
 {
 
-namespace
-{
-	const std::string RKEY_ENTITY_PIVOT_IS_ORIGIN = "user/ui/rotationPivotIsOrigin";
-	const std::string RKEY_SNAP_ROTATION_PIVOT_TO_GRID = "user/ui/snapRotationPivotToGrid";
-}
+const std::string ManipulationPivot::RKEY_ENTITY_PIVOT_IS_ORIGIN = "user/ui/rotationPivotIsOrigin";
+const std::string ManipulationPivot::RKEY_SNAP_ROTATION_PIVOT_TO_GRID = "user/ui/snapRotationPivotToGrid";
+const std::string ManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES = "user/ui/defaultPivotLocationIgnoresLightVolumes";
 
 ManipulationPivot::ManipulationPivot() :
 	_entityPivotIsOrigin(false),
 	_snapPivotToGrid(false),
 	_needsRecalculation(true),
+	_defaultPivotLocationIgnoresLightVolumes(false),
 	_operationActive(false),
 	_userLocked(false)
 {}
@@ -27,11 +26,15 @@ void ManipulationPivot::initialise()
 {
 	_entityPivotIsOrigin = registry::getValue<bool>(RKEY_ENTITY_PIVOT_IS_ORIGIN);
 	_snapPivotToGrid = registry::getValue<bool>(RKEY_SNAP_ROTATION_PIVOT_TO_GRID);
+	_defaultPivotLocationIgnoresLightVolumes = registry::getValue<bool>(RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
 
 	GlobalRegistry().signalForKey(RKEY_ENTITY_PIVOT_IS_ORIGIN).connect(
 		sigc::mem_fun(this, &ManipulationPivot::onRegistryKeyChanged)
 	);
 	GlobalRegistry().signalForKey(RKEY_SNAP_ROTATION_PIVOT_TO_GRID).connect(
+		sigc::mem_fun(this, &ManipulationPivot::onRegistryKeyChanged)
+	);
+	GlobalRegistry().signalForKey(RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES).connect(
 		sigc::mem_fun(this, &ManipulationPivot::onRegistryKeyChanged)
 	);
 }
@@ -145,7 +148,8 @@ void ManipulationPivot::updateFromSelection()
 		}
 		else
 		{
-			bounds = algorithm::getCurrentSelectionBounds();
+			// Ignore light volumes for the pivot calculation
+			bounds = algorithm::getCurrentSelectionBounds(!_defaultPivotLocationIgnoresLightVolumes);
 		}
 
 		// the <bounds> variable now contains the AABB of the selection, retrieve the origin
@@ -165,6 +169,7 @@ void ManipulationPivot::onRegistryKeyChanged()
 {
 	_entityPivotIsOrigin = registry::getValue<bool>(RKEY_ENTITY_PIVOT_IS_ORIGIN);
 	_snapPivotToGrid = registry::getValue<bool>(RKEY_SNAP_ROTATION_PIVOT_TO_GRID);
+	_defaultPivotLocationIgnoresLightVolumes = registry::getValue<bool>(RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
 
 	GlobalSelectionSystem().pivotChanged();
 }

@@ -640,6 +640,7 @@ void OpenGLShader::construct(const std::string& name)
         case '(': // fill shader
         {
             OpenGLState& state = appendDefaultPass();
+			state.setName(name);
 
             Colour4 colour;
             sscanf(name.c_str(), "(%lf %lf %lf)", &colour[0], &colour[1], &colour[2]);
@@ -658,6 +659,7 @@ void OpenGLShader::construct(const std::string& name)
         case '[':
         {
             OpenGLState& state = appendDefaultPass();
+			state.setName(name);
 
             Colour4 colour;
             sscanf(name.c_str(), "[%lf %lf %lf]", &colour[0], &colour[1], &colour[2]);
@@ -677,6 +679,7 @@ void OpenGLShader::construct(const std::string& name)
         case '<': // wireframe shader
         {
             OpenGLState& state = appendDefaultPass();
+			state.setName(name);
 
             Colour4 colour;
             sscanf(name.c_str(), "<%lf %lf %lf>", &colour[0], &colour[1], &colour[2]);
@@ -694,6 +697,7 @@ void OpenGLShader::construct(const std::string& name)
         case '$':
         {
             OpenGLState& state = appendDefaultPass();
+			state.setName(name);
 
             if (name == "$POINT")
             {
@@ -727,6 +731,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
+			  hiddenLine.setName(name + "_Hidden");
               hiddenLine.setRenderFlags(RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.m_linewidth = 2;
@@ -817,6 +822,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
+			  hiddenLine.setName(name + "_Hidden");
               hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
                                       | RENDER_DEPTHTEST
                                       | RENDER_OVERRIDE
@@ -839,6 +845,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
+			  hiddenLine.setName(name + "_Hidden");
               hiddenLine.setRenderFlags(RENDER_CULLFACE
                                       | RENDER_LIGHTING
                                       | RENDER_SMOOTH

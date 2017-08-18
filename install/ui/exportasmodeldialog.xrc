@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="ExportDialogMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>560,-1</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="ExportDialogOutputLabel">
+							<label>Output File</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxFlexGridSizer">
+							<rows>2</rows>
+							<cols>2</cols>
+							<vgap>0</vgap>
+							<hgap>12</hgap>
+							<growablecols>1</growablecols>
+							<growablerows></growablerows>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<object class="wxStaticText" name="m_staticText8">
+									<label>Output Format:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxChoice" name="ExportDialogFormatChoice">
+									<selection>0</selection>
+									<content>
+										<item>ASCII Scene Export (.ase)</item>
+									</content>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>0</border>
+								<object class="wxStaticText" name="m_staticText9">
+									<label>File Path:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxFilePickerCtrl" name="ExportDialogFilePicker">
+									<value></value>
+									<message>Select a file</message>
+									<wildcard>*.*</wildcard>
+									<style>wxFLP_DEFAULT_STYLE</style>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxTOP</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="ExportDialogOptionLabel">
+							<label>Export Options</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM|wxTOP</flag>
+								<border>6</border>
+								<object class="wxCheckBox" name="ExportDialogCenterObjects">
+									<label>Center Objects at 0,0,0 Origin</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM|wxTOP</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="ExportDialogSkipCaulk">
+									<label>Skip Surfaces textured with Caulk</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxTOP</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="ExportDialogReplaceWithModel">
+									<label>Replace selection with exported model</label>
+									<checked>0</checked>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_RIGHT|wxLEFT|wxTOP</flag>
+						<border>12</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxButton" name="ExportDialogCancelButton">
+									<label>Cancel</label>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxButton" name="ExportDialogExportButton">
+									<label>Export</label>
+									<default>0</default>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

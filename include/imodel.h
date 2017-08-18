@@ -4,15 +4,16 @@
 #include "irender.h"
 #include "inode.h"
 #include "imodule.h"
+#include "imodelsurface.h"
+#include <vector>
 
 /* Forward decls */
 class AABB;
 class ModelSkin;
+class Matrix4;
 
 namespace model
 {
-
-class IModelSurface; // see imodelsurface.h
 
 typedef std::vector<std::string> StringList;
 
@@ -129,11 +130,30 @@ public:
 	// can create a fresh instance of this exporter on demand.
 	virtual IModelExporterPtr clone() = 0;
 
+	enum class Format
+	{
+		Text,	// Exporter writes text-based format
+		Binary, // Exporter exports to a binary stream
+	};
+
+	virtual Format getFileFormat() const = 0;
+
+	// The display name for referencing this exporter in the GUI
+	virtual const std::string& getDisplayName() const = 0;
+
 	// Returns the uppercase file extension this exporter is suitable for
 	virtual const std::string& getExtension() const = 0;
 
 	// Adds the given Surface to the exporter's queue
-	virtual void addSurface(const IModelSurface& surface) = 0;
+	// The given transform is applied to the surface before the vertices are added to the queue.
+	// Note: Scaling components of the matrix are not treated separately here.
+	virtual void addSurface(const IModelSurface& surface, const Matrix4& localToWorld) = 0;
+
+	// Adds the given set of polygons to the named surface
+	// The given transform is applied to the surface before the vertices are added to the queue.
+	// Note: Scaling components of the matrix are not treated separately here.
+	virtual void addPolygons(const std::string& materialName, 
+		const std::vector<ModelPolygon>& polys, const Matrix4& localToWorld) = 0;
 
 	// Export the model file to the given stream
 	virtual void exportToStream(std::ostream& stream) = 0;
@@ -192,6 +212,12 @@ public:
 
 	// Find an exporter for the given extension, returns empty if nothing found
 	virtual IModelExporterPtr getExporter(const std::string& extension) = 0;
+
+	// Calls the functor with each registered model importer as argument
+	virtual void foreachImporter(const std::function<void(const IModelImporterPtr&)>& functor) = 0;
+
+	// Calls the functor with each registered model exporter as argument
+	virtual void foreachExporter(const std::function<void(const IModelExporterPtr&)>& functor) = 0;
 };
 
 } // namespace model
@@ -206,6 +232,9 @@ inline model::ModelNodePtr Node_getModel(const scene::INodePtr& node)
 {
 	return std::dynamic_pointer_cast<model::ModelNode>(node);
 }
+
+// Contains the default format used for exporting scaled models
+const char* const RKEY_DEFAULT_MODEL_EXPORT_FORMAT = "user/ui/map/defaultScaledModelExportFormat";
 
 const char* const MODULE_MODELFORMATMANAGER("ModelFormatManager");
 

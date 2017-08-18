@@ -97,7 +97,7 @@ public:
 	void askForOverwrite(bool ask);
 
 	/**
-	 * greebo: Displays the dialog and enters the GTK main loop.
+	 * greebo: Displays the dialog and enters a blocking loop.
 	 * Returns the filename or "" if the user hit cancel.
 	 *
 	 * The returned file name is normalised using the os::standardPath() method.
@@ -105,7 +105,7 @@ public:
 	virtual std::string display();
 
 private:
-	long getStyle(bool open);
+	static long getStyle(bool open);
 
 	void construct(); // shared constructor stuff
 };

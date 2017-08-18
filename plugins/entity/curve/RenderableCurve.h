@@ -1,11 +1,11 @@
-#ifndef RENDERABLECURVE_H_
-#define RENDERABLECURVE_H_
+#pragma once
 
 #include <vector>
 #include "irenderable.h"
 #include "render.h"
 
-namespace entity {
+namespace entity 
+{
 
 class RenderableCurve :
 	public OpenGLRenderable
@@ -21,9 +21,12 @@ public:
         }
 		pointvertex_gl_array(&m_vertices.front());
 		glDrawArrays(GL_LINE_STRIP, 0, GLsizei(m_vertices.size()));
+
+		if (info.checkFlag(RENDER_VERTEX_COLOUR))
+		{
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
 	}
 };
 
 } // namespace entity
-
-#endif /*RENDERABLECURVE_H_*/

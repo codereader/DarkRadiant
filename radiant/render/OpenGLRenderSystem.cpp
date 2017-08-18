@@ -62,6 +62,8 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
 OpenGLRenderSystem::~OpenGLRenderSystem()
 {
+	// The static default rendersystem won't use this, it will detach itself
+	// in the shutdownModule() method.
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
 	{
 		GlobalMaterialManager().detach(*this);
@@ -193,6 +195,25 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	glHint(GL_FOG_HINT, GL_NICEST);
     glDisable(GL_FOG);
 
+#if 0
+	std::size_t count = 0 ;
+
+	for (OpenGLStates::iterator i = _state_sorted.begin();
+		i != _state_sorted.end();
+		++i)
+	{
+		// Render the OpenGLShaderPass
+		if (!i->second->empty())
+		{
+			count++;
+		}
+	}
+
+	rMessage() << "R1 " << count << " of " << _state_sorted.size() << "\n";
+
+	std::size_t curObject = 0;
+#endif
+
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
@@ -201,9 +222,14 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 		i != _state_sorted.end();
 		++i)
 	{
-        // Render the OpenGLShaderPass
+		// Render the OpenGLShaderPass
         if (!i->second->empty())
         {
+#if 0
+			rMessage() << curObject << " " << (*i->second);
+			curObject++;
+#endif
+
             i->second->render(current, globalstate, viewer, _time);
         }
 	}
@@ -475,7 +501,8 @@ void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) c
 }
 
 // RegisterableModule implementation
-const std::string& OpenGLRenderSystem::getName() const {
+const std::string& OpenGLRenderSystem::getName() const
+{
 	static std::string _name(MODULE_RENDERSYSTEM);
 	return _name;
 }
@@ -484,7 +511,8 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty()) 
+	{
 		_dependencies.insert(MODULE_SHADERSYSTEM);
 		_dependencies.insert(MODULE_OPENGL);
 	}
@@ -494,7 +522,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 
 void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << "ShaderCache::initialiseModule called.\n";
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	GlobalMaterialManager().attach(*this);
 
@@ -505,6 +533,7 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 
 void OpenGLRenderSystem::shutdownModule()
 {
+	GlobalMaterialManager().detach(*this);
 }
 
 // Define the static ShaderCache module

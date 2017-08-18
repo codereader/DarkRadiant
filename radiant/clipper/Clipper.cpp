@@ -20,7 +20,6 @@
 
 namespace
 {
-	const char* const RKEY_CLIPPER_CAULK_SHADER = "user/ui/clipper/caulkTexture";
 	const char* const RKEY_CLIPPER_USE_CAULK = "user/ui/clipper/useCaulk";
 }
 

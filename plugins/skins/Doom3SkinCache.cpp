@@ -44,6 +44,11 @@ const StringList& Doom3SkinCache::getAllSkins()
     return _allSkins;
 }
 
+sigc::signal<void> Doom3SkinCache::signal_skinsReloaded()
+{
+	return _sigSkinsReloaded;
+}
+
 // Realise the skin cache
 void Doom3SkinCache::ensureDefsLoaded()
 {
@@ -85,6 +90,9 @@ void Doom3SkinCache::loadSkinFiles()
 	}
 
     rMessage() << "[skins] Found " << _allSkins.size() << " skins." << std::endl;
+
+	// Done loading skins
+	_sigSkinsReloaded.emit();
 }
 
 // Parse the contents of a .skin file

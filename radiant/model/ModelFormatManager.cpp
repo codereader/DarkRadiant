@@ -1,6 +1,9 @@
 #include "ModelFormatManager.h"
 
+#include "i18n.h"
 #include "itextstream.h"
+#include "ifiletypes.h"
+#include "ipreferencesystem.h"
 #include <boost/algorithm/string/case_conv.hpp>
 
 #include "modulesystem/StaticModule.h"
@@ -25,6 +28,40 @@ void ModelFormatManager::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	_nullModelLoader.reset(new NullModelLoader);
+
+	module::ModuleRegistry::Instance().signal_allModulesInitialised().connect(
+		sigc::mem_fun(this, &ModelFormatManager::postModuleInitialisation)
+	);
+}
+
+void ModelFormatManager::postModuleInitialisation()
+{
+	if (!_exporters.empty())
+	{
+		// Construct and Register the patch-related preferences
+		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Model Export"));
+
+		ComboBoxValueList choices;
+
+		for (const ExporterMap::value_type& pair : _exporters)
+		{
+			choices.push_back(pair.first);
+		}
+
+		page.appendCombo(_("Export Format for scaled Models"), RKEY_DEFAULT_MODEL_EXPORT_FORMAT, choices, true);
+
+		// Register all exporter extensions to the FileTypeRegistry
+
+		for (const ExporterMap::value_type& pair : _exporters)
+		{
+			std::string extLower = boost::algorithm::to_lower_copy(pair.second->getExtension());
+
+			GlobalFiletypes().registerPattern(filetype::TYPE_MODEL_EXPORT, FileTypePattern(
+				pair.second->getDisplayName(), 
+				extLower,
+				"*." + extLower));
+		}
+	}
 }
 
 void ModelFormatManager::registerImporter(const IModelImporterPtr& importer)
@@ -104,6 +141,22 @@ IModelExporterPtr ModelFormatManager::getExporter(const std::string& extension)
 
 	// Return a cloned instance if we found a matching exporter
 	return found != _exporters.end() ? found->second->clone() : IModelExporterPtr();
+}
+
+void ModelFormatManager::foreachImporter(const std::function<void(const IModelImporterPtr&)>& functor)
+{
+	for (const ImporterMap::value_type& pair : _importers)
+	{
+		functor(pair.second);
+	}
+}
+
+void ModelFormatManager::foreachExporter(const std::function<void(const IModelExporterPtr&)>& functor)
+{
+	for (const ExporterMap::value_type& pair : _exporters)
+	{
+		functor(pair.second);
+	}
 }
 
 module::StaticModule<ModelFormatManager> _staticModelFormatManagerModule;

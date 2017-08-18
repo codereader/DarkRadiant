@@ -23,9 +23,10 @@
       <autoSaveInterval value="5" />
       <autoSaveSnapshots value="0" />
       <snapshotFolder value="snapshots/" />
-      <maxSnapshotFolderSize value="100" />
+      <maxSnapshotFolderSize value="1024" />
       <loadStatusInterleave value="50" />
       <saveStatusInterleave value="50" />
+      <defaultScaledModelExportFormat value="ase" />
     </map>
     <undo>
       <queueSize value="256" />
@@ -57,6 +58,7 @@
     <rotateObjectsIndependently value="0" />
     <rotationPivotIsOrigin value="0" />
     <snapRotationPivotToGrid value="0" />
+    <defaultPivotLocationIgnoresLightVolumes value="1" />
     <selectionEpsilon value="8.0" />
     <dragResizeEntitiesSymmetrically value="1" />
     <transientComponentSelection value="1" />

@@ -51,6 +51,21 @@ public:
 		choice->SetSelection(wxNOT_FOUND);
 	} 
 
+	// Returns the string that has been attached as string client data to the currently selected choice item
+	static std::string GetSelectedStoredString(wxChoice* choice)
+	{
+		int selectionIdx = choice->GetSelection();
+
+		if (selectionIdx == wxNOT_FOUND)
+		{
+			return std::string();
+		}
+
+		wxStringClientData* data = static_cast<wxStringClientData*>(choice->GetClientObject(selectionIdx));
+
+		return data->GetData().ToStdString();
+	}
+
 	// Selects the item whose attached string is equal to <str>
 	static void SelectItemByStoredString(wxChoice* choice, const wxString& str)
 	{

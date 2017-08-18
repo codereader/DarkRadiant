@@ -647,16 +647,40 @@ AABB getCurrentComponentSelectionBounds()
 	return bounds;
 }
 
-AABB getCurrentSelectionBounds()
+// This is the same as for selection
+AABB getCurrentSelectionBounds(bool considerLightVolumes)
 {
 	AABB bounds;
 
-	GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
 	{
-		bounds.includeAABB(node->worldAABB());
+		if (considerLightVolumes)
+		{
+			bounds.includeAABB(node->worldAABB());
+			return;
+		}
+
+		// We were asked to ignore light volumes, so for lights we'll only 
+		// sum up the small diamond AABB to calculate the selection bounds (#4578)
+		ILightNodePtr lightNode = Node_getLightNode(node);
+
+		if (lightNode)
+		{
+			bounds.includeAABB(lightNode->getSelectAABB());
+		}
+		else
+		{
+			bounds.includeAABB(node->worldAABB());
+		}
 	});
 
 	return bounds;
+}
+
+AABB getCurrentSelectionBounds()
+{
+	// Consider light volumes by default
+	return getCurrentSelectionBounds(true);
 }
 
 Vector3 getCurrentSelectionCenter()

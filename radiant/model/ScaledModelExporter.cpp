@@ -1,16 +1,22 @@
 #include "ScaledModelExporter.h"
 
+#include <map>
 #include <fstream>
 #include "i18n.h"
+#include "iundo.h"
 #include "itextstream.h"
 #include "igame.h"
 #include "ientity.h"
 #include "iscenegraph.h"
 #include "os/fs.h"
 #include "os/path.h"
+#include "registry/registry.h"
 #include <boost/format.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <regex>
+
+#include "ModelExporter.h"
 
 namespace map
 {
@@ -37,42 +43,52 @@ void ScaledModelExporter::onMapEvent(IMap::MapEvent ev)
 
 void ScaledModelExporter::saveScaledModels()
 {
+	std::map<scene::INodePtr, model::ModelNodePtr> nodesToProcess;
+
 	// Find any models with modified scale
 	GlobalSceneGraph().foreachNode([&](const scene::INodePtr& node)
 	{
 		if (Node_isEntity(node))
 		{
 			// Find any model nodes below that one
-			model::ModelNodePtr childModel;
-
 			node->foreachNode([&](const scene::INodePtr& child)
 			{
 				model::ModelNodePtr candidate = Node_getModel(child);
 
 				if (candidate && candidate->hasModifiedScale())
 				{
-					childModel = candidate;
+					nodesToProcess.insert(std::make_pair(node, candidate));
 				}
 
 				return true;
 			});
-
-			// Do we have a model with modified scale?
-			if (childModel)
-			{
-				saveScaledModel(node, childModel);
-			}
 		}
 
 		return true;
 	});
+
+	// Do we have any models with modified scale?
+	if (!nodesToProcess.empty())
+	{
+		UndoableCommand scaleModels("saveScaledModels");
+
+		for (auto& pair : nodesToProcess)
+		{
+			saveScaledModel(pair.first, pair.second);
+		}
+	}
 }
 
 void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, const model::ModelNodePtr& modelNode)
 {
-	std::string outputExtension = "ase";
+	// Request the default format from the preferences
+	std::string outputExtension = registry::getValue<std::string>(RKEY_DEFAULT_MODEL_EXPORT_FORMAT);
+	boost::algorithm::to_lower(outputExtension);
 
-	// Save the scaled model as ASE
+	rMessage() << "Model format used for export: " << outputExtension << 
+		" (this can be changed in the preferences)" << std::endl;
+
+	// Save the scaled model in the configured format
 	model::IModelExporterPtr exporter = GlobalModelFormatManager().getExporter(outputExtension);
 
 	if (!exporter)
@@ -88,7 +104,7 @@ void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, con
 	{
 		const model::IModelSurface& surface = model.getSurface(s);
 
-		exporter->addSurface(surface);
+		exporter->addSurface(surface, Matrix4::getIdentity());
 	}
 
 	// Get the current model file name
@@ -115,64 +131,18 @@ void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, con
 	modelPath /= modelFilename;
 
 	// Export to temporary file and rename afterwards
-	exportModel(exporter, targetPath, modelFilename);
-
-	std::string newModelKey = os::standardPath(modelPath.string());
-	entity->setKeyValue("model", newModelKey);
-
-	rMessage() << "Done exporting scaled model, new model key is " << newModelKey << std::endl;
-}
-
-void ScaledModelExporter::exportModel(const model::IModelExporterPtr& exporter,
-	const fs::path& modelOutputPath, const std::string& modelFilename)
-{
-	fs::path targetPath = modelOutputPath;
-
-	// Open a temporary file (leading underscore)
-	fs::path tempFile = targetPath / ("_" + modelFilename);
-
-	std::ofstream tempStream(tempFile.string().c_str());
-
-	if (!tempStream.is_open())
-	{
-		throw std::runtime_error(
-			(boost::format(_("Cannot open file for writing: %s")) % tempFile.string()).str());
-	}
-
-	exporter->exportToStream(tempStream);
-
-	tempStream.close();
-
-	// The full OS path to the output file
-	targetPath /= modelFilename;
-
-	if (fs::exists(targetPath))
-	{
-		try
-		{
-			fs::remove(targetPath);
-		}
-		catch (fs::filesystem_error& e)
-		{
-			rError() << "Could not remove the file " << targetPath.string() << std::endl
-				<< e.what() << std::endl;
-
-			throw std::runtime_error(
-				(boost::format(_("Could not remove the file: %s")) % tempFile.string()).str());
-		}
-	}
-
 	try
 	{
-		fs::rename(tempFile, targetPath);
-	}
-	catch (fs::filesystem_error& e)
-	{
-		rError() << "Could not rename the temporary file " << tempFile.string() << std::endl
-			<< e.what() << std::endl;
+		model::ModelExporter::ExportToPath(exporter, targetPath.string(), modelFilename);
 
-		throw std::runtime_error(
-			(boost::format(_("Could not rename the temporary file: %s")) % tempFile.string()).str());
+		std::string newModelKey = os::standardPath(modelPath.string());
+		entity->setKeyValue("model", newModelKey);
+
+		rMessage() << "Done exporting scaled model, new model key is " << newModelKey << std::endl;
+	}
+	catch (std::runtime_error& ex)
+	{
+		rError() << "Failed to export scaled model: " << ex.what() << std::endl;
 	}
 }
 

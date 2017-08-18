@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_BYTESTREAMUTILS_H)
-#define INCLUDED_BYTESTREAMUTILS_H
+#pragma once
 
 #if defined(__GNUC__)
 
@@ -34,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
+#include <ostream>
 #include <algorithm>
 
 // if C99 is unavailable, fall back to the types most likely to be the right sizes
@@ -51,7 +50,42 @@ typedef unsigned int uint32_t;
 #endif
 
 
+namespace stream
+{
 
+/**
+ * greebo: Writes the given number value to the given output stream in Big Endian byte order,
+ * regardless of the calling platform's endianness.
+ */
+template<typename ValueType>
+void writeBigEndian(std::ostream& stream, ValueType value)
+{
+	ValueType output = value;
+
+#ifndef __BIG_ENDIAN__
+	std::reverse(reinterpret_cast<char*>(&output), reinterpret_cast<char*>(&output) + sizeof(ValueType));
+#endif
+
+	stream.write(reinterpret_cast<const char*>(&output), sizeof(ValueType));
+}
+
+/**
+* greebo: Writes the given number value to the given output stream in Little Endian byte order,
+* regardless of the calling platform's endianness.
+*/
+template<typename ValueType>
+void writeLittleEndian(std::ostream& stream, ValueType value)
+{
+	ValueType output = value;
+
+#ifdef __BIG_ENDIAN__
+	std::reverse(reinterpret_cast<char*>(&output), reinterpret_cast<char*>(&output) + sizeof(ValueType));
+#endif
+
+	stream.write(reinterpret_cast<const char*>(&output), sizeof(ValueType));
+}
+
+}
 
 template<typename InputStreamType, typename Type>
 inline void istream_read_little_endian(InputStreamType& istream, Type& value)
@@ -125,5 +159,3 @@ inline typename InputStreamType::byte_type istream_read_byte(InputStreamType& is
   istream.read(&b, sizeof(typename InputStreamType::byte_type));
   return b;
 }
-
-#endif

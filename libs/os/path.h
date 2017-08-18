@@ -193,6 +193,26 @@ namespace os
     }
 
 	/**
+	 * Returns the directory part of the given path, cutting off the filename
+	 * right after the last slash. Use standard paths (forward slashes) only!
+	 *
+	 * E.g.
+	 * blah/bleh/file.ext   -> "blah/bleh/"
+	 * blah/bloog			-> "blah/"
+	 */
+	inline std::string getDirectory(const std::string& path)
+	{
+		std::size_t lastSlash = path.rfind('/');
+
+		if (lastSlash == std::string::npos)
+		{
+			return path;
+		}
+
+		return path.substr(0, lastSlash + 1);
+	}
+
+	/**
 	 * Returns true if the given string qualifies as path to a directory,
 	 * which is equal to the path string ending with the slash '/' character.
 	 */

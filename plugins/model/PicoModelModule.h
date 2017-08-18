@@ -11,6 +11,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include "PicoModelLoader.h"
 #include "AseExporter.h"
+#include "Lwo2Exporter.h"
 
 typedef unsigned char byte;
 
@@ -111,6 +112,7 @@ public:
 		}
 
 		GlobalModelFormatManager().registerExporter(std::make_shared<AseExporter>());
+		GlobalModelFormatManager().registerExporter(std::make_shared<Lwo2Exporter>());
 	}
 };
 

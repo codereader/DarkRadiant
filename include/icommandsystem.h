@@ -1,5 +1,4 @@
-#ifndef _ICOMMANDSYSTEM_H_
-#define _ICOMMANDSYSTEM_H_
+#pragma once
 
 #include <memory>
 #include <functional>
@@ -10,7 +9,8 @@
 
 #include "string/convert.h"
 
-namespace cmd {
+namespace cmd
+{
 
 // Use these to define argument types
 enum ArgumentTypeFlags
@@ -114,32 +114,39 @@ public:
 		_type(other._type)
 	{}
 
-	std::size_t getType() const {
+	std::size_t getType() const
+	{
 		return _type;
 	}
 
-	std::string getString() const {
+	std::string getString() const 
+	{
 		return _strValue;
 	}
 
-	int getInt() const {
+	int getInt() const
+	{
 		return _intValue;
 	}
 
-	double getDouble() const {
+	double getDouble() const
+	{
 		return _doubleValue;
 	}
 
-	Vector3 getVector3() const {
+	Vector3 getVector3() const
+	{
 		return _vector3Value;
 	}
 
-	Vector2 getVector2() const {
+	Vector2 getVector2() const
+	{
 		return _vector2Value;
 	}
 
 private:
-	void tryNumberConversion() {
+	void tryNumberConversion()
+	{
 		// Try to cast the string value to numbers
 		try {
 			_intValue = boost::lexical_cast<int>(_strValue);
@@ -156,7 +163,8 @@ private:
 		catch (boost::bad_lexical_cast) {}
 	}
 
-	void tryVectorConversion() {
+	void tryVectorConversion()
+	{
 		// Use a stringstream to parse the string
         std::stringstream strm(_strValue);
         strm << std::skipws;
@@ -202,26 +210,39 @@ public:
 	{}
 
 	// Additional convenience constructors
-	Signature(std::size_t type1) {
+	Signature(std::size_t type1)
+	{
 		push_back(type1);
 	}
 
-	Signature(std::size_t type1, std::size_t type2) {
+	Signature(std::size_t type1, std::size_t type2)
+	{
 		push_back(type1);
 		push_back(type2);
 	}
 
-	Signature(std::size_t type1, std::size_t type2, std::size_t type3) {
+	Signature(std::size_t type1, std::size_t type2, std::size_t type3)
+	{
 		push_back(type1);
 		push_back(type2);
 		push_back(type3);
 	}
 
-	Signature(std::size_t type1, std::size_t type2, std::size_t type3, std::size_t type4) {
+	Signature(std::size_t type1, std::size_t type2, std::size_t type3, std::size_t type4)
+	{
 		push_back(type1);
 		push_back(type2);
 		push_back(type3);
 		push_back(type4);
+	}
+
+	Signature(std::size_t type1, std::size_t type2, std::size_t type3, std::size_t type4, std::size_t type5)
+	{
+		push_back(type1);
+		push_back(type2);
+		push_back(type3);
+		push_back(type4);
+		push_back(type5);
 	}
 };
 
@@ -326,10 +347,11 @@ typedef std::shared_ptr<ICommandSystem> ICommandSystemPtr;
 
 } // namespace cmd
 
-const std::string MODULE_COMMANDSYSTEM("CommandSystem");
+const char* const MODULE_COMMANDSYSTEM("CommandSystem");
 
 // This is the accessor for the commandsystem
-inline cmd::ICommandSystem& GlobalCommandSystem() {
+inline cmd::ICommandSystem& GlobalCommandSystem()
+{
 	// Cache the reference locally
 	static cmd::ICommandSystem& _cmdSystem(
 		*std::static_pointer_cast<cmd::ICommandSystem>(
@@ -338,5 +360,3 @@ inline cmd::ICommandSystem& GlobalCommandSystem() {
 	);
 	return _cmdSystem;
 }
-
-#endif /* _ICOMMANDSYSTEM_H_ */

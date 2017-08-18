@@ -356,7 +356,7 @@ void RenderPreview::startPlayback()
     else
     {
         // Timer is not enabled, we're paused or stopped
-        _timer.Start();
+        _timer.Start(MSEC_PER_FRAME);
     }
 
 	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
@@ -670,7 +670,7 @@ void RenderPreview::onPausePlaybackClick(wxCommandEvent& ev)
     }
     else
     {
-        _timer.Start(); // re-enable playback
+        _timer.Start(MSEC_PER_FRAME); // re-enable playback
     }
 }
 

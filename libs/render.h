@@ -212,13 +212,21 @@ public:
 		if (_vector.empty()) return;
 
         // Enable point colours if required
-        if (info.checkFlag(RENDER_VERTEX_COLOUR)
-            || (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS))
+		bool enablePointColours = info.checkFlag(RENDER_VERTEX_COLOUR) || 
+			(info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS);
+
+        if (enablePointColours)
         {
             glEnableClientState(GL_COLOR_ARRAY);
         }
+
 		pointvertex_gl_array(&_vector.front());
 		glDrawArrays(_mode, 0, static_cast<GLsizei>(_vector.size()));
+
+		if (enablePointColours)
+		{
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
 	}
 
 	// Convenience method to set the colour of the whole array
@@ -287,13 +295,21 @@ public:
 
 	void render(const RenderInfo& info) const
     {
-        if (info.checkFlag(RENDER_VERTEX_COLOUR)
-            || (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS))
+		bool enableColours = info.checkFlag(RENDER_VERTEX_COLOUR)
+			|| (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS);
+        
+		if (enableColours)
         {
             glEnableClientState(GL_COLOR_ARRAY);
         }
+
 		pointvertex_gl_array(m_vertices.data());
 		glDrawArrays(_mode, 0, static_cast<GLsizei>(m_vertices.size()));
+
+		if (enableColours)
+		{
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
 	}
 };
 
@@ -309,13 +325,21 @@ public:
 
 	void render(const RenderInfo& info) const
     {
-        if (info.checkFlag(RENDER_VERTEX_COLOUR)
-            || (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS))
+		bool enableColours = info.checkFlag(RENDER_VERTEX_COLOUR)
+			|| (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS);
+
+        if (enableColours)
         {
             glEnableClientState(GL_COLOR_ARRAY);
         }
+
 		pointvertex_gl_array(m_vertices.data());
 		glDrawElements(_mode, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
+
+		if (enableColours)
+		{
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
 	}
 };
 

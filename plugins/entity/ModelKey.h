@@ -2,6 +2,8 @@
 
 #include <string>
 #include "inode.h"
+#include "mapfile.h"
+#include "ObservedUndoable.h"
 
 /**
  * greebo: A ModelKey object watches the "model" spawnarg of
@@ -11,15 +13,22 @@
 class ModelKey
 {
 private:
-	scene::INodePtr _modelNode;
-
 	// The parent node, where the model node can be added to (as child)
 	scene::INode& _parentNode;
 
-	std::string _modelPath;
+	struct ModelNodeAndPath
+	{
+		scene::INodePtr node;
+		std::string path;
+	};
+
+	ModelNodeAndPath _model;
 
 	// To deactivate model handling during node destruction
 	bool _active;
+
+	// Saves modelnode and modelpath to undo stack
+	undo::ObservedUndoable<ModelNodeAndPath> _undo;
 
 public:
 	ModelKey(scene::INode& parentNode);
@@ -39,10 +48,15 @@ public:
 	// Returns the reference to the "singleton" model node
 	const scene::INodePtr& getNode() const;
 
+	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
+	void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+
 private:
 	// Loads the model node and attaches it to the parent node
 	void attachModelNode();
 
     // Attaches a model node, making sure that the skin setting is kept
     void attachModelNodeKeepinSkin();
+
+	void importState(const ModelNodeAndPath& data);
 };

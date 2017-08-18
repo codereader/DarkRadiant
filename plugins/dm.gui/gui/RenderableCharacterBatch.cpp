@@ -81,6 +81,8 @@ void RenderableCharacterBatch::render() const
 
 	glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_verts.size()));
 
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	GlobalOpenGL().assertNoErrors();
 #endif
 }

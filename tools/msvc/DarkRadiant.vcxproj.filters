@@ -200,6 +200,9 @@
     <Filter Include="src\ui\grid">
       <UniqueIdentifier>{26ca745d-bd90-4d70-beb3-89010a45515f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\modelexport">
+      <UniqueIdentifier>{729325bd-525b-47e6-94cb-1abcc9d27ded}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -903,6 +906,18 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\grid\GridManager.cpp">
       <Filter>src\ui\grid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\model\ModelExporter.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp">
+      <Filter>src\ui\modelexport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\Export.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\Models.cpp">
+      <Filter>src\map\algorithm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1838,6 +1853,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\grid\GridManager.h">
       <Filter>src\ui\grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\ModelExporter.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h">
+      <Filter>src\ui\modelexport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Export.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Models.h">
+      <Filter>src\map\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

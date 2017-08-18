@@ -1,6 +1,7 @@
 #include "AutoSaver.h"
 
 #include "i18n.h"
+#include <numeric>
 #include <iostream>
 #include "mapfile.h"
 #include "itextstream.h"
@@ -19,10 +20,13 @@
 
 #include <limits.h>
 #include "string/string.h"
+#include "string/convert.h"
 #include "map/Map.h"
 #include "modulesystem/ApplicationContextImpl.h"
 #include "modulesystem/StaticModule.h"
+#include "wxutil/dialog/MessageBox.h"
 
+#include <boost/format.hpp>
 #include <wx/frame.h>
 
 namespace map 
@@ -36,7 +40,24 @@ namespace
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_ENABLED = "user/ui/map/autoSaveSnapshots";
 	const char* RKEY_AUTOSAVE_SNAPSHOTS_FOLDER = "user/ui/map/snapshotFolder";
 	const char* RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE = "user/ui/map/maxSnapshotFolderSize";
+	const char* RKEY_AUTOSAVE_SNAPSHOT_FOLDER_SIZE_HISTORY = "user/ui/map/snapshotFolderSizeHistory";
 	const char* GKEY_MAP_EXTENSION = "/mapFormat/fileExtension";
+
+	std::string constructSnapshotName(const fs::path& snapshotPath, const std::string& mapName, int num)
+	{
+		std::string mapExt = game::current::getValue<std::string>(GKEY_MAP_EXTENSION);
+
+		// Construct the base name without numbered extension
+		std::string filename = (snapshotPath / mapName).string();
+
+		// Now append the number and the map extension to the map name
+		filename += ".";
+		filename += string::to_string(num);
+		filename += ".";
+		filename += mapExt;
+
+		return filename;
+	}
 }
 
 AutoMapSaver::AutoMapSaver() :
@@ -94,16 +115,7 @@ void AutoMapSaver::saveSnapshot()
 	// 2. find out what the lastest save is based on number
 	// 3. inc that and save the map
 
-	unsigned int maxSnapshotFolderSize =
-		registry::getValue<int>(RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
-
-	// Sanity check in case there is something weird going on in the registry
-	if (maxSnapshotFolderSize == 0)
-	{
-		maxSnapshotFolderSize = 100;
-	}
-
-	// Construct the boost::path class out of the full map path (throws on fail)
+	// Construct the fs::path class out of the full map path (throws on fail)
 	fs::path fullPath = GlobalMap().getMapName();
 
 	// Append the the snapshot folder to the path
@@ -114,55 +126,106 @@ void AutoMapSaver::saveSnapshot()
 	// Retrieve the mapname
 	std::string mapName = fullPath.filename().string();
 
+	// Map existing snapshots (snapshot num => path)
+	std::map<int, std::string> existingSnapshots;
+
 	// Check if the folder exists and create it if necessary
 	if (os::fileOrDirExists(snapshotPath.string()) || os::makeDirectory(snapshotPath.string()))
 	{
-		// Reset the size counter of the snapshots folder
-		std::size_t folderSize = 0;
+		collectExistingSnapshots(existingSnapshots, snapshotPath, mapName);
 
-		// This holds the target path of the snapshot
-		std::string filename;
+		int highestNum = existingSnapshots.empty() ? 0 : existingSnapshots.rbegin()->first + 1;
 
-		for (int nCount = 0; nCount < INT_MAX; nCount++) 
-		{
-			// Construct the base name without numbered extension
-			filename = (snapshotPath / mapName).string();
-
-			// Now append the number and the map extension to the map name
-			filename += ".";
-			filename += string::to_string(nCount);
-			filename += ".";
-			filename += game::current::getValue<std::string>(GKEY_MAP_EXTENSION);
-
-			if (os::fileOrDirExists(filename)) 
-			{
-				// Add to the folder size
-				folderSize += os::getFileSize(filename);
-			}
-			else 
-			{
-				// We've found an unused filename, break the loop
-				break;
-			}
-		}
+		std::string filename = constructSnapshotName(snapshotPath, mapName, highestNum);
 
 		rMessage() << "Autosaving snapshot to " << filename << std::endl;
 
 		// Dump to map to the next available filename
 		GlobalMap().saveDirect(filename);
 
-		// Display a warning, if the folder size exceeds the limit
-		if (folderSize > maxSnapshotFolderSize*1024*1024)
-		{
-			rMessage() << "AutoSaver: The snapshot files in " << snapshotPath;
-			rMessage() << " total more than " << maxSnapshotFolderSize;
-			rMessage() << " MB. You might consider cleaning up." << std::endl;
-		}
+		handleSnapshotSizeLimit(existingSnapshots, snapshotPath, mapName);
 	}
 	else 
 	{
 		rError() << "Snapshot save failed.. unable to create directory";
 		rError() << snapshotPath << std::endl;
+	}
+}
+
+void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& existingSnapshots, 
+	const fs::path& snapshotPath, const std::string& mapName)
+{
+	std::size_t maxSnapshotFolderSize =
+		registry::getValue<std::size_t>(RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
+
+	// Sanity check in case there is something weird going on in the registry
+	if (maxSnapshotFolderSize == 0)
+	{
+		maxSnapshotFolderSize = 100;
+	}
+
+	// Sum up the total folder size
+	std::size_t folderSize = 0;
+
+	for (const std::pair<int, std::string>& pair : existingSnapshots)
+	{
+		folderSize += os::getFileSize(pair.second);
+	}
+
+	std::size_t maxSize = maxSnapshotFolderSize * 1024 * 1024;
+
+	// The key containing the previously calculated size
+	std::string mapKey = RKEY_AUTOSAVE_SNAPSHOT_FOLDER_SIZE_HISTORY;
+	mapKey += "/map[@name='" + mapName + "']";
+
+	// Display a warning, if the folder size exceeds the limit
+	if (folderSize > maxSize)
+	{
+		std::size_t prevSize = string::convert<std::size_t>(GlobalRegistry().getAttribute(mapKey, "size"), 0);
+
+		// Save the size for the next time we hit it
+		GlobalRegistry().deleteXPath(mapKey);
+
+		// Create a new key and store the size
+		GlobalRegistry().createKeyWithName(RKEY_AUTOSAVE_SNAPSHOT_FOLDER_SIZE_HISTORY, "map", mapName);
+		GlobalRegistry().setAttribute(mapKey, "size", string::to_string(folderSize));
+
+		// Now should we display a message?
+		if (prevSize > maxSize)
+		{
+			rMessage() << "User has already been notified about the snapshot size exceeding limits." << std::endl;
+			return;
+		}
+
+		rMessage() << "AutoSaver: The snapshot files in " << snapshotPath << 
+			" take up more than " << maxSnapshotFolderSize << " MB. You might consider cleaning it up." << std::endl;
+
+		// Notify the user
+		wxutil::Messagebox::Show(_("Snapshot Folder Size Warning"),
+			(boost::format(_("The snapshots saved for this map are exceeding the configured size limit."
+				"\nConsider cleaning up the folder %s")) % snapshotPath).str(), ui::IDialog::MessageType::MESSAGE_WARNING);
+	}
+	else
+	{
+		// Folder size is within limits (again), delete the size info from the registry
+		GlobalRegistry().deleteXPath(mapKey);
+	}
+}
+
+void AutoMapSaver::collectExistingSnapshots(std::map<int, std::string>& existingSnapshots, 
+	const fs::path& snapshotPath, const std::string& mapName)
+{
+	for (int num = 0; num < INT_MAX; num++)
+	{
+		// Construct the base name without numbered extension
+		std::string filename = constructSnapshotName(snapshotPath, mapName, num);
+
+		if (!os::fileOrDirExists(filename))
+		{
+			return; // We've found an unused filename, break the loop
+		}
+
+		existingSnapshots.insert(std::make_pair(num, filename));
 	}
 }
 
@@ -272,7 +335,7 @@ void AutoMapSaver::constructPreferences()
 
 	page.appendCheckBox(_("Save Snapshots"), RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
 	page.appendEntry(_("Snapshot folder (relative to map folder)"), RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
-	page.appendEntry(_("Max Snapshot Folder size (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
+	page.appendEntry(_("Max total Snapshot size per map (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
 }
 
 void AutoMapSaver::onIntervalReached(wxTimerEvent& ev)

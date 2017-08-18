@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "imodule.h"
+#include <sigc++/signal.h>
 
 class ModuleObserver;
 
@@ -82,6 +83,9 @@ public:
 	 * greebo: Reloads all skins from the definition files.
 	 */
 	virtual void refresh() = 0;
+
+	/// Signal emitted after skins are reloaded
+	virtual sigc::signal<void> signal_skinsReloaded() = 0;
 };
 
 inline ModelSkinCache& GlobalModelSkinCache()

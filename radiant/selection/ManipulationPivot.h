@@ -33,6 +33,9 @@ private:
 	// "dirty" flag
 	bool _needsRecalculation;
 
+	// Whether to consider light volumes when calculating the selection bounds
+	bool _defaultPivotLocationIgnoresLightVolumes;
+
 	// During operations, we want to block pivot recalculations
 	bool _operationActive;
 
@@ -40,6 +43,10 @@ private:
 	bool _userLocked;
 
 public:
+	static const std::string RKEY_ENTITY_PIVOT_IS_ORIGIN;
+	static const std::string RKEY_SNAP_ROTATION_PIVOT_TO_GRID;
+	static const std::string RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES;
+
 	ManipulationPivot();
 
 	void initialise();

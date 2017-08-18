@@ -6,6 +6,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "imainframe.h"
+#include "ifiletypes.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "ieventmanager.h"
@@ -333,7 +334,7 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args)
 {
     // Query the desired filename from the user
     MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(false, _("Export region"), "region");
+        MapFileManager::getMapFileSelection(false, _("Export region"), filetype::TYPE_REGION);
 
     if (!fileInfo.fullPath.empty())
 	{

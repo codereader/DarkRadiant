@@ -17,38 +17,18 @@ IModelExporterPtr AseExporter::clone()
 	return std::make_shared<AseExporter>();
 }
 
+const std::string& AseExporter::getDisplayName() const
+{
+	static std::string _extension("ASCII Scene Export");
+	return _extension;
+}
+
 const std::string& AseExporter::getExtension() const
 {
 	static std::string _extension("ASE");
 	return _extension;
 }
 
-// Adds the given Surface to the exporter's queue
-void AseExporter::addSurface(const IModelSurface& incoming)
-{
-	_surfaces.push_back(Surface());
-
-	Surface& surface = _surfaces.back();
-	surface.materialName = incoming.getDefaultMaterial();
-
-	// Pull in all the triangles of that mesh
-	for (int i = 0; i < incoming.getNumTriangles(); ++i)
-	{
-		ModelPolygon poly = incoming.getPolygon(i);
-
-		unsigned int indexStart = static_cast<unsigned int>(surface.vertices.size());
-		
-		surface.vertices.push_back(poly.a);
-		surface.vertices.push_back(poly.b);
-		surface.vertices.push_back(poly.c);
-
-		surface.indices.push_back(indexStart);
-		surface.indices.push_back(indexStart+1);
-		surface.indices.push_back(indexStart+2);
-	}
-}
-
-// Export the model file to the given stream
 void AseExporter::exportToStream(std::ostream& stream)
 {
 	// Header / scene block
@@ -68,13 +48,15 @@ void AseExporter::exportToStream(std::ostream& stream)
 	stream << "*MATERIAL_LIST {" << std::endl;
 	stream << "\t*MATERIAL_COUNT " << _surfaces.size() << std::endl;
 
-	for (std::size_t m = 0; m < _surfaces.size(); ++m)
+	std::size_t m = 0;
+
+	for (const Surfaces::value_type& pair : _surfaces)
 	{
-		std::string aseMaterial = _surfaces[m].materialName;
+		std::string aseMaterial = pair.second.materialName;
 		boost::algorithm::replace_all(aseMaterial, "/", "\\");
 
 		stream << "\t*MATERIAL " << m << " {" << std::endl;
-		stream << "\t\t*MATERIAL_NAME \"" << _surfaces[m].materialName << "\"" << std::endl;
+		stream << "\t\t*MATERIAL_NAME \"" << aseMaterial << "\"" << std::endl;
 		stream << "\t\t*MATERIAL_CLASS \"Standard\"" << std::endl;
 		stream << "\t\t*MATERIAL_AMBIENT 0.5882	0.5882	0.5882" << std::endl;
 		stream << "\t\t*MATERIAL_DIFFUSE 0.5882	0.5882	0.5882" << std::endl;
@@ -89,7 +71,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 		stream << "\t\t*MATERIAL_FALLOFF In" << std::endl;
 		stream << "\t\t*MATERIAL_XP_TYPE Filter" << std::endl;
 		stream << "\t\t*MAP_DIFFUSE {" << std::endl;
-		stream << "\t\t\t*MAP_NAME \"" << _surfaces[m].materialName << "\"" << std::endl;
+		stream << "\t\t\t*MAP_NAME \"" << aseMaterial << "\"" << std::endl;
 		stream << "\t\t\t*MAP_CLASS \"Bitmap\"" << std::endl;
 		stream << "\t\t\t*MAP_SUBNO 1" << std::endl;
 		stream << "\t\t\t*MAP_AMOUNT 1.0000" << std::endl;
@@ -109,14 +91,18 @@ void AseExporter::exportToStream(std::ostream& stream)
 		stream << "\t\t\t*BITMAP_FILTER Pyramidal" << std::endl;
 		stream << "\t\t}" << std::endl;
 		stream << "\t}" << std::endl;
+
+		++m;
 	}
 
 	stream << "}" << std::endl; // Material List End
 
 	// Geom Objects
-	for (std::size_t m = 0; m < _surfaces.size(); ++m)
+	m = 0;
+
+	for (const Surfaces::value_type& pair : _surfaces)
 	{
-		const Surface& surface = _surfaces[m];
+		const Surface& surface = pair.second;
 
 		stream << "*GEOMOBJECT {" << std::endl;
 
@@ -252,6 +238,8 @@ void AseExporter::exportToStream(std::ostream& stream)
 		stream << "\t*MATERIAL_REF " << m << std::endl;
 
 		stream << "}" << std::endl;
+
+		++m;
 	}
 }
 
