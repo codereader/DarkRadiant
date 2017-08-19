@@ -153,17 +153,28 @@ if test "$build_linux" != "no"; then
 	AC_SUBST([GLU_LIBS])
 fi
 
+# Check for the pre-C++17 header <experimental/filesystem> and define a preprocessor symbol if found
+AC_CHECK_HEADER([experimental/filesystem], [found_std_filesystem=yes], [found_std_filesystem=no])
+
 # Boost
 BOOST_REQUIRE([1.46.1])
 
-# Check a load of common headers we use
+# Check a some boost headers we use
 BOOST_FORMAT
 BOOST_TOKENIZER
 
-# These ones require libraries too
-# BOOST_REGEX # no longer needed, using std::regex now
-BOOST_FILESYSTEM
-BOOST_SYSTEM
+# Require Boost Filesystem if the C++17-style header is not present
+if test "$found_std_filesystem" = "no"
+then
+    AC_MSG_NOTICE([Will check for boost.filesystem library since std::filesystem is not available])
+    BOOST_FILESYSTEM
+    BOOST_SYSTEM
+else
+    AC_DEFINE([HAVE_EXPERIMENTAL_FILESYSTEM], [1], [Define this to indicate that the <experimental/filesystem> 
+                                                    header is available for inclusion.])
+    AC_MSG_NOTICE([Will use std::filesystem instead of boost.filesystem])
+fi
+
 BOOST_TEST
 
 # Boost.Python if required
@@ -329,22 +340,36 @@ Configuration options:"
 echo     " Installation prefix: $prefix"
 if test -n "$sound_module"
 then
-    echo " Sound:               yes"
+    echo " Sound:                 yes"
 else
-    echo " Sound:               no"
+    echo " Sound:                 no"
 fi
 
 if test "$darkmod_plugins" != 'no'
 then
-    echo " Darkmod plugins:     yes"
+    echo " Darkmod plugins:       yes"
 else
-    echo " Darkmod plugins:     no"
+    echo " Darkmod plugins:       no"
 fi
 
 if test -z "$script_module"
 then
-    echo " Python scripting:    no"
+    echo " Python scripting:      no"
 else
-    echo " Python scripting:    yes"
+    echo " Python scripting:      yes"
+    
+    if test "$found_local_pybind11" = "yes"
+    then
+        echo " Use system pybind11:   yes"
+    else
+        echo " Use system pybind11:   no"
+    fi
+fi
+
+if test "$found_std_filesystem" = "no"
+then
+    echo " Use boost.filesystem:  yes"
+else
+    echo " Use boost.filesystem:  no"
 fi
 
