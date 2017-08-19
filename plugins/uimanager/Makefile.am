@@ -7,8 +7,7 @@ modules_LTLIBRARIES = uimanager.la
 uimanager_la_LDFLAGS = -module -avoid-version \
                        $(WX_LIBS) \
                        $(XML_LIBS) \
-                       $(BOOST_FILESYSTEM_LIBS) \
-                       $(BOOST_SYSTEM_LIBS) \
+                       $(FILESYSTEM_LIBS) \
                        $(GLEW_LIBS) \
                        $(GL_LIBS)
 uimanager_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \

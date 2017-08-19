@@ -14,8 +14,7 @@ libwxutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
                         $(LIBSIGC_LIBS) \
                         $(WX_LIBS) \
                         $(GL_LIBS) \
-                        $(BOOST_FILESYSTEM_LIBS) \
-                        $(BOOST_SYSTEM_LIBS) \
+                        $(FILESYSTEM_LIBS) \
                         $(GLU_LIBS) \
                         $(FTGL_LIBS)
 libwxutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \

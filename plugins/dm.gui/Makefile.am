@@ -12,8 +12,7 @@ dm_gui_la_LDFLAGS = -module -avoid-version \
                     $(XML_LIBS) \
                     $(GLEW_LIBS) \
                     $(GL_LIBS) \
-                    $(BOOST_SYSTEM_LIBS) \
-                    $(BOOST_FILESYSTEM_LIBS)
+                    $(FILESYSTEM_LIBS)
 dm_gui_la_SOURCES = GuiSelector.cpp \
                plugin.cpp \
                ReadableEditorDialog.cpp \

@@ -14,8 +14,7 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = script.la
 
 script_la_LDFLAGS = -module -avoid-version \
-                    $(BOOST_SYSTEM_LIBS) \
-                    $(BOOST_FILESYSTEM_LIBS) \
+                    $(FILESYSTEM_LIBS) \
                     $(PYTHON_LIBS) \
                     $(WX_LIBS)
 script_la_LIBADD = $(top_builddir)/libs/math/libmath.la \

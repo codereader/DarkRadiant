@@ -7,7 +7,7 @@ plugins_LTLIBRARIES = dm_stimresponse.la
 dm_stimresponse_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
                             $(top_builddir)/libs/wxutil/libwxutil.la
 dm_stimresponse_la_LDFLAGS = -module -avoid-version \
-                             $(BOOST_REGEX_LIBS) $(WX_LIBS) $(XML_LIBS)
+                             $(WX_LIBS) $(XML_LIBS)
 dm_stimresponse_la_SOURCES = ResponseEditor.cpp \
                       plugin.cpp \
                       StimResponse.cpp \

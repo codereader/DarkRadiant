@@ -7,9 +7,7 @@ particles_la_LDFLAGS = -module -avoid-version \
 					   -lpthread \
                        $(GL_LIBS) \
                        $(WX_LIBS) \
-                       $(BOOST_FILESYSTEM_LIBS) \
-                       $(BOOST_REGEX_LIBS) \
-                       $(BOOST_SYSTEM_LIBS)
+                       $(FILESYSTEM_LIBS)
 particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                       $(top_builddir)/libs/scene/libscenegraph.la \
                       $(top_builddir)/libs/wxutil/libwxutil.la

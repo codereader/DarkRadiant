@@ -2,17 +2,31 @@
  * \file
  * Helper header for std::filesystem feature set. Includes the relevant headers
  * and defines the common "fs" namespace alias. 
- * If the compiler library supports the C++17 feature std::filesystem, it will
- * include the corresponding headers. All other compilers will refer to the
- * headers provided by boost::filesystem.
+ * If the compiler library supports the C++17 feature std::filesystem, it includes
+ * the corresponding headers, or fall back to std::experimental::filesystem::v1.
+ * All other compilers will refer to the headers provided by boost::filesystem.
  */
 #pragma once
 
-// At the time of writing C++17 is still in draft state, but compilers
-// provide the features through the std::experimental namespace.
-#if _MSC_VER >= 1900
+// We need the HAVE_* symbols created by the configure script
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-// Visual Studio 2015 onwards supplies the experimental/filesystem header
+// If C++17 <filesystem> is available, use that one
+#ifdef HAVE_STD_FILESYSTEM
+
+#include <filesystem>
+namespace fs = std::filesystem;
+#define DR_USE_STD_FILESYSTEM
+
+// At the time of writing C++17 is still in draft state, but some compilers
+// provide the features through the std::experimental namespace.
+// In Linux, the configure script will check for the header and define the
+// HAVE_EXPERIMENTAL_FILESYSTEM symbol for us.
+#elif _MSC_VER >= 1900 || defined(HAVE_EXPERIMENTAL_FILESYSTEM)
+
+// Visual Studio 2015+ and GCC 5.3+ supply the experimental/filesystem header
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem::v1;
 #define DR_USE_STD_FILESYSTEM

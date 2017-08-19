@@ -182,15 +182,21 @@ BOOST_REQUIRE([1.46.1])
 BOOST_FORMAT
 BOOST_TOKENIZER
 
+FILESYSTEM_LIBS=''
+
 # Require Boost Filesystem if the C++17-style header is not present
 if test "$use_boost_filesystem" = "yes"
 then
     AC_MSG_NOTICE([Will check for boost.filesystem library since std::filesystem is not available])
     BOOST_FILESYSTEM
     BOOST_SYSTEM
+    FILESYSTEM_LIBS="$(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)"
 else
     AC_MSG_NOTICE([Will use std::filesystem instead of boost.filesystem])
+    FILESYSTEM_LIBS="-lstdc++fs"
 fi
+
+AC_SUBST([FILESYSTEM_LIBS])
 
 BOOST_TEST
 

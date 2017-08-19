@@ -7,7 +7,7 @@ plugins_LTLIBRARIES = dm_conversation.la
 dm_conversation_la_LIBADD = $(top_builddir)/libs/wxutil/libwxutil.la \
                             $(top_builddir)/libs/xmlutil/libxmlutil.la
 dm_conversation_la_LDFLAGS = -module -avoid-version \
-                             $(WX_LIBS) $(XML_LIBS) $(BOOST_REGEX_LIBS)
+                             $(WX_LIBS) $(XML_LIBS)
 dm_conversation_la_SOURCES = plugin.cpp \
                       ConversationKeyExtractor.cpp \
                       ConversationCommandInfo.cpp \

@@ -9,8 +9,7 @@ xmlregistry_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 xmlregistry_la_LDFLAGS = -module -avoid-version \
                          $(XML_LIBS) \
                          $(WX_LIBS) \
-                         $(BOOST_FILESYSTEM_LIBS) \
-                         $(BOOST_SYSTEM_LIBS) \
+                         $(FILESYSTEM_LIBS) \
                          $(LIBSIGC_LIBS)
 xmlregistry_la_SOURCES = RegistryTree.cpp XMLRegistry.cpp XMLRegistryModule.cpp
 
