@@ -153,25 +153,42 @@ if test "$build_linux" != "no"; then
 	AC_SUBST([GLU_LIBS])
 fi
 
-# Check for the pre-C++17 header <experimental/filesystem> and define a preprocessor symbol if found
-AC_CHECK_HEADER([experimental/filesystem], [found_std_filesystem=yes], [found_std_filesystem=no])
+# By default, we rely on boost.filesystem, unless we have the C++17 libs 
+use_boost_filesystem=yes
+
+# Check for the regular C++17 <filesystem> header
+AC_CHECK_HEADER([filesystem], [found_std_filesystem=yes], [found_std_filesystem=no])
+
+# if no <filesystem> is present, check for the pre-C++17 header <experimental/filesystem>
+if test "$found_std_filesystem" = "yes"
+then
+    AC_DEFINE([HAVE_STD_FILESYSTEM], [1], [Define this to indicate that the <filesystem> header is available for inclusion.])
+    use_boost_filesystem=no
+else
+    AC_CHECK_HEADER([experimental/filesystem], [found_experimental_filesystem=yes], [found_experimental_filesystem=no])
+    
+    if test "$found_experimental_filesystem" = "yes"
+    then
+        AC_DEFINE([HAVE_EXPERIMENTAL_FILESYSTEM], [1], [Define this to indicate that the <experimental/filesystem> 
+                                                        header is available for inclusion.])
+        use_boost_filesystem=no
+    fi
+fi
 
 # Boost
 BOOST_REQUIRE([1.46.1])
 
-# Check a some boost headers we use
+# Check some boost headers we use
 BOOST_FORMAT
 BOOST_TOKENIZER
 
 # Require Boost Filesystem if the C++17-style header is not present
-if test "$found_std_filesystem" = "no"
+if test "$use_boost_filesystem" = "yes"
 then
     AC_MSG_NOTICE([Will check for boost.filesystem library since std::filesystem is not available])
     BOOST_FILESYSTEM
     BOOST_SYSTEM
 else
-    AC_DEFINE([HAVE_EXPERIMENTAL_FILESYSTEM], [1], [Define this to indicate that the <experimental/filesystem> 
-                                                    header is available for inclusion.])
     AC_MSG_NOTICE([Will use std::filesystem instead of boost.filesystem])
 fi
 
@@ -366,10 +383,5 @@ else
     fi
 fi
 
-if test "$found_std_filesystem" = "no"
-then
-    echo " Use boost.filesystem:  yes"
-else
-    echo " Use boost.filesystem:  no"
-fi
+echo " Use boost.filesystem:  $use_boost_filesystem"
 
