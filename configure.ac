@@ -157,10 +157,7 @@ fi
 BOOST_REQUIRE([1.46.1])
 
 # Check a load of common headers we use
-BOOST_BIND
-BOOST_FOREACH
 BOOST_FORMAT
-BOOST_FUNCTION
 BOOST_TOKENIZER
 
 # These ones require libraries too
