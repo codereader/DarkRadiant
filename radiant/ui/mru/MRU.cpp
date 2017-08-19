@@ -51,7 +51,7 @@ MRU::MRU() :
 		// Connect the command to the last inserted menuItem
 		GlobalCommandSystem().addCommand(
 			commandName,
-			boost::bind(&MRUMenuItem::activate, &item, _1)
+			std::bind(&MRUMenuItem::activate, &item, std::placeholders::_1)
 		);
 		GlobalEventManager().addCommand(commandName, commandName);
 	}
