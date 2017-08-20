@@ -583,8 +583,11 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <PathRunnable
+         runnableDebuggingMode = "0"
+         FilePath = "/Users/greebo/Library/Developer/Xcode/DerivedData/DarkRadiant-etcbgzsvthtrgcekiotxfvvchrpb/Build/Products/Debug/DarkRadiantMain">
+      </PathRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEDE3991E4EEA1F005A8641"
@@ -592,7 +595,7 @@
             BlueprintName = "DarkRadiantMain"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

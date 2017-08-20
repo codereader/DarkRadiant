@@ -1,0 +1,11 @@
+//
+//  python.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 2017-08-20.
+//
+//
+PYTHON_CPLUSPLUSFLAGS =
+PYTHON_HEADER_SEARCH_PATHS = "/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7" "/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7" "$(SRCROOT)/../../libs/pybind"
+PYTHON_LIBRARY_SEARCH_PATHS =
+PYTHON_LINKFLAGS =

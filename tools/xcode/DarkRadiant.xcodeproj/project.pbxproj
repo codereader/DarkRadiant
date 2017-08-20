@@ -368,6 +368,22 @@
 		3AE2118A1E59922100F5A0A6 /* shift_textures_upwards_randomly.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5411E5232250062D9AF /* shift_textures_upwards_randomly.py */; };
 		3AE2118B1E59922100F5A0A6 /* test_targets.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5421E5232250062D9AF /* test_targets.py */; };
 		3AE6F12D1E8E9B72008A1B2D /* GridManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F12B1E8E9B72008A1B2D /* GridManager.cpp */; };
+		3AE6F1341F496A44008A1B2D /* Lwo2Chunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1301F496A44008A1B2D /* Lwo2Chunk.cpp */; };
+		3AE6F1351F496A44008A1B2D /* Lwo2Chunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1311F496A44008A1B2D /* Lwo2Chunk.h */; };
+		3AE6F1361F496A44008A1B2D /* Lwo2Exporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1321F496A44008A1B2D /* Lwo2Exporter.cpp */; };
+		3AE6F1371F496A44008A1B2D /* Lwo2Exporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1331F496A44008A1B2D /* Lwo2Exporter.h */; };
+		3AE6F1391F496A54008A1B2D /* ModelExporterBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1381F496A54008A1B2D /* ModelExporterBase.h */; };
+		3AE6F13E1F496AA1008A1B2D /* Export.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F13A1F496AA1008A1B2D /* Export.cpp */; };
+		3AE6F13F1F496AA1008A1B2D /* Models.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F13C1F496AA1008A1B2D /* Models.cpp */; };
+		3AE6F1421F496ACB008A1B2D /* ModelExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1401F496ACB008A1B2D /* ModelExporter.cpp */; };
+		3AE6F1B61F496CB5008A1B2D /* exportasmodeldialog.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
+		3AE6F1B71F496CDB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
+		3AE6F1BB1F496D33008A1B2D /* ExportAsModelDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1B91F496D29008A1B2D /* ExportAsModelDialog.cpp */; };
+		3AE6F1BF1F4975B6008A1B2D /* PythonModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1BD1F4975B6008A1B2D /* PythonModule.cpp */; };
+		3AE6F1C01F4975B6008A1B2D /* PythonModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1BE1F4975B6008A1B2D /* PythonModule.h */; };
+		3AE6F1C41F4975D9008A1B2D /* SceneGraphInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C11F4975D9008A1B2D /* SceneGraphInterface.cpp */; };
+		3AE6F1C51F4975D9008A1B2D /* SelectionGroupInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */; };
+		3AE6F1C61F4975D9008A1B2D /* SelectionGroupInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */; };
 		3AEBDC841E5067300062D9AF /* pkzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC781E50669C0062D9AF /* pkzip.cpp */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
@@ -2594,6 +2610,7 @@
 			dstPath = Contents/Resources/ui;
 			dstSubfolderSpec = 1;
 			files = (
+				3AE6F1B71F496CDB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */,
 				3AF475571E634D70006B26C2 /* aboutdialog.xrc in CopyFiles */,
 				3AF475581E634D70006B26C2 /* addpropertydialog.xrc in CopyFiles */,
 				3AF475591E634D70006B26C2 /* camwnd.xrc in CopyFiles */,
@@ -2990,6 +3007,26 @@
 		3AE6F12A1E8E9B72008A1B2D /* GridItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridItem.h; path = grid/GridItem.h; sourceTree = "<group>"; };
 		3AE6F12B1E8E9B72008A1B2D /* GridManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridManager.cpp; path = grid/GridManager.cpp; sourceTree = "<group>"; };
 		3AE6F12C1E8E9B72008A1B2D /* GridManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridManager.h; path = grid/GridManager.h; sourceTree = "<group>"; };
+		3AE6F1301F496A44008A1B2D /* Lwo2Chunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Lwo2Chunk.cpp; path = ../../plugins/model/Lwo2Chunk.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1311F496A44008A1B2D /* Lwo2Chunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Lwo2Chunk.h; path = ../../plugins/model/Lwo2Chunk.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1321F496A44008A1B2D /* Lwo2Exporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Lwo2Exporter.cpp; path = ../../plugins/model/Lwo2Exporter.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1331F496A44008A1B2D /* Lwo2Exporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Lwo2Exporter.h; path = ../../plugins/model/Lwo2Exporter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1381F496A54008A1B2D /* ModelExporterBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelExporterBase.h; path = ../../plugins/model/ModelExporterBase.h; sourceTree = "<group>"; };
+		3AE6F13A1F496AA1008A1B2D /* Export.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Export.cpp; path = ../../radiant/map/algorithm/Export.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F13B1F496AA1008A1B2D /* Export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Export.h; path = ../../radiant/map/algorithm/Export.h; sourceTree = SOURCE_ROOT; };
+		3AE6F13C1F496AA1008A1B2D /* Models.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Models.cpp; path = ../../radiant/map/algorithm/Models.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F13D1F496AA1008A1B2D /* Models.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Models.h; path = ../../radiant/map/algorithm/Models.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1401F496ACB008A1B2D /* ModelExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelExporter.cpp; path = ../../radiant/model/ModelExporter.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1411F496ACB008A1B2D /* ModelExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelExporter.h; path = ../../radiant/model/ModelExporter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = exportasmodeldialog.xrc; path = ../../install/ui/exportasmodeldialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AE6F1B91F496D29008A1B2D /* ExportAsModelDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExportAsModelDialog.cpp; path = modelexport/ExportAsModelDialog.cpp; sourceTree = "<group>"; };
+		3AE6F1BA1F496D29008A1B2D /* ExportAsModelDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExportAsModelDialog.h; path = modelexport/ExportAsModelDialog.h; sourceTree = "<group>"; };
+		3AE6F1BC1F49749C008A1B2D /* python.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = python.xcconfig; sourceTree = "<group>"; };
+		3AE6F1BD1F4975B6008A1B2D /* PythonModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PythonModule.cpp; path = ../../plugins/script/PythonModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1BE1F4975B6008A1B2D /* PythonModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PythonModule.h; path = ../../plugins/script/PythonModule.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1C11F4975D9008A1B2D /* SceneGraphInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneGraphInterface.cpp; path = ../../plugins/script/interfaces/SceneGraphInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionGroupInterface.cpp; path = ../../plugins/script/interfaces/SelectionGroupInterface.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionGroupInterface.h; path = ../../plugins/script/interfaces/SelectionGroupInterface.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
@@ -5196,6 +5233,7 @@
 				3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */,
 				3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */,
 				3AEBE1281E50D9570062D9AF /* script.xcconfig */,
+				3AE6F1BC1F49749C008A1B2D /* python.xcconfig */,
 				3AEBE1291E50D9F30062D9AF /* boost_python.xcconfig */,
 				3AEBE1BF1E50DDFB0062D9AF /* sound.xcconfig */,
 				3AEBE26A1E50E08C0062D9AF /* uimanager.xcconfig */,
@@ -5335,6 +5373,15 @@
 				3AE6F12C1E8E9B72008A1B2D /* GridManager.h */,
 			);
 			name = grid;
+			sourceTree = "<group>";
+		};
+		3AE6F1B81F496D06008A1B2D /* modelexport */ = {
+			isa = PBXGroup;
+			children = (
+				3AE6F1B91F496D29008A1B2D /* ExportAsModelDialog.cpp */,
+				3AE6F1BA1F496D29008A1B2D /* ExportAsModelDialog.h */,
+			);
+			name = modelexport;
 			sourceTree = "<group>";
 		};
 		3AEBDC6A1E50667D0062D9AF /* archivezip */ = {
@@ -5795,6 +5842,11 @@
 		3AEBE0351E50D0400062D9AF /* model */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1381F496A54008A1B2D /* ModelExporterBase.h */,
+				3AE6F1301F496A44008A1B2D /* Lwo2Chunk.cpp */,
+				3AE6F1311F496A44008A1B2D /* Lwo2Chunk.h */,
+				3AE6F1321F496A44008A1B2D /* Lwo2Exporter.cpp */,
+				3AE6F1331F496A44008A1B2D /* Lwo2Exporter.h */,
 				3AEBE4C51E50F0BD0062D9AF /* AseExporter.cpp */,
 				3AEBE4C61E50F0BD0062D9AF /* AseExporter.h */,
 				3AEBE4C91E50F0BD0062D9AF /* PicoModelLoader.cpp */,
@@ -5871,6 +5923,8 @@
 				3AEBE0E61E50D9200062D9AF /* precompiled.cpp */,
 				3AEBE0E71E50D9200062D9AF /* precompiled.h */,
 				3AEBE0E81E50D9200062D9AF /* PythonConsoleWriter.h */,
+				3AE6F1BD1F4975B6008A1B2D /* PythonModule.cpp */,
+				3AE6F1BE1F4975B6008A1B2D /* PythonModule.h */,
 				3AEBE0E91E50D9200062D9AF /* SceneNodeBuffer.cpp */,
 				3AEBE0EA1E50D9200062D9AF /* SceneNodeBuffer.h */,
 				3AEBE0EB1E50D9200062D9AF /* ScriptCommand.cpp */,
@@ -5916,7 +5970,10 @@
 				3AEBE0D61E50D9200062D9AF /* RadiantInterface.cpp */,
 				3AEBE0D71E50D9200062D9AF /* RadiantInterface.h */,
 				3AEBE0D81E50D9200062D9AF /* RegistryInterface.h */,
+				3AE6F1C11F4975D9008A1B2D /* SceneGraphInterface.cpp */,
 				3AEBE0D91E50D9200062D9AF /* SceneGraphInterface.h */,
+				3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */,
+				3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */,
 				3AEBE0DA1E50D9200062D9AF /* SelectionInterface.cpp */,
 				3AEBE0DB1E50D9200062D9AF /* SelectionInterface.h */,
 				3AEBE0DC1E50D9200062D9AF /* SelectionSetInterface.cpp */,
@@ -6465,6 +6522,7 @@
 		3AEBE4E31E5229AB0062D9AF /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */,
 				3AEBE4E51E5229DC0062D9AF /* aboutdialog.xrc */,
 				3AEBE4E71E5229DC0062D9AF /* addpropertydialog.xrc */,
 				3AEBE4E91E5229DC0062D9AF /* camwnd.xrc */,
@@ -6887,6 +6945,10 @@
 		3AF7437A1E4F861A003465B5 /* algorithm */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F13A1F496AA1008A1B2D /* Export.cpp */,
+				3AE6F13B1F496AA1008A1B2D /* Export.h */,
+				3AE6F13C1F496AA1008A1B2D /* Models.cpp */,
+				3AE6F13D1F496AA1008A1B2D /* Models.h */,
 				3AF7437B1E4F861A003465B5 /* ChildPrimitives.cpp */,
 				3AF7437C1E4F861A003465B5 /* ChildPrimitives.h */,
 				3AF7437D1E4F861A003465B5 /* Clone.h */,
@@ -6922,6 +6984,8 @@
 		3AF743B11E4F861A003465B5 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1401F496ACB008A1B2D /* ModelExporter.cpp */,
+				3AE6F1411F496ACB008A1B2D /* ModelExporter.h */,
 				3AF743B21E4F861A003465B5 /* ModelCache.cpp */,
 				3AF743B31E4F861A003465B5 /* ModelCache.h */,
 				3AF743B41E4F861A003465B5 /* ModelFormatManager.cpp */,
@@ -7310,6 +7374,7 @@
 				3AF745091E4F861B003465B5 /* mapinfo */,
 				3AF745141E4F861B003465B5 /* mediabrowser */,
 				3AF745181E4F861B003465B5 /* menu */,
+				3AE6F1B81F496D06008A1B2D /* modelexport */,
 				3AF7451B1E4F861B003465B5 /* modelselector */,
 				3AF745221E4F861B003465B5 /* mousetool */,
 				3AF745271E4F861B003465B5 /* mru */,
@@ -8115,7 +8180,10 @@
 				3AEBE4DD1E50F0D20062D9AF /* PicoModelModule.h in Headers */,
 				3AEBE4DA1E50F0C50062D9AF /* AseExporter.h in Headers */,
 				3AEBE4DC1E50F0D20062D9AF /* PicoModelLoader.h in Headers */,
+				3AE6F1351F496A44008A1B2D /* Lwo2Chunk.h in Headers */,
 				3AEBE0461E50D25E0062D9AF /* RenderablePicoSurface.h in Headers */,
+				3AE6F1391F496A54008A1B2D /* ModelExporterBase.h in Headers */,
+				3AE6F1371F496A44008A1B2D /* Lwo2Exporter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8159,12 +8227,14 @@
 				3AEBE11E1E50D9200062D9AF /* SceneNodeBuffer.h in Headers */,
 				3AEBE0FF1E50D9200062D9AF /* FileSystemInterface.h in Headers */,
 				3AEBE1011E50D9200062D9AF /* GameInterface.h in Headers */,
+				3AE6F1C61F4975D9008A1B2D /* SelectionGroupInterface.h in Headers */,
 				3AEBE10B1E50D9200062D9AF /* PatchInterface.h in Headers */,
 				3AEBE10D1E50D9200062D9AF /* RadiantInterface.h in Headers */,
 				3AEBE0F51E50D9200062D9AF /* BrushInterface.h in Headers */,
 				3AEBE1091E50D9200062D9AF /* ModelInterface.h in Headers */,
 				3AEBE1201E50D9200062D9AF /* ScriptCommand.h in Headers */,
 				3AEBE1131E50D9200062D9AF /* SelectionSetInterface.h in Headers */,
+				3AE6F1C01F4975B6008A1B2D /* PythonModule.h in Headers */,
 				3AEBE10E1E50D9200062D9AF /* RegistryInterface.h in Headers */,
 				3AEBE1151E50D9200062D9AF /* ShaderSystemInterface.h in Headers */,
 				3AEBE1071E50D9200062D9AF /* MathInterface.h in Headers */,
@@ -9370,6 +9440,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
+				3AE6F1B61F496CB5008A1B2D /* exportasmodeldialog.xrc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9677,10 +9748,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AEBE4E01E50F0D20062D9AF /* plugin.cpp in Sources */,
+				3AE6F1341F496A44008A1B2D /* Lwo2Chunk.cpp in Sources */,
 				3AEBE0451E50D25E0062D9AF /* RenderablePicoSurface.cpp in Sources */,
 				3AEBE4D91E50F0C50062D9AF /* AseExporter.cpp in Sources */,
 				3AEBE4DE1E50F0D20062D9AF /* PicoModelNode.cpp in Sources */,
 				3AEBE0431E50D25E0062D9AF /* RenderablePicoModel.cpp in Sources */,
+				3AE6F1361F496A44008A1B2D /* Lwo2Exporter.cpp in Sources */,
 				3AEBE4DB1E50F0D20062D9AF /* PicoModelLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9716,6 +9789,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AE6F1C51F4975D9008A1B2D /* SelectionGroupInterface.cpp in Sources */,
 				3AEBE10C1E50D9200062D9AF /* RadiantInterface.cpp in Sources */,
 				3AEBE0FA1E50D9200062D9AF /* EClassInterface.cpp in Sources */,
 				3AEBE1021E50D9200062D9AF /* GridInterface.cpp in Sources */,
@@ -9723,8 +9797,10 @@
 				3AEBE1251E50D9200062D9AF /* ScriptModule.cpp in Sources */,
 				3AEBE1081E50D9200062D9AF /* ModelInterface.cpp in Sources */,
 				3AEBE1121E50D9200062D9AF /* SelectionSetInterface.cpp in Sources */,
+				3AE6F1C41F4975D9008A1B2D /* SceneGraphInterface.cpp in Sources */,
 				3AEBE0F81E50D9200062D9AF /* DialogInterface.cpp in Sources */,
 				3AEBE1141E50D9200062D9AF /* ShaderSystemInterface.cpp in Sources */,
+				3AE6F1BF1F4975B6008A1B2D /* PythonModule.cpp in Sources */,
 				3AEBE1101E50D9200062D9AF /* SelectionInterface.cpp in Sources */,
 				3AEBE1261E50D9200062D9AF /* ScriptWindow.cpp in Sources */,
 				3AEBE11F1E50D9200062D9AF /* ScriptCommand.cpp in Sources */,
@@ -10003,6 +10079,7 @@
 				3AF7459D1E4F861B003465B5 /* CounterManager.cpp in Sources */,
 				3AF7461F1E4F861B003465B5 /* PropertyEditor.cpp in Sources */,
 				3AF745B41E4F861B003465B5 /* DynamicLibrary.cpp in Sources */,
+				3AE6F1BB1F496D33008A1B2D /* ExportAsModelDialog.cpp in Sources */,
 				3AF745AB1E4F861B003465B5 /* RenderableAasFile.cpp in Sources */,
 				3AF746141E4F861B003465B5 /* TexturePreviewCombo.cpp in Sources */,
 				3AF745C11E4F861B003465B5 /* PatchRenderables.cpp in Sources */,
@@ -10013,6 +10090,7 @@
 				3AF745B61E4F861B003465B5 /* ModuleLoader.cpp in Sources */,
 				3AF745D11E4F861B003465B5 /* OpenGLRenderSystem.cpp in Sources */,
 				3AF745AF1E4F861B003465B5 /* ModelFormatManager.cpp in Sources */,
+				3AE6F13E1F496AA1008A1B2D /* Export.cpp in Sources */,
 				3AF7457C1E4F861B003465B5 /* FacePlane.cpp in Sources */,
 				3AF745B91E4F861B003465B5 /* Namespace.cpp in Sources */,
 				3AF746251E4F861B003465B5 /* Vector3PropertyEditor.cpp in Sources */,
@@ -10024,6 +10102,7 @@
 				3AF745841E4F861B003465B5 /* CamRenderer.cpp in Sources */,
 				3AF745741E4F861B003465B5 /* Brush.cpp in Sources */,
 				3AF745DE1E4F861B003465B5 /* Transformation.cpp in Sources */,
+				3AE6F13F1F496AA1008A1B2D /* Models.cpp in Sources */,
 				3AF745B71E4F861B003465B5 /* ModuleRegistry.cpp in Sources */,
 				3AF746341E4F861B003465B5 /* RegularLayout.cpp in Sources */,
 				3AF745BD1E4F861B003465B5 /* Patch.cpp in Sources */,
@@ -10179,6 +10258,7 @@
 				3AF745C61E4F861B003465B5 /* ARBBumpProgram.cpp in Sources */,
 				3AF745F01E4F861B003465B5 /* SelectionSetInfoFileModule.cpp in Sources */,
 				3AF745DD1E4F861B003465B5 /* Shader.cpp in Sources */,
+				3AE6F1421F496ACB008A1B2D /* ModelExporter.cpp in Sources */,
 				3AF745A91E4F861B003465B5 /* PointFile.cpp in Sources */,
 				3AF7459A1E4F861B003465B5 /* Skins.cpp in Sources */,
 				3AF746391E4F861B003465B5 /* LayerInfoTab.cpp in Sources */,
