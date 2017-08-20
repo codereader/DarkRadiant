@@ -37,7 +37,6 @@
 
 #include <functional>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/functional/hash/hash.hpp>
 
 namespace ui
 {
