@@ -376,7 +376,6 @@
 		3AE6F13E1F496AA1008A1B2D /* Export.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F13A1F496AA1008A1B2D /* Export.cpp */; };
 		3AE6F13F1F496AA1008A1B2D /* Models.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F13C1F496AA1008A1B2D /* Models.cpp */; };
 		3AE6F1421F496ACB008A1B2D /* ModelExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1401F496ACB008A1B2D /* ModelExporter.cpp */; };
-		3AE6F1B61F496CB5008A1B2D /* exportasmodeldialog.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
 		3AE6F1B71F496CDB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
 		3AE6F1BB1F496D33008A1B2D /* ExportAsModelDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1B91F496D29008A1B2D /* ExportAsModelDialog.cpp */; };
 		3AE6F1BF1F4975B6008A1B2D /* PythonModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1BD1F4975B6008A1B2D /* PythonModule.cpp */; };
@@ -384,6 +383,7 @@
 		3AE6F1C41F4975D9008A1B2D /* SceneGraphInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C11F4975D9008A1B2D /* SceneGraphInterface.cpp */; };
 		3AE6F1C51F4975D9008A1B2D /* SelectionGroupInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */; };
 		3AE6F1C61F4975D9008A1B2D /* SelectionGroupInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */; };
+		3AE6F1C71F4978AB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
 		3AEBDC841E5067300062D9AF /* pkzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC781E50669C0062D9AF /* pkzip.cpp */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
@@ -2302,6 +2302,7 @@
 			dstPath = Resources/ui;
 			dstSubfolderSpec = 16;
 			files = (
+				3AE6F1C71F4978AB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */,
 				3AEBE51A1E522A510062D9AF /* aboutdialog.xrc in CopyFiles */,
 				3AEBE51B1E522A510062D9AF /* addpropertydialog.xrc in CopyFiles */,
 				3AEBE51C1E522A510062D9AF /* camwnd.xrc in CopyFiles */,
@@ -9440,7 +9441,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
-				3AE6F1B61F496CB5008A1B2D /* exportasmodeldialog.xrc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
