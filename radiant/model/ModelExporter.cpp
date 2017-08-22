@@ -105,13 +105,15 @@ void ModelExporter::processNodes()
 			// Push the geometry into the exporter
 			model::IModel& model = modelNode->getIModel();
 
+			Matrix4 exportTransform = node->localToWorld().getPremultipliedBy(_centerTransform);
+
 			for (int s = 0; s < model.getSurfaceCount(); ++s)
 			{
 				const model::IModelSurface& surface = model.getSurface(s);
 
 				if (isExportableMaterial(surface.getDefaultMaterial()))
 				{
-					_exporter->addSurface(surface, node->localToWorld().getMultipliedBy(_centerTransform));
+					_exporter->addSurface(surface, exportTransform);
 				}
 			}
 		}
@@ -132,6 +134,12 @@ AABB ModelExporter::calculateModelBounds()
 
 	for (const scene::INodePtr& node : _nodes)
 	{
+		// Only consider the node types supported by processNodes()
+		if (!Node_isModel(node) && !Node_isBrush(node) && !Node_isPatch(node))
+		{
+			continue;
+		}
+
 		bounds.includeAABB(node->worldAABB());
 	}
 
@@ -172,7 +180,9 @@ void ModelExporter::processPatch(const scene::INodePtr& node)
 		}
 	}
 
-	_exporter->addPolygons(materialName, polys, node->localToWorld().getMultipliedBy(_centerTransform));
+	Matrix4 exportTransform = node->localToWorld().getPremultipliedBy(_centerTransform);
+
+	_exporter->addPolygons(materialName, polys, exportTransform);
 }
 
 void ModelExporter::processBrush(const scene::INodePtr& node)
@@ -180,6 +190,8 @@ void ModelExporter::processBrush(const scene::INodePtr& node)
 	IBrush* brush = Node_getIBrush(node);
 
 	if (brush == nullptr) return;
+
+	Matrix4 exportTransform = node->localToWorld().getPremultipliedBy(_centerTransform);
 
 	for (std::size_t b = 0; b < brush->getNumFaces(); ++b)
 	{
@@ -211,7 +223,7 @@ void ModelExporter::processBrush(const scene::INodePtr& node)
 			polys.push_back(poly);
 		}
 
-		_exporter->addPolygons(materialName, polys, node->localToWorld().getMultipliedBy(_centerTransform));
+		_exporter->addPolygons(materialName, polys, exportTransform);
 	}
 }
 
