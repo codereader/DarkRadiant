@@ -93,14 +93,14 @@
 								<flag>wxBOTTOM|wxTOP</flag>
 								<border>6</border>
 								<object class="wxCheckBox" name="ExportDialogCenterObjects">
-									<label>Center Objects at 0,0,0 Origin</label>
+									<label>Center Objects around Origin</label>
 									<checked>0</checked>
 								</object>
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
 								<flag>wxBOTTOM|wxTOP</flag>
-								<border>5</border>
+								<border>6</border>
 								<object class="wxCheckBox" name="ExportDialogSkipCaulk">
 									<label>Skip Surfaces textured with Caulk</label>
 									<checked>0</checked>
@@ -108,10 +108,19 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxTOP</flag>
-								<border>5</border>
+								<flag>wxBOTTOM|wxTOP</flag>
+								<border>6</border>
 								<object class="wxCheckBox" name="ExportDialogReplaceWithModel">
-									<label>Replace selection with exported model</label>
+									<label>Replace Selection with exported Model</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM|wxTOP</flag>
+								<border>6</border>
+								<object class="wxCheckBox" name="ExportDialogUseEntityOrigin">
+									<label>Use Entity Origin as export Origin</label>
 									<checked>0</checked>
 								</object>
 							</object>

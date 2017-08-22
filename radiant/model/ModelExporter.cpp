@@ -53,6 +53,8 @@ ModelExporter::ModelExporter(const model::IModelExporterPtr& exporter) :
 	_skipCaulk(false),
 	_caulkMaterial(registry::getValue<std::string>(RKEY_CLIPPER_CAULK_SHADER)),
 	_centerObjects(false),
+	_origin(0,0,0),
+	_useOriginAsCenter(false),
 	_centerTransform(Matrix4::getIdentity())
 {
 	if (!_exporter)
@@ -70,6 +72,12 @@ void ModelExporter::setSkipCaulkMaterial(bool skipCaulk)
 void ModelExporter::setCenterObjects(bool centerObjects)
 {
 	_centerObjects = centerObjects;
+}
+
+void ModelExporter::setOrigin(const Vector3& origin)
+{
+	_origin = origin;
+	_useOriginAsCenter = true;
 }
 
 bool ModelExporter::pre(const scene::INodePtr& node)
@@ -93,7 +101,11 @@ void ModelExporter::processNodes()
 
 	if (_centerObjects)
 	{
-		_centerTransform = Matrix4::getTranslation(-bounds.origin);
+		// Depending on the center point, we need to use the object bounds
+		// or just the translation towards the user-defined origin, ignoring bounds
+		_centerTransform = _useOriginAsCenter ?
+			Matrix4::getTranslation(-_origin) :
+			Matrix4::getTranslation(-bounds.origin);
 	}
 
 	for (const scene::INodePtr& node : _nodes)

@@ -5,6 +5,7 @@
 #include "imodelsurface.h"
 #include "math/AABB.h"
 #include "math/Matrix4.h"
+#include "math/Vector3.h"
 #include <map>
 #include <list>
 
@@ -22,6 +23,11 @@ private:
 
 	bool _centerObjects;
 
+	// Optional origin to use for the centering transformation
+	// instead of the object bounds origin
+	Vector3 _origin;
+	bool _useOriginAsCenter;
+
 	std::list<scene::INodePtr> _nodes;
 
 	// The translation centering the objects
@@ -36,6 +42,9 @@ public:
 
 	// Define whether we should arrange the objects around the world origin
 	void setCenterObjects(bool centerObjects);
+
+	// Define the origin to use for centering the objects
+	void setOrigin(const Vector3& origin);
 
 	bool pre(const scene::INodePtr& node) override;
 

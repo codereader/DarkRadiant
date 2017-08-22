@@ -16,6 +16,7 @@ struct ModelExportOptions
 	bool skipCaulk;					// whether to skip caulk
 	bool centerObjects;				// whether to center objects
 	bool replaceSelectionWithModel;	// delete the selection and put the exported model in its place
+	bool useEntityOrigin;			// use entity origin as model origin (only applicable if a single entity is selected)
 };
 
 /**

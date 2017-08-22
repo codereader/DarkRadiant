@@ -14,6 +14,7 @@
 #include <wx/sizer.h>
 #include <boost/algorithm/string/case_conv.hpp>
 
+#include "selectionlib.h"
 #include "os/path.h"
 #include "os/file.h"
 #include "os/dir.h"
@@ -35,6 +36,7 @@ namespace
 	const char* RKEY_MODEL_EXPORT_REPLACE_WITH_MODEL = "user/ui/exportAsModel/replaceSelectionWithModel";
 	const char* RKEY_MODEL_EXPORT_OUTPUT_PATH = "user/ui/exportAsModel/outputPath";
 	const char* RKEY_MODEL_EXPORT_OUTPUT_FORMAT = "user/ui/exportAsModel/outputFormat";
+	const char* RKEY_MODEL_EXPORT_USE_ENTITY_ORIGIN = "user/ui/exportAsModel/keepEntityOrigin";
 }
 
 ExportAsModelDialog::ExportAsModelDialog(wxWindow* parent) :
@@ -127,6 +129,22 @@ void ExportAsModelDialog::populateWindow()
 	bool replaceSelectionWithModel = registry::getValue<bool>(RKEY_MODEL_EXPORT_REPLACE_WITH_MODEL);
 	findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel")->SetValue(replaceSelectionWithModel);
 
+	bool keepEntityOrigin = registry::getValue<bool>(RKEY_MODEL_EXPORT_USE_ENTITY_ORIGIN);
+	wxCheckBox* keepOriginBox = findNamedObject<wxCheckBox>(this, "ExportDialogUseEntityOrigin");
+
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+	if (info.totalCount == 1 && info.entityCount == 1)
+	{
+		keepOriginBox->SetValue(keepEntityOrigin);
+		keepOriginBox->Enable(true);
+	}
+	else
+	{
+		keepOriginBox->SetValue(false);
+		keepOriginBox->Enable(false);
+	}
+
 	Layout();
 	Fit();
 	CenterOnScreen();
@@ -141,6 +159,7 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 	options.outputFilename = findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->getValue();
 	options.outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
 	options.replaceSelectionWithModel = findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel")->GetValue();
+	options.useEntityOrigin = findNamedObject<wxCheckBox>(this, "ExportDialogUseEntityOrigin")->GetValue();
 
 	if (options.outputFilename.empty())
 	{
@@ -207,6 +226,9 @@ void ExportAsModelDialog::saveOptionsToRegistry()
 
 	registry::setValue(RKEY_MODEL_EXPORT_REPLACE_WITH_MODEL,
 		findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel")->GetValue());
+
+	registry::setValue(RKEY_MODEL_EXPORT_USE_ENTITY_ORIGIN,
+		findNamedObject<wxCheckBox>(this, "ExportDialogUseEntityOrigin")->GetValue());
 }
 
 void ExportAsModelDialog::ShowDialog(const cmd::ArgumentList& args)

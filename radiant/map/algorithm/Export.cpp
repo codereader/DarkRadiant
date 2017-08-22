@@ -8,8 +8,10 @@
 
 #include "os/path.h"
 
+#include "selectionlib.h"
 #include "selection/algorithm/Entity.h"
 #include "selection/algorithm/General.h"
+#include "string/convert.h"
 #include "model/ModelExporter.h"
 #include "registry/registry.h"
 #include "Traverse.h"
@@ -53,6 +55,27 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
 	exporter.setCenterObjects(options.centerObjects);
 	exporter.setSkipCaulkMaterial(options.skipCaulk);
+
+	if (options.useEntityOrigin)
+	{
+		// Check if we have a single entity selected
+		const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+		if (info.totalCount == 1 && info.entityCount == 1)
+		{
+			Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+
+			if (entity != nullptr)
+			{
+				Vector3 entityOrigin = string::convert<Vector3>(entity->getKeyValue("origin"));
+				exporter.setOrigin(entityOrigin);
+			}
+		}
+		else
+		{
+			rWarning() << "Will ignore the UseEntityOrigin setting as we don't have a single entity selected." << std::endl;
+		}
+	}
 
 	exporter.processNodes();
 
@@ -113,13 +136,14 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
 void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 {
-	if (args.size() < 2 || args.size() > 5)
+	if (args.size() < 2 || args.size() > 6)
 	{
-		rMessage() << "Usage: ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>]" << std::endl;
+		rMessage() << "Usage: ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>]" << std::endl;
 		rMessage() << "   <Path> must be an absolute file system path" << std::endl;
-		rMessage() << "   pass [<CenterObjects>] as 1 to center objects at 0,0,0 origin" << std::endl;
+		rMessage() << "   pass [<CenterObjects>] as 1 to center objects around the origin" << std::endl;
 		rMessage() << "   pass [<SkipCaulk>] as 1 to skip caulked surfaces" << std::endl;
 		rMessage() << "   pass [<ReplaceSelectionWithModel>] as 1 to delete the selection and put the exported model in its place" << std::endl;
+		rMessage() << "   pass [<UseEntityOrigin>] as 1 to use the entity origin as export origin (only applicable if a single entity is selected)" << std::endl;
 		return;
 	}
 
@@ -130,6 +154,7 @@ void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 	options.skipCaulk = false;
 	options.centerObjects = false;
 	options.replaceSelectionWithModel = false;
+	options.useEntityOrigin = false;
 
 	if (args.size() >= 3)
 	{
@@ -141,9 +166,14 @@ void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 		options.skipCaulk = (args[3].getInt() != 0);
 	}
 
-	if (args.size() >= 4)
+	if (args.size() >= 5)
 	{
 		options.replaceSelectionWithModel = (args[4].getInt() != 0);
+	}
+
+	if (args.size() >= 6)
+	{
+		options.useEntityOrigin = (args[5].getInt() != 0);
 	}
 
 	try
