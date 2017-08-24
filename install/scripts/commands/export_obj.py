@@ -24,7 +24,9 @@ __commandDisplayName__ = 'Export OBJ...'
 def execute():
     script = "DarkRadiant Wavefront OBJ Export (*.obj)"
     author = "Python port by greebo, based on original exporter C++ code in DarkRadiant and the ASE exporter scripts"
-    version = "0.1"
+    version = "0.2"
+
+    import darkradiant as dr
 
     # Check if we have a valid selection
 
@@ -32,7 +34,7 @@ def execute():
 
     # Don't allow empty selections or selected components only
     if selectionInfo.totalCount == 0 or selectionInfo.totalCount == selectionInfo.componentCount:
-        errMsg = GlobalDialogManager.createMessageBox('No selection', 'Nothing selected, cannot run exporter.', Dialog.ERROR)
+        errMsg = GlobalDialogManager.createMessageBox('No selection', 'Nothing selected, cannot run exporter.', dr.Dialog.ERROR)
         errMsg.run()
         return
 
@@ -87,7 +89,8 @@ def execute():
                 
             # Append the face to the list, referencing vertices from firstVertex to the current count
             # Face indices are 1-based, so increase by 1 each time
-            geometry.faces.append([i for i in range(firstVertex+1, geomlist.vertexCount+1)])
+			# Reverse the list to produce the correct face normal direction
+            geometry.faces.append([i for i in reversed(range(firstVertex+1, geomlist.vertexCount+1))])
 
         print('Processed brush geometry: {0} verts and {1} faces'.format(len(geometry.vertices), len(geometry.faces)))
         geomlist.objects.append(geometry)
@@ -137,7 +140,7 @@ def execute():
         return
 
     # Traversor class to visit child primitives of entities
-    class nodeVisitor(SceneNodeVisitor):
+    class nodeVisitor(dr.SceneNodeVisitor):
         def pre(self, scenenode):
             if scenenode.isBrush():
                 processBrush(scenenode.getBrush())
@@ -147,7 +150,7 @@ def execute():
             # Traverse all child nodes, regardless of type
             return 1
 
-    class SelectionWalker(SelectionVisitor):
+    class SelectionWalker(dr.SelectionVisitor):
         def visit(self, scenenode):
             if scenenode.isBrush():
                 processBrush(scenenode.getBrush())
@@ -180,7 +183,7 @@ def execute():
     exportCaulkHandle = dialog.addCheckbox("Export caulked faces")
     dialog.setElementValue(exportCaulkHandle, GlobalRegistry.get('user/scripts/objExport/exportcaulk'))
 
-    if dialog.run() == Dialog.OK:
+    if dialog.run() == dr.Dialog.OK:
         fullpath = dialog.getElementValue(pathHandle) + '/' + dialog.getElementValue(fileHandle)
         if not fullpath.endswith('.obj'):
             fullpath = fullpath + '.obj'
@@ -194,8 +197,8 @@ def execute():
         try:
             file = open(fullpath, 'r')
             file.close()
-            prompt = GlobalDialogManager.createMessageBox('Warning', 'The file ' + fullpath + ' already exists. Do you wish to overwrite it?', Dialog.ASK)
-            if prompt.run() == Dialog.YES:
+            prompt = GlobalDialogManager.createMessageBox('Warning', 'The file ' + fullpath + ' already exists. Do you wish to overwrite it?', dr.Dialog.ASK)
+            if prompt.run() == dr.Dialog.YES:
                 overwrite = True
             else:
                 overwrite = False
@@ -241,7 +244,7 @@ def execute():
                     
                 # Texture coord list (vt)
                 for texcoord in x.texcoords:
-                    objstr = objstr + "vt {0} {1}\n".format(texcoord.x(), texcoord.y())
+                    objstr = objstr + "vt {0} {1}\n".format(texcoord.x(), 1-texcoord.y()) # reverse V coord
                     
                 objstr = objstr + "\n"
                     
