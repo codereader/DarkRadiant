@@ -323,6 +323,7 @@
     <ClCompile Include="..\..\plugins\model\plugin.cpp" />
     <ClCompile Include="..\..\plugins\model\RenderablePicoModel.cpp" />
     <ClCompile Include="..\..\plugins\model\RenderablePicoSurface.cpp" />
+    <ClCompile Include="..\..\plugins\model\WavefrontExporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\model\AseExporter.h" />
@@ -335,6 +336,7 @@
     <ClInclude Include="..\..\plugins\model\plugin.h" />
     <ClInclude Include="..\..\plugins\model\RenderablePicoModel.h" />
     <ClInclude Include="..\..\plugins\model\RenderablePicoSurface.h" />
+    <ClInclude Include="..\..\plugins\model\WavefrontExporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="picomodellib.vcxproj">

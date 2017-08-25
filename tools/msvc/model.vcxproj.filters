@@ -31,6 +31,9 @@
     <ClCompile Include="..\..\plugins\model\Lwo2Chunk.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\model\WavefrontExporter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\model\PicoModelLoader.h">
@@ -61,6 +64,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\model\ModelExporterBase.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\model\WavefrontExporter.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
