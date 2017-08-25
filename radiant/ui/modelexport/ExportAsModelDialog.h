@@ -29,6 +29,7 @@ private:
 	void onFormatSelection(wxCommandEvent& ev);
 
 	void saveOptionsToRegistry();
+	void handleFormatSelectionChange();
 };
 
 }
