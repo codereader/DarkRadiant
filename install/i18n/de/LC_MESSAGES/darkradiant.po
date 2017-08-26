@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-07-22 09:53+0200\n"
-"PO-Revision-Date: 2017-07-22 09:55+0100\n"
+"POT-Creation-Date: 2017-08-26 08:06+0200\n"
+"PO-Revision-Date: 2017-08-26 08:07+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -89,7 +89,7 @@ msgid "Show camera toolbar"
 msgstr "Zeige Toolbar im Kamera-Fenster"
 
 #: ..\..\radiant\camera\FloatingCamWnd.cpp:18
-#: xml_file_content.cpp:61
+#: xml_file_content.cpp:62
 msgid "Camera"
 msgstr "Kamera"
 
@@ -129,15 +129,15 @@ msgstr "Shader einfügen (gesamter Brush)"
 msgid "Paste Shader Name"
 msgstr "Shadernamen einfügen"
 
-#: ..\..\radiant\clipper\Clipper.cpp:41
+#: ..\..\radiant\clipper\Clipper.cpp:40
 msgid "Settings/Clipper"
 msgstr "Einstellungen/Clipper"
 
-#: ..\..\radiant\clipper\Clipper.cpp:43
+#: ..\..\radiant\clipper\Clipper.cpp:42
 msgid "Clipper tool uses caulk texture"
 msgstr "Clipper verwendet Caulk-Textur für neu erzeugte Faces."
 
-#: ..\..\radiant\clipper\Clipper.cpp:44
+#: ..\..\radiant\clipper\Clipper.cpp:43
 msgid "Caulk shader name"
 msgstr "Name des Caulk Shaders"
 
@@ -170,6 +170,19 @@ msgstr "Keine Soundwiedergabe in dieser Session"
 msgid "Verbose logging."
 msgstr "Detailliertes Logging"
 
+#: ..\..\radiant\map\algorithm\Export.cpp:94
+msgid ""
+"To replace the selection with the exported model\n"
+"the output path must be located within the mod/project."
+msgstr ""
+"Um die Auswahl durch das exportierte Model zu ersetzen\n"
+"muss der Pfad innerhalb des Projekts/Mods liegen."
+
+#: ..\..\radiant\map\algorithm\Export.cpp:133
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:427
+msgid "Unable to create model, classname not found."
+msgstr "Kann Modell nicht erzeugen, Klassenname nicht gefunden."
+
 #: ..\..\radiant\map\algorithm\MapExporter.cpp:114
 msgid "Writing map"
 msgstr "Schreibe Map"
@@ -189,31 +202,60 @@ msgstr "Lade Map"
 msgid "Loading entity %d\n"
 msgstr "Lade Entity %d\n"
 
-#: ..\..\radiant\map\AutoSaver.cpp:267
+#: ..\..\radiant\map\algorithm\Models.cpp:94
+#: ..\..\radiant\map\algorithm\Models.cpp:110
+#: ..\..\radiant\map\Map.cpp:111
+#: ..\..\radiant\map\Map.cpp:431
+#: ..\..\radiant\map\Map.cpp:530
+#: ..\..\radiant\map\Map.cpp:558
+#: ..\..\radiant\RadiantModule.cpp:106
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:321
+msgid "Processing..."
+msgstr "Vorgang läuft..."
+
+#: ..\..\radiant\map\algorithm\Models.cpp:94
+#: ..\..\radiant\map\algorithm\Models.cpp:110
+msgid "Reloading Models"
+msgstr "Neuladen der Modelle"
+
+#: ..\..\radiant\map\AutoSaver.cpp:204
+msgid "Snapshot Folder Size Warning"
+msgstr "Grössenlimit des Schnappschussverzeichnisses (MB)"
+
+#: ..\..\radiant\map\AutoSaver.cpp:205
+#, c-format
+msgid ""
+"The snapshots saved for this map are exceeding the configured size limit.\n"
+"Consider cleaning up the folder %s"
+msgstr ""
+"Die Schnappschüsse für diese Map überschreiten das eingestellte Limit.\n"
+"Es wäre vielleicht gut den Ordner %s aufzuräumen."
+
+#: ..\..\radiant\map\AutoSaver.cpp:330
 msgid "Settings/Autosave"
 msgstr "Einstellungen/Automatisches Speichern"
 
-#: ..\..\radiant\map\AutoSaver.cpp:270
+#: ..\..\radiant\map\AutoSaver.cpp:333
 msgid "Enable Autosave"
 msgstr "Aktiviere automatisches Speichern"
 
-#: ..\..\radiant\map\AutoSaver.cpp:271
+#: ..\..\radiant\map\AutoSaver.cpp:334
 msgid "Autosave Interval (in minutes)"
 msgstr "Speicherintervall"
 
 #  Snapshots oder Schnappschüsse?
-#: ..\..\radiant\map\AutoSaver.cpp:273
+#: ..\..\radiant\map\AutoSaver.cpp:336
 msgid "Save Snapshots"
 msgstr "Speichere Schnappschüsse"
 
 #  Snapshot oder Schnappschuss?
-#: ..\..\radiant\map\AutoSaver.cpp:274
+#: ..\..\radiant\map\AutoSaver.cpp:337
 msgid "Snapshot folder (relative to map folder)"
 msgstr "Schnappschussverzeichniss (relativ zu map Verzeichniss)"
 
-#: ..\..\radiant\map\AutoSaver.cpp:275
-msgid "Max Snapshot Folder size (MB)"
-msgstr "Maximale Grösse des Schnappschussverzeichnisses (MB)"
+#: ..\..\radiant\map\AutoSaver.cpp:338
+msgid "Max total Snapshot size per map (MB)"
+msgstr "Maximale Grösse des Schnappschussverzeichnisses pro Map (MB)"
 
 #: ..\..\radiant\map\CounterManager.cpp:63
 msgid ""
@@ -244,30 +286,19 @@ msgstr "Brushnummer:"
 msgid "Map Info File Version invalid"
 msgstr "Ungültige Map Info File Verson"
 
-#: ..\..\radiant\map\Map.cpp:61
+#: ..\..\radiant\map\Map.cpp:64
 msgid "unnamed.map"
 msgstr "unbenannt.map"
 
-#: ..\..\radiant\map\Map.cpp:108
-#: ..\..\radiant\map\Map.cpp:428
-#: ..\..\radiant\map\Map.cpp:527
-#: ..\..\radiant\map\Map.cpp:555
-#: ..\..\radiant\model\ModelCache.cpp:224
-#: ..\..\radiant\model\ModelCache.cpp:240
-#: ..\..\radiant\RadiantModule.cpp:106
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:321
-msgid "Processing..."
-msgstr "Vorgang läuft..."
-
-#: ..\..\radiant\map\Map.cpp:108
+#: ..\..\radiant\map\Map.cpp:111
 msgid "Loading textures..."
 msgstr "Lade Texturen..."
 
-#: ..\..\radiant\map\Map.cpp:430
+#: ..\..\radiant\map\Map.cpp:433
 msgid "Preprocessing"
 msgstr "Vorverarbeitung"
 
-#: ..\..\radiant\map\Map.cpp:439
+#: ..\..\radiant\map\Map.cpp:442
 #, c-format
 msgid ""
 "Failure running map pre-save event:\n"
@@ -276,15 +307,15 @@ msgstr ""
 "Fehler beim Aufruf des Pre-Save Events:\n"
 "%s"
 
-#: ..\..\radiant\map\Map.cpp:447
+#: ..\..\radiant\map\Map.cpp:450
 msgid "Saving Map"
 msgstr "Speichere Map"
 
-#: ..\..\radiant\map\Map.cpp:486
+#: ..\..\radiant\map\Map.cpp:489
 msgid "Importing..."
 msgstr "Importiere..."
 
-#: ..\..\radiant\map\Map.cpp:581
+#: ..\..\radiant\map\Map.cpp:584
 #, c-format
 msgid ""
 "Save changes to map \"%s\"\n"
@@ -293,17 +324,17 @@ msgstr ""
 "Sollen die Änderungen an der Map \"%s\"\n"
 "vor dem Schließen gespeichert werden?"
 
-#: ..\..\radiant\map\Map.cpp:589
+#: ..\..\radiant\map\Map.cpp:592
 #, c-format
 msgid "%d minutes"
 msgstr "%d Minuten"
 
-#: ..\..\radiant\map\Map.cpp:593
+#: ..\..\radiant\map\Map.cpp:596
 #, c-format
 msgid "%d seconds"
 msgstr "%d Sekunden"
 
-#: ..\..\radiant\map\Map.cpp:597
+#: ..\..\radiant\map\Map.cpp:600
 #, c-format
 msgid ""
 "If you don't save, changes from the last %s\n"
@@ -312,40 +343,40 @@ msgstr ""
 "Wenn Du nicht sicherst, gehen die Änderungen\n"
 "der letzten %s verloren."
 
-#: ..\..\radiant\map\Map.cpp:655
+#: ..\..\radiant\map\Map.cpp:658
 msgid "Save Map"
 msgstr "Map speichern"
 
-#: ..\..\radiant\map\Map.cpp:695
+#: ..\..\radiant\map\Map.cpp:698
 msgid "Save Copy As..."
 msgstr "Speichere Kopie als..."
 
-#: ..\..\radiant\map\Map.cpp:786
+#: ..\..\radiant\map\Map.cpp:795
 msgid "New Map"
 msgstr "Neue Map"
 
-#: ..\..\radiant\map\Map.cpp:795
+#: ..\..\radiant\map\Map.cpp:804
 #: ..\..\radiant\ui\mru\MRU.cpp:93
 msgid "Open Map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:799
+#: ..\..\radiant\map\Map.cpp:808
 msgid "Open map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:813
+#: ..\..\radiant\map\Map.cpp:822
 msgid "Import map"
 msgstr "Map importieren"
 
-#: ..\..\radiant\map\Map.cpp:842
+#: ..\..\radiant\map\Map.cpp:851
 msgid "Export selection"
 msgstr "Auswahl exportieren"
 
-#: ..\..\radiant\map\Map.cpp:857
+#: ..\..\radiant\map\Map.cpp:866
 msgid "Save selected as Prefab"
 msgstr "Auswahl als Prefab speichern"
 
-#: ..\..\radiant\map\Map.cpp:938
+#: ..\..\radiant\map\Map.cpp:947
 #, c-format
 msgid ""
 "Failure reading map from clipboard:\n"
@@ -359,7 +390,7 @@ msgid "Map"
 msgstr "Map"
 
 #: ..\..\radiant\map\MapFileManager.cpp:36
-#: xml_file_content.cpp:90
+#: xml_file_content.cpp:91
 msgid "Region"
 msgstr "Region"
 
@@ -421,51 +452,54 @@ msgstr "Fehler beim Öffnen der Output-Streams"
 msgid "Could not open pointfile: %s"
 msgstr "Konnte das Pointfile nicht öffnen: %s"
 
-#: ..\..\radiant\map\RegionManager.cpp:173
+#: ..\..\radiant\map\RegionManager.cpp:174
 msgid "Warning: Camera not within region, can't set info_player_start."
 msgstr "Warnung: die Kamera befindet sich nicht innerhalb der Region, konnte daher den Spielerstartpunkt nicht setzen."
 
-#: ..\..\radiant\map\RegionManager.cpp:261
+#: ..\..\radiant\map\RegionManager.cpp:262
 msgid "Could not set Region: XY Top View not found."
 msgstr "Konnte Region nicht festlegen, weil die XY-Ansicht nicht gefunden wurde."
 
-#: ..\..\radiant\map\RegionManager.cpp:288
+#: ..\..\radiant\map\RegionManager.cpp:289
 msgid "Could not set Region: please select a single Brush."
 msgstr "Kann Region nicht festlegen: bitte einen einzelnen Brush auswählen."
 
-#: ..\..\radiant\map\RegionManager.cpp:313
+#: ..\..\radiant\map\RegionManager.cpp:314
 msgid "This command is not available in component mode."
 msgstr "Dieser Befehl steht im Komponentenmodus nicht zur Verfügung."
 
-#: ..\..\radiant\map\RegionManager.cpp:319
+#: ..\..\radiant\map\RegionManager.cpp:320
 msgid "Could not set Region: nothing selected."
 msgstr "Kann keine Region festlegen: keine Elemente ausgewählt."
 
-#: ..\..\radiant\map\RegionManager.cpp:336
+#: ..\..\radiant\map\RegionManager.cpp:337
 msgid "Export region"
 msgstr "Exportiere Region"
 
-#: ..\..\radiant\model\ModelCache.cpp:224
-#: ..\..\radiant\model\ModelCache.cpp:240
-msgid "Reloading Models"
-msgstr "Neuladen der Modelle"
-
-#: ..\..\radiant\model\ScaledModelExporter.cpp:139
+#: ..\..\radiant\model\ModelExporter.cpp:267
 #: ..\..\plugins\particles\ParticlesManager.cpp:323
 #: ..\..\plugins\particles\ParticlesManager.cpp:351
 #, c-format
 msgid "Cannot open file for writing: %s"
 msgstr "Kann die Datei nicht im Schreibmodus öffnen: %s"
 
-#: ..\..\radiant\model\ScaledModelExporter.cpp:161
+#: ..\..\radiant\model\ModelExporter.cpp:289
 #, c-format
-msgid "Could not remove the file: %s"
-msgstr "Kann die Datei nicht entfernen: %s"
+msgid "Could not rename the existing file to .bak: %s"
+msgstr "Konnte die bestehende Datei nicht auf .bak umbenennen: %s"
 
-#: ..\..\radiant\model\ScaledModelExporter.cpp:175
+#: ..\..\radiant\model\ModelExporter.cpp:303
 #, c-format
 msgid "Could not rename the temporary file: %s"
 msgstr "Konnte die temporäre Datei nicht entfernen: %s"
+
+#: ..\..\radiant\model\ModelFormatManager.cpp:42
+msgid "Settings/Model Export"
+msgstr "Einstellungen/Model-Export"
+
+#: ..\..\radiant\model\ModelFormatManager.cpp:51
+msgid "Export Format for scaled Models"
+msgstr "Export-Format für skalierte Models"
 
 #: ..\..\radiant\modulesystem\ModuleRegistry.cpp:131
 #, c-format
@@ -706,11 +740,11 @@ msgstr "Gruppe erstellen"
 msgid "Manipulate"
 msgstr "Manipulieren"
 
-#: ..\..\radiant\selection\RadiantSelectionSystem.cpp:923
+#: ..\..\radiant\selection\RadiantSelectionSystem.cpp:924
 msgid "Settings/Selection"
 msgstr "Einstellungen/Selektion"
 
-#: ..\..\radiant\selection\RadiantSelectionSystem.cpp:925
+#: ..\..\radiant\selection\RadiantSelectionSystem.cpp:926
 msgid "Ignore light volume bounds when calculating default rotation pivot location"
 msgstr "Ignoriere Lichtvolumina für die Berechnung des Standard-Pivotpunkts"
 
@@ -796,7 +830,7 @@ msgstr "Patch"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:359
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:73
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:362
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:361
 #: xml_file_content.cpp:14
 msgid "Shader"
 msgstr "Shader"
@@ -1724,7 +1758,7 @@ msgstr "Hinweis: diese Kombination ist bereits zugeordnet:"
 #: xml_file_content.cpp:10
 #: xml_file_content.cpp:18
 #: xml_file_content.cpp:8
-#: xml_file_content.cpp:4
+#: xml_file_content.cpp:6
 #: xml_file_content.cpp:14
 #: xml_file_content.cpp:15
 msgid "OK"
@@ -1736,7 +1770,7 @@ msgstr "OK"
 #: xml_file_content.cpp:9
 #: xml_file_content.cpp:17
 #: xml_file_content.cpp:1
-#: xml_file_content.cpp:3
+#: xml_file_content.cpp:5
 #: xml_file_content.cpp:13
 #: xml_file_content.cpp:14
 #: xml_file_content.cpp:20
@@ -1969,18 +2003,18 @@ msgstr "Y:"
 msgid " Z: "
 msgstr "Z:"
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:27
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:25
 msgid "Create entity"
 msgstr "Neue Entity"
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:284
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:340
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:282
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:376
 #: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:399
 #: ..\..\plugins\uimanager\SoundChooser.cpp:191
 msgid "Loading..."
 msgstr "Lade..."
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:295
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:293
 #: ..\..\plugins\eclasstree\EClassTree.cpp:127
 msgid "Classname"
 msgstr "Klassenname"
@@ -2191,7 +2225,7 @@ msgstr "Konnte Ebene nicht umbenennen, bitte nochmals versuchen."
 
 #: ..\..\radiant\ui\layers\LayerControlDialog.cpp:34
 #: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:18
-#: xml_file_content.cpp:50
+#: xml_file_content.cpp:51
 msgid "Layers"
 msgstr "Ebenen"
 
@@ -2215,7 +2249,7 @@ msgstr "Lichteigenschaften"
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:76
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:59
 #: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:111
-#: xml_file_content.cpp:52
+#: xml_file_content.cpp:53
 msgid "Texture Browser"
 msgstr "Texturbrowser"
 
@@ -2348,12 +2382,12 @@ msgid "Shaders"
 msgstr "Shader"
 
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:20
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:64
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:63
 msgid "Select elements using this shader"
 msgstr "Alle Elemente mit diesem Shader auswählen"
 
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:21
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:65
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:64
 msgid "Deselect elements using this shader"
 msgstr "Alle Elemente mit diesem Shader deselektieren"
 
@@ -2369,28 +2403,28 @@ msgstr "Patches"
 msgid "Shaders used:"
 msgstr "Benutzte Shader:"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:53
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:52
 msgid "Load in Textures view"
 msgstr "In Texturbrowser laden"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:56
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:55
 msgid "Apply to selection"
 msgstr "Auf Auswahl anwenden"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:59
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:58
 msgid "Show Shader Definition"
 msgstr "Zeige Shaderdefinition"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:62
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:61
 msgid "Other Materials"
 msgstr "Andere Shader"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:434
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:437
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:433
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:436
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:530
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:529
 #: ..\..\plugins\eclasstree\EClassTree.cpp:43
 msgid "Loading, please wait..."
 msgstr "Lade, bitte warten..."
@@ -2411,6 +2445,30 @@ msgstr "&Deaktiviere alle Filter"
 msgid "Edit Filters..."
 msgstr "Filter bearbeiten..."
 
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:32
+msgid "Model Export"
+msgstr "Model-Export"
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:166
+msgid "Empty Filename"
+msgstr "Leerer Dateiname"
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:166
+msgid "No filename specified, cannot run exporter"
+msgstr "Kein Zieldateipfad angegeben, exportieren nicht möglich."
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:181
+msgid "Export failed"
+msgstr "Export fehlgeschlagen"
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:238
+msgid "Empty Selection"
+msgstr "Keine Auswahl"
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:238
+msgid "Nothing selected, cannot run exporter"
+msgstr "Nichts ausgewählt, exportieren nicht möglich"
+
 #: ..\..\radiant\ui\modelselector\MaterialsList.cpp:45
 msgid "Material"
 msgstr "Material"
@@ -2430,31 +2488,31 @@ msgstr "Baue Hierarchie auf..."
 msgid "%d models loaded"
 msgstr "%d Modelle geladen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:36
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:38
 msgid "Choose Model"
 msgstr "Modell auswählen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:317
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:353
 msgid "Model Path"
 msgstr "Modell-Pfad"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:411
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:447
 msgid "Model name"
 msgstr "Modellname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:412
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:448
 msgid "Skin name"
 msgstr "Skinname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:413
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:449
 msgid "Total vertices"
 msgstr "Gesamte Vertices"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:414
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:450
 msgid "Total polys"
 msgstr "Gesamte Polygone"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:415
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:451
 msgid "Material surfaces"
 msgstr "Anzahl Oberflächen"
 
@@ -2575,7 +2633,7 @@ msgid "Merge Entities"
 msgstr "Entities zusammenführen"
 
 #: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:75
-#: xml_file_content.cpp:156
+#: xml_file_content.cpp:157
 msgid "Make Visportal"
 msgstr "Erzeuge Visportal"
 
@@ -2586,10 +2644,6 @@ msgstr "Kann Licht nicht erzeugen, Klassenname nicht gefunden."
 #: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:353
 msgid "Unable to create speaker, classname not found."
 msgstr "Kann Speaker nicht erzeugen, Klassenname nicht gefunden."
-
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:427
-msgid "Unable to create model, classname not found."
-msgstr "Kann Modell nicht erzeugen, Klassenname nicht gefunden."
 
 #: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:435
 msgid "Nothing must be selected for model creation"
@@ -2863,19 +2917,19 @@ msgstr "Skalierung Y-Achse"
 msgid "Z-Axis Scale:"
 msgstr "Skalierung Z-Achse"
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:37
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:38
 msgid "Create Layer..."
 msgstr "Neuer Layer..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:39
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:40
 msgid "Add to Layer..."
 msgstr "Zu Layer hinzufügen..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:40
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:41
 msgid "Move to Layer..."
 msgstr "Nach Layer verschieben..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:41
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:42
 msgid "Remove from Layer..."
 msgstr "Von Layer entfernen..."
 
@@ -2916,7 +2970,7 @@ msgid "Show Entity Names"
 msgstr "Zeige Namen der Entities"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:206
-#: xml_file_content.cpp:80
+#: xml_file_content.cpp:81
 msgid "Show Blocks"
 msgstr "Zeige Blöcke"
 
@@ -2925,17 +2979,17 @@ msgid "Show Coordinates"
 msgstr "Zeige Koordinaten"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:208
-#: xml_file_content.cpp:83
+#: xml_file_content.cpp:84
 msgid "Show Axes"
 msgstr "Zeige Achsen"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:209
-#: xml_file_content.cpp:82
+#: xml_file_content.cpp:83
 msgid "Show Window Outline"
 msgstr "Zeige Fensterumrandung"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:210
-#: xml_file_content.cpp:84
+#: xml_file_content.cpp:85
 msgid "Show Workzone"
 msgstr "Zeige Arbeitsbereich"
 
@@ -2964,7 +3018,7 @@ msgid "Drag Camera"
 msgstr "Kamera verschieben"
 
 #: ..\..\radiant\xyview\tools\ClipperTool.cpp:21
-#: xml_file_content.cpp:150
+#: xml_file_content.cpp:151
 #: xml_file_content.cpp:13
 #: xml_file_content.cpp:18
 msgid "Clipper"
@@ -4200,7 +4254,7 @@ msgstr "Entfernen"
 #: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:412
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:407
 #: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:92
-#: xml_file_content.cpp:180
+#: xml_file_content.cpp:181
 #: xml_file_content.cpp:3
 #: xml_file_content.cpp:7
 #: xml_file_content.cpp:9
@@ -4359,7 +4413,7 @@ msgid "createNodeForEntity(): cannot create entity for NULL entityclass."
 msgstr "createNodeForEntity: Entity für Entity-Klasse NULL kann nicht erstellt werden."
 
 #: ..\..\plugins\entitylist\EntityList.cpp:23
-#: xml_file_content.cpp:59
+#: xml_file_content.cpp:60
 msgid "Entity List"
 msgstr "Entity-Liste"
 
@@ -4376,7 +4430,7 @@ msgid "XY View"
 msgstr "XY-Ansicht"
 
 #: ..\..\plugins\eventmanager\MouseToolGroup.cpp:25
-#: xml_file_content.cpp:49
+#: xml_file_content.cpp:50
 msgid "Camera View"
 msgstr "Kamera"
 
@@ -4520,12 +4574,12 @@ msgstr "Kann die Datei nicht entfernen: %s"
 msgid "Could not rename the temporary file %s"
 msgstr "Konnte die temporäre Datei nicht entfernen: %s"
 
-#: ..\..\plugins\script\ScriptingSystem.cpp:193
-#: ..\..\plugins\script\ScriptingSystem.cpp:196
+#: ..\..\plugins\script\ScriptingSystem.cpp:239
+#: ..\..\plugins\script\ScriptingSystem.cpp:242
 msgid "Script"
 msgstr "Skript"
 
-#: ..\..\plugins\script\ScriptingSystem.cpp:474
+#: ..\..\plugins\script\ScriptingSystem.cpp:483
 msgid "Reload Scripts"
 msgstr "Skripts neu laden"
 
@@ -4551,7 +4605,7 @@ msgid "Parsing material file %s"
 msgstr "Lade Material Datei %s"
 
 #: ..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp:16
-#: xml_file_content.cpp:140
+#: xml_file_content.cpp:141
 msgid "MD5 Animation Viewer"
 msgstr "MD5-Animationsvorschau"
 
@@ -4646,15 +4700,15 @@ msgstr "Speichern"
 msgid "Close without saving"
 msgstr "Schließen ohne zu speichern"
 
-#: ..\..\libs\wxutil\FileChooser.cpp:65
+#: ..\..\libs\wxutil\FileChooser.cpp:59
 msgid "Open File"
 msgstr "Datei öffnen"
 
-#: ..\..\libs\wxutil\FileChooser.cpp:65
+#: ..\..\libs\wxutil\FileChooser.cpp:59
 msgid "Save File"
 msgstr "Datei speichern"
 
-#: ..\..\libs\wxutil\FileChooser.cpp:117
+#: ..\..\libs\wxutil\FileChooser.cpp:122
 msgid "All Files (*.*)"
 msgstr "Alle Dateien (*.*)"
 
@@ -4675,11 +4729,11 @@ msgstr "Strg"
 msgid "Shift"
 msgstr "Umschalt"
 
-#: ..\..\libs\wxutil\PathEntry.cpp:72
+#: ..\..\libs\wxutil\PathEntry.cpp:97
 msgid "Choose File"
 msgstr "Datei auswählen"
 
-#: ..\..\libs\wxutil\PathEntry.cpp:93
+#: ..\..\libs\wxutil\PathEntry.cpp:118
 msgid "Choose Directory"
 msgstr "Verzeichnis auswählen"
 
@@ -4757,722 +4811,726 @@ msgid "&Save selected as prefab..."
 msgstr "Auswahl als &Prefab speichern..."
 
 #: xml_file_content.cpp:11
+msgid "&Export selected as model..."
+msgstr "Auswahl als Model exportieren..."
+
+#: xml_file_content.cpp:12
 msgid "Save selected as Collision Model..."
 msgstr "_Auswahl als Kollisionsmodell speichern..."
 
-#: xml_file_content.cpp:12
+#: xml_file_content.cpp:13
 msgid "Save &region..."
 msgstr "&Region speichern"
 
-#: xml_file_content.cpp:13
+#: xml_file_content.cpp:14
 msgid "&Reload Models"
 msgstr "&Modelle neu laden"
 
-#: xml_file_content.cpp:14
+#: xml_file_content.cpp:15
 msgid "Reload Selected Models"
 msgstr "Ausgewählte Modelle neu laden"
 
-#: xml_file_content.cpp:15
+#: xml_file_content.cpp:16
 msgid "Reload S&kins"
 msgstr "S&kins neu laden"
 
-#: xml_file_content.cpp:16
+#: xml_file_content.cpp:17
 #: xml_file_content.cpp:28
 msgid "Reload Materials"
 msgstr "Materials neu laden"
 
-#: xml_file_content.cpp:17
+#: xml_file_content.cpp:18
 msgid "Reload Defs"
 msgstr "Defs neu laden"
 
-#: xml_file_content.cpp:18
+#: xml_file_content.cpp:19
 msgid "Reload Particles"
 msgstr "Partikel neu laden"
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:20
 msgid "Select &Game..."
 msgstr "Spiel auswählen..."
 
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:21
 msgid "&Pointfile"
 msgstr "Pointfile"
 
-#: xml_file_content.cpp:21
+#: xml_file_content.cpp:22
 msgid "E&xit"
 msgstr "B&eenden"
 
-#: xml_file_content.cpp:22
+#: xml_file_content.cpp:23
 msgid "&Edit"
 msgstr "Bearbeiten"
 
-#: xml_file_content.cpp:23
+#: xml_file_content.cpp:24
 msgid "&Undo"
 msgstr "Rückgängig"
 
-#: xml_file_content.cpp:24
+#: xml_file_content.cpp:25
 msgid "&Redo"
 msgstr "Wiede&rherstellen"
 
-#: xml_file_content.cpp:25
+#: xml_file_content.cpp:26
 msgid "&Copy"
 msgstr "&Kopieren"
 
-#: xml_file_content.cpp:26
+#: xml_file_content.cpp:27
 msgid "&Paste"
 msgstr "&Einfügen"
 
-#: xml_file_content.cpp:27
+#: xml_file_content.cpp:28
 msgid "Paste to Camera"
 msgstr "Bei Kameraposition einfügen"
 
-#: xml_file_content.cpp:28
+#: xml_file_content.cpp:29
 msgid "&Duplicate"
 msgstr "&Duplizieren"
 
-#: xml_file_content.cpp:29
+#: xml_file_content.cpp:30
 msgid "D&elete"
 msgstr "&Löschen"
 
-#: xml_file_content.cpp:30
+#: xml_file_content.cpp:31
 msgid "Rep&arent Primitives"
 msgstr "Primitive neu zuordnen (Elternknoten ändern)"
 
-#: xml_file_content.cpp:31
+#: xml_file_content.cpp:32
 msgid "Reparent Primitives to &Worldspawn"
 msgstr "Primitive Worldspawn zuordnen"
 
-#: xml_file_content.cpp:32
+#: xml_file_content.cpp:33
 msgid "Merge selected Entities"
 msgstr "Ausgewählte Entities zusammenführen"
 
-#: xml_file_content.cpp:33
+#: xml_file_content.cpp:34
 msgid "Copy Shader"
 msgstr "Shader kopieren"
 
-#: xml_file_content.cpp:34
+#: xml_file_content.cpp:35
 msgid "Paste Shader"
 msgstr "Shader einfügen"
 
-#: xml_file_content.cpp:35
+#: xml_file_content.cpp:36
 msgid "Paste Shader (Natural)"
 msgstr "Shader einfügen (Natürliche Skalierung)"
 
-#: xml_file_content.cpp:36
+#: xml_file_content.cpp:37
 msgid "C&lear selection"
 msgstr "Auswahl aufheben"
 
-#: xml_file_content.cpp:37
+#: xml_file_content.cpp:38
 msgid "&Invert selection"
 msgstr "Auswahl umkehren"
 
-#: xml_file_content.cpp:38
+#: xml_file_content.cpp:39
 msgid "Select complete t&all"
 msgstr "Inneres auswählen (Projektion)"
 
-#: xml_file_content.cpp:39
+#: xml_file_content.cpp:40
 msgid "Select i&nside"
 msgstr "Inneres auswählen"
 
-#: xml_file_content.cpp:40
+#: xml_file_content.cpp:41
 msgid "Select &touching"
 msgstr "Berührtes auswählen"
 
-#: xml_file_content.cpp:41
+#: xml_file_content.cpp:42
 msgid "Select Children"
 msgstr "Kinder auswählen"
 
-#: xml_file_content.cpp:42
+#: xml_file_content.cpp:43
 msgid "Expand selection to all Siblings"
 msgstr "Auswahl auf Geschwister ausweiten"
 
-#: xml_file_content.cpp:43
+#: xml_file_content.cpp:44
 msgid "Select all of type"
 msgstr "Alles vom selben Typ auswählen"
 
-#: xml_file_content.cpp:44
+#: xml_file_content.cpp:45
 msgid "Keyboard Shortcuts..."
 msgstr "Tastenkombinationen..."
 
-#: xml_file_content.cpp:45
+#: xml_file_content.cpp:46
 msgid "Mouse Bindings..."
 msgstr "Maustastenbelegungen..."
 
-#: xml_file_content.cpp:46
+#: xml_file_content.cpp:47
 msgid "Pre&ferences..."
 msgstr "Einstellungen..."
 
-#: xml_file_content.cpp:47
+#: xml_file_content.cpp:48
 msgid "V&iew"
 msgstr "Ansicht"
 
-#: xml_file_content.cpp:48
+#: xml_file_content.cpp:49
 msgid "New XY view"
 msgstr "Neue XY-Ansicht"
 
-#: xml_file_content.cpp:51
+#: xml_file_content.cpp:52
 msgid "Console View"
 msgstr "Konsole"
 
-#: xml_file_content.cpp:53
+#: xml_file_content.cpp:54
 msgid "Media Browser"
 msgstr "Mediabrowser"
 
-#: xml_file_content.cpp:54
+#: xml_file_content.cpp:55
 msgid "Entity Inspector"
 msgstr "Entity Inspector"
 
-#: xml_file_content.cpp:55
+#: xml_file_content.cpp:56
 msgid "&Light Inspector"
 msgstr "Light Inspector"
 
-#: xml_file_content.cpp:56
+#: xml_file_content.cpp:57
 msgid "&Surface Inspector"
 msgstr "Surface Inspector"
 
-#: xml_file_content.cpp:57
+#: xml_file_content.cpp:58
 msgid "&Patch Inspector"
 msgstr "Patch Inspector"
 
-#: xml_file_content.cpp:58
+#: xml_file_content.cpp:59
 msgid "&Texture Tool"
 msgstr "Textur-Werkzeug"
 
-#: xml_file_content.cpp:60
+#: xml_file_content.cpp:61
 msgid "AAS Area Viewer"
 msgstr "AAS Visualisierung"
 
-#: xml_file_content.cpp:62
+#: xml_file_content.cpp:63
 msgid "&Center"
 msgstr "Zentrieren"
 
-#: xml_file_content.cpp:63
+#: xml_file_content.cpp:64
 msgid "&Up Floor"
 msgstr "Ein Stockwerk höher"
 
-#: xml_file_content.cpp:64
+#: xml_file_content.cpp:65
 msgid "&Down Floor"
 msgstr "Ein Stockwerk tiefer"
 
-#: xml_file_content.cpp:65
+#: xml_file_content.cpp:66
 msgid "Far Clip Plane In"
 msgstr "Entfernte Clip-Ebene heran"
 
-#: xml_file_content.cpp:66
+#: xml_file_content.cpp:67
 msgid "Far Clip Plane Out"
 msgstr "Entfernte Clip-Ebene hinaus"
 
-#: xml_file_content.cpp:67
+#: xml_file_content.cpp:68
 msgid "Next leak spot"
 msgstr "Nächster Leak-Spot"
 
-#: xml_file_content.cpp:68
+#: xml_file_content.cpp:69
 msgid "Previous leak spot"
 msgstr "Vorheriger Leak-Spot"
 
-#: xml_file_content.cpp:69
+#: xml_file_content.cpp:70
 msgid "Orthographic"
 msgstr "2D-Ansicht"
 
-#: xml_file_content.cpp:70
+#: xml_file_content.cpp:71
 msgid "Next (XY, XZ, YZ)"
 msgstr "Nächste Ansicht (XY, XZ, YZ)"
 
-#: xml_file_content.cpp:71
+#: xml_file_content.cpp:72
 msgid "XY (Top)"
 msgstr "XY (Oben)"
 
-#: xml_file_content.cpp:72
+#: xml_file_content.cpp:73
 msgid "YZ"
 msgstr "YZ"
 
-#: xml_file_content.cpp:73
+#: xml_file_content.cpp:74
 msgid "XZ"
 msgstr "XZ"
 
-#: xml_file_content.cpp:74
+#: xml_file_content.cpp:75
 msgid "&XY 100%"
 msgstr "XY 100%"
 
-#: xml_file_content.cpp:75
+#: xml_file_content.cpp:76
 msgid "&XY Zoom In"
 msgstr "XY Einzoomen"
 
-#: xml_file_content.cpp:76
+#: xml_file_content.cpp:77
 msgid "&XY Zoom Out"
 msgstr "XY Auszoomen"
 
-#: xml_file_content.cpp:77
+#: xml_file_content.cpp:78
 msgid "Show"
 msgstr "Zeigen"
 
-#: xml_file_content.cpp:78
+#: xml_file_content.cpp:79
 msgid "Show &Angles"
 msgstr "Zeige Winkel"
 
-#: xml_file_content.cpp:79
+#: xml_file_content.cpp:80
 msgid "Show &Names"
 msgstr "Zeige Namen"
 
-#: xml_file_content.cpp:81
+#: xml_file_content.cpp:82
 msgid "Show C&oordinates"
 msgstr "Zeige Koordinaten"
 
-#: xml_file_content.cpp:85
+#: xml_file_content.cpp:86
 msgid "Show size info"
 msgstr "Zeige Größeninformation"
 
-#: xml_file_content.cpp:86
+#: xml_file_content.cpp:87
 msgid "Hide/Show"
 msgstr "Verbergen/Zeigen"
 
-#: xml_file_content.cpp:87
+#: xml_file_content.cpp:88
 msgid "Hide Selected"
 msgstr "Auswahl verbergen"
 
-#: xml_file_content.cpp:88
+#: xml_file_content.cpp:89
 msgid "Hide Deselected"
 msgstr "Nicht ausgewähltes verbergen"
 
-#: xml_file_content.cpp:89
+#: xml_file_content.cpp:90
 msgid "Show hidden"
 msgstr "Zeige Verborgenes"
 
-#: xml_file_content.cpp:91
+#: xml_file_content.cpp:92
 msgid "&Switch off"
 msgstr "Ausschalten"
 
-#: xml_file_content.cpp:92
+#: xml_file_content.cpp:93
 msgid "Set from &XY view"
 msgstr "Über XY-Ansicht festlegen"
 
-#: xml_file_content.cpp:93
+#: xml_file_content.cpp:94
 msgid "Set from &Brush"
 msgstr "Über Brush festlegen"
 
-#: xml_file_content.cpp:94
+#: xml_file_content.cpp:95
 msgid "Set from Se&lection"
 msgstr "Über Auswahl festlegen"
 
-#: xml_file_content.cpp:95
+#: xml_file_content.cpp:96
 msgid "Colours..."
 msgstr "Farben..."
 
-#: xml_file_content.cpp:96
+#: xml_file_content.cpp:97
 msgid "Background Image..."
 msgstr "Hintergrundbild..."
 
-#: xml_file_content.cpp:97
+#: xml_file_content.cpp:98
 msgid "Mo&dify"
 msgstr "Komponentenmodus"
 
-#: xml_file_content.cpp:98
+#: xml_file_content.cpp:99
 #: xml_file_content.cpp:16
 msgid "Components"
 msgstr "Komponenten"
 
-#: xml_file_content.cpp:99
+#: xml_file_content.cpp:100
 msgid "&Edges"
 msgstr "Edges"
 
-#: xml_file_content.cpp:100
+#: xml_file_content.cpp:101
 msgid "&Vertices"
 msgstr "Vertices"
 
-#: xml_file_content.cpp:101
+#: xml_file_content.cpp:102
 msgid "&Faces"
 msgstr "Faces"
 
-#: xml_file_content.cpp:102
+#: xml_file_content.cpp:103
 msgid "En&tities"
 msgstr "Entities"
 
-#: xml_file_content.cpp:103
+#: xml_file_content.cpp:104
 msgid "Nudge"
 msgstr "Verschieben"
 
-#: xml_file_content.cpp:104
+#: xml_file_content.cpp:105
 msgid "Nudge Left"
 msgstr "Verschiebe nach links"
 
-#: xml_file_content.cpp:105
+#: xml_file_content.cpp:106
 msgid "Nudge Right"
 msgstr "Verschiebe nach rechts"
 
-#: xml_file_content.cpp:106
+#: xml_file_content.cpp:107
 msgid "Nudge Up"
 msgstr "Verschiebe nach oben"
 
-#: xml_file_content.cpp:107
+#: xml_file_content.cpp:108
 msgid "Nudge Down"
 msgstr "Verschiebe nach unten"
 
-#: xml_file_content.cpp:108
+#: xml_file_content.cpp:109
 #: xml_file_content.cpp:16
 msgid "Rotate"
 msgstr "Drehen"
 
-#: xml_file_content.cpp:109
+#: xml_file_content.cpp:110
 msgid "Rotate X"
 msgstr "Drehe um X-Achse"
 
-#: xml_file_content.cpp:110
+#: xml_file_content.cpp:111
 msgid "Rotate Y"
 msgstr "Drehe um Y-Achse"
 
-#: xml_file_content.cpp:111
+#: xml_file_content.cpp:112
 msgid "Rotate Z"
 msgstr "Drehe um Z-Achse"
 
-#: xml_file_content.cpp:112
+#: xml_file_content.cpp:113
 msgid "Mirror"
 msgstr "Spiegeln"
 
-#: xml_file_content.cpp:113
+#: xml_file_content.cpp:114
 msgid "Mirror &X"
 msgstr "Spiegeln um X-Achse"
 
-#: xml_file_content.cpp:114
+#: xml_file_content.cpp:115
 msgid "Mirror &Y"
 msgstr "Spiegeln um Y-Achse"
 
-#: xml_file_content.cpp:115
+#: xml_file_content.cpp:116
 msgid "Mirror &Z"
 msgstr "Spiegeln um Z-Achse"
 
-#: xml_file_content.cpp:116
+#: xml_file_content.cpp:117
 #: xml_file_content.cpp:10
 msgid "Rotate Objects independently"
 msgstr "Objekte unabhängig voneinander drehen"
 
-#: xml_file_content.cpp:117
+#: xml_file_content.cpp:118
 msgid "Rotate and scale..."
 msgstr "Drehen und skalieren..."
 
-#: xml_file_content.cpp:118
+#: xml_file_content.cpp:119
 msgid "&Grid"
 msgstr "Raster"
 
-#: xml_file_content.cpp:119
+#: xml_file_content.cpp:120
 msgid "Snap selected to grid"
 msgstr "Auswahl am Raster ausrichten"
 
-#: xml_file_content.cpp:120
+#: xml_file_content.cpp:121
 msgid "Grid0.125"
 msgstr "Grid0.125"
 
-#: xml_file_content.cpp:121
+#: xml_file_content.cpp:122
 msgid "Grid0.25"
 msgstr "Grid0.25"
 
-#: xml_file_content.cpp:122
+#: xml_file_content.cpp:123
 msgid "Grid0.5"
 msgstr "Grid0.5"
 
-#: xml_file_content.cpp:123
+#: xml_file_content.cpp:124
 msgid "Grid1"
 msgstr "Grid1"
 
-#: xml_file_content.cpp:124
+#: xml_file_content.cpp:125
 msgid "Grid2"
 msgstr "Grid2"
 
-#: xml_file_content.cpp:125
+#: xml_file_content.cpp:126
 msgid "Grid4"
 msgstr "Grid4"
 
-#: xml_file_content.cpp:126
+#: xml_file_content.cpp:127
 msgid "Grid8"
 msgstr "Grid8"
 
-#: xml_file_content.cpp:127
+#: xml_file_content.cpp:128
 msgid "Grid16"
 msgstr "Grid16"
 
-#: xml_file_content.cpp:128
+#: xml_file_content.cpp:129
 msgid "Grid32"
 msgstr "Grid32"
 
-#: xml_file_content.cpp:129
+#: xml_file_content.cpp:130
 msgid "Grid64"
 msgstr "Grid64"
 
-#: xml_file_content.cpp:130
+#: xml_file_content.cpp:131
 msgid "Grid128"
 msgstr "Grid128"
 
-#: xml_file_content.cpp:131
+#: xml_file_content.cpp:132
 msgid "Grid256"
 msgstr "Grid256"
 
-#: xml_file_content.cpp:132
+#: xml_file_content.cpp:133
 msgid "M&ap"
 msgstr "Map"
 
-#: xml_file_content.cpp:133
+#: xml_file_content.cpp:134
 msgid "Find brush..."
 msgstr "Brush suchen..."
 
-#: xml_file_content.cpp:134
+#: xml_file_content.cpp:135
 msgid "Find and replace textures..."
 msgstr "Texturen suchen & ersetzen..."
 
-#: xml_file_content.cpp:135
+#: xml_file_content.cpp:136
 msgid "Map info..."
 msgstr "Map-Information"
 
-#: xml_file_content.cpp:136
+#: xml_file_content.cpp:137
 msgid "E&ntity"
 msgstr "Entity"
 
-#: xml_file_content.cpp:137
+#: xml_file_content.cpp:138
 msgid "&Revert group to worldspawn"
 msgstr "Gruppe zu Worldspawn umwandeln"
 
-#: xml_file_content.cpp:138
+#: xml_file_content.cpp:139
 msgid "&Connect selected entities"
 msgstr "Ausgewählte Entities verbinden"
 
-#: xml_file_content.cpp:139
+#: xml_file_content.cpp:140
 msgid "&Bind selected entities"
 msgstr "Ausgewählte Entities verknüpfen"
 
-#: xml_file_content.cpp:141
+#: xml_file_content.cpp:142
 msgid "B&rush"
 msgstr "Brush"
 
-#: xml_file_content.cpp:142
+#: xml_file_content.cpp:143
 msgid "Prism..."
 msgstr "Prisma..."
 
-#: xml_file_content.cpp:143
+#: xml_file_content.cpp:144
 msgid "Cone..."
 msgstr "Kegel..."
 
-#: xml_file_content.cpp:144
+#: xml_file_content.cpp:145
 msgid "Sphere..."
 msgstr "Kugel..."
 
-#: xml_file_content.cpp:145
+#: xml_file_content.cpp:146
 msgid "CSG"
 msgstr "CSG"
 
-#: xml_file_content.cpp:146
+#: xml_file_content.cpp:147
 msgid "Make &Hollow"
 msgstr "Aushöhlen"
 
-#: xml_file_content.cpp:147
+#: xml_file_content.cpp:148
 msgid "Make &Room"
 msgstr "Raum erstellen"
 
-#: xml_file_content.cpp:148
+#: xml_file_content.cpp:149
 msgid "CSG &Subtract"
 msgstr "CSG Subtraktion"
 
-#: xml_file_content.cpp:149
+#: xml_file_content.cpp:150
 msgid "CSG &Merge"
 msgstr "CSG Zusammenfügen"
 
-#: xml_file_content.cpp:151
+#: xml_file_content.cpp:152
 msgid "Clip Selection"
 msgstr "Auswahl clippen"
 
-#: xml_file_content.cpp:152
+#: xml_file_content.cpp:153
 msgid "Split Selection"
 msgstr "Auswahl splitten"
 
-#: xml_file_content.cpp:153
+#: xml_file_content.cpp:154
 msgid "Flip Clip Orientation"
 msgstr "Clip-Orientierung umkehren"
 
-#: xml_file_content.cpp:154
+#: xml_file_content.cpp:155
 msgid "Texture lock"
 msgstr "Textur-Lock"
 
-#: xml_file_content.cpp:155
+#: xml_file_content.cpp:156
 msgid "Create Decal Patches"
 msgstr "Decal-Patches erstellen"
 
-#: xml_file_content.cpp:157
+#: xml_file_content.cpp:158
 msgid "Make Detail"
 msgstr "Als Detail markieren"
 
-#: xml_file_content.cpp:158
+#: xml_file_content.cpp:159
 msgid "Make Structural"
 msgstr "Als Struktur markieren"
 
-#: xml_file_content.cpp:159
+#: xml_file_content.cpp:160
 msgid "&Patch"
 msgstr "Patch"
 
-#: xml_file_content.cpp:160
+#: xml_file_content.cpp:161
 msgid "Create Simple Patch Mesh"
 msgstr "Neuer einfacher Patch"
 
-#: xml_file_content.cpp:161
+#: xml_file_content.cpp:162
 msgid "Create End cap"
 msgstr "Endcap erstellen"
 
-#: xml_file_content.cpp:162
+#: xml_file_content.cpp:163
 msgid "Create Bevel"
 msgstr "Bogen erstellen"
 
-#: xml_file_content.cpp:163
+#: xml_file_content.cpp:164
 msgid "Create Cone"
 msgstr "Kegel erstellen"
 
-#: xml_file_content.cpp:164
+#: xml_file_content.cpp:165
 msgid "Create Cylinder"
 msgstr "Zylinder erstellen"
 
-#: xml_file_content.cpp:165
+#: xml_file_content.cpp:166
 msgid "Create Sphere"
 msgstr "Kugel erzeugen"
 
-#: xml_file_content.cpp:166
+#: xml_file_content.cpp:167
 msgid "More cylinders"
 msgstr "Mehr Zylinderarten"
 
-#: xml_file_content.cpp:167
+#: xml_file_content.cpp:168
 msgid "Create Dense Cylinder"
 msgstr "Erstelle \"dichten\" Zylinder"
 
-#: xml_file_content.cpp:168
+#: xml_file_content.cpp:169
 msgid "Create Very Dense Cylinder"
 msgstr "Erstelle \"sehr dichten\" Zylinder"
 
-#: xml_file_content.cpp:169
+#: xml_file_content.cpp:170
 msgid "Create Square Cylinder"
 msgstr "Erstelle quadratischen Zylinder"
 
-#: xml_file_content.cpp:170
+#: xml_file_content.cpp:171
 msgid "Insert"
 msgstr "Einfügen"
 
-#: xml_file_content.cpp:171
+#: xml_file_content.cpp:172
 msgid "Insert 2 Columns at the beginning"
 msgstr "Zwei Spalten am Anfang einfügen"
 
-#: xml_file_content.cpp:172
+#: xml_file_content.cpp:173
 msgid "Insert 2 Columns at the end"
 msgstr "Zwei Spalten am Ende einfügen"
 
-#: xml_file_content.cpp:173
+#: xml_file_content.cpp:174
 msgid "Insert 2 Rows at the beginning"
 msgstr "Zwei Zeilen am Anfang einfügen"
 
-#: xml_file_content.cpp:174
+#: xml_file_content.cpp:175
 msgid "Insert 2 Rows at the end"
 msgstr "Zwei Zeilen am Ende einfügen"
 
-#: xml_file_content.cpp:175
+#: xml_file_content.cpp:176
 msgid "Append"
 msgstr "Anfügen"
 
-#: xml_file_content.cpp:176
+#: xml_file_content.cpp:177
 msgid "Append 2 columns at the beginning"
 msgstr "Zwei Spalten am Anfang anfügen"
 
-#: xml_file_content.cpp:177
+#: xml_file_content.cpp:178
 msgid "Append 2 columns at the end"
 msgstr "Zwei Spalten am Ende anfügen"
 
-#: xml_file_content.cpp:178
+#: xml_file_content.cpp:179
 msgid "Append 2 rows at the beginning"
 msgstr "Zwei Zeilen am Anfang anfügen"
 
-#: xml_file_content.cpp:179
+#: xml_file_content.cpp:180
 msgid "Append 2 rows at the end"
 msgstr "Zwei Zeilen am Ende anfügen"
 
-#: xml_file_content.cpp:181
+#: xml_file_content.cpp:182
 msgid "Delete 2 columns from the beginning"
 msgstr "Zwei Spalten am Anfang löschen"
 
-#: xml_file_content.cpp:182
+#: xml_file_content.cpp:183
 msgid "Delete 2 columns from the end"
 msgstr "Zwei Spalten am Ende löschen"
 
-#: xml_file_content.cpp:183
+#: xml_file_content.cpp:184
 msgid "Delete 2 rows from the beginning"
 msgstr "Zwei Zeilen am Anfang löschen"
 
-#: xml_file_content.cpp:184
+#: xml_file_content.cpp:185
 msgid "Delete 2 rows from the end"
 msgstr "Zwei Spalten am Ende löschen"
 
-#: xml_file_content.cpp:185
+#: xml_file_content.cpp:186
 msgid "Matrix"
 msgstr "Matrix"
 
-#: xml_file_content.cpp:186
+#: xml_file_content.cpp:187
 msgid "Invert"
 msgstr "Invertieren"
 
-#: xml_file_content.cpp:187
+#: xml_file_content.cpp:188
 msgid "Re-disperse"
 msgstr "Neu verteilen"
 
-#: xml_file_content.cpp:188
+#: xml_file_content.cpp:189
 msgid "Rows"
 msgstr "Zeilen"
 
-#: xml_file_content.cpp:189
+#: xml_file_content.cpp:190
 msgid "Columns"
 msgstr "Spalten"
 
-#: xml_file_content.cpp:190
+#: xml_file_content.cpp:191
 msgid "Transpose"
 msgstr "Transponieren"
 
-#: xml_file_content.cpp:191
+#: xml_file_content.cpp:192
 msgid "Thicken Selected Patches"
 msgstr "Ausgewählte Patches extrudieren"
 
-#: xml_file_content.cpp:192
+#: xml_file_content.cpp:193
 msgid "Cap Selection"
 msgstr "Cap für Auswahl erstellen"
 
-#: xml_file_content.cpp:193
+#: xml_file_content.cpp:194
 msgid "Stitch Patch Textures"
 msgstr "Patch-Texturen zusammenfügen"
 
-#: xml_file_content.cpp:194
+#: xml_file_content.cpp:195
 msgid "Bulge patch"
 msgstr "Patch auswölben"
 
-#: xml_file_content.cpp:195
+#: xml_file_content.cpp:196
 msgid "&Curve"
 msgstr "Kurve"
 
-#: xml_file_content.cpp:196
+#: xml_file_content.cpp:197
 msgid "Create NURBS Curve"
 msgstr "NURBS-Kurve erstellen"
 
-#: xml_file_content.cpp:197
+#: xml_file_content.cpp:198
 msgid "Create CatmullRom Curve"
 msgstr "CatmullRom-Kurve erstellen"
 
-#: xml_file_content.cpp:198
+#: xml_file_content.cpp:199
 msgid "Convert NURBS <-> CatmullRom"
 msgstr "Konversion NURBS <-> CatmullRom"
 
-#: xml_file_content.cpp:199
+#: xml_file_content.cpp:200
 msgid "Append Curve Control Point"
 msgstr "Kurvenkontrollpunkt anfügen"
 
-#: xml_file_content.cpp:200
+#: xml_file_content.cpp:201
 msgid "Insert Curve Control Points"
 msgstr "Kurvenkontrollpunkt einfügen"
 
-#: xml_file_content.cpp:201
+#: xml_file_content.cpp:202
 msgid "Remove Curve Control Points"
 msgstr "Kurvenkontrollpunkt entfernen"
 
-#: xml_file_content.cpp:202
+#: xml_file_content.cpp:203
 msgid "&Help"
 msgstr "Hilfe"
 
-#: xml_file_content.cpp:203
+#: xml_file_content.cpp:204
 msgid "&About"
 msgstr "Über DarkRadiant"
 
@@ -5981,6 +6039,42 @@ msgstr "Wertepaar:"
 msgid "Argument:"
 msgstr "Argument:"
 
+#: xml_file_content.cpp:1
+msgid "Output File"
+msgstr "Zieldatei"
+
+#: xml_file_content.cpp:2
+msgid "Output Format:"
+msgstr "Export-Format:"
+
+#: xml_file_content.cpp:3
+msgid "File Path:"
+msgstr "Dateipfad:"
+
+#: xml_file_content.cpp:4
+msgid "Export Options"
+msgstr "Export-Optionen"
+
+#: xml_file_content.cpp:5
+msgid "Center Objects around Origin"
+msgstr "Objekte um den Ursprung anordnen"
+
+#: xml_file_content.cpp:6
+msgid "Skip Surfaces textured with Caulk"
+msgstr "Caulk-Flächen nicht exportieren"
+
+#: xml_file_content.cpp:7
+msgid "Replace Selection with exported Model"
+msgstr "Auswahl durch exportiertes Modelle ersetzen"
+
+#: xml_file_content.cpp:8
+msgid "Use Entity Origin as export Origin"
+msgstr "Verwende den Entity-Origin als Ursprung"
+
+#: xml_file_content.cpp:10
+msgid "Export"
+msgstr "Export"
+
 #: xml_file_content.cpp:3
 #: xml_file_content.cpp:68
 msgid "View"
@@ -6074,6 +6168,14 @@ msgstr "Optionen:"
 #: xml_file_content.cpp:2
 msgid "Surround with monsterclip brush"
 msgstr "Mit Monsterclip einhüllen"
+
+#: xml_file_content.cpp:3
+msgid "Reload Skins"
+msgstr "Skins neu laden"
+
+#: xml_file_content.cpp:4
+msgid "Reload Models"
+msgstr "Modelle neu laden"
 
 #: xml_file_content.cpp:2
 msgid "Difficulty"
@@ -6818,6 +6920,45 @@ msgstr "Min:"
 msgid "Max:"
 msgstr "Max:"
 
+#, fuzzy
+#~ msgid "capsule"
+#~ msgstr "Skalierung"
+
+#, fuzzy
+#~ msgid "bool"
+#~ msgstr "Werkzeug"
+
+#, fuzzy
+#~ msgid "Tuple["
+#~ msgstr "Typ"
+
+#, fuzzy
+#~ msgid "*args"
+#~ msgstr "Flags"
+
+#, fuzzy
+#~ msgid "complex"
+#~ msgstr "Fertig"
+
+#, fuzzy
+#~ msgid "n"
+#~ msgstr "Nein"
+
+#, fuzzy
+#~ msgid "Set["
+#~ msgstr "Auswählen"
+
+#, fuzzy
+#~ msgid "List["
+#~ msgstr "Linien"
+
+#, fuzzy
+#~ msgid "Optional["
+#~ msgstr "Optionen"
+
+#~ msgid "Could not remove the file: %s"
+#~ msgstr "Kann die Datei nicht entfernen: %s"
+
 #~ msgid "Page Editing:"
 #~ msgstr "Textbearbeitung"
 
@@ -6844,9 +6985,6 @@ msgstr "Max:"
 
 #~ msgid "Save as Obj"
 #~ msgstr "Als OBJ speichern"
-
-#~ msgid "Export Selection as OBJ..."
-#~ msgstr "Auswahl als OBJ exportieren..."
 
 #~ msgid "Loading models"
 #~ msgstr "Lade Modelle"

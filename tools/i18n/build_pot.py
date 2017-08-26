@@ -23,13 +23,17 @@ def invokeXGettext(targetfile):
 	#print(cmdline)
 	os.system(cmdline)
 
-def scanCodeFiles(path):
+def scanCodeFiles(path, exclude_directories):
 	#print("Inspecting path: " + os.path.join(path, '*'))
 	for current_file in glob.glob( os.path.join(path, '*') ):
 		# Dive into directories
 		if os.path.isdir(current_file):
-			#print 'got a directory: ' + current_file
-			scanCodeFiles(current_file)
+			dir_normalised = current_file.replace('\\', '/')
+			if not dir_normalised in exclude_directories:
+				#print 'got a directory: ' + dir_normalised
+				scanCodeFiles(dir_normalised, exclude_directories)
+			else:
+				print 'skipping directory: ' + dir_normalised
 		else:
 			# Analyse files
 			ext = os.path.splitext(current_file)[1]
@@ -87,9 +91,10 @@ print("------- Scanning C++ Files ----------------");
 build_root = '../../'
 
 code_directories = ['radiant', 'plugins', 'libs']
+exclude_directories = ['../../libs/pybind']
 
 for directory in code_directories:
-	scanCodeFiles(os.path.join(build_root, directory))
+	scanCodeFiles(os.path.join(build_root, directory), exclude_directories)
 
 print("------- Scanning XML Files ----------------");
 
