@@ -16,9 +16,6 @@
     <ClInclude Include="..\..\plugins\archivezip\pkzip.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\archivezip\plugin.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\archivezip\ZipArchive.h">
       <Filter>src</Filter>
     </ClInclude>

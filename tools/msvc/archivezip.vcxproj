@@ -310,7 +310,6 @@
     <ClInclude Include="..\..\plugins\archivezip\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\plugins\archivezip\DeflatedArchiveTextFile.h" />
     <ClInclude Include="..\..\plugins\archivezip\pkzip.h" />
-    <ClInclude Include="..\..\plugins\archivezip\plugin.h" />
     <ClInclude Include="..\..\plugins\archivezip\ZipArchive.h" />
     <ClInclude Include="..\..\plugins\archivezip\zlibstream.h" />
   </ItemGroup>
