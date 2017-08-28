@@ -54,7 +54,7 @@ public:
 	void forEachFile(VisitorFunc visitor, const std::string& root) override;
 
 private:
-	bool read_record();
+	bool readZipRecord();
 	bool loadZipFile();
 };
 

@@ -1,32 +1,13 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_FS_FILESYSTEM_H)
-#define INCLUDED_FS_FILESYSTEM_H
+#pragma once
 
 #include "string/string.h"
 #include "os/path.h"
 
 #include <map>
 #include <iostream>
+
+namespace archive
+{
 
 inline unsigned int path_get_depth(const char* path)
 {
@@ -83,25 +64,27 @@ class GenericFileSystem
 	}
   };
 
-  class Entry
-  {
-    file_type* m_file;
-  public:
-    Entry() : m_file(NULL)
-    {
-    }
-    Entry(file_type* file) : m_file(file)
-    {
-    }
-    file_type* file() const
-    {
-      return m_file;
-    }
-    bool is_directory() const
-    {
-      return file() == NULL;
-    }
-  };
+	class Entry
+	{
+		std::shared_ptr<file_type> _file;
+	public:
+		Entry()
+		{}
+
+		Entry(const std::shared_ptr<file_type>& file) : 
+			_file(file)
+		{}
+
+		std::shared_ptr<file_type>& file()
+		{
+			return _file;
+		}
+
+		bool is_directory() const
+		{
+			return !_file;
+		}
+	};
 
   typedef std::map<Path, Entry> Entries;
   Entries m_entries;
@@ -119,6 +102,11 @@ public:
   {
     return m_entries.end();
   }
+
+	void clear()
+	{
+		m_entries.clear();
+	}
 
 	/// \brief Returns the file at \p path.
 	/// Creates all directories below \p path if they do not exist.
@@ -192,4 +180,4 @@ public:
   }
 };
 
-#endif
+}

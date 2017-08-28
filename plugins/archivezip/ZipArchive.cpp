@@ -28,10 +28,7 @@ ZipArchive::ZipArchive(const std::string& fullPath) :
 
 ZipArchive::~ZipArchive()
 {
-	for (ZipFileSystem::iterator i = _filesystem.begin(); i != _filesystem.end(); ++i)
-	{
-		delete i->second.file();
-	}
+	_filesystem.clear();
 }
 
 ArchiveFilePtr ZipArchive::openFile(const std::string& name)
@@ -40,7 +37,7 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name)
 
 	if (i != _filesystem.end() && !i->second.is_directory())
 	{
-		ZipRecord* file = i->second.file();
+		const std::shared_ptr<ZipRecord>& file = i->second.file();
 
 		FileInputStream::size_type position = 0;
 
@@ -63,11 +60,12 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name)
 		switch (file->mode)
 		{
 		case ZipRecord::eStored:
-			return ArchiveFilePtr(new StoredArchiveFile(name, _fullPath, position, file->stream_size, file->file_size));
+			return std::make_shared<StoredArchiveFile>(name, _fullPath, position, file->stream_size, file->file_size);
 		case ZipRecord::eDeflated:
-			return ArchiveFilePtr(new DeflatedArchiveFile(name, _fullPath, position, file->stream_size, file->file_size));
+			return std::make_shared<DeflatedArchiveFile>(name, _fullPath, position, file->stream_size, file->file_size);
 		}
 	}
+
 	return ArchiveFilePtr();
 }
 
@@ -77,7 +75,7 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 
 	if (i != _filesystem.end() && !i->second.is_directory())
 	{
-		ZipRecord* file = i->second.file();
+		const std::shared_ptr<ZipRecord>& file = i->second.file();
 
 		{
 			// Guard against concurrent access
@@ -97,20 +95,21 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 		switch (file->mode)
 		{
 		case ZipRecord::eStored:
-			return ArchiveTextFilePtr(new StoredArchiveTextFile(name,
+			return std::make_shared<StoredArchiveTextFile>(name,
 				_fullPath,
 				_containingFolder,
 				_istream.tell(),
-				file->stream_size));
+				file->stream_size);
 
 		case ZipRecord::eDeflated:
-			return ArchiveTextFilePtr(new DeflatedArchiveTextFile(name,
+			return std::make_shared<DeflatedArchiveTextFile>(name,
 				_fullPath,
 				_containingFolder,
 				_istream.tell(),
-				file->stream_size));
+				file->stream_size);
 		}
 	}
+
 	return ArchiveTextFilePtr();
 }
 
@@ -123,7 +122,8 @@ void ZipArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
 	_filesystem.traverse(visitor, root);
 }
 
-bool ZipArchive::read_record() {
+bool ZipArchive::readZipRecord()
+{
 	zip_magic magic;
 	istream_read_zip_magic(_istream, magic);
 
@@ -180,7 +180,7 @@ bool ZipArchive::read_record() {
 
 	if (os::isDirectory(path))
 	{
-		_filesystem[path] = 0;
+		_filesystem[path].file().reset();
 	}
 	else
 	{
@@ -188,16 +188,14 @@ bool ZipArchive::read_record() {
 
 		if (!file.is_directory())
 		{
-			rMessage() << "Warning: zip archive "
-				<< _fullPath << " contains duplicated file: "
-				<< path << std::endl;
+			rWarning() << "Zip archive " << _fullPath << " contains duplicated file: " << path << std::endl;
 		}
 		else
 		{
-			file = new ZipRecord(position,
+			file.file().reset(new ZipRecord(position,
 				compressed_size,
 				uncompressed_size,
-				(compression_mode == Z_DEFLATED) ? ZipRecord::eDeflated : ZipRecord::eStored);
+				(compression_mode == Z_DEFLATED) ? ZipRecord::eDeflated : ZipRecord::eStored));
 		}
 	}
 
@@ -225,7 +223,7 @@ bool ZipArchive::loadZipFile()
 
 		for (unsigned int i = 0; i < disk_trailer.z_entries; ++i)
 		{
-			if (!read_record())
+			if (!readZipRecord())
 			{
 				return false;
 			}
