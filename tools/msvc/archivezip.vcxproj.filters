@@ -22,6 +22,9 @@
     <ClInclude Include="..\..\plugins\archivezip\zlibstream.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\archivezip\GenericFileSystem.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\archivezip\pkzip.cpp">

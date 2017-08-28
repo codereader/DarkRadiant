@@ -1,5 +1,6 @@
 #include "ZipArchive.h"
 
+#include "itextstream.h"
 #include "iarchive.h"
 #include "archivelib.h"
 
@@ -11,65 +12,60 @@
 #include "DeflatedArchiveFile.h"
 #include "DeflatedArchiveTextFile.h"
 
-ZipArchive::ZipArchive(const std::string& name) :
-	m_name(name),
-	_containingFolder(os::standardPathWithSlash(fs::path(name).remove_filename())),
-	m_istream(name)
+namespace archive
 {
-	if (!m_istream.failed())
+
+ZipArchive::ZipArchive(const std::string& fullPath) :
+	_fullPath(fullPath),
+	_containingFolder(os::standardPathWithSlash(fs::path(_fullPath).remove_filename())),
+	_istream(_fullPath)
+{
+	if (_istream.failed() || !loadZipFile())
 	{
-		if (!read_pkzip())
-		{
-			rError() << "ERROR: invalid zip-file " << name << std::endl;
-		}
+		rError() << "Invalid Zip file " << _fullPath << std::endl;
 	}
 }
 
-ZipArchive::~ZipArchive() {
-	for (ZipFileSystem::iterator i = m_filesystem.begin();
-		 i != m_filesystem.end(); ++i)
+ZipArchive::~ZipArchive()
+{
+	for (ZipFileSystem::iterator i = _filesystem.begin(); i != _filesystem.end(); ++i)
 	{
 		delete i->second.file();
 	}
 }
 
-bool ZipArchive::failed() 
-{
-	return m_istream.failed();
-}
-
 ArchiveFilePtr ZipArchive::openFile(const std::string& name)
 {
-	ZipFileSystem::iterator i = m_filesystem.find(name);
+	ZipFileSystem::iterator i = _filesystem.find(name);
 
-	if (i != m_filesystem.end() && !i->second.is_directory())
-    {
+	if (i != _filesystem.end() && !i->second.is_directory())
+	{
 		ZipRecord* file = i->second.file();
 
-        FileInputStream::size_type position = 0;
+		FileInputStream::size_type position = 0;
 
-        {
-            // Guard against concurrent access
-            std::lock_guard<std::mutex> lock(_streamLock);
+		{
+			// Guard against concurrent access
+			std::lock_guard<std::mutex> lock(_streamLock);
 
-            m_istream.seek(file->m_position);
-            zip_file_header file_header;
-            istream_read_zip_file_header(m_istream, file_header);
-            position = m_istream.tell();
+			_istream.seek(file->position);
+			zip_file_header file_header;
+			istream_read_zip_file_header(_istream, file_header);
+			position = _istream.tell();
 
-            if (file_header.z_magic != zip_file_header_magic)
-            {
-                rError() << "error reading zip file " << m_name << std::endl;
-                return ArchiveFilePtr();
-            }
-        }
+			if (file_header.z_magic != zip_file_header_magic)
+			{
+				rError() << "error reading zip file " << _fullPath << std::endl;
+				return ArchiveFilePtr();
+			}
+		}
 
-		switch (file->m_mode)
-        {
-			case ZipRecord::eStored:
-                return ArchiveFilePtr(new StoredArchiveFile(name, m_name, position, file->m_stream_size, file->m_file_size));
-			case ZipRecord::eDeflated:
-                return ArchiveFilePtr(new DeflatedArchiveFile(name, m_name, position, file->m_stream_size, file->m_file_size));
+		switch (file->mode)
+		{
+		case ZipRecord::eStored:
+			return ArchiveFilePtr(new StoredArchiveFile(name, _fullPath, position, file->stream_size, file->file_size));
+		case ZipRecord::eDeflated:
+			return ArchiveFilePtr(new DeflatedArchiveFile(name, _fullPath, position, file->stream_size, file->file_size));
 		}
 	}
 	return ArchiveFilePtr();
@@ -77,95 +73,95 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name)
 
 ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 {
-	ZipFileSystem::iterator i = m_filesystem.find(name);
+	ZipFileSystem::iterator i = _filesystem.find(name);
 
-	if (i != m_filesystem.end() && !i->second.is_directory())
-    {
+	if (i != _filesystem.end() && !i->second.is_directory())
+	{
 		ZipRecord* file = i->second.file();
 
-        {
-            // Guard against concurrent access
-            std::lock_guard<std::mutex> lock(_streamLock);
+		{
+			// Guard against concurrent access
+			std::lock_guard<std::mutex> lock(_streamLock);
 
-            m_istream.seek(file->m_position);
-            zip_file_header file_header;
-            istream_read_zip_file_header(m_istream, file_header);
+			_istream.seek(file->position);
+			zip_file_header file_header;
+			istream_read_zip_file_header(_istream, file_header);
 
-            if (file_header.z_magic != zip_file_header_magic)
-            {
-                rError() << "error reading zip file " << m_name << std::endl;
-                return ArchiveTextFilePtr();
-            }
-        }
+			if (file_header.z_magic != zip_file_header_magic)
+			{
+				rError() << "error reading zip file " << _fullPath << std::endl;
+				return ArchiveTextFilePtr();
+			}
+		}
 
-		switch (file->m_mode)
-        {
-			case ZipRecord::eStored:
-				return ArchiveTextFilePtr(new StoredArchiveTextFile(name,
-					m_name,
-					_containingFolder,
-					m_istream.tell(),
-					file->m_stream_size));
+		switch (file->mode)
+		{
+		case ZipRecord::eStored:
+			return ArchiveTextFilePtr(new StoredArchiveTextFile(name,
+				_fullPath,
+				_containingFolder,
+				_istream.tell(),
+				file->stream_size));
 
-			case ZipRecord::eDeflated:
-				return ArchiveTextFilePtr(new DeflatedArchiveTextFile(name,
-					m_name,
-					_containingFolder,
-					m_istream.tell(),
-					file->m_stream_size));
+		case ZipRecord::eDeflated:
+			return ArchiveTextFilePtr(new DeflatedArchiveTextFile(name,
+				_fullPath,
+				_containingFolder,
+				_istream.tell(),
+				file->stream_size));
 		}
 	}
 	return ArchiveTextFilePtr();
 }
 
 bool ZipArchive::containsFile(const std::string& name) {
-	ZipFileSystem::iterator i = m_filesystem.find(name);
-	return i != m_filesystem.end() && !i->second.is_directory();
+	ZipFileSystem::iterator i = _filesystem.find(name);
+	return i != _filesystem.end() && !i->second.is_directory();
 }
 
 void ZipArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
-	m_filesystem.traverse(visitor, root);
+	_filesystem.traverse(visitor, root);
 }
 
 bool ZipArchive::read_record() {
 	zip_magic magic;
-	istream_read_zip_magic(m_istream, magic);
+	istream_read_zip_magic(_istream, magic);
 
 	if (!(magic == zip_root_dirent_magic)) {
 		return false;
 	}
 	zip_version version_encoder;
-	istream_read_zip_version(m_istream, version_encoder);
+	istream_read_zip_version(_istream, version_encoder);
 	zip_version version_extract;
-	istream_read_zip_version(m_istream, version_extract);
+	istream_read_zip_version(_istream, version_extract);
 	//unsigned short flags =
-	istream_read_int16_le(m_istream);
-	unsigned short compression_mode = istream_read_int16_le(m_istream);
+	istream_read_int16_le(_istream);
+	unsigned short compression_mode = istream_read_int16_le(_istream);
 
 	if (compression_mode != Z_DEFLATED && compression_mode != 0) {
 		return false;
 	}
 
 	zip_dostime dostime;
-	istream_read_zip_dostime(m_istream, dostime);
+	istream_read_zip_dostime(_istream, dostime);
 
 	//unsigned int crc32 =
-	istream_read_int32_le(m_istream);
+	istream_read_int32_le(_istream);
 
-	unsigned int compressed_size = istream_read_uint32_le(m_istream);
-	unsigned int uncompressed_size = istream_read_uint32_le(m_istream);
-	unsigned int namelength = istream_read_uint16_le(m_istream);
-	unsigned short extras = istream_read_uint16_le(m_istream);
-	unsigned short comment = istream_read_uint16_le(m_istream);
+	unsigned int compressed_size = istream_read_uint32_le(_istream);
+	unsigned int uncompressed_size = istream_read_uint32_le(_istream);
+	unsigned int namelength = istream_read_uint16_le(_istream);
+	unsigned short extras = istream_read_uint16_le(_istream);
+	unsigned short comment = istream_read_uint16_le(_istream);
 
 	//unsigned short diskstart =
-	istream_read_int16_le(m_istream);
+	istream_read_int16_le(_istream);
 	//unsigned short filetype =
-	istream_read_int16_le(m_istream);
+	istream_read_int16_le(_istream);
 	//unsigned int filemode =
-	istream_read_int32_le(m_istream);
+	istream_read_int32_le(_istream);
 
-	unsigned int position = istream_read_int32_le(m_istream);
+	unsigned int position = istream_read_int32_le(_istream);
 
 	// greebo: Read the filename directly into a newly constructed std::string.
 
@@ -176,59 +172,69 @@ bool ZipArchive::read_record() {
 
 	std::string path(namelength, '\0');
 
-	m_istream.read(
+	_istream.read(
 		reinterpret_cast<FileInputStream::byte_type*>(const_cast<char*>(path.data())),
 		namelength);
 
-	m_istream.seek(extras + comment, FileInputStream::cur);
+	_istream.seek(extras + comment, FileInputStream::cur);
 
 	if (os::isDirectory(path))
 	{
-		m_filesystem[path] = 0;
+		_filesystem[path] = 0;
 	}
 	else
 	{
-		ZipFileSystem::entry_type& file = m_filesystem[path];
+		ZipFileSystem::entry_type& file = _filesystem[path];
 
 		if (!file.is_directory())
 		{
 			rMessage() << "Warning: zip archive "
-				<< m_name << " contains duplicated file: "
+				<< _fullPath << " contains duplicated file: "
 				<< path << std::endl;
 		}
-		else 
+		else
 		{
 			file = new ZipRecord(position,
-								 compressed_size,
-								 uncompressed_size,
-								 (compression_mode == Z_DEFLATED) ? ZipRecord::eDeflated : ZipRecord::eStored);
+				compressed_size,
+				uncompressed_size,
+				(compression_mode == Z_DEFLATED) ? ZipRecord::eDeflated : ZipRecord::eStored);
 		}
 	}
 
 	return true;
 }
 
-bool ZipArchive::read_pkzip() {
-	SeekableStream::position_type pos = pkzip_find_disk_trailer(m_istream);
-	if (pos != 0) {
+bool ZipArchive::loadZipFile()
+{
+	SeekableStream::position_type pos = pkzip_find_disk_trailer(_istream);
+
+	if (pos != 0)
+	{
 		zip_disk_trailer disk_trailer;
 
-		m_istream.seek(pos);
-		istream_read_zip_disk_trailer(m_istream, disk_trailer);
+		_istream.seek(pos);
 
-		if (!(disk_trailer.z_magic == zip_disk_trailer_magic)) {
+		istream_read_zip_disk_trailer(_istream, disk_trailer);
+
+		if (!(disk_trailer.z_magic == zip_disk_trailer_magic))
+		{
 			return false;
 		}
 
-		m_istream.seek(disk_trailer.z_rootseek);
+		_istream.seek(disk_trailer.z_rootseek);
 
-		for (unsigned int i = 0; i < disk_trailer.z_entries; ++i) {
-			if (!read_record()) {
+		for (unsigned int i = 0; i < disk_trailer.z_entries; ++i)
+		{
+			if (!read_record())
+			{
 				return false;
 			}
 		}
 
 		return true;
 	}
+
 	return false;
+}
+
 }
