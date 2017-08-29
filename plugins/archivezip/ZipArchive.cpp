@@ -58,9 +58,9 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name)
 {
 	ZipFileSystem::iterator i = _filesystem.find(name);
 
-	if (i != _filesystem.end() && !i->second.is_directory())
+	if (i != _filesystem.end() && !i->second.isDirectory())
 	{
-		const std::shared_ptr<ZipRecord>& file = i->second.file();
+		const std::shared_ptr<ZipRecord>& file = i->second.getRecord();
 
 		FileInputStream::size_type position = 0;
 
@@ -98,9 +98,9 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 {
 	ZipFileSystem::iterator i = _filesystem.find(name);
 
-	if (i != _filesystem.end() && !i->second.is_directory())
+	if (i != _filesystem.end() && !i->second.isDirectory())
 	{
-		const std::shared_ptr<ZipRecord>& file = i->second.file();
+		const std::shared_ptr<ZipRecord>& file = i->second.getRecord();
 
 		{
 			// Guard against concurrent access
@@ -142,7 +142,7 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 bool ZipArchive::containsFile(const std::string& name)
 {
 	ZipFileSystem::iterator i = _filesystem.find(name);
-	return i != _filesystem.end() && !i->second.is_directory();
+	return i != _filesystem.end() && !i->second.isDirectory();
 }
 
 void ZipArchive::forEachFile(VisitorFunc visitor, const std::string& root)
@@ -213,19 +213,19 @@ void ZipArchive::readZipRecord()
 
 	if (os::isDirectory(path))
 	{
-		_filesystem[path].file().reset();
+		_filesystem[path].getRecord().reset();
 	}
 	else
 	{
-		ZipFileSystem::entry_type& file = _filesystem[path];
+		ZipFileSystem::entry_type& entry = _filesystem[path];
 
-		if (!file.is_directory())
+		if (!entry.isDirectory())
 		{
 			rWarning() << "Zip archive " << _fullPath << " contains duplicated file: " << path << std::endl;
 		}
 		else
 		{
-			file.file().reset(new ZipRecord(position,
+			entry.getRecord().reset(new ZipRecord(position,
 				compressed_size,
 				uncompressed_size,
 				(compression_mode == Z_DEFLATED) ? ZipRecord::eDeflated : ZipRecord::eStored));

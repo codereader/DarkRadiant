@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iarchive.h"
 #include "string/string.h"
 #include "os/path.h"
 
@@ -9,103 +10,126 @@
 namespace archive
 {
 
-inline unsigned int path_get_depth(const char* path)
+namespace
 {
-  unsigned int depth = 0;
-  while(path != 0 && path[0] != '\0')
-  {
-    path = strchr(path, '/');
-    if(path != 0)
-    {
-      ++path;
-    }
-    ++depth;
-  }
-  return depth;
+
+// Returns the depth of a given path string, basically counting
+// the number of parts in between forward slashes
+// "" => 0
+// "dds/" => 1
+// "dds/textures/" => 2
+// "dds/textures/darkmod/" => 3
+// "dds/textures/darkmod/wood/" => 4
+// "dds/textures/darkmod/wood/boards/" => 5
+// "dds/textures/darkmod/wood/boards/dark_rough.dds" => 6
+inline unsigned int getPathDepth(const char* path)
+{
+	unsigned int depth = 0;
+
+	while (path != 0 && path[0] != '\0')
+	{
+		path = strchr(path, '/');
+
+		if (path != 0)
+		{
+			++path;
+		}
+
+		++depth;
+	}
+
+	return depth;
+}
+
 }
 
 /// \brief A generic unix-style file-system which maps paths to files and directories.
 /// Provides average O(log n) find and insert methods.
 /// \param file_type The data type which represents a file.
-template<typename file_type>
+template<typename RecordType>
 class GenericFileSystem
 {
-  class Path
-  {
-    std::string m_path;
-    unsigned int m_depth;
-  public:
-	Path(const std::string& path) :
-		m_path(path),
-		m_depth(path_get_depth(m_path.c_str()))
-	{}
-
-	Path(const char* start, std::size_t length) :
-		m_path(start, length),
-		m_depth(path_get_depth(m_path.c_str()))
-	{}
-
-    bool operator<(const Path& other) const
-    {
-      return string_less_nocase(c_str(), other.c_str());
-    }
-    unsigned int depth() const
-    {
-      return m_depth;
-    }
-    const char* c_str() const
-    {
-      return m_path.c_str();
-    }
-
-	const std::string& string() const
+	class Path
 	{
-		return m_path;
-	}
-  };
+	private:
+		std::string _path;
+		unsigned int _depth;
+	public:
+		Path(const std::string& path) :
+			_path(path),
+			_depth(getPathDepth(_path.c_str()))
+		{}
 
+		Path(const char* start, std::size_t length) :
+			Path(std::string(start, length))
+		{}
+
+		bool operator<(const Path& other) const
+		{
+			return string_less_nocase(c_str(), other.c_str());
+		}
+
+		unsigned int depth() const
+		{
+			return _depth;
+		}
+
+		const char* c_str() const
+		{
+			return _path.c_str();
+		}
+
+		const std::string& string() const
+		{
+			return _path;
+		}
+	};
+
+public:
 	class Entry
 	{
-		std::shared_ptr<file_type> _file;
+		std::shared_ptr<RecordType> _record;
 	public:
 		Entry()
 		{}
 
-		Entry(const std::shared_ptr<file_type>& file) : 
-			_file(file)
+		Entry(const std::shared_ptr<RecordType>& record) :
+			_record(record)
 		{}
 
-		std::shared_ptr<file_type>& file()
+		std::shared_ptr<RecordType>& getRecord()
 		{
-			return _file;
+			return _record;
 		}
 
-		bool is_directory() const
+		bool isDirectory() const
 		{
-			return !_file;
+			return !_record;
 		}
 	};
 
-  typedef std::map<Path, Entry> Entries;
-  Entries m_entries;
+private:
+	typedef std::map<Path, Entry> Entries;
+	Entries _entries;
 
 public:
-  typedef typename Entries::iterator iterator;
-  typedef typename Entries::value_type value_type;
-  typedef Entry entry_type;
+	typedef typename Entries::iterator iterator;
+	typedef typename Entries::value_type value_type;
+	typedef Entry entry_type;
 
-  iterator begin()
-  {
-    return m_entries.begin();
-  }
-  iterator end()
-  {
-    return m_entries.end();
-  }
+	iterator begin()
+	{
+		return _entries.begin();
+	}
+
+	iterator end()
+	{
+		return _entries.end();
+	}
 
 	void clear()
 	{
-		m_entries.clear();
+		_entries.clear();
 	}
 
 	/// \brief Returns the file at \p path.
@@ -121,63 +145,68 @@ public:
 			// greebo: Take the substring from start to end
 			Path dir(start, end - start);
 
-			// And insert it as directory (NULL)
-			m_entries.insert(value_type(dir, Entry(NULL)));
+			// And insert it as directory
+			_entries.insert(value_type(dir, Entry()));
 
 			end = path_remove_directory(end);
 		}
 
-		return m_entries[path];
+		return _entries[path];
 	}
 
-  /// \brief Returns the file at \p path or end() if not found.
-  iterator find(const Path& path)
-  {
-    return m_entries.find(path);
-  }
+	/// \brief Returns the file at \p path or end() if not found.
+	iterator find(const Path& path)
+	{
+		return _entries.find(path);
+	}
 
-  iterator begin(const std::string& root)
-  {
-    if(root[0] == '\0')
-    {
-      return m_entries.begin();
-    }
-    iterator i = m_entries.find(root);
-    if(i == m_entries.end())
-    {
-      return i;
-    }
-    return ++i;
-  }
+	/// \brief Performs a depth-first traversal of the file-system subtree rooted at \p root.
+	/// Traverses the entire tree if \p root is "".
+	/// Calls \p visitor.file() with the path to each file relative to the filesystem root.
+	/// Calls \p visitor.directory() with the path to each directory relative to the filesystem root.
+	void traverse(Archive::VisitorFunc visitor, const std::string& root)
+	{
+		unsigned int start_depth = getPathDepth(root.c_str());
+		unsigned int skip_depth = 0;
+		
+		for (iterator i = begin(root); i != end() && i->first.depth() > start_depth; ++i)
+		{
+			if (i->first.depth() == skip_depth)
+			{
+				skip_depth = 0;
+			}
 
-  /// \brief Performs a depth-first traversal of the file-system subtree rooted at \p root.
-  /// Traverses the entire tree if \p root is "".
-  /// Calls \p visitor.file() with the path to each file relative to the filesystem root.
-  /// Calls \p visitor.directory() with the path to each directory relative to the filesystem root.
-  template<typename visitor_type>
-  void traverse(visitor_type visitor, const std::string& root)
-  {
-    unsigned int start_depth = path_get_depth(root.c_str());
-    unsigned int skip_depth = 0;
-    for(iterator i = begin(root); i != end() && i->first.depth() > start_depth; ++i)
-    {
-      if(i->first.depth() == skip_depth)
-      {
-        skip_depth = 0;
-      }
-      if(skip_depth == 0)
-      {
-        if(!i->second.is_directory())
-        {
-          visitor.file(i->first.string());
-        }
-        else if(visitor.directory(i->first.string(), i->first.depth() - start_depth))
-        {
-          skip_depth = i->first.depth();
-        }
-      }
-    }
-  }
+			if (skip_depth == 0)
+			{
+				if (!i->second.isDirectory())
+				{
+					visitor.file(i->first.string());
+				}
+				else if (visitor.directory(i->first.string(), i->first.depth() - start_depth))
+				{
+					skip_depth = i->first.depth();
+				}
+			}
+		}
+	}
+
+private:
+	iterator begin(const std::string& root)
+	{
+		if (root.empty())
+		{
+			return _entries.begin();
+		}
+
+		iterator i = _entries.find(root);
+
+		if (i == _entries.end())
+		{
+			return i;
+		}
+
+		return ++i;
+	}
 };
 
 }
