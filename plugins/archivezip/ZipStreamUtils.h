@@ -1,29 +1,13 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #pragma once
 
 #include "bytestreamutils.h"
 #include "idatastream.h"
 #include <algorithm>
 
+/**
+ * greebo: Various data structures as defined by the PKWARE
+ * ZIP File Format Specification, plus a few stream helper functions.
+ */
 namespace archive
 {
 
@@ -88,9 +72,75 @@ struct ZipFileHeader
 								/* followed by extra field (of variable size) */
 };
 
+/* B. data descriptor
+* the data descriptor exists only if bit 3 of z_flags is set. It is byte aligned
+* and immediately follows the last byte of compressed data. It is only used if
+* the output media of the compressor was not seekable, eg. standard output.
+*/
+const ZipMagic ZIP_MAGIC_FILE_TRAILER('P', 'K', 0x07, 0x08);
+
+struct ZipFileTrailer
+{
+	ZipMagic magic;
+	uint32_t crc32;
+	uint32_t compressedSize;
+	uint32_t uncompressedSize;
+};
+
+/* C. central directory structure:
+[file header] . . . end of central dir record
+*/
+
+/* directory file header
+* - a single entry including filename, extras and comment may not exceed 64k.
+*/
+const ZipMagic ZIP_MAGIC_ROOT_DIR_ENTRY('P', 'K', 0x01, 0x02);
+
+struct ZipRootDirEntry
+{
+	ZipMagic magic;
+	ZipVersion encoder;			/* version made by */
+	ZipVersion extract;			/* version need to extract */
+	uint16_t flags;				/* general purpose bit flag */
+	uint16_t compressionMethod;	/* compression method */
+	ZipDosTime dostime;			/* last mod file time&date (dos format) */
+	uint32_t crc32;				/* crc-32 */
+	uint32_t compressedSize;	/* compressed size */
+	uint32_t uncompressedSize;	/* uncompressed size */
+	uint16_t nameLength;		/* filename length (null if stdin) */
+	uint16_t extras;			/* extra field length */
+	uint16_t comment;			/* file comment length */
+	uint16_t diskstart;			/* disk number of start (if spanning zip over multiple disks) */
+	uint16_t filetype;			/* internal file attributes, bit0 = ascii */
+	uint32_t filemode;			/* extrnal file attributes, eg. msdos attrib byte */
+	uint32_t offset;			/* relative offset of local file header, seekval if singledisk */
+								/* followed by filename (of variable size) */
+								/* followed by extra field (of variable size) */
+								/* followed by file comment (of variable size) */
+};
+
+/* end of central dir record */
+const ZipMagic ZIP_MAGIC_DISK_TRAILER('P', 'K', 0x05, 0x06);
+
+struct ZipDiskTrailer
+{
+	ZipMagic magic;
+	uint16_t disk;			/* number of this disk */
+	uint16_t finaldisk;		/* number of the disk with the start of the central dir */
+	uint16_t entries;		/* total number of entries in the central dir on this disk */
+	uint16_t finalentries;	/* total number of entries in the central dir */
+	uint32_t rootsize;		/* size of the central directory */
+	uint32_t rootseek;		/* offset of start of central directory with respect to
+							 * the starting disk number */
+	uint16_t comment;		/* zipfile comment length */
+							/* followed by zipfile comment (of variable size) */
+};
+
+const std::size_t ZIP_DISK_TRAILER_LENGTH = 22;
+
 }
 
-// Various convenience functions, reading Zip structures from an InputStream
+// Convenience functions, reading Zip structures from an InputStream
 namespace stream
 {
 
@@ -127,165 +177,126 @@ inline void readZipFileHeader(SeekableInputStream& stream, archive::ZipFileHeade
 	stream.seek(header.nameLength + header.extras, SeekableInputStream::cur);
 };
 
+inline void readZipFileTrailer(InputStream& stream, archive::ZipFileTrailer& trailer)
+{
+	stream::readZipMagic(stream, trailer.magic);
+	trailer.crc32 = stream::readLittleEndian<uint32_t>(stream);
+	trailer.compressedSize = stream::readLittleEndian<uint32_t>(stream);
+	trailer.uncompressedSize = stream::readLittleEndian<uint32_t>(stream);
+};
+
+inline void readZipRootDirEntry(SeekableInputStream& stream, archive::ZipRootDirEntry& entry)
+{
+	stream::readZipMagic(stream, entry.magic);
+	stream::readZipVersion(stream, entry.encoder);
+	stream::readZipVersion(stream, entry.extract);
+	entry.flags = stream::readLittleEndian<uint16_t>(stream);
+	entry.compressionMethod = stream::readLittleEndian<uint16_t>(stream);
+	stream::readZipDosTime(stream, entry.dostime);
+	entry.crc32 = stream::readLittleEndian<uint32_t>(stream);
+	entry.compressedSize = stream::readLittleEndian<uint32_t>(stream);
+	entry.uncompressedSize = stream::readLittleEndian<uint32_t>(stream);
+	entry.nameLength = stream::readLittleEndian<uint16_t>(stream);
+	entry.extras = stream::readLittleEndian<uint16_t>(stream);
+	entry.comment = stream::readLittleEndian<uint16_t>(stream);
+	entry.diskstart = stream::readLittleEndian<uint16_t>(stream);
+	entry.filetype = stream::readLittleEndian<uint16_t>(stream);
+	entry.filemode = stream::readLittleEndian<uint32_t>(stream);
+	entry.offset = stream::readLittleEndian<uint32_t>(stream);
+
+	stream.seek(entry.nameLength + entry.extras + entry.comment, SeekableInputStream::cur);
+}
+
+inline void readZipDiskTrailer(SeekableInputStream& stream, archive::ZipDiskTrailer& trailer)
+{
+	stream::readZipMagic(stream, trailer.magic);
+	trailer.disk = stream::readLittleEndian<uint16_t>(stream);
+	trailer.finaldisk = stream::readLittleEndian<uint16_t>(stream);
+	trailer.entries = stream::readLittleEndian<uint16_t>(stream);
+	trailer.finalentries = stream::readLittleEndian<uint16_t>(stream);
+	trailer.rootsize = stream::readLittleEndian<uint32_t>(stream);
+	trailer.rootseek = stream::readLittleEndian<uint32_t>(stream);
+	trailer.comment = stream::readLittleEndian<uint16_t>(stream);
+
+	stream.seek(trailer.comment, SeekableInputStream::cur);
+}
+
 } // namespace
 
 namespace archive
 {
 
-/* B. data descriptor
- * the data descriptor exists only if bit 3 of z_flags is set. It is byte aligned
- * and immediately follows the last byte of compressed data. It is only used if
- * the output media of the compressor was not seekable, eg. standard output.
- */
-const ZipMagic ZIP_MAGIC_FILE_TRAILER('P', 'K', 0x07, 0x08);
-
-struct zip_file_trailer
+// Function trying to locate the trailer position in the given seekable stream.
+// Will return the position of the trailer structure, or 0 if it was unable to find it.
+inline SeekableStream::position_type findZipDiskTrailerPosition(SeekableInputStream& stream)
 {
-	ZipMagic z_magic;
-  unsigned int z_crc32; /* crc-32 */
-  unsigned int z_csize; /* compressed size */
-  unsigned int z_usize; /* uncompressed size */
-};
+	// Seek to the end of the file and check if the last 22 bytes match the Zip Disk Trailer
+	stream.seek(0, SeekableInputStream::end);
 
-inline void istream_read_zip_file_trailer(InputStream& istream, zip_file_trailer& file_trailer)
-{
-	stream::readZipMagic(istream, file_trailer.z_magic);
-  file_trailer.z_crc32 = istream_read_uint32_le(istream);
-  file_trailer.z_csize = istream_read_uint32_le(istream);
-  file_trailer.z_usize = istream_read_uint32_le(istream);
-};
+	SeekableStream::position_type startPosition = stream.tell();
 
+	if (startPosition < ZIP_DISK_TRAILER_LENGTH)
+	{
+		return 0; // file is too small
+	}
 
-/* C. central directory structure:
-    [file header] . . . end of central dir record
-*/
+	startPosition -= ZIP_DISK_TRAILER_LENGTH;
 
-/* directory file header
- * - a single entry including filename, extras and comment may not exceed 64k.
- */
+	stream.seek(startPosition);
 
-const ZipMagic ZIP_MAGIC_ROOT_DIR_ENTRY('P', 'K', 0x01, 0x02);
-
-struct zip_root_dirent
-{
-	ZipMagic z_magic;
-	ZipVersion z_encoder;  /* version made by */
-	ZipVersion z_extract;  /* version need to extract */
-  unsigned short z_flags;  /* general purpose bit flag */
-  unsigned short z_compr;  /* compression method */
-	ZipDosTime z_dostime;  /* last mod file time&date (dos format) */
-  unsigned int z_crc32;  /* crc-32 */
-  unsigned int z_csize;  /* compressed size */
-  unsigned int z_usize;  /* uncompressed size */
-  unsigned short z_namlen; /* filename length (null if stdin) */
-  unsigned short z_extras;  /* extra field length */
-  unsigned short z_comment; /* file comment length */
-  unsigned short z_diskstart; /* disk number of start (if spanning zip over multiple disks) */
-  unsigned short z_filetype;  /* internal file attributes, bit0 = ascii */
-  unsigned int z_filemode;  /* extrnal file attributes, eg. msdos attrib byte */
-  unsigned int z_off;    /* relative offset of local file header, seekval if singledisk */
-  /* followed by filename (of variable size) */
-  /* followed by extra field (of variable size) */
-  /* followed by file comment (of variable size) */
-};
-
-inline void istream_read_zip_root_dirent(SeekableInputStream& istream, zip_root_dirent& root_dirent)
-{
-	stream::readZipMagic(istream, root_dirent.z_magic);
-	stream::readZipVersion(istream, root_dirent.z_encoder);
-	stream::readZipVersion(istream, root_dirent.z_extract);
-  root_dirent.z_flags = istream_read_uint16_le(istream);
-  root_dirent.z_compr = istream_read_uint16_le(istream);
-	stream::readZipDosTime(istream, root_dirent.z_dostime);
-  root_dirent.z_crc32 = istream_read_uint32_le(istream);
-  root_dirent.z_csize = istream_read_uint32_le(istream);
-  root_dirent.z_usize = istream_read_uint32_le(istream);
-  root_dirent.z_namlen = istream_read_uint16_le(istream);
-  root_dirent.z_extras = istream_read_uint16_le(istream);
-  root_dirent.z_comment = istream_read_uint16_le(istream);
-  root_dirent.z_diskstart = istream_read_uint16_le(istream);
-  root_dirent.z_filetype = istream_read_uint16_le(istream);
-  root_dirent.z_filemode = istream_read_uint32_le(istream);
-  root_dirent.z_off = istream_read_uint32_le(istream);
-  istream.seek(root_dirent.z_namlen + root_dirent.z_extras + root_dirent.z_comment, SeekableInputStream::cur);
-}
-
-  /* end of central dir record */
-const ZipMagic ZIP_MAGIC_DISK_TRAILER('P', 'K', 0x05, 0x06);
-const unsigned int disk_trailer_length = 22;
-struct zip_disk_trailer
-{
-	ZipMagic z_magic;
-  unsigned short z_disk;  /* number of this disk */
-  unsigned short z_finaldisk; /* number of the disk with the start of the central dir */
-  unsigned short z_entries; /* total number of entries in the central dir on this disk */
-  unsigned short z_finalentries; /* total number of entries in the central dir */
-  unsigned int z_rootsize; /* size of the central directory */
-  unsigned int z_rootseek; /* offset of start of central directory with respect to *
-                        * the starting disk number */
-  unsigned short z_comment;  /* zipfile comment length */
-  /* followed by zipfile comment (of variable size) */
-};
-
-inline void istream_read_zip_disk_trailer(SeekableInputStream& istream, zip_disk_trailer& disk_trailer)
-{
-	stream::readZipMagic(istream, disk_trailer.z_magic);
-  disk_trailer.z_disk = istream_read_uint16_le(istream);
-  disk_trailer.z_finaldisk = istream_read_uint16_le(istream);
-  disk_trailer.z_entries = istream_read_uint16_le(istream);
-  disk_trailer.z_finalentries = istream_read_uint16_le(istream);
-  disk_trailer.z_rootsize = istream_read_uint32_le(istream);
-  disk_trailer.z_rootseek = istream_read_uint32_le(istream);
-  disk_trailer.z_comment = istream_read_uint16_le(istream);
-  istream.seek(disk_trailer.z_comment, SeekableInputStream::cur);
-}
-
-inline SeekableStream::position_type pkzip_find_disk_trailer(SeekableInputStream& istream)
-{
-  istream.seek(0, SeekableInputStream::end);
-  SeekableStream::position_type start_position = istream.tell();
-  if(start_position < disk_trailer_length)
-    return 0;
-  start_position -= disk_trailer_length;
-
-  istream.seek(start_position);
 	ZipMagic magic;
-	stream::readZipMagic(istream, magic);
+	stream::readZipMagic(stream, magic);
 
 	if (magic == ZIP_MAGIC_DISK_TRAILER)
 	{
-		return start_position;
+		// We got lucky and found the trailer right at the end of the file
+		return startPosition;
 	}
 
-    const SeekableStream::position_type max_comment = 0x10000;
+	// Trailer not found right at the end of the file.
+	// Search for it, starting at the end of the file in backwards direction
+
+	// ZIP comments havea 2-byte size descriptor, so the maximum size of the comment is 65k
+    const SeekableStream::position_type maxCommentSize = 0x10000;
+
+	// Allocate a buffer to hold the data to be searched
     const SeekableStream::position_type bufshift = 6;
-    const SeekableStream::position_type bufsize = max_comment >> bufshift;
+    const SeekableStream::position_type bufsize = maxCommentSize >> bufshift;
     unsigned char buffer[bufsize];
 
-    SeekableStream::position_type search_end = (max_comment < start_position) ? start_position - max_comment : 0;
-    SeekableStream::position_type position = start_position;
-    while(position != search_end)
+	// Mark the end searching point in the file
+    SeekableStream::position_type searchEndPos = (maxCommentSize < startPosition) ? startPosition - maxCommentSize : 0;
+    SeekableStream::position_type position = startPosition;
+
+    while (position != searchEndPos)
     {
-      StreamBase::size_type to_read = std::min(bufsize, position - search_end);
-      position -= to_read;
+		StreamBase::size_type bytesToRead = std::min(bufsize, position - searchEndPos);
+		position -= bytesToRead;
 
-      istream.seek(position);
-      StreamBase::size_type size = istream.read(buffer, to_read);
+		// Go the current search position, load the data and search it
+		stream.seek(position);
+		StreamBase::size_type size = stream.read(buffer, bytesToRead);
 
-      unsigned char* p = buffer + size;
-      while(p != buffer)
-      {
-        --p;
-        magic.value[3] = magic.value[2];
-        magic.value[2] = magic.value[1];
-        magic.value[1] = magic.value[0];
-        magic.value[0] = *p;
-        if(magic == ZIP_MAGIC_DISK_TRAILER)
-        {
-          return position + (p - buffer);
-        }
-      }
+		// Search for the magic value and return its position on success
+		unsigned char* p = buffer + size;
+
+		while (p != buffer)
+		{
+			--p;
+
+			magic.value[3] = magic.value[2];
+			magic.value[2] = magic.value[1];
+			magic.value[1] = magic.value[0];
+			magic.value[0] = *p;
+
+			if (magic == ZIP_MAGIC_DISK_TRAILER)
+			{
+				return position + (p - buffer);
+			}
+		}
     }
+
+	// Zip magic not found
     return 0;
 }
 

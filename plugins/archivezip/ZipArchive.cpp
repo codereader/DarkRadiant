@@ -1,5 +1,6 @@
 #include "ZipArchive.h"
 
+#include <stdexcept>
 #include "itextstream.h"
 #include "iarchive.h"
 #include "archivelib.h"
@@ -138,12 +139,14 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 	return ArchiveTextFilePtr();
 }
 
-bool ZipArchive::containsFile(const std::string& name) {
+bool ZipArchive::containsFile(const std::string& name)
+{
 	ZipFileSystem::iterator i = _filesystem.find(name);
 	return i != _filesystem.end() && !i->second.is_directory();
 }
 
-void ZipArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
+void ZipArchive::forEachFile(VisitorFunc visitor, const std::string& root)
+{
 	_filesystem.traverse(visitor, root);
 }
 
@@ -232,7 +235,7 @@ void ZipArchive::readZipRecord()
 
 void ZipArchive::loadZipFile()
 {
-	SeekableStream::position_type pos = pkzip_find_disk_trailer(_istream);
+	SeekableStream::position_type pos = findZipDiskTrailerPosition(_istream);
 
 	if (pos == 0)
 	{
@@ -241,17 +244,17 @@ void ZipArchive::loadZipFile()
 
 	_istream.seek(pos);
 
-	zip_disk_trailer disk_trailer;
-	istream_read_zip_disk_trailer(_istream, disk_trailer);
+	ZipDiskTrailer trailer;
+	stream::readZipDiskTrailer(_istream, trailer);
 
-	if (disk_trailer.z_magic != ZIP_MAGIC_DISK_TRAILER)
+	if (trailer.magic != ZIP_MAGIC_DISK_TRAILER)
 	{
 		throw ZipFailureException("Invalid Zip Magic, maybe this is not a zip file?");
 	}
 
-	_istream.seek(disk_trailer.z_rootseek);
+	_istream.seek(trailer.rootseek);
 
-	for (unsigned short i = 0; i < disk_trailer.z_entries; ++i)
+	for (unsigned short i = 0; i < trailer.entries; ++i)
 	{
 		readZipRecord();
 	}
