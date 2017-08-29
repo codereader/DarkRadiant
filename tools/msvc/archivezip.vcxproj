@@ -310,12 +310,11 @@
     <ClInclude Include="..\..\plugins\archivezip\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\plugins\archivezip\DeflatedArchiveTextFile.h" />
     <ClInclude Include="..\..\plugins\archivezip\GenericFileSystem.h" />
-    <ClInclude Include="..\..\plugins\archivezip\pkzip.h" />
     <ClInclude Include="..\..\plugins\archivezip\ZipArchive.h" />
+    <ClInclude Include="..\..\plugins\archivezip\ZipStreamUtils.h" />
     <ClInclude Include="..\..\plugins\archivezip\zlibstream.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\archivezip\pkzip.cpp" />
     <ClCompile Include="..\..\plugins\archivezip\plugin.cpp" />
     <ClCompile Include="..\..\plugins\archivezip\ZipArchive.cpp" />
     <ClCompile Include="..\..\plugins\archivezip\zlibstream.cpp" />

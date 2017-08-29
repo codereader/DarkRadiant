@@ -103,6 +103,19 @@ inline ValueType readLittleEndian(InputStream& stream)
 	return value;
 }
 
+inline void readByte(InputStream& stream, InputStream::byte_type& value)
+{
+	stream.read(&value, 1);
+}
+
+inline InputStream::byte_type readByte(InputStream& stream)
+{
+	InputStream::byte_type value;
+	stream.read(&value, 1);
+
+	return value;
+}
+
 }
 
 template<typename InputStreamType, typename Type>

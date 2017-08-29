@@ -4,11 +4,11 @@
 #include "iarchive.h"
 #include "archivelib.h"
 
-#include "pkzip.h"
 #include "zlibstream.h"
 #include "os/fs.h"
 #include "os/path.h"
 
+#include "ZipStreamUtils.h"
 #include "DeflatedArchiveFile.h"
 #include "DeflatedArchiveTextFile.h"
 
@@ -39,6 +39,7 @@ ZipArchive::ZipArchive(const std::string& fullPath) :
 
 	try
 	{
+		// Try loading the zip file, this will throw exceptoions on any problem
 		loadZipFile();
 	}
 	catch (ZipFailureException& ex)
@@ -71,9 +72,9 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name)
 			istream_read_zip_file_header(_istream, file_header);
 			position = _istream.tell();
 
-			if (file_header.z_magic != zip_file_header_magic)
+			if (file_header.z_magic != ZIP_MAGIC_FILE_HEADER)
 			{
-				rError() << "error reading zip file " << _fullPath << std::endl;
+				rError() << "Error reading zip file " << _fullPath << std::endl;
 				return ArchiveFilePtr();
 			}
 		}
@@ -106,9 +107,9 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 			zip_file_header file_header;
 			istream_read_zip_file_header(_istream, file_header);
 
-			if (file_header.z_magic != zip_file_header_magic)
+			if (file_header.z_magic != ZIP_MAGIC_FILE_HEADER)
 			{
-				rError() << "error reading zip file " << _fullPath << std::endl;
+				rError() << "Error reading zip file " << _fullPath << std::endl;
 				return ArchiveTextFilePtr();
 			}
 		}
@@ -145,17 +146,18 @@ void ZipArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
 
 void ZipArchive::readZipRecord()
 {
-	zip_magic magic;
-	istream_read_zip_magic(_istream, magic);
+	ZipMagic magic;
+	stream::readZipMagic(_istream, magic);
 
-	if (!(magic == zip_root_dirent_magic))
+	if (magic != ZIP_MAGIC_ROOT_DIR_ENTRY)
 	{
 		throw ZipFailureException("Invalid Zip directory entry magic");
 	}
-	zip_version version_encoder;
-	istream_read_zip_version(_istream, version_encoder);
-	zip_version version_extract;
-	istream_read_zip_version(_istream, version_extract);
+
+	ZipVersion version_encoder;
+	stream::readZipVersion(_istream, version_encoder);
+	ZipVersion version_extract;
+	stream::readZipVersion(_istream, version_extract);
 
 	//unsigned short flags =
 	stream::readLittleEndian<int16_t>(_istream);
@@ -167,26 +169,26 @@ void ZipArchive::readZipRecord()
 		throw ZipFailureException("Unsupported compression mode");
 	}
 
-	zip_dostime dostime;
-	istream_read_zip_dostime(_istream, dostime);
+	ZipDosTime dostime;
+	stream::readZipDosTime(_istream, dostime);
 
 	//unsigned int crc32 =
-	istream_read_int32_le(_istream);
-
-	unsigned int compressed_size = istream_read_uint32_le(_istream);
-	unsigned int uncompressed_size = istream_read_uint32_le(_istream);
-	unsigned int namelength = istream_read_uint16_le(_istream);
-	unsigned short extras = istream_read_uint16_le(_istream);
-	unsigned short comment = istream_read_uint16_le(_istream);
+	stream::readLittleEndian<uint32_t>(_istream);
+	
+	uint32_t compressed_size = stream::readLittleEndian<uint32_t>(_istream);
+	uint32_t uncompressed_size = stream::readLittleEndian<uint32_t>(_istream);
+	uint16_t namelength = stream::readLittleEndian<uint16_t>(_istream);
+	uint16_t extras = stream::readLittleEndian<uint16_t>(_istream);
+	uint16_t comment = stream::readLittleEndian<uint16_t>(_istream);
 
 	//unsigned short diskstart =
-	istream_read_int16_le(_istream);
+	stream::readLittleEndian<uint16_t>(_istream);
 	//unsigned short filetype =
-	istream_read_int16_le(_istream);
+	stream::readLittleEndian<uint16_t>(_istream);
 	//unsigned int filemode =
-	istream_read_int32_le(_istream);
+	stream::readLittleEndian<uint32_t>(_istream);
 
-	unsigned int position = istream_read_int32_le(_istream);
+	uint32_t position = stream::readLittleEndian<uint32_t>(_istream);
 
 	// greebo: Read the filename directly into a newly constructed std::string.
 
@@ -239,7 +241,7 @@ void ZipArchive::loadZipFile()
 	zip_disk_trailer disk_trailer;
 	istream_read_zip_disk_trailer(_istream, disk_trailer);
 
-	if (disk_trailer.z_magic != zip_disk_trailer_magic)
+	if (disk_trailer.z_magic != ZIP_MAGIC_DISK_TRAILER)
 	{
 		throw ZipFailureException("Invalid Zip Magic, maybe this is not a zip file?");
 	}

@@ -13,9 +13,6 @@
     <ClInclude Include="..\..\plugins\archivezip\DeflatedArchiveTextFile.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\archivezip\pkzip.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\archivezip\ZipArchive.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -25,11 +22,11 @@
     <ClInclude Include="..\..\plugins\archivezip\GenericFileSystem.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\archivezip\ZipStreamUtils.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\archivezip\pkzip.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\archivezip\plugin.cpp">
       <Filter>src</Filter>
     </ClCompile>

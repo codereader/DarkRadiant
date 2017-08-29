@@ -30,9 +30,9 @@ private:
 			eDeflated,
 		};
 
-		ZipRecord(unsigned int position_,
-				  unsigned int compressed_size_,
-				  unsigned int uncompressed_size_,
+		ZipRecord(uint32_t position_,
+				  uint32_t compressed_size_,
+				  uint32_t uncompressed_size_,
 				  CompressionMode mode_) :
 			position(position_),
 			stream_size(compressed_size_),
@@ -40,9 +40,9 @@ private:
 			mode(mode_)
 		{}
 
-		unsigned int position;
-		unsigned int stream_size;
-		unsigned int file_size;
+		uint32_t position;
+		uint32_t stream_size;
+		uint32_t file_size;
 		CompressionMode mode;
 	};
 	typedef GenericFileSystem<ZipRecord> ZipFileSystem;
