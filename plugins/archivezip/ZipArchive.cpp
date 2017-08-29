@@ -68,11 +68,13 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name)
 			std::lock_guard<std::mutex> lock(_streamLock);
 
 			_istream.seek(file->position);
-			zip_file_header file_header;
-			istream_read_zip_file_header(_istream, file_header);
+
+			ZipFileHeader header;
+			stream::readZipFileHeader(_istream, header);
+
 			position = _istream.tell();
 
-			if (file_header.z_magic != ZIP_MAGIC_FILE_HEADER)
+			if (header.magic != ZIP_MAGIC_FILE_HEADER)
 			{
 				rError() << "Error reading zip file " << _fullPath << std::endl;
 				return ArchiveFilePtr();
@@ -104,10 +106,11 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 			std::lock_guard<std::mutex> lock(_streamLock);
 
 			_istream.seek(file->position);
-			zip_file_header file_header;
-			istream_read_zip_file_header(_istream, file_header);
 
-			if (file_header.z_magic != ZIP_MAGIC_FILE_HEADER)
+			ZipFileHeader header;
+			stream::readZipFileHeader(_istream, header);
+
+			if (header.magic != ZIP_MAGIC_FILE_HEADER)
 			{
 				rError() << "Error reading zip file " << _fullPath << std::endl;
 				return ArchiveTextFilePtr();

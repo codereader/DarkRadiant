@@ -71,6 +71,23 @@ struct ZipDosTime
 	uint16_t date;
 };
 
+/* A. Local file header */
+struct ZipFileHeader
+{
+	ZipMagic magic;				/* local file header signature (0x04034b50) */
+	ZipVersion extract;			/* version needed to extract */
+	uint16_t flags;				/* general purpose bit flag */
+	uint16_t compressionMethod;	/* compression method */
+	ZipDosTime dosTime;			/* last mod file time (dos format) */
+	uint32_t crc32;				/* crc-32 */
+	uint32_t compressedSize;	/* compressed size */
+	uint32_t uncompressedSize;	/* uncompressed size */
+	uint16_t nameLength;		/* filename length (null if stdin) */
+	uint16_t extras;			/* extra field length */
+								/* followed by filename (of variable size) */
+								/* followed by extra field (of variable size) */
+};
+
 }
 
 // Various convenience functions, reading Zip structures from an InputStream
@@ -94,42 +111,26 @@ inline void readZipDosTime(InputStream& stream, archive::ZipDosTime& dostime)
 	dostime.date = stream::readLittleEndian<uint16_t>(stream);
 }
 
+inline void readZipFileHeader(SeekableInputStream& stream, archive::ZipFileHeader& header)
+{
+	stream::readZipMagic(stream, header.magic);
+	stream::readZipVersion(stream, header.extract);
+	header.flags = stream::readLittleEndian<uint16_t>(stream);
+	header.compressionMethod = stream::readLittleEndian<uint16_t>(stream);
+	stream::readZipDosTime(stream, header.dosTime);
+	header.crc32 = stream::readLittleEndian<uint32_t>(stream);
+	header.compressedSize = stream::readLittleEndian<uint32_t>(stream);
+	header.uncompressedSize = stream::readLittleEndian<uint32_t>(stream);
+	header.nameLength = stream::readLittleEndian<uint16_t>(stream);
+	header.extras = stream::readLittleEndian<uint16_t>(stream);
+
+	stream.seek(header.nameLength + header.extras, SeekableInputStream::cur);
+};
+
 } // namespace
 
 namespace archive
 {
-
-/* A. Local file header */
-struct zip_file_header
-{
-	ZipMagic z_magic; /* local file header signature (0x04034b50) */
-	ZipVersion z_extract; /* version needed to extract */
-  unsigned short z_flags; /* general purpose bit flag */
-  unsigned short z_compr; /* compression method */
-	ZipDosTime z_dostime; /* last mod file time (dos format) */
-  unsigned int z_crc32; /* crc-32 */
-  unsigned int z_csize; /* compressed size */
-  unsigned int z_usize; /* uncompressed size */
-  unsigned short z_namlen; /* filename length (null if stdin) */
-  unsigned short z_extras; /* extra field length */
-  /* followed by filename (of variable size) */
-  /* followed by extra field (of variable size) */
-};
-
-inline void istream_read_zip_file_header(SeekableInputStream& istream, zip_file_header& file_header)
-{
-	stream::readZipMagic(istream, file_header.z_magic);
-	stream::readZipVersion(istream, file_header.z_extract);
-  file_header.z_flags = istream_read_uint16_le(istream);
-  file_header.z_compr = istream_read_uint16_le(istream);
-	stream::readZipDosTime(istream, file_header.z_dostime);
-  file_header.z_crc32 = istream_read_uint32_le(istream);
-  file_header.z_csize = istream_read_uint32_le(istream);
-  file_header.z_usize = istream_read_uint32_le(istream);
-  file_header.z_namlen = istream_read_uint16_le(istream);
-  file_header.z_extras = istream_read_uint16_le(istream);
-  istream.seek(file_header.z_namlen + file_header.z_extras, SeekableInputStream::cur);
-};
 
 /* B. data descriptor
  * the data descriptor exists only if bit 3 of z_flags is set. It is byte aligned
