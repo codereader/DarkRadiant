@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
+#include "idatastream.h"
 #include <ostream>
 #include <algorithm>
 
@@ -83,6 +84,23 @@ void writeLittleEndian(std::ostream& stream, ValueType value)
 #endif
 
 	stream.write(reinterpret_cast<const char*>(&output), sizeof(ValueType));
+}
+
+/**
+ * greebo: Read an integer type stored in little endian format 
+ * from the given stream and returns its value.
+ */
+template<typename ValueType>
+inline ValueType readLittleEndian(InputStream& stream)
+{
+	ValueType value;
+	stream.read(reinterpret_cast<InputStream::byte_type*>(&value), sizeof(ValueType));
+
+#ifdef __BIG_ENDIAN__
+	std::reverse(reinterpret_cast<InputStream::byte_type*>(&value), reinterpret_cast<InputStream::byte_type*>(&value) + sizeof(ValueType));
+#endif
+
+	return value;
 }
 
 }

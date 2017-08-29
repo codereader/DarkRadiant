@@ -8,6 +8,15 @@
 namespace archive
 {
 
+/**
+ * Archive adapter representing a PK4 (Zip) archive file.
+ *
+ * In idTech4 Virtual Filesystems this is the only other 
+ * Archive type allowed, next to the DirectoryArchives representing 
+ * physical directories.
+ *
+ * Archives are owned and instantiated by the GlobalFileSystem instance.
+ */
 class ZipArchive :
 	public Archive
 {
@@ -48,14 +57,15 @@ public:
 	ZipArchive(const std::string& fullPath);
 	virtual ~ZipArchive();
 
+	// Archive implementation
 	virtual ArchiveFilePtr openFile(const std::string& name) override;
 	virtual ArchiveTextFilePtr openTextFile(const std::string& name) override;
 	bool containsFile(const std::string& name) override;
 	void forEachFile(VisitorFunc visitor, const std::string& root) override;
 
 private:
-	bool readZipRecord();
-	bool loadZipFile();
+	void readZipRecord();
+	void loadZipFile();
 };
 
 }

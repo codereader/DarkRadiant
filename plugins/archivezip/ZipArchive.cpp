@@ -15,14 +15,35 @@
 namespace archive
 {
 
+// Thrown by the zip reader methods below
+class ZipFailureException :
+	public std::runtime_error
+{
+public:
+	ZipFailureException(const char* msg) :
+		std::runtime_error(msg)
+	{}
+};
+
+
 ZipArchive::ZipArchive(const std::string& fullPath) :
 	_fullPath(fullPath),
 	_containingFolder(os::standardPathWithSlash(fs::path(_fullPath).remove_filename())),
 	_istream(_fullPath)
 {
-	if (_istream.failed() || !loadZipFile())
+	if (_istream.failed())
 	{
-		rError() << "Invalid Zip file " << _fullPath << std::endl;
+		rError() << "Cannot open Zip file stream: " << _fullPath << std::endl;
+		return;
+	}
+
+	try
+	{
+		loadZipFile();
+	}
+	catch (ZipFailureException& ex)
+	{
+		rError() << "Cannot read Zip file " << _fullPath << ": " << ex.what() << std::endl;
 	}
 }
 
@@ -122,24 +143,28 @@ void ZipArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
 	_filesystem.traverse(visitor, root);
 }
 
-bool ZipArchive::readZipRecord()
+void ZipArchive::readZipRecord()
 {
 	zip_magic magic;
 	istream_read_zip_magic(_istream, magic);
 
-	if (!(magic == zip_root_dirent_magic)) {
-		return false;
+	if (!(magic == zip_root_dirent_magic))
+	{
+		throw ZipFailureException("Invalid Zip directory entry magic");
 	}
 	zip_version version_encoder;
 	istream_read_zip_version(_istream, version_encoder);
 	zip_version version_extract;
 	istream_read_zip_version(_istream, version_extract);
-	//unsigned short flags =
-	istream_read_int16_le(_istream);
-	unsigned short compression_mode = istream_read_int16_le(_istream);
 
-	if (compression_mode != Z_DEFLATED && compression_mode != 0) {
-		return false;
+	//unsigned short flags =
+	stream::readLittleEndian<int16_t>(_istream);
+	
+	uint16_t compression_mode = stream::readLittleEndian<uint16_t>(_istream);
+
+	if (compression_mode != Z_DEFLATED && compression_mode != 0)
+	{
+		throw ZipFailureException("Unsupported compression mode");
 	}
 
 	zip_dostime dostime;
@@ -198,41 +223,33 @@ bool ZipArchive::readZipRecord()
 				(compression_mode == Z_DEFLATED) ? ZipRecord::eDeflated : ZipRecord::eStored));
 		}
 	}
-
-	return true;
 }
 
-bool ZipArchive::loadZipFile()
+void ZipArchive::loadZipFile()
 {
 	SeekableStream::position_type pos = pkzip_find_disk_trailer(_istream);
 
-	if (pos != 0)
+	if (pos == 0)
 	{
-		zip_disk_trailer disk_trailer;
-
-		_istream.seek(pos);
-
-		istream_read_zip_disk_trailer(_istream, disk_trailer);
-
-		if (!(disk_trailer.z_magic == zip_disk_trailer_magic))
-		{
-			return false;
-		}
-
-		_istream.seek(disk_trailer.z_rootseek);
-
-		for (unsigned int i = 0; i < disk_trailer.z_entries; ++i)
-		{
-			if (!readZipRecord())
-			{
-				return false;
-			}
-		}
-
-		return true;
+		throw ZipFailureException("Unable to locate Zip disk trailer");
 	}
 
-	return false;
+	_istream.seek(pos);
+
+	zip_disk_trailer disk_trailer;
+	istream_read_zip_disk_trailer(_istream, disk_trailer);
+
+	if (disk_trailer.z_magic != zip_disk_trailer_magic)
+	{
+		throw ZipFailureException("Invalid Zip Magic, maybe this is not a zip file?");
+	}
+
+	_istream.seek(disk_trailer.z_rootseek);
+
+	for (unsigned short i = 0; i < disk_trailer.z_entries; ++i)
+	{
+		readZipRecord();
+	}
 }
 
 }
