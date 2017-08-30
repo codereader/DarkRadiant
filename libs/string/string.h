@@ -25,34 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstring>
 
-/// \brief Returns <0 if \p string is lexicographically less than \p other.
-/// Returns >0 if \p string is lexicographically greater than \p other.
-/// Returns 0 if \p string is lexicographically equal to \p other.
-/// O(n)
-inline int string_compare(const char* string, const char* other)
-{
-  return std::strcmp(string, other);
-}
-
-/// \brief Returns true if \p string is lexicographically equal to \p other.
-/// O(n)
-inline bool string_equal(const char* string, const char* other)
-{
-  return string_compare(string, other) == 0;
-}
-
 /// \brief Returns true if [\p string, \p string + \p n) is lexicographically equal to [\p other, \p other + \p n).
 /// O(n)
 inline bool string_equal_n(const char* string, const char* other, std::size_t n)
 {
   return std::strncmp(string, other, n) == 0;
-}
-
-/// \brief Returns true if \p string is lexicographically less than \p other.
-/// O(n)
-inline bool string_less(const char* string, const char* other)
-{
-  return string_compare(string, other) < 0;
 }
 
 /// \brief Returns <0 if \p string is lexicographically less than \p other after converting both to lower-case.
