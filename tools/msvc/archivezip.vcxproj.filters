@@ -16,13 +16,13 @@
     <ClInclude Include="..\..\plugins\archivezip\ZipArchive.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\archivezip\zlibstream.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\archivezip\GenericFileSystem.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\archivezip\ZipStreamUtils.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\archivezip\DeflatedInputStream.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -33,7 +33,7 @@
     <ClCompile Include="..\..\plugins\archivezip\ZipArchive.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\archivezip\zlibstream.cpp">
+    <ClCompile Include="..\..\plugins\archivezip\DeflatedInputStream.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

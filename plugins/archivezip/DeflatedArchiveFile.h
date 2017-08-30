@@ -1,8 +1,8 @@
-#ifndef DEFLATEDARCHIVEFILE_H_
-#define DEFLATEDARCHIVEFILE_H_
+#pragma once
 
 #include "iarchive.h"
 #include "stream/filestream.h"
+#include "DeflatedInputStream.h"
 
 class DeflatedArchiveFile :
 	public ArchiveFile
@@ -10,7 +10,7 @@ class DeflatedArchiveFile :
 	std::string m_name;
 	FileInputStream m_istream;
 	SubFileInputStream m_substream;
-	DeflatedInputStream m_zipstream;
+	archive::DeflatedInputStream m_zipstream;
 	FileInputStream::size_type m_size;
 public:
 	typedef FileInputStream::size_type size_type;
@@ -39,5 +39,3 @@ public:
 		return m_zipstream;
 	}
 };
-
-#endif /*DEFLATEDARCHIVEFILE_H_*/

@@ -4,5 +4,5 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = archivezip.la
 
 archivezip_la_LDFLAGS = -module -avoid-version $(Z_LIBS) $(LIBSIGC_LIBS) $(FILESYSTEM_LIBS)
-archivezip_la_SOURCES = ZipArchive.cpp plugin.cpp zlibstream.cpp
+archivezip_la_SOURCES = ZipArchive.cpp plugin.cpp DeflatedInputStream.cpp
 

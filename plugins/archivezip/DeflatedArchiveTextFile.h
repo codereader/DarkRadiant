@@ -13,8 +13,8 @@ class DeflatedArchiveTextFile :
 	std::string m_name;
 	FileInputStream m_istream;
 	SubFileInputStream m_substream;
-	DeflatedInputStream m_zipstream;
-	BinaryToTextInputStream<DeflatedInputStream> m_textStream;
+	archive::DeflatedInputStream m_zipstream;
+	BinaryToTextInputStream<archive::DeflatedInputStream> m_textStream;
 
     // Mod directory containing this file
     const std::string _modDir;

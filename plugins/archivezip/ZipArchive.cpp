@@ -4,8 +4,8 @@
 #include "itextstream.h"
 #include "iarchive.h"
 #include "archivelib.h"
+#include <zlib.h>
 
-#include "zlibstream.h"
 #include "os/fs.h"
 #include "os/path.h"
 
