@@ -36,6 +36,8 @@
 
 #include "UnixPath.h"
 #include "DirectoryArchive.h"
+#include "DirectoryArchiveFile.h"
+#include "DirectoryArchiveTextFile.h"
 #include "SortedFilenames.h"
 
 Doom3FileSystem::Doom3FileSystem() :
@@ -59,7 +61,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     {
         ArchiveDescriptor entry;
         entry.name = path;
-        entry.archive = DirectoryArchivePtr(new DirectoryArchive(path));
+        entry.archive = std::make_shared<DirectoryArchive>(path);
         entry.is_pakfile = false;
         _archives.push_back(entry);
     }
@@ -184,7 +186,8 @@ ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename) {
 
 ArchiveFilePtr Doom3FileSystem::openFileInAbsolutePath(const std::string& filename)
 {
-    DirectoryArchiveFilePtr file(new DirectoryArchiveFile(filename, filename));
+    std::shared_ptr<archive::DirectoryArchiveFile> file = 
+		std::make_shared<archive::DirectoryArchiveFile>(filename, filename);
 
     if (!file->failed())
     {
@@ -207,7 +210,8 @@ ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename) {
 
 ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string& filename)
 {
-    DirectoryArchiveTextFilePtr file(new DirectoryArchiveTextFile(filename, filename, filename));
+    std::shared_ptr<archive::DirectoryArchiveTextFile> file = 
+		std::make_shared<archive::DirectoryArchiveTextFile>(filename, filename, filename);
 
     if (!file->failed())
     {
@@ -326,7 +330,7 @@ void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::strin
 
         std::string path = os::standardPathWithSlash(filename);
         entry.name = path;
-        entry.archive = DirectoryArchivePtr(new DirectoryArchive(path));
+        entry.archive = std::make_shared<DirectoryArchive>(path);
         entry.is_pakfile = false;
         _archives.push_back(entry);
 
@@ -335,16 +339,19 @@ void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::strin
 }
 
 // RegisterableModule implementation
-const std::string& Doom3FileSystem::getName() const {
+const std::string& Doom3FileSystem::getName() const 
+{
     static std::string _name(MODULE_VIRTUALFILESYSTEM);
     return _name;
 }
 
-const StringSet& Doom3FileSystem::getDependencies() const {
+const StringSet& Doom3FileSystem::getDependencies() const
+{
     static StringSet _dependencies;
 
-    if (_dependencies.empty()) {
-        _dependencies.insert("ArchivePK4");
+    if (_dependencies.empty())
+	{
+        _dependencies.insert(MODULE_ARCHIVE + "PK4");
         _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_GAMEMANAGER);
     }

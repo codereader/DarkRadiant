@@ -1,12 +1,7 @@
 #pragma once
 
-#include "debugging/debugging.h"
-#include "iarchive.h"
 #include "stream/filestream.h"
 #include "stream/textfilestream.h"
-#include "string/string.h"
-#include "os/path.h"
-#include "gamelib.h"
 
 /// \brief A single-byte-reader wrapper around an InputStream.
 /// Optimised for reading one byte at a time.
@@ -80,85 +75,3 @@ public:
     }
   }
 };
-
-/// \brief An ArchiveFile which is stored as a single file on disk.
-class DirectoryArchiveFile :
-	public ArchiveFile
-{
-	std::string m_name;
-	FileInputStream m_istream;
-	FileInputStream::size_type m_size;
-public:
-	typedef FileInputStream::size_type size_type;
-
-	DirectoryArchiveFile(const std::string& name, const std::string& filename) :
-		m_name(name),
-		m_istream(filename)
-	{
-		if (!failed()) {
-			m_istream.seek(0, FileInputStream::end);
-  			m_size = m_istream.tell();
-  			m_istream.seek(0);
-      	}
-		else {
-			m_size = 0;
-		}
-	}
-
-	bool failed() const {
-		return m_istream.failed();
-	}
-
-	size_type size() const {
-		return m_size;
-	}
-
-	const std::string& getName() const {
-		return m_name;
-	}
-
-	InputStream& getInputStream() {
-		return m_istream;
-	}
-};
-typedef std::shared_ptr<DirectoryArchiveFile> DirectoryArchiveFilePtr;
-
-/// \brief An ArchiveTextFile which is stored as a single file on disk.
-class DirectoryArchiveTextFile :
-	public ArchiveTextFile
-{
-	std::string m_name;
-	TextFileInputStream m_inputStream;
-
-    // Mod directory
-    std::string _modDir;
-public:
-
-    DirectoryArchiveTextFile(const std::string& name,
-                             const std::string& modDir,
-                             const std::string& filename)
-    : m_name(name),
-      m_inputStream(filename.c_str()),
-      _modDir(game::current::getModPath(modDir))
-    {}
-
-	bool failed() const {
-		return m_inputStream.failed();
-	}
-
-	const std::string& getName() const {
-		return m_name;
-	}
-
-	TextInputStream& getInputStream() {
-		return m_inputStream;
-	}
-
-    /**
-     * Get mod directory.
-     */
-    std::string getModName() const {
-        return _modDir;
-    }
-};
-typedef std::shared_ptr<DirectoryArchiveTextFile> DirectoryArchiveTextFilePtr;

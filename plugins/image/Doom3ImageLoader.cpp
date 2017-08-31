@@ -13,6 +13,9 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
+#include "os/path.h"
+#include "DirectoryArchiveFile.h"
+
 namespace image
 {
 
@@ -110,9 +113,8 @@ ImagePtr Doom3ImageLoader::imageFromFile(const std::string& filename) const
     ImagePtr image;
 
     // Construct a DirectoryArchiveFile out of the filename
-    DirectoryArchiveFilePtr file(
-        new DirectoryArchiveFile(filename, filename)
-    );
+    std::shared_ptr<archive::DirectoryArchiveFile> file = 
+        std::make_shared<archive::DirectoryArchiveFile>(filename, filename);
 
     if (!file->failed())
     {

@@ -1,5 +1,6 @@
 #include "EClassManager.h"
 
+#include "iarchive.h"
 #include "i18n.h"
 #include "iregistry.h"
 #include "irender.h"

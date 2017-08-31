@@ -151,6 +151,8 @@
     <ClInclude Include="..\..\libs\render\RenderablePivot.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
+    <ClInclude Include="..\..\libs\DirectoryArchiveTextFile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

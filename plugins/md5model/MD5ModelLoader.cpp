@@ -1,5 +1,6 @@
 #include "MD5ModelLoader.h"
 
+#include "iarchive.h"
 #include "imodule.h"
 #include "ishaders.h"
 #include "imodelcache.h"
