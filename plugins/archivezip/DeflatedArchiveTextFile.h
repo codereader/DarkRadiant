@@ -15,8 +15,8 @@ class DeflatedArchiveTextFile :
 {
 private:
 	std::string _name;
-	FileInputStream _istream;
-	SubFileInputStream _substream;	// reads subset of _istream
+	stream::FileInputStream _istream;
+	stream::SubFileInputStream _substream;	// reads subset of _istream
 	DeflatedInputStream _zipstream;	// inflates data from _substream
 	stream::BinaryToTextInputStream<DeflatedInputStream> _textStream; // converts data from _zipstream
 
@@ -24,8 +24,8 @@ private:
     const std::string _modName;
 
 public:
-	typedef FileInputStream::size_type size_type;
-	typedef FileInputStream::position_type position_type;
+	typedef stream::FileInputStream::size_type size_type;
+	typedef stream::FileInputStream::position_type position_type;
 
     /**
      * Constructor.

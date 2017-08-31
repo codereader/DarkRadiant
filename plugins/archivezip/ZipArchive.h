@@ -2,7 +2,7 @@
 
 #include "iarchive.h"
 #include "GenericFileSystem.h"
-#include "stream/filestream.h"
+#include "stream/FileInputStream.h"
 #include <mutex>
 
 namespace archive
@@ -50,7 +50,7 @@ private:
 	ZipFileSystem _filesystem;
 	std::string _fullPath;			// the full path to the Zip file
 	std::string _containingFolder;  // the folder this Zip is located in
-	FileInputStream _istream;
+	stream::FileInputStream _istream;
     std::mutex _streamLock;
 
 public:

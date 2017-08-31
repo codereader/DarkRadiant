@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iarchive.h"
-#include "stream/filestream.h"
+#include "stream/FileInputStream.h"
 
 namespace archive
 {
@@ -12,11 +12,11 @@ class DirectoryArchiveFile :
 {
 private:
 	std::string _name;
-	FileInputStream _istream;
-	FileInputStream::size_type _size;
+	stream::FileInputStream _istream;
+	stream::FileInputStream::size_type _size;
 
 public:
-	typedef FileInputStream::size_type size_type;
+	typedef stream::FileInputStream::size_type size_type;
 
 	DirectoryArchiveFile(const std::string& name, const std::string& filename) :
 		_name(name),
@@ -24,7 +24,7 @@ public:
 	{
 		if (!failed())
 		{
-			_istream.seek(0, FileInputStream::end);
+			_istream.seek(0, stream::FileInputStream::end);
 			_size = _istream.tell();
 			_istream.seek(0);
 		}

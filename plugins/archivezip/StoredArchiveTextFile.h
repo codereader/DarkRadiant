@@ -12,15 +12,15 @@ class StoredArchiveTextFile :
 {
 private:
 	std::string _name;
-	FileInputStream _filestream;
-	SubFileInputStream _substream; // provides a subset of _filestream
-	stream::BinaryToTextInputStream<SubFileInputStream> _textStream; // converts data from _substream
+	stream::FileInputStream _filestream;
+	stream::SubFileInputStream _substream; // provides a subset of _filestream
+	stream::BinaryToTextInputStream<stream::SubFileInputStream> _textStream; // converts data from _substream
 
 	// Mod directory
 	std::string _modName;
 public:
-	typedef FileInputStream::size_type size_type;
-	typedef FileInputStream::position_type position_type;
+	typedef stream::FileInputStream::size_type size_type;
+	typedef stream::FileInputStream::position_type position_type;
 
 	/**
 	* Constructor.

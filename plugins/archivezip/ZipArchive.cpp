@@ -64,7 +64,7 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name)
 	{
 		const std::shared_ptr<ZipRecord>& file = i->second.getRecord();
 
-		FileInputStream::size_type position = 0;
+		stream::FileInputStream::size_type position = 0;
 
 		{
 			// Guard against concurrent access
@@ -202,10 +202,10 @@ void ZipArchive::readZipRecord()
 	std::string path(namelength, '\0');
 
 	_istream.read(
-		reinterpret_cast<FileInputStream::byte_type*>(const_cast<char*>(path.data())),
+		reinterpret_cast<stream::FileInputStream::byte_type*>(const_cast<char*>(path.data())),
 		namelength);
 
-	_istream.seek(extras + comment, FileInputStream::cur);
+	_istream.seek(extras + comment, stream::FileInputStream::cur);
 
 	if (os::isDirectory(path))
 	{

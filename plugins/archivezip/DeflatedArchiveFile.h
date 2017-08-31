@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iarchive.h"
-#include "stream/filestream.h"
+#include "stream/FileInputStream.h"
 #include "DeflatedInputStream.h"
 
 namespace archive
@@ -12,14 +12,14 @@ class DeflatedArchiveFile :
 {
 private:
 	std::string _name;
-	FileInputStream _istream;
-	SubFileInputStream _substream;	// provides a subset of _istream
+	stream::FileInputStream _istream;
+	stream::SubFileInputStream _substream;	// provides a subset of _istream
 	DeflatedInputStream _zipstream; // inflates data from _subStream
-	FileInputStream::size_type _size;
+	stream::FileInputStream::size_type _size;
 
 public:
-	typedef FileInputStream::size_type size_type;
-	typedef FileInputStream::position_type position_type;
+	typedef stream::FileInputStream::size_type size_type;
+	typedef stream::FileInputStream::position_type position_type;
 
 	DeflatedArchiveFile(const std::string& name,
 						const std::string& archiveName, // path to the ZIP file

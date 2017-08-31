@@ -11,13 +11,13 @@ class StoredArchiveFile :
 {
 private:
 	std::string _name;
-	FileInputStream _filestream;
-	SubFileInputStream _substream;	// provides a subset of _filestream
-	FileInputStream::size_type _size;
+	stream::FileInputStream _filestream;
+	stream::SubFileInputStream _substream;	// provides a subset of _filestream
+	stream::FileInputStream::size_type _size;
 
 public:
-	typedef FileInputStream::size_type size_type;
-	typedef FileInputStream::position_type position_type;
+	typedef stream::FileInputStream::size_type size_type;
+	typedef stream::FileInputStream::position_type position_type;
 
 	StoredArchiveFile(const std::string& name,
 					  const std::string& archiveName, // full path to the archive file
