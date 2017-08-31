@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "iarchive.h"
 #include "archivelib.h"
+#include "gamelib.h"
 #include <zlib.h>
 
 #include "os/fs.h"
@@ -12,6 +13,8 @@
 #include "ZipStreamUtils.h"
 #include "DeflatedArchiveFile.h"
 #include "DeflatedArchiveTextFile.h"
+#include "StoreArchiveFile.h"
+#include "StoredArchiveTextFile.h"
 
 namespace archive
 {
@@ -118,21 +121,15 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 			}
 		}
 
+		std::string modDir = game::current::getModPath(_containingFolder);
+
 		switch (file->mode)
 		{
 		case ZipRecord::eStored:
-			return std::make_shared<StoredArchiveTextFile>(name,
-				_fullPath,
-				_containingFolder,
-				_istream.tell(),
-				file->stream_size);
+			return std::make_shared<StoredArchiveTextFile>(name, _fullPath, modDir, _istream.tell(), file->stream_size);
 
 		case ZipRecord::eDeflated:
-			return std::make_shared<DeflatedArchiveTextFile>(name,
-				_fullPath,
-				_containingFolder,
-				_istream.tell(),
-				file->stream_size);
+			return std::make_shared<DeflatedArchiveTextFile>(name, _fullPath, modDir, _istream.tell(), file->stream_size);
 		}
 	}
 
