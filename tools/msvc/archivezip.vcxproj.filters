@@ -25,10 +25,10 @@
     <ClInclude Include="..\..\plugins\archivezip\DeflatedInputStream.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\archivezip\StoreArchiveFile.h">
+    <ClInclude Include="..\..\plugins\archivezip\StoredArchiveTextFile.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\archivezip\StoredArchiveTextFile.h">
+    <ClInclude Include="..\..\plugins\archivezip\StoredArchiveFile.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

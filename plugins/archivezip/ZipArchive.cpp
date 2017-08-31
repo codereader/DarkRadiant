@@ -12,7 +12,7 @@
 #include "ZipStreamUtils.h"
 #include "DeflatedArchiveFile.h"
 #include "DeflatedArchiveTextFile.h"
-#include "StoreArchiveFile.h"
+#include "StoredArchiveFile.h"
 #include "StoredArchiveTextFile.h"
 
 namespace archive
@@ -104,20 +104,18 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 	{
 		const std::shared_ptr<ZipRecord>& file = i->second.getRecord();
 
+		// Guard against concurrent access
+		std::lock_guard<std::mutex> lock(_streamLock);
+
+		_istream.seek(file->position);
+
+		ZipFileHeader header;
+		stream::readZipFileHeader(_istream, header);
+
+		if (header.magic != ZIP_MAGIC_FILE_HEADER)
 		{
-			// Guard against concurrent access
-			std::lock_guard<std::mutex> lock(_streamLock);
-
-			_istream.seek(file->position);
-
-			ZipFileHeader header;
-			stream::readZipFileHeader(_istream, header);
-
-			if (header.magic != ZIP_MAGIC_FILE_HEADER)
-			{
-				rError() << "Error reading zip file " << _fullPath << std::endl;
-				return ArchiveTextFilePtr();
-			}
+			rError() << "Error reading zip file " << _fullPath << std::endl;
+			return ArchiveTextFilePtr();
 		}
 
 		std::string modDir = game::current::getModPath(_containingFolder);

@@ -311,7 +311,7 @@
     <ClInclude Include="..\..\plugins\archivezip\DeflatedArchiveTextFile.h" />
     <ClInclude Include="..\..\plugins\archivezip\DeflatedInputStream.h" />
     <ClInclude Include="..\..\plugins\archivezip\GenericFileSystem.h" />
-    <ClInclude Include="..\..\plugins\archivezip\StoreArchiveFile.h" />
+    <ClInclude Include="..\..\plugins\archivezip\StoredArchiveFile.h" />
     <ClInclude Include="..\..\plugins\archivezip\StoredArchiveTextFile.h" />
     <ClInclude Include="..\..\plugins\archivezip\ZipArchive.h" />
     <ClInclude Include="..\..\plugins\archivezip\ZipStreamUtils.h" />
