@@ -44,7 +44,7 @@ class Flip10 {}; // horizontal flip only
 class Flip11 {}; // both
 
 template<typename PixelDecoder>
-void image_decode(PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip00&)
+void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip00&)
 {
   RGBAPixel* end = image.pixels + (image.height * image.width);
   for(RGBAPixel* row = end; row != image.pixels; row -= image.width)
@@ -57,7 +57,7 @@ void image_decode(PointerInputStream& istream, PixelDecoder& decode, RGBAImage& 
 }
 
 template<typename PixelDecoder>
-void image_decode(PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip01&)
+void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip01&)
 {
   RGBAPixel* end = image.pixels + (image.height * image.width);
   for(RGBAPixel* row = image.pixels; row != end; row += image.width)
@@ -70,7 +70,7 @@ void image_decode(PointerInputStream& istream, PixelDecoder& decode, RGBAImage& 
 }
 
 template<typename PixelDecoder>
-void image_decode(PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip10&)
+void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip10&)
 {
   RGBAPixel* end = image.pixels + (image.height * image.width);
   for(RGBAPixel* row = end; row != image.pixels; row -= image.width)
@@ -83,7 +83,7 @@ void image_decode(PointerInputStream& istream, PixelDecoder& decode, RGBAImage& 
 }
 
 template<typename PixelDecoder>
-void image_decode(PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip11&)
+void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip11&)
 {
   RGBAPixel* end = image.pixels + (image.height * image.width);
   for(RGBAPixel* row = image.pixels; row != end; row += image.width)
@@ -95,14 +95,14 @@ void image_decode(PointerInputStream& istream, PixelDecoder& decode, RGBAImage& 
   }
 }
 
-inline void istream_read_gray(PointerInputStream& istream, RGBAPixel& pixel)
+inline void istream_read_gray(stream::PointerInputStream& istream, RGBAPixel& pixel)
 {
   istream.read(&pixel.blue, 1);
   pixel.red = pixel.green = pixel.blue;
   pixel.alpha = 0xff;
 }
 
-inline void istream_read_rgb(PointerInputStream& istream, RGBAPixel& pixel)
+inline void istream_read_rgb(stream::PointerInputStream& istream, RGBAPixel& pixel)
 {
   istream.read(&pixel.blue, 1);
   istream.read(&pixel.green, 1);
@@ -110,7 +110,7 @@ inline void istream_read_rgb(PointerInputStream& istream, RGBAPixel& pixel)
   pixel.alpha = 0xff;
 }
 
-inline void istream_read_rgba(PointerInputStream& istream, RGBAPixel& pixel)
+inline void istream_read_rgba(stream::PointerInputStream& istream, RGBAPixel& pixel)
 {
   istream.read(&pixel.blue, 1);
   istream.read(&pixel.green, 1);
@@ -121,14 +121,14 @@ inline void istream_read_rgba(PointerInputStream& istream, RGBAPixel& pixel)
 class TargaDecodeGrayPixel
 {
 public:
-  void operator()(PointerInputStream& istream, RGBAPixel& pixel)
+  void operator()(stream::PointerInputStream& istream, RGBAPixel& pixel)
   {
     istream_read_gray(istream, pixel);
   }
 };
 
 template<typename Flip>
-void targa_decode_grayscale(PointerInputStream& istream, RGBAImage& image, const Flip& flip)
+void targa_decode_grayscale(stream::PointerInputStream& istream, RGBAImage& image, const Flip& flip)
 {
   TargaDecodeGrayPixel decode;
   image_decode(istream, decode, image, flip);
@@ -137,14 +137,14 @@ void targa_decode_grayscale(PointerInputStream& istream, RGBAImage& image, const
 class TargaDecodeRGBPixel
 {
 public:
-  void operator()(PointerInputStream& istream, RGBAPixel& pixel)
+  void operator()(stream::PointerInputStream& istream, RGBAPixel& pixel)
   {
     istream_read_rgb(istream, pixel);
   }
 };
 
 template<typename Flip>
-void targa_decode_rgb(PointerInputStream& istream, RGBAImage& image, const Flip& flip)
+void targa_decode_rgb(stream::PointerInputStream& istream, RGBAImage& image, const Flip& flip)
 {
   TargaDecodeRGBPixel decode;
   image_decode(istream, decode, image, flip);
@@ -153,14 +153,14 @@ void targa_decode_rgb(PointerInputStream& istream, RGBAImage& image, const Flip&
 class TargaDecodeRGBAPixel
 {
 public:
-  void operator()(PointerInputStream& istream, RGBAPixel& pixel)
+  void operator()(stream::PointerInputStream& istream, RGBAPixel& pixel)
   {
     istream_read_rgba(istream, pixel);
   }
 };
 
 template<typename Flip>
-void targa_decode_rgba(PointerInputStream& istream, RGBAImage& image, const Flip& flip)
+void targa_decode_rgba(stream::PointerInputStream& istream, RGBAImage& image, const Flip& flip)
 {
   TargaDecodeRGBAPixel decode;
   image_decode(istream, decode, image, flip);
@@ -169,7 +169,7 @@ void targa_decode_rgba(PointerInputStream& istream, RGBAImage& image, const Flip
 typedef byte TargaPacket;
 typedef byte TargaPacketSize;
 
-inline void targa_packet_read_istream(TargaPacket& packet, PointerInputStream& istream)
+inline void targa_packet_read_istream(TargaPacket& packet, stream::PointerInputStream& istream)
 {
   istream.read(&packet, 1);
 }
@@ -194,7 +194,7 @@ public:
   TargaDecodeRGBPixelRLE() : m_packetSize(0)
   {
   }
-  void operator()(PointerInputStream& istream, RGBAPixel& pixel)
+  void operator()(stream::PointerInputStream& istream, RGBAPixel& pixel)
   {
     if(m_packetSize == 0)
     {
@@ -221,7 +221,7 @@ public:
 };
 
 template<typename Flip>
-void targa_decode_rle_rgb(PointerInputStream& istream, RGBAImage& image, const Flip& flip)
+void targa_decode_rle_rgb(stream::PointerInputStream& istream, RGBAImage& image, const Flip& flip)
 {
 	TargaDecodeRGBPixelRLE decode;
   image_decode(istream, decode, image, flip);
@@ -236,7 +236,7 @@ public:
   TargaDecodeRGBAPixelRLE() : m_packetSize(0)
   {
   }
-  void operator()(PointerInputStream& istream, RGBAPixel& pixel)
+  void operator()(stream::PointerInputStream& istream, RGBAPixel& pixel)
   {
     if(m_packetSize == 0)
     {
@@ -263,7 +263,7 @@ public:
 };
 
 template<typename Flip>
-void targa_decode_rle_rgba(PointerInputStream& istream, RGBAImage& image, const Flip& flip)
+void targa_decode_rle_rgba(stream::PointerInputStream& istream, RGBAImage& image, const Flip& flip)
 {
 	TargaDecodeRGBAPixelRLE decode;
   image_decode(istream, decode, image, flip);
@@ -278,7 +278,7 @@ struct TargaHeader
   unsigned char pixel_size, attributes;
 };
 
-inline void targa_header_read_istream(TargaHeader& targa_header, PointerInputStream& istream)
+inline void targa_header_read_istream(TargaHeader& targa_header, stream::PointerInputStream& istream)
 {
   targa_header.id_length = istream_read_byte(istream);
   targa_header.colormap_type = istream_read_byte(istream);
@@ -319,7 +319,7 @@ public:
 };
 
 template<typename Flip>
-RGBAImagePtr Targa_decodeImageData(const TargaHeader& targa_header, PointerInputStream& istream, const Flip& flip)
+RGBAImagePtr Targa_decodeImageData(const TargaHeader& targa_header, stream::PointerInputStream& istream, const Flip& flip)
 {
   RGBAImagePtr image (new RGBAImage(targa_header.width, targa_header.height));
 
@@ -365,7 +365,7 @@ const unsigned int TGA_FLIP_VERTICAL = 0x20;
 
 RGBAImagePtr LoadTGABuff(const byte* buffer)
 {
-  PointerInputStream istream(buffer);
+	stream::PointerInputStream istream(buffer);
   TargaHeader targa_header;
 
   targa_header_read_istream(targa_header, istream);
@@ -419,7 +419,7 @@ RGBAImagePtr LoadTGABuff(const byte* buffer)
 
 ImagePtr TGALoader::load(ArchiveFile& file) const
 {
-    ScopedArchiveBuffer buffer(file);
+    archive::ScopedArchiveBuffer buffer(file);
     return LoadTGABuff(buffer.buffer);
 }
 

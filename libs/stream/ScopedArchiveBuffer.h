@@ -4,6 +4,9 @@
 #include "iarchive.h"
 #include <memory>
 
+namespace archive
+{
+
 /**
  * Scoped class reading all the data from the attached
  * ArchiveFile into a single memory chunk. Clients usually 
@@ -27,3 +30,5 @@ public:
 		data[file.size()] = 0;
 	}
 };
+
+}

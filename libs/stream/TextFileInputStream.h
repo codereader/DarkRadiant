@@ -28,7 +28,7 @@ public:
 		return _file == 0;
 	}
 
-	std::size_t read(char* buffer, std::size_t length)
+	std::size_t read(char* buffer, std::size_t length) override
 	{
 		return fread(buffer, 1, length, _file);
 	}
@@ -36,7 +36,7 @@ public:
 	// greebo: Override default std::streambuf::seekoff() method to provide buffer positioning capabilities
 	virtual std::streampos seekoff(std::streamoff off,
 								   std::ios_base::seekdir way,
-								   std::ios_base::openmode which = std::ios_base::in | std::ios_base::out)
+								   std::ios_base::openmode which = std::ios_base::in | std::ios_base::out) override
 	{
 		if (way == std::ios_base::beg)
 		{

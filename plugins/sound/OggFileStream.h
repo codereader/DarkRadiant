@@ -14,11 +14,11 @@ namespace sound {
 
 class OggFileStream
 {
-	ScopedArchiveBuffer& _source;
+	archive::ScopedArchiveBuffer& _source;
 
 	unsigned char* _curPtr;
 public:
-	OggFileStream(ScopedArchiveBuffer& source) :
+	OggFileStream(archive::ScopedArchiveBuffer& source) :
 		_source(source)
 	{
 		// Set the pointer to the beginning of the buffer

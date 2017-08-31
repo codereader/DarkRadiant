@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iarchive.h"
-#include "stream/textfilestream.h"
+#include "stream/TextFileInputStream.h"
 
 namespace archive
 {

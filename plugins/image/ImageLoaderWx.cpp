@@ -63,7 +63,7 @@ ImageLoaderWx::ImageLoaderWx()
 
 ImagePtr ImageLoaderWx::load(ArchiveFile& file) const
 {
-    ScopedArchiveBuffer buffer(file);
+    archive::ScopedArchiveBuffer buffer(file);
 
     // Construct a wxImage from the memory buffer
     wxMemoryInputStream inputStream(buffer.buffer, buffer.length);

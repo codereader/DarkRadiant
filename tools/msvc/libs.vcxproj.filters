@@ -111,9 +111,6 @@
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\stream\textfilestream.h">
-      <Filter>stream</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h">
       <Filter>stream</Filter>
     </ClInclude>
@@ -153,6 +150,9 @@
       <Filter>stream</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\stream\FileInputStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\stream\TextFileInputStream.h">
       <Filter>stream</Filter>
     </ClInclude>
   </ItemGroup>
