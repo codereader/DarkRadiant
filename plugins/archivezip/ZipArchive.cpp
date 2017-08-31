@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include "itextstream.h"
 #include "iarchive.h"
-#include "archivelib.h"
 #include "gamelib.h"
 #include <zlib.h>
 

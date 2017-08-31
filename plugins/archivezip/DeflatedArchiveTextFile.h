@@ -2,7 +2,7 @@
 
 #include "iarchive.h"
 #include "iregistry.h"
-#include "archivelib.h"
+#include "stream/BinaryToTextInputStream.h"
 
 namespace archive
 {
@@ -18,7 +18,7 @@ private:
 	FileInputStream _istream;
 	SubFileInputStream _substream;	// reads subset of _istream
 	DeflatedInputStream _zipstream;	// inflates data from _substream
-	BinaryToTextInputStream<DeflatedInputStream> _textStream; // converts data from _zipstream
+	stream::BinaryToTextInputStream<DeflatedInputStream> _textStream; // converts data from _zipstream
 
     // Mod directory containing this file
     const std::string _modName;

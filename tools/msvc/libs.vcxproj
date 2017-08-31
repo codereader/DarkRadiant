@@ -138,7 +138,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libs\archivelib.h" />
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
     <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
     <ClInclude Include="..\..\libs\bytestreamutils.h" />
@@ -194,6 +193,7 @@
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />
     <ClInclude Include="..\..\libs\shaderlib.h" />
+    <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h" />
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />
     <ClInclude Include="..\..\libs\stream\filestream.h" />
     <ClInclude Include="..\..\libs\stream\PointerInputStream.h" />

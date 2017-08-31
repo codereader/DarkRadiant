@@ -12,7 +12,6 @@
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\texturelib.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
-    <ClInclude Include="..\..\libs\archivelib.h" />
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
     <ClInclude Include="..\..\libs\bytestreamutils.h" />
     <ClInclude Include="..\..\libs\character.h" />
@@ -153,6 +152,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
     <ClInclude Include="..\..\libs\DirectoryArchiveTextFile.h" />
+    <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

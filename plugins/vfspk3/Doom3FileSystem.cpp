@@ -26,7 +26,6 @@
 #include "string/string.h"
 #include "os/path.h"
 #include "os/dir.h"
-#include "archivelib.h"
 #include "moduleobservers.h"
 
 #include <boost/algorithm/string/case_conv.hpp>

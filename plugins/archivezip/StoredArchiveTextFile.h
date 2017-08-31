@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iarchive.h"
-#include "archivelib.h"
+#include "stream/BinaryToTextInputStream.h"
 
 namespace archive
 {
@@ -14,7 +14,7 @@ private:
 	std::string _name;
 	FileInputStream _filestream;
 	SubFileInputStream _substream; // provides a subset of _filestream
-	BinaryToTextInputStream<SubFileInputStream> _textStream; // converts data from _substream
+	stream::BinaryToTextInputStream<SubFileInputStream> _textStream; // converts data from _substream
 
 	// Mod directory
 	std::string _modName;

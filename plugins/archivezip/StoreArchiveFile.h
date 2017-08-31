@@ -1,7 +1,6 @@
 #pragma once
 
 #include "iarchive.h"
-#include "archivelib.h"
 
 namespace archive
 {

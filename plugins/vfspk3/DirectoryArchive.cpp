@@ -1,6 +1,5 @@
 #include "DirectoryArchive.h"
 
-#include "archivelib.h"
 #include "gamelib.h"
 #include "UnixPath.h"
 #include "os/file.h"

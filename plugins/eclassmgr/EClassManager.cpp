@@ -10,7 +10,6 @@
 #include "iradiant.h"
 #include "iuimanager.h"
 #include "ifilesystem.h"
-#include "archivelib.h"
 #include "parser/DefTokeniser.h"
 
 #include "Doom3EntityClass.h"
