@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 aclocal -I m4
 # Use the glibtoolize command in OSX
 case "$OSTYPE" in
