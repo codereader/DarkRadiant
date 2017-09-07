@@ -280,17 +280,19 @@ struct TargaHeader
 
 inline void targa_header_read_istream(TargaHeader& targa_header, stream::PointerInputStream& istream)
 {
+	static_assert(sizeof(unsigned short) == sizeof(uint16_t), "TGA Loader Code relies on unsigned short being 16 bits wide!");
+
   targa_header.id_length = istream_read_byte(istream);
   targa_header.colormap_type = istream_read_byte(istream);
   targa_header.image_type = istream_read_byte(istream);
 
-  targa_header.colormap_index = istream_read_int16_le(istream);
-  targa_header.colormap_length = istream_read_int16_le(istream);
+  targa_header.colormap_index = stream::readLittleEndian<uint16_t>(istream);
+  targa_header.colormap_length = stream::readLittleEndian<uint16_t>(istream);
   targa_header.colormap_size = istream_read_byte(istream);
-  targa_header.x_origin = istream_read_int16_le(istream);
-  targa_header.y_origin = istream_read_int16_le(istream);
-  targa_header.width = istream_read_int16_le(istream);
-  targa_header.height = istream_read_int16_le(istream);
+  targa_header.x_origin = stream::readLittleEndian<uint16_t>(istream);
+  targa_header.y_origin = stream::readLittleEndian<uint16_t>(istream);
+  targa_header.width = stream::readLittleEndian<uint16_t>(istream);
+  targa_header.height = stream::readLittleEndian<uint16_t>(istream);
   targa_header.pixel_size = istream_read_byte(istream);
   targa_header.attributes = istream_read_byte(istream);
 
