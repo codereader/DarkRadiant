@@ -241,6 +241,8 @@ then
         AC_SUBST([PYBIND11_CPPFLAGS])
         AC_SUBST([SYSTEM_HAS_PYBIND11]) # Used by Makefile.am in plugins/script/
     fi
+else
+    AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [false])
 fi
 
 # dynamic link library
