@@ -32,7 +32,7 @@ typedef unsigned char byte;
 #include "stream/ScopedArchiveBuffer.h"
 #include "stream/PointerInputStream.h"
 #include "RGBAImage.h"
-#include "bytestreamutils.h"
+#include "stream/utils.h"
 
 namespace image
 {

@@ -140,7 +140,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
     <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
-    <ClInclude Include="..\..\libs\bytestreamutils.h" />
     <ClInclude Include="..\..\libs\character.h" />
     <ClInclude Include="..\..\libs\debugging\debugging.h" />
     <ClInclude Include="..\..\libs\debugging\render.h" />
@@ -199,6 +198,7 @@
     <ClInclude Include="..\..\libs\stream\PointerInputStream.h" />
     <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h" />
     <ClInclude Include="..\..\libs\stream\TextFileInputStream.h" />
+    <ClInclude Include="..\..\libs\stream\utils.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />
     <ClInclude Include="..\..\libs\string\string.h" />
     <ClInclude Include="..\..\libs\SurfaceShader.h" />

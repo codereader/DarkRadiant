@@ -1,6 +1,6 @@
 #include "Lwo2Chunk.h"
 
-#include "bytestreamutils.h"
+#include "stream/utils.h"
 
 namespace model
 {

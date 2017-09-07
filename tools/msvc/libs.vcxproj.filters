@@ -13,7 +13,6 @@
     <ClInclude Include="..\..\libs\texturelib.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
-    <ClInclude Include="..\..\libs\bytestreamutils.h" />
     <ClInclude Include="..\..\libs\character.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
@@ -153,6 +152,9 @@
       <Filter>stream</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\stream\TextFileInputStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\stream\utils.h">
       <Filter>stream</Filter>
     </ClInclude>
   </ItemGroup>

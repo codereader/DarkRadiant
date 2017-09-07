@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bytestreamutils.h"
+#include "stream/utils.h"
 #include "idatastream.h"
 #include <algorithm>
 
