@@ -282,19 +282,19 @@ inline void targa_header_read_istream(TargaHeader& targa_header, stream::Pointer
 {
 	static_assert(sizeof(unsigned short) == sizeof(uint16_t), "TGA Loader Code relies on unsigned short being 16 bits wide!");
 
-  targa_header.id_length = istream_read_byte(istream);
-  targa_header.colormap_type = istream_read_byte(istream);
-  targa_header.image_type = istream_read_byte(istream);
+	targa_header.id_length = stream::readByte(istream);
+	targa_header.colormap_type = stream::readByte(istream);
+	targa_header.image_type = stream::readByte(istream);
 
-  targa_header.colormap_index = stream::readLittleEndian<uint16_t>(istream);
-  targa_header.colormap_length = stream::readLittleEndian<uint16_t>(istream);
-  targa_header.colormap_size = istream_read_byte(istream);
-  targa_header.x_origin = stream::readLittleEndian<uint16_t>(istream);
-  targa_header.y_origin = stream::readLittleEndian<uint16_t>(istream);
-  targa_header.width = stream::readLittleEndian<uint16_t>(istream);
-  targa_header.height = stream::readLittleEndian<uint16_t>(istream);
-  targa_header.pixel_size = istream_read_byte(istream);
-  targa_header.attributes = istream_read_byte(istream);
+	targa_header.colormap_index = stream::readLittleEndian<uint16_t>(istream);
+	targa_header.colormap_length = stream::readLittleEndian<uint16_t>(istream);
+	targa_header.colormap_size = stream::readByte(istream);
+	targa_header.x_origin = stream::readLittleEndian<uint16_t>(istream);
+	targa_header.y_origin = stream::readLittleEndian<uint16_t>(istream);
+	targa_header.width = stream::readLittleEndian<uint16_t>(istream);
+	targa_header.height = stream::readLittleEndian<uint16_t>(istream);
+	targa_header.pixel_size = stream::readByte(istream);
+	targa_header.attributes = stream::readByte(istream);
 
   if (targa_header.id_length != 0)
     istream.seek(targa_header.id_length);	// skip TARGA image comment
