@@ -13,6 +13,8 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 #include "selectionlib.h"
 #include "os/path.h"
