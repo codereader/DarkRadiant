@@ -384,6 +384,8 @@
 		3AE6F1C51F4975D9008A1B2D /* SelectionGroupInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */; };
 		3AE6F1C61F4975D9008A1B2D /* SelectionGroupInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */; };
 		3AE6F1C71F4978AB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
+		3AE6F1D61F63D43D008A1B2D /* WavefrontExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */; };
+		3AE6F1D71F63D43D008A1B2D /* WavefrontExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */; };
 		3AEBDC841E5067300062D9AF /* pkzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC781E50669C0062D9AF /* pkzip.cpp */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
@@ -3028,6 +3030,8 @@
 		3AE6F1C11F4975D9008A1B2D /* SceneGraphInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneGraphInterface.cpp; path = ../../plugins/script/interfaces/SceneGraphInterface.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionGroupInterface.cpp; path = ../../plugins/script/interfaces/SelectionGroupInterface.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionGroupInterface.h; path = ../../plugins/script/interfaces/SelectionGroupInterface.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WavefrontExporter.cpp; path = ../../plugins/model/WavefrontExporter.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WavefrontExporter.h; path = ../../plugins/model/WavefrontExporter.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
@@ -5843,6 +5847,8 @@
 		3AEBE0351E50D0400062D9AF /* model */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */,
+				3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */,
 				3AE6F1381F496A54008A1B2D /* ModelExporterBase.h */,
 				3AE6F1301F496A44008A1B2D /* Lwo2Chunk.cpp */,
 				3AE6F1311F496A44008A1B2D /* Lwo2Chunk.h */,
@@ -8180,6 +8186,7 @@
 				3AEBE4DF1E50F0D20062D9AF /* PicoModelNode.h in Headers */,
 				3AEBE4DD1E50F0D20062D9AF /* PicoModelModule.h in Headers */,
 				3AEBE4DA1E50F0C50062D9AF /* AseExporter.h in Headers */,
+				3AE6F1D71F63D43D008A1B2D /* WavefrontExporter.h in Headers */,
 				3AEBE4DC1E50F0D20062D9AF /* PicoModelLoader.h in Headers */,
 				3AE6F1351F496A44008A1B2D /* Lwo2Chunk.h in Headers */,
 				3AEBE0461E50D25E0062D9AF /* RenderablePicoSurface.h in Headers */,
@@ -9753,6 +9760,7 @@
 				3AEBE4D91E50F0C50062D9AF /* AseExporter.cpp in Sources */,
 				3AEBE4DE1E50F0D20062D9AF /* PicoModelNode.cpp in Sources */,
 				3AEBE0431E50D25E0062D9AF /* RenderablePicoModel.cpp in Sources */,
+				3AE6F1D61F63D43D008A1B2D /* WavefrontExporter.cpp in Sources */,
 				3AE6F1361F496A44008A1B2D /* Lwo2Exporter.cpp in Sources */,
 				3AEBE4DB1E50F0D20062D9AF /* PicoModelLoader.cpp in Sources */,
 			);
