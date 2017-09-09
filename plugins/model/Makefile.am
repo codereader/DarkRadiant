@@ -11,6 +11,7 @@ model_la_LIBADD = $(top_builddir)/libs/picomodel/libpicomodel.la \
 model_la_SOURCES = AseExporter.cpp \
                    Lwo2Chunk.cpp \
                    Lwo2Exporter.cpp \
+				   WavefrontExporter.cpp \
                    PicoModelNode.cpp \
                    RenderablePicoModel.cpp \
                    PicoModelLoader.cpp \

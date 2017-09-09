@@ -145,6 +145,9 @@ void ExportAsModelDialog::populateWindow()
 		keepOriginBox->Enable(false);
 	}
 
+	// Check if options are available for the current format
+	handleFormatSelectionChange();
+
 	Layout();
 	Fit();
 	CenterOnScreen();
@@ -191,7 +194,7 @@ void ExportAsModelDialog::onCancel(wxCommandEvent& ev)
 	EndModal(wxID_CANCEL);
 }
 
-void ExportAsModelDialog::onFormatSelection(wxCommandEvent& ev)
+void ExportAsModelDialog::handleFormatSelectionChange()
 {
 	std::string selectedFormat = wxutil::ChoiceHelper::GetSelectedStoredString(
 		findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
@@ -199,7 +202,31 @@ void ExportAsModelDialog::onFormatSelection(wxCommandEvent& ev)
 	if (!selectedFormat.empty())
 	{
 		findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->setDefaultExtension(selectedFormat);
+
+		std::string extLower = boost::algorithm::to_lower_copy(selectedFormat);
+
+		// Check if the replace current selection option is available
+		std::string extensions = GlobalGameManager().currentGame()->getKeyValue("modeltypes");
+		std::set<std::string> supportedExtensions;
+		boost::algorithm::split(supportedExtensions, extensions, boost::algorithm::is_any_of(" "));
+
+		wxCheckBox* replaceSelectionBox = findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel");
+
+		// If the current game supports the format, make the option available
+		bool formatSupportedByCurrentGame = supportedExtensions.find(extLower) != supportedExtensions.end();
+
+		replaceSelectionBox->Enable(formatSupportedByCurrentGame);
+
+		if (!formatSupportedByCurrentGame)
+		{
+			replaceSelectionBox->SetValue(false);
+		}
 	}
+}
+
+void ExportAsModelDialog::onFormatSelection(wxCommandEvent& ev)
+{
+	handleFormatSelectionChange();
 }
 
 bool ExportAsModelDialog::_onDeleteEvent()

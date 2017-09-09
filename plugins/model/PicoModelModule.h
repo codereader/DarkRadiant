@@ -12,6 +12,7 @@
 #include "PicoModelLoader.h"
 #include "AseExporter.h"
 #include "Lwo2Exporter.h"
+#include "WavefrontExporter.h"
 
 typedef unsigned char byte;
 
@@ -113,6 +114,7 @@ public:
 
 		GlobalModelFormatManager().registerExporter(std::make_shared<AseExporter>());
 		GlobalModelFormatManager().registerExporter(std::make_shared<Lwo2Exporter>());
+		GlobalModelFormatManager().registerExporter(std::make_shared<WavefrontExporter>());
 	}
 };
 
