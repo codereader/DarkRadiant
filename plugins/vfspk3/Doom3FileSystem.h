@@ -41,9 +41,6 @@ public:
     ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) override;
     ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) override;
 
-	std::size_t loadFile(const std::string& filename, void **buffer) override;
-	void freeFile(void *p) override;
-
 	// Call the specified callback function for each file matching extension
 	// inside basedir.
     void forEachFile(const std::string& basedir, const std::string& extension,

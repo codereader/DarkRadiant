@@ -220,34 +220,6 @@ ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string
     return ArchiveTextFilePtr();
 }
 
-std::size_t Doom3FileSystem::loadFile(const std::string& filename, void **buffer) {
-    std::string fixedFilename(os::standardPathWithSlash(filename));
-
-    ArchiveFilePtr file = openFile(fixedFilename);
-
-    if (file != NULL) {
-        // Allocate one byte more for the trailing zero
-        *buffer = malloc(file->size()+1);
-
-        // we need to end the buffer with a 0
-        ((char*) (*buffer))[file->size()] = 0;
-
-        std::size_t length = file->getInputStream().read(
-            reinterpret_cast<InputStream::byte_type*>(*buffer),
-            file->size()
-        );
-
-        return length;
-    }
-
-    *buffer = NULL;
-    return 0;
-}
-
-void Doom3FileSystem::freeFile(void *p) {
-    free(p);
-}
-
 void Doom3FileSystem::forEachFile(const std::string& basedir,
                                   const std::string& extension,
                                   const VisitorFunc& visitorFunc,

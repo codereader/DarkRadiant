@@ -1,10 +1,13 @@
 #pragma once
 
+#include "idatastream.h"
+#include "iarchive.h"
 #include "imodule.h"
 #include "imodel.h"
 #include "itextstream.h"
 #include "ifilesystem.h"
 
+#include "os/path.h"
 #include <stdio.h>
 #include "picomodel.h"
 
@@ -13,47 +16,6 @@
 #include "AseExporter.h"
 #include "Lwo2Exporter.h"
 #include "WavefrontExporter.h"
-
-typedef unsigned char byte;
-
-void PicoPrintFunc(int level, const char *str)
-{
-	if (str == 0)
-		return;
-
-	switch (level)
-	{
-	case PICO_NORMAL:
-		rMessage() << str << std::endl;
-		break;
-
-	case PICO_VERBOSE:
-		//rMessage() << "PICO_VERBOSE: " << str << std::endl;
-		break;
-
-	case PICO_WARNING:
-		rError() << "PICO_WARNING: " << str << std::endl;
-		break;
-
-	case PICO_ERROR:
-		rError() << "PICO_ERROR: " << str << std::endl;
-		break;
-
-	case PICO_FATAL:
-		rError() << "PICO_FATAL: " << str << std::endl;
-		break;
-	}
-}
-
-void PicoLoadFileFunc(char *name, byte **buffer, int *bufSize)
-{
-	*bufSize = static_cast<int>(GlobalFileSystem().loadFile(name, (void**)buffer));
-}
-
-void PicoFreeFileFunc(void* file)
-{
-	GlobalFileSystem().freeFile(file);
-}
 
 namespace model
 {
@@ -115,6 +77,66 @@ public:
 		GlobalModelFormatManager().registerExporter(std::make_shared<AseExporter>());
 		GlobalModelFormatManager().registerExporter(std::make_shared<Lwo2Exporter>());
 		GlobalModelFormatManager().registerExporter(std::make_shared<WavefrontExporter>());
+	}
+
+private:
+
+	static void PicoPrintFunc(int level, const char *str)
+	{
+		if (str == nullptr) return;
+
+		switch (level)
+		{
+		case PICO_NORMAL:
+			rMessage() << str << std::endl;
+			break;
+
+		case PICO_VERBOSE:
+			//rMessage() << "PICO_VERBOSE: " << str << std::endl;
+			break;
+
+		case PICO_WARNING:
+			rError() << "PICO_WARNING: " << str << std::endl;
+			break;
+
+		case PICO_ERROR:
+			rError() << "PICO_ERROR: " << str << std::endl;
+			break;
+
+		case PICO_FATAL:
+			rError() << "PICO_FATAL: " << str << std::endl;
+			break;
+		}
+	}
+
+	static void PicoLoadFileFunc(char *name, unsigned char** buffer, int *bufSize)
+	{
+		std::string fixedFilename(os::standardPathWithSlash(name));
+
+		ArchiveFilePtr file = GlobalFileSystem().openFile(fixedFilename);
+
+		if (!file)
+		{
+			*buffer = nullptr;
+			*bufSize = 0;
+			return;
+		}
+
+		// Allocate one byte more for the trailing zero
+		*buffer = reinterpret_cast<unsigned char*>(malloc(file->size() + 1));
+
+		// we need to end the buffer with a 0
+		(*buffer)[file->size()] = '\0';
+
+		*bufSize = static_cast<int>(file->getInputStream().read(
+			reinterpret_cast<InputStream::byte_type*>(*buffer),
+			file->size()
+		));
+	}
+
+	static void PicoFreeFileFunc(void* file)
+	{
+		free(file);
 	}
 };
 
