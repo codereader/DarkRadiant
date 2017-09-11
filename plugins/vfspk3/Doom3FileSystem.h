@@ -9,12 +9,14 @@
 class Doom3FileSystem :
 	public VirtualFileSystem
 {
+private:
 	std::string _directories[VFS_MAXDIRS];
 	int _numDirectories;
 	std::set<std::string> _allowedExtensions;
 	std::set<std::string> _allowedExtensionsDir;
 
-	struct ArchiveDescriptor {
+	struct ArchiveDescriptor
+	{
 		std::string name;
 		ArchivePtr archive;
 		bool is_pakfile;
@@ -54,8 +56,8 @@ public:
 	std::string findFile(const std::string& name) override;
 	std::string findRoot(const std::string& name) override;
 
-	virtual void addObserver(Observer& observer) override;
-	virtual void removeObserver(Observer& observer) override;
+	void addObserver(Observer& observer) override;
+	void removeObserver(Observer& observer) override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

@@ -79,8 +79,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     }
     catch (os::DirectoryNotFoundException&)
     {
-        rConsole() << "[vfs] Directory '" << path << "' not found."
-                  << std::endl;
+        rConsole() << "[vfs] Directory '" << path << "' not found." << std::endl;
     }
 
     if (filenameList.empty())
@@ -94,9 +93,10 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     ArchiveLoader& archiveModule = GlobalArchive("PK4");
 
     // add the entries to the vfs
-    for (SortedFilenames::iterator i = filenameList.begin(); i != filenameList.end(); ++i) {
+    for (const std::string& filename : filenameList)
+	{
         // Assemble the filename and try to load the archive
-        initPakFile(archiveModule, path + *i);
+        initPakFile(archiveModule, path + filename);
     }
 }
 
@@ -108,35 +108,31 @@ void Doom3FileSystem::initialise()
     boost::algorithm::split(_allowedExtensions, extensions, boost::algorithm::is_any_of(" "));
 
     // Build list of dir extensions, e.g. pk4 -> pk4dir
-    for (std::set<std::string>::const_iterator i = _allowedExtensions.begin();
-         i != _allowedExtensions.end();
-         ++i)
+    for (const std::string& allowedExtension : _allowedExtensions)
     {
-        std::string extDir = *i + "dir";
-        _allowedExtensionsDir.insert(extDir);
+        _allowedExtensionsDir.insert(allowedExtension + "dir");
     }
 
     // Get the VFS search paths from the game manager
-    const game::IGameManager::PathList& paths =
-        GlobalGameManager().getVFSSearchPaths();
+    const game::IGameManager::PathList& paths = GlobalGameManager().getVFSSearchPaths();
 
     // Initialise the paths, in the given order
-    for (game::IGameManager::PathList::const_iterator i = paths.begin();
-         i != paths.end(); i++)
+    for (const std::string& path : paths)
     {
-        initDirectory(*i);
+        initDirectory(path);
     }
 
-    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i)
+    for (Observer* observer : _observers)
     {
-        (*i)->onFileSystemInitialise();
+        observer->onFileSystemInitialise();
     }
 }
 
-void Doom3FileSystem::shutdown() {
-    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i)
+void Doom3FileSystem::shutdown() 
+{
+	for (Observer* observer : _observers)
     {
-        (*i)->onFileSystemShutdown();
+        observer->onFileSystemShutdown();
     }
 
     rMessage() << "filesystem shutdown" << std::endl;
@@ -145,20 +141,25 @@ void Doom3FileSystem::shutdown() {
     _numDirectories = 0;
 }
 
-void Doom3FileSystem::addObserver(Observer& observer) {
+void Doom3FileSystem::addObserver(Observer& observer)
+{
     _observers.insert(&observer);
 }
 
-void Doom3FileSystem::removeObserver(Observer& observer) {
+void Doom3FileSystem::removeObserver(Observer& observer) 
+{
     _observers.erase(&observer);
 }
 
-int Doom3FileSystem::getFileCount(const std::string& filename) {
+int Doom3FileSystem::getFileCount(const std::string& filename)
+{
     int count = 0;
     std::string fixedFilename(os::standardPathWithSlash(filename));
 
-    for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-        if (i->archive->containsFile(fixedFilename.c_str())) {
+    for (const ArchiveDescriptor& descriptor : _archives)
+	{
+        if (descriptor.archive->containsFile(fixedFilename))
+		{
             ++count;
         }
     }
@@ -166,15 +167,20 @@ int Doom3FileSystem::getFileCount(const std::string& filename) {
     return count;
 }
 
-ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename) {
-    if (filename.find("\\") != std::string::npos) {
+ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename)
+{
+    if (filename.find("\\") != std::string::npos) 
+	{
         rError() << "Filename contains backslash: " << filename << std::endl;
         return ArchiveFilePtr();
     }
 
-    for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-        ArchiveFilePtr file = i->archive->openFile(filename);
-        if (file != NULL) {
+	for (const ArchiveDescriptor& descriptor : _archives)
+	{
+        ArchiveFilePtr file = descriptor.archive->openFile(filename);
+
+        if (file)
+		{
             return file;
         }
     }
@@ -196,10 +202,14 @@ ArchiveFilePtr Doom3FileSystem::openFileInAbsolutePath(const std::string& filena
     return ArchiveFilePtr();
 }
 
-ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename) {
-    for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-        ArchiveTextFilePtr file = i->archive->openTextFile(filename);
-        if (file != NULL) {
+ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename)
+{
+	for (const ArchiveDescriptor& descriptor : _archives)
+	{
+        ArchiveTextFilePtr file = descriptor.archive->openTextFile(filename);
+
+        if (file)
+		{
             return file;
         }
     }
@@ -233,11 +243,9 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
 
     // Visit each Archive, applying the FileVisitor to each one (which in
     // turn calls the callback for each matching file.
-    for (ArchiveList::iterator i = _archives.begin();
-         i != _archives.end();
-         ++i)
+	for (const ArchiveDescriptor& descriptor : _archives)
     {
-        i->archive->forEachFile(Archive::VisitorFunc(visitor2, Archive::eFiles, depth), basedir);
+		descriptor.archive->forEachFile(Archive::VisitorFunc(visitor2, Archive::eFiles, depth), basedir);
     }
 }
 
@@ -257,24 +265,30 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
     tempArchive.forEachFile(Archive::VisitorFunc(visitor2, Archive::eFiles, depth), "/");
 }
 
-std::string Doom3FileSystem::findFile(const std::string& name) {
-    for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-        if (!i->is_pakfile && i->archive->containsFile(name.c_str())) {
-            return i->name;
+std::string Doom3FileSystem::findFile(const std::string& name)
+{
+	for (const ArchiveDescriptor& descriptor : _archives)
+	{
+        if (!descriptor.is_pakfile && descriptor.archive->containsFile(name))
+		{
+            return descriptor.name;
         }
     }
 
-    return "";
+    return std::string();
 }
 
-std::string Doom3FileSystem::findRoot(const std::string& name) {
-    for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-        if (!i->is_pakfile && path_equal_n(name.c_str(), i->name.c_str(), i->name.size())) {
-            return i->name;
+std::string Doom3FileSystem::findRoot(const std::string& name)
+{
+	for (const ArchiveDescriptor& descriptor : _archives)
+	{
+        if (!descriptor.is_pakfile && path_equal_n(name.c_str(), descriptor.name.c_str(), descriptor.name.size()))
+		{
+            return descriptor.name;
         }
     }
 
-    return "";
+    return std::string();
 }
 
 void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename)
@@ -323,7 +337,6 @@ const StringSet& Doom3FileSystem::getDependencies() const
     if (_dependencies.empty())
 	{
         _dependencies.insert(MODULE_ARCHIVE + "PK4");
-        _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_GAMEMANAGER);
     }
 
@@ -332,7 +345,7 @@ const StringSet& Doom3FileSystem::getDependencies() const
 
 void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx)
 {
-    rMessage() << "VFS::initialiseModule called" << std::endl;
+    rMessage() << getName() << "::initialiseModule called" << std::endl;
 
     initialise();
 }
