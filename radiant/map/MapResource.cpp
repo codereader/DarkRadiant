@@ -23,7 +23,7 @@
 #include "os/file.h"
 #include "os/fs.h"
 #include "map/algorithm/Traverse.h"
-#include "stream/textfilestream.h"
+#include "stream/TextFileInputStream.h"
 #include "scenelib.h"
 
 #include <functional>

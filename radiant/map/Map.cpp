@@ -20,7 +20,7 @@
 #include "igame.h"
 
 #include "registry/registry.h"
-#include "stream/textfilestream.h"
+#include "stream/TextFileInputStream.h"
 #include "entitylib.h"
 #include "gamelib.h"
 #include "os/path.h"

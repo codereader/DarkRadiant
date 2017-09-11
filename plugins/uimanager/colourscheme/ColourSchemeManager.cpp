@@ -1,7 +1,7 @@
 #include "ColourSchemeManager.h"
 #include "iregistry.h"
 
-#include "stream/textfilestream.h"
+#include "stream/TextFileInputStream.h"
 
 namespace ui {
 

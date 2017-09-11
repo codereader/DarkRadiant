@@ -5,8 +5,7 @@
 #include <vector>
 #include <boost/algorithm/string/case_conv.hpp>
 
-#include "stream/textfilestream.h"
-#include "archivelib.h"
+#include "stream/TextFileInputStream.h"
 #include "os/path.h"
 #include <memory>
 
@@ -204,7 +203,7 @@ void SoundPlayer::createBufferDataFromWav(ArchiveFile& file)
 void SoundPlayer::createBufferDataFromOgg(ArchiveFile& file)
 {
 	// Convert the file into a buffer, self-destructs at end of scope
-	ScopedArchiveBuffer buffer(file);
+	archive::ScopedArchiveBuffer buffer(file);
 
 	// This is an OGG Vorbis file, decode it
 	vorbis_info* vorbisInfo;

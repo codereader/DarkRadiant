@@ -5,7 +5,7 @@
 #include "imodelsurface.h"
 #include "imap.h"
 #include "math/AABB.h"
-#include "bytestreamutils.h"
+#include "stream/utils.h"
 
 #include "Lwo2Chunk.h"
 

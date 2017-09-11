@@ -1,8 +1,8 @@
 #include "MD5AnimationCache.h"
 
+#include "iarchive.h"
 #include "ifilesystem.h"
 #include "itextstream.h"
-#include "archivelib.h"
 #include "parser/DefTokeniser.h"
 
 namespace md5

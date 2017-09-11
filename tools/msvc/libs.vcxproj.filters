@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
-    <ClInclude Include="..\..\libs\fs_filesystem.h" />
     <ClInclude Include="..\..\libs\moduleobservers.h" />
     <ClInclude Include="..\..\libs\picomodel.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
@@ -13,9 +12,7 @@
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\texturelib.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
-    <ClInclude Include="..\..\libs\archivelib.h" />
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
-    <ClInclude Include="..\..\libs\bytestreamutils.h" />
     <ClInclude Include="..\..\libs\character.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
@@ -113,12 +110,6 @@
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\stream\filestream.h">
-      <Filter>stream</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libs\stream\textfilestream.h">
-      <Filter>stream</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h">
       <Filter>stream</Filter>
     </ClInclude>
@@ -151,6 +142,20 @@
     <ClInclude Include="..\..\libs\ThreadedDefLoader.h" />
     <ClInclude Include="..\..\libs\render\RenderablePivot.h">
       <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
+    <ClInclude Include="..\..\libs\DirectoryArchiveTextFile.h" />
+    <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\stream\FileInputStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\stream\TextFileInputStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\stream\utils.h">
+      <Filter>stream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

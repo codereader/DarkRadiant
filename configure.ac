@@ -48,6 +48,9 @@ AC_PROG_LIBTOOL
 # We require a C++11-compliant compiler, without nonstandard extensions
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 
+# We require the cstdint header to be present
+AC_CHECK_HEADER([cstdint], [], [AC_MSG_ERROR([Could not find the <cstdint> header.])])
+
 # Optional features
 AC_ARG_ENABLE([debug],
               [AS_HELP_STRING([--enable-debug],

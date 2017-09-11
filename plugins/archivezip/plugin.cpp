@@ -1,75 +1,51 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#include "plugin.h"
-
-#include "imodule.h"
 #include "iarchive.h"
-#include "debugging/debugging.h"
-#include "iregistry.h"
 
-#include <iostream>
-
+#include "itextstream.h"
 #include "ZipArchive.h"
 
-class ArchivePK4API :
+namespace archive
+{
+
+class Pk4ArchiveLoader :
 	public ArchiveLoader
 {
 public:
 	// greebo: Returns the opened file or NULL if failed.
-	virtual ArchivePtr openArchive(const std::string& name) {
-		return ZipArchivePtr(new ZipArchive(name));
+	virtual ArchivePtr openArchive(const std::string& name) override
+	{
+		return std::make_shared<ZipArchive>(name);
 	}
 
-	virtual const std::string& getExtension() {
+	virtual const std::string& getExtension() override
+	{
 		static std::string _ext("pk4");
 		return _ext;
 	}
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const {
-		static std::string _name("ArchivePK4");
+	const std::string& getName() const override
+	{
+		static std::string _name(MODULE_ARCHIVE + "PK4");
 		return _name;
 	}
 
-	virtual const StringSet& getDependencies() const {
+	const StringSet& getDependencies() const override
+	{
 		static StringSet _dependencies;
-
-		if (_dependencies.empty())
-		{
-			_dependencies.insert(MODULE_XMLREGISTRY);
-		}
-
 		return _dependencies;
 	}
 
-	virtual void initialiseModule(const ApplicationContext& ctx) {
-		rMessage() << "ArchivePK4::initialiseModule called\n";
+	void initialiseModule(const ApplicationContext& ctx) override
+	{
+		rMessage() << getName() << "::initialiseModule called" << std::endl;
 	}
 };
-typedef std::shared_ptr<ArchivePK4API> ArchivePK4APIPtr;
+
+}
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	module::performDefaultInitialisation(registry);
 
-	registry.registerModule(ArchivePK4APIPtr(new ArchivePK4API));
+	registry.registerModule(std::make_shared<archive::Pk4ArchiveLoader>());
 }

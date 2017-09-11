@@ -385,11 +385,16 @@
 		3AE6F1C61F4975D9008A1B2D /* SelectionGroupInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */; };
 		3AE6F1C71F4978AB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
 		3AE6F1D61F63D43D008A1B2D /* WavefrontExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */; };
+		3AE6F1CB1F63CA11008A1B2D /* DeflatedInputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C81F63CA11008A1B2D /* DeflatedInputStream.cpp */; };
 		3AE6F1D71F63D43D008A1B2D /* WavefrontExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */; };
-		3AEBDC841E5067300062D9AF /* pkzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC781E50669C0062D9AF /* pkzip.cpp */; };
+		
+		3AE6F1CC1F63CA12008A1B2D /* DeflatedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C91F63CA11008A1B2D /* DeflatedInputStream.h */; };
+		3AE6F1CD1F63CA12008A1B2D /* GenericFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CA1F63CA11008A1B2D /* GenericFileSystem.h */; };
+		3AE6F1D11F63CA2D008A1B2D /* StoredArchiveFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CE1F63CA2D008A1B2D /* StoredArchiveFile.h */; };
+		3AE6F1D21F63CA2D008A1B2D /* StoredArchiveTextFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CF1F63CA2D008A1B2D /* StoredArchiveTextFile.h */; };
+		3AE6F1D31F63CA2D008A1B2D /* ZipStreamUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D01F63CA2D008A1B2D /* ZipStreamUtils.h */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
-		3AEBDC871E50673D0062D9AF /* zlibstream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7E1E50669C0062D9AF /* zlibstream.cpp */; };
 		3AEBDCA31E506C930062D9AF /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC9B1E5069A60062D9AF /* CommandSystem.cpp */; };
 		3AEBDCA51E509CEE0062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
 		3AEBDCBB1E509DC30062D9AF /* Doom3EntityClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCB51E509DC30062D9AF /* Doom3EntityClass.cpp */; };
@@ -3030,19 +3035,20 @@
 		3AE6F1C11F4975D9008A1B2D /* SceneGraphInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneGraphInterface.cpp; path = ../../plugins/script/interfaces/SceneGraphInterface.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionGroupInterface.cpp; path = ../../plugins/script/interfaces/SelectionGroupInterface.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionGroupInterface.h; path = ../../plugins/script/interfaces/SelectionGroupInterface.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1C81F63CA11008A1B2D /* DeflatedInputStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeflatedInputStream.cpp; path = ../../plugins/archivezip/DeflatedInputStream.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1C91F63CA11008A1B2D /* DeflatedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedInputStream.h; path = ../../plugins/archivezip/DeflatedInputStream.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1CA1F63CA11008A1B2D /* GenericFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericFileSystem.h; path = ../../plugins/archivezip/GenericFileSystem.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1CE1F63CA2D008A1B2D /* StoredArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StoredArchiveFile.h; path = ../../plugins/archivezip/StoredArchiveFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1CF1F63CA2D008A1B2D /* StoredArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StoredArchiveTextFile.h; path = ../../plugins/archivezip/StoredArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1D01F63CA2D008A1B2D /* ZipStreamUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipStreamUtils.h; path = ../../plugins/archivezip/ZipStreamUtils.h; sourceTree = SOURCE_ROOT; };
 		3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WavefrontExporter.cpp; path = ../../plugins/model/WavefrontExporter.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WavefrontExporter.h; path = ../../plugins/model/WavefrontExporter.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
-		3AEBDC781E50669C0062D9AF /* pkzip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pkzip.cpp; path = ../../plugins/archivezip/pkzip.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDC791E50669C0062D9AF /* pkzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pkzip.h; path = ../../plugins/archivezip/pkzip.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC7A1E50669C0062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/archivezip/plugin.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDC7B1E50669C0062D9AF /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plugin.h; path = ../../plugins/archivezip/plugin.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZipArchive.cpp; path = ../../plugins/archivezip/ZipArchive.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBDC7D1E50669C0062D9AF /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = ../../plugins/archivezip/ZipArchive.h; sourceTree = SOURCE_ROOT; };
-		3AEBDC7E1E50669C0062D9AF /* zlibstream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = zlibstream.cpp; path = ../../plugins/archivezip/zlibstream.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDC7F1E50669C0062D9AF /* zlibstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlibstream.h; path = ../../plugins/archivezip/zlibstream.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC881E5067630062D9AF /* zlib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = zlib.xcconfig; sourceTree = "<group>"; };
 		3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = archivezip.xcconfig; sourceTree = "<group>"; };
 		3AEBDC8E1E5069840062D9AF /* commandsystem.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = commandsystem.so; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5394,14 +5400,15 @@
 			children = (
 				3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */,
 				3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */,
-				3AEBDC781E50669C0062D9AF /* pkzip.cpp */,
-				3AEBDC791E50669C0062D9AF /* pkzip.h */,
+				3AE6F1C81F63CA11008A1B2D /* DeflatedInputStream.cpp */,
+				3AE6F1C91F63CA11008A1B2D /* DeflatedInputStream.h */,
+				3AE6F1CA1F63CA11008A1B2D /* GenericFileSystem.h */,
 				3AEBDC7A1E50669C0062D9AF /* plugin.cpp */,
-				3AEBDC7B1E50669C0062D9AF /* plugin.h */,
+				3AE6F1CE1F63CA2D008A1B2D /* StoredArchiveFile.h */,
+				3AE6F1CF1F63CA2D008A1B2D /* StoredArchiveTextFile.h */,
 				3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */,
 				3AEBDC7D1E50669C0062D9AF /* ZipArchive.h */,
-				3AEBDC7E1E50669C0062D9AF /* zlibstream.cpp */,
-				3AEBDC7F1E50669C0062D9AF /* zlibstream.h */,
+				3AE6F1D01F63CA2D008A1B2D /* ZipStreamUtils.h */,
 			);
 			path = archivezip;
 			sourceTree = "<group>";
@@ -7957,6 +7964,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AE6F1CC1F63CA12008A1B2D /* DeflatedInputStream.h in Headers */,
+				3AE6F1D21F63CA2D008A1B2D /* StoredArchiveTextFile.h in Headers */,
+				3AE6F1CD1F63CA12008A1B2D /* GenericFileSystem.h in Headers */,
+				3AE6F1D31F63CA2D008A1B2D /* ZipStreamUtils.h in Headers */,
+				3AE6F1D11F63CA2D008A1B2D /* StoredArchiveFile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9529,10 +9541,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3AEBDC871E50673D0062D9AF /* zlibstream.cpp in Sources */,
 				3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */,
 				3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */,
-				3AEBDC841E5067300062D9AF /* pkzip.cpp in Sources */,
+				3AE6F1CB1F63CA11008A1B2D /* DeflatedInputStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,10 +1,12 @@
 #include "MD5ModelLoader.h"
 
+#include "idatastream.h"
+#include "iarchive.h"
 #include "imodule.h"
 #include "ishaders.h"
 #include "imodelcache.h"
 #include "ifilesystem.h"
-#include "archivelib.h"
+#include "stream/BinaryToTextInputStream.h"
 #include "os/path.h"
 
 #include "MD5ModelNode.h"
@@ -78,7 +80,7 @@ model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name)
 		model->setFilename(os::getFilename(file->getName()));
 
 		// greebo: Get the Inputstream from the given file
-		BinaryToTextInputStream<InputStream> inputStream(file->getInputStream());
+		stream::BinaryToTextInputStream<InputStream> inputStream(file->getInputStream());
 
 		// Construct a Tokeniser object and start reading the file
 		try

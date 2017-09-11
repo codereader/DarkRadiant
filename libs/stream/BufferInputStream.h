@@ -3,6 +3,9 @@
 #include "itextstream.h"
 #include <algorithm>
 
+namespace stream
+{
+
 class BufferInputStream : 
 	public TextInputStream
 {
@@ -18,7 +21,7 @@ public:
 		_end(buffer + length)
 	{}
 
-	std::size_t read(char* buffer, std::size_t length)
+	std::size_t read(char* buffer, std::size_t length) override
 	{
 		std::size_t count = std::min(std::size_t(_end - _read), length);
 		
@@ -35,7 +38,7 @@ public:
 	// greebo: Override default std::streambuf::seekoff() method to provide buffer positioning capabilities
 	virtual std::streampos seekoff(std::streamoff off,
 								   std::ios_base::seekdir way,
-								   std::ios_base::openmode which = std::ios_base::in | std::ios_base::out)
+								   std::ios_base::openmode which = std::ios_base::in | std::ios_base::out) override
 	{
 		if (way == std::ios_base::beg)
 		{
@@ -88,3 +91,5 @@ public:
 		return std::streampos(_read - _begin);
 	}
 };
+
+}

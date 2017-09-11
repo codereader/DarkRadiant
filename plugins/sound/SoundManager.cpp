@@ -2,7 +2,6 @@
 #include "SoundFileLoader.h"
 
 #include "ifilesystem.h"
-#include "archivelib.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
