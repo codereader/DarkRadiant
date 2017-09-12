@@ -1,36 +1,34 @@
-LICENSE ( last update: Wed Feb  8 17:16:40 CST 2006 )
------------------------------------------------------
+DarkRadiant License (last update: 2017-09-12)
+----------------------------------------------------------------------------------------------
 
-There are 3 license types used throughout GtkRadiant source code.
+DarkRadiant is free software originally based on GtkRadiant, which has been licensed under
+the GNU General Public License (GPLv2) http://www.gnu.org/licenses/gpl-2.0.html
 
-BSD - modified Berkeley Software Distribution license
-( each BSD licensed source file starts with the appropriate header )
-LGPL - GNU Lesser General Public License v2.1
-( see LGPL at the root of the tree )
-GPL - GNU General Public License
-( see GPL at the root of the tree )
+Therefore all of the DarkRadiant source code (save a few exceptions noted below) is published
+under the same GPLv2 license. Unless stated otherwise in the source file header, the following
+applies to the DarkRadiant source code:
 
-How do I check which license applies to a given part of the source code?
+    DarkRadiant - Open Source Level Editor for Doom 3 and The Dark Mod
+    Copyright (C) 2017 Matthias Baumann (on behalf of the DarkRadiant Team, see AUTHORS file)
+    ==========================================================================================
 
-Each source file in the tree comes with a license header which explains what
-license applies. To sum up shortly:
+    This program is free software; you can redistribute it and/or modify it under the terms of 
+    the GNU General Public License as published by the Free Software Foundation; either 
+    version 2 of the License, or (at your option) any later version.
 
-GPL: ( except some files contributed by Loki Software under BSD license )
-GtkRadiant Core
-GtkRadiant Modules
-GtkRadiant Libraries
-Quake III Tools
-Quake II Tools
-Background2D Plugin
-HydraToolz Plugin
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+    See the GNU General Public License for more details.
 
-BSD:
-JPEG Library
-MD5 Library
-DDS Library
-PicoModel Library
-PrtView Plugin
+    You should have received a copy of the GNU General Public License along with this program; 
+    if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, 
+    MA 02110, USA
 
-LGPL
-BobToolz Plugin
-GenSurf Plugin
+    ==========================================================================================
+
+Exceptions to the above
+----------------------------------------------------------------------------------------------
+
+PicoModel Library - published under the modified Berkeley Software Distribution (BSD) license
+DDS Library - published under the modified Berkeley Software Distribution (BSD) license
+pybind11 Library - see the LICENSE file in the libs/pybind folder
