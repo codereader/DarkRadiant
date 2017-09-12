@@ -45,10 +45,10 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libftgl-dev 
 * libglew-dev 
 * libboost-dev 
-* libboost-filesystem-dev 
 * libboost-test-dev 
 * libalut-dev 
 * libvorbis-dev
+* pybind11-dev (Ubuntu 17 and later)
 
 This does not include core development tools such as g++ or the git client
 to download the sources (use sudo apt-get install git for that). One possible
@@ -98,7 +98,7 @@ similar to this:
 The `DarkRadiant.app` package in that folder can be launched right away or
 copied to some location of your preference.
 
-# More Information
+# More Build Information
 
 A more detailed compilation guide can be found on The Dark Mod's wiki:
 
@@ -113,3 +113,8 @@ and discuss changes or issues. If you happen to run into a bug, you're encourage
 application crashes (see also [How to record a crashdump](http://wiki.thedarkmod.com/index.php?title=Save_a_Memory_Dump_for_debugging_Crashes)). 
 
 The issue tracker for DarkRadiant is also run by the Dark Mod folks: [DarkRadiant Bugtracker](http://bugs.thedarkmod.com/view_all_bug_page.php?project_id=1).
+
+# License
+
+The DarkRadiant source code is published under the [GNU General Public License 2.0 (GPLv2)](http://www.gnu.org/licenses/gpl-2.0.html
+), except for a few libraries which are using the BSD license, see the [LICENSE](https://raw.githubusercontent.com/codereader/DarkRadiant/master/LICENSE) file for further notes.
