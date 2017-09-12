@@ -57,11 +57,13 @@ bool DirectoryArchive::containsFile(const std::string& name)
 
 #include <iostream>
 
-void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
+void DirectoryArchive::forEachFile(VisitorFunc& visitor, const std::string& root)
+{
 	// Initialise the search's starting point
 	fs::path start(_root + root);
 
-	if (!fs::exists(start)) {
+	if (!fs::exists(start))
+	{
 		return;
 	}
 

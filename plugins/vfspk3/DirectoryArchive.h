@@ -1,5 +1,4 @@
-#ifndef DIRECTORYARCHIVE_H_
-#define DIRECTORYARCHIVE_H_
+#pragma once
 
 #include "iarchive.h"
 
@@ -18,14 +17,12 @@ public:
 	// Pass the root path to the constructor
 	DirectoryArchive(const std::string& root);
 
-	virtual ArchiveFilePtr openFile(const std::string& name);
+	virtual ArchiveFilePtr openFile(const std::string& name) override;
 
-	virtual ArchiveTextFilePtr openTextFile(const std::string& name);
+	virtual ArchiveTextFilePtr openTextFile(const std::string& name) override;
 
-	virtual bool containsFile(const std::string& name);
+	virtual bool containsFile(const std::string& name) override;
 
-	virtual void forEachFile(VisitorFunc visitor, const std::string& root);
+	virtual void forEachFile(VisitorFunc& visitor, const std::string& root) override;
 };
 typedef std::shared_ptr<DirectoryArchive> DirectoryArchivePtr;
-
-#endif /*DIRECTORYARCHIVE_H_*/
