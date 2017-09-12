@@ -230,11 +230,10 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
                                   const VisitorFunc& visitorFunc,
                                   std::size_t depth)
 {
-    // Set of visited files, to avoid name conflicts
-    std::set<std::string> visitedFiles;
+    // Construct our FileVisitor filtering out the right elements
+    FileVisitor fileVisitor(visitorFunc, basedir, extension);
 
-    // Wrap around the passed visitor
-    FileVisitor fileVisitor(visitorFunc, basedir, extension, visitedFiles);
+	// Construct an ArchiveVisitor filtering out the files only, and watching the recursion depth
 	ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
 
     // Visit each Archive, applying the FileVisitor to each one (which in
@@ -250,13 +249,13 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
                                                 const VisitorFunc& visitorFunc,
                                                 std::size_t depth)
 {
-    std::set<std::string> visitedFiles;
-
     // Construct a temporary DirectoryArchive from the given path
     DirectoryArchive tempArchive(os::standardPathWithSlash(path));
 
-    // Wrap around the passed visitor
-    FileVisitor fileVisitor(visitorFunc, "", extension, visitedFiles);
+	// Construct our FileVisitor filtering out the right elements
+    FileVisitor fileVisitor(visitorFunc, "", extension);
+
+	// Construct an ArchiveVisitor filtering out the files only, and watching the recursion depth
 	ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
 
     tempArchive.traverse(functor, "/");

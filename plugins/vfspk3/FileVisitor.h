@@ -1,20 +1,26 @@
 #pragma once
 
 #include "ifilesystem.h"
-#include "iarchive.h"
-
-#include "os/path.h"
 
 #include <set>
 #include <boost/algorithm/string/case_conv.hpp>
 
+/**
+ * Adaptor class used in GlobalFileSystem().foreachFile(). 
+ * It's filtering out the files matching the defined extension only. 
+ * Passes the filename to the VisitorFunc given in its constructor. 
+ * The directory part is cut off the filename before it's passed to the VisitorFunc.
+ * On top of that, this class maintains a list of visited files to avoid
+ * hitting the same file twice (it might be present in more than one Archive).
+ */
 class FileVisitor
 {
+private:
 	// The VirtualFileSystem::Visitor to call for each located file
     VirtualFileSystem::VisitorFunc _visitorFunc;
 
-	// Set of already-visited files
-	std::set<std::string>& _visitedFiles;
+	// Set of already-visited files to avoid visiting the same file twice
+	std::set<std::string> _visitedFiles;
 
 	// Directory to search within
 	std::string _directory;
@@ -31,13 +37,11 @@ class FileVisitor
 
 public:
 
-	// Constructor
+	// Constructor. Pass "*" as extension to have it visit all files.
     FileVisitor(const VirtualFileSystem::VisitorFunc& visitorFunc,
 				const std::string& dir,
-				const std::string& ext,
-				std::set<std::string>& visitedFiles)
+				const std::string& ext)
     : _visitorFunc(visitorFunc),
-      _visitedFiles(visitedFiles),
       _directory(dir),
       _extension(ext),
 	  _dirPrefixLength(_directory.length()),
@@ -63,8 +67,7 @@ public:
 		if (!_visitAll)
 		{
 			// The dot must be at the right position
-			if (subname.length() <= _extLength ||
-				subname[subname.length() - _extLength - 1] != '.')
+			if (subname.length() <= _extLength || subname[subname.length() - _extLength - 1] != '.')
 			{
 				return;
 			}
@@ -74,15 +77,17 @@ public:
 
 #ifdef OS_CASE_INSENSITIVE
 			// Treat extensions case-insensitively in Windows
-			boost::to_lower(ext);
+			boost::algorithm::to_lower(ext);
 #endif
 
-			if (ext != _extension) {
+			if (ext != _extension)
+			{
 				return; // extension mismatch
 			}
 		}
 
-		if (_visitedFiles.find(subname) != _visitedFiles.end()) {
+		if (_visitedFiles.find(subname) != _visitedFiles.end())
+		{
 			return; // already visited
 		}
 
