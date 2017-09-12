@@ -180,9 +180,9 @@ public:
 			{
 				if (!i->second.isDirectory())
 				{
-					visitor.file(i->first.string());
+					visitor.visitFile(i->first.string());
 				}
-				else if (visitor.directory(i->first.string(), i->first.depth() - start_depth))
+				else if (visitor.visitDirectory(i->first.string(), i->first.depth() - start_depth))
 				{
 					skip_depth = i->first.depth();
 				}

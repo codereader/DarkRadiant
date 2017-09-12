@@ -77,7 +77,7 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 		if (fs::is_directory(candidate))
 		{
 			// Check if we should traverse further
-			if (visitor.directory(candidateStr.substr(rootLen), os::getDepth(it)+1))
+			if (visitor.visitDirectory(candidateStr.substr(rootLen), os::getDepth(it)+1))
 			{
 				// Visitor returned true, prevent going deeper into it
 				os::disableRecursionPending(it);
@@ -86,7 +86,7 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 		else
 		{
 			// File
-			visitor.file(candidateStr.substr(rootLen));
+			visitor.visitFile(candidateStr.substr(rootLen));
 		}
 	}
 }
