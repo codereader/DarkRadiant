@@ -1,11 +1,10 @@
 #pragma once
 
 /**
- * greebo: SortedFilenames is based on a std::set
- *         container with special sorting.
- *
- * The list fills itself with filenames while traversing a directory.
- * The class acts as File functor for the Directory_Foreach method.
+ * greebo: SortedFilenames is based on a std::set container 
+ * with special sorting, since the idTech4 virtual filesystem
+ * sorts PK4 archives in reverse alphabetical order, i.e. a PK4 file
+ * named zyx.pk4 has higher precedence than abc.pk4
  */
 
 // Arnout: note - sort pakfiles in reverse order. This ensures that
@@ -16,49 +15,54 @@
 class PakLess
 {
 public:
-	inline int ascii_to_upper(int c) const {
-		if (c >= 'a' && c <= 'z') {
-			return c - ('a' - 'A');
-		}
-		return c;
-	}
-
 	/*!
 		This behaves identically to stricmp(a,b), except that ASCII chars
 		[\]^`_ come AFTER alphabet chars instead of before. This is because
 		it converts all alphabet chars to uppercase before comparison,
 		while stricmp converts them to lowercase.
 	*/
-	bool operator()(const std::string& self, const std::string& other) const {
+	bool operator()(const std::string& self, const std::string& other) const 
+	{
 		const char* a = self.c_str();
 		const char* b = other.c_str();
 
-		for (;;) {
-			int c1 = ascii_to_upper(*a++);
-			int c2 = ascii_to_upper(*b++);
+		while (true)
+		{
+			char c1 = toUpper(*a++);
+			char c2 = toUpper(*b++);
 
-			if (c1 < c2) {
+			if (c1 < c2)
+			{
 				return false; // a < b
 			}
 
-			if (c1 > c2) {
+			if (c1 > c2)
+			{
 				return true; // a > b
 			}
 
-			if (c1 == 0) {
+			if (c1 == '\0')
+			{
 				// greebo: End of first string reached, strings are equal
 				return false; // a == b && a == 0
 			}
 		}
 	}
+
+private:
+	inline char toUpper(char c) const
+	{
+		if (c >= 'a' && c <= 'z')
+		{
+			return c - ('a' - 'A');
+		}
+
+		return c;
+	}
 };
 
 /**
- * greebo: A container providing a File functor method to populate
- *         itself with the visited filenames.
- *
- *         The inserted filenames get correctly sorted on insert, as
- *         this class is using the PakLess comparator.
+ * Filenames are sorted in reverse alphabetical order
+ * using the PakLess comparator.
  */
 typedef std::set<std::string, PakLess> SortedFilenames;
-
