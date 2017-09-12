@@ -39,29 +39,23 @@
 #include "DirectoryArchiveTextFile.h"
 #include "SortedFilenames.h"
 
-Doom3FileSystem::Doom3FileSystem() :
-    _numDirectories(0)
+Doom3FileSystem::Doom3FileSystem()
 {}
 
 void Doom3FileSystem::initDirectory(const std::string& inputPath)
 {
-    if (_numDirectories == (VFS_MAXDIRS-1)) {
-        return;
-    }
-
     // greebo: Normalise path: Replace backslashes and ensure trailing slash
-    _directories[_numDirectories] = os::standardPathWithSlash(inputPath);
+    _directories.push_back(os::standardPathWithSlash(inputPath));
 
     // Shortcut
-    const std::string& path = _directories[_numDirectories];
-
-    _numDirectories++;
+    const std::string& path = _directories.back();
 
     {
         ArchiveDescriptor entry;
         entry.name = path;
         entry.archive = std::make_shared<DirectoryArchive>(path);
         entry.is_pakfile = false;
+
         _archives.push_back(entry);
     }
 
@@ -138,7 +132,7 @@ void Doom3FileSystem::shutdown()
     rMessage() << "filesystem shutdown" << std::endl;
 
     _archives.clear();
-    _numDirectories = 0;
+	_directories.clear();
 }
 
 void Doom3FileSystem::addObserver(Observer& observer)

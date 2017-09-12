@@ -4,14 +4,11 @@
 #include "iarchive.h"
 #include "ifilesystem.h"
 
-#define VFS_MAXDIRS 8
-
 class Doom3FileSystem :
 	public VirtualFileSystem
 {
 private:
-	std::string _directories[VFS_MAXDIRS];
-	int _numDirectories;
+	std::list<std::string> _directories;
 	std::set<std::string> _allowedExtensions;
 	std::set<std::string> _allowedExtensionsDir;
 
@@ -29,7 +26,6 @@ private:
 	ObserverList _observers;
 
 public:
-	// Constructor
 	Doom3FileSystem();
 
 	void initDirectory(const std::string& path) override;
