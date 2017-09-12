@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IARCHIVE_H)
-#define INCLUDED_IARCHIVE_H
+#pragma once
 
 /**
  * \file iarchive.h
@@ -79,19 +57,29 @@ public:
 };
 typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
 
-class CustomArchiveVisitor;
-
 /**
- * Representation of a ZIP archive.
+ * Representation of an archive in the virtual filesystem.
+ * This might be a PK4/ZIP file or a regular mod directory.
  *
  * \ingroup vfs
  */
 class Archive
 {
 public:
-	typedef CustomArchiveVisitor VisitorFunc;
+	class Visitor
+	{
+	public:
+		virtual ~Visitor() {}
 
-	enum EMode {
+		// Invoked for each file in an Archive
+		virtual void visitFile(const std::string& name) = 0;
+
+		// Invoked for each directory in an Archive. Return true to skip the directory.
+		virtual bool visitDirectory(const std::string& name, std::size_t depth) = 0;
+	};
+
+	enum EMode
+	{
 		eFiles = 0x01,
 		eDirectories = 0x02,
 		eFilesAndDirectories = 0x03,
@@ -119,47 +107,9 @@ public:
 	/// Skips the directory if \c visitor.directory returned true.
 	/// Root comparisons are case-insensitive.
 	/// Names are mixed-case.
-	virtual void forEachFile(VisitorFunc& visitor, const std::string& root) = 0;
+	virtual void forEachFile(Visitor& visitor, const std::string& root) = 0;
 };
 typedef std::shared_ptr<Archive> ArchivePtr;
-
-class CustomArchiveVisitor
-{
-private:
-	std::function<void(const std::string&)> _visitorFunc;
-	Archive::EMode _mode;
-	std::size_t _depth;
-
-public:
-	CustomArchiveVisitor(const std::function<void(const std::string&)>& func, Archive::EMode mode, std::size_t depth) : 
-		_visitorFunc(func),
-		_mode(mode), 
-		_depth(depth)
-	{}
-
-	void visitFile(const std::string& name)
-	{
-		if ((_mode & Archive::eFiles) != 0)
-		{
-			_visitorFunc(name);
-		}
-	}
-
-	bool visitDirectory(const std::string& name, std::size_t depth)
-	{
-		if ((_mode & Archive::eDirectories) != 0)
-		{
-			_visitorFunc(name);
-		}
-
-		if (depth == _depth)
-		{
-			return true;
-		}
-
-		return false;
-	}
-};
 
 const std::string MODULE_ARCHIVE("Archive");
 
@@ -184,7 +134,8 @@ public:
  *
  * \ingroup vfs
  */
-inline ArchiveLoader& GlobalArchive(const std::string& fileType) {
+inline ArchiveLoader& GlobalArchive(const std::string& fileType) 
+{
 	// Cache the reference locally
 	static ArchiveLoader& _archive(
 		*std::static_pointer_cast<ArchiveLoader>(
@@ -193,5 +144,3 @@ inline ArchiveLoader& GlobalArchive(const std::string& fileType) {
 	);
 	return _archive;
 }
-
-#endif

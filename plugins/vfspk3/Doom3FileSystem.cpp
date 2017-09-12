@@ -38,6 +38,7 @@
 #include "DirectoryArchiveFile.h"
 #include "DirectoryArchiveTextFile.h"
 #include "SortedFilenames.h"
+#include "ArchiveVisitor.h"
 
 Doom3FileSystem::Doom3FileSystem()
 {}
@@ -234,7 +235,7 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
 
     // Wrap around the passed visitor
     FileVisitor fileVisitor(visitorFunc, basedir, extension, visitedFiles);
-	Archive::VisitorFunc functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
+	ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
 
     // Visit each Archive, applying the FileVisitor to each one (which in
     // turn calls the callback for each matching file.
@@ -256,7 +257,7 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
 
     // Wrap around the passed visitor
     FileVisitor fileVisitor(visitorFunc, "", extension, visitedFiles);
-	Archive::VisitorFunc functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
+	ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
 
     tempArchive.forEachFile(functor, "/");
 }

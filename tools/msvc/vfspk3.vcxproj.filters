@@ -36,5 +36,8 @@
     <ClInclude Include="..\..\plugins\vfspk3\vfspk3.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\vfspk3\ArchiveVisitor.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

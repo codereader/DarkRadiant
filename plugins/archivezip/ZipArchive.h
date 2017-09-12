@@ -61,7 +61,7 @@ public:
 	virtual ArchiveFilePtr openFile(const std::string& name) override;
 	virtual ArchiveTextFilePtr openTextFile(const std::string& name) override;
 	bool containsFile(const std::string& name) override;
-	void forEachFile(VisitorFunc& visitor, const std::string& root) override;
+	void forEachFile(Visitor& visitor, const std::string& root) override;
 
 private:
 	void readZipRecord();

@@ -312,6 +312,7 @@
     <ClCompile Include="..\..\plugins\vfspk3\vfspk3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\vfspk3\ArchiveVisitor.h" />
     <ClInclude Include="..\..\plugins\vfspk3\DirectoryArchive.h" />
     <ClInclude Include="..\..\plugins\vfspk3\Doom3FileSystem.h" />
     <ClInclude Include="..\..\plugins\vfspk3\FileVisitor.h" />

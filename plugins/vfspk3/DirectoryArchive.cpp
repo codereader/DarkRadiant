@@ -55,9 +55,7 @@ bool DirectoryArchive::containsFile(const std::string& name)
 	return os::fileIsReadable(path);
 }
 
-#include <iostream>
-
-void DirectoryArchive::forEachFile(VisitorFunc& visitor, const std::string& root)
+void DirectoryArchive::forEachFile(Visitor& visitor, const std::string& root)
 {
 	// Initialise the search's starting point
 	fs::path start(_root + root);
