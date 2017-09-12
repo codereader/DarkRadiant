@@ -23,6 +23,6 @@ public:
 
 	virtual bool containsFile(const std::string& name) override;
 
-	virtual void forEachFile(Visitor& visitor, const std::string& root) override;
+	virtual void traverse(Visitor& visitor, const std::string& root) override;
 };
 typedef std::shared_ptr<DirectoryArchive> DirectoryArchivePtr;

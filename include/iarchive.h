@@ -107,7 +107,7 @@ public:
 	/// Skips the directory if \c visitor.directory returned true.
 	/// Root comparisons are case-insensitive.
 	/// Names are mixed-case.
-	virtual void forEachFile(Visitor& visitor, const std::string& root) = 0;
+	virtual void traverse(Visitor& visitor, const std::string& root) = 0;
 };
 typedef std::shared_ptr<Archive> ArchivePtr;
 

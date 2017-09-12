@@ -139,7 +139,7 @@ bool ZipArchive::containsFile(const std::string& name)
 	return i != _filesystem.end() && !i->second.isDirectory();
 }
 
-void ZipArchive::forEachFile(Visitor& visitor, const std::string& root)
+void ZipArchive::traverse(Visitor& visitor, const std::string& root)
 {
 	_filesystem.traverse(visitor, root);
 }

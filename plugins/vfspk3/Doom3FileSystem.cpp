@@ -241,7 +241,7 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
     // turn calls the callback for each matching file.
 	for (const ArchiveDescriptor& descriptor : _archives)
     {
-		descriptor.archive->forEachFile(functor, basedir);
+		descriptor.archive->traverse(functor, basedir);
     }
 }
 
@@ -259,7 +259,7 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
     FileVisitor fileVisitor(visitorFunc, "", extension, visitedFiles);
 	ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
 
-    tempArchive.forEachFile(functor, "/");
+    tempArchive.traverse(functor, "/");
 }
 
 std::string Doom3FileSystem::findFile(const std::string& name)
