@@ -9,7 +9,6 @@
 #include <boost/algorithm/string/case_conv.hpp>
 
 class FileVisitor
-: public Archive::Visitor
 {
 	// The VirtualFileSystem::Visitor to call for each located file
     VirtualFileSystem::VisitorFunc _visitorFunc;

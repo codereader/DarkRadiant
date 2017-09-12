@@ -89,16 +89,6 @@ class CustomArchiveVisitor;
 class Archive
 {
 public:
-	/**
-	 * Visitor class for traversing files within an Archive.
-	 */
-	class Visitor
-	{
-	public:
-	    virtual ~Visitor() {}
-		virtual void visit(const std::string& name) = 0;
-	};
-
 	typedef CustomArchiveVisitor VisitorFunc;
 
 	enum EMode {
