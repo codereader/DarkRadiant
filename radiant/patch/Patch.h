@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "generic/callback.h"
 #include "transformlib.h"
 #include "editable.h"
 #include "iundo.h"
@@ -116,9 +115,6 @@ public:
 
 	// Allocate callback: pass the allocate call to all the observers
 	void onAllocate(std::size_t size);
-
-	// For the TransformNode implementation (localToParent() is abstract and needs to be here), returns identity
-	const Matrix4& localToParent() const;
 
 	// Return the interally stored AABB
 	const AABB& localAABB() const override;
@@ -274,7 +270,6 @@ public:
 	void ScaleTexture(float s, float t);
 	void RotateTexture(float angle);
 	void SetTextureRepeat(float s, float t); // call with s=1 t=1 for FIT
-	void CapTexture();
 	void NaturalTexture();
 
 	// Aligns the patch texture along the given side/border - if possible
