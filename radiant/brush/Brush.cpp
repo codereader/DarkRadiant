@@ -45,14 +45,13 @@ const std::size_t Brush::CONE_MAX_SIDES = 32;
 const std::size_t Brush::SPHERE_MIN_SIDES = 3;
 const std::size_t Brush::SPHERE_MAX_SIDES = 7;
 
-Brush::Brush(BrushNode& owner, const Callback& evaluateTransform) :
+Brush::Brush(BrushNode& owner) :
     _owner(owner),
     _undoStateSaver(nullptr),
     _mapFileChangeTracker(nullptr),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
-    m_evaluateTransform(evaluateTransform),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -60,14 +59,13 @@ Brush::Brush(BrushNode& owner, const Callback& evaluateTransform) :
     onFacePlaneChanged();
 }
 
-Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform) :
+Brush::Brush(BrushNode& owner, const Brush& other) :
     _owner(owner),
     _undoStateSaver(nullptr),
     _mapFileChangeTracker(nullptr),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
-    m_evaluateTransform(evaluateTransform),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -230,11 +228,13 @@ void Brush::transformChanged() {
     onFacePlaneChanged();
 }
 
-void Brush::evaluateTransform() {
-    if(m_transformChanged) {
+void Brush::evaluateTransform()
+{
+    if (m_transformChanged)
+	{
         m_transformChanged = false;
         revertTransform();
-        m_evaluateTransform();
+        _owner.evaluateTransform();
     }
 }
 

@@ -2,7 +2,6 @@
 
 #include "editable.h"
 
-#include "generic/callback.h"
 #include "Face.h"
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
@@ -123,8 +122,6 @@ private:
 	AABB m_aabb_local;
 	// ----
 
-	Callback m_evaluateTransform;
-
 	mutable bool m_planeChanged; // b-rep evaluation required
 	mutable bool m_transformChanged; // transform evaluation required
 	// ----
@@ -165,8 +162,8 @@ public:
 	static double m_maxWorldCoord;
 
 	// Constructors
-	Brush(BrushNode& owner, const Callback& evaluateTransform);
-	Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform);
+	Brush(BrushNode& owner);
+	Brush(BrushNode& owner, const Brush& other);
 
 	// Destructor
 	virtual ~Brush();
