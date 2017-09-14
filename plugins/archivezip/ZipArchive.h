@@ -50,6 +50,7 @@ private:
 	ZipFileSystem _filesystem;
 	std::string _fullPath;			// the full path to the Zip file
 	std::string _containingFolder;  // the folder this Zip is located in
+	std::string _modName;			// mod name, calculated based on the containing folder
 	stream::FileInputStream _istream;
     std::mutex _streamLock;
 

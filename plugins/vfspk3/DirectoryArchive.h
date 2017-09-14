@@ -4,7 +4,7 @@
 
 /**
  * greebo: This wraps around a certain path in the "real"
- *         filesystem on the user's hard drive.
+ * filesystem on the user's hard drive.
  *
  * A real folder is treated like any other "archive" and gets
  * added to the list of PK4 archives, using this class.
@@ -12,7 +12,14 @@
 class DirectoryArchive :
 	public Archive
 {
+private:
 	std::string _root;
+
+	// The modname for constructing the ModResource is cached here
+	// since changing the game paths will trigger a re-initialisation
+	// of the VFS anyway.
+	std::string _modName;
+
 public:
 	// Pass the root path to the constructor
 	DirectoryArchive(const std::string& root);

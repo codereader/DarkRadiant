@@ -32,6 +32,7 @@ public:
 ZipArchive::ZipArchive(const std::string& fullPath) :
 	_fullPath(fullPath),
 	_containingFolder(os::standardPathWithSlash(fs::path(_fullPath).remove_filename())),
+	_modName(game::current::getModPath(_containingFolder)),
 	_istream(_fullPath)
 {
 	if (_istream.failed())
@@ -118,15 +119,13 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name)
 			return ArchiveTextFilePtr();
 		}
 
-		std::string modDir = game::current::getModPath(_containingFolder);
-
 		switch (file->mode)
 		{
 		case ZipRecord::eStored:
-			return std::make_shared<StoredArchiveTextFile>(name, _fullPath, modDir, _istream.tell(), file->stream_size);
+			return std::make_shared<StoredArchiveTextFile>(name, _fullPath, _modName, _istream.tell(), file->stream_size);
 
 		case ZipRecord::eDeflated:
-			return std::make_shared<DeflatedArchiveTextFile>(name, _fullPath, modDir, _istream.tell(), file->stream_size);
+			return std::make_shared<DeflatedArchiveTextFile>(name, _fullPath, _modName, _istream.tell(), file->stream_size);
 		}
 	}
 
