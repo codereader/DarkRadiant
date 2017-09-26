@@ -384,15 +384,17 @@
 		3AE6F1C51F4975D9008A1B2D /* SelectionGroupInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */; };
 		3AE6F1C61F4975D9008A1B2D /* SelectionGroupInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */; };
 		3AE6F1C71F4978AB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
-		3AE6F1D61F63D43D008A1B2D /* WavefrontExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */; };
 		3AE6F1CB1F63CA11008A1B2D /* DeflatedInputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C81F63CA11008A1B2D /* DeflatedInputStream.cpp */; };
-		3AE6F1D71F63D43D008A1B2D /* WavefrontExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */; };
-		
 		3AE6F1CC1F63CA12008A1B2D /* DeflatedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C91F63CA11008A1B2D /* DeflatedInputStream.h */; };
 		3AE6F1CD1F63CA12008A1B2D /* GenericFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CA1F63CA11008A1B2D /* GenericFileSystem.h */; };
 		3AE6F1D11F63CA2D008A1B2D /* StoredArchiveFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CE1F63CA2D008A1B2D /* StoredArchiveFile.h */; };
 		3AE6F1D21F63CA2D008A1B2D /* StoredArchiveTextFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CF1F63CA2D008A1B2D /* StoredArchiveTextFile.h */; };
 		3AE6F1D31F63CA2D008A1B2D /* ZipStreamUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D01F63CA2D008A1B2D /* ZipStreamUtils.h */; };
+		3AE6F1D61F63D43D008A1B2D /* WavefrontExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */; };
+		3AE6F1D71F63D43D008A1B2D /* WavefrontExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */; };
+		3AE6F1D91F6E91A7008A1B2D /* ArchiveVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */; };
+		3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */ = {isa = PBXBuildFile; fileRef = 3AE6F1DA1F6E953F008A1B2D /* prey.game */; };
+		3AE6F1DC1F6E9560008A1B2D /* prey.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1DA1F6E953F008A1B2D /* prey.game */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
 		3AEBDCA31E506C930062D9AF /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC9B1E5069A60062D9AF /* CommandSystem.cpp */; };
@@ -2653,6 +2655,7 @@
 			dstPath = Contents/Resources/games;
 			dstSubfolderSpec = 1;
 			files = (
+				3AE6F1DC1F6E9560008A1B2D /* prey.game in CopyFiles */,
 				3AF475731E634D95006B26C2 /* darkmod.game in CopyFiles */,
 				3AF475741E634D95006B26C2 /* doom3-demo.game in CopyFiles */,
 				3AF475751E634D95006B26C2 /* doom3.game in CopyFiles */,
@@ -3043,6 +3046,8 @@
 		3AE6F1D01F63CA2D008A1B2D /* ZipStreamUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipStreamUtils.h; path = ../../plugins/archivezip/ZipStreamUtils.h; sourceTree = SOURCE_ROOT; };
 		3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WavefrontExporter.cpp; path = ../../plugins/model/WavefrontExporter.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WavefrontExporter.h; path = ../../plugins/model/WavefrontExporter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArchiveVisitor.h; path = ../../plugins/vfspk3/ArchiveVisitor.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1DA1F6E953F008A1B2D /* prey.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = prey.game; path = ../../install/games/prey.game; sourceTree = SOURCE_ROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
@@ -3402,7 +3407,6 @@
 		3AEBE0F21E50D9200062D9AF /* ScriptWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScriptWindow.cpp; path = ../../plugins/script/ScriptWindow.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE0F31E50D9200062D9AF /* ScriptWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScriptWindow.h; path = ../../plugins/script/ScriptWindow.h; sourceTree = SOURCE_ROOT; };
 		3AEBE1281E50D9570062D9AF /* script.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = script.xcconfig; sourceTree = "<group>"; };
-		3AEBE1291E50D9F30062D9AF /* boost_python.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = boost_python.xcconfig; sourceTree = "<group>"; };
 		3AEBE12A1E50DB950062D9AF /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = System/Library/Frameworks/Python.framework; sourceTree = SDKROOT; };
 		3AEBE1331E50DBF80062D9AF /* shaders.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shaders.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBE13E1E50DC1C0062D9AF /* CameraCubeMapDecl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CameraCubeMapDecl.cpp; path = ../../plugins/shaders/CameraCubeMapDecl.cpp; sourceTree = SOURCE_ROOT; };
@@ -5245,7 +5249,6 @@
 				3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */,
 				3AEBE1281E50D9570062D9AF /* script.xcconfig */,
 				3AE6F1BC1F49749C008A1B2D /* python.xcconfig */,
-				3AEBE1291E50D9F30062D9AF /* boost_python.xcconfig */,
 				3AEBE1BF1E50DDFB0062D9AF /* sound.xcconfig */,
 				3AEBE26A1E50E08C0062D9AF /* uimanager.xcconfig */,
 				3AEBE49D1E50E41F0062D9AF /* dm.editing.xcconfig */,
@@ -6120,6 +6123,7 @@
 		3AEBE1E31E50DF310062D9AF /* vfspk3 */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */,
 				3AEBE2501E50DFDF0062D9AF /* DirectoryArchive.cpp */,
 				3AEBE2511E50DFDF0062D9AF /* DirectoryArchive.h */,
 				3AEBE2521E50DFDF0062D9AF /* Doom3FileSystem.cpp */,
@@ -6523,6 +6527,7 @@
 		3AEBE4B71E50EFD60062D9AF /* games */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1DA1F6E953F008A1B2D /* prey.game */,
 				3AEBE4B81E50EFEB0062D9AF /* darkmod.game */,
 				3AEBE4B91E50EFEB0062D9AF /* doom3-demo.game */,
 				3AEBE4BA1E50EFEB0062D9AF /* doom3.game */,
@@ -8364,6 +8369,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AE6F1D91F6E91A7008A1B2D /* ArchiveVisitor.h in Headers */,
 				3AEBE2611E50DFDF0062D9AF /* UnixPath.h in Headers */,
 				3AEBE2601E50DFDF0062D9AF /* SortedFilenames.h in Headers */,
 				3AEBE25F1E50DFDF0062D9AF /* FileVisitor.h in Headers */,
@@ -9460,6 +9466,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
+				3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

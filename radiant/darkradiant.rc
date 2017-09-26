@@ -86,8 +86,8 @@ BEGIN
 			BEGIN
 				VALUE "ProductName", RADIANT_APPNAME
 				VALUE "ProductVersion", RADIANT_VERSION RADIANT_BLANK RADIANT_PLATFORM "\0"
-				VALUE "LegalCopyright", "www.thedarkmod.com" "\0"
-				VALUE "FileDescription", "Level Editor for The Dark Mod" "\0"
+				VALUE "LegalCopyright", "www.darkradiant.net" "\0"
+				VALUE "FileDescription", "DarkRadiant, Level Editor for The Dark Mod" "\0"
 			END
 		END
 	BLOCK "VarFileInfo"
