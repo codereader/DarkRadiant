@@ -1,5 +1,7 @@
 #include "RadiantApp.h"
 
+#include "i18n.h"
+
 #include "log/LogFile.h"
 #include "log/LogStream.h"
 #include "log/PIDFile.h"
