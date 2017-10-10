@@ -9,7 +9,7 @@
 #include "itextstream.h"
 
 #include <time.h>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include "util/ScopedBoolLock.h"
 #include "iselectiontest.h"
@@ -808,7 +808,7 @@ void CamWnd::benchmark()
 
     double dEnd = clock() / 1000.0;
 
-    rMessage() << (boost::format("%5.2lf") % (dEnd - dStart)) << " seconds\n";
+    rMessage() << fmt::format("{0:5.2lf}", (dEnd - dStart)) << " seconds\n";
 }
 
 void CamWnd::onSceneGraphChange()
@@ -1197,7 +1197,7 @@ void CamWnd::drawTime()
     glRasterPos3f(1.0f, static_cast<float>(_camera.height) - 1.0f, 0.0f);
 
     std::size_t time = GlobalRenderSystem().getTime();
-    GlobalOpenGL().drawString((boost::format("Time: %.3f sec.") % (time * 0.001f)).str());
+    GlobalOpenGL().drawString(fmt::format("Time: {0:.3f} sec.", (time * 0.001f)));
 }
 
 // -------------------------------------------------------------------------------
