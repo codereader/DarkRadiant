@@ -16,7 +16,7 @@
 #include "lrint.h"
 #include <sstream>
 #include <cmath>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 template <typename Element>
 class BasicVector2 {
@@ -259,10 +259,9 @@ public:
 
 	/** Cast to std::string
 	 */
-	operator std::string() const {
-		return (boost::format("%s %s")
-				 % _v[0]
-				 % _v[1]).str();
+	operator std::string() const
+	{
+		return fmt::format("{0:f} {1:f}", _v[0], _v[1]);
 	}
 
 	/** Return the length of this vector.

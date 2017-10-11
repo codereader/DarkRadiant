@@ -57,7 +57,7 @@ FixupMap::Result FixupMap::perform()
 		{
 			double fraction = static_cast<double>(parsedSize) / _contents.size();
 			_progress.setTextAndFraction(
-				(boost::format(_("Processing line %d...")) % _curLineNumber).str(),
+				fmt::format(_("Processing line {0}..."), _curLineNumber),
 				fraction);
 		}
 		catch (wxutil::ModalProgressDialog::OperationAbortedException& ex)

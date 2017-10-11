@@ -1031,7 +1031,7 @@ void ParticleEditor::updateWidgetsFromParticle()
     outFile /= _currentDef->getFilename();
 
 	findNamedObject<wxStaticText>(this, "ParticleEditorSaveNote")->SetLabelMarkup(
-		(boost::format(_("Note: changes will be written to the file <i>%s</i>")) % outFile.string()).str());
+		fmt::format(_("Note: changes will be written to the file <i>{0}</i>"), outFile.string()));
 }
 
 void ParticleEditor::reloadStageList()
@@ -1052,7 +1052,7 @@ void ParticleEditor::reloadStageList()
 		wxDataViewItemAttr colour;
 		colour.SetColour(stage.isVisible() ? wxColour(0, 0, 0) : wxColour(127, 127, 127));
 
-        row[STAGE_COLS().name] = (boost::format("Stage %d") % static_cast<int>(i)).str();
+        row[STAGE_COLS().name] = fmt::format("Stage {0}", static_cast<int>(i));
 		row[STAGE_COLS().name] = colour;
 
         row[STAGE_COLS().index] = static_cast<int>(i);
@@ -1110,14 +1110,14 @@ void ParticleEditor::updateWidgetsFromStage()
 
     const Vector4& colour = stage.getColour();
 	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageColour")->SetValue(
-        (boost::format("%.3f %.3f %.3f %.3f") % colour.x() % colour.y() % colour.z() % colour.w()).str());
+        fmt::format("{:.3f} {:.3f} {:.3f} {:.3f}", colour.x(), colour.y(), colour.z(), colour.w()));
 
 	findNamedObject<wxCheckBox>(this, "ParticleEditorStageUseEntityColour")->SetValue(stage.getUseEntityColour());
 
     const Vector4& fadeColour = stage.getFadeColour();
 
 	findNamedObject<wxTextCtrl>(this, "ParticleEditorStageFadeColour")->SetValue(
-        (boost::format("%.3f %.3f %.3f %.3f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str());
+		fmt::format("{:.3f} {:.3f} {:.3f} {:.3f}", fadeColour.x(), fadeColour.y(), fadeColour.z(), fadeColour.w()));
 
 	setSpinCtrlValue("ParticleEditorStageFadeInFrac", stage.getFadeInFraction());
 	setSpinCtrlValue("ParticleEditorStageFadeOutFrac", stage.getFadeOutFraction());
@@ -1339,7 +1339,7 @@ IDialog::Result ParticleEditor::askForSave()
 
     // The particle we're editing has been changed from the saved one
     wxutil::Messagebox box(_("Save Changes"),
-        (boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % origName).str(),
+        fmt::format(_("Do you want to save the changes\nyou made to the particle {0}?"), origName),
         IDialog::MESSAGE_SAVECONFIRMATION);
 
     return box.run();
@@ -1372,7 +1372,7 @@ bool ParticleEditor::saveCurrentParticle()
     }
     catch (std::runtime_error& err)
     {
-        std::string errMsg = (boost::format(_("Error saving particle definition:\n%s")) % err.what()).str();
+        std::string errMsg = fmt::format(_("Error saving particle definition:\n{0}"), err.what());
 
         rError() << errMsg << std::endl;
 

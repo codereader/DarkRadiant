@@ -320,7 +320,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 			if (!outFile.is_open())
 			{
 				throw std::runtime_error(
-					(boost::format(_("Cannot open file for writing: %s")) % targetFile.string()).str());
+					fmt::format(_("Cannot open file for writing: {0}"), targetFile.string()));
 			}
 
 			char buf[16384];
@@ -348,7 +348,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	if (!tempStream.is_open())
 	{
 		throw std::runtime_error(
-				(boost::format(_("Cannot open file for writing: %s")) % tempFile.string()).str());
+				fmt::format(_("Cannot open file for writing: {0}"), tempFile.string()));
 	}
 
 	std::string tempString;
@@ -361,7 +361,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 		if (!inheritStream.is_open())
 		{
 			throw std::runtime_error(
-					(boost::format(_("Cannot open file for reading: %s")) % targetFile.string()).str());
+					fmt::format(_("Cannot open file for reading: {0}"), targetFile.string()));
 		}
 
 		// Write the file to the output stream, up to the point the particle def should be written to
@@ -408,7 +408,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 				<< e.what() << std::endl;
 
 			throw std::runtime_error(
-				(boost::format(_("Could not remove the file %s")) % targetFile.string()).str());
+				fmt::format(_("Could not remove the file {0}"), targetFile.string()));
 		}
 	}
 
@@ -422,7 +422,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 			<< e.what() << std::endl;
 
 		throw std::runtime_error(
-			(boost::format(_("Could not rename the temporary file %s")) % tempFile.string()).str());
+			fmt::format(_("Could not rename the temporary file {0}"), tempFile.string()));
 	}
 }
 

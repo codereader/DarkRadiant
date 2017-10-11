@@ -1191,8 +1191,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 		std::size_t ent(0), prim(0);
 		selection::algorithm::getSelectionIndex(ent, prim);
 
-		_primitiveNumLabel->SetLabelText(
-			(boost::format(_("Entity %d")) % ent).str());
+		_primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}"), ent));
     }
     else
     {
@@ -1203,8 +1202,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 		std::size_t ent(0), prim(0);
 		selection::algorithm::getSelectionIndex(ent, prim);
 
-		_primitiveNumLabel->SetLabelText(
-			(boost::format(_("Entity %d, Primitive %d")) % ent % prim).str());
+		_primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), ent, prim));
     }
 }
 

@@ -4,7 +4,7 @@
 #include "imodelsurface.h"
 #include "imap.h"
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace model
 {
@@ -149,8 +149,8 @@ void AseExporter::exportToStream(std::ostream& stream)
 		{
 			std::size_t faceNum = i / 3;
 
-			stream << (boost::format("\t\t\t*MESH_FACE %3u:  A: %3u B: %3u C: %3u AB:       0 BC:    0 CA:    0	 *MESH_SMOOTHING 1 	*MESH_MTLID %3u") %
-				faceNum % surface.indices[i] % surface.indices[i + 1] % surface.indices[i + 2] % m) << std::endl;
+			stream << fmt::format("\t\t\t*MESH_FACE {:3d}:  A: {:3d} B: {:3d} C: {:3d} AB:       0 BC:    0 CA:    0	 *MESH_SMOOTHING 1 	*MESH_MTLID {:3d}",
+				faceNum, surface.indices[i], surface.indices[i + 1], surface.indices[i + 2], m) << std::endl;
 		}
 
 		stream << "\t\t}" << std::endl;
@@ -177,8 +177,8 @@ void AseExporter::exportToStream(std::ostream& stream)
 		{
 			std::size_t faceNum = i / 3;
 
-			stream << (boost::format("\t\t\t*MESH_TFACE %3u\t%3u\t%3u\t%3u") %
-				faceNum % surface.indices[i] % surface.indices[i + 1] % surface.indices[i + 2]) << std::endl;
+			stream << fmt::format("\t\t\t*MESH_TFACE {:3d}\t{:3d}\t{:3d}\t{:3d}",
+				faceNum, surface.indices[i], surface.indices[i + 1], surface.indices[i + 2]) << std::endl;
 		}
 
 		stream << "\t\t}" << std::endl;
@@ -205,8 +205,8 @@ void AseExporter::exportToStream(std::ostream& stream)
 		{
 			std::size_t faceNum = i / 3;
 
-			stream << (boost::format("\t\t\t*MESH_CFACE %3u\t%3u\t%3u\t%3u") %
-				faceNum % surface.indices[i] % surface.indices[i + 1] % surface.indices[i + 2]) << std::endl;
+			stream << fmt::format("\t\t\t*MESH_CFACE {:3d}\t{:3d}\t{:3d}\t{:3d}",
+				faceNum, surface.indices[i], surface.indices[i + 1], surface.indices[i + 2]) << std::endl;
 		}
 
 		stream << "\t\t}" << std::endl;

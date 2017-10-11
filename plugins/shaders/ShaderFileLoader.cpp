@@ -93,7 +93,7 @@ void ShaderFileLoader::parseFiles()
 
 		if (_currentOperation)
 		{
-			_currentOperation->setMessage((boost::format(_("Parsing material file %s")) % fullPath).str());
+			_currentOperation->setMessage(fmt::format(_("Parsing material file {0}"), fullPath));
 
 			float progress = static_cast<float>(i) / _files.size();
 			_currentOperation->setProgress(progress);

@@ -219,7 +219,7 @@ void MapExporter::onNodeProgress()
 	// button is clicked, which we must catch and handle.
 	if (_dialog && _dialogEventLimiter.readyForEvent())
 	{
-		std::string text = (boost::format(_("Writing node %d")) % _curNodeCount).str();
+		std::string text = fmt::format(_("Writing node {0:d}"), _curNodeCount);
 		_dialog->setTextAndFraction(
 			text, 
 			static_cast<double>(_curNodeCount) / static_cast<double>(_totalNodeCount)

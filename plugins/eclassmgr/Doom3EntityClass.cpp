@@ -8,6 +8,8 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
+#include <boost/format.hpp>
+#include <boost/optional.hpp>
 #include <functional>
 
 namespace eclass

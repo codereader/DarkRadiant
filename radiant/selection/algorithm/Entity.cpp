@@ -79,7 +79,7 @@ void setEntityKeyvalue(const std::string& key, const std::string& value)
 			if (nspace && nspace->nameExists(value))
 			{
 				// name exists, cancel the change
-				throw std::runtime_error((boost::format(_("The name %s already exists in this map!")) % value).str());
+				throw std::runtime_error(fmt::format(_("The name {0} already exists in this map!"), value));
 			}
 		}
 	}
@@ -233,7 +233,7 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 
     if (!(entityClass->isFixedSize() || isModel) && !primitivesSelected) {
         throw EntityCreationException(
-            (boost::format(_("Unable to create entity %s, no brushes selected.")) % name).str()
+            fmt::format(_("Unable to create entity {0}, no brushes selected."), name)
         );
     }
 

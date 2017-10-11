@@ -2,6 +2,7 @@
 
 #include "ientity.h"
 #include "irender.h"
+#include <fmt/format.h>
 
 namespace entity
 {
@@ -68,7 +69,7 @@ private:
 
 		if (renderSystem)
 		{
-			std::string wireCol = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
+			std::string wireCol = fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]);
 			_wireShader = renderSystem->capture(wireCol);
 		}
 		else

@@ -264,7 +264,7 @@ void ModelExporter::ExportToPath(const model::IModelExporterPtr& exporter,
 	if (!tempStream.is_open())
 	{
 		throw std::runtime_error(
-			(boost::format(_("Cannot open file for writing: %s")) % tempFile.string()).str());
+			fmt::format(_("Cannot open file for writing: {0}"), tempFile.string()));
 	}
 
 	exporter->exportToStream(tempStream);
@@ -286,7 +286,7 @@ void ModelExporter::ExportToPath(const model::IModelExporterPtr& exporter,
 				<< e.what() << std::endl;
 
 			throw std::runtime_error(
-				(boost::format(_("Could not rename the existing file to .bak: %s")) % tempFile.string()).str());
+				fmt::format(_("Could not rename the existing file to .bak: {0}"), tempFile.string()));
 		}
 	}
 
@@ -300,7 +300,7 @@ void ModelExporter::ExportToPath(const model::IModelExporterPtr& exporter,
 			<< e.what() << std::endl;
 
 		throw std::runtime_error(
-			(boost::format(_("Could not rename the temporary file: %s")) % tempFile.string()).str());
+			fmt::format(_("Could not rename the temporary file: {0}"), tempFile.string()));
 	}
 }
 

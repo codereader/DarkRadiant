@@ -434,10 +434,10 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	// Set the "_color" keyvalue
 	wxColour col = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->GetColour();
 
-	entity->setKeyValue("_color", (boost::format("%.3f %.3f %.3f")
-							  		% (col.Red() / 255.0f)
-							  		% (col.Green() / 255.0f)
-							  		% (col.Blue() / 255.0f)).str());
+	entity->setKeyValue("_color", fmt::format("{:.3f} {:.3f} {:.3f}", 
+							  		(col.Red() / 255.0f), 
+							  		(col.Green() / 255.0f),
+							  		(col.Blue() / 255.0f)));
 
 	// Write out all vectors to the entity
 	for (StringMap::iterator i = _valueMap.begin();

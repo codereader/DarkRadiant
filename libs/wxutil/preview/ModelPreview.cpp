@@ -153,9 +153,8 @@ void ModelPreview::setupSceneGraph()
     }
     catch (std::runtime_error&)
     {
-        wxutil::Messagebox::ShowError(
-            (boost::format(_("Unable to setup the preview,\n"
-            "could not find the entity class %s")) % FUNC_STATIC_CLASS).str());
+        wxutil::Messagebox::ShowError(fmt::format(_("Unable to setup the preview,\n"
+			"could not find the entity class {0}"), FUNC_STATIC_CLASS));
     }
 }
 

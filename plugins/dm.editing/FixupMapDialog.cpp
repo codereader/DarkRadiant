@@ -44,10 +44,10 @@ void FixupMapDialog::RunDialog(const cmd::ArgumentList& args)
 		// Show popup with results
 		std::string msg;
 
-		msg += (boost::format(_("%d shaders replaced.")) % result.replacedShaders).str() + "\n";
-		msg += (boost::format(_("%d entities replaced.")) % result.replacedEntities).str() + "\n";
-		msg += (boost::format(_("%d models replaced.")) % result.replacedModels).str() + "\n";
-		msg += (boost::format(_("%d spawnargs replaced.")) % result.replacedMisc).str() + "\n";
+		msg += fmt::format(_("{0} shaders replaced."), result.replacedShaders) + "\n";
+		msg += fmt::format(_("{0} entities replaced."), result.replacedEntities) + "\n";
+		msg += fmt::format(_("{0} models replaced."), result.replacedModels) + "\n";
+		msg += fmt::format(_("{0} spawnargs replaced."), result.replacedMisc) + "\n";
 
 		if (!result.errors.empty())
 		{
@@ -58,7 +58,7 @@ void FixupMapDialog::RunDialog(const cmd::ArgumentList& args)
 			for (FixupMap::Result::ErrorMap::const_iterator i = result.errors.begin();
 				 i != result.errors.end(); ++i)
 			{
-				msg += (boost::format(_("(Line %d): %s")) % i->first % i->second).str();
+				msg += fmt::format(_("(Line {0}): {1}"), i->first, i->second);
 				msg += "\n";
 			}
 		}

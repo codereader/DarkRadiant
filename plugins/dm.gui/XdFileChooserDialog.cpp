@@ -57,7 +57,7 @@ int XdFileChooserDialog::Import(const std::string& defName,
 
 			if (loader->getImportSummary().size() > 1)
 			{
-				std::string msg = (boost::format(_("%s successfully imported.")) % defName).str();
+				std::string msg = fmt::format(_("{0} successfully imported."), defName);
 				msg += "\n\nHowever, there were some problems.\n\n";
 				msg += _("Do you want to open the import summary?");
 

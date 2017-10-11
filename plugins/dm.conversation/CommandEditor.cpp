@@ -4,7 +4,7 @@
 #include "string/string.h"
 #include "string/convert.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include "itextstream.h"
 
 #include <wx/sizer.h>
@@ -37,7 +37,7 @@ CommandEditor::CommandEditor(wxWindow* parent, conversation::ConversationCommand
 	for (conversation::Conversation::ActorMap::const_iterator i = _conversation.actors.begin();
 		 i != _conversation.actors.end(); ++i)
 	{
-		std::string actorStr = (boost::format(_("Actor %d (%s)")) % i->first % i->second).str();
+		std::string actorStr = fmt::format(_("Actor {0:d} ({1})"), i->first, i->second);
 
 		// Store the actor ID into a client data object and pass it along
 		findNamedObject<wxChoice>(this, "ConvCmdEditorActorChoice")->Append(actorStr, 

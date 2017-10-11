@@ -17,6 +17,7 @@
 #include <wx/menu.h>
 #include <wx/dcclient.h>
 
+#include <fmt/format.h>
 #include <functional>
 
 namespace wxutil
@@ -779,7 +780,7 @@ void RenderPreview::drawTime()
 
     glRasterPos3f(1.0f, static_cast<float>(_previewHeight) - 1.0f, 0.0f);
 
-    GlobalOpenGL().drawString((boost::format("%.3f sec.") % (_renderSystem->getTime() * 0.001f)).str());
+    GlobalOpenGL().drawString(fmt::format("{0:.3f} sec.", (_renderSystem->getTime() * 0.001f)));
 }
 
 void RenderPreview::onGLKeyPress(wxKeyEvent& ev)

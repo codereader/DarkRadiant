@@ -106,7 +106,7 @@ void MRU::loadMap(const std::string& fileName)
 		else
 		{
 			wxutil::Messagebox::ShowError(
-				(boost::format(_("Could not read map file: %s")) % fileName).str());
+				fmt::format(_("Could not read map file: {0}"), fileName));
 		}
 	}
 }

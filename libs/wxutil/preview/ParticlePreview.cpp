@@ -18,7 +18,7 @@
 
 #include <wx/artprov.h>
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -182,9 +182,8 @@ void ParticlePreview::setupSceneGraph()
 	}
 	catch (std::runtime_error&)
 	{
-		wxutil::Messagebox::ShowError(
-			(boost::format(_("Unable to setup the preview,\n"
-			"could not find the entity class %s")) % FUNC_EMITTER_CLASS).str());
+		wxutil::Messagebox::ShowError(fmt::format(_("Unable to setup the preview,\n"
+			"could not find the entity class {0}"), FUNC_EMITTER_CLASS));
 	}
 }
 

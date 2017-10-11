@@ -129,13 +129,13 @@ void Doom3EntityCreator::connectEntities(const scene::INodePtr& source,
 	for (int i = 0; i < 1024; ++i) {
 
 		// Construct candidate key by appending number to "target"
-		std::string targetKey = (boost::format("target%i") % i).str();
+		std::string targetKey = fmt::format("target{0:d}", i);
 
 		// If the source entity does not have this key, add it and finish,
 		// otherwise continue looping
-		if (e1->getKeyValue(targetKey).empty()) {
-			e1->setKeyValue(targetKey,
-			                e2->getKeyValue("name"));
+		if (e1->getKeyValue(targetKey).empty())
+		{
+			e1->setKeyValue(targetKey, e2->getKeyValue("name"));
 			break;
 		}
 	}

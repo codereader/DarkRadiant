@@ -208,10 +208,10 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 	switch (cond.type)
 	{
 	case ObjectiveCondition::CHANGE_STATE:
-		_value->Append((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INCOMPLETE)).str());
-		_value->Append((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::COMPLETE)).str());
-		_value->Append((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INVALID)).str());
-		_value->Append((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::FAILED)).str());
+		_value->Append(fmt::format(_("Set state to {0}"), Objective::getStateText(Objective::INCOMPLETE)));
+		_value->Append(fmt::format(_("Set state to {0}"), Objective::getStateText(Objective::COMPLETE)));
+		_value->Append(fmt::format(_("Set state to {0}"), Objective::getStateText(Objective::INVALID)));
+		_value->Append(fmt::format(_("Set state to {0}"), Objective::getStateText(Objective::FAILED)));
 
 		if (cond.value >= Objective::NUM_STATES)
 		{
@@ -460,7 +460,7 @@ void ObjectiveConditionsDialog::populateWidgets()
 
 std::string ObjectiveConditionsDialog::getDescription(const ObjectiveCondition& cond)
 {
-	return (boost::format(_("Condition affecting objective %d")) % (cond.targetObjective+1)).str();
+	return fmt::format(_("Condition affecting objective {0:d}"), (cond.targetObjective+1));
 }
 
 void ObjectiveConditionsDialog::_onCancel(wxCommandEvent& ev)
@@ -490,8 +490,8 @@ std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& con
 
 	if (cond.isValid())
 	{
-		str = (boost::format(_("If Objective %d in Mission %d is in state '%s' do the following: ")) % 
-			(cond.sourceObjective+1) % (cond.sourceMission+1) % Objective::getStateText(cond.sourceState)).str();
+		str = fmt::format(_("If Objective {0} in Mission {1} is in state '{2}' do the following: "), 
+			(cond.sourceObjective+1), (cond.sourceMission+1), Objective::getStateText(cond.sourceState));
 
 		str += "\n";
 
@@ -501,29 +501,29 @@ std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& con
 		switch (cond.type)
 		{
 		case ObjectiveCondition::CHANGE_STATE:
-			actionStr = (boost::format(_("Set State on Objective %d to %s")) % 
-				objNum % Objective::getStateText(static_cast<Objective::State>(cond.value))).str();
+			actionStr = fmt::format(_("Set State on Objective {0} to {1}"),
+				objNum, Objective::getStateText(static_cast<Objective::State>(cond.value)));
 			break;
 
 		case ObjectiveCondition::CHANGE_VISIBILITY:
 			if (cond.value != 0)
 			{
-				actionStr = (boost::format(_("Make Objective %d visible")) % objNum).str();
+				actionStr = fmt::format(_("Make Objective {0} visible"), objNum);
 			}
 			else
 			{
-				actionStr = (boost::format(_("Make Objective %d invisible")) % objNum).str();
+				actionStr = fmt::format(_("Make Objective {0} invisible"), objNum);
 			}
 			break;
 
 		case ObjectiveCondition::CHANGE_MANDATORY:
 			if (cond.value != 0)
 			{
-				actionStr = (boost::format(_("Make Objective %d mandatory")) % objNum).str();
+				actionStr = fmt::format(_("Make Objective {0} mandatory"), objNum);
 			}
 			else
 			{
-				actionStr = (boost::format(_("Make Objective %d not mandatory")) % objNum).str();
+				actionStr = fmt::format(_("Make Objective {0} not mandatory"), objNum);
 			}
 			break;
         default:

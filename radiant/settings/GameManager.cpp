@@ -24,8 +24,6 @@
 
 #include <iostream>
 
-using boost::format;
-
 namespace game
 {
 	namespace {
@@ -249,24 +247,21 @@ void Manager::constructPaths()
 
 bool Manager::userWantsToCorrectSettings() const
 {
-    using boost::format;
     std::stringstream msg("<b>Warning:</b>\n");
 
     if (!os::fileOrDirExists(_enginePath))
     {
-        msg << format(_("Engine path \"%1%\" does not exist.\n")) % _enginePath;
+        msg << fmt::format(_("Engine path \"{0}\" does not exist.\n"), _enginePath);
     }
 
     if (!_fsGame.empty() && !os::fileOrDirExists(_modPath))
     {
-        msg << format(_("The fs_game folder \"%1%\" does not exist.\n"))
-               % _modPath;
+        msg << fmt::format(_("The fs_game folder \"{0}\" does not exist.\n"), _modPath);
     }
 
     if (!_fsGameBase.empty() && !os::fileOrDirExists(_modBasePath))
     {
-        msg << format(_("The fs_game_base folder \"%1%\" does not exist.\n"))
-               % _modBasePath;
+        msg << fmt::format(_("The fs_game_base folder \"{0}\" does not exist.\n"), _modBasePath);
     }
 
     msg << _("Do you want to correct these settings?");

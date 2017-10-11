@@ -313,7 +313,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 		}
 		catch (XdFileChooserDialog::ImportFailedException&)
 		{
-			std::string msg = (boost::format(_("Failed to import %s.")) % _entity->getKeyValue("xdata_contents")).str();
+			std::string msg = fmt::format(_("Failed to import {0}."), _entity->getKeyValue("xdata_contents"));
 			msg += "\n";
 			msg += _("Creating a new XData definition...");
 			msg += "\n\n";
@@ -394,7 +394,7 @@ bool ReadableEditorDialog::save()
 		{
 		case XData::OpenFailed:
 			wxutil::Messagebox::ShowError(
-				(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
+				fmt::format(_("Failed to open {0} for saving."), _xdFilename),
 				this
 			);
 			_saveInProgress = false;
@@ -415,7 +415,7 @@ bool ReadableEditorDialog::save()
 	else if (fst == XData::OpenFailed)
 	{
 		wxutil::Messagebox::ShowError(
-			(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
+			fmt::format(_("Failed to open {0} for saving."), _xdFilename),
 			this
 		);
 	}
@@ -501,11 +501,11 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (compPath.empty())
 					{
 						wxutil::Messagebox::ShowError(
-							(boost::format(_("%s%s already exists in another path.\n\nXData will be stored in %s%s!")) %
-								XData::XDATA_DIR % 
-								_mapBasedFilename % 
-								XData::XDATA_DIR % 
-								newFileName).str(),
+							fmt::format(_("{0}{1} already exists in another path.\n\nXData will be stored in {2}{3}!"),
+								XData::XDATA_DIR,
+								_mapBasedFilename,
+								XData::XDATA_DIR,
+								newFileName),
 							this
 						);
 						break;
@@ -640,7 +640,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 		}
 		else
 		{
-			std::string msg = (boost::format(_("Failed to import %s.")) % xDataName).str();
+			std::string msg = fmt::format(_("Failed to import {0}."), xDataName);
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
@@ -659,7 +659,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 
 		if (gui == NULL)
 		{
-			std::string msg = (boost::format(_("Failed to load gui definition %s.")) % xd->getGuiPage(0)).str();
+			std::string msg = fmt::format(_("Failed to load gui definition {0}."), xd->getGuiPage(0));
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
@@ -710,7 +710,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 		{
 			std::string nameGui = guiPath.empty() ? _guiEntry->GetValue().ToStdString() : guiPath;
 
-			std::string msg = (boost::format(_("Failed to load gui definition %s.")) % nameGui).str();
+			std::string msg = fmt::format(_("Failed to load gui definition {0}."), nameGui);
 			msg += "\n\n";
 			msg += _("Do you want to open the import summary?");
 
@@ -833,7 +833,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		// The definition already exists. Ask the user whether it should be imported. If not make a different name suggestion.
 		wxutil::Messagebox dialog(
 			_("Import definition?"),
-			(boost::format(_("The definition %s already exists. Should it be imported?")) % xdn).str(),
+			fmt::format(_("The definition {0} already exists. Should it be imported?"), xdn),
 			ui::IDialog::MESSAGE_ASK, this
 		);
 
@@ -883,8 +883,8 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		_xDataNameEntry->SetValue(suggestion);
 		_xData->setName(suggestion);
 
-		message += (boost::format(_("To avoid duplicated XData definitions "
-			"the current definition has been renamed to %s.")) % suggestion).str();
+		message += fmt::format(_("To avoid duplicated XData definitions "
+			"the current definition has been renamed to {0}."), suggestion);
 
 		wxutil::Messagebox::Show(
 			_("XData has been renamed."),
@@ -1396,7 +1396,7 @@ void ReadableEditorDialog::onBrowseXd(wxCommandEvent& ev)
 	}
 	catch (XdFileChooserDialog::ImportFailedException&)
 	{
-		std::string msg = (boost::format(_("Failed to import %s.")) % res).str();
+		std::string msg = fmt::format(_("Failed to import {0}."), res);
 		msg += "\n\n";
 		msg += _("Do you want to open the import summary?");
 
@@ -1570,7 +1570,7 @@ void ReadableEditorDialog::showDuplicateDefinitions()
 
 		occ += it->second[it->second.size() - 1];
 
-		out += (boost::format(_("%s has been defined in:")) % it->first).str();
+		out += fmt::format(_("{0} has been defined in:"), it->first);
 		out +="\n\t";
 		out += occ;
 		out += ".\n\n";
