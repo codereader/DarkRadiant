@@ -16,7 +16,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include "ModelSelector.h"
 #include "ModelDataInserter.h"
@@ -142,7 +142,7 @@ public:
 
 			if (_evLimiter.readyForEvent())
             {
-                reportProgress((boost::format(_("%d models loaded")) % _count).str());
+                reportProgress(fmt::format(_("{0:d} models loaded"), _count));
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public:
     void reportProgress(const std::string& message)
     {
         wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationProgressEvent(
-            (boost::format(_("%d models loaded")) % _count).str()));
+            fmt::format(_("{0:d} models loaded"), _count)));
     }
 };
 

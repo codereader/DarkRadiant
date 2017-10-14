@@ -17,7 +17,7 @@
 #include <wx/button.h>
 #include <wx/stattext.h>
 #include <wx/checkbox.h>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace ui
 {
@@ -25,13 +25,13 @@ namespace ui
 namespace
 {
 	const char* const FINDDLG_WINDOW_TITLE = N_("Find & Replace Shader");
-	const char* const COUNT_TEXT = N_("%d shader(s) replaced.");
+	const char* const COUNT_TEXT = N_("{0:d} shader(s) replaced.");
 
     const std::string RKEY_ROOT = "user/ui/textures/findShaderDialog/";
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
     const std::string RKEY_PICK_HINT_SHOWN = RKEY_ROOT + "pickHintShown";
 
-    const char* const PICK_TEXTURE_HINT = N_("When picking texture names, click the pick button and use %s\n"
+    const char* const PICK_TEXTURE_HINT = N_("When picking texture names, click the pick button and use {0}\n"
                                              "in the camera view to pick a material name. The picked texture will be\n"
                                              "filled in the entry box next to the activated button.");
 }
@@ -101,7 +101,7 @@ void FindAndReplaceShader::performReplace()
 	int replaced = selection::algorithm::findAndReplaceShader(find, replace, selectedOnly);
 
 	wxStaticText* status = findNamedObject<wxStaticText>(this, "FindReplaceDialogStatusLabel");
-	status->SetLabel((boost::format(_(COUNT_TEXT)) % replaced).str());
+	status->SetLabel(fmt::format(_(COUNT_TEXT), replaced));
 }
 
 void FindAndReplaceShader::onChooseFind(wxCommandEvent& ev)
@@ -211,7 +211,7 @@ std::string FindAndReplaceShader::getPickHelpText()
     bindText += !bindText.empty() ? "-" : "";
     bindText += wxutil::MouseButton::GetButtonString(mapping);
 
-    return (boost::format(_(PICK_TEXTURE_HINT)) % bindText).str();
+    return fmt::format(_(PICK_TEXTURE_HINT), bindText);
 }
 
 void FindAndReplaceShader::ShowDialog(const cmd::ArgumentList& args)

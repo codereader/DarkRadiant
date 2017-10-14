@@ -9,7 +9,7 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace ui
 {
@@ -133,9 +133,9 @@ bool ShortcutChooser::assignShortcut()
 
 			// Construct the message
 			std::string message =
-				(boost::format(_("The specified shortcut is already assigned to %s"
-				"\nOverwrite the current setting and assign this shortcut to %s instead?")) %
-				foundEventName % _commandName).str();
+				fmt::format(_("The specified shortcut is already assigned to {0}"
+				"\nOverwrite the current setting and assign this shortcut to {1} instead?"),
+				foundEventName, _commandName);
 
 			// Fire up the dialog to ask the user what action to take
 			IDialogPtr popup = GlobalDialogManager().createMessageBox(

@@ -9,7 +9,7 @@
 #include "primitiveparsers/PatchDef3.h"
 
 #include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace map
 {
@@ -62,7 +62,7 @@ void Quake4MapReader::parseMapVersion(parser::DefTokeniser& tok)
 	// Check we have the correct version for this module
 	if (version != requiredVersion)
 	{
-		std::string errMsg = (boost::format(_("Incorrect map version: required %f, found %f")) % requiredVersion % version).str();
+		std::string errMsg = fmt::format(_("Incorrect map version: required {0:f}, found {1:f}"), requiredVersion, version);
 
 		rError() << errMsg << std::endl;
 

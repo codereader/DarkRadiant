@@ -4,7 +4,7 @@
 #include "i18n.h"
 #include "string/string.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>
@@ -63,7 +63,7 @@ MissionLogicDialog::MissionLogicDialog(wxWindow* parent, ObjectiveEntity& object
 	for (LogicEditorMap::iterator i = _logicEditors.lower_bound(0);
 		 i != _logicEditors.end(); ++i)
 	{
-		std::string logicStr = (boost::format(_("Logic for Difficulty Level %d")) % i->first).str();
+		std::string logicStr = fmt::format(_("Logic for Difficulty Level {0:d}"), i->first);
 
 		wxStaticText* logicLabel = new wxStaticText(this, wxID_ANY, logicStr); 
 		logicLabel->SetFont(logicLabel->GetFont().Bold());

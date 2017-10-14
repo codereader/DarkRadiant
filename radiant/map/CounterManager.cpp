@@ -6,7 +6,7 @@
 #include "string/string.h"
 #include "modulesystem/StaticModule.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace map
 {
@@ -78,13 +78,13 @@ void CounterManager::onIdle()
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
 	std::string text =
-		(boost::format(_("Brushes: %lu (%lu) Patches: %lu (%lu) Entities: %lu (%lu)")) %
-		_counters[counterBrushes]->get() %
-		info.brushCount %
-		_counters[counterPatches]->get() %
-		info.patchCount %
-		_counters[counterEntities]->get() %
-		info.entityCount).str();
+		fmt::format(_("Brushes: {0:d} ({1:d}) Patches: {2:d} ({3:d}) Entities: {4:d} ({5:d})"), 
+		_counters[counterBrushes]->get(),
+		info.brushCount,
+		_counters[counterPatches]->get(),
+		info.patchCount,
+		_counters[counterEntities]->get(),
+		info.entityCount);
 
 	GlobalUIManager().getStatusBarManager().setText("MapCounters", text);
 }

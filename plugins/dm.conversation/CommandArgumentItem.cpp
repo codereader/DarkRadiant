@@ -17,7 +17,7 @@
 
 #include "wxutil/ChoiceHelper.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include "CommandEditor.h"
 #include "ActorNodeFinder.h"
@@ -115,7 +115,7 @@ ActorArgument::ActorArgument(CommandEditor& owner,
 	for (conversation::Conversation::ActorMap::const_iterator i = dummy.begin();
 		 i != dummy.end(); ++i)
 	{
-		std::string actorStr = (boost::format(_("Actor %d (%s)")) % i->first % i->second).str();
+		std::string actorStr = fmt::format(_("Actor {0:d} ({1})"), i->first, i->second);
 
 		// Store the actor ID into a client data object and pass it along
 		_comboBox->Append(actorStr, new wxStringClientData(string::to_string(i->first)));

@@ -7,7 +7,7 @@
 #include "XYMouseToolEvent.h"
 #include "selectionlib.h"
 #include "string/convert.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace ui
 {
@@ -153,7 +153,7 @@ void MeasurementTool::ensureShaders(RenderSystem& renderSystem)
 		_colour.z() = colour.z();
 		_colour.w() = 1;
 
-		_wireShader = renderSystem.capture((boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str());
+		_wireShader = renderSystem.capture(fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]));
 	}
 
 	if (!_pointShader)

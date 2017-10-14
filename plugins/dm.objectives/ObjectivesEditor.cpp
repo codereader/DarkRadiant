@@ -23,7 +23,7 @@
 #include <wx/panel.h>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace objectives
 {
@@ -464,7 +464,7 @@ void ObjectivesEditor::_onAddEntity(wxCommandEvent& ev)
     {
         // Objective entityclass was not found
         wxutil::Messagebox::ShowError(
-			(boost::format(_("Unable to create Objective Entity: class '%s' not found.")) % objEClass).str()
+			fmt::format(_("Unable to create Objective Entity: class '{0}' not found."), objEClass)
         );
     }
 }

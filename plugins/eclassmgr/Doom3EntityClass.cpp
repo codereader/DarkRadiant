@@ -8,7 +8,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <boost/optional.hpp>
 #include <functional>
 
@@ -297,10 +297,10 @@ void Doom3EntityClass::setColour(const Vector3& colour)
 
     // Define fill and wire versions of the entity colour
     _fillShader = _colourTransparent ?
-        (boost::format("[%f %f %f]") % _colour[0] % _colour[1] % _colour[2]).str() :
-        (boost::format("(%f %f %f)") % _colour[0] % _colour[1] % _colour[2]).str();
+        fmt::format("[{0:f} {1:f} {2:f}]", _colour[0], _colour[1], _colour[2]) :
+        fmt::format("({0:f} {1:f} {2:f})", _colour[0], _colour[1], _colour[2]);
 
-    _wireShader = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
+    _wireShader = fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]);
 }
 
 const Vector3& Doom3EntityClass::getColour() const {

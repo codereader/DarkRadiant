@@ -11,7 +11,7 @@
 #include "math/Plane3.h"
 #include "shaderlib.h"
 #include "i18n.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace map
 {
@@ -122,7 +122,7 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 		}
 		else
 		{
-			std::string text = (boost::format(_("BrushDefParser: invalid token '%s'")) % token).str();
+			std::string text = fmt::format(_("BrushDefParser: invalid token '{0}'"), token);
 			throw parser::ParseException(text);
 		}
 	}
@@ -231,7 +231,7 @@ scene::INodePtr LegacyBrushDefParser::parse(parser::DefTokeniser& tok) const
 		}
 		else
 		{
-			std::string text = (boost::format(_("BrushDefParser: invalid token '%s'")) % token).str();
+			std::string text = fmt::format(_("BrushDefParser: invalid token '{0}'"), token);
 			throw parser::ParseException(text);
 		}
 	}

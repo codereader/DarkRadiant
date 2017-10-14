@@ -19,7 +19,7 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <iostream>
 
 namespace ui
@@ -277,8 +277,8 @@ void ConversationDialog::onAddEntity(wxCommandEvent& ev)
     {
         // conversation entityclass was not found
         wxutil::Messagebox::ShowError(
-			(boost::format(_("Unable to create conversation Entity: class '%s' not found."))
-				% CONVERSATION_ENTITY_CLASS).str()
+			fmt::format(_("Unable to create conversation Entity: class '{0}' not found."),
+				CONVERSATION_ENTITY_CLASS)
         );
     }
 }

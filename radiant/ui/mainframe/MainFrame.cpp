@@ -24,7 +24,7 @@
 
 #include "modulesystem/StaticModule.h"
 #include <functional>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include <wx/display.h>
 
@@ -95,7 +95,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 		wxRect rect = wxutil::MultiMonitor::getMonitor(i);
 
 		list.push_back(
-			(boost::format("Monitor %d (%dx%d)") % i % rect.GetWidth() % rect.GetHeight()).str()
+			fmt::format("Monitor {0:d} ({1:d}x{2:d})", i, rect.GetWidth(), rect.GetHeight())
 		);
 	}
 

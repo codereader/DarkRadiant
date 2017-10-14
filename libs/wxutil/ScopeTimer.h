@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include <wx/stopwatch.h>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace wxutil
 {
@@ -24,7 +24,7 @@ public:
     {
         double elapsed_time = _timer.Time() / 1000.f;
 
-        rMessage() << _message << " timer: " << (boost::format("%5.2lf") % elapsed_time).str() 
+        rMessage() << _message << " timer: " << fmt::format("{0:5.2f}", elapsed_time) 
             << " second(s) elapsed" << std::endl;
     }
 };

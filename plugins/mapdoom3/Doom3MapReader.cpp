@@ -9,7 +9,7 @@
 #include "Doom3MapFormat.h"
 
 #include "i18n.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <boost/lexical_cast.hpp>
 
 #include "primitiveparsers/BrushDef.h"
@@ -47,7 +47,7 @@ void Doom3MapReader::readFromStream(std::istream& stream)
 		}
 		catch (FailureException& e)
 		{
-			std::string text = (boost::format(_("Failed parsing entity %d:\n%s")) % _entityCount % e.what()).str();
+			std::string text = fmt::format(_("Failed parsing entity {0:d}:\n{1}"), _entityCount, e.what());
 
 			// Re-throw with more text
 			throw FailureException(text);
@@ -108,7 +108,7 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
     // Check we have the correct version for this module
     if (version != requiredVersion)
 	{
-		std::string errMsg = (boost::format(_("Incorrect map version: required %f, found %f")) % requiredVersion % version).str();
+		std::string errMsg = fmt::format(_("Incorrect map version: required {0:f}, found {1:f}"), requiredVersion, version);
 
         rError() << errMsg << std::endl;
 
@@ -141,7 +141,7 @@ void Doom3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INod
 
 		if (!primitive)
 		{
-			std::string text = (boost::format(_("Primitive #%d: parse error")) % _primitiveCount).str();
+			std::string text = fmt::format(_("Primitive #{0:d}: parse error"), _primitiveCount);
 			throw FailureException(text);
 		}
 
@@ -151,7 +151,7 @@ void Doom3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INod
 	catch (parser::ParseException& e)
 	{
 		// Translate ParseExceptions to FailureExceptions
-		std::string text = (boost::format(_("Primitive #%d: parse exception %s")) % _primitiveCount % e.what()).str();
+		std::string text = fmt::format(_("Primitive #{0:d}: parse exception {1}"), _primitiveCount, e.what());
 		throw FailureException(text);
 	}
 }
@@ -242,7 +242,7 @@ void Doom3MapReader::parseEntity(parser::DefTokeniser& tok)
 	        // Sanity check (invalid number of tokens will get us out of sync)
 	        if (value == "{" || value == "}")
 			{
-				std::string text = (boost::format(_("Parsed invalid value '%s' for key '%s'")) % value % token).str();
+				std::string text = fmt::format(_("Parsed invalid value '{0}' for key '{1}'"), value, token);
 	            throw FailureException(text);
 	        }
 

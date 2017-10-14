@@ -10,7 +10,7 @@
 
 #include "patch/PatchNode.h"
 #include "brush/BrushNode.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace selection 
 {
@@ -86,7 +86,7 @@ void ShaderClipboard::updateStatusText()
 	std::string statusText;
 
 	if (!_source.empty()) {
-		statusText = (boost::format(_("ShaderClipboard: %s")) % _source.getShader()).str();
+		statusText = fmt::format(_("ShaderClipboard: {0}"), _source.getShader());
 
 		if (_source.isFace()) {
 			statusText += std::string(" (") + _("Face") + ")";

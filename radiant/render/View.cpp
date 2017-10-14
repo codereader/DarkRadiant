@@ -6,7 +6,7 @@
 
 #if defined(DEBUG_CULLING)
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 int g_count_planes;
 int g_count_oriented_planes;
@@ -174,9 +174,9 @@ const std::string& View::getCullStats()
 	static std::string stats;
 
 #if defined(DEBUG_CULLING)
-	stats = (boost::format("planes %d + %d | bboxs %d + %d") % 
-		g_count_planes % g_count_oriented_planes % 
-		g_count_bboxs % g_count_oriented_bboxs).str();
+	stats = fmt::format("planes {0:d} + {1:d} | bboxs {2:d} + {3:d}",
+		g_count_planes, g_count_oriented_planes, 
+		g_count_bboxs, g_count_oriented_bboxs);
 #endif
 
 	return stats;

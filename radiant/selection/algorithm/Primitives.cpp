@@ -27,7 +27,7 @@
 #include "selectionlib.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include "ModelFinder.h"
 #include "xyview/GlobalXYWnd.h"
@@ -193,7 +193,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 				}
 				else {
 					wxutil::Messagebox::ShowError(
-						(boost::format("Couldn't save to file: %s") % cmPath.string()).str());
+						fmt::format("Couldn't save to file: {0}", cmPath.string()));
 				}
 			}
 			catch (fs::filesystem_error f) {
@@ -379,7 +379,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 
 	if (unsuitableWindings > 0) {
 		wxutil::Messagebox::ShowError(
-			(boost::format(_("%d faces were not suitable (had more than 4 vertices).")) % unsuitableWindings).str()
+			fmt::format(_("{0:d} faces were not suitable (had more than 4 vertices)."), unsuitableWindings)
 		);
 	}
 }

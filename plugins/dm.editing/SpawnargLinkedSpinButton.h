@@ -5,7 +5,7 @@
 #include "ientity.h"
 #include "string/convert.h"
 #include "util/ScopedBoolLock.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <wx/spinctrl.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -103,7 +103,7 @@ protected:
 			UndoableCommand cmd("editAIProperties");
 
 			double floatVal = _spinCtrl->GetValue();
-			std::string newValue = (boost::format("%." + string::to_string(_spinCtrl->GetDigits()) + "f") % floatVal).str();
+			std::string newValue = fmt::format("{0:." + string::to_string(_spinCtrl->GetDigits()) + "f}", floatVal);
 
 			// Check if the new value conincides with an inherited one
 			const EntityClassAttribute& attr = _entity->getEntityClass()->getAttribute(_propertyName);

@@ -53,7 +53,7 @@
 #include "modulesystem/StaticModule.h"
 #include "RenderableAasFile.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include "algorithm/ChildPrimitives.h"
 
 namespace map 
@@ -439,7 +439,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 	catch (std::runtime_error& ex)
 	{
 		wxutil::Messagebox::ShowError(
-			(boost::format(_("Failure running map pre-save event:\n%s")) % ex.what()).str());
+			fmt::format(_("Failure running map pre-save event:\n{0}"), ex.what()));
 	}
 
     // Store the camview position into worldspawn
@@ -580,30 +580,24 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
 
 std::string Map::getSaveConfirmationText() const
 {
-    std::string primaryText = (boost::format(
-        _("Save changes to map \"%s\"\nbefore closing?")) % _mapName
-    ).str();
+    std::string primaryText = fmt::format(_("Save changes to map \"{0}\"\nbefore closing?"), _mapName);
 
     // Display "x seconds" or "x minutes"
     int seconds = static_cast<int>(_mapSaveTimer.Time() / 1000);
     std::string timeString;
     if (seconds > 120)
     {
-        timeString = (boost::format(_("%d minutes")) % (seconds / 60)).str();
+        timeString = fmt::format(_("{0:d} minutes"), (seconds / 60));
     }
     else
     {
-        timeString = (boost::format(_("%d seconds")) % seconds).str();
+        timeString = fmt::format(_("{0:d} seconds"), seconds);
     }
 
-    std::string secondaryText = (boost::format(
-        _("If you don't save, changes from the last %s\nwill be lost.")) %
-        timeString
-    ).str();
+    std::string secondaryText = fmt::format(
+        _("If you don't save, changes from the last {0}\nwill be lost."), timeString);
 
-    std::string confirmText = (boost::format("%s\n\n%s")
-		% primaryText % secondaryText
-    ).str();
+    std::string confirmText = fmt::format("{0}\n\n{1}", primaryText, secondaryText);
 
     return confirmText;
 }
@@ -944,7 +938,7 @@ void Map::importSelected(std::istream& in)
     catch (IMapReader::FailureException& e)
     {
         wxutil::Messagebox::ShowError(
-            (boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str());
+            fmt::format(_("Failure reading map from clipboard:\n{0}"), e.what()));
 
         // Clear out the root node, otherwise we end up with half a map
         scene::NodeRemover remover;

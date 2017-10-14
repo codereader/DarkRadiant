@@ -5,7 +5,7 @@
 #include "imap.h"
 #include "imainframe.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include "registry/registry.h"
 #include "string/string.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -41,7 +41,7 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 		_dialog.reset(new wxutil::ModalProgressDialog(_("Loading map")));
 
 		// Initialise the text
-		_dlgEntityText = (boost::format(_("Loading entity %d\n")) % _entityCount).str();
+		_dlgEntityText = fmt::format(_("Loading entity {0:d}\n"), _entityCount);
 	}
 }
 
@@ -56,7 +56,7 @@ bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 	if (_dialog)
 	{
 		// Update the dialog text
-		_dlgEntityText = (boost::format(_("Loading entity %d\n")) % _entityCount).str();
+		_dlgEntityText = fmt::format(_("Loading entity {0:d}\n"), _entityCount);
 
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.

@@ -12,7 +12,6 @@
 #include "dialog/MessageBox.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/format.hpp>
 #include <wx/app.h>
 
 namespace wxutil

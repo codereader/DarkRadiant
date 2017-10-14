@@ -8,7 +8,7 @@
 #include "precompiled_main.h"
 
 // Some entity specifics
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <functional>
 
 #include "string/string.h"

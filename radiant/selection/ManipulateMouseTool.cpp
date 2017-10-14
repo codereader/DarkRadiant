@@ -10,7 +10,7 @@
 #include "Pivot2World.h"
 #include "SelectionTest.h"
 #include "SceneWalkers.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -164,19 +164,19 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 
 	Vector4 pivotDev = pivot2device.transform(Vector4(0,0,0,1));
 
-	_debugText = (boost::format("\nPivotDevice x,y,z,w = (%5.3lf %5.3lf %5.3lf %5.3lf)") % pivotDev.x() % pivotDev.y() % pivotDev.z() % pivotDev.w()).str();
+	_debugText = fmt::format("\nPivotDevice x,y,z,w = ({0:5.3f} {1:5.3f} {2:5.3f} {3:5.3f})", pivotDev.x(), pivotDev.y(), pivotDev.z(), pivotDev.w());
 
-	_debugText += (boost::format("\nStart x,y = (%5.3lf %5.3lf)") % _deviceStart.x() % _deviceStart.y()).str();
-	_debugText += (boost::format("\nCurrent x,y = (%5.3lf %5.3lf)") % devicePoint.x() % devicePoint.y()).str();
+	_debugText += fmt::format("\nStart x,y = ({0:5.3f} {1:5.3f})", _deviceStart.x(), _deviceStart.y());
+	_debugText += fmt::format("\nCurrent x,y = ({0:5.3f} {1:5.3f})", devicePoint.x(), devicePoint.y());
 
 	double pivotDistanceDeviceSpace = pivot2device.tz();
 
 	Vector3 worldPosH = device2pivot.transform(Vector4(devicePoint.x(), devicePoint.y(), pivotDistanceDeviceSpace, 1)).getProjected();
 
-	_debugText += (boost::format("\nDev2Pivot x,y,z = (%5.3lf %5.3lf %5.3lf)") % worldPosH.x() % worldPosH.y() % worldPosH.z()).str();
+	_debugText += fmt::format("\nDev2Pivot x,y,z = ({0:5.3f} {1:5.3f} {2:5.3f})", worldPosH.x(), worldPosH.y(), worldPosH.z());
 
 	worldPosH = device2pivot.transform(pivotDev).getProjected();
-	_debugText += (boost::format("\nTest reversal x,y,z = (%5.3lf %5.3lf %5.3lf)") % worldPosH.x() % worldPosH.y() % worldPosH.z()).str();
+	_debugText += fmt::format("\nTest reversal x,y,z = ({0:5.3f} {1:5.3f} {2:5.3f})", worldPosH.x(), worldPosH.y(), worldPosH.z());
 #endif
 
 	// Query keyboard modifier state and pass them as flags

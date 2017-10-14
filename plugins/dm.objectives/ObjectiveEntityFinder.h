@@ -5,7 +5,7 @@
 #include "i18n.h"
 
 #include <string>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include "wxutil/TreeModel.h"
 
 namespace objectives

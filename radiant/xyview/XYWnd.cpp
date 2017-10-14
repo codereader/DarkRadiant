@@ -37,7 +37,7 @@
 #include "render/frontend/RenderableCollectionWalker.h"
 
 #include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <functional>
 
 namespace ui
@@ -496,10 +496,10 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 
     GlobalUIManager().getStatusBarManager().setText(
         "XYZPos",
-        (boost::format(_("x: %6.1lf y: %6.1lf z: %6.1lf"))
-            % _mousePosition[0]
-            % _mousePosition[1]
-            % _mousePosition[2]).str(),
+        fmt::format(_("x: {0:6.1f} y: {1:6.1f} z: {2:6.1f}"),
+            _mousePosition[0],
+            _mousePosition[1],
+            _mousePosition[2]),
         true // force UI update
     );
 

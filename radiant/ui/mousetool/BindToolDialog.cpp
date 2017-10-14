@@ -5,7 +5,7 @@
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/sizer.h>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <functional>
 
 namespace ui
@@ -13,11 +13,11 @@ namespace ui
 
 namespace
 {
-    const char* const TOOLMAPPING_WINDOW_TITLE = N_("Select new Binding: %s");
+    const char* const TOOLMAPPING_WINDOW_TITLE = N_("Select new Binding: {0}");
 }
 
 BindToolDialog::BindToolDialog(wxWindow* parent, IMouseToolGroup& group, const MouseToolPtr& tool) :
-    DialogBase((boost::format(_(TOOLMAPPING_WINDOW_TITLE)) % tool->getDisplayName()).str()),
+    DialogBase(fmt::format(_(TOOLMAPPING_WINDOW_TITLE), tool->getDisplayName())),
     _selectedState(wxutil::MouseButton::NONE | wxutil::Modifier::NONE),
     _group(group),
     _tool(tool),

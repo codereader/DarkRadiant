@@ -4,7 +4,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "string/convert.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace objectives {
 
@@ -51,35 +51,35 @@ std::string Specifier::getSentence(Component& component) {
 	else if (id == SpecifierType::SPEC_GROUP().getId()) {
 
 		if (_value == "loot_gold") {
-			result += (boost::format(_("%d loot in gold")) % amount).str();
+			result += fmt::format(_("{0:d} loot in gold"), amount);
 		}
 		else if (_value == "loot_goods") {
-			result += (boost::format(_("%d loot in goods")) % amount).str();
+			result += fmt::format(_("{0:d} loot in goods"), amount);
 		}
 		else if (_value == "loot_jewels") {
-			result += (boost::format(_("%d loot in jewels")) % amount).str();
+			result += fmt::format(_("{0:d} loot in jewels"), amount);
 		}
 		else if (_value == "loot_total") {
-			result += (boost::format(_("%d loot")) % amount).str();
+			result += fmt::format(_("{0:d} loot"), amount);
 		}
 		else {
-			result += (boost::format(_("%d of \"%s\"")) % amount % _value).str();
+			result += fmt::format(_("{0:d} of \"{1}\""), amount, _value);
 		}
 	}
 	else if (id == SpecifierType::SPEC_CLASSNAME().getId()) {
-		result += (boost::format(_("%s of type %s")) % printEntityAmount(amountStr) % _value).str();
+		result += fmt::format(_("{0} of type {1}"), printEntityAmount(amountStr), _value);
 	}
 	else if (id == SpecifierType::SPEC_SPAWNCLASS().getId()) {
-		result += (boost::format(_("%s of spawnclass %s")) % printEntityAmount(amountStr) % _value).str();
+		result += fmt::format(_("{0} of spawnclass {1}"), printEntityAmount(amountStr), _value);
 	}
 	else if (id == SpecifierType::SPEC_AI_TYPE().getId()) {
-		result += (boost::format(_("%s AI of type %s")) % amountStr % _value).str();
+		result += fmt::format(_("{0} AI of type {1}"), amountStr, _value);
 	}
 	else if (id == SpecifierType::SPEC_AI_TEAM().getId()) {
-		result += (boost::format(_("%s AI of team %s")) % amountStr % _value).str();
+		result += fmt::format(_("{0} AI of team {1}"), amountStr, _value);
 	}
 	else if (id == SpecifierType::SPEC_AI_INNOCENCE().getId()) {
-		result += (boost::format(_("%s AI of %s")) % amountStr % _value).str();
+		result += fmt::format(_("{0} AI of {1}"), amountStr, _value);
 	}
 	else {
 		rError() << "Unknown specifier ID " << id << "found!" << std::endl;

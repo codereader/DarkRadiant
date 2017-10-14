@@ -6,7 +6,7 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <sstream>
 
 namespace ui
@@ -70,10 +70,10 @@ std::string ColourPropertyEditor::getSelectedColour()
 	wxColour col = _colorButton->GetColour();
 
 	// Format the string value appropriately.
-	return (boost::format("%.3f %.3f %.3f")
-			% (col.Red() / 255.0f)
-			% (col.Green() / 255.0f)
-			% (col.Blue() / 255.0f)).str();
+	return fmt::format("{0:.3f} {1:.3f} {2:.3f}",
+			(col.Red() / 255.0f),
+			(col.Green() / 255.0f),
+			(col.Blue() / 255.0f));
 }
 
 void ColourPropertyEditor::_onColorSet(wxColourPickerEvent& ev)

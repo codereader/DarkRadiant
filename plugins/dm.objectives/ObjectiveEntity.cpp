@@ -12,7 +12,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <regex>
 
 #include <wx/choice.h>
@@ -149,7 +149,7 @@ void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 			continue; // skip invalid conditions without increasing the index
 		}
 
-		std::string prefix = (boost::format(OBJ_COND_PREFIX + "%d_") % index).str();
+		std::string prefix = fmt::format(OBJ_COND_PREFIX + "{0:d}_", index);
 
 		ent.setKeyValue(prefix + "src_mission", string::to_string(cond.sourceMission));
 		ent.setKeyValue(prefix + "src_obj", string::to_string(cond.sourceObjective));
@@ -277,7 +277,7 @@ void ObjectiveEntity::addObjective() {
 
 	// Insert a new Objective at this ID.
 	Objective o;
-	o.description = (boost::format(_("New objective %d")) % index).str();
+	o.description = fmt::format(_("New objective {0:d}"), index);
 	_objectives.insert(ObjectiveMap::value_type(index, o));
 }
 

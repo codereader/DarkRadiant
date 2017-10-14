@@ -5,7 +5,6 @@
 #include "imap.h"
 
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/format.hpp>
 
 namespace model
 {

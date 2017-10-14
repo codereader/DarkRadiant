@@ -6,7 +6,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include "PreferenceItems.h"
 
@@ -16,7 +16,7 @@ namespace settings
 PreferencePage::PreferencePage(const std::string& name, const PreferencePagePtr& parentPage) :
 	_name(name)
 {
-	_title = (boost::format(_("%s Settings")) % _name).str();
+	_title = fmt::format(_("{0} Settings"), _name);
 
 	// Construct the _path member value
 	if (parentPage && !parentPage->getPath().empty())

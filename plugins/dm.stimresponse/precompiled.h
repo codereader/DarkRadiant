@@ -10,5 +10,5 @@
 #include "wxutil/TreeModel.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include "string/string.h"

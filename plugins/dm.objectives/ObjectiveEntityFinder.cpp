@@ -33,7 +33,7 @@ bool ObjectiveEntityFinder::pre(const scene::INodePtr& node)
             // Add the entity to the list
             wxutil::TreeModel::Row row = _store->AddItem();
 
-            row[_columns.displayName] = (boost::format(_("%s at [ %s ]")) % name % ePtr->getKeyValue("origin")).str();
+            row[_columns.displayName] = fmt::format(_("{0} at [ {1} ]"), name, ePtr->getKeyValue("origin"));
             row[_columns.entityName] = name;
             row[_columns.startActive] = false;
 

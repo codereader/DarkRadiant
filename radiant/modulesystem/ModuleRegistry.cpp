@@ -7,7 +7,7 @@
 #include "ApplicationContextImpl.h"
 
 #include <wx/app.h>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace module
 {
@@ -128,7 +128,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.9f;
 
 	_sigModuleInitialisationProgress.emit(
-		(boost::format(_("Initialising Module: %s")) % name).str(),
+		fmt::format(_("Initialising Module: {0}"), name),
 		_progress);
 
 	// Initialise the module itself, now that the dependencies are ready

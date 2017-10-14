@@ -27,7 +27,7 @@
 #include "scenelib.h"
 
 #include <functional>
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include "infofile/InfoFile.h"
 #include "string/string.h"
@@ -252,7 +252,7 @@ bool MapResource::saveBackup()
 
 			// File is write-protected
 			wxutil::Messagebox::ShowError(
-				(boost::format(_("File is write-protected: %s")) % fullpath.string()).str());
+				fmt::format(_("File is write-protected: {0}"), fullpath.string()));
 
 			return false;
 		}
@@ -358,7 +358,7 @@ RootNodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::
 	if (format == NULL)
 	{
 		throw std::runtime_error(
-			(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str());
+			fmt::format(_("Could not determine map format of file:\n{0}"), fullpath));
 	}
 
 	// Map format valid, rewind the stream
@@ -417,7 +417,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 	catch (IMapReader::FailureException& e)
 	{
 		wxutil::Messagebox::ShowError(
-				(boost::format(_("Failure reading map file:\n%s\n\n%s")) % filename % e.what()).str());
+				fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), filename, e.what()));
 
 		// Clear out the root node, otherwise we end up with half a map
 		scene::NodeRemover remover;
@@ -480,7 +480,7 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 		if (file.failed())
 		{
 			rError() << "failure" << std::endl;
-			throw std::runtime_error((boost::format(_("Failure opening file:\n%s")) % path).str());
+			throw std::runtime_error(fmt::format(_("Failure opening file:\n{0}"), path));
 		}
 
 		std::istream stream(&file);
@@ -499,7 +499,7 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 		if (!vfsFile)
 		{
 			rError() << "failure" << std::endl;
-			throw std::runtime_error((boost::format(_("Failure opening file:\n%s")) % path).str());
+			throw std::runtime_error(fmt::format(_("Failure opening file:\n{0}"), path));
 		}
 
 		rMessage() << "success." << std::endl;
@@ -524,7 +524,7 @@ bool MapResource::checkIsWriteable(const fs::path& path)
 		rError() << "File is write-protected." << std::endl;
 
 		wxutil::Messagebox::ShowError(
-			(boost::format(_("File is write-protected: %s")) % path.string()).str());
+			fmt::format(_("File is write-protected: {0}"), path.string()));
 
 		return false;
 	}

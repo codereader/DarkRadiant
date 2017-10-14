@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "string/string.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <boost/algorithm/string/join.hpp>
 #include <regex>
 
@@ -229,7 +229,7 @@ void ConversationEditor::updateCommandList()
         wxutil::TreeModel::Row row = _commandStore->AddItem();
 
         row[_commandColumns.cmdNumber] = i->first;
-        row[_commandColumns.actorName] = (boost::format(_("Actor %d")) % cmd.actor).str();
+        row[_commandColumns.actorName] = fmt::format(_("Actor {0:d}"), cmd.actor);
         row[_commandColumns.sentence] = removeMarkup(cmd.getSentence());
         row[_commandColumns.wait] = cmd.waitUntilFinished ? _("yes") : _("no");
 
@@ -452,7 +452,7 @@ void ConversationEditor::onValidateActors(wxCommandEvent& ev)
 
 		if (!finder.getFoundNode())
 		{
-			errors.push_back((boost::format(_("The actor %s cannot be found in the current map.")) % i.second).str());
+			errors.push_back(fmt::format(_("The actor {0} cannot be found in the current map."), i.second));
 		}
 	}
 

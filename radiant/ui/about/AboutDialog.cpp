@@ -14,7 +14,7 @@
 #include <wx/textctrl.h>
 
 #include "modulesystem/ModuleRegistry.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace ui {
 
@@ -58,7 +58,7 @@ void AboutDialog::populateWindow()
 
 	bool showBuildTime = registry::getValue<bool>(RKEY_SHOW_BUILD_TIME);
 	std::string buildDate = (showBuildTime) ? date + " " + time : date;
-	std::string buildDateStr = (boost::format(_("Build date: %s")) % buildDate).str();
+	std::string buildDateStr = fmt::format(_("Build date: {0}"), buildDate);
 
 	buildDateText->SetLabel(buildDateStr);
 #else
@@ -67,10 +67,8 @@ void AboutDialog::populateWindow()
 	sizer->Layout();
 #endif
 
-	std::string wxVersion = (boost::format(_("Version: %d.%d.%d")) %
-		wxMAJOR_VERSION %
-		wxMINOR_VERSION %
-		wxRELEASE_NUMBER).str();
+	std::string wxVersion = fmt::format(_("Version: {0:d}.{1:d}.{2:d}"),
+		wxMAJOR_VERSION, wxMINOR_VERSION, wxRELEASE_NUMBER);
 	
 	findNamedObject<wxStaticText>(this, "AboutDialogWxWidgetsVersion")->SetLabel(wxVersion);
 
@@ -79,9 +77,9 @@ void AboutDialog::populateWindow()
 	std::string versionStr = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 	std::string rendererStr = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
 
-	std::string openGLVendor = (boost::format(_("Vendor: %s")) % vendorStr).str();
-	std::string openGLVersion = (boost::format(_("Version: %s")) % versionStr).str();
-	std::string openGLRenderer = (boost::format(_("Renderer: %s")) % rendererStr).str();
+	std::string openGLVendor = fmt::format(_("Vendor: {0}"), vendorStr);
+	std::string openGLVersion = fmt::format(_("Version: {0}"), versionStr);
+	std::string openGLRenderer = fmt::format(_("Renderer: {0}"), rendererStr);
 
 	findNamedObject<wxStaticText>(this, "AboutDialogOpenGLVendor")->SetLabel(openGLVendor);
 	findNamedObject<wxStaticText>(this, "AboutDialogOpenGLVersion")->SetLabel(openGLVersion);

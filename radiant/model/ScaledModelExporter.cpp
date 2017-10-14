@@ -11,7 +11,7 @@
 #include "os/fs.h"
 #include "os/path.h"
 #include "registry/registry.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <regex>
@@ -161,7 +161,7 @@ std::string ScaledModelExporter::generateUniqueModelFilename(
 
 	while (++i < INT_MAX)
 	{
-		std::string generatedFilename = (boost::format("%s_scaled%d.%s") % filenameNoExt % i % outputExtension).str();
+		std::string generatedFilename = fmt::format("{0}_scaled{1:d}.{2}", filenameNoExt, i, outputExtension);
 		fs::path targetFile = outputPath / generatedFilename;
 
 		if (!fs::exists(targetFile))

@@ -5,7 +5,7 @@
 #include "selection/BestPoint.h"
 #include "selection/TransformationVisitors.h"
 #include "render/View.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 namespace selection
 {
@@ -172,7 +172,7 @@ void RotateManipulator::render(const RenderInfo& info) const
 		glRasterPos3dv(_pivot2World._worldSpace.t().getVector3() - Vector3(10, 10, 10));
 
 		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
-		GlobalOpenGL().drawString((boost::format("Rotate: %3.2lf degrees") % angle).str());
+		GlobalOpenGL().drawString(fmt::format("Rotate: {0:3.2f} degrees", angle));
 	}
 }
 

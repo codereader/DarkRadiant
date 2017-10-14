@@ -16,7 +16,7 @@
 #include "camera/GlobalCamera.h"
 #include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
-#include <boost/format.hpp>
+#include <fmt/format.h>
 
 #include "modulesystem/StaticModule.h"
 
@@ -95,7 +95,7 @@ void PointFile::parse()
 	if (!inFile) 
 	{
 		wxutil::Messagebox::ShowError(
-			(boost::format(_("Could not open pointfile: %s")) % pfName).str());
+			fmt::format(_("Could not open pointfile: {0}"), pfName));
 		return;
 	}
 

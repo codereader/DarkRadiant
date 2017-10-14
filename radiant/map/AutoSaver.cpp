@@ -26,7 +26,7 @@
 #include "modulesystem/StaticModule.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include <boost/format.hpp>
+#include <fmt/format.h>
 #include <wx/frame.h>
 
 namespace map 
@@ -202,8 +202,8 @@ void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& exi
 
 		// Notify the user
 		wxutil::Messagebox::Show(_("Snapshot Folder Size Warning"),
-			(boost::format(_("The snapshots saved for this map are exceeding the configured size limit."
-				"\nConsider cleaning up the folder %s")) % snapshotPath).str(), ui::IDialog::MessageType::MESSAGE_WARNING);
+			fmt::format(_("The snapshots saved for this map are exceeding the configured size limit."
+				"\nConsider cleaning up the folder {0}"), snapshotPath.string()), ui::IDialog::MessageType::MESSAGE_WARNING);
 	}
 	else
 	{
