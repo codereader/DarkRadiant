@@ -71,7 +71,7 @@ AC_ARG_ENABLE([python],
 AC_ARG_WITH(pybind11,
             [--with-pybind11=/path/to/pybind11/include pybind11 include path to use (optional)],
             pybind11_include_path="$withval")
-              
+
 if [[ "$darkmod_plugins" != 'no' ]]
 then
     # Enable conditional directories (used by plugins/Makefile.am)
@@ -182,7 +182,6 @@ fi
 BOOST_REQUIRE([1.46.1])
 
 # Check some boost headers we use
-BOOST_FORMAT
 BOOST_TOKENIZER
 
 FILESYSTEM_LIBS=''
@@ -226,16 +225,16 @@ then
         
         # Check for a system-provided pybind11, otherwise fall back on
         # the pybind11 headers we ship in the libs/pybind folder
-	AC_CHECK_HEADER([pybind11/pybind11.h], [found_local_pybind11=yes], [found_local_pybind11=no])
-	
-	if test "$found_local_pybind11" = 'yes'
-	then
-            AC_MSG_NOTICE([Using the system-provided pybind11 headers])
-        else
-            AC_MSG_NOTICE([Using the pybind11 headers shipped with the sources])
-	fi
-	
-	AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [test "$found_local_pybind11" = 'yes'])
+        AC_CHECK_HEADER([pybind11/pybind11.h], [found_local_pybind11=yes], [found_local_pybind11=no])
+
+        if test "$found_local_pybind11" = 'yes'
+        then
+                AC_MSG_NOTICE([Using the system-provided pybind11 headers])
+            else
+                AC_MSG_NOTICE([Using the pybind11 headers shipped with the sources])
+        fi
+
+        AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [test "$found_local_pybind11" = 'yes'])
         
         script_module='script'
         AC_SUBST([script_module])
@@ -246,6 +245,30 @@ then
     fi
 else
     AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [false])
+fi
+
+# greebo: Don't check for the system-provided fmtlib, since linking
+# against the libfmt.a produces a relocation linker error, complaining about
+# a missing -fPIC switch. I won't bother with that right now, let's use the
+# headers shipped with the repository.
+
+#AC_MSG_NOTICE([Checking for fmtlib headers...])
+found_local_fmtlib=no
+
+# Check for a system-provided fmtlib, otherwise fall back on
+# the headers we ship in the libs/libfmt folder
+#AC_CHECK_HEADER([fmt/format.h], [found_local_fmtlib=yes], [found_local_fmtlib=no])
+
+if test "$found_local_fmtlib" = 'yes'
+then
+    FMTLIB_CPPFLAGS="" # system got one
+    FMTLIB_LDFLAGS="-lfmt"
+    AC_MSG_NOTICE([Using the system-provided fmtlib headers])
+else
+    # Switch to header-only mode when using our own shipped sources
+    FMTLIB_CPPFLAGS="-I`pwd`/libs/libfmt -DFMT_HEADER_ONLY"
+    FMTLIB_LDFLAGS=""
+    AC_MSG_NOTICE([Using the fmtlib headers shipped with the sources (header-only mode)])
 fi
 
 # dynamic link library
@@ -295,8 +318,8 @@ fi
 
 CFLAGS="$USER_CFLAGS $WARNING_FLAGS $WX_CFLAGS"
 CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS $WX_CXXFLAGS_ONLY"
-CPPFLAGS="$USER_CPPFLAGS -DPOSIX $WX_CPPFLAGS $LIBSIGC_CFLAGS -DWXINTL_NO_GETTEXT_MACRO"
-LDFLAGS="$USER_LDFLAGS $LIBSIGC_LIBS"
+CPPFLAGS="$USER_CPPFLAGS -DPOSIX -fPIC $WX_CPPFLAGS $LIBSIGC_CFLAGS -DWXINTL_NO_GETTEXT_MACRO $FMTLIB_CPPFLAGS"
+LDFLAGS="$USER_LDFLAGS $LIBSIGC_LIBS $FMTLIB_LDFLAGS"
 
 # Debug/optimisation
 if test "$debug_build" != 'no'
@@ -394,5 +417,11 @@ else
     fi
 fi
 
-echo " Use boost.filesystem:  $use_boost_filesystem"
+#if test "$found_local_fmtlib" = "yes"
+#then
+#    echo " Use system fmtlib:     yes"
+#else
+#    echo " Use system fmtlib:     no"
+#fi
 
+echo " Use boost.filesystem:  $use_boost_filesystem"
