@@ -5,7 +5,7 @@ namespace particles
 
 RenderableParticleStage::RenderableParticleStage(
 		const IStageDef& stage,
-		boost::rand48& random,
+		Rand48& random,
 		const Vector3& direction,
 		const Vector3& entityColour) :
 	_stageDef(stage),
@@ -195,7 +195,7 @@ RenderableParticleBunchPtr RenderableParticleStage::createBunch(std::size_t cycl
 		cycleIndex, getSeed(cycleIndex), _stageDef, _viewRotation, _direction, _entityColour));
 }
 
-int RenderableParticleStage::getSeed(std::size_t cycleIndex)
+Rand48::result_type RenderableParticleStage::getSeed(std::size_t cycleIndex)
 {
 	return _seeds[cycleIndex % _seeds.size()];
 }

@@ -8,7 +8,6 @@
 #include "math/AABB.h"
 #include "render.h"
 #include <map>
-#include <boost/random/linear_congruential.hpp>
 #include <sigc++/connection.h>
 
 namespace particles
@@ -40,7 +39,7 @@ class RenderableParticle : public IRenderableParticle,
 	// The random number generator, this is used to generate "constant"
 	// starting values for each bunch of particles. This enables us
 	// to go back in time when rendering the particle stage.
-	boost::rand48 _random;
+	Rand48 _random;
 
 	// The particle direction, usually set by the emitter entity or the preview
 	Vector3 _direction;

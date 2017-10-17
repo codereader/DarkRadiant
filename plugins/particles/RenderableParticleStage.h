@@ -25,7 +25,7 @@ class RenderableParticleStage :
 	// each bunch has a distinct index and is using the same seed during the lifetime
 	// of this particle stage
 	std::size_t _numSeeds;
-	std::vector<int> _seeds;
+	std::vector<Rand48::result_type> _seeds;
 
 	std::vector<RenderableParticleBunchPtr> _bunches;
 
@@ -43,7 +43,7 @@ class RenderableParticleStage :
 
 public:
 	RenderableParticleStage(const IStageDef& stage, 
-							boost::rand48& random, 
+							Rand48& random, 
 							const Vector3& direction,
 							const Vector3& entityColour);
 
@@ -65,7 +65,7 @@ private:
 
 	RenderableParticleBunchPtr createBunch(std::size_t cycleIndex);
 
-	int getSeed(std::size_t cycleIndex);
+	Rand48::result_type getSeed(std::size_t cycleIndex);
 
 	RenderableParticleBunchPtr getExistingBunchByIndex(std::size_t index);
 

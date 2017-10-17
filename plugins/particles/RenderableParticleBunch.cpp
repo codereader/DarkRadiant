@@ -9,7 +9,7 @@ namespace particles
 {
 
 RenderableParticleBunch::RenderableParticleBunch(std::size_t index,
-    int randSeed, const IStageDef& stage, const Matrix4& viewRotation,
+	Rand48::result_type randSeed, const IStageDef& stage, const Matrix4& viewRotation,
     const Vector3& direction, const Vector3& entityColour) :
     _index(index),
     _stage(stage),
@@ -92,7 +92,7 @@ void RenderableParticleBunch::update(std::size_t time)
         if (particle.angle == 0)
         {
             // Use random angle
-            particle.angle = 360 * static_cast<float>(_random()) / GET_BOOST_RAND48_MAX(_random);
+            particle.angle = 360 * static_cast<float>(_random()) / _random.max();
         }
 
         // Past this point, no more "randomness" is required, so let's check if we still need

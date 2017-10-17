@@ -1,5 +1,4 @@
-#ifndef _RENDERABLE_PARTICLE_BUNCH_H_
-#define _RENDERABLE_PARTICLE_BUNCH_H_
+#pragma once
 
 #include "irender.h"
 #include "iparticlestage.h"
@@ -8,8 +7,6 @@
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
-
-#include <boost/random/linear_congruential.hpp>
 
 #include "ParticleQuad.h"
 #include "ParticleRenderInfo.h"
@@ -35,10 +32,10 @@ class RenderableParticleBunch : public OpenGLRenderable
 	Quads _quads;
 
 	// The seed for our local randomiser, as passed by the parent stage
-	int _randSeed;
+	Rand48::result_type _randSeed;
 
 	// The randomiser itself, which is reset everytime we rebuild the geometry
-	boost::rand48 _random;
+	Rand48 _random;
 
 	// The flag whether to spawn particles at random locations (standard path calculation)
 	bool _distributeParticlesRandomly;
@@ -61,7 +58,7 @@ class RenderableParticleBunch : public OpenGLRenderable
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index,
-							int randSeed,
+							Rand48::result_type randSeed,
 							const IStageDef& stage,
 							const Matrix4& viewRotation,
 							const Vector3& direction,
@@ -123,5 +120,3 @@ private:
 typedef std::shared_ptr<RenderableParticleBunch> RenderableParticleBunchPtr;
 
 } // namespace
-
-#endif /* _RENDERABLE_PARTICLE_BUNCH_H_ */
