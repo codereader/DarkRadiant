@@ -160,6 +160,9 @@
     <ClInclude Include="..\..\libs\util\Noncopyable.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\string\replace.h">
+      <Filter>string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

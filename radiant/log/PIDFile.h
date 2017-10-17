@@ -5,7 +5,7 @@
 #include "modulesystem/ModuleRegistry.h"
 
 #include "os/file.h"
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 
 #define PID_FILENAME "darkradiant.pid"
 
@@ -39,8 +39,8 @@ public:
 			fs::path path = registry.getApplicationContext().getSettingsPath();
 			path /= "darkradiant.log";
 			std::string logPath = path.string();
-			boost::algorithm::replace_all(logPath, "\\\\", "\\");
-			boost::algorithm::replace_all(logPath, "//", "/");
+			string::replace_all(logPath, "\\\\", "\\");
+			string::replace_all(logPath, "//", "/");
 
 			std::string msg("Radiant failed to start properly the last time it was run.\n");
 			msg += "If this is happening again, you might want to check the log file in\n";

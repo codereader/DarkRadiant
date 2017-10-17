@@ -11,7 +11,6 @@
 #include "StringLogDevice.h"
 
 #include <functional>
-#include <boost/algorithm/string/replace.hpp>
 
 namespace ui {
 
