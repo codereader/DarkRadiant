@@ -11,6 +11,8 @@ namespace string
  */
 inline void replace_all(std::string& subject, const std::string& search, const std::string& replacement)
 {
+	if (search.empty()) return; // nothing to do
+
 	std::size_t pos = 0;
 
 	while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -28,6 +30,8 @@ inline void replace_all(std::string& subject, const std::string& search, const s
  */
 inline std::string replace_all_copy(std::string subject, const std::string& search, const std::string& replacement)
 {
+	if (search.empty()) return subject; // nothing to do
+
 	std::size_t pos = 0;
 
 	while ((pos = subject.find(search, pos)) != std::string::npos)
