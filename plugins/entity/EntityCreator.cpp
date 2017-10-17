@@ -13,7 +13,7 @@
 #include "entitylib.h"
 #include "gamelib.h"
 
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 #include <iostream>
 
 #include "i18n.h"
@@ -92,8 +92,7 @@ IEntityNodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
 		 * so that nothing bad can happen (for example, the colon character
 		 * seems to be causing problems in Doom 3 Scripting)
 		 */
-		std::string entityName =
-			boost::algorithm::replace_all_copy(eclassName, ":", "_") + "_1";
+		std::string entityName = string::replace_all_copy(eclassName, ":", "_") + "_1";
 
 		node->getEntity().setKeyValue("name", entityName);
 	}

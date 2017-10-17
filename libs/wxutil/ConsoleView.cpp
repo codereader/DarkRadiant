@@ -1,7 +1,7 @@
 #include "ConsoleView.h"
 
 #include "imodule.h"
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 
 namespace wxutil
 {
@@ -82,7 +82,7 @@ void ConsoleView::onIdle()
         };
 
         // Replace NULL characters
-        boost::algorithm::replace_all(pair.second, "\0", "NULL");
+        string::replace_all(pair.second, std::string(1, '\0'), "NULL");
 
         // Insert at the end of the text buffer
         AppendText(pair.second);

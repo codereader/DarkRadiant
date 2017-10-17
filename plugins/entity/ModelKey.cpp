@@ -7,7 +7,7 @@
 #include "ifilter.h"
 #include "modelskin.h"
 #include "itransformable.h"
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 
 ModelKey::ModelKey(scene::INode& parentNode) :
 	_parentNode(parentNode),
@@ -38,7 +38,7 @@ void ModelKey::modelChanged(const std::string& value)
 	if (!_active) return; // deactivated during parent node destruction
 
 	// Sanitise the keyvalue - must use forward slashes
-	std::string newModelName = boost::algorithm::replace_all_copy(value, "\\", "/");
+	std::string newModelName = string::replace_all_copy(value, "\\", "/");
 
 	if (newModelName == _model.path)
 	{

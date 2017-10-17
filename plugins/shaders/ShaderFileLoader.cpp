@@ -10,7 +10,7 @@
 #include "TableDefinition.h"
 
 #include <iostream>
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 #include <boost/algorithm/string/case_conv.hpp>
 
 /* FORWARD DECLS */
@@ -63,7 +63,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 			continue; // skip particle definition
 		}
 
-		boost::algorithm::replace_all(block.name, "\\", "/"); // use forward slashes
+		string::replace_all(block.name, "\\", "/"); // use forward slashes
 
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(block.name, block.contents));
 

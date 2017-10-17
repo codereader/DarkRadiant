@@ -13,6 +13,7 @@
 #include "os/path.h"
 #include "os/fs.h"
 #include "string/convert.h"
+#include "string/replace.h"
 
 #include "GameFileLoader.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -431,7 +432,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
    std::string pfbFolder = currentGame()->getLocalXPath(GKEY_PREFAB_FOLDER)[0].getAttributeValue("value");
 
    // Replace the "maps/" with "prefabs/"
-   boost::algorithm::replace_last(prefabPath, mapFolder, pfbFolder);
+   string::replace_last(prefabPath, mapFolder, pfbFolder);
    // Store the path into the registry
    rMessage() << "GameManager: Prefab path set to " << prefabPath << std::endl;
    GlobalRegistry().set(RKEY_PREFAB_PATH, prefabPath);

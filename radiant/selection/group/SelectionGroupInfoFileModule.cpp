@@ -4,7 +4,7 @@
 #include "iselectiongroup.h"
 #include "ientity.h"
 #include "string/convert.h"
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 #include "parser/DefTokeniser.h"
 
 #include "scenelib.h"
@@ -116,7 +116,7 @@ void SelectionGroupInfoFileModule::writeBlocks(std::ostream& stream)
 
 		// Make sure to escape the quotes of the set name, use the XML quote entity
 		stream << "\t\t" << SELECTION_GROUP << " " << group.getId()
-			<< " { \"" << boost::algorithm::replace_all_copy(group.getName(), "\"", "&quot;") << "\" }"
+			<< " { \"" << string::replace_all_copy(group.getName(), "\"", "&quot;") << "\" }"
 			<< std::endl;
 
 		selectionGroupCount++;
@@ -190,7 +190,8 @@ void SelectionGroupInfoFileModule::parseSelectionGroups(parser::DefTokeniser& to
 
 			tok.assertNextToken("{");
 
-			std::string name = tok.nextToken();
+			// Parse the name, replacing the &quot; placeholder with a proper quote
+			std::string name = string::replace_all_copy(tok.nextToken(), "&quot;", "\"");
 
 			tok.assertNextToken("}");
 

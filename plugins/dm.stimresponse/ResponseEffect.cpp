@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "string/convert.h"
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 #include <regex>
 
 ResponseEffect::ResponseEffect() :
@@ -206,7 +206,7 @@ std::string ResponseEffect::getArgumentStr()
 			replacement = (i->second.value.empty()) ? _("no") : _("yes");
 		}
 
-		boost::algorithm::replace_all(returnValue, needle, replacement);
+		string::replace_all(returnValue, needle, replacement);
 	}
 
 	return returnValue;

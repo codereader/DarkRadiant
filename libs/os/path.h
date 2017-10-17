@@ -32,8 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/replace.hpp>
-
+#include "string/replace.h"
 
 #if defined(WIN32)
 #define OS_CASE_INSENSITIVE
@@ -84,8 +83,9 @@ namespace os
      * forward or backslashes in its definitions
      */
 
-    inline std::string standardPath(const std::string& inPath) {
-        return boost::algorithm::replace_all_copy(inPath, "\\", "/");
+    inline std::string standardPath(const std::string& inPath)
+	{
+        return string::replace_all_copy(inPath, "\\", "/");
     }
 
     /** greebo: OS Folder names have forward slashes and a trailing slash

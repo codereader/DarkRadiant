@@ -12,7 +12,7 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 
 namespace script
 {
@@ -69,15 +69,15 @@ void ScriptWindow::onRunScript(wxCommandEvent& ev)
 	UndoableCommand cmd("runScript");
 
 	// wxWidgets on Windows might produce \r\n, these confuse the python interpreter
-	boost::algorithm::replace_all(scriptString, "\r\n", "\n");
+	string::replace_all(scriptString, "\r\n", "\n");
 
 	// Run the script
 	script::ExecutionResultPtr result = GlobalScriptingSystem().executeString(scriptString);
 
 	// Check if the output only consists of whitespace
-	std::string output = boost::algorithm::replace_all_copy(result->output, "\n", "");
-	boost::algorithm::replace_all(output, "\t", "");
-	boost::algorithm::replace_all(output, " ", "");
+	std::string output = string::replace_all_copy(result->output, "\n", "");
+	string::replace_all(output, "\t", "");
+	string::replace_all(output, " ", "");
 
 	if (!result->errorOccurred && output.empty())
 	{

@@ -3,7 +3,7 @@
 #include <limits>
 #include "itextstream.h"
 #include "string/convert.h"
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 #include "parser/DefTokeniser.h"
 
 namespace selection
@@ -90,7 +90,7 @@ void SelectionSetInfoFileModule::writeBlocks(std::ostream& stream)
 
 		// Make sure to escape the quotes of the set name, use the XML quote entity
 		stream << "\t\t" << SELECTION_SET << " " << selectionSetCount++
-			<< " { \"" << boost::algorithm::replace_all_copy(info.set->getName(), "\"", "&quot;") << "\" } "
+			<< " { \"" << string::replace_all_copy(info.set->getName(), "\"", "&quot;") << "\" } "
 			<< " { " << indices << " } "
 			<< std::endl;
 	});
@@ -140,7 +140,7 @@ void SelectionSetInfoFileModule::parseBlock(const std::string& blockName, parser
 			tok.assertNextToken("{");
 
 			// Parse the name, replacing the &quot; placeholder with a proper quote
-			_importInfo.back().name = boost::algorithm::replace_all_copy(tok.nextToken(), "&quot;", "\"");
+			_importInfo.back().name = string::replace_all_copy(tok.nextToken(), "&quot;", "\"");
 
 			tok.assertNextToken("}");
 

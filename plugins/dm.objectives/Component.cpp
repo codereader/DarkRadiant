@@ -2,7 +2,7 @@
 
 #include "string/convert.h"
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 
 namespace objectives {
 
@@ -137,7 +137,7 @@ std::string Component::getString() {
 	}
 
 	// Replace all double-space characters with one single space
-	boost::algorithm::replace_all(sentence, "  ", " ");
+	string::replace_all(sentence, "  ", " ");
 
     return sentence;
 }

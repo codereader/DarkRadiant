@@ -43,4 +43,36 @@ inline std::string replace_all_copy(std::string subject, const std::string& sear
 	return subject;
 }
 
+/**
+* Replaces the first occurrence of the given search string in the subject
+* with the given replacement, in-place.
+*/
+inline void replace_first(std::string& subject, const std::string& search, const std::string& replacement)
+{
+	if (search.empty()) return; // nothing to do
+
+	std::size_t pos = subject.find(search);
+	
+	if (pos != std::string::npos)
+	{
+		subject.replace(pos, search.length(), replacement);
+	}
+}
+
+/**
+* Replaces the last occurrence of the given search string in the subject
+* with the given replacement, in-place.
+*/
+inline void replace_last(std::string& subject, const std::string& search, const std::string& replacement)
+{
+	if (search.empty()) return; // nothing to do
+
+	std::size_t pos = subject.rfind(search);
+
+	if (pos != std::string::npos)
+	{
+		subject.replace(pos, search.length(), replacement);
+	}
+}
+
 }

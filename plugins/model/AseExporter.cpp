@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include "imodelsurface.h"
 #include "imap.h"
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 #include <fmt/format.h>
 
 namespace model
@@ -53,7 +53,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 	for (const Surfaces::value_type& pair : _surfaces)
 	{
 		std::string aseMaterial = pair.second.materialName;
-		boost::algorithm::replace_all(aseMaterial, "/", "\\");
+		string::replace_all(aseMaterial, "/", "\\");
 
 		stream << "\t*MATERIAL " << m << " {" << std::endl;
 		stream << "\t\t*MATERIAL_NAME \"" << aseMaterial << "\"" << std::endl;

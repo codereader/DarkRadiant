@@ -7,7 +7,7 @@
 #include "iselectiontest.h"
 #include "irenderable.h"
 
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 
 namespace model {
 
@@ -112,7 +112,7 @@ std::string RenderablePicoSurface::cleanupShaderName(const std::string& inName)
 	const std::string baseFolder = "base";	//FIXME: should be from game.xml
 	std::size_t basePos;
 
-	std::string mapName = boost::algorithm::replace_all_copy(inName, "\\", "/");
+	std::string mapName = string::replace_all_copy(inName, "\\", "/");
 
 	// for paths given relative, start from the beginning
 	if (mapName.substr(0,6) == "models" || mapName.substr(0,8) == "textures")

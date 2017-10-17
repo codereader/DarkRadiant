@@ -1,5 +1,4 @@
-#ifndef _CODE_TOKENISER_H_
-#define _CODE_TOKENISER_H_
+#pragma once
 
 #include "iarchive.h"
 #include "DefTokeniser.h"
@@ -8,7 +7,6 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include "Tokeniser.h"
 
@@ -837,5 +835,3 @@ private:
 };
 
 } // namespace parser
-
-#endif /* _CODE_TOKENISER_H_ */

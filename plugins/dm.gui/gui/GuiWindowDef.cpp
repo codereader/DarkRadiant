@@ -9,7 +9,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 
 #include "GuiScript.h"
 
@@ -197,7 +197,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			font = parseString(tokeniser);
 
 			// Cut off the "fonts/" part
-			boost::algorithm::replace_first(font, "fonts/", "");
+			string::replace_first(font, "fonts/", "");
 		}
 		else if (token == "textscale")
 		{

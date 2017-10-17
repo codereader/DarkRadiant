@@ -12,7 +12,6 @@
 #include "os/path.h"
 #include "registry/registry.h"
 #include <fmt/format.h>
-#include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <regex>
 

@@ -4,8 +4,6 @@
 #include "imodelsurface.h"
 #include "imap.h"
 
-#include <boost/algorithm/string/replace.hpp>
-
 namespace model
 {
 

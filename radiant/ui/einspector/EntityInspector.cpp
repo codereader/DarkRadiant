@@ -39,7 +39,7 @@
 #include <wx/artprov.h>
 
 #include <functional>
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 #include <regex>
 
 namespace ui {
@@ -619,8 +619,8 @@ std::string EntityInspector::cleanInputString(const std::string &input)
 {
     std::string ret = input;
 
-    boost::algorithm::replace_all(ret, "\n", "");
-    boost::algorithm::replace_all(ret, "\r", "");
+    string::replace_all(ret, "\n", "");
+	string::replace_all(ret, "\r", "");
 
     return ret;
 }

@@ -1,7 +1,7 @@
 #include "ConversationCommand.h"
 
 #include "string/convert.h"
-#include <boost/algorithm/string/replace.hpp>
+#include "string/replace.h"
 
 #include "ConversationCommandLibrary.h"
 
@@ -41,7 +41,7 @@ std::string ConversationCommand::getSentence() const {
 				replacement = (i->second.value.empty()) ? "no" : "yes";
 			}*/
 
-			boost::algorithm::replace_all(sentence, needle, replacement);
+			string::replace_all(sentence, needle, replacement);
 		}
 
 		return sentence;
