@@ -21,7 +21,7 @@
 
 #include "selection/Rectangle.h"
 #include <memory>
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 #include <sigc++/connection.h>
 #include "tools/CameraMouseToolEvent.h"
 
@@ -36,7 +36,7 @@ namespace ui
 class CamWnd :
     public ICameraView,
 	public scene::Graph::Observer,
-	public boost::noncopyable,
+	public util::Noncopyable,
     public sigc::trackable,
 	private wxutil::XmlResourceBasedWidget,
 	public wxEvtHandler,

@@ -10,14 +10,14 @@
 #include "NameKeyObserver.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 
 namespace entity {
 
 class NamespaceManager :
 	public Entity::Observer,
 	public Namespaced,
-	public boost::noncopyable
+	public util::Noncopyable
 {
 	INamespace* _namespace;
 

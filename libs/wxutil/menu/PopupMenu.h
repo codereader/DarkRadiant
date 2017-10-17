@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <memory>
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 #include <list>
 
 #include <wx/menu.h>

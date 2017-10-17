@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 #include <memory>
 #include <map>
 #include "ifilesystem.h"
@@ -36,7 +36,7 @@ typedef std::shared_ptr<Gui> GuiPtr;
  * including parsing the .gui files on demand.
  */
 class GuiManager :
-	public boost::noncopyable
+	public util::Noncopyable
 {
 public:
 	typedef std::vector<std::string> StringList;

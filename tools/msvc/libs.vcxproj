@@ -207,6 +207,7 @@
     <ClInclude Include="..\..\libs\Transformable.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
     <ClInclude Include="..\..\libs\UndoFileChangeTracker.h" />
+    <ClInclude Include="..\..\libs\util\Noncopyable.h" />
     <ClInclude Include="..\..\libs\util\ScopedBoolLock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

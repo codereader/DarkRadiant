@@ -27,7 +27,7 @@ wxString TreeModel::Column::getWxType() const
 
 // TreeModel nodes form a directed acyclic graph
 class TreeModel::Node :
-	public boost::noncopyable
+	public util::Noncopyable
 {
 public:
 	Node* parent; // NULL for the root node

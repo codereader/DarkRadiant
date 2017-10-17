@@ -4,7 +4,7 @@
 #include "iimage.h"
 #include "BasicTexture2D.h"
 #include <memory>
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 
 struct RGBAPixel
 {
@@ -18,7 +18,7 @@ struct RGBAPixel
  */
 class RGBAImage :
 	public Image,
-	public boost::noncopyable
+	public util::Noncopyable
 {
 public:
 	RGBAPixel* pixels;

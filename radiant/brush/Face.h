@@ -12,7 +12,7 @@
 #include "PlanePoints.h"
 #include "FacePlane.h"
 #include <memory>
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 #include <sigc++/signal.h>
 #include "selection/algorithm/Shader.h"
 
@@ -27,7 +27,7 @@ class Face :
 	public IFace,
 	public IUndoable,
 	public SurfaceShader::Observer,
-	public boost::noncopyable
+	public util::Noncopyable
 {
 private:
     // The structure which is saved to the undo stack

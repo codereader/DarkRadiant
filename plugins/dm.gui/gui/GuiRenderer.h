@@ -2,7 +2,7 @@
 #define GuiRenderer_h__
 
 #include "math/Vector2.h"
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 
 #include "Gui.h"
 #include <vector>
@@ -11,7 +11,7 @@ namespace gui
 {
 
 class GuiRenderer :
-	public boost::noncopyable
+	public util::Noncopyable
 {
 private:
 	GuiPtr _gui;

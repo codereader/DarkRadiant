@@ -3,7 +3,7 @@
 #include "iregistry.h"
 #include "string/convert.h"
 
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 
 /// Convenience methods and types for interacting with the XML registry
 namespace registry
@@ -47,7 +47,7 @@ template<typename T> T getValue(const std::string& key, T defaultVal = T())
  */
 template<typename T>
 class ScopedKeyChanger
-: boost::noncopyable
+: util::Noncopyable
 {
     std::string _key;
     T _origVal;

@@ -3,7 +3,7 @@
 #include "inode.h"
 #include "iundo.h"
 #include <list>
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
 
@@ -25,7 +25,7 @@ class Node;
  */
 class TraversableNodeSet :
 	public IUndoable,
-	public boost::noncopyable,
+	public util::Noncopyable,
 	public sigc::trackable
 {
 public:

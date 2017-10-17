@@ -14,7 +14,7 @@ namespace map
 
 class MapResource :
 	public IMapResource,
-	public boost::noncopyable
+	public util::Noncopyable
 {
 private:
     RootNodePtr _mapRoot;

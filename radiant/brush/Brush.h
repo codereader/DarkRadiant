@@ -8,7 +8,7 @@
 #include "Translatable.h"
 
 #include <sigc++/signal.h>
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 
 class RenderableCollector;
 class Ray;
@@ -88,7 +88,7 @@ class Brush :
 	public Snappable,
 	public IUndoable,
 	public Translatable,
-	public boost::noncopyable
+	public util::Noncopyable
 {
 private:
 	BrushNode& _owner;

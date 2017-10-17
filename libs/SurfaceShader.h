@@ -3,7 +3,7 @@
 #include <string>
 #include "debugging/debugging.h"
 #include "moduleobservers.h"
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 #include "irender.h"
 #include "shaderlib.h"
 
@@ -15,7 +15,7 @@
  */
 class SurfaceShader :
     public ModuleObserver,
-    public boost::noncopyable
+    public util::Noncopyable
 {
 public:
     // Observer classes can be attached to SurfaceShader to get notified

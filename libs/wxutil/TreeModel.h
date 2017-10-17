@@ -4,7 +4,7 @@
 #include <functional>
 #include <vector>
 #include <memory>
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 
 namespace wxutil
 {
@@ -79,7 +79,7 @@ public:
 	 * Subclasses should call Add() for each of their Column members.
 	 */
 	class ColumnRecord :
-		public boost::noncopyable
+		public util::Noncopyable
 	{
 	public:
 		// A list of column references, these point to members of subclasses

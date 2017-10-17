@@ -157,6 +157,9 @@
     <ClInclude Include="..\..\libs\stream\utils.h">
       <Filter>stream</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\util\Noncopyable.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

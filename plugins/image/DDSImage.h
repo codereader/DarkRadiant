@@ -4,11 +4,11 @@
 #include "igl.h"
 
 #include "RGBAImage.h"
-#include <boost/noncopyable.hpp>
+#include "util/Noncopyable.h"
 
 class DDSImage :
 	public Image,
-	public boost::noncopyable
+	public util::Noncopyable
 {
 public:
 
