@@ -202,6 +202,7 @@
     <ClInclude Include="..\..\libs\string\case_conv.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />
     <ClInclude Include="..\..\libs\string\replace.h" />
+    <ClInclude Include="..\..\libs\string\split.h" />
     <ClInclude Include="..\..\libs\string\string.h" />
     <ClInclude Include="..\..\libs\SurfaceShader.h" />
     <ClInclude Include="..\..\libs\texturelib.h" />

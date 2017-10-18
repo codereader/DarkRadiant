@@ -166,6 +166,9 @@
     <ClInclude Include="..\..\libs\string\case_conv.h">
       <Filter>string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\string\split.h">
+      <Filter>string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
