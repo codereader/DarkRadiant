@@ -5,7 +5,7 @@
 #include "Gui.h"
 
 #include "string/case_conv.h"
-#include <boost/algorithm/string/trim.hpp>
+#include "string/trim.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -135,7 +135,7 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 		try
         {
 			// Remove quotes from string before checking numerics
-			std::string trimmed = boost::algorithm::trim_copy_if(token, boost::algorithm::is_any_of("\""));
+			std::string trimmed = string::trim_copy(token, "\"");
 
 			// Try to cast the string to a number, throws
 			boost::lexical_cast<std::size_t>(trimmed);

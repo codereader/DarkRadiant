@@ -27,7 +27,7 @@
 #include "PrefabPopulator.h"
 #include "map/algorithm/WorldspawnArgFinder.h"
 
-#include <boost/algorithm/string/trim.hpp>
+#include "string/trim.h"
 #include "string/case_conv.h"
 #include <boost/lexical_cast.hpp>
 #include <functional>
@@ -208,7 +208,7 @@ void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
 void PrefabSelector::addCustomPathToRecentList()
 {
     std::string customPath = string::to_lower_copy(_customPath->getValue());
-    boost::algorithm::trim(customPath);
+    string::trim(customPath);
 
     if (customPath.empty())
     {

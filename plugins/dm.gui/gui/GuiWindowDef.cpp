@@ -6,8 +6,7 @@
 
 #include <limits>
 #include "string/split.h"
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/trim.hpp>
+#include "string/trim.h"
 #include "string/case_conv.h"
 #include "string/replace.h"
 
@@ -66,7 +65,7 @@ std::string GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 	}
 
 	//  Strip quotes
-	boost::algorithm::trim_if(returnValue, boost::algorithm::is_any_of("\""));
+	string::trim(returnValue, "\"");
 
 	return returnValue;
 }
@@ -89,7 +88,7 @@ Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 
 			for (std::size_t i = 0; i < parts.size(); ++i)
 			{
-				comp.push_back(boost::algorithm::trim_copy(parts[i]));
+				comp.push_back(string::trim_copy(parts[i]));
 			}
 
 			continue;

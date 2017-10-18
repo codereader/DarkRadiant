@@ -10,7 +10,7 @@
 #include "Statement.h"
 
 #include <functional>
-#include <boost/algorithm/string/trim.hpp>
+#include "string/trim.h"
 
 namespace cmd
 {
@@ -84,7 +84,7 @@ void CommandSystem::loadBinds() {
 		std::string statement = node.getAttributeValue("value");
 
 		// remove all whitespace from the front and the tail
-		boost::algorithm::trim(statement);
+		string::trim(statement);
 
 		// Create a new statement
 		StatementPtr st(new Statement(
@@ -221,7 +221,7 @@ void CommandSystem::addStatement(const std::string& statementName,
 {
 	// Remove all whitespace at the front and the tail
 	StatementPtr st(new Statement(
-		boost::algorithm::trim_copy(str),
+		string::trim_copy(str),
 		!saveStatementToRegistry // read-only if we should not save this statement
 	));
 

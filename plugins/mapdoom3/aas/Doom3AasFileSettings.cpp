@@ -1,7 +1,7 @@
 #include "Doom3AasFileSettings.h"
 
 #include "string/convert.h"
-#include <boost/algorithm/string/trim.hpp>
+#include "string/trim.h"
 #include "Util.h"
 
 namespace map
@@ -96,7 +96,7 @@ void Doom3AasFileSettings::parseFromTokens(parser::DefTokeniser& tok)
         else if (token == "fileExtension")
         {
             tok.assertNextToken("=");
-            fileExtension = boost::algorithm::trim_copy_if(tok.nextToken(), boost::algorithm::is_any_of("\""));
+            fileExtension = string::trim_copy(tok.nextToken(), "\"");
         }
         else if (token == "gravity")
         {

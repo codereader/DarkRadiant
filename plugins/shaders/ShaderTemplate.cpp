@@ -10,7 +10,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include "string/case_conv.h"
-#include <boost/algorithm/string/trim.hpp>
+#include "string/trim.h"
 #include <iostream>
 
 #include "ShaderExpression.h"
@@ -155,7 +155,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		else // no special sort keyword, try to parse the numeric value
 		{
 			//  Strip any quotes
-			boost::algorithm::trim_if(sortVal, boost::algorithm::is_any_of("\""));
+			string::trim(sortVal, "\"");
 
 			_sortReq = string::convert<int>(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
 		}

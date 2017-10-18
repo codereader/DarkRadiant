@@ -6,7 +6,7 @@
 #include <list>
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/trim.hpp>
+#include "string/trim.h"
 #include <boost/algorithm/string/classification.hpp>
 #include "Tokeniser.h"
 
@@ -744,7 +744,7 @@ private:
 
 			// Extract the value (can be empty) and trim it (everything after the space)
 			std::string value = (firstSpace == std::string::npos) ? "" : key.substr(firstSpace + 1);
-			boost::algorithm::trim(value);
+			string::trim(value);
 
 			key = key.substr(0, firstSpace);
 

@@ -1,15 +1,13 @@
 #include "ComplexName.h"
 
-#include <boost/algorithm/string/trim.hpp>
+#include "string/trim.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include "string/convert.h"
 
 ComplexName::ComplexName(const std::string& fullname)
 {
     // Retrieve the name by cutting off the trailing number
-    _name = boost::algorithm::trim_right_copy_if(
-        fullname, boost::algorithm::is_any_of("1234567890")
-    );
+    _name = string::trim_right_copy(fullname, "1234567890");
 
     // Get the trimmed part and take it as postfix
     std::string postFixStr = fullname.substr(_name.size());
