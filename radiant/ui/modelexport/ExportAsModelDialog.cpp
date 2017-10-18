@@ -13,7 +13,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include "string/case_conv.h"
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 
 #include "selectionlib.h"
@@ -210,7 +210,7 @@ void ExportAsModelDialog::handleFormatSelectionChange()
 		// Check if the replace current selection option is available
 		std::string extensions = GlobalGameManager().currentGame()->getKeyValue("modeltypes");
 		std::set<std::string> supportedExtensions;
-		boost::algorithm::split(supportedExtensions, extensions, boost::algorithm::is_any_of(" "));
+		string::split(supportedExtensions, extensions, " ");
 
 		wxCheckBox* replaceSelectionBox = findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel");
 

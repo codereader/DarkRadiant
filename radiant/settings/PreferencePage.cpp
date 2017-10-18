@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "i18n.h"
 #include "itextstream.h"
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <fmt/format.h>
@@ -53,7 +53,7 @@ PreferencePage& PreferencePage::createOrFindPage(const std::string& path)
 {
 	// Split the path into parts
 	std::list<std::string> parts;
-	boost::algorithm::split(parts, path, boost::algorithm::is_any_of("/"));
+	string::split(parts, path, "/");
 
 	if (parts.empty())
 	{

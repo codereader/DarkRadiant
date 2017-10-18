@@ -22,7 +22,7 @@
 #include <string>
 #include <map>
 
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include "string/case_conv.h"
@@ -52,7 +52,7 @@ ShaderSelector::ShaderSelector(wxWindow* parent, Client* client, const std::stri
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// Split the given comma-separated list into the vector
-	boost::algorithm::split(_prefixes, prefixes, boost::algorithm::is_any_of(","));
+	string::split(_prefixes, prefixes, ",");
 
 	// Pack in TreeView and info panel
 	createTreeView();

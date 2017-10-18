@@ -11,7 +11,7 @@
 #include "SelectionTest.h"
 #include "SceneWalkers.h"
 #include <fmt/format.h>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -339,7 +339,7 @@ void ManipulateMouseTool::renderOverlay()
 {
 #ifdef _DEBUG
 	std::vector<std::string> lines;
-	boost::algorithm::split(lines, _debugText, boost::algorithm::is_any_of("\n"));
+	string::split(lines, _debugText, "\n");
 
 	for (std::size_t i = 0; i < lines.size(); ++i)
 	{

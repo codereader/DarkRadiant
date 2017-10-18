@@ -5,7 +5,7 @@
 #include "string/convert.h"
 
 #include "i18n.h"
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -54,7 +54,7 @@ void InfoFile::parseInfoFileHeader()
 	try
 	{
 		std::vector<std::string> parts;
-		boost::algorithm::split(parts, HEADER_SEQUENCE, boost::algorithm::is_any_of(" "));
+		string::split(parts, HEADER_SEQUENCE, " ");
 
 		// Parse the string "DarkRadiant Map Information File Version"
 		for (std::size_t i = 0; i < parts.size(); i++)

@@ -11,7 +11,7 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -39,7 +39,7 @@ FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
 
 	// Split the options string to get min and max values
 	std::vector<std::string> values;
-	boost::algorithm::split(values, options, boost::algorithm::is_any_of(","));
+	string::split(values, options, ",");
 	if (values.size() != 2)
 		return;
 

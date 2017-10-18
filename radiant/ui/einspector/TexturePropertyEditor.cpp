@@ -5,10 +5,6 @@
 #include "i18n.h"
 #include "ientity.h"
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
-
 #include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
