@@ -169,6 +169,9 @@
     <ClInclude Include="..\..\libs\string\split.h">
       <Filter>string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\string\trim.h">
+      <Filter>string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

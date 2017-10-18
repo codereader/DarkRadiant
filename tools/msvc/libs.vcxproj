@@ -204,6 +204,7 @@
     <ClInclude Include="..\..\libs\string\replace.h" />
     <ClInclude Include="..\..\libs\string\split.h" />
     <ClInclude Include="..\..\libs\string\string.h" />
+    <ClInclude Include="..\..\libs\string\trim.h" />
     <ClInclude Include="..\..\libs\SurfaceShader.h" />
     <ClInclude Include="..\..\libs\texturelib.h" />
     <ClInclude Include="..\..\libs\ThreadedDefLoader.h" />
