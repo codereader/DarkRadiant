@@ -9,7 +9,7 @@
 
 #include <wx/sizer.h>
 #include <wx/treebook.h>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 
@@ -57,7 +57,7 @@ void PrefDialog::createPages()
 		_pages[pagePath] = pageWidget;
 
 		std::vector<std::string> parts;
-		boost::algorithm::split(parts, pagePath, boost::algorithm::is_any_of("/"));
+		string::split(parts, pagePath, "/");
 
 		if (parts.size() > 1)
 		{

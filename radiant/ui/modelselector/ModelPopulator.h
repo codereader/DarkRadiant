@@ -13,7 +13,7 @@
 #include "os/path.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 #include "string/case_conv.h"
 #include <fmt/format.h>
@@ -72,7 +72,7 @@ public:
 
 		// Load the allowed extensions
 		std::string extensions = GlobalGameManager().currentGame()->getKeyValue("modeltypes");
-		boost::algorithm::split(_allowedExtensions, extensions, boost::algorithm::is_any_of(" "));
+		string::split(_allowedExtensions, extensions, " ");
 	}
 
     ~ModelPopulator()

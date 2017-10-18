@@ -29,7 +29,7 @@
 #include "moduleobservers.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 
 #include "UnixPath.h"
@@ -99,7 +99,7 @@ void Doom3FileSystem::initialise()
     rMessage() << "filesystem initialised" << std::endl;
 
     std::string extensions = GlobalGameManager().currentGame()->getKeyValue("archivetypes");
-    boost::algorithm::split(_allowedExtensions, extensions, boost::algorithm::is_any_of(" "));
+    string::split(_allowedExtensions, extensions, " ");
 
     // Build list of dir extensions, e.g. pk4 -> pk4dir
     for (const std::string& allowedExtension : _allowedExtensions)

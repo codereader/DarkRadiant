@@ -27,7 +27,6 @@
 #include "PrefabPopulator.h"
 #include "map/algorithm/WorldspawnArgFinder.h"
 
-#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include "string/case_conv.h"
 #include <boost/lexical_cast.hpp>

@@ -5,8 +5,7 @@
 #include <vector>
 #include <string>
 #include "xmlutil/Node.h"
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 
 namespace wxutil
 {
@@ -112,7 +111,7 @@ public:
         unsigned int state = NONE;
 
         std::vector<std::string> parts;
-        boost::algorithm::split(parts, modifierStr, boost::algorithm::is_any_of("+"));
+        string::split(parts, modifierStr, "+");
 
         for (const std::string& mod : parts)
         {

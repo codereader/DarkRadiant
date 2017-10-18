@@ -6,7 +6,7 @@
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/join.hpp>
 
 #include <wx/menu.h>
@@ -154,7 +154,7 @@ MenuElementPtr MenuElement::find(const std::string& menuPath)
 {
 	// Split the path and analyse it
 	std::list<std::string> parts;
-	boost::algorithm::split(parts, menuPath, boost::algorithm::is_any_of("/"));
+	string::split(parts, menuPath, "/");
 
 	// Any path items at all?
 	if (parts.empty()) return MenuElementPtr();

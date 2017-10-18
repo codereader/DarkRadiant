@@ -6,8 +6,7 @@
 #include <algorithm>
 
 #include "string/convert.h"
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
+#include "string/split.h"
 
 #include <wx/checkbox.h>
 #include <wx/sizer.h>
@@ -52,7 +51,7 @@ void DifficultyPanel::populateFromObjective(const Objective& obj)
 {
 	// De-serialise the difficulty level string
 	std::vector<std::string> parts;
-	boost::algorithm::split(parts, obj.difficultyLevels, boost::algorithm::is_any_of(" "));
+	string::split(parts, obj.difficultyLevels, " ");
 
 	// Set the "applies to all difficulty" toggle
 	_allLevels->SetValue(obj.difficultyLevels.empty());

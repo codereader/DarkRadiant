@@ -9,8 +9,6 @@
 #include "igame.h"
 
 #include "string/case_conv.h"
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
 
 #include "os/path.h"
 #include "DirectoryArchiveFile.h"

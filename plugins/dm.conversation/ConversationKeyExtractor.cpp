@@ -2,20 +2,13 @@
 
 #include "itextstream.h"
 
-#include <boost/lexical_cast.hpp>
 #include <regex>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/classification.hpp>
 
 #include "string/convert.h"
 #include "ConversationCommand.h"
 #include "ConversationCommandLibrary.h"
 
 namespace conversation {
-
-// Shortcut for boost::algorithm::split
-typedef std::vector<std::string> StringParts;
 
 // Required entity visit function
 void ConversationKeyExtractor::operator()(const std::string& key, const std::string& value) 

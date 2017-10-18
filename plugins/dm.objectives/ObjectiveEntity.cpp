@@ -10,8 +10,7 @@
 
 #include "string/convert.h"
 #include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <fmt/format.h>
 #include <regex>
 
@@ -447,7 +446,7 @@ void ObjectiveEntity::populateListStore(wxutil::TreeModel& store,
 
 			// Split the string and increase each index by 1 for display (Level 1 == 0)
 			std::vector<std::string> parts;
-			boost::algorithm::split(parts, i->second.difficultyLevels, boost::algorithm::is_any_of(" "));
+			string::split(parts, i->second.difficultyLevels, " ");
 
 			for (std::size_t d = 0; d < parts.size(); ++d) {
 				diffStr += (diffStr.empty()) ? "" : " ";

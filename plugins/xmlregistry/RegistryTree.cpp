@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 
 #include "wxutil/IConv.h"
 
@@ -106,7 +106,7 @@ xml::Node RegistryTree::createKey(const std::string& key)
 	std::string fullKey = prepareKey(key);
 
 	std::vector<std::string> parts;
-	boost::algorithm::split(parts, fullKey, boost::algorithm::is_any_of("/"));
+	string::split(parts, fullKey, "/");
 
 	// Are there any slashes in the path at all? If not, exit, we've no use for this
 	if (parts.empty())

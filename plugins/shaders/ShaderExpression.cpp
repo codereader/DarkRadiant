@@ -8,7 +8,6 @@
 
 #include <stack>
 #include <list>
-#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
 namespace shaders

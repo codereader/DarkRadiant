@@ -5,7 +5,7 @@
 #include "itextstream.h"
 
 #include <limits>
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include "string/case_conv.h"
@@ -85,7 +85,7 @@ Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 		if (token.find(',') != std::string::npos)
 		{
 			std::vector<std::string> parts;
-			boost::algorithm::split(parts, token, boost::algorithm::is_any_of(","));
+			string::split(parts, token, ",");
 
 			for (std::size_t i = 0; i < parts.size(); ++i)
 			{

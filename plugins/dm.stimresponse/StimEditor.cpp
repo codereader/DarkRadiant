@@ -1,6 +1,6 @@
 #include "StimEditor.h"
 
-#include <boost/algorithm/string/split.hpp>
+#include "string/split.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include "string/convert.h"
@@ -480,7 +480,7 @@ void StimEditor::update()
 		// Split the property string and distribute the parts into the entry fields
 		std::vector<std::string> parts;
 		std::string timerTime = sr.get("timer_time");
-		boost::algorithm::split(parts, timerTime, boost::algorithm::is_any_of(":"));
+		string::split(parts, timerTime, ":");
 
 		std::string hour = (parts.size() > 0) ? parts[0] : "";
 		std::string minute = (parts.size() > 1) ? parts[1] : "";

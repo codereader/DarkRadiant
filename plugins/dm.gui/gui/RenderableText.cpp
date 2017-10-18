@@ -7,8 +7,7 @@
 #include <vector>
 #include <list>
 #include "gamelib.h"
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
+#include "string/split.h"
 
 #include "TextParts.h"
 #include "GuiWindowDef.h"
@@ -75,7 +74,7 @@ void RenderableText::recompile()
 
 	// Split the text into paragraphs
 	std::vector<std::string> paragraphs;
-	boost::algorithm::split(paragraphs, text, boost::algorithm::is_any_of("\n"));
+	string::split(paragraphs, text, "\n", false);
 
     fonts::IGlyphSetPtr gsp = _font->getGlyphSet(_resolution);
     if (!gsp)
@@ -109,7 +108,7 @@ void RenderableText::recompile()
 
 		// Split the paragraphs into words
 		std::list<std::string> words;
-		boost::algorithm::split(words, paragraphs[p], boost::algorithm::is_any_of(" \t"));
+		string::split(words, paragraphs[p], " \t", false);
 
 		// Add the words to lines
 		TextLinePtr curLine(new TextLine(_owner.rect[2] - 2 - _owner.textalignx, scale));

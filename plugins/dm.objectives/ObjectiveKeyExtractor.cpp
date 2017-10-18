@@ -4,16 +4,12 @@
 
 #include <boost/lexical_cast.hpp>
 #include <regex>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
+#include "string/split.h"
 #include "string/convert.h"
 
 namespace objectives {
-
-// Shortcut for boost::algorithm::split
-typedef std::vector<std::string> StringParts;
 
 // Required entity visit function
 void ObjectiveKeyExtractor::operator()(const std::string& key,
@@ -120,8 +116,8 @@ void ObjectiveKeyExtractor::operator()(const std::string& key,
 			}
 			else if (componentStr == "args") {
 				// We have a component argument string
-				StringParts parts;
-				boost::algorithm::split(parts, value, boost::algorithm::is_any_of(" "));
+				std::vector<std::string> parts;
+				string::split(parts, value, " ");
 
 				comp.clearArguments();
 
