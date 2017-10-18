@@ -3,7 +3,6 @@
 #include "itextstream.h"
 #include "ifilesystem.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
 #include <iostream>
 
 #include "os/path.h"

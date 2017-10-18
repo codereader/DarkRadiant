@@ -1,7 +1,7 @@
 #include "Component.h"
 
 #include "string/convert.h"
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include "string/replace.h"
 
 namespace objectives {
@@ -128,7 +128,7 @@ std::string Component::getString() {
 	// Convert the first character of the sentence to upper case
 	if (!sentence.empty()) {
 		std::string c(sentence.begin(), sentence.begin()+1);
-		sentence[0] = boost::algorithm::to_upper_copy(c)[0];
+		sentence[0] = string::to_upper_copy(c)[0];
 
 		// Append a full stop at the end of the sentence
 		if (sentence[sentence.length() - 1] != '.') {

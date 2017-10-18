@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include "picomodel.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include "PicoModelLoader.h"
 #include "AseExporter.h"
 #include "Lwo2Exporter.h"
@@ -65,7 +65,7 @@ public:
 				{
 					// greebo: File extension is expected to be UPPERCASE
 					std::string extension(*ext);
-					boost::algorithm::to_upper(extension);
+					string::to_upper(extension);
 
 					GlobalModelFormatManager().registerImporter(
 						std::make_shared<PicoModelLoader>(module, extension)

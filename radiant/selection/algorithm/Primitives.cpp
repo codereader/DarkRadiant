@@ -26,7 +26,7 @@
 #include "scenelib.h"
 #include "selectionlib.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <fmt/format.h>
 
 #include "ModelFinder.h"
@@ -678,7 +678,7 @@ void brushSetDetailFlag(const cmd::ArgumentList& args)
 	}
 
 	// First argument contains the number of sides
-	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	std::string arg = string::to_lower_copy(args[0].getString());
 
 	if (arg == "detail")
 	{

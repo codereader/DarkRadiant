@@ -2,7 +2,7 @@
 
 #include "GlyphInfo.h"
 #include "os/file.h"
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include "string/replace.h"
 
 namespace fonts
@@ -23,7 +23,7 @@ GlyphInfo::GlyphInfo(const q3font::Q3GlyphInfo& q3glyph)
 	t2 = q3glyph.t2;
 
 	texture = q3glyph.shaderName;
-	boost::algorithm::to_lower(texture);
+	string::to_lower(texture);
 
 	// Cut off fonts/
 	string::replace_first(texture, "fonts/", "");

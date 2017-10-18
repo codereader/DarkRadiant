@@ -4,7 +4,7 @@
 #include "parser/DefTokeniser.h"
 #include "Gui.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
@@ -223,7 +223,7 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 		while (tokeniser.hasMoreTokens() && _curLevel == blockLevel)
 		{
 			std::string nextToken = tokeniser.nextToken();
-			boost::algorithm::to_lower(nextToken);
+			string::to_lower(nextToken);
 
 			switchOnToken(nextToken, tokeniser);
 		}
@@ -291,7 +291,7 @@ void GuiScript::parseStatement(parser::DefTokeniser& tokeniser)
 	}
 
 	std::string token = tokeniser.nextToken();
-	boost::algorithm::to_lower(token);
+	string::to_lower(token);
 
 	switchOnToken(token, tokeniser);
 }

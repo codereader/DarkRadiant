@@ -29,7 +29,7 @@
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <boost/lexical_cast.hpp>
 #include <functional>
 
@@ -208,7 +208,7 @@ void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
 
 void PrefabSelector::addCustomPathToRecentList()
 {
-    std::string customPath = boost::algorithm::to_lower_copy(_customPath->getValue());
+    std::string customPath = string::to_lower_copy(_customPath->getValue());
     boost::algorithm::trim(customPath);
 
     if (customPath.empty())

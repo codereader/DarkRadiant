@@ -18,8 +18,6 @@
 
 #include "iuimanager.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
-
 namespace wxutil
 {
 

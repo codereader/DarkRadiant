@@ -25,7 +25,7 @@
 #include "selection/TransformationVisitors.h"
 #include "selection/SceneWalkers.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace selection
 {
@@ -380,7 +380,7 @@ void nudgeSelectedCmd(const cmd::ArgumentList& args)
 
 	UndoableCommand undo("nudgeSelected");
 
-	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	std::string arg = string::to_lower_copy(args[0].getString());
 
 	if (arg == "up") {
 		nudgeSelected(eNudgeUp);
@@ -434,7 +434,7 @@ void moveSelectedCmd(const cmd::ArgumentList& args)
 
 	UndoableCommand undo("moveSelectionVertically");
 
-	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	std::string arg = string::to_lower_copy(args[0].getString());
 
 	if (arg == "up") 
 	{

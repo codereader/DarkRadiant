@@ -8,7 +8,7 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace ui
 {
@@ -156,7 +156,7 @@ void CommandEntry::moveAutoCompletion(int direction)
 {
 	// Get the current prefix
 	std::string prefixOrig = _entry->GetValue().ToStdString();
-	std::string prefix = boost::algorithm::to_lower_copy(prefixOrig);
+	std::string prefix = string::to_lower_copy(prefixOrig);
 
 	if (prefix.empty())
 	{

@@ -4,7 +4,7 @@
 #include <cctype>
 #include <wx/defs.h>
 #include "wxutil/Modifier.h"
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace ui
 {
@@ -108,7 +108,7 @@ unsigned int Accelerator::getKeyCodeFromName(const std::string& name)
     }
     else // words like TAB, ESCAPE, etc.
     {
-        std::string upper = boost::algorithm::to_upper_copy(name);
+        std::string upper = string::to_upper_copy(name);
 
         // These are compatible with the ones defined in gdkkeysyms.h
         // to be able to load legacy input.xml files

@@ -11,7 +11,7 @@
 #include "MultiMonitor.h"
 #include "dialog/MessageBox.h"
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <wx/app.h>
 
 namespace wxutil
@@ -59,7 +59,7 @@ void FileChooser::construct()
 	}
 
 	// Make default extension lowercase
-	boost::algorithm::to_lower(_defaultExt);
+	string::to_lower(_defaultExt);
 
 	int defaultFormatIdx = 0;
 	int curFormatIdx = 0;

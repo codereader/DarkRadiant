@@ -2,7 +2,7 @@
 
 #include "Gui.h"
 #include "GuiWindowDef.h"
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace gui
 {
@@ -10,7 +10,7 @@ namespace gui
 WindowDefVariable::WindowDefVariable(GuiWindowDef& windowDef,
 									 const std::string& name) :
 	_windowDef(windowDef),
-	_name(boost::algorithm::to_lower_copy(name))
+	_name(string::to_lower_copy(name))
 {}
 
 // Assign a value to this Variable (returns TRUE on success)

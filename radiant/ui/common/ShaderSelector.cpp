@@ -25,7 +25,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <functional>
 
 namespace ui
@@ -85,7 +85,7 @@ void ShaderSelector::setSelection(const std::string& sel)
 
 	// Use the wxutil TreeModel algorithms to select the shader
 	wxDataViewItem found = _treeStore->FindString(
-		boost::algorithm::to_lower_copy(sel), _shaderTreeColumns.shaderName);
+		string::to_lower_copy(sel), _shaderTreeColumns.shaderName);
 
 	if (found.IsOk())
 	{
@@ -165,7 +165,7 @@ namespace
 				// Only allow the prefixes passed in the constructor
 				if (!shaderName.empty() && boost::algorithm::istarts_with(shaderName, (*i) + "/"))
 				{
-					_populator.addPath(boost::algorithm::to_lower_copy(shaderName));
+					_populator.addPath(string::to_lower_copy(shaderName));
 					break; // don't consider any further prefixes
 				}
 			}

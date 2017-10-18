@@ -3,7 +3,6 @@
 #include "iradiant.h"
 #include "ieclass.h"
 #include "debugging/debugging.h"
-#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <functional>
 

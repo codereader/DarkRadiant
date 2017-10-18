@@ -9,7 +9,7 @@
 #include "parser/DefTokeniser.h"
 
 #include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <boost/algorithm/string/trim.hpp>
 #include <iostream>
 
@@ -232,7 +232,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	else if (token == "deform")
 	{
 		std::string type = tokeniser.nextToken();
-		boost::algorithm::to_lower(type);
+		string::to_lower(type);
 
 		if (type == "sprite")
 		{
@@ -292,7 +292,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		// Skip over this renderbump directive
 		// Syntax: renderBump [-size <width> <height>] [-aa <0/1/2>] [-trace <0.01 - 1.0>] <normalMapImage> <highPolyModel>
 		std::string next = tokeniser.nextToken();
-		boost::algorithm::to_lower(next);
+		string::to_lower(next);
 
 		// Skip over the optional args
 		while (next.length() > 0 && next[0] == '-')
@@ -311,7 +311,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 			}
 
 			next = tokeniser.nextToken();
-			boost::algorithm::to_lower(next);
+			string::to_lower(next);
 		}
 
 		// The map token is already loaded in "next", skip the highpoly model name
@@ -322,7 +322,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		// Skip over this renderbump directive
 		// Syntax: RenderBumpFlat [-size <width> <height>] <modelfile>
 		std::string next = tokeniser.nextToken();
-		boost::algorithm::to_lower(next);
+		string::to_lower(next);
 
 		// Skip over the optional args
 		if (next == "-size")
@@ -416,7 +416,7 @@ bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
 {
     if (token == "blend")
     {
-        std::string blendType = boost::algorithm::to_lower_copy(tokeniser.nextToken());
+        std::string blendType = string::to_lower_copy(tokeniser.nextToken());
 
         if (blendType == "diffusemap")
 		{
@@ -514,7 +514,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	else if (token == "videomap")
     {
 		std::string nextToken = tokeniser.nextToken();
-		boost::algorithm::to_lower(nextToken);
+		string::to_lower(nextToken);
 
 		if (nextToken == "loop")
 		{
@@ -747,7 +747,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		int mapNum = string::convert<int>(tokeniser.nextToken());
 
 		std::string next = tokeniser.peek();
-		boost::algorithm::to_lower(next);
+		string::to_lower(next);
 
 		// These are all valid option keywords
 		while (next == "cubemap" || next == "cameracubemap" || next == "nearest" ||
@@ -758,7 +758,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 			tokeniser.nextToken();
 
 			next = tokeniser.peek();
-			boost::algorithm::to_lower(next);
+			string::to_lower(next);
 		}
 
 		// Get the map expression (but don't really use it)
@@ -1176,7 +1176,7 @@ void ShaderTemplate::parseDefinition()
             }
             else
 			{
-				boost::algorithm::to_lower(token);
+				string::to_lower(token);
 
                 switch (level)
 				{

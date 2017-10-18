@@ -8,7 +8,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include "string/replace.h"
 
 #include "GuiScript.h"
@@ -154,7 +154,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 	while (tokeniser.hasMoreTokens())
 	{
 		std::string token = tokeniser.nextToken();
-		boost::algorithm::to_lower(token);
+		string::to_lower(token);
 
 		if (token == "rect")
 		{

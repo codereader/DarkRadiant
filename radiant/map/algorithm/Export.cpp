@@ -12,11 +12,11 @@
 #include "selection/algorithm/Entity.h"
 #include "selection/algorithm/General.h"
 #include "string/convert.h"
+#include "string/case_conv.h"
 #include "model/ModelExporter.h"
 #include "registry/registry.h"
 #include "Traverse.h"
 #include "Models.h"
-#include <boost/algorithm/string/case_conv.hpp>
 
 namespace map
 {
@@ -39,7 +39,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 		outputFormat = registry::getValue<std::string>(RKEY_DEFAULT_MODEL_EXPORT_FORMAT);
 	}
 
-	boost::algorithm::to_lower(outputFormat);
+	string::to_lower(outputFormat);
 
 	rMessage() << "Model format used for export: " << outputFormat << std::endl;
 

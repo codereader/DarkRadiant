@@ -10,7 +10,7 @@
 #include "ModuleRegistry.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace module
 {
@@ -37,7 +37,7 @@ namespace
 void ModuleLoader::processModuleFile(const fs::path& file)
 {
 	// Check for the correct extension of the visited file
-	if (boost::algorithm::to_lower_copy(file.extension().string()) != MODULE_FILE_EXTENSION) return;
+	if (string::to_lower_copy(file.extension().string()) != MODULE_FILE_EXTENSION) return;
 
 	std::string fullName = file.string();
 	rMessage() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;

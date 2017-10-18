@@ -28,7 +28,6 @@
 #include "os/dir.h"
 #include "moduleobservers.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -290,7 +289,7 @@ std::string Doom3FileSystem::findRoot(const std::string& name)
 void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename)
 {
     std::string fileExt(os::getExtension(filename));
-    boost::to_lower(fileExt);
+    string::to_lower(fileExt);
 
     if (_allowedExtensions.find(fileExt) != _allowedExtensions.end())
     {

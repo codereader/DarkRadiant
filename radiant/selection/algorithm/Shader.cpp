@@ -21,7 +21,7 @@
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/shaderclipboard/ClosestTexturableFinder.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace selection
 {
@@ -747,7 +747,7 @@ void scaleTexture(const cmd::ArgumentList& args) {
 		return;
 	}
 
-	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	std::string arg = string::to_lower_copy(args[0].getString());
 
 	if (arg == "up") {
 		scaleTextureUp();
@@ -776,7 +776,7 @@ void shiftTextureCmd(const cmd::ArgumentList& args) {
 		return;
 	}
 
-	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	std::string arg = string::to_lower_copy(args[0].getString());
 
 	if (arg == "up") {
 		shiftTextureUp();
@@ -835,7 +835,7 @@ void alignTextureCmd(const cmd::ArgumentList& args)
 		return;
 	}
 
-	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	std::string arg = string::to_lower_copy(args[0].getString());
 
 	if (arg == "top")
 	{

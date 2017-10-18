@@ -3,7 +3,7 @@
 #include "ifilesystem.h"
 
 #include <set>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 /**
  * Adaptor class used in GlobalFileSystem().foreachFile(). 
@@ -54,7 +54,7 @@ public:
 	{
 #ifdef OS_CASE_INSENSITIVE
 		// The name should start with the directory, "def/" for instance, case-insensitively.
-		assert(boost::algorithm::to_lower_copy(name.substr(0, _dirPrefixLength)) == _directory);
+		assert(string::to_lower_copy(name.substr(0, _dirPrefixLength)) == _directory);
 #else
 		// Linux: The name should start with the directory, "def/" for instance, including case.
 		assert(name.substr(0, _dirPrefixLength) == _directory);
@@ -77,7 +77,7 @@ public:
 
 #ifdef OS_CASE_INSENSITIVE
 			// Treat extensions case-insensitively in Windows
-			boost::algorithm::to_lower(ext);
+			string::to_lower(ext);
 #endif
 
 			if (ext != _extension)

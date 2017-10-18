@@ -4,7 +4,7 @@
 #include "itextstream.h"
 #include "ifiletypes.h"
 #include "ipreferencesystem.h"
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 #include "modulesystem/StaticModule.h"
 
@@ -54,7 +54,7 @@ void ModelFormatManager::postModuleInitialisation()
 
 		for (const ExporterMap::value_type& pair : _exporters)
 		{
-			std::string extLower = boost::algorithm::to_lower_copy(pair.second->getExtension());
+			std::string extLower = string::to_lower_copy(pair.second->getExtension());
 
 			GlobalFiletypes().registerPattern(filetype::TYPE_MODEL_EXPORT, FileTypePattern(
 				pair.second->getDisplayName(), 
@@ -68,7 +68,7 @@ void ModelFormatManager::registerImporter(const IModelImporterPtr& importer)
 {
 	assert(importer);
 
-	std::string extension = boost::algorithm::to_upper_copy(importer->getExtension());
+	std::string extension = string::to_upper_copy(importer->getExtension());
 
 	if (_importers.find(extension) != _importers.end())
 	{
@@ -83,7 +83,7 @@ void ModelFormatManager::unregisterImporter(const IModelImporterPtr& importer)
 {
 	assert(importer);
 
-	std::string extension = boost::algorithm::to_upper_copy(importer->getExtension());
+	std::string extension = string::to_upper_copy(importer->getExtension());
 
 	if (_importers.find(extension) != _importers.end())
 	{
@@ -96,7 +96,7 @@ void ModelFormatManager::unregisterImporter(const IModelImporterPtr& importer)
 
 IModelImporterPtr ModelFormatManager::getImporter(const std::string& extension)
 {
-	std::string extensionUpper = boost::algorithm::to_upper_copy(extension);
+	std::string extensionUpper = string::to_upper_copy(extension);
 
 	ImporterMap::const_iterator found = _importers.find(extensionUpper);
 
@@ -107,7 +107,7 @@ void ModelFormatManager::registerExporter(const IModelExporterPtr& exporter)
 {
 	assert(exporter);
 
-	std::string extension = boost::algorithm::to_upper_copy(exporter->getExtension());
+	std::string extension = string::to_upper_copy(exporter->getExtension());
 
 	if (_exporters.find(extension) != _exporters.end())
 	{
@@ -122,7 +122,7 @@ void ModelFormatManager::unregisterExporter(const IModelExporterPtr& exporter)
 {
 	assert(exporter);
 
-	std::string extension = boost::algorithm::to_upper_copy(exporter->getExtension());
+	std::string extension = string::to_upper_copy(exporter->getExtension());
 
 	if (_exporters.find(extension) != _exporters.end())
 	{
@@ -135,7 +135,7 @@ void ModelFormatManager::unregisterExporter(const IModelExporterPtr& exporter)
 
 IModelExporterPtr ModelFormatManager::getExporter(const std::string& extension)
 {
-	std::string extensionUpper = boost::algorithm::to_upper_copy(extension);
+	std::string extensionUpper = string::to_upper_copy(extension);
 
 	ExporterMap::const_iterator found = _exporters.find(extensionUpper);
 

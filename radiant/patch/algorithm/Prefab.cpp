@@ -18,7 +18,7 @@
 #include "selection/algorithm/General.h"
 #include "selectionlib.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace patch
 {
@@ -93,7 +93,7 @@ void createPrefab(const cmd::ArgumentList& args)
 		return;
 	}
 
-	std::string typeStr = boost::algorithm::to_lower_copy(args[0].getString());
+	std::string typeStr = string::to_lower_copy(args[0].getString());
 
 	if (typeStr == "cylinder")
 	{

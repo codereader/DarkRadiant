@@ -3,14 +3,14 @@
 #include "itextstream.h"
 #include "modulesystem/StaticModule.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace map
 {
 
 void MapFormatManager::registerMapFormat(const std::string& extension, const MapFormatPtr& mapFormat)
 {
-	_mapFormats.insert(MapFormatModules::value_type(boost::algorithm::to_lower_copy(extension), mapFormat));
+	_mapFormats.insert(MapFormatModules::value_type(string::to_lower_copy(extension), mapFormat));
 }
 
 void MapFormatManager::unregisterMapFormat(const MapFormatPtr& mapFormat)
@@ -44,7 +44,7 @@ MapFormatPtr MapFormatManager::getMapFormatByName(const std::string& mapFormatNa
 MapFormatPtr MapFormatManager::getMapFormatForGameType(const std::string& gameType, 
 													   const std::string& extension)
 {
-	std::string extLower = boost::algorithm::to_lower_copy(extension);
+	std::string extLower = string::to_lower_copy(extension);
 
 	for (MapFormatModules::const_iterator i = _mapFormats.begin(); i != _mapFormats.end(); ++i)
 	{
@@ -60,7 +60,7 @@ MapFormatPtr MapFormatManager::getMapFormatForGameType(const std::string& gameTy
 std::set<MapFormatPtr> MapFormatManager::getMapFormatList(const std::string& extension)
 {
 	std::set<MapFormatPtr> list;
-	std::string extLower = boost::algorithm::to_lower_copy(extension);
+	std::string extLower = string::to_lower_copy(extension);
 
 	for (MapFormatModules::iterator it = _mapFormats.find(extLower);
 		 it != _mapFormats.upper_bound(extLower) && it != _mapFormats.end();

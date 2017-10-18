@@ -12,7 +12,7 @@
 #include <wx/filepicker.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
@@ -73,7 +73,7 @@ void ExportAsModelDialog::populateWindow()
 	{
 		// Generate the display name "<exporterName> (.<ext>)"
 		std::string displayName = exporter->getDisplayName();
-		displayName += " (." + boost::algorithm::to_lower_copy(exporter->getExtension()) + ")";
+		displayName += " (." + string::to_lower_copy(exporter->getExtension()) + ")";
 
 		// Store the exporter extension as client data
 		formatChoice->Append(displayName, new wxStringClientData(exporter->getExtension()));
@@ -205,7 +205,7 @@ void ExportAsModelDialog::handleFormatSelectionChange()
 	{
 		findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->setDefaultExtension(selectedFormat);
 
-		std::string extLower = boost::algorithm::to_lower_copy(selectedFormat);
+		std::string extLower = string::to_lower_copy(selectedFormat);
 
 		// Check if the replace current selection option is available
 		std::string extensions = GlobalGameManager().currentGame()->getKeyValue("modeltypes");

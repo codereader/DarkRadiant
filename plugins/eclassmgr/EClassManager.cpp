@@ -15,7 +15,7 @@
 #include "Doom3EntityClass.h"
 #include "Doom3ModelDef.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <functional>
 
 #include "debugging/ScopedDebugTimer.h"
@@ -46,7 +46,7 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
     }
 
 	// Convert string to lowercase, for case-insensitive lookup
-	std::string lName = boost::algorithm::to_lower_copy(name);
+	std::string lName = string::to_lower_copy(name);
 
     // Find and return if exists
     Doom3EntityClassPtr eclass = findInternal(lName);
@@ -218,7 +218,7 @@ IEntityClassPtr EClassManager::findClass(const std::string& className)
     ensureDefsLoaded();
 
 	// greebo: Convert the lookup className string to lowercase first
-	std::string classNameLower = boost::algorithm::to_lower_copy(className);
+	std::string classNameLower = string::to_lower_copy(className);
 
     EntityClasses::const_iterator i = _entityClasses.find(classNameLower);
 
@@ -353,13 +353,13 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
     while (tokeniser.hasMoreTokens())
 	{
         std::string blockType = tokeniser.nextToken();
-        boost::algorithm::to_lower(blockType);
+        string::to_lower(blockType);
 
         if (blockType == "entitydef")
 		{
 			// Get the (lowercase) entity name
 			const std::string sName =
-    			boost::algorithm::to_lower_copy(tokeniser.nextToken());
+    			string::to_lower_copy(tokeniser.nextToken());
 
 			// Ensure that an Entity class with this name already exists
 			// When reloading entityDef declarations, most names will already be registered

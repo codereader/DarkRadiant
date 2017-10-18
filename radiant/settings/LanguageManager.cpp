@@ -13,7 +13,7 @@
 #include "registry/registry.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "os/fs.h"
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace language
 {
@@ -399,7 +399,7 @@ void LanguageManager::loadSupportedLanguages()
 
 int LanguageManager::getLanguageIndex(const std::string& languageCode)
 {
-	std::string code = boost::algorithm::to_lower_copy(languageCode);
+	std::string code = string::to_lower_copy(languageCode);
 
 	for (LanguageMap::const_iterator i = _supportedLanguages.begin();
 		 i != _supportedLanguages.end(); ++i)

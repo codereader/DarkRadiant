@@ -1,6 +1,6 @@
 #include "GameFileLoader.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace game
 {
@@ -14,7 +14,7 @@ GameFileLoader::GameFileLoader(Manager::GameMap& games, const std::string& path)
 // Main functor () function, gets called with the file (without path)
 void GameFileLoader::operator() (const fs::path& file)
 {
-	if (boost::algorithm::to_lower_copy(file.extension().string()) != GAME_FILE_EXT)
+	if (string::to_lower_copy(file.extension().string()) != GAME_FILE_EXT)
 	{
 		// Don't process files not ending with .game
 		return;

@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include "string/replace.h"
-#include <boost/algorithm/string/case_conv.hpp>
 
 /* FORWARD DECLS */
 

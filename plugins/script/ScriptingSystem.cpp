@@ -54,7 +54,7 @@
 #include "os/file.h"
 #include "os/path.h"
 #include <functional>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace script 
 {
@@ -374,7 +374,7 @@ void ScriptingSystem::reloadScripts()
 		if (fs::is_directory(candidate)) continue;
 
 		std::string extension = os::getExtension(candidate.string());
-		boost::algorithm::to_lower(extension);
+		string::to_lower(extension);
 
 		if (extension != "py") continue;
 

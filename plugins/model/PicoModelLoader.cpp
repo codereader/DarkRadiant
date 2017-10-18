@@ -11,7 +11,7 @@
 #include "PicoModelNode.h"
 
 #include "idatastream.h"
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 namespace model {
 
@@ -30,7 +30,7 @@ namespace {
 
 PicoModelLoader::PicoModelLoader(const picoModule_t* module, const std::string& extension) :
 	_module(module),
-	_extension(boost::algorithm::to_upper_copy(extension))
+	_extension(string::to_upper_copy(extension))
 {}
 
 const std::string& PicoModelLoader::getExtension() const
@@ -87,7 +87,7 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
 
 	// Determine the file extension (ASE or LWO) to pass down to the PicoModel
 	std::string fName = file->getName();
-	boost::algorithm::to_lower(fName);
+	string::to_lower(fName);
 	std::string fExt = fName.substr(fName.size() - 3, 3);
 
 	picoModel_t* model = PicoModuleLoadModelStream(

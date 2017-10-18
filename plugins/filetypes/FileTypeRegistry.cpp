@@ -6,7 +6,7 @@
 #include "debugging/debugging.h"
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 FileTypeRegistry::FileTypeRegistry()
 {
@@ -16,7 +16,7 @@ FileTypeRegistry::FileTypeRegistry()
 void FileTypeRegistry::registerPattern(const std::string& fileType, const FileTypePattern& pattern)
 {
 	// Convert the file extension to lowercase
-	std::string fileTypeLower = boost::algorithm::to_lower_copy(fileType);
+	std::string fileTypeLower = string::to_lower_copy(fileType);
 
 	// Find or insert the fileType into the map
 	FileTypes::iterator i = _fileTypes.find(fileTypeLower);
@@ -32,8 +32,8 @@ void FileTypeRegistry::registerPattern(const std::string& fileType, const FileTy
 
 	// Ensure the pattern contains a lowercase extension
 	FileTypePattern patternLocal = pattern;
-	boost::algorithm::to_lower(patternLocal.extension);
-	boost::algorithm::to_lower(patternLocal.pattern);
+	string::to_lower(patternLocal.extension);
+	string::to_lower(patternLocal.pattern);
 
 	// Check if the pattern is already associated
 	for (const FileTypePattern& pattern : patternList)
@@ -52,7 +52,7 @@ void FileTypeRegistry::registerPattern(const std::string& fileType, const FileTy
 FileTypePatterns FileTypeRegistry::getPatternsForType(const std::string& fileType)
 {
 	// Convert the file extension to lowercase and try to find the matching list
-	FileTypes::const_iterator i = _fileTypes.find(boost::algorithm::to_lower_copy(fileType));
+	FileTypes::const_iterator i = _fileTypes.find(string::to_lower_copy(fileType));
 
 	return i != _fileTypes.end() ? i->second : FileTypePatterns();
 }

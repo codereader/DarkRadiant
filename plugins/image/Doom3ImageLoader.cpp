@@ -8,7 +8,7 @@
 #include "iregistry.h"
 #include "igame.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
@@ -39,7 +39,7 @@ ImageTypeLoader::Extensions getGameFileImageExtensions()
 		{
 			// Get the file extension
 			std::string extension = i->getContent();
-			boost::algorithm::to_lower(extension);
+			string::to_lower(extension);
             _extensions.push_back(extension);
 		}
 	}
@@ -54,7 +54,7 @@ void Doom3ImageLoader::addLoaderToMap(ImageTypeLoader::Ptr loader)
     ImageTypeLoader::Extensions exts = loader->getExtensions();
     for (auto i = exts.begin(); i != exts.end(); ++i)
     {
-        _loadersByExtension[boost::algorithm::to_lower_copy(*i)] = loader;
+        _loadersByExtension[string::to_lower_copy(*i)] = loader;
     }
 }
 
@@ -117,7 +117,7 @@ ImagePtr Doom3ImageLoader::imageFromFile(const std::string& filename) const
 
     if (!file->failed())
     {
-        const std::string ext = boost::algorithm::to_lower_copy(
+        const std::string ext = string::to_lower_copy(
             os::getExtension(filename)
         );
 

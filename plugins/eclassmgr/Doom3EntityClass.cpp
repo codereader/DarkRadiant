@@ -5,7 +5,6 @@
 #include "os/path.h"
 #include "string/convert.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <fmt/format.h>

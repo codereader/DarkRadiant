@@ -3,7 +3,7 @@
 #include <vorbis/vorbisfile.h>
 #include <iostream>
 #include <vector>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 
 #include "stream/TextFileInputStream.h"
 #include "os/path.h"
@@ -154,7 +154,7 @@ void SoundPlayer::play(ArchiveFile& file, bool loopSound)
 	// Retrieve the extension
 	std::string ext = os::getExtension(file.getName());
 
-	if (boost::algorithm::to_lower_copy(ext) == "ogg")
+	if (string::to_lower_copy(ext) == "ogg")
 	{
 		createBufferDataFromOgg(file);
 	}

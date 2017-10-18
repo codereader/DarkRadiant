@@ -15,7 +15,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <fmt/format.h>
 
 #include "ModelSelector.h"
@@ -130,7 +130,7 @@ public:
         }
 
 		std::string ext = os::getExtension(file);
-		boost::algorithm::to_lower(ext);
+		string::to_lower(ext);
 
 		// Test the extension. If it is not matching any of the known extensions,
 		// not interested

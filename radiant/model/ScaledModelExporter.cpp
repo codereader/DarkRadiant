@@ -12,7 +12,7 @@
 #include "os/path.h"
 #include "registry/registry.h"
 #include <fmt/format.h>
-#include <boost/algorithm/string/case_conv.hpp>
+#include "string/case_conv.h"
 #include <regex>
 
 #include "ModelExporter.h"
@@ -82,7 +82,7 @@ void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, con
 {
 	// Request the default format from the preferences
 	std::string outputExtension = registry::getValue<std::string>(RKEY_DEFAULT_MODEL_EXPORT_FORMAT);
-	boost::algorithm::to_lower(outputExtension);
+	string::to_lower(outputExtension);
 
 	rMessage() << "Model format used for export: " << outputExtension << 
 		" (this can be changed in the preferences)" << std::endl;
