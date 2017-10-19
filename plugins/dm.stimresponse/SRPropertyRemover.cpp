@@ -3,8 +3,6 @@
 #include "iregistry.h"
 #include "gamelib.h"
 #include "entitylib.h"
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/erase.hpp>
 #include <regex>
 
 SRPropertyRemover::SRPropertyRemover(

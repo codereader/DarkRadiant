@@ -4,8 +4,6 @@
 #include "entitylib.h"
 #include "string/convert.h"
 #include "gamelib.h"
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/erase.hpp>
 #include <regex>
 
 // Constructor

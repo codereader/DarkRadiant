@@ -5,8 +5,6 @@
 #include "os/path.h"
 #include "string/convert.h"
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/erase.hpp>
 #include "string/predicate.h"
 #include <fmt/format.h>
 #include <boost/optional.hpp>
@@ -36,13 +34,10 @@ boost::optional<std::string> suffixedKey(const std::string& key,
 {
     if (string::istarts_with(key, prefix))
     {
-        std::string suffixStr = boost::algorithm::erase_first_copy(key, prefix);
-        return suffixStr;
+        return key.substr(prefix.length());
     }
-    else
-    {
-        return boost::none;
-    }
+    
+	return boost::none;
 }
 
 } // namespace

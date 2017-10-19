@@ -4,9 +4,10 @@
 #include "ieclass.h"
 #include "ifilter.h"
 #include <regex>
-#include <boost/algorithm/string/erase.hpp>
+#include <algorithm>
 
-namespace filters {
+namespace filters
+{
 
 XMLFilter::XMLFilter(const std::string& name, bool readOnly) :
 	_name(name),
@@ -120,7 +121,10 @@ void XMLFilter::setRules(const FilterRules& rules) {
 void XMLFilter::updateEventName() {
 	// Construct the eventname out of the filtername (strip the spaces and add "Filter" prefix)
 	_eventName = _name;
-	boost::algorithm::erase_all(_eventName, " ");
+
+	// Strip all spaces from the string
+	_eventName.erase(std::remove(_eventName.begin(), _eventName.end(), ' '));
+
 	_eventName = "Filter" + _eventName;
 }
 

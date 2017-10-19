@@ -9,9 +9,6 @@
 #include "wxutil/IConv.h"
 #include "os/path.h"
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/erase.hpp>
-
 namespace map
 {
 
