@@ -30,7 +30,7 @@
 #include <wx/scrolbar.h>
 #include <wx/sizer.h>
 
-#include <boost/algorithm/string/find.hpp>
+#include "string/case_conv.h"
 #include "TextureBrowserManager.h"
 
 namespace ui
@@ -84,19 +84,22 @@ public:
         if (!_owner.getFilter().empty())
         {
             std::string textureNameCache(material->getName());
-            const char* textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary material->getName() here
+            std::string textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary material->getName() here
 
             if (_owner._filterIgnoresTexturePath)
             {
-                boost::iterator_range<const char*> lastSlash = boost::find_last(textureName, "/");
-                if (lastSlash)
+				std::size_t lastSlash = textureName.find_last_of('/');
+
+                if (lastSlash != std::string::npos)
                 {
-                    textureName = lastSlash.end();
+					textureName.erase(0, lastSlash + 1);
                 }
             }
 
+			string::to_lower(textureName);
+
             // case insensitive substring match
-            if (!boost::ifind_first(textureName, _owner.getFilter().c_str()))
+            if (textureName.find(string::to_lower_copy(_owner.getFilter())) == std::string::npos)
                 return false;
         }
 
@@ -566,20 +569,23 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
     if (!getFilter().empty())
     {
         std::string textureNameCache(material->getName());
-        const char* textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary material->getName() here
+        std::string textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary material->getName() here
 
-        if (_filterIgnoresTexturePath)
+		if (_filterIgnoresTexturePath)
         {
-            boost::iterator_range<const char*> lastSlash = boost::find_last(textureName, "/");
-            if (lastSlash)
-            {
-                textureName = lastSlash.end();
-            }
+			std::size_t lastSlash = textureName.find_last_of('/');
+
+			if (lastSlash != std::string::npos)
+			{
+				textureName.erase(0, lastSlash + 1);
+			}
         }
 
-        // case insensitive substring match
-        if ( !boost::ifind_first(textureName, getFilter().c_str()) )
-            return false;
+		string::to_lower(textureName);
+
+		// case insensitive substring match
+		if (textureName.find(string::to_lower_copy(getFilter())) == std::string::npos)
+			return false;
     }
 
     return true;
