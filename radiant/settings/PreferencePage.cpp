@@ -5,7 +5,6 @@
 #include "itextstream.h"
 #include "string/split.h"
 #include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/classification.hpp>
 #include <fmt/format.h>
 
 #include "PreferenceItems.h"

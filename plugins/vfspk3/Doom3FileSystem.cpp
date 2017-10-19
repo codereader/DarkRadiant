@@ -28,9 +28,7 @@
 #include "os/dir.h"
 #include "moduleobservers.h"
 
-#include <boost/algorithm/string/predicate.hpp>
 #include "string/split.h"
-#include <boost/algorithm/string/classification.hpp>
 
 #include "UnixPath.h"
 #include "DirectoryArchive.h"

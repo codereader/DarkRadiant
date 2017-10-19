@@ -12,9 +12,7 @@
 #include "string/string.h"
 #include "os/path.h"
 
-#include <boost/algorithm/string/predicate.hpp>
 #include "string/split.h"
-#include <boost/algorithm/string/classification.hpp>
 #include "string/case_conv.h"
 #include <fmt/format.h>
 

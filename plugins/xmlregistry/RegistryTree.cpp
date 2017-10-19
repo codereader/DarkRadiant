@@ -1,8 +1,6 @@
 #include "RegistryTree.h"
 
 #include "itextstream.h"
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include "string/split.h"
 
 #include "wxutil/IConv.h"

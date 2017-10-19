@@ -10,7 +10,6 @@
 #include <wx/sizer.h>
 #include <wx/treebook.h>
 #include "string/split.h"
-#include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 
 #include "settings/PreferenceSystem.h"

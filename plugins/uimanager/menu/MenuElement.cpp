@@ -4,8 +4,6 @@
 #include "itextstream.h"
 #include "ieventmanager.h"
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include "string/split.h"
 #include <boost/algorithm/string/join.hpp>
 

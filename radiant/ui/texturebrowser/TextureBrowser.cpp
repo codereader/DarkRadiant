@@ -30,6 +30,7 @@
 #include <wx/scrolbar.h>
 #include <wx/sizer.h>
 
+#include <boost/algorithm/string/find.hpp>
 #include "TextureBrowserManager.h"
 
 namespace ui

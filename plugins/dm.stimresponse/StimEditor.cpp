@@ -1,8 +1,6 @@
 #include "StimEditor.h"
 
 #include "string/split.h"
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/classification.hpp>
 #include "string/convert.h"
 
 #include "i18n.h"

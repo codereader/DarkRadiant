@@ -12,8 +12,6 @@
 #include "SceneWalkers.h"
 #include <fmt/format.h>
 #include "string/split.h"
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
 {

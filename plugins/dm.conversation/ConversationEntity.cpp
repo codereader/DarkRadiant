@@ -5,7 +5,6 @@
 #include "ientity.h"
 
 #include "string/convert.h"
-#include <boost/algorithm/string/classification.hpp>
 
 #include "ConversationKeyExtractor.h"
 #include "ConversationCommandLibrary.h"

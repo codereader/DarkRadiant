@@ -12,7 +12,6 @@
 #include <wx/button.h>
 
 #include "string/split.h"
-#include <boost/algorithm/string/classification.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace ui

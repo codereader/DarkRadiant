@@ -14,7 +14,6 @@
 #include <wx/sizer.h>
 #include "string/case_conv.h"
 #include "string/split.h"
-#include <boost/algorithm/string/classification.hpp>
 
 #include "selectionlib.h"
 #include "os/path.h"

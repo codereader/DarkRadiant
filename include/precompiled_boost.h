@@ -7,6 +7,4 @@
 
 #include <memory>
 #include <functional>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include "util/Noncopyable.h"

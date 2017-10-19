@@ -26,8 +26,6 @@
 #include "debugging/debugging.h"
 #include <iostream>
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace ui

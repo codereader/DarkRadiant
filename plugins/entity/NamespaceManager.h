@@ -1,5 +1,4 @@
-#ifndef _NAMESPACE_MANAGER_H_
-#define _NAMESPACE_MANAGER_H_
+#pragma once
 
 #include "ientity.h"
 #include "inamespace.h"
@@ -8,8 +7,6 @@
 #include "Doom3Entity.h"
 #include "KeyValueObserver.h"
 #include "NameKeyObserver.h"
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/classification.hpp>
 #include "util/Noncopyable.h"
 
 namespace entity {
@@ -98,5 +95,3 @@ private:
 };
 
 } // namespace entity
-
-#endif /* _NAMESPACE_MANAGER_H_ */
