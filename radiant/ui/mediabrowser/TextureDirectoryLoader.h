@@ -7,8 +7,7 @@
 #include "EventRateLimiter.h"
 
 #include "i18n.h"
-#include <string>
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 #include "../texturebrowser/TextureBrowser.h"
 
 namespace ui
@@ -42,7 +41,7 @@ public:
 	{
 		// Visited texture must start with the directory name
 		// separated by a slash.
-		if (boost::algorithm::istarts_with(shaderName, _searchDir))
+		if (string::istarts_with(shaderName, _searchDir))
 		{
 			// Update the text in the dialog
 			if (_evLimiter.readyForEvent())

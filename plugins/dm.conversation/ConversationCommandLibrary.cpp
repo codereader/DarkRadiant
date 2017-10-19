@@ -4,7 +4,7 @@
 #include "iregistry.h"
 #include "gamelib.h"
 #include "string/convert.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 #include <wx/choice.h>
 
 namespace conversation {
@@ -32,7 +32,7 @@ public:
 
 	void visit(const IEntityClassPtr& eclass)
 	{
-		if (boost::algorithm::starts_with(eclass->getName(), _prefix))
+		if (string::starts_with(eclass->getName(), _prefix))
 		{
 			// We have a match, create a new structure
 			ConversationCommandInfoPtr commandInfo(new ConversationCommandInfo);

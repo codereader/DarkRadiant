@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 
 #include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 #include "string/replace.h"
 
 #if defined(WIN32)
@@ -109,9 +110,9 @@ namespace os
                                        const std::string& basePath)
     {
 #ifdef OS_CASE_INSENSITIVE
-		if (boost::algorithm::istarts_with(fullPath, basePath))
+		if (string::istarts_with(fullPath, basePath))
 #else
-		if (boost::algorithm::starts_with(fullPath, basePath))
+		if (string::starts_with(fullPath, basePath))
 #endif
 		{
 			return fullPath.substr(basePath.length());
@@ -128,9 +129,9 @@ namespace os
 												 const std::string& basePath)
 	{
 #ifdef OS_CASE_INSENSITIVE
-		if (boost::algorithm::istarts_with(fullPath, basePath))
+		if (string::istarts_with(fullPath, basePath))
 #else
-		if (boost::algorithm::starts_with(fullPath, basePath))
+		if (string::starts_with(fullPath, basePath))
 #endif
 		{
 			return fullPath.substr(basePath.length(), fullPath.rfind('/') - basePath.length());

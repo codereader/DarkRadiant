@@ -15,7 +15,7 @@
 #include <wx/bmpcbox.h>
 #include <wx/combobox.h>
 
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 
 namespace {
 	const std::string RKEY_STIM_DEFINITIONS =
@@ -71,7 +71,8 @@ namespace {
         {
 			std::string prefix = game::current::getValue<std::string>(GKEY_STORAGE_PREFIX);
 
-			if (boost::algorithm::starts_with(key, prefix)) {
+			if (string::starts_with(key, prefix))
+			{
 				// We have a match, add the key to the removal list
 				_removeList.push_back(key);
 			}
@@ -273,7 +274,7 @@ void StimTypes::visitKeyValue(const std::string& key, const std::string& value)
 	std::string prefix = game::current::getValue<std::string>(GKEY_STORAGE_PREFIX);
 	int lowestCustomId = game::current::getValue<int>(GKEY_LOWEST_CUSTOM_STIM_ID);
 
-	if (boost::algorithm::starts_with(key, prefix))
+	if (string::starts_with(key, prefix))
 	{
 		// Extract the stim name from the key (the part after the prefix)
 		std::string idStr = key.substr(prefix.size());

@@ -3,7 +3,7 @@
 #include "iradiant.h"
 #include "ieclass.h"
 #include "debugging/debugging.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 #include <functional>
 
 namespace entity {
@@ -192,7 +192,7 @@ Entity::KeyValuePairs Doom3Entity::getKeyValuePairs(const std::string& prefix) c
 	for (KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
 	{
 		// If the prefix matches, add to list
-		if (boost::algorithm::istarts_with(i->first, prefix))
+		if (string::istarts_with(i->first, prefix))
 		{
 			list.push_back(
 				std::pair<std::string, std::string>(i->first, i->second->get())

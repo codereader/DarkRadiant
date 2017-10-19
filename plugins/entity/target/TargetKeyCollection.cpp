@@ -1,7 +1,7 @@
 #include "TargetKeyCollection.h"
 
 #include "TargetableNode.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 
 namespace entity {
 
@@ -38,7 +38,7 @@ bool TargetKeyCollection::empty() const
 bool TargetKeyCollection::isTargetKey(const std::string& key) 
 {
 	// A key is a target key if it starts with "target" (any case)
-	return (boost::algorithm::istarts_with(key, "target"));
+	return (string::istarts_with(key, "target"));
 }
 
 // Entity::Observer implementation, gets called on key insert

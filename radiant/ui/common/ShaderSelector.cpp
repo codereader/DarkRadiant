@@ -23,7 +23,7 @@
 #include <map>
 
 #include "string/split.h"
-#include <boost/algorithm/string/classification.hpp>
+#include "string/classification.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include "string/case_conv.h"
 #include <functional>
@@ -158,12 +158,10 @@ namespace
 
 		void visit(const std::string& shaderName)
 		{
-			for (ShaderSelector::PrefixList::iterator i = _prefixes.begin();
-				 i != _prefixes.end();
-				 ++i)
+			for (const std::string& prefix : _prefixes)
 			{
 				// Only allow the prefixes passed in the constructor
-				if (!shaderName.empty() && boost::algorithm::istarts_with(shaderName, (*i) + "/"))
+				if (!shaderName.empty() && string::istarts_with(shaderName, prefix + "/"))
 				{
 					_populator.addPath(string::to_lower_copy(shaderName));
 					break; // don't consider any further prefixes

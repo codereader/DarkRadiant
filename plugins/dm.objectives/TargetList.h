@@ -4,7 +4,7 @@
 
 #include <set>
 #include <string>
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 
 namespace objectives
 {
@@ -41,7 +41,7 @@ public:
         _src->forEachKeyValue([&](const std::string& key, const std::string& value)
         {
             // If the key starts with "target", add the value to the set
-            if (boost::algorithm::istarts_with(key, "target"))
+            if (string::istarts_with(key, "target"))
             {
                 _set.insert(value);
             }

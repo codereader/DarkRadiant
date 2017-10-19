@@ -3,7 +3,7 @@
 #include "ieclass.h"
 #include "iregistry.h"
 #include "gamelib.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 
 /** greebo: The visitor class that stores all the relevant eclassptrs
  * 			into the given target map if the prefix matches.
@@ -28,7 +28,7 @@ public:
 
 	void visit(const IEntityClassPtr& eclass)
 	{
-		if (boost::algorithm::starts_with(eclass->getName(), _prefix))
+		if (string::starts_with(eclass->getName(), _prefix))
 		{
 			// We have a match, store the eclassptr
 			_map[eclass->getName()] = eclass;

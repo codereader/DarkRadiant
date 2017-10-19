@@ -7,6 +7,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
+#include "string/classification.h"
 #include <fmt/format.h>
 #include <boost/optional.hpp>
 #include <functional>
@@ -33,7 +34,7 @@ const std::string ATTACH_POS_ANGLES = "attach_pos_angles";
 boost::optional<std::string> suffixedKey(const std::string& key,
                                          const std::string& prefix)
 {
-    if (boost::algorithm::istarts_with(key, prefix))
+    if (string::istarts_with(key, prefix))
     {
         std::string suffixStr = boost::algorithm::erase_first_copy(key, prefix);
         return suffixStr;
@@ -377,7 +378,7 @@ void Doom3EntityClass::forEachClassAttribute(
          ++i)
     {
         // Visit if it is a non-editor key or we are visiting all keys
-        if (editorKeys || !boost::algorithm::istarts_with(*i->first, "editor_"))
+        if (editorKeys || !string::istarts_with(*i->first, "editor_"))
         {
             visitor(i->second);
         }
@@ -586,7 +587,7 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         {
             setIsLight(value == "idLight");
         }
-        else if (boost::algorithm::istarts_with(key, "editor_"))
+        else if (string::istarts_with(key, "editor_"))
         {
             parseEditorSpawnarg(key, value);
         }

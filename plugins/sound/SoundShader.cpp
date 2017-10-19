@@ -3,7 +3,7 @@
 #include "parser/DefTokeniser.h"
 #include "string/convert.h"
 #include <algorithm>
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 
 namespace sound
 {
@@ -47,7 +47,7 @@ void SoundShader::parseDefinition() const
 
 		// Watch out for sound file definitions
         // Check if the token starts with soundSLASH or soundBACKSLASH
-		if (boost::algorithm::starts_with(nextToken, "sound") && 
+		if (string::starts_with(nextToken, "sound") && 
             nextToken.length() > 5 && (nextToken[5] == '\\' || nextToken[5] == '/'))
         {
 			// Add this to the list, replace backslashes with forward ones

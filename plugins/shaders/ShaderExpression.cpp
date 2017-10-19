@@ -8,7 +8,7 @@
 
 #include <stack>
 #include <list>
-#include <boost/algorithm/string/classification.hpp>
+#include "string/classification.h"
 
 namespace shaders
 {
@@ -257,7 +257,7 @@ private:
 	// The token is actually pulled from the tokeniser using nextToken()
 	IShaderExpressionPtr getTerm(const std::string& token)
 	{
-		if (boost::algorithm::istarts_with(token, "parm"))
+		if (string::istarts_with(token, "parm"))
 		{
 			_tokeniser.nextToken(); // valid token, exhaust
 
@@ -273,7 +273,7 @@ private:
 				throw new parser::ParseException("Shaderparm index out of bounds");
 			}
 		}
-		else if (boost::algorithm::istarts_with(token, "global"))
+		else if (string::istarts_with(token, "global"))
 		{
 			_tokeniser.nextToken(); // valid token, exhaust
 

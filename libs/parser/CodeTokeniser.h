@@ -7,7 +7,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include "string/trim.h"
-#include <boost/algorithm/string/classification.hpp>
+#include "string/classification.h"
 #include "Tokeniser.h"
 
 namespace parser
@@ -643,7 +643,7 @@ private:
 			// Don't treat #strNNNN as preprocessor tokens
 			if (!token.empty() &&
 				token[0] == '#' &&
-				!boost::algorithm::starts_with(token, "#str"))
+				!string::starts_with(token, "#str"))
 			{
 				// A pre-processor token is ahead
 				handlePreprocessorToken(token);
@@ -723,7 +723,7 @@ private:
 					<< includeFile << " in " << (*_curNode)->archive->getName() << std::endl;
 			}
 		}
-		else if (boost::algorithm::starts_with(token, "#define"))
+		else if (string::starts_with(token, "#define"))
 		{
 			std::string defineToken = token;
 

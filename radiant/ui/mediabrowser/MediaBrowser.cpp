@@ -36,7 +36,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include <functional>
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 
 namespace ui
 {
@@ -154,7 +154,7 @@ struct ShaderNameFunctor
 
 		wxDataViewItem parent;
 
-		if (boost::algorithm::istarts_with(name, GlobalTexturePrefix_get()))
+		if (string::istarts_with(name, GlobalTexturePrefix_get()))
 		{
 			// Regular texture, ensure parent folder
 			parent = slashPos != std::string::npos ? addRecursive(name.substr(0, slashPos), false) : _root;

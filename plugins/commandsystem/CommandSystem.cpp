@@ -11,6 +11,7 @@
 
 #include <functional>
 #include "string/trim.h"
+#include "string/classification.h"
 
 namespace cmd
 {
@@ -378,9 +379,11 @@ AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefi
 
 	returnValue.prefix = prefix;
 
-	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
+	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i)
+	{
 		// Check if the command matches the given prefix
-		if (boost::algorithm::istarts_with(i->first, prefix)) {
+		if (string::istarts_with(i->first, prefix))
+		{
 			returnValue.candidates.push_back(i->first);
 		}
 	}

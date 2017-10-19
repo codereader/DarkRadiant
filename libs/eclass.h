@@ -10,7 +10,7 @@
 
 #include <functional>
 #include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 
 namespace eclass
 {
@@ -65,7 +65,7 @@ namespace detail
                              const std::string& prefix,
                              bool includeInherited)
     {
-        if (boost::algorithm::istarts_with(attr.getName(), prefix)
+        if (string::istarts_with(attr.getName(), prefix)
             && (includeInherited || !attr.inherited))
         {
             list.push_back(attr);

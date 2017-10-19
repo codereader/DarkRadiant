@@ -9,6 +9,7 @@
 #include "ientity.h"
 
 #include "string/convert.h"
+#include "string/classification.h"
 #include <boost/lexical_cast.hpp>
 #include "string/split.h"
 #include <fmt/format.h>
@@ -195,7 +196,8 @@ void ObjectiveEntity::readMissionLogic(Entity& ent)
 			LogicPtr logic = getMissionLogic(-1);
 			logic->successLogic = kv->second;
 		}
-		else if (boost::algorithm::starts_with(postfix, "_diff_")) {
+		else if (string::starts_with(postfix, "_diff_"))
+		{
 			// We seem to have a difficulty-related logic, get the level
 			int level = string::convert<int>(postfix.substr(6), INVALID_LEVEL_INDEX);
 
@@ -223,7 +225,8 @@ void ObjectiveEntity::readMissionLogic(Entity& ent)
 			LogicPtr logic = getMissionLogic(-1);
 			logic->failureLogic = kv->second;
 		}
-		else if (boost::algorithm::starts_with(postfix, "_diff_")) {
+		else if (string::starts_with(postfix, "_diff_"))
+		{
 			// We seem to have a difficulty-related logic, get the level
 			int level = string::convert<int>(postfix.substr(6), INVALID_LEVEL_INDEX);
 

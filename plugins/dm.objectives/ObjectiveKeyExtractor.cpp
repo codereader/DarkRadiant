@@ -4,7 +4,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <regex>
-#include <boost/algorithm/string/classification.hpp>
+#include "string/classification.h"
 
 #include "string/split.h"
 #include "string/convert.h"
@@ -130,7 +130,8 @@ void ObjectiveKeyExtractor::operator()(const std::string& key,
 				comp.setClockInterval(string::convert<float>(value));
 			}
 			// Check for the spec_val first
-			else if (boost::algorithm::starts_with(componentStr, "spec_val")) {
+			else if (string::starts_with(componentStr, "spec_val"))
+			{
 				// We have a component specifier value, see if the specifier itself is there already
 				Specifier::SpecifierNumber specNum = getSpecifierNumber(
 					string::convert<int>(componentStr.substr(8), -1)
@@ -152,7 +153,8 @@ void ObjectiveKeyExtractor::operator()(const std::string& key,
 				comp.getSpecifier(specNum)->setValue(value);
 			}
 			// if "check_val" didn't match, look for "spec" alone
-			else if (boost::algorithm::starts_with(componentStr, "spec")) {
+			else if (string::starts_with(componentStr, "spec"))
+			{
 				// We have a component specifier, see which one
 				Specifier::SpecifierNumber specNum = getSpecifierNumber(
 					string::convert<int>(componentStr.substr(4), -1)

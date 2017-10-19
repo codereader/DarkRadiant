@@ -14,6 +14,7 @@
 #include "os/fs.h"
 #include "string/convert.h"
 #include "string/replace.h"
+#include "string/classification.h"
 
 #include "GameFileLoader.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -205,10 +206,12 @@ void Manager::constructPaths()
 		// get the argument and investigate it
 		std::string arg = *i;
 
-		if (boost::algorithm::istarts_with(arg, "fs_game=")) {
+		if (string::istarts_with(arg, "fs_game="))
+		{
 			GlobalRegistry().set(RKEY_FS_GAME, arg.substr(8));
 		}
-		else if (boost::algorithm::istarts_with(arg, "fs_game_base=")) {
+		else if (string::istarts_with(arg, "fs_game_base=")) 
+		{
 			GlobalRegistry().set(RKEY_FS_GAME_BASE, arg.substr(13));
 		}
 	}

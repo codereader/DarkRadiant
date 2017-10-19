@@ -3,7 +3,7 @@
 #include "iregistry.h"
 #include <wx/artprov.h>
 #include <wx/image.h>
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 #include "os/file.h"
 
 namespace ui
@@ -24,7 +24,7 @@ public:
 
 		const std::string& prefix = ArtIdPrefix();
 
-		if (boost::algorithm::starts_with(filename, prefix))
+		if (string::starts_with(filename, prefix))
 		{
 			std::string filePath = GlobalRegistry().get(RKEY_BITMAPS_PATH) + filename.substr(prefix.length());
 

@@ -20,7 +20,7 @@
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 #include <functional>
 
 #include <wx/panel.h>
@@ -70,7 +70,7 @@ public:
             return false;
         }
 
-        if (!boost::algorithm::istarts_with(material->getName(), GlobalTexturePrefix_get()))
+        if (!string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
         {
             return false;
         }
@@ -552,7 +552,7 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
         return false;
     }
 
-    if (!boost::algorithm::istarts_with(material->getName(), GlobalTexturePrefix_get()))
+    if (!string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
     {
         return false;
     }

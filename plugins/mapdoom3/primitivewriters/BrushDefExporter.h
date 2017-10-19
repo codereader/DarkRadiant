@@ -5,7 +5,7 @@
 #include "math/Matrix4.h"
 #include "shaderlib.h"
 
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 
 namespace map
 {
@@ -140,7 +140,7 @@ private:
 		}
 		else
 		{
-			if (boost::algorithm::starts_with(shaderName, GlobalTexturePrefix_get()))
+			if (string::starts_with(shaderName, GlobalTexturePrefix_get()))
 			{
 				// brushDef has an implicit "textures/" not written to the map, cut it off
 				stream << "" << shader_get_textureName(shaderName.c_str()) << " ";

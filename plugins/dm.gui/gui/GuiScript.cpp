@@ -6,7 +6,7 @@
 
 #include "string/case_conv.h"
 #include "string/trim.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/classification.h"
 #include <boost/lexical_cast.hpp>
 
 namespace gui
@@ -360,7 +360,7 @@ const Statement& GuiScript::getStatement(std::size_t index)
 
 VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 {
-	if (boost::algorithm::starts_with(expr, "gui::"))
+	if (string::starts_with(expr, "gui::"))
 	{
 		// Is a GUI state variable
 		return VariablePtr(new GuiStateVariable(
@@ -400,7 +400,7 @@ VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 
 std::string GuiScript::getValueFromExpression(const std::string& expr)
 {
-	if (boost::algorithm::starts_with(expr, "$gui::"))
+	if (string::starts_with(expr, "$gui::"))
 	{
 		// This is the value of a GUI state variable
 		return _owner.getGui().getStateString(expr.substr(6));

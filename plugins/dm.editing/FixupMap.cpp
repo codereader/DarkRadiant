@@ -19,7 +19,7 @@
 #include "DeprecatedEclassCollector.h"
 
 #include <regex>
-#include <boost/algorithm/string.hpp>
+#include "string/classification.h"
 
 FixupMap::FixupMap(const std::string& filename) :
 	_filename(filename),
@@ -77,8 +77,8 @@ void FixupMap::performFixup(const std::string& line)
 {
 	// Skip empty lines and comments
 	if (line.empty() ||
-		boost::algorithm::starts_with(line, "#") ||
-		boost::algorithm::starts_with(line, "//"))
+		string::starts_with(line, "#") ||
+		string::starts_with(line, "//"))
 	{
 		return;
 	}
