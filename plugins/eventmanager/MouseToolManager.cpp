@@ -5,10 +5,9 @@
 #include "iregistry.h"
 #include "itextstream.h"
 #include "string/convert.h"
+#include "string/join.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/Modifier.h"
-
-#include <boost/algorithm/string/join.hpp>
 
 namespace ui
 {
@@ -200,7 +199,7 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
             {
                 statusText += wxutil::Modifier::GetModifierString(_activeModifierState) + "-";
                 statusText += wxutil::MouseButton::GetButtonString(testFlags) + ": ";
-                statusText += boost::algorithm::join(toolNames, ", ");
+                statusText += string::join(toolNames, ", ");
                 statusText += " ";
             }
         });

@@ -4,7 +4,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "string/split.h"
-#include <boost/algorithm/string/join.hpp>
+#include "string/join.h"
 #include <fmt/format.h>
 
 #include "PreferenceItems.h"
@@ -84,7 +84,7 @@ PreferencePage& PreferencePage::createOrFindPage(const std::string& path)
 	{
 		// We have still more parts, split off the first part
 		parts.pop_front();
-		std::string subPath = boost::algorithm::join(parts, "/");
+		std::string subPath = string::join(parts, "/");
 
 		// Pass the call to the child
 		return child->createOrFindPage(subPath);

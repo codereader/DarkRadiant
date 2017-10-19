@@ -175,6 +175,9 @@
     <ClInclude Include="..\..\libs\string\predicate.h">
       <Filter>string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\string\join.h">
+      <Filter>string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

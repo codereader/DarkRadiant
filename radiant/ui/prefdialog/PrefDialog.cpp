@@ -10,7 +10,7 @@
 #include <wx/sizer.h>
 #include <wx/treebook.h>
 #include "string/split.h"
-#include <boost/algorithm/string/join.hpp>
+#include "string/join.h"
 
 #include "settings/PreferenceSystem.h"
 #include "settings/PreferencePage.h"
@@ -61,7 +61,7 @@ void PrefDialog::createPages()
 		if (parts.size() > 1)
 		{
 			parts.pop_back();
-			std::string parentPath = boost::algorithm::join(parts, "/");
+			std::string parentPath = string::join(parts, "/");
 			
 			PageMap::const_iterator parent = _pages.find(parentPath);
 

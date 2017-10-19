@@ -5,7 +5,7 @@
 #include "ieventmanager.h"
 
 #include "string/split.h"
-#include <boost/algorithm/string/join.hpp>
+#include "string/join.h"
 
 #include <wx/menu.h>
 #include <wx/menuitem.h>
@@ -173,7 +173,7 @@ MenuElementPtr MenuElement::find(const std::string& menuPath)
 			}
 			
 			// No, pass the query down the hierarchy
-			std::string childPath = boost::algorithm::join(parts, "/");
+			std::string childPath = string::join(parts, "/");
 
 			return candidate->find(childPath);
 		}

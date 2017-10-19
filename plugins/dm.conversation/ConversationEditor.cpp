@@ -4,7 +4,7 @@
 #include "string/string.h"
 
 #include <fmt/format.h>
-#include <boost/algorithm/string/join.hpp>
+#include "string/join.h"
 #include <regex>
 
 #include "CommandEditor.h"
@@ -458,7 +458,7 @@ void ConversationEditor::onValidateActors(wxCommandEvent& ev)
 
 	if (!errors.empty())
 	{
-		std::string message = boost::algorithm::join(errors, "\n");
+		std::string message = string::join(errors, "\n");
 		wxutil::Messagebox::Show(_("Actors missing"), message, IDialog::MESSAGE_ERROR, this);
 	}
 	else

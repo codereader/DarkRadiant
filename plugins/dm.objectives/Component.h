@@ -7,7 +7,7 @@
 #include <cassert>
 #include <vector>
 #include <string>
-#include <boost/algorithm/string/join.hpp>
+#include "string/join.h"
 #include <sigc++/signal.h>
 
 namespace objectives
@@ -257,8 +257,9 @@ public:
 	}
 
 	// Returns all arguments in a space-delimited string
-	std::string getArgumentString() const {
-		return boost::algorithm::join(_arguments, " ");
+	std::string getArgumentString() const
+	{
+		return string::join(_arguments, " ");
 	}
 
 	// Allow client code to be notified on change events
