@@ -4,7 +4,7 @@
 #include "iregistry.h"
 #include "gamelib.h"
 #include "string/convert.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 #include <wx/choice.h>
 
 namespace conversation {

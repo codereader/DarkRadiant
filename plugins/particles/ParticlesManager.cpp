@@ -23,7 +23,7 @@
 #include <iostream>
 #include <functional>
 #include <regex>
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/predicate.h"
 
 namespace particles
 {
@@ -74,7 +74,7 @@ IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
 	std::string nameCleaned = name;
 
 	// Cut off the ".prt" from the end of the particle name
-	if (boost::algorithm::ends_with(nameCleaned, ".prt"))
+	if (string::ends_with(nameCleaned, ".prt"))
 	{
 		nameCleaned = nameCleaned.substr(0, nameCleaned.length() - 4);
 	}

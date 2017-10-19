@@ -3,7 +3,7 @@
 #include "shaderlib.h"
 #include "ipatch.h"
 
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace map
 {

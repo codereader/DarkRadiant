@@ -10,7 +10,7 @@
 
 #include "MultiMonitor.h"
 #include "dialog/MessageBox.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/predicate.h"
 #include "string/case_conv.h"
 #include <wx/app.h>
 
@@ -180,7 +180,7 @@ std::string FileChooser::getSelectedFileName()
 	if (!_open											// save operation
 	    && !fileName.empty() 							// valid filename
 	    && !_defaultExt.empty()							// non-empty default extension
-	    && !boost::algorithm::iends_with(fileName, _defaultExt)) // no default extension
+	    && !string::iends_with(fileName, _defaultExt)) // no default extension
 	{
 		fileName.append(_defaultExt);
 	}

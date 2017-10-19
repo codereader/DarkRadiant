@@ -3,7 +3,7 @@
 #include "ieclass.h"
 #include "iregistry.h"
 #include "gamelib.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 
 /** greebo: The visitor class that stores all the relevant eclassptrs
  * 			into the given target map if the prefix matches.

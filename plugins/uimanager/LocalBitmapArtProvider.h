@@ -3,7 +3,7 @@
 #include "iregistry.h"
 #include <wx/artprov.h>
 #include <wx/image.h>
-#include "string/classification.h"
+#include "string/predicate.h"
 #include "os/file.h"
 
 namespace ui

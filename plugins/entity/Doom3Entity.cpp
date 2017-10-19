@@ -3,7 +3,7 @@
 #include "iradiant.h"
 #include "ieclass.h"
 #include "debugging/debugging.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 #include <functional>
 
 namespace entity {

@@ -13,6 +13,7 @@
 #include "RGBAImage.h"
 #include "textures/HeightmapCreator.h"
 #include "textures/TextureManipulator.h"
+#include <boost/algorithm/string/predicate.hpp>
 
 /* CONSTANTS */
 namespace {

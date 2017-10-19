@@ -3,7 +3,7 @@
 #include "parser/DefTokeniser.h"
 #include "string/convert.h"
 #include <algorithm>
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace sound
 {

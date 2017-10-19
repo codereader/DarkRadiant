@@ -6,7 +6,7 @@
 
 #include "string/case_conv.h"
 #include "string/trim.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 #include <boost/lexical_cast.hpp>
 
 namespace gui

@@ -36,7 +36,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include <functional>
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace ui
 {

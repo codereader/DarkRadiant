@@ -5,7 +5,7 @@
 #include "math/Matrix4.h"
 #include "shaderlib.h"
 
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace map
 {

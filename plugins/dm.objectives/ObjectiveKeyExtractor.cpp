@@ -4,7 +4,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <regex>
-#include "string/classification.h"
+#include "string/predicate.h"
 
 #include "string/split.h"
 #include "string/convert.h"

@@ -200,8 +200,8 @@
     <ClInclude Include="..\..\libs\stream\TextFileInputStream.h" />
     <ClInclude Include="..\..\libs\stream\utils.h" />
     <ClInclude Include="..\..\libs\string\case_conv.h" />
-    <ClInclude Include="..\..\libs\string\classification.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />
+    <ClInclude Include="..\..\libs\string\predicate.h" />
     <ClInclude Include="..\..\libs\string\replace.h" />
     <ClInclude Include="..\..\libs\string\split.h" />
     <ClInclude Include="..\..\libs\string\string.h" />

@@ -8,7 +8,7 @@
 
 #include <stack>
 #include <list>
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace shaders
 {

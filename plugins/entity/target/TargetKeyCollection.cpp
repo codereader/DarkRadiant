@@ -1,7 +1,7 @@
 #include "TargetKeyCollection.h"
 
 #include "TargetableNode.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace entity {
 

@@ -4,7 +4,7 @@
 
 #include <set>
 #include <string>
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace objectives
 {

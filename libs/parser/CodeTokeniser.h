@@ -7,7 +7,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include "string/trim.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 #include "Tokeniser.h"
 
 namespace parser

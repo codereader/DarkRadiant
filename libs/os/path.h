@@ -31,8 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "string/string.h"
 
-#include <boost/algorithm/string/predicate.hpp>
-#include "string/classification.h"
+#include "string/predicate.h"
 #include "string/replace.h"
 
 #if defined(WIN32)
@@ -96,7 +95,7 @@ namespace os
 		std::string output = standardPath(input);
 
 		// Append a slash at the end, if there isn't already one
-		if (!boost::algorithm::ends_with(output, "/")) {
+		if (!string::ends_with(output, "/")) {
 			output += "/";
 		}
 		return output;

@@ -9,7 +9,7 @@
 #include "ientity.h"
 
 #include "string/convert.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 #include <boost/lexical_cast.hpp>
 #include "string/split.h"
 #include <fmt/format.h>

@@ -19,7 +19,7 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/predicate.h"
 #include <functional>
 
 namespace {
@@ -89,7 +89,7 @@ ShaderLibraryPtr Doom3ShaderSystem::loadMaterialFiles()
 
 	// Load the shader files from the VFS
 	std::string sPath = nlShaderPath[0].getContent();
-	if (!boost::algorithm::ends_with(sPath, "/"))
+	if (!string::ends_with(sPath, "/"))
 		sPath += "/";
 
 	std::string extension = nlShaderExt[0].getContent();

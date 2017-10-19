@@ -7,7 +7,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
-#include "string/classification.h"
+#include "string/predicate.h"
 #include <fmt/format.h>
 #include <boost/optional.hpp>
 #include <functional>

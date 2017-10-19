@@ -11,7 +11,7 @@
 
 #include <functional>
 #include "string/trim.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace cmd
 {

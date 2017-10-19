@@ -7,7 +7,7 @@
 #include "EventRateLimiter.h"
 
 #include "i18n.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 #include "../texturebrowser/TextureBrowser.h"
 
 namespace ui

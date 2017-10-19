@@ -19,7 +19,7 @@
 #include "DeprecatedEclassCollector.h"
 
 #include <regex>
-#include "string/classification.h"
+#include "string/predicate.h"
 
 FixupMap::FixupMap(const std::string& filename) :
 	_filename(filename),

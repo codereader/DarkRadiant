@@ -42,7 +42,7 @@ namespace fs = boost::filesystem;
 
 #endif
 
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/predicate.h"
 
 namespace os
 {
@@ -53,7 +53,7 @@ namespace os
 
         // Just add slash if needed, we don't need to convert intermediate
         // slashes since string_from_path will already have done that.
-		if (!boost::algorithm::ends_with(genString, "/"))
+		if (!string::ends_with(genString, "/"))
         {
 			genString += "/";
 		}

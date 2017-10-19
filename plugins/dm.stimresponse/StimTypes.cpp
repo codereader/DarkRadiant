@@ -15,7 +15,7 @@
 #include <wx/bmpcbox.h>
 #include <wx/combobox.h>
 
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace {
 	const std::string RKEY_STIM_DEFINITIONS =

@@ -19,8 +19,7 @@
 #include <wx/artprov.h>
 
 #include <fmt/format.h>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/classification.hpp>
+#include "string/predicate.h"
 
 namespace wxutil
 {
@@ -84,7 +83,7 @@ void ParticlePreview::setParticle(const std::string& name)
 {
     std::string nameClean = name;
 
-    if (boost::algorithm::ends_with(nameClean, ".prt"))
+    if (string::ends_with(nameClean, ".prt"))
     {
         nameClean = nameClean.substr(0, nameClean.length() - 4);
     }

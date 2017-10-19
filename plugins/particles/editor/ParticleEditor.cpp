@@ -31,7 +31,7 @@
 #include "os/path.h"
 #include "util/ScopedBoolLock.h"
 
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/predicate.h"
 
 namespace ui
 {
@@ -1304,7 +1304,7 @@ void ParticleEditor::setupEditParticle()
 
 void ParticleEditor::releaseEditParticle()
 {
-    if (_currentDef && boost::algorithm::ends_with(_currentDef->getName(), EDIT_SUFFIX))
+    if (_currentDef && string::ends_with(_currentDef->getName(), EDIT_SUFFIX))
     {
         ParticlesManager::Instance().removeParticleDef(_currentDef->getName());
     }

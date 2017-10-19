@@ -172,7 +172,7 @@
     <ClInclude Include="..\..\libs\string\trim.h">
       <Filter>string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\string\classification.h">
+    <ClInclude Include="..\..\libs\string\predicate.h">
       <Filter>string</Filter>
     </ClInclude>
   </ItemGroup>

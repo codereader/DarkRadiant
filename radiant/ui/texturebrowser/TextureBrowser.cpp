@@ -20,7 +20,7 @@
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
-#include "string/classification.h"
+#include "string/predicate.h"
 #include <functional>
 
 #include <wx/panel.h>

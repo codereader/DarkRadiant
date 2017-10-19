@@ -10,7 +10,7 @@
 
 #include <functional>
 #include <boost/lexical_cast.hpp>
-#include "string/classification.h"
+#include "string/predicate.h"
 
 namespace eclass
 {

@@ -89,4 +89,73 @@ inline bool istarts_with(const std::string& input, const TestStringType& test)
 	return starts_with(input, test, detail::isEqualNoCase);
 }
 
+/**
+* Returns true if the given input string ends with the given test string,
+* compared using the given Comparator functor.
+*/
+template<typename Comparator>
+inline bool ends_with(const std::string& input, const std::string& test, Comparator compare)
+{
+	std::string::const_reverse_iterator inputEnd = input.rend();
+	std::string::const_reverse_iterator testEnd = test.rend();
+	std::string::const_reverse_iterator testIt = test.rbegin();
+
+	for (std::string::const_reverse_iterator inpIt = input.rbegin();
+		inpIt != inputEnd && testIt != testEnd;
+		++inpIt, ++testIt)
+	{
+		if (!compare(*inpIt, *testIt))
+		{
+			return false;
+		}
+	}
+
+	return testIt == testEnd;
+}
+
+/**
+* Returns true if the given input string ends with the given test string sequence,
+* compared using the given Comparator functor.
+*/
+template<typename Comparator>
+inline bool ends_with(const std::string& input, const char* test, Comparator compare)
+{
+	if (test == nullptr) return false;
+
+	std::string::const_reverse_iterator inputEnd = input.rend();
+	const char* testIt = test + strlen(test) - 1;
+
+	for (std::string::const_reverse_iterator inpIt = input.rbegin();
+		inpIt != inputEnd && testIt >= test;
+		++inpIt, --testIt)
+	{
+		if (!compare(*inpIt, *testIt))
+		{
+			return false;
+		}
+	}
+
+	return testIt == test - 1;
+}
+
+/**
+* Returns true if the given input string ends with the given test string,
+* compared case-sensitively.
+*/
+template<typename TestStringType>
+inline bool ends_with(const std::string& input, const TestStringType& test)
+{
+	return ends_with(input, test, detail::isEqual);
+}
+
+/**
+* Returns true if the given input string ends with the given test string,
+* compared case-insensitively.
+*/
+template<typename TestStringType>
+inline bool iends_with(const std::string& input, const TestStringType& test)
+{
+	return ends_with(input, test, detail::isEqualNoCase);
+}
+
 }

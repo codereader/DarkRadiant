@@ -14,7 +14,7 @@
 #include "os/fs.h"
 #include "string/convert.h"
 #include "string/replace.h"
-#include "string/classification.h"
+#include "string/predicate.h"
 
 #include "GameFileLoader.h"
 #include "wxutil/dialog/MessageBox.h"
