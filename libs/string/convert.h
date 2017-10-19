@@ -1,6 +1,8 @@
 #pragma once
 
 #include <boost/lexical_cast.hpp>
+#include "math/Vector3.h"
+#include <sstream>
 
 namespace string
 {
@@ -45,10 +47,34 @@ template<typename Src> float to_float(const Src& src)
 }
 #endif
 
-/// Convenient shortcut for convert<std::string>(T blah)
-template<typename Src> std::string to_string(const Src& value)
+// Convert the given type to a std::string
+template<typename Src> 
+inline std::string to_string(const Src& value)
 {
-    return convert<std::string>(value);
+    return std::to_string(value);
+}
+
+// Specialisation for Vector3
+template<>
+inline std::string to_string<Vector3>(const Vector3& value)
+{
+	std::stringstream str;
+	str << value;
+	return str.str();
+}
+
+// Specialisation for std::string
+template<>
+inline std::string to_string<std::string>(const std::string& value)
+{
+	return value;
+}
+
+// Special overload for converting const char* to string (this might actually
+// happen in other template<T> functions calling to_string<T> with T = const char*
+inline std::string to_string(const char* value)
+{
+	return value;
 }
 
 }

@@ -12,7 +12,7 @@ namespace registry
 /**
  * \brief
  * Set a value in the registry of any type that can be converted to a string
- * with boost::lexical_cast.
+ * with string::to_string.
  */
 template<typename T> void setValue(const std::string& key, const T& value)
 {
@@ -26,7 +26,7 @@ template<typename T> void setValue(const std::string& key, const T& value)
  * default-constructed T will be returned.
  *
  * T must be default-constructible, copy-constructible and convertible from
- * an std::string using boost::lexical_cast.
+ * an std::string using string::convert.
  */
 template<typename T> T getValue(const std::string& key, T defaultVal = T())
 {
