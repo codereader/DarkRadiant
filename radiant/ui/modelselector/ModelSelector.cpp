@@ -25,7 +25,6 @@
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
 
-#include <boost/lexical_cast.hpp>
 #include <functional>
 
 namespace ui

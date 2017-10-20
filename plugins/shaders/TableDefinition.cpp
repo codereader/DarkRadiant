@@ -4,7 +4,6 @@
 #include "parser/DefTokeniser.h"
 
 #include <cmath>
-#include <boost/lexical_cast.hpp>
 
 namespace shaders
 {
@@ -132,9 +131,9 @@ void TableDefinition::parseDefinition()
 				// Expect a numeric value at this point
 				try
 				{
-					_values.push_back(boost::lexical_cast<float>(token));
+					_values.push_back(std::stof(token));
 				}
-				catch (boost::bad_lexical_cast& ex)
+				catch (std::invalid_argument& ex)
 				{
 					throw parser::ParseException("Invalid token '" + token + 
 						"' encountered: " + ex.what());

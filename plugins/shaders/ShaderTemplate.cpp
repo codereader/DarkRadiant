@@ -8,7 +8,6 @@
 #include "string/convert.h"
 #include "parser/DefTokeniser.h"
 
-#include <boost/lexical_cast.hpp>
 #include "string/case_conv.h"
 #include "string/trim.h"
 #include <iostream>
@@ -364,9 +363,9 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
 
 		try
 		{
-			_spectrum = boost::lexical_cast<int>(value);
+			_spectrum = std::stoi(value);
 		}
-		catch (boost::bad_lexical_cast& e)
+		catch (std::invalid_argument& e)
 		{
 			rWarning() << "Expect integer number as spectrum value, found " << 
 				value << ": " << e.what() << std::endl;
@@ -534,10 +533,10 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	{
 		try
 		{
-			string::convert<int>(tokeniser.nextToken());
-			string::convert<int>(tokeniser.nextToken());
+			std::stoi(tokeniser.nextToken());
+			std::stoi(tokeniser.nextToken());
 		}
-		catch (boost::bad_lexical_cast& e)
+		catch (std::invalid_argument& e)
 		{
 			rWarning() << "Error parsing remoteRenderMap. Expected two integers: " 
 				<< e.what() << std::endl;
@@ -547,10 +546,10 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	{
 		try
 		{
-			string::convert<int>(tokeniser.nextToken());
-			string::convert<int>(tokeniser.nextToken());
+			std::stoi(tokeniser.nextToken());
+			std::stoi(tokeniser.nextToken());
 		}
-		catch (boost::bad_lexical_cast& e)
+		catch (std::invalid_argument& e)
 		{
 			rWarning() << "Error parsing mirrorRenderMap. Expected two integers: "
 				<< e.what() << std::endl;

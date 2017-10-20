@@ -9,10 +9,8 @@ namespace string
 
 // Converts a string to a different type, with a fallback value
 // A couple of template specialisations are defined below.
-// This default is declared as deleted function to trigger a compile error
-// instead of defaulting to something the user didn't intend
 template<typename T, typename Src> 
-inline T convert(const Src& str, T defaultVal = T()) = delete;
+T convert(const Src& str, T defaultVal = T());
 
 // Template specialisation to convert std::string => float
 template<>

@@ -22,7 +22,6 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 
-#include <boost/lexical_cast.hpp>
 #include <fmt/format.h>
 
 namespace objectives

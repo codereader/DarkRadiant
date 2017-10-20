@@ -2,7 +2,6 @@
 
 #include "itextstream.h"
 
-#include <boost/lexical_cast.hpp>
 #include <regex>
 #include "string/predicate.h"
 

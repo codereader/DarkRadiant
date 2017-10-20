@@ -7,8 +7,6 @@
 #include "gamelib.h"
 #include "parser/DefTokeniser.h"
 
-#include <boost/lexical_cast.hpp>
-
 /* CONSTANTS */
 namespace {
 

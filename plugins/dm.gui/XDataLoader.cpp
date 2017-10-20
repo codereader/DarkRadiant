@@ -1,7 +1,7 @@
 #include "XDataLoader.h"
 
+#include "string/convert.h"
 #include "iarchive.h"
-#include "boost/lexical_cast.hpp"
 
 namespace XData
 {
@@ -63,7 +63,7 @@ const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& 
 	else
 	{
 		_errorList.push_back("[XDataLoader::importDef] " + definitionName + " loaded successfully with "
-			+ boost::lexical_cast<std::string>(_errorList.size()) + " error(s)/warning(s).\n");
+			+ string::to_string(_errorList.size()) + " error(s)/warning(s).\n");
 		//Summary output:
 		if (_errorList.size() > 1)
             rConsoleError() << _errorList[_errorList.size() - 1];
@@ -105,10 +105,10 @@ const bool XDataLoader::import( const std::string& filename, XDataMap& target )
 
 	//Write summary
 	_errorList.push_back(
-		"[XDataLoader::import] Import finished with " + boost::lexical_cast<std::string>(_errorList.size())
-		+ " error(s)/warning(s). " + boost::lexical_cast<std::string>(target.size())
+		"[XDataLoader::import] Import finished with " + string::to_string(_errorList.size())
+		+ " error(s)/warning(s). " + string::to_string(target.size())
 		+ " XData-definition(s) successfully imported, but failed to import at least "
-		+ boost::lexical_cast<std::string>(ErrorCount) + " definitions.\n"
+		+ string::to_string(ErrorCount) + " definitions.\n"
 		);
 
 	//Summary output:
@@ -226,7 +226,7 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		std::size_t numEnd = 4;
 		while (statement[numEnd++] != '_') {}
 		std::string number = statement.substr(4,numEnd-5);
-		try { PageIndex = boost::lexical_cast<int>(number)-1; }
+		try { PageIndex = std::stoi(number)-1; }
 		catch (...)
 		{
 			if (tok != NULL)
@@ -314,7 +314,7 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		//Acquire gui_page number:
 		std::string number = statement.substr(8);
 		std::size_t guiNumber;
-		try	{ guiNumber = boost::lexical_cast<int>(number)-1; }
+		try	{ guiNumber = std::stoi(number)-1; }
 		catch (...)
 		{
 			if (tok != NULL)
@@ -367,7 +367,7 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 					+ statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
 				);
 			}
-			try { _numPages = boost::lexical_cast<int>(number); }
+			try { _numPages = std::stoi(number); }
 			catch(...)
 			{
 				_newXData.reset();
@@ -378,7 +378,7 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		}
 		else
 		{
-			try { _numPages = boost::lexical_cast<int>(content); }
+			try { _numPages = std::stoi(content); }
 			catch (...)
 			{
 				return reportError("[XDataLoader::import] Error in definition: " + defName + ", num_pages statement. '" + content
@@ -393,7 +393,7 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 			_numPages = _maxPageCount;
 			reportError("[XDataLoader::import] Warning for definition: " + defName
 				+ ". The specified _numPages statement did not match the amount of pages with content.\n\tnumPages is set to "
-				+ boost::lexical_cast<std::string>(_numPages) + ".\n");
+				+ string::to_string(_numPages) + ".\n");
 		}
 
 		return true;

@@ -11,11 +11,8 @@
 
 #include "parser/DefTokeniser.h"
 
-
 #include "i18n.h"
 #include "string/string.h"
-
-#include <boost/lexical_cast.hpp>
 
 #include "Quake4MapReader.h"
 #include "Quake4MapWriter.h"
@@ -107,11 +104,11 @@ bool Quake4MapFormat::canLoad(std::istream& stream) const
 		tok.assertNextToken("Version");
 
 		// Require specific version, return true on success 
-		return (boost::lexical_cast<float>(tok.nextToken()) == MAP_VERSION_Q4);
+		return (std::stof(tok.nextToken()) == MAP_VERSION_Q4);
 	}
 	catch (parser::ParseException&)
 	{}
-	catch (boost::bad_lexical_cast&)
+	catch (std::invalid_argument&)
 	{}
 
 	return false;

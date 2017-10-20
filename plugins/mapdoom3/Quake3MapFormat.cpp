@@ -15,8 +15,6 @@
 #include "i18n.h"
 #include "string/string.h"
 
-#include <boost/lexical_cast.hpp>
-
 #include "Quake3MapReader.h"
 #include "Quake3MapWriter.h"
 
@@ -110,8 +108,6 @@ bool Quake3MapFormat::canLoad(std::istream& stream) const
 		return true;
 	}
 	catch (parser::ParseException&)
-	{}
-	catch (boost::bad_lexical_cast&)
 	{}
 
 	return false;

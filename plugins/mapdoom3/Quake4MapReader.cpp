@@ -8,7 +8,6 @@
 #include "primitiveparsers/PatchDef2.h"
 #include "primitiveparsers/PatchDef3.h"
 
-#include <boost/lexical_cast.hpp>
 #include <fmt/format.h>
 
 namespace map
@@ -37,21 +36,19 @@ void Quake4MapReader::parseMapVersion(parser::DefTokeniser& tok)
 	try
 	{
 		tok.assertNextToken("Version");
-		version = boost::lexical_cast<float>(tok.nextToken());
+		version = std::stof(tok.nextToken());
 	}
 	catch (parser::ParseException& e)
 	{
 		// failed => quit
-		rError()
-			<< "[mapdoom3] Unable to parse map version: "
+		rError() << "[mapdoom3] Unable to parse map version: "
 			<< e.what() << std::endl;
 
 		throw FailureException(_("Unable to parse map version (parse exception)."));
 	}
-	catch (boost::bad_lexical_cast& e)
+	catch (std::invalid_argument& e)
 	{
-		rError()
-			<< "[mapdoom3] Unable to parse map version: "
+		rError() << "[mapdoom3] Unable to parse map version: "
 			<< e.what() << std::endl;
 
 		throw FailureException(_("Could not recognise map version number format."));

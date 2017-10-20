@@ -10,7 +10,6 @@
 
 #include "i18n.h"
 #include <fmt/format.h>
-#include <boost/lexical_cast.hpp>
 
 #include "primitiveparsers/BrushDef.h"
 #include "primitiveparsers/BrushDef3.h"
@@ -83,7 +82,7 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
     try
 	{
         tok.assertNextToken("Version");
-        version = boost::lexical_cast<float>(tok.nextToken());
+        version = std::stof(tok.nextToken());
     }
     catch (parser::ParseException& e)
 	{
@@ -94,7 +93,7 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
 
 		throw FailureException(_("Unable to parse map version (parse exception)."));
     }
-    catch (boost::bad_lexical_cast& e)
+    catch (std::invalid_argument& e)
 	{
         rError()
             << "[mapdoom3] Unable to parse map version: "

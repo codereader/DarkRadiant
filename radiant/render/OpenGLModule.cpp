@@ -6,10 +6,10 @@
 #include "debugging/debugging.h"
 #include "modulesystem/StaticModule.h"
 
+#include <string/convert.h>
 #include "wxutil/GLWidget.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include <boost/lexical_cast.hpp>
 #include <stdexcept>
 #include <FTGL/ftgl.h>
 
@@ -40,7 +40,7 @@ void OpenGLModule::assertNoErrors()
         const char* strErr = reinterpret_cast<const char*>(
             gluErrorString(error)
         );
-        allErrString += boost::lexical_cast<std::string>(error);
+        allErrString += string::to_string(error);
         allErrString += " (" + std::string(strErr) + ") ";
 	}
 

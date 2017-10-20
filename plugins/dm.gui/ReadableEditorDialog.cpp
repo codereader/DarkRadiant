@@ -13,6 +13,7 @@
 
 #include "registry/registry.h"
 #include "string/string.h"
+#include "string/convert.h"
 #include "os/file.h"
 #include "os/path.h"
 #include "i18n.h"
@@ -496,7 +497,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 
 				while ( (compPath.compare(storagePath + newFileName) != 0) )
 				{
-					newFileName = _mapBasedFilename.substr(0, _mapBasedFilename.rfind(".")) + boost::lexical_cast<std::string>(fileIdx++) + ".xd";
+					newFileName = _mapBasedFilename.substr(0, _mapBasedFilename.rfind(".")) + string::to_string(fileIdx++) + ".xd";
 					compPath = GlobalFileSystem().findFile(XData::XDATA_DIR + newFileName);
 					if (compPath.empty())
 					{

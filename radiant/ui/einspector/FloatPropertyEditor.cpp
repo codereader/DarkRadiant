@@ -12,7 +12,7 @@
 #include <wx/button.h>
 
 #include "string/split.h"
-#include <boost/lexical_cast.hpp>
+#include "string/convert.h"
 
 namespace ui
 {
@@ -46,10 +46,10 @@ FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
 	float min, max;
 	try
 	{
-		min = boost::lexical_cast<float>(values[0]);
-		max = boost::lexical_cast<float>(values[1]);
+		min = std::stof(values[0]);
+		max = std::stof(values[1]);
 	}
-	catch (boost::bad_lexical_cast&)
+	catch (std::invalid_argument&)
 	{
 		rError() << "[radiant] FloatPropertyEditor failed to parse options string "
 			<< "\"" << options << "\"" << std::endl;
@@ -78,14 +78,8 @@ void FloatPropertyEditor::updateFromEntity()
 {
 	if (_spinCtrl == nullptr) return;
 
-	float value = 0;
-
-	try
-	{
-		value = boost::lexical_cast<float>(_entity->getKeyValue(_key));
-	}
-	catch (boost::bad_lexical_cast&) {}
-
+	float value = string::convert<float>(_entity->getKeyValue(_key), 0);
+	
 	_spinCtrl->SetValue(value);
 }
 
@@ -93,7 +87,7 @@ void FloatPropertyEditor::_onApply(wxCommandEvent& ev)
 {
 	float value = static_cast<float>(_spinCtrl->GetValue());
 
-	setKeyValue(_key, boost::lexical_cast<std::string>(value));
+	setKeyValue(_key, string::to_string(value));
 }
 
 }

@@ -3,8 +3,6 @@
 #include "ientity.h"
 #include "math/Matrix4.h"
 
-#include <boost/lexical_cast.hpp>
-
 void RotationMatrix::setIdentity()
 {
     rotation[0] = 1;
@@ -134,12 +132,12 @@ void RotationMatrix::setFromAngleString(const std::string& value)
 {
     try
     {
-        float angle = boost::lexical_cast<float>(value);
+        float angle = std::stof(value);
 
         // Cast succeeded
         setFromMatrix4(Matrix4::getRotationAboutZDegrees(angle));
     }
-    catch (boost::bad_lexical_cast&)
+    catch (std::invalid_argument&)
     {
         // Cast failed
         setIdentity();

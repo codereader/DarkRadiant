@@ -6,7 +6,6 @@
 
 #include <sigc++/slot.h>
 #include <sigc++/signal.h>
-#include <boost/lexical_cast.hpp>
 
 namespace {
 	const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";

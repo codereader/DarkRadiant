@@ -36,7 +36,6 @@
 #include "scenelib.h"
 #include "render/frontend/RenderableCollectionWalker.h"
 
-#include <boost/lexical_cast.hpp>
 #include <fmt/format.h>
 #include <functional>
 

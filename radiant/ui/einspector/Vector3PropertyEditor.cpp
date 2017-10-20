@@ -9,9 +9,9 @@
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
 
+#include "string/convert.h"
 #include <sstream>
 #include <vector>
-#include <boost/lexical_cast.hpp>
 
 namespace ui
 {
@@ -95,16 +95,13 @@ void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)
 
 void Vector3PropertyEditor::_onApply(wxCommandEvent& ev)
 {
-	using boost::lexical_cast;
-	using std::string;
-
 	// Construct a text value out of the vector components
 	std::string value =
-		lexical_cast<string>(_xValue->GetValue())
+		string::to_string(_xValue->GetValue())
 		+ " "
-		+ lexical_cast<string>(_yValue->GetValue())
+		+ string::to_string(_yValue->GetValue())
 		+ " "
-		+ lexical_cast<string>(_zValue->GetValue());
+		+ string::to_string(_zValue->GetValue());
 
 	// Set the key on the entity
 	setKeyValue(_key, value);

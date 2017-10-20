@@ -8,7 +8,6 @@
 
 #include "i18n.h"
 #include <fmt/format.h>
-#include <boost/lexical_cast.hpp>
 
 #include "primitiveparsers/BrushDef.h"
 #include "primitiveparsers/BrushDef3.h"

@@ -7,8 +7,6 @@
 
 #include "i18n.h"
 #include <vector>
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/predicate.hpp>
 
 #include "wxutil/ChoiceHelper.h"
 #include <wx/panel.h>

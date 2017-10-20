@@ -18,7 +18,7 @@ namespace current
  * required type, a default-constructed T will be returned.
  *
  * T must be default-constructible, copy-constructible and convertible from
- * an std::string using boost::lexical_cast.
+ * an std::string using string::convert.
  */
 template<typename T> 
 inline T getValue(const std::string& localXPath, T defaultVal = T())

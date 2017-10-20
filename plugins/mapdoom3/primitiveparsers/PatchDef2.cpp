@@ -1,4 +1,4 @@
-// greebo: Specialise the boost::lexical_cast<float>() function
+// greebo: Specialise the float casting function
 #define SPECIALISE_STR_TO_FLOAT
 
 #include "PatchDef2.h"

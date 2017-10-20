@@ -7,7 +7,6 @@
 #include "string/case_conv.h"
 #include "string/trim.h"
 #include "string/predicate.h"
-#include <boost/lexical_cast.hpp>
 
 namespace gui
 {
@@ -138,14 +137,14 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 			std::string trimmed = string::trim_copy(token, "\"");
 
 			// Try to cast the string to a number, throws
-			boost::lexical_cast<std::size_t>(trimmed);
+			std::stoul(trimmed);
 
 			// Cast succeeded this is just the time for the current window
 			st->args.push_back(trimmed);
 
 			tokeniser.assertNextToken(";");
         }
-		catch (boost::bad_lexical_cast&)
+		catch (std::invalid_argument&)
         {
             // Not a number, must be window plus time
 			st->args.push_back(token); // window

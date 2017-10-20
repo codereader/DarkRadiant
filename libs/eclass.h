@@ -9,7 +9,6 @@
 #include <vector>
 
 #include <functional>
-#include <boost/lexical_cast.hpp>
 #include "string/predicate.h"
 
 namespace eclass
@@ -46,13 +45,13 @@ namespace detail
             // prefixes are not integers.
             try
             {
-                int ix = boost::lexical_cast<int>(sx);
-                int iy = boost::lexical_cast<int>(sy);
+                int ix = std::stoi(sx);
+                int iy = std::stoi(sy);
 
                 // Perform the comparison and return
                 return ix < iy;
             }
-            catch (boost::bad_lexical_cast&)
+            catch (std::invalid_argument&)
             {
                 // greebo: Non-numeric operands, use ordinary string comparison
                 return sx < sy;

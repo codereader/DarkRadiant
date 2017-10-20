@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include <fstream>
-#include <boost/lexical_cast.hpp>
 #include "os/fs.h"
 #include "os/file.h"
 

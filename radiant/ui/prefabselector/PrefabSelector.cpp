@@ -29,7 +29,6 @@
 
 #include "string/trim.h"
 #include "string/case_conv.h"
-#include <boost/lexical_cast.hpp>
 #include <functional>
 
 namespace ui

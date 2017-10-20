@@ -11,11 +11,8 @@
 
 #include "parser/DefTokeniser.h"
 
-
 #include "i18n.h"
 #include "string/string.h"
-
-#include <boost/lexical_cast.hpp>
 
 #include "Doom3MapReader.h"
 #include "Doom3MapWriter.h"
@@ -102,11 +99,11 @@ bool Doom3MapFormat::canLoad(std::istream& stream) const
 		tok.assertNextToken("Version");
 
 		// Require specific version, return true on success 
-		return (boost::lexical_cast<float>(tok.nextToken()) == MAP_VERSION_D3);
+		return (std::stof(tok.nextToken()) == MAP_VERSION_D3);
 	}
 	catch (parser::ParseException&)
 	{}
-	catch (boost::bad_lexical_cast&)
+	catch (std::invalid_argument&)
 	{}
 
 	return false;

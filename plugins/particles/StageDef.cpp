@@ -1,7 +1,6 @@
 #include "StageDef.h"
 
 #include "itextstream.h"
-#include <boost/lexical_cast.hpp>
 #include "string/case_conv.h"
 
 #include "ParticleDef.h"
@@ -14,19 +13,32 @@ namespace particles
 namespace
 {
 	// Returns next token as number, or returns zero on fail, printing the given error message
-	template<typename Type>
-	inline Type parseWithErrorMsg(parser::DefTokeniser& tok, const char* errorMsg)
+	inline float parseFloatWithErrorMsg(parser::DefTokeniser& tok, const char* errorMsg)
 	{
 		std::string str = tok.nextToken();
 
 		try
 		{
-			return boost::lexical_cast<Type>(str);
+			return std::stof(str);
 		}
-		catch (boost::bad_lexical_cast&)
+		catch (std::invalid_argument&)
 		{
-			rError() << "[particles] " << errorMsg << ", token is '" <<
-				str << "'" << std::endl;
+			rError() << "[particles] " << errorMsg << ", token is '" << str << "'" << std::endl;
+			return 0;
+		}
+	}
+
+	inline int parseIntWithErrorMsg(parser::DefTokeniser& tok, const char* errorMsg)
+	{
+		std::string str = tok.nextToken();
+
+		try
+		{
+			return std::stoi(str);
+		}
+		catch (std::invalid_argument&)
+		{
+			rError() << "[particles] " << errorMsg << ", token is '" << str << "'" << std::endl;
 			return 0;
 		}
 	}
@@ -72,7 +84,7 @@ StageDef::StageDef(parser::DefTokeniser& tok) :
 		rError() << "[particles]: Could not parse particle stage: " <<
 			p.what() << std::endl;
 	}
-	catch (boost::bad_lexical_cast& e)
+	catch (std::invalid_argument& e)
 	{
 		rError() << "[particles]: Invalid cast when parsing particle stage: " <<
 			e.what() << std::endl;
@@ -201,7 +213,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 	{
 		if (token == "count")
 		{
-			setCount(parseWithErrorMsg<int>(tok, "Bad count value"));
+			setCount(parseIntWithErrorMsg(tok, "Bad count value"));
 		}
 		else if (token == "material")
 		{
@@ -209,23 +221,23 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 		}
 		else if (token == "time") // duration
 		{
-			setDuration(parseWithErrorMsg<float>(tok, "Bad duration value"));
+			setDuration(parseFloatWithErrorMsg(tok, "Bad duration value"));
 		}
 		else if (token == "cycles")
 		{
-			setCycles(parseWithErrorMsg<float>(tok, "Bad cycles value"));
+			setCycles(parseFloatWithErrorMsg(tok, "Bad cycles value"));
 		}
 		else if (token == "timeOffset")
 		{
-			setTimeOffset(parseWithErrorMsg<float>(tok, "Bad time offset value"));
+			setTimeOffset(parseFloatWithErrorMsg(tok, "Bad time offset value"));
 		}
 		else if (token == "deadTime")
 		{
-			setDeadTime(parseWithErrorMsg<float>(tok, "Bad dead time value"));
+			setDeadTime(parseFloatWithErrorMsg(tok, "Bad dead time value"));
 		}
 		else if (token == "bunching")
 		{
-			setBunching(parseWithErrorMsg<float>(tok, "Bad bunching value"));
+			setBunching(parseFloatWithErrorMsg(tok, "Bad bunching value"));
 		}
 		else if (token == "color")
 		{
@@ -237,27 +249,27 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 		}
 		else if (token == "fadeIn")
 		{
-			setFadeInFraction(parseWithErrorMsg<float>(tok, "Bad fade in fraction value"));
+			setFadeInFraction(parseFloatWithErrorMsg(tok, "Bad fade in fraction value"));
 		}
 		else if (token == "fadeOut")
 		{
-			setFadeOutFraction(parseWithErrorMsg<float>(tok, "Bad fade out fraction value"));
+			setFadeOutFraction(parseFloatWithErrorMsg(tok, "Bad fade out fraction value"));
 		}
 		else if (token == "fadeIndex")
 		{
-			setFadeIndexFraction(parseWithErrorMsg<float>(tok, "Bad fade index fraction value"));
+			setFadeIndexFraction(parseFloatWithErrorMsg(tok, "Bad fade index fraction value"));
 		}
 		else if (token == "animationFrames")
 		{
-			setAnimationFrames(parseWithErrorMsg<int>(tok, "Bad anim frames value"));
+			setAnimationFrames(parseIntWithErrorMsg(tok, "Bad anim frames value"));
 		}
 		else if (token == "animationrate")
 		{
-			setAnimationRate(parseWithErrorMsg<float>(tok, "Bad anim rate value"));
+			setAnimationRate(parseFloatWithErrorMsg(tok, "Bad anim rate value"));
 		}
 		else if (token == "angle")
 		{
-			setInitialAngle(parseWithErrorMsg<float>(tok, "Bad initial angle value"));
+			setInitialAngle(parseFloatWithErrorMsg(tok, "Bad initial angle value"));
 		}
 		else if (token == "rotation")
 		{
@@ -265,7 +277,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 		}
 		else if (token == "boundsExpansion")
 		{
-			setBoundsExpansion(parseWithErrorMsg<float>(tok, "Bad bounds expansion value"));
+			setBoundsExpansion(parseFloatWithErrorMsg(tok, "Bad bounds expansion value"));
 		}
 		else if (token == "randomDistribution")
 		{
@@ -295,9 +307,9 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 			// At this point, the token contains the gravity factor, parse and assign it
 			try
 			{
-				setGravity(boost::lexical_cast<float>(token));
+				setGravity(std::stof(token));
 			}
-			catch (boost::bad_lexical_cast&)
+			catch (std::invalid_argument&)
 			{
 				rError() << "[particles] Bad gravity value, token is '" <<
 					token << "'" << std::endl;
@@ -332,8 +344,8 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 				setOrientationType(ORIENTATION_AIMED);
 
 				// Read orientation parameters
-				setOrientationParm(0, parseWithErrorMsg<float>(tok, "Bad aimed param1 value"));
-				setOrientationParm(1, parseWithErrorMsg<float>(tok, "Bad aimed param2 value"));
+				setOrientationParm(0, parseFloatWithErrorMsg(tok, "Bad aimed param1 value"));
+				setOrientationParm(1, parseFloatWithErrorMsg(tok, "Bad aimed param2 value"));
 			}
 			else if (orientationType == "x")
 			{
@@ -365,25 +377,25 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 				setDistributionType(DISTRIBUTION_RECT);
 
 				// Read orientation parameters (sizex, sizey, sizez)
-				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad distr param1 value"));
-				setDistributionParm(1, parseWithErrorMsg<float>(tok, "Bad distr param2 value"));
-				setDistributionParm(2, parseWithErrorMsg<float>(tok, "Bad distr param3 value"));
+				setDistributionParm(0, parseFloatWithErrorMsg(tok, "Bad distr param1 value"));
+				setDistributionParm(1, parseFloatWithErrorMsg(tok, "Bad distr param2 value"));
+				setDistributionParm(2, parseFloatWithErrorMsg(tok, "Bad distr param3 value"));
 			}
 			else if (distrType == "cylinder")
 			{
 				setDistributionType(DISTRIBUTION_CYLINDER);
 
 				// Read orientation parameters (sizex, sizey, sizez ringFraction?)
-				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad distr param1 value"));
-				setDistributionParm(1, parseWithErrorMsg<float>(tok, "Bad distr param2 value"));
-				setDistributionParm(2, parseWithErrorMsg<float>(tok, "Bad distr param3 value"));
+				setDistributionParm(0, parseFloatWithErrorMsg(tok, "Bad distr param1 value"));
+				setDistributionParm(1, parseFloatWithErrorMsg(tok, "Bad distr param2 value"));
+				setDistributionParm(2, parseFloatWithErrorMsg(tok, "Bad distr param3 value"));
 
 				// Try to parse that next value, some particle defs don't define a fourth component
 				std::string nextToken = tok.peek();
 
 				try
 				{
-					float parm = boost::lexical_cast<float>(nextToken);
+					float parm = std::stof(nextToken);
 
 					// successfully converted the next token to a number
 					setDistributionParm(3, parm);
@@ -391,7 +403,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 					// Skip that next token
 					tok.skipTokens(1);
 				}
-				catch (boost::bad_lexical_cast&)
+				catch (std::invalid_argument&)
 				{
 					setDistributionParm(3, 0.0f);
 				}
@@ -401,16 +413,16 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 				setDistributionType(DISTRIBUTION_SPHERE);
 
 				// Read orientation parameters (sizex, sizey, sizez)
-				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad distr param1 value"));
-				setDistributionParm(1, parseWithErrorMsg<float>(tok, "Bad distr param2 value"));
-				setDistributionParm(2, parseWithErrorMsg<float>(tok, "Bad distr param3 value"));
+				setDistributionParm(0, parseFloatWithErrorMsg(tok, "Bad distr param1 value"));
+				setDistributionParm(1, parseFloatWithErrorMsg(tok, "Bad distr param2 value"));
+				setDistributionParm(2, parseFloatWithErrorMsg(tok, "Bad distr param3 value"));
 
 				// Try to parse that next value, the D3 particle editor won't save the 4th parameter
 				std::string nextToken = tok.peek();
 
 				try
 				{
-					float parm = boost::lexical_cast<float>(nextToken);
+					float parm = std::stof(nextToken);
 
 					// successfully converted the next token to a number
 					setDistributionParm(3, parm);
@@ -418,7 +430,7 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 					// Skip that next token
 					tok.skipTokens(1);
 				}
-				catch (boost::bad_lexical_cast&)
+				catch (std::invalid_argument&)
 				{
 					setDistributionParm(3, 0.0f);
 				}
@@ -438,14 +450,14 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 				setDirectionType(DIRECTION_CONE);
 
 				// Read solid cone angle
-				setDirectionParm(0, parseWithErrorMsg<float>(tok, "Bad cone angle value"));
+				setDirectionParm(0, parseFloatWithErrorMsg(tok, "Bad cone angle value"));
 			}
 			else if (dirType == "outward")
 			{
 				setDirectionType(DIRECTION_OUTWARD);
 
 				// Read upward bias
-				setDirectionParm(0, parseWithErrorMsg<float>(tok, "Bad upward bias value"));
+				setDirectionParm(0, parseFloatWithErrorMsg(tok, "Bad upward bias value"));
 			}
 			else
 			{
@@ -462,20 +474,20 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 				setCustomPathType(PATH_HELIX);
 
 				// Read helix parameters ( sizeX sizeY sizeZ radialSpeed axialSpeed )
-				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad helix param1 value"));
-				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad helix param2 value"));
-				setCustomPathParm(2, parseWithErrorMsg<float>(tok, "Bad helix param3 value"));
-				setCustomPathParm(3, parseWithErrorMsg<float>(tok, "Bad helix param4 value"));
-				setCustomPathParm(4, parseWithErrorMsg<float>(tok, "Bad helix param5 value"));
+				setCustomPathParm(0, parseFloatWithErrorMsg(tok, "Bad helix param1 value"));
+				setCustomPathParm(1, parseFloatWithErrorMsg(tok, "Bad helix param2 value"));
+				setCustomPathParm(2, parseFloatWithErrorMsg(tok, "Bad helix param3 value"));
+				setCustomPathParm(3, parseFloatWithErrorMsg(tok, "Bad helix param4 value"));
+				setCustomPathParm(4, parseFloatWithErrorMsg(tok, "Bad helix param5 value"));
 			}
 			else if (pathType == "flies")
 			{
 				setCustomPathType(PATH_FLIES);
 
 				// Read flies parameters (radial_speed, axial_speed, size)
-				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad flies param1 value"));
-				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad flies param2 value"));
-				setCustomPathParm(2, parseWithErrorMsg<float>(tok, "Bad flies param3 value"));
+				setCustomPathParm(0, parseFloatWithErrorMsg(tok, "Bad flies param1 value"));
+				setCustomPathParm(1, parseFloatWithErrorMsg(tok, "Bad flies param2 value"));
+				setCustomPathParm(2, parseFloatWithErrorMsg(tok, "Bad flies param3 value"));
 			}
 			else if (pathType == "orbit")
 			{
@@ -483,8 +495,8 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 
 				// Read orbit parameters (radius, speed)
 				// These are actually unsupported by the engine ("bad path type")
-				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad orbit param1 value"));
-				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad orbit param2 value"));
+				setCustomPathParm(0, parseFloatWithErrorMsg(tok, "Bad orbit param1 value"));
+				setCustomPathParm(1, parseFloatWithErrorMsg(tok, "Bad orbit param2 value"));
 			}
 			else if (pathType == "drip")
 			{
@@ -492,8 +504,8 @@ void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 
 				// Read drip parameters (something something) (sic!, as seen in the particle editor)
 				// These are actually unsupported by the engine ("bad path type")
-				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad drip param1 value"));
-				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad drip param2 value"));
+				setCustomPathParm(0, parseFloatWithErrorMsg(tok, "Bad drip param1 value"));
+				setCustomPathParm(1, parseFloatWithErrorMsg(tok, "Bad drip param2 value"));
 			}
 			else
 			{
@@ -513,11 +525,11 @@ Vector3 StageDef::parseVector3(parser::DefTokeniser& tok)
 
 	try
 	{
-		vec.x() = boost::lexical_cast<float>(tok.nextToken());
-		vec.y() = boost::lexical_cast<float>(tok.nextToken());
-		vec.z() = boost::lexical_cast<float>(tok.nextToken());
+		vec.x() = std::stod(tok.nextToken());
+		vec.y() = std::stod(tok.nextToken());
+		vec.z() = std::stod(tok.nextToken());
 	}
-	catch (boost::bad_lexical_cast&)
+	catch (std::invalid_argument&)
 	{
 		vec = Vector3(0,0,0);
 
@@ -534,12 +546,12 @@ Vector4 StageDef::parseVector4(parser::DefTokeniser& tok)
 
 	try
 	{
-		vec.x() = boost::lexical_cast<float>(tok.nextToken());
-		vec.y() = boost::lexical_cast<float>(tok.nextToken());
-		vec.z() = boost::lexical_cast<float>(tok.nextToken());
-		vec.w() = boost::lexical_cast<float>(tok.nextToken());
+		vec.x() = std::stod(tok.nextToken());
+		vec.y() = std::stod(tok.nextToken());
+		vec.z() = std::stod(tok.nextToken());
+		vec.w() = std::stod(tok.nextToken());
 	}
-	catch (boost::bad_lexical_cast&)
+	catch (std::invalid_argument&)
 	{
 		vec = Vector4(1,1,1,1);
 

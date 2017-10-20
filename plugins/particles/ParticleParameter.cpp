@@ -3,7 +3,6 @@
 #include "StageDef.h"
 
 #include "itextstream.h"
-#include <boost/lexical_cast.hpp>
 
 namespace particles
 {
@@ -28,9 +27,9 @@ void ParticleParameter::parseFromTokens(parser::DefTokeniser& tok)
 
 	try
 	{
-		setFrom(boost::lexical_cast<float>(val));
+		setFrom(std::stof(val));
 	}
-	catch (boost::bad_lexical_cast&)
+	catch (std::invalid_argument&)
 	{
 		rError() << "[particles] Bad lower value, token is '" <<
 			val << "'" << std::endl;
@@ -46,9 +45,9 @@ void ParticleParameter::parseFromTokens(parser::DefTokeniser& tok)
 		try
 		{
 			// cut off the quotes before converting to double
-			setTo(boost::lexical_cast<float>(val));
+			setTo(std::stof(val));
 		}
-		catch (boost::bad_lexical_cast&)
+		catch (std::invalid_argument&)
 		{
 			rError() << "[particles] Bad upper value, token is '" <<
 				val << "'" << std::endl;

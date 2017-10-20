@@ -25,6 +25,7 @@
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
+#include "string/convert.h"
 #include "math/AABB.h"
 
 #include <wx/window.h>
@@ -333,8 +334,6 @@ void OrthoContextMenu::callbackAddPrefab()
 
 void OrthoContextMenu::callbackAddSpeaker()
 {
-    using boost::lexical_cast;
-
     UndoableCommand command("addSpeaker");
 
     // Cancel all selection
@@ -380,13 +379,12 @@ void OrthoContextMenu::callbackAddSpeaker()
 
         SoundRadii radii = snd->getRadii();
         entity->setKeyValue(
-            "s_mindistance", lexical_cast<std::string>(radii.getMin(true))
+            "s_mindistance", string::to_string(radii.getMin(true))
         );
         entity->setKeyValue(
             "s_maxdistance",
             (radii.getMax() > 0
-             ? lexical_cast<std
-             ::string>(radii.getMax(true)) : "10")
+             ? string::to_string(radii.getMax(true)) : "10")
         );
     }
 }
