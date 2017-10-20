@@ -1,20 +1,14 @@
 #pragma once
 
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/identity.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
+#include <list>
 
 /* greebo: The MRUList maintains the list of filenames in a FIFO-style
- * boost::multi_index_container of length _numMaxItems.
+ * container of length _numMaxItems.
  *
  * Construct it with the maximum number of strings this list can hold.
  *
  * Use insert() to add a filename to the list. Duplicated filenames are
  * recognised and relocated to the top of the list.
- *
- * This is adapted from:
- * http://www.boost.org/libs/multi_index/example/serialization.cpp
  */
 namespace ui 
 {
@@ -24,13 +18,7 @@ class MRUList
 	/* greebo: This is the (rather complex) type definition of the
 	 * list containing the filenames of type std::string
 	 */
-	typedef boost::multi_index::multi_index_container<
-				std::string,
-				boost::multi_index::indexed_by<
-					boost::multi_index::sequenced<>,
-					boost::multi_index::hashed_unique<boost::multi_index::identity<std::string> >
-					>
-				> FileList;
+	typedef std::list<std::string> FileList;
 
 	std::size_t _numMaxItems;
 
@@ -49,13 +37,21 @@ public:
 
 	void insert(const std::string& filename)
 	{
-		std::pair<iterator, bool> p = _list.push_front(filename);
+		// Check if the filename is already in the list
+		iterator existing = std::find(_list.begin(), _list.end(), filename);
 
-		if (!p.second) // duplicate item
-		{                     
-			_list.relocate(_list.begin(), p.first); // put in front
+		if (existing != _list.end())
+		{
+			// Relocate to top of the list and be done
+			_list.splice(_list.begin(), _list, existing);
+			return;
 		}
-		else if (_list.size() > _numMaxItems) // keep the length <= _numMaxItems
+
+		// Not present yet, insert at front of the list
+		_list.push_front(filename);
+		
+		// keep the length <= _numMaxItems
+		if (_list.size() > _numMaxItems) 
 		{  
 			_list.pop_back();
 		}
@@ -83,7 +79,7 @@ public:
 
 	bool empty() const
 	{
-		return (_list.begin() == _list.end());
+		return _list.empty();
 	}
 
 }; // class MRUList
