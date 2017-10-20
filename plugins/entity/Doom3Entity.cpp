@@ -4,7 +4,6 @@
 #include "ieclass.h"
 #include "debugging/debugging.h"
 #include "string/predicate.h"
-#include <boost/algorithm/string/predicate.hpp>
 #include <functional>
 
 namespace entity {
@@ -329,7 +328,7 @@ void Doom3Entity::erase(const KeyValues::iterator& i)
 	notifyErase(key, *value);
 
 	// Scope ends here, the KeyValue object will be deleted automatically
-	// as the boost::shared_ptr useCount will reach zero.
+	// as the std::shared_ptr useCount will reach zero.
 }
 
 void Doom3Entity::erase(const std::string& key)
@@ -350,7 +349,7 @@ Doom3Entity::KeyValues::const_iterator Doom3Entity::find(const std::string& key)
 		 i != _keyValues.end();
 		 ++i)
 	{
-		if (boost::iequals(i->first, key))
+		if (string::iequals(i->first, key))
 		{
 			return i;
 		}
@@ -366,7 +365,7 @@ Doom3Entity::KeyValues::iterator Doom3Entity::find(const std::string& key)
 		 i != _keyValues.end();
 		 ++i)
 	{
-		if (boost::iequals(i->first, key))
+		if (string::iequals(i->first, key))
 		{
 			return i;
 		}

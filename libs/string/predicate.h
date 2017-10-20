@@ -18,6 +18,75 @@ inline bool isEqualNoCase(const std::string::value_type& a, const std::string::v
 	return ::tolower(a) == ::tolower(b);
 }
 
+} // detail
+
+/**
+* Compares the two strings for equality using the given comparator function.
+* Returns true if the two strings are considered equal.
+*/
+template<typename Comparator>
+inline bool equals(const std::string& str1, const std::string& str2, Comparator compare)
+{
+	std::string::const_iterator str1It = str1.begin();
+	std::string::const_iterator str1End = str1.end();
+
+	std::string::const_iterator str2It = str2.begin();
+	std::string::const_iterator str2End = str2.end();
+
+	for (; str1It != str1End && str2It != str2End; ++str1It, ++str2It)
+	{
+		if (!compare(*str1It, *str2It))
+		{
+			return false;
+		}
+	}
+
+	return str1It == str1End && str2It == str2End;
+}
+
+/**
+* Compares the two strings for equality using the given comparator function.
+* Returns true if the two strings are considered equal.
+*/
+template<typename Comparator>
+inline bool equals(const std::string& str1, const char* str2, Comparator compare)
+{
+	if (str2 == nullptr) return false;
+
+	std::string::const_iterator str1It = str1.begin();
+	std::string::const_iterator str1End = str1.end();
+
+	const char* str2It = str2;
+
+	for (; str1It != str1End && *str2It != '\0'; ++str1It, ++str2It)
+	{
+		if (!compare(*str1It, *str2It))
+		{
+			return false;
+		}
+	}
+
+	return str1It == str1End && *str2It == '\0';
+}
+
+/**
+* Returns true if the given input string is equal with the given test string,
+* compared case-sensitively.
+*/
+template<typename TestStringType>
+inline bool equals(const std::string& input, const TestStringType& test)
+{
+	return equals(input, test, detail::isEqual);
+}
+
+/**
+* Returns true if the given input string is equal with the given test string,
+* compared case-insensitively.
+*/
+template<typename TestStringType>
+inline bool iequals(const std::string& input, const TestStringType& test)
+{
+	return equals(input, test, detail::isEqualNoCase);
 }
 
 /**

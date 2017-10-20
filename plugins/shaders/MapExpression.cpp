@@ -13,7 +13,7 @@
 #include "RGBAImage.h"
 #include "textures/HeightmapCreator.h"
 #include "textures/TextureManipulator.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "string/predicate.h"
 
 /* CONSTANTS */
 namespace {
@@ -43,31 +43,31 @@ MapExpressionPtr MapExpression::createForToken(DefTokeniser& token) {
 	// Tr3B: don't convert image names to lower because Unix filesystems are case sensitive
 	std::string type = token.nextToken();
 
-	if (boost::iequals(type, "heightmap")) {
+	if (string::iequals(type, "heightmap")) {
 		return MapExpressionPtr(new HeightMapExpression (token));
 	}
-	else if (boost::iequals(type, "addnormals")) {
+	else if (string::iequals(type, "addnormals")) {
 		return MapExpressionPtr(new AddNormalsExpression (token));
 	}
-	else if (boost::iequals(type, "smoothnormals")) {
+	else if (string::iequals(type, "smoothnormals")) {
 		return MapExpressionPtr(new SmoothNormalsExpression (token));
 	}
-	else if (boost::iequals(type, "add")) {
+	else if (string::iequals(type, "add")) {
 		return MapExpressionPtr(new AddExpression (token));
 	}
-	else if (boost::iequals(type, "scale")) {
+	else if (string::iequals(type, "scale")) {
 		return MapExpressionPtr(new ScaleExpression (token));
 	}
-	else if (boost::iequals(type, "invertalpha")) {
+	else if (string::iequals(type, "invertalpha")) {
 		return MapExpressionPtr(new InvertAlphaExpression (token));
 	}
-	else if (boost::iequals(type, "invertcolor")) {
+	else if (string::iequals(type, "invertcolor")) {
 		return MapExpressionPtr(new InvertColorExpression (token));
 	}
-	else if (boost::iequals(type, "makeintensity")) {
+	else if (string::iequals(type, "makeintensity")) {
 		return MapExpressionPtr(new MakeIntensityExpression (token));
 	}
-	else if (boost::iequals(type, "makealpha")) {
+	else if (string::iequals(type, "makealpha")) {
 		return MapExpressionPtr(new MakeAlphaExpression (token));
 	}
 	else {
