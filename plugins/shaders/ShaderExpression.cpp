@@ -3,7 +3,6 @@
 #include "itextstream.h"
 
 #include "string/convert.h"
-#include <boost/algorithm/string/predicate.hpp>
 #include "Doom3ShaderSystem.h"
 
 #include <stack>
@@ -302,7 +301,7 @@ private:
 			// No sound support so far
 			return IShaderExpressionPtr(new ConstantExpression(0));
 		}
-		else if (boost::algorithm::iequals("fragmentprograms", token))
+		else if (string::iequals("fragmentprograms", token))
 		{
 			_tokeniser.nextToken(); // valid token, exhaust
 
