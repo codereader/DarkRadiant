@@ -7,7 +7,6 @@
 
 #include "string/predicate.h"
 #include <fmt/format.h>
-#include <boost/optional.hpp>
 #include <functional>
 
 namespace eclass
@@ -27,17 +26,18 @@ const std::string ATTACH_POS_JOINT = "attach_pos_joint";
 const std::string ATTACH_POS_ANGLES = "attach_pos_angles";
 
 // Extract and return the string suffix for a key (which might be the empty
-// string if there is no suffix). Returns boost::none if the key did not match
+// string if there is no suffix). Returns false if the key did not match
 // the prefix.
-boost::optional<std::string> suffixedKey(const std::string& key,
-                                         const std::string& prefix)
+bool tryGetSuffixedKey(const std::string& key, const std::string& prefix, std::string& suffixedOutput)
 {
     if (string::istarts_with(key, prefix))
     {
-        return key.substr(prefix.length());
+		suffixedOutput = key.substr(prefix.length());
+		return true;
     }
     
-	return boost::none;
+	suffixedOutput.clear();
+	return false;
 }
 
 } // namespace
@@ -131,35 +131,35 @@ public:
     // Attempt to extract attachment data from the given key/value pair
     void parseDefAttachKeys(const std::string& key, const std::string& value)
     {
-        boost::optional<std::string> keySuffix;
+        std::string suffix;
 
-        if ((keySuffix = suffixedKey(key, DEF_ATTACH)))
+        if (tryGetSuffixedKey(key, DEF_ATTACH, suffix))
         {
-            _objects[*keySuffix].className = value;
+            _objects[suffix].className = value;
         }
-        else if ((keySuffix = suffixedKey(key, NAME_ATTACH)))
+        else if (tryGetSuffixedKey(key, NAME_ATTACH, suffix))
         {
-            _objects[*keySuffix].name = value;
+            _objects[suffix].name = value;
         }
-        else if ((keySuffix = suffixedKey(key, POS_ATTACH)))
+        else if (tryGetSuffixedKey(key, POS_ATTACH, suffix))
         {
-            _objects[*keySuffix].posName = value;
+            _objects[suffix].posName = value;
         }
-        else if ((keySuffix = suffixedKey(key, ATTACH_POS_NAME)))
+        else if (tryGetSuffixedKey(key, ATTACH_POS_NAME, suffix))
         {
-            _positions[*keySuffix].name = value;
+            _positions[suffix].name = value;
         }
-        else if ((keySuffix = suffixedKey(key, ATTACH_POS_ORIGIN)))
+        else if (tryGetSuffixedKey(key, ATTACH_POS_ORIGIN, suffix))
         {
-            _positions[*keySuffix].origin = string::convert<Vector3>(value);
+            _positions[suffix].origin = string::convert<Vector3>(value);
         }
-        else if ((keySuffix = suffixedKey(key, ATTACH_POS_ANGLES)))
+        else if (tryGetSuffixedKey(key, ATTACH_POS_ANGLES, suffix))
         {
-            _positions[*keySuffix].angles = string::convert<Vector3>(value);
+            _positions[suffix].angles = string::convert<Vector3>(value);
         }
-        else if ((keySuffix = suffixedKey(key, ATTACH_POS_JOINT)))
+        else if (tryGetSuffixedKey(key, ATTACH_POS_JOINT, suffix))
         {
-            _positions[*keySuffix].joint = value;
+            _positions[suffix].joint = value;
         }
     }
 
