@@ -149,18 +149,19 @@ private:
 	{
 		// Try to cast the string value to numbers
 		try {
-			_intValue = boost::lexical_cast<int>(_strValue);
+			_intValue = std::stoi(_strValue);
 			// cast succeeded
 			_type |= ARGTYPE_INT;
 		}
-		catch (boost::bad_lexical_cast) {}
+		catch (std::invalid_argument&) {}
 
-		try {
-			_doubleValue = boost::lexical_cast<double>(_strValue);
+		try 
+		{
+			_doubleValue = std::stod(_strValue);
 			// cast succeeded
 			_type |= ARGTYPE_DOUBLE;
 		}
-		catch (boost::bad_lexical_cast) {}
+		catch (std::invalid_argument&) {}
 	}
 
 	void tryVectorConversion()

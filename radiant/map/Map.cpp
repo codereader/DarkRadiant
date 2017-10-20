@@ -334,12 +334,7 @@ void Map::gotoStartPosition()
 				origin.z() += game::current::getValue<float>(GKEY_PLAYER_HEIGHT);
 
                 // Check for an angle key, and use it if present
-                try {
-                    angles[ui::CAMERA_YAW] = boost::lexical_cast<float>(playerStart->getKeyValue("angle"));
-                }
-                catch (boost::bad_lexical_cast&) {
-                    angles[ui::CAMERA_YAW] = 0;
-                }
+                angles[ui::CAMERA_YAW] = string::convert<float>(playerStart->getKeyValue("angle"), 0);
             }
         }
     }

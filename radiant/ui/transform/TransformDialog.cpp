@@ -259,7 +259,7 @@ void TransformDialog::update()
 void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)
 {
 	// Get the current step increment
-	float step = string::convert<float>(row->stepEntry->GetValue());
+	float step = string::convert<float>(row->stepEntry->GetValue().ToStdString());
 
 	// Determine the action
 	if (row->isRotator)
@@ -289,7 +289,7 @@ void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)
 void TransformDialog::onClickSmaller(wxCommandEvent& ev, EntryRow* row)
 {
 	// Get the current value and the step increment
-	float step = string::convert<float>(row->stepEntry->GetValue());
+	float step = string::convert<float>(row->stepEntry->GetValue().ToStdString());
 
 	// Determine the action
 	if (row->isRotator)

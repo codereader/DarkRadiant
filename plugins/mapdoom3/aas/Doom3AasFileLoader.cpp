@@ -39,7 +39,7 @@ bool Doom3AasFileLoader::canLoad(std::istream& stream) const
 	{
         return false;
     }
-	catch (boost::bad_lexical_cast&)
+	catch (std::invalid_argument&)
 	{
         return false;
     }
@@ -61,7 +61,7 @@ IAasFilePtr Doom3AasFileLoader::loadFromStream(std::istream& stream)
         // File header
         parseVersion(tok);
 
-        // Checksum (will throw if the stirng conversion fails)
+        // Checksum (will throw if the string conversion fails)
         string::convert<long>(tok.nextToken());
 
         aasFile->parseFromTokens(tok);
@@ -71,7 +71,7 @@ IAasFilePtr Doom3AasFileLoader::loadFromStream(std::istream& stream)
         rError() << "Failure parsing AAS file: " << ex.what() << std::endl;
         return IAasFilePtr();
     }
-	catch (boost::bad_lexical_cast& ex)
+	catch (std::invalid_argument& ex)
 	{
         rError() << "Conversion error while parsing AAS file: " << ex.what() << std::endl;
         return IAasFilePtr();
@@ -86,7 +86,7 @@ void Doom3AasFileLoader::parseVersion(parser::DefTokeniser& tok) const
     tok.assertNextToken("DewmAAS");
 
 	// Require specific version, return true on success 
-    if (string::convert<float>(tok.nextToken()) != DEWM3_AAS_VERSION)
+    if (std::stof(tok.nextToken()) != DEWM3_AAS_VERSION)
     {
         throw parser::ParseException("AAS File version mismatch");
     }

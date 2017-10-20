@@ -64,7 +64,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 			continue; // No match, abort
 		}
 
-		int index = string::convert<int>(results[1]);
+		int index = string::convert<int>(results[1].str());
 
 		// Valid indices are [1..infinity)
 		if (index < 1) 

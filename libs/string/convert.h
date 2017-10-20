@@ -1,23 +1,165 @@
 #pragma once
 
-#include <boost/lexical_cast.hpp>
 #include "math/Vector3.h"
+#include "math/Vector4.h"
 #include <sstream>
 
 namespace string
 {
 
-/// Convert a string to a different type, with a fallback value
-template<typename T, typename Src> T convert(const Src& str, T defaultVal = T())
+// Converts a string to a different type, with a fallback value
+// A couple of template specialisations are defined below.
+// This default is declared as deleted function to trigger a compile error
+// instead of defaulting to something the user didn't intend
+template<typename T, typename Src> 
+inline T convert(const Src& str, T defaultVal = T()) = delete;
+
+// Template specialisation to convert std::string => float
+template<>
+inline float convert<float, std::string>(const std::string& str, float defaultVal)
 {
-    try
-    {
-        return boost::lexical_cast<T>(str);
-    }
-    catch (const boost::bad_lexical_cast&)
-    {
-        return defaultVal;
-    }
+	try
+	{
+		return std::stof(str);
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to convert std::string => double
+template<>
+inline double convert<double, std::string>(const std::string& str, double defaultVal)
+{
+	try
+	{
+		return std::stod(str);
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to convert std::string => int
+template<>
+inline int convert<int, std::string>(const std::string& str, int defaultVal)
+{
+	try
+	{
+		return std::stoi(str);
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to convert std::string => unsigned int
+template<>
+inline unsigned int convert<unsigned int, std::string>(const std::string& str, unsigned int defaultVal)
+{
+	try
+	{
+		return static_cast<unsigned int>(std::stoul(str));
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to convert std::string => long
+template<>
+inline long convert<long, std::string>(const std::string& str, long defaultVal)
+{
+	try
+	{
+		return std::stol(str);
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to convert std::string => unsigned long
+template<>
+inline unsigned long convert<unsigned long, std::string>(const std::string& str, unsigned long defaultVal)
+{
+	try
+	{
+		return std::stoul(str);
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to convert std::string => std::size_t
+template<>
+inline std::size_t convert<std::size_t, std::string>(const std::string& str, std::size_t defaultVal)
+{
+	return convert<unsigned long>(str, static_cast<unsigned long>(defaultVal));
+}
+
+// Template specialisation to convert std::string => bool
+// Returns the default value if the string is empty, everything else except "0" returns true
+template<>
+inline bool convert<bool, std::string>(const std::string& str, bool defaultVal)
+{
+	return str.empty() ? defaultVal : (str != "0");
+}
+
+// Template specialisation to extract a Vector3 from the given string
+template<>
+inline Vector3 convert<Vector3, std::string>(const std::string& str, Vector3 defaultVal)
+{
+	try
+	{
+		Vector3 vec;
+
+		std::istringstream stream(str);
+		stream >> std::skipws >> vec.x() >> vec.y() >> vec.z();
+
+		if (stream.fail()) throw std::invalid_argument("Failed to parse Vector3");
+
+		return vec;
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to extract a Vector4 from the given string
+template<>
+inline Vector4 convert<Vector4, std::string>(const std::string& str, Vector4 defaultVal)
+{
+	try
+	{
+		Vector4 vec;
+
+		std::istringstream stream(str);
+		stream >> std::skipws >> vec.x() >> vec.y() >> vec.z();
+
+		if (stream.bad()) throw std::invalid_argument("Failed to parse Vector4");
+
+		return vec;
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to convert std::string => std::string, returning the input value
+template<>
+inline std::string convert<std::string, std::string>(const std::string& str, std::string defaultVal)
+{
+	return str;
 }
 
 #ifdef SPECIALISE_STR_TO_FLOAT

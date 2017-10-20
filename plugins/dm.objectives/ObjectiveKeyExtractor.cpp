@@ -26,7 +26,7 @@ void ObjectiveKeyExtractor::operator()(const std::string& key,
 
 	if (std::regex_match(key, results, reObjNum)) {
 		// Get the objective number
-		iNum = string::convert<int>(results[1]);
+		iNum = string::convert<int>(results[1].str());
 	}
 	else {
 		// No match, abort
@@ -93,7 +93,7 @@ void ObjectiveKeyExtractor::operator()(const std::string& key,
 		else {
 
 			// Get the component number and key string
-			int componentNum = string::convert<int>(results[1]);
+			int componentNum = string::convert<int>(results[1].str());
 			std::string componentStr = results[2];
 
 			Component& comp = _objMap[iNum].components[componentNum];

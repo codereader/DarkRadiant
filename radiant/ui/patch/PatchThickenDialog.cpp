@@ -29,7 +29,7 @@ PatchThickenDialog::PatchThickenDialog() :
 float PatchThickenDialog::getThickness()
 {
 	wxTextCtrl* entry = findNamedObject<wxTextCtrl>(_dialog, "ThickenDialogThickness");
-	return string::convert<float>(entry->GetValue(), 0.0f);
+	return string::convert<float>(entry->GetValue().ToStdString(), 0.0f);
 }
 
 bool PatchThickenDialog::getCeateSeams()

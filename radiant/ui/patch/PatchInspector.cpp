@@ -447,12 +447,12 @@ void PatchInspector::emitCoords()
 	// Retrieve the controlvertex
 	PatchControl& ctrl = patch->getPatchInternal().ctrlAt(row, col);
 
-	ctrl.vertex[0] = string::convert<float>(_coords["x"].value->GetValue());
-	ctrl.vertex[1] = string::convert<float>(_coords["y"].value->GetValue());
-	ctrl.vertex[2] = string::convert<float>(_coords["z"].value->GetValue());
+	ctrl.vertex[0] = string::convert<float>(_coords["x"].value->GetValue().ToStdString());
+	ctrl.vertex[1] = string::convert<float>(_coords["y"].value->GetValue().ToStdString());
+	ctrl.vertex[2] = string::convert<float>(_coords["z"].value->GetValue().ToStdString());
 
-	ctrl.texcoord[0] = string::convert<float>(_coords["s"].value->GetValue());
-	ctrl.texcoord[1] = string::convert<float>(_coords["t"].value->GetValue());
+	ctrl.texcoord[0] = string::convert<float>(_coords["s"].value->GetValue().ToStdString());
+	ctrl.texcoord[1] = string::convert<float>(_coords["t"].value->GetValue().ToStdString());
 
 	patch->getPatchInternal().controlPointsChanged();
 
@@ -519,8 +519,8 @@ void PatchInspector::onComboBoxChange()
 void PatchInspector::onClickLarger(CoordRow& row)
 {
 	// Get the current value and the step increment
-	float value = string::convert<float>(row.value->GetValue());
-	float step = string::convert<float>(row.stepEntry->GetValue());
+	float value = string::convert<float>(row.value->GetValue().ToStdString());
+	float step = string::convert<float>(row.stepEntry->GetValue().ToStdString());
 
 	// This triggers the onCoordChange callback method
 	row.value->SetValue(string::to_string(value + step));
@@ -529,8 +529,8 @@ void PatchInspector::onClickLarger(CoordRow& row)
 void PatchInspector::onClickSmaller(CoordRow& row)
 {
 	// Get the current value and the step increment
-	float value = string::convert<float>(row.value->GetValue());
-	float step = string::convert<float>(row.stepEntry->GetValue());
+	float value = string::convert<float>(row.value->GetValue().ToStdString());
+	float step = string::convert<float>(row.stepEntry->GetValue().ToStdString());
 
 	// This triggers the onCoordChange callback method
 	row.value->SetValue(string::to_string(value - step));

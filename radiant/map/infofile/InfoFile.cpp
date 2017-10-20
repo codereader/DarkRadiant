@@ -6,7 +6,6 @@
 
 #include "i18n.h"
 #include "string/split.h"
-#include <boost/lexical_cast.hpp>
 
 namespace map
 {
@@ -61,7 +60,7 @@ void InfoFile::parseInfoFileHeader()
 			_tok.assertNextToken(parts[i]);
 		}
 
-		float version = boost::lexical_cast<float>(_tok.nextToken());
+		float version = std::stof(_tok.nextToken());
 
 		if (version != MAP_INFO_VERSION)
 		{
@@ -75,7 +74,7 @@ void InfoFile::parseInfoFileHeader()
 		_isValid = false;
 		return;
 	}
-	catch (boost::bad_lexical_cast& e)
+	catch (std::invalid_argument& e)
 	{
 		rError() << "[InfoFile] Unable to parse info file version: " << e.what() << std::endl;
 		_isValid = false;

@@ -44,9 +44,10 @@ void SRPropertyLoader::parseAttribute(
 		std::regex expr(exprStr);
 		std::smatch matches;
 
-		if (std::regex_match(key, matches, expr)) {
+		if (std::regex_match(key, matches, expr))
+		{
 			// Retrieve the S/R index number
-			int index = string::convert<int>(matches[1]);
+			int index = string::convert<int>(matches[1].str());
 
 			// Check if the S/R with this index already exists
 			SREntity::StimResponseMap::iterator found = _srMap.find(index);
@@ -85,9 +86,9 @@ void SRPropertyLoader::parseAttribute(
 
 		if (std::regex_match(key, matches, expr)) {
 			// The response index
-			int index = string::convert<int>(matches[1]);
+			int index = string::convert<int>(matches[1].str());
 			// The effect index
-			int effectIndex = string::convert<int>(matches[2]);
+			int effectIndex = string::convert<int>(matches[2].str());
 
 			// Find the Response for this index
 			SREntity::StimResponseMap::iterator found = _srMap.find(index);

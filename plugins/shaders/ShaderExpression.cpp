@@ -338,13 +338,13 @@ private:
 				// Attempt to convert the token into a floating point value
 				try
 				{
-					float value = boost::lexical_cast<float>(token);
+					float value = std::stof(token);
 
 					_tokeniser.nextToken(); // valid token, exhaust
 
 					return IShaderExpressionPtr(new ConstantExpression(value));
 				}
-				catch (boost::bad_lexical_cast&)
+				catch (std::invalid_argument&)
 				{}
 			}
 		}

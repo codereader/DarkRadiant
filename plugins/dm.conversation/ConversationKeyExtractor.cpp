@@ -27,7 +27,7 @@ void ConversationKeyExtractor::operator()(const std::string& key, const std::str
 	}
 
 	// Get the conversation number
-	iNum = string::convert<int>(results[1]);
+	iNum = string::convert<int>(results[1].str());
 
 	// We now have the conversation number and the substring (everything after
 	// "conv_<n>_" which applies to this conversation.
@@ -69,7 +69,7 @@ void ConversationKeyExtractor::operator()(const std::string& key, const std::str
 			return; // not matching
 		}
 
-		int cmdIndex = string::convert<int>(results[1]);
+		int cmdIndex = string::convert<int>(results[1].str());
 		std::string cmdSubStr = results[2];
 
 		ConversationCommandPtr command;
