@@ -1,7 +1,5 @@
 #include "GenericVFPProgram.h"
 
-#include <boost/algorithm/string/predicate.hpp>
-
 namespace render
 {
 

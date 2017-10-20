@@ -19,8 +19,6 @@
 
 #include "ui/common/ShaderChooser.h" // for static displayLightInfo() function
 
-#include <boost/algorithm/string/predicate.hpp>
-
 namespace ui
 {
 

@@ -4,6 +4,7 @@
 #include "ieclass.h"
 #include "debugging/debugging.h"
 #include "string/predicate.h"
+#include <boost/algorithm/string/predicate.hpp>
 #include <functional>
 
 namespace entity {

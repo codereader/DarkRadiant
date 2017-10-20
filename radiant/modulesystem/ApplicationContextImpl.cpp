@@ -11,8 +11,6 @@
 #include "log/PopupErrorHandler.h"
 #include "log/LogStream.h"
 
-#include <boost/algorithm/string/predicate.hpp>
-
 #if defined(WIN32)
 #include <windows.h>
 #endif

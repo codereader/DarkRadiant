@@ -1,7 +1,6 @@
 #include "ComplexName.h"
 
 #include "string/trim.h"
-#include <boost/algorithm/string/predicate.hpp>
 #include "string/convert.h"
 
 ComplexName::ComplexName(const std::string& fullname)

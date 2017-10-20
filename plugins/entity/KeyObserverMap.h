@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 #include <map>
 #include <string>
-#include <boost/algorithm/string/predicate.hpp>
 
 #include "Doom3Entity.h"
 

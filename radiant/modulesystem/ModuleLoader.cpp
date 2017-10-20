@@ -9,7 +9,6 @@
 
 #include "ModuleRegistry.h"
 
-#include <boost/algorithm/string/predicate.hpp>
 #include "string/case_conv.h"
 
 namespace module

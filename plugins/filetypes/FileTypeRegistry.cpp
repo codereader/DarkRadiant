@@ -5,7 +5,6 @@
 #include "os/path.h"
 #include "debugging/debugging.h"
 
-#include <boost/algorithm/string/predicate.hpp>
 #include "string/case_conv.h"
 
 FileTypeRegistry::FileTypeRegistry()

@@ -18,7 +18,6 @@
 #include <sigc++/connection.h>
 
 #include <map>
-#include <boost/algorithm/string/predicate.hpp>
 
 /* FORWARD DECLS */
 
