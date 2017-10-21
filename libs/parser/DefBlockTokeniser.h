@@ -6,9 +6,10 @@
 #include <iostream>
 #include <string>
 #include <ctype.h>
-#include <boost/tokenizer.hpp>
+#include "string/tokeniser.h"
 
-namespace parser {
+namespace parser 
+{
 
 /**
  * Abstract base class BlockTokeniser. This class inspects a given input block
@@ -16,17 +17,20 @@ namespace parser {
  *
  * C and C++-style comments are properly ignored.
  */
-class BlockTokeniser {
+class BlockTokeniser 
+{
 public:
 
-	struct Block {
+	struct Block 
+	{
 		// The name of this block
 		std::string name;
 
 		// The block contents (excluding braces)
 		std::string contents;
 
-		void clear() {
+		void clear()
+		{
 			name.clear();
 			contents.clear();
 		}
@@ -61,10 +65,11 @@ public:
  * protection of quoted content.
  */
 
-class DefBlockTokeniserFunc {
-
+class DefBlockTokeniserFunc 
+{
     // Enumeration of states
-    enum State {
+    enum State 
+	{
         SEARCHING_NAME,	  // haven't found anything yet
 		TOKEN_STARTED,	  // first non-delimiter character found
 		SEARCHING_BLOCK,  // searching for block opening char
@@ -78,10 +83,11 @@ class DefBlockTokeniserFunc {
 	const char* _delims;			// whitespace
 
 	const char _blockStartChar;	// "{"
-	const char _blockEndChar;		// "}"
+	const char _blockEndChar;	// "}"
 
 	// Test if a character is a delimiter
-    bool isDelim(char c) {
+    bool isDelim(char c) 
+	{
         const char* curDelim = _delims;
         while (*curDelim != 0) {
             if (*(curDelim++) == c) {
@@ -101,13 +107,14 @@ public:
 		_blockEndChar(blockEndChar)
     {}
 
-    /* REQUIRED. Operator() is called by the boost::tokenizer. This function
+    /* REQUIRED. Operator() is called by the Tokeniser. This function
      * must search for a token between the two iterators next and end, and if
      * a token is found, set tok to the token, set next to position to start
      * parsing on the next call, and return true.
      */
-    template<typename InputIterator, typename Token>
-    bool operator() (InputIterator& next, InputIterator end, Token& tok) {
+    template<typename InputIterator>
+    bool operator() (InputIterator& next, const InputIterator& end, BlockTokeniser::Block& tok)
+	{
         // Initialise state, no persistence between calls
         _state = SEARCHING_NAME;
 
@@ -117,193 +124,186 @@ public:
 		char ch = '\0';
 		std::size_t blockLevel = 0;
 
-		while (next != end) {
-
+		while (next != end) 
+		{
 			ch = *next;
 
-			switch (_state) {
-
-                case SEARCHING_NAME:
-					// Ignore delimiters
-					if (isDelim(ch)) {
-						++next;
-						continue;
-					}
-
-                    // We have a non-delimiter, examine it
-					_state = TOKEN_STARTED;
-					// Fall through
-
-				case TOKEN_STARTED:
-					// Here a delimiter indicates a successful token match
-                    if (isDelim(ch)) {
-                        _state = SEARCHING_BLOCK;
-						continue;
-                    }
-
-                    // The character is pointing at a non-delimiter. Switch on it.
-                    switch (ch) {
-                        // Found a slash, possibly start of comment
-                        case '/':
-                            _state = FORWARDSLASH;
-                            ++next;
-                            continue; // skip slash, will need to add it back if this is not a comment
-
-                        // General case. Token lasts until next delimiter.
-                        default:
-                            tok.name += ch;
-                            ++next;
-                            continue;
-                    }
-					break;
-
-				case SEARCHING_BLOCK:
-					if (isDelim(ch)) {
-						++next; // keep on searching
-						continue;
-					}
-					else if (ch == _blockStartChar) {
-						// Found an opening brace
-						_state = BLOCK_CONTENT;
-						blockLevel++;
-						++next;
-						continue;
-					}
-					else if (ch == '/') {
-						// Forward slash, possible comment start
-						_state = FORWARDSLASH;
-						++next;
-						continue;
-					}
-					else {
-						// Not a delimiter, not an opening brace, must be
-						// an "extension" for the name
-						tok.name += ' ';
-						tok.name += ch;
-
-						// Switch back to name
-						_state = TOKEN_STARTED;
-						++next;
-						continue;
-					}
-
-				case BLOCK_CONTENT:
-					// Check for another opening brace
-					if (ch == _blockEndChar) {
-						blockLevel--;
-
-						if (blockLevel == 0) {
-							// End of block content, we're done here,
-							// don't add this last character either
-							++next;
-							return true;
-						}
-						else {
-							// Still within a block, add to contents
-							tok.contents += ch;
-							++next;
-							continue;
-						}
-					}
-					else if (ch == _blockStartChar) {
-						// another block within this block, ignore this
-						blockLevel++;
-						tok.contents += ch;
-						++next;
-						continue;
-					}
-					else {
-						tok.contents += ch;
-						++next;
-						continue;
-					}
-
-				case FORWARDSLASH:
-
-                    // If we have a forward slash we may be entering a comment. The forward slash
-                    // will NOT YET have been added to the token, so we must add it manually if
-                    // this proves not to be a comment.
-
-                    switch (ch) {
-                        case '*':
-                            _state = COMMENT_DELIM;
-                            ++next;
-                            continue;
-
-                        case '/':
-                            _state = COMMENT_EOL;
-                            ++next;
-                            continue;
-
-                        default: // false alarm, add the slash and carry on
-                            _state = TOKEN_STARTED;
-                            tok.name += '/';
-                            // Do not increment next here
-                            continue;
-                    }
-
-                case COMMENT_DELIM:
-                    // Inside a delimited comment, we add nothing to the token but check for
-                    // the "*/" sequence.
-                    if (ch == '*') {
-                        _state = STAR;
-                        ++next;
-                        continue;
-                    }
-                    else {
-                        ++next;
-                        continue; // ignore and carry on
-                    }
-
-                case COMMENT_EOL:
-                    // This comment lasts until the end of the line.
-                    if (ch == '\r' || ch == '\n') {
-						// An EOL comment with non-empty name means searching for block
-						_state = (tok.name.empty()) ? SEARCHING_NAME : SEARCHING_BLOCK;
-                        ++next;
-                        continue;
-                    }
-                    else {
-                        ++next;
-                        continue; // do nothing
-                    }
-
-                case STAR:
-                    // The star may indicate the end of a delimited comment.
-                    // This state will only be entered if we are inside a
-                    // delimited comment.
-                    if (ch == '/') {
-                    	// End of comment
-                        _state = (tok.name.empty()) ? SEARCHING_NAME : SEARCHING_BLOCK;
-                        ++next;
-                        continue;
-                    }
-                    else if (ch == '*') {
-                    	// Another star, remain in the STAR state in case we
-                    	// have a "**/" end of comment.
-                    	_state = STAR;
-                    	++next;
-                    	continue;
-                    }
-                    else {
-                    	// No end of comment
-                    	_state = COMMENT_DELIM;
-                    	++next;
-                        continue;
-                    }
+			switch (_state)
+			{
+            case SEARCHING_NAME:
+				// Ignore delimiters
+				if (isDelim(ch))
+				{
+					++next;
+					continue;
 				}
+
+                // We have a non-delimiter, examine it
+				_state = TOKEN_STARTED;
+				// Fall through
+
+			case TOKEN_STARTED:
+				// Here a delimiter indicates a successful token match
+                if (isDelim(ch)) {
+                    _state = SEARCHING_BLOCK;
+					continue;
+                }
+
+                // The character is pointing at a non-delimiter. Switch on it.
+                switch (ch) {
+                    // Found a slash, possibly start of comment
+                    case '/':
+                        _state = FORWARDSLASH;
+                        ++next;
+                        continue; // skip slash, will need to add it back if this is not a comment
+
+                    // General case. Token lasts until next delimiter.
+                    default:
+                        tok.name += ch;
+                        ++next;
+                        continue;
+                }
+				break;
+
+			case SEARCHING_BLOCK:
+				if (isDelim(ch)) {
+					++next; // keep on searching
+					continue;
+				}
+				else if (ch == _blockStartChar) {
+					// Found an opening brace
+					_state = BLOCK_CONTENT;
+					blockLevel++;
+					++next;
+					continue;
+				}
+				else if (ch == '/') {
+					// Forward slash, possible comment start
+					_state = FORWARDSLASH;
+					++next;
+					continue;
+				}
+				else {
+					// Not a delimiter, not an opening brace, must be
+					// an "extension" for the name
+					tok.name += ' ';
+					tok.name += ch;
+
+					// Switch back to name
+					_state = TOKEN_STARTED;
+					++next;
+					continue;
+				}
+
+			case BLOCK_CONTENT:
+				// Check for another opening brace
+				if (ch == _blockEndChar) {
+					blockLevel--;
+
+					if (blockLevel == 0) {
+						// End of block content, we're done here,
+						// don't add this last character either
+						++next;
+						return true;
+					}
+					else {
+						// Still within a block, add to contents
+						tok.contents += ch;
+						++next;
+						continue;
+					}
+				}
+				else if (ch == _blockStartChar) {
+					// another block within this block, ignore this
+					blockLevel++;
+					tok.contents += ch;
+					++next;
+					continue;
+				}
+				else {
+					tok.contents += ch;
+					++next;
+					continue;
+				}
+
+			case FORWARDSLASH:
+
+                // If we have a forward slash we may be entering a comment. The forward slash
+                // will NOT YET have been added to the token, so we must add it manually if
+                // this proves not to be a comment.
+
+                switch (ch) {
+                    case '*':
+                        _state = COMMENT_DELIM;
+                        ++next;
+                        continue;
+
+                    case '/':
+                        _state = COMMENT_EOL;
+                        ++next;
+                        continue;
+
+                    default: // false alarm, add the slash and carry on
+                        _state = TOKEN_STARTED;
+                        tok.name += '/';
+                        // Do not increment next here
+                        continue;
+                }
+
+            case COMMENT_DELIM:
+                // Inside a delimited comment, we add nothing to the token but check for
+                // the "*/" sequence.
+                if (ch == '*') {
+                    _state = STAR;
+                    ++next;
+                    continue;
+                }
+                else {
+                    ++next;
+                    continue; // ignore and carry on
+                }
+
+            case COMMENT_EOL:
+                // This comment lasts until the end of the line.
+                if (ch == '\r' || ch == '\n') {
+					// An EOL comment with non-empty name means searching for block
+					_state = (tok.name.empty()) ? SEARCHING_NAME : SEARCHING_BLOCK;
+                    ++next;
+                    continue;
+                }
+                else {
+                    ++next;
+                    continue; // do nothing
+                }
+
+            case STAR:
+                // The star may indicate the end of a delimited comment.
+                // This state will only be entered if we are inside a
+                // delimited comment.
+                if (ch == '/') {
+                    // End of comment
+                    _state = (tok.name.empty()) ? SEARCHING_NAME : SEARCHING_BLOCK;
+                    ++next;
+                    continue;
+                }
+                else if (ch == '*') {
+                    // Another star, remain in the STAR state in case we
+                    // have a "**/" end of comment.
+                    _state = STAR;
+                    ++next;
+                    continue;
+                }
+                else {
+                    // No end of comment
+                    _state = COMMENT_DELIM;
+                    ++next;
+                    continue;
+                }
 			}
+		}
 
         // Return true if we have found a named block
-        if (!tok.name.empty())
-            return true;
-        else
-            return false;
-    }
-
-    // REQUIRED. Reset function to clear internal state
-    void reset() {
-        _state = SEARCHING_NAME;
+		return !tok.name.empty();
     }
 };
 
@@ -318,13 +318,14 @@ template<typename ContainerT>
 class BasicDefBlockTokeniser :
 	public BlockTokeniser
 {
+private:
     // Internal Boost tokenizer and its iterator
-	typedef boost::tokenizer<DefBlockTokeniserFunc,
+	typedef string::Tokeniser<DefBlockTokeniserFunc,
 							  std::string::const_iterator,
 							  BlockTokeniser::Block> Tokeniser;
 
     Tokeniser _tok;
-    Tokeniser::iterator _tokIter;
+    Tokeniser::Iterator _tokIter;
 
 public:
 
@@ -339,7 +340,7 @@ public:
 						   const char blockStartChar = '{',
 						   const char blockEndChar = '}') :
 		_tok(str, DefBlockTokeniserFunc(delims, blockStartChar, blockEndChar)),
-		_tokIter(_tok.begin())
+		_tokIter(_tok.getIterator())
     {}
 
     /** Test if this StringTokeniser has more blocks to return.
@@ -347,8 +348,9 @@ public:
      * @returns
      * true if there are further blocks, false otherwise
      */
-    bool hasMoreBlocks() {
-        return _tokIter != _tok.end();
+    bool hasMoreBlocks() override
+	{
+        return !_tokIter.exhausted();
     }
 
     /** Return the next token in the sequence. This function consumes
@@ -361,11 +363,14 @@ public:
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
-    Block nextBlock() {
-        if (hasMoreBlocks())
-            return *(_tokIter++);
-        else
-            throw ParseException("BlockTokeniser: no more blocks");
+    Block nextBlock() override
+	{
+		if (hasMoreBlocks())
+		{
+			return *(_tokIter++);
+		}
+
+        throw ParseException("BlockTokeniser: no more blocks");
     }
 };
 
@@ -379,21 +384,21 @@ template<>
 class BasicDefBlockTokeniser<std::istream> :
 	public BlockTokeniser
 {
+private:
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
 
     // Internal Boost tokenizer and its iterator
-    typedef boost::tokenizer<DefBlockTokeniserFunc,
-                             CharStreamIterator,
-							 BlockTokeniser::Block> Tokeniser;
+    typedef string::Tokeniser<DefBlockTokeniserFunc, 
+							  CharStreamIterator,
+							  BlockTokeniser::Block> Tokeniser;
 
     Tokeniser _tok;
-    Tokeniser::iterator _tokIter;
-
-private:
+    Tokeniser::Iterator _tokIter;
 
 	// Helper function to set noskipws on the input stream.
-	static std::istream& setNoskipws(std::istream& is) {
+	static std::istream& setNoskipws(std::istream& is)
+	{
 		is >> std::noskipws;
 		return is;
 	}
@@ -414,7 +419,7 @@ public:
 		_tok(CharStreamIterator(setNoskipws(str)), // start iterator
 			 CharStreamIterator(), // end (null) iterator
 			 DefBlockTokeniserFunc(delims, blockStartChar, blockEndChar)),
-		_tokIter(_tok.begin())
+		_tokIter(_tok.getIterator())
 	{}
 
     /**
@@ -423,8 +428,9 @@ public:
      * @returns
      * true if there are further blocks, false otherwise
      */
-    bool hasMoreBlocks() {
-        return _tokIter != _tok.end();
+    bool hasMoreBlocks() override
+	{
+		return !_tokIter.isExhausted();
     }
 
     /**
@@ -438,11 +444,14 @@ public:
      * @pre
      * hasMoreBlocks() must be true, otherwise an exception will be thrown.
      */
-    Block nextBlock() {
-        if (hasMoreBlocks())
-            return *(_tokIter++);
-        else
-            throw ParseException("BlockTokeniser: no more tokens");
+    Block nextBlock() override
+	{
+		if (hasMoreBlocks())
+		{
+			return *(_tokIter++);
+		}
+
+        throw ParseException("BlockTokeniser: no more tokens");
     }
 };
 

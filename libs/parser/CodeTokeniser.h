@@ -490,7 +490,7 @@ public:
      */
     bool hasMoreTokens() const override
 	{
-		return !_tokIter.exhausted();
+		return !_tokIter.isExhausted();
     }
 
     /**

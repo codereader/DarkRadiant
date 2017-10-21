@@ -14,8 +14,8 @@ namespace string
 *
 * The TokeniserFunc is a function object matching the following signature:
 * 
-* template<typename InputIterator>
-* bool (InputIterator& next, const InputIterator& end, std::string& tok);
+* template<typename InputIterator, typename TokenType>
+* bool (InputIterator& next, const InputIterator& end, TokenType& tok);
 *
 * TokeniserFunc returns true if a non-empty token could be stored into "tok".
 * "next" is non-const is advanced by the TokeniserFunc as it parses the characters.
@@ -25,7 +25,9 @@ namespace string
 * 
 * See CharTokeniserFunc in string/tokeniser.h for an example.
 */
-template<typename TokeniserFunc, typename InputIterator = std::string::const_iterator>
+template<typename TokeniserFunc, 
+		 typename InputIterator = std::string::const_iterator,
+		 typename TokenType = std::string>
 class Tokeniser
 {
 protected:
@@ -43,7 +45,7 @@ public:
 		InputIterator _cur;
 		InputIterator _end;
 
-		std::string _token;
+		TokenType _token;
 		bool _hasValidToken; // true if we're not exhausted yet
 
 	public:
@@ -59,22 +61,22 @@ public:
 
 		// Call this to check whether the iterator can deliver at least one more token.
 		// Returns true if no more tokens are available.
-		bool exhausted() const
+		bool isExhausted() const
 		{
 			return !_hasValidToken;
 		}
 
-		// Retrieves the current token - only call this if exhausted() == false
-		const std::string& operator*() const
+		// Retrieves the current token - only call this if isExhausted == false
+		const TokenType& operator*() const
 		{
-			assert(!exhausted());
+			assert(!isExhausted());
 			return _token;
 		}
 
 		// Advances to the next token. Only call this when not exhausted
 		Iterator& operator++()
 		{
-			assert(!exhausted());
+			assert(!isExhausted());
 			advance();
 			return *this;
 		}
@@ -82,7 +84,7 @@ public:
 		// Advances to the next token. Only call this when not exhausted
 		Iterator operator++(int) // postfix-increment
 		{
-			assert(!exhausted());
+			assert(!isExhausted());
 
 			Iterator prev(*this);
 			advance();

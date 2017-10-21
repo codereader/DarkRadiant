@@ -473,7 +473,7 @@ public:
      */
     bool hasMoreTokens() const override
 	{
-        return !_tokIter.exhausted();
+        return !_tokIter.isExhausted();
     }
 
     /** Return the next token in the sequence. This function consumes
@@ -572,7 +572,7 @@ public:
      */
     bool hasMoreTokens() const override
 	{
-        return !_tokIter.exhausted();
+        return !_tokIter.isExhausted();
     }
 
     /**

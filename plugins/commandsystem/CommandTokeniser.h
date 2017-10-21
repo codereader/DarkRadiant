@@ -172,7 +172,7 @@ public:
 	// Documentation: see base class
 	bool hasMoreTokens() override
 	{
-        return !_tokIter.exhausted();
+        return !_tokIter.isExhausted();
     }
 
 	// Documentation: see base class
