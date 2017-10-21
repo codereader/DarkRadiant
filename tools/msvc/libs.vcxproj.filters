@@ -178,6 +178,9 @@
     <ClInclude Include="..\..\libs\string\join.h">
       <Filter>string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\string\tokeniser.h">
+      <Filter>string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
