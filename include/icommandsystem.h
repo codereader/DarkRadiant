@@ -153,7 +153,7 @@ private:
 			// cast succeeded
 			_type |= ARGTYPE_INT;
 		}
-		catch (std::invalid_argument&) {}
+		catch (std::logic_error&) {}
 
 		try 
 		{

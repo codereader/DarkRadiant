@@ -36,7 +36,7 @@ namespace
 		{
 			return std::stoi(str);
 		}
-		catch (std::invalid_argument&)
+		catch (std::logic_error&)
 		{
 			rError() << "[particles] " << errorMsg << ", token is '" << str << "'" << std::endl;
 			return 0;

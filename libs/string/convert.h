@@ -20,7 +20,7 @@ inline float convert<float, std::string>(const std::string& str, float defaultVa
 	{
 		return std::stof(str);
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -34,7 +34,7 @@ inline double convert<double, std::string>(const std::string& str, double defaul
 	{
 		return std::stod(str);
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -48,7 +48,7 @@ inline int convert<int, std::string>(const std::string& str, int defaultVal)
 	{
 		return std::stoi(str);
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -62,7 +62,7 @@ inline unsigned int convert<unsigned int, std::string>(const std::string& str, u
 	{
 		return static_cast<unsigned int>(std::stoul(str));
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -76,7 +76,7 @@ inline long convert<long, std::string>(const std::string& str, long defaultVal)
 	{
 		return std::stol(str);
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -90,7 +90,7 @@ inline long long convert<long long, std::string>(const std::string& str, long lo
 	{
 		return std::stoll(str);
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -104,7 +104,7 @@ inline unsigned long convert<unsigned long, std::string>(const std::string& str,
 	{
 		return std::stoul(str);
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -118,7 +118,7 @@ inline unsigned long long convert<unsigned long long, std::string>(const std::st
 	{
 		return std::stoull(str);
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -147,7 +147,7 @@ inline Vector3 convert<Vector3, std::string>(const std::string& str, Vector3 def
 
 		return vec;
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}
@@ -168,7 +168,7 @@ inline Vector4 convert<Vector4, std::string>(const std::string& str, Vector4 def
 
 		return vec;
 	}
-	catch (const std::invalid_argument&)
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
 		return defaultVal;
 	}

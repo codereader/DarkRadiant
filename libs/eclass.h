@@ -51,7 +51,7 @@ namespace detail
                 // Perform the comparison and return
                 return ix < iy;
             }
-            catch (std::invalid_argument&)
+            catch (std::logic_error&)
             {
                 // greebo: Non-numeric operands, use ordinary string comparison
                 return sx < sy;

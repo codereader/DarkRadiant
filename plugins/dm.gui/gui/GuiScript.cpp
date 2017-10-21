@@ -144,7 +144,7 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 
 			tokeniser.assertNextToken(";");
         }
-		catch (std::invalid_argument&)
+		catch (std::logic_error&)
         {
             // Not a number, must be window plus time
 			st->args.push_back(token); // window

@@ -365,7 +365,7 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
 		{
 			_spectrum = std::stoi(value);
 		}
-		catch (std::invalid_argument& e)
+		catch (std::logic_error& e)
 		{
 			rWarning() << "Expect integer number as spectrum value, found " << 
 				value << ": " << e.what() << std::endl;
@@ -536,7 +536,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 			std::stoi(tokeniser.nextToken());
 			std::stoi(tokeniser.nextToken());
 		}
-		catch (std::invalid_argument& e)
+		catch (std::logic_error& e)
 		{
 			rWarning() << "Error parsing remoteRenderMap. Expected two integers: " 
 				<< e.what() << std::endl;
