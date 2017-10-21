@@ -1,9 +1,9 @@
-#ifndef _COMMAND_TOKENISER_H_
-#define _COMMAND_TOKENISER_H_
+#pragma once
 
 #include "parser/Tokeniser.h"
 
-namespace cmd {
+namespace cmd 
+{
 
 class CommandTokeniserFunc
 {
@@ -42,8 +42,8 @@ public:
      * a token is found, set tok to the token, set next to position to start
      * parsing on the next call, and return true.
      */
-    template<typename InputIterator, typename Token>
-    bool operator() (InputIterator& next, InputIterator end, Token& tok) {
+    template<typename InputIterator>
+    bool operator() (InputIterator& next, const InputIterator& end, std::string& tok) {
 
         // Initialise state, no persistence between calls
         _state = SEARCHING;
@@ -148,12 +148,6 @@ public:
         // Return true if we have added anything to the token
         return (tok != "");
     }
-
-    // REQUIRED. Reset function to clear internal state
-    void reset() {
-        _state = SEARCHING;
-    }
-
 };
 
 /**
@@ -164,51 +158,52 @@ public:
 class CommandTokeniser :
 	public parser::StringTokeniser
 {
-	typedef boost::tokenizer<CommandTokeniserFunc> Tokeniser;
+	typedef string::Tokeniser<CommandTokeniserFunc> Tokeniser;
 
     Tokeniser _tok;
-    Tokeniser::iterator _tokIter;
+    Tokeniser::Iterator _tokIter;
 
 public:
 	CommandTokeniser(const std::string& str) :
 		_tok(str, CommandTokeniserFunc(" \n\t\v\r")),
-		_tokIter(_tok.begin())
+		_tokIter(_tok.getIterator())
 	{}
 
 	// Documentation: see base class
-	bool hasMoreTokens() {
-        return _tokIter != _tok.end();
+	bool hasMoreTokens() override
+	{
+        return !_tokIter.exhausted();
     }
 
 	// Documentation: see base class
-	std::string nextToken() {
+	std::string nextToken() override
+	{
 		if (hasMoreTokens()) {
             return *(_tokIter++);
 		}
-		else {
-            throw parser::ParseException("CommandTokeniser: no more tokens");
-		}
+		
+		throw parser::ParseException("CommandTokeniser: no more tokens");
     }
 
-	void assertNextToken(const std::string& val) {
+	void assertNextToken(const std::string& val) override
+	{
         const std::string tok = nextToken();
-        if (tok != val)
-            throw parser::ParseException("CommandTokeniser: Assertion failed: Required \""
-            					 + val + "\", found \"" + tok + "\"");
+        if (tok != val) throw parser::ParseException("CommandTokeniser: Assertion failed: Required \""
+			+ val + "\", found \"" + tok + "\"");
     }
 
-	void skipTokens(unsigned int n) {
-        for (unsigned int i = 0; i < n; i++) {
-            if (hasMoreTokens()) {
+	void skipTokens(unsigned int n) override
+	{
+        for (unsigned int i = 0; i < n; i++)
+		{
+            if (hasMoreTokens()) 
+			{
                 _tokIter++;
             }
-            else {
-				throw parser::ParseException("CommandTokeniser: no more tokens");
-            }
+            
+			throw parser::ParseException("CommandTokeniser: no more tokens");
         }
     }
 };
 
 } // namespace cmd
-
-#endif /* _COMMAND_TOKENISER_H_ */

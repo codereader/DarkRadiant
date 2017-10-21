@@ -1,9 +1,12 @@
 #pragma once
 
 #include "iarchive.h"
+#include "ifilesystem.h"
 #include "DefTokeniser.h"
 
 #include <list>
+#include <map>
+#include <algorithm>
 
 #include "string/trim.h"
 #include "string/predicate.h"
@@ -435,20 +438,20 @@ public:
 class SingleCodeFileTokeniser :
 	public DefTokeniser
 {
+private:
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
 
     // Internal Boost tokenizer and its iterator
-    typedef boost::tokenizer<CodeTokeniserFunc,
-                             CharStreamIterator,
-                             std::string> CharTokeniser;
+    typedef string::Tokeniser<CodeTokeniserFunc, CharStreamIterator> CharTokeniser;
     CharTokeniser _tok;
-    CharTokeniser::iterator _tokIter;
+    CharTokeniser::Iterator _tokIter;
 
 private:
 
 	// Helper function to set noskipws on the input stream.
-	static std::istream& setNoskipws(std::istream& is) {
+	static std::istream& setNoskipws(std::istream& is)
+	{
 		is >> std::noskipws;
 		return is;
 	}
@@ -476,7 +479,7 @@ public:
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
            CodeTokeniserFunc(delims, keptDelims)),
-      _tokIter(_tok.begin())
+      _tokIter(_tok.getIterator())
     { }
 
     /**
@@ -485,9 +488,9 @@ public:
      * @returns
      * true if there are further tokens, false otherwise
      */
-    bool hasMoreTokens() const
+    bool hasMoreTokens() const override
 	{
-        return _tokIter != _tok.end();
+		return !_tokIter.exhausted();
     }
 
     /**
@@ -501,23 +504,24 @@ public:
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
-    std::string nextToken() {
-        if (hasMoreTokens())
-            return *(_tokIter++);
-        else
-            throw ParseException("DefTokeniser: no more tokens");
+    std::string nextToken() override
+	{
+		if (hasMoreTokens())
+		{
+			return *(_tokIter++);
+		}
+        
+		throw ParseException("DefTokeniser: no more tokens");
     }
 
-	std::string peek() const
+	std::string peek() const override
 	{
 		if (hasMoreTokens())
 		{
             return *_tokIter;
 		}
-        else
-		{
-			throw ParseException("DefTokeniser: no more tokens");
-		}
+        
+		throw ParseException("DefTokeniser: no more tokens");
 	}
 };
 

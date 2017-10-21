@@ -1,5 +1,4 @@
-#ifndef PARSEEXCEPTION_H_
-#define PARSEEXCEPTION_H_
+#pragma once
 
 #include <stdexcept>
 #include <string>
@@ -20,5 +19,3 @@ public:
 };
 
 }
-
-#endif /*PARSEEXCEPTION_H_*/

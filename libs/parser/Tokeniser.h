@@ -1,11 +1,11 @@
-#ifndef TOKENISER_H_
-#define TOKENISER_H_
+#pragma once
 
 #include <string>
-#include <boost/tokenizer.hpp>
+#include "string/tokeniser.h"
 #include "ParseException.h"
 
-namespace parser {
+namespace parser 
+{
 
 /**
  * greebo: Abstract type of a StringTokeniser, which splits a given
@@ -56,20 +56,21 @@ public:
     virtual void skipTokens(unsigned int n) = 0;
 };
 
-/** Base class of a tokeniser wrapping around a boost::tokeniser
+/** Base class of a tokeniser wrapping around a string::tokeniser
  *
  *  Standard delimiters are initialised to whitespace: " \t\n\v\r"
  */
 class BasicStringTokeniser :
 	public StringTokeniser
 {
-    // Internal Boost tokenizer and its iterator
-    typedef boost::char_separator<char> CharSeparator;
-    typedef boost::tokenizer<CharSeparator> CharTokeniser;
+private:
+    // Internal tokenizer helper
+    typedef string::CharTokeniserFunc CharSeparator;
+    typedef string::Tokeniser<CharSeparator> CharTokeniser;
 
-    CharSeparator _separator;
+	CharSeparator _separator;
     CharTokeniser _tok;
-    CharTokeniser::iterator _tokIter;
+    CharTokeniser::Iterator _tokIter;
 
 public:
     /** Construct a Tokeniser with the given input string, and optionally
@@ -88,7 +89,7 @@ public:
 						 const char* delimiters = " \t\n\v\r") :
     	_separator(delimiters),
 		_tok(str, _separator),
-		_tokIter(_tok.begin())
+		_tokIter(_tok.getIterator())
     {}
 
     /** Test if this StringTokeniser has more tokens to return.
@@ -96,8 +97,9 @@ public:
      * @returns
      * true if there are further tokens, false otherwise
      */
-    bool hasMoreTokens() {
-        return _tokIter != _tok.end();
+    bool hasMoreTokens() override
+	{
+		return !_tokIter.exhausted();
     }
 
     /** Return the next token in the sequence. This function consumes
@@ -110,11 +112,14 @@ public:
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
-    std::string nextToken() {
-        if (hasMoreTokens())
-            return *(_tokIter++);
-        else
-            throw ParseException("Tokeniser: no more tokens");
+    std::string nextToken() override
+	{
+		if (hasMoreTokens())
+		{
+			return *(_tokIter++);
+		}
+
+        throw ParseException("Tokeniser: no more tokens");
     }
 
     /** Assert that the next token in the sequence must be equal to the provided
@@ -123,11 +128,12 @@ public:
      * @param val
      * The expected value of the token.
      */
-	void assertNextToken(const std::string& val) {
+	void assertNextToken(const std::string& val) override
+	{
         const std::string tok = nextToken();
-        if (tok != val)
-            throw ParseException("Tokeniser: Assertion failed: Required \""
-            					 + val + "\", found \"" + tok + "\"");
+
+        if (tok != val) throw ParseException("Tokeniser: Assertion failed: Required \"" + 
+			val + "\", found \"" + tok + "\"");
     }
 
     /** Skip the next n tokens. This method provides a convenient way to dispose
@@ -136,18 +142,18 @@ public:
      * @param n
      * The number of tokens to consume.
      */
-    void skipTokens(unsigned int n) {
-        for (unsigned int i = 0; i < n; i++) {
-            if (hasMoreTokens()) {
+    void skipTokens(unsigned int n) override
+	{
+        for (unsigned int i = 0; i < n; i++)
+		{
+            if (hasMoreTokens())
+			{
                 _tokIter++;
             }
-            else {
-                throw ParseException("Tokeniser: no more tokens");
-            }
+            
+			throw ParseException("Tokeniser: no more tokens");
         }
     }
 }; // class BasicStringTokeniser
 
 } // namespace parser
-
-#endif /* TOKENISER_H_ */

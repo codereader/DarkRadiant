@@ -1,21 +1,22 @@
-#ifndef DEFTOKENISER_H_
-#define DEFTOKENISER_H_
+#pragma once
 
 #include "ParseException.h"
 
+#include <iterator>
 #include <iostream>
 #include <ios>
 #include <string>
-#include <boost/tokenizer.hpp>
+#include "string/tokeniser.h"
 
-namespace parser {
+namespace parser
+{
 
-/* Model of boost::TokenizerFunction which splits tokens on whitespace with additional
+/* TokenizerFunction which splits tokens on whitespace with additional
  * protection of quoted content.
  */
 
-class DefTokeniserFunc {
-
+class DefTokeniserFunc 
+{
     // Enumeration of states
     enum {
         SEARCHING,        // haven't found anything yet
@@ -70,19 +71,19 @@ public:
      * a token is found, set tok to the token, set next to position to start
      * parsing on the next call, and return true.
      */
-    template<typename InputIterator, typename Token>
-    bool operator() (InputIterator& next, InputIterator end, Token& tok) {
-
+    template<typename InputIterator>
+    bool operator() (InputIterator& next, const InputIterator& end, std::string& tok)
+	{
         // Initialise state, no persistence between calls
         _state = SEARCHING;
 
         // Clear out the token, no guarantee that it is empty
         tok = "";
 
-        while (next != end) {
-
-            switch (_state) {
-
+        while (next != end) 
+		{
+            switch (_state)
+			{
                 case SEARCHING:
 
                     // If we have a delimiter, just advance to the next character
@@ -344,12 +345,6 @@ public:
         else
             return false;
     }
-
-    // REQUIRED. Reset function to clear internal state
-    void reset() {
-        _state = SEARCHING;
-    }
-
 };
 
 const char* const WHITESPACE = " \t\n\v\r";
@@ -400,7 +395,8 @@ public:
      * @param val
      * The expected value of the token.
      */
-    virtual void assertNextToken(const std::string& val) {
+    virtual void assertNextToken(const std::string& val)
+	{
         const std::string tok = nextToken();
         if (tok != val)
             throw ParseException("DefTokeniser: Assertion failed: Required \""
@@ -414,8 +410,10 @@ public:
      * @param n
      * The number of tokens to consume.
      */
-    virtual void skipTokens(unsigned int n) {
-        for (unsigned int i = 0; i < n; i++) {
+    virtual void skipTokens(unsigned int n) 
+	{
+        for (unsigned int i = 0; i < n; i++) 
+		{
         	nextToken();
         }
     }
@@ -437,13 +435,13 @@ public:
  * C++ style comments.
  */
 template<typename ContainerT>
-class BasicDefTokeniser
-: public DefTokeniser
+class BasicDefTokeniser : 
+	public DefTokeniser
 {
-    // Internal Boost tokenizer and its iterator
-    typedef boost::tokenizer<DefTokeniserFunc> CharTokeniser;
+    // Internal tokenizer and its iterator
+    typedef string::Tokeniser<DefTokeniserFunc> CharTokeniser;
     CharTokeniser _tok;
-    CharTokeniser::iterator _tokIter;
+    CharTokeniser::Iterator _tokIter;
 
 public:
 
@@ -465,7 +463,7 @@ public:
                       const char* delims = WHITESPACE,
                       const char* keptDelims = "{}()")
     : _tok(str, DefTokeniserFunc(delims, keptDelims)),
-      _tokIter(_tok.begin())
+      _tokIter(_tok.getIterator())
     { }
 
     /** Test if this StringTokeniser has more tokens to return.
@@ -473,8 +471,9 @@ public:
      * @returns
      * true if there are further tokens, false otherwise
      */
-    bool hasMoreTokens() const {
-        return _tokIter != _tok.end();
+    bool hasMoreTokens() const override
+	{
+        return !_tokIter.exhausted();
     }
 
     /** Return the next token in the sequence. This function consumes
@@ -487,11 +486,14 @@ public:
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
-    std::string nextToken() {
-        if (hasMoreTokens())
-            return *(_tokIter++);
-        else
-            throw ParseException("DefTokeniser: no more tokens");
+    std::string nextToken() override
+	{
+		if (hasMoreTokens())
+		{
+			return *(_tokIter++);
+		}
+
+        throw ParseException("DefTokeniser: no more tokens");
     }
 
 	/**
@@ -499,16 +501,14 @@ public:
 	 * iterator. Use this if you want to take a look at what is coming
 	 * next without actually changing the tokeniser's state.
 	 */
-	std::string peek() const
+	std::string peek() const override
 	{
 		if (hasMoreTokens())
 		{
             return *_tokIter;
 		}
-        else
-		{
-			throw ParseException("DefTokeniser: no more tokens");
-		}
+        
+		throw ParseException("DefTokeniser: no more tokens");
 	}
 };
 
@@ -519,23 +519,21 @@ public:
  * for it.
  */
 template<>
-class BasicDefTokeniser<std::istream>
-: public DefTokeniser
+class BasicDefTokeniser<std::istream> : 
+	public DefTokeniser
 {
+private:
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
 
-    // Internal Boost tokenizer and its iterator
-    typedef boost::tokenizer<DefTokeniserFunc,
-                             CharStreamIterator,
-                             std::string> CharTokeniser;
+    // Internal tokenizer and its iterator
+    typedef string::Tokeniser<DefTokeniserFunc, CharStreamIterator> CharTokeniser;
     CharTokeniser _tok;
-    CharTokeniser::iterator _tokIter;
-
-private:
+    CharTokeniser::Iterator _tokIter;
 
 	// Helper function to set noskipws on the input stream.
-	static std::istream& setNoskipws(std::istream& is) {
+	static std::istream& setNoskipws(std::istream& is)
+	{
 		is >> std::noskipws;
 		return is;
 	}
@@ -563,7 +561,7 @@ public:
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
            DefTokeniserFunc(delims, keptDelims)),
-      _tokIter(_tok.begin())
+      _tokIter(_tok.getIterator())
     { }
 
     /**
@@ -572,8 +570,9 @@ public:
      * @returns
      * true if there are further tokens, false otherwise
      */
-    bool hasMoreTokens() const {
-        return _tokIter != _tok.end();
+    bool hasMoreTokens() const override
+	{
+        return !_tokIter.exhausted();
     }
 
     /**
@@ -587,11 +586,14 @@ public:
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
-    std::string nextToken() {
-        if (hasMoreTokens())
-            return *(_tokIter++);
-        else
-            throw ParseException("DefTokeniser: no more tokens");
+    std::string nextToken() override
+	{
+		if (hasMoreTokens())
+		{
+			return *(_tokIter++);
+		}
+        
+		throw ParseException("DefTokeniser: no more tokens");
     }
 
 	/**
@@ -599,20 +601,15 @@ public:
 	 * iterator. Use this if you want to take a look at what is coming
 	 * next without actually changing the tokeniser's state.
 	 */
-	std::string peek() const
+	std::string peek() const override
 	{
 		if (hasMoreTokens())
 		{
             return *_tokIter;
 		}
-        else
-		{
-			throw ParseException("DefTokeniser: no more tokens");
-		}
+        
+		throw ParseException("DefTokeniser: no more tokens");
 	}
 };
 
-
 } // namespace parser
-
-#endif /*DEFTOKENISER_H_*/
