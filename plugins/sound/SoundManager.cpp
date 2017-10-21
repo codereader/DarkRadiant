@@ -5,6 +5,7 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
+#include <algorithm>
 #include "itextstream.h"
 
 namespace sound

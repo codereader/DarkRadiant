@@ -16,7 +16,7 @@ inline std::string join(const ContainerType& parts, const std::string& separator
 
 	if (parts.empty()) return result;
 
-	ContainerType::const_iterator part = parts.begin();
+	typename ContainerType::const_iterator part = parts.begin();
 	result.append(*part++);
 
 	while (part != parts.end())

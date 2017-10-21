@@ -36,8 +36,9 @@ inline void split(ContainerType& tokens, const std::string& subject, const std::
 		if (pos != lastPos || !trimEmpty)
 		{
 			// Copy the range [lastPos..pos] from the subject and insert it into our token container
-			output = ContainerType::value_type(
-				subject.data() + lastPos, static_cast<ContainerType::size_type>(pos - lastPos));
+			output = typename ContainerType::value_type(
+				subject.data() + lastPos, 
+				static_cast<typename ContainerType::size_type>(pos - lastPos));
 		}
 
 		// Advance the cursor by one to skip the found delimiter

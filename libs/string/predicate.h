@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstring>
 
 namespace string
 {
@@ -192,7 +193,7 @@ inline bool ends_with(const std::string& input, const char* test, Comparator com
 	if (test == nullptr) return false;
 
 	std::string::const_reverse_iterator inputEnd = input.rend();
-	const char* testIt = test + strlen(test) - 1;
+	const char* testIt = test + std::strlen(test) - 1;
 
 	for (std::string::const_reverse_iterator inpIt = input.rbegin();
 		inpIt != inputEnd && testIt >= test;

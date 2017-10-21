@@ -82,6 +82,20 @@ inline long convert<long, std::string>(const std::string& str, long defaultVal)
 	}
 }
 
+// Template specialisation to convert std::string => long long
+template<>
+inline long long convert<long long, std::string>(const std::string& str, long long defaultVal)
+{
+	try
+	{
+		return std::stoll(str);
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
+}
+
 // Template specialisation to convert std::string => unsigned long
 template<>
 inline unsigned long convert<unsigned long, std::string>(const std::string& str, unsigned long defaultVal)
@@ -96,11 +110,18 @@ inline unsigned long convert<unsigned long, std::string>(const std::string& str,
 	}
 }
 
-// Template specialisation to convert std::string => std::size_t
+// Template specialisation to convert std::string => unsigned long long
 template<>
-inline std::size_t convert<std::size_t, std::string>(const std::string& str, std::size_t defaultVal)
+inline unsigned long long convert<unsigned long long, std::string>(const std::string& str, unsigned long long defaultVal)
 {
-	return convert<unsigned long>(str, static_cast<unsigned long>(defaultVal));
+	try
+	{
+		return std::stoull(str);
+	}
+	catch (const std::invalid_argument&)
+	{
+		return defaultVal;
+	}
 }
 
 // Template specialisation to convert std::string => bool

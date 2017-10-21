@@ -123,7 +123,7 @@ void XMLFilter::updateEventName() {
 	_eventName = _name;
 
 	// Strip all spaces from the string
-	_eventName.erase(std::remove(_eventName.begin(), _eventName.end(), ' '));
+	_eventName.erase(std::remove(_eventName.begin(), _eventName.end(), ' '), _eventName.end());
 
 	_eventName = "Filter" + _eventName;
 }

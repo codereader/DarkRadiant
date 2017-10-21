@@ -1,5 +1,6 @@
 #include "ComplexName.h"
 
+#include <climits>
 #include "string/trim.h"
 #include "string/convert.h"
 
