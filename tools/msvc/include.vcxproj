@@ -44,28 +44,24 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
-    <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
-    <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release x64.props" />
-    <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
-    <Import Project="properties\Boost.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
@@ -82,16 +78,16 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -199,7 +195,6 @@
     <ClInclude Include="..\..\include\mapfile.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
     <ClInclude Include="..\..\include\ModResource.h" />
-    <ClInclude Include="..\..\include\precompiled_boost.h" />
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />
     <ClInclude Include="..\..\include\precompiled_main.h" />
     <ClInclude Include="..\..\include\precompiled_math.h" />

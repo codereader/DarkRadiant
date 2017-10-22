@@ -1,7 +1,6 @@
 // Precompiled header used by the Entity module
 #pragma once
 
-#define DR_PRECOMPILED_BOOST
 #define DR_PRECOMPILED_INTERFACES
 #define DR_PRECOMPILED_MATH
 

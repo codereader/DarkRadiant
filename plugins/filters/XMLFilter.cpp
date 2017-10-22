@@ -35,7 +35,7 @@ bool XMLFilter::isVisible(const FilterRule::Type type, const std::string& name) 
 			continue;
 		}
 
-		// If we have a rule for this item, use boost's regex to match the query name
+		// If we have a rule for this item, use a regex to match the query name
 		// against the "match" parameter
 		std::regex ex(ruleIter->match);
 

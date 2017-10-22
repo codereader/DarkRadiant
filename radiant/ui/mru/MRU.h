@@ -9,8 +9,8 @@
 /* greebo: MRU stands for "Most Recently Used" (maps) and this is what
  * this class is handling.
  *
- * To keep track of the recent filenames the class is using a boost::multi_index
- * container with n elements. The subclass MRUList is providing the interface
+ * To keep track of the recent filenames the class is using a container 
+ * with n elements. The subclass MRUList is providing the interface
  * and iterators for inserting and manipulating the list.
  */
 namespace ui

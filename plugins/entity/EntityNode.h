@@ -145,7 +145,7 @@ protected:
 	/**
 	 * greebo: construct() does the necessary setup, connects keyobservers, etc.
 	 * This is called by the static constructors - it seems awkward but is necessary
-	 * since the boost::shared_from_this() is not working when the object is not fully
+	 * since the std::shared_from_this() is not working when the object is not fully
 	 * constructed yet.
 	 * Subclasses must make sure to have this base method called if they override this.
 	 */

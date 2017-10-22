@@ -7,7 +7,6 @@
 #include <pybind11/stl_bind.h>
 #include <pybind11/attr.h>
 
-#define DR_PRECOMPILED_BOOST
 #define DR_PRECOMPILED_INTERFACES
 #define DR_PRECOMPILED_MATH
 

@@ -74,7 +74,7 @@ public:
 		_keptDelims(keptDelims)
     {}
 
-    /* REQUIRED. Operator() is called by the boost::tokenizer. This function
+    /* REQUIRED. Operator() is called by the Tokeniser. This function
      * must search for a token between the two iterators next and end, and if
      * a token is found, set tok to the token, set next to position to start
      * parsing on the next call, and return true.
@@ -442,7 +442,7 @@ private:
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
 
-    // Internal Boost tokenizer and its iterator
+    // Internal tokeniser and its iterator
     typedef string::Tokeniser<CodeTokeniserFunc, CharStreamIterator> CharTokeniser;
     CharTokeniser _tok;
     CharTokeniser::Iterator _tokIter;

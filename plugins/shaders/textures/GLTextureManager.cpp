@@ -22,7 +22,7 @@ void GLTextureManager::checkBindings() {
          i != _textures.end();
          /* in-loop increment */)
     {
-        // If the boost::shared_ptr is unique (i.e. refcount==1), remove it
+        // If the std::shared_ptr is unique (i.e. refcount==1), remove it
         if (i->second.unique()) {
             // Be sure to increment the iterator with a postfix ++,
             // so that the iterator is incremented right before deletion

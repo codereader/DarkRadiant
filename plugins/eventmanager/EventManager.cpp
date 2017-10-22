@@ -265,7 +265,7 @@ IEventPtr EventManager::addToggle(const std::string& name, const ToggleCallback&
 
 void EventManager::setToggled(const std::string& name, const bool toggled)
 {
-	// Check could be placed here by boost::shared_ptr's dynamic_pointer_cast
+	// Check could be placed here by std::dynamic_pointer_cast
 	if (!findEvent(name)->setToggled(toggled))
 	{
 		rWarning() << "EventManager: Event " << name << " is not a Toggle." << std::endl;

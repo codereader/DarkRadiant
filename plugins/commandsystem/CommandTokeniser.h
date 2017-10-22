@@ -37,7 +37,7 @@ public:
 		_delims(delims)
     {}
 
-    /* REQUIRED. Operator() is called by the boost::tokenizer. This function
+    /* REQUIRED. Operator() is called by the tokeniser. This function
      * must search for a token between the two iterators next and end, and if
      * a token is found, set tok to the token, set next to position to start
      * parsing on the next call, and return true.

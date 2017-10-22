@@ -24,7 +24,7 @@ namespace module
 template <class ModuleType>
 class StaticModule
 {
-	// Define a boost::shared_ptr for the given class type
+	// Define a std::shared_ptr for the given class type
 	typedef std::shared_ptr<ModuleType> ModuleTypePtr;
 	std::string _moduleName;
 

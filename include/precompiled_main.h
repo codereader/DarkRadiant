@@ -5,11 +5,6 @@
  */
 #pragma once
 
-#ifdef DR_PRECOMPILED_BOOST
-	// Include common boost headers that don't have link dependencies
-	#include "precompiled_boost.h"
-#endif
-
 #ifdef DR_PRECOMPILED_WXWIDGETS
 	#include <wx/wx.h>
 	#include <wx/artprov.h>
@@ -24,3 +19,6 @@
 	// Add DarkRadiant interfaces
 	#include "precompiled_interfaces.h"
 #endif
+
+#include <memory>
+#include <functional>

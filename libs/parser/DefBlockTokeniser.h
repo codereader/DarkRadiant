@@ -61,7 +61,7 @@ public:
      virtual Block nextBlock() = 0;
 };
 
-/* Model of boost::TokenizerFunction which splits tokens on whitespace with additional
+/* Model of a tokeniser function which splits tokens on whitespace with additional
  * protection of quoted content.
  */
 
@@ -319,7 +319,7 @@ class BasicDefBlockTokeniser :
 	public BlockTokeniser
 {
 private:
-    // Internal Boost tokenizer and its iterator
+    // Internal tokeniser and its iterator
 	typedef string::Tokeniser<DefBlockTokeniserFunc,
 							  std::string::const_iterator,
 							  BlockTokeniser::Block> Tokeniser;
@@ -388,7 +388,7 @@ private:
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
 
-    // Internal Boost tokenizer and its iterator
+    // Internal tokeniser and its iterator
     typedef string::Tokeniser<DefBlockTokeniserFunc, 
 							  CharStreamIterator,
 							  BlockTokeniser::Block> Tokeniser;

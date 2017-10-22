@@ -194,7 +194,7 @@ void ZipArchive::readZipRecord()
 	// I'm not entirely happy about this brute-force casting, but I wanted to
 	// avoid reading the filename into a temporary char[] array
 	// only to let its contents end up being copied by the std::string anyway.
-	// Alternative: use a static boost::shared_array here, resized to fit?
+	// Alternative: use a static std::shared_array here, resized to fit?
 
 	std::string path(namelength, '\0');
 

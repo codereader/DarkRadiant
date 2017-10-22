@@ -75,19 +75,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IntDir>$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost\include;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IntDir>$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost\include;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IntDir>$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost\include;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)\boost\include;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
