@@ -34,7 +34,7 @@ placed into the `install/` folder.
 
 ## Prerequisites
 
-To compile DarkRadiant, a number of libraries (with development headers) and a standards-compliant C++11 compiler are required. On an Ubuntu system, the requirements may include any or all of the following packages:
+To compile DarkRadiant, a number of libraries (with development headers) and a standards-compliant C++11 compiler (GCC 5.3+) are required. On an Ubuntu system, the requirements may include any or all of the following packages:
 
 * zlib1g-dev 
 * libjpeg62-dev 
@@ -44,8 +44,6 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libpng-dev 
 * libftgl-dev 
 * libglew-dev 
-* libboost-dev 
-* libboost-test-dev 
 * libalut-dev 
 * libvorbis-dev
 * pybind11-dev (Ubuntu 17 and later)
