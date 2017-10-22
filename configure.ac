@@ -178,18 +178,16 @@ else
     fi
 fi
 
-# Boost
-BOOST_REQUIRE([1.46.1])
-
-# Check some boost headers we use
-BOOST_TOKENIZER
-
 FILESYSTEM_LIBS=''
 
 # Require Boost Filesystem if the C++17-style header is not present
 if test "$use_boost_filesystem" = "yes"
 then
-    AC_MSG_NOTICE([Will check for boost.filesystem library since std::filesystem is not available])
+    AC_MSG_NOTICE([Will check for boost libraries since std::filesystem is not available])
+
+    # Boost
+    BOOST_REQUIRE([1.46.1])
+
     BOOST_FILESYSTEM
     BOOST_SYSTEM
     FILESYSTEM_LIBS="$(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)"
@@ -200,9 +198,7 @@ fi
 
 AC_SUBST([FILESYSTEM_LIBS])
 
-BOOST_TEST
-
-# Boost.Python if required
+# PyBind11 if required
 if test "$python_scripting" = 'yes'
 then
     AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
@@ -276,10 +272,6 @@ AC_CHECK_LIB([dl], [main],
              [DL_LIBS='-ldl'],
              [AC_MSG_ERROR([DL library not found])])
 AC_SUBST([DL_LIBS])
-
-# Dependent Boost headers
-AC_CHECK_HEADER([boost/serialization/access.hpp], [],
-                [AC_MSG_ERROR([Boost.Serialization headers not found])])
 
 # OpenAL and vorbis
 AC_CHECK_HEADER([AL/alut.h],
