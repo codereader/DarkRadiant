@@ -81,7 +81,8 @@ public:
 			return;
 		}
 
-		SetToolTip(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
+		std::string desc = _propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription();
+		_spinCtrl->SetToolTip(desc);
 
 		if (_updateLock) return;
 

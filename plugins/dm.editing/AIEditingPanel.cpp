@@ -84,6 +84,7 @@ void AIEditingPanel::constructWidgets()
 	_checkboxes["gas_immune"] = new SpawnargLinkedCheckbox(_mainPanel, _("AI is immune to Gas"), "gas_immune");
 
 	_spinButtons["team"] = new SpawnargLinkedSpinButton(_mainPanel, _("Team"), "team", 0, 99, 1, 0);
+	_spinButtons["rank"] = new SpawnargLinkedSpinButton(_mainPanel, _("Rank"), "rank", 0, 99, 1, 0);
 	_spinButtons["sit_down_angle"] = new SpawnargLinkedSpinButton(_mainPanel, _("Sitting Angle"), "sit_down_angle", -179, 180, 1, 0);
 	_spinButtons["drunk_acuity_factor"] = new SpawnargLinkedSpinButton(_mainPanel, _("Drunk Acuity Factor"), "drunk_acuity_factor", 0, 10, 0.1, 2);
 	_spinButtons["acuity_vis"] = new SpawnargLinkedSpinButton(_mainPanel, _("Visual Acuity"), "acuity_vis", 0, 100, 1, 0);
@@ -115,12 +116,16 @@ void AIEditingPanel::constructWidgets()
 		// Behaviour widgets
 		vbox->Add(createSectionLabel(_("Behaviour")), 0, wxTOP | wxBOTTOM, 6);
 		
-		wxGridSizer* table = new wxGridSizer(9, 2, 4, 12);
+		wxGridSizer* table = new wxGridSizer(10, 2, 4, 12);
 		vbox->Add(table, 0, wxLEFT, 18);
 
-		// Team
-		table->Add(createSpinButtonHbox(_spinButtons["team"]), 0, wxALIGN_CENTER_VERTICAL);
+		// Team & Rank
+		table->Add(createSpinButtonHbox(_spinButtons["team"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
+		table->Add(createSpinButtonHbox(_spinButtons["rank"]), 0, wxALIGN_CENTER_VERTICAL | wxEXPAND);
+
+		// Civilian flag
 		table->Add(_checkboxes["is_civilian"], 0, wxALIGN_CENTER_VERTICAL);
+		table->Add(new wxPanel(_mainPanel, wxID_ANY), 0); // empty dummy
 
 		// Sitting
 		table->Add(_checkboxes["sitting"], 0, wxALIGN_CENTER_VERTICAL);
