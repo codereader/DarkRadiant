@@ -32,3 +32,4 @@ Exceptions to the above
 PicoModel Library - published under the modified Berkeley Software Distribution (BSD) license
 DDS Library - published under the modified Berkeley Software Distribution (BSD) license
 pybind11 Library - see the LICENSE file in the libs/pybind folder
+fmtlib Library - see the LICENSE file in the libs/libfmt folder (BSD 2-clause "Simplified" License)
