@@ -919,6 +919,9 @@
     <ClCompile Include="..\..\radiant\map\algorithm\Models.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\RadiantApp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1865,6 +1868,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\Models.h">
       <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\RadiantApp.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

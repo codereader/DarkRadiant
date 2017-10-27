@@ -54,7 +54,6 @@
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
     <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
   </ImportGroup>
@@ -63,7 +62,6 @@
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
   </ImportGroup>
@@ -72,7 +70,6 @@
     <Import Project="properties\DarkRadiant Base Release x64.props" />
     <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
   </ImportGroup>
@@ -81,7 +78,6 @@
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
     <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
   </ImportGroup>
@@ -368,6 +364,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\RadiantApp.cpp" />
     <ClCompile Include="..\..\radiant\RadiantModule.cpp" />
     <ClCompile Include="..\..\radiant\RadiantThreadManager.cpp" />
     <ClCompile Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.cpp" />
@@ -609,6 +606,7 @@
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
+    <ClInclude Include="..\..\radiant\RadiantApp.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\RadiantThreadManager.h" />
     <ClInclude Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.h" />
