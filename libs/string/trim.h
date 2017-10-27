@@ -11,7 +11,7 @@ namespace string
 * modifying the given string in-place.
 */
 template<typename Predicate>
-inline void trim_left_if(std::string& subject, Predicate predicate)
+static inline void trim_left_if(std::string& subject, Predicate predicate)
 {
 	// Erase everything from the beginning up to the first character 
 	// that is not matching the predicate (e.g. is not a space)
@@ -24,7 +24,7 @@ inline void trim_left_if(std::string& subject, Predicate predicate)
 * modifying the given string in-place.
 */
 template<typename Predicate>
-inline void trim_right_if(std::string& subject, Predicate predicate)
+static inline void trim_right_if(std::string& subject, Predicate predicate)
 {
 	// Erase everything from the end up to the nearest-to-last character 
 	// that is not matching the predicate (e.g. is not a space)
@@ -38,7 +38,7 @@ inline void trim_right_if(std::string& subject, Predicate predicate)
 * matching the given predicate, returning a new string containing of the result.
 */
 template<typename Predicate>
-inline std::string trim_copy_if(std::string subject, Predicate predicate)
+static inline std::string trim_copy_if(std::string subject, Predicate predicate)
 {
 	trim_left_if(subject, predicate);
 	trim_right_if(subject, predicate);
