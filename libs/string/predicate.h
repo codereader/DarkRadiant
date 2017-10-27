@@ -203,9 +203,14 @@ inline bool ends_with(const std::string& input, const char* test, Comparator com
 		{
 			return false;
 		}
+
+		if (testIt == test)
+		{
+			return true;
+		}
 	}
 
-	return testIt == test - 1;
+	return false;
 }
 
 /**
