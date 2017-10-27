@@ -201,6 +201,8 @@ AC_SUBST([FILESYSTEM_LIBS])
 # PyBind11 if required
 if test "$python_scripting" = 'yes'
 then
+    AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [false]) # default to "not found"
+    
     AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
     if test ! -z "$PYTHON_CONFIG"
     then
