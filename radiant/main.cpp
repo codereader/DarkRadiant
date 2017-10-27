@@ -134,6 +134,23 @@ public:
         parser.AddParam("fs_game_base=<gamebase>", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL);
     }
 
+	virtual bool OnExceptionInMainLoop() override
+	{
+		try
+		{
+			// This method is called by the main loop controlling code, 
+			// from within the catch(...) block. Let's re-throw the current 
+			// exception and catch it to print the error message at the very least.
+			throw;
+		}
+		catch (std::exception& ex)
+		{
+			rError() << "Unhandled Exception: " << ex.what() << std::endl;
+		}
+
+		return wxApp::OnExceptionInMainLoop();
+	}
+
 private:
 	void onStartupEvent(wxCommandEvent& ev)
 	{
