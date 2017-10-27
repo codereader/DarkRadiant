@@ -37,33 +37,42 @@ int GlobalKeyEventFilter::FilterEvent(wxEvent& event)
     {
         wxKeyEvent& keyEvent = static_cast<wxKeyEvent&>(event);
         
-        if (shouldConsiderEvent(keyEvent))
-        {
-            // Attempt to find an accelerator
-            bool acceleratorFound = handleAccelerator(keyEvent);
+		switch (checkEvent(keyEvent))
+		{
+		case EventShouldBeIgnored:
+			return Event_Skip;
 
-            // Update the status bar in any case
-            GlobalMouseToolManager().updateStatusbar(wxutil::Modifier::GetStateForKeyEvent(keyEvent));
+		case EventAlreadyProcessed:
+			return Event_Processed;
 
-            return acceleratorFound ? Event_Processed : Event_Skip;
-        }
+		case EventShouldBeProcessed:
+			{
+				// Attempt to find an accelerator
+				bool acceleratorFound = handleAccelerator(keyEvent);
+
+				// Update the status bar in any case
+				GlobalMouseToolManager().updateStatusbar(wxutil::Modifier::GetStateForKeyEvent(keyEvent));
+
+				return acceleratorFound ? Event_Processed : Event_Skip;
+			}
+		};
     }
 
-    // Continue processing the event normally as well.
+    // Continue processing the event normally for non-key events.
     return Event_Skip;
 }
 
-bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
+GlobalKeyEventFilter::EventCheckResult GlobalKeyEventFilter::checkEvent(wxKeyEvent& keyEvent)
 {
     // Check if the event object can handle the event
     wxWindow* window = dynamic_cast<wxWindow*>(keyEvent.GetEventObject());
 
-    if (!window) return false;
+    if (!window) return EventShouldBeIgnored;
 
     if (window->GetEventHandler()->ProcessEvent(keyEvent))
     {
         // The control handled this event, so don't check for accelerators
-        return false;
+        return EventAlreadyProcessed;
     }
 
     // Don't catch key events when a blocking dialog window is in focus
@@ -71,7 +80,7 @@ bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
 
     if (dynamic_cast<wxutil::DialogBase*>(topLevelParent))
     {
-        return false;
+        return EventShouldBeIgnored;
     }
 
     wxObject* eventObject = keyEvent.GetEventObject();
@@ -83,7 +92,7 @@ bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
     {
         // For tool windows we let the ESC key propagate, since it's used to
         // de-select stuff.
-        return (keyEvent.GetKeyCode() == WXK_ESCAPE);
+        return keyEvent.GetKeyCode() == WXK_ESCAPE ? EventShouldBeProcessed : EventShouldBeIgnored;
     }
 
     // Special handling for our treeviews with type ahead search
@@ -104,16 +113,16 @@ bool GlobalKeyEventFilter::shouldConsiderEvent(wxKeyEvent& keyEvent)
 
             if (treeView && treeView->HasActiveSearchPopup())
             {
-                return false;
+                return EventShouldBeIgnored;
             }
         }
         else // non-escape key, no modifiers, don't process it
         {
-            return false;
+            return EventShouldBeIgnored;
         }
     }
 
-    return true;
+    return EventShouldBeProcessed;
 }
 
 bool GlobalKeyEventFilter::handleAccelerator(wxKeyEvent& keyEvent)

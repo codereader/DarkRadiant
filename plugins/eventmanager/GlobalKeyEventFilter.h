@@ -28,8 +28,15 @@ public:
     virtual int FilterEvent(wxEvent& event);
 
 private:
-    // Returns true if this event applies for accelerator
-    bool shouldConsiderEvent(wxKeyEvent& keyEvent);
+	enum EventCheckResult
+	{
+		EventShouldBeIgnored,	// let the event slip through
+		EventAlreadyProcessed,	// event already handled by controls
+		EventShouldBeProcessed,	// search for accelerators
+	};
+
+    // Check if this event applies for accelerator
+	EventCheckResult checkEvent(wxKeyEvent& keyEvent);
 
     // Attempts to fire an accelerator for this event. Returns false if no accelerator matched.
     bool handleAccelerator(wxKeyEvent& keyEvent);
