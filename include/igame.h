@@ -89,6 +89,9 @@ public:
 	// Returns the list of ordered engine paths, which should
 	// be initialised by the Virtual Filesystem (in this exact order)
 	virtual const PathList& getVFSSearchPaths() const = 0;
+
+	typedef std::vector<IGamePtr> GameList;
+	virtual const GameList& getSortedGameList() = 0;
 };
 typedef std::shared_ptr<IGameManager> IGameManagerPtr;
 

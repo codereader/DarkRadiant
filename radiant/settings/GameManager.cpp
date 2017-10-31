@@ -94,13 +94,18 @@ IGamePtr Manager::currentGame()
 	return _games[_currentGameName];
 }
 
+const Manager::GameList& Manager::getSortedGameList()
+{
+	return _sortedGames;
+}
+
 void Manager::constructPreferences()
 {
 	IPreferencePage& page = GetPreferenceSystem().getPage(_("Game"));
 
 	ComboBoxValueList gameList;
 
-	for (const GamePtr& game : _sortedGames)
+	for (const IGamePtr& game : _sortedGames)
 	{
 		gameList.push_back(game->getKeyValue("name"));
 	}
@@ -146,7 +151,7 @@ void Manager::initialise(const std::string& appPath)
 			);
 		}
 
-		GlobalRegistry().set(RKEY_GAME_TYPE, _sortedGames.front()->getName());
+		GlobalRegistry().set(RKEY_GAME_TYPE, _sortedGames.front()->getKeyValue("name"));
 	}
 
 	// Load the value from the registry, there should be one selected at this point

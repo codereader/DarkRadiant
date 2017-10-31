@@ -1,13 +1,50 @@
 #include "GameSetupDialog.h"
 
+#include "imainframe.h"
+#include "i18n.h"
+#include "igame.h"
 #include "modulesystem/ModuleRegistry.h"
+
+#include <wx/sizer.h>
+#include <wx/choicebk.h>
+#include <wx/stattext.h>
 
 namespace ui
 {
 
 GameSetupDialog::GameSetupDialog(wxWindow* parent) :
-	DialogBase(_("Game Setup"), parent)
-{}
+	DialogBase(_("Game Setup"), parent),
+	_book(nullptr)
+{
+	SetSizer(new wxBoxSizer(wxVERTICAL));
+	SetMinClientSize(wxSize(640, -1));
+
+	// 12-pixel spacer
+	wxBoxSizer* mainVbox = new wxBoxSizer(wxVERTICAL);
+	GetSizer()->Add(mainVbox, 1, wxEXPAND | wxALL, 12);
+
+	_book = new wxChoicebook(this, wxID_ANY);
+	wxStaticText* label = new wxStaticText(this, wxID_ANY, _("Please select a Game Type:"));
+
+	mainVbox->Add(label);
+	mainVbox->Add(_book, 1, wxEXPAND);
+
+	mainVbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
+
+	initialiseControls();
+}
+
+void GameSetupDialog::initialiseControls()
+{
+	wxChoice* choice = _book->GetChoiceCtrl();
+
+	const game::IGameManager::GameList& games = GlobalGameManager().getSortedGameList();
+
+	for (const game::IGamePtr& game : games)
+	{
+		choice->AppendString(game->getKeyValue("name"));
+	}
+}
 
 void GameSetupDialog::Show(const cmd::ArgumentList& args)
 {

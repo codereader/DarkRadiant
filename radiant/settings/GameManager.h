@@ -20,15 +20,12 @@ public:
 	// The map containing the named Game objects
 	typedef std::map<std::string, GamePtr> GameMap;
 
-	// A map sorted by game index, for display order and priority
-	typedef std::vector<GamePtr> SortedGames;
-
 private:
 
    // Map of named games
 	GameMap _games;
 	// Map of indexed games
-	SortedGames _sortedGames;
+	GameList _sortedGames;
 
     // The name of the current game, e.g. "Doom 3"
 	std::string _currentGameName;
@@ -128,6 +125,9 @@ public:
 	/** greebo: Returns the current Game (shared_ptr).
 	 */
 	virtual IGamePtr currentGame() override;
+
+	// Get the list of available games, sorted by their index
+	const GameList& getSortedGameList() override;
 
 	/** greebo: Loads the game files and the saved settings.
 	 * 			If no saved game setting is found, the user
