@@ -7,6 +7,7 @@
 #include "ifilesystem.h"
 #include "settings/PreferenceSystem.h"
 #include "ui/prefdialog/PrefDialog.h"
+#include "ui/prefdialog/GameSetupDialog.h"
 
 #include "os/file.h"
 #include "os/dir.h"
@@ -332,7 +333,8 @@ void Manager::initEnginePath()
 	while (!settingsValid())
 	{
 		// Engine path doesn't exist, ask the user
-		ui::PrefDialog::ShowDialog(_("Game"));
+		ui::GameSetupDialog::Show(cmd::ArgumentList());
+		//ui::PrefDialog::ShowDialog(_("Game"));
 
 		// After the dialog, the settings are located in the registry.
 		// Construct the paths with the settings found there

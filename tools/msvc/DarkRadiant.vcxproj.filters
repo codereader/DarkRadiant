@@ -922,6 +922,9 @@
     <ClCompile Include="..\..\radiant\RadiantApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupDialog.cpp">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1871,6 +1874,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\RadiantApp.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupDialog.h">
+      <Filter>src\ui\prefdialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
