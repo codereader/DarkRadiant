@@ -34,6 +34,9 @@
     <ClCompile Include="..\..\plugins\dm.editing\AIEditingPanel.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.editing\MissionInfoEditDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadChooserDialog.h">
@@ -73,6 +76,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedSpinButton.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.editing\MissionInfoEditDialog.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

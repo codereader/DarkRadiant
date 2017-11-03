@@ -52,28 +52,24 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release x64.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
@@ -323,6 +319,7 @@
     <ClCompile Include="..\..\plugins\dm.editing\AIVocalSetPropertyEditor.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\FixupMap.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\FixupMapDialog.cpp" />
+    <ClCompile Include="..\..\plugins\dm.editing\MissionInfoEditDialog.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +332,7 @@
     <ClInclude Include="..\..\plugins\dm.editing\DeprecatedEclassCollector.h" />
     <ClInclude Include="..\..\plugins\dm.editing\FixupMap.h" />
     <ClInclude Include="..\..\plugins\dm.editing\FixupMapDialog.h" />
+    <ClInclude Include="..\..\plugins\dm.editing\MissionInfoEditDialog.h" />
     <ClInclude Include="..\..\plugins\dm.editing\ShaderReplacer.h" />
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedCheckbox.h" />
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedSpinButton.h" />

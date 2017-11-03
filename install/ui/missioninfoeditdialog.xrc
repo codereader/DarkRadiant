@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="MissionInfoEditDialogMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>560,-1</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="MissionInfoLabel">
+							<label>Mission Info</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxFlexGridSizer">
+							<rows>5</rows>
+							<cols>2</cols>
+							<vgap>0</vgap>
+							<hgap>12</hgap>
+							<growablecols>1</growablecols>
+							<growablerows></growablerows>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>5</border>
+								<object class="wxStaticText" name="m_staticText8">
+									<label>Title:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxTextCtrl" name="MissionInfoEditDialogTitleEntry">
+									<value></value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+								<border>0</border>
+								<object class="wxStaticText" name="m_staticText81">
+									<label>Author:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxTextCtrl" name="MissionInfoEditDialogAuthorEntry">
+									<value></value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxTOP</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="m_staticText9">
+									<label>Description:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxTextCtrl" name="MissionInfoEditDialogDescriptionEntry">
+									<style>wxTE_MULTILINE|wxTE_WORDWRAP</style>
+									<value></value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+								<border>0</border>
+								<object class="wxStaticText" name="m_staticText811">
+									<label>Version:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL</flag>
+								<border>6</border>
+								<object class="wxSpinCtrl" name="MissionInfoEditDialogVersionEntry">
+									<style>wxSP_ARROW_KEYS</style>
+									<size>60,-1</size>
+									<value>0</value>
+									<min>1</min>
+									<max>999</max>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>0</border>
+								<object class="wxStaticText" name="m_staticText82">
+									<label>Required TDM Version:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxEXPAND</flag>
+								<border>5</border>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>6</border>
+										<object class="wxTextCtrl" name="MissionInfoEditDialogReqTdmVersionEntry">
+											<value></value>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText83">
+											<label>(optional, e.g. &quot;2.03&quot;)</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_RIGHT|wxLEFT|wxTOP</flag>
+						<border>12</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxButton" name="MissionInfoEditDialogSaveButton">
+									<label>Save</label>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxButton" name="MissionInfoEditDialogCancelButton">
+									<label>Cancel</label>
+									<default>0</default>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
