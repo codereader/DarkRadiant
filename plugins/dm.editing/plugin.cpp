@@ -15,6 +15,7 @@
 #include "AIVocalSetPropertyEditor.h"
 #include "FixupMapDialog.h"
 #include "AIEditingPanel.h"
+#include "MissionInfoEditDialog.h"
 
 class EditingModule :
 	public RegisterableModule
@@ -64,6 +65,16 @@ public:
 			_("Fixup Map..."), // caption
 			"", // icon
 			"FixupMapDialog"
+		);
+
+		GlobalCommandSystem().addCommand("MissionInfoEditDialog", ui::MissionInfoEditDialog::ShowDialog);
+		GlobalEventManager().addCommand("MissionInfoEditDialog", "MissionInfoEditDialog");
+
+		GlobalUIManager().getMenuManager().add("main/map",
+			"MissionInfoEditDialog", ui::menuItem,
+			_("Edit Mission Info..."), // caption
+			"", // icon
+			"MissionInfoEditDialog"
 		);
 
 		GlobalRadiant().signal_radiantStarted().connect(

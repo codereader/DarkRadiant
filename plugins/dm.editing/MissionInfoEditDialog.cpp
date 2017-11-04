@@ -4,6 +4,7 @@
 #include <sigc++/functors/mem_fun.h>
 
 #include <wx/button.h>
+#include <wx/textctrl.h>
 
 namespace ui
 {
@@ -17,6 +18,27 @@ MissionInfoEditDialog::MissionInfoEditDialog(wxWindow* parent) :
 	DialogBase(_(WINDOW_TITLE), parent)
 {
 	populateWindow();
+
+	_darkmodTxt = map::DarkmodTxt::LoadForCurrentMod();
+	updateValuesFromDarkmodTxt();
+}
+
+void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
+{
+	if (!_darkmodTxt)
+	{
+		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->SetValue("");
+		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogAuthorEntry")->SetValue("");
+		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue("");
+		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue("");
+
+		return;
+	}
+
+	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->SetValue(_darkmodTxt->getTitle());
+	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogAuthorEntry")->SetValue(_darkmodTxt->getAuthor());
+	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue(_darkmodTxt->getDescription());
+	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue(_darkmodTxt->getReqTdmVersion());
 }
 
 void MissionInfoEditDialog::populateWindow()

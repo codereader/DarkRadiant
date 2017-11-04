@@ -37,6 +37,9 @@
     <ClCompile Include="..\..\plugins\dm.editing\MissionInfoEditDialog.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.editing\DarkmodTxt.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadChooserDialog.h">
@@ -79,6 +82,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\dm.editing\MissionInfoEditDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.editing\DarkmodTxt.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -317,6 +317,7 @@
     <ClCompile Include="..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\AIVocalSetPreview.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\AIVocalSetPropertyEditor.cpp" />
+    <ClCompile Include="..\..\plugins\dm.editing\DarkmodTxt.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\FixupMap.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\FixupMapDialog.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\MissionInfoEditDialog.cpp" />
@@ -329,6 +330,7 @@
     <ClInclude Include="..\..\plugins\dm.editing\AIVocalSetChooserDialog.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIVocalSetPreview.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIVocalSetPropertyEditor.h" />
+    <ClInclude Include="..\..\plugins\dm.editing\DarkmodTxt.h" />
     <ClInclude Include="..\..\plugins\dm.editing\DeprecatedEclassCollector.h" />
     <ClInclude Include="..\..\plugins\dm.editing\FixupMap.h" />
     <ClInclude Include="..\..\plugins\dm.editing\FixupMapDialog.h" />
