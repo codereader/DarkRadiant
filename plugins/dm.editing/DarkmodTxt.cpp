@@ -290,6 +290,12 @@ std::string DarkmodTxt::GetPathForCurrentMod()
 	{
 		rMessage() << "Mod path empty, falling back to mod base path..." << std::endl;
 		modPath = GlobalGameManager().getModBasePath();
+
+		if (modPath.empty())
+		{
+			rMessage() << "Mod base path empty as well, falling back to user engine path..." << std::endl;
+			modPath = GlobalGameManager().getUserEnginePath();
+		}
 	}
 
 	fs::path darkmodTxtPath = fs::path(modPath) / NAME();

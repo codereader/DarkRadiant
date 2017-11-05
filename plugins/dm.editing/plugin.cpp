@@ -72,8 +72,8 @@ public:
 
 		GlobalUIManager().getMenuManager().add("main/map",
 			"MissionInfoEditDialog", ui::menuItem,
-			_("Edit Mission Info..."), // caption
-			"", // icon
+			_("Edit Package Info (darkmod.txt)..."), // caption
+			"sr_icon_readable.png", // icon
 			"MissionInfoEditDialog"
 		);
 
