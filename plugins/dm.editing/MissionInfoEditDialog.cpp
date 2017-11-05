@@ -55,6 +55,7 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue("");
 		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->SetValue("");
 		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue("");
+		findNamedObject<wxStaticText>(this, "MissionInfoEditDialogOutputPath")->SetLabelText("-");
 
 		return;
 	}
@@ -64,6 +65,7 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue(_darkmodTxt->getDescription());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->SetValue(_darkmodTxt->getVersion());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue(_darkmodTxt->getReqTdmVersion());
+	findNamedObject<wxStaticText>(this, "MissionInfoEditDialogOutputPath")->SetLabelText(map::DarkmodTxt::GetPathForCurrentMod());
 
 	const map::DarkmodTxt::TitleList& titles = _darkmodTxt->getMissionTitles();
 
@@ -140,8 +142,26 @@ void MissionInfoEditDialog::populateWindow()
 
 void MissionInfoEditDialog::onSave(wxCommandEvent& ev)
 {
-	// Close the dialog
-	EndModal(wxID_OK);
+	try
+	{
+		// Load the values from the UI to the DarkmodTxt instance
+		_darkmodTxt->setTitle(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->GetValue().ToStdString());
+		_darkmodTxt->setAuthor(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogAuthorEntry")->GetValue().ToStdString());
+		_darkmodTxt->setDescription(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->GetValue().ToStdString());
+		_darkmodTxt->setVersion(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->GetValue().ToStdString());
+		_darkmodTxt->setReqTdmVersion(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->GetValue().ToStdString());
+
+		// Mission list is kept in sync all the time, no need to load them into the instance here
+
+		_darkmodTxt->saveToCurrentMod();
+
+		// Close the dialog
+		EndModal(wxID_OK);
+	}
+	catch (std::runtime_error& err)
+	{
+		wxutil::Messagebox::ShowError(err.what(), this);
+	}
 }
 
 void MissionInfoEditDialog::onCancel(wxCommandEvent& ev)

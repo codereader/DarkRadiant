@@ -7,6 +7,7 @@
 #include "igame.h"
 #include "os/fs.h"
 
+#include <fstream>
 #include <fmt/format.h>
 #include "string/trim.h"
 #include "string/convert.h"
@@ -20,9 +21,19 @@ const std::string& DarkmodTxt::getTitle()
 	return _title;
 }
 
+void DarkmodTxt::setTitle(const std::string& title)
+{
+	_title = title;
+}
+
 const std::string& DarkmodTxt::getAuthor()
 {
 	return _author;
+}
+
+void DarkmodTxt::setAuthor(const std::string& author)
+{
+	_author = author;
 }
 
 const std::string& DarkmodTxt::getDescription()
@@ -30,14 +41,29 @@ const std::string& DarkmodTxt::getDescription()
 	return _description;
 }
 
+void DarkmodTxt::setDescription(const std::string& desc)
+{
+	_description = desc;
+}
+
 const std::string& DarkmodTxt::getVersion()
 {
 	return _version;
 }
 
+void DarkmodTxt::setVersion(const std::string& version)
+{
+	_version = version;
+}
+
 const std::string& DarkmodTxt::getReqTdmVersion()
 {
 	return _reqTdmVersion;
+}
+
+void DarkmodTxt::setReqTdmVersion(const std::string& reqVersion)
+{
+	_reqTdmVersion = reqVersion;
 }
 
 const DarkmodTxt::TitleList& DarkmodTxt::getMissionTitles()
@@ -174,6 +200,90 @@ DarkmodTxtPtr DarkmodTxt::CreateFromStream(std::istream& stream)
 
 DarkmodTxtPtr DarkmodTxt::LoadForCurrentMod()
 {
+	std::string darkmodTxtPath = GetPathForCurrentMod();
+
+	rMessage() << "Trying to open file " << darkmodTxtPath << std::endl;
+
+	ArchiveTextFilePtr file = GlobalFileSystem().openTextFileInAbsolutePath(darkmodTxtPath);
+
+	if (file)
+	{
+		std::istream stream(&(file->getInputStream()));
+		return CreateFromStream(stream);
+	}
+
+	return std::make_shared<DarkmodTxt>();
+}
+
+std::string DarkmodTxt::toString()
+{
+	std::string output;
+
+	if (!_title.empty())
+	{
+		output += fmt::format("Title: {0}", _title);
+	}
+
+	if (_missionTitles.size() > 1)
+	{
+		// Skip the first string, which is the same as the title
+		for (std::size_t i = 1; i < _missionTitles.size(); ++i)
+		{
+			output += fmt::format("\nMission {1:d} Title: {0}", _missionTitles[i], i);
+		}
+	}
+
+	if (!_description.empty())
+	{
+		output += fmt::format("\nDescription: {0}", _description);
+	}
+
+	if (!_author.empty())
+	{
+		output += fmt::format("\nAuthor: {0}", _author);
+	}
+
+	if (!_version.empty())
+	{
+		output += fmt::format("\nVersion: {0}", _version);
+	}
+
+	if (!_reqTdmVersion.empty())
+	{
+		output += fmt::format("\nRequired TDM Version: {0}", _reqTdmVersion);
+	}
+
+	return output;
+}
+
+void DarkmodTxt::saveToCurrentMod()
+{
+	std::string outputPath = GetPathForCurrentMod();
+
+	rMessage() << "Writing darkmod.txt contents to " << outputPath << std::endl;
+
+	std::ofstream outputStream;
+
+	// Let the stream throw exceptions
+	std::ios_base::iostate exceptionMask = outputStream.exceptions() | std::ios::failbit;
+	outputStream.exceptions(exceptionMask);
+
+	try
+	{
+		outputStream.open(outputPath);
+		outputStream << toString();
+		outputStream.close();
+
+		rMessage() << "Successfully wrote darkmod.txt contents to " << outputPath << std::endl;
+	}
+	catch (std::ios_base::failure& ex)
+	{
+		throw std::runtime_error(fmt::format(_("Could not write darkmod.txt contents:\n{0}"), ex.what()));
+	}
+}
+
+std::string DarkmodTxt::GetPathForCurrentMod()
+{
 	std::string modPath = GlobalGameManager().getModPath();
 
 	if (modPath.empty())
@@ -184,17 +294,7 @@ DarkmodTxtPtr DarkmodTxt::LoadForCurrentMod()
 
 	fs::path darkmodTxtPath = fs::path(modPath) / NAME();
 
-	rMessage() << "Trying to open file " << darkmodTxtPath << std::endl;
-
-	ArchiveTextFilePtr file = GlobalFileSystem().openTextFileInAbsolutePath(darkmodTxtPath.string());
-
-	if (file)
-	{
-		std::istream stream(&(file->getInputStream()));
-		return CreateFromStream(stream);
-	}
-
-	return std::make_shared<DarkmodTxt>();
+	return darkmodTxtPath.string();
 }
 
 }

@@ -46,10 +46,19 @@ public:
 	}
 
 	const std::string& getTitle();
+	void setTitle(const std::string& title);
+
 	const std::string& getAuthor();
+	void setAuthor(const std::string& author);
+
 	const std::string& getDescription();
+	void setDescription(const std::string& desc);
+
 	const std::string& getVersion();
+	void setVersion(const std::string& version);
+
 	const std::string& getReqTdmVersion();
+	void setReqTdmVersion(const std::string& reqVersion);
 
 	// Returns the mission titles (the first element is the same as getTitle())
 	const TitleList& getMissionTitles();
@@ -66,6 +75,15 @@ public:
 	// A parse exception will be thrown if the file is not compliant
 	static DarkmodTxtPtr LoadForCurrentMod();
 
+	// Saves the contents of this instance to the path applicable to the current mod
+	// Throws a std::runtime_error if the file couldn't be written
+	void saveToCurrentMod();
+
+	// Retrieves the text representation of this instance, as it will be written to the darkmod.txt file
+	std::string toString();
+
+	// Returns the output path for the current mod
+	static std::string GetPathForCurrentMod();
 private:
 	static void ParseMissionTitles(std::vector<std::string>& titleList, const std::string& source);
 };

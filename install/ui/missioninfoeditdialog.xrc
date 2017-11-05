@@ -25,7 +25,7 @@
 						<flag>wxEXPAND|wxLEFT</flag>
 						<border>12</border>
 						<object class="wxFlexGridSizer">
-							<rows>6</rows>
+							<rows>7</rows>
 							<cols>2</cols>
 							<vgap>0</vgap>
 							<hgap>12</hgap>
@@ -174,6 +174,24 @@
 								<object class="wxTreeCtrl" name="MissionInfoEditDialogMissionTitleList">
 									<style>wxTR_DEFAULT_STYLE</style>
 									<size>-1,150</size>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="m_staticText12">
+									<label>Output Path:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="MissionInfoEditDialogOutputPath">
+									<label>C:GamesDarkmodfmsgathers</label>
+									<wrap>-1</wrap>
 								</object>
 							</object>
 						</object>
