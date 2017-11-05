@@ -40,6 +40,16 @@ const std::string& DarkmodTxt::getReqTdmVersion()
 	return _reqTdmVersion;
 }
 
+const DarkmodTxt::TitleList& DarkmodTxt::getMissionTitles()
+{
+	return _missionTitles;
+}
+
+void DarkmodTxt::setMissionTitles(const DarkmodTxt::TitleList& list)
+{
+	_missionTitles = list;
+}
+
 void DarkmodTxt::ParseMissionTitles(std::vector<std::string>& titleList, const std::string& source)
 {
 	std::size_t titleNum = 1;

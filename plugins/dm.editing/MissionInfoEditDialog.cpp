@@ -7,6 +7,7 @@
 #include <fmt/format.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
+#include "wxutil/TreeView.h"
 #include "wxutil/dialog/MessageBox.h"
 
 namespace ui
@@ -18,7 +19,8 @@ namespace
 }
 
 MissionInfoEditDialog::MissionInfoEditDialog(wxWindow* parent) :
-	DialogBase(_(WINDOW_TITLE), parent)
+	DialogBase(_(WINDOW_TITLE), parent),
+	_missionTitleStore(new wxutil::TreeModel(_missionTitleColumns, true))
 {
 	populateWindow();
 
@@ -42,6 +44,8 @@ MissionInfoEditDialog::MissionInfoEditDialog(wxWindow* parent) :
 
 void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 {
+	_missionTitleStore->Clear();
+
 	if (!_darkmodTxt)
 	{
 		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->SetValue("");
@@ -58,6 +62,21 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue(_darkmodTxt->getDescription());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->SetValue(_darkmodTxt->getVersion());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue(_darkmodTxt->getReqTdmVersion());
+
+	const map::DarkmodTxt::TitleList& titles = _darkmodTxt->getMissionTitles();
+
+	// We skip the first entry, which is the campaign title
+	for (std::size_t i = 1; i < titles.size(); ++i)
+	{
+		const std::string& title = titles[i];
+		
+		wxutil::TreeModel::Row row = _missionTitleStore->AddItem();
+
+		row[_missionTitleColumns.number] = static_cast<int>(i);
+		row[_missionTitleColumns.title] = title;
+
+		row.SendItemAdded();
+	}
 }
 
 void MissionInfoEditDialog::populateWindow()
@@ -66,6 +85,27 @@ void MissionInfoEditDialog::populateWindow()
 
 	wxPanel* panel = loadNamedPanel(this, "MissionInfoEditDialogMainPanel");
 	GetSizer()->Add(panel, 1, wxEXPAND);
+
+	// Replace the list control with our own TreeView
+	wxWindow* existing = findNamedObject<wxWindow>(this, "MissionInfoEditDialogMissionTitleList");
+
+	wxutil::TreeView* treeview = wxutil::TreeView::CreateWithModel(existing->GetParent(), _missionTitleStore, wxDV_SINGLE);
+
+	treeview->SetName("MissionInfoEditDialogMissionTitleList");
+	treeview->SetMinSize(wxSize(-1, 150));
+
+	// Display name column with icon
+	treeview->AppendTextColumn(_("#"), _missionTitleColumns.number.getColumnIndex(),
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+
+	treeview->AppendTextColumn(_("Title"), _missionTitleColumns.title.getColumnIndex(),
+		wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+
+	treeview->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE,
+		wxDataViewEventHandler(MissionInfoEditDialog::onTitleEdited), nullptr, this);
+
+	existing->GetContainingSizer()->Replace(existing, treeview);
+	existing->Destroy();
 
 	makeLabelBold(this, "MissionInfoLabel");
 
@@ -90,6 +130,23 @@ void MissionInfoEditDialog::onCancel(wxCommandEvent& ev)
 {
 	// destroy dialog without saving
 	EndModal(wxID_CANCEL);
+}
+
+void MissionInfoEditDialog::onTitleEdited(wxDataViewEvent& ev)
+{
+	wxutil::TreeModel::Row row(ev.GetItem(), *_missionTitleStore);
+
+	int titleNum = row[_missionTitleColumns.number].getInteger();
+
+	map::DarkmodTxt::TitleList list = _darkmodTxt->getMissionTitles();
+
+	assert(titleNum >= 0 && titleNum < static_cast<int>(list.size()));
+
+	if (ev.GetColumn() == _missionTitleColumns.title.getColumnIndex())
+	{
+		list[titleNum] = static_cast<std::string>(ev.GetValue());
+		_darkmodTxt->setMissionTitles(list);
+	}
 }
 
 void MissionInfoEditDialog::ShowDialog(const cmd::ArgumentList& args)

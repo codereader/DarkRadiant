@@ -25,7 +25,7 @@
 						<flag>wxEXPAND|wxLEFT</flag>
 						<border>12</border>
 						<object class="wxFlexGridSizer">
-							<rows>5</rows>
+							<rows>6</rows>
 							<cols>2</cols>
 							<vgap>0</vgap>
 							<hgap>12</hgap>
@@ -134,6 +134,46 @@
 											<wrap>-1</wrap>
 										</object>
 									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxEXPAND</flag>
+								<border>0</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxTOP</flag>
+										<border>6</border>
+										<object class="wxStaticText" name="m_staticText821">
+											<label>Mission Titles:</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxTOP</flag>
+										<border>6</border>
+										<object class="wxStaticText" name="m_staticText8211">
+											<font>
+												<style>italic</style>
+												<weight>normal</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>Optional. Fill in if this \npackage is a campaign \ncontaining several maps</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL|wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxTreeCtrl" name="MissionInfoEditDialogMissionTitleList">
+									<style>wxTR_DEFAULT_STYLE</style>
+									<size>-1,150</size>
 								</object>
 							</object>
 						</object>

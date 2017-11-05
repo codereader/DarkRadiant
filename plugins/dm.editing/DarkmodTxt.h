@@ -28,6 +28,8 @@ public:
 		{}
 	};
 
+	typedef std::vector<std::string> TitleList;
+
 private:
 	std::string _title;
 	std::string _author;
@@ -35,7 +37,7 @@ private:
 	std::string _version;
 	std::string _reqTdmVersion;
 
-	std::vector<std::string> _missionTitles;
+	TitleList _missionTitles;
 
 public:
 	static const char* NAME()
@@ -48,6 +50,10 @@ public:
 	const std::string& getDescription();
 	const std::string& getVersion();
 	const std::string& getReqTdmVersion();
+
+	// Returns the mission titles (the first element is the same as getTitle())
+	const TitleList& getMissionTitles();
+	void setMissionTitles(const TitleList& list);
 
 	// Named constructor parsing the given string into a DarkmodTxt instance
 	// A parse exception will be thrown if the file is not compliant
