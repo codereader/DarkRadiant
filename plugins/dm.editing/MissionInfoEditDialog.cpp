@@ -1,10 +1,13 @@
 #include "MissionInfoEditDialog.h"
 
+#include "itextstream.h"
 #include "i18n.h"
 #include <sigc++/functors/mem_fun.h>
 
+#include <fmt/format.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
+#include "wxutil/dialog/MessageBox.h"
 
 namespace ui
 {
@@ -19,7 +22,21 @@ MissionInfoEditDialog::MissionInfoEditDialog(wxWindow* parent) :
 {
 	populateWindow();
 
-	_darkmodTxt = map::DarkmodTxt::LoadForCurrentMod();
+	try
+	{
+		_darkmodTxt = map::DarkmodTxt::LoadForCurrentMod();
+	}
+	catch (map::DarkmodTxt::ParseException& ex)
+	{
+		rError() << "Failed to parse darkmod.txt: " << ex.what() << std::endl;
+
+		wxutil::Messagebox::ShowError(
+			fmt::format(_("Failed to parse darkmod.txt:\n{0}"), ex.what()), this);
+
+		// Reset the file to defaults
+		_darkmodTxt = std::make_shared<map::DarkmodTxt>();
+	}
+
 	updateValuesFromDarkmodTxt();
 }
 
@@ -30,6 +47,7 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->SetValue("");
 		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogAuthorEntry")->SetValue("");
 		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue("");
+		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->SetValue("");
 		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue("");
 
 		return;
@@ -38,6 +56,7 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->SetValue(_darkmodTxt->getTitle());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogAuthorEntry")->SetValue(_darkmodTxt->getAuthor());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue(_darkmodTxt->getDescription());
+	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->SetValue(_darkmodTxt->getVersion());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue(_darkmodTxt->getReqTdmVersion());
 }
 

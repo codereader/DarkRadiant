@@ -1,10 +1,13 @@
 #include "DarkmodTxt.h"
 
+#include "i18n.h"
 #include "iarchive.h"
 #include "itextstream.h"
 #include "ifilesystem.h"
 #include "igame.h"
 #include "os/fs.h"
+
+#include <fmt/format.h>
 #include "string/trim.h"
 #include "string/convert.h"
 #include "string/case_conv.h"
@@ -27,6 +30,11 @@ const std::string& DarkmodTxt::getDescription()
 	return _description;
 }
 
+const std::string& DarkmodTxt::getVersion()
+{
+	return _version;
+}
+
 const std::string& DarkmodTxt::getReqTdmVersion()
 {
 	return _reqTdmVersion;
@@ -34,61 +42,114 @@ const std::string& DarkmodTxt::getReqTdmVersion()
 
 void DarkmodTxt::ParseMissionTitles(std::vector<std::string>& titleList, const std::string& source)
 {
-	// TODO
+	std::size_t titleNum = 1;
+	std::size_t endIndex = 0;
+
+	while (true)
+	{
+		std::string start = fmt::format("Mission {0:d} Title:", titleNum);
+		std::string end = fmt::format("Mission {0:d} Title:", titleNum + 1);
+
+		std::size_t startIndex = source.find(start, endIndex);
+
+		if (startIndex == std::string::npos) break;
+
+		endIndex = source.find(end, startIndex);
+
+		// Extract next title string
+		std::string title = source.substr(startIndex, (endIndex != std::string::npos) ? endIndex - startIndex : source.size() - startIndex);
+		string::trim_left(title, start);
+		string::trim(title);
+		
+		titleList.push_back(title);
+
+		++titleNum;
+	}
 }
 
 DarkmodTxtPtr DarkmodTxt::CreateFromString(const std::string& contents)
 {
 	DarkmodTxtPtr info(new DarkmodTxt);
 
-	// The positions need to be searched case-insensitively
-	std::string contentsLower = string::to_lower_copy(contents);
-	std::size_t titlePos = contentsLower.find("title:");
-	std::size_t descPos = contentsLower.find("description:");
-	std::size_t authorPos = contentsLower.find("author:");
-	std::size_t versionPos = contentsLower.find("required tdm version:");
-	std::size_t missionTitlesPos = contentsLower.find("mission 1 title:");
-
-	std::size_t len = contents.size();
-
-	if (titlePos != std::string::npos)
+	try
 	{
-		info->_title = contents.substr(titlePos, (missionTitlesPos != std::string::npos) ? 
-			descPos - missionTitlesPos : (descPos != std::string::npos) ? descPos - titlePos : len - titlePos);
-		string::trim_left(info->_title, "Title:");
-		string::trim(info->_title);
+		// Determine the positions in the file
+		std::size_t titlePos = contents.find("Title:");
+		std::size_t missionTitlesPos = contents.find("Mission 1 Title:");
+		std::size_t descPos = contents.find("Description:");
+		std::size_t authorPos = contents.find("Author:");
+		std::size_t versionPos = contents.find("\nVersion:");
+		std::size_t reqVersionPos = contents.find("Required TDM Version:");
+
+		// Validate the order of the markers in the file
+		bool positionsValid = titlePos != std::string::npos && titlePos < descPos && // Title is required & before description (or EOF)
+			(missionTitlesPos == std::string::npos || missionTitlesPos < descPos) && // Optional Mission Titles & before description (or EOF)
+			(descPos == std::string::npos || descPos < authorPos) &&				 // Optional description & before author (or EOF)
+			(authorPos == std::string::npos || authorPos < versionPos) &&			 // Author optional & before description (or EOF)
+			(versionPos == std::string::npos || versionPos < reqVersionPos);		 // Version optional & before req version (or EOF)
+
+		if (!positionsValid)
+		{
+			throw ParseException(_("Order of the elements Title/Description/Author/etc. is incorrect"));
+		}
+
+		std::size_t len = contents.size();
+
+		if (titlePos != std::string::npos)
+		{
+			std::size_t endPos = (missionTitlesPos != std::string::npos) ? missionTitlesPos : descPos;
+
+			info->_title = contents.substr(titlePos, (endPos != std::string::npos) ? endPos - titlePos : len - titlePos);
+			string::trim_left(info->_title, "Title:");
+			string::trim(info->_title);
+		}
+
+		info->_missionTitles.clear();
+		info->_missionTitles.push_back(info->_title); // [0] is title by default
+
+		if (missionTitlesPos != std::string::npos)
+		{
+			std::string missionTitles = contents.substr(missionTitlesPos, (descPos != std::string::npos) ? descPos - missionTitlesPos: len - missionTitlesPos);
+			ParseMissionTitles(info->_missionTitles, missionTitles);
+		}
+
+		if (descPos != std::string::npos)
+		{
+			info->_description = contents.substr(descPos, (authorPos != std::string::npos) ? authorPos - descPos : len - descPos);
+			string::trim_left(info->_description, "Description:");
+			string::trim(info->_description);
+		}
+
+		if (authorPos != std::string::npos)
+		{
+			std::size_t endPos = (versionPos != std::string::npos) ? versionPos : reqVersionPos;
+
+			info->_author = contents.substr(authorPos, (endPos != std::string::npos) ? endPos - authorPos : len - authorPos);
+			string::trim_left(info->_author, "Author:");
+			string::trim(info->_author);
+		}
+
+		if (versionPos != std::string::npos)
+		{
+			info->_version = contents.substr(versionPos, (reqVersionPos != std::string::npos) ? reqVersionPos - versionPos : len - versionPos);
+			string::trim_left(info->_version, "\nVersion:");
+			string::trim(info->_version);
+		}
+
+		if (reqVersionPos != std::string::npos)
+		{
+			info->_reqTdmVersion = contents.substr(reqVersionPos, len - reqVersionPos);
+
+			string::trim_left(info->_reqTdmVersion, "Required TDM Version:");
+			string::trim_left(info->_reqTdmVersion, "v");
+			string::trim(info->_reqTdmVersion);
+		}
 	}
-
-	info->_missionTitles.clear();
-	info->_missionTitles.push_back(info->_title); // [0] is the title
-
-	if (missionTitlesPos != std::string::npos)
+	catch (const std::exception& ex)
 	{
-		std::string missionTitles = contents.substr(missionTitlesPos, (descPos != std::string::npos) ? missionTitlesPos - descPos : len - missionTitlesPos);
-		ParseMissionTitles(info->_missionTitles, missionTitles);
-	}
-
-	if (descPos != std::string::npos)
-	{
-		info->_description = contents.substr(descPos, (authorPos != std::string::npos) ? authorPos - descPos : len - descPos);
-		string::trim_left(info->_description, "Description:");
-		string::trim(info->_description);
-	}
-
-	if (authorPos != std::string::npos)
-	{
-		info->_author = contents.substr(authorPos, (versionPos != std::string::npos) ? versionPos - authorPos : len - authorPos);
-		string::trim_left(info->_author, "Author:");
-		string::trim(info->_author);
-	}
-
-	if (versionPos != std::string::npos)
-	{
-		info->_reqTdmVersion = contents.substr(versionPos, len - versionPos);
-
-		string::trim_left(info->_reqTdmVersion, "Required TDM Version:");
-		string::trim_left(info->_reqTdmVersion, "v");
-		string::trim(info->_reqTdmVersion);
+		// Convert ordinary exceptions in ParseExceptions
+		rError() << "Exception parsing darkmod.txt: " << ex.what() << std::endl;
+		throw ParseException(ex.what());
 	}
 
 	return info;
