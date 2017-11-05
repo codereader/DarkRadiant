@@ -5,6 +5,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/TreeModel.h"
+#include "wxutil/menu/PopupMenu.h"
 
 #include "DarkmodTxt.h"
 
@@ -35,6 +36,9 @@ private:
 	MissionTitleColumns _missionTitleColumns;
 	wxutil::TreeModel::Ptr _missionTitleStore;
 
+	// Context menu
+	wxutil::PopupMenuPtr _missionTitlesContextMenu;
+
 public:
 	// Constructor
 	MissionInfoEditDialog(wxWindow* parent = nullptr);
@@ -48,6 +52,10 @@ private:
 	void onSave(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
 	void onTitleEdited(wxDataViewEvent& ev);
+	void onTitleContextMenu(wxDataViewEvent& ev);
+	void onAddTitle();
+	void onDeleteTitle();
+	bool testDeleteTitle();
 };
 
 }

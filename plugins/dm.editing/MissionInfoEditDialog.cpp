@@ -4,11 +4,13 @@
 #include "i18n.h"
 #include <sigc++/functors/mem_fun.h>
 
+#include <functional>
 #include <fmt/format.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #include "wxutil/TreeView.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {
@@ -103,6 +105,8 @@ void MissionInfoEditDialog::populateWindow()
 
 	treeview->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE,
 		wxDataViewEventHandler(MissionInfoEditDialog::onTitleEdited), nullptr, this);
+	treeview->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU,
+		wxDataViewEventHandler(MissionInfoEditDialog::onTitleContextMenu), nullptr, this);
 
 	existing->GetContainingSizer()->Replace(existing, treeview);
 	existing->Destroy();
@@ -114,7 +118,21 @@ void MissionInfoEditDialog::populateWindow()
 
 	saveButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &MissionInfoEditDialog::onSave));
 	cancelButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &MissionInfoEditDialog::onCancel));
-		
+	
+	// Popup Menu
+	_missionTitlesContextMenu.reset(new wxutil::PopupMenu);
+
+	_missionTitlesContextMenu->addItem(
+		new wxutil::StockIconTextMenuItem(_("Add Title"), wxART_PLUS),
+		std::bind(&MissionInfoEditDialog::onAddTitle, this)
+	);
+
+	_missionTitlesContextMenu->addItem(
+		new wxutil::StockIconTextMenuItem(_("Delete Title"), wxART_MINUS),
+		std::bind(&MissionInfoEditDialog::onDeleteTitle, this),
+		std::bind(&MissionInfoEditDialog::testDeleteTitle, this)
+	);
+
 	Layout();
 	Fit();
 	CenterOnScreen();
@@ -147,6 +165,51 @@ void MissionInfoEditDialog::onTitleEdited(wxDataViewEvent& ev)
 		list[titleNum] = static_cast<std::string>(ev.GetValue());
 		_darkmodTxt->setMissionTitles(list);
 	}
+}
+
+void MissionInfoEditDialog::onTitleContextMenu(wxDataViewEvent& ev)
+{
+	_missionTitlesContextMenu->show(findNamedObject<wxWindow>(this, "MissionInfoEditDialogMissionTitleList"));
+}
+
+void MissionInfoEditDialog::onAddTitle()
+{
+	map::DarkmodTxt::TitleList list = _darkmodTxt->getMissionTitles();
+	list.push_back("Click to edit Title");
+	_darkmodTxt->setMissionTitles(list);
+
+	updateValuesFromDarkmodTxt();
+}
+
+void MissionInfoEditDialog::onDeleteTitle()
+{
+	wxutil::TreeView* treeView = findNamedObject<wxutil::TreeView>(this, "MissionInfoEditDialogMissionTitleList");
+
+	wxDataViewItem item = treeView->GetSelection();
+
+	if (!item.IsOk()) return;
+
+	wxutil::TreeModel::Row row(item, *_missionTitleStore);
+
+	int titleNum = row[_missionTitleColumns.number].getInteger();
+
+	map::DarkmodTxt::TitleList list = _darkmodTxt->getMissionTitles();
+
+	assert(titleNum >= 0 && titleNum < static_cast<int>(list.size()));
+
+	list.erase(list.begin() + titleNum);
+	_darkmodTxt->setMissionTitles(list);
+
+	updateValuesFromDarkmodTxt();
+}
+
+bool MissionInfoEditDialog::testDeleteTitle()
+{
+	wxutil::TreeView* treeView = findNamedObject<wxutil::TreeView>(this, "MissionInfoEditDialogMissionTitleList");
+
+	wxDataViewItem item = treeView->GetSelection();
+
+	return item.IsOk();
 }
 
 void MissionInfoEditDialog::ShowDialog(const cmd::ArgumentList& args)
