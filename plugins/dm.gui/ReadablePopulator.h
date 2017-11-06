@@ -34,7 +34,7 @@ public:
 		_popTwo(popTwo),
 		_progress(_("Analysing Guis")),
 		_count(0),
-		_numGuis(gui::GuiManager::Instance().getNumGuis()),
+		_numGuis(GlobalGuiManager().getNumGuis()),
 		_evLimiter(50)
 	{}
 
@@ -51,7 +51,7 @@ public:
 		gui::GuiType type;
 		if (guiType == gui::NOT_LOADED_YET || guiType == gui::UNDETERMINED)
 		{
-			type = gui::GuiManager::Instance().getGuiType(guiPath);
+			type = GlobalGuiManager().getGuiType(guiPath);
 		}
 		else
 		{

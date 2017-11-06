@@ -36,7 +36,7 @@ public:
 	// Sets the GUI to render (by VFS path)
 	void setGui(const std::string& gui)
 	{
-		setGui(GuiManager::Instance().getGui(gui));
+		setGui(GlobalGuiManager().getGui(gui));
 	}
 
 	// Sets the GUI to render (can be NULL to clear this view)

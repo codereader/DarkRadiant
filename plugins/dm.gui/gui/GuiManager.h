@@ -1,11 +1,10 @@
 #pragma once
 
+#include "igui.h"
 #include "util/Noncopyable.h"
-#include <memory>
 #include <map>
 #include "ifilesystem.h"
 #include "string/string.h"
-#include <vector>
 #include "ThreadedDefLoader.h"
 
 namespace gui
@@ -17,17 +16,6 @@ namespace
 	const std::string GUI_EXT("gui");
 }
 
-enum GuiType
-{
-	NOT_LOADED_YET,		// no attempt to load the GUI has been made
-	UNDETERMINED,		// not checked yet for type
-	ONE_SIDED_READABLE,	// 1-sided
-	TWO_SIDED_READABLE,	// 2-sided
-	NO_READABLE,		// not a readable
-	IMPORT_FAILURE,		// failed to load
-	FILE_NOT_FOUND,		// file doesn't exist
-};
-
 class Gui;
 typedef std::shared_ptr<Gui> GuiPtr;
 
@@ -36,20 +24,9 @@ typedef std::shared_ptr<Gui> GuiPtr;
  * including parsing the .gui files on demand.
  */
 class GuiManager :
-	public util::Noncopyable
+	public IGuiManager,
+	public util::Noncopyable	
 {
-public:
-	typedef std::vector<std::string> StringList;
-
-	// A visitor class used to traverse all known GUIs by path
-	class Visitor
-	{
-	public:
-		virtual ~Visitor() {}
-
-		virtual void visit(const std::string& guiPath, const GuiType& guiType) = 0;
-	};
-
 private:
 	struct GuiInfo
 	{
@@ -78,40 +55,41 @@ private:
 	// A List of all the errors occuring lastly.
 	StringList _errorList;
 
-    GuiManager();
-
 public:
+	GuiManager();
+
 	// Gets a GUI from the given VFS path, parsing it on demand
 	// Returns NULL if the GUI couldn't be found or loaded.
-	GuiPtr getGui(const std::string& guiPath);
+	GuiPtr getGui(const std::string& guiPath) override;
 
 	// Returns the number of known GUIs (or GUI paths)
-	std::size_t getNumGuis();
+	std::size_t getNumGuis() override;
 
 	// Traverse all known GUIs using the given Visitor
-	void foreachGui(Visitor& visitor);
+	void foreachGui(Visitor& visitor) override;
 
 	// Returns the GUI appearance type for the given GUI path
-	GuiType getGuiType(const std::string& guiPath);
+	GuiType getGuiType(const std::string& guiPath) override;
 
 	// Reload the gui
-	void reloadGui(const std::string& guiPath);
+	void reloadGui(const std::string& guiPath) override;
 
 	// Returns the _errorList for use in a GUI.
-	const StringList& getErrorList() { return _errorList; }
-
-	// Provides access to the singleton
-	static GuiManager& Instance();
-
-    void init();
+	const StringList& getErrorList() override { return _errorList; }
 
     // Clears out the GUIs and reloads them
-    void reloadGuis();
+    void reloadGuis() override;
 
-	// Clears all internal objects
-	void clear();
+	// RegisterableModule
+	const std::string& GuiManager::getName() const override;
+	const StringSet& GuiManager::getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
+	void init();
+	void clear();
+
     // Searches the VFS for all available GUI definitions
     void findGuis();
 

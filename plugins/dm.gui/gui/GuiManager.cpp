@@ -192,10 +192,35 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 	}
 }
 
-GuiManager& GuiManager::Instance()
+const std::string& GuiManager::getName() const
 {
-	static GuiManager _instance;
-	return _instance;
+	static std::string _name(MODULE_GUIMANAGER);
+	return _name;
+}
+
+const StringSet& GuiManager::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void GuiManager::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	// Search the VFS for GUIs
+	init();
+}
+
+void GuiManager::shutdownModule()
+{
+	clear();
 }
 
 } // namespace gui

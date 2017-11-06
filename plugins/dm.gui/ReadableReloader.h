@@ -31,7 +31,7 @@ public:
 		_count(0),
 		_evLimiter(50)
 	{
-		_numGuis = gui::GuiManager::Instance().getNumGuis();
+		_numGuis = GlobalGuiManager().getNumGuis();
 	}
 
 	void visit(const std::string& guiPath, const gui::GuiType& guiType)
@@ -46,7 +46,7 @@ public:
 
 		if (guiType != gui::NOT_LOADED_YET)
 		{
-			gui::GuiManager::Instance().reloadGui(guiPath);
+			GlobalGuiManager().reloadGui(guiPath);
 		}
 	}
 
@@ -54,10 +54,10 @@ public:
 	{
 		try
 		{
-			gui::GuiManager::Instance().reloadGuis();
+			GlobalGuiManager().reloadGuis();
 
 			ReadableReloader reloader;
-			gui::GuiManager::Instance().foreachGui(reloader);
+			GlobalGuiManager().foreachGui(reloader);
 		}
 		catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 		{}

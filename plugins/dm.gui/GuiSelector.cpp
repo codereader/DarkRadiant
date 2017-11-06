@@ -112,7 +112,7 @@ void GuiSelector::fillTrees()
 	wxutil::VFSTreePopulator popTwo(_twoSidedStore);
 
 	ReadablePopulator walker(popOne, popTwo);
-	gui::GuiManager::Instance().foreachGui(walker);
+	GlobalGuiManager().foreachGui(walker);
 
 	popOne.forEachNode(*this);
 	popTwo.forEachNode(*this);

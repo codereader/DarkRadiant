@@ -76,9 +76,6 @@ public:
             sigc::mem_fun(this, &GuiModule::onRadiantStartup)
         );
 
-		// Search the VFS for GUIs
-        gui::GuiManager::Instance().init();
-
 		// Create the Readable Editor Preferences
 		constructPreferences();
 	}
@@ -119,11 +116,6 @@ public:
 
 		page.appendPathEntry(_("Custom Folder"), ui::RKEY_READABLES_CUSTOM_FOLDER, true);
 	}
-
-	void shutdownModule()
-	{
-        gui::GuiManager::Instance().clear();
-	}
 };
 typedef std::shared_ptr<GuiModule> GuiModulePtr;
 
@@ -132,4 +124,5 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 	module::performDefaultInitialisation(registry);
 
 	registry.registerModule(GuiModulePtr(new GuiModule));
+	registry.registerModule(std::make_shared<gui::GuiManager>());
 }

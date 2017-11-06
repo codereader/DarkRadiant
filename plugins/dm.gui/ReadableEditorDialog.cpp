@@ -1151,7 +1151,7 @@ void ReadableEditorDialog::checkGuiLayout()
 
 	std::string msg;
 
-	gui::GuiType type = gui::GuiManager::Instance().getGuiType(guiName);
+	gui::GuiType type = GlobalGuiManager().getGuiType(guiName);
 
 	switch (type)
 	{
@@ -1264,7 +1264,7 @@ void ReadableEditorDialog::showXdImportSummary()
 
 void ReadableEditorDialog::showGuiImportSummary()
 {
-	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
+	XData::StringList errors = GlobalGuiManager().getErrorList();
 	if (errors.empty())
 	{
 		wxutil::Messagebox::ShowError(_("No import summary available. Browse Gui Definitions first."), this);
