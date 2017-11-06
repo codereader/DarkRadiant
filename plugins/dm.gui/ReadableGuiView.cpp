@@ -1,5 +1,8 @@
 #include "ReadableGuiView.h"
 
+#include "math/Vector4.h"
+#include "gui/GuiWindowDef.h"
+
 namespace gui
 {
 
@@ -28,7 +31,7 @@ void ReadableGuiView::setGLViewPort()
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 }
 
-void ReadableGuiView::setGui(const GuiPtr& gui)
+void ReadableGuiView::setGui(const IGuiPtr& gui)
 {
 	// Call the base class first
 	GuiView::setGui(gui);

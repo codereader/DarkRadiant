@@ -60,7 +60,7 @@ public:
 
 	// Gets a GUI from the given VFS path, parsing it on demand
 	// Returns NULL if the GUI couldn't be found or loaded.
-	GuiPtr getGui(const std::string& guiPath) override;
+	IGuiPtr getGui(const std::string& guiPath) override;
 
 	// Returns the number of known GUIs (or GUI paths)
 	std::size_t getNumGuis() override;

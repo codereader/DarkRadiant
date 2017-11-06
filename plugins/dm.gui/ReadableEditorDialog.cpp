@@ -656,7 +656,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 			return;
 		}
 
-		const gui::GuiPtr& gui = _guiView->getGui();
+		const gui::IGuiPtr& gui = _guiView->getGui();
 
 		if (gui == NULL)
 		{
@@ -705,7 +705,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 			_guiView->setGui(guiPath);
 		}
 
-		const gui::GuiPtr& gui = _guiView->getGui();
+		const gui::IGuiPtr& gui = _guiView->getGui();
 
 		if (gui == NULL)
 		{
@@ -749,7 +749,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 	_guiView->redraw();
 }
 
-void ReadableEditorDialog::initGuiState(const gui::GuiPtr& gui)
+void ReadableEditorDialog::initGuiState(const gui::IGuiPtr& gui)
 {
     assert(gui);
 

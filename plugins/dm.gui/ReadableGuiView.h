@@ -20,7 +20,7 @@ protected:
 public:
 	ReadableGuiView(wxWindow* parent);
 
-	virtual void setGui(const GuiPtr& gui);
+	virtual void setGui(const IGuiPtr& gui) override;
 
 protected:
 	virtual void setGLViewPort();

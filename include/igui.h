@@ -7,8 +7,40 @@
 namespace gui
 {
 
-class Gui;
-typedef std::shared_ptr<Gui> GuiPtr;
+class GuiWindowDef;
+typedef std::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
+
+/**
+* greebo: This class represents a single D3 GUI. It holds all
+* the windowDefs and the source code behind.
+*/
+class IGui
+{
+public:
+	virtual ~IGui() {}
+
+	virtual const GuiWindowDefPtr& getDesktop() const = 0;
+	virtual void setDesktop(const GuiWindowDefPtr& newDesktop) = 0;
+
+	// Sets the given state variable (gui::<key> = <value>)
+	virtual void setStateString(const std::string& key, const std::string& value) = 0;
+
+	// Returns the state string "gui::<key>" or an empty string if non-existent
+	virtual std::string getStateString(const std::string& key) = 0;
+
+	// Sets up the time of the entire GUI (all windowDefs)
+	virtual void initTime(const std::size_t time) = 0;
+
+	// "Think" routine, advances all active windowDefs (where notime == false)
+	virtual void update(const std::size_t timestep) = 0;
+
+	// Returns a reference to the named windowDef, returns NULL if not found
+	virtual GuiWindowDefPtr findWindowDef(const std::string& name) = 0;
+
+	// Called by the GuiRenderer to re-compile text VBOs, etc.
+	virtual void pepareRendering() = 0;
+};
+typedef std::shared_ptr<IGui> IGuiPtr;
 
 enum GuiType
 {
@@ -46,7 +78,7 @@ public:
 
 	// Gets a GUI from the given VFS path, parsing it on demand
 	// Returns NULL if the GUI couldn't be found or loaded.
-	virtual GuiPtr getGui(const std::string& guiPath) = 0;
+	virtual IGuiPtr getGui(const std::string& guiPath) = 0;
 
 	// Returns the number of known GUIs (or GUI paths)
 	virtual std::size_t getNumGuis() = 0;

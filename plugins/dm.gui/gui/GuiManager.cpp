@@ -46,7 +46,7 @@ void GuiManager::reloadGui(const std::string& guiPath)
 GuiType GuiManager::getGuiType(const std::string& guiPath)
 {
 	// Get the GUI (will load the file if necessary)
-	GuiPtr gui = getGui(guiPath);
+	GuiPtr gui = std::static_pointer_cast<Gui>(getGui(guiPath));
 
 	GuiInfoMap::iterator found = _guis.find(guiPath);
 
@@ -118,7 +118,7 @@ void GuiManager::clear()
 	_errorList.clear();
 }
 
-GuiPtr GuiManager::getGui(const std::string& guiPath)
+IGuiPtr GuiManager::getGui(const std::string& guiPath)
 {
     ensureGuisLoaded();
 

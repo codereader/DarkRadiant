@@ -1,10 +1,9 @@
-#ifndef GuiRenderer_h__
-#define GuiRenderer_h__
+#pragma once
 
+#include "igui.h"
 #include "math/Vector2.h"
 #include "util/Noncopyable.h"
 
-#include "Gui.h"
 #include <vector>
 
 namespace gui
@@ -14,7 +13,7 @@ class GuiRenderer :
 	public util::Noncopyable
 {
 private:
-	GuiPtr _gui;
+	IGuiPtr _gui;
 
 	Vector2 _areaTopLeft;
 	Vector2 _areaBottomRight;
@@ -26,7 +25,7 @@ public:
 	// Construct a new renderer
 	GuiRenderer();
 
-	void setGui(const GuiPtr& gui);
+	void setGui(const IGuiPtr& gui);
 
 	void setIgnoreVisibility(bool ignoreVisibility);
 
@@ -42,5 +41,3 @@ private:
 };
 
 }
-
-#endif // GuiRenderer_h__

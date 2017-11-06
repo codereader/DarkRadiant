@@ -5,6 +5,8 @@
 #include "ishaders.h"
 #include "math/Matrix4.h"
 
+#include "GuiWindowDef.h"
+
 namespace gui
 {
 
@@ -14,7 +16,7 @@ GuiRenderer::GuiRenderer() :
 	_ignoreVisibility(false)
 {}
 
-void GuiRenderer::setGui(const GuiPtr& gui)
+void GuiRenderer::setGui(const IGuiPtr& gui)
 {
 	_gui = gui;
 }

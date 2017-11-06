@@ -1,9 +1,9 @@
 #pragma once
 
+#include "igui.h"
 #include "wxutil/GLWidget.h"
 #include "math/Vector2.h"
 #include "GuiRenderer.h"
-#include "Gui.h"
 
 #include "GuiManager.h"
 
@@ -23,7 +23,7 @@ protected:
 	GuiRenderer _renderer;
 
 	// The GUI to render
-	GuiPtr _gui;
+	IGuiPtr _gui;
 
 	// The dimensions of the GL widget in pixels.
 	Vector2 _windowDims;
@@ -40,10 +40,10 @@ public:
 	}
 
 	// Sets the GUI to render (can be NULL to clear this view)
-	virtual void setGui(const GuiPtr& gui);
+	virtual void setGui(const IGuiPtr& gui);
 
 	// Returns the current GUI (can be NULL)
-	const GuiPtr& getGui();
+	const IGuiPtr& getGui();
 
 	/**
 	 * Initialise the GL view. This clears the window and sets up the
