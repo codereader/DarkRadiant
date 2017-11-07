@@ -10,7 +10,16 @@ namespace gui
 {
 
 class IGui;
-class RenderableText;
+
+class IRenderableText
+{
+public:
+	// Submits the openGL calls
+	virtual void render() = 0;
+
+	// Re-construct this structure, called when the text in the owning windowDef has been changed
+	virtual void recompile() = 0;
+};
 
 class IGuiWindowDef;
 typedef std::shared_ptr<IGuiWindowDef> IGuiWindowDefPtr;
@@ -101,7 +110,7 @@ public:
 	virtual void setText(const std::string& newText) = 0;
 
 	// Get the renderable text object containing the OpenGLRenderables
-	virtual RenderableText& getRenderableText() = 0;
+	virtual IRenderableText& getRenderableText() = 0;
 
 	/**
 	* greebo: This is some sort of "think" method, giving this windowDef

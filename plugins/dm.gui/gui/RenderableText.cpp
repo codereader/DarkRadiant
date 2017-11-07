@@ -22,7 +22,7 @@ namespace gui
 		const std::string GKEY_MEDIUMFONT_LIMIT("/defaults/guiMediumFontLimit");
 	}
 
-RenderableText::RenderableText(const GuiWindowDef& owner) :
+RenderableText::RenderableText(const IGuiWindowDef& owner) :
 	_owner(owner)
 {}
 

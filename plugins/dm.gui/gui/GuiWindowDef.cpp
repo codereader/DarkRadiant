@@ -352,7 +352,7 @@ void GuiWindowDef::setText(const std::string& newText)
 	_textChanged = true;
 }
 
-RenderableText& GuiWindowDef::getRenderableText()
+IRenderableText& GuiWindowDef::getRenderableText()
 {
 	if (_textChanged)
 	{

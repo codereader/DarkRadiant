@@ -1,6 +1,6 @@
-#ifndef RenderableText_h__
-#define RenderableText_h__
+#pragma once
 
+#include "igui.h"
 #include "irenderable.h"
 #include "ifonts.h"
 #include <map>
@@ -9,12 +9,13 @@
 namespace gui
 {
 
-class GuiWindowDef;
+class IGuiWindowDef;
 
-class RenderableText
+class RenderableText :
+	public IRenderableText
 {
 	// The owning windowDef
-	const GuiWindowDef& _owner;
+	const IGuiWindowDef& _owner;
 
 	// The character soup, arranged into OpenGLRenderables, sorted by shader
 	typedef std::map<ShaderPtr, RenderableCharacterBatchPtr> CharBatches;
@@ -31,12 +32,12 @@ private:
 
 public:
 	// Construct a renderable for the text in the given windowDef
-	RenderableText(const GuiWindowDef& owner);
+	RenderableText(const IGuiWindowDef& owner);
 
-	void render();
+	void render() override;
 
 	// Re-construct this structure, called when the text in the owning windowDef has been changed
-	void recompile();
+	void recompile() override;
 
 private:
 	void realiseFontShaders();
@@ -48,5 +49,3 @@ private:
 };
 
 } // namespace
-
-#endif // RenderableText_h__

@@ -62,7 +62,7 @@ public:
 	void setText(const std::string& newText) override;
 
 	// Get the renderable text object containing the OpenGLRenderables
-	RenderableText& getRenderableText() override;
+	IRenderableText& getRenderableText() override;
 
 	/**
 	 * greebo: This is some sort of "think" method, giving this windowDef
