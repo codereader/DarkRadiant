@@ -5,6 +5,7 @@
 #include "igame.h"
 #include "modulesystem/ModuleRegistry.h"
 
+#include "GameSetupPageIdTech.h"
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/choicebk.h>
@@ -18,7 +19,6 @@ GameSetupDialog::GameSetupDialog(wxWindow* parent) :
 	_book(nullptr)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
-	SetMinClientSize(wxSize(640, -1));
 
 	// 12-pixel spacer
 	wxBoxSizer* mainVbox = new wxBoxSizer(wxVERTICAL);
@@ -33,25 +33,41 @@ GameSetupDialog::GameSetupDialog(wxWindow* parent) :
 	mainVbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
 
 	initialiseControls();
+
+	Layout();
+	Fit();
 }
 
 void GameSetupDialog::initialiseControls()
 {
-	wxChoice* choice = _book->GetChoiceCtrl();
-
 	const game::IGameManager::GameList& games = GlobalGameManager().getSortedGameList();
 
 	for (const game::IGamePtr& game : games)
 	{
-		choice->AppendString(game->getKeyValue("name"));
-
 		wxPanel* container = new wxPanel(_book, wxID_ANY);
 		container->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-		// For each game type create a separate page in the choice book
-		GameSetupPage* page = GameSetupPage::CreatePageForType(game->getKeyValue("type"), _book);
+		// Check the game setup dialog type
+		std::string type = GameSetupPageIdTech::TYPE();
 
-		container->GetSizer()->Add(page, 1, wxEXPAND, 12);
+		xml::NodeList nodes = game->getLocalXPath("/gameSetup/dialog");
+
+		if (!nodes.empty())
+		{
+			std::string value = nodes[0].getAttributeValue("type");
+
+			if (!value.empty())
+			{
+				type = value;
+			}
+		}
+
+		// For each game type create a separate page in the choice book
+		GameSetupPage* page = GameSetupPage::CreatePageForType(type, container);
+
+		container->GetSizer()->Add(page, 1, wxEXPAND | wxALL, 12);
+
+		_book->AddPage(container, game->getKeyValue("name"));
 	}
 }
 
