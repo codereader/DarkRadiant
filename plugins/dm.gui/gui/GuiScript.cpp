@@ -377,7 +377,7 @@ VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 		std::string windowDefName = expr.substr(0, ddPos);
 
 		// Look up the windowDef
-		GuiWindowDefPtr windowDef = _owner.getGui().findWindowDef(windowDefName);
+		IGuiWindowDefPtr windowDef = _owner.getGui().findWindowDef(windowDefName);
 
 		if (windowDef != NULL)
 		{

@@ -25,17 +25,15 @@ class Gui :
 {
 private:
 	// The desktop window
-	GuiWindowDefPtr _desktop;
+	IGuiWindowDefPtr _desktop;
 
 	// The global GUI state variables
 	typedef std::map<std::string, std::string> GuiState;
 	GuiState _state;
 
 public:
-	Gui();
-
-	const GuiWindowDefPtr& getDesktop() const override;
-	void setDesktop(const GuiWindowDefPtr& newDesktop) override;
+	const IGuiWindowDefPtr& getDesktop() const override;
+	void setDesktop(const IGuiWindowDefPtr& newDesktop) override;
 
 	// Sets the given state variable (gui::<key> = <value>)
 	void setStateString(const std::string& key, const std::string& value) override;
@@ -50,7 +48,7 @@ public:
 	void update(const std::size_t timestep) override;
 
 	// Returns a reference to the named windowDef, returns NULL if not found
-	GuiWindowDefPtr findWindowDef(const std::string& name) override;
+	IGuiWindowDefPtr findWindowDef(const std::string& name) override;
 
 	// Called by the GuiRenderer to re-compile text VBOs, etc.
 	void pepareRendering() override;

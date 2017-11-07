@@ -1,13 +1,12 @@
 #include "Variable.h"
 
-#include "Gui.h"
-#include "GuiWindowDef.h"
+#include "igui.h"
 #include "string/case_conv.h"
 
 namespace gui
 {
 
-WindowDefVariable::WindowDefVariable(GuiWindowDef& windowDef,
+WindowDefVariable::WindowDefVariable(IGuiWindowDef& windowDef,
 									 const std::string& name) :
 	_windowDef(windowDef),
 	_name(string::to_lower_copy(name))
@@ -40,7 +39,7 @@ bool WindowDefVariable::assignValueFromString(const std::string& val)
 	}
 }
 
-GuiStateVariable::GuiStateVariable(Gui& gui, const std::string& key) :
+GuiStateVariable::GuiStateVariable(IGui& gui, const std::string& key) :
 	_gui(gui),
 	_key(key)
 {}

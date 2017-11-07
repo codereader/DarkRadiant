@@ -4,16 +4,12 @@
 namespace gui
 {
 
-Gui::Gui()
-{
-}
-
-const GuiWindowDefPtr& Gui::getDesktop() const
+const IGuiWindowDefPtr& Gui::getDesktop() const
 {
 	return _desktop;
 }
 
-void Gui::setDesktop(const GuiWindowDefPtr& newDesktop)
+void Gui::setDesktop(const IGuiWindowDefPtr& newDesktop)
 {
 	_desktop = newDesktop;
 }
@@ -76,7 +72,7 @@ void Gui::update(const std::size_t timestep)
 	}
 }
 
-GuiWindowDefPtr Gui::findWindowDef(const std::string& name)
+IGuiWindowDefPtr Gui::findWindowDef(const std::string& name)
 {
 	// Handle "Desktop" right here
 	if (name == "Desktop")
@@ -84,7 +80,7 @@ GuiWindowDefPtr Gui::findWindowDef(const std::string& name)
 		return _desktop;
 	}
 
-	return (_desktop != NULL) ? _desktop->findWindowDef(name) : GuiWindowDefPtr();
+	return (_desktop != NULL) ? _desktop->findWindowDef(name) : IGuiWindowDefPtr();
 }
 
 void Gui::pepareRendering()

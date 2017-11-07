@@ -1,6 +1,6 @@
-#ifndef GuiWindowDef_h__
-#define GuiWindowDef_h__
+#pragma once
 
+#include "igui.h"
 #include "ishaders.h"
 #include "math/Vector4.h"
 
@@ -23,11 +23,12 @@ typedef std::shared_ptr<GuiScript> GuiScriptPtr;
  * greebo: This is the base class for all windowDef-like objects in a GUI,
  * including windowDef, choiceDef, bindDef, etc.
  */
-class GuiWindowDef
+class GuiWindowDef :
+	public IGuiWindowDef
 {
 private:
 	// The owning GUI
-	Gui& _owner;
+	IGui& _owner;
 
 	// The renderable text object for submission to a Renderer
 	RenderableText _renderableText;
@@ -43,93 +44,25 @@ private:
 	TimedEventMap _timedEvents;
 
 public:
-	// Public properties
-
-	// The name of this windowDef
-	std::string name;
-
-	// Window size (x,y,width,height)
-	Vector4 rect;
-
-	// Visible or hidden
-	bool visible;
-
-	// Whether this gui is full screen (use on desktop window)
-	bool menugui;
-
-	Vector4 forecolor;
-	Vector4 hovercolor;
-	Vector4 backcolor;
-	Vector4 bordercolor;
-	Vector4 matcolor;
-
-	float rotate;
-
-	// background shader name
-	std::string background;
-
-	// background shader (NULL until realised)
-	MaterialPtr backgroundShader;
-
-	// The name of the font
-	std::string font;
-
-	// The scale for rendering the font
-	float textscale;
-
-	// The text alignment (left, right, center)
-	int textalign;
-
-	// Text offsets
-	float textalignx;
-	float textaligny;
-
-	// Force a specific aspect ratio
-	float forceaspectwidth;
-	float forceaspectheight;
-
-	// No mouse events for this window
-	bool noevents;
-
-	// Whether this window forces text to wrap at their borders
-	bool noclip;
-
-	// Whether time is running for this windowDef
-	bool notime;
-
-	// Don't display the cursor
-	bool nocursor;
-
-	// Don't wrap words at rectangle borders
-	bool nowrap;
-
-	// The window time (0..infinity)
-	std::size_t time;
-
-	// All child windowDefs of this window
-	typedef std::vector<GuiWindowDefPtr> ChildWindows;
-	ChildWindows children;
-
-public:
 	// Default constructor
-	GuiWindowDef(Gui& owner);
+	GuiWindowDef(IGui& owner);
 
 	// Returns the GUI
-	Gui& getGui() const;
+	IGui& getGui() const override;
 
 	void constructFromTokens(parser::DefTokeniser& tokeniser);
 
-	void addWindow(const GuiWindowDefPtr& window);
+	void addWindow(const IGuiWindowDefPtr& window) override;
 
 	// Recursively looks for a named child windowDef
 	// Returns NULL if not found
-	GuiWindowDefPtr findWindowDef(const std::string& name);
+	IGuiWindowDefPtr findWindowDef(const std::string& name) override;
 
-	const std::string& getText() const;
-	void setText(const std::string& newText);
+	const std::string& getText() const override;
+	void setText(const std::string& newText) override;
 
 	// Get the renderable text object containing the OpenGLRenderables
-	RenderableText& getRenderableText();
+	RenderableText& getRenderableText() override;
 
 	/**
 	 * greebo: This is some sort of "think" method, giving this windowDef
@@ -137,13 +70,13 @@ public:
 	 *
 	 * @updateChildren: recursively updates child windowDef if true
 	 */
-	void update(const std::size_t timeStep, bool updateChildren = true);
+	void update(const std::size_t timeStep, bool updateChildren = true) override;
 
 	// Initialises the time of this windowDef and all children
-	void initTime(const std::size_t time, bool updateChildren = true);
+	void initTime(const std::size_t time, bool updateChildren = true) override;
 
 	// Prepares renderable objects, to be called by the parent Gui only
-	void pepareRendering(bool prepareChildren = true);
+	void pepareRendering(bool prepareChildren = true) override;
 
 private:
 	Vector4 parseVector4(parser::DefTokeniser& tokeniser);
@@ -157,5 +90,3 @@ private:
 
 
 } // namespace
-
-#endif // GuiWindowDef_h__

@@ -37,7 +37,7 @@ public:
 	void render();
 
 private:
-	void render(const GuiWindowDefPtr& window);
+	void render(const IGuiWindowDefPtr& window);
 };
 
 }

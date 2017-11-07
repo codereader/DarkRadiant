@@ -63,7 +63,7 @@ void GuiRenderer::render()
 	glDisable(GL_BLEND);
 }
 
-void GuiRenderer::render(const GuiWindowDefPtr& window)
+void GuiRenderer::render(const IGuiWindowDefPtr& window)
 {
 	if (window == NULL) return;
 

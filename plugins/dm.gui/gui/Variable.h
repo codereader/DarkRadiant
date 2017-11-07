@@ -1,5 +1,4 @@
-#ifndef _GUI_VARIABLE_H_
-#define _GUI_VARIABLE_H_
+#pragma once
 
 #include <string>
 #include <memory>
@@ -7,8 +6,8 @@
 namespace gui
 {
 
-class Gui;
-class GuiWindowDef;
+class IGui;
+class IGuiWindowDef;
 
 // An abstract variable wrapping around a target object in a GUI.
 // This can be a GUI state variable or a windowDef property
@@ -28,13 +27,13 @@ class WindowDefVariable :
 {
 private:
 	// The parent windowDef of this variable
-	GuiWindowDef& _windowDef;
+	IGuiWindowDef& _windowDef;
 
 	// Variable name (in the windowDef
 	std::string _name;
 
 public:
-	WindowDefVariable(GuiWindowDef& windowDef, const std::string& name);
+	WindowDefVariable(IGuiWindowDef& windowDef, const std::string& name);
 
 	// Assign a value to this Variable (returns TRUE on success)
 	bool assignValueFromString(const std::string& val);
@@ -46,17 +45,15 @@ class GuiStateVariable :
 {
 private:
 	// The GUi the state variable is located in
-	Gui& _gui;
+	IGui& _gui;
 
 	// State key (name)
 	std::string _key;
 
 public:
-	GuiStateVariable(Gui& gui, const std::string& key);
+	GuiStateVariable(IGui& gui, const std::string& key);
 
 	bool assignValueFromString(const std::string& val);
 };
 
 } // namespace
-
-#endif /* _GUI_VARIABLE_H_ */

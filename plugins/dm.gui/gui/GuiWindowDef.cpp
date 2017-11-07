@@ -15,31 +15,32 @@
 namespace gui
 {
 
-GuiWindowDef::GuiWindowDef(Gui& owner) :
+GuiWindowDef::GuiWindowDef(IGui& owner) :
 	_owner(owner),
 	_renderableText(*this),
-	_textChanged(true),
-	visible(true),
-	forecolor(1,1,1,1),
-	hovercolor(1,1,1,1),
-	backcolor(0,0,0,0),
-	bordercolor(0,0,0,0),
-	matcolor(1,1,1,1),
-	rotate(0),
-	textscale(1),
-	textalign(0),
-	textalignx(0),
-	textaligny(0),
-	forceaspectwidth(640),
-	forceaspectheight(480),
-	noclip(false),
-	notime(false),
-	nocursor(false),
-	nowrap(false),
-	time(0)
-{}
+	_textChanged(true)
+{
+	visible = true;
+	forecolor = Vector4(1, 1, 1, 1);
+	hovercolor = Vector4(1, 1, 1, 1);
+	backcolor = Vector4(0, 0, 0, 0);
+	bordercolor = Vector4(0, 0, 0, 0);
+	matcolor = Vector4(1, 1, 1, 1);
+	rotate = 0;
+	textscale = 1;
+	textalign = 0;
+	textalignx = 0;
+	textaligny = 0;
+	forceaspectwidth = 640;
+	forceaspectheight = 480;
+	noclip = false;
+	notime = false;
+	nocursor = false;
+	nowrap = false;
+	time = 0;
+}
 
-Gui& GuiWindowDef::getGui() const
+IGui& GuiWindowDef::getGui() const
 {
 	return _owner;
 }
@@ -138,7 +139,7 @@ bool GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
 	return string::convert<int>(getExpression(tokeniser)) != 0;
 }
 
-void GuiWindowDef::addWindow(const GuiWindowDefPtr& window)
+void GuiWindowDef::addWindow(const IGuiWindowDefPtr& window)
 {
 	children.push_back(window);
 }
@@ -411,7 +412,7 @@ void GuiWindowDef::initTime(const std::size_t toTime, bool updateChildren)
 	}
 }
 
-GuiWindowDefPtr GuiWindowDef::findWindowDef(const std::string& windowName)
+IGuiWindowDefPtr GuiWindowDef::findWindowDef(const std::string& windowName)
 {
 	// First look at all direct children
 	for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
@@ -425,13 +426,13 @@ GuiWindowDefPtr GuiWindowDef::findWindowDef(const std::string& windowName)
 	// Not found, ask each child to search for the windowDef
 	for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
-		GuiWindowDefPtr window = (*i)->findWindowDef(windowName);
+		IGuiWindowDefPtr window = (*i)->findWindowDef(windowName);
 
 		if (window != NULL) return window;
 	}
 
 	// Not found
-	return GuiWindowDefPtr();
+	return IGuiWindowDefPtr();
 }
 
 void GuiWindowDef::pepareRendering(bool prepareChildren)

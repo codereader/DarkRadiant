@@ -41,7 +41,7 @@ void ReadableGuiView::setGui(const IGuiPtr& gui)
 
 	if (_gui != NULL)
 	{
-		GuiWindowDefPtr bgWindowDef = _gui->findWindowDef("backgroundImage");
+		IGuiWindowDefPtr bgWindowDef = _gui->findWindowDef("backgroundImage");
 		if (!bgWindowDef)
 		{
 			bgWindowDef = _gui->findWindowDef("backgroundmulti");

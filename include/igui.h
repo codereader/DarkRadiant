@@ -3,12 +3,120 @@
 #include <vector>
 #include <string>
 #include "imodule.h"
+#include "math/Vector4.h"
+#include "ishaders.h"
 
 namespace gui
 {
 
-class GuiWindowDef;
-typedef std::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
+class IGui;
+class RenderableText;
+
+class IGuiWindowDef;
+typedef std::shared_ptr<IGuiWindowDef> IGuiWindowDefPtr;
+
+class IGuiWindowDef
+{
+public:
+	// Public properties
+
+	// The name of this windowDef
+	std::string name;
+
+	// Window size (x,y,width,height)
+	Vector4 rect;
+
+	// Visible or hidden
+	bool visible;
+
+	// Whether this gui is full screen (use on desktop window)
+	bool menugui;
+
+	Vector4 forecolor;
+	Vector4 hovercolor;
+	Vector4 backcolor;
+	Vector4 bordercolor;
+	Vector4 matcolor;
+
+	float rotate;
+
+	// background shader name
+	std::string background;
+
+	// background shader (NULL until realised)
+	MaterialPtr backgroundShader;
+
+	// The name of the font
+	std::string font;
+
+	// The scale for rendering the font
+	float textscale;
+
+	// The text alignment (left, right, center)
+	int textalign;
+
+	// Text offsets
+	float textalignx;
+	float textaligny;
+
+	// Force a specific aspect ratio
+	float forceaspectwidth;
+	float forceaspectheight;
+
+	// No mouse events for this window
+	bool noevents;
+
+	// Whether this window forces text to wrap at their borders
+	bool noclip;
+
+	// Whether time is running for this windowDef
+	bool notime;
+
+	// Don't display the cursor
+	bool nocursor;
+
+	// Don't wrap words at rectangle borders
+	bool nowrap;
+
+	// The window time (0..infinity)
+	std::size_t time;
+
+	// All child windowDefs of this window
+	typedef std::vector<IGuiWindowDefPtr> ChildWindows;
+	ChildWindows children;
+
+public:
+	virtual ~IGuiWindowDef() {}
+
+	// Returns the owning GUI
+	virtual IGui& getGui() const = 0;
+
+	virtual void addWindow(const IGuiWindowDefPtr& window) = 0;
+
+	// Recursively looks for a named child windowDef
+	// Returns NULL if not found
+	virtual IGuiWindowDefPtr findWindowDef(const std::string& name) = 0;
+
+	virtual const std::string& getText() const = 0;
+	virtual void setText(const std::string& newText) = 0;
+
+	// Get the renderable text object containing the OpenGLRenderables
+	virtual RenderableText& getRenderableText() = 0;
+
+	/**
+	* greebo: This is some sort of "think" method, giving this windowDef
+	* a chance to handle timed events.
+	*
+	* @updateChildren: recursively updates child windowDef if true
+	*/
+	virtual void update(const std::size_t timeStep, bool updateChildren = true) = 0;
+
+	// Initialises the time of this windowDef and all children
+	virtual void initTime(const std::size_t time, bool updateChildren = true) = 0;
+
+	// Prepares renderable objects, to be called by the parent Gui only
+	virtual void pepareRendering(bool prepareChildren = true) = 0;
+};
 
 /**
 * greebo: This class represents a single D3 GUI. It holds all
@@ -19,8 +127,8 @@ class IGui
 public:
 	virtual ~IGui() {}
 
-	virtual const GuiWindowDefPtr& getDesktop() const = 0;
-	virtual void setDesktop(const GuiWindowDefPtr& newDesktop) = 0;
+	virtual const IGuiWindowDefPtr& getDesktop() const = 0;
+	virtual void setDesktop(const IGuiWindowDefPtr& newDesktop) = 0;
 
 	// Sets the given state variable (gui::<key> = <value>)
 	virtual void setStateString(const std::string& key, const std::string& value) = 0;
@@ -35,7 +143,7 @@ public:
 	virtual void update(const std::size_t timestep) = 0;
 
 	// Returns a reference to the named windowDef, returns NULL if not found
-	virtual GuiWindowDefPtr findWindowDef(const std::string& name) = 0;
+	virtual IGuiWindowDefPtr findWindowDef(const std::string& name) = 0;
 
 	// Called by the GuiRenderer to re-compile text VBOs, etc.
 	virtual void pepareRendering() = 0;
