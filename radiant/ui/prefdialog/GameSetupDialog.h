@@ -2,6 +2,7 @@
 
 #include "icommandsystem.h"
 #include "wxutil/dialog/DialogBase.h"
+#include "GameSetupPage.h"
 
 class wxChoicebook;
 

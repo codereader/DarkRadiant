@@ -538,6 +538,8 @@
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPage.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp" />
@@ -841,6 +843,8 @@
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPage.h" />
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPageIdTech.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItem.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />

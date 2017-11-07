@@ -5,6 +5,7 @@
 #include "igame.h"
 #include "modulesystem/ModuleRegistry.h"
 
+#include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/choicebk.h>
 #include <wx/stattext.h>
@@ -43,6 +44,14 @@ void GameSetupDialog::initialiseControls()
 	for (const game::IGamePtr& game : games)
 	{
 		choice->AppendString(game->getKeyValue("name"));
+
+		wxPanel* container = new wxPanel(_book, wxID_ANY);
+		container->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+		// For each game type create a separate page in the choice book
+		GameSetupPage* page = GameSetupPage::CreatePageForType(game->getKeyValue("type"), _book);
+
+		container->GetSizer()->Add(page, 1, wxEXPAND, 12);
 	}
 }
 
