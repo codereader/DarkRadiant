@@ -30,14 +30,28 @@ private:
 	GameSetupDialog(wxWindow* parent);
 
 public:
+	std::string getSelectedGameType();
+
+	// The result after the user is done with the dialog
+	struct Result
+	{
+		std::string gameType;	 // Display name of the selected game
+		std::string enginePath;	 // selected engine path
+		std::string modPath;	 // selected mod path
+		std::string modBasePath; // selected mod base path
+	};
+
 	/** greebo: The command target to show the Game settings preferences.
 	*/
-	static void Show(const cmd::ArgumentList& args);
+	static Result Show(const cmd::ArgumentList& args);
 
 private:
+	GameSetupPage* getSelectedPage();
+
 	void initialiseControls();
 
-	void save();
+	void onSave(wxCommandEvent& ev);
+	void onCancel(wxCommandEvent& ev);
 };
 
 }

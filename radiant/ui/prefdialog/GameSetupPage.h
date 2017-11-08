@@ -39,8 +39,17 @@ public:
 	// GameSettingsInvalidException in case something is not correct.
 	virtual void validateSettings() = 0;
 
-	// Saves the settings to the registry
-	virtual void saveSettings() = 0;
+	// The following three path accessors are needed by the owning GameManager
+	// to continue setting up the VFS search order, map paths, etc.
+
+	// Returns the engine path as derived from the user's input
+	virtual std::string getEnginePath() = 0;
+
+	// Returns the mod base path as derived from the user's input
+	virtual std::string getModBasePath() = 0;
+
+	// Returns the mod path as derived from the user's input
+	virtual std::string getModPath() = 0;
 
 public:
 	typedef std::function<GameSetupPage*(wxWindow*)> CreateInstanceFunc;

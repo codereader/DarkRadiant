@@ -3,6 +3,9 @@
 #include "GameSetupPage.h"
 #include "registry/buffer.h"
 
+class wxTextCtrl;
+namespace wxutil { class PathEntry; }
+
 namespace ui
 {
 
@@ -21,18 +24,31 @@ private:
 	// when emitted, the widgets reload the values from the registry.
 	sigc::signal<void> _resetValuesSignal;
 
+	wxTextCtrl* _fsGameEntry;
+	wxTextCtrl* _fsGameBaseEntry;
+	wxutil::PathEntry* _enginePathEntry;
+
+	std::string _enginePath;
+	std::string _modBasePath;
+	std::string _modPath;
+
 public:
 	GameSetupPageIdTech(wxWindow* parent);
 
 	static const char* TYPE();
 
 	const char* getType() override;
-
 	void validateSettings() override;
-	void saveSettings() override;
+
+	std::string getEnginePath() override;
+	std::string getModBasePath() override;
+	std::string getModPath() override;
 
 private:
-	wxWindow* createEntry(const std::string& registryKey);
+	void constructPaths();
+
+	wxTextCtrl* createEntry(const std::string& registryKey);
+	wxutil::PathEntry* createPathEntry(const std::string& registryKey);
 };
 
 }

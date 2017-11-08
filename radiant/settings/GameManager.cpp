@@ -59,20 +59,38 @@ const StringSet& Manager::getDependencies() const {
 
 void Manager::initialiseModule(const ApplicationContext& ctx)
 {
+	// Read command line parameters, these override any existing preference setting
+	const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
+
+	for (const std::string& arg : args)
+	{
+		if (string::istarts_with(arg, "fs_game="))
+		{
+			GlobalRegistry().set(RKEY_FS_GAME, arg.substr(8));
+		}
+		else if (string::istarts_with(arg, "fs_game_base="))
+		{
+			GlobalRegistry().set(RKEY_FS_GAME_BASE, arg.substr(13));
+		}
+	}
+
 	initialise(ctx.getRuntimeDataPath());
 
 	initEnginePath();
 }
 
-const std::string& Manager::getFSGame() const {
-	return _fsGame;
+const std::string& Manager::getFSGame() const
+{
+	return GlobalRegistry().get(RKEY_FS_GAME);
 }
 
-const std::string& Manager::getFSGameBase() const {
-	return _fsGameBase;
+const std::string& Manager::getFSGameBase() const 
+{
+	return GlobalRegistry().get(RKEY_FS_GAME_BASE);
 }
 
-const std::string& Manager::getModPath() const {
+const std::string& Manager::getModPath() const
+{
 	// Return the fs_game path if available
 	return (!_modPath.empty()) ? _modPath : _modBasePath;
 }
@@ -125,7 +143,7 @@ void Manager::initialise(const std::string& appPath)
 		// No game types available, bail out, the program would crash anyway on
 		// module load
 		wxutil::Messagebox::ShowFatalError(
-			_("GameManager: No valid game files found, can't continue."), NULL
+			_("GameManager: No valid game files found, can't continue."), nullptr
 		);
 	}
 
@@ -159,10 +177,10 @@ void Manager::initialise(const std::string& appPath)
 	// The game type should be selected now
 	if (!_currentGameName.empty())
     {
-		rMessage() << "GameManager: Selected game type: "
-                             << _currentGameName << std::endl;
+		rMessage() << "GameManager: Selected game type: " << _currentGameName << std::endl;
 	}
-	else {
+	else 
+	{
 		// No game type selected, bail out, the program would crash anyway on module load
 		wxutil::Messagebox::ShowFatalError(_("No game type selected."));
 	}
@@ -198,28 +216,6 @@ void Manager::constructPaths()
 
 	// Make sure it's a well formatted path
 	_enginePath = os::standardPathWithSlash(_enginePath);
-
-	// Read command line parameters, these override any existing preference setting
-    const ApplicationContext::ArgumentList& args(
-        module::ModuleRegistry::Instance().getApplicationContext().getCmdLineArgs()
-    );
-
-    for (ApplicationContext::ArgumentList::const_iterator i = args.begin();
-         i != args.end();
-         ++i)
-    {
-		// get the argument and investigate it
-		std::string arg = *i;
-
-		if (string::istarts_with(arg, "fs_game="))
-		{
-			GlobalRegistry().set(RKEY_FS_GAME, arg.substr(8));
-		}
-		else if (string::istarts_with(arg, "fs_game_base=")) 
-		{
-			GlobalRegistry().set(RKEY_FS_GAME_BASE, arg.substr(13));
-		}
-	}
 
 	// Load the fsGame and fsGameBase from the registry
 	_fsGame = GlobalRegistry().get(RKEY_FS_GAME);

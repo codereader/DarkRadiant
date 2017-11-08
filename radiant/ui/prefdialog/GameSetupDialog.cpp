@@ -5,6 +5,7 @@
 #include "igame.h"
 #include "modulesystem/ModuleRegistry.h"
 
+#include "wxutil/dialog/MessageBox.h"
 #include "registry/registry.h"
 #include "GameSetupPageIdTech.h"
 #include <wx/panel.h>
@@ -31,7 +32,20 @@ GameSetupDialog::GameSetupDialog(wxWindow* parent) :
 	mainVbox->Add(label);
 	mainVbox->Add(_book, 1, wxEXPAND);
 
-	mainVbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT);
+	wxBoxSizer* buttonHBox = new wxBoxSizer(wxHORIZONTAL);
+
+	// Create the Save button
+	wxButton* saveButton = new wxButton(this, wxID_SAVE);
+	saveButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(GameSetupDialog::onSave), nullptr, this);
+
+	// Create the assign shortcut button
+	wxButton* cancelButton = new wxButton(this, wxID_CANCEL);
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(GameSetupDialog::onCancel), NULL, this);
+
+	buttonHBox->Add(saveButton, 0, wxRIGHT, 6);
+	buttonHBox->Add(cancelButton, 0, wxRIGHT, 6);
+
+	mainVbox->Add(buttonHBox, 0, wxALIGN_RIGHT | wxTOP | wxBOTTOM, 12);
 
 	initialiseControls();
 
@@ -76,29 +90,66 @@ void GameSetupDialog::initialiseControls()
 	}
 }
 
-void GameSetupDialog::save()
+GameSetupPage* GameSetupDialog::getSelectedPage()
 {
-	if (_book->GetSelection() == wxNOT_FOUND)
-	{
-		rError() << "Cannot save game type, nothing selected" << std::endl;
-		return;
-	}
-
 	// Extract the game type value from the current page and save it to the registry
 	wxWindow* container = _book->GetPage(_book->GetSelection());
-	GameSetupPage* page = dynamic_cast<GameSetupPage*>(wxWindow::FindWindowByName("GameSetupPage", container));
+	return dynamic_cast<GameSetupPage*>(wxWindow::FindWindowByName("GameSetupPage", container));
+}
+
+std::string GameSetupDialog::getSelectedGameType()
+{
+	// Extract the game type value from the current page and save it to the registry
+	GameSetupPage* page = getSelectedPage();
+
+	if (page == nullptr) return std::string();
 
 	wxStringClientData* data = static_cast<wxStringClientData*>(page->GetClientData());
 
-	std::string selectedGame = data->GetData().ToStdString();
-	registry::setValue(RKEY_GAME_TYPE, selectedGame);
-
-	// Ask the current page to set the paths to the registry
-	page->saveSettings();
+	return data->GetData().ToStdString();
 }
 
-void GameSetupDialog::Show(const cmd::ArgumentList& args)
+void GameSetupDialog::onSave(wxCommandEvent& ev)
 {
+	if (getSelectedGameType().empty())
+	{
+		// Ask the user to select a game type
+		wxutil::Messagebox::Show(_("Invalid Settings"), 
+			_("Please select a game type"), ui::IDialog::MESSAGE_CONFIRM, nullptr);
+		return;
+	}
+
+	GameSetupPage* page = GameSetupDialog::getSelectedPage();
+	assert(page != nullptr);
+
+	try
+	{
+		page->validateSettings();
+	}
+	catch (GameSettingsInvalidException& ex)
+	{
+		std::string msg = fmt::format(_("Warning:\n{0}\nDo you want to correct these settings?"), ex.what());
+
+		if (wxutil::Messagebox::Show(_("Invalid Settings"), 
+				msg, ui::IDialog::MESSAGE_ASK, nullptr) == wxutil::Messagebox::RESULT_YES)
+		{
+			// User wants to correct the settings, don't exit
+			return;
+		}
+	}
+
+	EndModal(wxID_OK);
+}
+
+void GameSetupDialog::onCancel(wxCommandEvent& ev)
+{
+	EndModal(wxID_CANCEL);
+}
+
+GameSetupDialog::Result GameSetupDialog::Show(const cmd::ArgumentList& args)
+{
+	GameSetupDialog::Result result;
+
 	// greebo: Check if the mainframe module is already "existing". It might be
 	// uninitialised if this dialog is shown during DarkRadiant startup
 	wxWindow* parent = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
@@ -106,14 +157,26 @@ void GameSetupDialog::Show(const cmd::ArgumentList& args)
 
 	GameSetupDialog* dialog = new GameSetupDialog(parent);
 
-	int result = dialog->ShowModal();
-
-	if (result == wxID_OK)
+	if (dialog->ShowModal() == wxID_OK)
 	{
-		dialog->save();
+		result.gameType = dialog->getSelectedGameType();
+
+		if (result.gameType.empty())
+		{
+			rError() << "Cannot save game paths, nothing selected" << std::endl;
+			return result;
+		}
+
+		GameSetupPage* page = dialog->getSelectedPage();
+
+		result.enginePath = page->getEnginePath();
+		result.modPath = page->getModPath();
+		result.modBasePath = page->getModBasePath();
 	}
 	
 	dialog->Destroy();
+
+	return result;
 }
 
 }
