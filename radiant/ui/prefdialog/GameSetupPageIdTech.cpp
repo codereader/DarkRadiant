@@ -47,7 +47,7 @@ void GameSetupPageIdTech::validateSettings()
 
 void GameSetupPageIdTech::saveSettings()
 {
-
+	_registryBuffer.commitChanges();
 }
 
 wxWindow* GameSetupPageIdTech::createEntry(const std::string& registryKey)

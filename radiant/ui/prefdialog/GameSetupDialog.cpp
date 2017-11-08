@@ -5,6 +5,7 @@
 #include "igame.h"
 #include "modulesystem/ModuleRegistry.h"
 
+#include "registry/registry.h"
 #include "GameSetupPageIdTech.h"
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -64,6 +65,10 @@ void GameSetupDialog::initialiseControls()
 
 		// For each game type create a separate page in the choice book
 		GameSetupPage* page = GameSetupPage::CreatePageForType(type, container);
+		page->SetName("GameSetupPage");
+
+		// Store the game value as client data into the page object
+		page->SetClientData(new wxStringClientData(game->getKeyValue("name")));
 
 		container->GetSizer()->Add(page, 1, wxEXPAND | wxALL, 12);
 
@@ -73,8 +78,23 @@ void GameSetupDialog::initialiseControls()
 
 void GameSetupDialog::save()
 {
-	// Save paths to the registry
-	// TODO
+	if (_book->GetSelection() == wxNOT_FOUND)
+	{
+		rError() << "Cannot save game type, nothing selected" << std::endl;
+		return;
+	}
+
+	// Extract the game type value from the current page and save it to the registry
+	wxWindow* container = _book->GetPage(_book->GetSelection());
+	GameSetupPage* page = dynamic_cast<GameSetupPage*>(wxWindow::FindWindowByName("GameSetupPage", container));
+
+	wxStringClientData* data = static_cast<wxStringClientData*>(page->GetClientData());
+
+	std::string selectedGame = data->GetData().ToStdString();
+	registry::setValue(RKEY_GAME_TYPE, selectedGame);
+
+	// Ask the current page to set the paths to the registry
+	page->saveSettings();
 }
 
 void GameSetupDialog::Show(const cmd::ArgumentList& args)
