@@ -1,12 +1,16 @@
-#ifndef IGAMEMANAGER_H_
-#define IGAMEMANAGER_H_
+#pragma once
 
 #include "xmlutil/Node.h"
 #include "imodule.h"
 #include <list>
 
 // String identifier for the game manager module
-const std::string MODULE_GAMEMANAGER("GameManager");
+const char* const MODULE_GAMEMANAGER("GameManager");
+
+const char* const RKEY_GAME_TYPE = "user/game/type";
+const char* const RKEY_FS_GAME = "user/game/fs_game";
+const char* const RKEY_FS_GAME_BASE = "user/game/fs_game_base";
+const char* const RKEY_ENGINE_PATH = "user/paths/enginePath";
 
 namespace game
 {
@@ -98,7 +102,8 @@ typedef std::shared_ptr<IGameManager> IGameManagerPtr;
 } // namespace game
 
 // This is the accessor for the game manager
-inline game::IGameManager& GlobalGameManager() {
+inline game::IGameManager& GlobalGameManager()
+{
 	// Cache the reference locally
 	static game::IGameManager& _gameManager(
 		*std::static_pointer_cast<game::IGameManager>(
@@ -107,5 +112,3 @@ inline game::IGameManager& GlobalGameManager() {
 	);
 	return _gameManager;
 }
-
-#endif /*IGAMEMANAGER_H_*/

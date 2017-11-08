@@ -29,13 +29,12 @@
 
 namespace game
 {
-	namespace {
-		const std::string RKEY_GAME_TYPE = "user/game/type";
-		const std::string RKEY_FS_GAME = "user/game/fs_game";
-		const std::string RKEY_FS_GAME_BASE = "user/game/fs_game_base";
-		const char* const GKEY_PREFAB_FOLDER = "/mapFormat/prefabFolder";
-		const char* const GKEY_MAPS_FOLDER = "/mapFormat/mapFolder";
-	}
+
+namespace
+{
+	const char* const GKEY_PREFAB_FOLDER = "/mapFormat/prefabFolder";
+	const char* const GKEY_MAPS_FOLDER = "/mapFormat/mapFolder";
+}
 
 Manager::Manager() :
 	_enginePathInitialised(false)

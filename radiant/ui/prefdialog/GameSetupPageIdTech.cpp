@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "imodule.h"
+#include "igame.h"
 
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
@@ -12,12 +13,6 @@
 
 namespace ui
 {
-
-namespace
-{
-	const std::string RKEY_FS_GAME = "user/game/fs_game";
-	const std::string RKEY_FS_GAME_BASE = "user/game/fs_game_base";
-}
 
 GameSetupPageIdTech::GameSetupPageIdTech(wxWindow* parent) :
 	GameSetupPage(parent)

@@ -71,6 +71,12 @@ void GameSetupDialog::initialiseControls()
 	}
 }
 
+void GameSetupDialog::save()
+{
+	// Save paths to the registry
+	// TODO
+}
+
 void GameSetupDialog::Show(const cmd::ArgumentList& args)
 {
 	// greebo: Check if the mainframe module is already "existing". It might be
@@ -80,7 +86,12 @@ void GameSetupDialog::Show(const cmd::ArgumentList& args)
 
 	GameSetupDialog* dialog = new GameSetupDialog(parent);
 
-	dialog->ShowModal();
+	int result = dialog->ShowModal();
+
+	if (result == wxID_OK)
+	{
+		dialog->save();
+	}
 	
 	dialog->Destroy();
 }
