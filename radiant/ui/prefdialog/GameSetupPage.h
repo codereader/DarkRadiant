@@ -1,5 +1,6 @@
 #pragma once
 
+#include "igame.h"
 #include <stdexcept>
 #include <functional>
 #include <map>
@@ -26,8 +27,12 @@ public:
 class GameSetupPage :
 	public wxPanel
 {
+protected:
+	// The game we're working on
+	game::IGamePtr _game;
+
 public:
-	GameSetupPage(wxWindow* parent);
+	GameSetupPage(wxWindow* parent, const game::IGamePtr& game);
 
 	virtual ~GameSetupPage() {}
 
@@ -55,7 +60,7 @@ public:
 	virtual std::string getModPath() = 0;
 
 public:
-	typedef std::function<GameSetupPage*(wxWindow*)> CreateInstanceFunc;
+	typedef std::function<GameSetupPage*(wxWindow*, const game::IGamePtr&)> CreateInstanceFunc;
 
 	// Base class keeps a map of registered pages
 	typedef std::map<std::string, GameSetupPage::CreateInstanceFunc> GameSetupPages;
@@ -64,7 +69,7 @@ public:
 	static void EnsureDefaultPages();
 
 	// Creates the setup page instance for the given type
-	static GameSetupPage* CreatePageForType(const std::string& type, wxWindow* parent);
+	static GameSetupPage* CreatePageForGame(const game::IGamePtr& game, wxWindow* parent);
 };
 
 }

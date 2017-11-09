@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameSetupPage.h"
-#include "registry/buffer.h"
 
 class wxTextCtrl;
 namespace wxutil { class PathEntry; }
@@ -17,13 +16,6 @@ class GameSetupPageIdTech :
 	public GameSetupPage
 {
 private:
-	// We're holding back any registry write operations until the user clicks OK
-	registry::Buffer _registryBuffer;
-
-	// A signal chain all registry key-bound widgets are connected with
-	// when emitted, the widgets reload the values from the registry.
-	sigc::signal<void> _resetValuesSignal;
-
 	wxTextCtrl* _fsGameEntry;
 	wxTextCtrl* _fsGameBaseEntry;
 	wxutil::PathEntry* _enginePathEntry;
@@ -33,7 +25,7 @@ private:
 	std::string _modPath;
 
 public:
-	GameSetupPageIdTech(wxWindow* parent);
+	GameSetupPageIdTech(wxWindow* parent, const game::IGamePtr& game);
 
 	static const char* TYPE();
 
@@ -47,10 +39,6 @@ public:
 
 private:
 	void constructPaths();
-#if 0
-	wxTextCtrl* createEntry(const std::string& registryKey);
-	wxutil::PathEntry* createPathEntry(const std::string& registryKey);
-#endif
 };
 
 }

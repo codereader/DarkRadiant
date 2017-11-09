@@ -253,34 +253,6 @@ void Manager::constructPaths()
 #endif
 }
 
-bool Manager::userWantsToCorrectSettings() const
-{
-#if 0
-    std::stringstream msg("<b>Warning:</b>\n");
-
-    if (!os::fileOrDirExists(_enginePath))
-    {
-        msg << fmt::format(_("Engine path \"{0}\" does not exist.\n"), _enginePath);
-    }
-
-    if (!_fsGame.empty() && !os::fileOrDirExists(_modPath))
-    {
-        msg << fmt::format(_("The fs_game folder \"{0}\" does not exist.\n"), _modPath);
-    }
-
-    if (!_fsGameBase.empty() && !os::fileOrDirExists(_modBasePath))
-    {
-        msg << fmt::format(_("The fs_game_base folder \"{0}\" does not exist.\n"), _modBasePath);
-    }
-
-    msg << _("Do you want to correct these settings?");
-
-    return wxutil::Messagebox::Show(_("Invalid Settings"), 
-		msg.str(), ui::IDialog::MESSAGE_ASK, NULL) == ui::IDialog::RESULT_YES;
-#endif
-	return false;
-}
-
 void Manager::initEnginePath()
 {
 	// Try to retrieve a saved value for the engine path
@@ -336,16 +308,6 @@ void Manager::initEnginePath()
 	// Take this path and store it into the Registry, it's expected to be there
 	registry::setValue(RKEY_ENGINE_PATH, _enginePath);
 
-#if 0
-	// Try to do something with the information currently in the Registry
-	// It should be enough to know the engine path and the fs_game.
-	constructPaths();
-#endif
-#if 0
-	// Check loop, continue, till the user specifies a valid setting
-	while (!settingsValid())
-	{
-#endif
 	if (!settingsValid())
 	{
 		// Paths not valid, ask the user to select something
@@ -375,18 +337,6 @@ void Manager::initEnginePath()
 			registry::setValue(RKEY_FS_GAME_BASE, fsGameBase);
 		}
 	}
-
-#if 0
-		// After the dialog, the settings are located in the registry.
-		// Construct the paths with the settings found there
-		constructPaths();
-
-		if (!settingsValid() && !userWantsToCorrectSettings())
-        {
-            break;
-		}
-	}
-#endif
 
 	// Register as observer, to get notified about future engine path changes
 	observeKey(RKEY_ENGINE_PATH);

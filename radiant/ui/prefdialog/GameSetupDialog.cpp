@@ -64,23 +64,8 @@ void GameSetupDialog::initialiseControls()
 		wxPanel* container = new wxPanel(_book, wxID_ANY);
 		container->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-		// Check the game setup dialog type
-		std::string type = GameSetupPageIdTech::TYPE();
-
-		xml::NodeList nodes = game->getLocalXPath("/gameSetup/dialog");
-
-		if (!nodes.empty())
-		{
-			std::string value = nodes[0].getAttributeValue("type");
-
-			if (!value.empty())
-			{
-				type = value;
-			}
-		}
-
 		// For each game type create a separate page in the choice book
-		GameSetupPage* page = GameSetupPage::CreatePageForType(type, container);
+		GameSetupPage* page = GameSetupPage::CreatePageForGame(game, container);
 		page->SetName("GameSetupPage");
 
 		// Store the game value as client data into the page object

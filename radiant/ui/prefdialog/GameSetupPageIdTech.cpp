@@ -20,8 +20,8 @@
 namespace ui
 {
 
-GameSetupPageIdTech::GameSetupPageIdTech(wxWindow* parent) :
-	GameSetupPage(parent),
+GameSetupPageIdTech::GameSetupPageIdTech(wxWindow* parent, const game::IGamePtr& game) :
+	GameSetupPage(parent, game),
 	_fsGameEntry(nullptr),
 	_fsGameBaseEntry(nullptr),
 	_enginePathEntry(nullptr)
@@ -187,36 +187,4 @@ void GameSetupPageIdTech::constructPaths()
 	}
 }
 
-#if 0
-wxTextCtrl* GameSetupPageIdTech::createEntry(const std::string& registryKey)
-{
-	wxTextCtrl* entryWidget = new wxTextCtrl(this, wxID_ANY);
-
-	int minChars = static_cast<int>(std::max(_registryBuffer.get(registryKey).size(), std::size_t(30)));
-	entryWidget->SetMinClientSize(wxSize(entryWidget->GetCharWidth() * minChars, -1));
-
-	// Connect the registry key to the newly created input field
-	registry::bindWidgetToBufferedKey(entryWidget, registryKey, _registryBuffer, _resetValuesSignal);
-
-	return entryWidget;
-}
-
-wxutil::PathEntry* GameSetupPageIdTech::createPathEntry(const std::string& registryKey)
-{
-	wxutil::PathEntry* entry = new wxutil::PathEntry(this, true);
-
-	// Connect the registry key to the newly created input field
-	registry::bindWidgetToBufferedKey(entry->getEntryWidget(), registryKey, _registryBuffer, _resetValuesSignal);
-
-	int minChars = static_cast<int>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(30)));
-
-	entry->getEntryWidget()->SetMinClientSize(
-		wxSize(entry->getEntryWidget()->GetCharWidth() * minChars, -1));
-
-	// Initialize entry
-	entry->setValue(registry::getValue<std::string>(registryKey));
-
-	return entry;
-}
-#endif
 }
