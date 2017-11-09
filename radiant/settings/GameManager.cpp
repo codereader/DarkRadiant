@@ -13,6 +13,7 @@
 #include "os/dir.h"
 #include "os/path.h"
 #include "os/fs.h"
+#include "string/trim.h"
 #include "string/convert.h"
 #include "string/replace.h"
 #include "string/predicate.h"
@@ -212,6 +213,7 @@ std::string Manager::getUserEnginePath()
 
 void Manager::constructPaths()
 {
+#if 0
 	_enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
 
 	// Make sure it's a well formatted path
@@ -248,10 +250,12 @@ void Manager::constructPaths()
 		// No fs_game, no modpath
 		_modPath = "";
 	}
+#endif
 }
 
 bool Manager::userWantsToCorrectSettings() const
 {
+#if 0
     std::stringstream msg("<b>Warning:</b>\n");
 
     if (!os::fileOrDirExists(_enginePath))
@@ -273,69 +277,106 @@ bool Manager::userWantsToCorrectSettings() const
 
     return wxutil::Messagebox::Show(_("Invalid Settings"), 
 		msg.str(), ui::IDialog::MESSAGE_ASK, NULL) == ui::IDialog::RESULT_YES;
+#endif
+	return false;
 }
 
 void Manager::initEnginePath()
 {
 	// Try to retrieve a saved value for the engine path
-	std::string enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
+	_enginePath = registry::getValue<std::string>(RKEY_ENGINE_PATH);
+	_modPath = registry::getValue<std::string>(RKEY_MOD_PATH);
+	_modBasePath = registry::getValue<std::string>(RKEY_MOD_BASE_PATH);
+
 	xml::NodeList gameNodeList = GlobalRegistry().findXPath("game");
 
-	if (enginePath.empty() && gameNodeList.size() > 0) {
+	if (_enginePath.empty() && !gameNodeList.empty())
+	{
 		// No engine path known, but we have a valid game description
 		// Try to deduce the engine path from the Registry settings (Win32 only)
 		std::string regKey = gameNodeList[0].getAttributeValue("registryKey");
 		std::string regValue = gameNodeList[0].getAttributeValue("registryValue");
 
 		rMessage() << "GameManager: Querying Windows Registry for game path: "
-							 << "HKEY_LOCAL_MACHINE\\"
-							 << regKey << "\\" << regValue << std::endl;
+			<< "HKEY_LOCAL_MACHINE\\"
+			<< regKey << "\\" << regValue << std::endl;
 
 		// Query the Windows Registry for a default installation path
 		// This will return "" for non-Windows environments
-		enginePath = Win32Registry::getKeyValue(regKey, regValue);
+		_enginePath = Win32Registry::getKeyValue(regKey, regValue);
 
 		rMessage() << "GameManager: Windows Registry returned result: "
-							 << enginePath << std::endl;
+			<< _enginePath << std::endl;
 	}
 
 	// If the engine path is still empty, consult the .game file for a fallback value
-	if (enginePath.empty()) {
+	if (_enginePath.empty())
+	{
 		// No engine path set so far, search the game file for default values
 		const std::string ENGINEPATH_ATTRIBUTE =
 #if defined(WIN32)
-		    "enginepath_win32"
+			"enginepath_win32"
 #elif defined(__linux__) || defined (__FreeBSD__)
-		    "enginepath_linux"
+			"enginepath_linux"
 #elif defined(__APPLE__)
-		    "enginepath_macos"
+			"enginepath_macos"
 #else
 #error "unknown platform"
 #endif
-    	;
+			;
 
-	    enginePath = os::standardPathWithSlash(
+		_enginePath = os::standardPathWithSlash(
 			currentGame()->getKeyValue(ENGINEPATH_ATTRIBUTE)
 		);
 	}
 
 	// Normalise the path in any case
-	enginePath = os::standardPathWithSlash(enginePath);
+	_enginePath = os::standardPathWithSlash(_enginePath);
 
 	// Take this path and store it into the Registry, it's expected to be there
-	GlobalRegistry().set(RKEY_ENGINE_PATH, enginePath);
+	registry::setValue(RKEY_ENGINE_PATH, _enginePath);
 
+#if 0
 	// Try to do something with the information currently in the Registry
 	// It should be enough to know the engine path and the fs_game.
 	constructPaths();
-
+#endif
+#if 0
 	// Check loop, continue, till the user specifies a valid setting
 	while (!settingsValid())
 	{
-		// Engine path doesn't exist, ask the user
-		ui::GameSetupDialog::Show(cmd::ArgumentList());
-		//ui::PrefDialog::ShowDialog(_("Game"));
+#endif
+	if (!settingsValid())
+	{
+		// Paths not valid, ask the user to select something
+		ui::GameSetupDialog::Result result = ui::GameSetupDialog::Show(cmd::ArgumentList());
 
+		if (!result.enginePath.empty())
+		{
+			_currentGameName = result.gameName;
+			_enginePath = result.enginePath;
+			_modBasePath = result.modBasePath;
+			_modPath = result.modPath;
+
+			// Persist the settings to the registry
+			registry::setValue(RKEY_GAME_TYPE, _currentGameName);
+			registry::setValue(RKEY_ENGINE_PATH, _enginePath);
+			registry::setValue(RKEY_MOD_PATH, _modPath);
+			registry::setValue(RKEY_MOD_BASE_PATH, _modBasePath);
+
+			// Extract the fs_game / fs_game_base settings from the mod path
+			std::string fsGame = os::getRelativePath(_modPath, _enginePath);
+			string::trim_right(fsGame, "/");
+
+			std::string fsGameBase = os::getRelativePath(_modBasePath, _enginePath);
+			string::trim_right(fsGameBase, "/");
+
+			registry::setValue(RKEY_FS_GAME, fsGame);
+			registry::setValue(RKEY_FS_GAME_BASE, fsGameBase);
+		}
+	}
+
+#if 0
 		// After the dialog, the settings are located in the registry.
 		// Construct the paths with the settings found there
 		constructPaths();
@@ -345,6 +386,7 @@ void Manager::initEnginePath()
             break;
 		}
 	}
+#endif
 
 	// Register as observer, to get notified about future engine path changes
 	observeKey(RKEY_ENGINE_PATH);
@@ -385,16 +427,18 @@ void Manager::addVFSSearchPath(const std::string &path)
 
 bool Manager::settingsValid() const
 {
-	if (os::fileOrDirExists(_enginePath)) {
-
+	if (os::fileOrDirExists(_enginePath)) 
+	{
 		// Check the mod base path, if appropriate
-		if (!_fsGameBase.empty() && !os::fileOrDirExists(_modBasePath)) {
+		if (!_modBasePath.empty() && !os::fileOrDirExists(_modBasePath))
+		{
 			// Mod base name is not empty, but folder doesnt' exist
 			return false;
 		}
 
 		// Check the mod path, if appropriate
-		if (!_fsGame.empty() && !os::fileOrDirExists(_modPath)) {
+		if (!_modPath.empty() && !os::fileOrDirExists(_modPath))
+		{
 			// Mod name is not empty, but mod folder doesnt' exist
 			return false;
 		}

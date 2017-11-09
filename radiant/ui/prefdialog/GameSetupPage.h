@@ -39,6 +39,9 @@ public:
 	// GameSettingsInvalidException in case something is not correct.
 	virtual void validateSettings() = 0;
 
+	// Called by the owning GameSetupDialog when this page is selected
+	virtual void onPageShown() = 0;
+
 	// The following three path accessors are needed by the owning GameManager
 	// to continue setting up the VFS search order, map paths, etc.
 

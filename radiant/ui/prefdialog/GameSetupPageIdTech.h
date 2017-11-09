@@ -39,6 +39,7 @@ public:
 
 	const char* getType() override;
 	void validateSettings() override;
+	void onPageShown() override;
 
 	std::string getEnginePath() override;
 	std::string getModBasePath() override;
@@ -46,9 +47,10 @@ public:
 
 private:
 	void constructPaths();
-
+#if 0
 	wxTextCtrl* createEntry(const std::string& registryKey);
 	wxutil::PathEntry* createPathEntry(const std::string& registryKey);
+#endif
 };
 
 }

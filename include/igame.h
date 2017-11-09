@@ -11,6 +11,8 @@ const char* const RKEY_GAME_TYPE = "user/game/type";
 const char* const RKEY_FS_GAME = "user/game/fs_game";
 const char* const RKEY_FS_GAME_BASE = "user/game/fs_game_base";
 const char* const RKEY_ENGINE_PATH = "user/paths/enginePath";
+const char* const RKEY_MOD_PATH = "user/paths/modPath";
+const char* const RKEY_MOD_BASE_PATH = "user/paths/modBasePath";
 
 namespace game
 {

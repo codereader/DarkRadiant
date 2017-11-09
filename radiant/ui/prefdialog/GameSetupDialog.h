@@ -5,6 +5,7 @@
 #include "GameSetupPage.h"
 
 class wxChoicebook;
+class wxBookCtrlEvent;
 
 namespace ui
 {
@@ -35,7 +36,7 @@ public:
 	// The result after the user is done with the dialog
 	struct Result
 	{
-		std::string gameType;	 // Display name of the selected game
+		std::string gameName;	 // Display name of the selected game
 		std::string enginePath;	 // selected engine path
 		std::string modPath;	 // selected mod path
 		std::string modBasePath; // selected mod base path
@@ -47,11 +48,14 @@ public:
 
 private:
 	GameSetupPage* getSelectedPage();
+	GameSetupPage* getPage(int num);
+	void setSelectedPage(const std::string& name);
 
 	void initialiseControls();
 
 	void onSave(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
+	void onPageChanged(wxBookCtrlEvent& ev);
 };
 
 }

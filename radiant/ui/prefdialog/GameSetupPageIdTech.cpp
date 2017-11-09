@@ -12,7 +12,9 @@
 #include <wx/stattext.h>
 #include <wx/panel.h>
 
+#include "string/trim.h"
 #include "os/file.h"
+#include "os/path.h"
 #include "registry/Widgets.h"
 
 namespace ui
@@ -27,19 +29,22 @@ GameSetupPageIdTech::GameSetupPageIdTech(wxWindow* parent) :
 	wxFlexGridSizer* table = new wxFlexGridSizer(3, 2, wxSize(6, 6));
 	this->SetSizer(table);
 
-	_enginePathEntry = createPathEntry(RKEY_ENGINE_PATH);
+	_enginePathEntry = new wxutil::PathEntry(this, true);
+	_enginePathEntry->getEntryWidget()->SetMinClientSize(
+		wxSize(_enginePathEntry->getEntryWidget()->GetCharWidth() * 30, -1));
+
 	table->Add(new wxStaticText(this, wxID_ANY, _("Engine Path")), 0, wxALIGN_CENTRE_VERTICAL);
 	table->Add(_enginePathEntry, 0);
 
-	_fsGameEntry = createEntry(RKEY_FS_GAME);
+	_fsGameEntry = new wxTextCtrl(this, wxID_ANY);
+	_fsGameEntry->SetMinClientSize(wxSize(_fsGameEntry->GetCharWidth() * 30, -1));
 	table->Add(new wxStaticText(this, wxID_ANY, _("Mod (fs_game)")), 0, wxALIGN_CENTRE_VERTICAL);
 	table->Add(_fsGameEntry, 0);
 
-	_fsGameBaseEntry = createEntry(RKEY_FS_GAME_BASE);
+	_fsGameBaseEntry = new wxTextCtrl(this, wxID_ANY);
+	_fsGameBaseEntry->SetMinClientSize(wxSize(_fsGameEntry->GetCharWidth() * 30, -1));
 	table->Add(new wxStaticText(this, wxID_ANY, _("Mod Base (fs_game_base, optional)")), 0, wxALIGN_CENTRE_VERTICAL);
 	table->Add(_fsGameBaseEntry, 0);
-
-	// TODO: Derive some default values for the paths unless they're already set
 }
 
 const char* GameSetupPageIdTech::TYPE()
@@ -99,6 +104,49 @@ std::string GameSetupPageIdTech::getModPath()
 	return _modPath;
 }
 
+void GameSetupPageIdTech::onPageShown()
+{
+	// Load the values from the registry if the controls are still empty
+	if (_enginePathEntry->getValue().empty())
+	{
+		_enginePath = registry::getValue<std::string>(RKEY_ENGINE_PATH);
+
+		// TODO: If engine path still empty, try to deduce it from defaults/registry
+
+		_enginePathEntry->setValue(_enginePath);
+	}
+
+	if (_fsGameEntry->GetValue().empty())
+	{
+		// Check if we have a valid mod path
+		_modPath = registry::getValue<std::string>(RKEY_MOD_PATH);
+
+		if (!_modPath.empty())
+		{
+			// Extract the fs_game part from the absolute mod path, if possible
+			std::string fsGame = os::getRelativePath(_modPath, _enginePath);
+			string::trim_right(fsGame, "/");
+
+			_fsGameEntry->SetValue(fsGame);
+		}
+	}
+
+	if (_fsGameBaseEntry->GetValue().empty())
+	{
+		// Check if we have a valid mod base path
+		_modBasePath = registry::getValue<std::string>(RKEY_MOD_BASE_PATH);
+
+		if (!_modBasePath.empty())
+		{
+			std::string fsGameBase = os::getRelativePath(_modBasePath, _enginePath);
+			string::trim_right(fsGameBase, "/");
+
+			// Extract the fs_game part from the absolute mod base path, if possible
+			_fsGameBaseEntry->SetValue(fsGameBase);
+		}
+	}
+}
+
 void GameSetupPageIdTech::constructPaths()
 {
 	_enginePath = _enginePathEntry->getEntryWidget()->GetValue().ToStdString();
@@ -139,6 +187,7 @@ void GameSetupPageIdTech::constructPaths()
 	}
 }
 
+#if 0
 wxTextCtrl* GameSetupPageIdTech::createEntry(const std::string& registryKey)
 {
 	wxTextCtrl* entryWidget = new wxTextCtrl(this, wxID_ANY);
@@ -169,5 +218,5 @@ wxutil::PathEntry* GameSetupPageIdTech::createPathEntry(const std::string& regis
 
 	return entry;
 }
-
+#endif
 }

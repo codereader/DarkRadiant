@@ -27,6 +27,8 @@ GameSetupDialog::GameSetupDialog(wxWindow* parent) :
 	GetSizer()->Add(mainVbox, 1, wxEXPAND | wxALL, 12);
 
 	_book = new wxChoicebook(this, wxID_ANY);
+	_book->Connect(wxEVT_CHOICEBOOK_PAGE_CHANGED, wxBookCtrlEventHandler(GameSetupDialog::onPageChanged), nullptr, this);
+
 	wxStaticText* label = new wxStaticText(this, wxID_ANY, _("Please select a Game Type:"));
 
 	mainVbox->Add(label);
@@ -40,7 +42,7 @@ GameSetupDialog::GameSetupDialog(wxWindow* parent) :
 
 	// Create the assign shortcut button
 	wxButton* cancelButton = new wxButton(this, wxID_CANCEL);
-	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(GameSetupDialog::onCancel), NULL, this);
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(GameSetupDialog::onCancel), nullptr, this);
 
 	buttonHBox->Add(saveButton, 0, wxRIGHT, 6);
 	buttonHBox->Add(cancelButton, 0, wxRIGHT, 6);
@@ -88,11 +90,40 @@ void GameSetupDialog::initialiseControls()
 
 		_book->AddPage(container, game->getKeyValue("name"));
 	}
+
+	// Select the currently active game type
+	setSelectedPage(registry::getValue<std::string>(RKEY_GAME_TYPE));
+}
+
+void GameSetupDialog::setSelectedPage(const std::string& name)
+{
+	for (std::size_t i = 0; i < _book->GetPageCount(); ++i)
+	{
+		wxWindow* container = _book->GetPage(i);
+
+		GameSetupPage* page = dynamic_cast<GameSetupPage*>(wxWindow::FindWindowByName("GameSetupPage", container));
+
+		assert(page != nullptr);
+
+		wxStringClientData* data = static_cast<wxStringClientData*>(page->GetClientData());
+
+		if (data->GetData() == name)
+		{
+			_book->SetSelection(i);
+			page->onPageShown();
+			return;
+		}
+	}
 }
 
 GameSetupPage* GameSetupDialog::getSelectedPage()
 {
-	// Extract the game type value from the current page and save it to the registry
+	return getPage(_book->GetSelection());
+}
+
+GameSetupPage* GameSetupDialog::getPage(int num)
+{
+	// Find the actual GameSetupPage in the window hierarchy
 	wxWindow* container = _book->GetPage(_book->GetSelection());
 	return dynamic_cast<GameSetupPage*>(wxWindow::FindWindowByName("GameSetupPage", container));
 }
@@ -146,6 +177,19 @@ void GameSetupDialog::onCancel(wxCommandEvent& ev)
 	EndModal(wxID_CANCEL);
 }
 
+void GameSetupDialog::onPageChanged(wxBookCtrlEvent& ev)
+{
+	if (ev.GetSelection() != wxNOT_FOUND)
+	{
+		GameSetupPage* page = getPage(ev.GetSelection());
+
+		if (page != nullptr)
+		{
+			page->onPageShown();
+		}
+	}
+}
+
 GameSetupDialog::Result GameSetupDialog::Show(const cmd::ArgumentList& args)
 {
 	GameSetupDialog::Result result;
@@ -159,9 +203,9 @@ GameSetupDialog::Result GameSetupDialog::Show(const cmd::ArgumentList& args)
 
 	if (dialog->ShowModal() == wxID_OK)
 	{
-		result.gameType = dialog->getSelectedGameType();
+		result.gameName = dialog->getSelectedGameType();
 
-		if (result.gameType.empty())
+		if (result.gameName.empty())
 		{
 			rError() << "Cannot save game paths, nothing selected" << std::endl;
 			return result;
