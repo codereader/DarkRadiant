@@ -33,7 +33,7 @@ class ReadableEditorDialog :
 	private wxutil::XmlResourceBasedWidget
 {
 private:
-	gui::GuiView* _guiView;
+	gui::ReadableGuiView* _guiView;
 
 	// The entity we're working with
 	Entity* _entity;

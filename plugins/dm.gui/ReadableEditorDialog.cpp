@@ -637,7 +637,7 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 		if (_xdLoader->importDef(xDataName, xdMap, xDataPath))
 		{
 			xd = xdMap.begin()->second;
-			_guiView->setGui(xd->getGuiPage(0));
+			_guiView->setGui(GlobalGuiManager().getGui(xd->getGuiPage(0)));
 		}
 		else
 		{
@@ -698,11 +698,11 @@ void ReadableEditorDialog::updateGuiView(wxWindow* parent,
 	{
 		if (guiPath.empty())
 		{
-			_guiView->setGui(_guiEntry->GetValue().ToStdString());
+			_guiView->setGui(GlobalGuiManager().getGui(_guiEntry->GetValue().ToStdString()));
 		}
 		else
 		{
-			_guiView->setGui(guiPath);
+			_guiView->setGui(GlobalGuiManager().getGui(guiPath));
 		}
 
 		const gui::IGuiPtr& gui = _guiView->getGui();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gui/GuiView.h"
+#include "wxutil/preview/GuiView.h"
 
 namespace gui
 {
@@ -10,7 +10,7 @@ namespace gui
  * The viewport is cropped to the size of the "backgroundImage" windowDef.
  */
 class ReadableGuiView :
-	public GuiView
+	public wxutil::GuiView
 {
 protected:
 	Vector2 _bgDims;

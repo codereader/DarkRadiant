@@ -5,9 +5,7 @@
 #include "math/Vector2.h"
 #include "GuiRenderer.h"
 
-#include "GuiManager.h"
-
-namespace gui
+namespace wxutil
 {
 
 /**
@@ -23,7 +21,7 @@ protected:
 	GuiRenderer _renderer;
 
 	// The GUI to render
-	IGuiPtr _gui;
+	gui::IGuiPtr _gui;
 
 	// The dimensions of the GL widget in pixels.
 	Vector2 _windowDims;
@@ -33,17 +31,11 @@ public:
 
 	virtual ~GuiView() {}
 
-	// Sets the GUI to render (by VFS path)
-	void setGui(const std::string& gui)
-	{
-		setGui(GlobalGuiManager().getGui(gui));
-	}
-
 	// Sets the GUI to render (can be NULL to clear this view)
-	virtual void setGui(const IGuiPtr& gui);
+	virtual void setGui(const gui::IGuiPtr& gui);
 
 	// Returns the current GUI (can be NULL)
-	const IGuiPtr& getGui();
+	const gui::IGuiPtr& getGui();
 
 	/**
 	 * Initialise the GL view. This clears the window and sets up the

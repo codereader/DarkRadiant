@@ -23,9 +23,7 @@ dm_gui_la_SOURCES = GuiSelector.cpp \
                XdFileChooserDialog.cpp \
                gui/Gui.cpp \
                gui/GuiManager.cpp \
-               gui/GuiRenderer.cpp \
                gui/GuiScript.cpp \
-               gui/GuiView.cpp \
                gui/GuiWindowDef.cpp \
                gui/RenderableCharacterBatch.cpp \
                gui/RenderableText.cpp \

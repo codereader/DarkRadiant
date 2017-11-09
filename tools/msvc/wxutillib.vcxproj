@@ -50,7 +50,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\wxWidgets.props" />
@@ -58,7 +57,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\wxWidgets.props" />
@@ -66,7 +64,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release x64.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\wxWidgets.props" />
@@ -74,7 +71,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
-    
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\wxWidgets.props" />
@@ -202,6 +198,8 @@
     <ClInclude Include="..\..\libs\wxutil\NonModalEntry.h" />
     <ClInclude Include="..\..\libs\wxutil\PanedPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\PathEntry.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\GuiRenderer.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\GuiView.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\ModelPreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\ParticlePreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\RenderPreview.h" />
@@ -233,6 +231,8 @@
     <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PanedPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PathEntry.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\preview\GuiRenderer.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\preview\GuiView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\ModelPreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\ParticlePreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\RenderPreview.cpp" />

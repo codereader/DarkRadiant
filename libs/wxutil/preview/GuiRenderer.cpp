@@ -5,9 +5,7 @@
 #include "ishaders.h"
 #include "math/Matrix4.h"
 
-#include "GuiWindowDef.h"
-
-namespace gui
+namespace wxutil
 {
 
 GuiRenderer::GuiRenderer() :
@@ -16,7 +14,7 @@ GuiRenderer::GuiRenderer() :
 	_ignoreVisibility(false)
 {}
 
-void GuiRenderer::setGui(const IGuiPtr& gui)
+void GuiRenderer::setGui(const gui::IGuiPtr& gui)
 {
 	_gui = gui;
 }
@@ -63,7 +61,7 @@ void GuiRenderer::render()
 	glDisable(GL_BLEND);
 }
 
-void GuiRenderer::render(const IGuiWindowDefPtr& window)
+void GuiRenderer::render(const gui::IGuiWindowDefPtr& window)
 {
 	if (window == NULL) return;
 
@@ -173,10 +171,9 @@ void GuiRenderer::render(const IGuiWindowDefPtr& window)
 	glPushMatrix();
 	glTranslated(window->rect[0], window->rect[1], 0);
 
-	for (GuiWindowDef::ChildWindows::const_iterator i = window->children.begin();
-		 i != window->children.end(); ++i)
+	for (const gui::IGuiWindowDefPtr& child : window->children)
 	{
-		render(*i);
+		render(child);
 	}
 
 	glMatrixMode(GL_MODELVIEW);

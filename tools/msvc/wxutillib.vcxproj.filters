@@ -97,6 +97,12 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\Modifier.h" />
     <ClInclude Include="..\..\libs\wxutil\MouseToolHandler.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\GuiRenderer.h">
+      <Filter>preview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\preview\GuiView.h">
+      <Filter>preview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -140,6 +146,12 @@
     <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\preview\GuiRenderer.cpp">
+      <Filter>preview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\preview\GuiView.cpp">
+      <Filter>preview</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\libs\wxutil\Makefile.am" />

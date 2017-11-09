@@ -6,14 +6,14 @@
 
 #include <vector>
 
-namespace gui
+namespace wxutil
 {
 
 class GuiRenderer :
 	public util::Noncopyable
 {
 private:
-	IGuiPtr _gui;
+	gui::IGuiPtr _gui;
 
 	Vector2 _areaTopLeft;
 	Vector2 _areaBottomRight;
@@ -25,7 +25,7 @@ public:
 	// Construct a new renderer
 	GuiRenderer();
 
-	void setGui(const IGuiPtr& gui);
+	void setGui(const gui::IGuiPtr& gui);
 
 	void setIgnoreVisibility(bool ignoreVisibility);
 
@@ -37,7 +37,7 @@ public:
 	void render();
 
 private:
-	void render(const IGuiWindowDefPtr& window);
+	void render(const gui::IGuiWindowDefPtr& window);
 };
 
 }

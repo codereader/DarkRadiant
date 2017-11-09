@@ -4,7 +4,7 @@
 #include "math/Matrix4.h"
 #include <functional>
 
-namespace gui
+namespace wxutil
 {
 
 namespace
@@ -31,7 +31,7 @@ void GuiView::redraw()
 	Refresh();
 }
 
-void GuiView::setGui(const IGuiPtr& gui)
+void GuiView::setGui(const gui::IGuiPtr& gui)
 {
 	// Check for equality
 	if (gui != _gui)
@@ -41,7 +41,7 @@ void GuiView::setGui(const IGuiPtr& gui)
 	}
 }
 
-const IGuiPtr& GuiView::getGui()
+const gui::IGuiPtr& GuiView::getGui()
 {
 	return _gui;
 }
