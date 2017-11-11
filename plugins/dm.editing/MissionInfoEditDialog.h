@@ -9,6 +9,8 @@
 
 #include "DarkmodTxt.h"
 
+namespace wxutil { class GuiView; }
+
 namespace ui
 {
 
@@ -38,6 +40,8 @@ private:
 
 	// Context menu
 	wxutil::PopupMenuPtr _missionTitlesContextMenu;
+
+	wxutil::GuiView* _guiView;
 
 public:
 	// Constructor

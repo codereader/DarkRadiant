@@ -156,6 +156,11 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		std::string token = tokeniser.nextToken();
 		string::to_lower(token);
 
+		if (token == ";") 
+		{
+			continue; // ignore stray semicolons
+		}
+
 		if (token == "rect")
 		{
 			rect = parseVector4(tokeniser);

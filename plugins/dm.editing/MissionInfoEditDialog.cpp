@@ -1,5 +1,6 @@
 #include "MissionInfoEditDialog.h"
 
+#include "igui.h"
 #include "itextstream.h"
 #include "i18n.h"
 #include <sigc++/functors/mem_fun.h>
@@ -9,6 +10,7 @@
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #include "wxutil/TreeView.h"
+#include "wxutil/preview/GuiView.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 
@@ -112,6 +114,13 @@ void MissionInfoEditDialog::populateWindow()
 
 	existing->GetContainingSizer()->Replace(existing, treeview);
 	existing->Destroy();
+
+	// Add the preview widget
+	wxPanel* previewPanel = findNamedObject<wxPanel>(this, "MissionInfoEditDialogPreviewPanel");
+	_guiView = new wxutil::GuiView(previewPanel);
+	previewPanel->GetSizer()->Add(_guiView, 1, wxEXPAND);
+
+	_guiView->setGui(GlobalGuiManager().getGui("guis/mainmenu.gui"));
 
 	makeLabelBold(this, "MissionInfoLabel");
 
