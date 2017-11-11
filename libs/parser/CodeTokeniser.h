@@ -428,11 +428,27 @@ public:
         else
             return false;
     }
+};
 
-    // REQUIRED. Reset function to clear internal state
-    void reset() {
-        _state = SEARCHING;
-    }
+// Represents a #DEFINE'd macro in a code file, which may have 0 to n arguments
+// #define MYDEF( y ) set "cmd" y;
+class Macro
+{
+public:
+	Macro();
+
+	Macro(const std::string& name_) :
+		name(name_)
+	{}
+
+	// Name of the #DEFINE'd macro
+	std::string name;
+
+	// The arguments of this macro
+	std::vector<std::string> arguments;
+
+	// The macro body
+	std::list<std::string> tokens;
 };
 
 class SingleCodeFileTokeniser :
@@ -565,9 +581,9 @@ private:
 
 	typedef std::list<std::string> StringList;
 
-	// A map associating #define names with a one or more sub-tokens
-	typedef std::map<std::string, StringList> DefinitionMap;
-	DefinitionMap _definitions;
+	// A map associating names to #define'd macros
+	typedef std::map<std::string, Macro> Macros;
+	Macros _macros;
 
 	// A small local buffer which is needed to properly resolve #define statements
 	// which could consist of several tokens themselves
@@ -675,15 +691,15 @@ private:
 		if (_tokenBuffer.empty()) return false;
 
 		// Check if this is matching a preprocessor definition
-		DefinitionMap::const_iterator found = _definitions.find(_tokenBuffer.front());
+		Macros::const_iterator found = _macros.find(_tokenBuffer.front());
 
-		if (found != _definitions.end())
+		if (found != _macros.end())
 		{
 			// Remove the token
 			_tokenBuffer.pop_front();
 
 			// Replace the token by the #defined contents
-			_tokenBuffer.insert(_tokenBuffer.begin(), found->second.begin(), found->second.end());
+			_tokenBuffer.insert(_tokenBuffer.begin(), found->second.tokens.begin(), found->second.tokens.end());
 
 			return true;
 		}
@@ -728,70 +744,29 @@ private:
 		}
 		else if (string::starts_with(token, "#define"))
 		{
-			std::string defineToken = token;
-
-			if (defineToken.length() <= 7)
-			{
-				rWarning() << "Invalid #define statement: "
-					<< " in " << (*_curNode)->archive->getName() << std::endl;
-				return;
-			}
-
-			// Replace tabs with spaces
-			std::replace(defineToken.begin(), defineToken.end(), '\t', ' ');
-
-			// Cut off the "#define " (including space)
-			std::string key = defineToken.substr(8);
-
-			std::size_t firstSpace = key.find(' ');
-
-			// Extract the value (can be empty) and trim it (everything after the space)
-			std::string value = (firstSpace == std::string::npos) ? "" : key.substr(firstSpace + 1);
-			string::trim(value);
-
-			key = key.substr(0, firstSpace);
-
-			std::pair<DefinitionMap::iterator, bool> result = _definitions.insert(
-				DefinitionMap::value_type(key, StringList())
-			);
-
-			if (!result.second)
-			{
-				rWarning() << "Redefinition of " << key
-					<< " in " << (*_curNode)->archive->getName() << std::endl;
-
-				result.first->second.clear();
-			}
-
-			// Instantiate a local stringtokeniser to split up the #defined string
-			BasicStringTokeniser tokeniser(value, _delims);
-
-			while (tokeniser.hasMoreTokens())
-			{
-				result.first->second.push_back(tokeniser.nextToken());
-			}
+			parseMacro(token);
 		}
 		else if (token == "#undef")
 		{
 			std::string key = (*_curNode)->tokeniser.nextToken();
-			_definitions.erase(key);
+			_macros.erase(key);
 		}
 		else if (token == "#ifdef")
 		{
 			std::string key = (*_curNode)->tokeniser.nextToken();
-			DefinitionMap::const_iterator found = _definitions.find(key);
+			Macros::const_iterator found = _macros.find(key);
 
-			if (found == _definitions.end())
+			if (found == _macros.end())
 			{
 				skipInactivePreprocessorBlock();
 			}
 		}
 		else if (token == "#ifndef")
 		{
-			DefinitionMap::const_iterator found = _definitions.find(
+			Macros::const_iterator found = _macros.find(
 				(*_curNode)->tokeniser.nextToken());
 
-			if (found != _definitions.end())
+			if (found != _macros.end())
 			{
 				skipInactivePreprocessorBlock();
 			}
@@ -804,6 +779,88 @@ private:
 		else if (token == "#if")
 		{
 			(*_curNode)->tokeniser.skipTokens(1);
+		}
+	}
+
+	void parseMacro(const std::string& token)
+	{
+		std::string defineToken = token;
+
+		if (defineToken.length() <= 7)
+		{
+			rWarning() << "Invalid #define statement in " << (*_curNode)->archive->getName() << std::endl;
+			return;
+		}
+
+		// Replace tabs with spaces
+		std::replace(defineToken.begin(), defineToken.end(), '\t', ' ');
+
+		// Cut off the "#define " (including space)
+		defineToken = defineToken.substr(8);
+
+		// Parse the entire macro
+		std::istringstream macroStream(defineToken);
+		SingleCodeFileTokeniser macroParser(macroStream);
+
+		std::string name = macroParser.nextToken();
+
+		bool paramsStarted = false;
+
+		if (string::ends_with(name, "("))
+		{
+			string::trim_right(name, "(");
+			paramsStarted = true;
+		}
+
+		std::pair<Macros::iterator, bool> result = _macros.insert(
+			Macros::value_type(name, Macro(name))
+		);
+
+		if (!result.second)
+		{
+			rWarning() << "Redefinition of " << name << " in " << (*_curNode)->archive->getName() << std::endl;
+			result.first->second = Macro(name);
+		}
+
+		Macro& macro = result.first->second;
+
+		while (macroParser.hasMoreTokens())
+		{
+			std::string macroToken = macroParser.nextToken();
+
+			// An opening parenthesis might be an argument list, but
+			// only if we're still at the beginning of the macro
+			if (macroToken == "(" && !paramsStarted && macro.tokens.empty())
+			{	
+				paramsStarted = true;
+			}
+			else if (macroToken == ")" && paramsStarted)
+			{
+				paramsStarted = false;
+			}
+			else if (macroToken == ",")
+			{
+				if (paramsStarted)
+				{
+					continue;
+				}
+
+				// Treat the comma as part of the macro value
+				macro.tokens.push_back(macroToken);
+			}
+			else 
+			{
+				if (paramsStarted)
+				{
+					// Token is an argument
+					macro.arguments.push_back(macroToken);
+				}
+				else
+				{
+					// Ordinary macro value
+					macro.tokens.push_back(macroToken);
+				}
+			}
 		}
 	}
 
