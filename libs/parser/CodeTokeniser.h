@@ -7,6 +7,7 @@
 #include <list>
 #include <map>
 #include <algorithm>
+#include <fmt/format.h>
 
 #include "string/trim.h"
 #include "string/predicate.h"
@@ -435,7 +436,8 @@ public:
 class Macro
 {
 public:
-	Macro();
+	Macro()
+	{}
 
 	Macro(const std::string& name_) :
 		name(name_)
@@ -445,7 +447,7 @@ public:
 	std::string name;
 
 	// The arguments of this macro
-	std::vector<std::string> arguments;
+	std::list<std::string> arguments;
 
 	// The macro body
 	std::list<std::string> tokens;
@@ -527,7 +529,7 @@ public:
 			return *(_tokIter++);
 		}
         
-		throw ParseException("DefTokeniser: no more tokens");
+		throw ParseException("SingleCodeFileTokeniser: no more tokens");
     }
 
 	std::string peek() const override
@@ -537,7 +539,7 @@ public:
             return *_tokIter;
 		}
         
-		throw ParseException("DefTokeniser: no more tokens");
+		throw ParseException("SingleCodeFileTokeniser: no more tokens");
 	}
 };
 
@@ -671,40 +673,109 @@ private:
 
 			_tokenBuffer.push_front(token);
 
-			// Found a non-preprocessor token
+			// Found a non-preprocessor token,
+			// check if this is matching a preprocessor definition
+			Macros::const_iterator found = _macros.find(_tokenBuffer.front());
 
-			while (!_tokenBuffer.empty())
+			if (found != _macros.end())
 			{
-				// Exit if the first buffer token is processed
-				if (!processFirstBufferToken())
+				if (found->second.name == "MM_TITLE_CAMPAIGN")
 				{
-					return;
+					int i = 6;
+				}
+
+				// Expand this macro, new tokens are acquired from the currently active tokeniser
+				StringList expanded = expandMacro(found->second, [this]() { return (*_curNode)->tokeniser.nextToken(); });
+
+				if (!expanded.empty())
+				{
+					// Replace the token in the buffer with the expanded string
+					_tokenBuffer.pop_front();
+					_tokenBuffer.insert(_tokenBuffer.begin(), expanded.begin(), expanded.end());
+				}
+				else
+				{
+					rWarning() << "Macro expansion yields empty token list: " << _tokenBuffer.front() <<
+						" in " << (*_curNode)->archive->getName()  << std::endl;
 				}
 			}
+
+			return; // got a token
 		}
 	}
 
-	// Checks if the first token in the buffer is to be replaced by some #define
-	// Returns true if the token got processed (the buffer is changed then)
-	bool processFirstBufferToken()
+	// Expands the given macro, returns the beginning and end of a range
+	StringList expandMacro(const Macro& macro, const std::function<std::string()>& nextTokenFunc)
 	{
-		if (_tokenBuffer.empty()) return false;
+		StringList argumentValues;
 
-		// Check if this is matching a preprocessor definition
-		Macros::const_iterator found = _macros.find(_tokenBuffer.front());
-
-		if (found != _macros.end())
+		// Acquire the macro argument values if applicable
+		if (!macro.arguments.empty())
 		{
-			// Remove the token
-			_tokenBuffer.pop_front();
+			// Assert an opening parenthesis
+			if (nextTokenFunc() != "(")
+			{
+				throw ParseException(fmt::format("Error expanding macro {0}, expected '('", macro.name));
+			}
 
-			// Replace the token by the #defined contents
-			_tokenBuffer.insert(_tokenBuffer.begin(), found->second.tokens.begin(), found->second.tokens.end());
+			for (StringList::const_iterator i = macro.arguments.begin(); i != macro.arguments.end(); ++i)
+			{
+				// Require a comma to separate the arguments
+				if (i != macro.arguments.begin() && nextTokenFunc() != ",")
+				{
+					throw ParseException(fmt::format("Error expanding macro {0}, expected ','", macro.name));
+				}
 
-			return true;
+				argumentValues.push_back(nextTokenFunc());
+			}
+
+			if (nextTokenFunc() != ")")
+			{
+				throw ParseException(fmt::format("Error expanding macro {0}, expected ')'", macro.name));
+			}
 		}
 
-		return false;
+		// Allocate a new list for the expanded tokens
+		StringList expandedTokens;
+		
+		// Insert the macro contents into the buffer, expanding sub-macros along the way
+		for (StringList::const_iterator t = macro.tokens.begin(); t != macro.tokens.end(); ++t)
+		{
+			// check if this is matching a preprocessor definition
+			Macros::const_iterator found = _macros.find(*t);
+
+			if (found == _macros.end())
+			{
+				// Not a macro
+				expandedTokens.push_back(*t);
+				continue;
+			}
+
+			// Enter recursion to expand this sub-macro, new tokens are acquired from the current iterator t
+			StringList subMacro = expandMacro(found->second, [&]() 
+			{ 
+				if (t == macro.tokens.end())
+				{
+					throw ParseException(fmt::format("Running out of tokens expanding sub-macro {0}", *t));
+				}
+
+				// Advance iterator and dereference
+				return *(++t);
+			});
+
+			if (!subMacro.empty())
+			{
+				// Insert the expanded macro contents, don't insert *t itself
+				expandedTokens.insert(expandedTokens.end(), subMacro.begin(), subMacro.end());
+			}
+			else
+			{
+				rWarning() << "Macro expansion yields empty token list: " << *t <<
+					" in " << (*_curNode)->archive->getName() << std::endl;
+			}
+		}
+
+		return expandedTokens;
 	}
 
 	void handlePreprocessorToken(const std::string& token)

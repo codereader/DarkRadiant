@@ -70,9 +70,16 @@ void GuiScript::parseSetStatement(parser::DefTokeniser& tokeniser)
 	StatementPtr st(new Statement(Statement::ST_SET));
 
 	st->args.push_back(getExpression(tokeniser)); // variable
-	st->args.push_back(getExpression(tokeniser)); // value
 
-	tokeniser.assertNextToken(";");
+	// Add all tokens up to the semicolon as arguments
+	while (true)
+	{
+		std::string expr = getExpression(tokeniser);
+
+		if (expr == ";") break;
+
+		st->args.push_back(expr); // value
+	}
 
 	pushStatement(st);
 }
