@@ -679,11 +679,6 @@ private:
 
 			if (found != _macros.end())
 			{
-				if (found->second.name == "MM_TITLE_CAMPAIGN")
-				{
-					int i = 6;
-				}
-
 				// Expand this macro, new tokens are acquired from the currently active tokeniser
 				StringList expanded = expandMacro(found->second, [this]() { return (*_curNode)->tokeniser.nextToken(); });
 
@@ -741,13 +736,16 @@ private:
 		// Insert the macro contents into the buffer, expanding sub-macros along the way
 		for (StringList::const_iterator t = macro.tokens.begin(); t != macro.tokens.end(); ++t)
 		{
+			// Replace macro variable with its value
+			std::string token = getMacroToken(*t, macro, argumentValues);
+
 			// check if this is matching a preprocessor definition
-			Macros::const_iterator found = _macros.find(*t);
+			Macros::const_iterator found = _macros.find(token);
 
 			if (found == _macros.end())
 			{
 				// Not a macro
-				expandedTokens.push_back(*t);
+				expandedTokens.push_back(token);
 				continue;
 			}
 
@@ -756,11 +754,12 @@ private:
 			{ 
 				if (t == macro.tokens.end())
 				{
-					throw ParseException(fmt::format("Running out of tokens expanding sub-macro {0}", *t));
+					throw ParseException(fmt::format("Running out of tokens expanding sub-macro {0}", token));
 				}
 
 				// Advance iterator and dereference
-				return *(++t);
+				// When delivering tokens to sub-macro expansions we still need to replace any argument values
+				return getMacroToken(*(++t), macro, argumentValues);
 			});
 
 			if (!subMacro.empty())
@@ -776,6 +775,21 @@ private:
 		}
 
 		return expandedTokens;
+	}
+
+	std::string getMacroToken(std::string token, const Macro& macro, const StringList& argumentValues)
+	{
+		// Check if the current token is referring to a macro argument and replace it with its value
+		for (StringList::const_iterator arg = macro.arguments.begin(), val = argumentValues.begin();
+			arg != macro.arguments.end() && val != argumentValues.end(); ++arg, ++val)
+		{
+			if (token == *arg)
+			{
+				return *val;
+			}
+		}
+
+		return token; // leave token unchanged
 	}
 
 	void handlePreprocessorToken(const std::string& token)
