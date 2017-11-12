@@ -316,6 +316,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\dm.gui\GuiSelector.cpp" />
+    <ClCompile Include="..\..\plugins\dm.gui\gui\GuiExpression.cpp" />
     <ClCompile Include="..\..\plugins\dm.gui\plugin.cpp" />
     <ClCompile Include="..\..\plugins\dm.gui\ReadableEditorDialog.cpp" />
     <ClCompile Include="..\..\plugins\dm.gui\ReadableGuiView.cpp" />
@@ -333,6 +334,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\dm.gui\GuiSelector.h" />
+    <ClInclude Include="..\..\plugins\dm.gui\gui\GuiExpression.h" />
     <ClInclude Include="..\..\plugins\dm.gui\ReadableEditorDialog.h" />
     <ClInclude Include="..\..\plugins\dm.gui\ReadableGuiView.h" />
     <ClInclude Include="..\..\plugins\dm.gui\ReadablePopulator.h" />

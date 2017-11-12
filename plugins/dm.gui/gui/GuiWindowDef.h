@@ -4,6 +4,7 @@
 #include "ishaders.h"
 #include "math/Vector4.h"
 
+#include "GuiExpression.h"
 #include "RenderableText.h"
 
 namespace parser { class DefTokeniser; }
@@ -85,7 +86,7 @@ private:
 	std::string parseString(parser::DefTokeniser& tokeniser);
 	bool parseBool(parser::DefTokeniser& tokeniser);
 
-	std::string getExpression(parser::DefTokeniser& tokeniser);
+	GuiExpressionPtr getExpression(parser::DefTokeniser& tokeniser);
 };
 
 

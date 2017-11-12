@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "parser/DefTokeniser.h"
 #include "Gui.h"
+#include "GuiExpression.h"
 
 #include "string/case_conv.h"
 #include "string/trim.h"
@@ -74,11 +75,9 @@ void GuiScript::parseSetStatement(parser::DefTokeniser& tokeniser)
 	// Add all tokens up to the semicolon as arguments
 	while (true)
 	{
-		std::string expr = getExpression(tokeniser);
+		if (tokeniser.peek() == ";") break;
 
-		if (expr == ";") break;
-
-		st->args.push_back(expr); // value
+		st->args.push_back(getExpression(tokeniser)); // argument
 	}
 
 	pushStatement(st);
@@ -94,15 +93,17 @@ void GuiScript::parseTransitionStatement(parser::DefTokeniser& tokeniser)
 	st->args.push_back(getExpression(tokeniser)); // to
 	st->args.push_back(getExpression(tokeniser)); // time
 
-	std::string token = tokeniser.nextToken();
-
-	if (token != ";")
+	if (tokeniser.peek() != ";")
 	{
 		// no semicolon, parse optional acceleration and deceleration
-		st->args.push_back(token);						// accel
+		st->args.push_back(getExpression(tokeniser)); 	// accel
 		st->args.push_back(getExpression(tokeniser));	// decel
 
 		tokeniser.assertNextToken(";");
+	}
+	else
+	{
+		tokeniser.nextToken(); // pull semicolon
 	}
 
 	pushStatement(st);
@@ -133,7 +134,7 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: resetTime [<window>] [<time>]
 	StatementPtr st(new Statement(Statement::ST_RESET_TIME));
 
-	std::string token = tokeniser.nextToken();
+	std::string token = tokeniser.peek();
 
 	if (token != ";")
 	{
@@ -147,14 +148,14 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 			std::stoul(trimmed);
 
 			// Cast succeeded this is just the time for the current window
-			st->args.push_back(trimmed);
+			st->args.push_back(getExpression(tokeniser));
 
 			tokeniser.assertNextToken(";");
         }
 		catch (std::logic_error&)
         {
             // Not a number, must be window plus time
-			st->args.push_back(token); // window
+			st->args.push_back(getExpression(tokeniser)); // window
 			st->args.push_back(getExpression(tokeniser)); // time
 			tokeniser.assertNextToken(";");
         }
@@ -324,13 +325,15 @@ std::size_t GuiScript::pushStatement(const StatementPtr& statement)
 	return _statements.size() - 1;
 }
 
-std::string GuiScript::getExpression(parser::DefTokeniser& tokeniser)
+GuiExpressionPtr GuiScript::getExpression(parser::DefTokeniser& tokeniser)
 {
-	return tokeniser.nextToken();
+	return GuiExpression::createFromTokens(tokeniser);
 }
 
-std::string GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
+GuiExpressionPtr GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
 {
+	return getExpression(tokeniser);
+#if 0
 	std::string rv;
 
 	std::size_t level = 1;
@@ -356,6 +359,7 @@ std::string GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
 	}
 
 	return rv;
+#endif
 }
 
 const Statement& GuiScript::getStatement(std::size_t index)
@@ -364,8 +368,10 @@ const Statement& GuiScript::getStatement(std::size_t index)
 	return *_statements[index];
 }
 
-VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
+VariablePtr GuiScript::getVariableFromExpression(const GuiExpressionPtr& expression)
 {
+	std::string expr = expression->getStringValue();
+
 	if (string::starts_with(expr, "gui::"))
 	{
 		// Is a GUI state variable
@@ -404,15 +410,15 @@ VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 	}
 }
 
-std::string GuiScript::getValueFromExpression(const std::string& expr)
+std::string GuiScript::getValueFromExpression(const GuiExpressionPtr& expr)
 {
-	if (string::starts_with(expr, "$gui::"))
+	if (string::starts_with(expr->getStringValue(), "$gui::"))
 	{
 		// This is the value of a GUI state variable
-		return _owner.getGui().getStateString(expr.substr(6));
+		return _owner.getGui().getStateString(expr->getStringValue().substr(6));
 	}
 
-	return expr;
+	return expr->getStringValue();
 }
 
 void GuiScript::execute()

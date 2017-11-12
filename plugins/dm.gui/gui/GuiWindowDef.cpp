@@ -46,8 +46,10 @@ IGui& GuiWindowDef::getGui() const
 }
 
 // Returns a GUI expression, which can be a number, a string or a formula ("gui::objVisible" == 1).
-std::string GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
+GuiExpressionPtr GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 {
+	return GuiExpression::createFromTokens(tokeniser);
+#if 0
 	std::string returnValue = tokeniser.nextToken();
 
 	if (returnValue == "(")
@@ -69,35 +71,27 @@ std::string GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 	string::trim(returnValue, "\"");
 
 	return returnValue;
+#endif
 }
 
 Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 {
 	// Collect tokens until all four components are parsed
-	std::vector<std::string> comp;
+	std::vector<GuiExpressionPtr> comp;
 
 	while (comp.size() < 4 && tokeniser.hasMoreTokens())
 	{
-		std::string token = getExpression(tokeniser);
+		std::string token = tokeniser.peek();
 
-		if (token == ",") continue;
-
-		if (token.find(',') != std::string::npos)
+		if (token == ",")
 		{
-			std::vector<std::string> parts;
-			string::split(parts, token, ",");
-
-			for (std::size_t i = 0; i < parts.size(); ++i)
-			{
-				comp.push_back(string::trim_copy(parts[i]));
-			}
-
+			tokeniser.nextToken();
 			continue;
 		}
 
-		// TODO: Catch GUI expressions
+		GuiExpressionPtr expr = getExpression(tokeniser);
 
-		comp.push_back(token);
+		comp.push_back(expr);
 	}
 
 	if (comp.size() != 4)
@@ -105,38 +99,58 @@ Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 		throw parser::ParseException("Couldn't parse Vector4, not enough components found.");
 	}
 
-	return Vector4(string::convert<float>(comp[0]),
-                   string::convert<float>(comp[1]),
-                   string::convert<float>(comp[2]),
-                   string::convert<float>(comp[3]));
+	return Vector4(comp[0]->getFloatValue(),
+                   comp[1]->getFloatValue(),
+                   comp[2]->getFloatValue(),
+                   comp[3]->getFloatValue());
 }
 
 float GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)
 {
-	// TODO: Catch GUI expressions
+	GuiExpressionPtr expr = getExpression(tokeniser);
 
-	return string::convert<float>(getExpression(tokeniser));
+	if (!expr)
+	{
+		throw parser::ParseException("Failed to parse float expression.");
+	}
+
+	return expr->getFloatValue();
 }
 
 int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
 {
-	// TODO: Catch GUI expressions
+	GuiExpressionPtr expr = getExpression(tokeniser);
 
-	return string::convert<int>(getExpression(tokeniser));
+	if (!expr)
+	{
+		throw parser::ParseException("Failed to parse integer expression.");
+	}
+
+	return static_cast<int>(expr->getFloatValue());
 }
 
 std::string GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
 {
-	// TODO: Catch GUI expressions
+	GuiExpressionPtr expr = getExpression(tokeniser);
 
-	return getExpression(tokeniser);
+	if (!expr)
+	{
+		throw parser::ParseException("Failed to parse string expression.");
+	}
+	
+	return expr->getStringValue();
 }
 
 bool GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
 {
-	// TODO: Catch GUI expressions
+	GuiExpressionPtr expr = getExpression(tokeniser);
 
-	return string::convert<int>(getExpression(tokeniser)) != 0;
+	if (!expr)
+	{
+		throw parser::ParseException("Failed to parse integer expression.");
+	}
+
+	return expr->getFloatValue() != 0;
 }
 
 void GuiWindowDef::addWindow(const IGuiWindowDefPtr& window)
@@ -148,6 +162,11 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 {
 	// The windowDef keyword has already been parsed, so expect a name plus an opening brace here
 	name = tokeniser.nextToken();
+
+	if (name == "LoadGameTextH")
+	{
+		int i = 6;
+	}
 
 	tokeniser.assertNextToken("{");
 

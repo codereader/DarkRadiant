@@ -55,6 +55,9 @@
     <ClCompile Include="..\..\plugins\dm.gui\gui\Variable.cpp">
       <Filter>src\gui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gui\gui\GuiExpression.cpp">
+      <Filter>src\gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\dm.gui\GuiSelector.h">
@@ -109,6 +112,9 @@
       <Filter>src\gui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\dm.gui\gui\Variable.h">
+      <Filter>src\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gui\gui\GuiExpression.h">
       <Filter>src\gui</Filter>
     </ClInclude>
   </ItemGroup>

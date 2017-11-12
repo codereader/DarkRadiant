@@ -1,10 +1,10 @@
-#ifndef _GUI_SCRIPT_H_
-#define _GUI_SCRIPT_H_
+#pragma once
 
 #include <list>
 #include <vector>
 #include <memory>
 
+#include "GuiExpression.h"
 #include "Variable.h"
 
 namespace parser { class DefTokeniser; }
@@ -39,7 +39,7 @@ struct Statement
 	// The statement type
 	Type type;
 
-	typedef std::vector<std::string> Arguments;
+	typedef std::vector<GuiExpressionPtr> Arguments;
 	Arguments args;
 
 	// The jump destination used by ST_IF and ST_JMP
@@ -80,8 +80,8 @@ public:
 
 private:
 	// Interprets the given string and returns the target object
-	VariablePtr getVariableFromExpression(const std::string& expr);
-	std::string getValueFromExpression(const std::string& expr);
+	VariablePtr getVariableFromExpression(const GuiExpressionPtr& expr);
+	std::string getValueFromExpression(const GuiExpressionPtr& expr);
 
 	const Statement& getStatement(std::size_t index);
 
@@ -91,8 +91,8 @@ private:
 	// Returns the current position in the code
 	std::size_t getCurPosition();
 
-	std::string getExpression(parser::DefTokeniser& tokeniser);
-	std::string getIfExpression(parser::DefTokeniser& tokeniser);
+	GuiExpressionPtr getExpression(parser::DefTokeniser& tokeniser);
+	GuiExpressionPtr getIfExpression(parser::DefTokeniser& tokeniser);
 
 	// Reads a "statement", which can be single one or a group (surrounded by curly braces)
 	void parseStatement(parser::DefTokeniser& tokeniser);
@@ -116,5 +116,3 @@ private:
 typedef std::shared_ptr<GuiScript> GuiScriptPtr;
 
 } // namespace
-
-#endif /* _GUI_SCRIPT_H_ */
