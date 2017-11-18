@@ -688,11 +688,6 @@ private:
 					_tokenBuffer.pop_front();
 					_tokenBuffer.insert(_tokenBuffer.begin(), expanded.begin(), expanded.end());
 				}
-				else
-				{
-					rWarning() << "Macro expansion yields empty token list: " << _tokenBuffer.front() <<
-						" in " << (*_curNode)->archive->getName()  << std::endl;
-				}
 			}
 
 			return; // got a token

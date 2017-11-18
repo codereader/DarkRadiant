@@ -391,6 +391,11 @@ public:
 		// No items in the buffer, take a peek in the underlying stream
 		std::string rawToken = _tokeniser.peek();
 
+		if (rawToken.empty())
+		{
+			return rawToken; // don't tokenise empty strings, just return it as it is
+		}
+
 		// Split up the token by using a sub-tokeniser, keeping all delimiters
 		parser::BasicDefTokeniser<std::string> subtokeniser(rawToken, "", _delims);
 
@@ -605,6 +610,11 @@ private:
 	// Helper routines
 	BinaryExpressionPtr getOperator()
 	{
+		if (!_tokeniser.hasMoreTokens())
+		{
+			return BinaryExpressionPtr();
+		}
+
 		std::string token = _tokeniser.peek();
 
 		if (token == "+")
