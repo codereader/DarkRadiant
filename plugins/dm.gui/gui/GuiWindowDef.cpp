@@ -16,6 +16,28 @@
 namespace gui
 {
 
+namespace
+{
+
+void skipBlock(parser::DefTokeniser& tokeniser)
+{
+	tokeniser.assertNextToken("{");
+
+	std::size_t level = 1;
+
+	while (tokeniser.hasMoreTokens())
+	{
+		std::string token = tokeniser.nextToken();
+
+		if (token == "{") level++;
+		if (token == "}") level--;
+
+		if (level == 0) return;
+	}
+}
+
+}
+
 GuiWindowDef::GuiWindowDef(IGui& owner) :
 	_owner(owner),
 	_renderableText(*this),
@@ -367,12 +389,17 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		else if (token == "listdef")
 		{
 			tokeniser.nextToken(); // listdef name
-			tokeniser.assertNextToken("{");
-
-			while (tokeniser.hasMoreTokens())
-			{
-				if (tokeniser.nextToken() == "}") break;
-			}
+			skipBlock(tokeniser);
+		}
+		else if (token == "choicedef")
+		{
+			tokeniser.nextToken(); // listdef name
+			skipBlock(tokeniser);
+		}
+		else if (token == "binddef")
+		{
+			tokeniser.nextToken(); // listdef name
+			skipBlock(tokeniser);
 		}
 		else if (token == "}")
 		{
