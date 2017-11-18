@@ -35,6 +35,8 @@ void GuiScript::parseIfStatement(parser::DefTokeniser& tokeniser)
 	// Add the statement at the current position
 	pushStatement(ifStatement);
 
+	tokeniser.assertNextToken(")");
+
 	// Parse the statement(s) to execute if the above condition is true
 	parseStatement(tokeniser);
 

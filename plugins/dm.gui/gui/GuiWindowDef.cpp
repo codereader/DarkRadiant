@@ -169,7 +169,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 	// The windowDef keyword has already been parsed, so expect a name plus an opening brace here
 	name = tokeniser.nextToken();
 
-	if (name == "NewGameRefreshAction")
+	if (name == "MainMenuModeSelect")
 	{
 		int i = 6;
 	}
@@ -366,6 +366,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "listdef")
 		{
+			tokeniser.nextToken(); // listdef name
 			tokeniser.assertNextToken("{");
 
 			while (tokeniser.hasMoreTokens())

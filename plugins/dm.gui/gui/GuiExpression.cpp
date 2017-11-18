@@ -63,6 +63,7 @@ public:
 	// The operator precedence, smaller values mean higher priority
 	enum Precedence
 	{
+		LOGICAL_NOT = 0, // !
 		MULTIPLICATION = 0,	// *
 		DIVISION = 0,	// /
 		MODULO = 0,	// %
@@ -287,6 +288,29 @@ public:
 	}
 };
 
+// An expression returning the opposite of the contained expression
+class LogicalNotExpression :
+	public BinaryExpression
+{
+private:
+	GuiExpressionPtr _contained;
+
+public:
+	LogicalNotExpression(const GuiExpressionPtr& contained = GuiExpressionPtr()) :
+		BinaryExpression(LOGICAL_NOT, contained)
+	{}
+
+	virtual float getFloatValue() override
+	{
+		return _a->getFloatValue() != 0.0f ? 1.0f : 0.0f;
+	}
+
+	virtual std::string getStringValue() override
+	{
+		return ""; // not implemented for string values
+	}
+};
+
 // An expression returning 1 if both A and B are true (non-zero), otherwise 0
 class LogicalAndExpression :
 	public BinaryExpression
@@ -334,7 +358,7 @@ private:
 public:
 	GuiExpressionTokeniser(parser::DefTokeniser& tokeniser) :
 		_tokeniser(tokeniser),
-		_delims("+-%*/")
+		_delims("+-%*/=!<>&|")
 	{}
 
 	bool hasMoreTokens() const override
@@ -406,8 +430,6 @@ public:
 		OperandStack operands;
 		OperatorStack operators;
 
-		bool lastTokenWasOperator = false; // to detect signs
-
 		enum {
 			SearchingForOperand,
 			SearchingForOperator,
@@ -417,13 +439,13 @@ public:
 
 		while (_tokeniser.hasMoreTokens())
 		{
-			// Don't actually pull the token from the tokeniser, we might want to 
-			// return the tokeniser to the caller if the token is not part of the expression
-			// The token will be exhausted from the stream once it is recognised as keyword
-			std::string token = _tokeniser.peek();
-
 			if (searchState == SearchingForOperand)
 			{
+				// Don't actually pull the token from the tokeniser, we might want to 
+				// return the tokeniser to the caller if the token is not part of the expression
+				// The token will be exhausted from the stream once it is recognised as keyword
+				std::string token = _tokeniser.peek();
+
 				// The parsed operand
 				GuiExpressionPtr term;
 
@@ -485,12 +507,10 @@ public:
 			else if (searchState == SearchingForOperator)
 			{
 				// Get an operator
-				BinaryExpressionPtr op = getOperatorForToken(token);
+				BinaryExpressionPtr op = getOperator();
 
 				if (op)
 				{
-					_tokeniser.nextToken(); // valid token, exhaust
-
 					// Check precedence if we have previous operators
 					while (!operators.empty())
 					{
@@ -513,96 +533,6 @@ public:
 				// Not an operator, break the loop
 				break;
 			}
-#if 0
-			
-
-			if (token == "(")
-			{
-				_tokeniser.nextToken(); // valid token, exhaust
-
-				// New scope, treat this as new expression
-				term = getExpression();
-			}
-			else if (token == ")")
-			{
-				_tokeniser.nextToken(); // valid token, exhaust
-
-				// End of scope reached, break the loop and roll up the expression
-				break;
-			}
-			else if (string::starts_with(token, "gui::"))
-			{
-				// This is a GUI state variable
-				term = std::make_shared<GuiStateVariableExpression>(token.substr(5));
-			}
-
-			if (term)
-			{
-				// The token has already been pulled from the tokeniser
-				operands.push(term);
-
-				lastTokenWasOperator = false;
-				continue;
-			}
-
-			// Not a term, do we have an operator at hand?
-
-			// Get an operator
-			BinaryExpressionPtr op = getOperatorForToken(token);
-
-			if (op)
-			{
-				_tokeniser.nextToken(); // valid token, exhaust
-
-				if (operands.empty() || lastTokenWasOperator)
-				{
-					lastTokenWasOperator = false; // clear the flag again
-
-					// If this is a + or -, take it as a sign operator
-					if (token == "+")
-					{
-						// A leading +, just ignore it
-						continue;
-					}
-					else if (token == "-")
-					{
-						// A leading -, interpret it as -1 *
-						operands.push(std::make_shared<ConstantExpression>("-1"));
-						operators.push(std::make_shared<MultiplyExpression>());
-
-						// Discard the - operator
-						continue;
-					}
-					else
-					{
-						throw parser::ParseException("Missing operand for operator: " + token);
-					}
-				}
-
-				// We have operands, so this is a regular operator
-				lastTokenWasOperator = true;
-
-				// Check precedence if we have previous operators
-				while (!operators.empty())
-				{
-					if (operators.top()->getPrecedence() <= op->getPrecedence())
-					{
-						finaliseOperator(operands, operators);
-					}
-					else
-					{
-						break;
-					}
-				}
-
-				// Push this one on the operator stack
-				operators.push(op);
-				continue;
-			}
-
-			// Not an operand, not an operator, we seem to be done here
-			break;
-#endif
 		}
 
 		// Roll up the operations
@@ -627,17 +557,29 @@ public:
 private:
 	void finaliseOperator(OperandStack& operands, OperatorStack& operators)
 	{
-		// Need two operands for an operator
-		if (operands.size() < 2)
-		{
-			throw parser::ParseException("Too few operands for operator.");
-		}
-
 		const BinaryExpressionPtr& op = operators.top();
 
 		// Set operand B first, we're dealing with a LIFO stack
-		op->setB(operands.top());
-		operands.pop();
+		// Do not push a second operand in the case of a logical NOT
+		if (!std::dynamic_pointer_cast<LogicalNotExpression>(op))
+		{
+			// Need two operands for an operator
+			if (operands.size() < 2)
+			{
+				throw parser::ParseException("Too few operands for operator.");
+			}
+
+			op->setB(operands.top());
+			operands.pop();
+		}
+		else
+		{
+			// Need at least one operand for a NOT operator
+			if (operands.size() < 1)
+			{
+				throw parser::ParseException("Too few operands for ! operator.");
+			}
+		}
 
 		op->setA(operands.top());
 		operands.pop();
@@ -653,8 +595,6 @@ private:
 	// The token is actually pulled from the tokeniser using nextToken()
 	GuiExpressionPtr getTerm(const std::string& token)
 	{
-		// TODO: Check if this is a gui:: parm
-
 		std::string tokenCleaned = string::trim_copy(token, "\"");
 
 		_tokeniser.nextToken(); // valid token, exhaust
@@ -663,59 +603,106 @@ private:
 	}
 
 	// Helper routines
-	BinaryExpressionPtr getOperatorForToken(const std::string& token)
+	BinaryExpressionPtr getOperator()
 	{
+		std::string token = _tokeniser.peek();
+
 		if (token == "+")
 		{
+			_tokeniser.nextToken();
 			return std::make_shared<AddExpression>();
 		}
 		else if (token == "-")
 		{
+			_tokeniser.nextToken();
 			return std::make_shared<SubtractExpression>();
 		}
 		else if (token == "*")
 		{
+			_tokeniser.nextToken();
 			return std::make_shared<MultiplyExpression>();
 		}
 		else if (token == "/")
 		{
+			_tokeniser.nextToken();
 			return std::make_shared<DivideExpression>();
 		}
 		else if (token == "%")
 		{
+			_tokeniser.nextToken();
 			return std::make_shared<ModuloExpression>();
 		}
 		else if (token == "<")
 		{
+			_tokeniser.nextToken();
+
+			if (_tokeniser.peek() == "=")
+			{
+				_tokeniser.nextToken();
+				return std::make_shared<LesserThanOrEqualExpression>();
+			}
+
 			return std::make_shared<LesserThanExpression>();
-		}
-		else if (token == "<=")
-		{
-			return std::make_shared<LesserThanOrEqualExpression>();
 		}
 		else if (token == ">")
 		{
+			_tokeniser.nextToken();
+
+			if (_tokeniser.peek() == "=")
+			{
+				_tokeniser.nextToken();
+				return std::make_shared<GreaterThanOrEqualExpression>();
+			}
+
 			return std::make_shared<GreaterThanExpression>();
 		}
-		else if (token == ">=")
+		else if (token == "=")
 		{
-			return std::make_shared<GreaterThanOrEqualExpression>();
+			_tokeniser.nextToken();
+
+			if (_tokeniser.peek() == "=")
+			{
+				_tokeniser.nextToken();
+				return std::make_shared<EqualityExpression>();
+			}
+
+			rError() << "Assignment operator '=' found in expression, did you mean '=='?" << std::endl;
 		}
-		else if (token == "==")
+		else if (token == "!")
 		{
-			return std::make_shared<EqualityExpression>();
+			_tokeniser.nextToken();
+
+			if (_tokeniser.peek() == "=")
+			{
+				_tokeniser.nextToken();
+				return std::make_shared<InequalityExpression>();
+			}
+
+			return std::make_shared<LogicalNotExpression>();
 		}
-		else if (token == "!=")
+		else if (token == "&")
 		{
-			return std::make_shared<InequalityExpression>();
+			_tokeniser.nextToken();
+
+			if (_tokeniser.peek() == "&")
+			{
+				_tokeniser.nextToken();
+				return std::make_shared<LogicalAndExpression>();
+			}
+
+			rError() << "Bit-wise operator '&' found in expression, did you mean '&&'?" << std::endl;
 		}
-		else if (token == "&&")
+		else if (token == "|")
 		{
-			return std::make_shared<LogicalAndExpression>();
-		}
-		else if (token == "||")
-		{
-			return std::make_shared<LogicalOrExpression>();
+			_tokeniser.nextToken();
+
+			if (_tokeniser.peek() == "|")
+			{
+				_tokeniser.nextToken();
+				return std::make_shared<LogicalOrExpression>();
+			}
+
+			rError() << "Bit-wise operator '|' found in expression, did you mean '||'?" << std::endl;
 		}
 
 		return BinaryExpressionPtr();
