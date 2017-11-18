@@ -7,40 +7,52 @@
 
 #include "string/trim.h"
 #include "string/convert.h"
+#include "string/predicate.h"
 
 namespace gui
 {
 
-namespace detail
-{
-
 // Specialised implementations of the GuiExpression below
 
-// An expression representing a constant floating point number
-class ConstantExpression :
-	public GuiExpression
+ConstantExpression::ConstantExpression(const std::string& stringValue) :
+	GuiExpression(),
+	_stringValue(stringValue),
+	_floatValue(string::convert<float>(stringValue, 0.0f))
+{}
+
+ConstantExpression::ConstantExpression(float value) :
+	GuiExpression(),
+	_stringValue(string::to_string(value)),
+	_floatValue(value)
+{}
+
+float ConstantExpression::getFloatValue()
 {
-private:
-	float _floatValue;
-	std::string _stringValue;
+	return _floatValue;
+}
 
-public:
-	ConstantExpression(std::string stringValue) :
-		GuiExpression(),
-		_stringValue(stringValue),
-		_floatValue(string::convert<float>(stringValue, 0.0f))
-	{}
+std::string ConstantExpression::getStringValue()
+{
+	return _stringValue;
+}
 
-	virtual float getFloatValue() override
-	{
-		return _floatValue;
-	}
+// An expression referring to a GUI state variable
+GuiStateVariableExpression::GuiStateVariableExpression(const std::string& variableName) :
+	_variableName(variableName)
+{}
 
-	virtual std::string getStringValue() override
-	{
-		return _stringValue;
-	}
-};
+float GuiStateVariableExpression::getFloatValue()
+{
+	return 0.0f; // TODO
+}
+
+std::string GuiStateVariableExpression::getStringValue()
+{
+	return ""; // TODO
+}
+
+namespace detail
+{
 
 // Abstract base class for an expression taking two sub-expression as arguments
 // Additions, Multiplications, Divisions, Modulo, comparisons, etc.
@@ -396,6 +408,13 @@ public:
 
 		bool lastTokenWasOperator = false; // to detect signs
 
+		enum {
+			SearchingForOperand,
+			SearchingForOperator,
+		} searchState;
+
+		searchState = SearchingForOperand;
+
 		while (_tokeniser.hasMoreTokens())
 		{
 			// Don't actually pull the token from the tokeniser, we might want to 
@@ -403,8 +422,99 @@ public:
 			// The token will be exhausted from the stream once it is recognised as keyword
 			std::string token = _tokeniser.peek();
 
-			// Get a new term, push it on the stack
-			GuiExpressionPtr term;
+			if (searchState == SearchingForOperand)
+			{
+				// The parsed operand
+				GuiExpressionPtr term;
+
+				if (token == "(")
+				{
+					_tokeniser.nextToken(); // valid token, exhaust
+
+					// New scope, treat this as new expression
+					term = getExpression();
+				}
+				else if (token == ")")
+				{
+					_tokeniser.nextToken(); // valid token, exhaust
+
+					// End of scope reached, break the loop and roll up the expression
+					break;
+				}
+				else if (string::starts_with(token, "gui::"))
+				{
+					// This is a GUI state variable
+					_tokeniser.nextToken();
+					term = std::make_shared<GuiStateVariableExpression>(token.substr(5));
+				}
+				// If this is a + or -, take it as a sign operator
+				else if (token == "+")
+				{
+					// A leading +, just ignore it
+					_tokeniser.nextToken();
+					continue;
+				}
+				else if (token == "-")
+				{
+					// A leading -, interpret it as -1 *
+					operands.push(std::make_shared<ConstantExpression>(-1.0f));
+					operators.push(std::make_shared<MultiplyExpression>());
+
+					// Discard the - token
+					_tokeniser.nextToken();
+					continue;
+				}
+				else
+				{
+					// This might either be a float or a string constant
+					term = std::make_shared<ConstantExpression>(_tokeniser.nextToken());
+				}
+				
+				if (!term)
+				{
+					break; // We've run out of terms
+				}
+
+				// The token has already been pulled from the tokeniser
+				operands.push(term);
+
+				// Look for an operator next
+				searchState = SearchingForOperator;
+				continue;
+			}
+			else if (searchState == SearchingForOperator)
+			{
+				// Get an operator
+				BinaryExpressionPtr op = getOperatorForToken(token);
+
+				if (op)
+				{
+					_tokeniser.nextToken(); // valid token, exhaust
+
+					// Check precedence if we have previous operators
+					while (!operators.empty())
+					{
+						if (operators.top()->getPrecedence() <= op->getPrecedence())
+						{
+							finaliseOperator(operands, operators);
+						}
+						else
+						{
+							break;
+						}
+					}
+
+					// Push this one on the operator stack
+					operators.push(op);
+					searchState = SearchingForOperand; // back to operand search mode
+					continue;
+				}
+
+				// Not an operator, break the loop
+				break;
+			}
+#if 0
+			
 
 			if (token == "(")
 			{
@@ -420,25 +530,10 @@ public:
 				// End of scope reached, break the loop and roll up the expression
 				break;
 			}
-			else
+			else if (string::starts_with(token, "gui::"))
 			{
-				// No parentheses
-				if (operands.empty())
-				{
-					// No operands yet, get a new one
-					term = getTerm(token);
-					operands.push(term);
-
-					lastTokenWasOperator = false;
-				}
-				else
-				{
-					// We already have an operand, require an operator next
-
-				}
-
-
-				continue;
+				// This is a GUI state variable
+				term = std::make_shared<GuiStateVariableExpression>(token.substr(5));
 			}
 
 			if (term)
@@ -507,6 +602,7 @@ public:
 
 			// Not an operand, not an operator, we seem to be done here
 			break;
+#endif
 		}
 
 		// Roll up the operations
@@ -650,7 +746,7 @@ GuiExpressionPtr GuiExpression::createFromTokens(parser::DefTokeniser& tokeniser
 	}
 	catch (parser::ParseException& ex)
 	{
-		rWarning() << "[shaders] " << ex.what() << std::endl;
+		rWarning() << "[GuiExpressionParser] " << ex.what() << std::endl;
 		return GuiExpressionPtr();
 	}
 }

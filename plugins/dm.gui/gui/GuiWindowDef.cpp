@@ -9,6 +9,7 @@
 #include "string/trim.h"
 #include "string/case_conv.h"
 #include "string/replace.h"
+#include "string/predicate.h"
 
 #include "GuiScript.h"
 
@@ -131,13 +132,18 @@ int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
 
 std::string GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
 {
-	GuiExpressionPtr expr = getExpression(tokeniser);
+	std::string token = tokeniser.peek();
+	GuiExpressionPtr expr;
 
-	if (!expr)
+	if (string::starts_with(token, "gui::"))
 	{
-		throw parser::ParseException("Failed to parse string expression.");
+		expr = std::make_shared<GuiStateVariableExpression>(tokeniser.nextToken().substr(5));
 	}
-	
+	else
+	{
+		expr = std::make_shared<ConstantExpression>(tokeniser.nextToken());
+	}
+
 	return expr->getStringValue();
 }
 
@@ -163,7 +169,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 	// The windowDef keyword has already been parsed, so expect a name plus an opening brace here
 	name = tokeniser.nextToken();
 
-	if (name == "LoadGameTextH")
+	if (name == "NewGameRefreshAction")
 	{
 		int i = 6;
 	}
@@ -195,6 +201,10 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		else if (token == "forecolor")
 		{
 			forecolor = parseVector4(tokeniser);
+		}
+		else if (token == "hovercolor")
+		{
+			hovercolor = parseVector4(tokeniser);
 		}
 		else if (token == "backcolor")
 		{
@@ -353,6 +363,15 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			// TODO: Add variable
 			std::string variableName = tokeniser.nextToken();
 			parseVector4(tokeniser);
+		}
+		else if (token == "listdef")
+		{
+			tokeniser.assertNextToken("{");
+
+			while (tokeniser.hasMoreTokens())
+			{
+				if (tokeniser.nextToken() == "}") break;
+			}
 		}
 		else if (token == "}")
 		{

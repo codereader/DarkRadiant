@@ -26,5 +26,34 @@ public:
 	static GuiExpressionPtr createFromTokens(parser::DefTokeniser& tokeniser);
 };
 
+// An expression representing a constant floating point number
+class ConstantExpression :
+	public GuiExpression
+{
+private:
+	float _floatValue;
+	std::string _stringValue;
+
+public:
+	ConstantExpression(const std::string& stringValue);
+
+	explicit ConstantExpression(float value);
+
+	virtual float getFloatValue();
+	virtual std::string getStringValue();
+};
+
+class GuiStateVariableExpression :
+	public GuiExpression
+{
+private:
+	std::string _variableName;
+public:
+	GuiStateVariableExpression(const std::string& variableName);
+
+	virtual float getFloatValue() override;
+	virtual std::string getStringValue() override;
+};
+
 }
 

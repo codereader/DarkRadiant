@@ -77,7 +77,7 @@ void GuiScript::parseSetStatement(parser::DefTokeniser& tokeniser)
 	{
 		if (tokeniser.peek() == ";") break;
 
-		st->args.push_back(getExpression(tokeniser)); // argument
+		st->args.push_back(std::make_shared<ConstantExpression>(tokeniser.nextToken())); // argument
 	}
 
 	pushStatement(st);
