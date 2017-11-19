@@ -48,6 +48,7 @@ GuiWindowDef::GuiWindowDef(IGui& owner) :
 	hovercolor = Vector4(1, 1, 1, 1);
 	backcolor = Vector4(0, 0, 0, 0);
 	bordercolor = Vector4(0, 0, 0, 0);
+	bordersize = 0;
 	matcolor = Vector4(1, 1, 1, 1);
 	rotate = 0;
 	textscale = 1;
@@ -191,7 +192,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 	// The windowDef keyword has already been parsed, so expect a name plus an opening brace here
 	name = tokeniser.nextToken();
 
-	if (name == "NewGameRefreshAction")
+	if (name == "ObjectivesMenuParchment")
 	{
 		int i = 6;
 	}
@@ -375,6 +376,13 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 			// TODO
 		}
+		else if (token == "onactionrelease")
+		{
+			GuiScriptPtr script(new GuiScript(*this));
+			script->constructFromTokens(tokeniser);
+
+			// TODO
+		}
 		else if (token == "float" || token == "definefloat")
 		{
 			// TODO: Add variable
@@ -386,20 +394,15 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			std::string variableName = tokeniser.nextToken();
 			parseVector4(tokeniser);
 		}
-		else if (token == "listdef")
+		else if (token == "listdef" || token == "choicedef" || token == "binddef" ||
+				 token == "editdef" || token == "sliderdef" || token == "renderdef")
 		{
-			tokeniser.nextToken(); // listdef name
+			tokeniser.nextToken(); // def name
 			skipBlock(tokeniser);
 		}
-		else if (token == "choicedef")
+		else if (token == "bordersize")
 		{
-			tokeniser.nextToken(); // listdef name
-			skipBlock(tokeniser);
-		}
-		else if (token == "binddef")
-		{
-			tokeniser.nextToken(); // listdef name
-			skipBlock(tokeniser);
+			bordersize = parseFloat(tokeniser);
 		}
 		else if (token == "}")
 		{

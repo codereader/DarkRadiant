@@ -406,6 +406,14 @@ public:
 private:
 	void fillBuffer(const std::string& token)
 	{
+		if (token.empty())
+		{
+			// It's possible to retrieve an empty token if the DefTokeniser encounters an empty string ""
+			// This is valid, so push the empty token
+			_buffer.push_back(token);
+			return;
+		}
+
 		// Use a separate tokeniser and keep all delimiters
 		parser::BasicDefTokeniser<std::string> subtokeniser(token, "", _delims);
 
@@ -533,6 +541,13 @@ public:
 					operators.push(op);
 					searchState = SearchingForOperand; // back to operand search mode
 					continue;
+				}
+
+				// We might also hit a closing parenthesis after an operand
+				if (_tokeniser.peek() == ")")
+				{
+					// Exhaust and break the loop
+					_tokeniser.nextToken();
 				}
 
 				// Not an operator, break the loop

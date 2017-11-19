@@ -79,14 +79,14 @@ public:
 	// Prepares renderable objects, to be called by the parent Gui only
 	void pepareRendering(bool prepareChildren = true) override;
 
-private:
-	Vector4 parseVector4(parser::DefTokeniser& tokeniser);
-	float parseFloat(parser::DefTokeniser& tokeniser);
-	int parseInt(parser::DefTokeniser& tokeniser);
-	std::string parseString(parser::DefTokeniser& tokeniser);
-	bool parseBool(parser::DefTokeniser& tokeniser);
+public:
+	static Vector4 parseVector4(parser::DefTokeniser& tokeniser);
+	static float parseFloat(parser::DefTokeniser& tokeniser);
+	static int parseInt(parser::DefTokeniser& tokeniser);
+	static std::string parseString(parser::DefTokeniser& tokeniser);
+	static bool parseBool(parser::DefTokeniser& tokeniser);
 
-	GuiExpressionPtr getExpression(parser::DefTokeniser& tokeniser);
+	static GuiExpressionPtr getExpression(parser::DefTokeniser& tokeniser);
 };
 
 

@@ -29,13 +29,11 @@ void GuiScript::parseIfStatement(parser::DefTokeniser& tokeniser)
 	// The initial "if" has already been parsed
 	StatementPtr ifStatement(new Statement(Statement::ST_IF));
 
-	tokeniser.assertNextToken("(");
+	// Any opening and closing parentheses are handled by the expression parser
 	ifStatement->args.push_back(getIfExpression(tokeniser)); // condition
 
 	// Add the statement at the current position
 	pushStatement(ifStatement);
-
-	tokeniser.assertNextToken(")");
 
 	// Parse the statement(s) to execute if the above condition is true
 	parseStatement(tokeniser);
@@ -77,7 +75,10 @@ void GuiScript::parseSetStatement(parser::DefTokeniser& tokeniser)
 	// Add all tokens up to the semicolon as arguments
 	while (true)
 	{
-		if (tokeniser.peek() == ";") break;
+		std::string token = tokeniser.peek();
+
+		// Sometimes the semicolon is missing
+		if (token == ";" || token == "}") break;
 
 		st->args.push_back(std::make_shared<ConstantExpression>(tokeniser.nextToken())); // argument
 	}
@@ -90,16 +91,17 @@ void GuiScript::parseTransitionStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: transition [window::]<variable> <from> <to> <time> [ <accel> <decel> ]
 	StatementPtr st(new Statement(Statement::ST_TRANSITION));
 
-	st->args.push_back(getExpression(tokeniser)); // variable
-	st->args.push_back(getExpression(tokeniser)); // from
-	st->args.push_back(getExpression(tokeniser)); // to
-	st->args.push_back(getExpression(tokeniser)); // time
+	st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); // variable
+
+	st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); // from
+	st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); // to
+	st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); // time
 
 	if (tokeniser.peek() != ";")
 	{
 		// no semicolon, parse optional acceleration and deceleration
-		st->args.push_back(getExpression(tokeniser)); 	// accel
-		st->args.push_back(getExpression(tokeniser));	// decel
+		st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); 	// accel
+		st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser)));	// decel
 
 		tokeniser.assertNextToken(";");
 	}

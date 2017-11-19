@@ -45,6 +45,7 @@ public:
 	Vector4 hovercolor;
 	Vector4 backcolor;
 	Vector4 bordercolor;
+	float bordersize;
 	Vector4 matcolor;
 
 	float rotate;
