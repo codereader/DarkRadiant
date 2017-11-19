@@ -89,10 +89,18 @@ public:
         // Clear out the token, no guarantee that it is empty
         tok = "";
 
-        while (next != end) {
+		enum class QuoteType
+		{
+			Single = 0,
+			Double = 1,
+		};
 
-            switch (_state) {
+		QuoteType quoteType = QuoteType::Single;
 
+        while (next != end)
+		{
+            switch (_state)
+			{
                 case SEARCHING:
 
                     // If we have a delimiter, just advance to the next character
@@ -128,8 +136,8 @@ public:
 
                     // Now next is pointing at a non-delimiter. Switch on this
                     // character.
-                    switch (*next) {
-
+                    switch (*next) 
+					{
                         // Found a quote, enter QUOTED state, or return the
                         // current token if we are in the process of building
                         // one.
@@ -138,10 +146,22 @@ public:
                                 return true;
                             }
                             else {
+								quoteType = QuoteType::Double;
                                 _state = QUOTED;
                                 ++next;
                                 continue; // skip the quote
                             }
+
+						case '\'':
+							if (tok != "") {
+								return true;
+							}
+							else {
+								quoteType = QuoteType::Single;
+								_state = QUOTED;
+								++next;
+								continue; // skip the quote
+							}
 
                         // Found a slash, possibly start of comment
                         case '/':
@@ -241,7 +261,9 @@ public:
 
                     // In the quoted state, just advance until the closing
                     // quote. No delimiter splitting is required.
-                    if (*next == '\"') {
+                    if (*next == '\"' && quoteType == QuoteType::Double ||
+						*next == '\'' && quoteType == QuoteType::Single)
+					{
                         ++next;
 
 						// greebo: We've found a closing quote, but there might be a backslash indicating
@@ -264,7 +286,11 @@ public:
 							{
 								tok += '\t';
 							}
-							else if (*next == '"') // Quote
+							else if (*next == '"' && quoteType == QuoteType::Double) // Escape Double Quote
+							{
+								tok += '"';
+							}
+							else if (*next == '\'' && quoteType == QuoteType::Single) // Escaped Single Quote
 							{
 								tok += '"';
 							}
@@ -321,7 +347,9 @@ public:
                         continue;
                     }
 
-					if (*next == '\"') {
+					if (*next == '\"' && quoteType == QuoteType::Double ||
+						*next == '\'' && quoteType == QuoteType::Single)
+					{
 						// Found the desired opening quote, switch to QUOTED
 						++next;
 						_state = QUOTED;
