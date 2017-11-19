@@ -14,6 +14,8 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 
+#include "MissionInfoGuiView.h"
+
 namespace ui
 {
 
@@ -117,7 +119,7 @@ void MissionInfoEditDialog::populateWindow()
 
 	// Add the preview widget
 	wxPanel* previewPanel = findNamedObject<wxPanel>(this, "MissionInfoEditDialogPreviewPanel");
-	_guiView = new wxutil::GuiView(previewPanel);
+	_guiView = new MissionInfoGuiView(previewPanel);
 	previewPanel->GetSizer()->Add(_guiView, 1, wxEXPAND);
 
 	_guiView->setGui(GlobalGuiManager().getGui("guis/mainmenu.gui"));

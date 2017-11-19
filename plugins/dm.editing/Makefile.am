@@ -15,7 +15,8 @@ dm_editing_la_SOURCES = plugin.cpp \
 				  AIEditingPanel.cpp \
                   FixupMap.cpp \
                   DarkmodTxt.cpp \
-                  MissionInfoEditDialog.cpp \
+				  MissionInfoEditDialog.cpp \
+                  MissionInfoGuiView.cpp \
                   FixupMapDialog.cpp \
                   AIVocalSetChooserDialog.cpp \
                   AIVocalSetPropertyEditor.cpp \

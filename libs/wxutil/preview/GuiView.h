@@ -34,6 +34,9 @@ public:
 	// Sets the GUI to render (can be NULL to clear this view)
 	virtual void setGui(const gui::IGuiPtr& gui);
 
+	// Only draw the given windowDef and its children
+	virtual void setWindowDefFilter(const std::string& windowDef);
+
 	// Returns the current GUI (can be NULL)
 	const gui::IGuiPtr& getGui();
 

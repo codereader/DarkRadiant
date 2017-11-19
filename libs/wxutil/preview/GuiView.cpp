@@ -46,6 +46,11 @@ const gui::IGuiPtr& GuiView::getGui()
 	return _gui;
 }
 
+void GuiView::setWindowDefFilter(const std::string& windowDef)
+{
+	_renderer.setWindowDefFilter(windowDef);
+}
+
 void GuiView::initialiseView()
 {
 	

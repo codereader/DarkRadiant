@@ -30,6 +30,11 @@ void GuiRenderer::setIgnoreVisibility(bool ignoreVisibility)
 	_ignoreVisibility = ignoreVisibility;
 }
 
+void GuiRenderer::setWindowDefFilter(const std::string& windowDef)
+{
+	_windowDefFilter = windowDef;
+}
+
 void GuiRenderer::render()
 {
 	glClearColor(0, 0, 0, 0);
@@ -61,11 +66,23 @@ void GuiRenderer::render()
 	glDisable(GL_BLEND);
 }
 
-void GuiRenderer::render(const gui::IGuiWindowDefPtr& window)
+void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 {
 	if (window == NULL) return;
 
 	if (!window->visible && !_ignoreVisibility) return;
+
+	if (!ignoreFilter && !_windowDefFilter.empty())
+	{
+		if (window->name == _windowDefFilter)
+		{
+			ignoreFilter = true; // this is the window we want, ignore filter from here on
+		}
+		else if (!window->findWindowDef(_windowDefFilter))
+		{
+			return; // filtered window is not even a child
+		}
+	}
 
 	if (window->backcolor[3] > 0)
 	{
@@ -173,7 +190,7 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window)
 
 	for (const gui::IGuiWindowDefPtr& child : window->children)
 	{
-		render(child);
+		render(child, ignoreFilter);
 	}
 
 	glMatrixMode(GL_MODELVIEW);

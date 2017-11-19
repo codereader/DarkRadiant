@@ -321,6 +321,7 @@
     <ClCompile Include="..\..\plugins\dm.editing\FixupMap.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\FixupMapDialog.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\MissionInfoEditDialog.cpp" />
+    <ClCompile Include="..\..\plugins\dm.editing\MissionInfoGuiView.cpp" />
     <ClCompile Include="..\..\plugins\dm.editing\plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +336,7 @@
     <ClInclude Include="..\..\plugins\dm.editing\FixupMap.h" />
     <ClInclude Include="..\..\plugins\dm.editing\FixupMapDialog.h" />
     <ClInclude Include="..\..\plugins\dm.editing\MissionInfoEditDialog.h" />
+    <ClInclude Include="..\..\plugins\dm.editing\MissionInfoGuiView.h" />
     <ClInclude Include="..\..\plugins\dm.editing\ShaderReplacer.h" />
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedCheckbox.h" />
     <ClInclude Include="..\..\plugins\dm.editing\SpawnargLinkedSpinButton.h" />
