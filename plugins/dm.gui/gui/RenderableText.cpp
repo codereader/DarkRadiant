@@ -28,7 +28,7 @@ RenderableText::RenderableText(const IGuiWindowDef& owner) :
 
 void RenderableText::printMissingGlyphSetError() const
 {
-    rConsoleError() << "[dm.gui] Font '" << _font->getName() << "'"
+    rWarning() << "[dm.gui] Font '" << _font->getName() << "'"
               << " does not have glyph set for resolution "
               << _resolution << std::endl;
 }
@@ -46,8 +46,6 @@ void RenderableText::realiseFontShaders()
 		}
 		else
 		{
-			printMissingGlyphSetError();
-			
 			switch (_resolution)
 			{
 				case fonts::Resolution12: 
@@ -60,6 +58,7 @@ void RenderableText::realiseFontShaders()
 					break;
 				case fonts::Resolution48: 
 					rWarning() << "No resolutions to fall back." << std::endl;
+					printMissingGlyphSetError();
 					return;
 			}
 		}

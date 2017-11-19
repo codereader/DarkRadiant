@@ -26,7 +26,8 @@ namespace
 
 MissionInfoEditDialog::MissionInfoEditDialog(wxWindow* parent) :
 	DialogBase(_(WINDOW_TITLE), parent),
-	_missionTitleStore(new wxutil::TreeModel(_missionTitleColumns, true))
+	_missionTitleStore(new wxutil::TreeModel(_missionTitleColumns, true)),
+	_updateInProgress(false)
 {
 	populateWindow();
 
@@ -45,6 +46,9 @@ MissionInfoEditDialog::MissionInfoEditDialog(wxWindow* parent) :
 		_darkmodTxt = std::make_shared<map::DarkmodTxt>();
 	}
 
+	_guiView->setGui(GlobalGuiManager().getGui("guis/mainmenu.gui"));
+	_guiView->setMissionInfoFile(_darkmodTxt);
+
 	updateValuesFromDarkmodTxt();
 }
 
@@ -52,17 +56,11 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 {
 	_missionTitleStore->Clear();
 
-	if (!_darkmodTxt)
-	{
-		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->SetValue("");
-		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogAuthorEntry")->SetValue("");
-		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue("");
-		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->SetValue("");
-		findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue("");
-		findNamedObject<wxStaticText>(this, "MissionInfoEditDialogOutputPath")->SetLabelText("-");
+	assert(_darkmodTxt); // this should be non-NULL at all times
 
-		return;
-	}
+	if (!_darkmodTxt) return;
+
+	_updateInProgress = true;
 
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->SetValue(_darkmodTxt->getTitle());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogAuthorEntry")->SetValue(_darkmodTxt->getAuthor());
@@ -85,6 +83,10 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 
 		row.SendItemAdded();
 	}
+
+	_guiView->update();
+
+	_updateInProgress = false;
 }
 
 void MissionInfoEditDialog::populateWindow()
@@ -122,8 +124,6 @@ void MissionInfoEditDialog::populateWindow()
 	_guiView = new MissionInfoGuiView(previewPanel);
 	previewPanel->GetSizer()->Add(_guiView, 1, wxEXPAND);
 
-	_guiView->setGui(GlobalGuiManager().getGui("guis/mainmenu.gui"));
-
 	makeLabelBold(this, "MissionInfoLabel");
 
 	wxButton* saveButton = findNamedObject<wxButton>(this, "MissionInfoEditDialogSaveButton");
@@ -146,15 +146,28 @@ void MissionInfoEditDialog::populateWindow()
 		std::bind(&MissionInfoEditDialog::testDeleteTitle, this)
 	);
 
+	// Wire up the text entry boxes to update the preview
+	setupNamedEntryBox("MissionInfoEditDialogTitleEntry");
+	setupNamedEntryBox("MissionInfoEditDialogAuthorEntry");
+	setupNamedEntryBox("MissionInfoEditDialogDescriptionEntry");
+	setupNamedEntryBox("MissionInfoEditDialogVersionEntry");
+
 	Layout();
 	Fit();
 	CenterOnScreen();
 }
 
-void MissionInfoEditDialog::onSave(wxCommandEvent& ev)
+void MissionInfoEditDialog::setupNamedEntryBox(const std::string& ctrlName)
 {
-	try
+	wxTextCtrl* ctrl = findNamedObject<wxTextCtrl>(this, ctrlName);
+
+	assert(ctrl != nullptr);
+	if (ctrl == nullptr) return;
+
+	ctrl->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev) 
 	{
+		if (_updateInProgress) return;
+
 		// Load the values from the UI to the DarkmodTxt instance
 		_darkmodTxt->setTitle(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogTitleEntry")->GetValue().ToStdString());
 		_darkmodTxt->setAuthor(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogAuthorEntry")->GetValue().ToStdString());
@@ -162,8 +175,15 @@ void MissionInfoEditDialog::onSave(wxCommandEvent& ev)
 		_darkmodTxt->setVersion(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->GetValue().ToStdString());
 		_darkmodTxt->setReqTdmVersion(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->GetValue().ToStdString());
 
-		// Mission list is kept in sync all the time, no need to load them into the instance here
+		_guiView->update();
+	});
+}
 
+void MissionInfoEditDialog::onSave(wxCommandEvent& ev)
+{
+	try
+	{
+		// DarkmodTxt is kept in sync all the time, no need to load anything, just save to disk
 		_darkmodTxt->saveToCurrentMod();
 
 		// Close the dialog

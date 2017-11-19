@@ -8,6 +8,7 @@
 #include "wxutil/menu/PopupMenu.h"
 
 #include "DarkmodTxt.h"
+#include "MissionInfoGuiView.h"
 
 namespace wxutil { class GuiView; }
 
@@ -41,7 +42,9 @@ private:
 	// Context menu
 	wxutil::PopupMenuPtr _missionTitlesContextMenu;
 
-	wxutil::GuiView* _guiView;
+	MissionInfoGuiView* _guiView;
+
+	bool _updateInProgress;
 
 public:
 	// Constructor
@@ -52,6 +55,7 @@ public:
 private:
 	void populateWindow();
 	void updateValuesFromDarkmodTxt();
+	void setupNamedEntryBox(const std::string& ctrlName);
 
 	void onSave(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
