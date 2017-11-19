@@ -710,18 +710,18 @@ private:
 
 			for (StringList::const_iterator i = macro.arguments.begin(); i != macro.arguments.end(); ++i)
 			{
-				// Require a comma to separate the arguments
-				if (i != macro.arguments.begin() && nextTokenFunc() != ",")
+				std::string argumentToken = nextTokenFunc();
+				std::string argumentValue = "";
+
+				while (argumentToken != "," && argumentToken != ")")
 				{
-					throw ParseException(fmt::format("Error expanding macro {0}, expected ','", macro.name));
+					argumentValue += argumentToken;
+					argumentValue.append(" ");
+
+					argumentToken = nextTokenFunc();
 				}
 
-				argumentValues.push_back(nextTokenFunc());
-			}
-
-			if (nextTokenFunc() != ")")
-			{
-				throw ParseException(fmt::format("Error expanding macro {0}, expected ')'", macro.name));
+				argumentValues.push_back(argumentValue);
 			}
 		}
 

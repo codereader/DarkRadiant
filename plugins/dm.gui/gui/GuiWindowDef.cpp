@@ -192,11 +192,6 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 	// The windowDef keyword has already been parsed, so expect a name plus an opening brace here
 	name = tokeniser.nextToken();
 
-	if (name == "ObjectivesMenuParchment")
-	{
-		int i = 6;
-	}
-
 	tokeniser.assertNextToken("{");
 
 	while (tokeniser.hasMoreTokens())
@@ -308,7 +303,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		{
 			menugui = parseBool(tokeniser);
 		}
-		else if (token == "windowdef")
+		else if (token == "windowdef" || token == "indowdef") // yes, there's a syntax error in the TDM GUI
 		{
 			// Child windowdef
 			GuiWindowDefPtr window(new GuiWindowDef(_owner));
@@ -387,6 +382,19 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		{
 			// TODO: Add variable
 			std::string variableName = tokeniser.nextToken();
+
+			// try to check if the next token is a numeric initialisation value
+			try
+			{
+				float value = std::stof(tokeniser.peek());
+
+				// Success, load the value
+				tokeniser.nextToken();
+			}
+			catch (std::invalid_argument&)
+			{
+				// Not a number, ignore and continue
+			}
 		}
 		else if (token == "definevec4")
 		{
@@ -403,6 +411,11 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		else if (token == "bordersize")
 		{
 			bordersize = parseFloat(tokeniser);
+		}
+		else if (token == "choicetype")
+		{
+			rWarning() << "'choiceType' token encountered in windowDef block in " << name << std::endl;
+			tokeniser.nextToken(); // the choicetype value
 		}
 		else if (token == "}")
 		{
