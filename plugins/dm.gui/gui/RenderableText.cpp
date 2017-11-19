@@ -35,15 +35,35 @@ void RenderableText::printMissingGlyphSetError() const
 
 void RenderableText::realiseFontShaders()
 {
-    fonts::IGlyphSetPtr glyphSet = _font->getGlyphSet(_resolution);
-    if (glyphSet)
-    {
-        glyphSet->realiseShaders();
-    }
-    else
-    {
-        printMissingGlyphSetError();
-    }
+	while (_resolution < fonts::Resolution::NumResolutions)
+	{
+		fonts::IGlyphSetPtr glyphSet = _font->getGlyphSet(_resolution);
+
+		if (glyphSet)
+		{
+			glyphSet->realiseShaders();
+			break;
+		}
+		else
+		{
+			printMissingGlyphSetError();
+			
+			switch (_resolution)
+			{
+				case fonts::Resolution12: 
+					rWarning() << "Falling back to higher resolution 24..." << std::endl;
+					_resolution = fonts::Resolution24; 
+					break;
+				case fonts::Resolution24: 
+					rWarning() << "Falling back to higher resolution 48..." << std::endl;
+					_resolution = fonts::Resolution48; 
+					break;
+				case fonts::Resolution48: 
+					rWarning() << "No resolutions to fall back." << std::endl;
+					return;
+			}
+		}
+	}
 }
 
 void RenderableText::render()
