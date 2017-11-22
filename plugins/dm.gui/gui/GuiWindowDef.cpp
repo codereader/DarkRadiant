@@ -73,29 +73,6 @@ IGui& GuiWindowDef::getGui() const
 GuiExpressionPtr GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 {
 	return GuiExpression::createFromTokens(tokeniser);
-#if 0
-	std::string returnValue = tokeniser.nextToken();
-
-	if (returnValue == "(")
-	{
-		// Assemble token until closing brace found
-		std::size_t depth = 1;
-
-		while (depth > 0 && tokeniser.hasMoreTokens())
-		{
-			std::string token = tokeniser.nextToken();
-
-			if (token == ")") depth--;
-
-			returnValue += token;
-		}
-	}
-
-	//  Strip quotes
-	string::trim(returnValue, "\"");
-
-	return returnValue;
-#endif
 }
 
 Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)

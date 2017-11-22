@@ -337,33 +337,6 @@ GuiExpressionPtr GuiScript::getExpression(parser::DefTokeniser& tokeniser)
 GuiExpressionPtr GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
 {
 	return getExpression(tokeniser);
-#if 0
-	std::string rv;
-
-	std::size_t level = 1;
-
-	while (tokeniser.hasMoreTokens() && level > 0)
-	{
-		std::string token = tokeniser.nextToken();
-
-		if (token == ")")
-		{
-			level--;
-		}
-		else if (token == "(")
-		{
-			level++;
-		}
-
-		if (level > 0)
-		{
-			rv += (rv.empty()) ? "" : " ";
-			rv += token;
-		}
-	}
-
-	return rv;
-#endif
 }
 
 const Statement& GuiScript::getStatement(std::size_t index)
