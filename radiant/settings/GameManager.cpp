@@ -20,7 +20,6 @@
 
 #include "GameFileLoader.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "Win32Registry.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
 
@@ -211,96 +210,12 @@ std::string Manager::getUserEnginePath()
     return _enginePath;
 }
 
-void Manager::constructPaths()
-{
-#if 0
-	_enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
-
-	// Make sure it's a well formatted path
-	_enginePath = os::standardPathWithSlash(_enginePath);
-
-	// Load the fsGame and fsGameBase from the registry
-	_fsGame = GlobalRegistry().get(RKEY_FS_GAME);
-	_fsGameBase = GlobalRegistry().get(RKEY_FS_GAME_BASE);
-
-	if (!_fsGameBase.empty())
-	{
-		// greebo: #3480 check if the mod base path is absolute. If not, append it to the engine path
-		_modBasePath = fs::path(_fsGameBase).is_absolute() ? _fsGameBase : getUserEnginePath() + _fsGameBase;
-
-		// Normalise the path as last step
-		_modBasePath = os::standardPathWithSlash(_modBasePath);
-	}
-	else
-	{
-		// No fs_game_base, no mod base path
-		_modBasePath = "";
-	}
-
-	if (!_fsGame.empty())
-	{
-		// greebo: #3480 check if the mod path is absolute. If not, append it to the engine path
-		_modPath = fs::path(_fsGame).is_absolute() ? _fsGame : getUserEnginePath() + _fsGame;
-
-		// Normalise the path as last step
-		_modPath = os::standardPathWithSlash(_modPath);
-	}
-	else
-	{
-		// No fs_game, no modpath
-		_modPath = "";
-	}
-#endif
-}
-
 void Manager::initEnginePath()
 {
 	// Try to retrieve a saved value for the engine path
 	_enginePath = registry::getValue<std::string>(RKEY_ENGINE_PATH);
 	_modPath = registry::getValue<std::string>(RKEY_MOD_PATH);
 	_modBasePath = registry::getValue<std::string>(RKEY_MOD_BASE_PATH);
-
-	xml::NodeList gameNodeList = GlobalRegistry().findXPath("game");
-
-	if (_enginePath.empty() && !gameNodeList.empty())
-	{
-		// No engine path known, but we have a valid game description
-		// Try to deduce the engine path from the Registry settings (Win32 only)
-		std::string regKey = gameNodeList[0].getAttributeValue("registryKey");
-		std::string regValue = gameNodeList[0].getAttributeValue("registryValue");
-
-		rMessage() << "GameManager: Querying Windows Registry for game path: "
-			<< "HKEY_LOCAL_MACHINE\\"
-			<< regKey << "\\" << regValue << std::endl;
-
-		// Query the Windows Registry for a default installation path
-		// This will return "" for non-Windows environments
-		_enginePath = Win32Registry::getKeyValue(regKey, regValue);
-
-		rMessage() << "GameManager: Windows Registry returned result: "
-			<< _enginePath << std::endl;
-	}
-
-	// If the engine path is still empty, consult the .game file for a fallback value
-	if (_enginePath.empty())
-	{
-		// No engine path set so far, search the game file for default values
-		const std::string ENGINEPATH_ATTRIBUTE =
-#if defined(WIN32)
-			"enginepath_win32"
-#elif defined(__linux__) || defined (__FreeBSD__)
-			"enginepath_linux"
-#elif defined(__APPLE__)
-			"enginepath_macos"
-#else
-#error "unknown platform"
-#endif
-			;
-
-		_enginePath = os::standardPathWithSlash(
-			currentGame()->getKeyValue(ENGINEPATH_ATTRIBUTE)
-		);
-	}
 
 	// Normalise the path in any case
 	_enginePath = os::standardPathWithSlash(_enginePath);
@@ -346,9 +261,11 @@ void Manager::initEnginePath()
 	// Force an update ((re-)initialises the VFS)
 	updateEnginePath(true);
 
+#if 0
 	// Add the note to the preference page
 	IPreferencePage& page = GetPreferenceSystem().getPage(_("Game"));
 	page.appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant\nfor the changes to take effect."));
+#endif
 }
 
 void Manager::observeKey(const std::string& key)
@@ -363,13 +280,9 @@ void Manager::observeKey(const std::string& key)
 void Manager::addVFSSearchPath(const std::string &path)
 {
 	// If this path is searched earlier then the file would be found the first time.
-	for (PathList::iterator i = _vfsSearchPaths.begin(); 
-		 i != _vfsSearchPaths.end(); ++i)
+	if (std::find(_vfsSearchPaths.begin(), _vfsSearchPaths.end(), path) != _vfsSearchPaths.end())
 	{
-		if (*i == path)
-		{
-			return;
-		}
+		return;
 	}
 
 	_vfsSearchPaths.push_back(path);
@@ -411,15 +324,19 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
       mapFolder = "maps/";
    }
 
-   if (_fsGame.empty() && _fsGameBase.empty()) {
+   if (_modPath.empty() && _modBasePath.empty()) 
+   {
       mapPath = baseGamePath + mapFolder;
    }
-   else if (!_fsGame.empty()) {
+   else if (!_modPath.empty())
+   {
       mapPath = _modPath + mapFolder;
    }
-   else { // fsGameBase is not empty
+   else // _modBasePath is not empty
+   { 
       mapPath = _modBasePath + mapFolder;
    }
+
    rMessage() << "GameManager: Map path set to " << mapPath << std::endl;
    os::makeDirectory(mapPath);
 
@@ -444,11 +361,11 @@ void Manager::updateEnginePath(bool forced)
 		GlobalRegistry().get(RKEY_ENGINE_PATH)
 	);
 
-	std::string newFSGame = GlobalRegistry().get(RKEY_FS_GAME);
-	std::string newFSGameBase = GlobalRegistry().get(RKEY_FS_GAME_BASE);
+	std::string newModPath = os::standardPathWithSlash(GlobalRegistry().get(RKEY_MOD_PATH));
+	std::string newModBasePath = os::standardPathWithSlash(GlobalRegistry().get(RKEY_MOD_BASE_PATH));
 
 	// Only update if any settings were changed, or if this is a "forced" update
-	if (newPath != _enginePath || newFSGame != _fsGame || newFSGameBase != _fsGameBase || forced)
+	if (forced || newPath != _enginePath || newModPath != _modPath || newModBasePath != _modBasePath)
 	{
 		bool enginePathWasInitialised = _enginePathInitialised;
 
@@ -462,34 +379,40 @@ void Manager::updateEnginePath(bool forced)
 			_vfsSearchPaths.clear();
 		}
 
-		// Set the new fs_game and engine paths
-		_fsGame = newFSGame;
-		_fsGameBase = newFSGameBase;
+		// Set the new mod and engine paths
+		_modPath = newModPath;
+		_modBasePath = newModBasePath;
 		_enginePath = newPath;
 
 		// Reconstruct the paths basing on these two, the _modBasePath may be out of date
-		constructPaths();
+		//constructPaths();
 
 		if (!_enginePathInitialised)
 		{
-			if (!_fsGame.empty()) {
+			if (!_modPath.empty())
+			{
 				// We have a MOD, register this directory first
 				addVFSSearchPath(_modPath);
 
-#if defined(POSIX)
+#ifdef POSIX
+				std::string fsGame = os::getRelativePath(_modPath, _enginePath);
+
 				// On Linux, the above was in ~/.doom3/, search the engine mod path as well
-				std::string baseModPath = os::standardPathWithSlash(_enginePath + _fsGame);
+				std::string baseModPath = os::standardPathWithSlash(_enginePath + fsGame);
 				addVFSSearchPath(baseModPath);
 #endif
 			}
 
-			if (!_fsGameBase.empty()) {
+			if (!_modBasePath.empty())
+			{
 				// We have a MOD base, register this directory as second
 				addVFSSearchPath(_modBasePath);
 
-#if defined(POSIX)
-				// On Linux, the above was in ~/.doom3/, search the engine mod path as well
-				std::string baseModPath = os::standardPathWithSlash(_enginePath + _fsGameBase);
+#ifdef POSIX
+				std::string fsGameBase = os::getRelativePath(_modBasePath, _enginePath);
+
+				// On Linux, the above was in ~/.doom3/, search the engine mod base path as well
+				std::string baseModPath = os::standardPathWithSlash(_enginePath + fsGameBase);
 				addVFSSearchPath(baseModPath);
 #endif
 			}
@@ -515,10 +438,9 @@ void Manager::updateEnginePath(bool forced)
 			_enginePathInitialised = true;
 
 			rMessage() << "VFS Search Path priority is: " << std::endl;
-			for (PathList::iterator i = _vfsSearchPaths.begin();
-				i != _vfsSearchPaths.end(); ++i)
+			for (const std::string& path : _vfsSearchPaths)
 			{
-				rMessage() << "- " << (*i) << std::endl;
+				rMessage() << "- " << path << std::endl;
 			}
 
 			if (enginePathWasInitialised)
@@ -530,7 +452,8 @@ void Manager::updateEnginePath(bool forced)
 	}
 }
 
-const Manager::PathList& Manager::getVFSSearchPaths() const {
+const Manager::PathList& Manager::getVFSSearchPaths() const 
+{
 	// Should not be called before the list is initialised
 	if (_vfsSearchPaths.empty()) {
         rConsole() << "GameManager: Warning, VFS search paths not yet initialised." << std::endl;

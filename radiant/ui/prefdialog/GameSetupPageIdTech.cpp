@@ -16,6 +16,7 @@
 #include "os/file.h"
 #include "os/path.h"
 #include "registry/Widgets.h"
+#include "settings/Win32Registry.h"
 
 namespace ui
 {
@@ -111,7 +112,41 @@ void GameSetupPageIdTech::onPageShown()
 	{
 		_enginePath = registry::getValue<std::string>(RKEY_ENGINE_PATH);
 
-		// TODO: If engine path still empty, try to deduce it from defaults/registry
+		if (_enginePath.empty())
+		{
+			// No engine path known, but we have a valid game description
+			// Try to deduce the engine path from the Registry settings (Win32 only)
+			std::string regKey = _game->getKeyValue("registryKey");
+			std::string regValue = _game->getKeyValue("registryValue");
+
+			rMessage() << "GameSetupPageIdTech: Querying Windows Registry for game path: "
+				<< "HKEY_LOCAL_MACHINE\\" << regKey << "\\" << regValue << std::endl;
+
+			// Query the Windows Registry for a default installation path
+			// This will return "" for non-Windows environments
+			_enginePath = game::Win32Registry::getKeyValue(regKey, regValue);
+
+			rMessage() << "GameManager: Windows Registry returned result: " << _enginePath << std::endl;
+		}
+
+		// If the engine path is still empty, consult the .game file for a fallback value
+		if (_enginePath.empty())
+		{
+			// No engine path set so far, search the game file for default values
+			const std::string ENGINEPATH_ATTRIBUTE =
+#if defined(WIN32)
+				"enginepath_win32"
+#elif defined(__linux__) || defined (__FreeBSD__)
+				"enginepath_linux"
+#elif defined(__APPLE__)
+				"enginepath_macos"
+#else
+#error "unknown platform"
+#endif
+				;
+
+			_enginePath = os::standardPathWithSlash(_game->getKeyValue(ENGINEPATH_ATTRIBUTE));
+		}
 
 		_enginePathEntry->setValue(_enginePath);
 	}
