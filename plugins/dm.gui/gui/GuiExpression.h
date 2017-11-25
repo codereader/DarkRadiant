@@ -46,6 +46,25 @@ public:
 	}
 };
 
+// Boolean specialisation
+template<>
+class TypedExpression<bool> :
+	public IGuiExpression<bool>
+{
+private:
+	GuiExpressionPtr _contained;
+
+public:
+	TypedExpression(const GuiExpressionPtr& contained) :
+		_contained(contained)
+	{}
+
+	virtual bool evaluate() override
+	{
+		return _contained->getFloatValue() != 0.0f;
+	}
+};
+
 // An expression representing a constant floating point value
 class FloatExpression :
 	public GuiExpression,

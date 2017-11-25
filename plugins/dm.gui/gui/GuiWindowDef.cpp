@@ -42,24 +42,24 @@ GuiWindowDef::GuiWindowDef(IGui& owner) :
 	_owner(owner),
 	_renderableText(*this)
 {
-	visible = true;
+	visible.setValue(true);
 	forecolor = Vector4(1, 1, 1, 1);
 	hovercolor = Vector4(1, 1, 1, 1);
 	backcolor = Vector4(0, 0, 0, 0);
 	bordercolor = Vector4(0, 0, 0, 0);
-	bordersize.setValue(ConstantExpression<float>::Create(0.0f));
+	bordersize.setValue(0.0f);
 	matcolor = Vector4(1, 1, 1, 1);
-	rotate.setValue(ConstantExpression<float>::Create(0.0f));
-	textscale.setValue(ConstantExpression<float>::Create(1.0f));
-	textalign = 0;
-	textalignx.setValue(ConstantExpression<float>::Create(0.0f));
-	textaligny.setValue(ConstantExpression<float>::Create(0.0f));
-	forceaspectwidth.setValue(ConstantExpression<float>::Create(640.0f));
-	forceaspectheight.setValue(ConstantExpression<float>::Create(480.0f));
-	noclip = false;
-	notime = false;
-	nocursor = false;
-	nowrap = false;
+	rotate.setValue(0.0f);
+	textscale.setValue(1.0f);
+	textalign.setValue(0);
+	textalignx.setValue(0.0f);
+	textaligny.setValue(0.0f);
+	forceaspectwidth.setValue(640.0f);
+	forceaspectheight.setValue(480.0f);
+	noclip.setValue(false);
+	notime.setValue(false);
+	nocursor.setValue(false);
+	nowrap.setValue(false);
 	time = 0;
 
 	_textChanged = true;
@@ -120,7 +120,7 @@ std::shared_ptr<IGuiExpression<float>> GuiWindowDef::parseFloat(parser::DefToken
 	return std::make_shared<TypedExpression<float>>(expr);
 }
 
-int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
+std::shared_ptr<IGuiExpression<int>> GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
 {
 	GuiExpressionPtr expr = getExpression(tokeniser);
 
@@ -129,7 +129,7 @@ int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
 		throw parser::ParseException("Failed to parse integer expression.");
 	}
 
-	return static_cast<int>(expr->getFloatValue());
+	return std::make_shared<TypedExpression<int>>(expr);
 }
 
 std::shared_ptr<IGuiExpression<std::string>> GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
@@ -149,7 +149,7 @@ std::shared_ptr<IGuiExpression<std::string>> GuiWindowDef::parseString(parser::D
 	return std::make_shared<TypedExpression<std::string>>(expr);
 }
 
-bool GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
+std::shared_ptr<IGuiExpression<bool>> GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
 {
 	GuiExpressionPtr expr = getExpression(tokeniser);
 
@@ -158,7 +158,7 @@ bool GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
 		throw parser::ParseException("Failed to parse integer expression.");
 	}
 
-	return expr->getFloatValue() != 0;
+	return std::make_shared<TypedExpression<bool>>(expr);
 }
 
 void GuiWindowDef::addWindow(const IGuiWindowDefPtr& window)
@@ -189,11 +189,11 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "visible")
 		{
-			visible = parseBool(tokeniser);
+			visible.setValue(parseBool(tokeniser));
 		}
 		else if (token == "notime")
 		{
-			notime = parseBool(tokeniser);
+			notime.setValue(parseBool(tokeniser));
 		}
 		else if (token == "forecolor")
 		{
@@ -233,7 +233,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "textalign")
 		{
-			textalign = parseInt(tokeniser);
+			textalign.setValue(parseInt(tokeniser));
 		}
 		else if (token == "textalignx")
 		{
@@ -257,27 +257,27 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "noevents")
 		{
-			noevents = parseBool(tokeniser);
+			noevents.setValue(parseBool(tokeniser));
 		}
 		else if (token == "nocursor")
 		{
-			nocursor = parseBool(tokeniser);
+			nocursor.setValue(parseBool(tokeniser));
 		}
 		else if (token == "noclip")
 		{
-			noclip = parseBool(tokeniser);
+			noclip.setValue(parseBool(tokeniser));
 		}
 		else if (token == "nowrap")
 		{
-			nowrap = parseBool(tokeniser);
+			nowrap.setValue(parseBool(tokeniser));
 		}
 		else if (token == "modal")
 		{
-			noevents = parseBool(tokeniser);
+			noevents.setValue(parseBool(tokeniser));
 		}
 		else if (token == "menugui")
 		{
-			menugui = parseBool(tokeniser);
+			menugui.setValue(parseBool(tokeniser));
 		}
 		else if (token == "windowdef" || token == "indowdef") // yes, there's a syntax error in the TDM GUI
 		{

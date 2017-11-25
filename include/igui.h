@@ -132,13 +132,13 @@ public:
 	Vector4 rect;
 
 	// Visible or hidden
-	bool visible;
+	ScalarWindowVariable<bool> visible;
 
 	// The body text of this window
 	ScalarWindowVariable<std::string> text;
 
 	// Whether this gui is full screen (use on desktop window)
-	bool menugui;
+	ScalarWindowVariable<bool> menugui;
 
 	Vector4 forecolor;
 	Vector4 hovercolor;
@@ -162,7 +162,7 @@ public:
 	ScalarWindowVariable<float> textscale;
 
 	// The text alignment (left, right, center)
-	int textalign;
+	ScalarWindowVariable<int> textalign;
 
 	// Text offsets
 	ScalarWindowVariable<float> textalignx;
@@ -173,19 +173,19 @@ public:
 	ScalarWindowVariable<float> forceaspectheight;
 
 	// No mouse events for this window
-	bool noevents;
+	ScalarWindowVariable<bool> noevents;
 
 	// Whether this window forces text to wrap at their borders
-	bool noclip;
+	ScalarWindowVariable<bool> noclip;
 
 	// Whether time is running for this windowDef
-	bool notime;
+	ScalarWindowVariable<bool> notime;
 
 	// Don't display the cursor
-	bool nocursor;
+	ScalarWindowVariable<bool> nocursor;
 
 	// Don't wrap words at rectangle borders
-	bool nowrap;
+	ScalarWindowVariable<bool> nowrap;
 
 	// The window time (0..infinity)
 	std::size_t time;
