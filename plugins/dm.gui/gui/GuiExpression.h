@@ -1,6 +1,8 @@
 #pragma once
 
+#include "igui.h"
 #include <memory>
+#include "string/convert.h"
 #include <parser/DefTokeniser.h>
 
 namespace gui
@@ -26,21 +28,52 @@ public:
 	static GuiExpressionPtr createFromTokens(parser::DefTokeniser& tokeniser);
 };
 
-// An expression representing a constant floating point number
-class ConstantExpression :
-	public GuiExpression
+template<typename ValueType>
+class TypedExpression :
+	public IGuiExpression<ValueType>
 {
 private:
-	float _floatValue;
-	std::string _stringValue;
+	GuiExpressionPtr _contained;
 
 public:
-	ConstantExpression(const std::string& stringValue);
+	TypedExpression(const GuiExpressionPtr& contained) :
+		_contained(contained)
+	{}
 
-	explicit ConstantExpression(float value);
+	virtual ValueType evaluate() override
+	{
+		return string::convert<ValueType>(_contained->getStringValue());
+	}
+};
 
-	virtual float getFloatValue();
-	virtual std::string getStringValue();
+// An expression representing a constant value
+template<typename ValueType>
+class ConstantExpression :
+	public GuiExpression,
+	public IGuiExpression<ValueType>
+{
+private:
+	ValueType _value;
+
+public:
+	ConstantExpression(const ValueType& value) :
+		_value(value)
+	{}
+
+	virtual ValueType evaluate() override
+	{
+		return _value;
+	}
+
+	virtual float getFloatValue()
+	{
+		return string::convert<float>(getStringValue());
+	}
+
+	virtual std::string getStringValue()
+	{
+		return string::to_string(_value);
+	}
 };
 
 class GuiStateVariableExpression :

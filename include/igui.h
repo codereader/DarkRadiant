@@ -14,11 +14,64 @@ class IGui;
 class IRenderableText
 {
 public:
+	virtual ~IRenderableText() {}
+
 	// Submits the openGL calls
 	virtual void render() = 0;
 
 	// Re-construct this structure, called when the text in the owning windowDef has been changed
 	virtual void recompile() = 0;
+};
+
+// An expression as encountered in the GUI code
+// Evaluates to an instance of a certain type (bool, string, etc.)
+template<typename ValueType>
+class IGuiExpression
+{
+public:
+	virtual ~IGuiExpression() {}
+
+	// Evaluate this expression to retrieve the result
+	virtual ValueType evaluate() = 0;
+};
+
+// Represents a variable or property of a GuiWindowDef
+// e.g. "text", "notime", "forecolor" or a user-defined variable
+class IWindowVariable
+{
+public:
+	virtual ~IWindowVariable() {}
+};
+
+// Represents a GUI property carrying a scalar value
+// e.g. "text" (std::string) or "textscale" (float)
+template<typename ValueType>
+class ScalarWindowVariable : 
+	public IWindowVariable
+{
+protected:
+	// Types used by this window variable
+	typedef IGuiExpression<ValueType> ExpressionType;
+	typedef std::shared_ptr<ExpressionType> ExpressionTypePtr;
+
+	// The expression which can be evaluated
+	ExpressionTypePtr _expression;
+
+public:
+	operator ValueType() const
+	{
+		return getValue();
+	}
+
+	virtual ValueType getValue() const
+	{
+		return _expression->evaluate();
+	}
+
+	virtual void setValue(const ExpressionTypePtr& newExpr)
+	{
+		_expression = newExpr;
+	}
 };
 
 class IGuiWindowDef;
@@ -45,10 +98,10 @@ public:
 	Vector4 hovercolor;
 	Vector4 backcolor;
 	Vector4 bordercolor;
-	float bordersize;
+	ScalarWindowVariable<float> bordersize;
 	Vector4 matcolor;
 
-	float rotate;
+	ScalarWindowVariable<float> rotate;
 
 	// background shader name
 	std::string background;
@@ -60,18 +113,18 @@ public:
 	std::string font;
 
 	// The scale for rendering the font
-	float textscale;
+	ScalarWindowVariable<float> textscale;
 
 	// The text alignment (left, right, center)
 	int textalign;
 
 	// Text offsets
-	float textalignx;
-	float textaligny;
+	ScalarWindowVariable<float> textalignx;
+	ScalarWindowVariable<float> textaligny;
 
 	// Force a specific aspect ratio
-	float forceaspectwidth;
-	float forceaspectheight;
+	ScalarWindowVariable<float> forceaspectwidth;
+	ScalarWindowVariable<float> forceaspectheight;
 
 	// No mouse events for this window
 	bool noevents;

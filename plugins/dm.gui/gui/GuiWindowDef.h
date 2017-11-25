@@ -81,7 +81,7 @@ public:
 
 public:
 	static Vector4 parseVector4(parser::DefTokeniser& tokeniser);
-	static float parseFloat(parser::DefTokeniser& tokeniser);
+	static std::shared_ptr<IGuiExpression<float>> parseFloat(parser::DefTokeniser& tokeniser);
 	static int parseInt(parser::DefTokeniser& tokeniser);
 	static std::string parseString(parser::DefTokeniser& tokeniser);
 	static bool parseBool(parser::DefTokeniser& tokeniser);

@@ -80,7 +80,7 @@ void GuiScript::parseSetStatement(parser::DefTokeniser& tokeniser)
 		// Sometimes the semicolon is missing
 		if (token == ";" || token == "}") break;
 
-		st->args.push_back(std::make_shared<ConstantExpression>(tokeniser.nextToken())); // argument
+		st->args.push_back(std::make_shared<ConstantExpression<std::string>>(tokeniser.nextToken())); // argument
 	}
 
 	pushStatement(st);
@@ -91,17 +91,17 @@ void GuiScript::parseTransitionStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: transition [window::]<variable> <from> <to> <time> [ <accel> <decel> ]
 	StatementPtr st(new Statement(Statement::ST_TRANSITION));
 
-	st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); // variable
+	st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); // variable
 
-	st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); // from
-	st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); // to
-	st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); // time
+	st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); // from
+	st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); // to
+	st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); // time
 
 	if (tokeniser.peek() != ";")
 	{
 		// no semicolon, parse optional acceleration and deceleration
-		st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser))); 	// accel
-		st->args.push_back(std::make_shared<ConstantExpression>(_owner.parseString(tokeniser)));	// decel
+		st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); 	// accel
+		st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser)));	// decel
 
 		tokeniser.assertNextToken(";");
 	}

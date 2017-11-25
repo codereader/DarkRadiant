@@ -12,30 +12,6 @@
 namespace gui
 {
 
-// Specialised implementations of the GuiExpression below
-
-ConstantExpression::ConstantExpression(const std::string& stringValue) :
-	GuiExpression(),
-	_stringValue(stringValue),
-	_floatValue(string::convert<float>(stringValue, 0.0f))
-{}
-
-ConstantExpression::ConstantExpression(float value) :
-	GuiExpression(),
-	_stringValue(string::to_string(value)),
-	_floatValue(value)
-{}
-
-float ConstantExpression::getFloatValue()
-{
-	return _floatValue;
-}
-
-std::string ConstantExpression::getStringValue()
-{
-	return _stringValue;
-}
-
 // An expression referring to a GUI state variable
 GuiStateVariableExpression::GuiStateVariableExpression(const std::string& variableName) :
 	_variableName(variableName)
@@ -492,7 +468,7 @@ public:
 				else if (token == "-")
 				{
 					// A leading -, interpret it as -1 *
-					operands.push(std::make_shared<ConstantExpression>(-1.0f));
+					operands.push(std::make_shared<ConstantExpression<float>>(-1.0f));
 					operators.push(std::make_shared<MultiplyExpression>());
 
 					// Discard the - token
@@ -502,7 +478,7 @@ public:
 				else
 				{
 					// This might either be a float or a string constant
-					term = std::make_shared<ConstantExpression>(_tokeniser.nextToken());
+					term = std::make_shared<ConstantExpression<std::string>>(_tokeniser.nextToken());
 				}
 				
 				if (!term)
@@ -619,7 +595,7 @@ private:
 
 		_tokeniser.nextToken(); // valid token, exhaust
 
-		return std::make_shared<ConstantExpression>(tokenCleaned);
+		return std::make_shared<ConstantExpression<std::string>>(tokenCleaned);
 	}
 
 	// Helper routines

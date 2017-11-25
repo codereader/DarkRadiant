@@ -48,15 +48,15 @@ GuiWindowDef::GuiWindowDef(IGui& owner) :
 	hovercolor = Vector4(1, 1, 1, 1);
 	backcolor = Vector4(0, 0, 0, 0);
 	bordercolor = Vector4(0, 0, 0, 0);
-	bordersize = 0;
+	bordersize.setValue(std::make_shared<ConstantExpression<float>>(0.0f));
 	matcolor = Vector4(1, 1, 1, 1);
-	rotate = 0;
-	textscale = 1;
+	rotate.setValue(std::make_shared<ConstantExpression<float>>(0.0f));
+	textscale.setValue(std::make_shared<ConstantExpression<float>>(1.0f));
 	textalign = 0;
-	textalignx = 0;
-	textaligny = 0;
-	forceaspectwidth = 640;
-	forceaspectheight = 480;
+	textalignx.setValue(std::make_shared<ConstantExpression<float>>(0.0f));
+	textaligny.setValue(std::make_shared<ConstantExpression<float>>(0.0f));
+	forceaspectwidth.setValue(std::make_shared<ConstantExpression<float>>(640.0f));
+	forceaspectheight.setValue(std::make_shared<ConstantExpression<float>>(480.0f));
 	noclip = false;
 	notime = false;
 	nocursor = false;
@@ -106,7 +106,7 @@ Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
                    comp[3]->getFloatValue());
 }
 
-float GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)
+std::shared_ptr<IGuiExpression<float>> GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)
 {
 	GuiExpressionPtr expr = getExpression(tokeniser);
 
@@ -115,7 +115,7 @@ float GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)
 		throw parser::ParseException("Failed to parse float expression.");
 	}
 
-	return expr->getFloatValue();
+	return std::make_shared<TypedExpression<float>>(expr);
 }
 
 int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
@@ -141,7 +141,7 @@ std::string GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
 	}
 	else
 	{
-		expr = std::make_shared<ConstantExpression>(tokeniser.nextToken());
+		expr = std::make_shared<ConstantExpression<std::string>>(tokeniser.nextToken());
 	}
 
 	return expr->getStringValue();
@@ -215,7 +215,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "rotate")
 		{
-			rotate = parseFloat(tokeniser);
+			rotate.setValue(parseFloat(tokeniser));
 		}
 		else if (token == "text")
 		{
@@ -230,7 +230,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "textscale")
 		{
-			textscale = parseFloat(tokeniser);
+			textscale.setValue(parseFloat(tokeniser));
 		}
 		else if (token == "textalign")
 		{
@@ -238,19 +238,19 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "textalignx")
 		{
-			textalignx = parseFloat(tokeniser);
+			textalignx.setValue(parseFloat(tokeniser));
 		}
 		else if (token == "textaligny")
 		{
-			textaligny = parseFloat(tokeniser);
+			textaligny.setValue(parseFloat(tokeniser));
 		}
 		else if (token == "forceaspectwidth")
 		{
-			forceaspectwidth = parseFloat(tokeniser);
+			forceaspectwidth.setValue(parseFloat(tokeniser));
 		}
 		else if (token == "forceaspectheight")
 		{
-			forceaspectheight = parseFloat(tokeniser);
+			forceaspectheight.setValue(parseFloat(tokeniser));
 		}
 		else if (token == "background")
 		{
@@ -387,7 +387,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "bordersize")
 		{
-			bordersize = parseFloat(tokeniser);
+			bordersize.setValue(parseFloat(tokeniser));
 		}
 		else if (token == "choicetype")
 		{
