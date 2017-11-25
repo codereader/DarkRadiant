@@ -84,16 +84,18 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 		}
 	}
 
+	Vector4 rect = window->rect;
+
 	if (window->backcolor[3] > 0)
 	{
 		glColor4dv(window->backcolor);
 
 		// Background quad
 		glBegin(GL_QUADS);
-		glVertex2d(window->rect[0], window->rect[1]);	// Upper left
-		glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
-		glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
-		glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
+		glVertex2d(rect[0], rect[1]);	// Upper left
+		glVertex2d(rect[0] + rect[2], rect[1]); // Upper right
+		glVertex2d(rect[0] + rect[2], rect[1] + rect[3]); // Lower right
+		glVertex2d(rect[0], rect[1] + rect[3]); // Lower left
 		glEnd();
 	}
 
@@ -143,16 +145,16 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 			glBegin(GL_QUADS);
 
 			glTexCoord2f(0,0);
-			glVertex2d(window->rect[0], window->rect[1]);	// Upper left
+			glVertex2d(rect[0], rect[1]);	// Upper left
 
 			glTexCoord2f(1,0);
-			glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
+			glVertex2d(rect[0] + rect[2], rect[1]); // Upper right
 
 			glTexCoord2f(1,1);
-			glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
+			glVertex2d(rect[0] + rect[2], rect[1] + rect[3]); // Lower right
 
 			glTexCoord2f(0,1);
-			glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
+			glVertex2d(rect[0], rect[1] + rect[3]); // Lower left
 
 			glEnd();
 			glDisable(GL_TEXTURE_2D);
@@ -186,7 +188,7 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	// this parent windowDef
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glTranslated(window->rect[0], window->rect[1], 0);
+	glTranslated(rect[0], rect[1], 0);
 
 	for (const gui::IGuiWindowDefPtr& child : window->children)
 	{

@@ -77,6 +77,34 @@ GuiExpressionPtr GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 	return GuiExpression::createFromTokens(tokeniser);
 }
 
+std::shared_ptr<IGuiExpression<Vector4>> GuiWindowDef::parseVector4Expr(parser::DefTokeniser& tokeniser)
+{
+	// Collect tokens until all four components are parsed
+	std::vector<GuiExpressionPtr> comp;
+
+	while (comp.size() < 4 && tokeniser.hasMoreTokens())
+	{
+		std::string token = tokeniser.peek();
+
+		if (token == ",")
+		{
+			tokeniser.nextToken();
+			continue;
+		}
+
+		GuiExpressionPtr expr = getExpression(tokeniser);
+
+		comp.push_back(expr);
+	}
+
+	if (comp.size() != 4)
+	{
+		throw parser::ParseException("Couldn't parse Vector4, not enough components found.");
+	}
+
+	return std::make_shared<Vector4Expression>(comp[0], comp[1], comp[2], comp[3]);
+}
+
 Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 {
 	// Collect tokens until all four components are parsed
@@ -185,7 +213,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 		if (token == "rect")
 		{
-			rect = parseVector4(tokeniser);
+			rect.setValue(parseVector4Expr(tokeniser));
 		}
 		else if (token == "visible")
 		{

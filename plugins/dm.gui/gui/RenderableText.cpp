@@ -116,13 +116,15 @@ void RenderableText::recompile()
 	// The distance from the top of the rectangle to the baseline
 	double startingBaseLine = lrint(_owner.textscale * maxGlyphHeight + 2) + _owner.textaligny;
 
+	Vector4 ownerRec = _owner.rect.getValue();
+
 	for (std::size_t p = 0; p < paragraphs.size(); ++p)
 	{
 		// Check if more lines are possible, if at least one line is in the rectangle
 		if (!lines.empty())
 		{
 			double curYPos = lineHeight * lines.size() + startingBaseLine;
-			if (curYPos > _owner.rect[3] - 2) break;
+			if (curYPos > ownerRec[3] - 2) break;
 		}
 
 		// Split the paragraphs into words
@@ -130,7 +132,7 @@ void RenderableText::recompile()
 		string::split(words, paragraphs[p], " \t", false);
 
 		// Add the words to lines
-		TextLinePtr curLine(new TextLine(_owner.rect[2] - 2 - _owner.textalignx, scale));
+		TextLinePtr curLine(new TextLine(ownerRec[2] - 2 - _owner.textalignx, scale));
 
 		const std::string space(" ");
 
@@ -203,12 +205,12 @@ void RenderableText::recompile()
 
 			// Check if more lines are possible
 			double curYPos = lineHeight * lines.size() + startingBaseLine;
-			if (curYPos > _owner.rect[3] - 2) break;
+			if (curYPos > ownerRec[3] - 2) break;
 
 			// Allocate a new line, but only if we have any more words in this paragraph
 			if (!words.empty())
 			{
-				curLine = TextLinePtr(new TextLine(_owner.rect[2] - 2 - _owner.textalignx, scale));
+				curLine = TextLinePtr(new TextLine(ownerRec[2] - 2 - _owner.textalignx, scale));
 			}
 		}
 
@@ -233,7 +235,7 @@ void RenderableText::recompile()
 	for (TextLines::const_iterator line = lines.begin(); line != lines.end(); ++line)
 	{
 		// Move the lines into our GUI rectangle
-		(*line)->offset(Vector2(_owner.rect[0], _owner.rect[1]));
+		(*line)->offset(Vector2(ownerRec[0], ownerRec[1]));
 
 		for (TextLine::Chars::const_iterator c = (*line)->getChars().begin();
 			 c != (*line)->getChars().end(); ++c)
@@ -274,10 +276,10 @@ double RenderableText::getAlignmentCorrection(double lineWidth)
 		break;
 	case 1: // center
 		// Somehow D3 adds a 1 pixel offset to the left
-		xoffset = 1 + (_owner.rect[2] - lineWidth) / 2;
+		xoffset = 1 + (_owner.rect.getValue()[2] - lineWidth) / 2;
 		break;
 	case 2: // right
-		xoffset = _owner.rect[2] - 2 - lineWidth;
+		xoffset = _owner.rect.getValue()[2] - 2 - lineWidth;
 		break;
 	};
 

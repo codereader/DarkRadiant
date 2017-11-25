@@ -107,6 +107,32 @@ public:
 	}
 };
 
+// An expression representing a Vector4 value
+// Translating between a quadruple of script expressions and IGuiExpression<Vector4>
+class Vector4Expression :
+	public IGuiExpression<Vector4>
+{
+private:
+	std::vector<GuiExpressionPtr> _vec;
+
+public:
+	Vector4Expression(const GuiExpressionPtr& x, const GuiExpressionPtr& y, 
+					  const GuiExpressionPtr& z, const GuiExpressionPtr& w) :
+		_vec(4)
+	{
+		_vec[0] = x;
+		_vec[1] = y;
+		_vec[2] = z;
+		_vec[3] = w;
+	}
+
+	virtual Vector4 evaluate() override
+	{
+		return Vector4(_vec[0]->getFloatValue(), _vec[1]->getFloatValue(), 
+			_vec[2]->getFloatValue(), _vec[3]->getFloatValue());
+	}
+};
+
 class GuiStateVariableExpression :
 	public GuiExpression
 {

@@ -79,10 +79,10 @@ public:
 	}
 };
 
-// Represents a GUI property carrying a scalar value
-// e.g. "text" (std::string) or "textscale" (float)
+// Represents a GUI property carrying a certain type
+// e.g. "text" (std::string), "rect" (Vector4), "textscale" (float), ...
 template<typename ValueType>
-class ScalarWindowVariable : 
+class WindowVariable : 
 	public IWindowVariable
 {
 protected:
@@ -129,63 +129,63 @@ public:
 	std::string name;
 
 	// Window size (x,y,width,height)
-	Vector4 rect;
+	WindowVariable<Vector4> rect;
 
 	// Visible or hidden
-	ScalarWindowVariable<bool> visible;
+	WindowVariable<bool> visible;
 
 	// The body text of this window
-	ScalarWindowVariable<std::string> text;
+	WindowVariable<std::string> text;
 
 	// Whether this gui is full screen (use on desktop window)
-	ScalarWindowVariable<bool> menugui;
+	WindowVariable<bool> menugui;
 
 	Vector4 forecolor;
 	Vector4 hovercolor;
 	Vector4 backcolor;
 	Vector4 bordercolor;
-	ScalarWindowVariable<float> bordersize;
+	WindowVariable<float> bordersize;
 	Vector4 matcolor;
 
-	ScalarWindowVariable<float> rotate;
+	WindowVariable<float> rotate;
 
 	// background shader name
-	ScalarWindowVariable<std::string> background;
+	WindowVariable<std::string> background;
 
 	// background shader (NULL until realised)
 	MaterialPtr backgroundShader;
 
 	// The name of the font
-	ScalarWindowVariable<std::string> font;
+	WindowVariable<std::string> font;
 
 	// The scale for rendering the font
-	ScalarWindowVariable<float> textscale;
+	WindowVariable<float> textscale;
 
 	// The text alignment (left, right, center)
-	ScalarWindowVariable<int> textalign;
+	WindowVariable<int> textalign;
 
 	// Text offsets
-	ScalarWindowVariable<float> textalignx;
-	ScalarWindowVariable<float> textaligny;
+	WindowVariable<float> textalignx;
+	WindowVariable<float> textaligny;
 
 	// Force a specific aspect ratio
-	ScalarWindowVariable<float> forceaspectwidth;
-	ScalarWindowVariable<float> forceaspectheight;
+	WindowVariable<float> forceaspectwidth;
+	WindowVariable<float> forceaspectheight;
 
 	// No mouse events for this window
-	ScalarWindowVariable<bool> noevents;
+	WindowVariable<bool> noevents;
 
 	// Whether this window forces text to wrap at their borders
-	ScalarWindowVariable<bool> noclip;
+	WindowVariable<bool> noclip;
 
 	// Whether time is running for this windowDef
-	ScalarWindowVariable<bool> notime;
+	WindowVariable<bool> notime;
 
 	// Don't display the cursor
-	ScalarWindowVariable<bool> nocursor;
+	WindowVariable<bool> nocursor;
 
 	// Don't wrap words at rectangle borders
-	ScalarWindowVariable<bool> nowrap;
+	WindowVariable<bool> nowrap;
 
 	// The window time (0..infinity)
 	std::size_t time;
