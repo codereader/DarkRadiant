@@ -40,28 +40,30 @@ void skipBlock(parser::DefTokeniser& tokeniser)
 
 GuiWindowDef::GuiWindowDef(IGui& owner) :
 	_owner(owner),
-	_renderableText(*this),
-	_textChanged(true)
+	_renderableText(*this)
 {
 	visible = true;
 	forecolor = Vector4(1, 1, 1, 1);
 	hovercolor = Vector4(1, 1, 1, 1);
 	backcolor = Vector4(0, 0, 0, 0);
 	bordercolor = Vector4(0, 0, 0, 0);
-	bordersize.setValue(std::make_shared<ConstantExpression<float>>(0.0f));
+	bordersize.setValue(ConstantExpression<float>::Create(0.0f));
 	matcolor = Vector4(1, 1, 1, 1);
-	rotate.setValue(std::make_shared<ConstantExpression<float>>(0.0f));
-	textscale.setValue(std::make_shared<ConstantExpression<float>>(1.0f));
+	rotate.setValue(ConstantExpression<float>::Create(0.0f));
+	textscale.setValue(ConstantExpression<float>::Create(1.0f));
 	textalign = 0;
-	textalignx.setValue(std::make_shared<ConstantExpression<float>>(0.0f));
-	textaligny.setValue(std::make_shared<ConstantExpression<float>>(0.0f));
-	forceaspectwidth.setValue(std::make_shared<ConstantExpression<float>>(640.0f));
-	forceaspectheight.setValue(std::make_shared<ConstantExpression<float>>(480.0f));
+	textalignx.setValue(ConstantExpression<float>::Create(0.0f));
+	textaligny.setValue(ConstantExpression<float>::Create(0.0f));
+	forceaspectwidth.setValue(ConstantExpression<float>::Create(640.0f));
+	forceaspectheight.setValue(ConstantExpression<float>::Create(480.0f));
 	noclip = false;
 	notime = false;
 	nocursor = false;
 	nowrap = false;
 	time = 0;
+
+	_textChanged = true;
+	text.signal_variableChanged().connect([this]() { _textChanged = true; });
 }
 
 IGui& GuiWindowDef::getGui() const
@@ -130,7 +132,7 @@ int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
 	return static_cast<int>(expr->getFloatValue());
 }
 
-std::string GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
+std::shared_ptr<IGuiExpression<std::string>> GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
 {
 	std::string token = tokeniser.peek();
 	GuiExpressionPtr expr;
@@ -141,10 +143,10 @@ std::string GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
 	}
 	else
 	{
-		expr = std::make_shared<ConstantExpression<std::string>>(tokeniser.nextToken());
+		expr = std::make_shared<StringExpression>(tokeniser.nextToken());
 	}
 
-	return expr->getStringValue();
+	return std::make_shared<TypedExpression<std::string>>(expr);
 }
 
 bool GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
@@ -219,14 +221,11 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "text")
 		{
-			setText(parseString(tokeniser));
+			text.setValue(parseString(tokeniser));
 		}
 		else if (token == "font")
 		{
-			font = parseString(tokeniser);
-
-			// Cut off the "fonts/" part
-			string::replace_first(font, "fonts/", "");
+			font.setValue(parseString(tokeniser));
 		}
 		else if (token == "textscale")
 		{
@@ -254,7 +253,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "background")
 		{
-			background = parseString(tokeniser);
+			background.setValue(parseString(tokeniser));
 		}
 		else if (token == "noevents")
 		{
@@ -403,17 +402,6 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			rWarning() << "Unknown token encountered in GUI: " << token << std::endl;
 		}
 	}
-}
-
-const std::string& GuiWindowDef::getText() const
-{
-	return _text;
-}
-
-void GuiWindowDef::setText(const std::string& newText)
-{
-	_text = newText;
-	_textChanged = true;
 }
 
 IRenderableText& GuiWindowDef::getRenderableText()

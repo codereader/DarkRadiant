@@ -69,25 +69,25 @@ void MissionInfoGuiView::update()
 
 	if (!_file || !gui) return;
 
-	gui->findWindowDef("modTitle")->setText(_file->getTitle());
-	gui->findWindowDef("modDescription")->setText(_file->getDescription());
-	gui->findWindowDef("modAuthor")->setText(_file->getAuthor());
+	gui->findWindowDef("modTitle")->text.setValue(_file->getTitle());
+	gui->findWindowDef("modDescription")->text.setValue(_file->getDescription());
+	gui->findWindowDef("modAuthor")->text.setValue(_file->getAuthor());
 
 	// These are internationalised strings in the GUI code, let's hardcode some for the preview
-	gui->findWindowDef("modLastPlayedTitle")->setText("Last played:");
-	gui->findWindowDef("modCompletedTitle")->setText("Completed:");
-	gui->findWindowDef("modLastPlayedValue")->setText("2017-11-19");
-	gui->findWindowDef("modCompletedValue")->setText("2017-11-26");
-	gui->findWindowDef("modSizeTitle")->setText("Space used:");
-	gui->findWindowDef("modSizeValue")->setText("123 MB");
-	gui->findWindowDef("modSizeEraseFromDiskAction")->setText("[Erase from disk]");
+	gui->findWindowDef("modLastPlayedTitle")->text.setValue("Last played:");
+	gui->findWindowDef("modCompletedTitle")->text.setValue("Completed:");
+	gui->findWindowDef("modLastPlayedValue")->text.setValue("2017-11-19");
+	gui->findWindowDef("modCompletedValue")->text.setValue("2017-11-26");
+	gui->findWindowDef("modSizeTitle")->text.setValue("Space used:");
+	gui->findWindowDef("modSizeValue")->text.setValue("123 MB");
+	gui->findWindowDef("modSizeEraseFromDiskAction")->text.setValue("[Erase from disk]");
 	
-	gui->findWindowDef("modLoadN")->setText("Install Mission");
-	gui->findWindowDef("modLoadH")->setText("Install Mission");
-	gui->findWindowDef("modLoad")->setText("Install Mission");
-	gui->findWindowDef("moreInfoH")->setText("Notes");
-	gui->findWindowDef("moreInfoN")->setText("Notes");
-	gui->findWindowDef("moreInfo")->setText("Notes");
+	gui->findWindowDef("modLoadN")->text.setValue("Install Mission");
+	gui->findWindowDef("modLoadH")->text.setValue("Install Mission");
+	gui->findWindowDef("modLoad")->text.setValue("Install Mission");
+	gui->findWindowDef("moreInfoH")->text.setValue("Notes");
+	gui->findWindowDef("moreInfoN")->text.setValue("Notes");
+	gui->findWindowDef("moreInfo")->text.setValue("Notes");
 
 	redraw();
 }

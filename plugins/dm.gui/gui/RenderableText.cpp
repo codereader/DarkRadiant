@@ -86,7 +86,7 @@ void RenderableText::recompile()
 
 	if (_font == NULL) return; // Rendering not possible
 
-	std::string text = _owner.getText();
+	std::string text = _owner.text;
 
 	typedef std::vector<TextLinePtr> TextLines;
 	TextLines lines;
@@ -286,15 +286,19 @@ double RenderableText::getAlignmentCorrection(double lineWidth)
 
 void RenderableText::ensureFont()
 {
-	if (_owner.font.empty()) return; // no font specified
+	if (_owner.font.getValue().empty()) return; // no font specified
 
 	if (_font != NULL) return; // already realised
 
-	_font = GlobalFontManager().findFontInfo(_owner.font);
+	// Cut off the "fonts/" part
+	std::string font = _owner.font;
+	string::replace_first(font, "fonts/", "");
+
+	_font = GlobalFontManager().findFontInfo(font);
 
 	if (_font == NULL)
 	{
-		rWarning() << "Cannot find font " << _owner.font
+		rWarning() << "Cannot find font " << _owner.font.getValue()
 			<< " in windowDef " << _owner.name << std::endl;
 		return;
 	}

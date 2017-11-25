@@ -30,7 +30,7 @@ void GuiScript::parseIfStatement(parser::DefTokeniser& tokeniser)
 	StatementPtr ifStatement(new Statement(Statement::ST_IF));
 
 	// Any opening and closing parentheses are handled by the expression parser
-	ifStatement->args.push_back(getIfExpression(tokeniser)); // condition
+	ifStatement->_condition = getIfExpression(tokeniser); // condition
 
 	// Add the statement at the current position
 	pushStatement(ifStatement);
@@ -70,7 +70,7 @@ void GuiScript::parseSetStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: set [window::]<variable> <value>
 	StatementPtr st(new Statement(Statement::ST_SET));
 
-	st->args.push_back(getExpression(tokeniser)); // variable
+	st->args.push_back(_owner.parseString(tokeniser)); // variable
 
 	// Add all tokens up to the semicolon as arguments
 	while (true)
@@ -80,7 +80,7 @@ void GuiScript::parseSetStatement(parser::DefTokeniser& tokeniser)
 		// Sometimes the semicolon is missing
 		if (token == ";" || token == "}") break;
 
-		st->args.push_back(std::make_shared<ConstantExpression<std::string>>(tokeniser.nextToken())); // argument
+		st->args.push_back(ConstantExpression<std::string>::Create(tokeniser.nextToken())); // argument
 	}
 
 	pushStatement(st);
@@ -91,17 +91,17 @@ void GuiScript::parseTransitionStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: transition [window::]<variable> <from> <to> <time> [ <accel> <decel> ]
 	StatementPtr st(new Statement(Statement::ST_TRANSITION));
 
-	st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); // variable
+	st->args.push_back(_owner.parseString(tokeniser)); // variable
 
-	st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); // from
-	st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); // to
-	st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); // time
+	st->args.push_back(_owner.parseString(tokeniser)); // from
+	st->args.push_back(_owner.parseString(tokeniser)); // to
+	st->args.push_back(_owner.parseString(tokeniser)); // time
 
 	if (tokeniser.peek() != ";")
 	{
 		// no semicolon, parse optional acceleration and deceleration
-		st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser))); 	// accel
-		st->args.push_back(std::make_shared<ConstantExpression<std::string>>(_owner.parseString(tokeniser)));	// decel
+		st->args.push_back(_owner.parseString(tokeniser)); 	// accel
+		st->args.push_back(_owner.parseString(tokeniser));	// decel
 
 		tokeniser.assertNextToken(";");
 	}
@@ -118,7 +118,7 @@ void GuiScript::parseSetFocusStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: setFocus <window>
 	StatementPtr st(new Statement(Statement::ST_SET_FOCUS));
 
-	st->args.push_back(getExpression(tokeniser)); // window
+	st->args.push_back(_owner.parseString(tokeniser)); // window
 	tokeniser.assertNextToken(";");
 
 	pushStatement(st);
@@ -152,15 +152,15 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 			std::stoul(trimmed);
 
 			// Cast succeeded this is just the time for the current window
-			st->args.push_back(getExpression(tokeniser));
+			st->args.push_back(_owner.parseString(tokeniser));
 
 			tokeniser.assertNextToken(";");
         }
 		catch (std::logic_error&)
         {
             // Not a number, must be window plus time
-			st->args.push_back(getExpression(tokeniser)); // window
-			st->args.push_back(getExpression(tokeniser)); // time
+			st->args.push_back(_owner.parseString(tokeniser)); // window
+			st->args.push_back(_owner.parseString(tokeniser)); // time
 			tokeniser.assertNextToken(";");
         }
 	}
@@ -173,7 +173,7 @@ void GuiScript::parseShowCursorStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: showCursor <bool>
 	StatementPtr st(new Statement(Statement::ST_SHOW_CURSOR));
 
-	st->args.push_back(getExpression(tokeniser)); // boolean
+	st->args.push_back(_owner.parseString(tokeniser)); // boolean
 	tokeniser.assertNextToken(";");
 
 	pushStatement(st);
@@ -193,7 +193,7 @@ void GuiScript::parseLocalSoundStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: localSound <sound>
 	StatementPtr st(new Statement(Statement::ST_LOCALSOUND));
 
-	st->args.push_back(getExpression(tokeniser)); // sound
+	st->args.push_back(_owner.parseString(tokeniser)); // sound
 	tokeniser.assertNextToken(";");
 
 	pushStatement(st);
@@ -204,7 +204,7 @@ void GuiScript::parseRunScriptStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: runScript <function>
 	StatementPtr st(new Statement(Statement::ST_RUNSCRIPT));
 
-	st->args.push_back(getExpression(tokeniser)); // function
+	st->args.push_back(_owner.parseString(tokeniser)); // function
 	tokeniser.assertNextToken(";");
 
 	pushStatement(st);
@@ -345,17 +345,14 @@ const Statement& GuiScript::getStatement(std::size_t index)
 	return *_statements[index];
 }
 
-VariablePtr GuiScript::getVariableFromExpression(const GuiExpressionPtr& expression)
+VariablePtr GuiScript::getVariableFromExpression(const std::shared_ptr<IGuiExpression<std::string>>& expression)
 {
-	std::string expr = expression->getStringValue();
+	std::string expr = expression->evaluate();
 
 	if (string::starts_with(expr, "gui::"))
 	{
 		// Is a GUI state variable
-		return VariablePtr(new GuiStateVariable(
-			_owner.getGui(),
-			expr.substr(5)
-		));
+		return std::make_shared<GuiStateVariable>(_owner.getGui(), expr.substr(5));
 	}
 
 	// Not a gui:: variable, check if a namespace has been specified
@@ -372,7 +369,7 @@ VariablePtr GuiScript::getVariableFromExpression(const GuiExpressionPtr& express
 		if (windowDef != NULL)
 		{
 			// Cut off the "<windowDef>::" from the name
-			return VariablePtr(new WindowDefVariable(*windowDef, expr.substr(ddPos+2)));
+			return std::make_shared<WindowDefVariable>(*windowDef, expr.substr(ddPos+2));
 		}
 		else
 		{
@@ -383,19 +380,21 @@ VariablePtr GuiScript::getVariableFromExpression(const GuiExpressionPtr& express
 	else
 	{
 		// Use the owner windowDef if no namespace was defined
-		return VariablePtr(new WindowDefVariable(_owner, expr));
+		return std::make_shared<WindowDefVariable>(_owner, expr);
 	}
 }
 
-std::string GuiScript::getValueFromExpression(const GuiExpressionPtr& expr)
+std::string GuiScript::getValueFromExpression(const std::shared_ptr<IGuiExpression<std::string>>& expr)
 {
-	if (string::starts_with(expr->getStringValue(), "$gui::"))
+	std::string value = expr->evaluate();
+
+	if (string::starts_with(value, "$gui::"))
 	{
 		// This is the value of a GUI state variable
-		return _owner.getGui().getStateString(expr->getStringValue().substr(6));
+		return _owner.getGui().getStateString(value.substr(6));
 	}
 
-	return expr->getStringValue();
+	return value;
 }
 
 void GuiScript::execute()

@@ -98,7 +98,7 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	}
 
 	// Realise background shader if necessary
-	if (!window->background.empty() && window->backgroundShader == NULL)
+	if (!window->background.getValue().empty() && window->backgroundShader == NULL)
 	{
 		window->backgroundShader = GlobalMaterialManager().getMaterialForName(window->background);
 	}
@@ -160,7 +160,7 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	}
 
 	// Render the text
-	if (!window->getText().empty())
+	if (!window->text.getValue().empty())
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);

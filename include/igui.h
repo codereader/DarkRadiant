@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <string>
+#include <memory>
+#include <sigc++/signal.h>
 #include "imodule.h"
 #include "math/Vector4.h"
 #include "ishaders.h"
@@ -35,12 +37,46 @@ public:
 	virtual ValueType evaluate() = 0;
 };
 
+// An expression representing a constant value
+template<typename ValueType>
+class ConstantExpression :
+	public IGuiExpression<ValueType>
+{
+private:
+	ValueType _value;
+
+public:
+	ConstantExpression(const ValueType& value) :
+		_value(value)
+	{}
+
+	virtual ValueType evaluate() override
+	{
+		return _value;
+	}
+
+	template<typename OtherType>
+	static std::shared_ptr<ConstantExpression<ValueType>> Create(const OtherType& value)
+	{
+		return std::make_shared<ConstantExpression<ValueType>>(value);
+	}
+};
+
 // Represents a variable or property of a GuiWindowDef
 // e.g. "text", "notime", "forecolor" or a user-defined variable
 class IWindowVariable
 {
+private:
+	sigc::signal<void> _changedSignal;
+
 public:
 	virtual ~IWindowVariable() {}
+
+	// value-changed signal, to get notified when this value changes
+	sigc::signal<void>& signal_variableChanged()
+	{
+		return _changedSignal;
+	}
 };
 
 // Represents a GUI property carrying a scalar value
@@ -65,12 +101,19 @@ public:
 
 	virtual ValueType getValue() const
 	{
-		return _expression->evaluate();
+		return _expression ? _expression->evaluate() : ValueType();
 	}
 
 	virtual void setValue(const ExpressionTypePtr& newExpr)
 	{
 		_expression = newExpr;
+		signal_variableChanged().emit();
+	}
+
+	virtual void setValue(const ValueType& constantValue)
+	{
+		_expression = ConstantExpression<ValueType>::Create(constantValue);
+		signal_variableChanged().emit();
 	}
 };
 
@@ -91,6 +134,9 @@ public:
 	// Visible or hidden
 	bool visible;
 
+	// The body text of this window
+	ScalarWindowVariable<std::string> text;
+
 	// Whether this gui is full screen (use on desktop window)
 	bool menugui;
 
@@ -104,13 +150,13 @@ public:
 	ScalarWindowVariable<float> rotate;
 
 	// background shader name
-	std::string background;
+	ScalarWindowVariable<std::string> background;
 
 	// background shader (NULL until realised)
 	MaterialPtr backgroundShader;
 
 	// The name of the font
-	std::string font;
+	ScalarWindowVariable<std::string> font;
 
 	// The scale for rendering the font
 	ScalarWindowVariable<float> textscale;
@@ -159,9 +205,6 @@ public:
 	// Recursively looks for a named child windowDef
 	// Returns NULL if not found
 	virtual IGuiWindowDefPtr findWindowDef(const std::string& name) = 0;
-
-	virtual const std::string& getText() const = 0;
-	virtual void setText(const std::string& newText) = 0;
 
 	// Get the renderable text object containing the OpenGLRenderables
 	virtual IRenderableText& getRenderableText() = 0;

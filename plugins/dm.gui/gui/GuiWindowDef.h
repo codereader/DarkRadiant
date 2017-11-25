@@ -34,11 +34,8 @@ private:
 	// The renderable text object for submission to a Renderer
 	RenderableText _renderableText;
 
-	// Whether the text has changed
+	// Is set to true when the text property is assigned
 	bool _textChanged;
-
-	// The text to be rendered in this window (private, use getText() and setText())
-	std::string _text;
 
 	// The mapping between time and GUI scripts
 	typedef std::multimap<std::size_t, GuiScriptPtr> TimedEventMap;
@@ -58,9 +55,6 @@ public:
 	// Recursively looks for a named child windowDef
 	// Returns NULL if not found
 	IGuiWindowDefPtr findWindowDef(const std::string& name) override;
-
-	const std::string& getText() const override;
-	void setText(const std::string& newText) override;
 
 	// Get the renderable text object containing the OpenGLRenderables
 	IRenderableText& getRenderableText() override;
@@ -83,7 +77,7 @@ public:
 	static Vector4 parseVector4(parser::DefTokeniser& tokeniser);
 	static std::shared_ptr<IGuiExpression<float>> parseFloat(parser::DefTokeniser& tokeniser);
 	static int parseInt(parser::DefTokeniser& tokeniser);
-	static std::string parseString(parser::DefTokeniser& tokeniser);
+	static std::shared_ptr<IGuiExpression<std::string>> parseString(parser::DefTokeniser& tokeniser);
 	static bool parseBool(parser::DefTokeniser& tokeniser);
 
 	static GuiExpressionPtr getExpression(parser::DefTokeniser& tokeniser);

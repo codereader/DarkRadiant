@@ -468,7 +468,7 @@ public:
 				else if (token == "-")
 				{
 					// A leading -, interpret it as -1 *
-					operands.push(std::make_shared<ConstantExpression<float>>(-1.0f));
+					operands.push(std::make_shared<FloatExpression>(-1.0f));
 					operators.push(std::make_shared<MultiplyExpression>());
 
 					// Discard the - token
@@ -478,7 +478,7 @@ public:
 				else
 				{
 					// This might either be a float or a string constant
-					term = std::make_shared<ConstantExpression<std::string>>(_tokeniser.nextToken());
+					term = std::make_shared<StringExpression>(_tokeniser.nextToken());
 				}
 				
 				if (!term)
@@ -587,6 +587,7 @@ private:
 		operators.pop();
 	}
 
+#if 0
 	// Try to get a valid expression from the token. If the token was found to be valid
 	// The token is actually pulled from the tokeniser using nextToken()
 	GuiExpressionPtr getTerm(const std::string& token)
@@ -595,9 +596,9 @@ private:
 
 		_tokeniser.nextToken(); // valid token, exhaust
 
-		return std::make_shared<ConstantExpression<std::string>>(tokenCleaned);
+		return ConstantExpression<std::string>::Create(tokenCleaned);
 	}
-
+#endif
 	// Helper routines
 	BinaryExpressionPtr getOperator()
 	{

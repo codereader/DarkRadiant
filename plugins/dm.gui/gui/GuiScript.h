@@ -39,8 +39,11 @@ struct Statement
 	// The statement type
 	Type type;
 
-	typedef std::vector<GuiExpressionPtr> Arguments;
+	typedef std::vector<std::shared_ptr<IGuiExpression<std::string>>> Arguments;
 	Arguments args;
+
+	// Condition used by ST_IF
+	GuiExpressionPtr _condition;
 
 	// The jump destination used by ST_IF and ST_JMP
 	std::size_t jmpDest;
@@ -80,8 +83,8 @@ public:
 
 private:
 	// Interprets the given string and returns the target object
-	VariablePtr getVariableFromExpression(const GuiExpressionPtr& expr);
-	std::string getValueFromExpression(const GuiExpressionPtr& expr);
+	VariablePtr getVariableFromExpression(const std::shared_ptr<IGuiExpression<std::string>>& expr);
+	std::string getValueFromExpression(const std::shared_ptr<IGuiExpression<std::string>>& expr);
 
 	const Statement& getStatement(std::size_t index);
 

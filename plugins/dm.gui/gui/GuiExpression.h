@@ -46,24 +46,36 @@ public:
 	}
 };
 
-// An expression representing a constant value
-template<typename ValueType>
-class ConstantExpression :
+// An expression representing a constant floating point value
+class FloatExpression :
 	public GuiExpression,
-	public IGuiExpression<ValueType>
+	public ConstantExpression<float>
 {
-private:
-	ValueType _value;
-
 public:
-	ConstantExpression(const ValueType& value) :
-		_value(value)
+	FloatExpression(float value) :
+		ConstantExpression(value)
 	{}
 
-	virtual ValueType evaluate() override
+	virtual float getFloatValue()
 	{
-		return _value;
+		return this->evaluate();
 	}
+
+	virtual std::string getStringValue()
+	{
+		return string::to_string(getFloatValue());
+	}
+};
+
+// An expression representing a constant string value
+class StringExpression :
+	public GuiExpression,
+	public ConstantExpression<std::string>
+{
+public:
+	StringExpression(const std::string& value) :
+		ConstantExpression(value)
+	{}
 
 	virtual float getFloatValue()
 	{
@@ -72,7 +84,7 @@ public:
 
 	virtual std::string getStringValue()
 	{
-		return string::to_string(_value);
+		return this->evaluate();
 	}
 };
 
