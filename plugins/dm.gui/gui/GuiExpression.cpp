@@ -13,18 +13,19 @@ namespace gui
 {
 
 // An expression referring to a GUI state variable
-GuiStateVariableExpression::GuiStateVariableExpression(const std::string& variableName) :
+GuiStateVariableExpression::GuiStateVariableExpression(IGui& gui, const std::string& variableName) :
+	_gui(gui),
 	_variableName(variableName)
 {}
 
 float GuiStateVariableExpression::getFloatValue()
 {
-	return 0.0f; // TODO
+	return string::convert<float>(_gui.getStateString(_variableName));
 }
 
 std::string GuiStateVariableExpression::getStringValue()
 {
-	return ""; // TODO
+	return _gui.getStateString(_variableName);
 }
 
 namespace detail
@@ -403,13 +404,15 @@ private:
 class GuiExpressionParser
 {
 private:
+	IGui& _gui;
 	GuiExpressionTokeniser& _tokeniser;
 
 	typedef std::stack<GuiExpressionPtr> OperandStack;
 	typedef std::stack<BinaryExpressionPtr> OperatorStack;
 
 public:
-	GuiExpressionParser(GuiExpressionTokeniser& tokeniser) :
+	GuiExpressionParser(IGui& gui, GuiExpressionTokeniser& tokeniser) :
+		_gui(gui),
 		_tokeniser(tokeniser)
 	{}
 
@@ -454,9 +457,9 @@ public:
 				}
 				else if (string::starts_with(token, "gui::"))
 				{
-					// This is a GUI state variable
+					// This is a GUI state variable, extract the variable name
 					_tokeniser.nextToken();
-					term = std::make_shared<GuiStateVariableExpression>(token.substr(5));
+					term = std::make_shared<GuiStateVariableExpression>(_gui, token.substr(5));
 				}
 				// If this is a + or -, take it as a sign operator
 				else if (token == "+")
@@ -587,18 +590,6 @@ private:
 		operators.pop();
 	}
 
-#if 0
-	// Try to get a valid expression from the token. If the token was found to be valid
-	// The token is actually pulled from the tokeniser using nextToken()
-	GuiExpressionPtr getTerm(const std::string& token)
-	{
-		std::string tokenCleaned = string::trim_copy(token, "\"");
-
-		_tokeniser.nextToken(); // valid token, exhaust
-
-		return ConstantExpression<std::string>::Create(tokenCleaned);
-	}
-#endif
 	// Helper routines
 	BinaryExpressionPtr getOperator()
 	{
@@ -716,13 +707,13 @@ private:
 GuiExpression::GuiExpression()
 {}
 
-GuiExpressionPtr GuiExpression::createFromString(const std::string& exprStr)
+GuiExpressionPtr GuiExpression::createFromString(IGui& gui, const std::string& exprStr)
 {
 	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "{}(),");
-	return createFromTokens(tokeniser);
+	return createFromTokens(gui, tokeniser);
 }
 
-GuiExpressionPtr GuiExpression::createFromTokens(parser::DefTokeniser& tokeniser)
+GuiExpressionPtr GuiExpression::createFromTokens(IGui& gui, parser::DefTokeniser& tokeniser)
 {
 	// Create an adapter which takes care of splitting the tokens into finer grains
 	// The incoming DefTokeniser is not splitting up expressions like "3*4" without any whitespace in them
@@ -730,7 +721,7 @@ GuiExpressionPtr GuiExpression::createFromTokens(parser::DefTokeniser& tokeniser
 
 	try
 	{
-		detail::GuiExpressionParser parser(adapter);
+		detail::GuiExpressionParser parser(gui, adapter);
 		return parser.getExpression();
 	}
 	catch (parser::ParseException& ex)

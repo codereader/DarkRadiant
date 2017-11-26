@@ -91,17 +91,17 @@ void GuiScript::parseTransitionStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: transition [window::]<variable> <from> <to> <time> [ <accel> <decel> ]
 	StatementPtr st(new Statement(Statement::ST_TRANSITION));
 
-	st->args.push_back(_owner.parseString(tokeniser)); // variable
+	st->args.push_back(ConstantExpression<std::string>::Create(tokeniser.nextToken())); // variable
 
-	st->args.push_back(_owner.parseString(tokeniser)); // from
-	st->args.push_back(_owner.parseString(tokeniser)); // to
-	st->args.push_back(_owner.parseString(tokeniser)); // time
+	st->args.push_back(ConstantExpression<std::string>::Create(tokeniser.nextToken())); // from
+	st->args.push_back(ConstantExpression<std::string>::Create(tokeniser.nextToken())); // to
+	st->args.push_back(ConstantExpression<std::string>::Create(tokeniser.nextToken())); // time
 
 	if (tokeniser.peek() != ";")
 	{
 		// no semicolon, parse optional acceleration and deceleration
-		st->args.push_back(_owner.parseString(tokeniser)); 	// accel
-		st->args.push_back(_owner.parseString(tokeniser));	// decel
+		st->args.push_back(ConstantExpression<std::string>::Create(tokeniser.nextToken())); 	// accel
+		st->args.push_back(ConstantExpression<std::string>::Create(tokeniser.nextToken()));	// decel
 
 		tokeniser.assertNextToken(";");
 	}
@@ -331,7 +331,7 @@ std::size_t GuiScript::pushStatement(const StatementPtr& statement)
 
 GuiExpressionPtr GuiScript::getExpression(parser::DefTokeniser& tokeniser)
 {
-	return GuiExpression::createFromTokens(tokeniser);
+	return GuiExpression::createFromTokens(_owner.getGui(), tokeniser);
 }
 
 GuiExpressionPtr GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)

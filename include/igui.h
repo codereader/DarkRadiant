@@ -94,6 +94,8 @@ protected:
 	ExpressionTypePtr _expression;
 
 public:
+	typedef ValueType ValueType; // make the ValueType public
+
 	operator ValueType() const
 	{
 		return getValue();
@@ -104,12 +106,15 @@ public:
 		return _expression ? _expression->evaluate() : ValueType();
 	}
 
+	// Assigns a new Expression to this variable. The expression needs
+	// to match the ValueType of this variable
 	virtual void setValue(const ExpressionTypePtr& newExpr)
 	{
 		_expression = newExpr;
 		signal_variableChanged().emit();
 	}
 
+	// Assigns a constant value to this variable
 	virtual void setValue(const ValueType& constantValue)
 	{
 		_expression = ConstantExpression<ValueType>::Create(constantValue);
