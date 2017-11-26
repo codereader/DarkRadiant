@@ -85,10 +85,11 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	}
 
 	Vector4 rect = window->rect;
+	Vector4 backcolor = window->backcolor;
 
-	if (window->backcolor[3] > 0)
+	if (backcolor[3] > 0)
 	{
-		glColor4dv(window->backcolor);
+		glColor4dv(backcolor);
 
 		// Background quad
 		glBegin(GL_QUADS);
@@ -106,7 +107,9 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	}
 
 	// Acquire the texture number of the active texture
-	if (window->backgroundShader != NULL && (window->matcolor[3] > 0 || _ignoreVisibility))
+	Vector4 matcolor = window->matcolor;
+
+	if (window->backgroundShader != NULL && (matcolor[3] > 0 || _ignoreVisibility))
 	{
 		// Get the diffuse layer
 		const ShaderLayerVector& layers = window->backgroundShader->getAllLayers();
@@ -133,12 +136,12 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
 			// Draw the textured quad
-			glColor4dv(window->matcolor);
+			glColor4dv(matcolor);
 
 			// Render background image as opaque if _ignoreVisibility is set to true
-			if (_ignoreVisibility && window->matcolor[3] <= 0)
+			if (_ignoreVisibility && matcolor[3] <= 0)
 			{
-				glColor4d(window->matcolor[0], window->matcolor[1], window->matcolor[2], 1);
+				glColor4d(matcolor[0], matcolor[1], matcolor[2], 1);
 			}
 
 			glEnable(GL_TEXTURE_2D);
@@ -168,12 +171,13 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 		glEnable(GL_TEXTURE_2D);
-		glColor4dv(window->forecolor);
+		Vector4 forecolor = window->forecolor;
+		glColor4dv(forecolor);
 
 		// Render text as opaque if _ignoreVisibility is set to true
-		if (_ignoreVisibility && window->forecolor[3] <= 0)
+		if (_ignoreVisibility && forecolor[3] <= 0)
 		{
-			glColor4d(window->forecolor[0], window->forecolor[1], window->forecolor[2], 1);
+			glColor4d(forecolor[0], forecolor[1], forecolor[2], 1);
 		}
 
 		window->getRenderableText().render();

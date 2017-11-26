@@ -43,12 +43,12 @@ GuiWindowDef::GuiWindowDef(IGui& owner) :
 	_renderableText(*this)
 {
 	visible.setValue(true);
-	forecolor = Vector4(1, 1, 1, 1);
-	hovercolor = Vector4(1, 1, 1, 1);
-	backcolor = Vector4(0, 0, 0, 0);
-	bordercolor = Vector4(0, 0, 0, 0);
+	forecolor.setValue(Vector4(1, 1, 1, 1));
+	hovercolor.setValue(Vector4(1, 1, 1, 1));
+	backcolor.setValue(Vector4(0, 0, 0, 0));
+	bordercolor.setValue(Vector4(0, 0, 0, 0));
 	bordersize.setValue(0.0f);
-	matcolor = Vector4(1, 1, 1, 1);
+	matcolor.setValue(Vector4(1, 1, 1, 1));
 	rotate.setValue(0.0f);
 	textscale.setValue(1.0f);
 	textalign.setValue(0);
@@ -77,7 +77,7 @@ GuiExpressionPtr GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 	return GuiExpression::createFromTokens(tokeniser);
 }
 
-std::shared_ptr<IGuiExpression<Vector4>> GuiWindowDef::parseVector4Expr(parser::DefTokeniser& tokeniser)
+std::shared_ptr<IGuiExpression<Vector4>> GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 {
 	// Collect tokens until all four components are parsed
 	std::vector<GuiExpressionPtr> comp;
@@ -103,37 +103,6 @@ std::shared_ptr<IGuiExpression<Vector4>> GuiWindowDef::parseVector4Expr(parser::
 	}
 
 	return std::make_shared<Vector4Expression>(comp[0], comp[1], comp[2], comp[3]);
-}
-
-Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
-{
-	// Collect tokens until all four components are parsed
-	std::vector<GuiExpressionPtr> comp;
-
-	while (comp.size() < 4 && tokeniser.hasMoreTokens())
-	{
-		std::string token = tokeniser.peek();
-
-		if (token == ",")
-		{
-			tokeniser.nextToken();
-			continue;
-		}
-
-		GuiExpressionPtr expr = getExpression(tokeniser);
-
-		comp.push_back(expr);
-	}
-
-	if (comp.size() != 4)
-	{
-		throw parser::ParseException("Couldn't parse Vector4, not enough components found.");
-	}
-
-	return Vector4(comp[0]->getFloatValue(),
-                   comp[1]->getFloatValue(),
-                   comp[2]->getFloatValue(),
-                   comp[3]->getFloatValue());
 }
 
 std::shared_ptr<IGuiExpression<float>> GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)
@@ -213,7 +182,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 		if (token == "rect")
 		{
-			rect.setValue(parseVector4Expr(tokeniser));
+			rect.setValue(parseVector4(tokeniser));
 		}
 		else if (token == "visible")
 		{
@@ -225,23 +194,23 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "forecolor")
 		{
-			forecolor = parseVector4(tokeniser);
+			forecolor.setValue(parseVector4(tokeniser));
 		}
 		else if (token == "hovercolor")
 		{
-			hovercolor = parseVector4(tokeniser);
+			hovercolor.setValue(parseVector4(tokeniser));
 		}
 		else if (token == "backcolor")
 		{
-			backcolor = parseVector4(tokeniser);
+			backcolor.setValue(parseVector4(tokeniser));
 		}
 		else if (token == "bordercolor")
 		{
-			bordercolor = parseVector4(tokeniser);
+			bordercolor.setValue(parseVector4(tokeniser));
 		}
 		else if (token == "matcolor")
 		{
-			matcolor = parseVector4(tokeniser);
+			matcolor.setValue(parseVector4(tokeniser));
 		}
 		else if (token == "rotate")
 		{

@@ -140,12 +140,12 @@ public:
 	// Whether this gui is full screen (use on desktop window)
 	WindowVariable<bool> menugui;
 
-	Vector4 forecolor;
-	Vector4 hovercolor;
-	Vector4 backcolor;
-	Vector4 bordercolor;
+	WindowVariable<Vector4> forecolor;
+	WindowVariable<Vector4> hovercolor;
+	WindowVariable<Vector4> backcolor;
+	WindowVariable<Vector4> bordercolor;
 	WindowVariable<float> bordersize;
-	Vector4 matcolor;
+	WindowVariable<Vector4> matcolor;
 
 	WindowVariable<float> rotate;
 
