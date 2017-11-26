@@ -360,9 +360,12 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			float value = 0.0f;
 
 			// try to check if the next token is a numeric initialisation value
+			// We parse it, but we won't make use of it, see the comment on iddevnet:
+			// "Note you cannot set the initial value for the variable (it will always be 0).
+			//  There are guis in Doom 3 that specify an initial value, but it is ignored."
 			try
 			{
-				value = std::stof(tokeniser.peek());
+				std::stof(tokeniser.peek());
 
 				// Success, load the value
 				tokeniser.nextToken();
@@ -380,14 +383,29 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 			if (!result.second)
 			{
-				rWarning() << "Duplicate variable defined in windowDef " << name << ": " << variableName << std::endl;
+				rWarning() << "Duplicate float variable defined in windowDef " << name << ": " << variableName << std::endl;
 			}
 		}
 		else if (token == "definevec4")
 		{
-			// TODO: Add variable
+			// Add variable
 			std::string variableName = tokeniser.nextToken();
-			parseVector4(tokeniser);
+
+			// Initial value (will be ignored, but anyway)
+			IGuiExpression<Vector4>::Ptr value = parseVector4(tokeniser);
+
+			Vector4 actualValue;
+
+			WindowVariable<Vector4>::Ptr windowVar = std::make_shared<WindowVariable<Vector4>>();
+			windowVar->setValue(actualValue);
+
+			std::pair<NamedVariables::iterator, bool> result = variables.insert(
+				std::make_pair(variableName, windowVar));
+
+			if (!result.second)
+			{
+				rWarning() << "Duplicate vec4 variable defined in windowDef " << name << ": " << variableName << std::endl;
+			}
 		}
 		else if (token == "listdef" || token == "choicedef" || token == "binddef" ||
 				 token == "editdef" || token == "sliderdef" || token == "renderdef")
