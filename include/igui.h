@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <map>
+
 #include <sigc++/signal.h>
 #include "imodule.h"
 #include "math/Vector4.h"
@@ -31,6 +33,9 @@ template<typename ValueType>
 class IGuiExpression
 {
 public:
+	// Shared ptr typedef
+	typedef std::shared_ptr<IGuiExpression<ValueType>> Ptr;
+
 	virtual ~IGuiExpression() {}
 
 	// Evaluate this expression to retrieve the result
@@ -95,6 +100,7 @@ protected:
 
 public:
 	typedef ValueType ValueType; // make the ValueType public
+	typedef std::shared_ptr<WindowVariable<ValueType>> Ptr; // smart ptr typedef
 
 	operator ValueType() const
 	{
@@ -194,6 +200,12 @@ public:
 
 	// The window time (0..infinity)
 	std::size_t time;
+
+	// Each window can define its own set of named variables, 
+	// which can be of type float or Vector4
+	typedef std::shared_ptr<IWindowVariable> IWindowVariablePtr;
+	typedef std::map<std::string, IWindowVariablePtr> NamedVariables;
+	NamedVariables variables;
 
 	// All child windowDefs of this window
 	typedef std::vector<IGuiWindowDefPtr> ChildWindows;

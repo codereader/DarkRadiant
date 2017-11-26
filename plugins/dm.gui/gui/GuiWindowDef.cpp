@@ -353,13 +353,16 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "float" || token == "definefloat")
 		{
-			// TODO: Add variable
+			// Add variable
 			std::string variableName = tokeniser.nextToken();
+
+			// Initial value
+			float value = 0.0f;
 
 			// try to check if the next token is a numeric initialisation value
 			try
 			{
-				float value = std::stof(tokeniser.peek());
+				value = std::stof(tokeniser.peek());
 
 				// Success, load the value
 				tokeniser.nextToken();
@@ -367,6 +370,17 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			catch (std::invalid_argument&)
 			{
 				// Not a number, ignore and continue
+			}
+
+			WindowVariable<float>::Ptr windowVar = std::make_shared<WindowVariable<float>>();
+			windowVar->setValue(value);
+
+			std::pair<NamedVariables::iterator, bool> result = variables.insert(
+				std::make_pair(variableName, windowVar));
+
+			if (!result.second)
+			{
+				rWarning() << "Duplicate variable defined in windowDef " << name << ": " << variableName << std::endl;
 			}
 		}
 		else if (token == "definevec4")
