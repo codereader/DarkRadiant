@@ -239,6 +239,9 @@ public:
 
 	// Prepares renderable objects, to be called by the parent Gui only
 	virtual void pepareRendering(bool prepareChildren = true) = 0;
+
+	// Returns a reference to the named variable, or throws a std::invalid_argument exception
+	virtual IWindowVariable& findVariableByName(const std::string& name) = 0;
 };
 
 /**

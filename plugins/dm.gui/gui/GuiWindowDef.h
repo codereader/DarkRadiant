@@ -73,6 +73,8 @@ public:
 	// Prepares renderable objects, to be called by the parent Gui only
 	void pepareRendering(bool prepareChildren = true) override;
 
+	IWindowVariable& findVariableByName(const std::string& name) override;
+
 public:
 	std::shared_ptr<IGuiExpression<Vector4>> parseVector4(parser::DefTokeniser& tokeniser);
 	std::shared_ptr<IGuiExpression<float>> parseFloat(parser::DefTokeniser& tokeniser);

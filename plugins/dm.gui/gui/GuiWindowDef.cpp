@@ -64,6 +64,9 @@ GuiWindowDef::GuiWindowDef(IGui& owner) :
 
 	_textChanged = true;
 	text.signal_variableChanged().connect([this]() { _textChanged = true; });
+
+	// Clear the shader if the background variable changes
+	background.signal_variableChanged().connect([this]() { backgroundShader.reset(); });
 }
 
 IGui& GuiWindowDef::getGui() const
@@ -527,6 +530,44 @@ void GuiWindowDef::pepareRendering(bool prepareChildren)
 	{
 		(*i)->pepareRendering(prepareChildren);
 	}
+}
+
+IWindowVariable& GuiWindowDef::findVariableByName(const std::string& name)
+{
+	if (name == "text") return text;
+	if (name == "rect") return rect;
+	if (name == "visible") return visible;
+	if (name == "text") return text;
+	if (name == "menugui") return menugui;
+	if (name == "forecolor") return forecolor;
+	if (name == "hovercolor") return hovercolor;
+	if (name == "backcolor") return backcolor;
+	if (name == "bordercolor") return bordercolor;
+	if (name == "bordersize") return bordersize;
+	if (name == "matcolor") return matcolor;
+	if (name == "rotate") return rotate;
+	if (name == "background") return background;
+	if (name == "font") return font;
+	if (name == "textscale") return textscale;
+	if (name == "textalign") return textalign;
+	if (name == "textalignx") return textalignx;
+	if (name == "textaligny") return textaligny;
+	if (name == "forceaspectwidth") return forceaspectwidth;
+	if (name == "forceaspectheight") return forceaspectheight;
+	if (name == "noevents") return noevents;
+	if (name == "noclip") return noclip;
+	if (name == "notime") return notime;
+	if (name == "nocursor") return nocursor;
+	if (name == "nowrap") return nowrap;
+
+	// Check the user-defined variables
+	NamedVariables::const_iterator i = variables.find(name);
+	if (i != variables.end())
+	{
+		return *(i->second);
+	}
+
+	throw std::invalid_argument("Cannot find variable with name " + name);
 }
 
 } // namespace

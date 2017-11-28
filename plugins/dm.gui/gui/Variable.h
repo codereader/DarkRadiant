@@ -22,7 +22,7 @@ public:
 typedef std::shared_ptr<Variable> VariablePtr;
 
 // A variable pointing to a specific item of a windowDef
-class WindowDefVariable :
+class AssignableWindowVariable :
 	public Variable
 {
 private:
@@ -33,10 +33,10 @@ private:
 	std::string _name;
 
 public:
-	WindowDefVariable(IGuiWindowDef& windowDef, const std::string& name);
+	AssignableWindowVariable(IGuiWindowDef& windowDef, const std::string& name);
 
 	// Assign a value to this Variable (returns TRUE on success)
-	bool assignValueFromString(const std::string& val);
+	bool assignValueFromString(const std::string& val) override;
 };
 
 // A variable pointing to a GUI state variable
@@ -53,7 +53,7 @@ private:
 public:
 	GuiStateVariable(IGui& gui, const std::string& key);
 
-	bool assignValueFromString(const std::string& val);
+	bool assignValueFromString(const std::string& val) override;
 };
 
 } // namespace

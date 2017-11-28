@@ -7,16 +7,40 @@
 namespace gui
 {
 
-WindowDefVariable::WindowDefVariable(IGuiWindowDef& windowDef,
+AssignableWindowVariable::AssignableWindowVariable(IGuiWindowDef& windowDef,
 									 const std::string& name) :
 	_windowDef(windowDef),
 	_name(string::to_lower_copy(name))
 {}
 
 // Assign a value to this Variable (returns TRUE on success)
-bool WindowDefVariable::assignValueFromString(const std::string& val)
+bool AssignableWindowVariable::assignValueFromString(const std::string& val)
 {
 	if (_name.empty()) return false;
+
+	// Lookup the target window variable by name
+	try
+	{
+		IWindowVariable& variable = _windowDef.findVariableByName(_name);
+
+		try
+		{
+			WindowVariable<Vector4>& vec4var = dynamic_cast<WindowVariable<Vector4>&>(variable);
+		}
+		catch (std::bad_cast&)
+		{
+			// Must be an ordinary value
+		}
+		// TODO: Switch on value type
+
+		return true;
+	}
+	catch (std::invalid_argument&)
+	{
+		rError() << "[GUI Script]: Cannot assign value to unknown variable: " << 
+			_windowDef.name << "::" << _name << std::endl;
+		return false;
+	}
 
 	if (_name == "text")
 	{

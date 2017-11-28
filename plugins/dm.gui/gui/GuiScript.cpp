@@ -349,12 +349,6 @@ VariablePtr GuiScript::getVariableFromExpression(const std::shared_ptr<IGuiExpre
 {
 	std::string expr = expression->evaluate();
 
-	if (string::starts_with(expr, "gui::"))
-	{
-		// Is a GUI state variable
-		return std::make_shared<GuiStateVariable>(_owner.getGui(), expr.substr(5));
-	}
-
 	// Not a gui:: variable, check if a namespace has been specified
 	std::size_t ddPos = expr.find("::");
 
@@ -363,13 +357,19 @@ VariablePtr GuiScript::getVariableFromExpression(const std::shared_ptr<IGuiExpre
 		// Retrieve the windowDef name
 		std::string windowDefName = expr.substr(0, ddPos);
 
+		if (windowDefName == "gui")
+		{
+			// Is a GUI state variable
+			return std::make_shared<GuiStateVariable>(_owner.getGui(), expr.substr(ddPos + 2));
+		}
+
 		// Look up the windowDef
 		IGuiWindowDefPtr windowDef = _owner.getGui().findWindowDef(windowDefName);
 
-		if (windowDef != NULL)
+		if (windowDef)
 		{
 			// Cut off the "<windowDef>::" from the name
-			return std::make_shared<WindowDefVariable>(*windowDef, expr.substr(ddPos+2));
+			return std::make_shared<AssignableWindowVariable>(*windowDef, expr.substr(ddPos+2));
 		}
 		else
 		{
@@ -380,7 +380,7 @@ VariablePtr GuiScript::getVariableFromExpression(const std::shared_ptr<IGuiExpre
 	else
 	{
 		// Use the owner windowDef if no namespace was defined
-		return std::make_shared<WindowDefVariable>(_owner, expr);
+		return std::make_shared<AssignableWindowVariable>(_owner, expr);
 	}
 }
 
@@ -418,6 +418,14 @@ void GuiScript::execute()
 			{
 				// Try to find the target variable
 				VariablePtr var = getVariableFromExpression(st.args[0]);
+
+				if (!var)
+				{
+					rWarning() << "Cannot assign to variable " << st.args[0] << std::endl;
+					continue;
+				}
+
+				// TODO
 
 				std::string value = getValueFromExpression(st.args[1]);
 
