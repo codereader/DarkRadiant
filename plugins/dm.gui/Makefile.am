@@ -22,6 +22,7 @@ dm_gui_la_SOURCES = GuiSelector.cpp \
                XDataSelector.cpp \
                XdFileChooserDialog.cpp \
                gui/Gui.cpp \
+               gui/GuiExpression.cpp \
                gui/GuiManager.cpp \
                gui/GuiScript.cpp \
                gui/GuiWindowDef.cpp \
