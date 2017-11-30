@@ -103,7 +103,6 @@ protected:
 	ExpressionTypePtr _expression;
 
 public:
-	typedef ValueType ValueType; // make the ValueType public
 	typedef std::shared_ptr<WindowVariable<ValueType>> Ptr; // smart ptr typedef
 
 	operator ValueType() const

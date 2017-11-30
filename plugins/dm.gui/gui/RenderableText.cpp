@@ -60,6 +60,8 @@ void RenderableText::realiseFontShaders()
 					rWarning() << "No resolutions to fall back." << std::endl;
 					printMissingGlyphSetError();
 					return;
+				default:
+					break;
 			}
 		}
 	}

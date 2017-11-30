@@ -261,8 +261,8 @@ public:
 
                     // In the quoted state, just advance until the closing
                     // quote. No delimiter splitting is required.
-                    if (*next == '\"' && quoteType == QuoteType::Double ||
-						*next == '\'' && quoteType == QuoteType::Single)
+                    if ((*next == '\"' && quoteType == QuoteType::Double) ||
+						(*next == '\'' && quoteType == QuoteType::Single))
 					{
                         ++next;
 
@@ -347,8 +347,8 @@ public:
                         continue;
                     }
 
-					if (*next == '\"' && quoteType == QuoteType::Double ||
-						*next == '\'' && quoteType == QuoteType::Single)
+					if ((*next == '\"' && quoteType == QuoteType::Double) ||
+						(*next == '\'' && quoteType == QuoteType::Single))
 					{
 						// Found the desired opening quote, switch to QUOTED
 						++next;

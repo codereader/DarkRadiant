@@ -81,8 +81,8 @@ public:
     void reloadGuis() override;
 
 	// RegisterableModule
-	const std::string& GuiManager::getName() const override;
-	const StringSet& GuiManager::getDependencies() const override;
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
 	void shutdownModule() override;
 
