@@ -5,12 +5,14 @@
 #include <memory>
 
 #include "GuiExpression.h"
-#include "Variable.h"
 
 namespace parser { class DefTokeniser; }
 
 namespace gui
 {
+
+class Variable;
+typedef std::shared_ptr<Variable> VariablePtr;
 
 class GuiWindowDef;
 

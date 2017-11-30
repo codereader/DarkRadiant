@@ -8,6 +8,7 @@
 #include <sigc++/signal.h>
 #include "imodule.h"
 #include "math/Vector4.h"
+#include "string/convert.h"
 #include "ishaders.h"
 
 namespace gui
@@ -82,6 +83,9 @@ public:
 	{
 		return _changedSignal;
 	}
+
+	// To be implemented by subclasses
+	virtual void setValueFromString(const std::string& stringVal) = 0;
 };
 
 // Represents a GUI property carrying a certain type
@@ -125,6 +129,13 @@ public:
 	{
 		_expression = ConstantExpression<ValueType>::Create(constantValue);
 		signal_variableChanged().emit();
+	}
+
+	// Implement the required string->ValueType conversion by means of string::convert<>
+	virtual void setValueFromString(const std::string& stringVal) override
+	{
+		ValueType converted = string::convert<ValueType>(stringVal);
+		setValue(converted);
 	}
 };
 

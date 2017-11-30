@@ -4,6 +4,7 @@
 #include "parser/DefTokeniser.h"
 #include "Gui.h"
 #include "GuiExpression.h"
+#include "Variable.h"
 
 #include "string/case_conv.h"
 #include "string/trim.h"
@@ -11,11 +12,6 @@
 
 namespace gui
 {
-
-bool Variable::assignValueFromString(const std::string& val)
-{
-	return true;
-}
 
 GuiScript::GuiScript(GuiWindowDef& owner) :
 	_owner(owner),
@@ -425,14 +421,11 @@ void GuiScript::execute()
 					continue;
 				}
 
-				// TODO
-
 				std::string value = getValueFromExpression(st.args[1]);
 
-				if (var == NULL || !var->assignValueFromString(value))
+				if (!var->assignValueFromString(value))
 				{
-					rWarning() << "Cannot assign value " <<
-						st.args[1] << " to variable " << st.args[1] << std::endl;
+					rWarning() << "Cannot assign value " << st.args[1] << " to variable " << st.args[1] << std::endl;
 				}
 			}
 			break;

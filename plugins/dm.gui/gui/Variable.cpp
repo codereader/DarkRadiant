@@ -22,16 +22,7 @@ bool AssignableWindowVariable::assignValueFromString(const std::string& val)
 	try
 	{
 		IWindowVariable& variable = _windowDef.findVariableByName(_name);
-
-		try
-		{
-			WindowVariable<Vector4>& vec4var = dynamic_cast<WindowVariable<Vector4>&>(variable);
-		}
-		catch (std::bad_cast&)
-		{
-			// Must be an ordinary value
-		}
-		// TODO: Switch on value type
+		variable.setValueFromString(val);
 
 		return true;
 	}
@@ -39,27 +30,6 @@ bool AssignableWindowVariable::assignValueFromString(const std::string& val)
 	{
 		rError() << "[GUI Script]: Cannot assign value to unknown variable: " << 
 			_windowDef.name << "::" << _name << std::endl;
-		return false;
-	}
-
-	if (_name == "text")
-	{
-		_windowDef.text.setValue(ConstantExpression<std::string>::Create(val));
-		return true;
-	}
-    else if (_name == "background")
-	{
-        if (_windowDef.background.getValue() != val)
-        {
-            // Reset the material reference when changing background
-            _windowDef.background.setValue(ConstantExpression<std::string>::Create(val));
-            _windowDef.backgroundShader.reset();
-        }
-		return true;
-	}
-	else
-	{
-		// TODO
 		return false;
 	}
 }
