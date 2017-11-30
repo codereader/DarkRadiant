@@ -69,6 +69,9 @@ void MissionInfoGuiView::update()
 
 	if (!_file || !gui) return;
 
+	// This is a localised value, hardcode some for the moment being
+	gui->setStateString("details_posx", "100");
+
 	gui->findWindowDef("modTitle")->text.setValue(_file->getTitle());
 	gui->findWindowDef("modDescription")->text.setValue(_file->getDescription());
 	gui->findWindowDef("modAuthor")->text.setValue(_file->getAuthor());
