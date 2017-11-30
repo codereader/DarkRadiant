@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-10-27 14:59+0200\n"
+"POT-Creation-Date: 2017-11-30 20:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1680,7 +1680,7 @@ msgstr ""
 
 #: ..\..\radiant\ui\commandlist\ShortcutChooser.cpp:52 xml_file_content.cpp:2
 #: xml_file_content.cpp:6 xml_file_content.cpp:9 xml_file_content.cpp:17
-#: xml_file_content.cpp:1 xml_file_content.cpp:5 xml_file_content.cpp:13
+#: xml_file_content.cpp:1 xml_file_content.cpp:13 xml_file_content.cpp:5
 #: xml_file_content.cpp:14 xml_file_content.cpp:20
 msgid "Cancel"
 msgstr ""
@@ -3265,6 +3265,16 @@ msgstr ""
 msgid "Select Vocal Set..."
 msgstr ""
 
+#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:129
+msgid "Order of the elements Title/Description/Author/etc. is incorrect"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:281
+msgid ""
+"Could not write darkmod.txt contents:\n"
+"{0}"
+msgstr ""
+
 #: ..\..\plugins\dm.editing\FixupMap.cpp:26
 msgid "Fixup in progress"
 msgstr ""
@@ -3330,8 +3340,39 @@ msgstr ""
 msgid "Fixup Results"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\plugin.cpp:64
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:24
+msgid "Mission Info Editor (darkmod.txt)"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:43
+msgid ""
+"Failed to parse darkmod.txt:\n"
+"{0}"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:108
+msgid "#"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:111
+#: xml_file_content.cpp:17
+msgid "Title"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:139
+msgid "Add Title"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:144
+msgid "Delete Title"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\plugin.cpp:65
 msgid "Fixup Map..."
+msgstr ""
+
+#: ..\..\plugins\dm.editing\plugin.cpp:75
+msgid "Edit Package Info (darkmod.txt)..."
 msgstr ""
 
 #: ..\..\plugins\dm.gui\GuiSelector.cpp:22
@@ -3351,33 +3392,33 @@ msgstr ""
 msgid "Two-Sided Readable Guis"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:93
+#: ..\..\plugins\dm.gui\plugin.cpp:90
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:43
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:542
 msgid "Readable Editor"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:100
+#: ..\..\plugins\dm.gui\plugin.cpp:97
 msgid "Reload Readable Guis"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:110
+#: ..\..\plugins\dm.gui\plugin.cpp:107
 msgid "Settings/Readable Editor"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:114
+#: ..\..\plugins\dm.gui\plugin.cpp:111
 msgid "Mod/xdata"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:115
+#: ..\..\plugins\dm.gui\plugin.cpp:112
 msgid "Mod Base/xdata"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:116 ..\..\plugins\dm.gui\plugin.cpp:120
+#: ..\..\plugins\dm.gui\plugin.cpp:113 ..\..\plugins\dm.gui\plugin.cpp:117
 msgid "Custom Folder"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\plugin.cpp:118
+#: ..\..\plugins\dm.gui\plugin.cpp:115
 msgid "XData Storage Folder"
 msgstr ""
 
@@ -4482,7 +4523,8 @@ msgid "Undo Queue Size"
 msgstr ""
 
 #: ..\..\libs\wxutil\dialog\MessageBox.cpp:20 xml_file_content.cpp:8
-#: xml_file_content.cpp:10 xml_file_content.cpp:3 xml_file_content.cpp:21
+#: xml_file_content.cpp:10 xml_file_content.cpp:12 xml_file_content.cpp:3
+#: xml_file_content.cpp:21
 msgid "Save"
 msgstr ""
 
@@ -5921,6 +5963,49 @@ msgid "Light Texture"
 msgstr ""
 
 #: xml_file_content.cpp:1
+msgid "Mission Info"
+msgstr ""
+
+#: xml_file_content.cpp:2
+msgid "Title:"
+msgstr ""
+
+#: xml_file_content.cpp:3
+msgid "Author:"
+msgstr ""
+
+#: xml_file_content.cpp:4
+msgid "Description:"
+msgstr ""
+
+#: xml_file_content.cpp:6
+msgid "Required TDM Version:"
+msgstr ""
+
+#: xml_file_content.cpp:7
+msgid "(optional, e.g. \"2.03\")"
+msgstr ""
+
+#: xml_file_content.cpp:8
+msgid "Mission Titles:"
+msgstr ""
+
+#: xml_file_content.cpp:9
+msgid ""
+"Optional. Fill in if this \n"
+"package is a campaign \n"
+"containing several maps"
+msgstr ""
+
+#: xml_file_content.cpp:10
+msgid "Output Path:"
+msgstr ""
+
+#: xml_file_content.cpp:11
+msgid "C:GamesDarkmodfmsgathers"
+msgstr ""
+
+#: xml_file_content.cpp:1
 msgid "Options:"
 msgstr ""
 
@@ -6528,10 +6613,6 @@ msgstr ""
 
 #: xml_file_content.cpp:14
 msgid "GUI Definition:"
-msgstr ""
-
-#: xml_file_content.cpp:17
-msgid "Title"
 msgstr ""
 
 #: xml_file_content.cpp:18

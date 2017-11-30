@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-10-27 14:59+0200\n"
-"PO-Revision-Date: 2017-10-27 15:10+0100\n"
-"Last-Translator: codereader <greebo@angua.at>\n"
+"POT-Creation-Date: 2017-11-30 20:19+0100\n"
+"PO-Revision-Date: 2017-11-30 20:25+0100\n"
+"Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1738,8 +1738,8 @@ msgstr "OK"
 #: xml_file_content.cpp:9
 #: xml_file_content.cpp:17
 #: xml_file_content.cpp:1
-#: xml_file_content.cpp:5
 #: xml_file_content.cpp:13
+#: xml_file_content.cpp:5
 #: xml_file_content.cpp:14
 #: xml_file_content.cpp:20
 msgid "Cancel"
@@ -3354,6 +3354,18 @@ msgstr "<b>Fehler:</b> Datei nicht gefunden."
 msgid "Select Vocal Set..."
 msgstr "Sprachsatz auswählen..."
 
+#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:129
+msgid "Order of the elements Title/Description/Author/etc. is incorrect"
+msgstr "Die Reihenfolge der Title/Description/Author/etc.-Elemente ist ungültig."
+
+#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:281
+msgid ""
+"Could not write darkmod.txt contents:\n"
+"{0}"
+msgstr ""
+"Konnte darkmod.txt Datei nicht speichern:\n"
+"{0}"
+
 #: ..\..\plugins\dm.editing\FixupMap.cpp:26
 msgid "Fixup in progress"
 msgstr "Fixup läuft"
@@ -3419,9 +3431,42 @@ msgstr "(Zeile {0}): {1}"
 msgid "Fixup Results"
 msgstr "Fixup Ergebnisse"
 
-#: ..\..\plugins\dm.editing\plugin.cpp:64
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:24
+msgid "Mission Info Editor (darkmod.txt)"
+msgstr "Missions-Info (darkmod.txt)"
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:43
+msgid ""
+"Failed to parse darkmod.txt:\n"
+"{0}"
+msgstr ""
+"Import der darkmod.txt-Datei fehlgeschlagen:\n"
+"{0}"
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:108
+msgid "#"
+msgstr "#"
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:111
+#: xml_file_content.cpp:17
+msgid "Title"
+msgstr "Titel:"
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:139
+msgid "Add Title"
+msgstr "Titel hinzufügen:"
+
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:144
+msgid "Delete Title"
+msgstr "Titel löschen"
+
+#: ..\..\plugins\dm.editing\plugin.cpp:65
 msgid "Fixup Map..."
 msgstr "Map-Fixup..."
+
+#: ..\..\plugins\dm.editing\plugin.cpp:75
+msgid "Edit Package Info (darkmod.txt)..."
+msgstr "Missions-Info editieren (darkmod.txt)..."
 
 #: ..\..\plugins\dm.gui\GuiSelector.cpp:22
 msgid "Choose a Gui Definition..."
@@ -3440,34 +3485,34 @@ msgstr "Einseitige Schriftstück-GUIs"
 msgid "Two-Sided Readable Guis"
 msgstr "Zweiseitige Schriftstück-GUIs"
 
-#: ..\..\plugins\dm.gui\plugin.cpp:93
+#: ..\..\plugins\dm.gui\plugin.cpp:90
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:43
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:542
 msgid "Readable Editor"
 msgstr "Schriftstück-Editor"
 
-#: ..\..\plugins\dm.gui\plugin.cpp:100
+#: ..\..\plugins\dm.gui\plugin.cpp:97
 msgid "Reload Readable Guis"
 msgstr "Schriftstück-GUIs neu laden"
 
-#: ..\..\plugins\dm.gui\plugin.cpp:110
+#: ..\..\plugins\dm.gui\plugin.cpp:107
 msgid "Settings/Readable Editor"
 msgstr "Einstellungen/Schriftstück-Editor"
 
-#: ..\..\plugins\dm.gui\plugin.cpp:114
+#: ..\..\plugins\dm.gui\plugin.cpp:111
 msgid "Mod/xdata"
 msgstr "Mod/xdata"
 
-#: ..\..\plugins\dm.gui\plugin.cpp:115
+#: ..\..\plugins\dm.gui\plugin.cpp:112
 msgid "Mod Base/xdata"
 msgstr "Mod Base/xdata"
 
-#: ..\..\plugins\dm.gui\plugin.cpp:116
-#: ..\..\plugins\dm.gui\plugin.cpp:120
+#: ..\..\plugins\dm.gui\plugin.cpp:113
+#: ..\..\plugins\dm.gui\plugin.cpp:117
 msgid "Custom Folder"
 msgstr "Benutzerdefinierter Ordner"
 
-#: ..\..\plugins\dm.gui\plugin.cpp:118
+#: ..\..\plugins\dm.gui\plugin.cpp:115
 msgid "XData Storage Folder"
 msgstr "Ordner zum Ablegen der XData-Dateien"
 
@@ -4599,6 +4644,7 @@ msgstr "Größe des Undo-Stapels"
 #: ..\..\libs\wxutil\dialog\MessageBox.cpp:20
 #: xml_file_content.cpp:8
 #: xml_file_content.cpp:10
+#: xml_file_content.cpp:12
 #: xml_file_content.cpp:3
 #: xml_file_content.cpp:21
 msgid "Save"
@@ -6069,6 +6115,52 @@ msgid "Light Texture"
 msgstr "Lichttextur"
 
 #: xml_file_content.cpp:1
+msgid "Mission Info"
+msgstr "Missions-Info"
+
+#: xml_file_content.cpp:2
+msgid "Title:"
+msgstr "Titel:"
+
+#: xml_file_content.cpp:3
+msgid "Author:"
+msgstr "Autor:"
+
+#: xml_file_content.cpp:4
+msgid "Description:"
+msgstr "Beschreibung:"
+
+#: xml_file_content.cpp:6
+msgid "Required TDM Version:"
+msgstr "Erforderliche TDM-Version:"
+
+#: xml_file_content.cpp:7
+msgid "(optional, e.g. \"2.03\")"
+msgstr "(option, z.B. \"2.03\")"
+
+#: xml_file_content.cpp:8
+msgid "Mission Titles:"
+msgstr "Missions-Titel:"
+
+#: xml_file_content.cpp:9
+msgid ""
+"Optional. Fill in if this \n"
+"package is a campaign \n"
+"containing several maps"
+msgstr ""
+"Optional. Nur ausfüllen\n"
+"bei Kampagnen bestehend\n"
+"aus mehreren Missionen."
+
+#: xml_file_content.cpp:10
+msgid "Output Path:"
+msgstr "Zielpfad:"
+
+#: xml_file_content.cpp:11
+msgid "C:GamesDarkmodfmsgathers"
+msgstr "C:\\Games\\Darkmod\\fms\\gathers"
+
+#: xml_file_content.cpp:1
 msgid "Options:"
 msgstr "Optionen:"
 
@@ -6683,10 +6775,6 @@ msgstr "Seite Entfernen"
 #: xml_file_content.cpp:14
 msgid "GUI Definition:"
 msgstr "GUI-Definition:"
-
-#: xml_file_content.cpp:17
-msgid "Title"
-msgstr "Titel:"
 
 #: xml_file_content.cpp:18
 msgid "Body"
