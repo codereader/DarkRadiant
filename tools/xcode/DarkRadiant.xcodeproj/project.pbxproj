@@ -395,6 +395,24 @@
 		3AE6F1D91F6E91A7008A1B2D /* ArchiveVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */; };
 		3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */ = {isa = PBXBuildFile; fileRef = 3AE6F1DA1F6E953F008A1B2D /* prey.game */; };
 		3AE6F1DC1F6E9560008A1B2D /* prey.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1DA1F6E953F008A1B2D /* prey.game */; };
+		3AE6F1E21FD1A529008A1B2D /* GuiRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1DE1FD1A529008A1B2D /* GuiRenderer.cpp */; };
+		3AE6F1E41FD1A529008A1B2D /* GuiRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1DF1FD1A529008A1B2D /* GuiRenderer.h */; };
+		3AE6F1E51FD1A529008A1B2D /* GuiRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1DF1FD1A529008A1B2D /* GuiRenderer.h */; };
+		3AE6F1E61FD1A529008A1B2D /* GuiView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1E01FD1A529008A1B2D /* GuiView.cpp */; };
+		3AE6F1E81FD1A529008A1B2D /* GuiView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1E11FD1A529008A1B2D /* GuiView.h */; };
+		3AE6F1E91FD1A529008A1B2D /* GuiView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1E11FD1A529008A1B2D /* GuiView.h */; };
+		3AE6F1EC1FD1A58A008A1B2D /* GuiExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1EA1FD1A58A008A1B2D /* GuiExpression.cpp */; };
+		3AE6F1ED1FD1A58A008A1B2D /* GuiExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1EB1FD1A58A008A1B2D /* GuiExpression.h */; };
+		3AE6F1F51FD1A5CA008A1B2D /* DarkmodTxt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1EE1FD1A5CA008A1B2D /* DarkmodTxt.cpp */; };
+		3AE6F1F61FD1A5CA008A1B2D /* DarkmodTxt.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1EF1FD1A5CA008A1B2D /* DarkmodTxt.h */; };
+		3AE6F1F71FD1A5CA008A1B2D /* MissionInfoEditDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1F11FD1A5CA008A1B2D /* MissionInfoEditDialog.cpp */; };
+		3AE6F1F81FD1A5CA008A1B2D /* MissionInfoEditDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1F21FD1A5CA008A1B2D /* MissionInfoEditDialog.h */; };
+		3AE6F1F91FD1A5CA008A1B2D /* MissionInfoGuiView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1F31FD1A5CA008A1B2D /* MissionInfoGuiView.cpp */; };
+		3AE6F1FA1FD1A5CA008A1B2D /* MissionInfoGuiView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1F41FD1A5CA008A1B2D /* MissionInfoGuiView.h */; };
+		3AE6F1FD1FD1A9B7008A1B2D /* RadiantApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1FB1FD1A9B7008A1B2D /* RadiantApp.cpp */; };
+		3AE6F2011FD1AB24008A1B2D /* missioninfoeditdialog.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3AE6F2001FD1AB24008A1B2D /* missioninfoeditdialog.xrc */; };
+		3AE6F2021FD1AB66008A1B2D /* missioninfoeditdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F2001FD1AB24008A1B2D /* missioninfoeditdialog.xrc */; };
+		3AE6F2031FD1ACAD008A1B2D /* missioninfoeditdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F2001FD1AB24008A1B2D /* missioninfoeditdialog.xrc */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
 		3AEBDCA31E506C930062D9AF /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC9B1E5069A60062D9AF /* CommandSystem.cpp */; };
@@ -925,12 +943,8 @@
 		3AEBE36D1E50E2940062D9AF /* Gui.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE3461E50E2940062D9AF /* Gui.h */; };
 		3AEBE36E1E50E2940062D9AF /* GuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE3471E50E2940062D9AF /* GuiManager.cpp */; };
 		3AEBE36F1E50E2940062D9AF /* GuiManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE3481E50E2940062D9AF /* GuiManager.h */; };
-		3AEBE3701E50E2940062D9AF /* GuiRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE3491E50E2940062D9AF /* GuiRenderer.cpp */; };
-		3AEBE3711E50E2940062D9AF /* GuiRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE34A1E50E2940062D9AF /* GuiRenderer.h */; };
 		3AEBE3721E50E2940062D9AF /* GuiScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE34B1E50E2940062D9AF /* GuiScript.cpp */; };
 		3AEBE3731E50E2940062D9AF /* GuiScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE34C1E50E2940062D9AF /* GuiScript.h */; };
-		3AEBE3741E50E2940062D9AF /* GuiView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE34D1E50E2940062D9AF /* GuiView.cpp */; };
-		3AEBE3751E50E2940062D9AF /* GuiView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE34E1E50E2940062D9AF /* GuiView.h */; };
 		3AEBE3761E50E2940062D9AF /* GuiWindowDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE34F1E50E2940062D9AF /* GuiWindowDef.cpp */; };
 		3AEBE3771E50E2940062D9AF /* GuiWindowDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE3501E50E2940062D9AF /* GuiWindowDef.h */; };
 		3AEBE3781E50E2940062D9AF /* RenderableCharacterBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE3511E50E2940062D9AF /* RenderableCharacterBatch.cpp */; };
@@ -2311,6 +2325,7 @@
 			dstPath = Resources/ui;
 			dstSubfolderSpec = 16;
 			files = (
+				3AE6F2021FD1AB66008A1B2D /* missioninfoeditdialog.xrc in CopyFiles */,
 				3AE6F1C71F4978AB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */,
 				3AEBE51A1E522A510062D9AF /* aboutdialog.xrc in CopyFiles */,
 				3AEBE51B1E522A510062D9AF /* addpropertydialog.xrc in CopyFiles */,
@@ -2620,6 +2635,7 @@
 			dstPath = Contents/Resources/ui;
 			dstSubfolderSpec = 1;
 			files = (
+				3AE6F2031FD1ACAD008A1B2D /* missioninfoeditdialog.xrc in CopyFiles */,
 				3AE6F1B71F496CDB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */,
 				3AF475571E634D70006B26C2 /* aboutdialog.xrc in CopyFiles */,
 				3AF475581E634D70006B26C2 /* addpropertydialog.xrc in CopyFiles */,
@@ -3048,6 +3064,22 @@
 		3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WavefrontExporter.h; path = ../../plugins/model/WavefrontExporter.h; sourceTree = SOURCE_ROOT; };
 		3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArchiveVisitor.h; path = ../../plugins/vfspk3/ArchiveVisitor.h; sourceTree = SOURCE_ROOT; };
 		3AE6F1DA1F6E953F008A1B2D /* prey.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = prey.game; path = ../../install/games/prey.game; sourceTree = SOURCE_ROOT; };
+		3AE6F1DD1FD1A500008A1B2D /* igui.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = igui.h; path = ../../include/igui.h; sourceTree = "<group>"; };
+		3AE6F1DE1FD1A529008A1B2D /* GuiRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiRenderer.cpp; path = ../../libs/wxutil/preview/GuiRenderer.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1DF1FD1A529008A1B2D /* GuiRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiRenderer.h; path = ../../libs/wxutil/preview/GuiRenderer.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1E01FD1A529008A1B2D /* GuiView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiView.cpp; path = ../../libs/wxutil/preview/GuiView.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1E11FD1A529008A1B2D /* GuiView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiView.h; path = ../../libs/wxutil/preview/GuiView.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1EA1FD1A58A008A1B2D /* GuiExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiExpression.cpp; path = ../../plugins/dm.gui/gui/GuiExpression.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1EB1FD1A58A008A1B2D /* GuiExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiExpression.h; path = ../../plugins/dm.gui/gui/GuiExpression.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1EE1FD1A5CA008A1B2D /* DarkmodTxt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DarkmodTxt.cpp; path = ../../plugins/dm.editing/DarkmodTxt.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1EF1FD1A5CA008A1B2D /* DarkmodTxt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DarkmodTxt.h; path = ../../plugins/dm.editing/DarkmodTxt.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1F11FD1A5CA008A1B2D /* MissionInfoEditDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MissionInfoEditDialog.cpp; path = ../../plugins/dm.editing/MissionInfoEditDialog.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1F21FD1A5CA008A1B2D /* MissionInfoEditDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MissionInfoEditDialog.h; path = ../../plugins/dm.editing/MissionInfoEditDialog.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1F31FD1A5CA008A1B2D /* MissionInfoGuiView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MissionInfoGuiView.cpp; path = ../../plugins/dm.editing/MissionInfoGuiView.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1F41FD1A5CA008A1B2D /* MissionInfoGuiView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MissionInfoGuiView.h; path = ../../plugins/dm.editing/MissionInfoGuiView.h; sourceTree = SOURCE_ROOT; };
+		3AE6F1FB1FD1A9B7008A1B2D /* RadiantApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RadiantApp.cpp; path = ../../radiant/RadiantApp.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F1FC1FD1A9B7008A1B2D /* RadiantApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RadiantApp.h; path = ../../radiant/RadiantApp.h; sourceTree = SOURCE_ROOT; };
+		3AE6F2001FD1AB24008A1B2D /* missioninfoeditdialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = missioninfoeditdialog.xrc; path = ../../install/ui/missioninfoeditdialog.xrc; sourceTree = SOURCE_ROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
@@ -3588,12 +3620,8 @@
 		3AEBE3461E50E2940062D9AF /* Gui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Gui.h; path = ../../plugins/dm.gui/gui/Gui.h; sourceTree = SOURCE_ROOT; };
 		3AEBE3471E50E2940062D9AF /* GuiManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiManager.cpp; path = ../../plugins/dm.gui/gui/GuiManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE3481E50E2940062D9AF /* GuiManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiManager.h; path = ../../plugins/dm.gui/gui/GuiManager.h; sourceTree = SOURCE_ROOT; };
-		3AEBE3491E50E2940062D9AF /* GuiRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiRenderer.cpp; path = ../../plugins/dm.gui/gui/GuiRenderer.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBE34A1E50E2940062D9AF /* GuiRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiRenderer.h; path = ../../plugins/dm.gui/gui/GuiRenderer.h; sourceTree = SOURCE_ROOT; };
 		3AEBE34B1E50E2940062D9AF /* GuiScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiScript.cpp; path = ../../plugins/dm.gui/gui/GuiScript.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE34C1E50E2940062D9AF /* GuiScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiScript.h; path = ../../plugins/dm.gui/gui/GuiScript.h; sourceTree = SOURCE_ROOT; };
-		3AEBE34D1E50E2940062D9AF /* GuiView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiView.cpp; path = ../../plugins/dm.gui/gui/GuiView.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBE34E1E50E2940062D9AF /* GuiView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiView.h; path = ../../plugins/dm.gui/gui/GuiView.h; sourceTree = SOURCE_ROOT; };
 		3AEBE34F1E50E2940062D9AF /* GuiWindowDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuiWindowDef.cpp; path = ../../plugins/dm.gui/gui/GuiWindowDef.cpp; sourceTree = SOURCE_ROOT; };
 		3AEBE3501E50E2940062D9AF /* GuiWindowDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuiWindowDef.h; path = ../../plugins/dm.gui/gui/GuiWindowDef.h; sourceTree = SOURCE_ROOT; };
 		3AEBE3511E50E2940062D9AF /* RenderableCharacterBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderableCharacterBatch.cpp; path = ../../plugins/dm.gui/gui/RenderableCharacterBatch.cpp; sourceTree = SOURCE_ROOT; };
@@ -4949,6 +4977,10 @@
 		3A0120071E50278400A62BC1 /* preview */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1DE1FD1A529008A1B2D /* GuiRenderer.cpp */,
+				3AE6F1DF1FD1A529008A1B2D /* GuiRenderer.h */,
+				3AE6F1E01FD1A529008A1B2D /* GuiView.cpp */,
+				3AE6F1E11FD1A529008A1B2D /* GuiView.h */,
 				3A0120081E50278400A62BC1 /* ModelPreview.cpp */,
 				3A0120091E50278400A62BC1 /* ModelPreview.h */,
 				3A01200A1E50278400A62BC1 /* ParticlePreview.cpp */,
@@ -6254,6 +6286,12 @@
 		3AEBE28F1E50E1660062D9AF /* dm.editing */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1EE1FD1A5CA008A1B2D /* DarkmodTxt.cpp */,
+				3AE6F1EF1FD1A5CA008A1B2D /* DarkmodTxt.h */,
+				3AE6F1F11FD1A5CA008A1B2D /* MissionInfoEditDialog.cpp */,
+				3AE6F1F21FD1A5CA008A1B2D /* MissionInfoEditDialog.h */,
+				3AE6F1F31FD1A5CA008A1B2D /* MissionInfoGuiView.cpp */,
+				3AE6F1F41FD1A5CA008A1B2D /* MissionInfoGuiView.h */,
 				3AEBE3161E50E2700062D9AF /* AIEditingPanel.cpp */,
 				3AEBE3171E50E2700062D9AF /* AIEditingPanel.h */,
 				3AEBE3181E50E2700062D9AF /* AIHeadChooserDialog.cpp */,
@@ -6391,16 +6429,14 @@
 		3AEBE3441E50E2940062D9AF /* gui */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F1EA1FD1A58A008A1B2D /* GuiExpression.cpp */,
+				3AE6F1EB1FD1A58A008A1B2D /* GuiExpression.h */,
 				3AEBE3451E50E2940062D9AF /* Gui.cpp */,
 				3AEBE3461E50E2940062D9AF /* Gui.h */,
 				3AEBE3471E50E2940062D9AF /* GuiManager.cpp */,
 				3AEBE3481E50E2940062D9AF /* GuiManager.h */,
-				3AEBE3491E50E2940062D9AF /* GuiRenderer.cpp */,
-				3AEBE34A1E50E2940062D9AF /* GuiRenderer.h */,
 				3AEBE34B1E50E2940062D9AF /* GuiScript.cpp */,
 				3AEBE34C1E50E2940062D9AF /* GuiScript.h */,
-				3AEBE34D1E50E2940062D9AF /* GuiView.cpp */,
-				3AEBE34E1E50E2940062D9AF /* GuiView.h */,
 				3AEBE34F1E50E2940062D9AF /* GuiWindowDef.cpp */,
 				3AEBE3501E50E2940062D9AF /* GuiWindowDef.h */,
 				3AEBE3511E50E2940062D9AF /* RenderableCharacterBatch.cpp */,
@@ -6541,7 +6577,7 @@
 		3AEBE4E31E5229AB0062D9AF /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */,
+				3AE6F2001FD1AB24008A1B2D /* missioninfoeditdialog.xrc */,
 				3AEBE4E51E5229DC0062D9AF /* aboutdialog.xrc */,
 				3AEBE4E71E5229DC0062D9AF /* addpropertydialog.xrc */,
 				3AEBE4E91E5229DC0062D9AF /* camwnd.xrc */,
@@ -6550,6 +6586,7 @@
 				3AEBE4EF1E5229DC0062D9AF /* conversationeditor.xrc */,
 				3AEBE4F11E5229DC0062D9AF /* difficultyeditor.xrc */,
 				3AEBE4F31E5229DC0062D9AF /* entityclasschooser.xrc */,
+				3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */,
 				3AEBE4F51E5229DC0062D9AF /* filterdialog.xrc */,
 				3AEBE4F71E5229DC0062D9AF /* filtereditor.xrc */,
 				3AEBE4F91E5229DC0062D9AF /* findandreplacedialog.xrc */,
@@ -6616,7 +6653,6 @@
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBE4B61E50EFAD0062D9AF /* Resources */,
 				3AF7430F1E4F861A003465B5 /* brush */,
 				3AF743371E4F861A003465B5 /* camera */,
 				3AF7434C1E4F861A003465B5 /* clipper */,
@@ -6630,11 +6666,14 @@
 				3AF743D11E4F861A003465B5 /* patch */,
 				3AF743E71E4F861A003465B5 /* precompiled.cpp */,
 				3AF743E81E4F861A003465B5 /* precompiled.h */,
+				3AE6F1FB1FD1A9B7008A1B2D /* RadiantApp.cpp */,
+				3AE6F1FC1FD1A9B7008A1B2D /* RadiantApp.h */,
 				3AF743E91E4F861A003465B5 /* RadiantModule.cpp */,
 				3AF743EA1E4F861A003465B5 /* RadiantModule.h */,
 				3AF743EB1E4F861A003465B5 /* RadiantThreadManager.cpp */,
 				3AF743EC1E4F861A003465B5 /* RadiantThreadManager.h */,
 				3AF743ED1E4F861A003465B5 /* render */,
+				3AEBE4B61E50EFAD0062D9AF /* Resources */,
 				3AF744121E4F861A003465B5 /* selection */,
 				3AF744701E4F861B003465B5 /* settings */,
 				3AF744831E4F861B003465B5 /* textool */,
@@ -6680,6 +6719,7 @@
 				3AF475F11E6BEE89006B26C2 /* igrid.h */,
 				3AF475F21E6BEE89006B26C2 /* igroupdialog.h */,
 				3AF475F31E6BEE89006B26C2 /* igroupnode.h */,
+				3AE6F1DD1FD1A500008A1B2D /* igui.h */,
 				3AF475F41E6BEE89006B26C2 /* iimage.h */,
 				3AF475F51E6BEE89006B26C2 /* iinteractiveview.h */,
 				3AF475F61E6BEE89006B26C2 /* ilayer.h */,
@@ -7894,6 +7934,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A0120331E50278400A62BC1 /* DirChooser.h in Headers */,
+				3AE6F1E81FD1A529008A1B2D /* GuiView.h in Headers */,
 				3A0120381E50278400A62BC1 /* FileChooser.h in Headers */,
 				3A0120521E50278400A62BC1 /* PanedPosition.h in Headers */,
 				3A0120431E50278400A62BC1 /* IconTextMenuItem.h in Headers */,
@@ -7940,6 +7981,7 @@
 				3A0120581E50278400A62BC1 /* ParticlePreview.h in Headers */,
 				3A0120341E50278400A62BC1 /* EntryAbortedException.h in Headers */,
 				3A01203C1E50278400A62BC1 /* GLFont.h in Headers */,
+				3AE6F1E41FD1A529008A1B2D /* GuiRenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8370,12 +8412,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AE6F1D91F6E91A7008A1B2D /* ArchiveVisitor.h in Headers */,
+				3AE6F1E91FD1A529008A1B2D /* GuiView.h in Headers */,
 				3AEBE2611E50DFDF0062D9AF /* UnixPath.h in Headers */,
 				3AEBE2601E50DFDF0062D9AF /* SortedFilenames.h in Headers */,
 				3AEBE25F1E50DFDF0062D9AF /* FileVisitor.h in Headers */,
 				3AEBE25E1E50DFDF0062D9AF /* Doom3FileSystem.h in Headers */,
 				3AEBE25C1E50DFDF0062D9AF /* DirectoryArchive.h in Headers */,
 				3AEBE2631E50DFDF0062D9AF /* vfspk3.h in Headers */,
+				3AE6F1E51FD1A529008A1B2D /* GuiRenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8420,9 +8464,12 @@
 				3AEBE3431E50E2700062D9AF /* SpawnargReplacer.h in Headers */,
 				3AEBE3421E50E2700062D9AF /* SpawnargLinkedSpinButton.h in Headers */,
 				3AEBE3411E50E2700062D9AF /* SpawnargLinkedCheckbox.h in Headers */,
+				3AE6F1F81FD1A5CA008A1B2D /* MissionInfoEditDialog.h in Headers */,
 				3AEBE33A1E50E2700062D9AF /* DeprecatedEclassCollector.h in Headers */,
 				3AEBE3401E50E2700062D9AF /* ShaderReplacer.h in Headers */,
 				3AEBE3371E50E2700062D9AF /* AIVocalSetPreview.h in Headers */,
+				3AE6F1F61FD1A5CA008A1B2D /* DarkmodTxt.h in Headers */,
+				3AE6F1FA1FD1A5CA008A1B2D /* MissionInfoGuiView.h in Headers */,
 				3AEBE33C1E50E2700062D9AF /* FixupMap.h in Headers */,
 				3AEBE3331E50E2700062D9AF /* AIHeadPropertyEditor.h in Headers */,
 				3AEBE33E1E50E2700062D9AF /* FixupMapDialog.h in Headers */,
@@ -8449,10 +8496,9 @@
 				3AEBE3881E50E2940062D9AF /* TextViewInfoDialog.h in Headers */,
 				3AEBE38A1E50E2940062D9AF /* XData.h in Headers */,
 				3AEBE3771E50E2940062D9AF /* GuiWindowDef.h in Headers */,
-				3AEBE3751E50E2940062D9AF /* GuiView.h in Headers */,
+				3AE6F1ED1FD1A58A008A1B2D /* GuiExpression.h in Headers */,
 				3AEBE3871E50E2940062D9AF /* ReadableReloader.h in Headers */,
 				3AEBE3791E50E2940062D9AF /* RenderableCharacterBatch.h in Headers */,
-				3AEBE3711E50E2940062D9AF /* GuiRenderer.h in Headers */,
 				3AEBE3731E50E2940062D9AF /* GuiScript.h in Headers */,
 				3AEBE3861E50E2940062D9AF /* ReadablePopulator.h in Headers */,
 				3AEBE37B1E50E2940062D9AF /* RenderableText.h in Headers */,
@@ -9467,6 +9513,7 @@
 			files = (
 				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
 				3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */,
+				3AE6F2011FD1AB24008A1B2D /* missioninfoeditdialog.xrc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9509,10 +9556,12 @@
 				3A0120661E50278400A62BC1 /* VFSTreePopulator.cpp in Sources */,
 				3A0120471E50278400A62BC1 /* MenuItemAccelerator.cpp in Sources */,
 				3A01206A1E50278400A62BC1 /* WindowPosition.cpp in Sources */,
+				3AE6F1E21FD1A529008A1B2D /* GuiRenderer.cpp in Sources */,
 				3A0120641E50278400A62BC1 /* TreeView.cpp in Sources */,
 				3A0120591E50278400A62BC1 /* RenderPreview.cpp in Sources */,
 				3A01202E1E50278400A62BC1 /* MessageBox.cpp in Sources */,
 				3A0120371E50278400A62BC1 /* FileChooser.cpp in Sources */,
+				3AE6F1E61FD1A529008A1B2D /* GuiView.cpp in Sources */,
 				3A01202A1E50278400A62BC1 /* Dialog.cpp in Sources */,
 				3A0120681E50278400A62BC1 /* TransientWindow.cpp in Sources */,
 				3A0120451E50278400A62BC1 /* PopupMenu.cpp in Sources */,
@@ -9975,7 +10024,10 @@
 				3AEBE3361E50E2700062D9AF /* AIVocalSetPreview.cpp in Sources */,
 				3AEBE33D1E50E2700062D9AF /* FixupMapDialog.cpp in Sources */,
 				3AEBE3341E50E2700062D9AF /* AIVocalSetChooserDialog.cpp in Sources */,
+				3AE6F1F71FD1A5CA008A1B2D /* MissionInfoEditDialog.cpp in Sources */,
+				3AE6F1F91FD1A5CA008A1B2D /* MissionInfoGuiView.cpp in Sources */,
 				3AEBE3301E50E2700062D9AF /* AIHeadChooserDialog.cpp in Sources */,
+				3AE6F1F51FD1A5CA008A1B2D /* DarkmodTxt.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9989,13 +10041,12 @@
 				3AEBE37D1E50E2940062D9AF /* Variable.cpp in Sources */,
 				3AEBE3811E50E2940062D9AF /* plugin.cpp in Sources */,
 				3AEBE38D1E50E2940062D9AF /* XDataSelector.cpp in Sources */,
-				3AEBE3741E50E2940062D9AF /* GuiView.cpp in Sources */,
 				3AEBE3721E50E2940062D9AF /* GuiScript.cpp in Sources */,
+				3AE6F1EC1FD1A58A008A1B2D /* GuiExpression.cpp in Sources */,
 				3AEBE36C1E50E2940062D9AF /* Gui.cpp in Sources */,
 				3AEBE3781E50E2940062D9AF /* RenderableCharacterBatch.cpp in Sources */,
 				3AEBE37A1E50E2940062D9AF /* RenderableText.cpp in Sources */,
 				3AEBE37F1E50E2940062D9AF /* GuiSelector.cpp in Sources */,
-				3AEBE3701E50E2940062D9AF /* GuiRenderer.cpp in Sources */,
 				3AEBE36E1E50E2940062D9AF /* GuiManager.cpp in Sources */,
 				3AEBE3841E50E2940062D9AF /* ReadableGuiView.cpp in Sources */,
 				3AEBE38F1E50E2940062D9AF /* XdFileChooserDialog.cpp in Sources */,
@@ -10224,6 +10275,7 @@
 				3AF745FB1E4F861B003465B5 /* LanguageManager.cpp in Sources */,
 				3AF745D01E4F861B003465B5 /* OpenGLModule.cpp in Sources */,
 				3AF7464C1E4F861C003465B5 /* PatchInspector.cpp in Sources */,
+				3AE6F1FD1FD1A9B7008A1B2D /* RadiantApp.cpp in Sources */,
 				3AF745C31E4F861B003465B5 /* precompiled.cpp in Sources */,
 				3AF745A51E4F861B003465B5 /* MapPosition.cpp in Sources */,
 				3AF7458E1E4F861B003465B5 /* Console.cpp in Sources */,
