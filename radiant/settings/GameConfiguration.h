@@ -3,6 +3,7 @@
 #include "igame.h"
 #include "registry/registry.h"
 #include "os/path.h"
+#include "os/file.h"
 
 namespace game
 {
@@ -45,6 +46,32 @@ public:
 		registry::setValue(RKEY_ENGINE_PATH, enginePath);
 		registry::setValue(RKEY_MOD_PATH, modPath);
 		registry::setValue(RKEY_MOD_BASE_PATH, modBasePath);
+	}
+
+	// Returns true if the paths in this config are pointing to valid OS folders
+	bool pathsValid() const
+	{
+		if (!os::fileOrDirExists(enginePath))
+		{
+			// Engine path doesn't exist
+			return false;
+		}
+
+		// Check the mod base path, if appropriate
+		if (!modBasePath.empty() && !os::fileOrDirExists(modBasePath))
+		{
+			// Mod base name is not empty, but folder doesnt' exist
+			return false;
+		}
+
+		// Check the mod path, if appropriate
+		if (!modPath.empty() && !os::fileOrDirExists(modPath))
+		{
+			// Mod name is not empty, but mod folder doesnt' exist
+			return false;
+		}
+
+		return true; // all paths ok
 	}
 };
 

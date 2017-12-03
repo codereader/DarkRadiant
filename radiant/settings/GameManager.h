@@ -36,17 +36,11 @@ private:
 private:
     void observeKey(const std::string& key);
 
-   // Set the map and prefab file paths from the current game information
-   void setMapAndPrefabPaths(const std::string& baseGamePath);
+	// Set the map and prefab file paths from the current game information
+	void setMapAndPrefabPaths(const std::string& baseGamePath);
 
-	/** greebo: Returns TRUE if the engine path exists and
-	 * 			the fs_game (if it is non-empty) exists as well.
-	 */
-	bool settingsValid() const;
-
-	/** greebo: Adds the EnginePath and fs_game widgets to the Preference dialog
-	 */
-	void constructPreferences();
+	// greebo: Loads the paths from the registry and constructs a few secondary paths.
+	void initialiseConfig();
 
 public:
 	Manager();
@@ -86,11 +80,6 @@ public:
 	 */
 	const std::string& getFSGameBase() const override;
 
-	/** greebo: Initialises the engine path from the settings in the registry.
-	 * 			If nothing is found, the game file is queried.
-	 */
-	void initEnginePath();
-
 	void showGameSetupDialog(const cmd::ArgumentList& args);
 
 	/** greebo: Returns the current Game (shared_ptr).
@@ -100,11 +89,12 @@ public:
 	// Get the list of available games, sorted by their index
 	const GameList& getSortedGameList() override;
 
-	/** greebo: Loads the game files and the saved settings.
-	 * 			If no saved game setting is found, the user
-	 * 			is asked to enter the relevant information in a Dialog.
+	/** 
+	 * greebo: Loads the game type from the saved settings.
+	 * Tries to fall back to a reasonable default. Afterwards, the
+	 * _config.gameType member is properly filled in.
 	 */
-	void initialise(const std::string& appPath);
+	void initialiseGameType();
 
 	/** greebo: Scans the "games/" subfolder for .game description foles.
 	 */

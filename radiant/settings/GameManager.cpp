@@ -81,9 +81,16 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalCommandSystem().addCommand("ProjectSettings", std::bind(&Manager::showGameSetupDialog, this, std::placeholders::_1));
 
-	initialise(ctx.getRuntimeDataPath());
+	// Scan the <applicationpath>/games folder for .game files
+	loadGameFiles(ctx.getRuntimeDataPath());
 
-	initEnginePath();
+	// Check if there's a saved game type in the registry,
+	// try to setup a default if nothing is found.
+	initialiseGameType();
+
+	// Check validity of the saved game configuration 
+	// and invoke the UI if it's not a valid one.
+	initialiseConfig();
 }
 
 const std::string& Manager::getFSGame() const
@@ -123,30 +130,8 @@ const Manager::GameList& Manager::getSortedGameList()
 	return _sortedGames;
 }
 
-void Manager::constructPreferences()
+void Manager::initialiseGameType()
 {
-#if 0
-	IPreferencePage& page = GetPreferenceSystem().getPage(_("Game"));
-
-	ComboBoxValueList gameList;
-
-	for (const IGamePtr& game : _sortedGames)
-	{
-		gameList.push_back(game->getKeyValue("name"));
-	}
-
-	page.appendCombo(_("Select a Game:"), RKEY_GAME_TYPE, gameList, true);
-	page.appendPathEntry(_("Engine Path"), RKEY_ENGINE_PATH, true);
-	page.appendEntry(_("Mod (fs_game)"), RKEY_FS_GAME);
-	page.appendEntry(_("Mod Base (fs_game_base, optional)"), RKEY_FS_GAME_BASE);
-#endif
-}
-
-void Manager::initialise(const std::string& appPath)
-{
-	// Scan the <applicationpath>/games folder for .game files
-	loadGameFiles(appPath);
-
 	if (_games.empty())
 	{
 		// No game types available, bail out, the program would crash anyway on
@@ -156,13 +141,10 @@ void Manager::initialise(const std::string& appPath)
 		);
 	}
 
-	// Add the settings widgets to the Preference Dialog, we might need it
-	constructPreferences();
-
 	// Find the user's selected game from the XML registry, and attempt to find
 	// it in the set of available games.
-	std::string gameType = GlobalRegistry().get(RKEY_GAME_TYPE);
-	GameMap::iterator i = _games.find(gameType);
+	std::string gameType = registry::getValue<std::string>(RKEY_GAME_TYPE);
+	GameMap::const_iterator i = _games.find(gameType);
 
 	if (gameType.empty() || i == _games.end())
    {
@@ -177,11 +159,11 @@ void Manager::initialise(const std::string& appPath)
 			);
 		}
 
-		GlobalRegistry().set(RKEY_GAME_TYPE, _sortedGames.front()->getKeyValue("name"));
+		registry::setValue(RKEY_GAME_TYPE, _sortedGames.front()->getKeyValue("name"));
 	}
 
 	// Load the value from the registry, there should be one selected at this point
-	_config.gameType = GlobalRegistry().get(RKEY_GAME_TYPE);
+	_config.gameType = registry::getValue<std::string>(RKEY_GAME_TYPE);
 
 	// The game type should be selected now
 	if (!_config.gameType.empty())
@@ -218,12 +200,12 @@ std::string Manager::getUserEnginePath()
     return _config.enginePath;
 }
 
-void Manager::initEnginePath()
+void Manager::initialiseConfig()
 {
 	// Try to retrieve a saved value for the game setup
 	_config.loadFromRegistry();
 
-	if (!settingsValid())
+	if (!_config.pathsValid())
 	{
 		showGameSetupDialog(cmd::ArgumentList());
 	}
@@ -245,12 +227,6 @@ void Manager::initEnginePath()
 
 	// Force an update ((re-)initialises the VFS)
 	updateEnginePath(true);
-
-#if 0
-	// Add the note to the preference page
-	IPreferencePage& page = GetPreferenceSystem().getPage(_("Game"));
-	page.appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant\nfor the changes to take effect."));
-#endif
 }
 
 void Manager::showGameSetupDialog(const cmd::ArgumentList& args)
@@ -272,31 +248,6 @@ void Manager::observeKey(const std::string& key)
 	GlobalRegistry().signalForKey(key).connect(
         sigc::bind(sigc::mem_fun(this, &Manager::updateEnginePath), false)
     );
-}
-
-bool Manager::settingsValid() const
-{
-	if (os::fileOrDirExists(_config.enginePath)) 
-	{
-		// Check the mod base path, if appropriate
-		if (!_config.modBasePath.empty() && !os::fileOrDirExists(_config.modBasePath))
-		{
-			// Mod base name is not empty, but folder doesnt' exist
-			return false;
-		}
-
-		// Check the mod path, if appropriate
-		if (!_config.modPath.empty() && !os::fileOrDirExists(_config.modPath))
-		{
-			// Mod name is not empty, but mod folder doesnt' exist
-			return false;
-		}
-
-		return true; // all settings there
-	}
-
-	// Engine path doesn't exist
-	return false;
 }
 
 void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
