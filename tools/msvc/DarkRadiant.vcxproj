@@ -642,6 +642,7 @@
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiant\selection\SingleItemSelector.h" />
+    <ClInclude Include="..\..\radiant\settings\GameConfiguration.h" />
     <ClInclude Include="..\..\radiant\settings\PreferenceItemBase.h" />
     <ClInclude Include="..\..\radiant\settings\PreferenceItems.h" />
     <ClInclude Include="..\..\radiant\settings\PreferencePage.h" />

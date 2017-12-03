@@ -5,10 +5,13 @@
 #include <set>
 #include "string/case_conv.h"
 
+namespace vfs
+{
+
 /**
- * Adaptor class used in GlobalFileSystem().foreachFile(). 
- * It's filtering out the files matching the defined extension only. 
- * Passes the filename to the VisitorFunc given in its constructor. 
+ * Adaptor class used in GlobalFileSystem().foreachFile().
+ * It's filtering out the files matching the defined extension only.
+ * Passes the filename to the VisitorFunc given in its constructor.
  * The directory part is cut off the filename before it's passed to the VisitorFunc.
  * On top of that, this class maintains a list of visited files to avoid
  * hitting the same file twice (it might be present in more than one Archive).
@@ -17,7 +20,7 @@ class FileVisitor
 {
 private:
 	// The VirtualFileSystem::Visitor to call for each located file
-    VirtualFileSystem::VisitorFunc _visitorFunc;
+	VirtualFileSystem::VisitorFunc _visitorFunc;
 
 	// Set of already-visited files to avoid visiting the same file twice
 	std::set<std::string> _visitedFiles;
@@ -38,16 +41,16 @@ private:
 public:
 
 	// Constructor. Pass "*" as extension to have it visit all files.
-    FileVisitor(const VirtualFileSystem::VisitorFunc& visitorFunc,
-				const std::string& dir,
-				const std::string& ext)
-    : _visitorFunc(visitorFunc),
-      _directory(dir),
-      _extension(ext),
-	  _dirPrefixLength(_directory.length()),
-	  _visitAll(_extension == "*"),
-	  _extLength(_extension.length())
-    {}
+	FileVisitor(const VirtualFileSystem::VisitorFunc& visitorFunc,
+		const std::string& dir,
+		const std::string& ext)
+		: _visitorFunc(visitorFunc),
+		_directory(dir),
+		_extension(ext),
+		_dirPrefixLength(_directory.length()),
+		_visitAll(_extension == "*"),
+		_extLength(_extension.length())
+	{}
 
 	// Required visit function
 	void visit(const std::string& name)
@@ -91,9 +94,11 @@ public:
 			return; // already visited
 		}
 
-   		// Suitable file, call the callback and add to visited file set
+		// Suitable file, call the callback and add to visited file set
 		_visitorFunc(subname);
 
-   		_visitedFiles.insert(subname);
+		_visitedFiles.insert(subname);
 	}
 };
+
+}

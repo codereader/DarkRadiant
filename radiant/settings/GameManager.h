@@ -7,14 +7,17 @@
 #include "imodule.h"
 #include "iregistry.h"
 #include "Game.h"
+#include "GameConfiguration.h"
 
 namespace game
 {
 
-/** greebo: The Manager class for keeping track
- * 			of the possible games and the current game.
- */
-class Manager : public IGameManager
+/** 
+* greebo: The Manager class for keeping track of all the available 
+* game types and the current game and path setup.
+*/
+class Manager : 
+	public IGameManager
 {
 public:
 	// The map containing the named Game objects
@@ -27,24 +30,8 @@ private:
 	// Map of indexed games
 	GameList _sortedGames;
 
-    // The name of the current game, e.g. "Doom 3"
-	std::string _currentGameName;
-
-	// The current engine path
-	std::string _enginePath;
-
-	// The "userengine" path (where the fs_game is stored)
-	// this is ~/.doom3/<fs_game> in linux, and <enginepath>/<fs_game> in Win32
-	std::string _modBasePath;
-
-	// The "mod mod" path (where the fs_game_base is stored)
-	// this is ~/.doom3/<fs_game_base> in linux, and <enginepath>/<fs_game_base> in Win32
-	std::string _modPath;
-
-	// The sorted list of VFS search paths (valid after module initialisation)
-	PathList _vfsSearchPaths;
-
-	bool _enginePathInitialised;
+	// The currently active game configuration
+	GameConfiguration _config;
 
 private:
     void observeKey(const std::string& key);
@@ -56,12 +43,6 @@ private:
 	 * 			the fs_game (if it is non-empty) exists as well.
 	 */
 	bool settingsValid() const;
-
-	/** 
-	 * DerSaidin: Adds a path to the VFS search list, skipping any duplicates.
-	 * Note that the order of search paths must be preserved.
-	 */
-	void addVFSSearchPath(const std::string &path);
 
 	/** greebo: Adds the EnginePath and fs_game widgets to the Preference dialog
 	 */
@@ -109,6 +90,8 @@ public:
 	 * 			If nothing is found, the game file is queried.
 	 */
 	void initEnginePath();
+
+	void showGameSetupDialog(const cmd::ArgumentList& args);
 
 	/** greebo: Returns the current Game (shared_ptr).
 	 */

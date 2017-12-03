@@ -1890,6 +1890,9 @@
     <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPage.h">
       <Filter>src\ui\prefdialog</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\GameConfiguration.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
