@@ -20,10 +20,6 @@ private:
 	wxTextCtrl* _fsGameBaseEntry;
 	wxutil::PathEntry* _enginePathEntry;
 
-	std::string _enginePath;
-	std::string _modBasePath;
-	std::string _modPath;
-
 public:
 	GameSetupPageIdTech(wxWindow* parent, const game::IGamePtr& game);
 
@@ -32,10 +28,6 @@ public:
 	const char* getType() override;
 	void validateSettings() override;
 	void onPageShown() override;
-
-	std::string getEnginePath() override;
-	std::string getModBasePath() override;
-	std::string getModPath() override;
 
 private:
 	void constructPaths();

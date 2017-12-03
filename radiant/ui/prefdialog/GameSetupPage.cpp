@@ -10,7 +10,17 @@ namespace ui
 GameSetupPage::GameSetupPage(wxWindow* parent, const game::IGamePtr& game) :
 	wxPanel(parent, wxID_ANY),
 	_game(game)
-{}
+{
+	// Fill in the game type
+	// We use the "name" attribute of the game node instead of "type", 
+	// as multiple .game files seem to share the same game type.
+	_config.gameType = _game->getKeyValue("name");
+}
+
+const game::GameConfiguration& GameSetupPage::getConfiguration()
+{
+	return _config;
+}
 
 // Static instance
 GameSetupPage::GameSetupPages GameSetupPage::_registeredPages;

@@ -64,24 +64,24 @@ void GameSetupPageIdTech::validateSettings()
 	
 	std::string errorMsg;
 
-	if (!os::fileOrDirExists(_enginePath))
+	if (!os::fileOrDirExists(_config.enginePath))
 	{
 		// Engine path doesn't exist
-		errorMsg += fmt::format(_("Engine path \"{0}\" does not exist.\n"), _enginePath);
+		errorMsg += fmt::format(_("Engine path \"{0}\" does not exist.\n"), _config.enginePath);
 	}
 
 	// Check the mod base path, if not empty
-	if (!_modBasePath.empty() && !os::fileOrDirExists(_modBasePath))
+	if (!_config.modBasePath.empty() && !os::fileOrDirExists(_config.modBasePath))
 	{
 		// Mod base name is not empty, but folder doesnt' exist
-		errorMsg += fmt::format(_("The mod base path \"{0}\" does not exist.\n"), _modBasePath);
+		errorMsg += fmt::format(_("The mod base path \"{0}\" does not exist.\n"), _config.modBasePath);
 	}
 
 	// Check the mod path, if not empty
-	if (!_modPath.empty() && !os::fileOrDirExists(_modPath))
+	if (!_config.modPath.empty() && !os::fileOrDirExists(_config.modPath))
 	{
 		// Mod name is not empty, but mod folder doesnt' exist
-		errorMsg += fmt::format(_("The mod path \"{0}\" does not exist.\n"), _modPath);
+		errorMsg += fmt::format(_("The mod path \"{0}\" does not exist.\n"), _config.modPath);
 	}
 
 	if (!errorMsg.empty())
@@ -90,29 +90,14 @@ void GameSetupPageIdTech::validateSettings()
 	}
 }
 
-std::string GameSetupPageIdTech::getEnginePath()
-{
-	return _enginePath;
-}
-
-std::string GameSetupPageIdTech::getModBasePath()
-{
-	return _modBasePath;
-}
-
-std::string GameSetupPageIdTech::getModPath()
-{
-	return _modPath;
-}
-
 void GameSetupPageIdTech::onPageShown()
 {
 	// Load the values from the registry if the controls are still empty
 	if (_enginePathEntry->getValue().empty())
 	{
-		_enginePath = registry::getValue<std::string>(RKEY_ENGINE_PATH);
+		_config.enginePath = registry::getValue<std::string>(RKEY_ENGINE_PATH);
 
-		if (_enginePath.empty())
+		if (_config.enginePath.empty())
 		{
 			// No engine path known, but we have a valid game description
 			// Try to deduce the engine path from the Registry settings (Win32 only)
@@ -124,13 +109,13 @@ void GameSetupPageIdTech::onPageShown()
 
 			// Query the Windows Registry for a default installation path
 			// This will return "" for non-Windows environments
-			_enginePath = game::Win32Registry::getKeyValue(regKey, regValue);
+			_config.enginePath = game::Win32Registry::getKeyValue(regKey, regValue);
 
-			rMessage() << "GameManager: Windows Registry returned result: " << _enginePath << std::endl;
+			rMessage() << "GameManager: Windows Registry returned result: " << _config.enginePath << std::endl;
 		}
 
 		// If the engine path is still empty, consult the .game file for a fallback value
-		if (_enginePath.empty())
+		if (_config.enginePath.empty())
 		{
 			// No engine path set so far, search the game file for default values
 			const std::string ENGINEPATH_ATTRIBUTE =
@@ -145,21 +130,21 @@ void GameSetupPageIdTech::onPageShown()
 #endif
 				;
 
-			_enginePath = os::standardPathWithSlash(_game->getKeyValue(ENGINEPATH_ATTRIBUTE));
+			_config.enginePath = os::standardPathWithSlash(_game->getKeyValue(ENGINEPATH_ATTRIBUTE));
 		}
 
-		_enginePathEntry->setValue(_enginePath);
+		_enginePathEntry->setValue(_config.enginePath);
 	}
 
 	if (_fsGameEntry->GetValue().empty())
 	{
 		// Check if we have a valid mod path
-		_modPath = registry::getValue<std::string>(RKEY_MOD_PATH);
+		_config.modPath = registry::getValue<std::string>(RKEY_MOD_PATH);
 
-		if (!_modPath.empty())
+		if (!_config.modPath.empty())
 		{
 			// Extract the fs_game part from the absolute mod path, if possible
-			std::string fsGame = os::getRelativePath(_modPath, _enginePath);
+			std::string fsGame = os::getRelativePath(_config.modPath, _config.enginePath);
 			string::trim_right(fsGame, "/");
 
 			_fsGameEntry->SetValue(fsGame);
@@ -169,11 +154,11 @@ void GameSetupPageIdTech::onPageShown()
 	if (_fsGameBaseEntry->GetValue().empty())
 	{
 		// Check if we have a valid mod base path
-		_modBasePath = registry::getValue<std::string>(RKEY_MOD_BASE_PATH);
+		_config.modBasePath = registry::getValue<std::string>(RKEY_MOD_BASE_PATH);
 
-		if (!_modBasePath.empty())
+		if (!_config.modBasePath.empty())
 		{
-			std::string fsGameBase = os::getRelativePath(_modBasePath, _enginePath);
+			std::string fsGameBase = os::getRelativePath(_config.modBasePath, _config.enginePath);
 			string::trim_right(fsGameBase, "/");
 
 			// Extract the fs_game part from the absolute mod base path, if possible
@@ -184,10 +169,10 @@ void GameSetupPageIdTech::onPageShown()
 
 void GameSetupPageIdTech::constructPaths()
 {
-	_enginePath = _enginePathEntry->getEntryWidget()->GetValue().ToStdString();
+	_config.enginePath = _enginePathEntry->getEntryWidget()->GetValue().ToStdString();
 
 	// Make sure it's a well formatted path
-	_enginePath = os::standardPathWithSlash(_enginePath);
+	_config.enginePath = os::standardPathWithSlash(_config.enginePath);
 
 	// Load the fsGame and fsGameBase from the registry
 	std::string fsGame = _fsGameEntry->GetValue().ToStdString();
@@ -196,29 +181,29 @@ void GameSetupPageIdTech::constructPaths()
 	if (!fsGameBase.empty())
 	{
 		// greebo: #3480 check if the mod base path is absolute. If not, append it to the engine path
-		_modBasePath = fs::path(fsGameBase).is_absolute() ? fsGameBase : _enginePath + fsGameBase;
+		_config.modBasePath = fs::path(fsGameBase).is_absolute() ? fsGameBase : _config.enginePath + fsGameBase;
 
 		// Normalise the path as last step
-		_modBasePath = os::standardPathWithSlash(_modBasePath);
+		_config.modBasePath = os::standardPathWithSlash(_config.modBasePath);
 	}
 	else
 	{
 		// No fs_game_base, no mod base path
-		_modBasePath = "";
+		_config.modBasePath = "";
 	}
 
 	if (!fsGame.empty())
 	{
 		// greebo: #3480 check if the mod path is absolute. If not, append it to the engine path
-		_modPath = fs::path(fsGame).is_absolute() ? fsGame : _enginePath + fsGame;
+		_config.modPath = fs::path(fsGame).is_absolute() ? fsGame : _config.enginePath + fsGame;
 
 		// Normalise the path as last step
-		_modPath = os::standardPathWithSlash(_modPath);
+		_config.modPath = os::standardPathWithSlash(_config.modPath);
 	}
 	else
 	{
 		// No fs_game, no modpath
-		_modPath = "";
+		_config.modPath = "";
 	}
 }
 

@@ -175,9 +175,9 @@ void GameSetupDialog::onPageChanged(wxBookCtrlEvent& ev)
 	}
 }
 
-GameSetupDialog::Result GameSetupDialog::Show(const cmd::ArgumentList& args)
+game::GameConfiguration GameSetupDialog::Show(const cmd::ArgumentList& args)
 {
-	GameSetupDialog::Result result;
+	game::GameConfiguration result;
 
 	// greebo: Check if the mainframe module is already "existing". It might be
 	// uninitialised if this dialog is shown during DarkRadiant startup
@@ -188,19 +188,10 @@ GameSetupDialog::Result GameSetupDialog::Show(const cmd::ArgumentList& args)
 
 	if (dialog->ShowModal() == wxID_OK)
 	{
-		result.gameName = dialog->getSelectedGameType();
-
-		if (result.gameName.empty())
-		{
-			rError() << "Cannot save game paths, nothing selected" << std::endl;
-			return result;
-		}
-
 		GameSetupPage* page = dialog->getSelectedPage();
 
-		result.enginePath = page->getEnginePath();
-		result.modPath = page->getModPath();
-		result.modBasePath = page->getModBasePath();
+		// Copy the values from the page instance to our result
+		result = page->getConfiguration();
 	}
 	
 	dialog->Destroy();

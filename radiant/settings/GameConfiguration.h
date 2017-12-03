@@ -32,7 +32,7 @@ public:
 	// Loads the property values of this instance from the XMLRegistry
 	void loadFromRegistry()
 	{
-		gameType = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_GAME_TYPE));
+		gameType = registry::getValue<std::string>(RKEY_GAME_TYPE);
 		enginePath = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_ENGINE_PATH));
 		modPath = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_MOD_PATH));
 		modBasePath = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_MOD_BASE_PATH));

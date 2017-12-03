@@ -33,18 +33,8 @@ private:
 public:
 	std::string getSelectedGameType();
 
-	// The result after the user is done with the dialog
-	struct Result
-	{
-		std::string gameName;	 // Display name of the selected game
-		std::string enginePath;	 // selected engine path
-		std::string modPath;	 // selected mod path
-		std::string modBasePath; // selected mod base path
-	};
-
-	/** greebo: The command target to show the Game settings preferences.
-	*/
-	static Result Show(const cmd::ArgumentList& args);
+	// greebo: The command target to show the Game settings preferences.
+	static game::GameConfiguration Show(const cmd::ArgumentList& args);
 
 private:
 	GameSetupPage* getSelectedPage();

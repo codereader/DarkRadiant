@@ -5,6 +5,7 @@
 #include <functional>
 #include <map>
 #include <wx/panel.h>
+#include "settings/GameConfiguration.h"
 
 namespace ui
 {
@@ -31,6 +32,11 @@ protected:
 	// The game we're working on
 	game::IGamePtr _game;
 
+	// The configuration. This structure should be filled in
+	// as a result of this setup page. The game type member is 
+	// already assigned by this base class.
+	game::GameConfiguration _config;
+
 public:
 	GameSetupPage(wxWindow* parent, const game::IGamePtr& game);
 
@@ -47,17 +53,8 @@ public:
 	// Called by the owning GameSetupDialog when this page is selected
 	virtual void onPageShown() = 0;
 
-	// The following three path accessors are needed by the owning GameManager
-	// to continue setting up the VFS search order, map paths, etc.
-
-	// Returns the engine path as derived from the user's input
-	virtual std::string getEnginePath() = 0;
-
-	// Returns the mod base path as derived from the user's input
-	virtual std::string getModBasePath() = 0;
-
-	// Returns the mod path as derived from the user's input
-	virtual std::string getModPath() = 0;
+	// Accessor to the result config structure
+	virtual const game::GameConfiguration& getConfiguration();
 
 public:
 	typedef std::function<GameSetupPage*(wxWindow*, const game::IGamePtr&)> CreateInstanceFunc;

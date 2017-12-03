@@ -256,15 +256,11 @@ void Manager::initEnginePath()
 void Manager::showGameSetupDialog(const cmd::ArgumentList& args)
 {
 	// Paths not valid, ask the user to select something
-	ui::GameSetupDialog::Result result = ui::GameSetupDialog::Show(cmd::ArgumentList());
+	GameConfiguration result = ui::GameSetupDialog::Show(cmd::ArgumentList());
 
 	if (!result.enginePath.empty())
 	{
-		_config.gameType = result.gameName;
-		_config.enginePath = result.enginePath;
-		_config.modBasePath = result.modBasePath;
-		_config.modPath = result.modPath;
-
+		_config = result;
 		_config.saveToRegistry();
 	}
 }
