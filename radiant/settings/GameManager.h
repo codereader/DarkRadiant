@@ -34,8 +34,6 @@ private:
 	GameConfiguration _config;
 
 private:
-    void observeKey(const std::string& key);
-
 	// Set the map and prefab file paths from the current game information
 	void setMapAndPrefabPaths(const std::string& baseGamePath);
 
@@ -45,12 +43,8 @@ private:
 public:
 	Manager();
 
-	/** greebo: Reloads the setting from the registry and
-	 * 			triggers a VFS refresh if the path has changed.
-	 *
-	 * @forced: Forces the update (don't check whether anything has changed)
-	 */
-	void updateEnginePath(bool forced = false);
+	// greebo: Sets up the VFS paths and calls initialise()
+	void initialiseVfs();
 
 	/** greebo: Gets the engine path (e.g. /usr/local/doom3/).
 	 */

@@ -48,6 +48,14 @@ public:
 		registry::setValue(RKEY_MOD_BASE_PATH, modBasePath);
 	}
 
+	// Makes sure that all paths are normalised OS paths
+	void ensurePathsNormalised()
+	{
+		enginePath = os::standardPathWithSlash(enginePath);
+		modPath = os::standardPathWithSlash(modPath);
+		modBasePath = os::standardPathWithSlash(modBasePath);
+	}
+
 	// Returns true if the paths in this config are pointing to valid OS folders
 	bool pathsValid() const
 	{

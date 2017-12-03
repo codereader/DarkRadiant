@@ -79,7 +79,8 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 		}
 	}
 
-	GlobalCommandSystem().addCommand("ProjectSettings", std::bind(&Manager::showGameSetupDialog, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("ProjectSettings", 
+		std::bind(&Manager::showGameSetupDialog, this, std::placeholders::_1));
 
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles(ctx.getRuntimeDataPath());
@@ -220,13 +221,8 @@ void Manager::initialiseConfig()
 	registry::setValue(RKEY_FS_GAME, fsGame);
 	registry::setValue(RKEY_FS_GAME_BASE, fsGameBase);
 
-	// Register as observer, to get notified about future engine path changes
-	observeKey(RKEY_ENGINE_PATH);
-	observeKey(RKEY_FS_GAME);
-	observeKey(RKEY_FS_GAME_BASE);
-
-	// Force an update ((re-)initialises the VFS)
-	updateEnginePath(true);
+	// Instruct the VFS about our search paths
+	initialiseVfs();
 }
 
 void Manager::showGameSetupDialog(const cmd::ArgumentList& args)
@@ -239,15 +235,6 @@ void Manager::showGameSetupDialog(const cmd::ArgumentList& args)
 		_config = result;
 		_config.saveToRegistry();
 	}
-}
-
-void Manager::observeKey(const std::string& key)
-{
-    // Hide std::string signal argument, replace with bound false value for
-    // updateEnginePath().
-	GlobalRegistry().signalForKey(key).connect(
-        sigc::bind(sigc::mem_fun(this, &Manager::updateEnginePath), false)
-    );
 }
 
 void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
@@ -278,7 +265,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
    os::makeDirectory(mapPath);
 
    // Save the map path to the registry
-   GlobalRegistry().set(RKEY_MAP_PATH, mapPath);
+   registry::setValue(RKEY_MAP_PATH, mapPath);
 
    // Setup the prefab path
    std::string prefabPath = mapPath;
@@ -288,79 +275,68 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
    string::replace_last(prefabPath, mapFolder, pfbFolder);
    // Store the path into the registry
    rMessage() << "GameManager: Prefab path set to " << prefabPath << std::endl;
-   GlobalRegistry().set(RKEY_PREFAB_PATH, prefabPath);
+   registry::setValue(RKEY_PREFAB_PATH, prefabPath);
 }
 
-void Manager::updateEnginePath(bool forced)
+void Manager::initialiseVfs()
 {
-	// Clean the new path
-	std::string newEnginePath = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_ENGINE_PATH));
-	std::string newModPath = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_MOD_PATH));
-	std::string newModBasePath = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_MOD_BASE_PATH));
+	// Ensure that all paths are normalised
+	_config.ensurePathsNormalised();
 
-	// Only update if any settings were changed, or if this is a "forced" update
-	if (forced || newEnginePath != _config.enginePath || newModPath != _config.modPath || newModBasePath != _config.modBasePath)
+	// The list of paths which will be passed to the VFS init method
+	vfs::SearchPaths vfsSearchPaths;
+
+	vfs::VirtualFileSystem::ExtensionSet extensions;
+	string::split(extensions, currentGame()->getKeyValue("archivetypes"), " ");
+
+	if (!_config.modPath.empty())
 	{
-		// The list of paths which will be passed to the VFS init method
-		vfs::SearchPaths vfsSearchPaths;
-
-		vfs::VirtualFileSystem::ExtensionSet extensions;
-		string::split(extensions, currentGame()->getKeyValue("archivetypes"), " ");
-
-		// Set the new mod and engine paths
-		_config.modPath = newModPath;
-		_config.modBasePath = newModBasePath;
-		_config.enginePath = newEnginePath;
-
-		if (!_config.modPath.empty())
-		{
-			// We have a MOD, register this directory first
-			vfsSearchPaths.insertIfNotExists(_config.modPath);
+		// We have a MOD, register this directory first
+		vfsSearchPaths.insertIfNotExists(_config.modPath);
 
 #ifdef POSIX
-			std::string fsGame = os::getRelativePath(_config.modPath, _config.enginePath);
+		std::string fsGame = os::getRelativePath(_config.modPath, _config.enginePath);
 
-			// On Linux, the above was in ~/.doom3/, search the engine mod path as well
-			std::string baseModPath = os::standardPathWithSlash(_config.enginePath + fsGame);
-			vfsSearchPaths.insertIfNotExists(baseModPath);
+		// On Linux, the above was in ~/.doom3/, search the engine mod path as well
+		std::string baseModPath = os::standardPathWithSlash(_config.enginePath + fsGame);
+		vfsSearchPaths.insertIfNotExists(baseModPath);
 #endif
-		}
-
-		if (!_config.modBasePath.empty())
-		{
-			// We have a MOD base, register this directory as second
-			vfsSearchPaths.insertIfNotExists(_config.modBasePath);
-
-#ifdef POSIX
-			std::string fsGameBase = os::getRelativePath(_config.modBasePath, _config.enginePath);
-
-			// On Linux, the above was in ~/.doom3/, search the engine mod base path as well
-			std::string baseModPath = os::standardPathWithSlash(_config.enginePath + fsGameBase);
-			vfsSearchPaths.insertIfNotExists(baseModPath);
-#endif
-		}
-
-		// On UNIX this is the user-local enginepath, e.g. ~/.doom3/base/
-		// On Windows this will be the same as global engine path
-		std::string userBasePath = os::standardPathWithSlash(
-			getUserEnginePath() + // ~/.doom3
-			currentGame()->getKeyValue("basegame") // base
-		);
-		vfsSearchPaths.insertIfNotExists(userBasePath);
-
-		// Register the base game folder (/usr/local/games/doom3/<basegame>) last
-		// This will always be searched, but *after* the other paths
-		std::string baseGame = os::standardPathWithSlash(
-			_config.enginePath + currentGame()->getKeyValue("basegame")
-		);
-		vfsSearchPaths.insertIfNotExists(baseGame);
-
-		// Update map and prefab paths
-		setMapAndPrefabPaths(userBasePath);
-
-		// Initialise the filesystem, if we were initialised before
-		GlobalFileSystem().initialise(vfsSearchPaths, extensions);
 	}
+
+	if (!_config.modBasePath.empty())
+	{
+		// We have a MOD base, register this directory as second
+		vfsSearchPaths.insertIfNotExists(_config.modBasePath);
+
+#ifdef POSIX
+		std::string fsGameBase = os::getRelativePath(_config.modBasePath, _config.enginePath);
+
+		// On Linux, the above was in ~/.doom3/, search the engine mod base path as well
+		std::string baseModPath = os::standardPathWithSlash(_config.enginePath + fsGameBase);
+		vfsSearchPaths.insertIfNotExists(baseModPath);
+#endif
+	}
+
+	// On UNIX this is the user-local enginepath, e.g. ~/.doom3/base/
+	// On Windows this will be the same as global engine path
+	std::string userBasePath = os::standardPathWithSlash(
+		getUserEnginePath() + // ~/.doom3
+		currentGame()->getKeyValue("basegame") // base
+	);
+	vfsSearchPaths.insertIfNotExists(userBasePath);
+
+	// Register the base game folder (/usr/local/games/doom3/<basegame>) last
+	// This will always be searched, but *after* the other paths
+	std::string baseGame = os::standardPathWithSlash(
+		_config.enginePath + currentGame()->getKeyValue("basegame")
+	);
+	vfsSearchPaths.insertIfNotExists(baseGame);
+
+	// Update map and prefab paths
+	setMapAndPrefabPaths(userBasePath);
+
+	// Initialise the filesystem, if we were initialised before
+	GlobalFileSystem().initialise(vfsSearchPaths, extensions);
 }
 
 const Manager::PathList& Manager::getVFSSearchPaths() const 
@@ -368,7 +344,8 @@ const Manager::PathList& Manager::getVFSSearchPaths() const
 	return GlobalFileSystem().getVfsSearchPaths();
 }
 
-const std::string& Manager::getEnginePath() const {
+const std::string& Manager::getEnginePath() const
+{
 	return _config.enginePath;
 }
 
