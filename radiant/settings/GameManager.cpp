@@ -15,8 +15,8 @@
 #include "string/replace.h"
 #include "string/predicate.h"
 #include "string/split.h"
+#include "string/case_conv.h"
 
-#include "GameFileLoader.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
@@ -370,12 +370,28 @@ void Manager::loadGameFiles(const std::string& appPath)
 	std::string gamePath = appPath + "games/";
 	rMessage() << "GameManager: Scanning for game description files: " << gamePath << std::endl;
 
-	// Invoke a GameFileLoader functor on every file in the games/ dir.
-	GameFileLoader gameFileLoader(_games, gamePath);
-    
     try
     {
-        os::foreachItemInDirectory(gamePath, gameFileLoader);
+		// Invoke a functor on every file in the games/ dir, 
+		// function gets called with the file (without path)
+		os::foreachItemInDirectory(gamePath, [&](const fs::path& file)
+		{
+			if (string::to_lower_copy(file.extension().string()) != Game::FILE_EXTENSION)
+			{
+				// Don't process files not ending with .game
+				return;
+			}
+
+			// Create a new Game object
+			GamePtr newGame = std::make_shared<Game>(gamePath, file.filename().string());
+			std::string gameName = newGame->getName();
+
+			if (!gameName.empty())
+			{
+				// Store the game into the map
+				_games[gameName] = newGame;
+			}
+		});
 
         rMessage() << "GameManager: Found game definitions: " << std::endl;
 
@@ -410,7 +426,7 @@ void Manager::loadGameFiles(const std::string& appPath)
 }
 
 // The static module definition (self-registers)
-module::StaticModule<game::Manager> gameManagerModule;
+module::StaticModule<Manager> gameManagerModule;
 
 Manager& Manager::Instance()
 {

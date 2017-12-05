@@ -1,13 +1,9 @@
-#ifndef GAME_H_
-#define GAME_H_
+#pragma once
 
 #include "igame.h"
 
-namespace game {
-
-	namespace {
-		const std::string GAME_FILE_EXT = ".game";
-	}
+namespace game 
+{
 
 /**
  * \brief
@@ -23,36 +19,32 @@ namespace game {
 class Game :
 	public IGame
 {
+private:
 	std::string _enginePath;
 
    // user-friendly name
 	std::string _name;
 
-private:
-
-    // Return the string representing the XPath root for this game node
-    std::string getXPathRoot() const;
-
 public:
-	/** greebo: Constructor, call this with the filename relative to "games/"
-	 */
+	// Public constant
+	static const std::string FILE_EXTENSION;
+
+	// greebo: Constructor, call this with the filename relative to "games/"
 	Game(const std::string& path, const std::string& filename);
 
 	// Copy Constructor
 	Game(const Game& other);
 
-	// Destructor
-	virtual ~Game() {}
+	std::string getName() const;
 
     /* IGame implementation */
-	std::string getName() const;
-	std::string getKeyValue(const std::string& key) const;
-    xml::NodeList getLocalXPath(const std::string& path) const;
+	std::string getKeyValue(const std::string& key) const override;
+    xml::NodeList getLocalXPath(const std::string& path) const override;
 
+private:
+	// Return the string representing the XPath root for this game node
+	std::string getXPathRoot() const;
 };
-
 typedef std::shared_ptr<Game> GamePtr;
 
 } // namespace game
-
-#endif /*GAME_H_*/
