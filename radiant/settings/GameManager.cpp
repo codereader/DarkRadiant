@@ -3,10 +3,7 @@
 #include "i18n.h"
 #include "iregistry.h"
 #include "itextstream.h"
-#include "ifiletypes.h"
 #include "ifilesystem.h"
-#include "settings/PreferenceSystem.h"
-#include "ui/prefdialog/PrefDialog.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 
 #include "os/file.h"
@@ -53,8 +50,6 @@ const StringSet& Manager::getDependencies() const
 	if (_dependencies.empty()) 
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
@@ -64,21 +59,6 @@ const StringSet& Manager::getDependencies() const
 
 void Manager::initialiseModule(const ApplicationContext& ctx)
 {
-	// Read command line parameters, these override any existing preference setting
-	const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
-
-	for (const std::string& arg : args)
-	{
-		if (string::istarts_with(arg, "fs_game="))
-		{
-			GlobalRegistry().set(RKEY_FS_GAME, arg.substr(8));
-		}
-		else if (string::istarts_with(arg, "fs_game_base="))
-		{
-			GlobalRegistry().set(RKEY_FS_GAME_BASE, arg.substr(13));
-		}
-	}
-
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles(ctx.getRuntimeDataPath());
 
@@ -89,6 +69,37 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 	// Try to retrieve a persisted game setup from the registry
 	GameConfiguration config;
 	config.loadFromRegistry();
+
+	// Read command line parameters, these override any existing preference setting
+	// but only if we have a valid engine path
+	if (!config.enginePath.empty())
+	{
+		const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
+
+		for (const std::string& arg : args)
+		{
+			if (string::istarts_with(arg, "fs_game="))
+			{
+				rMessage() << "Found fs_game command line argument, overriding existing mod path." << std::endl;
+
+				// Remove starting slash from argument and convert to standard paths
+				config.modPath = os::standardPathWithSlash(config.enginePath) + 
+					os::standardPath(string::trim_left_copy(arg.substr(8), "/"));
+
+				registry::setValue(RKEY_MOD_PATH, config.modPath);
+			}
+			else if (string::istarts_with(arg, "fs_game_base="))
+			{
+				rMessage() << "Found fs_game_base command line argument, overriding existing mod base path." << std::endl;
+
+				// Remove starting slash from argument and convert to standard paths
+				config.modBasePath = os::standardPathWithSlash(config.enginePath) +
+					os::standardPath(string::trim_left_copy(arg.substr(13), "/"));
+
+				registry::setValue(RKEY_MOD_BASE_PATH, config.modBasePath);
+			}
+		}
+	}
 
 	// Check validity of the saved game configuration 
 	// and invoke the UI if it's not a valid one.

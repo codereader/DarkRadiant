@@ -970,6 +970,7 @@ const StringSet& Map::getDependencies() const
         _dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_FILETYPES);
     }
 
     return _dependencies;
