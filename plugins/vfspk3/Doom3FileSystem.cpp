@@ -96,6 +96,13 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
 
 void Doom3FileSystem::initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedExtensions)
 {
+	// Check if the new configuration is any different then the current one
+	if (!vfsSearchPaths.empty() && vfsSearchPaths == _vfsSearchPaths && allowedExtensions == _allowedExtensions)
+	{
+		rMessage() << "VFS::initialise call has identical arguments as current setup, won't do anything." << std::endl;
+		return;
+	}
+
 	if (!_vfsSearchPaths.empty())
 	{
 		// We've been initialised with some paths already, shutdown first
@@ -106,7 +113,7 @@ void Doom3FileSystem::initialise(const SearchPaths& vfsSearchPaths, const Extens
 	_allowedExtensions = allowedExtensions;
 
 	rMessage() << "Initialising filesystem using " << _vfsSearchPaths.size() << " paths " << std::endl;
-	rMessage() << "VFS Search Path priority is: " << string::join(_vfsSearchPaths, "\n- ") << std::endl;
+	rMessage() << "VFS Search Path priority is: \n- " << string::join(_vfsSearchPaths, "\n- ") << std::endl;
 
 	rMessage() << "Allowed PK4 Archive File Extensions: " << string::join(_allowedExtensions, ", ") << std::endl;
 
