@@ -12,6 +12,7 @@
 #include <wx/sizer.h>
 #include <wx/choicebk.h>
 #include <wx/stattext.h>
+#include "settings/GameManager.h"
 
 namespace ui
 {
@@ -125,13 +126,13 @@ std::string GameSetupDialog::getSelectedGameType()
 	return data->GetData().ToStdString();
 }
 
-void GameSetupDialog::onSave(wxCommandEvent& ev)
+void GameSetupDialog::tryEndModal(wxStandardID result)
 {
 	if (getSelectedGameType().empty())
 	{
 		// Ask the user to select a game type
-		wxutil::Messagebox::Show(_("Invalid Settings"), 
-			_("Please select a game type"), ui::IDialog::MESSAGE_CONFIRM, nullptr);
+		wxutil::Messagebox::Show(_("Invalid Settings"),
+			_("Please select a game type"), IDialog::MESSAGE_CONFIRM, nullptr);
 		return;
 	}
 
@@ -146,20 +147,27 @@ void GameSetupDialog::onSave(wxCommandEvent& ev)
 	{
 		std::string msg = fmt::format(_("Warning:\n{0}\nDo you want to correct these settings?"), ex.what());
 
-		if (wxutil::Messagebox::Show(_("Invalid Settings"), 
-				msg, ui::IDialog::MESSAGE_ASK, nullptr) == wxutil::Messagebox::RESULT_YES)
+		if (wxutil::Messagebox::Show(_("Invalid Settings"),
+			msg, IDialog::MESSAGE_ASK, nullptr) == wxutil::Messagebox::RESULT_YES)
 		{
 			// User wants to correct the settings, don't exit
 			return;
 		}
 	}
 
-	EndModal(wxID_OK);
+	EndModal(result);
+}
+
+void GameSetupDialog::onSave(wxCommandEvent& ev)
+{
+	// Confirm valid or invalid settings and end the dialog
+	tryEndModal(wxID_OK);
 }
 
 void GameSetupDialog::onCancel(wxCommandEvent& ev)
 {
-	EndModal(wxID_CANCEL);
+	// Confirm valid or invalid settings and end the dialog
+	tryEndModal(wxID_CANCEL);
 }
 
 void GameSetupDialog::onPageChanged(wxBookCtrlEvent& ev)
@@ -175,10 +183,8 @@ void GameSetupDialog::onPageChanged(wxBookCtrlEvent& ev)
 	}
 }
 
-game::GameConfiguration GameSetupDialog::Show(const cmd::ArgumentList& args)
+void GameSetupDialog::Show(const cmd::ArgumentList& args)
 {
-	game::GameConfiguration result;
-
 	// greebo: Check if the mainframe module is already "existing". It might be
 	// uninitialised if this dialog is shown during DarkRadiant startup
 	wxWindow* parent = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
@@ -190,13 +196,16 @@ game::GameConfiguration GameSetupDialog::Show(const cmd::ArgumentList& args)
 	{
 		GameSetupPage* page = dialog->getSelectedPage();
 
+		assert(page != nullptr);
+
 		// Copy the values from the page instance to our result
-		result = page->getConfiguration();
+		const game::GameConfiguration& config = page->getConfiguration();
+
+		// Apply the configuration (don't use the GlobalGameManager accessor yet)
+		game::Manager::Instance().applyConfig(config);
 	}
 	
 	dialog->Destroy();
-
-	return result;
 }
 
 }

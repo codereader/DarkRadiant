@@ -34,7 +34,7 @@ public:
 	std::string getSelectedGameType();
 
 	// greebo: The command target to show the Game settings preferences.
-	static game::GameConfiguration Show(const cmd::ArgumentList& args);
+	static void Show(const cmd::ArgumentList& args);
 
 private:
 	GameSetupPage* getSelectedPage();
@@ -46,6 +46,8 @@ private:
 	void onSave(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
 	void onPageChanged(wxBookCtrlEvent& ev);
+
+	void tryEndModal(wxStandardID result);
 };
 
 }

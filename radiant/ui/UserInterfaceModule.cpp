@@ -10,7 +10,7 @@
 
 #include "modulesystem/StaticModule.h"
 
-#include "settings/GameManager.h"
+#include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/overlay/OverlayDialog.h"
@@ -112,6 +112,7 @@ void UserInterfaceModule::registerUICommands()
 {
 	TexTool::registerCommands();
 
+	GlobalCommandSystem().addCommand("ProjectSettings", GameSetupDialog::Show);
 	GlobalCommandSystem().addCommand("Preferences", PrefDialog::ShowPrefDialog);
 
 	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);

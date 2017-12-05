@@ -79,9 +79,6 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 		}
 	}
 
-	GlobalCommandSystem().addCommand("ProjectSettings", 
-		std::bind(&Manager::showGameSetupDialog, this, std::placeholders::_1));
-
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles(ctx.getRuntimeDataPath());
 
@@ -89,9 +86,21 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 	// try to setup a default if nothing is found.
 	initialiseGameType();
 
+	// Try to retrieve a persisted game setup from the registry
+	GameConfiguration config;
+	config.loadFromRegistry();
+
 	// Check validity of the saved game configuration 
 	// and invoke the UI if it's not a valid one.
-	initialiseConfig();
+	if (config.pathsValid())
+	{
+		applyConfig(config);
+	}
+	else
+	{
+		// The UI will call applyConfig on its own
+		showGameSetupDialog();
+	}
 }
 
 const std::string& Manager::getFSGame() const
@@ -201,15 +210,17 @@ std::string Manager::getUserEnginePath()
     return _config.enginePath;
 }
 
-void Manager::initialiseConfig()
+void Manager::applyConfig(const GameConfiguration& config)
 {
-	// Try to retrieve a saved value for the game setup
-	_config.loadFromRegistry();
-
-	if (!_config.pathsValid())
+	if (!config.pathsValid())
 	{
-		showGameSetupDialog(cmd::ArgumentList());
+		rError() << "GameManager: Cannot apply invalid configuration, paths not valid" << std::endl;
+		return;
 	}
+
+	// Store the configuration, and persist it to the registry
+	_config = config;
+	_config.saveToRegistry();
 
 	// Extract the fs_game / fs_game_base settings from the mod path
 	std::string fsGame = os::getRelativePath(_config.modPath, _config.enginePath);
@@ -225,16 +236,10 @@ void Manager::initialiseConfig()
 	initialiseVfs();
 }
 
-void Manager::showGameSetupDialog(const cmd::ArgumentList& args)
+void Manager::showGameSetupDialog()
 {
 	// Paths not valid, ask the user to select something
-	GameConfiguration result = ui::GameSetupDialog::Show(cmd::ArgumentList());
-
-	if (!result.enginePath.empty())
-	{
-		_config = result;
-		_config.saveToRegistry();
-	}
+	ui::GameSetupDialog::Show(cmd::ArgumentList());
 }
 
 void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
@@ -393,7 +398,12 @@ void Manager::loadGameFiles(const std::string& appPath)
     }
 }
 
-} // namespace game
-
 // The static module definition (self-registers)
 module::StaticModule<game::Manager> gameManagerModule;
+
+Manager& Manager::Instance()
+{
+	return *gameManagerModule.getModule();
+}
+
+} // namespace game
