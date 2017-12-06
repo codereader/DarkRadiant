@@ -15,7 +15,6 @@
 #include "string/trim.h"
 #include "os/file.h"
 #include "os/path.h"
-#include "registry/Widgets.h"
 #include "settings/Win32Registry.h"
 
 namespace ui
@@ -174,7 +173,7 @@ void GameSetupPageIdTech::constructPaths()
 	// Make sure it's a well formatted path
 	_config.enginePath = os::standardPathWithSlash(_config.enginePath);
 
-	// Load the fsGame and fsGameBase from the registry
+	// Load the fsGame and fsGameBase values from the widgets
 	std::string fsGame = _fsGameEntry->GetValue().ToStdString();
 	std::string fsGameBase = _fsGameBaseEntry->GetValue().ToStdString();
 

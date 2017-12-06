@@ -119,6 +119,10 @@ darkradiant_SOURCES = main.cpp \
                       ui/common/EntityChooser.cpp \
                       ui/common/MapPreview.cpp \
                       ui/menu/FiltersMenu.cpp \
+                      ui/prefdialog/GameSetupDialog.cpp \
+					  ui/prefdialog/GameSetupPage.cpp \
+                      ui/prefdialog/GameSetupPageIdTech.cpp \
+					  ui/prefdialog/GameSetupPageTdm.cpp \
                       ui/prefdialog/PrefPage.cpp \
                       ui/prefdialog/PrefDialog.cpp \
 					  ui/prefdialog/PreferenceItem.cpp \

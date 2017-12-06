@@ -24,7 +24,8 @@
 >
   <!-- Settings used by the Game Setup Dialog -->
   <gameSetup>
-    <dialog type="idTechGeneric" /><!-- Indicates a default dialog showing options for engine path, fs_game and fs_game_base -->
+    <dialog type="TDM" /><!-- Indicates the TDM-style setup dialog showing options for engine path and mission -->
+    <missionFolder value="fms/" />
   </gameSetup>
   
 	<!-- Types of resource files which are used by this game -->
