@@ -34,7 +34,7 @@ GameSetupPageTdm::GameSetupPageTdm(wxWindow* parent, const game::IGamePtr& game)
 		wxSize(_enginePathEntry->getEntryWidget()->GetCharWidth() * 30, -1));
 
 	table->Add(new wxStaticText(this, wxID_ANY, _("Darkmod Path")), 0, wxALIGN_CENTRE_VERTICAL);
-	table->Add(_enginePathEntry, 0);
+	table->Add(_enginePathEntry, 1, wxEXPAND);
 
 	_enginePathEntry->getEntryWidget()->Bind(wxEVT_TEXT, [&](wxCommandEvent& ev)
 	{
@@ -44,7 +44,7 @@ GameSetupPageTdm::GameSetupPageTdm(wxWindow* parent, const game::IGamePtr& game)
 	_missionEntry = new wxComboBox(this, wxID_ANY);
 	_missionEntry->SetMinClientSize(wxSize(_missionEntry->GetCharWidth() * 30, -1));
 	table->Add(new wxStaticText(this, wxID_ANY, _("Mission")), 0, wxALIGN_CENTRE_VERTICAL);
-	table->Add(_missionEntry, 0);
+	table->Add(_missionEntry, 1, wxEXPAND);
 
 	// Determine the fms folder name where the missions are stored, defaults to "fms/"
 	_fmFolder = "fms/";
@@ -225,6 +225,9 @@ void GameSetupPageTdm::constructPaths()
 
 void GameSetupPageTdm::populateAvailableMissionPaths()
 {
+	// Remember the current value, the Clear() call will remove any text
+	std::string previousMissionValue = _missionEntry->GetValue().ToStdString();
+
 	_missionEntry->Clear();
 
 	fs::path enginePath = _enginePathEntry->getValue();
@@ -236,7 +239,7 @@ void GameSetupPageTdm::populateAvailableMissionPaths()
 
 	try
 	{
-		fs::path fmPath = enginePath / "fms";
+		fs::path fmPath = enginePath / _fmFolder;
 
 		os::foreachItemInDirectory(fmPath.string(), [&](const fs::path& fmFolder)
 		{
@@ -245,6 +248,9 @@ void GameSetupPageTdm::populateAvailableMissionPaths()
 	}
 	catch (const os::DirectoryNotFoundException&)
 	{}
+
+	// Keep the previous value after repopulation
+	_missionEntry->SetValue(previousMissionValue);
 }
 
 }

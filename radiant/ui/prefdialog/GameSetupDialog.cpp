@@ -30,9 +30,10 @@ GameSetupDialog::GameSetupDialog(wxWindow* parent) :
 	_book = new wxChoicebook(this, wxID_ANY);
 	_book->Connect(wxEVT_CHOICEBOOK_PAGE_CHANGED, wxBookCtrlEventHandler(GameSetupDialog::onPageChanged), nullptr, this);
 
-	wxStaticText* label = new wxStaticText(this, wxID_ANY, _("Please select a Game Type:"));
+	wxStaticText* label = new wxStaticText(this, wxID_ANY, _("Game Type:"));
+	label->SetFont(label->GetFont().Bold());
 
-	mainVbox->Add(label);
+	mainVbox->Add(label, 0, wxBOTTOM, 6);
 	mainVbox->Add(_book, 1, wxEXPAND);
 
 	wxBoxSizer* buttonHBox = new wxBoxSizer(wxHORIZONTAL);
@@ -54,6 +55,7 @@ GameSetupDialog::GameSetupDialog(wxWindow* parent) :
 
 	Layout();
 	Fit();
+	CenterOnParent();
 }
 
 void GameSetupDialog::initialiseControls()
