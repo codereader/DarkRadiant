@@ -136,7 +136,7 @@ void GameSetupDialog::tryEndModal(wxStandardID result)
 		return;
 	}
 
-	GameSetupPage* page = GameSetupDialog::getSelectedPage();
+	GameSetupPage* page = getSelectedPage();
 	assert(page != nullptr);
 
 	try
@@ -160,6 +160,14 @@ void GameSetupDialog::tryEndModal(wxStandardID result)
 
 void GameSetupDialog::onSave(wxCommandEvent& ev)
 {
+	GameSetupPage* page = getSelectedPage();
+	assert(page != nullptr);
+
+	if (!page->onPreSave())
+	{
+		return; // pre-save action returned false, prevent dialog close
+	}
+
 	// Confirm valid or invalid settings and end the dialog
 	tryEndModal(wxID_OK);
 }

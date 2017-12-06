@@ -28,6 +28,7 @@ public:
 
 	const char* getType() override;
 	void validateSettings() override;
+	bool onPreSave() override;
 	void onPageShown() override;
 
 private:

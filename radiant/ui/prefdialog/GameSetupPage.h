@@ -53,6 +53,13 @@ public:
 	// Called by the owning GameSetupDialog when this page is selected
 	virtual void onPageShown() = 0;
 
+	// Fired before the dialog is about to run the save routine
+	// Override and return false here to veto the event
+	virtual bool onPreSave()
+	{
+		return true; // return true by default, don't veto
+	}
+
 	// Accessor to the result config structure
 	virtual const game::GameConfiguration& getConfiguration();
 

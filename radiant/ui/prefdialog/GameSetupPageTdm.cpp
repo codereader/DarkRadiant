@@ -4,6 +4,7 @@
 #include "imodule.h"
 #include "igame.h"
 
+#include "wxutil/dialog/MessageBox.h"
 #include "wxutil/PathEntry.h"
 
 #include <fmt/format.h>
@@ -73,12 +74,60 @@ const char* GameSetupPageTdm::getType()
 	return TYPE();
 }
 
+bool GameSetupPageTdm::onPreSave()
+{
+	constructPaths();
+
+	// Validate the engine path first, otherwise we can't do anything
+	if (!os::fileOrDirExists(_config.enginePath))
+	{
+		return true; // proceed to normal validation routine, which will error out anyway
+	}
+
+	// Check the mod path (=mission path), if not empty
+	if (!_config.modPath.empty() && !os::fileOrDirExists(_config.modPath))
+	{
+		// Mod name is not empty, but mod folder doesnt' exist, this might indicate that 
+		// the user wants to start a new mission, ask him whether we should create the folder
+		std::string missionName = _missionEntry->GetValue().ToStdString();
+		std::string msg = fmt::format(_("The mission path {0} doesn't exist.\nDo you intend to start a "
+			"new mission and create that folder?"), _config.modPath);
+
+		if (wxutil::Messagebox::Show(fmt::format(_("Start a new Mission named {0}?"), missionName),
+			msg, IDialog::MESSAGE_ASK, wxGetTopLevelParent(this)) == wxutil::Messagebox::RESULT_YES)
+		{
+			// User wants to create the path
+			rMessage() << "Creating mission directory " << _config.modPath << std::endl;
+
+			// Create the directory
+			if (!os::makeDirectory(_config.modPath))
+			{
+				wxutil::Messagebox::Show(_("Could not create directory"), fmt::format(_("Failed to create the folder {0}"), _config.modPath),
+					IDialog::MessageType::MESSAGE_ERROR, wxGetTopLevelParent(this));
+
+				// Veto the event
+				return false;
+			}
+
+			// Everything went smooth, proceed to the normal save routine 
+			return true;
+		}
+		
+		// User doesn't want to create a new mission, so veto the save event
+		return false;
+	}
+
+	// Engine path is OK, mod path is empty or exists already
+	return true;
+}
+
 void GameSetupPageTdm::validateSettings()
 {
 	constructPaths();
 
 	std::string errorMsg;
 
+	// Validate the engine path first, otherwise we can't do anything
 	if (!os::fileOrDirExists(_config.enginePath))
 	{
 		// Engine path doesn't exist
@@ -88,7 +137,7 @@ void GameSetupPageTdm::validateSettings()
 	// Check the mod path (=mission path), if not empty
 	if (!_config.modPath.empty() && !os::fileOrDirExists(_config.modPath))
 	{
-		// Mod name is not empty, but mod folder doesnt' exist
+		// Path not existent => error
 		errorMsg += fmt::format(_("The mission path \"{0}\" does not exist.\n"), _config.modPath);
 	}
 
