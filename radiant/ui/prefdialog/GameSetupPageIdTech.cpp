@@ -27,6 +27,7 @@ GameSetupPageIdTech::GameSetupPageIdTech(wxWindow* parent, const game::IGamePtr&
 	_enginePathEntry(nullptr)
 {
 	wxFlexGridSizer* table = new wxFlexGridSizer(3, 2, wxSize(6, 6));
+	table->AddGrowableCol(1);
 	this->SetSizer(table);
 
 	_enginePathEntry = new wxutil::PathEntry(this, true);
@@ -34,17 +35,17 @@ GameSetupPageIdTech::GameSetupPageIdTech(wxWindow* parent, const game::IGamePtr&
 		wxSize(_enginePathEntry->getEntryWidget()->GetCharWidth() * 30, -1));
 
 	table->Add(new wxStaticText(this, wxID_ANY, _("Engine Path")), 0, wxALIGN_CENTRE_VERTICAL);
-	table->Add(_enginePathEntry, 0);
+	table->Add(_enginePathEntry, 1, wxEXPAND);
 
 	_fsGameEntry = new wxTextCtrl(this, wxID_ANY);
 	_fsGameEntry->SetMinClientSize(wxSize(_fsGameEntry->GetCharWidth() * 30, -1));
 	table->Add(new wxStaticText(this, wxID_ANY, _("Mod (fs_game)")), 0, wxALIGN_CENTRE_VERTICAL);
-	table->Add(_fsGameEntry, 0);
+	table->Add(_fsGameEntry, 1, wxEXPAND);
 
 	_fsGameBaseEntry = new wxTextCtrl(this, wxID_ANY);
 	_fsGameBaseEntry->SetMinClientSize(wxSize(_fsGameEntry->GetCharWidth() * 30, -1));
-	table->Add(new wxStaticText(this, wxID_ANY, _("Mod Base (fs_game_base, optional)")), 0, wxALIGN_CENTRE_VERTICAL);
-	table->Add(_fsGameBaseEntry, 0);
+	table->Add(new wxStaticText(this, wxID_ANY, _("Mod Base (fs_game_base)")), 0, wxALIGN_CENTRE_VERTICAL);
+	table->Add(_fsGameBaseEntry, 1, wxEXPAND);
 }
 
 const char* GameSetupPageIdTech::TYPE()

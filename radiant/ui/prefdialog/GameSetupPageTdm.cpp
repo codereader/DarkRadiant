@@ -27,13 +27,14 @@ GameSetupPageTdm::GameSetupPageTdm(wxWindow* parent, const game::IGamePtr& game)
 	_enginePathEntry(nullptr)
 {
 	wxFlexGridSizer* table = new wxFlexGridSizer(2, 2, wxSize(6, 6));
+	table->AddGrowableCol(1);
 	this->SetSizer(table);
 
 	_enginePathEntry = new wxutil::PathEntry(this, true);
 	_enginePathEntry->getEntryWidget()->SetMinClientSize(
 		wxSize(_enginePathEntry->getEntryWidget()->GetCharWidth() * 30, -1));
 
-	table->Add(new wxStaticText(this, wxID_ANY, _("Darkmod Path")), 0, wxALIGN_CENTRE_VERTICAL);
+	table->Add(new wxStaticText(this, wxID_ANY, _("DarkMod Path")), 0, wxALIGN_CENTRE_VERTICAL);
 	table->Add(_enginePathEntry, 1, wxEXPAND);
 
 	_enginePathEntry->getEntryWidget()->Bind(wxEVT_TEXT, [&](wxCommandEvent& ev)
@@ -41,8 +42,12 @@ GameSetupPageTdm::GameSetupPageTdm(wxWindow* parent, const game::IGamePtr& game)
 		populateAvailableMissionPaths();
 	});
 
+	_enginePathEntry->SetToolTip(_("This is the path where your TheDarkMod.exe is located."));
+
 	_missionEntry = new wxComboBox(this, wxID_ANY);
 	_missionEntry->SetMinClientSize(wxSize(_missionEntry->GetCharWidth() * 30, -1));
+	_missionEntry->SetToolTip(_("The FM folder name of the mission you want to work on, e.g. 'saintlucia'."));
+
 	table->Add(new wxStaticText(this, wxID_ANY, _("Mission")), 0, wxALIGN_CENTRE_VERTICAL);
 	table->Add(_missionEntry, 1, wxEXPAND);
 
@@ -132,6 +137,30 @@ void GameSetupPageTdm::validateSettings()
 	{
 		// Engine path doesn't exist
 		errorMsg += fmt::format(_("Engine path \"{0}\" does not exist.\n"), _config.enginePath);
+	}
+
+	// Check if the TheDarkMod.exe file is in the right place
+	fs::path darkmodExePath = _config.enginePath;
+
+	// No engine path set so far, search the game file for default values
+	const std::string ENGINE_EXECUTABLE_ATTRIBUTE =
+#if defined(WIN32)
+		"engine_win32"
+#elif defined(__linux__) || defined (__FreeBSD__)
+		"engine_linux"
+#elif defined(__APPLE__)
+		"engine_macos"
+#else
+#error "unknown platform"
+#endif
+		;
+
+	std::string exeName = _game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE);
+
+	if (!os::fileOrDirExists(darkmodExePath / exeName))
+	{
+		// engine executable not present
+		errorMsg += fmt::format(_("The engine executable \"{0}\" could not be found in the specified folder.\n"), exeName);
 	}
 
 	// Check the mod path (=mission path), if not empty

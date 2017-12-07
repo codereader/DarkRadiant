@@ -86,6 +86,19 @@ inline bool fileOrDirExists(const std::string& path)
 	}
 }
 
+/// \brief Returns true if the file or directory identified by \p path exists.
+inline bool fileOrDirExists(const fs::path& path)
+{
+	try
+	{
+		return fs::exists(path);
+	}
+	catch (fs::filesystem_error&)
+	{
+		return false;
+	}
+}
+
 // Returns the file size in bytes, or static_cast<uintmax_t>(-1)
 inline std::size_t getFileSize(const std::string& path)
 {
