@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "itextstream.h"
 #include "ifilesystem.h"
+#include "ipreferencesystem.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 
 #include "os/file.h"
@@ -52,6 +53,7 @@ const StringSet& Manager::getDependencies() const
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 	}
 
 	return _dependencies;
@@ -112,6 +114,10 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 		// The UI will call applyConfig on its own
 		showGameSetupDialog();
 	}
+
+	// Add a legacy note to the preference dialog for folks who are looking for the old settings page
+	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Game"));
+	page.appendLabel(_("This page has been moved!\nPlease use the game settings dialog in the menu: File &gt; Game/Project Setup..."));
 }
 
 const std::string& Manager::getFSGame() const

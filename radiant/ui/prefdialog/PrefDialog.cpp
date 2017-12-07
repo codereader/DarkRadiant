@@ -11,6 +11,7 @@
 #include <wx/treebook.h>
 #include "string/split.h"
 #include "string/join.h"
+#include "string/predicate.h"
 
 #include "settings/PreferenceSystem.h"
 #include "settings/PreferencePage.h"
@@ -106,6 +107,19 @@ void PrefDialog::showModal(const std::string& requestedPage)
 	if (!requestedPage.empty())
 	{
 		showPage(requestedPage);
+	}
+	else
+	{
+		// To prevent starting up with the "Game" node selected, 
+		// select the first page below the Settings path
+		for (const PageMap::value_type& p : _pages)
+		{
+			if (string::starts_with(p.first, _("Settings/")))
+			{
+				showPage(p.first);
+				break;
+			}
+		}
 	}
 
 	if (ShowModal() == wxID_OK)
