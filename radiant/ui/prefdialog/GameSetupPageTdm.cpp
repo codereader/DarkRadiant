@@ -42,7 +42,7 @@ GameSetupPageTdm::GameSetupPageTdm(wxWindow* parent, const game::IGamePtr& game)
 		populateAvailableMissionPaths();
 	});
 
-	_enginePathEntry->SetToolTip(_("This is the path where your TheDarkMod.exe is located."));
+	_enginePathEntry->getEntryWidget()->SetToolTip(_("This is the path where your TheDarkMod.exe is located."));
 
 	_missionEntry = new wxComboBox(this, wxID_ANY);
 	_missionEntry->SetMinClientSize(wxSize(_missionEntry->GetCharWidth() * 30, -1));

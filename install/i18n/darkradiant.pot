@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-10-27 14:59+0200\n"
+"POT-Creation-Date: 2017-12-09 14:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -774,65 +774,28 @@ msgstr ""
 msgid "ShaderClipboard is empty."
 msgstr ""
 
-#: ..\..\radiant\settings\GameManager.cpp:90
-msgid "GameManager: No game type selected, can't continue."
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:98
-#: ..\..\radiant\settings\GameManager.cpp:335
-#: ..\..\radiant\settings\GameManager.cpp:356
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:168
+#: ..\..\radiant\settings\GameManager.cpp:119
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:182
 msgid "Game"
 msgstr ""
 
-#: ..\..\radiant\settings\GameManager.cpp:107
-msgid "Select a Game:"
+#: ..\..\radiant\settings\GameManager.cpp:120
+msgid ""
+"This page has been moved!\n"
+"Please use the game settings dialog in the menu: File &gt; Game/Project "
+"Setup..."
 msgstr ""
 
-#: ..\..\radiant\settings\GameManager.cpp:108
-msgid "Engine Path"
+#: ..\..\radiant\settings\GameManager.cpp:149
+msgid "GameManager: No game type selected, can't continue."
 msgstr ""
 
-#: ..\..\radiant\settings\GameManager.cpp:109
-msgid "Mod (fs_game)"
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:110
-msgid "Mod Base (fs_game_base, optional)"
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:123
+#: ..\..\radiant\settings\GameManager.cpp:167
 msgid "GameManager: No valid game files found, can't continue."
 msgstr ""
 
-#: ..\..\radiant\settings\GameManager.cpp:162
+#: ..\..\radiant\settings\GameManager.cpp:203
 msgid "No game type selected."
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:258
-msgid "Engine path \"{0}\" does not exist.\n"
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:263
-msgid "The fs_game folder \"{0}\" does not exist.\n"
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:268
-msgid "The fs_game_base folder \"{0}\" does not exist.\n"
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:271
-msgid "Do you want to correct these settings?"
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:273
-msgid "Invalid Settings"
-msgstr ""
-
-#: ..\..\radiant\settings\GameManager.cpp:357
-msgid ""
-"<b>Note</b>: You will have to restart DarkRadiant\n"
-"for the changes to take effect."
 msgstr ""
 
 #: ..\..\radiant\settings\LanguageManager.cpp:102
@@ -2623,8 +2586,105 @@ msgstr ""
 msgid "<no description>"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:22
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:21
+msgid "Game Setup"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:33
+msgid "Game Type:"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:136
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:152
+msgid "Invalid Settings"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:137
+msgid "Please select a game type"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:150
+msgid ""
+"Warning:\n"
+"{0}\n"
+"Do you want to correct these settings?"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:37
+msgid "Engine Path"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:42
+msgid "Mod (fs_game)"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:47
+msgid "Mod Base (fs_game_base)"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:70
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:139
+msgid "Engine path \"{0}\" does not exist.\n"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:77
+msgid "The mod base path \"{0}\" does not exist.\n"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:84
+msgid "The mod path \"{0}\" does not exist.\n"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:37
+msgid "DarkMod Path"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:45
+msgid "This is the path where your TheDarkMod.exe is located."
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:49
+msgid ""
+"The FM folder name of the mission you want to work on, e.g. 'saintlucia'."
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:51
+msgid "Mission"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:98
+msgid ""
+"The mission path {0} doesn't exist.\n"
+"Do you intend to start a new mission and create that folder?"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:101
+msgid "Start a new Mission named {0}?"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:110
+msgid "Could not create directory"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:110
+msgid "Failed to create the folder {0}"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:163
+msgid ""
+"The engine executable \"{0}\" could not be found in the specified folder.\n"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:170
+msgid "The mission path \"{0}\" does not exist.\n"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:23
 msgid "DarkRadiant Preferences"
+msgstr ""
+
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:117
+msgid "Settings/"
 msgstr ""
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:42
@@ -2800,19 +2860,19 @@ msgstr ""
 msgid "Z-Axis Scale:"
 msgstr ""
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:38
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:39
 msgid "Create Layer..."
 msgstr ""
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:40
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:41
 msgid "Add to Layer..."
 msgstr ""
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:41
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:42
 msgid "Move to Layer..."
 msgstr ""
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:42
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:43
 msgid "Remove from Layer..."
 msgstr ""
 
@@ -4633,7 +4693,7 @@ msgid "Reload Particles"
 msgstr ""
 
 #: xml_file_content.cpp:20
-msgid "Select &Game..."
+msgid "&Game/Project Setup..."
 msgstr ""
 
 #: xml_file_content.cpp:21
