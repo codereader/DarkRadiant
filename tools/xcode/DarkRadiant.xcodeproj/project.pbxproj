@@ -395,6 +395,10 @@
 		3AE6F1D91F6E91A7008A1B2D /* ArchiveVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */; };
 		3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */ = {isa = PBXBuildFile; fileRef = 3AE6F1DA1F6E953F008A1B2D /* prey.game */; };
 		3AE6F1DC1F6E9560008A1B2D /* prey.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1DA1F6E953F008A1B2D /* prey.game */; };
+		3AE6F20C1FDC229F008A1B2D /* GameSetupDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2041FDC229F008A1B2D /* GameSetupDialog.cpp */; };
+		3AE6F20D1FDC229F008A1B2D /* GameSetupPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2061FDC229F008A1B2D /* GameSetupPage.cpp */; };
+		3AE6F20E1FDC229F008A1B2D /* GameSetupPageIdTech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2081FDC229F008A1B2D /* GameSetupPageIdTech.cpp */; };
+		3AE6F20F1FDC229F008A1B2D /* GameSetupPageTdm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F20A1FDC229F008A1B2D /* GameSetupPageTdm.cpp */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
 		3AEBDCA31E506C930062D9AF /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC9B1E5069A60062D9AF /* CommandSystem.cpp */; };
@@ -1566,7 +1570,6 @@
 		3AF745F61E4F861B003465B5 /* Texturable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7446B1E4F861B003465B5 /* Texturable.cpp */; };
 		3AF745F71E4F861B003465B5 /* TransformationVisitors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7446E1E4F861B003465B5 /* TransformationVisitors.cpp */; };
 		3AF745F81E4F861B003465B5 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744711E4F861B003465B5 /* Game.cpp */; };
-		3AF745F91E4F861B003465B5 /* GameFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744731E4F861B003465B5 /* GameFileLoader.cpp */; };
 		3AF745FA1E4F861B003465B5 /* GameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744751E4F861B003465B5 /* GameManager.cpp */; };
 		3AF745FB1E4F861B003465B5 /* LanguageManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744771E4F861B003465B5 /* LanguageManager.cpp */; };
 		3AF745FC1E4F861B003465B5 /* PreferencePage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7447B1E4F861B003465B5 /* PreferencePage.cpp */; };
@@ -3048,6 +3051,15 @@
 		3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WavefrontExporter.h; path = ../../plugins/model/WavefrontExporter.h; sourceTree = SOURCE_ROOT; };
 		3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArchiveVisitor.h; path = ../../plugins/vfspk3/ArchiveVisitor.h; sourceTree = SOURCE_ROOT; };
 		3AE6F1DA1F6E953F008A1B2D /* prey.game */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = prey.game; path = ../../install/games/prey.game; sourceTree = SOURCE_ROOT; };
+		3AE6F2041FDC229F008A1B2D /* GameSetupDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameSetupDialog.cpp; path = ../../radiant/ui/prefdialog/GameSetupDialog.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F2051FDC229F008A1B2D /* GameSetupDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameSetupDialog.h; path = ../../radiant/ui/prefdialog/GameSetupDialog.h; sourceTree = SOURCE_ROOT; };
+		3AE6F2061FDC229F008A1B2D /* GameSetupPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameSetupPage.cpp; path = ../../radiant/ui/prefdialog/GameSetupPage.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F2071FDC229F008A1B2D /* GameSetupPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameSetupPage.h; path = ../../radiant/ui/prefdialog/GameSetupPage.h; sourceTree = SOURCE_ROOT; };
+		3AE6F2081FDC229F008A1B2D /* GameSetupPageIdTech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameSetupPageIdTech.cpp; path = ../../radiant/ui/prefdialog/GameSetupPageIdTech.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F2091FDC229F008A1B2D /* GameSetupPageIdTech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameSetupPageIdTech.h; path = ../../radiant/ui/prefdialog/GameSetupPageIdTech.h; sourceTree = SOURCE_ROOT; };
+		3AE6F20A1FDC229F008A1B2D /* GameSetupPageTdm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameSetupPageTdm.cpp; path = ../../radiant/ui/prefdialog/GameSetupPageTdm.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F20B1FDC229F008A1B2D /* GameSetupPageTdm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameSetupPageTdm.h; path = ../../radiant/ui/prefdialog/GameSetupPageTdm.h; sourceTree = SOURCE_ROOT; };
+		3AE6F2101FDC2347008A1B2D /* GameConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameConfiguration.h; path = ../../radiant/settings/GameConfiguration.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
@@ -4248,8 +4260,6 @@
 		3AF7446F1E4F861B003465B5 /* TransformationVisitors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformationVisitors.h; path = ../../radiant/selection/TransformationVisitors.h; sourceTree = SOURCE_ROOT; };
 		3AF744711E4F861B003465B5 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../../radiant/settings/Game.cpp; sourceTree = SOURCE_ROOT; };
 		3AF744721E4F861B003465B5 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../../radiant/settings/Game.h; sourceTree = SOURCE_ROOT; };
-		3AF744731E4F861B003465B5 /* GameFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameFileLoader.cpp; path = ../../radiant/settings/GameFileLoader.cpp; sourceTree = SOURCE_ROOT; };
-		3AF744741E4F861B003465B5 /* GameFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameFileLoader.h; path = ../../radiant/settings/GameFileLoader.h; sourceTree = SOURCE_ROOT; };
 		3AF744751E4F861B003465B5 /* GameManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameManager.cpp; path = ../../radiant/settings/GameManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AF744761E4F861B003465B5 /* GameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameManager.h; path = ../../radiant/settings/GameManager.h; sourceTree = SOURCE_ROOT; };
 		3AF744771E4F861B003465B5 /* LanguageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LanguageManager.cpp; path = ../../radiant/settings/LanguageManager.cpp; sourceTree = SOURCE_ROOT; };
@@ -7318,10 +7328,9 @@
 		3AF744701E4F861B003465B5 /* settings */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F2101FDC2347008A1B2D /* GameConfiguration.h */,
 				3AF744711E4F861B003465B5 /* Game.cpp */,
 				3AF744721E4F861B003465B5 /* Game.h */,
-				3AF744731E4F861B003465B5 /* GameFileLoader.cpp */,
-				3AF744741E4F861B003465B5 /* GameFileLoader.h */,
 				3AF744751E4F861B003465B5 /* GameManager.cpp */,
 				3AF744761E4F861B003465B5 /* GameManager.h */,
 				3AF744771E4F861B003465B5 /* LanguageManager.cpp */,
@@ -7755,6 +7764,14 @@
 		3AF745491E4F861B003465B5 /* prefdialog */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F2041FDC229F008A1B2D /* GameSetupDialog.cpp */,
+				3AE6F2051FDC229F008A1B2D /* GameSetupDialog.h */,
+				3AE6F2061FDC229F008A1B2D /* GameSetupPage.cpp */,
+				3AE6F2071FDC229F008A1B2D /* GameSetupPage.h */,
+				3AE6F2081FDC229F008A1B2D /* GameSetupPageIdTech.cpp */,
+				3AE6F2091FDC229F008A1B2D /* GameSetupPageIdTech.h */,
+				3AE6F20A1FDC229F008A1B2D /* GameSetupPageTdm.cpp */,
+				3AE6F20B1FDC229F008A1B2D /* GameSetupPageTdm.h */,
 				3AF7454A1E4F861B003465B5 /* PrefDialog.cpp */,
 				3AF7454B1E4F861B003465B5 /* PrefDialog.h */,
 				3AF7454C1E4F861B003465B5 /* PreferenceItem.cpp */,
@@ -10138,6 +10155,7 @@
 				3AF745AC1E4F861B003465B5 /* RootNode.cpp in Sources */,
 				3AF746271E4F861B003465B5 /* EntityClassTreePopulator.cpp in Sources */,
 				3AF746301E4F861B003465B5 /* EmbeddedLayout.cpp in Sources */,
+				3AE6F20E1FDC229F008A1B2D /* GameSetupPageIdTech.cpp in Sources */,
 				3AF7459B1E4F861B003465B5 /* Traverse.cpp in Sources */,
 				3AF7463F1E4F861C003465B5 /* MaterialsList.cpp in Sources */,
 				3AF746061E4F861B003465B5 /* TexToolItem.cpp in Sources */,
@@ -10191,6 +10209,7 @@
 				3AF746501E4F861C003465B5 /* PrefDialog.cpp in Sources */,
 				3AF745F61E4F861B003465B5 /* Texturable.cpp in Sources */,
 				3AF746591E4F861C003465B5 /* FloatingOrthoView.cpp in Sources */,
+				3AE6F20C1FDC229F008A1B2D /* GameSetupDialog.cpp in Sources */,
 				3AF745E71E4F861B003465B5 /* ManipulatorComponents.cpp in Sources */,
 				3AF745961E4F861B003465B5 /* AasFileManager.cpp in Sources */,
 				3AF745EB1E4F861B003465B5 /* TranslateManipulator.cpp in Sources */,
@@ -10217,6 +10236,7 @@
 				3AF745CB1E4F861B003465B5 /* GLProgramFactory.cpp in Sources */,
 				3AF745C71E4F861B003465B5 /* ARBDepthFillProgram.cpp in Sources */,
 				3AF746221E4F861B003465B5 /* SkinPropertyEditor.cpp in Sources */,
+				3AE6F20D1FDC229F008A1B2D /* GameSetupPage.cpp in Sources */,
 				3AF746511E4F861C003465B5 /* PreferenceItem.cpp in Sources */,
 				3AF7463D1E4F861C003465B5 /* MediaBrowser.cpp in Sources */,
 				3AF746441E4F861C003465B5 /* MRUMenuItem.cpp in Sources */,
@@ -10241,6 +10261,7 @@
 				3AF746371E4F861B003465B5 /* TopLevelFrame.cpp in Sources */,
 				3AF745891E4F861B003465B5 /* ClipPoint.cpp in Sources */,
 				3AF745E01E4F861B003465B5 /* Clipboard.cpp in Sources */,
+				3AE6F20F1FDC229F008A1B2D /* GameSetupPageTdm.cpp in Sources */,
 				3AF7460B1E4F861B003465B5 /* CommandList.cpp in Sources */,
 				3AF746471E4F861C003465B5 /* OverlayDialog.cpp in Sources */,
 				3AF746161E4F861B003465B5 /* AnglePropertyEditor.cpp in Sources */,
@@ -10297,7 +10318,6 @@
 				3AF745EE1E4F861B003465B5 /* SelectionMouseTools.cpp in Sources */,
 				3AF7463B1E4F861C003465B5 /* ModelInfoTab.cpp in Sources */,
 				3AF746421E4F861C003465B5 /* ToolMappingDialog.cpp in Sources */,
-				3AF745F91E4F861B003465B5 /* GameFileLoader.cpp in Sources */,
 				3AF745761E4F861B003465B5 /* BrushNode.cpp in Sources */,
 				3AF745FD1E4F861B003465B5 /* PreferenceSystem.cpp in Sources */,
 				3AF745AE1E4F861B003465B5 /* ModelCache.cpp in Sources */,
