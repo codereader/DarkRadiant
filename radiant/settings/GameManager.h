@@ -54,12 +54,6 @@ public:
 	 */
 	const std::string& getModBasePath() const override;
 
-	// greebo: Accessor method for the fs_game parameter
-	const std::string& getFSGame() const override;
-
-	// greebo: Accessor method for the fs_game_base parameter
-	const std::string& getFSGameBase() const override;
-
 	// greebo: Returns the current Game (shared_ptr).
 	IGamePtr currentGame() override;
 

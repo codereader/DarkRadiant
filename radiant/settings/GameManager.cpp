@@ -120,16 +120,6 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 	page.appendLabel(_("This page has been moved!\nPlease use the game settings dialog in the menu: File &gt; Game/Project Setup..."));
 }
 
-const std::string& Manager::getFSGame() const
-{
-	return GlobalRegistry().get(RKEY_FS_GAME);
-}
-
-const std::string& Manager::getFSGameBase() const 
-{
-	return GlobalRegistry().get(RKEY_FS_GAME_BASE);
-}
-
 const std::string& Manager::getModPath() const
 {
 	// Return the fs_game path if available

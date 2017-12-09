@@ -67,12 +67,6 @@ public:
 	// engine path is returned, e.g. /usr/local/doom3 or c:\games\doom3
 	virtual std::string getUserEnginePath() = 0;
 
-	// Returns the setting for fs_game
-	virtual const std::string& getFSGame() const = 0;
-
-	// Returns the setting for fs_game_base (can be empty)
-	virtual const std::string& getFSGameBase() const = 0;
-
 	/**
 	 * greebo: Gets the mod path (e.g. ~/.doom3/gathers/).
 	 * Returns the mod base path if the mod path itself is empty.

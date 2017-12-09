@@ -31,16 +31,6 @@ std::string GameInterface::getModBasePath()
 	return GlobalGameManager().getModBasePath();
 }
 
-std::string GameInterface::getFSGame()
-{
-	return GlobalGameManager().getFSGame();
-}
-
-std::string GameInterface::getFSGameBase()
-{
-	return GlobalGameManager().getFSGameBase();
-}
-
 ScriptGame GameInterface::currentGame() 
 {
 	return ScriptGame(GlobalGameManager().currentGame());
@@ -70,8 +60,6 @@ void GameInterface::registerInterface(py::module& scope, py::dict& globals)
 	gameManager.def("getUserEnginePath", &GameInterface::getUserEnginePath);
 	gameManager.def("getModPath", &GameInterface::getModPath);
 	gameManager.def("getModBasePath", &GameInterface::getModBasePath);
-	gameManager.def("getFSGame", &GameInterface::getFSGame);
-	gameManager.def("getFSGameBase", &GameInterface::getFSGameBase);
 	gameManager.def("currentGame", &GameInterface::currentGame);
 	gameManager.def("getVFSSearchPaths", &GameInterface::getVFSSearchPaths);
 

@@ -27,8 +27,6 @@ public:
 	std::string getUserEnginePath();
 	std::string getModPath();
 	std::string getModBasePath();
-	std::string getFSGame();
-	std::string getFSGameBase();
 	ScriptGame currentGame();
 	PathList getVFSSearchPaths();
 
