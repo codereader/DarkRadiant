@@ -143,11 +143,13 @@ void Doom3ShaderSystem::ensureDefsLoaded()
     }
 }
 
-void Doom3ShaderSystem::onFileSystemInitialise() {
+void Doom3ShaderSystem::onFileSystemInitialise()
+{
 	realise();
 }
 
-void Doom3ShaderSystem::onFileSystemShutdown() {
+void Doom3ShaderSystem::onFileSystemShutdown()
+{
 	unrealise();
 }
 
