@@ -21,9 +21,9 @@ namespace shaders
  * \brief
  * Implementation of the MaterialManager for Doom 3 .
  */
-class Doom3ShaderSystem
-: public MaterialManager,
-  public VirtualFileSystem::Observer
+class Doom3ShaderSystem : 
+	public MaterialManager,
+	public vfs::VirtualFileSystem::Observer
 {
 	// The shaderlibrary stores all the known shaderdefinitions
 	// as well as the active shaders

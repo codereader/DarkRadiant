@@ -22,8 +22,10 @@
 #include "ifilesystem.h"
 #include "iregistry.h"
 #include "igame.h"
+#include "itextstream.h"
 
 #include "string/string.h"
+#include "string/join.h"
 #include "os/path.h"
 #include "os/dir.h"
 #include "moduleobservers.h"
@@ -37,313 +39,339 @@
 #include "SortedFilenames.h"
 #include "ArchiveVisitor.h"
 
-Doom3FileSystem::Doom3FileSystem()
-{}
+namespace vfs
+{
 
 void Doom3FileSystem::initDirectory(const std::string& inputPath)
 {
-    // greebo: Normalise path: Replace backslashes and ensure trailing slash
-    _directories.push_back(os::standardPathWithSlash(inputPath));
+	// greebo: Normalise path: Replace backslashes and ensure trailing slash
+	_directories.push_back(os::standardPathWithSlash(inputPath));
 
-    // Shortcut
-    const std::string& path = _directories.back();
+	// Shortcut
+	const std::string& path = _directories.back();
 
-    {
-        ArchiveDescriptor entry;
-        entry.name = path;
-        entry.archive = std::make_shared<DirectoryArchive>(path);
-        entry.is_pakfile = false;
+	{
+		ArchiveDescriptor entry;
+		entry.name = path;
+		entry.archive = std::make_shared<DirectoryArchive>(path);
+		entry.is_pakfile = false;
 
-        _archives.push_back(entry);
-    }
+		_archives.push_back(entry);
+	}
 
-    // Instantiate a new sorting container for the filenames
-    SortedFilenames filenameList;
+	// Instantiate a new sorting container for the filenames
+	SortedFilenames filenameList;
 
-    // Traverse the directory using the filename list as functor
-    try
-    {
-		os::foreachItemInDirectory(path, [&] (const fs::path& file)
+	// Traverse the directory using the filename list as functor
+	try
+	{
+		os::foreachItemInDirectory(path, [&](const fs::path& file)
 		{
 			// Just insert the name, it will get sorted correctly.
 			filenameList.insert(file.filename().string());
 		});
-    }
-    catch (os::DirectoryNotFoundException&)
-    {
-        rConsole() << "[vfs] Directory '" << path << "' not found." << std::endl;
-    }
-
-    if (filenameList.empty())
-    {
-        return; // nothing found
-    }
-
-    rMessage() << "[vfs] searched directory: " << path << std::endl;
-
-    // Get the ArchiveLoader and try to load each file
-    ArchiveLoader& archiveModule = GlobalArchive("PK4");
-
-    // add the entries to the vfs
-    for (const std::string& filename : filenameList)
+	}
+	catch (os::DirectoryNotFoundException&)
 	{
-        // Assemble the filename and try to load the archive
-        initPakFile(archiveModule, path + filename);
-    }
+		rConsole() << "[vfs] Directory '" << path << "' not found." << std::endl;
+	}
+
+	if (filenameList.empty())
+	{
+		return; // nothing found
+	}
+
+	rMessage() << "[vfs] Searched directory: " << path << std::endl;
+
+	// Get the ArchiveLoader and try to load each file
+	ArchiveLoader& archiveModule = GlobalArchive("PK4");
+
+	// add the entries to the vfs
+	for (const std::string& filename : filenameList)
+	{
+		// Assemble the filename and try to load the archive
+		initPakFile(archiveModule, path + filename);
+	}
 }
 
-void Doom3FileSystem::initialise()
+void Doom3FileSystem::initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedExtensions)
 {
-    rMessage() << "filesystem initialised" << std::endl;
+	// Check if the new configuration is any different then the current one
+	if (!vfsSearchPaths.empty() && vfsSearchPaths == _vfsSearchPaths && allowedExtensions == _allowedExtensions)
+	{
+		rMessage() << "VFS::initialise call has identical arguments as current setup, won't do anything." << std::endl;
+		return;
+	}
 
-    std::string extensions = GlobalGameManager().currentGame()->getKeyValue("archivetypes");
-    string::split(_allowedExtensions, extensions, " ");
+	if (!_vfsSearchPaths.empty())
+	{
+		// We've been initialised with some paths already, shutdown first
+		shutdown();
+	}
 
-    // Build list of dir extensions, e.g. pk4 -> pk4dir
-    for (const std::string& allowedExtension : _allowedExtensions)
-    {
-        _allowedExtensionsDir.insert(allowedExtension + "dir");
-    }
+	_vfsSearchPaths = vfsSearchPaths;
+	_allowedExtensions = allowedExtensions;
 
-    // Get the VFS search paths from the game manager
-    const game::IGameManager::PathList& paths = GlobalGameManager().getVFSSearchPaths();
+	rMessage() << "Initialising filesystem using " << _vfsSearchPaths.size() << " paths " << std::endl;
+	rMessage() << "VFS Search Path priority is: \n- " << string::join(_vfsSearchPaths, "\n- ") << std::endl;
 
-    // Initialise the paths, in the given order
-    for (const std::string& path : paths)
-    {
-        initDirectory(path);
-    }
+	rMessage() << "Allowed PK4 Archive File Extensions: " << string::join(_allowedExtensions, ", ") << std::endl;
 
-    for (Observer* observer : _observers)
-    {
-        observer->onFileSystemInitialise();
-    }
+	// Build list of dir extensions, e.g. pk4 -> pk4dir
+	for (const std::string& allowedExtension : _allowedExtensions)
+	{
+		_allowedExtensionsDir.insert(allowedExtension + "dir");
+	}
+
+	// Initialise the paths, in the given order
+	for (const std::string& path : _vfsSearchPaths)
+	{
+		initDirectory(path);
+	}
+
+	for (Observer* observer : _observers)
+	{
+		observer->onFileSystemInitialise();
+	}
 }
 
-void Doom3FileSystem::shutdown() 
+void Doom3FileSystem::shutdown()
 {
 	for (Observer* observer : _observers)
-    {
-        observer->onFileSystemShutdown();
-    }
+	{
+		observer->onFileSystemShutdown();
+	}
 
-    rMessage() << "filesystem shutdown" << std::endl;
-
-    _archives.clear();
+	_archives.clear();
 	_directories.clear();
+	_vfsSearchPaths.clear();
+	_allowedExtensions.clear();
+	_allowedExtensionsDir.clear();
+
+	rMessage() << "Filesystem shut down" << std::endl;
 }
 
 void Doom3FileSystem::addObserver(Observer& observer)
 {
-    _observers.insert(&observer);
+	_observers.insert(&observer);
 }
 
-void Doom3FileSystem::removeObserver(Observer& observer) 
+void Doom3FileSystem::removeObserver(Observer& observer)
 {
-    _observers.erase(&observer);
+	_observers.erase(&observer);
 }
 
 int Doom3FileSystem::getFileCount(const std::string& filename)
 {
-    int count = 0;
-    std::string fixedFilename(os::standardPathWithSlash(filename));
+	int count = 0;
+	std::string fixedFilename(os::standardPathWithSlash(filename));
 
-    for (const ArchiveDescriptor& descriptor : _archives)
+	for (const ArchiveDescriptor& descriptor : _archives)
 	{
-        if (descriptor.archive->containsFile(fixedFilename))
+		if (descriptor.archive->containsFile(fixedFilename))
 		{
-            ++count;
-        }
-    }
+			++count;
+		}
+	}
 
-    return count;
+	return count;
 }
 
 ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename)
 {
-    if (filename.find("\\") != std::string::npos) 
+	if (filename.find("\\") != std::string::npos)
 	{
-        rError() << "Filename contains backslash: " << filename << std::endl;
-        return ArchiveFilePtr();
-    }
+		rError() << "Filename contains backslash: " << filename << std::endl;
+		return ArchiveFilePtr();
+	}
 
 	for (const ArchiveDescriptor& descriptor : _archives)
 	{
-        ArchiveFilePtr file = descriptor.archive->openFile(filename);
+		ArchiveFilePtr file = descriptor.archive->openFile(filename);
 
-        if (file)
+		if (file)
 		{
-            return file;
-        }
-    }
+			return file;
+		}
+	}
 
-    // not found
-    return ArchiveFilePtr();
+	// not found
+	return ArchiveFilePtr();
 }
 
 ArchiveFilePtr Doom3FileSystem::openFileInAbsolutePath(const std::string& filename)
 {
-    std::shared_ptr<archive::DirectoryArchiveFile> file = 
+	std::shared_ptr<archive::DirectoryArchiveFile> file =
 		std::make_shared<archive::DirectoryArchiveFile>(filename, filename);
 
-    if (!file->failed())
-    {
-        return file;
-    }
+	if (!file->failed())
+	{
+		return file;
+	}
 
-    return ArchiveFilePtr();
+	return ArchiveFilePtr();
 }
 
 ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename)
 {
 	for (const ArchiveDescriptor& descriptor : _archives)
 	{
-        ArchiveTextFilePtr file = descriptor.archive->openTextFile(filename);
+		ArchiveTextFilePtr file = descriptor.archive->openTextFile(filename);
 
-        if (file)
+		if (file)
 		{
-            return file;
-        }
-    }
+			return file;
+		}
+	}
 
-    return ArchiveTextFilePtr();
+	return ArchiveTextFilePtr();
 }
 
 ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string& filename)
 {
-    std::shared_ptr<archive::DirectoryArchiveTextFile> file = 
+	std::shared_ptr<archive::DirectoryArchiveTextFile> file =
 		std::make_shared<archive::DirectoryArchiveTextFile>(filename, filename, filename);
 
-    if (!file->failed())
-    {
-        return file;
-    }
+	if (!file->failed())
+	{
+		return file;
+	}
 
-    return ArchiveTextFilePtr();
+	return ArchiveTextFilePtr();
 }
 
 void Doom3FileSystem::forEachFile(const std::string& basedir,
-                                  const std::string& extension,
-                                  const VisitorFunc& visitorFunc,
-                                  std::size_t depth)
+	const std::string& extension,
+	const VisitorFunc& visitorFunc,
+	std::size_t depth)
 {
-    // Construct our FileVisitor filtering out the right elements
-    FileVisitor fileVisitor(visitorFunc, basedir, extension);
+	// Construct our FileVisitor filtering out the right elements
+	FileVisitor fileVisitor(visitorFunc, basedir, extension);
 
 	// Construct an ArchiveVisitor filtering out the files only, and watching the recursion depth
 	ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
 
-    // Visit each Archive, applying the FileVisitor to each one (which in
-    // turn calls the callback for each matching file.
+	// Visit each Archive, applying the FileVisitor to each one (which in
+	// turn calls the callback for each matching file.
 	for (const ArchiveDescriptor& descriptor : _archives)
-    {
+	{
 		descriptor.archive->traverse(functor, basedir);
-    }
+	}
 }
 
 void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
-                                                const std::string& extension,
-                                                const VisitorFunc& visitorFunc,
-                                                std::size_t depth)
+	const std::string& extension,
+	const VisitorFunc& visitorFunc,
+	std::size_t depth)
 {
-    // Construct a temporary DirectoryArchive from the given path
-    DirectoryArchive tempArchive(os::standardPathWithSlash(path));
+	// Construct a temporary DirectoryArchive from the given path
+	DirectoryArchive tempArchive(os::standardPathWithSlash(path));
 
 	// Construct our FileVisitor filtering out the right elements
-    FileVisitor fileVisitor(visitorFunc, "", extension);
+	FileVisitor fileVisitor(visitorFunc, "", extension);
 
 	// Construct an ArchiveVisitor filtering out the files only, and watching the recursion depth
 	ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
 
-    tempArchive.traverse(functor, "/");
+	tempArchive.traverse(functor, "/");
 }
 
 std::string Doom3FileSystem::findFile(const std::string& name)
 {
 	for (const ArchiveDescriptor& descriptor : _archives)
 	{
-        if (!descriptor.is_pakfile && descriptor.archive->containsFile(name))
+		if (!descriptor.is_pakfile && descriptor.archive->containsFile(name))
 		{
-            return descriptor.name;
-        }
-    }
+			return descriptor.name;
+		}
+	}
 
-    return std::string();
+	return std::string();
 }
 
 std::string Doom3FileSystem::findRoot(const std::string& name)
 {
 	for (const ArchiveDescriptor& descriptor : _archives)
 	{
-        if (!descriptor.is_pakfile && path_equal_n(name.c_str(), descriptor.name.c_str(), descriptor.name.size()))
+		if (!descriptor.is_pakfile && path_equal_n(name.c_str(), descriptor.name.c_str(), descriptor.name.size()))
 		{
-            return descriptor.name;
-        }
-    }
+			return descriptor.name;
+		}
+	}
 
-    return std::string();
+	return std::string();
 }
 
 void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename)
 {
-    std::string fileExt(os::getExtension(filename));
-    string::to_lower(fileExt);
+	std::string fileExt(os::getExtension(filename));
+	string::to_lower(fileExt);
 
-    if (_allowedExtensions.find(fileExt) != _allowedExtensions.end())
-    {
-        // Matched extension for archive (e.g. "pk3", "pk4")
-        ArchiveDescriptor entry;
+	if (_allowedExtensions.find(fileExt) != _allowedExtensions.end())
+	{
+		// Matched extension for archive (e.g. "pk3", "pk4")
+		ArchiveDescriptor entry;
 
-        entry.name = filename;
-        entry.archive = archiveModule.openArchive(filename);
-        entry.is_pakfile = true;
-        _archives.push_back(entry);
+		entry.name = filename;
+		entry.archive = archiveModule.openArchive(filename);
+		entry.is_pakfile = true;
+		_archives.push_back(entry);
 
-        rMessage() << "[vfs] pak file: " << filename << std::endl;
-    }
-    else if (_allowedExtensionsDir.find(fileExt) != _allowedExtensionsDir.end())
-    {
-        // Matched extension for archive dir (e.g. "pk3dir", "pk4dir")
-        ArchiveDescriptor entry;
+		rMessage() << "[vfs] pak file: " << filename << std::endl;
+	}
+	else if (_allowedExtensionsDir.find(fileExt) != _allowedExtensionsDir.end())
+	{
+		// Matched extension for archive dir (e.g. "pk3dir", "pk4dir")
+		ArchiveDescriptor entry;
 
-        std::string path = os::standardPathWithSlash(filename);
-        entry.name = path;
-        entry.archive = std::make_shared<DirectoryArchive>(path);
-        entry.is_pakfile = false;
-        _archives.push_back(entry);
+		std::string path = os::standardPathWithSlash(filename);
+		entry.name = path;
+		entry.archive = std::make_shared<DirectoryArchive>(path);
+		entry.is_pakfile = false;
+		_archives.push_back(entry);
 
-        rMessage() << "[vfs] pak dir:  " << path << std::endl;
-    }
+		rMessage() << "[vfs] pak dir:  " << path << std::endl;
+	}
+}
+
+const SearchPaths& Doom3FileSystem::getVfsSearchPaths()
+{
+	// Should not be called before the list is initialised
+	if (_vfsSearchPaths.empty())
+	{
+		rConsole() << "Warning: VFS search paths not yet initialised." << std::endl;
+	}
+
+	return _vfsSearchPaths;
 }
 
 // RegisterableModule implementation
-const std::string& Doom3FileSystem::getName() const 
+const std::string& Doom3FileSystem::getName() const
 {
-    static std::string _name(MODULE_VIRTUALFILESYSTEM);
-    return _name;
+	static std::string _name(MODULE_VIRTUALFILESYSTEM);
+	return _name;
 }
 
 const StringSet& Doom3FileSystem::getDependencies() const
 {
-    static StringSet _dependencies;
+	static StringSet _dependencies;
 
-    if (_dependencies.empty())
+	if (_dependencies.empty())
 	{
-        _dependencies.insert(MODULE_ARCHIVE + "PK4");
-        _dependencies.insert(MODULE_GAMEMANAGER);
-    }
+		_dependencies.insert(MODULE_ARCHIVE + "PK4");
+	}
 
-    return _dependencies;
+	return _dependencies;
 }
 
 void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-    initialise();
+	rMessage() << getName() << "::initialiseModule called" << std::endl;
 }
 
 void Doom3FileSystem::shutdownModule()
 {
 	shutdown();
+}
+
 }

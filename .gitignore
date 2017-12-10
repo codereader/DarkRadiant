@@ -59,3 +59,4 @@ Makefile.in
 /tools/msvc/DarkRadiant.VC.db
 /tools/innosetup/*.zip
 /tools/lwo_analyse/.vs
+/radiant/*.aps

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-11-30 20:19+0100\n"
-"PO-Revision-Date: 2017-11-30 20:25+0100\n"
+"POT-Creation-Date: 2017-12-09 14:33+0100\n"
+"PO-Revision-Date: 2017-12-10 10:14+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -816,68 +816,30 @@ msgstr "Shader"
 msgid "ShaderClipboard is empty."
 msgstr "Shader-Zwischenablage ist leer."
 
-#: ..\..\radiant\settings\GameManager.cpp:90
-msgid "GameManager: No game type selected, can't continue."
-msgstr "GameManager: kein Spieltyp ausgewählt, kann daher nicht fortfahren."
-
-#: ..\..\radiant\settings\GameManager.cpp:98
-#: ..\..\radiant\settings\GameManager.cpp:335
-#: ..\..\radiant\settings\GameManager.cpp:356
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:168
+#: ..\..\radiant\settings\GameManager.cpp:119
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:182
 msgid "Game"
 msgstr "Spiel"
 
-#: ..\..\radiant\settings\GameManager.cpp:107
-msgid "Select a Game:"
-msgstr "Spiel auswählen:"
+#: ..\..\radiant\settings\GameManager.cpp:120
+msgid ""
+"This page has been moved!\n"
+"Please use the game settings dialog in the menu: File &gt; Game/Project Setup..."
+msgstr ""
+"Diese Seite wurde verschoben!\n"
+"Bitte benutze den Dialog unter dem Menüpunkt Datei &gt; Spiel/Projekteinstellungen..."
 
-#: ..\..\radiant\settings\GameManager.cpp:108
-msgid "Engine Path"
-msgstr "Pfad zur Engine"
+#: ..\..\radiant\settings\GameManager.cpp:149
+msgid "GameManager: No game type selected, can't continue."
+msgstr "GameManager: kein Spieltyp ausgewählt, kann daher nicht fortfahren."
 
-#: ..\..\radiant\settings\GameManager.cpp:109
-msgid "Mod (fs_game)"
-msgstr "Mod (fs_game)"
-
-#: ..\..\radiant\settings\GameManager.cpp:110
-msgid "Mod Base (fs_game_base, optional)"
-msgstr "Mod Base (fs_game_base, optional)"
-
-#: ..\..\radiant\settings\GameManager.cpp:123
+#: ..\..\radiant\settings\GameManager.cpp:167
 msgid "GameManager: No valid game files found, can't continue."
 msgstr "GameManager: keine gültigen Spieldateien (.game) gefunden, kann nicht fortfahren."
 
-#: ..\..\radiant\settings\GameManager.cpp:162
+#: ..\..\radiant\settings\GameManager.cpp:203
 msgid "No game type selected."
 msgstr "Kein Spieltyp ausgewählt."
-
-#: ..\..\radiant\settings\GameManager.cpp:258
-msgid "Engine path \"{0}\" does not exist.\n"
-msgstr "Engine-Pfad \"{0}\" existiert nicht.\n"
-
-#: ..\..\radiant\settings\GameManager.cpp:263
-msgid "The fs_game folder \"{0}\" does not exist.\n"
-msgstr "Das fs_game Verzeichnis \"{0}\" existiert nicht.\n"
-
-#: ..\..\radiant\settings\GameManager.cpp:268
-msgid "The fs_game_base folder \"{0}\" does not exist.\n"
-msgstr "Das fs_game_base Verzeichnis \"{0}\" existiert nicht.\n"
-
-#: ..\..\radiant\settings\GameManager.cpp:271
-msgid "Do you want to correct these settings?"
-msgstr "Möchtest Du diese Einstellungen korrigieren?"
-
-#: ..\..\radiant\settings\GameManager.cpp:273
-msgid "Invalid Settings"
-msgstr "Ungültige Einstellungen"
-
-#: ..\..\radiant\settings\GameManager.cpp:357
-msgid ""
-"<b>Note</b>: You will have to restart DarkRadiant\n"
-"for the changes to take effect."
-msgstr ""
-"<b>Hinweis</b>: Du musst DarkRadiant neu starten,\n"
-"damit die Änderungen wirksam werden."
 
 #: ..\..\radiant\settings\LanguageManager.cpp:102
 msgid "Settings/Language"
@@ -2700,9 +2662,109 @@ msgstr "Pfad durchsuchen:"
 msgid "<no description>"
 msgstr "<keine Beschreibung>"
 
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:22
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:21
+msgid "Game Setup"
+msgstr "Spiel-Einstellungen"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:33
+msgid "Game Type:"
+msgstr "Spiel-Typ:"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:136
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:152
+msgid "Invalid Settings"
+msgstr "Ungültige Einstellungen"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:137
+msgid "Please select a game type"
+msgstr "Bitte einen Spieltyp auswählen"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:150
+msgid ""
+"Warning:\n"
+"{0}\n"
+"Do you want to correct these settings?"
+msgstr ""
+"Warnung:\n"
+"{0}\n"
+"Möchtest Du diese Einstellungen korrigieren?"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:37
+msgid "Engine Path"
+msgstr "Pfad zur Engine"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:42
+msgid "Mod (fs_game)"
+msgstr "Mod (fs_game)"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:47
+msgid "Mod Base (fs_game_base)"
+msgstr "Mod Base (fs_game_base)"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:70
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:139
+msgid "Engine path \"{0}\" does not exist.\n"
+msgstr "Engine-Pfad \"{0}\" existiert nicht.\n"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:77
+msgid "The mod base path \"{0}\" does not exist.\n"
+msgstr "Der Mod-Base-Pfad \"{0}\" existiert nicht.\n"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:84
+msgid "The mod path \"{0}\" does not exist.\n"
+msgstr "Der Mod-Pfad \"{0}\" existiert nicht.\n"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:37
+msgid "DarkMod Path"
+msgstr "DarkMod Verzeichnis"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:45
+msgid "This is the path where your TheDarkMod.exe is located."
+msgstr "An dieser stelle sollte sich TheDarkMod.exe befinden."
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:49
+msgid "The FM folder name of the mission you want to work on, e.g. 'saintlucia'."
+msgstr "Der Ordnername der zu editierenden Mission, z.B. 'saintlucia'."
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:51
+msgid "Mission"
+msgstr "Mission"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:98
+msgid ""
+"The mission path {0} doesn't exist.\n"
+"Do you intend to start a new mission and create that folder?"
+msgstr ""
+"Der Missions-Ordner {0} existiert nicht.\n"
+"Willst Du eine neue Mission anfangen und den Ordner erzeugen?"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:101
+msgid "Start a new Mission named {0}?"
+msgstr "Neue Mission namens {0} anlegen?"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:110
+msgid "Could not create directory"
+msgstr "Konnte Verzeichnis nicht anlegen"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:110
+msgid "Failed to create the folder {0}"
+msgstr "Konnte das Verzeichnis {0} nicht anlegen"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:163
+msgid "The engine executable \"{0}\" could not be found in the specified folder.\n"
+msgstr "Die EXE-Datei \"{0}\" konnte in dem angegebenen Ordner nicht gefunden werden.\n"
+
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:170
+msgid "The mission path \"{0}\" does not exist.\n"
+msgstr "Der Missions-Pfad \"{0}\" existiert nicht.\n"
+
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:23
 msgid "DarkRadiant Preferences"
 msgstr "DarkRadiant Einstellungen"
+
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:117
+msgid "Settings/"
+msgstr "Einstellungen/"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:42
 msgid "Surface Inspector"
@@ -2877,19 +2939,19 @@ msgstr "Skalierung Y-Achse"
 msgid "Z-Axis Scale:"
 msgstr "Skalierung Z-Achse"
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:38
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:39
 msgid "Create Layer..."
 msgstr "Neuer Layer..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:40
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:41
 msgid "Add to Layer..."
 msgstr "Zu Layer hinzufügen..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:41
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:42
 msgid "Move to Layer..."
 msgstr "Nach Layer verschieben..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:42
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:43
 msgid "Remove from Layer..."
 msgstr "Von Layer entfernen..."
 
@@ -4801,8 +4863,8 @@ msgid "Reload Particles"
 msgstr "Partikel neu laden"
 
 #: xml_file_content.cpp:20
-msgid "Select &Game..."
-msgstr "Spiel auswählen..."
+msgid "&Game/Project Setup..."
+msgstr "Spiel/Projekteinstellungen..."
 
 #: xml_file_content.cpp:21
 msgid "&Pointfile"
@@ -6914,6 +6976,25 @@ msgstr "Min:"
 #: xml_file_content.cpp:26
 msgid "Max:"
 msgstr "Max:"
+
+#~ msgid "Select a Game:"
+#~ msgstr "Spiel auswählen:"
+
+#~ msgid "The fs_game folder \"{0}\" does not exist.\n"
+#~ msgstr "Das fs_game Verzeichnis \"{0}\" existiert nicht.\n"
+
+#~ msgid "The fs_game_base folder \"{0}\" does not exist.\n"
+#~ msgstr "Das fs_game_base Verzeichnis \"{0}\" existiert nicht.\n"
+
+#~ msgid ""
+#~ "<b>Note</b>: You will have to restart DarkRadiant\n"
+#~ "for the changes to take effect."
+#~ msgstr ""
+#~ "<b>Hinweis</b>: Du musst DarkRadiant neu starten,\n"
+#~ "damit die Änderungen wirksam werden."
+
+#~ msgid "Select &Game..."
+#~ msgstr "Spiel auswählen..."
 
 #~ msgid "%s Settings"
 #~ msgstr "%s Einstellungen"

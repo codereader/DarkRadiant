@@ -23,7 +23,7 @@
 		<menuItem name="reloadDefs" caption="Reload Defs" command="ReloadDefs" />
 		<menuItem name="reloadParticles" caption="Reload Particles" command="ReloadParticles" icon="particle16.png" />
 		<menuSeparator />
-		<menuItem name="gameSelector" caption="Select &amp;Game..." command="ProjectSettings" />
+		<menuItem name="gameSelector" caption="&amp;Game/Project Setup..." command="ProjectSettings" />
 		<menuSeparator />
 		<menuItem name="pointfile" caption="&amp;Pointfile" command="TogglePointfile" icon="pointfile16.png"/>
 		<menuSeparator />

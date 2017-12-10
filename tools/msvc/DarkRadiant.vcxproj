@@ -471,7 +471,6 @@
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetManager.cpp" />
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp" />
     <ClCompile Include="..\..\radiant\settings\Game.cpp" />
-    <ClCompile Include="..\..\radiant\settings\GameFileLoader.cpp" />
     <ClCompile Include="..\..\radiant\settings\GameManager.cpp" />
     <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp" />
     <ClCompile Include="..\..\radiant\settings\PreferenceSystem.cpp" />
@@ -537,6 +536,10 @@
     <ClCompile Include="..\..\radiant\ui\patch\PatchThickenDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPage.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp" />
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp" />
@@ -639,6 +642,7 @@
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiant\selection\SingleItemSelector.h" />
+    <ClInclude Include="..\..\radiant\settings\GameConfiguration.h" />
     <ClInclude Include="..\..\radiant\settings\PreferenceItemBase.h" />
     <ClInclude Include="..\..\radiant\settings\PreferenceItems.h" />
     <ClInclude Include="..\..\radiant\settings\PreferencePage.h" />
@@ -763,7 +767,6 @@
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetManager.h" />
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetToolmenu.h" />
     <ClInclude Include="..\..\radiant\settings\Game.h" />
-    <ClInclude Include="..\..\radiant\settings\GameFileLoader.h" />
     <ClInclude Include="..\..\radiant\settings\GameManager.h" />
     <ClInclude Include="..\..\radiant\settings\LanguageManager.h" />
     <ClInclude Include="..\..\radiant\settings\PreferenceSystem.h" />
@@ -839,6 +842,10 @@
     <ClInclude Include="..\..\radiant\ui\patch\PatchThickenDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPage.h" />
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPageIdTech.h" />
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItem.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />

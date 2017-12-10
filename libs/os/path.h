@@ -89,13 +89,15 @@ namespace os
     }
 
     /** greebo: OS Folder names have forward slashes and a trailing slash
-     * 			at the end by convention.
+     * at the end by convention. Empty strings are returned unchanged.
      */
-    inline std::string standardPathWithSlash(const std::string& input) {
+    inline std::string standardPathWithSlash(const std::string& input) 
+	{
 		std::string output = standardPath(input);
 
 		// Append a slash at the end, if there isn't already one
-		if (!string::ends_with(output, "/")) {
+		if (!output.empty() && !string::ends_with(output, "/"))
+		{
 			output += "/";
 		}
 		return output;

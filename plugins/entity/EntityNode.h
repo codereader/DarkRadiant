@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "ientity.h"
 #include "inamespace.h"
 #include "Bounded.h"
@@ -73,6 +74,8 @@ protected:
 	// The wireframe / solid shaders as determined by the entityclass
 	ShaderPtr _fillShader;
 	ShaderPtr _wireShader;
+
+	sigc::connection _eclassChangedConn;
 
 protected:
 	// The Constructor needs the eclass
@@ -150,6 +153,11 @@ protected:
 	 * Subclasses must make sure to have this base method called if they override this.
 	 */
 	virtual void construct();
+
+	// Signal method to be overridden by subclasses.
+	// Don't forget to call the base class implementation as this will
+	// reload the entity key values and notify observers
+	virtual void onEntityClassChanged();
 
 private:
 	// Routine used by the destructor, should be non-virtual

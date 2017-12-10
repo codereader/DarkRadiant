@@ -19,7 +19,7 @@ private:
 	wxTreebook* _notebook;
 
 	// Each notebook page is created and maintained by a PrefPage class
-	// Map the page path wo its widget
+	// Map the page path to its widget
 	typedef std::map<std::string, PrefPage*> PageMap;
 	PageMap _pages;
 

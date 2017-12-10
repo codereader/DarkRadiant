@@ -242,8 +242,6 @@ void EClassManager::unrealise()
 	{
         // This waits for any threaded work to finish
         _defLoader.reset();
-
-       	_entityClasses.clear();
        	_realised = false;
     }
 }
@@ -317,8 +315,18 @@ void EClassManager::initialiseModule(const ApplicationContext& ctx)
 void EClassManager::shutdownModule()
 {
 	rMessage() << "EntityClassDoom3::shutdownModule called." << std::endl;
-	unrealise();
+
 	GlobalFileSystem().removeObserver(*this);
+
+	// Unrealise ourselves and wait for threads to finish
+	unrealise();
+	
+	// Don't notify anyone anymore
+	_defsReloadedSignal.clear();
+
+	// Clear member structures
+	_entityClasses.clear();
+	_models.clear();
 }
 
 // This takes care of relading the entityDefs and refreshing the scenegraph

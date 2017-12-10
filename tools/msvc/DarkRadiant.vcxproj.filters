@@ -439,9 +439,6 @@
     <ClCompile Include="..\..\radiant\settings\Game.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\GameFileLoader.cpp">
-      <Filter>src\settings</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\settings\GameManager.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
@@ -922,6 +919,18 @@
     <ClCompile Include="..\..\radiant\RadiantApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupDialog.cpp">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPage.cpp">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1264,9 +1273,6 @@
       <Filter>src\selection\selectionset</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\settings\Game.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\GameFileLoader.h">
       <Filter>src\settings</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\settings\GameManager.h">
@@ -1871,6 +1877,21 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\RadiantApp.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupDialog.h">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPageIdTech.h">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPage.h">
+      <Filter>src\ui\prefdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\GameConfiguration.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.h">
+      <Filter>src\ui\prefdialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

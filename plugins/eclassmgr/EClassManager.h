@@ -32,7 +32,7 @@ namespace eclass
  */
 class EClassManager :
     public IEntityClassManager,
-    public VirtualFileSystem::Observer
+    public vfs::VirtualFileSystem::Observer
 {
     // Whether the entity classes have been realised
     bool _realised;

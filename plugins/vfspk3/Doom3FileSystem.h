@@ -1,15 +1,20 @@
 #pragma once
 
-#include <list>
 #include "iarchive.h"
 #include "ifilesystem.h"
+
+namespace vfs
+{
 
 class Doom3FileSystem :
 	public VirtualFileSystem
 {
 private:
+	// Our ordered list of paths to search
+	SearchPaths _vfsSearchPaths;
+
 	std::list<std::string> _directories;
-	std::set<std::string> _allowedExtensions;
+	ExtensionSet _allowedExtensions;
 	std::set<std::string> _allowedExtensionsDir;
 
 	struct ArchiveDescriptor
@@ -26,34 +31,34 @@ private:
 	ObserverList _observers;
 
 public:
-	Doom3FileSystem();
-
 	void initDirectory(const std::string& path) override;
-	void initialise() override;
+	void initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedExtensions) override;
 	void shutdown() override;
 
 	int getFileCount(const std::string& filename) override;
 	ArchiveFilePtr openFile(const std::string& filename) override;
 	ArchiveTextFilePtr openTextFile(const std::string& filename) override;
 
-    ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) override;
-    ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) override;
+	ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) override;
+	ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) override;
 
 	// Call the specified callback function for each file matching extension
 	// inside basedir.
-    void forEachFile(const std::string& basedir, const std::string& extension,
-                     const VisitorFunc& visitorFunc, std::size_t depth) override;
+	void forEachFile(const std::string& basedir, const std::string& extension,
+		const VisitorFunc& visitorFunc, std::size_t depth) override;
 
-    void forEachFileInAbsolutePath(const std::string& path,
-                                   const std::string& extension,
-                                   const VisitorFunc& visitorFunc,
-                                   std::size_t depth = 1) override;
+	void forEachFileInAbsolutePath(const std::string& path,
+		const std::string& extension,
+		const VisitorFunc& visitorFunc,
+		std::size_t depth = 1) override;
 
 	std::string findFile(const std::string& name) override;
 	std::string findRoot(const std::string& name) override;
 
 	void addObserver(Observer& observer) override;
 	void removeObserver(Observer& observer) override;
+
+	const SearchPaths& getVfsSearchPaths() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;
@@ -64,4 +69,5 @@ public:
 private:
 	void initPakFile(ArchiveLoader& archiveModule, const std::string& filename);
 };
-typedef std::shared_ptr<Doom3FileSystem> Doom3FileSystemPtr;
+
+}

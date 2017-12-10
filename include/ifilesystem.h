@@ -8,7 +8,10 @@
 
 #include <cstddef>
 #include <string>
+#include <list>
+#include <set>
 #include <functional>
+#include <algorithm>
 
 #include "imodule.h"
 
@@ -18,9 +21,25 @@ class ArchiveTextFile;
 typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
 class Archive;
 
-class ModuleObserver;
+namespace vfs
+{
 
-const std::string MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
+// Extension of std::list to check for existing paths before inserting new ones
+class SearchPaths :
+	public std::list<std::string>
+{
+public:
+	bool insertIfNotExists(const std::string& path)
+	{
+		if (std::find(begin(), end(), path) != end())
+		{
+			return false;
+		}
+
+		push_back(path);
+		return true;
+	}
+};
 
 /**
  * Main interface for the virtual filesystem.
@@ -36,10 +55,11 @@ class VirtualFileSystem :
 	public RegisterableModule
 {
 public:
+	virtual ~VirtualFileSystem() {}
 
 	// Functor taking the filename as argument. The filename is relative 
-    // to the base path passed to the GlobalFileSystem().foreach*() method.
-    typedef std::function<void (const std::string& filename)> VisitorFunc;
+	// to the base path passed to the GlobalFileSystem().foreach*() method.
+	typedef std::function<void(const std::string& filename)> VisitorFunc;
 
 	/**
 	 * Interface for VFS observers.
@@ -47,9 +67,10 @@ public:
 	 * A VFS observer is automatically notified of events relating to the
 	 * VFS, including startup and shutdown.
 	 */
-	class Observer {
+	class Observer
+	{
 	public:
-	    virtual ~Observer() {}
+		virtual ~Observer() {}
 
 		/**
 		 * Notification of VFS initialisation.
@@ -72,9 +93,10 @@ public:
 	/// Called before \c initialise.
 	virtual void initDirectory(const std::string& path) = 0;
 
-	/// \brief Initialises the filesystem.
-	/// Called after all root search paths have been added.
-	virtual void initialise() = 0;
+	typedef std::set<std::string> ExtensionSet;
+
+	// Initialises the filesystem using the given search order.
+	virtual void initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedArchiveExtensions) = 0;
 
 	/// \brief Shuts down the filesystem.
 	virtual void shutdown() = 0;
@@ -90,31 +112,31 @@ public:
 	// greebo: Note: expects the filename to be normalised (forward slashes, trailing slash).
 	virtual ArchiveFilePtr openFile(const std::string& filename) = 0;
 
-    /// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
-    // This is a variant of openFile taking an absolute path as argument.
-    virtual ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) = 0;
+	/// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
+	// This is a variant of openFile taking an absolute path as argument.
+	virtual ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) = 0;
 
 	/// \brief Returns the file identified by \p filename opened in text mode, or 0 if not found.
 	virtual ArchiveTextFilePtr openTextFile(const std::string& filename) = 0;
 
-    /// \brief Returns the file identified by \p filename opened in text mode, or NULL if not found.
-    /// This is a variant of openTextFile taking an absolute path as argument.
-    virtual ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) = 0;
+	/// \brief Returns the file identified by \p filename opened in text mode, or NULL if not found.
+	/// This is a variant of openTextFile taking an absolute path as argument.
+	virtual ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) = 0;
 
 	/// \brief Calls the visitor function for each file under \p basedir matching \p extension.
 	/// Use "*" as \p extension to match all file extensions.
-    virtual void forEachFile(const std::string& basedir,
-                             const std::string& extension,
-                             const VisitorFunc& visitorFunc,
-                             std::size_t depth = 1) = 0;
+	virtual void forEachFile(const std::string& basedir,
+		const std::string& extension,
+		const VisitorFunc& visitorFunc,
+		std::size_t depth = 1) = 0;
 
-    // Similar to forEachFile, this routine traverses an absolute path
-    // searching for files matching a certain extension and invoking
-    // the givne visitor functor on each occurrence.
-    virtual void forEachFileInAbsolutePath(const std::string& path,
-                             const std::string& extension,
-                             const VisitorFunc& visitorFunc,
-                             std::size_t depth = 1) = 0;
+	// Similar to forEachFile, this routine traverses an absolute path
+	// searching for files matching a certain extension and invoking
+	// the givne visitor functor on each occurrence.
+	virtual void forEachFileInAbsolutePath(const std::string& path,
+		const std::string& extension,
+		const VisitorFunc& visitorFunc,
+		std::size_t depth = 1) = 0;
 
 	/// \brief Returns the absolute filename for a relative \p name, or "" if not found.
 	virtual std::string findFile(const std::string& name) = 0;
@@ -122,13 +144,20 @@ public:
 	/// \brief Returns the filesystem root for an absolute \p name, or "" if not found.
 	/// This can be used to convert an absolute name to a relative name.
 	virtual std::string findRoot(const std::string& name) = 0;
+
+	// Returns the list of registered VFS paths, ordered by search priority
+	virtual const SearchPaths& getVfsSearchPaths() = 0;
 };
 
-inline VirtualFileSystem& GlobalFileSystem()
+}
+
+const char* const MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
+
+inline vfs::VirtualFileSystem& GlobalFileSystem()
 {
 	// Cache the reference locally
-	static VirtualFileSystem& _vfs(
-		*std::static_pointer_cast<VirtualFileSystem>(
+	static vfs::VirtualFileSystem& _vfs(
+		*std::static_pointer_cast<vfs::VirtualFileSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_VIRTUALFILESYSTEM)
 		)
 	);

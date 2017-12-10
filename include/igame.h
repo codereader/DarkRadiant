@@ -1,12 +1,18 @@
-#ifndef IGAMEMANAGER_H_
-#define IGAMEMANAGER_H_
+#pragma once
 
 #include "xmlutil/Node.h"
 #include "imodule.h"
 #include <list>
 
 // String identifier for the game manager module
-const std::string MODULE_GAMEMANAGER("GameManager");
+const char* const MODULE_GAMEMANAGER("GameManager");
+
+const char* const RKEY_GAME_TYPE = "user/game/type";
+const char* const RKEY_FS_GAME = "user/game/fs_game";
+const char* const RKEY_FS_GAME_BASE = "user/game/fs_game_base";
+const char* const RKEY_ENGINE_PATH = "user/paths/enginePath";
+const char* const RKEY_MOD_PATH = "user/paths/modPath";
+const char* const RKEY_MOD_BASE_PATH = "user/paths/modBasePath";
 
 namespace game
 {
@@ -61,12 +67,6 @@ public:
 	// engine path is returned, e.g. /usr/local/doom3 or c:\games\doom3
 	virtual std::string getUserEnginePath() = 0;
 
-	// Returns the setting for fs_game
-	virtual const std::string& getFSGame() const = 0;
-
-	// Returns the setting for fs_game_base (can be empty)
-	virtual const std::string& getFSGameBase() const = 0;
-
 	/**
 	 * greebo: Gets the mod path (e.g. ~/.doom3/gathers/).
 	 * Returns the mod base path if the mod path itself is empty.
@@ -89,13 +89,17 @@ public:
 	// Returns the list of ordered engine paths, which should
 	// be initialised by the Virtual Filesystem (in this exact order)
 	virtual const PathList& getVFSSearchPaths() const = 0;
+
+	typedef std::vector<IGamePtr> GameList;
+	virtual const GameList& getSortedGameList() = 0;
 };
 typedef std::shared_ptr<IGameManager> IGameManagerPtr;
 
 } // namespace game
 
 // This is the accessor for the game manager
-inline game::IGameManager& GlobalGameManager() {
+inline game::IGameManager& GlobalGameManager()
+{
 	// Cache the reference locally
 	static game::IGameManager& _gameManager(
 		*std::static_pointer_cast<game::IGameManager>(
@@ -104,5 +108,3 @@ inline game::IGameManager& GlobalGameManager() {
 	);
 	return _gameManager;
 }
-
-#endif /*IGAMEMANAGER_H_*/

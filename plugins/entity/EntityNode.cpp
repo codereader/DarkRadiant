@@ -49,9 +49,10 @@ EntityNode::~EntityNode()
 
 void EntityNode::construct()
 {
-    _eclass->changedSignal().connect(
-        sigc::mem_fun(_keyObservers, &KeyObserverMap::refreshObservers)
-    );
+	_eclassChangedConn = _eclass->changedSignal().connect([this]()
+	{
+		this->onEntityClassChanged();
+	});
 
 	TargetableNode::construct();
 
@@ -80,7 +81,15 @@ void EntityNode::destruct()
 	removeKeyObserver("_color", _colourKey);
 	removeKeyObserver("name", _nameKey);
 
+	_eclassChangedConn.disconnect();
+
 	TargetableNode::destruct();
+}
+
+void EntityNode::onEntityClassChanged()
+{
+	// By default, we notify the KeyObservers attached to this entity
+	_keyObservers.refreshObservers();
 }
 
 void EntityNode::addKeyObserver(const std::string& key, KeyObserver& observer)
