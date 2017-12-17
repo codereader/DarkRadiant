@@ -3,6 +3,7 @@
 #include "igui.h"
 
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include "parser/DefTokeniser.h"
 #include "GuiWindowDef.h"
@@ -28,8 +29,11 @@ private:
 	IGuiWindowDefPtr _desktop;
 
 	// The global GUI state variables
-	typedef std::map<std::string, std::string> GuiState;
+	typedef std::unordered_map<std::string, std::string> GuiState;
 	GuiState _state;
+
+	typedef std::unordered_map<std::string, sigc::signal<void>> GuiStateChangedSignals;
+	GuiStateChangedSignals _stateSignals;
 
 public:
 	const IGuiWindowDefPtr& getDesktop() const override;
@@ -37,6 +41,9 @@ public:
 
 	// Sets the given state variable (gui::<key> = <value>)
 	void setStateString(const std::string& key, const std::string& value) override;
+
+	// Allocate and/or return the changed signal for the given key
+	sigc::signal<void>& getChangedSignalForState(const std::string& key) override;
 
 	// Returns the state string "gui::<key>" or an empty string if non-existent
 	std::string getStateString(const std::string& key) override;

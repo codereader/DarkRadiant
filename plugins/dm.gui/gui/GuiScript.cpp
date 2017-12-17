@@ -327,7 +327,7 @@ std::size_t GuiScript::pushStatement(const StatementPtr& statement)
 
 GuiExpressionPtr GuiScript::getExpression(parser::DefTokeniser& tokeniser)
 {
-	return GuiExpression::createFromTokens(_owner.getGui(), tokeniser);
+	return GuiExpression::CreateFromTokens(_owner.getGui(), tokeniser);
 }
 
 GuiExpressionPtr GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)

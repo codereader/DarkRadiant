@@ -6,6 +6,7 @@
 #include <map>
 
 #include <sigc++/signal.h>
+#include <sigc++/connection.h>
 #include "imodule.h"
 #include "math/Vector4.h"
 #include "string/convert.h"
@@ -41,6 +42,9 @@ public:
 
 	// Evaluate this expression to retrieve the result
 	virtual ValueType evaluate() = 0;
+
+	// Value changed signal 
+	virtual sigc::signal<void>& signal_valueChanged() = 0;
 };
 
 // An expression representing a constant value
@@ -51,6 +55,8 @@ class ConstantExpression :
 private:
 	ValueType _value;
 
+	sigc::signal<void> _sigValueChanged;
+
 public:
 	ConstantExpression(const ValueType& value) :
 		_value(value)
@@ -59,6 +65,12 @@ public:
 	virtual ValueType evaluate() override
 	{
 		return _value;
+	}
+
+	// Provide a value changed signal, though it's never invoked
+	sigc::signal<void>& signal_valueChanged() override
+	{
+		return _sigValueChanged;
 	}
 
 	template<typename OtherType>
@@ -102,6 +114,8 @@ protected:
 	// The expression which can be evaluated
 	ExpressionTypePtr _expression;
 
+	sigc::connection _exprChangedSignal;
+
 public:
 	typedef std::shared_ptr<WindowVariable<ValueType>> Ptr; // smart ptr typedef
 
@@ -119,15 +133,36 @@ public:
 	// to match the ValueType of this variable
 	virtual void setValue(const ExpressionTypePtr& newExpr)
 	{
+		if (_expression == newExpr) return;
+
+		// Disconnect from any previously subscribed signals
+		_exprChangedSignal.disconnect();
+
 		_expression = newExpr;
+
 		signal_variableChanged().emit();
+
+		// Subscribe to this new expression's changed signal
+		if (_expression)
+		{
+			_expression->signal_valueChanged().connect([this]()
+			{
+				signal_variableChanged().emit();
+			});
+		}
 	}
 
 	// Assigns a constant value to this variable
 	virtual void setValue(const ValueType& constantValue)
 	{
+		// Disconnect from any previously subscribed signals
+		_exprChangedSignal.disconnect();
+
 		_expression = ConstantExpression<ValueType>::Create(constantValue);
+
 		signal_variableChanged().emit();
+
+		// Since this is a constant expression, we don't need to subscribe to any signal
 	}
 
 	// Implement the required string->ValueType conversion by means of string::convert<>
@@ -268,6 +303,10 @@ public:
 
 	// Sets the given state variable (gui::<key> = <value>)
 	virtual void setStateString(const std::string& key, const std::string& value) = 0;
+
+	// Retrieve a changed signal for the given key, which is invoked 
+	// whenever setStateString() is called
+	virtual sigc::signal<void>& getChangedSignalForState(const std::string& key) = 0;
 
 	// Returns the state string "gui::<key>" or an empty string if non-existent
 	virtual std::string getStateString(const std::string& key) = 0;

@@ -2,6 +2,7 @@
 
 #include <list>
 #include <stack>
+#include <sigc++/connection.h>
 
 #include "itextstream.h"
 
@@ -16,7 +17,16 @@ namespace gui
 GuiStateVariableExpression::GuiStateVariableExpression(IGui& gui, const std::string& variableName) :
 	_gui(gui),
 	_variableName(variableName)
-{}
+{
+	if (!_variableName.empty())
+	{
+		// Register to the GUI state change signal
+		_gui.getChangedSignalForState(_variableName).connect([this]()
+		{
+			signal_valueChanged().emit();
+		});
+	}
+}
 
 float GuiStateVariableExpression::getFloatValue()
 {
@@ -57,6 +67,9 @@ protected:
 	GuiExpressionPtr _b;
 	Precedence _precedence;
 
+	sigc::connection _aChanged;
+	sigc::connection _bChanged;
+
 public:
 	BinaryExpression(Precedence precedence,
 		const GuiExpressionPtr& a = GuiExpressionPtr(),
@@ -65,7 +78,23 @@ public:
 		_a(a),
 		_b(b),
 		_precedence(precedence)
-	{}
+	{
+		if (_a)
+		{
+			_aChanged = _a->signal_valueChanged().connect([this]()
+			{
+				signal_valueChanged().emit();
+			});
+		}
+
+		if (_b)
+		{
+			_bChanged = _b->signal_valueChanged().connect([this]()
+			{
+				signal_valueChanged().emit();
+			});
+		}
+	}
 
 	Precedence getPrecedence() const
 	{
@@ -74,12 +103,34 @@ public:
 
 	void setA(const GuiExpressionPtr& a)
 	{
+		// Disconnect from any previous signal
+		_aChanged.disconnect();
+
 		_a = a;
+
+		if (_a)
+		{
+			_aChanged = _a->signal_valueChanged().connect([this]()
+			{
+				signal_valueChanged().emit();
+			});
+		}
 	}
 
 	void setB(const GuiExpressionPtr& b)
 	{
+		// Disconnect from any previous signal
+		_bChanged.disconnect();
+
 		_b = b;
+
+		if (_b)
+		{
+			_bChanged = _b->signal_valueChanged().connect([this]()
+			{
+				signal_valueChanged().emit();
+			});
+		}
 	}
 
 	virtual std::string getStringValue() override
@@ -707,13 +758,13 @@ private:
 GuiExpression::GuiExpression()
 {}
 
-GuiExpressionPtr GuiExpression::createFromString(IGui& gui, const std::string& exprStr)
+GuiExpressionPtr GuiExpression::CreateFromString(IGui& gui, const std::string& exprStr)
 {
 	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "{}(),");
-	return createFromTokens(gui, tokeniser);
+	return CreateFromTokens(gui, tokeniser);
 }
 
-GuiExpressionPtr GuiExpression::createFromTokens(IGui& gui, parser::DefTokeniser& tokeniser)
+GuiExpressionPtr GuiExpression::CreateFromTokens(IGui& gui, parser::DefTokeniser& tokeniser)
 {
 	// Create an adapter which takes care of splitting the tokens into finer grains
 	// The incoming DefTokeniser is not splitting up expressions like "3*4" without any whitespace in them

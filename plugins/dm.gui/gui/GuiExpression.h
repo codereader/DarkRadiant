@@ -15,15 +15,24 @@ typedef std::shared_ptr<GuiExpression> GuiExpressionPtr;
 // a simple float, a string, a gui variable or a complex formula.
 class GuiExpression
 {
+protected:
+	sigc::signal<void> _sigValueChanged;
+
 public:
 	GuiExpression();
 
 	virtual float getFloatValue() = 0;
 	virtual std::string getStringValue() = 0;
 
-	static GuiExpressionPtr createFromString(IGui& gui, const std::string& exprStr);
+	// Sub-expressions or clients can subscribe to get notified about changes
+	sigc::signal<void>& signal_valueChanged()
+	{
+		return _sigValueChanged;
+	}
 
-	static GuiExpressionPtr createFromTokens(IGui& gui, parser::DefTokeniser& tokeniser);
+	static GuiExpressionPtr CreateFromString(IGui& gui, const std::string& exprStr);
+
+	static GuiExpressionPtr CreateFromTokens(IGui& gui, parser::DefTokeniser& tokeniser);
 };
 
 // An expression representing a constant floating point value
@@ -77,16 +86,33 @@ class TypedExpression :
 private:
 	GuiExpressionPtr _contained;
 
+	sigc::signal<void> _sigValueChanged;
+
 public:
 	TypedExpression(const GuiExpressionPtr& contained) :
 		_contained(contained)
-	{}
+	{
+		if (_contained)
+		{
+			// Connect the changed signal of the contained expression
+			// to fire our own signal
+			_contained->signal_valueChanged().connect([this]()
+			{
+				signal_valueChanged().emit();
+			});
+		}
+	}
 
 	// The generic evaluate() implementation will try to cast the string
 	// value of the GuiExpression to the desired ValueType
 	virtual ValueType evaluate() override
 	{
 		return string::convert<ValueType>(_contained->getStringValue());
+	}
+
+	sigc::signal<void>& signal_valueChanged() override
+	{
+		return _sigValueChanged;
 	}
 };
 
@@ -99,14 +125,31 @@ class TypedExpression<bool> :
 private:
 	GuiExpressionPtr _contained;
 
+	sigc::signal<void> _sigValueChanged;
+
 public:
 	TypedExpression(const GuiExpressionPtr& contained) :
 		_contained(contained)
-	{}
+	{
+		if (_contained)
+		{
+			// Connect the changed signal of the contained expression
+			// to fire our own signal
+			_contained->signal_valueChanged().connect([this]()
+			{
+				signal_valueChanged().emit();
+			});
+		}
+	}
 
 	virtual bool evaluate() override
 	{
 		return _contained->getFloatValue() != 0.0f;
+	}
+
+	sigc::signal<void>& signal_valueChanged() override
+	{
+		return _sigValueChanged;
 	}
 };
 
@@ -118,6 +161,8 @@ class Vector4Expression :
 private:
 	std::vector<GuiExpressionPtr> _vec;
 
+	sigc::signal<void> _sigValueChanged;
+
 public:
 	Vector4Expression(const GuiExpressionPtr& x, const GuiExpressionPtr& y, 
 					  const GuiExpressionPtr& z, const GuiExpressionPtr& w) :
@@ -127,12 +172,27 @@ public:
 		_vec[1] = y;
 		_vec[2] = z;
 		_vec[3] = w;
+
+		for (const GuiExpressionPtr& comp : _vec)
+		{
+			if (!comp) continue;
+
+			comp->signal_valueChanged().connect([this]()
+			{
+				signal_valueChanged().emit();
+			});
+		}
 	}
 
 	virtual Vector4 evaluate() override
 	{
 		return Vector4(_vec[0]->getFloatValue(), _vec[1]->getFloatValue(), 
 			_vec[2]->getFloatValue(), _vec[3]->getFloatValue());
+	}
+
+	sigc::signal<void>& signal_valueChanged() override
+	{
+		return _sigValueChanged;
 	}
 };
 

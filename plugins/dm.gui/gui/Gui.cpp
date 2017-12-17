@@ -45,7 +45,29 @@ void Gui::setStateString(const std::string& key, const std::string& value)
 {
 	_state[key] = value;
 
-	// TODO: Handle state variable links to windowDef registers
+	// Handle state variable links to windowDef registers
+	GuiStateChangedSignals::iterator i = _stateSignals.find(key);
+
+	if (i != _stateSignals.end())
+	{
+		i->second.emit();
+	}
+}
+
+sigc::signal<void>& Gui::getChangedSignalForState(const std::string& key)
+{
+	GuiStateChangedSignals::iterator i = _stateSignals.find(key);
+
+	if (i != _stateSignals.end())
+	{
+		return i->second;
+	}
+
+	// Insert a new signal
+	std::pair<GuiStateChangedSignals::iterator, bool> result =
+		_stateSignals.insert(std::make_pair(key, sigc::signal<void>()));
+
+	return result.first->second;
 }
 
 std::string Gui::getStateString(const std::string& key)

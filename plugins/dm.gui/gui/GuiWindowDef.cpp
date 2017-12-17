@@ -77,7 +77,7 @@ IGui& GuiWindowDef::getGui() const
 // Returns a GUI expression, which can be a number, a string or a formula ("gui::objVisible" == 1).
 GuiExpressionPtr GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 {
-	return GuiExpression::createFromTokens(_owner, tokeniser);
+	return GuiExpression::CreateFromTokens(_owner, tokeniser);
 }
 
 std::shared_ptr<IGuiExpression<Vector4>> GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
