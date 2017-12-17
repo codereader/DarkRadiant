@@ -42,7 +42,7 @@ private:
 	// Context menu
 	wxutil::PopupMenuPtr _missionTitlesContextMenu;
 
-	MissionInfoGuiView* _guiView;
+	DarkmodTxtGuiView* _guiView;
 
 	bool _updateInProgress;
 

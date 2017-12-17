@@ -85,7 +85,7 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 		row.SendItemAdded();
 	}
 
-	_guiView->update();
+	_guiView->updateGuiState();
 
 	_updateInProgress = false;
 }
@@ -122,7 +122,7 @@ void MissionInfoEditDialog::populateWindow()
 
 	// Add the preview widget
 	wxPanel* previewPanel = findNamedObject<wxPanel>(this, "MissionInfoEditDialogPreviewPanel");
-	_guiView = new MissionInfoGuiView(previewPanel);
+	_guiView = new DarkmodTxtGuiView(previewPanel);
 	previewPanel->GetSizer()->Add(_guiView, 1, wxEXPAND);
 
 	makeLabelBold(this, "MissionInfoLabel");
@@ -180,7 +180,7 @@ void MissionInfoEditDialog::setupNamedEntryBox(const std::string& ctrlName)
 		_darkmodTxt->setVersion(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->GetValue().ToStdString());
 		_darkmodTxt->setReqTdmVersion(findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->GetValue().ToStdString());
 
-		_guiView->update();
+		_guiView->updateGuiState();
 	});
 }
 

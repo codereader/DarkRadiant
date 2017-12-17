@@ -44,7 +44,7 @@ MissionReadmeDialog::MissionReadmeDialog(wxWindow* parent) :
 	}
 
 	_guiView->setGui(GlobalGuiManager().getGui("guis/mainmenu.gui"));
-	//_guiView->setMissionInfoFile(_readmeFile);
+	_guiView->setMissionInfoFile(_readmeFile);
 
 	updateValuesFromReadmeFile();
 }
@@ -60,7 +60,7 @@ void MissionReadmeDialog::updateValuesFromReadmeFile()
 	findNamedObject<wxTextCtrl>(this, "MissionInfoReadmeContentsEntry")->SetValue(_readmeFile->getContents());
 	findNamedObject<wxStaticText>(this, "MissionInfoReadmeOutputPath")->SetLabelText(_readmeFile->getFullOutputPath());
 
-	_guiView->update();
+	_guiView->updateGuiState();
 
 	_updateInProgress = false;
 }
@@ -75,7 +75,7 @@ void MissionReadmeDialog::populateWindow()
 	// Add the preview widget
 	wxPanel* previewPanel = findNamedObject<wxPanel>(this, "MissionInfoReadmeDialogPreviewPanel");
 
-	_guiView = new MissionInfoGuiView(previewPanel);
+	_guiView = new ReadmeTxtGuiView(previewPanel);
 	previewPanel->GetSizer()->Add(_guiView, 1, wxEXPAND);
 
 	makeLabelBold(this, "MissionReadmeLabel");
@@ -108,7 +108,7 @@ void MissionReadmeDialog::setupNamedEntryBox(const std::string& ctrlName)
 		// Load the values from the UI to the ReadmeTxt instance
 		_readmeFile->setContents(findNamedObject<wxTextCtrl>(this, "MissionInfoReadmeContentsEntry")->GetValue().ToStdString());
 		
-		_guiView->update();
+		_guiView->updateGuiState();
 	});
 }
 

@@ -18,7 +18,7 @@ class MissionReadmeDialog :
 	private wxutil::XmlResourceBasedWidget
 {
 private:
-	MissionInfoGuiView* _guiView;
+	ReadmeTxtGuiView* _guiView;
 
 	map::ReadmeTxtPtr _readmeFile;
 

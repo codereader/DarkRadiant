@@ -40,7 +40,7 @@ void MissionInfoGuiView::setGui(const gui::IGuiPtr& gui)
 
 	if (_gui != NULL)
 	{
-		gui::IGuiWindowDefPtr bgWindowDef = _gui->findWindowDef("ModToInstallParent");
+		gui::IGuiWindowDefPtr bgWindowDef = _gui->findWindowDef(getTargetWindowDefName());
 
 		if (bgWindowDef)
 		{
@@ -55,15 +55,21 @@ void MissionInfoGuiView::setGui(const gui::IGuiPtr& gui)
 	_renderer.setVisibleArea(topLeft, bottomRight);
 
 	// Only draw a certain windowDef
-	setWindowDefFilter("ModToInstallParent");
+	setWindowDefFilter(getTargetWindowDefName());
 }
 
-void MissionInfoGuiView::setMissionInfoFile(const map::DarkmodTxtPtr& file)
+// ---------- Darkmod.xt ----------------
+
+DarkmodTxtGuiView::DarkmodTxtGuiView(wxWindow* parent) :
+	MissionInfoGuiView(parent)
+{}
+
+void DarkmodTxtGuiView::setMissionInfoFile(const map::DarkmodTxtPtr& file)
 {
 	_file = file;
 }
 
-void MissionInfoGuiView::update()
+void DarkmodTxtGuiView::updateGuiState()
 {
 	const gui::IGuiPtr& gui = getGui();
 
@@ -84,7 +90,7 @@ void MissionInfoGuiView::update()
 	gui->findWindowDef("modSizeTitle")->text.setValue("Space used:");
 	gui->findWindowDef("modSizeValue")->text.setValue("123 MB");
 	gui->findWindowDef("modSizeEraseFromDiskAction")->text.setValue("[Erase from disk]");
-	
+
 	gui->findWindowDef("modLoadN")->text.setValue("Install Mission");
 	gui->findWindowDef("modLoadH")->text.setValue("Install Mission");
 	gui->findWindowDef("modLoad")->text.setValue("Install Mission");
@@ -93,6 +99,39 @@ void MissionInfoGuiView::update()
 	gui->findWindowDef("moreInfo")->text.setValue("Notes");
 
 	redraw();
+}
+
+std::string DarkmodTxtGuiView::getTargetWindowDefName()
+{
+	return "ModToInstallParent";
+}
+
+// ---------- Readme.xt ----------------
+
+ReadmeTxtGuiView::ReadmeTxtGuiView(wxWindow* parent) :
+	MissionInfoGuiView(parent)
+{}
+
+void ReadmeTxtGuiView::setMissionInfoFile(const map::ReadmeTxtPtr& file)
+{
+	_file = file;
+}
+
+void ReadmeTxtGuiView::updateGuiState()
+{
+	const gui::IGuiPtr& gui = getGui();
+
+	if (!_file || !gui) return;
+
+	gui->setStateString("ModNotesText", _file->getContents());
+	gui->findWindowDef("ModInstallationNotesButtonOK")->text.setValue("OK");
+
+	redraw();
+}
+
+std::string ReadmeTxtGuiView::getTargetWindowDefName()
+{
+	return "ModInstallationNotesParchment";
 }
 
 } // namespace
