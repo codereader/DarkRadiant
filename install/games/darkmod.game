@@ -8,7 +8,7 @@
   enginepath_macos="/usr/local/games/darkmod/"
   engine_win32="TheDarkMod.exe"
   engine_linux="thedarkmod.x86"
-  engine_macos="thedarkmod"
+  engine_macos="thedarkmod.app"
   prefix=""
   basegame=""
   archivetypes="pk4"
