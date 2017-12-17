@@ -1,9 +1,7 @@
 #pragma once
 
-#include <string>
-#include <memory>
 #include <vector>
-#include <stdexcept>
+#include "MissionInfoTextFile.h"
 
 namespace map
 {
@@ -16,18 +14,10 @@ typedef std::shared_ptr<DarkmodTxt> DarkmodTxtPtr;
 * mission folder's root directory. It contains information shown
 * in the "New Mission" section in TDM's main menu.
 */
-class DarkmodTxt
+class DarkmodTxt :
+	public MissionInfoTextFile
 {
 public:
-	class ParseException : 
-		public std::runtime_error
-	{
-	public:
-		ParseException(const std::string& msg) :
-			runtime_error(msg.c_str())
-		{}
-	};
-
 	typedef std::vector<std::string> TitleList;
 
 private:
@@ -44,6 +34,8 @@ public:
 	{
 		return "darkmod.txt";
 	}
+
+	std::string getFilename() override;
 
 	const std::string& getTitle();
 	void setTitle(const std::string& title);
@@ -75,15 +67,9 @@ public:
 	// A parse exception will be thrown if the file is not compliant
 	static DarkmodTxtPtr LoadForCurrentMod();
 
-	// Saves the contents of this instance to the path applicable to the current mod
-	// Throws a std::runtime_error if the file couldn't be written
-	void saveToCurrentMod();
-
 	// Retrieves the text representation of this instance, as it will be written to the darkmod.txt file
-	std::string toString();
+	std::string toString() override;
 
-	// Returns the output path for the current mod
-	static std::string GetPathForCurrentMod();
 private:
 	static void ParseMissionTitles(std::vector<std::string>& titleList, const std::string& source);
 };

@@ -4,10 +4,7 @@
 #include "iarchive.h"
 #include "itextstream.h"
 #include "ifilesystem.h"
-#include "igame.h"
-#include "os/fs.h"
 
-#include <fstream>
 #include <fmt/format.h>
 #include "string/trim.h"
 #include "string/convert.h"
@@ -15,6 +12,11 @@
 
 namespace map
 {
+
+std::string DarkmodTxt::getFilename()
+{
+	return NAME();
+}
 
 const std::string& DarkmodTxt::getTitle()
 {
@@ -200,7 +202,7 @@ DarkmodTxtPtr DarkmodTxt::CreateFromStream(std::istream& stream)
 
 DarkmodTxtPtr DarkmodTxt::LoadForCurrentMod()
 {
-	std::string darkmodTxtPath = GetPathForCurrentMod();
+	std::string darkmodTxtPath = GetOutputPathForCurrentMod() + NAME();
 
 	rMessage() << "Trying to open file " << darkmodTxtPath << std::endl;
 
@@ -254,53 +256,6 @@ std::string DarkmodTxt::toString()
 	}
 
 	return output;
-}
-
-void DarkmodTxt::saveToCurrentMod()
-{
-	std::string outputPath = GetPathForCurrentMod();
-
-	rMessage() << "Writing darkmod.txt contents to " << outputPath << std::endl;
-
-	std::ofstream outputStream;
-
-	// Let the stream throw exceptions
-	std::ios_base::iostate exceptionMask = outputStream.exceptions() | std::ios::failbit;
-	outputStream.exceptions(exceptionMask);
-
-	try
-	{
-		outputStream.open(outputPath);
-		outputStream << toString();
-		outputStream.close();
-
-		rMessage() << "Successfully wrote darkmod.txt contents to " << outputPath << std::endl;
-	}
-	catch (std::ios_base::failure& ex)
-	{
-		throw std::runtime_error(fmt::format(_("Could not write darkmod.txt contents:\n{0}"), ex.what()));
-	}
-}
-
-std::string DarkmodTxt::GetPathForCurrentMod()
-{
-	std::string modPath = GlobalGameManager().getModPath();
-
-	if (modPath.empty())
-	{
-		rMessage() << "Mod path empty, falling back to mod base path..." << std::endl;
-		modPath = GlobalGameManager().getModBasePath();
-
-		if (modPath.empty())
-		{
-			rMessage() << "Mod base path empty as well, falling back to user engine path..." << std::endl;
-			modPath = GlobalGameManager().getUserEnginePath();
-		}
-	}
-
-	fs::path darkmodTxtPath = fs::path(modPath) / NAME();
-
-	return darkmodTxtPath.string();
 }
 
 }

@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MissionInfoEditDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>900,534</size>
+		<size>900,546</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -221,11 +221,25 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_RIGHT|wxLEFT|wxTOP</flag>
+						<option>1</option>
+						<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
 						<border>12</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
+						<object class="wxFlexGridSizer">
+							<rows>0</rows>
+							<cols>3</cols>
+							<vgap>0</vgap>
+							<hgap>0</hgap>
+							<growablecols>0</growablecols>
+							<growablerows></growablerows>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>12</border>
+								<object class="wxButton" name="MissionInfoEditDialogEditReadmeButton">
+									<label>Edit readme.txt...</label>
+									<default>0</default>
+								</object>
+							</object>
 							<object class="sizeritem">
 								<option>0</option>
 								<flag>wxLEFT</flag>

@@ -15,6 +15,7 @@
 #include "wxutil/menu/IconTextMenuItem.h"
 
 #include "MissionInfoGuiView.h"
+#include "MissionReadmeDialog.h"
 
 namespace ui
 {
@@ -67,7 +68,7 @@ void MissionInfoEditDialog::updateValuesFromDarkmodTxt()
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogDescriptionEntry")->SetValue(_darkmodTxt->getDescription());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogVersionEntry")->SetValue(_darkmodTxt->getVersion());
 	findNamedObject<wxTextCtrl>(this, "MissionInfoEditDialogReqTdmVersionEntry")->SetValue(_darkmodTxt->getReqTdmVersion());
-	findNamedObject<wxStaticText>(this, "MissionInfoEditDialogOutputPath")->SetLabelText(map::DarkmodTxt::GetPathForCurrentMod());
+	findNamedObject<wxStaticText>(this, "MissionInfoEditDialogOutputPath")->SetLabelText(_darkmodTxt->getFullOutputPath());
 
 	const map::DarkmodTxt::TitleList& titles = _darkmodTxt->getMissionTitles();
 
@@ -152,6 +153,10 @@ void MissionInfoEditDialog::populateWindow()
 	setupNamedEntryBox("MissionInfoEditDialogDescriptionEntry");
 	setupNamedEntryBox("MissionInfoEditDialogVersionEntry");
 
+	// Setup the event for the readme.txt button
+	wxButton* editReadmeButton = findNamedObject<wxButton>(this, "MissionInfoEditDialogEditReadmeButton");
+	editReadmeButton->Bind(wxEVT_BUTTON, sigc::mem_fun(this, &MissionInfoEditDialog::onEditReadme));
+
 	Layout();
 	Fit();
 	CenterOnScreen();
@@ -199,6 +204,14 @@ void MissionInfoEditDialog::onCancel(wxCommandEvent& ev)
 {
 	// destroy dialog without saving
 	EndModal(wxID_CANCEL);
+}
+
+void MissionInfoEditDialog::onEditReadme(wxCommandEvent& ev)
+{
+	MissionReadmeDialog* dialog = new MissionReadmeDialog(this);
+
+	dialog->ShowModal();
+	dialog->Destroy();
 }
 
 void MissionInfoEditDialog::onTitleEdited(wxDataViewEvent& ev)

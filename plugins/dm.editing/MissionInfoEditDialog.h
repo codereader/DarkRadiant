@@ -59,6 +59,7 @@ private:
 
 	void onSave(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
+	void onEditReadme(wxCommandEvent& ev);
 	void onTitleEdited(wxDataViewEvent& ev);
 	void onTitleContextMenu(wxDataViewEvent& ev);
 	void onAddTitle();

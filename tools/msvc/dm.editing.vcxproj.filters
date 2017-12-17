@@ -43,6 +43,15 @@
     <ClCompile Include="..\..\plugins\dm.editing\MissionInfoGuiView.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.editing\MissionReadmeDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.editing\ReadmeTxt.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.editing\MissionInfoTextFile.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadChooserDialog.h">
@@ -91,6 +100,15 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\dm.editing\MissionInfoGuiView.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.editing\MissionReadmeDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.editing\ReadmeTxt.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.editing\MissionInfoTextFile.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
