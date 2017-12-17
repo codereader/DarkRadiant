@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-12-09 14:33+0100\n"
-"PO-Revision-Date: 2017-12-10 10:14+0100\n"
+"POT-Creation-Date: 2017-12-17 13:49+0100\n"
+"PO-Revision-Date: 2017-12-17 13:50+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -199,7 +199,7 @@ msgstr "Lade Entity {0:d}\n"
 #: ..\..\radiant\map\Map.cpp:525
 #: ..\..\radiant\map\Map.cpp:553
 #: ..\..\radiant\RadiantModule.cpp:106
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:321
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:323
 msgid "Processing..."
 msgstr "Vorgang läuft..."
 
@@ -829,15 +829,15 @@ msgstr ""
 "Diese Seite wurde verschoben!\n"
 "Bitte benutze den Dialog unter dem Menüpunkt Datei &gt; Spiel/Projekteinstellungen..."
 
-#: ..\..\radiant\settings\GameManager.cpp:149
+#: ..\..\radiant\settings\GameManager.cpp:139
 msgid "GameManager: No game type selected, can't continue."
 msgstr "GameManager: kein Spieltyp ausgewählt, kann daher nicht fortfahren."
 
-#: ..\..\radiant\settings\GameManager.cpp:167
+#: ..\..\radiant\settings\GameManager.cpp:157
 msgid "GameManager: No valid game files found, can't continue."
 msgstr "GameManager: keine gültigen Spieldateien (.game) gefunden, kann nicht fortfahren."
 
-#: ..\..\radiant\settings\GameManager.cpp:203
+#: ..\..\radiant\settings\GameManager.cpp:193
 msgid "No game type selected."
 msgstr "Kein Spieltyp ausgewählt."
 
@@ -1700,9 +1700,9 @@ msgstr "OK"
 #: xml_file_content.cpp:9
 #: xml_file_content.cpp:17
 #: xml_file_content.cpp:1
-#: xml_file_content.cpp:13
-#: xml_file_content.cpp:5
 #: xml_file_content.cpp:14
+#: xml_file_content.cpp:5
+#: xml_file_content.cpp:13
 #: xml_file_content.cpp:20
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -3416,17 +3416,9 @@ msgstr "<b>Fehler:</b> Datei nicht gefunden."
 msgid "Select Vocal Set..."
 msgstr "Sprachsatz auswählen..."
 
-#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:129
+#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:131
 msgid "Order of the elements Title/Description/Author/etc. is incorrect"
 msgstr "Die Reihenfolge der Title/Description/Author/etc.-Elemente ist ungültig."
-
-#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:281
-msgid ""
-"Could not write darkmod.txt contents:\n"
-"{0}"
-msgstr ""
-"Konnte darkmod.txt Datei nicht speichern:\n"
-"{0}"
 
 #: ..\..\plugins\dm.editing\FixupMap.cpp:26
 msgid "Fixup in progress"
@@ -3493,11 +3485,11 @@ msgstr "(Zeile {0}): {1}"
 msgid "Fixup Results"
 msgstr "Fixup Ergebnisse"
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:24
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:25
 msgid "Mission Info Editor (darkmod.txt)"
 msgstr "Missions-Info (darkmod.txt)"
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:43
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:44
 msgid ""
 "Failed to parse darkmod.txt:\n"
 "{0}"
@@ -3505,22 +3497,42 @@ msgstr ""
 "Import der darkmod.txt-Datei fehlgeschlagen:\n"
 "{0}"
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:108
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:109
 msgid "#"
 msgstr "#"
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:111
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:112
 #: xml_file_content.cpp:17
 msgid "Title"
 msgstr "Titel:"
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:139
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:140
 msgid "Add Title"
 msgstr "Titel hinzufügen:"
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:144
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:145
 msgid "Delete Title"
 msgstr "Titel löschen"
+
+#: ..\..\plugins\dm.editing\MissionInfoTextFile.cpp:43
+msgid ""
+"Could not write {0} contents:\n"
+"{1}"
+msgstr ""
+"Konnte {0} Datei nicht speichern:\n"
+"{1}"
+
+#: ..\..\plugins\dm.editing\MissionReadmeDialog.cpp:23
+msgid "Mission Readme Editor (readme.txt)"
+msgstr "Missions-Readme Editor (readme.txt)"
+
+#: ..\..\plugins\dm.editing\MissionReadmeDialog.cpp:41
+msgid ""
+"Failed to parse readme.txt:\n"
+"{0}"
+msgstr ""
+"Import der readme.txt-Datei fehlgeschlagen:\n"
+"{0}"
 
 #: ..\..\plugins\dm.editing\plugin.cpp:65
 msgid "Fixup Map..."
@@ -4425,8 +4437,8 @@ msgstr "Responses"
 msgid "Custom Stims"
 msgstr "Benutzerdefinierte Stims"
 
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:327
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:328
+#: ..\..\plugins\eclassmgr\EClassManager.cpp:335
+#: ..\..\plugins\eclassmgr\EClassManager.cpp:336
 msgid "Reloading Defs"
 msgstr "Neuladen der Definitionen"
 
@@ -4611,7 +4623,7 @@ msgstr "Python Skripteingabe"
 msgid "Run Script"
 msgstr "Starte Skript"
 
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:321
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:323
 msgid "Loading Shaders"
 msgstr "Lade Shader"
 
@@ -4706,7 +4718,8 @@ msgstr "Größe des Undo-Stapels"
 #: ..\..\libs\wxutil\dialog\MessageBox.cpp:20
 #: xml_file_content.cpp:8
 #: xml_file_content.cpp:10
-#: xml_file_content.cpp:12
+#: xml_file_content.cpp:13
+#: xml_file_content.cpp:4
 #: xml_file_content.cpp:3
 #: xml_file_content.cpp:21
 msgid "Save"
@@ -6215,12 +6228,22 @@ msgstr ""
 "aus mehreren Missionen."
 
 #: xml_file_content.cpp:10
+#: xml_file_content.cpp:2
 msgid "Output Path:"
 msgstr "Zielpfad:"
 
 #: xml_file_content.cpp:11
+#: xml_file_content.cpp:3
 msgid "C:GamesDarkmodfmsgathers"
 msgstr "C:\\Games\\Darkmod\\fms\\gathers"
+
+#: xml_file_content.cpp:12
+msgid "Edit readme.txt..."
+msgstr "Bearbeite readme.txt Datei..."
+
+#: xml_file_content.cpp:1
+msgid "Mission Readme"
+msgstr "Missions-Readme"
 
 #: xml_file_content.cpp:1
 msgid "Options:"

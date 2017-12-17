@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-12-09 14:33+0100\n"
+"POT-Creation-Date: 2017-12-17 13:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -188,7 +188,7 @@ msgstr ""
 #: ..\..\radiant\map\algorithm\Models.cpp:110 ..\..\radiant\map\Map.cpp:111
 #: ..\..\radiant\map\Map.cpp:426 ..\..\radiant\map\Map.cpp:525
 #: ..\..\radiant\map\Map.cpp:553 ..\..\radiant\RadiantModule.cpp:106
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:321
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:323
 msgid "Processing..."
 msgstr ""
 
@@ -786,15 +786,15 @@ msgid ""
 "Setup..."
 msgstr ""
 
-#: ..\..\radiant\settings\GameManager.cpp:149
+#: ..\..\radiant\settings\GameManager.cpp:139
 msgid "GameManager: No game type selected, can't continue."
 msgstr ""
 
-#: ..\..\radiant\settings\GameManager.cpp:167
+#: ..\..\radiant\settings\GameManager.cpp:157
 msgid "GameManager: No valid game files found, can't continue."
 msgstr ""
 
-#: ..\..\radiant\settings\GameManager.cpp:203
+#: ..\..\radiant\settings\GameManager.cpp:193
 msgid "No game type selected."
 msgstr ""
 
@@ -1643,8 +1643,8 @@ msgstr ""
 
 #: ..\..\radiant\ui\commandlist\ShortcutChooser.cpp:52 xml_file_content.cpp:2
 #: xml_file_content.cpp:6 xml_file_content.cpp:9 xml_file_content.cpp:17
-#: xml_file_content.cpp:1 xml_file_content.cpp:13 xml_file_content.cpp:5
-#: xml_file_content.cpp:14 xml_file_content.cpp:20
+#: xml_file_content.cpp:1 xml_file_content.cpp:14 xml_file_content.cpp:5
+#: xml_file_content.cpp:13 xml_file_content.cpp:20
 msgid "Cancel"
 msgstr ""
 
@@ -3325,14 +3325,8 @@ msgstr ""
 msgid "Select Vocal Set..."
 msgstr ""
 
-#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:129
+#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:131
 msgid "Order of the elements Title/Description/Author/etc. is incorrect"
-msgstr ""
-
-#: ..\..\plugins\dm.editing\DarkmodTxt.cpp:281
-msgid ""
-"Could not write darkmod.txt contents:\n"
-"{0}"
 msgstr ""
 
 #: ..\..\plugins\dm.editing\FixupMap.cpp:26
@@ -3400,31 +3394,47 @@ msgstr ""
 msgid "Fixup Results"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:24
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:25
 msgid "Mission Info Editor (darkmod.txt)"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:43
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:44
 msgid ""
 "Failed to parse darkmod.txt:\n"
 "{0}"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:108
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:109
 msgid "#"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:111
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:112
 #: xml_file_content.cpp:17
 msgid "Title"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:139
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:140
 msgid "Add Title"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:144
+#: ..\..\plugins\dm.editing\MissionInfoEditDialog.cpp:145
 msgid "Delete Title"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\MissionInfoTextFile.cpp:43
+msgid ""
+"Could not write {0} contents:\n"
+"{1}"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\MissionReadmeDialog.cpp:23
+msgid "Mission Readme Editor (readme.txt)"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\MissionReadmeDialog.cpp:41
+msgid ""
+"Failed to parse readme.txt:\n"
+"{0}"
 msgstr ""
 
 #: ..\..\plugins\dm.editing\plugin.cpp:65
@@ -4310,8 +4320,8 @@ msgstr ""
 msgid "Custom Stims"
 msgstr ""
 
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:327
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:328
+#: ..\..\plugins\eclassmgr\EClassManager.cpp:335
+#: ..\..\plugins\eclassmgr\EClassManager.cpp:336
 msgid "Reloading Defs"
 msgstr ""
 
@@ -4490,7 +4500,7 @@ msgstr ""
 msgid "Run Script"
 msgstr ""
 
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:321
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:323
 msgid "Loading Shaders"
 msgstr ""
 
@@ -4583,8 +4593,8 @@ msgid "Undo Queue Size"
 msgstr ""
 
 #: ..\..\libs\wxutil\dialog\MessageBox.cpp:20 xml_file_content.cpp:8
-#: xml_file_content.cpp:10 xml_file_content.cpp:12 xml_file_content.cpp:3
-#: xml_file_content.cpp:21
+#: xml_file_content.cpp:10 xml_file_content.cpp:13 xml_file_content.cpp:4
+#: xml_file_content.cpp:3 xml_file_content.cpp:21
 msgid "Save"
 msgstr ""
 
@@ -6057,12 +6067,20 @@ msgid ""
 "containing several maps"
 msgstr ""
 
-#: xml_file_content.cpp:10
+#: xml_file_content.cpp:10 xml_file_content.cpp:2
 msgid "Output Path:"
 msgstr ""
 
-#: xml_file_content.cpp:11
+#: xml_file_content.cpp:11 xml_file_content.cpp:3
 msgid "C:GamesDarkmodfmsgathers"
+msgstr ""
+
+#: xml_file_content.cpp:12
+msgid "Edit readme.txt..."
+msgstr ""
+
+#: xml_file_content.cpp:1
+msgid "Mission Readme"
 msgstr ""
 
 #: xml_file_content.cpp:1
