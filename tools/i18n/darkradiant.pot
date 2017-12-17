@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-12-17 13:49+0100\n"
+"POT-Creation-Date: 2017-12-17 17:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -569,31 +569,31 @@ msgid ""
 "(The first selected entity will be preserved.)"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:402
-msgid "Groups can be formed in Primitive selection mode only"
+#: ..\..\radiant\selection\algorithm\Group.cpp:403
+msgid "Groups can be formed in Primitive and Group Part selection mode only"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:407
+#: ..\..\radiant\selection\algorithm\Group.cpp:408
 msgid "Nothing selected, cannot group anything"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:412
+#: ..\..\radiant\selection\algorithm\Group.cpp:413
 msgid "Select more than one element to form a group"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:438
+#: ..\..\radiant\selection\algorithm\Group.cpp:439
 msgid "The selected elements already form a group"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:463
-msgid "Groups can be dissolved in Primitive selection mode only"
+#: ..\..\radiant\selection\algorithm\Group.cpp:465
+msgid "Groups can be dissolved in Primitive and Group Part selection mode only"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:468
+#: ..\..\radiant\selection\algorithm\Group.cpp:470
 msgid "Nothing selected, cannot un-group anything"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:488
+#: ..\..\radiant\selection\algorithm\Group.cpp:490
 msgid "The selected elements aren't part of any group"
 msgstr ""
 

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-12-17 13:49+0100\n"
-"PO-Revision-Date: 2017-12-17 13:50+0100\n"
+"POT-Creation-Date: 2017-12-17 17:20+0100\n"
+"PO-Revision-Date: 2017-12-17 17:20+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -606,31 +606,31 @@ msgstr ""
 "Kann Entities nicht zusammenführen, die Auswahl muss ausschließlich aus func_*-Entities bestehen.\n"
 "(Die zuerst ausgewählte Entity bleibt dabei erhalten.)"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:402
-msgid "Groups can be formed in Primitive selection mode only"
-msgstr "Gruppen können nur im Primitiv-Selektionsmodus erstellt werden"
+#: ..\..\radiant\selection\algorithm\Group.cpp:403
+msgid "Groups can be formed in Primitive and Group Part selection mode only"
+msgstr "Gruppen können nur im Primitiv- und Gruppenteil-Selektionsmodus erstellt werden"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:407
+#: ..\..\radiant\selection\algorithm\Group.cpp:408
 msgid "Nothing selected, cannot group anything"
 msgstr "Nichts ausgewählt, kann keine Gruppe erstellen"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:412
+#: ..\..\radiant\selection\algorithm\Group.cpp:413
 msgid "Select more than one element to form a group"
 msgstr "Um eine Gruppe zu erstellen muss mehr als ein Element ausgewählt werden"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:438
+#: ..\..\radiant\selection\algorithm\Group.cpp:439
 msgid "The selected elements already form a group"
 msgstr "Die selektierten Elemente bilden bereits eine Gruppe"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:463
-msgid "Groups can be dissolved in Primitive selection mode only"
-msgstr "Gruppen können nur im Primitiv-Selektionsmodus aufgelöst werden"
+#: ..\..\radiant\selection\algorithm\Group.cpp:465
+msgid "Groups can be dissolved in Primitive and Group Part selection mode only"
+msgstr "Gruppen können nur im Primitiv- und Gruppenteil-Selektionsmodus aufgelöst werden"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:468
+#: ..\..\radiant\selection\algorithm\Group.cpp:470
 msgid "Nothing selected, cannot un-group anything"
 msgstr "Nichts ausgewählt, kann keine Gruppierung auflösen"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:488
+#: ..\..\radiant\selection\algorithm\Group.cpp:490
 msgid "The selected elements aren't part of any group"
 msgstr "Keines der selektierten Elemente ist Teil einer Gruppe"
 

@@ -397,9 +397,10 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 
 void checkGroupSelectedAvailable()
 {
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive &&
+		GlobalSelectionSystem().Mode() != SelectionSystem::eGroupPart)
 	{
-		throw CommandNotAvailableException(_("Groups can be formed in Primitive selection mode only"));
+		throw CommandNotAvailableException(_("Groups can be formed in Primitive and Group Part selection mode only"));
 	}
 
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
@@ -458,9 +459,10 @@ void groupSelected()
 
 void checkUngroupSelectedAvailable()
 {
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive &&
+		GlobalSelectionSystem().Mode() != SelectionSystem::eGroupPart)
 	{
-		throw CommandNotAvailableException(_("Groups can be dissolved in Primitive selection mode only"));
+		throw CommandNotAvailableException(_("Groups can be dissolved in Primitive and Group Part selection mode only"));
 	}
 
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
