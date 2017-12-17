@@ -47,14 +47,14 @@ if ($target -eq "x86")
     $platform = "Win32"
     $issFile = "..\innosetup\darkradiant.iss"
     $portablePath = "DarkRadiant_install"
-	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.10.25008\x86\Microsoft.VC150.CRT"
+	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.11.25325\x86\Microsoft.VC141.CRT"
 } 
 else
 {
     $platform = "x64"
     $issFile = "..\innosetup\darkradiant.x64.iss"
     $portablePath = "DarkRadiant_install.x64"
-	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.10.25008\x64\Microsoft.VC150.CRT"
+	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.11.25325\x64\Microsoft.VC141.CRT"
 }
 
 if (-not $skipbuild)
