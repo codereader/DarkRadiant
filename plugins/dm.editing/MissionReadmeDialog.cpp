@@ -9,6 +9,7 @@
 #include <fmt/format.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
+#include <wx/splitter.h>
 #include "wxutil/preview/GuiView.h"
 #include "wxutil/dialog/MessageBox.h"
 
@@ -89,9 +90,13 @@ void MissionReadmeDialog::populateWindow()
 	// Wire up the text entry boxes to update the preview
 	setupNamedEntryBox("MissionInfoReadmeContentsEntry");
 
+	// Make this dialog LARGE
 	Layout();
-	Fit();
-	CenterOnScreen();
+	FitToScreen(0.9f, 0.8f);
+
+	// Set the sash to 50%
+	wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "MissionInfoReadmeSplitter");
+	splitter->SetSashPosition(this->GetSize().GetWidth() / 2);
 }
 
 void MissionReadmeDialog::setupNamedEntryBox(const std::string& ctrlName)
