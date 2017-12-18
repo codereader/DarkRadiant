@@ -149,16 +149,26 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 
 			// Cast succeeded this is just the time for the current window
 			st->args.push_back(_owner.parseString(tokeniser));
-
-			tokeniser.assertNextToken(";");
         }
 		catch (std::logic_error&)
         {
             // Not a number, must be window plus time
 			st->args.push_back(_owner.parseString(tokeniser)); // window
 			st->args.push_back(_owner.parseString(tokeniser)); // time
-			tokeniser.assertNextToken(";");
         }
+
+		// Reset statement complete, check the next token, as some 
+		// GUI scripts don't bother writing an ending semicolon before the closing brace
+		std::string next = tokeniser.peek();
+
+		if (next == ";" || next == "}")
+		{
+			tokeniser.nextToken(); // exhaust
+		}
+		else
+		{
+			tokeniser.assertNextToken(";");
+		}
 	}
 
 	pushStatement(st);
