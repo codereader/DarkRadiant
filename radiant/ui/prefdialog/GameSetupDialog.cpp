@@ -12,6 +12,7 @@
 #include <wx/sizer.h>
 #include <wx/choicebk.h>
 #include <wx/stattext.h>
+#include <wx/button.h>
 #include "settings/GameManager.h"
 
 namespace ui
