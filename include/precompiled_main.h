@@ -16,8 +16,8 @@
 #endif
 
 #ifdef DR_PRECOMPILED_MATH
-	// Add DarkRadiant interfaces
-	#include "precompiled_interfaces.h"
+	// Add DarkRadiant math libraries
+	#include "precompiled_math.h"
 #endif
 
 #include <memory>
