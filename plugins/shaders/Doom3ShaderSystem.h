@@ -48,6 +48,10 @@ class Doom3ShaderSystem :
 	// notified upon realisation of this class.
 	ModuleObservers _observers;
 
+	// Signals for module subscribers
+	sigc::signal<void> _signalDefsLoaded;
+	sigc::signal<void> _signalDefsUnloaded;
+
 	// Used to provide feedback to the user during long operations
 	ILongRunningOperation* _currentOperation;
 
@@ -74,6 +78,9 @@ public:
 
 	// Is the shader system realised
     bool isRealised() override;
+
+	sigc::signal<void>& signal_DefsLoaded() override;
+	sigc::signal<void>& signal_DefsUnloaded() override;
 
 	// Return a shader by name
     MaterialPtr getMaterialForName(const std::string& name) override;

@@ -496,7 +496,7 @@ void MediaBrowser::setSelection(const std::string& selection)
 	}
 }
 
-void MediaBrowser::realise()
+void MediaBrowser::onMaterialDefsLoaded()
 {
 	if (!_isPopulated)
 	{
@@ -504,7 +504,7 @@ void MediaBrowser::realise()
 	}
 }
 
-void MediaBrowser::unrealise()
+void MediaBrowser::onMaterialDefsUnloaded()
 {
 	// Stop any populator thread that might be running
 	_populator.reset();
@@ -519,6 +519,9 @@ void MediaBrowser::populate()
 {
 	if (!_isPopulated)
 	{
+		// Set the flag to true to avoid double-entering this function
+		_isPopulated = true;
+
 		// Clear our treestore and put a single item in it
 		_treeStore->Clear();
 
@@ -529,14 +532,11 @@ void MediaBrowser::populate()
 		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
 
 		row.SendItemAdded();
+
+		// Start the background thread
+		_populator.reset(new Populator(_columns, this));
+		_populator->populate();
 	}
-
-	// Set the flag to true to avoid double-entering this function
-	_isPopulated = true;
-
-	// Start the background thread
-	_populator.reset(new Populator(_columns, this));
-	_populator->populate();
 }
 
 void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
@@ -693,12 +693,22 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 
 	// Attach to the MaterialManager to get notified on unrealise/realise
 	// events, in which case we're reloading the media tree
-	GlobalMaterialManager().attach(*this);
+	_materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
+		sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsLoaded)
+	);
+
+	_materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
+		sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsUnloaded)
+	);
+
+	// Start loading materials
+	populate();
 }
 
 void MediaBrowser::shutdownModule()
 {
-	GlobalMaterialManager().detach(*this);
+	_materialDefsLoaded.disconnect();
+	_materialDefsUnloaded.disconnect();
 }
 
 // Static module

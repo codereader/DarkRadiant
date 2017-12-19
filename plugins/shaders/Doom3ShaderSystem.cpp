@@ -119,6 +119,7 @@ void Doom3ShaderSystem::realise()
         // Start loading defs
         _defLoader.start();
 
+		_signalDefsLoaded.emit();
 		_observers.realise();
 		_realised = true;
 	}
@@ -128,6 +129,7 @@ void Doom3ShaderSystem::unrealise()
 {
 	if (_realised)
 	{
+		_signalDefsUnloaded.emit();
 		_observers.unrealise();
 		freeShaders();
 		_realised = false;
@@ -170,6 +172,16 @@ bool Doom3ShaderSystem::isRealised()
 {
 	// Don't report true until we have at least some definitions loaded
 	return _realised && _library->getNumDefinitions() > 0;
+}
+
+sigc::signal<void>& Doom3ShaderSystem::signal_DefsLoaded()
+{
+	return _signalDefsLoaded;
+}
+
+sigc::signal<void>& Doom3ShaderSystem::signal_DefsUnloaded()
+{
+	return _signalDefsUnloaded;
 }
 
 // Return a shader by name

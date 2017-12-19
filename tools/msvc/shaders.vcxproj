@@ -324,7 +324,6 @@
     <ClInclude Include="..\..\plugins\shaders\Doom3ShaderSystem.h" />
     <ClInclude Include="..\..\plugins\shaders\MapExpression.h" />
     <ClInclude Include="..\..\plugins\shaders\NamedBindable.h" />
-    <ClInclude Include="..\..\plugins\shaders\plugin.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderDefinition.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderExpression.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderFileLoader.h" />

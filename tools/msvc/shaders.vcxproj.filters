@@ -69,9 +69,6 @@
     <ClInclude Include="..\..\plugins\shaders\NamedBindable.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\shaders\plugin.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\shaders\ShaderDefinition.h">
       <Filter>src</Filter>
     </ClInclude>

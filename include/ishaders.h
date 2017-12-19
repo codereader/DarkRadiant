@@ -372,6 +372,15 @@ public:
 	 */
 	virtual bool isRealised() = 0;
 
+	// Signal which is invoked when the materials defs have been parsed
+	// Note that the DEF files might be parsed in a separate thread so 
+	// any call acquiring material info might need to block and wait for 
+	// that background call to finish before it can yield results.
+	virtual sigc::signal<void>& signal_DefsLoaded() = 0;
+
+	// Signal invoked when the material defs have been unloaded due 
+	// to a filesystem or other configuration change
+	virtual sigc::signal<void>& signal_DefsUnloaded() = 0;
 
 	/** Activate the shader for a given name and return it. The default shader
 	 * will be returned if name is not found.

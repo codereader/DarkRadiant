@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sigc++/connection.h>
+
 #include "imediabrowser.h"
 #include "iradiant.h"
 #include "imodule.h"
@@ -29,8 +31,7 @@ class TexturePreviewCombo;
  */
 class MediaBrowser : 
 	public IMediaBrowser,
-	public wxEvtHandler,
-	public ModuleObserver // to monitor the MaterialManager module
+	public wxEvtHandler
 {
 public:
 	struct TreeColumns :
@@ -75,6 +76,9 @@ private:
 	// false, if the tree is not yet initialised.
 	bool _isPopulated;
 
+	sigc::connection _materialDefsLoaded;
+	sigc::connection _materialDefsUnloaded;
+
 private:
 	void construct();
 
@@ -118,17 +122,16 @@ public:
 	 */
 	void setSelection(const std::string& selection) override;
 
-	// ModuleObserver implementation, these are called when the MaterialManager
-	// is emitting realise signals
-	void unrealise() override;
-	void realise() override;
-
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
 	void shutdownModule() override;
 
 private:
+	// These are called when the MaterialManager is loading/unloading the defs
+	void onMaterialDefsUnloaded();
+	void onMaterialDefsLoaded();
+
 	// Radiant Event Listener
 	void onRadiantStartup();
 
