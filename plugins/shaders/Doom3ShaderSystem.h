@@ -7,7 +7,6 @@
 #include "icommandsystem.h"
 
 #include <functional>
-#include "moduleobservers.h"
 
 #include "ShaderLibrary.h"
 #include "TableDefinition.h"
@@ -43,10 +42,6 @@ class Doom3ShaderSystem :
 
 	// TRUE if the material files have been parsed
 	bool _realised;
-
-	// The observers that are attached to this system. These get
-	// notified upon realisation of this class.
-	ModuleObservers _observers;
 
 	// Signals for module subscribers
 	sigc::signal<void> _signalDefsLoaded;
@@ -95,9 +90,6 @@ public:
 	void setActiveShaderUpdates(bool v) override {
 		_enableActiveUpdates = v;
 	}
-
-	void attach(ModuleObserver& observer) override;
-	void detach(ModuleObserver& observer) override;
 
     void setLightingEnabled(bool enabled) override;
 

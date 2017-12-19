@@ -414,9 +414,6 @@ public:
      */
     virtual void setActiveShaderUpdates(bool val) = 0;
 
-  virtual void attach(ModuleObserver& observer) = 0;
-  virtual void detach(ModuleObserver& observer) = 0;
-
   virtual void setLightingEnabled(bool enabled) = 0;
 
   virtual const char* getTexturePrefix() const = 0;

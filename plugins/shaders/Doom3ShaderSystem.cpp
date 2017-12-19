@@ -46,7 +46,6 @@ Doom3ShaderSystem::Doom3ShaderSystem() :
     _defLoader(std::bind(&Doom3ShaderSystem::loadMaterialFiles, this)),
 	_enableActiveUpdates(true),
 	_realised(false),
-	_observers(getName()),
 	_currentOperation(nullptr)
 {}
 
@@ -120,7 +119,6 @@ void Doom3ShaderSystem::realise()
         _defLoader.start();
 
 		_signalDefsLoaded.emit();
-		_observers.realise();
 		_realised = true;
 	}
 }
@@ -130,7 +128,6 @@ void Doom3ShaderSystem::unrealise()
 	if (_realised)
 	{
 		_signalDefsUnloaded.emit();
-		_observers.unrealise();
 		freeShaders();
 		_realised = false;
 	}
@@ -206,26 +203,6 @@ void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback)
 
 	// Pass the call to the Library
 	_library->foreachShaderName(callback);
-}
-
-void Doom3ShaderSystem::attach(ModuleObserver& observer)
-{
-	_observers.attach(observer);
-
-	if (_realised)
-	{
-		observer.realise();
-	}
-}
-
-void Doom3ShaderSystem::detach(ModuleObserver& observer)
-{
-	if (_realised)
-	{
-		observer.unrealise();
-	}
-
-	_observers.detach(observer);
 }
 
 void Doom3ShaderSystem::setLightingEnabled(bool enabled)

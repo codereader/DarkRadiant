@@ -48,7 +48,10 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 	// hence it will be attached in initialiseModule().
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
 	{
-		GlobalMaterialManager().attach(*this);
+		_materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
+			sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
+		_materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
+			sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
 	}
 
     // If the openGL module is already initialised and a shared context is created
@@ -62,12 +65,8 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
 OpenGLRenderSystem::~OpenGLRenderSystem()
 {
-	// The static default rendersystem won't use this, it will detach itself
-	// in the shutdownModule() method.
-    if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
-	{
-		GlobalMaterialManager().detach(*this);
-	}
+	_materialDefsLoaded.disconnect();
+	_materialDefsUnloaded.disconnect();
 }
 
 ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
@@ -524,7 +523,10 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	GlobalMaterialManager().attach(*this);
+	_materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
+		sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
+	_materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
+		sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
 
 	// greebo: Don't realise the module yet, this must wait
 	// until the shared GL context has been created (this
@@ -533,7 +535,8 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 
 void OpenGLRenderSystem::shutdownModule()
 {
-	GlobalMaterialManager().detach(*this);
+	_materialDefsLoaded.disconnect();
+	_materialDefsUnloaded.disconnect();
 }
 
 // Define the static ShaderCache module

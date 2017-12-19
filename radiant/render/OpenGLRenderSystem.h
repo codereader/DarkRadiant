@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irender.h"
+#include <sigc++/connection.h>
 #include <map>
 #include "imodule.h"
 #include "backend/OpenGLStateManager.h"
@@ -20,8 +21,7 @@ typedef std::shared_ptr<GLProgramFactory> GLProgramFactoryPtr;
  */
 class OpenGLRenderSystem
 : public RenderSystem,
-  public OpenGLStateManager,
-  public ModuleObserver
+  public OpenGLStateManager
 {
 private:
 	// Map of named Shader objects
@@ -50,6 +50,9 @@ private:
 	LightLists m_lightLists;
 
 	sigc::signal<void> _sigExtensionsInitialised;
+
+	sigc::connection _materialDefsLoaded;
+	sigc::connection _materialDefsUnloaded;
 
 private:
 	void propagateLightChangedFlagToAllLights();
