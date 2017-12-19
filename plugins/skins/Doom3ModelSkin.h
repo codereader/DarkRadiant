@@ -1,8 +1,6 @@
-#ifndef DOOM3MODELSKIN_H_
-#define DOOM3MODELSKIN_H_
+#pragma once
 
 #include "modelskin.h"
-#include "moduleobservers.h"
 
 #include <string>
 #include <map>
@@ -64,5 +62,3 @@ typedef std::shared_ptr<Doom3ModelSkin> Doom3ModelSkinPtr;
 
 
 }
-
-#endif /*DOOM3MODELSKIN_H_*/

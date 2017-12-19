@@ -4,7 +4,6 @@
 #include "icommandsystem.h"
 #include "ifilesystem.h"
 #include "itextstream.h"
-#include "moduleobservers.h"
 #include "ThreadedDefLoader.h"
 
 #include "Doom3EntityClass.h"
@@ -27,8 +26,6 @@ namespace eclass
  * which in turn kicks off the parse process (including the resolution of
  * inheritance).
  *
- * It also accomodates ModuleObservers, presumably to be notified when the
- * dependency modules are realised. This one depends on the VFS.
  */
 class EClassManager :
     public IEntityClassManager,

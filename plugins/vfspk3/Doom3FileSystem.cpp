@@ -28,7 +28,6 @@
 #include "string/join.h"
 #include "os/path.h"
 #include "os/dir.h"
-#include "moduleobservers.h"
 
 #include "string/split.h"
 

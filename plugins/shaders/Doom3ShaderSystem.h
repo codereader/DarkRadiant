@@ -61,11 +61,10 @@ public:
 	// Gets called on shutdown
     void onFileSystemShutdown() override;
 
-	// greebo: This parses the material files and calls realise() on any
-	// attached moduleobservers
+	// greebo: This parses the material files and emits the defs loaded signal
     void realise() override;
 
-	// greebo: Unrealises the attached ModuleObservers and frees the shaders
+	// greebo: Emits the defs unloaded signal and frees the shaders
     void unrealise() override;
 
 	// Flushes the shaders from memory and reloads the material files
