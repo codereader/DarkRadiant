@@ -214,6 +214,11 @@ private:
 
         if (_glShader)
         {
+			if (_glShader->isRealised())
+			{
+				unrealise();
+			}
+
             if (_inUse)
             {
                 _glShader->decrementUsed();
