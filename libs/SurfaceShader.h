@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <sigc++/connection.h>
 #include "debugging/debugging.h"
 #include "moduleobservers.h"
 #include "util/Noncopyable.h"
@@ -14,7 +15,6 @@
  * shadersystem reference available.
  */
 class SurfaceShader :
-    public ModuleObserver,
     public util::Noncopyable
 {
 public:
@@ -43,6 +43,9 @@ private:
 
     typedef std::set<Observer*> Observers;
     Observers _observers;
+
+	sigc::connection _shaderRealised;
+	sigc::connection _shaderUnrealised;
 
 public:
     // Constructor. The renderSystem reference will be kept internally as reference
@@ -171,8 +174,8 @@ public:
         _observers.erase(&observer);
     }
 
-    // ModuleObserver methods
-    void realise() override
+	// Called when the GL shader is realised
+    void realise()
     {
         assert(!_realised);
         _realised = true;
@@ -180,7 +183,8 @@ public:
         for (auto i : _observers) i->realiseShader();
     }
 
-    void unrealise() override
+	// Called when the GL shader is unrealised
+    void unrealise()
     {
         assert(_realised);
 
@@ -193,37 +197,46 @@ private:
     // Shader capture and release
     void captureShader()
     {
+		// Release previous resources in any case
+		releaseShader();
+
         // Check if we have a rendersystem - can we capture already?
         if (_renderSystem)
         {
-            releaseShader();
-
             _glShader = _renderSystem->capture(_materialName);
             assert(_glShader);
 
-            _glShader->attach(*this);
+			_shaderRealised = _glShader->signal_Realised().connect(
+				sigc::mem_fun(*this, &SurfaceShader::realise)
+			);
+			_shaderUnrealised = _glShader->signal_Unrealised().connect(
+				sigc::mem_fun(*this, &SurfaceShader::unrealise)
+			);
+
+			// Realise right now if the GLShader is already in that state
+			if (_glShader->isRealised())
+			{
+				realise();
+			}
 
             if (_inUse)
             {
                 _glShader->incrementUsed();
             }
         }
-        else
-        {
-            releaseShader();
-        }
     }
 
     void releaseShader()
     {
+		_shaderRealised.disconnect();
+		_shaderUnrealised.disconnect();
+
         if (_glShader)
         {
             if (_inUse)
             {
                 _glShader->decrementUsed();
             }
-
-            _glShader->detach(*this);
 
             _glShader.reset();
         }

@@ -4,7 +4,6 @@
 
 #include "irender.h"
 #include "ishaders.h"
-#include "moduleobservers.h"
 #include "string/string.h"
 
 #include <list>
@@ -17,8 +16,8 @@ class OpenGLRenderSystem;
 /**
  * Implementation of the Shader class.
  */
-class OpenGLShader
-: public Shader
+class OpenGLShader : 
+	public Shader
 {
     // The state manager we will be inserting/removing OpenGL states from
     OpenGLRenderSystem& _renderSystem;
@@ -34,7 +33,9 @@ class OpenGLShader
     bool _isVisible;
 
 	std::size_t _useCount;
-	ModuleObservers m_observers;
+
+	sigc::signal<void> _sigRealised;
+	sigc::signal<void> _sigUnrealised;
 
 private:
 
@@ -69,8 +70,6 @@ private:
     void insertPasses();
     void removePasses();
     
-    bool realised() const;
-
 public:
     /// Construct and initialise
     OpenGLShader(OpenGLRenderSystem& renderSystem);
@@ -93,8 +92,10 @@ public:
     void incrementUsed() override;
     void decrementUsed() override;
 
-    void attach(ModuleObserver& observer) override;
-    void detach(ModuleObserver& observer) override;
+	sigc::signal<void>& signal_Realised() override;
+	sigc::signal<void>& signal_Unrealised() override;
+
+	bool isRealised() override;
 
 	/**
 	 * Realise this shader, setting the name in the process.

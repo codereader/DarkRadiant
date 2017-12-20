@@ -402,7 +402,6 @@ public:
 
 class Matrix4;
 class Texture;
-class ModuleObserver;
 
 #include "math/Vector3.h"
 
@@ -463,8 +462,13 @@ public:
 
     virtual void incrementUsed() = 0;
     virtual void decrementUsed() = 0;
-    virtual void attach(ModuleObserver& observer) = 0;
-    virtual void detach(ModuleObserver& observer) = 0;
+
+	virtual sigc::signal<void>& signal_Realised() = 0;
+	virtual sigc::signal<void>& signal_Unrealised() = 0;
+
+	virtual bool isRealised() = 0;
+    //virtual void attach(ModuleObserver& observer) = 0;
+    //virtual void detach(ModuleObserver& observer) = 0;
 
 	/**
      * \brief Retrieve the Material that was used to construct this shader (if

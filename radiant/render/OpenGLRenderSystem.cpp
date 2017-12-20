@@ -6,6 +6,7 @@
 #include "math/Matrix4.h"
 #include "modulesystem/StaticModule.h"
 #include "backend/GLProgramFactory.h"
+#include "debugging/debugging.h"
 
 #include <functional>
 

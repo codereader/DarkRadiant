@@ -148,27 +148,19 @@ void OpenGLShader::decrementUsed()
     }
 }
 
-bool OpenGLShader::realised() const
+sigc::signal<void>& OpenGLShader::signal_Realised()
+{
+	return _sigRealised;
+}
+
+sigc::signal<void>& OpenGLShader::signal_Unrealised()
+{
+	return _sigUnrealised;
+}
+
+bool OpenGLShader::isRealised()
 {
     return _material != 0;
-}
-
-void OpenGLShader::attach(ModuleObserver& observer)
-{
-    if (realised())
-    {
-        observer.realise();
-    }
-    m_observers.attach(observer);
-}
-
-void OpenGLShader::detach(ModuleObserver& observer)
-{
-    if (realised())
-    {
-        observer.unrealise();
-    }
-    m_observers.detach(observer);
 }
 
 void OpenGLShader::realise(const std::string& name)
@@ -189,7 +181,7 @@ void OpenGLShader::realise(const std::string& name)
 
     insertPasses();
 
-    m_observers.realise();
+	signal_Realised().emit();
 }
 
 void OpenGLShader::insertPasses()
@@ -218,7 +210,7 @@ void OpenGLShader::removePasses()
 
 void OpenGLShader::unrealise()
 {
-    m_observers.unrealise();
+	signal_Unrealised().emit();
 
     removePasses();
 
