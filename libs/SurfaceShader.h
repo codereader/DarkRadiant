@@ -3,7 +3,6 @@
 #include <string>
 #include <sigc++/connection.h>
 #include "debugging/debugging.h"
-#include "moduleobservers.h"
 #include "util/Noncopyable.h"
 #include "irender.h"
 #include "shaderlib.h"
@@ -17,17 +16,6 @@
 class SurfaceShader :
     public util::Noncopyable
 {
-public:
-    // Observer classes can be attached to SurfaceShader to get notified
-    // on realisation/unrealisation
-    class Observer
-    {
-    public:
-        virtual ~Observer() {}
-        virtual void realiseShader() = 0;
-        virtual void unrealiseShader() = 0;
-    };
-
 private:
     // greebo: The name of the material
     std::string _materialName;
@@ -41,11 +29,13 @@ private:
 
     bool _realised;
 
-    typedef std::set<Observer*> Observers;
-    Observers _observers;
+	// Signals connected to the contained GL shader
+	sigc::connection _glShaderRealised;
+	sigc::connection _glShaderUnrealised;
 
-	sigc::connection _shaderRealised;
-	sigc::connection _shaderUnrealised;
+	// Client signals
+	sigc::signal<void> _signalRealised;
+	sigc::signal<void> _signalUnrealised;
 
 public:
     // Constructor. The renderSystem reference will be kept internally as reference
@@ -148,31 +138,17 @@ public:
         captureShader();
     }
 
-    void attachObserver(Observer& observer)
-    {
-        // Insert the observer into our observer set
-        std::pair<Observers::iterator, bool> result = _observers.insert(&observer);
+	// Get the signal which is fired when this shader is realised
+	sigc::signal<void>& signal_Realised()
+	{
+		return _signalRealised;
+	}
 
-        ASSERT_MESSAGE(result.second, "SurfaceShader::attachObserver(): Observer already attached.");
-
-        if (_realised)
-        {
-            observer.realiseShader();
-        }
-    }
-
-    void detachObserver(Observer& observer)
-    {
-        if (_realised)
-        {
-            observer.unrealiseShader();
-        }
-
-        ASSERT_MESSAGE(_observers.find(&observer) != _observers.end(), "SurfaceShader::detachObserver(): Cannot detach non-existing observer.");
-
-        // Remove after unrealising
-        _observers.erase(&observer);
-    }
+	// Get the signal which is fired when this shader is unrealised
+	sigc::signal<void>& signal_Unrealised()
+	{
+		return _signalUnrealised;
+	}
 
 	// Called when the GL shader is realised
     void realise()
@@ -180,7 +156,7 @@ public:
         assert(!_realised);
         _realised = true;
 
-        for (auto i : _observers) i->realiseShader();
+		signal_Realised().emit();
     }
 
 	// Called when the GL shader is unrealised
@@ -188,10 +164,15 @@ public:
     {
         assert(_realised);
 
-        for (auto i : _observers) i->unrealiseShader();
+		signal_Unrealised().emit();
 
         _realised = false;
     }
+
+	bool isRealised() const
+	{
+		return _realised;
+	}
 
 private:
     // Shader capture and release
@@ -206,10 +187,10 @@ private:
             _glShader = _renderSystem->capture(_materialName);
             assert(_glShader);
 
-			_shaderRealised = _glShader->signal_Realised().connect(
+			_glShaderRealised = _glShader->signal_Realised().connect(
 				sigc::mem_fun(*this, &SurfaceShader::realise)
 			);
-			_shaderUnrealised = _glShader->signal_Unrealised().connect(
+			_glShaderUnrealised = _glShader->signal_Unrealised().connect(
 				sigc::mem_fun(*this, &SurfaceShader::unrealise)
 			);
 
@@ -228,8 +209,8 @@ private:
 
     void releaseShader()
     {
-		_shaderRealised.disconnect();
-		_shaderUnrealised.disconnect();
+		_glShaderRealised.disconnect();
+		_glShaderUnrealised.disconnect();
 
         if (_glShader)
         {

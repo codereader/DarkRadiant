@@ -4,6 +4,7 @@
 #include "iundo.h"
 #include "mapfile.h"
 #include "iselectiontest.h"
+#include <sigc++/connection.h>
 
 #include "math/Vector3.h"
 
@@ -26,7 +27,6 @@ typedef std::vector<FacePtr> Faces;
 class Face :
 	public IFace,
 	public IUndoable,
-	public SurfaceShader::Observer,
 	public util::Noncopyable
 {
 private:
@@ -46,6 +46,9 @@ private:
 
     // Face shader, stores material name and GL shader object
 	SurfaceShader _shader;
+
+	// Connected to the SurfaceShader signals
+	sigc::connection _surfaceShaderRealised;
 
 	TextureProjection _texdef;
 	TextureProjection m_texdefTransformed;
@@ -82,9 +85,6 @@ public:
 
 	// greebo: Emits the updated normals to the Winding class.
 	void updateWinding();
-
-	void realiseShader();
-	void unrealiseShader();
 
     void connectUndoSystem(IMapFileChangeTracker& changeTracker);
     void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
@@ -210,5 +210,11 @@ public:
 
 	// Signal for external code to get notified each time the texdef of any face changes
 	static sigc::signal<void>& signal_texdefChanged();
+
+private:
+	void realiseShader();
+
+	// Connects surface shader signals and calls realiseShader() if possible
+	void setupSurfaceShader();
 
 }; // class Face

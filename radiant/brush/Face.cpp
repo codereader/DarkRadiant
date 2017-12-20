@@ -43,7 +43,8 @@ Face::Face(Brush& owner) :
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _shader.attachObserver(*this);
+	setupSurfaceShader();
+
     m_plane.initialiseFromPoints(
         Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0)
     );
@@ -65,7 +66,7 @@ Face::Face(
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _shader.attachObserver(*this);
+	setupSurfaceShader();
     m_plane.initialiseFromPoints(p0, p1, p2);
     planeChanged();
     shaderChanged();
@@ -77,7 +78,7 @@ Face::Face(Brush& owner, const Plane3& plane) :
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _shader.attachObserver(*this);
+	setupSurfaceShader();
     m_plane.setPlane(plane);
     planeChanged();
     shaderChanged();
@@ -90,7 +91,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-    _shader.attachObserver(*this);
+	setupSurfaceShader();
     m_plane.setPlane(plane);
 
     _texdef.matrix = TextureMatrix(texdef);
@@ -102,7 +103,6 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 Face::Face(Brush& owner, const Face& other) :
     IFace(other),
     IUndoable(other),
-    SurfaceShader::Observer(other),
     _owner(owner),
     m_plane(other.m_plane),
     _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
@@ -110,14 +110,26 @@ Face::Face(Brush& owner, const Face& other) :
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
-    _shader.attachObserver(*this);
+	setupSurfaceShader();
     planepts_assign(m_move_planepts, other.m_move_planepts);
     planeChanged();
 }
 
 Face::~Face()
 {
-    _shader.detachObserver(*this);
+	_surfaceShaderRealised.disconnect();
+}
+
+void Face::setupSurfaceShader()
+{
+	_surfaceShaderRealised = _shader.signal_Realised().connect(
+		sigc::mem_fun(*this, &Face::realiseShader));
+
+	// If we're already in realised state, call realiseShader right away
+	if (_shader.isRealised())
+	{
+		realiseShader();
+	}
 }
 
 Brush& Face::getBrush()
@@ -134,9 +146,6 @@ void Face::planeChanged()
 void Face::realiseShader()
 {
     _owner.onFaceShaderChanged();
-}
-
-void Face::unrealiseShader() {
 }
 
 void Face::connectUndoSystem(IMapFileChangeTracker& changeTracker)
