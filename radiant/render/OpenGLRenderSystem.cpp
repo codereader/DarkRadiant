@@ -53,6 +53,11 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 			sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
 		_materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
 			sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
+
+		if (GlobalMaterialManager().isRealised())
+		{
+			realise();
+		}
 	}
 
     // If the openGL module is already initialised and a shared context is created
@@ -528,6 +533,11 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 		sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
 	_materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
 		sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
+
+	if (GlobalMaterialManager().isRealised())
+	{
+		realise();
+	}
 
 	// greebo: Don't realise the module yet, this must wait
 	// until the shared GL context has been created (this
