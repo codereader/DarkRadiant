@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
-    <ClInclude Include="..\..\libs\moduleobservers.h" />
     <ClInclude Include="..\..\libs\picomodel.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
     <ClInclude Include="..\..\libs\RandomOrigin.h" />
