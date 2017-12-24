@@ -8,10 +8,13 @@
 #include "modulesystem/ModuleRegistry.h"
 
 #include <wx/wxprec.h>
+#include <wx/event.h>
 #include <wx/cmdline.h>
-
-#include "ui/splash/Splash.h"
 #include <sigc++/functors/mem_fun.h>
+
+#ifndef __linux__
+#include "ui/splash/Splash.h"
+#endif
 
 #ifndef POSIX
 #include "settings/LanguageManager.h"
@@ -74,7 +77,7 @@ bool RadiantApp::OnInit()
 	wxInitAllImageHandlers();
 
 	// Register to the start up signal
-	Connect(EV_RadiantStartup, wxCommandEventHandler(RadiantApp::onStartupEvent), NULL, this);
+	Bind(EV_RadiantStartup, sigc::mem_fun(*this, &RadiantApp::onStartupEvent));
 
 	// Activate the Popup Error Handler
 	_context.initErrorHandler();
@@ -135,8 +138,7 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 #ifndef __linux__
 	// We skip the splash screen in Linux, but the other platforms will show a progress bar
 	// Connect the progress callback to the Splash instance.
-	module::ModuleRegistry::Instance().signal_moduleInitialisationProgress().connect(
-		sigc::mem_fun(ui::Splash::Instance(), &ui::Splash::setProgressAndText));
+	ui::Splash::OnAppStartup();
 #endif
 
 	module::ModuleRegistry::Instance().loadAndInitialiseModules();

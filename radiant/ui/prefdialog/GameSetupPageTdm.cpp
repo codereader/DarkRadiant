@@ -272,6 +272,9 @@ void GameSetupPageTdm::populateAvailableMissionPaths()
 
 		os::foreachItemInDirectory(fmPath.string(), [&](const fs::path& fmFolder)
 		{
+			// Skip the mission preview image folder
+			if (fmFolder.filename() == "_missionshots") return;
+
 			_missionEntry->AppendString(fmFolder.filename().string());
 		});
 	}

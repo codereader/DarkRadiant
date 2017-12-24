@@ -6,13 +6,13 @@
 #include <wx/sizer.h>
 #include <wx/app.h>
 #include <sigc++/retype_return.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include "modulesystem/ModuleRegistry.h"
 
 namespace ui
 {
 
-#if !defined(__linux__)
 namespace
 {
 	const char* const SPLASH_FILENAME = "darksplash.png";
@@ -67,8 +67,8 @@ void wxImagePanel::render(wxDC&  dc)
 }
 
 Splash::Splash() :
-	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant"), wxDefaultPosition, wxDefaultSize, wxCENTRE),
-	_progressBar(NULL)
+	wxFrame(nullptr, wxID_ANY, wxT("DarkRadiant"), wxDefaultPosition, wxDefaultSize, wxCENTRE),
+	_progressBar(nullptr)
 {
     const ApplicationContext& ctx = module::ModuleRegistry::Instance().getApplicationContext();
 	std::string fullFileName(ctx.getBitmapsPath() + SPLASH_FILENAME);
@@ -101,36 +101,35 @@ void Splash::queueDraw()
 	wxTheApp->Yield(true);
 }
 
-#endif
-
 void Splash::setText(const std::string& text)
 {
-#if !defined(__linux__)
     _imagePanel->setText(text);
     queueDraw();
-#endif
 }
 
 void Splash::setProgress(float fraction)
 {
-#if !defined(__linux__)
 	_progressBar->SetValue(static_cast<int>(fraction*100));
 	queueDraw();
-#endif
 }
 
 void Splash::setProgressAndText(const std::string& text, float fraction)
 {
-#if !defined(__linux__)
 	setText(text);
 	setProgress(fraction);
-#endif
 }
 
 Splash& Splash::Instance()
 {
 	static Splash* instance = new Splash;
 	return *instance;
+}
+
+void Splash::OnAppStartup()
+{
+	// Connect the module progress callback
+	module::ModuleRegistry::Instance().signal_moduleInitialisationProgress().connect(
+		sigc::mem_fun(Instance(), &Splash::setProgressAndText));
 }
 
 } // namespace ui

@@ -15,7 +15,7 @@
 						<option>1</option>
 						<flag>wxEXPAND</flag>
 						<border>5</border>
-						<object class="wxSplitterWindow" name="ReadableEditorSplitter">
+						<object class="wxSplitterWindow" name="MissionInfoEditDialogSplitter">
 							<style>wxSP_3D|wxSP_LIVE_UPDATE</style>
 							<sashpos>350</sashpos>
 							<gravity>1</gravity>
@@ -221,8 +221,8 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+						<option>0</option>
+						<flag>wxEXPAND|wxTOP</flag>
 						<border>12</border>
 						<object class="wxFlexGridSizer">
 							<rows>0</rows>

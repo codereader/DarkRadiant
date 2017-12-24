@@ -1,6 +1,12 @@
 # DarkRadiant
 
-DarkRadiant is a level (map) editor for the **The Dark Mod**, an open-source Doom 3 modification which is available at http://www.thedarkmod.com
+DarkRadiant is a level (map) editor for the **The Dark Mod**, an open-source Doom 3 modification which is available at www.thedarkmod.com
+
+# Getting started
+
+DarkRadiant requires game resources to work with, these resources are not installed by this editor. You'll need to point DarkRadiant to one of these games (The Dark Mod, Doom 3, Quake 4, etc.) before you can start to work on your map. Visit www.thedarkmod.com for download instructions, then proceed with one of the tutorials available on the web.
+
+For The Dark Mod mappers, there's an extensive [Beginner's Guide](http://wiki.thedarkmod.com/index.php?title=A_-_Z_Beginner_Full_Guide_Start_Here!) on the project's wiki, which covers a lot of steps almost from scratch. Moreover, a couple of excellent video tutorials are available, linked from the top of that wiki article above.
 
 # Compiling on Windows
 
@@ -14,7 +20,7 @@ The free Community Edition can be obtained here:
 Since DarkRadiant uses a couple of open-source libraries that are not available on Windows by default, you will also need to download and install the dependencies. 7-Zip packages of the dependencies are available at the following
 URL(s). [Get 7-zip here](http://www.7-zip.org/)
 
-https://github.com/codereader/DarkRadiant/releases/download/2.3.0/windeps.7z  
+https://github.com/codereader/DarkRadiant/releases/download/2.5.0/windeps.7z  
 
 The dependencies packages need to be extracted into the main DarkRadiant
 source directory, i.e. alongside the `include/` and `radiant/` directories.
@@ -49,8 +55,7 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * pybind11-dev (Ubuntu 17 and later)
 
 This does not include core development tools such as g++ or the git client
-to download the sources (use sudo apt-get install git for that). One possible
-set of packages might be:
+to download the sources (use sudo apt-get install git for that). One possible set of packages might be:
 
 `sudo apt-get install git automake libtool g++ gettext pkg-config`
 
