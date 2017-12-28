@@ -462,6 +462,9 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
 	// Traverse the child and reparent all primitives to the new entity node
 	scene::parentPrimitives(oldNode, newNode);
 
+	// Let the new node keep its layer information (#4710)
+	newNode->assignToLayers(oldNode->getLayers());
+
 	// Insert the new entity to the parent
 	parent->addChildNode(newNode);
 
