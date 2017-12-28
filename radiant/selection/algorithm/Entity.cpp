@@ -103,8 +103,7 @@ void setEntityClassname(const std::string& classname)
 {
 	if (classname.empty())
 	{
-		wxutil::Messagebox::ShowError(_("Cannot set classname to an empty string."));
-		return;
+		throw std::runtime_error(_("Cannot set classname to an empty string."));
 	}
 
 	if (classname == "worldspawn")
