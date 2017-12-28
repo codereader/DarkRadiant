@@ -452,15 +452,19 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
         }
     });
 
-	// The old node must not be the root node (size of path >= 2)
+	// Remember the oldNode's parent before removing it
 	scene::INodePtr parent = oldNode->getParent();
-	assert(parent);
 
-	// Remove the old entity node from the parent
-	scene::removeNodeFromParent(oldNode);
+	// The old node must not be the root node or an orphaned one
+	assert(parent);
 
 	// Traverse the child and reparent all primitives to the new entity node
 	scene::parentPrimitives(oldNode, newNode);
+
+	// Remove the old entity node from the parent. This will disconnect 
+	// oldNode from the scene and the UndoSystem, so it's important to do 
+	// this step last, after the primitives have been moved. (#4718)
+	scene::removeNodeFromParent(oldNode);
 
 	// Let the new node keep its layer information (#4710)
 	newNode->assignToLayers(oldNode->getLayers());
