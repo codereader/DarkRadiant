@@ -931,6 +931,9 @@
     <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp">
       <Filter>src\ui\prefdialog</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\map\EditingStopwatch.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1892,6 +1895,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.h">
       <Filter>src\ui\prefdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\EditingStopwatch.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\EditingStopwatchInfoFileModule.h">
+      <Filter>src\map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
