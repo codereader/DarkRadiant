@@ -16,6 +16,7 @@
 #include "i18n.h"
 #include "GridItem.h"
 #include <functional>
+#include <fmt/format.h>
 
 #include "modulesystem/StaticModule.h"
 
@@ -239,7 +240,7 @@ void GridManager::gridChanged()
 		GlobalEventManager().setToggled(toggleName, _activeGridSize == gridItem.getGridSize());
 	}
 
-	GlobalUIManager().getStatusBarManager().setText("GridStatus", string::to_string(getGridSize()));
+	GlobalUIManager().getStatusBarManager().setText("GridStatus", fmt::format("{0:g}", getGridSize()));
 
 	gridChangeNotify();
 
