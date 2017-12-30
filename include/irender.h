@@ -420,6 +420,14 @@ typedef std::shared_ptr<Material> MaterialPtr;
 class Shader
 {
 public:
+	// Observer interface to get notified on (un-)realisation
+	class Observer
+	{
+	public:
+		virtual void onShaderRealised() = 0;
+		virtual void onShaderUnrealised() = 0;
+	};
+
     virtual ~Shader() {}
 
 	/**
@@ -463,12 +471,15 @@ public:
     virtual void incrementUsed() = 0;
     virtual void decrementUsed() = 0;
 
-	virtual sigc::signal<void>& signal_Realised() = 0;
-	virtual sigc::signal<void>& signal_Unrealised() = 0;
+	// Attach/detach an observer to this shader object.
+	// In case the shader is already realised when attachObserver() is called,
+	// the observer's onShaderRealised() method is immediately invoked.
+	// The analogous holds for detachObserver(): if the shader is realised,
+	// the observer's onShaderUnrealised() method is invoked before unregistering it.
+	virtual void attachObserver(Observer& observer) = 0;
+	virtual void detachObserver(Observer& observer) = 0;
 
 	virtual bool isRealised() = 0;
-    //virtual void attach(ModuleObserver& observer) = 0;
-    //virtual void detach(ModuleObserver& observer) = 0;
 
 	/**
      * \brief Retrieve the Material that was used to construct this shader (if

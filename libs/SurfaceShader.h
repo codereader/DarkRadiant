@@ -14,7 +14,8 @@
  * shadersystem reference available.
  */
 class SurfaceShader :
-    public util::Noncopyable
+    public util::Noncopyable,
+	public Shader::Observer
 {
 private:
     // greebo: The name of the material
@@ -28,10 +29,6 @@ private:
     bool _inUse;
 
     bool _realised;
-
-	// Signals connected to the contained GL shader
-	sigc::connection _glShaderRealised;
-	sigc::connection _glShaderUnrealised;
 
 	// Client signals
 	sigc::signal<void> _signalRealised;
@@ -187,18 +184,7 @@ private:
             _glShader = _renderSystem->capture(_materialName);
             assert(_glShader);
 
-			_glShaderRealised = _glShader->signal_Realised().connect(
-				sigc::mem_fun(*this, &SurfaceShader::realise)
-			);
-			_glShaderUnrealised = _glShader->signal_Unrealised().connect(
-				sigc::mem_fun(*this, &SurfaceShader::unrealise)
-			);
-
-			// Realise right now if the GLShader is already in that state
-			if (_glShader->isRealised())
-			{
-				realise();
-			}
+			_glShader->attachObserver(*this);
 
             if (_inUse)
             {
@@ -209,15 +195,9 @@ private:
 
     void releaseShader()
     {
-		_glShaderRealised.disconnect();
-		_glShaderUnrealised.disconnect();
-
         if (_glShader)
         {
-			if (_glShader->isRealised())
-			{
-				unrealise();
-			}
+			_glShader->detachObserver(*this);
 
             if (_inUse)
             {
@@ -227,4 +207,15 @@ private:
             _glShader.reset();
         }
     }
+
+	// Inherited via Observer
+	void onShaderRealised() override
+	{
+		realise();
+	}
+
+	void onShaderUnrealised() override
+	{
+		unrealise();
+	}
 };

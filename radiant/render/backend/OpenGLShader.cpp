@@ -148,14 +148,32 @@ void OpenGLShader::decrementUsed()
     }
 }
 
-sigc::signal<void>& OpenGLShader::signal_Realised()
+void OpenGLShader::attachObserver(Observer& observer)
 {
-	return _sigRealised;
+	std::pair<Observers::iterator, bool> result = _observers.insert(&observer);
+
+	// Prevent double-attach operations in debug mode
+	assert(result.second);
+
+	// Emit the signal immediately if we're in realised state
+	if (isRealised())
+	{
+		observer.onShaderRealised();
+	}
 }
 
-sigc::signal<void>& OpenGLShader::signal_Unrealised()
+void OpenGLShader::detachObserver(Observer& observer)
 {
-	return _sigUnrealised;
+	// Emit the signal immediately if we're in realised state
+	if (isRealised())
+	{
+		observer.onShaderUnrealised();
+	}
+
+	// Prevent invalid detach operations in debug mode
+	assert(_observers.find(&observer) != _observers.end());
+
+	_observers.erase(&observer);
 }
 
 bool OpenGLShader::isRealised()
@@ -181,7 +199,10 @@ void OpenGLShader::realise(const std::string& name)
 
     insertPasses();
 
-	signal_Realised().emit();
+	for (Observer* observer : _observers)
+	{
+		observer->onShaderRealised();
+	}
 }
 
 void OpenGLShader::insertPasses()
@@ -210,7 +231,10 @@ void OpenGLShader::removePasses()
 
 void OpenGLShader::unrealise()
 {
-	signal_Unrealised().emit();
+	for (Observer* observer : _observers)
+	{
+		observer->onShaderUnrealised();
+	}
 
     removePasses();
 

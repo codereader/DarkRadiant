@@ -34,8 +34,9 @@ class OpenGLShader :
 
 	std::size_t _useCount;
 
-	sigc::signal<void> _sigRealised;
-	sigc::signal<void> _sigUnrealised;
+	// Observers attached to this Shader
+	typedef std::set<Observer*> Observers;
+	Observers _observers;
 
 private:
 
@@ -92,8 +93,8 @@ public:
     void incrementUsed() override;
     void decrementUsed() override;
 
-	sigc::signal<void>& signal_Realised() override;
-	sigc::signal<void>& signal_Unrealised() override;
+	void attachObserver(Observer& observer) override;
+	void detachObserver(Observer& observer) override;
 
 	bool isRealised() override;
 
