@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "EditingStopwatch.h"
 #include "parser/DefTokeniser.h"
+#include "string/convert.h"
 
 namespace map
 {

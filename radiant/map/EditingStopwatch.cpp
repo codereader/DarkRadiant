@@ -2,6 +2,8 @@
 
 #include <sigc++/functors/mem_fun.h>
 
+#include "i18n.h"
+#include "iradiant.h"
 #include "iuimanager.h"
 #include "itextstream.h"
 #include "imainframe.h"
@@ -128,6 +130,9 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 		break;
 	case IMap::MapSaved:
 		start();
+		break;
+		
+	default:
 		break;
 	};
 }
