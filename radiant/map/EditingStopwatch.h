@@ -39,7 +39,9 @@ public:
 
 	void start();
 	void stop();
-	void setEditingTime(unsigned long newValue);
+
+	unsigned long getTotalSecondsEdited();
+	void setTotalSecondsEdited(unsigned long newValue);
 
 	// Internal accessor to the module
 	static EditingStopwatch& GetInstanceInternal();

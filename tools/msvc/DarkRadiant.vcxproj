@@ -332,6 +332,7 @@
     <ClCompile Include="..\..\radiant\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiant\map\EditingStopwatch.cpp" />
+    <ClCompile Include="..\..\radiant\map\EditingStopwatchInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFile.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp" />

@@ -934,6 +934,9 @@
     <ClCompile Include="..\..\radiant\map\EditingStopwatch.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\map\EditingStopwatchInfoFileModule.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">

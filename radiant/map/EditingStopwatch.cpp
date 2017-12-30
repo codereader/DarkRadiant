@@ -8,6 +8,7 @@
 #include "imapinfofile.h"
 
 #include "modulesystem/StaticModule.h"
+#include "EditingStopwatchInfoFileModule.h"
 
 namespace map
 {
@@ -48,9 +49,9 @@ void EditingStopwatch::initialiseModule(const ApplicationContext& ctx)
 		sigc::mem_fun(*this, &EditingStopwatch::onMapEvent)
 	);
 
-	/*GlobalMapInfoFileManager().registerInfoFileModule(
+	GlobalMapInfoFileManager().registerInfoFileModule(
 		std::make_shared<EditingStopwatchInfoFileModule>()
-	);*/
+	);
 
 	// Register the timer when the application has come up
 	GlobalRadiant().signal_radiantStarted().connect(
@@ -76,8 +77,7 @@ void EditingStopwatch::onIntervalReached(wxTimerEvent& ev)
 	if (GlobalMainFrame().isActiveApp() && GlobalMainFrame().screenUpdatesEnabled())
 	{
 		_secondsEdited += TIMER_INTERVAL_SECS;
-
-		rMessage() << "Current timer: " << _secondsEdited << " seconds" << std::endl;
+		//rMessage() << "Current timer: " << _secondsEdited << " seconds" << std::endl;
 	}
 }
 
@@ -91,19 +91,19 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 	// the new value will be set by the InfoFileModule.
 	case IMap::MapLoading:
 		stop();
-		setEditingTime(0);
+		setTotalSecondsEdited(0);
 		break;
 
 	// Start the clock once the map is done loading
 	case IMap::MapLoaded:
 		start();
 		break;
-
+		
 	// When a map is unloaded, we reset the value to 0 again
 	// to prevent leaving stuff behind.
 	case IMap::MapUnloaded:
 		stop();
-		setEditingTime(0);
+		setTotalSecondsEdited(0);
 		break;
 
 	// We start/stop during save operations
@@ -132,7 +132,12 @@ void EditingStopwatch::stop()
 	}
 }
 
-void EditingStopwatch::setEditingTime(unsigned long newValue)
+unsigned long EditingStopwatch::getTotalSecondsEdited()
+{
+	return _secondsEdited;
+}
+
+void EditingStopwatch::setTotalSecondsEdited(unsigned long newValue)
 {
 	_secondsEdited = newValue;
 }
