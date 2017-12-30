@@ -359,7 +359,6 @@
 		3AE211811E59922100F5A0A6 /* ase_export.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5381E5232250062D9AF /* ase_export.py */; };
 		3AE211821E59922100F5A0A6 /* ase_export_blend.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5391E5232250062D9AF /* ase_export_blend.py */; };
 		3AE211831E59922100F5A0A6 /* check_for_invalid_visportals.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */; };
-		3AE211841E59922100F5A0A6 /* convert_to_ase_and_replace.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53B1E5232250062D9AF /* convert_to_ase_and_replace.py */; };
 		3AE211851E59922100F5A0A6 /* example.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53C1E5232250062D9AF /* example.py */; };
 		3AE211861E59922100F5A0A6 /* export_obj.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53D1E5232250062D9AF /* export_obj.py */; };
 		3AE211871E59922100F5A0A6 /* patchsplitter.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53E1E5232250062D9AF /* patchsplitter.py */; };
@@ -425,6 +424,9 @@
 		3AE6F21F1FDD39E7008A1B2D /* ReadmeTxt.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F2191FDD39E7008A1B2D /* ReadmeTxt.h */; };
 		3AE6F2211FDD3A6C008A1B2D /* missioninforeadmedialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F2201FDD3A36008A1B2D /* missioninforeadmedialog.xrc */; };
 		3AE6F2221FDD3A83008A1B2D /* missioninforeadmedialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F2201FDD3A36008A1B2D /* missioninforeadmedialog.xrc */; };
+		3AE6F2691FF78201008A1B2D /* EditingStopwatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2651FF78201008A1B2D /* EditingStopwatch.cpp */; };
+		3AE6F26A1FF78201008A1B2D /* EditingStopwatchInfoFileModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2671FF78201008A1B2D /* EditingStopwatchInfoFileModule.cpp */; };
+		3AE6F26C1FF78285008A1B2D /* stopwatch.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F26B1FF7823B008A1B2D /* stopwatch.png */; };
 		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
 		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
 		3AEBDCA31E506C930062D9AF /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC9B1E5069A60062D9AF /* CommandSystem.cpp */; };
@@ -1186,7 +1188,6 @@
 		3AEBE55B1E5233880062D9AF /* ase_export.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5381E5232250062D9AF /* ase_export.py */; };
 		3AEBE55C1E5233880062D9AF /* ase_export_blend.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5391E5232250062D9AF /* ase_export_blend.py */; };
 		3AEBE55D1E5233880062D9AF /* check_for_invalid_visportals.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */; };
-		3AEBE55E1E5233880062D9AF /* convert_to_ase_and_replace.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53B1E5232250062D9AF /* convert_to_ase_and_replace.py */; };
 		3AEBE55F1E5233880062D9AF /* example.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53C1E5232250062D9AF /* example.py */; };
 		3AEBE5601E5233880062D9AF /* export_obj.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53D1E5232250062D9AF /* export_obj.py */; };
 		3AEBE5611E5233880062D9AF /* patchsplitter.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE53E1E5232250062D9AF /* patchsplitter.py */; };
@@ -2043,6 +2044,7 @@
 			dstPath = Contents/Resources/bitmaps;
 			dstSubfolderSpec = 1;
 			files = (
+				3AE6F26C1FF78285008A1B2D /* stopwatch.png in CopyFiles */,
 				3AF474791E634D2B006B26C2 /* _cubiclight.bmp in CopyFiles */,
 				3AF4747A1E634D2B006B26C2 /* _currentrender.bmp in CopyFiles */,
 				3AF4747B1E634D2B006B26C2 /* _flat.bmp in CopyFiles */,
@@ -2289,7 +2291,6 @@
 				3AE211811E59922100F5A0A6 /* ase_export.py in CopyFiles */,
 				3AE211821E59922100F5A0A6 /* ase_export_blend.py in CopyFiles */,
 				3AE211831E59922100F5A0A6 /* check_for_invalid_visportals.py in CopyFiles */,
-				3AE211841E59922100F5A0A6 /* convert_to_ase_and_replace.py in CopyFiles */,
 				3AE211851E59922100F5A0A6 /* example.py in CopyFiles */,
 				3AE211861E59922100F5A0A6 /* export_obj.py in CopyFiles */,
 				3AE211871E59922100F5A0A6 /* patchsplitter.py in CopyFiles */,
@@ -2400,7 +2401,6 @@
 				3AEBE55B1E5233880062D9AF /* ase_export.py in CopyFiles */,
 				3AEBE55C1E5233880062D9AF /* ase_export_blend.py in CopyFiles */,
 				3AEBE55D1E5233880062D9AF /* check_for_invalid_visportals.py in CopyFiles */,
-				3AEBE55E1E5233880062D9AF /* convert_to_ase_and_replace.py in CopyFiles */,
 				3AEBE55F1E5233880062D9AF /* example.py in CopyFiles */,
 				3AEBE5601E5233880062D9AF /* export_obj.py in CopyFiles */,
 				3AEBE5611E5233880062D9AF /* patchsplitter.py in CopyFiles */,
@@ -3109,6 +3109,11 @@
 		3AE6F2181FDD39E7008A1B2D /* ReadmeTxt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReadmeTxt.cpp; path = ../../plugins/dm.editing/ReadmeTxt.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F2191FDD39E7008A1B2D /* ReadmeTxt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReadmeTxt.h; path = ../../plugins/dm.editing/ReadmeTxt.h; sourceTree = SOURCE_ROOT; };
 		3AE6F2201FDD3A36008A1B2D /* missioninforeadmedialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = missioninforeadmedialog.xrc; path = ../../install/ui/missioninforeadmedialog.xrc; sourceTree = SOURCE_ROOT; };
+		3AE6F2651FF78201008A1B2D /* EditingStopwatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditingStopwatch.cpp; path = ../../radiant/map/EditingStopwatch.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F2661FF78201008A1B2D /* EditingStopwatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EditingStopwatch.h; path = ../../radiant/map/EditingStopwatch.h; sourceTree = SOURCE_ROOT; };
+		3AE6F2671FF78201008A1B2D /* EditingStopwatchInfoFileModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EditingStopwatchInfoFileModule.cpp; path = ../../radiant/map/EditingStopwatchInfoFileModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F2681FF78201008A1B2D /* EditingStopwatchInfoFileModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EditingStopwatchInfoFileModule.h; path = ../../radiant/map/EditingStopwatchInfoFileModule.h; sourceTree = SOURCE_ROOT; };
+		3AE6F26B1FF7823B008A1B2D /* stopwatch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopwatch.png; path = ../../install/bitmaps/stopwatch.png; sourceTree = SOURCE_ROOT; };
 		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
@@ -3855,7 +3860,6 @@
 		3AEBE5381E5232250062D9AF /* ase_export.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = ase_export.py; path = ../../install/scripts/commands/ase_export.py; sourceTree = SOURCE_ROOT; };
 		3AEBE5391E5232250062D9AF /* ase_export_blend.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = ase_export_blend.py; path = ../../install/scripts/commands/ase_export_blend.py; sourceTree = SOURCE_ROOT; };
 		3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = check_for_invalid_visportals.py; path = ../../install/scripts/commands/check_for_invalid_visportals.py; sourceTree = SOURCE_ROOT; };
-		3AEBE53B1E5232250062D9AF /* convert_to_ase_and_replace.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = convert_to_ase_and_replace.py; path = ../../install/scripts/commands/convert_to_ase_and_replace.py; sourceTree = SOURCE_ROOT; };
 		3AEBE53C1E5232250062D9AF /* example.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = example.py; path = ../../install/scripts/commands/example.py; sourceTree = SOURCE_ROOT; };
 		3AEBE53D1E5232250062D9AF /* export_obj.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = export_obj.py; path = ../../install/scripts/commands/export_obj.py; sourceTree = SOURCE_ROOT; };
 		3AEBE53E1E5232250062D9AF /* patchsplitter.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = patchsplitter.py; path = ../../install/scripts/commands/patchsplitter.py; sourceTree = SOURCE_ROOT; };
@@ -5049,6 +5053,7 @@
 		3A0122531E503C4D00A62BC1 /* bitmaps */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F26B1FF7823B008A1B2D /* stopwatch.png */,
 				3A0122561E503D3000A62BC1 /* _cubiclight.bmp */,
 				3A0122571E503D3100A62BC1 /* _currentrender.bmp */,
 				3A0122581E503D3100A62BC1 /* _flat.bmp */,
@@ -6671,7 +6676,6 @@
 				3AEBE5381E5232250062D9AF /* ase_export.py */,
 				3AEBE5391E5232250062D9AF /* ase_export_blend.py */,
 				3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */,
-				3AEBE53B1E5232250062D9AF /* convert_to_ase_and_replace.py */,
 				3AEBE53C1E5232250062D9AF /* example.py */,
 				3AEBE53D1E5232250062D9AF /* export_obj.py */,
 				3AEBE53E1E5232250062D9AF /* patchsplitter.py */,
@@ -6992,6 +6996,10 @@
 		3AF743771E4F861A003465B5 /* map */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F2651FF78201008A1B2D /* EditingStopwatch.cpp */,
+				3AE6F2661FF78201008A1B2D /* EditingStopwatch.h */,
+				3AE6F2671FF78201008A1B2D /* EditingStopwatchInfoFileModule.cpp */,
+				3AE6F2681FF78201008A1B2D /* EditingStopwatchInfoFileModule.h */,
 				3AF743781E4F861A003465B5 /* AasFileManager.cpp */,
 				3AF743791E4F861A003465B5 /* AasFileManager.h */,
 				3AF7437A1E4F861A003465B5 /* algorithm */,
@@ -10216,6 +10224,7 @@
 				3AF745AF1E4F861B003465B5 /* ModelFormatManager.cpp in Sources */,
 				3AE6F13E1F496AA1008A1B2D /* Export.cpp in Sources */,
 				3AF7457C1E4F861B003465B5 /* FacePlane.cpp in Sources */,
+				3AE6F2691FF78201008A1B2D /* EditingStopwatch.cpp in Sources */,
 				3AF745B91E4F861B003465B5 /* Namespace.cpp in Sources */,
 				3AF746251E4F861B003465B5 /* Vector3PropertyEditor.cpp in Sources */,
 				3AF7462E1E4F861B003465B5 /* LayerOrthoContextMenuItem.cpp in Sources */,
@@ -10363,6 +10372,7 @@
 				3AF745831E4F861B003465B5 /* CameraSettings.cpp in Sources */,
 				3AF745B31E4F861B003465B5 /* ApplicationContextImpl.cpp in Sources */,
 				3AF745DA1E4F861B003465B5 /* Patch.cpp in Sources */,
+				3AE6F26A1FF78201008A1B2D /* EditingStopwatchInfoFileModule.cpp in Sources */,
 				3AF7463E1E4F861C003465B5 /* FiltersMenu.cpp in Sources */,
 				3AF746001E4F861B003465B5 /* BrushItem.cpp in Sources */,
 				3AF745D31E4F861B003465B5 /* View.cpp in Sources */,
