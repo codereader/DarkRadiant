@@ -116,6 +116,7 @@ public:
 		POS_BRUSHCOUNT		= 30,
 		POS_SHADERCLIPBOARD	= 40,
 		POS_GRID			= 50,
+		POS_MAP_EDIT_TIME	= 60,
 		POS_BACK			= 9000,
 	};
 

@@ -2,11 +2,13 @@
 
 #include <sigc++/functors/mem_fun.h>
 
+#include "iuimanager.h"
 #include "itextstream.h"
 #include "imainframe.h"
 #include "imap.h"
 #include "imapinfofile.h"
 
+#include <fmt/format.h>
 #include "modulesystem/StaticModule.h"
 #include "EditingStopwatchInfoFileModule.h"
 
@@ -16,6 +18,7 @@ namespace map
 namespace
 {
 	const int TIMER_INTERVAL_SECS = 1;
+	const char* const STATUS_BAR_ELEMENT = "EditTime";
 }
 
 EditingStopwatch::EditingStopwatch() :
@@ -36,6 +39,7 @@ const StringSet& EditingStopwatch::getDependencies() const
 	{
 		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
+		_dependencies.insert(MODULE_UIMANAGER);
 	}
 
 	return _dependencies;
@@ -56,6 +60,11 @@ void EditingStopwatch::initialiseModule(const ApplicationContext& ctx)
 	// Register the timer when the application has come up
 	GlobalRadiant().signal_radiantStarted().connect(
 		sigc::mem_fun(*this, &EditingStopwatch::onRadiantStartup));
+
+	// Add the status bar element
+	GlobalUIManager().getStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "stopwatch.png", 
+		IStatusBarManager::POS_MAP_EDIT_TIME, _("Time spent on this map"));
+	GlobalUIManager().getStatusBarManager().setText(STATUS_BAR_ELEMENT, "00:00:00");
 }
 
 void EditingStopwatch::shutdownModule()
@@ -77,7 +86,14 @@ void EditingStopwatch::onIntervalReached(wxTimerEvent& ev)
 	if (GlobalMainFrame().isActiveApp() && GlobalMainFrame().screenUpdatesEnabled())
 	{
 		_secondsEdited += TIMER_INTERVAL_SECS;
-		//rMessage() << "Current timer: " << _secondsEdited << " seconds" << std::endl;
+
+		// Format the time and pass it to the status bar
+		unsigned long hours = _secondsEdited / 3600;
+		unsigned long minutes = (_secondsEdited % 3600) / 60;
+		unsigned long seconds = _secondsEdited % 60;
+
+		GlobalUIManager().getStatusBarManager().setText(STATUS_BAR_ELEMENT,
+			fmt::format("{0:02d}:{1:02d}:{2:02d}", hours, minutes, seconds));
 	}
 }
 
