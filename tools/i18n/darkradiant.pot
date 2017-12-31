@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2017-12-17 17:20+0100\n"
+"POT-Creation-Date: 2017-12-30 10:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -188,7 +188,7 @@ msgstr ""
 #: ..\..\radiant\map\algorithm\Models.cpp:110 ..\..\radiant\map\Map.cpp:111
 #: ..\..\radiant\map\Map.cpp:426 ..\..\radiant\map\Map.cpp:525
 #: ..\..\radiant\map\Map.cpp:553 ..\..\radiant\RadiantModule.cpp:106
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:323
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:312
 msgid "Processing..."
 msgstr ""
 
@@ -239,6 +239,10 @@ msgstr ""
 
 #: ..\..\radiant\map\CounterManager.cpp:81
 msgid "Brushes: {0:d} ({1:d}) Patches: {2:d} ({3:d}) Entities: {4:d} ({5:d})"
+msgstr ""
+
+#: ..\..\radiant\map\EditingStopwatch.cpp:68
+msgid "Time spent on this map"
 msgstr ""
 
 #: ..\..\radiant\map\FindMapElements.cpp:95
@@ -496,11 +500,11 @@ msgstr ""
 msgid "Patch Subdivide Threshold"
 msgstr ""
 
-#: ..\..\radiant\RadiantApp.cpp:104
+#: ..\..\radiant\RadiantApp.cpp:107
 msgid "Disable sound for this session."
 msgstr ""
 
-#: ..\..\radiant\RadiantApp.cpp:105
+#: ..\..\radiant\RadiantApp.cpp:108
 msgid "Verbose logging."
 msgstr ""
 
@@ -536,24 +540,24 @@ msgstr ""
 msgid "Cannot set classname to an empty string."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Entity.cpp:112
+#: ..\..\radiant\selection\algorithm\Entity.cpp:111
 msgid "Cannot change classname to worldspawn."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Entity.cpp:131
+#: ..\..\radiant\selection\algorithm\Entity.cpp:130
 msgid "Cannot change classname of worldspawn entity."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Entity.cpp:169
+#: ..\..\radiant\selection\algorithm\Entity.cpp:168
 msgid "Critical: Cannot find selected entities."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Entity.cpp:174
-#: ..\..\radiant\selection\algorithm\Entity.cpp:190
+#: ..\..\radiant\selection\algorithm\Entity.cpp:173
+#: ..\..\radiant\selection\algorithm\Entity.cpp:189
 msgid "Exactly two entities must be selected for this operation."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Entity.cpp:236
+#: ..\..\radiant\selection\algorithm\Entity.cpp:235
 msgid "Unable to create entity {0}, no brushes selected."
 msgstr ""
 
@@ -1990,51 +1994,51 @@ msgstr ""
 msgid "Picking Texures"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:64
+#: ..\..\radiant\ui\grid\GridManager.cpp:65
 msgid "Current Grid Size"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:155
+#: ..\..\radiant\ui\grid\GridManager.cpp:156
 msgid "Settings/Grid"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:157
+#: ..\..\radiant\ui\grid\GridManager.cpp:158
 msgid "Default Grid Size"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:161
+#: ..\..\radiant\ui\grid\GridManager.cpp:162
 msgid "Lines"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:162
+#: ..\..\radiant\ui\grid\GridManager.cpp:163
 msgid "Dotted Lines"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:163
+#: ..\..\radiant\ui\grid\GridManager.cpp:164
 msgid "More Dotted Lines"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:164
+#: ..\..\radiant\ui\grid\GridManager.cpp:165
 msgid "Crosses"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:165
+#: ..\..\radiant\ui\grid\GridManager.cpp:166
 msgid "Dots"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:166
+#: ..\..\radiant\ui\grid\GridManager.cpp:167
 msgid "Big Dots"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:167
+#: ..\..\radiant\ui\grid\GridManager.cpp:168
 msgid "Squares"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:169
+#: ..\..\radiant\ui\grid\GridManager.cpp:170
 msgid "Major Grid Style"
 msgstr ""
 
-#: ..\..\radiant\ui\grid\GridManager.cpp:170
+#: ..\..\radiant\ui\grid\GridManager.cpp:171
 msgid "Minor Grid Style"
 msgstr ""
 
@@ -2279,7 +2283,7 @@ msgstr ""
 msgid "Media"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:529
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:532
 #: ..\..\plugins\eclasstree\EClassTree.cpp:43
 msgid "Loading, please wait..."
 msgstr ""
@@ -2586,24 +2590,24 @@ msgstr ""
 msgid "<no description>"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:21
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:22
 msgid "Game Setup"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:33
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:34
 msgid "Game Type:"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:136
-#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:152
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:137
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:153
 msgid "Invalid Settings"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:137
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:138
 msgid "Please select a game type"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:150
+#: ..\..\radiant\ui\prefdialog\GameSetupDialog.cpp:151
 msgid ""
 "Warning:\n"
 "{0}\n"
@@ -4500,7 +4504,7 @@ msgstr ""
 msgid "Run Script"
 msgstr ""
 
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:323
+#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:312
 msgid "Loading Shaders"
 msgstr ""
 
