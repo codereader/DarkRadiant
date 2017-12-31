@@ -225,7 +225,7 @@ def execute():
                 zcenter=(max(zlist)+min(zlist))/2
                 for item in geomlist.objects:
                     for vert in item.vertices:
-                        vert -= Vector3(xcenter, ycenter, zcenter)
+                        vert -= dr.Vector3(xcenter, ycenter, zcenter)
 
             # This string will hold our export data
             data = str()
