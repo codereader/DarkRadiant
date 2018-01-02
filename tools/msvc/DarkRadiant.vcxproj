@@ -120,7 +120,6 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <GenerateMapFile>false</GenerateMapFile>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
     </Link>
@@ -146,7 +145,6 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <GenerateMapFile>false</GenerateMapFile>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
     </Link>
