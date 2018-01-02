@@ -6,7 +6,13 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DarkRadiantRoot)\radiant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/Zm200 /Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <Link>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
+      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

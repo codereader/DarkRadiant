@@ -105,8 +105,6 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <BrowseInformation>
@@ -122,9 +120,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateMapFile>false</GenerateMapFile>
-      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
       <FixedBaseAddress>false</FixedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -138,8 +134,6 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <BrowseInformation>
       </BrowseInformation>
@@ -153,9 +147,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateMapFile>false</GenerateMapFile>
-      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
       <FixedBaseAddress>false</FixedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -166,8 +158,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -179,8 +169,6 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>
@@ -195,9 +183,7 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
@@ -208,9 +194,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>
