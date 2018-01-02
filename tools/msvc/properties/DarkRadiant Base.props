@@ -16,7 +16,6 @@
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;FMT_HEADER_ONLY;FMT_USE_WINDOWS_H=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>

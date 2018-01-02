@@ -99,7 +99,6 @@
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -130,7 +129,6 @@
       </PrecompiledHeader>
       <BrowseInformation>
       </BrowseInformation>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -157,7 +155,6 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -188,7 +185,6 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
