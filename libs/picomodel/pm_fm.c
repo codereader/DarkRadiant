@@ -455,13 +455,13 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 				if (p_index_LUT2 == NULL)
 					_pico_printf( PICO_NORMAL, " Couldn't allocate memory!\n");
 				p_index_LUT[triangle->index_xyz[j]].next = (index_LUT_t *)p_index_LUT2;
-				p_index_LUT2->Vert = dups;
+				p_index_LUT2->Vert = (short)dups;
 				p_index_LUT2->ST = triangle->index_st[j];
 				p_index_LUT2->next = NULL;
 #ifdef FM_VERBOSE_DBG
 				_pico_printf( PICO_NORMAL, " ADDING first LL XYZ:%d DUP:%d ST:%d\n", triangle->index_xyz[j], dups, triangle->index_st[j]);
 #endif
-				triangle->index_xyz[j] = dups + fm_head->numXYZ; // Make change in Tri hunk
+				triangle->index_xyz[j] = (short)(dups + fm_head->numXYZ); // Make change in Tri hunk
 				dups++;
 			}
 			else // Try to find in LL from Main Entry
@@ -476,7 +476,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 
 				if ( triangle->index_st[j] == p_index_LUT2->ST ) // Found it
 				{
-					triangle->index_xyz[j] = p_index_LUT2->Vert + fm_head->numXYZ; // Make change in Tri hunk
+					triangle->index_xyz[j] = (short)(p_index_LUT2->Vert + fm_head->numXYZ); // Make change in Tri hunk
 #ifdef FM_VERBOSE_DBG
 					_pico_printf( PICO_NORMAL, "--> Tri #%d, Vert %d:\t XYZ:%d   ST:%d\n", i, j, triangle->index_xyz[j], triangle->index_st[j]);
 #endif
@@ -490,13 +490,13 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 					if (p_index_LUT3 == NULL)
 						_pico_printf( PICO_NORMAL, " Couldn't allocate memory!\n");
 					p_index_LUT2->next = (index_LUT_t *)p_index_LUT3;
-					p_index_LUT3->Vert = dups;
+					p_index_LUT3->Vert = (short)dups;
 					p_index_LUT3->ST = triangle->index_st[j];
 					p_index_LUT3->next = NULL;
 #ifdef FM_VERBOSE_DBG
 					_pico_printf( PICO_NORMAL, " ADDING additional LL XYZ:%d DUP:%d NewXYZ:%d ST:%d\n", triangle->index_xyz[j], dups, dups + (fm_head->numXYZ), triangle->index_st[j]);
 #endif
-					triangle->index_xyz[j] = dups + fm_head->numXYZ; // Make change in Tri hunk
+					triangle->index_xyz[j] = (short)(dups + fm_head->numXYZ); // Make change in Tri hunk
 					dups++;
 				}
 			}
@@ -518,7 +518,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 		p_index_LUT2 = p_index_LUT[i].next;
 		while (p_index_LUT2 != NULL)
 		{
-			p_index_LUT_DUPS[p_index_LUT2->Vert].OldVert = i;
+			p_index_LUT_DUPS[p_index_LUT2->Vert].OldVert = (short)i;
 			p_index_LUT_DUPS[p_index_LUT2->Vert].ST = p_index_LUT2->ST;
 			dup_index++;
 			p_index_LUT2 = p_index_LUT2->next;

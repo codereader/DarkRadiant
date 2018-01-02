@@ -52,8 +52,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 /* function pointers */
-void *(*_pico_ptr_malloc	)( size_t ) = malloc;
-void  (*_pico_ptr_free		)( void* ) = free;
+void *(*_pico_ptr_malloc	)( size_t ) = NULL; // was pointing to malloc, but this might be a dll import func
+void  (*_pico_ptr_free		)( void* ) = NULL;  // was pointing to free, but this might be a dll import func
 void  (*_pico_ptr_load_file	)( char*, unsigned char**, int* ) = NULL;
 void  (*_pico_ptr_free_file	)( void* ) = NULL;
 void  (*_pico_ptr_print		)( int, const char* ) = NULL;
@@ -478,10 +478,10 @@ picoVec_t _pico_calc_plane( picoVec4_t plane, picoVec3_t a, picoVec3_t b, picoVe
 /* separate from _pico_set_vec4 */
 void _pico_set_color( picoColor_t c, int r, int g, int b, int a )
 {
-	c[ 0 ] = r;
-	c[ 1 ] = g;
-	c[ 2 ] = b;
-	c[ 3 ] = a;
+	c[ 0 ] = (picoByte_t)r;
+	c[ 1 ] = (picoByte_t)g;
+	c[ 2 ] = (picoByte_t)b;
+	c[ 3 ] = (picoByte_t)a;
 }
 
 void _pico_copy_color( picoColor_t src, picoColor_t dest )

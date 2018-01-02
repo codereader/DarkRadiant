@@ -1851,7 +1851,11 @@ void _pico_vertices_combine_shared_normals(picoVec3_t* xyz, picoIndex_t* smoothi
 {
 	UniqueIndices vertices;
 	IndexArray indices;
-	picoSmoothVertices_t smoothVertices = { xyz, smoothingGroups };
+	picoSmoothVertices_t smoothVertices;
+
+	smoothVertices.xyz = xyz;
+	smoothVertices.smoothingGroups = smoothingGroups;
+
 	UniqueIndices_init(&vertices, lessSmoothVertex, &smoothVertices);
 	UniqueIndices_reserve(&vertices, numVertices);
 	indexarray_reserve(&indices, numVertices);
