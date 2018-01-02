@@ -203,7 +203,7 @@ void TextureManipulator::calculateGammaTable() {
 	// Linear gamma, just fill the array linearly
 	if (_gamma == 1.0) {
 		for (int i = 0; i < 256; i++)
-			_gammaTable[i] = i;
+			_gammaTable[i] = static_cast<byte>(i);
 	}
 	else {
 		// Calculate the gamma values
@@ -222,7 +222,7 @@ void TextureManipulator::calculateGammaTable() {
 				inf = 255;
 			}
 
-			_gammaTable[i] = inf;
+			_gammaTable[i] = static_cast<byte>(inf);
 		}
 	}
 }

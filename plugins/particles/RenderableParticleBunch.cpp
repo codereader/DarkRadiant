@@ -297,11 +297,11 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 {
     // Check if the main direction is different to the z axis
     Vector3 dir = _direction.getNormalised();
-    Vector3 z(0,0,1);
+    Vector3 zDir(0,0,1);
 
-    double deviation = dir.angle(z);
+    double deviation = dir.angle(zDir);
 
-    Matrix4 rotation = deviation != 0 ? Matrix4::getRotation(z, dir) : Matrix4::getIdentity();
+    Matrix4 rotation = deviation != 0 ? Matrix4::getRotation(zDir, dir) : Matrix4::getIdentity();
 
     // Consider offset as starting point
     particle.origin = rotation.transformPoint(_offset);

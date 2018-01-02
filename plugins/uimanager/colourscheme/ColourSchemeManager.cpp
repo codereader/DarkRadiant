@@ -114,12 +114,12 @@ void ColourSchemeManager::saveScheme(const std::string& name) {
 	// Cycle through all the ColourItems and save them into the registry
 	for (ColourItemMap::iterator it = colourMap.begin(); it != colourMap.end(); it++) {
 		// Retrieve the name of the ColourItem
-		std::string name = it->first;
+		std::string itemName = it->first;
 
 		// Cast the ColourItem onto a std::string
 		std::string colour = string::to_string<Vector3>(it->second);
 
-		xml::Node colourNode = GlobalRegistry().createKeyWithName(schemePath, "colour", name);
+		xml::Node colourNode = GlobalRegistry().createKeyWithName(schemePath, "colour", itemName);
 		colourNode.setAttributeValue("value", colour);
 	}
 }
