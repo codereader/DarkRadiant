@@ -40,6 +40,34 @@ inline double convert<double, std::string>(const std::string& str, double defaul
 	}
 }
 
+// Template specialisation to convert std::string => short
+template<>
+inline short convert<short, std::string>(const std::string& str, short defaultVal)
+{
+	try
+	{
+		return static_cast<short>(std::stoi(str));
+	}
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
+	{
+		return defaultVal;
+	}
+}
+
+// Template specialisation to convert std::string => unsigned short
+template<>
+inline unsigned short convert<unsigned short, std::string>(const std::string& str, unsigned short defaultVal)
+{
+	try
+	{
+		return static_cast<unsigned short>(std::stoul(str));
+	}
+	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
+	{
+		return defaultVal;
+	}
+}
+
 // Template specialisation to convert std::string => int
 template<>
 inline int convert<int, std::string>(const std::string& str, int defaultVal)
