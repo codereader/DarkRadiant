@@ -100,10 +100,7 @@
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <DisableSpecificWarnings>4244;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
+    <ClCompile />
     <Lib />
     <Lib>
       <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -113,19 +110,14 @@
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
-    <ClCompile>
-      <DisableSpecificWarnings>4244;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
+    <ClCompile />
     <Lib />
     <Lib>
       <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <DisableSpecificWarnings>4244;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-    </ClCompile>
+    <ClCompile />
     <Lib />
     <Lib>
       <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -135,9 +127,7 @@
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
-    <ClCompile>
-      <DisableSpecificWarnings>4244;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-    </ClCompile>
+    <ClCompile />
     <Lib />
     <Lib>
       <AdditionalDependencies>scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
