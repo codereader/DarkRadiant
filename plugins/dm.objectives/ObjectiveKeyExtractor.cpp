@@ -84,16 +84,16 @@ void ObjectiveKeyExtractor::operator()(const std::string& key,
 
 		// Use another regex to check for components (obj1_1_blah)
 		static const std::regex reComponent("(\\d+)_(.*)");
-		std::smatch results;
+		std::smatch compResults;
 
-		if (!std::regex_match(objSubString, results, reComponent)) {
+		if (!std::regex_match(objSubString, compResults, reComponent)) {
 			return;
 		}
 		else {
 
 			// Get the component number and key string
-			int componentNum = string::convert<int>(results[1].str());
-			std::string componentStr = results[2];
+			int componentNum = string::convert<int>(compResults[1].str());
+			std::string componentStr = compResults[2];
 
 			Component& comp = _objMap[iNum].components[componentNum];
 

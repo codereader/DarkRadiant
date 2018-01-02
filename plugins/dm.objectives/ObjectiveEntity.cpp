@@ -493,12 +493,12 @@ void ObjectiveEntity::writeComponents(Entity* entity,
 			c.getClockInterval() > 0 ? string::to_string(c.getClockInterval()) : "");
 
         // Write out Specifier keyvals
-		for (int i = Specifier::FIRST_SPECIFIER; i < Specifier::MAX_SPECIFIERS; i++)
+		for (int s = Specifier::FIRST_SPECIFIER; s < Specifier::MAX_SPECIFIERS; s++)
 		{
 			// The specifier index of the spawnargs is starting from 1, not 0
-			std::string indexStr = string::to_string(i + 1);
+			std::string indexStr = string::to_string(s + 1);
 
-			SpecifierPtr spec = c.getSpecifier(static_cast<Specifier::SpecifierNumber>(i));
+			SpecifierPtr spec = c.getSpecifier(static_cast<Specifier::SpecifierNumber>(s));
 
 			if (spec != NULL) {
 				entity->setKeyValue(prefix + "spec" + indexStr, spec->getType().getName());
