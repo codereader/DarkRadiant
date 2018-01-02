@@ -45,7 +45,7 @@ struct Statement
 	Arguments args;
 
 	// Condition used by ST_IF
-	GuiExpressionPtr _condition;
+	std::shared_ptr<IGuiExpression<bool>> _condition;
 
 	// The jump destination used by ST_IF and ST_JMP
 	std::size_t jmpDest;
@@ -97,7 +97,7 @@ private:
 	std::size_t getCurPosition();
 
 	GuiExpressionPtr getExpression(parser::DefTokeniser& tokeniser);
-	GuiExpressionPtr getIfExpression(parser::DefTokeniser& tokeniser);
+	std::shared_ptr<IGuiExpression<bool>> getIfExpression(parser::DefTokeniser& tokeniser);
 
 	// Reads a "statement", which can be single one or a group (surrounded by curly braces)
 	void parseStatement(parser::DefTokeniser& tokeniser);

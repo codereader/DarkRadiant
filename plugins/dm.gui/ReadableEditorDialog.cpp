@@ -758,13 +758,11 @@ void ReadableEditorDialog::initGuiState(const gui::IGuiPtr& gui)
     gui->setStateString("curPage", string::to_string(_currentPageIndex + 1));
     gui->setStateString("numPages", string::to_string(_numPages->GetValue()));
 
-#if 0
     // ContentsFadeIn is reponsible of setting custom backgrounds
     if (gui->findWindowDef("ContentsFadeIn"))
     {
-        gui->findWindowDef("ContentsFadeIn")->notime = false;
+        gui->findWindowDef("ContentsFadeIn")->notime.setValue(false);
     }
-#endif
 
     // Initialise the time of this GUI
 	gui->initTime(0);

@@ -340,9 +340,10 @@ GuiExpressionPtr GuiScript::getExpression(parser::DefTokeniser& tokeniser)
 	return GuiExpression::CreateFromTokens(_owner.getGui(), tokeniser);
 }
 
-GuiExpressionPtr GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
+std::shared_ptr<IGuiExpression<bool>> GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
 {
-	return getExpression(tokeniser);
+	// Parse the IF condition and pack it into a bool-typed expression
+	return std::make_shared<TypedExpression<bool>>(getExpression(tokeniser));
 }
 
 const Statement& GuiScript::getStatement(std::size_t index)
@@ -442,8 +443,12 @@ void GuiScript::execute()
 		case Statement::ST_TRANSITION:
 			break;
 		case Statement::ST_IF:
-			// TODO: Evaluate expression, for now just perform the jump
-			_ip = st.jmpDest;
+			// Evaluate expression
+			if (!st._condition || st._condition->evaluate() == false)
+			{
+				// Expression evaluated to false, jump over the block
+				_ip = st.jmpDest;
+			}
 			break;
 		case Statement::ST_SET_FOCUS:
 			break;
