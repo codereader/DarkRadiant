@@ -175,7 +175,6 @@
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>
@@ -209,7 +208,6 @@
       <ShowProgress>NotSet</ShowProgress>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>

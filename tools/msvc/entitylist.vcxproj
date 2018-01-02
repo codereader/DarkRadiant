@@ -180,7 +180,6 @@
       <AdditionalDependencies>mathlib.lib;wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>
@@ -213,7 +212,6 @@
       <AdditionalDependencies>mathlib.lib;wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>

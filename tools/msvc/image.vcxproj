@@ -199,7 +199,6 @@
       <AdditionalDependencies>ddslib.lib;libjpeg$(LibSuffix)-vc$(PlatformToolsetVersion).lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>
@@ -234,7 +233,6 @@
       <AdditionalDependencies>ddslib.lib;libjpeg$(LibSuffix)-vc$(PlatformToolsetVersion).lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>

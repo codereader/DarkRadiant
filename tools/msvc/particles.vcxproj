@@ -177,7 +177,6 @@
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;wxutillib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>
@@ -209,7 +208,6 @@
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;wxutillib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>
