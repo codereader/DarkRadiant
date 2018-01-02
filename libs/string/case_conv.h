@@ -13,7 +13,7 @@ namespace string
  */
 inline void to_lower(std::string& input)
 {
-	std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+	std::transform(input.begin(), input.end(), input.begin(), [](char c) { return(static_cast<char>(::tolower(c))); });
 }
 
 /**
@@ -25,7 +25,7 @@ inline std::string to_lower_copy(const std::string& input)
 	std::string output;
 	output.resize(input.size());
 
-	std::transform(input.begin(), input.end(), output.begin(), ::tolower);
+	std::transform(input.begin(), input.end(), output.begin(), [](char c) { return(static_cast<char>(::tolower(c))); });
 
 	return output;
 }
@@ -36,7 +36,7 @@ inline std::string to_lower_copy(const std::string& input)
 */
 inline void to_upper(std::string& input)
 {
-	std::transform(input.begin(), input.end(), input.begin(), ::toupper);
+	std::transform(input.begin(), input.end(), input.begin(), [](char c) { return(static_cast<char>(::toupper(c))); });
 }
 
 /**
@@ -48,7 +48,7 @@ inline std::string to_upper_copy(const std::string& input)
 	std::string output;
 	output.resize(input.size());
 
-	std::transform(input.begin(), input.end(), output.begin(), ::toupper);
+	std::transform(input.begin(), input.end(), output.begin(), [](char c) { return(static_cast<char>(::toupper(c))); });
 
 	return output;
 }
