@@ -116,7 +116,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -152,7 +151,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX64</TargetMachine>
       <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -177,7 +175,6 @@
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
@@ -185,7 +182,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
       <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -213,7 +209,6 @@
       <ShowProgress>NotSet</ShowProgress>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
@@ -221,7 +216,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX64</TargetMachine>
       <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>

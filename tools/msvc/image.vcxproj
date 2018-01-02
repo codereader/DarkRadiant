@@ -135,7 +135,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\libjpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -174,7 +173,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\libjpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -201,7 +199,6 @@
       <AdditionalDependencies>ddslib.lib;libjpeg$(LibSuffix)-vc$(PlatformToolsetVersion).lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
@@ -209,7 +206,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\libjpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -238,7 +234,6 @@
       <AdditionalDependencies>ddslib.lib;libjpeg$(LibSuffix)-vc$(PlatformToolsetVersion).lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
@@ -246,7 +241,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX64</TargetMachine>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\libjpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>

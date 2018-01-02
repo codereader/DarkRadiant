@@ -116,7 +116,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -151,7 +150,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -175,7 +173,6 @@
       <AdditionalDependencies>xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
@@ -183,7 +180,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -209,7 +205,6 @@
       <AdditionalDependencies>xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <FixedBaseAddress>
       </FixedBaseAddress>
@@ -217,7 +212,6 @@
       </DataExecutionPrevention>
       <ImportLibrary>
       </ImportLibrary>
-      <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
       <Command>
