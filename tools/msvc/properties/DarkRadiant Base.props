@@ -6,7 +6,10 @@
     <W32DepsDir>$(DarkRadiantRoot)\w32deps\</W32DepsDir>
     <W64DepsDir>$(DarkRadiantRoot)\w64deps\</W64DepsDir>
   </PropertyGroup>
-  <PropertyGroup />
+  <PropertyGroup>
+    <IntDir>$(SolutionDir)\..\..\build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)libsigc++\include;$(DarkRadiantRoot)\libs\libfmt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -24,6 +27,7 @@
       <AdditionalDependencies>libsigc++$(LibSuffix)-vc$(PlatformToolsetVersion).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
