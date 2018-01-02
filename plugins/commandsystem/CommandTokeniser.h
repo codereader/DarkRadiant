@@ -199,6 +199,7 @@ public:
             if (hasMoreTokens()) 
 			{
                 _tokIter++;
+				continue;
             }
             
 			throw parser::ParseException("CommandTokeniser: no more tokens");
