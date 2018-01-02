@@ -111,7 +111,6 @@
       <WarningLevel>Level4</WarningLevel>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
-      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -144,7 +143,6 @@
       </BrowseInformation>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
-      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -173,7 +171,6 @@
       <WarningLevel>Level4</WarningLevel>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
-      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>
@@ -204,7 +201,6 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
-      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
       <Culture>0x0409</Culture>

@@ -13,7 +13,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;$(W32DepsDir)libsigc++\include;$(DarkRadiantRoot)\libs\libfmt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;FMT_HEADER_ONLY;FMT_USE_WINDOWS_H=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;FMT_HEADER_ONLY;FMT_USE_WINDOWS_H=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -21,6 +21,8 @@
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level4</WarningLevel>
       <StringPooling>true</StringPooling>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(DarkRadiantRoot)\build\libs\$(Platform);$(DarkRadiantRoot)\build\libs\$(Platform)\$(Configuration);$(PlatformDepsDir)\libsigc++\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
