@@ -115,10 +115,8 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)/../../radiant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -126,7 +124,6 @@
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -141,16 +138,13 @@
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>$(OutDir)$(ProjectName)_stripped.pdb</StripPrivateSymbols>
       <GenerateMapFile>false</GenerateMapFile>
-      <SubSystem>Console</SubSystem>
       <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>false</FixedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -169,17 +163,13 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)/../../radiant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <BrowseInformation>
       </BrowseInformation>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -194,16 +184,13 @@
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>advapi32.lib;Dbghelp.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>$(OutDir)$(ProjectName)_stripped.pdb</StripPrivateSymbols>
       <GenerateMapFile>false</GenerateMapFile>
-      <SubSystem>Console</SubSystem>
       <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>false</FixedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -221,14 +208,11 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>$(SolutionDir)/../../radiant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -242,17 +226,14 @@
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>$(OutDir)$(ProjectName)_stripped.pdb</StripPrivateSymbols>
-      <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>
@@ -275,14 +256,10 @@
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(SolutionDir)/../../radiant;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4244;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
@@ -296,18 +273,15 @@
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>advapi32.lib;Dbghelp.lib;winmm.lib;kernel32.lib;user32.lib;gdi32.lib;wsock32.lib;scenelib.lib;mathlib.lib;xmlutillib.lib;wxutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(ProjectName).pdb</ProgramDatabaseFile>
       <StripPrivateSymbols>$(OutDir)$(ProjectName)_stripped.pdb</StripPrivateSymbols>
-      <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <FixedBaseAddress>
       </FixedBaseAddress>
       <DataExecutionPrevention>

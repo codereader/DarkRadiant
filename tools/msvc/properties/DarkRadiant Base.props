@@ -16,10 +16,14 @@
       <DisableSpecificWarnings>4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/Zc:twoPhase- %(AdditionalOptions)</AdditionalOptions>
+      <WarningLevel>Level4</WarningLevel>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(DarkRadiantRoot)\build\libs\$(Platform);$(DarkRadiantRoot)\build\libs\$(Platform)\$(Configuration);$(PlatformDepsDir)\libsigc++\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libsigc++$(LibSuffix)-vc$(PlatformToolsetVersion).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
