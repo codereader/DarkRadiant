@@ -119,7 +119,6 @@
       <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
     </Link>
@@ -144,7 +143,6 @@
       <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
     </Link>
@@ -164,7 +162,6 @@
       <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
     </Link>
@@ -187,7 +184,6 @@
       <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
