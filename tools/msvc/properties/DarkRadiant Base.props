@@ -22,6 +22,7 @@
       <StringPooling>true</StringPooling>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
+      <DisableSpecificWarnings>4250</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(DarkRadiantRoot)\build\libs\$(Platform);$(DarkRadiantRoot)\build\libs\$(Platform)\$(Configuration);$(PlatformDepsDir)\libsigc++\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
