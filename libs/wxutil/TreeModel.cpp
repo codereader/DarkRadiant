@@ -740,7 +740,7 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
         }
         
         default:
-            return 0; // default case
+            break; // break to return 0
     };
 
 	return 0;
