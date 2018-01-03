@@ -61,17 +61,17 @@ TexturePtr DDSImage::bindTexture(const std::string& name) const
     return texObj;
 }
 
-void DDSImage::addMipMap(std::size_t width,
-                         std::size_t height,
-                         std::size_t size,
-                         std::size_t offset)
+void DDSImage::addMipMap(std::size_t mipWidth,
+                         std::size_t mipHeight,
+                         std::size_t mipSize,
+                         std::size_t mipOffset)
 {
     MipMapInfo info;
 
-    info.size = size;
-    info.width = width;
-    info.height = height;
-    info.offset = offset;
+    info.size = mipSize;
+    info.width = mipWidth;
+    info.height = mipHeight;
+    info.offset = mipOffset;
 
     _mipMapInfo.push_back(info);
 }

@@ -1086,10 +1086,10 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 						_ase_error_return("Material color parse error");
 
 					/* setup 0..255 range color values */
-					ambientColor[ 0 ] = (int)( vec[ 0 ] * 255.0 );
-					ambientColor[ 1 ] = (int)( vec[ 1 ] * 255.0 );
-					ambientColor[ 2 ] = (int)( vec[ 2 ] * 255.0 );
-					ambientColor[ 3 ] = (int)( 255 );
+					ambientColor[ 0 ] = (picoByte_t)( vec[ 0 ] * 255.0 );
+					ambientColor[ 1 ] = (picoByte_t)( vec[ 1 ] * 255.0 );
+					ambientColor[ 2 ] = (picoByte_t)( vec[ 2 ] * 255.0 );
+					ambientColor[ 3 ] = (picoByte_t)( 255 );
 
 					/* skip rest and continue with next token */
 					_pico_parse_skip_rest( p );
@@ -1105,10 +1105,10 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 						_ase_error_return("Material color parse error");
 
 					/* setup 0..255 range color */
-					diffuseColor[ 0 ] = (int)( vec[ 0 ] * 255.0 );
-					diffuseColor[ 1 ] = (int)( vec[ 1 ] * 255.0 );
-					diffuseColor[ 2 ] = (int)( vec[ 2 ] * 255.0 );
-					diffuseColor[ 3 ] = (int)( 255 );
+					diffuseColor[ 0 ] = (picoByte_t)( vec[ 0 ] * 255.0 );
+					diffuseColor[ 1 ] = (picoByte_t)( vec[ 1 ] * 255.0 );
+					diffuseColor[ 2 ] = (picoByte_t)( vec[ 2 ] * 255.0 );
+					diffuseColor[ 3 ] = (picoByte_t)( 255 );
 
 					/* skip rest and continue with next token */
 					_pico_parse_skip_rest( p );
@@ -1124,10 +1124,10 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 						_ase_error_return("Material color parse error");
 
 					/* setup 0..255 range color */
-					specularColor[ 0 ] = (int)( vec[ 0 ] * 255 );
-					specularColor[ 1 ] = (int)( vec[ 1 ] * 255 );
-					specularColor[ 2 ] = (int)( vec[ 2 ] * 255 );
-					specularColor[ 3 ] = (int)( 255 );
+					specularColor[ 0 ] = (picoByte_t)( vec[ 0 ] * 255 );
+					specularColor[ 1 ] = (picoByte_t)( vec[ 1 ] * 255 );
+					specularColor[ 2 ] = (picoByte_t)( vec[ 2 ] * 255 );
+					specularColor[ 3 ] = (picoByte_t)( 255 );
 
 					/* skip rest and continue with next token */
 					_pico_parse_skip_rest( p );
@@ -1259,13 +1259,13 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 				/* extract shadername from bitmap path */
 				if(mapname != NULL)
 				{
-					char* p = mapname;
+					char* mp = mapname;
 
 					/* convert to shader-name format */
 					shadername_convert(mapname);
 					{
 						/* remove extension */
-						char* last_period = strrchr(p, '.');
+						char* last_period = strrchr(mp, '.');
 						if (last_period != NULL)
 						{
 							*last_period = '\0';
@@ -1273,36 +1273,36 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					}
 
 					/* find game root */
-					for(; *p != '\0'; ++p)
+					for(; *mp != '\0'; ++mp)
 					{
-						if (_pico_strnicmp(p, "quake", 5) == 0 || _pico_strnicmp(p, "doom", 4) == 0)
+						if (_pico_strnicmp(mp, "quake", 5) == 0 || _pico_strnicmp(mp, "doom", 4) == 0)
 						{
 							break;
 						}
 					}
 					/* root-relative */
-					for (; *p != '\0'; ++p)
+					for (; *mp != '\0'; ++mp)
 					{
-						if (*p == '/')
+						if (*mp == '/')
 						{
-							++p;
+							++mp;
 							break;
 						}
 					}
 					/* game-relative */
-					for (; *p != '\0'; ++p)
+					for (; *mp != '\0'; ++mp)
 					{
-						if (*p == '/')
+						if (*mp == '/')
 						{
-							++p;
+							++mp;
 							break;
 						}
 					}
 
-					if (*p != '\0')
+					if (*mp != '\0')
 					{
 						/* set material name */
-						PicoSetShaderName(shader, p);
+						PicoSetShaderName(shader, mp);
 					}
 				}
 

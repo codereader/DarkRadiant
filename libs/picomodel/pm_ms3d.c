@@ -403,7 +403,7 @@ static picoModel_t *_ms3d_load( PM_PARAMS_LOAD )
 		picoShader_t *shader;
 		picoColor_t   ambient,diffuse,specular;
 		TMsMaterial  *material;
-		int           k;
+		int           colIdx;
 
 		material = (TMsMaterial *)bufptr;
 		bufptr += sizeof( TMsMaterial );
@@ -431,11 +431,11 @@ static picoModel_t *_ms3d_load( PM_PARAMS_LOAD )
 			return NULL;
 		}
 		/* scale shader colors */
-		for (k=0; k<4; k++)
+		for (colIdx =0; colIdx<4; colIdx++)
 		{
-			ambient [ k ] = (picoByte_t) (material->ambient[ k ] * 255);
-			diffuse [ k ] = (picoByte_t) (material->diffuse[ k ] * 255);
-			specular[ k ] = (picoByte_t) (material->specular[ k ] * 255);
+			ambient [ colIdx ] = (picoByte_t) (material->ambient[colIdx] * 255);
+			diffuse [ colIdx ] = (picoByte_t) (material->diffuse[colIdx] * 255);
+			specular[ colIdx ] = (picoByte_t) (material->specular[colIdx] * 255);
 		}
 		/* set shader colors */
 		PicoSetShaderAmbientColor( shader,ambient );

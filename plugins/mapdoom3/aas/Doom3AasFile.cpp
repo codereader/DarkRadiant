@@ -198,9 +198,9 @@ void Doom3AasFile::parseFromTokens(parser::DefTokeniser& tok)
                 Face face;
 
                 face.planeNum = string::convert<int>(tok.nextToken());
-                face.flags = string::convert<int>(tok.nextToken());
-                face.areas[0] = string::convert<int>(tok.nextToken());
-                face.areas[1] = string::convert<int>(tok.nextToken());
+                face.flags = string::convert<unsigned short>(tok.nextToken());
+                face.areas[0] = string::convert<short>(tok.nextToken());
+                face.areas[1] = string::convert<short>(tok.nextToken());
                 face.firstEdge = string::convert<int>(tok.nextToken());
                 face.numEdges = string::convert<int>(tok.nextToken());
 
@@ -232,12 +232,12 @@ void Doom3AasFile::parseFromTokens(parser::DefTokeniser& tok)
 
                 Area area;
 
-                area.flags = string::convert<int>(tok.nextToken());
-                area.contents = string::convert<int>(tok.nextToken());
+                area.flags = string::convert<unsigned short>(tok.nextToken());
+                area.contents = string::convert<unsigned short>(tok.nextToken());
                 area.firstFace = string::convert<int>(tok.nextToken());
                 area.numFaces = string::convert<int>(tok.nextToken());
-                area.cluster = string::convert<int>(tok.nextToken());
-                area.clusterAreaNum = string::convert<int>(tok.nextToken());
+                area.cluster = string::convert<short>(tok.nextToken());
+                area.clusterAreaNum = string::convert<short>(tok.nextToken());
 
                 _areas.push_back(area);
 

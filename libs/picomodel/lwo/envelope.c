@@ -22,7 +22,7 @@ void lwFreeEnvelope( lwEnvelope *env )
    if ( env ) {
       if ( env->name ) _pico_free( env->name );
       lwListFree( env->key, _pico_free );
-      lwListFree( env->cfilter, (void *) lwFreePlugin );
+      lwListFree( env->cfilter, (void (*)(void *))lwFreePlugin );
       _pico_free( env );
    }
 }
@@ -101,7 +101,7 @@ lwEnvelope *lwGetEnvelope( picoMemStream_t *fp, int cksize )
             if ( !key ) goto Fail;
             key->time = getF4( fp );
             key->value = getF4( fp );
-            lwListInsert( (void **) &env->key, key, (void *) compare_keys );
+            lwListInsert( (void **) &env->key, key, (int (*)(void *, void *))compare_keys );
             env->nkeys++;
             break;
 
@@ -441,7 +441,6 @@ static float incoming( lwKey *key0, lwKey *key1 )
          if ( key1->next )
             in *= ( key1->time - key0->time ) / ( key1->next->time - key0->time );
          break;
-         return in;
 
       case ID_BEZ2:
          in = key1->param[ 1 ] * ( key1->time - key0->time );

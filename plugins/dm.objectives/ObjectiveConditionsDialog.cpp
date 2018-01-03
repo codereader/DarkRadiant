@@ -301,12 +301,12 @@ void ObjectiveConditionsDialog::_onAddObjCondition(wxCommandEvent& ev)
 			populateWidgets();
 
 			// Select the new condition
-			wxDataViewItem found = _objectiveConditionList->FindInteger(i, 
+			wxDataViewItem foundItem = _objectiveConditionList->FindInteger(i, 
 				_objConditionColumns.conditionNumber);
 
-			if (found.IsOk())
+			if (foundItem.IsOk())
 			{
-				_conditionsView->Select(found);
+				_conditionsView->Select(foundItem);
 			}
 
 			return;

@@ -25,7 +25,7 @@ GLFont::GLFont(Style style, unsigned int size) :
 	if (_ftglFont)
 	{
 		ftglSetFontFaceSize(_ftglFont,size,0);
-		_pixelHeight = FTGL::ftglGetFontLineHeight(_ftglFont);
+		_pixelHeight = static_cast<int>(FTGL::ftglGetFontLineHeight(_ftglFont));
 	}
 	else
 	{

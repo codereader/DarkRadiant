@@ -28,9 +28,9 @@ public:
 		_parseStamp = parseStamp;
 	}
 
-	void setModName(const std::string& name)
+	void setModName(const std::string& newModName)
 	{
-		modName = name;
+		modName = newModName;
 	}
 
 	void clear()
@@ -85,10 +85,10 @@ public:
 	        }
 	        else if (parameter == "anim") {
 	            // SYNTAX: "anim" <name> <md5file> [ "{" <blah> [ <blah> ... ] "}" ]
-	            std::string name = tokeniser.nextToken();
+	            std::string animName = tokeniser.nextToken();
 	            std::string file = tokeniser.nextToken();
 
-	            anims.insert(Anims::value_type(name, file));
+	            anims.insert(Anims::value_type(animName, file));
 	            state = ANIM; // check for the braces on the next iteration
 	        }
 	        else if (state == ANIM && parameter == "{") { // anim braces

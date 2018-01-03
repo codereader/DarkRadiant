@@ -149,6 +149,7 @@ public:
             if (hasMoreTokens())
 			{
                 _tokIter++;
+				continue;
             }
             
 			throw ParseException("Tokeniser: no more tokens");

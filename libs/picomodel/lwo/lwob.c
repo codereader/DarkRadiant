@@ -71,7 +71,7 @@ static int add_clip( char *s, lwClip **clist, int *nclips )
    clip->saturation.val = 1.0f;
    clip->gamma.val = 1.0f;
 
-   if ( (p = strstr( s, "(sequence)" ))) {
+   if ( (p = strstr( s, "(sequence)" )) != NULL ) {
       p[ -1 ] = 0;
       clip->type = ID_ISEQ;
       clip->source.seq.prefix = s;
@@ -124,7 +124,7 @@ static int add_tvel( float pos[], float vel[], lwEnvelope **elist, int *nenvs )
       env->name = _pico_alloc( 11 );
       if ( env->name ) {
          strcpy( env->name, "Position.X" );
-         env->name[ 9 ] += i;
+         env->name[ 9 ] += (char)i;
       }
       env->key = key0;
       env->nkeys = 2;
@@ -362,7 +362,7 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj )
             if ( flags & 1 ) i = 0;
             if ( flags & 2 ) i = 1;
             if ( flags & 4 ) i = 2;
-            tex->axis = i;
+            tex->axis = (short)i;
             if ( tex->type == ID_IMAP )
                tex->param.imap.axis = i;
             else

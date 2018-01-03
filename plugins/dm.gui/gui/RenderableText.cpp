@@ -136,13 +136,8 @@ void RenderableText::recompile()
 		// Add the words to lines
 		TextLinePtr curLine(new TextLine(ownerRec[2] - 2 - _owner.textalignx, scale));
 
-		const std::string space(" ");
-
 		while (!words.empty())
 		{
-			// Empty words are stemming from an extra space character, treat them as space
-			const std::string& wordToAdd = words.front().empty() ? space : words.front();
-
 			// If nowrap set to true, force words into this line
 			bool added = curLine->addWord(words.front(), glyphSet, _owner.nowrap);
 

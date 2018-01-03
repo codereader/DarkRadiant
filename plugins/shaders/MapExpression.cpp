@@ -194,9 +194,9 @@ ImagePtr AddNormalsExpression::getImage() const {
 			// Take the mean value of the two vectors
 			Vector3 vectorOut = (vectorOne + vectorTwo) * 0.5;
 
-			pixOut[0] = float_to_integer(vectorOut.x());
-			pixOut[1] = float_to_integer(vectorOut.y());
-			pixOut[2] = float_to_integer(vectorOut.z());
+			pixOut[0] = static_cast<byte>(float_to_integer(vectorOut.x()));
+			pixOut[1] = static_cast<byte>(float_to_integer(vectorOut.y()));
+			pixOut[2] = static_cast<byte>(float_to_integer(vectorOut.z()));
 			pixOut[3] = 255;
 
 			// advance the pixel pointer
@@ -278,9 +278,9 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 			// Take the average normal vector as result
 			smoothVector *= perKernelSize;
 
-			out[0] = float_to_integer(smoothVector.x());
-			out[1] = float_to_integer(smoothVector.y());
-			out[2] = float_to_integer(smoothVector.z());
+			out[0] = static_cast<byte>(float_to_integer(smoothVector.x()));
+			out[1] = static_cast<byte>(float_to_integer(smoothVector.y()));
+			out[2] = static_cast<byte>(float_to_integer(smoothVector.z()));
 			out[3] = 255;
 
 			// advance the pixel pointer
@@ -337,10 +337,10 @@ ImagePtr AddExpression::getImage() const {
 		for( std::size_t x = 0; x < width; x++)
 		{
 			// add the colors
-			pixOut[0] = float_to_integer((static_cast<float>(pixOne[0]) + pixTwo[0]) * 0.5f);
-			pixOut[1] = float_to_integer((static_cast<float>(pixOne[1]) + pixTwo[1]) * 0.5f);
-			pixOut[2] = float_to_integer((static_cast<float>(pixOne[2]) + pixTwo[2]) * 0.5f);
-			pixOut[3] = float_to_integer((static_cast<float>(pixOne[3]) + pixTwo[3]) * 0.5f);
+			pixOut[0] = static_cast<byte>(float_to_integer((static_cast<float>(pixOne[0]) + pixTwo[0]) * 0.5f));
+			pixOut[1] = static_cast<byte>(float_to_integer((static_cast<float>(pixOne[1]) + pixTwo[1]) * 0.5f));
+			pixOut[2] = static_cast<byte>(float_to_integer((static_cast<float>(pixOne[2]) + pixTwo[2]) * 0.5f));
+			pixOut[3] = static_cast<byte>(float_to_integer((static_cast<float>(pixOne[3]) + pixTwo[3]) * 0.5f));
 
 			//advance the pixel pointer
 			pixOne += 4;
@@ -408,16 +408,16 @@ ImagePtr ScaleExpression::getImage() const {
 		{
 			// prevent negative values and check for values >255
 			int red = float_to_integer(static_cast<float>(in[0]) * scaleRed);
-			out[0] = (red>255) ? 255 : red;
+			out[0] = (red>255) ? 255 : static_cast<byte>(red);
 
 			int green = float_to_integer(static_cast<float>(in[1]) * scaleGreen);
-			out[1] = (green>255) ? 255 : green;
+			out[1] = (green>255) ? 255 : static_cast<byte>(green);
 
 			int blue = float_to_integer(static_cast<float>(in[2]) * scaleBlue);
-			out[2] = (blue>255) ? 255 : blue;
+			out[2] = (blue>255) ? 255 : static_cast<byte>(blue);
 
 			int alpha = float_to_integer(static_cast<float>(in[3]) * scaleAlpha);
-			out[3] = (alpha>255) ? 255 : alpha;
+			out[3] = (alpha>255) ? 255 : static_cast<byte>(alpha);
 
 			// advance the pixel pointer
 			in += 4;

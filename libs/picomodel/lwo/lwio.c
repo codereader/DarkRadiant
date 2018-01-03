@@ -177,7 +177,7 @@ unsigned char getU1( picoMemStream_t *fp )
       return 0;
    }
    flen += 1;
-   return i;
+   return (unsigned char)i;
 }
 
 

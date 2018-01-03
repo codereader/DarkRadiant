@@ -82,7 +82,7 @@ void Lwo2Chunk::writeToStream(std::ostream& output)
 	}
 	else
 	{
-		stream::writeBigEndian<uint16_t>(output, getContentSize());
+		stream::writeBigEndian<uint16_t>(output, static_cast<uint16_t>(getContentSize()));
 	}
 
 	// Write the direct contents of this chunk

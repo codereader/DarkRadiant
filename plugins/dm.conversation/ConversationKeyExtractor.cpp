@@ -63,14 +63,14 @@ void ConversationKeyExtractor::operator()(const std::string& key, const std::str
 	else if (convSubString.substr(0, 4) == "cmd_") {
 		// This is a conversation command, form a new regex
 		static const std::regex reCommand("cmd_(\\d+)_(.*)");
-		std::smatch results;
+		std::smatch cmdResults;
 
-		if (!std::regex_match(convSubString, results, reCommand)) {
+		if (!std::regex_match(convSubString, cmdResults, reCommand)) {
 			return; // not matching
 		}
 
-		int cmdIndex = string::convert<int>(results[1].str());
-		std::string cmdSubStr = results[2];
+		int cmdIndex = string::convert<int>(cmdResults[1].str());
+		std::string cmdSubStr = cmdResults[2];
 
 		ConversationCommandPtr command;
 		Conversation::CommandMap::iterator found = _convMap[iNum].commands.find(cmdIndex);

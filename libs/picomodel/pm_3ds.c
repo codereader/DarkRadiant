@@ -228,7 +228,7 @@ static int GetASCIIZ (T3dsLoaderPers *pers, char *dest, int max)
 			dest[ pos ] = '\0';
 			return 0;
 		}
-		dest[ pos++ ] = ch;
+		dest[ pos++ ] = (char)ch;
 		if (pos >= max) break;
 	}
 	dest[ pos ] = '\0';
@@ -323,10 +323,10 @@ static int GetMeshFaces (T3dsLoaderPers *pers)
 		/* face. the 4th value is a vis flag for 3dsmax which is */
 		/* being ignored by us here */
 		T3dsIndices face;
-		face.a		 = GetWord(pers);
-		face.c		 = GetWord(pers);	/* ydnar: flipped order */
-		face.b		 = GetWord(pers);	/* ydnar: flipped order */
-		face.visible = GetWord(pers);
+		face.a		 = (unsigned short)GetWord(pers);
+		face.c		 = (unsigned short)GetWord(pers);	/* ydnar: flipped order */
+		face.b		 = (unsigned short)GetWord(pers);	/* ydnar: flipped order */
+		face.visible = (unsigned short)GetWord(pers);
 
 		/* copy indexes */
 		PicoSetSurfaceIndex( pers->surface, (i * 3 + 0), (picoIndex_t)face.a );

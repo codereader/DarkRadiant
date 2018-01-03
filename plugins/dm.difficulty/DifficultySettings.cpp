@@ -261,11 +261,11 @@ wxDataViewItem DifficultySettings::findOrInsertClassname(const std::string& clas
     while (!parentClassName.empty())
     {
         // Try to look up the classname in the tree
-        TreeIterMap::iterator found = _iterMap.find(parentClassName);
+        TreeIterMap::iterator foundParent = _iterMap.find(parentClassName);
 
-        if (found != _iterMap.end())
+        if (foundParent != _iterMap.end())
         {
-            parentIter = found->second;
+            parentIter = foundParent->second;
             break;
         }
 

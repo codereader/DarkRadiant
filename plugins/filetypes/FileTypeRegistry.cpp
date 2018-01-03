@@ -35,9 +35,9 @@ void FileTypeRegistry::registerPattern(const std::string& fileType, const FileTy
 	string::to_lower(patternLocal.pattern);
 
 	// Check if the pattern is already associated
-	for (const FileTypePattern& pattern : patternList)
+	for (const FileTypePattern& existing : patternList)
 	{
-		if (pattern.extension == patternLocal.extension)
+		if (existing.extension == patternLocal.extension)
 		{
 			// Ignore this pattern
 			return;

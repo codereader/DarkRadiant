@@ -21,8 +21,8 @@ Free memory used by an lwClip.
 void lwFreeClip( lwClip *clip )
 {
    if ( clip ) {
-      lwListFree( clip->ifilter, (void *) lwFreePlugin );
-      lwListFree( clip->pfilter, (void *) lwFreePlugin );
+      lwListFree( clip->ifilter, (void (*)(void *))lwFreePlugin );
+      lwListFree( clip->pfilter, (void (*)(void *))lwFreePlugin );
 
       switch ( clip->type ) {
           case ID_STIL:

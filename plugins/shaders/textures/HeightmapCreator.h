@@ -83,9 +83,9 @@ ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 
 			// Normalize
 			float norm = 1.0f/sqrt(nx*nx + ny*ny + nz*nz);
-			out[0] = float_to_integer(((nx * norm) + 1) * 127.5);
-			out[1] = float_to_integer(((ny * norm) + 1) * 127.5);
-			out[2] = float_to_integer(((nz * norm) + 1) * 127.5);
+			out[0] = static_cast<byte>(float_to_integer(((nx * norm) + 1) * 127.5));
+			out[1] = static_cast<byte>(float_to_integer(((ny * norm) + 1) * 127.5));
+			out[2] = static_cast<byte>(float_to_integer(((nz * norm) + 1) * 127.5));
 			out[3] = 255;
 
 			x++;

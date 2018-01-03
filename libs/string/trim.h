@@ -16,7 +16,7 @@ static inline void trim_left_if(std::string& subject, Predicate predicate)
 	// Erase everything from the beginning up to the first character 
 	// that is not matching the predicate (e.g. is not a space)
 	subject.erase(subject.begin(), 
-		std::find_if(subject.begin(), subject.end(), [&](int ch) { return !predicate(ch); }));
+		std::find_if(subject.begin(), subject.end(), [&](char ch) { return !predicate(ch); }));
 }
 
 /**
@@ -29,7 +29,7 @@ static inline void trim_right_if(std::string& subject, Predicate predicate)
 	// Erase everything from the end up to the nearest-to-last character 
 	// that is not matching the predicate (e.g. is not a space)
 	subject.erase(
-		std::find_if(subject.rbegin(), subject.rend(), [&](int ch) { return !predicate(ch); }).base(),
+		std::find_if(subject.rbegin(), subject.rend(), [&](char ch) { return !predicate(ch); }).base(),
 		subject.end());
 }
 
@@ -72,8 +72,8 @@ inline std::string trim_copy(std::string subject)
 */
 inline void trim(std::string& subject, const std::string& charsToBeRemoved)
 {
-	trim_left_if(subject, [&](int ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
-	trim_right_if(subject, [&](int ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
+	trim_left_if(subject, [&](char ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
+	trim_right_if(subject, [&](char ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
 }
 
 /**
@@ -82,8 +82,8 @@ inline void trim(std::string& subject, const std::string& charsToBeRemoved)
 */
 inline std::string trim_copy(std::string subject, const std::string& charsToBeRemoved)
 {
-	trim_left_if(subject, [&](int ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
-	trim_right_if(subject, [&](int ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
+	trim_left_if(subject, [&](char ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
+	trim_right_if(subject, [&](char ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
 
 	return subject;
 }
@@ -93,7 +93,7 @@ inline std::string trim_copy(std::string subject, const std::string& charsToBeRe
 */
 inline void trim_left(std::string& subject, const std::string& charsToBeRemoved)
 {
-	trim_left_if(subject, [&](int ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
+	trim_left_if(subject, [&](char ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
 }
 
 /**
@@ -102,7 +102,7 @@ inline void trim_left(std::string& subject, const std::string& charsToBeRemoved)
 */
 inline std::string trim_left_copy(std::string subject, const std::string& charsToBeRemoved)
 {
-	trim_left_if(subject, [&](int ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
+	trim_left_if(subject, [&](char ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
 
 	return subject;
 }
@@ -112,7 +112,7 @@ inline std::string trim_left_copy(std::string subject, const std::string& charsT
 */
 inline void trim_right(std::string& subject, const std::string& charsToBeRemoved)
 {
-	trim_right_if(subject, [&](int ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
+	trim_right_if(subject, [&](char ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
 }
 
 /**
@@ -121,7 +121,7 @@ inline void trim_right(std::string& subject, const std::string& charsToBeRemoved
 */
 inline std::string trim_right_copy(std::string subject, const std::string& charsToBeRemoved)
 {
-	trim_right_if(subject, [&](int ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
+	trim_right_if(subject, [&](char ch) { return charsToBeRemoved.find(ch) != std::string::npos; });
 
 	return subject;
 }

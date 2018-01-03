@@ -29,7 +29,7 @@ void lwFreeLayer( lwLayer *layer )
       if ( layer->name ) _pico_free( layer->name );
       lwFreePoints( &layer->point );
       lwFreePolygons( &layer->polygon );
-      lwListFree( layer->vmap, (void *) lwFreeVMap );
+      lwListFree( layer->vmap, (void (*)(void *))lwFreeVMap );
       _pico_free( layer );
    }
 }
@@ -45,10 +45,10 @@ Free memory used by an lwObject.
 void lwFreeObject( lwObject *object )
 {
    if ( object ) {
-      lwListFree( object->layer, (void *) lwFreeLayer );
-      lwListFree( object->env, (void *) lwFreeEnvelope );
-      lwListFree( object->clip, (void *) lwFreeClip );
-      lwListFree( object->surf, (void *) lwFreeSurface );
+      lwListFree( object->layer, (void (*)(void *))lwFreeLayer );
+      lwListFree( object->env, (void (*)(void *))lwFreeEnvelope );
+      lwListFree( object->clip, (void (*)(void *))lwFreeClip );
+      lwListFree( object->surf, (void (*)(void *))lwFreeSurface );
       lwFreeTags( &object->taglist );
       _pico_free( object );
    }

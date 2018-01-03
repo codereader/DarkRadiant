@@ -532,42 +532,42 @@ void GuiWindowDef::pepareRendering(bool prepareChildren)
 	}
 }
 
-IWindowVariable& GuiWindowDef::findVariableByName(const std::string& name)
+IWindowVariable& GuiWindowDef::findVariableByName(const std::string& varName)
 {
-	if (name == "text") return text;
-	if (name == "rect") return rect;
-	if (name == "visible") return visible;
-	if (name == "text") return text;
-	if (name == "menugui") return menugui;
-	if (name == "forecolor") return forecolor;
-	if (name == "hovercolor") return hovercolor;
-	if (name == "backcolor") return backcolor;
-	if (name == "bordercolor") return bordercolor;
-	if (name == "bordersize") return bordersize;
-	if (name == "matcolor") return matcolor;
-	if (name == "rotate") return rotate;
-	if (name == "background") return background;
-	if (name == "font") return font;
-	if (name == "textscale") return textscale;
-	if (name == "textalign") return textalign;
-	if (name == "textalignx") return textalignx;
-	if (name == "textaligny") return textaligny;
-	if (name == "forceaspectwidth") return forceaspectwidth;
-	if (name == "forceaspectheight") return forceaspectheight;
-	if (name == "noevents") return noevents;
-	if (name == "noclip") return noclip;
-	if (name == "notime") return notime;
-	if (name == "nocursor") return nocursor;
-	if (name == "nowrap") return nowrap;
+	if (varName == "text") return text;
+	if (varName == "rect") return rect;
+	if (varName == "visible") return visible;
+	if (varName == "text") return text;
+	if (varName == "menugui") return menugui;
+	if (varName == "forecolor") return forecolor;
+	if (varName == "hovercolor") return hovercolor;
+	if (varName == "backcolor") return backcolor;
+	if (varName == "bordercolor") return bordercolor;
+	if (varName == "bordersize") return bordersize;
+	if (varName == "matcolor") return matcolor;
+	if (varName == "rotate") return rotate;
+	if (varName == "background") return background;
+	if (varName == "font") return font;
+	if (varName == "textscale") return textscale;
+	if (varName == "textalign") return textalign;
+	if (varName == "textalignx") return textalignx;
+	if (varName == "textaligny") return textaligny;
+	if (varName == "forceaspectwidth") return forceaspectwidth;
+	if (varName == "forceaspectheight") return forceaspectheight;
+	if (varName == "noevents") return noevents;
+	if (varName == "noclip") return noclip;
+	if (varName == "notime") return notime;
+	if (varName == "nocursor") return nocursor;
+	if (varName == "nowrap") return nowrap;
 
 	// Check the user-defined variables
-	NamedVariables::const_iterator i = variables.find(name);
+	NamedVariables::const_iterator i = variables.find(varName);
 	if (i != variables.end())
 	{
 		return *(i->second);
 	}
 
-	throw std::invalid_argument("Cannot find variable with name " + name);
+	throw std::invalid_argument("Cannot find variable with name " + varName);
 }
 
 } // namespace
