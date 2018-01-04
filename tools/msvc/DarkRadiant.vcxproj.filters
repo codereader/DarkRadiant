@@ -206,6 +206,9 @@
     <Filter Include="src\ui\eclasstree">
       <UniqueIdentifier>{a9a3199e-0a04-4967-984b-b58241f17b36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\entitylist">
+      <UniqueIdentifier>{cf31bdd4-5049-41b1-bfe6-fafd3b1e8692}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -945,6 +948,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp">
       <Filter>src\ui\eclasstree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\entitylist\EntityList.cpp">
+      <Filter>src\ui\entitylist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp">
+      <Filter>src\ui\entitylist</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1919,6 +1928,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h">
       <Filter>src\ui\eclasstree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\entitylist\EntityList.h">
+      <Filter>src\ui\entitylist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModel.h">
+      <Filter>src\ui\entitylist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModelPopulator.h">
+      <Filter>src\ui\entitylist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h">
+      <Filter>src\ui\entitylist</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

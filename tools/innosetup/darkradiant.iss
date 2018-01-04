@@ -43,3 +43,5 @@ Type: files; Name: {app}\plugins\wavefront.dll;
 Type: files; Name: {app}\modules\grid.dll;
 ; eclasstree module has been removed
 Type: files; Name: {app}\modules\eclasstree.dll;
+; entitylist module has been removed
+Type: files; Name: {app}\modules\entitylist.dll;

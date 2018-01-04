@@ -256,6 +256,8 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp" />
+    <ClCompile Include="..\..\radiant\ui\entitylist\EntityList.cpp" />
+    <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp" />
     <ClCompile Include="..\..\radiant\ui\grid\GridManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
@@ -518,6 +520,10 @@
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h" />
+    <ClInclude Include="..\..\radiant\ui\entitylist\EntityList.h" />
+    <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModel.h" />
+    <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModelPopulator.h" />
+    <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridItem.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridManager.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />

@@ -3,7 +3,6 @@ SUBDIRS = eventmanager \
 		  commandsystem \
           eclassmgr \
           entity \
-		  entitylist \
           filetypes \
           filters \
           fonts \
