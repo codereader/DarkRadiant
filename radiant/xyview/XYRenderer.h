@@ -116,6 +116,59 @@ public:
 		}
 	}
 
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override
+	{
+		if (_stateStack.back().highlightPrimitives)
+		{
+			if (_stateStack.back().highlightAsGroupMember)
+			{
+				_selectedShaderGroup->addRenderable(renderable, world);
+			}
+			else
+			{
+				_selectedShader->addRenderable(renderable, world);
+			}
+		}
+
+		shader->addRenderable(renderable, world);
+	}
+
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+		const Matrix4& world, const IRenderEntity& entity) override
+	{
+		if (_stateStack.back().highlightPrimitives)
+		{
+			if (_stateStack.back().highlightAsGroupMember)
+			{
+				_selectedShaderGroup->addRenderable(renderable, world, entity);
+			}
+			else
+			{
+				_selectedShader->addRenderable(renderable, world, entity);
+			}
+		}
+
+		shader->addRenderable(renderable, world, entity);
+	}
+
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+		const Matrix4& world, const IRenderEntity& entity, const LightList& lights) override
+	{
+		if (_stateStack.back().highlightPrimitives)
+		{
+			if (_stateStack.back().highlightAsGroupMember)
+			{
+				_selectedShaderGroup->addRenderable(renderable, world, entity, &lights);
+			}
+			else
+			{
+				_selectedShader->addRenderable(renderable, world, entity, &lights);
+			}
+		}
+
+		shader->addRenderable(renderable, world, entity, &lights);
+	}
+
 	void render(const Matrix4& modelview, const Matrix4& projection)
     {
 		GlobalRenderSystem().render(_globalstate, modelview, projection);

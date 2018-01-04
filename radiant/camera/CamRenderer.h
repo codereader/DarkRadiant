@@ -57,4 +57,10 @@ public:
 	void addRenderable(const OpenGLRenderable& renderable,
                        const Matrix4& world,
                        const IRenderEntity& entity) override;
+
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override;
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+		const Matrix4& world, const IRenderEntity& entity) override;
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+		const Matrix4& world, const IRenderEntity& entity, const LightList& lights) override;
 };

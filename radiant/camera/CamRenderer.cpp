@@ -107,6 +107,53 @@ void CamRenderer::addRenderable(const OpenGLRenderable& renderable,
     );
 }
 
+void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world)
+{
+	if (_stateStack.back().highlightPrimitives)
+	{
+		_highlightedPrimitiveShader->addRenderable(renderable, world);
+	}
+
+	if (_stateStack.back().highlightFaces)
+	{
+		_highlightedFaceShader->addRenderable(renderable, world);
+	}
+
+	shader->addRenderable(renderable, world);
+}
+
+void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+	const Matrix4& world, const IRenderEntity& entity)
+{
+	if (_stateStack.back().highlightPrimitives)
+	{
+		_highlightedPrimitiveShader->addRenderable(renderable, world, entity);
+	}
+
+	if (_stateStack.back().highlightFaces)
+	{
+		_highlightedFaceShader->addRenderable(renderable, world, entity);
+	}
+
+	shader->addRenderable(renderable, world, entity);
+}
+
+void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+	const Matrix4& world, const IRenderEntity& entity, const LightList& lights)
+{
+	if (_stateStack.back().highlightPrimitives)
+	{
+		_highlightedPrimitiveShader->addRenderable(renderable, world, entity, &lights);
+	}
+
+	if (_stateStack.back().highlightFaces)
+	{
+		_highlightedFaceShader->addRenderable(renderable, world, entity, &lights);
+	}
+
+	shader->addRenderable(renderable, world, entity, &lights);
+}
+
 void CamRenderer::render(const Matrix4& modelview, const Matrix4& projection)
 {
     GlobalRenderSystem().render(m_globalstate, modelview, projection, m_viewer);

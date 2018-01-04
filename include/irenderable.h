@@ -48,12 +48,14 @@ public:
 	 * push, which does not accept an argument but duplicates the topmost
 	 * stack value. The new value should be set with SetState().
 	 */
+	[[deprecated]]
 	virtual void PushState() = 0;
 
 	/**
 	 * Pop the topmost Shader off the internal stack. This discards the value
 	 * without returning it.
 	 */
+	[[deprecated]]
 	virtual void PopState() = 0;
 
 	/**
@@ -69,6 +71,7 @@ public:
     * used for. Individual RenderableCollector subclasses may ignore this method
     * call if it does not use the render mode they are interested in.
 	 */
+	[[deprecated]]
 	virtual void SetState(const ShaderPtr& state, EStyle mode) = 0;
 
 	/**
@@ -83,6 +86,7 @@ public:
 	 * The local to world transform that should be applied to this object when
 	 * it is rendered.
 	 */
+	[[deprecated]]
 	virtual void addRenderable(const OpenGLRenderable& renderable,
 							   const Matrix4& world) = 0;
 
@@ -90,10 +94,47 @@ public:
 	 * Like addRenderable() above but providing an additional IRenderEntity argument
 	 * needed to evaluate the shader expressions right before rendering.
 	 */
+	[[deprecated]]
 	virtual void addRenderable(const OpenGLRenderable& renderable,
 							   const Matrix4& world,
 							   const IRenderEntity& entity) = 0;
 
+	/**
+	* Submit an OpenGLRenderable object for rendering using the given shader.
+	*
+	* @param shader
+	* The Shader object this Renderable will be attached to.
+	*
+	* @param renderable
+	* The renderable object to submit.
+	*
+	* @param world
+	* The local to world transform that should be applied to this object when
+	* it is rendered.
+	*/
+	virtual void addRenderable(const ShaderPtr& shader,
+							   const OpenGLRenderable& renderable,
+							   const Matrix4& world) = 0;
+
+	/**
+	* Like addRenderable() above but providing an additional IRenderEntity argument
+	* needed to evaluate the shader expressions right before rendering.
+	*/
+	virtual void addRenderable(const ShaderPtr& shader, 
+							   const OpenGLRenderable& renderable,
+							   const Matrix4& world, 
+							   const IRenderEntity& entity) = 0;
+
+
+	/**
+	* Like addRenderable() but with additional LightList containing the RendererLights
+	* intersecting with this object. This should be handled differently.
+	*/
+	virtual void addRenderable(const ShaderPtr& shader,
+							   const OpenGLRenderable& renderable,
+							   const Matrix4& world,
+							   const IRenderEntity& entity,
+							   const LightList& lights) = 0;
 
     /**
      * \brief

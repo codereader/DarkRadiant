@@ -74,6 +74,23 @@ public:
         _stateStack.back().shader->addRenderable(renderable, world, entity, _stateStack.back().lights);
 	}
 
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override
+	{
+		shader->addRenderable(renderable, world);
+	}
+
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+		const Matrix4& world, const IRenderEntity& entity) override
+	{
+		shader->addRenderable(renderable, world, entity);
+	}
+
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+		const Matrix4& world, const IRenderEntity& entity, const LightList& lights) override
+	{
+		shader->addRenderable(renderable, world, entity, &lights);
+	}
+
 	bool supportsFullMaterials() const
 	{
         return true;
