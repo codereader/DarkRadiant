@@ -341,8 +341,6 @@ std::ostream& operator<< (std::ostream& os, const Material& shader) {
 
 typedef std::function<void(const std::string&)> ShaderNameCallback;
 
-class ModuleObserver;
-
 const char* const MODULE_SHADERSYSTEM = "MaterialManager";
 
 /**

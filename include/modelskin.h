@@ -4,8 +4,6 @@
 #include "imodule.h"
 #include <sigc++/signal.h>
 
-class ModuleObserver;
-
 class ModelSkin
 {
 public:

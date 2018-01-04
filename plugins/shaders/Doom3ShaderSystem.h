@@ -124,7 +124,7 @@ public:
     void shutdownModule() override;
 
 private:
-    // This attaches this class as ModuleObserver to the Filesystem
+    // This attaches this class as Observer to the Filesystem
     void construct();
     void destroy();
 
