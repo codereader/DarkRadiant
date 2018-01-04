@@ -21,34 +21,31 @@ namespace render
 class RenderableCollectionWalker :
     public scene::Graph::Walker
 {
+private:
     // The collector which is sorting our renderables
     RenderableCollector& _collector;
 
     // The view we're using for culling
     const VolumeTest& _volume;
 
-private:
-
     // Construct with RenderableCollector to receive renderables
-    RenderableCollectionWalker(RenderableCollector& collector,
-                               const VolumeTest& volume)
-    : _collector(collector), _volume(volume)
+    RenderableCollectionWalker(RenderableCollector& collector, const VolumeTest& volume) : 
+		_collector(collector), 
+		_volume(volume)
     {}
 
-    void render(const Renderable& renderable) const
-    {
-        if (_collector.supportsFullMaterials())
-            renderable.renderSolid(_collector, _volume);
-        else
-            renderable.renderWireframe(_collector, _volume);
-    }
-
-    RenderableCallback getRenderableCallback()
-    {
-        return std::bind(&RenderableCollectionWalker::render, this, std::placeholders::_1);
-    }
-
 public:
+	void dispatchRenderable(const Renderable& renderable)
+	{
+		if (_collector.supportsFullMaterials())
+		{
+			renderable.renderSolid(_collector, _volume);
+		}
+		else
+		{
+			renderable.renderWireframe(_collector, _volume);
+		}
+	}
 
     // scene::Graph::Walker implementation
     bool visit(const scene::INodePtr& node)
@@ -104,7 +101,7 @@ public:
 			}
         }
 
-        render(*node);
+		dispatchRenderable(*node);
 
         _collector.PopState();
 
@@ -116,19 +113,21 @@ public:
      * Use a RenderableCollectionWalker to find all renderables in the global
      * scenegraph.
      */
-    static void collectRenderablesInScene(RenderableCollector& collector,
-                                          const VolumeTest& volume)
+    static void CollectRenderablesInScene(RenderableCollector& collector, const VolumeTest& volume)
     {
         // Instantiate a new walker class
         RenderableCollectionWalker renderHighlightWalker(collector, volume);
 
         // Submit renderables from scene graph
-        GlobalSceneGraph().foreachVisibleNodeInVolume(volume,
-                                                      renderHighlightWalker);
+        GlobalSceneGraph().foreachVisibleNodeInVolume(volume, renderHighlightWalker);
 
-        // Submit renderables directly attached to the ShaderCache
+        // Submit any renderables that have been directly attached to the RenderSystem
+		// without belonging to an actual scene object
         RenderableCollectionWalker walker(collector, volume);
-        GlobalRenderSystem().forEachRenderable(walker.getRenderableCallback());
+		GlobalRenderSystem().forEachRenderable([&](const Renderable& renderable)
+		{
+			walker.dispatchRenderable(renderable);
+		});
     }
 };
 
