@@ -53,9 +53,9 @@ public:
 	virtual void save(IUndoable& undoable) = 0;
 };
 
-const std::string MODULE_UNDOSYSTEM("UndoSystem");
+const char* const MODULE_UNDOSYSTEM("UndoSystem");
 
-class UndoSystem :
+class IUndoSystem :
 	public RegisterableModule
 {
 public:
@@ -102,10 +102,11 @@ public:
 };
 
 // The accessor function
-inline UndoSystem& GlobalUndoSystem() {
+inline IUndoSystem& GlobalUndoSystem() 
+{
 	// Cache the reference locally
-	static UndoSystem& _undoSystem(
-		*std::static_pointer_cast<UndoSystem>(
+	static IUndoSystem& _undoSystem(
+		*std::static_pointer_cast<IUndoSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_UNDOSYSTEM)
 		)
 	);

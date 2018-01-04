@@ -1959,6 +1959,9 @@
     <ClInclude Include="..\..\radiant\undo\StackFiller.h">
       <Filter>src\undo</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\undo\UndoSystem.h">
+      <Filter>src\undo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

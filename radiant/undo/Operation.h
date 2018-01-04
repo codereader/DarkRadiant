@@ -1,6 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <string>
+
+#include "SnapShot.h"
 
 namespace undo
 {

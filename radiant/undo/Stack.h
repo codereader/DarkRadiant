@@ -1,6 +1,8 @@
 #pragma once
 
 #include "debugging/debugging.h"
+#include <list>
+#include "Operation.h"
 
 namespace undo
 {

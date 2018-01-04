@@ -7,7 +7,7 @@
 #include <functional>
 
 class UndoFileChangeTracker :
-    public UndoSystem::Tracker,
+    public IUndoSystem::Tracker,
     public IMapFileChangeTracker
 {
 private:
