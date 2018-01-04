@@ -194,17 +194,6 @@ void RenderablePicoSurface::calculateTangents() {
 	}
 }
 
-// Front-end renderable submission
-void RenderablePicoSurface::submitRenderables(RenderableCollector& rend,
-											  const Matrix4& localToWorld,
-											  const ShaderPtr& shader,
-											  const IRenderEntity& entity)
-{
-	// Submit geometry
-	rend.SetState(shader, RenderableCollector::eFullMaterials);
-    rend.addRenderable(*this, localToWorld, entity);
-}
-
 // Back-end render function
 void RenderablePicoSurface::render(const RenderInfo& info) const
 {

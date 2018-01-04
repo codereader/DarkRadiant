@@ -115,11 +115,28 @@ void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest
 
 	assert(_renderEntity);
 
-	submitRenderables(collector, volume, localToWorld(), *_renderEntity);
+	// Test the model's intersection volume, if it intersects pass on the render call
+	const Matrix4& l2w = localToWorld();
+
+	if (volume.TestAABB(_picoModel->localAABB(), l2w) != VOLUME_OUTSIDE)
+	{
+		// Submit the model's geometry
+		_picoModel->renderSolid(collector, l2w, *_renderEntity, _lights);
+	}
 }
 
-void PicoModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
-	renderSolid(collector, volume);
+void PicoModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	assert(_renderEntity);
+
+	// Test the model's intersection volume, if it intersects pass on the render call
+	const Matrix4& l2w = localToWorld();
+
+	if (volume.TestAABB(_picoModel->localAABB(), l2w) != VOLUME_OUTSIDE)
+	{
+		// Submit the model's geometry
+		_picoModel->renderWireframe(collector, l2w, *_renderEntity);
+	}
 }
 
 void PicoModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -133,24 +150,6 @@ void PicoModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 bool PicoModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 {
 	return _picoModel->getIntersection(ray, intersection, localToWorld());
-}
-
-// Renderable submission
-void PicoModelNode::submitRenderables(RenderableCollector& collector,
-	const VolumeTest& volume,
-	const Matrix4& localToWorld,
-	const IRenderEntity& entity) const
-{
-	// Test the model's intersection volume, if it intersects pass on the
-	// render call
-	if (volume.TestAABB(_picoModel->localAABB(), localToWorld) != VOLUME_OUTSIDE)
-	{
-		// Submit the lights
-		collector.setLights(_lights);
-
-		// Submit the model's geometry
-		_picoModel->submitRenderables(collector, localToWorld, entity);
-	}
 }
 
 // Skin changed notify
