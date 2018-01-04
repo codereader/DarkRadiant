@@ -203,6 +203,9 @@
     <Filter Include="src\ui\modelexport">
       <UniqueIdentifier>{729325bd-525b-47e6-94cb-1abcc9d27ded}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\eclasstree">
+      <UniqueIdentifier>{a9a3199e-0a04-4967-984b-b58241f17b36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -936,6 +939,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\EditingStopwatchInfoFileModule.cpp">
       <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp">
+      <Filter>src\ui\eclasstree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp">
+      <Filter>src\ui\eclasstree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1904,6 +1913,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\EditingStopwatchInfoFileModule.h">
       <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h">
+      <Filter>src\ui\eclasstree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h">
+      <Filter>src\ui\eclasstree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

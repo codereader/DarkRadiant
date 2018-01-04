@@ -27,6 +27,7 @@
 #include "ui/filterdialog/FilterDialog.h"
 #include "ui/mousetool/ToolMappingDialog.h"
 #include "ui/about/AboutDialog.h"
+#include "ui/eclasstree/EClassTree.h"
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
 
@@ -133,6 +134,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 	GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
 
+	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
+
 	// ----------------------- Bind Events ---------------------------------------
 
 	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
@@ -157,6 +160,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
 	GlobalEventManager().addCommand("About", "About");
 	GlobalEventManager().addCommand("ExportSelectedAsModelDialog", "ExportSelectedAsModelDialog");
+	GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
 }
 
 // Static module registration

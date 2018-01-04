@@ -84,6 +84,11 @@ void EClassTree::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFini
 		_eclassView->EnsureVisible(preselectItem);
 		handleSelectionChange();
 	}
+	else
+	{
+		// Expand the top level items if nothing should be preselected
+		_eclassView->ExpandTopLevelItems();
+	}
 }
 
 void EClassTree::populateWindow()

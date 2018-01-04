@@ -3,15 +3,15 @@
 
 [Setup]
 AppName=DarkRadiant
-AppVerName=DarkRadiant 2.5.0 x86
+AppVerName=DarkRadiant 2.6.0pre1 x86
 AppPublisher=The Dark Mod
 AppPublisherURL=http://www.darkradiant.net
 AppSupportURL=http://www.darkradiant.net
 AppUpdatesURL=http://www.darkradiant.net
 DefaultDirName={pf}\DarkRadiant
-DefaultGroupName=DarkRadiant 2.5.0 x86
+DefaultGroupName=DarkRadiant 2.6.0pre1 x86
 OutputDir=.
-OutputBaseFilename=darkradiant-2.5.0-x86
+OutputBaseFilename=darkradiant-2.6.0pre1-x86
 Compression=lzma
 SolidCompression=yes
 ;ArchitecturesAllowed=x64
@@ -41,3 +41,5 @@ Name: "{userdesktop}\DarkRadiant"; Filename: "{app}\darkradiant.exe"; Tasks: des
 Type: files; Name: {app}\plugins\wavefront.dll;
 ; Grid module has been removed
 Type: files; Name: {app}\modules\grid.dll;
+; eclasstree module has been removed
+Type: files; Name: {app}\modules\eclasstree.dll;

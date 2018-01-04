@@ -203,6 +203,7 @@
 		<menuItem name="connectEntity" caption="&amp;Connect selected entities" command="ConnectSelection" />
 		<menuItem name="bindEntity" caption="&amp;Bind selected entities" command="BindSelection" />
 		<menuItem name="animviewer" caption="MD5 Animation Viewer" command="AnimationPreview" />
+		<menuItem name="entityclasstree" caption="Entity Class Tree..." command="EntityClassTree" icon="icon_classname.png" />
 	</subMenu>
 
 	<subMenu name="brush" caption="B&amp;rush">
