@@ -264,6 +264,7 @@ darkradiant_SOURCES = main.cpp \
                       log/StringLogDevice.cpp \
                       log/LogStreamBuf.cpp \
                       log/LogFile.cpp \
+                      undo/UndoSystem.cpp \
                       model/ModelCache.cpp \
                       model/ModelExporter.cpp \
 					  model/ModelFormatManager.cpp \

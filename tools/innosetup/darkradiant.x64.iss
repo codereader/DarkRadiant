@@ -44,3 +44,5 @@ Type: files; Name: {app}\modules\grid.dll;
 Type: files; Name: {app}\modules\eclasstree.dll;
 ; entitylist module has been removed
 Type: files; Name: {app}\modules\entitylist.dll;
+; undo module has been removed
+Type: files; Name: {app}\modules\undo.dll;

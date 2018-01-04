@@ -15,6 +15,7 @@
 #include <set>
 
 #include "registry/registry.h"
+#include "modulesystem/StaticModule.h"
 #include "SnapShot.h"
 #include "Operation.h"
 #include "Stack.h"
@@ -379,15 +380,9 @@ private:
 		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
 		page.appendSpinner(_("Undo Queue Size"), RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
 	}
+};
 
-}; // class RadiantUndoSystem
-typedef std::shared_ptr<RadiantUndoSystem> RadiantUndoSystemPtr;
+// Static module instance
+module::StaticModule<RadiantUndoSystem> _staticUndoSystemModule;
 
 } // namespace undo
-
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
-{
-	module::performDefaultInitialisation(registry);
-
-	registry.registerModule(undo::RadiantUndoSystemPtr(new undo::RadiantUndoSystem));
-}

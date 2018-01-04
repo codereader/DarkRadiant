@@ -15,7 +15,6 @@ SUBDIRS = eventmanager \
           shaders \
           skins \
           uimanager \
-          undo \
           vfspk3 \
           xmlregistry
 
