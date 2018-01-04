@@ -40,7 +40,7 @@ MRU::MRU() :
 	constructPreferences();
 
 	// Create _numMaxFiles menu items
-	for (unsigned int i = 0; i < _numMaxFiles; i++) {
+	for (std::size_t i = 0; i < _numMaxFiles; i++) {
 
 		_menuItems.push_back(MRUMenuItem(string::to_string(i), *this, i+1));
 
@@ -66,8 +66,11 @@ void MRU::loadRecentFiles()
 		const std::string key = RKEY_MAP_MRUS + "/map" + string::to_string(i);
 		const std::string fileName = GlobalRegistry().get(key);
 
-		// Insert the filename
-		insert(fileName);
+		if (!fileName.empty())
+		{
+			// Insert the item into the filelist
+			_list.insert(fileName);
+		}
 	}
 }
 
@@ -145,12 +148,7 @@ bool MRU::loadLastMap() const {
 
 std::string MRU::getLastMapName()
 {
-	if (_list.empty())
-	{
-		return "";
-	}
-	
-	return *_list.begin();
+	return _list.empty() ? "" : *_list.begin();
 }
 
 void MRU::insert(const std::string& fileName) {
@@ -162,6 +160,9 @@ void MRU::insert(const std::string& fileName) {
 
 		// Update the widgets
 		updateMenu();
+
+		// Persist MRU to the registry on each change
+		saveRecentFiles();
 	}
 }
 
@@ -188,48 +189,46 @@ void MRU::updateMenu()
 			"", // empty icon
 			"" // empty event
 		);
+
+		return;
 	}
-	else
+	
+	// Set the iterator to the first filename in the list
+	MRUList::iterator i = _list.begin();
+
+	// Add all the created widgets to the menu
+	for (MRUMenuItem& item : _menuItems)
 	{
-		// Set the iterator to the first filename in the list
-		MRUList::iterator i = _list.begin();
+		// The default string to be loaded into the widget (i.e. "inactive")
+		std::string filename;
 
-		// Add all the created widgets to the menu
-		for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); ++m)
+		// If the end of the list is reached, do nothing, otherwise increase the iterator
+		if (i != _list.end())
 		{
-			// The default string to be loaded into the widget (i.e. "inactive")
-			std::string filename = "";
-
-			// If the end of the list is reached, do nothing, otherwise increase the iterator
-			if (i != _list.end())
-			{
-				filename = (*i);
-				i++;
-			}
-
-			if (filename.empty())
-			{
-				continue;
-			}
-
-			MRUMenuItem& item = (*m);
-
-			std::string label = string::to_string(m->getIndex()) + " - " + filename;
-
-			const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
-
-			// Create the toplevel menu item
-			menuManager.insert(
-				"main/file/mruseparator",
-				"MRU" + string::to_string(item.getIndex()),
-				ui::menuItem,
-				label,
-				"", // empty icon
-				commandName
-			);
-
-			item.setMapFilename(filename);
+			filename = (*i);
+			i++;
 		}
+
+		if (filename.empty())
+		{
+			continue;
+		}
+
+		std::string label = string::to_string(item.getIndex()) + " - " + filename;
+
+		const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
+
+		// Create the menu item
+		menuManager.insert(
+			"main/file/mruseparator",
+			"MRU" + string::to_string(item.getIndex()),
+			ui::menuItem,
+			label,
+			"", // empty icon
+			commandName
+		);
+
+		item.setMapFilename(filename);
 	}
 }
 
@@ -257,7 +256,8 @@ void MRU::constructMenu()
 } // namespace ui
 
 // The accessor function to the MRU instance
-ui::MRU& GlobalMRU() {
+ui::MRU& GlobalMRU() 
+{
 	static ui::MRU _mruInstance;
 	return _mruInstance;
 }

@@ -2,7 +2,10 @@
 
 #include <list>
 
-/* greebo: The MRUList maintains the list of filenames in a FIFO-style
+namespace ui
+{
+
+/* greebo: The MRUList maintains the recent file paths in a FIFO-style
  * container of length _numMaxItems.
  *
  * Construct it with the maximum number of strings this list can hold.
@@ -10,14 +13,9 @@
  * Use insert() to add a filename to the list. Duplicated filenames are
  * recognised and relocated to the top of the list.
  */
-namespace ui 
-{
-
 class MRUList
 {
-	/* greebo: This is the (rather complex) type definition of the
-	 * list containing the filenames of type std::string
-	 */
+private:
 	typedef std::list<std::string> FileList;
 
 	std::size_t _numMaxItems;
