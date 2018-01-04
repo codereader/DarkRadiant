@@ -39,11 +39,6 @@ void UndoSystem::keyChanged()
 	_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 }
 
-IUndoStateSaver* UndoSystem::getStateSaver(IUndoable& undoable)
-{
-	return &_undoables[&undoable];
-}
-
 IUndoStateSaver* UndoSystem::getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker)
 {
     auto result = _undoables.insert(std::make_pair(&undoable, UndoStackFiller(tracker)));

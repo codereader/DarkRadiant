@@ -47,10 +47,6 @@ public:
 
 	virtual ~UndoSystem();
 
-	// Gets called as soon as the observed registry keys get changed
-	void keyChanged();
-
-	IUndoStateSaver* getStateSaver(IUndoable& undoable);
 	IUndoStateSaver* getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker) override;
 
 	void releaseStateSaver(IUndoable& undoable) override;
@@ -83,13 +79,16 @@ public:
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
 
+private:
 	// This is connected to the CommandSystem
 	void undoCmd(const cmd::ArgumentList& args);
 
 	// This is connected to the CommandSystem
 	void redoCmd(const cmd::ArgumentList& args);
 
-private:
+	// Gets called as soon as the observed registry key is changed
+	void keyChanged();
+
 	void onMapEvent(IMap::MapEvent ev);
 
 	// Sets the size of the undoStack
