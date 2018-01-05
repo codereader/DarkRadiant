@@ -272,8 +272,13 @@ void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 {
 	EntityNode::renderSolid(collector, volume);
 
-	// Pass through to wireframe render
-	renderWireframe(collector, volume);
+	// Re-use the same method as in wireframe rendering for the moment
+	const bool lightIsSelected = isSelected();
+	_light.renderWireframe(
+		collector, volume, localToWorld(), lightIsSelected
+	);
+
+	renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
 void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
