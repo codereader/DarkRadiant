@@ -172,7 +172,7 @@ void FaceInstance::renderSolid(RenderableCollector& collector, const VolumeTest&
 			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 		}
 
-		m_face->renderSolid(collector, Matrix4::getIdentity(), entity);
+		m_face->renderSolid(collector, Matrix4::getIdentity(), entity, m_lights);
 	}
 }
 

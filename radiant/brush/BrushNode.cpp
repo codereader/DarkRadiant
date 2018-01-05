@@ -463,7 +463,9 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 		// Skip invisible faces before traversing further
 		if (!forceVisible && !face.faceIsVisible()) continue;
 
+#if 0
         collector.setLights(face.m_lights);
+#endif
 
 		// greebo: BrushNodes have always an identity l2w, don't do any transforms
 #if 0

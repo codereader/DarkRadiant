@@ -235,9 +235,9 @@ void Face::submitRenderables(RenderableCollector& collector,
 #endif
 
 void Face::renderSolid(RenderableCollector& collector, const Matrix4& localToWorld,
-	const IRenderEntity& entity) const
+	const IRenderEntity& entity, const LightList& lights) const
 {
-	collector.addRenderable(_shader.getGLShader(), m_winding, localToWorld, entity);
+	collector.addRenderable(_shader.getGLShader(), m_winding, localToWorld, entity, lights);
 }
 
 void Face::renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
