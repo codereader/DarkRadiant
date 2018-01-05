@@ -48,12 +48,12 @@ const AABB& GenericEntity::localAABB() const {
 	return m_aabb_local;
 }
 
-void GenericEntity::renderArrow(RenderableCollector& collector,
+void GenericEntity::renderArrow(const ShaderPtr& shader, RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	if (EntitySettings::InstancePtr()->showEntityAngles())
 	{
-		collector.addRenderable(m_arrow, localToWorld);
+		collector.addRenderable(shader, m_arrow, localToWorld);
 	}
 }
 
@@ -61,18 +61,21 @@ void GenericEntity::renderSolid(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	// greebo: Don't render a filled cube if we have a proper model
-	collector.SetState(_owner.getSolidAABBRenderMode() == GenericEntityNode::WireFrameOnly ? 
-        _owner.getWireShader() : _owner.getFillShader(), RenderableCollector::eFullMaterials);
-	collector.addRenderable(m_aabb_solid, localToWorld);
-	renderArrow(collector, volume, localToWorld);
+	const ShaderPtr& shader = _owner.getSolidAABBRenderMode() == GenericEntityNode::WireFrameOnly ?
+		_owner.getWireShader() : _owner.getFillShader();
+
+	collector.addRenderable(shader, m_aabb_solid, localToWorld);
+	renderArrow(shader, collector, volume, localToWorld);
 }
 
 void GenericEntity::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
+#if 0
 	collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
-	collector.addRenderable(m_aabb_wire, localToWorld);
-	renderArrow(collector, volume, localToWorld);
+#endif
+	collector.addRenderable(_owner.getWireShader(), m_aabb_wire, localToWorld);
+	renderArrow(_owner.getWireShader(), collector, volume, localToWorld);
 }
 
 void GenericEntity::testSelect(Selector& selector,

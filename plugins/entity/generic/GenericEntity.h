@@ -69,7 +69,7 @@ public:
 
 	const AABB& localAABB() const;
 
-	void renderArrow(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderArrow(const ShaderPtr& shader, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
