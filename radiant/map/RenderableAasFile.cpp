@@ -40,8 +40,6 @@ void RenderableAasFile::renderSolid(RenderableCollector& collector, const Volume
 {
 	if (!_aasFile) return;
 
-	collector.SetState(_normalShader, RenderableCollector::eFullMaterials);
-
 	// Get the camera position for distance clipping
 	Matrix4 invModelView = volume.GetModelview().getFullInverse();
 	Vector3 viewPos = invModelView.t().getProjected();
@@ -53,19 +51,18 @@ void RenderableAasFile::renderSolid(RenderableCollector& collector, const Volume
 			continue;
 		}
 
-		collector.addRenderable(aabb, Matrix4::getIdentity());
+		collector.addRenderable(_normalShader, aabb, Matrix4::getIdentity());
 	}
 
 	if (_renderNumbers)
 	{
-		collector.addRenderable(*this, Matrix4::getIdentity());
+		collector.addRenderable(_normalShader, *this, Matrix4::getIdentity());
 	}
 }
 
 void RenderableAasFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Do nothing in wireframe mode
-	//renderSolid(collector, volume);
 }
 
 std::size_t RenderableAasFile::getHighlightFlags()
