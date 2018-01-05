@@ -36,11 +36,14 @@ void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& 
     // temp hack
     UpdateColours();
 
+	// greebo: Deactivated the render functions for now, as there's no shader acquired in this manipulator
+#if 0
     collector.addRenderable(_arrowX, _pivot2World._worldSpace);
     collector.addRenderable(_arrowY, _pivot2World._worldSpace);
     collector.addRenderable(_arrowZ, _pivot2World._worldSpace);
 
     collector.addRenderable(_quadScreen, _pivot2World._viewpointSpace);
+#endif
 }
 
 void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
