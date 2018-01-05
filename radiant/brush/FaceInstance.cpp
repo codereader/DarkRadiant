@@ -162,6 +162,35 @@ bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& loca
 	return m_face->intersectVolume(volume, localToWorld);
 }
 
+void FaceInstance::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
+	const IRenderEntity& entity) const
+{
+	if (m_face->intersectVolume(volume))
+	{
+		if (selectedComponents())
+		{
+			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
+		}
+
+		m_face->renderSolid(collector, Matrix4::getIdentity(), entity);
+	}
+}
+
+void FaceInstance::renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
+	const IRenderEntity& entity) const
+{
+	if (m_face->intersectVolume(volume))
+	{
+		if (selectedComponents())
+		{
+			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
+		}
+
+		m_face->renderWireframe(collector, Matrix4::getIdentity(), entity);
+	}
+}
+
+#if 0
 // Submit renderable geometry
 void FaceInstance::submitRenderables(RenderableCollector& collector,
                                      const VolumeTest& volume,
@@ -200,7 +229,7 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
 		collector.PopState();
 	}
 }
-
+#endif
 void FaceInstance::testSelect(SelectionTest& test, SelectionIntersection& best) {
 	if (getFace().getFaceShader().getGLShader()->getMaterial()->isVisible()) {
 		m_face->testSelect(test, best);

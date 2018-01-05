@@ -110,6 +110,13 @@ public:
 	bool intersectVolume(const VolumeTest& volume) const;
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
+	// Frontend render methods for submitting the face to the given collector
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume,
+		const IRenderEntity& entity) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
+		const IRenderEntity& entity) const;
+
+#if 0
 	/**
      * \brief
      * Submit renderable geometry to a RenderableCollector (without l2w transform).
@@ -126,7 +133,7 @@ public:
                            const VolumeTest& volume,
                            const Matrix4& localToWorld,
 						   const IRenderEntity& entity) const;
-
+#endif
 	void testSelect(SelectionTest& test, SelectionIntersection& best);
 
 	void testSelect(Selector& selector, SelectionTest& test);

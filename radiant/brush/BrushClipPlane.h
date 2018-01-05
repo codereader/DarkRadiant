@@ -9,30 +9,38 @@ class BrushClipPlane :
 	public OpenGLRenderable
 {
 private:
-	Plane3 m_plane;
-	Winding m_winding;
-	ShaderPtr m_state;
+	Plane3 _plane;
+	Winding _winding;
+	ShaderPtr _shader;
 
 public:
     virtual ~BrushClipPlane() {}
 
-	void setPlane(const Brush& brush, const Plane3& plane) {
-		m_plane = plane;
-		if (m_plane.isValid()) {
-			brush.windingForClipPlane(m_winding, m_plane);
+	void setPlane(const Brush& brush, const Plane3& plane)
+	{
+		_plane = plane;
+
+		if (_plane.isValid())
+		{
+			brush.windingForClipPlane(_winding, _plane);
 		}
-		else {
-			m_winding.resize(0);
+		else 
+		{
+			_winding.resize(0);
 		}
-		m_winding.updateNormals(m_plane.normal());
+
+		_winding.updateNormals(_plane.normal());
 	}
 
-	void render(const RenderInfo& info) const {
-		if (info.checkFlag(RENDER_FILL)) {
-			m_winding.render(info);
+	void render(const RenderInfo& info) const override
+	{
+		if (info.checkFlag(RENDER_FILL))
+		{
+			_winding.render(info);
 		}
-		else {
-			m_winding.drawWireframe();
+		else
+		{
+			_winding.drawWireframe();
 		}
 	}
 
@@ -40,18 +48,22 @@ public:
 	{
 		if (renderSystem)
 		{
-			m_state = renderSystem->capture("$CLIPPER_OVERLAY");
+			_shader = renderSystem->capture("$CLIPPER_OVERLAY");
 		}
 		else
 		{
-			m_state.reset();
+			_shader.reset();
 		}
 	}
 
 	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 	{
-		collector.SetState(m_state, RenderableCollector::eWireframeOnly);
-		collector.SetState(m_state, RenderableCollector::eFullMaterials);
+#if 0
+		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
+		collector.SetState(_shader, RenderableCollector::eFullMaterials);
 		collector.addRenderable(*this, localToWorld);
+#else
+		collector.addRenderable(_shader, *this, localToWorld);
+#endif
 	}
 };
