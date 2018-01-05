@@ -69,10 +69,10 @@ ControlPoints& Curve::getControlPoints() {
 	return _controlPoints;
 }
 
-void Curve::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
+void Curve::submitRenderables(const ShaderPtr& shader, RenderableCollector& collector, const VolumeTest& volume,
 	const Matrix4& localToWorld) const
 {
-	collector.addRenderable(_renderCurve, localToWorld);
+	collector.addRenderable(shader, _renderCurve, localToWorld);
 }
 
 const AABB& Curve::getBounds() const {

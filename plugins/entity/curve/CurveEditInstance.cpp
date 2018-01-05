@@ -170,9 +170,13 @@ void CurveEditInstance::updateSelected() const {
 void CurveEditInstance::renderComponents(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
+#if 0
     collector.SetState(_shaders.controlsShader, RenderableCollector::eWireframeOnly);
     collector.SetState(_shaders.controlsShader, RenderableCollector::eFullMaterials);
     collector.addRenderable(m_controlsRender, localToWorld);
+#else
+	collector.addRenderable(_shaders.controlsShader, m_controlsRender, localToWorld);
+#endif
 }
 
 void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
@@ -181,10 +185,14 @@ void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
     updateSelected();
     if(!m_selectedRender.empty())
     {
-      collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+#if 0
+		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
       collector.SetState(_shaders.selectedShader, RenderableCollector::eWireframeOnly);
       collector.SetState(_shaders.selectedShader, RenderableCollector::eFullMaterials);
       collector.addRenderable(m_selectedRender, localToWorld);
+#else
+	  collector.addRenderable(_shaders.selectedShader, m_selectedRender, localToWorld);
+#endif
     }
 }
 
