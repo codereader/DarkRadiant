@@ -1,5 +1,6 @@
 #pragma once
 
+#include "irenderable.h"
 #include "irender.h"
 #include <list>
 
@@ -10,11 +11,11 @@ namespace render
  * greebo: This is a basic front-end renderer (collecting renderables)
  * No highlighting support. It is returning FullMaterials as renderer style.
  */
-class ShaderStateRenderer :
+class SimpleFrontendRenderer :
 	public RenderableCollector
 {
 public:
-	ShaderStateRenderer()
+	SimpleFrontendRenderer()
 	{}
 
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override

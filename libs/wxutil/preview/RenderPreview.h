@@ -12,7 +12,7 @@
 #include "irender.h"
 
 #include "../FreezePointer.h"
-#include "render/ShaderStateRenderer.h"
+#include "render/SimpleFrontendRenderer.h"
 #include "render/SceneRenderWalker.h"
 #include "render/NopVolumeTest.h"
 
@@ -92,7 +92,7 @@ protected:
     RenderSystemPtr _renderSystem;
 
     // The front-end renderer, collecting the OpenGLRenderables
-    render::ShaderStateRenderer _renderer;
+    render::SimpleFrontendRenderer _renderer;
     render::NopVolumeTest _volumeTest;
 
     // The scene adaptor passing nodes into our front-end renderer
