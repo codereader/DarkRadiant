@@ -223,15 +223,6 @@ const AABB& MD5Surface::localAABB() const {
 	return _aabb_local;
 }
 
-void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, 
-						const ShaderPtr& shader, const IRenderEntity& entity) const
-{
-	assert(shader); // shader must be captured at this point
-
-	collector.SetState(shader, RenderableCollector::eFullMaterials);
-	collector.addRenderable(*this, localToWorld, entity);
-}
-
 int MD5Surface::getNumVertices() const
 {
 	return static_cast<int>(_vertices.size());

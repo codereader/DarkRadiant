@@ -96,9 +96,6 @@ public:
 
 	const AABB& localAABB() const;
 
-	void render(RenderableCollector& collector, const Matrix4& localToWorld, 
-				const ShaderPtr& shader, const IRenderEntity& entity) const;
-
 	// Test for selection
 	void testSelect(Selector& selector,
 					SelectionTest& test,
