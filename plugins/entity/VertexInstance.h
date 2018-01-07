@@ -89,11 +89,6 @@ public:
     {
 		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 		collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-#if 0
-		collector.SetState(_shader, RenderableCollector::eFullMaterials);
-		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
-#endif
-
 		collector.addRenderable(_shader, *this, localToWorld);
 	}
 

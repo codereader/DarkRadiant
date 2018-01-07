@@ -136,10 +136,6 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
     // temp hack
     UpdateColours();
 
-#if 0
-    collector.SetState(_stateOuter, RenderableCollector::eWireframeOnly);
-    collector.SetState(_stateOuter, RenderableCollector::eFullMaterials);
-#endif
     collector.addRenderable(_stateOuter, _circleScreen, _pivot2World._viewpointSpace);
     collector.addRenderable(_stateOuter, _circleSphere, _pivot2World._viewpointSpace);
 
@@ -156,10 +152,6 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
       collector.addRenderable(_stateOuter, _circleZ, _local2worldZ);
     }
 
-#if 0
-	collector.SetState(_pivotPointShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_pivotPointShader, RenderableCollector::eFullMaterials);
-#endif
 	collector.addRenderable(_pivotPointShader, _pivotPoint, _pivot2World._worldSpace);
 
 	collector.addRenderable(_pivotPointShader, *this, Matrix4::getIdentity());

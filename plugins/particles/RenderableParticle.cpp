@@ -59,10 +59,6 @@ void RenderableParticle::renderSolid(RenderableCollector& collector,
 	{
 		assert(pair.second.shader); // ensure we're realised
 
-#if 0 
-		collector.SetState(i->second.shader, RenderableCollector::eFullMaterials);
-#endif
-
         // For each stage using this shader
         for (const RenderableParticleStagePtr& stage : pair.second.stages)
 		{

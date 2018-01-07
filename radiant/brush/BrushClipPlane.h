@@ -58,12 +58,6 @@ public:
 
 	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 	{
-#if 0
-		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
-		collector.SetState(_shader, RenderableCollector::eFullMaterials);
-		collector.addRenderable(*this, localToWorld);
-#else
 		collector.addRenderable(_shader, *this, localToWorld);
-#endif
 	}
 };

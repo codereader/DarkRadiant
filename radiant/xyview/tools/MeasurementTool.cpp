@@ -166,21 +166,11 @@ void MeasurementTool::render(RenderSystem& renderSystem, RenderableCollector& co
 {
 	ensureShaders(renderSystem);
 
-#if 0
-	// Render lines
-	collector.SetState(_wireShader, RenderableCollector::eWireframeOnly);
-	collector.addRenderable(_lines, Matrix4::getIdentity());
-
-	// Render points
-	collector.SetState(_pointShader, RenderableCollector::eWireframeOnly);
-	collector.addRenderable(_points, Matrix4::getIdentity());
-#else
 	// Render lines
 	collector.addRenderable(_wireShader, _lines, Matrix4::getIdentity());
 
 	// Render points
 	collector.addRenderable(_pointShader, _points, Matrix4::getIdentity());
-#endif
 
 	// Render distance string
 	for (std::size_t i = 1; i < _points.size(); ++i)

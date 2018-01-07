@@ -93,11 +93,6 @@ void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& v
 		m_renderOrigin.render(collector, volume, localToWorld);
 	}
 
-#if 0
-	collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
-	collector.SetState(_owner.getWireShader(), RenderableCollector::eFullMaterials);
-#endif
-
 	if (!m_curveNURBS.isEmpty())
 	{
 		// Always render curves relative to map origin

@@ -62,11 +62,6 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
     Vector3 z = _pivot2World._worldSpace.z().getVector3().getNormalised();
     bool show_z = manipulator_show_axis(_pivot2World, z);
 
-#if 0
-    collector.SetState(_stateWire, RenderableCollector::eWireframeOnly);
-    collector.SetState(_stateWire, RenderableCollector::eFullMaterials);
-#endif
-
     if(show_x)
     {
       collector.addRenderable(_stateWire, _arrowX, _pivot2World._worldSpace);
@@ -81,11 +76,6 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
     }
 
     collector.addRenderable(_stateWire, _quadScreen, _pivot2World._viewplaneSpace);
-
-#if 0
-    collector.SetState(_stateFill, RenderableCollector::eWireframeOnly);
-    collector.SetState(_stateFill, RenderableCollector::eFullMaterials);
-#endif
 
     if(show_x)
     {

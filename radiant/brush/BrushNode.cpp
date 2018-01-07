@@ -328,19 +328,10 @@ void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTes
 
 	const Matrix4& l2w = localToWorld();
 
-#if 0
-	collector.SetState(m_brush.m_state_point, RenderableCollector::eWireframeOnly);
-	collector.SetState(m_brush.m_state_point, RenderableCollector::eFullMaterials);
-#endif
-
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace)
 	{
 		evaluateViewDependent(volume, l2w);
-#if 0
-		collector.addRenderable(_faceCentroidPointsCulled, l2w);
-#else
 		collector.addRenderable(m_brush.m_state_point, _faceCentroidPointsCulled, l2w);
-#endif
 	}
 	else
 	{
@@ -463,16 +454,8 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 		// Skip invisible faces before traversing further
 		if (!forceVisible && !face.faceIsVisible()) continue;
 
-#if 0
-        collector.setLights(face.m_lights);
-#endif
-
 		// greebo: BrushNodes have always an identity l2w, don't do any transforms
-#if 0
-		face.submitRenderables(collector, volume, *_renderEntity);
-#else
 		face.renderSolid(collector, volume, *_renderEntity);
-#endif
     }
 
 	renderSelectedPoints(collector, volume, localToWorld);
@@ -486,11 +469,7 @@ void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 
 	if (m_render_wireframe.m_size != 0)
 	{
-#if 0
-		collector.addRenderable(m_render_wireframe, localToWorld);
-#else
 		collector.addRenderable(_renderEntity->getWireShader(), m_render_wireframe, localToWorld);
-#endif
 	}
 
 	renderSelectedPoints(collector, volume, localToWorld);
@@ -522,14 +501,7 @@ void BrushNode::renderSelectedPoints(RenderableCollector& collector,
 	if (!_selectedPoints.empty())
     {
 		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-
-#if 0
-		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
-		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eFullMaterials);
-		collector.addRenderable(_selectedPoints, localToWorld);
-#else
 		collector.addRenderable(m_state_selpoint, _selectedPoints, localToWorld);
-#endif
 	}
 }
 

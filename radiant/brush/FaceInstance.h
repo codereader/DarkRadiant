@@ -116,24 +116,6 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
 		const IRenderEntity& entity) const;
 
-#if 0
-	/**
-     * \brief
-     * Submit renderable geometry to a RenderableCollector (without l2w transform).
-     */
-	void submitRenderables(RenderableCollector& collector,
-                           const VolumeTest& volume,
-						   const IRenderEntity& entity) const;
-
-    /**
-     * \brief
-     * Submit renderable geometry to a RenderableCollector (with l2w transform).
-     */
-	void submitRenderables(RenderableCollector& collector,
-                           const VolumeTest& volume,
-                           const Matrix4& localToWorld,
-						   const IRenderEntity& entity) const;
-#endif
 	void testSelect(SelectionTest& test, SelectionIntersection& best);
 
 	void testSelect(Selector& selector, SelectionTest& test);

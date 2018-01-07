@@ -283,9 +283,6 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
-#if 0
-	collector.setLights(*m_lightList);
-#endif
 
 	assert(_renderEntity); // patches rendered without parent - no way!
 
@@ -372,13 +369,7 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	if (!m_render_selected.empty())
     {
 		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-#if 0
-		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
-		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eFullMaterials);
-		collector.addRenderable(m_render_selected, localToWorld());
-#else
 		collector.addRenderable(m_state_selpoint, m_render_selected, localToWorld());
-#endif
 	}
 }
 

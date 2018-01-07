@@ -96,25 +96,10 @@ public:
 
 	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 	{
-#if 0
-		collector.PushState();
-#endif
-
 		// greebo: Commented this out to avoid the point from being moved along with the view.
 		//Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
-#if 0
-		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
-		collector.SetState(_shader, RenderableCollector::eFullMaterials);
-		collector.addRenderable(*this, localToWorld);
-#else
 		collector.addRenderable(_shader, *this, localToWorld);
-#endif
-
-#if 0
-		collector.PopState();
-#endif
 	}
 };
 

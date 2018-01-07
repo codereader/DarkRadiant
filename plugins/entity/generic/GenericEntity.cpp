@@ -71,9 +71,6 @@ void GenericEntity::renderSolid(RenderableCollector& collector,
 void GenericEntity::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-#if 0
-	collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
-#endif
 	collector.addRenderable(_owner.getWireShader(), m_aabb_wire, localToWorld);
 	renderArrow(_owner.getWireShader(), collector, volume, localToWorld);
 }

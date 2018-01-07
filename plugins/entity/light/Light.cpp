@@ -539,44 +539,18 @@ void Light::renderProjectionPoints(RenderableCollector& collector,
     collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
     collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
 
-#if 0
-    collector.SetState(_rRight.getShader(), RenderableCollector::eFullMaterials);
-    collector.SetState(_rRight.getShader(), RenderableCollector::eWireframeOnly);
-    collector.addRenderable(_rRight, localToWorld);
-
-    collector.SetState(_rUp.getShader(), RenderableCollector::eFullMaterials);
-    collector.SetState(_rUp.getShader(), RenderableCollector::eWireframeOnly);
-    collector.addRenderable(_rUp, localToWorld);
-
-    collector.SetState(_rTarget.getShader(), RenderableCollector::eFullMaterials);
-    collector.SetState(_rTarget.getShader(), RenderableCollector::eWireframeOnly);
-    collector.addRenderable(_rTarget, localToWorld);
-#else
 	collector.addRenderable(_rRight.getShader(), _rRight, localToWorld);
 	collector.addRenderable(_rUp.getShader(), _rUp, localToWorld);
 	collector.addRenderable(_rTarget.getShader(), _rTarget, localToWorld);
-#endif
 
     if (m_useLightStart)
 	{
-#if 0
-        collector.SetState(_rStart.getShader(), RenderableCollector::eFullMaterials);
-        collector.SetState(_rStart.getShader(), RenderableCollector::eWireframeOnly);
-        collector.addRenderable(_rStart, localToWorld);
-#else
 		collector.addRenderable(_rStart.getShader(), _rStart, localToWorld);
-#endif
     }
 
     if (m_useLightEnd)
 	{
-#if 0
-        collector.SetState(_rEnd.getShader(), RenderableCollector::eFullMaterials);
-        collector.SetState(_rEnd.getShader(), RenderableCollector::eWireframeOnly);
-        collector.addRenderable(_rEnd, localToWorld);
-#else
 		collector.addRenderable(_rEnd.getShader(), _rEnd, localToWorld);
-#endif
     }
 }
 
@@ -585,16 +559,7 @@ void Light::renderLightCentre(RenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const 
 {
-#if 0
-    collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-    collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-    collector.SetState(_rCentre.getShader(), RenderableCollector::eFullMaterials);
-    collector.SetState(_rCentre.getShader(), RenderableCollector::eWireframeOnly);
-
-    collector.addRenderable(_rCentre, localToWorld);
-#else
 	collector.addRenderable(_rCentre.getShader(), _rCentre, localToWorld);
-#endif
 }
 
 void Light::renderWireframe(RenderableCollector& collector,
