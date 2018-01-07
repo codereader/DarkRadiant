@@ -50,27 +50,8 @@ public:
     // scene::Graph::Walker implementation
     bool visit(const scene::INodePtr& node)
     {
-        _collector.PushState();
-
-        // greebo: Fix for primitive nodes: as we don't traverse the scenegraph
-        // nodes top-down anymore, we need to set the shader state of our
-        // parent entity ourselves.  Otherwise we're in for NULL-states when
-        // rendering worldspawn brushes.
+        // greebo: Highlighting propagates to child nodes
         scene::INodePtr parent = node->getParent();
-
-        Entity* entity = Node_getEntity(parent);
-
-        if (entity != NULL)
-        {
-            const IRenderEntity* renderEntity = node->getRenderEntity();
-
-            assert(renderEntity);
-
-            if (renderEntity)
-            {
-                _collector.SetState(renderEntity->getWireShader(), RenderableCollector::eWireframeOnly);
-            }
-        }
 
         node->viewChanged();
 
@@ -89,6 +70,7 @@ public:
             }
             else
             {
+				_collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
                 node->renderComponents(_collector, _volume);
             }
 
@@ -99,11 +81,19 @@ public:
 			{
 				_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, true);
 			}
+			else
+			{
+				_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, false);
+			}
         }
+		else
+		{
+			_collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+			_collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+			_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, false);
+		}
 
 		dispatchRenderable(*node);
-
-        _collector.PopState();
 
         return true;
     }

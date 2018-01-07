@@ -19,6 +19,7 @@ CamRenderer::CamRenderer(RenderStateFlags globalstate,
     _stateStack.push_back(State());
 }
 
+#if 0
 void CamRenderer::SetState(const ShaderPtr& shader, EStyle style)
 {
     if(style == eFullMaterials)
@@ -27,12 +28,14 @@ void CamRenderer::SetState(const ShaderPtr& shader, EStyle style)
         _stateStack.back().shader = shader.get();
     }
 }
+#endif
 
 bool CamRenderer::supportsFullMaterials() const
 {
     return true;
 }
 
+#if 0
 void CamRenderer::PushState()
 {
     _stateStack.push_back(_stateStack.back());
@@ -43,6 +46,7 @@ void CamRenderer::PopState()
     ASSERT_MESSAGE(!_stateStack.empty(), "popping empty stack");
     _stateStack.pop_back();
 }
+#endif
 
 void CamRenderer::setHighlightFlag(Highlight::Flags flags, bool enabled)
 {

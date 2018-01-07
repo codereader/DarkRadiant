@@ -39,6 +39,7 @@ public:
 		_stateStack.push_back(State());
 	}
 
+#if 0
 	void SetState(const ShaderPtr& state, EStyle style)
 	{
 		if (style == eWireframeOnly)
@@ -47,12 +48,14 @@ public:
 			_stateStack.back().shader = state.get();
 		}
 	}
+#endif
 
 	bool supportsFullMaterials() const
     {
 		return false;
 	}
 
+#if 0
 	void PushState() {
 		// Duplicate the most recent state
 		_stateStack.push_back(_stateStack.back());
@@ -61,6 +64,7 @@ public:
 	void PopState() {
 		_stateStack.pop_back();
 	}
+#endif
 
 	void setHighlightFlag(Highlight::Flags flags, bool enabled)
 	{

@@ -44,37 +44,6 @@ public:
 	};
 
 	/**
-	 * Push a Shader onto the internal shader stack. This is an OpenGL-style
-	 * push, which does not accept an argument but duplicates the topmost
-	 * stack value. The new value should be set with SetState().
-	 */
-	[[deprecated]]
-	virtual void PushState() = 0;
-
-	/**
-	 * Pop the topmost Shader off the internal stack. This discards the value
-	 * without returning it.
-	 */
-	[[deprecated]]
-	virtual void PopState() = 0;
-
-	/**
-	 * Set the Shader to be used when rendering any subsequently-submitted
-	 * OpenGLRenderable object. This shader remains in effect until it is
-	 * changed with a subsequent call to SetState().
-	 *
-	 * @param state
-	 * The Shader to be used from now on.
-	 *
-	 * @param mode
-	 * The type of rendering (wireframe or shaded) that this shader should be
-    * used for. Individual RenderableCollector subclasses may ignore this method
-    * call if it does not use the render mode they are interested in.
-	 */
-	[[deprecated]]
-	virtual void SetState(const ShaderPtr& state, EStyle mode) = 0;
-
-	/**
 	 * Submit an OpenGLRenderable object for rendering when the backend render
 	 * pass is conducted. The object will be rendered using the Shader previous-
 	 * ly set with SetState().
