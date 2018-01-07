@@ -95,15 +95,6 @@ public:
 	};
 
 	virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) = 0;
-
-  	/**
-  	 * Set the list of lights to be used for lighting-mode rendering. This
-    * method only makes sense for RenderableCollectors that support this
-    * rendering mode.
-  	 *
-  	 * TODO: Use std::shared_ptr<> here.
-  	 */
-    virtual void setLights(const LightList& lights) { }
 };
 
 class VolumeTest;

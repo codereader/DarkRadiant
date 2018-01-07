@@ -7,23 +7,21 @@
 class CamRenderer : 
 	public RenderableCollector
 {
+private:
     // Data class storing state on the stack
 	struct State
 	{
         bool highlightFaces;
         bool highlightPrimitives;
-		Shader* shader; // raw pointer for speed
-		const LightList* lights;
 
-		State() : highlightFaces(false),
-                  highlightPrimitives(false),
-                  shader(NULL),
-                  lights(NULL) 
+		State() : 
+			highlightFaces(false),
+			highlightPrimitives(false)
         {}
 	};
 
-    // Stack of states
-    std::vector<State> _stateStack;
+    // Highlight state
+    State _state;
 
     RenderStateFlags m_globalstate;
     ShaderPtr _highlightedPrimitiveShader;
@@ -49,7 +47,6 @@ public:
     // RenderableCollector implementation
     bool supportsFullMaterials() const override;
 	void setHighlightFlag(Highlight::Flags flags, bool enabled) override;
-    void setLights(const LightList& lights) override;
 
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override;
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
