@@ -66,51 +66,6 @@ void CamRenderer::setLights(const LightList& lights)
     _stateStack.back().lights = &lights;
 }
 
-void CamRenderer::addRenderable(const OpenGLRenderable& renderable,
-                                const Matrix4& world)
-{
-    if(_stateStack.back().highlightPrimitives)
-    {
-        _highlightedPrimitiveShader->addRenderable(
-          renderable, world, _stateStack.back().lights
-        );
-    }
-
-    if(_stateStack.back().highlightFaces)
-    {
-        _highlightedFaceShader->addRenderable(
-            renderable, world, _stateStack.back().lights
-        );
-    }
-
-    _stateStack.back().shader->addRenderable(
-        renderable, world, _stateStack.back().lights
-    );
-}
-
-void CamRenderer::addRenderable(const OpenGLRenderable& renderable,
-                                const Matrix4& world,
-                                const IRenderEntity& entity)
-{
-    if (_stateStack.back().highlightPrimitives)
-    {
-        _highlightedPrimitiveShader->addRenderable(
-            renderable, world, entity, _stateStack.back().lights
-        );
-    }
-
-    if (_stateStack.back().highlightFaces)
-    {
-        _highlightedFaceShader->addRenderable(
-            renderable, world, entity, _stateStack.back().lights
-        );
-    }
-
-    _stateStack.back().shader->addRenderable(
-        renderable, world, entity, _stateStack.back().lights
-    );
-}
-
 void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world)
 {
 	if (_stateStack.back().highlightPrimitives)

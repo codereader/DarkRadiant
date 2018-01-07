@@ -8,9 +8,8 @@ namespace render
 
 /**
  * greebo: This is a basic front-end renderer (collecting renderables)
- * using a state stack to sort the renderables. Each renderable
- * is assigned to the topmost shader on the stack. No highlighting support.
- * It is returning FullMaterials as renderer style.
+ * Each renderable is assigned to the topmost shader on the stack. 
+ * No highlighting support. It is returning FullMaterials as renderer style.
  */
 class ShaderStateRenderer :
 	public RenderableCollector
@@ -33,45 +32,8 @@ private:
 public:
 	ShaderStateRenderer()
 	{
-		// Start with an empty shader, which can be assigned in SetState
+		// Start with an empty state
         _stateStack.push_back(State());
-	}
-
-	void PushState()
-	{
-		if (!_stateStack.empty())
-		{
-			_stateStack.push_back(_stateStack.back());
-		}
-	}
-
-	void PopState()
-	{
-		if (!_stateStack.empty())
-		{
-			_stateStack.pop_back();
-		}
-	}
-
-	void SetState(const ShaderPtr& state, EStyle mode)
-	{
-		assert(!_stateStack.empty());
-
-        _stateStack.back().shader = state;
-	}
-
-	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world)
-	{
-		assert(!_stateStack.empty());
-
-        _stateStack.back().shader->addRenderable(renderable, world, _stateStack.back().lights);
-	}
-
-	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world, const IRenderEntity& entity)
-	{
-		assert(!_stateStack.empty());
-
-        _stateStack.back().shader->addRenderable(renderable, world, entity, _stateStack.back().lights);
 	}
 
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override

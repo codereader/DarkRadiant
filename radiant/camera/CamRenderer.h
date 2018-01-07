@@ -50,10 +50,6 @@ public:
     bool supportsFullMaterials() const override;
 	void setHighlightFlag(Highlight::Flags flags, bool enabled) override;
     void setLights(const LightList& lights) override;
-    void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world) override;
-	void addRenderable(const OpenGLRenderable& renderable,
-                       const Matrix4& world,
-                       const IRenderEntity& entity) override;
 
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override;
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,

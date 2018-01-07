@@ -39,32 +39,10 @@ public:
 		_stateStack.push_back(State());
 	}
 
-#if 0
-	void SetState(const ShaderPtr& state, EStyle style)
-	{
-		if (style == eWireframeOnly)
-		{
-			ASSERT_NOTNULL(state);
-			_stateStack.back().shader = state.get();
-		}
-	}
-#endif
-
 	bool supportsFullMaterials() const
     {
 		return false;
 	}
-
-#if 0
-	void PushState() {
-		// Duplicate the most recent state
-		_stateStack.push_back(_stateStack.back());
-	}
-
-	void PopState() {
-		_stateStack.pop_back();
-	}
-#endif
 
 	void setHighlightFlag(Highlight::Flags flags, bool enabled)
 	{
@@ -76,47 +54,6 @@ public:
 		if (flags & Highlight::GroupMember)
 		{
 			_stateStack.back().highlightAsGroupMember = enabled;
-		}
-	}
-
-	void addRenderable(const OpenGLRenderable& renderable,
-					   const Matrix4& localToWorld)
-	{
-		if (_stateStack.back().highlightPrimitives)
-		{
-			if (_stateStack.back().highlightAsGroupMember)
-			{
-				_selectedShaderGroup->addRenderable(renderable, localToWorld);
-			}
-			else
-			{
-				_selectedShader->addRenderable(renderable, localToWorld);
-			}
-		}
-		else if (_stateStack.back().shader != nullptr)
-		{
-			_stateStack.back().shader->addRenderable(renderable, localToWorld);
-		}
-	}
-
-	void addRenderable(const OpenGLRenderable& renderable,
-					   const Matrix4& localToWorld,
-					   const IRenderEntity& entity)
-	{
-		if (_stateStack.back().highlightPrimitives)
-		{
-			if (_stateStack.back().highlightAsGroupMember)
-			{
-				_selectedShaderGroup->addRenderable(renderable, localToWorld, entity);
-			}
-			else
-			{
-				_selectedShader->addRenderable(renderable, localToWorld, entity);
-			}
-		}
-		else if (_stateStack.back().shader != nullptr)
-		{
-			_stateStack.back().shader->addRenderable(renderable, localToWorld, entity);
 		}
 	}
 

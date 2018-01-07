@@ -36,39 +36,6 @@ public:
 	virtual ~RenderableCollector() {}
 
 	/**
-	 * Enumeration containing render styles.
-	 */
-	enum EStyle {
-		eWireframeOnly,
-		eFullMaterials
-	};
-
-	/**
-	 * Submit an OpenGLRenderable object for rendering when the backend render
-	 * pass is conducted. The object will be rendered using the Shader previous-
-	 * ly set with SetState().
-	 *
-	 * @param renderable
-	 * The renderable object to submit.
-	 *
-	 * @param world
-	 * The local to world transform that should be applied to this object when
-	 * it is rendered.
-	 */
-	[[deprecated]]
-	virtual void addRenderable(const OpenGLRenderable& renderable,
-							   const Matrix4& world) = 0;
-
-	/**
-	 * Like addRenderable() above but providing an additional IRenderEntity argument
-	 * needed to evaluate the shader expressions right before rendering.
-	 */
-	[[deprecated]]
-	virtual void addRenderable(const OpenGLRenderable& renderable,
-							   const Matrix4& world,
-							   const IRenderEntity& entity) = 0;
-
-	/**
 	* Submit an OpenGLRenderable object for rendering using the given shader.
 	*
 	* @param shader
