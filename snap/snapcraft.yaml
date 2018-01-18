@@ -17,4 +17,5 @@ apps:
 parts:
   darkradiant:
     plugin: autotools
+    install-via: prefix
     source: .
