@@ -35,6 +35,7 @@ public:
 
     /* ApplicationContext implementation */
     std::string getApplicationPath() const override;
+    std::string getLibraryPath() const override;
     std::string getRuntimeDataPath() const override;
     std::string getSettingsPath() const override;
     std::string getBitmapsPath() const override;

@@ -29,6 +29,19 @@ std::string ApplicationContextImpl::getApplicationPath() const
 	return _appPath;
 }
 
+std::string ApplicationContextImpl::getLibraryPath() const
+{
+#if defined(POSIX)
+#if defined(PKGLIBDIR) && !defined(ENABLE_RELOCATION)
+    return PKGLIBDIR;
+#else
+    return _appPath + "../lib/darkradiant";
+#endif
+#else // !defined(POSIX)
+    return _appPath;
+#endif
+}
+
 std::string ApplicationContextImpl::getRuntimeDataPath() const
 {
 #if defined(POSIX) && defined (PKGDATADIR)

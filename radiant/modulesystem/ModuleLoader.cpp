@@ -94,7 +94,7 @@ void ModuleLoader::loadModules(const std::string& root)
 {
     // Get standardised paths
     std::string stdRoot = os::standardPathWithSlash(root);
-    
+
 #if defined(DR_MODULES_NEXT_TO_APP)
     // Xcode output goes to the application folder right now
     std::string modulesPath = stdRoot;
@@ -103,6 +103,8 @@ void ModuleLoader::loadModules(const std::string& root)
     std::string modulesPath = stdRoot + MODULES_DIR;
     std::string pluginsPath = stdRoot + PLUGINS_DIR;
 #endif
+
+    rMessage() << "ModuleLoader: loading modules from " << root << std::endl;
 
     // Load modules first, then plugins
 	loadModulesFromPath(modulesPath);
