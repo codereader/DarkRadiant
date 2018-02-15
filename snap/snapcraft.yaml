@@ -18,5 +18,8 @@ apps:
 parts:
   darkradiant:
     plugin: autotools
+    configflags:
+      - --enable-darkmod-plugins
+      - --enable-relocation
     install-via: prefix
     source: .
