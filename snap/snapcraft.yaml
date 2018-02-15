@@ -20,6 +20,7 @@ parts:
     after: [desktop-gtk2]
     plugin: autotools
     configflags:
+      - --enable-debug
       - --enable-darkmod-plugins
       - --enable-relocation
     install-via: prefix
