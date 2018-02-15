@@ -13,7 +13,7 @@ confinement: devmode # use 'strict' once you have the right plugs and slots
 apps:
   darkradiant:
     command: darkradiant
-    plugs: [desktop]
+    plugs: [desktop, gsettings, home, opengl, pulseaudio, x11]
 
 parts:
   darkradiant:
