@@ -35,7 +35,7 @@ std::string ApplicationContextImpl::getLibraryPath() const
 #if defined(PKGLIBDIR) && !defined(ENABLE_RELOCATION)
     return PKGLIBDIR;
 #else
-    return _appPath + "../lib/darkradiant";
+    return _appPath + "../lib/darkradiant/";
 #endif
 #else // !defined(POSIX)
     return _appPath;
@@ -44,20 +44,24 @@ std::string ApplicationContextImpl::getLibraryPath() const
 
 std::string ApplicationContextImpl::getRuntimeDataPath() const
 {
-#if defined(POSIX) && defined (PKGDATADIR)
+#if defined(POSIX)
+#if defined(PKGDATADIR) && !defined(ENABLE_RELOCATION)
     return std::string(PKGDATADIR) + "/";
+#else
+    return _appPath + "../share/darkradiant/";
+#endif
 #elif defined(__APPLE__)
     // The Resources are in the Bundle folder Contents/Resources/, whereas the
     // application binary is located in Contents/MacOS/
     std::string path = getApplicationPath() + "../Resources/";
-    
+
     // When launching the app from Xcode, the Resources/ folder
     // is next to the binary
     if (!fs::exists(path))
     {
         path = getApplicationPath() + "Resources/";
     }
-    
+
     return path;
 #else
     return getApplicationPath();
@@ -81,17 +85,17 @@ ApplicationContextImpl::getCmdLineArgs() const
 	return _cmdLineArgs;
 }
 
-std::ostream& ApplicationContextImpl::getOutputStream() const 
+std::ostream& ApplicationContextImpl::getOutputStream() const
 {
     return GlobalOutputStream().getStream();
 }
 
-std::ostream& ApplicationContextImpl::getWarningStream() const 
+std::ostream& ApplicationContextImpl::getWarningStream() const
 {
     return GlobalWarningStream().getStream();
 }
 
-std::ostream& ApplicationContextImpl::getErrorStream() const 
+std::ostream& ApplicationContextImpl::getErrorStream() const
 {
     return GlobalErrorStream().getStream();
 }
@@ -112,7 +116,7 @@ std::mutex& ApplicationContextImpl::getStreamLock() const
 #ifdef __APPLE__
 #include <libproc.h>
 #endif
-    
+
 namespace
 {
 
@@ -123,10 +127,10 @@ namespace
 std::string getExecutablePath(char* argv[])
 {
     pid_t pid = getpid();
-    
+
     char pathBuf[PROC_PIDPATHINFO_MAXSIZE];
     int ret = proc_pidpath(pid, pathBuf, sizeof(pathBuf));
-    
+
     if (ret > 0)
     {
         // Success
@@ -134,19 +138,19 @@ std::string getExecutablePath(char* argv[])
         fs::path appPath = execPath.remove_leaf();
 
         rConsole() << "Application path: " << appPath << std::endl;
-        
+
         return appPath.string();
     }
-    
+
     // Error, terminate the app
     rConsoleError() << "ApplicationContextImpl: could not get app path: "
         << strerror(errno) << std::endl;
-    
+
     throw std::runtime_error("ApplicationContextImpl: could not get app path");
 }
-    
+
 #else // generic POSIX
-    
+
 const char* LINK_NAME =
 #if defined (__linux__)
   "/proc/self/exe"
@@ -159,16 +163,16 @@ const char* LINK_NAME =
 std::string getExecutablePath(char* argv[])
 {
     char buf[PATH_MAX];
-    
+
 	// Now read the symbolic link
 	int ret = readlink(LINK_NAME, buf, PATH_MAX);
 
 	if (ret == -1)
     {
 		rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'\n";
-        
+
 		const char* path = realpath(argv[0], buf);
-        
+
 		if (path == nullptr)
         {
 			// In case of an error, leave the handling up to the caller
@@ -191,7 +195,7 @@ std::string getExecutablePath(char* argv[])
 
 	return std::string(buf);
 }
-    
+
 #endif
 
 }
@@ -221,7 +225,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 
 	_appPath = getExecutablePath(argv);
     ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
-	
+
 	// Initialise the relative paths
 	initPaths();
 }
@@ -232,7 +236,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 void ApplicationContextImpl::initialise(int argc, char* argv[])
 {
 	initArgs(argc, argv);
-    
+
     // Get application data directory from environment
 	std::string appData = getenv("APPDATA");
 	if (appData.empty())
@@ -263,7 +267,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 		}
 
 		// convert to std::string
-		std::wstring wide(filename); 
+		std::wstring wide(filename);
 		std::string appPathNarrow(wide.begin(), wide.end());
 
 		// Make sure we have forward slashes
