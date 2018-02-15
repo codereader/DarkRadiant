@@ -12,11 +12,12 @@ confinement: devmode # use 'strict' once you have the right plugs and slots
 
 apps:
   darkradiant:
-    command: darkradiant
+    command: desktop-launch $SNAP/bin/darkradiant
     plugs: [desktop, gsettings, home, opengl, pulseaudio, x11]
 
 parts:
   darkradiant:
+    after: [desktop-gtk2]
     plugin: autotools
     configflags:
       - --enable-darkmod-plugins
