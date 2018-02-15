@@ -39,7 +39,7 @@ void ModuleLoader::processModuleFile(const fs::path& file)
 	if (string::to_lower_copy(file.extension().string()) != MODULE_FILE_EXTENSION) return;
 
 	std::string fullName = file.string();
-	rMessage() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
+	rConsole() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
 
 	// Create the encapsulator class
 	DynamicLibraryPtr library = std::make_shared<DynamicLibrary>(fullName);
@@ -104,7 +104,7 @@ void ModuleLoader::loadModules(const std::string& root)
     std::string pluginsPath = stdRoot + PLUGINS_DIR;
 #endif
 
-    rMessage() << "ModuleLoader: loading modules from " << root << std::endl;
+    rConsole() << "ModuleLoader: loading modules from " << root << std::endl;
 
     // Load modules first, then plugins
 	loadModulesFromPath(modulesPath);
