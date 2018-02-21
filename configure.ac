@@ -377,7 +377,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/sound/Makefile
                  plugins/uimanager/Makefile
                  plugins/vfspk3/Makefile
-                 plugins/xmlregistry/Makefile
                  plugins/dm.stimresponse/Makefile
                  plugins/dm.objectives/Makefile
                  plugins/dm.difficulty/Makefile

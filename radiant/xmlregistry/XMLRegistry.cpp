@@ -10,6 +10,7 @@
 #include "version.h"
 #include "string/string.h"
 #include "wxutil/IConv.h"
+#include "modulesystem/StaticModule.h"
 
 namespace registry
 {
@@ -322,5 +323,8 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 		return _changesSinceLastSave > 0;
 	}));
 }
+
+// Static module instance
+module::StaticModule<XMLRegistry> xmlRegistryModule;
 
 }

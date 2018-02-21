@@ -157,6 +157,8 @@ darkradiant_SOURCES = main.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
+                      xmlregistry/RegistryTree.cpp \
+                      xmlregistry/XMLRegistry.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
                       xyview/tools/ClipperTool.cpp \
 					  xyview/tools/MeasurementTool.cpp \

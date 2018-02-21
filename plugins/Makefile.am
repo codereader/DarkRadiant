@@ -15,8 +15,7 @@ SUBDIRS = eventmanager \
           shaders \
           skins \
           uimanager \
-          vfspk3 \
-          xmlregistry
+          vfspk3
 
 # Conditional modules
 SUBDIRS += @sound_module@ @script_module@
