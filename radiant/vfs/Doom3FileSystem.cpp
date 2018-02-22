@@ -37,6 +37,7 @@
 #include "DirectoryArchiveTextFile.h"
 #include "SortedFilenames.h"
 #include "ArchiveVisitor.h"
+#include "modulesystem/StaticModule.h"
 
 namespace vfs
 {
@@ -372,5 +373,8 @@ void Doom3FileSystem::shutdownModule()
 {
 	shutdown();
 }
+
+// Static module instance
+module::StaticModule<Doom3FileSystem> doom3FileSystemModule;
 
 }

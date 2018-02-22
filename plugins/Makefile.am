@@ -14,8 +14,7 @@ SUBDIRS = eventmanager \
           scenegraph \
           shaders \
           skins \
-          uimanager \
-          vfspk3
+          uimanager
 
 # Conditional modules
 SUBDIRS += @sound_module@ @script_module@

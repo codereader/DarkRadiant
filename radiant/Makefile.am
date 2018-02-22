@@ -157,6 +157,9 @@ darkradiant_SOURCES = main.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
+                      vfs/DirectoryArchive.cpp \
+                      vfs/Doom3FileSystem.cpp \
+                      vfs/vfspk3.cpp \
                       xmlregistry/RegistryTree.cpp \
                       xmlregistry/XMLRegistry.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
