@@ -157,6 +157,26 @@ darkradiant_SOURCES = main.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
+                      uimanager/SoundChooser.cpp \
+                      uimanager/StatusBarManager.cpp \
+                      uimanager/animationpreview/MD5AnimationChooser.cpp \
+                      uimanager/animationpreview/AnimationPreview.cpp \
+                      uimanager/animationpreview/MD5AnimationViewer.cpp \
+                      uimanager/colourscheme/ColourSchemeEditor.cpp \
+                      uimanager/colourscheme/ColourSchemeManager.cpp \
+                      uimanager/colourscheme/ColourScheme.cpp \
+                      uimanager/ToolbarManager.cpp \
+                      uimanager/DialogManager.cpp \
+                      uimanager/FilterMenu.cpp \
+                      uimanager/GroupDialog.cpp \
+                      uimanager/menu/MenuManager.cpp \
+                      uimanager/menu/MenuFolder.cpp \
+                      uimanager/menu/MenuSeparator.cpp \
+                      uimanager/menu/MenuItem.cpp \
+                      uimanager/menu/MenuBar.cpp \
+                      uimanager/menu/MenuElement.cpp \
+                      uimanager/UIManager.cpp \
+                      uimanager/SoundShaderPreview.cpp \
                       vfs/DirectoryArchive.cpp \
                       vfs/Doom3FileSystem.cpp \
                       vfs/vfspk3.cpp \

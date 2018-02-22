@@ -1,4 +1,5 @@
 #include "UIManager.h"
+#include "modulesystem/StaticModule.h"
 
 #include "i18n.h"
 #include "itextstream.h"
@@ -18,6 +19,7 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
+#include <boost/make_shared.hpp>
 
 namespace ui
 {
@@ -28,11 +30,11 @@ IDialogManager& UIManager::getDialogManager()
 }
 
 IMenuManager& UIManager::getMenuManager() {
-	return _menuManager;
+	return *_menuManager;
 }
 
 IToolbarManager& UIManager::getToolbarManager() {
-	return _toolbarManager;
+	return *_toolbarManager;
 }
 
 IColourSchemeManager& UIManager::getColourSchemeManager() {
@@ -44,7 +46,7 @@ IGroupDialog& UIManager::getGroupDialog() {
 }
 
 IStatusBarManager& UIManager::getStatusBarManager() {
-	return _statusBarManager;
+	return *_statusBarManager;
 }
 
 IFilterMenuPtr UIManager::createFilterMenu()
@@ -54,9 +56,9 @@ IFilterMenuPtr UIManager::createFilterMenu()
 
 void UIManager::clear()
 {
-	_statusBarManager.onRadiantShutdown();
+	_statusBarManager->onRadiantShutdown();
 
-	_menuManager.clear();
+	_menuManager->clear();
 	_dialogManager = DialogManagerPtr();
 
 	wxFileSystem::CleanUpHandlers();
@@ -97,8 +99,10 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 	_dialogManager = DialogManagerPtr(new DialogManager);
 
-	_menuManager.loadFromRegistry();
-	_toolbarManager.initialise();
+    _menuManager = boost::make_shared<MenuManager>();
+	_menuManager->loadFromRegistry();
+    _toolbarManager = boost::make_shared<ToolbarManager>();
+	_toolbarManager->initialise();
 	ColourSchemeManager::Instance().loadColourSchemes();
 
 	GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
@@ -112,7 +116,8 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
     );
 
 	// Add the statusbar command text item
-	_statusBarManager.addTextElement(
+    _statusBarManager = boost::make_shared<StatusBarManager>();
+	_statusBarManager->addTextElement(
 		STATUSBAR_COMMAND,
 		"",  // no icon
 		IStatusBarManager::POS_COMMAND,
@@ -128,14 +133,9 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 void UIManager::shutdownModule()
 {
-	_menuManager.clear();
+	_menuManager->clear();
 }
+
+module::StaticModule<UIManager> uiManagerModule;
 
 } // namespace ui
-
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
-{
-	module::performDefaultInitialisation(registry);
-
-	registry.registerModule(ui::UIManagerPtr(new ui::UIManager));
-}

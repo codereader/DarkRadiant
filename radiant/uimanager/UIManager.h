@@ -11,6 +11,8 @@
 #include "DialogManager.h"
 #include "colourscheme/ColourSchemeManager.h"
 
+#include <boost/shared_ptr.hpp>
+
 namespace ui
 {
 
@@ -20,14 +22,11 @@ class UIManager :
 	public IUIManager,
 	public std::enable_shared_from_this<UIManager>
 {
-private:
-	// Local helper class taking care of the menu
-	MenuManager _menuManager;
-
-	ToolbarManager _toolbarManager;
-
-	StatusBarManager _statusBarManager;
-
+    // Sub-manager classes, constructed in initialiseModule to avoid being
+    // called before the main window is ready.
+    boost::shared_ptr<MenuManager> _menuManager;
+    boost::shared_ptr<ToolbarManager> _toolbarManager;
+    boost::shared_ptr<StatusBarManager> _statusBarManager;
 	DialogManagerPtr _dialogManager;
 
 	LocalBitmapArtProvider* _bitmapArtProvider;
