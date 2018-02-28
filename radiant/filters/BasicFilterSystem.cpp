@@ -9,6 +9,7 @@
 #include "ieventmanager.h"
 #include "igame.h"
 #include "ishaders.h"
+#include "modulesystem/StaticModule.h"
 
 #include <functional>
 
@@ -601,5 +602,8 @@ const StringSet& BasicFilterSystem::getDependencies() const {
 
 	return _dependencies;
 }
+
+// Module instance
+module::StaticModule<BasicFilterSystem> filterSystemModule;
 
 }

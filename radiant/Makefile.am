@@ -48,6 +48,8 @@ darkradiant_SOURCES = main.cpp \
                       camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
+                      filters/BasicFilterSystem.cpp \
+                      filters/XMLFilter.cpp \
                       namespace/ComplexName.cpp \
                       namespace/Namespace.cpp \
                       namespace/NamespaceFactory.cpp \

@@ -4,7 +4,6 @@ SUBDIRS = eventmanager \
           eclassmgr \
           entity \
           filetypes \
-          filters \
           fonts \
           image \
           mapdoom3 \

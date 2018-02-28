@@ -363,7 +363,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/entity/Makefile
                  plugins/eventmanager/Makefile
                  plugins/filetypes/Makefile
-                 plugins/filters/Makefile
                  plugins/fonts/Makefile
                  plugins/image/Makefile
                  plugins/mapdoom3/Makefile
