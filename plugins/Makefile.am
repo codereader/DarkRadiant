@@ -1,5 +1,4 @@
 SUBDIRS = eventmanager \
-          archivezip \
 		  commandsystem \
           eclassmgr \
           entity \

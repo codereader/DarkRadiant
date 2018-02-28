@@ -19,7 +19,8 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
                       $(FILESYSTEM_LIBS) \
                       $(DL_LIBS) \
                       $(INTL_LIBS) \
-                      $(WX_LIBS)
+                      $(WX_LIBS) \
+                      $(Z_LIBS)
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
@@ -28,6 +29,9 @@ darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       RadiantModule.cpp \
                       RadiantThreadManager.cpp \
+                      archivezip/DeflatedInputStream.cpp \
+                      archivezip/Pk4ArchiveLoader.cpp \
+                      archivezip/ZipArchive.cpp \
                       brush/Winding.cpp \
                       brush/export/CollisionModel.cpp \
                       brush/BrushModule.cpp \

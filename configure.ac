@@ -357,7 +357,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  libs/scene/Makefile
                  libs/xmlutil/Makefile
                  plugins/Makefile
-                 plugins/archivezip/Makefile
                  plugins/commandsystem/Makefile
                  plugins/eclassmgr/Makefile
                  plugins/entity/Makefile

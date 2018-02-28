@@ -3,6 +3,8 @@
 #include "itextstream.h"
 #include "ZipArchive.h"
 
+#include "modulesystem/StaticModule.h"
+
 namespace archive
 {
 
@@ -41,11 +43,7 @@ public:
 	}
 };
 
-}
+// Module instance
+module::StaticModule<Pk4ArchiveLoader> pk4Module;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
-{
-	module::performDefaultInitialisation(registry);
-
-	registry.registerModule(std::make_shared<archive::Pk4ArchiveLoader>());
 }
