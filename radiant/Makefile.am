@@ -185,7 +185,6 @@ darkradiant_SOURCES = main.cpp \
                       uimanager/SoundShaderPreview.cpp \
                       vfs/DirectoryArchive.cpp \
                       vfs/Doom3FileSystem.cpp \
-                      vfs/vfspk3.cpp \
                       xmlregistry/RegistryTree.cpp \
                       xmlregistry/XMLRegistry.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
