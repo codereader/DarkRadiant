@@ -185,7 +185,6 @@ darkradiant_SOURCES = main.cpp \
                       vfs/DeflatedInputStream.cpp \
                       vfs/DirectoryArchive.cpp \
                       vfs/Doom3FileSystem.cpp \
-                      vfs/Pk4ArchiveLoader.cpp \
                       vfs/ZipArchive.cpp \
                       xmlregistry/RegistryTree.cpp \
                       xmlregistry/XMLRegistry.cpp \

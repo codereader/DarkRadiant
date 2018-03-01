@@ -67,7 +67,7 @@ public:
 	void shutdownModule() override;
 
 private:
-	void initPakFile(ArchiveLoader& archiveModule, const std::string& filename);
+	void initPakFile(const std::string& filename);
 };
 
 }

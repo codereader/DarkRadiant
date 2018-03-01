@@ -110,37 +110,3 @@ public:
 	virtual void traverse(Visitor& visitor, const std::string& root) = 0;
 };
 typedef std::shared_ptr<Archive> ArchivePtr;
-
-const std::string MODULE_ARCHIVE("Archive");
-
-/**
- * Loader module for ZIP archives.
- *
- * \ingroup vfs
- */
-class ArchiveLoader :
-	public RegisterableModule
-{
-public:
-	// greebo: Returns the opened file or NULL if failed.
-	virtual ArchivePtr openArchive(const std::string& name) = 0;
-
-    // get the supported file extension
-    virtual const std::string& getExtension() = 0;
-};
-
-/**
- * Return an ArchiveLoader module for the specified filetype.
- *
- * \ingroup vfs
- */
-inline ArchiveLoader& GlobalArchive(const std::string& fileType) 
-{
-	// Cache the reference locally
-	static ArchiveLoader& _archive(
-		*std::static_pointer_cast<ArchiveLoader>(
-			module::GlobalModuleRegistry().getModule(MODULE_ARCHIVE + fileType) // e.g. ArchivePK4
-		)
-	);
-	return _archive;
-}

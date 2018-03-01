@@ -37,6 +37,7 @@
 #include "DirectoryArchiveTextFile.h"
 #include "SortedFilenames.h"
 #include "ArchiveVisitor.h"
+#include "ZipArchive.h"
 #include "modulesystem/StaticModule.h"
 
 namespace vfs
@@ -83,14 +84,11 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
 
 	rMessage() << "[vfs] Searched directory: " << path << std::endl;
 
-	// Get the ArchiveLoader and try to load each file
-	ArchiveLoader& archiveModule = GlobalArchive("PK4");
-
 	// add the entries to the vfs
 	for (const std::string& filename : filenameList)
 	{
 		// Assemble the filename and try to load the archive
-		initPakFile(archiveModule, path + filename);
+		initPakFile(path + filename);
 	}
 }
 
@@ -302,7 +300,7 @@ std::string Doom3FileSystem::findRoot(const std::string& name)
 	return std::string();
 }
 
-void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename)
+void Doom3FileSystem::initPakFile(const std::string& filename)
 {
 	std::string fileExt(os::getExtension(filename));
 	string::to_lower(fileExt);
@@ -313,7 +311,7 @@ void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::strin
 		ArchiveDescriptor entry;
 
 		entry.name = filename;
-		entry.archive = archiveModule.openArchive(filename);
+		entry.archive = std::make_shared<archive::ZipArchive>(filename);
 		entry.is_pakfile = true;
 		_archives.push_back(entry);
 
@@ -355,12 +353,6 @@ const std::string& Doom3FileSystem::getName() const
 const StringSet& Doom3FileSystem::getDependencies() const
 {
 	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_ARCHIVE + "PK4");
-	}
-
 	return _dependencies;
 }
 
