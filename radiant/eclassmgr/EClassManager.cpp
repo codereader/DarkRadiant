@@ -19,6 +19,7 @@
 #include <functional>
 
 #include "debugging/ScopedDebugTimer.h"
+#include "modulesystem/StaticModule.h"
 
 namespace eclass {
 
@@ -465,5 +466,8 @@ void EClassManager::parseFile(const std::string& filename)
 				 << " (" << e.what() << ")" << std::endl;
 	}
 }
+
+// Static module instance
+module::StaticModule<EClassManager> eclassModule;
 
 } // namespace eclass

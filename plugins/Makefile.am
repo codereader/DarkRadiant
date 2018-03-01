@@ -1,6 +1,5 @@
 SUBDIRS = eventmanager \
 		  commandsystem \
-          eclassmgr \
           entity \
           filetypes \
           fonts \
