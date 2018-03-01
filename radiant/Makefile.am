@@ -29,9 +29,6 @@ darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       RadiantModule.cpp \
                       RadiantThreadManager.cpp \
-                      archivezip/DeflatedInputStream.cpp \
-                      archivezip/Pk4ArchiveLoader.cpp \
-                      archivezip/ZipArchive.cpp \
                       brush/Winding.cpp \
                       brush/export/CollisionModel.cpp \
                       brush/BrushModule.cpp \
@@ -185,8 +182,11 @@ darkradiant_SOURCES = main.cpp \
                       uimanager/menu/MenuElement.cpp \
                       uimanager/UIManager.cpp \
                       uimanager/SoundShaderPreview.cpp \
+                      vfs/DeflatedInputStream.cpp \
                       vfs/DirectoryArchive.cpp \
                       vfs/Doom3FileSystem.cpp \
+                      vfs/Pk4ArchiveLoader.cpp \
+                      vfs/ZipArchive.cpp \
                       xmlregistry/RegistryTree.cpp \
                       xmlregistry/XMLRegistry.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
