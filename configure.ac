@@ -364,7 +364,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/image/Makefile
                  plugins/mapdoom3/Makefile
                  plugins/md5model/Makefile
-                 plugins/model/Makefile
                  plugins/particles/Makefile
                  plugins/scenegraph/Makefile
                  plugins/script/Makefile

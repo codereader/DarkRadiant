@@ -24,7 +24,8 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
-                    $(top_builddir)/libs/math/libmath.la
+                    $(top_builddir)/libs/math/libmath.la \
+                    $(top_builddir)/libs/picomodel/libpicomodel.la
 darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       RadiantModule.cpp \
@@ -86,6 +87,15 @@ darkradiant_SOURCES = main.cpp \
                       entity/EntityCreator.cpp \
                       filters/BasicFilterSystem.cpp \
                       filters/XMLFilter.cpp \
+                      modelfile/AseExporter.cpp \
+                      modelfile/Lwo2Chunk.cpp \
+                      modelfile/Lwo2Exporter.cpp \
+                      modelfile/PicoModelLoader.cpp \
+                      modelfile/PicoModelModule.cpp \
+                      modelfile/PicoModelNode.cpp \
+                      modelfile/RenderablePicoModel.cpp \
+                      modelfile/RenderablePicoSurface.cpp \
+                      modelfile/WavefrontExporter.cpp \
                       namespace/ComplexName.cpp \
                       namespace/Namespace.cpp \
                       namespace/NamespaceFactory.cpp \

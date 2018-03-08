@@ -5,7 +5,6 @@ SUBDIRS = eventmanager \
           image \
           mapdoom3 \
           md5model \
-          model \
           particles \
           scenegraph \
           shaders
