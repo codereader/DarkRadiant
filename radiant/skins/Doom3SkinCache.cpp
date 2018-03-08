@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "ifilesystem.h"
 #include "iarchive.h"
+#include "modulesystem/StaticModule.h"
 
 #include <iostream>
 
@@ -226,5 +227,8 @@ void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx)
     // Load the skins in a new thread
     refresh();
 }
+
+// Module instance
+module::StaticModule<Doom3SkinCache> skinCacheModule;
 
 } // namespace skins

@@ -369,7 +369,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/scenegraph/Makefile
                  plugins/script/Makefile
                  plugins/shaders/Makefile
-                 plugins/skins/Makefile
                  plugins/sound/Makefile
                  plugins/dm.stimresponse/Makefile
                  plugins/dm.objectives/Makefile

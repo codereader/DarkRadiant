@@ -8,8 +8,7 @@ SUBDIRS = eventmanager \
           model \
           particles \
           scenegraph \
-          shaders \
-          skins
+          shaders
 
 # Conditional modules
 SUBDIRS += @sound_module@ @script_module@
