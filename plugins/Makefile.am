@@ -1,6 +1,5 @@
 SUBDIRS = eventmanager \
 		  commandsystem \
-          entity \
           filetypes \
           fonts \
           image \

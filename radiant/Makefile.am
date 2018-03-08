@@ -51,6 +51,39 @@ darkradiant_SOURCES = main.cpp \
                       camera/FloatingCamWnd.cpp \
                       eclassmgr/Doom3EntityClass.cpp \
                       eclassmgr/EClassManager.cpp \
+                      entity/ShaderParms.cpp \
+                      entity/EntitySettings.cpp \
+                      entity/KeyValueObserver.cpp \
+                      entity/EntityNode.cpp \
+                      entity/RotationMatrix.cpp \
+                      entity/target/TargetManager.cpp \
+                      entity/target/TargetLineNode.cpp \
+                      entity/target/TargetKeyCollection.cpp \
+                      entity/target/TargetKey.cpp \
+                      entity/target/TargetableNode.cpp \
+                      entity/light/Renderables.cpp \
+                      entity/light/Light.cpp \
+                      entity/light/LightNode.cpp \
+                      entity/eclassmodel/EclassModelNode.cpp \
+                      entity/RotationKey.cpp \
+                      entity/NameKeyObserver.cpp \
+                      entity/doom3group/Doom3GroupNode.cpp \
+                      entity/doom3group/Doom3Group.cpp \
+                      entity/NamespaceManager.cpp \
+                      entity/precompiled.cpp \
+                      entity/generic/GenericEntity.cpp \
+                      entity/generic/GenericEntityNode.cpp \
+                      entity/speaker/SpeakerNode.cpp \
+                      entity/speaker/SpeakerRenderables.cpp \
+                      entity/Doom3Entity.cpp \
+                      entity/ModelKey.cpp \
+                      entity/KeyValue.cpp \
+                      entity/curve/CurveCatmullRom.cpp \
+                      entity/curve/Curve.cpp \
+                      entity/curve/CurveEditInstance.cpp \
+                      entity/curve/CurveNURBS.cpp \
+                      entity/AngleKey.cpp \
+                      entity/EntityCreator.cpp \
                       filters/BasicFilterSystem.cpp \
                       filters/XMLFilter.cpp \
                       namespace/ComplexName.cpp \

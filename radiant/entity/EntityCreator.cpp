@@ -25,6 +25,7 @@
 #include "generic/GenericEntityNode.h"
 #include "eclassmodel/EclassModelNode.h"
 #include "target/TargetManager.h"
+#include "modulesystem/StaticModule.h"
 
 namespace entity
 {
@@ -186,5 +187,8 @@ void Doom3EntityCreator::shutdownModule()
 	// Destroy the settings instance
 	EntitySettings::destroy();
 }
+
+// Static module instance
+module::StaticModule<Doom3EntityCreator> entityCreatorModule;
 
 } // namespace entity
