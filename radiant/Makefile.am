@@ -89,6 +89,14 @@ darkradiant_SOURCES = main.cpp \
                       entity/curve/CurveNURBS.cpp \
                       entity/AngleKey.cpp \
                       entity/EntityCreator.cpp \
+                      eventmanager/Accelerator.cpp \
+                      eventmanager/EventManager.cpp \
+                      eventmanager/GlobalKeyEventFilter.cpp \
+                      eventmanager/MouseToolGroup.cpp \
+                      eventmanager/MouseToolManager.cpp \
+                      eventmanager/Statement.cpp \
+                      eventmanager/Toggle.cpp \
+                      eventmanager/WidgetToggle.cpp \
                       filters/BasicFilterSystem.cpp \
                       filters/XMLFilter.cpp \
                       image/dds.cpp \

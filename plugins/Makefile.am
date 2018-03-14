@@ -1,5 +1,4 @@
-SUBDIRS = eventmanager \
-          filetypes \
+SUBDIRS = filetypes \
           fonts \
           mapdoom3 \
           md5model \

@@ -24,6 +24,7 @@
 #include "MouseToolManager.h"
 
 #include "debugging/debugging.h"
+#include "modulesystem/StaticModule.h"
 #include <iostream>
 
 namespace ui
@@ -569,12 +570,8 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 	return returnValue;
 }
 
-}
+// Static module instances
+module::StaticModule<EventManager> eventManagerModule;
+module::StaticModule<MouseToolManager> mouseToolManagerModule;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
-{
-	module::performDefaultInitialisation(registry);
-
-    registry.registerModule(std::make_shared<ui::EventManager>());
-    registry.registerModule(std::make_shared<ui::MouseToolManager>());
 }
