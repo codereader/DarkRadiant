@@ -12,6 +12,7 @@
 #include <functional>
 #include "string/trim.h"
 #include "string/predicate.h"
+#include "modulesystem/StaticModule.h"
 
 namespace cmd
 {
@@ -391,11 +392,7 @@ AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefi
 	return returnValue;
 }
 
+// Static module instance
+module::StaticModule<CommandSystem> commandSystemModule;
+
 } // namespace cmd
-
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
-{
-	module::performDefaultInitialisation(registry);
-
-	registry.registerModule(cmd::CommandSystemPtr(new cmd::CommandSystem));
-}
