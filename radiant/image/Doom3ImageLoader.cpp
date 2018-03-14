@@ -12,6 +12,7 @@
 
 #include "os/path.h"
 #include "DirectoryArchiveFile.h"
+#include "modulesystem/StaticModule.h"
 
 namespace image
 {
@@ -145,5 +146,8 @@ const StringSet& Doom3ImageLoader::getDependencies() const
     static StringSet _dependencies; // no dependencies
     return _dependencies;
 }
+
+// Static module instance
+module::StaticModule<Doom3ImageLoader> doom3ImageLoaderModule;
 
 } // namespace shaders

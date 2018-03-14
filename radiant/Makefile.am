@@ -14,6 +14,8 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
                       $(GLU_LIBS) \
+                      $(JPEG_LIBS) \
+                      $(PNG_LIBS) \
                       $(FTGL_LIBS) \
                       $(LIBSIGC_LIBS) \
                       $(FILESYSTEM_LIBS) \
@@ -24,6 +26,7 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
+                    $(top_builddir)/libs/ddslib/libdds.la \
                     $(top_builddir)/libs/math/libmath.la \
                     $(top_builddir)/libs/picomodel/libpicomodel.la
 darkradiant_SOURCES = main.cpp \
@@ -88,6 +91,11 @@ darkradiant_SOURCES = main.cpp \
                       entity/EntityCreator.cpp \
                       filters/BasicFilterSystem.cpp \
                       filters/XMLFilter.cpp \
+                      image/dds.cpp \
+                      image/DDSImage.cpp \
+                      image/Doom3ImageLoader.cpp \
+                      image/ImageLoaderWx.cpp \
+                      image/TGALoader.cpp \
                       modelfile/AseExporter.cpp \
                       modelfile/Lwo2Chunk.cpp \
                       modelfile/Lwo2Exporter.cpp \

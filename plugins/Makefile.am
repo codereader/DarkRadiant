@@ -1,7 +1,6 @@
 SUBDIRS = eventmanager \
           filetypes \
           fonts \
-          image \
           mapdoom3 \
           md5model \
           particles \
