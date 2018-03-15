@@ -26,8 +26,7 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
-                    $(top_builddir)/libs/math/libmath.la \
-                    $(top_builddir)/libs/picomodel/libpicomodel.la
+                    $(top_builddir)/libs/math/libmath.la
 darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       RadiantModule.cpp \
@@ -130,6 +129,29 @@ darkradiant_SOURCES = main.cpp \
                       modelfile/RenderablePicoModel.cpp \
                       modelfile/RenderablePicoSurface.cpp \
                       modelfile/WavefrontExporter.cpp \
+                      modelfile/picomodel/pm_md3.c \
+                      modelfile/picomodel/pm_md2.c \
+                      modelfile/picomodel/pm_obj.c \
+                      modelfile/picomodel/picointernal.c \
+                      modelfile/picomodel/picomodules.c \
+                      modelfile/picomodel/pm_lwo.c \
+                      modelfile/picomodel/pm_mdc.c \
+                      modelfile/picomodel/pm_fm.c \
+                      modelfile/picomodel/pm_ase.c \
+                      modelfile/picomodel/picomodel.c \
+                      modelfile/picomodel/lwo/envelope.c \
+                      modelfile/picomodel/lwo/surface.c \
+                      modelfile/picomodel/lwo/clip.c \
+                      modelfile/picomodel/lwo/lwob.c \
+                      modelfile/picomodel/lwo/lwio.c \
+                      modelfile/picomodel/lwo/lwo2.c \
+                      modelfile/picomodel/lwo/list.c \
+                      modelfile/picomodel/lwo/pntspols.c \
+                      modelfile/picomodel/lwo/vmap.c \
+                      modelfile/picomodel/lwo/vecmath.c \
+                      modelfile/picomodel/pm_terrain.c \
+                      modelfile/picomodel/pm_ms3d.c \
+                      modelfile/picomodel/pm_3ds.c \
                       namespace/ComplexName.cpp \
                       namespace/Namespace.cpp \
                       namespace/NamespaceFactory.cpp \

@@ -9,7 +9,7 @@
 
 #include "os/path.h"
 #include <stdio.h>
-#include "picomodel.h"
+#include "picomodel/picomodel.h"
 
 #include "string/case_conv.h"
 #include "PicoModelLoader.h"

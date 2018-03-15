@@ -4,7 +4,7 @@
 #include "iarchive.h"
 #include "imodelcache.h"
 
-#include "picomodel.h"
+#include "picomodel/picomodel.h"
 
 #include "os/path.h"
 

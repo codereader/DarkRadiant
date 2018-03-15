@@ -1,1 +1,1 @@
-SUBDIRS = math xmlutil scene wxutil picomodel
+SUBDIRS = math xmlutil scene wxutil

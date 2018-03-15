@@ -352,7 +352,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  libs/Makefile
                  libs/wxutil/Makefile
                  libs/math/Makefile
-                 libs/picomodel/Makefile
                  libs/scene/Makefile
                  libs/xmlutil/Makefile
                  plugins/Makefile
