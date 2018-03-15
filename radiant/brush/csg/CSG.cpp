@@ -47,6 +47,13 @@ void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom)
         BrushNodePtr brushNode = std::dynamic_pointer_cast<BrushNode>(newNode);
         assert(brushNode);
 
+        float offset = GlobalGrid().getGridSize();
+
+		if (makeRoom)
+		{
+			face.getPlane().offset(offset);
+		}
+
         // Add the child to the same parent as the source brush
         parent->addChildNode(brushNode);
 
@@ -56,24 +63,25 @@ void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom)
         // Copy all faces from the source brush
         brushNode->getBrush().copy(sourceBrush->getBrush());
 
+		if (makeRoom)
+		{
+			face.getPlane().offset(-offset);
+		}
+
         Node_setSelected(brushNode, true);
 
         FacePtr newFace = brushNode->getBrush().addFace(face);
 
         if (newFace != 0)
         {
-            float offset = GlobalGrid().getGridSize();
-
             newFace->flipWinding();
-            newFace->getPlane().offset(offset);
-            newFace->planeChanged();
 
-            if (makeRoom)
-            {
-                // Retrieve the normal vector of the "source" face
-                brushNode->getBrush().transform(Matrix4::getTranslation(face.getPlane().getPlane().normal() * offset));
-                brushNode->getBrush().freezeTransform();
-            }
+			if (!makeRoom)
+			{
+	            newFace->getPlane().offset(offset);
+			}
+
+            newFace->planeChanged();
         }
 
         brushNode->getBrush().removeEmptyFaces();
