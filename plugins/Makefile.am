@@ -1,6 +1,5 @@
 SUBDIRS = filetypes \
           fonts \
-          mapdoom3 \
           md5model \
           particles \
           scenegraph \

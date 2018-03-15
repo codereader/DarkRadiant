@@ -104,6 +104,23 @@ darkradiant_SOURCES = main.cpp \
                       image/Doom3ImageLoader.cpp \
                       image/ImageLoaderWx.cpp \
                       image/TGALoader.cpp \
+                      mapdoom3/mapdoom3.cpp \
+                      mapdoom3/Quake3MapFormat.cpp \
+                      mapdoom3/Doom3MapFormat.cpp \
+                      mapdoom3/Doom3MapReader.cpp \
+                      mapdoom3/Doom3PrefabFormat.cpp \
+                      mapdoom3/Quake3MapReader.cpp \
+                      mapdoom3/Doom3MapWriter.cpp \
+                      mapdoom3/primitiveparsers/PatchDef2.cpp \
+                      mapdoom3/primitiveparsers/Patch.cpp \
+                      mapdoom3/primitiveparsers/PatchDef3.cpp \
+                      mapdoom3/primitiveparsers/BrushDef3.cpp \
+                      mapdoom3/primitiveparsers/BrushDef.cpp \
+                      mapdoom3/Quake4MapReader.cpp \
+                      mapdoom3/aas/Doom3AasFileLoader.cpp \
+                      mapdoom3/aas/Doom3AasFileSettings.cpp \
+                      mapdoom3/aas/Doom3AasFile.cpp \
+                      mapdoom3/Quake4MapFormat.cpp \
                       modelfile/AseExporter.cpp \
                       modelfile/Lwo2Chunk.cpp \
                       modelfile/Lwo2Exporter.cpp \
