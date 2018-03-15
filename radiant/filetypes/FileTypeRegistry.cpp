@@ -6,6 +6,7 @@
 #include "debugging/debugging.h"
 
 #include "string/case_conv.h"
+#include "modulesystem/StaticModule.h"
 
 FileTypeRegistry::FileTypeRegistry()
 {
@@ -73,10 +74,5 @@ void FileTypeRegistry::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
-// This will be called by the DarkRadiant main binary's ModuleRegistry
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
-{
-	module::performDefaultInitialisation(registry);
-
-	registry.registerModule(std::make_shared<FileTypeRegistry>());
-}
+// Static module instance
+module::StaticModule<FileTypeRegistry> fileTypesModule;

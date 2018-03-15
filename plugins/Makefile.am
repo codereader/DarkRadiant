@@ -1,5 +1,4 @@
-SUBDIRS = filetypes \
-          fonts \
+SUBDIRS = fonts \
           md5model \
           particles \
           scenegraph \

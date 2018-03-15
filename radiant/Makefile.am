@@ -95,6 +95,7 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Statement.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
+                      filetypes/FileTypeRegistry.cpp \
                       filters/BasicFilterSystem.cpp \
                       filters/XMLFilter.cpp \
                       image/dds.cpp \
