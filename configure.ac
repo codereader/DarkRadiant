@@ -350,7 +350,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  radiant/Makefile
                  install/i18n/Makefile.in
                  libs/Makefile
-                 libs/ddslib/Makefile
                  libs/wxutil/Makefile
                  libs/math/Makefile
                  libs/picomodel/Makefile
