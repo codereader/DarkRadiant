@@ -348,9 +348,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/archivezip/Makefile
                  plugins/commandsystem/Makefile
                  plugins/eclassmgr/Makefile
-                 plugins/eclasstree/Makefile
                  plugins/entity/Makefile
-                 plugins/entitylist/Makefile
                  plugins/eventmanager/Makefile
                  plugins/filetypes/Makefile
                  plugins/filters/Makefile
@@ -366,7 +364,6 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/skins/Makefile
                  plugins/sound/Makefile
                  plugins/uimanager/Makefile
-                 plugins/undo/Makefile
                  plugins/vfspk3/Makefile
                  plugins/xmlregistry/Makefile
                  plugins/dm.stimresponse/Makefile
