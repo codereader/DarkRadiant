@@ -170,6 +170,18 @@ darkradiant_SOURCES = main.cpp \
 					  render/RenderSystemFactory.cpp \
 					  render/View.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
+                      shaders/CameraCubeMapDecl.cpp \
+                      shaders/textures/TextureManipulator.cpp \
+                      shaders/textures/GLTextureManager.cpp \
+                      shaders/Doom3ShaderLayer.cpp \
+                      shaders/TableDefinition.cpp \
+                      shaders/ShaderFileLoader.cpp \
+                      shaders/ShaderTemplate.cpp \
+                      shaders/MapExpression.cpp \
+                      shaders/CShader.cpp \
+                      shaders/Doom3ShaderSystem.cpp \
+                      shaders/ShaderLibrary.cpp \
+                      shaders/ShaderExpression.cpp \
                       skins/Doom3SkinCache.cpp \
 					  ui/UserInterfaceModule.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \

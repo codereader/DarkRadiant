@@ -1,8 +1,7 @@
 SUBDIRS = fonts \
           md5model \
           particles \
-          scenegraph \
-          shaders
+          scenegraph
 
 # Conditional modules
 SUBDIRS += @sound_module@ @script_module@

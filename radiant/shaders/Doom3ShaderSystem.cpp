@@ -18,6 +18,7 @@
 #include "ShaderExpression.h"
 
 #include "debugging/ScopedDebugTimer.h"
+#include "modulesystem/StaticModule.h"
 
 #include "string/predicate.h"
 #include <functional>
@@ -540,5 +541,8 @@ GLTextureManager& GetTextureManager()
 {
     return GetShaderSystem()->getTextureManager();
 }
+
+// Static module instance
+module::StaticModule<Doom3ShaderSystem> d3ShaderSystemModule;
 
 } // namespace shaders
