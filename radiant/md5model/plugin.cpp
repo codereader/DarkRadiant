@@ -3,6 +3,8 @@
 #include "MD5ModelLoader.h"
 #include "MD5AnimationCache.h"
 
+#include "modulesystem/StaticModule.h"
+
 namespace md5
 {
 
@@ -35,13 +37,8 @@ public:
 	}
 };
 
-}
+// Static module instances
+module::StaticModule<md5::MD5Module> md5Module;
+module::StaticModule<md5::MD5AnimationCache> md5AnimationCache;
 
-// DarkRadiant module entry point
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
-{
-	module::performDefaultInitialisation(registry);
-
-	registry.registerModule(std::make_shared<md5::MD5Module>());
-	registry.registerModule(std::make_shared<md5::MD5AnimationCache>());
 }

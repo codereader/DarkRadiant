@@ -121,6 +121,14 @@ darkradiant_SOURCES = main.cpp \
                       mapdoom3/aas/Doom3AasFileSettings.cpp \
                       mapdoom3/aas/Doom3AasFile.cpp \
                       mapdoom3/Quake4MapFormat.cpp \
+                      md5model/MD5Skeleton.cpp \
+                      md5model/plugin.cpp \
+                      md5model/MD5Model.cpp \
+                      md5model/MD5ModelLoader.cpp \
+                      md5model/MD5AnimationCache.cpp \
+                      md5model/MD5Surface.cpp \
+                      md5model/MD5Anim.cpp \
+                      md5model/MD5ModelNode.cpp \
                       modelfile/AseExporter.cpp \
                       modelfile/Lwo2Chunk.cpp \
                       modelfile/Lwo2Exporter.cpp \

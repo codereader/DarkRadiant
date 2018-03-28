@@ -1,6 +1,4 @@
-SUBDIRS = fonts \
-          md5model \
-          particles
+SUBDIRS = fonts particles
 
 # Conditional modules
 SUBDIRS += @sound_module@ @script_module@
