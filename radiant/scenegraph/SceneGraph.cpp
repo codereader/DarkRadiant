@@ -10,6 +10,7 @@
 #include "Octree.h"
 #include "SceneGraphFactory.h"
 #include "util/ScopedBoolLock.h"
+#include "modulesystem/StaticModule.h"
 
 namespace scene
 {
@@ -342,12 +343,8 @@ void SceneGraphModule::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 }
 
+// Static module instances
+module::StaticModule<SceneGraphModule> sceneGraphModule;
+module::StaticModule<SceneGraphFactory> sceneGraphFactory;
+
 } // namespace scene
-
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
-{
-	module::performDefaultInitialisation(registry);
-
-	registry.registerModule(scene::SceneGraphModulePtr(new scene::SceneGraphModule));
-	registry.registerModule(scene::SceneGraphFactoryPtr(new scene::SceneGraphFactory));
-}
