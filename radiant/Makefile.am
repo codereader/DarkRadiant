@@ -168,6 +168,16 @@ darkradiant_SOURCES = main.cpp \
                       namespace/ComplexName.cpp \
                       namespace/Namespace.cpp \
                       namespace/NamespaceFactory.cpp \
+                      particles/ParticleNode.cpp \
+                      particles/RenderableParticle.cpp \
+                      particles/RenderableParticleBunch.cpp \
+                      particles/ParticlesManager.cpp \
+                      particles/StageDef.cpp \
+                      particles/particles.cpp \
+                      particles/ParticleParameter.cpp \
+                      particles/editor/ParticleEditor.cpp \
+                      particles/RenderableParticleStage.cpp \
+                      particles/ParticleDef.cpp \
                       render/backend/glprogram/ARBBumpProgram.cpp \
                       render/backend/glprogram/ARBDepthFillProgram.cpp \
 					  render/backend/glprogram/GenericVFPProgram.cpp \
