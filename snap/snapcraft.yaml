@@ -23,5 +23,6 @@ parts:
       - --enable-debug
       - --enable-darkmod-plugins
       - --enable-relocation
+      - --disable-rpath
     install-via: prefix
     source: .
