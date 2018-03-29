@@ -6,6 +6,7 @@
 #include "iregistry.h"
 #include "igame.h"
 #include "os/path.h"
+#include "modulesystem/StaticModule.h"
 
 #include "xmlutil/MissingXMLNodeException.h"
 
@@ -140,5 +141,8 @@ FontInfoPtr FontManager::findOrCreateFontInfo(const std::string& name)
 
 	return i->second;
 }
+
+// Static module instance
+module::StaticModule<FontManager> fontManagerModule;
 
 } // namespace fonts

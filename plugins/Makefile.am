@@ -1,4 +1,4 @@
-SUBDIRS = fonts particles
+SUBDIRS = particles
 
 # Conditional modules
 SUBDIRS += @sound_module@ @script_module@

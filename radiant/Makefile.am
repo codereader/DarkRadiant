@@ -98,6 +98,10 @@ darkradiant_SOURCES = main.cpp \
                       filetypes/FileTypeRegistry.cpp \
                       filters/BasicFilterSystem.cpp \
                       filters/XMLFilter.cpp \
+                      fonts/FontLoader.cpp \
+                      fonts/GlyphInfo.cpp \
+                      fonts/GlyphSet.cpp \
+                      fonts/FontManager.cpp \
                       image/dds.cpp \
                       image/ddslib.cpp \
                       image/DDSImage.cpp \
