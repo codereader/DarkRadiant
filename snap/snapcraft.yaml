@@ -24,5 +24,6 @@ parts:
       - --enable-darkmod-plugins
       - --enable-relocation
       - --disable-rpath
+      - --disable-python
     install-via: prefix
     source: .
