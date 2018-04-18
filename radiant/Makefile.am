@@ -272,11 +272,12 @@ darkradiant_SOURCES = main.cpp \
 					  model/ScaledModelExporter.cpp \
                       model/NullModelNode.cpp 
 
-TESTS = facePlaneTest
-check_PROGRAMS = facePlaneTest
+# greebo: Disabled the tests for the moment being to not depend on boost just for this
+#TESTS = facePlaneTest
+#check_PROGRAMS = facePlaneTest
 
-facePlaneTest_SOURCES = test/facePlaneTest.cpp \
-                        brush/FacePlane.cpp
-facePlaneTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS) \
-                      $(top_builddir)/libs/math/libmath.la
+#facePlaneTest_SOURCES = test/facePlaneTest.cpp \
+#                        brush/FacePlane.cpp
+#facePlaneTest_LDADD = $(BOOST_UNIT_TEST_FRAMEWORK_LIBS) \
+#                      $(top_builddir)/libs/math/libmath.la
 
