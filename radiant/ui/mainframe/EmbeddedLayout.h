@@ -23,9 +23,6 @@ private:
 	wxSplitterWindow* _horizPane;
 	wxSplitterWindow* _groupCamPane;
 
-	wxutil::PanedPosition _posHPane;
-	wxutil::PanedPosition _posGroupCamPane;
-
 public:
 	// IMainFrameLayout implementation
 	std::string getName() override;
@@ -40,10 +37,6 @@ public:
 private:
 	void maximiseCameraSize();
 	void restorePanePositions();
-
-	// Saves the state of this window layout to the given XMLRegistry path (without trailing slash)
-	void restoreStateFromPath(const std::string& path);
-	void saveStateToPath(const std::string& path);
 };
 
 } // namespace ui
