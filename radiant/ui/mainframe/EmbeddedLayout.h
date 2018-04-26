@@ -4,6 +4,7 @@
 #include "imainframelayout.h"
 
 #include "camera/CamWnd.h"
+#include "ui/widgets/Splitter.h"
 
 namespace ui
 {
@@ -20,8 +21,8 @@ private:
 	// The camera view
 	CamWndPtr _camWnd;
 
-	wxSplitterWindow* _horizPane;
-	wxSplitterWindow* _groupCamPane;
+	Splitter* _horizPane;
+	Splitter* _groupCamPane;
 
 public:
 	// IMainFrameLayout implementation

@@ -21,6 +21,8 @@ namespace ui
     namespace
     {
         const std::string RKEY_EMBEDDED_ROOT = "user/ui/mainFrame/embedded";
+        const std::string RKEY_HORIZ_POS = RKEY_EMBEDDED_ROOT + "/mainSplitterPos";
+        const std::string RKEY_VERT_POS = RKEY_EMBEDDED_ROOT + "/groupCamSplitterPos";
         const std::string RKEY_EMBEDDED_TEMP_ROOT = RKEY_EMBEDDED_ROOT + "/temp";
     }
 
@@ -33,12 +35,10 @@ void EmbeddedLayout::activate()
     wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 
     // Splitters
-    _horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY,
-        wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedHorizPane");
-
-    _horizPane->SetMinimumPaneSize(1); // disallow unsplitting
-    _horizPane->SetSashGravity(0.5);
-    _horizPane->SetSashPosition(400);
+    _horizPane = new Splitter(
+        topLevelParent, RKEY_HORIZ_POS, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS,
+        "EmbeddedHorizPane"
+    );
 
     GlobalMainFrame().getWxMainContainer()->Add(_horizPane, 1, wxEXPAND);
 
@@ -46,12 +46,10 @@ void EmbeddedLayout::activate()
     XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, _horizPane);
 
     // CamGroup Pane
-    _groupCamPane = new wxSplitterWindow(_horizPane, wxID_ANY,
-        wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedVertPane");
-
-    _groupCamPane->SetSashGravity(0.5);
-    _groupCamPane->SetSashPosition(300);
-    _groupCamPane->SetMinimumPaneSize(1); // disallow unsplitting
+    _groupCamPane = new Splitter(
+        _horizPane, RKEY_VERT_POS, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS,
+        "EmbeddedVertPane"
+    );
 
     // Create a new camera window and parent it
     _camWnd = GlobalCamera().createCamWnd(_groupCamPane);
@@ -81,12 +79,15 @@ void EmbeddedLayout::activate()
         GlobalGroupDialog().addPage(page);
     }
 
-    _groupCamPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
-
     // Add the camGroup pane to the left and the GL widget to the right
+    _groupCamPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
     _horizPane->SplitVertically(_groupCamPane, xywnd->getGLWidget());
 
     topLevelParent->Layout();
+
+    // Enable sash position persistence
+    _horizPane->connectToRegistry();
+    _groupCamPane->connectToRegistry();
 
     // Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);

@@ -300,6 +300,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
+                      ui/widgets/Splitter.cpp \
                       uimanager/SoundChooser.cpp \
                       uimanager/StatusBarManager.cpp \
                       uimanager/animationpreview/MD5AnimationChooser.cpp \
