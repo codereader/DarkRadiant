@@ -261,6 +261,16 @@ model::ModelPolygon MD5Surface::getPolygon(int polygonIndex) const
 	return poly;
 }
 
+const std::vector<ArbitraryMeshVertex>& MD5Surface::getVertexArray() const
+{
+	return _vertices;
+}
+
+const std::vector<unsigned int>& MD5Surface::getIndexArray() const
+{
+	return _indices;
+}
+
 const std::string& MD5Surface::getDefaultMaterial() const
 {
 	return _originalShaderName;

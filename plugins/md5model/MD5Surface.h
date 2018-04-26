@@ -20,7 +20,7 @@ namespace md5
 class MD5Skeleton;
 
 class MD5Surface :
-	public model::IModelSurface,
+	public model::IIndexedModelSurface,
 	public OpenGLRenderable
 {
 public:
@@ -107,13 +107,16 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
 
 	// IModelSurface implementation
-	int getNumVertices() const;
-	int getNumTriangles() const;
+	int getNumVertices() const override;
+	int getNumTriangles() const override;
 
-	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
-	model::ModelPolygon getPolygon(int polygonIndex) const;
+	const ArbitraryMeshVertex& getVertex(int vertexIndex) const override;
+	model::ModelPolygon getPolygon(int polygonIndex) const override;
 
-	const std::string& getDefaultMaterial() const;
+	const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
+	const std::vector<unsigned int>& getIndexArray() const override;
+
+	const std::string& getDefaultMaterial() const override;
 	const std::string& getActiveMaterial() const;
 	void setActiveMaterial(const std::string& activeMaterial);
 

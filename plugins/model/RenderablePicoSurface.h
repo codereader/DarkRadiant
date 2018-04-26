@@ -25,7 +25,7 @@ namespace model
  */
 
 class RenderablePicoSurface :
-	public IModelSurface,
+	public IIndexedModelSurface,
 	public OpenGLRenderable
 {
 	// Name of the material this surface is using
@@ -121,13 +121,16 @@ public:
 					const Matrix4& localToWorld) const;
 
 	// IModelSurface implementation
-	int getNumVertices() const;
-	int getNumTriangles() const;
+	int getNumVertices() const override;
+	int getNumTriangles() const override;
 
-	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
-	ModelPolygon getPolygon(int polygonIndex) const;
+	const ArbitraryMeshVertex& getVertex(int vertexIndex) const override;
+	ModelPolygon getPolygon(int polygonIndex) const override;
 
-	const std::string& getDefaultMaterial() const;
+	const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
+	const std::vector<unsigned int>& getIndexArray() const override;
+
+	const std::string& getDefaultMaterial() const override;
 	void setDefaultMaterial(const std::string& defaultMaterial);
 
 	// Returns true if the given ray intersects this surface geometry and fills in

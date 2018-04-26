@@ -354,6 +354,16 @@ ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
 	return poly;
 }
 
+const std::vector<ArbitraryMeshVertex>& RenderablePicoSurface::getVertexArray() const
+{
+	return _vertices;
+}
+
+const std::vector<unsigned int>& RenderablePicoSurface::getIndexArray() const
+{
+	return _indices;
+}
+
 const std::string& RenderablePicoSurface::getDefaultMaterial() const
 {
 	return _shaderName;
