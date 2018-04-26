@@ -33,6 +33,43 @@ public:
 	{
 		Surface& surface = ensureSurface(incoming.getDefaultMaterial());
 
+		try
+		{
+			const IIndexedModelSurface& indexedSurf = dynamic_cast<const IIndexedModelSurface&>(incoming);
+
+			// Cast succeeded, load the vertices and indices directly into here
+			unsigned int indexStart = static_cast<unsigned int>(surface.vertices.size());
+			
+			const auto& vertices = indexedSurf.getVertexArray();
+			const auto& indices = indexedSurf.getIndexArray();
+
+			if (indices.size() < 3)
+			{
+				// Reject this index buffer
+				rError() << "Rejecting model surface with less than 3 indices." << std::endl;
+				return;
+			}
+
+			surface.vertices.insert(surface.vertices.end(), vertices.begin(), vertices.end());
+			
+			surface.indices.reserve(surface.indices.size() + indices.size());
+
+			// Incoming polygons are defined in clockwise windings, so reverse the indices
+			// as the exporter code expects them to be counter-clockwise.
+			for (std::size_t i = 0; i < indices.size() - 2; i += 3)
+			{
+				surface.indices.push_back(indices[i + 2] + indexStart);
+				surface.indices.push_back(indices[i + 1] + indexStart);
+				surface.indices.push_back(indices[i + 0] + indexStart);
+			}
+
+			return;
+		}
+		catch (std::bad_cast&)
+		{
+			// Not an indexed surface, fall through
+		}
+
 		// Pull in all the triangles of that mesh
 		for (int i = 0; i < incoming.getNumTriangles(); ++i)
 		{

@@ -44,7 +44,8 @@ public:
 
 /**
  * Model surface supporting direct access to its vertex and index arrays
- * which define the polygons.
+ * which define the polygons. Model surfaces in DarkRadiant are loaded by
+ * the PicoModel library which generates clockwise polygon windings.
  */
 class IIndexedModelSurface :
 	public IModelSurface
