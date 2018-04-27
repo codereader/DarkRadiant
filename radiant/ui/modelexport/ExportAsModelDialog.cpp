@@ -19,6 +19,7 @@
 #include "os/path.h"
 #include "os/file.h"
 #include "os/dir.h"
+#include "os/fs.h"
 #include "registry/registry.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/ChoiceHelper.h"
@@ -202,9 +203,17 @@ void ExportAsModelDialog::handleFormatSelectionChange()
 
 	if (!selectedFormat.empty())
 	{
-		findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->setDefaultExtension(selectedFormat);
+		wxutil::PathEntry* pathEntry = findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker");
+
+		pathEntry->setDefaultExtension(selectedFormat);
 
 		std::string extLower = string::to_lower_copy(selectedFormat);
+
+		// Adjust the extension of the current file name
+		if (!os::getExtension(pathEntry->getValue()).empty())
+		{
+			pathEntry->setValue(os::replaceExtension(pathEntry->getValue(), extLower));
+		}
 
 		// Check if the replace current selection option is available
 		std::string extensions = GlobalGameManager().currentGame()->getKeyValue("modeltypes");
