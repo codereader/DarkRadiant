@@ -50,7 +50,16 @@ public:
 				return;
 			}
 
-			surface.vertices.insert(surface.vertices.end(), vertices.begin(), vertices.end());
+			// Transform vertices before inserting them
+			for (const auto& meshVertex : vertices)
+			{
+				// Copy-construct based on the incoming meshVertex
+				surface.vertices.emplace_back(meshVertex);
+
+				// Transform the copied vertex
+				Vertex3f& vertex = surface.vertices.back().vertex;
+				vertex = localToWorld.transformPoint(vertex);
+			}
 			
 			surface.indices.reserve(surface.indices.size() + indices.size());
 
