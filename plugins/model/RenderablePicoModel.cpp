@@ -63,7 +63,7 @@ RenderablePicoModel::RenderablePicoModel(const RenderablePicoModel& other) :
 		// Copy-construct the other surface, inheriting any applied scale
 		_surfVec[i].surface = std::make_shared<RenderablePicoSurface>(*(other._surfVec[i].surface));
 		_surfVec[i].originalSurface = other._surfVec[i].originalSurface;
-		_surfVec[i].activeMaterial = _surfVec[i].surface->getDefaultMaterial();
+		_surfVec[i].surface->setActiveMaterial(_surfVec[i].surface->getDefaultMaterial());
 	}
 }
 
@@ -205,7 +205,7 @@ void RenderablePicoModel::applySkin(const ModelSkin& skin)
 		 ++i)
 	{
 		const std::string& defaultMaterial = i->surface->getDefaultMaterial();
-		const std::string& activeMaterial = i->activeMaterial;
+		const std::string& activeMaterial = i->surface->getActiveMaterial();
 
 		// Look up the remap for this surface's material name. If there is a remap
 		// change the Shader* to point to the new shader.
@@ -214,12 +214,12 @@ void RenderablePicoModel::applySkin(const ModelSkin& skin)
 		if (!remap.empty() && remap != activeMaterial)
 		{
 			// Save the remapped shader name
-			i->activeMaterial = remap;
+			i->surface->setActiveMaterial(remap);
 		}
 		else if (remap.empty() && activeMaterial != defaultMaterial)
 		{
 			// No remap, so reset our shader to the original unskinned shader
-			i->activeMaterial = defaultMaterial;
+			i->surface->setActiveMaterial(defaultMaterial);
 		}
 	}
 
@@ -238,7 +238,7 @@ void RenderablePicoModel::captureShaders()
 	{
 		if (renderSystem)
 		{
-			i->shader = renderSystem->capture(i->activeMaterial);
+			i->shader = renderSystem->capture(i->surface->getActiveMaterial());
 		}
 		else
 		{
@@ -252,11 +252,9 @@ void RenderablePicoModel::updateMaterialList() const
 {
 	_materialList.clear();
 
-	for (SurfaceList::const_iterator i = _surfVec.begin();
-		 i != _surfVec.end();
-		 ++i)
+	for (const auto& s : _surfVec)
 	{
-		_materialList.push_back(i->activeMaterial);
+		_materialList.push_back(s.surface->getActiveMaterial());
 	}
 }
 

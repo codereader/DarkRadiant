@@ -28,8 +28,11 @@ class RenderablePicoSurface :
 	public IIndexedModelSurface,
 	public OpenGLRenderable
 {
-	// Name of the material this surface is using
-	std::string _shaderName;
+	// Name of the material this surface is using by default (without any skins)
+	std::string _defaultMaterial;
+
+	// Name of the material with skin remaps applied
+	std::string _activeMaterial;
 
 	// Vector of ArbitraryMeshVertex structures, containing the coordinates,
 	// normals, tangents and texture coordinates of the component vertices
@@ -132,6 +135,9 @@ public:
 
 	const std::string& getDefaultMaterial() const override;
 	void setDefaultMaterial(const std::string& defaultMaterial);
+
+	const std::string& getActiveMaterial() const;
+	void setActiveMaterial(const std::string& activeMaterial);
 
 	// Returns true if the given ray intersects this surface geometry and fills in
 	// the exact point in the given Vector3, returns false if no intersection was found.

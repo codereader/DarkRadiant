@@ -47,10 +47,6 @@ private:
 		// The (unmodified) surface object
 		RenderablePicoSurfacePtr originalSurface;
 
-		// The name of the material (with skin applied)
-		// The default material name is stored on the surface
-		std::string activeMaterial;
-
 		// The shader this surface is using
 		ShaderPtr shader;
 
