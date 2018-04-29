@@ -31,7 +31,7 @@ public:
 	// Adds the given Surface to the exporter's queue
 	void addSurface(const IModelSurface& incoming, const Matrix4& localToWorld) override
 	{
-		Surface& surface = ensureSurface(incoming.getDefaultMaterial());
+		Surface& surface = ensureSurface(incoming.getActiveMaterial());
 
 		try
 		{

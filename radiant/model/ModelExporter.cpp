@@ -123,7 +123,7 @@ void ModelExporter::processNodes()
 			{
 				const model::IModelSurface& surface = model.getSurface(s);
 
-				if (isExportableMaterial(surface.getDefaultMaterial()))
+				if (isExportableMaterial(surface.getActiveMaterial()))
 				{
 					_exporter->addSurface(surface, exportTransform);
 				}
