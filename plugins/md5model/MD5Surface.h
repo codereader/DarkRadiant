@@ -30,8 +30,11 @@ public:
 private:
 	AABB _aabb_local;
 
-	// Shader name
+	// Default shader name
 	std::string _originalShaderName;
+
+	// The name of the currently active material (afer skin application)
+	std::string _activeMaterial;
 
 	// The mesh definition - will be baked into renderable vertex arrays
 	// Several MD5Surfaces can share the same mesh
@@ -117,7 +120,7 @@ public:
 	const std::vector<unsigned int>& getIndexArray() const override;
 
 	const std::string& getDefaultMaterial() const override;
-	const std::string& getActiveMaterial() const;
+	const std::string& getActiveMaterial() const override;
 	void setActiveMaterial(const std::string& activeMaterial);
 
 	void parseFromTokens(parser::DefTokeniser& tok);

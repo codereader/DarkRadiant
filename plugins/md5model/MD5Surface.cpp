@@ -276,6 +276,16 @@ const std::string& MD5Surface::getDefaultMaterial() const
 	return _originalShaderName;
 }
 
+const std::string& MD5Surface::getActiveMaterial() const
+{
+	return _activeMaterial;
+}
+
+void MD5Surface::setActiveMaterial(const std::string& activeMaterial)
+{
+	_activeMaterial = activeMaterial;
+}
+
 void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 {
 	if (_vertices.size() != _mesh->vertices.size())

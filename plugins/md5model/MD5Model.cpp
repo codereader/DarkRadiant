@@ -31,7 +31,7 @@ MD5Model::MD5Model(const MD5Model& other) :
 	for (std::size_t i = 0; i < other._surfaces.size(); ++i)
 	{
 		_surfaces[i].surface.reset(new MD5Surface(*other._surfaces[i].surface));
-		_surfaces[i].activeMaterial = _surfaces[i].surface->getDefaultMaterial();
+		_surfaces[i].surface->setActiveMaterial(_surfaces[i].surface->getDefaultMaterial());
 
 		// Build the index array - this has to happen at least once
 		_surfaces[i].surface->buildIndexArray();
@@ -140,7 +140,7 @@ void MD5Model::applySkin(const ModelSkin& skin)
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
 	{
 		const std::string& defaultMaterial = i->surface->getDefaultMaterial();
-		const std::string& activeMaterial = i->activeMaterial;
+		const std::string& activeMaterial = i->surface->getActiveMaterial();
 
 		// Look up the remap for this surface's material name. If there is a remap
 		// change the Shader* to point to the new shader.
@@ -149,12 +149,12 @@ void MD5Model::applySkin(const ModelSkin& skin)
 		if (!remap.empty() && remap != activeMaterial)
 		{
 			// Save the remapped shader name
-			i->activeMaterial = remap;
+			i->surface->setActiveMaterial(remap);
 		}
 		else if (remap.empty() && activeMaterial != defaultMaterial)
 		{
 			// No remap, so reset our shader to the original unskinned shader
-			i->activeMaterial = defaultMaterial;
+			i->surface->setActiveMaterial(defaultMaterial);
 		}
 	}
 
@@ -185,7 +185,7 @@ void MD5Model::updateMaterialList()
 		 i != _surfaces.end();
 		 ++i)
 	{
-		_surfaceNames.push_back(i->activeMaterial);
+		_surfaceNames.push_back(i->surface->getActiveMaterial());
 	}
 }
 
@@ -203,7 +203,7 @@ void MD5Model::captureShaders()
 	{
 		if (renderSystem)
 		{
-			i->shader = renderSystem->capture(i->activeMaterial);
+			i->shader = renderSystem->capture(i->surface->getActiveMaterial());
 		}
 		else
 		{

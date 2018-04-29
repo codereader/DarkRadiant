@@ -40,6 +40,12 @@ public:
 	 * the name of the material without any skin applied.
 	 */
 	virtual const std::string& getDefaultMaterial() const = 0;
+
+	/**
+	 * Return the name of the currently assigned material,
+	 * respecting the applied skin.
+	 */
+	virtual const std::string& getActiveMaterial() const = 0;
 };
 
 /**

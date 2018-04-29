@@ -136,7 +136,7 @@ public:
 	const std::string& getDefaultMaterial() const override;
 	void setDefaultMaterial(const std::string& defaultMaterial);
 
-	const std::string& getActiveMaterial() const;
+	const std::string& getActiveMaterial() const override;
 	void setActiveMaterial(const std::string& activeMaterial);
 
 	// Returns true if the given ray intersects this surface geometry and fills in
