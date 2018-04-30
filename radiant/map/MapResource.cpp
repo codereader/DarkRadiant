@@ -547,7 +547,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	rMessage() << "Opening file " << outFile.string();
 
 	// Open the stream to the primary output file
-	std::unique_ptr<std::ofstream> outFileStream = std::make_unique<std::ofstream>(outFile.string());
+	std::unique_ptr<std::ofstream> outFileStream(new std::ofstream(outFile.string()));
 	std::unique_ptr<std::ofstream> auxFileStream; // aux stream is optional
 
 	// Check writeability of the auxiliary output file if necessary
@@ -557,7 +557,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 
 		rMessage() << " and auxiliary file " << auxFile.string();
 
-		auxFileStream = std::make_unique<std::ofstream>(auxFile.string());
+		auxFileStream.reset(new std::ofstream(auxFile.string()));
 	}
 
 	rMessage() << " for writing... ";
