@@ -39,6 +39,7 @@ namespace
 	const char* RKEY_MODEL_EXPORT_OUTPUT_PATH = "user/ui/exportAsModel/outputPath";
 	const char* RKEY_MODEL_EXPORT_OUTPUT_FORMAT = "user/ui/exportAsModel/outputFormat";
 	const char* RKEY_MODEL_EXPORT_USE_ENTITY_ORIGIN = "user/ui/exportAsModel/keepEntityOrigin";
+	const char* RKEY_MODEL_EXPORT_EXPORT_LIGHTS_AS_OBJECTS = "user/ui/exportAsModel/exportLightsAsObjects";
 }
 
 ExportAsModelDialog::ExportAsModelDialog(wxWindow* parent) :
@@ -134,6 +135,9 @@ void ExportAsModelDialog::populateWindow()
 	bool keepEntityOrigin = registry::getValue<bool>(RKEY_MODEL_EXPORT_USE_ENTITY_ORIGIN);
 	wxCheckBox* keepOriginBox = findNamedObject<wxCheckBox>(this, "ExportDialogUseEntityOrigin");
 
+	bool exportLightsAsObjects = registry::getValue<bool>(RKEY_MODEL_EXPORT_EXPORT_LIGHTS_AS_OBJECTS);
+	findNamedObject<wxCheckBox>(this, "ExportDialogExportLightsAsObjects")->SetValue(exportLightsAsObjects);
+
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
 	if (info.totalCount == 1 && info.entityCount == 1)
@@ -165,6 +169,7 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 	options.outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
 	options.replaceSelectionWithModel = findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel")->GetValue();
 	options.useEntityOrigin = findNamedObject<wxCheckBox>(this, "ExportDialogUseEntityOrigin")->GetValue();
+	options.exportLightsAsObjects = findNamedObject<wxCheckBox>(this, "ExportDialogExportLightsAsObjects")->GetValue();
 
 	if (options.outputFilename.empty())
 	{
@@ -266,6 +271,9 @@ void ExportAsModelDialog::saveOptionsToRegistry()
 
 	registry::setValue(RKEY_MODEL_EXPORT_USE_ENTITY_ORIGIN,
 		findNamedObject<wxCheckBox>(this, "ExportDialogUseEntityOrigin")->GetValue());
+
+	registry::setValue(RKEY_MODEL_EXPORT_EXPORT_LIGHTS_AS_OBJECTS,
+		findNamedObject<wxCheckBox>(this, "ExportDialogExportLightsAsObjects")->GetValue());
 }
 
 void ExportAsModelDialog::ShowDialog(const cmd::ArgumentList& args)
