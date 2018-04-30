@@ -190,7 +190,7 @@ inline Vector4 convert<Vector4, std::string>(const std::string& str, Vector4 def
 		Vector4 vec;
 
 		std::istringstream stream(str);
-		stream >> std::skipws >> vec.x() >> vec.y() >> vec.z();
+		stream >> std::skipws >> vec.x() >> vec.y() >> vec.z() >> vec.w();
 
 		if (stream.bad()) throw std::invalid_argument("Failed to parse Vector4");
 
