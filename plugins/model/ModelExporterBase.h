@@ -33,6 +33,8 @@ public:
 	{
 		Surface& surface = ensureSurface(incoming.getActiveMaterial());
 
+		Matrix4 invTranspTransform = localToWorld.getFullInverse().getTransposed();
+
 		try
 		{
 			const IIndexedModelSurface& indexedSurf = dynamic_cast<const IIndexedModelSurface&>(incoming);
@@ -53,12 +55,13 @@ public:
 			// Transform vertices before inserting them
 			for (const auto& meshVertex : vertices)
 			{
-				// Copy-construct based on the incoming meshVertex
-				surface.vertices.emplace_back(meshVertex);
-
-				// Transform the copied vertex
-				Vertex3f& vertex = surface.vertices.back().vertex;
-				vertex = localToWorld.transformPoint(vertex);
+				// Copy-construct based on the incoming meshVertex, transform the vertex.
+				// Transform the normal using the inverse transpose
+				// We discard the tangent and bitangent vectors here, none of the exporters is using them.
+				surface.vertices.emplace_back(
+					localToWorld.transformPoint(meshVertex.vertex),
+					invTranspTransform.transformPoint(meshVertex.normal).getNormalised(),
+					meshVertex.texcoord);
 			}
 			
 			surface.indices.reserve(surface.indices.size() + indices.size());
@@ -89,6 +92,11 @@ public:
 			poly.a.vertex = localToWorld.transformPoint(poly.a.vertex);
 			poly.b.vertex = localToWorld.transformPoint(poly.b.vertex);
 			poly.c.vertex = localToWorld.transformPoint(poly.c.vertex);
+
+			// Transform the normal using the inverse transpose
+			poly.a.normal = invTranspTransform.transformPoint(poly.a.normal).getNormalised();
+			poly.b.normal = invTranspTransform.transformPoint(poly.b.normal).getNormalised();
+			poly.c.normal = invTranspTransform.transformPoint(poly.c.normal).getNormalised();
 
 			surface.vertices.push_back(poly.a);
 			surface.vertices.push_back(poly.b);
