@@ -100,13 +100,6 @@ public:
 protected:
 	virtual void _onTransformationChanged() override;
 	virtual void _applyTransformation() override;
-
-private:
-	// Instance render function
-	void submitRenderables(RenderableCollector& collector,
-						   const VolumeTest& volume,
-						   const Matrix4& localToWorld,
-						   const IRenderEntity& entity) const;
 };
 typedef std::shared_ptr<PicoModelNode> PicoModelNodePtr;
 

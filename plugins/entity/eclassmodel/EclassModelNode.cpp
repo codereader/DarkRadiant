@@ -76,8 +76,6 @@ void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTe
 	{
 		_renderOrigin.render(collector, volume, localToWorld());
 	}
-
-	collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);
 }
 
 void EclassModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
@@ -88,8 +86,6 @@ void EclassModelNode::renderWireframe(RenderableCollector& collector, const Volu
 	{
 		_renderOrigin.render(collector, volume, localToWorld());
 	}
-
-	collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);
 }
 
 void EclassModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)

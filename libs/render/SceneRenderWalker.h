@@ -36,13 +36,9 @@ public:
 	// scene::Graph::Walker implementation, tells each node to submit its OpenGLRenderables
 	bool visit(const scene::INodePtr& node)
 	{
-		_collector.PushState();
-
 		node->viewChanged();
 
 		render(*node);
-
-		_collector.PopState();
 
 		return true;
 	}

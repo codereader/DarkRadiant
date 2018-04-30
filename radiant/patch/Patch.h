@@ -120,9 +120,10 @@ public:
 	const AABB& localAABB() const override;
 
 	// Render functions: solid mode, wireframe mode and components
-	void render_solid(RenderableCollector& collector, const VolumeTest& volume, 
-					  const Matrix4& localToWorld, const IRenderEntity& entity) const;
-	void render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
+		const Matrix4& localToWorld, const IRenderEntity& entity, const LightList& lights) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
+		const Matrix4& localToWorld, const IRenderEntity& entity) const;
 
     /// Submit renderable edge and face points
 	void submitRenderablePoints(RenderableCollector& collector,

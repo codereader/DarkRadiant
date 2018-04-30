@@ -88,24 +88,6 @@ public:
 	~RenderablePicoSurface();
 
 	/**
-	 * Front-end render function used by the main renderer.
-	 *
-	 * @param rend
-	 * The sorting RenderableCollector object which accepts renderable geometry.
-	 *
-	 * @param localToWorld
-	 * Object to world-space transform.
-	 *
-	 * @param shader
-	 * The shader to submit ourselves as renderable
-	 *
-	 * @param entity
-	 * The entity this object is attached to.
-	 */
-	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld,
-						   const ShaderPtr& shader, const IRenderEntity& entity);
-
-	/**
 	 * Render function from OpenGLRenderable
 	 */
 	void render(const RenderInfo& info) const;

@@ -104,6 +104,8 @@ private:
 
 	void applyScaleToSurfaces();
 
+	void foreachVisibleSurface(const std::function<void(const Surface& s)>& func) const;
+
 public:
 
 	/**
@@ -122,20 +124,10 @@ public:
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
 	void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
-	/**
-	 * Front-end render function used by the main collector.
-	 *
-	 * @param rend
-	 * The sorting RenderableCollector object which accepts renderable geometry.
-	 *
-	 * @param localToWorld
-	 * Object to world-space transform.
-	 *
-	 * @param entity
-	 * The entity this model is attached to.
-	 */
-	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld,
-						   const IRenderEntity& entity);
+	void renderSolid(RenderableCollector& rend, const Matrix4& localToWorld,
+		const IRenderEntity& entity, const LightList& lights) const;
+	void renderWireframe(RenderableCollector& rend, const Matrix4& localToWorld,
+		const IRenderEntity& entity) const;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 

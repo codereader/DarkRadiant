@@ -1310,7 +1310,7 @@ void XYWnd::draw()
         XYRenderer renderer(flagsMask, _selectedShader.get(), _selectedShaderGroup.get());
 
         // First pass (scenegraph traversal)
-        render::RenderableCollectionWalker::collectRenderablesInScene(renderer,
+        render::RenderableCollectionWalker::CollectRenderablesInScene(renderer,
                                                                       _view);
 
 

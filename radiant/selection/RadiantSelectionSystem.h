@@ -42,8 +42,6 @@ class RadiantSelectionSystem :
 	// with a preferred sorting (see RadiantSelectionSystem::testSelectScene)
 	typedef std::list<ISelectable*> SelectablesList;
 
-public:
-	static ShaderPtr _state;
 private:
 	SelectionInfo _selectionInfo;
 

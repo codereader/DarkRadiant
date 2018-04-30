@@ -195,35 +195,26 @@ const AABB& Patch::localAABB() const
 	return _localAABB;
 }
 
-// Render functions: solid mode
-void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volume, 
-						 const Matrix4& localToWorld, const IRenderEntity& entity) const
+void Patch::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
+						 const Matrix4& localToWorld, const IRenderEntity& entity, const LightList& lights) const
 {
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
-    collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
-	collector.addRenderable(_solidRenderable, localToWorld, entity);
+	collector.addRenderable(_shader.getGLShader(), _solidRenderable, localToWorld, entity, lights);
 
 #if DEBUG_PATCH_NTB_VECTORS
     _renderableVectors.render(collector, volume, localToWorld);
 #endif
 }
 
-// Render functions for WireFrame rendering
-void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+void Patch::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
-	collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
-
-	if (_patchDef3) {
-		collector.addRenderable(_fixedWireframeRenderable, localToWorld);
-	}
-	else {
-		collector.addRenderable(_wireframeRenderable, localToWorld);
-	}
+	collector.addRenderable(entity.getWireShader(), 
+		_patchDef3 ? _fixedWireframeRenderable : _wireframeRenderable, localToWorld);
 }
 
 // greebo: This renders the patch components, namely the lattice and the corner controls
@@ -234,13 +225,8 @@ void Patch::submitRenderablePoints(RenderableCollector& collector,
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
-	collector.SetState(_latticeShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_latticeShader, RenderableCollector::eFullMaterials);
-	collector.addRenderable(_renderableLattice, localToWorld);
-
-	collector.SetState(_pointShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
-	collector.addRenderable(_renderableCtrlPoints, localToWorld);
+	collector.addRenderable(_latticeShader, _renderableLattice, localToWorld);
+	collector.addRenderable(_pointShader, _renderableCtrlPoints, localToWorld);
 }
 
 RenderSystemPtr Patch::getRenderSystem() const

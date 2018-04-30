@@ -86,25 +86,42 @@ void RenderablePicoModel::disconnectUndoSystem(IMapFileChangeTracker& changeTrac
 	GlobalUndoSystem().releaseStateSaver(*this);
 }
 
-// Front end renderable submission
-void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
-											const Matrix4& localToWorld,
-											const IRenderEntity& entity)
+void RenderablePicoModel::foreachVisibleSurface(const std::function<void(const Surface& s)>& func) const
 {
-	// Submit renderables from each surface
-	for (SurfaceList::iterator i = _surfVec.begin(); i != _surfVec.end(); ++i)
+	for (const Surface& surface : _surfVec)
 	{
-		assert(i->shader);
+		assert(surface.shader);
 
-		// Check if the surface's shader is filtered, if not then submit it for
-		// rendering
-		const MaterialPtr& surfaceShader = i->shader->getMaterial();
+		// Check if the surface's shader is filtered, if not then submit it for rendering
+		const MaterialPtr& surfaceShader = surface.shader->getMaterial();
 
 		if (surfaceShader->isVisible())
 		{
-			i->surface->submitRenderables(rend, localToWorld, i->shader, entity);
+			func(surface);
 		}
 	}
+}
+
+void RenderablePicoModel::renderSolid(RenderableCollector& rend, const Matrix4& localToWorld,
+	const IRenderEntity& entity, const LightList& lights) const
+{
+	// Submit renderables from each surface
+	foreachVisibleSurface([&](const Surface& s)
+	{
+		// Submit the ordinary shader for material-based rendering
+		rend.addRenderable(s.shader, *s.surface, localToWorld, entity, lights);
+	});
+}
+
+void RenderablePicoModel::renderWireframe(RenderableCollector& rend, const Matrix4& localToWorld,
+	const IRenderEntity& entity) const
+{
+	// Submit renderables from each surface
+	foreachVisibleSurface([&](const Surface& s)
+	{
+		// Submit the wireframe shader for non-shaded renderers
+		rend.addRenderable(entity.getWireShader(), *s.surface, localToWorld, entity);
+	});
 }
 
 void RenderablePicoModel::setRenderSystem(const RenderSystemPtr& renderSystem)

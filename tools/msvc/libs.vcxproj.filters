@@ -76,9 +76,6 @@
     <ClInclude Include="..\..\libs\render\SceneRenderWalker.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\render\ShaderStateRenderer.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\render\TexCoord2f.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -179,6 +176,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\string\tokeniser.h">
       <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\SimpleFrontendRenderer.h">
+      <Filter>render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

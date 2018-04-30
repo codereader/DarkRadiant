@@ -766,31 +766,39 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$CAM_HIGHLIGHT")
             {
-              state.setRenderFlag(RENDER_FILL);
-              state.setRenderFlag(RENDER_DEPTHTEST);
-              state.setRenderFlag(RENDER_CULLFACE);
-              state.setRenderFlag(RENDER_BLEND);
+				// This is the shader drawing a coloured overlay
+				// over faces/polys. Its colour is configurable,
+				// and it has depth test activated.
+				state.setRenderFlag(RENDER_FILL);
+				state.setRenderFlag(RENDER_DEPTHTEST);
+				state.setRenderFlag(RENDER_CULLFACE);
+				state.setRenderFlag(RENDER_BLEND);
 
-              state.setColour(highLightColour);
-              state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
-              state.polygonOffset = 0.5f;
-              state.setDepthFunc(GL_LEQUAL);
+				state.setColour(highLightColour);
+				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
+				state.polygonOffset = 0.5f;
+				state.setDepthFunc(GL_LEQUAL);
             }
             else if (name == "$CAM_OVERLAY")
             {
-              state.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST);
-              state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
+				// This is the shader drawing a solid line to outline
+				// a selected item. The first pass has its depth test
+				// activated using GL_LESS, whereas the second pass
+				// draws the hidden lines in stippled appearance
+				// with its depth test using GL_GREATER.
+				state.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST);
+				state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
 
-			  // Second pass for hidden lines
-			  OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setColour(0.75, 0.75, 0.75, 1);
-			  hiddenLine.setRenderFlags(RENDER_CULLFACE
-				  | RENDER_DEPTHTEST
-				  | RENDER_OFFSETLINE
-				  | RENDER_LINESTIPPLE);
-			  hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-			  hiddenLine.setDepthFunc(GL_GREATER);
-			  hiddenLine.m_linestipple_factor = 2;
+				// Second pass for hidden lines
+				OpenGLState& hiddenLine = appendDefaultPass();
+				hiddenLine.setColour(0.75, 0.75, 0.75, 1);
+				hiddenLine.setRenderFlags(RENDER_CULLFACE
+					| RENDER_DEPTHTEST
+					| RENDER_OFFSETLINE
+					| RENDER_LINESTIPPLE);
+				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+				hiddenLine.setDepthFunc(GL_GREATER);
+				hiddenLine.m_linestipple_factor = 2;
             }
             else if (name == "$XY_OVERLAY")
             {

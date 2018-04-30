@@ -243,14 +243,13 @@ void SpeakerNode::renderSolid(RenderableCollector& collector,
 {
 	EntityNode::renderSolid(collector, volume);
 
-	collector.SetState(getFillShader(), RenderableCollector::eFullMaterials);
-	collector.addRenderable(m_aabb_solid, localToWorld());
+	collector.addRenderable(getFillShader(), m_aabb_solid, localToWorld());
 
     // Submit the speaker radius if we are selected or the "show all speaker
     // radii" option is set
 	if (isSelected() || EntitySettings::InstancePtr()->showAllSpeakerRadii())
     {
-		collector.addRenderable(_renderableRadii, localToWorld());
+		collector.addRenderable(getFillShader(), _renderableRadii, localToWorld());
     }
 }
 void SpeakerNode::renderWireframe(RenderableCollector& collector,
@@ -258,14 +257,13 @@ void SpeakerNode::renderWireframe(RenderableCollector& collector,
 {
 	EntityNode::renderWireframe(collector, volume);
 
-	collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);
-	collector.addRenderable(m_aabb_wire, localToWorld());
+	collector.addRenderable(getWireShader(), m_aabb_wire, localToWorld());
 
     // Submit the speaker radius if we are selected or the "show all speaker
     // radii" option is set
 	if (isSelected() || EntitySettings::InstancePtr()->showAllSpeakerRadii())
     {
-		collector.addRenderable(_renderableRadii, localToWorld());
+		collector.addRenderable(getWireShader(), _renderableRadii, localToWorld());
     }
 }
 

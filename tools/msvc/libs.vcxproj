@@ -180,7 +180,7 @@
     <ClInclude Include="..\..\libs\render\RenderablePivot.h" />
     <ClInclude Include="..\..\libs\render\RenderableSpacePartition.h" />
     <ClInclude Include="..\..\libs\render\SceneRenderWalker.h" />
-    <ClInclude Include="..\..\libs\render\ShaderStateRenderer.h" />
+    <ClInclude Include="..\..\libs\render\SimpleFrontendRenderer.h" />
     <ClInclude Include="..\..\libs\render\TexCoord2f.h" />
     <ClInclude Include="..\..\libs\render\VectorLightList.h" />
     <ClInclude Include="..\..\libs\render\Vertex3f.h" />

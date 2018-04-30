@@ -121,7 +121,9 @@ void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest&
 
 void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	renderSolid(collector, volume);
+	assert(_renderEntity);
+
+	render(collector, volume, localToWorld(), *_renderEntity);
 }
 
 void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -154,8 +156,16 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 
 		if (surfaceShader->isVisible())
 		{
-			collector.setLights(*j);
-			i->surface->render(collector, localToWorld, i->shader, entity);
+			//collector.setLights(*j);
+			if (collector.supportsFullMaterials())
+			{
+				assert(i->shader); // shader must be captured at this point
+				collector.addRenderable(i->shader, *i->surface, localToWorld, entity, *j);
+			}
+			else
+			{
+				collector.addRenderable(entity.getWireShader(), *i->surface, localToWorld, entity);
+			}
 		}
 	}
 

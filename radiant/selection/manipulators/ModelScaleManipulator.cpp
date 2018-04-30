@@ -87,18 +87,12 @@ void ModelScaleManipulator::render(RenderableCollector& collector, const VolumeT
 		}
 	});
 
-	collector.SetState(_lineShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_lineShader, RenderableCollector::eFullMaterials);
-
 	for (const RenderableSolidAABB& aabb : _renderableAabbs)
 	{
-		collector.addRenderable(aabb, Matrix4::getIdentity());
+		collector.addRenderable(_lineShader, aabb, Matrix4::getIdentity());
 	}
 
-	collector.SetState(_pointShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
-
-	collector.addRenderable(_renderableCornerPoints, Matrix4::getIdentity());
+	collector.addRenderable(_pointShader, _renderableCornerPoints, Matrix4::getIdentity());
 }
 
 void ModelScaleManipulator::foreachSelectedTransformable(

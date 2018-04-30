@@ -55,25 +55,23 @@ void RenderableParticle::renderSolid(RenderableCollector& collector,
                                      const Matrix4& localToWorld,
                                      const IRenderEntity* entity) const
 {
-	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
+	for (const ShaderMap::value_type& pair : _shaderMap)
 	{
-		assert(i->second.shader); // ensure we're realised
-
-		collector.SetState(i->second.shader, RenderableCollector::eFullMaterials);
+		assert(pair.second.shader); // ensure we're realised
 
         // For each stage using this shader
-        for (const RenderableParticleStagePtr& stage : i->second.stages)
+        for (const RenderableParticleStagePtr& stage : pair.second.stages)
 		{
 			// Skip invisible stages
 			if (!stage->getDef().isVisible()) continue;
 
 			if (entity)
 			{
-				collector.addRenderable(*stage, localToWorld, *entity);
+				collector.addRenderable(pair.second.shader, *stage, localToWorld, *entity);
 			}
 			else
 			{
-				collector.addRenderable(*stage, localToWorld);
+				collector.addRenderable(pair.second.shader, *stage, localToWorld);
 			}
 		}
 	}
@@ -81,7 +79,7 @@ void RenderableParticle::renderSolid(RenderableCollector& collector,
 
 void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	renderSolid(collector, volume, Matrix4::getIdentity(), NULL);
+	renderSolid(collector, volume, Matrix4::getIdentity(), nullptr);
 }
 
 void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 

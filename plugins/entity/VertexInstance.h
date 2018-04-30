@@ -89,10 +89,7 @@ public:
     {
 		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 		collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-		collector.SetState(_shader, RenderableCollector::eFullMaterials);
-		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
-
-		collector.addRenderable(*this, localToWorld);
+		collector.addRenderable(_shader, *this, localToWorld);
 	}
 
 	// GL render function (backend)

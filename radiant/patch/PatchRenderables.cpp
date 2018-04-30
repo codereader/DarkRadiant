@@ -154,12 +154,6 @@ void RenderablePatchVectorsNTB::render(const RenderInfo& info) const
 
 void RenderablePatchVectorsNTB::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	collector.PushState();
-
 	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-	collector.SetState(_shader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_shader, RenderableCollector::eFullMaterials);
-	collector.addRenderable(*this, localToWorld);
-
-	collector.PopState();
+	collector.addRenderable(_shader, *this, localToWorld);
 }

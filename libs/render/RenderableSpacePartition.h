@@ -41,8 +41,7 @@ public:
 	{
 		if (_shader != NULL)
 		{
-			collector.SetState(_shader, RenderableCollector::eFullMaterials);
-			collector.addRenderable(*this, Matrix4::getIdentity());
+			collector.addRenderable(_shader, *this, Matrix4::getIdentity());
 		}
 	}
 
@@ -50,8 +49,7 @@ public:
 	{
 		if (_shader != NULL)
 		{
-			collector.SetState(_shader, RenderableCollector::eWireframeOnly);
-			collector.addRenderable(*this, Matrix4::getIdentity());
+			collector.addRenderable(_shader, *this, Matrix4::getIdentity());
 		}
 	}
 
