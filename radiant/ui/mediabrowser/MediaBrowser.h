@@ -56,6 +56,7 @@ public:
 	};
 
 	class PopulatorFinishedEvent; // wxEvent type
+	class Favourites;
 
 private:
 	wxFrame* _tempParent;
@@ -81,6 +82,8 @@ private:
 	// Populates the Media Browser in its own thread
     class Populator;
     std::unique_ptr<Populator> _populator;
+
+	std::unique_ptr<Favourites> _favourites;
 
 	// Context menu
 	wxutil::PopupMenuPtr _popupMenu;
