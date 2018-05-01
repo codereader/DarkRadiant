@@ -409,6 +409,15 @@ void MediaBrowser::construct()
 	// Connect the finish callback to load the treestore
 	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
 		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), nullptr, this);
+
+	// When destroying the main widget clear out the held references.
+	// The dying populator thread might have posted a finished message which 
+	// runs into problems when the _treeView is still valid
+	_mainWidget->Bind(wxEVT_DESTROY, [&](wxWindowDestroyEvent& ev)
+	{
+		_treeView = nullptr;
+		ev.Skip();
+	});
 }
 
 /* Tree query functions */
@@ -541,8 +550,14 @@ void MediaBrowser::populate()
 
 void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
-	_treeStore = ev.GetTreeModel();
+	// Check if we still have a treeview to work with, we might be in the middle of a shutdown
+	// with this event being posted on the thread's last breath
+	if (_treeView == nullptr)
+	{
+		return;
+	}
 
+	_treeStore = ev.GetTreeModel();
 	_treeView->AssociateModel(_treeStore.get());
 }
 
