@@ -692,9 +692,14 @@ void MediaBrowser::setupTreeViewAndFilter()
 
 void MediaBrowser::handleTreeModeChanged()
 {
+	std::string previouslySelectedItem = getSelection();
+
 	_mode = _showAll->GetValue() ? TreeMode::ShowAll : TreeMode::ShowFavourites;
 
 	setupTreeViewAndFilter();
+
+	// Try to select the same item we had as before
+	setSelection(previouslySelectedItem);
 }
 
 void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
