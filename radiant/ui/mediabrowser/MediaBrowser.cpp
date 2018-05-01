@@ -143,7 +143,7 @@ struct ShaderNameFunctor
 		row[_columns.fullName] = path; 
 		row[_columns.isFolder] = true;
 		row[_columns.isOtherMaterialsFolder] = isOtherMaterial;
-		row[_columns.isFavourite] = true;
+		row[_columns.isFavourite] = false; // folders are not favourites
 
 		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
@@ -612,6 +612,33 @@ void MediaBrowser::populate()
 	}
 }
 
+bool MediaBrowser::treeModelFilterFunc(wxutil::TreeModel::Row& row)
+{
+	if (_mode == TreeMode::ShowAll) return true; // everything is visible
+
+	// Favourites mode, check if this item or any descendant is visible
+	if (row[_columns.isFavourite].getBool())
+	{
+		return true;
+	}
+
+	wxDataViewItemArray children;
+	_treeStore->GetChildren(row.getItem(), children);
+
+	// Enter the recursion for each of the children and bail out on the first visible one
+	for (const wxDataViewItem& child : children)
+	{
+		wxutil::TreeModel::Row childRow(child, *_treeStore);
+		
+		if (treeModelFilterFunc(childRow))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void MediaBrowser::setupTreeViewAndFilter()
 {
 	if (!_treeStore) return;
@@ -619,9 +646,9 @@ void MediaBrowser::setupTreeViewAndFilter()
 	// Set up the filter model
 	_treeModelFilter.reset(new wxutil::TreeModelFilter(_treeStore));
 
-	_treeModelFilter->SetVisibleFunc([&](wxutil::TreeModel::Row& row)
+	_treeModelFilter->SetVisibleFunc([this](wxutil::TreeModel::Row& row)
 	{
-		return _mode == TreeMode::ShowAll || row[_columns.isFavourite].getBool();
+		return treeModelFilterFunc(row);
 	});
 
 	_treeView->AssociateModel(_treeModelFilter.get());
@@ -632,6 +659,11 @@ void MediaBrowser::handleTreeModeChanged()
 	_mode = _showAll->GetValue() ? TreeMode::ShowAll : TreeMode::ShowFavourites;
 
 	setupTreeViewAndFilter();
+
+	if (_mode == TreeMode::ShowFavourites)
+	{
+		_treeView->ExpandTopLevelItems();
+	}
 }
 
 void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)

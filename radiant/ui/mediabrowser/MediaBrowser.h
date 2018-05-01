@@ -124,6 +124,9 @@ private:
 
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
+	// Evaulation function for item visibility
+	bool treeModelFilterFunc(wxutil::TreeModel::Row& row);
+
 public:
 	/** Constructor creates widgets.
 	 */
