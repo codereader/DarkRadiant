@@ -18,6 +18,7 @@
 #include <wx/dataview.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/radiobut.h>
 
 #include <iostream>
 #include <map>
@@ -62,6 +63,9 @@ const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
 
 const char* const SELECT_ITEMS = N_("Select elements using this shader");
 const char* const DESELECT_ITEMS = N_("Deselect elements using this shader");
+
+const char* const ADD_TO_FAVOURITES = N_("Add to Favourites");
+const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 
 }
 
@@ -139,6 +143,7 @@ struct ShaderNameFunctor
 		row[_columns.fullName] = path; 
 		row[_columns.isFolder] = true;
 		row[_columns.isOtherMaterialsFolder] = isOtherMaterial;
+		row[_columns.isFavourite] = true;
 
 		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
@@ -177,6 +182,7 @@ struct ShaderNameFunctor
 		row[_columns.fullName] = name; 
 		row[_columns.isFolder] = false;
 		row[_columns.isOtherMaterialsFolder] = false;
+		row[_columns.isFavourite] = false;
 	}
 };
 
@@ -330,6 +336,7 @@ MediaBrowser::MediaBrowser() :
 	_mainWidget(nullptr),
 	_treeView(nullptr),
 	_treeStore(nullptr),
+	_mode(TreeMode::ShowAll),
 	_preview(nullptr),
 	_isPopulated(false)
 {}
@@ -351,6 +358,29 @@ void MediaBrowser::construct()
 
 	_mainWidget = new wxPanel(_tempParent, wxID_ANY); 
 	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	// Hbox for the favourites selection widgets
+	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+	_showAll = new wxRadioButton(_mainWidget, wxID_ANY, _("Show All"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	_showFavourites = new wxRadioButton(_mainWidget, wxID_ANY, _("Show Favourites"));
+	
+	hbox->Add(_showAll, 0, wxRIGHT, 0);
+	hbox->Add(_showFavourites, 0, wxLEFT, 6);
+
+	_mainWidget->GetSizer()->Add(hbox, 0, wxALIGN_RIGHT | wxALL, 6);
+
+	_showAll->SetValue(_mode == TreeMode::ShowAll);
+	_showFavourites->SetValue(_mode == TreeMode::ShowFavourites);
+
+	_showAll->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
+	{
+		handleTreeModeChanged();
+	});
+	_showFavourites->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
+	{
+		handleTreeModeChanged();
+	});
 
 	_treeView = wxutil::TreeView::Create(_mainWidget, wxDV_NO_HEADER);
 	_mainWidget->GetSizer()->Add(_treeView, 1, wxEXPAND);
@@ -417,6 +447,17 @@ void MediaBrowser::construct()
         std::bind(&MediaBrowser::_testSingleTexSel, this)
     );
 
+	_popupMenu->addItem(
+		new wxutil::StockIconTextMenuItem(_(ADD_TO_FAVOURITES), wxART_ADD_BOOKMARK),
+		std::bind(&MediaBrowser::_onSetFavourite, this, true),
+		std::bind(&MediaBrowser::_testAddToFavourites, this)
+	);
+	_popupMenu->addItem(
+		new wxutil::StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
+		std::bind(&MediaBrowser::_onSetFavourite, this, false),
+		std::bind(&MediaBrowser::_testRemoveFromFavourites, this)
+	);
+
 	// Connect the finish callback to load the treestore
 	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
 		TreeModelPopulationFinishedHandler(MediaBrowser::onTreeStorePopulationFinished), nullptr, this);
@@ -442,6 +483,17 @@ bool MediaBrowser::isDirectorySelected()
 	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
 
 	return row[_columns.isFolder].getBool();
+}
+
+bool MediaBrowser::isFavouriteSelected()
+{
+	wxDataViewItem item = _treeView->GetSelection();
+
+	if (!item.IsOk()) return false;
+
+	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+
+	return row[_columns.isFavourite].getBool();
 }
 
 void MediaBrowser::onRadiantStartup()
@@ -550,6 +602,7 @@ void MediaBrowser::populate()
 		wxIcon icon;
 		icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
 		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
+		row[_columns.isFavourite] = true;
 
 		row.SendItemAdded();
 
@@ -557,6 +610,28 @@ void MediaBrowser::populate()
 		_populator.reset(new Populator(_columns, this));
 		_populator->populate();
 	}
+}
+
+void MediaBrowser::setupTreeViewAndFilter()
+{
+	if (!_treeStore) return;
+
+	// Set up the filter model
+	_treeModelFilter.reset(new wxutil::TreeModelFilter(_treeStore));
+
+	_treeModelFilter->SetVisibleFunc([&](wxutil::TreeModel::Row& row)
+	{
+		return _mode == TreeMode::ShowAll || row[_columns.isFavourite].getBool();
+	});
+
+	_treeView->AssociateModel(_treeModelFilter.get());
+}
+
+void MediaBrowser::handleTreeModeChanged()
+{
+	_mode = _showAll->GetValue() ? TreeMode::ShowAll : TreeMode::ShowFavourites;
+
+	setupTreeViewAndFilter();
 }
 
 void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
@@ -569,7 +644,9 @@ void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFi
 	}
 
 	_treeStore = ev.GetTreeModel();
-	_treeView->AssociateModel(_treeStore.get());
+
+	// Set up the filter model
+	setupTreeViewAndFilter();
 }
 
 /* wxutil::PopupMenu callbacks */
@@ -635,6 +712,40 @@ void MediaBrowser::_onSelectItems(bool select)
     {
         selection::algorithm::deselectItemsByShader(shaderName);
     }
+}
+
+bool MediaBrowser::_testAddToFavourites()
+{
+	return _testSingleTexSel() && !isFavouriteSelected();
+}
+
+bool MediaBrowser::_testRemoveFromFavourites()
+{
+	return _testSingleTexSel() && isFavouriteSelected();
+}
+
+void MediaBrowser::_onSetFavourite(bool isFavourite)
+{
+	wxDataViewItem item = _treeView->GetSelection();
+
+	if (!item.IsOk()) return;
+
+	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+
+	row[_columns.isFavourite] = isFavourite;
+	row.SendItemChanged();
+
+	if (_mode != TreeMode::ShowAll)
+	{
+		if (!_treeModelFilter->ItemIsVisible(row))
+		{
+			row.SendItemDeleted();
+		}
+		else
+		{
+			row.SendItemAdded();
+		}
+	}
 }
 
 void MediaBrowser::_onContextMenu(wxDataViewEvent& ev)

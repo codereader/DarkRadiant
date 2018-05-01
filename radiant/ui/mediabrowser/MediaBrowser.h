@@ -9,6 +9,7 @@
 
 #include "wxutil/TreeView.h"
 #include "wxutil/menu/PopupMenu.h"
+#include "wxutil/TreeModelFilter.h"
 
 #include <wx/event.h>
 
@@ -42,7 +43,8 @@ public:
 			leafName(add(wxutil::TreeModel::Column::String)),
 			fullName(add(wxutil::TreeModel::Column::String)),
 			isFolder(add(wxutil::TreeModel::Column::Boolean)),
-			isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Boolean))
+			isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Boolean)),
+			isFavourite(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
 		wxutil::TreeModel::Column iconAndName;
@@ -50,6 +52,7 @@ public:
 		wxutil::TreeModel::Column fullName;
 		wxutil::TreeModel::Column isFolder;
 		wxutil::TreeModel::Column isOtherMaterialsFolder;
+		wxutil::TreeModel::Column isFavourite;
 	};
 
 	class PopulatorFinishedEvent; // wxEvent type
@@ -59,9 +62,20 @@ private:
 
 	wxWindow* _mainWidget;
 
+	wxRadioButton* _showAll;
+	wxRadioButton* _showFavourites;
+
 	wxutil::TreeView* _treeView;
 	TreeColumns _columns;
 	wxutil::TreeModel::Ptr _treeStore;
+	wxutil::TreeModelFilter::Ptr _treeModelFilter;
+
+	enum class TreeMode
+	{
+		ShowAll,
+		ShowFavourites,
+	};
+	TreeMode _mode;
 
 	// Populates the Media Browser in its own thread
     class Populator;
@@ -89,6 +103,9 @@ private:
 	void _onLoadInTexView();
 	void _onShowShaderDefinition();
     void _onSelectItems(bool select);
+	bool _testAddToFavourites();
+	bool _testRemoveFromFavourites();
+	void _onSetFavourite(bool isFavourite);
 
 	/* wx CALLBACKS */
 	void _onExpose(wxPaintEvent& ev);
@@ -96,9 +113,11 @@ private:
 	void _onContextMenu(wxDataViewEvent& ev);
 
 	void handleSelectionChange();
+	void handleTreeModeChanged();
 
 	/* Tree selection query functions */
 	bool isDirectorySelected(); // is a directory selected
+	bool isFavouriteSelected(); // is a favourite selected
 
 	// Populates the treeview
 	void populate();
@@ -139,6 +158,8 @@ private:
 	* greebo: Command target for toggling the mediabrowser tab in the groupdialog.
 	*/
 	void togglePage(const cmd::ArgumentList& args);
+
+	void setupTreeViewAndFilter();
 };
 
 }
