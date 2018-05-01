@@ -447,6 +447,8 @@ void MediaBrowser::construct()
         std::bind(&MediaBrowser::_testSingleTexSel, this)
     );
 
+	_popupMenu->addSeparator();
+
 	_popupMenu->addItem(
 		new wxutil::StockIconTextMenuItem(_(ADD_TO_FAVOURITES), wxART_ADD_BOOKMARK),
 		std::bind(&MediaBrowser::_onSetFavourite, this, true),
@@ -583,6 +585,7 @@ void MediaBrowser::onMaterialDefsUnloaded()
 
 	// Clear the media browser on MaterialManager unrealisation
 	_treeStore->Clear();
+	_emptyFavouritesLabel = wxDataViewItem();
 
 	_isPopulated = false;
 }
@@ -596,6 +599,7 @@ void MediaBrowser::populate()
 
 		// Clear our treestore and put a single item in it
 		_treeStore->Clear();
+		_emptyFavouritesLabel = wxDataViewItem();
 
 		wxutil::TreeModel::Row row = _treeStore->AddItem();
 
@@ -603,6 +607,7 @@ void MediaBrowser::populate()
 		icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
 		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
 		row[_columns.isFavourite] = true;
+		row[_columns.isFolder] = false;
 
 		row.SendItemAdded();
 
@@ -652,6 +657,37 @@ void MediaBrowser::setupTreeViewAndFilter()
 	});
 
 	_treeView->AssociateModel(_treeModelFilter.get());
+
+	// Remove the dummy label in any case
+	if (_emptyFavouritesLabel.IsOk())
+	{
+		_treeStore->RemoveItem(_emptyFavouritesLabel);
+		_emptyFavouritesLabel = wxDataViewItem();
+	}
+
+	if (_mode == TreeMode::ShowFavourites)
+	{
+		wxDataViewItemArray visibleChildren;
+		if (_treeModelFilter->GetChildren(_treeModelFilter->GetRoot(), visibleChildren) == 0)
+		{
+			// All items filtered out, show the dummy label
+			if (!_emptyFavouritesLabel.IsOk())
+			{
+				wxutil::TreeModel::Row row = _treeStore->AddItem();
+				_emptyFavouritesLabel = row.getItem();
+
+				wxIcon icon;
+				icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
+				row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("No favourites added so far"), icon));
+				row[_columns.isFavourite] = true;
+				row[_columns.isFolder] = false;
+
+				row.SendItemAdded();
+			}
+		}
+
+		_treeView->ExpandTopLevelItems();
+	}
 }
 
 void MediaBrowser::handleTreeModeChanged()
@@ -659,15 +695,12 @@ void MediaBrowser::handleTreeModeChanged()
 	_mode = _showAll->GetValue() ? TreeMode::ShowAll : TreeMode::ShowFavourites;
 
 	setupTreeViewAndFilter();
-
-	if (_mode == TreeMode::ShowFavourites)
-	{
-		_treeView->ExpandTopLevelItems();
-	}
 }
 
 void MediaBrowser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
+	_emptyFavouritesLabel = wxDataViewItem();
+
 	// Check if we still have a treeview to work with, we might be in the middle of a shutdown
 	// with this event being posted on the thread's last breath
 	if (_treeView == nullptr)
@@ -890,6 +923,7 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 
 void MediaBrowser::shutdownModule()
 {
+	_emptyFavouritesLabel = wxDataViewItem();
 	_materialDefsLoaded.disconnect();
 	_materialDefsUnloaded.disconnect();
 }

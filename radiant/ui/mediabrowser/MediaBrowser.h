@@ -69,6 +69,7 @@ private:
 	TreeColumns _columns;
 	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::TreeModelFilter::Ptr _treeModelFilter;
+	wxDataViewItem _emptyFavouritesLabel;
 
 	enum class TreeMode
 	{
