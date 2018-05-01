@@ -375,6 +375,17 @@ void MediaBrowser::construct()
 	_treeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
 		wxDataViewEventHandler(MediaBrowser::_onContextMenu), nullptr, this);
 
+	_treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, [this](wxDataViewEvent& ev)
+	{
+		std::string selection = getSelection();
+
+		if (!isDirectorySelected() && !selection.empty())
+		{
+			// Pass shader name to the selection system
+			selection::algorithm::applyShaderToSelection(selection);
+		}
+	});
+
 	// Add the info pane
 	_preview = new TexturePreviewCombo(_mainWidget);
 	_mainWidget->GetSizer()->Add(_preview, 0, wxEXPAND);
