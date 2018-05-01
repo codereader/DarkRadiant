@@ -145,7 +145,7 @@ struct ShaderNameFunctor
 		row[_columns.isOtherMaterialsFolder] = isOtherMaterial;
 		row[_columns.isFavourite] = false; // folders are not favourites
 
-		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
+		// Add a copy of the wxDataViewItem to our hashmap and return it
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
 			NamedIterMap::value_type(path, row.getItem()));
 
@@ -368,7 +368,7 @@ void MediaBrowser::construct()
 	hbox->Add(_showAll, 0, wxRIGHT, 0);
 	hbox->Add(_showFavourites, 0, wxLEFT, 6);
 
-	_mainWidget->GetSizer()->Add(hbox, 0, wxALIGN_RIGHT | wxALL, 6);
+	_mainWidget->GetSizer()->Add(hbox, 0, wxALIGN_LEFT | wxALL, 6);
 
 	_showAll->SetValue(_mode == TreeMode::ShowAll);
 	_showFavourites->SetValue(_mode == TreeMode::ShowFavourites);
@@ -765,6 +765,20 @@ void MediaBrowser::_onSetFavourite(bool isFavourite)
 	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
 
 	row[_columns.isFavourite] = isFavourite;
+
+	if (isFavourite)
+	{
+		wxDataViewItemAttr blueBold;
+		blueBold.SetColour(wxColor(0, 0, 255));
+		blueBold.SetBold(true);
+
+		row[_columns.iconAndName] = blueBold;
+	}
+	else
+	{
+		row[_columns.iconAndName] = wxDataViewItemAttr();
+	}
+
 	row.SendItemChanged();
 
 	if (_mode != TreeMode::ShowAll)
