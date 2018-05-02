@@ -18,6 +18,7 @@ class wxTreeCtrl;
 class wxFrame;
 class wxDataViewTreeStore;
 class wxTreeEvent;
+class wxRadioButton;
 
 namespace ui
 {

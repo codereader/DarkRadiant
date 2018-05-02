@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "ibrush.h"
 #include "iclipper.h" // for caulk shader registry key
+#include "ilightnode.h"
 #include "ipatch.h"
 #include "itextstream.h"
 #include "imodel.h"
