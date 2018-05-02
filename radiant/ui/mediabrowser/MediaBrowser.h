@@ -111,6 +111,9 @@ private:
 	bool _testRemoveFromFavourites();
 	void _onSetFavourite(bool isFavourite);
 
+	// Sets favourite status on this item and all below
+	void setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isFavourite);
+
 	/* wx CALLBACKS */
 	void _onExpose(wxPaintEvent& ev);
 	void _onSelectionChanged(wxTreeEvent& ev);

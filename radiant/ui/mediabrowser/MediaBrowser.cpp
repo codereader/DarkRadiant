@@ -849,22 +849,34 @@ void MediaBrowser::_onSelectItems(bool select)
 
 bool MediaBrowser::_testAddToFavourites()
 {
-	return _testSingleTexSel() && !isFavouriteSelected();
+	// Adding favourites is allowed for any folder and non-favourite items 
+	return isDirectorySelected() || (!getSelection().empty() && !isFavouriteSelected());
 }
 
 bool MediaBrowser::_testRemoveFromFavourites()
 {
-	return _testSingleTexSel() && isFavouriteSelected();
+	// We can run remove from favourites on any folder or on favourites themselves
+	return isDirectorySelected() || isFavouriteSelected();
 }
 
-void MediaBrowser::_onSetFavourite(bool isFavourite)
+void MediaBrowser::setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isFavourite)
 {
-	wxDataViewItem item = _treeView->GetSelection();
+	if (row[_columns.isFolder].getBool())
+	{
+		// Enter recursion for this folder
+		wxDataViewItemArray children;
+		_treeModelFilter->GetChildren(row.getItem(), children);
 
-	if (!item.IsOk()) return;
+		for (const wxDataViewItem& child : children)
+		{
+			wxutil::TreeModel::Row childRow(child, *_treeModelFilter);
+			setFavouriteRecursively(childRow, isFavourite);
+		}
 
-	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+		return;
+	}
 
+	// Not a folder, set the desired status on this item
 	row[_columns.isFavourite] = isFavourite;
 	row[_columns.iconAndName] = getItemFormat(isFavourite);
 
@@ -880,9 +892,6 @@ void MediaBrowser::_onSetFavourite(bool isFavourite)
 
 	row.SendItemChanged();
 
-	// Store to registry on each change
-	_favourites->saveToRegistry();
-
 	if (_mode != TreeMode::ShowAll)
 	{
 		if (!_treeModelFilter->ItemIsVisible(row))
@@ -894,6 +903,22 @@ void MediaBrowser::_onSetFavourite(bool isFavourite)
 			row.SendItemAdded();
 		}
 	}
+}
+
+void MediaBrowser::_onSetFavourite(bool isFavourite)
+{
+	wxDataViewItem item = _treeView->GetSelection();
+
+	if (!item.IsOk()) return;
+
+	// Grab this item and enter recursion, propagating the favourite status
+	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+
+	setFavouriteRecursively(row, isFavourite);
+
+	// Store to registry on each change
+	_favourites->saveToRegistry();
+
 }
 
 void MediaBrowser::_onContextMenu(wxDataViewEvent& ev)
