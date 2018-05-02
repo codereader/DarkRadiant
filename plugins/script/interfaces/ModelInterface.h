@@ -25,6 +25,7 @@ public:
 	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
 	model::ModelPolygon getPolygon(int polygonIndex) const;
 	std::string getDefaultMaterial() const;
+	std::string getActiveMaterial() const;
 };
 
 class ScriptModelNode :

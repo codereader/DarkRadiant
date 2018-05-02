@@ -32,6 +32,11 @@ std::string ScriptModelSurface::getDefaultMaterial() const
 	return _surface.getDefaultMaterial();
 }
 
+std::string ScriptModelSurface::getActiveMaterial() const
+{
+	return _surface.getActiveMaterial();
+}
+
 // ----------- ScriptModelNode -----------
 
 // Constructor, checks if the passed node is actually an entity
@@ -162,6 +167,7 @@ void ModelInterface::registerInterface(py::module& scope, py::dict& globals)
 	surface.def("getVertex", &ScriptModelSurface::getVertex, py::return_value_policy::reference);
 	surface.def("getPolygon", &ScriptModelSurface::getPolygon);
 	surface.def("getDefaultMaterial", &ScriptModelSurface::getDefaultMaterial);
+	surface.def("getActiveMaterial", &ScriptModelSurface::getActiveMaterial);
 
 	// Add the ModelNode interface
 	py::class_<ScriptModelNode, ScriptSceneNode> modelNode(scope, "ModelNode");
