@@ -167,12 +167,19 @@ void FaceInstance::renderSolid(RenderableCollector& collector, const VolumeTest&
 {
 	if (m_face->intersectVolume(volume))
 	{
-		if (selectedComponents())
+		bool highlight = selectedComponents();
+
+		if (highlight)
 		{
 			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 		}
 
 		m_face->renderSolid(collector, Matrix4::getIdentity(), entity, m_lights);
+
+		if (highlight)
+		{
+			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+		}
 	}
 }
 
