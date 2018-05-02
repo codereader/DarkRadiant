@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2018-04-30 15:33+0200\n"
-"PO-Revision-Date: 2018-04-30 15:34+0100\n"
+"POT-Creation-Date: 2018-05-02 09:31+0200\n"
+"PO-Revision-Date: 2018-05-02 09:33+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -811,7 +811,7 @@ msgstr "Patch"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:356
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:73
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:361
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:451
 #: xml_file_content.cpp:14
 msgid "Shader"
 msgstr "Shader"
@@ -1802,7 +1802,7 @@ msgid "Entity Class Tree"
 msgstr "Entity-Klassenbaum"
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:43
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:532
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:668
 msgid "Loading, please wait..."
 msgstr "Lade, bitte warten..."
 
@@ -2334,12 +2334,12 @@ msgid "Shaders"
 msgstr "Shader"
 
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:20
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:63
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:64
 msgid "Select elements using this shader"
 msgstr "Alle Elemente mit diesem Shader auswählen"
 
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:21
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:64
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:65
 msgid "Deselect elements using this shader"
 msgstr "Alle Elemente mit diesem Shader deselektieren"
 
@@ -2355,26 +2355,46 @@ msgstr "Patches"
 msgid "Shaders used:"
 msgstr "Benutzte Shader:"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:52
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:53
 msgid "Load in Textures view"
 msgstr "In Texturbrowser laden"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:55
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:56
 msgid "Apply to selection"
 msgstr "Auf Auswahl anwenden"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:58
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:59
 msgid "Show Shader Definition"
 msgstr "Zeige Shaderdefinition"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:61
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:62
 msgid "Other Materials"
 msgstr "Andere Shader"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:433
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:436
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:67
+msgid "Add to Favourites"
+msgstr "Zu Favoriten hinzufügen"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:68
+msgid "Remove from Favourites"
+msgstr "Aus Favoriten entfernen"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:425
+msgid "Show All"
+msgstr "Alle anzeigen"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:426
+msgid "Show Favourites"
+msgstr "Favoriten anzeigen"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:567
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:570
 msgid "Media"
 msgstr "Media"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:744
+msgid "No favourites added so far"
+msgstr "Keine Favoriten vorhanden"
 
 #: ..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h:35
 msgid "Loading textures"
