@@ -28,12 +28,7 @@ public:
 
 	virtual bool ItemDeleted(const wxDataViewItem& parent, const wxDataViewItem& item)
 	{ 
-		if (_owner->ItemIsVisible(parent) && _owner->ItemIsVisible(item))
-		{
-			return _owner->ItemDeleted(parent, item);
-		}
-
-		return true;
+		return _owner->ItemDeleted(parent, item);
 	}
 
 	virtual bool ItemChanged(const wxDataViewItem& item)
