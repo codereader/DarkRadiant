@@ -124,6 +124,15 @@
 									<checked>0</checked>
 								</object>
 							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM|wxTOP</flag>
+								<border>6</border>
+								<object class="wxCheckBox" name="ExportDialogExportLightsAsObjects">
+									<label>Export Lights as Objects (small octahedrons)</label>
+									<checked>0</checked>
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">

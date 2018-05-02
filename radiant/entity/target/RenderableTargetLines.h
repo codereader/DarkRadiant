@@ -39,8 +39,10 @@ public:
         return !_targetKeys.empty();
     }
 
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Vector3& worldPosition) {
-		if (_targetKeys.empty()) {
+	void render(const ShaderPtr& shader, RenderableCollector& collector, const VolumeTest& volume, const Vector3& worldPosition)
+	{
+		if (_targetKeys.empty())
+		{
 			return;
 		}
 
@@ -66,7 +68,7 @@ public:
 		// If we hold any objects now, add us as renderable
 		if (!empty())
         {
-			collector.addRenderable(*this, Matrix4::getIdentity());
+			collector.addRenderable(shader, *this, Matrix4::getIdentity());
 		}
 	}
 

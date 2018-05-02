@@ -14,7 +14,7 @@ namespace model {
 // Constructor. Copy the provided picoSurface_t structure into this object
 RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 											 const std::string& fExt)
-: _shaderName(""),
+: _defaultMaterial(""),
   _dlRegular(0),
   _dlProgramVcol(0),
   _dlProgramNoVCol(0)
@@ -29,27 +29,27 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	{
 		if (fExt == "lwo")
 		{
-			_shaderName = PicoGetShaderName(shader);
+			_defaultMaterial = PicoGetShaderName(shader);
 		}
 		else if (fExt == "ase")
 		{
 			rawName = PicoGetShaderName(shader);
 			std::string rawMapName = PicoGetShaderMapName(shader);
-			_shaderName = cleanupShaderName(rawMapName);
+			_defaultMaterial = cleanupShaderName(rawMapName);
 		}
         else // if extension is not handled explicitly, use at least something
         {
-            _shaderName = PicoGetShaderName(shader);
+            _defaultMaterial = PicoGetShaderName(shader);
         }
 	}
 
 	// If shader not found, fallback to alternative if available
-	// _shaderName is empty if the ase material has no BITMAP
-	// materialIsValid is false if _shaderName is not an existing shader
-	if ((_shaderName.empty() || !GlobalMaterialManager().materialExists(_shaderName)) &&
+	// _defaultMaterial is empty if the ase material has no BITMAP
+	// materialIsValid is false if _defaultMaterial is not an existing shader
+	if ((_defaultMaterial.empty() || !GlobalMaterialManager().materialExists(_defaultMaterial)) &&
 		!rawName.empty())
 	{
-		_shaderName = cleanupShaderName(rawName);
+		_defaultMaterial = cleanupShaderName(rawName);
 	}
 
 	// Capturing the shader happens later on when we have a RenderSystem reference
@@ -95,7 +95,7 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 }
 
 RenderablePicoSurface::RenderablePicoSurface(const RenderablePicoSurface& other) :
-	_shaderName(other._shaderName),
+	_defaultMaterial(other._defaultMaterial),
 	_vertices(other._vertices),
 	_indices(other._indices),
 	_nIndices(other._nIndices),
@@ -192,17 +192,6 @@ void RenderablePicoSurface::calculateTangents() {
 		j->tangent.normalise();
 		j->bitangent.normalise();
 	}
-}
-
-// Front-end renderable submission
-void RenderablePicoSurface::submitRenderables(RenderableCollector& rend,
-											  const Matrix4& localToWorld,
-											  const ShaderPtr& shader,
-											  const IRenderEntity& entity)
-{
-	// Submit geometry
-	rend.SetState(shader, RenderableCollector::eFullMaterials);
-    rend.addRenderable(*this, localToWorld, entity);
 }
 
 // Back-end render function
@@ -354,14 +343,34 @@ ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
 	return poly;
 }
 
+const std::vector<ArbitraryMeshVertex>& RenderablePicoSurface::getVertexArray() const
+{
+	return _vertices;
+}
+
+const std::vector<unsigned int>& RenderablePicoSurface::getIndexArray() const
+{
+	return _indices;
+}
+
 const std::string& RenderablePicoSurface::getDefaultMaterial() const
 {
-	return _shaderName;
+	return _defaultMaterial;
 }
 
 void RenderablePicoSurface::setDefaultMaterial(const std::string& defaultMaterial)
 {
-	_shaderName = defaultMaterial;
+	_defaultMaterial = defaultMaterial;
+}
+
+const std::string& RenderablePicoSurface::getActiveMaterial() const
+{
+	return _activeMaterial;
+}
+
+void RenderablePicoSurface::setActiveMaterial(const std::string& activeMaterial)
+{
+	_activeMaterial = activeMaterial;
 }
 
 bool RenderablePicoSurface::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)

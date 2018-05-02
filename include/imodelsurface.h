@@ -25,7 +25,7 @@ public:
 	virtual int getNumTriangles() const = 0;
 
 	// Get a specific vertex of this surface
-	virtual const ArbitraryMeshVertex& getVertex(int vertexIndex) const = 0;
+	virtual const ArbitraryMeshVertex& getVertex(int vertexNum) const = 0;
 
 	/**
 	 * greebo: Returns a specific polygon from this model surface.
@@ -33,13 +33,35 @@ public:
 	 * This is merely to provide read access to the model polygons
 	 * for scripts and plugins.
 	 */
-	virtual ModelPolygon getPolygon(int polygonIndex) const = 0;
+	virtual ModelPolygon getPolygon(int polygonNum) const = 0;
 
 	/**
 	 * Get the name of the default material for this surface, i.e.
 	 * the name of the material without any skin applied.
 	 */
 	virtual const std::string& getDefaultMaterial() const = 0;
+
+	/**
+	 * Return the name of the currently assigned material,
+	 * respecting the applied skin.
+	 */
+	virtual const std::string& getActiveMaterial() const = 0;
+};
+
+/**
+ * Model surface supporting direct access to its vertex and index arrays
+ * which define the polygons. Model surfaces in DarkRadiant are loaded by
+ * the PicoModel library which generates clockwise polygon windings.
+ */
+class IIndexedModelSurface :
+	public IModelSurface
+{
+public:
+	// Const access to the vertices used in this surface.
+	virtual const std::vector<ArbitraryMeshVertex>& getVertexArray() const = 0;
+
+	// Const access to the index array connecting the vertices.
+	virtual const std::vector<unsigned int>& getIndexArray() const = 0;
 };
 
 } // namespace

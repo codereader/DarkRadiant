@@ -673,7 +673,7 @@ void CamWnd::Cam_Draw()
         CamRenderer renderer(allowedRenderFlags, _primitiveHighlightShader,
                              _faceHighlightShader, _view.getViewer());
 
-		render::RenderableCollectionWalker::collectRenderablesInScene(renderer, _view);
+		render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
 
 		// Render any active mousetools
 		for (const ActiveMouseTools::value_type& i : _activeMouseTools)

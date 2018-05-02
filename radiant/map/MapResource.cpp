@@ -540,21 +540,29 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	fs::path auxFile = outFile;
 	auxFile.replace_extension(_infoFileExt);
 
-	// Check writeability of the output files
+	// Check writeability of the primary output file
 	if (!checkIsWriteable(outFile)) return false;
-	if (!checkIsWriteable(auxFile)) return false;
 
 	// Test opening the output file
-	rMessage() << "Opening file " << outFile.string() << " ";
-	
-	// Open the stream to the output file
-	std::ofstream outFileStream(outFile.string().c_str());
+	rMessage() << "Opening file " << outFile.string();
 
-	rMessage() << "and auxiliary file " << auxFile.string() << " for writing...";
+	// Open the stream to the primary output file
+	std::unique_ptr<std::ofstream> outFileStream(new std::ofstream(outFile.string()));
+	std::unique_ptr<std::ofstream> auxFileStream; // aux stream is optional
 
-	std::ofstream auxFileStream(auxFile.string().c_str());
+	// Check writeability of the auxiliary output file if necessary
+	if (format.allowInfoFileCreation())
+	{
+		if (!checkIsWriteable(auxFile)) return false;
 
-	if (outFileStream.is_open() && auxFileStream.is_open())
+		rMessage() << " and auxiliary file " << auxFile.string();
+
+		auxFileStream.reset(new std::ofstream(auxFile.string()));
+	}
+
+	rMessage() << " for writing... ";
+
+	if (outFileStream->is_open() && (!auxFileStream || auxFileStream->is_open()))
 	{
 		rMessage() << "success" << std::endl;
 
@@ -573,11 +581,11 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 		
 		if (format.allowInfoFileCreation())
 		{
-			exporter.reset(new MapExporter(*mapWriter, root, outFileStream, auxFileStream, counter.getCount()));
+			exporter.reset(new MapExporter(*mapWriter, root, *outFileStream, *auxFileStream, counter.getCount()));
 		}
 		else
 		{
-			exporter.reset(new MapExporter(*mapWriter, root, outFileStream, counter.getCount())); // no aux stream
+			exporter.reset(new MapExporter(*mapWriter, root, *outFileStream, counter.getCount())); // no aux stream
 		}
 
 		bool cancelled = false;
@@ -596,16 +604,18 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 
 		exporter.reset();
 
-		outFileStream.close();
-		auxFileStream.close();
+		outFileStream->close();
+
+		if (auxFileStream)
+		{
+			auxFileStream->close();
+		}
 
 		return !cancelled;
 	}
 	else
 	{
-		wxutil::Messagebox::ShowError(
-			_("Could not open output streams for writing")
-		);
+		wxutil::Messagebox::ShowError(_("Could not open output streams for writing"));
 
 		rError() << "failure" << std::endl;
 		return false;

@@ -30,9 +30,6 @@
 namespace selection
 {
 
-// Initialise the shader pointer
-ShaderPtr RadiantSelectionSystem::_state;
-
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
@@ -789,7 +786,6 @@ const Matrix4& RadiantSelectionSystem::getPivot2World()
 
 void RadiantSelectionSystem::captureShaders()
 {
-    _state = GlobalRenderSystem().capture("$POINT");
     TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
     TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
     RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
@@ -800,7 +796,6 @@ void RadiantSelectionSystem::captureShaders()
 
 void RadiantSelectionSystem::releaseShaders()
 {
-    _state.reset();
     TranslateManipulator::_stateWire.reset();
     TranslateManipulator::_stateFill.reset();
 	RotateManipulator::_stateOuter.reset();
@@ -824,9 +819,6 @@ void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const V
 	{
         collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
         collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-
-        collector.SetState(_state, RenderableCollector::eWireframeOnly);
-        collector.SetState(_state, RenderableCollector::eFullMaterials);
 
 		_activeManipulator->render(collector, volume);
     }

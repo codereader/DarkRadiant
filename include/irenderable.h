@@ -36,64 +36,41 @@ public:
 	virtual ~RenderableCollector() {}
 
 	/**
-	 * Enumeration containing render styles.
-	 */
-	enum EStyle {
-		eWireframeOnly,
-		eFullMaterials
-	};
-
-	/**
-	 * Push a Shader onto the internal shader stack. This is an OpenGL-style
-	 * push, which does not accept an argument but duplicates the topmost
-	 * stack value. The new value should be set with SetState().
-	 */
-	virtual void PushState() = 0;
-
-	/**
-	 * Pop the topmost Shader off the internal stack. This discards the value
-	 * without returning it.
-	 */
-	virtual void PopState() = 0;
-
-	/**
-	 * Set the Shader to be used when rendering any subsequently-submitted
-	 * OpenGLRenderable object. This shader remains in effect until it is
-	 * changed with a subsequent call to SetState().
-	 *
-	 * @param state
-	 * The Shader to be used from now on.
-	 *
-	 * @param mode
-	 * The type of rendering (wireframe or shaded) that this shader should be
-    * used for. Individual RenderableCollector subclasses may ignore this method
-    * call if it does not use the render mode they are interested in.
-	 */
-	virtual void SetState(const ShaderPtr& state, EStyle mode) = 0;
-
-	/**
-	 * Submit an OpenGLRenderable object for rendering when the backend render
-	 * pass is conducted. The object will be rendered using the Shader previous-
-	 * ly set with SetState().
-	 *
-	 * @param renderable
-	 * The renderable object to submit.
-	 *
-	 * @param world
-	 * The local to world transform that should be applied to this object when
-	 * it is rendered.
-	 */
-	virtual void addRenderable(const OpenGLRenderable& renderable,
+	* Submit an OpenGLRenderable object for rendering using the given shader.
+	*
+	* @param shader
+	* The Shader object this Renderable will be attached to.
+	*
+	* @param renderable
+	* The renderable object to submit.
+	*
+	* @param world
+	* The local to world transform that should be applied to this object when
+	* it is rendered.
+	*/
+	virtual void addRenderable(const ShaderPtr& shader,
+							   const OpenGLRenderable& renderable,
 							   const Matrix4& world) = 0;
 
 	/**
-	 * Like addRenderable() above but providing an additional IRenderEntity argument
-	 * needed to evaluate the shader expressions right before rendering.
-	 */
-	virtual void addRenderable(const OpenGLRenderable& renderable,
-							   const Matrix4& world,
+	* Like addRenderable() above but providing an additional IRenderEntity argument
+	* needed to evaluate the shader expressions right before rendering.
+	*/
+	virtual void addRenderable(const ShaderPtr& shader, 
+							   const OpenGLRenderable& renderable,
+							   const Matrix4& world, 
 							   const IRenderEntity& entity) = 0;
 
+
+	/**
+	* Like addRenderable() but with additional LightList containing the RendererLights
+	* intersecting with this object. This should be handled differently.
+	*/
+	virtual void addRenderable(const ShaderPtr& shader,
+							   const OpenGLRenderable& renderable,
+							   const Matrix4& world,
+							   const IRenderEntity& entity,
+							   const LightList& lights) = 0;
 
     /**
      * \brief
@@ -118,15 +95,6 @@ public:
 	};
 
 	virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) = 0;
-
-  	/**
-  	 * Set the list of lights to be used for lighting-mode rendering. This
-    * method only makes sense for RenderableCollectors that support this
-    * rendering mode.
-  	 *
-  	 * TODO: Use std::shared_ptr<> here.
-  	 */
-    virtual void setLights(const LightList& lights) { }
 };
 
 class VolumeTest;

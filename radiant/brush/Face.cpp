@@ -224,12 +224,16 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
     }
 }
 
-void Face::submitRenderables(RenderableCollector& collector,
-                             const Matrix4& localToWorld,
-                             const IRenderEntity& entity) const
+void Face::renderSolid(RenderableCollector& collector, const Matrix4& localToWorld,
+	const IRenderEntity& entity, const LightList& lights) const
 {
-    collector.SetState(_shader.getGLShader(), RenderableCollector::eFullMaterials);
-    collector.addRenderable(m_winding, localToWorld, entity);
+	collector.addRenderable(_shader.getGLShader(), m_winding, localToWorld, entity, lights);
+}
+
+void Face::renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
+	const IRenderEntity& entity) const
+{
+	collector.addRenderable(entity.getWireShader(), m_winding, localToWorld, entity);
 }
 
 void Face::setRenderSystem(const RenderSystemPtr& renderSystem)

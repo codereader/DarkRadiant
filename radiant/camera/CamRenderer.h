@@ -7,23 +7,21 @@
 class CamRenderer : 
 	public RenderableCollector
 {
+private:
     // Data class storing state on the stack
 	struct State
 	{
         bool highlightFaces;
         bool highlightPrimitives;
-		Shader* shader; // raw pointer for speed
-		const LightList* lights;
 
-		State() : highlightFaces(false),
-                  highlightPrimitives(false),
-                  shader(NULL),
-                  lights(NULL) 
+		State() : 
+			highlightFaces(false),
+			highlightPrimitives(false)
         {}
 	};
 
-    // Stack of states
-    std::vector<State> _stateStack;
+    // Highlight state
+    State _state;
 
     RenderStateFlags m_globalstate;
     ShaderPtr _highlightedPrimitiveShader;
@@ -47,14 +45,12 @@ public:
     void render(const Matrix4& modelview, const Matrix4& projection);
 
     // RenderableCollector implementation
-    void SetState(const ShaderPtr& shader, EStyle style) override;
     bool supportsFullMaterials() const override;
-    void PushState() override;
-    void PopState() override;
 	void setHighlightFlag(Highlight::Flags flags, bool enabled) override;
-    void setLights(const LightList& lights) override;
-    void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world) override;
-	void addRenderable(const OpenGLRenderable& renderable,
-                       const Matrix4& world,
-                       const IRenderEntity& entity) override;
+
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override;
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+		const Matrix4& world, const IRenderEntity& entity) override;
+	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+		const Matrix4& world, const IRenderEntity& entity, const LightList& lights) override;
 };

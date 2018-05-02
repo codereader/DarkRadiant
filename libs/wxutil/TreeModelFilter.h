@@ -10,13 +10,22 @@ namespace wxutil
  * TreeModel instance to filter its data and return only
  * those items that are matching the given criteria.
  *
- * Once a TreeModelFilter is constructede it will increase
+ * Pass a boolean-valued TreeModel::Column to the constructor to 
+ * use that as the simplest filter criterion.
+ *
+ * If a single column value check is not enough for your needs,
+ * use the SetVisibleFunc() method to pass a custom function
+ * object which is then used to evaluate item visibility.
+ * The custom visible functor will aoverride the filter column
+ * passed to the constructor.
+ *
+ * Once a TreeModelFilter is constructed it will increase
  * the refcount of the underlying TreeModel. When the 
  * TreeModelFilter is destroyed, the reference count of the 
  * child TreeModel is decreased as well, so it's safe to 
  * transfer the ownership of the child model to this filter.
  *
- * Upon constructor, the root node of the child model will be shared
+ * Upon construction, the root node of the child model will be shared
  * by this instance, all settable properties like "hasDefaultCompare" 
  * will be copied over, but can be changed independently for this instance.
  *

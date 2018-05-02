@@ -152,6 +152,7 @@ public:
 	// Adds the given set of polygons to the named surface
 	// The given transform is applied to the surface before the vertices are added to the queue.
 	// Note: Scaling components of the matrix are not treated separately here.
+	// Note 2: Polygons are expected to have their vertices defined counter-clockwise
 	virtual void addPolygons(const std::string& materialName, 
 		const std::vector<ModelPolygon>& polys, const Matrix4& localToWorld) = 0;
 

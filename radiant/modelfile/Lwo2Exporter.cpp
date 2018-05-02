@@ -208,6 +208,10 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		stream::writeBigEndian<float>(colr->stream, 1.0f);
 		stream::writeVariableIndex(colr->stream, 0);
 
+		// Smoothing angle
+		Lwo2Chunk::Ptr sman = surf->addSubChunk("SMAN");
+		stream::writeBigEndian<float>(sman->stream, static_cast<float>(degrees_to_radians(95.0f))); // 95 degrees smoothing angle
+
 		// Define the BLOK subchunk
 		Lwo2Chunk::Ptr blok = surf->addSubChunk("BLOK");
 

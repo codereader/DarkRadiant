@@ -21,59 +21,37 @@ namespace render
 class RenderableCollectionWalker :
     public scene::Graph::Walker
 {
+private:
     // The collector which is sorting our renderables
     RenderableCollector& _collector;
 
     // The view we're using for culling
     const VolumeTest& _volume;
 
-private:
-
     // Construct with RenderableCollector to receive renderables
-    RenderableCollectionWalker(RenderableCollector& collector,
-                               const VolumeTest& volume)
-    : _collector(collector), _volume(volume)
+    RenderableCollectionWalker(RenderableCollector& collector, const VolumeTest& volume) : 
+		_collector(collector), 
+		_volume(volume)
     {}
 
-    void render(const Renderable& renderable) const
-    {
-        if (_collector.supportsFullMaterials())
-            renderable.renderSolid(_collector, _volume);
-        else
-            renderable.renderWireframe(_collector, _volume);
-    }
-
-    RenderableCallback getRenderableCallback()
-    {
-        return std::bind(&RenderableCollectionWalker::render, this, std::placeholders::_1);
-    }
-
 public:
+	void dispatchRenderable(const Renderable& renderable)
+	{
+		if (_collector.supportsFullMaterials())
+		{
+			renderable.renderSolid(_collector, _volume);
+		}
+		else
+		{
+			renderable.renderWireframe(_collector, _volume);
+		}
+	}
 
     // scene::Graph::Walker implementation
     bool visit(const scene::INodePtr& node)
     {
-        _collector.PushState();
-
-        // greebo: Fix for primitive nodes: as we don't traverse the scenegraph
-        // nodes top-down anymore, we need to set the shader state of our
-        // parent entity ourselves.  Otherwise we're in for NULL-states when
-        // rendering worldspawn brushes.
+        // greebo: Highlighting propagates to child nodes
         scene::INodePtr parent = node->getParent();
-
-        Entity* entity = Node_getEntity(parent);
-
-        if (entity != NULL)
-        {
-            const IRenderEntity* renderEntity = node->getRenderEntity();
-
-            assert(renderEntity);
-
-            if (renderEntity)
-            {
-                _collector.SetState(renderEntity->getWireShader(), RenderableCollector::eWireframeOnly);
-            }
-        }
 
         node->viewChanged();
 
@@ -92,6 +70,7 @@ public:
             }
             else
             {
+				_collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
                 node->renderComponents(_collector, _volume);
             }
 
@@ -102,11 +81,19 @@ public:
 			{
 				_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, true);
 			}
+			else
+			{
+				_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, false);
+			}
         }
+		else
+		{
+			_collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+			_collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+			_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, false);
+		}
 
-        render(*node);
-
-        _collector.PopState();
+		dispatchRenderable(*node);
 
         return true;
     }
@@ -116,19 +103,21 @@ public:
      * Use a RenderableCollectionWalker to find all renderables in the global
      * scenegraph.
      */
-    static void collectRenderablesInScene(RenderableCollector& collector,
-                                          const VolumeTest& volume)
+    static void CollectRenderablesInScene(RenderableCollector& collector, const VolumeTest& volume)
     {
         // Instantiate a new walker class
         RenderableCollectionWalker renderHighlightWalker(collector, volume);
 
         // Submit renderables from scene graph
-        GlobalSceneGraph().foreachVisibleNodeInVolume(volume,
-                                                      renderHighlightWalker);
+        GlobalSceneGraph().foreachVisibleNodeInVolume(volume, renderHighlightWalker);
 
-        // Submit renderables directly attached to the ShaderCache
+        // Submit any renderables that have been directly attached to the RenderSystem
+		// without belonging to an actual scene object
         RenderableCollectionWalker walker(collector, volume);
-        GlobalRenderSystem().forEachRenderable(walker.getRenderableCallback());
+		GlobalRenderSystem().forEachRenderable([&](const Renderable& renderable)
+		{
+			walker.dispatchRenderable(renderable);
+		});
     }
 };
 

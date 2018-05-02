@@ -20,7 +20,7 @@ namespace md5
 class MD5Skeleton;
 
 class MD5Surface :
-	public model::IModelSurface,
+	public model::IIndexedModelSurface,
 	public OpenGLRenderable
 {
 public:
@@ -30,8 +30,11 @@ public:
 private:
 	AABB _aabb_local;
 
-	// Shader name
+	// Default shader name
 	std::string _originalShaderName;
+
+	// The name of the currently active material (afer skin application)
+	std::string _activeMaterial;
 
 	// The mesh definition - will be baked into renderable vertex arrays
 	// Several MD5Surfaces can share the same mesh
@@ -96,9 +99,6 @@ public:
 
 	const AABB& localAABB() const;
 
-	void render(RenderableCollector& collector, const Matrix4& localToWorld, 
-				const ShaderPtr& shader, const IRenderEntity& entity) const;
-
 	// Test for selection
 	void testSelect(Selector& selector,
 					SelectionTest& test,
@@ -107,14 +107,17 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
 
 	// IModelSurface implementation
-	int getNumVertices() const;
-	int getNumTriangles() const;
+	int getNumVertices() const override;
+	int getNumTriangles() const override;
 
-	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
-	model::ModelPolygon getPolygon(int polygonIndex) const;
+	const ArbitraryMeshVertex& getVertex(int vertexIndex) const override;
+	model::ModelPolygon getPolygon(int polygonIndex) const override;
 
-	const std::string& getDefaultMaterial() const;
-	const std::string& getActiveMaterial() const;
+	const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
+	const std::vector<unsigned int>& getIndexArray() const override;
+
+	const std::string& getDefaultMaterial() const override;
+	const std::string& getActiveMaterial() const override;
 	void setActiveMaterial(const std::string& activeMaterial);
 
 	void parseFromTokens(parser::DefTokeniser& tok);

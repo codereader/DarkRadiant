@@ -25,11 +25,14 @@ namespace model
  */
 
 class RenderablePicoSurface :
-	public IModelSurface,
+	public IIndexedModelSurface,
 	public OpenGLRenderable
 {
-	// Name of the material this surface is using
-	std::string _shaderName;
+	// Name of the material this surface is using by default (without any skins)
+	std::string _defaultMaterial;
+
+	// Name of the material with skin remaps applied
+	std::string _activeMaterial;
 
 	// Vector of ArbitraryMeshVertex structures, containing the coordinates,
 	// normals, tangents and texture coordinates of the component vertices
@@ -85,24 +88,6 @@ public:
 	~RenderablePicoSurface();
 
 	/**
-	 * Front-end render function used by the main renderer.
-	 *
-	 * @param rend
-	 * The sorting RenderableCollector object which accepts renderable geometry.
-	 *
-	 * @param localToWorld
-	 * Object to world-space transform.
-	 *
-	 * @param shader
-	 * The shader to submit ourselves as renderable
-	 *
-	 * @param entity
-	 * The entity this object is attached to.
-	 */
-	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld,
-						   const ShaderPtr& shader, const IRenderEntity& entity);
-
-	/**
 	 * Render function from OpenGLRenderable
 	 */
 	void render(const RenderInfo& info) const;
@@ -121,14 +106,20 @@ public:
 					const Matrix4& localToWorld) const;
 
 	// IModelSurface implementation
-	int getNumVertices() const;
-	int getNumTriangles() const;
+	int getNumVertices() const override;
+	int getNumTriangles() const override;
 
-	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
-	ModelPolygon getPolygon(int polygonIndex) const;
+	const ArbitraryMeshVertex& getVertex(int vertexIndex) const override;
+	ModelPolygon getPolygon(int polygonIndex) const override;
 
-	const std::string& getDefaultMaterial() const;
+	const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
+	const std::vector<unsigned int>& getIndexArray() const override;
+
+	const std::string& getDefaultMaterial() const override;
 	void setDefaultMaterial(const std::string& defaultMaterial);
+
+	const std::string& getActiveMaterial() const override;
+	void setActiveMaterial(const std::string& activeMaterial);
 
 	// Returns true if the given ray intersects this surface geometry and fills in
 	// the exact point in the given Vector3, returns false if no intersection was found.

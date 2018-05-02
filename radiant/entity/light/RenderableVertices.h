@@ -65,7 +65,12 @@ public:
 
 	    // Draw the center point
 	    glBegin(GL_POINTS);
-	    glColor3dv(_colour);
+
+		if (info.checkFlag(RENDER_POINT_COLOUR))
+		{
+			glColor3dv(_colour);
+		}
+
 	    glVertex3dv(centreWorld);
 	    glEnd();
 	}

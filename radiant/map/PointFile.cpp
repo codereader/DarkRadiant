@@ -70,9 +70,7 @@ void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 {
 	if (isVisible())
 	{
-		collector.SetState(_renderstate, RenderableCollector::eWireframeOnly);
-		collector.SetState(_renderstate, RenderableCollector::eFullMaterials);
-		collector.addRenderable(_points, Matrix4::getIdentity());
+		collector.addRenderable(_renderstate, _points, Matrix4::getIdentity());
 	}
 }
 

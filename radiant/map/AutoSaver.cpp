@@ -247,7 +247,8 @@ void AutoMapSaver::checkSave()
 	}
 
 	// Check, if changes have been made since the last autosave
-    if (_changes == GlobalSceneGraph().root()->getUndoChangeTracker().changes())
+    if (!GlobalSceneGraph().root() ||
+		_changes == GlobalSceneGraph().root()->getUndoChangeTracker().changes())
 	{
 		return;
 	}

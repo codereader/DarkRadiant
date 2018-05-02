@@ -88,23 +88,21 @@ const AABB& Doom3Group::localAABB() const {
 void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
 	const Matrix4& localToWorld, bool selected) const
 {
-	if (selected) {
+	if (selected) 
+	{
 		m_renderOrigin.render(collector, volume, localToWorld);
 	}
-
-	collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
-	collector.SetState(_owner.getWireShader(), RenderableCollector::eFullMaterials);
 
 	if (!m_curveNURBS.isEmpty())
 	{
 		// Always render curves relative to map origin
-		m_curveNURBS.renderSolid(collector, volume, Matrix4::getIdentity());
+		m_curveNURBS.submitRenderables(_owner.getWireShader(), collector, volume, Matrix4::getIdentity());
 	}
 
 	if (!m_curveCatmullRom.isEmpty())
 	{
 		// Always render curves relative to map origin
-		m_curveCatmullRom.renderSolid(collector, volume, Matrix4::getIdentity());
+		m_curveCatmullRom.submitRenderables(_owner.getWireShader(), collector, volume, Matrix4::getIdentity());
 	}
 }
 

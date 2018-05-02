@@ -37,10 +37,7 @@ void TargetLineNode::renderWireframe(RenderableCollector& collector, const Volum
     // If the owner is hidden, the lines are hidden too
     if (!_targetLines.hasTargets() || !_owner.visible()) return;
 
-    collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
-	collector.SetState(_owner.getWireShader(), RenderableCollector::eFullMaterials);
-
-	_targetLines.render(collector, volume, getOwnerPosition());
+	_targetLines.render(_owner.getWireShader(), collector, volume, getOwnerPosition());
 }
 
 std::size_t TargetLineNode::getHighlightFlags()

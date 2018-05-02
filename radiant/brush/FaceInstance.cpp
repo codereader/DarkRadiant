@@ -162,42 +162,38 @@ bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& loca
 	return m_face->intersectVolume(volume, localToWorld);
 }
 
-// Submit renderable geometry
-void FaceInstance::submitRenderables(RenderableCollector& collector,
-                                     const VolumeTest& volume,
-									 const IRenderEntity& entity) const
+void FaceInstance::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
+	const IRenderEntity& entity) const
 {
 	if (m_face->intersectVolume(volume))
 	{
-		collector.PushState();
+		bool highlight = selectedComponents();
 
-		if (selectedComponents())
+		if (highlight)
 		{
 			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 		}
 
-		m_face->submitRenderables(collector, Matrix4::getIdentity(), entity);
-		collector.PopState();
+		m_face->renderSolid(collector, Matrix4::getIdentity(), entity, m_lights);
+
+		if (highlight)
+		{
+			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+		}
 	}
 }
 
-// Submit renderable geometry (with transform)
-void FaceInstance::submitRenderables(RenderableCollector& collector,
-                                     const VolumeTest& volume,
-                                     const Matrix4& localToWorld,
-									 const IRenderEntity& entity) const
+void FaceInstance::renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
+	const IRenderEntity& entity) const
 {
-	if (m_face->intersectVolume(volume, localToWorld))
+	if (m_face->intersectVolume(volume))
 	{
-		collector.PushState();
-
 		if (selectedComponents())
 		{
 			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 		}
 
-		m_face->submitRenderables(collector, localToWorld, entity);
-		collector.PopState();
+		m_face->renderWireframe(collector, Matrix4::getIdentity(), entity);
 	}
 }
 

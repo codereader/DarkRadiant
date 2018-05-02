@@ -223,15 +223,6 @@ const AABB& MD5Surface::localAABB() const {
 	return _aabb_local;
 }
 
-void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, 
-						const ShaderPtr& shader, const IRenderEntity& entity) const
-{
-	assert(shader); // shader must be captured at this point
-
-	collector.SetState(shader, RenderableCollector::eFullMaterials);
-	collector.addRenderable(*this, localToWorld, entity);
-}
-
 int MD5Surface::getNumVertices() const
 {
 	return static_cast<int>(_vertices.size());
@@ -261,9 +252,29 @@ model::ModelPolygon MD5Surface::getPolygon(int polygonIndex) const
 	return poly;
 }
 
+const std::vector<ArbitraryMeshVertex>& MD5Surface::getVertexArray() const
+{
+	return _vertices;
+}
+
+const std::vector<unsigned int>& MD5Surface::getIndexArray() const
+{
+	return _indices;
+}
+
 const std::string& MD5Surface::getDefaultMaterial() const
 {
 	return _originalShaderName;
+}
+
+const std::string& MD5Surface::getActiveMaterial() const
+{
+	return _activeMaterial;
+}
+
+void MD5Surface::setActiveMaterial(const std::string& activeMaterial)
+{
+	_activeMaterial = activeMaterial;
 }
 
 void MD5Surface::updateToDefaultPose(const MD5Joints& joints)

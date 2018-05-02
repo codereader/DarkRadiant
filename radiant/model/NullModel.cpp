@@ -23,15 +23,13 @@ const AABB& NullModel::localAABB() const {
 void NullModel::renderSolid(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	collector.SetState(_state, RenderableCollector::eFullMaterials);
-	collector.addRenderable(_aabbSolid, localToWorld);
+	collector.addRenderable(_state, _aabbSolid, localToWorld);
 }
 
 void NullModel::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	collector.SetState(_state, RenderableCollector::eWireframeOnly);
-	collector.addRenderable(_aabbWire, localToWorld);
+	collector.addRenderable(_state, _aabbWire, localToWorld);
 }
 
 void NullModel::setRenderSystem(const RenderSystemPtr& renderSystem)

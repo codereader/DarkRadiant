@@ -29,10 +29,10 @@ private:
 	{
 		// The MD5 mesh
 		MD5SurfacePtr surface;
-
+#if 0
 		// The name of the material with skin applied
 		std::string activeMaterial;
-
+#endif
 		// Mapped shader
 		ShaderPtr shader;
 

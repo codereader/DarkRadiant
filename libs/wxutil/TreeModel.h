@@ -294,6 +294,11 @@ public:
 		{
 			_model.ItemChanged(_item);
 		}
+
+		void SendItemDeleted()
+		{
+			_model.ItemDeleted(_model.GetParent(_item), _item);
+		}
 	};
 
 	// Visit function

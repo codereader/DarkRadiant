@@ -103,13 +103,11 @@ public:
 	bool intersectVolume(const VolumeTest& volume) const;
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-    /**
-     * \brief
-     * Submit renderable geometry to a RenderableCollector.
-     */
-	void submitRenderables(RenderableCollector& collector,
-                           const Matrix4& localToWorld,
-						   const IRenderEntity& entity) const;
+	// Frontend render methods for submitting the face winding
+	void renderSolid(RenderableCollector& collector, const Matrix4& localToWorld,
+		const IRenderEntity& entity, const LightList& lights) const;
+	void renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
+		const IRenderEntity& entity) const;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 

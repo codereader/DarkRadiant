@@ -28,6 +28,9 @@ private:
 	Vector3 _origin;
 	bool _useOriginAsCenter;
 
+	// Whether lights should be exported too (as small diamond-shaped objects)
+	bool _exportLightsAsObjects;
+
 	std::list<scene::INodePtr> _nodes;
 
 	// The translation centering the objects
@@ -45,6 +48,9 @@ public:
 
 	// Define the origin to use for centering the objects
 	void setOrigin(const Vector3& origin);
+
+	// Set whether lights should be exported too (as small diamond-shaped objects)
+	void setExportLightsAsObjects(bool enabled);
 
 	bool pre(const scene::INodePtr& node) override;
 
@@ -73,6 +79,7 @@ private:
 
 	void processBrush(const scene::INodePtr& node);
 	void processPatch(const scene::INodePtr& node);
+	void processLight(const scene::INodePtr& node);
 };
 
 }

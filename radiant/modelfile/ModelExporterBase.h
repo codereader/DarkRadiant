@@ -31,7 +31,56 @@ public:
 	// Adds the given Surface to the exporter's queue
 	void addSurface(const IModelSurface& incoming, const Matrix4& localToWorld) override
 	{
-		Surface& surface = ensureSurface(incoming.getDefaultMaterial());
+		Surface& surface = ensureSurface(incoming.getActiveMaterial());
+
+		Matrix4 invTranspTransform = localToWorld.getFullInverse().getTransposed();
+
+		try
+		{
+			const IIndexedModelSurface& indexedSurf = dynamic_cast<const IIndexedModelSurface&>(incoming);
+
+			// Cast succeeded, load the vertices and indices directly into here
+			unsigned int indexStart = static_cast<unsigned int>(surface.vertices.size());
+			
+			const auto& vertices = indexedSurf.getVertexArray();
+			const auto& indices = indexedSurf.getIndexArray();
+
+			if (indices.size() < 3)
+			{
+				// Reject this index buffer
+				rError() << "Rejecting model surface with less than 3 indices." << std::endl;
+				return;
+			}
+
+			// Transform vertices before inserting them
+			for (const auto& meshVertex : vertices)
+			{
+				// Copy-construct based on the incoming meshVertex, transform the vertex.
+				// Transform the normal using the inverse transpose
+				// We discard the tangent and bitangent vectors here, none of the exporters is using them.
+				surface.vertices.emplace_back(
+					localToWorld.transformPoint(meshVertex.vertex),
+					invTranspTransform.transformPoint(meshVertex.normal).getNormalised(),
+					meshVertex.texcoord);
+			}
+			
+			surface.indices.reserve(surface.indices.size() + indices.size());
+
+			// Incoming polygons are defined in clockwise windings, so reverse the indices
+			// as the exporter code expects them to be counter-clockwise.
+			for (std::size_t i = 0; i < indices.size() - 2; i += 3)
+			{
+				surface.indices.push_back(indices[i + 2] + indexStart);
+				surface.indices.push_back(indices[i + 1] + indexStart);
+				surface.indices.push_back(indices[i + 0] + indexStart);
+			}
+
+			return;
+		}
+		catch (std::bad_cast&)
+		{
+			// Not an indexed surface, fall through
+		}
 
 		// Pull in all the triangles of that mesh
 		for (int i = 0; i < incoming.getNumTriangles(); ++i)
@@ -43,6 +92,11 @@ public:
 			poly.a.vertex = localToWorld.transformPoint(poly.a.vertex);
 			poly.b.vertex = localToWorld.transformPoint(poly.b.vertex);
 			poly.c.vertex = localToWorld.transformPoint(poly.c.vertex);
+
+			// Transform the normal using the inverse transpose
+			poly.a.normal = invTranspTransform.transformPoint(poly.a.normal).getNormalised();
+			poly.b.normal = invTranspTransform.transformPoint(poly.b.normal).getNormalised();
+			poly.c.normal = invTranspTransform.transformPoint(poly.c.normal).getNormalised();
 
 			surface.vertices.push_back(poly.a);
 			surface.vertices.push_back(poly.b);

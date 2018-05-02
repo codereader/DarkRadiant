@@ -17,6 +17,7 @@ struct ModelExportOptions
 	bool centerObjects;				// whether to center objects
 	bool replaceSelectionWithModel;	// delete the selection and put the exported model in its place
 	bool useEntityOrigin;			// use entity origin as model origin (only applicable if a single entity is selected)
+	bool exportLightsAsObjects;		// will export lights as small octahedrons
 };
 
 /**

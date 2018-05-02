@@ -55,6 +55,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
 	exporter.setCenterObjects(options.centerObjects);
 	exporter.setSkipCaulkMaterial(options.skipCaulk);
+	exporter.setExportLightsAsObjects(options.exportLightsAsObjects);
 
 	if (options.useEntityOrigin)
 	{

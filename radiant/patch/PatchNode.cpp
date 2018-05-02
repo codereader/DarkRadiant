@@ -283,12 +283,11 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
-	collector.setLights(*m_lightList);
 
 	assert(_renderEntity); // patches rendered without parent - no way!
 
 	// Pass the call to the patch instance, it adds the renderable
-	m_patch.render_solid(collector, volume, localToWorld(), *_renderEntity);
+	m_patch.renderSolid(collector, volume, localToWorld(), *_renderEntity, *m_lightList);
 
 	// Render the selected components
 	renderComponentsSelected(collector, volume);
@@ -302,7 +301,7 @@ void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
 	// Pass the call to the patch instance, it adds the renderable
-	m_patch.render_wireframe(collector, volume, localToWorld());
+	m_patch.renderWireframe(collector, volume, localToWorld(), *_renderEntity);
 
 	// Render the selected components
 	renderComponentsSelected(collector, volume);
@@ -370,9 +369,7 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	if (!m_render_selected.empty())
     {
 		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
-		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eFullMaterials);
-		collector.addRenderable(m_render_selected, localToWorld());
+		collector.addRenderable(m_state_selpoint, m_render_selected, localToWorld());
 	}
 }
 
