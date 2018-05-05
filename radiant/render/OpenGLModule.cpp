@@ -73,8 +73,8 @@ void OpenGLModule::sharedContextCreated()
 	// Initialise the font before firing the extension initialised signal
 	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 12));
 
+	// This call will automatically realise the render system
 	GlobalRenderSystem().extensionsInitialised();
-	GlobalRenderSystem().realise();
 }
 
 void OpenGLModule::sharedContextDestroyed()

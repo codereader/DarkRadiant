@@ -403,6 +403,13 @@ void OpenGLRenderSystem::extensionsInitialised()
 		}
 	}
 
+	// Now that GL extensions are done, we can realise our shaders
+	// This was previously done explicitly by the OpenGLModule after the
+	// shared context was created. But we need realised shaders before
+	// we can fire off the "extensions initialised" signal, map loading
+	// code might rely on materials being constructed.
+	realise();
+
 	// Notify all our observers
 	_sigExtensionsInitialised();
 }
