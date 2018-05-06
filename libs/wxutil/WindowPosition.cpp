@@ -20,7 +20,7 @@ namespace wxutil
 WindowPosition::WindowPosition() :
 	_position(DEFAULT_POSITION_X, DEFAULT_POSITION_Y),
 	_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y),
-	_window(NULL)
+	_window(nullptr)
 {}
 
 void WindowPosition::initialise(wxTopLevelWindow* window, 
@@ -47,7 +47,7 @@ void WindowPosition::initialise(wxTopLevelWindow* window,
 // Connect the passed window to this object
 void WindowPosition::connect(wxTopLevelWindow* window)
 {
-	if (_window != NULL)
+	if (_window != nullptr)
 	{
 		disconnect(_window);
 	}
@@ -55,16 +55,16 @@ void WindowPosition::connect(wxTopLevelWindow* window)
 	_window = window;
 	applyPosition();
 
-	window->Connect(wxEVT_SIZE, wxSizeEventHandler(WindowPosition::onResize), NULL, this);
-	window->Connect(wxEVT_MOVE, wxMoveEventHandler(WindowPosition::onMove), NULL, this);
+	window->Connect(wxEVT_SIZE, wxSizeEventHandler(WindowPosition::onResize), nullptr, this);
+	window->Connect(wxEVT_MOVE, wxMoveEventHandler(WindowPosition::onMove), nullptr, this);
 }
 
 void WindowPosition::disconnect(wxTopLevelWindow* window)
 {
-	_window = NULL;
+	_window = nullptr;
 
-	window->Disconnect(wxEVT_SIZE, wxSizeEventHandler(WindowPosition::onResize), NULL, this);
-	window->Disconnect(wxEVT_MOVE, wxMoveEventHandler(WindowPosition::onMove), NULL, this);
+	window->Disconnect(wxEVT_SIZE, wxSizeEventHandler(WindowPosition::onResize), nullptr, this);
+	window->Disconnect(wxEVT_MOVE, wxMoveEventHandler(WindowPosition::onMove), nullptr, this);
 }
 
 const WindowPosition::Position& WindowPosition::getPosition() const
@@ -106,20 +106,23 @@ void WindowPosition::loadFromPath(const std::string& path)
 	_size[1] = string::convert<int>(GlobalRegistry().getAttribute(path, "height"));
 }
 
-// Applies the internally stored size/position info to the GtkWindow
-// The algorithm was adapted from original GtkRadiant code (window.h)
 void WindowPosition::applyPosition()
 {
 	if (_window == NULL) return;
 
-	// TODO: What about multi-monitor setups with overlapping windows?
-	wxDisplay display(wxDisplay::GetFromWindow(_window));
+	// On multi-monitor setups, wxWidgets offers a virtual big screen with
+	// coordinates going from 0,0 to whatever lower-rightmost point there is
 
-	// Sanity check of the window position
-	if (_position[0] < 0 || _position[1] < 0 ||
-		_position[0] > display.GetGeometry().GetWidth() ||
-		_position[1] > display.GetGeometry().GetHeight())
+	// Sanity check the window position
+	wxRect targetPos = wxRect(_position[0], _position[1], _size[0], _size[1]);
+	
+	const int TOL = 30;
+
+	// Employ a few pixels tolerance to allow for placement very near the borders
+	if (wxDisplay::GetFromPoint(targetPos.GetTopLeft() + wxPoint(TOL, TOL)) == wxNOT_FOUND ||
+		wxDisplay::GetFromPoint(targetPos.GetBottomRight() - wxPoint(TOL, TOL)) == wxNOT_FOUND)
 	{
+		// Window probably ends up invisible, refuse these coords
 		_window->CenterOnParent();
 	}
 	else
@@ -142,7 +145,7 @@ void WindowPosition::readPosition()
 
 void WindowPosition::fitToScreen(float xfraction, float yfraction)
 {
-	if (_window == NULL) return;
+	if (_window == nullptr) return;
 
 	wxDisplay display(wxDisplay::GetFromWindow(_window));
 
