@@ -356,11 +356,16 @@ void TreeView::_onSearch(SearchEvent& ev)
 		EnsureVisible(_curSearchMatch);
 
 		// Synthesise a selection changed signal
+		// In wxWidgets 3.1.x the wxDataViewEvent constructors have changed, switch on it
+#if wxCHECK_VERSION(3, 1, 0)
+		wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, this, _curSearchMatch);
+#else
 		wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, GetId());
 
 		le.SetEventObject(this);
 		le.SetModel(GetModel());
 		le.SetItem(_curSearchMatch);
+#endif
 
 		ProcessWindowEvent(le);
 	}
