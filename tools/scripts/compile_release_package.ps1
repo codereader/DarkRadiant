@@ -39,7 +39,7 @@ $target = $args[0]
 Write-Host ("Compiling for target: {0}" -f $target)
 
 $versionRegex = "AppVerName=DarkRadiant (.*) $target"
-$portableFilenameTemplate = "darkradiant-{0}-$target.7z"
+$portableFilenameTemplate = "darkradiant-{0}-$target.portable.7z"
 $pdbFilenameTemplate = "darkradiant-{0}-$target.pdb.7z"
 
 if ($target -eq "x86")
