@@ -1,6 +1,10 @@
 # DarkRadiant
 
-DarkRadiant is a level (map) editor for the **The Dark Mod**, an open-source Doom 3 modification which is available at www.thedarkmod.com
+DarkRadiant is a level (map) editor for the **The Dark Mod**, an open-source Doom 3 modification which is available at www.thedarkmod.com. It's primary use is creating missions for The Dark Mod as well as maps for idTech4-based games like Doom 3, Quake 4 and Prey.
+
+## Download
+
+Get the latest DarkRadiant binaries from the [releases page](https://github.com/codereader/DarkRadiant/releases/latest). We have binaries for Windows and macOS, plus [compilation instructions](http://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compiling_in_Linux) for various Linux distributions.
 
 # Getting started
 
@@ -76,7 +80,7 @@ The available configure options are listed with `./configure --help`. There are
 options for debug builds, and enabling or disabling various optional components
 such as audio support and the Dark Mod-specific plugins (`--enable-darkmod-plugins`).
 
-# Compiling on OS X
+# Compiling on macOS
 
 ## Prerequisites
 
@@ -109,7 +113,7 @@ http://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compilation_Guide
 
 # Contact / Discussion
 
-DarkRadiant Website: http://www.darkradiant.net
+DarkRadiant Website: https://www.darkradiant.net
 
 All discussion is ongoing primarily at [The Dark Mod Forums](http://forums.thedarkmod.com/forum/51-darkradiant-feedback-and-development/), where you can get in touch with knowledgeable people 
 and discuss changes or issues. If you happen to run into a bug, you're encouraged to report it to us, especially when running into
