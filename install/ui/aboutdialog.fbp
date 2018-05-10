@@ -380,7 +380,7 @@
                                         <property name="gripper">0</property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="label">http://www.darkradiant.net/&#x0A;&#x0A;This product contains software technology&#x0A;from id Software, Inc. (&apos;id Technology&apos;).&#x0A;id Technology 2000 id Software,Inc.&#x0A;DarkRadiant is originally based &#x0A;on the GPL version of GtkRadiant.&#x0A;&#x0A;The Dark Mod (www.thedarkmod.com)</property>
+                                        <property name="label">https://www.darkradiant.net/&#x0A;&#x0A;This product contains software technology&#x0A;from id Software, Inc. (&apos;id Technology&apos;).&#x0A;id Technology 2000 id Software,Inc.&#x0A;DarkRadiant is originally based &#x0A;on the GPL version of GtkRadiant.&#x0A;&#x0A;The Dark Mod (www.thedarkmod.com)</property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
                                         <property name="maximum_size"></property>
