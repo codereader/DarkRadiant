@@ -531,7 +531,7 @@ const bool XDataLoader::recursiveImport( const std::string& sourceDef, const Str
 				{
 					//Syntaxerror!
 					std::string errMSG = "[XData::import] Error in definition: " + defName
-						+ ". Found an import-statement, but an sytax-error occured in the definition "
+						+ ". Found an import-statement, but an sytax-error occurred in the definition "
 						+ sourceDef + ", in sourcefile " + it->second[k] + ".\n";
 					if ( (FileCount > 1) && (k+1 < FileCount) )
 						errMSG += "\tThe referenced definition has been found in multiple files. Trying next file...\n";
@@ -552,7 +552,7 @@ const bool XDataLoader::recursiveImport( const std::string& sourceDef, const Str
 				if (!getImportParameters(ImpTok, ImpStmts, ImpSrcDef, defName))
 				{
 					std::string errMSG = "[XData::import] Error in definition: " + defName
-						+ ". Found an import-statement, but an sytax-error occured in the definition "
+						+ ". Found an import-statement, but an sytax-error occurred in the definition "
 						+ sourceDef + ", in sourcefile " + it->second[k] + ".\n";
 					if ( (FileCount > 1) && (k < FileCount-1) )
 						errMSG += "\tThe referenced definition has been found in multiple files. Trying next file...\n";
