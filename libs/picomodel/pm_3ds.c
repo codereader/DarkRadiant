@@ -301,7 +301,7 @@ static int GetMeshVertices (T3dsLoaderPers *pers)
 		printf("Vertex: x: %f y: %f z: %f\n",v[0],v[1],v[2]);
 #endif
 	}
-	/* success (no errors occured) */
+	/* success (no errors occurred) */
 	return 1;
 }
 
@@ -337,7 +337,7 @@ static int GetMeshFaces (T3dsLoaderPers *pers)
 		printf("Face: a: %d b: %d c: %d (%d)\n",face.a,face.b,face.c,face.visible);
 #endif
 	}
-	/* success (no errors occured) */
+	/* success (no errors occurred) */
 	return 1;
 }
 
@@ -370,7 +370,7 @@ static int GetMeshTexCoords (T3dsLoaderPers *pers)
 		printf("u: %f v: %f\n",uv[0],uv[1]);
 #endif
 	}
-	/* success (no errors occured) */
+	/* success (no errors occurred) */
 	return 1;
 }
 
@@ -467,7 +467,7 @@ static int GetMeshShader (T3dsLoaderPers *pers)
 	{
 		GetWord(pers);
 	}
-	/* success (no errors occured) */
+	/* success (no errors occurred) */
 	return 1;
 }
 
@@ -492,7 +492,7 @@ static int GetDiffuseColor (T3dsLoaderPers *pers)
 #ifdef DEBUG_PM_3DS
 	printf("GetDiffuseColor: %d %d %d\n",color[0],color[1],color[2]);
 #endif
-	/* success (no errors occured) */
+	/* success (no errors occurred) */
 	return 1;
 }
 
