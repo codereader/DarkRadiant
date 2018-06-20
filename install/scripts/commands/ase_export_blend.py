@@ -121,7 +121,7 @@ def execute():
     def processBlendBrush(brushnode):
         #ab = AABB(brushnode)
         origin = brushnode.getFace(0).getWinding()[0].vertex
-        ab = AABB(origin,origin-origin)
+        ab = dr.AABB(origin,origin-origin)
         numfaces = brushnode.getNumFaces()
         for index in range(numfaces):
             facenode = brushnode.getFace(index)
