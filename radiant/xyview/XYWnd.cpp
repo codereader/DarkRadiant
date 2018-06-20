@@ -117,6 +117,12 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
     _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 
 	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 

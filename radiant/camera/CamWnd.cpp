@@ -170,6 +170,12 @@ CamWnd::CamWnd(wxWindow* parent) :
     _wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
     _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
     _wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
 
     // Now add the handlers for the non-freelook mode, the events are activated by this
     addHandlersMove();
