@@ -1,0 +1,29 @@
+= DarkRadiant
+:toc:
+
+== Introduction
+
+DarkRadiant is a level editor for Doom 3 and The Dark Mod. It creates `.map`
+files which are loaded by the game at runtime, and compiled into processed
+geometry (`.proc` files) using the game engine's integrated `dmap` tool.
+DarkRadiant does not include any game assets itself, but makes use of a game
+installation elsewhere on the system.
+
+== File types
+
+There are three main types of files encountered when building levels with DarkRadiant.
+
+`.map`:: The map file contains all of the brushes, patches and entities
+contained within the map. It is loaded and saved by DarkRadiant, and loaded by
+the game engine itself.
+
+`.proc`:: The proc file contains compiled geometry which the game engine's
+`dmap` tool generates from the brushes and patches in the `map` file. The proc
+file cannot be loaded or saved by DarkRadiant, and is used only by the game
+engine.
+
+`.darkradiant`:: This is an extra file used by DarkRadiant itself to store extra
+editing-related information that cannot easily be represented in the `map` file
+(whose format is tightly determined by the game engine). A `.darkradiant` file
+is not used by the game itself, and is not critical for editing, however without
+the `.darkradiant` file certain features (such as object groups) may be lost.
