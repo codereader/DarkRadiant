@@ -349,6 +349,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  Makefile
                  radiant/Makefile
                  install/i18n/Makefile.in
+                 doc/Makefile
                  libs/Makefile
                  libs/wxutil/Makefile
                  libs/math/Makefile
