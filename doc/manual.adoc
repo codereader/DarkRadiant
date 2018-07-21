@@ -1,5 +1,6 @@
 = DarkRadiant
 :toc:
+:imagesdir: img
 
 == Introduction
 
@@ -27,3 +28,44 @@ editing-related information that cannot easily be represented in the `map` file
 (whose format is tightly determined by the game engine). A `.darkradiant` file
 is not used by the game itself, and is not critical for editing, however without
 the `.darkradiant` file certain features (such as object groups) may be lost.
+
+== First time setup
+
+When running DarkRadiant for the first time, the *Game Setup* dialog will be
+shown. This is where you configure the path to the game installation from which
+DarkRadiant will load assets, such as textures, models and entity definitions.
+
+image::GameSetupDialog.png[align="center"]
+
+The *Game Setup* dialog allows configuration of the following options:
+
+*Game Type*:: DarkRadiant ships with support for several different game engines,
+ each of which is contained within a `.game` file. For editing Dark Mod
+ missions, the default choice of `The Dark Mod 2.0 (Standalone)` is the one to
+ use, but it is also possible to edit stock Doom 3 or Quake 4 missions.
+
+*DarkMod Path* / *Engine Path*:: This is the path to the game installation on
+ the system. The label text will change depending on whether the selected game
+ is `The Dark Mod` or another engine.
+
+*Mission*:: Optional path to a subdirectory containing assets specific to a
+ particular mission which is being worked on. For game types other than `The
+ Dark Mod`, this will be displayed as *Mod (fs_game)*, and should be set to the
+ path of a subdirectory containing a particular game mod, if one is being used.
+
+*Mod Base (fs_game_base)*:: This field only appears for non-DarkMod game types.
+ It allows a two-level mod structure, where the *Mod Base* can point to a major
+ game mod, possibly downloaded from elsewhere, while *Mod* can be set to point
+ to an entirely local "sub-mod" which contains local changes and overrides.
+ Before the release of Dark Mod standalone, this field would have been set to
+ `darkmod` while the *Mod* field would have been set to the local mission,
+ however this is no longer necessary when `The Dark Mod 2.0 (Standalone)` is
+ being used.
+
+Once the game paths are set up, click the *Save* button to proceed to the main
+DarkRadiant interface.
+
+NOTE: It is possible to *Cancel* the *Game Setup* dialog and proceed to the main
+window without configuring a game installation, in which case DarkRadiant will
+show a warning and ask if you wish to proceed. If you do, DarkRadiant will run
+but there will be no available textures, models, entities or other game assets.

@@ -5,3 +5,6 @@ SUFFIXES = .adoc .html
 
 docdir = $(pkgdatadir)/doc
 doc_DATA = manual.html
+
+docimgdir = $(docdir)/img
+dist_docimg_DATA = img/*.png
