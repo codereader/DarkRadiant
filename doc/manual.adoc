@@ -1,4 +1,4 @@
-= DarkRadiant
+= DarkRadiant User Guide
 :toc:
 :imagesdir: img
 
@@ -29,7 +29,9 @@ editing-related information that cannot easily be represented in the `map` file
 is not used by the game itself, and is not critical for editing, however without
 the `.darkradiant` file certain features (such as object groups) may be lost.
 
-== First time setup
+== Initial configuration
+
+=== Choosing a game type
 
 When running DarkRadiant for the first time, the *Game Setup* dialog will be
 shown. This is where you configure the path to the game installation from which
@@ -69,3 +71,35 @@ NOTE: It is possible to *Cancel* the *Game Setup* dialog and proceed to the main
 window without configuring a game installation, in which case DarkRadiant will
 show a warning and ask if you wish to proceed. If you do, DarkRadiant will run
 but there will be no available textures, models, entities or other game assets.
+
+=== Interface layout
+
+DarkRadiant ships with a number of different user interface layouts, which
+control the position, visibility and window type of the major interface
+elements. The current layout can be changed from the `View -> Window Layout`
+menu, and will require DarkRadiant to be restarted.
+
+There is currently no support for custom layouts, however all of the provided
+layouts allow window sizes and splitter positions to be changed, and the changes
+will persist through multiple editing sessions.
+
+*Embedded*:: A large 2D window is shown on the right, while the left-hand side
+ is divided vertically into the 3D camera window and a tab widget containing the
+ main editing panels. There are no floating subwindows in this layout.
+
+*Regular*:: A legacy GtkRadiant layout which places the 2D window on the left,
+ the 3D camera view on the top right, and a 2D scrolling textures panel on the
+ bottom right. Other tabs in the editing panel are shown in a floating window.
+
+*RegularLeft*:: The same as *Regular* except the full-height 2D window is on the
+ right and the 3D window and texture panels are on the left.
+
+*Floating*:: The 2D window, 3D window and editing tab widget are all shown in
+ separate floating windows which always appear above the main DarkRadiant
+ window. The main window itself is empty apart from the toolbars and status bar.
+ This is the most flexible layout, since each subwindow can be sized or
+ positioned as desired, but the multiple subwindows may be cumbersome to manage.
+
+*SplitPane*:: Three separate 2D windows, showing each of the major axes, are
+ shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
+ modelling applications. The editing tab widget is in a floating window.
