@@ -1,7 +1,7 @@
 SUFFIXES = .adoc .html
 
 .adoc.html:
-	asciidoctor $^
+	asciidoctor -a stylesheet=manual.css $^
 
 docdir = $(pkgdatadir)/doc
 doc_DATA = manual.html
