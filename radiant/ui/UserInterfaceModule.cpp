@@ -15,6 +15,7 @@
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
+#include "ui/Documentation.h"
 #include "log/Console.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/patch/PatchInspector.h"
@@ -133,6 +134,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("FindReplaceTextures", FindAndReplaceShader::ShowDialog);
 	GlobalCommandSystem().addCommand("ShowCommandList", CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
+	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
 	GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
@@ -161,6 +163,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
 	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
 	GlobalEventManager().addCommand("About", "About");
+	GlobalEventManager().addCommand("ShowUserGuide", "ShowUserGuide");
 	GlobalEventManager().addCommand("ExportSelectedAsModelDialog", "ExportSelectedAsModelDialog");
 	GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
 	GlobalEventManager().addCommand("EntityList", "EntityList");
