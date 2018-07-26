@@ -10,7 +10,30 @@ geometry (`.proc` files) using the game engine's integrated `dmap` tool.
 DarkRadiant does not include any game assets itself, but makes use of a game
 installation elsewhere on the system.
 
-== File types
+=== Editing workflow
+
+image::DarkRadiantWorkflow.png[align="center"]
+
+The level editing process starts off with basic assets: models, textures,
+sounds, entity definitions, skins, animations and so on. Many of these assets
+will be packaged with a particular game installation, but a level designer may
+also choose to create custom assets for a specific mission. These assets are
+installed into a directory tree which is accessible both by DarkRadiant (for
+editing) and the game engine itself (for playing the mission).
+
+Once assets have been arranged in DarkRadiant according to the wishes of the
+level designer, a `.map` file is saved to disk. This is a text file in a format
+understood by the game engine, and includes both level geometry and references
+to the assets used in the map. Since the `.map` file is simply text, and does
+not actually embed the binary asset data, it tends to be fairly small.
+
+The game engine includes functionality to _compile_ the `.map` file into a
+`.proc` file containing low-level vertex geometry derived from the brushes and
+patches within the `.map` file. The game engine can then render the mission in
+realtime, making use of the same assets that were accessed by DarkRadiant during
+editing.
+
+=== File types
 
 There are three main types of files encountered when building levels with DarkRadiant.
 
