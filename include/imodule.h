@@ -107,6 +107,9 @@ public:
 	 */
 	virtual std::string getBitmapsPath() const = 0;
 
+    /// Return the path to HTML documentation files
+    virtual std::string getHTMLPath() const = 0;
+
 	/**
      * \brief
      * Return the list of command line arguments.

@@ -2,6 +2,7 @@ libsdir = $(top_srcdir)/libs
 AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
               -DLOCALEDIR='"$(localedir)"' \
+              -DHTMLDIR='"$(htmldir)"' \
               -I$(top_srcdir)/include \
               -I$(libsdir) \
               $(LIBSIGC_CFLAGS) \

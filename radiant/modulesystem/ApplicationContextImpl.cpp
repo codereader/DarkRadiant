@@ -68,6 +68,20 @@ std::string ApplicationContextImpl::getRuntimeDataPath() const
 #endif
 }
 
+std::string ApplicationContextImpl::getHTMLPath() const
+{
+#if defined(POSIX)
+#if defined(HTMLDIR) && !defined(ENABLE_RELOCATION)
+    return std::string(HTMLDIR) + "/";
+#else
+    return _appPath + "../share/doc/darkradiant/";
+#endif
+#else
+    // TODO: implement correct path for macOS and Windows
+    return getRuntimeDataPath();
+#endif
+}
+
 std::string ApplicationContextImpl::getSettingsPath() const
 {
 	return _settingsPath;
