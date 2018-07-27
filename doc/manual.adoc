@@ -4,11 +4,25 @@
 
 == Introduction
 
-DarkRadiant is a level editor for Doom 3 and The Dark Mod. It creates `.map`
-files which are loaded by the game at runtime, and compiled into processed
-geometry (`.proc` files) using the game engine's integrated `dmap` tool.
-DarkRadiant does not include any game assets itself, but makes use of a game
-installation elsewhere on the system.
+DarkRadiant is a level editor for Doom 3 and The Dark Mod, developed by The Dark
+Mod team. It may also be used for editing levels for similar *id Software* games
+such as Quake 4.
+
+This User Guide describes the features and functionality of DarkRadiant, however
+it is not intended as a guide to mapping techniques. Level design is a complex
+topic, and is covered by various other learning resources, some of which are
+listed below.
+
+http://wiki.thedarkmod.com/index.php?title=Main_Page[The Dark Mod Wiki]:: The
+starting point for most Dark Mod documentation and tutorials, including
+gameplay, configuration and editing.
+
+https://modwiki.xnet.fi[ModWiki]:: Online wiki covering editing topics for
+vanilla Doom 3 and similar engines.
+
+http://forums.thedarkmod.com[The Dark Mod forums]:: Online community for
+discussion of the Dark Mod, including various ad-hoc mapping tutorial threads
+posted by individual users.
 
 === Editing workflow
 
