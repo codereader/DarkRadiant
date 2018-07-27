@@ -113,3 +113,17 @@ will persist through multiple editing sessions.
 *SplitPane*:: Three separate 2D windows, showing each of the major axes, are
  shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
  modelling applications. The editing tab widget is in a floating window.
+
+== Basic editing
+
+=== Navigating the 2D view
+
+The game world is a three-dimensional vector space with a central origin,
+rendered in the 2D editing window as a grid. The unit of measurement is an
+arbitrary game unit which does not directly correspond to any real-world
+measurement system -- in The Dark Mod, a typical human stands around 80 - 90
+game units high. Each 2D window shows which axes it is representing with an icon
+in the top-left corner, as well as an identical icon at the `<0,0,0>` origin
+position, if visible within the view.
+
+image::2DViewMarkedUp.png[align="center"]
