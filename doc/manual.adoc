@@ -127,3 +127,18 @@ in the top-left corner, as well as an identical icon at the `<0,0,0>` origin
 position, if visible within the view.
 
 image::2DViewMarkedUp.png[align="center"]
+
+The 2D view also shows the current position of the camera (used for rendering
+the separate 3D camera view window), and its view direction.
+
+The following commands are available within the 2D view:
+
+[horizontal]
+*Right-drag*:: Scroll the view horizontally or vertically (relative to the
+ window).
+*Mouse wheel*:: Zoom the view
+*Shift-right-drag*:: Zoom the view (alternative binding)
+*Ctrl-middle-click*:: Move the camera directly to the clicked position
+*Middle-click*:: Rotate the camera to look directly at the clicked point
+*Ctrl-TAB*:: Change view axis (XY, XZ, YZ)
+*Ctrl-Shift-TAB*:: Center 2D view on current camera position
