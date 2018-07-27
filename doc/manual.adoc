@@ -1,5 +1,5 @@
 = DarkRadiant User Guide
-:toc:
+:toc: left
 :imagesdir: img
 
 == Introduction
@@ -33,24 +33,11 @@ patches within the `.map` file. The game engine can then render the mission in
 realtime, making use of the same assets that were accessed by DarkRadiant during
 editing.
 
-=== File types
-
-There are three main types of files encountered when building levels with DarkRadiant.
-
-`.map`:: The map file contains all of the brushes, patches and entities
-contained within the map. It is loaded and saved by DarkRadiant, and loaded by
-the game engine itself.
-
-`.proc`:: The proc file contains compiled geometry which the game engine's
-`dmap` tool generates from the brushes and patches in the `map` file. The proc
-file cannot be loaded or saved by DarkRadiant, and is used only by the game
-engine.
-
-`.darkradiant`:: This is an extra file used by DarkRadiant itself to store extra
-editing-related information that cannot easily be represented in the `map` file
-(whose format is tightly determined by the game engine). A `.darkradiant` file
-is not used by the game itself, and is not critical for editing, however without
-the `.darkradiant` file certain features (such as object groups) may be lost.
+DarkRadiant also maintains its own separate file containing various editing
+information, such as object layers used within a map. This `.darkradiant` file
+is never used by the game engine, and is non-critical --- a `.map` file with no
+accompanying `.darkradiant` file can still be edited with DarkRadiant, although
+certain DarkRadiant-specific state may be lost.
 
 == Initial configuration
 
