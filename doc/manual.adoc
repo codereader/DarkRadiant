@@ -1,6 +1,8 @@
 = DarkRadiant User Guide
 :toc: left
 :imagesdir: img
+:icons:
+:iconsdir: img
 
 == Introduction
 
@@ -49,7 +51,7 @@ editing.
 
 DarkRadiant also maintains its own separate file containing various editing
 information, such as object layers used within a map. This `.darkradiant` file
-is never used by the game engine, and is non-critical --- a `.map` file with no
+is never used by the game engine, and is non-critical -- a `.map` file with no
 accompanying `.darkradiant` file can still be edited with DarkRadiant, although
 certain DarkRadiant-specific state may be lost.
 
@@ -136,9 +138,11 @@ The game world is a three-dimensional vector space with a central origin,
 rendered in the 2D editing window as a grid. The unit of measurement is an
 arbitrary game unit which does not directly correspond to any real-world
 measurement system -- in The Dark Mod, a typical human stands around 80 - 90
-game units high. Each 2D window shows which axes it is representing with an icon
-in the top-left corner, as well as an identical icon at the `<0,0,0>` origin
-position, if visible within the view.
+game units high, making a game unit about 2 cm.
+
+Each 2D window shows which axes it is representing with an icon in the top-left
+corner, as well as an identical icon at the `<0,0,0>` origin position, if
+visible within the view.
 
 image::2DViewMarkedUp.png[align="center"]
 
@@ -147,12 +151,32 @@ the separate 3D camera view window), and its view direction.
 
 The following commands are available within the 2D view:
 
-[horizontal]
-*Right-drag*:: Scroll the view horizontally or vertically (relative to the
+[options="autowidth"]
+|===
+|*Right-drag*|Scroll the view horizontally or vertically (relative to the
  window).
-*Mouse wheel*:: Zoom the view
-*Shift-right-drag*:: Zoom the view (alternative binding)
-*Ctrl-middle-click*:: Move the camera directly to the clicked position
-*Middle-click*:: Rotate the camera to look directly at the clicked point
-*Ctrl-TAB*:: Change view axis (XY, XZ, YZ)
-*Ctrl-Shift-TAB*:: Center 2D view on current camera position
+|*Mouse wheel*|Zoom the view
+|*Shift-right-drag*|Zoom the view (alternative binding)
+|*Ctrl-middle-click*|Move the camera directly to the clicked position
+|*Middle-click*|Rotate the camera to look directly at the clicked point
+|*Ctrl-TAB*|Change view axis (XY, XZ, YZ)
+|*Ctrl-Shift-TAB*|Center 2D view on current camera position
+|===
+
+=== Adjusting the grid
+
+The grid shown in the 2D view is used to snap the position and size of brushes
+and patches, as well as the centerpoints of entities. The size of the grid can
+be configured, in powers of 2, from 0.125 up to 256, using the *1-9* keys on the
+main keyboard (not the numeric keypad), or the equivalent options in the *Grid*
+menu.
+
+The *0 key* on the main keyboard can be used to toggle the display of the grid.
+Note that objects will still be snapped to the grid even if the grid is not
+visible; this is purely a visual toggle.
+
+IMPORTANT: Level geometry built from brushes and patches should *always* be
+snapped to the grid to avoid problems such as rendering glitches and map leaks.
+Static meshes and animated AI can be positioned more freely, however grid
+snapping is a useful tool for ensuring that models are appropriately aligned
+with the level geometry.
