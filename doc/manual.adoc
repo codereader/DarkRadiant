@@ -55,6 +55,36 @@ is never used by the game engine, and is non-critical -- a `.map` file with no
 accompanying `.darkradiant` file can still be edited with DarkRadiant, although
 certain DarkRadiant-specific state may be lost.
 
+=== What's in a MAP?
+
+There are three main types of object contained within a `.map` file: entities,
+brushes and patches.
+
+*Entities* are the top-level objects in a map -- essentially, a map file is just a
+ list of entities. Every entity has an *entity class* which determines the type
+ of entity it is: static mesh, AI, sound emitter, particle emitter, light etc.
+ Entities also store a list of string key/value pairs, known as *spawnargs* or
+ *properties*. Some entities also contain brushes and patches as children.
+
+*Brushes* are convex solids used to define basic map geometry: walls, floors,
+ ceilings, steps and other medium to large items. Brushes are often rectangular
+ in shape, although a brush can actually have any number of faces provided that
+ it is convex (it is impossible to have a brush in an L or a U shape, for
+ example). Brushes are not smooth-shaded by the game engine, which generally
+ makes them unsuitable for representing curved surfaces.
+
+*Patches* are smooth one-sided surfaces used to represent curved objects such as
+ vaulted ceilings, pillars or cave interiors. A patch is defined by a number of
+ Bezier control points, and offers control over the level of detail used when
+ subdividing the patch into triangles for rendering: more triangles will produce
+ a smoother surface but may lower rendering performance.
+
+The entities, brushes and patches in a map are arranged in a hierarchy: not
+every entity has children, but every brush and patch must have an entity as a
+parent. Each map therefore starts with a single default entity called the
+*worldspawn*, which acts as the parent for new brushes and patches created in
+DarkRadiant.
+
 == Initial configuration
 
 === Choosing a game type
@@ -65,7 +95,7 @@ DarkRadiant will load assets, such as textures, models and entity definitions.
 
 image::GameSetupDialog.png[align="center"]
 
-The *Game Setup* dialog allows configuration of the following options:
+The *Game Setup* dialog contains the following options:
 
 *Game Type*:: DarkRadiant ships with support for several different game engines,
  each of which is contained within a `.game` file. For editing Dark Mod
@@ -151,16 +181,16 @@ the separate 3D camera view window), and its view direction.
 
 The following commands are available within the 2D view:
 
-[options="autowidth"]
+[cols="1,3"]
 |===
-|*Right-drag*|Scroll the view horizontally or vertically (relative to the
+|*Right drag*|Scroll the view horizontally or vertically (relative to the
  window).
 |*Mouse wheel*|Zoom the view
-|*Shift-right-drag*|Zoom the view (alternative binding)
-|*Ctrl-middle-click*|Move the camera directly to the clicked position
-|*Middle-click*|Rotate the camera to look directly at the clicked point
-|*Ctrl-TAB*|Change view axis (XY, XZ, YZ)
-|*Ctrl-Shift-TAB*|Center 2D view on current camera position
+|*Shift + Right drag*|Zoom the view (alternative binding)
+|*Ctrl + Middle click*|Move the camera directly to the clicked position
+|*Middle click*|Rotate the camera to look directly at the clicked point
+|*Ctrl + TAB*|Change view axis (XY, XZ, YZ)
+|*Ctrl + Shift + TAB*|Center 2D view on current camera position
 |===
 
 === Adjusting the grid
@@ -180,3 +210,22 @@ snapped to the grid to avoid problems such as rendering glitches and map leaks.
 Static meshes and animated AI can be positioned more freely, however grid
 snapping is a useful tool for ensuring that models are appropriately aligned
 with the level geometry.
+
+=== Manipulating objects
+
+Every object in a map can be selected and moved within the 2D view. Brushes and
+patches can also be resized.
+
+[cols="1,3"]
+|===
+|*Shift + Left click*|Select or deselect the object at the clicked position. Any
+  existing selected objects will remain selected. If the clicked position
+  overlaps more than one object, the closest one (according to the current 2D
+  view axis) will be affected.
+|*Alt + Shift + Left click*|Select the object at the clicked position, and
+  deselect any existing selected objects. If the clicked position overlaps more
+  than one object, each click will cycle through the overlapping objects.
+|*ESC*|Deselect all objects
+|*Left drag* _inside_ a selected object|Move the selected object
+|*Left drag* _outside_ a selected object|Resize the object (if available)
+|===
