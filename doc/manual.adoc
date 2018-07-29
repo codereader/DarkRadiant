@@ -229,3 +229,46 @@ patches can also be resized.
 |*Left drag* _inside_ a selected object|Move the selected object
 |*Left drag* _outside_ a selected object|Resize the object (if available)
 |===
+
+=== Working with brushes
+
+Brushes are the basic building blocks of all maps. Typically they are used for
+coarse-grained level geometry such as walls, ceiling and floors. Brushes also
+have a vital role in sealing a map from the void: even a map built entirely from
+patches and static meshes must still be surrounded by brushes in order to avoid
+leaking.
+
+[sidebar]
+.Additive versus subtractive geometry
+--
+If you are used to mapping for the legacy Thief games using Dromed or T3Edit,
+the system used by DarkRadiant may seem somewhat back-to-front. In previous
+games, the world starts out as an infinite solid, in which you "carve out" rooms
+using subtractive brushes. In DarkRadiant, the world starts out as an infinite
+void, and all brushes are solid. The space in which the mission happens must be
+fully enclosed by solid brushes, otherwise the map will "leak" and fail to
+compile.
+
+The need to deal with map leaks may at first seem like a burden, however the
+exclusive use of solid brushes frees the engine from needing to worry about
+"brush ordering", and allows an important performance optimisation: by "flood
+filling" the map interior, the map compiler can efficiently discard geometry
+that never needs to be rendered.
+--
+
+==== Creating a brush
+
+To create a simple rectangular brush, ensure that nothing is selected (*ESC*),
+then *Left drag* in the 2D view. A new brush will be created and sized according
+to the dragged area, with its dimensions snapped to the current grid level. To
+adjust the third dimension of the brush (perpendicular to the view direction),
+used *Ctrl + TAB* to switch the 2D view axis, and *Left drag* outside the brush
+boundary to adjust the size.
+
+TIP: Whenever you drag to create a new brush, the third dimension will match the
+size of the _most recently selected_ brush. This makes it easy to draw a series
+of brushes with the same height, such as when you need to create a series of
+floors or walls in succession. To match the height of an existing brush, simply
+select (*Shift + Left click*) and deselect it (*ESC*) before drawing the new
+brush.
+
