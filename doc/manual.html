@@ -442,6 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_creating_a_brush">Creating a brush</a></li>
 <li><a href="#_more_complex_brush_shapes">More complex brush shapes</a></li>
+<li><a href="#_creating_a_room">Creating a room</a></li>
 </ul>
 </li>
 </ul>
@@ -935,13 +936,44 @@ that brushes are always flat-shaded and are not generally a good substitute for
 spheres or cones created with patches or static meshes.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_creating_a_room">Creating a room</h4>
+<div class="paragraph">
+<p>Although it is not too difficult to create a hollow rectangular room by creating
+floor, ceiling and wall brushes manually, this is a common enough operation that
+DarkRadiant provides a couple of shortcuts. These options can be found on the
+vertical toolbar at the far left of the main window.</p>
+</div>
+<table class="tableblock frame-all grid-all">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoom.png" alt="CreateRoom" width="54"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Create Room</strong>
+</p><p class="tableblock">Create a room whose interior size matches the size of the currently-selected
+rectangular brush. The wall thickness will be equal to the current grid size.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/Hollow.png" alt="Hollow" width="54"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Hollow</strong>
+</p><p class="tableblock">Hollow out the selected brush, leaving the exterior dimensions the same. The
+wall thickness will be equal to the current grid size, but the wall brushes will
+overlap at the corners, rather than just touching each other as with <strong>Create
+Room</strong>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-01 21:14:20 BST
+Last updated 2018-08-01 21:45:05 BST
 </div>
 </div>
 </body>

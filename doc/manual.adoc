@@ -309,3 +309,26 @@ axis of rotation pointing upwards.
 While these shapes can be useful for certain architectural modelling, remember
 that brushes are always flat-shaded and are not generally a good substitute for
 spheres or cones created with patches or static meshes.
+
+==== Creating a room
+
+Although it is not too difficult to create a hollow rectangular room by creating
+floor, ceiling and wall brushes manually, this is a common enough operation that
+DarkRadiant provides a couple of shortcuts. These options can be found on the
+vertical toolbar at the far left of the main window.
+
+[%autowidth]
+|===
+|image:CreateRoom.png[width=54]|
+*Create Room*
+
+Create a room whose interior size matches the size of the currently-selected
+rectangular brush. The wall thickness will be equal to the current grid size.
+|image:Hollow.png[width=54]|
+*Hollow*
+
+Hollow out the selected brush, leaving the exterior dimensions the same. The
+wall thickness will be equal to the current grid size, but the wall brushes will
+overlap at the corners, rather than just touching each other as with *Create
+Room*.
+|===
