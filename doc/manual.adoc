@@ -285,14 +285,26 @@ more complex shapes. To create one of these shapes, first define a regular
 cuboid brush covering the volume you want the new shape to occupy, then choose
 the appropriate option from the *Brush* menu:
 
-*Prism*:: An n-sided approximation of a cylinder, with the axis of the cylinder
+[options="autowidth"]
+|===
+|image:6Prism.png[]|
+*Prism*
+
+An n-sided approximation of a cylinder, with the axis of the cylinder
  aligned with the current 2D view.
 
-*Cone*:: A tapered n-sided cone, which always points upwards regardless of the
- 2D view axis.
+|image:6Cone.png[]|
+*Cone*
 
-*Sphere*:: A rotationally symmetric n-sided approximation of a sphere, with the
- axis of rotation pointing upwards.
+A tapered n-sided cone, which always points upwards regardless of the
+2D view axis.
+
+|image:6Sphere.png[]|
+*Sphere*
+
+A rotationally symmetric n-sided approximation of a sphere, with the
+axis of rotation pointing upwards.
+|===
 
 While these shapes can be useful for certain architectural modelling, remember
 that brushes are always flat-shaded and are not generally a good substitute for
