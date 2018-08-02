@@ -436,6 +436,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_basic_editing">Basic editing</a>
 <ul class="sectlevel2">
 <li><a href="#_navigating_the_2d_view">Navigating the 2D view</a></li>
+<li><a href="#_using_the_3d_camera_view">Using the 3D camera view</a></li>
 <li><a href="#_adjusting_the_grid">Adjusting the grid</a></li>
 <li><a href="#_manipulating_objects">Manipulating objects</a></li>
 <li><a href="#_working_with_brushes">Working with brushes</a>
@@ -752,6 +753,60 @@ the separate 3D camera view window), and its view direction.</p>
 </table>
 </div>
 <div class="sect2">
+<h3 id="_using_the_3d_camera_view">Using the 3D camera view</h3>
+<div class="paragraph">
+<p>The 3D camera view provides an approximate rendering of the map in three
+dimensions, in several different render modes: wireframe, flat shaded, textured,
+and fully lit by in-game light sources. While the 2D view is the main interface
+for creating and aligning level geometry, the 3D view is a vital tool for tasks
+such as texturing, or configuring light parameters.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="img/important.png" alt="Important">
+</td>
+<td class="content">
+The fully lit rendering mode in DarkRadiant is very limited, and only
+offers a partial view of what the game engine will ultimately render. In
+particular, there are no shadows or foglights.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The 3D view always renders the scene from a particular vantage point, which is
+shown in the 2D view as a blue diamond. This camera position can be set directly
+from the 2D view with <strong>Ctrl + Middle click</strong>, and the camera view direction can
+be set with <strong>Middle click</strong>. There are also various options within the 3D view
+itself to adjust the camera position.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Right click</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enter or leave free camera mode. In this mode, moving the mouse
+around updates the camera view direction in real-time, and moving the mouse
+around while holding <strong>Ctrl</strong> causes the camera to move up/down/left/right
+according to the camera motion.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Left/Right arrow</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pan the camera left or right</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Up/Down arrow</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera forwards or backwards</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="_adjusting_the_grid">Adjusting the grid</h3>
 <div class="paragraph">
 <p>The grid shown in the 2D view is used to snap the position and size of brushes
@@ -761,7 +816,7 @@ main keyboard (not the numeric keypad), or the equivalent options in the <strong
 menu.</p>
 </div>
 <div class="paragraph">
-<p>The <strong>0 key</strong> on the main keyboard can be used to toggle the display of the grid.
+<p>The <strong>0</strong> key on the main keyboard can be used to toggle the display of the grid.
 Note that objects will still be snapped to the grid even if the grid is not
 visible; this is purely a visual toggle.</p>
 </div>
@@ -978,7 +1033,7 @@ is useful, so it is retained in DarkRadiant.</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-02 21:22:12 BST
+Last updated 2018-08-02 21:41:26 BST
 </div>
 </div>
 </body>
