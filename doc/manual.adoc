@@ -285,7 +285,7 @@ more complex shapes. To create one of these shapes, first define a regular
 cuboid brush covering the volume you want the new shape to occupy, then choose
 the appropriate option from the *Brush* menu:
 
-[options="autowidth"]
+[%autowidth]
 |===
 |image:6Prism.png[]|
 *Prism*
@@ -317,18 +317,25 @@ floor, ceiling and wall brushes manually, this is a common enough operation that
 DarkRadiant provides a couple of shortcuts. These options can be found on the
 vertical toolbar at the far left of the main window.
 
-[%autowidth]
+[cols="1,4"]
 |===
-|image:CreateRoom.png[width=54]|
-*Create Room*
+|image:CreateRoomBrush.png[width=320]|
+image:CreateRoom.png[width=36] *Create Room*
 
 Create a room whose interior size matches the size of the currently-selected
 rectangular brush. The wall thickness will be equal to the current grid size.
-|image:Hollow.png[width=54]|
-*Hollow*
+
+|image:HollowBrush.png[width=320]|
+image:Hollow.png[width=36] *Hollow*
 
 Hollow out the selected brush, leaving the exterior dimensions the same. The
 wall thickness will be equal to the current grid size, but the wall brushes will
 overlap at the corners, rather than just touching each other as with *Create
 Room*.
+
+This is legacy tool from GtkRadiant, and generally inferior to *Create Room*.
+The overlapping wall brushes make it more difficult to precisely align interior
+textures, since part of the inner face is obscured (and therefore removed during
+map compilation). However, there may be occasional situations in which *Hollow*
+is useful, so it is retained in DarkRadiant.
 |===

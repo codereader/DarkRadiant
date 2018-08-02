@@ -944,25 +944,30 @@ floor, ceiling and wall brushes manually, this is a common enough operation that
 DarkRadiant provides a couple of shortcuts. These options can be found on the
 vertical toolbar at the far left of the main window.</p>
 </div>
-<table class="tableblock frame-all grid-all">
+<table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col>
-<col>
+<col style="width: 20%;">
+<col style="width: 80%;">
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoom.png" alt="CreateRoom" width="54"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Create Room</strong>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoomBrush.png" alt="CreateRoomBrush" width="320"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoom.png" alt="CreateRoom" width="36"></span> <strong>Create Room</strong>
 </p><p class="tableblock">Create a room whose interior size matches the size of the currently-selected
 rectangular brush. The wall thickness will be equal to the current grid size.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/Hollow.png" alt="Hollow" width="54"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Hollow</strong>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/HollowBrush.png" alt="HollowBrush" width="320"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/Hollow.png" alt="Hollow" width="36"></span> <strong>Hollow</strong>
 </p><p class="tableblock">Hollow out the selected brush, leaving the exterior dimensions the same. The
 wall thickness will be equal to the current grid size, but the wall brushes will
 overlap at the corners, rather than just touching each other as with <strong>Create
-Room</strong>.</p></td>
+Room</strong>.
+</p><p class="tableblock">This is legacy tool from GtkRadiant, and generally inferior to <strong>Create Room</strong>.
+The overlapping wall brushes make it more difficult to precisely align interior
+textures, since part of the inner face is obscured (and therefore removed during
+map compilation). However, there may be occasional situations in which <strong>Hollow</strong>
+is useful, so it is retained in DarkRadiant.</p></td>
 </tr>
 </tbody>
 </table>
@@ -973,7 +978,7 @@ Room</strong>.</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-01 21:45:05 BST
+Last updated 2018-08-02 21:22:12 BST
 </div>
 </div>
 </body>
