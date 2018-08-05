@@ -303,7 +303,14 @@ td.hdlist1{font-weight:bold;padding-bottom:1.25em}
 .thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
 .imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
 .imageblock.right,.imageblock[style*="float: right"]{margin:.25em 0 1.25em .625em}
-.imageblock>.title{margin-bottom:0}
+
+.imageblock>.title
+{
+    font-family:"Open Sans",sans-serif;
+    margin-bottom:0;
+    text-align:center;
+}
+
 .imageblock.thumb,.imageblock.th{border-width:6px}
 .imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
 .image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
@@ -436,14 +443,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_basic_editing">Basic editing</a>
 <ul class="sectlevel2">
 <li><a href="#_navigating_the_2d_view">Navigating the 2D view</a></li>
-<li><a href="#_using_the_3d_camera_view">Using the 3D camera view</a></li>
 <li><a href="#_adjusting_the_grid">Adjusting the grid</a></li>
+<li><a href="#_using_the_3d_camera_view">Using the 3D camera view</a></li>
 <li><a href="#_manipulating_objects">Manipulating objects</a></li>
 <li><a href="#_working_with_brushes">Working with brushes</a>
 <ul class="sectlevel3">
 <li><a href="#_creating_a_brush">Creating a brush</a></li>
 <li><a href="#_more_complex_brush_shapes">More complex brush shapes</a></li>
 <li><a href="#_creating_a_room">Creating a room</a></li>
+<li><a href="#_splitting_brushes">Splitting brushes</a></li>
 </ul>
 </li>
 </ul>
@@ -707,6 +715,7 @@ visible within the view.</p>
 <div class="content">
 <img src="img/2DViewMarkedUp.png" alt="2DViewMarkedUp">
 </div>
+<div class="title">Figure 1. Components of the 2D view</div>
 </div>
 <div class="paragraph">
 <p>The 2D view also shows the current position of the camera (used for rendering
@@ -753,60 +762,6 @@ the separate 3D camera view window), and its view direction.</p>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_using_the_3d_camera_view">Using the 3D camera view</h3>
-<div class="paragraph">
-<p>The 3D camera view provides an approximate rendering of the map in three
-dimensions, in several different render modes: wireframe, flat shaded, textured,
-and fully lit by in-game light sources. While the 2D view is the main interface
-for creating and aligning level geometry, the 3D view is a vital tool for tasks
-such as texturing, or configuring light parameters.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<img src="img/important.png" alt="Important">
-</td>
-<td class="content">
-The fully lit rendering mode in DarkRadiant is very limited, and only
-offers a partial view of what the game engine will ultimately render. In
-particular, there are no shadows or foglights.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The 3D view always renders the scene from a particular vantage point, which is
-shown in the 2D view as a blue diamond. This camera position can be set directly
-from the 2D view with <strong>Ctrl + Middle click</strong>, and the camera view direction can
-be set with <strong>Middle click</strong>. There are also various options within the 3D view
-itself to adjust the camera position.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Right click</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enter or leave free camera mode. In this mode, moving the mouse
-around updates the camera view direction in real-time, and moving the mouse
-around while holding <strong>Ctrl</strong> causes the camera to move up/down/left/right
-according to the camera motion.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Left/Right arrow</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pan the camera left or right</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Up/Down arrow</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera forwards or backwards</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
 <h3 id="_adjusting_the_grid">Adjusting the grid</h3>
 <div class="paragraph">
 <p>The grid shown in the 2D view is used to snap the position and size of brushes
@@ -838,6 +793,60 @@ with the level geometry.
 </div>
 </div>
 <div class="sect2">
+<h3 id="_using_the_3d_camera_view">Using the 3D camera view</h3>
+<div class="paragraph">
+<p>The 3D camera view provides an approximate rendering of the map in three
+dimensions, in several different render modes: wireframe, flat shaded, textured,
+and fully lit by in-game light sources. While the 2D view is the main interface
+for creating and aligning level geometry, the 3D view is a vital tool for tasks
+such as texturing, or configuring light parameters.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="img/important.png" alt="Important">
+</td>
+<td class="content">
+The fully lit rendering mode in DarkRadiant is very limited, and only
+offers a partial view of what the game engine will ultimately render. In
+particular, there are no shadows or foglights.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The 3D view always renders the scene from a particular camera position, which is
+shown in the 2D view as a blue diamond. This camera position can be set directly
+from the 2D view with <strong>Ctrl + Middle click</strong>, and the camera view direction can
+be set with <strong>Middle click</strong>. There are also various options within the 3D view
+itself to adjust the camera position.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Right click</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enter or leave free camera mode. In this mode, moving the mouse
+around updates the camera view direction in real-time, and moving the mouse
+around while holding <strong>Ctrl</strong> causes the camera to move up/down/left/right
+according to the camera motion.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Left/Right arrow</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pan the camera left or right</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Up/Down arrow</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera forwards or backwards</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="_manipulating_objects">Manipulating objects</h3>
 <div class="paragraph">
 <p>Every object in a map can be selected and moved within the 2D view. Some objects&#8201;&#8212;&#8201;including brushes, patches and lights&#8201;&#8212;&#8201;can also be resized.</p>
@@ -867,11 +876,15 @@ with the level geometry.
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Left drag</strong> <em>inside</em> a selected object</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Move the selected object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the selected object(s)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Left drag</strong> <em>outside</em> a selected object</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Resize the object (if available)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resize the selected object(s) (if available)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Space</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Duplicate the selected object(s)</p></td>
 </tr>
 </tbody>
 </table>
@@ -1027,13 +1040,73 @@ is useful, so it is retained in DarkRadiant.</p></td>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_splitting_brushes">Splitting brushes</h4>
+<div class="paragraph">
+<p>Sometimes it is necessary to divide a brush into two or more pieces, perhaps to
+create a doorway or other opening. The <strong>Clipper</strong> tool, accessed with the <strong>X</strong>
+key, is used for this purpose.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/ClipTool3D.png" alt="ClipTool3D">
+</div>
+<div class="title">Figure 2. Splitting a brush into two parts</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the brush to be split (the Clipper can be activated with nothing
+selected, but it will not do anything useful).</p>
+</li>
+<li>
+<p>Press <strong>X</strong> to activate the Clipper, or click on the respective icon on the
+left-hand editing toolbar.</p>
+</li>
+<li>
+<p>Click in the 2D window at two different positions, to define the plane along
+which the brush will be split. The proposed split plane will be highlighted in
+blue; feel free to change 2D view axis with <strong>Ctrl+TAB</strong> or use the 3D camera view
+to better visualise the split plane.</p>
+</li>
+<li>
+<p>Once the split plane is defined, press <strong>Shift+Enter</strong> to execute the split and
+keep <em>both</em> halves of the brush; press <strong>Enter</strong> to execute the split and keep
+only one half. The part of the brush that is kept with <strong>Enter</strong> depends on the
+order in which you define the clip points: the points (marked <strong>0</strong> and <strong>1</strong>) will
+appear <em>clockwise</em> on the brush edge according to the current 2D view. If in
+doubt, just use <strong>Shift+Enter</strong> to keep both parts, and delete the unwanted one
+afterwards.</p>
+</li>
+<li>
+<p>Repeat the process to perform additional splits on the selected brush, or
+disable the Clipper with the <strong>X</strong> key. The Clipper is a toggled tool and will
+remain active until disabled.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+It is possible create <em>three</em> split points before executing the split,
+which will define a split plane in three dimensions. Defining a three-point
+split plane which is actually useful, however, may be challenging.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-02 21:41:26 BST
+Last updated 2018-08-05 19:57:58 BST
 </div>
 </div>
 </body>

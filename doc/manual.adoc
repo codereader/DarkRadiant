@@ -175,6 +175,7 @@ Each 2D window shows which axes it is representing with an icon in the top-left
 corner, as well as an identical icon at the `<0,0,0>` origin position, if
 visible within the view.
 
+.Components of the 2D view
 image::2DViewMarkedUp.png[align="center"]
 
 The 2D view also shows the current position of the camera (used for rendering
@@ -191,34 +192,6 @@ The following commands are available within the 2D view:
 |*Middle click*|Rotate the camera to look directly at the clicked point
 |*Ctrl + TAB*|Change view axis (XY, XZ, YZ)
 |*Ctrl + Shift + TAB*|Center 2D view on current camera position
-|===
-
-=== Using the 3D camera view
-
-The 3D camera view provides an approximate rendering of the map in three
-dimensions, in several different render modes: wireframe, flat shaded, textured,
-and fully lit by in-game light sources. While the 2D view is the main interface
-for creating and aligning level geometry, the 3D view is a vital tool for tasks
-such as texturing, or configuring light parameters.
-
-IMPORTANT: The fully lit rendering mode in DarkRadiant is very limited, and only
-offers a partial view of what the game engine will ultimately render. In
-particular, there are no shadows or foglights.
-
-The 3D view always renders the scene from a particular vantage point, which is
-shown in the 2D view as a blue diamond. This camera position can be set directly
-from the 2D view with *Ctrl + Middle click*, and the camera view direction can
-be set with *Middle click*. There are also various options within the 3D view
-itself to adjust the camera position.
-
-[cols="1,3"]
-|===
-|*Right click*|Enter or leave free camera mode. In this mode, moving the mouse
-around updates the camera view direction in real-time, and moving the mouse
-around while holding *Ctrl* causes the camera to move up/down/left/right
-according to the camera motion.
-|*Left/Right arrow*|Pan the camera left or right
-|*Up/Down arrow*|Move the camera forwards or backwards
 |===
 
 === Adjusting the grid
@@ -239,6 +212,34 @@ Static meshes and animated AI can be positioned more freely, however grid
 snapping is a useful tool for ensuring that models are appropriately aligned
 with the level geometry.
 
+=== Using the 3D camera view
+
+The 3D camera view provides an approximate rendering of the map in three
+dimensions, in several different render modes: wireframe, flat shaded, textured,
+and fully lit by in-game light sources. While the 2D view is the main interface
+for creating and aligning level geometry, the 3D view is a vital tool for tasks
+such as texturing, or configuring light parameters.
+
+IMPORTANT: The fully lit rendering mode in DarkRadiant is very limited, and only
+offers a partial view of what the game engine will ultimately render. In
+particular, there are no shadows or foglights.
+
+The 3D view always renders the scene from a particular camera position, which is
+shown in the 2D view as a blue diamond. This camera position can be set directly
+from the 2D view with *Ctrl + Middle click*, and the camera view direction can
+be set with *Middle click*. There are also various options within the 3D view
+itself to adjust the camera position.
+
+[cols="1,3"]
+|===
+|*Right click*|Enter or leave free camera mode. In this mode, moving the mouse
+around updates the camera view direction in real-time, and moving the mouse
+around while holding *Ctrl* causes the camera to move up/down/left/right
+according to the camera motion.
+|*Left/Right arrow*|Pan the camera left or right
+|*Up/Down arrow*|Move the camera forwards or backwards
+|===
+
 === Manipulating objects
 
 Every object in a map can be selected and moved within the 2D view. Some objects
@@ -254,8 +255,9 @@ Every object in a map can be selected and moved within the 2D view. Some objects
   deselect any existing selected objects. If the clicked position overlaps more
   than one object, each click will cycle through the overlapping objects.
 |*ESC*|Deselect all objects
-|*Left drag* _inside_ a selected object|Move the selected object
-|*Left drag* _outside_ a selected object|Resize the object (if available)
+|*Left drag* _inside_ a selected object|Move the selected object(s)
+|*Left drag* _outside_ a selected object|Resize the selected object(s) (if available)
+|*Space*|Duplicate the selected object(s)
 |===
 
 TIP: Like other editors in the Radiant family, DarkRadiant offers a rather
@@ -367,3 +369,35 @@ textures, since part of the inner face is obscured (and therefore removed during
 map compilation). However, there may be occasional situations in which *Hollow*
 is useful, so it is retained in DarkRadiant.
 |===
+
+==== Splitting brushes
+
+Sometimes it is necessary to divide a brush into two or more pieces, perhaps to
+create a doorway or other opening. The *Clipper* tool, accessed with the *X*
+key, is used for this purpose.
+
+.Splitting a brush into two parts
+image::ClipTool3D.png[align="center"]
+
+. Select the brush to be split (the Clipper can be activated with nothing
+selected, but it will not do anything useful).
+. Press *X* to activate the Clipper, or click on the respective icon on the
+left-hand editing toolbar.
+. Click in the 2D window at two different positions, to define the plane along
+which the brush will be split. The proposed split plane will be highlighted in
+blue; feel free to change 2D view axis with *Ctrl+TAB* or use the 3D camera view
+to better visualise the split plane.
+. Once the split plane is defined, press *Shift+Enter* to execute the split and
+keep _both_ halves of the brush; press *Enter* to execute the split and keep
+only one half. The part of the brush that is kept with *Enter* depends on the
+order in which you define the clip points: the points (marked *0* and *1*) will
+appear _clockwise_ on the brush edge according to the current 2D view. If in
+doubt, just use *Shift+Enter* to keep both parts, and delete the unwanted one
+afterwards.
+. Repeat the process to perform additional splits on the selected brush, or
+disable the Clipper with the *X* key. The Clipper is a toggled tool and will
+remain active until disabled.
+
+NOTE: It is possible create _three_ split points before executing the split,
+which will define a split plane in three dimensions. Defining a three-point
+split plane which is actually useful, however, may be challenging.
