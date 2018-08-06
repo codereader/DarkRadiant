@@ -161,6 +161,18 @@ will persist through multiple editing sessions.
  shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
  modelling applications. The editing tab widget is in a floating window.
 
+=== Colour schemes
+
+DarkRadiant defaults to a black-on-white colour scheme in the 2D windows, but
+ships with four other colour schemes, which can be accessed under `View ->
+Colours...`. If you prefer a dark theme, the `Black & Green` scheme might be
+suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
+provide a more neutral, low-contrast look.
+
+Each of the colour schemes can be edited using the colour selector buttons in
+the *Colours* dialog, and it is also possible to copy one of the default schemes
+into a custom scheme with a new name.
+
 == Basic editing
 
 === Navigating the 2D view
@@ -427,3 +439,27 @@ can more easily be seen.
 . To reduce the number of brush sides, such as changing a rectangle into a
 triangle, simply drag one corner directly on top of another. The two edges will
 be merged.
+
+==== Applying textures to brushes
+
+There are two tabs on the editing panel which show information about textures,
+and both allow you to apply a given texture to the selected brush(es).
+
+*Media*:: A browseable tree view which shows all of the textures available
+within the game installation, organised in the hierarchy specified within the
+game files. Selecting a texture in this tree will show a small preview swatch in
+the widget at the bottom of the panel, along with some metadata about the
+particular texture definition.
++ 
+To apply a texture from the *Media* tab, either *Double-click* on a texture name
+in the tree, or *Right-click* and choose *Apply to selection*.
+
+*Textures*:: A scrollable canvas which shows square or rectangular preview
+swatches of all the textures which are currently loaded by DarkRadiant. When
+DarkRadiant first starts up, no textures are loaded and this panel is empty. By
+right-clicking on a texture or texture folder in the *Media* tab, you can access
+a context menu which allows you to load textures into the *Textures* tab.
++
+To apply a texture from this tab, simply *Left-click* on the desired texture
+while one or more brushes is selected..
+

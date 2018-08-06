@@ -438,6 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_choosing_a_game_type">Choosing a game type</a></li>
 <li><a href="#_interface_layout">Interface layout</a></li>
+<li><a href="#_colour_schemes">Colour schemes</a></li>
 </ul>
 </li>
 <li><a href="#_basic_editing">Basic editing</a>
@@ -453,6 +454,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_creating_a_room">Creating a room</a></li>
 <li><a href="#_splitting_brushes">Splitting brushes</a></li>
 <li><a href="#_reshaping_brush_edges">Reshaping brush edges</a></li>
+<li><a href="#_applying_textures_to_brushes">Applying textures to brushes</a></li>
 </ul>
 </li>
 </ul>
@@ -691,6 +693,21 @@ shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
 modelling applications. The editing tab widget is in a floating window.</p>
 </dd>
 </dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_colour_schemes">Colour schemes</h3>
+<div class="paragraph">
+<p>DarkRadiant defaults to a black-on-white colour scheme in the 2D windows, but
+ships with four other colour schemes, which can be accessed under <code>View &#8594;
+Colours&#8230;&#8203;</code>. If you prefer a dark theme, the <code>Black &amp; Green</code> scheme might be
+suitable, whereas the <code>Maya/Max/Lightwave Emulation</code> and <code>Super Mal</code> themes
+provide a more neutral, low-contrast look.</p>
+</div>
+<div class="paragraph">
+<p>Each of the colour schemes can be edited using the colour selector buttons in
+the <strong>Colours</strong> dialog, and it is also possible to copy one of the default schemes
+into a custom scheme with a new name.</p>
 </div>
 </div>
 </div>
@@ -1143,13 +1160,48 @@ be merged.</p>
 </ol>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_applying_textures_to_brushes">Applying textures to brushes</h4>
+<div class="paragraph">
+<p>There are two tabs on the editing panel which show information about textures,
+and both allow you to apply a given texture to the selected brush(es).</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Media</strong></dt>
+<dd>
+<p>A browseable tree view which shows all of the textures available
+within the game installation, organised in the hierarchy specified within the
+game files. Selecting a texture in this tree will show a small preview swatch in
+the widget at the bottom of the panel, along with some metadata about the
+particular texture definition.</p>
+<div class="paragraph">
+<p>To apply a texture from the <strong>Media</strong> tab, either <strong>Double-click</strong> on a texture name
+in the tree, or <strong>Right-click</strong> and choose <strong>Apply to selection</strong>.</p>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Textures</strong></dt>
+<dd>
+<p>A scrollable canvas which shows square or rectangular preview
+swatches of all the textures which are currently loaded by DarkRadiant. When
+DarkRadiant first starts up, no textures are loaded and this panel is empty. By
+right-clicking on a texture or texture folder in the <strong>Media</strong> tab, you can access
+a context menu which allows you to load textures into the <strong>Textures</strong> tab.</p>
+<div class="paragraph">
+<p>To apply a texture from this tab, simply <strong>Left-click</strong> on the desired texture
+while one or more brushes is selected..</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-06 20:42:20 BST
+Last updated 2018-08-06 21:13:31 BST
 </div>
 </div>
 </body>
