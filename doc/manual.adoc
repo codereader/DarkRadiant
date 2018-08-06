@@ -342,8 +342,8 @@ spheres or cones created with patches or static meshes.
 
 ==== Creating a room
 
-Although it is not too difficult to create a hollow rectangular room by creating
-floor, ceiling and wall brushes manually, this is a common enough operation that
+Although it is not too difficult to create a hollow room by creating floor,
+ceiling and wall brushes manually, this is a common enough operation that
 DarkRadiant provides a couple of shortcuts. These options can be found on the
 vertical toolbar at the far left of the main window.
 
@@ -353,7 +353,7 @@ vertical toolbar at the far left of the main window.
 image:CreateRoom.png[width=36] *Create Room*
 
 Create a room whose interior size matches the size of the currently-selected
-rectangular brush. The wall thickness will be equal to the current grid size.
+brush. The wall thickness will be equal to the current grid size.
 
 |image:HollowBrush.png[width=320]|
 image:Hollow.png[width=36] *Hollow*
@@ -369,6 +369,12 @@ textures, since part of the inner face is obscured (and therefore removed during
 map compilation). However, there may be occasional situations in which *Hollow*
 is useful, so it is retained in DarkRadiant.
 |===
+
+The room creation tools do not require the initial brush to be rectangular --
+you can quite happily *Create Room* with a triangular or trapezoidal brush, or a
+brush with sloping sides. However, with a more complex brush shape, the
+complexity of the resulting wall geometry increases considerably, so attempting
+to hollow out a 7-sided sphere is probably ill-advised.
 
 ==== Splitting brushes
 
@@ -401,3 +407,23 @@ remain active until disabled.
 NOTE: It is possible create _three_ split points before executing the split,
 which will define a split plane in three dimensions. Defining a three-point
 split plane which is actually useful, however, may be challenging.
+
+==== Reshaping brush edges
+
+DarkRadiant allows each of the 12 edges of a rectangular brush to be moved,
+allowing you to quickly create shapes like triangles or trapeziums. This is
+accessed via the *Select Edges* tool on the upper toolbar, or with the *E* key.
+
+.Creating a trapezium using edge editing
+image::EdgeEditing.png[align="center"]
+
+. Select a brush.
+. Activate *Select Edges* with the toolbar button or *E* key. DarkRadiant will
+place a green control point at the center of each brush edge.
+. In either the 2D or the 3D view, click and drag on a control point to move its
+edge. The control point will turn blue and move along with the cursor. In the 2D
+view, dragging corners is generally easiest, since the resulting shape change
+can more easily be seen.
+. To reduce the number of brush sides, such as changing a rectangle into a
+triangle, simply drag one corner directly on top of another. The two edges will
+be merged.
