@@ -1090,16 +1090,16 @@ left-hand editing toolbar.</p>
 <li>
 <p>Click in the 2D window at two different positions, to define the plane along
 which the brush will be split. The proposed split plane will be highlighted in
-blue; feel free to change 2D view axis with <strong>Ctrl+TAB</strong> or use the 3D camera view
+blue; feel free to change 2D view axis with <strong>Ctrl + TAB</strong> or use the 3D camera view
 to better visualise the split plane.</p>
 </li>
 <li>
-<p>Once the split plane is defined, press <strong>Shift+Enter</strong> to execute the split and
+<p>Once the split plane is defined, press <strong>Shift + Enter</strong> to execute the split and
 keep <em>both</em> halves of the brush; press <strong>Enter</strong> to execute the split and keep
 only one half. The part of the brush that is kept with <strong>Enter</strong> depends on the
 order in which you define the clip points: the points (marked <strong>0</strong> and <strong>1</strong>) will
 appear <em>clockwise</em> on the brush edge according to the current 2D view. If in
-doubt, just use <strong>Shift+Enter</strong> to keep both parts, and delete the unwanted one
+doubt, just use <strong>Shift + Enter</strong> to keep both parts, and delete the unwanted one
 afterwards.</p>
 </li>
 <li>
@@ -1116,7 +1116,7 @@ remain active until disabled.</p>
 <img src="img/note.png" alt="Note">
 </td>
 <td class="content">
-It is possible create <em>three</em> split points before executing the split,
+It is possible to create <em>three</em> split points before executing the split,
 which will define a split plane in three dimensions. Defining a three-point
 split plane which is actually useful, however, may be challenging.
 </td>
@@ -1127,8 +1127,8 @@ split plane which is actually useful, however, may be challenging.
 <div class="sect3">
 <h4 id="_reshaping_brush_edges">Reshaping brush edges</h4>
 <div class="paragraph">
-<p>DarkRadiant allows each of the 12 edges of a rectangular brush to be moved,
-allowing you to quickly create shapes like triangles or trapeziums. This is
+<p>All brush edges can be moved independently, which gives you the ability to
+quickly create shapes like triangles or trapeziums. This functionality is
 accessed via the <strong>Select Edges</strong> tool on the upper toolbar, or with the <strong>E</strong> key.</p>
 </div>
 <div class="imageblock" style="text-align: center">
@@ -1163,36 +1163,46 @@ be merged.</p>
 <div class="sect3">
 <h4 id="_applying_textures_to_brushes">Applying textures to brushes</h4>
 <div class="paragraph">
-<p>There are two tabs on the editing panel which show information about textures,
-and both allow you to apply a given texture to the selected brush(es).</p>
+<p>There are two separate interfaces for browsing and applying textures, each of
+which provides similar functionality but presents the information in a slightly
+different way.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><strong>Media</strong></dt>
-<dd>
-<p>A browseable tree view which shows all of the textures available
-within the game installation, organised in the hierarchy specified within the
-game files. Selecting a texture in this tree will show a small preview swatch in
-the widget at the bottom of the panel, along with some metadata about the
-particular texture definition.</p>
 <div class="paragraph">
-<p>To apply a texture from the <strong>Media</strong> tab, either <strong>Double-click</strong> on a texture name
-in the tree, or <strong>Right-click</strong> and choose <strong>Apply to selection</strong>.</p>
+<p>The <strong>Media</strong> tab shows a tree view which contains all of the textures available
+within the game installation. Selecting a texture in the tree will show a small
+preview swatch in the widget at the bottom of the panel, along with some
+metadata about the texture definition. To apply a texture to the selected brush,
+either <strong>Double-click</strong> on a texture name in the tree, or <strong>Right-click</strong> and choose
+<strong>Apply to selection</strong>.</p>
 </div>
-</dd>
-<dt class="hdlist1"><strong>Textures</strong></dt>
-<dd>
-<p>A scrollable canvas which shows square or rectangular preview
-swatches of all the textures which are currently loaded by DarkRadiant. When
-DarkRadiant first starts up, no textures are loaded and this panel is empty. By
-right-clicking on a texture or texture folder in the <strong>Media</strong> tab, you can access
-a context menu which allows you to load textures into the <strong>Textures</strong> tab.</p>
 <div class="paragraph">
-<p>To apply a texture from this tab, simply <strong>Left-click</strong> on the desired texture
-while one or more brushes is selected..</p>
+<p>The <strong>Textures</strong> tab provides a scrollable canvas containing preview swatches of
+all the textures which are currently loaded. When DarkRadiant first starts up,
+no textures are loaded and this panel is empty; to load a texture you must
+either apply it to a brush directly from the <strong>Media</strong> tab, or use the <strong>Media</strong>
+tab&#8217;s context menu to <strong>Load in Textures view</strong> (this command can be applied to an
+individual texture or an entire folder). To apply a texture from the <strong>Textures</strong>
+tab, simply <strong>Left-click</strong> on the texture preview with one or more brushes
+selected.</p>
 </div>
-</dd>
-</dl>
+<div class="paragraph">
+<p>You can control which faces of a brush are textured by choosing the appropriate
+selection commmand:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Selecting a brush with <strong>Shift + Left click</strong>, which works in any 2D or 3D view,
+will select the entire brush. Any applied texture will apply to all faces.</p>
+</li>
+<li>
+<p>In the 3D view, use <strong>Ctrl + Shift + Left click</strong> to select or deselect a
+particular brush face. This works best when the entire brush is <em>not</em> already
+selected with <strong>Shift + Left click</strong>. Each selected brush face will be rendered
+with a red-coloured overlay, and any texture operation will apply only to the
+selected faces.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1201,7 +1211,7 @@ while one or more brushes is selected..</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-06 21:13:31 BST
+Last updated 2018-08-07 20:59:30 BST
 </div>
 </div>
 </body>

@@ -403,27 +403,27 @@ selected, but it will not do anything useful).
 left-hand editing toolbar.
 . Click in the 2D window at two different positions, to define the plane along
 which the brush will be split. The proposed split plane will be highlighted in
-blue; feel free to change 2D view axis with *Ctrl+TAB* or use the 3D camera view
+blue; feel free to change 2D view axis with *Ctrl + TAB* or use the 3D camera view
 to better visualise the split plane.
-. Once the split plane is defined, press *Shift+Enter* to execute the split and
+. Once the split plane is defined, press *Shift + Enter* to execute the split and
 keep _both_ halves of the brush; press *Enter* to execute the split and keep
 only one half. The part of the brush that is kept with *Enter* depends on the
 order in which you define the clip points: the points (marked *0* and *1*) will
 appear _clockwise_ on the brush edge according to the current 2D view. If in
-doubt, just use *Shift+Enter* to keep both parts, and delete the unwanted one
+doubt, just use *Shift + Enter* to keep both parts, and delete the unwanted one
 afterwards.
 . Repeat the process to perform additional splits on the selected brush, or
 disable the Clipper with the *X* key. The Clipper is a toggled tool and will
 remain active until disabled.
 
-NOTE: It is possible create _three_ split points before executing the split,
+NOTE: It is possible to create _three_ split points before executing the split,
 which will define a split plane in three dimensions. Defining a three-point
 split plane which is actually useful, however, may be challenging.
 
 ==== Reshaping brush edges
 
-DarkRadiant allows each of the 12 edges of a rectangular brush to be moved,
-allowing you to quickly create shapes like triangles or trapeziums. This is
+All brush edges can be moved independently, which gives you the ability to
+quickly create shapes like triangles or trapeziums. This functionality is
 accessed via the *Select Edges* tool on the upper toolbar, or with the *E* key.
 
 .Creating a trapezium using edge editing
@@ -442,24 +442,33 @@ be merged.
 
 ==== Applying textures to brushes
 
-There are two tabs on the editing panel which show information about textures,
-and both allow you to apply a given texture to the selected brush(es).
+There are two separate interfaces for browsing and applying textures, each of
+which provides similar functionality but presents the information in a slightly
+different way.
 
-*Media*:: A browseable tree view which shows all of the textures available
-within the game installation, organised in the hierarchy specified within the
-game files. Selecting a texture in this tree will show a small preview swatch in
-the widget at the bottom of the panel, along with some metadata about the
-particular texture definition.
-+ 
-To apply a texture from the *Media* tab, either *Double-click* on a texture name
-in the tree, or *Right-click* and choose *Apply to selection*.
+The *Media* tab shows a tree view which contains all of the textures available
+within the game installation. Selecting a texture in the tree will show a small
+preview swatch in the widget at the bottom of the panel, along with some
+metadata about the texture definition. To apply a texture to the selected brush,
+either *Double-click* on a texture name in the tree, or *Right-click* and choose
+*Apply to selection*.
 
-*Textures*:: A scrollable canvas which shows square or rectangular preview
-swatches of all the textures which are currently loaded by DarkRadiant. When
-DarkRadiant first starts up, no textures are loaded and this panel is empty. By
-right-clicking on a texture or texture folder in the *Media* tab, you can access
-a context menu which allows you to load textures into the *Textures* tab.
-+
-To apply a texture from this tab, simply *Left-click* on the desired texture
-while one or more brushes is selected..
+The *Textures* tab provides a scrollable canvas containing preview swatches of
+all the textures which are currently loaded. When DarkRadiant first starts up,
+no textures are loaded and this panel is empty; to load a texture you must
+either apply it to a brush directly from the *Media* tab, or use the *Media*
+tab's context menu to *Load in Textures view* (this command can be applied to an
+individual texture or an entire folder). To apply a texture from the *Textures*
+tab, simply *Left-click* on the texture preview with one or more brushes
+selected.
 
+You can control which faces of a brush are textured by choosing the appropriate
+selection commmand:
+
+- Selecting a brush with *Shift + Left click*, which works in any 2D or 3D view,
+  will select the entire brush. Any applied texture will apply to all faces.
+- In the 3D view, use *Ctrl + Shift + Left click* to select or deselect a
+  particular brush face. This works best when the entire brush is _not_ already
+  selected with *Shift + Left click*. Each selected brush face will be rendered
+  with a red-coloured overlay, and any texture operation will apply only to the
+  selected faces.
