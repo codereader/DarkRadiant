@@ -472,3 +472,39 @@ selection commmand:
   selected with *Shift + Left click*. Each selected brush face will be rendered
   with a red-coloured overlay, and any texture operation will apply only to the
   selected faces.
+
+=== Working with entities
+
+If brushes are the bricks and mortar of a map (often literally), entities are
+its fixtures and fittings. Every object in a map which "does something" other
+than form part of the level geometry is an entity: lights, audio speakers,
+particle emitters, static meshes, animated creatures or machinery. There are
+also various functional entity types which provide vital metadata to the game
+engine, such as determining where the player should start, or how creatures
+should navigate between locations.
+
+DarkRadiant provides certain common functionality to all entities, such as the
+ability to edit properties using the *Entity* tab. Particular entity types are
+sufficiently common, however, that they have their own dedicated creation and
+editing tools.
+
+*Light*:: Every map requires at least one light source in order to render
+anything in game. A light occupies a rectangular volume, which can be created
+and resized much like a brush, and has properties to determine its colour,
+visible shape and falloff pattern in three dimensions. Lights can optionally
+cast shadows, and can even be animated to flicker or flash.
+
+*Model (func_static)*:: Model entities represent geometry that is not compiled
+as part of the map itself. The model geometry can either be derived from brushes
+and patches created inside DarkRadiant, or from an external model file in ASE or
+LWO format. Model files are the primary mechanism for including fine detail in a
+map which would be cumbersome to create with brushes and patches.
+
+*Speaker*:: Essentially the audio equivalent of a light, a speaker entity
+represents the point from which an in-game sound source will emanate. It has
+properties to control its size and falloff, and optionally override certain
+properties of the sound shader itself, such as volume.
+
+*Player start (info_player_start)*:: This entity tells the game engine where to
+place the player when a map is first loaded. A map without such an entity will
+not be playable.
