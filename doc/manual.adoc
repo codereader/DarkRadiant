@@ -508,3 +508,27 @@ properties of the sound shader itself, such as volume.
 *Player start (info_player_start)*:: This entity tells the game engine where to
 place the player when a map is first loaded. A map without such an entity will
 not be playable.
+
+==== Creating lights
+
+To create a light, *Right click* in the 2D view and choose *Create light…*.
+The position and size of the light volume depends on the current selection:
+
+- If _nothing_ is selected, then a light volume will be created at the clicked
+  position with a default size.
+- If a _single brush_ is selected, the brush will be deleted and the light
+  volume will match the size and position of the brush.
+- If _several brushes_ are selected, then all selected brushes will be deleted
+  and the light volume will be sized according to the bounding box of the
+  brushes (i.e. the smallest box that would contain all of the brushes).
+
+Unselected lights are shown in the 2D view as small boxes, while selected lights
+also show the boundaries of the light volume.
+
+.Light entity selected (left) and unselected (right)
+image::LightSelectedAndUnselected.png[align="center"]
+
+A selected light entity can be moved by dragging inside the small center box,
+and it can be resized by dragging outside the edge of the light volume. Unlike
+brushes, light volumes will by default resize symmetrically, so that the center
+point does not move during the resize.
