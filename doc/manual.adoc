@@ -532,3 +532,19 @@ A selected light entity can be moved by dragging inside the small center box,
 and it can be resized by dragging outside the edge of the light volume. Unlike
 brushes, light volumes will by default resize symmetrically, so that the center
 point does not move during the resize.
+
+There are a couple of options on the top toolbar which control the display and
+behaviour of light volumes:
+
+[cols="1,3,10"]
+|===
+a|image::view_show_lightradii.png[align="center",width=24]|*Show all light volumes*|
+If enabled, light volume boundaries will be rendered in the 2D view for _all_
+light entities, not just selected entities. The default behaviour is to show
+only the center box for unselected light entities.
+a|image::dragresize_symm.png[align="center",width=24]|*Drag-resize entities symmetrically*|
+If enabled (the default), light entities will be resized symmetrically, without
+moving the center point. If disabled, lights will be resized like brushes:
+dragging an edge will move only that edge, while the opposite edge remains
+fixed.
+|===
