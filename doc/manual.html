@@ -926,6 +926,10 @@ axis</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Space</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Duplicate the selected object(s)</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Backspace</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete the selected object(s)</p></td>
+</tr>
 </tbody>
 </table>
 <div class="admonitionblock tip">
@@ -1353,6 +1357,57 @@ fixed.</p></td>
 </tr>
 </tbody>
 </table>
+<div class="sect4">
+<h5 id="_the_light_inspector">The light inspector</h5>
+<div class="paragraph">
+<p>When initially created, a light is pure white in colour and has an unrealistic
+rectangular illumination pattern matching its shape. You can change these
+properties using the light inspector, which is accessed with the <strong>L</strong> key while a
+light is selected.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/LightInspector.png" alt="LightInspector">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Light volume (omni vs projected)</strong></dt>
+<dd>
+<p>The majority of lights in a map will be the
+default, omnidirectional shape. An omni light is a simple axis-aligned cuboid
+which emits light in all directions from its center to its edges.</p>
+<div class="paragraph">
+<p>A projected light is pyramid-shaped, and emits light from the tip of the pyramid
+towards the base. Projected lights behave more like spotlights in real-life, and
+can be used to highlight particular areas or project images of windows onto the
+floor.</p>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Colour</strong></dt>
+<dd>
+<p>Use the colour selector button to display a standard colour selection
+dialog, or enter the RGB values directly using the text box. As well as changing
+the hue, the light colour also governs the overall brightness of the light.</p>
+</dd>
+<dt class="hdlist1"><strong>Texture</strong></dt>
+<dd>
+<p>The falloff texture governs the shape of the lit area when rendered
+in-game; the square texture chosen here will be mapped directly onto the
+rectangular shape of the light volume. Light textures can be simple, such as the
+generic circular gradient of <code>biground1</code>, or much more complex, including
+multiple colours or animation.</p>
+</dd>
+<dt class="hdlist1"><strong>Options</strong></dt>
+<dd>
+<p>There are a few light-propagation options which are mostly used to
+tweak performance. In particular, disabling shadows for any light which does
+not actually <em>need</em> to cast shadows can give a significant boost to rendering
+speed.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1360,7 +1415,7 @@ fixed.</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-14 20:57:24 BST
+Last updated 2018-08-14 21:34:40 BST
 </div>
 </div>
 </body>

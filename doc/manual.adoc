@@ -278,6 +278,7 @@ Every object in a map can be selected and moved within the 2D view. Some objects
 |*Left drag* _inside_ a selected object|Move the selected object(s)
 |*Left drag* _outside_ a selected object|Resize the selected object(s) (if available)
 |*Space*|Duplicate the selected object(s)
+|*Backspace*|Delete the selected object(s)
 |===
 
 TIP: Like other editors in the Radiant family, DarkRadiant offers a rather
@@ -556,3 +557,36 @@ moving the center point. If disabled, lights will be resized like brushes:
 dragging an edge will move only that edge, while the opposite edge remains
 fixed.
 |===
+
+===== The light inspector
+
+When initially created, a light is pure white in colour and has an unrealistic
+rectangular illumination pattern matching its shape. You can change these
+properties using the light inspector, which is accessed with the *L* key while a
+light is selected.
+
+image::LightInspector.png[align="center"]
+
+*Light volume (omni vs projected)*:: The majority of lights in a map will be the
+default, omnidirectional shape. An omni light is a simple axis-aligned cuboid
+which emits light in all directions from its center to its edges.
++
+A projected light is pyramid-shaped, and emits light from the tip of the pyramid
+towards the base. Projected lights behave more like spotlights in real-life, and
+can be used to highlight particular areas or project images of windows onto the
+floor.
+
+*Colour*:: Use the colour selector button to display a standard colour selection
+dialog, or enter the RGB values directly using the text box. As well as changing
+the hue, the light colour also governs the overall brightness of the light.
+
+*Texture*:: The falloff texture governs the shape of the lit area when rendered
+in-game; the square texture chosen here will be mapped directly onto the
+rectangular shape of the light volume. Light textures can be simple, such as the
+generic circular gradient of `biground1`, or much more complex, including
+multiple colours or animation.
+
+*Options*:: There are a few light-propagation options which are mostly used to
+ tweak performance. In particular, disabling shadows for any light which does
+ not actually _need_ to cast shadows can give a significant boost to rendering
+ speed.
