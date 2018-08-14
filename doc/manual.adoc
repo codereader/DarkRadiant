@@ -248,8 +248,16 @@ itself to adjust the camera position.
 around updates the camera view direction in real-time, and moving the mouse
 around while holding *Ctrl* causes the camera to move up/down/left/right
 according to the camera motion.
+2+^s|Default mode (not free camera)
 |*Left/Right arrow*|Pan the camera left or right
-|*Up/Down arrow*|Move the camera forwards or backwards
+|*Up/Down arrow*|Move the camera forwards or backwards on the horizontal plane,
+without changing its height on the Z axis.
+2+^s|Free camera mode
+|*Left/Right arrow*|Move ("truck") camera left or right, leaving view direction
+the same.
+|*Up/Down arrow*|Move ("dolly") the camera forwards or backwards along its view
+axis
+
 |===
 
 === Manipulating objects
