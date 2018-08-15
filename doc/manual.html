@@ -461,6 +461,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_creating_lights">Creating lights</a></li>
 <li><a href="#_creating_models">Creating models</a></li>
+<li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
 </ul>
 </li>
 </ul>
@@ -1460,13 +1461,32 @@ The model will be inserted at the position where you originally right-clicked to
 show the model chooser.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_creating_a_player_start_marker">Creating a player start marker</h4>
+<div class="paragraph">
+<p>The game requires a special entity (<code>info_player_start</code>) to mark the position at
+which the player should enter the map. Without such an entity the map will be
+unplayable.</p>
+</div>
+<div class="paragraph">
+<p>To create this entity, ensure that nothing is selected then <strong>Right click</strong> in the
+2D view and choose <strong>Create player start here</strong>. DarkRadiant will create the
+player start entity at the clicked position.</p>
+</div>
+<div class="paragraph">
+<p>Since it makes no sense to have more than one player start location, DarkRadiant
+will not enable the <strong>Create player start here</strong> menu option if there is already
+an <code>info_player_start</code> in the map. Instead, you may choose <strong>Move player start
+here</strong> to move the existing entity to the clicked position.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-15 21:04:29 BST
+Last updated 2018-08-15 21:11:53 BST
 </div>
 </div>
 </body>

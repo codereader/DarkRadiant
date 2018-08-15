@@ -622,3 +622,18 @@ the applied textures are also shown in table at the lower left.
 When you have chosen the desired model, click *OK* to insert it into the map.
 The model will be inserted at the position where you originally right-clicked to
 show the model chooser.
+
+==== Creating a player start marker
+
+The game requires a special entity (`info_player_start`) to mark the position at
+which the player should enter the map. Without such an entity the map will be
+unplayable.
+
+To create this entity, ensure that nothing is selected then *Right click* in the
+2D view and choose *Create player start here*. DarkRadiant will create the
+player start entity at the clicked position.
+
+Since it makes no sense to have more than one player start location, DarkRadiant
+will not enable the *Create player start here* menu option if there is already
+an `info_player_start` in the map. Instead, you may choose *Move player start
+here* to move the existing entity to the clicked position.
