@@ -460,6 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_working_with_entities">Working with entities</a>
 <ul class="sectlevel3">
 <li><a href="#_creating_lights">Creating lights</a></li>
+<li><a href="#_creating_models">Creating models</a></li>
 </ul>
 </li>
 </ul>
@@ -1321,6 +1322,22 @@ and it can be resized by dragging outside the edge of the light volume. Unlike
 brushes, light volumes will by default resize symmetrically, so that the center
 point does not move during the resize.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Although light volumes can be resized like brushes, their shape can never
+be changed; every light is an axis-aligned cuboid. This does not, however, mean
+that they need to <em>look</em> rectangular in game. See the <a href="#LightInspector">next
+section</a> for details on how to change the falloff texture using the light
+inspector.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>There are a couple of options on the top toolbar which control the display and
 behaviour of light volumes:</p>
@@ -1358,12 +1375,11 @@ fixed.</p></td>
 </tbody>
 </table>
 <div class="sect4">
-<h5 id="_the_light_inspector">The light inspector</h5>
+<h5 id="LightInspector">The light inspector</h5>
 <div class="paragraph">
 <p>When initially created, a light is pure white in colour and has an unrealistic
 rectangular illumination pattern matching its shape. You can change these
-properties using the light inspector, which is accessed with the <strong>L</strong> key while a
-light is selected.</p>
+properties using the light inspector, which is accessed with the <strong>L</strong> key.</p>
 </div>
 <div class="imageblock" style="text-align: center">
 <div class="content">
@@ -1392,7 +1408,7 @@ the hue, the light colour also governs the overall brightness of the light.</p>
 </dd>
 <dt class="hdlist1"><strong>Texture</strong></dt>
 <dd>
-<p>The falloff texture governs the shape of the lit area when rendered
+<p>The falloff texture controls the shape of the lit area when rendered
 in-game; the square texture chosen here will be mapped directly onto the
 rectangular shape of the light volume. Light textures can be simple, such as the
 generic circular gradient of <code>biground1</code>, or much more complex, including
@@ -1409,13 +1425,48 @@ speed.</p>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_creating_models">Creating models</h4>
+<div class="paragraph">
+<p>Static models can be used to provide fine details in a map which would be
+difficult or impossible to create in the editor with brushes or patches. Models
+are created with an external 3D application such as Blender, Lightwave or Maya,
+and saved into the game asset tree in LWO or ASE format.</p>
+</div>
+<div class="paragraph">
+<p>To insert a model, ensure that nothing is selected, then <strong>Right click</strong> in the 2D
+view and choose <strong>Create model…</strong>. DarkRadiant will show the model selector
+dialog:</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/ModelSelector.png" alt="ModelSelector">
+</div>
+</div>
+<div class="paragraph">
+<p>In the top-left of the model selector window is a tree of all available models
+in the game installation. Models may have different <em>skins</em>, which are variants
+of the same model with different textures applied. If a model has skins
+available, these will be listed as children of the model entry in the tree.</p>
+</div>
+<div class="paragraph">
+<p>Choosing a model or one of its skins will show a preview render in the large
+widget on the right-hand side. Various metadata such as the polygon count and
+the applied textures are also shown in table at the lower left.</p>
+</div>
+<div class="paragraph">
+<p>When you have chosen the desired model, click <strong>OK</strong> to insert it into the map.
+The model will be inserted at the position where you originally right-clicked to
+show the model chooser.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-14 21:34:40 BST
+Last updated 2018-08-15 21:04:29 BST
 </div>
 </div>
 </body>

@@ -542,6 +542,12 @@ and it can be resized by dragging outside the edge of the light volume. Unlike
 brushes, light volumes will by default resize symmetrically, so that the center
 point does not move during the resize.
 
+NOTE: Although light volumes can be resized like brushes, their shape can never
+be changed; every light is an axis-aligned cuboid. This does not, however, mean
+that they need to _look_ rectangular in game. See the <<LightInspector,next
+section>> for details on how to change the falloff texture using the light
+inspector.
+
 There are a couple of options on the top toolbar which control the display and
 behaviour of light volumes:
 
@@ -558,12 +564,12 @@ dragging an edge will move only that edge, while the opposite edge remains
 fixed.
 |===
 
+[[LightInspector]]
 ===== The light inspector
 
 When initially created, a light is pure white in colour and has an unrealistic
 rectangular illumination pattern matching its shape. You can change these
-properties using the light inspector, which is accessed with the *L* key while a
-light is selected.
+properties using the light inspector, which is accessed with the *L* key.
 
 image::LightInspector.png[align="center"]
 
@@ -580,7 +586,7 @@ floor.
 dialog, or enter the RGB values directly using the text box. As well as changing
 the hue, the light colour also governs the overall brightness of the light.
 
-*Texture*:: The falloff texture governs the shape of the lit area when rendered
+*Texture*:: The falloff texture controls the shape of the lit area when rendered
 in-game; the square texture chosen here will be mapped directly onto the
 rectangular shape of the light volume. Light textures can be simple, such as the
 generic circular gradient of `biground1`, or much more complex, including
@@ -590,3 +596,29 @@ multiple colours or animation.
  tweak performance. In particular, disabling shadows for any light which does
  not actually _need_ to cast shadows can give a significant boost to rendering
  speed.
+
+==== Creating models
+
+Static models can be used to provide fine details in a map which would be
+difficult or impossible to create in the editor with brushes or patches. Models
+are created with an external 3D application such as Blender, Lightwave or Maya,
+and saved into the game asset tree in LWO or ASE format.
+
+To insert a model, ensure that nothing is selected, then *Right click* in the 2D
+view and choose *Create model…*. DarkRadiant will show the model selector
+dialog:
+
+image::ModelSelector.png[align="center"]
+
+In the top-left of the model selector window is a tree of all available models
+in the game installation. Models may have different _skins_, which are variants
+of the same model with different textures applied. If a model has skins
+available, these will be listed as children of the model entry in the tree.
+
+Choosing a model or one of its skins will show a preview render in the large
+widget on the right-hand side. Various metadata such as the polygon count and
+the applied textures are also shown in table at the lower left.
+
+When you have chosen the desired model, click *OK* to insert it into the map.
+The model will be inserted at the position where you originally right-clicked to
+show the model chooser.
