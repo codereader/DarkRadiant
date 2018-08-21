@@ -597,6 +597,7 @@ multiple colours or animation.
  not actually _need_ to cast shadows can give a significant boost to rendering
  speed.
 
+[[CreatingModels]]
 ==== Creating models
 
 Static models can be used to provide fine details in a map which would be
@@ -637,3 +638,26 @@ Since it makes no sense to have more than one player start location, DarkRadiant
 will not enable the *Create player start here* menu option if there is already
 an `info_player_start` in the map. Instead, you may choose *Move player start
 here* to move the existing entity to the clicked position.
+
+==== Creating other entity types
+
+Entity types without a dedicated item in the right-click menu are created using
+the generic *Create entity…* option, which displays a dialog very similar to the
+<<CreatingModels,model selector>>:
+
+image::EntityClassSelector.png[align="center"]
+
+Just like the model selector, the entity selector displays a tree of all
+available entity types in the game installation, and a large preview widget
+which shows an approximate rendering of the entity, if appropriate. Purely
+functional entity types such as `info_location` or `info_player_start` do not
+have any visible appearance and their render preview will be blank.
+
+Some entity types have a short textual description giving information about
+their usage; if present, this is displayed in the text box underneath the entity
+class tree.
+
+After selecting the desired entity type in the tree, click the *Add* button to
+insert an instance of the entity into the map at the right-clicked location. If
+the selected entity type requires a brush selection and no brush is selected, a
+warning will be shown at this point.

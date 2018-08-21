@@ -460,8 +460,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_working_with_entities">Working with entities</a>
 <ul class="sectlevel3">
 <li><a href="#_creating_lights">Creating lights</a></li>
-<li><a href="#_creating_models">Creating models</a></li>
+<li><a href="#CreatingModels">Creating models</a></li>
 <li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
+<li><a href="#_creating_other_entity_types">Creating other entity types</a></li>
 </ul>
 </li>
 </ul>
@@ -1427,7 +1428,7 @@ speed.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_creating_models">Creating models</h4>
+<h4 id="CreatingModels">Creating models</h4>
 <div class="paragraph">
 <p>Static models can be used to provide fine details in a map which would be
 difficult or impossible to create in the editor with brushes or patches. Models
@@ -1480,13 +1481,44 @@ an <code>info_player_start</code> in the map. Instead, you may choose <strong>Mo
 here</strong> to move the existing entity to the clicked position.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_creating_other_entity_types">Creating other entity types</h4>
+<div class="paragraph">
+<p>Entity types without a dedicated item in the right-click menu are created using
+the generic <strong>Create entity…</strong> option, which displays a dialog very similar to the
+<a href="#CreatingModels">model selector</a>:</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/EntityClassSelector.png" alt="EntityClassSelector">
+</div>
+</div>
+<div class="paragraph">
+<p>Just like the model selector, the entity selector displays a tree of all
+available entity types in the game installation, and a large preview widget
+which shows an approximate rendering of the entity, if appropriate. Purely
+functional entity types such as <code>info_location</code> or <code>info_player_start</code> do not
+have any visible appearance and their render preview will be blank.</p>
+</div>
+<div class="paragraph">
+<p>Some entity types have a short textual description giving information about
+their usage; if present, this is displayed in the text box underneath the entity
+class tree.</p>
+</div>
+<div class="paragraph">
+<p>After selecting the desired entity type in the tree, click the <strong>Add</strong> button to
+insert an instance of the entity into the map at the right-clicked location. If
+the selected entity type requires a brush selection and no brush is selected, a
+warning will be shown at this point.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-15 21:11:53 BST
+Last updated 2018-08-21 20:32:19 BST
 </div>
 </div>
 </body>
