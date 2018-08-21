@@ -463,6 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#CreatingModels">Creating models</a></li>
 <li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
 <li><a href="#_creating_other_entity_types">Creating other entity types</a></li>
+<li><a href="#_editing_entity_properties">Editing entity properties</a></li>
 </ul>
 </li>
 </ul>
@@ -1512,13 +1513,48 @@ the selected entity type requires a brush selection and no brush is selected, a
 warning will be shown at this point.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_editing_entity_properties">Editing entity properties</h4>
+<div class="paragraph">
+<p>Every entity has a list of key/value pairs known as <em>properties</em> or <em>spawnargs</em>.
+These properties are displayed on the <strong>Entity</strong> tab of the editing panel.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/EntityInspector.png" alt="EntityInspector">
+</div>
+</div>
+<div class="paragraph">
+<p>The list box at the top shows all of the properties which are currently set on
+the entity. Every entity has at least two standard properties: <code>classname</code> which
+specifies which type of entity it is, and <code>name</code> which is a unique name for this
+particular entity in the map. Properties that are recognised by DarkRadiant will
+display a small icon indicating the data type: text, boolean, vector etc.</p>
+</div>
+<div class="paragraph">
+<p>Selecting a property in the list will populate the two text boxes directly below
+with the property name and current value. The value can be changed by editing
+the text and hitting <strong>Enter</strong> (or clicking the green tick button). You can also
+edit the property name and hit <strong>Enter</strong>, however this will not rename the
+property but add a <em>new</em> property with the edited name and the current value.</p>
+</div>
+<div class="paragraph">
+<p>At the bottom of the panel is a property-specific widget which allows particular
+known property types to be edited with a more convenient interface. For example,
+the common 3-element vector type will show three separate numeric spin boxes for
+the X, Y and Z axis, along with a button to apply the changes. Boolean
+properties will show a simple checkbox, while generic text properties do not
+show a custom panel at all (since the text can simply be edited using the
+generic value textbox underneath the property list).</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-21 20:32:19 BST
+Last updated 2018-08-21 20:56:39 BST
 </div>
 </div>
 </body>

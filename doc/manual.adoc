@@ -661,3 +661,30 @@ After selecting the desired entity type in the tree, click the *Add* button to
 insert an instance of the entity into the map at the right-clicked location. If
 the selected entity type requires a brush selection and no brush is selected, a
 warning will be shown at this point.
+
+==== Editing entity properties
+
+Every entity has a list of key/value pairs known as _properties_ or _spawnargs_.
+These properties are displayed on the *Entity* tab of the editing panel.
+
+image::EntityInspector.png[align="center"]
+
+The list box at the top shows all of the properties which are currently set on
+the entity. Every entity has at least two standard properties: `classname` which
+specifies which type of entity it is, and `name` which is a unique name for this
+particular entity in the map. Properties that are recognised by DarkRadiant will
+display a small icon indicating the data type: text, boolean, vector etc.
+
+Selecting a property in the list will populate the two text boxes directly below
+with the property name and current value. The value can be changed by editing
+the text and hitting *Enter* (or clicking the green tick button). You can also
+edit the property name and hit *Enter*, however this will not rename the
+property but add a _new_ property with the edited name and the current value.
+
+At the bottom of the panel is a property-specific widget which allows particular
+known property types to be edited with a more convenient interface. For example,
+the common 3-element vector type will show three separate numeric spin boxes for
+the X, Y and Z axis, along with a button to apply the changes. Boolean
+properties will show a simple checkbox, while generic text properties do not
+show a custom panel at all (since the text can simply be edited using the
+generic value textbox underneath the property list).
