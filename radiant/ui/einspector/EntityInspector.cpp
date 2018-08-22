@@ -50,22 +50,22 @@ namespace
 {
     const char* const PROPERTY_NODES_XPATH = "/entityInspector//property";
 
-	const std::string RKEY_ROOT = "user/ui/entityInspector/";
-	const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
+    const std::string RKEY_ROOT = "user/ui/entityInspector/";
+    const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
 
-	const std::string HELP_ICON_NAME = "helpicon.png";
+    const std::string HELP_ICON_NAME = "helpicon.png";
 }
 
 EntityInspector::EntityInspector() :
-	_mainWidget(NULL),
-	_editorFrame(NULL),
-	_showInheritedCheckbox(NULL),
-	_showHelpColumnCheckbox(NULL),
-	_primitiveNumLabel(NULL),
-	_keyValueTreeView(NULL),
-	_helpColumn(NULL),
-	_keyEntry(NULL),
-	_valEntry(NULL)
+    _mainWidget(NULL),
+    _editorFrame(NULL),
+    _showInheritedCheckbox(NULL),
+    _showHelpColumnCheckbox(NULL),
+    _primitiveNumLabel(NULL),
+    _keyValueTreeView(NULL),
+    _helpColumn(NULL),
+    _keyEntry(NULL),
+    _valEntry(NULL)
 {}
 
 namespace
@@ -89,52 +89,53 @@ namespace
 
 void EntityInspector::construct()
 {
-	_emptyIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png"));
+    _emptyIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png"));
     wxASSERT(_emptyIcon.IsOk());
 
-	wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
+    wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
 
-	_mainWidget = new wxPanel(temporaryParent, wxID_ANY);
-	_mainWidget->SetName("EntityInspector");
-	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
+    _mainWidget = new wxPanel(temporaryParent, wxID_ANY);
+    _mainWidget->SetName("EntityInspector");
+    _mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxBoxSizer* topHBox = new wxBoxSizer(wxHORIZONTAL);
+    // Construct HBox with the display checkboxes
+    wxBoxSizer* optionsHBox = new wxBoxSizer(wxHORIZONTAL);
 
-	_showInheritedCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show inherited properties"));
-	_showInheritedCheckbox->Connect(wxEVT_CHECKBOX, 
-		wxCommandEventHandler(EntityInspector::_onToggleShowInherited), NULL, this);
-	
-	_showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
-	_showHelpColumnCheckbox->SetValue(false);
-	_showHelpColumnCheckbox->Connect(wxEVT_CHECKBOX, 
-		wxCommandEventHandler(EntityInspector::_onToggleShowHelpIcons), NULL, this);
+    _showInheritedCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show inherited properties"));
+    _showInheritedCheckbox->Connect(wxEVT_CHECKBOX, 
+        wxCommandEventHandler(EntityInspector::_onToggleShowInherited), NULL, this);
+    
+    _showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
+    _showHelpColumnCheckbox->SetValue(false);
+    _showHelpColumnCheckbox->Connect(wxEVT_CHECKBOX, 
+        wxCommandEventHandler(EntityInspector::_onToggleShowHelpIcons), NULL, this);
 
-	_primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", 
-		wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE | wxALIGN_RIGHT);
+    _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "",
+                                          wxDefaultPosition, wxDefaultSize);
+    optionsHBox->Add(_primitiveNumLabel, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, 5);
+    optionsHBox->AddStretchSpacer();
+    optionsHBox->Add(_showInheritedCheckbox, 1, wxEXPAND);
+    optionsHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
 
-	topHBox->Add(_showInheritedCheckbox, 0, wxEXPAND);
-	topHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
-	topHBox->Add(_primitiveNumLabel, 1, wxEXPAND);
-
-	// Pane with treeview and editor panel
-	_paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    // Pane with treeview and editor panel
+    _paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     _paned->SetMinimumPaneSize(80);
 
-	_paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
-	_panedPosition.connect(_paned);
+    _paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
+    _panedPosition.connect(_paned);
 
-	_helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "", 
-		wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
-	_helpText->SetMinClientSize(wxSize(-1, 60));
-	
-	_mainWidget->GetSizer()->Add(topHBox, 0, wxEXPAND | wxALL, 3);
-	_mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
-	_mainWidget->GetSizer()->Add(_helpText, 0, wxEXPAND);
+    _helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "", 
+        wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
+    _helpText->SetMinClientSize(wxSize(-1, 60));
+    
+    _mainWidget->GetSizer()->Add(optionsHBox, 0, wxEXPAND | wxALL, 3);
+    _mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
+    _mainWidget->GetSizer()->Add(_helpText, 0, wxEXPAND);
 
-	_helpText->Hide();
-	
-	// Reload the information from the registry
-	restoreSettings();
+    _helpText->Hide();
+    
+    // Reload the information from the registry
+    restoreSettings();
 
     // Create the context menu
     createContextMenu();
@@ -146,29 +147,29 @@ void EntityInspector::construct()
     // changes.
     GlobalSelectionSystem().addObserver(this);
 
-	// Observe the Undo system for undo/redo operations, to refresh the
-	// keyvalues when this happens
-	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
-		sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
-	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
-		sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
+    // Observe the Undo system for undo/redo operations, to refresh the
+    // keyvalues when this happens
+    _undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+        sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
+    _redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+        sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
 
-	// initialise the properties
-	loadPropertyMap();
+    // initialise the properties
+    loadPropertyMap();
 }
 
 void EntityInspector::restoreSettings()
 {
-	// Find the information stored in the registry
-	if (GlobalRegistry().keyExists(RKEY_PANE_STATE))
-	{
-		_panedPosition.loadFromPath(RKEY_PANE_STATE);
-	}
-	else
-	{
-		// No saved information, apply standard value
-		_panedPosition.setPosition(400);
-	}
+    // Find the information stored in the registry
+    if (GlobalRegistry().keyExists(RKEY_PANE_STATE))
+    {
+        _panedPosition.loadFromPath(RKEY_PANE_STATE);
+    }
+    else
+    {
+        // No saved information, apply standard value
+        _panedPosition.setPosition(400);
+    }
 }
 
 // Entity::Observer implementation
@@ -182,8 +183,8 @@ void EntityInspector::onKeyInsert(const std::string& key,
 void EntityInspector::onKeyChange(const std::string& key,
                                   const std::string& value)
 {
-	wxDataViewItem keyValueIter;
-	bool added = false;
+    wxDataViewItem keyValueIter;
+    bool added = false;
 
     // Check if we already have an iter for this key (i.e. this is a
     // modification).
@@ -196,23 +197,23 @@ void EntityInspector::onKeyChange(const std::string& key,
     else
     {
         // Append a new row to the list store and add it to the iter map
-		keyValueIter = _kvStore->AddItem().getItem();
+        keyValueIter = _kvStore->AddItem().getItem();
         _keyValueIterMap.insert(TreeIterMap::value_type(key, keyValueIter));
 
-		added = true;
+        added = true;
     }
 
     // Look up type for this key. First check the property parm map,
     // then the entity class itself. If nothing is found, leave blank.
-	// Get the type for this key if it exists, and the options
-	PropertyParms parms = getPropertyParmsForKey(key);
+    // Get the type for this key if it exists, and the options
+    PropertyParms parms = getPropertyParmsForKey(key);
 
     assert(!_selectedEntity.expired());
     Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
-	// Check the entityclass (which will return blank if not found)
+    // Check the entityclass (which will return blank if not found)
     IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-	const EntityClassAttribute& attr = eclass->getAttribute(key);
+    const EntityClassAttribute& attr = eclass->getAttribute(key);
 
     if (parms.type.empty())
     {
@@ -222,66 +223,66 @@ void EntityInspector::onKeyChange(const std::string& key,
     bool hasDescription = !attr.getDescription().empty();
 
     // Set the values for the row
-	wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
+    wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
 
-	wxDataViewItemAttr black;
-	black.SetColour(wxColor(0,0,0));
+    wxDataViewItemAttr black;
+    black.SetColour(wxColor(0,0,0));
 
-	wxIcon icon;
-	icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : PropertyEditorFactory::getBitmapFor(parms.type));
+    wxIcon icon;
+    icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : PropertyEditorFactory::getBitmapFor(parms.type));
 
-	row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
-	row[_columns.value] = value;
+    row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
+    row[_columns.value] = value;
 
-	if (parms.type == "bool")
-	{
-		// Render a checkbox for boolean values (store an actual bool)
-		row[_columns.booleanValue] = value == "1";
+    if (parms.type == "bool")
+    {
+        // Render a checkbox for boolean values (store an actual bool)
+        row[_columns.booleanValue] = value == "1";
 
-		// Column is enabled by default after assignment
-	}
-	else
-	{
-		// Store false to render the checkbox as unchecked
-		row[_columns.booleanValue] = false;
-		row[_columns.booleanValue].setEnabled(false);
-	}
+        // Column is enabled by default after assignment
+    }
+    else
+    {
+        // Store false to render the checkbox as unchecked
+        row[_columns.booleanValue] = false;
+        row[_columns.booleanValue].setEnabled(false);
+    }
 
-	// Text colour
-	row[_columns.name] = black;
-	row[_columns.value] = black;
+    // Text colour
+    row[_columns.name] = black;
+    row[_columns.value] = black;
 
-	row[_columns.isInherited] = false;
-	row[_columns.hasHelpText] = hasDescription;
-	row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
+    row[_columns.isInherited] = false;
+    row[_columns.hasHelpText] = hasDescription;
+    row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
 
-	if (added)
-	{
-		row.SendItemAdded();
-	}
-	else
-	{
-		row.SendItemChanged();
-	}
+    if (added)
+    {
+        row.SendItemAdded();
+    }
+    else
+    {
+        row.SendItemChanged();
+    }
 
-	// Check if we should update the key/value entry boxes
-	std::string curKey = _keyEntry->GetValue().ToStdString();
-	std::string selectedKey = getSelectedKey();
+    // Check if we should update the key/value entry boxes
+    std::string curKey = _keyEntry->GetValue().ToStdString();
+    std::string selectedKey = getSelectedKey();
 
-	// If the key in the entry box matches the key which got changed,
-	// update the value accordingly, otherwise leave it alone. This is to fix
-	// the entry boxes not being updated when a PropertyEditor is changing the value.
-	// Therefore only do this if the selectedKey is matching too.
-	if (curKey == key && selectedKey == key)
-	{
-		_valEntry->SetValue(value);
-	}
+    // If the key in the entry box matches the key which got changed,
+    // update the value accordingly, otherwise leave it alone. This is to fix
+    // the entry boxes not being updated when a PropertyEditor is changing the value.
+    // Therefore only do this if the selectedKey is matching too.
+    if (curKey == key && selectedKey == key)
+    {
+        _valEntry->SetValue(value);
+    }
 
-	// Also update the property editor if the changed key is highlighted
-	if (_currentPropertyEditor && key == selectedKey)
-	{
-		_currentPropertyEditor->updateFromEntity();
-	}
+    // Also update the property editor if the changed key is highlighted
+    if (_currentPropertyEditor && key == selectedKey)
+    {
+        _currentPropertyEditor->updateFromEntity();
+    }
 }
 
 void EntityInspector::onKeyErase(const std::string& key,
@@ -292,7 +293,7 @@ void EntityInspector::onKeyErase(const std::string& key,
     if (i != _keyValueIterMap.end())
     {
         // Erase row from tree store
-		_kvStore->RemoveItem(i->second);
+        _kvStore->RemoveItem(i->second);
 
         // Erase iter from iter map
         _keyValueIterMap.erase(i);
@@ -307,60 +308,60 @@ void EntityInspector::onKeyErase(const std::string& key,
 // Create the context menu
 void EntityInspector::createContextMenu()
 {
-	_contextMenu.reset(new wxutil::PopupMenu);
+    _contextMenu.reset(new wxutil::PopupMenu);
 
-	_contextMenu->addItem(
-		new wxutil::StockIconTextMenuItem(_("Add property..."), wxART_PLUS),
-		std::bind(&EntityInspector::_onAddKey, this),
-		std::bind(&EntityInspector::_testAddKey, this)
-	);
-	_contextMenu->addItem(
-		new wxutil::StockIconTextMenuItem(_("Delete property"), wxART_MINUS),
-		std::bind(&EntityInspector::_onDeleteKey, this),
-		std::bind(&EntityInspector::_testDeleteKey, this)
-	);
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Add property..."), wxART_PLUS),
+        std::bind(&EntityInspector::_onAddKey, this),
+        std::bind(&EntityInspector::_testAddKey, this)
+    );
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Delete property"), wxART_MINUS),
+        std::bind(&EntityInspector::_onDeleteKey, this),
+        std::bind(&EntityInspector::_testDeleteKey, this)
+    );
 
-	_contextMenu->addSeparator();
+    _contextMenu->addSeparator();
 
-	_contextMenu->addItem(
-		new wxutil::StockIconTextMenuItem(_("Copy Spawnarg(s)"), wxART_COPY),
-		std::bind(&EntityInspector::_onCopyKey, this),
-		std::bind(&EntityInspector::_testCopyKey, this)
-	);
-	_contextMenu->addItem(
-		new wxutil::StockIconTextMenuItem(_("Cut Spawnarg(s)"), wxART_CUT),
-		std::bind(&EntityInspector::_onCutKey, this),
-		std::bind(&EntityInspector::_testCutKey, this)
-	);
-	_contextMenu->addItem(
-		new wxutil::StockIconTextMenuItem(_("Paste Spawnarg(s)"), wxART_PASTE),
-		std::bind(&EntityInspector::_onPasteKey, this),
-		std::bind(&EntityInspector::_testPasteKey, this)
-	);
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Copy Spawnarg(s)"), wxART_COPY),
+        std::bind(&EntityInspector::_onCopyKey, this),
+        std::bind(&EntityInspector::_testCopyKey, this)
+    );
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Cut Spawnarg(s)"), wxART_CUT),
+        std::bind(&EntityInspector::_onCutKey, this),
+        std::bind(&EntityInspector::_testCutKey, this)
+    );
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Paste Spawnarg(s)"), wxART_PASTE),
+        std::bind(&EntityInspector::_onPasteKey, this),
+        std::bind(&EntityInspector::_testPasteKey, this)
+    );
 }
 
 void EntityInspector::onRadiantStartup()
 {
-	// Add entity inspector to the group dialog
-	IGroupDialog::PagePtr page(new IGroupDialog::Page);
+    // Add entity inspector to the group dialog
+    IGroupDialog::PagePtr page(new IGroupDialog::Page);
 
-	page->name = "entity";
-	page->windowLabel = _("Entity");
-	page->page = getWidget();
-	page->tabIcon = "cmenu_add_entity.png";
-	page->tabLabel = _("Entity");
-	page->position = IGroupDialog::Page::Position::EntityInspector;
+    page->name = "entity";
+    page->windowLabel = _("Entity");
+    page->page = getWidget();
+    page->tabIcon = "cmenu_add_entity.png";
+    page->tabLabel = _("Entity");
+    page->position = IGroupDialog::Page::Position::EntityInspector;
 
-	GlobalGroupDialog().addPage(page);
+    GlobalGroupDialog().addPage(page);
 }
 
 void EntityInspector::onRadiantShutdown()
 {
-	_undoHandler.disconnect();
-	_redoHandler.disconnect();
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
 
     // Remove all previously stored pane information
-	_panedPosition.saveToPath(RKEY_PANE_STATE);
+    _panedPosition.saveToPath(RKEY_PANE_STATE);
 
     // Remove the current property editor to prevent destructors
     // from firing too late in the shutdown process
@@ -369,66 +370,66 @@ void EntityInspector::onRadiantShutdown()
 
 void EntityInspector::onUndoRedoOperation()
 {
-	// Clear the previous entity (detaches this class as observer)
-	changeSelectedEntity(nullptr);
+    // Clear the previous entity (detaches this class as observer)
+    changeSelectedEntity(nullptr);
 
-	// Now rescan the selection and update the stores
+    // Now rescan the selection and update the stores
     requestIdleCallback();
 }
 
 const std::string& EntityInspector::getName() const
 {
-	static std::string _name(MODULE_ENTITYINSPECTOR);
-	return _name;
+    static std::string _name(MODULE_ENTITYINSPECTOR);
+    return _name;
 }
 
 const StringSet& EntityInspector::getDependencies() const
 {
-	static StringSet _dependencies;
+    static StringSet _dependencies;
 
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
-		_dependencies.insert(MODULE_UNDOSYSTEM);
-		_dependencies.insert(MODULE_GAMEMANAGER);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_MAINFRAME);
-	}
+    if (_dependencies.empty())
+    {
+        _dependencies.insert(MODULE_XMLREGISTRY);
+        _dependencies.insert(MODULE_UIMANAGER);
+        _dependencies.insert(MODULE_SELECTIONSYSTEM);
+        _dependencies.insert(MODULE_UNDOSYSTEM);
+        _dependencies.insert(MODULE_GAMEMANAGER);
+        _dependencies.insert(MODULE_COMMANDSYSTEM);
+        _dependencies.insert(MODULE_EVENTMANAGER);
+        _dependencies.insert(MODULE_MAINFRAME);
+    }
 
-	return _dependencies;
+    return _dependencies;
 }
 
 void EntityInspector::initialiseModule(const ApplicationContext& ctx)
 {
-	construct();
+    construct();
 
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(this, &EntityInspector::onRadiantStartup)
-	);
-	GlobalRadiant().signal_radiantShutdown().connect(
+    GlobalRadiant().signal_radiantStarted().connect(
+        sigc::mem_fun(this, &EntityInspector::onRadiantStartup)
+    );
+    GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(this, &EntityInspector::onRadiantShutdown)
     );
 
-	GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
-	GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");
+    GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
+    GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");
 }
 
 void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor)
 {
-	PropertyEditorFactory::registerPropertyEditor(key, editor);
+    PropertyEditorFactory::registerPropertyEditor(key, editor);
 }
 
 IPropertyEditorPtr EntityInspector::getRegisteredPropertyEditor(const std::string& key)
 {
-	return PropertyEditorFactory::getRegisteredPropertyEditor(key);
+    return PropertyEditorFactory::getRegisteredPropertyEditor(key);
 }
 
 void EntityInspector::unregisterPropertyEditor(const std::string& key)
 {
-	PropertyEditorFactory::unregisterPropertyEditor(key);
+    PropertyEditorFactory::unregisterPropertyEditor(key);
 }
 
 // Return the Gtk widget for the EntityInspector dialog.
@@ -441,9 +442,9 @@ wxPanel* EntityInspector::getWidget()
 // Create the dialog pane
 wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
 {
-	_editorFrame = new wxPanel(parent, wxID_ANY);
-	_editorFrame->SetSizer(new wxBoxSizer(wxVERTICAL));
-	_editorFrame->SetMinClientSize(wxSize(-1, 50));
+    _editorFrame = new wxPanel(parent, wxID_ANY);
+    _editorFrame->SetSizer(new wxBoxSizer(wxVERTICAL));
+    _editorFrame->SetMinClientSize(wxSize(-1, 50));
     return _editorFrame;
 }
 
@@ -451,67 +452,67 @@ wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
 
 wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 {
-	wxPanel* treeViewPanel = new wxPanel(parent, wxID_ANY);
-	treeViewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+    wxPanel* treeViewPanel = new wxPanel(parent, wxID_ANY);
+    treeViewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
     treeViewPanel->SetMinClientSize(wxSize(-1, 150));
 
-	_kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
+    _kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
 
-	_keyValueTreeView = wxutil::TreeView::CreateWithModel(treeViewPanel, _kvStore, wxDV_MULTIPLE);
+    _keyValueTreeView = wxutil::TreeView::CreateWithModel(treeViewPanel, _kvStore, wxDV_MULTIPLE);
 
     // Search in both name and value columns
     _keyValueTreeView->AddSearchColumn(_columns.name);
     _keyValueTreeView->AddSearchColumn(_columns.value);
 
-	// Add the checkbox for boolean properties
-	_keyValueTreeView->AppendToggleColumn("", _columns.booleanValue.getColumnIndex(),
-		wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+    // Add the checkbox for boolean properties
+    _keyValueTreeView->AppendToggleColumn("", _columns.booleanValue.getColumnIndex(),
+        wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	// Create the Property column (has an icon)
-	_keyValueTreeView->AppendIconTextColumn(_("Property"), 
-		_columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
-		wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    // Create the Property column (has an icon)
+    _keyValueTreeView->AppendIconTextColumn(_("Property"), 
+        _columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	// Create the value column
-	_keyValueTreeView->AppendTextColumn(_("Value"), 
-		_columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
-		wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    // Create the value column
+    _keyValueTreeView->AppendTextColumn(_("Value"), 
+        _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	// Add the help icon
-	_helpColumn = _keyValueTreeView->AppendBitmapColumn(_("?"), 
-		_columns.helpIcon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
-	_helpColumn->SetHidden(true);
+    // Add the help icon
+    _helpColumn = _keyValueTreeView->AppendBitmapColumn(_("?"), 
+        _columns.helpIcon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+    _helpColumn->SetHidden(true);
 
-	// Used to update the help text
-	_keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(EntityInspector::_onTreeViewSelectionChanged), NULL, this);
-	_keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
-		wxDataViewEventHandler(EntityInspector::_onContextMenu), NULL, this);
+    // Used to update the help text
+    _keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+        wxDataViewEventHandler(EntityInspector::_onTreeViewSelectionChanged), NULL, this);
+    _keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+        wxDataViewEventHandler(EntityInspector::_onContextMenu), NULL, this);
 
-	// When the toggle column is clicked to check/uncheck the box, the model's column value
-	// is directly changed by the wxWidgets event handlers. On model value change, this event is fired afterwards
-	_keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,
-		wxDataViewEventHandler(EntityInspector::_onDataViewItemChanged), NULL, this);
+    // When the toggle column is clicked to check/uncheck the box, the model's column value
+    // is directly changed by the wxWidgets event handlers. On model value change, this event is fired afterwards
+    _keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,
+        wxDataViewEventHandler(EntityInspector::_onDataViewItemChanged), NULL, this);
 
-	wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
 
-	// Pack in the key and value edit boxes
-	_keyEntry = new wxTextCtrl(treeViewPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	_valEntry = new wxTextCtrl(treeViewPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    // Pack in the key and value edit boxes
+    _keyEntry = new wxTextCtrl(treeViewPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    _valEntry = new wxTextCtrl(treeViewPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 
-	wxBitmap icon = wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_MENU);
-	wxBitmapButton* setButton = new wxBitmapButton(treeViewPanel, wxID_APPLY, icon);
+    wxBitmap icon = wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_MENU);
+    wxBitmapButton* setButton = new wxBitmapButton(treeViewPanel, wxID_APPLY, icon);
 
-	buttonHbox->Add(_valEntry, 1, wxEXPAND);
-	buttonHbox->Add(setButton, 0, wxEXPAND);
+    buttonHbox->Add(_valEntry, 1, wxEXPAND);
+    buttonHbox->Add(setButton, 0, wxEXPAND);
 
-	treeViewPanel->GetSizer()->Add(_keyValueTreeView, 1, wxEXPAND);
-	treeViewPanel->GetSizer()->Add(_keyEntry, 0, wxEXPAND);
-	treeViewPanel->GetSizer()->Add(buttonHbox, 0, wxEXPAND);
+    treeViewPanel->GetSizer()->Add(_keyValueTreeView, 1, wxEXPAND);
+    treeViewPanel->GetSizer()->Add(_keyEntry, 0, wxEXPAND);
+    treeViewPanel->GetSizer()->Add(buttonHbox, 0, wxEXPAND);
 
-	setButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityInspector::_onSetProperty), NULL, this);
-	_keyEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
-	_valEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
+    setButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityInspector::_onSetProperty), NULL, this);
+    _keyEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
+    _valEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
 
     return treeViewPanel;
 }
@@ -520,57 +521,57 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 
 std::string EntityInspector::getSelectedKey()
 {
-	wxDataViewItemArray selectedItems;
-	if (_keyValueTreeView->GetSelections(selectedItems) != 1)
-	{
-		// Multiple or nothing selected, return empty string
-		return std::string();
-	}
+    wxDataViewItemArray selectedItems;
+    if (_keyValueTreeView->GetSelections(selectedItems) != 1)
+    {
+        // Multiple or nothing selected, return empty string
+        return std::string();
+    }
 
-	const wxDataViewItem& item = selectedItems.front();
+    const wxDataViewItem& item = selectedItems.front();
 
-	if (!item.IsOk()) return "";
+    if (!item.IsOk()) return "";
 
-	wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
+    wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
 
-	wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
-	return iconAndName.GetText().ToStdString();
+    wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+    return iconAndName.GetText().ToStdString();
 }
 
 std::string EntityInspector::getListSelection(const wxutil::TreeModel::Column& col)
 {
-	wxDataViewItemArray selectedItems;
-	if (_keyValueTreeView->GetSelections(selectedItems) != 1)
-	{
-		// Multiple or nothing selected, return empty string
-		return std::string();
-	}
+    wxDataViewItemArray selectedItems;
+    if (_keyValueTreeView->GetSelections(selectedItems) != 1)
+    {
+        // Multiple or nothing selected, return empty string
+        return std::string();
+    }
 
-	const wxDataViewItem& item = selectedItems.front();
+    const wxDataViewItem& item = selectedItems.front();
 
-	if (!item.IsOk()) return "";
+    if (!item.IsOk()) return "";
 
-	wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
+    wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
 
-	return row[col];
+    return row[col];
 }
 
 bool EntityInspector::getListSelectionBool(const wxutil::TreeModel::Column& col)
 {
-	wxDataViewItemArray selectedItems;
-	if (_keyValueTreeView->GetSelections(selectedItems) != 1)
-	{
-		// Multiple or nothing selected, return false
-		return false;
-	}
+    wxDataViewItemArray selectedItems;
+    if (_keyValueTreeView->GetSelections(selectedItems) != 1)
+    {
+        // Multiple or nothing selected, return false
+        return false;
+    }
 
-	const wxDataViewItem& item = selectedItems.front();
+    const wxDataViewItem& item = selectedItems.front();
 
-	if (!item.IsOk()) return false;
+    if (!item.IsOk()) return false;
 
-	wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
+    wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
 
-	return row[col].getBool();
+    return row[col].getBool();
 }
 
 // Redraw the GUI elements
@@ -590,14 +591,14 @@ void EntityInspector::updateGUIElements()
     {
         // Remove the displayed PropertyEditor
         if (_currentPropertyEditor)
-		{
+        {
             _currentPropertyEditor = PropertyEditorPtr();
         }
 
-		_helpText->SetValue("");
+        _helpText->SetValue("");
 
         // Disable the dialog and clear the TreeView
-		_editorFrame->Enable(false);
+        _editorFrame->Enable(false);
         _keyValueTreeView->Enable(true); // leave the treeview enabled
         _showInheritedCheckbox->Enable(false);
         _showHelpColumnCheckbox->Enable(false);
@@ -620,7 +621,7 @@ std::string EntityInspector::cleanInputString(const std::string &input)
     std::string ret = input;
 
     string::replace_all(ret, "\n", "");
-	string::replace_all(ret, "\r", "");
+    string::replace_all(ret, "\r", "");
 
     return ret;
 }
@@ -628,50 +629,50 @@ std::string EntityInspector::cleanInputString(const std::string &input)
 // Set entity property from entry boxes
 void EntityInspector::setPropertyFromEntries()
 {
-	// Get the key from the entry box
-	std::string key = cleanInputString(_keyEntry->GetValue().ToStdString());
+    // Get the key from the entry box
+    std::string key = cleanInputString(_keyEntry->GetValue().ToStdString());
     std::string val = cleanInputString(_valEntry->GetValue().ToStdString());
 
     // Update the entry boxes
     _keyEntry->SetValue(key);
-	_valEntry->SetValue(val);
+    _valEntry->SetValue(val);
 
-	UndoableCommand cmd("entitySetProperty");
+    UndoableCommand cmd("entitySetProperty");
 
-	// Pass the call to the specialised routine
-	applyKeyValueToSelection(key, val);
+    // Pass the call to the specialised routine
+    applyKeyValueToSelection(key, val);
 }
 
 void EntityInspector::applyKeyValueToSelection(const std::string& key, const std::string& val)
 {
-	try
-	{
-		selection::algorithm::setEntityKeyvalue(key, val);
-	}
-	catch (std::runtime_error& ex)
-	{
-		wxutil::Messagebox::ShowError(ex.what());
-	}
+    try
+    {
+        selection::algorithm::setEntityKeyvalue(key, val);
+    }
+    catch (std::runtime_error& ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what());
+    }
 }
 
 void EntityInspector::loadPropertyMap()
 {
-	_propertyTypes.clear();
+    _propertyTypes.clear();
 
-	xml::NodeList pNodes = GlobalGameManager().currentGame()->getLocalXPath(PROPERTY_NODES_XPATH);
+    xml::NodeList pNodes = GlobalGameManager().currentGame()->getLocalXPath(PROPERTY_NODES_XPATH);
 
-	for (xml::NodeList::const_iterator iter = pNodes.begin();
-		 iter != pNodes.end();
-		 ++iter)
-	{
-		PropertyParms parms;
-		parms.type = iter->getAttributeValue("type");
-		parms.options = iter->getAttributeValue("options");
+    for (xml::NodeList::const_iterator iter = pNodes.begin();
+         iter != pNodes.end();
+         ++iter)
+    {
+        PropertyParms parms;
+        parms.type = iter->getAttributeValue("type");
+        parms.options = iter->getAttributeValue("options");
 
-		_propertyTypes.insert(PropertyParmMap::value_type(
-			iter->getAttributeValue("match"), parms)
-		);
-	}
+        _propertyTypes.insert(PropertyParmMap::value_type(
+            iter->getAttributeValue("match"), parms)
+        );
+    }
 }
 
 // Popup menu callbacks (see wxutil::PopupMenu)
@@ -682,315 +683,315 @@ void EntityInspector::_onAddKey()
 
     Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
-	// Obtain the entity class to provide to the AddPropertyDialog
+    // Obtain the entity class to provide to the AddPropertyDialog
     IEntityClassConstPtr ec = selectedEntity->getEntityClass();
 
-	// Choose a property, and add to entity with a default value
+    // Choose a property, and add to entity with a default value
     AddPropertyDialog::PropertyList properties = AddPropertyDialog::chooseProperty(selectedEntity);
 
-	for (std::size_t i = 0; i < properties.size(); ++i)
-	{
-		const std::string& key = properties[i];
+    for (std::size_t i = 0; i < properties.size(); ++i)
+    {
+        const std::string& key = properties[i];
 
-		// Add all keys, skipping existing ones to not overwrite any values on the entity
+        // Add all keys, skipping existing ones to not overwrite any values on the entity
         if (selectedEntity->getKeyValue(key) == "" || selectedEntity->isInherited(key))
-		{
-			// Add the keyvalue on the entity (triggering the refresh)
+        {
+            // Add the keyvalue on the entity (triggering the refresh)
             selectedEntity->setKeyValue(key, "-");
-		}
+        }
     }
 }
 
 bool EntityInspector::_testAddKey()
 {
-	return !_selectedEntity.expired();
+    return !_selectedEntity.expired();
 }
 
 void EntityInspector::_onDeleteKey()
 {
     assert(!_selectedEntity.expired());
 
-	std::string key = getSelectedKey();
+    std::string key = getSelectedKey();
 
-	if (!key.empty())
-	{
+    if (!key.empty())
+    {
         UndoableCommand cmd("deleteProperty");
         
         Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-		selectedEntity->setKeyValue(key, "");
-	}
+        selectedEntity->setKeyValue(key, "");
+    }
 }
 
 bool EntityInspector::_testDeleteKey()
 {
-	if (_selectedEntity.expired()) return false;
+    if (_selectedEntity.expired()) return false;
 
-	if (getSelectedKey().empty()) return false;
+    if (getSelectedKey().empty()) return false;
 
-	// Make sure the Delete item is only available for explicit
-	// (non-inherited) properties
-	if (getListSelectionBool(_columns.isInherited) == false)
-		return true;
-	else
-		return false;
+    // Make sure the Delete item is only available for explicit
+    // (non-inherited) properties
+    if (getListSelectionBool(_columns.isInherited) == false)
+        return true;
+    else
+        return false;
 }
 
 void EntityInspector::_onCopyKey()
 {
-	wxDataViewItemArray selectedItems;
-	_keyValueTreeView->GetSelections(selectedItems);
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
 
-	if (selectedItems.Count() == 0) return;
+    if (selectedItems.Count() == 0) return;
 
-	_clipBoard.clear();
+    _clipBoard.clear();
 
-	for (const wxDataViewItem& item : selectedItems)
-	{
-		wxutil::TreeModel::Row row(item, *_kvStore);
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
 
-		wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+        wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
 
-		std::string key = iconAndName.GetText().ToStdString();
-		std::string value = row[_columns.value];
+        std::string key = iconAndName.GetText().ToStdString();
+        std::string value = row[_columns.value];
 
-		_clipBoard.push_back(std::make_pair(key, value));
-	}
+        _clipBoard.push_back(std::make_pair(key, value));
+    }
 #if 0
-	std::string key = getSelectedKey();
+    std::string key = getSelectedKey();
     std::string value = getListSelection(_columns.value);
 
-	if (!key.empty())
-	{
-		_clipBoard.key = key;
-		_clipBoard.value = value;
-	}
+    if (!key.empty())
+    {
+        _clipBoard.key = key;
+        _clipBoard.value = value;
+    }
 #endif
 }
 
 bool EntityInspector::_testCopyKey()
 {
-	return _keyValueTreeView->HasSelection();
+    return _keyValueTreeView->HasSelection();
 }
 
 void EntityInspector::_onCutKey()
 {
-	wxDataViewItemArray selectedItems;
-	_keyValueTreeView->GetSelections(selectedItems);
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
 
-	if (selectedItems.Count() == 0) return;
+    if (selectedItems.Count() == 0) return;
 
-	assert(!_selectedEntity.expired());
-	Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+    assert(!_selectedEntity.expired());
+    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
-	_clipBoard.clear();
+    _clipBoard.clear();
 
-	for (const wxDataViewItem& item : selectedItems)
-	{
-		wxutil::TreeModel::Row row(item, *_kvStore);
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
 
-		wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+        wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
 
-		std::string key = iconAndName.GetText().ToStdString();
-		std::string value = row[_columns.value];
+        std::string key = iconAndName.GetText().ToStdString();
+        std::string value = row[_columns.value];
 
-		_clipBoard.push_back(std::make_pair(key, value));
+        _clipBoard.push_back(std::make_pair(key, value));
 
-		// We don't delete any inherited key values
-		if (row[_columns.isInherited].getBool()) continue;
+        // We don't delete any inherited key values
+        if (row[_columns.isInherited].getBool()) continue;
 
-		UndoableCommand cmd("cutProperty");
+        UndoableCommand cmd("cutProperty");
 
-		// Clear the key after copying
-		selectedEntity->setKeyValue(key, "");
-	}
+        // Clear the key after copying
+        selectedEntity->setKeyValue(key, "");
+    }
 
 #if 0
-	std::string key = getSelectedKey();
+    std::string key = getSelectedKey();
     std::string value = getListSelection(_columns.value);
 
     assert(!_selectedEntity.expired());
     Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
     if (!key.empty() && selectedEntity != NULL)
-	{
-		_clipBoard.key = key;
-		_clipBoard.value = value;
+    {
+        _clipBoard.key = key;
+        _clipBoard.value = value;
 
-		UndoableCommand cmd("cutProperty");
+        UndoableCommand cmd("cutProperty");
 
-		// Clear the key after copying
+        // Clear the key after copying
         selectedEntity->setKeyValue(key, "");
-	}
+    }
 #endif
 }
 
 bool EntityInspector::_testCutKey()
 {
-	wxDataViewItemArray selectedItems;
-	_keyValueTreeView->GetSelections(selectedItems);
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
 
-	for (const wxDataViewItem& item : selectedItems)
-	{
-		wxutil::TreeModel::Row row(item, *_kvStore);
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
 
-		if (!row[_columns.isInherited].getBool())
-		{
-			return true; // we have at least one non-inherited value
-		}
-	}
+        if (!row[_columns.isInherited].getBool())
+        {
+            return true; // we have at least one non-inherited value
+        }
+    }
 
-	return false;
+    return false;
 #if 0
-	// Make sure the Delete item is only available for explicit
-	// (non-inherited) properties
-	if (getListSelectionBool(_columns.isInherited) == false)
-	{
-		// return true only if selection is not empty
-		return !getSelectedKey().empty();
-	}
-	else
-	{
-		return false;
-	}
+    // Make sure the Delete item is only available for explicit
+    // (non-inherited) properties
+    if (getListSelectionBool(_columns.isInherited) == false)
+    {
+        // return true only if selection is not empty
+        return !getSelectedKey().empty();
+    }
+    else
+    {
+        return false;
+    }
 #endif
 }
 
 void EntityInspector::_onPasteKey()
 {
-	// greebo: Instantiate a scoped object to make this operation undoable
-	UndoableCommand command("entitySetProperties");
+    // greebo: Instantiate a scoped object to make this operation undoable
+    UndoableCommand command("entitySetProperties");
 
-	for (const KeyValuePair& kv : _clipBoard)
-	{
-		// skip empty entries
-		if (kv.first.empty() || kv.second.empty()) continue;
+    for (const KeyValuePair& kv : _clipBoard)
+    {
+        // skip empty entries
+        if (kv.first.empty() || kv.second.empty()) continue;
 
-		// Pass the call
-		applyKeyValueToSelection(kv.first, kv.second);
-	}
+        // Pass the call
+        applyKeyValueToSelection(kv.first, kv.second);
+    }
 }
 
 bool EntityInspector::_testPasteKey()
 {
-	if (GlobalSelectionSystem().getSelectionInfo().entityCount == 0)
-	{
-		// No entities selected
-		return false;
-	}
+    if (GlobalSelectionSystem().getSelectionInfo().entityCount == 0)
+    {
+        // No entities selected
+        return false;
+    }
 
-	// Return true if the clipboard contains data
-	return !_clipBoard.empty();
+    // Return true if the clipboard contains data
+    return !_clipBoard.empty();
 }
 
 // wxWidget callbacks
 
 void EntityInspector::_onContextMenu(wxDataViewEvent& ev)
 {
-	_contextMenu->show(_keyValueTreeView);
+    _contextMenu->show(_keyValueTreeView);
 }
 
 void EntityInspector::_onDataViewItemChanged(wxDataViewEvent& ev)
 {
-	if (ev.GetDataViewColumn() != nullptr && 
-		static_cast<int>(ev.GetDataViewColumn()->GetModelColumn()) == _columns.booleanValue.getColumnIndex())
-	{
-		// Model value in the boolean column has changed, this means
-		// the user has clicked the checkbox, send the value to the entity/entities
-		wxutil::TreeModel::Row row(ev.GetItem(), *_kvStore);
+    if (ev.GetDataViewColumn() != nullptr && 
+        static_cast<int>(ev.GetDataViewColumn()->GetModelColumn()) == _columns.booleanValue.getColumnIndex())
+    {
+        // Model value in the boolean column has changed, this means
+        // the user has clicked the checkbox, send the value to the entity/entities
+        wxutil::TreeModel::Row row(ev.GetItem(), *_kvStore);
 
-		wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+        wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
 
-		std::string key = iconAndName.GetText().ToStdString();
-		bool updatedValue = row[_columns.booleanValue].getBool();
+        std::string key = iconAndName.GetText().ToStdString();
+        bool updatedValue = row[_columns.booleanValue].getBool();
 
-		UndoableCommand cmd("entitySetProperty");
-		applyKeyValueToSelection(key, updatedValue ? "1" : "0");
-		
-		// Check if the property was an inherited one.
-		// The applyKeyValue function produced a non-inherited entry
-		// which should be visible once we're done
-		// Note: selecting the non-inherited property instead of this one
-		// is not as easy as it may appear, since the user is yet to release
-		// the mouse button (we're in the middle of the click event here)
-		// and the MouseUp handler will select this row again
-		if (row[_columns.isInherited].getBool())
-		{
-			_kvStore->ForeachNode([&](wxutil::TreeModel::Row& row)
-			{
-				wxDataViewIconText nameVal = static_cast<wxDataViewIconText>(row[_columns.name]);
+        UndoableCommand cmd("entitySetProperty");
+        applyKeyValueToSelection(key, updatedValue ? "1" : "0");
+        
+        // Check if the property was an inherited one.
+        // The applyKeyValue function produced a non-inherited entry
+        // which should be visible once we're done
+        // Note: selecting the non-inherited property instead of this one
+        // is not as easy as it may appear, since the user is yet to release
+        // the mouse button (we're in the middle of the click event here)
+        // and the MouseUp handler will select this row again
+        if (row[_columns.isInherited].getBool())
+        {
+            _kvStore->ForeachNode([&](wxutil::TreeModel::Row& row)
+            {
+                wxDataViewIconText nameVal = static_cast<wxDataViewIconText>(row[_columns.name]);
 
-				if (nameVal.GetText() == key && !row[_columns.isInherited].getBool())
-				{
-					_keyValueTreeView->EnsureVisible(row.getItem());
-				}
-			});
-		}
-	}
+                if (nameVal.GetText() == key && !row[_columns.isInherited].getBool())
+                {
+                    _keyValueTreeView->EnsureVisible(row.getItem());
+                }
+            });
+        }
+    }
 }
 
 void EntityInspector::_onSetProperty(wxCommandEvent& ev)
 {
-	setPropertyFromEntries();
+    setPropertyFromEntries();
 }
 
 // ENTER key in entry boxes
 void EntityInspector::_onEntryActivate(wxCommandEvent& ev)
 {
-	// Set property and move back to key entry
-	setPropertyFromEntries();
-	_keyEntry->SetFocus();
+    // Set property and move back to key entry
+    setPropertyFromEntries();
+    _keyEntry->SetFocus();
 }
 
 void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
 {
-	if (_showInheritedCheckbox->IsChecked())
+    if (_showInheritedCheckbox->IsChecked())
     {
-		addClassProperties();
-	}
-	else
+        addClassProperties();
+    }
+    else
     {
-		removeClassProperties();
-	}
+        removeClassProperties();
+    }
 }
 
 void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
 {
-	// Set the visibility of the column accordingly
-	_helpColumn->SetHidden(!_showHelpColumnCheckbox->IsChecked());
-	_helpText->Show(_showHelpColumnCheckbox->IsChecked());
+    // Set the visibility of the column accordingly
+    _helpColumn->SetHidden(!_showHelpColumnCheckbox->IsChecked());
+    _helpText->Show(_showHelpColumnCheckbox->IsChecked());
 
-	// After showing a packed control we need to call the sizer's layout() method
-	_mainWidget->GetSizer()->Layout();
+    // After showing a packed control we need to call the sizer's layout() method
+    _mainWidget->GetSizer()->Layout();
 }
 
 void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
 {
-	_helpText->SetValue("");
+    _helpText->SetValue("");
 
-	if (!row.getItem().IsOk()) return;
+    if (!row.getItem().IsOk()) return;
 
-	// Get the key pointed at
-	bool hasHelp = row[_columns.hasHelpText].getBool();
+    // Get the key pointed at
+    bool hasHelp = row[_columns.hasHelpText].getBool();
 
-	if (hasHelp)
-	{
-		std::string key = getSelectedKey();
+    if (hasHelp)
+    {
+        std::string key = getSelectedKey();
 
         assert(!_selectedEntity.expired());
         Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
         IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-		assert(eclass != NULL);
+        assert(eclass != NULL);
 
-		// Find the attribute on the eclass, that's where the descriptions are defined
-		const EntityClassAttribute& attr = eclass->getAttribute(key);
+        // Find the attribute on the eclass, that's where the descriptions are defined
+        const EntityClassAttribute& attr = eclass->getAttribute(key);
 
-		if (!attr.getDescription().empty())
-		{
-			// Check the description of the focused item
-			_helpText->SetValue(attr.getDescription());
-		}
-	}
+        if (!attr.getDescription().empty())
+        {
+            // Check the description of the focused item
+            _helpText->SetValue(attr.getDescription());
+        }
+    }
 }
 
 // Update the PropertyEditor pane, displaying the PropertyEditor if necessary
@@ -1004,7 +1005,7 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     if (_selectedEntity.expired()) return;
 
     wxDataViewItemArray selectedItems;
-	_keyValueTreeView->GetSelections(selectedItems);
+    _keyValueTreeView->GetSelections(selectedItems);
 
     if (selectedItems.Count() == 1)
     {
@@ -1057,37 +1058,37 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
             _valEntry->SetValue(value);
         }
     }
-	else if (selectedItems.Count() > 1)
-	{
-		// When multiple items are selected, clear the property editor
-		_currentPropertyEditor.reset();
-	}
+    else if (selectedItems.Count() > 1)
+    {
+        // When multiple items are selected, clear the property editor
+        _currentPropertyEditor.reset();
+    }
 }
 
 EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
     const std::string& key
 )
 {
-	PropertyParms returnValue;
+    PropertyParms returnValue;
 
-	// First, attempt to find the key in the property map
-	for (PropertyParmMap::const_iterator i = _propertyTypes.begin();
-		 i != _propertyTypes.end(); ++i)
-	{
-		if (i->first.empty()) continue; // safety check
+    // First, attempt to find the key in the property map
+    for (PropertyParmMap::const_iterator i = _propertyTypes.begin();
+         i != _propertyTypes.end(); ++i)
+    {
+        if (i->first.empty()) continue; // safety check
 
-		// Try to match the entity key against the regex (i->first)
-		std::regex expr(i->first);
-		std::smatch matches;
+        // Try to match the entity key against the regex (i->first)
+        std::regex expr(i->first);
+        std::smatch matches;
 
-		if (!std::regex_match(key, matches, expr)) continue;
+        if (!std::regex_match(key, matches, expr)) continue;
 
-		// We have a match
-		returnValue.type = i->second.type;
-		returnValue.options = i->second.options;
-	}
+        // We have a match
+        returnValue.type = i->second.type;
+        returnValue.options = i->second.options;
+    }
 
-	return returnValue;
+    return returnValue;
 }
 
 void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
@@ -1100,31 +1101,31 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         wxutil::TreeModel::Row row = _kvStore->AddItem();
 
-		wxDataViewItemAttr grey;
-		grey.SetColour(wxColor(112, 112, 112));
+        wxDataViewItemAttr grey;
+        grey.SetColour(wxColor(112, 112, 112));
 
         row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon)); 
         row[_columns.value] = a.getValue();
 
-		// Inherited values have an inactive checkbox, so assign a false value and disable
-		if (a.getType() == "bool")
-		{
-			row[_columns.booleanValue] = a.getValue() == "1";
-		}
-		else
-		{
-			row[_columns.booleanValue] = false;
-			row[_columns.booleanValue].setEnabled(false);
-		}
+        // Inherited values have an inactive checkbox, so assign a false value and disable
+        if (a.getType() == "bool")
+        {
+            row[_columns.booleanValue] = a.getValue() == "1";
+        }
+        else
+        {
+            row[_columns.booleanValue] = false;
+            row[_columns.booleanValue].setEnabled(false);
+        }
 
-		row[_columns.name] = grey;
+        row[_columns.name] = grey;
         row[_columns.value] = grey;
 
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
-		row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
+        row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
 
-		row.SendItemAdded();
+        row.SendItemAdded();
     }
 }
 
@@ -1134,14 +1135,14 @@ void EntityInspector::addClassProperties()
     assert(!_selectedEntity.expired());
     Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
-	// Get the entityclass for the current entity
+    // Get the entityclass for the current entity
     std::string className = selectedEntity->getKeyValue("classname");
-	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
+    IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
         className, true
     );
 
-	// Visit the entity class
-	eclass->forEachClassAttribute(
+    // Visit the entity class
+    eclass->forEachClassAttribute(
         std::bind(&EntityInspector::addClassAttribute, this, std::placeholders::_1)
     );
 }
@@ -1149,34 +1150,34 @@ void EntityInspector::addClassProperties()
 // Remove the inherited properties
 void EntityInspector::removeClassProperties()
 {
-	_kvStore->RemoveItems([&] (const wxutil::TreeModel::Row& row)->bool
-	{
-		// If this is an inherited row, remove it
-		return row[_columns.isInherited].getBool();
-	});
+    _kvStore->RemoveItems([&] (const wxutil::TreeModel::Row& row)->bool
+    {
+        // If this is an inherited row, remove it
+        return row[_columns.isInherited].getBool();
+    });
 }
 
 // Update the selected Entity pointer from the selection system
 void EntityInspector::getEntityFromSelectionSystem()
 {
-	// A single entity must be selected
-	if (GlobalSelectionSystem().countSelected() != 1)
+    // A single entity must be selected
+    if (GlobalSelectionSystem().countSelected() != 1)
     {
         changeSelectedEntity(scene::INodePtr());
-		_primitiveNumLabel->SetLabelText("");
-		return;
-	}
+        _primitiveNumLabel->SetLabelMarkup("");
+        return;
+    }
 
-	scene::INodePtr selectedNode = GlobalSelectionSystem().ultimateSelected();
+    scene::INodePtr selectedNode = GlobalSelectionSystem().ultimateSelected();
 
     // The root node must not be selected (this can happen if Invert Selection is
     // activated with an empty scene, or by direct selection in the entity list).
-	if (selectedNode->isRoot())
+    if (selectedNode->isRoot())
     {
         changeSelectedEntity(scene::INodePtr());
-		_primitiveNumLabel->SetLabelText("");
-		return;
-	}
+        _primitiveNumLabel->SetLabelMarkup("");
+        return;
+    }
 
     // Try both the selected node (if an entity is selected) or the parent node
     // (if a brush is selected).
@@ -1187,22 +1188,22 @@ void EntityInspector::getEntityFromSelectionSystem()
         // Node was an entity, use this
         changeSelectedEntity(selectedNode);
 
-		// Just set the entity number
-		std::size_t ent(0), prim(0);
-		selection::algorithm::getSelectionIndex(ent, prim);
+        // Just set the entity number
+        std::size_t ent(0), prim(0);
+        selection::algorithm::getSelectionIndex(ent, prim);
 
-		_primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}"), ent));
+        _primitiveNumLabel->SetLabelMarkup(fmt::format(_("<b>Entity {0}</b>"), ent));
     }
     else
     {
         // Node was not an entity, try parent instead
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
         changeSelectedEntity(selectedNodeParent);
-		
-		std::size_t ent(0), prim(0);
-		selection::algorithm::getSelectionIndex(ent, prim);
+        
+        std::size_t ent(0), prim(0);
+        selection::algorithm::getSelectionIndex(ent, prim);
 
-		_primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), ent, prim));
+        _primitiveNumLabel->SetLabelMarkup(fmt::format(_("<b>Entity {0}, Primitive {1}</b>"), ent, prim));
     }
 }
 
@@ -1237,8 +1238,8 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
     _keyValueIterMap.clear();
     _kvStore->Clear();
 
-	// Reset the sorting when changing entities
-	_keyValueTreeView->ResetSortingOnAllColumns();
+    // Reset the sorting when changing entities
+    _keyValueTreeView->ResetSortingOnAllColumns();
     
     // Attach to new entity if it is non-NULL
     if (newEntity)
@@ -1258,7 +1259,7 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
 
 void EntityInspector::toggle(const cmd::ArgumentList& args)
 {
-	GlobalGroupDialog().togglePage("entity");
+    GlobalGroupDialog().togglePage("entity");
 }
 
 // Define the static EntityInspector module
