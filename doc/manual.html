@@ -449,7 +449,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_manipulating_objects">Manipulating objects</a></li>
 <li><a href="#_working_with_brushes">Working with brushes</a>
 <ul class="sectlevel3">
-<li><a href="#_creating_a_brush">Creating a brush</a></li>
+<li><a href="#CreatingABrush">Creating a brush</a></li>
 <li><a href="#_more_complex_brush_shapes">More complex brush shapes</a></li>
 <li><a href="#_creating_a_room">Creating a room</a></li>
 <li><a href="#_splitting_brushes">Splitting brushes</a></li>
@@ -464,6 +464,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
 <li><a href="#_creating_other_entity_types">Creating other entity types</a></li>
 <li><a href="#_editing_entity_properties">Editing entity properties</a></li>
+</ul>
+</li>
+<li><a href="#_working_with_patches">Working with patches</a>
+<ul class="sectlevel3">
+<li><a href="#_creating_a_simple_patch">Creating a simple patch</a></li>
 </ul>
 </li>
 </ul>
@@ -984,7 +989,7 @@ that never needs to be rendered.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_creating_a_brush">Creating a brush</h4>
+<h4 id="CreatingABrush">Creating a brush</h4>
 <div class="paragraph">
 <p>To create a simple rectangular brush, ensure that nothing is selected (<strong>ESC</strong>),
 then <strong>Left drag</strong> in the 2D view. A new brush will be created and sized according
@@ -1600,12 +1605,63 @@ text available, the question mark icon will be shown in the <strong>?</strong> c
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_working_with_patches">Working with patches</h3>
+<div class="paragraph">
+<p>Patches are smooth-shaded Bezier surfaces that can be created and manipulated in
+the editor (unlike models), and used to represent a variety of curved shapes
+such as vaulted ceilings, arches or pillars. Patches are single-sided surfaces,
+not solid like brushes, and cannot be used to seal a map from the void&#8201;&#8212;&#8201;any
+patch work on the boundary of a map will need solid brushes behind it to prevent
+the map from leaking.</p>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_simple_patch">Creating a simple patch</h4>
+<div class="paragraph">
+<p>A simple patch starts off as a flat rectangle, which can then be manipulated
+with vertex editing to produce a curved surface, if desired.</p>
+</div>
+<div class="paragraph">
+<p>To create a simple patch:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Set the 2D view axes (<strong>Ctrl + TAB</strong>) to define the orientation of the patch.
+The patch will be created facing directly towards the screen, so to create a
+horizontal (ceiling or floor) patch, the 2D view should be in XY (Top)
+orientation.</p>
+</li>
+<li>
+<p><a href="#CreatingABrush">Create a rectangular brush</a> to define the width and height of
+the patch in the current 2D view (the third dimension is not important, since
+the patch will be infinitely thin once created).</p>
+</li>
+<li>
+<p>With the brush selected, choose <strong>Create Simple Patch Mesh</strong> from the <strong>Patch</strong>
+menu.</p>
+</li>
+<li>
+<p>In the dialog which appears, choose the number of control points which should
+control the shape of the patch along its width and height. A patch can have
+between 3 and 15 control points in each dimension; there will always be a
+control point at the extreme edge, and one in the middle. More control points
+allow more complex shapes but also require more manual adjustment&#8201;&#8212;&#8201;creating a
+simple arch is much easier with just three control points.</p>
+</li>
+<li>
+<p>Click <strong>OK</strong> to create the patch.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-28 20:14:12 BST
+Last updated 2018-08-28 21:24:10 BST
 </div>
 </div>
 </body>

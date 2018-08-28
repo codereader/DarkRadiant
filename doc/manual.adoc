@@ -312,6 +312,7 @@ filling" the map interior, the map compiler can efficiently discard geometry
 that never needs to be rendered.
 ****
 
+[[CreatingABrush]]
 ==== Creating a brush
 
 To create a simple rectangular brush, ensure that nothing is selected (*ESC*),
@@ -713,3 +714,36 @@ entity which overrides the inherited default.
 which shows a brief explanation of certain properties. If a property has help
 text available, the question mark icon will be shown in the *?* column.
 |===
+
+=== Working with patches
+
+Patches are smooth-shaded Bezier surfaces that can be created and manipulated in
+the editor (unlike models), and used to represent a variety of curved shapes
+such as vaulted ceilings, arches or pillars. Patches are single-sided surfaces,
+not solid like brushes, and cannot be used to seal a map from the void -- any
+patch work on the boundary of a map will need solid brushes behind it to prevent
+the map from leaking.
+
+==== Creating a simple patch
+
+A simple patch starts off as a flat rectangle, which can then be manipulated
+with vertex editing to produce a curved surface, if desired.
+
+To create a simple patch:
+
+. Set the 2D view axes (*Ctrl + TAB*) to define the orientation of the patch.
+The patch will be created facing directly towards the screen, so to create a
+horizontal (ceiling or floor) patch, the 2D view should be in XY (Top)
+orientation.
+. <<CreatingABrush,Create a rectangular brush>> to define the width and height of
+the patch in the current 2D view (the third dimension is not important, since
+the patch will be infinitely thin once created).
+. With the brush selected, choose *Create Simple Patch Mesh* from the *Patch*
+menu.
+. In the dialog which appears, choose the number of control points which should
+control the shape of the patch along its width and height. A patch can have
+between 3 and 15 control points in each dimension; there will always be a
+control point at the extreme edge, and one in the middle. More control points
+allow more complex shapes but also require more manual adjustment -- creating a
+simple arch is much easier with just three control points.
+. Click *OK* to create the patch.
