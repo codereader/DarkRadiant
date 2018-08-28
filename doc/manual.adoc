@@ -669,22 +669,47 @@ These properties are displayed on the *Entity* tab of the editing panel.
 
 image::EntityInspector.png[align="center"]
 
-The list box at the top shows all of the properties which are currently set on
-the entity. Every entity has at least two standard properties: `classname` which
-specifies which type of entity it is, and `name` which is a unique name for this
-particular entity in the map. Properties that are recognised by DarkRadiant will
-display a small icon indicating the data type: text, boolean, vector etc.
+The entity panel lists all of the properties of the currently-selected entity,
+showing each property's name, its current value, and an icon representing its
+type (boolean, vector, text etc) if known. Selecting a property will populate
+the two text boxes in the center of the widget with the property name and value,
+allowing the value to be edited. If the selected property is of a known type,
+the panel at the bottom will show a custom widget appropriate for editing the
+particular property, e.g. three separate numeric spinboxes for a vector
+property, a colour selector widget for a colour property, and so on.
 
-Selecting a property in the list will populate the two text boxes directly below
-with the property name and current value. The value can be changed by editing
-the text and hitting *Enter* (or clicking the green tick button). You can also
-edit the property name and hit *Enter*, however this will not rename the
-property but add a _new_ property with the edited name and the current value.
+*Changing a property value*:: To change the value of the selected property,
+ simply enter the new value in the lower text box, then hit *Enter* or click the
+ green tick button. If the property has a type-specific editing widget, you can
+ also change its value using the controls in this widget.
 
-At the bottom of the panel is a property-specific widget which allows particular
-known property types to be edited with a more convenient interface. For example,
-the common 3-element vector type will show three separate numeric spin boxes for
-the X, Y and Z axis, along with a button to apply the changes. Boolean
-properties will show a simple checkbox, while generic text properties do not
-show a custom panel at all (since the text can simply be edited using the
-generic value textbox underneath the property list).
+*Adding a new property*:: There are two different ways to add a new property:
+. Enter a new property name in the upper text box (which shows the selected
+property name), and hit *Enter*. This does not rename the selected property, but
+adds a new property with the edited name and the current value.
+. *Right click* in the list of properties and choose *Add property* from the
+context menu. This will display a new dialog listing all known properties along
+with their descriptive text (if available). Selecting a property in this dialog
+and choosing *OK* will add the property to the entity with a default value of
+"-", which can then be edited in the entity panel itself.
+
+*Deleting a property*:: To delete the selected property, *Right click* on the
+ property in the list and choose *Delete property*.
+
+The entity panel provides two options controlling its behaviour:
+
+[cols="1,3"]
+|===
+|*Show inherited properties*|If checked, all properties that apply to the
+selected entity will be shown, including those which are inherited from the
+entity type declaration in the game installation. If unchecked, only those
+properties explicitly set on this particular entity (and stored in the map file)
+will be shown.
+
+You can change the value of an inherited property by selecting it and entering a
+new value in the entity panel; this will create a new explicit property on the
+entity which overrides the inherited default.
+|*Show help*|Enables or disables the text widget at the bottom of the panel
+which shows a brief explanation of certain properties. If a property has help
+text available, the question mark icon will be shown in the *?* column.
+|===

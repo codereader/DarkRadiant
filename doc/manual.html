@@ -1525,28 +1525,79 @@ These properties are displayed on the <strong>Entity</strong> tab of the editing
 </div>
 </div>
 <div class="paragraph">
-<p>The list box at the top shows all of the properties which are currently set on
-the entity. Every entity has at least two standard properties: <code>classname</code> which
-specifies which type of entity it is, and <code>name</code> which is a unique name for this
-particular entity in the map. Properties that are recognised by DarkRadiant will
-display a small icon indicating the data type: text, boolean, vector etc.</p>
+<p>The entity panel lists all of the properties of the currently-selected entity,
+showing each property&#8217;s name, its current value, and an icon representing its
+type (boolean, vector, text etc) if known. Selecting a property will populate
+the two text boxes in the center of the widget with the property name and value,
+allowing the value to be edited. If the selected property is of a known type,
+the panel at the bottom will show a custom widget appropriate for editing the
+particular property, e.g. three separate numeric spinboxes for a vector
+property, a colour selector widget for a colour property, and so on.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Changing a property value</strong></dt>
+<dd>
+<p>To change the value of the selected property,
+simply enter the new value in the lower text box, then hit <strong>Enter</strong> or click the
+green tick button. If the property has a type-specific editing widget, you can
+also change its value using the controls in this widget.</p>
+</dd>
+<dt class="hdlist1"><strong>Adding a new property</strong></dt>
+<dd>
+<p>There are two different ways to add a new property:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Enter a new property name in the upper text box (which shows the selected
+property name), and hit <strong>Enter</strong>. This does not rename the selected property, but
+adds a new property with the edited name and the current value.</p>
+</li>
+<li>
+<p><strong>Right click</strong> in the list of properties and choose <strong>Add property</strong> from the
+context menu. This will display a new dialog listing all known properties along
+with their descriptive text (if available). Selecting a property in this dialog
+and choosing <strong>OK</strong> will add the property to the entity with a default value of
+"-", which can then be edited in the entity panel itself.</p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Deleting a property</strong></dt>
+<dd>
+<p>To delete the selected property, <strong>Right click</strong> on the
+property in the list and choose <strong>Delete property</strong>.</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
-<p>Selecting a property in the list will populate the two text boxes directly below
-with the property name and current value. The value can be changed by editing
-the text and hitting <strong>Enter</strong> (or clicking the green tick button). You can also
-edit the property name and hit <strong>Enter</strong>, however this will not rename the
-property but add a <em>new</em> property with the edited name and the current value.</p>
+<p>The entity panel provides two options controlling its behaviour:</p>
 </div>
-<div class="paragraph">
-<p>At the bottom of the panel is a property-specific widget which allows particular
-known property types to be edited with a more convenient interface. For example,
-the common 3-element vector type will show three separate numeric spin boxes for
-the X, Y and Z axis, along with a button to apply the changes. Boolean
-properties will show a simple checkbox, while generic text properties do not
-show a custom panel at all (since the text can simply be edited using the
-generic value textbox underneath the property list).</p>
-</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Show inherited properties</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If checked, all properties that apply to the
+selected entity will be shown, including those which are inherited from the
+entity type declaration in the game installation. If unchecked, only those
+properties explicitly set on this particular entity (and stored in the map file)
+will be shown.
+</p><p class="tableblock">You can change the value of an inherited property by selecting it and entering a
+new value in the entity panel; this will create a new explicit property on the
+entity which overrides the inherited default.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Show help</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables the text widget at the bottom of the panel
+which shows a brief explanation of certain properties. If a property has help
+text available, the question mark icon will be shown in the <strong>?</strong> column.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -1554,7 +1605,7 @@ generic value textbox underneath the property list).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-21 20:56:39 BST
+Last updated 2018-08-28 20:14:12 BST
 </div>
 </div>
 </body>
