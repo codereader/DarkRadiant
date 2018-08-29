@@ -469,6 +469,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_working_with_patches">Working with patches</a>
 <ul class="sectlevel3">
 <li><a href="#_creating_a_simple_patch">Creating a simple patch</a></li>
+<li><a href="#_manipulating_control_points">Manipulating control points</a></li>
 </ul>
 </li>
 </ul>
@@ -1661,13 +1662,43 @@ with just three control points.</p>
 <div class="title">Figure 5. Simple patches with 3, 7 and 15 control points in both dimensions</div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_manipulating_control_points">Manipulating control points</h4>
+<div class="paragraph">
+<p>With a patch selected, press <strong>V</strong> to enter (or leave) vertex editing mode. This
+will display all of the control vertices, and allow you to select and move them.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Left click</strong> and drag a vertex to move just that one vertex.</p>
+</li>
+<li>
+<p><strong>Shift + Left click</strong> to add a vertex to the current selection set. When
+several vertices are selected, dragging any one of the selected vertices will
+move all of them together.</p>
+</li>
+<li>
+<p><strong>Shift + Left drag</strong> around several vertices to draw a selection rectangle that
+will toggle the selection state of all vertices inside it, selecting them if
+unselected and unselecting them if already selected.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/PatchVertexEditing.png" alt="PatchVertexEditing">
+</div>
+<div class="title">Figure 6. Making an arch by raising the central row of vertices in a simple patch</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-29 20:52:44 BST
+Last updated 2018-08-29 21:22:10 BST
 </div>
 </div>
 </body>

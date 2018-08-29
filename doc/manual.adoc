@@ -750,3 +750,19 @@ with just three control points.
 
 .Simple patches with 3, 7 and 15 control points in both dimensions
 image::SimplePatchesControlPoints.png[align="center"]
+
+==== Manipulating control points
+
+With a patch selected, press *V* to enter (or leave) vertex editing mode. This
+will display all of the control vertices, and allow you to select and move them.
+
+- *Left click* and drag a vertex to move just that one vertex.
+- *Shift + Left click* to add a vertex to the current selection set. When
+   several vertices are selected, dragging any one of the selected vertices will
+   move all of them together.
+- *Shift + Left drag* around several vertices to draw a selection rectangle that
+   will toggle the selection state of all vertices inside it, selecting them if
+   unselected and unselecting them if already selected.
+
+.Making an arch by raising the central row of vertices in a simple patch
+image::PatchVertexEditing.png[align="center"]
