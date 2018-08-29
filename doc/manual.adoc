@@ -740,10 +740,13 @@ the patch in the current 2D view (the third dimension is not important, since
 the patch will be infinitely thin once created).
 . With the brush selected, choose *Create Simple Patch Mesh* from the *Patch*
 menu.
-. In the dialog which appears, choose the number of control points which should
-control the shape of the patch along its width and height. A patch can have
-between 3 and 15 control points in each dimension; there will always be a
-control point at the extreme edge, and one in the middle. More control points
-allow more complex shapes but also require more manual adjustment -- creating a
-simple arch is much easier with just three control points.
+. In the dialog, choose the number of control points to define the shape of the
+patch along its width and height. A patch can have between 3 and 15 control
+points in each dimension; there will always be a control point at the extreme
+edge, and one in the middle. More control points allow more complex shapes but
+also require more manual adjustment -- creating a simple arch is much easier
+with just three control points.
 . Click *OK* to create the patch.
+
+.Simple patches with 3, 7 and 15 control points in both dimensions
+image::SimplePatchesControlPoints.png[align="center"]
