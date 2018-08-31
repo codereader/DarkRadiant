@@ -14,7 +14,7 @@
 #endif
 
 // If C++17 <filesystem> is available, use that one
-#ifdef HAVE_STD_FILESYSTEM
+#if defined(HAVE_STD_FILESYSTEM) || defined(__cpp_lib_filesystem)
 
 #include <filesystem>
 namespace fs = std::filesystem;
