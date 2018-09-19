@@ -766,3 +766,44 @@ will display all of the control vertices, and allow you to select and move them.
 
 .Making an arch by raising the central row of vertices in a simple patch
 image::PatchVertexEditing.png[align="center"]
+
+==== More complex patch shapes
+
+Just like with brushes, DarkRadiant offers several default patch shapes beyond
+the flat simple patch. These can be created by choosing the corresponding option
+in the *Patch* menu. There is no need to have a brush selected first in order to
+create these shapes, however if a brush _is_ selected, it will be removed and
+used to define the size of the patch shape.
+
+[cols="1,3"]
+|===
+|image:PatchSphere.png[]|
+*Sphere*
+
+An approximation of a sphere (the quadratic Bezier patch implementation in Doom
+3 and DarkRadiant does not permit the creation of a perfect sphere).
+
+|image:PatchCylinder.png[]|
+*Cylinder*
+
+A hollow cylinder aligned with the direction of the 2D view.
+
+|image:PatchCone.png[]|
+*Cone*
+
+A tapered cone pointing along the 2D view axis.
+
+|image:PatchEndCap.png[]|
+*End cap*
+
+An arch or half-cylinder covering a 180 degree angle, aligned with the 2D view
+axis. The peak of the arch will be at the top if created in front or side views,
+making this useful for curved ceilings and the like.
+
+|image:PatchBevel.png[]|
+*Bevel*
+
+Portion of an arch covering a 90 degree angle. This may be placed along room
+edges to give a curved appearance.
+
+|===

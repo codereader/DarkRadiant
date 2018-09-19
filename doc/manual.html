@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.4">
+<meta name="generator" content="Asciidoctor 1.5.5">
 <title>DarkRadiant User Guide</title>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -470,6 +470,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_creating_a_simple_patch">Creating a simple patch</a></li>
 <li><a href="#_manipulating_control_points">Manipulating control points</a></li>
+<li><a href="#_more_complex_patch_shapes">More complex patch shapes</a></li>
 </ul>
 </li>
 </ul>
@@ -1692,13 +1693,60 @@ unselected and unselecting them if already selected.</p>
 <div class="title">Figure 6. Making an arch by raising the central row of vertices in a simple patch</div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_more_complex_patch_shapes">More complex patch shapes</h4>
+<div class="paragraph">
+<p>Just like with brushes, DarkRadiant offers several default patch shapes beyond
+the flat simple patch. These can be created by choosing the corresponding option
+in the <strong>Patch</strong> menu. There is no need to have a brush selected first in order to
+create these shapes, however if a brush <em>is</em> selected, it will be removed and
+used to define the size of the patch shape.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchSphere.png" alt="PatchSphere"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sphere</strong>
+</p><p class="tableblock">An approximation of a sphere (the quadratic Bezier patch implementation in Doom
+3 and DarkRadiant does not permit the creation of a perfect sphere).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchCylinder.png" alt="PatchCylinder"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cylinder</strong>
+</p><p class="tableblock">A hollow cylinder aligned with the direction of the 2D view.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchCone.png" alt="PatchCone"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cone</strong>
+</p><p class="tableblock">A tapered cone pointing along the 2D view axis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchEndCap.png" alt="PatchEndCap"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>End cap</strong>
+</p><p class="tableblock">An arch or half-cylinder covering a 180 degree angle, aligned with the 2D view
+axis. The curved part of the arch will be at the top if created in front or side
+views, making this useful for curved ceilings and the like.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchBevel.png" alt="PatchBevel"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Bevel</strong>
+</p><p class="tableblock">Portion of an arch covering a 90 degree angle. This may be placed along room
+edges to give a curved appearance.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-08-29 21:22:10 BST
+Last updated 2018-09-19 21:22:42 BST
 </div>
 </div>
 </body>
