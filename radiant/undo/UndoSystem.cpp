@@ -25,7 +25,8 @@ namespace
 
 // Constructor
 UndoSystem::UndoSystem() :
-	_undoLevels(64)
+	_undoLevels(64),
+	_activeUndoStack(nullptr)
 {}
 
 UndoSystem::~UndoSystem()
@@ -41,6 +42,13 @@ void UndoSystem::keyChanged()
 IUndoStateSaver* UndoSystem::getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker)
 {
     auto result = _undoables.insert(std::make_pair(&undoable, UndoStackFiller(tracker)));
+
+	// If we're in the middle of an active undo operation, assign this to the tracker (#4861)
+	if (_activeUndoStack != nullptr)
+	{
+		result.first->second.setStack(_activeUndoStack);
+	}
+
     return &(result.first->second);
 }
 
@@ -271,7 +279,7 @@ void UndoSystem::startUndo()
 bool UndoSystem::finishUndo(const std::string& command)
 {
 	bool changed = _undoStack.finish(command);
-	setActiveUndoStack(NULL);
+	setActiveUndoStack(nullptr);
 	return changed;
 }
 
@@ -284,18 +292,18 @@ void UndoSystem::startRedo()
 bool UndoSystem::finishRedo(const std::string& command)
 {
 	bool changed = _redoStack.finish(command);
-	setActiveUndoStack(NULL);
+	setActiveUndoStack(nullptr);
 	return changed;
 }
 
 // Assigns the given stack to all of the Undoables listed in the map
 void UndoSystem::setActiveUndoStack(UndoStack* stack)
 {
-	//rMessage() << "Setting stack of " << _undoables.size() << " undoables.\n";
+	_activeUndoStack = stack;
 
 	for (UndoablesMap::value_type& pair : _undoables)
 	{
-		pair.second.setStack(stack);
+		pair.second.setStack(_activeUndoStack);
 	}
 }
 

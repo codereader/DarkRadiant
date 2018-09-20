@@ -40,6 +40,8 @@ private:
 	UndoStack _undoStack;
 	UndoStack _redoStack;
 
+	UndoStack* _activeUndoStack;
+
 	typedef std::map<IUndoable*, UndoStackFiller> UndoablesMap;
 	UndoablesMap _undoables;
 

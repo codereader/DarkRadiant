@@ -48,8 +48,6 @@ bool Doom3Entity::isOfType(const std::string& className)
 
 void Doom3Entity::importState(const KeyValues& keyValues)
 {
-	//rMessage() << "Importing state into entity " << getKeyValue("name") << ", got " << keyValues.size() << " key values\n";
-
 	// Remove the entity key values, one by one
 	while (_keyValues.size() > 0)
 	{
@@ -110,7 +108,6 @@ void Doom3Entity::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 
 	for (const auto& keyValue : _keyValues)
 	{
-		//rMessage() << "Connecting keyValue: " << keyValue.first << " to Undo System\n";
 		keyValue.second->connectUndoSystem(changeTracker);
 	}
 
@@ -123,7 +120,6 @@ void Doom3Entity::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 
 	for (const auto& keyValue : _keyValues)
 	{
-		//rMessage() << "Disconnecting keyValue: " << keyValue.first << " from Undo System\n";
 		keyValue.second->disconnectUndoSystem(changeTracker);
 	}
 
@@ -291,7 +287,6 @@ void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
 
 	if (_instanced)
 	{
-		//rMessage() << "Connecting new key value to undo system " << key << "\n";
 		i->second->connectUndoSystem(_undo.getUndoChangeTracker());
 	}
 }
@@ -303,8 +298,6 @@ void Doom3Entity::insert(const std::string& key, const std::string& value)
 
 	if (i != _keyValues.end())
     {
-		//rMessage() << "Storing value over existing key " << key << ": " << value << "\n";
-
 		// Key has been found
 		i->second->assign(value);
 
@@ -314,8 +307,6 @@ void Doom3Entity::insert(const std::string& key, const std::string& value)
 	}
 	else
 	{
-		//rMessage() << "Setting value of new key " << key << ": " << value << "\n";
-
 		// No key with that name found, create a new one
 		_undo.save();
 
@@ -331,8 +322,6 @@ void Doom3Entity::erase(const KeyValues::iterator& i)
 {
 	if (_instanced)
 	{
-		//rMessage() << "Disconnecting key value from undo system " << i->first << "\n";
-
 		i->second->disconnectUndoSystem(_undo.getUndoChangeTracker());
 	}
 

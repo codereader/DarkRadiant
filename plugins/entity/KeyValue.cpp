@@ -72,8 +72,6 @@ void KeyValue::notify()
 
 void KeyValue::importState(const std::string& string) 
 {
-	//rMessage() << "Importing value from undo system " << string << "\n";
-
 	// Add ourselves to the Undo event observers, to get notified after all this has been finished
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &KeyValue::onUndoRedoOperationFinished));
