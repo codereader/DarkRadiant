@@ -187,7 +187,12 @@ void PatchTesselation::generateNormals()
 			}
 
 			vertices[j * width + i].normal = sum;
-			vertices[j * width + i].normal.normalise();
+
+			// Catch cases where normal turns out as (0,0,0)
+			if (sum.getLengthSquared() > 0)
+			{
+				vertices[j * width + i].normal.normalise();
+			}
 		}
 	}
 }
@@ -866,7 +871,10 @@ void PatchTesselation::generate(std::size_t patchWidth, std::size_t patchHeight,
 	// normalize all the lerped normals
 	for (ArbitraryMeshVertex& vertex : vertices)
 	{
-		vertex.normal.normalise();
+		if (vertex.normal.getLengthSquared() > 0)
+		{
+			vertex.normal.normalise();
+		}
 	}
 
 	// Build the strip indices for rendering the quads
