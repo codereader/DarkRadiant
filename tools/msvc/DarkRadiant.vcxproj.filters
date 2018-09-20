@@ -1950,9 +1950,6 @@
     <ClInclude Include="..\..\radiant\undo\Operation.h">
       <Filter>src\undo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\SnapShot.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\undo\Stack.h">
       <Filter>src\undo</Filter>
     </ClInclude>

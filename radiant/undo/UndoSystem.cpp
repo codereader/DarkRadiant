@@ -11,7 +11,6 @@
 
 #include "registry/registry.h"
 #include "modulesystem/StaticModule.h"
-#include "SnapShot.h"
 #include "Operation.h"
 #include "StackFiller.h"
 

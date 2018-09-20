@@ -15,12 +15,22 @@ namespace undo
 {
 
 /**
-* greebo: The UndoSystem (interface: iundo.h) is maintaining an internal
-* stack of UndoCommands that contains the pointers to the Undoables as well as
-* to their UndoMementos.
+* greebo: The UndoSystem (interface: iundo.h) is maintaining two internal
+* stacks of Operations (one for Undo, one for Redo), each containing a list
+* of Undoables plus their snapshot data.
+*
+* The Undoables are responsible of submitting their data to the UndoSystem
+* before their data is changed, not knowing which or whether an operation is 
+* currently active. If there actually is an Undo Operation in the works,
+* this system is handling all of the paperwork.
 *
 * On undo or redo, the Undoables are called to re-import the states
-* as stored in the UndoMementos.
+* as stored in their UndoMementos. When undoing operations, the Undoables
+* themselves are again responsible for submitting their data to the UndoSystem
+* such that it can record the changes and store them in the RedoStack.
+*
+* The RedoStack is discarded as soon as a new Undoable Operation is recorded
+* and pushed to the UndoStack.
 */
 class UndoSystem :
 	public IUndoSystem

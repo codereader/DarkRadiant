@@ -749,7 +749,6 @@
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
     <ClInclude Include="..\..\radiant\ui\UserInterfaceModule.h" />
     <ClInclude Include="..\..\radiant\undo\Operation.h" />
-    <ClInclude Include="..\..\radiant\undo\SnapShot.h" />
     <ClInclude Include="..\..\radiant\undo\Stack.h" />
     <ClInclude Include="..\..\radiant\undo\StackFiller.h" />
     <ClInclude Include="..\..\radiant\undo\UndoSystem.h" />
