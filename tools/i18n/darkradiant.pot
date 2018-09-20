@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2018-05-02 09:31+0200\n"
+"POT-Creation-Date: 2018-09-20 13:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -422,17 +422,17 @@ msgstr ""
 msgid "Export region"
 msgstr ""
 
-#: ..\..\radiant\model\ModelExporter.cpp:323
+#: ..\..\radiant\model\ModelExporter.cpp:324
 #: ..\..\plugins\particles\ParticlesManager.cpp:323
 #: ..\..\plugins\particles\ParticlesManager.cpp:351
 msgid "Cannot open file for writing: {0}"
 msgstr ""
 
-#: ..\..\radiant\model\ModelExporter.cpp:345
+#: ..\..\radiant\model\ModelExporter.cpp:346
 msgid "Could not rename the existing file to .bak: {0}"
 msgstr ""
 
-#: ..\..\radiant\model\ModelExporter.cpp:359
+#: ..\..\radiant\model\ModelExporter.cpp:360
 msgid "Could not rename the temporary file: {0}"
 msgstr ""
 
@@ -779,7 +779,7 @@ msgid "ShaderClipboard is empty."
 msgstr ""
 
 #: ..\..\radiant\settings\GameManager.cpp:119
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:182
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:183
 msgid "Game"
 msgstr ""
 
@@ -2345,23 +2345,33 @@ msgstr ""
 msgid "Model Export"
 msgstr ""
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:176
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:180
 msgid "Empty Filename"
 msgstr ""
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:176
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:180
 msgid "No filename specified, cannot run exporter"
 msgstr ""
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:191
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:186
+msgid "Confirm Replacement"
+msgstr ""
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:187
+msgid ""
+"The file {0} already exists.\n"
+"Replace this file?"
+msgstr ""
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:204
 msgid "Export failed"
 msgstr ""
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:283
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:296
 msgid "Empty Selection"
 msgstr ""
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:283
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:296
 msgid "Nothing selected, cannot run exporter"
 msgstr ""
 
@@ -2720,11 +2730,11 @@ msgstr ""
 msgid "The mission path \"{0}\" does not exist.\n"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:23
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:24
 msgid "DarkRadiant Preferences"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:117
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:118
 msgid "Settings/"
 msgstr ""
 
@@ -2917,11 +2927,11 @@ msgstr ""
 msgid "Remove from Layer..."
 msgstr ""
 
-#: ..\..\radiant\undo\UndoSystem.cpp:331
+#: ..\..\radiant\undo\UndoSystem.cpp:340
 msgid "Settings/Undo System"
 msgstr ""
 
-#: ..\..\radiant\undo\UndoSystem.cpp:332
+#: ..\..\radiant\undo\UndoSystem.cpp:341
 msgid "Undo Queue Size"
 msgstr ""
 
@@ -3022,19 +3032,19 @@ msgstr ""
 msgid "Zoom View"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:229
+#: ..\..\radiant\xyview\XYWnd.cpp:235
 msgid "XY Top"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:232
+#: ..\..\radiant\xyview\XYWnd.cpp:238
 msgid "XZ Front"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:235
+#: ..\..\radiant\xyview\XYWnd.cpp:241
 msgid "YZ Side"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:498
+#: ..\..\radiant\xyview\XYWnd.cpp:504
 msgid "x: {0:6.1f} y: {1:6.1f} z: {2:6.1f}"
 msgstr ""
 
@@ -4652,11 +4662,11 @@ msgstr ""
 msgid "Shift"
 msgstr ""
 
-#: ..\..\libs\wxutil\PathEntry.cpp:97
+#: ..\..\libs\wxutil\PathEntry.cpp:103
 msgid "Choose File"
 msgstr ""
 
-#: ..\..\libs\wxutil\PathEntry.cpp:118
+#: ..\..\libs\wxutil\PathEntry.cpp:126
 msgid "Choose Directory"
 msgstr ""
 
@@ -5791,7 +5801,7 @@ msgstr ""
 
 #: xml_file_content.cpp:3
 msgid ""
-"http://www.darkradiant.net/\n"
+"https://www.darkradiant.net/\n"
 "\n"
 "This product contains software technology\n"
 "from id Software, Inc. ('id Technology').\n"

@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2018-05-02 09:31+0200\n"
-"PO-Revision-Date: 2018-05-02 09:33+0100\n"
-"Last-Translator: codereader <greebo@thedarkmod.com>\n"
+"POT-Creation-Date: 2018-09-20 13:24+0200\n"
+"PO-Revision-Date: 2018-09-20 13:25+0100\n"
+"Last-Translator: codereader <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -457,17 +457,17 @@ msgstr "Kann keine Region festlegen: keine Elemente ausgewählt."
 msgid "Export region"
 msgstr "Exportiere Region"
 
-#: ..\..\radiant\model\ModelExporter.cpp:323
+#: ..\..\radiant\model\ModelExporter.cpp:324
 #: ..\..\plugins\particles\ParticlesManager.cpp:323
 #: ..\..\plugins\particles\ParticlesManager.cpp:351
 msgid "Cannot open file for writing: {0}"
 msgstr "Kann die Datei nicht im Schreibmodus öffnen: {0}"
 
-#: ..\..\radiant\model\ModelExporter.cpp:345
+#: ..\..\radiant\model\ModelExporter.cpp:346
 msgid "Could not rename the existing file to .bak: {0}"
 msgstr "Konnte die bestehende Datei nicht auf .bak umbenennen: {0}"
 
-#: ..\..\radiant\model\ModelExporter.cpp:359
+#: ..\..\radiant\model\ModelExporter.cpp:360
 msgid "Could not rename the temporary file: {0}"
 msgstr "Konnte die temporäre Datei nicht umbenennen: {0}"
 
@@ -821,7 +821,7 @@ msgid "ShaderClipboard is empty."
 msgstr "Shader-Zwischenablage ist leer."
 
 #: ..\..\radiant\settings\GameManager.cpp:119
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:182
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:183
 msgid "Game"
 msgstr "Spiel"
 
@@ -2416,23 +2416,35 @@ msgstr "Filter bearbeiten..."
 msgid "Model Export"
 msgstr "Model-Export"
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:176
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:180
 msgid "Empty Filename"
 msgstr "Leerer Dateiname"
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:176
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:180
 msgid "No filename specified, cannot run exporter"
 msgstr "Kein Zieldateipfad angegeben, exportieren nicht möglich."
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:191
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:186
+msgid "Confirm Replacement"
+msgstr "Ersetzen bestätigen"
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:187
+msgid ""
+"The file {0} already exists.\n"
+"Replace this file?"
+msgstr ""
+"Die Datei {0} existiert bereits.\n"
+"Soll sie überschrieben werden?"
+
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:204
 msgid "Export failed"
 msgstr "Export fehlgeschlagen"
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:283
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:296
 msgid "Empty Selection"
 msgstr "Keine Auswahl"
 
-#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:283
+#: ..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp:296
 msgid "Nothing selected, cannot run exporter"
 msgstr "Nichts ausgewählt, exportieren nicht möglich"
 
@@ -2800,11 +2812,11 @@ msgstr "Die EXE-Datei \"{0}\" konnte in dem angegebenen Ordner nicht gefunden we
 msgid "The mission path \"{0}\" does not exist.\n"
 msgstr "Der Missions-Pfad \"{0}\" existiert nicht.\n"
 
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:23
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:24
 msgid "DarkRadiant Preferences"
 msgstr "DarkRadiant Einstellungen"
 
-#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:117
+#: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:118
 msgid "Settings/"
 msgstr "Einstellungen/"
 
@@ -2997,11 +3009,11 @@ msgstr "Nach Layer verschieben..."
 msgid "Remove from Layer..."
 msgstr "Von Layer entfernen..."
 
-#: ..\..\radiant\undo\UndoSystem.cpp:331
+#: ..\..\radiant\undo\UndoSystem.cpp:340
 msgid "Settings/Undo System"
 msgstr "Einstellungen/Undo"
 
-#: ..\..\radiant\undo\UndoSystem.cpp:332
+#: ..\..\radiant\undo\UndoSystem.cpp:341
 msgid "Undo Queue Size"
 msgstr "Größe des Undo-Stapels"
 
@@ -3108,19 +3120,19 @@ msgstr "Ansicht verschieben"
 msgid "Zoom View"
 msgstr "Ansicht zoomen"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:229
+#: ..\..\radiant\xyview\XYWnd.cpp:235
 msgid "XY Top"
 msgstr "XY Oben"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:232
+#: ..\..\radiant\xyview\XYWnd.cpp:238
 msgid "XZ Front"
 msgstr "XZ Vorne"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:235
+#: ..\..\radiant\xyview\XYWnd.cpp:241
 msgid "YZ Side"
 msgstr "YZ Seite"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:498
+#: ..\..\radiant\xyview\XYWnd.cpp:504
 msgid "x: {0:6.1f} y: {1:6.1f} z: {2:6.1f}"
 msgstr "x: {0:6.1f} y: {1:6.1f} z: {2:6.1f}"
 
@@ -4779,11 +4791,11 @@ msgstr "Strg"
 msgid "Shift"
 msgstr "Umschalt"
 
-#: ..\..\libs\wxutil\PathEntry.cpp:97
+#: ..\..\libs\wxutil\PathEntry.cpp:103
 msgid "Choose File"
 msgstr "Datei auswählen"
 
-#: ..\..\libs\wxutil\PathEntry.cpp:118
+#: ..\..\libs\wxutil\PathEntry.cpp:126
 msgid "Choose Directory"
 msgstr "Verzeichnis auswählen"
 
@@ -5925,7 +5937,7 @@ msgstr "Kompilierungsdatum: %s"
 
 #: xml_file_content.cpp:3
 msgid ""
-"http://www.darkradiant.net/\n"
+"https://www.darkradiant.net/\n"
 "\n"
 "This product contains software technology\n"
 "from id Software, Inc. ('id Technology').\n"
@@ -5935,7 +5947,7 @@ msgid ""
 "\n"
 "The Dark Mod (www.thedarkmod.com)"
 msgstr ""
-"http://www.darkradiant.net/\n"
+"https://www.darkradiant.net/\n"
 "\n"
 "Dieses Produkt enthält teilweise Software \n"
 "der Firma id Software, Inc. ('id Technology').\n"

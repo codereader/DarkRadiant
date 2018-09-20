@@ -36,7 +36,8 @@ PathEntry::PathEntry(wxWindow* parent, bool foldersOnly, bool open,
 	wxPanel(parent, wxID_ANY),
 	_fileType(fileType),
 	_defaultExt(defaultExt),
-	_open(open)
+	_open(open),
+	_askForOverwrite(true)
 {
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -90,12 +91,19 @@ void PathEntry::setDefaultExtension(const std::string& defaultExt)
 	_defaultExt = defaultExt;
 }
 
+void PathEntry::setAskForOverwrite(bool ask)
+{
+	_askForOverwrite = ask;
+}
+
 void PathEntry::onBrowseFiles(wxCommandEvent& ev)
 {
 	wxWindow* topLevel = wxGetTopLevelParent(this);
 
     FileChooser fileChooser(topLevel, _("Choose File"), _open, _fileType, _defaultExt);
 
+	// Propagate the setting of this picker
+	fileChooser.askForOverwrite(_askForOverwrite);
 	fileChooser.setCurrentPath(getValue());
 
 	std::string filename = fileChooser.display();
