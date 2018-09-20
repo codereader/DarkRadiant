@@ -9,7 +9,7 @@ namespace entity
 KeyValue::KeyValue(const std::string& value, const std::string& empty) :
 	_value(value),
 	_emptyValue(empty),
-	_undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1))
+	_undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1), "KeyValue")
 {
 	notify();
 }
@@ -72,6 +72,8 @@ void KeyValue::notify()
 
 void KeyValue::importState(const std::string& string) 
 {
+	//rMessage() << "Importing value from undo system " << string << "\n";
+
 	// Add ourselves to the Undo event observers, to get notified after all this has been finished
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &KeyValue::onUndoRedoOperationFinished));

@@ -292,6 +292,8 @@ bool UndoSystem::finishRedo(const std::string& command)
 // Assigns the given stack to all of the Undoables listed in the map
 void UndoSystem::setActiveUndoStack(UndoStack* stack)
 {
+	//rMessage() << "Setting stack of " << _undoables.size() << " undoables.\n";
+
 	for (UndoablesMap::value_type& pair : _undoables)
 	{
 		pair.second.setStack(stack);

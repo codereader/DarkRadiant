@@ -342,14 +342,15 @@ void LightInspector::getValuesFromEntity()
 
 	// Now load values from entity, overwriting the defaults if the value is
 	// set
-	for (StringMap::iterator i = _valueMap.begin();
-		 i != _valueMap.end();
-		 ++i)
+	for (auto& pair : _valueMap)
 	{
 		// Overwrite the map value if the key exists on the entity
-		std::string val = entity->getKeyValue(i->first);
+		std::string val = entity->getKeyValue(pair.first);
+
 		if (!val.empty())
-			i->second = val;
+		{
+			pair.second = val;
+		}
 	}
 
 	// Get the colour key from the entity to set the GtkColorButton. If the
@@ -404,11 +405,11 @@ void LightInspector::getValuesFromEntity()
 // Write to all entities
 void LightInspector::writeToAllEntities()
 {
-    for (EntityList::iterator i = _lightEntities.begin();
-         i != _lightEntities.end();
-         ++i)
+	UndoableCommand command("setLightProperties");
+
+    for (auto entity : _lightEntities)
     {
-        setValuesOnEntity(*i);
+        setValuesOnEntity(entity);
     }
 }
 
@@ -416,33 +417,39 @@ void LightInspector::writeToAllEntities()
 void LightInspector::setKeyValueAllLights(const std::string& key,
                                           const std::string& value)
 {
-    for (EntityList::iterator i = _lightEntities.begin();
-         i != _lightEntities.end();
-         ++i)
+	for (auto entity : _lightEntities)
     {
-        (*i)->setKeyValue(key, value);
+        entity->setKeyValue(key, value);
     }
+}
+
+inline void setEntityValueIfDifferent(Entity* entity, const std::string& key, const std::string& value)
+{
+	// Only set the values if the entity carries different ones
+	// to avoid triggering lots of undo system state savings
+	if (entity->getKeyValue(key) != value)
+	{
+		entity->setKeyValue(key, value);
+	}
 }
 
 // Set the keyvalues on the entity from the dialog widgets
 void LightInspector::setValuesOnEntity(Entity* entity)
 {
-	UndoableCommand command("setLightProperties");
-
 	// Set the "_color" keyvalue
 	wxColour col = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->GetColour();
 
-	entity->setKeyValue("_color", fmt::format("{:.3f} {:.3f} {:.3f}", 
+	setEntityValueIfDifferent(entity, "_color", fmt::format("{:.3f} {:.3f} {:.3f}", 
 							  		(col.Red() / 255.0f), 
 							  		(col.Green() / 255.0f),
 							  		(col.Blue() / 255.0f)));
 
 	// Write out all vectors to the entity
-	for (StringMap::iterator i = _valueMap.begin();
-		 i != _valueMap.end();
-		 ++i)
+	for (const auto& pair : _valueMap)
 	{
-		entity->setKeyValue(i->first, i->second);
+		// Only set the values if the entity carries different ones
+		// to avoid triggering lots of undo system state savings
+		setEntityValueIfDifferent(entity, pair.first, pair.second);
 	}
 
 	// Remove vector keys that should not exist, depending on the lightvolume
@@ -452,32 +459,32 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 		// Clear start/end vectors if checkbox is disabled
 		if (!findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd")->GetValue())
 		{
-			entity->setKeyValue("light_start", "");
-			entity->setKeyValue("light_end", "");
+			setEntityValueIfDifferent(entity, "light_start", "");
+			setEntityValueIfDifferent(entity, "light_end", "");
 		}
 
 		// Blank out pointlight values
-		entity->setKeyValue("light_radius", "");
-		entity->setKeyValue("light_center", "");
+		setEntityValueIfDifferent(entity, "light_radius", "");
+		setEntityValueIfDifferent(entity, "light_center", "");
 	}
 	else
 	{
 		// Blank out projected light values
-		entity->setKeyValue("light_target", "");
-		entity->setKeyValue("light_right", "");
-		entity->setKeyValue("light_up", "");
-		entity->setKeyValue("light_start", "");
-		entity->setKeyValue("light_end", "");
+		setEntityValueIfDifferent(entity, "light_target", "");
+		setEntityValueIfDifferent(entity, "light_right", "");
+		setEntityValueIfDifferent(entity, "light_up", "");
+		setEntityValueIfDifferent(entity, "light_start", "");
+		setEntityValueIfDifferent(entity, "light_end", "");
 	}
 
 	// Write the texture key
-	entity->setKeyValue("texture", _texSelector->getSelection());
+	setEntityValueIfDifferent(entity, "texture", _texSelector->getSelection());
 
 	// Write the options
-	entity->setKeyValue("parallel", findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->GetValue() ? "1" : "0");
-	entity->setKeyValue("nospecular", findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->GetValue() ? "1" : "0");
-	entity->setKeyValue("nodiffuse", findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->GetValue() ? "1" : "0");
-	entity->setKeyValue("noshadows", findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->GetValue() ? "1" : "0");
+	setEntityValueIfDifferent(entity, "parallel", findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->GetValue() ? "1" : "0");
+	setEntityValueIfDifferent(entity, "nospecular", findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->GetValue() ? "1" : "0");
+	setEntityValueIfDifferent(entity, "nodiffuse", findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->GetValue() ? "1" : "0");
+	setEntityValueIfDifferent(entity, "noshadows", findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->GetValue() ? "1" : "0");
 }
 
 void LightInspector::_onOptionsToggle(wxCommandEvent& ev)

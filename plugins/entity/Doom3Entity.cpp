@@ -10,7 +10,7 @@ namespace entity {
 
 Doom3Entity::Doom3Entity(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
-	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1)),
+	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1), "EntityKeyValues"),
 	_instanced(false),
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize())
@@ -19,7 +19,7 @@ Doom3Entity::Doom3Entity(const IEntityClassPtr& eclass) :
 Doom3Entity::Doom3Entity(const Doom3Entity& other) :
 	Entity(other),
 	_eclass(other.getEntityClass()),
-	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1)),
+	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1), "EntityKeyValues"),
 	_instanced(false),
 	_observerMutex(false),
 	_isContainer(other._isContainer)
@@ -48,6 +48,8 @@ bool Doom3Entity::isOfType(const std::string& className)
 
 void Doom3Entity::importState(const KeyValues& keyValues)
 {
+	//rMessage() << "Importing state into entity " << getKeyValue("name") << ", got " << keyValues.size() << " key values\n";
+
 	// Remove the entity key values, one by one
 	while (_keyValues.size() > 0)
 	{
@@ -106,14 +108,24 @@ void Doom3Entity::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
 	_instanced = true;
 
-    for (auto keyValue : _keyValues) keyValue.second->connectUndoSystem(changeTracker);
+	for (const auto& keyValue : _keyValues)
+	{
+		//rMessage() << "Connecting keyValue: " << keyValue.first << " to Undo System\n";
+		keyValue.second->connectUndoSystem(changeTracker);
+	}
+
     _undo.connectUndoSystem(changeTracker);
 }
 
 void Doom3Entity::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
 	_undo.disconnectUndoSystem(changeTracker);
-    for (auto keyValue : _keyValues) keyValue.second->disconnectUndoSystem(changeTracker);
+
+	for (const auto& keyValue : _keyValues)
+	{
+		//rMessage() << "Disconnecting keyValue: " << keyValue.first << " from Undo System\n";
+		keyValue.second->disconnectUndoSystem(changeTracker);
+	}
 
 	_instanced = false;
 }
@@ -279,6 +291,7 @@ void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
 
 	if (_instanced)
 	{
+		//rMessage() << "Connecting new key value to undo system " << key << "\n";
 		i->second->connectUndoSystem(_undo.getUndoChangeTracker());
 	}
 }
@@ -290,6 +303,8 @@ void Doom3Entity::insert(const std::string& key, const std::string& value)
 
 	if (i != _keyValues.end())
     {
+		//rMessage() << "Storing value over existing key " << key << ": " << value << "\n";
+
 		// Key has been found
 		i->second->assign(value);
 
@@ -299,6 +314,8 @@ void Doom3Entity::insert(const std::string& key, const std::string& value)
 	}
 	else
 	{
+		//rMessage() << "Setting value of new key " << key << ": " << value << "\n";
+
 		// No key with that name found, create a new one
 		_undo.save();
 
@@ -314,6 +331,8 @@ void Doom3Entity::erase(const KeyValues::iterator& i)
 {
 	if (_instanced)
 	{
+		//rMessage() << "Disconnecting key value from undo system " << i->first << "\n";
+
 		i->second->disconnectUndoSystem(_undo.getUndoChangeTracker());
 	}
 
