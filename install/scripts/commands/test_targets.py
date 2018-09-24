@@ -54,7 +54,7 @@ def execute():
         msg += "\n\nDo you want to select all entities with missing targets?"
         response = GlobalDialogManager.createMessageBox('Missing targets', msg, dr.Dialog.ASK).run()
         if response == dr.Dialog.YES:
-            class Selector(SceneNodeVisitor):
+            class Selector(dr.SceneNodeVisitor):
                 def pre(self, node):
                     if node.isEntity() and node.getEntity().getKeyValue('name') in g_missing.keys():
                         node.setSelected(True)
