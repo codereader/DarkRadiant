@@ -3,19 +3,21 @@
 #include <string>
 #include <set>
 
-/// Set of unique integer postfixes
-typedef std::set<int> PostfixSet;
+/// Set of unique postfixes, e.g. "1", "6" or "04"
+typedef std::set<std::string> PostfixSet;
 
-/// Name consisting of initial text and optional unique-making numeric postfix
+/// Name consisting of initial text and optional unique-making number-postfix 
+/// e.g. "Carl" + "6", or "Mary" + "03"
 class ComplexName
 {
     // Initial name text
     std::string _name;
 
-    // Numeric postfix. -1 is considered as invalid/empty postfix
-    int _postFix;
+    // The number postfix in string form. "-" is considered an invalid/empty postfix
+    std::string _postFix;
 
 public:
+	static const std::string EMPTY_POSTFIX; // "-"
 
     /// Construct a ComplexName from the given full name string
     ComplexName(const std::string& fullname);
@@ -29,8 +31,8 @@ public:
         return _name;
     }
 
-    /// Get the numeric postfix (-1 indicates no postfix is used)
-    int getPostfix() const
+    /// Get the numeric postfix ("-" indicates no postfix is used)
+	std::string getPostfix() const
     {
         return _postFix;
     }
@@ -43,5 +45,5 @@ public:
      * \param postfixes
      * Set of existing postfixes which must not be used.
      */
-    int makePostfixUnique(const PostfixSet& postfixes);
+    std::string makePostfixUnique(const PostfixSet& postfixes);
 };

@@ -7,13 +7,13 @@
 
 /**
  * \brief
- * A set which maps name prefixes (e.g. "func_static_") to the set of integer
+ * A set which maps name prefixes (e.g. "func_static_") to the set of 
  * postfixes which are used in the current map.
  */
 class UniqueNameSet
 {
     // This maps name prefixes to a set of used postfixes
-    // e.g. "func_static_" => [1,3,4,5,10]
+    // e.g. "func_static_" => ["1","3","4","5","05","10"]
     // Allows fairly quick lookup of used names and postfixes
     typedef std::map<std::string, PostfixSet> Names;
     Names _names;
@@ -126,7 +126,8 @@ public:
         PostfixSet& postfixSet = found->second;
 
         ComplexName uniqueName(name);
-        int postfix = uniqueName.makePostfixUnique(postfixSet);
+
+        std::string postfix = uniqueName.makePostfixUnique(postfixSet);
         postfixSet.insert(postfix);
 
         return uniqueName.getFullname();
