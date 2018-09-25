@@ -807,3 +807,25 @@ Portion of an arch covering a 90 degree angle. This may be placed along room
 edges to give a curved appearance.
 
 |===
+
+==== Controlling patch subdivision
+
+Although patches are defined by Bezier curves, they are subdivided into flat
+polygons for rendering. By default, the number of polygons to create is
+determined dynamically by the game engine, based on the shape of the patch.
+However, you can also use the *Patch Inspector* to explicitly set the level of
+subdivision required, which can be useful when optimising a map by reducing
+on-screen polygon counts.
+
+.Default (automatic) subdivision, 2x2 subdivision, 3x3 subdivision, 3x10 subdivision
+image::PatchSubdivision.png[align="center"]
+
+To subdivide a patch:
+
+. Select *Patch Inspector* in the *View* menu to make the inspector widget
+visible.
+. With the patch selected, enable the *Fixed Subdivisions* checkbox.
+. Use the *Horizontal* and *Vertical* numeric spinboxes to set the number of
+polygons to divide the patch into. The value can range from *1*, making the
+patch completely flat regardless of control point positions, up to a maximum of
+*32*. Each dimension can have a different subdivision level, if required.
