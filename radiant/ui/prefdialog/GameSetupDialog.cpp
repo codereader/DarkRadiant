@@ -158,6 +158,9 @@ void GameSetupDialog::tryEndModal(wxStandardID result)
 		}
 	}
 
+	// Fire the close event
+	page->onClose();
+
 	EndModal(result);
 }
 

@@ -21,6 +21,9 @@ private:
 
 	std::string _fmFolder;
 
+	class FmFolderHistory;
+	std::unique_ptr<FmFolderHistory> _fmFolderHistory;
+
 public:
 	GameSetupPageTdm(wxWindow* parent, const game::IGamePtr& game);
 
@@ -30,6 +33,7 @@ public:
 	void validateSettings() override;
 	bool onPreSave() override;
 	void onPageShown() override;
+	void onClose() override;
 
 private:
 	void constructPaths();

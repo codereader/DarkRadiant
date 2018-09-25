@@ -1,5 +1,6 @@
 #include "GameSetupPageTdm.h"
 
+#include <set>
 #include "i18n.h"
 #include "imodule.h"
 #include "igame.h"
@@ -21,11 +22,49 @@
 namespace ui
 {
 
+namespace
+{
+	const std::string RKEY_FM_FOLDER_HISTORY = "user/ui/gameSetup/tdm/fmFolderHistory";
+	const std::size_t HISTORY_LENGTH = 5;
+}
+
+class GameSetupPageTdm::FmFolderHistory :
+	public std::list<std::string>
+{
+public:
+	void loadFromRegistry()
+	{
+		xml::NodeList folders = GlobalRegistry().findXPath(std::string(RKEY_FM_FOLDER_HISTORY) + "//folder");
+
+		for (xml::Node& node : folders)
+		{
+			this->push_back(node.getAttributeValue("value"));
+		}
+	}
+
+	void saveToRegistry()
+	{
+		GlobalRegistry().deleteXPath(std::string(RKEY_FM_FOLDER_HISTORY) + "//folder");
+
+		xml::Node folders = GlobalRegistry().createKey(RKEY_FM_FOLDER_HISTORY);
+
+		for (const auto& folder : *this)
+		{
+			xml::Node node = folders.createChild("folder");
+			node.setAttributeValue("value", folder);
+		}
+	}
+};
+
 GameSetupPageTdm::GameSetupPageTdm(wxWindow* parent, const game::IGamePtr& game) :
 	GameSetupPage(parent, game),
 	_missionEntry(nullptr),
-	_enginePathEntry(nullptr)
+	_enginePathEntry(nullptr),
+	_fmFolderHistory(new FmFolderHistory)
 {
+	// Load the stored recent paths
+	_fmFolderHistory->loadFromRegistry();
+
 	wxFlexGridSizer* table = new wxFlexGridSizer(2, 2, wxSize(6, 6));
 	table->AddGrowableCol(1);
 	this->SetSizer(table);
@@ -124,6 +163,25 @@ bool GameSetupPageTdm::onPreSave()
 
 	// Engine path is OK, mod path is empty or exists already
 	return true;
+}
+
+void GameSetupPageTdm::onClose()
+{
+	// Add the path to the history if it's an absolute path
+	if (!_config.modPath.empty() && path_is_absolute(_config.modPath.c_str()))
+	{
+		// Erase all existing occurrences, this moves recently used paths to the top
+		_fmFolderHistory->remove(_config.modPath);
+
+		_fmFolderHistory->push_front(_config.modPath);
+
+		while (_fmFolderHistory->size() > HISTORY_LENGTH)
+		{
+			_fmFolderHistory->pop_back();
+		}
+
+		_fmFolderHistory->saveToRegistry();
+	}
 }
 
 void GameSetupPageTdm::validateSettings()
@@ -280,6 +338,12 @@ void GameSetupPageTdm::populateAvailableMissionPaths()
 	}
 	catch (const os::DirectoryNotFoundException&)
 	{}
+
+	// Add the history entries to the top of the list
+	for (auto f = _fmFolderHistory->rbegin(); f != _fmFolderHistory->rend(); ++f)
+	{
+		_missionEntry->Insert(*f, 0);
+	}
 
 	// Keep the previous value after repopulation
 	_missionEntry->SetValue(previousMissionValue);
