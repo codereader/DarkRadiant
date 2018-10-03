@@ -851,6 +851,95 @@ particular, there are no shadows or foglights.
 </table>
 </div>
 <div class="paragraph">
+<p>The 3D camera view provides its own toolbar which can be used to configure
+various display settings.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 7.1428%;">
+<col style="width: 21.4285%;">
+<col style="width: 71.4287%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/wireframeMode16.png" alt="wireframeMode16" width="24">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Render in wireframe mode</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render objects as wire meshes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/solidMode16.png" alt="solidMode16" width="24">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Render in flat-shaded mode</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render objects as coloured solids, without textures or lighting.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/textureMode16.png" alt="textureMode16" width="24">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Render in fullbright textured mode</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render objects as preview textures, with no lighting or material effects such as
+transparency.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/lightingMode.png" alt="lightingMode" width="24">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Render in lighting preview mode</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render all available lighting and texture effects.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/StartPlayback.png" alt="StartPlayback" width="24">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Start render time</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Begin rendering animated effects.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/StopPlayback.png" alt="StopPlayback" width="24">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Stop render time</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stop rendering animated effects.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/farClipIn.png" alt="farClipIn" width="24">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Clip plane in</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the far
+clip plane closer to the camera.
+</p><p class="tableblock">The far clip plane is a performance optimisation which avoids rendering geometry
+more than a certain distance away from the camera.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/farClipOut.png" alt="farClipOut" width="24">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Clip plane out</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the far clip plane further away from the camera.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
 <p>The 3D view always renders the scene from a particular camera position, which is
 shown in the 2D view as a blue diamond. This camera position can be set directly
 from the 2D view with <strong>Ctrl + Middle click</strong>, and the camera view direction can
@@ -1784,7 +1873,7 @@ patch completely flat regardless of control point positions, up to a maximum of
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-09-25 20:46:21 BST
+Last updated 2018-10-03 21:04:01 BST
 </div>
 </div>
 </body>

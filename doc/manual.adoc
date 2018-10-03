@@ -236,6 +236,33 @@ IMPORTANT: The fully lit rendering mode in DarkRadiant is very limited, and only
 offers a partial view of what the game engine will ultimately render. In
 particular, there are no shadows or foglights.
 
+The 3D camera view provides its own toolbar which can be used to configure
+various display settings.
+
+[cols="1,3,10"]
+|===
+a|image::wireframeMode16.png[align="center",width=24]|*Render in wireframe mode*|
+Render objects as wire meshes.
+a|image::solidMode16.png[align="center",width=24]|*Render in flat-shaded mode*|
+Render objects as coloured solids, without textures or lighting.
+a|image::textureMode16.png[align="center",width=24]|*Render in fullbright textured mode*|
+Render objects as preview textures, with no lighting or material effects such as
+transparency.
+a|image::lightingMode.png[align="center",width=24]|*Render in lighting preview mode*|
+Render all available lighting and texture effects.
+a|image::StartPlayback.png[align="center",width=24]|*Start render time*|
+Begin rendering animated effects.
+a|image::StopPlayback.png[align="center",width=24]|*Stop render time*|
+Stop rendering animated effects.
+a|image::farClipIn.png[align="center",width=24]|*Clip plane in*| Move the far
+clip plane closer to the camera.
+
+The far clip plane is a performance optimisation which avoids rendering geometry
+more than a certain distance away from the camera.
+a|image::farClipOut.png[align="center",width=24]|*Clip plane out*|
+Move the far clip plane further away from the camera.
+|===
+
 The 3D view always renders the scene from a particular camera position, which is
 shown in the 2D view as a blue diamond. This camera position can be set directly
 from the 2D view with *Ctrl + Middle click*, and the camera view direction can
