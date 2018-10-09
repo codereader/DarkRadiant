@@ -169,9 +169,28 @@ Colours...`. If you prefer a dark theme, the `Black & Green` scheme might be
 suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
 provide a more neutral, low-contrast look.
 
+[align="center",cols="^.^a,^.^a,^.^a"]
+|===
+|image:DarkRadiantDefaultTheme.png[] +
+*DarkRadiant Default*
+|image:BlackGreenTheme.png[] +
+*Black and Green*
+|image:Q3RadiantTheme.png[] +
+*QE3Radiant Original*
+|image:SuperMalTheme.png[] +
+*Super Mal*
+|image:MayaEmulationTheme.png[] +
+*Maya/Max/Lightwave Emulation*
+|
+|===
+
 Each of the colour schemes can be edited using the colour selector buttons in
 the *Colours* dialog, and it is also possible to copy one of the default schemes
 into a custom scheme with a new name.
+
+NOTE: The game installation may specify the colour of certain entity types, in
+which case it will not be possible to change the colour of these entities via
+the *Colours* dialog.
 
 == Basic editing
 
