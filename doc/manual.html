@@ -473,6 +473,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_controlling_patch_subdivision">Controlling patch subdivision</a></li>
 </ul>
 </li>
+<li><a href="#_compiling_a_map">Compiling a map</a>
+<ul class="sectlevel3">
+<li><a href="#_preventing_leaks">Preventing leaks</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1875,12 +1880,69 @@ patch completely flat regardless of control point positions, up to a maximum of
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_compiling_a_map">Compiling a map</h3>
+<div class="paragraph">
+<p>DarkRadiant does not include functionality for compiling a map into the form
+needed by the game engine; instead, you must use external tools or the map
+compiler built into the game itself. For the Dark Mod, you would need to enter
+the in-game console and type <code>dmap &lt;mapname&gt;</code>, where <em>&lt;mapname&gt;</em> is the actual
+filename of your map.</p>
+</div>
+<div class="sect3">
+<h4 id="_preventing_leaks">Preventing leaks</h4>
+<div class="paragraph">
+<p>A map "leak" occurs when the play area is not fully enclosed with a complete
+shell of opaque brushes. If the map leaks, compilation will fail and the map
+will not be playable.</p>
+</div>
+<div class="paragraph">
+<p>In order to minimise the likelihood of a map leak, ensure that your map has all
+of the following properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The map interior is <em>completely</em> sealed from the exterior void by brushes (not
+patches). It is much easier to achieve this by building up a map carefully,
+making good use of the grid snapping functionality, rather than haphazardly
+throwing brushes together and hoping to seal them later.</p>
+</li>
+<li>
+<p>All of the sealing brushes have an opaque texture. Skybox textures are
+considered opaque and are OK, however semi-transparent or perforated mesh
+textures are not.</p>
+</li>
+<li>
+<p>The origin point of <em>every</em> entity in the map lies within the sealed map
+interior. It is OK if a large model extends outside of the map, provided that
+its origin point is on the inside.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<img src="img/warning.png" alt="Warning">
+</td>
+<td class="content">
+Do <strong>not</strong> be tempted to avoid leaks by enclosing your entire map in a
+single huge box. This may seem to solve the problem (the map will indeed not
+leak), but it completely negates the important performance optimisations that
+the map compiler carries out when it "flood fills" the map interior.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-10-16 20:58:21 BST
+Last updated 2018-10-16 21:36:09 BST
 </div>
 </div>
 </body>

@@ -875,3 +875,36 @@ visible.
 polygons to divide the patch into. The value can range from *1*, making the
 patch completely flat regardless of control point positions, up to a maximum of
 *32*. Each dimension can have a different subdivision level, if required.
+
+=== Compiling a map
+
+DarkRadiant does not include functionality for compiling a map into the form
+needed by the game engine; instead, you must use external tools or the map
+compiler built into the game itself. For the Dark Mod, you would need to enter
+the in-game console and type `dmap <mapname>`, where _<mapname>_ is the actual
+filename of your map.
+
+==== Preventing leaks
+
+A map "leak" occurs when the play area is not fully enclosed with a complete
+shell of opaque brushes. If the map leaks, compilation will fail and the map
+will not be playable.
+
+In order to minimise the likelihood of a map leak, ensure that your map has all
+of the following properties:
+
+- The map interior is _completely_ sealed from the exterior void by brushes (not
+  patches). It is much easier to achieve this by building up a map carefully,
+  making good use of the grid snapping functionality, rather than haphazardly
+  throwing brushes together and hoping to seal them later.
+- All of the sealing brushes have an opaque texture. Skybox textures are
+  considered opaque and are OK, however semi-transparent or perforated mesh
+  textures are not.
+- The origin point of _every_ entity in the map lies within the sealed map
+  interior. It is OK if a large model extends outside of the map, provided that
+  its origin point is on the inside.
+
+WARNING: Do *not* be tempted to avoid leaks by enclosing your entire map in a
+single huge box. This may seem to solve the problem (the map will indeed not
+leak), but it completely negates the important performance optimisations that
+the map compiler carries out when it "flood fills" the map interior.
