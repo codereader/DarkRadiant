@@ -169,7 +169,7 @@ Colours...`. If you prefer a dark theme, the `Black & Green` scheme might be
 suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
 provide a more neutral, low-contrast look.
 
-[align="center",cols="^.^a,^.^a,^.^a"]
+[align="center",cols="^.<a,^.<a,^.<a",grid="none"]
 |===
 |image:DarkRadiantDefaultTheme.png[] +
 *DarkRadiant Default*
