@@ -476,6 +476,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_compiling_a_map">Compiling a map</a>
 <ul class="sectlevel3">
 <li><a href="#_preventing_leaks">Preventing leaks</a></li>
+<li><a href="#_locating_leaks_with_a_pointfile">Locating leaks with a pointfile</a></li>
 </ul>
 </li>
 </ul>
@@ -1885,9 +1886,50 @@ patch completely flat regardless of control point positions, up to a maximum of
 <div class="paragraph">
 <p>DarkRadiant does not include functionality for compiling a map into the form
 needed by the game engine; instead, you must use external tools or the map
-compiler built into the game itself. For the Dark Mod, you would need to enter
-the in-game console and type <code>dmap &lt;mapname&gt;</code>, where <em>&lt;mapname&gt;</em> is the actual
-filename of your map.</p>
+compiler built into the game itself.</p>
+</div>
+<div class="paragraph">
+<p>For Doom 3 and the Dark Mod, the following commands are used within the in-game
+console (which can normally be accessed with the key immediately above <code>TAB</code>):</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+<code>dmap&nbsp;&lt;mymapname.map&gt;</code>
+</td>
+<td class="hdlist2">
+<p>Compile the map called <code>mymapname.map</code>, which must be
+located within the <code>maps</code> directory of the mod installation. If there are any
+problems compiling the map (e.g. a leak), the error will be displayed in the
+console output.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>map&nbsp;&lt;mymapname.map&gt;</code>
+</td>
+<td class="hdlist2">
+<p>Load the compiled map <code>mymapname.map</code> into the game
+engine and start playing it immediately.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+When compiling and testing maps, it may be helpful to set your game to
+play in windowed mode, with a reduced resolution. This will allow both the game
+and DarkRadiant to be visible on the screen as separate windows, which you can
+easily switch between during the compile and test cycle.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_preventing_leaks">Preventing leaks</h4>
@@ -1936,13 +1978,38 @@ the map compiler carries out when it "flood fills" the map interior.
 </table>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_locating_leaks_with_a_pointfile">Locating leaks with a pointfile</h4>
+<div class="paragraph">
+<p>No matter how hard you try to avoid leaks, occasionally they will happen. In
+this case the <strong>pointfile</strong> functionality is helpful to identify the location of
+the leak.</p>
+</div>
+<div class="paragraph">
+<p>After the map compilation has failed with a leak, return to DarkRadiant and
+choose <strong>Pointfile</strong> from the <strong>File</strong> menu. This will automatically load the point
+file associated with the current mape, which contains a series of points
+identifying the path to the leak. This path will be rendered as a bright red
+line in both the 2D and 3D views:</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/Pointfile.png" alt="Pointfile">
+</div>
+<div class="title">Figure 8. A pointfile rendered in both 3D and 3D views</div>
+</div>
+<div class="paragraph">
+<p>In this example we can clearly see that the map has leaked because the far wall
+brush does not join up with the ceiling.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-10-16 21:36:09 BST
+Last updated 2018-10-23 20:33:04 BST
 </div>
 </div>
 </body>
