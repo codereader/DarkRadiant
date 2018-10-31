@@ -496,38 +496,191 @@ can more easily be seen.
 triangle, simply drag one corner directly on top of another. The two edges will
 be merged.
 
-==== Applying textures to brushes
+=== Working with patches
 
-There are two separate interfaces for browsing and applying textures, each of
-which provides similar functionality but presents the information in a slightly
-different way.
+Patches are smooth-shaded Bezier surfaces that can be created and manipulated in
+the editor (unlike models), and used to represent a variety of curved shapes
+such as vaulted ceilings, arches or pillars. Patches are single-sided surfaces,
+not solid like brushes, and cannot be used to seal a map from the void -- any
+patch work on the boundary of a map will need solid brushes behind it to prevent
+the map from leaking.
+
+==== Creating a simple patch
+
+A simple patch starts off as a flat rectangle, which can then be manipulated
+with vertex editing to produce a curved surface, if desired.
+
+To create a simple patch:
+
+. Set the 2D view axes (*Ctrl + TAB*) to define the orientation of the patch.
+The patch will be created facing directly towards the screen, so to create a
+horizontal (ceiling or floor) patch, the 2D view should be in XY (Top)
+orientation.
+. <<CreatingABrush,Create a rectangular brush>> to define the width and height of
+the patch in the current 2D view (the third dimension is not important, since
+the patch will be infinitely thin once created).
+. With the brush selected, choose *Create Simple Patch Mesh* from the *Patch*
+menu.
+. In the dialog, choose the number of control points to define the shape of the
+patch along its width and height. A patch can have between 3 and 15 control
+points in each dimension; there will always be a control point at the extreme
+edge, and one in the middle. More control points allow more complex shapes but
+also require more manual adjustment -- creating a simple arch is much easier
+with just three control points.
+. Click *OK* to create the patch.
+
+.Simple patches with 3, 7 and 15 control points in both dimensions
+image::SimplePatchesControlPoints.png[align="center"]
+
+==== Manipulating control points
+
+With a patch selected, press *V* to enter (or leave) vertex editing mode. This
+will display all of the control vertices, and allow you to select and move them.
+
+- *Left click* and drag a vertex to move just that one vertex.
+- *Shift + Left click* to add a vertex to the current selection set. When
+   several vertices are selected, dragging any one of the selected vertices will
+   move all of them together.
+- *Shift + Left drag* around several vertices to draw a selection rectangle that
+   will toggle the selection state of all vertices inside it, selecting them if
+   unselected and unselecting them if already selected.
+
+.Making an arch by raising the central row of vertices in a simple patch
+image::PatchVertexEditing.png[align="center"]
+
+==== More complex patch shapes
+
+Just like with brushes, DarkRadiant offers several default patch shapes beyond
+the flat simple patch. These can be created by choosing the corresponding option
+in the *Patch* menu. There is no need to have a brush selected first in order to
+create these shapes, however if a brush _is_ selected, it will be removed and
+used to define the size of the patch shape.
+
+[cols="1,3"]
+|===
+|image:PatchSphere.png[]|
+*Sphere*
+
+An approximation of a sphere (the quadratic Bezier patch implementation in Doom
+3 and DarkRadiant does not permit the creation of a perfect sphere).
+
+|image:PatchCylinder.png[]|
+*Cylinder*
+
+A hollow cylinder aligned with the direction of the 2D view.
+
+|image:PatchCone.png[]|
+*Cone*
+
+A tapered cone pointing along the 2D view axis.
+
+|image:PatchEndCap.png[]|
+*End cap*
+
+An arch or half-cylinder covering a 180 degree angle, aligned with the 2D view
+axis. The peak of the arch will be at the top if created in front or side views,
+making this useful for curved ceilings and the like.
+
+|image:PatchBevel.png[]|
+*Bevel*
+
+Portion of an arch covering a 90 degree angle. This may be placed along room
+edges to give a curved appearance.
+
+|===
+
+==== Controlling patch subdivision
+
+Although patches are defined by Bezier curves, they are subdivided into flat
+polygons for rendering. By default, the number of polygons to create is
+determined dynamically by the game engine, based on the shape of the patch.
+However, you can also use the *Patch Inspector* to explicitly set the level of
+subdivision required, which can be useful when optimising a map by reducing
+on-screen polygon counts.
+
+.Default (automatic) subdivision, 2x2 subdivision, 3x3 subdivision, 3x10 subdivision
+image::PatchSubdivision.png[align="center"]
+
+To subdivide a patch:
+
+. Select *Patch Inspector* in the *View* menu to make the inspector widget
+visible.
+. With the patch selected, enable the *Fixed Subdivisions* checkbox.
+. Use the *Horizontal* and *Vertical* numeric spinboxes to set the number of
+polygons to divide the patch into. The value can range from *1*, making the
+patch completely flat regardless of control point positions, up to a maximum of
+*32*. Each dimension can have a different subdivision level, if required.
+
+=== Applying textures
+
+When a brush or patch is created, it will be assigned a default texture. To
+apply a new texture, you must first select the brush, face or patch to be
+textured. There are two different selection commands:
+
+[cols="1h,3"]
+|===
+|Shift + Left click|
+Select an entire brush or patch. Any chosen texture will apply to all faces.
+|Ctrl + Shift + Left click|
+Select a single brush face for texturing. This command is only available in the
+3D camera view
+|===
+
+Once you have selected the objects or faces to texture, you can use either the *Media*
+or the *Textures* tab to perform the texturing operation.
+
+[[MediaTab]]
+==== The Media tab
 
 The *Media* tab shows a tree view which contains all of the textures available
-within the game installation. Selecting a texture in the tree will show a small
-preview swatch in the widget at the bottom of the panel, along with some
-metadata about the texture definition. To apply a texture to the selected brush,
-either *Double-click* on a texture name in the tree, or *Right-click* and choose
-*Apply to selection*.
+in the game installation. Selecting a texture in the tree will show a small
+preview swatch, along with some metadata about the texture definition.
+
+image::MediaTab.png[align="center"]
+
+To apply a texture to the selected brush, simply *Double-click* on a texture
+name in the tree. The tree view also offers a context menu with several options:
+
+[cols="1h,3"]
+|===
+|Load in Textures view|
+Load all textures contained within the selected folder, making them available on
+the *Textures* tab. This option is not available when a single texture is
+highlighted.
+|Apply to selection|
+Apply the highlighted texture to the current object. This is identical to the
+*Double-click* operation, and is only available for single textures, not
+folders.
+|Show Shader Definition|
+Show a syntax-highlighted text window containing the definition of the selected
+texture.
+|Selected/deselect elements using this shader|
+Select or deselect objects in the map which the highlighted texture is
+applied to. This can be used for organisational purposes, or to identify whether
+a texture is used or not.
+|Add to/Remove from favourites|
+Add or remove the selected texture from the favourites list. The favourites list
+provides easy access to a user-chosen group of textures, and can be accessed by
+choosing the *Show Favourites* radio button at the top of the panel.
+|===
+
+==== The Textures tab
 
 The *Textures* tab provides a scrollable canvas containing preview swatches of
-all the textures which are currently loaded. When DarkRadiant first starts up,
-no textures are loaded and this panel is empty; to load a texture you must
-either apply it to a brush directly from the *Media* tab, or use the *Media*
-tab's context menu to *Load in Textures view* (this command can be applied to an
-individual texture or an entire folder). To apply a texture from the *Textures*
-tab, simply *Left-click* on the texture preview with one or more brushes
-selected.
+all the textures which are currently loaded in the current map.
 
-You can control which faces of a brush are textured by choosing the appropriate
-selection commmand:
+image::TexturesTab.png[align="center"]
 
-- Selecting a brush with *Shift + Left click*, which works in any 2D or 3D view,
-  will select the entire brush. Any applied texture will apply to all faces.
-- In the 3D view, use *Ctrl + Shift + Left click* to select or deselect a
-  particular brush face. This works best when the entire brush is _not_ already
-  selected with *Shift + Left click*. Each selected brush face will be rendered
-  with a red-coloured overlay, and any texture operation will apply only to the
-  selected faces.
+When DarkRadiant first starts up no textures are loaded and this panel is empty.
+New textures can only be loaded via the *Media* tab (described in the
+<<MediaTab,previous section>>), either by applying a texture directly to a
+brush, or by using the *Load in Textures view* command to explicitly load an
+entire folder of textures.
+
+Once textures are loaded onto the *Textures* tab, you can apply them to a
+selected object by *Left clicking* on them. By *Right clicking* on a texture you
+can access a context menu with a single command *Seek in Media browser*, which
+will highlight the clicked texture in the *Media* tab.
 
 === Working with entities
 
@@ -760,121 +913,6 @@ entity which overrides the inherited default.
 which shows a brief explanation of certain properties. If a property has help
 text available, the question mark icon will be shown in the *?* column.
 |===
-
-=== Working with patches
-
-Patches are smooth-shaded Bezier surfaces that can be created and manipulated in
-the editor (unlike models), and used to represent a variety of curved shapes
-such as vaulted ceilings, arches or pillars. Patches are single-sided surfaces,
-not solid like brushes, and cannot be used to seal a map from the void -- any
-patch work on the boundary of a map will need solid brushes behind it to prevent
-the map from leaking.
-
-==== Creating a simple patch
-
-A simple patch starts off as a flat rectangle, which can then be manipulated
-with vertex editing to produce a curved surface, if desired.
-
-To create a simple patch:
-
-. Set the 2D view axes (*Ctrl + TAB*) to define the orientation of the patch.
-The patch will be created facing directly towards the screen, so to create a
-horizontal (ceiling or floor) patch, the 2D view should be in XY (Top)
-orientation.
-. <<CreatingABrush,Create a rectangular brush>> to define the width and height of
-the patch in the current 2D view (the third dimension is not important, since
-the patch will be infinitely thin once created).
-. With the brush selected, choose *Create Simple Patch Mesh* from the *Patch*
-menu.
-. In the dialog, choose the number of control points to define the shape of the
-patch along its width and height. A patch can have between 3 and 15 control
-points in each dimension; there will always be a control point at the extreme
-edge, and one in the middle. More control points allow more complex shapes but
-also require more manual adjustment -- creating a simple arch is much easier
-with just three control points.
-. Click *OK* to create the patch.
-
-.Simple patches with 3, 7 and 15 control points in both dimensions
-image::SimplePatchesControlPoints.png[align="center"]
-
-==== Manipulating control points
-
-With a patch selected, press *V* to enter (or leave) vertex editing mode. This
-will display all of the control vertices, and allow you to select and move them.
-
-- *Left click* and drag a vertex to move just that one vertex.
-- *Shift + Left click* to add a vertex to the current selection set. When
-   several vertices are selected, dragging any one of the selected vertices will
-   move all of them together.
-- *Shift + Left drag* around several vertices to draw a selection rectangle that
-   will toggle the selection state of all vertices inside it, selecting them if
-   unselected and unselecting them if already selected.
-
-.Making an arch by raising the central row of vertices in a simple patch
-image::PatchVertexEditing.png[align="center"]
-
-==== More complex patch shapes
-
-Just like with brushes, DarkRadiant offers several default patch shapes beyond
-the flat simple patch. These can be created by choosing the corresponding option
-in the *Patch* menu. There is no need to have a brush selected first in order to
-create these shapes, however if a brush _is_ selected, it will be removed and
-used to define the size of the patch shape.
-
-[cols="1,3"]
-|===
-|image:PatchSphere.png[]|
-*Sphere*
-
-An approximation of a sphere (the quadratic Bezier patch implementation in Doom
-3 and DarkRadiant does not permit the creation of a perfect sphere).
-
-|image:PatchCylinder.png[]|
-*Cylinder*
-
-A hollow cylinder aligned with the direction of the 2D view.
-
-|image:PatchCone.png[]|
-*Cone*
-
-A tapered cone pointing along the 2D view axis.
-
-|image:PatchEndCap.png[]|
-*End cap*
-
-An arch or half-cylinder covering a 180 degree angle, aligned with the 2D view
-axis. The peak of the arch will be at the top if created in front or side views,
-making this useful for curved ceilings and the like.
-
-|image:PatchBevel.png[]|
-*Bevel*
-
-Portion of an arch covering a 90 degree angle. This may be placed along room
-edges to give a curved appearance.
-
-|===
-
-==== Controlling patch subdivision
-
-Although patches are defined by Bezier curves, they are subdivided into flat
-polygons for rendering. By default, the number of polygons to create is
-determined dynamically by the game engine, based on the shape of the patch.
-However, you can also use the *Patch Inspector* to explicitly set the level of
-subdivision required, which can be useful when optimising a map by reducing
-on-screen polygon counts.
-
-.Default (automatic) subdivision, 2x2 subdivision, 3x3 subdivision, 3x10 subdivision
-image::PatchSubdivision.png[align="center"]
-
-To subdivide a patch:
-
-. Select *Patch Inspector* in the *View* menu to make the inspector widget
-visible.
-. With the patch selected, enable the *Fixed Subdivisions* checkbox.
-. Use the *Horizontal* and *Vertical* numeric spinboxes to set the number of
-polygons to divide the patch into. The value can range from *1*, making the
-patch completely flat regardless of control point positions, up to a maximum of
-*32*. Each dimension can have a different subdivision level, if required.
 
 === Compiling a map
 
