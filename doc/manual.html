@@ -467,6 +467,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#MediaTab">The Media tab</a></li>
 <li><a href="#_the_textures_tab">The Textures tab</a></li>
+<li><a href="#_using_the_surface_inspector">Using the Surface Inspector</a></li>
 </ul>
 </li>
 <li><a href="#_working_with_entities">Working with entities</a>
@@ -1592,6 +1593,92 @@ can access a context menu with a single command <strong>Seek in Media browser</s
 will highlight the clicked texture in the <strong>Media</strong> tab.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_using_the_surface_inspector">Using the Surface Inspector</h4>
+<div class="paragraph">
+<p>Once a texture is applied via the Media or Textures tabs, you will most likely
+wish to adjust the alignment and scale of the texture on the brush or patch
+face. DarkRadiant provides the <strong>Surface Inspector</strong> for this purpose, which can
+be toggled with the <strong>S</strong> key or by choosing the option in the <strong>View</strong> menu.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/SurfaceInspector.png" alt="SurfaceInspector">
+</div>
+</div>
+<div class="paragraph">
+<p>The Surface Inspector can be used to adjust textures on a single brush or patch
+face, or several selected faces/brushes/patches at once. If more than one face
+is selected and these faces have different values for text boxes in the dialog,
+the text box will be greyed out, however it is still possible to use the buttons
+to make changes which will be applied uniformly to all selected faces.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Shader</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This shows the full name of the texture applied to the selected
+face(s). You can use the folder button to bring up a new dialog which allows you
+to choose a new texture.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Horiz/Vert Shift</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These text boxes show the current texture shift (translation)
+on the horizontal and vertical axes. The associated arrow buttons will increase
+or decrease the texture shift by the current <strong>Step</strong> value.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Horiz/Vert Scale</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These show the current texture scale in the horizontal and
+vertical directions. The arrow buttons will increase or decrease the scale by
+the current <strong>Step</strong> value.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Rotation</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shows the current texture rotation, in degrees. The arrow buttons will
+rotate the texture clockwise or anticlockwise by the current <strong>Step</strong> value.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Fit Texture</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These controls allow you to fit an exact number of copies of the
+texture across the face, so that the texture edges correspond to the face edges.
+The numeric spin boxes control how many copies of the texture are tiled, and the
+operation is performed by clicking the <strong>Fit</strong> button.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Align Texture</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These buttons shift the texture so that the Top/Bottom/Left/Right
+edge of the face are aligned with a texture boundary, but otherwise do not
+modify the scaling of the texture (unlike the <strong>Fit</strong> operation).</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Flip Texture</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flips (mirrors) the texture along the horizontal or vertical axis.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Natural</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This button resets the texture to a default alignment and scale, based
+the location and size of the face.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Texture Lock</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If this is enabled, the alignment of the texture will be preserved
+relative to the face if the brush or patch is moved in 3D space. If disabled,
+the texture itself will remain fixed in 3D space as the brush or patch moves,
+resulting in the alignment changing.
+</p><p class="tableblock">Typically, if you have <strong>Fit</strong> a particular number of texture tiles across a face,
+you will want to preserve alignment with <strong>Texture Lock</strong>. Conversely, if the
+texture is applied to a much larger group of brushes with a common texture (that
+needs to align across all of the brushes, regardless of how they are moved or
+resized), you will want to disable <strong>Texture Lock</strong>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_working_with_entities">Working with entities</h3>
@@ -2056,7 +2143,7 @@ the leak.</p>
 <div class="paragraph">
 <p>After the map compilation has failed with a leak, return to DarkRadiant and
 choose <strong>Pointfile</strong> from the <strong>File</strong> menu. This will automatically load the point
-file associated with the current mape, which contains a series of points
+file associated with the current map, which contains a series of points
 identifying the path to the leak. This path will be rendered as a bright red
 line in both the 2D and 3D views:</p>
 </div>
@@ -2077,7 +2164,7 @@ brush does not join up with the ceiling.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-10-31 21:13:21 GMT
+Last updated 2018-11-06 21:06:41 GMT
 </div>
 </div>
 </body>

@@ -682,6 +682,56 @@ selected object by *Left clicking* on them. By *Right clicking* on a texture you
 can access a context menu with a single command *Seek in Media browser*, which
 will highlight the clicked texture in the *Media* tab.
 
+==== Using the Surface Inspector
+
+Once a texture is applied via the Media or Textures tabs, you will most likely
+wish to adjust the alignment and scale of the texture on the brush or patch
+face. DarkRadiant provides the *Surface Inspector* for this purpose, which can
+be toggled with the *S* key or by choosing the option in the *View* menu.
+
+image::SurfaceInspector.png[align="center"]
+
+The Surface Inspector can be used to adjust textures on a single brush or patch
+face, or several selected faces/brushes/patches at once. If more than one face
+is selected and these faces have different values for text boxes in the dialog,
+the text box will be greyed out, however it is still possible to use the buttons
+to make changes which will be applied uniformly to all selected faces.
+
+[cols="1h,3"]
+|===
+|Shader|This shows the full name of the texture applied to the selected
+face(s). You can use the folder button to bring up a new dialog which allows you
+to choose a new texture.
+|Horiz/Vert Shift|These text boxes show the current texture shift (translation)
+on the horizontal and vertical axes. The associated arrow buttons will increase
+or decrease the texture shift by the current *Step* value.
+|Horiz/Vert Scale|These show the current texture scale in the horizontal and
+vertical directions. The arrow buttons will increase or decrease the scale by
+the current *Step* value.
+|Rotation|Shows the current texture rotation, in degrees. The arrow buttons will
+rotate the texture clockwise or anticlockwise by the current *Step* value.
+|Fit Texture|These controls allow you to fit an exact number of copies of the
+texture across the face, so that the texture edges correspond to the face edges.
+The numeric spin boxes control how many copies of the texture are tiled, and the
+operation is performed by clicking the *Fit* button.
+|Align Texture|These buttons shift the texture so that the Top/Bottom/Left/Right
+edge of the face are aligned with a texture boundary, but otherwise do not
+modify the scaling of the texture (unlike the *Fit* operation).
+|Flip Texture|Flips (mirrors) the texture along the horizontal or vertical axis.
+|Natural|This button resets the texture to a default alignment and scale, based
+the location and size of the face.
+|Texture Lock|If this is enabled, the alignment of the texture will be preserved
+relative to the face if the brush or patch is moved in 3D space. If disabled,
+the texture itself will remain fixed in 3D space as the brush or patch moves,
+resulting in the alignment changing.
+
+Typically, if you have *Fit* a particular number of texture tiles across a face,
+you will want to preserve alignment with *Texture Lock*. Conversely, if the
+texture is applied to a much larger group of brushes with a common texture (that
+needs to align across all of the brushes, regardless of how they are moved or
+resized), you will want to disable *Texture Lock*.
+|===
+
 === Working with entities
 
 If brushes are the bricks and mortar of a map (often literally), entities are
@@ -969,7 +1019,7 @@ the leak.
 
 After the map compilation has failed with a leak, return to DarkRadiant and
 choose *Pointfile* from the *File* menu. This will automatically load the point
-file associated with the current mape, which contains a series of points
+file associated with the current map, which contains a series of points
 identifying the path to the leak. This path will be rendered as a bright red
 line in both the 2D and 3D views:
 
