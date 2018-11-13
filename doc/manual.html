@@ -487,6 +487,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
+<li><a href="#_organising_a_map">Organising a map</a>
+<ul class="sectlevel2">
+<li><a href="#_working_with_prefabs">Working with prefabs</a>
+<ul class="sectlevel3">
+<li><a href="#_exporting_to_a_prefab">Exporting to a prefab</a></li>
+<li><a href="#_importing_a_prefab">Importing a prefab</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -2161,10 +2171,117 @@ brush does not join up with the ceiling.</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_organising_a_map">Organising a map</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Since a fully developed Dark Mod map is large and complex, DarkRadiant provides
+several tools to make organising a large map easier. Objects can be grouped,
+sorted into user-defined layers and filtered using various criteria, while the
+prefab system allows large chunks of map to be reused or shared with other
+mappers.</p>
+</div>
+<div class="sect2">
+<h3 id="_working_with_prefabs">Working with prefabs</h3>
+<div class="paragraph">
+<p>DarkRadiant allows a collection of objects to be saved to disk as a <strong>prefab</strong>,
+which can then be imported into other maps. You can use prefabs to store
+anything from a single small object to a vast section of map geometry complete
+with lights and AI.</p>
+</div>
+<div class="sect3">
+<h4 id="_exporting_to_a_prefab">Exporting to a prefab</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the objects in the map that you wish to include in the prefab.</p>
+</li>
+<li>
+<p>From the <strong>File</strong> menu, choose <strong>Save selected as prefab&#8230;&#8203;</strong></p>
+</li>
+<li>
+<p>Use the file chooser dialog to choose a location and name for the prefab file.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+Unlike actual <code>.map</code> files which must be accessible by the game engine,
+prefabs are a DarkRadiant-only feature that have no significance to the engine.
+You are therefore free to store prefab files wherever you wish, either inside or
+outside the game installation directory.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_importing_a_prefab">Importing a prefab</h4>
+<div class="paragraph">
+<p>Either right-click in the 2D window and choose <strong>Insert prefab&#8230;&#8203;</strong>, or open the
+<strong>File</strong> menu and choose <strong>Import prefab&#8230;&#8203;</strong>. This will show the prefab browser.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/PrefabChooser.png" alt="PrefabChooser">
+</div>
+</div>
+<div class="paragraph">
+<p>Like the model selector, the prefab selector shows a tree of available prefabs
+on the left, and a preview window on the right giving an idea of what the prefab
+looks like. Using the radio buttons at the top of the window, you can choose
+whether to browse prefabs contained within the game installation, or within a
+custom directory of your choice.</p>
+</div>
+<div class="paragraph">
+<p>The preview window functions much like the 3D view in the main application:
+<strong>right click</strong> to enter or leave camera mode, which enables the following motion
+commands:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Mouse move</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Change the camera view direction (pan or tilt)</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Mouse wheel</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zoom the camera</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Up/Down arrow</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera forwards or backwards</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Left/Right arrow</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera left or right</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>When you have chosen the desired prefab, click <strong>OK</strong> to insert it into the map.
+Before inserting the prefab, you can use the
+<strong>Create&nbsp;Group&nbsp;out&nbsp;of&nbsp;Prefab&nbsp;parts</strong> checkbox to control
+whether the prefab is automatically grouped as a single object, or inserted as
+separate selectable objects.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-06 21:06:41 GMT
+Last updated 2018-11-13 21:11:41 GMT
 </div>
 </div>
 </body>
