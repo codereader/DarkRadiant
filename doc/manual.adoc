@@ -311,6 +311,9 @@ axis
 Every object in a map can be selected and moved within the 2D view. Some objects
 -- including brushes, patches and lights -- can also be resized.
 
+For more advanced ways to select objects, see
+<<BrushBasedSelection,brush-based selection>>.
+
 [cols="1h,3"]
 |===
 |Shift + Left click|Select or deselect the object at the clicked position. Any
@@ -320,6 +323,8 @@ Every object in a map can be selected and moved within the 2D view. Some objects
 |Alt + Shift + Left click|Select the object at the clicked position, and
   deselect any existing selected objects. If the clicked position overlaps more
   than one object, each click will cycle through the overlapping objects.
+|Shift + Left drag|Draw a selection rectangle, which will select any objects
+ contained (fully or partially) within it.
 |ESC|Deselect all objects
 |Left drag (_inside_ object)|Move the selected object(s)
 |Left drag (_outside_ object)|Resize the selected object(s) (if available)
@@ -495,6 +500,29 @@ can more easily be seen.
 . To reduce the number of brush sides, such as changing a rectangle into a
 triangle, simply drag one corner directly on top of another. The two edges will
 be merged.
+
+[[BrushBasedSelection]]
+==== Brush-based selection
+
+As well as using brushes to define map geometry, you can also use them to select
+objects. There are three commands on the top toolbar which convert the selected
+brush(es) into a temporary selection volume:
+
+[cols="^1h,3h,10"]
+|===
+|image:SelectCompleteTall.png[align="center",width=24]|Select complete tall|
+Select all objects that are _completely_ contained within the two-dimensional
+outline of the selected brush(es) in the current 2D view window, ignoring their
+position on the third axis (perpendicular to the screen).
+|image:SelectInside.png[align="center",width=24]|Select inside|
+Select all objects that are _completely_ contained within the selected brush
+volume(s) in all three dimensions.
+|image:SelectTouching.png[align="center",width=24]|Select touching|
+Select all objects that are touching the selected brushes. Unlike the previous
+two commands, this one does not remove the selected brushes, since it is
+designed to allow you to quickly select objects that are adjacent to real map
+geometry.
+|===
 
 === Working with patches
 

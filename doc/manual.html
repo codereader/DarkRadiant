@@ -453,6 +453,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_creating_a_room">Creating a room</a></li>
 <li><a href="#_splitting_brushes">Splitting brushes</a></li>
 <li><a href="#_reshaping_brush_edges">Reshaping brush edges</a></li>
+<li><a href="#BrushBasedSelection">Brush-based selection</a></li>
 </ul>
 </li>
 <li><a href="#_working_with_patches">Working with patches</a>
@@ -1029,6 +1030,10 @@ axis</p></td>
 <div class="paragraph">
 <p>Every object in a map can be selected and moved within the 2D view. Some objects&#8201;&#8212;&#8201;including brushes, patches and lights&#8201;&#8212;&#8201;can also be resized.</p>
 </div>
+<div class="paragraph">
+<p>For more advanced ways to select objects, see
+<a href="#BrushBasedSelection">brush-based selection</a>.</p>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 25%;">
@@ -1047,6 +1052,11 @@ axis</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Select the object at the clicked position, and
   deselect any existing selected objects. If the clicked position overlaps more
   than one object, each click will cycle through the overlapping objects.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Shift + Left drag</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Draw a selection rectangle, which will select any objects
+ contained (fully or partially) within it.</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-left valign-top"><p class="tableblock">ESC</p></th>
@@ -1323,6 +1333,44 @@ be merged.</p>
 </li>
 </ol>
 </div>
+</div>
+<div class="sect3">
+<h4 id="BrushBasedSelection">Brush-based selection</h4>
+<div class="paragraph">
+<p>As well as using brushes to define map geometry, you can also use them to select
+objects. There are three commands on the top toolbar which convert the selected
+brush(es) into a temporary selection volume:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 7.1428%;">
+<col style="width: 21.4285%;">
+<col style="width: 71.4287%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/SelectCompleteTall.png" alt="SelectCompleteTall" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Select complete tall</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select all objects that are <em>completely</em> contained within the two-dimensional
+outline of the selected brush(es) in the current 2D view window, ignoring their
+position on the third axis (perpendicular to the screen).</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/SelectInside.png" alt="SelectInside" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Select inside</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select all objects that are <em>completely</em> contained within the selected brush
+volume(s) in all three dimensions.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/SelectTouching.png" alt="SelectTouching" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Select touching</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select all objects that are touching the selected brushes. Unlike the previous
+two commands, this one does not remove the selected brushes, since it is
+designed to allow you to quickly select objects that are adjacent to real map
+geometry.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2281,7 +2329,7 @@ separate selectable objects.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-13 21:11:41 GMT
+Last updated 2018-11-20 20:53:07 GMT
 </div>
 </div>
 </body>
