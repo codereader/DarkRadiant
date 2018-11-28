@@ -490,6 +490,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_organising_a_map">Organising a map</a>
 <ul class="sectlevel2">
+<li><a href="#_grouping_objects">Grouping objects</a></li>
 <li><a href="#_working_with_prefabs">Working with prefabs</a>
 <ul class="sectlevel3">
 <li><a href="#_exporting_to_a_prefab">Exporting to a prefab</a></li>
@@ -2230,6 +2231,51 @@ prefab system allows large chunks of map to be reused or shared with other
 mappers.</p>
 </div>
 <div class="sect2">
+<h3 id="_grouping_objects">Grouping objects</h3>
+<div class="paragraph">
+<p>DarkRadiant allows a number of objects to be grouped together, so that they can
+be selected and manipulated as a single unit.</p>
+</div>
+<div class="paragraph">
+<p>To <strong>create</strong> a group:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select several objects.</p>
+</li>
+<li>
+<p><strong>Right-click</strong> in the 2D window to show the context menu.</p>
+</li>
+<li>
+<p>Choose <strong>Group Selection</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Once the objects are in a group, selecting any object in the group will
+automatically select all other objects in the same group.</p>
+</div>
+<div class="paragraph">
+<p>To <strong>remove</strong> a group, select the group then choose <strong>Ungroup Selection</strong> from the
+2D view context menu.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Groups can be nested, by creating a group that includes one or more
+existing groups. When you ungroup such a nested group, the original component
+groups will be restored.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_working_with_prefabs">Working with prefabs</h3>
 <div class="paragraph">
 <p>DarkRadiant allows a collection of objects to be saved to disk as a <strong>prefab</strong>,
@@ -2329,7 +2375,7 @@ separate selectable objects.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-20 20:53:07 GMT
+Last updated 2018-11-28 20:49:41 GMT
 </div>
 </div>
 </body>

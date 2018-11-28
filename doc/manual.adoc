@@ -1065,6 +1065,27 @@ sorted into user-defined layers and filtered using various criteria, while the
 prefab system allows large chunks of map to be reused or shared with other
 mappers.
 
+=== Grouping objects
+
+DarkRadiant allows a number of objects to be grouped together, so that they can
+be selected and manipulated as a single unit.
+
+To *create* a group:
+
+. Select several objects.
+. *Right-click* in the 2D window to show the context menu.
+. Choose *Group Selection*.
+
+Once the objects are in a group, selecting any object in the group will
+automatically select all other objects in the same group.
+
+To *remove* a group, select the group then choose *Ungroup Selection* from the
+2D view context menu.
+
+NOTE: Groups can be nested, by creating a group that includes one or more
+existing groups. When you ungroup such a nested group, the original component
+groups will be restored.
+
 === Working with prefabs
 
 DarkRadiant allows a collection of objects to be saved to disk as a *prefab*,
