@@ -497,6 +497,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_importing_a_prefab">Importing a prefab</a></li>
 </ul>
 </li>
+<li><a href="#_using_layers">Using layers</a>
+<ul class="sectlevel3">
+<li><a href="#_the_layers_window">The Layers window</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -2370,12 +2375,79 @@ separate selectable objects.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_using_layers">Using layers</h3>
+<div class="paragraph">
+<p>When a map contains a large number of objects, it may become difficult to work
+with the 2D views as a result of the visual clutter. Organising the map into
+several <strong>layers</strong> can help solve this problem. The visibility of each layer can
+toggled independently, allowing you to focus on the objects you want to work
+with.</p>
+</div>
+<div class="paragraph">
+<p>Layers do not impose any requirements on the physical layout of objects: it is
+possible to include objects spread all over a map into a single layer. For
+example, you can have a layer for all enemies, another layer for all lights,
+another layer for brushwork, and so on.</p>
+</div>
+<div class="sect3">
+<h4 id="_the_layers_window">The Layers window</h4>
+<div class="paragraph">
+<p>To show or hide the <strong>Layers</strong> window, choose <code>Layers</code> from the <code>Edit</code> menu. The
+window lists all of the layers which exist in the current project, and allows
+you to perform various operations on them.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/LayersWindow.png" alt="LayersWindow">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Creating a layer</strong></dt>
+<dd>
+<p>To create a new layer, click the <code>New</code> button at the bottom
+of the window. A popup will be shown asking for the name of the new layer. Once
+the layer is created, it will appear in the list.</p>
+</dd>
+<dt class="hdlist1"><strong>Deleting a layer</strong></dt>
+<dd>
+<p>Click the red 'X' button to the right of a layer to
+delete it. Deleting a layer does <strong>not</strong> delete the objects in the layer, only
+the layer itself. Any objects in that layer will be moved to the default layer.</p>
+</dd>
+<dt class="hdlist1"><strong>Renaming a layer</strong></dt>
+<dd>
+<p>Click the edit button to the right of a layer name to
+change the name. A popup will be shown asking for the new name.</p>
+</dd>
+<dt class="hdlist1"><strong>Selecting objects on a layer</strong></dt>
+<dd>
+<p>Click on the name of a layer itself to select
+all objects on that layer.</p>
+</dd>
+<dt class="hdlist1"><strong>Toggling visibility</strong></dt>
+<dd>
+<p>The button to the left of a layer name is used to toggle
+the visibility of objects on that layer. If objects are visible, a tick is
+shown in the button, otherwise it is empty.</p>
+</dd>
+<dt class="hdlist1"><strong>Changing the active layer</strong></dt>
+<dd>
+<p>The visibility toggle button shows a star for the
+layer which is currently set as the active layer. To change the active layer,
+<strong>Ctrl + Left click</strong> on the layer you wish to set as the new active layer.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-11-28 20:49:41 GMT
+Last updated 2019-01-09 21:00:24 GMT
 </div>
 </div>
 </body>

@@ -1134,3 +1134,46 @@ Before inserting the prefab, you can use the
 *Create&nbsp;Group&nbsp;out&nbsp;of&nbsp;Prefab&nbsp;parts* checkbox to control
 whether the prefab is automatically grouped as a single object, or inserted as
 separate selectable objects.
+
+=== Using layers
+
+When a map contains a large number of objects, it may become difficult to work
+with the 2D views as a result of the visual clutter. Organising the map into
+several *layers* can help solve this problem. The visibility of each layer can
+toggled independently, allowing you to focus on the objects you want to work
+with.
+
+Layers do not impose any requirements on the physical layout of objects: it is
+possible to include objects spread all over a map into a single layer. For
+example, you can have a layer for all enemies, another layer for all lights,
+another layer for brushwork, and so on.
+
+==== The Layers window
+
+To show or hide the *Layers* window, choose `Layers` from the `Edit` menu. The
+window lists all of the layers which exist in the current project, and allows
+you to perform various operations on them.
+
+image::LayersWindow.png[align="center"]
+
+*Creating a layer*:: To create a new layer, click the `New` button at the bottom
+ of the window. A popup will be shown asking for the name of the new layer. Once
+ the layer is created, it will appear in the list.
+
+*Deleting a layer*:: Click the red 'X' button to the right of a layer to
+ delete it. Deleting a layer does *not* delete the objects in the layer, only
+ the layer itself. Any objects in that layer will be moved to the default layer.
+
+*Renaming a layer*:: Click the edit button to the right of a layer name to
+ change the name. A popup will be shown asking for the new name.
+
+*Selecting objects on a layer*:: Click on the name of a layer itself to select
+ all objects on that layer.
+
+*Toggling visibility*:: The button to the left of a layer name is used to toggle
+ the visibility of objects on that layer. If objects are visible, a tick is
+ shown in the button, otherwise it is empty.
+
+*Changing the active layer*:: The visibility toggle button shows a star for the
+ layer which is currently set as the active layer. To change the active layer,
+ *Ctrl + Left click* on the layer you wish to set as the new active layer.
