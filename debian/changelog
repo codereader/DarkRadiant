@@ -1,3 +1,13 @@
+darkradiant (2.6.0) bionic; urgency=medium
+
+  * 2.6.0 release for Bionic.
+  * This feature release is further improving on the Model Exporting
+    capabilities and introduces smaller features like a mapping time stopwatch
+    and the ability to define favourites in the Media Browser, making it more
+    convenient to work with a large number of materials.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Fri, 18 Jan 2019 20:17:22 +0000
+
 darkradiant (2.0.2-2~vivid1) vivid; urgency=medium
 
   * Entity list now shows entity names, and no longer crashes when an entity is
