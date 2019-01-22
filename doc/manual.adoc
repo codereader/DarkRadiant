@@ -1177,3 +1177,27 @@ image::LayersWindow.png[align="center"]
 *Changing the active layer*:: The visibility toggle button shows a star for the
  layer which is currently set as the active layer. To change the active layer,
  *Ctrl + Left click* on the layer you wish to set as the new active layer.
+
+==== Moving objects into layers
+
+An object can be placed in any number of layers. To see which layers a selected
+object is in, look at the narrow coloured rectangle next to the layer name in
+the *Layers* window. The rectangle will turn from grey to pink for each layer
+that contains the selected object.
+
+.A light in two layers: "Default" and "Lights"
+image::LightInTwoLayers.png[align="center"]
+
+All newly-created objects will be placed in the *Default* layer. You can move or
+copy objects between layers using the options in the 2D view's context menu.
+
+*Create layer...*:: Bring up the name entry dialog and create a new layer,
+ exactly as if the *New* button in the *Layers* window had been clicked.
+
+*Add to layer...*:: Copy the selected object into the chosen layer, without
+ removing it from its existing layer(s).
+
+*Move to layer...*:: Move the selected object into the chosen layer, removing it
+ from all other layers.
+
+*Remove from layer...*:: Remove the selected object from the chosen layer.
