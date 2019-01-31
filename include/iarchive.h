@@ -78,13 +78,6 @@ public:
 		virtual bool visitDirectory(const std::string& name, std::size_t depth) = 0;
 	};
 
-	enum EMode
-	{
-		eFiles = 0x01,
-		eDirectories = 0x02,
-		eFilesAndDirectories = 0x03,
-	};
-
 	/// \brief destructor
 	virtual ~Archive() {}
 

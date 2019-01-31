@@ -50,31 +50,21 @@ class ArchiveVisitor: public Archive::Visitor
 {
 private:
     std::function<void(const std::string&)> _visitorFunc;
-    Archive::EMode _mode;
     std::size_t _depth;
 
 public:
-    ArchiveVisitor(const std::function<void(const std::string&)>& func, Archive::EMode mode, std::size_t depth) :
+    ArchiveVisitor(const std::function<void(const std::string&)>& func, std::size_t depth) :
         _visitorFunc(func),
-        _mode(mode),
         _depth(depth)
     {}
 
     void visitFile(const std::string& name)
     {
-        if ((_mode & Archive::eFiles) != 0)
-        {
-            _visitorFunc(name);
-        }
+        _visitorFunc(name);
     }
 
     bool visitDirectory(const std::string& name, std::size_t depth)
     {
-        if ((_mode & Archive::eDirectories) != 0)
-        {
-            _visitorFunc(name);
-        }
-
         if (depth == _depth)
         {
             return true;
@@ -383,7 +373,7 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
     FileVisitor fileVisitor(visitorFunc, basedir, extension);
 
     // Construct an ArchiveVisitor filtering out the files only, and watching the recursion depth
-    ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
+    ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), depth);
 
     // Visit each Archive, applying the FileVisitor to each one (which in
     // turn calls the callback for each matching file.
@@ -405,7 +395,7 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
     FileVisitor fileVisitor(visitorFunc, "", extension);
 
     // Construct an ArchiveVisitor filtering out the files only, and watching the recursion depth
-    ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), Archive::eFiles, depth);
+    ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), depth);
 
     tempArchive.traverse(functor, "/");
 }
