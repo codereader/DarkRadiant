@@ -45,47 +45,19 @@ namespace vfs
 namespace
 {
 
-// Visitor class for archives (directory or PK4)
-class ArchiveVisitor: public Archive::Visitor
-{
-private:
-    std::function<void(const std::string&)> _visitorFunc;
-    std::size_t _depth;
-
-public:
-    ArchiveVisitor(const std::function<void(const std::string&)>& func, std::size_t depth) :
-        _visitorFunc(func),
-        _depth(depth)
-    {}
-
-    void visitFile(const std::string& name)
-    {
-        _visitorFunc(name);
-    }
-
-    bool visitDirectory(const std::string& name, std::size_t depth)
-    {
-        if (depth == _depth)
-        {
-            return true;
-        }
-
-        return false;
-    }
-};
-
 /*
- * Adaptor class used in GlobalFileSystem().foreachFile().
+ * Archive::Visitor class used in GlobalFileSystem().foreachFile().
  * It's filtering out the files matching the defined extension only.
- * Passes the filename to the VisitorFunc given in its constructor.
- * The directory part is cut off the filename before it's passed to the VisitorFunc.
+ * The directory part is cut off the filename.
  * On top of that, this class maintains a list of visited files to avoid
  * hitting the same file twice (it might be present in more than one Archive).
  */
-class FileVisitor
+class FileVisitor: public Archive::Visitor
 {
-private:
-    // The VirtualFileSystem::Visitor to call for each located file
+    // Maximum traversal depth
+    std::size_t _maxDepth;
+
+    // User-supplied functor to invoke for each file
     VirtualFileSystem::VisitorFunc _visitorFunc;
 
     // Set of already-visited files to avoid visiting the same file twice
@@ -108,18 +80,16 @@ public:
 
     // Constructor. Pass "*" as extension to have it visit all files.
     FileVisitor(const VirtualFileSystem::VisitorFunc& visitorFunc,
-        const std::string& dir,
-        const std::string& ext)
-        : _visitorFunc(visitorFunc),
-        _directory(dir),
-        _extension(ext),
-        _dirPrefixLength(_directory.length()),
-        _visitAll(_extension == "*"),
-        _extLength(_extension.length())
+                const std::string& dir, const std::string& ext,
+                std::size_t maxDepth)
+    : _maxDepth(maxDepth), _visitorFunc(visitorFunc), _directory(dir),
+      _extension(ext), _dirPrefixLength(_directory.length()),
+      _visitAll(_extension == "*"), _extLength(_extension.length())
     {}
 
-    // Required visit function
-    void visit(const std::string& name)
+    // Archive::Visitor interface
+
+    void visitFile(const std::string& name)
     {
 #ifdef OS_CASE_INSENSITIVE
         // The name should start with the directory, "def/" for instance, case-insensitively.
@@ -164,6 +134,16 @@ public:
         _visitorFunc(subname);
 
         _visitedFiles.insert(subname);
+    }
+
+    bool visitDirectory(const std::string& name, std::size_t depth)
+    {
+        if (depth == _maxDepth)
+        {
+            return true;
+        }
+
+        return false;
     }
 };
 
@@ -370,16 +350,13 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
     std::size_t depth)
 {
     // Construct our FileVisitor filtering out the right elements
-    FileVisitor fileVisitor(visitorFunc, basedir, extension);
-
-    // Construct an ArchiveVisitor filtering out the files only, and watching the recursion depth
-    ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), depth);
+    FileVisitor fileVisitor(visitorFunc, basedir, extension, depth);
 
     // Visit each Archive, applying the FileVisitor to each one (which in
     // turn calls the callback for each matching file.
     for (const ArchiveDescriptor& descriptor : _archives)
     {
-        descriptor.archive->traverse(functor, basedir);
+        descriptor.archive->traverse(fileVisitor, basedir);
     }
 }
 
@@ -392,12 +369,9 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
     DirectoryArchive tempArchive(os::standardPathWithSlash(path));
 
     // Construct our FileVisitor filtering out the right elements
-    FileVisitor fileVisitor(visitorFunc, "", extension);
+    FileVisitor fileVisitor(visitorFunc, "", extension, depth);
 
-    // Construct an ArchiveVisitor filtering out the files only, and watching the recursion depth
-    ArchiveVisitor functor(std::bind(&FileVisitor::visit, fileVisitor, std::placeholders::_1), depth);
-
-    tempArchive.traverse(functor, "/");
+    tempArchive.traverse(fileVisitor, "/");
 }
 
 std::string Doom3FileSystem::findFile(const std::string& name)
