@@ -147,6 +147,71 @@ public:
     }
 };
 
+enum class Visibility
+{
+    /// Standard visibility, shown in all relevant areas
+    NORMAL,
+
+    /// Hidden from selectors, but rendered as normal in the map itself
+    HIDDEN
+};
+
+// Representation of an assets.lst file, containing visibility information for
+// assets within a particular folder.
+class AssetsList
+{
+    std::map<std::string, Visibility> _visibilities;
+
+    // Convert visibility string to enum value
+    static Visibility toVisibility(const std::string& input)
+    {
+        if (string::starts_with(input, "hid" /* 'hidden' or 'hide'*/))
+        {
+            return Visibility::HIDDEN;
+        }
+        else if (input == "normal")
+        {
+            return Visibility::NORMAL;
+        }
+        else
+        {
+            rWarning() << "AssetsList: failed to parse visibility '" << input
+                       << "'" << std::endl;
+            return Visibility::NORMAL;
+        }
+    }
+
+public:
+
+    static constexpr const char* FILENAME = "assets.lst";
+
+    // Construct with possible ArchiveTextFile pointer containing an assets.lst
+    // file to parse.
+    AssetsList(ArchiveTextFilePtr inputFile)
+    {
+        if (inputFile)
+        {
+            // Read lines from the file
+            std::istream stream(&inputFile->getInputStream());
+            while (stream.good())
+            {
+                std::string line;
+                std::getline(stream, line);
+
+                // Attempt to parse the line as "asset=visibility"
+                std::vector<std::string> tokens;
+                string::split(tokens, line, "=");
+
+                // Parsing was a success if we have two tokens
+                if (tokens.size() == 2)
+                {
+                    _visibilities[tokens[0]] = toVisibility(tokens[1]);
+                }
+            }
+        }
+    }
+};
+
 }
 
 void Doom3FileSystem::initDirectory(const std::string& inputPath)
@@ -349,6 +414,11 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
     const VisitorFunc& visitorFunc,
     std::size_t depth)
 {
+    // Look for an assets.lst in the base dir
+    std::string assetsLstName = basedir + AssetsList::FILENAME;
+    ArchiveTextFilePtr assetsLstFile = openTextFile(assetsLstName);
+    AssetsList assetsList(assetsLstFile);
+
     // Construct our FileVisitor filtering out the right elements
     FileVisitor fileVisitor(visitorFunc, basedir, extension, depth);
 
