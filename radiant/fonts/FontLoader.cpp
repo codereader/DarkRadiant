@@ -11,7 +11,7 @@
 namespace fonts
 {
 
-void FontLoader::operator()(const std::string& filename)
+void FontLoader::operator()(const std::string& filename, vfs::Visibility)
 {
 	// Construct the full VFS path
 	std::string fullPath = os::standardPath(_basePath + filename);

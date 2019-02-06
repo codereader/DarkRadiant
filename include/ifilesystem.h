@@ -40,6 +40,16 @@ public:
 	}
 };
 
+/// Visibility of an asset in the mod installation
+enum class Visibility
+{
+    /// Standard visibility, shown in all relevant areas
+    NORMAL,
+
+    /// Hidden from selectors, but rendered as normal in the map itself
+    HIDDEN
+};
+
 /**
  * Main interface for the virtual filesystem.
  *
@@ -56,9 +66,11 @@ class VirtualFileSystem :
 public:
 	virtual ~VirtualFileSystem() {}
 
-	// Functor taking the filename as argument. The filename is relative 
-	// to the base path passed to the GlobalFileSystem().foreach*() method.
-	typedef std::function<void(const std::string& filename)> VisitorFunc;
+    // Functor taking the filename and visibility as argument. The filename is
+    // relative to the base path passed to the GlobalFileSystem().foreach*()
+    // method.
+	typedef std::function<void(const std::string& filename,
+                               Visibility)> VisitorFunc;
 
 	/**
 	 * Interface for VFS observers.

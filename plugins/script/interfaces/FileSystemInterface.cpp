@@ -12,7 +12,7 @@ void FileSystemInterface::forEachFile(const std::string& basedir,
                                       VirtualFileSystemVisitor& visitor,
                                       std::size_t depth)
 {
-    GlobalFileSystem().forEachFile(basedir, extension, [&](const std::string& filename)
+    GlobalFileSystem().forEachFile(basedir, extension, [&](const std::string& filename, vfs::Visibility)
     {
         visitor.visit(filename);
     }, depth);

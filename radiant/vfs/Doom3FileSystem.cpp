@@ -45,6 +45,78 @@ namespace vfs
 namespace
 {
 
+// Representation of an assets.lst file, containing visibility information for
+// assets within a particular folder.
+class AssetsList
+{
+    std::map<std::string, Visibility> _visibilities;
+
+    // Convert visibility string to enum value
+    static Visibility toVisibility(const std::string& input)
+    {
+        if (string::starts_with(input, "hid" /* 'hidden' or 'hide'*/))
+        {
+            return Visibility::HIDDEN;
+        }
+        else if (input == "normal")
+        {
+            return Visibility::NORMAL;
+        }
+        else
+        {
+            rWarning() << "AssetsList: failed to parse visibility '" << input
+                       << "'" << std::endl;
+            return Visibility::NORMAL;
+        }
+    }
+
+public:
+
+    static constexpr const char* FILENAME = "assets.lst";
+
+    // Construct with possible ArchiveTextFile pointer containing an assets.lst
+    // file to parse.
+    explicit AssetsList(ArchiveTextFilePtr inputFile)
+    {
+        if (inputFile)
+        {
+            // Read lines from the file
+            std::istream stream(&inputFile->getInputStream());
+            while (stream.good())
+            {
+                std::string line;
+                std::getline(stream, line);
+
+                // Attempt to parse the line as "asset=visibility"
+                std::vector<std::string> tokens;
+                string::split(tokens, line, "=");
+
+                // Parsing was a success if we have two tokens
+                if (tokens.size() == 2)
+                {
+                    std::string filename = tokens[0];
+                    Visibility v = toVisibility(tokens[1]);
+                    _visibilities[filename] = v;
+                }
+            }
+        }
+    }
+
+    // Return visibility for a given file
+    Visibility getVisibility(const std::string& fileName) const
+    {
+        auto i = _visibilities.find(fileName);
+        if (i == _visibilities.end())
+        {
+            return Visibility::NORMAL;
+        }
+        else
+        {
+            return i->second;
+        }
+    }
+};
+
 /*
  * Archive::Visitor class used in GlobalFileSystem().foreachFile().
  * It's filtering out the files matching the defined extension only.
@@ -59,6 +131,9 @@ class FileVisitor: public Archive::Visitor
 
     // User-supplied functor to invoke for each file
     VirtualFileSystem::VisitorFunc _visitorFunc;
+
+    // Optional AssetsList containing visibility information
+    const AssetsList* _assetsList = nullptr;
 
     // Set of already-visited files to avoid visiting the same file twice
     std::set<std::string> _visitedFiles;
@@ -86,6 +161,11 @@ public:
       _extension(ext), _dirPrefixLength(_directory.length()),
       _visitAll(_extension == "*"), _extLength(_extension.length())
     {}
+
+    void setAssetsList(const AssetsList& list)
+    {
+        _assetsList = &list;
+    }
 
     // Archive::Visitor interface
 
@@ -131,7 +211,8 @@ public:
         }
 
         // Suitable file, call the callback and add to visited file set
-        _visitorFunc(subname);
+        _visitorFunc(subname, _assetsList ? _assetsList->getVisibility(subname)
+                                          : Visibility::NORMAL);
 
         _visitedFiles.insert(subname);
     }
@@ -144,71 +225,6 @@ public:
         }
 
         return false;
-    }
-};
-
-enum class Visibility
-{
-    /// Standard visibility, shown in all relevant areas
-    NORMAL,
-
-    /// Hidden from selectors, but rendered as normal in the map itself
-    HIDDEN
-};
-
-// Representation of an assets.lst file, containing visibility information for
-// assets within a particular folder.
-class AssetsList
-{
-    std::map<std::string, Visibility> _visibilities;
-
-    // Convert visibility string to enum value
-    static Visibility toVisibility(const std::string& input)
-    {
-        if (string::starts_with(input, "hid" /* 'hidden' or 'hide'*/))
-        {
-            return Visibility::HIDDEN;
-        }
-        else if (input == "normal")
-        {
-            return Visibility::NORMAL;
-        }
-        else
-        {
-            rWarning() << "AssetsList: failed to parse visibility '" << input
-                       << "'" << std::endl;
-            return Visibility::NORMAL;
-        }
-    }
-
-public:
-
-    static constexpr const char* FILENAME = "assets.lst";
-
-    // Construct with possible ArchiveTextFile pointer containing an assets.lst
-    // file to parse.
-    AssetsList(ArchiveTextFilePtr inputFile)
-    {
-        if (inputFile)
-        {
-            // Read lines from the file
-            std::istream stream(&inputFile->getInputStream());
-            while (stream.good())
-            {
-                std::string line;
-                std::getline(stream, line);
-
-                // Attempt to parse the line as "asset=visibility"
-                std::vector<std::string> tokens;
-                string::split(tokens, line, "=");
-
-                // Parsing was a success if we have two tokens
-                if (tokens.size() == 2)
-                {
-                    _visibilities[tokens[0]] = toVisibility(tokens[1]);
-                }
-            }
-        }
     }
 };
 
@@ -421,6 +437,7 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
 
     // Construct our FileVisitor filtering out the right elements
     FileVisitor fileVisitor(visitorFunc, basedir, extension, depth);
+    fileVisitor.setAssetsList(assetsList);
 
     // Visit each Archive, applying the FileVisitor to each one (which in
     // turn calls the callback for each matching file.

@@ -242,7 +242,7 @@ void ParticlesManager::reloadParticleDefs()
 {
 	ScopedDebugTimer timer("Particle definitions parsed: ");
 
-    GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, [&](const std::string& filename)
+    GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, [&](const std::string& filename, vfs::Visibility)
     {
         // Attempt to open the file in text mode
         ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(PARTICLES_DIR + filename);

@@ -90,7 +90,7 @@ public:
             // Search for model files
             GlobalFileSystem().forEachFile(MODELS_FOLDER,
                                            "*",
-                                           [&](const std::string& filename) { visitModelFile(filename); },
+                                           [&](const std::string& filename, vfs::Visibility) { visitModelFile(filename); },
                                            0);
 
             if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);

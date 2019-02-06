@@ -66,7 +66,7 @@ void Doom3SkinCache::loadSkinFiles()
 	// exceptions that may be thrown
 	try
 	{
-        GlobalFileSystem().forEachFile(SKINS_FOLDER, "skin", [&] (const std::string& filename)
+        GlobalFileSystem().forEachFile(SKINS_FOLDER, "skin", [&] (const std::string& filename, vfs::Visibility)
         {
             // Open the .skin file and get its contents as a std::string
             ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(SKINS_FOLDER + filename);
