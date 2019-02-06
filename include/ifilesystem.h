@@ -19,7 +19,6 @@ class ArchiveFile;
 typedef std::shared_ptr<ArchiveFile> ArchiveFilePtr;
 class ArchiveTextFile;
 typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
-class Archive;
 
 namespace vfs
 {
