@@ -41,7 +41,7 @@ PrefabPopulator::~PrefabPopulator()
 	}
 }
 
-void PrefabPopulator::visitFile(const std::string& filename)
+void PrefabPopulator::visitFile(const vfs::FileInfo& fileInfo)
 {
     if (TestDestroy())
     {
@@ -49,7 +49,7 @@ void PrefabPopulator::visitFile(const std::string& filename)
     }
 
     // Let the VFSTreePopulator do the insertion
-    _treePopulator.addPath(filename);
+    _treePopulator.addPath(fileInfo.name);
 }
 
 wxThread::ExitCode PrefabPopulator::Entry()

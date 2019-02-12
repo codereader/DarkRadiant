@@ -242,30 +242,34 @@ void ParticlesManager::reloadParticleDefs()
 {
 	ScopedDebugTimer timer("Particle definitions parsed: ");
 
-    GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, [&](const std::string& filename, vfs::Visibility)
-    {
-        // Attempt to open the file in text mode
-        ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(PARTICLES_DIR + filename);
+    GlobalFileSystem().forEachFile(
+        PARTICLES_DIR, PARTICLES_EXT,
+        [&](const vfs::FileInfo& fileInfo)
+        {
+            // Attempt to open the file in text mode
+            ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(PARTICLES_DIR + fileInfo.name);
 
-        if (file != NULL)
-        {
-            // File is open, so parse the tokens
-            try 
+            if (file != NULL)
             {
-                std::istream is(&(file->getInputStream()));
-                parseStream(is, filename);
+                // File is open, so parse the tokens
+                try 
+                {
+                    std::istream is(&(file->getInputStream()));
+                    parseStream(is, fileInfo.name);
+                }
+                catch (parser::ParseException& e)
+                {
+                    rError() << "[particles] Failed to parse " << fileInfo.name
+                        << ": " << e.what() << std::endl;
+                }
             }
-            catch (parser::ParseException& e)
+            else
             {
-                rError() << "[particles] Failed to parse " << filename
-                    << ": " << e.what() << std::endl;
+                rError() << "[particles] Unable to open " << fileInfo.name << std::endl;
             }
-        }
-        else
-        {
-            rError() << "[particles] Unable to open " << filename << std::endl;
-        }
-    }, 1); // depth == 1: don't search subdirectories
+        },
+        1 // depth == 1: don't search subdirectories
+    );
 
     rMessage() << "Found " << _particleDefs.size() << " particle definitions." << std::endl;
 

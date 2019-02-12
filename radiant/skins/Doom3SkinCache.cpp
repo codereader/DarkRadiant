@@ -66,24 +66,27 @@ void Doom3SkinCache::loadSkinFiles()
 	// exceptions that may be thrown
 	try
 	{
-        GlobalFileSystem().forEachFile(SKINS_FOLDER, "skin", [&] (const std::string& filename, vfs::Visibility)
-        {
-            // Open the .skin file and get its contents as a std::string
-            ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(SKINS_FOLDER + filename);
-            assert(file);
-
-            std::istream is(&(file->getInputStream()));
-
-            try 
+        GlobalFileSystem().forEachFile(
+            SKINS_FOLDER, "skin",
+            [&] (const vfs::FileInfo& fileInfo)
             {
-                // Pass the contents back to the SkinCache module for parsing
-                parseFile(is, filename);
+                // Open the .skin file and get its contents as a std::string
+                ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(SKINS_FOLDER + fileInfo.name);
+                assert(file);
+
+                std::istream is(&(file->getInputStream()));
+
+                try 
+                {
+                    // Pass the contents back to the SkinCache module for parsing
+                    parseFile(is, fileInfo.name);
+                }
+                catch (parser::ParseException& e)
+                {
+                    rError() << "[skins]: in " << fileInfo.name << ": " << e.what() << std::endl;
+                }
             }
-            catch (parser::ParseException& e)
-            {
-                rError() << "[skins]: in " << filename << ": " << e.what() << std::endl;
-            }
-        });
+        );
 	}
 	catch (parser::ParseException& e)
 	{

@@ -12,10 +12,11 @@ void FileSystemInterface::forEachFile(const std::string& basedir,
                                       VirtualFileSystemVisitor& visitor,
                                       std::size_t depth)
 {
-    GlobalFileSystem().forEachFile(basedir, extension, [&](const std::string& filename, vfs::Visibility)
-    {
-        visitor.visit(filename);
-    }, depth);
+    GlobalFileSystem().forEachFile(
+        basedir, extension,
+        [&](const vfs::FileInfo& fileInfo) { visitor.visit(fileInfo.name); },
+        depth
+    );
 }
 
 std::string FileSystemInterface::readTextFile(const std::string& filename)

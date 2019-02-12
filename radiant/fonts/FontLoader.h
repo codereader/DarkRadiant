@@ -23,7 +23,7 @@ public:
 		_manager(manager)
 	{}
 
-	void operator()(const std::string& fileName, vfs::Visibility);
+	void operator()(const vfs::FileInfo& fileInfo);
 };
 
 } // namespace fonts

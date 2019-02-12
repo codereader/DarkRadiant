@@ -90,11 +90,11 @@ public:
             // Search for model files
             GlobalFileSystem().forEachFile(
                 MODELS_FOLDER, "*",
-                [&](const std::string& filename, vfs::Visibility vis)
+                [&](const vfs::FileInfo& fileInfo)
                 {
                     // Only add visible models
-                    if (vis == vfs::Visibility::NORMAL)
-                        visitModelFile(filename);
+                    if (fileInfo.visibility == vfs::Visibility::NORMAL)
+                        visitModelFile(fileInfo.name);
                 },
                 0
             );

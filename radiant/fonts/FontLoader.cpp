@@ -11,15 +11,15 @@
 namespace fonts
 {
 
-void FontLoader::operator()(const std::string& filename, vfs::Visibility)
+void FontLoader::operator()(const vfs::FileInfo& fileInfo)
 {
 	// Construct the full VFS path
-	std::string fullPath = os::standardPath(_basePath + filename);
+	std::string fullPath = os::standardPath(_basePath + fileInfo.name);
 
 	std::regex expr("^/?(.*)/.*_(\\d{2})\\.dat$", std::regex::icase);
 	std::smatch matches;
 
-	if (std::regex_match(filename, matches, expr))
+	if (std::regex_match(fileInfo.name, matches, expr))
 	{
 		// Get the font name and resolution from the match
 		std::string fontname = matches[1];
@@ -54,7 +54,7 @@ void FontLoader::operator()(const std::string& filename, vfs::Visibility)
 		}
 		else
 		{
-			rWarning() << "FontLoader: ignoring DAT: " << filename << std::endl;
+			rWarning() << "FontLoader: ignoring DAT: " << fileInfo.name << std::endl;
 		}
 	}
 }

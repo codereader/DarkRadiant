@@ -131,10 +131,10 @@ void EClassManager::parseDefFiles()
 
 	{
 		ScopedDebugTimer timer("EntityDefs parsed: ");
-        GlobalFileSystem().forEachFile("def/", "def", [&](const std::string& filename, vfs::Visibility)
-        {
-            parseFile(filename);
-        });
+        GlobalFileSystem().forEachFile(
+            "def/", "def",
+            [&](const vfs::FileInfo& fileInfo) { parseFile(fileInfo.name); }
+        );
 	}
 }
 

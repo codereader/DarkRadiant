@@ -100,10 +100,11 @@ ShaderLibraryPtr Doom3ShaderSystem::loadMaterialFiles()
 	ShaderFileLoader loader(sPath, *library, _currentOperation);
 	{
 		ScopedDebugTimer timer("ShaderFiles parsed: ");
-        GlobalFileSystem().forEachFile(sPath, extension, [&](const std::string& filename, vfs::Visibility)
-        {
-            loader.addFile(filename);
-        }, 0);
+        GlobalFileSystem().forEachFile(
+            sPath, extension,
+            [&](const vfs::FileInfo& fileInfo) { loader.addFile(fileInfo.name); },
+            0
+        );
 		loader.parseFiles();
 	}
 

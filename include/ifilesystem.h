@@ -50,6 +50,16 @@ enum class Visibility
     HIDDEN
 };
 
+/// Metadata about a file in the virtual filesystem
+struct FileInfo
+{
+    /// Name of the file
+    std::string name;
+
+    /// Visibility of the file
+    Visibility visibility = Visibility::NORMAL;
+};
+
 /**
  * Main interface for the virtual filesystem.
  *
@@ -69,8 +79,7 @@ public:
     // Functor taking the filename and visibility as argument. The filename is
     // relative to the base path passed to the GlobalFileSystem().foreach*()
     // method.
-	typedef std::function<void(const std::string& filename,
-                               Visibility)> VisitorFunc;
+	typedef std::function<void(const FileInfo&)> VisitorFunc;
 
 	/**
 	 * Interface for VFS observers.
