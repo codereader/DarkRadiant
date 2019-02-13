@@ -32,9 +32,6 @@ public:
     sigc::signal<void> signal_radiantShutdown() const override;
 
     ThreadManager& getThreadManager() override;
-	void performLongRunningOperation(
-		const std::function<void(ILongRunningOperation&)>& operationFunc,
-		const std::string& title) override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

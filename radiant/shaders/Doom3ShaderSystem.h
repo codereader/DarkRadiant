@@ -47,9 +47,6 @@ class Doom3ShaderSystem :
 	sigc::signal<void> _signalDefsLoaded;
 	sigc::signal<void> _signalDefsUnloaded;
 
-	// Used to provide feedback to the user during long operations
-	ILongRunningOperation* _currentOperation;
-
 public:
 
 	// Constructor, allocates the library

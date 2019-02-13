@@ -24,8 +24,6 @@ private:
 
     ShaderLibrary& _library;
 
-	ILongRunningOperation* _currentOperation;
-
 	std::vector<std::string> _files;
 
 private:
@@ -35,12 +33,8 @@ private:
 
 public:
 	// Constructor. Set the basepath to prepend onto shader filenames.
-    ShaderFileLoader(const std::string& path, 
-                     ShaderLibrary& library, 
-                     ILongRunningOperation* currentOperation) : 
-        _basePath(path),
-        _library(library),
-	    _currentOperation(currentOperation)
+    ShaderFileLoader(const std::string& path, ShaderLibrary& library)
+    : _basePath(path), _library(library)
 	{
 		_files.reserve(200);
 	}

@@ -90,14 +90,6 @@ void ShaderFileLoader::parseFiles()
 	{
 		const std::string& fullPath = _files[i];
 
-		if (_currentOperation)
-		{
-			_currentOperation->setMessage(fmt::format(_("Parsing material file {0}"), fullPath));
-
-			float progress = static_cast<float>(i) / _files.size();
-			_currentOperation->setProgress(progress);
-		}
-
 		// Open the file
 		ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullPath);
 

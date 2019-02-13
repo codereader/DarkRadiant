@@ -46,8 +46,7 @@ namespace shaders
 Doom3ShaderSystem::Doom3ShaderSystem() :
     _defLoader(std::bind(&Doom3ShaderSystem::loadMaterialFiles, this)),
 	_enableActiveUpdates(true),
-	_realised(false),
-	_currentOperation(nullptr)
+	_realised(false)
 {}
 
 void Doom3ShaderSystem::construct()
@@ -97,7 +96,7 @@ ShaderLibraryPtr Doom3ShaderSystem::loadMaterialFiles()
     ShaderLibraryPtr library = std::make_shared<ShaderLibrary>();
 
 	// Load each file from the global filesystem
-	ShaderFileLoader loader(sPath, *library, _currentOperation);
+	ShaderFileLoader loader(sPath, *library);
 	{
 		ScopedDebugTimer timer("ShaderFiles parsed: ");
         GlobalFileSystem().forEachFile(
