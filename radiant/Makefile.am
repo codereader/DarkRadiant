@@ -201,7 +201,6 @@ darkradiant_SOURCES = main.cpp \
                       shaders/textures/GLTextureManager.cpp \
                       shaders/Doom3ShaderLayer.cpp \
                       shaders/TableDefinition.cpp \
-                      shaders/ShaderFileLoader.cpp \
                       shaders/ShaderTemplate.cpp \
                       shaders/MapExpression.cpp \
                       shaders/CShader.cpp \
