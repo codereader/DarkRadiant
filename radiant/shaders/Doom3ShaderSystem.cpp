@@ -86,12 +86,13 @@ class ShaderFileLoader
 
     ShaderLibrary& _library;
 
-    std::vector<std::string> _files;
+    // List of shader definition files to parse
+    std::vector<vfs::FileInfo> _files;
 
 private:
 
     // Parse a shader file with the given contents and filename
-    void parseShaderFile(std::istream& inStr, const std::string& filename)
+    void parseShaderFile(std::istream& inStr, const vfs::FileInfo& fileInfo)
     {
         // Parse the file with a blocktokeniser, the actual block contents
         // will be parsed separately.
@@ -109,7 +110,7 @@ private:
 
                 if (tableName.empty())
                 {
-                    rError() << "[shaders] " << filename << ": Missing table name." << std::endl;
+                    rError() << "[shaders] " << fileInfo.name << ": Missing table name." << std::endl;
                     continue;
                 }
 
@@ -117,7 +118,7 @@ private:
 
                 if (!_library.addTableDefinition(table))
                 {
-                    rError() << "[shaders] " << filename
+                    rError() << "[shaders] " << fileInfo.name
                         << ": table " << tableName << " already defined." << std::endl;
                 }
 
@@ -137,12 +138,12 @@ private:
             ShaderTemplatePtr shaderTemplate(new ShaderTemplate(block.name, block.contents));
 
             // Construct the ShaderDefinition wrapper class
-            ShaderDefinition def(shaderTemplate, filename);
+            ShaderDefinition def(shaderTemplate, fileInfo.name);
 
             // Insert into the definitions map, if not already present
             if (!_library.addDefinition(block.name, def))
             {
-                rError() << "[shaders] " << filename
+                rError() << "[shaders] " << fileInfo.name
                     << ": shader " << block.name << " already defined." << std::endl;
             }
         }
@@ -156,29 +157,31 @@ public:
         _files.reserve(200);
     }
 
-    void addFile(const std::string& filename)
+    void addFile(const vfs::FileInfo& fileInfo)
     {
         // Construct the full VFS path
-        _files.push_back(_basePath + filename);
+        vfs::FileInfo fileWithBasePath = fileInfo;
+        fileWithBasePath.name = _basePath + fileInfo.name;
+        _files.push_back(fileWithBasePath);
     }
 
     void parseFiles()
     {
         for (std::size_t i = 0; i < _files.size(); ++i)
         {
-            const std::string& fullPath = _files[i];
+            const vfs::FileInfo& fileInfo = _files[i];
 
             // Open the file
-            ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullPath);
+            ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fileInfo.name);
 
-            if (file != NULL)
+            if (file != nullptr)
             {
                 std::istream is(&(file->getInputStream()));
-                parseShaderFile(is, fullPath);
+                parseShaderFile(is, fileInfo);
             }
             else
             {
-                throw std::runtime_error("Unable to read shaderfile: " + fullPath);
+                throw std::runtime_error("Unable to read shaderfile: " + fileInfo.name);
             }
         }
     }
@@ -214,7 +217,7 @@ ShaderLibraryPtr Doom3ShaderSystem::loadMaterialFiles()
         ScopedDebugTimer timer("ShaderFiles parsed: ");
         GlobalFileSystem().forEachFile(
             sPath, extension,
-            [&](const vfs::FileInfo& fileInfo) { loader.addFile(fileInfo.name); },
+            [&](const vfs::FileInfo& fileInfo) { loader.addFile(fileInfo); },
             0
         );
         loader.parseFiles();
