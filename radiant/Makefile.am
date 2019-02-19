@@ -9,6 +9,13 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               $(XML_CFLAGS) \
               $(FTGL_CFLAGS)
 
+# Clusters of source files common to executable and tests
+VFS_SOURCES = vfs/DeflatedInputStream.cpp \
+              vfs/DirectoryArchive.cpp \
+              vfs/Doom3FileSystem.cpp \
+              vfs/ZipArchive.cpp
+
+# DarkRadiant executable
 bin_PROGRAMS = darkradiant
 darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
 darkradiant_LDFLAGS = $(XML_LIBS) \
@@ -322,10 +329,8 @@ darkradiant_SOURCES = main.cpp \
                       uimanager/menu/MenuElement.cpp \
                       uimanager/UIManager.cpp \
                       uimanager/SoundShaderPreview.cpp \
-                      vfs/DeflatedInputStream.cpp \
-                      vfs/DirectoryArchive.cpp \
-                      vfs/Doom3FileSystem.cpp \
-                      vfs/ZipArchive.cpp \
+                      $(VFS_SOURCES) \
+                      vfs/Doom3FileSystemModule.cpp \
                       xmlregistry/RegistryTree.cpp \
                       xmlregistry/XMLRegistry.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
@@ -443,10 +448,12 @@ darkradiant_SOURCES = main.cpp \
 					  model/ScaledModelExporter.cpp \
                       model/NullModelNode.cpp 
 
-TESTS = facePlaneTest
-check_PROGRAMS = facePlaneTest
+check_PROGRAMS = facePlaneTest vfsTest
+TESTS = $(check_PROGRAMS)
 
 facePlaneTest_SOURCES = test/facePlaneTest.cpp \
                         brush/FacePlane.cpp
 facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
 
+vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
+vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
