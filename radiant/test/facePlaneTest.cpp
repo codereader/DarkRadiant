@@ -1,6 +1,5 @@
-#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE facePlaneTest
-#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 #include "radiant/brush/FacePlane.h"
 #include "math/Matrix4.h"
