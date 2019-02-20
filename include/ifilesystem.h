@@ -109,10 +109,6 @@ public:
 		virtual void onFileSystemShutdown() {}
 	};
 
-	/// \brief Adds a root search \p path.
-	/// Called before \c initialise.
-	virtual void initDirectory(const std::string& path) = 0;
-
 	typedef std::set<std::string> ExtensionSet;
 
 	// Initialises the filesystem using the given search order.

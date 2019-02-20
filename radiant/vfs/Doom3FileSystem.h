@@ -31,7 +31,6 @@ private:
 	ObserverList _observers;
 
 public:
-	void initDirectory(const std::string& path) override;
 	void initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedExtensions) override;
 	void shutdown() override;
 
@@ -67,6 +66,7 @@ public:
 	void shutdownModule() override;
 
 private:
+	void initDirectory(const std::string& path);
 	void initPakFile(const std::string& filename);
 };
 
