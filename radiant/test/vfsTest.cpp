@@ -18,3 +18,18 @@ BOOST_AUTO_TEST_CASE(constructFileSystemModule)
     BOOST_TEST(fs.getFileCount("") == 0);
 }
 
+BOOST_AUTO_TEST_CASE(readFilesFromVFS)
+{
+    vfs::VirtualFileSystem::ExtensionSet exts;
+    exts.insert("pk4");
+
+    vfs::SearchPaths paths;
+    paths.insertIfNotExists(std::string(getenv("srcdir")) + "/test/data/vfs_root");
+
+    vfs::Doom3FileSystem fs;
+    fs.initialise(paths, exts);
+
+    // Check presence of some files
+    BOOST_TEST(fs.getFileCount("nothere") == 0);
+}
+

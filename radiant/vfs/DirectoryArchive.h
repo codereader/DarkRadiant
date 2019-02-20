@@ -12,13 +12,15 @@
 class DirectoryArchive :
 	public Archive
 {
-private:
 	std::string _root;
 
 	// The modname for constructing the ModResource is cached here
 	// since changing the game paths will trigger a re-initialisation
 	// of the VFS anyway.
-	std::string _modName;
+	mutable std::string _modName;
+
+	// Construct and return the mod name
+	const std::string& modName() const;
 
 public:
 	// Pass the root path to the constructor
