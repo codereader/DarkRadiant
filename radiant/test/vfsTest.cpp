@@ -34,5 +34,19 @@ BOOST_AUTO_TEST_CASE(readFilesFromVFS)
     // Check presence of some files
     BOOST_TEST(fs.getFileCount("nothere") == 0);
     BOOST_TEST(fs.getFileCount("materials/example.mtr") == 1);
+    BOOST_TEST(fs.getFileCount("models/darkmod/test/unit_cube.ase") == 1);
+    BOOST_TEST(fs.getFileCount("models/darkmod/test/unit_cube_blah.ase") == 0);
+    BOOST_TEST(fs.getFileCount("models/darkmod/test/unit_cube.lwo") == 1);
+
+    // Use a visitor to walk the tree
+    std::set<std::string> foundFiles;
+    fs.forEachFile(
+        "", "*",
+        [&](const vfs::FileInfo& fi) { foundFiles.insert(fi.name); },
+        0
+    );
+    BOOST_TEST(foundFiles.count("dummy") == 0);
+    BOOST_TEST(foundFiles.count("materials/example.mtr") == 1);
+    BOOST_TEST(foundFiles.count("models/darkmod/test/unit_cube.ase") == 1);
 }
 
