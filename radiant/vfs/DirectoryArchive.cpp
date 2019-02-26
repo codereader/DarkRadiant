@@ -14,14 +14,6 @@ DirectoryArchive::DirectoryArchive(const std::string& root) :
 	_root(root)
 {}
 
-const std::string& DirectoryArchive::modName() const
-{
-	if (_modName.empty())
-		_modName = game::current::getModPath(_root);
-
-	return _modName;
-}
-
 ArchiveFilePtr DirectoryArchive::openFile(const std::string& name) 
 {
 	UnixPath path(_root);
@@ -43,8 +35,7 @@ ArchiveTextFilePtr DirectoryArchive::openTextFile(const std::string& name)
 	UnixPath path(_root);
 	path.push_filename(name);
 
-	std::shared_ptr<archive::DirectoryArchiveTextFile> file = 
-		std::make_shared<archive::DirectoryArchiveTextFile>(name, modName(), path);
+	auto file = std::make_shared<archive::DirectoryArchiveTextFile>(name, _root, path);
 
 	if (!file->failed()) 
 	{

@@ -19,9 +19,6 @@ class DirectoryArchive :
 	// of the VFS anyway.
 	mutable std::string _modName;
 
-	// Construct and return the mod name
-	const std::string& modName() const;
-
 public:
 	// Pass the root path to the constructor
 	DirectoryArchive(const std::string& root);

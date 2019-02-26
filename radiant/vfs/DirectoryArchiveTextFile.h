@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iarchive.h"
+#include "gamelib.h"
 #include "stream/TextFileInputStream.h"
 
 namespace archive
@@ -14,17 +15,17 @@ private:
 	std::string _name;
 	TextFileInputStream _inputStream;
 
-	// Mod directory
-	std::string _modName;
+	// Mod directory root
+	std::string _modRoot;
 
 public:
 
 	DirectoryArchiveTextFile(const std::string& name,
-							 const std::string& modName,
+							 const std::string& modRoot,
 							 const std::string& filename) : 
 		_name(name),
 		_inputStream(filename),
-		_modName(modName)
+		_modRoot(modRoot)
 	{}
 
 	bool failed() const 
@@ -42,12 +43,9 @@ public:
 		return _inputStream;
 	}
 
-	/**
-	* Get mod directory.
-	*/
 	std::string getModName() const override
 	{
-		return _modName;
+		return game::current::getModPath(_modRoot);
 	}
 };
 
