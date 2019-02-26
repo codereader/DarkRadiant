@@ -351,7 +351,7 @@ void Doom3FileSystem::removeObserver(Observer& observer)
 int Doom3FileSystem::getFileCount(const std::string& filename)
 {
     int count = 0;
-    std::string fixedFilename(os::standardPathWithSlash(filename));
+    std::string fixedFilename(os::standardPath(filename));
 
     for (const ArchiveDescriptor& descriptor : _archives)
     {

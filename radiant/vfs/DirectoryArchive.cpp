@@ -47,9 +47,9 @@ ArchiveTextFilePtr DirectoryArchive::openTextFile(const std::string& name)
 
 bool DirectoryArchive::containsFile(const std::string& name)
 {
-	UnixPath path(_root);
-	path.push_filename(name);
-	return os::fileIsReadable(path);
+    UnixPath path(_root);
+    std::string filePath = std::string(path) + name;
+    return os::fileIsReadable(filePath);
 }
 
 void DirectoryArchive::traverse(Visitor& visitor, const std::string& root)

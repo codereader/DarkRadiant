@@ -20,6 +20,8 @@ BOOST_AUTO_TEST_CASE(constructFileSystemModule)
 
 BOOST_AUTO_TEST_CASE(readFilesFromVFS)
 {
+    GlobalOutputStream().setStream(std::cout);
+
     vfs::VirtualFileSystem::ExtensionSet exts;
     exts.insert("pk4");
 
@@ -31,5 +33,6 @@ BOOST_AUTO_TEST_CASE(readFilesFromVFS)
 
     // Check presence of some files
     BOOST_TEST(fs.getFileCount("nothere") == 0);
+    BOOST_TEST(fs.getFileCount("materials/example.mtr") == 1);
 }
 
