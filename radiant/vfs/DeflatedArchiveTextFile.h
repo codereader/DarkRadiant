@@ -21,7 +21,7 @@ private:
 	stream::BinaryToTextInputStream<DeflatedInputStream> _textStream; // converts data from _zipstream
 
     // Mod directory containing this file
-    const std::string _modName;
+    const std::string _modRoot;
 
 public:
 	typedef stream::FileInputStream::size_type size_type;
@@ -35,7 +35,7 @@ public:
      */
     DeflatedArchiveTextFile(const std::string& name,
                             const std::string& archiveName, // full path to ZIP file
-                            const std::string& modName,
+                            const std::string& modRoot,
                             position_type position,
                             size_type stream_size) : 
 		_name(name),
@@ -43,7 +43,7 @@ public:
 		_substream(_istream, position, stream_size),
 		_zipstream(_substream),
 		_textStream(_zipstream),
-		_modName(modName)
+		_modRoot(modRoot)
     {}
 
 	TextInputStream& getInputStream() override
@@ -56,12 +56,9 @@ public:
 		return _name;
 	}
 
-    /**
-     * Return mod directory of this file.
-     */
     std::string getModName() const override
 	{
-        return _modName;
+		return game::current::getModPath(_modRoot);
     }
 };
 

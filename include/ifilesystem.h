@@ -50,6 +50,16 @@ enum class Visibility
     HIDDEN
 };
 
+inline std::ostream& operator<< (std::ostream& s, const Visibility& v)
+{
+    if (v == Visibility::HIDDEN)
+        return s << "Visibility::HIDDEN";
+    else if (v == Visibility::NORMAL)
+        return s << "Visibility::NORMAL";
+    else
+        return s << "Visibility(invalid)";
+}
+
 /// Metadata about a file in the virtual filesystem
 struct FileInfo
 {

@@ -54,8 +54,6 @@ private:
 	stream::FileInputStream _istream;
     std::mutex _streamLock;
 
-	const std::string& modName() const;
-
 public:
 	ZipArchive(const std::string& fullPath);
 	virtual ~ZipArchive();
