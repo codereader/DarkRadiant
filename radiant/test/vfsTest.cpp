@@ -35,7 +35,7 @@ BOOST_FIXTURE_TEST_CASE(constructFileSystemModule, VFSFixture)
     BOOST_TEST(fs.getDependencies().empty());
 }
 
-BOOST_FIXTURE_TEST_CASE(readFilesFromVFS, VFSFixture)
+BOOST_FIXTURE_TEST_CASE(findFilesInVFS, VFSFixture)
 {
     // Check presence of some files
     BOOST_TEST(fs.getFileCount("nothere") == 0);
@@ -54,6 +54,29 @@ BOOST_FIXTURE_TEST_CASE(readFilesFromVFS, VFSFixture)
     BOOST_TEST(foundFiles.count("dummy") == 0);
     BOOST_TEST(foundFiles.count("materials/example.mtr") == 1);
     BOOST_TEST(foundFiles.count("models/darkmod/test/unit_cube.ase") == 1);
+
+    // Visit files only under materials/
+    std::map<std::string, vfs::FileInfo> mtrFiles;
+    fs.forEachFile(
+        "materials/", "mtr",
+        [&](const vfs::FileInfo& fi) { mtrFiles.insert(std::make_pair(fi.name, fi)); },
+        0
+    );
+    BOOST_TEST(!mtrFiles.empty());
+
+    // When giving a topdir to visit, the returned file names should be
+    // relative to that directory.
+    BOOST_TEST(mtrFiles.count("materials/example.mtr") == 0);
+    BOOST_TEST(mtrFiles.count("example.mtr") == 1);
+    BOOST_TEST(mtrFiles.count("materials/tdm_ai_nobles.mtr") == 0);
+    BOOST_TEST(mtrFiles.count("tdm_ai_nobles.mtr") == 1);
+
+    // But we can reconstruct the original path using the FileInfo::fullPath
+    // method.
+    BOOST_TEST(mtrFiles.find("example.mtr")->second.fullPath()
+               == "materials/example.mtr");
+    BOOST_TEST(mtrFiles.find("tdm_ai_nobles.mtr")->second.fullPath()
+               == "materials/tdm_ai_nobles.mtr");
 }
 
 BOOST_FIXTURE_TEST_CASE(handleAssetsLst, VFSFixture)

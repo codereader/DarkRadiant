@@ -63,11 +63,23 @@ inline std::ostream& operator<< (std::ostream& s, const Visibility& v)
 /// Metadata about a file in the virtual filesystem
 struct FileInfo
 {
-    /// Name of the file
+    /// Top-level directory (if any), e.g. "def" or "models"
+    std::string topDir;
+
+    /// Name of the file, including intermediate directories under the topDir
     std::string name;
 
     /// Visibility of the file
     Visibility visibility = Visibility::NORMAL;
+
+    /// Return the full mod-relative path, including the containing directory
+    std::string fullPath() const
+    {
+        if (topDir.empty())
+            return name;
+        else
+            return topDir + (topDir.back() == '/' ? "" : "/") + name;
+    }
 };
 
 /**

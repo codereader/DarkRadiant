@@ -32,7 +32,6 @@
 #include "string/split.h"
 #include "debugging/ScopedDebugTimer.h"
 
-#include "UnixPath.h"
 #include "DirectoryArchive.h"
 #include "DirectoryArchiveFile.h"
 #include "DirectoryArchiveTextFile.h"
@@ -218,7 +217,7 @@ public:
         // Suitable file, call the callback and add to visited file set
         vfs::Visibility vis = _assetsList ? _assetsList->getVisibility(subname)
                                           : Visibility::NORMAL;
-        _visitorFunc(vfs::FileInfo{subname, vis});
+        _visitorFunc(vfs::FileInfo{_directory, subname, vis});
 
         _visitedFiles.insert(subname);
     }
