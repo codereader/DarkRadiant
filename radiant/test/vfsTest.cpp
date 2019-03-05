@@ -70,4 +70,8 @@ BOOST_FIXTURE_TEST_CASE(handleAssetsLst, VFSFixture)
     BOOST_TEST(fileVis.count("darkmod/test/unit_cube.ase") == 1);
     BOOST_TEST(fileVis["darkmod/test/unit_cube.ase"] == vfs::Visibility::HIDDEN);
     BOOST_TEST(fileVis["darkmod/test/unit_cube.lwo"] == vfs::Visibility::NORMAL);
+
+    // The assets.lst should be converted into visibility information, but NOT
+    // returned as an actual file to the calling code.
+    BOOST_TEST(fileVis.count("assets.lst") == 0);
 }

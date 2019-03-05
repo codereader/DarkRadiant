@@ -211,6 +211,10 @@ public:
             return; // already visited
         }
 
+        // Don't return assets.lst itself
+        if (subname == AssetsList::FILENAME)
+            return;
+
         // Suitable file, call the callback and add to visited file set
         vfs::Visibility vis = _assetsList ? _assetsList->getVisibility(subname)
                                           : Visibility::NORMAL;
