@@ -2,6 +2,7 @@
 #include <boost/test/included/unit_test.hpp>
 
 #include "radiant/vfs/Doom3FileSystem.h"
+#include "radiant/shaders/ShaderFileLoader.h"
 
 struct VFSFixture
 {
@@ -97,4 +98,16 @@ BOOST_FIXTURE_TEST_CASE(handleAssetsLst, VFSFixture)
     // The assets.lst should be converted into visibility information, but NOT
     // returned as an actual file to the calling code.
     BOOST_TEST(fileVis.count("assets.lst") == 0);
+}
+
+using namespace shaders;
+
+struct MockShaderLibrary
+{
+};
+
+BOOST_FIXTURE_TEST_CASE(loaderShaderFiles, VFSFixture)
+{
+    MockShaderLibrary library;
+    shaders::ShaderFileLoader<MockShaderLibrary> loader("materials", library);
 }
