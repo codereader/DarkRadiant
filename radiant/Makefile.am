@@ -455,5 +455,8 @@ facePlaneTest_SOURCES = test/facePlaneTest.cpp \
                         brush/FacePlane.cpp
 facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
 
-vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
+vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES) \
+                  shaders/Doom3ShaderLayer.cpp \
+                  shaders/TableDefinition.cpp \
+                  shaders/textures/GLTextureManager.cpp
 vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
