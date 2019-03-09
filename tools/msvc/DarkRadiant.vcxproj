@@ -22,6 +22,7 @@
     <ProjectGuid>{8E70385C-223A-4DD1-9B99-28FF2331A2B5}</ProjectGuid>
     <RootNamespace>GtkRadiant</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -55,6 +56,7 @@
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
+    <Import Project="properties\zlib.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -64,6 +66,7 @@
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
+    <Import Project="properties\zlib.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -73,6 +76,7 @@
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
+    <Import Project="properties\zlib.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -82,6 +86,7 @@
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
+    <Import Project="properties\zlib.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -191,9 +196,83 @@
   <ItemGroup>
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
+    <ClCompile Include="..\..\radiant\commandsystem\CommandSystem.cpp" />
+    <ClCompile Include="..\..\radiant\eclassmgr\Doom3EntityClass.cpp" />
+    <ClCompile Include="..\..\radiant\eclassmgr\EClassManager.cpp" />
+    <ClCompile Include="..\..\radiant\entity\AngleKey.cpp" />
+    <ClCompile Include="..\..\radiant\entity\curve\Curve.cpp" />
+    <ClCompile Include="..\..\radiant\entity\curve\CurveCatmullRom.cpp" />
+    <ClCompile Include="..\..\radiant\entity\curve\CurveEditInstance.cpp" />
+    <ClCompile Include="..\..\radiant\entity\curve\CurveNURBS.cpp" />
+    <ClCompile Include="..\..\radiant\entity\Doom3Entity.cpp" />
+    <ClCompile Include="..\..\radiant\entity\doom3group\Doom3Group.cpp" />
+    <ClCompile Include="..\..\radiant\entity\doom3group\Doom3GroupNode.cpp" />
+    <ClCompile Include="..\..\radiant\entity\eclassmodel\EclassModelNode.cpp" />
+    <ClCompile Include="..\..\radiant\entity\EntityCreator.cpp" />
+    <ClCompile Include="..\..\radiant\entity\EntityNode.cpp" />
+    <ClCompile Include="..\..\radiant\entity\EntitySettings.cpp" />
+    <ClCompile Include="..\..\radiant\entity\generic\GenericEntity.cpp" />
+    <ClCompile Include="..\..\radiant\entity\generic\GenericEntityNode.cpp" />
+    <ClCompile Include="..\..\radiant\entity\KeyValue.cpp" />
+    <ClCompile Include="..\..\radiant\entity\KeyValueObserver.cpp" />
+    <ClCompile Include="..\..\radiant\entity\light\Light.cpp" />
+    <ClCompile Include="..\..\radiant\entity\light\LightNode.cpp" />
+    <ClCompile Include="..\..\radiant\entity\light\Renderables.cpp" />
+    <ClCompile Include="..\..\radiant\entity\ModelKey.cpp" />
+    <ClCompile Include="..\..\radiant\entity\NameKeyObserver.cpp" />
+    <ClCompile Include="..\..\radiant\entity\NamespaceManager.cpp" />
+    <ClCompile Include="..\..\radiant\entity\precompiled.cpp" />
+    <ClCompile Include="..\..\radiant\entity\RotationKey.cpp" />
+    <ClCompile Include="..\..\radiant\entity\RotationMatrix.cpp" />
+    <ClCompile Include="..\..\radiant\entity\ShaderParms.cpp" />
+    <ClCompile Include="..\..\radiant\entity\speaker\SpeakerNode.cpp" />
+    <ClCompile Include="..\..\radiant\entity\speaker\SpeakerRenderables.cpp" />
+    <ClCompile Include="..\..\radiant\entity\target\TargetableNode.cpp" />
+    <ClCompile Include="..\..\radiant\entity\target\TargetKey.cpp" />
+    <ClCompile Include="..\..\radiant\entity\target\TargetKeyCollection.cpp" />
+    <ClCompile Include="..\..\radiant\entity\target\TargetLineNode.cpp" />
+    <ClCompile Include="..\..\radiant\entity\target\TargetManager.cpp" />
+    <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp" />
+    <ClCompile Include="..\..\radiant\eventmanager\EventManager.cpp" />
+    <ClCompile Include="..\..\radiant\eventmanager\GlobalKeyEventFilter.cpp" />
+    <ClCompile Include="..\..\radiant\eventmanager\MouseToolGroup.cpp" />
+    <ClCompile Include="..\..\radiant\eventmanager\MouseToolManager.cpp" />
+    <ClCompile Include="..\..\radiant\eventmanager\Statement.cpp" />
+    <ClCompile Include="..\..\radiant\eventmanager\Toggle.cpp" />
+    <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp" />
+    <ClCompile Include="..\..\radiant\filetypes\FileTypeRegistry.cpp" />
+    <ClCompile Include="..\..\radiant\filters\BasicFilterSystem.cpp" />
+    <ClCompile Include="..\..\radiant\filters\XMLFilter.cpp" />
+    <ClCompile Include="..\..\radiant\fonts\FontLoader.cpp" />
+    <ClCompile Include="..\..\radiant\fonts\FontManager.cpp" />
+    <ClCompile Include="..\..\radiant\fonts\GlyphInfo.cpp" />
+    <ClCompile Include="..\..\radiant\fonts\GlyphSet.cpp" />
+    <ClCompile Include="..\..\radiant\image\dds.cpp" />
+    <ClCompile Include="..\..\radiant\image\DDSImage.cpp" />
+    <ClCompile Include="..\..\radiant\image\ddslib.cpp" />
+    <ClCompile Include="..\..\radiant\image\Doom3ImageLoader.cpp" />
+    <ClCompile Include="..\..\radiant\image\ImageLoaderWx.cpp" />
+    <ClCompile Include="..\..\radiant\image\TGALoader.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerUsageBreakdown.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\aas\Doom3AasFile.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\aas\Doom3AasFileLoader.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\aas\Doom3AasFileSettings.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\Doom3MapFormat.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\Doom3MapReader.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\Doom3MapWriter.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\Doom3PrefabFormat.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\mapdoom3.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\BrushDef.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\BrushDef3.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\Patch.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\PatchDef2.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\PatchDef3.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\Quake3MapFormat.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\Quake3MapReader.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\Quake4MapFormat.cpp" />
+    <ClCompile Include="..\..\radiant\mapdoom3\Quake4MapReader.cpp" />
     <ClCompile Include="..\..\radiant\map\AasFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Export.cpp" />
@@ -207,6 +286,437 @@
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp" />
+    <ClCompile Include="..\..\radiant\md5model\MD5Anim.cpp" />
+    <ClCompile Include="..\..\radiant\md5model\MD5AnimationCache.cpp" />
+    <ClCompile Include="..\..\radiant\md5model\MD5Model.cpp" />
+    <ClCompile Include="..\..\radiant\md5model\MD5ModelLoader.cpp" />
+    <ClCompile Include="..\..\radiant\md5model\MD5ModelNode.cpp" />
+    <ClCompile Include="..\..\radiant\md5model\MD5Skeleton.cpp" />
+    <ClCompile Include="..\..\radiant\md5model\MD5Surface.cpp" />
+    <ClCompile Include="..\..\radiant\md5model\plugin.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\AseExporter.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\Lwo2Chunk.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\Lwo2Exporter.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\PicoModelLoader.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\PicoModelModule.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\PicoModelNode.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\clip.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\envelope.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\list.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\lwio.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\lwo2.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\lwob.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\pntspols.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\surface.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\vecmath.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\vmap.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\picointernal.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\picomodel.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\picomodules.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_3ds.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_ase.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_fm.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_lwo.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_md2.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_md3.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_mdc.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_ms3d.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_obj.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_terrain.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modelfile\RenderablePicoModel.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\RenderablePicoSurface.cpp" />
+    <ClCompile Include="..\..\radiant\modelfile\WavefrontExporter.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelCache.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelFormatManager.cpp" />
@@ -214,6 +724,16 @@
     <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
+    <ClCompile Include="..\..\radiant\particles\editor\ParticleEditor.cpp" />
+    <ClCompile Include="..\..\radiant\particles\ParticleDef.cpp" />
+    <ClCompile Include="..\..\radiant\particles\ParticleNode.cpp" />
+    <ClCompile Include="..\..\radiant\particles\ParticleParameter.cpp" />
+    <ClCompile Include="..\..\radiant\particles\particles.cpp" />
+    <ClCompile Include="..\..\radiant\particles\ParticlesManager.cpp" />
+    <ClCompile Include="..\..\radiant\particles\RenderableParticle.cpp" />
+    <ClCompile Include="..\..\radiant\particles\RenderableParticleBunch.cpp" />
+    <ClCompile Include="..\..\radiant\particles\RenderableParticleStage.cpp" />
+    <ClCompile Include="..\..\radiant\particles\StageDef.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp" />
@@ -234,6 +754,9 @@
     <ClCompile Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.cpp" />
     <ClCompile Include="..\..\radiant\render\LinearLightList.cpp" />
     <ClCompile Include="..\..\radiant\render\View.cpp" />
+    <ClCompile Include="..\..\radiant\scenegraph\Octree.cpp" />
+    <ClCompile Include="..\..\radiant\scenegraph\SceneGraph.cpp" />
+    <ClCompile Include="..\..\radiant\scenegraph\SceneGraphFactory.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Planes.cpp" />
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp" />
@@ -252,8 +775,41 @@
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
     <ClCompile Include="..\..\radiant\settings\PreferencePage.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\CameraCubeMapDecl.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\CShader.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\Doom3ShaderLayer.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\Doom3ShaderSystem.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\MapExpression.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\ShaderExpression.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\ShaderLibrary.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\ShaderTemplate.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\TableDefinition.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\textures\GLTextureManager.cpp" />
+    <ClCompile Include="..\..\radiant\shaders\textures\TextureManipulator.cpp" />
+    <ClCompile Include="..\..\radiant\skins\Doom3SkinCache.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourScheme.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeManager.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\FilterMenu.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\GroupDialog.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\menu\MenuBar.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\menu\MenuElement.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\menu\MenuFolder.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\menu\MenuItem.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\menu\MenuManager.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\menu\MenuSeparator.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\SoundChooser.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\SoundShaderPreview.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\StatusBarManager.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\ToolbarManager.cpp" />
+    <ClCompile Include="..\..\radiant\uimanager\UIManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\EntityList.cpp" />
@@ -431,7 +987,15 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\UserInterfaceModule.cpp" />
+    <ClCompile Include="..\..\radiant\ui\widgets\Splitter.cpp" />
     <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\DeflatedInputStream.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\DirectoryArchive.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystem.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystemModule.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\ZipArchive.cpp" />
+    <ClCompile Include="..\..\radiant\xmlregistry\RegistryTree.cpp" />
+    <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp" />
     <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp" />
@@ -455,8 +1019,114 @@
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\PanViewTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\CaseInsensitiveCompare.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\Command.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\CommandSystem.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\CommandTokeniser.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\Executable.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\Statement.h" />
+    <ClInclude Include="..\..\radiant\eclassmgr\Doom3EntityClass.h" />
+    <ClInclude Include="..\..\radiant\eclassmgr\Doom3ModelDef.h" />
+    <ClInclude Include="..\..\radiant\eclassmgr\EClassManager.h" />
+    <ClInclude Include="..\..\radiant\entity\AngleKey.h" />
+    <ClInclude Include="..\..\radiant\entity\ColourKey.h" />
+    <ClInclude Include="..\..\radiant\entity\curve\Curve.h" />
+    <ClInclude Include="..\..\radiant\entity\curve\CurveCatmullRom.h" />
+    <ClInclude Include="..\..\radiant\entity\curve\CurveControlPointFunctors.h" />
+    <ClInclude Include="..\..\radiant\entity\curve\CurveEditInstance.h" />
+    <ClInclude Include="..\..\radiant\entity\curve\CurveNURBS.h" />
+    <ClInclude Include="..\..\radiant\entity\curve\RenderableCurve.h" />
+    <ClInclude Include="..\..\radiant\entity\Doom3Entity.h" />
+    <ClInclude Include="..\..\radiant\entity\doom3group\Doom3Group.h" />
+    <ClInclude Include="..\..\radiant\entity\doom3group\Doom3GroupNode.h" />
+    <ClInclude Include="..\..\radiant\entity\eclassmodel\EclassModelNode.h" />
+    <ClInclude Include="..\..\radiant\entity\EntityCreator.h" />
+    <ClInclude Include="..\..\radiant\entity\EntityNode.h" />
+    <ClInclude Include="..\..\radiant\entity\EntitySettings.h" />
+    <ClInclude Include="..\..\radiant\entity\generic\GenericEntity.h" />
+    <ClInclude Include="..\..\radiant\entity\generic\GenericEntityNode.h" />
+    <ClInclude Include="..\..\radiant\entity\generic\RenderableArrow.h" />
+    <ClInclude Include="..\..\radiant\entity\KeyObserverDelegate.h" />
+    <ClInclude Include="..\..\radiant\entity\KeyObserverMap.h" />
+    <ClInclude Include="..\..\radiant\entity\KeyValue.h" />
+    <ClInclude Include="..\..\radiant\entity\KeyValueObserver.h" />
+    <ClInclude Include="..\..\radiant\entity\light\Doom3LightRadius.h" />
+    <ClInclude Include="..\..\radiant\entity\light\Light.h" />
+    <ClInclude Include="..\..\radiant\entity\light\LightNode.h" />
+    <ClInclude Include="..\..\radiant\entity\light\LightShader.h" />
+    <ClInclude Include="..\..\radiant\entity\light\Renderables.h" />
+    <ClInclude Include="..\..\radiant\entity\light\RenderableVertices.h" />
+    <ClInclude Include="..\..\radiant\entity\ModelKey.h" />
+    <ClInclude Include="..\..\radiant\entity\NameKey.h" />
+    <ClInclude Include="..\..\radiant\entity\NameKeyObserver.h" />
+    <ClInclude Include="..\..\radiant\entity\NamespaceManager.h" />
+    <ClInclude Include="..\..\radiant\entity\OriginKey.h" />
+    <ClInclude Include="..\..\radiant\entity\precompiled.h" />
+    <ClInclude Include="..\..\radiant\entity\RotationKey.h" />
+    <ClInclude Include="..\..\radiant\entity\RotationMatrix.h" />
+    <ClInclude Include="..\..\radiant\entity\ShaderParms.h" />
+    <ClInclude Include="..\..\radiant\entity\speaker\SpeakerNode.h" />
+    <ClInclude Include="..\..\radiant\entity\speaker\SpeakerRenderables.h" />
+    <ClInclude Include="..\..\radiant\entity\target\RenderableTargetLines.h" />
+    <ClInclude Include="..\..\radiant\entity\target\Target.h" />
+    <ClInclude Include="..\..\radiant\entity\target\TargetableNode.h" />
+    <ClInclude Include="..\..\radiant\entity\target\TargetKey.h" />
+    <ClInclude Include="..\..\radiant\entity\target\TargetKeyCollection.h" />
+    <ClInclude Include="..\..\radiant\entity\target\TargetLineNode.h" />
+    <ClInclude Include="..\..\radiant\entity\target\TargetManager.h" />
+    <ClInclude Include="..\..\radiant\entity\VertexInstance.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\Event.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\EventManager.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\GlobalKeyEventFilter.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\KeyEvent.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\MouseToolGroup.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\MouseToolManager.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\RegistryToggle.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\SaveEventVisitor.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\Statement.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\Toggle.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h" />
+    <ClInclude Include="..\..\radiant\filetypes\FileTypeRegistry.h" />
+    <ClInclude Include="..\..\radiant\filters\BasicFilterSystem.h" />
+    <ClInclude Include="..\..\radiant\filters\InstanceUpdateWalker.h" />
+    <ClInclude Include="..\..\radiant\filters\XMLFilter.h" />
+    <ClInclude Include="..\..\radiant\fonts\FontInfo.h" />
+    <ClInclude Include="..\..\radiant\fonts\FontLoader.h" />
+    <ClInclude Include="..\..\radiant\fonts\FontManager.h" />
+    <ClInclude Include="..\..\radiant\fonts\GlyphInfo.h" />
+    <ClInclude Include="..\..\radiant\fonts\GlyphSet.h" />
+    <ClInclude Include="..\..\radiant\image\dds.h" />
+    <ClInclude Include="..\..\radiant\image\DDSImage.h" />
+    <ClInclude Include="..\..\radiant\image\ddslib.h" />
+    <ClInclude Include="..\..\radiant\image\Doom3ImageLoader.h" />
+    <ClInclude Include="..\..\radiant\image\ImageLoaderWx.h" />
+    <ClInclude Include="..\..\radiant\image\ImageTypeLoader.h" />
+    <ClInclude Include="..\..\radiant\image\TGALoader.h" />
     <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\aas\Doom3AasFile.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\aas\Doom3AasFileLoader.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\aas\Doom3AasFileSettings.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\aas\Util.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Doom3MapFormat.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Doom3MapReader.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Doom3MapWriter.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Doom3PrefabFormat.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\BrushDef.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\BrushDef3.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\Patch.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\PatchDef2.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\PatchDef3.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\primitivewriters\BrushDef3Exporter.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\primitivewriters\BrushDefExporter.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\primitivewriters\PatchDefExporter.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Quake3MapFormat.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Quake3MapReader.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Quake3MapWriter.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Quake4MapFormat.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Quake4MapReader.h" />
+    <ClInclude Include="..\..\radiant\mapdoom3\Quake4MapWriter.h" />
     <ClInclude Include="..\..\radiant\map\AasFileManager.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Export.h" />
@@ -470,6 +1140,29 @@
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h" />
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h" />
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h" />
+    <ClInclude Include="..\..\radiant\md5model\MD5Anim.h" />
+    <ClInclude Include="..\..\radiant\md5model\MD5AnimationCache.h" />
+    <ClInclude Include="..\..\radiant\md5model\MD5DataStructures.h" />
+    <ClInclude Include="..\..\radiant\md5model\MD5Model.h" />
+    <ClInclude Include="..\..\radiant\md5model\MD5ModelLoader.h" />
+    <ClInclude Include="..\..\radiant\md5model\MD5ModelNode.h" />
+    <ClInclude Include="..\..\radiant\md5model\MD5Skeleton.h" />
+    <ClInclude Include="..\..\radiant\md5model\MD5Surface.h" />
+    <ClInclude Include="..\..\radiant\md5model\RenderableMD5Skeleton.h" />
+    <ClInclude Include="..\..\radiant\modelfile\AseExporter.h" />
+    <ClInclude Include="..\..\radiant\modelfile\Lwo2Chunk.h" />
+    <ClInclude Include="..\..\radiant\modelfile\Lwo2Exporter.h" />
+    <ClInclude Include="..\..\radiant\modelfile\ModelExporterBase.h" />
+    <ClInclude Include="..\..\radiant\modelfile\PicoModelLoader.h" />
+    <ClInclude Include="..\..\radiant\modelfile\PicoModelModule.h" />
+    <ClInclude Include="..\..\radiant\modelfile\PicoModelNode.h" />
+    <ClInclude Include="..\..\radiant\modelfile\picomodel\lwo\lwo2.h" />
+    <ClInclude Include="..\..\radiant\modelfile\picomodel\picointernal.h" />
+    <ClInclude Include="..\..\radiant\modelfile\picomodel\picomodel.h" />
+    <ClInclude Include="..\..\radiant\modelfile\picomodel\pm_fm.h" />
+    <ClInclude Include="..\..\radiant\modelfile\RenderablePicoModel.h" />
+    <ClInclude Include="..\..\radiant\modelfile\RenderablePicoSurface.h" />
+    <ClInclude Include="..\..\radiant\modelfile\WavefrontExporter.h" />
     <ClInclude Include="..\..\radiant\model\ModelCache.h" />
     <ClInclude Include="..\..\radiant\model\ModelExporter.h" />
     <ClInclude Include="..\..\radiant\model\ModelFormatManager.h" />
@@ -477,6 +1170,18 @@
     <ClInclude Include="..\..\radiant\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiant\model\NullModelNode.h" />
     <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h" />
+    <ClInclude Include="..\..\radiant\particles\editor\ParticleEditor.h" />
+    <ClInclude Include="..\..\radiant\particles\editor\ParticleEditorModule.h" />
+    <ClInclude Include="..\..\radiant\particles\ParticleDef.h" />
+    <ClInclude Include="..\..\radiant\particles\ParticleNode.h" />
+    <ClInclude Include="..\..\radiant\particles\ParticleParameter.h" />
+    <ClInclude Include="..\..\radiant\particles\ParticleQuad.h" />
+    <ClInclude Include="..\..\radiant\particles\ParticleRenderInfo.h" />
+    <ClInclude Include="..\..\radiant\particles\ParticlesManager.h" />
+    <ClInclude Include="..\..\radiant\particles\RenderableParticle.h" />
+    <ClInclude Include="..\..\radiant\particles\RenderableParticleBunch.h" />
+    <ClInclude Include="..\..\radiant\particles\RenderableParticleStage.h" />
+    <ClInclude Include="..\..\radiant\particles\StageDef.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
@@ -487,6 +1192,10 @@
     <ClInclude Include="..\..\radiant\render\backend\OpenGLStateManager.h" />
     <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
+    <ClInclude Include="..\..\radiant\scenegraph\Octree.h" />
+    <ClInclude Include="..\..\radiant\scenegraph\OctreeNode.h" />
+    <ClInclude Include="..\..\radiant\scenegraph\SceneGraph.h" />
+    <ClInclude Include="..\..\radiant\scenegraph\SceneGraphFactory.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Planes.h" />
@@ -517,8 +1226,50 @@
     <ClInclude Include="..\..\radiant\settings\PreferenceItemBase.h" />
     <ClInclude Include="..\..\radiant\settings\PreferenceItems.h" />
     <ClInclude Include="..\..\radiant\settings\PreferencePage.h" />
+    <ClInclude Include="..\..\radiant\shaders\CameraCubeMapDecl.h" />
+    <ClInclude Include="..\..\radiant\shaders\CShader.h" />
+    <ClInclude Include="..\..\radiant\shaders\Doom3ShaderLayer.h" />
+    <ClInclude Include="..\..\radiant\shaders\Doom3ShaderSystem.h" />
+    <ClInclude Include="..\..\radiant\shaders\MapExpression.h" />
+    <ClInclude Include="..\..\radiant\shaders\NamedBindable.h" />
+    <ClInclude Include="..\..\radiant\shaders\ShaderDefinition.h" />
+    <ClInclude Include="..\..\radiant\shaders\ShaderExpression.h" />
+    <ClInclude Include="..\..\radiant\shaders\ShaderFileLoader.h" />
+    <ClInclude Include="..\..\radiant\shaders\ShaderLibrary.h" />
+    <ClInclude Include="..\..\radiant\shaders\ShaderNameCompareFunctor.h" />
+    <ClInclude Include="..\..\radiant\shaders\ShaderTemplate.h" />
+    <ClInclude Include="..\..\radiant\shaders\TableDefinition.h" />
+    <ClInclude Include="..\..\radiant\shaders\textures\CubeMapTexture.h" />
+    <ClInclude Include="..\..\radiant\shaders\textures\GLTextureManager.h" />
+    <ClInclude Include="..\..\radiant\shaders\textures\HeightmapCreator.h" />
+    <ClInclude Include="..\..\radiant\shaders\textures\TextureManipulator.h" />
+    <ClInclude Include="..\..\radiant\skins\Doom3ModelSkin.h" />
+    <ClInclude Include="..\..\radiant\skins\Doom3SkinCache.h" />
+    <ClInclude Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.h" />
+    <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.h" />
+    <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.h" />
+    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourScheme.h" />
+    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.h" />
+    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeManager.h" />
+    <ClInclude Include="..\..\radiant\uimanager\DialogManager.h" />
+    <ClInclude Include="..\..\radiant\uimanager\FilterMenu.h" />
+    <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h" />
+    <ClInclude Include="..\..\radiant\uimanager\LocalBitmapArtProvider.h" />
+    <ClInclude Include="..\..\radiant\uimanager\menu\MenuBar.h" />
+    <ClInclude Include="..\..\radiant\uimanager\menu\MenuElement.h" />
+    <ClInclude Include="..\..\radiant\uimanager\menu\MenuFolder.h" />
+    <ClInclude Include="..\..\radiant\uimanager\menu\MenuItem.h" />
+    <ClInclude Include="..\..\radiant\uimanager\menu\MenuManager.h" />
+    <ClInclude Include="..\..\radiant\uimanager\menu\MenuRootElement.h" />
+    <ClInclude Include="..\..\radiant\uimanager\menu\MenuSeparator.h" />
+    <ClInclude Include="..\..\radiant\uimanager\SoundChooser.h" />
+    <ClInclude Include="..\..\radiant\uimanager\SoundShaderPreview.h" />
+    <ClInclude Include="..\..\radiant\uimanager\StatusBarManager.h" />
+    <ClInclude Include="..\..\radiant\uimanager\ToolbarManager.h" />
+    <ClInclude Include="..\..\radiant\uimanager\UIManager.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\EntityList.h" />
@@ -748,10 +1499,28 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\SplitPaneLayout.h" />
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
     <ClInclude Include="..\..\radiant\ui\UserInterfaceModule.h" />
+    <ClInclude Include="..\..\radiant\ui\widgets\Splitter.h" />
     <ClInclude Include="..\..\radiant\undo\Operation.h" />
     <ClInclude Include="..\..\radiant\undo\Stack.h" />
     <ClInclude Include="..\..\radiant\undo\StackFiller.h" />
     <ClInclude Include="..\..\radiant\undo\UndoSystem.h" />
+    <ClInclude Include="..\..\radiant\vfs\Archive.h" />
+    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveTextFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\DeflatedInputStream.h" />
+    <ClInclude Include="..\..\radiant\vfs\DirectoryArchive.h" />
+    <ClInclude Include="..\..\radiant\vfs\DirectoryArchiveTextFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\Doom3FileSystem.h" />
+    <ClInclude Include="..\..\radiant\vfs\GenericFileSystem.h" />
+    <ClInclude Include="..\..\radiant\vfs\SortedFilenames.h" />
+    <ClInclude Include="..\..\radiant\vfs\StoredArchiveFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\StoredArchiveTextFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\UnixPath.h" />
+    <ClInclude Include="..\..\radiant\vfs\ZipArchive.h" />
+    <ClInclude Include="..\..\radiant\vfs\ZipStreamUtils.h" />
+    <ClInclude Include="..\..\radiant\xmlregistry\Autosaver.h" />
+    <ClInclude Include="..\..\radiant\xmlregistry\RegistryTree.h" />
+    <ClInclude Include="..\..\radiant\xmlregistry\XMLRegistry.h" />
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />
@@ -786,20 +1555,12 @@
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="ddslib.vcxproj">
-      <Project>{d42098ed-e192-4dc1-ba1c-80812ab194b4}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="wxutillib.vcxproj">
       <Project>{b6d4b38a-0c39-42cd-8193-75979e1f4d68}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="mathlib.vcxproj">
       <Project>{3c9fb5aa-7118-476e-b33d-d3ac1c8412bb}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="picomodellib.vcxproj">
-      <Project>{8050cfb1-20cc-40fd-8d74-0901c9ca2be8}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="scenelib.vcxproj">
@@ -850,6 +1611,7 @@
     </Xml>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\radiant\modelfile\Makefile.am" />
     <None Include="..\innosetup\darkradiant.iss" />
     <None Include="..\innosetup\darkradiant.x64.iss" />
   </ItemGroup>

@@ -19,7 +19,7 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 namespace ui
 {
@@ -99,9 +99,9 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 	_dialogManager = DialogManagerPtr(new DialogManager);
 
-    _menuManager = boost::make_shared<MenuManager>();
+    _menuManager = std::make_shared<MenuManager>();
 	_menuManager->loadFromRegistry();
-    _toolbarManager = boost::make_shared<ToolbarManager>();
+    _toolbarManager = std::make_shared<ToolbarManager>();
 	_toolbarManager->initialise();
 	ColourSchemeManager::Instance().loadColourSchemes();
 
@@ -116,7 +116,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
     );
 
 	// Add the statusbar command text item
-    _statusBarManager = boost::make_shared<StatusBarManager>();
+    _statusBarManager = std::make_shared<StatusBarManager>();
 	_statusBarManager->addTextElement(
 		STATUSBAR_COMMAND,
 		"",  // no icon
