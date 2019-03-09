@@ -88,10 +88,16 @@ public:
         try
         {
             // Search for model files
-            GlobalFileSystem().forEachFile(MODELS_FOLDER,
-                                           "*",
-                                           [&](const std::string& filename) { visitModelFile(filename); },
-                                           0);
+            GlobalFileSystem().forEachFile(
+                MODELS_FOLDER, "*",
+                [&](const vfs::FileInfo& fileInfo)
+                {
+                    // Only add visible models
+                    if (fileInfo.visibility == vfs::Visibility::NORMAL)
+                        visitModelFile(fileInfo.name);
+                },
+                0
+            );
 
             if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 

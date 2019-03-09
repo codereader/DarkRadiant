@@ -131,7 +131,7 @@ void SoundManager::loadShadersFromFilesystem()
     GlobalFileSystem().forEachFile(
         SOUND_FOLDER,			// directory
         "sndshd", 				// required extension
-        [&](const std::string& filename) { loader(filename); },	// loader callback
+        [&](const vfs::FileInfo& fileInfo) { loader(fileInfo.name); },	// loader callback
         99						// max depth
     );
 

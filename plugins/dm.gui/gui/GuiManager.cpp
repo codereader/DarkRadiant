@@ -103,10 +103,11 @@ void GuiManager::findGuis()
     _guis.clear();
 
     // Traverse the file system, using this class as callback
-    GlobalFileSystem().forEachFile(GUI_DIR, GUI_EXT, [&](const std::string& filename)
-    {
-        registerGui(filename);
-    }, 99);
+    GlobalFileSystem().forEachFile(
+        GUI_DIR, GUI_EXT,
+        [&](const vfs::FileInfo& fileInfo) { registerGui(fileInfo.name); },
+        99
+    );
 
     rMessage() << "[GuiManager]: Found " << _guis.size() << " guis." << std::endl;
 }

@@ -1,22 +1,4 @@
-SUBDIRS = eventmanager \
-          archivezip \
-		  commandsystem \
-          eclassmgr \
-          entity \
-          filetypes \
-          filters \
-          fonts \
-          image \
-          mapdoom3 \
-          md5model \
-          model \
-          particles \
-          scenegraph \
-          shaders \
-          skins \
-          uimanager \
-          vfspk3 \
-          xmlregistry
+SUBDIRS =
 
 # Conditional modules
 SUBDIRS += @sound_module@ @script_module@

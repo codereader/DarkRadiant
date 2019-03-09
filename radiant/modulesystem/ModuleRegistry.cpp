@@ -149,13 +149,7 @@ void ModuleRegistry::loadAndInitialiseModules()
 	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
 
 	// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-#if defined(POSIX) && defined(PKGLIBDIR)
-	// Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
-	_loader.loadModules(PKGLIBDIR);
-#else
-	// Load modules from application-relative path
-	_loader.loadModules(_context->getApplicationPath());
-#endif
+	_loader.loadModules(_context->getLibraryPath());
 
 	_progress = 0.1f;
 	_sigModuleInitialisationProgress.emit(_("Initialising Modules"), _progress);

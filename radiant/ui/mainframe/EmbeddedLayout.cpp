@@ -18,10 +18,11 @@
 
 namespace ui
 {
-
     namespace
     {
         const std::string RKEY_EMBEDDED_ROOT = "user/ui/mainFrame/embedded";
+        const std::string RKEY_HORIZ_POS = RKEY_EMBEDDED_ROOT + "/mainSplitterPos";
+        const std::string RKEY_VERT_POS = RKEY_EMBEDDED_ROOT + "/groupCamSplitterPos";
         const std::string RKEY_EMBEDDED_TEMP_ROOT = RKEY_EMBEDDED_ROOT + "/temp";
     }
 
@@ -34,12 +35,10 @@ void EmbeddedLayout::activate()
     wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 
     // Splitters
-    _horizPane = new wxSplitterWindow(topLevelParent, wxID_ANY,
-        wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedHorizPane");
-
-    _horizPane->SetMinimumPaneSize(1); // disallow unsplitting
-    _horizPane->SetSashGravity(0.5);
-    _horizPane->SetSashPosition(400);
+    _horizPane = new Splitter(
+        topLevelParent, RKEY_HORIZ_POS, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS,
+        "EmbeddedHorizPane"
+    );
 
     GlobalMainFrame().getWxMainContainer()->Add(_horizPane, 1, wxEXPAND);
 
@@ -47,12 +46,10 @@ void EmbeddedLayout::activate()
     XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, _horizPane);
 
     // CamGroup Pane
-    _groupCamPane = new wxSplitterWindow(_horizPane, wxID_ANY,
-        wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS, "EmbeddedVertPane");
-
-    _groupCamPane->SetSashGravity(0.5);
-    _groupCamPane->SetSashPosition(300);
-    _groupCamPane->SetMinimumPaneSize(1); // disallow unsplitting
+    _groupCamPane = new Splitter(
+        _horizPane, RKEY_VERT_POS, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS,
+        "EmbeddedVertPane"
+    );
 
     // Create a new camera window and parent it
     _camWnd = GlobalCamera().createCamWnd(_groupCamPane);
@@ -82,19 +79,15 @@ void EmbeddedLayout::activate()
         GlobalGroupDialog().addPage(page);
     }
 
-    _groupCamPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
-
     // Add the camGroup pane to the left and the GL widget to the right
+    _groupCamPane->SplitHorizontally(_camWnd->getMainWidget(), notebookPanel);
     _horizPane->SplitVertically(_groupCamPane, xywnd->getGLWidget());
 
-    // Connect the pane position trackers
-    _posHPane.connect(_horizPane);
-    _posGroupCamPane.connect(_groupCamPane);
-
-    // Attempt to restore this layout's state
-    restoreStateFromPath(RKEY_EMBEDDED_ROOT);
-
     topLevelParent->Layout();
+
+    // Enable sash position persistence
+    _horizPane->connectToRegistry();
+    _groupCamPane->connectToRegistry();
 
     // Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
@@ -111,9 +104,6 @@ void EmbeddedLayout::deactivate()
     // Remove all previously stored pane information
     GlobalRegistry().deleteXPath(RKEY_EMBEDDED_ROOT + "//pane");
 
-    // Save pane info
-    saveStateToPath(RKEY_EMBEDDED_ROOT);
-
     // Delete all active views
     GlobalXYWndManager().destroyViews();
 
@@ -128,10 +118,6 @@ void EmbeddedLayout::deactivate()
 
     GlobalGroupDialog().removePage("textures"); // do this after destroyWindow()
 
-    // Disconnect before destroying stuff
-    _posHPane.disconnect();
-    _posGroupCamPane.disconnect();
-
 	delete _horizPane;
 
     // Those two have been deleted by the above, so NULL the references
@@ -141,60 +127,19 @@ void EmbeddedLayout::deactivate()
 
 void EmbeddedLayout::maximiseCameraSize()
 {
-    // Save the current state to the registry
-    saveStateToPath(RKEY_EMBEDDED_TEMP_ROOT);
-
     // Maximise the camera, wxWidgets will clip the coordinates
     _horizPane->SetSashPosition(2000000);
     _groupCamPane->SetSashPosition(2000000);
 }
 
-void EmbeddedLayout::restorePanePositions()
-{
-    // Restore state
-    restoreStateFromPath(RKEY_EMBEDDED_TEMP_ROOT);
-
-    // Remove all previously stored pane information
-    GlobalRegistry().deleteXPath(RKEY_EMBEDDED_TEMP_ROOT);
-}
-
-void EmbeddedLayout::restoreStateFromPath(const std::string& path)
-{
-    // Trigger a proper resize event before setting the sash position
-    GlobalMainFrame().getWxTopLevelWindow()->SendSizeEvent();
-    wxTheApp->Yield();
-
-    // Now load the paned positions from the registry
-    if (GlobalRegistry().keyExists(path + "/pane[@name='texcam']"))
-    {
-        _posGroupCamPane.loadFromPath(path + "/pane[@name='texcam']");
-    }
-
-    if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
-    {
-        _posHPane.loadFromPath(path + "/pane[@name='horizontal']");
-    }
-}
-
 void EmbeddedLayout::restoreStateFromRegistry()
 {
-	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
-}
-
-void EmbeddedLayout::saveStateToPath(const std::string& path)
-{
-    GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-    _posHPane.saveToPath(path + "/pane[@name='horizontal']");
-
-    GlobalRegistry().createKeyWithName(path, "pane", "texcam");
-    _posGroupCamPane.saveToPath(path + "/pane[@name='texcam']");
 }
 
 void EmbeddedLayout::toggleFullscreenCameraView()
 {
     if (GlobalRegistry().keyExists(RKEY_EMBEDDED_TEMP_ROOT))
     {
-        restorePanePositions();
     }
     else
     {

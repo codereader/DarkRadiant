@@ -121,7 +121,7 @@ bool RadiantApp::OnExceptionInMainLoop()
 		// exception and catch it to print the error message at the very least.
 		throw;
 	}
-	catch (std::exception& ex)
+	catch (const std::exception& ex)
 	{
 		rError() << "Unhandled Exception: " << ex.what() << std::endl;
 	}
@@ -141,7 +141,16 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	ui::Splash::OnAppStartup();
 #endif
 
-	module::ModuleRegistry::Instance().loadAndInitialiseModules();
+    try
+    {
+        module::ModuleRegistry::Instance().loadAndInitialiseModules();
+    }
+    catch (const std::exception& e)
+    {
+        rConsole() << "Exception thrown while initialising ModuleRegistry: "
+                   << e.what() << std::endl;
+        abort();
+    }
 
 	// Scope ends here, PIDFile is deleted by its destructor
 }

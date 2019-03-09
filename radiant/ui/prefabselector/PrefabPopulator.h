@@ -48,7 +48,7 @@ protected:
 	// Thread entry point
 	ExitCode Entry();
 
-    void visitFile(const std::string& filename);
+    void visitFile(const vfs::FileInfo& fileInfo);
 };
 
 }

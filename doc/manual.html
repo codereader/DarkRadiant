@@ -1,0 +1,2497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.5">
+<title>DarkRadiant User Guide</title>
+<style>
+/* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
+@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
+audio,canvas,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+[hidden],template{display:none}
+script{display:none!important}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{margin:0}
+a{background:transparent}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:110%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Open Sans",sans-serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+body{-webkit-font-smoothing:antialiased}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.center{margin-left:auto;margin-right:auto}
+.spread{width:100%}
+p.lead,.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{font-size:1.21875em;line-height:1.6}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:none}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:bold;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #ddddd8;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{color:#7a2518;font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.no-bullet{list-style:none}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite:before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media only screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7;font-weight:bold}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+body{tab-size:4}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
+.clearfix:after,.float-group:after{clear:both}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menu{color:rgba(0,0,0,.8)}
+b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
+b.button:before{content:"[";padding:0 3px 0 2px}
+b.button:after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header:before,#header:after,#content:before,#content:after,#footnotes:before,#footnotes:after,#footer:before,#footer:after{content:" ";display:table}
+#header:after,#content:after,#footnotes:after,#footer:after{clear:both}
+#content{margin-top:1.25em}
+#content:before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #ddddd8}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #ddddd8;padding-bottom:8px}
+#header .details{border-bottom:1px solid #ddddd8;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span:before{content:"\00a0\2013\00a0"}
+#header .details br+span.author:before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark:before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber:after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #ddddd8;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #efefed;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media only screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background-color:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #efefed;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}
+@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background-color:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+.sect1{padding-bottom:.625em}
+@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}
+.sect1+.sect1{border-top:1px solid #efefed}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:left;font-weight:400}
+#content h1>a.anchor:before,h2>a.anchor:before,h3>a.anchor:before,#toctitle>a.anchor:before,.sidebarblock>.content>.title>a.anchor:before,h4>a.anchor:before,h5>a.anchor:before,h6>a.anchor:before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
+.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;margin-bottom:1em;text-align:left;font-size:1.1em;font-weight:bold;}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#f7f7f8}
+.sidebarblock .literalblock pre,.sidebarblock .listingblock pre:not(.highlight),.sidebarblock .listingblock pre[class="highlight"],.sidebarblock .listingblock pre[class^="highlight "],.sidebarblock .listingblock pre.CodeRay,.sidebarblock .listingblock pre.prettyprint{background:#f2f1f1}
+.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;padding:1em;font-size:.8125em}
+.literalblock pre.nowrap,.literalblock pre[class].nowrap,.listingblock pre.nowrap,.listingblock pre[class].nowrap{overflow-x:auto;white-space:pre;word-wrap:normal}
+@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:.90625em}}
+@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}
+.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]:before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:#999}
+.listingblock:hover code[data-lang]:before{display:block}
+.listingblock.terminal pre .command:before{content:attr(data-prompt);padding-right:.5em;color:#999}
+.listingblock.terminal pre .command:not([data-prompt]):before{content:"$"}
+table.pyhltable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0;line-height:1.45}
+table.pyhltable td.code{padding-left:.75em;padding-right:0}
+pre.pygments .lineno,table.pyhltable td:not(.code){color:#999;padding-left:0;padding-right:.5em;border-right:1px solid #ddddd8}
+pre.pygments .lineno{display:inline-block;margin-right:.25em}
+table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock blockquote p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote:before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.5em;margin-right:.5ex;text-align:right}
+.quoteblock .quoteblock{margin-left:0;margin-right:0;padding:.5em 0;border-left:3px solid rgba(0,0,0,.6)}
+.quoteblock .quoteblock blockquote{padding:0 0 0 .75em}
+.quoteblock .quoteblock blockquote:before{display:none}
+.verseblock{margin:0 1em 1.25em 1em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract{margin:0 0 1.25em 0;display:block}
+.quoteblock.abstract blockquote,.quoteblock.abstract blockquote p{text-align:left;word-spacing:0}
+.quoteblock.abstract blockquote:before,.quoteblock.abstract blockquote p:first-of-type:before{display:none}
+table.tableblock{max-width:100%;border-collapse:separate}
+table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
+table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
+table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
+table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
+table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
+table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
+table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot{border-width:1px 0}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:#7a2518;font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+td>div.verse{white-space:pre}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
+ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1em;font-size:.85em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{width:1em;position:relative;top:1px}
+ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
+ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
+ul.inline>li>*{display:block}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:last-of-type{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
+.imageblock.right,.imageblock[style*="float: right"]{margin:.25em 0 1.25em .625em}
+
+.imageblock>.title
+{
+    font-family:"Open Sans",sans-serif;
+    margin-bottom:0;
+    text-align:center;
+}
+
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em 0;border-width:1px 0 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;text-indent:-1.05em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background-color:#00fafa}
+.black{color:#000}
+.black-background{background-color:#000}
+.blue{color:#0000bf}
+.blue-background{background-color:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background-color:#fa00fa}
+.gray{color:#606060}
+.gray-background{background-color:#7d7d7d}
+.green{color:#006000}
+.green-background{background-color:#007d00}
+.lime{color:#00bf00}
+.lime-background{background-color:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background-color:#7d0000}
+.navy{color:#000060}
+.navy-background{background-color:#00007d}
+.olive{color:#606000}
+.olive-background{background-color:#7d7d00}
+.purple{color:#600060}
+.purple-background{background-color:#7d007d}
+.red{color:#bf0000}
+.red-background{background-color:#fa0000}
+.silver{color:#909090}
+.silver-background{background-color:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background-color:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background-color:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background-color:#fafa00}
+span.icon>.fa{cursor:default}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning:before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution:before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important:before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background-color:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]:after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background-color:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@media print{@page{margin:1.25cm .75cm}
+*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare):after,a[href^="https:"]:not(.bare):after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]:after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #ddddd8!important;padding-bottom:0!important}
+.sect1{padding-bottom:0!important}
+.sect1+.sect1{border:0!important}
+#header>h1:first-child{margin-top:1.25rem}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em 0}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span:before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]:before{display:block}
+#footer{background:none!important;padding:0 .9375em}
+#footer-text{color:rgba(0,0,0,.6)!important;font-size:.9em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+
+</style>
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>DarkRadiant User Guide</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">Introduction</a>
+<ul class="sectlevel2">
+<li><a href="#_editing_workflow">Editing workflow</a></li>
+<li><a href="#_what_s_in_a_map">What&#8217;s in a MAP?</a></li>
+</ul>
+</li>
+<li><a href="#_initial_configuration">Initial configuration</a>
+<ul class="sectlevel2">
+<li><a href="#_choosing_a_game_type">Choosing a game type</a></li>
+<li><a href="#_interface_layout">Interface layout</a></li>
+<li><a href="#_colour_schemes">Colour schemes</a></li>
+</ul>
+</li>
+<li><a href="#_basic_editing">Basic editing</a>
+<ul class="sectlevel2">
+<li><a href="#_navigating_the_2d_view">Navigating the 2D view</a></li>
+<li><a href="#_adjusting_the_grid">Adjusting the grid</a></li>
+<li><a href="#_using_the_3d_camera_view">Using the 3D camera view</a></li>
+<li><a href="#_manipulating_objects">Manipulating objects</a></li>
+<li><a href="#_working_with_brushes">Working with brushes</a>
+<ul class="sectlevel3">
+<li><a href="#CreatingABrush">Creating a brush</a></li>
+<li><a href="#_more_complex_brush_shapes">More complex brush shapes</a></li>
+<li><a href="#_creating_a_room">Creating a room</a></li>
+<li><a href="#_splitting_brushes">Splitting brushes</a></li>
+<li><a href="#_reshaping_brush_edges">Reshaping brush edges</a></li>
+<li><a href="#BrushBasedSelection">Brush-based selection</a></li>
+</ul>
+</li>
+<li><a href="#_working_with_patches">Working with patches</a>
+<ul class="sectlevel3">
+<li><a href="#_creating_a_simple_patch">Creating a simple patch</a></li>
+<li><a href="#_manipulating_control_points">Manipulating control points</a></li>
+<li><a href="#_more_complex_patch_shapes">More complex patch shapes</a></li>
+<li><a href="#_controlling_patch_subdivision">Controlling patch subdivision</a></li>
+</ul>
+</li>
+<li><a href="#_applying_textures">Applying textures</a>
+<ul class="sectlevel3">
+<li><a href="#MediaTab">The Media tab</a></li>
+<li><a href="#_the_textures_tab">The Textures tab</a></li>
+<li><a href="#_using_the_surface_inspector">Using the Surface Inspector</a></li>
+</ul>
+</li>
+<li><a href="#_working_with_entities">Working with entities</a>
+<ul class="sectlevel3">
+<li><a href="#_creating_lights">Creating lights</a></li>
+<li><a href="#CreatingModels">Creating models</a></li>
+<li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
+<li><a href="#_creating_other_entity_types">Creating other entity types</a></li>
+<li><a href="#_editing_entity_properties">Editing entity properties</a></li>
+</ul>
+</li>
+<li><a href="#_compiling_a_map">Compiling a map</a>
+<ul class="sectlevel3">
+<li><a href="#_preventing_leaks">Preventing leaks</a></li>
+<li><a href="#_locating_leaks_with_a_pointfile">Locating leaks with a pointfile</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_organising_a_map">Organising a map</a>
+<ul class="sectlevel2">
+<li><a href="#_grouping_objects">Grouping objects</a></li>
+<li><a href="#_working_with_prefabs">Working with prefabs</a>
+<ul class="sectlevel3">
+<li><a href="#_exporting_to_a_prefab">Exporting to a prefab</a></li>
+<li><a href="#_importing_a_prefab">Importing a prefab</a></li>
+</ul>
+</li>
+<li><a href="#_using_layers">Using layers</a>
+<ul class="sectlevel3">
+<li><a href="#_the_layers_window">The Layers window</a></li>
+<li><a href="#_moving_objects_into_layers">Moving objects into layers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>DarkRadiant is a level editor for Doom 3 and The Dark Mod, developed by The Dark
+Mod team. It may also be used for editing levels for similar <strong>id Software</strong> games
+such as Quake 4.</p>
+</div>
+<div class="paragraph">
+<p>This User Guide describes the features and functionality of DarkRadiant, however
+it is not intended as a guide to mapping techniques. Level design is a complex
+topic, and is covered by various other learning resources, some of which are
+listed below.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><a href="http://wiki.thedarkmod.com/index.php?title=Main_Page">The Dark Mod Wiki</a></dt>
+<dd>
+<p>The
+starting point for most Dark Mod documentation and tutorials, including
+gameplay, configuration and editing.</p>
+</dd>
+<dt class="hdlist1"><a href="https://modwiki.xnet.fi">ModWiki</a></dt>
+<dd>
+<p>Online wiki covering editing topics for
+vanilla Doom 3 and similar engines.</p>
+</dd>
+<dt class="hdlist1"><a href="http://forums.thedarkmod.com">The Dark Mod forums</a></dt>
+<dd>
+<p>Online community for
+discussion of the Dark Mod, including various ad-hoc mapping tutorial threads
+posted by individual users.</p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="_editing_workflow">Editing workflow</h3>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/DarkRadiantWorkflow.png" alt="DarkRadiantWorkflow">
+</div>
+</div>
+<div class="paragraph">
+<p>The level editing process starts off with basic assets: models, textures,
+sounds, entity definitions, skins, animations and so on. Many of these assets
+will be packaged with a particular game installation, but a level designer may
+also choose to create custom assets for a specific mission. These assets are
+installed into a directory tree which is accessible both by DarkRadiant (for
+editing) and the game engine itself (for playing the mission).</p>
+</div>
+<div class="paragraph">
+<p>Once assets have been arranged in DarkRadiant according to the wishes of the
+level designer, a <code>.map</code> file is saved to disk. This is a text file in a format
+understood by the game engine, and includes both level geometry and references
+to the assets used in the map. Since the <code>.map</code> file is simply text, and does
+not actually embed the binary asset data, it tends to be fairly small.</p>
+</div>
+<div class="paragraph">
+<p>The game engine includes functionality to <em>compile</em> the <code>.map</code> file into a
+<code>.proc</code> file containing low-level vertex geometry derived from the brushes and
+patches within the <code>.map</code> file. The game engine can then render the mission in
+realtime, making use of the same assets that were accessed by DarkRadiant during
+editing.</p>
+</div>
+<div class="paragraph">
+<p>DarkRadiant also maintains its own separate file containing various editing
+information, such as object layers used within a map. This <code>.darkradiant</code> file
+is never used by the game engine, and is non-critical&#8201;&#8212;&#8201;a <code>.map</code> file with no
+accompanying <code>.darkradiant</code> file can still be edited with DarkRadiant, although
+certain DarkRadiant-specific state may be lost.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_s_in_a_map">What&#8217;s in a MAP?</h3>
+<div class="paragraph">
+<p>There are three main types of object contained within a <code>.map</code> file: entities,
+brushes and patches.</p>
+</div>
+<div class="paragraph">
+<p><strong>Entities</strong> are the top-level objects in a map&#8201;&#8212;&#8201;essentially, a map file is just a
+ list of entities. Every entity has an <strong>entity class</strong> which determines the type
+ of entity it is: static mesh, AI, sound emitter, particle emitter, light etc.
+ Entities also store a list of string key/value pairs, known as <strong>spawnargs</strong> or
+ <strong>properties</strong>. Some entities also contain brushes and patches as children.</p>
+</div>
+<div class="paragraph">
+<p><strong>Brushes</strong> are convex solids used to define basic map geometry: walls, floors,
+ ceilings, steps and other medium to large items. Brushes are often rectangular
+ in shape, although a brush can actually have any number of faces provided that
+ it is convex (it is impossible to have a brush in an L or a U shape, for
+ example). Brushes are not smooth-shaded by the game engine, which generally
+ makes them unsuitable for representing curved surfaces.</p>
+</div>
+<div class="paragraph">
+<p><strong>Patches</strong> are smooth one-sided surfaces used to represent curved objects such as
+ vaulted ceilings, pillars or cave interiors. A patch is defined by a number of
+ Bezier control points, and offers control over the level of detail used when
+ subdividing the patch into triangles for rendering: more triangles will produce
+ a smoother surface but may lower rendering performance.</p>
+</div>
+<div class="paragraph">
+<p>The entities, brushes and patches in a map are arranged in a hierarchy: not
+every entity has children, but every brush and patch must have an entity as a
+parent. Each map therefore starts with a single default entity called the
+<strong>worldspawn</strong>, which acts as the parent for new brushes and patches created in
+DarkRadiant.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_initial_configuration">Initial configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_choosing_a_game_type">Choosing a game type</h3>
+<div class="paragraph">
+<p>When running DarkRadiant for the first time, the <strong>Game Setup</strong> dialog will be
+shown. This is where you configure the path to the game installation from which
+DarkRadiant will load assets, such as textures, models and entity definitions.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/GameSetupDialog.png" alt="GameSetupDialog">
+</div>
+</div>
+<div class="paragraph">
+<p>The <strong>Game Setup</strong> dialog contains the following options:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Game Type</strong></dt>
+<dd>
+<p>DarkRadiant ships with support for several different game engines,
+each of which is contained within a <code>.game</code> file. For editing Dark Mod
+missions, the default choice of <code>The Dark Mod 2.0 (Standalone)</code> is the one to
+use, but it is also possible to edit stock Doom 3 or Quake 4 missions.</p>
+</dd>
+<dt class="hdlist1"><strong>DarkMod Path</strong> / <strong>Engine Path</strong></dt>
+<dd>
+<p>This is the path to the game installation on
+the system. The label text will change depending on whether the selected game
+is <code>The Dark Mod</code> or another engine.</p>
+</dd>
+<dt class="hdlist1"><strong>Mission</strong></dt>
+<dd>
+<p>Optional path to a subdirectory containing assets specific to a
+particular mission which is being worked on. For game types other than <code>The
+Dark Mod</code>, this will be displayed as <strong>Mod (fs_game)</strong>, and should be set to the
+path of a subdirectory containing a particular game mod, if one is being used.</p>
+</dd>
+<dt class="hdlist1"><strong>Mod Base (fs_game_base)</strong></dt>
+<dd>
+<p>This field only appears for non-DarkMod game types.
+It allows a two-level mod structure, where the <strong>Mod Base</strong> can point to a major
+game mod, possibly downloaded from elsewhere, while <strong>Mod</strong> can be set to point
+to an entirely local "sub-mod" which contains local changes and overrides.
+Before the release of Dark Mod standalone, this field would have been set to
+<code>darkmod</code> while the <strong>Mod</strong> field would have been set to the local mission,
+however this is no longer necessary when <code>The Dark Mod 2.0 (Standalone)</code> is
+being used.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Once the game paths are set up, click the <strong>Save</strong> button to proceed to the main
+DarkRadiant interface.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+It is possible to <strong>Cancel</strong> the <strong>Game Setup</strong> dialog and proceed to the main
+window without configuring a game installation, in which case DarkRadiant will
+show a warning and ask if you wish to proceed. If you do, DarkRadiant will run
+but there will be no available textures, models, entities or other game assets.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_interface_layout">Interface layout</h3>
+<div class="paragraph">
+<p>DarkRadiant ships with a number of different user interface layouts, which
+control the position, visibility and window type of the major interface
+elements. The current layout can be changed from the <code>View &#8594; Window Layout</code>
+menu, and will require DarkRadiant to be restarted.</p>
+</div>
+<div class="paragraph">
+<p>There is currently no support for custom layouts, however all of the provided
+layouts allow window sizes and splitter positions to be changed, and the changes
+will persist through multiple editing sessions.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Embedded</strong></dt>
+<dd>
+<p>A large 2D window is shown on the right, while the left-hand side
+is divided vertically into the 3D camera window and a tab widget containing the
+main editing panels. There are no floating subwindows in this layout.</p>
+</dd>
+<dt class="hdlist1"><strong>Regular</strong></dt>
+<dd>
+<p>A legacy GtkRadiant layout which places the 2D window on the left,
+the 3D camera view on the top right, and a 2D scrolling textures panel on the
+bottom right. Other tabs in the editing panel are shown in a floating window.</p>
+</dd>
+<dt class="hdlist1"><strong>RegularLeft</strong></dt>
+<dd>
+<p>The same as <strong>Regular</strong> except the full-height 2D window is on the
+right and the 3D window and texture panels are on the left.</p>
+</dd>
+<dt class="hdlist1"><strong>Floating</strong></dt>
+<dd>
+<p>The 2D window, 3D window and editing tab widget are all shown in
+separate floating windows which always appear above the main DarkRadiant
+window. The main window itself is empty apart from the toolbars and status bar.
+This is the most flexible layout, since each subwindow can be sized or
+positioned as desired, but the multiple subwindows may be cumbersome to manage.</p>
+</dd>
+<dt class="hdlist1"><strong>SplitPane</strong></dt>
+<dd>
+<p>Three separate 2D windows, showing each of the major axes, are
+shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
+modelling applications. The editing tab widget is in a floating window.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_colour_schemes">Colour schemes</h3>
+<div class="paragraph">
+<p>DarkRadiant defaults to a black-on-white colour scheme in the 2D windows, but
+ships with four other colour schemes, which can be accessed under <code>View &#8594;
+Colours&#8230;&#8203;</code>. If you prefer a dark theme, the <code>Black &amp; Green</code> scheme might be
+suitable, whereas the <code>Maya/Max/Lightwave Emulation</code> and <code>Super Mal</code> themes
+provide a more neutral, low-contrast look.</p>
+</div>
+<table class="tableblock frame-all grid-none spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<p><span class="image"><img src="img/DarkRadiantDefaultTheme.png" alt="DarkRadiantDefaultTheme"></span><br>
+<strong>DarkRadiant Default</strong></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<p><span class="image"><img src="img/BlackGreenTheme.png" alt="BlackGreenTheme"></span><br>
+<strong>Black and Green</strong></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<p><span class="image"><img src="img/Q3RadiantTheme.png" alt="Q3RadiantTheme"></span><br>
+<strong>QE3Radiant Original</strong></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<p><span class="image"><img src="img/SuperMalTheme.png" alt="SuperMalTheme"></span><br>
+<strong>Super Mal</strong></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<p><span class="image"><img src="img/MayaEmulationTheme.png" alt="MayaEmulationTheme"></span><br>
+<strong>Maya/Max/Lightwave Emulation</strong></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Each of the colour schemes can be edited using the colour selector buttons in
+the <strong>Colours</strong> dialog, and it is also possible to copy one of the default schemes
+into a custom scheme with a new name.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+The game installation may specify the colour of certain entity types, in
+which case it will not be possible to change the colour of these entities via
+the <strong>Colours</strong> dialog.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_basic_editing">Basic editing</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_navigating_the_2d_view">Navigating the 2D view</h3>
+<div class="paragraph">
+<p>The game world is a three-dimensional vector space with a central origin,
+rendered in the 2D editing window as a grid. The unit of measurement is an
+arbitrary game unit which does not directly correspond to any real-world
+measurement system&#8201;&#8212;&#8201;in The Dark Mod, a typical human stands around 80 - 90
+game units high, making a game unit about 2 cm.</p>
+</div>
+<div class="paragraph">
+<p>Each 2D window shows which axes it is representing with an icon in the top-left
+corner, as well as an identical icon at the <code>&lt;0,0,0&gt;</code> origin position, if
+visible within the view.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/2DViewMarkedUp.png" alt="2DViewMarkedUp">
+</div>
+<div class="title">Figure 1. Components of the 2D view</div>
+</div>
+<div class="paragraph">
+<p>The 2D view also shows the current position of the camera (used for rendering
+the separate 3D camera view window), and its view direction.</p>
+</div>
+<div class="paragraph">
+<p>The following commands are available within the 2D view:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Right drag</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scroll the view horizontally or vertically</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Mouse wheel</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zoom the view</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Shift + Right drag</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zoom the view (alternative binding)</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Ctrl + Middle click</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera directly to the clicked position</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Middle click</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rotate the camera to look directly at the clicked point</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Ctrl + TAB</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Change view axis (XY, XZ, YZ)</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Ctrl + Shift + TAB</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Center 2D view on current camera position</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_adjusting_the_grid">Adjusting the grid</h3>
+<div class="paragraph">
+<p>The grid shown in the 2D view is used to snap the position and size of brushes
+and patches, as well as the centerpoints of entities. The size of the grid can
+be configured, in powers of 2, from 0.125 up to 256, using the <strong>1-9</strong> keys on the
+main keyboard (not the numeric keypad), or the equivalent options in the <strong>Grid</strong>
+menu.</p>
+</div>
+<div class="paragraph">
+<p>The <strong>0</strong> key on the main keyboard can be used to toggle the display of the grid.
+Note that objects will still be snapped to the grid even if the grid is not
+visible; this is purely a visual toggle.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="img/important.png" alt="Important">
+</td>
+<td class="content">
+Level geometry built from brushes and patches should <em>always</em> be
+snapped to the grid to avoid problems such as rendering glitches and map leaks.
+Static meshes and animated AI can be positioned more freely, however grid
+snapping is a useful tool for ensuring that models are appropriately aligned
+with the level geometry.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_the_3d_camera_view">Using the 3D camera view</h3>
+<div class="paragraph">
+<p>The 3D camera view provides an approximate rendering of the map in three
+dimensions, in several different render modes: wireframe, flat shaded, textured,
+and fully lit by in-game light sources. While the 2D view is the main interface
+for creating and aligning level geometry, the 3D view is a vital tool for tasks
+such as texturing, or configuring light parameters.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="img/important.png" alt="Important">
+</td>
+<td class="content">
+The fully lit rendering mode in DarkRadiant is very limited, and only
+offers a partial view of what the game engine will ultimately render. In
+particular, there are no shadows or foglights.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The 3D camera view provides its own toolbar which can be used to configure
+various display settings.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 7.1428%;">
+<col style="width: 21.4285%;">
+<col style="width: 71.4287%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/wireframeMode16.png" alt="wireframeMode16" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Render in wireframe mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render objects as wire meshes.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/solidMode16.png" alt="solidMode16" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Render in flat-shaded mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render objects as coloured solids, without textures or lighting.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/textureMode16.png" alt="textureMode16" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Render in fullbright textured mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render objects as preview textures, with no lighting or material effects such as
+transparency.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/lightingMode.png" alt="lightingMode" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Render in lighting preview mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Render all available lighting and texture effects.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/StartPlayback.png" alt="StartPlayback" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Start render time</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Begin rendering animated effects.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/StopPlayback.png" alt="StopPlayback" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Stop render time</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stop rendering animated effects.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/farClipIn.png" alt="farClipIn" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Clip plane in</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the far
+clip plane closer to the camera.
+</p><p class="tableblock">The far clip plane is a performance optimisation which avoids rendering geometry
+more than a certain distance away from the camera.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/farClipOut.png" alt="farClipOut" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Clip plane out</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the far clip plane further away from the camera.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The 3D view always renders the scene from a particular camera position, which is
+shown in the 2D view as a blue diamond. This camera position can be set directly
+from the 2D view with <strong>Ctrl + Middle click</strong>, and the camera view direction can
+be set with <strong>Middle click</strong>. There are also various options within the 3D view
+itself to adjust the camera position.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Right click</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enter or leave free camera mode. In this mode, moving the mouse
+around updates the camera view direction in real-time, and moving the mouse
+around while holding <strong>Ctrl</strong> causes the camera to move up/down/left/right
+according to the camera motion.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top" colspan="2"><p class="tableblock">Default mode (not free camera)</p></th>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Left/Right arrow</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pan the camera left or right</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Up/Down arrow</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera forwards or backwards on the horizontal plane,
+without changing its height on the Z axis.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top" colspan="2"><p class="tableblock">Free camera mode</p></th>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Left/Right arrow</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move ("truck") camera left or right, leaving view direction
+the same.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Up/Down arrow</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move ("dolly") the camera forwards or backwards along its view
+axis</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_manipulating_objects">Manipulating objects</h3>
+<div class="paragraph">
+<p>Every object in a map can be selected and moved within the 2D view. Some objects&#8201;&#8212;&#8201;including brushes, patches and lights&#8201;&#8212;&#8201;can also be resized.</p>
+</div>
+<div class="paragraph">
+<p>For more advanced ways to select objects, see
+<a href="#BrushBasedSelection">brush-based selection</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Shift + Left click</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select or deselect the object at the clicked position. Any
+  existing selected objects will remain selected. If the clicked position
+  overlaps more than one object, the closest one (according to the current 2D
+  view axis) will be affected.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Alt + Shift + Left click</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select the object at the clicked position, and
+  deselect any existing selected objects. If the clicked position overlaps more
+  than one object, each click will cycle through the overlapping objects.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Shift + Left drag</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Draw a selection rectangle, which will select any objects
+ contained (fully or partially) within it.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">ESC</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deselect all objects</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Left drag (<em>inside</em> object)</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the selected object(s)</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Left drag (<em>outside</em> object)</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Resize the selected object(s) (if available)</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Space</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Duplicate the selected object(s)</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Backspace</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete the selected object(s)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+Like other editors in the Radiant family, DarkRadiant offers a rather
+unusual system for resizing objects. Rather than clicking exactly on the edge,
+or on a dedicated resizing handle, you can click and drag anywhere outside an
+edge to move that edge inwards or outwards. Dragging outside a corner allows you
+to move two edges at once.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_working_with_brushes">Working with brushes</h3>
+<div class="paragraph">
+<p>Brushes are the basic building blocks of all maps. Typically they are used for
+coarse-grained level geometry such as walls, ceiling and floors. Brushes also
+have a vital role in sealing a map from the void: even a map built entirely from
+patches and static meshes must still be surrounded by brushes in order to avoid
+leaking.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Additive versus subtractive geometry</div>
+<div class="paragraph">
+<p>If you are used to mapping for the legacy Thief games using Dromed or T3Edit,
+the system used by DarkRadiant may seem somewhat back-to-front. In previous
+games, the world starts out as an infinite solid, in which you "carve out" rooms
+using subtractive brushes. In DarkRadiant, the world starts out as an infinite
+void, and all brushes are solid. The space in which the mission happens must be
+fully enclosed by solid brushes, otherwise the map will "leak" and fail to
+compile.</p>
+</div>
+<div class="paragraph">
+<p>The need to deal with map leaks may at first seem like a burden, however the
+exclusive use of solid brushes frees the engine from needing to worry about
+"brush ordering", and allows an important performance optimisation: by "flood
+filling" the map interior, the map compiler can efficiently discard geometry
+that never needs to be rendered.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="CreatingABrush">Creating a brush</h4>
+<div class="paragraph">
+<p>To create a simple rectangular brush, ensure that nothing is selected (<strong>ESC</strong>),
+then <strong>Left drag</strong> in the 2D view. A new brush will be created and sized according
+to the dragged area, with its dimensions snapped to the current grid level. To
+adjust the third dimension of the brush (perpendicular to the view direction),
+used <strong>Ctrl + TAB</strong> to switch the 2D view axis, and <strong>Left drag</strong> outside the brush
+boundary to adjust the size.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+Whenever you drag to create a new brush, the third dimension will match the
+size of the <em>most recently selected</em> brush. This makes it easy to draw a series
+of brushes with the same height, such as when you need to create a series of
+floors or walls in succession. To match the height of an existing brush, simply
+select (<strong>Shift + Left click</strong>) and deselect it (<strong>ESC</strong>) before drawing the new
+brush.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_more_complex_brush_shapes">More complex brush shapes</h4>
+<div class="paragraph">
+<p>Although each brush starts out as a six-sided cuboid, it doesn&#8217;t have to stay
+that way. DarkRadiant offers several options for creating multi-sided brushes in
+more complex shapes. To create one of these shapes, first define a regular
+cuboid brush covering the volume you want the new shape to occupy, then choose
+the appropriate option from the <strong>Brush</strong> menu:</p>
+</div>
+<table class="tableblock frame-all grid-all">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/6Prism.png" alt="6Prism"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Prism</strong>
+</p><p class="tableblock">An n-sided approximation of a cylinder, with the axis of the cylinder
+ aligned with the current 2D view.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/6Cone.png" alt="6Cone"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cone</strong>
+</p><p class="tableblock">A tapered n-sided cone, which always points upwards regardless of the
+2D view axis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/6Sphere.png" alt="6Sphere"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sphere</strong>
+</p><p class="tableblock">A rotationally symmetric n-sided approximation of a sphere, with the
+axis of rotation pointing upwards.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>While these shapes can be useful for certain architectural modelling, remember
+that brushes are always flat-shaded and are not generally a good substitute for
+spheres or cones created with patches or static meshes.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_room">Creating a room</h4>
+<div class="paragraph">
+<p>Although it is not too difficult to create a hollow room by creating floor,
+ceiling and wall brushes manually, this is a common enough operation that
+DarkRadiant provides a couple of shortcuts. These options can be found on the
+vertical toolbar at the far left of the main window.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoomBrush.png" alt="CreateRoomBrush" width="320"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoom.png" alt="CreateRoom" width="36"></span> <strong>Create Room</strong>
+</p><p class="tableblock">Create a room whose interior size matches the size of the currently-selected
+brush. The wall thickness will be equal to the current grid size.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/HollowBrush.png" alt="HollowBrush" width="320"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/Hollow.png" alt="Hollow" width="36"></span> <strong>Hollow</strong>
+</p><p class="tableblock">Hollow out the selected brush, leaving the exterior dimensions the same. The
+wall thickness will be equal to the current grid size, but the wall brushes will
+overlap at the corners, rather than just touching each other as with <strong>Create
+Room</strong>.
+</p><p class="tableblock">This is legacy tool from GtkRadiant, and generally inferior to <strong>Create Room</strong>.
+The overlapping wall brushes make it more difficult to precisely align interior
+textures, since part of the inner face is obscured (and therefore removed during
+map compilation). However, there may be occasional situations in which <strong>Hollow</strong>
+is useful, so it is retained in DarkRadiant.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The room creation tools do not require the initial brush to be rectangular&#8201;&#8212;&#8201;you can quite happily <strong>Create Room</strong> with a triangular or trapezoidal brush, or a
+brush with sloping sides. However, with a more complex brush shape, the
+complexity of the resulting wall geometry increases considerably, so attempting
+to hollow out a 7-sided sphere is probably ill-advised.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_splitting_brushes">Splitting brushes</h4>
+<div class="paragraph">
+<p>Sometimes it is necessary to divide a brush into two or more pieces, perhaps to
+create a doorway or other opening. The <strong>Clipper</strong> tool, accessed with the <strong>X</strong>
+key, is used for this purpose.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/ClipTool3D.png" alt="ClipTool3D">
+</div>
+<div class="title">Figure 2. Splitting a brush into two parts</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the brush to be split (the Clipper can be activated with nothing
+selected, but it will not do anything useful).</p>
+</li>
+<li>
+<p>Press <strong>X</strong> to activate the Clipper, or click on the respective icon on the
+left-hand editing toolbar.</p>
+</li>
+<li>
+<p>Click in the 2D window at two different positions, to define the plane along
+which the brush will be split. The proposed split plane will be highlighted in
+blue; feel free to change 2D view axis with <strong>Ctrl + TAB</strong> or use the 3D camera view
+to better visualise the split plane.</p>
+</li>
+<li>
+<p>Once the split plane is defined, press <strong>Shift + Enter</strong> to execute the split and
+keep <em>both</em> halves of the brush; press <strong>Enter</strong> to execute the split and keep
+only one half. The part of the brush that is kept with <strong>Enter</strong> depends on the
+order in which you define the clip points: the points (marked <strong>0</strong> and <strong>1</strong>) will
+appear <em>clockwise</em> on the brush edge according to the current 2D view. If in
+doubt, just use <strong>Shift + Enter</strong> to keep both parts, and delete the unwanted one
+afterwards.</p>
+</li>
+<li>
+<p>Repeat the process to perform additional splits on the selected brush, or
+disable the Clipper with the <strong>X</strong> key. The Clipper is a toggled tool and will
+remain active until disabled.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+It is possible to create <em>three</em> split points before executing the split,
+which will define a split plane in three dimensions. Defining a three-point
+split plane which is actually useful, however, may be challenging.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reshaping_brush_edges">Reshaping brush edges</h4>
+<div class="paragraph">
+<p>All brush edges can be moved independently, which gives you the ability to
+quickly create shapes like triangles or trapeziums. This functionality is
+accessed via the <strong>Select Edges</strong> tool on the upper toolbar, or with the <strong>E</strong> key.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/EdgeEditing.png" alt="EdgeEditing">
+</div>
+<div class="title">Figure 3. Creating a trapezium using edge editing</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select a brush.</p>
+</li>
+<li>
+<p>Activate <strong>Select Edges</strong> with the toolbar button or <strong>E</strong> key. DarkRadiant will
+place a green control point at the center of each brush edge.</p>
+</li>
+<li>
+<p>In either the 2D or the 3D view, click and drag on a control point to move its
+edge. The control point will turn blue and move along with the cursor. In the 2D
+view, dragging corners is generally easiest, since the resulting shape change
+can more easily be seen.</p>
+</li>
+<li>
+<p>To reduce the number of brush sides, such as changing a rectangle into a
+triangle, simply drag one corner directly on top of another. The two edges will
+be merged.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="BrushBasedSelection">Brush-based selection</h4>
+<div class="paragraph">
+<p>As well as using brushes to define map geometry, you can also use them to select
+objects. There are three commands on the top toolbar which convert the selected
+brush(es) into a temporary selection volume:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 7.1428%;">
+<col style="width: 21.4285%;">
+<col style="width: 71.4287%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/SelectCompleteTall.png" alt="SelectCompleteTall" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Select complete tall</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select all objects that are <em>completely</em> contained within the two-dimensional
+outline of the selected brush(es) in the current 2D view window, ignoring their
+position on the third axis (perpendicular to the screen).</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/SelectInside.png" alt="SelectInside" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Select inside</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select all objects that are <em>completely</em> contained within the selected brush
+volume(s) in all three dimensions.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/SelectTouching.png" alt="SelectTouching" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Select touching</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select all objects that are touching the selected brushes. Unlike the previous
+two commands, this one does not remove the selected brushes, since it is
+designed to allow you to quickly select objects that are adjacent to real map
+geometry.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_working_with_patches">Working with patches</h3>
+<div class="paragraph">
+<p>Patches are smooth-shaded Bezier surfaces that can be created and manipulated in
+the editor (unlike models), and used to represent a variety of curved shapes
+such as vaulted ceilings, arches or pillars. Patches are single-sided surfaces,
+not solid like brushes, and cannot be used to seal a map from the void&#8201;&#8212;&#8201;any
+patch work on the boundary of a map will need solid brushes behind it to prevent
+the map from leaking.</p>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_simple_patch">Creating a simple patch</h4>
+<div class="paragraph">
+<p>A simple patch starts off as a flat rectangle, which can then be manipulated
+with vertex editing to produce a curved surface, if desired.</p>
+</div>
+<div class="paragraph">
+<p>To create a simple patch:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Set the 2D view axes (<strong>Ctrl + TAB</strong>) to define the orientation of the patch.
+The patch will be created facing directly towards the screen, so to create a
+horizontal (ceiling or floor) patch, the 2D view should be in XY (Top)
+orientation.</p>
+</li>
+<li>
+<p><a href="#CreatingABrush">Create a rectangular brush</a> to define the width and height of
+the patch in the current 2D view (the third dimension is not important, since
+the patch will be infinitely thin once created).</p>
+</li>
+<li>
+<p>With the brush selected, choose <strong>Create Simple Patch Mesh</strong> from the <strong>Patch</strong>
+menu.</p>
+</li>
+<li>
+<p>In the dialog, choose the number of control points to define the shape of the
+patch along its width and height. A patch can have between 3 and 15 control
+points in each dimension; there will always be a control point at the extreme
+edge, and one in the middle. More control points allow more complex shapes but
+also require more manual adjustment&#8201;&#8212;&#8201;creating a simple arch is much easier
+with just three control points.</p>
+</li>
+<li>
+<p>Click <strong>OK</strong> to create the patch.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/SimplePatchesControlPoints.png" alt="SimplePatchesControlPoints">
+</div>
+<div class="title">Figure 4. Simple patches with 3, 7 and 15 control points in both dimensions</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_manipulating_control_points">Manipulating control points</h4>
+<div class="paragraph">
+<p>With a patch selected, press <strong>V</strong> to enter (or leave) vertex editing mode. This
+will display all of the control vertices, and allow you to select and move them.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Left click</strong> and drag a vertex to move just that one vertex.</p>
+</li>
+<li>
+<p><strong>Shift + Left click</strong> to add a vertex to the current selection set. When
+several vertices are selected, dragging any one of the selected vertices will
+move all of them together.</p>
+</li>
+<li>
+<p><strong>Shift + Left drag</strong> around several vertices to draw a selection rectangle that
+will toggle the selection state of all vertices inside it, selecting them if
+unselected and unselecting them if already selected.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/PatchVertexEditing.png" alt="PatchVertexEditing">
+</div>
+<div class="title">Figure 5. Making an arch by raising the central row of vertices in a simple patch</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_more_complex_patch_shapes">More complex patch shapes</h4>
+<div class="paragraph">
+<p>Just like with brushes, DarkRadiant offers several default patch shapes beyond
+the flat simple patch. These can be created by choosing the corresponding option
+in the <strong>Patch</strong> menu. There is no need to have a brush selected first in order to
+create these shapes, however if a brush <em>is</em> selected, it will be removed and
+used to define the size of the patch shape.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchSphere.png" alt="PatchSphere"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sphere</strong>
+</p><p class="tableblock">An approximation of a sphere (the quadratic Bezier patch implementation in Doom
+3 and DarkRadiant does not permit the creation of a perfect sphere).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchCylinder.png" alt="PatchCylinder"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cylinder</strong>
+</p><p class="tableblock">A hollow cylinder aligned with the direction of the 2D view.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchCone.png" alt="PatchCone"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cone</strong>
+</p><p class="tableblock">A tapered cone pointing along the 2D view axis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchEndCap.png" alt="PatchEndCap"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>End cap</strong>
+</p><p class="tableblock">An arch or half-cylinder covering a 180 degree angle, aligned with the 2D view
+axis. The peak of the arch will be at the top if created in front or side views,
+making this useful for curved ceilings and the like.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchBevel.png" alt="PatchBevel"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Bevel</strong>
+</p><p class="tableblock">Portion of an arch covering a 90 degree angle. This may be placed along room
+edges to give a curved appearance.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_controlling_patch_subdivision">Controlling patch subdivision</h4>
+<div class="paragraph">
+<p>Although patches are defined by Bezier curves, they are subdivided into flat
+polygons for rendering. By default, the number of polygons to create is
+determined dynamically by the game engine, based on the shape of the patch.
+However, you can also use the <strong>Patch Inspector</strong> to explicitly set the level of
+subdivision required, which can be useful when optimising a map by reducing
+on-screen polygon counts.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/PatchSubdivision.png" alt="PatchSubdivision">
+</div>
+<div class="title">Figure 6. Default (automatic) subdivision, 2x2 subdivision, 3x3 subdivision, 3x10 subdivision</div>
+</div>
+<div class="paragraph">
+<p>To subdivide a patch:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select <strong>Patch Inspector</strong> in the <strong>View</strong> menu to make the inspector widget
+visible.</p>
+</li>
+<li>
+<p>With the patch selected, enable the <strong>Fixed Subdivisions</strong> checkbox.</p>
+</li>
+<li>
+<p>Use the <strong>Horizontal</strong> and <strong>Vertical</strong> numeric spinboxes to set the number of
+polygons to divide the patch into. The value can range from <strong>1</strong>, making the
+patch completely flat regardless of control point positions, up to a maximum of
+<strong>32</strong>. Each dimension can have a different subdivision level, if required.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_applying_textures">Applying textures</h3>
+<div class="paragraph">
+<p>When a brush or patch is created, it will be assigned a default texture. To
+apply a new texture, you must first select the brush, face or patch to be
+textured. There are two different selection commands:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Shift + Left click</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select an entire brush or patch. Any chosen texture will apply to all faces.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Ctrl + Shift + Left click</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select a single brush face for texturing. This command is only available in the
+3D camera view</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Once you have selected the objects or faces to texture, you can use either the <strong>Media</strong>
+or the <strong>Textures</strong> tab to perform the texturing operation.</p>
+</div>
+<div class="sect3">
+<h4 id="MediaTab">The Media tab</h4>
+<div class="paragraph">
+<p>The <strong>Media</strong> tab shows a tree view which contains all of the textures available
+in the game installation. Selecting a texture in the tree will show a small
+preview swatch, along with some metadata about the texture definition.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/MediaTab.png" alt="MediaTab">
+</div>
+</div>
+<div class="paragraph">
+<p>To apply a texture to the selected brush, simply <strong>Double-click</strong> on a texture
+name in the tree. The tree view also offers a context menu with several options:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Load in Textures view</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Load all textures contained within the selected folder, making them available on
+the <strong>Textures</strong> tab. This option is not available when a single texture is
+highlighted.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Apply to selection</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apply the highlighted texture to the current object. This is identical to the
+<strong>Double-click</strong> operation, and is only available for single textures, not
+folders.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Show Shader Definition</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Show a syntax-highlighted text window containing the definition of the selected
+texture.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Selected/deselect elements using this shader</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select or deselect objects in the map which the highlighted texture is
+applied to. This can be used for organisational purposes, or to identify whether
+a texture is used or not.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Add to/Remove from favourites</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Add or remove the selected texture from the favourites list. The favourites list
+provides easy access to a user-chosen group of textures, and can be accessed by
+choosing the <strong>Show Favourites</strong> radio button at the top of the panel.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_the_textures_tab">The Textures tab</h4>
+<div class="paragraph">
+<p>The <strong>Textures</strong> tab provides a scrollable canvas containing preview swatches of
+all the textures which are currently loaded in the current map.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/TexturesTab.png" alt="TexturesTab">
+</div>
+</div>
+<div class="paragraph">
+<p>When DarkRadiant first starts up no textures are loaded and this panel is empty.
+New textures can only be loaded via the <strong>Media</strong> tab (described in the
+<a href="#MediaTab">previous section</a>), either by applying a texture directly to a
+brush, or by using the <strong>Load in Textures view</strong> command to explicitly load an
+entire folder of textures.</p>
+</div>
+<div class="paragraph">
+<p>Once textures are loaded onto the <strong>Textures</strong> tab, you can apply them to a
+selected object by <strong>Left clicking</strong> on them. By <strong>Right clicking</strong> on a texture you
+can access a context menu with a single command <strong>Seek in Media browser</strong>, which
+will highlight the clicked texture in the <strong>Media</strong> tab.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_using_the_surface_inspector">Using the Surface Inspector</h4>
+<div class="paragraph">
+<p>Once a texture is applied via the Media or Textures tabs, you will most likely
+wish to adjust the alignment and scale of the texture on the brush or patch
+face. DarkRadiant provides the <strong>Surface Inspector</strong> for this purpose, which can
+be toggled with the <strong>S</strong> key or by choosing the option in the <strong>View</strong> menu.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/SurfaceInspector.png" alt="SurfaceInspector">
+</div>
+</div>
+<div class="paragraph">
+<p>The Surface Inspector can be used to adjust textures on a single brush or patch
+face, or several selected faces/brushes/patches at once. If more than one face
+is selected and these faces have different values for text boxes in the dialog,
+the text box will be greyed out, however it is still possible to use the buttons
+to make changes which will be applied uniformly to all selected faces.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Shader</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This shows the full name of the texture applied to the selected
+face(s). You can use the folder button to bring up a new dialog which allows you
+to choose a new texture.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Horiz/Vert Shift</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These text boxes show the current texture shift (translation)
+on the horizontal and vertical axes. The associated arrow buttons will increase
+or decrease the texture shift by the current <strong>Step</strong> value.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Horiz/Vert Scale</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These show the current texture scale in the horizontal and
+vertical directions. The arrow buttons will increase or decrease the scale by
+the current <strong>Step</strong> value.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Rotation</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shows the current texture rotation, in degrees. The arrow buttons will
+rotate the texture clockwise or anticlockwise by the current <strong>Step</strong> value.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Fit Texture</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These controls allow you to fit an exact number of copies of the
+texture across the face, so that the texture edges correspond to the face edges.
+The numeric spin boxes control how many copies of the texture are tiled, and the
+operation is performed by clicking the <strong>Fit</strong> button.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Align Texture</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These buttons shift the texture so that the Top/Bottom/Left/Right
+edge of the face are aligned with a texture boundary, but otherwise do not
+modify the scaling of the texture (unlike the <strong>Fit</strong> operation).</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Flip Texture</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flips (mirrors) the texture along the horizontal or vertical axis.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Natural</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This button resets the texture to a default alignment and scale, based
+the location and size of the face.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Texture Lock</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If this is enabled, the alignment of the texture will be preserved
+relative to the face if the brush or patch is moved in 3D space. If disabled,
+the texture itself will remain fixed in 3D space as the brush or patch moves,
+resulting in the alignment changing.
+</p><p class="tableblock">Typically, if you have <strong>Fit</strong> a particular number of texture tiles across a face,
+you will want to preserve alignment with <strong>Texture Lock</strong>. Conversely, if the
+texture is applied to a much larger group of brushes with a common texture (that
+needs to align across all of the brushes, regardless of how they are moved or
+resized), you will want to disable <strong>Texture Lock</strong>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_working_with_entities">Working with entities</h3>
+<div class="paragraph">
+<p>If brushes are the bricks and mortar of a map (often literally), entities are
+its fixtures and fittings. Every object in a map which "does something" other
+than form part of the level geometry is an entity: lights, audio speakers,
+particle emitters, static meshes, animated creatures or machinery. There are
+also various functional entity types which provide vital metadata to the game
+engine, such as determining where the player should start, or how creatures
+should navigate between locations.</p>
+</div>
+<div class="paragraph">
+<p>DarkRadiant provides certain common functionality to all entities, such as the
+ability to edit properties using the <strong>Entity</strong> tab. Particular entity types are
+sufficiently common, however, that they have their own dedicated creation and
+editing tools.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Light</strong></dt>
+<dd>
+<p>Every map requires at least one light source in order to render
+anything in game. A light occupies a rectangular volume, which can be created
+and resized much like a brush, and has properties to determine its colour,
+visible shape and falloff pattern in three dimensions. Lights can optionally
+cast shadows, and can even be animated to flicker or flash.</p>
+</dd>
+<dt class="hdlist1"><strong>Model (func_static)</strong></dt>
+<dd>
+<p>Model entities represent geometry that is not compiled
+as part of the map itself. The model geometry can either be derived from brushes
+and patches created inside DarkRadiant, or from an external model file in ASE or
+LWO format. Model files are the primary mechanism for including fine detail in a
+map which would be cumbersome to create with brushes and patches.</p>
+</dd>
+<dt class="hdlist1"><strong>Speaker</strong></dt>
+<dd>
+<p>Essentially the audio equivalent of a light, a speaker entity
+represents the point from which an in-game sound source will emanate. It has
+properties to control its size and falloff, and optionally override certain
+properties of the sound shader itself, such as volume.</p>
+</dd>
+<dt class="hdlist1"><strong>Player start (info_player_start)</strong></dt>
+<dd>
+<p>This entity tells the game engine where to
+place the player when a map is first loaded. A map without such an entity will
+not be playable.</p>
+</dd>
+</dl>
+</div>
+<div class="sect3">
+<h4 id="_creating_lights">Creating lights</h4>
+<div class="paragraph">
+<p>To create a light, <strong>Right click</strong> in the 2D view and choose <strong>Create light…</strong>.
+The position and size of the light volume depends on the current selection:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If <em>nothing</em> is selected, then a light volume will be created at the clicked
+position with a default size.</p>
+</li>
+<li>
+<p>If a <em>single brush</em> is selected, the brush will be deleted and the light
+volume will match the size and position of the brush.</p>
+</li>
+<li>
+<p>If <em>several brushes</em> are selected, then all selected brushes will be deleted
+and the light volume will be sized according to the bounding box of the
+brushes (i.e. the smallest box that would contain all of the brushes).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Unselected lights are shown in the 2D view as small boxes, while selected lights
+also show the boundaries of the light volume.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/LightSelectedAndUnselected.png" alt="LightSelectedAndUnselected">
+</div>
+<div class="title">Figure 7. Light entity selected (left) and unselected (right)</div>
+</div>
+<div class="paragraph">
+<p>A selected light entity can be moved by dragging inside the small center box,
+and it can be resized by dragging outside the edge of the light volume. Unlike
+brushes, light volumes will by default resize symmetrically, so that the center
+point does not move during the resize.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Although light volumes can be resized like brushes, their shape can never
+be changed; every light is an axis-aligned cuboid. This does not, however, mean
+that they need to <em>look</em> rectangular in game. See the <a href="#LightInspector">next
+section</a> for details on how to change the falloff texture using the light
+inspector.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There are a couple of options on the top toolbar which control the display and
+behaviour of light volumes:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 7.1428%;">
+<col style="width: 21.4285%;">
+<col style="width: 71.4287%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/view_show_lightradii.png" alt="view show lightradii" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Show all light volumes</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If enabled, light volume boundaries will be rendered in the 2D view for <em>all</em>
+light entities, not just selected entities. The default behaviour is to show
+only the center box for unselected light entities.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/dragresize_symm.png" alt="dragresize symm" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Drag-resize entities symmetrically</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If enabled (the default), light entities will be resized symmetrically, without
+moving the center point. If disabled, lights will be resized like brushes:
+dragging an edge will move only that edge, while the opposite edge remains
+fixed.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect4">
+<h5 id="LightInspector">The light inspector</h5>
+<div class="paragraph">
+<p>When initially created, a light is pure white in colour and has an unrealistic
+rectangular illumination pattern matching its shape. You can change these
+properties using the light inspector, which is accessed with the <strong>L</strong> key.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/LightInspector.png" alt="LightInspector">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Light volume (omni vs projected)</strong></dt>
+<dd>
+<p>The majority of lights in a map will be the
+default, omnidirectional shape. An omni light is a simple axis-aligned cuboid
+which emits light in all directions from its center to its edges.</p>
+<div class="paragraph">
+<p>A projected light is pyramid-shaped, and emits light from the tip of the pyramid
+towards the base. Projected lights behave more like spotlights in real-life, and
+can be used to highlight particular areas or project images of windows onto the
+floor.</p>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Colour</strong></dt>
+<dd>
+<p>Use the colour selector button to display a standard colour selection
+dialog, or enter the RGB values directly using the text box. As well as changing
+the hue, the light colour also governs the overall brightness of the light.</p>
+</dd>
+<dt class="hdlist1"><strong>Texture</strong></dt>
+<dd>
+<p>The falloff texture controls the shape of the lit area when rendered
+in-game; the square texture chosen here will be mapped directly onto the
+rectangular shape of the light volume. Light textures can be simple, such as the
+generic circular gradient of <code>biground1</code>, or much more complex, including
+multiple colours or animation.</p>
+</dd>
+<dt class="hdlist1"><strong>Options</strong></dt>
+<dd>
+<p>There are a few light-propagation options which are mostly used to
+tweak performance. In particular, disabling shadows for any light which does
+not actually <em>need</em> to cast shadows can give a significant boost to rendering
+speed.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="CreatingModels">Creating models</h4>
+<div class="paragraph">
+<p>Static models can be used to provide fine details in a map which would be
+difficult or impossible to create in the editor with brushes or patches. Models
+are created with an external 3D application such as Blender, Lightwave or Maya,
+and saved into the game asset tree in LWO or ASE format.</p>
+</div>
+<div class="paragraph">
+<p>To insert a model, ensure that nothing is selected, then <strong>Right click</strong> in the 2D
+view and choose <strong>Create model…</strong>. DarkRadiant will show the model selector
+dialog:</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/ModelSelector.png" alt="ModelSelector">
+</div>
+</div>
+<div class="paragraph">
+<p>In the top-left of the model selector window is a tree of all available models
+in the game installation. Models may have different <em>skins</em>, which are variants
+of the same model with different textures applied. If a model has skins
+available, these will be listed as children of the model entry in the tree.</p>
+</div>
+<div class="paragraph">
+<p>Choosing a model or one of its skins will show a preview render in the large
+widget on the right-hand side. Various metadata such as the polygon count and
+the applied textures are also shown in table at the lower left.</p>
+</div>
+<div class="paragraph">
+<p>When you have chosen the desired model, click <strong>OK</strong> to insert it into the map.
+The model will be inserted at the position where you originally right-clicked to
+show the model chooser.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creating_a_player_start_marker">Creating a player start marker</h4>
+<div class="paragraph">
+<p>The game requires a special entity (<code>info_player_start</code>) to mark the position at
+which the player should enter the map. Without such an entity the map will be
+unplayable.</p>
+</div>
+<div class="paragraph">
+<p>To create this entity, ensure that nothing is selected then <strong>Right click</strong> in the
+2D view and choose <strong>Create player start here</strong>. DarkRadiant will create the
+player start entity at the clicked position.</p>
+</div>
+<div class="paragraph">
+<p>Since it makes no sense to have more than one player start location, DarkRadiant
+will not enable the <strong>Create player start here</strong> menu option if there is already
+an <code>info_player_start</code> in the map. Instead, you may choose <strong>Move player start
+here</strong> to move the existing entity to the clicked position.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_creating_other_entity_types">Creating other entity types</h4>
+<div class="paragraph">
+<p>Entity types without a dedicated item in the right-click menu are created using
+the generic <strong>Create entity…</strong> option, which displays a dialog very similar to the
+<a href="#CreatingModels">model selector</a>:</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/EntityClassSelector.png" alt="EntityClassSelector">
+</div>
+</div>
+<div class="paragraph">
+<p>Just like the model selector, the entity selector displays a tree of all
+available entity types in the game installation, and a large preview widget
+which shows an approximate rendering of the entity, if appropriate. Purely
+functional entity types such as <code>info_location</code> or <code>info_player_start</code> do not
+have any visible appearance and their render preview will be blank.</p>
+</div>
+<div class="paragraph">
+<p>Some entity types have a short textual description giving information about
+their usage; if present, this is displayed in the text box underneath the entity
+class tree.</p>
+</div>
+<div class="paragraph">
+<p>After selecting the desired entity type in the tree, click the <strong>Add</strong> button to
+insert an instance of the entity into the map at the right-clicked location. If
+the selected entity type requires a brush selection and no brush is selected, a
+warning will be shown at this point.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_editing_entity_properties">Editing entity properties</h4>
+<div class="paragraph">
+<p>Every entity has a list of key/value pairs known as <em>properties</em> or <em>spawnargs</em>.
+These properties are displayed on the <strong>Entity</strong> tab of the editing panel.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/EntityInspector.png" alt="EntityInspector">
+</div>
+</div>
+<div class="paragraph">
+<p>The entity panel lists all of the properties of the currently-selected entity,
+showing each property&#8217;s name, its current value, and an icon representing its
+type (boolean, vector, text etc) if known. Selecting a property will populate
+the two text boxes in the center of the widget with the property name and value,
+allowing the value to be edited. If the selected property is of a known type,
+the panel at the bottom will show a custom widget appropriate for editing the
+particular property, e.g. three separate numeric spinboxes for a vector
+property, a colour selector widget for a colour property, and so on.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Changing a property value</strong></dt>
+<dd>
+<p>To change the value of the selected property,
+simply enter the new value in the lower text box, then hit <strong>Enter</strong> or click the
+green tick button. If the property has a type-specific editing widget, you can
+also change its value using the controls in this widget.</p>
+</dd>
+<dt class="hdlist1"><strong>Adding a new property</strong></dt>
+<dd>
+<p>There are two different ways to add a new property:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Enter a new property name in the upper text box (which shows the selected
+property name), and hit <strong>Enter</strong>. This does not rename the selected property, but
+adds a new property with the edited name and the current value.</p>
+</li>
+<li>
+<p><strong>Right click</strong> in the list of properties and choose <strong>Add property</strong> from the
+context menu. This will display a new dialog listing all known properties along
+with their descriptive text (if available). Selecting a property in this dialog
+and choosing <strong>OK</strong> will add the property to the entity with a default value of
+"-", which can then be edited in the entity panel itself.</p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Deleting a property</strong></dt>
+<dd>
+<p>To delete the selected property, <strong>Right click</strong> on the
+property in the list and choose <strong>Delete property</strong>.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The entity panel provides two options controlling its behaviour:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Show inherited properties</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If checked, all properties that apply to the
+selected entity will be shown, including those which are inherited from the
+entity type declaration in the game installation. If unchecked, only those
+properties explicitly set on this particular entity (and stored in the map file)
+will be shown.
+</p><p class="tableblock">You can change the value of an inherited property by selecting it and entering a
+new value in the entity panel; this will create a new explicit property on the
+entity which overrides the inherited default.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Show help</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables or disables the text widget at the bottom of the panel
+which shows a brief explanation of certain properties. If a property has help
+text available, the question mark icon will be shown in the <strong>?</strong> column.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_compiling_a_map">Compiling a map</h3>
+<div class="paragraph">
+<p>DarkRadiant does not include functionality for compiling a map into the form
+needed by the game engine; instead, you must use external tools or the map
+compiler built into the game itself.</p>
+</div>
+<div class="paragraph">
+<p>For Doom 3 and the Dark Mod, the following commands are used within the in-game
+console (which can normally be accessed with the key immediately above <code>TAB</code>):</p>
+</div>
+<div class="hdlist">
+<table>
+<tr>
+<td class="hdlist1">
+<code>dmap&nbsp;&lt;mymapname.map&gt;</code>
+</td>
+<td class="hdlist2">
+<p>Compile the map called <code>mymapname.map</code>, which must be
+located within the <code>maps</code> directory of the mod installation. If there are any
+problems compiling the map (e.g. a leak), the error will be displayed in the
+console output.</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>map&nbsp;&lt;mymapname.map&gt;</code>
+</td>
+<td class="hdlist2">
+<p>Load the compiled map <code>mymapname.map</code> into the game
+engine and start playing it immediately.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+When compiling and testing maps, it may be helpful to set your game to
+play in windowed mode, with a reduced resolution. This will allow both the game
+and DarkRadiant to be visible on the screen as separate windows, which you can
+easily switch between during the compile and test cycle.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_preventing_leaks">Preventing leaks</h4>
+<div class="paragraph">
+<p>A map "leak" occurs when the play area is not fully enclosed with a complete
+shell of opaque brushes. If the map leaks, compilation will fail and the map
+will not be playable.</p>
+</div>
+<div class="paragraph">
+<p>In order to minimise the likelihood of a map leak, ensure that your map has all
+of the following properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The map interior is <em>completely</em> sealed from the exterior void by brushes (not
+patches). It is much easier to achieve this by building up a map carefully,
+making good use of the grid snapping functionality, rather than haphazardly
+throwing brushes together and hoping to seal them later.</p>
+</li>
+<li>
+<p>All of the sealing brushes have an opaque texture. Skybox textures are
+considered opaque and are OK, however semi-transparent or perforated mesh
+textures are not.</p>
+</li>
+<li>
+<p>The origin point of <em>every</em> entity in the map lies within the sealed map
+interior. It is OK if a large model extends outside of the map, provided that
+its origin point is on the inside.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<img src="img/warning.png" alt="Warning">
+</td>
+<td class="content">
+Do <strong>not</strong> be tempted to avoid leaks by enclosing your entire map in a
+single huge box. This may seem to solve the problem (the map will indeed not
+leak), but it completely negates the important performance optimisations that
+the map compiler carries out when it "flood fills" the map interior.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_locating_leaks_with_a_pointfile">Locating leaks with a pointfile</h4>
+<div class="paragraph">
+<p>No matter how hard you try to avoid leaks, occasionally they will happen. In
+this case the <strong>pointfile</strong> functionality is helpful to identify the location of
+the leak.</p>
+</div>
+<div class="paragraph">
+<p>After the map compilation has failed with a leak, return to DarkRadiant and
+choose <strong>Pointfile</strong> from the <strong>File</strong> menu. This will automatically load the point
+file associated with the current map, which contains a series of points
+identifying the path to the leak. This path will be rendered as a bright red
+line in both the 2D and 3D views:</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/Pointfile.png" alt="Pointfile">
+</div>
+<div class="title">Figure 8. A pointfile rendered in both 3D and 3D views</div>
+</div>
+<div class="paragraph">
+<p>In this example we can clearly see that the map has leaked because the far wall
+brush does not join up with the ceiling.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_organising_a_map">Organising a map</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Since a fully developed Dark Mod map is large and complex, DarkRadiant provides
+several tools to make organising a large map easier. Objects can be grouped,
+sorted into user-defined layers and filtered using various criteria, while the
+prefab system allows large chunks of map to be reused or shared with other
+mappers.</p>
+</div>
+<div class="sect2">
+<h3 id="_grouping_objects">Grouping objects</h3>
+<div class="paragraph">
+<p>DarkRadiant allows a number of objects to be grouped together, so that they can
+be selected and manipulated as a single unit.</p>
+</div>
+<div class="paragraph">
+<p>To <strong>create</strong> a group:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select several objects.</p>
+</li>
+<li>
+<p><strong>Right-click</strong> in the 2D window to show the context menu.</p>
+</li>
+<li>
+<p>Choose <strong>Group Selection</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Once the objects are in a group, selecting any object in the group will
+automatically select all other objects in the same group.</p>
+</div>
+<div class="paragraph">
+<p>To <strong>remove</strong> a group, select the group then choose <strong>Ungroup Selection</strong> from the
+2D view context menu.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Groups can be nested, by creating a group that includes one or more
+existing groups. When you ungroup such a nested group, the original component
+groups will be restored.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_working_with_prefabs">Working with prefabs</h3>
+<div class="paragraph">
+<p>DarkRadiant allows a collection of objects to be saved to disk as a <strong>prefab</strong>,
+which can then be imported into other maps. You can use prefabs to store
+anything from a single small object to a vast section of map geometry complete
+with lights and AI.</p>
+</div>
+<div class="sect3">
+<h4 id="_exporting_to_a_prefab">Exporting to a prefab</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the objects in the map that you wish to include in the prefab.</p>
+</li>
+<li>
+<p>From the <strong>File</strong> menu, choose <strong>Save selected as prefab&#8230;&#8203;</strong></p>
+</li>
+<li>
+<p>Use the file chooser dialog to choose a location and name for the prefab file.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+Unlike actual <code>.map</code> files which must be accessible by the game engine,
+prefabs are a DarkRadiant-only feature that have no significance to the engine.
+You are therefore free to store prefab files wherever you wish, either inside or
+outside the game installation directory.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_importing_a_prefab">Importing a prefab</h4>
+<div class="paragraph">
+<p>Either right-click in the 2D window and choose <strong>Insert prefab&#8230;&#8203;</strong>, or open the
+<strong>File</strong> menu and choose <strong>Import prefab&#8230;&#8203;</strong>. This will show the prefab browser.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/PrefabChooser.png" alt="PrefabChooser">
+</div>
+</div>
+<div class="paragraph">
+<p>Like the model selector, the prefab selector shows a tree of available prefabs
+on the left, and a preview window on the right giving an idea of what the prefab
+looks like. Using the radio buttons at the top of the window, you can choose
+whether to browse prefabs contained within the game installation, or within a
+custom directory of your choice.</p>
+</div>
+<div class="paragraph">
+<p>The preview window functions much like the 3D view in the main application:
+<strong>right click</strong> to enter or leave camera mode, which enables the following motion
+commands:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Mouse move</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Change the camera view direction (pan or tilt)</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Mouse wheel</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zoom the camera</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Up/Down arrow</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera forwards or backwards</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Left/Right arrow</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the camera left or right</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>When you have chosen the desired prefab, click <strong>OK</strong> to insert it into the map.
+Before inserting the prefab, you can use the
+<strong>Create&nbsp;Group&nbsp;out&nbsp;of&nbsp;Prefab&nbsp;parts</strong> checkbox to control
+whether the prefab is automatically grouped as a single object, or inserted as
+separate selectable objects.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_using_layers">Using layers</h3>
+<div class="paragraph">
+<p>When a map contains a large number of objects, it may become difficult to work
+with the 2D views as a result of the visual clutter. Organising the map into
+several <strong>layers</strong> can help solve this problem. The visibility of each layer can
+toggled independently, allowing you to focus on the objects you want to work
+with.</p>
+</div>
+<div class="paragraph">
+<p>Layers do not impose any requirements on the physical layout of objects: it is
+possible to include objects spread all over a map into a single layer. For
+example, you can have a layer for all enemies, another layer for all lights,
+another layer for brushwork, and so on.</p>
+</div>
+<div class="sect3">
+<h4 id="_the_layers_window">The Layers window</h4>
+<div class="paragraph">
+<p>To show or hide the <strong>Layers</strong> window, choose <code>Layers</code> from the <code>Edit</code> menu. The
+window lists all of the layers which exist in the current project, and allows
+you to perform various operations on them.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/LayersWindow.png" alt="LayersWindow">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Creating a layer</strong></dt>
+<dd>
+<p>To create a new layer, click the <code>New</code> button at the bottom
+of the window. A popup will be shown asking for the name of the new layer. Once
+the layer is created, it will appear in the list.</p>
+</dd>
+<dt class="hdlist1"><strong>Deleting a layer</strong></dt>
+<dd>
+<p>Click the red 'X' button to the right of a layer to
+delete it. Deleting a layer does <strong>not</strong> delete the objects in the layer, only
+the layer itself. Any objects in that layer will be moved to the default layer.</p>
+</dd>
+<dt class="hdlist1"><strong>Renaming a layer</strong></dt>
+<dd>
+<p>Click the edit button to the right of a layer name to
+change the name. A popup will be shown asking for the new name.</p>
+</dd>
+<dt class="hdlist1"><strong>Selecting objects on a layer</strong></dt>
+<dd>
+<p>Click on the name of a layer itself to select
+all objects on that layer.</p>
+</dd>
+<dt class="hdlist1"><strong>Toggling visibility</strong></dt>
+<dd>
+<p>The button to the left of a layer name is used to toggle
+the visibility of objects on that layer. If objects are visible, a tick is
+shown in the button, otherwise it is empty.</p>
+</dd>
+<dt class="hdlist1"><strong>Changing the active layer</strong></dt>
+<dd>
+<p>The visibility toggle button shows a star for the
+layer which is currently set as the active layer. To change the active layer,
+<strong>Ctrl + Left click</strong> on the layer you wish to set as the new active layer.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_moving_objects_into_layers">Moving objects into layers</h4>
+<div class="paragraph">
+<p>An object can be placed in any number of layers. To see which layers a selected
+object is in, look at the narrow coloured rectangle next to the layer name in
+the <strong>Layers</strong> window. The rectangle will turn from grey to pink for each layer
+that contains the selected object.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/LightInTwoLayers.png" alt="LightInTwoLayers">
+</div>
+<div class="title">Figure 9. A light in two layers: "Default" and "Lights"</div>
+</div>
+<div class="paragraph">
+<p>All newly-created objects will be placed in the <strong>Default</strong> layer. You can move or
+copy objects between layers using the options in the 2D view&#8217;s context menu.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Create layer&#8230;&#8203;</strong></dt>
+<dd>
+<p>Bring up the name entry dialog and create a new layer,
+exactly as if the <strong>New</strong> button in the <strong>Layers</strong> window had been clicked.</p>
+</dd>
+<dt class="hdlist1"><strong>Add to layer&#8230;&#8203;</strong></dt>
+<dd>
+<p>Copy the selected object into the chosen layer, without
+removing it from its existing layer(s).</p>
+</dd>
+<dt class="hdlist1"><strong>Move to layer&#8230;&#8203;</strong></dt>
+<dd>
+<p>Move the selected object into the chosen layer, removing it
+from all other layers.</p>
+</dd>
+<dt class="hdlist1"><strong>Remove from layer&#8230;&#8203;</strong></dt>
+<dd>
+<p>Remove the selected object from the chosen layer.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2019-01-22 21:10:46 GMT
+</div>
+</div>
+</body>
+</html>

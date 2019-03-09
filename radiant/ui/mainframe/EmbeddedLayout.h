@@ -4,6 +4,7 @@
 #include "imainframelayout.h"
 
 #include "camera/CamWnd.h"
+#include "ui/widgets/Splitter.h"
 
 namespace ui
 {
@@ -20,11 +21,8 @@ private:
 	// The camera view
 	CamWndPtr _camWnd;
 
-	wxSplitterWindow* _horizPane;
-	wxSplitterWindow* _groupCamPane;
-
-	wxutil::PanedPosition _posHPane;
-	wxutil::PanedPosition _posGroupCamPane;
+	Splitter* _horizPane;
+	Splitter* _groupCamPane;
 
 public:
 	// IMainFrameLayout implementation
@@ -40,10 +38,6 @@ public:
 private:
 	void maximiseCameraSize();
 	void restorePanePositions();
-
-	// Saves the state of this window layout to the given XMLRegistry path (without trailing slash)
-	void restoreStateFromPath(const std::string& path);
-	void saveStateToPath(const std::string& path);
 };
 
 } // namespace ui

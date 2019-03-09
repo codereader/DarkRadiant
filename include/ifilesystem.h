@@ -19,7 +19,6 @@ class ArchiveFile;
 typedef std::shared_ptr<ArchiveFile> ArchiveFilePtr;
 class ArchiveTextFile;
 typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
-class Archive;
 
 namespace vfs
 {
@@ -41,6 +40,48 @@ public:
 	}
 };
 
+/// Visibility of an asset in the mod installation
+enum class Visibility
+{
+    /// Standard visibility, shown in all relevant areas
+    NORMAL,
+
+    /// Hidden from selectors, but rendered as normal in the map itself
+    HIDDEN
+};
+
+inline std::ostream& operator<< (std::ostream& s, const Visibility& v)
+{
+    if (v == Visibility::HIDDEN)
+        return s << "Visibility::HIDDEN";
+    else if (v == Visibility::NORMAL)
+        return s << "Visibility::NORMAL";
+    else
+        return s << "Visibility(invalid)";
+}
+
+/// Metadata about a file in the virtual filesystem
+struct FileInfo
+{
+    /// Top-level directory (if any), e.g. "def" or "models"
+    std::string topDir;
+
+    /// Name of the file, including intermediate directories under the topDir
+    std::string name;
+
+    /// Visibility of the file
+    Visibility visibility = Visibility::NORMAL;
+
+    /// Return the full mod-relative path, including the containing directory
+    std::string fullPath() const
+    {
+        if (topDir.empty())
+            return name;
+        else
+            return topDir + (topDir.back() == '/' ? "" : "/") + name;
+    }
+};
+
 /**
  * Main interface for the virtual filesystem.
  *
@@ -57,9 +98,10 @@ class VirtualFileSystem :
 public:
 	virtual ~VirtualFileSystem() {}
 
-	// Functor taking the filename as argument. The filename is relative 
-	// to the base path passed to the GlobalFileSystem().foreach*() method.
-	typedef std::function<void(const std::string& filename)> VisitorFunc;
+    // Functor taking the filename and visibility as argument. The filename is
+    // relative to the base path passed to the GlobalFileSystem().foreach*()
+    // method.
+	typedef std::function<void(const FileInfo&)> VisitorFunc;
 
 	/**
 	 * Interface for VFS observers.
@@ -88,10 +130,6 @@ public:
 		 */
 		virtual void onFileSystemShutdown() {}
 	};
-
-	/// \brief Adds a root search \p path.
-	/// Called before \c initialise.
-	virtual void initDirectory(const std::string& path) = 0;
 
 	typedef std::set<std::string> ExtensionSet;
 

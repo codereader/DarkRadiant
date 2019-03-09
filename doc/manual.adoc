@@ -1,0 +1,1203 @@
+= DarkRadiant User Guide
+:toc: left
+:toclevels: 3
+:imagesdir: img
+:icons:
+:iconsdir: img
+
+== Introduction
+
+DarkRadiant is a level editor for Doom 3 and The Dark Mod, developed by The Dark
+Mod team. It may also be used for editing levels for similar *id Software* games
+such as Quake 4.
+
+This User Guide describes the features and functionality of DarkRadiant, however
+it is not intended as a guide to mapping techniques. Level design is a complex
+topic, and is covered by various other learning resources, some of which are
+listed below.
+
+http://wiki.thedarkmod.com/index.php?title=Main_Page[The Dark Mod Wiki]:: The
+starting point for most Dark Mod documentation and tutorials, including
+gameplay, configuration and editing.
+
+https://modwiki.xnet.fi[ModWiki]:: Online wiki covering editing topics for
+vanilla Doom 3 and similar engines.
+
+http://forums.thedarkmod.com[The Dark Mod forums]:: Online community for
+discussion of the Dark Mod, including various ad-hoc mapping tutorial threads
+posted by individual users.
+
+=== Editing workflow
+
+image::DarkRadiantWorkflow.png[align="center"]
+
+The level editing process starts off with basic assets: models, textures,
+sounds, entity definitions, skins, animations and so on. Many of these assets
+will be packaged with a particular game installation, but a level designer may
+also choose to create custom assets for a specific mission. These assets are
+installed into a directory tree which is accessible both by DarkRadiant (for
+editing) and the game engine itself (for playing the mission).
+
+Once assets have been arranged in DarkRadiant according to the wishes of the
+level designer, a `.map` file is saved to disk. This is a text file in a format
+understood by the game engine, and includes both level geometry and references
+to the assets used in the map. Since the `.map` file is simply text, and does
+not actually embed the binary asset data, it tends to be fairly small.
+
+The game engine includes functionality to _compile_ the `.map` file into a
+`.proc` file containing low-level vertex geometry derived from the brushes and
+patches within the `.map` file. The game engine can then render the mission in
+realtime, making use of the same assets that were accessed by DarkRadiant during
+editing.
+
+DarkRadiant also maintains its own separate file containing various editing
+information, such as object layers used within a map. This `.darkradiant` file
+is never used by the game engine, and is non-critical -- a `.map` file with no
+accompanying `.darkradiant` file can still be edited with DarkRadiant, although
+certain DarkRadiant-specific state may be lost.
+
+=== What's in a MAP?
+
+There are three main types of object contained within a `.map` file: entities,
+brushes and patches.
+
+*Entities* are the top-level objects in a map -- essentially, a map file is just a
+ list of entities. Every entity has an *entity class* which determines the type
+ of entity it is: static mesh, AI, sound emitter, particle emitter, light etc.
+ Entities also store a list of string key/value pairs, known as *spawnargs* or
+ *properties*. Some entities also contain brushes and patches as children.
+
+*Brushes* are convex solids used to define basic map geometry: walls, floors,
+ ceilings, steps and other medium to large items. Brushes are often rectangular
+ in shape, although a brush can actually have any number of faces provided that
+ it is convex (it is impossible to have a brush in an L or a U shape, for
+ example). Brushes are not smooth-shaded by the game engine, which generally
+ makes them unsuitable for representing curved surfaces.
+
+*Patches* are smooth one-sided surfaces used to represent curved objects such as
+ vaulted ceilings, pillars or cave interiors. A patch is defined by a number of
+ Bezier control points, and offers control over the level of detail used when
+ subdividing the patch into triangles for rendering: more triangles will produce
+ a smoother surface but may lower rendering performance.
+
+The entities, brushes and patches in a map are arranged in a hierarchy: not
+every entity has children, but every brush and patch must have an entity as a
+parent. Each map therefore starts with a single default entity called the
+*worldspawn*, which acts as the parent for new brushes and patches created in
+DarkRadiant.
+
+== Initial configuration
+
+=== Choosing a game type
+
+When running DarkRadiant for the first time, the *Game Setup* dialog will be
+shown. This is where you configure the path to the game installation from which
+DarkRadiant will load assets, such as textures, models and entity definitions.
+
+image::GameSetupDialog.png[align="center"]
+
+The *Game Setup* dialog contains the following options:
+
+*Game Type*:: DarkRadiant ships with support for several different game engines,
+ each of which is contained within a `.game` file. For editing Dark Mod
+ missions, the default choice of `The Dark Mod 2.0 (Standalone)` is the one to
+ use, but it is also possible to edit stock Doom 3 or Quake 4 missions.
+
+*DarkMod Path* / *Engine Path*:: This is the path to the game installation on
+ the system. The label text will change depending on whether the selected game
+ is `The Dark Mod` or another engine.
+
+*Mission*:: Optional path to a subdirectory containing assets specific to a
+ particular mission which is being worked on. For game types other than `The
+ Dark Mod`, this will be displayed as *Mod (fs_game)*, and should be set to the
+ path of a subdirectory containing a particular game mod, if one is being used.
+
+*Mod Base (fs_game_base)*:: This field only appears for non-DarkMod game types.
+ It allows a two-level mod structure, where the *Mod Base* can point to a major
+ game mod, possibly downloaded from elsewhere, while *Mod* can be set to point
+ to an entirely local "sub-mod" which contains local changes and overrides.
+ Before the release of Dark Mod standalone, this field would have been set to
+ `darkmod` while the *Mod* field would have been set to the local mission,
+ however this is no longer necessary when `The Dark Mod 2.0 (Standalone)` is
+ being used.
+
+Once the game paths are set up, click the *Save* button to proceed to the main
+DarkRadiant interface.
+
+NOTE: It is possible to *Cancel* the *Game Setup* dialog and proceed to the main
+window without configuring a game installation, in which case DarkRadiant will
+show a warning and ask if you wish to proceed. If you do, DarkRadiant will run
+but there will be no available textures, models, entities or other game assets.
+
+=== Interface layout
+
+DarkRadiant ships with a number of different user interface layouts, which
+control the position, visibility and window type of the major interface
+elements. The current layout can be changed from the `View -> Window Layout`
+menu, and will require DarkRadiant to be restarted.
+
+There is currently no support for custom layouts, however all of the provided
+layouts allow window sizes and splitter positions to be changed, and the changes
+will persist through multiple editing sessions.
+
+*Embedded*:: A large 2D window is shown on the right, while the left-hand side
+ is divided vertically into the 3D camera window and a tab widget containing the
+ main editing panels. There are no floating subwindows in this layout.
+
+*Regular*:: A legacy GtkRadiant layout which places the 2D window on the left,
+ the 3D camera view on the top right, and a 2D scrolling textures panel on the
+ bottom right. Other tabs in the editing panel are shown in a floating window.
+
+*RegularLeft*:: The same as *Regular* except the full-height 2D window is on the
+ right and the 3D window and texture panels are on the left.
+
+*Floating*:: The 2D window, 3D window and editing tab widget are all shown in
+ separate floating windows which always appear above the main DarkRadiant
+ window. The main window itself is empty apart from the toolbars and status bar.
+ This is the most flexible layout, since each subwindow can be sized or
+ positioned as desired, but the multiple subwindows may be cumbersome to manage.
+
+*SplitPane*:: Three separate 2D windows, showing each of the major axes, are
+ shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
+ modelling applications. The editing tab widget is in a floating window.
+
+=== Colour schemes
+
+DarkRadiant defaults to a black-on-white colour scheme in the 2D windows, but
+ships with four other colour schemes, which can be accessed under `View ->
+Colours...`. If you prefer a dark theme, the `Black & Green` scheme might be
+suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
+provide a more neutral, low-contrast look.
+
+[align="center",cols="^.<a,^.<a,^.<a",grid="none"]
+|===
+|image:DarkRadiantDefaultTheme.png[] +
+*DarkRadiant Default*
+|image:BlackGreenTheme.png[] +
+*Black and Green*
+|image:Q3RadiantTheme.png[] +
+*QE3Radiant Original*
+|image:SuperMalTheme.png[] +
+*Super Mal*
+|image:MayaEmulationTheme.png[] +
+*Maya/Max/Lightwave Emulation*
+|
+|===
+
+Each of the colour schemes can be edited using the colour selector buttons in
+the *Colours* dialog, and it is also possible to copy one of the default schemes
+into a custom scheme with a new name.
+
+NOTE: The game installation may specify the colour of certain entity types, in
+which case it will not be possible to change the colour of these entities via
+the *Colours* dialog.
+
+== Basic editing
+
+=== Navigating the 2D view
+
+The game world is a three-dimensional vector space with a central origin,
+rendered in the 2D editing window as a grid. The unit of measurement is an
+arbitrary game unit which does not directly correspond to any real-world
+measurement system -- in The Dark Mod, a typical human stands around 80 - 90
+game units high, making a game unit about 2 cm.
+
+Each 2D window shows which axes it is representing with an icon in the top-left
+corner, as well as an identical icon at the `<0,0,0>` origin position, if
+visible within the view.
+
+.Components of the 2D view
+image::2DViewMarkedUp.png[align="center"]
+
+The 2D view also shows the current position of the camera (used for rendering
+the separate 3D camera view window), and its view direction.
+
+The following commands are available within the 2D view:
+
+[cols="1h,3"]
+|===
+|Right drag|Scroll the view horizontally or vertically
+|Mouse wheel|Zoom the view
+|Shift + Right drag|Zoom the view (alternative binding)
+|Ctrl + Middle click|Move the camera directly to the clicked position
+|Middle click|Rotate the camera to look directly at the clicked point
+|Ctrl + TAB|Change view axis (XY, XZ, YZ)
+|Ctrl + Shift + TAB|Center 2D view on current camera position
+|===
+
+=== Adjusting the grid
+
+The grid shown in the 2D view is used to snap the position and size of brushes
+and patches, as well as the centerpoints of entities. The size of the grid can
+be configured, in powers of 2, from 0.125 up to 256, using the *1-9* keys on the
+main keyboard (not the numeric keypad), or the equivalent options in the *Grid*
+menu.
+
+The *0* key on the main keyboard can be used to toggle the display of the grid.
+Note that objects will still be snapped to the grid even if the grid is not
+visible; this is purely a visual toggle.
+
+IMPORTANT: Level geometry built from brushes and patches should _always_ be
+snapped to the grid to avoid problems such as rendering glitches and map leaks.
+Static meshes and animated AI can be positioned more freely, however grid
+snapping is a useful tool for ensuring that models are appropriately aligned
+with the level geometry.
+
+=== Using the 3D camera view
+
+The 3D camera view provides an approximate rendering of the map in three
+dimensions, in several different render modes: wireframe, flat shaded, textured,
+and fully lit by in-game light sources. While the 2D view is the main interface
+for creating and aligning level geometry, the 3D view is a vital tool for tasks
+such as texturing, or configuring light parameters.
+
+IMPORTANT: The fully lit rendering mode in DarkRadiant is very limited, and only
+offers a partial view of what the game engine will ultimately render. In
+particular, there are no shadows or foglights.
+
+The 3D camera view provides its own toolbar which can be used to configure
+various display settings.
+
+[cols="^1h,3h,10"]
+|===
+|image:wireframeMode16.png[align="center",width=24]|Render in wireframe mode|
+Render objects as wire meshes.
+|image:solidMode16.png[align="center",width=24]|Render in flat-shaded mode|
+Render objects as coloured solids, without textures or lighting.
+|image:textureMode16.png[align="center",width=24]|Render in fullbright textured mode|
+Render objects as preview textures, with no lighting or material effects such as
+transparency.
+|image:lightingMode.png[align="center",width=24]|Render in lighting preview mode|
+Render all available lighting and texture effects.
+|image:StartPlayback.png[align="center",width=24]|Start render time|
+Begin rendering animated effects.
+|image:StopPlayback.png[align="center",width=24]|Stop render time|
+Stop rendering animated effects.
+|image:farClipIn.png[align="center",width=24]|Clip plane in| Move the far
+clip plane closer to the camera.
+
+The far clip plane is a performance optimisation which avoids rendering geometry
+more than a certain distance away from the camera.
+|image:farClipOut.png[align="center",width=24]|Clip plane out|
+Move the far clip plane further away from the camera.
+|===
+
+The 3D view always renders the scene from a particular camera position, which is
+shown in the 2D view as a blue diamond. This camera position can be set directly
+from the 2D view with *Ctrl + Middle click*, and the camera view direction can
+be set with *Middle click*. There are also various options within the 3D view
+itself to adjust the camera position.
+
+[cols="1h,3"]
+|===
+|Right click|Enter or leave free camera mode. In this mode, moving the mouse
+around updates the camera view direction in real-time, and moving the mouse
+around while holding *Ctrl* causes the camera to move up/down/left/right
+according to the camera motion.
+2+^h|Default mode (not free camera)
+|Left/Right arrow|Pan the camera left or right
+|Up/Down arrow|Move the camera forwards or backwards on the horizontal plane,
+without changing its height on the Z axis.
+2+^h|Free camera mode
+|Left/Right arrow|Move ("truck") camera left or right, leaving view direction
+the same.
+|Up/Down arrow|Move ("dolly") the camera forwards or backwards along its view
+axis
+
+|===
+
+=== Manipulating objects
+
+Every object in a map can be selected and moved within the 2D view. Some objects
+-- including brushes, patches and lights -- can also be resized.
+
+For more advanced ways to select objects, see
+<<BrushBasedSelection,brush-based selection>>.
+
+[cols="1h,3"]
+|===
+|Shift + Left click|Select or deselect the object at the clicked position. Any
+  existing selected objects will remain selected. If the clicked position
+  overlaps more than one object, the closest one (according to the current 2D
+  view axis) will be affected.
+|Alt + Shift + Left click|Select the object at the clicked position, and
+  deselect any existing selected objects. If the clicked position overlaps more
+  than one object, each click will cycle through the overlapping objects.
+|Shift + Left drag|Draw a selection rectangle, which will select any objects
+ contained (fully or partially) within it.
+|ESC|Deselect all objects
+|Left drag (_inside_ object)|Move the selected object(s)
+|Left drag (_outside_ object)|Resize the selected object(s) (if available)
+|Space|Duplicate the selected object(s)
+|Backspace|Delete the selected object(s)
+|===
+
+TIP: Like other editors in the Radiant family, DarkRadiant offers a rather
+unusual system for resizing objects. Rather than clicking exactly on the edge,
+or on a dedicated resizing handle, you can click and drag anywhere outside an
+edge to move that edge inwards or outwards. Dragging outside a corner allows you
+to move two edges at once.
+
+=== Working with brushes
+
+Brushes are the basic building blocks of all maps. Typically they are used for
+coarse-grained level geometry such as walls, ceiling and floors. Brushes also
+have a vital role in sealing a map from the void: even a map built entirely from
+patches and static meshes must still be surrounded by brushes in order to avoid
+leaking.
+
+.Additive versus subtractive geometry
+****
+If you are used to mapping for the legacy Thief games using Dromed or T3Edit,
+the system used by DarkRadiant may seem somewhat back-to-front. In previous
+games, the world starts out as an infinite solid, in which you "carve out" rooms
+using subtractive brushes. In DarkRadiant, the world starts out as an infinite
+void, and all brushes are solid. The space in which the mission happens must be
+fully enclosed by solid brushes, otherwise the map will "leak" and fail to
+compile.
+
+The need to deal with map leaks may at first seem like a burden, however the
+exclusive use of solid brushes frees the engine from needing to worry about
+"brush ordering", and allows an important performance optimisation: by "flood
+filling" the map interior, the map compiler can efficiently discard geometry
+that never needs to be rendered.
+****
+
+[[CreatingABrush]]
+==== Creating a brush
+
+To create a simple rectangular brush, ensure that nothing is selected (*ESC*),
+then *Left drag* in the 2D view. A new brush will be created and sized according
+to the dragged area, with its dimensions snapped to the current grid level. To
+adjust the third dimension of the brush (perpendicular to the view direction),
+used *Ctrl + TAB* to switch the 2D view axis, and *Left drag* outside the brush
+boundary to adjust the size.
+
+TIP: Whenever you drag to create a new brush, the third dimension will match the
+size of the _most recently selected_ brush. This makes it easy to draw a series
+of brushes with the same height, such as when you need to create a series of
+floors or walls in succession. To match the height of an existing brush, simply
+select (*Shift + Left click*) and deselect it (*ESC*) before drawing the new
+brush.
+
+==== More complex brush shapes
+
+Although each brush starts out as a six-sided cuboid, it doesn't have to stay
+that way. DarkRadiant offers several options for creating multi-sided brushes in
+more complex shapes. To create one of these shapes, first define a regular
+cuboid brush covering the volume you want the new shape to occupy, then choose
+the appropriate option from the *Brush* menu:
+
+[%autowidth]
+|===
+|image:6Prism.png[]|
+*Prism*
+
+An n-sided approximation of a cylinder, with the axis of the cylinder
+ aligned with the current 2D view.
+
+|image:6Cone.png[]|
+*Cone*
+
+A tapered n-sided cone, which always points upwards regardless of the
+2D view axis.
+
+|image:6Sphere.png[]|
+*Sphere*
+
+A rotationally symmetric n-sided approximation of a sphere, with the
+axis of rotation pointing upwards.
+|===
+
+While these shapes can be useful for certain architectural modelling, remember
+that brushes are always flat-shaded and are not generally a good substitute for
+spheres or cones created with patches or static meshes.
+
+==== Creating a room
+
+Although it is not too difficult to create a hollow room by creating floor,
+ceiling and wall brushes manually, this is a common enough operation that
+DarkRadiant provides a couple of shortcuts. These options can be found on the
+vertical toolbar at the far left of the main window.
+
+[cols="1,4"]
+|===
+|image:CreateRoomBrush.png[width=320]|
+image:CreateRoom.png[width=36] *Create Room*
+
+Create a room whose interior size matches the size of the currently-selected
+brush. The wall thickness will be equal to the current grid size.
+
+|image:HollowBrush.png[width=320]|
+image:Hollow.png[width=36] *Hollow*
+
+Hollow out the selected brush, leaving the exterior dimensions the same. The
+wall thickness will be equal to the current grid size, but the wall brushes will
+overlap at the corners, rather than just touching each other as with *Create
+Room*.
+
+This is legacy tool from GtkRadiant, and generally inferior to *Create Room*.
+The overlapping wall brushes make it more difficult to precisely align interior
+textures, since part of the inner face is obscured (and therefore removed during
+map compilation). However, there may be occasional situations in which *Hollow*
+is useful, so it is retained in DarkRadiant.
+|===
+
+The room creation tools do not require the initial brush to be rectangular --
+you can quite happily *Create Room* with a triangular or trapezoidal brush, or a
+brush with sloping sides. However, with a more complex brush shape, the
+complexity of the resulting wall geometry increases considerably, so attempting
+to hollow out a 7-sided sphere is probably ill-advised.
+
+==== Splitting brushes
+
+Sometimes it is necessary to divide a brush into two or more pieces, perhaps to
+create a doorway or other opening. The *Clipper* tool, accessed with the *X*
+key, is used for this purpose.
+
+.Splitting a brush into two parts
+image::ClipTool3D.png[align="center"]
+
+. Select the brush to be split (the Clipper can be activated with nothing
+selected, but it will not do anything useful).
+. Press *X* to activate the Clipper, or click on the respective icon on the
+left-hand editing toolbar.
+. Click in the 2D window at two different positions, to define the plane along
+which the brush will be split. The proposed split plane will be highlighted in
+blue; feel free to change 2D view axis with *Ctrl + TAB* or use the 3D camera view
+to better visualise the split plane.
+. Once the split plane is defined, press *Shift + Enter* to execute the split and
+keep _both_ halves of the brush; press *Enter* to execute the split and keep
+only one half. The part of the brush that is kept with *Enter* depends on the
+order in which you define the clip points: the points (marked *0* and *1*) will
+appear _clockwise_ on the brush edge according to the current 2D view. If in
+doubt, just use *Shift + Enter* to keep both parts, and delete the unwanted one
+afterwards.
+. Repeat the process to perform additional splits on the selected brush, or
+disable the Clipper with the *X* key. The Clipper is a toggled tool and will
+remain active until disabled.
+
+NOTE: It is possible to create _three_ split points before executing the split,
+which will define a split plane in three dimensions. Defining a three-point
+split plane which is actually useful, however, may be challenging.
+
+==== Reshaping brush edges
+
+All brush edges can be moved independently, which gives you the ability to
+quickly create shapes like triangles or trapeziums. This functionality is
+accessed via the *Select Edges* tool on the upper toolbar, or with the *E* key.
+
+.Creating a trapezium using edge editing
+image::EdgeEditing.png[align="center"]
+
+. Select a brush.
+. Activate *Select Edges* with the toolbar button or *E* key. DarkRadiant will
+place a green control point at the center of each brush edge.
+. In either the 2D or the 3D view, click and drag on a control point to move its
+edge. The control point will turn blue and move along with the cursor. In the 2D
+view, dragging corners is generally easiest, since the resulting shape change
+can more easily be seen.
+. To reduce the number of brush sides, such as changing a rectangle into a
+triangle, simply drag one corner directly on top of another. The two edges will
+be merged.
+
+[[BrushBasedSelection]]
+==== Brush-based selection
+
+As well as using brushes to define map geometry, you can also use them to select
+objects. There are three commands on the top toolbar which convert the selected
+brush(es) into a temporary selection volume:
+
+[cols="^1h,3h,10"]
+|===
+|image:SelectCompleteTall.png[align="center",width=24]|Select complete tall|
+Select all objects that are _completely_ contained within the two-dimensional
+outline of the selected brush(es) in the current 2D view window, ignoring their
+position on the third axis (perpendicular to the screen).
+|image:SelectInside.png[align="center",width=24]|Select inside|
+Select all objects that are _completely_ contained within the selected brush
+volume(s) in all three dimensions.
+|image:SelectTouching.png[align="center",width=24]|Select touching|
+Select all objects that are touching the selected brushes. Unlike the previous
+two commands, this one does not remove the selected brushes, since it is
+designed to allow you to quickly select objects that are adjacent to real map
+geometry.
+|===
+
+=== Working with patches
+
+Patches are smooth-shaded Bezier surfaces that can be created and manipulated in
+the editor (unlike models), and used to represent a variety of curved shapes
+such as vaulted ceilings, arches or pillars. Patches are single-sided surfaces,
+not solid like brushes, and cannot be used to seal a map from the void -- any
+patch work on the boundary of a map will need solid brushes behind it to prevent
+the map from leaking.
+
+==== Creating a simple patch
+
+A simple patch starts off as a flat rectangle, which can then be manipulated
+with vertex editing to produce a curved surface, if desired.
+
+To create a simple patch:
+
+. Set the 2D view axes (*Ctrl + TAB*) to define the orientation of the patch.
+The patch will be created facing directly towards the screen, so to create a
+horizontal (ceiling or floor) patch, the 2D view should be in XY (Top)
+orientation.
+. <<CreatingABrush,Create a rectangular brush>> to define the width and height of
+the patch in the current 2D view (the third dimension is not important, since
+the patch will be infinitely thin once created).
+. With the brush selected, choose *Create Simple Patch Mesh* from the *Patch*
+menu.
+. In the dialog, choose the number of control points to define the shape of the
+patch along its width and height. A patch can have between 3 and 15 control
+points in each dimension; there will always be a control point at the extreme
+edge, and one in the middle. More control points allow more complex shapes but
+also require more manual adjustment -- creating a simple arch is much easier
+with just three control points.
+. Click *OK* to create the patch.
+
+.Simple patches with 3, 7 and 15 control points in both dimensions
+image::SimplePatchesControlPoints.png[align="center"]
+
+==== Manipulating control points
+
+With a patch selected, press *V* to enter (or leave) vertex editing mode. This
+will display all of the control vertices, and allow you to select and move them.
+
+- *Left click* and drag a vertex to move just that one vertex.
+- *Shift + Left click* to add a vertex to the current selection set. When
+   several vertices are selected, dragging any one of the selected vertices will
+   move all of them together.
+- *Shift + Left drag* around several vertices to draw a selection rectangle that
+   will toggle the selection state of all vertices inside it, selecting them if
+   unselected and unselecting them if already selected.
+
+.Making an arch by raising the central row of vertices in a simple patch
+image::PatchVertexEditing.png[align="center"]
+
+==== More complex patch shapes
+
+Just like with brushes, DarkRadiant offers several default patch shapes beyond
+the flat simple patch. These can be created by choosing the corresponding option
+in the *Patch* menu. There is no need to have a brush selected first in order to
+create these shapes, however if a brush _is_ selected, it will be removed and
+used to define the size of the patch shape.
+
+[cols="1,3"]
+|===
+|image:PatchSphere.png[]|
+*Sphere*
+
+An approximation of a sphere (the quadratic Bezier patch implementation in Doom
+3 and DarkRadiant does not permit the creation of a perfect sphere).
+
+|image:PatchCylinder.png[]|
+*Cylinder*
+
+A hollow cylinder aligned with the direction of the 2D view.
+
+|image:PatchCone.png[]|
+*Cone*
+
+A tapered cone pointing along the 2D view axis.
+
+|image:PatchEndCap.png[]|
+*End cap*
+
+An arch or half-cylinder covering a 180 degree angle, aligned with the 2D view
+axis. The peak of the arch will be at the top if created in front or side views,
+making this useful for curved ceilings and the like.
+
+|image:PatchBevel.png[]|
+*Bevel*
+
+Portion of an arch covering a 90 degree angle. This may be placed along room
+edges to give a curved appearance.
+
+|===
+
+==== Controlling patch subdivision
+
+Although patches are defined by Bezier curves, they are subdivided into flat
+polygons for rendering. By default, the number of polygons to create is
+determined dynamically by the game engine, based on the shape of the patch.
+However, you can also use the *Patch Inspector* to explicitly set the level of
+subdivision required, which can be useful when optimising a map by reducing
+on-screen polygon counts.
+
+.Default (automatic) subdivision, 2x2 subdivision, 3x3 subdivision, 3x10 subdivision
+image::PatchSubdivision.png[align="center"]
+
+To subdivide a patch:
+
+. Select *Patch Inspector* in the *View* menu to make the inspector widget
+visible.
+. With the patch selected, enable the *Fixed Subdivisions* checkbox.
+. Use the *Horizontal* and *Vertical* numeric spinboxes to set the number of
+polygons to divide the patch into. The value can range from *1*, making the
+patch completely flat regardless of control point positions, up to a maximum of
+*32*. Each dimension can have a different subdivision level, if required.
+
+=== Applying textures
+
+When a brush or patch is created, it will be assigned a default texture. To
+apply a new texture, you must first select the brush, face or patch to be
+textured. There are two different selection commands:
+
+[cols="1h,3"]
+|===
+|Shift + Left click|
+Select an entire brush or patch. Any chosen texture will apply to all faces.
+|Ctrl + Shift + Left click|
+Select a single brush face for texturing. This command is only available in the
+3D camera view
+|===
+
+Once you have selected the objects or faces to texture, you can use either the *Media*
+or the *Textures* tab to perform the texturing operation.
+
+[[MediaTab]]
+==== The Media tab
+
+The *Media* tab shows a tree view which contains all of the textures available
+in the game installation. Selecting a texture in the tree will show a small
+preview swatch, along with some metadata about the texture definition.
+
+image::MediaTab.png[align="center"]
+
+To apply a texture to the selected brush, simply *Double-click* on a texture
+name in the tree. The tree view also offers a context menu with several options:
+
+[cols="1h,3"]
+|===
+|Load in Textures view|
+Load all textures contained within the selected folder, making them available on
+the *Textures* tab. This option is not available when a single texture is
+highlighted.
+|Apply to selection|
+Apply the highlighted texture to the current object. This is identical to the
+*Double-click* operation, and is only available for single textures, not
+folders.
+|Show Shader Definition|
+Show a syntax-highlighted text window containing the definition of the selected
+texture.
+|Selected/deselect elements using this shader|
+Select or deselect objects in the map which the highlighted texture is
+applied to. This can be used for organisational purposes, or to identify whether
+a texture is used or not.
+|Add to/Remove from favourites|
+Add or remove the selected texture from the favourites list. The favourites list
+provides easy access to a user-chosen group of textures, and can be accessed by
+choosing the *Show Favourites* radio button at the top of the panel.
+|===
+
+==== The Textures tab
+
+The *Textures* tab provides a scrollable canvas containing preview swatches of
+all the textures which are currently loaded in the current map.
+
+image::TexturesTab.png[align="center"]
+
+When DarkRadiant first starts up no textures are loaded and this panel is empty.
+New textures can only be loaded via the *Media* tab (described in the
+<<MediaTab,previous section>>), either by applying a texture directly to a
+brush, or by using the *Load in Textures view* command to explicitly load an
+entire folder of textures.
+
+Once textures are loaded onto the *Textures* tab, you can apply them to a
+selected object by *Left clicking* on them. By *Right clicking* on a texture you
+can access a context menu with a single command *Seek in Media browser*, which
+will highlight the clicked texture in the *Media* tab.
+
+==== Using the Surface Inspector
+
+Once a texture is applied via the Media or Textures tabs, you will most likely
+wish to adjust the alignment and scale of the texture on the brush or patch
+face. DarkRadiant provides the *Surface Inspector* for this purpose, which can
+be toggled with the *S* key or by choosing the option in the *View* menu.
+
+image::SurfaceInspector.png[align="center"]
+
+The Surface Inspector can be used to adjust textures on a single brush or patch
+face, or several selected faces/brushes/patches at once. If more than one face
+is selected and these faces have different values for text boxes in the dialog,
+the text box will be greyed out, however it is still possible to use the buttons
+to make changes which will be applied uniformly to all selected faces.
+
+[cols="1h,3"]
+|===
+|Shader|This shows the full name of the texture applied to the selected
+face(s). You can use the folder button to bring up a new dialog which allows you
+to choose a new texture.
+|Horiz/Vert Shift|These text boxes show the current texture shift (translation)
+on the horizontal and vertical axes. The associated arrow buttons will increase
+or decrease the texture shift by the current *Step* value.
+|Horiz/Vert Scale|These show the current texture scale in the horizontal and
+vertical directions. The arrow buttons will increase or decrease the scale by
+the current *Step* value.
+|Rotation|Shows the current texture rotation, in degrees. The arrow buttons will
+rotate the texture clockwise or anticlockwise by the current *Step* value.
+|Fit Texture|These controls allow you to fit an exact number of copies of the
+texture across the face, so that the texture edges correspond to the face edges.
+The numeric spin boxes control how many copies of the texture are tiled, and the
+operation is performed by clicking the *Fit* button.
+|Align Texture|These buttons shift the texture so that the Top/Bottom/Left/Right
+edge of the face are aligned with a texture boundary, but otherwise do not
+modify the scaling of the texture (unlike the *Fit* operation).
+|Flip Texture|Flips (mirrors) the texture along the horizontal or vertical axis.
+|Natural|This button resets the texture to a default alignment and scale, based
+the location and size of the face.
+|Texture Lock|If this is enabled, the alignment of the texture will be preserved
+relative to the face if the brush or patch is moved in 3D space. If disabled,
+the texture itself will remain fixed in 3D space as the brush or patch moves,
+resulting in the alignment changing.
+
+Typically, if you have *Fit* a particular number of texture tiles across a face,
+you will want to preserve alignment with *Texture Lock*. Conversely, if the
+texture is applied to a much larger group of brushes with a common texture (that
+needs to align across all of the brushes, regardless of how they are moved or
+resized), you will want to disable *Texture Lock*.
+|===
+
+=== Working with entities
+
+If brushes are the bricks and mortar of a map (often literally), entities are
+its fixtures and fittings. Every object in a map which "does something" other
+than form part of the level geometry is an entity: lights, audio speakers,
+particle emitters, static meshes, animated creatures or machinery. There are
+also various functional entity types which provide vital metadata to the game
+engine, such as determining where the player should start, or how creatures
+should navigate between locations.
+
+DarkRadiant provides certain common functionality to all entities, such as the
+ability to edit properties using the *Entity* tab. Particular entity types are
+sufficiently common, however, that they have their own dedicated creation and
+editing tools.
+
+*Light*:: Every map requires at least one light source in order to render
+anything in game. A light occupies a rectangular volume, which can be created
+and resized much like a brush, and has properties to determine its colour,
+visible shape and falloff pattern in three dimensions. Lights can optionally
+cast shadows, and can even be animated to flicker or flash.
+
+*Model (func_static)*:: Model entities represent geometry that is not compiled
+as part of the map itself. The model geometry can either be derived from brushes
+and patches created inside DarkRadiant, or from an external model file in ASE or
+LWO format. Model files are the primary mechanism for including fine detail in a
+map which would be cumbersome to create with brushes and patches.
+
+*Speaker*:: Essentially the audio equivalent of a light, a speaker entity
+represents the point from which an in-game sound source will emanate. It has
+properties to control its size and falloff, and optionally override certain
+properties of the sound shader itself, such as volume.
+
+*Player start (info_player_start)*:: This entity tells the game engine where to
+place the player when a map is first loaded. A map without such an entity will
+not be playable.
+
+==== Creating lights
+
+To create a light, *Right click* in the 2D view and choose *Create light…*.
+The position and size of the light volume depends on the current selection:
+
+- If _nothing_ is selected, then a light volume will be created at the clicked
+  position with a default size.
+- If a _single brush_ is selected, the brush will be deleted and the light
+  volume will match the size and position of the brush.
+- If _several brushes_ are selected, then all selected brushes will be deleted
+  and the light volume will be sized according to the bounding box of the
+  brushes (i.e. the smallest box that would contain all of the brushes).
+
+Unselected lights are shown in the 2D view as small boxes, while selected lights
+also show the boundaries of the light volume.
+
+.Light entity selected (left) and unselected (right)
+image::LightSelectedAndUnselected.png[align="center"]
+
+A selected light entity can be moved by dragging inside the small center box,
+and it can be resized by dragging outside the edge of the light volume. Unlike
+brushes, light volumes will by default resize symmetrically, so that the center
+point does not move during the resize.
+
+NOTE: Although light volumes can be resized like brushes, their shape can never
+be changed; every light is an axis-aligned cuboid. This does not, however, mean
+that they need to _look_ rectangular in game. See the <<LightInspector,next
+section>> for details on how to change the falloff texture using the light
+inspector.
+
+There are a couple of options on the top toolbar which control the display and
+behaviour of light volumes:
+
+[cols="^1h,3h,10"]
+|===
+|image:view_show_lightradii.png[align="center",width=24]|Show all light volumes|
+If enabled, light volume boundaries will be rendered in the 2D view for _all_
+light entities, not just selected entities. The default behaviour is to show
+only the center box for unselected light entities.
+|image:dragresize_symm.png[align="center",width=24]|Drag-resize entities symmetrically|
+If enabled (the default), light entities will be resized symmetrically, without
+moving the center point. If disabled, lights will be resized like brushes:
+dragging an edge will move only that edge, while the opposite edge remains
+fixed.
+|===
+
+[[LightInspector]]
+===== The light inspector
+
+When initially created, a light is pure white in colour and has an unrealistic
+rectangular illumination pattern matching its shape. You can change these
+properties using the light inspector, which is accessed with the *L* key.
+
+image::LightInspector.png[align="center"]
+
+*Light volume (omni vs projected)*:: The majority of lights in a map will be the
+default, omnidirectional shape. An omni light is a simple axis-aligned cuboid
+which emits light in all directions from its center to its edges.
++
+A projected light is pyramid-shaped, and emits light from the tip of the pyramid
+towards the base. Projected lights behave more like spotlights in real-life, and
+can be used to highlight particular areas or project images of windows onto the
+floor.
+
+*Colour*:: Use the colour selector button to display a standard colour selection
+dialog, or enter the RGB values directly using the text box. As well as changing
+the hue, the light colour also governs the overall brightness of the light.
+
+*Texture*:: The falloff texture controls the shape of the lit area when rendered
+in-game; the square texture chosen here will be mapped directly onto the
+rectangular shape of the light volume. Light textures can be simple, such as the
+generic circular gradient of `biground1`, or much more complex, including
+multiple colours or animation.
+
+*Options*:: There are a few light-propagation options which are mostly used to
+ tweak performance. In particular, disabling shadows for any light which does
+ not actually _need_ to cast shadows can give a significant boost to rendering
+ speed.
+
+[[CreatingModels]]
+==== Creating models
+
+Static models can be used to provide fine details in a map which would be
+difficult or impossible to create in the editor with brushes or patches. Models
+are created with an external 3D application such as Blender, Lightwave or Maya,
+and saved into the game asset tree in LWO or ASE format.
+
+To insert a model, ensure that nothing is selected, then *Right click* in the 2D
+view and choose *Create model…*. DarkRadiant will show the model selector
+dialog:
+
+image::ModelSelector.png[align="center"]
+
+In the top-left of the model selector window is a tree of all available models
+in the game installation. Models may have different _skins_, which are variants
+of the same model with different textures applied. If a model has skins
+available, these will be listed as children of the model entry in the tree.
+
+Choosing a model or one of its skins will show a preview render in the large
+widget on the right-hand side. Various metadata such as the polygon count and
+the applied textures are also shown in table at the lower left.
+
+When you have chosen the desired model, click *OK* to insert it into the map.
+The model will be inserted at the position where you originally right-clicked to
+show the model chooser.
+
+==== Creating a player start marker
+
+The game requires a special entity (`info_player_start`) to mark the position at
+which the player should enter the map. Without such an entity the map will be
+unplayable.
+
+To create this entity, ensure that nothing is selected then *Right click* in the
+2D view and choose *Create player start here*. DarkRadiant will create the
+player start entity at the clicked position.
+
+Since it makes no sense to have more than one player start location, DarkRadiant
+will not enable the *Create player start here* menu option if there is already
+an `info_player_start` in the map. Instead, you may choose *Move player start
+here* to move the existing entity to the clicked position.
+
+==== Creating other entity types
+
+Entity types without a dedicated item in the right-click menu are created using
+the generic *Create entity…* option, which displays a dialog very similar to the
+<<CreatingModels,model selector>>:
+
+image::EntityClassSelector.png[align="center"]
+
+Just like the model selector, the entity selector displays a tree of all
+available entity types in the game installation, and a large preview widget
+which shows an approximate rendering of the entity, if appropriate. Purely
+functional entity types such as `info_location` or `info_player_start` do not
+have any visible appearance and their render preview will be blank.
+
+Some entity types have a short textual description giving information about
+their usage; if present, this is displayed in the text box underneath the entity
+class tree.
+
+After selecting the desired entity type in the tree, click the *Add* button to
+insert an instance of the entity into the map at the right-clicked location. If
+the selected entity type requires a brush selection and no brush is selected, a
+warning will be shown at this point.
+
+==== Editing entity properties
+
+Every entity has a list of key/value pairs known as _properties_ or _spawnargs_.
+These properties are displayed on the *Entity* tab of the editing panel.
+
+image::EntityInspector.png[align="center"]
+
+The entity panel lists all of the properties of the currently-selected entity,
+showing each property's name, its current value, and an icon representing its
+type (boolean, vector, text etc) if known. Selecting a property will populate
+the two text boxes in the center of the widget with the property name and value,
+allowing the value to be edited. If the selected property is of a known type,
+the panel at the bottom will show a custom widget appropriate for editing the
+particular property, e.g. three separate numeric spinboxes for a vector
+property, a colour selector widget for a colour property, and so on.
+
+*Changing a property value*:: To change the value of the selected property,
+ simply enter the new value in the lower text box, then hit *Enter* or click the
+ green tick button. If the property has a type-specific editing widget, you can
+ also change its value using the controls in this widget.
+
+*Adding a new property*:: There are two different ways to add a new property:
+. Enter a new property name in the upper text box (which shows the selected
+property name), and hit *Enter*. This does not rename the selected property, but
+adds a new property with the edited name and the current value.
+. *Right click* in the list of properties and choose *Add property* from the
+context menu. This will display a new dialog listing all known properties along
+with their descriptive text (if available). Selecting a property in this dialog
+and choosing *OK* will add the property to the entity with a default value of
+"-", which can then be edited in the entity panel itself.
+
+*Deleting a property*:: To delete the selected property, *Right click* on the
+ property in the list and choose *Delete property*.
+
+The entity panel provides two options controlling its behaviour:
+
+[cols="1h,3"]
+|===
+|Show inherited properties|If checked, all properties that apply to the
+selected entity will be shown, including those which are inherited from the
+entity type declaration in the game installation. If unchecked, only those
+properties explicitly set on this particular entity (and stored in the map file)
+will be shown.
+
+You can change the value of an inherited property by selecting it and entering a
+new value in the entity panel; this will create a new explicit property on the
+entity which overrides the inherited default.
+|Show help|Enables or disables the text widget at the bottom of the panel
+which shows a brief explanation of certain properties. If a property has help
+text available, the question mark icon will be shown in the *?* column.
+|===
+
+=== Compiling a map
+
+DarkRadiant does not include functionality for compiling a map into the form
+needed by the game engine; instead, you must use external tools or the map
+compiler built into the game itself.
+
+For Doom 3 and the Dark Mod, the following commands are used within the in-game
+console (which can normally be accessed with the key immediately above `TAB`):
+
+[horizontal]
+`dmap&nbsp;<mymapname.map>`:: Compile the map called `mymapname.map`, which must be
+located within the `maps` directory of the mod installation. If there are any
+problems compiling the map (e.g. a leak), the error will be displayed in the
+console output.
+`map&nbsp;<mymapname.map>`:: Load the compiled map `mymapname.map` into the game
+engine and start playing it immediately.
+
+TIP: When compiling and testing maps, it may be helpful to set your game to
+play in windowed mode, with a reduced resolution. This will allow both the game
+and DarkRadiant to be visible on the screen as separate windows, which you can
+easily switch between during the compile and test cycle.
+
+==== Preventing leaks
+
+A map "leak" occurs when the play area is not fully enclosed with a complete
+shell of opaque brushes. If the map leaks, compilation will fail and the map
+will not be playable.
+
+In order to minimise the likelihood of a map leak, ensure that your map has all
+of the following properties:
+
+- The map interior is _completely_ sealed from the exterior void by brushes (not
+  patches). It is much easier to achieve this by building up a map carefully,
+  making good use of the grid snapping functionality, rather than haphazardly
+  throwing brushes together and hoping to seal them later.
+- All of the sealing brushes have an opaque texture. Skybox textures are
+  considered opaque and are OK, however semi-transparent or perforated mesh
+  textures are not.
+- The origin point of _every_ entity in the map lies within the sealed map
+  interior. It is OK if a large model extends outside of the map, provided that
+  its origin point is on the inside.
+
+WARNING: Do *not* be tempted to avoid leaks by enclosing your entire map in a
+single huge box. This may seem to solve the problem (the map will indeed not
+leak), but it completely negates the important performance optimisations that
+the map compiler carries out when it "flood fills" the map interior.
+
+==== Locating leaks with a pointfile
+
+No matter how hard you try to avoid leaks, occasionally they will happen. In
+this case the *pointfile* functionality is helpful to identify the location of
+the leak.
+
+After the map compilation has failed with a leak, return to DarkRadiant and
+choose *Pointfile* from the *File* menu. This will automatically load the point
+file associated with the current map, which contains a series of points
+identifying the path to the leak. This path will be rendered as a bright red
+line in both the 2D and 3D views:
+
+.A pointfile rendered in both 3D and 3D views
+image::Pointfile.png[align="center"]
+
+In this example we can clearly see that the map has leaked because the far wall
+brush does not join up with the ceiling.
+
+== Organising a map
+
+Since a fully developed Dark Mod map is large and complex, DarkRadiant provides
+several tools to make organising a large map easier. Objects can be grouped,
+sorted into user-defined layers and filtered using various criteria, while the
+prefab system allows large chunks of map to be reused or shared with other
+mappers.
+
+=== Grouping objects
+
+DarkRadiant allows a number of objects to be grouped together, so that they can
+be selected and manipulated as a single unit.
+
+To *create* a group:
+
+. Select several objects.
+. *Right-click* in the 2D window to show the context menu.
+. Choose *Group Selection*.
+
+Once the objects are in a group, selecting any object in the group will
+automatically select all other objects in the same group.
+
+To *remove* a group, select the group then choose *Ungroup Selection* from the
+2D view context menu.
+
+NOTE: Groups can be nested, by creating a group that includes one or more
+existing groups. When you ungroup such a nested group, the original component
+groups will be restored.
+
+=== Working with prefabs
+
+DarkRadiant allows a collection of objects to be saved to disk as a *prefab*,
+which can then be imported into other maps. You can use prefabs to store
+anything from a single small object to a vast section of map geometry complete
+with lights and AI.
+
+==== Exporting to a prefab
+
+. Select the objects in the map that you wish to include in the prefab.
+. From the *File* menu, choose *Save selected as prefab...*
+. Use the file chooser dialog to choose a location and name for the prefab file.
+
+TIP: Unlike actual `.map` files which must be accessible by the game engine,
+prefabs are a DarkRadiant-only feature that have no significance to the engine.
+You are therefore free to store prefab files wherever you wish, either inside or
+outside the game installation directory.
+
+==== Importing a prefab
+
+Either right-click in the 2D window and choose *Insert prefab...*, or open the
+*File* menu and choose *Import prefab...*. This will show the prefab browser.
+
+image::PrefabChooser.png[align="center"]
+
+Like the model selector, the prefab selector shows a tree of available prefabs
+on the left, and a preview window on the right giving an idea of what the prefab
+looks like. Using the radio buttons at the top of the window, you can choose
+whether to browse prefabs contained within the game installation, or within a
+custom directory of your choice.
+
+The preview window functions much like the 3D view in the main application:
+*right click* to enter or leave camera mode, which enables the following motion
+commands:
+
+[cols="1h,3"]
+|===
+|Mouse move|Change the camera view direction (pan or tilt)
+|Mouse wheel|Zoom the camera
+|Up/Down arrow|Move the camera forwards or backwards
+|Left/Right arrow|Move the camera left or right
+|===
+
+When you have chosen the desired prefab, click *OK* to insert it into the map.
+Before inserting the prefab, you can use the
+*Create&nbsp;Group&nbsp;out&nbsp;of&nbsp;Prefab&nbsp;parts* checkbox to control
+whether the prefab is automatically grouped as a single object, or inserted as
+separate selectable objects.
+
+=== Using layers
+
+When a map contains a large number of objects, it may become difficult to work
+with the 2D views as a result of the visual clutter. Organising the map into
+several *layers* can help solve this problem. The visibility of each layer can
+toggled independently, allowing you to focus on the objects you want to work
+with.
+
+Layers do not impose any requirements on the physical layout of objects: it is
+possible to include objects spread all over a map into a single layer. For
+example, you can have a layer for all enemies, another layer for all lights,
+another layer for brushwork, and so on.
+
+==== The Layers window
+
+To show or hide the *Layers* window, choose `Layers` from the `Edit` menu. The
+window lists all of the layers which exist in the current project, and allows
+you to perform various operations on them.
+
+image::LayersWindow.png[align="center"]
+
+*Creating a layer*:: To create a new layer, click the `New` button at the bottom
+ of the window. A popup will be shown asking for the name of the new layer. Once
+ the layer is created, it will appear in the list.
+
+*Deleting a layer*:: Click the red 'X' button to the right of a layer to
+ delete it. Deleting a layer does *not* delete the objects in the layer, only
+ the layer itself. Any objects in that layer will be moved to the default layer.
+
+*Renaming a layer*:: Click the edit button to the right of a layer name to
+ change the name. A popup will be shown asking for the new name.
+
+*Selecting objects on a layer*:: Click on the name of a layer itself to select
+ all objects on that layer.
+
+*Toggling visibility*:: The button to the left of a layer name is used to toggle
+ the visibility of objects on that layer. If objects are visible, a tick is
+ shown in the button, otherwise it is empty.
+
+*Changing the active layer*:: The visibility toggle button shows a star for the
+ layer which is currently set as the active layer. To change the active layer,
+ *Ctrl + Left click* on the layer you wish to set as the new active layer.
+
+==== Moving objects into layers
+
+An object can be placed in any number of layers. To see which layers a selected
+object is in, look at the narrow coloured rectangle next to the layer name in
+the *Layers* window. The rectangle will turn from grey to pink for each layer
+that contains the selected object.
+
+.A light in two layers: "Default" and "Lights"
+image::LightInTwoLayers.png[align="center"]
+
+All newly-created objects will be placed in the *Default* layer. You can move or
+copy objects between layers using the options in the 2D view's context menu.
+
+*Create layer...*:: Bring up the name entry dialog and create a new layer,
+ exactly as if the *New* button in the *Layers* window had been clicked.
+
+*Add to layer...*:: Copy the selected object into the chosen layer, without
+ removing it from its existing layer(s).
+
+*Move to layer...*:: Move the selected object into the chosen layer, removing it
+ from all other layers.
+
+*Remove from layer...*:: Remove the selected object from the chosen layer.

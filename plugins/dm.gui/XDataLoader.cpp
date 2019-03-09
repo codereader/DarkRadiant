@@ -729,10 +729,11 @@ void XDataLoader::retrieveXdInfo()
 	_fileSet.clear();
 	_duplicatedDefs.clear();
 	//ScopedDebugTimer timer("XData definitions parsed: ");
-	GlobalFileSystem().forEachFile(XDATA_DIR, XDATA_EXT, [&](const std::string& filename)
-    {
-        loadFromFile(filename);
-    }, 99);
+	GlobalFileSystem().forEachFile(
+        XDATA_DIR, XDATA_EXT,
+        [&](const vfs::FileInfo& fileInfo) { loadFromFile(fileInfo.name); },
+        99
+    );
 }
 
 void XDataLoader::loadFromFile(const std::string& filename)

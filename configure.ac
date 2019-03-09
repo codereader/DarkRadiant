@@ -60,6 +60,12 @@ AC_ARG_ENABLE([debug],
                               [enable debug build])],
               [debug_build=$enableval],
               [debug_build='no'])
+AC_ARG_ENABLE([relocation],
+              [AS_HELP_STRING([--enable-relocation],
+                              [build a relocatable package without hard-coded
+                               absolute paths])],
+              [reloc_build=$enableval],
+              [reloc_build='no'])
 AC_ARG_ENABLE([darkmod-plugins],
               [AS_HELP_STRING([--enable-darkmod-plugins],
                               [build Dark Mod plugins such as S/R editor])],
@@ -329,6 +335,12 @@ else
     CXXFLAGS="-g -O2 -DNDEBUG $CXXFLAGS"
 fi
 
+# Relocation
+if test "$reloc_build" != 'no'
+then
+    CPPFLAGS="-DENABLE_RELOCATION $CPPFLAGS"
+fi
+
 AC_SUBST([CPPFLAGS])
 AC_SUBST([CFLAGS])
 AC_SUBST([CXXFLAGS])
@@ -340,35 +352,15 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  Makefile
                  radiant/Makefile
                  install/i18n/Makefile.in
+                 doc/Makefile
                  libs/Makefile
-                 libs/ddslib/Makefile
                  libs/wxutil/Makefile
                  libs/math/Makefile
-                 libs/picomodel/Makefile
                  libs/scene/Makefile
                  libs/xmlutil/Makefile
                  plugins/Makefile
-                 plugins/archivezip/Makefile
-                 plugins/commandsystem/Makefile
-                 plugins/eclassmgr/Makefile
-                 plugins/entity/Makefile
-                 plugins/eventmanager/Makefile
-                 plugins/filetypes/Makefile
-                 plugins/filters/Makefile
-                 plugins/fonts/Makefile
-                 plugins/image/Makefile
-                 plugins/mapdoom3/Makefile
-                 plugins/md5model/Makefile
-                 plugins/model/Makefile
-                 plugins/particles/Makefile
-                 plugins/scenegraph/Makefile
                  plugins/script/Makefile
-                 plugins/shaders/Makefile
-                 plugins/skins/Makefile
                  plugins/sound/Makefile
-                 plugins/uimanager/Makefile
-                 plugins/vfspk3/Makefile
-                 plugins/xmlregistry/Makefile
                  plugins/dm.stimresponse/Makefile
                  plugins/dm.objectives/Makefile
                  plugins/dm.difficulty/Makefile
@@ -382,7 +374,15 @@ AC_OUTPUT
 echo "
 Configuration options:"
 
-echo     " Installation prefix: $prefix"
+echo     " Installation prefix:   $prefix"
+
+if test "$reloc_build" != 'no'
+then
+    echo " Relocatable package:   yes"
+else
+    echo " Relocatable package:   no"
+fi
+
 if test -n "$sound_module"
 then
     echo " Sound:                 yes"
