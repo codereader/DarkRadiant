@@ -37,6 +37,28 @@ Name: "{group}\{cm:UninstallProgram,DarkRadiant}"; Filename: "{uninstallexe}"
 Name: "{userdesktop}\DarkRadiant"; Filename: "{app}\darkradiant.exe"; Tasks: desktopicon
 
 [InstallDelete]
+; Remove all modules that are now integrated in DarkRadiant.exe
+Type: files; Name: {app}\modules\shaders.dll;
+Type: files; Name: {app}\modules\skins.dll;
+Type: files; Name: {app}\modules\sound.dll;
+Type: files; Name: {app}\modules\uimanager.dll;
+Type: files; Name: {app}\modules\vfspk3.dll;
+Type: files; Name: {app}\modules\xmlregistry.dll;
+Type: files; Name: {app}\modules\archivezip.dll;
+Type: files; Name: {app}\modules\commandsystem.dll;
+Type: files; Name: {app}\modules\eclassmgr.dll;
+Type: files; Name: {app}\modules\entity.dll;
+Type: files; Name: {app}\modules\eventmanager.dll;
+Type: files; Name: {app}\modules\filetypes.dll;
+Type: files; Name: {app}\modules\filters.dll;
+Type: files; Name: {app}\modules\fonts.dll;
+Type: files; Name: {app}\modules\image.dll;
+Type: files; Name: {app}\modules\mapdoom3.dll;
+Type: files; Name: {app}\modules\md5model.dll;
+Type: files; Name: {app}\modules\model.dll;
+Type: files; Name: {app}\modules\particles.dll;
+Type: files; Name: {app}\modules\scenegraph.dll;
+Type: files; Name: {app}\modules\script.dll;
 ; Remove the legacy WaveFront plugin before installation
 Type: files; Name: {app}\plugins\wavefront.dll;
 ; Grid module has been removed
