@@ -66,6 +66,7 @@ void AlertComponentEditor::writeToComponent() const
         Specifier::FIRST_SPECIFIER, _targetCombo->getSpecifier()
     );
 
+	_component->clearArguments();
 	_component->setArgument(0, string::to_string(_amount->GetValue()));
 	_component->setArgument(1, string::to_string(_alertLevel->GetValue()));
 }

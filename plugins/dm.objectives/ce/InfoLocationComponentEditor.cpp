@@ -56,6 +56,8 @@ void InfoLocationComponentEditor::writeToComponent() const
 	_component->setSpecifier(
 		Specifier::SECOND_SPECIFIER, _locationSpec->getSpecifier()
     );
+
+	_component->clearArguments();
 }
 
 } // namespace ce

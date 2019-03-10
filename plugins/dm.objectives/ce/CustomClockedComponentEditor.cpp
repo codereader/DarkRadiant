@@ -63,6 +63,7 @@ void CustomClockedComponentEditor::writeToComponent() const
 
     assert(_component);
 
+	_component->clearArguments();
 	_component->setArgument(0, _scriptFunction->GetValue().ToStdString());
 	_component->setClockInterval(static_cast<float>(_interval->GetValue()));
 }
