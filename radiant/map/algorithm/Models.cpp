@@ -88,10 +88,15 @@ public:
 	}
 };
 
-void refreshModels()
+void refreshModels(bool blockScreenUpdates)
 {
-	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Models"));
+	std::unique_ptr<ui::ScreenUpdateBlocker> blocker;
+
+	if (blockScreenUpdates)
+	{
+		// Disable screen updates for the scope of this function
+		blocker.reset(new ui::ScreenUpdateBlocker(_("Processing..."), _("Reloading Models")));
+	}
 
 	// Clear the model cache
 	GlobalModelCache().clear();
@@ -104,10 +109,15 @@ void refreshModels()
 	GlobalModelCache().signal_modelsReloaded().emit();
 }
 
-void refreshSelectedModels()
+void refreshSelectedModels(bool blockScreenUpdates)
 {
-	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Models"));
+	std::unique_ptr<ui::ScreenUpdateBlocker> blocker;
+
+	if (blockScreenUpdates)
+	{
+		// Disable screen updates for the scope of this function
+		blocker.reset(new ui::ScreenUpdateBlocker(_("Processing..."), _("Reloading Models")));
+	}
 
 	// Find all models in the current selection
 	ModelFinder walker;

@@ -127,7 +127,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 		Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
 
 		// It's possible that the export overwrote a model we're already using in this map, refresh it
-		refreshSelectedModels();
+		refreshSelectedModels(false);
 	}
 	catch (selection::algorithm::EntityCreationException&)
 	{

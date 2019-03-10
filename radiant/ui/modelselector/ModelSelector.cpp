@@ -27,6 +27,8 @@
 
 #include <functional>
 
+#include "map/algorithm/Models.h"
+
 namespace ui
 {
 
@@ -484,8 +486,8 @@ void ModelSelector::onReloadModels(wxCommandEvent& ev)
 	// Remember the selected model before reloading
 	_preselectedModel = getSelectedValue(_columns.vfspath);
 
-	_populated = false;
-	populateModels();
+	// This will fire the models reloaded signal after some time
+	map::algorithm::refreshModels(false);
 }
 
 void ModelSelector::onReloadSkins(wxCommandEvent& ev)
