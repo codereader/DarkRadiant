@@ -365,13 +365,12 @@ void MainFrame::restoreWindowPosition()
 		_windowPosition.fitToScreen(wxutil::MultiMonitor::getMonitor(startMonitor), 0.8f, 0.8f);
 	}
 
+	// Connect the tracker which will also apply the stored size/position
+	_windowPosition.connect(_topLevelWindow);
+
 	if (isMaximised)
 	{
 		_topLevelWindow->Maximize(true);
-	}
-	else
-	{
-		_windowPosition.connect(_topLevelWindow);
 	}
 }
 
