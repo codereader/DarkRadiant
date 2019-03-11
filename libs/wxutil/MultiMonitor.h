@@ -36,7 +36,18 @@ public:
 	}
 
 	/**
-	 * greebo: Returns the rectangle (width/height) for the monitor
+	 * Returns the index of the monitor
+	 * the given window is currently displayed on.
+	 * If the window cannot be found, the first monitor number 0 is returned.
+	 */
+	static unsigned int getMonitorNumForWindow(wxWindow* window)
+	{
+		int num = wxDisplay::GetFromWindow(window);
+		return num != wxNOT_FOUND && num > 0 ? static_cast<unsigned int>(num) : 0;
+	}
+
+	/**
+	 * Returns the rectangle (width/height) for the monitor
 	 * which the given window is displayed on.
 	 */
 	static wxRect getMonitorForWindow(wxWindow* window)
