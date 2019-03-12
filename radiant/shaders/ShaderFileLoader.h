@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iarchive.h"
+#include "ifilesystem.h"
 
 #include "TableDefinition.h"
 #include "ShaderTemplate.h"

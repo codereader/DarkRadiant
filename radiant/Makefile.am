@@ -14,6 +14,9 @@ VFS_SOURCES = vfs/DeflatedInputStream.cpp \
               vfs/DirectoryArchive.cpp \
               vfs/Doom3FileSystem.cpp \
               vfs/ZipArchive.cpp
+SHADERS_SOURCES = shaders/Doom3ShaderLayer.cpp \
+                  shaders/TableDefinition.cpp \
+                  shaders/textures/GLTextureManager.cpp
 
 # DarkRadiant executable
 bin_PROGRAMS = darkradiant
@@ -205,9 +208,7 @@ darkradiant_SOURCES = main.cpp \
                       scenegraph/SceneGraphFactory.cpp \
                       shaders/CameraCubeMapDecl.cpp \
                       shaders/textures/TextureManipulator.cpp \
-                      shaders/textures/GLTextureManager.cpp \
-                      shaders/Doom3ShaderLayer.cpp \
-                      shaders/TableDefinition.cpp \
+                      $(SHADERS_SOURCES) \
                       shaders/ShaderTemplate.cpp \
                       shaders/MapExpression.cpp \
                       shaders/CShader.cpp \
@@ -448,15 +449,14 @@ darkradiant_SOURCES = main.cpp \
 					  model/ScaledModelExporter.cpp \
                       model/NullModelNode.cpp 
 
-check_PROGRAMS = facePlaneTest vfsTest
+check_PROGRAMS = facePlaneTest vfsTest shadersTest
 TESTS = $(check_PROGRAMS)
 
 facePlaneTest_SOURCES = test/facePlaneTest.cpp \
                         brush/FacePlane.cpp
 facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
 
-vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES) \
-                  shaders/Doom3ShaderLayer.cpp \
-                  shaders/TableDefinition.cpp \
-                  shaders/textures/GLTextureManager.cpp
+vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
 vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
+
+shadersTest_SOURCES = test/shadersTest.cpp $(SHADERS_SOURCES)

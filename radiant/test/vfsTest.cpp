@@ -2,8 +2,6 @@
 #include <boost/test/included/unit_test.hpp>
 
 #include "radiant/vfs/Doom3FileSystem.h"
-#include "radiant/shaders/ShaderFileLoader.h"
-#include "radiant/shaders/textures/GLTextureManager.h"
 
 struct VFSFixture
 {
@@ -99,37 +97,4 @@ BOOST_FIXTURE_TEST_CASE(handleAssetsLst, VFSFixture)
     // The assets.lst should be converted into visibility information, but NOT
     // returned as an actual file to the calling code.
     BOOST_TEST(fileVis.count("assets.lst") == 0);
-}
-
-namespace shaders
-{
-
-// Provide a local implementation of GetTextureManager since the application
-// version calls the module registry.
-GLTextureManager& GetTextureManager()
-{
-    static GLTextureManager manager;
-    return manager;
-}
-
-}
-
-using namespace shaders;
-
-// Replacement for ShaderLibrary used in tests
-struct MockShaderLibrary
-{
-    bool addTableDefinition(const TableDefinitionPtr& def)
-    { return true; }
-
-    bool addDefinition(const std::string& name, const ShaderDefinition& def)
-    { return true; }
-};
-
-BOOST_FIXTURE_TEST_CASE(loaderShaderFiles, VFSFixture)
-{
-    MockShaderLibrary library;
-    shaders::ShaderFileLoader<MockShaderLibrary> loader("materials", library);
-
-    loader.parseFiles();
 }
