@@ -16,6 +16,9 @@ namespace shaders
 // VFS functor class which loads material (mtr) files.
 template<typename ShaderLibrary_T> class ShaderFileLoader
 {
+    // The VFS module to provide shader files
+    vfs::VirtualFileSystem& _vfs;
+
     // The base path for the shaders (e.g. "materials/")
     std::string _basePath;
 
@@ -86,8 +89,9 @@ private:
 
 public:
     // Constructor. Set the basepath to prepend onto shader filenames.
-    ShaderFileLoader(const std::string& path, ShaderLibrary_T& library)
-    : _basePath(path), _library(library)
+    ShaderFileLoader(vfs::VirtualFileSystem& fs, const std::string& path,
+                     ShaderLibrary_T& library)
+    : _vfs(fs), _basePath(path), _library(library)
     {
         _files.reserve(200);
     }
@@ -107,7 +111,7 @@ public:
             const vfs::FileInfo& fileInfo = _files[i];
 
             // Open the file
-            ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fileInfo.name);
+            ArchiveTextFilePtr file = _vfs.openTextFile(fileInfo.name);
 
             if (file != nullptr)
             {

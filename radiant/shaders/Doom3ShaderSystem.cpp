@@ -99,7 +99,7 @@ ShaderLibraryPtr Doom3ShaderSystem::loadMaterialFiles()
     ShaderLibraryPtr library = std::make_shared<ShaderLibrary>();
 
     // Load each file from the global filesystem
-    ShaderFileLoader<ShaderLibrary> loader(sPath, *library);
+    ShaderFileLoader<ShaderLibrary> loader(GlobalFileSystem(), sPath, *library);
     {
         ScopedDebugTimer timer("ShaderFiles parsed: ");
         GlobalFileSystem().forEachFile(

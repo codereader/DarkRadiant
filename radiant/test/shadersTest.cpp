@@ -33,8 +33,20 @@ struct MockShaderLibrary
 
 BOOST_FIXTURE_TEST_CASE(loaderShaderFiles, VFSFixture)
 {
+    static const char* MATERIALS_PATH = "materials";
+    static const char* MATERIALS_EXT = "mtr";
+
     MockShaderLibrary library;
-    shaders::ShaderFileLoader<MockShaderLibrary> loader("materials", library);
+    shaders::ShaderFileLoader<MockShaderLibrary> loader(
+        fs, MATERIALS_PATH, library
+    );
+
+    // Walk the filesystem and load .mtr files
+    fs.forEachFile(
+        MATERIALS_PATH, MATERIALS_EXT,
+        [&](const vfs::FileInfo& fileInfo) { loader.addFile(fileInfo); },
+        0
+    );
 
     loader.parseFiles();
 }
