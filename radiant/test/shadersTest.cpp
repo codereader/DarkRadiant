@@ -1,6 +1,8 @@
 #define BOOST_TEST_MODULE shadersTest
 #include <boost/test/included/unit_test.hpp>
 
+#include "VFSFixture.h"
+
 #include "radiant/shaders/ShaderFileLoader.h"
 #include "radiant/shaders/textures/GLTextureManager.h"
 
@@ -29,7 +31,7 @@ struct MockShaderLibrary
     { return true; }
 };
 
-BOOST_AUTO_TEST_CASE(loaderShaderFiles)
+BOOST_FIXTURE_TEST_CASE(loaderShaderFiles, VFSFixture)
 {
     MockShaderLibrary library;
     shaders::ShaderFileLoader<MockShaderLibrary> loader("materials", library);

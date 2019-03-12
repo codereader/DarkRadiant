@@ -459,4 +459,5 @@ facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
 vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
 vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
 
-shadersTest_SOURCES = test/shadersTest.cpp $(SHADERS_SOURCES)
+shadersTest_SOURCES = test/shadersTest.cpp $(SHADERS_SOURCES) $(VFS_SOURCES)
+shadersTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
