@@ -38,7 +38,7 @@ struct MockShaderLibrary
     }
 };
 
-BOOST_FIXTURE_TEST_CASE(loaderShaderFiles, VFSFixture)
+BOOST_FIXTURE_TEST_CASE(loadShaderFiles, VFSFixture)
 {
     static const char* MATERIALS_PATH = "materials/";
     static const char* MATERIALS_EXT = "mtr";

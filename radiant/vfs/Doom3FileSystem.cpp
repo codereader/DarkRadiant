@@ -431,24 +431,26 @@ ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string
 }
 
 void Doom3FileSystem::forEachFile(const std::string& basedir,
-    const std::string& extension,
-    const VisitorFunc& visitorFunc,
-    std::size_t depth)
+                                  const std::string& extension,
+                                  const VisitorFunc& visitorFunc,
+                                  std::size_t depth)
 {
+    std::string dirWithSlash = os::standardPathWithSlash(basedir);
+
     // Look for an assets.lst in the base dir
-    std::string assetsLstName = basedir + AssetsList::FILENAME;
+    std::string assetsLstName = dirWithSlash + AssetsList::FILENAME;
     ArchiveTextFilePtr assetsLstFile = openTextFile(assetsLstName);
     AssetsList assetsList(assetsLstFile);
 
     // Construct our FileVisitor filtering out the right elements
-    FileVisitor fileVisitor(visitorFunc, basedir, extension, depth);
+    FileVisitor fileVisitor(visitorFunc, dirWithSlash, extension, depth);
     fileVisitor.setAssetsList(assetsList);
 
     // Visit each Archive, applying the FileVisitor to each one (which in
     // turn calls the callback for each matching file.
     for (const ArchiveDescriptor& descriptor : _archives)
     {
-        descriptor.archive->traverse(fileVisitor, basedir);
+        descriptor.archive->traverse(fileVisitor, dirWithSlash);
     }
 }
 
