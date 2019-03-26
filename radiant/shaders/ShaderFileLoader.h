@@ -19,9 +19,6 @@ template<typename ShaderLibrary_T> class ShaderFileLoader
     // The VFS module to provide shader files
     vfs::VirtualFileSystem& _vfs;
 
-    // The base path for the shaders (e.g. "materials/")
-    std::string _basePath;
-
     ShaderLibrary_T& _library;
 
     // List of shader definition files to parse
@@ -89,29 +86,23 @@ private:
 
 public:
     // Constructor. Set the basepath to prepend onto shader filenames.
-    ShaderFileLoader(vfs::VirtualFileSystem& fs, const std::string& path,
-                     ShaderLibrary_T& library)
-    : _vfs(fs), _basePath(path), _library(library)
+    ShaderFileLoader(vfs::VirtualFileSystem& fs, ShaderLibrary_T& library)
+    : _vfs(fs), _library(library)
     {
         _files.reserve(200);
     }
 
     void addFile(const vfs::FileInfo& fileInfo)
     {
-        // Construct the full VFS path
-        vfs::FileInfo fileWithBasePath = fileInfo;
-        fileWithBasePath.name = _basePath + fileInfo.name;
-        _files.push_back(fileWithBasePath);
+        _files.push_back(fileInfo);
     }
 
     void parseFiles()
     {
-        for (std::size_t i = 0; i < _files.size(); ++i)
+        for (const vfs::FileInfo& fileInfo: _files)
         {
-            const vfs::FileInfo& fileInfo = _files[i];
-
             // Open the file
-            ArchiveTextFilePtr file = _vfs.openTextFile(fileInfo.name);
+            ArchiveTextFilePtr file = _vfs.openTextFile(fileInfo.fullPath());
 
             if (file != nullptr)
             {

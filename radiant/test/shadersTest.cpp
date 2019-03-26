@@ -38,25 +38,30 @@ struct MockShaderLibrary
     }
 };
 
-BOOST_FIXTURE_TEST_CASE(loadShaderFiles, VFSFixture)
+void parseShadersFromPath(vfs::Doom3FileSystem& fs, const std::string& path,
+                          MockShaderLibrary& library)
 {
-    static const char* MATERIALS_PATH = "materials/";
     static const char* MATERIALS_EXT = "mtr";
 
-    MockShaderLibrary library;
-    shaders::ShaderFileLoader<MockShaderLibrary> loader(
-        fs, MATERIALS_PATH, library
-    );
+    ShaderFileLoader<MockShaderLibrary> loader(fs, library);
 
     // Walk the filesystem and load .mtr files
     fs.forEachFile(
-        MATERIALS_PATH, MATERIALS_EXT,
+        path, MATERIALS_EXT,
         [&](const vfs::FileInfo& fileInfo) { loader.addFile(fileInfo); },
         0
     );
 
     // Instruct the loader to parse MTR files and create ShaderDefinitions
     loader.parseFiles();
+}
+
+BOOST_FIXTURE_TEST_CASE(loadShaderFiles, VFSFixture)
+{
+    static const char* MATERIALS_PATH = "materials/";
+
+    MockShaderLibrary library;
+    parseShadersFromPath(fs, MATERIALS_PATH, library);
 
     // We should now see our example material definitions in the ShaderLibrary
     auto& defs = library.shaderDefs;
@@ -64,4 +69,16 @@ BOOST_FIXTURE_TEST_CASE(loadShaderFiles, VFSFixture)
     BOOST_TEST(defs.count("textures/orbweaver/drain_grille") == 1);
     BOOST_TEST(defs.count("models/md5/chars/nobles/noblewoman/noblebottom") == 1);
     BOOST_TEST(defs.count("tdm_spider_black") == 1);
+
+    // Parsing should work both with or without a trailing slash on the
+    // directory name
+    MockShaderLibrary libNoSlash;
+    parseShadersFromPath(fs, "materials", libNoSlash);
+    BOOST_TEST(libNoSlash.shaderDefs.size() == defs.size());
+    for (auto i1 = defs.begin(), i2 = libNoSlash.shaderDefs.begin();
+         i1 != defs.end() && i2 != libNoSlash.shaderDefs.end();
+         ++i1, ++i2)
+    {
+        BOOST_TEST(i1->first == i2->first);
+    }
 }
