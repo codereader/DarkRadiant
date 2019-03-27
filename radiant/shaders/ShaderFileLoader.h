@@ -85,16 +85,21 @@ private:
     }
 
 public:
-    // Constructor. Set the basepath to prepend onto shader filenames.
-    ShaderFileLoader(vfs::VirtualFileSystem& fs, ShaderLibrary_T& library)
+
+    /// Construct and initialise the ShaderFileLoader
+    ShaderFileLoader(vfs::VirtualFileSystem& fs, ShaderLibrary_T& library,
+                     const std::string& basedir,
+                     const std::string& extension = "mtr")
     : _vfs(fs), _library(library)
     {
         _files.reserve(200);
-    }
 
-    void addFile(const vfs::FileInfo& fileInfo)
-    {
-        _files.push_back(fileInfo);
+        // Walk the VFS and populate our files list
+        _vfs.forEachFile(
+            basedir, extension,
+            [this](const vfs::FileInfo& fi) { _files.push_back(fi); },
+            0
+        );
     }
 
     void parseFiles()

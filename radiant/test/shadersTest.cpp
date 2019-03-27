@@ -41,16 +41,8 @@ struct MockShaderLibrary
 void parseShadersFromPath(vfs::Doom3FileSystem& fs, const std::string& path,
                           MockShaderLibrary& library)
 {
-    static const char* MATERIALS_EXT = "mtr";
-
-    ShaderFileLoader<MockShaderLibrary> loader(fs, library);
-
     // Walk the filesystem and load .mtr files
-    fs.forEachFile(
-        path, MATERIALS_EXT,
-        [&](const vfs::FileInfo& fileInfo) { loader.addFile(fileInfo); },
-        0
-    );
+    ShaderFileLoader<MockShaderLibrary> loader(fs, library, path);
 
     // Instruct the loader to parse MTR files and create ShaderDefinitions
     loader.parseFiles();
