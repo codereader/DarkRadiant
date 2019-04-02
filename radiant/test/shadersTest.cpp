@@ -73,4 +73,17 @@ BOOST_FIXTURE_TEST_CASE(loadShaderFiles, VFSFixture)
     {
         BOOST_TEST(i1->first == i2->first);
     }
+
+    // ShaderDefinitions should contain their source file infos
+    const ShaderDefinition& drainGrille {
+        defs.find("textures/orbweaver/drain_grille")->second
+    };
+    BOOST_TEST(drainGrille.file.name == "example.mtr");
+    BOOST_TEST(drainGrille.file.visibility == vfs::Visibility::NORMAL);
+
+    const ShaderDefinition& nobleTop {
+        defs.find("models/md5/chars/nobles/noblewoman/nobletop")->second
+    };
+    BOOST_TEST(nobleTop.file.name == "tdm_ai_nobles.mtr");
+    BOOST_TEST(nobleTop.file.visibility == vfs::Visibility::NORMAL);
 }

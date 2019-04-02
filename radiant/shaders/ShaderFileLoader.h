@@ -73,7 +73,7 @@ private:
             ShaderTemplatePtr shaderTemplate(new ShaderTemplate(block.name, block.contents));
 
             // Construct the ShaderDefinition wrapper class
-            ShaderDefinition def(shaderTemplate, fileInfo.name);
+            ShaderDefinition def(shaderTemplate, fileInfo);
 
             // Insert into the definitions map, if not already present
             if (!_library.addDefinition(block.name, def))
