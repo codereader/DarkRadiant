@@ -1,0 +1,18 @@
+textures/orbweaver/drain_grille_h
+{
+    {
+        blend diffusemap
+        map textures/darkmod/metal/flat/heavy_rust_pocked01
+        vertexColor
+    }
+    {
+        blend bumpmap
+        map textures/orbweaver/draingrille_n.tga
+        vertexColor
+    }
+}
+
+textures/darkmod/another_white
+{
+    diffusemap _white
+}

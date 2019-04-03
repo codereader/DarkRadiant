@@ -75,15 +75,30 @@ BOOST_FIXTURE_TEST_CASE(loadShaderFiles, VFSFixture)
     }
 
     // ShaderDefinitions should contain their source file infos
-    const ShaderDefinition& drainGrille {
+    const auto& drainGrille {
         defs.find("textures/orbweaver/drain_grille")->second
     };
     BOOST_TEST(drainGrille.file.name == "example.mtr");
     BOOST_TEST(drainGrille.file.visibility == vfs::Visibility::NORMAL);
 
-    const ShaderDefinition& nobleTop {
+    const auto& nobleTop {
         defs.find("models/md5/chars/nobles/noblewoman/nobletop")->second
     };
     BOOST_TEST(nobleTop.file.name == "tdm_ai_nobles.mtr");
     BOOST_TEST(nobleTop.file.visibility == vfs::Visibility::NORMAL);
+
+    // Visibility should be parsed from assets.lst
+    const auto& hiddenTex {
+        defs.find("textures/orbweaver/drain_grille_h")->second
+    };
+    BOOST_TEST(hiddenTex.file.name == "hidden.mtr");
+    BOOST_TEST(hiddenTex.file.visibility == vfs::Visibility::HIDDEN);
+
+    // assets.lst visibility applies to the MTR file, and should propagate to
+    // all shaders within it
+    const auto& hiddenTex2 {
+        defs.find("textures/darkmod/another_white")->second
+    };
+    BOOST_TEST(hiddenTex2.file.name == "hidden.mtr");
+    BOOST_TEST(hiddenTex2.file.visibility == vfs::Visibility::HIDDEN);
 }
