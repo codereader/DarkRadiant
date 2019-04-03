@@ -95,7 +95,7 @@ void RenderablePicoModel::foreachVisibleSurface(const std::function<void(const S
 		// Check if the surface's shader is filtered, if not then submit it for rendering
 		const MaterialPtr& surfaceShader = surface.shader->getMaterial();
 
-		if (surfaceShader->isVisible())
+		if (surfaceShader && surfaceShader->isVisible())
 		{
 			func(surface);
 		}
