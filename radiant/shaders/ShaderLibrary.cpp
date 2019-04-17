@@ -117,9 +117,10 @@ std::size_t ShaderLibrary::getNumDefinitions()
 
 void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback)
 {
-    for (const ShaderDefinitionMap::value_type& pair : _definitions)
+    for (const auto& pair : _definitions)
 	{
-		callback(pair.first);
+        if (pair.second.file.visibility == vfs::Visibility::NORMAL)
+            callback(pair.first);
 	}
 }
 
