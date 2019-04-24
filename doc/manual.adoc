@@ -1201,3 +1201,51 @@ copy objects between layers using the options in the 2D view's context menu.
  from all other layers.
 
 *Remove from layer...*:: Remove the selected object from the chosen layer.
+
+== Features for game distributors
+
+DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
+Mod game installation, however it also offers a few features aimed at developers
+of the game itself.
+
+=== Controlling asset visibility
+
+As the development of a game progresses, certain models or textures may become
+obsolete or deprecated, either because they are no longer needed or because they
+fall short of the quality standard that is expected of new assets. If these
+models and textures have already been distributed, removing them from the game
+installation may be problematic, as maps which depend on them will fail to load
+correctly.
+
+DarkRadiant offers a mechanism to deal with this by allowing certain assets to
+be marked as "hidden". A hidden asset will no longer be presented for selection
+by the user (e.g. on the Media tab or in the Model selector), but will continue
+to function as normal when it appears in a loaded map.
+
+==== Creating an assets.lst file
+
+To change the visibility of assets, you need to create a file called
+`assets.lst` which resides in the top-level `models` or `materials` directories
+in the mod installation. This file may be inside a PK4 or in an extracted
+directory tree.
+
+The contents of `assets.lst` are a simple list of key/value pairs, assigning a
+visibility value to each named asset. For example:
+
+.assets.lst
+----
+darkmod/chairs/some_broken_chair.lwo=hidden
+darkmod/tables/another_table.ase=hidden
+----
+
+Asset paths listed on the left-hand side are interpreted relative to the
+directory containing `assets.lst` (which must be `models` or `materials`). The
+visibility value on the right-hand side must be either `hidden` or `normal`; a
+value of `normal` is equivalent to not listing the file at all, and results in
+no change to its visibility.
+
+NOTE: Only *files* may be listed in an `assets.lst`, not items in a virtual
+hierarchy such as the material shader tree. When an MTR file is listed as hidden
+in the `materials` directory, all shaders contained within it will be hidden in
+DarkRadiant. This means that in order to hide specific shaders, you must move
+these into one or more MTR files which are listed as hidden.

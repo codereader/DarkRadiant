@@ -505,6 +505,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
+<li><a href="#_features_for_game_distributors">Features for game distributors</a>
+<ul class="sectlevel2">
+<li><a href="#_controlling_asset_visibility">Controlling asset visibility</a>
+<ul class="sectlevel3">
+<li><a href="#_creating_an_assets_lst_file">Creating an assets.lst file</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -2487,10 +2496,80 @@ from all other layers.</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_features_for_game_distributors">Features for game distributors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
+Mod game installation, however it also offers a few features aimed at developers
+of the game itself.</p>
+</div>
+<div class="sect2">
+<h3 id="_controlling_asset_visibility">Controlling asset visibility</h3>
+<div class="paragraph">
+<p>As the development of a game progresses, certain models or textures may become
+obsolete or deprecated, either because they are no longer needed or because they
+fall short of the quality standard that is expected of new assets. If these
+models and textures have already been distributed, removing them from the game
+installation may be problematic, as maps which depend on them will fail to load
+correctly.</p>
+</div>
+<div class="paragraph">
+<p>DarkRadiant offers a mechanism to deal with this by allowing certain assets to
+be marked as "hidden". A hidden asset will no longer be presented for selection
+by the user (e.g. on the Media tab or in the Model selector), but will continue
+to function as normal when it appears in a loaded map.</p>
+</div>
+<div class="sect3">
+<h4 id="_creating_an_assets_lst_file">Creating an assets.lst file</h4>
+<div class="paragraph">
+<p>To change the visibility of assets, you need to create a file called
+<code>assets.lst</code> which resides in the top-level <code>models</code> or <code>materials</code> directories
+in the mod installation. This file may be inside a PK4 or in an extracted
+directory tree.</p>
+</div>
+<div class="paragraph">
+<p>The contents of <code>assets.lst</code> are a simple list of key/value pairs, assigning a
+visibility value to each named asset. For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">assets.lst</div>
+<div class="content">
+<pre>darkmod/chairs/some_broken_chair.lwo=hidden
+darkmod/tables/another_table.ase=hidden</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Asset paths listed on the left-hand side are interpreted relative to the
+directory containing <code>assets.lst</code> (which must be <code>models</code> or <code>materials</code>). The
+visibility value on the right-hand side must be either <code>hidden</code> or <code>normal</code>; a
+value of <code>normal</code> is equivalent to not listing the file at all, and results in
+no change to its visibility.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Only <strong>files</strong> may be listed in an <code>assets.lst</code>, not items in a virtual
+hierarchy such as the material shader tree. When an MTR file is listed as hidden
+in the <code>materials</code> directory, all shaders contained within it will be hidden in
+DarkRadiant. This means that in order to hide specific shaders, you must move
+these into one or more MTR files which are listed as hidden.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-01-22 21:10:46 GMT
+Last updated 2019-04-24 21:17:00 BST
 </div>
 </div>
 </body>
