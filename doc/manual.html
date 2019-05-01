@@ -503,6 +503,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_moving_objects_into_layers">Moving objects into layers</a></li>
 </ul>
 </li>
+<li><a href="#_filtering_map_elements">Filtering map elements</a>
+<ul class="sectlevel3">
+<li><a href="#_built_in_filters">Built-in filters</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_features_for_game_distributors">Features for game distributors</a>
@@ -2494,6 +2499,108 @@ from all other layers.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_filtering_map_elements">Filtering map elements</h3>
+<div class="paragraph">
+<p>While the Layers feature allows maps to be organised into manual groupings of
+objects, DarkRadiant also provides a mechanism for controlling the visibility of
+items based on their characteristics. This is controlled via the <strong>Filter</strong>
+menu.</p>
+</div>
+<div class="sect3">
+<h4 id="_built_in_filters">Built-in filters</h4>
+<div class="paragraph">
+<p>The <strong>Filter</strong> menu is populated with a number of built-in filter rules which are
+expected to be useful to mappers. Each filter may be activated independently,
+and each activated filter will be shown with a tick alongside its name. Filters
+operate in a "subtractive" sense: if a filter is active, objects matched by that
+filter will be hidden; the remaining visible objects will be those which are not
+matched by any active filters.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+Active filters are persisted into settings, and are therefore retained
+between DarkRadiant sessions.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The built-in filters include:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">All entities</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide all entities other than the worldspawn, leaving only brushes
+ and patches visible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">World geometry</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The inverse of <strong>All entities</strong>. Hides brushes and patches while
+ leaving entities visible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Brushes</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide only brushes, leaving patches and entities visible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Patches</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide only patches, leaving brushes and entities visible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Caulk</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide any brush or patch which has the <strong>caulk</strong> texture applied to at least
+ one surface.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Collision surfaces</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide the additional collision meshes which are embedded in
+ certain models, while leaving the models themselves visible. This filter is
+ especially useful because collision meshes often obscure parts of the model
+ itself.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Aside from the list of filters, the <strong>Filter</strong> menu contains three other options:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Activate all filters</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Activate every filter in the list. Very unlikely to be
+ useful, because it will probably result in every object in the map becoming
+ invisible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Deactivate all filters</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Turn off all active filters. This one <em>is</em> useful, since
+ you may have manually activated a number of filters and want to turn them all
+ off at once.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Edit filters&#8230;&#8203;</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Display a dialog allowing you to create, edit and manage the
+ list of available filters.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2569,7 +2676,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-24 21:17:00 BST
+Last updated 2019-05-01 20:45:46 BST
 </div>
 </div>
 </body>
