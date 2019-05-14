@@ -3,8 +3,9 @@
 #include "wxutil/dialog/DialogBase.h"
 #include <map>
 #include "Filter.h"
-#include "wxutil/TreeView.h"
 #include "wxutil/XmlResourceBasedWidget.h"
+
+#include <wx/dataview.h>
 
 namespace ui
 {
@@ -25,67 +26,12 @@ private:
 
 	std::map<int, wxWindow*> _widgets;
 
-	// Treemodel definition
-	struct ListColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		ListColumns() :
-			index(add(wxutil::TreeModel::Column::Integer)),
-			type(add(wxutil::TreeModel::Column::Integer)),
-			typeString(add(wxutil::TreeModel::Column::String)),
-			entityKey(add(wxutil::TreeModel::Column::String)),
-			regexMatch(add(wxutil::TreeModel::Column::String)),
-			showHide(add(wxutil::TreeModel::Column::String))
-		{}
+    // List of filter rules in order
+	wxDataViewListCtrl* _ruleList = nullptr;
 
-		wxutil::TreeModel::Column index;
-		wxutil::TreeModel::Column type;
-		wxutil::TreeModel::Column typeString;
-		wxutil::TreeModel::Column entityKey;
-		wxutil::TreeModel::Column regexMatch;
-		wxutil::TreeModel::Column showHide;
-	};
+	int _selectedRule = -1;
 
-	ListColumns _columns;
-
-	wxutil::TreeModel::Ptr _ruleStore;
-	wxutil::TreeView* _ruleView;
-
-	// Treemodel definition
-	struct TypeStoreColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		TypeStoreColumns() :
-			type(add(wxutil::TreeModel::Column::Integer)),
-			typeString(add(wxutil::TreeModel::Column::String))
-		{}
-
-		wxutil::TreeModel::Column type;
-		wxutil::TreeModel::Column typeString;
-	};
-
-	TypeStoreColumns _typeStoreColumns;
-	wxutil::TreeModel::Ptr _typeStore;
-
-	// Treemodel definition
-	struct ActionStoreColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		ActionStoreColumns() :
-			boolean(add(wxutil::TreeModel::Column::Boolean)),
-			action(add(wxutil::TreeModel::Column::String))
-		{}
-
-		wxutil::TreeModel::Column boolean;
-		wxutil::TreeModel::Column action;
-	};
-
-	ActionStoreColumns _actionStoreColumns;
-	wxutil::TreeModel::Ptr _actionStore;
-
-	int _selectedRule;
-
-	bool _updateActive;
+	bool _updateActive = false;
 	bool _viewOnly;
 
 public:
