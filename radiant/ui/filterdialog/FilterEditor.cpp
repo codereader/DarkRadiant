@@ -50,7 +50,7 @@ FilterEditor::FilterEditor(Filter& filter, wxWindow* parent, bool viewOnly) :
     // Update the widget contents
     update();
 
-    FitToScreen(0.66f, 0.4f);
+    FitToScreen(0.5f, 0.4f);
 }
 
 void FilterEditor::populateWindow()
@@ -133,6 +133,7 @@ void FilterEditor::createCriteriaPanel()
     _ruleList = new wxDataViewListCtrl(parent, wxID_ANY);
     parent->GetSizer()->Add(_ruleList, 1, wxEXPAND | wxLEFT, 12);
 
+    static const int INITIAL_WIDTH = 140;
     static const int FLAGS = wxDATAVIEW_COL_SORTABLE
                            | wxDATAVIEW_COL_RESIZABLE
                            | wxDATAVIEW_COL_REORDERABLE;
@@ -149,11 +150,11 @@ void FilterEditor::createCriteriaPanel()
     typeChoices.Add("entitykeyvalue");
 
     wxDataViewChoiceRenderer* typeChoiceRenderer = 
-        new wxDataViewChoiceRenderer(typeChoices, wxDATAVIEW_CELL_EDITABLE, wxALIGN_RIGHT);
+        new wxDataViewChoiceRenderer(typeChoices, wxDATAVIEW_CELL_EDITABLE, wxALIGN_LEFT);
     
     wxDataViewColumn* typeColumn = new wxDataViewColumn(
         _("Type"), typeChoiceRenderer, Columns::TYPE_STRING,
-        -1, wxALIGN_LEFT,
+        INITIAL_WIDTH, wxALIGN_LEFT,
         wxDATAVIEW_COL_REORDERABLE | wxDATAVIEW_COL_RESIZABLE
     );
     
@@ -161,11 +162,11 @@ void FilterEditor::createCriteriaPanel()
 
     // ENTITY_KEY (col 2)
     _ruleList->AppendTextColumn(_("Entity Key"), wxDATAVIEW_CELL_EDITABLE,
-                                -1, wxALIGN_NOT, FLAGS);
+                                INITIAL_WIDTH, wxALIGN_NOT, FLAGS);
 
     // MATCH (col 3)
     _ruleList->AppendTextColumn(_("Match"), wxDATAVIEW_CELL_EDITABLE,
-                                -1, wxALIGN_NOT, FLAGS);
+                                INITIAL_WIDTH, wxALIGN_NOT, FLAGS);
 
     // SHOWHIDE (col 4)
     wxArrayString actionChoices;
@@ -178,7 +179,7 @@ void FilterEditor::createCriteriaPanel()
     
     wxDataViewColumn* actionColumn = new wxDataViewColumn(
         _("Action"), actionChoiceRenderer, Columns::SHOWHIDE,
-        -1, wxALIGN_LEFT, FLAGS
+        INITIAL_WIDTH, wxALIGN_LEFT, FLAGS
     );
     
     _ruleList->AppendColumn(actionColumn);

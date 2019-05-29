@@ -24,8 +24,6 @@ private:
 	// The working copy of the Filter
 	Filter _filter;
 
-	std::map<int, wxWindow*> _widgets;
-
     // List of filter rules in order
 	wxDataViewListCtrl* _ruleList = nullptr;
 
