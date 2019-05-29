@@ -506,6 +506,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_filtering_map_elements">Filtering map elements</a>
 <ul class="sectlevel3">
 <li><a href="#_built_in_filters">Built-in filters</a></li>
+<li><a href="#_customising_filters">Customising filters</a></li>
 </ul>
 </li>
 </ul>
@@ -2600,6 +2601,75 @@ between DarkRadiant sessions.
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_customising_filters">Customising filters</h4>
+<div class="paragraph">
+<p>In addition to the filters supplied with the mod distribution, DarkRadiant also
+allows you to add your own custom filters to the list by choosing the <strong>Edit
+Filters&#8230;&#8203;</strong> menu option. This displays a dialog containing the list of all
+available filters, including built-in ones. Use the <strong>Add</strong> and <strong>Delete</strong> buttons
+to add or remove custom filters from the list, and the <strong>Edit</strong> button to enter a
+new dialog which allows you to edit the rules of the selected filter.</p>
+</div>
+<div class="paragraph">
+<p>Built-in filters cannot be removed or edited, but you can choose the <strong>View</strong>
+button to open the filter editor in a read-only mode.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/FilterEditor.png" alt="FilterEditor">
+</div>
+<div class="title">Figure 10. The filter editor dialog</div>
+</div>
+<div class="paragraph">
+<p>Each filter consists of a number of <strong>rules</strong>, which are applied in the order
+shown in the list box. Filters may contain only a single rule ("hide all speaker
+entities"), or multiple rules ("hide all entities, then show only speaker
+entities"). You can freely add, remove or reorder rules using the buttons to the
+right of the rules list.</p>
+</div>
+<div class="paragraph">
+<p>Each rule has the following components:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Index</strong></dt>
+<dd>
+<p>An integer representing the rule&#8217;s position in the list, numbered from
+zero.</p>
+</dd>
+<dt class="hdlist1"><strong>Type</strong></dt>
+<dd>
+<p>This controls what the rule is "looking for" when it tries to match
+objects to hide or show. Currently there are four rule types: <strong>entityclass</strong>
+which matches the classname of entities (e.g. "speaker"), <strong>object</strong> which
+matches either "brush" or "patch" and is used for controlling the visibility of
+map geometry, <strong>texture</strong> which matches the name of an applied texture, and
+<strong>entitykeyvalue</strong> which matches the value of a specific property on the entity.</p>
+</dd>
+<dt class="hdlist1"><strong>Entity Key</strong></dt>
+<dd>
+<p>This column is only used for <strong>entitykeyvalue</strong> rules, in which
+case it contains the name of the property to match (while the <em>value</em> to match
+will be contained in the <strong>Match</strong> column).</p>
+</dd>
+<dt class="hdlist1"><strong>Match</strong></dt>
+<dd>
+<p>This contains the actual value to be matched by the rule. Its
+interpretation and allowed values will depend on the rule type. For <strong>object</strong>
+type rules the value must be "brush" or "patch", whereas with all other rule
+types the value may be any arbitrary string.</p>
+</dd>
+<dt class="hdlist1"><strong>Action</strong></dt>
+<dd>
+<p>Choose whether this rule will result in matched objects being shown,
+or hidden. The filter system starts with everything being visible by default,
+so a filter which does not contain at least one <strong>hide</strong> rule will have no
+effect.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2676,7 +2746,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-05-01 20:45:46 BST
+Last updated 2019-05-29 21:03:46 BST
 </div>
 </div>
 </body>

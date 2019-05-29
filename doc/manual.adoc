@@ -1253,6 +1253,53 @@ Aside from the list of filters, the *Filter* menu contains three other options:
  list of available filters.
 |===
 
+==== Customising filters
+
+In addition to the filters supplied with the mod distribution, DarkRadiant also
+allows you to add your own custom filters to the list by choosing the *Edit
+Filters...* menu option. This displays a dialog containing the list of all
+available filters, including built-in ones. Use the *Add* and *Delete* buttons
+to add or remove custom filters from the list, and the *Edit* button to enter a
+new dialog which allows you to edit the rules of the selected filter.
+
+Built-in filters cannot be removed or edited, but you can choose the *View*
+button to open the filter editor in a read-only mode.
+
+.The filter editor dialog
+image::FilterEditor.png[align="center"]
+
+Each filter consists of a number of *rules*, which are applied in the order
+shown in the list box. Filters may contain only a single rule ("hide all speaker
+entities"), or multiple rules ("hide all entities, then show only speaker
+entities"). You can freely add, remove or reorder rules using the buttons to the
+right of the rules list.
+
+Each rule has the following components:
+
+*Index*:: An integer representing the rule's position in the list, numbered from
+ zero.
+
+*Type*:: This controls what the rule is "looking for" when it tries to match
+ objects to hide or show. Currently there are four rule types: *entityclass*
+ which matches the classname of entities (e.g. "speaker"), *object* which
+ matches either "brush" or "patch" and is used for controlling the visibility of
+ map geometry, *texture* which matches the name of an applied texture, and
+ *entitykeyvalue* which matches the value of a specific property on the entity.
+
+*Entity Key*:: This column is only used for *entitykeyvalue* rules, in which
+ case it contains the name of the property to match (while the _value_ to match
+ will be contained in the *Match* column).
+
+*Match*:: This contains the actual value to be matched by the rule. Its
+ interpretation and allowed values will depend on the rule type. For *object*
+ type rules the value must be "brush" or "patch", whereas with all other rule
+ types the value may be any arbitrary string.
+
+*Action*:: Choose whether this rule will result in matched objects being shown,
+ or hidden. The filter system starts with everything being visible by default,
+ so a filter which does not contain at least one *hide* rule will have no
+ effect.
+
 == Features for game distributors
 
 DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
