@@ -509,6 +509,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_customising_filters">Customising filters</a></li>
 </ul>
 </li>
+<li><a href="#_the_entity_list">The entity list</a></li>
 </ul>
 </li>
 <li><a href="#_features_for_game_distributors">Features for game distributors</a>
@@ -2671,6 +2672,40 @@ effect.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_the_entity_list">The entity list</h3>
+<div class="paragraph">
+<p>As a map becomes larger and more complex, keeping track of its contents may
+become more challenging. To assist with this, DarkRadiant provides an <strong>Entity
+List</strong> which functions as an "outline" view of the map, listing all entities and
+their child brushes and patches (if any).</p>
+</div>
+<div class="paragraph">
+<p>The entity list can be accessed by choosing the <strong>Entity List</strong> option from the
+<strong>View</strong> menu.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/EntityList.png" alt="EntityList">
+</div>
+<div class="title">Figure 11. The entity list, showing a number of entities in a small test map</div>
+</div>
+<div class="paragraph">
+<p>The tree structure shown in the entity list corresponds to the structure of the
+map itself: a single "world" entity which acts as the parent of the brushes and
+patches in the map, alongside a number of other entities that have been placed
+by the mapper, some of which may contain their own child brushes or patches.</p>
+</div>
+<div class="paragraph">
+<p>Clicking on an entity in the list will cause it to be selected in the map. If
+the <strong>Focus camera on selected entity</strong> checkbox is enabled, the camera will
+additionally be moved to view the clicked entity.</p>
+</div>
+<div class="paragraph">
+<p>By enabling the <strong>List visible nodes only</strong> checkbox, you can limit the entity
+list to show only entities which are not currently hidden via filters.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2746,7 +2781,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-05-29 21:03:46 BST
+Last updated 2019-06-04 20:37:55 BST
 </div>
 </div>
 </body>

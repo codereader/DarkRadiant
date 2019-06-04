@@ -1300,6 +1300,31 @@ Each rule has the following components:
  so a filter which does not contain at least one *hide* rule will have no
  effect.
 
+=== The entity list
+
+As a map becomes larger and more complex, keeping track of its contents may
+become more challenging. To assist with this, DarkRadiant provides an *Entity
+List* which functions as an "outline" view of the map, listing all entities and
+their child brushes and patches (if any).
+
+The entity list can be accessed by choosing the *Entity List* option from the
+*View* menu.
+
+.The entity list, showing a number of entities in a small test map
+image::EntityList.png[align="center"]
+
+The tree structure shown in the entity list corresponds to the structure of the
+map itself: a single "world" entity which acts as the parent of the brushes and
+patches in the map, alongside a number of other entities that have been placed
+by the mapper, some of which may contain their own child brushes or patches.
+
+Clicking on an entity in the list will cause it to be selected in the map. If
+the *Focus camera on selected entity* checkbox is enabled, the camera will
+additionally be moved to view the clicked entity.
+
+By enabling the *List visible nodes only* checkbox, you can limit the entity
+list to show only entities which are not currently hidden via filters.
+
 == Features for game distributors
 
 DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
