@@ -445,7 +445,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_navigating_the_2d_view">Navigating the 2D view</a></li>
 <li><a href="#_adjusting_the_grid">Adjusting the grid</a></li>
 <li><a href="#_using_the_3d_camera_view">Using the 3D camera view</a></li>
-<li><a href="#_manipulating_objects">Manipulating objects</a></li>
+<li><a href="#_manipulating_objects">Manipulating objects</a>
+<ul class="sectlevel3">
+<li><a href="#_flipping_and_rotating">Flipping and rotating</a></li>
+<li><a href="#_manipulator_modes">Manipulator modes</a></li>
+</ul>
+</li>
 <li><a href="#_working_with_brushes">Working with brushes</a>
 <ul class="sectlevel3">
 <li><a href="#CreatingABrush">Creating a brush</a></li>
@@ -1117,6 +1122,85 @@ edge to move that edge inwards or outwards. Dragging outside a corner allows you
 to move two edges at once.
 </td>
 </tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_flipping_and_rotating">Flipping and rotating</h4>
+<div class="paragraph">
+<p>DarkRadiant provides six buttons to quickly flip or rotate objects (in 90 degree
+increments) around each of the three world axes. These are available on the
+left-hand vertical toolbar.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 9.0909%;">
+<col style="width: 90.9091%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_flipx.png" alt="brush flipx" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flip along the X axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_rotatex.png" alt="brush rotatex" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rotate around the X axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_flipy.png" alt="brush flipy" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flip along the Y axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_rotatey.png" alt="brush rotatey" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rotate around the Y axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_flipz.png" alt="brush flipz" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flip along the Z axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_rotatez.png" alt="brush rotatez" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rotate around the Z axis</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_manipulator_modes">Manipulator modes</h4>
+<div class="paragraph">
+<p>For more precise control over object motion, there are three manipulator modes
+which can be selected with buttons on the left-hand vertical toolbar.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 7.1428%;">
+<col style="width: 21.4285%;">
+<col style="width: 71.4287%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/select_mousetranslate.png" alt="select mousetranslate" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Translate mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A manipulator widget with axis-aligned arrows will be displayed at the selected
+object&#8217;s center. Click and drag one of the arrows to move the object along that
+axis, or drag inside the manipulator box to move the object in two dimensions.
+This mode may be useful for moving brushes around without accidentally resizing
+them.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/select_mouserotate.png" alt="select mouserotate" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Rotate mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A widget with three axis-aligned rings will be displayed at the selected
+object&#8217;s center. Drag a ring to rotate the object by any arbitrary amount around
+that ring&#8217;s axis.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/select_mouseresize.png" alt="select mouseresize" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Resize mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This is the default Radiant drag mode (hence the "QE" icon referring to the
+original QERadiant) which allows you to move objects by dragging inside them and
+resize by dragging outside the boundary edges.</p></td>
+</tr>
+</tbody>
 </table>
 </div>
 </div>
@@ -2781,7 +2865,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-04 20:37:55 BST
+Last updated 2019-06-11 20:57:01 BST
 </div>
 </div>
 </body>

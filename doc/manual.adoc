@@ -338,6 +338,47 @@ or on a dedicated resizing handle, you can click and drag anywhere outside an
 edge to move that edge inwards or outwards. Dragging outside a corner allows you
 to move two edges at once.
 
+==== Flipping and rotating
+
+DarkRadiant provides six buttons to quickly flip or rotate objects (in 90 degree
+increments) around each of the three world axes. These are available on the
+left-hand vertical toolbar.
+
+[cols="^1h,10"]
+|===
+|image:brush_flipx.png[align="center",width=24]|Flip along the X axis
+|image:brush_rotatex.png[align="center",width=24]|Rotate around the X axis
+|image:brush_flipy.png[align="center",width=24]|Flip along the Y axis
+|image:brush_rotatey.png[align="center",width=24]|Rotate around the Y axis
+|image:brush_flipz.png[align="center",width=24]|Flip along the Z axis
+|image:brush_rotatez.png[align="center",width=24]|Rotate around the Z axis
+|===
+
+==== Manipulator modes
+
+For more precise control over object motion, there are three manipulator modes
+which can be selected with buttons on the left-hand vertical toolbar.
+
+[cols="^1h,3h,10"]
+|===
+|image:select_mousetranslate.png[align="center",width=24]|Translate mode|
+A manipulator widget with axis-aligned arrows will be displayed at the selected
+object's center. Click and drag one of the arrows to move the object along that
+axis, or drag inside the manipulator box to move the object in two dimensions.
+This mode may be useful for moving brushes around without accidentally resizing
+them.
+|image:select_mouserotate.png[align="center",width=24]|Rotate mode|
+A widget with three axis-aligned rings will be displayed at the selected
+object's center. Drag a ring to rotate the object by any arbitrary amount around
+that ring's axis.
+|image:select_mouseresize.png[align="center",width=24]|Resize mode|
+This is the default Radiant drag mode (hence the "QE" icon referring to the
+original QERadiant) which allows you to move objects by dragging inside them and
+resize by dragging outside the boundary edges.
+|===
+
+
+
 === Working with brushes
 
 Brushes are the basic building blocks of all maps. Typically they are used for
