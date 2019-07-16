@@ -243,6 +243,7 @@ Static meshes and animated AI can be positioned more freely, however grid
 snapping is a useful tool for ensuring that models are appropriately aligned
 with the level geometry.
 
+[[Using3DCameraView]]
 === Using the 3D camera view
 
 The 3D camera view provides an approximate rendering of the map in three
@@ -376,8 +377,6 @@ This is the default Radiant drag mode (hence the "QE" icon referring to the
 original QERadiant) which allows you to move objects by dragging inside them and
 resize by dragging outside the boundary edges.
 |===
-
-
 
 === Working with brushes
 
@@ -1365,6 +1364,47 @@ additionally be moved to view the clicked entity.
 
 By enabling the *List visible nodes only* checkbox, you can limit the entity
 list to show only entities which are not currently hidden via filters.
+
+== Configuring DarkRadiant
+
+DarkRadiant offers a large number of configurable options which can be used to
+tailor its behaviour to your desired workflow. Most of these options can be
+found either in the Preferences dialog or exposed directly as menu items.
+
+=== The Preferences dialog
+
+The Preferences dialog can be shown by choosing `Preferences...` from the `Edit`
+menu. The dialog contains a number of pages containing groups of logically
+related options.
+
+==== Camera settings
+
+The *Camera* page contains options relating to the movement and behaviour of the
+3D camera.
+
+*Movement Speed*:: Use this slider to control how many game units the camera
+ moves forwards or backwards when you use the scroll wheel in the 3D view. It
+ does not affect the speed of rotation or lateral dragging (e.g. with *Ctrl*) in
+ free look mode, nor does it affect motion with the arrow keys.
+
+*Rotation Speed*:: This controls the speed of angular rotation when dragging the
+ mouse after entering free look mode with right-click. If you have a high DPI
+ mouse and want to be able to direct the camera more precisely, reducing this
+ setting may help.
+
+*Freelook mode can be toggled*:: Disabling this checkbox makes the free look
+ functionality behave more like typical MMO games, where you hold down the right
+ mouse button and drag to move the camera around. Uncheck this option if you
+ hate modal interfaces or find the default toggle behaviour confusing.
+
+*Discrete movement (non-freelook mode)*:: If this is checked, moving the camera
+ with the arrow keys in non-freelook mode will cause discrete jumps in position,
+ rather than smooth motion.
+
+*Enable far clip plane*:: You can completely disable the <<Using3DCameraView,far
+ clip plane>> by unchecking this option. This will avoid the need to manage the
+ position of the far clip plane, but may negatively impact rendering performance
+ in large or complex maps.
 
 == Features for game distributors
 
