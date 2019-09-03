@@ -265,6 +265,10 @@ void CamWnd::updateToolbarVisibility()
 
     _mainWxWidget->FindWindow("CamToolbar")->Show(visible);
     _mainWxWidget->FindWindow("MiscToolbar")->Show(visible);
+
+    // WxWidgets/GTK doesn't seem to automatically refresh the layout when we
+    // hide/show the toolbars
+    _mainWxWidget->GetSizer()->Layout();
 }
 
 void CamWnd::onGLExtensionsInitialised()
