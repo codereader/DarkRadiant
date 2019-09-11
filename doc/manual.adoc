@@ -1418,6 +1418,27 @@ The *Camera* page contains options relating to the movement and behaviour of the
  of the 3D camera window (which includes the render mode buttons and the far
  clip plane controls).
 
+==== Orthoview settings
+
+The *Orthoview* page contains options controlling the display and behaviour of
+the 2D views.
+
+*View chases mouse cursor during drags*:: If this is enabled, dragging an object
+ off the edge of a 2D view will cause the 2D view to automatically scroll to
+ keep the dragged object in view. If disabled, the dragged object will reach the
+ edge and stop. You can control the speed of the scrolling with the *Maximum
+ Chase Mouse Speed* slider.
+
+*Update views on camera movement*:: This option controls whether the camera
+ position indicator in the 2D views is automatically kept in sync with camera
+ movements in the 3D window. If this option is disabled, the 2D view camera
+ indicator may not move until you explicitly click on or interact with a 2D
+ view.
+
+*Show crosshairs*:: Enable this option to display full-window-sized crosshairs
+ tracking the mouse cursor whenever it moves over a 2D window. This may assist
+ with precise selection or object alignment.
+
 == Features for game distributors
 
 DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
