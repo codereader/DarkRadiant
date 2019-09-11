@@ -1406,6 +1406,18 @@ The *Camera* page contains options relating to the movement and behaviour of the
  position of the far clip plane, but may negatively impact rendering performance
  in large or complex maps.
 
+*Invert mouse vertical axis*:: Enable this option to flip the sense of the
+ vertical camera motion when freelook mode is enabled, so that moving the mouse
+ upwards tilts the camera downwards, and vice versa.
+
+*Solid selection boxes*:: This option controls whether selected brushes are
+ drawn with a dashed outline (option disabled) or a solid line (option enabled).
+ It affects both the 2D and the 3D views.
+
+*Show camera toolbar*:: Uncheck this to completely hide the toolbar at the top
+ of the 3D camera window (which includes the render mode buttons and the far
+ clip plane controls).
+
 == Features for game distributors
 
 DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
