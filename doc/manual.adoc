@@ -1439,6 +1439,40 @@ the 2D views.
  tracking the mouse cursor whenever it moves over a 2D window. This may assist
  with precise selection or object alignment.
 
+*Show grid*:: Control the visibility of grid lines in the 2D views. This does
+ not affect the snapping behaviour, just the visual rendering of the grid.
+
+*Show size info*:: Control the visibility of the text overlays which show the
+ dimensions of a selected object on the X, Y or Z axes. This option is also
+ available in the `View -> Show` menu.
+
+*Show entity angle arrow*:: Hide or show the small arrow which indicates the
+ direction of an entity with an `angle` spawnarg, such as `info_player_start`.
+ This affects both the 2D and 3D views.
+
+*Show entity names*:: Enable this to show permanently-visible text names next to
+ each entity in the map. This option is also available as `View -> Show -> Show
+ names`.
+
+*Show blocks*:: If enabled, the world space is divided into a horizontal grid of
+ 1024x1024 unit blocks (of infinite height) which are outlined in blue in the 2D
+ views. Each block is assigned a pair of numbers representing its position from
+ the centermost block, which is assigned `(0, 0)`. This might help with
+ "blocking out" a map at the beginning of the design phase. This option is also
+ available in the `View -> Show` menu.
+
+*Show coordinates*:: Toggle the visibility of the coordinate rulers along the
+ edges of the 2D window. Also available in the `View -> Show` menu.
+
+*Show axes*:: Control the visibility of the axis widget displayed at the
+ top-left of each 2D window and at the world origin. Also available in the `View
+ -> Show` menu.
+
+*Show window outline*:: Enable this to draw a rectangular outline around the
+ edge of the 2D window. Depending on the platform and GUI theme this may be
+ almost invisible, but might be useful to improve visibility in certain
+ environments.
+
 == Features for game distributors
 
 DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
