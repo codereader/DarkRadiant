@@ -355,6 +355,7 @@ left-hand vertical toolbar.
 |image:brush_rotatez.png[align="center",width=24]|Rotate around the Z axis
 |===
 
+[[ManipulatorModes]]
 ==== Manipulator modes
 
 For more precise control over object motion, there are three manipulator modes
@@ -836,6 +837,7 @@ properties of the sound shader itself, such as volume.
 place the player when a map is first loaded. A map without such an entity will
 not be playable.
 
+[[CreatingLights]]
 ==== Creating lights
 
 To create a light, *Right click* in the 2D view and choose *Create light…*.
@@ -1472,6 +1474,27 @@ the 2D views.
  edge of the 2D window. Depending on the platform and GUI theme this may be
  almost invisible, but might be useful to improve visibility in certain
  environments.
+
+*Show workzone*:: The 'workzone' is an imaginary axis-aligned cuboid which
+ encloses the set of currently-selected items (this is what defines the volume
+ of a new light, when a <<CreatingLights,light is created>> from one or more
+ existing brushes). Enabling this option causes the workzone to be outlined in
+ red in the 2D views. Also available in the `View -> Show` menu.
+
+*Translate manipulator always constrained to axis*:: This option affects the
+ behaviour of the <<ManipulatorModes,translate manipulator>>. When the option is
+ disabled, dragging a selected object in translation mode will behave as if the
+ manipulator's *central square* is being dragged, and allow motion in two
+ dimensions. If the option is enabled, dragging the selected object will behave
+ as if the closest manipulator *arrow* is being dragged, and allow motion along
+ only a single axis. Translation in two dimensions will always be possible by
+ clicking on the manipulator's central square directly, regardless of the state
+ of this option.
+
+*Higher selection priority for entities*:: When using the mouse to click on and
+ select an entity which is in front of, behind or inside a brush, this option
+ controls whether DarkRadiant will prefer to select the entity (enabled) or the
+ brush (disabled).
 
 == Features for game distributors
 

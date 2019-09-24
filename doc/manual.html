@@ -448,7 +448,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_manipulating_objects">Manipulating objects</a>
 <ul class="sectlevel3">
 <li><a href="#_flipping_and_rotating">Flipping and rotating</a></li>
-<li><a href="#_manipulator_modes">Manipulator modes</a></li>
+<li><a href="#ManipulatorModes">Manipulator modes</a></li>
 </ul>
 </li>
 <li><a href="#_working_with_brushes">Working with brushes</a>
@@ -478,7 +478,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_working_with_entities">Working with entities</a>
 <ul class="sectlevel3">
-<li><a href="#_creating_lights">Creating lights</a></li>
+<li><a href="#CreatingLights">Creating lights</a></li>
 <li><a href="#CreatingModels">Creating models</a></li>
 <li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
 <li><a href="#_creating_other_entity_types">Creating other entity types</a></li>
@@ -1175,7 +1175,7 @@ left-hand vertical toolbar.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_manipulator_modes">Manipulator modes</h4>
+<h4 id="ManipulatorModes">Manipulator modes</h4>
 <div class="paragraph">
 <p>For more precise control over object motion, there are three manipulator modes
 which can be selected with buttons on the left-hand vertical toolbar.</p>
@@ -1906,7 +1906,7 @@ not be playable.</p>
 </dl>
 </div>
 <div class="sect3">
-<h4 id="_creating_lights">Creating lights</h4>
+<h4 id="CreatingLights">Creating lights</h4>
 <div class="paragraph">
 <p>To create a light, <strong>Right click</strong> in the 2D view and choose <strong>Create light…</strong>.
 The position and size of the light volume depends on the current selection:</p>
@@ -2960,6 +2960,33 @@ edge of the 2D window. Depending on the platform and GUI theme this may be
 almost invisible, but might be useful to improve visibility in certain
 environments.</p>
 </dd>
+<dt class="hdlist1"><strong>Show workzone</strong></dt>
+<dd>
+<p>The 'workzone' is an imaginary axis-aligned cuboid which
+encloses the set of currently-selected items (this is what defines the volume
+of a new light, when a <a href="#CreatingLights">light is created</a> from one or more
+existing brushes). Enabling this option causes the workzone to be outlined in
+red in the 2D views. Also available in the <code>View &#8594; Show</code> menu.</p>
+</dd>
+<dt class="hdlist1"><strong>Translate manipulator always constrained to axis</strong></dt>
+<dd>
+<p>This option affects the
+behaviour of the <a href="#ManipulatorModes">translate manipulator</a>. When the option is
+disabled, dragging a selected object in translation mode will behave as if the
+manipulator&#8217;s <strong>central square</strong> is being dragged, and allow motion in two
+dimensions. If the option is enabled, dragging the selected object will behave
+as if the closest manipulator <strong>arrow</strong> is being dragged, and allow motion along
+only a single axis. Translation in two dimensions will always be possible by
+clicking on the manipulator&#8217;s central square directly, regardless of the state
+of this option.</p>
+</dd>
+<dt class="hdlist1"><strong>Higher selection priority for entities</strong></dt>
+<dd>
+<p>When using the mouse to click on and
+select an entity which is in front of, behind or inside a brush, this option
+controls whether DarkRadiant will prefer to select the entity (enabled) or the
+brush (disabled).</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -3039,7 +3066,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-18 20:57:50 BST
+Last updated 2019-09-24 20:28:25 BST
 </div>
 </div>
 </body>
