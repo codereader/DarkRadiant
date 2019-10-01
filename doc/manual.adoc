@@ -1496,6 +1496,34 @@ the 2D views.
  controls whether DarkRadiant will prefer to select the entity (enabled) or the
  brush (disabled).
 
+==== Multi Monitor settings
+
+The Multi Monitor page contains a single setting, *Start DarkRadiant on
+monitor*, which allows you to choose which monitor DarkRadiant will start on if
+you have several available.
+
+==== Autosave settings
+
+*Enable Autosave*:: Controls whether the autosave feature is active or disabled.
+
+*Autosave Interval*:: Use this slider to choose how often DarkRadiant will make
+ an autosave. By default, autosaves are made every 5 minutes.
+
+*Save Snapshots*:: If this option is enabled, DarkRadiant will make each
+ autosave into a separate copy of the map file, allowing you to potentially
+ revert changes which were made several autosaves ago. If this option is
+ disabled, there will only ever be a single autosave file, which will protect
+ against DarkRadiant or system crashes but not against long-term erroneous
+ changes.
+
+*Snapshot folder*:: This specifies the name of the folder used to store snapshot
+ autosaves, if the *Save Snapshots* option is enabled.
+
+*Max Snapshot size per map*:: This allows you to control the amount of disk
+ space used for storing snapshots, by specifying a maximum number of megabytes
+ that will be used for storing the snapshots for a single map. If the disk usage
+ grows above this limit, DarkRadiant will start to delete old snapshots.
+
 == Features for game distributors
 
 DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
