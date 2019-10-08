@@ -490,6 +490,7 @@ brush with sloping sides. However, with a more complex brush shape, the
 complexity of the resulting wall geometry increases considerably, so attempting
 to hollow out a 7-sided sphere is probably ill-advised.
 
+[[SplittingBrushes]]
 ==== Splitting brushes
 
 Sometimes it is necessary to divide a brush into two or more pieces, perhaps to
@@ -1523,6 +1524,35 @@ you have several available.
  space used for storing snapshots, by specifying a maximum number of megabytes
  that will be used for storing the snapshots for a single map. If the disk usage
  grows above this limit, DarkRadiant will start to delete old snapshots.
+
+==== Clipper settings
+
+*Clipper tool uses caulk texture*:: If this option is enabled, the
+ <<SplittingBrushes,clipper tool>> will texture the newly-created clip face with
+ the texture specified in the *Caulk shader name* text field. If the option is
+ disabled, the new face will be given the same texture as the rest of the brush.
+
+==== Grid settings
+
+This page contains a couple of options relating to the appearance and default
+behaviour of the grid.
+
+*Default grid size*:: Use this combo box to choose the default grid size used in
+ new projects (to change the grid size in the _current_ project, use the options
+ in the *Grid* main menu).
+
+*Major grid style*:: Choose the rendering style for the major grid lines.
+ Available options are *Lines*, *Dotted Lines*, *More Dotted Lines*, *Crosses*,
+ *Dots*, *Big Dots*, and *Squares*.
+
+*Minor grid style*:: Choose the rendering style for the minor grid lines.
+ Available options are the same as the *Major grid style* combo box.
+
+==== Undo settings
+
+*Undo Queue Size*:: Use this spinbox to control the number of operations which
+ are saved onto DarkRadiant's internal undo stack. Larger values provide a
+ longer history of undoable operations, at the expense of requiring more memory.
 
 == Features for game distributors
 
