@@ -752,6 +752,7 @@ selected object by *Left clicking* on them. By *Right clicking* on a texture you
 can access a context menu with a single command *Seek in Media browser*, which
 will highlight the clicked texture in the *Media* tab.
 
+[[SurfaceInspector]]
 ==== Using the Surface Inspector
 
 Once a texture is applied via the Media or Textures tabs, you will most likely
@@ -1548,11 +1549,34 @@ behaviour of the grid.
 *Minor grid style*:: Choose the rendering style for the minor grid lines.
  Available options are the same as the *Major grid style* combo box.
 
+==== Selection settings
+
+*Ignore light volume bounds when calculating default rotation pivot location*::
+ This option affects the behaviour of the <<ManipulatorModes,rotation tool>>
+ when multiple objects are selected. DarkRadiant will place the rotation widget
+ at the approximate "center of gravity" of the set of selected objects. If this
+ option is enabled, any selected lights will be treated as point entities, with
+ no volume in 3D space regardless of their actual light volumes. If this option
+ is disabled, the entire light volume will be taken into account as if the light
+ were a rectangular brush.
+
 ==== Undo settings
 
 *Undo Queue Size*:: Use this spinbox to control the number of operations which
  are saved onto DarkRadiant's internal undo stack. Larger values provide a
  longer history of undoable operations, at the expense of requiring more memory.
+
+==== Primitives settings
+
+This page contains two options controlling the default behaviour of applied
+textures. These values can be set on a per-object basis using the
+<<SurfaceInspector,Surface Inspector>>.
+
+*Default texture scale*:: Set a default scale factor for newly applied textures.
+
+*Enable texture lock*:: Set the default value of the Texture Lock button. See
+ the <<SurfaceInspector,Surface Inspector>> section for more details on this
+ feature.
 
 == Features for game distributors
 

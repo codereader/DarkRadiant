@@ -473,7 +473,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#MediaTab">The Media tab</a></li>
 <li><a href="#_the_textures_tab">The Textures tab</a></li>
-<li><a href="#_using_the_surface_inspector">Using the Surface Inspector</a></li>
+<li><a href="#SurfaceInspector">Using the Surface Inspector</a></li>
 </ul>
 </li>
 <li><a href="#_working_with_entities">Working with entities</a>
@@ -527,7 +527,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_autosave_settings">Autosave settings</a></li>
 <li><a href="#_clipper_settings">Clipper settings</a></li>
 <li><a href="#_grid_settings">Grid settings</a></li>
+<li><a href="#_selection_settings">Selection settings</a></li>
 <li><a href="#_undo_settings">Undo settings</a></li>
+<li><a href="#_primitives_settings">Primitives settings</a></li>
 </ul>
 </li>
 </ul>
@@ -1774,7 +1776,7 @@ will highlight the clicked texture in the <strong>Media</strong> tab.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_using_the_surface_inspector">Using the Surface Inspector</h4>
+<h4 id="SurfaceInspector">Using the Surface Inspector</h4>
 <div class="paragraph">
 <p>Once a texture is applied via the Media or Textures tabs, you will most likely
 wish to adjust the alignment and scale of the texture on the brush or patch
@@ -3083,6 +3085,23 @@ Available options are the same as the <strong>Major grid style</strong> combo bo
 </div>
 </div>
 <div class="sect3">
+<h4 id="_selection_settings">Selection settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Ignore light volume bounds when calculating default rotation pivot location</strong></dt>
+<dd>
+<p>This option affects the behaviour of the <a href="#ManipulatorModes">rotation tool</a>
+when multiple objects are selected. DarkRadiant will place the rotation widget
+at the approximate "center of gravity" of the set of selected objects. If this
+option is enabled, any selected lights will be treated as point entities, with
+no volume in 3D space regardless of their actual light volumes. If this option
+is disabled, the entire light volume will be taken into account as if the light
+were a rectangular brush.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
 <h4 id="_undo_settings">Undo settings</h4>
 <div class="dlist">
 <dl>
@@ -3091,6 +3110,28 @@ Available options are the same as the <strong>Major grid style</strong> combo bo
 <p>Use this spinbox to control the number of operations which
 are saved onto DarkRadiant&#8217;s internal undo stack. Larger values provide a
 longer history of undoable operations, at the expense of requiring more memory.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_primitives_settings">Primitives settings</h4>
+<div class="paragraph">
+<p>This page contains two options controlling the default behaviour of applied
+textures. These values can be set on a per-object basis using the
+<a href="#SurfaceInspector">Surface Inspector</a>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Default texture scale</strong></dt>
+<dd>
+<p>Set a default scale factor for newly applied textures.</p>
+</dd>
+<dt class="hdlist1"><strong>Enable texture lock</strong></dt>
+<dd>
+<p>Set the default value of the Texture Lock button. See
+the <a href="#SurfaceInspector">Surface Inspector</a> section for more details on this
+feature.</p>
 </dd>
 </dl>
 </div>
@@ -3171,7 +3212,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-08 20:46:42 BST
+Last updated 2019-10-16 20:53:04 BST
 </div>
 </div>
 </body>
