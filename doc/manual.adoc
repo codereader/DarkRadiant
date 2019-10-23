@@ -734,6 +734,7 @@ provides easy access to a user-chosen group of textures, and can be accessed by
 choosing the *Show Favourites* radio button at the top of the panel.
 |===
 
+[[TexturesTab]]
 ==== The Textures tab
 
 The *Textures* tab provides a scrollable canvas containing preview swatches of
@@ -1577,6 +1578,23 @@ textures. These values can be set on a per-object basis using the
 *Enable texture lock*:: Set the default value of the Texture Lock button. See
  the <<SurfaceInspector,Surface Inspector>> section for more details on this
  feature.
+
+==== Texture Browser settings
+
+These options control the behaviour of the <<TexturesTab,Textures tab>>.
+
+*Uniform texture thumbnail size*:: Choose the size in pixels that will be used
+ for texture thumbnails.
+
+*Texture scrollbar*:: Hide or show the scrollbar in the textures tab. If the
+ scrollbar is hidden, scrolling is only possible with the mouse wheel.
+
+*Mousewheel increment*:: This option determines how much the window is scrolled
+ when the mouse wheel is rotated.
+
+*Max shadername length*:: Choose the maximum number of characters that may
+ appear in each texture name. If a texture contains more characters than this,
+ the texture name will be abbreviated with "..." in the middle.
 
 == Features for game distributors
 
