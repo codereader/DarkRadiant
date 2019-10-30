@@ -499,7 +499,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_working_with_prefabs">Working with prefabs</a>
 <ul class="sectlevel3">
 <li><a href="#_exporting_to_a_prefab">Exporting to a prefab</a></li>
-<li><a href="#_importing_a_prefab">Importing a prefab</a></li>
+<li><a href="#ImportPrefab">Importing a prefab</a></li>
 </ul>
 </li>
 <li><a href="#_using_layers">Using layers</a>
@@ -517,6 +517,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_the_entity_list">The entity list</a></li>
 </ul>
 </li>
+<li><a href="#_command_reference">Command reference</a>
+<ul class="sectlevel2">
+<li><a href="#_file_menu">File menu</a></li>
+</ul>
+</li>
 <li><a href="#_configuring_darkradiant">Configuring DarkRadiant</a>
 <ul class="sectlevel2">
 <li><a href="#_the_preferences_dialog">The Preferences dialog</a>
@@ -531,6 +536,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_undo_settings">Undo settings</a></li>
 <li><a href="#_primitives_settings">Primitives settings</a></li>
 <li><a href="#_texture_browser_settings">Texture Browser settings</a></li>
+<li><a href="#_map_files_settings">Map files settings</a></li>
 </ul>
 </li>
 </ul>
@@ -2439,7 +2445,7 @@ outside the game installation directory.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_importing_a_prefab">Importing a prefab</h4>
+<h4 id="ImportPrefab">Importing a prefab</h4>
 <div class="paragraph">
 <p>Either right-click in the 2D window and choose <strong>Insert prefab&#8230;&#8203;</strong>, or open the
 <strong>File</strong> menu and choose <strong>Import prefab&#8230;&#8203;</strong>. This will show the prefab browser.</p>
@@ -2811,6 +2817,73 @@ list to show only entities which are not currently hidden via filters.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_command_reference">Command reference</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_file_menu">File menu</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>New map</strong></dt>
+<dd>
+<p>Prompt to save and close the current map (if necessary), then start
+working on a new empty map.</p>
+</dd>
+<dt class="hdlist1"><strong>Open map&#8230;&#8203;</strong></dt>
+<dd>
+<p>Prompt to save and close the current map (if necessary), then
+display a file browser to choose and load an existing map file from disk.</p>
+</dd>
+<dt class="hdlist1"><strong>Import map&#8230;&#8203;</strong></dt>
+<dd>
+<p>Display a file browser to choose and load an existing map file
+from disk, merging the contents with the existing map</p>
+</dd>
+<dt class="hdlist1"><strong>Import prefab&#8230;&#8203;</strong></dt>
+<dd>
+<p>Display the <a href="#ImportPrefab">prefab browser</a> to choose and
+import a prefab from disk.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Importing a map and importing a prefab are functionally identical
+operations; the only difference is the user interface used for choosing what to
+import. The prefab browser is designed to offer a user-friendly workflow for
+browsing, previewing and importing from a library of frequently-used map
+elements, while <strong>Import map</strong> may be more useful for merging two or more
+partially-complete maps.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Save</strong></dt>
+<dd>
+<p>Save the current map to disk under its existing file name.</p>
+</dd>
+<dt class="hdlist1"><strong>Save as&#8230;&#8203;</strong></dt>
+<dd>
+<p>Display a file browser to choose a new name for the current map,
+then save to this new file name in future.</p>
+</dd>
+<dt class="hdlist1"><strong>Save copy as&#8230;&#8203;</strong></dt>
+<dd>
+<p>Display a file browser to choose a new filename to save this
+map into, without changing the current map name for future <strong>Save</strong> operations.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_configuring_darkradiant">Configuring DarkRadiant</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -3168,6 +3241,24 @@ the texture name will be abbreviated with "&#8230;&#8203;" in the middle.</p>
 </dl>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_map_files_settings">Map files settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Number of most recently used files</strong></dt>
+<dd>
+<p>Choose the number of map files to list in
+the recent map section at the bottom of the <strong>File</strong> menu.</p>
+</dd>
+<dt class="hdlist1"><strong>Open last map on startup</strong></dt>
+<dd>
+<p>Enable this option to make DarkRadiant
+automatically load the most recently-used map every time it starts, rather than
+starting with an empty map.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3244,7 +3335,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-23 21:01:22 BST
+Last updated 2019-10-30 21:02:12 GMT
 </div>
 </div>
 </body>

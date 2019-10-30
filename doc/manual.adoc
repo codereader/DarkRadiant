@@ -1149,6 +1149,7 @@ prefabs are a DarkRadiant-only feature that have no significance to the engine.
 You are therefore free to store prefab files wherever you wish, either inside or
 outside the game installation directory.
 
+[[ImportPrefab]]
 ==== Importing a prefab
 
 Either right-click in the 2D window and choose *Insert prefab...*, or open the
@@ -1369,6 +1370,37 @@ additionally be moved to view the clicked entity.
 
 By enabling the *List visible nodes only* checkbox, you can limit the entity
 list to show only entities which are not currently hidden via filters.
+
+== Command reference
+
+=== File menu
+
+*New map*:: Prompt to save and close the current map (if necessary), then start
+ working on a new empty map.
+
+*Open map...*:: Prompt to save and close the current map (if necessary), then
+ display a file browser to choose and load an existing map file from disk.
+
+*Import map...*:: Display a file browser to choose and load an existing map file
+ from disk, merging the contents with the existing map
+
+*Import prefab...*:: Display the <<ImportPrefab,prefab browser>> to choose and
+ import a prefab from disk.
+
+NOTE: Importing a map and importing a prefab are functionally identical
+operations; the only difference is the user interface used for choosing what to
+import. The prefab browser is designed to offer a user-friendly workflow for
+browsing, previewing and importing from a library of frequently-used map
+elements, while *Import map* may be more useful for merging two or more
+partially-complete maps.
+
+*Save*:: Save the current map to disk under its existing file name.
+
+*Save as...*:: Display a file browser to choose a new name for the current map,
+ then save to this new file name in future.
+
+*Save copy as...*:: Display a file browser to choose a new filename to save this
+ map into, without changing the current map name for future *Save* operations.
 
 == Configuring DarkRadiant
 
@@ -1595,6 +1627,15 @@ These options control the behaviour of the <<TexturesTab,Textures tab>>.
 *Max shadername length*:: Choose the maximum number of characters that may
  appear in each texture name. If a texture contains more characters than this,
  the texture name will be abbreviated with "..." in the middle.
+
+==== Map files settings
+
+*Number of most recently used files*:: Choose the number of map files to list in
+ the recent map section at the bottom of the *File* menu.
+
+*Open last map on startup*:: Enable this option to make DarkRadiant
+ automatically load the most recently-used map every time it starts, rather than
+ starting with an empty map.
 
 == Features for game distributors
 
