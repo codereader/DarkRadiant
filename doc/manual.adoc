@@ -243,6 +243,7 @@ Static meshes and animated AI can be positioned more freely, however grid
 snapping is a useful tool for ensuring that models are appropriately aligned
 with the level geometry.
 
+[[Using3DCameraView]]
 === Using the 3D camera view
 
 The 3D camera view provides an approximate rendering of the map in three
@@ -337,6 +338,46 @@ unusual system for resizing objects. Rather than clicking exactly on the edge,
 or on a dedicated resizing handle, you can click and drag anywhere outside an
 edge to move that edge inwards or outwards. Dragging outside a corner allows you
 to move two edges at once.
+
+==== Flipping and rotating
+
+DarkRadiant provides six buttons to quickly flip or rotate objects (in 90 degree
+increments) around each of the three world axes. These are available on the
+left-hand vertical toolbar.
+
+[cols="^1h,10"]
+|===
+|image:brush_flipx.png[align="center",width=24]|Flip along the X axis
+|image:brush_rotatex.png[align="center",width=24]|Rotate around the X axis
+|image:brush_flipy.png[align="center",width=24]|Flip along the Y axis
+|image:brush_rotatey.png[align="center",width=24]|Rotate around the Y axis
+|image:brush_flipz.png[align="center",width=24]|Flip along the Z axis
+|image:brush_rotatez.png[align="center",width=24]|Rotate around the Z axis
+|===
+
+[[ManipulatorModes]]
+==== Manipulator modes
+
+For more precise control over object motion, there are three manipulator modes
+which can be selected with buttons on the left-hand vertical toolbar.
+
+[cols="^1h,3h,10"]
+|===
+|image:select_mousetranslate.png[align="center",width=24]|Translate mode|
+A manipulator widget with axis-aligned arrows will be displayed at the selected
+object's center. Click and drag one of the arrows to move the object along that
+axis, or drag inside the manipulator box to move the object in two dimensions.
+This mode may be useful for moving brushes around without accidentally resizing
+them.
+|image:select_mouserotate.png[align="center",width=24]|Rotate mode|
+A widget with three axis-aligned rings will be displayed at the selected
+object's center. Drag a ring to rotate the object by any arbitrary amount around
+that ring's axis.
+|image:select_mouseresize.png[align="center",width=24]|Resize mode|
+This is the default Radiant drag mode (hence the "QE" icon referring to the
+original QERadiant) which allows you to move objects by dragging inside them and
+resize by dragging outside the boundary edges.
+|===
 
 === Working with brushes
 
@@ -449,6 +490,7 @@ brush with sloping sides. However, with a more complex brush shape, the
 complexity of the resulting wall geometry increases considerably, so attempting
 to hollow out a 7-sided sphere is probably ill-advised.
 
+[[SplittingBrushes]]
 ==== Splitting brushes
 
 Sometimes it is necessary to divide a brush into two or more pieces, perhaps to
@@ -692,6 +734,7 @@ provides easy access to a user-chosen group of textures, and can be accessed by
 choosing the *Show Favourites* radio button at the top of the panel.
 |===
 
+[[TexturesTab]]
 ==== The Textures tab
 
 The *Textures* tab provides a scrollable canvas containing preview swatches of
@@ -710,6 +753,7 @@ selected object by *Left clicking* on them. By *Right clicking* on a texture you
 can access a context menu with a single command *Seek in Media browser*, which
 will highlight the clicked texture in the *Media* tab.
 
+[[SurfaceInspector]]
 ==== Using the Surface Inspector
 
 Once a texture is applied via the Media or Textures tabs, you will most likely
@@ -796,6 +840,7 @@ properties of the sound shader itself, such as volume.
 place the player when a map is first loaded. A map without such an entity will
 not be playable.
 
+[[CreatingLights]]
 ==== Creating lights
 
 To create a light, *Right click* in the 2D view and choose *Create light…*.
@@ -1104,6 +1149,7 @@ prefabs are a DarkRadiant-only feature that have no significance to the engine.
 You are therefore free to store prefab files wherever you wish, either inside or
 outside the game installation directory.
 
+[[ImportPrefab]]
 ==== Importing a prefab
 
 Either right-click in the 2D window and choose *Insert prefab...*, or open the
@@ -1201,3 +1247,440 @@ copy objects between layers using the options in the 2D view's context menu.
  from all other layers.
 
 *Remove from layer...*:: Remove the selected object from the chosen layer.
+
+=== Filtering map elements
+
+While the Layers feature allows maps to be organised into manual groupings of
+objects, DarkRadiant also provides a mechanism for controlling the visibility of
+items based on their characteristics. This is controlled via the *Filter*
+menu.
+
+==== Built-in filters
+
+The *Filter* menu is populated with a number of built-in filter rules which are
+expected to be useful to mappers. Each filter may be activated independently,
+and each activated filter will be shown with a tick alongside its name. Filters
+operate in a "subtractive" sense: if a filter is active, objects matched by that
+filter will be hidden; the remaining visible objects will be those which are not
+matched by any active filters.
+
+TIP: Active filters are persisted into settings, and are therefore retained
+between DarkRadiant sessions.
+
+The built-in filters include:
+
+[cols="1h,3"]
+|===
+|All entities|Hide all entities other than the worldspawn, leaving only brushes
+ and patches visible.
+|World geometry|The inverse of *All entities*. Hides brushes and patches while
+ leaving entities visible.
+|Brushes|Hide only brushes, leaving patches and entities visible.
+|Patches|Hide only patches, leaving brushes and entities visible.
+|Caulk|Hide any brush or patch which has the *caulk* texture applied to at least
+ one surface.
+|Collision surfaces|Hide the additional collision meshes which are embedded in
+ certain models, while leaving the models themselves visible. This filter is
+ especially useful because collision meshes often obscure parts of the model
+ itself.
+|===
+
+Aside from the list of filters, the *Filter* menu contains three other options:
+
+[cols="1h,3"]
+|===
+|Activate all filters|Activate every filter in the list. Very unlikely to be
+ useful, because it will probably result in every object in the map becoming
+ invisible.
+|Deactivate all filters|Turn off all active filters. This one _is_ useful, since
+ you may have manually activated a number of filters and want to turn them all
+ off at once.
+|Edit filters...|Display a dialog allowing you to create, edit and manage the
+ list of available filters.
+|===
+
+==== Customising filters
+
+In addition to the filters supplied with the mod distribution, DarkRadiant also
+allows you to add your own custom filters to the list by choosing the *Edit
+Filters...* menu option. This displays a dialog containing the list of all
+available filters, including built-in ones. Use the *Add* and *Delete* buttons
+to add or remove custom filters from the list, and the *Edit* button to enter a
+new dialog which allows you to edit the rules of the selected filter.
+
+Built-in filters cannot be removed or edited, but you can choose the *View*
+button to open the filter editor in a read-only mode.
+
+.The filter editor dialog
+image::FilterEditor.png[align="center"]
+
+Each filter consists of a number of *rules*, which are applied in the order
+shown in the list box. Filters may contain only a single rule ("hide all speaker
+entities"), or multiple rules ("hide all entities, then show only speaker
+entities"). You can freely add, remove or reorder rules using the buttons to the
+right of the rules list.
+
+Each rule has the following components:
+
+*Index*:: An integer representing the rule's position in the list, numbered from
+ zero.
+
+*Type*:: This controls what the rule is "looking for" when it tries to match
+ objects to hide or show. Currently there are four rule types: *entityclass*
+ which matches the classname of entities (e.g. "speaker"), *object* which
+ matches either "brush" or "patch" and is used for controlling the visibility of
+ map geometry, *texture* which matches the name of an applied texture, and
+ *entitykeyvalue* which matches the value of a specific property on the entity.
+
+*Entity Key*:: This column is only used for *entitykeyvalue* rules, in which
+ case it contains the name of the property to match (while the _value_ to match
+ will be contained in the *Match* column).
+
+*Match*:: This contains the actual value to be matched by the rule. Its
+ interpretation and allowed values will depend on the rule type. For *object*
+ type rules the value must be "brush" or "patch", whereas with all other rule
+ types the value may be any arbitrary string.
+
+*Action*:: Choose whether this rule will result in matched objects being shown,
+ or hidden. The filter system starts with everything being visible by default,
+ so a filter which does not contain at least one *hide* rule will have no
+ effect.
+
+=== The entity list
+
+As a map becomes larger and more complex, keeping track of its contents may
+become more challenging. To assist with this, DarkRadiant provides an *Entity
+List* which functions as an "outline" view of the map, listing all entities and
+their child brushes and patches (if any).
+
+The entity list can be accessed by choosing the *Entity List* option from the
+*View* menu.
+
+.The entity list, showing a number of entities in a small test map
+image::EntityList.png[align="center"]
+
+The tree structure shown in the entity list corresponds to the structure of the
+map itself: a single "world" entity which acts as the parent of the brushes and
+patches in the map, alongside a number of other entities that have been placed
+by the mapper, some of which may contain their own child brushes or patches.
+
+Clicking on an entity in the list will cause it to be selected in the map. If
+the *Focus camera on selected entity* checkbox is enabled, the camera will
+additionally be moved to view the clicked entity.
+
+By enabling the *List visible nodes only* checkbox, you can limit the entity
+list to show only entities which are not currently hidden via filters.
+
+== Command reference
+
+=== File menu
+
+*New map*:: Prompt to save and close the current map (if necessary), then start
+ working on a new empty map.
+
+*Open map...*:: Prompt to save and close the current map (if necessary), then
+ display a file browser to choose and load an existing map file from disk.
+
+*Import map...*:: Display a file browser to choose and load an existing map file
+ from disk, merging the contents with the existing map
+
+*Import prefab...*:: Display the <<ImportPrefab,prefab browser>> to choose and
+ import a prefab from disk.
+
+NOTE: Importing a map and importing a prefab are functionally identical
+operations; the only difference is the user interface used for choosing what to
+import. The prefab browser is designed to offer a user-friendly workflow for
+browsing, previewing and importing from a library of frequently-used map
+elements, while *Import map* may be more useful for merging two or more
+partially-complete maps.
+
+*Save*:: Save the current map to disk under its existing file name.
+
+*Save as...*:: Display a file browser to choose a new name for the current map,
+ then save to this new file name in future.
+
+*Save copy as...*:: Display a file browser to choose a new filename to save this
+ map into, without changing the current map name for future *Save* operations.
+
+== Configuring DarkRadiant
+
+DarkRadiant offers a large number of configurable options which can be used to
+tailor its behaviour to your desired workflow. Most of these options can be
+found either in the Preferences dialog or exposed directly as menu items.
+
+=== The Preferences dialog
+
+The Preferences dialog can be shown by choosing `Preferences...` from the `Edit`
+menu. The dialog contains a number of pages containing groups of logically
+related options.
+
+==== Camera settings
+
+The *Camera* page contains options relating to the movement and behaviour of the
+3D camera.
+
+*Movement Speed*:: Use this slider to control how many game units the camera
+ moves forwards or backwards when you use the scroll wheel in the 3D view. It
+ does not affect the speed of rotation or lateral dragging (e.g. with *Ctrl*) in
+ free look mode, nor does it affect motion with the arrow keys.
+
+*Rotation Speed*:: This controls the speed of angular rotation when dragging the
+ mouse after entering free look mode with right-click. If you have a high DPI
+ mouse and want to be able to direct the camera more precisely, reducing this
+ setting may help.
+
+*Freelook mode can be toggled*:: Disabling this checkbox makes the free look
+ functionality behave more like typical MMO games, where you hold down the right
+ mouse button and drag to move the camera around. Uncheck this option if you
+ hate modal interfaces or find the default toggle behaviour confusing.
+
+*Discrete movement (non-freelook mode)*:: If this is checked, moving the camera
+ with the arrow keys in non-freelook mode will cause discrete jumps in position,
+ rather than smooth motion.
+
+*Enable far clip plane*:: You can completely disable the <<Using3DCameraView,far
+ clip plane>> by unchecking this option. This will avoid the need to manage the
+ position of the far clip plane, but may negatively impact rendering performance
+ in large or complex maps.
+
+*Invert mouse vertical axis*:: Enable this option to flip the sense of the
+ vertical camera motion when freelook mode is enabled, so that moving the mouse
+ upwards tilts the camera downwards, and vice versa.
+
+*Solid selection boxes*:: This option controls whether selected brushes are
+ drawn with a dashed outline (option disabled) or a solid line (option enabled).
+ It affects both the 2D and the 3D views.
+
+*Show camera toolbar*:: Uncheck this to completely hide the toolbar at the top
+ of the 3D camera window (which includes the render mode buttons and the far
+ clip plane controls).
+
+==== Orthoview settings
+
+The *Orthoview* page contains options controlling the display and behaviour of
+the 2D views.
+
+*View chases mouse cursor during drags*:: If this is enabled, dragging an object
+ off the edge of a 2D view will cause the 2D view to automatically scroll to
+ keep the dragged object in view. If disabled, the dragged object will reach the
+ edge and stop. You can control the speed of the scrolling with the *Maximum
+ Chase Mouse Speed* slider.
+
+*Update views on camera movement*:: This option controls whether the camera
+ position indicator in the 2D views is automatically kept in sync with camera
+ movements in the 3D window. If this option is disabled, the 2D view camera
+ indicator may not move until you explicitly click on or interact with a 2D
+ view.
+
+*Show crosshairs*:: Enable this option to display full-window-sized crosshairs
+ tracking the mouse cursor whenever it moves over a 2D window. This may assist
+ with precise selection or object alignment.
+
+*Show grid*:: Control the visibility of grid lines in the 2D views. This does
+ not affect the snapping behaviour, just the visual rendering of the grid.
+
+*Show size info*:: Control the visibility of the text overlays which show the
+ dimensions of a selected object on the X, Y or Z axes. This option is also
+ available in the `View -> Show` menu.
+
+*Show entity angle arrow*:: Hide or show the small arrow which indicates the
+ direction of an entity with an `angle` spawnarg, such as `info_player_start`.
+ This affects both the 2D and 3D views.
+
+*Show entity names*:: Enable this to show permanently-visible text names next to
+ each entity in the map. This option is also available as `View -> Show -> Show
+ names`.
+
+*Show blocks*:: If enabled, the world space is divided into a horizontal grid of
+ 1024x1024 unit blocks (of infinite height) which are outlined in blue in the 2D
+ views. Each block is assigned a pair of numbers representing its position from
+ the centermost block, which is assigned `(0, 0)`. This might help with
+ "blocking out" a map at the beginning of the design phase. This option is also
+ available in the `View -> Show` menu.
+
+*Show coordinates*:: Toggle the visibility of the coordinate rulers along the
+ edges of the 2D window. Also available in the `View -> Show` menu.
+
+*Show axes*:: Control the visibility of the axis widget displayed at the
+ top-left of each 2D window and at the world origin. Also available in the `View
+ -> Show` menu.
+
+*Show window outline*:: Enable this to draw a rectangular outline around the
+ edge of the 2D window. Depending on the platform and GUI theme this may be
+ almost invisible, but might be useful to improve visibility in certain
+ environments.
+
+*Show workzone*:: The 'workzone' is an imaginary axis-aligned cuboid which
+ encloses the set of currently-selected items (this is what defines the volume
+ of a new light, when a <<CreatingLights,light is created>> from one or more
+ existing brushes). Enabling this option causes the workzone to be outlined in
+ red in the 2D views. Also available in the `View -> Show` menu.
+
+*Translate manipulator always constrained to axis*:: This option affects the
+ behaviour of the <<ManipulatorModes,translate manipulator>>. When the option is
+ disabled, dragging a selected object in translation mode will behave as if the
+ manipulator's *central square* is being dragged, and allow motion in two
+ dimensions. If the option is enabled, dragging the selected object will behave
+ as if the closest manipulator *arrow* is being dragged, and allow motion along
+ only a single axis. Translation in two dimensions will always be possible by
+ clicking on the manipulator's central square directly, regardless of the state
+ of this option.
+
+*Higher selection priority for entities*:: When using the mouse to click on and
+ select an entity which is in front of, behind or inside a brush, this option
+ controls whether DarkRadiant will prefer to select the entity (enabled) or the
+ brush (disabled).
+
+==== Multi Monitor settings
+
+The Multi Monitor page contains a single setting, *Start DarkRadiant on
+monitor*, which allows you to choose which monitor DarkRadiant will start on if
+you have several available.
+
+==== Autosave settings
+
+*Enable Autosave*:: Controls whether the autosave feature is active or disabled.
+
+*Autosave Interval*:: Use this slider to choose how often DarkRadiant will make
+ an autosave. By default, autosaves are made every 5 minutes.
+
+*Save Snapshots*:: If this option is enabled, DarkRadiant will make each
+ autosave into a separate copy of the map file, allowing you to potentially
+ revert changes which were made several autosaves ago. If this option is
+ disabled, there will only ever be a single autosave file, which will protect
+ against DarkRadiant or system crashes but not against long-term erroneous
+ changes.
+
+*Snapshot folder*:: This specifies the name of the folder used to store snapshot
+ autosaves, if the *Save Snapshots* option is enabled.
+
+*Max Snapshot size per map*:: This allows you to control the amount of disk
+ space used for storing snapshots, by specifying a maximum number of megabytes
+ that will be used for storing the snapshots for a single map. If the disk usage
+ grows above this limit, DarkRadiant will start to delete old snapshots.
+
+==== Clipper settings
+
+*Clipper tool uses caulk texture*:: If this option is enabled, the
+ <<SplittingBrushes,clipper tool>> will texture the newly-created clip face with
+ the texture specified in the *Caulk shader name* text field. If the option is
+ disabled, the new face will be given the same texture as the rest of the brush.
+
+==== Grid settings
+
+This page contains a couple of options relating to the appearance and default
+behaviour of the grid.
+
+*Default grid size*:: Use this combo box to choose the default grid size used in
+ new projects (to change the grid size in the _current_ project, use the options
+ in the *Grid* main menu).
+
+*Major grid style*:: Choose the rendering style for the major grid lines.
+ Available options are *Lines*, *Dotted Lines*, *More Dotted Lines*, *Crosses*,
+ *Dots*, *Big Dots*, and *Squares*.
+
+*Minor grid style*:: Choose the rendering style for the minor grid lines.
+ Available options are the same as the *Major grid style* combo box.
+
+==== Selection settings
+
+*Ignore light volume bounds when calculating default rotation pivot location*::
+ This option affects the behaviour of the <<ManipulatorModes,rotation tool>>
+ when multiple objects are selected. DarkRadiant will place the rotation widget
+ at the approximate "center of gravity" of the set of selected objects. If this
+ option is enabled, any selected lights will be treated as point entities, with
+ no volume in 3D space regardless of their actual light volumes. If this option
+ is disabled, the entire light volume will be taken into account as if the light
+ were a rectangular brush.
+
+==== Undo settings
+
+*Undo Queue Size*:: Use this spinbox to control the number of operations which
+ are saved onto DarkRadiant's internal undo stack. Larger values provide a
+ longer history of undoable operations, at the expense of requiring more memory.
+
+==== Primitives settings
+
+This page contains two options controlling the default behaviour of applied
+textures. These values can be set on a per-object basis using the
+<<SurfaceInspector,Surface Inspector>>.
+
+*Default texture scale*:: Set a default scale factor for newly applied textures.
+
+*Enable texture lock*:: Set the default value of the Texture Lock button. See
+ the <<SurfaceInspector,Surface Inspector>> section for more details on this
+ feature.
+
+==== Texture Browser settings
+
+These options control the behaviour of the <<TexturesTab,Textures tab>>.
+
+*Uniform texture thumbnail size*:: Choose the size in pixels that will be used
+ for texture thumbnails.
+
+*Texture scrollbar*:: Hide or show the scrollbar in the textures tab. If the
+ scrollbar is hidden, scrolling is only possible with the mouse wheel.
+
+*Mousewheel increment*:: This option determines how much the window is scrolled
+ when the mouse wheel is rotated.
+
+*Max shadername length*:: Choose the maximum number of characters that may
+ appear in each texture name. If a texture contains more characters than this,
+ the texture name will be abbreviated with "..." in the middle.
+
+==== Map files settings
+
+*Number of most recently used files*:: Choose the number of map files to list in
+ the recent map section at the bottom of the *File* menu.
+
+*Open last map on startup*:: Enable this option to make DarkRadiant
+ automatically load the most recently-used map every time it starts, rather than
+ starting with an empty map.
+
+== Features for game distributors
+
+DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
+Mod game installation, however it also offers a few features aimed at developers
+of the game itself.
+
+=== Controlling asset visibility
+
+As the development of a game progresses, certain models or textures may become
+obsolete or deprecated, either because they are no longer needed or because they
+fall short of the quality standard that is expected of new assets. If these
+models and textures have already been distributed, removing them from the game
+installation may be problematic, as maps which depend on them will fail to load
+correctly.
+
+DarkRadiant offers a mechanism to deal with this by allowing certain assets to
+be marked as "hidden". A hidden asset will no longer be presented for selection
+by the user (e.g. on the Media tab or in the Model selector), but will continue
+to function as normal when it appears in a loaded map.
+
+==== Creating an assets.lst file
+
+To change the visibility of assets, you need to create a file called
+`assets.lst` which resides in the top-level `models` or `materials` directories
+in the mod installation. This file may be inside a PK4 or in an extracted
+directory tree.
+
+The contents of `assets.lst` are a simple list of key/value pairs, assigning a
+visibility value to each named asset. For example:
+
+.assets.lst
+----
+darkmod/chairs/some_broken_chair.lwo=hidden
+darkmod/tables/another_table.ase=hidden
+----
+
+Asset paths listed on the left-hand side are interpreted relative to the
+directory containing `assets.lst` (which must be `models` or `materials`). The
+visibility value on the right-hand side must be either `hidden` or `normal`; a
+value of `normal` is equivalent to not listing the file at all, and results in
+no change to its visibility.
+
+NOTE: Only *files* may be listed in an `assets.lst`, not items in a virtual
+hierarchy such as the material shader tree. When an MTR file is listed as hidden
+in the `materials` directory, all shaders contained within it will be hidden in
+DarkRadiant. This means that in order to hide specific shaders, you must move
+these into one or more MTR files which are listed as hidden.

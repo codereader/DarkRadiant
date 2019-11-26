@@ -444,14 +444,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_navigating_the_2d_view">Navigating the 2D view</a></li>
 <li><a href="#_adjusting_the_grid">Adjusting the grid</a></li>
-<li><a href="#_using_the_3d_camera_view">Using the 3D camera view</a></li>
-<li><a href="#_manipulating_objects">Manipulating objects</a></li>
+<li><a href="#Using3DCameraView">Using the 3D camera view</a></li>
+<li><a href="#_manipulating_objects">Manipulating objects</a>
+<ul class="sectlevel3">
+<li><a href="#_flipping_and_rotating">Flipping and rotating</a></li>
+<li><a href="#ManipulatorModes">Manipulator modes</a></li>
+</ul>
+</li>
 <li><a href="#_working_with_brushes">Working with brushes</a>
 <ul class="sectlevel3">
 <li><a href="#CreatingABrush">Creating a brush</a></li>
 <li><a href="#_more_complex_brush_shapes">More complex brush shapes</a></li>
 <li><a href="#_creating_a_room">Creating a room</a></li>
-<li><a href="#_splitting_brushes">Splitting brushes</a></li>
+<li><a href="#SplittingBrushes">Splitting brushes</a></li>
 <li><a href="#_reshaping_brush_edges">Reshaping brush edges</a></li>
 <li><a href="#BrushBasedSelection">Brush-based selection</a></li>
 </ul>
@@ -467,13 +472,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_applying_textures">Applying textures</a>
 <ul class="sectlevel3">
 <li><a href="#MediaTab">The Media tab</a></li>
-<li><a href="#_the_textures_tab">The Textures tab</a></li>
-<li><a href="#_using_the_surface_inspector">Using the Surface Inspector</a></li>
+<li><a href="#TexturesTab">The Textures tab</a></li>
+<li><a href="#SurfaceInspector">Using the Surface Inspector</a></li>
 </ul>
 </li>
 <li><a href="#_working_with_entities">Working with entities</a>
 <ul class="sectlevel3">
-<li><a href="#_creating_lights">Creating lights</a></li>
+<li><a href="#CreatingLights">Creating lights</a></li>
 <li><a href="#CreatingModels">Creating models</a></li>
 <li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
 <li><a href="#_creating_other_entity_types">Creating other entity types</a></li>
@@ -494,13 +499,53 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_working_with_prefabs">Working with prefabs</a>
 <ul class="sectlevel3">
 <li><a href="#_exporting_to_a_prefab">Exporting to a prefab</a></li>
-<li><a href="#_importing_a_prefab">Importing a prefab</a></li>
+<li><a href="#ImportPrefab">Importing a prefab</a></li>
 </ul>
 </li>
 <li><a href="#_using_layers">Using layers</a>
 <ul class="sectlevel3">
 <li><a href="#_the_layers_window">The Layers window</a></li>
 <li><a href="#_moving_objects_into_layers">Moving objects into layers</a></li>
+</ul>
+</li>
+<li><a href="#_filtering_map_elements">Filtering map elements</a>
+<ul class="sectlevel3">
+<li><a href="#_built_in_filters">Built-in filters</a></li>
+<li><a href="#_customising_filters">Customising filters</a></li>
+</ul>
+</li>
+<li><a href="#_the_entity_list">The entity list</a></li>
+</ul>
+</li>
+<li><a href="#_command_reference">Command reference</a>
+<ul class="sectlevel2">
+<li><a href="#_file_menu">File menu</a></li>
+</ul>
+</li>
+<li><a href="#_configuring_darkradiant">Configuring DarkRadiant</a>
+<ul class="sectlevel2">
+<li><a href="#_the_preferences_dialog">The Preferences dialog</a>
+<ul class="sectlevel3">
+<li><a href="#_camera_settings">Camera settings</a></li>
+<li><a href="#_orthoview_settings">Orthoview settings</a></li>
+<li><a href="#_multi_monitor_settings">Multi Monitor settings</a></li>
+<li><a href="#_autosave_settings">Autosave settings</a></li>
+<li><a href="#_clipper_settings">Clipper settings</a></li>
+<li><a href="#_grid_settings">Grid settings</a></li>
+<li><a href="#_selection_settings">Selection settings</a></li>
+<li><a href="#_undo_settings">Undo settings</a></li>
+<li><a href="#_primitives_settings">Primitives settings</a></li>
+<li><a href="#_texture_browser_settings">Texture Browser settings</a></li>
+<li><a href="#_map_files_settings">Map files settings</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_features_for_game_distributors">Features for game distributors</a>
+<ul class="sectlevel2">
+<li><a href="#_controlling_asset_visibility">Controlling asset visibility</a>
+<ul class="sectlevel3">
+<li><a href="#_creating_an_assets_lst_file">Creating an assets.lst file</a></li>
 </ul>
 </li>
 </ul>
@@ -905,7 +950,7 @@ with the level geometry.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_using_the_3d_camera_view">Using the 3D camera view</h3>
+<h3 id="Using3DCameraView">Using the 3D camera view</h3>
 <div class="paragraph">
 <p>The 3D camera view provides an approximate rendering of the map in three
 dimensions, in several different render modes: wireframe, flat shaded, textured,
@@ -1103,6 +1148,85 @@ to move two edges at once.
 </tr>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_flipping_and_rotating">Flipping and rotating</h4>
+<div class="paragraph">
+<p>DarkRadiant provides six buttons to quickly flip or rotate objects (in 90 degree
+increments) around each of the three world axes. These are available on the
+left-hand vertical toolbar.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 9.0909%;">
+<col style="width: 90.9091%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_flipx.png" alt="brush flipx" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flip along the X axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_rotatex.png" alt="brush rotatex" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rotate around the X axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_flipy.png" alt="brush flipy" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flip along the Y axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_rotatey.png" alt="brush rotatey" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rotate around the Y axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_flipz.png" alt="brush flipz" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flip along the Z axis</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/brush_rotatez.png" alt="brush rotatez" width="24"></span></p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rotate around the Z axis</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="ManipulatorModes">Manipulator modes</h4>
+<div class="paragraph">
+<p>For more precise control over object motion, there are three manipulator modes
+which can be selected with buttons on the left-hand vertical toolbar.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 7.1428%;">
+<col style="width: 21.4285%;">
+<col style="width: 71.4287%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/select_mousetranslate.png" alt="select mousetranslate" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Translate mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A manipulator widget with axis-aligned arrows will be displayed at the selected
+object&#8217;s center. Click and drag one of the arrows to move the object along that
+axis, or drag inside the manipulator box to move the object in two dimensions.
+This mode may be useful for moving brushes around without accidentally resizing
+them.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/select_mouserotate.png" alt="select mouserotate" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Rotate mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A widget with three axis-aligned rings will be displayed at the selected
+object&#8217;s center. Drag a ring to rotate the object by any arbitrary amount around
+that ring&#8217;s axis.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/select_mouseresize.png" alt="select mouseresize" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Resize mode</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This is the default Radiant drag mode (hence the "QE" icon referring to the
+original QERadiant) which allows you to move objects by dragging inside them and
+resize by dragging outside the boundary edges.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_working_with_brushes">Working with brushes</h3>
@@ -1246,7 +1370,7 @@ to hollow out a 7-sided sphere is probably ill-advised.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_splitting_brushes">Splitting brushes</h4>
+<h4 id="SplittingBrushes">Splitting brushes</h4>
 <div class="paragraph">
 <p>Sometimes it is necessary to divide a brush into two or more pieces, perhaps to
 create a doorway or other opening. The <strong>Clipper</strong> tool, accessed with the <strong>X</strong>
@@ -1634,7 +1758,7 @@ choosing the <strong>Show Favourites</strong> radio button at the top of the pan
 </table>
 </div>
 <div class="sect3">
-<h4 id="_the_textures_tab">The Textures tab</h4>
+<h4 id="TexturesTab">The Textures tab</h4>
 <div class="paragraph">
 <p>The <strong>Textures</strong> tab provides a scrollable canvas containing preview swatches of
 all the textures which are currently loaded in the current map.</p>
@@ -1659,7 +1783,7 @@ will highlight the clicked texture in the <strong>Media</strong> tab.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_using_the_surface_inspector">Using the Surface Inspector</h4>
+<h4 id="SurfaceInspector">Using the Surface Inspector</h4>
 <div class="paragraph">
 <p>Once a texture is applied via the Media or Textures tabs, you will most likely
 wish to adjust the alignment and scale of the texture on the brush or patch
@@ -1796,7 +1920,7 @@ not be playable.</p>
 </dl>
 </div>
 <div class="sect3">
-<h4 id="_creating_lights">Creating lights</h4>
+<h4 id="CreatingLights">Creating lights</h4>
 <div class="paragraph">
 <p>To create a light, <strong>Right click</strong> in the 2D view and choose <strong>Create light…</strong>.
 The position and size of the light volume depends on the current selection:</p>
@@ -2321,7 +2445,7 @@ outside the game installation directory.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_importing_a_prefab">Importing a prefab</h4>
+<h4 id="ImportPrefab">Importing a prefab</h4>
 <div class="paragraph">
 <p>Either right-click in the 2D window and choose <strong>Insert prefab&#8230;&#8203;</strong>, or open the
 <strong>File</strong> menu and choose <strong>Import prefab&#8230;&#8203;</strong>. This will show the prefab browser.</p>
@@ -2485,12 +2609,733 @@ from all other layers.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_filtering_map_elements">Filtering map elements</h3>
+<div class="paragraph">
+<p>While the Layers feature allows maps to be organised into manual groupings of
+objects, DarkRadiant also provides a mechanism for controlling the visibility of
+items based on their characteristics. This is controlled via the <strong>Filter</strong>
+menu.</p>
+</div>
+<div class="sect3">
+<h4 id="_built_in_filters">Built-in filters</h4>
+<div class="paragraph">
+<p>The <strong>Filter</strong> menu is populated with a number of built-in filter rules which are
+expected to be useful to mappers. Each filter may be activated independently,
+and each activated filter will be shown with a tick alongside its name. Filters
+operate in a "subtractive" sense: if a filter is active, objects matched by that
+filter will be hidden; the remaining visible objects will be those which are not
+matched by any active filters.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+Active filters are persisted into settings, and are therefore retained
+between DarkRadiant sessions.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The built-in filters include:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">All entities</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide all entities other than the worldspawn, leaving only brushes
+ and patches visible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">World geometry</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The inverse of <strong>All entities</strong>. Hides brushes and patches while
+ leaving entities visible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Brushes</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide only brushes, leaving patches and entities visible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Patches</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide only patches, leaving brushes and entities visible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Caulk</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide any brush or patch which has the <strong>caulk</strong> texture applied to at least
+ one surface.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Collision surfaces</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hide the additional collision meshes which are embedded in
+ certain models, while leaving the models themselves visible. This filter is
+ especially useful because collision meshes often obscure parts of the model
+ itself.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Aside from the list of filters, the <strong>Filter</strong> menu contains three other options:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Activate all filters</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Activate every filter in the list. Very unlikely to be
+ useful, because it will probably result in every object in the map becoming
+ invisible.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Deactivate all filters</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Turn off all active filters. This one <em>is</em> useful, since
+ you may have manually activated a number of filters and want to turn them all
+ off at once.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Edit filters&#8230;&#8203;</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Display a dialog allowing you to create, edit and manage the
+ list of available filters.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_customising_filters">Customising filters</h4>
+<div class="paragraph">
+<p>In addition to the filters supplied with the mod distribution, DarkRadiant also
+allows you to add your own custom filters to the list by choosing the <strong>Edit
+Filters&#8230;&#8203;</strong> menu option. This displays a dialog containing the list of all
+available filters, including built-in ones. Use the <strong>Add</strong> and <strong>Delete</strong> buttons
+to add or remove custom filters from the list, and the <strong>Edit</strong> button to enter a
+new dialog which allows you to edit the rules of the selected filter.</p>
+</div>
+<div class="paragraph">
+<p>Built-in filters cannot be removed or edited, but you can choose the <strong>View</strong>
+button to open the filter editor in a read-only mode.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/FilterEditor.png" alt="FilterEditor">
+</div>
+<div class="title">Figure 10. The filter editor dialog</div>
+</div>
+<div class="paragraph">
+<p>Each filter consists of a number of <strong>rules</strong>, which are applied in the order
+shown in the list box. Filters may contain only a single rule ("hide all speaker
+entities"), or multiple rules ("hide all entities, then show only speaker
+entities"). You can freely add, remove or reorder rules using the buttons to the
+right of the rules list.</p>
+</div>
+<div class="paragraph">
+<p>Each rule has the following components:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Index</strong></dt>
+<dd>
+<p>An integer representing the rule&#8217;s position in the list, numbered from
+zero.</p>
+</dd>
+<dt class="hdlist1"><strong>Type</strong></dt>
+<dd>
+<p>This controls what the rule is "looking for" when it tries to match
+objects to hide or show. Currently there are four rule types: <strong>entityclass</strong>
+which matches the classname of entities (e.g. "speaker"), <strong>object</strong> which
+matches either "brush" or "patch" and is used for controlling the visibility of
+map geometry, <strong>texture</strong> which matches the name of an applied texture, and
+<strong>entitykeyvalue</strong> which matches the value of a specific property on the entity.</p>
+</dd>
+<dt class="hdlist1"><strong>Entity Key</strong></dt>
+<dd>
+<p>This column is only used for <strong>entitykeyvalue</strong> rules, in which
+case it contains the name of the property to match (while the <em>value</em> to match
+will be contained in the <strong>Match</strong> column).</p>
+</dd>
+<dt class="hdlist1"><strong>Match</strong></dt>
+<dd>
+<p>This contains the actual value to be matched by the rule. Its
+interpretation and allowed values will depend on the rule type. For <strong>object</strong>
+type rules the value must be "brush" or "patch", whereas with all other rule
+types the value may be any arbitrary string.</p>
+</dd>
+<dt class="hdlist1"><strong>Action</strong></dt>
+<dd>
+<p>Choose whether this rule will result in matched objects being shown,
+or hidden. The filter system starts with everything being visible by default,
+so a filter which does not contain at least one <strong>hide</strong> rule will have no
+effect.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_entity_list">The entity list</h3>
+<div class="paragraph">
+<p>As a map becomes larger and more complex, keeping track of its contents may
+become more challenging. To assist with this, DarkRadiant provides an <strong>Entity
+List</strong> which functions as an "outline" view of the map, listing all entities and
+their child brushes and patches (if any).</p>
+</div>
+<div class="paragraph">
+<p>The entity list can be accessed by choosing the <strong>Entity List</strong> option from the
+<strong>View</strong> menu.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/EntityList.png" alt="EntityList">
+</div>
+<div class="title">Figure 11. The entity list, showing a number of entities in a small test map</div>
+</div>
+<div class="paragraph">
+<p>The tree structure shown in the entity list corresponds to the structure of the
+map itself: a single "world" entity which acts as the parent of the brushes and
+patches in the map, alongside a number of other entities that have been placed
+by the mapper, some of which may contain their own child brushes or patches.</p>
+</div>
+<div class="paragraph">
+<p>Clicking on an entity in the list will cause it to be selected in the map. If
+the <strong>Focus camera on selected entity</strong> checkbox is enabled, the camera will
+additionally be moved to view the clicked entity.</p>
+</div>
+<div class="paragraph">
+<p>By enabling the <strong>List visible nodes only</strong> checkbox, you can limit the entity
+list to show only entities which are not currently hidden via filters.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_command_reference">Command reference</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_file_menu">File menu</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>New map</strong></dt>
+<dd>
+<p>Prompt to save and close the current map (if necessary), then start
+working on a new empty map.</p>
+</dd>
+<dt class="hdlist1"><strong>Open map&#8230;&#8203;</strong></dt>
+<dd>
+<p>Prompt to save and close the current map (if necessary), then
+display a file browser to choose and load an existing map file from disk.</p>
+</dd>
+<dt class="hdlist1"><strong>Import map&#8230;&#8203;</strong></dt>
+<dd>
+<p>Display a file browser to choose and load an existing map file
+from disk, merging the contents with the existing map</p>
+</dd>
+<dt class="hdlist1"><strong>Import prefab&#8230;&#8203;</strong></dt>
+<dd>
+<p>Display the <a href="#ImportPrefab">prefab browser</a> to choose and
+import a prefab from disk.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Importing a map and importing a prefab are functionally identical
+operations; the only difference is the user interface used for choosing what to
+import. The prefab browser is designed to offer a user-friendly workflow for
+browsing, previewing and importing from a library of frequently-used map
+elements, while <strong>Import map</strong> may be more useful for merging two or more
+partially-complete maps.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Save</strong></dt>
+<dd>
+<p>Save the current map to disk under its existing file name.</p>
+</dd>
+<dt class="hdlist1"><strong>Save as&#8230;&#8203;</strong></dt>
+<dd>
+<p>Display a file browser to choose a new name for the current map,
+then save to this new file name in future.</p>
+</dd>
+<dt class="hdlist1"><strong>Save copy as&#8230;&#8203;</strong></dt>
+<dd>
+<p>Display a file browser to choose a new filename to save this
+map into, without changing the current map name for future <strong>Save</strong> operations.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuring_darkradiant">Configuring DarkRadiant</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>DarkRadiant offers a large number of configurable options which can be used to
+tailor its behaviour to your desired workflow. Most of these options can be
+found either in the Preferences dialog or exposed directly as menu items.</p>
+</div>
+<div class="sect2">
+<h3 id="_the_preferences_dialog">The Preferences dialog</h3>
+<div class="paragraph">
+<p>The Preferences dialog can be shown by choosing <code>Preferences&#8230;&#8203;</code> from the <code>Edit</code>
+menu. The dialog contains a number of pages containing groups of logically
+related options.</p>
+</div>
+<div class="sect3">
+<h4 id="_camera_settings">Camera settings</h4>
+<div class="paragraph">
+<p>The <strong>Camera</strong> page contains options relating to the movement and behaviour of the
+3D camera.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Movement Speed</strong></dt>
+<dd>
+<p>Use this slider to control how many game units the camera
+moves forwards or backwards when you use the scroll wheel in the 3D view. It
+does not affect the speed of rotation or lateral dragging (e.g. with <strong>Ctrl</strong>) in
+free look mode, nor does it affect motion with the arrow keys.</p>
+</dd>
+<dt class="hdlist1"><strong>Rotation Speed</strong></dt>
+<dd>
+<p>This controls the speed of angular rotation when dragging the
+mouse after entering free look mode with right-click. If you have a high DPI
+mouse and want to be able to direct the camera more precisely, reducing this
+setting may help.</p>
+</dd>
+<dt class="hdlist1"><strong>Freelook mode can be toggled</strong></dt>
+<dd>
+<p>Disabling this checkbox makes the free look
+functionality behave more like typical MMO games, where you hold down the right
+mouse button and drag to move the camera around. Uncheck this option if you
+hate modal interfaces or find the default toggle behaviour confusing.</p>
+</dd>
+<dt class="hdlist1"><strong>Discrete movement (non-freelook mode)</strong></dt>
+<dd>
+<p>If this is checked, moving the camera
+with the arrow keys in non-freelook mode will cause discrete jumps in position,
+rather than smooth motion.</p>
+</dd>
+<dt class="hdlist1"><strong>Enable far clip plane</strong></dt>
+<dd>
+<p>You can completely disable the <a href="#Using3DCameraView">far
+clip plane</a> by unchecking this option. This will avoid the need to manage the
+position of the far clip plane, but may negatively impact rendering performance
+in large or complex maps.</p>
+</dd>
+<dt class="hdlist1"><strong>Invert mouse vertical axis</strong></dt>
+<dd>
+<p>Enable this option to flip the sense of the
+vertical camera motion when freelook mode is enabled, so that moving the mouse
+upwards tilts the camera downwards, and vice versa.</p>
+</dd>
+<dt class="hdlist1"><strong>Solid selection boxes</strong></dt>
+<dd>
+<p>This option controls whether selected brushes are
+drawn with a dashed outline (option disabled) or a solid line (option enabled).
+It affects both the 2D and the 3D views.</p>
+</dd>
+<dt class="hdlist1"><strong>Show camera toolbar</strong></dt>
+<dd>
+<p>Uncheck this to completely hide the toolbar at the top
+of the 3D camera window (which includes the render mode buttons and the far
+clip plane controls).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_orthoview_settings">Orthoview settings</h4>
+<div class="paragraph">
+<p>The <strong>Orthoview</strong> page contains options controlling the display and behaviour of
+the 2D views.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>View chases mouse cursor during drags</strong></dt>
+<dd>
+<p>If this is enabled, dragging an object
+off the edge of a 2D view will cause the 2D view to automatically scroll to
+keep the dragged object in view. If disabled, the dragged object will reach the
+edge and stop. You can control the speed of the scrolling with the <strong>Maximum
+Chase Mouse Speed</strong> slider.</p>
+</dd>
+<dt class="hdlist1"><strong>Update views on camera movement</strong></dt>
+<dd>
+<p>This option controls whether the camera
+position indicator in the 2D views is automatically kept in sync with camera
+movements in the 3D window. If this option is disabled, the 2D view camera
+indicator may not move until you explicitly click on or interact with a 2D
+view.</p>
+</dd>
+<dt class="hdlist1"><strong>Show crosshairs</strong></dt>
+<dd>
+<p>Enable this option to display full-window-sized crosshairs
+tracking the mouse cursor whenever it moves over a 2D window. This may assist
+with precise selection or object alignment.</p>
+</dd>
+<dt class="hdlist1"><strong>Show grid</strong></dt>
+<dd>
+<p>Control the visibility of grid lines in the 2D views. This does
+not affect the snapping behaviour, just the visual rendering of the grid.</p>
+</dd>
+<dt class="hdlist1"><strong>Show size info</strong></dt>
+<dd>
+<p>Control the visibility of the text overlays which show the
+dimensions of a selected object on the X, Y or Z axes. This option is also
+available in the <code>View &#8594; Show</code> menu.</p>
+</dd>
+<dt class="hdlist1"><strong>Show entity angle arrow</strong></dt>
+<dd>
+<p>Hide or show the small arrow which indicates the
+direction of an entity with an <code>angle</code> spawnarg, such as <code>info_player_start</code>.
+This affects both the 2D and 3D views.</p>
+</dd>
+<dt class="hdlist1"><strong>Show entity names</strong></dt>
+<dd>
+<p>Enable this to show permanently-visible text names next to
+each entity in the map. This option is also available as <code>View &#8594; Show &#8594; Show
+names</code>.</p>
+</dd>
+<dt class="hdlist1"><strong>Show blocks</strong></dt>
+<dd>
+<p>If enabled, the world space is divided into a horizontal grid of
+1024x1024 unit blocks (of infinite height) which are outlined in blue in the 2D
+views. Each block is assigned a pair of numbers representing its position from
+the centermost block, which is assigned <code>(0, 0)</code>. This might help with
+"blocking out" a map at the beginning of the design phase. This option is also
+available in the <code>View &#8594; Show</code> menu.</p>
+</dd>
+<dt class="hdlist1"><strong>Show coordinates</strong></dt>
+<dd>
+<p>Toggle the visibility of the coordinate rulers along the
+edges of the 2D window. Also available in the <code>View &#8594; Show</code> menu.</p>
+</dd>
+<dt class="hdlist1"><strong>Show axes</strong></dt>
+<dd>
+<p>Control the visibility of the axis widget displayed at the
+top-left of each 2D window and at the world origin. Also available in the <code>View
+&#8594; Show</code> menu.</p>
+</dd>
+<dt class="hdlist1"><strong>Show window outline</strong></dt>
+<dd>
+<p>Enable this to draw a rectangular outline around the
+edge of the 2D window. Depending on the platform and GUI theme this may be
+almost invisible, but might be useful to improve visibility in certain
+environments.</p>
+</dd>
+<dt class="hdlist1"><strong>Show workzone</strong></dt>
+<dd>
+<p>The 'workzone' is an imaginary axis-aligned cuboid which
+encloses the set of currently-selected items (this is what defines the volume
+of a new light, when a <a href="#CreatingLights">light is created</a> from one or more
+existing brushes). Enabling this option causes the workzone to be outlined in
+red in the 2D views. Also available in the <code>View &#8594; Show</code> menu.</p>
+</dd>
+<dt class="hdlist1"><strong>Translate manipulator always constrained to axis</strong></dt>
+<dd>
+<p>This option affects the
+behaviour of the <a href="#ManipulatorModes">translate manipulator</a>. When the option is
+disabled, dragging a selected object in translation mode will behave as if the
+manipulator&#8217;s <strong>central square</strong> is being dragged, and allow motion in two
+dimensions. If the option is enabled, dragging the selected object will behave
+as if the closest manipulator <strong>arrow</strong> is being dragged, and allow motion along
+only a single axis. Translation in two dimensions will always be possible by
+clicking on the manipulator&#8217;s central square directly, regardless of the state
+of this option.</p>
+</dd>
+<dt class="hdlist1"><strong>Higher selection priority for entities</strong></dt>
+<dd>
+<p>When using the mouse to click on and
+select an entity which is in front of, behind or inside a brush, this option
+controls whether DarkRadiant will prefer to select the entity (enabled) or the
+brush (disabled).</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_multi_monitor_settings">Multi Monitor settings</h4>
+<div class="paragraph">
+<p>The Multi Monitor page contains a single setting, <strong>Start DarkRadiant on
+monitor</strong>, which allows you to choose which monitor DarkRadiant will start on if
+you have several available.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_autosave_settings">Autosave settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Enable Autosave</strong></dt>
+<dd>
+<p>Controls whether the autosave feature is active or disabled.</p>
+</dd>
+<dt class="hdlist1"><strong>Autosave Interval</strong></dt>
+<dd>
+<p>Use this slider to choose how often DarkRadiant will make
+an autosave. By default, autosaves are made every 5 minutes.</p>
+</dd>
+<dt class="hdlist1"><strong>Save Snapshots</strong></dt>
+<dd>
+<p>If this option is enabled, DarkRadiant will make each
+autosave into a separate copy of the map file, allowing you to potentially
+revert changes which were made several autosaves ago. If this option is
+disabled, there will only ever be a single autosave file, which will protect
+against DarkRadiant or system crashes but not against long-term erroneous
+changes.</p>
+</dd>
+<dt class="hdlist1"><strong>Snapshot folder</strong></dt>
+<dd>
+<p>This specifies the name of the folder used to store snapshot
+autosaves, if the <strong>Save Snapshots</strong> option is enabled.</p>
+</dd>
+<dt class="hdlist1"><strong>Max Snapshot size per map</strong></dt>
+<dd>
+<p>This allows you to control the amount of disk
+space used for storing snapshots, by specifying a maximum number of megabytes
+that will be used for storing the snapshots for a single map. If the disk usage
+grows above this limit, DarkRadiant will start to delete old snapshots.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_clipper_settings">Clipper settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Clipper tool uses caulk texture</strong></dt>
+<dd>
+<p>If this option is enabled, the
+<a href="#SplittingBrushes">clipper tool</a> will texture the newly-created clip face with
+the texture specified in the <strong>Caulk shader name</strong> text field. If the option is
+disabled, the new face will be given the same texture as the rest of the brush.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_grid_settings">Grid settings</h4>
+<div class="paragraph">
+<p>This page contains a couple of options relating to the appearance and default
+behaviour of the grid.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Default grid size</strong></dt>
+<dd>
+<p>Use this combo box to choose the default grid size used in
+new projects (to change the grid size in the <em>current</em> project, use the options
+in the <strong>Grid</strong> main menu).</p>
+</dd>
+<dt class="hdlist1"><strong>Major grid style</strong></dt>
+<dd>
+<p>Choose the rendering style for the major grid lines.
+Available options are <strong>Lines</strong>, <strong>Dotted Lines</strong>, <strong>More Dotted Lines</strong>, <strong>Crosses</strong>,
+<strong>Dots</strong>, <strong>Big Dots</strong>, and <strong>Squares</strong>.</p>
+</dd>
+<dt class="hdlist1"><strong>Minor grid style</strong></dt>
+<dd>
+<p>Choose the rendering style for the minor grid lines.
+Available options are the same as the <strong>Major grid style</strong> combo box.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_selection_settings">Selection settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Ignore light volume bounds when calculating default rotation pivot location</strong></dt>
+<dd>
+<p>This option affects the behaviour of the <a href="#ManipulatorModes">rotation tool</a>
+when multiple objects are selected. DarkRadiant will place the rotation widget
+at the approximate "center of gravity" of the set of selected objects. If this
+option is enabled, any selected lights will be treated as point entities, with
+no volume in 3D space regardless of their actual light volumes. If this option
+is disabled, the entire light volume will be taken into account as if the light
+were a rectangular brush.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_undo_settings">Undo settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Undo Queue Size</strong></dt>
+<dd>
+<p>Use this spinbox to control the number of operations which
+are saved onto DarkRadiant&#8217;s internal undo stack. Larger values provide a
+longer history of undoable operations, at the expense of requiring more memory.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_primitives_settings">Primitives settings</h4>
+<div class="paragraph">
+<p>This page contains two options controlling the default behaviour of applied
+textures. These values can be set on a per-object basis using the
+<a href="#SurfaceInspector">Surface Inspector</a>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Default texture scale</strong></dt>
+<dd>
+<p>Set a default scale factor for newly applied textures.</p>
+</dd>
+<dt class="hdlist1"><strong>Enable texture lock</strong></dt>
+<dd>
+<p>Set the default value of the Texture Lock button. See
+the <a href="#SurfaceInspector">Surface Inspector</a> section for more details on this
+feature.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_texture_browser_settings">Texture Browser settings</h4>
+<div class="paragraph">
+<p>These options control the behaviour of the <a href="#TexturesTab">Textures tab</a>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Uniform texture thumbnail size</strong></dt>
+<dd>
+<p>Choose the size in pixels that will be used
+for texture thumbnails.</p>
+</dd>
+<dt class="hdlist1"><strong>Texture scrollbar</strong></dt>
+<dd>
+<p>Hide or show the scrollbar in the textures tab. If the
+scrollbar is hidden, scrolling is only possible with the mouse wheel.</p>
+</dd>
+<dt class="hdlist1"><strong>Mousewheel increment</strong></dt>
+<dd>
+<p>This option determines how much the window is scrolled
+when the mouse wheel is rotated.</p>
+</dd>
+<dt class="hdlist1"><strong>Max shadername length</strong></dt>
+<dd>
+<p>Choose the maximum number of characters that may
+appear in each texture name. If a texture contains more characters than this,
+the texture name will be abbreviated with "&#8230;&#8203;" in the middle.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_map_files_settings">Map files settings</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Number of most recently used files</strong></dt>
+<dd>
+<p>Choose the number of map files to list in
+the recent map section at the bottom of the <strong>File</strong> menu.</p>
+</dd>
+<dt class="hdlist1"><strong>Open last map on startup</strong></dt>
+<dd>
+<p>Enable this option to make DarkRadiant
+automatically load the most recently-used map every time it starts, rather than
+starting with an empty map.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_features_for_game_distributors">Features for game distributors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>DarkRadiant is designed to work out of the box with a standard Doom 3 or Dark
+Mod game installation, however it also offers a few features aimed at developers
+of the game itself.</p>
+</div>
+<div class="sect2">
+<h3 id="_controlling_asset_visibility">Controlling asset visibility</h3>
+<div class="paragraph">
+<p>As the development of a game progresses, certain models or textures may become
+obsolete or deprecated, either because they are no longer needed or because they
+fall short of the quality standard that is expected of new assets. If these
+models and textures have already been distributed, removing them from the game
+installation may be problematic, as maps which depend on them will fail to load
+correctly.</p>
+</div>
+<div class="paragraph">
+<p>DarkRadiant offers a mechanism to deal with this by allowing certain assets to
+be marked as "hidden". A hidden asset will no longer be presented for selection
+by the user (e.g. on the Media tab or in the Model selector), but will continue
+to function as normal when it appears in a loaded map.</p>
+</div>
+<div class="sect3">
+<h4 id="_creating_an_assets_lst_file">Creating an assets.lst file</h4>
+<div class="paragraph">
+<p>To change the visibility of assets, you need to create a file called
+<code>assets.lst</code> which resides in the top-level <code>models</code> or <code>materials</code> directories
+in the mod installation. This file may be inside a PK4 or in an extracted
+directory tree.</p>
+</div>
+<div class="paragraph">
+<p>The contents of <code>assets.lst</code> are a simple list of key/value pairs, assigning a
+visibility value to each named asset. For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">assets.lst</div>
+<div class="content">
+<pre>darkmod/chairs/some_broken_chair.lwo=hidden
+darkmod/tables/another_table.ase=hidden</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Asset paths listed on the left-hand side are interpreted relative to the
+directory containing <code>assets.lst</code> (which must be <code>models</code> or <code>materials</code>). The
+visibility value on the right-hand side must be either <code>hidden</code> or <code>normal</code>; a
+value of <code>normal</code> is equivalent to not listing the file at all, and results in
+no change to its visibility.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Only <strong>files</strong> may be listed in an <code>assets.lst</code>, not items in a virtual
+hierarchy such as the material shader tree. When an MTR file is listed as hidden
+in the <code>materials</code> directory, all shaders contained within it will be hidden in
+DarkRadiant. This means that in order to hide specific shaders, you must move
+these into one or more MTR files which are listed as hidden.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-01-22 21:10:46 GMT
+Last updated 2019-10-30 21:02:12 GMT
 </div>
 </div>
 </body>

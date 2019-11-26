@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iarchive.h"
+#include "ifilesystem.h"
 
 #include "TableDefinition.h"
 #include "ShaderTemplate.h"
@@ -15,8 +16,8 @@ namespace shaders
 // VFS functor class which loads material (mtr) files.
 template<typename ShaderLibrary_T> class ShaderFileLoader
 {
-    // The base path for the shaders (e.g. "materials/")
-    std::string _basePath;
+    // The VFS module to provide shader files
+    vfs::VirtualFileSystem& _vfs;
 
     ShaderLibrary_T& _library;
 
@@ -72,7 +73,7 @@ private:
             ShaderTemplatePtr shaderTemplate(new ShaderTemplate(block.name, block.contents));
 
             // Construct the ShaderDefinition wrapper class
-            ShaderDefinition def(shaderTemplate, fileInfo.name);
+            ShaderDefinition def(shaderTemplate, fileInfo);
 
             // Insert into the definitions map, if not already present
             if (!_library.addDefinition(block.name, def))
@@ -84,29 +85,29 @@ private:
     }
 
 public:
-    // Constructor. Set the basepath to prepend onto shader filenames.
-    ShaderFileLoader(const std::string& path, ShaderLibrary_T& library)
-    : _basePath(path), _library(library)
+
+    /// Construct and initialise the ShaderFileLoader
+    ShaderFileLoader(vfs::VirtualFileSystem& fs, ShaderLibrary_T& library,
+                     const std::string& basedir,
+                     const std::string& extension = "mtr")
+    : _vfs(fs), _library(library)
     {
         _files.reserve(200);
-    }
 
-    void addFile(const vfs::FileInfo& fileInfo)
-    {
-        // Construct the full VFS path
-        vfs::FileInfo fileWithBasePath = fileInfo;
-        fileWithBasePath.name = _basePath + fileInfo.name;
-        _files.push_back(fileWithBasePath);
+        // Walk the VFS and populate our files list
+        _vfs.forEachFile(
+            basedir, extension,
+            [this](const vfs::FileInfo& fi) { _files.push_back(fi); },
+            0
+        );
     }
 
     void parseFiles()
     {
-        for (std::size_t i = 0; i < _files.size(); ++i)
+        for (const vfs::FileInfo& fileInfo: _files)
         {
-            const vfs::FileInfo& fileInfo = _files[i];
-
             // Open the file
-            ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fileInfo.name);
+            ArchiveTextFilePtr file = _vfs.openTextFile(fileInfo.fullPath());
 
             if (file != nullptr)
             {

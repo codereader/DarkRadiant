@@ -45,7 +45,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 		shaderTemplate->addLayer(ShaderLayer::DIFFUSE, imgExpr);
 
 		// Take this empty shadertemplate and create a ShaderDefinition
-		ShaderDefinition def(shaderTemplate, "");
+		ShaderDefinition def(shaderTemplate);
 
 		// Insert the shader definition and set the iterator to it
 		i = _definitions.insert(ShaderDefinitionMap::value_type(name, def)).first;
@@ -61,7 +61,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name, ""));
 
 		// Take this empty shadertemplate and create a ShaderDefinition
-		ShaderDefinition def(shaderTemplate, "");
+		ShaderDefinition def(shaderTemplate);
 
 		// Insert the shader definition and set the iterator to it
 		i = _definitions.insert(ShaderDefinitionMap::value_type(name, def)).first;
@@ -117,9 +117,10 @@ std::size_t ShaderLibrary::getNumDefinitions()
 
 void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback)
 {
-    for (const ShaderDefinitionMap::value_type& pair : _definitions)
+    for (const auto& pair : _definitions)
 	{
-		callback(pair.first);
+        if (pair.second.file.visibility == vfs::Visibility::NORMAL)
+            callback(pair.first);
 	}
 }
 

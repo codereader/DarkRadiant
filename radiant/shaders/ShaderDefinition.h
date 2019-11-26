@@ -1,5 +1,6 @@
-#ifndef SHADERDEFINITION_H_
-#define SHADERDEFINITION_H_
+#pragma once
+
+#include "ifilesystem.h"
 
 #include <map>
 #include <string>
@@ -14,23 +15,22 @@ namespace shaders
  */
 struct ShaderDefinition
 {
-	// The shader template
-	ShaderTemplatePtr shaderTemplate;
+    // The shader template
+    ShaderTemplatePtr shaderTemplate;
 
-	// Filename from which the shader was parsed
-	std::string filename;
+    // File from which the shader was parsed
+    vfs::FileInfo file;
 
-	/* Constructor
-	 */
-	ShaderDefinition(const ShaderTemplatePtr& templ, const std::string& fname) :
-		shaderTemplate(templ),
-		filename(fname)
-	{}
+    /* Constructor
+     */
+    explicit ShaderDefinition(const ShaderTemplatePtr& templ,
+                              const vfs::FileInfo& f = vfs::FileInfo()):
+        shaderTemplate(templ),
+        file(f)
+    {}
 
 };
 
 typedef std::map<std::string, ShaderDefinition, ShaderNameCompareFunctor> ShaderDefinitionMap;
 
 }
-
-#endif /*SHADERDEFINITION_H_*/

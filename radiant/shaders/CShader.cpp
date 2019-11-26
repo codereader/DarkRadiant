@@ -22,7 +22,7 @@ namespace shaders
  */
 CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 	_template(definition.shaderTemplate),
-	_fileName(definition.filename),
+	_fileName(definition.file.name),
 	_name(name),
 	m_bInUse(false),
 	_visible(true)

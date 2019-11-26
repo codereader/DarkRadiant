@@ -80,6 +80,13 @@ struct FileInfo
         else
             return topDir + (topDir.back() == '/' ? "" : "/") + name;
     }
+
+    /// Equality comparison with another FileInfo
+    bool operator== (const FileInfo& rhs) const
+    {
+        return topDir == rhs.topDir && name == rhs.name
+            && visibility == rhs.visibility;
+    }
 };
 
 /**
