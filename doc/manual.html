@@ -496,12 +496,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_organising_a_map">Organising a map</a>
 <ul class="sectlevel2">
 <li><a href="#_grouping_objects">Grouping objects</a></li>
-<li><a href="#_working_with_prefabs">Working with prefabs</a>
+<li><a href="#WorkingWithPrefabs">Working with prefabs</a>
 <ul class="sectlevel3">
 <li><a href="#_exporting_to_a_prefab">Exporting to a prefab</a></li>
 <li><a href="#ImportPrefab">Importing a prefab</a></li>
 </ul>
 </li>
+<li><a href="#_exporting_models">Exporting models</a></li>
 <li><a href="#_using_layers">Using layers</a>
 <ul class="sectlevel3">
 <li><a href="#_the_layers_window">The Layers window</a></li>
@@ -2406,7 +2407,7 @@ groups will be restored.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_working_with_prefabs">Working with prefabs</h3>
+<h3 id="WorkingWithPrefabs">Working with prefabs</h3>
 <div class="paragraph">
 <p>DarkRadiant allows a collection of objects to be saved to disk as a <strong>prefab</strong>,
 which can then be imported into other maps. You can use prefabs to store
@@ -2498,6 +2499,49 @@ Before inserting the prefab, you can use the
 whether the prefab is automatically grouped as a single object, or inserted as
 separate selectable objects.</p>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exporting_models">Exporting models</h3>
+<div class="paragraph">
+<p>DarkRadiant provides a limited ability to export scene geometry into a number of
+3D model file formats: ASCII Scene Export (ASE), Lightwave (LWO) or
+Wavefront OBJ. This functionality is provided to help with organising
+frequently-used map elements — DarkRadiant is not intended to compete with
+full-featured 3D modelling applications such as Blender or 3DS Max.</p>
+</div>
+<div class="paragraph">
+<p>Exporting to a model is similar to exporting to a prefab, except that models can
+only contain geometry (brushes or patches), not other map entities such as
+lights or speakers. However, unlike prefabs, models can be edited with other 3D
+software, and exporting map geometry as a model might provide a useful template
+for creating map-specific static meshes in a more powerful modelling tool.</p>
+</div>
+<div class="paragraph">
+<p>To export a model:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the geometry to be exported. Note that DarkRadiant currently does not
+complain if you select non-geometry such as lights, however these will not
+appear in the resulting model file.</p>
+</li>
+<li>
+<p>Open the <strong>File</strong> menu and choose <strong>Export selected as model&#8230;&#8203;</strong></p>
+</li>
+<li>
+<p>In the <strong>Output Format</strong> dropdown, choose one of the supported model formats:
+<code>ASCII Scene Export (.ase)</code>, <code>Lightwave Object File (.lwo)</code>, or <code>Wavefront OBJ
+(.obj)</code>.</p>
+</li>
+<li>
+<p>Choose the path for the exported model file in the <strong>File Path</strong> entry box.</p>
+</li>
+<li>
+<p>Click <strong>OK</strong> to export the model.</p>
+</li>
+</ol>
 </div>
 </div>
 <div class="sect2">
@@ -2877,6 +2921,18 @@ then save to this new file name in future.</p>
 <dd>
 <p>Display a file browser to choose a new filename to save this
 map into, without changing the current map name for future <strong>Save</strong> operations.</p>
+</dd>
+<dt class="hdlist1"><strong>Save selected as Map&#8230;&#8203;</strong></dt>
+<dd>
+<p>Choose a file name and save the currently-selected
+items into a new map file without changing the current map name. Equivalent to
+<strong>Save copy as</strong> but it only saves the selected items, not the entire map.</p>
+</dd>
+<dt class="hdlist1"><strong>Save selected as prefab&#8230;&#8203;</strong></dt>
+<dd>
+<p>Equivalent to <strong>Save selected as Map</strong> but it saves
+the selected items into a <a href="#WorkingWithPrefabs">prefab</a> (<code>*.pfb</code>) file in the
+standard prefab location.</p>
 </dd>
 </dl>
 </div>
@@ -3335,7 +3391,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-30 21:02:12 GMT
+Last updated 2019-11-27 20:52:40 GMT
 </div>
 </div>
 </body>

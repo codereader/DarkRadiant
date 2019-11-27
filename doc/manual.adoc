@@ -1131,6 +1131,7 @@ NOTE: Groups can be nested, by creating a group that includes one or more
 existing groups. When you ungroup such a nested group, the original component
 groups will be restored.
 
+[[WorkingWithPrefabs]]
 === Working with prefabs
 
 DarkRadiant allows a collection of objects to be saved to disk as a *prefab*,
@@ -1180,6 +1181,32 @@ Before inserting the prefab, you can use the
 *Create&nbsp;Group&nbsp;out&nbsp;of&nbsp;Prefab&nbsp;parts* checkbox to control
 whether the prefab is automatically grouped as a single object, or inserted as
 separate selectable objects.
+
+=== Exporting models
+
+DarkRadiant provides a limited ability to export scene geometry into a number of
+3D model file formats: ASCII Scene Export (ASE), Lightwave (LWO) or
+Wavefront OBJ. This functionality is provided to help with organising
+frequently-used map elements — DarkRadiant is not intended to compete with
+full-featured 3D modelling applications such as Blender or 3DS Max.
+
+Exporting to a model is similar to exporting to a prefab, except that models can
+only contain geometry (brushes or patches), not other map entities such as
+lights or speakers. However, unlike prefabs, models can be edited with other 3D
+software, and exporting map geometry as a model might provide a useful template
+for creating map-specific static meshes in a more powerful modelling tool.
+
+To export a model:
+
+. Select the geometry to be exported. Note that DarkRadiant currently does not
+complain if you select non-geometry such as lights, however these will not
+appear in the resulting model file.
+. Open the *File* menu and choose *Export selected as model...*
+. In the *Output Format* dropdown, choose one of the supported model formats:
+`ASCII Scene Export (.ase)`, `Lightwave Object File (.lwo)`, or `Wavefront OBJ
+(.obj)`.
+. Choose the path for the exported model file in the *File Path* entry box.
+. Click *OK* to export the model.
 
 === Using layers
 
@@ -1401,6 +1428,14 @@ partially-complete maps.
 
 *Save copy as...*:: Display a file browser to choose a new filename to save this
  map into, without changing the current map name for future *Save* operations.
+
+*Save selected as Map...*:: Choose a file name and save the currently-selected
+ items into a new map file without changing the current map name. Equivalent to
+ *Save copy as* but it only saves the selected items, not the entire map.
+
+*Save selected as prefab...*:: Equivalent to *Save selected as Map* but it saves
+ the selected items into a <<WorkingWithPrefabs,prefab>> (`*.pfb`) file in the
+ standard prefab location.
 
 == Configuring DarkRadiant
 
