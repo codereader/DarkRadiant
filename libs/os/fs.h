@@ -14,19 +14,20 @@
 #endif
 
 // If C++17 <filesystem> is available, use that one
-#if defined(HAVE_STD_FILESYSTEM) || defined(__cpp_lib_filesystem)
+// e.g. Visual Studio 2019 provides the regular C++17 header
+#if defined(HAVE_STD_FILESYSTEM) || defined(__cpp_lib_filesystem) || _MSC_VER >= 1920
 
 #include <filesystem>
 namespace fs = std::filesystem;
 #define DR_USE_STD_FILESYSTEM
 
-// At the time of writing C++17 is still in draft state, but some compilers
+// For older compilers C++17 is still in draft state, but some compilers
 // provide the features through the std::experimental namespace.
 // In Linux, the configure script will check for the header and define the
 // HAVE_EXPERIMENTAL_FILESYSTEM symbol for us.
 #elif _MSC_VER >= 1900 || defined(HAVE_EXPERIMENTAL_FILESYSTEM)
 
-// Visual Studio 2015+ and GCC 5.3+ supply the experimental/filesystem header
+// Visual Studio 2015/2017 and GCC 5.3+ supply the experimental/filesystem header
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem::v1;
 #define DR_USE_STD_FILESYSTEM
