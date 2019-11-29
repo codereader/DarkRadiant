@@ -68,8 +68,7 @@ public:
 	};
 
 private:
-	struct StringCompareFunctorNoCase :
-		public std::binary_function<std::string, std::string, bool>
+	struct StringCompareFunctorNoCase
 	{
 		bool operator()(const std::string& s1, const std::string& s2) const
 		{
