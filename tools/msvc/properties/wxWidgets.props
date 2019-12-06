@@ -6,7 +6,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(W32DepsDir)wxWidgets\include;$(W32DepsDir)wxWidgets\include\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WXINTL_NO_GETTEXT_MACRO;WXUSINGDLL;wxMSVC_VERSION_AUTO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WXINTL_NO_GETTEXT_MACRO;WXUSINGDLL;wxMSVC_VERSION_AUTO;wxMSVC_VERSION_ABI_COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\wxWidgets\lib\$(WxWidgetsLibDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
