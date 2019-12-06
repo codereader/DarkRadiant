@@ -112,7 +112,7 @@ void EntityInspector::construct()
 
     _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "",
                                           wxDefaultPosition, wxDefaultSize);
-    optionsHBox->Add(_primitiveNumLabel, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, 5);
+    optionsHBox->Add(_primitiveNumLabel, 1, wxEXPAND | wxALL, 5);
     optionsHBox->AddStretchSpacer();
     optionsHBox->Add(_showInheritedCheckbox, 1, wxEXPAND);
     optionsHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
