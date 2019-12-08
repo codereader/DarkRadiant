@@ -3,15 +3,15 @@
 
 [Setup]
 AppName=DarkRadiant
-AppVerName=DarkRadiant 2.6.1pre1 x86
+AppVerName=DarkRadiant 2.7.0pre1 x86
 AppPublisher=The Dark Mod
-AppPublisherURL=http://www.darkradiant.net
-AppSupportURL=http://www.darkradiant.net
-AppUpdatesURL=http://www.darkradiant.net
+AppPublisherURL=https://www.darkradiant.net
+AppSupportURL=https://www.darkradiant.net
+AppUpdatesURL=https://www.darkradiant.net
 DefaultDirName={pf}\DarkRadiant
-DefaultGroupName=DarkRadiant 2.6.1pre1 x86
+DefaultGroupName=DarkRadiant 2.7.0pre1 x86
 OutputDir=.
-OutputBaseFilename=darkradiant-2.6.1pre1-x86
+OutputBaseFilename=darkradiant-2.7.0pre1-x86
 Compression=lzma
 SolidCompression=yes
 ;ArchitecturesAllowed=x64
@@ -26,8 +26,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\..\install\darkradiant.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\install\*"; Excludes: "*.pdb,*.exp,*.lib,*.in,*.fbp,*.iobj,*.ipdb"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.12.25810\x86\Microsoft.VC141.CRT\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Redist\MSVC\14.12.25810\x86\Microsoft.VC141.CRT\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.23.27820\x86\Microsoft.VC142.CRT\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.23.27820\x86\Microsoft.VC142.CRT\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
