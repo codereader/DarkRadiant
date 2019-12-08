@@ -16,10 +16,11 @@ For The Dark Mod mappers, there's an extensive [Beginner's Guide](http://wiki.th
 
 ## Prerequisites
 
-DarkRadiant is built on Windows using *Microsoft Visual C++ 2017*. 
-The free Community Edition can be obtained here:
+DarkRadiant is built on Windows using *Microsoft Visual Studio*, the free Community Edition can be obtained here:
 
 *VC++ 2019:* https://visualstudio.microsoft.com/downloads/ (Choose Visual Studio Community)
+
+When installing Studio please make sure to enable the "Desktop Development with C++" workload.
 
 Since DarkRadiant uses a couple of open-source libraries that are not available on Windows by default, you will also need to download and install the dependencies. 7-Zip packages of the dependencies are available at the following
 URL(s). [Get 7-zip here](http://www.7-zip.org/)
@@ -32,9 +33,9 @@ Just drop the windeps.7z in the DarkRadiant folder and use 7-zip's "Extract to h
 
 ## Build
 
-The main Visual C++ solution file is:
+The main Visual C++ solution file is located in:
 
-Visual Studio 2019: `tools/msvc/DarkRadiant.sln`
+`tools/msvc/DarkRadiant.sln`
 
 Open this file with Visual Studio and start a build by right-clicking on the top-level 
 "Solution 'DarkRadiant'" item and choosing Build Solution. The DarkRadiant.exe file will be 
