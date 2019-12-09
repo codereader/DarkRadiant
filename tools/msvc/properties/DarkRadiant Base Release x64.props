@@ -7,7 +7,7 @@
     <PlatformDepsDir>$(DarkRadiantRoot)\w64deps\</PlatformDepsDir>
     <LibSuffix>
     </LibSuffix>
-    <WxWidgetsLibDir>vc$(PlatformToolsetVersion)_x64_dll</WxWidgetsLibDir>
+    <WxWidgetsLibDir>vc14x_x64_dll</WxWidgetsLibDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
