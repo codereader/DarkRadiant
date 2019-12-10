@@ -321,13 +321,6 @@
 		3A0124291E50489D00A62BC1 /* XMLRegistryModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */; };
 		3A01242B1E50527B00A62BC1 /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
 		3A01242C1E50527B00A62BC1 /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
-		3AE210431E5980AF00F5A0A6 /* eventmanager.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDDC81E50BE540062D9AF /* eventmanager.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3AE210441E5980AF00F5A0A6 /* filetypes.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE0D1E50BFB80062D9AF /* filetypes.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3AE210451E5980AF00F5A0A6 /* filters.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE201E50C0190062D9AF /* filters.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3AE210461E5980AF00F5A0A6 /* fonts.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE3E1E50C0B50062D9AF /* fonts.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3AE210481E5980AF00F5A0A6 /* image.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDE791E50C29B0062D9AF /* image.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3AE210491E5980AF00F5A0A6 /* mapdoom3.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDEBB1E50C6400062D9AF /* mapdoom3.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		3AE2104A1E5980AF00F5A0A6 /* md5model.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDF1E1E50C6F10062D9AF /* md5model.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE2104B1E5980AF00F5A0A6 /* model.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0341E50D0400062D9AF /* model.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE2104C1E5980AF00F5A0A6 /* particles.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0501E50D6C60062D9AF /* particles.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE2104D1E5980AF00F5A0A6 /* scenegraph.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0941E50D8270062D9AF /* scenegraph.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -460,126 +453,54 @@
 		3AE6F325239F4CA2008A1B2D /* TargetKeyCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F300239F4CA2008A1B2D /* TargetKeyCollection.cpp */; };
 		3AE6F326239F4CA2008A1B2D /* TargetLineNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F302239F4CA2008A1B2D /* TargetLineNode.cpp */; };
 		3AE6F327239F4CA2008A1B2D /* TargetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F304239F4CA2008A1B2D /* TargetManager.cpp */; };
-		3AEBDDF11E50BF1D0062D9AF /* Accelerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDD31E50BF110062D9AF /* Accelerator.cpp */; };
-		3AEBDDF21E50BF1D0062D9AF /* Accelerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDD41E50BF110062D9AF /* Accelerator.h */; };
-		3AEBDDF31E50BF1D0062D9AF /* Event.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDD51E50BF110062D9AF /* Event.h */; };
-		3AEBDDF41E50BF1D0062D9AF /* EventManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDD61E50BF110062D9AF /* EventManager.cpp */; };
-		3AEBDDF51E50BF1D0062D9AF /* EventManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDD71E50BF110062D9AF /* EventManager.h */; };
-		3AEBDDF61E50BF1D0062D9AF /* GlobalKeyEventFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDD81E50BF110062D9AF /* GlobalKeyEventFilter.cpp */; };
-		3AEBDDF71E50BF1D0062D9AF /* GlobalKeyEventFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDD91E50BF110062D9AF /* GlobalKeyEventFilter.h */; };
-		3AEBDDF81E50BF1D0062D9AF /* KeyEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDDA1E50BF110062D9AF /* KeyEvent.h */; };
-		3AEBDDF91E50BF1D0062D9AF /* MouseToolGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDDD1E50BF110062D9AF /* MouseToolGroup.cpp */; };
-		3AEBDDFA1E50BF1D0062D9AF /* MouseToolGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDDE1E50BF110062D9AF /* MouseToolGroup.h */; };
-		3AEBDDFB1E50BF1D0062D9AF /* MouseToolManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDDF1E50BF110062D9AF /* MouseToolManager.cpp */; };
-		3AEBDDFC1E50BF1D0062D9AF /* MouseToolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDE01E50BF110062D9AF /* MouseToolManager.h */; };
-		3AEBDDFD1E50BF1D0062D9AF /* RegistryToggle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDE11E50BF110062D9AF /* RegistryToggle.h */; };
-		3AEBDDFE1E50BF1D0062D9AF /* SaveEventVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDE21E50BF110062D9AF /* SaveEventVisitor.h */; };
-		3AEBDDFF1E50BF1D0062D9AF /* Statement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDE31E50BF110062D9AF /* Statement.cpp */; };
-		3AEBDE001E50BF1D0062D9AF /* Statement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDE41E50BF110062D9AF /* Statement.h */; };
-		3AEBDE011E50BF1D0062D9AF /* Toggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDE51E50BF110062D9AF /* Toggle.cpp */; };
-		3AEBDE021E50BF1D0062D9AF /* Toggle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDE61E50BF110062D9AF /* Toggle.h */; };
-		3AEBDE031E50BF1D0062D9AF /* WidgetToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDDE71E50BF110062D9AF /* WidgetToggle.cpp */; };
-		3AEBDE041E50BF1D0062D9AF /* WidgetToggle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDDE81E50BF110062D9AF /* WidgetToggle.h */; };
-		3AEBDE061E50BF770062D9AF /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
-		3AEBDE071E50BF770062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
-		3AEBDE081E50BF8C0062D9AF /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
-		3AEBDE1A1E50BFF00062D9AF /* FileTypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE181E50BFF00062D9AF /* FileTypeRegistry.cpp */; };
-		3AEBDE1B1E50BFF00062D9AF /* FileTypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE191E50BFF00062D9AF /* FileTypeRegistry.h */; };
-		3AEBDE331E50C05F0062D9AF /* BasicFilterSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE2B1E50C05F0062D9AF /* BasicFilterSystem.cpp */; };
-		3AEBDE341E50C05F0062D9AF /* BasicFilterSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE2C1E50C05F0062D9AF /* BasicFilterSystem.h */; };
-		3AEBDE351E50C05F0062D9AF /* filters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE2D1E50C05F0062D9AF /* filters.cpp */; };
-		3AEBDE361E50C05F0062D9AF /* InstanceUpdateWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE2E1E50C05F0062D9AF /* InstanceUpdateWalker.h */; };
-		3AEBDE371E50C05F0062D9AF /* XMLFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE311E50C05F0062D9AF /* XMLFilter.cpp */; };
-		3AEBDE381E50C05F0062D9AF /* XMLFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE321E50C05F0062D9AF /* XMLFilter.h */; };
-		3AEBDE391E50C0810062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
-		3AEBDE551E50C0F40062D9AF /* FontInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE491E50C0F40062D9AF /* FontInfo.h */; };
-		3AEBDE561E50C0F40062D9AF /* FontLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE4A1E50C0F40062D9AF /* FontLoader.cpp */; };
-		3AEBDE571E50C0F40062D9AF /* FontLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE4B1E50C0F40062D9AF /* FontLoader.h */; };
-		3AEBDE581E50C0F40062D9AF /* FontManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE4C1E50C0F40062D9AF /* FontManager.cpp */; };
-		3AEBDE591E50C0F40062D9AF /* FontManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE4D1E50C0F40062D9AF /* FontManager.h */; };
-		3AEBDE5A1E50C0F40062D9AF /* GlyphInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE4E1E50C0F40062D9AF /* GlyphInfo.cpp */; };
-		3AEBDE5B1E50C0F40062D9AF /* GlyphInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE4F1E50C0F40062D9AF /* GlyphInfo.h */; };
-		3AEBDE5C1E50C0F40062D9AF /* GlyphSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE501E50C0F40062D9AF /* GlyphSet.cpp */; };
-		3AEBDE5D1E50C0F40062D9AF /* GlyphSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE511E50C0F40062D9AF /* GlyphSet.h */; };
-		3AEBDE5E1E50C0F40062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE541E50C0F40062D9AF /* plugin.cpp */; };
-		3AEBDE5F1E50C1240062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
-		3AEBDE921E50C2DA0062D9AF /* dds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE841E50C2DA0062D9AF /* dds.cpp */; };
-		3AEBDE931E50C2DA0062D9AF /* dds.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE851E50C2DA0062D9AF /* dds.h */; };
-		3AEBDE941E50C2DA0062D9AF /* DDSImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE861E50C2DA0062D9AF /* DDSImage.cpp */; };
-		3AEBDE951E50C2DA0062D9AF /* DDSImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE871E50C2DA0062D9AF /* DDSImage.h */; };
-		3AEBDE961E50C2DA0062D9AF /* Doom3ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE881E50C2DA0062D9AF /* Doom3ImageLoader.cpp */; };
-		3AEBDE971E50C2DA0062D9AF /* Doom3ImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE891E50C2DA0062D9AF /* Doom3ImageLoader.h */; };
-		3AEBDE981E50C2DA0062D9AF /* image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE8A1E50C2DA0062D9AF /* image.cpp */; };
-		3AEBDE991E50C2DA0062D9AF /* ImageLoaderWx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE8B1E50C2DA0062D9AF /* ImageLoaderWx.cpp */; };
-		3AEBDE9A1E50C2DA0062D9AF /* ImageLoaderWx.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE8C1E50C2DA0062D9AF /* ImageLoaderWx.h */; };
-		3AEBDE9B1E50C2DA0062D9AF /* ImageTypeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE8D1E50C2DA0062D9AF /* ImageTypeLoader.h */; };
-		3AEBDE9C1E50C2DA0062D9AF /* TGALoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDE901E50C2DA0062D9AF /* TGALoader.cpp */; };
-		3AEBDE9D1E50C2DA0062D9AF /* TGALoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDE911E50C2DA0062D9AF /* TGALoader.h */; };
-		3AEBDE9E1E50C31D0062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
+		3AE6F33E239F4FE1008A1B2D /* Accelerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F32A239F4FE1008A1B2D /* Accelerator.cpp */; };
+		3AE6F33F239F4FE1008A1B2D /* EventManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F32D239F4FE1008A1B2D /* EventManager.cpp */; };
+		3AE6F340239F4FE1008A1B2D /* GlobalKeyEventFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F32F239F4FE1008A1B2D /* GlobalKeyEventFilter.cpp */; };
+		3AE6F341239F4FE1008A1B2D /* MouseToolGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F332239F4FE1008A1B2D /* MouseToolGroup.cpp */; };
+		3AE6F342239F4FE1008A1B2D /* MouseToolManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F334239F4FE1008A1B2D /* MouseToolManager.cpp */; };
+		3AE6F343239F4FE1008A1B2D /* Statement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F338239F4FE1008A1B2D /* Statement.cpp */; };
+		3AE6F344239F4FE1008A1B2D /* Toggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F33A239F4FE1008A1B2D /* Toggle.cpp */; };
+		3AE6F345239F4FE1008A1B2D /* WidgetToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F33C239F4FE1008A1B2D /* WidgetToggle.cpp */; };
+		3AE6F349239F5033008A1B2D /* FileTypeRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F347239F5033008A1B2D /* FileTypeRegistry.cpp */; };
+		3AE6F350239F507B008A1B2D /* BasicFilterSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F34B239F507B008A1B2D /* BasicFilterSystem.cpp */; };
+		3AE6F351239F507B008A1B2D /* XMLFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F34E239F507B008A1B2D /* XMLFilter.cpp */; };
+		3AE6F35C239F5C4C008A1B2D /* FontLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F354239F5C4C008A1B2D /* FontLoader.cpp */; };
+		3AE6F35D239F5C4C008A1B2D /* FontManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F356239F5C4C008A1B2D /* FontManager.cpp */; };
+		3AE6F35E239F5C4C008A1B2D /* GlyphInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F358239F5C4C008A1B2D /* GlyphInfo.cpp */; };
+		3AE6F35F239F5C4C008A1B2D /* GlyphSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F35A239F5C4C008A1B2D /* GlyphSet.cpp */; };
+		3AE6F36E239F5C9F008A1B2D /* dds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F361239F5C9F008A1B2D /* dds.cpp */; };
+		3AE6F36F239F5C9F008A1B2D /* DDSImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F363239F5C9F008A1B2D /* DDSImage.cpp */; };
+		3AE6F370239F5C9F008A1B2D /* ddslib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F365239F5C9F008A1B2D /* ddslib.cpp */; };
+		3AE6F371239F5C9F008A1B2D /* Doom3ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F367239F5C9F008A1B2D /* Doom3ImageLoader.cpp */; };
+		3AE6F372239F5C9F008A1B2D /* ImageLoaderWx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F369239F5C9F008A1B2D /* ImageLoaderWx.cpp */; };
+		3AE6F373239F5C9F008A1B2D /* TGALoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F36C239F5C9F008A1B2D /* TGALoader.cpp */; };
+		3AE6F39F239F5D35008A1B2D /* Doom3AasFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F376239F5D35008A1B2D /* Doom3AasFile.cpp */; };
+		3AE6F3A0239F5D35008A1B2D /* Doom3AasFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F378239F5D35008A1B2D /* Doom3AasFileLoader.cpp */; };
+		3AE6F3A1239F5D35008A1B2D /* Doom3AasFileSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F37A239F5D35008A1B2D /* Doom3AasFileSettings.cpp */; };
+		3AE6F3A2239F5D35008A1B2D /* Doom3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F37D239F5D35008A1B2D /* Doom3MapFormat.cpp */; };
+		3AE6F3A3239F5D35008A1B2D /* Doom3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F37F239F5D35008A1B2D /* Doom3MapReader.cpp */; };
+		3AE6F3A4239F5D35008A1B2D /* Doom3MapWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F381239F5D35008A1B2D /* Doom3MapWriter.cpp */; };
+		3AE6F3A5239F5D35008A1B2D /* Doom3PrefabFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F383239F5D35008A1B2D /* Doom3PrefabFormat.cpp */; };
+		3AE6F3A6239F5D35008A1B2D /* mapdoom3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F385239F5D35008A1B2D /* mapdoom3.cpp */; };
+		3AE6F3A7239F5D35008A1B2D /* BrushDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F387239F5D35008A1B2D /* BrushDef.cpp */; };
+		3AE6F3A8239F5D35008A1B2D /* BrushDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F389239F5D35008A1B2D /* BrushDef3.cpp */; };
+		3AE6F3A9239F5D35008A1B2D /* Patch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F38B239F5D35008A1B2D /* Patch.cpp */; };
+		3AE6F3AA239F5D35008A1B2D /* PatchDef2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F38D239F5D35008A1B2D /* PatchDef2.cpp */; };
+		3AE6F3AB239F5D35008A1B2D /* PatchDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F38F239F5D35008A1B2D /* PatchDef3.cpp */; };
+		3AE6F3AC239F5D35008A1B2D /* Quake3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F395239F5D35008A1B2D /* Quake3MapFormat.cpp */; };
+		3AE6F3AD239F5D35008A1B2D /* Quake3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F397239F5D35008A1B2D /* Quake3MapReader.cpp */; };
+		3AE6F3AE239F5D35008A1B2D /* Quake4MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F39A239F5D35008A1B2D /* Quake4MapFormat.cpp */; };
+		3AE6F3AF239F5D35008A1B2D /* Quake4MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F39C239F5D35008A1B2D /* Quake4MapReader.cpp */; };
+		3AE6F3C2239F5DC3008A1B2D /* MD5Anim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3B1239F5DC3008A1B2D /* MD5Anim.cpp */; };
+		3AE6F3C3239F5DC3008A1B2D /* MD5AnimationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3B3239F5DC3008A1B2D /* MD5AnimationCache.cpp */; };
+		3AE6F3C4239F5DC3008A1B2D /* MD5Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3B6239F5DC3008A1B2D /* MD5Model.cpp */; };
+		3AE6F3C5239F5DC3008A1B2D /* MD5ModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3B8239F5DC3008A1B2D /* MD5ModelLoader.cpp */; };
+		3AE6F3C6239F5DC3008A1B2D /* MD5ModelNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3BA239F5DC3008A1B2D /* MD5ModelNode.cpp */; };
+		3AE6F3C7239F5DC3008A1B2D /* MD5Skeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3BC239F5DC3008A1B2D /* MD5Skeleton.cpp */; };
+		3AE6F3C8239F5DC3008A1B2D /* MD5Surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3BE239F5DC3008A1B2D /* MD5Surface.cpp */; };
+		3AE6F3C9239F5DC3008A1B2D /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3C0239F5DC3008A1B2D /* plugin.cpp */; };
 		3AEBDEB21E50C3620062D9AF /* ddslib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEAE1E50C34F0062D9AF /* ddslib.cpp */; };
 		3AEBDEB31E50C3660062D9AF /* ddslib.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEB01E50C35D0062D9AF /* ddslib.h */; };
-		3AEBDEB41E50C3850062D9AF /* libdds.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDEA31E50C3330062D9AF /* libdds.a */; };
-		3AEBDEB51E50C39A0062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
-		3AEBDEF21E50C68D0062D9AF /* Doom3AasFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEC71E50C68D0062D9AF /* Doom3AasFile.cpp */; };
-		3AEBDEF31E50C68D0062D9AF /* Doom3AasFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEC81E50C68D0062D9AF /* Doom3AasFile.h */; };
-		3AEBDEF41E50C68D0062D9AF /* Doom3AasFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEC91E50C68D0062D9AF /* Doom3AasFileLoader.cpp */; };
-		3AEBDEF51E50C68D0062D9AF /* Doom3AasFileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDECA1E50C68D0062D9AF /* Doom3AasFileLoader.h */; };
-		3AEBDEF61E50C68D0062D9AF /* Doom3AasFileSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDECB1E50C68D0062D9AF /* Doom3AasFileSettings.cpp */; };
-		3AEBDEF71E50C68D0062D9AF /* Doom3AasFileSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDECC1E50C68D0062D9AF /* Doom3AasFileSettings.h */; };
-		3AEBDEF81E50C68D0062D9AF /* Util.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDECD1E50C68D0062D9AF /* Util.h */; };
-		3AEBDEF91E50C68D0062D9AF /* Doom3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDECE1E50C68D0062D9AF /* Doom3MapFormat.cpp */; };
-		3AEBDEFA1E50C68D0062D9AF /* Doom3MapFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDECF1E50C68D0062D9AF /* Doom3MapFormat.h */; };
-		3AEBDEFB1E50C68D0062D9AF /* Doom3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDED01E50C68D0062D9AF /* Doom3MapReader.cpp */; };
-		3AEBDEFC1E50C68D0062D9AF /* Doom3MapReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDED11E50C68D0062D9AF /* Doom3MapReader.h */; };
-		3AEBDEFD1E50C68D0062D9AF /* Doom3MapWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDED21E50C68D0062D9AF /* Doom3MapWriter.cpp */; };
-		3AEBDEFE1E50C68D0062D9AF /* Doom3MapWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDED31E50C68D0062D9AF /* Doom3MapWriter.h */; };
-		3AEBDEFF1E50C68D0062D9AF /* Doom3PrefabFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDED41E50C68D0062D9AF /* Doom3PrefabFormat.cpp */; };
-		3AEBDF001E50C68D0062D9AF /* Doom3PrefabFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDED51E50C68D0062D9AF /* Doom3PrefabFormat.h */; };
-		3AEBDF011E50C68D0062D9AF /* mapdoom3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDED81E50C68D0062D9AF /* mapdoom3.cpp */; };
-		3AEBDF021E50C68D0062D9AF /* BrushDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEDA1E50C68D0062D9AF /* BrushDef.cpp */; };
-		3AEBDF031E50C68D0062D9AF /* BrushDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEDB1E50C68D0062D9AF /* BrushDef.h */; };
-		3AEBDF041E50C68D0062D9AF /* BrushDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEDC1E50C68D0062D9AF /* BrushDef3.cpp */; };
-		3AEBDF051E50C68D0062D9AF /* BrushDef3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEDD1E50C68D0062D9AF /* BrushDef3.h */; };
-		3AEBDF061E50C68D0062D9AF /* Patch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEDE1E50C68D0062D9AF /* Patch.cpp */; };
-		3AEBDF071E50C68D0062D9AF /* Patch.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEDF1E50C68D0062D9AF /* Patch.h */; };
-		3AEBDF081E50C68D0062D9AF /* PatchDef2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEE01E50C68D0062D9AF /* PatchDef2.cpp */; };
-		3AEBDF091E50C68D0062D9AF /* PatchDef2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE11E50C68D0062D9AF /* PatchDef2.h */; };
-		3AEBDF0A1E50C68D0062D9AF /* PatchDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEE21E50C68D0062D9AF /* PatchDef3.cpp */; };
-		3AEBDF0B1E50C68D0062D9AF /* PatchDef3.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE31E50C68D0062D9AF /* PatchDef3.h */; };
-		3AEBDF0C1E50C68D0062D9AF /* BrushDef3Exporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE51E50C68D0062D9AF /* BrushDef3Exporter.h */; };
-		3AEBDF0D1E50C68D0062D9AF /* BrushDefExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE61E50C68D0062D9AF /* BrushDefExporter.h */; };
-		3AEBDF0E1E50C68D0062D9AF /* PatchDefExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE71E50C68D0062D9AF /* PatchDefExporter.h */; };
-		3AEBDF0F1E50C68D0062D9AF /* Quake3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEE81E50C68D0062D9AF /* Quake3MapFormat.cpp */; };
-		3AEBDF101E50C68D0062D9AF /* Quake3MapFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEE91E50C68D0062D9AF /* Quake3MapFormat.h */; };
-		3AEBDF111E50C68D0062D9AF /* Quake3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEEA1E50C68D0062D9AF /* Quake3MapReader.cpp */; };
-		3AEBDF121E50C68D0062D9AF /* Quake3MapReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEEB1E50C68D0062D9AF /* Quake3MapReader.h */; };
-		3AEBDF131E50C68D0062D9AF /* Quake3MapWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEEC1E50C68D0062D9AF /* Quake3MapWriter.h */; };
-		3AEBDF141E50C68D0062D9AF /* Quake4MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEED1E50C68D0062D9AF /* Quake4MapFormat.cpp */; };
-		3AEBDF151E50C68D0062D9AF /* Quake4MapFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEEE1E50C68D0062D9AF /* Quake4MapFormat.h */; };
-		3AEBDF161E50C68D0062D9AF /* Quake4MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDEEF1E50C68D0062D9AF /* Quake4MapReader.cpp */; };
-		3AEBDF171E50C68D0062D9AF /* Quake4MapReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEF01E50C68D0062D9AF /* Quake4MapReader.h */; };
-		3AEBDF181E50C68D0062D9AF /* Quake4MapWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDEF11E50C68D0062D9AF /* Quake4MapWriter.h */; };
-		3AEBDF191E50C6DB0062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
-		3AEBDF6D1E50C7290062D9AF /* MD5Anim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF3A1E50C71E0062D9AF /* MD5Anim.cpp */; };
-		3AEBDF6E1E50C7290062D9AF /* MD5Anim.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF3B1E50C71E0062D9AF /* MD5Anim.h */; };
-		3AEBDF6F1E50C7290062D9AF /* MD5AnimationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF3C1E50C71E0062D9AF /* MD5AnimationCache.cpp */; };
-		3AEBDF701E50C7290062D9AF /* MD5AnimationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF3D1E50C71E0062D9AF /* MD5AnimationCache.h */; };
-		3AEBDF711E50C7290062D9AF /* MD5DataStructures.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF3E1E50C71E0062D9AF /* MD5DataStructures.h */; };
-		3AEBDF721E50C7290062D9AF /* MD5Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF3F1E50C71E0062D9AF /* MD5Model.cpp */; };
-		3AEBDF731E50C7290062D9AF /* MD5Model.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF401E50C71E0062D9AF /* MD5Model.h */; };
-		3AEBDF741E50C7290062D9AF /* MD5ModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF411E50C71E0062D9AF /* MD5ModelLoader.cpp */; };
-		3AEBDF751E50C7290062D9AF /* MD5ModelLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF421E50C71E0062D9AF /* MD5ModelLoader.h */; };
-		3AEBDF761E50C7290062D9AF /* MD5ModelNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF431E50C71E0062D9AF /* MD5ModelNode.cpp */; };
-		3AEBDF771E50C7290062D9AF /* MD5ModelNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF441E50C71E0062D9AF /* MD5ModelNode.h */; };
-		3AEBDF781E50C7290062D9AF /* MD5Skeleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF451E50C71E0062D9AF /* MD5Skeleton.cpp */; };
-		3AEBDF791E50C7290062D9AF /* MD5Skeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF461E50C71E0062D9AF /* MD5Skeleton.h */; };
-		3AEBDF7A1E50C7290062D9AF /* MD5Surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF471E50C71E0062D9AF /* MD5Surface.cpp */; };
-		3AEBDF7B1E50C7290062D9AF /* MD5Surface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF481E50C71E0062D9AF /* MD5Surface.h */; };
-		3AEBDF7C1E50C7290062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDF491E50C71E0062D9AF /* plugin.cpp */; };
-		3AEBDF7D1E50C7290062D9AF /* RenderableMD5Skeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDF4A1E50C71E0062D9AF /* RenderableMD5Skeleton.h */; };
-		3AEBDF9A1E50C7A10062D9AF /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
-		3AEBDF9B1E50C7A10062D9AF /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
-		3AEBDF9C1E50C7B80062D9AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
 		3AEBE0151E50CB120062D9AF /* clip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFF91E50CB120062D9AF /* clip.c */; };
 		3AEBE0161E50CB120062D9AF /* envelope.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFA1E50CB120062D9AF /* envelope.c */; };
 		3AEBE0171E50CB120062D9AF /* list.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFB1E50CB120062D9AF /* list.c */; };
@@ -1692,55 +1613,6 @@
 			remoteGlobalIDString = 3AEBDFF21E50CAEE0062D9AF;
 			remoteInfo = picomodel;
 		};
-		3AF4759D1E6B2115006B26C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3AEBDDC71E50BE540062D9AF;
-			remoteInfo = eventmanager;
-		};
-		3AF4759F1E6B2115006B26C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3AEBDE0C1E50BFB80062D9AF;
-			remoteInfo = filetypes;
-		};
-		3AF475A11E6B2115006B26C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3AEBDE1F1E50C0190062D9AF;
-			remoteInfo = filters;
-		};
-		3AF475A31E6B2115006B26C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3AEBDE3D1E50C0B50062D9AF;
-			remoteInfo = fonts;
-		};
-		3AF475A71E6B2115006B26C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3AEBDE781E50C29B0062D9AF;
-			remoteInfo = image;
-		};
-		3AF475A91E6B2115006B26C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3AEBDEBA1E50C6400062D9AF;
-			remoteInfo = mapdoom3;
-		};
-		3AF475AB1E6B2115006B26C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3AEBDF1D1E50C6F10062D9AF;
-			remoteInfo = md5model;
-		};
 		3AF475AD1E6B2115006B26C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
@@ -1868,13 +1740,6 @@
 				3AE210591E59811500F5A0A6 /* dm.gui.so in CopyFiles */,
 				3AE2105A1E59811500F5A0A6 /* dm.objectives.so in CopyFiles */,
 				3AE2105B1E59811500F5A0A6 /* dm.stimresponse.so in CopyFiles */,
-				3AE210431E5980AF00F5A0A6 /* eventmanager.so in CopyFiles */,
-				3AE210441E5980AF00F5A0A6 /* filetypes.so in CopyFiles */,
-				3AE210451E5980AF00F5A0A6 /* filters.so in CopyFiles */,
-				3AE210461E5980AF00F5A0A6 /* fonts.so in CopyFiles */,
-				3AE210481E5980AF00F5A0A6 /* image.so in CopyFiles */,
-				3AE210491E5980AF00F5A0A6 /* mapdoom3.so in CopyFiles */,
-				3AE2104A1E5980AF00F5A0A6 /* md5model.so in CopyFiles */,
 				3AE2104B1E5980AF00F5A0A6 /* model.so in CopyFiles */,
 				3AE2104C1E5980AF00F5A0A6 /* particles.so in CopyFiles */,
 				3AE2104D1E5980AF00F5A0A6 /* scenegraph.so in CopyFiles */,
@@ -3094,208 +2959,117 @@
 		3AE6F304239F4CA2008A1B2D /* TargetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetManager.cpp; path = ../../radiant/entity/target/TargetManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F305239F4CA2008A1B2D /* TargetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetManager.h; path = ../../radiant/entity/target/TargetManager.h; sourceTree = SOURCE_ROOT; };
 		3AE6F306239F4CA2008A1B2D /* VertexInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexInstance.h; path = ../../radiant/entity/VertexInstance.h; sourceTree = SOURCE_ROOT; };
+		3AE6F329239F4FCB008A1B2D /* GlobalKeyEventFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalKeyEventFilter.h; path = ../../radiant/eventmanager/GlobalKeyEventFilter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F32A239F4FE1008A1B2D /* Accelerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Accelerator.cpp; path = ../../radiant/eventmanager/Accelerator.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F32B239F4FE1008A1B2D /* Accelerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Accelerator.h; path = ../../radiant/eventmanager/Accelerator.h; sourceTree = SOURCE_ROOT; };
+		3AE6F32C239F4FE1008A1B2D /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = ../../radiant/eventmanager/Event.h; sourceTree = SOURCE_ROOT; };
+		3AE6F32D239F4FE1008A1B2D /* EventManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventManager.cpp; path = ../../radiant/eventmanager/EventManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F32E239F4FE1008A1B2D /* EventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventManager.h; path = ../../radiant/eventmanager/EventManager.h; sourceTree = SOURCE_ROOT; };
+		3AE6F32F239F4FE1008A1B2D /* GlobalKeyEventFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalKeyEventFilter.cpp; path = ../../radiant/eventmanager/GlobalKeyEventFilter.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F330239F4FE1008A1B2D /* GlobalKeyEventFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalKeyEventFilter.h; path = ../../radiant/eventmanager/GlobalKeyEventFilter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F331239F4FE1008A1B2D /* KeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEvent.h; path = ../../radiant/eventmanager/KeyEvent.h; sourceTree = SOURCE_ROOT; };
+		3AE6F332239F4FE1008A1B2D /* MouseToolGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MouseToolGroup.cpp; path = ../../radiant/eventmanager/MouseToolGroup.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F333239F4FE1008A1B2D /* MouseToolGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MouseToolGroup.h; path = ../../radiant/eventmanager/MouseToolGroup.h; sourceTree = SOURCE_ROOT; };
+		3AE6F334239F4FE1008A1B2D /* MouseToolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MouseToolManager.cpp; path = ../../radiant/eventmanager/MouseToolManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F335239F4FE1008A1B2D /* MouseToolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MouseToolManager.h; path = ../../radiant/eventmanager/MouseToolManager.h; sourceTree = SOURCE_ROOT; };
+		3AE6F336239F4FE1008A1B2D /* RegistryToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistryToggle.h; path = ../../radiant/eventmanager/RegistryToggle.h; sourceTree = SOURCE_ROOT; };
+		3AE6F337239F4FE1008A1B2D /* SaveEventVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SaveEventVisitor.h; path = ../../radiant/eventmanager/SaveEventVisitor.h; sourceTree = SOURCE_ROOT; };
+		3AE6F338239F4FE1008A1B2D /* Statement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Statement.cpp; path = ../../radiant/eventmanager/Statement.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F339239F4FE1008A1B2D /* Statement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Statement.h; path = ../../radiant/eventmanager/Statement.h; sourceTree = SOURCE_ROOT; };
+		3AE6F33A239F4FE1008A1B2D /* Toggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Toggle.cpp; path = ../../radiant/eventmanager/Toggle.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F33B239F4FE1008A1B2D /* Toggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Toggle.h; path = ../../radiant/eventmanager/Toggle.h; sourceTree = SOURCE_ROOT; };
+		3AE6F33C239F4FE1008A1B2D /* WidgetToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WidgetToggle.cpp; path = ../../radiant/eventmanager/WidgetToggle.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F33D239F4FE1008A1B2D /* WidgetToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WidgetToggle.h; path = ../../radiant/eventmanager/WidgetToggle.h; sourceTree = SOURCE_ROOT; };
+		3AE6F347239F5033008A1B2D /* FileTypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileTypeRegistry.cpp; path = ../../radiant/filetypes/FileTypeRegistry.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F348239F5033008A1B2D /* FileTypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTypeRegistry.h; path = ../../radiant/filetypes/FileTypeRegistry.h; sourceTree = SOURCE_ROOT; };
+		3AE6F34B239F507B008A1B2D /* BasicFilterSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicFilterSystem.cpp; path = ../../radiant/filters/BasicFilterSystem.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F34C239F507B008A1B2D /* BasicFilterSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicFilterSystem.h; path = ../../radiant/filters/BasicFilterSystem.h; sourceTree = SOURCE_ROOT; };
+		3AE6F34D239F507B008A1B2D /* InstanceUpdateWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceUpdateWalker.h; path = ../../radiant/filters/InstanceUpdateWalker.h; sourceTree = SOURCE_ROOT; };
+		3AE6F34E239F507B008A1B2D /* XMLFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLFilter.cpp; path = ../../radiant/filters/XMLFilter.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F34F239F507B008A1B2D /* XMLFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLFilter.h; path = ../../radiant/filters/XMLFilter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F353239F5C4C008A1B2D /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontInfo.h; path = ../../radiant/fonts/FontInfo.h; sourceTree = SOURCE_ROOT; };
+		3AE6F354239F5C4C008A1B2D /* FontLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontLoader.cpp; path = ../../radiant/fonts/FontLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F355239F5C4C008A1B2D /* FontLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontLoader.h; path = ../../radiant/fonts/FontLoader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F356239F5C4C008A1B2D /* FontManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontManager.cpp; path = ../../radiant/fonts/FontManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F357239F5C4C008A1B2D /* FontManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontManager.h; path = ../../radiant/fonts/FontManager.h; sourceTree = SOURCE_ROOT; };
+		3AE6F358239F5C4C008A1B2D /* GlyphInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlyphInfo.cpp; path = ../../radiant/fonts/GlyphInfo.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F359239F5C4C008A1B2D /* GlyphInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlyphInfo.h; path = ../../radiant/fonts/GlyphInfo.h; sourceTree = SOURCE_ROOT; };
+		3AE6F35A239F5C4C008A1B2D /* GlyphSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlyphSet.cpp; path = ../../radiant/fonts/GlyphSet.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F35B239F5C4C008A1B2D /* GlyphSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlyphSet.h; path = ../../radiant/fonts/GlyphSet.h; sourceTree = SOURCE_ROOT; };
+		3AE6F361239F5C9F008A1B2D /* dds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dds.cpp; path = ../../radiant/image/dds.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F362239F5C9F008A1B2D /* dds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dds.h; path = ../../radiant/image/dds.h; sourceTree = SOURCE_ROOT; };
+		3AE6F363239F5C9F008A1B2D /* DDSImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DDSImage.cpp; path = ../../radiant/image/DDSImage.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F364239F5C9F008A1B2D /* DDSImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DDSImage.h; path = ../../radiant/image/DDSImage.h; sourceTree = SOURCE_ROOT; };
+		3AE6F365239F5C9F008A1B2D /* ddslib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ddslib.cpp; path = ../../radiant/image/ddslib.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F366239F5C9F008A1B2D /* ddslib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ddslib.h; path = ../../radiant/image/ddslib.h; sourceTree = SOURCE_ROOT; };
+		3AE6F367239F5C9F008A1B2D /* Doom3ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3ImageLoader.cpp; path = ../../radiant/image/Doom3ImageLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F368239F5C9F008A1B2D /* Doom3ImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3ImageLoader.h; path = ../../radiant/image/Doom3ImageLoader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F369239F5C9F008A1B2D /* ImageLoaderWx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageLoaderWx.cpp; path = ../../radiant/image/ImageLoaderWx.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F36A239F5C9F008A1B2D /* ImageLoaderWx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageLoaderWx.h; path = ../../radiant/image/ImageLoaderWx.h; sourceTree = SOURCE_ROOT; };
+		3AE6F36B239F5C9F008A1B2D /* ImageTypeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageTypeLoader.h; path = ../../radiant/image/ImageTypeLoader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F36C239F5C9F008A1B2D /* TGALoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGALoader.cpp; path = ../../radiant/image/TGALoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F36D239F5C9F008A1B2D /* TGALoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGALoader.h; path = ../../radiant/image/TGALoader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F376239F5D35008A1B2D /* Doom3AasFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFile.cpp; path = ../../radiant/mapdoom3/aas/Doom3AasFile.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F377239F5D35008A1B2D /* Doom3AasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFile.h; path = ../../radiant/mapdoom3/aas/Doom3AasFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F378239F5D35008A1B2D /* Doom3AasFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileLoader.cpp; path = ../../radiant/mapdoom3/aas/Doom3AasFileLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F379239F5D35008A1B2D /* Doom3AasFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileLoader.h; path = ../../radiant/mapdoom3/aas/Doom3AasFileLoader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F37A239F5D35008A1B2D /* Doom3AasFileSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileSettings.cpp; path = ../../radiant/mapdoom3/aas/Doom3AasFileSettings.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F37B239F5D35008A1B2D /* Doom3AasFileSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileSettings.h; path = ../../radiant/mapdoom3/aas/Doom3AasFileSettings.h; sourceTree = SOURCE_ROOT; };
+		3AE6F37C239F5D35008A1B2D /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Util.h; path = ../../radiant/mapdoom3/aas/Util.h; sourceTree = SOURCE_ROOT; };
+		3AE6F37D239F5D35008A1B2D /* Doom3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapFormat.cpp; path = ../../radiant/mapdoom3/Doom3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F37E239F5D35008A1B2D /* Doom3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapFormat.h; path = ../../radiant/mapdoom3/Doom3MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AE6F37F239F5D35008A1B2D /* Doom3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapReader.cpp; path = ../../radiant/mapdoom3/Doom3MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F380239F5D35008A1B2D /* Doom3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapReader.h; path = ../../radiant/mapdoom3/Doom3MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F381239F5D35008A1B2D /* Doom3MapWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapWriter.cpp; path = ../../radiant/mapdoom3/Doom3MapWriter.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F382239F5D35008A1B2D /* Doom3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapWriter.h; path = ../../radiant/mapdoom3/Doom3MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F383239F5D35008A1B2D /* Doom3PrefabFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3PrefabFormat.cpp; path = ../../radiant/mapdoom3/Doom3PrefabFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F384239F5D35008A1B2D /* Doom3PrefabFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3PrefabFormat.h; path = ../../radiant/mapdoom3/Doom3PrefabFormat.h; sourceTree = SOURCE_ROOT; };
+		3AE6F385239F5D35008A1B2D /* mapdoom3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mapdoom3.cpp; path = ../../radiant/mapdoom3/mapdoom3.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F387239F5D35008A1B2D /* BrushDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef.cpp; path = ../../radiant/mapdoom3/primitiveparsers/BrushDef.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F388239F5D35008A1B2D /* BrushDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef.h; path = ../../radiant/mapdoom3/primitiveparsers/BrushDef.h; sourceTree = SOURCE_ROOT; };
+		3AE6F389239F5D35008A1B2D /* BrushDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef3.cpp; path = ../../radiant/mapdoom3/primitiveparsers/BrushDef3.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F38A239F5D35008A1B2D /* BrushDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3.h; path = ../../radiant/mapdoom3/primitiveparsers/BrushDef3.h; sourceTree = SOURCE_ROOT; };
+		3AE6F38B239F5D35008A1B2D /* Patch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Patch.cpp; path = ../../radiant/mapdoom3/primitiveparsers/Patch.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F38C239F5D35008A1B2D /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Patch.h; path = ../../radiant/mapdoom3/primitiveparsers/Patch.h; sourceTree = SOURCE_ROOT; };
+		3AE6F38D239F5D35008A1B2D /* PatchDef2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef2.cpp; path = ../../radiant/mapdoom3/primitiveparsers/PatchDef2.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F38E239F5D35008A1B2D /* PatchDef2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef2.h; path = ../../radiant/mapdoom3/primitiveparsers/PatchDef2.h; sourceTree = SOURCE_ROOT; };
+		3AE6F38F239F5D35008A1B2D /* PatchDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef3.cpp; path = ../../radiant/mapdoom3/primitiveparsers/PatchDef3.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F390239F5D35008A1B2D /* PatchDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef3.h; path = ../../radiant/mapdoom3/primitiveparsers/PatchDef3.h; sourceTree = SOURCE_ROOT; };
+		3AE6F392239F5D35008A1B2D /* BrushDef3Exporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3Exporter.h; path = ../../radiant/mapdoom3/primitivewriters/BrushDef3Exporter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F393239F5D35008A1B2D /* BrushDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDefExporter.h; path = ../../radiant/mapdoom3/primitivewriters/BrushDefExporter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F394239F5D35008A1B2D /* PatchDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDefExporter.h; path = ../../radiant/mapdoom3/primitivewriters/PatchDefExporter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F395239F5D35008A1B2D /* Quake3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapFormat.cpp; path = ../../radiant/mapdoom3/Quake3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F396239F5D35008A1B2D /* Quake3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapFormat.h; path = ../../radiant/mapdoom3/Quake3MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AE6F397239F5D35008A1B2D /* Quake3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapReader.cpp; path = ../../radiant/mapdoom3/Quake3MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F398239F5D35008A1B2D /* Quake3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapReader.h; path = ../../radiant/mapdoom3/Quake3MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F399239F5D35008A1B2D /* Quake3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapWriter.h; path = ../../radiant/mapdoom3/Quake3MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F39A239F5D35008A1B2D /* Quake4MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapFormat.cpp; path = ../../radiant/mapdoom3/Quake4MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F39B239F5D35008A1B2D /* Quake4MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapFormat.h; path = ../../radiant/mapdoom3/Quake4MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AE6F39C239F5D35008A1B2D /* Quake4MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapReader.cpp; path = ../../radiant/mapdoom3/Quake4MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F39D239F5D35008A1B2D /* Quake4MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapReader.h; path = ../../radiant/mapdoom3/Quake4MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F39E239F5D35008A1B2D /* Quake4MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapWriter.h; path = ../../radiant/mapdoom3/Quake4MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3B1239F5DC3008A1B2D /* MD5Anim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Anim.cpp; path = ../../radiant/md5model/MD5Anim.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F3B2239F5DC3008A1B2D /* MD5Anim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Anim.h; path = ../../radiant/md5model/MD5Anim.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3B3239F5DC3008A1B2D /* MD5AnimationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5AnimationCache.cpp; path = ../../radiant/md5model/MD5AnimationCache.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F3B4239F5DC3008A1B2D /* MD5AnimationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5AnimationCache.h; path = ../../radiant/md5model/MD5AnimationCache.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3B5239F5DC3008A1B2D /* MD5DataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5DataStructures.h; path = ../../radiant/md5model/MD5DataStructures.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3B6239F5DC3008A1B2D /* MD5Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Model.cpp; path = ../../radiant/md5model/MD5Model.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F3B7239F5DC3008A1B2D /* MD5Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Model.h; path = ../../radiant/md5model/MD5Model.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3B8239F5DC3008A1B2D /* MD5ModelLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5ModelLoader.cpp; path = ../../radiant/md5model/MD5ModelLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F3B9239F5DC3008A1B2D /* MD5ModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5ModelLoader.h; path = ../../radiant/md5model/MD5ModelLoader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3BA239F5DC3008A1B2D /* MD5ModelNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5ModelNode.cpp; path = ../../radiant/md5model/MD5ModelNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F3BB239F5DC3008A1B2D /* MD5ModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5ModelNode.h; path = ../../radiant/md5model/MD5ModelNode.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3BC239F5DC3008A1B2D /* MD5Skeleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Skeleton.cpp; path = ../../radiant/md5model/MD5Skeleton.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F3BD239F5DC3008A1B2D /* MD5Skeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Skeleton.h; path = ../../radiant/md5model/MD5Skeleton.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3BE239F5DC3008A1B2D /* MD5Surface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Surface.cpp; path = ../../radiant/md5model/MD5Surface.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F3BF239F5DC3008A1B2D /* MD5Surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Surface.h; path = ../../radiant/md5model/MD5Surface.h; sourceTree = SOURCE_ROOT; };
+		3AE6F3C0239F5DC3008A1B2D /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../radiant/md5model/plugin.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F3C1239F5DC3008A1B2D /* RenderableMD5Skeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableMD5Skeleton.h; path = ../../radiant/md5model/RenderableMD5Skeleton.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC881E5067630062D9AF /* zlib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = zlib.xcconfig; sourceTree = "<group>"; };
 		3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		3AEBDCEF1E50AB640062D9AF /* AngleKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AngleKey.cpp; path = ../../plugins/entity/AngleKey.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDCF01E50AB640062D9AF /* AngleKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AngleKey.h; path = ../../plugins/entity/AngleKey.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCF11E50AB640062D9AF /* ColourKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColourKey.h; path = ../../plugins/entity/ColourKey.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCF31E50AB640062D9AF /* Curve.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Curve.cpp; path = ../../plugins/entity/curve/Curve.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDCF41E50AB640062D9AF /* Curve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Curve.h; path = ../../plugins/entity/curve/Curve.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCF51E50AB640062D9AF /* CurveCatmullRom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CurveCatmullRom.cpp; path = ../../plugins/entity/curve/CurveCatmullRom.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDCF61E50AB640062D9AF /* CurveCatmullRom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveCatmullRom.h; path = ../../plugins/entity/curve/CurveCatmullRom.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCF71E50AB640062D9AF /* CurveControlPointFunctors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveControlPointFunctors.h; path = ../../plugins/entity/curve/CurveControlPointFunctors.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCF81E50AB640062D9AF /* CurveEditInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CurveEditInstance.cpp; path = ../../plugins/entity/curve/CurveEditInstance.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDCF91E50AB640062D9AF /* CurveEditInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveEditInstance.h; path = ../../plugins/entity/curve/CurveEditInstance.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCFA1E50AB640062D9AF /* CurveNURBS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CurveNURBS.cpp; path = ../../plugins/entity/curve/CurveNURBS.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDCFB1E50AB640062D9AF /* CurveNURBS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurveNURBS.h; path = ../../plugins/entity/curve/CurveNURBS.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCFC1E50AB640062D9AF /* RenderableCurve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableCurve.h; path = ../../plugins/entity/curve/RenderableCurve.h; sourceTree = SOURCE_ROOT; };
-		3AEBDCFD1E50AB640062D9AF /* Doom3Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3Entity.cpp; path = ../../plugins/entity/Doom3Entity.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDCFE1E50AB640062D9AF /* Doom3Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3Entity.h; path = ../../plugins/entity/Doom3Entity.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD001E50AB640062D9AF /* Doom3Group.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3Group.cpp; path = ../../plugins/entity/doom3group/Doom3Group.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD011E50AB640062D9AF /* Doom3Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3Group.h; path = ../../plugins/entity/doom3group/Doom3Group.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD021E50AB640062D9AF /* Doom3GroupNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3GroupNode.cpp; path = ../../plugins/entity/doom3group/Doom3GroupNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD031E50AB640062D9AF /* Doom3GroupNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3GroupNode.h; path = ../../plugins/entity/doom3group/Doom3GroupNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD051E50AB640062D9AF /* EclassModelNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EclassModelNode.cpp; path = ../../plugins/entity/eclassmodel/EclassModelNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD061E50AB640062D9AF /* EclassModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EclassModelNode.h; path = ../../plugins/entity/eclassmodel/EclassModelNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD071E50AB640062D9AF /* EntityCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityCreator.cpp; path = ../../plugins/entity/EntityCreator.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD081E50AB640062D9AF /* EntityCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityCreator.h; path = ../../plugins/entity/EntityCreator.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD091E50AB640062D9AF /* EntityNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityNode.cpp; path = ../../plugins/entity/EntityNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD0A1E50AB640062D9AF /* EntityNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityNode.h; path = ../../plugins/entity/EntityNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD0B1E50AB640062D9AF /* EntitySettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntitySettings.cpp; path = ../../plugins/entity/EntitySettings.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD0C1E50AB640062D9AF /* EntitySettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntitySettings.h; path = ../../plugins/entity/EntitySettings.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD0E1E50AB640062D9AF /* GenericEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenericEntity.cpp; path = ../../plugins/entity/generic/GenericEntity.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD0F1E50AB640062D9AF /* GenericEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericEntity.h; path = ../../plugins/entity/generic/GenericEntity.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD101E50AB640062D9AF /* GenericEntityNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GenericEntityNode.cpp; path = ../../plugins/entity/generic/GenericEntityNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD111E50AB640062D9AF /* GenericEntityNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericEntityNode.h; path = ../../plugins/entity/generic/GenericEntityNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD121E50AB640062D9AF /* RenderableArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableArrow.h; path = ../../plugins/entity/generic/RenderableArrow.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD131E50AB640062D9AF /* KeyObserverDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyObserverDelegate.h; path = ../../plugins/entity/KeyObserverDelegate.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD141E50AB640062D9AF /* KeyObserverMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyObserverMap.h; path = ../../plugins/entity/KeyObserverMap.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD151E50AB640062D9AF /* KeyValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValue.cpp; path = ../../plugins/entity/KeyValue.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD161E50AB640062D9AF /* KeyValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyValue.h; path = ../../plugins/entity/KeyValue.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD171E50AB640062D9AF /* KeyValueObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValueObserver.cpp; path = ../../plugins/entity/KeyValueObserver.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD181E50AB640062D9AF /* KeyValueObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyValueObserver.h; path = ../../plugins/entity/KeyValueObserver.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD1A1E50AB640062D9AF /* Doom3LightRadius.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3LightRadius.h; path = ../../plugins/entity/light/Doom3LightRadius.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD1B1E50AB640062D9AF /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Light.cpp; path = ../../plugins/entity/light/Light.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD1C1E50AB640062D9AF /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Light.h; path = ../../plugins/entity/light/Light.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD1D1E50AB640062D9AF /* LightNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightNode.cpp; path = ../../plugins/entity/light/LightNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD1E1E50AB640062D9AF /* LightNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightNode.h; path = ../../plugins/entity/light/LightNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD1F1E50AB640062D9AF /* LightShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightShader.h; path = ../../plugins/entity/light/LightShader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD201E50AB640062D9AF /* Renderables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Renderables.cpp; path = ../../plugins/entity/light/Renderables.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD211E50AB640062D9AF /* Renderables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Renderables.h; path = ../../plugins/entity/light/Renderables.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD221E50AB640062D9AF /* RenderableVertices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableVertices.h; path = ../../plugins/entity/light/RenderableVertices.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD251E50AB640062D9AF /* ModelKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelKey.cpp; path = ../../plugins/entity/ModelKey.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD261E50AB640062D9AF /* ModelKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelKey.h; path = ../../plugins/entity/ModelKey.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD271E50AB640062D9AF /* NameKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NameKey.h; path = ../../plugins/entity/NameKey.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD281E50AB640062D9AF /* NameKeyObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NameKeyObserver.cpp; path = ../../plugins/entity/NameKeyObserver.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD291E50AB640062D9AF /* NameKeyObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NameKeyObserver.h; path = ../../plugins/entity/NameKeyObserver.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD2A1E50AB640062D9AF /* NamespaceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NamespaceManager.cpp; path = ../../plugins/entity/NamespaceManager.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD2B1E50AB640062D9AF /* NamespaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NamespaceManager.h; path = ../../plugins/entity/NamespaceManager.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD2C1E50AB640062D9AF /* OriginKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OriginKey.h; path = ../../plugins/entity/OriginKey.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD2D1E50AB640062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/entity/plugin.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD2E1E50AB640062D9AF /* plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = plugin.h; path = ../../plugins/entity/plugin.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD2F1E50AB640062D9AF /* precompiled.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = precompiled.cpp; path = ../../plugins/entity/precompiled.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD301E50AB640062D9AF /* precompiled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = precompiled.h; path = ../../plugins/entity/precompiled.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD311E50AB640062D9AF /* RotationKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RotationKey.cpp; path = ../../plugins/entity/RotationKey.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD321E50AB640062D9AF /* RotationKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotationKey.h; path = ../../plugins/entity/RotationKey.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD331E50AB640062D9AF /* RotationMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RotationMatrix.cpp; path = ../../plugins/entity/RotationMatrix.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD341E50AB640062D9AF /* RotationMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RotationMatrix.h; path = ../../plugins/entity/RotationMatrix.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD351E50AB640062D9AF /* ShaderParms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderParms.cpp; path = ../../plugins/entity/ShaderParms.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD361E50AB640062D9AF /* ShaderParms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderParms.h; path = ../../plugins/entity/ShaderParms.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD381E50AB640062D9AF /* SpeakerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpeakerNode.cpp; path = ../../plugins/entity/speaker/SpeakerNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD391E50AB640062D9AF /* SpeakerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeakerNode.h; path = ../../plugins/entity/speaker/SpeakerNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD3A1E50AB640062D9AF /* SpeakerRenderables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpeakerRenderables.cpp; path = ../../plugins/entity/speaker/SpeakerRenderables.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD3B1E50AB640062D9AF /* SpeakerRenderables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpeakerRenderables.h; path = ../../plugins/entity/speaker/SpeakerRenderables.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD3D1E50AB640062D9AF /* RenderableTargetLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableTargetLines.h; path = ../../plugins/entity/target/RenderableTargetLines.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD3E1E50AB640062D9AF /* Target.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Target.h; path = ../../plugins/entity/target/Target.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD3F1E50AB640062D9AF /* TargetableNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetableNode.cpp; path = ../../plugins/entity/target/TargetableNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD401E50AB640062D9AF /* TargetableNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetableNode.h; path = ../../plugins/entity/target/TargetableNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD411E50AB640062D9AF /* TargetKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetKey.cpp; path = ../../plugins/entity/target/TargetKey.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD421E50AB640062D9AF /* TargetKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetKey.h; path = ../../plugins/entity/target/TargetKey.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD431E50AB640062D9AF /* TargetKeyCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetKeyCollection.cpp; path = ../../plugins/entity/target/TargetKeyCollection.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD441E50AB640062D9AF /* TargetKeyCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetKeyCollection.h; path = ../../plugins/entity/target/TargetKeyCollection.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD451E50AB640062D9AF /* TargetLineNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetLineNode.cpp; path = ../../plugins/entity/target/TargetLineNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD461E50AB640062D9AF /* TargetLineNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetLineNode.h; path = ../../plugins/entity/target/TargetLineNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD471E50AB640062D9AF /* TargetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetManager.cpp; path = ../../plugins/entity/target/TargetManager.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDD481E50AB640062D9AF /* TargetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetManager.h; path = ../../plugins/entity/target/TargetManager.h; sourceTree = SOURCE_ROOT; };
-		3AEBDD491E50AB640062D9AF /* VertexInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VertexInstance.h; path = ../../plugins/entity/VertexInstance.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDC81E50BE540062D9AF /* eventmanager.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = eventmanager.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBDDD31E50BF110062D9AF /* Accelerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Accelerator.cpp; path = ../../plugins/eventmanager/Accelerator.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDDD41E50BF110062D9AF /* Accelerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Accelerator.h; path = ../../plugins/eventmanager/Accelerator.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDD51E50BF110062D9AF /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Event.h; path = ../../plugins/eventmanager/Event.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDD61E50BF110062D9AF /* EventManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventManager.cpp; path = ../../plugins/eventmanager/EventManager.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDDD71E50BF110062D9AF /* EventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventManager.h; path = ../../plugins/eventmanager/EventManager.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDD81E50BF110062D9AF /* GlobalKeyEventFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalKeyEventFilter.cpp; path = ../../plugins/eventmanager/GlobalKeyEventFilter.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDDD91E50BF110062D9AF /* GlobalKeyEventFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalKeyEventFilter.h; path = ../../plugins/eventmanager/GlobalKeyEventFilter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDDA1E50BF110062D9AF /* KeyEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEvent.h; path = ../../plugins/eventmanager/KeyEvent.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDDD1E50BF110062D9AF /* MouseToolGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MouseToolGroup.cpp; path = ../../plugins/eventmanager/MouseToolGroup.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDDDE1E50BF110062D9AF /* MouseToolGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MouseToolGroup.h; path = ../../plugins/eventmanager/MouseToolGroup.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDDF1E50BF110062D9AF /* MouseToolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MouseToolManager.cpp; path = ../../plugins/eventmanager/MouseToolManager.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDDE01E50BF110062D9AF /* MouseToolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MouseToolManager.h; path = ../../plugins/eventmanager/MouseToolManager.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDE11E50BF110062D9AF /* RegistryToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegistryToggle.h; path = ../../plugins/eventmanager/RegistryToggle.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDE21E50BF110062D9AF /* SaveEventVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SaveEventVisitor.h; path = ../../plugins/eventmanager/SaveEventVisitor.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDE31E50BF110062D9AF /* Statement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Statement.cpp; path = ../../plugins/eventmanager/Statement.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDDE41E50BF110062D9AF /* Statement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Statement.h; path = ../../plugins/eventmanager/Statement.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDE51E50BF110062D9AF /* Toggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Toggle.cpp; path = ../../plugins/eventmanager/Toggle.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDDE61E50BF110062D9AF /* Toggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Toggle.h; path = ../../plugins/eventmanager/Toggle.h; sourceTree = SOURCE_ROOT; };
-		3AEBDDE71E50BF110062D9AF /* WidgetToggle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WidgetToggle.cpp; path = ../../plugins/eventmanager/WidgetToggle.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDDE81E50BF110062D9AF /* WidgetToggle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WidgetToggle.h; path = ../../plugins/eventmanager/WidgetToggle.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE0D1E50BFB80062D9AF /* filetypes.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = filetypes.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBDE181E50BFF00062D9AF /* FileTypeRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileTypeRegistry.cpp; path = ../../plugins/filetypes/FileTypeRegistry.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE191E50BFF00062D9AF /* FileTypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTypeRegistry.h; path = ../../plugins/filetypes/FileTypeRegistry.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE201E50C0190062D9AF /* filters.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = filters.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBDE2B1E50C05F0062D9AF /* BasicFilterSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicFilterSystem.cpp; path = ../../plugins/filters/BasicFilterSystem.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE2C1E50C05F0062D9AF /* BasicFilterSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicFilterSystem.h; path = ../../plugins/filters/BasicFilterSystem.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE2D1E50C05F0062D9AF /* filters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = filters.cpp; path = ../../plugins/filters/filters.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE2E1E50C05F0062D9AF /* InstanceUpdateWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceUpdateWalker.h; path = ../../plugins/filters/InstanceUpdateWalker.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE311E50C05F0062D9AF /* XMLFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XMLFilter.cpp; path = ../../plugins/filters/XMLFilter.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE321E50C05F0062D9AF /* XMLFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XMLFilter.h; path = ../../plugins/filters/XMLFilter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE3E1E50C0B50062D9AF /* fonts.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fonts.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBDE491E50C0F40062D9AF /* FontInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontInfo.h; path = ../../plugins/fonts/FontInfo.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE4A1E50C0F40062D9AF /* FontLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontLoader.cpp; path = ../../plugins/fonts/FontLoader.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE4B1E50C0F40062D9AF /* FontLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontLoader.h; path = ../../plugins/fonts/FontLoader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE4C1E50C0F40062D9AF /* FontManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontManager.cpp; path = ../../plugins/fonts/FontManager.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE4D1E50C0F40062D9AF /* FontManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontManager.h; path = ../../plugins/fonts/FontManager.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE4E1E50C0F40062D9AF /* GlyphInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlyphInfo.cpp; path = ../../plugins/fonts/GlyphInfo.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE4F1E50C0F40062D9AF /* GlyphInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlyphInfo.h; path = ../../plugins/fonts/GlyphInfo.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE501E50C0F40062D9AF /* GlyphSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlyphSet.cpp; path = ../../plugins/fonts/GlyphSet.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE511E50C0F40062D9AF /* GlyphSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlyphSet.h; path = ../../plugins/fonts/GlyphSet.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE541E50C0F40062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/fonts/plugin.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE791E50C29B0062D9AF /* image.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = image.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBDE841E50C2DA0062D9AF /* dds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dds.cpp; path = ../../plugins/image/dds.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE851E50C2DA0062D9AF /* dds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dds.h; path = ../../plugins/image/dds.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE861E50C2DA0062D9AF /* DDSImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DDSImage.cpp; path = ../../plugins/image/DDSImage.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE871E50C2DA0062D9AF /* DDSImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DDSImage.h; path = ../../plugins/image/DDSImage.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE881E50C2DA0062D9AF /* Doom3ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3ImageLoader.cpp; path = ../../plugins/image/Doom3ImageLoader.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE891E50C2DA0062D9AF /* Doom3ImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3ImageLoader.h; path = ../../plugins/image/Doom3ImageLoader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE8A1E50C2DA0062D9AF /* image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = image.cpp; path = ../../plugins/image/image.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE8B1E50C2DA0062D9AF /* ImageLoaderWx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageLoaderWx.cpp; path = ../../plugins/image/ImageLoaderWx.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE8C1E50C2DA0062D9AF /* ImageLoaderWx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageLoaderWx.h; path = ../../plugins/image/ImageLoaderWx.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE8D1E50C2DA0062D9AF /* ImageTypeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageTypeLoader.h; path = ../../plugins/image/ImageTypeLoader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDE901E50C2DA0062D9AF /* TGALoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGALoader.cpp; path = ../../plugins/image/TGALoader.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDE911E50C2DA0062D9AF /* TGALoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGALoader.h; path = ../../plugins/image/TGALoader.h; sourceTree = SOURCE_ROOT; };
 		3AEBDEA31E50C3330062D9AF /* libdds.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdds.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDEAE1E50C34F0062D9AF /* ddslib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ddslib.cpp; path = ../../../libs/ddslib/ddslib.cpp; sourceTree = "<group>"; };
 		3AEBDEB01E50C35D0062D9AF /* ddslib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ddslib.h; path = ../../../libs/ddslib.h; sourceTree = "<group>"; };
-		3AEBDEB61E50C3AD0062D9AF /* image.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = image.xcconfig; sourceTree = "<group>"; };
-		3AEBDEBB1E50C6400062D9AF /* mapdoom3.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = mapdoom3.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBDEC71E50C68D0062D9AF /* Doom3AasFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFile.cpp; path = ../../plugins/mapdoom3/aas/Doom3AasFile.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEC81E50C68D0062D9AF /* Doom3AasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFile.h; path = ../../plugins/mapdoom3/aas/Doom3AasFile.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEC91E50C68D0062D9AF /* Doom3AasFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileLoader.cpp; path = ../../plugins/mapdoom3/aas/Doom3AasFileLoader.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDECA1E50C68D0062D9AF /* Doom3AasFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileLoader.h; path = ../../plugins/mapdoom3/aas/Doom3AasFileLoader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDECB1E50C68D0062D9AF /* Doom3AasFileSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileSettings.cpp; path = ../../plugins/mapdoom3/aas/Doom3AasFileSettings.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDECC1E50C68D0062D9AF /* Doom3AasFileSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileSettings.h; path = ../../plugins/mapdoom3/aas/Doom3AasFileSettings.h; sourceTree = SOURCE_ROOT; };
-		3AEBDECD1E50C68D0062D9AF /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Util.h; path = ../../plugins/mapdoom3/aas/Util.h; sourceTree = SOURCE_ROOT; };
-		3AEBDECE1E50C68D0062D9AF /* Doom3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapFormat.cpp; path = ../../plugins/mapdoom3/Doom3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDECF1E50C68D0062D9AF /* Doom3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapFormat.h; path = ../../plugins/mapdoom3/Doom3MapFormat.h; sourceTree = SOURCE_ROOT; };
-		3AEBDED01E50C68D0062D9AF /* Doom3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapReader.cpp; path = ../../plugins/mapdoom3/Doom3MapReader.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDED11E50C68D0062D9AF /* Doom3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapReader.h; path = ../../plugins/mapdoom3/Doom3MapReader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDED21E50C68D0062D9AF /* Doom3MapWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapWriter.cpp; path = ../../plugins/mapdoom3/Doom3MapWriter.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDED31E50C68D0062D9AF /* Doom3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapWriter.h; path = ../../plugins/mapdoom3/Doom3MapWriter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDED41E50C68D0062D9AF /* Doom3PrefabFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3PrefabFormat.cpp; path = ../../plugins/mapdoom3/Doom3PrefabFormat.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDED51E50C68D0062D9AF /* Doom3PrefabFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3PrefabFormat.h; path = ../../plugins/mapdoom3/Doom3PrefabFormat.h; sourceTree = SOURCE_ROOT; };
-		3AEBDED81E50C68D0062D9AF /* mapdoom3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mapdoom3.cpp; path = ../../plugins/mapdoom3/mapdoom3.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEDA1E50C68D0062D9AF /* BrushDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef.cpp; path = ../../plugins/mapdoom3/primitiveparsers/BrushDef.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEDB1E50C68D0062D9AF /* BrushDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef.h; path = ../../plugins/mapdoom3/primitiveparsers/BrushDef.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEDC1E50C68D0062D9AF /* BrushDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef3.cpp; path = ../../plugins/mapdoom3/primitiveparsers/BrushDef3.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEDD1E50C68D0062D9AF /* BrushDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3.h; path = ../../plugins/mapdoom3/primitiveparsers/BrushDef3.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEDE1E50C68D0062D9AF /* Patch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Patch.cpp; path = ../../plugins/mapdoom3/primitiveparsers/Patch.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEDF1E50C68D0062D9AF /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Patch.h; path = ../../plugins/mapdoom3/primitiveparsers/Patch.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEE01E50C68D0062D9AF /* PatchDef2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef2.cpp; path = ../../plugins/mapdoom3/primitiveparsers/PatchDef2.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEE11E50C68D0062D9AF /* PatchDef2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef2.h; path = ../../plugins/mapdoom3/primitiveparsers/PatchDef2.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEE21E50C68D0062D9AF /* PatchDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef3.cpp; path = ../../plugins/mapdoom3/primitiveparsers/PatchDef3.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEE31E50C68D0062D9AF /* PatchDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef3.h; path = ../../plugins/mapdoom3/primitiveparsers/PatchDef3.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEE51E50C68D0062D9AF /* BrushDef3Exporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3Exporter.h; path = ../../plugins/mapdoom3/primitivewriters/BrushDef3Exporter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEE61E50C68D0062D9AF /* BrushDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDefExporter.h; path = ../../plugins/mapdoom3/primitivewriters/BrushDefExporter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEE71E50C68D0062D9AF /* PatchDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDefExporter.h; path = ../../plugins/mapdoom3/primitivewriters/PatchDefExporter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEE81E50C68D0062D9AF /* Quake3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapFormat.cpp; path = ../../plugins/mapdoom3/Quake3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEE91E50C68D0062D9AF /* Quake3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapFormat.h; path = ../../plugins/mapdoom3/Quake3MapFormat.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEEA1E50C68D0062D9AF /* Quake3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapReader.cpp; path = ../../plugins/mapdoom3/Quake3MapReader.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEEB1E50C68D0062D9AF /* Quake3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapReader.h; path = ../../plugins/mapdoom3/Quake3MapReader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEEC1E50C68D0062D9AF /* Quake3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapWriter.h; path = ../../plugins/mapdoom3/Quake3MapWriter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEED1E50C68D0062D9AF /* Quake4MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapFormat.cpp; path = ../../plugins/mapdoom3/Quake4MapFormat.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEEE1E50C68D0062D9AF /* Quake4MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapFormat.h; path = ../../plugins/mapdoom3/Quake4MapFormat.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEEF1E50C68D0062D9AF /* Quake4MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapReader.cpp; path = ../../plugins/mapdoom3/Quake4MapReader.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDEF01E50C68D0062D9AF /* Quake4MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapReader.h; path = ../../plugins/mapdoom3/Quake4MapReader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDEF11E50C68D0062D9AF /* Quake4MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapWriter.h; path = ../../plugins/mapdoom3/Quake4MapWriter.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF1E1E50C6F10062D9AF /* md5model.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = md5model.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBDF3A1E50C71E0062D9AF /* MD5Anim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Anim.cpp; path = ../../plugins/md5model/MD5Anim.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDF3B1E50C71E0062D9AF /* MD5Anim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Anim.h; path = ../../plugins/md5model/MD5Anim.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF3C1E50C71E0062D9AF /* MD5AnimationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5AnimationCache.cpp; path = ../../plugins/md5model/MD5AnimationCache.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDF3D1E50C71E0062D9AF /* MD5AnimationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5AnimationCache.h; path = ../../plugins/md5model/MD5AnimationCache.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF3E1E50C71E0062D9AF /* MD5DataStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5DataStructures.h; path = ../../plugins/md5model/MD5DataStructures.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF3F1E50C71E0062D9AF /* MD5Model.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Model.cpp; path = ../../plugins/md5model/MD5Model.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDF401E50C71E0062D9AF /* MD5Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Model.h; path = ../../plugins/md5model/MD5Model.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF411E50C71E0062D9AF /* MD5ModelLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5ModelLoader.cpp; path = ../../plugins/md5model/MD5ModelLoader.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDF421E50C71E0062D9AF /* MD5ModelLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5ModelLoader.h; path = ../../plugins/md5model/MD5ModelLoader.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF431E50C71E0062D9AF /* MD5ModelNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5ModelNode.cpp; path = ../../plugins/md5model/MD5ModelNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDF441E50C71E0062D9AF /* MD5ModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5ModelNode.h; path = ../../plugins/md5model/MD5ModelNode.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF451E50C71E0062D9AF /* MD5Skeleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Skeleton.cpp; path = ../../plugins/md5model/MD5Skeleton.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDF461E50C71E0062D9AF /* MD5Skeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Skeleton.h; path = ../../plugins/md5model/MD5Skeleton.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF471E50C71E0062D9AF /* MD5Surface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Surface.cpp; path = ../../plugins/md5model/MD5Surface.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDF481E50C71E0062D9AF /* MD5Surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Surface.h; path = ../../plugins/md5model/MD5Surface.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF491E50C71E0062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/md5model/plugin.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDF4A1E50C71E0062D9AF /* RenderableMD5Skeleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableMD5Skeleton.h; path = ../../plugins/md5model/RenderableMD5Skeleton.h; sourceTree = SOURCE_ROOT; };
-		3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = md5model.xcconfig; sourceTree = "<group>"; };
 		3AEBDFF31E50CAEE0062D9AF /* libpicomodel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpicomodel.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDFF91E50CB120062D9AF /* clip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = clip.c; path = ../../libs/picomodel/lwo/clip.c; sourceTree = SOURCE_ROOT; };
 		3AEBDFFA1E50CB120062D9AF /* envelope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = envelope.c; path = ../../libs/picomodel/lwo/envelope.c; sourceTree = SOURCE_ROOT; };
@@ -4525,71 +4299,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3AEBDDC51E50BE540062D9AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE081E50BF8C0062D9AF /* CoreFoundation.framework in Frameworks */,
-				3AEBDE061E50BF770062D9AF /* libwxutil.a in Frameworks */,
-				3AEBDE071E50BF770062D9AF /* libxmlutil.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE0A1E50BFB80062D9AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE1D1E50C0190062D9AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE391E50C0810062D9AF /* libxmlutil.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE3B1E50C0B50062D9AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE5F1E50C1240062D9AF /* libxmlutil.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE761E50C29B0062D9AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDEB51E50C39A0062D9AF /* libxmlutil.a in Frameworks */,
-				3AEBDEB41E50C3850062D9AF /* libdds.a in Frameworks */,
-				3AEBDE9E1E50C31D0062D9AF /* OpenGL.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3AEBDEA01E50C3330062D9AF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDEB81E50C6400062D9AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDF191E50C6DB0062D9AF /* libmathlib.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDF1B1E50C6F10062D9AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDF9C1E50C7B80062D9AF /* OpenGL.framework in Frameworks */,
-				3AEBDF9A1E50C7A10062D9AF /* libmathlib.a in Frameworks */,
-				3AEBDF9B1E50C7A10062D9AF /* libscene.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5177,23 +4890,21 @@
 				3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */,
 				3AF746C81E4FAF3D003465B5 /* boost.xcconfig */,
 				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,
+				3AEBE49D1E50E41F0062D9AF /* dm.editing.xcconfig */,
 				3AF7465F1E4F8A36003465B5 /* ftgl.xcconfig */,
 				3A0120961E50359200A62BC1 /* glew.xcconfig */,
 				3A011FBD1E5020D800A62BC1 /* libxml2.xcconfig */,
+				3AEBE0491E50D2F30062D9AF /* model.xcconfig */,
+				3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */,
+				3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */,
+				3AE6F1BC1F49749C008A1B2D /* python.xcconfig */,
+				3AEBE1281E50D9570062D9AF /* script.xcconfig */,
 				3AEDE3CE1E4F04E9005A8641 /* sigc++.xcconfig */,
+				3AEBE1BF1E50DDFB0062D9AF /* sound.xcconfig */,
+				3AEBE26A1E50E08C0062D9AF /* uimanager.xcconfig */,
 				3A01206D1E50279E00A62BC1 /* wxutil.xcconfig */,
 				3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */,
 				3AEBDC881E5067630062D9AF /* zlib.xcconfig */,
-				3AEBDEB61E50C3AD0062D9AF /* image.xcconfig */,
-				3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */,
-				3AEBE0491E50D2F30062D9AF /* model.xcconfig */,
-				3AEBE04A1E50D5ED0062D9AF /* picomodel.xcconfig */,
-				3AEBE08F1E50D7CE0062D9AF /* particles.xcconfig */,
-				3AEBE1281E50D9570062D9AF /* script.xcconfig */,
-				3AE6F1BC1F49749C008A1B2D /* python.xcconfig */,
-				3AEBE1BF1E50DDFB0062D9AF /* sound.xcconfig */,
-				3AEBE26A1E50E08C0062D9AF /* uimanager.xcconfig */,
-				3AEBE49D1E50E41F0062D9AF /* dm.editing.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
@@ -5201,14 +4912,6 @@
 		3A0124101E50481E00A62BC1 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDCE51E50A8980062D9AF /* entity */,
-				3AEBDDC91E50BE540062D9AF /* eventmanager */,
-				3AEBDE0E1E50BFB80062D9AF /* filetypes */,
-				3AEBDE211E50C0190062D9AF /* filters */,
-				3AEBDE3F1E50C0B50062D9AF /* fonts */,
-				3AEBDE7A1E50C29B0062D9AF /* image */,
-				3AEBDEBC1E50C6400062D9AF /* mapdoom3 */,
-				3AEBDF1F1E50C6F10062D9AF /* md5model */,
 				3AEBE0351E50D0400062D9AF /* model */,
 				3AEBE0511E50D6C60062D9AF /* particles */,
 				3AEBE0951E50D8270062D9AF /* scenegraph */,
@@ -5252,13 +4955,6 @@
 				3A0120731E502F7800A62BC1 /* libscene.a */,
 				3A011FC31E50275700A62BC1 /* libwxutil.a */,
 				3AF746AB1E4FADF3003465B5 /* libxmlutil.a */,
-				3AEBDDC81E50BE540062D9AF /* eventmanager.so */,
-				3AEBDE0D1E50BFB80062D9AF /* filetypes.so */,
-				3AEBDE201E50C0190062D9AF /* filters.so */,
-				3AEBDE3E1E50C0B50062D9AF /* fonts.so */,
-				3AEBDE791E50C29B0062D9AF /* image.so */,
-				3AEBDEBB1E50C6400062D9AF /* mapdoom3.so */,
-				3AEBDF1E1E50C6F10062D9AF /* md5model.so */,
 				3AEBE0341E50D0400062D9AF /* model.so */,
 				3AEBE0501E50D6C60062D9AF /* particles.so */,
 				3AEBE0941E50D8270062D9AF /* scenegraph.so */,
@@ -5565,241 +5261,186 @@
 			path = ../../../radiant/entity/target;
 			sourceTree = SOURCE_ROOT;
 		};
-		3AEBDCE51E50A8980062D9AF /* entity */ = {
+		3AE6F328239F4E46008A1B2D /* eventmanager */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDCEF1E50AB640062D9AF /* AngleKey.cpp */,
-				3AEBDCF01E50AB640062D9AF /* AngleKey.h */,
-				3AEBDCF11E50AB640062D9AF /* ColourKey.h */,
-				3AEBDCF21E50AB640062D9AF /* curve */,
-				3AEBDCFD1E50AB640062D9AF /* Doom3Entity.cpp */,
-				3AEBDCFE1E50AB640062D9AF /* Doom3Entity.h */,
-				3AEBDCFF1E50AB640062D9AF /* doom3group */,
-				3AEBDD041E50AB640062D9AF /* eclassmodel */,
-				3AEBDD071E50AB640062D9AF /* EntityCreator.cpp */,
-				3AEBDD081E50AB640062D9AF /* EntityCreator.h */,
-				3AEBDD091E50AB640062D9AF /* EntityNode.cpp */,
-				3AEBDD0A1E50AB640062D9AF /* EntityNode.h */,
-				3AEBDD0B1E50AB640062D9AF /* EntitySettings.cpp */,
-				3AEBDD0C1E50AB640062D9AF /* EntitySettings.h */,
-				3AEBDD0D1E50AB640062D9AF /* generic */,
-				3AEBDD131E50AB640062D9AF /* KeyObserverDelegate.h */,
-				3AEBDD141E50AB640062D9AF /* KeyObserverMap.h */,
-				3AEBDD151E50AB640062D9AF /* KeyValue.cpp */,
-				3AEBDD161E50AB640062D9AF /* KeyValue.h */,
-				3AEBDD171E50AB640062D9AF /* KeyValueObserver.cpp */,
-				3AEBDD181E50AB640062D9AF /* KeyValueObserver.h */,
-				3AEBDD191E50AB640062D9AF /* light */,
-				3AEBDD251E50AB640062D9AF /* ModelKey.cpp */,
-				3AEBDD261E50AB640062D9AF /* ModelKey.h */,
-				3AEBDD271E50AB640062D9AF /* NameKey.h */,
-				3AEBDD281E50AB640062D9AF /* NameKeyObserver.cpp */,
-				3AEBDD291E50AB640062D9AF /* NameKeyObserver.h */,
-				3AEBDD2A1E50AB640062D9AF /* NamespaceManager.cpp */,
-				3AEBDD2B1E50AB640062D9AF /* NamespaceManager.h */,
-				3AEBDD2C1E50AB640062D9AF /* OriginKey.h */,
-				3AEBDD2D1E50AB640062D9AF /* plugin.cpp */,
-				3AEBDD2E1E50AB640062D9AF /* plugin.h */,
-				3AEBDD2F1E50AB640062D9AF /* precompiled.cpp */,
-				3AEBDD301E50AB640062D9AF /* precompiled.h */,
-				3AEBDD311E50AB640062D9AF /* RotationKey.cpp */,
-				3AEBDD321E50AB640062D9AF /* RotationKey.h */,
-				3AEBDD331E50AB640062D9AF /* RotationMatrix.cpp */,
-				3AEBDD341E50AB640062D9AF /* RotationMatrix.h */,
-				3AEBDD351E50AB640062D9AF /* ShaderParms.cpp */,
-				3AEBDD361E50AB640062D9AF /* ShaderParms.h */,
-				3AEBDD371E50AB640062D9AF /* speaker */,
-				3AEBDD3C1E50AB640062D9AF /* target */,
-				3AEBDD491E50AB640062D9AF /* VertexInstance.h */,
+				3AE6F32A239F4FE1008A1B2D /* Accelerator.cpp */,
+				3AE6F32B239F4FE1008A1B2D /* Accelerator.h */,
+				3AE6F32C239F4FE1008A1B2D /* Event.h */,
+				3AE6F32D239F4FE1008A1B2D /* EventManager.cpp */,
+				3AE6F32E239F4FE1008A1B2D /* EventManager.h */,
+				3AE6F32F239F4FE1008A1B2D /* GlobalKeyEventFilter.cpp */,
+				3AE6F330239F4FE1008A1B2D /* GlobalKeyEventFilter.h */,
+				3AE6F331239F4FE1008A1B2D /* KeyEvent.h */,
+				3AE6F332239F4FE1008A1B2D /* MouseToolGroup.cpp */,
+				3AE6F333239F4FE1008A1B2D /* MouseToolGroup.h */,
+				3AE6F334239F4FE1008A1B2D /* MouseToolManager.cpp */,
+				3AE6F335239F4FE1008A1B2D /* MouseToolManager.h */,
+				3AE6F336239F4FE1008A1B2D /* RegistryToggle.h */,
+				3AE6F337239F4FE1008A1B2D /* SaveEventVisitor.h */,
+				3AE6F338239F4FE1008A1B2D /* Statement.cpp */,
+				3AE6F339239F4FE1008A1B2D /* Statement.h */,
+				3AE6F33A239F4FE1008A1B2D /* Toggle.cpp */,
+				3AE6F33B239F4FE1008A1B2D /* Toggle.h */,
+				3AE6F33C239F4FE1008A1B2D /* WidgetToggle.cpp */,
+				3AE6F33D239F4FE1008A1B2D /* WidgetToggle.h */,
+				3AE6F329239F4FCB008A1B2D /* GlobalKeyEventFilter.h */,
 			);
-			path = entity;
+			name = eventmanager;
 			sourceTree = "<group>";
 		};
-		3AEBDCF21E50AB640062D9AF /* curve */ = {
+		3AE6F346239F5015008A1B2D /* filetypes */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDCF31E50AB640062D9AF /* Curve.cpp */,
-				3AEBDCF41E50AB640062D9AF /* Curve.h */,
-				3AEBDCF51E50AB640062D9AF /* CurveCatmullRom.cpp */,
-				3AEBDCF61E50AB640062D9AF /* CurveCatmullRom.h */,
-				3AEBDCF71E50AB640062D9AF /* CurveControlPointFunctors.h */,
-				3AEBDCF81E50AB640062D9AF /* CurveEditInstance.cpp */,
-				3AEBDCF91E50AB640062D9AF /* CurveEditInstance.h */,
-				3AEBDCFA1E50AB640062D9AF /* CurveNURBS.cpp */,
-				3AEBDCFB1E50AB640062D9AF /* CurveNURBS.h */,
-				3AEBDCFC1E50AB640062D9AF /* RenderableCurve.h */,
+				3AE6F347239F5033008A1B2D /* FileTypeRegistry.cpp */,
+				3AE6F348239F5033008A1B2D /* FileTypeRegistry.h */,
 			);
-			name = curve;
-			path = ../../plugins/entity/curve;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDCFF1E50AB640062D9AF /* doom3group */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDD001E50AB640062D9AF /* Doom3Group.cpp */,
-				3AEBDD011E50AB640062D9AF /* Doom3Group.h */,
-				3AEBDD021E50AB640062D9AF /* Doom3GroupNode.cpp */,
-				3AEBDD031E50AB640062D9AF /* Doom3GroupNode.h */,
-			);
-			name = doom3group;
-			path = ../../plugins/entity/doom3group;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDD041E50AB640062D9AF /* eclassmodel */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDD051E50AB640062D9AF /* EclassModelNode.cpp */,
-				3AEBDD061E50AB640062D9AF /* EclassModelNode.h */,
-			);
-			name = eclassmodel;
-			path = ../../plugins/entity/eclassmodel;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDD0D1E50AB640062D9AF /* generic */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDD0E1E50AB640062D9AF /* GenericEntity.cpp */,
-				3AEBDD0F1E50AB640062D9AF /* GenericEntity.h */,
-				3AEBDD101E50AB640062D9AF /* GenericEntityNode.cpp */,
-				3AEBDD111E50AB640062D9AF /* GenericEntityNode.h */,
-				3AEBDD121E50AB640062D9AF /* RenderableArrow.h */,
-			);
-			name = generic;
-			path = ../../plugins/entity/generic;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDD191E50AB640062D9AF /* light */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDD1A1E50AB640062D9AF /* Doom3LightRadius.h */,
-				3AEBDD1B1E50AB640062D9AF /* Light.cpp */,
-				3AEBDD1C1E50AB640062D9AF /* Light.h */,
-				3AEBDD1D1E50AB640062D9AF /* LightNode.cpp */,
-				3AEBDD1E1E50AB640062D9AF /* LightNode.h */,
-				3AEBDD1F1E50AB640062D9AF /* LightShader.h */,
-				3AEBDD201E50AB640062D9AF /* Renderables.cpp */,
-				3AEBDD211E50AB640062D9AF /* Renderables.h */,
-				3AEBDD221E50AB640062D9AF /* RenderableVertices.h */,
-			);
-			name = light;
-			path = ../../plugins/entity/light;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDD371E50AB640062D9AF /* speaker */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDD381E50AB640062D9AF /* SpeakerNode.cpp */,
-				3AEBDD391E50AB640062D9AF /* SpeakerNode.h */,
-				3AEBDD3A1E50AB640062D9AF /* SpeakerRenderables.cpp */,
-				3AEBDD3B1E50AB640062D9AF /* SpeakerRenderables.h */,
-			);
-			name = speaker;
-			path = ../../plugins/entity/speaker;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDD3C1E50AB640062D9AF /* target */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDD3D1E50AB640062D9AF /* RenderableTargetLines.h */,
-				3AEBDD3E1E50AB640062D9AF /* Target.h */,
-				3AEBDD3F1E50AB640062D9AF /* TargetableNode.cpp */,
-				3AEBDD401E50AB640062D9AF /* TargetableNode.h */,
-				3AEBDD411E50AB640062D9AF /* TargetKey.cpp */,
-				3AEBDD421E50AB640062D9AF /* TargetKey.h */,
-				3AEBDD431E50AB640062D9AF /* TargetKeyCollection.cpp */,
-				3AEBDD441E50AB640062D9AF /* TargetKeyCollection.h */,
-				3AEBDD451E50AB640062D9AF /* TargetLineNode.cpp */,
-				3AEBDD461E50AB640062D9AF /* TargetLineNode.h */,
-				3AEBDD471E50AB640062D9AF /* TargetManager.cpp */,
-				3AEBDD481E50AB640062D9AF /* TargetManager.h */,
-			);
-			name = target;
-			path = ../../plugins/entity/target;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDDC91E50BE540062D9AF /* eventmanager */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDDD31E50BF110062D9AF /* Accelerator.cpp */,
-				3AEBDDD41E50BF110062D9AF /* Accelerator.h */,
-				3AEBDDD51E50BF110062D9AF /* Event.h */,
-				3AEBDDD61E50BF110062D9AF /* EventManager.cpp */,
-				3AEBDDD71E50BF110062D9AF /* EventManager.h */,
-				3AEBDDD81E50BF110062D9AF /* GlobalKeyEventFilter.cpp */,
-				3AEBDDD91E50BF110062D9AF /* GlobalKeyEventFilter.h */,
-				3AEBDDDA1E50BF110062D9AF /* KeyEvent.h */,
-				3AEBDDDD1E50BF110062D9AF /* MouseToolGroup.cpp */,
-				3AEBDDDE1E50BF110062D9AF /* MouseToolGroup.h */,
-				3AEBDDDF1E50BF110062D9AF /* MouseToolManager.cpp */,
-				3AEBDDE01E50BF110062D9AF /* MouseToolManager.h */,
-				3AEBDDE11E50BF110062D9AF /* RegistryToggle.h */,
-				3AEBDDE21E50BF110062D9AF /* SaveEventVisitor.h */,
-				3AEBDDE31E50BF110062D9AF /* Statement.cpp */,
-				3AEBDDE41E50BF110062D9AF /* Statement.h */,
-				3AEBDDE51E50BF110062D9AF /* Toggle.cpp */,
-				3AEBDDE61E50BF110062D9AF /* Toggle.h */,
-				3AEBDDE71E50BF110062D9AF /* WidgetToggle.cpp */,
-				3AEBDDE81E50BF110062D9AF /* WidgetToggle.h */,
-			);
-			path = eventmanager;
+			name = filetypes;
 			sourceTree = "<group>";
 		};
-		3AEBDE0E1E50BFB80062D9AF /* filetypes */ = {
+		3AE6F34A239F5067008A1B2D /* filters */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDE181E50BFF00062D9AF /* FileTypeRegistry.cpp */,
-				3AEBDE191E50BFF00062D9AF /* FileTypeRegistry.h */,
+				3AE6F34B239F507B008A1B2D /* BasicFilterSystem.cpp */,
+				3AE6F34C239F507B008A1B2D /* BasicFilterSystem.h */,
+				3AE6F34D239F507B008A1B2D /* InstanceUpdateWalker.h */,
+				3AE6F34E239F507B008A1B2D /* XMLFilter.cpp */,
+				3AE6F34F239F507B008A1B2D /* XMLFilter.h */,
 			);
-			path = filetypes;
+			name = filters;
 			sourceTree = "<group>";
 		};
-		3AEBDE211E50C0190062D9AF /* filters */ = {
+		3AE6F352239F5C38008A1B2D /* fonts */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDE2B1E50C05F0062D9AF /* BasicFilterSystem.cpp */,
-				3AEBDE2C1E50C05F0062D9AF /* BasicFilterSystem.h */,
-				3AEBDE2D1E50C05F0062D9AF /* filters.cpp */,
-				3AEBDE2E1E50C05F0062D9AF /* InstanceUpdateWalker.h */,
-				3AEBDE311E50C05F0062D9AF /* XMLFilter.cpp */,
-				3AEBDE321E50C05F0062D9AF /* XMLFilter.h */,
+				3AE6F353239F5C4C008A1B2D /* FontInfo.h */,
+				3AE6F354239F5C4C008A1B2D /* FontLoader.cpp */,
+				3AE6F355239F5C4C008A1B2D /* FontLoader.h */,
+				3AE6F356239F5C4C008A1B2D /* FontManager.cpp */,
+				3AE6F357239F5C4C008A1B2D /* FontManager.h */,
+				3AE6F358239F5C4C008A1B2D /* GlyphInfo.cpp */,
+				3AE6F359239F5C4C008A1B2D /* GlyphInfo.h */,
+				3AE6F35A239F5C4C008A1B2D /* GlyphSet.cpp */,
+				3AE6F35B239F5C4C008A1B2D /* GlyphSet.h */,
 			);
-			path = filters;
+			name = fonts;
 			sourceTree = "<group>";
 		};
-		3AEBDE3F1E50C0B50062D9AF /* fonts */ = {
+		3AE6F360239F5C8B008A1B2D /* image */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDE491E50C0F40062D9AF /* FontInfo.h */,
-				3AEBDE4A1E50C0F40062D9AF /* FontLoader.cpp */,
-				3AEBDE4B1E50C0F40062D9AF /* FontLoader.h */,
-				3AEBDE4C1E50C0F40062D9AF /* FontManager.cpp */,
-				3AEBDE4D1E50C0F40062D9AF /* FontManager.h */,
-				3AEBDE4E1E50C0F40062D9AF /* GlyphInfo.cpp */,
-				3AEBDE4F1E50C0F40062D9AF /* GlyphInfo.h */,
-				3AEBDE501E50C0F40062D9AF /* GlyphSet.cpp */,
-				3AEBDE511E50C0F40062D9AF /* GlyphSet.h */,
-				3AEBDE541E50C0F40062D9AF /* plugin.cpp */,
+				3AE6F361239F5C9F008A1B2D /* dds.cpp */,
+				3AE6F362239F5C9F008A1B2D /* dds.h */,
+				3AE6F363239F5C9F008A1B2D /* DDSImage.cpp */,
+				3AE6F364239F5C9F008A1B2D /* DDSImage.h */,
+				3AE6F365239F5C9F008A1B2D /* ddslib.cpp */,
+				3AE6F366239F5C9F008A1B2D /* ddslib.h */,
+				3AE6F367239F5C9F008A1B2D /* Doom3ImageLoader.cpp */,
+				3AE6F368239F5C9F008A1B2D /* Doom3ImageLoader.h */,
+				3AE6F369239F5C9F008A1B2D /* ImageLoaderWx.cpp */,
+				3AE6F36A239F5C9F008A1B2D /* ImageLoaderWx.h */,
+				3AE6F36B239F5C9F008A1B2D /* ImageTypeLoader.h */,
+				3AE6F36C239F5C9F008A1B2D /* TGALoader.cpp */,
+				3AE6F36D239F5C9F008A1B2D /* TGALoader.h */,
 			);
-			path = fonts;
+			name = image;
 			sourceTree = "<group>";
 		};
-		3AEBDE7A1E50C29B0062D9AF /* image */ = {
+		3AE6F374239F5D18008A1B2D /* mapdoom3 */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDE841E50C2DA0062D9AF /* dds.cpp */,
-				3AEBDE851E50C2DA0062D9AF /* dds.h */,
-				3AEBDE861E50C2DA0062D9AF /* DDSImage.cpp */,
-				3AEBDE871E50C2DA0062D9AF /* DDSImage.h */,
-				3AEBDE881E50C2DA0062D9AF /* Doom3ImageLoader.cpp */,
-				3AEBDE891E50C2DA0062D9AF /* Doom3ImageLoader.h */,
-				3AEBDE8A1E50C2DA0062D9AF /* image.cpp */,
-				3AEBDE8B1E50C2DA0062D9AF /* ImageLoaderWx.cpp */,
-				3AEBDE8C1E50C2DA0062D9AF /* ImageLoaderWx.h */,
-				3AEBDE8D1E50C2DA0062D9AF /* ImageTypeLoader.h */,
-				3AEBDE901E50C2DA0062D9AF /* TGALoader.cpp */,
-				3AEBDE911E50C2DA0062D9AF /* TGALoader.h */,
+				3AE6F375239F5D35008A1B2D /* aas */,
+				3AE6F37D239F5D35008A1B2D /* Doom3MapFormat.cpp */,
+				3AE6F37E239F5D35008A1B2D /* Doom3MapFormat.h */,
+				3AE6F37F239F5D35008A1B2D /* Doom3MapReader.cpp */,
+				3AE6F380239F5D35008A1B2D /* Doom3MapReader.h */,
+				3AE6F381239F5D35008A1B2D /* Doom3MapWriter.cpp */,
+				3AE6F382239F5D35008A1B2D /* Doom3MapWriter.h */,
+				3AE6F383239F5D35008A1B2D /* Doom3PrefabFormat.cpp */,
+				3AE6F384239F5D35008A1B2D /* Doom3PrefabFormat.h */,
+				3AE6F385239F5D35008A1B2D /* mapdoom3.cpp */,
+				3AE6F386239F5D35008A1B2D /* primitiveparsers */,
+				3AE6F391239F5D35008A1B2D /* primitivewriters */,
+				3AE6F395239F5D35008A1B2D /* Quake3MapFormat.cpp */,
+				3AE6F396239F5D35008A1B2D /* Quake3MapFormat.h */,
+				3AE6F397239F5D35008A1B2D /* Quake3MapReader.cpp */,
+				3AE6F398239F5D35008A1B2D /* Quake3MapReader.h */,
+				3AE6F399239F5D35008A1B2D /* Quake3MapWriter.h */,
+				3AE6F39A239F5D35008A1B2D /* Quake4MapFormat.cpp */,
+				3AE6F39B239F5D35008A1B2D /* Quake4MapFormat.h */,
+				3AE6F39C239F5D35008A1B2D /* Quake4MapReader.cpp */,
+				3AE6F39D239F5D35008A1B2D /* Quake4MapReader.h */,
+				3AE6F39E239F5D35008A1B2D /* Quake4MapWriter.h */,
 			);
-			path = image;
+			name = mapdoom3;
+			sourceTree = "<group>";
+		};
+		3AE6F375239F5D35008A1B2D /* aas */ = {
+			isa = PBXGroup;
+			children = (
+				3AE6F376239F5D35008A1B2D /* Doom3AasFile.cpp */,
+				3AE6F377239F5D35008A1B2D /* Doom3AasFile.h */,
+				3AE6F378239F5D35008A1B2D /* Doom3AasFileLoader.cpp */,
+				3AE6F379239F5D35008A1B2D /* Doom3AasFileLoader.h */,
+				3AE6F37A239F5D35008A1B2D /* Doom3AasFileSettings.cpp */,
+				3AE6F37B239F5D35008A1B2D /* Doom3AasFileSettings.h */,
+				3AE6F37C239F5D35008A1B2D /* Util.h */,
+			);
+			name = aas;
+			path = ../../../radiant/mapdoom3/aas;
+			sourceTree = "<group>";
+		};
+		3AE6F386239F5D35008A1B2D /* primitiveparsers */ = {
+			isa = PBXGroup;
+			children = (
+				3AE6F387239F5D35008A1B2D /* BrushDef.cpp */,
+				3AE6F388239F5D35008A1B2D /* BrushDef.h */,
+				3AE6F389239F5D35008A1B2D /* BrushDef3.cpp */,
+				3AE6F38A239F5D35008A1B2D /* BrushDef3.h */,
+				3AE6F38B239F5D35008A1B2D /* Patch.cpp */,
+				3AE6F38C239F5D35008A1B2D /* Patch.h */,
+				3AE6F38D239F5D35008A1B2D /* PatchDef2.cpp */,
+				3AE6F38E239F5D35008A1B2D /* PatchDef2.h */,
+				3AE6F38F239F5D35008A1B2D /* PatchDef3.cpp */,
+				3AE6F390239F5D35008A1B2D /* PatchDef3.h */,
+			);
+			name = primitiveparsers;
+			path = ../../radiant/mapdoom3/primitiveparsers;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AE6F391239F5D35008A1B2D /* primitivewriters */ = {
+			isa = PBXGroup;
+			children = (
+				3AE6F392239F5D35008A1B2D /* BrushDef3Exporter.h */,
+				3AE6F393239F5D35008A1B2D /* BrushDefExporter.h */,
+				3AE6F394239F5D35008A1B2D /* PatchDefExporter.h */,
+			);
+			name = primitivewriters;
+			path = ../../radiant/mapdoom3/primitivewriters;
+			sourceTree = SOURCE_ROOT;
+		};
+		3AE6F3B0239F5D97008A1B2D /* md5model */ = {
+			isa = PBXGroup;
+			children = (
+				3AE6F3B1239F5DC3008A1B2D /* MD5Anim.cpp */,
+				3AE6F3B2239F5DC3008A1B2D /* MD5Anim.h */,
+				3AE6F3B3239F5DC3008A1B2D /* MD5AnimationCache.cpp */,
+				3AE6F3B4239F5DC3008A1B2D /* MD5AnimationCache.h */,
+				3AE6F3B5239F5DC3008A1B2D /* MD5DataStructures.h */,
+				3AE6F3B6239F5DC3008A1B2D /* MD5Model.cpp */,
+				3AE6F3B7239F5DC3008A1B2D /* MD5Model.h */,
+				3AE6F3B8239F5DC3008A1B2D /* MD5ModelLoader.cpp */,
+				3AE6F3B9239F5DC3008A1B2D /* MD5ModelLoader.h */,
+				3AE6F3BA239F5DC3008A1B2D /* MD5ModelNode.cpp */,
+				3AE6F3BB239F5DC3008A1B2D /* MD5ModelNode.h */,
+				3AE6F3BC239F5DC3008A1B2D /* MD5Skeleton.cpp */,
+				3AE6F3BD239F5DC3008A1B2D /* MD5Skeleton.h */,
+				3AE6F3BE239F5DC3008A1B2D /* MD5Surface.cpp */,
+				3AE6F3BF239F5DC3008A1B2D /* MD5Surface.h */,
+				3AE6F3C0239F5DC3008A1B2D /* plugin.cpp */,
+				3AE6F3C1239F5DC3008A1B2D /* RenderableMD5Skeleton.h */,
+			);
+			name = md5model;
 			sourceTree = "<group>";
 		};
 		3AEBDEA41E50C3330062D9AF /* dds */ = {
@@ -5809,103 +5450,6 @@
 				3AEBDEAE1E50C34F0062D9AF /* ddslib.cpp */,
 			);
 			path = dds;
-			sourceTree = "<group>";
-		};
-		3AEBDEBC1E50C6400062D9AF /* mapdoom3 */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDEC61E50C68D0062D9AF /* aas */,
-				3AEBDECE1E50C68D0062D9AF /* Doom3MapFormat.cpp */,
-				3AEBDECF1E50C68D0062D9AF /* Doom3MapFormat.h */,
-				3AEBDED01E50C68D0062D9AF /* Doom3MapReader.cpp */,
-				3AEBDED11E50C68D0062D9AF /* Doom3MapReader.h */,
-				3AEBDED21E50C68D0062D9AF /* Doom3MapWriter.cpp */,
-				3AEBDED31E50C68D0062D9AF /* Doom3MapWriter.h */,
-				3AEBDED41E50C68D0062D9AF /* Doom3PrefabFormat.cpp */,
-				3AEBDED51E50C68D0062D9AF /* Doom3PrefabFormat.h */,
-				3AEBDED81E50C68D0062D9AF /* mapdoom3.cpp */,
-				3AEBDED91E50C68D0062D9AF /* primitiveparsers */,
-				3AEBDEE41E50C68D0062D9AF /* primitivewriters */,
-				3AEBDEE81E50C68D0062D9AF /* Quake3MapFormat.cpp */,
-				3AEBDEE91E50C68D0062D9AF /* Quake3MapFormat.h */,
-				3AEBDEEA1E50C68D0062D9AF /* Quake3MapReader.cpp */,
-				3AEBDEEB1E50C68D0062D9AF /* Quake3MapReader.h */,
-				3AEBDEEC1E50C68D0062D9AF /* Quake3MapWriter.h */,
-				3AEBDEED1E50C68D0062D9AF /* Quake4MapFormat.cpp */,
-				3AEBDEEE1E50C68D0062D9AF /* Quake4MapFormat.h */,
-				3AEBDEEF1E50C68D0062D9AF /* Quake4MapReader.cpp */,
-				3AEBDEF01E50C68D0062D9AF /* Quake4MapReader.h */,
-				3AEBDEF11E50C68D0062D9AF /* Quake4MapWriter.h */,
-			);
-			path = mapdoom3;
-			sourceTree = "<group>";
-		};
-		3AEBDEC61E50C68D0062D9AF /* aas */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDEC71E50C68D0062D9AF /* Doom3AasFile.cpp */,
-				3AEBDEC81E50C68D0062D9AF /* Doom3AasFile.h */,
-				3AEBDEC91E50C68D0062D9AF /* Doom3AasFileLoader.cpp */,
-				3AEBDECA1E50C68D0062D9AF /* Doom3AasFileLoader.h */,
-				3AEBDECB1E50C68D0062D9AF /* Doom3AasFileSettings.cpp */,
-				3AEBDECC1E50C68D0062D9AF /* Doom3AasFileSettings.h */,
-				3AEBDECD1E50C68D0062D9AF /* Util.h */,
-			);
-			name = aas;
-			path = ../../../plugins/mapdoom3/aas;
-			sourceTree = "<group>";
-		};
-		3AEBDED91E50C68D0062D9AF /* primitiveparsers */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDEDA1E50C68D0062D9AF /* BrushDef.cpp */,
-				3AEBDEDB1E50C68D0062D9AF /* BrushDef.h */,
-				3AEBDEDC1E50C68D0062D9AF /* BrushDef3.cpp */,
-				3AEBDEDD1E50C68D0062D9AF /* BrushDef3.h */,
-				3AEBDEDE1E50C68D0062D9AF /* Patch.cpp */,
-				3AEBDEDF1E50C68D0062D9AF /* Patch.h */,
-				3AEBDEE01E50C68D0062D9AF /* PatchDef2.cpp */,
-				3AEBDEE11E50C68D0062D9AF /* PatchDef2.h */,
-				3AEBDEE21E50C68D0062D9AF /* PatchDef3.cpp */,
-				3AEBDEE31E50C68D0062D9AF /* PatchDef3.h */,
-			);
-			name = primitiveparsers;
-			path = ../../plugins/mapdoom3/primitiveparsers;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDEE41E50C68D0062D9AF /* primitivewriters */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDEE51E50C68D0062D9AF /* BrushDef3Exporter.h */,
-				3AEBDEE61E50C68D0062D9AF /* BrushDefExporter.h */,
-				3AEBDEE71E50C68D0062D9AF /* PatchDefExporter.h */,
-			);
-			name = primitivewriters;
-			path = ../../plugins/mapdoom3/primitivewriters;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AEBDF1F1E50C6F10062D9AF /* md5model */ = {
-			isa = PBXGroup;
-			children = (
-				3AEBDF3A1E50C71E0062D9AF /* MD5Anim.cpp */,
-				3AEBDF3B1E50C71E0062D9AF /* MD5Anim.h */,
-				3AEBDF3C1E50C71E0062D9AF /* MD5AnimationCache.cpp */,
-				3AEBDF3D1E50C71E0062D9AF /* MD5AnimationCache.h */,
-				3AEBDF3E1E50C71E0062D9AF /* MD5DataStructures.h */,
-				3AEBDF3F1E50C71E0062D9AF /* MD5Model.cpp */,
-				3AEBDF401E50C71E0062D9AF /* MD5Model.h */,
-				3AEBDF411E50C71E0062D9AF /* MD5ModelLoader.cpp */,
-				3AEBDF421E50C71E0062D9AF /* MD5ModelLoader.h */,
-				3AEBDF431E50C71E0062D9AF /* MD5ModelNode.cpp */,
-				3AEBDF441E50C71E0062D9AF /* MD5ModelNode.h */,
-				3AEBDF451E50C71E0062D9AF /* MD5Skeleton.cpp */,
-				3AEBDF461E50C71E0062D9AF /* MD5Skeleton.h */,
-				3AEBDF471E50C71E0062D9AF /* MD5Surface.cpp */,
-				3AEBDF481E50C71E0062D9AF /* MD5Surface.h */,
-				3AEBDF491E50C71E0062D9AF /* plugin.cpp */,
-				3AEBDF4A1E50C71E0062D9AF /* RenderableMD5Skeleton.h */,
-			);
-			path = md5model;
 			sourceTree = "<group>";
 		};
 		3AEBDFF71E50CAF50062D9AF /* picomodel */ = {
@@ -6717,10 +6261,17 @@
 				3AE6F29E239F4B5D008A1B2D /* commandsystem */,
 				3AE6F2A7239F4BED008A1B2D /* eclassmgr */,
 				3AE6F2AF239F4C53008A1B2D /* entity */,
+				3AE6F328239F4E46008A1B2D /* eventmanager */,
+				3AE6F346239F5015008A1B2D /* filetypes */,
+				3AE6F34A239F5067008A1B2D /* filters */,
+				3AE6F352239F5C38008A1B2D /* fonts */,
+				3AE6F360239F5C8B008A1B2D /* image */,
 				3AF743541E4F861A003465B5 /* layers */,
 				3AF743611E4F861A003465B5 /* log */,
 				3AF743741E4F861A003465B5 /* main.cpp */,
 				3AF743771E4F861A003465B5 /* map */,
+				3AE6F374239F5D18008A1B2D /* mapdoom3 */,
+				3AE6F3B0239F5D97008A1B2D /* md5model */,
 				3AF743B11E4F861A003465B5 /* model */,
 				3AF743BD1E4F861A003465B5 /* modulesystem */,
 				3AF743C91E4F861A003465B5 /* namespace */,
@@ -8083,118 +7634,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3AEBDDC61E50BE540062D9AF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDDF21E50BF1D0062D9AF /* Accelerator.h in Headers */,
-				3AEBDDFD1E50BF1D0062D9AF /* RegistryToggle.h in Headers */,
-				3AEBDE041E50BF1D0062D9AF /* WidgetToggle.h in Headers */,
-				3AEBDDFE1E50BF1D0062D9AF /* SaveEventVisitor.h in Headers */,
-				3AEBDE021E50BF1D0062D9AF /* Toggle.h in Headers */,
-				3AEBDDF51E50BF1D0062D9AF /* EventManager.h in Headers */,
-				3AEBDDF71E50BF1D0062D9AF /* GlobalKeyEventFilter.h in Headers */,
-				3AEBDDFC1E50BF1D0062D9AF /* MouseToolManager.h in Headers */,
-				3AEBDDF31E50BF1D0062D9AF /* Event.h in Headers */,
-				3AEBDDFA1E50BF1D0062D9AF /* MouseToolGroup.h in Headers */,
-				3AEBDE001E50BF1D0062D9AF /* Statement.h in Headers */,
-				3AEBDDF81E50BF1D0062D9AF /* KeyEvent.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE0B1E50BFB80062D9AF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE1B1E50BFF00062D9AF /* FileTypeRegistry.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE1E1E50C0190062D9AF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE361E50C05F0062D9AF /* InstanceUpdateWalker.h in Headers */,
-				3AEBDE341E50C05F0062D9AF /* BasicFilterSystem.h in Headers */,
-				3AEBDE381E50C05F0062D9AF /* XMLFilter.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE3C1E50C0B50062D9AF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE5D1E50C0F40062D9AF /* GlyphSet.h in Headers */,
-				3AEBDE571E50C0F40062D9AF /* FontLoader.h in Headers */,
-				3AEBDE5B1E50C0F40062D9AF /* GlyphInfo.h in Headers */,
-				3AEBDE551E50C0F40062D9AF /* FontInfo.h in Headers */,
-				3AEBDE591E50C0F40062D9AF /* FontManager.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE771E50C29B0062D9AF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE951E50C2DA0062D9AF /* DDSImage.h in Headers */,
-				3AEBDE9B1E50C2DA0062D9AF /* ImageTypeLoader.h in Headers */,
-				3AEBDE9D1E50C2DA0062D9AF /* TGALoader.h in Headers */,
-				3AEBDE931E50C2DA0062D9AF /* dds.h in Headers */,
-				3AEBDE9A1E50C2DA0062D9AF /* ImageLoaderWx.h in Headers */,
-				3AEBDE971E50C2DA0062D9AF /* Doom3ImageLoader.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3AEBDEA11E50C3330062D9AF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3AEBDEB31E50C3660062D9AF /* ddslib.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDEB91E50C6400062D9AF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDF0E1E50C68D0062D9AF /* PatchDefExporter.h in Headers */,
-				3AEBDF181E50C68D0062D9AF /* Quake4MapWriter.h in Headers */,
-				3AEBDF0C1E50C68D0062D9AF /* BrushDef3Exporter.h in Headers */,
-				3AEBDF131E50C68D0062D9AF /* Quake3MapWriter.h in Headers */,
-				3AEBDEFA1E50C68D0062D9AF /* Doom3MapFormat.h in Headers */,
-				3AEBDEF71E50C68D0062D9AF /* Doom3AasFileSettings.h in Headers */,
-				3AEBDF071E50C68D0062D9AF /* Patch.h in Headers */,
-				3AEBDF031E50C68D0062D9AF /* BrushDef.h in Headers */,
-				3AEBDF051E50C68D0062D9AF /* BrushDef3.h in Headers */,
-				3AEBDEF51E50C68D0062D9AF /* Doom3AasFileLoader.h in Headers */,
-				3AEBDF151E50C68D0062D9AF /* Quake4MapFormat.h in Headers */,
-				3AEBDEFE1E50C68D0062D9AF /* Doom3MapWriter.h in Headers */,
-				3AEBDF0B1E50C68D0062D9AF /* PatchDef3.h in Headers */,
-				3AEBDF001E50C68D0062D9AF /* Doom3PrefabFormat.h in Headers */,
-				3AEBDF101E50C68D0062D9AF /* Quake3MapFormat.h in Headers */,
-				3AEBDF121E50C68D0062D9AF /* Quake3MapReader.h in Headers */,
-				3AEBDF171E50C68D0062D9AF /* Quake4MapReader.h in Headers */,
-				3AEBDEFC1E50C68D0062D9AF /* Doom3MapReader.h in Headers */,
-				3AEBDEF81E50C68D0062D9AF /* Util.h in Headers */,
-				3AEBDF091E50C68D0062D9AF /* PatchDef2.h in Headers */,
-				3AEBDEF31E50C68D0062D9AF /* Doom3AasFile.h in Headers */,
-				3AEBDF0D1E50C68D0062D9AF /* BrushDefExporter.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDF1C1E50C6F10062D9AF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDF711E50C7290062D9AF /* MD5DataStructures.h in Headers */,
-				3AEBDF7B1E50C7290062D9AF /* MD5Surface.h in Headers */,
-				3AEBDF7D1E50C7290062D9AF /* RenderableMD5Skeleton.h in Headers */,
-				3AEBDF6E1E50C7290062D9AF /* MD5Anim.h in Headers */,
-				3AEBDF791E50C7290062D9AF /* MD5Skeleton.h in Headers */,
-				3AEBDF701E50C7290062D9AF /* MD5AnimationCache.h in Headers */,
-				3AEBDF751E50C7290062D9AF /* MD5ModelLoader.h in Headers */,
-				3AEBDF731E50C7290062D9AF /* MD5Model.h in Headers */,
-				3AEBDF771E50C7290062D9AF /* MD5ModelNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8665,13 +8109,6 @@
 				3AF4758C1E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF4758E1E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF475901E6B2115006B26C2 /* PBXTargetDependency */,
-				3AF4759E1E6B2115006B26C2 /* PBXTargetDependency */,
-				3AF475A01E6B2115006B26C2 /* PBXTargetDependency */,
-				3AF475A21E6B2115006B26C2 /* PBXTargetDependency */,
-				3AF475A41E6B2115006B26C2 /* PBXTargetDependency */,
-				3AF475A81E6B2115006B26C2 /* PBXTargetDependency */,
-				3AF475AA1E6B2115006B26C2 /* PBXTargetDependency */,
-				3AF475AC1E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF475AE1E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF475B01E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF475B21E6B2115006B26C2 /* PBXTargetDependency */,
@@ -8695,91 +8132,6 @@
 			productReference = 3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */;
 			productType = "com.apple.product-type.bundle";
 		};
-		3AEBDDC71E50BE540062D9AF /* eventmanager */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3AEBDDD01E50BE540062D9AF /* Build configuration list for PBXNativeTarget "eventmanager" */;
-			buildPhases = (
-				3AEBDDC41E50BE540062D9AF /* Sources */,
-				3AEBDDC51E50BE540062D9AF /* Frameworks */,
-				3AEBDDC61E50BE540062D9AF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = eventmanager;
-			productName = eventmanager;
-			productReference = 3AEBDDC81E50BE540062D9AF /* eventmanager.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		3AEBDE0C1E50BFB80062D9AF /* filetypes */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3AEBDE151E50BFB80062D9AF /* Build configuration list for PBXNativeTarget "filetypes" */;
-			buildPhases = (
-				3AEBDE091E50BFB80062D9AF /* Sources */,
-				3AEBDE0A1E50BFB80062D9AF /* Frameworks */,
-				3AEBDE0B1E50BFB80062D9AF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = filetypes;
-			productName = filetypes;
-			productReference = 3AEBDE0D1E50BFB80062D9AF /* filetypes.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		3AEBDE1F1E50C0190062D9AF /* filters */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3AEBDE281E50C0190062D9AF /* Build configuration list for PBXNativeTarget "filters" */;
-			buildPhases = (
-				3AEBDE1C1E50C0190062D9AF /* Sources */,
-				3AEBDE1D1E50C0190062D9AF /* Frameworks */,
-				3AEBDE1E1E50C0190062D9AF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = filters;
-			productName = filters;
-			productReference = 3AEBDE201E50C0190062D9AF /* filters.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		3AEBDE3D1E50C0B50062D9AF /* fonts */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3AEBDE461E50C0B50062D9AF /* Build configuration list for PBXNativeTarget "fonts" */;
-			buildPhases = (
-				3AEBDE3A1E50C0B50062D9AF /* Sources */,
-				3AEBDE3B1E50C0B50062D9AF /* Frameworks */,
-				3AEBDE3C1E50C0B50062D9AF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = fonts;
-			productName = fonts;
-			productReference = 3AEBDE3E1E50C0B50062D9AF /* fonts.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		3AEBDE781E50C29B0062D9AF /* image */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3AEBDE811E50C29C0062D9AF /* Build configuration list for PBXNativeTarget "image" */;
-			buildPhases = (
-				3AEBDE751E50C29B0062D9AF /* Sources */,
-				3AEBDE761E50C29B0062D9AF /* Frameworks */,
-				3AEBDE771E50C29B0062D9AF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = image;
-			productName = image;
-			productReference = 3AEBDE791E50C29B0062D9AF /* image.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		3AEBDEA21E50C3330062D9AF /* dds */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3AEBDEAB1E50C3330062D9AF /* Build configuration list for PBXNativeTarget "dds" */;
@@ -8796,40 +8148,6 @@
 			productName = dds;
 			productReference = 3AEBDEA31E50C3330062D9AF /* libdds.a */;
 			productType = "com.apple.product-type.library.static";
-		};
-		3AEBDEBA1E50C6400062D9AF /* mapdoom3 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3AEBDEC31E50C6400062D9AF /* Build configuration list for PBXNativeTarget "mapdoom3" */;
-			buildPhases = (
-				3AEBDEB71E50C6400062D9AF /* Sources */,
-				3AEBDEB81E50C6400062D9AF /* Frameworks */,
-				3AEBDEB91E50C6400062D9AF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = mapdoom3;
-			productName = mapdoom3;
-			productReference = 3AEBDEBB1E50C6400062D9AF /* mapdoom3.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		3AEBDF1D1E50C6F10062D9AF /* md5model */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3AEBDF261E50C6F10062D9AF /* Build configuration list for PBXNativeTarget "md5model" */;
-			buildPhases = (
-				3AEBDF1A1E50C6F10062D9AF /* Sources */,
-				3AEBDF1B1E50C6F10062D9AF /* Frameworks */,
-				3AEBDF1C1E50C6F10062D9AF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = md5model;
-			productName = md5model;
-			productReference = 3AEBDF1E1E50C6F10062D9AF /* md5model.so */;
-			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDFF21E50CAEE0062D9AF /* picomodel */ = {
 			isa = PBXNativeTarget;
@@ -9183,28 +8501,7 @@
 					3AE20CD21E59687300F5A0A6 = {
 						CreatedOnToolsVersion = 7.1;
 					};
-					3AEBDDC71E50BE540062D9AF = {
-						CreatedOnToolsVersion = 7.1;
-					};
-					3AEBDE0C1E50BFB80062D9AF = {
-						CreatedOnToolsVersion = 7.1;
-					};
-					3AEBDE1F1E50C0190062D9AF = {
-						CreatedOnToolsVersion = 7.1;
-					};
-					3AEBDE3D1E50C0B50062D9AF = {
-						CreatedOnToolsVersion = 7.1;
-					};
-					3AEBDE781E50C29B0062D9AF = {
-						CreatedOnToolsVersion = 7.1;
-					};
 					3AEBDEA21E50C3330062D9AF = {
-						CreatedOnToolsVersion = 7.1;
-					};
-					3AEBDEBA1E50C6400062D9AF = {
-						CreatedOnToolsVersion = 7.1;
-					};
-					3AEBDF1D1E50C6F10062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
 					3AEBDFF21E50CAEE0062D9AF = {
@@ -9289,13 +8586,6 @@
 				3A0120721E502F7800A62BC1 /* scene */,
 				3AEBDEA21E50C3330062D9AF /* dds */,
 				3AEBDFF21E50CAEE0062D9AF /* picomodel */,
-				3AEBDDC71E50BE540062D9AF /* eventmanager */,
-				3AEBDE0C1E50BFB80062D9AF /* filetypes */,
-				3AEBDE1F1E50C0190062D9AF /* filters */,
-				3AEBDE3D1E50C0B50062D9AF /* fonts */,
-				3AEBDE781E50C29B0062D9AF /* image */,
-				3AEBDEBA1E50C6400062D9AF /* mapdoom3 */,
-				3AEBDF1D1E50C6F10062D9AF /* md5model */,
 				3AEBE0331E50D0400062D9AF /* model */,
 				3AEBE04F1E50D6C60062D9AF /* particles */,
 				3AEBE0931E50D8270062D9AF /* scenegraph */,
@@ -9403,108 +8693,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3AEBDDC41E50BE540062D9AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDDF61E50BF1D0062D9AF /* GlobalKeyEventFilter.cpp in Sources */,
-				3AEBDDF41E50BF1D0062D9AF /* EventManager.cpp in Sources */,
-				3AEBDDF11E50BF1D0062D9AF /* Accelerator.cpp in Sources */,
-				3AEBDE011E50BF1D0062D9AF /* Toggle.cpp in Sources */,
-				3AEBDDFF1E50BF1D0062D9AF /* Statement.cpp in Sources */,
-				3AEBDDFB1E50BF1D0062D9AF /* MouseToolManager.cpp in Sources */,
-				3AEBDDF91E50BF1D0062D9AF /* MouseToolGroup.cpp in Sources */,
-				3AEBDE031E50BF1D0062D9AF /* WidgetToggle.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE091E50BFB80062D9AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE1A1E50BFF00062D9AF /* FileTypeRegistry.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE1C1E50C0190062D9AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE331E50C05F0062D9AF /* BasicFilterSystem.cpp in Sources */,
-				3AEBDE351E50C05F0062D9AF /* filters.cpp in Sources */,
-				3AEBDE371E50C05F0062D9AF /* XMLFilter.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE3A1E50C0B50062D9AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE5E1E50C0F40062D9AF /* plugin.cpp in Sources */,
-				3AEBDE581E50C0F40062D9AF /* FontManager.cpp in Sources */,
-				3AEBDE5C1E50C0F40062D9AF /* GlyphSet.cpp in Sources */,
-				3AEBDE561E50C0F40062D9AF /* FontLoader.cpp in Sources */,
-				3AEBDE5A1E50C0F40062D9AF /* GlyphInfo.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDE751E50C29B0062D9AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDE921E50C2DA0062D9AF /* dds.cpp in Sources */,
-				3AEBDE991E50C2DA0062D9AF /* ImageLoaderWx.cpp in Sources */,
-				3AEBDE981E50C2DA0062D9AF /* image.cpp in Sources */,
-				3AEBDE9C1E50C2DA0062D9AF /* TGALoader.cpp in Sources */,
-				3AEBDE961E50C2DA0062D9AF /* Doom3ImageLoader.cpp in Sources */,
-				3AEBDE941E50C2DA0062D9AF /* DDSImage.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3AEBDE9F1E50C3330062D9AF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3AEBDEB21E50C3620062D9AF /* ddslib.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDEB71E50C6400062D9AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDEF91E50C68D0062D9AF /* Doom3MapFormat.cpp in Sources */,
-				3AEBDF0F1E50C68D0062D9AF /* Quake3MapFormat.cpp in Sources */,
-				3AEBDEFB1E50C68D0062D9AF /* Doom3MapReader.cpp in Sources */,
-				3AEBDF041E50C68D0062D9AF /* BrushDef3.cpp in Sources */,
-				3AEBDEFD1E50C68D0062D9AF /* Doom3MapWriter.cpp in Sources */,
-				3AEBDEF21E50C68D0062D9AF /* Doom3AasFile.cpp in Sources */,
-				3AEBDF141E50C68D0062D9AF /* Quake4MapFormat.cpp in Sources */,
-				3AEBDEFF1E50C68D0062D9AF /* Doom3PrefabFormat.cpp in Sources */,
-				3AEBDF161E50C68D0062D9AF /* Quake4MapReader.cpp in Sources */,
-				3AEBDF111E50C68D0062D9AF /* Quake3MapReader.cpp in Sources */,
-				3AEBDF021E50C68D0062D9AF /* BrushDef.cpp in Sources */,
-				3AEBDF0A1E50C68D0062D9AF /* PatchDef3.cpp in Sources */,
-				3AEBDF081E50C68D0062D9AF /* PatchDef2.cpp in Sources */,
-				3AEBDF061E50C68D0062D9AF /* Patch.cpp in Sources */,
-				3AEBDF011E50C68D0062D9AF /* mapdoom3.cpp in Sources */,
-				3AEBDEF61E50C68D0062D9AF /* Doom3AasFileSettings.cpp in Sources */,
-				3AEBDEF41E50C68D0062D9AF /* Doom3AasFileLoader.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDF1A1E50C6F10062D9AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDF761E50C7290062D9AF /* MD5ModelNode.cpp in Sources */,
-				3AEBDF721E50C7290062D9AF /* MD5Model.cpp in Sources */,
-				3AEBDF7C1E50C7290062D9AF /* plugin.cpp in Sources */,
-				3AEBDF7A1E50C7290062D9AF /* MD5Surface.cpp in Sources */,
-				3AEBDF741E50C7290062D9AF /* MD5ModelLoader.cpp in Sources */,
-				3AEBDF781E50C7290062D9AF /* MD5Skeleton.cpp in Sources */,
-				3AEBDF6F1E50C7290062D9AF /* MD5AnimationCache.cpp in Sources */,
-				3AEBDF6D1E50C7290062D9AF /* MD5Anim.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9858,22 +9051,28 @@
 				3AE6F31E239F4CA2008A1B2D /* RotationKey.cpp in Sources */,
 				3AF7459C1E4F861B003465B5 /* AutoSaver.cpp in Sources */,
 				3AF7460F1E4F861B003465B5 /* MapPreview.cpp in Sources */,
+				3AE6F372239F5C9F008A1B2D /* ImageLoaderWx.cpp in Sources */,
 				3AF745DF1E4F861B003465B5 /* BestPoint.cpp in Sources */,
 				3AF746581E4F861C003465B5 /* UserInterfaceModule.cpp in Sources */,
 				3AE6F29B239F474E008A1B2D /* Doom3FileSystem.cpp in Sources */,
 				3AF746361E4F861B003465B5 /* SplitPaneLayout.cpp in Sources */,
+				3AE6F39F239F5D35008A1B2D /* Doom3AasFile.cpp in Sources */,
 				3AE6F309239F4CA2008A1B2D /* CurveCatmullRom.cpp in Sources */,
 				3AE6F30D239F4CA2008A1B2D /* Doom3Group.cpp in Sources */,
 				3AF746411E4F861C003465B5 /* BindToolDialog.cpp in Sources */,
+				3AE6F351239F507B008A1B2D /* XMLFilter.cpp in Sources */,
 				3AF745D41E4F861B003465B5 /* Curves.cpp in Sources */,
 				3AF7464F1E4F861C003465B5 /* PrefabSelector.cpp in Sources */,
 				3AF745BC1E4F861B003465B5 /* Prefab.cpp in Sources */,
 				3AF745F21E4F861B003465B5 /* SelectionSetToolmenu.cpp in Sources */,
+				3AE6F3C5239F5DC3008A1B2D /* MD5ModelLoader.cpp in Sources */,
 				3AE6F30E239F4CA2008A1B2D /* Doom3GroupNode.cpp in Sources */,
 				3AF745AA1E4F861B003465B5 /* RegionManager.cpp in Sources */,
 				3AE6F311239F4CA2008A1B2D /* EntityNode.cpp in Sources */,
 				3AF745A71E4F861B003465B5 /* MapResource.cpp in Sources */,
+				3AE6F36E239F5C9F008A1B2D /* dds.cpp in Sources */,
 				3AF745781E4F861B003465B5 /* CSG.cpp in Sources */,
+				3AE6F3AA239F5D35008A1B2D /* PatchDef2.cpp in Sources */,
 				3AF746031E4F861B003465B5 /* PatchItem.cpp in Sources */,
 				3AF745C91E4F861B003465B5 /* GLSLBumpProgram.cpp in Sources */,
 				3AF745751E4F861B003465B5 /* BrushModule.cpp in Sources */,
@@ -9901,31 +9100,39 @@
 				3AF746251E4F861B003465B5 /* Vector3PropertyEditor.cpp in Sources */,
 				3AF7462E1E4F861B003465B5 /* LayerOrthoContextMenuItem.cpp in Sources */,
 				3AF745D71E4F861B003465B5 /* Group.cpp in Sources */,
+				3AE6F3A0239F5D35008A1B2D /* Doom3AasFileLoader.cpp in Sources */,
 				3AF745791E4F861B003465B5 /* CollisionModel.cpp in Sources */,
 				3AE6F326239F4CA2008A1B2D /* TargetLineNode.cpp in Sources */,
 				3AF745A01E4F861B003465B5 /* InfoFileExporter.cpp in Sources */,
 				3AF745801E4F861B003465B5 /* TextureProjection.cpp in Sources */,
 				3AF745841E4F861B003465B5 /* CamRenderer.cpp in Sources */,
 				3AE6F30C239F4CA2008A1B2D /* Doom3Entity.cpp in Sources */,
+				3AE6F35C239F5C4C008A1B2D /* FontLoader.cpp in Sources */,
 				3AF745741E4F861B003465B5 /* Brush.cpp in Sources */,
 				3AF745DE1E4F861B003465B5 /* Transformation.cpp in Sources */,
+				3AE6F3C6239F5DC3008A1B2D /* MD5ModelNode.cpp in Sources */,
 				3AE6F2AE239F4C19008A1B2D /* EClassManager.cpp in Sources */,
+				3AE6F3C2239F5DC3008A1B2D /* MD5Anim.cpp in Sources */,
+				3AE6F350239F507B008A1B2D /* BasicFilterSystem.cpp in Sources */,
 				3AE6F13F1F496AA1008A1B2D /* Models.cpp in Sources */,
 				3AF745B71E4F861B003465B5 /* ModuleRegistry.cpp in Sources */,
 				3AF746341E4F861B003465B5 /* RegularLayout.cpp in Sources */,
 				3AE6F307239F4CA2008A1B2D /* AngleKey.cpp in Sources */,
 				3AF745BD1E4F861B003465B5 /* Patch.cpp in Sources */,
+				3AE6F3AB239F5D35008A1B2D /* PatchDef3.cpp in Sources */,
 				3AF745E61E4F861B003465B5 /* ManipulatorBase.cpp in Sources */,
 				3AF745821E4F861B003465B5 /* Camera.cpp in Sources */,
 				3AE6F27E1FF78CD0008A1B2D /* GraphTreeModel.cpp in Sources */,
 				3AF746481E4F861C003465B5 /* ParticlesChooser.cpp in Sources */,
 				3AF745AC1E4F861B003465B5 /* RootNode.cpp in Sources */,
+				3AE6F3A7239F5D35008A1B2D /* BrushDef.cpp in Sources */,
 				3AF746271E4F861B003465B5 /* EntityClassTreePopulator.cpp in Sources */,
 				3AF746301E4F861B003465B5 /* EmbeddedLayout.cpp in Sources */,
 				3AE6F20E1FDC229F008A1B2D /* GameSetupPageIdTech.cpp in Sources */,
 				3AF7459B1E4F861B003465B5 /* Traverse.cpp in Sources */,
 				3AF7463F1E4F861C003465B5 /* MaterialsList.cpp in Sources */,
 				3AF746061E4F861B003465B5 /* TexToolItem.cpp in Sources */,
+				3AE6F3A4239F5D35008A1B2D /* Doom3MapWriter.cpp in Sources */,
 				3AF745EF1E4F861B003465B5 /* SelectionSet.cpp in Sources */,
 				3AF746011E4F861B003465B5 /* FaceItem.cpp in Sources */,
 				3AF7458C1E4F861B003465B5 /* LayerSystem.cpp in Sources */,
@@ -9936,6 +9143,7 @@
 				3AE6F31F239F4CA2008A1B2D /* RotationMatrix.cpp in Sources */,
 				3AF7464D1E4F861C003465B5 /* PatchThickenDialog.cpp in Sources */,
 				3AF745CD1E4F861B003465B5 /* OpenGLShaderPass.cpp in Sources */,
+				3AE6F345239F4FE1008A1B2D /* WidgetToggle.cpp in Sources */,
 				3AF745AD1E4F861B003465B5 /* StartupMapLoader.cpp in Sources */,
 				3AF7457D1E4F861B003465B5 /* FixedWinding.cpp in Sources */,
 				3AF745D21E4F861B003465B5 /* RenderSystemFactory.cpp in Sources */,
@@ -9949,6 +9157,7 @@
 				3AF745881E4F861B003465B5 /* Clipper.cpp in Sources */,
 				3AE6F317239F4CA2008A1B2D /* Light.cpp in Sources */,
 				3AF745911E4F861B003465B5 /* LogStream.cpp in Sources */,
+				3AE6F3AE239F5D35008A1B2D /* Quake4MapFormat.cpp in Sources */,
 				3AF745971E4F861B003465B5 /* ChildPrimitives.cpp in Sources */,
 				3AF7462B1E4F861B003465B5 /* LayerContextMenu.cpp in Sources */,
 				3AF7459E1E4F861B003465B5 /* FindMapElements.cpp in Sources */,
@@ -9967,19 +9176,25 @@
 				3AF745E21E4F861B003465B5 /* SelectionGroupManager.cpp in Sources */,
 				3AF7462D1E4F861B003465B5 /* LayerControlDialog.cpp in Sources */,
 				3AF7465C1E4F861C003465B5 /* ClipperTool.cpp in Sources */,
+				3AE6F3A5239F5D35008A1B2D /* Doom3PrefabFormat.cpp in Sources */,
 				3AE6F320239F4CA2008A1B2D /* ShaderParms.cpp in Sources */,
 				3AF745B01E4F861B003465B5 /* NullModel.cpp in Sources */,
 				3AF745F11E4F861B003465B5 /* SelectionSetManager.cpp in Sources */,
 				3AF745C41E4F861B003465B5 /* RadiantModule.cpp in Sources */,
+				3AE6F36F239F5C9F008A1B2D /* DDSImage.cpp in Sources */,
 				3AF746451E4F861C003465B5 /* OrthoContextMenu.cpp in Sources */,
 				3AF745CE1E4F861B003465B5 /* SpacePartitionRenderer.cpp in Sources */,
 				3AF745A21E4F861B003465B5 /* Map.cpp in Sources */,
+				3AE6F370239F5C9F008A1B2D /* ddslib.cpp in Sources */,
+				3AE6F349239F5033008A1B2D /* FileTypeRegistry.cpp in Sources */,
 				3AF745E41E4F861B003465B5 /* ManipulationPivot.cpp in Sources */,
 				3AF746551E4F861C003465B5 /* TextureBrowser.cpp in Sources */,
 				3AF7464E1E4F861C003465B5 /* PrefabPopulator.cpp in Sources */,
 				3AF745C01E4F861B003465B5 /* PatchNode.cpp in Sources */,
 				3AF745771E4F861B003465B5 /* BrushByPlaneClipper.cpp in Sources */,
 				3AF746501E4F861C003465B5 /* PrefDialog.cpp in Sources */,
+				3AE6F3A2239F5D35008A1B2D /* Doom3MapFormat.cpp in Sources */,
+				3AE6F3A9239F5D35008A1B2D /* Patch.cpp in Sources */,
 				3AF745F61E4F861B003465B5 /* Texturable.cpp in Sources */,
 				3AF746591E4F861C003465B5 /* FloatingOrthoView.cpp in Sources */,
 				3AE6F20C1FDC229F008A1B2D /* GameSetupDialog.cpp in Sources */,
@@ -9999,6 +9214,7 @@
 				3AF7461D1E4F861B003465B5 /* LightTextureChooser.cpp in Sources */,
 				3AF745FE1E4F861B003465B5 /* Win32Registry.cpp in Sources */,
 				3AF745E91E4F861B003465B5 /* RotateManipulator.cpp in Sources */,
+				3AE6F340239F4FE1008A1B2D /* GlobalKeyEventFilter.cpp in Sources */,
 				3AF7465B1E4F861C003465B5 /* BrushCreatorTool.cpp in Sources */,
 				3AF746571E4F861C003465B5 /* TransformDialog.cpp in Sources */,
 				3AF746231E4F861B003465B5 /* SoundPropertyEditor.cpp in Sources */,
@@ -10009,10 +9225,12 @@
 				3AF7458D1E4F861B003465B5 /* LayerUsageBreakdown.cpp in Sources */,
 				3AF746131E4F861B003465B5 /* ShaderSelector.cpp in Sources */,
 				3AF745A61E4F861B003465B5 /* MapPositionManager.cpp in Sources */,
+				3AE6F33F239F4FE1008A1B2D /* EventManager.cpp in Sources */,
 				3AE6F2831FF78CDB008A1B2D /* EClassTree.cpp in Sources */,
 				3AF7460D1E4F861B003465B5 /* CommandEntry.cpp in Sources */,
 				3AF745CB1E4F861B003465B5 /* GLProgramFactory.cpp in Sources */,
 				3AE6F30A239F4CA2008A1B2D /* CurveEditInstance.cpp in Sources */,
+				3AE6F35D239F5C4C008A1B2D /* FontManager.cpp in Sources */,
 				3AF745C71E4F861B003465B5 /* ARBDepthFillProgram.cpp in Sources */,
 				3AF746221E4F861B003465B5 /* SkinPropertyEditor.cpp in Sources */,
 				3AE6F20D1FDC229F008A1B2D /* GameSetupPage.cpp in Sources */,
@@ -10020,6 +9238,7 @@
 				3AF7463D1E4F861C003465B5 /* MediaBrowser.cpp in Sources */,
 				3AF746441E4F861C003465B5 /* MRUMenuItem.cpp in Sources */,
 				3AF7461B1E4F861B003465B5 /* EntityPropertyEditor.cpp in Sources */,
+				3AE6F341239F4FE1008A1B2D /* MouseToolGroup.cpp in Sources */,
 				3AF745FB1E4F861B003465B5 /* LanguageManager.cpp in Sources */,
 				3AF745D01E4F861B003465B5 /* OpenGLModule.cpp in Sources */,
 				3AF7464C1E4F861C003465B5 /* PatchInspector.cpp in Sources */,
@@ -10032,12 +9251,16 @@
 				3AF745951E4F861B003465B5 /* main.cpp in Sources */,
 				3AF745BF1E4F861B003465B5 /* PatchModule.cpp in Sources */,
 				3AF7457F1E4F861B003465B5 /* TextureMatrix.cpp in Sources */,
+				3AE6F342239F4FE1008A1B2D /* MouseToolManager.cpp in Sources */,
 				3AF745ED1E4F861B003465B5 /* SelectedNodeList.cpp in Sources */,
 				3AF745811E4F861B003465B5 /* Winding.cpp in Sources */,
+				3AE6F33E239F4FE1008A1B2D /* Accelerator.cpp in Sources */,
 				3AF745A41E4F861B003465B5 /* MapFormatManager.cpp in Sources */,
 				3AF7462A1E4F861B003465B5 /* FindShader.cpp in Sources */,
+				3AE6F3C7239F5DC3008A1B2D /* MD5Skeleton.cpp in Sources */,
 				3AF746171E4F861B003465B5 /* BooleanPropertyEditor.cpp in Sources */,
 				3AF746151E4F861B003465B5 /* AddPropertyDialog.cpp in Sources */,
+				3AE6F35F239F5C4C008A1B2D /* GlyphSet.cpp in Sources */,
 				3AE6F319239F4CA2008A1B2D /* Renderables.cpp in Sources */,
 				3AF745E81E4F861B003465B5 /* ModelScaleManipulator.cpp in Sources */,
 				3AF746371E4F861B003465B5 /* TopLevelFrame.cpp in Sources */,
@@ -10046,6 +9269,7 @@
 				3AE6F20F1FDC229F008A1B2D /* GameSetupPageTdm.cpp in Sources */,
 				3AE6F325239F4CA2008A1B2D /* TargetKeyCollection.cpp in Sources */,
 				3AF7460B1E4F861B003465B5 /* CommandList.cpp in Sources */,
+				3AE6F371239F5C9F008A1B2D /* Doom3ImageLoader.cpp in Sources */,
 				3AF746471E4F861C003465B5 /* OverlayDialog.cpp in Sources */,
 				3AF746161E4F861B003465B5 /* AnglePropertyEditor.cpp in Sources */,
 				3AE6F314239F4CA2008A1B2D /* GenericEntityNode.cpp in Sources */,
@@ -10060,6 +9284,7 @@
 				3AF7457B1E4F861B003465B5 /* FaceInstance.cpp in Sources */,
 				3AE6F2AD239F4C19008A1B2D /* Doom3EntityClass.cpp in Sources */,
 				3AF745CF1E4F861B003465B5 /* LinearLightList.cpp in Sources */,
+				3AE6F3AF239F5D35008A1B2D /* Quake4MapReader.cpp in Sources */,
 				3AF745941E4F861B003465B5 /* StringLogDevice.cpp in Sources */,
 				3AF745B81E4F861B003465B5 /* ComplexName.cpp in Sources */,
 				3AF7460E1E4F861B003465B5 /* EntityChooser.cpp in Sources */,
@@ -10070,6 +9295,7 @@
 				3AF745DA1E4F861B003465B5 /* Patch.cpp in Sources */,
 				3AE6F26A1FF78201008A1B2D /* EditingStopwatchInfoFileModule.cpp in Sources */,
 				3AF7463E1E4F861C003465B5 /* FiltersMenu.cpp in Sources */,
+				3AE6F3AD239F5D35008A1B2D /* Quake3MapReader.cpp in Sources */,
 				3AF746001E4F861B003465B5 /* BrushItem.cpp in Sources */,
 				3AF745D31E4F861B003465B5 /* View.cpp in Sources */,
 				3AF746021E4F861B003465B5 /* FaceVertexItem.cpp in Sources */,
@@ -10077,6 +9303,9 @@
 				3AF746111E4F861B003465B5 /* ShaderChooser.cpp in Sources */,
 				3AF7462C1E4F861B003465B5 /* LayerControl.cpp in Sources */,
 				3AF746101E4F861B003465B5 /* RenderableAABB.cpp in Sources */,
+				3AE6F3C3239F5DC3008A1B2D /* MD5AnimationCache.cpp in Sources */,
+				3AE6F3A3239F5D35008A1B2D /* Doom3MapReader.cpp in Sources */,
+				3AE6F3AC239F5D35008A1B2D /* Quake3MapFormat.cpp in Sources */,
 				3AF746521E4F861C003465B5 /* PrefPage.cpp in Sources */,
 				3AF7460A1E4F861B003465B5 /* QuerySidesDialog.cpp in Sources */,
 				3AF746081E4F861B003465B5 /* AasControlDialog.cpp in Sources */,
@@ -10087,6 +9316,7 @@
 				3AF745931E4F861B003465B5 /* LogWriter.cpp in Sources */,
 				3AF746291E4F861B003465B5 /* FilterEditor.cpp in Sources */,
 				3AE6F29A239F474E008A1B2D /* DirectoryArchive.cpp in Sources */,
+				3AE6F373239F5C9F008A1B2D /* TGALoader.cpp in Sources */,
 				3AF746431E4F861C003465B5 /* MRU.cpp in Sources */,
 				3AF746311E4F861B003465B5 /* FloatingLayout.cpp in Sources */,
 				3AF745D81E4F861B003465B5 /* GroupCycle.cpp in Sources */,
@@ -10097,6 +9327,7 @@
 				3AE6F1421F496ACB008A1B2D /* ModelExporter.cpp in Sources */,
 				3AF745A91E4F861B003465B5 /* PointFile.cpp in Sources */,
 				3AF7459A1E4F861B003465B5 /* Skins.cpp in Sources */,
+				3AE6F3A6239F5D35008A1B2D /* mapdoom3.cpp in Sources */,
 				3AF746391E4F861B003465B5 /* LayerInfoTab.cpp in Sources */,
 				3AF745E51E4F861B003465B5 /* DragManipulator.cpp in Sources */,
 				3AF746281E4F861B003465B5 /* FilterDialog.cpp in Sources */,
@@ -10108,6 +9339,7 @@
 				3AF745EE1E4F861B003465B5 /* SelectionMouseTools.cpp in Sources */,
 				3AF7463B1E4F861C003465B5 /* ModelInfoTab.cpp in Sources */,
 				3AF746421E4F861C003465B5 /* ToolMappingDialog.cpp in Sources */,
+				3AE6F3A1239F5D35008A1B2D /* Doom3AasFileSettings.cpp in Sources */,
 				3AF745761E4F861B003465B5 /* BrushNode.cpp in Sources */,
 				3AF745FD1E4F861B003465B5 /* PreferenceSystem.cpp in Sources */,
 				3AE6F2A6239F4B8F008A1B2D /* CommandSystem.cpp in Sources */,
@@ -10117,14 +9349,18 @@
 				3AF745F81E4F861B003465B5 /* Game.cpp in Sources */,
 				3AF746331E4F861B003465B5 /* MainFrameLayoutManager.cpp in Sources */,
 				3AE6F323239F4CA2008A1B2D /* TargetableNode.cpp in Sources */,
+				3AE6F343239F4FE1008A1B2D /* Statement.cpp in Sources */,
 				3AF745E11E4F861B003465B5 /* SelectionGroupInfoFileModule.cpp in Sources */,
 				3AF746211E4F861B003465B5 /* SkinChooser.cpp in Sources */,
+				3AE6F3C8239F5DC3008A1B2D /* MD5Surface.cpp in Sources */,
 				3AF745DC1E4F861B003465B5 /* Primitives.cpp in Sources */,
 				3AF745F41E4F861B003465B5 /* ClosestTexturableFinder.cpp in Sources */,
 				3AE6F315239F4CA2008A1B2D /* KeyValue.cpp in Sources */,
 				3AF746491E4F861C003465B5 /* BulgePatchDialog.cpp in Sources */,
+				3AE6F344239F4FE1008A1B2D /* Toggle.cpp in Sources */,
 				3AF7457A1E4F861B003465B5 /* Face.cpp in Sources */,
 				3AE6F316239F4CA2008A1B2D /* KeyValueObserver.cpp in Sources */,
+				3AE6F3A8239F5D35008A1B2D /* BrushDef3.cpp in Sources */,
 				3AF745D61E4F861B003465B5 /* General.cpp in Sources */,
 				3AF746461E4F861C003465B5 /* Overlay.cpp in Sources */,
 				3AE6F327239F4CA2008A1B2D /* TargetManager.cpp in Sources */,
@@ -10134,8 +9370,11 @@
 				3AE6F30F239F4CA2008A1B2D /* EclassModelNode.cpp in Sources */,
 				3AF746321E4F861B003465B5 /* MainFrame.cpp in Sources */,
 				3AF745F51E4F861B003465B5 /* ShaderClipboard.cpp in Sources */,
+				3AE6F3C9239F5DC3008A1B2D /* plugin.cpp in Sources */,
 				3AF746241E4F861B003465B5 /* TexturePropertyEditor.cpp in Sources */,
 				3AF746091E4F861B003465B5 /* AboutDialog.cpp in Sources */,
+				3AE6F35E239F5C4C008A1B2D /* GlyphInfo.cpp in Sources */,
+				3AE6F3C4239F5DC3008A1B2D /* MD5Model.cpp in Sources */,
 				3AF746401E4F861C003465B5 /* ModelSelector.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10198,41 +9437,6 @@
 			isa = PBXTargetDependency;
 			target = 3AEBDFF21E50CAEE0062D9AF /* picomodel */;
 			targetProxy = 3AF4758F1E6B2115006B26C2 /* PBXContainerItemProxy */;
-		};
-		3AF4759E1E6B2115006B26C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3AEBDDC71E50BE540062D9AF /* eventmanager */;
-			targetProxy = 3AF4759D1E6B2115006B26C2 /* PBXContainerItemProxy */;
-		};
-		3AF475A01E6B2115006B26C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3AEBDE0C1E50BFB80062D9AF /* filetypes */;
-			targetProxy = 3AF4759F1E6B2115006B26C2 /* PBXContainerItemProxy */;
-		};
-		3AF475A21E6B2115006B26C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3AEBDE1F1E50C0190062D9AF /* filters */;
-			targetProxy = 3AF475A11E6B2115006B26C2 /* PBXContainerItemProxy */;
-		};
-		3AF475A41E6B2115006B26C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3AEBDE3D1E50C0B50062D9AF /* fonts */;
-			targetProxy = 3AF475A31E6B2115006B26C2 /* PBXContainerItemProxy */;
-		};
-		3AF475A81E6B2115006B26C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3AEBDE781E50C29B0062D9AF /* image */;
-			targetProxy = 3AF475A71E6B2115006B26C2 /* PBXContainerItemProxy */;
-		};
-		3AF475AA1E6B2115006B26C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3AEBDEBA1E50C6400062D9AF /* mapdoom3 */;
-			targetProxy = 3AF475A91E6B2115006B26C2 /* PBXContainerItemProxy */;
-		};
-		3AF475AC1E6B2115006B26C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3AEBDF1D1E50C6F10062D9AF /* md5model */;
-			targetProxy = 3AF475AB1E6B2115006B26C2 /* PBXContainerItemProxy */;
 		};
 		3AF475AE1E6B2115006B26C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -10717,471 +9921,6 @@
 			};
 			name = Release;
 		};
-		3AEBDDD11E50BE540062D9AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		3AEBDDD21E50BE540062D9AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		3AEBDE161E50BFB80062D9AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		3AEBDE171E50BFB80062D9AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		3AEBDE291E50C0190062D9AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		3AEBDE2A1E50C0190062D9AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		3AEBDE471E50C0B50062D9AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		3AEBDE481E50C0B50062D9AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		3AEBDE821E50C29C0062D9AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEBDEB61E50C3AD0062D9AF /* image.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		3AEBDE831E50C29C0062D9AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEBDEB61E50C3AD0062D9AF /* image.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
 		3AEBDEAC1E50C3330062D9AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
@@ -11252,192 +9991,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = lib;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		3AEBDEC41E50C6400062D9AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		3AEBDEC51E50C6400062D9AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		3AEBDF271E50C6F10062D9AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		3AEBDF281E50C6F10062D9AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEBDF9D1E50C7D20062D9AF /* md5model.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -13280,74 +11833,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3AEBDDD01E50BE540062D9AF /* Build configuration list for PBXNativeTarget "eventmanager" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AEBDDD11E50BE540062D9AF /* Debug */,
-				3AEBDDD21E50BE540062D9AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3AEBDE151E50BFB80062D9AF /* Build configuration list for PBXNativeTarget "filetypes" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AEBDE161E50BFB80062D9AF /* Debug */,
-				3AEBDE171E50BFB80062D9AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3AEBDE281E50C0190062D9AF /* Build configuration list for PBXNativeTarget "filters" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AEBDE291E50C0190062D9AF /* Debug */,
-				3AEBDE2A1E50C0190062D9AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3AEBDE461E50C0B50062D9AF /* Build configuration list for PBXNativeTarget "fonts" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AEBDE471E50C0B50062D9AF /* Debug */,
-				3AEBDE481E50C0B50062D9AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3AEBDE811E50C29C0062D9AF /* Build configuration list for PBXNativeTarget "image" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AEBDE821E50C29C0062D9AF /* Debug */,
-				3AEBDE831E50C29C0062D9AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		3AEBDEAB1E50C3330062D9AF /* Build configuration list for PBXNativeTarget "dds" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3AEBDEAC1E50C3330062D9AF /* Debug */,
 				3AEBDEAD1E50C3330062D9AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3AEBDEC31E50C6400062D9AF /* Build configuration list for PBXNativeTarget "mapdoom3" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AEBDEC41E50C6400062D9AF /* Debug */,
-				3AEBDEC51E50C6400062D9AF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3AEBDF261E50C6F10062D9AF /* Build configuration list for PBXNativeTarget "md5model" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AEBDF271E50C6F10062D9AF /* Debug */,
-				3AEBDF281E50C6F10062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
