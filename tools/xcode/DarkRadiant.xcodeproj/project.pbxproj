@@ -321,7 +321,6 @@
 		3A0124291E50489D00A62BC1 /* XMLRegistryModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0124241E50489D00A62BC1 /* XMLRegistryModule.cpp */; };
 		3A01242B1E50527B00A62BC1 /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
 		3A01242C1E50527B00A62BC1 /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
-		3AE2103D1E5980AF00F5A0A6 /* archivezip.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDC691E50667D0062D9AF /* archivezip.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE2103E1E5980AF00F5A0A6 /* commandsystem.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDC8E1E5069840062D9AF /* commandsystem.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE2103F1E5980AF00F5A0A6 /* eclassmgr.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDCAA1E509D8B0062D9AF /* eclassmgr.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210411E5980AF00F5A0A6 /* entity.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBDCE41E50A8980062D9AF /* entity.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -380,12 +379,6 @@
 		3AE6F1C51F4975D9008A1B2D /* SelectionGroupInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */; };
 		3AE6F1C61F4975D9008A1B2D /* SelectionGroupInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */; };
 		3AE6F1C71F4978AB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F1B51F496CB5008A1B2D /* exportasmodeldialog.xrc */; };
-		3AE6F1CB1F63CA11008A1B2D /* DeflatedInputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1C81F63CA11008A1B2D /* DeflatedInputStream.cpp */; };
-		3AE6F1CC1F63CA12008A1B2D /* DeflatedInputStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1C91F63CA11008A1B2D /* DeflatedInputStream.h */; };
-		3AE6F1CD1F63CA12008A1B2D /* GenericFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CA1F63CA11008A1B2D /* GenericFileSystem.h */; };
-		3AE6F1D11F63CA2D008A1B2D /* StoredArchiveFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CE1F63CA2D008A1B2D /* StoredArchiveFile.h */; };
-		3AE6F1D21F63CA2D008A1B2D /* StoredArchiveTextFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1CF1F63CA2D008A1B2D /* StoredArchiveTextFile.h */; };
-		3AE6F1D31F63CA2D008A1B2D /* ZipStreamUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D01F63CA2D008A1B2D /* ZipStreamUtils.h */; };
 		3AE6F1D61F63D43D008A1B2D /* WavefrontExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */; };
 		3AE6F1D71F63D43D008A1B2D /* WavefrontExporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */; };
 		3AE6F1D91F6E91A7008A1B2D /* ArchiveVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */; };
@@ -429,8 +422,11 @@
 		3AE6F27E1FF78CD0008A1B2D /* GraphTreeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2791FF78CD0008A1B2D /* GraphTreeModel.cpp */; };
 		3AE6F2831FF78CDB008A1B2D /* EClassTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F27F1FF78CDB008A1B2D /* EClassTree.cpp */; };
 		3AE6F2841FF78CDB008A1B2D /* EClassTreeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2811FF78CDB008A1B2D /* EClassTreeBuilder.cpp */; };
-		3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7A1E50669C0062D9AF /* plugin.cpp */; };
-		3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */; };
+		3AE6F299239F474E008A1B2D /* DeflatedInputStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F289239F474E008A1B2D /* DeflatedInputStream.cpp */; };
+		3AE6F29A239F474E008A1B2D /* DirectoryArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F28B239F474E008A1B2D /* DirectoryArchive.cpp */; };
+		3AE6F29B239F474E008A1B2D /* Doom3FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F28E239F474E008A1B2D /* Doom3FileSystem.cpp */; };
+		3AE6F29C239F474E008A1B2D /* Doom3FileSystemModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F290239F474E008A1B2D /* Doom3FileSystemModule.cpp */; };
+		3AE6F29D239F474E008A1B2D /* ZipArchive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F296239F474E008A1B2D /* ZipArchive.cpp */; };
 		3AEBDCA31E506C930062D9AF /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDC9B1E5069A60062D9AF /* CommandSystem.cpp */; };
 		3AEBDCA51E509CEE0062D9AF /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
 		3AEBDCBB1E509DC30062D9AF /* Doom3EntityClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDCB51E509DC30062D9AF /* Doom3EntityClass.cpp */; };
@@ -1757,13 +1753,6 @@
 			remoteGlobalIDString = 3AEBDFF21E50CAEE0062D9AF;
 			remoteInfo = picomodel;
 		};
-		3AF475911E6B2115006B26C2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3AEBDC681E50667D0062D9AF;
-			remoteInfo = archivezip;
-		};
 		3AF475931E6B2115006B26C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
@@ -1961,7 +1950,6 @@
 				3AE210591E59811500F5A0A6 /* dm.gui.so in CopyFiles */,
 				3AE2105A1E59811500F5A0A6 /* dm.objectives.so in CopyFiles */,
 				3AE2105B1E59811500F5A0A6 /* dm.stimresponse.so in CopyFiles */,
-				3AE2103D1E5980AF00F5A0A6 /* archivezip.so in CopyFiles */,
 				3AE2103E1E5980AF00F5A0A6 /* commandsystem.so in CopyFiles */,
 				3AE2103F1E5980AF00F5A0A6 /* eclassmgr.so in CopyFiles */,
 				3AE210411E5980AF00F5A0A6 /* entity.so in CopyFiles */,
@@ -3024,12 +3012,6 @@
 		3AE6F1C11F4975D9008A1B2D /* SceneGraphInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneGraphInterface.cpp; path = ../../plugins/script/interfaces/SceneGraphInterface.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1C21F4975D9008A1B2D /* SelectionGroupInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionGroupInterface.cpp; path = ../../plugins/script/interfaces/SelectionGroupInterface.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1C31F4975D9008A1B2D /* SelectionGroupInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionGroupInterface.h; path = ../../plugins/script/interfaces/SelectionGroupInterface.h; sourceTree = SOURCE_ROOT; };
-		3AE6F1C81F63CA11008A1B2D /* DeflatedInputStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeflatedInputStream.cpp; path = ../../plugins/archivezip/DeflatedInputStream.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F1C91F63CA11008A1B2D /* DeflatedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedInputStream.h; path = ../../plugins/archivezip/DeflatedInputStream.h; sourceTree = SOURCE_ROOT; };
-		3AE6F1CA1F63CA11008A1B2D /* GenericFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericFileSystem.h; path = ../../plugins/archivezip/GenericFileSystem.h; sourceTree = SOURCE_ROOT; };
-		3AE6F1CE1F63CA2D008A1B2D /* StoredArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StoredArchiveFile.h; path = ../../plugins/archivezip/StoredArchiveFile.h; sourceTree = SOURCE_ROOT; };
-		3AE6F1CF1F63CA2D008A1B2D /* StoredArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StoredArchiveTextFile.h; path = ../../plugins/archivezip/StoredArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
-		3AE6F1D01F63CA2D008A1B2D /* ZipStreamUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipStreamUtils.h; path = ../../plugins/archivezip/ZipStreamUtils.h; sourceTree = SOURCE_ROOT; };
 		3AE6F1D41F63D43D008A1B2D /* WavefrontExporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WavefrontExporter.cpp; path = ../../plugins/model/WavefrontExporter.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F1D51F63D43D008A1B2D /* WavefrontExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WavefrontExporter.h; path = ../../plugins/model/WavefrontExporter.h; sourceTree = SOURCE_ROOT; };
 		3AE6F1D81F6E91A7008A1B2D /* ArchiveVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArchiveVisitor.h; path = ../../plugins/vfspk3/ArchiveVisitor.h; sourceTree = SOURCE_ROOT; };
@@ -3072,7 +3054,6 @@
 		3AE6F2681FF78201008A1B2D /* EditingStopwatchInfoFileModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EditingStopwatchInfoFileModule.h; path = ../../radiant/map/EditingStopwatchInfoFileModule.h; sourceTree = SOURCE_ROOT; };
 		3AE6F26B1FF7823B008A1B2D /* stopwatch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stopwatch.png; path = ../../install/bitmaps/stopwatch.png; sourceTree = SOURCE_ROOT; };
 		3AE6F2701FF78CAC008A1B2D /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = ../../radiant/undo/Operation.h; sourceTree = SOURCE_ROOT; };
-		3AE6F2711FF78CAC008A1B2D /* SnapShot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SnapShot.h; path = ../../radiant/undo/SnapShot.h; sourceTree = SOURCE_ROOT; };
 		3AE6F2721FF78CAC008A1B2D /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stack.h; path = ../../radiant/undo/Stack.h; sourceTree = SOURCE_ROOT; };
 		3AE6F2731FF78CAC008A1B2D /* StackFiller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StackFiller.h; path = ../../radiant/undo/StackFiller.h; sourceTree = SOURCE_ROOT; };
 		3AE6F2741FF78CAC008A1B2D /* UndoSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UndoSystem.cpp; path = ../../radiant/undo/UndoSystem.cpp; sourceTree = SOURCE_ROOT; };
@@ -3087,14 +3068,26 @@
 		3AE6F2801FF78CDB008A1B2D /* EClassTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassTree.h; path = ../../radiant/ui/eclasstree/EClassTree.h; sourceTree = SOURCE_ROOT; };
 		3AE6F2811FF78CDB008A1B2D /* EClassTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EClassTreeBuilder.cpp; path = ../../radiant/ui/eclasstree/EClassTreeBuilder.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F2821FF78CDB008A1B2D /* EClassTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EClassTreeBuilder.h; path = ../../radiant/ui/eclasstree/EClassTreeBuilder.h; sourceTree = SOURCE_ROOT; };
-		3AEBDC691E50667D0062D9AF /* archivezip.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = archivezip.so; sourceTree = BUILT_PRODUCTS_DIR; };
-		3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../plugins/archivezip/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
-		3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../plugins/archivezip/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
-		3AEBDC7A1E50669C0062D9AF /* plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = plugin.cpp; path = ../../plugins/archivezip/plugin.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZipArchive.cpp; path = ../../plugins/archivezip/ZipArchive.cpp; sourceTree = SOURCE_ROOT; };
-		3AEBDC7D1E50669C0062D9AF /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = ../../plugins/archivezip/ZipArchive.h; sourceTree = SOURCE_ROOT; };
+		3AE6F286239F474E008A1B2D /* Archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Archive.h; path = ../../radiant/vfs/Archive.h; sourceTree = SOURCE_ROOT; };
+		3AE6F287239F474E008A1B2D /* DeflatedArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveFile.h; path = ../../radiant/vfs/DeflatedArchiveFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F288239F474E008A1B2D /* DeflatedArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedArchiveTextFile.h; path = ../../radiant/vfs/DeflatedArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F289239F474E008A1B2D /* DeflatedInputStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeflatedInputStream.cpp; path = ../../radiant/vfs/DeflatedInputStream.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F28A239F474E008A1B2D /* DeflatedInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeflatedInputStream.h; path = ../../radiant/vfs/DeflatedInputStream.h; sourceTree = SOURCE_ROOT; };
+		3AE6F28B239F474E008A1B2D /* DirectoryArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DirectoryArchive.cpp; path = ../../radiant/vfs/DirectoryArchive.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F28C239F474E008A1B2D /* DirectoryArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryArchive.h; path = ../../radiant/vfs/DirectoryArchive.h; sourceTree = SOURCE_ROOT; };
+		3AE6F28D239F474E008A1B2D /* DirectoryArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryArchiveTextFile.h; path = ../../radiant/vfs/DirectoryArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F28E239F474E008A1B2D /* Doom3FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3FileSystem.cpp; path = ../../radiant/vfs/Doom3FileSystem.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F28F239F474E008A1B2D /* Doom3FileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3FileSystem.h; path = ../../radiant/vfs/Doom3FileSystem.h; sourceTree = SOURCE_ROOT; };
+		3AE6F290239F474E008A1B2D /* Doom3FileSystemModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3FileSystemModule.cpp; path = ../../radiant/vfs/Doom3FileSystemModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F291239F474E008A1B2D /* GenericFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericFileSystem.h; path = ../../radiant/vfs/GenericFileSystem.h; sourceTree = SOURCE_ROOT; };
+		3AE6F292239F474E008A1B2D /* SortedFilenames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SortedFilenames.h; path = ../../radiant/vfs/SortedFilenames.h; sourceTree = SOURCE_ROOT; };
+		3AE6F293239F474E008A1B2D /* StoredArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StoredArchiveFile.h; path = ../../radiant/vfs/StoredArchiveFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F294239F474E008A1B2D /* StoredArchiveTextFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StoredArchiveTextFile.h; path = ../../radiant/vfs/StoredArchiveTextFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F295239F474E008A1B2D /* UnixPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnixPath.h; path = ../../radiant/vfs/UnixPath.h; sourceTree = SOURCE_ROOT; };
+		3AE6F296239F474E008A1B2D /* ZipArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ZipArchive.cpp; path = ../../radiant/vfs/ZipArchive.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F297239F474E008A1B2D /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipArchive.h; path = ../../radiant/vfs/ZipArchive.h; sourceTree = SOURCE_ROOT; };
+		3AE6F298239F474E008A1B2D /* ZipStreamUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZipStreamUtils.h; path = ../../radiant/vfs/ZipStreamUtils.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC881E5067630062D9AF /* zlib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = zlib.xcconfig; sourceTree = "<group>"; };
-		3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = archivezip.xcconfig; sourceTree = "<group>"; };
 		3AEBDC8E1E5069840062D9AF /* commandsystem.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = commandsystem.so; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AEBDC991E5069A60062D9AF /* CaseInsensitiveCompare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CaseInsensitiveCompare.h; path = ../../plugins/commandsystem/CaseInsensitiveCompare.h; sourceTree = SOURCE_ROOT; };
 		3AEBDC9A1E5069A60062D9AF /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Command.h; path = ../../plugins/commandsystem/Command.h; sourceTree = SOURCE_ROOT; };
@@ -4541,13 +4534,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3AEBDC661E50667D0062D9AF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3AEBDC8B1E5069840062D9AF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5223,7 +5209,6 @@
 		3A01240F1E50426500A62BC1 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */,
 				3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */,
 				3AF746C81E4FAF3D003465B5 /* boost.xcconfig */,
 				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,
@@ -5251,7 +5236,6 @@
 		3A0124101E50481E00A62BC1 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDC6A1E50667D0062D9AF /* archivezip */,
 				3AEBDC8F1E5069840062D9AF /* commandsystem */,
 				3AEBDCAB1E509D8B0062D9AF /* eclassmgr */,
 				3AEBDCE51E50A8980062D9AF /* entity */,
@@ -5305,7 +5289,6 @@
 				3A0120731E502F7800A62BC1 /* libscene.a */,
 				3A011FC31E50275700A62BC1 /* libwxutil.a */,
 				3AF746AB1E4FADF3003465B5 /* libxmlutil.a */,
-				3AEBDC691E50667D0062D9AF /* archivezip.so */,
 				3AEBDC8E1E5069840062D9AF /* commandsystem.so */,
 				3AEBDCAA1E509D8B0062D9AF /* eclassmgr.so */,
 				3AEBDCE41E50A8980062D9AF /* entity.so */,
@@ -5388,7 +5371,6 @@
 			isa = PBXGroup;
 			children = (
 				3AE6F2701FF78CAC008A1B2D /* Operation.h */,
-				3AE6F2711FF78CAC008A1B2D /* SnapShot.h */,
 				3AE6F2721FF78CAC008A1B2D /* Stack.h */,
 				3AE6F2731FF78CAC008A1B2D /* StackFiller.h */,
 				3AE6F2741FF78CAC008A1B2D /* UndoSystem.cpp */,
@@ -5421,22 +5403,30 @@
 			name = eclasstree;
 			sourceTree = "<group>";
 		};
-		3AEBDC6A1E50667D0062D9AF /* archivezip */ = {
+		3AE6F285239F4713008A1B2D /* vfs */ = {
 			isa = PBXGroup;
 			children = (
-				3AEBDC741E50669B0062D9AF /* DeflatedArchiveFile.h */,
-				3AEBDC751E50669B0062D9AF /* DeflatedArchiveTextFile.h */,
-				3AE6F1C81F63CA11008A1B2D /* DeflatedInputStream.cpp */,
-				3AE6F1C91F63CA11008A1B2D /* DeflatedInputStream.h */,
-				3AE6F1CA1F63CA11008A1B2D /* GenericFileSystem.h */,
-				3AEBDC7A1E50669C0062D9AF /* plugin.cpp */,
-				3AE6F1CE1F63CA2D008A1B2D /* StoredArchiveFile.h */,
-				3AE6F1CF1F63CA2D008A1B2D /* StoredArchiveTextFile.h */,
-				3AEBDC7C1E50669C0062D9AF /* ZipArchive.cpp */,
-				3AEBDC7D1E50669C0062D9AF /* ZipArchive.h */,
-				3AE6F1D01F63CA2D008A1B2D /* ZipStreamUtils.h */,
+				3AE6F286239F474E008A1B2D /* Archive.h */,
+				3AE6F287239F474E008A1B2D /* DeflatedArchiveFile.h */,
+				3AE6F288239F474E008A1B2D /* DeflatedArchiveTextFile.h */,
+				3AE6F289239F474E008A1B2D /* DeflatedInputStream.cpp */,
+				3AE6F28A239F474E008A1B2D /* DeflatedInputStream.h */,
+				3AE6F28B239F474E008A1B2D /* DirectoryArchive.cpp */,
+				3AE6F28C239F474E008A1B2D /* DirectoryArchive.h */,
+				3AE6F28D239F474E008A1B2D /* DirectoryArchiveTextFile.h */,
+				3AE6F28E239F474E008A1B2D /* Doom3FileSystem.cpp */,
+				3AE6F28F239F474E008A1B2D /* Doom3FileSystem.h */,
+				3AE6F290239F474E008A1B2D /* Doom3FileSystemModule.cpp */,
+				3AE6F291239F474E008A1B2D /* GenericFileSystem.h */,
+				3AE6F292239F474E008A1B2D /* SortedFilenames.h */,
+				3AE6F293239F474E008A1B2D /* StoredArchiveFile.h */,
+				3AE6F294239F474E008A1B2D /* StoredArchiveTextFile.h */,
+				3AE6F295239F474E008A1B2D /* UnixPath.h */,
+				3AE6F296239F474E008A1B2D /* ZipArchive.cpp */,
+				3AE6F297239F474E008A1B2D /* ZipArchive.h */,
+				3AE6F298239F474E008A1B2D /* ZipStreamUtils.h */,
 			);
-			path = archivezip;
+			name = vfs;
 			sourceTree = "<group>";
 		};
 		3AEBDC8F1E5069840062D9AF /* commandsystem */ = {
@@ -6612,7 +6602,6 @@
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
 			children = (
-				3AE6F26D1FF78C83008A1B2D /* undo */,
 				3AF7430F1E4F861A003465B5 /* brush */,
 				3AF743371E4F861A003465B5 /* camera */,
 				3AF7434C1E4F861A003465B5 /* clipper */,
@@ -6638,6 +6627,8 @@
 				3AF744701E4F861B003465B5 /* settings */,
 				3AF744831E4F861B003465B5 /* textool */,
 				3AF744971E4F861B003465B5 /* ui */,
+				3AE6F26D1FF78C83008A1B2D /* undo */,
+				3AE6F285239F4713008A1B2D /* vfs */,
 				3AF745601E4F861B003465B5 /* xyview */,
 			);
 			path = DarkRadiant;
@@ -7980,18 +7971,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3AEBDC671E50667D0062D9AF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AE6F1CC1F63CA12008A1B2D /* DeflatedInputStream.h in Headers */,
-				3AE6F1D21F63CA2D008A1B2D /* StoredArchiveTextFile.h in Headers */,
-				3AE6F1CD1F63CA12008A1B2D /* GenericFileSystem.h in Headers */,
-				3AE6F1D31F63CA2D008A1B2D /* ZipStreamUtils.h in Headers */,
-				3AE6F1D11F63CA2D008A1B2D /* StoredArchiveFile.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3AEBDC8C1E5069840062D9AF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -8646,7 +8625,6 @@
 				3AF4758C1E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF4758E1E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF475901E6B2115006B26C2 /* PBXTargetDependency */,
-				3AF475921E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF475941E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF475961E6B2115006B26C2 /* PBXTargetDependency */,
 				3AF4759A1E6B2115006B26C2 /* PBXTargetDependency */,
@@ -8679,23 +8657,6 @@
 			productName = "DarkRadiant App";
 			productReference = 3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */;
 			productType = "com.apple.product-type.bundle";
-		};
-		3AEBDC681E50667D0062D9AF /* archivezip */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3AEBDC711E50667D0062D9AF /* Build configuration list for PBXNativeTarget "archivezip" */;
-			buildPhases = (
-				3AEBDC651E50667D0062D9AF /* Sources */,
-				3AEBDC661E50667D0062D9AF /* Frameworks */,
-				3AEBDC671E50667D0062D9AF /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = archivezip;
-			productName = archivezip;
-			productReference = 3AEBDC691E50667D0062D9AF /* archivezip.so */;
-			productType = "com.apple.product-type.library.dynamic";
 		};
 		3AEBDC8D1E5069840062D9AF /* commandsystem */ = {
 			isa = PBXNativeTarget;
@@ -9236,9 +9197,6 @@
 					3AE20CD21E59687300F5A0A6 = {
 						CreatedOnToolsVersion = 7.1;
 					};
-					3AEBDC681E50667D0062D9AF = {
-						CreatedOnToolsVersion = 7.1;
-					};
 					3AEBDC8D1E5069840062D9AF = {
 						CreatedOnToolsVersion = 7.1;
 					};
@@ -9354,7 +9312,6 @@
 				3A0120721E502F7800A62BC1 /* scene */,
 				3AEBDEA21E50C3330062D9AF /* dds */,
 				3AEBDFF21E50CAEE0062D9AF /* picomodel */,
-				3AEBDC681E50667D0062D9AF /* archivezip */,
 				3AEBDC8D1E5069840062D9AF /* commandsystem */,
 				3AEBDCA91E509D8B0062D9AF /* eclassmgr */,
 				3AEBDCE31E50A8980062D9AF /* entity */,
@@ -9469,16 +9426,6 @@
 				3A0124291E50489D00A62BC1 /* XMLRegistryModule.cpp in Sources */,
 				3A0124271E50489D00A62BC1 /* XMLRegistry.cpp in Sources */,
 				3A0124251E50489D00A62BC1 /* RegistryTree.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3AEBDC651E50667D0062D9AF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3AEBDC861E5067390062D9AF /* ZipArchive.cpp in Sources */,
-				3AEBDC851E5067340062D9AF /* plugin.cpp in Sources */,
-				3AE6F1CB1F63CA11008A1B2D /* DeflatedInputStream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9996,6 +9943,7 @@
 				3AF7460F1E4F861B003465B5 /* MapPreview.cpp in Sources */,
 				3AF745DF1E4F861B003465B5 /* BestPoint.cpp in Sources */,
 				3AF746581E4F861C003465B5 /* UserInterfaceModule.cpp in Sources */,
+				3AE6F29B239F474E008A1B2D /* Doom3FileSystem.cpp in Sources */,
 				3AF746361E4F861B003465B5 /* SplitPaneLayout.cpp in Sources */,
 				3AF746411E4F861C003465B5 /* BindToolDialog.cpp in Sources */,
 				3AF745D41E4F861B003465B5 /* Curves.cpp in Sources */,
@@ -10077,6 +10025,7 @@
 				3AF7458A1E4F861B003465B5 /* LayerCommandTarget.cpp in Sources */,
 				3AF7464A1E4F861C003465B5 /* CapDialog.cpp in Sources */,
 				3AF745EA1E4F861B003465B5 /* ScaleManipulator.cpp in Sources */,
+				3AE6F29C239F474E008A1B2D /* Doom3FileSystemModule.cpp in Sources */,
 				3AF7465D1E4F861C003465B5 /* MeasurementTool.cpp in Sources */,
 				3AF7464B1E4F861C003465B5 /* PatchCreateDialog.cpp in Sources */,
 				3AF745FC1E4F861B003465B5 /* PreferencePage.cpp in Sources */,
@@ -10111,6 +10060,7 @@
 				3AF745C81E4F861B003465B5 /* GenericVFPProgram.cpp in Sources */,
 				3AF746181E4F861B003465B5 /* ClassnamePropertyEditor.cpp in Sources */,
 				3AF745DB1E4F861B003465B5 /* Planes.cpp in Sources */,
+				3AE6F29D239F474E008A1B2D /* ZipArchive.cpp in Sources */,
 				3AF7461D1E4F861B003465B5 /* LightTextureChooser.cpp in Sources */,
 				3AF745FE1E4F861B003465B5 /* Win32Registry.cpp in Sources */,
 				3AF745E91E4F861B003465B5 /* RotateManipulator.cpp in Sources */,
@@ -10194,6 +10144,7 @@
 				3AF745C51E4F861B003465B5 /* RadiantThreadManager.cpp in Sources */,
 				3AF745931E4F861B003465B5 /* LogWriter.cpp in Sources */,
 				3AF746291E4F861B003465B5 /* FilterEditor.cpp in Sources */,
+				3AE6F29A239F474E008A1B2D /* DirectoryArchive.cpp in Sources */,
 				3AF746431E4F861C003465B5 /* MRU.cpp in Sources */,
 				3AF746311E4F861B003465B5 /* FloatingLayout.cpp in Sources */,
 				3AF745D81E4F861B003465B5 /* GroupCycle.cpp in Sources */,
@@ -10228,6 +10179,7 @@
 				3AF7457A1E4F861B003465B5 /* Face.cpp in Sources */,
 				3AF745D61E4F861B003465B5 /* General.cpp in Sources */,
 				3AF746461E4F861C003465B5 /* Overlay.cpp in Sources */,
+				3AE6F299239F474E008A1B2D /* DeflatedInputStream.cpp in Sources */,
 				3AF745E31E4F861B003465B5 /* ManipulateMouseTool.cpp in Sources */,
 				3AF746321E4F861B003465B5 /* MainFrame.cpp in Sources */,
 				3AF745F51E4F861B003465B5 /* ShaderClipboard.cpp in Sources */,
@@ -10295,11 +10247,6 @@
 			isa = PBXTargetDependency;
 			target = 3AEBDFF21E50CAEE0062D9AF /* picomodel */;
 			targetProxy = 3AF4758F1E6B2115006B26C2 /* PBXContainerItemProxy */;
-		};
-		3AF475921E6B2115006B26C2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3AEBDC681E50667D0062D9AF /* archivezip */;
-			targetProxy = 3AF475911E6B2115006B26C2 /* PBXContainerItemProxy */;
 		};
 		3AF475941E6B2115006B26C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -10831,107 +10778,6 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		3AEBDC721E50667D0062D9AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/lib,
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		3AEBDC731E50667D0062D9AF /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AEBDC891E5067A90062D9AF /* archivezip.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../PlugIns/";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				EXECUTABLE_EXTENSION = so;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/opt/local/lib,
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -13777,15 +13623,6 @@
 			buildConfigurations = (
 				3AE20CD61E59687300F5A0A6 /* Debug */,
 				3AE20CD71E59687300F5A0A6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3AEBDC711E50667D0062D9AF /* Build configuration list for PBXNativeTarget "archivezip" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3AEBDC721E50667D0062D9AF /* Debug */,
-				3AEBDC731E50667D0062D9AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
