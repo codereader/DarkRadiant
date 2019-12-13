@@ -88,7 +88,8 @@ $vcFolder = Get-Item $redistSource -Erroraction SilentlyContinue
 if ($vcFolder -ne $null)
 {
 	Get-ChildItem "msvcp140.dll" -Path $vcFolder | Copy-Item -Destination $portableFilesFolder
-	Get-ChildItem "vcruntime140.dll" -Path $vcFolder | Copy-Item -Destination $portableFilesFolder
+    Get-ChildItem "vcruntime140.dll" -Path $vcFolder | Copy-Item -Destination $portableFilesFolder
+    Get-ChildItem "vcruntime140_1.dll" -Path $vcFolder | Copy-Item -Destination $portableFilesFolder
 }
 else
 {
