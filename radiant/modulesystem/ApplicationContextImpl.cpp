@@ -31,12 +31,14 @@ std::string ApplicationContextImpl::getApplicationPath() const
 
 std::string ApplicationContextImpl::getLibraryPath() const
 {
-#if defined(POSIX)
-#if defined(PKGLIBDIR) && !defined(ENABLE_RELOCATION)
+#if defined(__APPLE__)
+    return _appPath;
+#elif defined(POSIX)
+#   if defined(PKGLIBDIR) && !defined(ENABLE_RELOCATION)
     return PKGLIBDIR;
-#else
+#   else
     return _appPath + "../lib/darkradiant/";
-#endif
+#   endif
 #else // !defined(POSIX)
     return _appPath;
 #endif
@@ -44,26 +46,25 @@ std::string ApplicationContextImpl::getLibraryPath() const
 
 std::string ApplicationContextImpl::getRuntimeDataPath() const
 {
-#if defined(POSIX)
-#if defined(PKGDATADIR) && !defined(ENABLE_RELOCATION)
-    return std::string(PKGDATADIR) + "/";
-#else
-    return _appPath + "../share/darkradiant/";
-#endif
-#elif defined(__APPLE__)
+#if defined(__APPLE__)
     // The Resources are in the Bundle folder Contents/Resources/, whereas the
     // application binary is located in Contents/MacOS/
     std::string path = getApplicationPath() + "../Resources/";
-
+    
     // When launching the app from Xcode, the Resources/ folder
     // is next to the binary
     if (!fs::exists(path))
     {
         path = getApplicationPath() + "Resources/";
     }
-
+    
     return path;
-#else
+#elif defined(POSIX)
+#   if defined(PKGDATADIR) && !defined(ENABLE_RELOCATION)
+    return std::string(PKGDATADIR) + "/";
+#   else
+    return _appPath + "../share/darkradiant/";
+#   endif
     return getApplicationPath();
 #endif
 }
