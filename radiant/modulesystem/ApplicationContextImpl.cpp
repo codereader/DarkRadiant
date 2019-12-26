@@ -65,6 +65,7 @@ std::string ApplicationContextImpl::getRuntimeDataPath() const
 #   else
     return _appPath + "../share/darkradiant/";
 #   endif
+#else
     return getApplicationPath();
 #endif
 }
