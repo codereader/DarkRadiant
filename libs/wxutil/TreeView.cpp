@@ -1,8 +1,13 @@
 #include "TreeView.h"
 
+#include "i18n.h"
+#include "iuimanager.h"
+
+#include <wx/bmpbuttn.h>
 #include <wx/popupwin.h>
 #include <wx/sizer.h>
 #include <wx/timer.h>
+#include <wx/artprov.h>
 #include <wx/textctrl.h>
 
 namespace wxutil
@@ -12,6 +17,31 @@ namespace
 {
 	const int MSECS_TO_AUTO_CLOSE_POPUP = 6000;
 }
+
+class TreeView::Search :
+	public wxEvtHandler
+{
+private:
+	TreeView& _treeView;
+	SearchPopupWindow* _popup;
+	wxDataViewItem _curSearchMatch;
+	wxTimer _closeTimer;
+
+public:
+	Search(TreeView& treeView);
+
+	~Search();
+
+	void OnIntervalReached(wxTimerEvent& ev);
+
+	void HandleKeyEvent(wxKeyEvent& ev);
+
+	void HighlightNextMatch();
+	void HighlightPrevMatch();
+
+private:
+	void HighlightMatch(const wxDataViewItem& item);
+};
 
 TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)
@@ -182,11 +212,28 @@ public:
 		_owner(owner),
 		_entry(nullptr)
 	{
-		SetSizer(new wxBoxSizer(wxVERTICAL));
+		SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 		_entry = new wxTextCtrl(this, wxID_ANY);
 
+		auto nextImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_down.png");
+		auto nextButton = new wxBitmapButton(this, wxID_ANY, nextImg);
+
+		auto prevImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_up.png");
+		auto prevButton = new wxBitmapButton(this, wxID_ANY, prevImg);
+		
+		nextButton->SetSize(wxSize(16, 16));
+		prevButton->SetSize(wxSize(16, 16));
+
+		nextButton->SetToolTip(_("Go to next match"));
+		prevButton->SetToolTip(_("Go to previous match"));
+
+		nextButton->Bind(wxEVT_BUTTON, [this] (wxCommandEvent& ev) { _owner.HighlightNextMatch(); });
+		prevButton->Bind(wxEVT_BUTTON, [this] (wxCommandEvent& ev) { _owner.HighlightPrevMatch(); });
+
 		GetSizer()->Add(_entry, 1, wxEXPAND | wxALL, 6);
+		GetSizer()->Add(prevButton, 0, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 6);
+		GetSizer()->Add(nextButton, 0, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 6);
 
 		Layout();
 		Fit();
@@ -207,106 +254,119 @@ public:
 	}
 };
 
-class TreeView::Search :
-	public wxEvtHandler
+TreeView::Search::Search(TreeView& treeView) :
+	_treeView(treeView),
+	_closeTimer(this)
 {
-private:
-	TreeView& _treeView;
-	SearchPopupWindow* _popup;
-	wxDataViewItem _curSearchMatch;
-	wxTimer _closeTimer;
+	_popup = new SearchPopupWindow(&_treeView, *this);
+	_popup->Show();
+	_curSearchMatch = wxDataViewItem();
 
-public:
-	TreeView::Search(TreeView& treeView) :
-		_treeView(treeView),
-		_closeTimer(this)
+	Bind(wxEVT_TIMER, std::bind(&Search::OnIntervalReached, this, std::placeholders::_1));
+
+	_closeTimer.Start(MSECS_TO_AUTO_CLOSE_POPUP);
+}
+
+TreeView::Search::~Search()
+{
+	_popup->Destroy();
+	_popup = nullptr;
+	_curSearchMatch = wxDataViewItem();
+}
+
+void TreeView::Search::OnIntervalReached(wxTimerEvent& ev)
+{
+	// Disconnect the timing event
+	_closeTimer.Stop();
+
+	_treeView.CloseSearch();
+}
+
+void TreeView::Search::HighlightMatch(const wxDataViewItem& item)
+{
+	_closeTimer.Start(MSECS_TO_AUTO_CLOSE_POPUP); // restart
+
+	_curSearchMatch = item;
+	_treeView.JumpToSearchMatch(_curSearchMatch);
+}
+
+void TreeView::Search::HandleKeyEvent(wxKeyEvent& ev)
+{
+	TreeModel* model = dynamic_cast<TreeModel*>(_treeView.GetModel());
+
+	if (model == nullptr)
 	{
-		_popup = new SearchPopupWindow(&_treeView, *this);
-		_popup->Show();
-		_curSearchMatch = wxDataViewItem();
-
-		Bind(wxEVT_TIMER, std::bind(&Search::onIntervalReached, this, std::placeholders::_1));
-
-		_closeTimer.Start(MSECS_TO_AUTO_CLOSE_POPUP);
+		ev.Skip();
+		return;
 	}
 
-	~Search()
+	// Adapted this from the wxWidgets docs
+	wxChar uc = ev.GetUnicodeKey();
+
+	if (uc != WXK_NONE)
 	{
-		_popup->Destroy();
-		_popup = nullptr;
-		_curSearchMatch = wxDataViewItem();
-	}
-
-	void onIntervalReached(wxTimerEvent& ev)
-	{
-		// Disconnect the timing event
-		_closeTimer.Stop();
-
-		_treeView.CloseSearch();
-	}
-
-	void HighlightMatch(const wxDataViewItem& item)
-	{
-		_closeTimer.Start(MSECS_TO_AUTO_CLOSE_POPUP); // restart
-
-		_curSearchMatch = item;
-		_treeView.JumpToSearchMatch(_curSearchMatch);
-	}
-
-	void HandleKeyEvent(wxKeyEvent& ev)
-	{
-		TreeModel* model = dynamic_cast<TreeModel*>(_treeView.GetModel());
-
-		if (model == nullptr)
+		// It's a "normal" character. Notice that this includes
+		// control characters in 1..31 range, e.g. WXK_RETURN or
+		// WXK_BACK, so check for them explicitly.
+		if (uc >= 32)
 		{
-			ev.Skip();
-			return;
+			_popup->SetSearchString(_popup->GetSearchString() + ev.GetUnicodeKey());
+
+			HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
 		}
-
-		// Adapted this from the wxWidgets docs
-		wxChar uc = ev.GetUnicodeKey();
-
-		if (uc != WXK_NONE)
+		else if (ev.GetKeyCode() == WXK_ESCAPE)
 		{
-			// It's a "normal" character. Notice that this includes
-			// control characters in 1..31 range, e.g. WXK_RETURN or
-			// WXK_BACK, so check for them explicitly.
-			if (uc >= 32)
-			{
-				_popup->SetSearchString(_popup->GetSearchString() + ev.GetUnicodeKey());
-
-				HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
-			}
-			else if (ev.GetKeyCode() == WXK_ESCAPE)
-			{
-				_treeView.CloseSearch();
-			}
-			else if (ev.GetKeyCode() == WXK_BACK)
-			{
-				_popup->SetSearchString(_popup->GetSearchString().RemoveLast(1));
-
-				HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
-			}
-			else
-			{
-				ev.Skip();
-			}
+			_treeView.CloseSearch();
 		}
-		// No Unicode equivalent, might be an arrow key
-		else if (ev.GetKeyCode() == WXK_UP)
+		else if (ev.GetKeyCode() == WXK_BACK)
 		{
-			HighlightMatch(model->FindPrevString(_popup->GetSearchString(), _treeView._colsToSearch, _curSearchMatch));
-		}
-		else if (ev.GetKeyCode() == WXK_DOWN)
-		{
-			HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch, _curSearchMatch));
+			_popup->SetSearchString(_popup->GetSearchString().RemoveLast(1));
+
+			HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
 		}
 		else
 		{
 			ev.Skip();
 		}
 	}
-};
+	// No Unicode equivalent, might be an arrow key
+	else if (ev.GetKeyCode() == WXK_UP)
+	{
+		HighlightPrevMatch();
+	}
+	else if (ev.GetKeyCode() == WXK_DOWN)
+	{
+		HighlightNextMatch();
+	}
+	else
+	{
+		ev.Skip();
+	}
+}
+
+void TreeView::Search::HighlightNextMatch()
+{
+	TreeModel* model = dynamic_cast<TreeModel*>(_treeView.GetModel());
+
+	if (model == nullptr)
+	{
+		return;
+	}
+
+	HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch, _curSearchMatch));
+}
+
+void TreeView::Search::HighlightPrevMatch()
+{
+	TreeModel* model = dynamic_cast<TreeModel*>(_treeView.GetModel());
+
+	if (model == nullptr)
+	{
+		return;
+	}
+
+	HighlightMatch(model->FindPrevString(_popup->GetSearchString(), _treeView._colsToSearch, _curSearchMatch));
+}
 
 void TreeView::CloseSearch()
 {
