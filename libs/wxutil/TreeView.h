@@ -25,10 +25,8 @@ protected:
 	std::unique_ptr<Search> _search;
 
 	class SearchPopupWindow;
-	SearchPopupWindow* _searchPopup;
 
 	std::vector<TreeModel::Column> _colsToSearch;
-	wxDataViewItem _curSearchMatch;
 
 	TreeView(wxWindow* parent, TreeModel::Ptr model, long style);
 

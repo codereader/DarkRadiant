@@ -14,8 +14,7 @@ namespace
 }
 
 TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
-	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style),
-	_searchPopup(NULL)
+	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)
 {
 	EnableAutoColumnWidthFix();
 
@@ -24,8 +23,8 @@ TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 		AssociateModel(model.get());
 	}
 
-	Connect(wxEVT_CHAR, wxKeyEventHandler(TreeView::_onChar), NULL, this);
-	Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(TreeView::_onItemActivated), NULL, this);
+	Bind(wxEVT_CHAR, std::bind(&TreeView::_onChar, this, std::placeholders::_1));
+	Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, std::bind(&TreeView::_onItemActivated, this, std::placeholders::_1));
 }
 
 TreeView* TreeView::Create(wxWindow* parent, long style)
@@ -68,7 +67,7 @@ void TreeView::EnableAutoColumnWidthFix(bool enable)
 
 void TreeView::TriggerColumnSizeEvent(const wxDataViewItem& item)
 {
-    if (GetModel() == NULL) return;
+    if (GetModel() == nullptr) return;
 
     // Trigger a column size event on the first row
     wxDataViewItemArray children;
@@ -347,7 +346,7 @@ void TreeView::JumpToSearchMatch(const wxDataViewItem& item)
 {
 	TreeModel* model = dynamic_cast<TreeModel*>(GetModel());
 
-	if (model == NULL)
+	if (model == nullptr)
 	{
 		return;
 	}
