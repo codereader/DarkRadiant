@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2018-09-20 13:24+0200\n"
-"PO-Revision-Date: 2018-09-20 13:25+0100\n"
-"Last-Translator: codereader <greebo@angua.at>\n"
+"POT-Creation-Date: 2019-12-27 16:03+0100\n"
+"PO-Revision-Date: 2019-12-27 16:06+0100\n"
+"Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -141,12 +141,38 @@ msgstr "Clipper verwendet Caulk-Textur für neu erzeugte Faces."
 msgid "Caulk shader name"
 msgstr "Name des Caulk Shaders"
 
+#: ..\..\radiant\eclassmgr\EClassManager.cpp:336
+#: ..\..\radiant\eclassmgr\EClassManager.cpp:337
+msgid "Reloading Defs"
+msgstr "Neuladen der Definitionen"
+
+#: ..\..\radiant\entity\EntityCreator.cpp:39
+msgid "createNodeForEntity(): cannot create entity for NULL entityclass."
+msgstr "createNodeForEntity: Entity für Entity-Klasse NULL kann nicht erstellt werden."
+
+#: ..\..\radiant\eventmanager\MouseToolGroup.cpp:23
+msgid "XY View"
+msgstr "XY-Ansicht"
+
+#: ..\..\radiant\eventmanager\MouseToolGroup.cpp:25
+#: xml_file_content.cpp:50
+msgid "Camera View"
+msgstr "Kamera"
+
+#: ..\..\radiant\eventmanager\MouseToolGroup.cpp:27
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: ..\..\radiant\filetypes\FileTypeRegistry.cpp:13
+msgid "All Files"
+msgstr "Alle Dateien"
+
 #: ..\..\radiant\layers\LayerSystem.cpp:32
 msgid "Default"
 msgstr "Standard"
 
 #: ..\..\radiant\layers\LayerSystem.cpp:558
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1538
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1538
 msgid "Enter Name"
 msgstr "Namen eingeben"
 
@@ -192,19 +218,18 @@ msgstr "Lade Map"
 msgid "Loading entity {0:d}\n"
 msgstr "Lade Entity {0:d}\n"
 
-#: ..\..\radiant\map\algorithm\Models.cpp:94
-#: ..\..\radiant\map\algorithm\Models.cpp:110
+#: ..\..\radiant\map\algorithm\Models.cpp:98
+#: ..\..\radiant\map\algorithm\Models.cpp:119
 #: ..\..\radiant\map\Map.cpp:111
 #: ..\..\radiant\map\Map.cpp:426
 #: ..\..\radiant\map\Map.cpp:525
 #: ..\..\radiant\map\Map.cpp:553
-#: ..\..\radiant\RadiantModule.cpp:106
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:312
+#: ..\..\radiant\shaders\Doom3ShaderSystem.cpp:312
 msgid "Processing..."
 msgstr "Vorgang läuft..."
 
-#: ..\..\radiant\map\algorithm\Models.cpp:94
-#: ..\..\radiant\map\algorithm\Models.cpp:110
+#: ..\..\radiant\map\algorithm\Models.cpp:98
+#: ..\..\radiant\map\algorithm\Models.cpp:119
 msgid "Reloading Models"
 msgstr "Neuladen der Modelle"
 
@@ -457,9 +482,61 @@ msgstr "Kann keine Region festlegen: keine Elemente ausgewählt."
 msgid "Export region"
 msgstr "Exportiere Region"
 
+#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:49
+#: ..\..\radiant\mapdoom3\Quake3MapReader.cpp:44
+msgid ""
+"Failed parsing entity {0:d}:\n"
+"{1}"
+msgstr ""
+"Fehler beim Parsen der Entity {0:d}\n"
+"{1}"
+
+#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:94
+#: ..\..\radiant\mapdoom3\Quake4MapReader.cpp:47
+msgid "Unable to parse map version (parse exception)."
+msgstr "Konnte Map-Version nicht parsen (Parse-Exception)"
+
+#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:102
+#: ..\..\radiant\mapdoom3\Quake4MapReader.cpp:54
+msgid "Could not recognise map version number format."
+msgstr "Nicht erkennbares Versionsnummernformat"
+
+#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:110
+#: ..\..\radiant\mapdoom3\Quake4MapReader.cpp:62
+msgid "Incorrect map version: required {0:f}, found {1:f}"
+msgstr "Ungültige Map-Version: erwartet: {0:f}, gefunden: {1:f}"
+
+#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:143
+#: ..\..\radiant\mapdoom3\Quake3MapReader.cpp:101
+msgid "Primitive #{0:d}: parse error"
+msgstr "Primitiv #{0:d}: Parserfehler"
+
+#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:153
+#: ..\..\radiant\mapdoom3\Quake3MapReader.cpp:111
+msgid "Primitive #{0:d}: parse exception {1}"
+msgstr "Primitiv #{0:d}: Parserfehler {1}"
+
+#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:244
+#: ..\..\radiant\mapdoom3\Quake3MapReader.cpp:202
+msgid "Parsed invalid value '{0}' for key '{1}'"
+msgstr "Ungültigen Wert '{0}' für Schlüssel '{1}' eingelesen"
+
+#: ..\..\radiant\mapdoom3\primitiveparsers\BrushDef.cpp:125
+#: ..\..\radiant\mapdoom3\primitiveparsers\BrushDef.cpp:234
+msgid "BrushDefParser: invalid token '{0}'"
+msgstr "BrushDefParser: Ungültiges Token '{0}'"
+
+#: ..\..\radiant\mapdoom3\primitiveparsers\BrushDef3.cpp:115
+msgid "BrushDef3Parser: invalid token '{0}'"
+msgstr "BrushDef3Parser: ungültiges Token '{0}'"
+
+#: ..\..\radiant\mapdoom3\primitiveparsers\BrushDef3.cpp:186
+msgid "BrushDef3ParserQuake4: invalid token '{0}'"
+msgstr "BrushDef3ParserQuake4: ungültiges Token '{0}'"
+
 #: ..\..\radiant\model\ModelExporter.cpp:324
-#: ..\..\plugins\particles\ParticlesManager.cpp:323
-#: ..\..\plugins\particles\ParticlesManager.cpp:351
+#: ..\..\radiant\particles\ParticlesManager.cpp:327
+#: ..\..\radiant\particles\ParticlesManager.cpp:355
 msgid "Cannot open file for writing: {0}"
 msgstr "Kann die Datei nicht im Schreibmodus öffnen: {0}"
 
@@ -487,13 +564,84 @@ msgstr "Initialisiere Modul: {0}"
 msgid "Searching for Modules"
 msgstr "Suche nach Modulen"
 
-#: ..\..\radiant\modulesystem\ModuleRegistry.cpp:161
+#: ..\..\radiant\modulesystem\ModuleRegistry.cpp:155
 msgid "Initialising Modules"
 msgstr "Initialisiere Module"
 
-#: ..\..\radiant\modulesystem\ModuleRegistry.cpp:175
+#: ..\..\radiant\modulesystem\ModuleRegistry.cpp:169
 msgid "Modules initialised"
 msgstr "Module initialisiert"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:44
+msgid "Particle Editor"
+msgstr "Partikeleditor"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:159
+#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:66
+msgid "Particle"
+msgstr "Partikel"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:208
+msgid "Stage"
+msgstr "Stufe"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1034
+msgid "Note: changes will be written to the file <i>{0}</i>"
+msgstr "Hinweis: alle Änderungen werden in den File <i>{0}</i> geschrieben"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1341
+msgid "Save Changes"
+msgstr "Änderungen Speichern"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1342
+msgid ""
+"Do you want to save the changes\n"
+"you made to the particle {0}?"
+msgstr "Änderungen am Partikel {0} speichern?"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1375
+msgid ""
+"Error saving particle definition:\n"
+"{0}"
+msgstr ""
+"Fehler beim Speichern der Partikeldefinition:\n"
+"{0}"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1505
+msgid "Select .prt file"
+msgstr "Eine .prt-Datei auswählen"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1539
+msgid "Enter Particle Name"
+msgstr "Partikelnamen eingeben"
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1553
+msgid "Cannot create particle with an empty name."
+msgstr "Es ist nicht möglich einen Partikel ohne Namen zu erstellen."
+
+#: ..\..\radiant\particles\editor\ParticleEditor.cpp:1568
+msgid "This name is already in use."
+msgstr "Dieser Name ist bereits in Verwendung."
+
+#: ..\..\radiant\particles\editor\ParticleEditorModule.h:56
+msgid "Particle Editor..."
+msgstr "Partikeleditor..."
+
+#: ..\..\radiant\particles\ParticlesManager.cpp:288
+msgid "Cannot save particle, it has not been registered yet."
+msgstr "Kann Partikeldefinition nicht speichern, sie wurde nicht registriert."
+
+#: ..\..\radiant\particles\ParticlesManager.cpp:368
+msgid "Cannot open file for reading: {0}"
+msgstr "Kann die Datei nicht im Lesemodus öffnen: {0}"
+
+#: ..\..\radiant\particles\ParticlesManager.cpp:415
+msgid "Could not remove the file {0}"
+msgstr "Kann die Datei nicht entfernen: {0}"
+
+#: ..\..\radiant\particles\ParticlesManager.cpp:429
+msgid "Could not rename the temporary file {0}"
+msgstr "Konnte die temporäre Datei nicht umbenennen: {0}"
 
 #: ..\..\radiant\patch\algorithm\General.cpp:110
 msgid ""
@@ -811,7 +959,7 @@ msgstr "Patch"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:356
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:73
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:451
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:450
 #: xml_file_content.cpp:14
 msgid "Shader"
 msgstr "Shader"
@@ -1587,6 +1735,10 @@ msgstr "Zulu"
 msgid "{0} Settings"
 msgstr "{0} Einstellungen"
 
+#: ..\..\radiant\shaders\Doom3ShaderSystem.cpp:312
+msgid "Loading Shaders"
+msgstr "Lade Shader"
+
 #: ..\..\radiant\textool\TexTool.cpp:38
 msgid "Texture Tool"
 msgstr "Textur-Werkzeug"
@@ -1756,7 +1908,7 @@ msgstr "Shaderdefinition ansehen"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:192
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:222
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:148
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:476
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:477
 #: ..\..\libs\wxutil\KeyValueTable.cpp:44
 msgid "Value"
 msgstr "Wert"
@@ -1802,7 +1954,7 @@ msgid "Entity Class Tree"
 msgstr "Entity-Klassenbaum"
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:43
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:668
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:667
 msgid "Loading, please wait..."
 msgstr "Lade, bitte warten..."
 
@@ -1813,7 +1965,7 @@ msgstr "Klassenname"
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:145
 #: ..\..\radiant\ui\einspector\AddPropertyDialog.cpp:76
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:471
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:472
 msgid "Property"
 msgstr "Eigenschaft"
 
@@ -1829,51 +1981,51 @@ msgstr "Benutzerdefinierte Eigenschaften dieser Entityklasse, falls definiert"
 msgid "Choose entity class..."
 msgstr "Entityklasse auswählen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:103
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:104
 msgid "Show inherited properties"
 msgstr "Zeige vererbte Eigenschaften"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:107
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:108
 msgid "Show help"
 msgstr "Zeige Hilfe"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:313
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:314
 msgid "Add property..."
 msgstr "Eigenschaft hinzufügen..."
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:318
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:319
 msgid "Delete property"
 msgstr "Eigenschaft entfernen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:326
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:327
 msgid "Copy Spawnarg(s)"
 msgstr "Wertepaar(e) kopieren"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:331
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:332
 msgid "Cut Spawnarg(s)"
 msgstr "Wertepaar(e) ausschneiden"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:336
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:337
 msgid "Paste Spawnarg(s)"
 msgstr "Wertepaar(e) einfügen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:348
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:351
-#: ..\..\plugins\uimanager\GroupDialog.cpp:30
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:349
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:352
+#: ..\..\radiant\uimanager\GroupDialog.cpp:30
 msgid "Entity"
 msgstr "Entity"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:481
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:482
 msgid "?"
 msgstr "?"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1194
-msgid "Entity {0}"
-msgstr "Entity {0}"
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1195
+msgid "<b>Entity {0}</b>"
+msgstr "<b>Entity {0}</b>"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1205
-msgid "Entity {0}, Primitive {1}"
-msgstr "Entity {0}, Primitiv {1}"
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1206
+msgid "<b>Entity {0}, Primitive {1}</b>"
+msgstr "<b>Entity {0}, Primitiv {1}</b>"
 
 #: ..\..\radiant\ui\einspector\EntityPropertyEditor.cpp:31
 msgid "Choose target entity..."
@@ -1954,9 +2106,9 @@ msgid "Create entity"
 msgstr "Neue Entity"
 
 #: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:282
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:374
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:376
 #: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:397
-#: ..\..\plugins\uimanager\SoundChooser.cpp:191
+#: ..\..\radiant\uimanager\SoundChooser.cpp:191
 msgid "Loading..."
 msgstr "Lade..."
 
@@ -2029,22 +2181,22 @@ msgstr "Filter bearbeiten"
 msgid "View Filter"
 msgstr "Filter anzeigen"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:111
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:161
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:306
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:116
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:173
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:326
 msgid "show"
 msgstr "zeige"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:111
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:162
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:116
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:174
 msgid "hide"
 msgstr "verstecke"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:132
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:142
 msgid "Index"
 msgstr "Index"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:145
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:156
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:119
 #: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:66
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:91
@@ -2052,15 +2204,15 @@ msgstr "Index"
 msgid "Type"
 msgstr "Typ"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:152
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:164
 msgid "Entity Key"
 msgstr "Entity Key"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:156
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:168
 msgid "Match"
 msgstr "Ausdruck"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:167
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:181
 msgid "Action"
 msgstr "Aktion"
 
@@ -2194,18 +2346,18 @@ msgstr "Alle ausblenden"
 msgid "New"
 msgstr "Neu"
 
-#: ..\..\radiant\ui\lightinspector\LightInspector.cpp:29
+#: ..\..\radiant\ui\lightinspector\LightInspector.cpp:30
 msgid "Light properties"
 msgstr "Lichteigenschaften"
 
-#: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:76
+#: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:73
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:59
 #: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:111
 #: xml_file_content.cpp:53
 msgid "Texture Browser"
 msgstr "Texturbrowser"
 
-#: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:79
+#: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:76
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:62
 #: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:114
 msgid "Textures"
@@ -2243,8 +2395,8 @@ msgstr "Desktopgestaltung deaktivieren"
 msgid "Exit DarkRadiant"
 msgstr "DarkRadiant beenden"
 
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:391
 #: ..\..\radiant\ui\mainframe\MainFrame.cpp:394
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:397
 msgid "Console"
 msgstr "Konsole"
 
@@ -2379,20 +2531,20 @@ msgstr "Zu Favoriten hinzufügen"
 msgid "Remove from Favourites"
 msgstr "Aus Favoriten entfernen"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:425
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:424
 msgid "Show All"
 msgstr "Alle anzeigen"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:426
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:425
 msgid "Show Favourites"
 msgstr "Favoriten anzeigen"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:567
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:570
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:566
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:569
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:744
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:743
 msgid "No favourites added so far"
 msgstr "Keine Favoriten vorhanden"
 
@@ -2457,40 +2609,40 @@ msgstr "Material"
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: ..\..\radiant\ui\modelselector\ModelPopulator.h:98
+#: ..\..\radiant\ui\modelselector\ModelPopulator.h:104
 msgid "Building tree..."
 msgstr "Baue Hierarchie auf..."
 
-#: ..\..\radiant\ui\modelselector\ModelPopulator.h:143
-#: ..\..\radiant\ui\modelselector\ModelPopulator.h:151
+#: ..\..\radiant\ui\modelselector\ModelPopulator.h:149
+#: ..\..\radiant\ui\modelselector\ModelPopulator.h:157
 msgid "{0:d} models loaded"
 msgstr "{0:d} Modelle geladen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:36
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:38
 msgid "Choose Model"
 msgstr "Modell auswählen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:351
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:353
 msgid "Model Path"
 msgstr "Modell-Pfad"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:445
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:447
 msgid "Model name"
 msgstr "Modellname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:446
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:448
 msgid "Skin name"
 msgstr "Skinname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:447
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:449
 msgid "Total vertices"
 msgstr "Gesamte Vertices"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:448
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:450
 msgid "Total polys"
 msgstr "Gesamte Polygone"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:449
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:451
 msgid "Material surfaces"
 msgstr "Anzahl Oberflächen"
 
@@ -2633,11 +2785,6 @@ msgstr "Hintergrundbild"
 msgid "Choose particles"
 msgstr "Partikel auswählen"
 
-#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:66
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:159
-msgid "Particle"
-msgstr "Partikel"
-
 #: ..\..\radiant\ui\patch\BulgePatchDialog.cpp:9
 msgid "Bulge Patch"
 msgstr "Patch auswölben"
@@ -2756,7 +2903,7 @@ msgid "Mod Base (fs_game_base)"
 msgstr "Mod Base (fs_game_base)"
 
 #: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:70
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:139
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:197
 msgid "Engine path \"{0}\" does not exist.\n"
 msgstr "Engine-Pfad \"{0}\" existiert nicht.\n"
 
@@ -2768,23 +2915,23 @@ msgstr "Der Mod-Base-Pfad \"{0}\" existiert nicht.\n"
 msgid "The mod path \"{0}\" does not exist.\n"
 msgstr "Der Mod-Pfad \"{0}\" existiert nicht.\n"
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:37
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:76
 msgid "DarkMod Path"
 msgstr "DarkMod Verzeichnis"
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:45
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:84
 msgid "This is the path where your TheDarkMod.exe is located."
 msgstr "An dieser stelle sollte sich TheDarkMod.exe befinden."
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:49
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:88
 msgid "The FM folder name of the mission you want to work on, e.g. 'saintlucia'."
 msgstr "Der Ordnername der zu editierenden Mission, z.B. 'saintlucia'."
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:51
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:90
 msgid "Mission"
 msgstr "Mission"
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:98
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:137
 msgid ""
 "The mission path {0} doesn't exist.\n"
 "Do you intend to start a new mission and create that folder?"
@@ -2792,23 +2939,23 @@ msgstr ""
 "Der Missions-Ordner {0} existiert nicht.\n"
 "Willst Du eine neue Mission anfangen und den Ordner erzeugen?"
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:101
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:140
 msgid "Start a new Mission named {0}?"
 msgstr "Neue Mission namens {0} anlegen?"
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:110
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:149
 msgid "Could not create directory"
 msgstr "Konnte Verzeichnis nicht anlegen"
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:110
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:149
 msgid "Failed to create the folder {0}"
 msgstr "Konnte das Verzeichnis {0} nicht anlegen"
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:163
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:221
 msgid "The engine executable \"{0}\" could not be found in the specified folder.\n"
 msgstr "Die EXE-Datei \"{0}\" konnte in dem angegebenen Ordner nicht gefunden werden.\n"
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:170
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:228
 msgid "The mission path \"{0}\" does not exist.\n"
 msgstr "Der Missions-Pfad \"{0}\" existiert nicht.\n"
 
@@ -2993,21 +3140,119 @@ msgstr "Skalierung Y-Achse"
 msgid "Z-Axis Scale:"
 msgstr "Skalierung Z-Achse"
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:41
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:42
 msgid "Create Layer..."
 msgstr "Neuer Layer..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:43
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:44
 msgid "Add to Layer..."
 msgstr "Zu Layer hinzufügen..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:44
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:45
 msgid "Move to Layer..."
 msgstr "Nach Layer verschieben..."
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:45
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:46
 msgid "Remove from Layer..."
 msgstr "Von Layer entfernen..."
+
+#: ..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp:16
+#: xml_file_content.cpp:141
+msgid "MD5 Animation Viewer"
+msgstr "MD5-Animationsvorschau"
+
+#: ..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp:83
+#: ..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp:103
+msgid "Model Definition"
+msgstr "Model-Definition"
+
+#: ..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp:86
+msgid "Available Animations"
+msgstr "Verfügbare Animationen"
+
+#: ..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp:125
+msgid "Animation"
+msgstr "Animation"
+
+#: ..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp:127
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:104
+msgid "File"
+msgstr "Datei"
+
+#: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:24
+msgid "Edit Colour Schemes"
+msgstr "Farbschemas bearbeiten"
+
+#: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:81
+#: xml_file_content.cpp:5
+msgid "Colour"
+msgstr "Farbe"
+
+#: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:92
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:53
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:397
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:412
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:405
+#: xml_file_content.cpp:182
+#: xml_file_content.cpp:3
+#: xml_file_content.cpp:7
+#: xml_file_content.cpp:9
+#: xml_file_content.cpp:16
+#: xml_file_content.cpp:2
+#: xml_file_content.cpp:5
+#: xml_file_content.cpp:6
+#: xml_file_content.cpp:18
+msgid "Delete"
+msgstr "Löschen"
+
+#: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:93
+#: xml_file_content.cpp:4
+msgid "Copy"
+msgstr "Kopieren"
+
+#: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:268
+msgid "Copy Colour Scheme"
+msgstr "Farbschema kopieren"
+
+#: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:268
+msgid "Enter a name for the new scheme:"
+msgstr "Namen für das neue Schema eingeben:"
+
+#: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:278
+msgid "A Scheme with that name already exists."
+msgstr "Es existiert bereits ein Schema mit diesem Namen."
+
+#: ..\..\radiant\uimanager\SoundChooser.cpp:140
+msgid "Choose sound"
+msgstr "Sound auswählen"
+
+#: ..\..\radiant\uimanager\SoundChooser.cpp:170
+msgid "Soundshader"
+msgstr "Soundshader"
+
+#: ..\..\radiant\uimanager\SoundShaderPreview.cpp:28
+msgid "Sound Files"
+msgstr "Sounddateien"
+
+#: ..\..\radiant\uimanager\SoundShaderPreview.cpp:57
+msgid "Play"
+msgstr "Abspielen"
+
+#: ..\..\radiant\uimanager\SoundShaderPreview.cpp:60
+msgid "Play and loop"
+msgstr "Loopen"
+
+#: ..\..\radiant\uimanager\SoundShaderPreview.cpp:63
+msgid "Stop"
+msgstr "Stop"
+
+#: ..\..\radiant\uimanager\SoundShaderPreview.cpp:209
+msgid "Error: File not found."
+msgstr "Fehler: Datei nicht gefunden."
+
+#: ..\..\radiant\uimanager\UIManager.cpp:124
+msgid "Describes available Mouse Commands"
+msgstr "Listet verfügbare Mauskommandos auf"
 
 #: ..\..\radiant\undo\UndoSystem.cpp:340
 msgid "Settings/Undo System"
@@ -3917,11 +4162,6 @@ msgstr "Fehler beim Import."
 msgid "The requested definition has been found in multiple Files. Choose the file:"
 msgstr "Die angeforderte Definition wurde in mehreren Dateien gefunden, bitte die genaue Datei auswählen:"
 
-#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:104
-#: ..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp:127
-msgid "File"
-msgstr "Datei"
-
 #: ..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp:31
 msgid "Body:"
 msgstr "Text:"
@@ -4353,23 +4593,6 @@ msgstr "S/R"
 msgid "Remove"
 msgstr "Entfernen"
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:53
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:397
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:412
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:405
-#: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:92
-#: xml_file_content.cpp:182
-#: xml_file_content.cpp:3
-#: xml_file_content.cpp:7
-#: xml_file_content.cpp:9
-#: xml_file_content.cpp:16
-#: xml_file_content.cpp:2
-#: xml_file_content.cpp:5
-#: xml_file_content.cpp:6
-#: xml_file_content.cpp:18
-msgid "Delete"
-msgstr "Löschen"
-
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:106
 #: xml_file_content.cpp:2
 msgid "Name:"
@@ -4499,150 +4722,6 @@ msgstr "Responses"
 msgid "Custom Stims"
 msgstr "Benutzerdefinierte Stims"
 
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:335
-#: ..\..\plugins\eclassmgr\EClassManager.cpp:336
-msgid "Reloading Defs"
-msgstr "Neuladen der Definitionen"
-
-#: ..\..\plugins\entity\EntityCreator.cpp:38
-msgid "createNodeForEntity(): cannot create entity for NULL entityclass."
-msgstr "createNodeForEntity: Entity für Entity-Klasse NULL kann nicht erstellt werden."
-
-#: ..\..\plugins\eventmanager\MouseToolGroup.cpp:23
-msgid "XY View"
-msgstr "XY-Ansicht"
-
-#: ..\..\plugins\eventmanager\MouseToolGroup.cpp:25
-#: xml_file_content.cpp:50
-msgid "Camera View"
-msgstr "Kamera"
-
-#: ..\..\plugins\eventmanager\MouseToolGroup.cpp:27
-msgid "Unknown"
-msgstr "Unbekannt"
-
-#: ..\..\plugins\filetypes\FileTypeRegistry.cpp:12
-msgid "All Files"
-msgstr "Alle Dateien"
-
-#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:49
-#: ..\..\plugins\mapdoom3\Quake3MapReader.cpp:44
-msgid ""
-"Failed parsing entity {0:d}:\n"
-"{1}"
-msgstr ""
-"Fehler beim Parsen der Entity {0:d}\n"
-"{1}"
-
-#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:94
-#: ..\..\plugins\mapdoom3\Quake4MapReader.cpp:47
-msgid "Unable to parse map version (parse exception)."
-msgstr "Konnte Map-Version nicht parsen (Parse-Exception)"
-
-#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:102
-#: ..\..\plugins\mapdoom3\Quake4MapReader.cpp:54
-msgid "Could not recognise map version number format."
-msgstr "Nicht erkennbares Versionsnummernformat"
-
-#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:110
-#: ..\..\plugins\mapdoom3\Quake4MapReader.cpp:62
-msgid "Incorrect map version: required {0:f}, found {1:f}"
-msgstr "Ungültige Map-Version: erwartet: {0:f}, gefunden: {1:f}"
-
-#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:143
-#: ..\..\plugins\mapdoom3\Quake3MapReader.cpp:101
-msgid "Primitive #{0:d}: parse error"
-msgstr "Primitiv #{0:d}: Parserfehler"
-
-#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:153
-#: ..\..\plugins\mapdoom3\Quake3MapReader.cpp:111
-msgid "Primitive #{0:d}: parse exception {1}"
-msgstr "Primitiv #{0:d}: Parserfehler {1}"
-
-#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:244
-#: ..\..\plugins\mapdoom3\Quake3MapReader.cpp:202
-msgid "Parsed invalid value '{0}' for key '{1}'"
-msgstr "Ungültigen Wert '{0}' für Schlüssel '{1}' eingelesen"
-
-#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp:125
-#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp:234
-msgid "BrushDefParser: invalid token '{0}'"
-msgstr "BrushDefParser: Ungültiges Token '{0}'"
-
-#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:115
-msgid "BrushDef3Parser: invalid token '{0}'"
-msgstr "BrushDef3Parser: ungültiges Token '{0}'"
-
-#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:186
-msgid "BrushDef3ParserQuake4: invalid token '{0}'"
-msgstr "BrushDef3ParserQuake4: ungültiges Token '{0}'"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:44
-msgid "Particle Editor"
-msgstr "Partikeleditor"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:208
-msgid "Stage"
-msgstr "Stufe"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1034
-msgid "Note: changes will be written to the file <i>{0}</i>"
-msgstr "Hinweis: alle Änderungen werden in den File <i>{0}</i> geschrieben"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1341
-msgid "Save Changes"
-msgstr "Änderungen Speichern"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1342
-msgid ""
-"Do you want to save the changes\n"
-"you made to the particle {0}?"
-msgstr "Änderungen am Partikel {0} speichern?"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1375
-msgid ""
-"Error saving particle definition:\n"
-"{0}"
-msgstr ""
-"Fehler beim Speichern der Partikeldefinition:\n"
-"{0}"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1505
-msgid "Select .prt file"
-msgstr "Eine .prt-Datei auswählen"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1539
-msgid "Enter Particle Name"
-msgstr "Partikelnamen eingeben"
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1553
-msgid "Cannot create particle with an empty name."
-msgstr "Es ist nicht möglich einen Partikel ohne Namen zu erstellen."
-
-#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1568
-msgid "This name is already in use."
-msgstr "Dieser Name ist bereits in Verwendung."
-
-#: ..\..\plugins\particles\editor\ParticleEditorModule.h:56
-msgid "Particle Editor..."
-msgstr "Partikeleditor..."
-
-#: ..\..\plugins\particles\ParticlesManager.cpp:284
-msgid "Cannot save particle, it has not been registered yet."
-msgstr "Kann Partikeldefinition nicht speichern, sie wurde nicht registriert."
-
-#: ..\..\plugins\particles\ParticlesManager.cpp:364
-msgid "Cannot open file for reading: {0}"
-msgstr "Kann die Datei nicht im Lesemodus öffnen: {0}"
-
-#: ..\..\plugins\particles\ParticlesManager.cpp:411
-msgid "Could not remove the file {0}"
-msgstr "Kann die Datei nicht entfernen: {0}"
-
-#: ..\..\plugins\particles\ParticlesManager.cpp:425
-msgid "Could not rename the temporary file {0}"
-msgstr "Konnte die temporäre Datei nicht umbenennen: {0}"
-
 #: ..\..\plugins\script\ScriptingSystem.cpp:239
 #: ..\..\plugins\script\ScriptingSystem.cpp:242
 msgid "Script"
@@ -4663,90 +4742,6 @@ msgstr "Python Skripteingabe"
 #: ..\..\plugins\script\ScriptWindow.cpp:39
 msgid "Run Script"
 msgstr "Starte Skript"
-
-#: ..\..\plugins\shaders\Doom3ShaderSystem.cpp:312
-msgid "Loading Shaders"
-msgstr "Lade Shader"
-
-#: ..\..\plugins\shaders\ShaderFileLoader.cpp:95
-msgid "Parsing material file {0}"
-msgstr "Lade Material Datei {0}"
-
-#: ..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp:16
-#: xml_file_content.cpp:141
-msgid "MD5 Animation Viewer"
-msgstr "MD5-Animationsvorschau"
-
-#: ..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp:83
-#: ..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp:103
-msgid "Model Definition"
-msgstr "Model-Definition"
-
-#: ..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp:86
-msgid "Available Animations"
-msgstr "Verfügbare Animationen"
-
-#: ..\..\plugins\uimanager\animationpreview\MD5AnimationViewer.cpp:125
-msgid "Animation"
-msgstr "Animation"
-
-#: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:24
-msgid "Edit Colour Schemes"
-msgstr "Farbschemas bearbeiten"
-
-#: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:81
-#: xml_file_content.cpp:5
-msgid "Colour"
-msgstr "Farbe"
-
-#: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:93
-#: xml_file_content.cpp:4
-msgid "Copy"
-msgstr "Kopieren"
-
-#: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:268
-msgid "Copy Colour Scheme"
-msgstr "Farbschema kopieren"
-
-#: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:268
-msgid "Enter a name for the new scheme:"
-msgstr "Namen für das neue Schema eingeben:"
-
-#: ..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp:278
-msgid "A Scheme with that name already exists."
-msgstr "Es existiert bereits ein Schema mit diesem Namen."
-
-#: ..\..\plugins\uimanager\SoundChooser.cpp:140
-msgid "Choose sound"
-msgstr "Sound auswählen"
-
-#: ..\..\plugins\uimanager\SoundChooser.cpp:170
-msgid "Soundshader"
-msgstr "Soundshader"
-
-#: ..\..\plugins\uimanager\SoundShaderPreview.cpp:28
-msgid "Sound Files"
-msgstr "Sounddateien"
-
-#: ..\..\plugins\uimanager\SoundShaderPreview.cpp:57
-msgid "Play"
-msgstr "Abspielen"
-
-#: ..\..\plugins\uimanager\SoundShaderPreview.cpp:60
-msgid "Play and loop"
-msgstr "Loopen"
-
-#: ..\..\plugins\uimanager\SoundShaderPreview.cpp:63
-msgid "Stop"
-msgstr "Stop"
-
-#: ..\..\plugins\uimanager\SoundShaderPreview.cpp:209
-msgid "Error: File not found."
-msgstr "Fehler: Datei nicht gefunden."
-
-#: ..\..\plugins\uimanager\UIManager.cpp:119
-msgid "Describes available Mouse Commands"
-msgstr "Listet verfügbare Mauskommandos auf"
 
 #: ..\..\libs\wxutil\dialog\MessageBox.cpp:20
 #: xml_file_content.cpp:8
@@ -4830,6 +4825,18 @@ msgstr "Partikel-Definitionen neu laden"
 #: xml_file_content.cpp:1
 msgid "Filters"
 msgstr "Filter"
+
+#: ..\..\libs\wxutil\TreeView.cpp:218
+msgid "Find: "
+msgstr "Finde:"
+
+#: ..\..\libs\wxutil\TreeView.cpp:231
+msgid "Go to next match"
+msgstr "Zur nächsten Übereinstimmung"
+
+#: ..\..\libs\wxutil\TreeView.cpp:232
+msgid "Go to previous match"
+msgstr "Zur vorherigen Übereinstimmung"
 
 #: xml_file_content.cpp:1
 msgid "&File"
@@ -5599,6 +5606,10 @@ msgstr "Hilfe"
 msgid "&About"
 msgstr "Über DarkRadiant"
 
+#: xml_file_content.cpp:206
+msgid "&User Guide"
+msgstr "&Benutzerhandbuch"
+
 #: xml_file_content.cpp:1
 msgid "Texture Background"
 msgstr "Texturbrowser-Hintergrund"
@@ -6194,8 +6205,8 @@ msgid "Light Volume"
 msgstr "Lichtvolumina"
 
 #: xml_file_content.cpp:2
-msgid "Omni"
-msgstr "Omni"
+msgid "Omnidirectional"
+msgstr "Omnidirektional"
 
 #: xml_file_content.cpp:3
 msgid "Projected"
@@ -7040,6 +7051,12 @@ msgstr "Min:"
 #: xml_file_content.cpp:26
 msgid "Max:"
 msgstr "Max:"
+
+#~ msgid "Parsing material file {0}"
+#~ msgstr "Lade Material Datei {0}"
+
+#~ msgid "Omni"
+#~ msgstr "Omni"
 
 #~ msgid "Select a Game:"
 #~ msgstr "Spiel auswählen:"
