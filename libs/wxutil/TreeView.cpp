@@ -5,6 +5,7 @@
 
 #include <wx/bmpbuttn.h>
 #include <wx/popupwin.h>
+#include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/timer.h>
 #include <wx/artprov.h>
@@ -208,11 +209,13 @@ private:
 
 public:
 	SearchPopupWindow(TreeView* treeView, Search& owner) :
-		wxPopupWindow(treeView),
+		wxPopupWindow(treeView, wxBORDER_SIMPLE),
 		_owner(owner),
 		_entry(nullptr)
 	{
 		SetSizer(new wxBoxSizer(wxHORIZONTAL));
+
+		auto label = new wxStaticText(this, wxID_ANY, _("Find: "));
 
 		_entry = new wxTextCtrl(this, wxID_ANY);
 
@@ -231,6 +234,7 @@ public:
 		nextButton->Bind(wxEVT_BUTTON, [this] (wxCommandEvent& ev) { _owner.HighlightNextMatch(); });
 		prevButton->Bind(wxEVT_BUTTON, [this] (wxCommandEvent& ev) { _owner.HighlightPrevMatch(); });
 
+		GetSizer()->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 		GetSizer()->Add(_entry, 1, wxEXPAND | wxALL, 6);
 		GetSizer()->Add(prevButton, 0, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 6);
 		GetSizer()->Add(nextButton, 0, wxEXPAND | wxRIGHT | wxTOP | wxBOTTOM, 6);
@@ -269,6 +273,11 @@ TreeView::Search::Search(TreeView& treeView) :
 
 TreeView::Search::~Search()
 {
+	_closeTimer.Stop();
+
+	// Always hide popup windows before destroying them, otherwise the
+	// wx-internal wxCurrentPopupWindow pointer doesn't get cleared (in MSW at least)
+	_popup->Hide();
 	_popup->Destroy();
 	_popup = nullptr;
 	_curSearchMatch = wxDataViewItem();
