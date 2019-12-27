@@ -528,7 +528,12 @@ void MediaBrowser::construct()
 	// runs into problems when the _treeView is still valid
 	_mainWidget->Bind(wxEVT_DESTROY, [&](wxWindowDestroyEvent& ev)
 	{
-		_treeView = nullptr;
+		// In wxGTK the destroy event might bubble from a child window 
+		// like the search popup, so check the event object
+		if (ev.GetEventObject() == _mainWidget)
+		{
+			_treeView = nullptr;
+		}
 		ev.Skip();
 	});
 }
