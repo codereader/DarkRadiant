@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <wx/dataview.h>
 #include <wx/windowptr.h>
 
@@ -44,7 +45,7 @@ public:
 	virtual ~TreeView();
 
     // override wxDataViewCtrl to make it more robust
-    virtual bool AssociateModel(wxDataViewModel* model);
+    virtual bool AssociateModel(wxDataViewModel* model) override;
 
 	// Enable the automatic recalculation of column widths
 	void EnableAutoColumnWidthFix(bool enable = true);

@@ -2,11 +2,16 @@
 
 #include <wx/popupwin.h>
 #include <wx/sizer.h>
+#include <wx/timer.h>
 #include <wx/textctrl.h>
-#include <algorithm>
 
 namespace wxutil
 {
+
+namespace
+{
+	const int MSECS_TO_AUTO_CLOSE_POPUP = 6000;
+}
 
 TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style),
@@ -69,10 +74,10 @@ void TreeView::TriggerColumnSizeEvent(const wxDataViewItem& item)
     wxDataViewItemArray children;
     GetModel()->GetChildren(item, children);
 
-    std::for_each(children.begin(), children.end(), [&](wxDataViewItem& item)
+	for (const auto& child : children)
     {
-        GetModel()->ItemChanged(item);
-    });
+        GetModel()->ItemChanged(child);
+    }
 }
 
 void TreeView::ExpandTopLevelItems()
@@ -85,10 +90,10 @@ void TreeView::ExpandTopLevelItems()
 	wxDataViewItemArray children;
 	model->GetChildren(model->GetRoot(), children);
 
-	std::for_each(children.begin(), children.end(), [&](const wxDataViewItem& item)
+	for (const auto& item : children)
 	{
 		Expand(item);
-	});
+	}
 }
 
 void TreeView::ResetSortingOnAllColumns()
@@ -144,7 +149,7 @@ void TreeView::Rebuild()
 void TreeView::_onItemExpanded(wxDataViewEvent& ev)
 {
 	// This should force a recalculation of the column width
-	if (GetModel() != NULL)
+	if (GetModel() != nullptr)
 	{
 		GetModel()->ItemChanged(ev.GetItem());
 	}
@@ -203,20 +208,27 @@ public:
 	}
 };
 
-class TreeView::Search 
+class TreeView::Search :
+	public wxEvtHandler
 {
 private:
 	TreeView& _treeView;
 	SearchPopupWindow* _popup;
 	wxDataViewItem _curSearchMatch;
+	wxTimer _closeTimer;
 
 public:
 	TreeView::Search(TreeView& treeView) :
-		_treeView(treeView)
+		_treeView(treeView),
+		_closeTimer(this)
 	{
 		_popup = new SearchPopupWindow(&_treeView, *this);
 		_popup->Show();
 		_curSearchMatch = wxDataViewItem();
+
+		Bind(wxEVT_TIMER, std::bind(&Search::onIntervalReached, this, std::placeholders::_1));
+
+		_closeTimer.Start(MSECS_TO_AUTO_CLOSE_POPUP);
 	}
 
 	~Search()
@@ -226,8 +238,18 @@ public:
 		_curSearchMatch = wxDataViewItem();
 	}
 
+	void onIntervalReached(wxTimerEvent& ev)
+	{
+		// Disconnect the timing event
+		_closeTimer.Stop();
+
+		_treeView.CloseSearch();
+	}
+
 	void HighlightMatch(const wxDataViewItem& item)
 	{
+		_closeTimer.Start(MSECS_TO_AUTO_CLOSE_POPUP); // restart
+
 		_curSearchMatch = item;
 		_treeView.JumpToSearchMatch(_curSearchMatch);
 	}
@@ -294,7 +316,7 @@ void TreeView::CloseSearch()
 
 void TreeView::_onChar(wxKeyEvent& ev)
 {
-	if (GetModel() == NULL || _colsToSearch.empty())
+	if (GetModel() == nullptr || _colsToSearch.empty())
 	{
 		ev.Skip();
 		return;
@@ -307,8 +329,6 @@ void TreeView::_onChar(wxKeyEvent& ev)
 	if (uc != WXK_NONE && uc >= 32 && !_search)
 	{
 		_search = std::make_unique<Search>(*this);
-
-		// TODO: Add timeout to hide search window
 	}
 
 	if (_search)
