@@ -20,7 +20,6 @@ TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 	}
 
 	Connect(wxEVT_CHAR, wxKeyEventHandler(TreeView::_onChar), NULL, this);
-	Connect(EV_TREEVIEW_SEARCH_EVENT, SearchEventHandler(TreeView::_onSearch), NULL, this);
 	Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(TreeView::_onItemActivated), NULL, this);
 }
 
@@ -117,7 +116,7 @@ void TreeView::AddSearchColumn(const TreeModel::Column& column)
 
 bool TreeView::HasActiveSearchPopup()
 {
-    return _searchPopup != NULL;
+    return _search != nullptr;
 }
 
 #if !defined(__linux__)
@@ -165,47 +164,19 @@ void TreeView::_onItemActivated(wxDataViewEvent& ev)
 	}
 }
 
-wxDEFINE_EVENT(EV_TREEVIEW_SEARCH_EVENT, TreeView::SearchEvent);
-
-TreeView::SearchEvent::SearchEvent(int id) :
-	wxEvent(id, EV_TREEVIEW_SEARCH_EVENT)
-{}
-
-TreeView::SearchEvent::SearchEvent(const wxString& searchString, int id) :
-	wxEvent(id, EV_TREEVIEW_SEARCH_EVENT),
-	_searchString(searchString)
-{}
-
-// You *must* copy here the data to be transported
-TreeView::SearchEvent::SearchEvent(const TreeView::SearchEvent& ev) :
-	wxEvent(ev),
-	_searchString(ev._searchString)
-{}
-
-// Required for sending with wxPostEvent()
-wxEvent* TreeView::SearchEvent::Clone() const
-{
-	return new SearchEvent(*this);
-}
-
-const wxString& TreeView::SearchEvent::GetSearchString() const
-{
-	return _searchString;
-}
-
 // The custom popup window containing our search box
 class TreeView::SearchPopupWindow :
-	public wxPopupTransientWindow
+	public wxPopupWindow
 {
 private:
-	TreeView* _owner;
+	Search& _owner;
 	wxTextCtrl* _entry;
 
 public:
-	SearchPopupWindow(TreeView* owner) :
-		wxPopupTransientWindow(owner),
+	SearchPopupWindow(TreeView* treeView, Search& owner) :
+		wxPopupWindow(treeView),
 		_owner(owner),
-		_entry(NULL)
+		_entry(nullptr)
 	{
 		SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -217,28 +188,60 @@ public:
 		Fit();
 
 		// Position this control in the bottom right corner
-		wxPoint popupPos = owner->GetScreenPosition() + owner->GetSize() - GetSize();
+		wxPoint popupPos = GetParent()->GetScreenPosition() + GetParent()->GetSize() - GetSize();
 		Position(popupPos, wxSize(0, 0));
-
-		Connect(wxEVT_CHAR, wxKeyEventHandler(SearchPopupWindow::OnChar), NULL, this);
 	}
 
-	void OnChar(wxKeyEvent& ev)
+	wxString GetSearchString()
 	{
-		HandleKey(ev);
+		return _entry->GetValue();
 	}
 
-	virtual void OnDismiss()
+	void SetSearchString(const wxString& str)
 	{
-		// Send an event to the parent TreeView
-		SearchEvent searchEvent("", SearchEvent::POPUP_DISMISSED);
-		_owner->HandleWindowEvent(searchEvent);
+		_entry->SetValue(str);
+	}
+};
 
-		wxPopupTransientWindow::OnDismiss();
+class TreeView::Search 
+{
+private:
+	TreeView& _treeView;
+	SearchPopupWindow* _popup;
+	wxDataViewItem _curSearchMatch;
+
+public:
+	TreeView::Search(TreeView& treeView) :
+		_treeView(treeView)
+	{
+		_popup = new SearchPopupWindow(&_treeView, *this);
+		_popup->Show();
+		_curSearchMatch = wxDataViewItem();
 	}
 
-	void HandleKey(wxKeyEvent& ev)
+	~Search()
 	{
+		_popup->Destroy();
+		_popup = nullptr;
+		_curSearchMatch = wxDataViewItem();
+	}
+
+	void HighlightMatch(const wxDataViewItem& item)
+	{
+		_curSearchMatch = item;
+		_treeView.JumpToSearchMatch(_curSearchMatch);
+	}
+
+	void HandleKeyEvent(wxKeyEvent& ev)
+	{
+		TreeModel* model = dynamic_cast<TreeModel*>(_treeView.GetModel());
+
+		if (model == nullptr)
+		{
+			ev.Skip();
+			return;
+		}
+
 		// Adapted this from the wxWidgets docs
 		wxChar uc = ev.GetUnicodeKey();
 
@@ -249,37 +252,45 @@ public:
 			// WXK_BACK, so check for them explicitly.
 			if (uc >= 32)
 			{
-				_entry->SetValue(_entry->GetValue() + ev.GetUnicodeKey());
+				_popup->SetSearchString(_popup->GetSearchString() + ev.GetUnicodeKey());
 
-				// Send an event to the parent TreeView
-				SearchEvent searchEvent(_entry->GetValue(), SearchEvent::SEARCH);
-				_owner->HandleWindowEvent(searchEvent);
+				HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
 			}
 			else if (ev.GetKeyCode() == WXK_ESCAPE)
 			{
-				DismissAndNotify();
+				_treeView.CloseSearch();
 			}
 			else if (ev.GetKeyCode() == WXK_BACK)
 			{
-				_entry->SetValue(_entry->GetValue().RemoveLast(1));
+				_popup->SetSearchString(_popup->GetSearchString().RemoveLast(1));
 
-				// Send an event to the parent TreeView
-				SearchEvent searchEvent(_entry->GetValue(), SearchEvent::SEARCH);
-				_owner->HandleWindowEvent(searchEvent);
+				HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
+			}
+			else
+			{
+				ev.Skip();
 			}
 		}
-		else // No Unicode equivalent.
+		// No Unicode equivalent, might be an arrow key
+		else if (ev.GetKeyCode() == WXK_UP)
 		{
-			// Cursor events are special 
-			if (ev.GetKeyCode() == WXK_UP || ev.GetKeyCode() == WXK_DOWN)
-			{
-				SearchEvent searchEvent(_entry->GetValue(),
-					ev.GetKeyCode() == WXK_UP ? SearchEvent::SEARCH_PREV_MATCH : SearchEvent::SEARCH_NEXT_MATCH);
-				_owner->HandleWindowEvent(searchEvent);
-			}
+			HighlightMatch(model->FindPrevString(_popup->GetSearchString(), _treeView._colsToSearch, _curSearchMatch));
+		}
+		else if (ev.GetKeyCode() == WXK_DOWN)
+		{
+			HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch, _curSearchMatch));
+		}
+		else
+		{
+			ev.Skip();
 		}
 	}
 };
+
+void TreeView::CloseSearch()
+{
+	_search.reset();
+}
 
 void TreeView::_onChar(wxKeyEvent& ev)
 {
@@ -292,79 +303,51 @@ void TreeView::_onChar(wxKeyEvent& ev)
 	// Adapted this from the wxWidgets docs
 	wxChar uc = ev.GetUnicodeKey();
 
-	if (uc != WXK_NONE && uc >= 32)
+	// Start a search operation on any "normal" character
+	if (uc != WXK_NONE && uc >= 32 && !_search)
 	{
-		// It's a "normal" character, start the search
-		if (_searchPopup == NULL)
-		{
-			_searchPopup = new SearchPopupWindow(this);
-			_searchPopup->Popup();
-			_curSearchMatch = wxDataViewItem();
-		}
+		_search = std::make_unique<Search>(*this);
 
-		// Handle the first key immediately
-		_searchPopup->HandleKey(ev);
+		// TODO: Add timeout to hide search window
 	}
 
-	// Don't eat the event
-	ev.Skip();
+	if (_search)
+	{
+		// Forward the key event to the search helper
+		_search->HandleKeyEvent(ev);
+	}
+	else
+	{
+		// Don't eat the event
+		ev.Skip();
+	}
 }
 
-void TreeView::_onSearch(SearchEvent& ev)
+void TreeView::JumpToSearchMatch(const wxDataViewItem& item)
 {
-	if (GetModel() == NULL)
-	{
-		ev.Skip(); // no model attached
-		return;
-	}
-
 	TreeModel* model = dynamic_cast<TreeModel*>(GetModel());
 
 	if (model == NULL)
 	{
-		ev.Skip(); // not a TreeModel
 		return;
 	}
 
-	wxDataViewItem oldMatch = _curSearchMatch;
-
-	// Handle the search
-	switch (ev.GetId())
-	{
-	case SearchEvent::SEARCH:
-		_curSearchMatch = model->FindNextString(ev.GetSearchString(), _colsToSearch);
-		break;
-
-	case SearchEvent::SEARCH_NEXT_MATCH:
-		_curSearchMatch = model->FindNextString(ev.GetSearchString(), _colsToSearch, _curSearchMatch);
-		break;
-
-	case SearchEvent::SEARCH_PREV_MATCH:
-		_curSearchMatch = model->FindPrevString(ev.GetSearchString(), _colsToSearch, _curSearchMatch);
-		break;
-
-	case SearchEvent::POPUP_DISMISSED:
-		_searchPopup = NULL;
-		_curSearchMatch = wxDataViewItem();
-		break;
-	};
-
-	if (oldMatch != _curSearchMatch && _curSearchMatch.IsOk())
+	if (GetSelection() != item && item.IsOk())
 	{
         UnselectAll();
-		Select(_curSearchMatch);
-		EnsureVisible(_curSearchMatch);
+		Select(item);
+		EnsureVisible(item);
 
 		// Synthesise a selection changed signal
 		// In wxWidgets 3.1.x the wxDataViewEvent constructors have changed, switch on it
 #if wxCHECK_VERSION(3, 1, 0)
-		wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, this, _curSearchMatch);
+		wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
 #else
 		wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, GetId());
 
 		le.SetEventObject(this);
 		le.SetModel(GetModel());
-		le.SetItem(_curSearchMatch);
+		le.SetItem(item);
 #endif
 
 		ProcessWindowEvent(le);
