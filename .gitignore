@@ -49,6 +49,7 @@ tools/msvc2015/DarkRadiant.VC.db
 # Mac OS X Stuff
 .DS_Store
 xcuserdata
+
 Makefile.in
 /config.h.in
 /configure
@@ -60,3 +61,7 @@ Makefile.in
 /tools/innosetup/*.zip
 /tools/lwo_analyse/.vs
 /radiant/*.aps
+
+# Portable installation temp folders
+/tools/scripts/DarkRadiant_install.x64
+/tools/scripts/DarkRadiant_install

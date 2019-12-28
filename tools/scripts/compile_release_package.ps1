@@ -1,9 +1,11 @@
 # Check input arguments
 if ($args.Count -eq 0 -or ($args[0] -ne "x64" -and $args[0] -ne "x86"))
 {
-    Write-Host "Usage: compile_release_package.ps1 <x64|x86>"
+    Write-Host "Usage: compile_release_package.ps1 <x64|x86> [skipbuild]"
     Write-Host ""
     Write-Host "e.g. to compile a 64 bit build: .\compile_release_package.ps1 x64"
+    Write-Host "The skipbuild flag is optional and can be used to skip recompiling"
+    Write-Host "the whole sources, only the installers and 7z files will be created"
     Write-Host ""
     return
 }
@@ -64,8 +66,8 @@ if (-not $skipbuild)
 
 # Copy files to portable files folder
 
-$pathToCheck = "..\..\..\$portablePath"
-$portableFilesFolder = Get-Item -Path $pathToCheck
+$pathToCheck = ".\$portablePath"
+$portableFilesFolder = Get-Item -Path $pathToCheck -ErrorAction SilentlyContinue
 
 if ($portableFilesFolder -eq $null)
 {
@@ -122,11 +124,11 @@ if ((Get-ChildItem -Path $portableFilename -ErrorAction SilentlyContinue) -ne $n
 {
     Remove-Item -Path $portableFilename
 }
-Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-x!*.pdb", "-mx9", "-mmt2", $portableFilename, "..\..\..\$portablePath\*.*")
+Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-x!*.pdb", "-mx9", "-mmt2", $portableFilename, "$portableFilesFolder\*.*")
 
 # Compress Program Database Files
 if ((Get-ChildItem -Path $pdbFilename -ErrorAction SilentlyContinue) -ne $null)
 {
     Remove-Item -Path $pdbFilename
 }
-Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-mx9", "-mmt2", $pdbFilename, "..\..\..\$portablePath\*.pdb") -Wait
+Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-mx9", "-mmt2", $pdbFilename, "$portableFilesFolder\*.pdb") -Wait
