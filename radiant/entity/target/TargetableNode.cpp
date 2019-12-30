@@ -123,10 +123,13 @@ void TargetableNode::onTargetKeyCollectionChanged()
         if (!_targetLineNode)
         {
             _targetLineNode.reset(new TargetLineNode(_node));
-            scene::addNodeToContainer(_targetLineNode, _node.shared_from_this());
-
+			
 			// Fix #4373: Move the target lines to the same layers as the owning node
 			_targetLineNode->assignToLayers(_node.getLayers());
+
+			// Add the target node as child to the owning node,
+			// this also updates its layer visibility flags
+            scene::addNodeToContainer(_targetLineNode, _node.shared_from_this());
         }
     }
     else // No more targets
