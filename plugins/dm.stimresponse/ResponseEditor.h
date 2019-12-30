@@ -57,6 +57,8 @@ public:
 	 */
 	void update() override;
 
+	void reloadStimTypes();
+
 private:
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.

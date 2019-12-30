@@ -397,7 +397,7 @@ void ClassEditor::onContextMenu(wxDataViewEvent& ev)
 
 void ClassEditor::onStimTypeSelect(wxCommandEvent& ev)
 {
-	if (_updatesDisabled || _type == NULL) return; // Callback loop guard
+	if (_updatesDisabled || _type == nullptr) return; // Callback loop guard
 
 	std::string name = getStimTypeIdFromSelector(_type);
 
@@ -410,10 +410,10 @@ void ClassEditor::onStimTypeSelect(wxCommandEvent& ev)
 
 void ClassEditor::onAddTypeSelect(wxCommandEvent& ev)
 {
-	if (_updatesDisabled || _addType == NULL) return; // Callback loop guard
+	if (_updatesDisabled || _addType == nullptr) return; // Callback loop guard
 
 	wxComboBox* combo = dynamic_cast<wxComboBox*>(ev.GetEventObject());
-	assert(combo != NULL);
+	assert(combo != nullptr);
 
 	std::string name = getStimTypeIdFromSelector(combo);
 

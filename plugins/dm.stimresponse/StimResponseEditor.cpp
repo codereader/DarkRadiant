@@ -89,9 +89,8 @@ void StimResponseEditor::populateWindow()
 	
 	_notebook = findNamedObject<wxNotebook>(this, "SREditorNotebook");
 
-	// Set up the list containing the stims and responses
-
 	_stimEditor = new StimEditor(mainPanel, _stimTypes);
+	_responseEditor = new ResponseEditor(mainPanel, _stimTypes);
 
 #if 0
 	SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -128,9 +127,9 @@ void StimResponseEditor::populateWindow()
 	findNamedObject<wxButton>(this, "SREditorCancelButton")->Bind(
 		wxEVT_BUTTON, [this](wxCommandEvent& ev) { EndModal(wxID_CANCEL); });
 
-	if (_lastShownPage == -1 && _notebook->GetPageCount() > 0)
+	if (_lastShownPage == -1)
 	{
-		_lastShownPage = -1;
+		_lastShownPage = 0;
 	}
 
 	Layout();

@@ -99,6 +99,8 @@ public:
 	 */
 	void update() override;
 
+	void reloadStimTypes();
+
 private:
 	/** greebo: Retrieves the formatted timer string h:m:s:ms
 	 */

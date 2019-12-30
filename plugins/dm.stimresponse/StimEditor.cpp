@@ -37,15 +37,27 @@ void StimEditor::setupPage()
 
 	setupEditPanel();
 
-	auto addType = findNamedObject<wxBitmapComboBox>(_mainPanel, "StimTypeComboBox");
-
-	addType->Bind(wxEVT_COMBOBOX, std::bind(&StimEditor::onAddTypeSelect, this, std::placeholders::_1));
+	_addType = findNamedObject<wxBitmapComboBox>(_mainPanel, "StimTypeComboBox");
+	_addType->Bind(wxEVT_COMBOBOX, std::bind(&StimEditor::onAddTypeSelect, this, std::placeholders::_1));
 
 	auto addButton = findNamedObject<wxButton>(_mainPanel, "AddStimButton");
 	auto removeButton = findNamedObject<wxButton>(_mainPanel, "RemoveStimButton");
 
 	addButton->Bind(wxEVT_BUTTON, std::bind(&StimEditor::onAddSR, this, std::placeholders::_1));
 	removeButton->Bind(wxEVT_BUTTON, std::bind(&StimEditor::onRemoveSR, this, std::placeholders::_1));
+	
+	reloadStimTypes();
+}
+
+void StimEditor::reloadStimTypes()
+{
+	if (_stimTypes.getStimMap().empty())
+	{
+		_stimTypes.reload();
+	}
+
+	_stimTypes.populateComboBox(_addType);
+	_stimTypes.populateComboBox(_type);
 }
 
 void StimEditor::setEntity(const SREntityPtr& entity)

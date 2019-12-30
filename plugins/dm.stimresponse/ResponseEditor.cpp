@@ -161,8 +161,6 @@ void ResponseEditor::setupPage()
 	_type->SetName("ResponseEditorTypeCombo");
 #endif
 
-	_stimTypes.populateComboBox(_type);
-
 	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(ResponseEditor::onStimTypeSelect), NULL, this); 
 
 	// Active
@@ -196,6 +194,28 @@ void ResponseEditor::setupPage()
 	makeLabelBold(_mainPanel, "ResponseEditorFXLabel");
 
 	createEffectWidgets();
+
+	_addType = findNamedObject<wxBitmapComboBox>(_mainPanel, "ResponseTypeComboBox");
+	_addType->Bind(wxEVT_COMBOBOX, std::bind(&ResponseEditor::onAddTypeSelect, this, std::placeholders::_1));
+
+	auto addButton = findNamedObject<wxButton>(_mainPanel, "AddResponseButton");
+	auto removeButton = findNamedObject<wxButton>(_mainPanel, "RemoveResponseButton");
+
+	addButton->Bind(wxEVT_BUTTON, std::bind(&ResponseEditor::onAddSR, this, std::placeholders::_1));
+	removeButton->Bind(wxEVT_BUTTON, std::bind(&ResponseEditor::onRemoveSR, this, std::placeholders::_1));
+	
+	reloadStimTypes();
+}
+
+void ResponseEditor::reloadStimTypes()
+{
+	if (_stimTypes.getStimMap().empty())
+	{
+		_stimTypes.reload();
+	}
+
+	_stimTypes.populateComboBox(_addType);
+	_stimTypes.populateComboBox(_type);
 }
 
 void ResponseEditor::createEffectWidgets()
