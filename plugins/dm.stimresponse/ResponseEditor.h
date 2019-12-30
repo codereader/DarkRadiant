@@ -43,10 +43,11 @@ private:
 		wxTextCtrl* randomEffectsEntry;
 	} _propertyWidgets;
 
+	wxWindow* _mainPanel;
+
 public:
-	/** greebo: Constructor creates all the widgets
-	 */
-	ResponseEditor(wxWindow* parent, StimTypes& stimTypes);
+	// Constructor is setting up the response edit controls
+	ResponseEditor(wxWindow* mainPanel, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (updates the treeviews)
 	 */
@@ -110,9 +111,7 @@ private:
 
 	void openSRListContextMenu() override;
 
-	/** greebo: Creates all the widgets
-	 */
-	void populatePage(wxWindow* parent);
+	void setupPage();
 
 	// Context menu callbacks
 	void onContextMenuAdd(wxCommandEvent& ev);

@@ -85,10 +85,11 @@ private:
 		wxMenuItem* duplicate;
 	} _contextMenu;
 
+	wxWindow* _mainPanel;
+
 public:
-	/** greebo: Constructor creates all the widgets
-	 */
-	StimEditor(wxWindow* parent, StimTypes& stimTypes);
+	// Constructor is setting up the stim editing panel
+	StimEditor(wxWindow* mainPanel, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (is called by the StimResponseEditor class)
 	 */
@@ -127,12 +128,8 @@ private:
 
 	void openSRListContextMenu() override;
 
-	/** greebo: Creates all the widgets
-	 */
-	void populatePage(wxWindow* parent);
-
-	// Connects signals
-	void setupEditingPanel();
+	void setupPage();
+	void setupEditPanel();
 
 	// Context menu callbacks
 	void onContextMenuAdd(wxCommandEvent& ev);

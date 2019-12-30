@@ -20,10 +20,12 @@
 namespace ui
 {
 
-ResponseEditor::ResponseEditor(wxWindow* parent, StimTypes& stimTypes) :
-	ClassEditor(parent, stimTypes)
+ResponseEditor::ResponseEditor(wxWindow* mainPanel, StimTypes& stimTypes) :
+	ClassEditor(mainPanel, stimTypes),
+	_mainPanel(mainPanel)
 {
-	populatePage(this);
+	setupPage();
+
 	createContextMenu();
 	update();
 }
@@ -59,7 +61,7 @@ void ResponseEditor::update()
 {
 	_updatesDisabled = true;
 
-	wxPanel* mainPanel = findNamedObject<wxPanel>(this, "ResponseEditorMainPanel");
+	wxPanel* mainPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorResponsePanel");
 
 	int id = getIdFromSelection();
 
@@ -138,17 +140,17 @@ void ResponseEditor::update()
 	_updatesDisabled = false;
 }
 
-void ResponseEditor::populatePage(wxWindow* parent)
+void ResponseEditor::setupPage()
 {
-	wxPanel* editingPanel = loadNamedPanel(parent, "ResponseEditorMainPanel");
-	packEditingPane(editingPanel);
+	wxPanel* listPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorResponseList");
+	createListView(listPanel);
 
 #ifdef USE_BMP_COMBO_BOX
 	// Response property section
-	_type = findNamedObject<wxBitmapComboBox>(this, "ResponseEditorTypeCombo");
+	_type = findNamedObject<wxBitmapComboBox>(_mainPanel, "ResponseEditorTypeCombo");
 #else
 	// Response property section
-	wxControl* typeBox = findNamedObject<wxControl>(this, "ResponseEditorTypeCombo");
+	wxControl* typeBox = findNamedObject<wxControl>(_mainPanel, "ResponseEditorTypeCombo");
 
 	// Replace the bitmap combo with an ordinary one
 	wxComboBox* combo = new wxComboBox(typeBox->GetParent(), wxID_ANY);
@@ -164,16 +166,16 @@ void ResponseEditor::populatePage(wxWindow* parent)
 	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(ResponseEditor::onStimTypeSelect), NULL, this); 
 
 	// Active
-	_propertyWidgets.active = findNamedObject<wxCheckBox>(this, "ResponseEditorActive");
+	_propertyWidgets.active = findNamedObject<wxCheckBox>(_mainPanel, "ResponseEditorActive");
 
 	// Random Effects Toggle
-	_propertyWidgets.randomEffectsToggle = findNamedObject<wxCheckBox>(this, "ResponseEditorRandomFX");
-	_propertyWidgets.randomEffectsEntry = findNamedObject<wxTextCtrl>(this, "ResponseEditorRandomFXValue");
+	_propertyWidgets.randomEffectsToggle = findNamedObject<wxCheckBox>(_mainPanel, "ResponseEditorRandomFX");
+	_propertyWidgets.randomEffectsEntry = findNamedObject<wxTextCtrl>(_mainPanel, "ResponseEditorRandomFXValue");
 
 	// Chance variable
-	_propertyWidgets.chanceToggle = findNamedObject<wxCheckBox>(this, "ResponseEditorChance");
+	_propertyWidgets.chanceToggle = findNamedObject<wxCheckBox>(_mainPanel, "ResponseEditorChance");
 
-	wxPanel* chancePanel = findNamedObject<wxPanel>(this, "ResponseEditorChanceValuePanel");
+	wxPanel* chancePanel = findNamedObject<wxPanel>(_mainPanel, "ResponseEditorChanceValuePanel");
 
 	_propertyWidgets.chanceEntry = new wxSpinCtrlDouble(chancePanel, wxID_ANY);
 	_propertyWidgets.chanceEntry->SetRange(0.0, 1.0);
@@ -191,20 +193,14 @@ void ResponseEditor::populatePage(wxWindow* parent)
 
 	connectSpinButton(_propertyWidgets.chanceEntry, "chance");
 
-	makeLabelBold(this, "ResponseEditorFXLabel");
+	makeLabelBold(_mainPanel, "ResponseEditorFXLabel");
 
 	createEffectWidgets();
-
-	editingPanel->Layout();
-	editingPanel->Fit();
-	Layout();
-	Fit();
 }
 
-// Create the response effect list widgets
 void ResponseEditor::createEffectWidgets()
 {
-	wxPanel* effectsPanel = findNamedObject<wxPanel>(this, "ResponseEditorFXPanel");
+	wxPanel* effectsPanel = findNamedObject<wxPanel>(_mainPanel, "ResponseEditorFXPanel");
 
 	wxutil::TreeModel::Ptr dummyModel(
         new wxutil::TreeModel(StimResponse::getColumns(), true)
@@ -322,7 +318,7 @@ void ResponseEditor::editEffect()
 		if (sr.get("class") == "R" && effectIndex > 0)
 		{
 			// Create a new effect editor (self-destructs)
-			EffectEditor* editor = new EffectEditor(this, sr, effectIndex, _stimTypes, *this);
+			EffectEditor* editor = new EffectEditor(_mainPanel, sr, effectIndex, _stimTypes, *this);
 
 			editor->ShowModal();
 			editor->Destroy();

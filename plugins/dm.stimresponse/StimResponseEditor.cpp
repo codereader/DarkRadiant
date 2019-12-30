@@ -34,11 +34,11 @@ namespace
 
 StimResponseEditor::StimResponseEditor() :
 	DialogBase(_(WINDOW_TITLE)),
-	_notebook(new wxNotebook(this, wxID_ANY)),
-	_entity(nullptr),
-	_stimEditor(new StimEditor(_notebook, _stimTypes)),
-	_responseEditor(new ResponseEditor(_notebook, _stimTypes)),
-	_customStimEditor(new CustomStimEditor(_notebook, _stimTypes))
+	//_notebook(new wxNotebook(this, wxID_ANY)),
+	_entity(nullptr)
+	//_stimEditor(new StimEditor(_notebook, _stimTypes)),
+	//_responseEditor(new ResponseEditor(_notebook, _stimTypes)),
+	//_customStimEditor(new CustomStimEditor(_notebook, _stimTypes))
 {
 	// Create the widgets
 	populateWindow();
@@ -85,6 +85,15 @@ int StimResponseEditor::ShowModal()
 
 void StimResponseEditor::populateWindow()
 {
+	auto mainPanel = loadNamedPanel(this, "SREditorMainPanel");
+	
+	_notebook = findNamedObject<wxNotebook>(this, "SREditorNotebook");
+
+	// Set up the list containing the stims and responses
+
+	_stimEditor = new StimEditor(mainPanel, _stimTypes);
+
+#if 0
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	_imageList.reset(new wxImageList(16, 16));
@@ -110,17 +119,18 @@ void StimResponseEditor::populateWindow()
 	
 	_notebook->AddPage(_customStimEditor, _("Custom Stims"), false, imageId);
 	_customStimPageNum = _notebook->FindPage(_customStimEditor);
-
+#endif
 	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
 		wxBookCtrlEventHandler(StimResponseEditor::onPageChanged), nullptr, this);
 
-	// Pack everything into the main window
-	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
-	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxALL, 12);
+	findNamedObject<wxButton>(this, "SREditorOkButton")->Bind(
+		wxEVT_BUTTON, [this](wxCommandEvent& ev) { EndModal(wxID_OK); });
+	findNamedObject<wxButton>(this, "SREditorCancelButton")->Bind(
+		wxEVT_BUTTON, [this](wxCommandEvent& ev) { EndModal(wxID_CANCEL); });
 
-	if (_lastShownPage == -1)
+	if (_lastShownPage == -1 && _notebook->GetPageCount() > 0)
 	{
-		_lastShownPage = _stimPageNum;
+		_lastShownPage = -1;
 	}
 
 	Layout();
@@ -146,11 +156,11 @@ void StimResponseEditor::rescanSelection()
 {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	_entity = NULL;
-	_srEntity = SREntityPtr();
+	_entity = nullptr;
+	_srEntity.reset();
 	_stimEditor->setEntity(_srEntity);
 	_responseEditor->setEntity(_srEntity);
-	_customStimEditor->setEntity(_srEntity);
+	//_customStimEditor->setEntity(_srEntity);
 
 	if (info.entityCount == 1 && info.totalCount == 1)
 	{
@@ -162,7 +172,7 @@ void StimResponseEditor::rescanSelection()
 		_srEntity = SREntityPtr(new SREntity(_entity, _stimTypes));
 		_stimEditor->setEntity(_srEntity);
 		_responseEditor->setEntity(_srEntity);
-		_customStimEditor->setEntity(_srEntity);
+		//_customStimEditor->setEntity(_srEntity);
 	}
 
 	if (_entity != NULL)

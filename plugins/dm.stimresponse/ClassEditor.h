@@ -3,12 +3,13 @@
 #include "SREntity.h"
 #include "StimTypes.h"
 
-#include <wx/panel.h>
+#include <wx/event.h>
 #include "wxutil/TreeView.h"
 
 class wxTextCtrl;
 class wxButton;
 class wxChoice;
+class wxPanel;
 class wxComboBox;
 class wxBitmapComboBox;
 class wxControl;
@@ -19,7 +20,7 @@ class wxSpinDoubleEvent;
 class wxBoxSizer;
 
 // There's a bug in the MSW implementation of wxBitmapComboBox, don't use it in 3.0.0
-#if (wxMAJOR_VERSION >= 3) && (wxMINOR_VERSION >= 0) && (wxRELEASE_NUMBER > 0) && defined(__WXMSW__)
+#if wxCHECK_VERSION(3,0,1) && defined(__WXMSW__)
 #define USE_BMP_COMBO_BOX
 #endif
 
@@ -27,7 +28,7 @@ namespace ui
 {
 
 class ClassEditor :
-	public wxPanel
+	public wxEvtHandler
 {
 protected:
 	typedef std::map<wxTextCtrl*, std::string> EntryMap;
@@ -47,17 +48,6 @@ protected:
 	// TRUE if the GTK callbacks should be disabled
 	bool _updatesDisabled;
 
-	struct ListButtons
-	{
-		wxButton* add;
-		wxButton* remove;
-
-		ListButtons() : 
-			add(NULL), 
-			remove(NULL)
-		{}
-	} _listButtons;
-
 #ifdef USE_BMP_COMBO_BOX
 	// The combo boxes to select the stim/response type
 	wxBitmapComboBox* _type;
@@ -71,12 +61,9 @@ protected:
 	wxBoxSizer* _overallHBox;
 
 public:
-	/** greebo: Constructs the shared widgets, but does not pack them
-	 */
-	ClassEditor(wxWindow* parent, StimTypes& stimTypes);
+	// Constructor is connecting the list pane
+	ClassEditor(wxWindow* mainPanel, StimTypes& stimTypes);
 
-	/** destructor
-	 */
 	virtual ~ClassEditor() {}
 
 	/** greebo: Sets the new entity (is called by the subclasses)
@@ -96,6 +83,8 @@ public:
 protected:
 	// Adds the constructed editing pane to the dialog
 	void packEditingPane(wxWindow* pane);
+	// Constructs a new list view as child to the given parent
+	void createListView(wxWindow* parent);
 
 	/** 
 	 * greebo: Returns the name of the selected stim in the given combo box.

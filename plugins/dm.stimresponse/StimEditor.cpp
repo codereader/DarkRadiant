@@ -18,10 +18,11 @@
 namespace ui
 {
 
-StimEditor::StimEditor(wxWindow* parent, StimTypes& stimTypes) :
-	ClassEditor(parent, stimTypes)
+StimEditor::StimEditor(wxWindow* mainPanel, StimTypes& stimTypes) :
+	ClassEditor(mainPanel, stimTypes),
+	_mainPanel(mainPanel)
 {
-	populatePage(this);
+	setupPage();
 
 	// Setup the context menu items and connect them to the callbacks
 	createContextMenu();
@@ -29,18 +30,22 @@ StimEditor::StimEditor(wxWindow* parent, StimTypes& stimTypes) :
 	update();
 }
 
-void StimEditor::populatePage(wxWindow* parent)
+void StimEditor::setupPage()
 {
-	wxPanel* editingPanel = loadNamedPanel(parent, "StimEditorMainPanel");
+	wxPanel* listPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorStimList");
+	createListView(listPanel);
 
-	packEditingPane(editingPanel);
+	setupEditPanel();
 
-	setupEditingPanel();
+	auto addType = findNamedObject<wxBitmapComboBox>(_mainPanel, "StimTypeComboBox");
 
-	editingPanel->Layout();
-	editingPanel->Fit();
-	Layout();
-	Fit();
+	addType->Bind(wxEVT_COMBOBOX, std::bind(&StimEditor::onAddTypeSelect, this, std::placeholders::_1));
+
+	auto addButton = findNamedObject<wxButton>(_mainPanel, "AddStimButton");
+	auto removeButton = findNamedObject<wxButton>(_mainPanel, "RemoveStimButton");
+
+	addButton->Bind(wxEVT_BUTTON, std::bind(&StimEditor::onAddSR, this, std::placeholders::_1));
+	removeButton->Bind(wxEVT_BUTTON, std::bind(&StimEditor::onRemoveSR, this, std::placeholders::_1));
 }
 
 void StimEditor::setEntity(const SREntityPtr& entity)
@@ -48,7 +53,7 @@ void StimEditor::setEntity(const SREntityPtr& entity)
 	// Pass the call to the base class
 	ClassEditor::setEntity(entity);
 
-	if (entity != NULL)
+	if (entity)
 	{
 		wxutil::TreeModel::Ptr stimStore = _entity->getStimStore();
 		_list->AssociateModel(stimStore.get());
@@ -65,14 +70,14 @@ void StimEditor::setEntity(const SREntityPtr& entity)
 	}
 }
 
-void StimEditor::setupEditingPanel()
+void StimEditor::setupEditPanel()
 {
 #ifdef USE_BMP_COMBO_BOX
 	// Type Selector
-	_type = findNamedObject<wxBitmapComboBox>(this, "StimEditorTypeCombo");
+	_type = findNamedObject<wxBitmapComboBox>(_mainPanel, "StimEditorTypeCombo");
 #else
 	// Response property section
-	wxControl* typeBox = findNamedObject<wxControl>(this, "StimEditorTypeCombo");
+	wxControl* typeBox = findNamedObject<wxControl>(_mainPanel, "StimEditorTypeCombo");
 
 	// Replace the bitmap combo with an ordinary one
 	wxComboBox* combo = new wxComboBox(typeBox->GetParent(), wxID_ANY);
@@ -86,55 +91,55 @@ void StimEditor::setupEditingPanel()
 	_stimTypes.populateComboBox(_type);
 	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(StimEditor::onStimTypeSelect), NULL, this); 
 
-	_propertyWidgets.active = findNamedObject<wxCheckBox>(this, "StimEditorActive");
+	_propertyWidgets.active = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorActive");
 
 	// Timer Time
-	_propertyWidgets.timer.toggle = findNamedObject<wxCheckBox>(this, "StimEditorActivationTimer");
-	_propertyWidgets.timer.entryHBox = findNamedObject<wxPanel>(this, "StimEditorActivationTimerPanel");
+	_propertyWidgets.timer.toggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorActivationTimer");
+	_propertyWidgets.timer.entryHBox = findNamedObject<wxPanel>(_mainPanel, "StimEditorActivationTimerPanel");
 
-	_propertyWidgets.timer.hour = findNamedObject<wxSpinCtrl>(this, "StimEditorAcivationTimerHour");
-	_propertyWidgets.timer.minute = findNamedObject<wxSpinCtrl>(this, "StimEditorAcivationTimerMinute");
-	_propertyWidgets.timer.second = findNamedObject<wxSpinCtrl>(this, "StimEditorAcivationTimerSecond");
-	_propertyWidgets.timer.millisecond = findNamedObject<wxSpinCtrl>(this, "StimEditorAcivationTimerMS");
+	_propertyWidgets.timer.hour = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorAcivationTimerHour");
+	_propertyWidgets.timer.minute = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorAcivationTimerMinute");
+	_propertyWidgets.timer.second = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorAcivationTimerSecond");
+	_propertyWidgets.timer.millisecond = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorAcivationTimerMS");
 
 	// Timer type
-	_propertyWidgets.timer.typeToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimerRestarts");
-	_propertyWidgets.timer.reloadHBox = findNamedObject<wxPanel>(this, "StimEditorTimerRestartPanel");
+	_propertyWidgets.timer.typeToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorTimerRestarts");
+	_propertyWidgets.timer.reloadHBox = findNamedObject<wxPanel>(_mainPanel, "StimEditorTimerRestartPanel");
 
-	_propertyWidgets.timer.reloadEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorTimerReloadsTimes");
+	_propertyWidgets.timer.reloadEntry = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorTimerReloadsTimes");
 	_propertyWidgets.timer.reloadEntry->SetMinClientSize(wxSize(_propertyWidgets.timer.reloadEntry->GetCharWidth() * 9, -1));
 
-	_propertyWidgets.timer.reloadToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimerReloads");
+	_propertyWidgets.timer.reloadToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorTimerReloads");
 
-	_propertyWidgets.timer.waitToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimerWaitsForStart");
+	_propertyWidgets.timer.waitToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorTimerWaitsForStart");
 
 	// Time Interval
-	_propertyWidgets.timeIntToggle = findNamedObject<wxCheckBox>(this, "StimEditorTimeInterval");
-	_propertyWidgets.timeIntEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorTimeIntervalValue");
-	_propertyWidgets.timeUnitLabel = findNamedObject<wxStaticText>(this, "StimEditorTimeIntervalUnitLabel");
+	_propertyWidgets.timeIntToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorTimeInterval");
+	_propertyWidgets.timeIntEntry = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorTimeIntervalValue");
+	_propertyWidgets.timeUnitLabel = findNamedObject<wxStaticText>(_mainPanel, "StimEditorTimeIntervalUnitLabel");
 
 	// Duration
-	_propertyWidgets.durationToggle = findNamedObject<wxCheckBox>(this, "StimEditorDuration");
-	_propertyWidgets.durationEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorDurationValue");
-	_propertyWidgets.durationUnitLabel = findNamedObject<wxStaticText>(this, "StimEditorDurationUnitLabel");
+	_propertyWidgets.durationToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorDuration");
+	_propertyWidgets.durationEntry = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorDurationValue");
+	_propertyWidgets.durationUnitLabel = findNamedObject<wxStaticText>(_mainPanel, "StimEditorDurationUnitLabel");
 
 	// Radius / Use Bounds
-	_propertyWidgets.radiusToggle = findNamedObject<wxCheckBox>(this, "StimEditorRadius");
-	_propertyWidgets.radiusEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorRadiusValue");
-	_propertyWidgets.useBounds = findNamedObject<wxCheckBox>(this, "StimEditorRadiusUseBounds");
+	_propertyWidgets.radiusToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorRadius");
+	_propertyWidgets.radiusEntry = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorRadiusValue");
+	_propertyWidgets.useBounds = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorRadiusUseBounds");
 
 	// Final Radius
-	_propertyWidgets.finalRadiusToggle = findNamedObject<wxCheckBox>(this, "StimEditorRadiusChangesOverTime");
-	_propertyWidgets.finalRadiusEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorRadiusChangesOverTimeValue");
+	_propertyWidgets.finalRadiusToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorRadiusChangesOverTime");
+	_propertyWidgets.finalRadiusEntry = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorRadiusChangesOverTimeValue");
 
 	// Magnitude
-	_propertyWidgets.magnToggle = findNamedObject<wxCheckBox>(this, "StimEditorMagnitude");
-	_propertyWidgets.magnEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorMagnitudeValue");
+	_propertyWidgets.magnToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorMagnitude");
+	_propertyWidgets.magnEntry = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorMagnitudeValue");
 
 	// Falloff exponent
-	_propertyWidgets.falloffToggle = findNamedObject<wxCheckBox>(this, "StimEditorMagnitudeFalloff");
+	_propertyWidgets.falloffToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorMagnitudeFalloff");
 
-	wxPanel* falloffPanel = findNamedObject<wxPanel>(this, "StimEditorMagnitudePanel");
+	wxPanel* falloffPanel = findNamedObject<wxPanel>(_mainPanel, "StimEditorMagnitudePanel");
 
 	_propertyWidgets.falloffEntry = new wxSpinCtrlDouble(falloffPanel, wxID_ANY);
 	_propertyWidgets.falloffEntry->SetRange(-10, +10);
@@ -145,12 +150,12 @@ void StimEditor::setupEditingPanel()
 	falloffPanel->GetSizer()->Add(_propertyWidgets.falloffEntry, 2);
 
 	// Max fire count
-	_propertyWidgets.maxFireCountToggle = findNamedObject<wxCheckBox>(this, "StimEditorMaxFireCount");
-	_propertyWidgets.maxFireCountEntry = findNamedObject<wxSpinCtrl>(this, "StimEditorMaxFireCountValue");
+	_propertyWidgets.maxFireCountToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorMaxFireCount");
+	_propertyWidgets.maxFireCountEntry = findNamedObject<wxSpinCtrl>(_mainPanel, "StimEditorMaxFireCountValue");
 
 	// Chance variable
-	_propertyWidgets.chanceToggle = findNamedObject<wxCheckBox>(this, "StimEditorChance");
-	wxPanel* chancePanel = findNamedObject<wxPanel>(this, "StimEditorChanceValuePanel");
+	_propertyWidgets.chanceToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorChance");
+	wxPanel* chancePanel = findNamedObject<wxPanel>(_mainPanel, "StimEditorChanceValuePanel");
 
 	_propertyWidgets.chanceEntry = new wxSpinCtrlDouble(chancePanel, wxID_ANY);
 	_propertyWidgets.chanceEntry->SetRange(0.0, 1.0);
@@ -160,14 +165,14 @@ void StimEditor::setupEditingPanel()
 	chancePanel->GetSizer()->Add(_propertyWidgets.chanceEntry, 1);
 
 	// Velocity variable
-	_propertyWidgets.velocityToggle = findNamedObject<wxCheckBox>(this, "StimEditorVelocity");
-	_propertyWidgets.velocityEntry = findNamedObject<wxTextCtrl>(this, "StimEditorVelocityValue");
+	_propertyWidgets.velocityToggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorVelocity");
+	_propertyWidgets.velocityEntry = findNamedObject<wxTextCtrl>(_mainPanel, "StimEditorVelocityValue");
 
 	// Bounds mins and maxs
-	_propertyWidgets.bounds.toggle = findNamedObject<wxCheckBox>(this, "StimEditorBounds");
-	_propertyWidgets.bounds.panel = findNamedObject<wxPanel>(this, "StimEditorBoundsPanel");
-	_propertyWidgets.bounds.minEntry = findNamedObject<wxTextCtrl>(this, "StimEditorBoundsMinValue");
-	_propertyWidgets.bounds.maxEntry = findNamedObject<wxTextCtrl>(this, "StimEditorBoundsMaxValue");
+	_propertyWidgets.bounds.toggle = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorBounds");
+	_propertyWidgets.bounds.panel = findNamedObject<wxPanel>(_mainPanel, "StimEditorBoundsPanel");
+	_propertyWidgets.bounds.minEntry = findNamedObject<wxTextCtrl>(_mainPanel, "StimEditorBoundsMinValue");
+	_propertyWidgets.bounds.maxEntry = findNamedObject<wxTextCtrl>(_mainPanel, "StimEditorBoundsMaxValue");
 	_propertyWidgets.bounds.minEntry->SetMinClientSize(wxSize(100, -1));
 	_propertyWidgets.bounds.maxEntry->SetMinClientSize(wxSize(100, -1));
 
@@ -419,7 +424,7 @@ void StimEditor::update()
 {
 	_updatesDisabled = true; // avoid unwanted callbacks
 
-	wxPanel* mainPanel = findNamedObject<wxPanel>(this, "StimEditorMainPanel");
+	wxPanel* mainPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorStimPanel");
 
 	int id = getIdFromSelection();
 

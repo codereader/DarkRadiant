@@ -6,6 +6,7 @@
 #include "iscenegraph.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 #include "StimTypes.h"
 #include "SREntity.h"
@@ -23,7 +24,8 @@ class StimResponseEditor;
 typedef std::shared_ptr<StimResponseEditor> StimResponseEditorPtr;
 
 class StimResponseEditor :
-	public wxutil::DialogBase
+	public wxutil::DialogBase,
+	public wxutil::XmlResourceBasedWidget
 {
 private:
 	wxNotebook* _notebook;
