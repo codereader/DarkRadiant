@@ -785,6 +785,17 @@
 							</object>
 						</object>
 					</object>
+					<object class="notebookpage">
+						<label>Custom Stims</label>
+						<selected>0</selected>
+						<bitmap stock_id="darkradiant:sr_icon_custom.png" stock_client="">undefined.png</bitmap>
+						<object class="wxPanel" name="SREditorCustomStimEditorContainer">
+							<style>wxTAB_TRAVERSAL</style>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+							</object>
+						</object>
+					</object>
 				</object>
 			</object>
 			<object class="sizeritem">

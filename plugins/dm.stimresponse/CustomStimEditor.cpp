@@ -22,13 +22,12 @@ namespace
 }
 
 CustomStimEditor::CustomStimEditor(wxWindow* parent, StimTypes& stimTypes) :
-	wxPanel(parent, wxID_ANY),
-	_customStimStore(NULL),
-	_list(NULL),
+	_customStimStore(nullptr),
+	_list(nullptr),
 	_stimTypes(stimTypes),
 	_updatesDisabled(false)
 {
-	populatePage();
+	populatePage(parent);
 
 	// Setup the context menu items and connect them to the callbacks
 	createContextMenu();
@@ -59,20 +58,17 @@ void CustomStimEditor::createContextMenu()
 		wxCommandEventHandler(CustomStimEditor::onContextMenuAdd), NULL, this);
 }
 
-void CustomStimEditor::populatePage()
+void CustomStimEditor::populatePage(wxWindow* parent)
 {
-	// Add a 6 pixel border around everything
-	SetSizer(new wxBoxSizer(wxVERTICAL));
-
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
-	GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 6);
+	parent->GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 6);
 
 	// Setup a treemodel filter to display the custom stims only
 	_customStimStore = new wxutil::TreeModelFilter(_stimTypes.getListStore());
 
 	_customStimStore->SetFilterColumn(_stimTypes.getColumns().isCustom);
 
-	_list = wxutil::TreeView::Create(this);
+	_list = wxutil::TreeView::Create(parent);
 	_list->AssociateModel(_customStimStore.get());
 	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
 
@@ -93,9 +89,9 @@ void CustomStimEditor::populatePage()
 
 	wxBoxSizer* listVBox = new wxBoxSizer(wxVERTICAL);
 	listVBox->Add(_list, 1, wxEXPAND | wxBOTTOM, 6);
-	listVBox->Add(createListButtons(), 0, wxEXPAND);
+	listVBox->Add(createListButtons(parent), 0, wxEXPAND);
 
-	_propertyWidgets.vbox = new wxPanel(this, wxID_ANY);
+	_propertyWidgets.vbox = new wxPanel(parent, wxID_ANY);
 	_propertyWidgets.vbox->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	hbox->Add(listVBox, 0, wxEXPAND | wxRIGHT, 12);
@@ -122,12 +118,12 @@ void CustomStimEditor::populatePage()
 	_propertyWidgets.vbox->GetSizer()->Add(infoText, 0);
 }
 
-wxBoxSizer* CustomStimEditor::createListButtons()
+wxBoxSizer* CustomStimEditor::createListButtons(wxWindow* parent)
 {
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
-	_listButtons.add = new wxButton(this, wxID_ANY, _("Add Stim Type"));
-	_listButtons.remove = new wxButton(this, wxID_ANY, _("Remove Stim Type"));
+	_listButtons.add = new wxButton(parent, wxID_ANY, _("Add Stim Type"));
+	_listButtons.remove = new wxButton(parent, wxID_ANY, _("Remove Stim Type"));
 
 	hbox->Add(_listButtons.add, 1, wxRIGHT, 6);
 	hbox->Add(_listButtons.remove, 1);
@@ -187,8 +183,7 @@ void CustomStimEditor::addStimType()
 				   true);
 
 	selectId(id);
-
-	// Send an update to the parent window
+	update();
 }
 
 int CustomStimEditor::getIdFromSelection()

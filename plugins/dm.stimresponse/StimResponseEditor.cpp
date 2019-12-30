@@ -34,11 +34,8 @@ namespace
 
 StimResponseEditor::StimResponseEditor() :
 	DialogBase(_(WINDOW_TITLE)),
-	//_notebook(new wxNotebook(this, wxID_ANY)),
-	_entity(nullptr)
-	//_stimEditor(new StimEditor(_notebook, _stimTypes)),
-	//_responseEditor(new ResponseEditor(_notebook, _stimTypes)),
-	//_customStimEditor(new CustomStimEditor(_notebook, _stimTypes))
+	_entity(nullptr),
+	_customStimEditor(nullptr)
 {
 	// Create the widgets
 	populateWindow();
@@ -89,36 +86,13 @@ void StimResponseEditor::populateWindow()
 	
 	_notebook = findNamedObject<wxNotebook>(this, "SREditorNotebook");
 
-	_stimEditor = new StimEditor(mainPanel, _stimTypes);
-	_responseEditor = new ResponseEditor(mainPanel, _stimTypes);
-
-#if 0
-	SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	_imageList.reset(new wxImageList(16, 16));
-	_notebook->SetImageList(_imageList.get());
-
-	// Stim Editor Page
-	int imageId = _imageList->Add(
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_STIM + SUFFIX_EXTENSION));
+	_stimEditor = std::make_unique<StimEditor>(mainPanel, _stimTypes);
+	_responseEditor = std::make_unique<ResponseEditor>(mainPanel, _stimTypes);
 	
-	_notebook->AddPage(_stimEditor, _("Stims"), false, imageId);
-	_stimPageNum = _notebook->FindPage(_stimEditor);
-
-	// Response Editor Page
-	imageId = _imageList->Add(
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_RESPONSE + SUFFIX_EXTENSION));
-	
-	_notebook->AddPage(_responseEditor, _("Responses"), false, imageId);
-	_responsePageNum = _notebook->FindPage(_responseEditor);
-
 	// Custom Stim Editor
-	imageId = _imageList->Add(
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_CUSTOM_STIM));
-	
-	_notebook->AddPage(_customStimEditor, _("Custom Stims"), false, imageId);
-	_customStimPageNum = _notebook->FindPage(_customStimEditor);
-#endif
+	auto customStimPanel = findNamedObject<wxPanel>(mainPanel, "SREditorCustomStimEditorContainer");
+	_customStimEditor = std::make_unique<CustomStimEditor>(customStimPanel, _stimTypes);
+
 	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
 		wxBookCtrlEventHandler(StimResponseEditor::onPageChanged), nullptr, this);
 
@@ -159,7 +133,7 @@ void StimResponseEditor::rescanSelection()
 	_srEntity.reset();
 	_stimEditor->setEntity(_srEntity);
 	_responseEditor->setEntity(_srEntity);
-	//_customStimEditor->setEntity(_srEntity);
+	_customStimEditor->setEntity(_srEntity);
 
 	if (info.entityCount == 1 && info.totalCount == 1)
 	{
@@ -171,7 +145,7 @@ void StimResponseEditor::rescanSelection()
 		_srEntity = SREntityPtr(new SREntity(_entity, _stimTypes));
 		_stimEditor->setEntity(_srEntity);
 		_responseEditor->setEntity(_srEntity);
-		//_customStimEditor->setEntity(_srEntity);
+		_customStimEditor->setEntity(_srEntity);
 	}
 
 	if (_entity != NULL)

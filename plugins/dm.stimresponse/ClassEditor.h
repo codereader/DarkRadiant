@@ -81,8 +81,6 @@ public:
 	void reloadStimTypes();
 
 protected:
-	// Adds the constructed editing pane to the dialog
-	void packEditingPane(wxWindow* pane);
 	// Constructs a new list view as child to the given parent
 	void createListView(wxWindow* parent);
 
@@ -101,10 +99,6 @@ protected:
 	/** greebo: Duplicates the currently selected S/R object
 	 */
 	void duplicateStimResponse();
-
-	/** greebo: Returns the fabricated Stim Selector widget structure
-	 */
-	wxComboBox* createStimTypeSelector(wxWindow* parent);
 
 	/** greebo: Gets called when a check box is toggled, this should
 	 * 			update the contents of possible associated entry fields.

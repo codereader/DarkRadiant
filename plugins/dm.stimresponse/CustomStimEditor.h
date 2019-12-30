@@ -2,7 +2,7 @@
 
 #include "StimTypes.h"
 #include "SREntity.h"
-#include <wx/panel.h>
+#include <wx/event.h>
 #include "wxutil/TreeModelFilter.h"
 #include "wxutil/TreeView.h"
 #include <memory>
@@ -18,7 +18,7 @@ namespace ui
 {
 
 class CustomStimEditor :
-	public wxPanel
+	public wxEvtHandler
 {
 	struct PropertyWidget
 	{
@@ -86,11 +86,11 @@ private:
 	/** greebo: Widget creators
 	 */
 	void createContextMenu();
-	wxBoxSizer* createListButtons();
+	wxBoxSizer* createListButtons(wxWindow* parent);
 
 	/** greebo: Creates all the widgets
 	 */
-	void populatePage();
+	void populatePage(wxWindow* parent);
 
 	// Callbacks
 	void onAddStimType(wxCommandEvent& ev);
