@@ -149,16 +149,18 @@ void ResponseEditor::setupPage()
 	// Response property section
 	_type = findNamedObject<wxBitmapComboBox>(_mainPanel, "ResponseEditorTypeCombo");
 #else
-	// Response property section
-	wxControl* typeBox = findNamedObject<wxControl>(_mainPanel, "ResponseEditorTypeCombo");
+	{
+		// Response property section
+		wxControl* typeBox = findNamedObject<wxControl>(_mainPanel, "ResponseEditorTypeCombo");
+	
+		// Replace the bitmap combo with an ordinary one
+		wxComboBox* combo = new wxComboBox(typeBox->GetParent(), wxID_ANY);
+		typeBox->GetContainingSizer()->Add(combo, 1, wxEXPAND);
+		typeBox->Destroy();
 
-	// Replace the bitmap combo with an ordinary one
-	wxComboBox* combo = new wxComboBox(typeBox->GetParent(), wxID_ANY);
-	typeBox->GetContainingSizer()->Add(combo, 1, wxEXPAND);
-	typeBox->Destroy();
-
-	_type = combo;
-	_type->SetName("ResponseEditorTypeCombo");
+		_type = combo;
+		_type->SetName("ResponseEditorTypeCombo");
+	}
 #endif
 
 	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(ResponseEditor::onStimTypeSelect), NULL, this); 
@@ -195,7 +197,22 @@ void ResponseEditor::setupPage()
 
 	createEffectWidgets();
 
+#ifdef USE_BMP_COMBO_BOX
 	_addType = findNamedObject<wxBitmapComboBox>(_mainPanel, "ResponseTypeComboBox");
+#else
+	{
+		// Type selector box
+		wxControl* addTypeBox = findNamedObject<wxControl>(_mainPanel, "ResponseTypeComboBox");
+
+		// Replace the bitmap combo with an ordinary one
+		wxComboBox* newTypeCombo = new wxComboBox(addTypeBox->GetParent(), wxID_ANY);
+		addTypeBox->GetContainingSizer()->Prepend(newTypeCombo, 1, wxEXPAND | wxRIGHT, 6);
+		addTypeBox->Destroy();
+
+		_addType = newTypeCombo;
+		_addType->SetName("ResponseTypeComboBox");
+	}
+#endif
 	_addType->Bind(wxEVT_COMBOBOX, std::bind(&ResponseEditor::onAddTypeSelect, this, std::placeholders::_1));
 
 	auto addButton = findNamedObject<wxButton>(_mainPanel, "AddResponseButton");

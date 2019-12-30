@@ -37,7 +37,23 @@ void StimEditor::setupPage()
 
 	setupEditPanel();
 
+#ifdef USE_BMP_COMBO_BOX
 	_addType = findNamedObject<wxBitmapComboBox>(_mainPanel, "StimTypeComboBox");
+#else
+	{
+		// Type selector box
+		wxControl* typeBox = findNamedObject<wxControl>(_mainPanel, "StimTypeComboBox");
+
+		// Replace the bitmap combo with an ordinary one
+		wxComboBox* combo = new wxComboBox(typeBox->GetParent(), wxID_ANY);
+		typeBox->GetContainingSizer()->Prepend(combo, 1, wxEXPAND | wxRIGHT, 6);
+		typeBox->Destroy();
+
+		_addType = combo;
+		_addType->SetName("StimTypeComboBox");
+	}
+#endif
+
 	_addType->Bind(wxEVT_COMBOBOX, std::bind(&StimEditor::onAddTypeSelect, this, std::placeholders::_1));
 
 	auto addButton = findNamedObject<wxButton>(_mainPanel, "AddStimButton");
