@@ -12,6 +12,9 @@ namespace wxutil
  * 
  * Use the SetShouldScrollToChildOnFocus() method to control
  * the behaviour.
+ *
+ * Note that this class can't do its job in wxWidgets versions 
+ * below 3.1.3.
  */
 class ScrollWindow : 
 	public wxScrolledWindow
@@ -38,11 +41,14 @@ public:
 	}
 
 protected:
+
+#if wxCHECK_VERSION(3,1,3)
 	// Override the protected wxScrolledWindow method to return the configured value
 	bool ShouldScrollToChildOnFocus(wxWindow* child) override
 	{
 		return _shouldScrollToChildOnFocus;
 	}
+#endif
 };
 
 }
