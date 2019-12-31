@@ -3,15 +3,15 @@
 
 [Setup]
 AppName=DarkRadiant
-AppVerName=DarkRadiant 2.7.0pre2 x86
+AppVerName=DarkRadiant 2.7.0pre3 x86
 AppPublisher=The Dark Mod
 AppPublisherURL=https://www.darkradiant.net
 AppSupportURL=https://www.darkradiant.net
 AppUpdatesURL=https://www.darkradiant.net
 DefaultDirName={pf}\DarkRadiant
-DefaultGroupName=DarkRadiant 2.7.0pre2 x86
+DefaultGroupName=DarkRadiant 2.7.0pre3 x86
 OutputDir=.
-OutputBaseFilename=darkradiant-2.7.0pre2-x86
+OutputBaseFilename=darkradiant-2.7.0pre3-x86
 Compression=lzma
 SolidCompression=yes
 ;ArchitecturesAllowed=x64
@@ -69,3 +69,5 @@ Type: files; Name: {app}\modules\eclasstree.dll;
 Type: files; Name: {app}\modules\entitylist.dll;
 ; undo module has been removed
 Type: files; Name: {app}\modules\undo.dll;
+; remove all legacy XRC files before installing
+Type: files; Name: {app}\ui\*.xrc;
