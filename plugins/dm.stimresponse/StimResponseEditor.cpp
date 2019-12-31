@@ -16,6 +16,7 @@
 #include "StimEditor.h"
 #include "ResponseEditor.h"
 
+#include <wx/button.h>
 #include <wx/artprov.h>
 
 namespace ui

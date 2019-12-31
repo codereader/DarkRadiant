@@ -11,6 +11,7 @@
 #include <wx/spinctrl.h>
 #include <wx/bmpcbox.h>
 #include <wx/sizer.h>
+#include <wx/button.h>
 
 #include "wxutil/ChoiceHelper.h"
 #include "wxutil/menu/IconTextMenuItem.h"

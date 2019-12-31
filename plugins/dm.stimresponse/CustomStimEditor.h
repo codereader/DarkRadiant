@@ -7,6 +7,7 @@
 #include "wxutil/TreeView.h"
 #include <memory>
 
+class wxPanel;
 class wxTextCtrl;
 class wxStaticText;
 class wxButton;
