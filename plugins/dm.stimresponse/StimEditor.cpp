@@ -400,7 +400,7 @@ void StimEditor::openSRListContextMenu()
 
 void StimEditor::addSR()
 {
-	if (_entity == NULL) return;
+	if (!_entity) return;
 
 	// Create a new StimResponse object
 	int id = _entity->add();

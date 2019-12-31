@@ -249,24 +249,24 @@ void StimTypes::populateComboBox(wxComboBox* combo) const
 {
 	combo->Clear();
 
-	std::for_each(_stimTypes.begin(), _stimTypes.end(), [&] (const StimTypeMap::value_type& pair)
+	for (const auto& pair : _stimTypes)
 	{
 		// Add the name (e.g. "STIM_FIRE") as client data to this option, for later retrieval
 		combo->Append(pair.second.caption, new wxStringClientData(pair.second.name));
-	});
+	}
 }
 
 void StimTypes::populateComboBox(wxBitmapComboBox* combo) const
 {
 	combo->Clear();
 
-	std::for_each(_stimTypes.begin(), _stimTypes.end(), [&] (const StimTypeMap::value_type& pair)
+	for (const auto& pair : _stimTypes)
 	{
 		wxBitmap icon = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + pair.second.icon);
 
 		// Add the name (e.g. "STIM_FIRE") as client data to this option, for later retrieval
 		combo->Append(pair.second.caption, icon, new wxStringClientData(pair.second.name));
-	});
+	}
 }
 
 void StimTypes::visitKeyValue(const std::string& key, const std::string& value)

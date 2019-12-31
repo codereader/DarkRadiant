@@ -230,8 +230,6 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	row[cols.caption] = wxVariant(wxDataViewIconText(stimTypeStr, icon));
 	row[cols.caption] = colour;
 	row[cols.inherited] = sr.inherited();
-
-	row.SendItemChanged();
 }
 
 void SREntity::setProperty(int id, const std::string& key, const std::string& value)
@@ -252,6 +250,7 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 
 	wxutil::TreeModel::Row row(item, *targetStore);
 	writeToListRow(row, sr);
+	row.SendItemChanged();
 }
 
 StimResponse& SREntity::get(int id)
