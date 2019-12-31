@@ -83,8 +83,6 @@ private:
 public:
 	SREntity(Entity* source, StimTypes& stimTypes);
 
-	~SREntity();
-
 	void load(Entity* source);
 	void save(Entity* target);
 

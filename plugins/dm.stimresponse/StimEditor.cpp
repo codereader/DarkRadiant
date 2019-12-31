@@ -117,7 +117,7 @@ void StimEditor::setupEditPanel()
 #endif
 
 	_stimTypes.populateComboBox(_type);
-	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(StimEditor::onStimTypeSelect), NULL, this); 
+	_type->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(StimEditor::onStimTypeSelect), nullptr, this); 
 
 	_propertyWidgets.active = findNamedObject<wxCheckBox>(_mainPanel, "StimEditorActive");
 
@@ -439,13 +439,13 @@ void StimEditor::createContextMenu()
 
 	// Connect up the signals
 	_contextMenu.menu->Connect(_contextMenu.remove->GetId(), wxEVT_MENU, 
-		wxCommandEventHandler(StimEditor::onContextMenuDelete), NULL, this);
+		wxCommandEventHandler(StimEditor::onContextMenuDelete), nullptr, this);
 	_contextMenu.menu->Connect(_contextMenu.enable->GetId(), wxEVT_MENU, 
-		wxCommandEventHandler(StimEditor::onContextMenuEnable), NULL, this);
+		wxCommandEventHandler(StimEditor::onContextMenuEnable), nullptr, this);
 	_contextMenu.menu->Connect(_contextMenu.disable->GetId(), wxEVT_MENU, 
-		wxCommandEventHandler(StimEditor::onContextMenuDisable), NULL, this);
+		wxCommandEventHandler(StimEditor::onContextMenuDisable), nullptr, this);
 	_contextMenu.menu->Connect(_contextMenu.duplicate->GetId(), wxEVT_MENU, 
-		wxCommandEventHandler(StimEditor::onContextMenuDuplicate), NULL, this);
+		wxCommandEventHandler(StimEditor::onContextMenuDuplicate), nullptr, this);
 }
 
 void StimEditor::update()

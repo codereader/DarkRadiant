@@ -28,10 +28,6 @@ SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
 	load(source);
 }
 
-SREntity::~SREntity()
-{
-}
-
 int SREntity::getHighestId()
 {
 	int id = 0;
@@ -68,7 +64,7 @@ void SREntity::load(Entity* source)
 	_stimStore->Clear();
 	_responseStore->Clear();
 
-	if (source == NULL)
+	if (source == nullptr)
 	{
 		return;
 	}
@@ -183,7 +179,7 @@ void SREntity::cleanEntity(Entity* target)
 
 void SREntity::save(Entity* target)
 {
-	if (target == NULL) {
+	if (target == nullptr) {
 		return;
 	}
 
