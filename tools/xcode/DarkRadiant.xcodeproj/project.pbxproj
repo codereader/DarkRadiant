@@ -370,6 +370,11 @@
 		3AA6E08323B23B1000BF9AD7 /* GLTextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F41A23B1B896008A1B2D /* GLTextureManager.cpp */; };
 		3AA6E08423B23B1000BF9AD7 /* TextureManipulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F41D23B1B896008A1B2D /* TextureManipulator.cpp */; };
 		3AA6E08523B23C6000BF9AD7 /* particles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3EA23B1B745008A1B2D /* particles.cpp */; };
+		3AA6E08723BB4E9F00BF9AD7 /* GLWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */; };
+		3AA6E08923BB4EF200BF9AD7 /* ScrollWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */; };
+		3AA6E08D23BB50DE00BF9AD7 /* stimresponseeditor.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */; };
+		3AA6E08E23BB510900BF9AD7 /* stimresponseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */; };
+		3AA6E08F23BB539B00BF9AD7 /* stimresponseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */; };
 		3AE2104E1E5980AF00F5A0A6 /* script.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0B21E50D8D50062D9AF /* script.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210511E5980B000F5A0A6 /* sound.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE19E1E50DD620062D9AF /* sound.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2701E50E1520062D9AF /* dm.conversation.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -902,8 +907,6 @@
 		3AEBE5301E522A510062D9AF /* patchthickendialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5101E5229DC0062D9AF /* patchthickendialog.xrc */; };
 		3AEBE5311E522A510062D9AF /* readableeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5121E5229DC0062D9AF /* readableeditor.xrc */; };
 		3AEBE5321E522A510062D9AF /* renderpreview.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */; };
-		3AEBE5331E522A510062D9AF /* responseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */; };
-		3AEBE5341E522A510062D9AF /* stimeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */; };
 		3AEBE5531E5233030062D9AF /* dialogtest.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5431E5232250062D9AF /* dialogtest.py */; };
 		3AEBE5541E5233030062D9AF /* init.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5441E5232250062D9AF /* init.py */; };
 		3AEBE5551E5233030062D9AF /* patchtest.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5451E5232250062D9AF /* patchtest.py */; };
@@ -1164,8 +1167,6 @@
 		3AF4756D1E634D70006B26C2 /* patchthickendialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5101E5229DC0062D9AF /* patchthickendialog.xrc */; };
 		3AF4756E1E634D70006B26C2 /* readableeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5121E5229DC0062D9AF /* readableeditor.xrc */; };
 		3AF4756F1E634D70006B26C2 /* renderpreview.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */; };
-		3AF475701E634D70006B26C2 /* responseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */; };
-		3AF475711E634D70006B26C2 /* stimeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */; };
 		3AF475731E634D95006B26C2 /* darkmod.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4B81E50EFEB0062D9AF /* darkmod.game */; };
 		3AF475741E634D95006B26C2 /* doom3-demo.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4B91E50EFEB0062D9AF /* doom3-demo.game */; };
 		3AF475751E634D95006B26C2 /* doom3.game in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE4BA1E50EFEB0062D9AF /* doom3.game */; };
@@ -1886,6 +1887,7 @@
 			dstPath = Resources/ui;
 			dstSubfolderSpec = 16;
 			files = (
+				3AA6E08F23BB539B00BF9AD7 /* stimresponseeditor.xrc in CopyFiles */,
 				3AE6F2211FDD3A6C008A1B2D /* missioninforeadmedialog.xrc in CopyFiles */,
 				3AE6F2021FD1AB66008A1B2D /* missioninfoeditdialog.xrc in CopyFiles */,
 				3AE6F1C71F4978AB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */,
@@ -1912,8 +1914,6 @@
 				3AEBE5301E522A510062D9AF /* patchthickendialog.xrc in CopyFiles */,
 				3AEBE5311E522A510062D9AF /* readableeditor.xrc in CopyFiles */,
 				3AEBE5321E522A510062D9AF /* renderpreview.xrc in CopyFiles */,
-				3AEBE5331E522A510062D9AF /* responseeditor.xrc in CopyFiles */,
-				3AEBE5341E522A510062D9AF /* stimeditor.xrc in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2196,6 +2196,7 @@
 			dstPath = Contents/Resources/ui;
 			dstSubfolderSpec = 1;
 			files = (
+				3AA6E08E23BB510900BF9AD7 /* stimresponseeditor.xrc in CopyFiles */,
 				3AE6F2221FDD3A83008A1B2D /* missioninforeadmedialog.xrc in CopyFiles */,
 				3AE6F2031FD1ACAD008A1B2D /* missioninfoeditdialog.xrc in CopyFiles */,
 				3AE6F1B71F496CDB008A1B2D /* exportasmodeldialog.xrc in CopyFiles */,
@@ -2222,8 +2223,6 @@
 				3AF4756D1E634D70006B26C2 /* patchthickendialog.xrc in CopyFiles */,
 				3AF4756E1E634D70006B26C2 /* readableeditor.xrc in CopyFiles */,
 				3AF4756F1E634D70006B26C2 /* renderpreview.xrc in CopyFiles */,
-				3AF475701E634D70006B26C2 /* responseeditor.xrc in CopyFiles */,
-				3AF475711E634D70006B26C2 /* stimeditor.xrc in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2582,6 +2581,9 @@
 		3A01232F1E503D3200A62BC1 /* white.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = white.bmp; path = ../../install/bitmaps/white.bmp; sourceTree = SOURCE_ROOT; };
 		3A0123301E503D3200A62BC1 /* wireframe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframe.png; path = ../../install/bitmaps/wireframe.png; sourceTree = SOURCE_ROOT; };
 		3A0123311E503D3200A62BC1 /* wireframeMode16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframeMode16.png; path = ../../install/bitmaps/wireframeMode16.png; sourceTree = SOURCE_ROOT; };
+		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
+		3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollWindow.h; path = ../../libs/wxutil/ScrollWindow.h; sourceTree = SOURCE_ROOT; };
+		3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = stimresponseeditor.xrc; path = ../../install/ui/stimresponseeditor.xrc; sourceTree = SOURCE_ROOT; };
 		3AAAC7201E617F700019C4F2 /* package_bundle.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = package_bundle.sh; sourceTree = SOURCE_ROOT; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
 		3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3368,8 +3370,6 @@
 		3AEBE5101E5229DC0062D9AF /* patchthickendialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = patchthickendialog.xrc; path = ../../install/ui/patchthickendialog.xrc; sourceTree = SOURCE_ROOT; };
 		3AEBE5121E5229DC0062D9AF /* readableeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = readableeditor.xrc; path = ../../install/ui/readableeditor.xrc; sourceTree = SOURCE_ROOT; };
 		3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = renderpreview.xrc; path = ../../install/ui/renderpreview.xrc; sourceTree = SOURCE_ROOT; };
-		3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = responseeditor.xrc; path = ../../install/ui/responseeditor.xrc; sourceTree = SOURCE_ROOT; };
-		3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = stimeditor.xrc; path = ../../install/ui/stimeditor.xrc; sourceTree = SOURCE_ROOT; };
 		3AEBE5381E5232250062D9AF /* ase_export.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = ase_export.py; path = ../../install/scripts/commands/ase_export.py; sourceTree = SOURCE_ROOT; };
 		3AEBE5391E5232250062D9AF /* ase_export_blend.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = ase_export_blend.py; path = ../../install/scripts/commands/ase_export_blend.py; sourceTree = SOURCE_ROOT; };
 		3AEBE53A1E5232250062D9AF /* check_for_invalid_visportals.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = check_for_invalid_visportals.py; path = ../../install/scripts/commands/check_for_invalid_visportals.py; sourceTree = SOURCE_ROOT; };
@@ -4225,6 +4225,8 @@
 		3A011FC41E50275700A62BC1 /* wxutil */ = {
 			isa = PBXGroup;
 			children = (
+				3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */,
+				3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */,
 				3A011FCE1E50278400A62BC1 /* ChoiceHelper.h */,
 				3A011FCF1E50278400A62BC1 /* clipboard.cpp */,
 				3A011FD01E50278400A62BC1 /* clipboard.h */,
@@ -5865,6 +5867,7 @@
 		3AEBE4E31E5229AB0062D9AF /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */,
 				3AE6F2201FDD3A36008A1B2D /* missioninforeadmedialog.xrc */,
 				3AE6F2001FD1AB24008A1B2D /* missioninfoeditdialog.xrc */,
 				3AEBE4E51E5229DC0062D9AF /* aboutdialog.xrc */,
@@ -5892,8 +5895,6 @@
 				3AEBE5101E5229DC0062D9AF /* patchthickendialog.xrc */,
 				3AEBE5121E5229DC0062D9AF /* readableeditor.xrc */,
 				3AEBE5141E5229DC0062D9AF /* renderpreview.xrc */,
-				3AEBE5161E5229DC0062D9AF /* responseeditor.xrc */,
-				3AEBE5181E5229DC0062D9AF /* stimeditor.xrc */,
 			);
 			name = ui;
 			sourceTree = "<group>";
@@ -7297,6 +7298,8 @@
 				3A01204E1E50278400A62BC1 /* MouseToolHandler.h in Headers */,
 				3A01202C1E50278400A62BC1 /* DialogBase.h in Headers */,
 				3A0120461E50278400A62BC1 /* PopupMenu.h in Headers */,
+				3AA6E08723BB4E9F00BF9AD7 /* GLWidget.h in Headers */,
+				3AA6E08923BB4EF200BF9AD7 /* ScrollWindow.h in Headers */,
 				3A0120291E50278400A62BC1 /* DeferredMotionDelta.h in Headers */,
 				3A01206C1E50278400A62BC1 /* XmlResourceBasedWidget.h in Headers */,
 				3A01205B1E50278400A62BC1 /* ScopeTimer.h in Headers */,
@@ -7994,6 +7997,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AA6E08D23BB50DE00BF9AD7 /* stimresponseeditor.xrc in Resources */,
 				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
 				3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */,
 				3AE6F2011FD1AB24008A1B2D /* missioninfoeditdialog.xrc in Resources */,
