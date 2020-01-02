@@ -28,7 +28,7 @@ inline void setTextureState(GLint& current,
         glActiveTexture(textureUnit);
         glClientActiveTexture(textureUnit);
         glBindTexture(textureMode, texture);
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
         current = texture;
     }
 }
@@ -41,7 +41,7 @@ inline void setTextureState(GLint& current,
     if (texture != current)
     {
         glBindTexture(textureMode, texture);
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
         current = texture;
     }
 }
@@ -55,12 +55,12 @@ inline void setState(unsigned int state,
     if (delta & state & flag)
     {
         glEnable(glflag);
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
     }
     else if(delta & ~state & flag)
     {
         glDisable(glflag);
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
     }
 }
 
@@ -94,12 +94,12 @@ void OpenGLShaderPass::setTexture0()
 
 void OpenGLShaderPass::enableTexture2D()
 {
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     setTexture0();
     glEnable(GL_TEXTURE_2D);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void OpenGLShaderPass::disableTexture2D()
@@ -108,7 +108,7 @@ void OpenGLShaderPass::disableTexture2D()
     glDisable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 // Enable cubemap texturing and texcoord array
@@ -117,7 +117,7 @@ void OpenGLShaderPass::enableTextureCubeMap()
     setTexture0();
     glEnable(GL_TEXTURE_CUBE_MAP);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 // Disable cubemap texturing and texcoord array
@@ -127,7 +127,7 @@ void OpenGLShaderPass::disableTextureCubeMap()
     glDisable(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void OpenGLShaderPass::enableRenderBlend()
@@ -135,7 +135,7 @@ void OpenGLShaderPass::enableRenderBlend()
     glEnable(GL_BLEND);
     setTexture0();
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void OpenGLShaderPass::disableRenderBlend()
@@ -143,7 +143,7 @@ void OpenGLShaderPass::disableRenderBlend()
     glDisable(GL_BLEND);
     setTexture0();
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerPtr& stage)
@@ -365,12 +365,12 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         if(changingBitsMask & requiredState & RENDER_FILL)
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
         else if(changingBitsMask & ~requiredState & RENDER_FILL)
         {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
 
         setState(requiredState, changingBitsMask, RENDER_OFFSETLINE, GL_POLYGON_OFFSET_LINE);
@@ -380,14 +380,14 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
             glEnable(GL_LIGHTING);
             glEnable(GL_COLOR_MATERIAL);
             glEnableClientState(GL_NORMAL_ARRAY);
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
         else if(changingBitsMask & ~requiredState & RENDER_LIGHTING)
         {
             glDisable(GL_LIGHTING);
             glDisable(GL_COLOR_MATERIAL);
             glDisableClientState(GL_NORMAL_ARRAY);
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
 
         // RENDER_TEXTURE_CUBEMAP
@@ -425,12 +425,12 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         if(changingBitsMask & requiredState & RENDER_SMOOTH)
         {
             glShadeModel(GL_SMOOTH);
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
         else if(changingBitsMask & ~requiredState & RENDER_SMOOTH)
         {
             glShadeModel(GL_FLAT);
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
 
         setState(requiredState, changingBitsMask, RENDER_SCALED, GL_NORMALIZE); // not GL_RESCALE_NORMAL
@@ -441,25 +441,25 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         {
             glDepthMask(GL_TRUE);
 
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
         else if(changingBitsMask & ~requiredState & RENDER_DEPTHWRITE)
         {
             glDepthMask(GL_FALSE);
 
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
 
         // Disable colour buffer writes if required
         if(changingBitsMask & requiredState & RENDER_MASKCOLOUR)
         {
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
         else if(changingBitsMask & ~requiredState & RENDER_MASKCOLOUR)
         {
             glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-            GlobalOpenGL().assertNoErrors();
+            debug::assertNoGlErrors();
         }
 
         setState(requiredState, changingBitsMask, RENDER_ALPHATEST, GL_ALPHA_TEST);
@@ -475,7 +475,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         && _glState.getDepthFunc() != current.getDepthFunc())
     {
         glDepthFunc(_glState.getDepthFunc());
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
         current.setDepthFunc(_glState.getDepthFunc());
     }
 
@@ -484,7 +484,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     || _glState.m_linestipple_pattern != current.m_linestipple_pattern))
   {
     glLineStipple(_glState.m_linestipple_factor, _glState.m_linestipple_pattern);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     current.m_linestipple_factor = _glState.m_linestipple_factor;
     current.m_linestipple_pattern = _glState.m_linestipple_pattern;
   }
@@ -497,7 +497,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     {
         // Set alpha function in GL
         glAlphaFunc(_glState.alphaFunc, _glState.alphaThreshold);
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
 
         // Store state values
         current.alphaFunc = _glState.alphaFunc;
@@ -531,7 +531,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     }
     glColor4dv(_glState.getColour());
     current.setColour(_glState.getColour());
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // Set up the cubemap and texgen parameters
     setUpCubeMapAndTexGen(current, requiredState, viewer);
@@ -540,7 +540,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     && (_glState.m_blend_src != current.m_blend_src || _glState.m_blend_dst != current.m_blend_dst))
   {
     glBlendFunc(_glState.m_blend_src, _glState.m_blend_dst);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     current.m_blend_src = _glState.m_blend_src;
     current.m_blend_dst = _glState.m_blend_dst;
   }
@@ -549,7 +549,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     && _glState.m_linewidth != current.m_linewidth)
   {
     glLineWidth(_glState.m_linewidth);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     current.m_linewidth = _glState.m_linewidth;
   }
 
@@ -557,13 +557,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     && _glState.m_pointsize != current.m_pointsize)
   {
     glPointSize(_glState.m_pointsize);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     current.m_pointsize = _glState.m_pointsize;
   }
 
   current.setRenderFlags(requiredState);
 
-  GlobalOpenGL().assertNoErrors();
+  debug::assertNoGlErrors();
 }
 
 // Add a Renderable to this bucket

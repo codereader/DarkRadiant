@@ -63,7 +63,7 @@ public:
     {
 		GLuint textureNum;
 
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
 
 		// Allocate a new texture number and store it into the Texture structure
 		glGenTextures(1, &textureNum);
@@ -88,7 +88,7 @@ public:
         tex2DObject->setWidth(getWidth(0));
         tex2DObject->setHeight(getHeight(0));
 
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
 
 		return tex2DObject;
 	}

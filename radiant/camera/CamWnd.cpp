@@ -796,11 +796,11 @@ void CamWnd::draw()
 
     if (GlobalMainFrame().screenUpdatesEnabled())
     {
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
 
         Cam_Draw();
 
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
     }
 }
 

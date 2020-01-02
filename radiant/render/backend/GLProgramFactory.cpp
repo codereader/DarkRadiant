@@ -214,7 +214,7 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 
     glShaderSource(vertexShader, 1, &csVertex, NULL);
     glShaderSource(fragmentShader, 1, &csFragment, NULL);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // Compile the shaders
     glCompileShader(vertexShader);
@@ -223,12 +223,12 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
     glCompileShader(fragmentShader);
     assertShaderCompiled(fragmentShader);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // Attach and link the program object itself
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     glLinkProgram(program);
 
@@ -246,7 +246,7 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
     CharBufPtr buffer = getFileAsBuffer(filename, false);
 
     // Bind the program data into OpenGL
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     GLuint programID;
     glGenProgramsARB(1, &programID);

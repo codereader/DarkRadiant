@@ -58,7 +58,7 @@ void GuiView::initialiseView()
 
 void GuiView::setGLViewPort()
 {
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	double width = _windowDims[0];
 	double height = _windowDims[1];
@@ -75,14 +75,14 @@ void GuiView::setGLViewPort()
 
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 }
 
 void GuiView::draw()
 {
 	if (_gui == NULL) return;
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	// Clear the window
 	glEnable(GL_DEPTH_TEST);
@@ -98,23 +98,23 @@ void GuiView::draw()
     // Enable depth buffer writing, to be safe
     glDepthMask(GL_TRUE);
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	// Prepare the GUI for rendering, like re-compiling texts etc.
 	// This has to be performed before states are initialised
 	_gui->pepareRendering();
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	setGLViewPort();
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	// Set up the scale
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	_renderer.render();
 }

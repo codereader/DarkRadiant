@@ -7,7 +7,7 @@ TexturePtr DDSImage::bindTexture(const std::string& name) const
 {
     GLuint textureNum;
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // Allocate a new texture number and store it into the Texture structure
     glGenTextures(1, &textureNum);
@@ -43,7 +43,7 @@ TexturePtr DDSImage::bindTexture(const std::string& name) const
             return TexturePtr();
         }
 
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
     }
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(_mipMapInfo.size() - 1));
@@ -56,7 +56,7 @@ TexturePtr DDSImage::bindTexture(const std::string& name) const
     texObj->setWidth(getWidth(0));
     texObj->setHeight(getHeight(0));
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     return texObj;
 }

@@ -1332,31 +1332,31 @@ void XYWnd::draw()
 
     glDepthMask(GL_FALSE);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     glLoadMatrixd(_modelView);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisable(GL_LINE_STIPPLE);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glLineWidth(1);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     if (GLEW_VERSION_1_3) {
         glActiveTexture(GL_TEXTURE0);
         glClientActiveTexture(GL_TEXTURE0);
     }
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisableClientState(GL_NORMAL_ARRAY);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisableClientState(GL_COLOR_ARRAY);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisable(GL_TEXTURE_2D);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisable(GL_LIGHTING);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisable(GL_COLOR_MATERIAL);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // greebo: Check, if the size info should be displayed (if there are any items selected)
     if (xyWndManager.showSizeInfo() && GlobalSelectionSystem().countSelected() != 0)
@@ -1406,7 +1406,7 @@ void XYWnd::draw()
         glPointSize(1);
     }
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // reset modelview
     glLoadIdentity();
@@ -1464,11 +1464,11 @@ void XYWnd::draw()
         }
     }
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // Reset the depth mask to its initial value (enabled)
     glDepthMask(GL_TRUE);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     glFinish();
 }

@@ -5,7 +5,7 @@
 
 #include "imodule.h"
 
-const std::string MODULE_OPENGL("OpenGL");
+const char* const MODULE_OPENGL("OpenGL");
 
 namespace wxutil { class GLWidget; }
 class wxGLContext;
@@ -17,6 +17,7 @@ public:
     virtual ~OpenGLBinding() {}
 
     /// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
+	// Normally, you want to use the debug::assertNoGlErrors() wrapper which does nothing in release builds
     virtual void assertNoErrors() = 0;
 
 	/// Returns the shared context widget holding the GL context
@@ -47,7 +48,8 @@ public:
     virtual void drawChar(char character) const = 0;
 };
 
-inline OpenGLBinding& GlobalOpenGL() {
+inline OpenGLBinding& GlobalOpenGL() 
+{
     // Cache the reference locally
     static OpenGLBinding& _openGL(
         *std::static_pointer_cast<OpenGLBinding>(
@@ -55,5 +57,17 @@ inline OpenGLBinding& GlobalOpenGL() {
         )
     );
     return _openGL;
+}
+
+namespace debug
+{
+
+inline void assertNoGlErrors()
+{
+#ifdef _DEBUG
+	GlobalOpenGL().assertNoErrors();
+#endif
+}
+
 }
 

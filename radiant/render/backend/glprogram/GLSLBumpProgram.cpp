@@ -47,7 +47,7 @@ void GLSLBumpProgram::create()
     glBindAttribLocation(_programObj, ATTR_BITANGENT, "attr_Bitangent");
     glBindAttribLocation(_programObj, ATTR_NORMAL, "attr_Normal");
     glLinkProgram(_programObj);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // Set the uniform locations to the correct bound values
     _locLightOrigin = glGetUniformLocation(_programObj, "u_light_origin");
@@ -66,7 +66,7 @@ void GLSLBumpProgram::create()
     // Texture 4 - Z attenuation map
 
     glUseProgram(_programObj);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     GLint samplerLoc;
 
@@ -85,17 +85,17 @@ void GLSLBumpProgram::create()
     samplerLoc = glGetUniformLocation(_programObj, "u_attenuationmap_z");
     glUniform1i(samplerLoc, 4);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glUseProgram(0);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void GLSLBumpProgram::destroy()
 {
     glDeleteProgram(_programObj);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void GLSLBumpProgram::enable()
@@ -107,7 +107,7 @@ void GLSLBumpProgram::enable()
     glEnableVertexAttribArrayARB(ATTR_BITANGENT);
     glEnableVertexAttribArrayARB(ATTR_NORMAL);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void GLSLBumpProgram::disable()
@@ -119,7 +119,7 @@ void GLSLBumpProgram::disable()
     glDisableVertexAttribArrayARB(ATTR_BITANGENT);
     glDisableVertexAttribArrayARB(ATTR_NORMAL);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
@@ -167,7 +167,7 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
     glLoadMatrixd(local2light);
     glMatrixMode(GL_MODELVIEW);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 }
