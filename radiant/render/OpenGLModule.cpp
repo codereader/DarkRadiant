@@ -34,6 +34,7 @@ void OpenGLModule::assertNoErrors()
 
     // Build list of all GL errors
     std::string allErrString = "GL errors encountered: ";
+	int maxErrors = 100;
 
     for ( ; error != GL_NO_ERROR; error = glGetError())
     {
@@ -42,6 +43,12 @@ void OpenGLModule::assertNoErrors()
         );
         allErrString += string::to_string(error);
         allErrString += " (" + std::string(strErr) + ") ";
+
+		if (--maxErrors <= 0)
+		{
+			allErrString += "---> Maximum number of GL errors reached, maybe there is a problem with the GL context?";
+			break;
+		}
 	}
 
     // Show the error message and terminate
