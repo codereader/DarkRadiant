@@ -21,6 +21,17 @@ namespace wxutil
 class ModelPreview
 : public RenderPreview
 {
+private:
+	// TRUE when the scene, model and skin have been set up
+	// is set back to FALSE if the model or skin config is changed
+	bool _sceneIsReady;
+
+	// The name of the model to render
+	std::string _model;
+
+	// The name of the skin to render
+	std::string _skin;
+
     scene::IMapRootNodePtr _rootNode;
 
     // The parent entity
@@ -45,6 +56,8 @@ private:
     AABB getSceneBounds() override;
     bool onPreRender() override;
     RenderStateFlags getRenderFlagsFill() override;
+
+	void prepareScene();
 
 protected:
     virtual void onModelRotationChanged() override;

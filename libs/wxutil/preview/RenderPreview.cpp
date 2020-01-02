@@ -446,20 +446,20 @@ void RenderPreview::drawPreview()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Pre-Render event
+	if (!onPreRender())
+	{
+		// a return value of false means to cancel rendering
+		drawTime();
+		return;
+	}
+
     // Set up the camera
     Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Keep the modelview matrix in the volumetest class up to date
     _volumeTest.setModelView(getModelViewMatrix());
     _volumeTest.setProjection(projection);
-
-    // Pre-Render event
-    if (!onPreRender())
-    {
-        // a return value of false means to cancel rendering
-        drawTime();
-        return;
-    }
 
 	// Set the projection and modelview matrices
 	glMatrixMode(GL_PROJECTION);
