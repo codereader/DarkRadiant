@@ -255,6 +255,9 @@ public:
 			parentWindow->Bind(wxEVT_SHOW, &SearchPopupWindow::_onParentVisibilityChanged, this);
 			parentWindow->Bind(wxEVT_ICONIZE, &SearchPopupWindow::_onParentMinimized, this);
 
+			// Detect when the parent window is losing focus (e.g. by alt-tabbing)
+			parentWindow->Bind(wxEVT_ACTIVATE, &SearchPopupWindow::_onParentActivate, this);
+
 			// Detect parent window movements to reposition ourselves
 			parentWindow->Bind(wxEVT_MOVE, &SearchPopupWindow::_onParentMoved, this);
 		}
@@ -278,6 +281,14 @@ private:
 		Position(popupPos, wxSize(0, 0));
 	}
 
+	void _onParentActivate(wxActivateEvent& ev)
+	{
+		if (!ev.GetActive())
+		{
+			_owner.Close();
+		}
+	}
+	
 	void _onParentMoved(wxMoveEvent&)
 	{
 		Reposition();
