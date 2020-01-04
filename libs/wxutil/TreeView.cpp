@@ -40,6 +40,8 @@ public:
 	void HighlightNextMatch();
 	void HighlightPrevMatch();
 
+	void Close();
+
 private:
 	void HighlightMatch(const wxDataViewItem& item);
 };
@@ -55,7 +57,7 @@ TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 	}
 
 	Bind(wxEVT_CHAR, std::bind(&TreeView::_onChar, this, std::placeholders::_1));
-	Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, std::bind(&TreeView::_onItemActivated, this, std::placeholders::_1));
+	Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, std::bind(&TreeView::_onItemActivated, this, std::placeholders::_1));	
 }
 
 TreeView* TreeView::Create(wxWindow* parent, long style)
@@ -242,9 +244,20 @@ public:
 		Layout();
 		Fit();
 
-		// Position this control in the bottom right corner
-		wxPoint popupPos = GetParent()->GetScreenPosition() + GetParent()->GetSize() - GetSize();
-		Position(popupPos, wxSize(0, 0));
+		Reposition();
+
+		// Subscribe to the parent window's visibility and iconise events to avoid 
+		// the popup from lingering around long after the tree is gone (#5095)
+		wxWindow* parentWindow = wxGetTopLevelParent(treeView);
+
+		if (parentWindow != nullptr)
+		{
+			parentWindow->Bind(wxEVT_SHOW, &SearchPopupWindow::_onParentVisibilityChanged, this);
+			parentWindow->Bind(wxEVT_ICONIZE, &SearchPopupWindow::_onParentMinimized, this);
+
+			// Detect parent window movements to reposition ourselves
+			parentWindow->Bind(wxEVT_MOVE, &SearchPopupWindow::_onParentMoved, this);
+		}
 	}
 
 	wxString GetSearchString()
@@ -255,6 +268,34 @@ public:
 	void SetSearchString(const wxString& str)
 	{
 		_entry->SetValue(str);
+	}
+
+private:
+	void Reposition()
+	{
+		// Position this control in the bottom right corner
+		wxPoint popupPos = GetParent()->GetScreenPosition() + GetParent()->GetSize() - GetSize();
+		Position(popupPos, wxSize(0, 0));
+	}
+
+	void _onParentMoved(wxMoveEvent&)
+	{
+		Reposition();
+	}
+
+	void _onParentMinimized(wxIconizeEvent&)
+	{
+		// Close any searches when the parent window is minimized
+		_owner.Close();
+	}
+
+	void _onParentVisibilityChanged(wxShowEvent& ev)
+	{
+		if (!ev.IsShown())
+		{
+			// Close any searches when the parent window is hidden
+			_owner.Close();
+		}
 	}
 };
 
@@ -375,6 +416,11 @@ void TreeView::Search::HighlightPrevMatch()
 	}
 
 	HighlightMatch(model->FindPrevString(_popup->GetSearchString(), _treeView._colsToSearch, _curSearchMatch));
+}
+
+void TreeView::Search::Close()
+{
+	_treeView.CloseSearch();
 }
 
 void TreeView::CloseSearch()
