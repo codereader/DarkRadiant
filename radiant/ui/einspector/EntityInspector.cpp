@@ -586,14 +586,20 @@ void EntityInspector::updateGUIElements()
         _keyValueTreeView->Enable(true);
         _showInheritedCheckbox->Enable(true);
         _showHelpColumnCheckbox->Enable(true);
+
+		// Update the target entity on any active property editor (#5092)
+		if (_currentPropertyEditor)
+		{
+			auto newEntity = Node_getEntity(_selectedEntity.lock());
+			assert(newEntity != nullptr);
+
+			_currentPropertyEditor->setEntity(newEntity);
+		}
     }
     else  // no selected entity
     {
         // Remove the displayed PropertyEditor
-        if (_currentPropertyEditor)
-        {
-            _currentPropertyEditor = PropertyEditorPtr();
-        }
+		_currentPropertyEditor.reset();
 
         _helpText->SetValue("");
 

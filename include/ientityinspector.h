@@ -43,6 +43,14 @@ public:
 	virtual wxPanel* getWidget() = 0;
 
 	/**
+	 * Instructs this editor to focus on a different target, so all operations
+	 * should be performed on the given entity.
+	 * It's not valid to pass nullptrs into this method, doing so will result
+	 * in an exception being thrown.
+	 */
+	virtual void setEntity(Entity* entity) = 0;
+
+	/**
 	 * Instructs the editor to update its widgets from the edited entity's key values.
 	 */
 	virtual void updateFromEntity() = 0;
