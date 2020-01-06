@@ -146,17 +146,15 @@ namespace os
     /**
      * greebo: Get the filename contained in the given path (the part after the last slash).
      * If there is no filename, an empty string is returned.
+	 * If there's no slash, the input string is returned as is.
      *
      * Note: The input string is expected to be standardised (forward slashes).
      */
-    inline std::string getFilename(const std::string& path) {
+    inline std::string getFilename(const std::string& path) 
+	{
         std::size_t slashPos = path.rfind('/');
-        if (slashPos == std::string::npos) {
-            return "";
-        }
-        else {
-            return path.substr(slashPos + 1);
-        }
+
+		return slashPos == std::string::npos ? path : path.substr(slashPos + 1);
     }
 
     /**
