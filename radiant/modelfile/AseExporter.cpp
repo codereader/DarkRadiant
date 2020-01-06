@@ -44,6 +44,19 @@ void AseExporter::exportToStream(std::ostream& stream)
 	stream << "\t*SCENE_AMBIENT_STATIC 0.0000	0.0000	0.0000" << std::endl;
 	stream << "}" << std::endl;
 
+	// Remove empty surfaces before exporting (#5104)
+	for (auto it = _surfaces.begin(); it != _surfaces.end();)
+	{
+		if (it->second.vertices.empty())
+		{
+			_surfaces.erase(it++);
+		}
+		else
+		{
+			++it;
+		}
+	}
+
 	// Materials
 	stream << "*MATERIAL_LIST {" << std::endl;
 	stream << "\t*MATERIAL_COUNT " << _surfaces.size() << std::endl;
