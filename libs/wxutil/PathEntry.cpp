@@ -104,9 +104,24 @@ void PathEntry::onBrowseFiles(wxCommandEvent& ev)
 
 	// Propagate the setting of this picker
 	fileChooser.askForOverwrite(_askForOverwrite);
-	fileChooser.setCurrentPath(getValue());
 
-	std::string filename = fileChooser.display();
+	auto curValue = getValue();
+
+	if (!curValue.empty())
+	{
+		// Set the filename to the one contained in the text box
+		fileChooser.setCurrentFile(os::getFilename(curValue));
+
+		// If there's a non-empty path, point it to the specified folder
+		auto curFolder = os::getDirectory(curValue);
+
+		if (!curFolder.empty())
+		{
+			fileChooser.setCurrentPath(curFolder);
+		}
+	}
+
+	auto filename = fileChooser.display();
 
 	topLevel->Show();
 
