@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_initial_configuration">Initial configuration</a>
 <ul class="sectlevel2">
-<li><a href="#_choosing_a_game_type">Choosing a game type</a></li>
+<li><a href="#GameSetup">Choosing a game type</a></li>
 <li><a href="#_interface_layout">Interface layout</a></li>
 <li><a href="#_colour_schemes">Colour schemes</a></li>
 </ul>
@@ -488,7 +488,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_compiling_a_map">Compiling a map</a>
 <ul class="sectlevel3">
 <li><a href="#_preventing_leaks">Preventing leaks</a></li>
-<li><a href="#_locating_leaks_with_a_pointfile">Locating leaks with a pointfile</a></li>
+<li><a href="#PointFile">Locating leaks with a pointfile</a></li>
 </ul>
 </li>
 </ul>
@@ -669,7 +669,7 @@ DarkRadiant.</p>
 <h2 id="_initial_configuration">Initial configuration</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_choosing_a_game_type">Choosing a game type</h3>
+<h3 id="GameSetup">Choosing a game type</h3>
 <div class="paragraph">
 <p>When running DarkRadiant for the first time, the <strong>Game Setup</strong> dialog will be
 shown. This is where you configure the path to the game installation from which
@@ -2324,7 +2324,7 @@ the map compiler carries out when it "flood fills" the map interior.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_locating_leaks_with_a_pointfile">Locating leaks with a pointfile</h4>
+<h4 id="PointFile">Locating leaks with a pointfile</h4>
 <div class="paragraph">
 <p>No matter how hard you try to avoid leaks, occasionally they will happen. In
 this case the <strong>pointfile</strong> functionality is helpful to identify the location of
@@ -2934,6 +2934,39 @@ items into a new map file without changing the current map name. Equivalent to
 the selected items into a <a href="#WorkingWithPrefabs">prefab</a> (<code>*.pfb</code>) file in the
 standard prefab location.</p>
 </dd>
+<dt class="hdlist1"><strong>Save selected as Collision Model&#8230;&#8203;</strong></dt>
+<dd>
+<p>Allows a selected map object (typically
+a brush) to be set as the collision model for a particular ASE or LWO model.
+After choosing this option, DarkRadiant will display the model chooser dialog,
+allowing you to choose the particular model that the selected object should be
+associated with. The selected brush is then saved, and associated with the
+model so that subsequent insertions of the same model will use the new
+collision geometry.</p>
+</dd>
+<dt class="hdlist1"><strong>Reload Models/Selected Models/Skins/Scripts/Readable Guis/Materials/Defs/Particles</strong></dt>
+<dd>
+<p>Forces DarkRadiant to re-read the selected category of items from disk,
+refreshing its internal data structures. This is necessary if you have edited
+or re-exported some asset which DarkRadiant is using in the current map and you
+want to see the latest changes.</p>
+</dd>
+<dt class="hdlist1"><strong>Game/Project Setup&#8230;&#8203;</strong></dt>
+<dd>
+<p>Show the <a href="#GameSetup">Game Setup</a> dialog for
+configuring game-specific settings.</p>
+</dd>
+<dt class="hdlist1"><strong>Pointfile</strong></dt>
+<dd>
+<p>Load and show the <a href="#PointFile">pointfile</a> for the current map, if
+there is one. An error dialog will be displayed if there is no current
+pointfile (which is usually the case if the current map has not leaked during
+compilation).</p>
+</dd>
+<dt class="hdlist1"><strong>Exit</strong></dt>
+<dd>
+<p>Exit DarkRadiant, prompting to save the current map if necessary.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -3391,7 +3424,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-11-27 20:52:40 GMT
+Last updated 2020-01-07 20:55:04 GMT
 </div>
 </div>
 </body>

@@ -88,6 +88,7 @@ DarkRadiant.
 
 == Initial configuration
 
+[[GameSetup]]
 === Choosing a game type
 
 When running DarkRadiant for the first time, the *Game Setup* dialog will be
@@ -1084,6 +1085,7 @@ single huge box. This may seem to solve the problem (the map will indeed not
 leak), but it completely negates the important performance optimisations that
 the map compiler carries out when it "flood fills" the map interior.
 
+[[PointFile]]
 ==== Locating leaks with a pointfile
 
 No matter how hard you try to avoid leaks, occasionally they will happen. In
@@ -1436,6 +1438,30 @@ partially-complete maps.
 *Save selected as prefab...*:: Equivalent to *Save selected as Map* but it saves
  the selected items into a <<WorkingWithPrefabs,prefab>> (`*.pfb`) file in the
  standard prefab location.
+
+*Save selected as Collision Model...*:: Allows a selected map object (typically
+ a brush) to be set as the collision model for a particular ASE or LWO model.
+ After choosing this option, DarkRadiant will display the model chooser dialog,
+ allowing you to choose the particular model that the selected object should be
+ associated with. The selected brush is then saved, and associated with the
+ model so that subsequent insertions of the same model will use the new
+ collision geometry.
+
+*Reload Models/Selected Models/Skins/Scripts/Readable Guis/Materials/Defs/Particles*::
+ Forces DarkRadiant to re-read the selected category of items from disk,
+ refreshing its internal data structures. This is necessary if you have edited
+ or re-exported some asset which DarkRadiant is using in the current map and you
+ want to see the latest changes.
+
+*Game/Project Setup...*:: Show the <<GameSetup,Game Setup>> dialog for
+ configuring game-specific settings.
+
+*Pointfile*:: Load and show the <<PointFile,pointfile>> for the current map, if
+ there is one. An error dialog will be displayed if there is no current
+ pointfile (which is usually the case if the current map has not leaked during
+ compilation).
+
+*Exit*:: Exit DarkRadiant, prompting to save the current map if necessary.
 
 == Configuring DarkRadiant
 
