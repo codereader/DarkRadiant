@@ -3,9 +3,11 @@
 #include "i18n.h"
 #include "iuimanager.h"
 
+#include <wx/eventfilter.h>
 #include <wx/bmpbuttn.h>
 #include <wx/popupwin.h>
 #include <wx/stattext.h>
+#include <wx/app.h>
 #include <wx/sizer.h>
 #include <wx/timer.h>
 #include <wx/artprov.h>
@@ -203,15 +205,18 @@ void TreeView::_onItemActivated(wxDataViewEvent& ev)
 
 // The custom popup window containing our search box
 class TreeView::SearchPopupWindow :
-	public wxPopupWindow
+	public wxPopupWindow,
+	public wxEventFilter
 {
 private:
+	TreeView* _treeView;
 	Search& _owner;
 	wxTextCtrl* _entry;
 
 public:
 	SearchPopupWindow(TreeView* treeView, Search& owner) :
 		wxPopupWindow(treeView, wxBORDER_SIMPLE),
+		_treeView(treeView),
 		_owner(owner),
 		_entry(nullptr)
 	{
@@ -261,6 +266,41 @@ public:
 			// Detect parent window movements to reposition ourselves
 			parentWindow->Bind(wxEVT_MOVE, &SearchPopupWindow::_onParentMoved, this);
 		}
+
+		// Register as global filter to catch mouse events
+		wxEvtHandler::AddFilter(this);
+	}
+
+	virtual ~SearchPopupWindow()
+	{
+		wxEvtHandler::RemoveFilter(this);
+	}
+
+	int FilterEvent(wxEvent& ev) override
+	{
+		const wxEventType t = ev.GetEventType();
+
+		if (t == wxEVT_LEFT_UP || t == wxEVT_RIGHT_UP)
+		{
+			for (wxWindow* win = wxDynamicCast(ev.GetEventObject(), wxWindow); 
+				win != nullptr; win = win->GetParent())
+			{
+				if (win == this || win == _treeView)
+				{
+					// Ignore any clicks on this popup or the owning treeview
+					return Event_Skip;
+				}
+			}
+
+			// User clicked on a window which is not a child of this popup => close it
+			// But we can't call _owner.Close() immediately since this
+			// will fire the destructor and crash the event filter handler
+			// Register for the next idle event to close this popup
+			wxTheApp->Bind(wxEVT_IDLE, &SearchPopupWindow::_onIdleClose, this);
+		}
+
+		// Continue processing the event normally 
+		return Event_Skip;
 	}
 
 	wxString GetSearchString()
@@ -279,6 +319,12 @@ private:
 		// Position this control in the bottom right corner
 		wxPoint popupPos = GetParent()->GetScreenPosition() + GetParent()->GetSize() - GetSize();
 		Position(popupPos, wxSize(0, 0));
+	}
+
+	void _onIdleClose(wxIdleEvent& ev)
+	{
+		_owner.Close();
+		ev.Skip();
 	}
 
 	void _onParentActivate(wxActivateEvent& ev)
