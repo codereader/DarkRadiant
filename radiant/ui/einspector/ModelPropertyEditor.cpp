@@ -114,11 +114,14 @@ void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
 {
 	// Display the SkinChooser to get a skin from the user
 	std::string modelName = _entity->getKeyValue("model");
-	std::string prevSkin = _entity->getKeyValue(_key);
+	std::string prevSkin = _entity->getKeyValue("skin");
 	std::string skin = SkinChooser::chooseSkin(modelName, prevSkin);
 
-	// Apply the key to the entity
-	setKeyValue("skin", skin);
+	if (skin != prevSkin)
+	{
+		// Apply the key to the entity
+		setKeyValue("skin", skin);
+	}
 }
 
 }
