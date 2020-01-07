@@ -164,6 +164,8 @@ private:
 	// Connected to the ModelCache/SkinCache signal, fires after the refresh commands are done
 	void onSkinsOrModelsReloaded();
 
+	void onModelLoaded(const model::ModelNodePtr& modelNode);
+
 protected:
 	void _onDeleteEvent(wxCloseEvent& ev);
 

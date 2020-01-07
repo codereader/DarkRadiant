@@ -34,6 +34,16 @@ ModelPreview::ModelPreview(wxWindow* parent) :
 	_defaultCamDistanceFactor(2.8f)
 {}
 
+const std::string& ModelPreview::getModel() const
+{
+	return _model;
+}
+
+const std::string& ModelPreview::getSkin() const
+{
+	return _skin;
+}
+
 void ModelPreview::setModel(const std::string& model)
 {
 	// Remember the name and mark the scene as "not ready"
@@ -130,6 +140,9 @@ void ModelPreview::prepareScene()
 		}
 
 		_modelNode.reset();
+
+		// Emit the signal carrying an empty pointer
+		_modelLoadedSignal.emit(model::ModelNodePtr());
 		return;
 	}
 
@@ -175,6 +188,9 @@ void ModelPreview::prepareScene()
 		}
 
 		_lastModel = _model;
+
+		// Done loading, emit the signal
+		_modelLoadedSignal.emit(model);
 	}
 }
 
@@ -230,6 +246,11 @@ void ModelPreview::onModelRotationChanged()
 RenderStateFlags ModelPreview::getRenderFlagsFill()
 {
 	return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
+}
+
+sigc::signal<void, const model::ModelNodePtr&>& ModelPreview::signal_ModelLoaded()
+{
+	return _modelLoadedSignal;
 }
 
 } // namespace ui

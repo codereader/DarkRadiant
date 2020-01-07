@@ -112,6 +112,8 @@ ModelSelector::ModelSelector() :
 
 	_skinsReloadedConn = GlobalModelSkinCache().signal_skinsReloaded().connect(
 		sigc::mem_fun(this, &ModelSelector::onSkinsOrModelsReloaded));
+
+	_modelPreview->signal_ModelLoaded().connect(sigc::mem_fun(this, &ModelSelector::onModelLoaded));
 }
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)
@@ -340,6 +342,33 @@ void ModelSelector::onSkinsOrModelsReloaded()
 	}
 }
 
+void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
+{
+	if (!modelNode)
+	{
+		return;
+	}
+
+	// Update the text in the info table
+	const model::IModel& model = modelNode->getIModel();
+
+	_infoTable->Append(_("Model name"), _modelPreview->getModel());
+	_infoTable->Append(_("Skin name"), _modelPreview->getSkin());
+	_infoTable->Append(_("Total vertices"), string::to_string(model.getVertexCount()));
+	_infoTable->Append(_("Total polys"), string::to_string(model.getPolyCount()));
+	_infoTable->Append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
+
+	// Add the list of active materials
+	_materialsList->clear();
+
+	const model::StringList& matList(model.getActiveMaterials());
+
+	for (const auto& material : matList)
+	{
+		_materialsList->addMaterial(material);
+	}
+}
+
 // Helper function to create the TreeView
 void ModelSelector::setupTreeView(wxWindow* parent)
 {
@@ -427,38 +456,6 @@ void ModelSelector::showInfoForSelectedModel()
     // Pass the model and skin to the preview widget
     _modelPreview->setModel(mName);
     _modelPreview->setSkin(skinName);
-
-    // Check that the model is actually valid by querying the IModelPtr
-    // returned from the preview widget.
-    scene::INodePtr mdl = _modelPreview->getModelNode();
-    if (!mdl) {
-        return; // no valid model
-    }
-
-    model::ModelNodePtr modelNode = Node_getModel(mdl);
-
-    if (!modelNode)
-    {
-        return;
-    }
-
-    // Update the text in the info table
-    const model::IModel& model = modelNode->getIModel();
-    _infoTable->Append(_("Model name"), mName);
-    _infoTable->Append(_("Skin name"), skinName);
-    _infoTable->Append(_("Total vertices"), string::to_string(model.getVertexCount()));
-    _infoTable->Append(_("Total polys"), string::to_string(model.getPolyCount()));
-    _infoTable->Append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
-
-    // Add the list of active materials
-    _materialsList->clear();
-
-    const model::StringList& matList(model.getActiveMaterials());
-
-    std::for_each(
-        matList.begin(), matList.end(),
-        std::bind(&MaterialsList::addMaterial, _materialsList, std::placeholders::_1)
-    );
 }
 
 void ModelSelector::onOK(wxCommandEvent& ev)

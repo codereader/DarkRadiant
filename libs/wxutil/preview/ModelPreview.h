@@ -5,6 +5,7 @@
 #include "imodel.h"
 #include "imap.h"
 
+#include <sigc++/signal.h>
 #include <string>
 #include <map>
 
@@ -49,6 +50,8 @@ private:
 
 	float _defaultCamDistanceFactor;
 
+	sigc::signal<void, const model::ModelNodePtr&> _modelLoadedSignal;
+
 private:
 
     // Creates parent entity etc.
@@ -66,6 +69,12 @@ public:
 
     /// Construct a ModelPreview widget.
     ModelPreview(wxWindow* parent);
+
+	// Returns the name of the current model
+	const std::string& getModel() const;
+
+	// Returns the name of the current skin
+	const std::string& getSkin() const;
 
     /**
      * Set the widget to display the given model. If the model name is the
@@ -88,6 +97,9 @@ public:
     {
         return _modelNode;
     }
+
+	// Signal emitted when the preview is done loading a new model
+	sigc::signal<void, const model::ModelNodePtr&>& signal_ModelLoaded();
 };
 typedef std::shared_ptr<ModelPreview> ModelPreviewPtr;
 
