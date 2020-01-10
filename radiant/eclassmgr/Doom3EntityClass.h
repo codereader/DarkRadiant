@@ -53,8 +53,11 @@ class Doom3EntityClass
 
     // Colour of this entity and flag to indicate it has been specified
     Vector3 _colour;
-    bool _colourSpecified;
     bool _colourTransparent;
+
+    // Default shader names, in case we don't get any from the parent or otherwise
+    static const std::string DefaultWireShader;
+    static const std::string DefaultFillShader;
 
     // Shader versions of the colour
     std::string _fillShader;
