@@ -4,13 +4,13 @@ DarkRadiant is a level (map) editor for the **The Dark Mod**, an open-source Doo
 
 ## Download
 
-Get the latest DarkRadiant binaries from the [releases page](https://github.com/codereader/DarkRadiant/releases/latest). We have binaries for Windows and macOS, plus [compilation instructions](http://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compiling_in_Linux) for various Linux distributions.
+Get the latest DarkRadiant binaries from the [releases page](https://github.com/codereader/DarkRadiant/releases/latest). We have binaries for Windows and macOS, plus [compilation instructions](https://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compiling_in_Linux) for various Linux distributions.
 
 # Getting started
 
 DarkRadiant requires game resources to work with, these resources are not installed by this editor. You'll need to point DarkRadiant to one of these games (The Dark Mod, Doom 3, Quake 4, etc.) before you can start to work on your map. Visit www.thedarkmod.com for download instructions, then proceed with one of the tutorials available on the web.
 
-For The Dark Mod mappers, there's an extensive [Beginner's Guide](http://wiki.thedarkmod.com/index.php?title=A_-_Z_Beginner_Full_Guide_Start_Here!) on the project's wiki, which covers a lot of steps almost from scratch. Moreover, a couple of excellent video tutorials are available, linked from the top of that wiki article above.
+For The Dark Mod mappers, there's an extensive [Beginner's Guide](https://wiki.thedarkmod.com/index.php?title=A_-_Z_Beginner_Full_Guide_Start_Here!) on the project's wiki, which covers a lot of steps almost from scratch. Moreover, a couple of excellent video tutorials are available, linked from the top of that wiki article above.
 
 # Compiling on Windows
 
@@ -22,8 +22,7 @@ DarkRadiant is built on Windows using *Microsoft Visual Studio*, the free Commun
 
 When installing Studio please make sure to enable the "Desktop Development with C++" workload.
 
-Since DarkRadiant uses a couple of open-source libraries that are not available on Windows by default, you will also need to download and install the dependencies. 7-Zip packages of the dependencies are available at the following
-URL(s). [Get 7-zip here](http://www.7-zip.org/)
+Since DarkRadiant uses a couple of open-source libraries that are not available on Windows by default, you will also need to download and install the dependencies. A 7-Zip package containing the necessary files is available at the URL below ([Get 7-zip here](http://www.7-zip.org/)):
 
 https://github.com/codereader/DarkRadiant/releases/download/2.7.0/windeps.7z  
 
@@ -57,14 +56,14 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libglew-dev 
 * libalut-dev 
 * libvorbis-dev
-* pybind11-dev (Ubuntu 17 and later)
+* pybind11-dev
 
 This does not include core development tools such as g++ or the git client
 to download the sources (use sudo apt-get install git for that). One possible set of packages might be:
 
 `sudo apt-get install git automake libtool g++ gettext pkg-config`
 
-More required package lists for various Linux distributions are [listed in the Wiki Article](http://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compiling_in_Linux).
+More required package lists for various Linux distributions are [listed in the Wiki Article](https://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compiling_in_Linux).
 
 ## Build
 
@@ -110,17 +109,17 @@ copied to some location of your preference.
 
 A more detailed compilation guide can be found on The Dark Mod's wiki:
 
-http://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compilation_Guide
+https://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compilation_Guide
 
 # Contact / Discussion
 
 DarkRadiant Website: https://www.darkradiant.net
 
-All discussion is ongoing primarily at [The Dark Mod Forums](http://forums.thedarkmod.com/forum/51-darkradiant-feedback-and-development/), where you can get in touch with knowledgeable people 
+All discussion is ongoing primarily at [The Dark Mod Forums](https://forums.thedarkmod.com/forum/51-darkradiant-feedback-and-development/), where you can get in touch with knowledgeable people 
 and discuss changes or issues. If you happen to run into a bug, you're encouraged to report it to us, especially when running into
-application crashes (see also [How to record a crashdump](http://wiki.thedarkmod.com/index.php?title=Save_a_Memory_Dump_for_debugging_Crashes)). 
+application crashes (see also [How to record a crashdump](https://wiki.thedarkmod.com/index.php?title=Save_a_Memory_Dump_for_debugging_Crashes)). 
 
-The issue tracker for DarkRadiant is also run by the Dark Mod folks: [DarkRadiant Bugtracker](http://bugs.thedarkmod.com/view_all_bug_page.php?project_id=1).
+The issue tracker for DarkRadiant is also run by the Dark Mod folks: [DarkRadiant Bugtracker](https://bugs.thedarkmod.com/view_all_bug_page.php?project_id=1).
 
 # License
 
