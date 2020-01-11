@@ -334,58 +334,58 @@ void OrthoContextMenu::callbackAddPrefab()
 
 void OrthoContextMenu::callbackAddSpeaker()
 {
+    ISoundShaderPtr soundShader;
+
+    // If we have an active sound module, query the desired shader from the user
+    if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
+    {
+        IResourceChooser* chooser = GlobalDialogManager().createSoundShaderChooser();
+
+        // Use a SoundChooser dialog to get a selection from the user
+        std::string shaderPath = chooser->chooseResource();
+
+        chooser->destroyDialog();
+
+        if (shaderPath.empty())
+        {
+            return; // user cancelled the dialog, don't do anything
+        }
+
+        soundShader = GlobalSoundManager().getSoundShader(shaderPath);
+    }
+
     UndoableCommand command("addSpeaker");
 
     // Cancel all selection
     GlobalSelectionSystem().setSelectedAll(false);
 
-    // Create the speaker entity
-    scene::INodePtr spkNode;
-
     try
     {
-        spkNode = selection::algorithm::createEntityFromSelection(
+        // Create the speaker entity
+        scene::INodePtr spkNode = selection::algorithm::createEntityFromSelection(
             SPEAKER_CLASSNAME, _lastPoint
         );
-    }
-    catch (selection::algorithm::EntityCreationException&) {
-        wxutil::Messagebox::ShowError(_("Unable to create speaker, classname not found."));
-        return;
-    }
 
-    // Initialise the speaker with suitable values
-    if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
-    {
-		IResourceChooser* chooser = GlobalDialogManager().createSoundShaderChooser();
-
-		// Use a SoundChooser dialog to get a selection from the user
-		std::string soundShader = chooser->chooseResource();
-
-		chooser->destroyDialog();
-
-        if (soundShader.empty())
+        if (soundShader)
         {
-            return;
+            // Set the shader keyvalue
+            Entity* entity = Node_getEntity(spkNode);
+            assert(entity);
+
+            entity->setKeyValue("s_shader", soundShader->getName());
+
+            // Initialise the speaker with suitable distance values
+            SoundRadii radii = soundShader->getRadii();
+
+            entity->setKeyValue("s_mindistance", string::to_string(radii.getMin(true)));
+            entity->setKeyValue("s_maxdistance",
+                (radii.getMax(true) > 0 ? string::to_string(radii.getMax(true)) : "10")
+            );
         }
-
-        // Set the keyvalue
-        Entity* entity = Node_getEntity(spkNode);
-        assert(entity);
-        entity->setKeyValue("s_shader", soundShader);
-
-        // Set initial radii according to values in sound shader
-        ISoundShaderPtr snd = GlobalSoundManager().getSoundShader(soundShader);
-        assert(snd);
-
-        SoundRadii radii = snd->getRadii();
-        entity->setKeyValue(
-            "s_mindistance", string::to_string(radii.getMin(true))
-        );
-        entity->setKeyValue(
-            "s_maxdistance",
-            (radii.getMax() > 0
-             ? string::to_string(radii.getMax(true)) : "10")
-        );
+    }
+    catch (selection::algorithm::EntityCreationException&) 
+    {
+        wxutil::Messagebox::ShowError(_("Unable to create speaker, classname not found."));
     }
 }
 
