@@ -40,23 +40,40 @@ $target = $args[0]
 
 Write-Host ("Compiling for target: {0}" -f $target)
 
-$versionRegex = "AppVerName=DarkRadiant (.*) $target"
 $portableFilenameTemplate = "darkradiant-{0}-$target.portable.7z"
 $pdbFilenameTemplate = "darkradiant-{0}-$target.pdb.7z"
+
+$versionRegex = '#define RADIANT_VERSION "(.+)"'
+$versionIncludeFile = "..\..\include\version.h"
+
+# Extract the version string from the version.h file
+$content = Get-Content $versionIncludeFile
+$defaultVersionString = "X.Y.ZpreV"
+$foundVersionString = $defaultVersionString
+
+foreach ($line in $content)
+{
+    if ($line -match $versionRegex)
+    {
+        $foundVersionString = $matches[1] 
+        Write-Host ("Version is {0}" -f $matches[1])
+        break
+    }
+}
 
 if ($target -eq "x86")
 {
     $platform = "Win32"
     $issFile = "..\innosetup\darkradiant.iss"
     $portablePath = "DarkRadiant_install"
-	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.23.27820\x86\Microsoft.VC142.CRT"
+	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.24.28127\x86\Microsoft.VC142.CRT"
 } 
 else
 {
     $platform = "x64"
     $issFile = "..\innosetup\darkradiant.x64.iss"
     $portablePath = "DarkRadiant_install.x64"
-	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.23.27820\x64\Microsoft.VC142.CRT"
+	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.24.28127\x64\Microsoft.VC142.CRT"
 }
 
 if (-not $skipbuild)
@@ -98,23 +115,14 @@ else
 	Write-Host -ForegroundColor Yellow "Warning: cannot find the VC++ redist folder, won't copy runtime DLLs."
 }
 
-# Get the version from the innosetup file
-$content = Get-Content $issFile
-$defaultVersionString = "X.Y.ZpreV"
-$foundVersionString = $defaultVersionString
-
-foreach ($line in $content)
-{
-    if ($line -match $versionRegex)
-    {
-        $foundVersionString = $matches[1] 
-        Write-Host ("Version is {0}" -f $matches[1])
-        break
-    }
-}
-
 $portableFilename = "..\innosetup\" + ($portableFilenameTemplate -f $foundVersionString)
 $pdbFilename = "..\innosetup\" + ($pdbFilenameTemplate -f $foundVersionString)
+
+# Write the version to the innosetup source file
+Write-Host ("Writing version {0} to InnoSetup file" -f $foundVersionString)
+$issContent = Get-Content $issFile
+$issContent = $issContent -replace '#define DarkRadiantVersion "(.+)"', ('#define DarkRadiantVersion "{0}"' -f $foundVersionString)
+Set-Content -Path $issFile -Value $issContent
 
 # Compile the installer package
 Start-Process "compil32" -ArgumentList ("/cc", $issFile)
