@@ -3,12 +3,27 @@ param (
     [string]$Platform, 
 
     [Parameter(Mandatory=$false)]
+    [string]$OutputFolder,
+
+    [Parameter(Mandatory=$false)]
     [switch]$SkipBuild  
 )
 
 if ($SkipBuild)
 {
     Write-Host "skipbuild: Will skip the build process."
+}
+
+$dummy = [Reflection.Assembly]::LoadWithPartialName("System.IO");
+
+if ([string]::IsNullOrEmpty($OutputFolder) -eq $false)
+{
+    if (-not [System.IO.Directory]::Exists($OutputFolder))
+    {
+        throw "The given output path $OutputFolder doesn't exist"
+    }
+
+    Write-Host ("Will copy the resulting packages to the folder {0}" -f $OutputFolder)
 }
 
 # Check tool reachability
@@ -32,6 +47,7 @@ Write-Host ("Compiling for target: {0}" -f $target)
 
 $portableFilenameTemplate = "darkradiant-{0}-$target.portable.7z"
 $pdbFilenameTemplate = "darkradiant-{0}-$target.pdb.7z"
+$innoSetupFilenameTemplate = "darkradiant-{0}-$target.exe"
 
 $versionRegex = '#define RADIANT_VERSION "(.+)"'
 $versionIncludeFile = "..\..\include\version.h"
@@ -105,8 +121,9 @@ else
 	Write-Host -ForegroundColor Yellow "Warning: cannot find the VC++ redist folder, won't copy runtime DLLs."
 }
 
-$portableFilename = "..\innosetup\" + ($portableFilenameTemplate -f $foundVersionString)
-$pdbFilename = "..\innosetup\" + ($pdbFilenameTemplate -f $foundVersionString)
+$portableFilename = Join-Path "..\innosetup\" ($portableFilenameTemplate -f $foundVersionString)
+$pdbFilename = Join-Path "..\innosetup\" ($pdbFilenameTemplate -f $foundVersionString)
+$innoSetupFilename = Join-Path "..\innosetup\" ($innoSetupFilenameTemplate -f $foundVersionString)
 
 # Write the version to the innosetup source file
 Write-Host ("Writing version {0} to InnoSetup file" -f $foundVersionString)
@@ -130,3 +147,13 @@ if ((Get-ChildItem -Path $pdbFilename -ErrorAction SilentlyContinue) -ne $null)
     Remove-Item -Path $pdbFilename
 }
 Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-mx9", "-mmt2", $pdbFilename, "$portableFilesFolder\*.pdb") -Wait
+
+# Copy to target folder when everything is done
+if ([string]::IsNullOrEmpty($OutputFolder) -eq $false)
+{
+    Write-Host "Copying files to output folder $OutputFolder..."
+
+    Copy-Item -Path $innoSetupFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($innoSetupFilename))) -Force
+    Copy-Item -Path $portableFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($portableFilename))) -Force
+    Copy-Item -Path $pdbFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($pdbFilename))) -Force
+}
