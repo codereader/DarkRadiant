@@ -1,24 +1,14 @@
-# Check input arguments
-if ($args.Count -eq 0 -or ($args[0] -ne "x64" -and $args[0] -ne "x86"))
-{
-    Write-Host "Usage: compile_release_package.ps1 <x64|x86> [skipbuild]"
-    Write-Host ""
-    Write-Host "e.g. to compile a 64 bit build: .\compile_release_package.ps1 x64"
-    Write-Host "The skipbuild flag is optional and can be used to skip recompiling"
-    Write-Host "the whole sources, only the installers and 7z files will be created"
-    Write-Host ""
-    return
-}
+param (
+    [Parameter(Mandatory, ValueFromPipeline)]
+    [string]$Platform, 
 
-$skipbuild = $false
+    [Parameter(Mandatory=$false)]
+    [switch]$SkipBuild  
+)
 
-foreach ($arg in $args)
+if ($SkipBuild)
 {
-	if ($arg -eq "skipbuild")
-	{
-		Write-Host "skipbuild: Will skip the build process."
-		$skipbuild = $true
-	}
+    Write-Host "skipbuild: Will skip the build process."
 }
 
 # Check tool reachability
@@ -36,7 +26,7 @@ if ((Get-Command "msbuild" -ErrorAction SilentlyContinue) -eq $null)
 
 # ----------------------------------------------
 
-$target = $args[0]
+$target = $Platform
 
 Write-Host ("Compiling for target: {0}" -f $target)
 
@@ -76,7 +66,7 @@ else
 	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.24.28127\x64\Microsoft.VC142.CRT"
 }
 
-if (-not $skipbuild)
+if (-not $SkipBuild)
 {
 	Start-Process "msbuild" -ArgumentList ("..\msvc\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4") -NoNewWindow -Wait
 }
