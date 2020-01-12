@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2019-12-27 16:03+0100\n"
+"POT-Creation-Date: 2020-01-12 05:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -1789,7 +1790,7 @@ msgstr ""
 #: ..\..\plugins\script\ScriptWindow.cpp:85 xml_file_content.cpp:12
 #: xml_file_content.cpp:3 xml_file_content.cpp:7 xml_file_content.cpp:10
 #: xml_file_content.cpp:18 xml_file_content.cpp:8 xml_file_content.cpp:6
-#: xml_file_content.cpp:14 xml_file_content.cpp:15
+#: xml_file_content.cpp:14 xml_file_content.cpp:15 xml_file_content.cpp:39
 msgid "OK"
 msgstr ""
 
@@ -1797,6 +1798,7 @@ msgstr ""
 #: xml_file_content.cpp:6 xml_file_content.cpp:9 xml_file_content.cpp:17
 #: xml_file_content.cpp:1 xml_file_content.cpp:10 xml_file_content.cpp:14
 #: xml_file_content.cpp:5 xml_file_content.cpp:13 xml_file_content.cpp:20
+#: xml_file_content.cpp:40
 msgid "Cancel"
 msgstr ""
 
@@ -1841,7 +1843,7 @@ msgstr ""
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:192
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:222
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:148
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:477
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:453
 #: ..\..\libs\wxutil\KeyValueTable.cpp:44
 msgid "Value"
 msgstr ""
@@ -1886,7 +1888,7 @@ msgid "Entity Class Tree"
 msgstr ""
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:43
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:667
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:672
 msgid "Loading, please wait..."
 msgstr ""
 
@@ -1897,7 +1899,7 @@ msgstr ""
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:145
 #: ..\..\radiant\ui\einspector\AddPropertyDialog.cpp:76
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:472
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:448
 msgid "Property"
 msgstr ""
 
@@ -1913,50 +1915,46 @@ msgstr ""
 msgid "Choose entity class..."
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:104
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:82
 msgid "Show inherited properties"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:108
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:85
 msgid "Show help"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:314
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:290
 msgid "Add property..."
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:319
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:295
 msgid "Delete property"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:327
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:303
 msgid "Copy Spawnarg(s)"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:332
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:308
 msgid "Cut Spawnarg(s)"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:337
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:313
 msgid "Paste Spawnarg(s)"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:349
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:352
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:325
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:328
 #: ..\..\radiant\uimanager\GroupDialog.cpp:30
 msgid "Entity"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:482
-msgid "?"
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1170
+msgid "Entity {0}"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1195
-msgid "<b>Entity {0}</b>"
-msgstr ""
-
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1206
-msgid "<b>Entity {0}, Primitive {1}</b>"
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1181
+msgid "Entity {0}, Primitive {1}"
 msgstr ""
 
 #: ..\..\radiant\ui\einspector\EntityPropertyEditor.cpp:31
@@ -1972,19 +1970,25 @@ msgstr ""
 msgid "Choose texture"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:40
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:42
 msgid "Choose model..."
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:45
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:46
+#: ..\..\radiant\ui\einspector\SkinPropertyEditor.cpp:23
+#: ..\..\plugins\dm.editing\AIEditingPanel.cpp:110
+msgid "Choose skin..."
+msgstr ""
+
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:51
 msgid "Choose particle..."
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:80
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:87
 msgid "Warning: "
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:81
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:88
 msgid ""
 "Changing this entity's model to the selected value will\n"
 "remove all child primitives from it:\n"
@@ -2004,11 +2008,6 @@ msgstr ""
 
 #: ..\..\radiant\ui\einspector\SkinChooser.cpp:219
 msgid "All skins"
-msgstr ""
-
-#: ..\..\radiant\ui\einspector\SkinPropertyEditor.cpp:23
-#: ..\..\plugins\dm.editing\AIEditingPanel.cpp:110
-msgid "Choose skin..."
 msgstr ""
 
 #: ..\..\radiant\ui\einspector\SoundPropertyEditor.cpp:23
@@ -2036,7 +2035,7 @@ msgid "Create entity"
 msgstr ""
 
 #: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:282
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:376
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:405
 #: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:397
 #: ..\..\radiant\uimanager\SoundChooser.cpp:191
 msgid "Loading..."
@@ -2127,8 +2126,8 @@ msgstr ""
 
 #: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:156
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:119
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:66
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:91
+#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:58
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:88
 #: xml_file_content.cpp:19
 msgid "Type"
 msgstr ""
@@ -2255,20 +2254,20 @@ msgstr ""
 msgid "Could not rename layer, please try again."
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:34
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:35
 #: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:18 xml_file_content.cpp:51
 msgid "Layers"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:74
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:76
 msgid "Show all"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:75
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:77
 msgid "Hide all"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:81 xml_file_content.cpp:2
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:83 xml_file_content.cpp:2
 msgid "New"
 msgstr ""
 
@@ -2464,12 +2463,12 @@ msgstr ""
 msgid "Show Favourites"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:566
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:569
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:571
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:574
 msgid "Media"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:743
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:748
 msgid "No favourites added so far"
 msgstr ""
 
@@ -2544,28 +2543,28 @@ msgstr ""
 msgid "Choose Model"
 msgstr ""
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:353
-msgid "Model Path"
-msgstr ""
-
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:447
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:355
 msgid "Model name"
 msgstr ""
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:448
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:356
 msgid "Skin name"
 msgstr ""
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:449
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:357
 msgid "Total vertices"
 msgstr ""
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:450
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:358
 msgid "Total polys"
 msgstr ""
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:451
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:359
 msgid "Material surfaces"
+msgstr ""
+
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:382
+msgid "Model Path"
 msgstr ""
 
 #: ..\..\radiant\ui\mousetool\BindToolDialog.cpp:16
@@ -2686,7 +2685,7 @@ msgstr ""
 msgid "Unable to create light, classname not found."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:352
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:388
 msgid "Unable to create speaker, classname not found."
 msgstr ""
 
@@ -3104,9 +3103,9 @@ msgstr ""
 
 #: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:92
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:53
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:397
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:412
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:405 xml_file_content.cpp:182
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:430
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:445
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:439 xml_file_content.cpp:182
 #: xml_file_content.cpp:3 xml_file_content.cpp:7 xml_file_content.cpp:9
 #: xml_file_content.cpp:16 xml_file_content.cpp:2 xml_file_content.cpp:5
 #: xml_file_content.cpp:6 xml_file_content.cpp:18
@@ -3385,11 +3384,10 @@ msgid "Assign"
 msgstr ""
 
 #: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:92
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:81
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:51
-#: xml_file_content.cpp:2 xml_file_content.cpp:5 xml_file_content.cpp:8
-#: xml_file_content.cpp:12 xml_file_content.cpp:1 xml_file_content.cpp:3
-#: xml_file_content.cpp:17 xml_file_content.cpp:6
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:51 xml_file_content.cpp:2
+#: xml_file_content.cpp:5 xml_file_content.cpp:8 xml_file_content.cpp:12
+#: xml_file_content.cpp:1 xml_file_content.cpp:3 xml_file_content.cpp:17
+#: xml_file_content.cpp:6 xml_file_content.cpp:31
 msgid "Add"
 msgstr ""
 
@@ -4472,43 +4470,39 @@ msgstr ""
 msgid "Any AI with specified combat status"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:62
+#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:54
 msgid "S/R"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:82 xml_file_content.cpp:7
-msgid "Remove"
-msgstr ""
-
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:106
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:103
 #: xml_file_content.cpp:2
 msgid "Name:"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:117
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:114
 msgid ""
 "Note: Please beware that deleting custom stims may\n"
 "affect other entities as well. So check before you delete."
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:129
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:126
 msgid "Add Stim Type"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:130
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:127
 msgid "Remove Stim Type"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:185
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:182
 #: ..\..\plugins\dm.stimresponse\StimTypes.cpp:294
 msgid "Custom Stim"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:209
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:205
 msgid "Delete Custom Stim"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:210
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:206
 msgid ""
 "Beware that other entities might still be using this stim type.\n"
 "Do you really want to delete this custom stim?"
@@ -4522,7 +4516,8 @@ msgstr ""
 msgid "Effect:"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\EffectEditor.cpp:115 xml_file_content.cpp:2
+#: ..\..\plugins\dm.stimresponse\EffectEditor.cpp:115 xml_file_content.cpp:5
+#: xml_file_content.cpp:34
 msgid "Active"
 msgstr ""
 
@@ -4534,43 +4529,43 @@ msgstr ""
 msgid "Stim/Response..."
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:231
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:264
 msgid "Effect"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:234
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:267
 msgid "Details (double-click to edit)"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:391
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:399
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:424
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:433
 msgid "Activate"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:393
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:401
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:426
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:435
 msgid "Deactivate"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:395
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:403 xml_file_content.cpp:11
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:428
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:437 xml_file_content.cpp:11
 msgid "Duplicate"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:402
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:435
 msgid "Add new Effect"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:404 xml_file_content.cpp:6
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:437 xml_file_content.cpp:6
 #: xml_file_content.cpp:13 xml_file_content.cpp:4 xml_file_content.cpp:8
 msgid "Edit"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:407 xml_file_content.cpp:4
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:440 xml_file_content.cpp:4
 msgid "Move Up"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:409 xml_file_content.cpp:5
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:442 xml_file_content.cpp:5
 msgid "Move Down"
 msgstr ""
 
@@ -4578,24 +4573,12 @@ msgstr ""
 msgid "Error: eclass pointer invalid."
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:26
+#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:27
 msgid "Stim/Response Editor"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:31
+#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:32
 msgid "A single entity must be selected to edit Stim/Response properties."
-msgstr ""
-
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:97
-msgid "Stims"
-msgstr ""
-
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:104
-msgid "Responses"
-msgstr ""
-
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:111
-msgid "Custom Stims"
 msgstr ""
 
 #: ..\..\plugins\script\ScriptingSystem.cpp:239
@@ -4662,11 +4645,11 @@ msgstr ""
 msgid "Choose File"
 msgstr ""
 
-#: ..\..\libs\wxutil\PathEntry.cpp:126
+#: ..\..\libs\wxutil\PathEntry.cpp:141
 msgid "Choose Directory"
 msgstr ""
 
-#: ..\..\libs\wxutil\preview\ModelPreview.cpp:154
+#: ..\..\libs\wxutil\preview\ModelPreview.cpp:114
 #: ..\..\libs\wxutil\preview\ParticlePreview.cpp:182
 msgid ""
 "Unable to setup the preview,\n"
@@ -4695,15 +4678,15 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
-#: ..\..\libs\wxutil\TreeView.cpp:218
+#: ..\..\libs\wxutil\TreeView.cpp:225
 msgid "Find: "
 msgstr ""
 
-#: ..\..\libs\wxutil\TreeView.cpp:231
+#: ..\..\libs\wxutil\TreeView.cpp:238
 msgid "Go to next match"
 msgstr ""
 
-#: ..\..\libs\wxutil\TreeView.cpp:232
+#: ..\..\libs\wxutil\TreeView.cpp:239
 msgid "Go to previous match"
 msgstr ""
 
@@ -6330,6 +6313,10 @@ msgstr ""
 msgid "Particle Stages"
 msgstr ""
 
+#: xml_file_content.cpp:7 xml_file_content.cpp:3 xml_file_content.cpp:32
+msgid "Remove"
+msgstr ""
+
 #: xml_file_content.cpp:8
 msgid "Toggle Visibility"
 msgstr ""
@@ -6781,101 +6768,113 @@ msgid "gridButton"
 msgstr ""
 
 #: xml_file_content.cpp:1
+msgid "Stims"
+msgstr ""
+
+#: xml_file_content.cpp:4 xml_file_content.cpp:33
 msgid "Type:"
 msgstr ""
 
-#: xml_file_content.cpp:3 xml_file_content.cpp:22
-msgid "Chance:"
-msgstr ""
-
-#: xml_file_content.cpp:4
-msgid "Random Effects:"
-msgstr ""
-
-#: xml_file_content.cpp:5
-msgid "Response Effects"
-msgstr ""
-
-#: xml_file_content.cpp:3
+#: xml_file_content.cpp:6
 msgid "Activation Timer:"
 msgstr ""
 
-#: xml_file_content.cpp:4
+#: xml_file_content.cpp:7
 msgid "h"
 msgstr ""
 
-#: xml_file_content.cpp:5
+#: xml_file_content.cpp:8
 msgid "m"
 msgstr ""
 
-#: xml_file_content.cpp:6
+#: xml_file_content.cpp:9
 msgid "s"
 msgstr ""
 
-#: xml_file_content.cpp:7 xml_file_content.cpp:13 xml_file_content.cpp:15
+#: xml_file_content.cpp:10 xml_file_content.cpp:16 xml_file_content.cpp:18
 msgid "ms"
 msgstr ""
 
-#: xml_file_content.cpp:8
+#: xml_file_content.cpp:11
 msgid "Timer restarts after firing"
 msgstr ""
 
-#: xml_file_content.cpp:9
+#: xml_file_content.cpp:12
 msgid "Timer reloads"
 msgstr ""
 
-#: xml_file_content.cpp:10
+#: xml_file_content.cpp:13
 msgid "times"
 msgstr ""
 
-#: xml_file_content.cpp:11
+#: xml_file_content.cpp:14
 msgid "Timer waits for start (when disabled: starts at spawn time)"
 msgstr ""
 
-#: xml_file_content.cpp:12
+#: xml_file_content.cpp:15
 msgid "Time interval:"
 msgstr ""
 
-#: xml_file_content.cpp:14
+#: xml_file_content.cpp:17
 msgid "Duration:"
 msgstr ""
 
-#: xml_file_content.cpp:16
+#: xml_file_content.cpp:19
 msgid "Radius"
 msgstr ""
 
-#: xml_file_content.cpp:17
+#: xml_file_content.cpp:20
 msgid "Use bounds"
 msgstr ""
 
-#: xml_file_content.cpp:18
+#: xml_file_content.cpp:21
 msgid "Radius changes over time to:"
 msgstr ""
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:22
 msgid "Magnitude:"
 msgstr ""
 
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:23
 msgid "Falloff Exponent:"
 msgstr ""
 
-#: xml_file_content.cpp:21
+#: xml_file_content.cpp:24
 msgid "Max Fire Count:"
 msgstr ""
 
-#: xml_file_content.cpp:23
-msgid "Velocity:"
-msgstr ""
-
-#: xml_file_content.cpp:24
-msgid "Bounds:"
-msgstr ""
-
-#: xml_file_content.cpp:25
-msgid "Min:"
+#: xml_file_content.cpp:25 xml_file_content.cpp:35
+msgid "Chance:"
 msgstr ""
 
 #: xml_file_content.cpp:26
+msgid "Velocity:"
+msgstr ""
+
+#: xml_file_content.cpp:27
+msgid "Bounds:"
+msgstr ""
+
+#: xml_file_content.cpp:28
+msgid "Min:"
+msgstr ""
+
+#: xml_file_content.cpp:29
 msgid "Max:"
+msgstr ""
+
+#: xml_file_content.cpp:30
+msgid "Responses"
+msgstr ""
+
+#: xml_file_content.cpp:36
+msgid "Random Effects:"
+msgstr ""
+
+#: xml_file_content.cpp:37
+msgid "Response Effects"
+msgstr ""
+
+#: xml_file_content.cpp:38
+msgid "Custom Stims"
 msgstr ""

@@ -2,19 +2,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2019-12-27 16:03+0100\n"
-"PO-Revision-Date: 2019-12-27 16:06+0100\n"
+"POT-Creation-Date: 2020-01-12 05:34+0100\n"
+"PO-Revision-Date: 2020-01-12 05:36+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-Language: German\n"
-"X-Poedit-SearchPath-0: ..\\..\\..\\..\\radiant\n"
-"X-Poedit-SearchPath-1: ..\\..\\..\\..\\libs\n"
-"X-Poedit-SearchPath-2: ..\\..\\..\\..\\plugins\n"
+"X-Generator: Poedit 2.2.4\n"
+"X-Poedit-SearchPath-0: ../../../../radiant\n"
+"X-Poedit-SearchPath-1: ../../../../libs\n"
+"X-Poedit-SearchPath-2: ../../../../plugins\n"
 
 #: ..\..\radiant\brush\BrushModule.cpp:27
 msgid "Settings/Primitives"
@@ -42,13 +43,11 @@ msgstr ""
 "da es unnötig viele sehr kleine Brushes und/oder Lecks erzeugen kann.\n"
 "Dieser Hinweis wird nicht wieder erscheinen."
 
-#: ..\..\radiant\brush\csg\CSG.cpp:305
-#: ..\..\radiant\brush\csg\CSG.cpp:306
+#: ..\..\radiant\brush\csg\CSG.cpp:305 ..\..\radiant\brush\csg\CSG.cpp:306
 msgid "CSG Subtract: No brushes selected."
 msgstr "CSG Subtraktion: Keine Brushes ausgewählt."
 
-#: ..\..\radiant\brush\csg\CSG.cpp:416
-#: ..\..\radiant\brush\csg\CSG.cpp:417
+#: ..\..\radiant\brush\csg\CSG.cpp:416 ..\..\radiant\brush\csg\CSG.cpp:417
 msgid "CSG Merge: No brushes selected."
 msgstr "CSG Zusammenfügen: Keine Brushes ausgewählt."
 
@@ -88,8 +87,7 @@ msgstr "Feste Auswahlrahmen"
 msgid "Show camera toolbar"
 msgstr "Zeige Toolbar im Kamera-Fenster"
 
-#: ..\..\radiant\camera\FloatingCamWnd.cpp:18
-#: xml_file_content.cpp:62
+#: ..\..\radiant\camera\FloatingCamWnd.cpp:18 xml_file_content.cpp:62
 msgid "Camera"
 msgstr "Kamera"
 
@@ -148,14 +146,15 @@ msgstr "Neuladen der Definitionen"
 
 #: ..\..\radiant\entity\EntityCreator.cpp:39
 msgid "createNodeForEntity(): cannot create entity for NULL entityclass."
-msgstr "createNodeForEntity: Entity für Entity-Klasse NULL kann nicht erstellt werden."
+msgstr ""
+"createNodeForEntity: Entity für Entity-Klasse NULL kann nicht erstellt "
+"werden."
 
 #: ..\..\radiant\eventmanager\MouseToolGroup.cpp:23
 msgid "XY View"
 msgstr "XY-Ansicht"
 
-#: ..\..\radiant\eventmanager\MouseToolGroup.cpp:25
-#: xml_file_content.cpp:50
+#: ..\..\radiant\eventmanager\MouseToolGroup.cpp:25 xml_file_content.cpp:50
 msgid "Camera View"
 msgstr "Kamera"
 
@@ -219,10 +218,8 @@ msgid "Loading entity {0:d}\n"
 msgstr "Lade Entity {0:d}\n"
 
 #: ..\..\radiant\map\algorithm\Models.cpp:98
-#: ..\..\radiant\map\algorithm\Models.cpp:119
-#: ..\..\radiant\map\Map.cpp:111
-#: ..\..\radiant\map\Map.cpp:426
-#: ..\..\radiant\map\Map.cpp:525
+#: ..\..\radiant\map\algorithm\Models.cpp:119 ..\..\radiant\map\Map.cpp:111
+#: ..\..\radiant\map\Map.cpp:426 ..\..\radiant\map\Map.cpp:525
 #: ..\..\radiant\map\Map.cpp:553
 #: ..\..\radiant\shaders\Doom3ShaderSystem.cpp:312
 msgid "Processing..."
@@ -367,8 +364,7 @@ msgstr "Speichere Kopie als..."
 msgid "New Map"
 msgstr "Neue Map"
 
-#: ..\..\radiant\map\Map.cpp:793
-#: ..\..\radiant\ui\mru\MRU.cpp:96
+#: ..\..\radiant\map\Map.cpp:793 ..\..\radiant\ui\mru\MRU.cpp:96
 msgid "Open Map"
 msgstr "Map öffnen"
 
@@ -400,8 +396,7 @@ msgstr ""
 msgid "Map"
 msgstr "Map"
 
-#: ..\..\radiant\map\MapFileManager.cpp:33
-#: xml_file_content.cpp:91
+#: ..\..\radiant\map\MapFileManager.cpp:33 xml_file_content.cpp:91
 msgid "Region"
 msgstr "Region"
 
@@ -410,8 +405,7 @@ msgstr "Region"
 msgid "Prefab"
 msgstr "Prefab"
 
-#: ..\..\radiant\map\MapResource.cpp:255
-#: ..\..\radiant\map\MapResource.cpp:527
+#: ..\..\radiant\map\MapResource.cpp:255 ..\..\radiant\map\MapResource.cpp:527
 msgid "File is write-protected: {0}"
 msgstr "Datei ist schreibgeschützt: {0}"
 
@@ -437,8 +431,7 @@ msgstr ""
 "\n"
 "{1}"
 
-#: ..\..\radiant\map\MapResource.cpp:483
-#: ..\..\radiant\map\MapResource.cpp:502
+#: ..\..\radiant\map\MapResource.cpp:483 ..\..\radiant\map\MapResource.cpp:502
 msgid ""
 "Failure opening file:\n"
 "{0}"
@@ -460,11 +453,14 @@ msgstr "Konnte das Pointfile nicht öffnen: {0}"
 
 #: ..\..\radiant\map\RegionManager.cpp:174
 msgid "Warning: Camera not within region, can't set info_player_start."
-msgstr "Warnung: die Kamera befindet sich nicht innerhalb der Region, konnte daher den Spielerstartpunkt nicht setzen."
+msgstr ""
+"Warnung: die Kamera befindet sich nicht innerhalb der Region, konnte daher "
+"den Spielerstartpunkt nicht setzen."
 
 #: ..\..\radiant\map\RegionManager.cpp:262
 msgid "Could not set Region: XY Top View not found."
-msgstr "Konnte Region nicht festlegen, weil die XY-Ansicht nicht gefunden wurde."
+msgstr ""
+"Konnte Region nicht festlegen, weil die XY-Ansicht nicht gefunden wurde."
 
 #: ..\..\radiant\map\RegionManager.cpp:289
 msgid "Could not set Region: please select a single Brush."
@@ -655,7 +651,9 @@ msgstr ""
 msgid ""
 "Cannot stitch patch textures. \n"
 "Exactly 2 patches must be selected."
-msgstr "Kann Texturen nicht zusammenheften, für diese Operation müssten genau 2 Patches ausgewählt sein."
+msgstr ""
+"Kann Texturen nicht zusammenheften, für diese Operation müssten genau 2 "
+"Patches ausgewählt sein."
 
 #: ..\..\radiant\patch\algorithm\General.cpp:157
 msgid "Cannot bulge patch. No patches selected."
@@ -699,7 +697,9 @@ msgstr "Kann Kontrollpunkt nicht anfügen, keine Kurven ausgewählt."
 
 #: ..\..\radiant\selection\algorithm\Curves.cpp:198
 msgid "Can't remove curve points - must be in vertex editing mode."
-msgstr "Kann Kontrollpunkte nicht entfernen, bitte vorher in den Vertex-Modus wechseln."
+msgstr ""
+"Kann Kontrollpunkte nicht entfernen, bitte vorher in den Vertex-Modus "
+"wechseln."
 
 #: ..\..\radiant\selection\algorithm\Curves.cpp:218
 msgid "Can't remove curve points - no entities with curves selected."
@@ -707,7 +707,9 @@ msgstr "Kann Kontrollpunkte nicht entfernen, keine Kurven ausgewählt."
 
 #: ..\..\radiant\selection\algorithm\Curves.cpp:228
 msgid "Can't insert curve points - must be in vertex editing mode."
-msgstr "Kann Kontrollpunkte nicht einfügen, bitte vorher in den Vertex-Modus wechseln."
+msgstr ""
+"Kann Kontrollpunkte nicht einfügen, bitte vorher in den Vertex-Modus "
+"wechseln."
 
 #: ..\..\radiant\selection\algorithm\Curves.cpp:248
 msgid "Can't insert curve points - no entities with curves selected."
@@ -747,20 +749,28 @@ msgid "Unable to create entity {0}, no brushes selected."
 msgstr "Entity {0} kann nicht erzeugt werden. Keine Brushes ausgewählt."
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:242
-msgid "Cannot reparent primitives to entity. Please select at least one brush/patch and exactly one func_* entity. (The entity has to be selected last.)"
-msgstr "Kann die ausgewählten Primitive nicht neu zuordnen. Bitte zumindest einen Brush/Patch sowie genau eine Entity auswählen. (Die Entity muss als letztes ausgewählt worden sein.)"
+msgid ""
+"Cannot reparent primitives to entity. Please select at least one brush/patch "
+"and exactly one func_* entity. (The entity has to be selected last.)"
+msgstr ""
+"Kann die ausgewählten Primitive nicht neu zuordnen. Bitte zumindest einen "
+"Brush/Patch sowie genau eine Entity auswählen. (Die Entity muss als letztes "
+"ausgewählt worden sein.)"
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:392
 msgid ""
 "Cannot merge entities, the selection must consist of func_* entities only.\n"
 "(The first selected entity will be preserved.)"
 msgstr ""
-"Kann Entities nicht zusammenführen, die Auswahl muss ausschließlich aus func_*-Entities bestehen.\n"
+"Kann Entities nicht zusammenführen, die Auswahl muss ausschließlich aus "
+"func_*-Entities bestehen.\n"
 "(Die zuerst ausgewählte Entity bleibt dabei erhalten.)"
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:403
 msgid "Groups can be formed in Primitive and Group Part selection mode only"
-msgstr "Gruppen können nur im Primitiv- und Gruppenteil-Selektionsmodus erstellt werden"
+msgstr ""
+"Gruppen können nur im Primitiv- und Gruppenteil-Selektionsmodus erstellt "
+"werden"
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:408
 msgid "Nothing selected, cannot group anything"
@@ -768,7 +778,8 @@ msgstr "Nichts ausgewählt, kann keine Gruppe erstellen"
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:413
 msgid "Select more than one element to form a group"
-msgstr "Um eine Gruppe zu erstellen muss mehr als ein Element ausgewählt werden"
+msgstr ""
+"Um eine Gruppe zu erstellen muss mehr als ein Element ausgewählt werden"
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:439
 msgid "The selected elements already form a group"
@@ -776,7 +787,9 @@ msgstr "Die selektierten Elemente bilden bereits eine Gruppe"
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:465
 msgid "Groups can be dissolved in Primitive and Group Part selection mode only"
-msgstr "Gruppen können nur im Primitiv- und Gruppenteil-Selektionsmodus aufgelöst werden"
+msgstr ""
+"Gruppen können nur im Primitiv- und Gruppenteil-Selektionsmodus aufgelöst "
+"werden"
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:470
 msgid "Nothing selected, cannot un-group anything"
@@ -809,7 +822,9 @@ msgstr "Keine Faces ausgewählt."
 
 #: ..\..\radiant\selection\algorithm\Primitives.cpp:382
 msgid "{0:d} faces were not suitable (had more than 4 vertices)."
-msgstr "{0:d} ungeeignete Faces wurden nicht bearbeitet (Faces mit mehr als 4 Eckpunkten)."
+msgstr ""
+"{0:d} ungeeignete Faces wurden nicht bearbeitet (Faces mit mehr als 4 "
+"Eckpunkten)."
 
 #: ..\..\radiant\selection\algorithm\Primitives.cpp:393
 #: ..\..\radiant\selection\algorithm\Primitives.cpp:492
@@ -824,17 +839,21 @@ msgstr "Für diese Operation muss mindestens ein Brush ausgewählt sein."
 msgid ""
 "Can't paste shader to entire brush.\n"
 "Target is not a brush."
-msgstr "Kann Shader nicht auf gesamten Brush anwenden, das Ziel ist kein Brush."
+msgstr ""
+"Kann Shader nicht auf gesamten Brush anwenden, das Ziel ist kein Brush."
 
 #: ..\..\radiant\selection\algorithm\Shader.cpp:346
 msgid ""
 "Can't paste Texture Coordinates.\n"
 "Target patch dimensions must match."
-msgstr "Kann Texturkoordinaten nicht kopieren, da die Patch-Dimensionen nicht passend sind."
+msgstr ""
+"Kann Texturkoordinaten nicht kopieren, da die Patch-Dimensionen nicht "
+"passend sind."
 
 #: ..\..\radiant\selection\algorithm\Shader.cpp:355
 msgid "Can't paste Texture Coordinates from patches to faces."
-msgstr "Es ist nicht möglich, Texturkoordinaten von Patches auf Faces zu kopieren."
+msgstr ""
+"Es ist nicht möglich, Texturkoordinaten von Patches auf Faces zu kopieren."
 
 #: ..\..\radiant\selection\algorithm\Shader.cpp:361
 msgid "Can't paste Texture Coordinates from faces."
@@ -850,7 +869,8 @@ msgstr "Konnte Face nicht casten, Shader wurde nicht kopiert."
 
 #: ..\..\radiant\selection\algorithm\Shader.cpp:433
 msgid "Can't copy Shader. Please select a single face or patch."
-msgstr "Shader nicht kopiert: bitte ein einzelnes Face oder einen Patch auswählen."
+msgstr ""
+"Shader nicht kopiert: bitte ein einzelnes Face oder einen Patch auswählen."
 
 #: ..\..\radiant\selection\algorithm\Transformation.cpp:97
 msgid "Cannot scale by zero value."
@@ -875,15 +895,15 @@ msgid "Settings/Selection"
 msgstr "Einstellungen/Selektion"
 
 #: ..\..\radiant\selection\RadiantSelectionSystem.cpp:918
-msgid "Ignore light volume bounds when calculating default rotation pivot location"
+msgid ""
+"Ignore light volume bounds when calculating default rotation pivot location"
 msgstr "Ignoriere Lichtvolumina für die Berechnung des Standard-Pivotpunkts"
 
 #: ..\..\radiant\selection\SelectionMouseTools.cpp:54
 msgid "Select"
 msgstr "Auswählen"
 
-#: ..\..\radiant\selection\SelectionMouseTools.cpp:176
-#: xml_file_content.cpp:4
+#: ..\..\radiant\selection\SelectionMouseTools.cpp:176 xml_file_content.cpp:4
 msgid "Select Faces"
 msgstr "Faces auswählen"
 
@@ -909,11 +929,13 @@ msgstr "Alle Auswahlsätze löschen?"
 
 #: ..\..\radiant\selection\selectionset\SelectionSetManager.cpp:224
 msgid ""
-"This will delete all set definitions. The actual map objects will not be affected by this step.\n"
+"This will delete all set definitions. The actual map objects will not be "
+"affected by this step.\n"
 "\n"
 "Continue with that operation?"
 msgstr ""
-"Dies entfernt alle vorhandenen Auswahlsätze. Die Objekte in der aktuellen Map werden dadurch nicht beeinflusst.\n"
+"Dies entfernt alle vorhandenen Auswahlsätze. Die Objekte in der aktuellen "
+"Map werden dadurch nicht beeinflusst.\n"
 "\n"
 "Fortfahren?"
 
@@ -923,20 +945,26 @@ msgid ""
 "\n"
 "Select an item from the dropdown list to restore the selection.\n"
 "\n"
-"Hold SHIFT when opening the dropdown list and selecting the item to de-select the set."
+"Hold SHIFT when opening the dropdown list and selecting the item to de-"
+"select the set."
 msgstr ""
-"Namen eingaben und mit der EINGABETASTE bestätigen um einen neuen Satz anzulegen.\n"
+"Namen eingaben und mit der EINGABETASTE bestätigen um einen neuen Satz "
+"anzulegen.\n"
 "\n"
-"Ein Element in der Liste auswählen um die entsprechende Auswahl wiederherzustellen.\n"
+"Ein Element in der Liste auswählen um die entsprechende Auswahl "
+"wiederherzustellen.\n"
 "\n"
-"UMSCHALTTASTE gedrückt halten um die Auswahl der entsprechenden Elemente aufzuheben."
+"UMSCHALTTASTE gedrückt halten um die Auswahl der entsprechenden Elemente "
+"aufzuheben."
 
 #: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:62
 msgid "Cannot create selection set"
 msgstr "Kann Auswahlsatz nicht erstellen"
 
 #: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:63
-msgid "Cannot create a selection set, there is nothing selected in the current scene."
+msgid ""
+"Cannot create a selection set, there is nothing selected in the current "
+"scene."
 msgstr "Kann Auswahlsatz nicht anlegen, keine Auswahl vorhanden."
 
 #: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:25
@@ -959,8 +987,7 @@ msgstr "Patch"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:356
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:73
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:450
-#: xml_file_content.cpp:14
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:450 xml_file_content.cpp:14
 msgid "Shader"
 msgstr "Shader"
 
@@ -976,10 +1003,12 @@ msgstr "Spiel"
 #: ..\..\radiant\settings\GameManager.cpp:120
 msgid ""
 "This page has been moved!\n"
-"Please use the game settings dialog in the menu: File &gt; Game/Project Setup..."
+"Please use the game settings dialog in the menu: File &gt; Game/Project "
+"Setup..."
 msgstr ""
 "Diese Seite wurde verschoben!\n"
-"Bitte benutze den Dialog unter dem Menüpunkt Datei &gt; Spiel/Projekteinstellungen..."
+"Bitte benutze den Dialog unter dem Menüpunkt Datei &gt; Spiel/"
+"Projekteinstellungen..."
 
 #: ..\..\radiant\settings\GameManager.cpp:139
 msgid "GameManager: No game type selected, can't continue."
@@ -987,7 +1016,9 @@ msgstr "GameManager: kein Spieltyp ausgewählt, kann daher nicht fortfahren."
 
 #: ..\..\radiant\settings\GameManager.cpp:157
 msgid "GameManager: No valid game files found, can't continue."
-msgstr "GameManager: keine gültigen Spieldateien (.game) gefunden, kann nicht fortfahren."
+msgstr ""
+"GameManager: keine gültigen Spieldateien (.game) gefunden, kann nicht "
+"fortfahren."
 
 #: ..\..\radiant\settings\GameManager.cpp:193
 msgid "No game type selected."
@@ -1837,30 +1868,18 @@ msgid "Note: This shortcut is already assigned to:"
 msgstr "Hinweis: diese Kombination ist bereits zugeordnet:"
 
 #: ..\..\radiant\ui\commandlist\ShortcutChooser.cpp:49
-#: ..\..\plugins\script\ScriptWindow.cpp:85
-#: xml_file_content.cpp:12
-#: xml_file_content.cpp:3
-#: xml_file_content.cpp:7
-#: xml_file_content.cpp:10
-#: xml_file_content.cpp:18
-#: xml_file_content.cpp:8
-#: xml_file_content.cpp:6
-#: xml_file_content.cpp:14
-#: xml_file_content.cpp:15
+#: ..\..\plugins\script\ScriptWindow.cpp:85 xml_file_content.cpp:12
+#: xml_file_content.cpp:3 xml_file_content.cpp:7 xml_file_content.cpp:10
+#: xml_file_content.cpp:18 xml_file_content.cpp:8 xml_file_content.cpp:6
+#: xml_file_content.cpp:14 xml_file_content.cpp:15 xml_file_content.cpp:39
 msgid "OK"
 msgstr "OK"
 
-#: ..\..\radiant\ui\commandlist\ShortcutChooser.cpp:52
-#: xml_file_content.cpp:2
-#: xml_file_content.cpp:6
-#: xml_file_content.cpp:9
-#: xml_file_content.cpp:17
-#: xml_file_content.cpp:1
-#: xml_file_content.cpp:10
-#: xml_file_content.cpp:14
-#: xml_file_content.cpp:5
-#: xml_file_content.cpp:13
-#: xml_file_content.cpp:20
+#: ..\..\radiant\ui\commandlist\ShortcutChooser.cpp:52 xml_file_content.cpp:2
+#: xml_file_content.cpp:6 xml_file_content.cpp:9 xml_file_content.cpp:17
+#: xml_file_content.cpp:1 xml_file_content.cpp:10 xml_file_content.cpp:14
+#: xml_file_content.cpp:5 xml_file_content.cpp:13 xml_file_content.cpp:20
+#: xml_file_content.cpp:40
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -1908,7 +1927,7 @@ msgstr "Shaderdefinition ansehen"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:192
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:222
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:148
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:477
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:453
 #: ..\..\libs\wxutil\KeyValueTable.cpp:44
 msgid "Value"
 msgstr "Wert"
@@ -1927,8 +1946,7 @@ msgstr "Definiert in"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:391
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:75
 #: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:53
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:133
-#: xml_file_content.cpp:1
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:133 xml_file_content.cpp:1
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -1954,7 +1972,7 @@ msgid "Entity Class Tree"
 msgstr "Entity-Klassenbaum"
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:43
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:667
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:672
 msgid "Loading, please wait..."
 msgstr "Lade, bitte warten..."
 
@@ -1965,7 +1983,7 @@ msgstr "Klassenname"
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:145
 #: ..\..\radiant\ui\einspector\AddPropertyDialog.cpp:76
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:472
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:448
 msgid "Property"
 msgstr "Eigenschaft"
 
@@ -1981,51 +1999,47 @@ msgstr "Benutzerdefinierte Eigenschaften dieser Entityklasse, falls definiert"
 msgid "Choose entity class..."
 msgstr "Entityklasse auswählen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:104
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:82
 msgid "Show inherited properties"
 msgstr "Zeige vererbte Eigenschaften"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:108
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:85
 msgid "Show help"
 msgstr "Zeige Hilfe"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:314
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:290
 msgid "Add property..."
 msgstr "Eigenschaft hinzufügen..."
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:319
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:295
 msgid "Delete property"
 msgstr "Eigenschaft entfernen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:327
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:303
 msgid "Copy Spawnarg(s)"
 msgstr "Wertepaar(e) kopieren"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:332
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:308
 msgid "Cut Spawnarg(s)"
 msgstr "Wertepaar(e) ausschneiden"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:337
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:313
 msgid "Paste Spawnarg(s)"
 msgstr "Wertepaar(e) einfügen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:349
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:352
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:325
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:328
 #: ..\..\radiant\uimanager\GroupDialog.cpp:30
 msgid "Entity"
 msgstr "Entity"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:482
-msgid "?"
-msgstr "?"
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1170
+msgid "Entity {0}"
+msgstr "Entity {0}"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1195
-msgid "<b>Entity {0}</b>"
-msgstr "<b>Entity {0}</b>"
-
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1206
-msgid "<b>Entity {0}, Primitive {1}</b>"
-msgstr "<b>Entity {0}, Primitiv {1}</b>"
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1181
+msgid "Entity {0}, Primitive {1}"
+msgstr "Entity {0}, Primitiv {1}"
 
 #: ..\..\radiant\ui\einspector\EntityPropertyEditor.cpp:31
 msgid "Choose target entity..."
@@ -2040,19 +2054,25 @@ msgstr "Anwenden..."
 msgid "Choose texture"
 msgstr "Textur auswählen"
 
-#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:40
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:42
 msgid "Choose model..."
 msgstr "Modell auswählen..."
 
-#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:45
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:46
+#: ..\..\radiant\ui\einspector\SkinPropertyEditor.cpp:23
+#: ..\..\plugins\dm.editing\AIEditingPanel.cpp:110
+msgid "Choose skin..."
+msgstr "Skin auswählen..."
+
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:51
 msgid "Choose particle..."
 msgstr "Partikel auswählen..."
 
-#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:80
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:87
 msgid "Warning: "
 msgstr "Achtung:"
 
-#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:81
+#: ..\..\radiant\ui\einspector\ModelPropertyEditor.cpp:88
 msgid ""
 "Changing this entity's model to the selected value will\n"
 "remove all child primitives from it:\n"
@@ -2075,11 +2095,6 @@ msgstr "Passende Skins"
 #: ..\..\radiant\ui\einspector\SkinChooser.cpp:219
 msgid "All skins"
 msgstr "Alle Skins"
-
-#: ..\..\radiant\ui\einspector\SkinPropertyEditor.cpp:23
-#: ..\..\plugins\dm.editing\AIEditingPanel.cpp:110
-msgid "Choose skin..."
-msgstr "Skin auswählen..."
 
 #: ..\..\radiant\ui\einspector\SoundPropertyEditor.cpp:23
 msgid "Choose sound..."
@@ -2106,14 +2121,13 @@ msgid "Create entity"
 msgstr "Neue Entity"
 
 #: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:282
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:376
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:405
 #: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:397
 #: ..\..\radiant\uimanager\SoundChooser.cpp:191
 msgid "Loading..."
 msgstr "Lade..."
 
-#: ..\..\radiant\ui\entitylist\EntityList.cpp:23
-#: xml_file_content.cpp:60
+#: ..\..\radiant\ui\entitylist\EntityList.cpp:23 xml_file_content.cpp:60
 msgid "Entity List"
 msgstr "Entity-Liste"
 
@@ -2167,11 +2181,15 @@ msgstr "Namenskonflikt"
 
 #: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:298
 msgid "Cannot add, filter with same name already exists."
-msgstr "Kann diesen Filter nicht hinzufügen, ein weiterer Filter mit demselben Namen existiert bereits."
+msgstr ""
+"Kann diesen Filter nicht hinzufügen, ein weiterer Filter mit demselben Namen "
+"existiert bereits."
 
 #: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:354
 msgid "No rules defined for this filter. Delete it?"
-msgstr "Für diesen Filter sind keine Regeln definiert, soll der Filter gelöscht werden?"
+msgstr ""
+"Für diesen Filter sind keine Regeln definiert, soll der Filter gelöscht "
+"werden?"
 
 #: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:16
 msgid "Edit Filter"
@@ -2198,8 +2216,8 @@ msgstr "Index"
 
 #: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:156
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:119
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:66
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:91
+#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:58
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:88
 #: xml_file_content.cpp:19
 msgid "Type"
 msgstr "Typ"
@@ -2288,12 +2306,19 @@ msgid "Minor Grid Style"
 msgstr "Nebengitter-Stil"
 
 #: ..\..\radiant\ui\layers\LayerControl.cpp:50
-msgid "Indicates whether anything among the current selection is part of this layer."
-msgstr "Zeigt an, ob irgendetwas aus der momentanen Auswahl Teil dieser Ebene ist."
+msgid ""
+"Indicates whether anything among the current selection is part of this layer."
+msgstr ""
+"Zeigt an, ob irgendetwas aus der momentanen Auswahl Teil dieser Ebene ist."
 
 #: ..\..\radiant\ui\layers\LayerControl.cpp:70
-msgid "Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as active layer."
-msgstr "Klicken um alles in der Ebene auszuwählen, UMSCHALT beim Klicken gedrückt halten um Auswahl aufzuheben, STRG halten um die Ebene als aktive Ebene festzulegen."
+msgid ""
+"Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as "
+"active layer."
+msgstr ""
+"Klicken um alles in der Ebene auszuwählen, UMSCHALT beim Klicken gedrückt "
+"halten um Auswahl aufzuheben, STRG halten um die Ebene als aktive Ebene "
+"festzulegen."
 
 #: ..\..\radiant\ui\layers\LayerControl.cpp:71
 msgid "Rename this layer"
@@ -2327,22 +2352,20 @@ msgstr "Neuen Ebenennamen eingeben"
 msgid "Could not rename layer, please try again."
 msgstr "Konnte Ebene nicht umbenennen, bitte nochmals versuchen."
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:34
-#: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:18
-#: xml_file_content.cpp:51
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:35
+#: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:18 xml_file_content.cpp:51
 msgid "Layers"
 msgstr "Ebenen"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:74
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:76
 msgid "Show all"
 msgstr "Alle anzeigen"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:75
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:77
 msgid "Hide all"
 msgstr "Alle ausblenden"
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:81
-#: xml_file_content.cpp:2
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:83 xml_file_content.cpp:2
 msgid "New"
 msgstr "Neu"
 
@@ -2352,8 +2375,7 @@ msgstr "Lichteigenschaften"
 
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:73
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:59
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:111
-#: xml_file_content.cpp:53
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:111 xml_file_content.cpp:53
 msgid "Texture Browser"
 msgstr "Texturbrowser"
 
@@ -2539,12 +2561,12 @@ msgstr "Alle anzeigen"
 msgid "Show Favourites"
 msgstr "Favoriten anzeigen"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:566
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:569
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:571
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:574
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:743
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:748
 msgid "No favourites added so far"
 msgstr "Keine Favoriten vorhanden"
 
@@ -2604,8 +2626,7 @@ msgstr "Nichts ausgewählt, exportieren nicht möglich"
 msgid "Material"
 msgstr "Material"
 
-#: ..\..\radiant\ui\modelselector\MaterialsList.cpp:47
-#: xml_file_content.cpp:8
+#: ..\..\radiant\ui\modelselector\MaterialsList.cpp:47 xml_file_content.cpp:8
 msgid "Visible"
 msgstr "Sichtbar"
 
@@ -2622,29 +2643,29 @@ msgstr "{0:d} Modelle geladen"
 msgid "Choose Model"
 msgstr "Modell auswählen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:353
-msgid "Model Path"
-msgstr "Modell-Pfad"
-
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:447
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:355
 msgid "Model name"
 msgstr "Modellname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:448
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:356
 msgid "Skin name"
 msgstr "Skinname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:449
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:357
 msgid "Total vertices"
 msgstr "Gesamte Vertices"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:450
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:358
 msgid "Total polys"
 msgstr "Gesamte Polygone"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:451
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:359
 msgid "Material surfaces"
 msgstr "Anzahl Oberflächen"
+
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:382
+msgid "Model Path"
+msgstr "Modell-Pfad"
 
 #: ..\..\radiant\ui\mousetool\BindToolDialog.cpp:16
 msgid "Select new Binding: {0}"
@@ -2760,8 +2781,7 @@ msgstr "Teil zu Worldspawn umwandeln"
 msgid "Merge Entities"
 msgstr "Entities zusammenführen"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76
-#: xml_file_content.cpp:158
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76 xml_file_content.cpp:158
 msgid "Make Visportal"
 msgstr "Erzeuge Visportal"
 
@@ -2769,7 +2789,7 @@ msgstr "Erzeuge Visportal"
 msgid "Unable to create light, classname not found."
 msgstr "Kann Licht nicht erzeugen, Klassenname nicht gefunden."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:352
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:388
 msgid "Unable to create speaker, classname not found."
 msgstr "Kann Speaker nicht erzeugen, Klassenname nicht gefunden."
 
@@ -2924,7 +2944,8 @@ msgid "This is the path where your TheDarkMod.exe is located."
 msgstr "An dieser stelle sollte sich TheDarkMod.exe befinden."
 
 #: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:88
-msgid "The FM folder name of the mission you want to work on, e.g. 'saintlucia'."
+msgid ""
+"The FM folder name of the mission you want to work on, e.g. 'saintlucia'."
 msgstr "Der Ordnername der zu editierenden Mission, z.B. 'saintlucia'."
 
 #: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:90
@@ -2952,8 +2973,11 @@ msgid "Failed to create the folder {0}"
 msgstr "Konnte das Verzeichnis {0} nicht anlegen"
 
 #: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:221
-msgid "The engine executable \"{0}\" could not be found in the specified folder.\n"
-msgstr "Die EXE-Datei \"{0}\" konnte in dem angegebenen Ordner nicht gefunden werden.\n"
+msgid ""
+"The engine executable \"{0}\" could not be found in the specified folder.\n"
+msgstr ""
+"Die EXE-Datei \"{0}\" konnte in dem angegebenen Ordner nicht gefunden "
+"werden.\n"
 
 #: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:228
 msgid "The mission path \"{0}\" does not exist.\n"
@@ -3190,18 +3214,12 @@ msgstr "Farbe"
 
 #: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:92
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:53
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:397
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:412
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:405
-#: xml_file_content.cpp:182
-#: xml_file_content.cpp:3
-#: xml_file_content.cpp:7
-#: xml_file_content.cpp:9
-#: xml_file_content.cpp:16
-#: xml_file_content.cpp:2
-#: xml_file_content.cpp:5
-#: xml_file_content.cpp:6
-#: xml_file_content.cpp:18
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:430
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:445
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:439 xml_file_content.cpp:182
+#: xml_file_content.cpp:3 xml_file_content.cpp:7 xml_file_content.cpp:9
+#: xml_file_content.cpp:16 xml_file_content.cpp:2 xml_file_content.cpp:5
+#: xml_file_content.cpp:6 xml_file_content.cpp:18
 msgid "Delete"
 msgstr "Löschen"
 
@@ -3298,8 +3316,7 @@ msgstr "Zeige Richtungspfeile der Entities"
 msgid "Show Entity Names"
 msgstr "Zeige Namen der Entities"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:206
-#: xml_file_content.cpp:81
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:206 xml_file_content.cpp:81
 msgid "Show Blocks"
 msgstr "Zeige Blöcke"
 
@@ -3307,18 +3324,15 @@ msgstr "Zeige Blöcke"
 msgid "Show Coordinates"
 msgstr "Zeige Koordinaten"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:208
-#: xml_file_content.cpp:84
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:208 xml_file_content.cpp:84
 msgid "Show Axes"
 msgstr "Zeige Achsen"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:209
-#: xml_file_content.cpp:83
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:209 xml_file_content.cpp:83
 msgid "Show Window Outline"
 msgstr "Zeige Fensterumrandung"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:210
-#: xml_file_content.cpp:85
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:210 xml_file_content.cpp:85
 msgid "Show Workzone"
 msgstr "Zeige Arbeitsbereich"
 
@@ -3346,10 +3360,8 @@ msgstr "Kamera ausrichten"
 msgid "Drag Camera"
 msgstr "Kamera verschieben"
 
-#: ..\..\radiant\xyview\tools\ClipperTool.cpp:21
-#: xml_file_content.cpp:152
-#: xml_file_content.cpp:13
-#: xml_file_content.cpp:18
+#: ..\..\radiant\xyview\tools\ClipperTool.cpp:21 xml_file_content.cpp:152
+#: xml_file_content.cpp:13 xml_file_content.cpp:18
 msgid "Clipper"
 msgstr "Clipper"
 
@@ -3474,8 +3486,7 @@ msgstr "Konversationen..."
 msgid "Difficulty Editor"
 msgstr "Schwierigkeitsstufen-Editor"
 
-#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:76
-#: xml_file_content.cpp:4
+#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:76 xml_file_content.cpp:4
 msgid "Setting"
 msgstr "Einstellung"
 
@@ -3484,16 +3495,10 @@ msgid "Assign"
 msgstr "Zuweisen"
 
 #: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:92
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:81
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:51
-#: xml_file_content.cpp:2
-#: xml_file_content.cpp:5
-#: xml_file_content.cpp:8
-#: xml_file_content.cpp:12
-#: xml_file_content.cpp:1
-#: xml_file_content.cpp:3
-#: xml_file_content.cpp:17
-#: xml_file_content.cpp:6
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:51 xml_file_content.cpp:2
+#: xml_file_content.cpp:5 xml_file_content.cpp:8 xml_file_content.cpp:12
+#: xml_file_content.cpp:1 xml_file_content.cpp:3 xml_file_content.cpp:17
+#: xml_file_content.cpp:6 xml_file_content.cpp:31
 msgid "Add"
 msgstr "Addieren"
 
@@ -3507,7 +3512,8 @@ msgstr "Ignorieren"
 
 #: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:152
 msgid "This default setting is overridden, cannot edit."
-msgstr "Diese Standardeinstellung wurde außer Kraft gesetzt, Editieren nicht möglich."
+msgstr ""
+"Diese Standardeinstellung wurde außer Kraft gesetzt, Editieren nicht möglich."
 
 #: ..\..\plugins\dm.difficulty\DifficultySettings.cpp:168
 msgid " (overridden)"
@@ -3725,7 +3731,8 @@ msgstr "Sprachsatz auswählen..."
 
 #: ..\..\plugins\dm.editing\DarkmodTxt.cpp:131
 msgid "Order of the elements Title/Description/Author/etc. is incorrect"
-msgstr "Die Reihenfolge der Title/Description/Author/etc.-Elemente ist ungültig."
+msgstr ""
+"Die Reihenfolge der Title/Description/Author/etc.-Elemente ist ungültig."
 
 #: ..\..\plugins\dm.editing\FixupMap.cpp:26
 msgid "Fixup in progress"
@@ -3888,8 +3895,7 @@ msgstr "Mod/xdata"
 msgid "Mod Base/xdata"
 msgstr "Mod Base/xdata"
 
-#: ..\..\plugins\dm.gui\plugin.cpp:113
-#: ..\..\plugins\dm.gui\plugin.cpp:117
+#: ..\..\plugins\dm.gui\plugin.cpp:113 ..\..\plugins\dm.gui\plugin.cpp:117
 msgid "Custom Folder"
 msgstr "Benutzerdefinierter Ordner"
 
@@ -3982,12 +3988,20 @@ msgid "Import failed"
 msgstr "Import fehlgeschlagen"
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:379
-msgid "You have imported an XData definition that is contained in a PK4, which can't be accessed for saving."
-msgstr "Du hast eine XData-Definition importiert, die in einem PK4-File gespeichert ist."
+msgid ""
+"You have imported an XData definition that is contained in a PK4, which "
+"can't be accessed for saving."
+msgstr ""
+"Du hast eine XData-Definition importiert, die in einem PK4-File gespeichert "
+"ist."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:381
-msgid "Please rename your XData definition, so that it is stored under a different filename."
-msgstr "Bitte benenne Deine XData-Definition um, so dass sie unter einem neuen Namen gespeichert wird."
+msgid ""
+"Please rename your XData definition, so that it is stored under a different "
+"filename."
+msgstr ""
+"Bitte benenne Deine XData-Definition um, so dass sie unter einem neuen Namen "
+"gespeichert wird."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:398
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:419
@@ -3995,8 +4009,12 @@ msgid "Failed to open {0} for saving."
 msgstr "Konnte {0} nicht zum Speichern öffnen."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:405
-msgid "Merging failed, because the length of the definition to be overwritten could not be retrieved."
-msgstr "Fehler beim Zusammenführen. Die Länge der zu überschreibenden Definition konnte nicht abgerufen werden."
+msgid ""
+"Merging failed, because the length of the definition to be overwritten could "
+"not be retrieved."
+msgstr ""
+"Fehler beim Zusammenführen. Die Länge der zu überschreibenden Definition "
+"konnte nicht abgerufen werden."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:443
 msgid "Mod path not defined. Using Base path..."
@@ -4005,7 +4023,8 @@ msgstr "Mod-Pfad nicht definiert, verwende Base-Pfad..."
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:456
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:474
 msgid "Mod Base path not defined, neither is Mod path. Using Engine path..."
-msgstr "Mod-Base-Pfad nicht definiert, Mod-Pfad auch nicht, verwende Base-Pfad..."
+msgstr ""
+"Mod-Base-Pfad nicht definiert, Mod-Pfad auch nicht, verwende Base-Pfad..."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:461
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:479
@@ -4041,11 +4060,17 @@ msgstr "Import fehlgeschlagen:"
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:862
 msgid "Consult the import summary for further information."
-msgstr "Bitte sieh in der Import-Zusammenfassung nach, um weitere Informationen zu erhalten."
+msgstr ""
+"Bitte sieh in der Import-Zusammenfassung nach, um weitere Informationen zu "
+"erhalten."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:885
-msgid "To avoid duplicated XData definitions the current definition has been renamed to {0}."
-msgstr "Die aktuelle Definition wurde in {0} umbenannt, um doppelte XData-Definitionen zu vermeiden."
+msgid ""
+"To avoid duplicated XData definitions the current definition has been "
+"renamed to {0}."
+msgstr ""
+"Die aktuelle Definition wurde in {0} umbenannt, um doppelte XData-"
+"Definitionen zu vermeiden."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:889
 msgid "XData has been renamed."
@@ -4057,8 +4082,12 @@ msgstr "Die angegebene GUI-Definition ist kein Schriftstück."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1162
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1174
-msgid "The specified gui definition is not suitable for the currently chosen page-layout."
-msgstr "Die angegebene GUI-Definition ist für das momentan gewählte Seitenlayout nicht geeignet."
+msgid ""
+"The specified gui definition is not suitable for the currently chosen page-"
+"layout."
+msgstr ""
+"Die angegebene GUI-Definition ist für das momentan gewählte Seitenlayout "
+"nicht geeignet."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1184
 msgid "Failure during import."
@@ -4085,8 +4114,11 @@ msgid "You didn't choose a Gui. Using the default Gui now."
 msgstr "Du hast keine GUI ausgewählt. Es wird die Standard-GUI verwendet."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1248
-msgid "No import summary available. An XData definition has to be imported first..."
-msgstr "Die Importzusammenfassung ist erst nach dem Import einer XData-Definition verfügbar."
+msgid ""
+"No import summary available. An XData definition has to be imported first..."
+msgstr ""
+"Die Importzusammenfassung ist erst nach dem Import einer XData-Definition "
+"verfügbar."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1260
 msgid "XData import summary"
@@ -4094,7 +4126,9 @@ msgstr "XData Importzusammenfassung"
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1268
 msgid "No import summary available. Browse Gui Definitions first."
-msgstr "Die Importzusammenfassung ist erst nach dem Öffnen des GUI-Browsers verfügbar."
+msgstr ""
+"Die Importzusammenfassung ist erst nach dem Öffnen des GUI-Browsers "
+"verfügbar."
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1279
 msgid "Gui import summary"
@@ -4126,15 +4160,12 @@ msgstr "Analysiere GUIs"
 msgid "Reloading Guis"
 msgstr "Neuladen der GUIs"
 
-#: ..\..\plugins\dm.gui\XData.cpp:257
-#: ..\..\plugins\dm.gui\XData.cpp:285
-#: ..\..\plugins\dm.gui\XData.cpp:367
-#: ..\..\plugins\dm.gui\XData.cpp:382
+#: ..\..\plugins\dm.gui\XData.cpp:257 ..\..\plugins\dm.gui\XData.cpp:285
+#: ..\..\plugins\dm.gui\XData.cpp:367 ..\..\plugins\dm.gui\XData.cpp:382
 msgid "Page Index out of bounds."
 msgstr "Seitenindex ungültig."
 
-#: ..\..\plugins\dm.gui\XData.h:118
-#: ..\..\plugins\dm.gui\XData.h:125
+#: ..\..\plugins\dm.gui\XData.h:118 ..\..\plugins\dm.gui\XData.h:125
 msgid "GUI Page Index out of bounds."
 msgstr "GUI-Seitenindex ungültig"
 
@@ -4159,8 +4190,11 @@ msgid "Problems during import"
 msgstr "Fehler beim Import."
 
 #: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:99
-msgid "The requested definition has been found in multiple Files. Choose the file:"
-msgstr "Die angeforderte Definition wurde in mehreren Dateien gefunden, bitte die genaue Datei auswählen:"
+msgid ""
+"The requested definition has been found in multiple Files. Choose the file:"
+msgstr ""
+"Die angeforderte Definition wurde in mehreren Dateien gefunden, bitte die "
+"genaue Datei auswählen:"
 
 #: ..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp:31
 msgid "Body:"
@@ -4357,7 +4391,8 @@ msgid ""
 "These logics override the standard logic for the given difficulty level\n"
 "if the logic string is non-empty."
 msgstr ""
-"Diese Logik überschreibt die Standard-Logik für die angegebene Schwierigkeitsstufe\n"
+"Diese Logik überschreibt die Standard-Logik für die angegebene "
+"Schwierigkeitsstufe\n"
 "wenn das Logik-Eingabefeld nicht leer ist."
 
 #: ..\..\plugins\dm.objectives\MissionLogicDialog.cpp:45
@@ -4486,7 +4521,9 @@ msgstr "Ausnahmefehler:"
 
 #: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:437
 msgid "Unable to create Objective Entity: classes not defined in registry."
-msgstr "Kann Ziel-Entity nicht erzeugen: die Entityklassen sind nicht in der Registierung definiert."
+msgstr ""
+"Kann Ziel-Entity nicht erzeugen: die Entityklassen sind nicht in der "
+"Registierung definiert."
 
 #: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:466
 msgid "Unable to create Objective Entity: class '{0}' not found."
@@ -4584,21 +4621,16 @@ msgstr "Irgendeine AI des angegebenen Teams"
 msgid "Any AI with specified combat status"
 msgstr "Irgendeine AI mit dem angegebenen Kampfzustand"
 
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:62
+#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:54
 msgid "S/R"
 msgstr "S/R"
 
-#: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:82
-#: xml_file_content.cpp:7
-msgid "Remove"
-msgstr "Entfernen"
-
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:106
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:103
 #: xml_file_content.cpp:2
 msgid "Name:"
 msgstr "Name:"
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:117
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:114
 msgid ""
 "Note: Please beware that deleting custom stims may\n"
 "affect other entities as well. So check before you delete."
@@ -4606,24 +4638,24 @@ msgstr ""
 "Hinweis: Bitte beachte, dass sich das Löschen benutzerdefinierter Stims auf\n"
 "andere Entities auswirken kann. Gehe deshalb sorgfältig vor."
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:129
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:126
 msgid "Add Stim Type"
 msgstr "Stimtyp hinzufügen"
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:130
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:127
 msgid "Remove Stim Type"
 msgstr "Stimtyp entfernen"
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:185
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:182
 #: ..\..\plugins\dm.stimresponse\StimTypes.cpp:294
 msgid "Custom Stim"
 msgstr "Benutzerdefinierter Stim"
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:209
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:205
 msgid "Delete Custom Stim"
 msgstr "Benutzerdefinierten Stim entfernen"
 
-#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:210
+#: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:206
 msgid ""
 "Beware that other entities might still be using this stim type.\n"
 "Do you really want to delete this custom stim?"
@@ -4639,8 +4671,8 @@ msgstr "Response-Effekt editieren"
 msgid "Effect:"
 msgstr "Effekt:"
 
-#: ..\..\plugins\dm.stimresponse\EffectEditor.cpp:115
-#: xml_file_content.cpp:2
+#: ..\..\plugins\dm.stimresponse\EffectEditor.cpp:115 xml_file_content.cpp:5
+#: xml_file_content.cpp:34
 msgid "Active"
 msgstr "Aktiv"
 
@@ -4652,49 +4684,43 @@ msgstr "Argumente"
 msgid "Stim/Response..."
 msgstr "Stim/Response..."
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:231
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:264
 msgid "Effect"
 msgstr "Effekt"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:234
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:267
 msgid "Details (double-click to edit)"
 msgstr "Details (doppelklicken zum Editieren)"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:391
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:399
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:424
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:433
 msgid "Activate"
 msgstr "Aktivieren"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:393
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:401
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:426
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:435
 msgid "Deactivate"
 msgstr "Deaktivieren"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:395
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:403
-#: xml_file_content.cpp:11
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:428
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:437 xml_file_content.cpp:11
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:402
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:435
 msgid "Add new Effect"
 msgstr "Neuen Effekt hinzufügen"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:404
-#: xml_file_content.cpp:6
-#: xml_file_content.cpp:13
-#: xml_file_content.cpp:4
-#: xml_file_content.cpp:8
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:437 xml_file_content.cpp:6
+#: xml_file_content.cpp:13 xml_file_content.cpp:4 xml_file_content.cpp:8
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:407
-#: xml_file_content.cpp:4
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:440 xml_file_content.cpp:4
 msgid "Move Up"
 msgstr "Nach oben"
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:409
-#: xml_file_content.cpp:5
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:442 xml_file_content.cpp:5
 msgid "Move Down"
 msgstr "Nach unten"
 
@@ -4702,25 +4728,15 @@ msgstr "Nach unten"
 msgid "Error: eclass pointer invalid."
 msgstr "Fehler: Entityklassenzeiger ungültig."
 
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:26
+#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:27
 msgid "Stim/Response Editor"
 msgstr "Stim/Response-Editor"
 
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:31
+#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:32
 msgid "A single entity must be selected to edit Stim/Response properties."
-msgstr "Um Stim/Response-Eigenschaften zu editieren muss genau eine Entity ausgewählt sein."
-
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:97
-msgid "Stims"
-msgstr "Stims"
-
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:104
-msgid "Responses"
-msgstr "Responses"
-
-#: ..\..\plugins\dm.stimresponse\StimResponseEditor.cpp:111
-msgid "Custom Stims"
-msgstr "Benutzerdefinierte Stims"
+msgstr ""
+"Um Stim/Response-Eigenschaften zu editieren muss genau eine Entity "
+"ausgewählt sein."
 
 #: ..\..\plugins\script\ScriptingSystem.cpp:239
 #: ..\..\plugins\script\ScriptingSystem.cpp:242
@@ -4743,13 +4759,9 @@ msgstr "Python Skripteingabe"
 msgid "Run Script"
 msgstr "Starte Skript"
 
-#: ..\..\libs\wxutil\dialog\MessageBox.cpp:20
-#: xml_file_content.cpp:8
-#: xml_file_content.cpp:10
-#: xml_file_content.cpp:13
-#: xml_file_content.cpp:4
-#: xml_file_content.cpp:3
-#: xml_file_content.cpp:21
+#: ..\..\libs\wxutil\dialog\MessageBox.cpp:20 xml_file_content.cpp:8
+#: xml_file_content.cpp:10 xml_file_content.cpp:13 xml_file_content.cpp:4
+#: xml_file_content.cpp:3 xml_file_content.cpp:21
 msgid "Save"
 msgstr "Speichern"
 
@@ -4790,11 +4802,11 @@ msgstr "Umschalt"
 msgid "Choose File"
 msgstr "Datei auswählen"
 
-#: ..\..\libs\wxutil\PathEntry.cpp:126
+#: ..\..\libs\wxutil\PathEntry.cpp:141
 msgid "Choose Directory"
 msgstr "Verzeichnis auswählen"
 
-#: ..\..\libs\wxutil\preview\ModelPreview.cpp:154
+#: ..\..\libs\wxutil\preview\ModelPreview.cpp:114
 #: ..\..\libs\wxutil\preview\ParticlePreview.cpp:182
 msgid ""
 "Unable to setup the preview,\n"
@@ -4821,20 +4833,19 @@ msgid "Reload Particle Defs"
 msgstr "Partikel-Definitionen neu laden"
 
 #: ..\..\libs\wxutil\preview\RenderPreview.cpp:102
-#: ..\..\libs\wxutil\preview\RenderPreview.cpp:104
-#: xml_file_content.cpp:1
+#: ..\..\libs\wxutil\preview\RenderPreview.cpp:104 xml_file_content.cpp:1
 msgid "Filters"
 msgstr "Filter"
 
-#: ..\..\libs\wxutil\TreeView.cpp:218
+#: ..\..\libs\wxutil\TreeView.cpp:225
 msgid "Find: "
 msgstr "Finde:"
 
-#: ..\..\libs\wxutil\TreeView.cpp:231
+#: ..\..\libs\wxutil\TreeView.cpp:238
 msgid "Go to next match"
 msgstr "Zur nächsten Übereinstimmung"
 
-#: ..\..\libs\wxutil\TreeView.cpp:232
+#: ..\..\libs\wxutil\TreeView.cpp:239
 msgid "Go to previous match"
 msgstr "Zur vorherigen Übereinstimmung"
 
@@ -4902,8 +4913,7 @@ msgstr "Ausgewählte Modelle neu laden"
 msgid "Reload S&kins"
 msgstr "S&kins neu laden"
 
-#: xml_file_content.cpp:17
-#: xml_file_content.cpp:28
+#: xml_file_content.cpp:17 xml_file_content.cpp:28
 msgid "Reload Materials"
 msgstr "Materials neu laden"
 
@@ -5191,8 +5201,7 @@ msgstr "Hintergrundbild..."
 msgid "Mo&dify"
 msgstr "Komponentenmodus"
 
-#: xml_file_content.cpp:99
-#: xml_file_content.cpp:16
+#: xml_file_content.cpp:99 xml_file_content.cpp:16
 msgid "Components"
 msgstr "Komponenten"
 
@@ -5232,8 +5241,7 @@ msgstr "Verschiebe nach oben"
 msgid "Nudge Down"
 msgstr "Verschiebe nach unten"
 
-#: xml_file_content.cpp:109
-#: xml_file_content.cpp:16
+#: xml_file_content.cpp:109 xml_file_content.cpp:16
 msgid "Rotate"
 msgstr "Drehen"
 
@@ -5265,8 +5273,7 @@ msgstr "Spiegeln um Y-Achse"
 msgid "Mirror &Z"
 msgstr "Spiegeln um Z-Achse"
 
-#: xml_file_content.cpp:117
-#: xml_file_content.cpp:10
+#: xml_file_content.cpp:117 xml_file_content.cpp:10
 msgid "Rotate Objects independently"
 msgstr "Objekte unabhängig voneinander drehen"
 
@@ -5908,11 +5915,14 @@ msgstr "Rotationspivot am Raster ausrichten"
 
 #: xml_file_content.cpp:13
 msgid "Drag-resize entities symmetrically (leave origin unchanged)"
-msgstr "Symmetrisches Verändern von Entities beim Ziehen (Ursprung bleibt unverändert)"
+msgstr ""
+"Symmetrisches Verändern von Entities beim Ziehen (Ursprung bleibt "
+"unverändert)"
 
 #: xml_file_content.cpp:14
 msgid "Offset cloned objects by one grid unit to the right and downwards."
-msgstr "Duplizierte Objekte um eine Rastereinheit nach rechts unten verschieben"
+msgstr ""
+"Duplizierte Objekte um eine Rastereinheit nach rechts unten verschieben"
 
 #: xml_file_content.cpp:15
 msgid "Translate"
@@ -5973,8 +5983,7 @@ msgstr ""
 msgid "wxWidgets Properties"
 msgstr "wxWidgets Eigenschaften"
 
-#: xml_file_content.cpp:5
-#: xml_file_content.cpp:8
+#: xml_file_content.cpp:5 xml_file_content.cpp:8
 msgid "Version:"
 msgstr "Version:"
 
@@ -6014,13 +6023,11 @@ msgstr "texturedBtn"
 msgid "lightingBtn"
 msgstr "lightingBtn"
 
-#: xml_file_content.cpp:5
-#: xml_file_content.cpp:1
+#: xml_file_content.cpp:5 xml_file_content.cpp:1
 msgid "startTimeButton"
 msgstr "startTimeButton"
 
-#: xml_file_content.cpp:6
-#: xml_file_content.cpp:3
+#: xml_file_content.cpp:6 xml_file_content.cpp:3
 msgid "stopTimeButton"
 msgstr "stopTimeButton"
 
@@ -6052,8 +6059,7 @@ msgstr "Konversations-Entities"
 msgid "Conversations"
 msgstr "Konversationen"
 
-#: xml_file_content.cpp:8
-#: xml_file_content.cpp:7
+#: xml_file_content.cpp:8 xml_file_content.cpp:7
 msgid "Clear"
 msgstr "Löschen"
 
@@ -6089,13 +6095,11 @@ msgstr "Alle überprüfen"
 msgid "Commands"
 msgstr "Befehle"
 
-#: xml_file_content.cpp:14
-#: xml_file_content.cpp:9
+#: xml_file_content.cpp:14 xml_file_content.cpp:9
 msgid "Move up"
 msgstr "Nach oben"
 
-#: xml_file_content.cpp:15
-#: xml_file_content.cpp:10
+#: xml_file_content.cpp:15 xml_file_content.cpp:10
 msgid "Move down"
 msgstr "Nach unten"
 
@@ -6155,8 +6159,7 @@ msgstr "Exportiere Lichter als Objekte (Oktaeder)"
 msgid "Export"
 msgstr "Export"
 
-#: xml_file_content.cpp:3
-#: xml_file_content.cpp:68
+#: xml_file_content.cpp:3 xml_file_content.cpp:68
 msgid "View"
 msgstr "Ansicht"
 
@@ -6172,7 +6175,8 @@ msgid ""
 msgstr ""
 "Filterregeln werden in der angegebenen Reihenfolge angewandt.\n"
 "Das Ausdruck-Feld akzeptiert reguläre Ausdrücke (RegEx).\n"
-"Für Filter vom Typ Objekt können die Schlüsselwörter patch oder brush verwendet werden."
+"Für Filter vom Typ Objekt können die Schlüsselwörter patch oder brush "
+"verwendet werden."
 
 #: xml_file_content.cpp:1
 msgid "Find:"
@@ -6194,9 +6198,7 @@ msgstr "x shader ersetzt."
 msgid "Find and Replace"
 msgstr "Suchen & Ersetzen"
 
-#: xml_file_content.cpp:6
-#: xml_file_content.cpp:13
-#: xml_file_content.cpp:88
+#: xml_file_content.cpp:6 xml_file_content.cpp:13 xml_file_content.cpp:88
 msgid "Close"
 msgstr "Schließen"
 
@@ -6216,8 +6218,7 @@ msgstr "Projektion"
 msgid "Use start/end"
 msgstr "Verwende Start/End"
 
-#: xml_file_content.cpp:6
-#: xml_file_content.cpp:9
+#: xml_file_content.cpp:6 xml_file_content.cpp:9
 msgid "Options"
 msgstr "Optionen"
 
@@ -6279,13 +6280,11 @@ msgstr ""
 "bei Kampagnen bestehend\n"
 "aus mehreren Missionen."
 
-#: xml_file_content.cpp:10
-#: xml_file_content.cpp:2
+#: xml_file_content.cpp:10 xml_file_content.cpp:2
 msgid "Output Path:"
 msgstr "Zielpfad:"
 
-#: xml_file_content.cpp:11
-#: xml_file_content.cpp:3
+#: xml_file_content.cpp:11 xml_file_content.cpp:3
 msgid "C:GamesDarkmodfmsgathers"
 msgstr "C:\\Games\\Darkmod\\fms\\gathers"
 
@@ -6321,8 +6320,7 @@ msgstr "Schwierigkeitsgrad"
 msgid "Iniital State"
 msgstr "Anfangszustand"
 
-#: xml_file_content.cpp:4
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:4 xml_file_content.cpp:20
 msgid "Flags"
 msgstr "Flags"
 
@@ -6334,8 +6332,7 @@ msgstr "Obgligatorisches Ziel"
 msgid "Ongoing"
 msgstr "Laufend"
 
-#: xml_file_content.cpp:7
-#: xml_file_content.cpp:22
+#: xml_file_content.cpp:7 xml_file_content.cpp:22
 msgid "Irreversible"
 msgstr "Irreversibel"
 
@@ -6495,6 +6492,10 @@ msgstr "Partikeldefinitionen"
 msgid "Particle Stages"
 msgstr "Partikelstufen"
 
+#: xml_file_content.cpp:7 xml_file_content.cpp:3 xml_file_content.cpp:32
+msgid "Remove"
+msgstr "Entfernen"
+
 #: xml_file_content.cpp:8
 msgid "Toggle Visibility"
 msgstr "Anzeigen/Verstecken"
@@ -6591,16 +6592,12 @@ msgstr "Größe / Geschw."
 msgid "Speed:"
 msgstr "Geschw.:"
 
-#: xml_file_content.cpp:35
-#: xml_file_content.cpp:38
-#: xml_file_content.cpp:41
+#: xml_file_content.cpp:35 xml_file_content.cpp:38 xml_file_content.cpp:41
 #: xml_file_content.cpp:44
 msgid "From:"
 msgstr "Von:"
 
-#: xml_file_content.cpp:36
-#: xml_file_content.cpp:39
-#: xml_file_content.cpp:42
+#: xml_file_content.cpp:36 xml_file_content.cpp:39 xml_file_content.cpp:42
 #: xml_file_content.cpp:45
 msgid "To:"
 msgstr "Bis:"
@@ -6950,107 +6947,124 @@ msgid "gridButton"
 msgstr "Grid"
 
 #: xml_file_content.cpp:1
+msgid "Stims"
+msgstr "Stims"
+
+#: xml_file_content.cpp:4 xml_file_content.cpp:33
 msgid "Type:"
 msgstr "Typ:"
 
-#: xml_file_content.cpp:3
-#: xml_file_content.cpp:22
-msgid "Chance:"
-msgstr "Wahrscheinlichkeit:"
-
-#: xml_file_content.cpp:4
-msgid "Random Effects:"
-msgstr "Zufällige Effekte:"
-
-#: xml_file_content.cpp:5
-msgid "Response Effects"
-msgstr "Response-Effekte"
-
-#: xml_file_content.cpp:3
+#: xml_file_content.cpp:6
 msgid "Activation Timer:"
 msgstr "Aktivierungs-Timer:"
 
-#: xml_file_content.cpp:4
+#: xml_file_content.cpp:7
 msgid "h"
 msgstr "h"
 
-#: xml_file_content.cpp:5
+#: xml_file_content.cpp:8
 msgid "m"
 msgstr "m"
 
-#: xml_file_content.cpp:6
+#: xml_file_content.cpp:9
 msgid "s"
 msgstr "s"
 
-#: xml_file_content.cpp:7
-#: xml_file_content.cpp:13
-#: xml_file_content.cpp:15
+#: xml_file_content.cpp:10 xml_file_content.cpp:16 xml_file_content.cpp:18
 msgid "ms"
 msgstr "ms"
 
-#: xml_file_content.cpp:8
+#: xml_file_content.cpp:11
 msgid "Timer restarts after firing"
 msgstr "Timer startet neu nach Ablauf"
 
-#: xml_file_content.cpp:9
+#: xml_file_content.cpp:12
 msgid "Timer reloads"
 msgstr "Timer-Neustarts"
 
-#: xml_file_content.cpp:10
+#: xml_file_content.cpp:13
 msgid "times"
 msgstr "Mal(e)"
 
-#: xml_file_content.cpp:11
+#: xml_file_content.cpp:14
 msgid "Timer waits for start (when disabled: starts at spawn time)"
-msgstr "Timer wartet auf Start (wenn Option deaktiviert: Timer startet zur Spawn-Zeit)"
+msgstr ""
+"Timer wartet auf Start (wenn Option deaktiviert: Timer startet zur Spawn-"
+"Zeit)"
 
-#: xml_file_content.cpp:12
+#: xml_file_content.cpp:15
 msgid "Time interval:"
 msgstr "Zeitintervall:"
 
-#: xml_file_content.cpp:14
+#: xml_file_content.cpp:17
 msgid "Duration:"
 msgstr "Dauer:"
 
-#: xml_file_content.cpp:16
+#: xml_file_content.cpp:19
 msgid "Radius"
 msgstr "Radius"
 
-#: xml_file_content.cpp:17
+#: xml_file_content.cpp:20
 msgid "Use bounds"
 msgstr "Boundingbox benutzen"
 
-#: xml_file_content.cpp:18
+#: xml_file_content.cpp:21
 msgid "Radius changes over time to:"
 msgstr "Radius verändert sich über die Zeit zu:"
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:22
 msgid "Magnitude:"
 msgstr "Stärke:"
 
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:23
 msgid "Falloff Exponent:"
 msgstr "Falloff-Exponent:"
 
-#: xml_file_content.cpp:21
+#: xml_file_content.cpp:24
 msgid "Max Fire Count:"
 msgstr "Max. Auslösevorgänge:"
 
-#: xml_file_content.cpp:23
+#: xml_file_content.cpp:25 xml_file_content.cpp:35
+msgid "Chance:"
+msgstr "Wahrscheinlichkeit:"
+
+#: xml_file_content.cpp:26
 msgid "Velocity:"
 msgstr "Geschwindigkeit:"
 
-#: xml_file_content.cpp:24
+#: xml_file_content.cpp:27
 msgid "Bounds:"
 msgstr "Boundingbox:"
 
-#: xml_file_content.cpp:25
+#: xml_file_content.cpp:28
 msgid "Min:"
 msgstr "Min:"
 
-#: xml_file_content.cpp:26
+#: xml_file_content.cpp:29
 msgid "Max:"
 msgstr "Max:"
+
+#: xml_file_content.cpp:30
+msgid "Responses"
+msgstr "Responses"
+
+#: xml_file_content.cpp:36
+msgid "Random Effects:"
+msgstr "Zufällige Effekte:"
+
+#: xml_file_content.cpp:37
+msgid "Response Effects"
+msgstr "Response-Effekte"
+
+#: xml_file_content.cpp:38
+msgid "Custom Stims"
+msgstr "Benutzerdefinierte Stims"
+
+#~ msgid "?"
+#~ msgstr "?"
+
+#~ msgid "<b>Entity {0}</b>"
+#~ msgstr "<b>Entity {0}</b>"
 
 #~ msgid "Parsing material file {0}"
 #~ msgstr "Lade Material Datei {0}"
