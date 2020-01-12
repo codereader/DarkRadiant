@@ -86,8 +86,9 @@ void EntityInspector::construct()
     _showHelpColumnCheckbox->SetValue(false);
     _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, &EntityInspector::_onToggleShowHelpIcons, this);
 
-    _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "",
-                                          wxDefaultPosition, wxDefaultSize);
+    _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+    _primitiveNumLabel->SetFont(_primitiveNumLabel->GetFont().Bold());
+
     optionsHBox->Add(_primitiveNumLabel, 1, wxEXPAND | wxALL, 5);
     optionsHBox->AddStretchSpacer();
     optionsHBox->Add(_showInheritedCheckbox, 1, wxEXPAND);
@@ -1138,7 +1139,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     if (GlobalSelectionSystem().countSelected() != 1)
     {
         changeSelectedEntity(scene::INodePtr());
-        _primitiveNumLabel->SetLabelMarkup("");
+        _primitiveNumLabel->SetLabelText("");
         return;
     }
 
@@ -1149,7 +1150,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     if (selectedNode->isRoot())
     {
         changeSelectedEntity(scene::INodePtr());
-        _primitiveNumLabel->SetLabelMarkup("");
+        _primitiveNumLabel->SetLabelText("");
         return;
     }
 
@@ -1166,7 +1167,7 @@ void EntityInspector::getEntityFromSelectionSystem()
         std::size_t ent(0), prim(0);
         selection::algorithm::getSelectionIndex(ent, prim);
 
-        _primitiveNumLabel->SetLabelMarkup(fmt::format(_("<b>Entity {0}</b>"), ent));
+        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}"), ent));
     }
     else
     {
@@ -1177,7 +1178,7 @@ void EntityInspector::getEntityFromSelectionSystem()
         std::size_t ent(0), prim(0);
         selection::algorithm::getSelectionIndex(ent, prim);
 
-        _primitiveNumLabel->SetLabelMarkup(fmt::format(_("<b>Entity {0}, Primitive {1}</b>"), ent, prim));
+        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), ent, prim));
     }
 }
 
