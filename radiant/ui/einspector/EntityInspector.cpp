@@ -52,40 +52,18 @@ namespace
 
     const std::string RKEY_ROOT = "user/ui/entityInspector/";
     const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
-
-    const std::string HELP_ICON_NAME = "helpicon.png";
 }
 
 EntityInspector::EntityInspector() :
-    _mainWidget(NULL),
-    _editorFrame(NULL),
-    _showInheritedCheckbox(NULL),
-    _showHelpColumnCheckbox(NULL),
-    _primitiveNumLabel(NULL),
-    _keyValueTreeView(NULL),
-    _helpColumn(NULL),
-    _keyEntry(NULL),
-    _valEntry(NULL)
+    _mainWidget(nullptr),
+    _editorFrame(nullptr),
+    _showInheritedCheckbox(nullptr),
+    _showHelpColumnCheckbox(nullptr),
+    _primitiveNumLabel(nullptr),
+    _keyValueTreeView(nullptr),
+    _keyEntry(nullptr),
+    _valEntry(nullptr)
 {}
-
-namespace
-{
-    wxVariant HELP_ICON()
-    {
-        static wxBitmap _helpBitmap = wxArtProvider::GetBitmap(
-            GlobalUIManager().ArtIdPrefix() + HELP_ICON_NAME
-        );
-        wxASSERT(_helpBitmap.IsOk());
-
-        return wxVariant(_helpBitmap);
-    }
-
-    wxVariant BLANK_ICON()
-    {
-        static const char* EMPTY_XPM[] = { "1 1 1 1", "* c none", "*" };
-        return wxVariant(wxBitmap(EMPTY_XPM));
-    }
-}
 
 void EntityInspector::construct()
 {
@@ -102,13 +80,11 @@ void EntityInspector::construct()
     wxBoxSizer* optionsHBox = new wxBoxSizer(wxHORIZONTAL);
 
     _showInheritedCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show inherited properties"));
-    _showInheritedCheckbox->Connect(wxEVT_CHECKBOX, 
-        wxCommandEventHandler(EntityInspector::_onToggleShowInherited), NULL, this);
+    _showInheritedCheckbox->Bind(wxEVT_CHECKBOX, &EntityInspector::_onToggleShowInherited, this);
     
     _showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
     _showHelpColumnCheckbox->SetValue(false);
-    _showHelpColumnCheckbox->Connect(wxEVT_CHECKBOX, 
-        wxCommandEventHandler(EntityInspector::_onToggleShowHelpIcons), NULL, this);
+    _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, &EntityInspector::_onToggleShowHelpIcons, this);
 
     _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "",
                                           wxDefaultPosition, wxDefaultSize);
@@ -254,7 +230,6 @@ void EntityInspector::onKeyChange(const std::string& key,
 
     row[_columns.isInherited] = false;
     row[_columns.hasHelpText] = hasDescription;
-    row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
 
     if (added)
     {
@@ -477,11 +452,6 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     _keyValueTreeView->AppendTextColumn(_("Value"), 
         _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
         wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
-
-    // Add the help icon
-    _helpColumn = _keyValueTreeView->AppendBitmapColumn(_("?"), 
-        _columns.helpIcon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
-    _helpColumn->SetHidden(true);
 
     // Used to update the help text
     _keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
@@ -962,8 +932,7 @@ void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
 
 void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
 {
-    // Set the visibility of the column accordingly
-    _helpColumn->SetHidden(!_showHelpColumnCheckbox->IsChecked());
+    // Set the visibility of the help text panel
     _helpText->Show(_showHelpColumnCheckbox->IsChecked());
 
     // After showing a packed control we need to call the sizer's layout() method
@@ -1129,7 +1098,6 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
-        row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
 
         row.SendItemAdded();
     }

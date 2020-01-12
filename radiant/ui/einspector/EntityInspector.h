@@ -54,7 +54,6 @@ public:
 			name(add(wxutil::TreeModel::Column::IconText)),
 			value(add(wxutil::TreeModel::Column::String)),
 			isInherited(add(wxutil::TreeModel::Column::Boolean)),
-			helpIcon(add(wxutil::TreeModel::Column::Icon)),
 			hasHelpText(add(wxutil::TreeModel::Column::Boolean)),
 			booleanValue(add(wxutil::TreeModel::Column::Boolean))
 		{}
@@ -62,7 +61,6 @@ public:
 		wxutil::TreeModel::Column name;
 		wxutil::TreeModel::Column value;
 		wxutil::TreeModel::Column isInherited;
-		wxutil::TreeModel::Column helpIcon;
 		wxutil::TreeModel::Column hasHelpText;
 		wxutil::TreeModel::Column booleanValue;
 	};
@@ -100,8 +98,6 @@ private:
 	wxutil::TreeModel::Ptr _kvStore;
 
 	wxIcon _emptyIcon;
-
-	wxDataViewColumn* _helpColumn;
 
     // Cache of wxDataViewItems pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values
