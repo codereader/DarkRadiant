@@ -33,7 +33,7 @@ def scanCodeFiles(path, exclude_directories):
 				#print 'got a directory: ' + dir_normalised
 				scanCodeFiles(dir_normalised, exclude_directories)
 			else:
-				print 'skipping directory: ' + dir_normalised
+				print('skipping directory: ' + dir_normalised)
 		else:
 			# Analyse files
 			ext = os.path.splitext(current_file)[1]
