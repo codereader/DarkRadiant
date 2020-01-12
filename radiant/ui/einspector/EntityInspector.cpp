@@ -471,12 +471,12 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     // Create the Property column (has an icon)
     _keyValueTreeView->AppendIconTextColumn(_("Property"), 
         _columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
-        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
     // Create the value column
     _keyValueTreeView->AppendTextColumn(_("Value"), 
         _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
-        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
     // Add the help icon
     _helpColumn = _keyValueTreeView->AppendBitmapColumn(_("?"), 
