@@ -524,7 +524,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 	// Register the "create layer" command
 	GlobalCommandSystem().addCommand("CreateNewLayer",
 		std::bind(&LayerSystem::createLayerCmd, this, std::placeholders::_1), 
-        cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
+		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 	IEventPtr ev = GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
 
 	GlobalMapModule().signal_mapEvent().connect(

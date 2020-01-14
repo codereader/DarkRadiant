@@ -1043,14 +1043,14 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("GroupCycleForward", selection::GroupCycle::cycleForward);
 	GlobalCommandSystem().addCommand("GroupCycleBackward", selection::GroupCycle::cycleBackward);
 
-	GlobalCommandSystem().addCommand("TexRotate", rotateTexture, cmd::ARGTYPE_INT|cmd::ARGTYPE_STRING);
-	GlobalCommandSystem().addCommand("TexScale", scaleTexture, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
-	GlobalCommandSystem().addCommand("TexShift", shiftTextureCmd, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("TexRotate", rotateTexture, { cmd::ARGTYPE_INT | cmd::ARGTYPE_STRING });
+	GlobalCommandSystem().addCommand("TexScale", scaleTexture, { cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_STRING });
+	GlobalCommandSystem().addCommand("TexShift", shiftTextureCmd, { cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_STRING });
 
-	GlobalCommandSystem().addCommand("TexAlign", alignTextureCmd, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("TexAlign", alignTextureCmd, { cmd::ARGTYPE_STRING });
 
 	// Add the nudge commands (one general, four specialised ones)
-	GlobalCommandSystem().addCommand("NudgeSelected", nudgeSelectedCmd, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("NudgeSelected", nudgeSelectedCmd, { cmd::ARGTYPE_STRING });
 
 	GlobalCommandSystem().addCommand("NormaliseTexture", normaliseTexture);
 
@@ -1061,7 +1061,7 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("FlipTextureX", flipTextureS);
 	GlobalCommandSystem().addCommand("FlipTextureY", flipTextureT);
 
-	GlobalCommandSystem().addCommand("MoveSelectionVertically", moveSelectedCmd, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("MoveSelectionVertically", moveSelectedCmd, { cmd::ARGTYPE_STRING });
 	
 	GlobalCommandSystem().addCommand("CurveAppendControlPoint", appendCurveControlPoint);
 	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", removeCurveControlPoints);
@@ -1082,7 +1082,7 @@ void registerCommands()
     GlobalCommandSystem().addCommand("CreateCurveCatmullRom", createCurveCatmullRom);
 
 	GlobalCommandSystem().addCommand("FloorSelection", floorSelection);
-	GlobalCommandSystem().addCommand("BrushSetDetailFlag", brushSetDetailFlag, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("BrushSetDetailFlag", brushSetDetailFlag, { cmd::ARGTYPE_STRING });
 	GlobalCommandSystem().addStatement("BrushMakeDetail", "BrushSetDetailFlag detail", false);
 	GlobalCommandSystem().addStatement("BrushMakeStructural", "BrushSetDetailFlag structural", false);
 

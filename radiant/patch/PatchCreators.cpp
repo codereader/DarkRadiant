@@ -66,11 +66,11 @@ void Doom3PatchCreator::initialiseModule(const ApplicationContext& ctx)
 void Doom3PatchCreator::registerPatchCommands()
 {
 	// First connect the commands to the code
-	GlobalCommandSystem().addCommand("CreatePatchPrefab", patch::algorithm::createPrefab, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("CreatePatchPrefab", patch::algorithm::createPrefab, { cmd::ARGTYPE_STRING });
 
 	// Two optional integer arguments
 	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::algorithm::createSimplePatch,
-		cmd::Signature(cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL));
+		{ cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 
 	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", selection::algorithm::insertPatchColumnsAtEnd);
 	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", selection::algorithm::insertPatchColumnsAtBeginning);

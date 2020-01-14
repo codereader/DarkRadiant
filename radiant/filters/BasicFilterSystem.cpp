@@ -89,7 +89,7 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 
 	// Add the (de-)activate all commands
 	GlobalCommandSystem().addCommand("SetAllFilterStates", 
-        std::bind(&BasicFilterSystem::setAllFilterStatesCmd, this, std::placeholders::_1), cmd::ARGTYPE_INT);
+		std::bind(&BasicFilterSystem::setAllFilterStatesCmd, this, std::placeholders::_1), { cmd::ARGTYPE_INT });
 
 	// Register two shortcuts
 	GlobalCommandSystem().addStatement("ActivateAllFilters", "SetAllFilterStates 1", false);

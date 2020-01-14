@@ -44,10 +44,10 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << "CommandSystem::initialiseModule called." << std::endl;
 
 	// Add the built-in commands
-	addCommand("bind", std::bind(&CommandSystem::bindCmd, this, std::placeholders::_1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
-	addCommand("unbind", std::bind(&CommandSystem::unbindCmd, this, std::placeholders::_1), ARGTYPE_STRING);
+	addCommand("bind", std::bind(&CommandSystem::bindCmd, this, std::placeholders::_1), { ARGTYPE_STRING, ARGTYPE_STRING });
+	addCommand("unbind", std::bind(&CommandSystem::unbindCmd, this, std::placeholders::_1), { ARGTYPE_STRING });
 	addCommand("listCmds", std::bind(&CommandSystem::listCmds, this, std::placeholders::_1));
-	addCommand("print", std::bind(&CommandSystem::printCmd, this, std::placeholders::_1), ARGTYPE_STRING);
+	addCommand("print", std::bind(&CommandSystem::printCmd, this, std::placeholders::_1), { ARGTYPE_STRING });
 
 	loadBinds();
 }
