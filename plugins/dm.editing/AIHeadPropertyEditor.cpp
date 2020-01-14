@@ -16,8 +16,8 @@ namespace ui
 {
 
 AIHeadPropertyEditor::AIHeadPropertyEditor() :
-	_widget(NULL),
-	_entity(NULL)
+	_widget(nullptr),
+	_entity(nullptr)
 {}
 
 AIHeadPropertyEditor::AIHeadPropertyEditor(wxWindow* parent, Entity* entity, const std::string& key, const std::string& options) :
@@ -30,14 +30,14 @@ AIHeadPropertyEditor::AIHeadPropertyEditor(wxWindow* parent, Entity* entity, con
 	// Create the browse button
 	wxButton* browseButton = new wxButton(_widget, wxID_ANY, _("Choose AI head..."));
 	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "icon_model.png"));
-	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIHeadPropertyEditor::onChooseButton), NULL, this);
+	browseButton->Bind(wxEVT_BUTTON, &AIHeadPropertyEditor::onChooseButton, this);
 
 	_widget->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
 }
 
 AIHeadPropertyEditor::~AIHeadPropertyEditor()
 {
-	if (_widget != NULL)
+	if (_widget != nullptr)
 	{
 		_widget->Destroy();
 	}
@@ -51,6 +51,13 @@ wxPanel* AIHeadPropertyEditor::getWidget()
 void AIHeadPropertyEditor::updateFromEntity()
 {
 	// nothing to do
+}
+
+void AIHeadPropertyEditor::setEntity(Entity* entity)
+{
+	if (entity == nullptr) throw std::logic_error("No nullptrs allowed as entity argument");
+
+	_entity = entity;
 }
 
 IPropertyEditorPtr AIHeadPropertyEditor::createNew(wxWindow* parent, Entity* entity,

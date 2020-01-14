@@ -1,5 +1,5 @@
-#include "radiant/vfs/Doom3FileSystem.h"
-#include "radiant/modulesystem/StaticModule.h"
+#include "vfs/Doom3FileSystem.h"
+#include "modulesystem/StaticModule.h"
 
 namespace vfs
 {

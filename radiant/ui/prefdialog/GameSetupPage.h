@@ -60,6 +60,10 @@ public:
 		return true; // return true by default, don't veto
 	}
 
+	// Overridable event which is fired before the page is closed
+	virtual void onClose()
+	{}
+
 	// Accessor to the result config structure
 	virtual const game::GameConfiguration& getConfiguration();
 

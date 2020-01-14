@@ -28,10 +28,6 @@ SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
 	load(source);
 }
 
-SREntity::~SREntity()
-{
-}
-
 int SREntity::getHighestId()
 {
 	int id = 0;
@@ -68,7 +64,7 @@ void SREntity::load(Entity* source)
 	_stimStore->Clear();
 	_responseStore->Clear();
 
-	if (source == NULL)
+	if (source == nullptr)
 	{
 		return;
 	}
@@ -183,7 +179,7 @@ void SREntity::cleanEntity(Entity* target)
 
 void SREntity::save(Entity* target)
 {
-	if (target == NULL) {
+	if (target == nullptr) {
 		return;
 	}
 
@@ -230,8 +226,6 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	row[cols.caption] = wxVariant(wxDataViewIconText(stimTypeStr, icon));
 	row[cols.caption] = colour;
 	row[cols.inherited] = sr.inherited();
-
-	row.SendItemChanged();
 }
 
 void SREntity::setProperty(int id, const std::string& key, const std::string& value)
@@ -252,6 +246,7 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 
 	wxutil::TreeModel::Row row(item, *targetStore);
 	writeToListRow(row, sr);
+	row.SendItemChanged();
 }
 
 StimResponse& SREntity::get(int id)

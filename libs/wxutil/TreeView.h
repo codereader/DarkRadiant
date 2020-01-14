@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <wx/dataview.h>
 #include <wx/windowptr.h>
 
@@ -10,9 +11,9 @@ namespace wxutil
 
 /**
  * greebo: Extension of the regular wxDataViewCtrl to add
- * a few regularly need improvements, like automatic column sizing
+ * a few needed improvements, like automatic column sizing
  * for treeviews (a thing that seems to be problematic in the 
- * pure wxDataViewCtrl).
+ * pure wxDataViewCtrl) and type-ahead searching.
  *
  * Use the named constructors Create*() to instantiate a new TreeView.
  */
@@ -20,11 +21,12 @@ class TreeView :
 	public wxDataViewCtrl
 {
 protected:
+	class Search;
+	std::unique_ptr<Search> _search;
+
 	class SearchPopupWindow;
-	SearchPopupWindow* _searchPopup;
 
 	std::vector<TreeModel::Column> _colsToSearch;
-	wxDataViewItem _curSearchMatch;
 
 	TreeView(wxWindow* parent, TreeModel::Ptr model, long style);
 
@@ -40,8 +42,8 @@ public:
 
 	virtual ~TreeView();
 
-    // ovverride wxDataViewCtrl to make it more robust
-    virtual bool AssociateModel(wxDataViewModel* model);
+    // override wxDataViewCtrl to make it more robust
+    virtual bool AssociateModel(wxDataViewModel* model) override;
 
 	// Enable the automatic recalculation of column widths
 	void EnableAutoColumnWidthFix(bool enable = true);
@@ -68,43 +70,13 @@ public:
     void Rebuild();
 #endif
 
-public:
-	// Event handled by the TreeView when the user triggers a search
-	// or tries to navigate between search results
-	class SearchEvent :
-		public wxEvent
-	{
-	private:
-		wxString _searchString;
-	public:
-		enum EventType
-		{
-			SEARCH,				// user has entered something, changed the search terms
-			SEARCH_NEXT_MATCH,	// user wants to display the next match
-			SEARCH_PREV_MATCH,	// user wants to display the prev match
-			POPUP_DISMISSED,	// popup has been dismissed, search has ended
-		};
-
-		SearchEvent(int id = SEARCH);
-		SearchEvent(const wxString& searchString, int id = SEARCH);
-		SearchEvent(const SearchEvent& ev);
-
-		wxEvent* Clone() const;
-
-		const wxString& GetSearchString() const;
-	};
-
-	typedef void (wxEvtHandler::*SearchHandlerFunction)(SearchEvent&);
-
 private:
+	void CloseSearch();
+	void JumpToSearchMatch(const wxDataViewItem& item);
+
 	void _onItemExpanded(wxDataViewEvent& ev);
 	void _onChar(wxKeyEvent& ev);
-	void _onSearch(SearchEvent& ev);
 	void _onItemActivated(wxDataViewEvent& ev);
 };
-
-// wx event macros
-wxDECLARE_EVENT(EV_TREEVIEW_SEARCH_EVENT, TreeView::SearchEvent);
-#define SearchEventHandler(func) wxEVENT_HANDLER_CAST(wxutil::TreeView::SearchHandlerFunction, func)
 
 } // namespace

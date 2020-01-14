@@ -1,11 +1,13 @@
 #pragma once
 
+#include <memory>
 #include "ientity.h"
 #include "iradiant.h"
 #include "icommandsystem.h"
 #include "iscenegraph.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/dialog/DialogBase.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 #include "StimTypes.h"
 #include "SREntity.h"
@@ -23,7 +25,8 @@ class StimResponseEditor;
 typedef std::shared_ptr<StimResponseEditor> StimResponseEditorPtr;
 
 class StimResponseEditor :
-	public wxutil::DialogBase
+	public wxutil::DialogBase,
+	public wxutil::XmlResourceBasedWidget
 {
 private:
 	wxNotebook* _notebook;
@@ -47,9 +50,9 @@ private:
 	StimTypes _stimTypes;
 
 	// The helper classes for editing the stims/responses
-	StimEditor* _stimEditor;
-	ResponseEditor* _responseEditor;
-	CustomStimEditor* _customStimEditor;
+	std::unique_ptr<StimEditor> _stimEditor;
+	std::unique_ptr<ResponseEditor> _responseEditor;
+	std::unique_ptr<CustomStimEditor> _customStimEditor;
 
 public:
 	StimResponseEditor();

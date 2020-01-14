@@ -18,6 +18,19 @@
 namespace ui
 {
 
+    namespace
+    {
+        // Depending on our platform detecting the wxutil::TreeView from an eventobject
+        // might be tricky. in wxMSW the events are fired from an internal wxDataViewMainWindow
+        // and the parent is a TreeView, in wxGTK the events are fired on the TreeView* itself
+        wxutil::TreeView* getTreeView(wxWindow* window)
+        {
+            wxutil::TreeView* view = dynamic_cast<wxutil::TreeView*>(window);
+            
+            return view != nullptr ? view : dynamic_cast<wxutil::TreeView*>(window->GetParent());
+        }
+    }
+
 GlobalKeyEventFilter::GlobalKeyEventFilter(EventManager& eventManager) :
     _eventManager(eventManager)
 {
@@ -100,18 +113,16 @@ GlobalKeyEventFilter::EventCheckResult GlobalKeyEventFilter::checkEvent(wxKeyEve
     // Treeviews are special, the actual wxWindows receiving/generating the event are the
     // privately implemented wxDataViewMainWindows, so let's attempt identifying that case
     // Check for keys with Alt or Ctrl modifers, these are not handled by the treeview search
-    if (!keyEvent.ControlDown() && !keyEvent.AltDown() &&
-        wxString(eventObject->GetClassInfo()->GetClassName()) == "wxDataViewMainWindow")
+    wxutil::TreeView* treeView = getTreeView(window);
+
+    if (treeView != nullptr && !keyEvent.ControlDown() && !keyEvent.AltDown())
     {
         // We have a modifier-less key event in a wxutil::TreeView. It will be passed through
         // in the general case. The ESC key will be caught if the treeview is not search mode.
-
         if (keyEvent.GetKeyCode() == WXK_ESCAPE)
         {
             // The ESC key should only be passed to the dataview if the search popup is actually shown
-            wxutil::TreeView* treeView = dynamic_cast<wxutil::TreeView*>(window->GetParent());
-
-            if (treeView && treeView->HasActiveSearchPopup())
+            if (treeView->HasActiveSearchPopup())
             {
                 return EventShouldBeIgnored;
             }

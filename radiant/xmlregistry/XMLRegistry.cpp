@@ -262,7 +262,7 @@ void XMLRegistry::loadUserFileFromSettingsPath(const ApplicationContext& ctx,
             // skip them and move on (as if the user-modified file simply did
             // not exist).
             rError() << "XMLRegistry: user settings file " << filename
-                     << " could not be parsed and was skipped." << std::endl;
+                     << " could not be parsed and was skipped (" << e.what() << ")" << std::endl;
         }
     }
     else

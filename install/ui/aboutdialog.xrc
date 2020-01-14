@@ -47,7 +47,7 @@
 								<flag>wxTOP</flag>
 								<border>6</border>
 								<object class="wxStaticText" name="m_staticText5">
-									<label>http://www.darkradiant.net/\n\nThis product contains software technology\nfrom id Software, Inc. (&apos;id Technology&apos;).\nid Technology 2000 id Software,Inc.\nDarkRadiant is originally based \non the GPL version of GtkRadiant.\n\nThe Dark Mod (www.thedarkmod.com)</label>
+									<label>https://www.darkradiant.net/\n\nThis product contains software technology\nfrom id Software, Inc. (&apos;id Technology&apos;).\nid Technology 2000 id Software,Inc.\nDarkRadiant is originally based \non the GPL version of GtkRadiant.\n\nThe Dark Mod (www.thedarkmod.com)</label>
 									<wrap>-1</wrap>
 								</object>
 							</object>

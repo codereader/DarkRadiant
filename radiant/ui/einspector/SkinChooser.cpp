@@ -238,6 +238,9 @@ void SkinChooser::populateSkins()
 	// Visit the tree populator in order to fill in the column data
 	SkinTreeVisitor visitor(_columns);
 	pop.forEachNode(visitor);
+
+	// Make sure the "matching skins" item is expanded
+	_treeView->Expand(matchingSkins.getItem());
 }
 
 std::string SkinChooser::getSelectedSkin()

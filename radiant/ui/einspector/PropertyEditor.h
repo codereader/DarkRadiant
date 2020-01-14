@@ -91,6 +91,8 @@ public:
 	{
 		// nothing by default, override in subclasses if needed
 	}
+
+	virtual void setEntity(Entity* entity) override;
 };
 
 } // namespace

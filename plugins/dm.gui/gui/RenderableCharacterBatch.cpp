@@ -13,7 +13,7 @@ RenderableCharacterBatch::RenderableCharacterBatch()
 	// Allocate a vertex buffer object
 	glGenBuffersARB(1, &_vboData);
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 #endif
 }
 
@@ -44,16 +44,16 @@ void RenderableCharacterBatch::compile()
 	// Allocate space for vertices
 	glBufferData(GL_ARRAY_BUFFER, dataSize, NULL, GL_STATIC_DRAW);
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	// Upload the data
 	glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, &_verts.front());
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 #endif
 }
 
@@ -70,7 +70,7 @@ void RenderableCharacterBatch::render() const
 
 	glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_verts.size()));
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 #else
@@ -83,7 +83,7 @@ void RenderableCharacterBatch::render() const
 
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 #endif
 }
 

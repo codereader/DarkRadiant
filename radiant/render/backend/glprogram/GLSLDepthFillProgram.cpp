@@ -22,31 +22,31 @@ void GLSLDepthFillProgram::create()
         DEPTHFILL_VP_FILENAME, DEPTHFILL_FP_FILENAME
     );
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void GLSLDepthFillProgram::destroy()
 {
     glDeleteProgram(_programObj);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void GLSLDepthFillProgram::enable()
 {
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     assert(glIsProgram(_programObj));
     glUseProgram(_programObj);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void GLSLDepthFillProgram::disable()
 {
     glUseProgram(0);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 }

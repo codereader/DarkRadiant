@@ -57,6 +57,7 @@ void AIFindBodyComponentEditor::writeToComponent() const
         Specifier::FIRST_SPECIFIER, _bodyCombo->getSpecifier()
     );
 
+	_component->clearArguments();
 	_component->setArgument(0, string::to_string(_amount->GetValue()));
 }
 

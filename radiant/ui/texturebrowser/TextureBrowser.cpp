@@ -200,7 +200,7 @@ private:
     void drawTextureQuad(GLuint num)
     {
         glBindTexture(GL_TEXTURE_2D, num);
-        GlobalOpenGL().assertNoErrors();
+        debug::assertNoGlErrors();
         glColor3f(1, 1, 1);
 
         glBegin(GL_QUADS);
@@ -748,7 +748,7 @@ void TextureBrowser::draw()
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     Vector3 colorBackground = ColourSchemes().getColour("texture_background");
     glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
@@ -766,7 +766,7 @@ void TextureBrowser::draw()
 
     glOrtho(0, _viewportSize.x(), getOriginY() - _viewportSize.y(), getOriginY(), -100, 100);
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
     glEnable (GL_TEXTURE_2D);
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
@@ -776,11 +776,11 @@ void TextureBrowser::draw()
         tile.render();
     }
 
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
     // reset the current texture
     glBindTexture(GL_TEXTURE_2D, 0);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
 	glPopAttrib();
 }
@@ -977,7 +977,7 @@ void TextureBrowser::onIdle(wxIdleEvent& ev)
 
 void TextureBrowser::onRender()
 {
-	GlobalOpenGL().assertNoErrors();
+	debug::assertNoGlErrors();
 
     if (_updateNeeded)
     {
@@ -986,7 +986,7 @@ void TextureBrowser::onRender()
 
     draw();
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 } // namespace ui

@@ -6,7 +6,6 @@
 #include "imodelcache.h"
 #include "i18n.h"
 #include "ieclass.h"
-#include "os/path.h"
 #include "math/AABB.h"
 #include "modelskin.h"
 #include "entitylib.h"
@@ -28,90 +27,51 @@ namespace
 	const char* const FUNC_STATIC_CLASS = "func_static";
 }
 
-// Construct the widgets
-
 ModelPreview::ModelPreview(wxWindow* parent) :
     RenderPreview(parent, false),
+	_sceneIsReady(false),
 	_lastModel(""),
 	_defaultCamDistanceFactor(2.8f)
 {}
 
-// Set the model, this also resets the camera
+const std::string& ModelPreview::getModel() const
+{
+	return _model;
+}
+
+const std::string& ModelPreview::getSkin() const
+{
+	return _skin;
+}
+
 void ModelPreview::setModel(const std::string& model)
 {
-	// If the model name is empty, release the model
-	if (model.empty())
+	// Remember the name and mark the scene as "not ready"
+	_model = model;
+	_sceneIsReady = false;
+
+	if (!_model.empty())
 	{
-		if (_modelNode)
-		{
-			_entity->removeChildNode(_modelNode);
-		}
-
-		_modelNode.reset();
-
-		stopPlayback();
-		return;
-	}
-
-	// Set up the scene
-	if (!_entity)
-	{
-		getScene(); // trigger a setupscenegraph call
-	}
-
-	if (_modelNode)
-	{
-		_entity->removeChildNode(_modelNode);
-	}
-
-	_modelNode = GlobalModelCache().getModelNode(model);
-
-	if (_modelNode)
-	{
-		_entity->addChildNode(_modelNode);
-
-		// Trigger an initial update of the subgraph
-		GlobalFilterSystem().updateSubgraph(getScene()->root());
-
-		// Reset camera if the model has changed
-		if (model != _lastModel)
+		// Reset time if the model has changed
+		if (_model != _lastModel)
 		{
 			// Reset preview time
 			stopPlayback();
-
-			// Reset the model rotation
-            resetModelRotation();
-
-            // Reset the default view, facing down to the model from diagonally above the bounding box
-            double distance = _modelNode->localAABB().getRadius() * _defaultCamDistanceFactor;
-
-            setViewOrigin(Vector3(1, 1, 1) * distance);
-            setViewAngles(Vector3(34, 135, 0));
 		}
 
-		_lastModel = model;
+		// Redraw
+		queueDraw(); 
 	}
-
-	// Redraw
-	queueDraw();
+	else
+	{
+		stopPlayback();
+	}
 }
-
-// Set the skin, this does NOT reset the camera
 
 void ModelPreview::setSkin(const std::string& skin) {
 
-	// Load and apply the skin, checking first to make sure the model is valid
-	// and not null
-	if (_modelNode != NULL)
-	{
-		model::ModelNodePtr model = Node_getModel(_modelNode);
-
-		if (model)
-		{
-			ModelSkin& mSkin = GlobalModelSkinCache().capture(skin);
-			model->getIModel().applySkin(mSkin);
-		}
-	}
+	_skin = skin;
+	_sceneIsReady = false;
 
 	// Redraw
 	queueDraw();
@@ -166,8 +126,81 @@ AABB ModelPreview::getSceneBounds()
 	return _modelNode->localAABB();
 }
 
+void ModelPreview::prepareScene()
+{
+	// Clear the flag
+	_sceneIsReady = true;
+
+	// If the model name is empty, release the model
+	if (_model.empty())
+	{
+		if (_modelNode)
+		{
+			_entity->removeChildNode(_modelNode);
+		}
+
+		_modelNode.reset();
+
+		// Emit the signal carrying an empty pointer
+		_modelLoadedSignal.emit(model::ModelNodePtr());
+		return;
+	}
+
+	// Set up the scene
+	if (!_entity)
+	{
+		getScene(); // trigger a setupscenegraph call
+	}
+
+	if (_modelNode)
+	{
+		_entity->removeChildNode(_modelNode);
+	}
+
+	_modelNode = GlobalModelCache().getModelNode(_model);
+
+	if (_modelNode)
+	{
+		_entity->addChildNode(_modelNode);
+
+		// Apply the skin
+		model::ModelNodePtr model = Node_getModel(_modelNode);
+
+		if (model)
+		{
+			ModelSkin& mSkin = GlobalModelSkinCache().capture(_skin);
+			model->getIModel().applySkin(mSkin);
+		}
+
+		// Trigger an initial update of the subgraph
+		GlobalFilterSystem().updateSubgraph(getScene()->root());
+
+		if (_lastModel != _model)
+		{
+			// Reset the model rotation
+			resetModelRotation();
+
+			// Reset the default view, facing down to the model from diagonally above the bounding box
+			double distance = _modelNode->localAABB().getRadius() * _defaultCamDistanceFactor;
+
+			setViewOrigin(Vector3(1, 1, 1) * distance);
+			setViewAngles(Vector3(34, 135, 0));
+		}
+
+		_lastModel = _model;
+
+		// Done loading, emit the signal
+		_modelLoadedSignal.emit(model);
+	}
+}
+
 bool ModelPreview::onPreRender()
 {
+	if (!_sceneIsReady)
+	{
+		prepareScene();
+	}
+
     if (_light)
     {
         Vector3 lightOrigin = _viewOrigin + Vector3(0, 0, 20);
@@ -213,6 +246,11 @@ void ModelPreview::onModelRotationChanged()
 RenderStateFlags ModelPreview::getRenderFlagsFill()
 {
 	return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
+}
+
+sigc::signal<void, const model::ModelNodePtr&>& ModelPreview::signal_ModelLoaded()
+{
+	return _modelLoadedSignal;
 }
 
 } // namespace ui

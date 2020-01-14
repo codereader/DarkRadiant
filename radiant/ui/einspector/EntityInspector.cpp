@@ -52,40 +52,18 @@ namespace
 
     const std::string RKEY_ROOT = "user/ui/entityInspector/";
     const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
-
-    const std::string HELP_ICON_NAME = "helpicon.png";
 }
 
 EntityInspector::EntityInspector() :
-    _mainWidget(NULL),
-    _editorFrame(NULL),
-    _showInheritedCheckbox(NULL),
-    _showHelpColumnCheckbox(NULL),
-    _primitiveNumLabel(NULL),
-    _keyValueTreeView(NULL),
-    _helpColumn(NULL),
-    _keyEntry(NULL),
-    _valEntry(NULL)
+    _mainWidget(nullptr),
+    _editorFrame(nullptr),
+    _showInheritedCheckbox(nullptr),
+    _showHelpColumnCheckbox(nullptr),
+    _primitiveNumLabel(nullptr),
+    _keyValueTreeView(nullptr),
+    _keyEntry(nullptr),
+    _valEntry(nullptr)
 {}
-
-namespace
-{
-    wxVariant HELP_ICON()
-    {
-        static wxBitmap _helpBitmap = wxArtProvider::GetBitmap(
-            GlobalUIManager().ArtIdPrefix() + HELP_ICON_NAME
-        );
-        wxASSERT(_helpBitmap.IsOk());
-
-        return wxVariant(_helpBitmap);
-    }
-
-    wxVariant BLANK_ICON()
-    {
-        static const char* EMPTY_XPM[] = { "1 1 1 1", "* c none", "*" };
-        return wxVariant(wxBitmap(EMPTY_XPM));
-    }
-}
 
 void EntityInspector::construct()
 {
@@ -102,17 +80,16 @@ void EntityInspector::construct()
     wxBoxSizer* optionsHBox = new wxBoxSizer(wxHORIZONTAL);
 
     _showInheritedCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show inherited properties"));
-    _showInheritedCheckbox->Connect(wxEVT_CHECKBOX, 
-        wxCommandEventHandler(EntityInspector::_onToggleShowInherited), NULL, this);
+    _showInheritedCheckbox->Bind(wxEVT_CHECKBOX, &EntityInspector::_onToggleShowInherited, this);
     
     _showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
     _showHelpColumnCheckbox->SetValue(false);
-    _showHelpColumnCheckbox->Connect(wxEVT_CHECKBOX, 
-        wxCommandEventHandler(EntityInspector::_onToggleShowHelpIcons), NULL, this);
+    _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, &EntityInspector::_onToggleShowHelpIcons, this);
 
-    _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "",
-                                          wxDefaultPosition, wxDefaultSize);
-    optionsHBox->Add(_primitiveNumLabel, 1, wxEXPAND | wxALL | wxALIGN_CENTER_VERTICAL, 5);
+    _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+    _primitiveNumLabel->SetFont(_primitiveNumLabel->GetFont().Bold());
+
+    optionsHBox->Add(_primitiveNumLabel, 1, wxEXPAND | wxALL, 5);
     optionsHBox->AddStretchSpacer();
     optionsHBox->Add(_showInheritedCheckbox, 1, wxEXPAND);
     optionsHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
@@ -254,7 +231,6 @@ void EntityInspector::onKeyChange(const std::string& key,
 
     row[_columns.isInherited] = false;
     row[_columns.hasHelpText] = hasDescription;
-    row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
 
     if (added)
     {
@@ -471,17 +447,12 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     // Create the Property column (has an icon)
     _keyValueTreeView->AppendIconTextColumn(_("Property"), 
         _columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
-        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
     // Create the value column
     _keyValueTreeView->AppendTextColumn(_("Value"), 
         _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
-        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-
-    // Add the help icon
-    _helpColumn = _keyValueTreeView->AppendBitmapColumn(_("?"), 
-        _columns.helpIcon.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
-    _helpColumn->SetHidden(true);
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
     // Used to update the help text
     _keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
@@ -586,14 +557,20 @@ void EntityInspector::updateGUIElements()
         _keyValueTreeView->Enable(true);
         _showInheritedCheckbox->Enable(true);
         _showHelpColumnCheckbox->Enable(true);
+
+		// Update the target entity on any active property editor (#5092)
+		if (_currentPropertyEditor)
+		{
+			auto newEntity = Node_getEntity(_selectedEntity.lock());
+			assert(newEntity != nullptr);
+
+			_currentPropertyEditor->setEntity(newEntity);
+		}
     }
     else  // no selected entity
     {
         // Remove the displayed PropertyEditor
-        if (_currentPropertyEditor)
-        {
-            _currentPropertyEditor = PropertyEditorPtr();
-        }
+		_currentPropertyEditor.reset();
 
         _helpText->SetValue("");
 
@@ -956,8 +933,7 @@ void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
 
 void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
 {
-    // Set the visibility of the column accordingly
-    _helpColumn->SetHidden(!_showHelpColumnCheckbox->IsChecked());
+    // Set the visibility of the help text panel
     _helpText->Show(_showHelpColumnCheckbox->IsChecked());
 
     // After showing a packed control we need to call the sizer's layout() method
@@ -1123,7 +1099,6 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
-        row[_columns.helpIcon] = hasDescription ? HELP_ICON() : BLANK_ICON();
 
         row.SendItemAdded();
     }
@@ -1164,7 +1139,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     if (GlobalSelectionSystem().countSelected() != 1)
     {
         changeSelectedEntity(scene::INodePtr());
-        _primitiveNumLabel->SetLabelMarkup("");
+        _primitiveNumLabel->SetLabelText("");
         return;
     }
 
@@ -1175,7 +1150,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     if (selectedNode->isRoot())
     {
         changeSelectedEntity(scene::INodePtr());
-        _primitiveNumLabel->SetLabelMarkup("");
+        _primitiveNumLabel->SetLabelText("");
         return;
     }
 
@@ -1192,7 +1167,7 @@ void EntityInspector::getEntityFromSelectionSystem()
         std::size_t ent(0), prim(0);
         selection::algorithm::getSelectionIndex(ent, prim);
 
-        _primitiveNumLabel->SetLabelMarkup(fmt::format(_("<b>Entity {0}</b>"), ent));
+        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}"), ent));
     }
     else
     {
@@ -1203,7 +1178,7 @@ void EntityInspector::getEntityFromSelectionSystem()
         std::size_t ent(0), prim(0);
         selection::algorithm::getSelectionIndex(ent, prim);
 
-        _primitiveNumLabel->SetLabelMarkup(fmt::format(_("<b>Entity {0}, Primitive {1}</b>"), ent, prim));
+        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), ent, prim));
     }
 }
 

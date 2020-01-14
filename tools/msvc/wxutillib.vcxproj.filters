@@ -103,6 +103,7 @@
     <ClInclude Include="..\..\libs\wxutil\preview\GuiView.h">
       <Filter>preview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\ScrollWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

@@ -30,6 +30,7 @@ public:
 
 	wxPanel* getWidget() override;
 	void updateFromEntity() override;
+	void setEntity(Entity* entity) override;
 
 	AIHeadPropertyEditor(wxWindow* parent, Entity* entity,
 		const std::string& key, const std::string& options);

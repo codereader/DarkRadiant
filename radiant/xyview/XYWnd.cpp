@@ -117,6 +117,12 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
     _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX1_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
+	_wxGLWidget->Connect(wxEVT_AUX2_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
 
 	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
 
@@ -1326,31 +1332,31 @@ void XYWnd::draw()
 
     glDepthMask(GL_FALSE);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     glLoadMatrixd(_modelView);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisable(GL_LINE_STIPPLE);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glLineWidth(1);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     if (GLEW_VERSION_1_3) {
         glActiveTexture(GL_TEXTURE0);
         glClientActiveTexture(GL_TEXTURE0);
     }
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisableClientState(GL_NORMAL_ARRAY);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisableClientState(GL_COLOR_ARRAY);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisable(GL_TEXTURE_2D);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisable(GL_LIGHTING);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
     glDisable(GL_COLOR_MATERIAL);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // greebo: Check, if the size info should be displayed (if there are any items selected)
     if (xyWndManager.showSizeInfo() && GlobalSelectionSystem().countSelected() != 0)
@@ -1400,7 +1406,7 @@ void XYWnd::draw()
         glPointSize(1);
     }
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // reset modelview
     glLoadIdentity();
@@ -1458,11 +1464,11 @@ void XYWnd::draw()
         }
     }
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     // Reset the depth mask to its initial value (enabled)
     glDepthMask(GL_TRUE);
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 
     glFinish();
 }

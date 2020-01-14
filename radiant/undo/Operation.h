@@ -1,18 +1,45 @@
 #pragma once
 
+#include "iundo.h"
+
+#include <list>
 #include <memory>
 #include <string>
-
-#include "SnapShot.h"
 
 namespace undo
 {
 
+/**
+ * A named Undo/Redo Operation summarises the state
+ * of all the undoable objects that have been touched
+ * between start() and finish().
+ */
 class Operation
 {
 private:
-	// The Snapshot that (i.e. the list of Undoables and all their UndoMementos)
-	Snapshot _snapshot;
+	// This holds the Undoable reference and its exported data
+	// The data is recorded right in the constructor
+	class UndoableState
+	{
+	private:
+		IUndoable& _undoable;
+		IUndoMementoPtr _data;
+
+	public:
+		// Constructor
+		UndoableState(IUndoable& undoable) :
+			_undoable(undoable),
+			_data(_undoable.exportState())
+		{}
+
+		void restoreState()
+		{
+			_undoable.importState(_data);
+		}
+	};
+
+	// The Snapshot (the list of structs containing Undoable+Data)
+	std::list<UndoableState> _snapshot;
 
 	// The name of the UndoOperaton
 	std::string _command;
@@ -35,12 +62,17 @@ public:
 
 	void save(IUndoable& undoable)
 	{
-		_snapshot.save(undoable);
+		// Record the state of the given undable and push it to the snapshot
+		// The order is relevant, we use push_front()
+		_snapshot.push_front(UndoableState(undoable));
 	}
 
 	void restoreSnapshot()
 	{
-		_snapshot.restore();
+		for (auto& undoablePlusMemento : _snapshot)
+		{
+			undoablePlusMemento.restoreState();
+		}
 	}
 };
 typedef std::shared_ptr<Operation> OperationPtr;

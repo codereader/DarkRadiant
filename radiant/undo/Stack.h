@@ -7,8 +7,12 @@
 namespace undo
 {
 
-/* greebo: This is some kind of Stack wrapper keepign track
- * of all the Undo Operations.
+/** 
+ * greebo: The UndoSystem keeps track of Undoable and Redoable operations,
+ * which are kept in a chain-like data structure.
+ *
+ * Each named operation in this stack contains a snapshot of the undoable objects
+ * that have been touched between start() and finish().
  *
  * When start() is called, a new Operation is allocated  and 
  * on calling save(Undoable*) the Undoable is actually stored within

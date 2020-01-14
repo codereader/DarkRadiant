@@ -6,7 +6,7 @@
   <PropertyGroup Label="UserMacros">
     <PlatformDepsDir>$(DarkRadiantRoot)\w32deps\</PlatformDepsDir>
     <LibSuffix>-d</LibSuffix>
-    <WxWidgetsLibDir>vc$(PlatformToolsetVersion)_dll</WxWidgetsLibDir>
+    <WxWidgetsLibDir>vc14x_dll</WxWidgetsLibDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>

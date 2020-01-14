@@ -15,8 +15,9 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/artprov.h>
-#include <wx/scrolwin.h>
 #include <functional>
+
+#include "wxutil/ScrollWindow.h"
 
 #include "layers/LayerSystem.h"
 #include "layers/LayerUsageBreakdown.h"
@@ -48,7 +49,8 @@ LayerControlDialog::LayerControlDialog() :
 
 void LayerControlDialog::populateWindow()
 {
-	wxScrolledWindow* dialogPanel = new wxScrolledWindow(this, wxID_ANY);
+	auto dialogPanel = new wxutil::ScrollWindow(this, wxID_ANY);
+	dialogPanel->SetShouldScrollToChildOnFocus(false);
 	dialogPanel->SetScrollRate(0, 15);
 
 	_dialogPanel = dialogPanel;

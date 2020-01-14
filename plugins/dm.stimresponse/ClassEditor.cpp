@@ -21,77 +21,42 @@ namespace
 	const int TREE_VIEW_HEIGHT = 160;
 }
 
-ClassEditor::ClassEditor(wxWindow* parent, StimTypes& stimTypes) :
-	wxPanel(parent, wxID_ANY),
-	_list(NULL),
+ClassEditor::ClassEditor(wxWindow* mainPanel, StimTypes& stimTypes) :
+	_list(nullptr),
 	_stimTypes(stimTypes),
 	_updatesDisabled(false),
-	_type(NULL),
-	_addType(NULL),
-	_overallHBox(NULL)
+	_type(nullptr),
+	_addType(nullptr)
+{}
+
+void ClassEditor::createListView(wxWindow* parent)
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	_overallHBox = new wxBoxSizer(wxHORIZONTAL);
-	GetSizer()->Add(_overallHBox, 1, wxEXPAND | wxALL, 6);
-
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	_overallHBox->Add(vbox, 0, wxEXPAND | wxRIGHT, 12);
-
 	wxutil::TreeModel::Ptr dummyModel(
-        new wxutil::TreeModel(SREntity::getColumns(), true)
-    );
-	_list = wxutil::TreeView::CreateWithModel(this, dummyModel);
+		new wxutil::TreeModel(SREntity::getColumns(), true)
+	);
+
+	_list = wxutil::TreeView::CreateWithModel(parent, dummyModel);
 
 	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
-	vbox->Add(_list, 1, wxEXPAND | wxBOTTOM, 6);
+	parent->GetSizer()->Add(_list, 1, wxEXPAND);
 
 	// Connect the signals to the callbacks
-	_list->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-        wxDataViewEventHandler(ClassEditor::onSRSelectionChange), NULL, this);
+	_list->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(ClassEditor::onSRSelectionChange), NULL, this);
 	_list->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ClassEditor::onTreeViewKeyPress), NULL, this);
-	_list->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
-		wxDataViewEventHandler(ClassEditor::onContextMenu), NULL, this);
+	_list->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, wxDataViewEventHandler(ClassEditor::onContextMenu), NULL, this);
 
 	// Add the columns to the treeview
 	// ID number
-	_list->AppendTextColumn("#", SREntity::getColumns().index.getColumnIndex(), 
+	_list->AppendTextColumn("#", SREntity::getColumns().index.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
-	
+
 	// The S/R icon
-	_list->AppendBitmapColumn(_("S/R"), SREntity::getColumns().srClass.getColumnIndex(), 
+	_list->AppendBitmapColumn(_("S/R"), SREntity::getColumns().srClass.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
 	// The Type
-	_list->AppendIconTextColumn(_("Type"), SREntity::getColumns().caption.getColumnIndex(), 
+	_list->AppendIconTextColumn(_("Type"), SREntity::getColumns().caption.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
-
-	// Buttons below the treeview
-	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
-	vbox->Add(hbox, 0, wxEXPAND);
-
-	// Create the type selector and pack it
-#ifndef USE_BMP_COMBO_BOX
-	_addType = createStimTypeSelector(this);
-#else
-	_addType = dynamic_cast<wxBitmapComboBox*>(createStimTypeSelector(this));
-#endif
-	hbox->Add(_addType, 1, wxRIGHT | wxEXPAND, 6);
-
-	_listButtons.add = new wxButton(this, wxID_ANY, _("Add"));
-	_listButtons.remove = new wxButton(this, wxID_ANY, _("Remove"));
-
-	hbox->Add(_listButtons.add, 0, wxRIGHT, 6);
-	hbox->Add(_listButtons.remove, 0);
-
-	_addType->Connect(wxEVT_COMBOBOX, wxCommandEventHandler(ClassEditor::onAddTypeSelect), NULL, this);
-	_listButtons.add->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassEditor::onAddSR), NULL, this);
-	_listButtons.remove->Connect(wxEVT_BUTTON, wxCommandEventHandler(ClassEditor::onRemoveSR), NULL, this);
-}
-
-void ClassEditor::packEditingPane(wxWindow* pane)
-{
-	_overallHBox->Add(pane, 1, wxEXPAND);
 }
 
 void ClassEditor::setEntity(const SREntityPtr& entity)
@@ -174,26 +139,6 @@ void ClassEditor::spinButtonChanged(wxSpinCtrlDouble* ctrl)
 			setProperty(found->second, valueText);
 		}
 	}
-}
-
-wxComboBox* ClassEditor::createStimTypeSelector(wxWindow* parent)
-{
-#ifdef USE_BMP_COMBO_BOX
-	wxBitmapComboBox* combo = new wxBitmapComboBox(parent, 
-		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
-#else
-	wxComboBox* combo = new wxComboBox(parent, 
-		wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY);
-#endif
-
-	if (_stimTypes.getStimMap().empty())
-	{
-		_stimTypes.reload();
-	}
-
-	_stimTypes.populateComboBox(combo);
-
-	return combo;
 }
 
 void ClassEditor::reloadStimTypes()
@@ -360,7 +305,7 @@ void ClassEditor::onContextMenu(wxDataViewEvent& ev)
 
 void ClassEditor::onStimTypeSelect(wxCommandEvent& ev)
 {
-	if (_updatesDisabled || _type == NULL) return; // Callback loop guard
+	if (_updatesDisabled || _type == nullptr) return; // Callback loop guard
 
 	std::string name = getStimTypeIdFromSelector(_type);
 
@@ -373,10 +318,10 @@ void ClassEditor::onStimTypeSelect(wxCommandEvent& ev)
 
 void ClassEditor::onAddTypeSelect(wxCommandEvent& ev)
 {
-	if (_updatesDisabled || _addType == NULL) return; // Callback loop guard
+	if (_updatesDisabled || _addType == nullptr) return; // Callback loop guard
 
 	wxComboBox* combo = dynamic_cast<wxComboBox*>(ev.GetEventObject());
-	assert(combo != NULL);
+	assert(combo != nullptr);
 
 	std::string name = getStimTypeIdFromSelector(combo);
 

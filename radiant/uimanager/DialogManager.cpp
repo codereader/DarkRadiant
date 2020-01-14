@@ -68,7 +68,7 @@ void DialogManager::cleanupOldDialogs()
 {
 	for (Dialogs::iterator i = _dialogs.begin(); i != _dialogs.end(); /* in-loop increment */)
 	{
-		if (i->unique())
+		if (i->use_count() <= 1)
 		{
 			_dialogs.erase(i++);
 		}

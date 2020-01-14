@@ -120,6 +120,10 @@ void ExportAsModelDialog::populateWindow()
 	pathEntry->setValue(recentPath);
 	pathEntry->SetName("ExportDialogFilePicker");
 
+	// We don't want the FileChooser to ask for permission overwriting an existing file,
+	// we do this ourselves in this class when the user hits OK
+	pathEntry->setAskForOverwrite(false);
+
 	existing->GetContainingSizer()->Replace(existing, pathEntry);
 	existing->Destroy();
 
@@ -175,6 +179,15 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 	{
 		wxutil::Messagebox::Show(_("Empty Filename"), _("No filename specified, cannot run exporter"), IDialog::MessageType::MESSAGE_ERROR);
 		return;
+	}
+
+	// Check if the target file already exists
+	if (os::fileOrDirExists(options.outputFilename) && 
+		wxutil::Messagebox::Show(_("Confirm Replacement"), 
+			fmt::format(_("The file {0} already exists.\nReplace this file?"), options.outputFilename),
+			IDialog::MessageType::MESSAGE_ASK) != IDialog::RESULT_YES)
+	{
+		return; // abort
 	}
 
 	saveOptionsToRegistry();

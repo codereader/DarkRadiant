@@ -34,6 +34,8 @@ void AIFindItemComponentEditor::writeToComponent() const
     if (!_active) return; // still under construction
 
     assert(_component);
+
+	_component->clearArguments();
 	// TODO
 }
 

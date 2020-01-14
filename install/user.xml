@@ -291,5 +291,6 @@
       <separator/>
       <toggletoolbutton name="togglefacevertexscalepivot" action="TexToolToggleFaceVertexScalePivot" tooltip="Center Pivot when scaling faces" icon="textool_facescale_pivot.png"/>
     </toolbar>
+    <userGuideUrl value="https://www.darkradiant.net/userguide" />
   </ui>
 </user>

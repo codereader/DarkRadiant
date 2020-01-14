@@ -10,7 +10,7 @@ namespace entity {
 
 Doom3Entity::Doom3Entity(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
-	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1)),
+	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1), "EntityKeyValues"),
 	_instanced(false),
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize())
@@ -19,7 +19,7 @@ Doom3Entity::Doom3Entity(const IEntityClassPtr& eclass) :
 Doom3Entity::Doom3Entity(const Doom3Entity& other) :
 	Entity(other),
 	_eclass(other.getEntityClass()),
-	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1)),
+	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1), "EntityKeyValues"),
 	_instanced(false),
 	_observerMutex(false),
 	_isContainer(other._isContainer)
@@ -106,14 +106,22 @@ void Doom3Entity::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
 	_instanced = true;
 
-    for (auto keyValue : _keyValues) keyValue.second->connectUndoSystem(changeTracker);
+	for (const auto& keyValue : _keyValues)
+	{
+		keyValue.second->connectUndoSystem(changeTracker);
+	}
+
     _undo.connectUndoSystem(changeTracker);
 }
 
 void Doom3Entity::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
 	_undo.disconnectUndoSystem(changeTracker);
-    for (auto keyValue : _keyValues) keyValue.second->disconnectUndoSystem(changeTracker);
+
+	for (const auto& keyValue : _keyValues)
+	{
+		keyValue.second->disconnectUndoSystem(changeTracker);
+	}
 
 	_instanced = false;
 }

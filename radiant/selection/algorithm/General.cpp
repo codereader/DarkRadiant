@@ -218,12 +218,28 @@ inline void hideNode(const scene::INodePtr& node, bool hide)
 	}
 }
 
+// If the given node has any components of any kind, set the component selection status to the given flag
+inline void setComponentSelection(const scene::INodePtr& node, bool selected)
+{
+	ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
+
+	if (componentSelectionTestable)
+	{
+		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eVertex);
+		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eEdge);
+		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eFace);
+	}
+}
+
 void hideSelected(const cmd::ArgumentList& args)
 {
 	// Traverse the selection, hiding all nodes
 	GlobalSelectionSystem().foreachSelected([] (const scene::INodePtr& node) 
 	{
 		hideSubgraph(node, true);
+
+		// De-select all components of the node that is going to be hidden (#5054)
+		setComponentSelection(node, false);
 	});
 
 	// Then de-select the hidden nodes

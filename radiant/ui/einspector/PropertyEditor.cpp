@@ -10,22 +10,22 @@ namespace ui
 {
 
 PropertyEditor::PropertyEditor() :
-	_mainWidget(NULL),
-	_entity(NULL)
+	_mainWidget(nullptr),
+	_entity(nullptr)
 {}
 
 PropertyEditor::PropertyEditor(Entity* entity) :
-	_mainWidget(NULL),
+	_mainWidget(nullptr),
 	_entity(entity)
 {}
 
 PropertyEditor::~PropertyEditor()
 {
 	// Destroy the widget
-	if (_mainWidget != NULL)
+	if (_mainWidget != nullptr)
 	{
 		_mainWidget->Destroy();
-        _mainWidget = NULL;
+        _mainWidget = nullptr;
 	}
 }
 
@@ -37,7 +37,7 @@ void PropertyEditor::setMainWidget(wxPanel* widget)
     // to forget about our reference to avoid double deletions
     _mainWidget->Bind(wxEVT_DESTROY, [&] (wxWindowDestroyEvent&)
     {
-        _mainWidget = NULL;
+        _mainWidget = nullptr;
     });
 }
 
@@ -47,14 +47,27 @@ wxPanel* PropertyEditor::getWidget()
 	return _mainWidget;
 }
 
+void PropertyEditor::setEntity(Entity* entity)
+{
+	if (entity == nullptr) throw std::logic_error("No nullptrs allowed as entity argument");
+
+	if (_entity != entity)
+	{
+		_entity = entity;
+
+		// Let any subclasses update themselves now that the entity got changed
+		updateFromEntity();
+	}
+}
+
 std::string PropertyEditor::getKeyValue(const std::string& key)
 {
-	return (_entity != NULL) ? _entity->getKeyValue(key) : "";
+	return _entity != nullptr ? _entity->getKeyValue(key) : std::string();
 }
 
 void PropertyEditor::setKeyValue(const std::string& key, const std::string& value)
 {
-	if (_entity == NULL) return;
+	if (_entity == nullptr) return;
 
 	UndoableCommand cmd("setProperty");
 
@@ -74,7 +87,7 @@ void PropertyEditor::constructBrowseButtonPanel(wxWindow* parent, const std::str
 	// Button with image
 	wxButton* button = new wxButton(mainVBox, wxID_ANY, label);
 	button->SetBitmap(bitmap);
-	button->Connect(wxEVT_BUTTON, wxCommandEventHandler(PropertyEditor::_onBrowseButtonClick), NULL, this);
+	button->Bind(wxEVT_BUTTON, &PropertyEditor::_onBrowseButtonClick, this);
 
 	mainVBox->GetSizer()->Add(button, 0, wxALIGN_CENTER_VERTICAL);
 }

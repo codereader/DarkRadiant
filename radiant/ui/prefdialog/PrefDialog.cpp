@@ -9,6 +9,7 @@
 
 #include <wx/sizer.h>
 #include <wx/treebook.h>
+#include <wx/treectrl.h>
 #include "string/split.h"
 #include "string/join.h"
 #include "string/predicate.h"

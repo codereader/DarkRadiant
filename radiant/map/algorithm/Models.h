@@ -7,10 +7,10 @@ namespace algorithm
 {
 
 // This reloads all models in the map
-void refreshModels();
+void refreshModels(bool blockScreenUpdates);
 
 // This reloads all selected models in the map
-void refreshSelectedModels();
+void refreshSelectedModels(bool blockScreenUpdates);
 
 }
 

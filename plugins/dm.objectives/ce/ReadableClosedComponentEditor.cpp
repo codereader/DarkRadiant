@@ -41,6 +41,8 @@ void ReadableClosedComponentEditor::writeToComponent() const
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _readableSpec->getSpecifier()
     );
+
+	_component->clearArguments();
 }
 
 } // namespace ce

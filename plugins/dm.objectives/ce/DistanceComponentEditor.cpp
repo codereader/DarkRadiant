@@ -85,6 +85,7 @@ void DistanceComponentEditor::writeToComponent() const
 
     assert(_component);
 
+	_component->clearArguments();
 	_component->setArgument(0, _entity->GetValue().ToStdString());
 	_component->setArgument(1, _location->GetValue().ToStdString());
 	_component->setArgument(2, string::to_string(_distance->GetValue()));

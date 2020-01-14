@@ -121,8 +121,7 @@ inline wxDataViewItemAttr getItemFormat(bool isFavourite)
 }
 
 /* Callback functor for processing shader names */
-struct ShaderNameCompareFunctor :
-	public std::binary_function<std::string, std::string, bool>
+struct ShaderNameCompareFunctor
 {
 	bool operator()(const std::string& s1, const std::string& s2) const
 	{
@@ -529,7 +528,12 @@ void MediaBrowser::construct()
 	// runs into problems when the _treeView is still valid
 	_mainWidget->Bind(wxEVT_DESTROY, [&](wxWindowDestroyEvent& ev)
 	{
-		_treeView = nullptr;
+		// In wxGTK the destroy event might bubble from a child window 
+		// like the search popup, so check the event object
+		if (ev.GetEventObject() == _mainWidget)
+		{
+			_treeView = nullptr;
+		}
 		ev.Skip();
 	});
 }

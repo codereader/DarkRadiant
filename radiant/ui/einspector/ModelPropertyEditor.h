@@ -21,6 +21,7 @@ private:
 private:
 
 	void _onModelButton(wxCommandEvent& ev);
+	void _onSkinButton(wxCommandEvent& ev);
 	void _onParticleButton(wxCommandEvent& ev);
 
 public:

@@ -57,8 +57,8 @@ extern "C"
 
 /* os dependent replacements */
 #if WIN32 || _WIN32
-	#define _pico_stricmp stricmp
-	#define _pico_strnicmp strnicmp
+	#define _pico_stricmp _stricmp
+	#define _pico_strnicmp _strnicmp
 #else
 	#define _pico_stricmp strcasecmp
 	#define _pico_strnicmp strncasecmp

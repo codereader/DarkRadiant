@@ -1,5 +1,10 @@
 #include "PythonModule.h"
 
+// Stringify and concatenate the PYBIND11_VERSION_xxx preprocessor symbols
+#define Str(x) #x
+#define QUOTE(x) Str(x)
+#define PYBIND11_VERSION_STR (QUOTE(PYBIND11_VERSION_MAJOR) "." QUOTE(PYBIND11_VERSION_MINOR) "." QUOTE(PYBIND11_VERSION_PATCH))
+
 #include "itextstream.h"
 
 namespace script
@@ -25,9 +30,7 @@ void PythonModule::RegisterToPython(const ModuleRegistrationCallback& callback)
 	_registrationCallback = callback;
 
         rMessage() << "Registering darkradiant module to Python using pybind11 version " << 
-            PYBIND11_VERSION_MAJOR << "." << 
-            PYBIND11_VERSION_MINOR << "." << 
-            PYBIND11_VERSION_PATCH << std::endl;
+            PYBIND11_VERSION_STR << std::endl;
         
 	// Register the darkradiant module to Python
 	int result = PyImport_AppendInittab(NAME(), InitModule);

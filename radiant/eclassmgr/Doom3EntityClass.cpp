@@ -195,17 +195,19 @@ public:
     }
 };
 
-// Constructor
-Doom3EntityClass::Doom3EntityClass(const std::string& name,
-                                   const Vector3& colour,
-                                   bool fixedSize,
-                                   const Vector3& mins,
-                                   const Vector3& maxs)
+const std::string Doom3EntityClass::DefaultWireShader("<0.3 0.3 1>");
+const std::string Doom3EntityClass::DefaultFillShader("(0.3 0.3 1)");
+
+
+Doom3EntityClass::Doom3EntityClass(const std::string& name) :
+    Doom3EntityClass(name, false)
+{}
+
+Doom3EntityClass::Doom3EntityClass(const std::string& name, bool fixedSize)
 : _name(name),
-  _parent(NULL),
+  _parent(nullptr),
   _isLight(false),
-  _colour(colour),
-  _colourSpecified(false),
+  _colour(-1, -1, -1),
   _colourTransparent(false),
   _fixedSize(fixedSize),
   _model(""),
@@ -279,9 +281,6 @@ void Doom3EntityClass::setIsLight(bool val)
 
 void Doom3EntityClass::setColour(const Vector3& colour)
 {
-    // Set the specified flag
-    _colourSpecified = true;
-
     _colour = colour;
 
     // Set the entity colour to default, if none was specified
@@ -304,12 +303,14 @@ const Vector3& Doom3EntityClass::getColour() const {
 
 const std::string& Doom3EntityClass::getWireShader() const
 {
-    return _wireShader;
+    // Use a fallback shader colour in case we don't have anything
+    return !_wireShader.empty() ? _wireShader : DefaultWireShader;
 }
 
 const std::string& Doom3EntityClass::getFillShader() const
 {
-    return _fillShader;
+    // Use a fallback shader colour in case we don't have anything
+    return !_fillShader.empty() ? _fillShader : DefaultFillShader;
 }
 
 /* ATTRIBUTES */
@@ -345,22 +346,9 @@ void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
     }
 }
 
-// Static function to create an EntityClass (named constructor idiom)
-Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name,
-                                             bool brushes)
+Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes)
 {
-    if (!brushes)
-    {
-        return std::make_shared<Doom3EntityClass>(name,
-                                                    Vector3(-1, -1, -1),
-                                                    true,
-                                                    Vector3(-8, -8, -8),
-                                                    Vector3(8, 8, 8));
-    }
-    else
-    {
-        return std::make_shared<Doom3EntityClass>(name);
-    }
+    return std::make_shared<Doom3EntityClass>(name, !brushes);
 }
 
 // Enumerate entity class attributes
@@ -501,7 +489,6 @@ void Doom3EntityClass::clear()
     _isLight = false;
 
     _colour = Vector3(-1,-1,-1);
-    _colourSpecified = false;
     _colourTransparent = false;
 
     _fixedSize = false;

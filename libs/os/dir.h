@@ -59,15 +59,30 @@ inline bool makeDirectory(const std::string& name)
 		if (fs::create_directory(dirPath))
 		{
 			// Directory has been created, set permissions
-			rConsole() << "Directory " << dirPath << " created succesfully." << std::endl;
+			rConsole() << "Directory " << dirPath << " created successfully." << std::endl;
 
 #ifdef DR_USE_STD_FILESYSTEM
+
+#if __cpp_lib_filesystem
+			// C++17 standards-compliant call to std::filesystem::permissions
+			// Set permissions to rwxrwxr_x
+			fs::permissions(dirPath, 
+				fs::perms::owner_exec | fs::perms::owner_write | fs::perms::owner_read |
+				fs::perms::group_exec | fs::perms::group_write | fs::perms::group_read |
+				fs::perms::others_exec | fs::perms::others_read,
+				fs::perm_options::add);
+
+#else
+			// pre-C++17 call to std::filesystem::permissions, only one bitmask
 			// Set permissions to rwxrwxr_x
 			fs::permissions(dirPath, fs::perms::add_perms |
 				fs::perms::owner_exec | fs::perms::owner_write | fs::perms::owner_read |
 				fs::perms::group_exec | fs::perms::group_write | fs::perms::group_read |
 				fs::perms::others_exec | fs::perms::others_read);
+#endif
+
 #else
+			// Boost filesystem call to filesystem::permissions
 			// Set permissions to rwxrwxr_x
 			fs::permissions(dirPath, fs::add_perms |
 				fs::owner_exe  | fs::owner_write | fs::owner_read |

@@ -35,6 +35,8 @@ void CustomComponentEditor::writeToComponent() const
 {
     if (!_active) return; // still under construction
 
+	_component->clearArguments();
+
 	// nothing to save here
 }
 

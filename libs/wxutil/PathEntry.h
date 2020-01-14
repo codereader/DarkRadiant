@@ -33,6 +33,9 @@ protected:
 	// Whether we're opening the FileChooser in open or save mode
 	bool _open;
 
+	// Whether save-dialogs are asking the user if they want to overwrite the selected file
+	bool _askForOverwrite;
+
 private:
 	// Private shared constructor
 	PathEntry(wxWindow* parent, bool foldersOnly, bool open,
@@ -81,6 +84,10 @@ public:
 
 	// Set the default extension to use in the FileChooser variant
 	void setDefaultExtension(const std::string& defaultExt);
+
+	// For save-style PathEntry fields it's possible to skip the "Replace this file?" question
+	// This flag will be forwarded to the underlying FileChooser class.
+	void setAskForOverwrite(bool ask);
 
 private:
 	// callbacks

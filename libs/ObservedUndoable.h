@@ -19,12 +19,22 @@ class ObservedUndoable :
 	IUndoStateSaver* _undoStateSaver;
     IMapFileChangeTracker* _changeTracker;
 
+	std::string _debugName;
+
 public:
 	ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback) :
 		_object(object), 
 		_importCallback(importCallback), 
         _undoStateSaver(nullptr),
         _changeTracker(nullptr)
+	{}
+
+	ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback, const std::string& debugName) :
+		_object(object),
+		_importCallback(importCallback),
+		_undoStateSaver(nullptr),
+		_changeTracker(nullptr),
+		_debugName(debugName)
 	{}
 
     IMapFileChangeTracker& getUndoChangeTracker()

@@ -344,36 +344,33 @@ void MainFrame::restoreWindowPosition()
 	// We start out maximised by default
 	bool isMaximised = true;
 
-	// Connect the window position tracker
-	if (!GlobalRegistry().findXPath(RKEY_WINDOW_STATE).empty())
+	// Load and sanitise the monitor number, the number of displays might have changed
+	unsigned int startMonitor = registry::getValue<unsigned int>(RKEY_MULTIMON_START_MONITOR);
+
+	if (startMonitor >= wxutil::MultiMonitor::getNumMonitors())
+	{
+		startMonitor = 0;
+	}
+
+	// Set up the size/position from registry or the defaults
+	if (GlobalRegistry().keyExists(RKEY_WINDOW_STATE))
 	{
 		_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 
 		isMaximised = string::convert<bool>(GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state"), true);
 	}
-
-	unsigned int startMonitor = registry::getValue<unsigned int>(RKEY_MULTIMON_START_MONITOR);
-
-	if (startMonitor < wxDisplay::GetCount())
+	else
 	{
-		// Yes, connect the position tracker, this overrides the existing setting.
-		_windowPosition.connect(_topLevelWindow);
-
-  		// Load the correct coordinates into the position tracker
-		_windowPosition.fitToScreen(wxDisplay(startMonitor).GetGeometry(), 0.8f, 0.8f);
-
-		// Apply the position
-		_windowPosition.applyPosition();
+		// If no state was found in the registry, fit the window into the start monitor rectangle
+		_windowPosition.fitToScreen(wxutil::MultiMonitor::getMonitor(startMonitor), 0.8f, 0.8f);
 	}
+
+	// Connect the tracker which will also apply the stored size/position
+	_windowPosition.connect(_topLevelWindow);
 
 	if (isMaximised)
 	{
 		_topLevelWindow->Maximize(true);
-	}
-	else
-	{
-		_windowPosition.connect(_topLevelWindow);
-		_windowPosition.applyPosition();
 	}
 }
 
@@ -415,6 +412,10 @@ void MainFrame::saveWindowPosition()
 			"state",
 			string::to_string(_topLevelWindow->IsMaximized())
 		);
+
+		// Save the monitor number the window is currently displayed on
+		registry::setValue(RKEY_MULTIMON_START_MONITOR,
+			wxutil::MultiMonitor::getMonitorNumForWindow(_topLevelWindow));
 	}
 }
 

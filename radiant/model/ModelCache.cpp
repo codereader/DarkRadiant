@@ -205,12 +205,12 @@ void ModelCache::shutdownModule()
 
 void ModelCache::refreshModels(const cmd::ArgumentList& args)
 {
-	map::algorithm::refreshModels();
+	map::algorithm::refreshModels(true);
 }
 
 void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)
 {
-	map::algorithm::refreshSelectedModels();
+	map::algorithm::refreshSelectedModels(true);
 }
 
 // The static module

@@ -65,7 +65,7 @@ void ARBBumpProgram::create()
     _locLightScale = C6_LIGHT_SCALE;
     _locAmbientFactor = C7_AMBIENT_FACTOR;
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void ARBBumpProgram::destroy()
@@ -73,7 +73,7 @@ void ARBBumpProgram::destroy()
     glDeleteProgramsARB(1, &m_vertex_program);
     glDeleteProgramsARB(1, &m_fragment_program);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void ARBBumpProgram::enable()
@@ -88,7 +88,7 @@ void ARBBumpProgram::enable()
     glEnableVertexAttribArrayARB(ATTR_BITANGENT);
     glEnableVertexAttribArrayARB(ATTR_NORMAL);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void ARBBumpProgram::disable()
@@ -101,7 +101,7 @@ void ARBBumpProgram::disable()
     glDisableVertexAttribArrayARB(ATTR_BITANGENT);
     glDisableVertexAttribArrayARB(ATTR_NORMAL);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
@@ -150,7 +150,7 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
     glLoadMatrixd(local2light);
     glMatrixMode(GL_MODELVIEW);
 
-    GlobalOpenGL().assertNoErrors();
+    debug::assertNoGlErrors();
 }
 
 }

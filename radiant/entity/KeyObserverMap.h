@@ -34,8 +34,7 @@ namespace entity
 /**
  * Comaparator to allow for case-insensitive search in std::multimap
  */
-struct CaseInsensitiveKeyCompare :
-	public std::binary_function<std::string, std::string, bool>
+struct CaseInsensitiveKeyCompare
 {
 	bool operator()(const std::string &s1, const std::string &s2) const
 	{

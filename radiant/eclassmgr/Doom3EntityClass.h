@@ -53,8 +53,11 @@ class Doom3EntityClass
 
     // Colour of this entity and flag to indicate it has been specified
     Vector3 _colour;
-    bool _colourSpecified;
     bool _colourTransparent;
+
+    // Default shader names, in case we don't get any from the parent or otherwise
+    static const std::string DefaultWireShader;
+    static const std::string DefaultFillShader;
 
     // Shader versions of the colour
     std::string _fillShader;
@@ -123,19 +126,25 @@ public:
     static Doom3EntityClassPtr create(const std::string& name, bool brushes);
 
     /**
-     * Default constructor.
+     * Constructor.
      *
      * @param name
      * Entity class name.
      *
-     * @param colour
-     * Display colour for this entity.
+     * This eclass will have isFixedSize set to false.
      */
-    Doom3EntityClass(const std::string& name,
-                     const Vector3& colour = Vector3(-1, -1, -1),
-                     bool fixedSize = false,
-                     const Vector3& mins = Vector3(1, 1, 1),
-                     const Vector3& maxs = Vector3(-1, -1, -1));
+    Doom3EntityClass(const std::string& name);
+
+    /**
+     * Constructor.
+     *
+     * @param name
+     * Entity class name.
+     *
+     * @param fixedSize
+     * whether this entity has a fixed size.
+     */
+    Doom3EntityClass(const std::string& name, bool fixedSize);
 
     ~Doom3EntityClass();
 

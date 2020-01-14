@@ -16,8 +16,8 @@ namespace ui
 {
 
 AIVocalSetPropertyEditor::AIVocalSetPropertyEditor() :
-	_widget(NULL),
-	_entity(NULL)
+	_widget(nullptr),
+	_entity(nullptr)
 {}
 
 AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, Entity* entity, const std::string& key, const std::string& options) :
@@ -30,14 +30,14 @@ AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, Entity* ent
 	// Create the browse button
 	wxButton* browseButton = new wxButton(_widget, wxID_ANY, _("Select Vocal Set..."));
 	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "icon_sound.png"));
-	browseButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIVocalSetPropertyEditor::onChooseButton), NULL, this);
+	browseButton->Bind(wxEVT_BUTTON, &AIVocalSetPropertyEditor::onChooseButton, this);
 
 	_widget->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);
 }
 
 AIVocalSetPropertyEditor::~AIVocalSetPropertyEditor()
 {
-	if (_widget != NULL)
+	if (_widget != nullptr)
 	{
 		_widget->Destroy();
 	}
@@ -51,6 +51,13 @@ wxPanel* AIVocalSetPropertyEditor::getWidget()
 void AIVocalSetPropertyEditor::updateFromEntity()
 {
 	// Nothing to do
+}
+
+void AIVocalSetPropertyEditor::setEntity(Entity* entity)
+{
+	if (entity == nullptr) throw std::logic_error("No nullptrs allowed as entity argument");
+
+	_entity = entity;
 }
 
 IPropertyEditorPtr AIVocalSetPropertyEditor::createNew(wxWindow* parent, Entity* entity,

@@ -7,8 +7,7 @@
 /**
  * allow case-insensitive binary searchs with shader definitions.
  */
-struct ShaderNameCompareFunctor :
-	public std::binary_function<std::string, std::string, bool>
+struct ShaderNameCompareFunctor
 {
 	bool operator()(const std::string& s1, const std::string& s2) const
 	{
