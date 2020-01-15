@@ -27,7 +27,7 @@ void Doom3MapWriter::endWriteMap(std::ostream& stream)
 	// nothing
 }
 
-void Doom3MapWriter::beginWriteEntity(const Entity& entity, std::ostream& stream)
+void Doom3MapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
 {
 	// Write out the entity number comment
 	stream << "// entity " << _entityCount++ << std::endl;
@@ -39,16 +39,16 @@ void Doom3MapWriter::beginWriteEntity(const Entity& entity, std::ostream& stream
 	writeEntityKeyValues(entity, stream);
 }
 
-void Doom3MapWriter::writeEntityKeyValues(const Entity& entity, std::ostream& stream)
+void Doom3MapWriter::writeEntityKeyValues(const IEntityNodePtr& entity, std::ostream& stream)
 {
 	// Export the entity key values
-    entity.forEachKeyValue([&](const std::string& key, const std::string& value)
+    entity->getEntity().forEachKeyValue([&](const std::string& key, const std::string& value)
     {
         stream << "\"" << key << "\" \"" << value << "\"" << std::endl;
     });
 }
 
-void Doom3MapWriter::endWriteEntity(const Entity& entity, std::ostream& stream)
+void Doom3MapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
 {
 	// Write the closing brace for the entity
 	stream << "}" << std::endl;

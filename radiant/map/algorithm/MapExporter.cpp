@@ -123,14 +123,14 @@ bool MapExporter::pre(const scene::INodePtr& node)
 {
 	try
 	{
-		Entity* entity = Node_getEntity(node);
+		IEntityNodePtr entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
-		if (entity != NULL)
+		if (entity)
 		{
 			// Progress dialog handling
 			onNodeProgress();
 			
-			_writer.beginWriteEntity(*entity, _mapStream);
+			_writer.beginWriteEntity(entity, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitEntity(node, _entityNum);
 
@@ -177,11 +177,11 @@ void MapExporter::post(const scene::INodePtr& node)
 {
 	try
 	{
-		Entity* entity = Node_getEntity(node);
+		IEntityNodePtr entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
-		if (entity != NULL)
+		if (entity)
 		{
-			_writer.endWriteEntity(*entity, _mapStream);
+			_writer.endWriteEntity(entity, _mapStream);
 
 			_entityNum++;
 			return;

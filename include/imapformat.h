@@ -14,6 +14,8 @@ namespace parser { class DefTokeniser; }
 class Entity;
 class IBrush;
 class IPatch;
+class IEntityNode;
+typedef std::shared_ptr<IEntityNode> IEntityNodePtr;
 
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
@@ -106,8 +108,8 @@ public:
 	virtual void endWriteMap(std::ostream& stream) = 0;
 
 	// Entity export methods
-	virtual void beginWriteEntity(const Entity& entity, std::ostream& stream) = 0;
-	virtual void endWriteEntity(const Entity& entity, std::ostream& stream) = 0;
+	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) = 0;
+	virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) = 0;
 
 	// Brush export methods
 	virtual void beginWriteBrush(const IBrush& brush, std::ostream& stream) = 0;

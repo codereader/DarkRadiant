@@ -25,8 +25,8 @@ public:
 	virtual void endWriteMap(std::ostream& stream);
 
 	// Entity export methods
-	virtual void beginWriteEntity(const Entity& entity, std::ostream& stream);
-	virtual void endWriteEntity(const Entity& entity, std::ostream& stream);
+	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream);
+	virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream);
 
 	// Brush export methods
 	virtual void beginWriteBrush(const IBrush& brush, std::ostream& stream);
@@ -37,7 +37,7 @@ public:
 	virtual void endWritePatch(const IPatch& patch, std::ostream& stream);
 
 protected:
-	void writeEntityKeyValues(const Entity& entity, std::ostream& stream);
+	void writeEntityKeyValues(const IEntityNodePtr& entity, std::ostream& stream);
 };
 
 } // namespace
