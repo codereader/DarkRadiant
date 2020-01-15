@@ -14,13 +14,13 @@ class Quake4MapWriter :
 	public Doom3MapWriter
 {
 public:
-	virtual void beginWriteMap(std::ostream& stream)
+	virtual void beginWriteMap(std::ostream& stream) override
 	{
 		// Write the version tag
 		stream << "Version " << MAP_VERSION_Q4 << std::endl;
 	}
 
-	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream)
+	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override
 	{
 		// Primitive count comment
 		stream << "// primitive " << _primitiveCount++ << std::endl;

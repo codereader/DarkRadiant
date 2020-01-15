@@ -36,8 +36,10 @@ class PatchDefExporter
 public:
 
 	// Writes a patchDef2/3 definition from the given patch to the given stream
-	static void exportPatch(std::ostream& stream, const IPatch& patch)
+	static void exportPatch(std::ostream& stream, const IPatchNodePtr& patchNode)
 	{
+		const IPatch& patch = patchNode->getPatch();
+
 		if (patch.subdivisionsFixed())
 		{
 			exportPatchDef3(stream, patch);
@@ -49,8 +51,10 @@ public:
 	}
 
 	// Export a patchDef2 declaration, Q3-style
-	static void exportQ3PatchDef2(std::ostream& stream, const IPatch& patch)
+	static void exportQ3PatchDef2(std::ostream& stream, const IPatchNodePtr& patchNode)
 	{
+		const IPatch& patch = patchNode->getPatch();
+
 		// Export patch declaration
 		stream << "{\n";
 		stream << "patchDef2\n";
@@ -154,7 +158,7 @@ private:
 		{
 			if (string::starts_with(shaderName, GlobalTexturePrefix_get()))
 			{
-				// Q3-style patchDef2 has the "textures/" not written to the map, cut it off
+				// Q3-style patchDef2 doesn't write the "textures/" prefix to the map, cut it off
 				stream << "" << shader_get_textureName(shaderName.c_str()) << " ";
 			}
 			else

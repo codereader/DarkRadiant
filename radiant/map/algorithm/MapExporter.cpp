@@ -151,14 +151,14 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			return true;
 		}
 
-		IPatch* patch = Node_getIPatch(node);
+		auto patch = std::dynamic_pointer_cast<IPatchNode>(node);
 
-		if (patch != NULL)
+		if (patch)
 		{
 			// Progress dialog handling
 			onNodeProgress();
 
-			_writer.beginWritePatch(*patch, _mapStream);
+			_writer.beginWritePatch(patch, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
@@ -177,7 +177,7 @@ void MapExporter::post(const scene::INodePtr& node)
 {
 	try
 	{
-		IEntityNodePtr entity = std::dynamic_pointer_cast<IEntityNode>(node);
+		auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
 		if (entity)
 		{
@@ -196,11 +196,11 @@ void MapExporter::post(const scene::INodePtr& node)
 			return;
 		}
 
-		IPatch* patch = Node_getIPatch(node);
+		auto patch = std::dynamic_pointer_cast<IPatchNode>(node);
 
-		if (patch != NULL)
+		if (patch)
 		{
-			_writer.endWritePatch(*patch, _mapStream);
+			_writer.endWritePatch(patch, _mapStream);
 			_primitiveNum++;
 			return;
 		}

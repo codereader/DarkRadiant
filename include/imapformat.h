@@ -11,7 +11,8 @@ typedef std::shared_ptr<INode> INodePtr;
 
 namespace parser { class DefTokeniser; }
 
-class IPatch;
+class IPatchNode;
+typedef std::shared_ptr<IPatchNode> IPatchNodePtr;
 class IBrushNode;
 typedef std::shared_ptr<IBrushNode> IBrushNodePtr;
 class IEntityNode;
@@ -116,8 +117,8 @@ public:
 	virtual void endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) = 0;
 
 	// Patch export methods
-	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream) = 0;
-	virtual void endWritePatch(const IPatch& patch, std::ostream& stream) = 0;
+	virtual void beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream) = 0;
+	virtual void endWritePatch(const IPatchNodePtr& patch, std::ostream& stream) = 0;
 };
 typedef std::shared_ptr<IMapWriter> IMapWriterPtr;
 

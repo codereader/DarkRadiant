@@ -71,7 +71,7 @@ void Doom3MapWriter::endWriteBrush(const IBrushNodePtr& brush, std::ostream& str
 	// nothing
 }
 
-void Doom3MapWriter::beginWritePatch(const IPatch& patch, std::ostream& stream)
+void Doom3MapWriter::beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream)
 {
 	// Primitive count comment
 	stream << "// primitive " << _primitiveCount++ << std::endl;
@@ -80,7 +80,7 @@ void Doom3MapWriter::beginWritePatch(const IPatch& patch, std::ostream& stream)
 	PatchDefExporter::exportPatch(stream, patch);
 }
 
-void Doom3MapWriter::endWritePatch(const IPatch& patch, std::ostream& stream)
+void Doom3MapWriter::endWritePatch(const IPatchNodePtr& patch, std::ostream& stream)
 {
 	// nothing
 }

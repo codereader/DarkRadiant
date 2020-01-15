@@ -21,20 +21,20 @@ protected:
 public:
 	Doom3MapWriter();
 
-	virtual void beginWriteMap(std::ostream& stream);
-	virtual void endWriteMap(std::ostream& stream);
+	virtual void beginWriteMap(std::ostream& stream) override;
+	virtual void endWriteMap(std::ostream& stream) override;
 
 	// Entity export methods
-	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream);
-	virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream);
+	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
+	virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
 
 	// Brush export methods
-	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream);
-	virtual void endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream);
+	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override;
+	virtual void endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override;
 
 	// Patch export methods
-	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream);
-	virtual void endWritePatch(const IPatch& patch, std::ostream& stream);
+	virtual void beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override;
+	virtual void endWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override;
 
 protected:
 	void writeEntityKeyValues(const IEntityNodePtr& entity, std::ostream& stream);
