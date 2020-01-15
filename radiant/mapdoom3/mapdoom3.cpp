@@ -1,7 +1,7 @@
-#include "Doom3MapFormat.h"
-#include "Doom3PrefabFormat.h"
-#include "Quake4MapFormat.h"
-#include "Quake3MapFormat.h"
+#include "map/format/Doom3MapFormat.h"
+#include "map/format/Doom3PrefabFormat.h"
+#include "map/format/Quake4MapFormat.h"
+#include "map/format/Quake3MapFormat.h"
 #include "aas/Doom3AasFileLoader.h"
 
 #include "imapformat.h"

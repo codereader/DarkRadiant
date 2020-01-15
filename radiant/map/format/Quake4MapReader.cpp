@@ -3,10 +3,10 @@
 #include "i18n.h"
 #include "itextstream.h"
 
-#include "primitiveparsers/BrushDef.h"
-#include "primitiveparsers/BrushDef3.h"
-#include "primitiveparsers/PatchDef2.h"
-#include "primitiveparsers/PatchDef3.h"
+#include "mapdoom3/primitiveparsers/BrushDef.h"
+#include "mapdoom3/primitiveparsers/BrushDef3.h"
+#include "mapdoom3/primitiveparsers/PatchDef2.h"
+#include "mapdoom3/primitiveparsers/PatchDef3.h"
 
 #include <fmt/format.h>
 

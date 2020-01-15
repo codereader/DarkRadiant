@@ -120,22 +120,22 @@ darkradiant_SOURCES = main.cpp \
                       image/ImageLoaderWx.cpp \
                       image/TGALoader.cpp \
                       mapdoom3/mapdoom3.cpp \
-                      mapdoom3/Quake3MapFormat.cpp \
-                      mapdoom3/Doom3MapFormat.cpp \
-                      mapdoom3/Doom3MapReader.cpp \
-                      mapdoom3/Doom3PrefabFormat.cpp \
-                      mapdoom3/Quake3MapReader.cpp \
-                      mapdoom3/Doom3MapWriter.cpp \
+                      map/format/Quake3MapFormat.cpp \
+                      map/format/Doom3MapFormat.cpp \
+                      map/format/Doom3MapReader.cpp \
+                      map/format/Doom3PrefabFormat.cpp \
+                      map/format/Quake3MapReader.cpp \
+                      map/format/Doom3MapWriter.cpp \
                       mapdoom3/primitiveparsers/PatchDef2.cpp \
                       mapdoom3/primitiveparsers/Patch.cpp \
                       mapdoom3/primitiveparsers/PatchDef3.cpp \
                       mapdoom3/primitiveparsers/BrushDef3.cpp \
                       mapdoom3/primitiveparsers/BrushDef.cpp \
-                      mapdoom3/Quake4MapReader.cpp \
+                      map/format/Quake4MapReader.cpp \
                       mapdoom3/aas/Doom3AasFileLoader.cpp \
                       mapdoom3/aas/Doom3AasFileSettings.cpp \
                       mapdoom3/aas/Doom3AasFile.cpp \
-                      mapdoom3/Quake4MapFormat.cpp \
+                      map/format/Quake4MapFormat.cpp \
                       md5model/MD5Skeleton.cpp \
                       md5model/plugin.cpp \
                       md5model/MD5Model.cpp \

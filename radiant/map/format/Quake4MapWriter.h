@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Doom3MapWriter.h"
-#include "primitivewriters/BrushDef3Exporter.h"
+#include "mapdoom3/primitivewriters/BrushDef3Exporter.h"
 #include "Quake4MapFormat.h"
 
 namespace map
