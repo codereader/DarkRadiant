@@ -119,7 +119,7 @@ darkradiant_SOURCES = main.cpp \
                       image/Doom3ImageLoader.cpp \
                       image/ImageLoaderWx.cpp \
                       image/TGALoader.cpp \
-                      mapdoom3/mapdoom3.cpp \
+                      map/MapModules.cpp \
                       map/format/Quake3MapFormat.cpp \
                       map/format/Quake4MapFormat.cpp \
                       map/format/Doom3MapFormat.cpp \

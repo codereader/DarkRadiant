@@ -281,9 +281,6 @@
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\mapdoom3">
-      <UniqueIdentifier>{5f73c69f-9ad5-4d16-8e65-ce89180bee6c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\filetypes">
       <UniqueIdentifier>{92c13fe5-4911-4731-a5f0-d6c0ae88ba6a}</UniqueIdentifier>
     </Filter>
@@ -1408,9 +1405,6 @@
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp">
       <Filter>src\eventmanager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\mapdoom3.cpp">
-      <Filter>src\mapdoom3</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\filetypes\FileTypeRegistry.cpp">
       <Filter>src\filetypes</Filter>
     </ClCompile>
@@ -1575,6 +1569,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\aas\Doom3AasFileSettings.cpp">
       <Filter>src\map\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\MapModules.cpp">
+      <Filter>src\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

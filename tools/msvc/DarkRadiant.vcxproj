@@ -256,7 +256,6 @@
     <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerUsageBreakdown.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
-    <ClCompile Include="..\..\radiant\mapdoom3\mapdoom3.cpp" />
     <ClCompile Include="..\..\radiant\map\AasFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\aas\Doom3AasFile.cpp" />
     <ClCompile Include="..\..\radiant\map\aas\Doom3AasFileLoader.cpp" />
@@ -285,6 +284,7 @@
     <ClCompile Include="..\..\radiant\map\infofile\InfoFile.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp" />
+    <ClCompile Include="..\..\radiant\map\MapModules.cpp" />
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiant\md5model\MD5Anim.cpp" />
     <ClCompile Include="..\..\radiant\md5model\MD5AnimationCache.cpp" />
