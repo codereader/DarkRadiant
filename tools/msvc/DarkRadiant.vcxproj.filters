@@ -1573,6 +1573,9 @@
     <ClCompile Include="..\..\radiant\map\MapModules.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\map\format\PortableMapFormat.cpp">
+      <Filter>src\map\format</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -3185,6 +3188,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\aas\Util.h">
       <Filter>src\map\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\PortableMapFormat.h">
+      <Filter>src\map\format</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

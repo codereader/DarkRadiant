@@ -1,3 +1,4 @@
+#include "format/PortableMapFormat.h"
 #include "format/Doom3MapFormat.h"
 #include "format/Doom3PrefabFormat.h"
 #include "format/Quake4MapFormat.h"
@@ -9,6 +10,7 @@
 #include "Map.h"
 
 // Static module instances
+module::StaticModule<map::PortableMapFormat> portableMapModule;
 module::StaticModule<map::Doom3MapFormat> d3MapModule;
 module::StaticModule<map::Quake4MapFormat> q4MapModule;
 module::StaticModule<map::Doom3PrefabFormat> d3PrefabModule;
