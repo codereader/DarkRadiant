@@ -121,6 +121,7 @@ darkradiant_SOURCES = main.cpp \
                       image/TGALoader.cpp \
                       mapdoom3/mapdoom3.cpp \
                       map/format/Quake3MapFormat.cpp \
+                      map/format/Quake4MapFormat.cpp \
                       map/format/Doom3MapFormat.cpp \
                       map/format/Doom3MapReader.cpp \
                       map/format/Doom3PrefabFormat.cpp \
@@ -132,10 +133,9 @@ darkradiant_SOURCES = main.cpp \
                       map/format/primitiveparsers/BrushDef3.cpp \
                       map/format/primitiveparsers/BrushDef.cpp \
                       map/format/Quake4MapReader.cpp \
-                      mapdoom3/aas/Doom3AasFileLoader.cpp \
-                      mapdoom3/aas/Doom3AasFileSettings.cpp \
-                      mapdoom3/aas/Doom3AasFile.cpp \
-                      map/format/Quake4MapFormat.cpp \
+                      map/aas/Doom3AasFileLoader.cpp \
+                      map/aas/Doom3AasFileSettings.cpp \
+                      map/aas/Doom3AasFile.cpp \
                       md5model/MD5Skeleton.cpp \
                       md5model/plugin.cpp \
                       md5model/MD5Model.cpp \

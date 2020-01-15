@@ -284,9 +284,6 @@
     <Filter Include="src\mapdoom3">
       <UniqueIdentifier>{5f73c69f-9ad5-4d16-8e65-ce89180bee6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\mapdoom3\aas">
-      <UniqueIdentifier>{38725e06-316d-4fc5-8e3b-e79a1bfa315d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\filetypes">
       <UniqueIdentifier>{92c13fe5-4911-4731-a5f0-d6c0ae88ba6a}</UniqueIdentifier>
     </Filter>
@@ -322,6 +319,9 @@
     </Filter>
     <Filter Include="src\map\format\primitivewriters">
       <UniqueIdentifier>{212c13a6-062d-43c8-a386-3ab276f15408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\map\aas">
+      <UniqueIdentifier>{6a40fdfb-2b56-41c2-ba54-dbf1ca276a43}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1411,15 +1411,6 @@
     <ClCompile Include="..\..\radiant\mapdoom3\mapdoom3.cpp">
       <Filter>src\mapdoom3</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\aas\Doom3AasFile.cpp">
-      <Filter>src\mapdoom3\aas</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\aas\Doom3AasFileLoader.cpp">
-      <Filter>src\mapdoom3\aas</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\aas\Doom3AasFileSettings.cpp">
-      <Filter>src\mapdoom3\aas</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\filetypes\FileTypeRegistry.cpp">
       <Filter>src\filetypes</Filter>
     </ClCompile>
@@ -1575,6 +1566,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\format\primitiveparsers\PatchDef3.cpp">
       <Filter>src\map\format\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\aas\Doom3AasFile.cpp">
+      <Filter>src\map\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\aas\Doom3AasFileLoader.cpp">
+      <Filter>src\map\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\aas\Doom3AasFileSettings.cpp">
+      <Filter>src\map\aas</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2973,18 +2973,6 @@
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h">
       <Filter>src\eventmanager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\aas\Doom3AasFile.h">
-      <Filter>src\mapdoom3\aas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\aas\Doom3AasFileLoader.h">
-      <Filter>src\mapdoom3\aas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\aas\Doom3AasFileSettings.h">
-      <Filter>src\mapdoom3\aas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\aas\Util.h">
-      <Filter>src\mapdoom3\aas</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\filetypes\FileTypeRegistry.h">
       <Filter>src\filetypes</Filter>
     </ClInclude>
@@ -3188,6 +3176,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\format\primitiveparsers\PatchDef3.h">
       <Filter>src\map\format\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\aas\Doom3AasFile.h">
+      <Filter>src\map\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\aas\Doom3AasFileLoader.h">
+      <Filter>src\map\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\aas\Doom3AasFileSettings.h">
+      <Filter>src\map\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\aas\Util.h">
+      <Filter>src\map\aas</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
