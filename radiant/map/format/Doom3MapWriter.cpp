@@ -3,8 +3,8 @@
 #include "igame.h"
 #include "ientity.h"
 
-#include "mapdoom3/primitivewriters/BrushDef3Exporter.h"
-#include "mapdoom3/primitivewriters/PatchDefExporter.h"
+#include "primitivewriters/BrushDef3Exporter.h"
+#include "primitivewriters/PatchDefExporter.h"
 
 #include "Doom3MapFormat.h"
 

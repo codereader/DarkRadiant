@@ -126,11 +126,11 @@ darkradiant_SOURCES = main.cpp \
                       map/format/Doom3PrefabFormat.cpp \
                       map/format/Quake3MapReader.cpp \
                       map/format/Doom3MapWriter.cpp \
-                      mapdoom3/primitiveparsers/PatchDef2.cpp \
-                      mapdoom3/primitiveparsers/Patch.cpp \
-                      mapdoom3/primitiveparsers/PatchDef3.cpp \
-                      mapdoom3/primitiveparsers/BrushDef3.cpp \
-                      mapdoom3/primitiveparsers/BrushDef.cpp \
+                      map/format/primitiveparsers/PatchDef2.cpp \
+                      map/format/primitiveparsers/Patch.cpp \
+                      map/format/primitiveparsers/PatchDef3.cpp \
+                      map/format/primitiveparsers/BrushDef3.cpp \
+                      map/format/primitiveparsers/BrushDef.cpp \
                       map/format/Quake4MapReader.cpp \
                       mapdoom3/aas/Doom3AasFileLoader.cpp \
                       mapdoom3/aas/Doom3AasFileSettings.cpp \

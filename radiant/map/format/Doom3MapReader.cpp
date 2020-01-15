@@ -11,10 +11,10 @@
 #include "i18n.h"
 #include <fmt/format.h>
 
-#include "mapdoom3/primitiveparsers/BrushDef.h"
-#include "mapdoom3/primitiveparsers/BrushDef3.h"
-#include "mapdoom3/primitiveparsers/PatchDef2.h"
-#include "mapdoom3/primitiveparsers/PatchDef3.h"
+#include "primitiveparsers/BrushDef.h"
+#include "primitiveparsers/BrushDef3.h"
+#include "primitiveparsers/PatchDef2.h"
+#include "primitiveparsers/PatchDef3.h"
 
 namespace map {
 
@@ -62,10 +62,10 @@ void Doom3MapReader::initPrimitiveParsers()
 {
 	if (_primitiveParsers.empty())
 	{
-		addPrimitiveParser(PrimitiveParserPtr(new BrushDefParser));
-		addPrimitiveParser(PrimitiveParserPtr(new BrushDef3Parser));
-		addPrimitiveParser(PrimitiveParserPtr(new PatchDef2Parser));
-		addPrimitiveParser(PrimitiveParserPtr(new PatchDef3Parser));
+		addPrimitiveParser(std::make_shared<BrushDefParser>());
+		addPrimitiveParser(std::make_shared<BrushDef3Parser>());
+		addPrimitiveParser(std::make_shared<PatchDef2Parser>());
+		addPrimitiveParser(std::make_shared<PatchDef3Parser>());
 	}
 }
 

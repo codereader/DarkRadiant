@@ -287,12 +287,6 @@
     <Filter Include="src\mapdoom3\aas">
       <UniqueIdentifier>{38725e06-316d-4fc5-8e3b-e79a1bfa315d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\mapdoom3\primitivewriters">
-      <UniqueIdentifier>{5349c11f-4328-4336-92b5-4248bb3b2e7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\mapdoom3\primitiveparsers">
-      <UniqueIdentifier>{83f075cf-b59a-46ee-942c-e1677a625249}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\filetypes">
       <UniqueIdentifier>{92c13fe5-4911-4731-a5f0-d6c0ae88ba6a}</UniqueIdentifier>
     </Filter>
@@ -322,6 +316,12 @@
     </Filter>
     <Filter Include="src\map\format">
       <UniqueIdentifier>{a33db67b-1632-47ad-9368-04d014d7d730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\map\format\primitiveparsers">
+      <UniqueIdentifier>{1d0cd8ef-6ea9-4896-9538-99c8a932b57b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\map\format\primitivewriters">
+      <UniqueIdentifier>{212c13a6-062d-43c8-a386-3ab276f15408}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1420,21 +1420,6 @@
     <ClCompile Include="..\..\radiant\mapdoom3\aas\Doom3AasFileSettings.cpp">
       <Filter>src\mapdoom3\aas</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\BrushDef.cpp">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\BrushDef3.cpp">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\Patch.cpp">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\PatchDef2.cpp">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\mapdoom3\primitiveparsers\PatchDef3.cpp">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\filetypes\FileTypeRegistry.cpp">
       <Filter>src\filetypes</Filter>
     </ClCompile>
@@ -1575,6 +1560,21 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\format\Quake4MapReader.cpp">
       <Filter>src\map\format</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\BrushDef.cpp">
+      <Filter>src\map\format\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\BrushDef3.cpp">
+      <Filter>src\map\format\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\Patch.cpp">
+      <Filter>src\map\format\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\PatchDef2.cpp">
+      <Filter>src\map\format\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\PatchDef3.cpp">
+      <Filter>src\map\format\primitiveparsers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2985,30 +2985,6 @@
     <ClInclude Include="..\..\radiant\mapdoom3\aas\Util.h">
       <Filter>src\mapdoom3\aas</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\BrushDef.h">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\BrushDef3.h">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\Patch.h">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\PatchDef2.h">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\primitiveparsers\PatchDef3.h">
-      <Filter>src\mapdoom3\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\primitivewriters\BrushDef3Exporter.h">
-      <Filter>src\mapdoom3\primitivewriters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\primitivewriters\BrushDefExporter.h">
-      <Filter>src\mapdoom3\primitivewriters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\mapdoom3\primitivewriters\PatchDefExporter.h">
-      <Filter>src\mapdoom3\primitivewriters</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\filetypes\FileTypeRegistry.h">
       <Filter>src\filetypes</Filter>
     </ClInclude>
@@ -3188,6 +3164,30 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\format\Quake4MapWriter.h">
       <Filter>src\map\format</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\primitivewriters\BrushDef3Exporter.h">
+      <Filter>src\map\format\primitivewriters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\primitivewriters\BrushDefExporter.h">
+      <Filter>src\map\format\primitivewriters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\primitivewriters\PatchDefExporter.h">
+      <Filter>src\map\format\primitivewriters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\BrushDef.h">
+      <Filter>src\map\format\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\BrushDef3.h">
+      <Filter>src\map\format\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\Patch.h">
+      <Filter>src\map\format\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\PatchDef2.h">
+      <Filter>src\map\format\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\PatchDef3.h">
+      <Filter>src\map\format\primitiveparsers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
