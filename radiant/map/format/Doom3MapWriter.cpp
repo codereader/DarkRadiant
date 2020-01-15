@@ -57,7 +57,7 @@ void Doom3MapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& 
 	_primitiveCount = 0;
 }
 
-void Doom3MapWriter::beginWriteBrush(const IBrush& brush, std::ostream& stream)
+void Doom3MapWriter::beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream)
 {
 	// Primitive count comment
 	stream << "// primitive " << _primitiveCount++ << std::endl;
@@ -66,7 +66,7 @@ void Doom3MapWriter::beginWriteBrush(const IBrush& brush, std::ostream& stream)
 	BrushDef3Exporter::exportBrush(stream, brush);
 }
 
-void Doom3MapWriter::endWriteBrush(const IBrush& brush, std::ostream& stream)
+void Doom3MapWriter::endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream)
 {
 	// nothing
 }

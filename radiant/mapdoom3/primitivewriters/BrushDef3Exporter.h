@@ -1,5 +1,4 @@
-#ifndef BrushDef3Exporter_h__
-#define BrushDef3Exporter_h__
+#pragma once
 
 #include "ibrush.h"
 #include "math/Plane3.h"
@@ -37,8 +36,10 @@ class BrushDef3Exporter
 public:
 
 	// Writes a brushDef3 definition from the given brush to the given stream
-	static void exportBrush(std::ostream& stream, const IBrush& brush, bool writeContentsFlags = true)
+	static void exportBrush(std::ostream& stream, const IBrushNodePtr& brushNode, bool writeContentsFlags = true)
 	{
+		const IBrush& brush = brushNode->getIBrush();
+
 		// Brush decl header
 		stream << "{" << std::endl;
 		stream << "brushDef3" << std::endl;
@@ -121,5 +122,3 @@ private:
 };
 
 }
-
-#endif // BrushDef3Exporter_h__

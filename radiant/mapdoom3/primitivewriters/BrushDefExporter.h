@@ -39,8 +39,10 @@ class BrushDefExporter
 public:
 
 	// Writes a Q3-style brushDef definition from the given brush to the given stream
-	static void exportBrush(std::ostream& stream, const IBrush& brush)
+	static void exportBrush(std::ostream& stream, const IBrushNodePtr& brushNode)
 	{
+		const IBrush& brush = brushNode->getIBrush();
+
 		// Brush decl header
 		stream << "{" << std::endl;
 		stream << "brushDef" << std::endl;

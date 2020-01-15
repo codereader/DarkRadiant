@@ -123,7 +123,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 {
 	try
 	{
-		IEntityNodePtr entity = std::dynamic_pointer_cast<IEntityNode>(node);
+		auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
 		if (entity)
 		{
@@ -137,14 +137,14 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			return true;
 		}
 
-		IBrush* brush = Node_getIBrush(node);
+		auto brush = std::dynamic_pointer_cast<IBrushNode>(node);
 
-		if (brush != NULL && brush->hasContributingFaces())
+		if (brush && brush->getIBrush().hasContributingFaces())
 		{
 			// Progress dialog handling
 			onNodeProgress();
 
-			_writer.beginWriteBrush(*brush, _mapStream);
+			_writer.beginWriteBrush(brush, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
@@ -187,11 +187,11 @@ void MapExporter::post(const scene::INodePtr& node)
 			return;
 		}
 
-		IBrush* brush = Node_getIBrush(node);
+		auto brush = std::dynamic_pointer_cast<IBrushNode>(node);
 
-		if (brush != NULL && brush->hasContributingFaces())
+		if (brush && brush->getIBrush().hasContributingFaces())
 		{
-			_writer.endWriteBrush(*brush, _mapStream);
+			_writer.endWriteBrush(brush, _mapStream);
 			_primitiveNum++;
 			return;
 		}

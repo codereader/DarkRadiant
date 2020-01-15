@@ -29,8 +29,8 @@ public:
 	virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream);
 
 	// Brush export methods
-	virtual void beginWriteBrush(const IBrush& brush, std::ostream& stream);
-	virtual void endWriteBrush(const IBrush& brush, std::ostream& stream);
+	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream);
+	virtual void endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream);
 
 	// Patch export methods
 	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream);

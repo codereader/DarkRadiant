@@ -21,7 +21,7 @@ public:
 		stream << std::endl;
 	}
 
-	virtual void beginWriteBrush(const IBrush& brush, std::ostream& stream)
+	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream)
 	{
 		// Primitive count comment
 		stream << "// brush " << _primitiveCount++ << std::endl;
