@@ -1005,13 +1005,4 @@ void Map::shutdownModule()
 	_mapPositionManager.reset();
 }
 
-// Creates the static module instance
-module::StaticModule<Map> staticMapModule;
-
 } // namespace map
-
-// Accessor method containing the singleton Map instance
-map::Map& GlobalMap() 
-{
-    return *map::staticMapModule.getModule();
-}

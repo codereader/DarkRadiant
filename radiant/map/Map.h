@@ -243,4 +243,5 @@ private:
 } // namespace map
 
 // Accessor function for the map
+// Function body defined in MapModules.cpp
 map::Map& GlobalMap();

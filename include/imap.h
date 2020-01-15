@@ -102,7 +102,7 @@ public:
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 
-const std::string MODULE_MAP("Map");
+const char* const MODULE_MAP("Map");
 
 // Application-wide Accessor to the currently active map
 inline IMap& GlobalMapModule() {
