@@ -67,44 +67,46 @@ void FileChooser::construct()
 	// Add the filetype
 	FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(_fileType);
 
-	for (FileTypePatterns::const_iterator i = patterns.begin(); i != patterns.end(); ++i)
+	for (const auto& pattern : patterns)
 	{
 		if (!_open && _fileType == filetype::TYPE_MAP)
 		{
-			std::set<map::MapFormatPtr> formats = GlobalMapFormatManager().getMapFormatList(i->extension);
+			auto formats = GlobalMapFormatManager().getMapFormatList(pattern.extension);
 
 			// Pre-select take the default map format for this game type
 			map::MapFormatPtr defaultFormat = GlobalMapFormatManager().getMapFormatForGameType(
-				GlobalGameManager().currentGame()->getKeyValue("type"), i->extension
+				GlobalGameManager().currentGame()->getKeyValue("type"), pattern.extension
 			);
 
-			std::for_each(formats.begin(), formats.end(), [&] (const map::MapFormatPtr& format)
+			auto defaultMapExtension = GlobalGameManager().currentGame()->getKeyValue("defaultmapextension");
+
+			for (const map::MapFormatPtr& format : formats)
 			{
 				FileFilter filter;
 
-				filter.caption = format->getMapFormatName() + " " + i->name + " (" + i->pattern + ")";
-				filter.filter = i->pattern;
+				filter.caption = format->getMapFormatName() + " " + pattern.name + " (" + pattern.pattern + ")";
+				filter.filter = pattern.pattern;
 				filter.mapFormatName = format->getMapFormatName();
 
 				_fileFilters.push_back(filter);
 
-				if (format == defaultFormat)
+				if (format == defaultFormat && defaultMapExtension == pattern.extension)
 				{
 					defaultFormatIdx = curFormatIdx;
 				}
 
                 ++curFormatIdx;
-			});
+			}
 		}
 		else
 		{
 			FileFilter filter;
 
-			filter.caption = i->name + " (" + i->pattern + ")";
-			filter.filter = i->pattern;
+			filter.caption = pattern.name + " (" + pattern.pattern + ")";
+			filter.filter = pattern.pattern;
 
 			// Pre-select the filter matching the default extension
-			if (i->extension == _defaultExt)
+			if (pattern.extension == _defaultExt)
 			{
 				defaultFormatIdx = curFormatIdx;
 			}

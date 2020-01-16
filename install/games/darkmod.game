@@ -13,7 +13,7 @@
   basegame=""
   archivetypes="pk4"
   modeltypes="lwo ase md5mesh"
-  maptypes="mapdoom3"
+  defaultmapextension="map"
   shaders="doom3"
   entityclass="doom3"
   entities="doom3"
