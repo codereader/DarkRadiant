@@ -1,5 +1,7 @@
 #include "PortableMapFormat.h"
 
+#include "PortableMapWriter.h"
+
 namespace map
 {
 
@@ -62,7 +64,7 @@ IMapReaderPtr PortableMapFormat::getMapReader(IMapImportFilter& filter) const
 
 IMapWriterPtr PortableMapFormat::getMapWriter() const
 {
-	return IMapWriterPtr();
+	return std::make_shared<PortableMapWriter>();
 }
 
 bool PortableMapFormat::allowInfoFileCreation() const
