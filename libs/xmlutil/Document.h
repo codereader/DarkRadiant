@@ -50,7 +50,7 @@ public:
 	static Document clone(const Document& source);
 
 	// Add a new toplevel node with the given name to this Document
-	void addTopLevelNode(const std::string& name);
+	Node addTopLevelNode(const std::string& name);
 
 	// Returns the top level node (or an empty Node object if none exists)
 	Node getTopLevelNode() const;
@@ -72,6 +72,9 @@ public:
 
     // Saves the file to the disk via xmlSaveFormatFile
     void saveToFile(const std::string& filename) const;
+
+	// Saves the document to a std::string and returns it
+	std::string saveToString() const;
 };
 
 }

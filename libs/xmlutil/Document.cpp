@@ -54,12 +54,13 @@ Document Document::clone(const Document& source)
 	return Document(xmlCopyDoc(source._xmlDoc, 1));
 }
 
-void Document::addTopLevelNode(const std::string& name)
+Node Document::addTopLevelNode(const std::string& name)
 {
 	std::lock_guard<std::mutex> lock(_lock);
 
-	if (!isValid()) {
-		return; // is not Valid, place an assertion here?
+	if (!isValid()) 
+	{
+		return xml::Node(nullptr); // is not Valid, place an assertion here?
 	}
 
 	xmlChar* nameStr = xmlCharStrdup(name.c_str());
@@ -77,6 +78,8 @@ void Document::addTopLevelNode(const std::string& name)
 
 	xmlFree(nameStr);
 	xmlFree(emptyStr);
+
+	return Node(root);
 }
 
 Node Document::getTopLevelNode() const
@@ -192,6 +195,22 @@ void Document::saveToFile(const std::string& filename) const
 	std::lock_guard<std::mutex> lock(_lock);
 
 	xmlSaveFormatFile(filename.c_str(), _xmlDoc, 1);
+}
+
+std::string Document::saveToString() const
+{
+	std::lock_guard<std::mutex> lock(_lock);
+
+	xmlBuffer* buffer = xmlBufferCreate();
+	xmlOutputBuffer* outputBuffer = xmlOutputBufferCreateBuffer(buffer, nullptr);
+
+	xmlSaveFormatFileTo(outputBuffer, _xmlDoc, "utf-8", 1);
+
+	std::string output(reinterpret_cast<char*>(buffer->content), buffer->use);
+	
+	xmlBufferFree(buffer);
+
+	return output;
 }
 
 }
