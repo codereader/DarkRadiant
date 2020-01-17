@@ -182,6 +182,7 @@ std::string FileChooser::getSelectedFileName()
 	if (!_open											// save operation
 	    && !fileName.empty() 							// valid filename
 	    && !_defaultExt.empty()							// non-empty default extension
+		&& os::getExtension(fileName).empty()			// no extension selected by the user
 	    && !string::iends_with(fileName, _defaultExt)) // no default extension
 	{
 		fileName.append(_defaultExt);
