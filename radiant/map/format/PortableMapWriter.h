@@ -40,6 +40,9 @@ public:
 	// Patch export methods
 	virtual void beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override;
 	virtual void endWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override;
+
+private:
+	void appendLayerInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode);
 };
 
 } // namespace

@@ -2,6 +2,7 @@
 
 #include "igame.h"
 #include "ientity.h"
+#include "ilayer.h"
 
 #include "string/string.h"
 
@@ -43,7 +44,19 @@ PortableMapWriter::PortableMapWriter() :
 {}
 
 void PortableMapWriter::beginWriteMap(std::ostream& stream)
-{}
+{
+	// Write layer information to the header
+	auto layers = _map.createChild("layers");
+
+	// Visit all layers and add a tag for each
+	GlobalLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
+	{
+		auto layer = layers.createChild("layer");
+
+		layer.setAttributeValue("id", string::to_string(layerId));
+		layer.setAttributeValue("name", layerName);
+	});
+}
 
 void PortableMapWriter::endWriteMap(std::ostream& stream)
 {
@@ -67,6 +80,8 @@ void PortableMapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostr
 		kv.setAttributeValue("key", key);
 		kv.setAttributeValue("value", value);
 	});
+
+	appendLayerInformation(node, entity);
 }
 
 void PortableMapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
@@ -127,6 +142,8 @@ void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ost
 		auto detailTag = faceTag.createChild("contentsFlag");
 		detailTag.setAttributeValue("value", string::to_string(brush.getDetailFlag()));
 	}
+
+	appendLayerInformation(brushTag, std::dynamic_pointer_cast<scene::INode>(brushNode));
 }
 
 void PortableMapWriter::endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream)
@@ -181,11 +198,26 @@ void PortableMapWriter::beginWritePatch(const IPatchNodePtr& patchNode, std::ost
 			cv.setAttributeValue("v", getSafeDouble(patchControl.texcoord.y()));
 		}
 	}
+
+	appendLayerInformation(patchTag, std::dynamic_pointer_cast<scene::INode>(patchNode));
 }
 
 void PortableMapWriter::endWritePatch(const IPatchNodePtr& patch, std::ostream& stream)
 {
 	// nothing
+}
+
+void PortableMapWriter::appendLayerInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode)
+{
+	auto layers = sceneNode->getLayers();
+	auto layersTag = xmlNode.createChild("layers");
+
+	// Write a space-separated list of node IDs
+	for (const auto& layerId : layers)
+	{
+		auto layerTag = layersTag.createChild("layer");
+		layerTag.setAttributeValue("id", string::to_string(layerId));
+	}
 }
 
 } // namespace
