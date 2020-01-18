@@ -124,7 +124,7 @@ void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ost
 		shaderTag.setAttributeValue("name", face.getShader());
 		
 		// Export (dummy) contents/flags
-		auto detailTag = faceTag.createChild("contentFlag");
+		auto detailTag = faceTag.createChild("contentsFlag");
 		detailTag.setAttributeValue("value", string::to_string(brush.getDetailFlag()));
 	}
 }
@@ -134,12 +134,53 @@ void PortableMapWriter::endWriteBrush(const IBrushNodePtr& brush, std::ostream& 
 	// nothing
 }
 
-void PortableMapWriter::beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream)
+void PortableMapWriter::beginWritePatch(const IPatchNodePtr& patchNode, std::ostream& stream)
 {
 	assert(_curEntityPrimitives.getNodePtr() != nullptr);
 
-	auto node = _curEntityPrimitives.createChild("patch");
-	node.setAttributeValue("number", string::to_string(_primitiveCount++));
+	auto patchTag = _curEntityPrimitives.createChild("patch");
+	patchTag.setAttributeValue("number", string::to_string(_primitiveCount++));
+
+	const IPatch& patch = patchNode->getPatch();
+
+	patchTag.setAttributeValue("width", string::to_string(patch.getWidth()));
+	patchTag.setAttributeValue("height", string::to_string(patch.getHeight()));
+
+	patchTag.setAttributeValue("fixedSubdivisions", patch.subdivisionsFixed() ? "true" : "false");
+
+	if (patch.subdivisionsFixed())
+	{
+		Subdivisions divisions = patch.getSubdivisions();
+
+		patchTag.setAttributeValue("subdivisionsX", string::to_string(divisions.x()));
+		patchTag.setAttributeValue("subdivisionsY", string::to_string(divisions.y()));
+	}
+
+	// Write Shader
+	auto shaderTag = patchTag.createChild("material");
+	shaderTag.setAttributeValue("name", patch.getShader());
+
+	auto cvTag = patchTag.createChild("controlVertices");
+
+	for (std::size_t c = 0; c < patch.getWidth(); c++)
+	{
+		for (std::size_t r = 0; r < patch.getHeight(); r++)
+		{
+			auto cv = cvTag.createChild("controlVertex");
+
+			cv.setAttributeValue("row", string::to_string(r));
+			cv.setAttributeValue("column", string::to_string(c));
+
+			const auto& patchControl = patch.ctrlAt(r, c);
+
+			cv.setAttributeValue("x", getSafeDouble(patchControl.vertex.x()));
+			cv.setAttributeValue("y", getSafeDouble(patchControl.vertex.y()));
+			cv.setAttributeValue("z", getSafeDouble(patchControl.vertex.z()));
+
+			cv.setAttributeValue("u", getSafeDouble(patchControl.texcoord.x()));
+			cv.setAttributeValue("v", getSafeDouble(patchControl.texcoord.y()));
+		}
+	}
 }
 
 void PortableMapWriter::endWritePatch(const IPatchNodePtr& patch, std::ostream& stream)
