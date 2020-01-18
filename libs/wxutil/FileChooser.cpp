@@ -69,7 +69,7 @@ void FileChooser::construct()
 
 	for (const auto& pattern : patterns)
 	{
-		if (!_open && _fileType == filetype::TYPE_MAP)
+		if (!_open &&  _fileType == filetype::TYPE_MAP_EXPORT)
 		{
 			auto formats = GlobalMapFormatManager().getMapFormatList(pattern.extension);
 
@@ -77,8 +77,6 @@ void FileChooser::construct()
 			map::MapFormatPtr defaultFormat = GlobalMapFormatManager().getMapFormatForGameType(
 				GlobalGameManager().currentGame()->getKeyValue("type"), pattern.extension
 			);
-
-			auto defaultMapExtension = GlobalGameManager().currentGame()->getKeyValue("defaultmapextension");
 
 			for (const map::MapFormatPtr& format : formats)
 			{
@@ -90,7 +88,7 @@ void FileChooser::construct()
 
 				_fileFilters.push_back(filter);
 
-				if (format == defaultFormat && defaultMapExtension == pattern.extension)
+				if (format == defaultFormat)
 				{
 					defaultFormatIdx = curFormatIdx;
 				}

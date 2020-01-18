@@ -208,12 +208,13 @@ public:
 	void registerCommands();
 
 	// Static command targets for connection to the EventManager
-	static void exportMap(const cmd::ArgumentList& args);
+	static void exportSelection(const cmd::ArgumentList& args);
 	static void newMap(const cmd::ArgumentList& args);
 	static void openMap(const cmd::ArgumentList& args);
 	static void importMap(const cmd::ArgumentList& args);
 	static void saveMap(const cmd::ArgumentList& args);
 	static void saveMapAs(const cmd::ArgumentList& args);
+	static void exportMap(const cmd::ArgumentList& args);
 
 	/** greebo: Queries a filename from the user and saves a copy
 	 *          of the current map to the specified filename.

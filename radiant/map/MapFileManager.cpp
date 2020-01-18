@@ -32,7 +32,9 @@ void MapFileManager::registerFileTypes()
 	GlobalFiletypes().registerPattern(filetype::TYPE_MAP, FileTypePattern(_("Map"), "map", "*.map"));
 	GlobalFiletypes().registerPattern(filetype::TYPE_REGION, FileTypePattern(_("Region"), "reg", "*.reg"));
 	GlobalFiletypes().registerPattern(filetype::TYPE_PREFAB, FileTypePattern(_("Prefab"), "pfb", "*.pfb"));
-	GlobalFiletypes().registerPattern(filetype::TYPE_MAP, FileTypePattern(_("Portable Map File"), "mapx", "*.mapx"));
+
+	GlobalFiletypes().registerPattern(filetype::TYPE_MAP_EXPORT, FileTypePattern(_("Map"), "map", "*.map"));
+	GlobalFiletypes().registerPattern(filetype::TYPE_MAP_EXPORT, FileTypePattern(_("Portable Map File"), "mapx", "*.mapx"));
 }
 
 // Utility method to select a map file

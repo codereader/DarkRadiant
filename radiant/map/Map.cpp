@@ -757,7 +757,8 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
-    GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
+    GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
+    GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
         { cmd::ARGTYPE_STRING, 
@@ -771,6 +772,7 @@ void Map::registerCommands()
     GlobalEventManager().addCommand("ImportMap", "ImportMap");
     GlobalEventManager().addCommand("LoadPrefab", "LoadPrefab");
     GlobalEventManager().addCommand("SaveSelectedAsPrefab", "SaveSelectedAsPrefab");
+    GlobalEventManager().addCommand("ExportMap", "ExportMap");
     GlobalEventManager().addCommand("SaveMap", "SaveMap");
     GlobalEventManager().addCommand("SaveMapAs", "SaveMapAs");
     GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
@@ -836,6 +838,19 @@ void Map::saveMap(const cmd::ArgumentList& args)
 }
 
 void Map::exportMap(const cmd::ArgumentList& args)
+{
+    auto fileInfo = MapFileManager::getMapFileSelection(false, _("Export Map"), filetype::TYPE_MAP_EXPORT);
+
+	if (!fileInfo.fullPath.empty())
+	{
+        MapResource::saveFile(*fileInfo.mapFormat,
+            GlobalSceneGraph().root(),
+            traverse,
+            fileInfo.fullPath);
+    }
+}
+
+void Map::exportSelection(const cmd::ArgumentList& args)
 {
     MapFileSelection fileInfo =
         MapFileManager::getMapFileSelection(false, _("Export selection"), filetype::TYPE_MAP);

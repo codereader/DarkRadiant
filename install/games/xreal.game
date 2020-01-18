@@ -15,7 +15,7 @@
   unknowngamename="Custom XreaL modification"
   archivetypes="pk3"
   modeltypes="lwo ase md5mesh md3"
-  defaultmapextension="map"
+  maptypes="mapdoom3"
   shaders="doom3"
   entityclass="doom3"
   entities="doom3"

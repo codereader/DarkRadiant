@@ -15,7 +15,7 @@
   unknowngamename="Custom Doom 3 modification"
   archivetypes="pk4"
   modeltypes="lwo ase md5mesh"
-  defaultmapextension="map"
+  maptypes="mapdoom3"
   shaders="doom3"
   entityclass="doom3"
   entities="doom3"
