@@ -4,6 +4,7 @@
 #include "ientity.h"
 #include "ilayer.h"
 #include "iselectiongroup.h"
+#include "iselectionset.h"
 
 #include "string/string.h"
 #include "selection/group/SelectionGroupManager.h"
@@ -60,8 +61,6 @@ void PortableMapWriter::beginWriteMap(std::ostream& stream)
 	});
 
 	// Write selection groups
-	std::size_t selectionGroupCount = 0;
-
 	auto selGroups = _map.createChild("selectionGroups");
 
 	selection::getSelectionGroupManagerInternal().foreachSelectionGroup([&](selection::ISelectionGroup& group)
@@ -72,7 +71,28 @@ void PortableMapWriter::beginWriteMap(std::ostream& stream)
 		auto selGroup = selGroups.createChild("selectionGroup");
 
 		selGroup.setAttributeValue("id", string::to_string(group.getId()));
-		selGroup.setAttributeValue("name", string::to_string(group.getName()));
+		selGroup.setAttributeValue("name", group.getName());
+	});
+
+	// Write selection sets
+	auto selSets = _map.createChild("selectionSets");
+	std::size_t selectionSetCount = 0;
+
+	// Visit all selection sets
+	GlobalSelectionSetManager().foreachSelectionSet([&](const selection::ISelectionSetPtr& set)
+	{
+		auto selSet = selSets.createChild("selectionSet");
+
+		selSet.setAttributeValue("id", string::to_string(selectionSetCount));
+		selSet.setAttributeValue("name", set->getName());
+
+		// Get all nodes of this selection set and store them for later lookup
+		_selectionSets.push_back(SelectionSetExportInfo());
+
+		_selectionSets.back().index = selectionSetCount;
+		_selectionSets.back().nodes = set->getNodes();
+
+		selectionSetCount++;
 	});
 }
 
@@ -101,6 +121,7 @@ void PortableMapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostr
 
 	appendLayerInformation(node, entity);
 	appendSelectionGroupInformation(node, entity);
+	appendSelectionSetInformation(node, entity);
 }
 
 void PortableMapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
@@ -165,6 +186,7 @@ void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ost
 	auto sceneNode = std::dynamic_pointer_cast<scene::INode>(brushNode);
 	appendLayerInformation(brushTag, sceneNode);
 	appendSelectionGroupInformation(brushTag, sceneNode);
+	appendSelectionSetInformation(brushTag, sceneNode);
 }
 
 void PortableMapWriter::endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream)
@@ -223,6 +245,7 @@ void PortableMapWriter::beginWritePatch(const IPatchNodePtr& patchNode, std::ost
 	auto sceneNode = std::dynamic_pointer_cast<scene::INode>(patchNode);
 	appendLayerInformation(patchTag, sceneNode);
 	appendSelectionGroupInformation(patchTag, sceneNode);
+	appendSelectionSetInformation(patchTag, sceneNode);
 }
 
 void PortableMapWriter::endWritePatch(const IPatchNodePtr& patch, std::ostream& stream)
@@ -257,6 +280,20 @@ void PortableMapWriter::appendSelectionGroupInformation(xml::Node& xmlNode, cons
 	{
 		auto groupTag = groupsTag.createChild("selectionGroup");
 		groupTag.setAttributeValue("id", string::to_string(groupId));
+	}
+}
+
+void PortableMapWriter::appendSelectionSetInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode)
+{
+	auto sets = xmlNode.createChild("selectionSets");
+
+	for (const auto& info : _selectionSets)
+	{
+		if (info.nodes.find(sceneNode) != info.nodes.end())
+		{
+			auto setTag = sets.createChild("selectionSet");
+			setTag.setAttributeValue("id", string::to_string(info.index));
+		}
 	}
 }
 

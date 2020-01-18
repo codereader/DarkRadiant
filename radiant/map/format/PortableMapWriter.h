@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imapformat.h"
+#include "iselectionset.h"
 
 #include "xmlutil/Document.h"
 
@@ -23,6 +24,18 @@ protected:
 	xml::Node _map;
 	xml::Node _curEntityPrimitives;
 
+	struct SelectionSetExportInfo
+	{
+		std::size_t index;
+
+		// The nodes in this set
+		std::set<scene::INodePtr> nodes;
+	};
+
+	// SelectionSet-related
+	typedef std::vector<SelectionSetExportInfo> SelectionSetInfo;
+	SelectionSetInfo _selectionSets;
+
 public:
 	PortableMapWriter();
 
@@ -44,6 +57,7 @@ public:
 private:
 	void appendLayerInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode);
 	void appendSelectionGroupInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode);
+	void appendSelectionSetInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode);
 };
 
 } // namespace
