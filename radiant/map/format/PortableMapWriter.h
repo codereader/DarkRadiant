@@ -43,6 +43,7 @@ public:
 
 private:
 	void appendLayerInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode);
+	void appendSelectionGroupInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode);
 };
 
 } // namespace

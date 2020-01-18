@@ -3,8 +3,10 @@
 #include "igame.h"
 #include "ientity.h"
 #include "ilayer.h"
+#include "iselectiongroup.h"
 
 #include "string/string.h"
+#include "selection/group/SelectionGroupManager.h"
 
 namespace map
 {
@@ -56,6 +58,22 @@ void PortableMapWriter::beginWriteMap(std::ostream& stream)
 		layer.setAttributeValue("id", string::to_string(layerId));
 		layer.setAttributeValue("name", layerName);
 	});
+
+	// Write selection groups
+	std::size_t selectionGroupCount = 0;
+
+	auto selGroups = _map.createChild("selectionGroups");
+
+	selection::getSelectionGroupManagerInternal().foreachSelectionGroup([&](selection::ISelectionGroup& group)
+	{
+		// Ignore empty groups
+		if (group.size() == 0) return;
+
+		auto selGroup = selGroups.createChild("selectionGroup");
+
+		selGroup.setAttributeValue("id", string::to_string(group.getId()));
+		selGroup.setAttributeValue("name", string::to_string(group.getName()));
+	});
 }
 
 void PortableMapWriter::endWriteMap(std::ostream& stream)
@@ -82,6 +100,7 @@ void PortableMapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostr
 	});
 
 	appendLayerInformation(node, entity);
+	appendSelectionGroupInformation(node, entity);
 }
 
 void PortableMapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream)
@@ -143,7 +162,9 @@ void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ost
 		detailTag.setAttributeValue("value", string::to_string(brush.getDetailFlag()));
 	}
 
-	appendLayerInformation(brushTag, std::dynamic_pointer_cast<scene::INode>(brushNode));
+	auto sceneNode = std::dynamic_pointer_cast<scene::INode>(brushNode);
+	appendLayerInformation(brushTag, sceneNode);
+	appendSelectionGroupInformation(brushTag, sceneNode);
 }
 
 void PortableMapWriter::endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream)
@@ -199,7 +220,9 @@ void PortableMapWriter::beginWritePatch(const IPatchNodePtr& patchNode, std::ost
 		}
 	}
 
-	appendLayerInformation(patchTag, std::dynamic_pointer_cast<scene::INode>(patchNode));
+	auto sceneNode = std::dynamic_pointer_cast<scene::INode>(patchNode);
+	appendLayerInformation(patchTag, sceneNode);
+	appendSelectionGroupInformation(patchTag, sceneNode);
 }
 
 void PortableMapWriter::endWritePatch(const IPatchNodePtr& patch, std::ostream& stream)
@@ -212,11 +235,28 @@ void PortableMapWriter::appendLayerInformation(xml::Node& xmlNode, const scene::
 	auto layers = sceneNode->getLayers();
 	auto layersTag = xmlNode.createChild("layers");
 
-	// Write a space-separated list of node IDs
+	// Write the list of node IDs
 	for (const auto& layerId : layers)
 	{
 		auto layerTag = layersTag.createChild("layer");
 		layerTag.setAttributeValue("id", string::to_string(layerId));
+	}
+}
+
+void PortableMapWriter::appendSelectionGroupInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode)
+{
+	auto selectable = std::dynamic_pointer_cast<IGroupSelectable>(sceneNode);
+
+	if (!selectable) return;
+
+	auto groupIds = selectable->getGroupIds();
+	auto groupsTag = xmlNode.createChild("selectionGroups");
+
+	// Write the list of group IDs
+	for (auto groupId : groupIds)
+	{
+		auto groupTag = groupsTag.createChild("selectionGroup");
+		groupTag.setAttributeValue("id", string::to_string(groupId));
 	}
 }
 
