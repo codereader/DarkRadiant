@@ -16,6 +16,7 @@
 #include "iradiant.h"
 #include "imainframe.h"
 #include "imapresource.h"
+#include "imapinfofile.h"
 #include "iaasfile.h"
 #include "igame.h"
 
@@ -52,6 +53,7 @@
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
 #include "RenderableAasFile.h"
+#include "MapPropertyInfoFileModule.h"
 
 #include <fmt/format.h>
 #include "algorithm/ChildPrimitives.h"
@@ -986,6 +988,7 @@ const StringSet& Map::getDependencies() const
         _dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		_dependencies.insert(MODULE_FILETYPES);
     }
 
@@ -1008,6 +1011,11 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 	_scaledModelExporter.initialise();
 
 	MapFileManager::registerFileTypes();
+
+    // Register an info file module to save the map property bag
+    GlobalMapInfoFileManager().registerInfoFileModule(
+        std::make_shared<MapPropertyInfoFileModule>()
+    );
 }
 
 void Map::shutdownModule()

@@ -410,6 +410,7 @@ darkradiant_SOURCES = main.cpp \
                       map/MapPosition.cpp \
                       map/EditingStopwatch.cpp \
                       map/EditingStopwatchInfoFileModule.cpp \
+                      map/MapPropertyInfoFileModule.cpp \
                       map/FindMapElements.cpp \
 					  map/infofile/InfoFileManager.cpp \
 					  map/infofile/InfoFile.cpp \

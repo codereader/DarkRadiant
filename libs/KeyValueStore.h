@@ -16,6 +16,16 @@ private:
 	KeyValues _keyValues;
 
 public:
+	std::size_t getPropertyCount() const
+	{
+		return _keyValues.size();
+	}
+
+	void clearProperties()
+	{
+		_keyValues.clear();
+	}
+
 	virtual std::string getProperty(const std::string& key, const std::string& value) const
 	{
 		auto existing = _keyValues.find(key);

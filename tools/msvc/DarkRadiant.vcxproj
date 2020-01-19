@@ -287,6 +287,7 @@
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\MapModules.cpp" />
+    <ClCompile Include="..\..\radiant\map\MapPropertyInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiant\md5model\MD5Anim.cpp" />
     <ClCompile Include="..\..\radiant\md5model\MD5AnimationCache.cpp" />
@@ -1143,6 +1144,7 @@
     <ClInclude Include="..\..\radiant\map\infofile\InfoFile.h" />
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h" />
     <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h" />
+    <ClInclude Include="..\..\radiant\map\MapPropertyInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiant\md5model\MD5Anim.h" />
     <ClInclude Include="..\..\radiant\md5model\MD5AnimationCache.h" />

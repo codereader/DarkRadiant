@@ -35,6 +35,12 @@ void SelectionGroupInfoFileModule::onInfoFileSaveStart()
 	_nodeInfoCount = 0;
 }
 
+void SelectionGroupInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
+void SelectionGroupInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
 void SelectionGroupInfoFileModule::onSavePrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
 {
 	saveNode(node, entityNum, primitiveNum);

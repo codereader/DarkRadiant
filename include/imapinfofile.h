@@ -42,10 +42,16 @@ public:
 	virtual std::string getName() = 0;
 
 	/**
-	 * Called before any node is written to the .map file. Use tihs
+	 * Called before any node is written to the .map file. Use this
 	 * to prepare the internal structures for exporting.
 	 */
 	virtual void onInfoFileSaveStart() = 0;
+
+	/**
+	 * Called before starting the actual node traversal,
+	 * the info file exporter gets a chance to look at the map root.
+	 */
+	virtual void onBeginSaveMap(const scene::IMapRootNodePtr& root) = 0;
 
 	/**
 	 * Called during map export traversal when a single
@@ -63,6 +69,11 @@ public:
 	* internally, until the writeBlocks() method is called.
 	*/
 	virtual void onSaveEntity(const scene::INodePtr& node, std::size_t entityNum) = 0;
+
+	/**
+	 * Called after node traversal.
+	 */
+	virtual void onFinishSaveMap(const scene::IMapRootNodePtr& root) = 0;
 
 	/**
 	 * Final export function, write the assembled data to the

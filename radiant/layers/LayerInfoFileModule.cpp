@@ -38,6 +38,12 @@ void LayerInfoFileModule::onInfoFileSaveStart()
 	_output.clear();
 }
 
+void LayerInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
+void LayerInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
 void LayerInfoFileModule::onSavePrimitive(const INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
 {
 	saveNode(node);

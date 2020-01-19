@@ -21,6 +21,12 @@ std::string SelectionSetInfoFileModule::getName()
 	return "Selection Set Mapping";
 }
 
+void SelectionSetInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
+void SelectionSetInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
 void SelectionSetInfoFileModule::onInfoFileSaveStart()
 {
 	_exportInfo.clear();

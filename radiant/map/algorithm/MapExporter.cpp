@@ -6,6 +6,7 @@
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ientity.h"
+#include "imap.h"
 #include "igroupnode.h"
 #include "imainframe.h"
 #include "../../brush/Brush.h"
@@ -88,6 +89,16 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 	try
 	{
 		_writer.beginWriteMap(_mapStream);
+
+		if (_infoFileExporter)
+		{
+			auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
+
+			if (mapRoot)
+			{
+				_infoFileExporter->beginSaveMap(mapRoot);
+			}
+		}
 	}
 	catch (IMapWriter::FailureException& ex)
 	{
@@ -100,6 +111,16 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 	try
 	{
 		_writer.endWriteMap(_mapStream);
+
+		if (_infoFileExporter)
+		{
+			auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
+
+			if (mapRoot)
+			{
+				_infoFileExporter->finishSaveMap(mapRoot);
+			}
+		}
 	}
 	catch (IMapWriter::FailureException& ex)
 	{
