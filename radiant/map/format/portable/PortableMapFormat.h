@@ -5,6 +5,9 @@
 namespace map
 {
 
+namespace format
+{
+
 class PortableMapFormat :
 	public MapFormat,
 	public std::enable_shared_from_this<PortableMapFormat>
@@ -30,5 +33,7 @@ public:
 
 	virtual bool canLoad(std::istream& stream) const override;
 };
+
+}
 
 } // namespace map

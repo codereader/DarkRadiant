@@ -272,9 +272,9 @@
     <ClCompile Include="..\..\radiant\map\format\Doom3MapReader.cpp" />
     <ClCompile Include="..\..\radiant\map\format\Doom3MapWriter.cpp" />
     <ClCompile Include="..\..\radiant\map\format\Doom3PrefabFormat.cpp" />
-    <ClCompile Include="..\..\radiant\map\format\PortableMapFormat.cpp" />
-    <ClCompile Include="..\..\radiant\map\format\PortableMapReader.cpp" />
-    <ClCompile Include="..\..\radiant\map\format\PortableMapWriter.cpp" />
+    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapFormat.cpp" />
+    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapReader.cpp" />
+    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapWriter.cpp" />
     <ClCompile Include="..\..\radiant\map\format\primitiveparsers\BrushDef.cpp" />
     <ClCompile Include="..\..\radiant\map\format\primitiveparsers\BrushDef3.cpp" />
     <ClCompile Include="..\..\radiant\map\format\primitiveparsers\Patch.cpp" />
@@ -1126,9 +1126,10 @@
     <ClInclude Include="..\..\radiant\map\format\Doom3MapReader.h" />
     <ClInclude Include="..\..\radiant\map\format\Doom3MapWriter.h" />
     <ClInclude Include="..\..\radiant\map\format\Doom3PrefabFormat.h" />
-    <ClInclude Include="..\..\radiant\map\format\PortableMapFormat.h" />
-    <ClInclude Include="..\..\radiant\map\format\PortableMapReader.h" />
-    <ClInclude Include="..\..\radiant\map\format\PortableMapWriter.h" />
+    <ClInclude Include="..\..\radiant\map\format\portable\Constants.h" />
+    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapFormat.h" />
+    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapReader.h" />
+    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapWriter.h" />
     <ClInclude Include="..\..\radiant\map\format\primitiveparsers\BrushDef.h" />
     <ClInclude Include="..\..\radiant\map\format\primitiveparsers\BrushDef3.h" />
     <ClInclude Include="..\..\radiant\map\format\primitiveparsers\Patch.h" />

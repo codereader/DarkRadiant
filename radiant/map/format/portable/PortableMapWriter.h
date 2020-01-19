@@ -8,6 +8,9 @@
 namespace map
 {
 
+namespace format
+{
+
 /**
  * Exporter class writing the map data into an XML-based file format.
  */
@@ -59,5 +62,7 @@ private:
 	void appendSelectionGroupInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode);
 	void appendSelectionSetInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode);
 };
+
+}
 
 } // namespace

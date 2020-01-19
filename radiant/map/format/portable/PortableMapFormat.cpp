@@ -6,6 +6,9 @@
 namespace map
 {
 
+namespace format
+{
+
 std::size_t PortableMapFormat::VERSION = 1;
 
 // RegisterableModule implementation
@@ -78,6 +81,8 @@ bool PortableMapFormat::allowInfoFileCreation() const
 bool PortableMapFormat::canLoad(std::istream& stream) const
 {
 	return PortableMapReader::CanLoad(stream);
+}
+
 }
 
 }

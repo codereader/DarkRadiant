@@ -6,6 +6,9 @@
 namespace map
 {
 
+namespace format
+{
+
 PortableMapReader::PortableMapReader(IMapImportFilter& importFilter) :
 	_importFilter(importFilter)
 {}
@@ -45,6 +48,8 @@ bool PortableMapReader::CanLoad(std::istream& stream)
 	}
 
 	return false;
+}
+
 }
 
 }

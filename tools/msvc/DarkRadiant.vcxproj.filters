@@ -320,6 +320,9 @@
     <Filter Include="src\map\aas">
       <UniqueIdentifier>{6a40fdfb-2b56-41c2-ba54-dbf1ca276a43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map\format\portable">
+      <UniqueIdentifier>{158557a6-7181-4ced-a45b-210fc3e54b34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1573,17 +1576,17 @@
     <ClCompile Include="..\..\radiant\map\MapModules.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\PortableMapFormat.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\PortableMapWriter.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\MapPropertyInfoFileModule.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\PortableMapReader.cpp">
-      <Filter>src\map\format</Filter>
+    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapFormat.cpp">
+      <Filter>src\map\format\portable</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapReader.cpp">
+      <Filter>src\map\format\portable</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapWriter.cpp">
+      <Filter>src\map\format\portable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3198,17 +3201,20 @@
     <ClInclude Include="..\..\radiant\map\aas\Util.h">
       <Filter>src\map\aas</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\PortableMapFormat.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\PortableMapWriter.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\MapPropertyInfoFileModule.h">
       <Filter>src\map</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\PortableMapReader.h">
-      <Filter>src\map\format</Filter>
+    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapFormat.h">
+      <Filter>src\map\format\portable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapReader.h">
+      <Filter>src\map\format\portable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapWriter.h">
+      <Filter>src\map\format\portable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\format\portable\Constants.h">
+      <Filter>src\map\format\portable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -125,8 +125,9 @@ darkradiant_SOURCES = main.cpp \
                       map/format/Doom3MapFormat.cpp \
                       map/format/Doom3MapReader.cpp \
                       map/format/Doom3PrefabFormat.cpp \
-                      map/format/PortableMapFormat.cpp \
-                      map/format/PortableMapWriter.cpp \
+                      map/format/portable/PortableMapFormat.cpp \
+                      map/format/portable/PortableMapWriter.cpp \
+                      map/format/portable/PortableMapReader.cpp \
                       map/format/Quake3MapReader.cpp \
                       map/format/Doom3MapWriter.cpp \
                       map/format/primitiveparsers/PatchDef2.cpp \

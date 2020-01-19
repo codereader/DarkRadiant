@@ -13,29 +13,32 @@
 namespace map
 {
 
+namespace format
+{
+
 namespace
 {
 
-	// Checks for NaN and infinity
-	inline std::string getSafeDouble(double d)
+// Checks for NaN and infinity
+inline std::string getSafeDouble(double d)
+{
+	if (isValid(d))
 	{
-		if (isValid(d))
+		if (d == -0.0)
 		{
-			if (d == -0.0)
-			{
-				return "0"; // convert -0 to 0
-			}
-			else
-			{
-				return string::to_string(d);
-			}
+			return "0"; // convert -0 to 0
 		}
 		else
 		{
-			// Is infinity or NaN, write 0
-			return "0";
+			return string::to_string(d);
 		}
 	}
+	else
+	{
+		// Is infinity or NaN, write 0
+		return "0";
+	}
+}
 
 }
 
@@ -102,7 +105,7 @@ void PortableMapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::o
 
 	// Export all map properties
 	auto props = _map.createChild("properties");
-	
+
 	root->foreachProperty([&](const std::string& key, const std::string& value)
 	{
 		auto property = props.createChild("property");
@@ -193,7 +196,7 @@ void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ost
 		// Write Shader
 		auto shaderTag = faceTag.createChild("material");
 		shaderTag.setAttributeValue("name", face.getShader());
-		
+
 		// Export (dummy) contents/flags
 		auto detailTag = faceTag.createChild("contentsFlag");
 		detailTag.setAttributeValue("value", string::to_string(brush.getDetailFlag()));
@@ -311,6 +314,8 @@ void PortableMapWriter::appendSelectionSetInformation(xml::Node& xmlNode, const 
 			setTag.setAttributeValue("id", string::to_string(info.index));
 		}
 	}
+}
+
 }
 
 } // namespace

@@ -8,6 +8,9 @@
 namespace map 
 {
 
+namespace format
+{
+
 class PortableMapReader :
 	public IMapReader
 {
@@ -31,5 +34,7 @@ public:
 
 	static bool CanLoad(std::istream& stream);
 };
+
+}
 
 } // namespace map
