@@ -6,6 +6,7 @@
 #include "Node.h"
 #include "inamespace.h"
 #include "UndoFileChangeTracker.h"
+#include "KeyValueStore.h"
 
 namespace scene
 {
@@ -14,7 +15,8 @@ namespace scene
 // for use in the preview widget's scenes.
 class BasicRootNode :
     public IMapRootNode,
-    public Node
+    public Node,
+    public KeyValueStore
 {
 private:
     INamespacePtr _namespace;

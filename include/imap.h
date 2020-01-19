@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "inode.h"
+#include "ikeyvaluestore.h"
 #include <sigc++/signal.h>
 
 // Registry setting for suppressing the map load progress dialog
@@ -25,7 +26,8 @@ namespace scene
  * It also owns the namespace of the corresponding map.
  */
 class IMapRootNode :
-    public virtual INode
+    public virtual INode,
+	public virtual IKeyValueStore
 {
 public:
     virtual ~IMapRootNode() {}

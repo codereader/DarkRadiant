@@ -6,6 +6,7 @@
 #include "scene/Node.h"
 #include "UndoFileChangeTracker.h"
 #include "transformlib.h"
+#include "KeyValueStore.h"
 
 namespace map 
 {
@@ -21,7 +22,8 @@ class RootNode :
 	public scene::Node,
     public scene::IMapRootNode,
 	public IdentityTransform,
-    protected UndoFileChangeTracker
+    protected UndoFileChangeTracker,
+	public KeyValueStore
 {
 private:
 	// The actual name of the map
