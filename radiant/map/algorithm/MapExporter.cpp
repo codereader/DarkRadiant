@@ -88,16 +88,18 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 {
 	try
 	{
-		_writer.beginWriteMap(_mapStream);
+		auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
+
+		if (!mapRoot)
+		{
+			throw std::logic_error("Map node is not a scene::IMapRootNode");
+		}
+
+		_writer.beginWriteMap(mapRoot, _mapStream);
 
 		if (_infoFileExporter)
 		{
-			auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
-
-			if (mapRoot)
-			{
-				_infoFileExporter->beginSaveMap(mapRoot);
-			}
+			_infoFileExporter->beginSaveMap(mapRoot);
 		}
 	}
 	catch (IMapWriter::FailureException& ex)
@@ -110,16 +112,18 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 
 	try
 	{
-		_writer.endWriteMap(_mapStream);
+		auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
+
+		if (!mapRoot)
+		{
+			throw std::logic_error("Map node is not a scene::IMapRootNode");
+		}
+
+		_writer.endWriteMap(mapRoot, _mapStream);
 
 		if (_infoFileExporter)
 		{
-			auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
-
-			if (mapRoot)
-			{
-				_infoFileExporter->finishSaveMap(mapRoot);
-			}
+			_infoFileExporter->finishSaveMap(mapRoot);
 		}
 	}
 	catch (IMapWriter::FailureException& ex)

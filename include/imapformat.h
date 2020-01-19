@@ -7,6 +7,8 @@ namespace scene
 class NodeVisitor;
 class INode;
 typedef std::shared_ptr<INode> INodePtr;
+class IMapRootNode;
+typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
 }
 
 namespace parser { class DefTokeniser; }
@@ -100,13 +102,13 @@ public:
 	 * This is called before writing any nodes, to give an opportunity
 	 * to write a map header and version info.
 	 */
-	virtual void beginWriteMap(std::ostream& stream) = 0;
+	virtual void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) = 0;
 
 	/**
 	 * Called after all nodes have been visited. Note that this method
 	 * should NOT attempt to close the given stream.
 	 */
-	virtual void endWriteMap(std::ostream& stream) = 0;
+	virtual void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) = 0;
 
 	// Entity export methods
 	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) = 0;

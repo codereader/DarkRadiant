@@ -15,7 +15,7 @@ class Quake3MapWriter :
 	public Doom3MapWriter
 {
 public:
-	virtual void beginWriteMap(std::ostream& stream) override
+	virtual void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override
 	{
 		// Write an empty line at the beginning of the file
 		stream << std::endl;

@@ -21,8 +21,8 @@ protected:
 public:
 	Doom3MapWriter();
 
-	virtual void beginWriteMap(std::ostream& stream) override;
-	virtual void endWriteMap(std::ostream& stream) override;
+	virtual void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
+	virtual void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
 
 	// Entity export methods
 	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;

@@ -14,7 +14,7 @@ class Quake4MapWriter :
 	public Doom3MapWriter
 {
 public:
-	virtual void beginWriteMap(std::ostream& stream) override
+	virtual void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override
 	{
 		// Write the version tag
 		stream << "Version " << MAP_VERSION_Q4 << std::endl;

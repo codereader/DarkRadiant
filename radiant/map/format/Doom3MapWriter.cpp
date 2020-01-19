@@ -16,13 +16,13 @@ Doom3MapWriter::Doom3MapWriter() :
 	_primitiveCount(0)
 {}
 
-void Doom3MapWriter::beginWriteMap(std::ostream& stream)
+void Doom3MapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream)
 {
 	// Write the version tag
     stream << "Version " << MAP_VERSION_D3 << std::endl;
 }
 
-void Doom3MapWriter::endWriteMap(std::ostream& stream)
+void Doom3MapWriter::endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream)
 {
 	// nothing
 }

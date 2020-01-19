@@ -46,7 +46,7 @@ PortableMapWriter::PortableMapWriter() :
 	_curEntityPrimitives(nullptr)
 {}
 
-void PortableMapWriter::beginWriteMap(std::ostream& stream)
+void PortableMapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream)
 {
 	// Write layer information to the header
 	auto layers = _map.createChild("layers");
@@ -94,9 +94,20 @@ void PortableMapWriter::beginWriteMap(std::ostream& stream)
 
 		selectionSetCount++;
 	});
+
+	// Export all map properties
+	auto props = _map.createChild("properties");
+	
+	root->foreachProperty([&](const std::string& key, const std::string& value)
+	{
+		auto property = props.createChild("property");
+
+		property.setAttributeValue("key", key);
+		property.setAttributeValue("value", value);
+	});
 }
 
-void PortableMapWriter::endWriteMap(std::ostream& stream)
+void PortableMapWriter::endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream)
 {
 	stream << _document.saveToString();
 }
