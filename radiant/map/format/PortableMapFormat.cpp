@@ -1,9 +1,12 @@
 #include "PortableMapFormat.h"
 
+#include "PortableMapReader.h"
 #include "PortableMapWriter.h"
 
 namespace map
 {
+
+std::size_t PortableMapFormat::VERSION = 1;
 
 // RegisterableModule implementation
 const std::string& PortableMapFormat::getName() const
@@ -59,7 +62,7 @@ const std::string& PortableMapFormat::getGameType() const
 
 IMapReaderPtr PortableMapFormat::getMapReader(IMapImportFilter& filter) const
 {
-	return IMapReaderPtr();
+	return std::make_shared<PortableMapReader>(filter);
 }
 
 IMapWriterPtr PortableMapFormat::getMapWriter() const
@@ -74,7 +77,7 @@ bool PortableMapFormat::allowInfoFileCreation() const
 
 bool PortableMapFormat::canLoad(std::istream& stream) const
 {
-	return false;
+	return PortableMapReader::CanLoad(stream);
 }
 
 }

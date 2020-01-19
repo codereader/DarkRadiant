@@ -10,6 +10,9 @@ class PortableMapFormat :
 	public std::enable_shared_from_this<PortableMapFormat>
 {
 public:
+	// Format version, will be exported as <map> tag attribute
+	static std::size_t VERSION;
+
 	typedef std::shared_ptr<PortableMapFormat> Ptr;
 
 	// RegisterableModule implementation

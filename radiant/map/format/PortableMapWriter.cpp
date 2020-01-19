@@ -8,6 +8,7 @@
 
 #include "string/string.h"
 #include "selection/group/SelectionGroupManager.h"
+#include "PortableMapFormat.h"
 
 namespace map
 {
@@ -44,7 +45,11 @@ PortableMapWriter::PortableMapWriter() :
 	_document(xml::Document::create()),
 	_map(_document.addTopLevelNode("map")),
 	_curEntityPrimitives(nullptr)
-{}
+{
+	// Export name and version tag
+	_map.setAttributeValue("version", string::to_string(PortableMapFormat::VERSION));
+	_map.setAttributeValue("format", "portable");
+}
 
 void PortableMapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream)
 {
