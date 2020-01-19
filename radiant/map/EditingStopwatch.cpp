@@ -21,6 +21,7 @@ namespace
 {
 	const int TIMER_INTERVAL_SECS = 1;
 	const char* const STATUS_BAR_ELEMENT = "EditTime";
+	const char* const MAP_PROPERTY_KEY = "EditTimeInSeconds";
 }
 
 EditingStopwatch::EditingStopwatch() :
@@ -126,6 +127,7 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 
 	// We start/stop during save operations
 	case IMap::MapSaving:
+		writeToMapProperties();
 		stop();
 		break;
 	case IMap::MapSaved:
@@ -161,6 +163,16 @@ unsigned long EditingStopwatch::getTotalSecondsEdited()
 void EditingStopwatch::setTotalSecondsEdited(unsigned long newValue)
 {
 	_secondsEdited = newValue;
+}
+
+void EditingStopwatch::writeToMapProperties()
+{
+	auto root = GlobalMapModule().getRoot();
+
+	if (root)
+	{
+		root->setProperty(MAP_PROPERTY_KEY, string::to_string(getTotalSecondsEdited()));
+	}
 }
 
 // Static module registration
