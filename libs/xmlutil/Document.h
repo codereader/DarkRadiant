@@ -37,6 +37,10 @@ public:
 	// Use the isValid() method to check if the load was successful.
 	Document(const std::string& filename);
 
+	// Create a document from the given stream. This will read the whole
+	// stream data into memory, and parse it chunk by chunk.
+	Document(std::istream& stream);
+
 	// Copy constructor (note: does not create an actual copy of the internal xmlDoc)
 	Document(const Document& other);
 

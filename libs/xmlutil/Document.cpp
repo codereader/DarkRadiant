@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
+#include <vector>
 
 namespace xml
 {
@@ -16,6 +17,39 @@ Document::Document(xmlDocPtr doc):
 Document::Document(const std::string& filename) :
 	_xmlDoc(xmlParseFile(filename.c_str()))
 {}
+
+Document::Document(std::istream& stream) :
+	_xmlDoc(nullptr)
+{
+	const std::size_t bufferSize = 4096;
+	static_assert(bufferSize < std::numeric_limits<int>::max());
+
+	std::vector<char> buffer(bufferSize);
+
+	// Read 1 byte to construct the parser context
+	stream.read(buffer.data(), 1);
+
+	if (stream.gcount() != 1)
+	{
+		rError() << "[xml::Document] Could not read a single byte from the given stream." << std::endl;
+		return;
+	}
+
+	xmlParserCtxtPtr ctxt = xmlCreatePushParserCtxt(nullptr, nullptr, buffer.data(), 1, "stream");
+
+	while (!stream.eof())
+	{
+		stream.read(buffer.data(), buffer.size());
+		xmlParseChunk(ctxt, buffer.data(), static_cast<int>(stream.gcount()), 0);
+	}
+
+	// Terminate the parser
+	xmlParseChunk(ctxt, buffer.data(), 0, 1);
+
+	_xmlDoc = ctxt->myDoc;
+
+	xmlFreeParserCtxt(ctxt);
+}
 
 Document::Document(const Document& other) :
 	_xmlDoc(other._xmlDoc)
