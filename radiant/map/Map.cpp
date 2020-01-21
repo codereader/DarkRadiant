@@ -891,18 +891,23 @@ void Map::rename(const std::string& filename) {
 
 void Map::importSelected(std::istream& in)
 {
-    scene::INodePtr root = std::make_shared<scene::BasicRootNode>();
+    auto root = std::make_shared<scene::BasicRootNode>();
 
     // Instantiate the default import filter
     class MapImportFilter :
         public IMapImportFilter
     {
     private:
-        scene::INodePtr _root;
+        scene::IMapRootNodePtr _root;
     public:
-        MapImportFilter(const scene::INodePtr& root) :
+        MapImportFilter(const scene::IMapRootNodePtr& root) :
             _root(root)
         {}
+
+        const scene::IMapRootNodePtr& getRootNode() const
+        {
+            return _root;
+        }
 
         bool addEntity(const scene::INodePtr& entityNode)
         {

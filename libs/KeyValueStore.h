@@ -21,19 +21,19 @@ public:
 		return _keyValues.size();
 	}
 
-	void clearProperties()
+	virtual void clearProperties() override
 	{
 		_keyValues.clear();
 	}
 
-	virtual std::string getProperty(const std::string& key, const std::string& value) const
+	virtual std::string getProperty(const std::string& key, const std::string& value) const override
 	{
 		auto existing = _keyValues.find(key);
 
 		return existing != _keyValues.end() ? existing->second : std::string();
 	}
 
-	virtual void setProperty(const std::string& key, const std::string& value)
+	virtual void setProperty(const std::string& key, const std::string& value) override
 	{
 		if (value.empty())
 		{
@@ -44,12 +44,12 @@ public:
 		_keyValues[key] = value;
 	}
 
-	virtual void removeProperty(const std::string& key)
+	virtual void removeProperty(const std::string& key) override
 	{
 		_keyValues.erase(key);
 	}
 
-	virtual void foreachProperty(const std::function<void(const std::string&, const std::string&)>& visitor) const
+	virtual void foreachProperty(const std::function<void(const std::string&, const std::string&)>& visitor) const override
 	{
 		for (const auto& pair : _keyValues)
 		{

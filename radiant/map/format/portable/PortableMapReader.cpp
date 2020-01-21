@@ -1,7 +1,13 @@
 #include "PortableMapReader.h"
 
 #include <regex>
+#include "itextstream.h"
+#include "iselectionset.h"
+#include "ilayer.h"
 #include "PortableMapFormat.h"
+#include "Constants.h"
+#include "xmlutil/Document.h"
+#include "selection/group/SelectionGroupManager.h"
 
 namespace map
 {
@@ -9,13 +15,122 @@ namespace map
 namespace format
 {
 
+using namespace map::format::constants;
+
 PortableMapReader::PortableMapReader(IMapImportFilter& importFilter) :
 	_importFilter(importFilter)
 {}
 
 void PortableMapReader::readFromStream(std::istream& stream)
 {
+	xml::Document doc(stream);
 
+	auto mapNode = doc.getTopLevelNode();
+
+	if (string::convert<std::size_t>(mapNode.getAttributeValue(ATTR_VERSION)) != PortableMapFormat::VERSION)
+	{
+		throw FailureException("Unsupported format version.");
+	}
+
+	readLayers(mapNode);
+	readSelectionGroups(mapNode);
+	readSelectionSets(mapNode);
+	readMapProperties(mapNode);
+}
+
+void PortableMapReader::readLayers(const xml::Node& mapNode)
+{
+	GlobalLayerSystem().reset();
+
+	auto mapLayers = mapNode.getNamedChildren(TAG_MAP_LAYERS);
+
+	if (mapLayers.size() != 1)
+	{
+		rWarning() << "Odd number of " << TAG_MAP_LAYERS << " nodes encountered." << std::endl;
+		return;
+	}
+
+	auto layers = mapLayers.front().getNamedChildren(TAG_MAP_LAYER);
+
+	for (const auto& layer : layers)
+	{
+		auto id = string::convert<int>(layer.getAttributeValue(ATTR_MAP_LAYER_ID));
+		auto name = layer.getAttributeValue(ATTR_MAP_LAYER_NAME);
+
+		GlobalLayerSystem().createLayer(name, id);
+	}
+}
+
+void PortableMapReader::readSelectionGroups(const xml::Node& mapNode)
+{
+	GlobalSelectionGroupManager().deleteAllSelectionGroups();
+
+	auto mapSelGroups = mapNode.getNamedChildren(TAG_SELECTIONGROUPS);
+
+	if (mapSelGroups.size() != 1)
+	{
+		rWarning() << "Odd number of " << TAG_SELECTIONGROUPS << " nodes encountered." << std::endl;
+		return;
+	}
+
+	auto groups = mapSelGroups.front().getNamedChildren(TAG_SELECTIONGROUP);
+
+	for (const auto& group : groups)
+	{
+		auto id = string::convert<std::size_t>(group.getAttributeValue(ATTR_SELECTIONGROUP_ID));
+		auto name = group.getAttributeValue(ATTR_SELECTIONGROUP_NAME);
+
+		auto newGroup = selection::getSelectionGroupManagerInternal().createSelectionGroupInternal(id);
+		newGroup->setName(name);
+	}
+}
+
+void PortableMapReader::readSelectionSets(const xml::Node& mapNode)
+{
+	_selectionSets.clear();
+	GlobalSelectionSetManager().deleteAllSelectionSets();
+
+	auto mapSelSets = mapNode.getNamedChildren(TAG_SELECTIONSETS);
+
+	if (mapSelSets.size() != 1)
+	{
+		rWarning() << "Odd number of " << TAG_SELECTIONSETS << " nodes encountered." << std::endl;
+		return;
+	}
+
+	auto setNodes = mapSelSets.front().getNamedChildren(TAG_SELECTIONSET);
+
+	for (const auto& setNode : setNodes)
+	{
+		auto id = string::convert<std::size_t>(setNode.getAttributeValue(ATTR_SELECTIONSET_ID));
+		auto name = setNode.getAttributeValue(ATTR_SELECTIONSET_NAME);
+
+		auto set = GlobalSelectionSetManager().createSelectionSet(name);
+		_selectionSets[id] = set;
+	}
+}
+
+void PortableMapReader::readMapProperties(const xml::Node& mapNode)
+{
+	_importFilter.getRootNode()->clearProperties();
+
+	auto mapProperties = mapNode.getNamedChildren(TAG_MAP_PROPERTIES);
+
+	if (mapProperties.size() != 1)
+	{
+		rWarning() << "Odd number of " << TAG_MAP_PROPERTIES << " nodes encountered." << std::endl;
+		return;
+	}
+
+	auto propertyNodes = mapProperties.front().getNamedChildren(TAG_MAP_PROPERTY);
+
+	for (const auto& propertyNode : propertyNodes)
+	{
+		auto key = propertyNode.getAttributeValue(ATTR_MAP_PROPERTY_KEY);
+		auto value = propertyNode.getAttributeValue(ATTR_MAP_PROPERTY_VALUE);
+
+		_importFilter.getRootNode()->setProperty(key, value);
+	}
 }
 
 bool PortableMapReader::CanLoad(std::istream& stream)

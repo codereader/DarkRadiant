@@ -157,6 +157,11 @@ class IMapImportFilter
 {
 public:
 	/**
+	 * Returns a reference to the root node.
+	 */
+	virtual const scene::IMapRootNodePtr& getRootNode() const = 0;
+
+	/**
 	 * Send an entity node to the import filter. In idTech4 maps all entities
 	 * are immediate children of the root node in the scene, so this is where
      * they usually end up after being added (unless they're filtered out).

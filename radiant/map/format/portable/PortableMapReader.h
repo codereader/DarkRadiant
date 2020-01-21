@@ -3,6 +3,7 @@
 #include <map>
 #include "inode.h"
 #include "imapformat.h"
+#include "iselectionset.h"
 #include "parser/DefTokeniser.h"
 
 namespace map 
@@ -26,6 +27,9 @@ protected:
 	// The number of primitives of the currently parsed entity
 	std::size_t _primitiveCount;
 
+	typedef std::map<std::size_t, selection::ISelectionSetPtr> SelectionSets;
+	SelectionSets _selectionSets;
+
 public:
 	PortableMapReader(IMapImportFilter& importFilter);
 
@@ -33,6 +37,12 @@ public:
 	virtual void readFromStream(std::istream& stream);
 
 	static bool CanLoad(std::istream& stream);
+
+private:
+	void readLayers(const xml::Node& mapNode);
+	void readSelectionGroups(const xml::Node& mapNode);
+	void readSelectionSets(const xml::Node& mapNode);
+	void readMapProperties(const xml::Node& mapNode);
 };
 
 }

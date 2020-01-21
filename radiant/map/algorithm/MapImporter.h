@@ -24,7 +24,7 @@ class MapImporter :
 	public IMapImportFilter
 {
 private:
-	scene::INodePtr _root;
+	scene::IMapRootNodePtr _root;
 
 	// The progress dialog
 	wxutil::ModalProgressDialogPtr _dialog;
@@ -47,10 +47,11 @@ private:
 	NodeIndexMap _nodes;
 
 public:
-	MapImporter(const scene::INodePtr& root, std::istream& inputStream);
+	MapImporter(const scene::IMapRootNodePtr& root, std::istream& inputStream);
 
-	bool addEntity(const scene::INodePtr& entityNode);
-	bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity);
+	const scene::IMapRootNodePtr& getRootNode() const override;
+	bool addEntity(const scene::INodePtr& entityNode) override;
+	bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity) override;
 
 	const NodeIndexMap& getNodeMap() const;
 

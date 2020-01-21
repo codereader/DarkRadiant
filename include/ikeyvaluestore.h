@@ -39,5 +39,10 @@ public:
 	 * Iterates over the property store, hitting the visitor with each value pair.
 	 */
 	virtual void foreachProperty(const std::function<void (const std::string&, const std::string&)>& visitor) const = 0;
+
+	/**
+	 * Removes all properties from this store
+	 */
+	virtual void clearProperties() = 0;
 };
 
