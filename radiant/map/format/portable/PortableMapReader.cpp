@@ -258,9 +258,58 @@ void PortableMapReader::readBrush(const xml::Node& brushTag, const scene::INodeP
 	_importFilter.addPrimitiveToEntity(node, entity);
 }
 
-void PortableMapReader::readPatch(const xml::Node& patchNode, const scene::INodePtr& entity)
+void PortableMapReader::readPatch(const xml::Node& patchTag, const scene::INodePtr& entity)
 {
+	bool isFixedSubdiv = patchTag.getAttributeValue(ATTR_PATCH_FIXED_SUBDIV) == ATTR_VALUE_TRUE;
 
+	auto patchType = isFixedSubdiv ? PatchDefType::Def3 : PatchDefType::Def2;
+
+	scene::INodePtr node = GlobalPatchCreator(patchType).createPatch();
+
+	auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+	assert(patchNode);
+
+	IPatch& patch = patchNode->getPatch();
+
+	// Parse shader
+	auto shaderTag = getNamedChild(patchTag, TAG_PATCH_MATERIAL);
+	patch.setShader(shaderTag.getAttributeValue(ATTR_PATCH_MATERIAL_NAME));
+
+	std::size_t cols = string::convert<std::size_t>(patchTag.getAttributeValue(ATTR_PATCH_WIDTH));
+	std::size_t rows = string::convert<std::size_t>(patchTag.getAttributeValue(ATTR_PATCH_HEIGHT));
+
+	patch.setDims(cols, rows);
+
+	if (isFixedSubdiv)
+	{
+		// Parse fixed tesselation
+		std::size_t subdivX = string::convert<std::size_t>(patchTag.getAttributeValue(ATTR_PATCH_FIXED_SUBDIV_X));
+		std::size_t subdivY = string::convert<std::size_t>(patchTag.getAttributeValue(ATTR_PATCH_FIXED_SUBDIV_Y));
+
+		patch.setFixedSubdivisions(true, Subdivisions(subdivX, subdivY));
+	}
+
+	auto cvTag = getNamedChild(patchTag, TAG_PATCH_CONTROL_VERTICES);
+	auto cvTags = cvTag.getNamedChildren(TAG_PATCH_CONTROL_VERTEX);
+
+	for (const auto& vertexTag : cvTags)
+	{
+		std::size_t row = string::convert<std::size_t>(vertexTag.getAttributeValue(ATTR_PATCH_CONTROL_VERTEX_ROW));
+		std::size_t col = string::convert<std::size_t>(vertexTag.getAttributeValue(ATTR_PATCH_CONTROL_VERTEX_COL));
+
+		auto& ctrl = patch.ctrlAt(row, col);
+
+		ctrl.vertex[0] = string::to_float(vertexTag.getAttributeValue(ATTR_PATCH_CONTROL_VERTEX_X));
+		ctrl.vertex[1] = string::to_float(vertexTag.getAttributeValue(ATTR_PATCH_CONTROL_VERTEX_Y));
+		ctrl.vertex[2] = string::to_float(vertexTag.getAttributeValue(ATTR_PATCH_CONTROL_VERTEX_Z));
+
+		ctrl.texcoord[0] = string::to_float(vertexTag.getAttributeValue(ATTR_PATCH_CONTROL_VERTEX_U));
+		ctrl.texcoord[1] = string::to_float(vertexTag.getAttributeValue(ATTR_PATCH_CONTROL_VERTEX_V));
+	}
+
+	patch.controlPointsChanged();
+
+	_importFilter.addPrimitiveToEntity(node, entity);
 }
 
 void PortableMapReader::readEntity(const xml::Node& entityNode)
