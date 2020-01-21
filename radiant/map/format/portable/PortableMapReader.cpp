@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "iselectionset.h"
 #include "ilayer.h"
+#include "ibrush.h"
 #include "PortableMapFormat.h"
 #include "Constants.h"
 #include "xmlutil/Document.h"
@@ -14,6 +15,22 @@ namespace map
 
 namespace format
 {
+
+namespace
+{
+	// Retrieves the first named child - will throw a std::runtime_error if there are 0 or 2+ matching nodes
+	inline xml::Node getNamedChild(const xml::Node& node, const std::string& tagName)
+	{
+		auto children = node.getNamedChildren(tagName);
+
+		if (children.size() != 1)
+		{
+			throw std::runtime_error("Odd number of " + tagName + " nodes encountered.");
+		}
+
+		return children.front();
+	}
+}
 
 using namespace map::format::constants;
 
@@ -42,96 +59,100 @@ void PortableMapReader::readFromStream(std::istream& stream)
 
 void PortableMapReader::readLayers(const xml::Node& mapNode)
 {
-	GlobalLayerSystem().reset();
-
-	auto mapLayers = mapNode.getNamedChildren(TAG_MAP_LAYERS);
-
-	if (mapLayers.size() != 1)
+	try
 	{
-		rWarning() << "Odd number of " << TAG_MAP_LAYERS << " nodes encountered." << std::endl;
-		return;
+		GlobalLayerSystem().reset();
+
+		auto mapLayers = getNamedChild(mapNode, TAG_MAP_LAYERS);
+
+		auto layers = mapLayers.getNamedChildren(TAG_MAP_LAYER);
+
+		for (const auto& layer : layers)
+		{
+			auto id = string::convert<int>(layer.getAttributeValue(ATTR_MAP_LAYER_ID));
+			auto name = layer.getAttributeValue(ATTR_MAP_LAYER_NAME);
+
+			GlobalLayerSystem().createLayer(name, id);
+		}
 	}
-
-	auto layers = mapLayers.front().getNamedChildren(TAG_MAP_LAYER);
-
-	for (const auto& layer : layers)
+	catch (const std::runtime_error& ex)
 	{
-		auto id = string::convert<int>(layer.getAttributeValue(ATTR_MAP_LAYER_ID));
-		auto name = layer.getAttributeValue(ATTR_MAP_LAYER_NAME);
-
-		GlobalLayerSystem().createLayer(name, id);
+		rError() << "PortableMapReader: " << ex.what() << std::endl;
 	}
 }
 
 void PortableMapReader::readSelectionGroups(const xml::Node& mapNode)
 {
-	GlobalSelectionGroupManager().deleteAllSelectionGroups();
-
-	auto mapSelGroups = mapNode.getNamedChildren(TAG_SELECTIONGROUPS);
-
-	if (mapSelGroups.size() != 1)
+	try
 	{
-		rWarning() << "Odd number of " << TAG_SELECTIONGROUPS << " nodes encountered." << std::endl;
-		return;
+		GlobalSelectionGroupManager().deleteAllSelectionGroups();
+
+		auto mapSelGroups = getNamedChild(mapNode, TAG_SELECTIONGROUPS);
+
+		auto groups = mapSelGroups.getNamedChildren(TAG_SELECTIONGROUP);
+
+		for (const auto& group : groups)
+		{
+			auto id = string::convert<std::size_t>(group.getAttributeValue(ATTR_SELECTIONGROUP_ID));
+			auto name = group.getAttributeValue(ATTR_SELECTIONGROUP_NAME);
+
+			auto newGroup = selection::getSelectionGroupManagerInternal().createSelectionGroupInternal(id);
+			newGroup->setName(name);
+		}
 	}
-
-	auto groups = mapSelGroups.front().getNamedChildren(TAG_SELECTIONGROUP);
-
-	for (const auto& group : groups)
+	catch (const std::runtime_error & ex)
 	{
-		auto id = string::convert<std::size_t>(group.getAttributeValue(ATTR_SELECTIONGROUP_ID));
-		auto name = group.getAttributeValue(ATTR_SELECTIONGROUP_NAME);
-
-		auto newGroup = selection::getSelectionGroupManagerInternal().createSelectionGroupInternal(id);
-		newGroup->setName(name);
+		rError() << "PortableMapReader: " << ex.what() << std::endl;
 	}
 }
 
 void PortableMapReader::readSelectionSets(const xml::Node& mapNode)
 {
-	_selectionSets.clear();
-	GlobalSelectionSetManager().deleteAllSelectionSets();
-
-	auto mapSelSets = mapNode.getNamedChildren(TAG_SELECTIONSETS);
-
-	if (mapSelSets.size() != 1)
+	try
 	{
-		rWarning() << "Odd number of " << TAG_SELECTIONSETS << " nodes encountered." << std::endl;
-		return;
+		_selectionSets.clear();
+		GlobalSelectionSetManager().deleteAllSelectionSets();
+
+		auto mapSelSets = getNamedChild(mapNode, TAG_SELECTIONSETS);
+
+		auto setNodes = mapSelSets.getNamedChildren(TAG_SELECTIONSET);
+
+		for (const auto& setNode : setNodes)
+		{
+			auto id = string::convert<std::size_t>(setNode.getAttributeValue(ATTR_SELECTIONSET_ID));
+			auto name = setNode.getAttributeValue(ATTR_SELECTIONSET_NAME);
+
+			auto set = GlobalSelectionSetManager().createSelectionSet(name);
+			_selectionSets[id] = set;
+		}
 	}
-
-	auto setNodes = mapSelSets.front().getNamedChildren(TAG_SELECTIONSET);
-
-	for (const auto& setNode : setNodes)
+	catch (const std::runtime_error & ex)
 	{
-		auto id = string::convert<std::size_t>(setNode.getAttributeValue(ATTR_SELECTIONSET_ID));
-		auto name = setNode.getAttributeValue(ATTR_SELECTIONSET_NAME);
-
-		auto set = GlobalSelectionSetManager().createSelectionSet(name);
-		_selectionSets[id] = set;
+		rError() << "PortableMapReader: " << ex.what() << std::endl;
 	}
 }
 
 void PortableMapReader::readMapProperties(const xml::Node& mapNode)
 {
-	_importFilter.getRootNode()->clearProperties();
-
-	auto mapProperties = mapNode.getNamedChildren(TAG_MAP_PROPERTIES);
-
-	if (mapProperties.size() != 1)
+	try
 	{
-		rWarning() << "Odd number of " << TAG_MAP_PROPERTIES << " nodes encountered." << std::endl;
-		return;
+		_importFilter.getRootNode()->clearProperties();
+
+		auto mapProperties = getNamedChild(mapNode, TAG_MAP_PROPERTIES);
+
+		auto propertyNodes = mapProperties.getNamedChildren(TAG_MAP_PROPERTY);
+
+		for (const auto& propertyNode : propertyNodes)
+		{
+			auto key = propertyNode.getAttributeValue(ATTR_MAP_PROPERTY_KEY);
+			auto value = propertyNode.getAttributeValue(ATTR_MAP_PROPERTY_VALUE);
+
+			_importFilter.getRootNode()->setProperty(key, value);
+		}
 	}
-
-	auto propertyNodes = mapProperties.front().getNamedChildren(TAG_MAP_PROPERTY);
-
-	for (const auto& propertyNode : propertyNodes)
+	catch (const std::runtime_error & ex)
 	{
-		auto key = propertyNode.getAttributeValue(ATTR_MAP_PROPERTY_KEY);
-		auto value = propertyNode.getAttributeValue(ATTR_MAP_PROPERTY_VALUE);
-
-		_importFilter.getRootNode()->setProperty(key, value);
+		rError() << "PortableMapReader: " << ex.what() << std::endl;
 	}
 }
 
@@ -141,17 +162,15 @@ void PortableMapReader::readEntities(const xml::Node& mapNode)
 
 	for (const auto& entityNode : entityNodes)
 	{
-		auto entity = readEntity(mapNode);
-
-		auto primitiveNode = entityNode.getNamedChildren(TAG_ENTITY_PRIMITIVES);
-
-		if (primitiveNode.size() != 1)
+		try
 		{
-			rWarning() << "Odd number of " << TAG_MAP_PROPERTIES << " nodes encountered." << std::endl;
+			readEntity(entityNode);
+		}
+		catch (const std::runtime_error & ex)
+		{
+			rError() << "PortableMapReader: Failed to parse entity: " << ex.what() << std::endl;
 			continue;
 		}
-
-		readPrimitives(primitiveNode.front(), entity);
 	}
 }
 
@@ -171,17 +190,72 @@ void PortableMapReader::readPrimitives(const xml::Node& primitivesNode, const sc
 		{
 			readPatch(childNode, entity);
 		}
-		else
-		{
-			rWarning() << "Unknown primitive tag " << name << " encountered." << std::endl;
-			continue;
-		}
 	}
 }
 
-void PortableMapReader::readBrush(const xml::Node& brushNode, const scene::INodePtr& entity)
+void PortableMapReader::readBrush(const xml::Node& brushTag, const scene::INodePtr& entity)
 {
+	// Create a new brush
+	auto node = GlobalBrushCreator().createBrush();
 
+	// Cast the node, this must succeed
+	auto brushNode = std::dynamic_pointer_cast<IBrushNode>(node);
+	assert(brushNode);
+
+	IBrush& brush = brushNode->getIBrush();
+
+	auto facesTag = getNamedChild(brushTag, TAG_FACES);
+	auto faceTags = facesTag.getNamedChildren(TAG_FACE);
+
+	for (const auto& faceTag : faceTags)
+	{
+		try
+		{
+			auto planeTag = getNamedChild(faceTag, TAG_FACE_PLANE);
+
+			// Construct a plane and parse its values
+			Plane3 plane;
+
+			plane.normal().x() = string::to_float(planeTag.getAttributeValue(ATTR_FACE_PLANE_X));
+			plane.normal().y() = string::to_float(planeTag.getAttributeValue(ATTR_FACE_PLANE_Y));
+			plane.normal().z() = string::to_float(planeTag.getAttributeValue(ATTR_FACE_PLANE_Z));
+			plane.dist() = -string::to_float(planeTag.getAttributeValue(ATTR_FACE_PLANE_D)); // negate d
+
+			auto texProjTag = getNamedChild(faceTag, TAG_FACE_TEXPROJ);
+
+			// Parse TexDef
+			Matrix4 texdef;
+
+			texdef.xx() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_XX));
+			texdef.yx() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_YX));
+			texdef.tx() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_TX));
+			texdef.xy() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_XY));
+			texdef.yy() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_YY));
+			texdef.ty() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_TY));
+
+			// Parse Shader
+			auto shaderTag = getNamedChild(faceTag, TAG_FACE_MATERIAL);
+			std::string shader = shaderTag.getAttributeValue(ATTR_FACE_MATERIAL_NAME);
+
+			// Parse Flags (usually each brush has all faces detail or all faces structural)
+			auto detailTag = getNamedChild(faceTag, TAG_FACE_CONTENTSFLAG);
+
+			IBrush::DetailFlag flag = static_cast<IBrush::DetailFlag>(
+				string::convert<std::size_t>(detailTag.getAttributeValue(ATTR_FACE_CONTENTSFLAG_VALUE), IBrush::Structural));
+			brush.setDetailFlag(flag);
+
+			// Finally, add the new face to the brush
+			brush.addFace(plane, texdef, shader);
+		}
+		catch (const std::runtime_error& ex)
+		{
+			rError() << "PortableMapReader: Entity " << entity->name() << ", Brush " << 
+				brushTag.getAttributeValue(ATTR_BRUSH_NUMBER) << ": " << ex.what() << std::endl;
+			continue;
+		}
+	}
+
+	_importFilter.addPrimitiveToEntity(node, entity);
 }
 
 void PortableMapReader::readPatch(const xml::Node& patchNode, const scene::INodePtr& entity)
@@ -189,21 +263,14 @@ void PortableMapReader::readPatch(const xml::Node& patchNode, const scene::INode
 
 }
 
-scene::INodePtr PortableMapReader::readEntity(const xml::Node& entityNode)
+void PortableMapReader::readEntity(const xml::Node& entityNode)
 {
 	std::map<std::string, std::string> entityKeyValues{};
 
-	auto kvNodes = entityNode.getNamedChildren(TAG_ENTITY_KEYVALUES);
+	auto keyValuesTag = getNamedChild(entityNode, TAG_ENTITY_KEYVALUES);
+	auto keyValueTags = keyValuesTag.getNamedChildren(TAG_ENTITY_KEYVALUE);
 
-	if (kvNodes.size() != 1)
-	{
-		rWarning() << "Odd number of " << TAG_ENTITY_KEYVALUES << " nodes encountered." << std::endl;
-		return;
-	}
-
-	auto keyValueNodes = kvNodes.front().getNamedChildren(TAG_ENTITY_KEYVALUE);
-
-	for (const auto& keyValue : keyValueNodes)
+	for (const auto& keyValue : keyValueTags)
 	{
 		auto key = keyValue.getAttributeValue(ATTR_ENTITY_PROPERTY_KEY);
 		auto value = keyValue.getAttributeValue(ATTR_ENTITY_PROPERTY_VALUE);
@@ -241,7 +308,14 @@ scene::INodePtr PortableMapReader::readEntity(const xml::Node& entityNode)
 
 	_importFilter.addEntity(sceneNode);
 
-	return sceneNode;
+	try
+	{
+		readPrimitives(getNamedChild(entityNode, TAG_ENTITY_PRIMITIVES), sceneNode);
+	}
+	catch (const std::runtime_error & ex)
+	{
+		rError() << "PortableMapReader: Entity " << sceneNode->name() << ": " << ex.what() << std::endl;
+	}
 }
 
 bool PortableMapReader::CanLoad(std::istream& stream)

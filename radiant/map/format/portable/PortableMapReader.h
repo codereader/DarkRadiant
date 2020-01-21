@@ -44,7 +44,7 @@ private:
 	void readSelectionSets(const xml::Node& mapNode);
 	void readMapProperties(const xml::Node& mapNode);
 	void readEntities(const xml::Node& mapNode);
-	scene::INodePtr readEntity(const xml::Node& entityNode);
+	void readEntity(const xml::Node& entityNode);
 	void readPrimitives(const xml::Node& primitivesNode, const scene::INodePtr& entity);
 	void readBrush(const xml::Node& brushNode, const scene::INodePtr& entity);
 	void readPatch(const xml::Node& patchNode, const scene::INodePtr& entity);
