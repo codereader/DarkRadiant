@@ -521,6 +521,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_command_reference">Command reference</a>
 <ul class="sectlevel2">
 <li><a href="#_file_menu">File menu</a></li>
+<li><a href="#_edit_menu">Edit menu</a></li>
 </ul>
 </li>
 <li><a href="#_configuring_darkradiant">Configuring DarkRadiant</a>
@@ -2970,6 +2971,61 @@ compilation).</p>
 </dl>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_edit_menu">Edit menu</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Undo</strong></dt>
+<dd>
+<p>Undo the most recent operation.</p>
+</dd>
+<dt class="hdlist1"><strong>Redo</strong></dt>
+<dd>
+<p>Redo the most recently undone operation.</p>
+</dd>
+<dt class="hdlist1"><strong>Copy</strong></dt>
+<dd>
+<p>Copy the selected item(s) to the clipboard.</p>
+</dd>
+<dt class="hdlist1"><strong>Paste</strong></dt>
+<dd>
+<p>Paste the item(s) on the clipboard to their original world location.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Objects copied to the clipboard are represented using the same text format
+which can be found in <code>.map</code> files. This makes it possible to save clipboard
+content into a file and load it later as an actual map fragment.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Paste to camera</strong></dt>
+<dd>
+<p>Paste the item(s) on the clipboard to the current camera
+location, ignoring their original world location.</p>
+</dd>
+<dt class="hdlist1"><strong>Duplicate</strong></dt>
+<dd>
+<p>Make a copy of the currently selected item(s), slightly offset
+from their original position.</p>
+</dd>
+<dt class="hdlist1"><strong>Delete</strong></dt>
+<dd>
+<p>Remove the currently selected item(s).</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -3424,7 +3480,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-01-07 20:55:04 GMT
+Last updated 2020-01-21 21:16:39 GMT
 </div>
 </div>
 </body>
