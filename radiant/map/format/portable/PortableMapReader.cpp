@@ -36,6 +36,8 @@ void PortableMapReader::readFromStream(std::istream& stream)
 	readSelectionGroups(mapNode);
 	readSelectionSets(mapNode);
 	readMapProperties(mapNode);
+
+	readEntities(mapNode);
 }
 
 void PortableMapReader::readLayers(const xml::Node& mapNode)
@@ -131,6 +133,115 @@ void PortableMapReader::readMapProperties(const xml::Node& mapNode)
 
 		_importFilter.getRootNode()->setProperty(key, value);
 	}
+}
+
+void PortableMapReader::readEntities(const xml::Node& mapNode)
+{
+	auto entityNodes = mapNode.getNamedChildren(TAG_ENTITY);
+
+	for (const auto& entityNode : entityNodes)
+	{
+		auto entity = readEntity(mapNode);
+
+		auto primitiveNode = entityNode.getNamedChildren(TAG_ENTITY_PRIMITIVES);
+
+		if (primitiveNode.size() != 1)
+		{
+			rWarning() << "Odd number of " << TAG_MAP_PROPERTIES << " nodes encountered." << std::endl;
+			continue;
+		}
+
+		readPrimitives(primitiveNode.front(), entity);
+	}
+}
+
+void PortableMapReader::readPrimitives(const xml::Node& primitivesNode, const scene::INodePtr& entity)
+{
+	auto childNodes = primitivesNode.getChildren();
+	
+	for (const auto childNode : childNodes)
+	{
+		const std::string name = childNode.getName();
+
+		if (name == TAG_BRUSH)
+		{
+			readBrush(childNode, entity);
+		}
+		else if (name == TAG_PATCH)
+		{
+			readPatch(childNode, entity);
+		}
+		else
+		{
+			rWarning() << "Unknown primitive tag " << name << " encountered." << std::endl;
+			continue;
+		}
+	}
+}
+
+void PortableMapReader::readBrush(const xml::Node& brushNode, const scene::INodePtr& entity)
+{
+
+}
+
+void PortableMapReader::readPatch(const xml::Node& patchNode, const scene::INodePtr& entity)
+{
+
+}
+
+scene::INodePtr PortableMapReader::readEntity(const xml::Node& entityNode)
+{
+	std::map<std::string, std::string> entityKeyValues{};
+
+	auto kvNodes = entityNode.getNamedChildren(TAG_ENTITY_KEYVALUES);
+
+	if (kvNodes.size() != 1)
+	{
+		rWarning() << "Odd number of " << TAG_ENTITY_KEYVALUES << " nodes encountered." << std::endl;
+		return;
+	}
+
+	auto keyValueNodes = kvNodes.front().getNamedChildren(TAG_ENTITY_KEYVALUE);
+
+	for (const auto& keyValue : keyValueNodes)
+	{
+		auto key = keyValue.getAttributeValue(ATTR_ENTITY_PROPERTY_KEY);
+		auto value = keyValue.getAttributeValue(ATTR_ENTITY_PROPERTY_VALUE);
+
+		entityKeyValues[key] = value;
+	}
+
+	// Get the classname from the EntityKeyValues
+	auto found = entityKeyValues.find("classname");
+
+	if (found == entityKeyValues.end())
+	{
+		throw FailureException("PortableMapReader: could not find classname for entity.");
+	}
+
+	// Otherwise create the entity and add all of the properties
+	std::string className = found->second;
+	auto eclass = GlobalEntityClassManager().findClass(className);
+
+	if (!eclass)
+	{
+		rError() << "PortableMapReader: Could not find entity class: " << className << std::endl;
+
+		// greebo: EntityClass not found, insert a brush-based one
+		eclass = GlobalEntityClassManager().findOrInsert(className, true);
+	}
+
+	// Create the actual entity node
+	auto sceneNode = GlobalEntityCreator().createEntity(eclass);
+
+	for (const auto& pair : entityKeyValues)
+	{
+		sceneNode->getEntity().setKeyValue(pair.first, pair.second);
+	}
+
+	_importFilter.addEntity(sceneNode);
+
+	return sceneNode;
 }
 
 bool PortableMapReader::CanLoad(std::istream& stream)
