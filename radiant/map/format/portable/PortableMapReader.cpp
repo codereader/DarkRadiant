@@ -3,10 +3,12 @@
 #include <regex>
 #include "itextstream.h"
 #include "iselectionset.h"
+#include "iselectiongroup.h"
 #include "ilayer.h"
 #include "ibrush.h"
 #include "PortableMapFormat.h"
 #include "Constants.h"
+#include "scenelib.h"
 #include "xmlutil/Document.h"
 #include "selection/group/SelectionGroupManager.h"
 
@@ -256,6 +258,10 @@ void PortableMapReader::readBrush(const xml::Node& brushTag, const scene::INodeP
 	}
 
 	_importFilter.addPrimitiveToEntity(node, entity);
+
+	readLayerInformation(brushTag, node);
+	readSelectionGroupInformation(brushTag, node);
+	readSelectionSetInformation(brushTag, node);
 }
 
 void PortableMapReader::readPatch(const xml::Node& patchTag, const scene::INodePtr& entity)
@@ -310,13 +316,17 @@ void PortableMapReader::readPatch(const xml::Node& patchTag, const scene::INodeP
 	patch.controlPointsChanged();
 
 	_importFilter.addPrimitiveToEntity(node, entity);
+
+	readLayerInformation(patchTag, node);
+	readSelectionGroupInformation(patchTag, node);
+	readSelectionSetInformation(patchTag, node);
 }
 
-void PortableMapReader::readEntity(const xml::Node& entityNode)
+void PortableMapReader::readEntity(const xml::Node& entityTag)
 {
 	std::map<std::string, std::string> entityKeyValues{};
 
-	auto keyValuesTag = getNamedChild(entityNode, TAG_ENTITY_KEYVALUES);
+	auto keyValuesTag = getNamedChild(entityTag, TAG_ENTITY_KEYVALUES);
 	auto keyValueTags = keyValuesTag.getNamedChildren(TAG_ENTITY_KEYVALUE);
 
 	for (const auto& keyValue : keyValueTags)
@@ -348,22 +358,93 @@ void PortableMapReader::readEntity(const xml::Node& entityNode)
 	}
 
 	// Create the actual entity node
-	auto sceneNode = GlobalEntityCreator().createEntity(eclass);
+	auto entityNode = GlobalEntityCreator().createEntity(eclass);
 
 	for (const auto& pair : entityKeyValues)
 	{
-		sceneNode->getEntity().setKeyValue(pair.first, pair.second);
+		entityNode->getEntity().setKeyValue(pair.first, pair.second);
 	}
 
-	_importFilter.addEntity(sceneNode);
+	readLayerInformation(entityTag, entityNode);
+	readSelectionGroupInformation(entityTag, entityNode);
+	readSelectionSetInformation(entityTag, entityNode);
+
+	_importFilter.addEntity(entityNode);
 
 	try
 	{
-		readPrimitives(getNamedChild(entityNode, TAG_ENTITY_PRIMITIVES), sceneNode);
+		readPrimitives(getNamedChild(entityTag, TAG_ENTITY_PRIMITIVES), entityNode);
 	}
 	catch (const std::runtime_error & ex)
 	{
-		rError() << "PortableMapReader: Entity " << sceneNode->name() << ": " << ex.what() << std::endl;
+		rError() << "PortableMapReader: Entity " << entityNode->name() << ": " << ex.what() << std::endl;
+	}
+}
+
+void PortableMapReader::readLayerInformation(const xml::Node& tag, const scene::INodePtr& sceneNode)
+{
+	auto layersTag = getNamedChild(tag, TAG_OBJECT_LAYERS);
+
+	auto layerTags = layersTag.getNamedChildren(TAG_OBJECT_LAYER);
+	auto layers = scene::LayerList{};
+
+	// Read the list of node IDs
+	for (const auto& layerTag : layerTags)
+	{
+		layers.insert(string::convert<int>(layerTag.getAttributeValue(ATTR_OBJECT_LAYER_ID)));
+	}
+
+	sceneNode->assignToLayers(layers);
+
+	sceneNode->foreachNode([&](const scene::INodePtr& child)
+	{
+		if (!Node_isEntity(child) && !Node_isPrimitive(child))
+		{
+			child->assignToLayers(layers);
+		}
+
+		return true;
+	});
+}
+
+void PortableMapReader::readSelectionGroupInformation(const xml::Node& tag, const scene::INodePtr& sceneNode)
+{
+	auto selectable = std::dynamic_pointer_cast<IGroupSelectable>(sceneNode);
+
+	if (!selectable) return;
+
+	auto groupsTag = getNamedChild(tag, TAG_OBJECT_SELECTIONGROUPS);
+	auto groupTags = groupsTag.getNamedChildren(TAG_OBJECT_SELECTIONGROUP);
+
+	// Read the list of group IDs
+	for (const auto& groupTag : groupTags)
+	{
+		auto groupId = string::convert<IGroupSelectable::GroupIds::value_type>(
+			groupTag.getAttributeValue(ATTR_OBJECT_SELECTIONGROUP_ID)
+		);
+
+		selectable->addToGroup(groupId);
+	}
+}
+
+void PortableMapReader::readSelectionSetInformation(const xml::Node& tag, const scene::INodePtr& sceneNode)
+{
+	auto setsTag = getNamedChild(tag, TAG_OBJECT_SELECTIONSETS);
+	auto setTags = setsTag.getNamedChildren(TAG_OBJECT_SELECTIONSET);
+
+	// Read the list of set indices
+	for (const auto& setTag : setTags)
+	{
+		auto id = string::convert<std::size_t>(
+			setTag.getAttributeValue(ATTR_OBJECT_SELECTIONSET_ID)
+		);
+
+		auto setIter = _selectionSets.find(id);
+		
+		if (setIter != _selectionSets.end())
+		{
+			setIter->second->addNode(sceneNode);
+		}
 	}
 }
 

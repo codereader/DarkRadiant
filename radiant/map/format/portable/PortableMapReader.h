@@ -48,6 +48,9 @@ private:
 	void readPrimitives(const xml::Node& primitivesNode, const scene::INodePtr& entity);
 	void readBrush(const xml::Node& brushNode, const scene::INodePtr& entity);
 	void readPatch(const xml::Node& patchNode, const scene::INodePtr& entity);
+	void readLayerInformation(const xml::Node& parentTag, const scene::INodePtr& sceneNode);
+	void readSelectionGroupInformation(const xml::Node& parentTag, const scene::INodePtr& sceneNode);
+	void readSelectionSetInformation(const xml::Node& parentTag, const scene::INodePtr& sceneNode);
 };
 
 }
