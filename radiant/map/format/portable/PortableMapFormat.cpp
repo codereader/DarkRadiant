@@ -53,7 +53,7 @@ void PortableMapFormat::shutdownModule()
 
 const std::string& PortableMapFormat::getMapFormatName() const
 {
-	static std::string _name = "Portable Map";
+	static std::string _name = "Portable";
 	return _name;
 }
 
