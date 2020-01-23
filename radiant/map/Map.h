@@ -239,6 +239,8 @@ private:
 
 	void loadMapResourceFromPath(const std::string& path);
 
+	void emitMapEvent(MapEvent ev);
+
 }; // class Map
 
 } // namespace map

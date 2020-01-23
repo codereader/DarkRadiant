@@ -115,6 +115,8 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 
 	// Start the clock once the map is done loading
 	case IMap::MapLoaded:
+		// Check if we have a non-empty property on the map root node
+		readFromMapProperties();
 		start();
 		break;
 		
@@ -163,6 +165,20 @@ unsigned long EditingStopwatch::getTotalSecondsEdited()
 void EditingStopwatch::setTotalSecondsEdited(unsigned long newValue)
 {
 	_secondsEdited = newValue;
+}
+
+void EditingStopwatch::readFromMapProperties()
+{
+	auto root = GlobalMapModule().getRoot();
+
+	if (root && !root->getProperty(MAP_PROPERTY_KEY).empty())
+	{
+		auto value = string::convert<unsigned long>(root->getProperty(MAP_PROPERTY_KEY));
+
+		rMessage() << "Read " << value << " seconds of total map editing time." << std::endl;
+
+		setTotalSecondsEdited(value);
+	}
 }
 
 void EditingStopwatch::writeToMapProperties()

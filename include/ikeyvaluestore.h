@@ -18,7 +18,7 @@ public:
 	 * Retrieves a property value from the store. This will return an empty string
 	 * if the property doesn't exist.
 	 */
-	virtual std::string getProperty(const std::string& key, const std::string& value) const = 0;
+	virtual std::string getProperty(const std::string& key) const = 0;
 
 	/**
 	 * Store a value in the map root's property store. DarkRadiant will persist

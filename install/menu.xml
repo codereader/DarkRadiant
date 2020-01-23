@@ -11,7 +11,7 @@
 		<menuItem name="saveas" caption="Save &amp;as..." command="SaveMapAs" />
 		<menuItem name="saveCopyAs" caption="Save &amp;copy as..." command="SaveMapCopyAs" />
 		<menuSeparator />
-		<menuItem name="exportMap" caption="&amp;Export whole Map..." command="ExportMap" />
+		<menuItem name="exportMap" caption="&amp;Export Map..." command="ExportMap" />
 		<menuItem name="saveSelected" caption="&amp;Export selected as Map..." command="SaveSelected" />
 		<menuItem name="saveSelectedPrefab" caption="&amp;Export selected as Prefab..." command="SaveSelectedAsPrefab" />
 		<menuItem name="exportSelectedAsModel" caption="&amp;Export selected as Model..." command="ExportSelectedAsModelDialog" />

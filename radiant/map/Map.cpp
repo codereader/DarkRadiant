@@ -81,7 +81,7 @@ Map::Map() :
 void Map::loadMapResourceFromPath(const std::string& path)
 {
 	// Map loading started
-	signal_mapEvent().emit(MapLoading);
+	emitMapEvent(MapLoading);
 
 	_resource = GlobalMapResourceManager().loadFromPath(_mapName);
 
@@ -117,7 +117,7 @@ void Map::loadMapResourceFromPath(const std::string& path)
     }
 
     // Map loading finished, emit the signal
-    signal_mapEvent().emit(MapLoaded);
+    emitMapEvent(MapLoaded);
 }
 
 void Map::updateTitle()
@@ -215,13 +215,13 @@ void Map::freeMap()
 {
 	// Fire the map unloading event, 
 	// This will de-select stuff, clear the pointfile, etc.
-	signal_mapEvent().emit(MapUnloading);
+    emitMapEvent(MapUnloading);
 
 	setWorldspawn(scene::INodePtr());
 
 	GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
 
-	signal_mapEvent().emit(MapUnloaded);
+    emitMapEvent(MapUnloaded);
 
     // Reset the resource pointer
     _resource.reset();
@@ -429,15 +429,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
 	blocker.setMessage(_("Preprocessing"));
 
-	try
-	{
-		signal_mapEvent().emit(IMap::MapSaving);
-	}
-	catch (std::runtime_error& ex)
-	{
-		wxutil::Messagebox::ShowError(
-			fmt::format(_("Failure running map pre-save event:\n{0}"), ex.what()));
-	}
+    emitMapEvent(MapSaving);
 
     // Store the camview position into worldspawn
     saveCameraPosition();
@@ -449,7 +441,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
     // Save the actual map resource
     bool success = _resource->save(mapFormat);
 
-	signal_mapEvent().emit(IMap::MapSaved);
+    emitMapEvent(MapSaved);
 
     // Remove the saved camera position
     removeCameraPosition();
@@ -845,10 +837,14 @@ void Map::exportMap(const cmd::ArgumentList& args)
 
 	if (!fileInfo.fullPath.empty())
 	{
+        GlobalMap().emitMapEvent(MapSaving);
+
         MapResource::saveFile(*fileInfo.mapFormat,
             GlobalSceneGraph().root(),
             traverse,
             fileInfo.fullPath);
+
+        GlobalMap().emitMapEvent(MapSaved);
     }
 }
 
@@ -975,6 +971,18 @@ void Map::exportSelected(std::ostream& out)
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
+}
+
+void Map::emitMapEvent(MapEvent ev)
+{
+    try
+    {
+        signal_mapEvent().emit(ev);
+    }
+    catch (std::runtime_error & ex)
+    {
+        wxutil::Messagebox::ShowError(fmt::format(_("Failure running map event {0}:\n{1}"), ev, ex.what()));
+    }
 }
 
 // RegisterableModule implementation

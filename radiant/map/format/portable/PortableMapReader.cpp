@@ -20,14 +20,23 @@ namespace format
 
 namespace
 {
-	// Retrieves the first named child - will throw a std::runtime_error if there are 0 or 2+ matching nodes
+	class BadDocumentFormatException : 
+		public std::runtime_error
+	{
+	public:
+		BadDocumentFormatException(const std::string& message) :
+			std::runtime_error(message)
+		{}
+	};
+
+	// Retrieves the first named child - will throw BadDocumentFormatException if there are 0 or 2+ matching nodes
 	inline xml::Node getNamedChild(const xml::Node& node, const std::string& tagName)
 	{
 		auto children = node.getNamedChildren(tagName);
 
 		if (children.size() != 1)
 		{
-			throw std::runtime_error("Odd number of " + tagName + " nodes encountered.");
+			throw BadDocumentFormatException("Odd number of " + tagName + " nodes encountered.");
 		}
 
 		return children.front();
@@ -77,7 +86,7 @@ void PortableMapReader::readLayers(const xml::Node& mapNode)
 			GlobalLayerSystem().createLayer(name, id);
 		}
 	}
-	catch (const std::runtime_error& ex)
+	catch (const BadDocumentFormatException& ex)
 	{
 		rError() << "PortableMapReader: " << ex.what() << std::endl;
 	}
@@ -102,7 +111,7 @@ void PortableMapReader::readSelectionGroups(const xml::Node& mapNode)
 			newGroup->setName(name);
 		}
 	}
-	catch (const std::runtime_error & ex)
+	catch (const BadDocumentFormatException & ex)
 	{
 		rError() << "PortableMapReader: " << ex.what() << std::endl;
 	}
@@ -128,7 +137,7 @@ void PortableMapReader::readSelectionSets(const xml::Node& mapNode)
 			_selectionSets[id] = set;
 		}
 	}
-	catch (const std::runtime_error & ex)
+	catch (const BadDocumentFormatException & ex)
 	{
 		rError() << "PortableMapReader: " << ex.what() << std::endl;
 	}
@@ -152,7 +161,7 @@ void PortableMapReader::readMapProperties(const xml::Node& mapNode)
 			_importFilter.getRootNode()->setProperty(key, value);
 		}
 	}
-	catch (const std::runtime_error & ex)
+	catch (const BadDocumentFormatException & ex)
 	{
 		rError() << "PortableMapReader: " << ex.what() << std::endl;
 	}
@@ -168,7 +177,7 @@ void PortableMapReader::readEntities(const xml::Node& mapNode)
 		{
 			readEntity(entityNode);
 		}
-		catch (const std::runtime_error & ex)
+		catch (const BadDocumentFormatException & ex)
 		{
 			rError() << "PortableMapReader: Failed to parse entity: " << ex.what() << std::endl;
 			continue;
@@ -249,7 +258,7 @@ void PortableMapReader::readBrush(const xml::Node& brushTag, const scene::INodeP
 			// Finally, add the new face to the brush
 			brush.addFace(plane, texdef, shader);
 		}
-		catch (const std::runtime_error& ex)
+		catch (const BadDocumentFormatException& ex)
 		{
 			rError() << "PortableMapReader: Entity " << entity->name() << ", Brush " << 
 				brushTag.getAttributeValue(ATTR_BRUSH_NUMBER) << ": " << ex.what() << std::endl;
@@ -375,7 +384,7 @@ void PortableMapReader::readEntity(const xml::Node& entityTag)
 	{
 		readPrimitives(getNamedChild(entityTag, TAG_ENTITY_PRIMITIVES), entityNode);
 	}
-	catch (const std::runtime_error & ex)
+	catch (const BadDocumentFormatException & ex)
 	{
 		rError() << "PortableMapReader: Entity " << entityNode->name() << ": " << ex.what() << std::endl;
 	}

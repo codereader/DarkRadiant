@@ -26,7 +26,7 @@ public:
 		_keyValues.clear();
 	}
 
-	virtual std::string getProperty(const std::string& key, const std::string& value) const override
+	virtual std::string getProperty(const std::string& key) const override
 	{
 		auto existing = _keyValues.find(key);
 
