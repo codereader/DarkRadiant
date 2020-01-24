@@ -19,6 +19,7 @@
 #include "imapinfofile.h"
 #include "iaasfile.h"
 #include "igame.h"
+#include "imapformat.h"
 
 #include "registry/registry.h"
 #include "stream/TextFileInputStream.h"
@@ -192,22 +193,9 @@ scene::IMapRootNodePtr Map::getRoot()
     return scene::IMapRootNodePtr();
 }
 
-MapFormatPtr Map::getFormatForFile(const std::string& filename)
-{
-    // Look up the module name which loads the given extension
-    std::string gameType = GlobalGameManager().currentGame()->getKeyValue("type");
-
-    MapFormatPtr mapFormat = GlobalMapFormatManager().getMapFormatForGameType(
-        gameType, os::getExtension(filename));
-
-    ASSERT_MESSAGE(mapFormat != NULL, "map format not found for file " + filename);
-
-    return mapFormat;
-}
-
 MapFormatPtr Map::getFormat()
 {
-    return getFormatForFile(_mapName);
+    return GlobalMapFormatManager().getMapFormatForFilename(_mapName);
 }
 
 // free all map elements, reinitialize the structures that depend on them
@@ -524,7 +512,7 @@ bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
 
 	if (!mapFormat)
 	{
-		format = getFormatForFile(filename);
+		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
 	}
 
     bool result = MapResource::saveFile(
@@ -552,7 +540,7 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
 
 	if (!format)
 	{
-		format = getFormatForFile(filename);
+		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
 	}
 
     bool success = MapResource::saveFile(

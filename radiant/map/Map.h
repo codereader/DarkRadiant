@@ -172,10 +172,6 @@ public:
 	 */
 	MapFormatPtr getFormat();
 
-	/** greebo: Returns the map format for the given filename
-	 */
-	static MapFormatPtr getFormatForFile(const std::string& filename);
-
 	/** greebo: Removes or saves the camera position (into worldspawn)
 	 */
 	void removeCameraPosition();

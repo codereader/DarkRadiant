@@ -263,6 +263,13 @@ public:
 	 * Returns the list of registered map formats.
 	 */
 	virtual std::set<MapFormatPtr> getMapFormatList(const std::string& extension) = 0;
+
+	/**
+	 * A matching map format is returned, based on the given filename's extension
+	 * and the currently active game type.
+	 * An empty pointer is returned if no format can be found.
+	 */
+	virtual MapFormatPtr getMapFormatForFilename(const std::string& filename) = 0;
 };
 typedef std::shared_ptr<IMapFormatManager> IMapFormatManagerPtr;
 
