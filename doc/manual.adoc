@@ -80,11 +80,14 @@ brushes and patches.
  subdividing the patch into triangles for rendering: more triangles will produce
  a smoother surface but may lower rendering performance.
 
+Brushes and patches together are also referred to as *primitives* (since they
+define the basic geometry of the map), and are typically described as such in
+situations where the distinction between brush and patch is not important.
+
 The entities, brushes and patches in a map are arranged in a hierarchy: not
-every entity has children, but every brush and patch must have an entity as a
-parent. Each map therefore starts with a single default entity called the
-*worldspawn*, which acts as the parent for new brushes and patches created in
-DarkRadiant.
+every entity has children, but every primitive must have an entity as a parent.
+Each map therefore starts with a single default entity called the *worldspawn*,
+which acts as the parent for new brushes and patches created in DarkRadiant.
 
 == Initial configuration
 
@@ -1112,6 +1115,7 @@ sorted into user-defined layers and filtered using various criteria, while the
 prefab system allows large chunks of map to be reused or shared with other
 mappers.
 
+[[Group]]
 === Grouping objects
 
 DarkRadiant allows a number of objects to be grouped together, so that they can
@@ -1484,6 +1488,24 @@ content into a file and load it later as an actual map fragment.
  from their original position.
 
 *Delete*:: Remove the currently selected item(s).
+
+*Group selection*:: Combine the selected items into a <<Group,group>>.
+
+*Ungroup selection*:: Split the selected group back into individual objects.
+
+*Reparent primitives*:: Make all selected worldspawn brushes or patches into
+ children of the selected func_static (or similar entity). Requires exactly one
+ entity to be selected, along with at least one primitive which is currently a
+ child of the worldspawn.
+
+*Reparent primitives to worldspawn*:: Unparent the selected primitive from a
+ func_static (or similar entity), making it a child of the worldspawn. Before
+ using this command you must first select a single primitive with the *TAB* key
+ (even if the entity only contains a single primitive), otherwise the whole
+ entity will be selected and the command will silently fail.
+
+TIP: To unparent *all* of an entity's primitives and convert them back into
+worldspawn, just right-click in the 2D view and choose *Revert to worldspawn*.
 
 == Configuring DarkRadiant
 

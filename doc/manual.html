@@ -495,7 +495,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_organising_a_map">Organising a map</a>
 <ul class="sectlevel2">
-<li><a href="#_grouping_objects">Grouping objects</a></li>
+<li><a href="#Group">Grouping objects</a></li>
 <li><a href="#WorkingWithPrefabs">Working with prefabs</a>
 <ul class="sectlevel3">
 <li><a href="#_exporting_to_a_prefab">Exporting to a prefab</a></li>
@@ -657,11 +657,15 @@ brushes and patches.</p>
  a smoother surface but may lower rendering performance.</p>
 </div>
 <div class="paragraph">
+<p>Brushes and patches together are also referred to as <strong>primitives</strong> (since they
+define the basic geometry of the map), and are typically described as such in
+situations where the distinction between brush and patch is not important.</p>
+</div>
+<div class="paragraph">
 <p>The entities, brushes and patches in a map are arranged in a hierarchy: not
-every entity has children, but every brush and patch must have an entity as a
-parent. Each map therefore starts with a single default entity called the
-<strong>worldspawn</strong>, which acts as the parent for new brushes and patches created in
-DarkRadiant.</p>
+every entity has children, but every primitive must have an entity as a parent.
+Each map therefore starts with a single default entity called the <strong>worldspawn</strong>,
+which acts as the parent for new brushes and patches created in DarkRadiant.</p>
 </div>
 </div>
 </div>
@@ -2363,7 +2367,7 @@ prefab system allows large chunks of map to be reused or shared with other
 mappers.</p>
 </div>
 <div class="sect2">
-<h3 id="_grouping_objects">Grouping objects</h3>
+<h3 id="Group">Grouping objects</h3>
 <div class="paragraph">
 <p>DarkRadiant allows a number of objects to be grouped together, so that they can
 be selected and manipulated as a single unit.</p>
@@ -3023,7 +3027,43 @@ from their original position.</p>
 <dd>
 <p>Remove the currently selected item(s).</p>
 </dd>
+<dt class="hdlist1"><strong>Group selection</strong></dt>
+<dd>
+<p>Combine the selected items into a <a href="#Group">group</a>.</p>
+</dd>
+<dt class="hdlist1"><strong>Ungroup selection</strong></dt>
+<dd>
+<p>Split the selected group back into individual objects.</p>
+</dd>
+<dt class="hdlist1"><strong>Reparent primitives</strong></dt>
+<dd>
+<p>Make all selected worldspawn brushes or patches into
+children of the selected func_static (or similar entity). Requires exactly one
+entity to be selected, along with at least one primitive which is currently a
+child of the worldspawn.</p>
+</dd>
+<dt class="hdlist1"><strong>Reparent primitives to worldspawn</strong></dt>
+<dd>
+<p>Unparent the selected primitive from a
+func_static (or similar entity), making it a child of the worldspawn. Before
+using this command you must first select a single primitive with the <strong>TAB</strong> key
+(even if the entity only contains a single primitive), otherwise the whole
+entity will be selected and the command will silently fail.</p>
+</dd>
 </dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+To unparent <strong>all</strong> of an entity&#8217;s primitives and convert them back into
+worldspawn, just right-click in the 2D view and choose <strong>Revert to worldspawn</strong>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -3480,7 +3520,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-01-21 21:16:39 GMT
+Last updated 2020-01-28 21:37:38 GMT
 </div>
 </div>
 </body>
