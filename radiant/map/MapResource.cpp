@@ -34,6 +34,7 @@
 
 #include "algorithm/MapImporter.h"
 #include "algorithm/MapExporter.h"
+#include "algorithm/Import.h"
 #include "infofile/InfoFileExporter.h"
 #include "algorithm/ChildPrimitives.h"
 
@@ -83,7 +84,7 @@ std::string MapResource::_infoFileExt;
 // Constructor
 MapResource::MapResource(const std::string& name) :
 	_originalName(name),
-	_type(os::getExtension(name))
+	_extension(os::getExtension(name))
 {
 	// Initialise the paths, this is all needed for realisation
     _path = rootPath(_originalName);
@@ -104,7 +105,7 @@ void MapResource::rename(const std::string& fullPath)
 {
 	// Save the paths locally and split them into parts
 	_originalName = fullPath;
-	_type = fullPath.substr(fullPath.rfind(".") + 1);
+	_extension = os::getExtension(fullPath);
 	_path = rootPath(_originalName);
 	_name = os::getRelativePath(_originalName, _path);
 
@@ -130,7 +131,7 @@ bool MapResource::save(const MapFormatPtr& mapFormat)
 {
 	// For saving, take the default map format for this game type
 	MapFormatPtr format = mapFormat ? mapFormat : GlobalMapFormatManager().getMapFormatForGameType(
-		GlobalGameManager().currentGame()->getKeyValue("type"), _type
+		GlobalGameManager().currentGame()->getKeyValue("type"), _extension
 	);
 
 	if (format == NULL)
@@ -294,39 +295,13 @@ void MapResource::mapSave()
     }
 }
 
-MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
-{
-	// Get all registered map formats
-	std::set<MapFormatPtr> availableFormats = GlobalMapFormatManager().getMapFormatList(_type);
-
-	MapFormatPtr format;
-
-	for (const MapFormatPtr& candidate : availableFormats)
-	{
-		// Rewind the stream before passing it to the format for testing
-		// Map format valid, rewind the stream
-		stream.seekg(0, std::ios_base::beg);
-
-		if (candidate->canLoad(stream))
-		{
-			format = candidate;
-			break;
-		}
-	}
-
-	// Rewind the stream when we're done
-	stream.seekg(0, std::ios_base::beg);
-
-	return format;
-}
-
 RootNodePtr MapResource::loadMapNode()
 {
 	RootNodePtr rootNode;
 
 	// greebo: Check if we have valid settings
 	// The _path might be empty if we're loading from a folder outside the mod
-	if (_name.empty() && _type.empty())
+	if (_name.empty() && _extension.empty())
 	{
         return rootNode;
 	}
@@ -353,19 +328,16 @@ RootNodePtr MapResource::loadMapNode()
 RootNodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::string& fullpath)
 {
 	// Get the mapformat
-	MapFormatPtr format = determineMapFormat(stream);
+	auto format = map::algorithm::determineMapFormat(stream, _extension);
 
-	if (format == NULL)
+	if (!format)
 	{
 		throw std::runtime_error(
 			fmt::format(_("Could not determine map format of file:\n{0}"), fullpath));
 	}
 
-	// Map format valid, rewind the stream
-	stream.seekg(0, std::ios_base::beg);
-	
 	// Create a new map root node
-    RootNodePtr root = std::make_shared<RootNode>(_name);
+    auto root = std::make_shared<RootNode>(_name);
 
 	if (loadFile(stream, *format, root, fullpath))
 	{
@@ -385,6 +357,8 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 	try
 	{
+		rMessage() << "Using " << format.getMapFormatName() << " format to load the data." << std::endl;
+
 		// Start parsing
 		reader->readFromStream(mapStream);
 
@@ -404,9 +378,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 	}
 	catch (wxutil::ModalProgressDialog::OperationAbortedException&)
 	{
-		wxutil::Messagebox::ShowError(
-			_("Map loading cancelled")
-		);
+		wxutil::Messagebox::ShowError(_("Map loading cancelled"));
 
 		// Clear out the root node, otherwise we end up with half a map
 		scene::NodeRemover remover;

@@ -73,6 +73,18 @@ MapFormatPtr MapFormatManager::getMapFormatForFilename(const std::string& filena
 	return getMapFormatForGameType(gameType, os::getExtension(filename));
 }
 
+std::set<MapFormatPtr> MapFormatManager::getAllMapFormats()
+{
+	std::set<MapFormatPtr> set;
+	
+	for (const auto& fmt : _mapFormats)
+	{
+		set.insert(fmt.second);
+	}
+	
+	return set;
+}
+
 std::set<MapFormatPtr> MapFormatManager::getMapFormatList(const std::string& extension)
 {
 	std::set<MapFormatPtr> list;

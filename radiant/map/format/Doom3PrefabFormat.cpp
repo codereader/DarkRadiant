@@ -28,6 +28,12 @@ void Doom3PrefabFormat::shutdownModule()
 	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
 }
 
+const std::string& Doom3PrefabFormat::getMapFormatName() const
+{
+	static std::string _name = "Doom 3 Prefab";
+	return _name;
+}
+
 bool Doom3PrefabFormat::allowInfoFileCreation() const
 {
 	return false;

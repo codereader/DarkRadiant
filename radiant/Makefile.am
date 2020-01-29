@@ -422,6 +422,7 @@ darkradiant_SOURCES = main.cpp \
                       map/algorithm/Traverse.cpp \
 					  map/algorithm/MapExporter.cpp \
                       map/algorithm/MapImporter.cpp \
+                      map/algorithm/Import.cpp \
                       map/algorithm/Export.cpp \
                       map/algorithm/Models.cpp \
                       map/CounterManager.cpp \

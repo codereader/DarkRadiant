@@ -1588,6 +1588,9 @@
     <ClCompile Include="..\..\radiant\map\format\portable\PortableMapWriter.cpp">
       <Filter>src\map\format\portable</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\Import.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -3215,6 +3218,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\format\portable\Constants.h">
       <Filter>src\map\format\portable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Import.h">
+      <Filter>src\map\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

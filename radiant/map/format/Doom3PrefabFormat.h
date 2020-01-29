@@ -18,6 +18,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 
+	virtual const std::string& getMapFormatName() const;
 	virtual bool allowInfoFileCreation() const;
 };
 typedef std::shared_ptr<Doom3PrefabFormat> Doom3PrefabFormatPtr;

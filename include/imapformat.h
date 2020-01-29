@@ -260,7 +260,12 @@ public:
 												 const std::string& extension) = 0;
 
 	/**
-	 * Returns the list of registered map formats.
+	 * Returns the list of all registered map formats.
+	 */
+	virtual std::set<MapFormatPtr> getAllMapFormats() = 0;
+
+	/**
+	 * Returns the list of registered map formats matching the given extension.
 	 */
 	virtual std::set<MapFormatPtr> getMapFormatList(const std::string& extension) = 0;
 

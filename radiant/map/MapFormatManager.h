@@ -21,6 +21,7 @@ public:
 
 	MapFormatPtr getMapFormatByName(const std::string& mapFormatName) override;
 	MapFormatPtr getMapFormatForGameType(const std::string& gameType, const std::string& extension) override;
+	std::set<MapFormatPtr> getAllMapFormats() override;
 	std::set<MapFormatPtr> getMapFormatList(const std::string& extension) override;
 	MapFormatPtr getMapFormatForFilename(const std::string& filename) override;
 
