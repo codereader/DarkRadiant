@@ -8,8 +8,8 @@
 #include "camera/GlobalCamera.h"
 #include "brush/FaceInstance.h"
 #include "map/format/portable/PortableMapFormat.h"
+#include "map/algorithm/Import.h"
 #include "selection/algorithm/General.h"
-#include "selection/algorithm/Transformation.h"
 #include "selection/algorithm/Transformation.h"
 
 namespace selection
@@ -20,9 +20,8 @@ namespace clipboard
 
 void pasteToMap()
 {
-    GlobalSelectionSystem().setSelectedAll(false);
-    std::stringstream str(wxutil::pasteFromClipboard());
-    GlobalMap().importSelected(str);
+    std::stringstream stream(wxutil::pasteFromClipboard());
+	map::algorithm::importFromStream(stream);
 }
 
 void copy(const cmd::ArgumentList& args)

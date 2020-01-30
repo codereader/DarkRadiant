@@ -1,6 +1,14 @@
 #include "Import.h"
 
+#include "imap.h"
 #include "imapformat.h"
+#include "ientity.h"
+#include "scene/BasicRootNode.h"
+#include "map/algorithm/ChildPrimitives.h"
+#include "map/algorithm/Merge.h"
+#include "map/Map.h"
+#include "scenelib.h"
+#include "wxutil/dialog/MessageBox.h"
 
 namespace map
 {
@@ -39,6 +47,89 @@ MapFormatPtr determineMapFormat(std::istream& stream, const std::string& type)
 MapFormatPtr determineMapFormat(std::istream& stream)
 {
 	return determineMapFormat(stream, std::string());
+}
+
+class SimpleMapImportFilter :
+    public IMapImportFilter
+{
+private:
+    scene::IMapRootNodePtr _root;
+
+public:
+    SimpleMapImportFilter() :
+        _root(new scene::BasicRootNode)
+    {}
+
+    const scene::IMapRootNodePtr& getRootNode() const
+    {
+        return _root;
+    }
+
+    bool addEntity(const scene::INodePtr& entityNode)
+    {
+        _root->addChildNode(entityNode);
+        return true;
+    }
+
+    bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
+    {
+        if (Node_getEntity(entity)->isContainer())
+        {
+            entity->addChildNode(primitive);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+};
+
+void importFromStream(std::istream& stream)
+{
+	GlobalSelectionSystem().setSelectedAll(false);
+
+    // Instantiate the default import filter
+    SimpleMapImportFilter importFilter;
+
+    try
+    {
+        auto format = determineMapFormat(stream);
+
+        if (!format)
+        {
+            throw IMapReader::FailureException(_("Unknown map format"));
+        }
+
+        auto reader = format->getMapReader(importFilter);
+
+        // Start parsing
+        reader->readFromStream(stream);
+
+        // Prepare child primitives
+        addOriginToChildPrimitives(importFilter.getRootNode());
+
+        // Adjust all new names to fit into the existing map namespace,
+        // this routine will be changing a lot of names in the importNamespace
+        INamespacePtr nspace = GlobalMap().getRoot()->getNamespace();
+
+        if (nspace)
+        {
+            // Prepare all names, but do not import them into the namespace. This
+            // will happen during the MergeMap call.
+            nspace->ensureNoConflicts(importFilter.getRootNode());
+        }
+
+        MergeMap(importFilter.getRootNode());
+    }
+    catch (IMapReader::FailureException& ex)
+    {
+        wxutil::Messagebox::ShowError(fmt::format(_("Failure reading map from clipboard:\n{0}"), ex.what()));
+
+        // Clear out the root node, otherwise we end up with half a map
+        scene::NodeRemover remover;
+        importFilter.getRootNode()->traverseChildren(remover);
+    }
 }
 
 }

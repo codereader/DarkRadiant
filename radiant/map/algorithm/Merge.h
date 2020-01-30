@@ -2,6 +2,8 @@
 
 #include "iscenegraph.h"
 #include "scenelib.h"
+#include "entitylib.h"
+#include "map/Map.h"
 
 namespace map
 {

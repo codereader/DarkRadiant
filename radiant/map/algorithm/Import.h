@@ -13,6 +13,12 @@ namespace algorithm
 {
 
 /**
+ * Imports map objects from the given stream, inserting it into the active map.
+ * De-selects the current selection before importing, selects the imported objects.
+ */
+void importFromStream(std::istream& stream);
+
+/**
  * Returns a map format capable of loading the data in the given stream,
  * matching the the given extension. Since more than one map format might
  * be able to load the map data (e.g. .pfb vs .map), the extension gives this

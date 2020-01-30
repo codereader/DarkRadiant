@@ -147,9 +147,6 @@ public:
 
 	void rename(const std::string& filename);
 
-    /// Import selection from given stream
-	void importSelected(std::istream& in);
-
 	void exportSelected(std::ostream& out);
 	void exportSelected(std::ostream& out, const MapFormatPtr& format);
 
