@@ -151,6 +151,7 @@ public:
 	void importSelected(std::istream& in);
 
 	void exportSelected(std::ostream& out);
+	void exportSelected(std::ostream& out, const MapFormatPtr& format);
 
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();

@@ -10,6 +10,7 @@ namespace format
 {
 
 std::size_t PortableMapFormat::VERSION = 1;
+const char* PortableMapFormat::NAME = "Portable";
 
 // RegisterableModule implementation
 const std::string& PortableMapFormat::getName() const
@@ -53,7 +54,7 @@ void PortableMapFormat::shutdownModule()
 
 const std::string& PortableMapFormat::getMapFormatName() const
 {
-	static std::string _name = "Portable";
+	static std::string _name = NAME;
 	return _name;
 }
 

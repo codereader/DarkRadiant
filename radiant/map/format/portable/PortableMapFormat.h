@@ -15,6 +15,7 @@ class PortableMapFormat :
 public:
 	// Format version, will be exported as <map> tag attribute
 	static std::size_t VERSION;
+	static const char* NAME;
 
 	typedef std::shared_ptr<PortableMapFormat> Ptr;
 

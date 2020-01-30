@@ -950,7 +950,12 @@ void Map::importSelected(std::istream& in)
 
 void Map::exportSelected(std::ostream& out)
 {
-    MapFormatPtr format = getFormat();
+    exportSelected(out, getFormat());
+}
+
+void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
+{
+    assert(format);
 
     IMapWriterPtr writer = format->getMapWriter();
 

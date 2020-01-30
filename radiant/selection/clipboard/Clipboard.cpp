@@ -7,7 +7,9 @@
 #include "map/Map.h"
 #include "camera/GlobalCamera.h"
 #include "brush/FaceInstance.h"
+#include "map/format/portable/PortableMapFormat.h"
 #include "selection/algorithm/General.h"
+#include "selection/algorithm/Transformation.h"
 #include "selection/algorithm/Transformation.h"
 
 namespace selection
@@ -27,9 +29,12 @@ void copy(const cmd::ArgumentList& args)
 {
 	if (FaceInstance::Selection().empty())
     {
+		// When exporting to the system clipboard, use the portable format
+		auto format = GlobalMapFormatManager().getMapFormatByName(map::format::PortableMapFormat::NAME);
+
         // Stream selected objects into a stringstream
         std::stringstream out;
-        GlobalMap().exportSelected(out);
+        GlobalMap().exportSelected(out, format);
 
         // Copy the resulting string to the clipboard
         wxutil::copyToClipboard(out.str());
