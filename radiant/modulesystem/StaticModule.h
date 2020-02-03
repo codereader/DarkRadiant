@@ -24,6 +24,8 @@ namespace module
 template <class ModuleType>
 class StaticModule
 {
+    static_assert(std::is_base_of<RegisterableModule, ModuleType>::value, "ModuleType must be of type RegisterableModule");
+
 	// Define a std::shared_ptr for the given class type
 	typedef std::shared_ptr<ModuleType> ModuleTypePtr;
 	std::string _moduleName;
