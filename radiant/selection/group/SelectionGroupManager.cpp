@@ -29,86 +29,6 @@ SelectionGroupManager::SelectionGroupManager() :
 	_nextGroupId(1)
 {}
 
-const std::string& SelectionGroupManager::getName() const
-{
-	static std::string _name(MODULE_SELECTIONGROUP);
-	return _name;
-}
-
-const StringSet& SelectionGroupManager::getDependencies() const
-{
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_RADIANT);
-		_dependencies.insert(MODULE_MAP);
-		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
-	}
-
-	return _dependencies;
-}
-
-void SelectionGroupManager::initialiseModule(const ApplicationContext& ctx)
-{
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
-	GlobalCommandSystem().addCommand("GroupSelected",
-		std::bind(&SelectionGroupManager::groupSelectedCmd, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("UngroupSelected",
-		std::bind(&SelectionGroupManager::ungroupSelectedCmd, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("DeleteAllSelectionGroups",
-		std::bind(&SelectionGroupManager::deleteAllSelectionGroupsCmd, this, std::placeholders::_1));
-
-	GlobalEventManager().addCommand("GroupSelected", "GroupSelected");
-	GlobalEventManager().addCommand("UngroupSelected", "UngroupSelected");
-	GlobalEventManager().addCommand("DeleteAllSelectionGroups", "DeleteAllSelectionGroups");
-
-	GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(*this, &SelectionGroupManager::onMapEvent)
-	);
-
-	GlobalMapInfoFileManager().registerInfoFileModule(
-		std::make_shared<SelectionGroupInfoFileModule>()
-	);
-
-	GlobalRadiant().signal_radiantStarted().connect([this] ()
-	{
-		GlobalUIManager().getMenuManager().insert(
-			"main/edit/parent", "ungroupSelected", ui::eMenuItemType::menuItem, _("Ungroup Selection"), "ungroup_selection.png", "UngroupSelected");
-
-		GlobalUIManager().getMenuManager().insert(
-			"main/edit/ungroupSelected", "groupSelected", ui::eMenuItemType::menuItem, _("Group Selection"), "group_selection.png", "GroupSelected");
-
-		GlobalUIManager().getMenuManager().insert(
-			"main/edit/parent", "groupSelectedSeparator", ui::eMenuItemType::menuSeparator, "", "", "");
-	});
-
-	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
-		new wxutil::IconTextMenuItem(_("Group Selection"), "group_selection.png"),
-		[]() { algorithm::groupSelected(); },
-		[]() { return algorithm::CommandNotAvailableException::ToBool(algorithm::checkGroupSelectedAvailable); }),
-		ui::IOrthoContextMenu::SECTION_SELECTION_GROUPS);
-
-	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
-		new wxutil::IconTextMenuItem(_("Ungroup Selection"), "ungroup_selection.png"),
-		[]() { algorithm::ungroupSelected(); },
-		[]() { return algorithm::CommandNotAvailableException::ToBool(algorithm::checkUngroupSelectedAvailable); }), 
-		ui::IOrthoContextMenu::SECTION_SELECTION_GROUPS);
-}
-
-void SelectionGroupManager::onMapEvent(IMap::MapEvent ev)
-{
-	if (ev == IMap::MapUnloaded)
-	{
-		deleteAllSelectionGroups();
-		resetNextGroupId();
-	}
-}
-
 ISelectionGroupPtr SelectionGroupManager::createSelectionGroup()
 {
 	// Reserve a new group ID
@@ -131,7 +51,7 @@ ISelectionGroupPtr SelectionGroupManager::findOrCreateSelectionGroup(std::size_t
 {
 	SelectionGroupMap::iterator found = _groups.find(id);
 
-	return found != _groups.end() ? found->second : createSelectionGroupInternal(id);
+	return found != _groups.end() ? found->second : createSelectionGroup(id);
 }
 
 void SelectionGroupManager::setGroupSelected(std::size_t id, bool selected)
@@ -179,6 +99,8 @@ void SelectionGroupManager::deleteAllSelectionGroups()
 	}
 
 	assert(_groups.empty());
+
+	resetNextGroupId();
 }
 
 void SelectionGroupManager::foreachSelectionGroup(const std::function<void(ISelectionGroup&)>& func)
@@ -189,7 +111,7 @@ void SelectionGroupManager::foreachSelectionGroup(const std::function<void(ISele
 	}
 }
 
-ISelectionGroupPtr SelectionGroupManager::createSelectionGroupInternal(std::size_t id)
+ISelectionGroupPtr SelectionGroupManager::createSelectionGroup(std::size_t id)
 {
 	if (_groups.find(id) != _groups.end())
 	{
@@ -197,44 +119,13 @@ ISelectionGroupPtr SelectionGroupManager::createSelectionGroupInternal(std::size
 		throw std::runtime_error("Group ID already taken");
 	}
 
-	SelectionGroupPtr group = std::make_shared<SelectionGroup>(id);
+	auto group = std::make_shared<SelectionGroup>(id);
 	_groups[id] = group;
 
 	// Adjust the next group ID 
 	resetNextGroupId();
 
 	return group;
-}
-
-void SelectionGroupManager::deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args)
-{
-	deleteAllSelectionGroups();
-}
-
-void SelectionGroupManager::groupSelectedCmd(const cmd::ArgumentList& args)
-{
-	try
-	{
-		algorithm::groupSelected();
-	}
-	catch (selection::algorithm::CommandNotAvailableException& ex)
-	{
-		rError() << ex.what() << std::endl;
-		wxutil::Messagebox::ShowError(ex.what());
-	}
-}
-
-void SelectionGroupManager::ungroupSelectedCmd(const cmd::ArgumentList& args)
-{
-	try
-	{
-		algorithm::ungroupSelected();
-	}
-	catch (selection::algorithm::CommandNotAvailableException& ex)
-	{
-		rError() << ex.what() << std::endl;
-		wxutil::Messagebox::ShowError(ex.what());
-	}
 }
 
 void SelectionGroupManager::resetNextGroupId()
@@ -251,30 +142,12 @@ void SelectionGroupManager::resetNextGroupId()
 
 std::size_t SelectionGroupManager::generateGroupId()
 {
-#if 0
-	for (std::size_t i = 0; i < std::numeric_limits<std::size_t>::max(); ++i)
-	{
-		if (_groups.find(i) == _groups.end())
-		{
-			// Found a free ID
-			return i;
-		}
-	}
-#endif
-
 	if (_nextGroupId + 1 == std::numeric_limits<std::size_t>::max())
 	{
 		throw std::runtime_error("Out of group IDs.");
 	}
 
 	return _nextGroupId++;
-}
-
-module::StaticModule<SelectionGroupManager> staticSelectionGroupManagerModule;
-
-SelectionGroupManager& getSelectionGroupManagerInternal()
-{
-	return *staticSelectionGroupManagerModule.getModule();
 }
 
 }

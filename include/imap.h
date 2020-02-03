@@ -18,6 +18,8 @@ class IMapFileChangeTracker;
 // see ientity.h
 class ITargetManager;
 
+namespace selection { class ISelectionGroupManager;  }
+
 namespace scene
 {
 
@@ -36,6 +38,11 @@ public:
      * greebo: Returns the namespace of this root.
      */
     virtual const INamespacePtr& getNamespace() = 0;
+
+	/**
+	 * Access the selection group manager of this hierarchy.
+	 */
+	virtual selection::ISelectionGroupManager& getSelectionGroupManager() = 0;
 
     /**
      * Returns the target manager keeping track of all
@@ -107,7 +114,8 @@ typedef std::shared_ptr<IMap> IMapPtr;
 const char* const MODULE_MAP("Map");
 
 // Application-wide Accessor to the currently active map
-inline IMap& GlobalMapModule() {
+inline IMap& GlobalMapModule()
+{
 	// Cache the reference locally
 	static IMap& _mapModule(
 		*std::static_pointer_cast<IMap>(

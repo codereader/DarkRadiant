@@ -765,6 +765,7 @@
     <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Planes.cpp" />
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp" />
+    <ClCompile Include="..\..\radiant\selection\group\SelectionGroupModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupManager.cpp" />
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />

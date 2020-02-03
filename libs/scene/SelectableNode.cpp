@@ -38,7 +38,7 @@ void SelectableNode::onInsertIntoScene(IMapRootNode& root)
 	// is not there anymore, it will be created.
 	for (std::size_t id : _groups)
 	{
-		selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().findOrCreateSelectionGroup(id);
+		auto group = root.getSelectionGroupManager().findOrCreateSelectionGroup(id);
 
 		if (group)
 		{
@@ -67,7 +67,7 @@ void SelectableNode::onRemoveFromScene(IMapRootNode& root)
 		{
 			std::size_t id = _groups.front();
 
-			selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().getSelectionGroup(id);
+			auto group = root.getSelectionGroupManager().getSelectionGroup(id);
 
 			if (group)
 			{

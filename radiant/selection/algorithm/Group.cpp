@@ -17,6 +17,13 @@ namespace selection {
 
 namespace algorithm {
 
+ISelectionGroupManager& getMapSelectionGroupManager()
+{
+	assert(GlobalMapModule().getRoot());
+
+	return GlobalMapModule().getRoot()->getSelectionGroupManager();
+}
+
 void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
 {
 	UndoableCommand command("convertSelectedToFuncStatic");
@@ -397,6 +404,11 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 
 void checkGroupSelectedAvailable()
 {
+	if (!GlobalMap().getRoot())
+	{
+		throw CommandNotAvailableException(_("No map loaded"));
+	}
+
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive &&
 		GlobalSelectionSystem().Mode() != SelectionSystem::eGroupPart)
 	{
@@ -447,7 +459,7 @@ void groupSelected()
 
 	UndoableCommand cmd("GroupSelected");
 
-	ISelectionGroupPtr group = GlobalSelectionGroupManager().createSelectionGroup();
+	ISelectionGroupPtr group = getMapSelectionGroupManager().createSelectionGroup();
 
 	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
 	{
@@ -459,6 +471,11 @@ void groupSelected()
 
 void checkUngroupSelectedAvailable()
 {
+	if (!GlobalMap().getRoot())
+	{
+		throw CommandNotAvailableException(_("No map loaded"));
+	}
+
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive &&
 		GlobalSelectionSystem().Mode() != SelectionSystem::eGroupPart)
 	{
@@ -513,13 +530,52 @@ void ungroupSelected()
 		}
 	});
 
+	auto& selGroupMgr = getMapSelectionGroupManager();
+
 	// Now remove the found group by ID (maybe convert them to a selection set before removal?)
-	std::for_each(ids.begin(), ids.end(), [](std::size_t id)
+	std::for_each(ids.begin(), ids.end(), [&](std::size_t id)
 	{
-		GlobalSelectionGroupManager().deleteSelectionGroup(id);
+		selGroupMgr.deleteSelectionGroup(id);
 	});
 
 	GlobalMainFrame().updateAllWindows();
+}
+
+void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args)
+{
+	if (!GlobalMap().getRoot())
+	{
+		rError() << "No map loaded, cannot delete groups." << std::endl;
+		return;
+	}
+
+	getMapSelectionGroupManager().deleteAllSelectionGroups();
+}
+
+void groupSelectedCmd(const cmd::ArgumentList& args)
+{
+	try
+	{
+		groupSelected();
+	}
+	catch (CommandNotAvailableException & ex)
+	{
+		rError() << ex.what() << std::endl;
+		wxutil::Messagebox::ShowError(ex.what());
+	}
+}
+
+void ungroupSelectedCmd(const cmd::ArgumentList& args)
+{
+	try
+	{
+		ungroupSelected();
+	}
+	catch (CommandNotAvailableException & ex)
+	{
+		rError() << ex.what() << std::endl;
+		wxutil::Messagebox::ShowError(ex.what());
+	}
 }
 
 } // namespace algorithm

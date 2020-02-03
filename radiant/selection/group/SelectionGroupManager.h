@@ -1,8 +1,6 @@
 #pragma once
 
 #include "iselectiongroup.h"
-#include "imap.h"
-#include "icommandsystem.h"
 #include <map>
 
 namespace selection
@@ -25,38 +23,20 @@ private:
 public:
 	SelectionGroupManager();
 
-	const std::string& getName() const override;
-	const StringSet& getDependencies() const override;
-	void initialiseModule(const ApplicationContext& ctx) override;
-
 	ISelectionGroupPtr createSelectionGroup() override;
+	ISelectionGroupPtr createSelectionGroup(std::size_t id) override;
 	void setGroupSelected(std::size_t id, bool selected) override;
 	void deleteAllSelectionGroups() override;
 	void deleteSelectionGroup(std::size_t id) override;
 	ISelectionGroupPtr getSelectionGroup(std::size_t id) override;
 	ISelectionGroupPtr findOrCreateSelectionGroup(std::size_t id) override;
-
-	// Internal methods only accessible through getSelectionGroupManagerInternal()
-
-	void foreachSelectionGroup(const std::function<void(ISelectionGroup&)>& func);
-	
-	// Internal method allowing to create groups by ID
-	ISelectionGroupPtr createSelectionGroupInternal(std::size_t id);
+	void foreachSelectionGroup(const std::function<void(ISelectionGroup&)>& func) override;
 
 private:
-	void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args);
-	void groupSelectedCmd(const cmd::ArgumentList& args);
-	void ungroupSelectedCmd(const cmd::ArgumentList& args);
-
-	void onMapEvent(IMap::MapEvent ev);
-
 	std::size_t generateGroupId();
 	void resetNextGroupId();
 
 	void doDeleteSelectionGroup(std::size_t id);
 };
-
-// Internal accessor method to get hold of the implementing subclass
-SelectionGroupManager& getSelectionGroupManagerInternal();
 
 }

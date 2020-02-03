@@ -138,6 +138,12 @@ namespace selection {
 	void mergeSelectedEntities(const cmd::ArgumentList& args);
 
 	/**
+	 * Returns the selection group manager of the current map's root node.
+	 * This will fail if there is no map root node, check this first.
+	 */
+	ISelectionGroupManager& getMapSelectionGroupManager();
+
+	/**
 	 * Groups the currently selected elements.
 	 * Will throw a CommandNotAvailableException if it cannot execute.
 	 */
@@ -160,6 +166,11 @@ namespace selection {
 	* at this point, otherwise throws a CommandNotAvailableException.
 	*/
 	void checkUngroupSelectedAvailable();
+
+	// Command targets
+	void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args);
+	void groupSelectedCmd(const cmd::ArgumentList& args);
+	void ungroupSelectedCmd(const cmd::ArgumentList& args);
 
 	} // namespace algorithm
 } // namespace selection

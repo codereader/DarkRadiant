@@ -390,6 +390,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/manipulators/RotateManipulator.cpp \
                       selection/manipulators/ManipulatorComponents.cpp \
                       selection/manipulators/ScaleManipulator.cpp \
+					  selection/group/SelectionGroupModule.cpp \
 					  selection/group/SelectionGroupManager.cpp \
 					  selection/group/SelectionGroupInfoFileModule.cpp \
                       selection/manipulators/TranslateManipulator.cpp \

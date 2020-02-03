@@ -1591,6 +1591,9 @@
     <ClCompile Include="..\..\radiant\map\algorithm\Import.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\group\SelectionGroupModule.cpp">
+      <Filter>src\selection\group</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
