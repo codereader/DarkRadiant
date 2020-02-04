@@ -989,6 +989,7 @@ insert an instance of the entity into the map at the right-clicked location. If
 the selected entity type requires a brush selection and no brush is selected, a
 warning will be shown at this point.
 
+[[EntityInspector]]
 ==== Editing entity properties
 
 Every entity has a list of key/value pairs known as _properties_ or _spawnargs_.
@@ -1040,6 +1041,72 @@ entity which overrides the inherited default.
 which shows a brief explanation of certain properties. If a property has help
 text available, the question mark icon will be shown in the *?* column.
 |===
+
+=== Reparenting primitives
+
+Whenever a new brush or patch is created, it will automatically be made a child
+of the special *worldspawn* entity, which serves as the default entity
+containing all of the primitives which define the world geometry. However,
+*worldspawn* is not the only entity which can contain brushes and patches as
+children.
+
+When you create a model using the <<CreatingModels,model selector>>, DarkRadiant
+will insert a type of entity called a *func_static* into the map to represent
+the model geometry. A *func_static* can contain a model file loaded from disk in
+LWO or ASE format, but it can also be used as a parent for one or more
+primitives created within DarkRadiant. In either case, the behaviour of
+*func_static* is the same: it represents a static mesh which is rendered in
+game but is considered separate from the main world geometry, meaning that it
+does not participate in map compilation, will not seal the map from leaks, and
+will not cause intersecting brushes to be subdivided.
+
+It is therefore often useful to make certain brushes and patches — typically
+those which represent "fine detail" rather than entire walls, floors and the
+like — into *func_static* entities to improve in-game performance and reduce the
+chances for map compilation problems caused by excessively complex world
+geometry.
+
+==== Converting primitives into func_static
+
+To convert one or more existing primitives into a *func_static* entity, simply
+select all of the primitives, right-click in the 2D window, and choose *Convert
+to func_static*.
+
+After converting a primitive, a number of changes are noticeable:
+
+. The primitive may be drawn in a different colour.
+. The primitive will no longer be resizeable by dragging its boundary with the
+mouse.
+. When the primitive is selected, the *Entity Inspector* will no longer show the
+*worldspawn* entity, but a new entity with a *classname* of `func_static`. You
+can set spawnargs on this entity like any other (including giving it a custom
+name).
+. Selecting any primitive contained by a *func_static* will cause a small X/Y/Z
+axis widget to be drawn at the entity's origin position (which may be inside one
+of the primitives, or outside all of them, depending on their layout).
+. If there are multiple primitives contained within a single entity, selecting
+any individual primitive will cause all of the entity's primitives to be
+selected.
+
+==== Selecting individual child primitives
+
+As mentioned in the previous section, selecting any primitive which comprises
+part of a *func_static* will cause the entire entity and all of its child
+primitives to be selected together. This allows you to easily move the entire
+static object by simply dragging any one of its primitives.
+
+However, it is still possible to perform operations on a single primitive, for
+example resizing a brush, by selecting it with the *TAB* key. Each press of
+*TAB* will cause DarkRadiant to select a different primitive contained within
+the entity, after which it will return to selecting the entire entity. With only
+a single primitive selected, all of the normal operations are possible on that
+primitive, for example deleting or resizing it.
+
+The <<EntityInspector,entity inspector>> widget makes it clear whether you have
+selected an entity or a primitive within that entity, using the text above the
+list of entity properties. If an entire entity is selected, the text will appear
+similar to `Entity&nbsp;1`, whereas with a primitive selected it will read
+`Entity&nbsp;1,&nbsp;Primitive&nbsp;1`.
 
 === Compiling a map
 

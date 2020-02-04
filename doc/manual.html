@@ -482,7 +482,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#CreatingModels">Creating models</a></li>
 <li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
 <li><a href="#_creating_other_entity_types">Creating other entity types</a></li>
-<li><a href="#_editing_entity_properties">Editing entity properties</a></li>
+<li><a href="#EntityInspector">Editing entity properties</a></li>
+</ul>
+</li>
+<li><a href="#_reparenting_primitives">Reparenting primitives</a>
+<ul class="sectlevel3">
+<li><a href="#_converting_primitives_into_func_static">Converting primitives into func_static</a></li>
+<li><a href="#_selecting_individual_child_primitives">Selecting individual child primitives</a></li>
 </ul>
 </li>
 <li><a href="#_compiling_a_map">Compiling a map</a>
@@ -2145,7 +2151,7 @@ warning will be shown at this point.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_editing_entity_properties">Editing entity properties</h4>
+<h4 id="EntityInspector">Editing entity properties</h4>
 <div class="paragraph">
 <p>Every entity has a list of key/value pairs known as <em>properties</em> or <em>spawnargs</em>.
 These properties are displayed on the <strong>Entity</strong> tab of the editing panel.</p>
@@ -2229,6 +2235,96 @@ text available, the question mark icon will be shown in the <strong>?</strong> c
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reparenting_primitives">Reparenting primitives</h3>
+<div class="paragraph">
+<p>Whenever a new brush or patch is created, it will automatically be made a child
+of the special <strong>worldspawn</strong> entity, which serves as the default entity
+containing all of the primitives which define the world geometry. However,
+<strong>worldspawn</strong> is not the only entity which can contain brushes and patches as
+children.</p>
+</div>
+<div class="paragraph">
+<p>When you create a model using the <a href="#CreatingModels">model selector</a>, DarkRadiant
+will insert a type of entity called a <strong>func_static</strong> into the map to represent
+the model geometry. A <strong>func_static</strong> can contain a model file loaded from disk in
+LWO or ASE format, but it can also be used as a parent for one or more
+primitives created within DarkRadiant. In either case, the behaviour of
+<strong>func_static</strong> is the same: it represents a static mesh which is rendered in
+game but is considered separate from the main world geometry, meaning that it
+does not participate in map compilation, will not seal the map from leaks, and
+will not cause intersecting brushes to be subdivided.</p>
+</div>
+<div class="paragraph">
+<p>It is therefore often useful to make certain brushes and patches — typically
+those which represent "fine detail" rather than entire walls, floors and the
+like — into <strong>func_static</strong> entities to improve in-game performance and reduce the
+chances for map compilation problems caused by excessively complex world
+geometry.</p>
+</div>
+<div class="sect3">
+<h4 id="_converting_primitives_into_func_static">Converting primitives into func_static</h4>
+<div class="paragraph">
+<p>To convert one or more existing primitives into a <strong>func_static</strong> entity, simply
+select all of the primitives, right-click in the 2D window, and choose <strong>Convert
+to func_static</strong>.</p>
+</div>
+<div class="paragraph">
+<p>After converting a primitive, a number of changes are noticeable:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The primitive may be drawn in a different colour.</p>
+</li>
+<li>
+<p>The primitive will no longer be resizeable by dragging its boundary with the
+mouse.</p>
+</li>
+<li>
+<p>When the primitive is selected, the <strong>Entity Inspector</strong> will no longer show the
+<strong>worldspawn</strong> entity, but a new entity with a <strong>classname</strong> of <code>func_static</code>. You
+can set spawnargs on this entity like any other (including giving it a custom
+name).</p>
+</li>
+<li>
+<p>Selecting any primitive contained by a <strong>func_static</strong> will cause a small X/Y/Z
+axis widget to be drawn at the entity&#8217;s origin position (which may be inside one
+of the primitives, or outside all of them, depending on their layout).</p>
+</li>
+<li>
+<p>If there are multiple primitives contained within a single entity, selecting
+any individual primitive will cause all of the entity&#8217;s primitives to be
+selected.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_selecting_individual_child_primitives">Selecting individual child primitives</h4>
+<div class="paragraph">
+<p>As mentioned in the previous section, selecting any primitive which comprises
+part of a <strong>func_static</strong> will cause the entire entity and all of its child
+primitives to be selected together. This allows you to easily move the entire
+static object by simply dragging any one of its primitives.</p>
+</div>
+<div class="paragraph">
+<p>However, it is still possible to perform operations on a single primitive, for
+example resizing a brush, by selecting it with the <strong>TAB</strong> key. Each press of
+<strong>TAB</strong> will cause DarkRadiant to select a different primitive contained within
+the entity, after which it will return to selecting the entire entity. With only
+a single primitive selected, all of the normal operations are possible on that
+primitive, for example deleting or resizing it.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="#EntityInspector">entity inspector</a> widget makes it clear whether you have
+selected an entity or a primitive within that entity, using the text above the
+list of entity properties. If an entire entity is selected, the text will appear
+similar to <code>Entity&nbsp;1</code>, whereas with a primitive selected it will read
+<code>Entity&nbsp;1,&nbsp;Primitive&nbsp;1</code>.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -3520,7 +3616,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-01-28 21:37:38 GMT
+Last updated 2020-02-04 21:15:22 GMT
 </div>
 </div>
 </body>
