@@ -172,10 +172,16 @@ void SelectableNode::importState(const IUndoMementoPtr& state)
 	std::set_difference(newGroups.begin(), newGroups.end(), _groups.begin(), _groups.end(),
 		std::inserter(addedGroups, addedGroups.begin()));
 
+	auto rootNode = getRootNode();
+	if (!rootNode)
+	{
+		throw std::runtime_error("No root available, cannot import undo state for orphaned node.");
+	}
+
 	// Remove ourselves from each removed group ID
 	for (GroupIds::value_type id : removedGroups)
 	{
-		selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().getSelectionGroup(id);
+		auto group = rootNode->getSelectionGroupManager().getSelectionGroup(id);
 
 		if (group)
 		{
@@ -186,7 +192,7 @@ void SelectableNode::importState(const IUndoMementoPtr& state)
 	// Add ourselves to each missing group ID
 	for (GroupIds::value_type id : addedGroups)
 	{
-		selection::ISelectionGroupPtr group = GlobalSelectionGroupManager().findOrCreateSelectionGroup(id);
+		auto group = rootNode->getSelectionGroupManager().findOrCreateSelectionGroup(id);
 
 		assert(group);
 		group->addNode(getSelf());
@@ -216,8 +222,14 @@ void SelectableNode::onSelectionStatusChange(bool changeGroupStatus)
 	{
 		std::size_t mostRecentGroupId = _groups.back();
 
+		auto rootNode = getRootNode();
+		if (!rootNode)
+		{
+			throw std::runtime_error("No root available, cannot group-select an orphaned node.");
+		}
+
 		// Propagate the selection status of this node to all members of the topmost group
-		GlobalSelectionGroupManager().setGroupSelected(mostRecentGroupId, selected);
+		rootNode->getSelectionGroupManager().setGroupSelected(mostRecentGroupId, selected);
 	}
 }
 

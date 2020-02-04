@@ -3,6 +3,7 @@
 #include "inamespace.h"
 #include "imap.h"
 #include "ientity.h"
+#include "iselectiongroup.h"
 #include "scene/Node.h"
 #include "UndoFileChangeTracker.h"
 #include "transformlib.h"
@@ -11,12 +12,15 @@
 namespace map 
 {
 
-/** greebo: This is the root node of the map, it gets inserted as
- * 			the top node into the scenegraph. Each entity node is
- * 			inserted as child node to this.
+/** 
+ * greebo: This is the root node of the map, it gets inserted as
+ * the top node into the scenegraph. Each entity node is
+ * inserted as child node to this.
  *
- * Note:	Inserting a child node to this MapRoot automatically
- * 			triggers an instantiation of this child node.
+ * Note: Inserting a child node to this MapRoot automatically
+ * triggers an "instantiation" of this child node, which can be
+ * seen as "activation" of this node. In contrast to nodes on the 
+ * undo stack which are "not instantiated"/inactive.
  */
 class RootNode :
 	public scene::Node,
@@ -32,8 +36,9 @@ private:
 	// The namespace this node belongs to
 	INamespacePtr _namespace;
 
-    // The target tracker
     ITargetManagerPtr _targetManager;
+
+    selection::ISelectionGroupManager::Ptr _selectionGroupManager;
 
 	AABB _emptyAABB;
 
@@ -47,6 +52,7 @@ public:
     const INamespacePtr& getNamespace() override;
     IMapFileChangeTracker& getUndoChangeTracker() override;
     ITargetManager& getTargetManager() override;
+    selection::ISelectionGroupManager& getSelectionGroupManager() override;
 
 	// Renderable implementation (empty)
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override

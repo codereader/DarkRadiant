@@ -125,7 +125,7 @@ public:
 
 const char* const MODULE_SELECTIONGROUPMODULE = "SelectionGroupModule";
 
-inline selection::ISelectionGroupModule& GlobalSelectionGroupFactory()
+inline selection::ISelectionGroupModule& GlobalSelectionGroupModule()
 {
 	// Cache the reference locally
 	static selection::ISelectionGroupModule& _module(

@@ -1,9 +1,26 @@
 #include "SelectionGroupInterface.h"
 
+#include "imap.h"
+#include "itextstream.h"
 #include <pybind11/pybind11.h>
 
 namespace script
 {
+
+namespace
+{
+
+inline selection::ISelectionGroupManager& getMapGroupManager()
+{
+	if (!GlobalMapModule().getRoot())
+	{
+		throw std::runtime_error("No map loaded.");
+	}
+
+	return GlobalMapModule().getRoot()->getSelectionGroupManager();
+}
+
+}
 
 ScriptSelectionGroup::ScriptSelectionGroup(const selection::ISelectionGroupPtr& group) :
 	_group(group)
@@ -73,32 +90,77 @@ std::string ScriptSelectionGroup::_emptyStr;
 
 ScriptSelectionGroup SelectionGroupInterface::createSelectionGroup()
 {
-	return ScriptSelectionGroup(GlobalSelectionGroupManager().createSelectionGroup());
+	try
+	{
+		return ScriptSelectionGroup(getMapGroupManager().createSelectionGroup());
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << ex.what() << std::endl;
+		return ScriptSelectionGroup(selection::ISelectionGroupPtr());
+	}
 }
 
 ScriptSelectionGroup SelectionGroupInterface::getSelectionGroup(std::size_t id)
 {
-	return ScriptSelectionGroup(GlobalSelectionGroupManager().getSelectionGroup(id));
+	try
+	{
+		return ScriptSelectionGroup(getMapGroupManager().getSelectionGroup(id));
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << ex.what() << std::endl;
+		return ScriptSelectionGroup(selection::ISelectionGroupPtr());
+	}
 }
 
 ScriptSelectionGroup SelectionGroupInterface::findOrCreateSelectionGroup(std::size_t id)
 {
-	return ScriptSelectionGroup(GlobalSelectionGroupManager().findOrCreateSelectionGroup(id));
+	try
+	{
+		return ScriptSelectionGroup(getMapGroupManager().findOrCreateSelectionGroup(id));
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << ex.what() << std::endl;
+		return ScriptSelectionGroup(selection::ISelectionGroupPtr());
+	}
 }
 
 void SelectionGroupInterface::setGroupSelected(std::size_t id, int selected)
 {
-	GlobalSelectionGroupManager().setGroupSelected(id, static_cast<bool>(selected));
+	try
+	{
+		getMapGroupManager().setGroupSelected(id, static_cast<bool>(selected));
+	}
+	catch (const std::exception& ex)
+	{
+		rError() << ex.what() << std::endl;
+	}
 }
 
 void SelectionGroupInterface::deleteAllSelectionGroups()
 {
-	GlobalSelectionGroupManager().deleteAllSelectionGroups();
+	try
+	{
+		getMapGroupManager().deleteAllSelectionGroups();
+	}
+	catch (const std::exception & ex)
+	{
+		rError() << ex.what() << std::endl;
+	}
 }
 
 void SelectionGroupInterface::deleteSelectionGroup(std::size_t id)
 {
-	GlobalSelectionGroupManager().deleteSelectionGroup(id);
+	try
+	{
+		getMapGroupManager().deleteSelectionGroup(id);
+	}
+	catch (const std::exception & ex)
+	{
+		rError() << ex.what() << std::endl;
+	}
 }
 
 // IScriptInterface implementation

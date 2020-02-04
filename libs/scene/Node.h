@@ -211,6 +211,9 @@ protected:
 	// Clears the TraversableNodeSet
 	virtual void removeAllChildNodes();
 
+	//  Searching this node's ancestry, this returns the toplevel/root node
+	virtual IMapRootNodePtr getRootNode();
+
 private:
 	void evaluateBounds() const;
 	void evaluateChildBounds() const;

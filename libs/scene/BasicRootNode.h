@@ -3,6 +3,7 @@
 #include "imap.h"
 #include "mapfile.h"
 #include "ientity.h"
+#include "iselectiongroup.h"
 #include "Node.h"
 #include "inamespace.h"
 #include "UndoFileChangeTracker.h"
@@ -22,6 +23,7 @@ private:
     INamespacePtr _namespace;
     UndoFileChangeTracker _changeTracker;
     ITargetManagerPtr _targetManager;
+    selection::ISelectionGroupManager::Ptr _selectionGroupManager;
     AABB _emptyAABB;
 
 public:
@@ -29,6 +31,7 @@ public:
     {
         _namespace = GlobalNamespaceFactory().createNamespace();
         _targetManager = GlobalEntityCreator().createTargetManager();
+        _selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
     }
 
     virtual ~BasicRootNode()
@@ -47,6 +50,11 @@ public:
     ITargetManager& getTargetManager() override
     {
         return *_targetManager;
+    }
+
+    selection::ISelectionGroupManager& getSelectionGroupManager() override
+    {
+        return *_selectionGroupManager;
     }
 
     const AABB& localAABB() const override
