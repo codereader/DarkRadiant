@@ -90,6 +90,7 @@ public:
 
 	bool isRoot() const override;
 	void setIsRoot(bool isRoot) override;
+	IMapRootNodePtr getRootNode() override;
 
 	void enable(unsigned int state) override;
 	void disable(unsigned int state) override;
@@ -210,9 +211,6 @@ protected:
 
 	// Clears the TraversableNodeSet
 	virtual void removeAllChildNodes();
-
-	//  Searching this node's ancestry, this returns the toplevel/root node
-	virtual IMapRootNodePtr getRootNode();
 
 private:
 	void evaluateBounds() const;

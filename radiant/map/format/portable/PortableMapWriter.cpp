@@ -74,7 +74,7 @@ void PortableMapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::o
 	// Write selection groups
 	auto selGroups = _map.createChild(TAG_SELECTIONGROUPS);
 
-	selection::getSelectionGroupManagerInternal().foreachSelectionGroup([&](selection::ISelectionGroup& group)
+	root->getSelectionGroupManager().foreachSelectionGroup([&](selection::ISelectionGroup& group)
 	{
 		// Ignore empty groups
 		if (group.size() == 0) return;

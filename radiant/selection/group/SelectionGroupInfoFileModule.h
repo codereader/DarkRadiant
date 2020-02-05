@@ -32,6 +32,7 @@ private:
 	NodeMapping _nodeMapping;
 
 	std::stringstream _output;
+	std::stringstream _selectionGroupBuffer;
 
 	std::size_t _nodeInfoCount;
 

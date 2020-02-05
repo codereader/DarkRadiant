@@ -96,7 +96,8 @@ void PortableMapReader::readSelectionGroups(const xml::Node& mapNode)
 {
 	try
 	{
-		GlobalSelectionGroupManager().deleteAllSelectionGroups();
+		assert(_importFilter.getRootNode());
+		_importFilter.getRootNode()->getSelectionGroupManager().deleteAllSelectionGroups();
 
 		auto mapSelGroups = getNamedChild(mapNode, TAG_SELECTIONGROUPS);
 
@@ -107,7 +108,7 @@ void PortableMapReader::readSelectionGroups(const xml::Node& mapNode)
 			auto id = string::convert<std::size_t>(group.getAttributeValue(ATTR_SELECTIONGROUP_ID));
 			auto name = group.getAttributeValue(ATTR_SELECTIONGROUP_NAME);
 
-			auto newGroup = selection::getSelectionGroupManagerInternal().createSelectionGroupInternal(id);
+			auto newGroup = _importFilter.getRootNode()->getSelectionGroupManager().createSelectionGroup(id);
 			newGroup->setName(name);
 		}
 	}

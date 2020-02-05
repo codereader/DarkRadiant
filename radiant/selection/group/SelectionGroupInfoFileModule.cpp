@@ -32,11 +32,38 @@ void SelectionGroupInfoFileModule::onInfoFileSaveStart()
 {
 	_output.str(std::string());
 	_output.clear();
+	_selectionGroupBuffer.clear();
 	_nodeInfoCount = 0;
 }
 
 void SelectionGroupInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
-{}
+{
+	// Selection Group output
+	_selectionGroupBuffer << "\t" << SELECTION_GROUPS << std::endl;
+
+	_selectionGroupBuffer << "\t{" << std::endl;
+
+	// SelectionGroup 0 { Name of this group }
+
+	std::size_t selectionGroupCount = 0;
+
+	root->getSelectionGroupManager().foreachSelectionGroup([&](ISelectionGroup& group)
+	{
+		// Ignore empty groups
+		if (group.size() == 0) return;
+
+		// Make sure to escape the quotes of the set name, use the XML quote entity
+		_selectionGroupBuffer << "\t\t" << SELECTION_GROUP << " " << group.getId()
+			<< " { \"" << string::replace_all_copy(group.getName(), "\"", "&quot;") << "\" }"
+			<< std::endl;
+
+		selectionGroupCount++;
+	});
+
+	_selectionGroupBuffer << "\t}" << std::endl;
+
+	rMessage() << selectionGroupCount << " selection groups collected." << std::endl;
+}
 
 void SelectionGroupInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
 {}
@@ -107,30 +134,7 @@ void SelectionGroupInfoFileModule::saveNode(const scene::INodePtr& node, std::si
 void SelectionGroupInfoFileModule::writeBlocks(std::ostream& stream)
 {
 	// Selection Group output
-	stream << "\t" << SELECTION_GROUPS << std::endl;
-
-	stream << "\t{" << std::endl;
-
-	// SelectionGroup 0 { Name of this group }
-
-	std::size_t selectionGroupCount = 0;
-
-	getSelectionGroupManagerInternal().foreachSelectionGroup([&] (ISelectionGroup& group)
-	{
-		// Ignore empty groups
-		if (group.size() == 0) return;
-
-		// Make sure to escape the quotes of the set name, use the XML quote entity
-		stream << "\t\t" << SELECTION_GROUP << " " << group.getId()
-			<< " { \"" << string::replace_all_copy(group.getName(), "\"", "&quot;") << "\" }"
-			<< std::endl;
-
-		selectionGroupCount++;
-	});
-
-	stream << "\t}" << std::endl;
-
-	rMessage() << selectionGroupCount << " selection groups exported." << std::endl;
+	stream << _selectionGroupBuffer.str();
 
 	// Write the NodeToLayerMapping block
 	stream << "\t" << NODE_MAPPING << std::endl;
@@ -280,7 +284,7 @@ void SelectionGroupInfoFileModule::parseNodeMappings(parser::DefTokeniser& tok)
 void SelectionGroupInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& root, const map::NodeIndexMap& nodeMap)
 {
 	// Remove all selection sets, there shouldn't be any left at this point
-	GlobalSelectionGroupManager().deleteAllSelectionGroups();
+	root->getSelectionGroupManager().deleteAllSelectionGroups();
 
 	typedef std::map<std::size_t, ISelectionGroupPtr> GroupMap;
 	GroupMap groups;
@@ -291,7 +295,7 @@ void SelectionGroupInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr
 		try
 		{
 			// Create the group by ID
-			ISelectionGroupPtr group = getSelectionGroupManagerInternal().createSelectionGroupInternal(info.id);
+			ISelectionGroupPtr group = root->getSelectionGroupManager().createSelectionGroup(info.id);
 			group->setName(info.name);
 
 			// Store for later retrieval

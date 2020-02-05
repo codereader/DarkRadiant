@@ -13,6 +13,7 @@
 #include "SelectionGroupInfoFileModule.h"
 #include "wxutil/menu/MenuItem.h"
 #include "wxutil/menu/IconTextMenuItem.h"
+#include "modulesystem/StaticModule.h"
 
 namespace selection
 {
@@ -104,7 +105,7 @@ private:
 	}
 };
 
-
+module::StaticModule<SelectionGroupModule> selGroupModule;
 
 }
 
