@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="ObjCompMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>700,600</size>
+		<size>670,600</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -72,7 +72,7 @@
 								<flag>wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>
 								<object class="wxStaticText" name="m_staticText6">
-									<label>Iniital State</label>
+									<label>Initial State</label>
 									<wrap>-1</wrap>
 								</object>
 							</object>
@@ -160,7 +160,7 @@
 								<flag>wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>
 								<object class="wxStaticText" name="m_staticText8">
-									<label>Sucess Logic</label>
+									<label>Success Logic</label>
 									<wrap>-1</wrap>
 								</object>
 							</object>
@@ -340,6 +340,8 @@
 																<object class="wxButton" name="ObjCompAddComponentButton">
 																	<label>Add</label>
 																	<default>0</default>
+																	<markup>0</markup>
+																	<bitmap />
 																</object>
 															</object>
 															<object class="sizeritem">
@@ -349,6 +351,8 @@
 																<object class="wxButton" name="ObjCompDeleteComponentButton">
 																	<label>Delete</label>
 																	<default>0</default>
+																	<markup>0</markup>
+																	<bitmap />
 																</object>
 															</object>
 														</object>
@@ -454,7 +458,7 @@
 													<flag>wxEXPAND</flag>
 													<border>0</border>
 													<object class="wxPanel" name="ObjCompEditorContainer">
-														<style>wxSTATIC_BORDER|wxTAB_TRAVERSAL</style>
+														<style>wxTAB_TRAVERSAL|wxBORDER_STATIC</style>
 														<object class="wxBoxSizer">
 															<orient>wxVERTICAL</orient>
 														</object>
@@ -493,3 +497,4 @@
 		</object>
 	</object>
 </resource>
+
