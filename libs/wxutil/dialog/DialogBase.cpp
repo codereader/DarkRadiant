@@ -18,7 +18,7 @@ void DialogBase::_onDelete(wxCloseEvent& ev)
 DialogBase::DialogBase(const std::string& title, wxWindow* parent)
 : wxDialog(parent ? parent : GlobalMainFrame().getWxTopLevelWindow(),
            wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
-           wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+           wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER)
 {
     Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(DialogBase::_onDelete),
             nullptr, this);
