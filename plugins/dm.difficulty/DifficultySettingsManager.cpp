@@ -68,19 +68,31 @@ void DifficultySettingsManager::loadMapSettings() {
     }
 }
 
-void DifficultySettingsManager::loadDifficultyNames() {
+void DifficultySettingsManager::loadDifficultyNames()
+{
     // Locate the worldspawn entity
     Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
 
     // Try to locate the difficulty menu entity, where the default names are defined
-    IEntityClassPtr eclass = GlobalEntityClassManager().findClass(
+    IEntityClassPtr menuEclass = GlobalEntityClassManager().findClass(
         game::current::getValue<std::string>(GKEY_DIFFICULTY_ENTITYDEF_MENU)
     );
 
+    // Obtain translations for the string table entries from the .game file
+    xml::NodeList transNodes = game::current::getNodes(
+        GKEY_DIFFICULTY_ENTITYDEF_MENU + "/string"
+    );
+    std::map<std::string, std::string> transStrings;
+    for (auto xmlNode: transNodes)
+    {
+        transStrings[xmlNode.getAttributeValue("id")] = xmlNode.getContent();
+    }
+
     // greebo: Setup the default difficulty levels using the found entityDef
     int numLevels = game::current::getValue<int>(GKEY_DIFFICULTY_LEVELS);
-    for (int i = 0; i < numLevels; i++) {
-        std::string nameKey = "diff" + string::to_string(i) + "default";
+    for (int i = 0; i < numLevels; i++)
+    {
+        std::string nameKey = "diff" + std::to_string(i) + "default";
 
         // First, try to find a map-specific name
         if (worldspawn != NULL) {
@@ -92,18 +104,28 @@ void DifficultySettingsManager::loadDifficultyNames() {
             }
         }
 
-        // If the above failed, try to load the default setting
-        if (eclass != NULL) {
-            EntityClassAttribute attr = eclass->getAttribute(nameKey);
+        // If the above failed, try to load the default setting, which we will
+        // need to translate from a string table entry into English.
+        if (menuEclass)
+        {
+            EntityClassAttribute attr = menuEclass->getAttribute(nameKey);
+            std::string rawName = attr.getValue();
+            if (!rawName.empty())
+            {
+                // Look for a translation, otherwise use the raw name
+                auto found = transStrings.find(rawName);
+                if (found != transStrings.end())
+                    _difficultyNames.push_back(found->second);
+                else
+                    _difficultyNames.push_back(rawName);
 
-            if (!attr.getValue().empty()) {
-                _difficultyNames.push_back(attr.getValue());
+                // Finished for this difficulty level
                 continue;
             }
         }
 
         // Fall back to a non-empty default
-        _difficultyNames.push_back(string::to_string(i));
+        _difficultyNames.push_back(std::to_string(i));
     }
 }
 

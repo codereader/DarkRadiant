@@ -13,6 +13,15 @@ namespace current
 
 /**
  * \brief
+ * Get the node(s) identified by the given path in the current game tree.
+ */
+inline xml::NodeList getNodes(const std::string& localPath)
+{
+	return GlobalGameManager().currentGame()->getLocalXPath(localPath);
+}
+
+/**
+ * \brief
  * Get the value of the current game's tree in the registry and convert it 
  * to type T. If the key cannot be found or is not convertible to the 
  * required type, a default-constructed T will be returned.
@@ -23,8 +32,7 @@ namespace current
 template<typename T> 
 inline T getValue(const std::string& localXPath, T defaultVal = T())
 {
-	xml::NodeList list = GlobalGameManager().currentGame()->getLocalXPath(localXPath);
-
+	xml::NodeList list = getNodes(localXPath);
 	return list.empty() ? defaultVal : string::convert<T>(list[0].getAttributeValue("value"));
 }
 
