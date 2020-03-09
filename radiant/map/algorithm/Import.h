@@ -3,6 +3,14 @@
 #include <istream>
 #include <string>
 
+namespace scene
+{
+class INode;
+typedef std::shared_ptr<INode> INodePtr;
+class IMapRootNode;
+typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
+}
+
 namespace map
 {
 
@@ -11,6 +19,13 @@ typedef std::shared_ptr<MapFormat> MapFormatPtr;
 
 namespace algorithm
 {
+
+/**
+ * Ensures that all names in the foreign root node are adjusted such that
+ * they don't conflict with any names in the target root's namespace, while keeping
+ * all the links within the imported nodes intact.
+ */
+void prepareNamesForImport(const scene::IMapRootNodePtr& targetRoot, const scene::INodePtr& foreignRoot);
 
 /**
  * Imports map objects from the given stream, inserting it into the active map.

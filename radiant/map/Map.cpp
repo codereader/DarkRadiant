@@ -40,6 +40,7 @@
 #include "map/RootNode.h"
 #include "map/MapResource.h"
 #include "map/algorithm/Merge.h"
+#include "map/algorithm/Import.h"
 #include "map/algorithm/Export.h"
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
@@ -476,15 +477,8 @@ bool Map::import(const std::string& filename)
             // is not the NULL node
             scene::INodePtr otherRoot = resource->getNode();
 
-            // Adjust all new names to fit into the existing map namespace,
-            // this routine will be changing a lot of names in the importNamespace
-            INamespacePtr nspace = getRoot()->getNamespace();
-
-            if (nspace)
-            {
-                // Prepare our namespace for import
-                nspace->ensureNoConflicts(otherRoot);
-            }
+            // Adjust all new names to fit into the existing map namespace
+            algorithm::prepareNamesForImport(getRoot(), otherRoot);
 
             MergeMap(otherRoot);
             success = true;

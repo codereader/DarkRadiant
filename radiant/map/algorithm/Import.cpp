@@ -2,6 +2,7 @@
 
 #include "imap.h"
 #include "imapformat.h"
+#include "inamespace.h"
 #include "ientity.h"
 #include "scene/BasicRootNode.h"
 #include "map/algorithm/ChildPrimitives.h"
@@ -15,6 +16,18 @@ namespace map
 
 namespace algorithm
 {
+
+void prepareNamesForImport(const scene::IMapRootNodePtr& targetRoot, const scene::INodePtr& foreignRoot)
+{
+    const auto& nspace = targetRoot->getNamespace();
+
+    if (nspace)
+    {
+        // Prepare all names, but do not import them into the namespace. This
+        // will happen when nodes are added to the target root later by the caller.
+        nspace->ensureNoConflicts(foreignRoot);
+    }
+}
 
 MapFormatPtr determineMapFormat(std::istream& stream, const std::string& type)
 {
@@ -109,16 +122,8 @@ void importFromStream(std::istream& stream)
         // Prepare child primitives
         addOriginToChildPrimitives(importFilter.getRootNode());
 
-        // Adjust all new names to fit into the existing map namespace,
-        // this routine will be changing a lot of names in the importNamespace
-        INamespacePtr nspace = GlobalMap().getRoot()->getNamespace();
-
-        if (nspace)
-        {
-            // Prepare all names, but do not import them into the namespace. This
-            // will happen during the MergeMap call.
-            nspace->ensureNoConflicts(importFilter.getRootNode());
-        }
+        // Adjust all new names to fit into the existing map namespace
+        prepareNamesForImport(GlobalMap().getRoot(), importFilter.getRootNode());
 
         MergeMap(importFilter.getRootNode());
     }

@@ -20,6 +20,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
+#include "map/algorithm/Import.h"
 #include "scene/BasicRootNode.h"
 #include "debugging/debugging.h"
 #include "selection/TransformationVisitors.h"
@@ -258,12 +259,8 @@ void cloneSelected(const cmd::ArgumentList& args)
 	// Move items into the temporary namespace, this will setup the links
 	clonedNamespace->connect(cloner.getCloneRoot());
 
-	auto nspace = mapRoot->getNamespace();
-	if (nspace)
-    {
-		// Prepare the nodes for import
-		nspace->ensureNoConflicts(cloner.getCloneRoot());
-	}
+	// Adjust all new names to fit into the existing map namespace
+	map::algorithm::prepareNamesForImport(mapRoot, cloner.getCloneRoot());
 
 	// Unselect the current selection
 	GlobalSelectionSystem().setSelectedAll(false);
