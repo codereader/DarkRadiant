@@ -549,6 +549,7 @@ void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args)
 		return;
 	}
 
+	UndoableCommand cmd("DeleteAllSelectionGroups");
 	getMapSelectionGroupManager().deleteAllSelectionGroups();
 }
 

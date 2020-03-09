@@ -35,8 +35,6 @@ public:
 private:
 	std::size_t generateGroupId();
 	void resetNextGroupId();
-
-	void doDeleteSelectionGroup(std::size_t id);
 };
 
 }

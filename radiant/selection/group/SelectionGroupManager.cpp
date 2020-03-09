@@ -9,7 +9,6 @@
 #include "iselection.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
-#include "iundo.h"
 #include "iorthocontextmenu.h"
 #include "modulesystem/StaticModule.h"
 #include "selection/algorithm/Group.h"
@@ -69,13 +68,6 @@ void SelectionGroupManager::setGroupSelected(std::size_t id, bool selected)
 
 void SelectionGroupManager::deleteSelectionGroup(std::size_t id)
 {
-	UndoableCommand cmd("DeleteSelectionGroup");
-
-	doDeleteSelectionGroup(id);
-}
-
-void SelectionGroupManager::doDeleteSelectionGroup(std::size_t id)
-{
 	SelectionGroupMap::iterator found = _groups.find(id);
 
 	if (found == _groups.end())
@@ -91,11 +83,9 @@ void SelectionGroupManager::doDeleteSelectionGroup(std::size_t id)
 
 void SelectionGroupManager::deleteAllSelectionGroups()
 {
-	UndoableCommand cmd("DeleteAllSelectionGroups");
-
 	for (SelectionGroupMap::iterator g = _groups.begin(); g != _groups.end(); )
 	{
-		doDeleteSelectionGroup((g++)->first);
+		deleteSelectionGroup((g++)->first);
 	}
 
 	assert(_groups.empty());
