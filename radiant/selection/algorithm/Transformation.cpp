@@ -263,8 +263,6 @@ void cloneSelected(const cmd::ArgumentList& args)
     {
 		// Prepare the nodes for import
 		nspace->ensureNoConflicts(cloner.getCloneRoot());
-		// Now move all nodes into the target namespace
-		nspace->connect(cloner.getCloneRoot());
 	}
 
 	// Unselect the current selection

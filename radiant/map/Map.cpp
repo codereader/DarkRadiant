@@ -484,9 +484,6 @@ bool Map::import(const std::string& filename)
             {
                 // Prepare our namespace for import
                 nspace->ensureNoConflicts(otherRoot);
-
-                // Now add the imported names to the local namespace
-                nspace->connect(otherRoot);
             }
 
             MergeMap(otherRoot);
