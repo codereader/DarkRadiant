@@ -23,45 +23,48 @@ inline bool Node_isPrimitive(const scene::INodePtr& node)
 namespace scene
 {
 
-class ParentPrimitives :
+// Reparents every visited primitive to the parent in the constructor arguments
+class PrimitiveReparentor :
     public scene::NodeVisitor
 {
 private:
     scene::INodePtr _parent;
 
 public:
-    ParentPrimitives(const scene::INodePtr& parent) :
+    PrimitiveReparentor(const scene::INodePtr& parent) :
         _parent(parent)
     {}
 
-    virtual bool pre(const scene::INodePtr& node)
+    virtual bool pre(const scene::INodePtr& node) override
     {
         return false;
     }
 
-    virtual void post(const scene::INodePtr& node) 
+    virtual void post(const scene::INodePtr& node) override
     {
-        if (Node_isPrimitive(node))
+        if (!Node_isPrimitive(node))
         {
-            // We need to keep the hard reference to the node, such that the refcount doesn't reach 0
-            scene::INodePtr nodeRef = node;
-
-            scene::INodePtr oldParent = nodeRef->getParent();
-
-            if (oldParent)
-            {
-                // greebo: remove the node from the old parent first
-                oldParent->removeChildNode(nodeRef);
-            }
-
-            _parent->addChildNode(nodeRef);
+            return;
         }
+
+        // We need to keep the hard reference to the node, such that the refcount doesn't reach 0
+        scene::INodePtr nodeRef = node;
+
+        scene::INodePtr oldParent = nodeRef->getParent();
+
+        if (oldParent)
+        {
+            // greebo: remove the node from the old parent first
+            oldParent->removeChildNode(nodeRef);
+        }
+
+        _parent->addChildNode(nodeRef);
     }
 };
 
 inline void parentPrimitives(const scene::INodePtr& subgraph, const scene::INodePtr& parent)
 {
-    ParentPrimitives visitor(parent);
+    PrimitiveReparentor visitor(parent);
     subgraph->traverseChildren(visitor);
 }
 

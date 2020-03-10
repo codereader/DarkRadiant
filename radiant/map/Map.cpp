@@ -39,7 +39,6 @@
 #include "map/StartupMapLoader.h"
 #include "map/RootNode.h"
 #include "map/MapResource.h"
-#include "map/algorithm/Merge.h"
 #include "map/algorithm/Import.h"
 #include "map/algorithm/Export.h"
 #include "map/algorithm/Traverse.h"
@@ -480,7 +479,7 @@ bool Map::import(const std::string& filename)
             // Adjust all new names to fit into the existing map namespace
             algorithm::prepareNamesForImport(getRoot(), otherRoot);
 
-            MergeMap(otherRoot);
+            algorithm::mergeMap(otherRoot);
             success = true;
         }
     }

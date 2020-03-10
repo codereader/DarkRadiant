@@ -20,6 +20,9 @@ typedef std::shared_ptr<MapFormat> MapFormatPtr;
 namespace algorithm
 {
 
+// Merges the map graph rooted at \p node into the global scene-graph.
+void mergeMap(const scene::INodePtr& node);
+
 /**
  * Ensures that all names in the foreign root node are adjusted such that
  * they don't conflict with any names in the target root's namespace, while keeping

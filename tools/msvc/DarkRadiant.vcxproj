@@ -1345,7 +1345,6 @@
     <ClInclude Include="..\..\radiant\map\ShaderBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Clone.h" />
-    <ClInclude Include="..\..\radiant\map\algorithm\Merge.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\WorldspawnArgFinder.h" />
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h" />

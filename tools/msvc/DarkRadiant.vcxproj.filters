@@ -1752,9 +1752,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\Clone.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\Merge.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
