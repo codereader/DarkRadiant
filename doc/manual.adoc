@@ -1471,6 +1471,68 @@ additionally be moved to view the clicked entity.
 By enabling the *List visible nodes only* checkbox, you can limit the entity
 list to show only entities which are not currently hidden via filters.
 
+== Dark Mod features
+
+The Dark Mod is a considerably more complex game than vanilla Doom 3, and its
+maps therefore include certain settings and features that would be cumbersome to
+configure manually by entering property values on entities. DarkRadiant
+therefore provides a number of Dark Mod specific dialogs which are described in
+this section.
+
+NOTE: Most Dark Mod features are compiled as separate plugins, and may not be
+built by default on certain platforms. If these features seem to be missing,
+contact the distributor of your DarkRadiant binary package for advice, or
+examine the build options if you are compiling DarkRadiant yourself from source
+code.
+
+=== The Difficulty editor
+
+Most Dark Mod maps can be played on one of three possible difficulty settings,
+typically named "Easy", "Medium" and "Difficult" (although these names can be
+overridden). The precise effects of each of these difficulty settings are fully
+under the control of the map author, and might include such effects as spawning
+or despawning particular enemies, changing enemy health or patrol routes, or
+modifying the details of objectives.
+
+DarkRadiant provides a Difficulty editor dialog to facilitate one particular
+class of difficulty-dependent modification: making global changes to entity
+classes throughout the map. This could be used, for example, to change the
+health of every instance of a particular enemy, or (as shown in the diagram)
+removing a particular enemy type's ability to relight torches.
+
+.The Difficulty editor, showing a modified property on a particular entity class
+image::DifficultyEditor.png[align="center"]
+
+The Difficulty editor consists of a tabbed widget, where each tab contains the
+settings which correspond to a particular difficulty level. The difficulty names
+are shown for the current map — normally these will be the default values of
+"Easy", "Medium" and "Difficult", but if the current map has customised
+difficulty names DarkRadiant will adjust the tab names accordingly.
+
+On the left is a tree view showing all of the property overrides for the current
+difficulty level. Each top-level item is a particular entity class, which
+contains all of the property changes that are made to this entity class in this
+difficulty level. In this example, the `ai_builder_guard` entity has its
+`canLightTorches` property set to 0 on the Easy difficulty setting, meaning that
+all enemies of this particular type will not be able to relight torches.
+
+*Adding a setting*:: To add a new property setting for the current difficulty
+ level, click the *Add* button. The widgets on the right hand side will become
+ available, allowing you to choose an entity class, a property ("Spawnarg") to
+ change, and the change to make ("Argument"). You can choose a number of
+ mathematical operations for the modification, including a simple value
+ assignment, or an addition or multiplication. After specifying the values, make
+ sure you click the *Save* button to commit the changes into the list view.
+
+*Removing a setting*:: Select an item in the list view and click the *Delete*
+ button to remove a particular setting. You can only remove individual
+ assignments from the list; to remove all of the assignments for a particular
+ entity class, you must select and delete each one individually.
+
+TIP: For details of more advanced difficulty-dependent changes, such as
+modifying the behaviour of a *single* entity (rather than an entire entity
+class), or changing the names of difficulty settings, consult the Dark Mod Wiki.
+
 == Command reference
 
 === File menu
