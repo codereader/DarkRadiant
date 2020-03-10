@@ -51,7 +51,7 @@ public:
 
 	virtual bool isGroupMember() override;
 	virtual std::size_t getMostRecentGroupId() override;
-	virtual const GroupIds& getGroupIds() override;
+	virtual const GroupIds& getGroupIds() const override;
 	virtual void setSelected(bool select, bool changeGroupStatus) override;
 	virtual bool isSelected() const override;
 

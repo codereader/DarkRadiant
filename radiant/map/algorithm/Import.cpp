@@ -1,8 +1,11 @@
 #include "Import.h"
 
+#include <map>
+
 #include "imap.h"
 #include "imapformat.h"
 #include "inamespace.h"
+#include "iselectiongroup.h"
 #include "ientity.h"
 #include "iscenegraph.h"
 #include "scene/BasicRootNode.h"
@@ -12,18 +15,100 @@
 #include "entitylib.h"
 #include "wxutil/dialog/MessageBox.h"
 
+#include "string/join.h"
+
 namespace map
 {
 
 namespace algorithm
 {
 
+// Will map source group IDs to new groups created in the target map
+class SelectionGroupRemapper :
+	private std::map<std::size_t, selection::ISelectionGroupPtr>
+{
+private:
+	selection::ISelectionGroupManager& _targetGroupManager;
+
+public:
+	// The given groupManager will be used to create one corresponding group
+	// for each distinct group found in the source nodes
+	SelectionGroupRemapper(selection::ISelectionGroupManager& targetGroupManager) :
+		_targetGroupManager(targetGroupManager)
+	{}
+
+	void assignRemappedGroups(const scene::INodePtr& node, const IGroupSelectable::GroupIds& oldGroupIds)
+	{
+		rMessage() << "Node " << node->name() << " had the groups " << string::join(oldGroupIds, "|");
+
+		// Get the Groups the source node was assigned to, and add the
+		// cloned node to the mapped group, one by one, keeping the order intact
+		for (std::size_t id : oldGroupIds)
+		{
+			// Try to insert the ID, ignore if already exists
+			// Get a new mapping for the given group ID
+			const selection::ISelectionGroupPtr& mappedGroup = getMappedGroup(id);
+
+			// Assign the new group ID to this clone
+			mappedGroup->addNode(node);
+		}
+
+		rMessage() << " => " << string::join(std::dynamic_pointer_cast<IGroupSelectable>(node)->getGroupIds(), "|") << std::endl;
+	}
+
+	void remapSelectionGroups(const scene::INodePtr& node)
+	{
+		std::shared_ptr<IGroupSelectable> groupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+		if (groupSelectable)
+		{
+			auto sourceRoot = node->getRootNode();
+			assert(sourceRoot);
+
+			// Save the current set of group IDs
+			IGroupSelectable::GroupIds oldGroupIds = groupSelectable->getGroupIds();
+
+			// Remove the node from all its groups
+			for (auto id : oldGroupIds)
+			{
+				auto group = sourceRoot->getSelectionGroupManager().getSelectionGroup(id);
+
+				group->removeNode(node);
+			}
+
+			// Assign the new set of groups for this node
+			assignRemappedGroups(node, oldGroupIds);
+		}
+	}
+
+private:
+	const selection::ISelectionGroupPtr& getMappedGroup(std::size_t id)
+	{
+		auto found = emplace(id, selection::ISelectionGroupPtr());
+
+		if (!found.second)
+		{
+			// We already covered this ID, return the mapped group
+			return found.first->second;
+		}
+
+		// Insertion was successful, so we didn't cover this ID yet
+		found.first->second = _targetGroupManager.createSelectionGroup();
+
+		return found.first->second;
+	}
+};
+
 class PrimitiveMerger :
 	public scene::PrimitiveReparentor
 {
+private:
+	SelectionGroupRemapper _groupRemapper;
+
 public:
-	PrimitiveMerger(const scene::INodePtr& newParent) :
-		PrimitiveReparentor(newParent)
+	PrimitiveMerger(const scene::INodePtr& newParent, SelectionGroupRemapper& remapper) :
+		PrimitiveReparentor(newParent),
+		_groupRemapper(remapper)
 	{}
 
 	void post(const scene::INodePtr& node) override
@@ -31,11 +116,11 @@ public:
 		// Base class is doing the reparenting
 		PrimitiveReparentor::post(node);
 
+		// Re-generate the group IDs of this node
+		_groupRemapper.remapSelectionGroups(node);
+		
 		// After reparenting, highlight the imported node
 		Node_setSelected(node, true);
-
-		// Re-generate the group IDs of this node
-		// TODO
 	}
 };
 
@@ -46,9 +131,12 @@ private:
 	// The target path
 	mutable scene::Path _path;
 
+	SelectionGroupRemapper _groupRemapper;
+
 public:
 	EntityMerger(const scene::INodePtr& root) :
-		_path(scene::Path(root))
+		_path(scene::Path(root)),
+		_groupRemapper(root->getRootNode()->getSelectionGroupManager())
 	{}
 
 	bool pre(const scene::INodePtr& originalNode) override
@@ -93,7 +181,7 @@ public:
 				_path.push(worldSpawn);
 
 				// Move all children of this node to the target worldspawn
-				PrimitiveMerger visitor(worldSpawn);
+				PrimitiveMerger visitor(worldSpawn, _groupRemapper);
 				node->traverseChildren(visitor);
 			}
 		}
@@ -124,7 +212,7 @@ public:
 	void post(const scene::INodePtr& node) override
 	{
 		// Re-generate the group IDs of this entity node
-		// TODO
+		_groupRemapper.remapSelectionGroups(node);
 
 		_path.pop();
 	}

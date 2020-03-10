@@ -126,7 +126,7 @@ std::size_t SelectableNode::getMostRecentGroupId()
 	return _groups.back();
 }
 
-const SelectableNode::GroupIds& SelectableNode::getGroupIds()
+const SelectableNode::GroupIds& SelectableNode::getGroupIds() const
 {
 	return _groups;
 }

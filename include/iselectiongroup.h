@@ -30,7 +30,7 @@ public:
 
 	// Returns all group assignments of this node
 	// The most recently added group is at the back of the list
-	virtual const GroupIds& getGroupIds() = 0;
+	virtual const GroupIds& getGroupIds() const = 0;
 
 	// Special overload to control whether this selectable should propagate
 	// the status change to the group it belongs to.
