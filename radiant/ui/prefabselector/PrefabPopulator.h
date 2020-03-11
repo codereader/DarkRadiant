@@ -49,6 +49,7 @@ protected:
 	ExitCode Entry();
 
     void visitFile(const vfs::FileInfo& fileInfo);
+	void searchForFilesMatchingExtension(const std::string& extension);
 };
 
 }
