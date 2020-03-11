@@ -42,8 +42,9 @@ void PortableMapFormat::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 
-	// Register ourselves as map format for mapx files
+	// Register ourselves as map format for mapx and pfbx files
 	GlobalMapFormatManager().registerMapFormat("mapx", shared_from_this());
+	GlobalMapFormatManager().registerMapFormat("pfbx", shared_from_this());
 }
 
 void PortableMapFormat::shutdownModule()
