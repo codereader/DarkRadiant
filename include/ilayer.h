@@ -43,7 +43,7 @@ public:
     /**
      * Return the set of layers to which this object is assigned.
      */
-    virtual LayerList getLayers() const = 0;
+    virtual const LayerList& getLayers() const = 0;
 
 	/**
 	 * greebo: This assigns the given node to the given set of layers. Any previous

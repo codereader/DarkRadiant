@@ -154,7 +154,7 @@ void Node::removeFromLayer(int layerId)
 	}
 }
 
-LayerList Node::getLayers() const
+const LayerList& Node::getLayers() const
 {
 	return _layers;
 }

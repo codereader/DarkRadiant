@@ -12,7 +12,7 @@ namespace
 {
 	void addNodeMapping(LayerUsageBreakdown& bd, const scene::INodePtr& node)
 	{
-		scene::LayerList layers = node->getLayers();
+		const auto& layers = node->getLayers();
 
 		for (int layerId : layers)
 		{

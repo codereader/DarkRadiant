@@ -279,7 +279,7 @@ void PortableMapWriter::endWritePatch(const IPatchNodePtr& patch, std::ostream& 
 
 void PortableMapWriter::appendLayerInformation(xml::Node& xmlNode, const scene::INodePtr& sceneNode)
 {
-	auto layers = sceneNode->getLayers();
+	const auto& layers = sceneNode->getLayers();
 	auto layersTag = xmlNode.createChild(TAG_OBJECT_LAYERS);
 
 	// Write the list of node IDs

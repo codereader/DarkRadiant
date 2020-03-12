@@ -388,8 +388,7 @@ void LayerSystem::removeSelectionFromLayer(int layerID) {
 bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node)
 {
 	// Get the list of layers the node is associated with
-	// greebo: FIXME: Check if returning the LayerList by value is taxing.
-	LayerList layers = node->getLayers();
+	const auto& layers = node->getLayers();
 
 	// We start with the assumption that a node is hidden
 	node->enable(Node::eLayered);

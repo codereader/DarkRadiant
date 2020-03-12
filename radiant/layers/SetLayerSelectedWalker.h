@@ -33,7 +33,7 @@ public:
 			return true;
 		}
 
-		LayerList layers = node->getLayers();
+		const auto& layers = node->getLayers();
 
 		if (layers.find(_layer) != layers.end())
 		{
