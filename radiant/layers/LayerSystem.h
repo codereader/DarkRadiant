@@ -17,7 +17,7 @@ namespace
 }
 
 class LayerSystem :
-	public ILayerSystem
+	public ILayerManager
 {
 private:
 	// greebo: An array of booleans reflects the visibility status

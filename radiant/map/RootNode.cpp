@@ -22,6 +22,9 @@ RootNode::RootNode(const std::string& name) :
 
 	_selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
 	assert(_selectionGroupManager);
+
+	_layerManager = GlobalLayerModule().createLayerManager();
+	assert(_layerManager);
 }
 
 RootNode::~RootNode()
@@ -50,6 +53,11 @@ ITargetManager& RootNode::getTargetManager()
 selection::ISelectionGroupManager& RootNode::getSelectionGroupManager()
 {
 	return *_selectionGroupManager;
+}
+
+scene::ILayerManager& RootNode::getLayerManager()
+{
+	return *_layerManager;
 }
 
 std::string RootNode::name() const 

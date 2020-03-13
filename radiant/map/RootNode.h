@@ -2,6 +2,7 @@
 
 #include "inamespace.h"
 #include "imap.h"
+#include "ilayer.h"
 #include "ientity.h"
 #include "iselectiongroup.h"
 #include "scene/Node.h"
@@ -40,6 +41,8 @@ private:
 
     selection::ISelectionGroupManager::Ptr _selectionGroupManager;
 
+    scene::ILayerManager::Ptr _layerManager;
+
 	AABB _emptyAABB;
 
 public:
@@ -53,6 +56,7 @@ public:
     IMapFileChangeTracker& getUndoChangeTracker() override;
     ITargetManager& getTargetManager() override;
     selection::ISelectionGroupManager& getSelectionGroupManager() override;
+    scene::ILayerManager& getLayerManager() override;
 
 	// Renderable implementation (empty)
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override

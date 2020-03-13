@@ -254,6 +254,7 @@
     <ClCompile Include="..\..\radiant\image\ImageLoaderWx.cpp" />
     <ClCompile Include="..\..\radiant\image\TGALoader.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp" />
+    <ClCompile Include="..\..\radiant\layers\LayerModule.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerUsageBreakdown.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\AasFileManager.cpp" />

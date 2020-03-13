@@ -53,10 +53,12 @@ public:
 	virtual void assignToLayers(const LayerList& newLayers) = 0;
 };
 
-class ILayerSystem :
+class ILayerManager :
 	public RegisterableModule
 {
 public:
+	typedef std::shared_ptr<ILayerManager> Ptr;
+
 	/**
 	 * greebo: Creates a new layer with the given name.
 	 *
@@ -201,17 +203,38 @@ public:
 	virtual sigc::signal<void> signal_nodeMembershipChanged() = 0;
 };
 
+class ILayerModule :
+	public RegisterableModule
+{
+public:
+	virtual ~ILayerModule() {}
+
+	virtual ILayerManager::Ptr createLayerManager() = 0;
+};
+
 } // namespace scene
 
-const std::string MODULE_LAYERSYSTEM("LayerSystem");
+const char* const MODULE_LAYERSYSTEM("LayerSystem");
+const char* const MODULE_LAYERS("LayerModule");
 
-inline scene::ILayerSystem& GlobalLayerSystem()
+inline scene::ILayerManager& GlobalLayerSystem()
 {
 	// Cache the reference locally
-	static scene::ILayerSystem& _layerSystem(
-		*std::static_pointer_cast<scene::ILayerSystem>(
+	static scene::ILayerManager& _layerManager(
+		*std::static_pointer_cast<scene::ILayerManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_LAYERSYSTEM)
 		)
 	);
-	return _layerSystem;
+	return _layerManager;
+}
+
+inline scene::ILayerModule& GlobalLayerModule()
+{
+	// Cache the reference locally
+	static scene::ILayerModule& _layerModule(
+		*std::static_pointer_cast<scene::ILayerModule>(
+			module::GlobalModuleRegistry().getModule(MODULE_LAYERS)
+			)
+	);
+	return _layerModule;
 }

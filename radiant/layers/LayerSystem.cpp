@@ -537,6 +537,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 
 void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 {
+#if 0
 	std::string initialName = !args.empty() ? args[0].getString() : "";
 
 	while (true)
@@ -585,6 +586,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 			continue;
 		}
 	}
+#endif
 }
 
 void LayerSystem::onMapEvent(IMap::MapEvent ev)

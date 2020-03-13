@@ -27,7 +27,7 @@ const StringSet& PortableMapFormat::getDependencies() const
 	{
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_ECLASSMANAGER);
-		_dependencies.insert(MODULE_LAYERSYSTEM);
+		_dependencies.insert(MODULE_LAYERS);
 		_dependencies.insert(MODULE_BRUSHCREATOR);
 		_dependencies.insert(MODULE_PATCHDEF2);
 		_dependencies.insert(MODULE_PATCHDEF3);

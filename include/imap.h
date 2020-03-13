@@ -18,6 +18,9 @@ class IMapFileChangeTracker;
 // see ientity.h
 class ITargetManager;
 
+// see ilayer.h
+class ILayerManager;
+
 namespace selection { class ISelectionGroupManager;  }
 
 namespace scene
@@ -56,6 +59,11 @@ public:
      * up to date or not.
      */
     virtual IMapFileChangeTracker& getUndoChangeTracker() = 0;
+
+	/**
+	 * Provides methods to create and assign layers in this map.
+	 */
+	virtual ILayerManager& getLayerManager() = 0;
 };
 typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
 

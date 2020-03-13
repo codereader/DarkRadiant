@@ -58,7 +58,7 @@ const StringSet& UserInterfaceModule::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_LAYERSYSTEM);
+		_dependencies.insert(MODULE_LAYERS);
 		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
 		_dependencies.insert(MODULE_UIMANAGER);
 	}

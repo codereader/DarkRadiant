@@ -2,6 +2,7 @@
 
 #include "imap.h"
 #include "mapfile.h"
+#include "ilayer.h"
 #include "ientity.h"
 #include "iselectiongroup.h"
 #include "Node.h"
@@ -24,6 +25,7 @@ private:
     UndoFileChangeTracker _changeTracker;
     ITargetManagerPtr _targetManager;
     selection::ISelectionGroupManager::Ptr _selectionGroupManager;
+    ILayerManager::Ptr _layerManager;
     AABB _emptyAABB;
 
 public:
@@ -32,6 +34,7 @@ public:
         _namespace = GlobalNamespaceFactory().createNamespace();
         _targetManager = GlobalEntityCreator().createTargetManager();
         _selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
+        _layerManager = GlobalLayerModule().createLayerManager();
     }
 
     virtual ~BasicRootNode()
@@ -55,6 +58,11 @@ public:
     selection::ISelectionGroupManager& getSelectionGroupManager() override
     {
         return *_selectionGroupManager;
+    }
+
+    scene::ILayerManager& getLayerManager() override
+    {
+        return *_layerManager;
     }
 
     const AABB& localAABB() const override
