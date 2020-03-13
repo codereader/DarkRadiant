@@ -352,7 +352,8 @@ darkradiant_SOURCES = main.cpp \
                       textool/TexTool.cpp \
 					  layers/LayerInfoFileModule.cpp \
                       layers/LayerCommandTarget.cpp \
-                      layers/LayerSystem.cpp \
+                      layers/LayerModule.cpp \
+                      layers/LayerManager.cpp \
 					  layers/LayerUsageBreakdown.cpp \
                       modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \

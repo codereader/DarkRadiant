@@ -16,7 +16,7 @@ namespace
 	const char* const COMMAND_PREFIX_HIDELAYER("HideLayer");
 }
 
-class LayerSystem :
+class LayerManager :
 	public ILayerManager
 {
 private:
@@ -41,7 +41,7 @@ private:
 	sigc::signal<void> _nodeMembershipChangedSignal;
 
 public:
-	LayerSystem();
+	LayerManager();
 
 	/**
 	 * greebo: Creates a new layer with the given name.
@@ -160,6 +160,6 @@ private:
 };
 
 // Internal accessor, only accessible within this binary
-LayerSystem& getLayerSystem();
+LayerManager& getLayerSystem();
 
 } // namespace scene

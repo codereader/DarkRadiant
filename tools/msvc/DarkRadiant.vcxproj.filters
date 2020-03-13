@@ -811,9 +811,6 @@
     <ClCompile Include="..\..\radiant\layers\LayerCommandTarget.cpp">
       <Filter>src\layers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\layers\LayerSystem.cpp">
-      <Filter>src\layers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\log\Console.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
@@ -1597,6 +1594,9 @@
     <ClCompile Include="..\..\radiant\layers\LayerModule.cpp">
       <Filter>src\layers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\layers\LayerManager.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -2230,9 +2230,6 @@
       <Filter>src\layers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\layers\LayerCommandTarget.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\LayerSystem.h">
       <Filter>src\layers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\layers\MoveToLayerWalker.h">
@@ -3224,6 +3221,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\Import.h">
       <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\layers\LayerManager.h">
+      <Filter>src\layers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

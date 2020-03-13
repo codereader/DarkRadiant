@@ -4,7 +4,7 @@
 #include "imapinfofile.h"
 
 #include "modulesystem/StaticModule.h"
-#include "LayerSystem.h"
+#include "LayerManager.h"
 #include "LayerInfoFileModule.h"
 #include "LayerCommandTarget.h"
 
@@ -75,7 +75,7 @@ public:
 
 	ILayerManager::Ptr createLayerManager() override
 	{
-		return std::make_shared<LayerSystem>();
+		return std::make_shared<LayerManager>();
 	}
 
 private:

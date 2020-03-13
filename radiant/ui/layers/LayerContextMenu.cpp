@@ -2,7 +2,7 @@
 
 #include "iuimanager.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "layers/LayerSystem.h"
+#include "layers/LayerManager.h"
 
 namespace ui
 {

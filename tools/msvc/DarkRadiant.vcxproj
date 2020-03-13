@@ -254,6 +254,7 @@
     <ClCompile Include="..\..\radiant\image\ImageLoaderWx.cpp" />
     <ClCompile Include="..\..\radiant\image\TGALoader.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp" />
+    <ClCompile Include="..\..\radiant\layers\LayerManager.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerModule.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerUsageBreakdown.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
@@ -1010,7 +1011,6 @@
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerCommandTarget.cpp" />
-    <ClCompile Include="..\..\radiant\layers\LayerSystem.cpp" />
     <ClCompile Include="..\..\radiant\log\Console.cpp" />
     <ClCompile Include="..\..\radiant\log\COutRedirector.cpp" />
     <ClCompile Include="..\..\radiant\log\LogFile.cpp" />
@@ -1111,6 +1111,7 @@
     <ClInclude Include="..\..\radiant\image\ImageTypeLoader.h" />
     <ClInclude Include="..\..\radiant\image\TGALoader.h" />
     <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h" />
+    <ClInclude Include="..\..\radiant\layers\LayerManager.h" />
     <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\AasFileManager.h" />
     <ClInclude Include="..\..\radiant\map\aas\Doom3AasFile.h" />
@@ -1547,7 +1548,6 @@
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
     <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h" />
     <ClInclude Include="..\..\radiant\layers\LayerCommandTarget.h" />
-    <ClInclude Include="..\..\radiant\layers\LayerSystem.h" />
     <ClInclude Include="..\..\radiant\layers\MoveToLayerWalker.h" />
     <ClInclude Include="..\..\radiant\layers\RemoveFromLayerWalker.h" />
     <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h" />

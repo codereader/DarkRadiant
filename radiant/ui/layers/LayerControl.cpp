@@ -15,7 +15,7 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
-#include "layers/LayerSystem.h"
+#include "layers/LayerManager.h"
 #include "LayerControlDialog.h"
 
 namespace ui
@@ -100,7 +100,7 @@ void LayerControl::update()
 {
 	_updateActive = true;
 
-	scene::LayerSystem& layerSystem = scene::getLayerSystem();
+	auto& layerSystem = scene::getLayerSystem();
 
 	bool layerIsVisible = layerSystem.layerIsVisible(_layerID);
 	_toggle->SetValue(layerIsVisible);

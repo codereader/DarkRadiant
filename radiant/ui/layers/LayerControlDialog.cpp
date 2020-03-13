@@ -19,7 +19,7 @@
 
 #include "wxutil/ScrollWindow.h"
 
-#include "layers/LayerSystem.h"
+#include "layers/LayerManager.h"
 #include "layers/LayerUsageBreakdown.h"
 
 namespace ui

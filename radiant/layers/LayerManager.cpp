@@ -1,4 +1,4 @@
-#include "LayerSystem.h"
+#include "LayerManager.h"
 
 #include "iorthocontextmenu.h"
 #include "i18n.h"
@@ -33,11 +33,11 @@ namespace
 	const int DEFAULT_LAYER = 0;
 }
 
-LayerSystem::LayerSystem() :
+LayerManager::LayerManager() :
 	_activeLayer(DEFAULT_LAYER)
 {}
 
-int LayerSystem::createLayer(const std::string& name, int layerID)
+int LayerManager::createLayer(const std::string& name, int layerID)
 {
 	// Check if the ID already exists
 	if (_layers.find(layerID) != _layers.end())
@@ -72,7 +72,7 @@ int LayerSystem::createLayer(const std::string& name, int layerID)
 	return result.first->first;
 }
 
-int LayerSystem::createLayer(const std::string& name)
+int LayerManager::createLayer(const std::string& name)
 {
 	// Check if the layer already exists
 	int existingID = getLayerID(name);
@@ -90,7 +90,7 @@ int LayerSystem::createLayer(const std::string& name)
 	return createLayer(name, newID);
 }
 
-void LayerSystem::deleteLayer(const std::string& name)
+void LayerManager::deleteLayer(const std::string& name)
 {
 	// Check if the layer already exists
 	int layerID = getLayerID(name);
@@ -126,7 +126,7 @@ void LayerSystem::deleteLayer(const std::string& name)
 	onNodeMembershipChanged();
 }
 
-void LayerSystem::foreachLayer(const LayerVisitFunc& visitor)
+void LayerManager::foreachLayer(const LayerVisitFunc& visitor)
 {
     for (const LayerMap::value_type& pair : _layers)
     {
@@ -134,7 +134,7 @@ void LayerSystem::foreachLayer(const LayerVisitFunc& visitor)
     }
 }
 
-void LayerSystem::reset()
+void LayerManager::reset()
 {
 	_activeLayer = DEFAULT_LAYER;
 
@@ -149,7 +149,7 @@ void LayerSystem::reset()
 	_layerVisibilityChangedSignal.emit();
 }
 
-bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName)
+bool LayerManager::renameLayer(int layerID, const std::string& newLayerName)
 {
 	// Check sanity
 	if (newLayerName.empty() || newLayerName == _(DEFAULT_LAYER_NAME)) {
@@ -171,7 +171,7 @@ bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName)
 	return true;
 }
 
-int LayerSystem::getFirstVisibleLayer() const
+int LayerManager::getFirstVisibleLayer() const
 {
 	// Iterate over all IDs and check the visibility status, return the first visible
 	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); ++i)
@@ -186,12 +186,12 @@ int LayerSystem::getFirstVisibleLayer() const
 	return DEFAULT_LAYER;
 }
 
-int LayerSystem::getActiveLayer() const
+int LayerManager::getActiveLayer() const
 {
 	return _activeLayer;
 }
 
-void LayerSystem::setActiveLayer(int layerID)
+void LayerManager::setActiveLayer(int layerID)
 {
 	LayerMap::iterator i = _layers.find(layerID);
 
@@ -204,7 +204,7 @@ void LayerSystem::setActiveLayer(int layerID)
 	_activeLayer = layerID;
 }
 
-bool LayerSystem::layerIsVisible(const std::string& layerName) 
+bool LayerManager::layerIsVisible(const std::string& layerName) 
 {
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
@@ -218,7 +218,7 @@ bool LayerSystem::layerIsVisible(const std::string& layerName)
 	return _layerVisibility[layerID];
 }
 
-bool LayerSystem::layerIsVisible(int layerID) {
+bool LayerManager::layerIsVisible(int layerID) {
 	// Sanity check
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
 		rMessage() << "LayerSystem: Querying invalid layer ID: " << layerID << std::endl;
@@ -228,7 +228,7 @@ bool LayerSystem::layerIsVisible(int layerID) {
 	return _layerVisibility[layerID];
 }
 
-void LayerSystem::setLayerVisibility(int layerID, bool visible)
+void LayerManager::setLayerVisibility(int layerID, bool visible)
 {
 	// Sanity check
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size()))
@@ -260,7 +260,7 @@ void LayerSystem::setLayerVisibility(int layerID, bool visible)
 	onLayerVisibilityChanged();
 }
 
-void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible) {
+void LayerManager::setLayerVisibility(const std::string& layerName, bool visible) {
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
 
@@ -274,7 +274,7 @@ void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible)
 	setLayerVisibility(layerID, visible);
 }
 
-void LayerSystem::updateSceneGraphVisibility()
+void LayerManager::updateSceneGraphVisibility()
 {
 	UpdateNodeVisibilityWalker walker;
 	GlobalSceneGraph().root()->traverseChildren(walker);
@@ -283,19 +283,19 @@ void LayerSystem::updateSceneGraphVisibility()
 	SceneChangeNotify();
 }
 
-void LayerSystem::onLayersChanged()
+void LayerManager::onLayersChanged()
 {
 	_layersChangedSignal.emit();
 }
 
-void LayerSystem::onNodeMembershipChanged()
+void LayerManager::onNodeMembershipChanged()
 {
 	_nodeMembershipChangedSignal.emit();
 
 	updateSceneGraphVisibility();
 }
 
-void LayerSystem::onLayerVisibilityChanged()
+void LayerManager::onLayerVisibilityChanged()
 {
 	// Update all nodes and views
 	updateSceneGraphVisibility();
@@ -304,7 +304,7 @@ void LayerSystem::onLayerVisibilityChanged()
 	_layerVisibilityChangedSignal.emit();
 }
 
-void LayerSystem::addSelectionToLayer(int layerID) {
+void LayerManager::addSelectionToLayer(int layerID) {
 	// Check if the layer ID exists
 	if (_layers.find(layerID) == _layers.end()) {
 		return;
@@ -317,7 +317,7 @@ void LayerSystem::addSelectionToLayer(int layerID) {
 	onNodeMembershipChanged();
 }
 
-void LayerSystem::addSelectionToLayer(const std::string& layerName) {
+void LayerManager::addSelectionToLayer(const std::string& layerName) {
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
 
@@ -331,7 +331,7 @@ void LayerSystem::addSelectionToLayer(const std::string& layerName) {
 	addSelectionToLayer(layerID);
 }
 
-void LayerSystem::moveSelectionToLayer(const std::string& layerName) {
+void LayerManager::moveSelectionToLayer(const std::string& layerName) {
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
 
@@ -345,7 +345,7 @@ void LayerSystem::moveSelectionToLayer(const std::string& layerName) {
 	moveSelectionToLayer(layerID);
 }
 
-void LayerSystem::moveSelectionToLayer(int layerID) {
+void LayerManager::moveSelectionToLayer(int layerID) {
 	// Check if the layer ID exists
 	if (_layers.find(layerID) == _layers.end()) {
 		return;
@@ -358,7 +358,7 @@ void LayerSystem::moveSelectionToLayer(int layerID) {
 	onNodeMembershipChanged();
 }
 
-void LayerSystem::removeSelectionFromLayer(const std::string& layerName) {
+void LayerManager::removeSelectionFromLayer(const std::string& layerName) {
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
 
@@ -372,7 +372,7 @@ void LayerSystem::removeSelectionFromLayer(const std::string& layerName) {
 	removeSelectionFromLayer(layerID);
 }
 
-void LayerSystem::removeSelectionFromLayer(int layerID) {
+void LayerManager::removeSelectionFromLayer(int layerID) {
 	// Check if the layer ID exists
 	if (_layers.find(layerID) == _layers.end()) {
 		return;
@@ -385,7 +385,7 @@ void LayerSystem::removeSelectionFromLayer(int layerID) {
 	onNodeMembershipChanged();
 }
 
-bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node)
+bool LayerManager::updateNodeVisibility(const scene::INodePtr& node)
 {
 	// Get the list of layers the node is associated with
 	const auto& layers = node->getLayers();
@@ -409,7 +409,7 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node)
 	return false;
 }
 
-void LayerSystem::setSelected(int layerID, bool selected)
+void LayerManager::setSelected(int layerID, bool selected)
 {
 	SetLayerSelectedWalker walker(layerID, selected);
 
@@ -419,22 +419,22 @@ void LayerSystem::setSelected(int layerID, bool selected)
     }
 }
 
-sigc::signal<void> LayerSystem::signal_layersChanged()
+sigc::signal<void> LayerManager::signal_layersChanged()
 {
 	return _layersChangedSignal;
 }
 
-sigc::signal<void> LayerSystem::signal_layerVisibilityChanged()
+sigc::signal<void> LayerManager::signal_layerVisibilityChanged()
 {
 	return _layerVisibilityChangedSignal;
 }
 
-sigc::signal<void> LayerSystem::signal_nodeMembershipChanged()
+sigc::signal<void> LayerManager::signal_nodeMembershipChanged()
 {
 	return _nodeMembershipChangedSignal;
 }
 
-int LayerSystem::getLayerID(const std::string& name) const
+int LayerManager::getLayerID(const std::string& name) const
 {
 	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); i++) {
 		if (i->second == name) {
@@ -446,7 +446,7 @@ int LayerSystem::getLayerID(const std::string& name) const
 	return -1;
 }
 
-std::string LayerSystem::getLayerName(int layerID) const 
+std::string LayerManager::getLayerName(int layerID) const 
 {
 	LayerMap::const_iterator found = _layers.find(layerID);
 
@@ -458,12 +458,12 @@ std::string LayerSystem::getLayerName(int layerID) const
 	return "";
 }
 
-bool LayerSystem::layerExists(int layerID) const
+bool LayerManager::layerExists(int layerID) const
 {
 	return _layers.find(layerID) != _layers.end();
 }
 
-int LayerSystem::getHighestLayerID() const
+int LayerManager::getHighestLayerID() const
 {
 	if (_layers.size() == 0) {
 		// Empty layer map, just return DEFAULT_LAYER
@@ -474,7 +474,7 @@ int LayerSystem::getHighestLayerID() const
 	return _layers.rbegin()->first;
 }
 
-int LayerSystem::getLowestUnusedLayerID()
+int LayerManager::getLowestUnusedLayerID()
 {
 	for (int i = 0; i < INT_MAX; i++) {
 		if (_layers.find(i) == _layers.end()) {
@@ -487,13 +487,13 @@ int LayerSystem::getLowestUnusedLayerID()
 }
 
 // RegisterableModule implementation
-const std::string& LayerSystem::getName() const 
+const std::string& LayerManager::getName() const 
 {
 	static std::string _name(MODULE_LAYERSYSTEM);
 	return _name;
 }
 
-const StringSet& LayerSystem::getDependencies() const
+const StringSet& LayerManager::getDependencies() const
 {
 	static StringSet _dependencies;
 
@@ -507,7 +507,7 @@ const StringSet& LayerSystem::getDependencies() const
 	return _dependencies;
 }
 
-void LayerSystem::initialiseModule(const ApplicationContext& ctx)
+void LayerManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
@@ -522,12 +522,12 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 
 	// Register the "create layer" command
 	GlobalCommandSystem().addCommand("CreateNewLayer",
-		std::bind(&LayerSystem::createLayerCmd, this, std::placeholders::_1), 
+		std::bind(&LayerManager::createLayerCmd, this, std::placeholders::_1), 
 		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 	IEventPtr ev = GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
 
 	GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(*this, &LayerSystem::onMapEvent)
+		sigc::mem_fun(*this, &LayerManager::onMapEvent)
 	);
 
 	GlobalMapInfoFileManager().registerInfoFileModule(
@@ -535,7 +535,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 	);
 }
 
-void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
+void LayerManager::createLayerCmd(const cmd::ArgumentList& args)
 {
 #if 0
 	std::string initialName = !args.empty() ? args[0].getString() : "";
@@ -589,7 +589,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 #endif
 }
 
-void LayerSystem::onMapEvent(IMap::MapEvent ev)
+void LayerManager::onMapEvent(IMap::MapEvent ev)
 {
 	if (ev == IMap::MapUnloaded || ev == IMap::MapLoading)
 	{ 
@@ -598,12 +598,13 @@ void LayerSystem::onMapEvent(IMap::MapEvent ev)
 	}
 }
 
-// Define the static LayerSystem module
-module::StaticModule<LayerSystem> layerSystemModule;
+// Define the static LayerManager module
+module::StaticModule<LayerManager> layerManagerModule;
 
 // Internal accessor method
-LayerSystem& getLayerSystem() {
-	return *layerSystemModule.getModule();
+LayerManager& getLayerSystem()
+{
+	return *layerManagerModule.getModule();
 }
 
 } // namespace scene
