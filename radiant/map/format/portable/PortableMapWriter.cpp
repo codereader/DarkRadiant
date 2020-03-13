@@ -63,7 +63,7 @@ void PortableMapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::o
 	auto layers = _map.createChild(TAG_MAP_LAYERS);
 
 	// Visit all layers and add a tag for each
-	GlobalLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
+	root->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
 	{
 		auto layer = layers.createChild(TAG_MAP_LAYER);
 

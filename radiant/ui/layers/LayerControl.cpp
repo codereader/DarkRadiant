@@ -7,6 +7,7 @@
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/EntryAbortedException.h"
+#include "util/ScopedBoolLock.h"
 
 #include <wx/button.h>
 #include <wx/bmpbuttn.h>
@@ -98,9 +99,14 @@ wxToggleButton* LayerControl::getToggle()
 
 void LayerControl::update()
 {
-	_updateActive = true;
+	util::ScopedBoolLock{_updateActive};
 
-	auto& layerSystem = scene::getLayerSystem();
+	if (!GlobalMapModule().getRoot())
+	{
+		return;
+	}
+	
+	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
 
 	bool layerIsVisible = layerSystem.layerIsVisible(_layerID);
 	_toggle->SetValue(layerIsVisible);
@@ -131,8 +137,6 @@ void LayerControl::update()
 
 	// Clear usage status
 	_statusWidget->SetBackgroundColour(_inactiveColour);
-
-	_updateActive = false;
 }
 
 int LayerControl::getLayerId() const
@@ -148,16 +152,24 @@ void LayerControl::updateUsageStatusWidget(std::size_t numUsedObjectsInLayer)
 
 void LayerControl::onToggle(wxCommandEvent& ev)
 {
-	if (_updateActive) return;
+	if (_updateActive || !GlobalMapModule().getRoot()) return;
 
-	scene::getLayerSystem().setLayerVisibility(_layerID, _toggle->GetValue());
+	GlobalMapModule().getRoot()->getLayerManager().setLayerVisibility(_layerID, _toggle->GetValue());
 }
 
 void LayerControl::onDelete(wxCommandEvent& ev)
 {
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "Can't delete layer, no map root present" << std::endl;
+		return;
+	}
+
+	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
 	// Ask the about the deletion
 	std::string msg = _("Do you really want to delete this layer?");
-	msg += "\n" + scene::getLayerSystem().getLayerName(_layerID);
+	msg += "\n" + layerSystem.getLayerName(_layerID);
 
 	IDialogPtr box = GlobalDialogManager().createMessageBox(
 		_("Confirm Layer Deletion"), msg, IDialog::MESSAGE_ASK
@@ -165,14 +177,20 @@ void LayerControl::onDelete(wxCommandEvent& ev)
 
 	if (box->run() == IDialog::RESULT_YES)
 	{
-		scene::getLayerSystem().deleteLayer(
-			scene::getLayerSystem().getLayerName(_layerID)
-		);
+		layerSystem.deleteLayer(layerSystem.getLayerName(_layerID));
 	}
 }
 
 void LayerControl::onRename(wxCommandEvent& ev)
 {
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "Can't rename layer, no map root present" << std::endl;
+		return;
+	}
+
+	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
 	while (true)
 	{
 		// Query the name of the new layer from the user
@@ -183,7 +201,7 @@ void LayerControl::onRename(wxCommandEvent& ev)
 			newLayerName = wxutil::Dialog::TextEntryDialog(
 				_("Rename Layer"),
 				_("Enter new Layer Name"),
-				scene::getLayerSystem().getLayerName(_layerID),
+				layerSystem.getLayerName(_layerID),
 				_toggle->GetParent()
 			);
 		}
@@ -193,7 +211,7 @@ void LayerControl::onRename(wxCommandEvent& ev)
 		}
 
 		// Attempt to rename the layer, this will return -1 if the operation fails
-		bool success = scene::getLayerSystem().renameLayer(_layerID, newLayerName);
+		bool success = layerSystem.renameLayer(_layerID, newLayerName);
 
 		if (success)
 		{
@@ -211,10 +229,16 @@ void LayerControl::onRename(wxCommandEvent& ev)
 
 void LayerControl::onLayerSelect(wxCommandEvent& ev)
 {
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "Can't select layer, no map root present" << std::endl;
+		return;
+	}
+
 	// When holding down CTRL the user sets this as active
 	if (wxGetKeyState(WXK_CONTROL))
 	{
-		GlobalLayerSystem().setActiveLayer(_layerID);
+		GlobalMapModule().getRoot()->getLayerManager().setActiveLayer(_layerID);
 
 		// Update our icon set
 		LayerControlDialog::Instance().refresh();
@@ -232,7 +256,7 @@ void LayerControl::onLayerSelect(wxCommandEvent& ev)
 	}
 
 	// Set the entire layer to selected
-	GlobalLayerSystem().setSelected(_layerID, selected);
+	GlobalMapModule().getRoot()->getLayerManager().setSelected(_layerID, selected);
 }
 
 } // namespace ui

@@ -129,14 +129,6 @@ public:
 	sigc::signal<void> signal_layerVisibilityChanged() override;
 	sigc::signal<void> signal_nodeMembershipChanged() override;
 
-	// RegisterableModule implementation
-	const std::string& getName() const override;
-	const StringSet& getDependencies() const override;
-	void initialiseModule(const ApplicationContext& ctx) override;
-
-	// Command target
-	void createLayerCmd(const cmd::ArgumentList& args);
-
 private:
 	void onMapEvent(IMap::MapEvent ev);
 
@@ -158,8 +150,5 @@ private:
 	// Returns the lowest unused layer ID
 	int getLowestUnusedLayerID();
 };
-
-// Internal accessor, only accessible within this binary
-LayerManager& getLayerSystem();
 
 } // namespace scene

@@ -8,10 +8,10 @@
 namespace ui
 {
 
-	namespace
-	{
-		const char* const LAYER_ICON = "layers.png";
-	}
+namespace
+{
+	const char* const LAYER_ICON = "layers.png";
+}
 
 LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 											 LayerContextMenu::OnSelectionFunc callback) :
@@ -27,7 +27,7 @@ LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 
 LayerOrthoContextMenuItem::~LayerOrthoContextMenuItem()
 {
-	if (GetMenu() != NULL)
+	if (GetMenu() != nullptr)
 	{
 		// Destroying a menu item doesn't de-register it from the parent menu
 		// To prevent double-deletions, we de-register the item on our own
@@ -56,20 +56,39 @@ void LayerOrthoContextMenuItem::preShow()
 
 void LayerOrthoContextMenuItem::AddToLayer(int layerID)
 {
-	GlobalLayerSystem().addSelectionToLayer(layerID);
-	GlobalMap().setModified(true);
+	DoWithMapLayerManager([=](scene::ILayerManager& manager)
+	{
+		manager.addSelectionToLayer(layerID);
+		GlobalMap().setModified(true);
+	});
 }
 
 void LayerOrthoContextMenuItem::MoveToLayer(int layerID)
 {
-	GlobalLayerSystem().moveSelectionToLayer(layerID);
-	GlobalMap().setModified(true);
+	DoWithMapLayerManager([=](scene::ILayerManager& manager)
+	{
+		manager.moveSelectionToLayer(layerID);
+		GlobalMap().setModified(true);
+	});
 }
 
 void LayerOrthoContextMenuItem::RemoveFromLayer(int layerID)
 {
-	GlobalLayerSystem().removeSelectionFromLayer(layerID);
-	GlobalMap().setModified(true);
+	DoWithMapLayerManager([=](scene::ILayerManager& manager)
+	{
+		manager.removeSelectionFromLayer(layerID);
+		GlobalMap().setModified(true);
+	});
+}
+
+void LayerOrthoContextMenuItem::DoWithMapLayerManager(const std::function<void(scene::ILayerManager&)>& func)
+{
+	if (!GlobalMapModule().getRoot())
+	{
+		return;
+	}
+
+	func(GlobalMapModule().getRoot()->getLayerManager());
 }
 
 } // namespace

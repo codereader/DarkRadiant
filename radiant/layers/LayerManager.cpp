@@ -35,7 +35,10 @@ namespace
 
 LayerManager::LayerManager() :
 	_activeLayer(DEFAULT_LAYER)
-{}
+{
+	// Create the "master" layer with ID DEFAULT_LAYER
+	createLayer(_(DEFAULT_LAYER_NAME), DEFAULT_LAYER);
+}
 
 int LayerManager::createLayer(const std::string& name, int layerID)
 {
@@ -260,13 +263,14 @@ void LayerManager::setLayerVisibility(int layerID, bool visible)
 	onLayerVisibilityChanged();
 }
 
-void LayerManager::setLayerVisibility(const std::string& layerName, bool visible) {
+void LayerManager::setLayerVisibility(const std::string& layerName, bool visible) 
+{
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
 
-	if (layerID == -1) {
-		rError() << "Could not set layer visibility, name doesn't exist: "
-			<< layerName.c_str() << std::endl;
+	if (layerID == -1) 
+	{
+		rError() << "Could not set layer visibility, name doesn't exist: " << layerName << std::endl;
 		return;
 	}
 
@@ -276,7 +280,7 @@ void LayerManager::setLayerVisibility(const std::string& layerName, bool visible
 
 void LayerManager::updateSceneGraphVisibility()
 {
-	UpdateNodeVisibilityWalker walker;
+	UpdateNodeVisibilityWalker walker(GlobalSceneGraph().root());
 	GlobalSceneGraph().root()->traverseChildren(walker);
 
 	// Redraw
@@ -486,109 +490,6 @@ int LayerManager::getLowestUnusedLayerID()
 	return -1;
 }
 
-// RegisterableModule implementation
-const std::string& LayerManager::getName() const 
-{
-	static std::string _name(MODULE_LAYERSYSTEM);
-	return _name;
-}
-
-const StringSet& LayerManager::getDependencies() const
-{
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
-	}
-
-	return _dependencies;
-}
-
-void LayerManager::initialiseModule(const ApplicationContext& ctx)
-{
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
-	// Create the "master" layer with ID DEFAULT_LAYER
-	createLayer(_(DEFAULT_LAYER_NAME));
-
-	// Add command targets for the first 10 layer IDs here
-	for (int i = 0; i < 10; i++)
-	{
-		_commandTargets.push_back(std::make_shared<LayerCommandTarget>(i));
-	}
-
-	// Register the "create layer" command
-	GlobalCommandSystem().addCommand("CreateNewLayer",
-		std::bind(&LayerManager::createLayerCmd, this, std::placeholders::_1), 
-		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
-	IEventPtr ev = GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
-
-	GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(*this, &LayerManager::onMapEvent)
-	);
-
-	GlobalMapInfoFileManager().registerInfoFileModule(
-		std::make_shared<LayerInfoFileModule>()
-	);
-}
-
-void LayerManager::createLayerCmd(const cmd::ArgumentList& args)
-{
-#if 0
-	std::string initialName = !args.empty() ? args[0].getString() : "";
-
-	while (true)
-	{
-		// Query the name of the new layer from the user
-		std::string layerName;
-
-		if (!initialName.empty()) {
-			// If we got a layer name passed through the arguments,
-			// we use this one, but only the first time
-			layerName = initialName;
-			initialName.clear();
-		}
-
-		if (layerName.empty()) {
-			try {
-				layerName = wxutil::Dialog::TextEntryDialog(
-					_("Enter Name"),
-					_("Enter Layer Name"),
-					"",
-					GlobalMainFrame().getWxTopLevelWindow()
-				);
-			}
-			catch (wxutil::EntryAbortedException&) {
-				break;
-			}
-		}
-
-		if (layerName.empty()) {
-			// Wrong name, let the user try again
-			wxutil::Messagebox::ShowError(_("Cannot create layer with empty name."));
-			continue;
-		}
-
-		// Attempt to create the layer, this will return -1 if the operation fails
-		int layerID = createLayer(layerName);
-
-		if (layerID != -1)
-		{
-			// Success, break the loop
-			break;
-		}
-		else {
-			// Wrong name, let the user try again
-			wxutil::Messagebox::ShowError(_("This name already exists."));
-			continue;
-		}
-	}
-#endif
-}
-
 void LayerManager::onMapEvent(IMap::MapEvent ev)
 {
 	if (ev == IMap::MapUnloaded || ev == IMap::MapLoading)
@@ -596,15 +497,6 @@ void LayerManager::onMapEvent(IMap::MapEvent ev)
 		// Purge layer info before map is loading or after it has been unloaded
 		reset();
 	}
-}
-
-// Define the static LayerManager module
-module::StaticModule<LayerManager> layerManagerModule;
-
-// Internal accessor method
-LayerManager& getLayerSystem()
-{
-	return *layerManagerModule.getModule();
 }
 
 } // namespace scene

@@ -228,11 +228,17 @@ public:
 
 void mergeMap(const scene::INodePtr& node)
 {
+	if (!GlobalSceneGraph().root())
+	{
+		rError() << "Cannot merge map, no scenegraph root present." << std::endl;
+		return;
+	}
+
 	// Discard all layer information found in the data to be merged
 	// We move everything into the active layer
 	{
 		scene::LayerList layers;
-		layers.insert(GlobalLayerSystem().getActiveLayer());
+		layers.insert(GlobalSceneGraph().root()->getLayerManager().getActiveLayer());
 
 		scene::AssignNodeToLayersWalker walker(layers);
 		node->traverse(walker);

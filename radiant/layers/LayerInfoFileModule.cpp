@@ -36,10 +36,23 @@ void LayerInfoFileModule::onInfoFileSaveStart()
 	_layerInfoCount = 0;
 	_output.str(std::string());
 	_output.clear();
+	_layerNameBuffer.clear();
 }
 
 void LayerInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
-{}
+{
+	// Open a "Layers" block
+	_layerNameBuffer << "\t" << LAYERS << std::endl;
+	_layerNameBuffer << "\t{" << std::endl;
+
+	// Visit all layers and write them to the stream
+	root->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
+	{
+		_layerNameBuffer << "\t\t" << LAYER << " " << layerId << " { " << layerName << " }" << std::endl;
+	});
+
+	_layerNameBuffer << "\t}" << std::endl;
+}
 
 void LayerInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
 {}
@@ -85,7 +98,7 @@ void LayerInfoFileModule::saveNode(const INodePtr& node)
 void LayerInfoFileModule::writeBlocks(std::ostream& stream)
 {
 	// Write the layer names block
-	writeLayerNames(stream);
+	stream << _layerNameBuffer.str();
 
 	// Write the NodeToLayerMapping block
 	stream << "\t" << NODE_TO_LAYER_MAPPING << std::endl;
@@ -217,7 +230,7 @@ void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const ma
 	for (const LayerNameMap::value_type& i : _layerNames)
 	{
 		// Create the named layer with the saved ID
-		GlobalLayerSystem().createLayer(i.second, i.first);
+		root->getLayerManager().createLayer(i.second, i.first);
 	}
 
 	// Set the layer mapping iterator to the beginning
@@ -268,21 +281,6 @@ void LayerInfoFileModule::onInfoFileLoadFinished()
 {
 	_layerNames.clear();
 	_layerMappings.clear();
-}
-
-void LayerInfoFileModule::writeLayerNames(std::ostream& stream)
-{
-	// Open a "Layers" block
-	stream << "\t" << LAYERS << std::endl;
-	stream << "\t{" << std::endl;
-
-	// Visit all layers and write them to the stream
-	GlobalLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
-	{
-		stream << "\t\t" << LAYER << " " << layerId << " { " << layerName << " }" << std::endl;
-	});
-
-	stream << "\t}" << std::endl;
 }
 
 }

@@ -1,6 +1,7 @@
 #include "LayerCommandTarget.h"
 
 #include "ieventmanager.h"
+#include "imap.h"
 #include "icommandsystem.h"
 #include "LayerManager.h"
 #include "string/string.h"
@@ -48,22 +49,50 @@ LayerCommandTarget::LayerCommandTarget(int layerID) :
 	);
 }
 
-void LayerCommandTarget::addSelectionToLayer(const cmd::ArgumentList& args) {
+void LayerCommandTarget::addSelectionToLayer(const cmd::ArgumentList& args)
+{
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "No map loaded, cannot do this." << std::endl;
+		return;
+	}
+
 	// Pass the call to the LayerSystem
-	getLayerSystem().addSelectionToLayer(_layerID);
+	GlobalMapModule().getRoot()->getLayerManager().addSelectionToLayer(_layerID);
 }
 
-void LayerCommandTarget::moveSelectionToLayer(const cmd::ArgumentList& args) {
+void LayerCommandTarget::moveSelectionToLayer(const cmd::ArgumentList& args)
+{
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "No map loaded, cannot do this." << std::endl;
+		return;
+	}
+
 	// Pass the call to the LayerSystem
-	getLayerSystem().moveSelectionToLayer(_layerID);
+	GlobalMapModule().getRoot()->getLayerManager().moveSelectionToLayer(_layerID);
 }
 
-void LayerCommandTarget::showLayer(const cmd::ArgumentList& args) {
-	getLayerSystem().setLayerVisibility(_layerID, true);
+void LayerCommandTarget::showLayer(const cmd::ArgumentList& args) 
+{
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "No map loaded, cannot do this." << std::endl;
+		return;
+	}
+
+	GlobalMapModule().getRoot()->getLayerManager().setLayerVisibility(_layerID, true);
 }
 
-void LayerCommandTarget::hideLayer(const cmd::ArgumentList& args) {
-	getLayerSystem().setLayerVisibility(_layerID, false);
+void LayerCommandTarget::hideLayer(const cmd::ArgumentList& args) 
+{
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "No map loaded, cannot do this." << std::endl;
+		return;
+	}
+
+	GlobalMapModule().getRoot()->getLayerManager().setLayerVisibility(_layerID, false);
 }
 
 } // namespace scene

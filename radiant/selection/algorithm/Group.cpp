@@ -100,7 +100,7 @@ void ParentPrimitivesToEntityWalker::reparent()
 		<< " primitives." << std::endl;
 
 	// Update parent node/subgraph visibility after reparenting
-	scene::UpdateNodeVisibilityWalker updater;
+	scene::UpdateNodeVisibilityWalker updater(_parent->getRootNode());
 
 	// Update the new parent too
 	_parent->traverse(updater);

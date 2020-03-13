@@ -15,6 +15,7 @@ private:
 
 	// Buffer to hold our output
 	std::stringstream _output;
+	std::stringstream _layerNameBuffer;
 
 	// The list of layernames
 	typedef std::map<int, std::string> LayerNameMap;

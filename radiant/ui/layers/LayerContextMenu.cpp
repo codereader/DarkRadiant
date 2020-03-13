@@ -1,6 +1,7 @@
 #include "LayerContextMenu.h"
 
 #include "iuimanager.h"
+#include "imap.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "layers/LayerManager.h"
 
@@ -21,8 +22,13 @@ void LayerContextMenu::populate()
 {
 	_sortedLayers.clear();
 
+	if (!GlobalMapModule().getRoot())
+	{
+		return;
+	}
+
 	// Populate the map with all layer names and IDs
-    scene::getLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
+	GlobalMapModule().getRoot()->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
     {
         _sortedLayers.insert(SortedLayerMap::value_type(layerName, layerId));
     });

@@ -70,8 +70,11 @@ scene::INodePtr BrushModuleImpl::createBrush()
 {
 	scene::INodePtr node = std::make_shared<BrushNode>();
 
-	// Move it to the active layer
-	node->moveToLayer(GlobalLayerSystem().getActiveLayer());
+	if (GlobalMapModule().getRoot())
+	{
+		// All brushes are created in the active layer by default
+		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
+	}
 
 	return node;
 }

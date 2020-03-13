@@ -51,12 +51,19 @@ void LayerInfoTab::populateTab()
 
 	_treeView->AppendTextColumn(_("Node Count"), _columns.nodeCount.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	
+	GetSizer()->Add(_treeView, 1, wxEXPAND | wxALL, 12);
+
+	if (!GlobalMapModule().getRoot())
+	{
+		return; // stop here if we don't have a map loaded
+	}
 
 	// Calculate the node histogram
 	scene::LayerUsageBreakdown bd = scene::LayerUsageBreakdown::CreateFromScene(true);
 
 	// Populate the liststore with the layer-to-nodecount information
-	GlobalLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
+	GlobalMapModule().getRoot()->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
 	{
 		if (layerId >= static_cast<int>(bd.size())) return;
 
@@ -67,8 +74,6 @@ void LayerInfoTab::populateTab()
 
 		row.SendItemAdded();
 	});
-
-	GetSizer()->Add(_treeView, 1, wxEXPAND | wxALL, 12);
 }
 
 } // namespace ui

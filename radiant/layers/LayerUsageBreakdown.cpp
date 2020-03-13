@@ -28,6 +28,11 @@ LayerUsageBreakdown LayerUsageBreakdown::CreateFromScene(bool includeHidden)
 {
 	LayerUsageBreakdown bd;
 
+	if (!GlobalMapModule().getRoot())
+	{
+		return bd;
+	}
+
 	InitialiseVector(bd);
 
 	GlobalSceneGraph().foreachNode([&](const scene::INodePtr& node)
@@ -50,6 +55,11 @@ LayerUsageBreakdown LayerUsageBreakdown::CreateFromSelection()
 {
 	LayerUsageBreakdown bd;
 
+	if (!GlobalMapModule().getRoot())
+	{
+		return bd;
+	}
+
 	InitialiseVector(bd);
 
 	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
@@ -69,7 +79,7 @@ void LayerUsageBreakdown::InitialiseVector(LayerUsageBreakdown& bd)
 	// below will fill the vector with zeros
 	bd.resize(0, 0);
 
-	GlobalLayerSystem().foreachLayer([&](int layerId, const std::string& layerName)
+	GlobalMapModule().getRoot()->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
 	{
 		if (layerId >= static_cast<int>(bd.size()))
 		{

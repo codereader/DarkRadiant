@@ -53,8 +53,7 @@ public:
 	virtual void assignToLayers(const LayerList& newLayers) = 0;
 };
 
-class ILayerManager :
-	public RegisterableModule
+class ILayerManager
 {
 public:
 	typedef std::shared_ptr<ILayerManager> Ptr;
@@ -214,19 +213,7 @@ public:
 
 } // namespace scene
 
-const char* const MODULE_LAYERSYSTEM("LayerSystem");
 const char* const MODULE_LAYERS("LayerModule");
-
-inline scene::ILayerManager& GlobalLayerSystem()
-{
-	// Cache the reference locally
-	static scene::ILayerManager& _layerManager(
-		*std::static_pointer_cast<scene::ILayerManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_LAYERSYSTEM)
-		)
-	);
-	return _layerManager;
-}
 
 inline scene::ILayerModule& GlobalLayerModule()
 {

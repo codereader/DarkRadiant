@@ -72,7 +72,7 @@ void PortableMapReader::readLayers(const xml::Node& mapNode)
 {
 	try
 	{
-		GlobalLayerSystem().reset();
+		_importFilter.getRootNode()->getLayerManager().reset();
 
 		auto mapLayers = getNamedChild(mapNode, TAG_MAP_LAYERS);
 
@@ -83,7 +83,7 @@ void PortableMapReader::readLayers(const xml::Node& mapNode)
 			auto id = string::convert<int>(layer.getAttributeValue(ATTR_MAP_LAYER_ID));
 			auto name = layer.getAttributeValue(ATTR_MAP_LAYER_NAME);
 
-			GlobalLayerSystem().createLayer(name, id);
+			_importFilter.getRootNode()->getLayerManager().createLayer(name, id);
 		}
 	}
 	catch (const BadDocumentFormatException& ex)

@@ -47,11 +47,6 @@ public:
 	{
 		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-#if 0 // TODO
-		// Create the "master" layer with ID DEFAULT_LAYER
-		createLayer(_(DEFAULT_LAYER_NAME));
-#endif
-
 		// Add command targets for the first 10 layer IDs here
 		for (int i = 0; i < 10; i++)
 		{
