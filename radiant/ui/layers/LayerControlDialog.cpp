@@ -97,13 +97,18 @@ void LayerControlDialog::createButtons()
     _dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
-void LayerControlDialog::refresh()
+void LayerControlDialog::clearControls()
 {
 	// Delete all wxWidgets objects first
 	_controlContainer->Clear(true);
 
 	// Remove all previously allocated layercontrols
 	_layerControls.clear();
+}
+
+void LayerControlDialog::refresh()
+{
+	clearControls();
 
 	if (!GlobalMapModule().getRoot())
 	{
@@ -277,6 +282,30 @@ void LayerControlDialog::_preShow()
 		_rescanSelectionOnIdle = true;
 	});
 
+	connectToMapRoot();
+
+	_mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
+		sigc::mem_fun(this, &LayerControlDialog::onMapEvent)
+	);
+
+	// Re-populate the dialog
+	refresh();
+}
+
+void LayerControlDialog::_postHide()
+{
+	disconnectFromMapRoot();
+
+	_mapEventSignal.disconnect();
+	_selectionChangedSignal.disconnect();
+	_rescanSelectionOnIdle = false;
+}
+
+void LayerControlDialog::connectToMapRoot()
+{
+	// Always disconnect first
+	disconnectFromMapRoot();
+
 	if (GlobalMapModule().getRoot())
 	{
 		auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
@@ -295,23 +324,13 @@ void LayerControlDialog::_preShow()
 			_rescanSelectionOnIdle = true;
 		});
 	}
-
-	_mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(this, &LayerControlDialog::onMapEvent)
-	);
-
-	// Re-populate the dialog
-	refresh();
 }
 
-void LayerControlDialog::_postHide()
+void LayerControlDialog::disconnectFromMapRoot()
 {
-	_mapEventSignal.disconnect();
 	_nodeLayerMembershipChangedSignal.disconnect();
 	_layersChangedSignal.disconnect();
 	_layerVisibilityChangedSignal.disconnect();
-	_selectionChangedSignal.disconnect();
-	_rescanSelectionOnIdle = false;
 }
 
 void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
@@ -345,7 +364,13 @@ void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
 	if (ev == IMap::MapLoaded)
 	{
 		// Rebuild the dialog once a map is loaded
+		connectToMapRoot();
 		refresh();
+	}
+	else if (ev == IMap::MapUnloading)
+	{
+		disconnectFromMapRoot();
+		clearControls();
 	}
 }
 
