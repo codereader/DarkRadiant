@@ -81,7 +81,7 @@ void DifficultyDialog::populateWindow()
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
     // Create the notebook and add it to the vbox
-    _notebook = new wxNotebook(this, wxID_ANY);
+    _notebook = new wxChoicebook(this, wxID_ANY);
     _notebook->SetMinClientSize(wxSize(800, 400));
 
     // Create and pack the editors
@@ -96,8 +96,9 @@ void DifficultyDialog::populateWindow()
     cancelButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_CANCEL); });
 
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    buttonSizer->Add(cancelButton, 0, wxRIGHT, 6);
-    buttonSizer->Add(okButton, 0, wxRIGHT, 6);
+    buttonSizer->Add(cancelButton);
+    buttonSizer->AddSpacer(6);
+    buttonSizer->Add(okButton);
 
     GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxALL, 12);
 

@@ -9,7 +9,7 @@
 #include "DifficultySettingsManager.h"
 
 #include <memory>
-#include <wx/notebook.h>
+#include <wx/choicebk.h>
 
 namespace ui
 {
@@ -27,8 +27,7 @@ typedef std::shared_ptr<DifficultyDialog> DifficultyDialogPtr;
 class DifficultyDialog :
 	public wxutil::DialogBase
 {
-private:
-	wxNotebook* _notebook;
+	wxChoicebook* _notebook;
 
 	// The difficulty settings manager
 	difficulty::DifficultySettingsManager _settingsManager;
