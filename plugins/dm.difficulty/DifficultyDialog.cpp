@@ -77,6 +77,15 @@ void DifficultyDialog::populateWindow()
     _notebook = new wxChoicebook(this, wxID_ANY);
     _notebook->SetMinClientSize(wxSize(800, 400));
 
+    // Add the edit button alongside the dropdown
+    wxSizer* choiceSizer = _notebook->GetControlSizer();
+    wxButton* editBtn = new wxButton(
+        _notebook, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        wxBU_EXACTFIT | wxBU_NOTEXT
+    );
+    editBtn->SetBitmap(wxArtProvider::GetBitmap("darkradiant:edit.png"));
+    choiceSizer->Add(editBtn, 0, wxEXPAND);
+
     // Create and pack the editors
     createDifficultyEditors();
 
