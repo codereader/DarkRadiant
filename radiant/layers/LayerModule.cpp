@@ -1,12 +1,12 @@
 #include "ilayer.h"
 #include "ieventmanager.h"
 #include "icommandsystem.h"
+#include "itextstream.h"
 #include "imapinfofile.h"
 
 #include "modulesystem/StaticModule.h"
 #include "LayerManager.h"
 #include "LayerInfoFileModule.h"
-#include "LayerCommandTarget.h"
 
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -14,6 +14,22 @@
 
 namespace scene
 {
+
+namespace
+{
+
+inline void DoWithMapLayerManager(const std::function<void(scene::ILayerManager&)>& func)
+{
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "No map loaded, cannot do this." << std::endl;
+		return;
+	}
+
+	func(GlobalMapModule().getRoot()->getLayerManager());
+}
+
+}
 
 class LayerModule :
 	public ILayerModule
@@ -47,10 +63,48 @@ public:
 	{
 		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+		GlobalCommandSystem().addCommand(COMMAND_PREFIX_ADDTOLAYER,
+			std::bind(&LayerModule::addSelectionToLayer, this, std::placeholders::_1),
+			{ cmd::ARGTYPE_INT });
+
+		GlobalCommandSystem().addCommand(COMMAND_PREFIX_MOVETOLAYER,
+			std::bind(&LayerModule::moveSelectionToLayer, this, std::placeholders::_1),
+			{ cmd::ARGTYPE_INT });
+
+		GlobalCommandSystem().addCommand(COMMAND_PREFIX_SHOWLAYER,
+			std::bind(&LayerModule::showLayer, this, std::placeholders::_1),
+			{ cmd::ARGTYPE_INT });
+
+		GlobalCommandSystem().addCommand(COMMAND_PREFIX_HIDELAYER,
+			std::bind(&LayerModule::hideLayer, this, std::placeholders::_1),
+			{ cmd::ARGTYPE_INT });
+
 		// Add command targets for the first 10 layer IDs here
+		// The statements are defined in commandsystem.xml, they just need to be
+		// registered in the event manager module
 		for (int i = 0; i < 10; i++)
 		{
-			_commandTargets.emplace_back(std::make_shared<LayerCommandTarget>(i));
+			//_commandTargets.emplace_back(std::make_shared<LayerCommandTarget>(i));
+
+			GlobalEventManager().addCommand(
+				COMMAND_PREFIX_ADDTOLAYER + string::to_string(i),
+				COMMAND_PREFIX_ADDTOLAYER + string::to_string(i)
+			);
+
+			GlobalEventManager().addCommand(
+				COMMAND_PREFIX_MOVETOLAYER + string::to_string(i),
+				COMMAND_PREFIX_MOVETOLAYER + string::to_string(i)
+			);
+
+			GlobalEventManager().addCommand(
+				COMMAND_PREFIX_SHOWLAYER + string::to_string(i),
+				COMMAND_PREFIX_SHOWLAYER + string::to_string(i)
+			);
+
+			GlobalEventManager().addCommand(
+				COMMAND_PREFIX_HIDELAYER + string::to_string(i),
+				COMMAND_PREFIX_HIDELAYER + string::to_string(i)
+			);
 		}
 
 		// Register the "create layer" command
@@ -142,6 +196,62 @@ private:
 				continue;
 			}
 		}
+	}
+
+	void addSelectionToLayer(const cmd::ArgumentList& args)
+	{
+		if (args.size() != 1)
+		{
+			rError() << "Usage: " << COMMAND_PREFIX_ADDTOLAYER << " <LayerID> " << std::endl;
+			return;
+		}
+
+		DoWithMapLayerManager([&](ILayerManager& manager)
+		{
+			manager.addSelectionToLayer(args[0].getInt());
+		});
+	}
+
+	void moveSelectionToLayer(const cmd::ArgumentList& args)
+	{
+		if (args.size() != 1)
+		{
+			rError() << "Usage: " << COMMAND_PREFIX_MOVETOLAYER << " <LayerID> " << std::endl;
+			return;
+		}
+
+		DoWithMapLayerManager([&](ILayerManager& manager)
+		{
+			manager.moveSelectionToLayer(args[0].getInt());
+		});
+	}
+
+	void showLayer(const cmd::ArgumentList& args)
+	{
+		if (args.size() != 1)
+		{
+			rError() << "Usage: " << COMMAND_PREFIX_SHOWLAYER << " <LayerID> " << std::endl;
+			return;
+		}
+
+		DoWithMapLayerManager([&](ILayerManager& manager)
+		{
+			manager.setLayerVisibility(args[0].getInt(), true);
+		});
+	}
+
+	void hideLayer(const cmd::ArgumentList& args)
+	{
+		if (args.size() != 1)
+		{
+			rError() << "Usage: " << COMMAND_PREFIX_HIDELAYER << " <LayerID> " << std::endl;
+			return;
+		}
+
+		DoWithMapLayerManager([&](ILayerManager& manager)
+		{
+			manager.setLayerVisibility(args[0].getInt(), false);
+		});
 	}
 };
 
