@@ -351,7 +351,6 @@ darkradiant_SOURCES = main.cpp \
                       textool/item/PatchVertexItem.cpp \
                       textool/TexTool.cpp \
 					  layers/LayerInfoFileModule.cpp \
-                      layers/LayerCommandTarget.cpp \
                       layers/LayerModule.cpp \
                       layers/LayerManager.cpp \
 					  layers/LayerUsageBreakdown.cpp \

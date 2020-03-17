@@ -808,9 +808,6 @@
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp">
       <Filter>src\xyview</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\layers\LayerCommandTarget.cpp">
-      <Filter>src\layers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\log\Console.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
@@ -2227,9 +2224,6 @@
       <Filter>src\xyview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\LayerCommandTarget.h">
       <Filter>src\layers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\layers\MoveToLayerWalker.h">

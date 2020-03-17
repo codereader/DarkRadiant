@@ -1010,7 +1010,6 @@
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
-    <ClCompile Include="..\..\radiant\layers\LayerCommandTarget.cpp" />
     <ClCompile Include="..\..\radiant\log\Console.cpp" />
     <ClCompile Include="..\..\radiant\log\COutRedirector.cpp" />
     <ClCompile Include="..\..\radiant\log\LogFile.cpp" />
@@ -1547,7 +1546,6 @@
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
     <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h" />
-    <ClInclude Include="..\..\radiant\layers\LayerCommandTarget.h" />
     <ClInclude Include="..\..\radiant\layers\MoveToLayerWalker.h" />
     <ClInclude Include="..\..\radiant\layers\RemoveFromLayerWalker.h" />
     <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h" />

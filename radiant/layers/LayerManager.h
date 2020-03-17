@@ -4,17 +4,9 @@
 #include <map>
 #include "ilayer.h"
 #include "imap.h"
-#include "LayerCommandTarget.h"
 
-namespace scene {
-
-namespace
+namespace scene 
 {
-	const char* const COMMAND_PREFIX_ADDTOLAYER("AddSelectionToLayer");
-	const char* const COMMAND_PREFIX_MOVETOLAYER("MoveSelectionToLayer");
-	const char* const COMMAND_PREFIX_SHOWLAYER("ShowLayer");
-	const char* const COMMAND_PREFIX_HIDELAYER("HideLayer");
-}
 
 class LayerManager :
 	public ILayerManager
@@ -29,9 +21,6 @@ private:
 	// The list of named layers, indexed by an integer ID
 	typedef std::map<int, std::string> LayerMap;
 	LayerMap _layers;
-
-	typedef std::vector<LayerCommandTargetPtr> CommandTargetList;
-	CommandTargetList _commandTargets;
 
 	// The ID of the active layer
 	int _activeLayer;

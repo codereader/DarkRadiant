@@ -18,6 +18,11 @@ namespace scene
 namespace
 {
 
+const char* const COMMAND_PREFIX_ADDTOLAYER("AddSelectionToLayer");
+const char* const COMMAND_PREFIX_MOVETOLAYER("MoveSelectionToLayer");
+const char* const COMMAND_PREFIX_SHOWLAYER("ShowLayer");
+const char* const COMMAND_PREFIX_HIDELAYER("HideLayer");
+
 inline void DoWithMapLayerManager(const std::function<void(scene::ILayerManager&)>& func)
 {
 	if (!GlobalMapModule().getRoot())
@@ -34,10 +39,6 @@ inline void DoWithMapLayerManager(const std::function<void(scene::ILayerManager&
 class LayerModule :
 	public ILayerModule
 {
-private:
-	typedef std::vector<LayerCommandTargetPtr> CommandTargetList;
-	CommandTargetList _commandTargets;
-
 public:
 	const std::string& getName() const override
 	{
@@ -79,13 +80,11 @@ public:
 			std::bind(&LayerModule::hideLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
 
-		// Add command targets for the first 10 layer IDs here
+		// Register the statements for layers 0..9
 		// The statements are defined in commandsystem.xml, they just need to be
 		// registered in the event manager module
 		for (int i = 0; i < 10; i++)
 		{
-			//_commandTargets.emplace_back(std::make_shared<LayerCommandTarget>(i));
-
 			GlobalEventManager().addCommand(
 				COMMAND_PREFIX_ADDTOLAYER + string::to_string(i),
 				COMMAND_PREFIX_ADDTOLAYER + string::to_string(i)
