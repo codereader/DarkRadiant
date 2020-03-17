@@ -66,7 +66,6 @@ public:
 
 	// Returns the label for packing into a GtkNotebook tab.
 	std::string getNotebookLabel();
-	std::string getNotebookIconName();
 
 private:
 	// Creates the widgets

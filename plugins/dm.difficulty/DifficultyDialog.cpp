@@ -55,24 +55,17 @@ void DifficultyDialog::createDifficultyEditors()
         }
     }
 
-    // A new image list for the notebook tab icons
-    _imageList.reset(new wxImageList(16, 16));
-    _notebook->SetImageList(_imageList.get());
-
     // Pack the editors into the notebook
     for (std::size_t i = 0; i < _editors.size(); i++)
     {
         DifficultyEditor& editor = *_editors[i];
 
         wxWindow* editorWidget = editor.getEditor();
-        std::string icon = editor.getNotebookIconName();
 
-        // Load the icon
-        int imageId = icon.empty() ? -1 : 
-            _imageList->Add(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + icon));
-    
+        // Reparent the DifficultyEditor's widget to the book control and then
+        // add it as a new page.
         editorWidget->Reparent(_notebook);
-        _notebook->AddPage(editorWidget, editor.getNotebookLabel(), false, imageId);
+        _notebook->AddPage(editorWidget, editor.getNotebookLabel(), false);
     }
 }
 

@@ -34,8 +34,6 @@ class DifficultyDialog :
 
 	std::vector<DifficultyEditorPtr> _editors;
 
-	std::unique_ptr<wxImageList> _imageList;
-
 public:
 	DifficultyDialog();
 

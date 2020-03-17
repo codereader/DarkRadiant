@@ -19,11 +19,6 @@
 namespace ui
 {
 
-namespace
-{
-	const char* const DIFF_ICON = "sr_icon_custom.png";
-}
-
 DifficultyEditor::DifficultyEditor(wxWindow* parent, const std::string& label,
 								   const difficulty::DifficultySettingsPtr& settings) :
 	_settings(settings),
@@ -57,11 +52,6 @@ wxWindow* DifficultyEditor::getEditor()
 std::string DifficultyEditor::getNotebookLabel()
 {
 	return _label;
-}
-
-std::string DifficultyEditor::getNotebookIconName()
-{
-	return DIFF_ICON;
 }
 
 void DifficultyEditor::populateWindow()
