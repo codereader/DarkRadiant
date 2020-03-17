@@ -58,6 +58,8 @@ class ILayerManager
 public:
 	typedef std::shared_ptr<ILayerManager> Ptr;
 
+	virtual ~ILayerManager() {}
+
 	/**
 	 * greebo: Creates a new layer with the given name.
 	 *
@@ -221,7 +223,7 @@ inline scene::ILayerModule& GlobalLayerModule()
 	static scene::ILayerModule& _layerModule(
 		*std::static_pointer_cast<scene::ILayerModule>(
 			module::GlobalModuleRegistry().getModule(MODULE_LAYERS)
-			)
+		)
 	);
 	return _layerModule;
 }
