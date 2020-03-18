@@ -4,8 +4,8 @@
 #include "ieventmanager.h"
 #include "iselection.h"
 #include "icommandsystem.h"
-#include "i18n.h"
 #include "imap.h"
+#include "i18n.h"
 #include "iradiant.h"
 
 #include <sigc++/sigc++.h>
@@ -42,11 +42,9 @@ public:
 
 		if (_dependencies.empty())
 		{
-			_dependencies.insert(MODULE_SELECTIONSYSTEM);
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_RADIANT);
-			_dependencies.insert(MODULE_MAP);
 			_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		}
 
@@ -75,28 +73,8 @@ public:
 private:
 	void onRadiantStartup()
 	{
-		// Get the horizontal toolbar and add a custom widget
-		wxToolBar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
-
-		// Insert a separator at the end of the toolbar
-		toolbar->AddSeparator();
-
-		wxStaticText* label = new wxStaticText(toolbar, wxID_ANY, _("Selection Set: "));
-		toolbar->AddControl(label);
-
 		// Construct a new tool menu object
-		_toolMenu.reset(new SelectionSetToolmenu(toolbar));
-
-		toolbar->Realize();
-
-#ifdef __WXOSX__
-		// Weird workaround to stop an empty area from being drawn
-		// where the label and combobox are supposed to be
-		label->Hide();
-		label->Show();
-		_toolMenu->Hide();
-		_toolMenu->Show();
-#endif
+		_toolMenu.reset(new SelectionSetToolmenu);
 	}
 
 	void deleteAllSelectionSetsCmd(const cmd::ArgumentList& args)

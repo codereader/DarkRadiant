@@ -6,6 +6,7 @@
 #include "iuimanager.h"
 #include "imap.h"
 #include "iradiant.h"
+#include "imainframe.h"
 #include "itextstream.h"
 #include "idialogmanager.h"
 
@@ -26,9 +27,18 @@ namespace
 	const int CLEAR_TOOL_ID = 1;
 }
 
-SelectionSetToolmenu::SelectionSetToolmenu(wxToolBar* toolbar) :
+SelectionSetToolmenu::SelectionSetToolmenu() :
 	_dropdownToolId(wxID_NONE)
 {
+	// Get the horizontal toolbar and add a custom widget
+	wxToolBar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
+
+	// Insert a separator at the end of the toolbar
+	toolbar->AddSeparator();
+
+	wxStaticText* label = new wxStaticText(toolbar, wxID_ANY, _("Selection Set: "));
+	toolbar->AddControl(label);
+
 	_dropdown = new wxComboBox(toolbar, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER);
 
 	// Add tooltip
@@ -45,6 +55,17 @@ SelectionSetToolmenu::SelectionSetToolmenu(wxToolBar* toolbar) :
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"), _("Clear Selection Sets"));
 
 	toolbar->Bind(wxEVT_TOOL, &SelectionSetToolmenu::onDeleteAllSetsClicked, this, _clearAllButton->GetId());
+
+	toolbar->Realize();
+
+#ifdef __WXOSX__
+	// Weird workaround to stop an empty area from being drawn
+	// where the label and combobox are supposed to be
+	label->Hide();
+	label->Show();
+	_toolMenu->Hide();
+	_toolMenu->Show();
+#endif
 
 	_mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &SelectionSetToolmenu::onMapEvent)

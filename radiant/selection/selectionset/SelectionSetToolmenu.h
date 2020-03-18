@@ -23,7 +23,7 @@ private:
 	wxToolBarToolBase* _clearAllButton;
 
 public:
-	SelectionSetToolmenu(wxToolBar* toolbar);
+	SelectionSetToolmenu();
 
 private:
 	// Updates the available list items and widget sensitivity
