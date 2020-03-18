@@ -5,6 +5,7 @@
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "imap.h"
+#include "iradiant.h"
 #include "itextstream.h"
 #include "idialogmanager.h"
 
@@ -23,21 +24,43 @@ namespace
 }
 
 SelectionSetToolmenu::SelectionSetToolmenu(wxToolBar* toolbar) :
-	wxComboBox(toolbar, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER)
+	_dropdownToolId(wxID_NONE)
 {
+	_dropdown = new wxComboBox(toolbar, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxTE_PROCESS_ENTER);
+
 	// Add tooltip
-	SetHelpText(_(ENTRY_TOOLTIP));
+	_dropdown->SetHelpText(_(ENTRY_TOOLTIP));
 
 	// Connect the signals
-	Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SelectionSetToolmenu::onEntryActivated), NULL, this);
-	Connect(wxEVT_COMBOBOX, wxCommandEventHandler(SelectionSetToolmenu::onSelectionChanged), NULL, this);
+	_dropdown->Bind(wxEVT_TEXT_ENTER, &SelectionSetToolmenu::onEntryActivated, this);
+	_dropdown->Bind(wxEVT_COMBOBOX, &SelectionSetToolmenu::onSelectionChanged, this);
 
-	GlobalMapModule().signal_mapEvent().connect(
+	auto dropdownTool = toolbar->AddControl(_dropdown);
+	_dropdownToolId = dropdownTool->GetId();
+
+	_mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &SelectionSetToolmenu::onMapEvent)
+	);
+
+	GlobalRadiant().signal_radiantShutdown().connect(
+		sigc::mem_fun(*this, &SelectionSetToolmenu::onRadiantShutdown)
 	);
 
 	connectToMapRoot();
 	update();
+}
+
+void SelectionSetToolmenu::onRadiantShutdown()
+{
+	if (_dropdownToolId != wxID_NONE)
+	{
+		auto toolbar = static_cast<wxToolBar*>(_dropdown->GetParent());
+		toolbar->DeleteTool(_dropdownToolId);
+	}
+
+	_dropdown = nullptr;
+
+	_mapEventHandler.disconnect();
 }
 
 void SelectionSetToolmenu::onMapEvent(IMap::MapEvent ev)
@@ -76,7 +99,7 @@ void SelectionSetToolmenu::disconnectFromMapRoot()
 
 void SelectionSetToolmenu::update()
 {
-	Clear();
+	_dropdown->Clear();
 
 	auto root = GlobalMapModule().getRoot();
 
@@ -87,7 +110,7 @@ void SelectionSetToolmenu::update()
 
 	root->getSelectionSetManager().foreachSelectionSet([&] (const ISelectionSetPtr& set)
 	{
-		Append(set->getName());
+		_dropdown->Append(set->getName());
 	});
 }
 
@@ -102,7 +125,7 @@ void SelectionSetToolmenu::onEntryActivated(wxCommandEvent& ev)
 	}
 
 	// Create new selection set if possible
-	std::string name = GetValue().ToStdString();
+	std::string name = _dropdown->GetValue().ToStdString();
 
 	if (name.empty()) return;
 
@@ -125,10 +148,10 @@ void SelectionSetToolmenu::onEntryActivated(wxCommandEvent& ev)
 	set->assignFromCurrentScene();
 
 	// Clear the entry again
-	SetValue("");
+	_dropdown->SetValue("");
 
 	// Unset our focus
-	wxGetTopLevelParent(this)->SetFocus();
+	wxGetTopLevelParent(_dropdown)->SetFocus();
 }
 
 void SelectionSetToolmenu::onSelectionChanged(wxCommandEvent& ev)
@@ -141,7 +164,7 @@ void SelectionSetToolmenu::onSelectionChanged(wxCommandEvent& ev)
 		return;
 	}
 
-	std::string name = GetStringSelection().ToStdString();
+	std::string name = _dropdown->GetStringSelection().ToStdString();
 
 	if (name.empty()) return;
 
@@ -159,10 +182,10 @@ void SelectionSetToolmenu::onSelectionChanged(wxCommandEvent& ev)
 		set->select();
 	}
 
-	SetValue("");
+	_dropdown->SetValue("");
 
 	// Unset our focus
-	wxGetTopLevelParent(this)->SetFocus();
+	wxGetTopLevelParent(_dropdown)->SetFocus();
 }
 
 } // namespace

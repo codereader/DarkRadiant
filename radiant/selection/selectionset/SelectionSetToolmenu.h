@@ -3,23 +3,25 @@
 #include "iselectionset.h"
 #include "imap.h"
 #include <memory>
-#include <wx/combobox.h>
 #include <sigc++/connection.h>
 
 class wxToolBar;
+class wxComboBox;
 class wxCommandEvent;
 
 namespace selection
 {
 
-class SelectionSetToolmenu : 
-	public wxComboBox
+class SelectionSetToolmenu
 {
 private:
+	wxComboBox* _dropdown;
 	sigc::connection _setsChangedSignal;
+	sigc::connection _mapEventHandler;
+	int _dropdownToolId;
 
 public:
-	SelectionSetToolmenu(wxToolBar* parent);
+	SelectionSetToolmenu(wxToolBar* toolbar);
 
 private:
 	// Updates the available list items and widget sensitivity
@@ -29,6 +31,8 @@ private:
 	void onEntryActivated(wxCommandEvent& ev);
 
 	void onMapEvent(IMap::MapEvent ev);
+	void onRadiantShutdown();
+
 	void connectToMapRoot();
 	void disconnectFromMapRoot();
 };

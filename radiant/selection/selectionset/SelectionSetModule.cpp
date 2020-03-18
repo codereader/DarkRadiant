@@ -31,12 +31,11 @@ class SelectionSetModule :
 	public ISelectionSetModule
 {
 private:
-	SelectionSetToolmenu* _toolMenu;
+	std::unique_ptr<SelectionSetToolmenu> _toolMenu;
 	wxToolBarToolBase* _clearAllButton;
 
 public:
 	SelectionSetModule() :
-		_toolMenu(nullptr),
 		_clearAllButton(nullptr)
 	{}
 
@@ -100,8 +99,7 @@ private:
 		toolbar->AddControl(label);
 
 		// Construct a new tool menu object
-		_toolMenu = new SelectionSetToolmenu(toolbar);
-		toolbar->AddControl(_toolMenu);
+		_toolMenu.reset(new SelectionSetToolmenu(toolbar));
 
 		_clearAllButton = toolbar->AddTool(CLEAR_TOOL_ID, "",
 			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"), _("Clear Selection Sets"));
