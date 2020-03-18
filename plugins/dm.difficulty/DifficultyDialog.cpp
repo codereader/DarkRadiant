@@ -44,28 +44,20 @@ void DifficultyDialog::createDifficultyEditors()
     {
         // Acquire the settings object
         difficulty::DifficultySettingsPtr settings = _settingsManager.getSettings(i);
-
-        if (settings != NULL)
+        if (settings)
         {
-            _editors.push_back(
-                DifficultyEditorPtr(new DifficultyEditor(
-                    _notebook, _settingsManager.getDifficultyName(i), settings)
-                )
-            );
+            // Construct the editor for this difficulty level and add it to our
+            // internal list of editors
+            std::string diffName = _settingsManager.getDifficultyName(i);
+            auto editor = std::make_shared<DifficultyEditor>(_notebook,
+                                                             settings);
+            _editors.push_back(editor);
+
+            // Insert the editor's widget as a new page in the choicebook
+            wxWindow* editorWidget = editor->getWidget();
+            editorWidget->Reparent(_notebook);
+            _notebook->AddPage(editorWidget, diffName, false);
         }
-    }
-
-    // Pack the editors into the notebook
-    for (std::size_t i = 0; i < _editors.size(); i++)
-    {
-        DifficultyEditor& editor = *_editors[i];
-
-        wxWindow* editorWidget = editor.getEditor();
-
-        // Reparent the DifficultyEditor's widget to the book control and then
-        // add it as a new page.
-        editorWidget->Reparent(_notebook);
-        _notebook->AddPage(editorWidget, editor.getNotebookLabel(), false);
     }
 }
 

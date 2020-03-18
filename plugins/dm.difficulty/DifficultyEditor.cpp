@@ -19,21 +19,20 @@
 namespace ui
 {
 
-DifficultyEditor::DifficultyEditor(wxWindow* parent, const std::string& label,
-								   const difficulty::DifficultySettingsPtr& settings) :
-	_settings(settings),
-	_label(label),
-	_settingsView(nullptr),
-	_classCombo(nullptr),
-	_spawnArgEntry(nullptr),
-	_argumentEntry(nullptr),
-	_appTypeCombo(nullptr),
-	_saveSettingButton(nullptr),
-	_deleteSettingButton(nullptr),
-	_createSettingButton(nullptr),
-	_refreshButton(nullptr),
-	_noteText(nullptr),
-	_updateActive(false)
+DifficultyEditor::DifficultyEditor(wxWindow* parent,
+                                   const difficulty::DifficultySettingsPtr& settings)
+: _settings(settings),
+  _settingsView(nullptr),
+  _classCombo(nullptr),
+  _spawnArgEntry(nullptr),
+  _argumentEntry(nullptr),
+  _appTypeCombo(nullptr),
+  _saveSettingButton(nullptr),
+  _deleteSettingButton(nullptr),
+  _createSettingButton(nullptr),
+  _refreshButton(nullptr),
+  _noteText(nullptr),
+  _updateActive(false)
 {
 	// The actual editor pane
 	_editor = loadNamedPanel(parent, "DifficultyEditorMainPanel");
@@ -44,14 +43,9 @@ DifficultyEditor::DifficultyEditor(wxWindow* parent, const std::string& label,
 	updateEditorWidgets();
 }
 
-wxWindow* DifficultyEditor::getEditor()
+wxWindow* DifficultyEditor::getWidget()
 {
 	return _editor;
-}
-
-std::string DifficultyEditor::getNotebookLabel()
-{
-	return _label;
 }
 
 void DifficultyEditor::populateWindow()
