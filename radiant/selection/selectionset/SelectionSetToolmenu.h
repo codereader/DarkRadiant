@@ -20,6 +20,8 @@ private:
 	sigc::connection _mapEventHandler;
 	int _dropdownToolId;
 
+	wxToolBarToolBase* _clearAllButton;
+
 public:
 	SelectionSetToolmenu(wxToolBar* toolbar);
 
@@ -29,6 +31,7 @@ private:
 
 	void onSelectionChanged(wxCommandEvent& ev);
 	void onEntryActivated(wxCommandEvent& ev);
+	void onDeleteAllSetsClicked(wxCommandEvent& ev);
 
 	void onMapEvent(IMap::MapEvent ev);
 	void onRadiantShutdown();

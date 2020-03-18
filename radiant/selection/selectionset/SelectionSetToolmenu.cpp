@@ -21,6 +21,9 @@ namespace
 	const char* const ENTRY_TOOLTIP = N_("Enter a name and hit ENTER to save a set.\n\n"
 		"Select an item from the dropdown list to restore the selection.\n\n"
 		"Hold SHIFT when opening the dropdown list and selecting the item to de-select the set.");
+
+	// Tool items created by the ToolBarManager carry ID >= 100
+	const int CLEAR_TOOL_ID = 1;
 }
 
 SelectionSetToolmenu::SelectionSetToolmenu(wxToolBar* toolbar) :
@@ -37,6 +40,11 @@ SelectionSetToolmenu::SelectionSetToolmenu(wxToolBar* toolbar) :
 
 	auto dropdownTool = toolbar->AddControl(_dropdown);
 	_dropdownToolId = dropdownTool->GetId();
+
+	_clearAllButton = toolbar->AddTool(CLEAR_TOOL_ID, "",
+		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"), _("Clear Selection Sets"));
+
+	toolbar->Bind(wxEVT_TOOL, &SelectionSetToolmenu::onDeleteAllSetsClicked, this, _clearAllButton->GetId());
 
 	_mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &SelectionSetToolmenu::onMapEvent)
@@ -105,13 +113,19 @@ void SelectionSetToolmenu::update()
 
 	if (!root)
 	{
+		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), false);
 		return;
 	}
+
+	bool hasSelectionSets = false;
 
 	root->getSelectionSetManager().foreachSelectionSet([&] (const ISelectionSetPtr& set)
 	{
 		_dropdown->Append(set->getName());
+		hasSelectionSets = true;
 	});
+	
+	_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), hasSelectionSets);
 }
 
 void SelectionSetToolmenu::onEntryActivated(wxCommandEvent& ev)
@@ -186,6 +200,31 @@ void SelectionSetToolmenu::onSelectionChanged(wxCommandEvent& ev)
 
 	// Unset our focus
 	wxGetTopLevelParent(_dropdown)->SetFocus();
+}
+
+void SelectionSetToolmenu::onDeleteAllSetsClicked(wxCommandEvent& ev)
+{
+	if (ev.GetId() != _clearAllButton->GetId())
+	{
+		ev.Skip();
+		return; // not our business
+	}
+
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "No map loaded, can't delete any sets" << std::endl;
+		return;
+	}
+
+	ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+		_("Delete all selection sets?"),
+		_("This will delete all set definitions. The actual map objects will not be affected by this step.\n\nContinue with that operation?"),
+		ui::IDialog::MESSAGE_ASK);
+
+	if (dialog->run() == ui::IDialog::RESULT_YES)
+	{
+		GlobalMapModule().getRoot()->getSelectionSetManager().deleteAllSelectionSets();
+	}
 }
 
 } // namespace

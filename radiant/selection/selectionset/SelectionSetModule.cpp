@@ -15,30 +15,16 @@
 #include "SelectionSetToolmenu.h"
 #include "SelectionSetManager.h"
 
-#include <wx/event.h>
-#include <wx/toolbar.h>
-
 namespace selection
 {
-
-namespace
-{
-	// Tool items created by the ToolBarManager carry ID >= 100
-	const int CLEAR_TOOL_ID = 1;
-}
 
 class SelectionSetModule :
 	public ISelectionSetModule
 {
 private:
 	std::unique_ptr<SelectionSetToolmenu> _toolMenu;
-	wxToolBarToolBase* _clearAllButton;
 
 public:
-	SelectionSetModule() :
-		_clearAllButton(nullptr)
-	{}
-
 	ISelectionSetManager::Ptr createSelectionSetManager() override
 	{
 		return std::make_shared<SelectionSetManager>();
@@ -101,13 +87,6 @@ private:
 		// Construct a new tool menu object
 		_toolMenu.reset(new SelectionSetToolmenu(toolbar));
 
-		_clearAllButton = toolbar->AddTool(CLEAR_TOOL_ID, "",
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"), _("Clear Selection Sets"));
-#if 0 // TODO
-		_clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
-#endif
-
-		toolbar->Bind(wxEVT_TOOL, &SelectionSetModule::onDeleteAllSetsClicked, this, _clearAllButton->GetId());
 		toolbar->Realize();
 
 #ifdef __WXOSX__
@@ -129,31 +108,6 @@ private:
 		}
 
 		GlobalMapModule().getRoot()->getSelectionSetManager().deleteAllSelectionSets();
-	}
-
-	void onDeleteAllSetsClicked(wxCommandEvent& ev)
-	{
-		if (ev.GetId() != _clearAllButton->GetId())
-		{
-			ev.Skip();
-			return; // not our business
-		}
-
-		if (!GlobalMapModule().getRoot())
-		{
-			rError() << "No map loaded, can't delete any sets" << std::endl;
-			return;
-		}
-
-		ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(
-			_("Delete all selection sets?"),
-			_("This will delete all set definitions. The actual map objects will not be affected by this step.\n\nContinue with that operation?"),
-			ui::IDialog::MESSAGE_ASK);
-
-		if (dialog->run() == ui::IDialog::RESULT_YES)
-		{
-			GlobalMapModule().getRoot()->getSelectionSetManager().deleteAllSelectionSets();
-		}
 	}
 };
 
