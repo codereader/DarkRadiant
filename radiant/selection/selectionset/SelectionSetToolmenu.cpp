@@ -4,6 +4,8 @@
 #include "iselection.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "imap.h"
+#include "itextstream.h"
 #include "idialogmanager.h"
 
 #include <wx/combobox.h>
@@ -30,19 +32,60 @@ SelectionSetToolmenu::SelectionSetToolmenu(wxToolBar* toolbar) :
 	Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SelectionSetToolmenu::onEntryActivated), NULL, this);
 	Connect(wxEVT_COMBOBOX, wxCommandEventHandler(SelectionSetToolmenu::onSelectionChanged), NULL, this);
 
-	// Populate the list
-	update();
+	GlobalMapModule().signal_mapEvent().connect(
+		sigc::mem_fun(*this, &SelectionSetToolmenu::onMapEvent)
+	);
 
-	GlobalSelectionSetManager().signal_selectionSetsChanged().connect(
-        sigc::mem_fun(this, &SelectionSetToolmenu::update)
-    );
+	connectToMapRoot();
+	update();
+}
+
+void SelectionSetToolmenu::onMapEvent(IMap::MapEvent ev)
+{
+	if (ev == IMap::MapLoaded)
+	{
+		// Rebuild the dialog once a map is loaded
+		connectToMapRoot();
+		update();
+	}
+	else if (ev == IMap::MapUnloading)
+	{
+		disconnectFromMapRoot();
+		update();
+	}
+}
+
+void SelectionSetToolmenu::connectToMapRoot()
+{
+	// Always disconnect first
+	disconnectFromMapRoot();
+
+	if (GlobalMapModule().getRoot())
+	{
+		auto& setManager = GlobalMapModule().getRoot()->getSelectionSetManager();
+
+		_setsChangedSignal = setManager.signal_selectionSetsChanged().connect(
+			sigc::mem_fun(this, &SelectionSetToolmenu::update));
+	}
+}
+
+void SelectionSetToolmenu::disconnectFromMapRoot()
+{
+	_setsChangedSignal.disconnect();
 }
 
 void SelectionSetToolmenu::update()
 {
 	Clear();
 
-	GlobalSelectionSetManager().foreachSelectionSet([&] (const ISelectionSetPtr& set)
+	auto root = GlobalMapModule().getRoot();
+
+	if (!root)
+	{
+		return;
+	}
+
+	root->getSelectionSetManager().foreachSelectionSet([&] (const ISelectionSetPtr& set)
 	{
 		Append(set->getName());
 	});
@@ -50,6 +93,14 @@ void SelectionSetToolmenu::update()
 
 void SelectionSetToolmenu::onEntryActivated(wxCommandEvent& ev)
 {
+	auto root = GlobalMapModule().getRoot();
+
+	if (!root)
+	{
+		rError() << "No map loaded, cannot create selection sets" << std::endl;
+		return;
+	}
+
 	// Create new selection set if possible
 	std::string name = GetValue().ToStdString();
 
@@ -67,9 +118,9 @@ void SelectionSetToolmenu::onEntryActivated(wxCommandEvent& ev)
 		return;
 	}
 
-	ISelectionSetPtr set = GlobalSelectionSetManager().createSelectionSet(name);
+	auto set = root->getSelectionSetManager().createSelectionSet(name);
 
-	assert(set != NULL);
+	assert(set);
 
 	set->assignFromCurrentScene();
 
@@ -82,13 +133,21 @@ void SelectionSetToolmenu::onEntryActivated(wxCommandEvent& ev)
 
 void SelectionSetToolmenu::onSelectionChanged(wxCommandEvent& ev)
 {
+	auto root = GlobalMapModule().getRoot();
+
+	if (!root)
+	{
+		rError() << "No map loaded, cannot select or deselect sets" << std::endl;
+		return;
+	}
+
 	std::string name = GetStringSelection().ToStdString();
 
 	if (name.empty()) return;
 
-	ISelectionSetPtr set = GlobalSelectionSetManager().findSelectionSet(name);
+	auto set = root->getSelectionSetManager().findSelectionSet(name);
 
-	if (set == NULL) return;
+	if (!set) return;
 
 	// The user can choose to DESELECT the set nodes when holding down shift
 	if (wxGetKeyState(WXK_SHIFT))

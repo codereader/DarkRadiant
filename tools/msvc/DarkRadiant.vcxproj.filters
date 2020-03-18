@@ -1594,6 +1594,9 @@
     <ClCompile Include="..\..\radiant\layers\LayerManager.cpp">
       <Filter>src\layers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetModule.cpp">
+      <Filter>src\selection\selectionset</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">

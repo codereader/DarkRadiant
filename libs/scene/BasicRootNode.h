@@ -5,6 +5,7 @@
 #include "ilayer.h"
 #include "ientity.h"
 #include "iselectiongroup.h"
+#include "iselectionset.h"
 #include "Node.h"
 #include "inamespace.h"
 #include "UndoFileChangeTracker.h"
@@ -25,6 +26,7 @@ private:
     UndoFileChangeTracker _changeTracker;
     ITargetManagerPtr _targetManager;
     selection::ISelectionGroupManager::Ptr _selectionGroupManager;
+    selection::ISelectionSetManager::Ptr _selectionSetManager;
     ILayerManager::Ptr _layerManager;
     AABB _emptyAABB;
 
@@ -34,6 +36,7 @@ public:
         _namespace = GlobalNamespaceFactory().createNamespace();
         _targetManager = GlobalEntityCreator().createTargetManager();
         _selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
+        _selectionSetManager = GlobalSelectionSetModule().createSelectionSetManager();
         _layerManager = GlobalLayerModule().createLayerManager();
     }
 
@@ -58,6 +61,11 @@ public:
     selection::ISelectionGroupManager& getSelectionGroupManager() override
     {
         return *_selectionGroupManager;
+    }
+
+    selection::ISelectionSetManager& getSelectionSetManager() override
+    {
+        return *_selectionSetManager;
     }
 
     scene::ILayerManager& getLayerManager() override

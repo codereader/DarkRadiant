@@ -90,7 +90,7 @@ void PortableMapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::o
 	std::size_t selectionSetCount = 0;
 
 	// Visit all selection sets
-	GlobalSelectionSetManager().foreachSelectionSet([&](const selection::ISelectionSetPtr& set)
+	root->getSelectionSetManager().foreachSelectionSet([&](const selection::ISelectionSetPtr& set)
 	{
 		auto selSet = selSets.createChild(TAG_SELECTIONSET);
 

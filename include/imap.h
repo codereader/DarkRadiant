@@ -21,7 +21,11 @@ class ITargetManager;
 // see ilayer.h
 class ILayerManager;
 
-namespace selection { class ISelectionGroupManager;  }
+namespace selection 
+{ 
+	class ISelectionSetManager;
+	class ISelectionGroupManager;
+}
 
 namespace scene
 {
@@ -46,6 +50,11 @@ public:
 	 * Access the selection group manager of this hierarchy.
 	 */
 	virtual selection::ISelectionGroupManager& getSelectionGroupManager() = 0;
+
+	/**
+	 * Gives access to the selectionset manager in this scene.
+	 */
+	virtual selection::ISelectionSetManager& getSelectionSetManager() = 0;
 
     /**
      * Returns the target manager keeping track of all

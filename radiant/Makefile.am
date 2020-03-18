@@ -367,6 +367,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/selectionset/SelectionSetToolmenu.cpp \
 					  selection/selectionset/SelectionSetInfoFileModule.cpp \
                       selection/selectionset/SelectionSet.cpp \
+                      selection/selectionset/SelectionSetModule.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \

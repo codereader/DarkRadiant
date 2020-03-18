@@ -5,6 +5,7 @@
 #include "ilayer.h"
 #include "ientity.h"
 #include "iselectiongroup.h"
+#include "iselectionset.h"
 #include "scene/Node.h"
 #include "UndoFileChangeTracker.h"
 #include "transformlib.h"
@@ -41,6 +42,8 @@ private:
 
     selection::ISelectionGroupManager::Ptr _selectionGroupManager;
 
+    selection::ISelectionSetManager::Ptr _selectionSetManager;
+
     scene::ILayerManager::Ptr _layerManager;
 
 	AABB _emptyAABB;
@@ -56,6 +59,7 @@ public:
     IMapFileChangeTracker& getUndoChangeTracker() override;
     ITargetManager& getTargetManager() override;
     selection::ISelectionGroupManager& getSelectionGroupManager() override;
+    selection::ISelectionSetManager& getSelectionSetManager() override;
     scene::ILayerManager& getLayerManager() override;
 
 	// Renderable implementation (empty)

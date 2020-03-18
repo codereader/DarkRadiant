@@ -781,6 +781,7 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\TranslateManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp" />
+    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
     <ClCompile Include="..\..\radiant\settings\PreferencePage.cpp" />
     <ClCompile Include="..\..\radiant\shaders\CameraCubeMapDecl.cpp" />

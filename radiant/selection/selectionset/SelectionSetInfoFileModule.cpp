@@ -22,17 +22,9 @@ std::string SelectionSetInfoFileModule::getName()
 }
 
 void SelectionSetInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
-{}
-
-void SelectionSetInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
-{}
-
-void SelectionSetInfoFileModule::onInfoFileSaveStart()
 {
-	_exportInfo.clear();
-
 	// Visit all selection sets and assemble the info into the structures
-	GlobalSelectionSetManager().foreachSelectionSet([&](const ISelectionSetPtr& set)
+	root->getSelectionSetManager().foreachSelectionSet([&](const ISelectionSetPtr& set)
 	{
 		// Get all nodes of this selection set and store them for later use
 		_exportInfo.push_back(SelectionSetExportInfo());
@@ -42,28 +34,36 @@ void SelectionSetInfoFileModule::onInfoFileSaveStart()
 	});
 }
 
+void SelectionSetInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
+void SelectionSetInfoFileModule::onInfoFileSaveStart()
+{
+	_exportInfo.clear();
+}
+
 void SelectionSetInfoFileModule::onSavePrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
 {
 	// Determine the item index for the selection set index mapping
-	std::for_each(_exportInfo.begin(), _exportInfo.end(), [&](SelectionSetExportInfo& info)
+	for (auto& info : _exportInfo)
 	{
 		if (info.nodes.find(node) != info.nodes.end())
 		{
 			info.nodeIndices.insert(map::NodeIndexPair(entityNum, primitiveNum));
 		}
-	});
+	}
 }
 
 void SelectionSetInfoFileModule::onSaveEntity(const scene::INodePtr& node, std::size_t entityNum)
 {
 	// Determine the item index for the selection set index mapping
-	std::for_each(_exportInfo.begin(), _exportInfo.end(), [&](SelectionSetExportInfo& info)
+	for (auto& info : _exportInfo)
 	{
 		if (info.nodes.find(node) != info.nodes.end())
 		{
 			info.nodeIndices.insert(map::NodeIndexPair(entityNum, EMPTY_PRIMITVE_NUM));
 		}
-	});
+	}
 }
 
 void SelectionSetInfoFileModule::writeBlocks(std::ostream& stream)
@@ -75,12 +75,11 @@ void SelectionSetInfoFileModule::writeBlocks(std::ostream& stream)
 
 	std::size_t selectionSetCount = 0;
 
-	std::for_each(_exportInfo.begin(), _exportInfo.end(), [&](SelectionSetExportInfo& info)
+	for (const auto& info : _exportInfo)
 	{
 		std::string indices = "";
 
-		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(),
-			[&](const map::NodeIndexPair& pair)
+		for (const auto& pair : info.nodeIndices)
 		{
 			if (pair.second == EMPTY_PRIMITVE_NUM)
 			{
@@ -92,14 +91,14 @@ void SelectionSetInfoFileModule::writeBlocks(std::ostream& stream)
 				// entity & primitive number
 				indices += "( " + string::to_string(pair.first) + " " + string::to_string(pair.second) + " ) ";
 			}
-		});
+		}
 
 		// Make sure to escape the quotes of the set name, use the XML quote entity
 		stream << "\t\t" << SELECTION_SET << " " << selectionSetCount++
 			<< " { \"" << string::replace_all_copy(info.set->getName(), "\"", "&quot;") << "\" } "
 			<< " { " << indices << " } "
 			<< std::endl;
-	});
+	}
 
 	stream << "\t}" << std::endl;
 
@@ -197,19 +196,18 @@ void SelectionSetInfoFileModule::parseBlock(const std::string& blockName, parser
 void SelectionSetInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& root, const map::NodeIndexMap& nodeMap)
 {
 	// Remove all selection sets, there shouldn't be any left at this point
-	GlobalSelectionSetManager().deleteAllSelectionSets();
+	root->getSelectionSetManager().deleteAllSelectionSets();
 
 	// Re-construct the selection sets
-	std::for_each(_importInfo.begin(), _importInfo.end(), [&](const SelectionSetImportInfo& info)
+	for (const auto& info : _importInfo)
 	{
-		ISelectionSetPtr set = GlobalSelectionSetManager().createSelectionSet(info.name);
+		auto set = root->getSelectionSetManager().createSelectionSet(info.name);
 
 		std::size_t failedNodes = 0;
 
-		std::for_each(info.nodeIndices.begin(), info.nodeIndices.end(),
-			[&](const map::NodeIndexPair& indexPair)
+		for (const auto& indexPair : info.nodeIndices)
 		{
-			map::NodeIndexMap::const_iterator i = nodeMap.find(indexPair);
+			auto i = nodeMap.find(indexPair);
 
 			if (i != nodeMap.end())
 			{
@@ -219,13 +217,13 @@ void SelectionSetInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& 
 			{
 				failedNodes++;
 			}
-		});
+		}
 
 		if (failedNodes > 0)
 		{
 			rWarning() << "Couldn't resolve " << failedNodes << " nodes in selection set " << set->getName() << std::endl;
 		}
-	});
+	}
 }
 
 void SelectionSetInfoFileModule::onInfoFileLoadFinished()

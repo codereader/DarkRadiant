@@ -123,7 +123,9 @@ void PortableMapReader::readSelectionSets(const xml::Node& mapNode)
 	try
 	{
 		_selectionSets.clear();
-		GlobalSelectionSetManager().deleteAllSelectionSets();
+
+		assert(_importFilter.getRootNode());
+		_importFilter.getRootNode()->getSelectionSetManager().deleteAllSelectionSets();
 
 		auto mapSelSets = getNamedChild(mapNode, TAG_SELECTIONSETS);
 
@@ -134,7 +136,7 @@ void PortableMapReader::readSelectionSets(const xml::Node& mapNode)
 			auto id = string::convert<std::size_t>(setNode.getAttributeValue(ATTR_SELECTIONSET_ID));
 			auto name = setNode.getAttributeValue(ATTR_SELECTIONSET_NAME);
 
-			auto set = GlobalSelectionSetManager().createSelectionSet(name);
+			auto set = _importFilter.getRootNode()->getSelectionSetManager().createSelectionSet(name);
 			_selectionSets[id] = set;
 		}
 	}
