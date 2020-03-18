@@ -11,6 +11,8 @@
 #include "math/Vector3.h"
 
 #include "model/ScaledModelExporter.h"
+#include "StartupMapLoader.h"
+#include "MapPositionManager.h"
 
 #include <sigc++/signal.h>
 #include <wx/stopwatch.h>
@@ -19,9 +21,6 @@ class TextInputStream;
 
 namespace map
 {
-
-class MapPositionManager;
-class StartupMapLoader;
 
 class Map :
 	public IMap,

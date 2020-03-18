@@ -6,9 +6,14 @@
 #include "iselectiongroup.h"
 #include "ilayer.h"
 #include "ibrush.h"
+#include "ieclass.h"
+#include "ientity.h"
+
 #include "PortableMapFormat.h"
 #include "Constants.h"
+
 #include "scenelib.h"
+#include "string/convert.h"
 #include "xmlutil/Document.h"
 #include "selection/group/SelectionGroupManager.h"
 
@@ -55,7 +60,7 @@ void PortableMapReader::readFromStream(std::istream& stream)
 
 	auto mapNode = doc.getTopLevelNode();
 
-	if (string::convert<std::size_t>(mapNode.getAttributeValue(ATTR_VERSION)) != PortableMapFormat::VERSION)
+	if (string::convert<std::size_t>(mapNode.getAttributeValue(ATTR_VERSION)) != PortableMapFormat::Version)
 	{
 		throw FailureException("Unsupported format version.");
 	}
@@ -482,7 +487,7 @@ bool PortableMapReader::CanLoad(std::istream& stream)
 			std::smatch results;
 
 			if (std::regex_search(buffer, results, versionPattern) &&
-				string::convert<std::size_t>(results[1].str()) <= PortableMapFormat::VERSION)
+				string::convert<std::size_t>(results[1].str()) <= PortableMapFormat::Version)
 			{
 				return true;
 			}

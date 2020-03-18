@@ -1,5 +1,12 @@
 #include "PortableMapFormat.h"
 
+#include "ifiletypes.h"
+#include "ieclass.h"
+#include "ibrush.h"
+#include "ipatch.h"
+#include "imapformat.h"
+#include "iregistry.h"
+
 #include "PortableMapReader.h"
 #include "PortableMapWriter.h"
 
@@ -9,8 +16,8 @@ namespace map
 namespace format
 {
 
-std::size_t PortableMapFormat::VERSION = 1;
-const char* PortableMapFormat::NAME = "Portable";
+std::size_t PortableMapFormat::Version = 1;
+const char* PortableMapFormat::Name = "Portable";
 
 // RegisterableModule implementation
 const std::string& PortableMapFormat::getName() const
@@ -55,7 +62,7 @@ void PortableMapFormat::shutdownModule()
 
 const std::string& PortableMapFormat::getMapFormatName() const
 {
-	static std::string _name = NAME;
+	static std::string _name = Name;
 	return _name;
 }
 

@@ -6,8 +6,13 @@
 #include <list>
 #include "CommandNotAvailableException.h"
 
-namespace selection {
-	namespace algorithm {
+namespace selection 
+{
+
+class ISelectionGroupManager;
+
+namespace algorithm 
+{
 
 	class ParentPrimitivesToEntityWalker :
 		public SelectionSystem::Visitor,
@@ -172,5 +177,5 @@ namespace selection {
 	void groupSelectedCmd(const cmd::ArgumentList& args);
 	void ungroupSelectedCmd(const cmd::ArgumentList& args);
 
-	} // namespace algorithm
+} // namespace algorithm
 } // namespace selection

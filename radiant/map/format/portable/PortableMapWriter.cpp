@@ -2,11 +2,16 @@
 
 #include "igame.h"
 #include "ientity.h"
+#include "ipatch.h"
+#include "imap.h"
+#include "ibrush.h"
 #include "ilayer.h"
 #include "iselectiongroup.h"
 #include "iselectionset.h"
 
-#include "string/string.h"
+#include "math/Plane3.h"
+#include "math/Matrix4.h"
+#include "string/convert.h"
 #include "selection/group/SelectionGroupManager.h"
 #include "PortableMapFormat.h"
 #include "Constants.h"
@@ -53,7 +58,7 @@ PortableMapWriter::PortableMapWriter() :
 	_curEntityPrimitives(nullptr)
 {
 	// Export name and version tag
-	_map.setAttributeValue(ATTR_VERSION, string::to_string(PortableMapFormat::VERSION));
+	_map.setAttributeValue(ATTR_VERSION, string::to_string(PortableMapFormat::Version));
 	_map.setAttributeValue(ATTR_FORMAT, ATTR_FORMAT_VALUE);
 }
 

@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "iradiant.h"
 #include "icounter.h"
+#include "imap.h"
 
 #include "string/convert.h"
 

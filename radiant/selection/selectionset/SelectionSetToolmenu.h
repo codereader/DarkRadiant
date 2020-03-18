@@ -8,6 +8,7 @@
 class wxToolBar;
 class wxComboBox;
 class wxCommandEvent;
+class wxToolBarToolBase;
 
 namespace selection
 {

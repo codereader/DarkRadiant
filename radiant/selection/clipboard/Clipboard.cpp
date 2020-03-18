@@ -29,7 +29,7 @@ void copy(const cmd::ArgumentList& args)
 	if (FaceInstance::Selection().empty())
     {
 		// When exporting to the system clipboard, use the portable format
-		auto format = GlobalMapFormatManager().getMapFormatByName(map::format::PortableMapFormat::NAME);
+		auto format = GlobalMapFormatManager().getMapFormatByName(map::format::PortableMapFormat::Name);
 
         // Stream selected objects into a stringstream
         std::stringstream out;

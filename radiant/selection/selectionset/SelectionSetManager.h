@@ -8,6 +8,8 @@
 #include <map>
 #include "SelectionSet.h"
 
+#include <wx/event.h>
+
 namespace selection
 {
 

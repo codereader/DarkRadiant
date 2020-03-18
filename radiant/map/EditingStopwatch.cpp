@@ -11,6 +11,7 @@
 #include "imapinfofile.h"
 
 #include <fmt/format.h>
+#include "string/convert.h"
 #include "modulesystem/StaticModule.h"
 #include "EditingStopwatchInfoFileModule.h"
 

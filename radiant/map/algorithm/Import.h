@@ -2,6 +2,7 @@
 
 #include <istream>
 #include <string>
+#include <memory>
 
 namespace scene
 {

@@ -3,6 +3,7 @@
 #include <map>
 #include <limits>
 
+#include "i18n.h"
 #include "imap.h"
 #include "imapformat.h"
 #include "inamespace.h"

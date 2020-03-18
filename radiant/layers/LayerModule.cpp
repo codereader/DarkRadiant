@@ -1,4 +1,5 @@
 #include "ilayer.h"
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "icommandsystem.h"
 #include "itextstream.h"

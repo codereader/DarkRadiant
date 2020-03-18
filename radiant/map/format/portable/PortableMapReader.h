@@ -6,6 +6,8 @@
 #include "iselectionset.h"
 #include "parser/DefTokeniser.h"
 
+namespace xml { class Node; }
+
 namespace map 
 {
 

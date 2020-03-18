@@ -13,6 +13,8 @@
 #include <wx/combobox.h>
 #include <wx/toolbar.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
+#include <wx/artprov.h>
 
 namespace selection
 {

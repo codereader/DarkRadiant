@@ -1,6 +1,7 @@
 #include <functional>
 
 #include "iselectiongroup.h"
+#include "i18n.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
 #include "imap.h"
