@@ -1,13 +1,11 @@
 #pragma once
 
 #include "iselectionset.h"
-#include "iradiant.h"
-#include "imap.h"
-#include "icommandsystem.h"
 
 #include <map>
 #include "SelectionSet.h"
 
+#include <sigc++/signal.h>
 #include <wx/event.h>
 
 namespace selection
@@ -27,8 +25,6 @@ class SelectionSetManager :
 	SelectionSets _selectionSets;
 
 public:
-    SelectionSetManager();
-
 	// ISelectionSetManager implementation
     sigc::signal<void> signal_selectionSetsChanged() const override;
 	void foreachSelectionSet(Visitor& visitor) override;
@@ -37,9 +33,6 @@ public:
 	void deleteSelectionSet(const std::string& name) override;
 	void deleteAllSelectionSets() override;
 	ISelectionSetPtr findSelectionSet(const std::string& name) override;
-
-	// Command target
-	void deleteAllSelectionSetsCmd(const cmd::ArgumentList& args);
 };
 
 } // namespace

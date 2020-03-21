@@ -1,29 +1,9 @@
 #include "SelectionSetManager.h"
 
-#include "itextstream.h"
-#include "i18n.h"
-#include "iselection.h"
-#include "idialogmanager.h"
-#include "imapinfofile.h"
-#include "iuimanager.h"
-#include "ieventmanager.h"
-#include "imainframe.h"
-#include "modulesystem/StaticModule.h"
-#include "SelectionSetToolmenu.h"
-#include "SelectionSetInfoFileModule.h"
-
-#include <wx/toolbar.h>
-#include <wx/frame.h>
-#include <wx/artprov.h>
-#include <wx/stattext.h>
-
 #include <functional>
 
 namespace selection
 {
-
-SelectionSetManager::SelectionSetManager()
-{}
 
 sigc::signal<void> SelectionSetManager::signal_selectionSetsChanged() const
 {
@@ -58,13 +38,6 @@ ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name
 		i = result.first;
 
 		_sigSelectionSetsChanged();
-
-#if 0 // TODO: move to separate class
-        if (_clearAllButton)
-        {
-            _clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
-        }
-#endif
 	}
 
 	return i->second;
@@ -79,27 +52,14 @@ void SelectionSetManager::deleteSelectionSet(const std::string& name)
         _selectionSets.erase(i);
 
         _sigSelectionSetsChanged();
-
-#if 0 // TODO: move to separate class
-        if (_clearAllButton)
-        {
-            _clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), !_selectionSets.empty());
-        }
-#endif
     }
 }
 
 void SelectionSetManager::deleteAllSelectionSets()
 {
 	_selectionSets.clear();
-	_sigSelectionSetsChanged();
 
-#if 0 // TODO: move to separate class
-    if (_clearAllButton)
-    {
-        _clearAllButton->GetToolBar()->EnableTool(_clearAllButton->GetId(), false);
-    }
-#endif
+	_sigSelectionSetsChanged();
 }
 
 ISelectionSetPtr SelectionSetManager::findSelectionSet(const std::string& name)
