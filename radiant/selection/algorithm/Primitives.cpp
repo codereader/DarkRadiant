@@ -196,7 +196,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 						fmt::format("Couldn't save to file: {0}", cmPath.string()));
 				}
 			}
-			catch (fs::filesystem_error f) {
+			catch (const fs::filesystem_error& f) {
 				rError() << "CollisionModel: " << f.what() << std::endl;
 			}
 

@@ -162,7 +162,7 @@ void ConversationEntity::writeToEntity()
 					entity->setKeyValue(cmdPrefix + "arg_" + string::to_string(a->first), a->second);
 				}
 			}
-			catch (std::runtime_error e) {
+			catch (const std::runtime_error&) {
 				rError() << "Unrecognised conversation command ID: " << c->second->type << std::endl;
 			}
 		}

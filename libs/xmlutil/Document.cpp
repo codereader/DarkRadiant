@@ -22,7 +22,7 @@ Document::Document(std::istream& stream) :
 	_xmlDoc(nullptr)
 {
 	const std::size_t bufferSize = 4096;
-	static_assert(bufferSize < std::numeric_limits<int>::max());
+	static_assert(bufferSize < std::numeric_limits<std::size_t>::max());
 
 	std::vector<char> buffer(bufferSize);
 

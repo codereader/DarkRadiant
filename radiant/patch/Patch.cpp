@@ -697,7 +697,7 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 			}
 		}
 	}
-	catch (GenericPatchException g) {
+	catch (const GenericPatchException& g) {
 		rError() << "Error manipulating patch dimensions: " << g.what() << "\n";
 	}
 
