@@ -215,7 +215,11 @@ then
     AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
     if test ! -z "$PYTHON_CONFIG"
     then
-        PYTHON_LIBS=`$PYTHON_CONFIG --libs`
+        # Python 3.8 requires the --embed switch to produce working linker flags
+        PC_PYTHON_VERIFY_VERSION([>=], [3.8.0],
+            [PYTHON_LIBS=`$PYTHON_CONFIG --libs --embed`],
+            [PYTHON_LIBS=`$PYTHON_CONFIG --libs`])
+
         PYTHON_CPPFLAGS=`$PYTHON_CONFIG --includes`
         PYBIND11_CPPFLAGS=``
         
