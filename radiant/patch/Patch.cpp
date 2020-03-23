@@ -2255,6 +2255,9 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 	NaturalTexture();
 }
 
+namespace
+{
+
 Vector3 getAverageNormal(const Vector3& normal1, const Vector3& normal2, double thickness)
 {
 	// Beware of normals with 0 length
@@ -2283,6 +2286,152 @@ Vector3 getAverageNormal(const Vector3& normal1, const Vector3& normal2, double 
 	}
 
 	return normal;
+}
+
+inline void calculateColTangentForCtrl(const Patch& sourcePatch, std::size_t row, std::size_t col, Vector3 colTangent[2])
+{
+	const auto& curCtrl = sourcePatch.ctrlAt(row, col);
+	auto sourceWidth = sourcePatch.getWidth();
+
+	// Are we at the beginning/end of the column?
+	if (col == 0 || col == sourceWidth - 1)
+	{
+		// Get the next row index
+		std::size_t nextCol = (col == sourceWidth - 1) ? (col - 1) : (col + 1);
+
+		const PatchControl& colNeighbour = sourcePatch.ctrlAt(row, nextCol);
+
+		// One available tangent
+		colTangent[0] = colNeighbour.vertex - curCtrl.vertex;
+		// Reverse it if we're at the end of the column
+		colTangent[0] *= (col == sourceWidth - 1) ? -1 : +1;
+	}
+	// We are in between, two tangents can be calculated
+	else
+	{
+		// Take two neighbouring vertices that should form a line segment
+		const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, col + 1);
+		const PatchControl& neighbour2 = sourcePatch.ctrlAt(row, col - 1);
+
+		// Calculate both available tangents
+		colTangent[0] = neighbour1.vertex - curCtrl.vertex;
+		colTangent[1] = neighbour2.vertex - curCtrl.vertex;
+
+		// Reverse the second one
+		colTangent[1] *= -1;
+
+		// Cull redundant tangents
+		if (colTangent[1].isParallel(colTangent[0]))
+		{
+			colTangent[1] = Vector3(0, 0, 0);
+		}
+	}
+}
+
+inline void calculateRowTangentForCtrl(const Patch& sourcePatch, std::size_t row, std::size_t col, Vector3 rowTangent[2])
+{
+	const auto& curCtrl = sourcePatch.ctrlAt(row, col);
+	auto sourceHeight = sourcePatch.getHeight();
+
+	// Are we at the beginning or the end?
+	if (row == 0 || row == sourceHeight - 1)
+	{
+		// Yes, only calculate one row tangent
+		// Get the next row index
+		std::size_t nextRow = (row == sourceHeight - 1) ? (row - 1) : (row + 1);
+
+		const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
+
+		// First tangent
+		rowTangent[0] = rowNeighbour.vertex - curCtrl.vertex;
+		// Reverse it accordingly
+		rowTangent[0] *= (row == sourceHeight - 1) ? -1 : +1;
+	}
+	else
+	{
+		// Two tangents to calculate
+		const PatchControl& rowNeighbour1 = sourcePatch.ctrlAt(row + 1, col);
+		const PatchControl& rowNeighbour2 = sourcePatch.ctrlAt(row - 1, col);
+
+		// First tangent
+		rowTangent[0] = rowNeighbour1.vertex - curCtrl.vertex;
+		rowTangent[1] = rowNeighbour2.vertex - curCtrl.vertex;
+
+		// Reverse the second one
+		rowTangent[1] *= -1;
+
+		// Cull redundant tangents
+		if (rowTangent[1].isParallel(rowTangent[0]))
+		{
+			rowTangent[1] = Vector3(0, 0, 0);
+		}
+	}
+}
+
+Vector3 calculateNormalForTangents(Vector3 colTangent[2], Vector3 rowTangent[2], const float thickness)
+{
+	Vector3 normal;
+
+	// If two column tangents are available, take the length-corrected average
+	if (colTangent[1].getLengthSquared() > 0)
+	{
+		// Two column normals to calculate
+		Vector3 normal1 = rowTangent[0].crossProduct(colTangent[0]);
+		Vector3 normal2 = rowTangent[0].crossProduct(colTangent[1]);
+
+		if (normal1.getLengthSquared() > 0)
+		{
+			normal1.normalise();
+		}
+
+		if (normal2.getLengthSquared() > 0)
+		{
+			normal2.normalise();
+		}
+
+		normal = getAverageNormal(normal1, normal2, thickness);
+
+		// Scale the normal down, as it is multiplied with thickness later on
+		normal /= thickness;
+	}
+	else
+	{
+		// One column tangent available, maybe we have a second rowtangent?
+		if (rowTangent[1].getLengthSquared() > 0)
+		{
+			// Two row normals to calculate
+			Vector3 normal1 = rowTangent[0].crossProduct(colTangent[0]);
+			Vector3 normal2 = rowTangent[1].crossProduct(colTangent[0]);
+
+			if (normal1.getLengthSquared() > 0)
+			{
+				normal1.normalise();
+			}
+
+			if (normal2.getLengthSquared() > 0)
+			{
+				normal2.normalise();
+			}
+
+			normal = getAverageNormal(normal1, normal2, thickness);
+
+			// Scale the normal down, as it is multiplied with thickness later on
+			normal /= thickness;
+		}
+		else
+		{
+			normal = rowTangent[0].crossProduct(colTangent[0]);
+
+			if (normal.getLengthSquared() > 0)
+			{
+				normal.normalise();
+			}
+		}
+	}
+
+	return normal;
+}
+
 }
 
 void Patch::createThickenedOpposite(const Patch& sourcePatch,
@@ -2331,113 +2480,14 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 				// The col tangents (empty if 0,0,0)
 				Vector3 colTangent[2] = { Vector3(0,0,0), Vector3(0,0,0) };
 
-				// Are we at the beginning/end of the column?
-				if (col == 0 || col == _width - 1)
-				{
-					// Get the next row index
-					std::size_t nextCol = (col == _width - 1) ? (col - 1) : (col + 1);
-
-					const PatchControl& colNeighbour = sourcePatch.ctrlAt(row, nextCol);
-
-					// One available tangent
-					colTangent[0] = colNeighbour.vertex - curCtrl.vertex;
-					// Reverse it if we're at the end of the column
-					colTangent[0] *= (col == _width - 1) ? -1 : +1;
-				}
-				// We are in between, two tangents can be calculated
-				else
-				{
-					// Take two neighbouring vertices that should form a line segment
-					const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, col+1);
-					const PatchControl& neighbour2 = sourcePatch.ctrlAt(row, col-1);
-
-					// Calculate both available tangents
-					colTangent[0] = neighbour1.vertex - curCtrl.vertex;
-					colTangent[1] = neighbour2.vertex - curCtrl.vertex;
-
-					// Reverse the second one
-					colTangent[1] *= -1;
-
-					// Cull redundant tangents
-					if (colTangent[1].isParallel(colTangent[0]))
-					{
-						colTangent[1] = Vector3(0,0,0);
-					}
-				}
+				calculateColTangentForCtrl(sourcePatch, row, col, colTangent);
 
 				// Calculate the tangent vectors to the next row
 				Vector3 rowTangent[2] = { Vector3(0,0,0), Vector3(0,0,0) };
 
-				// Are we at the beginning or the end?
-				if (row == 0 || row == _height - 1)
-				{
-					// Yes, only calculate one row tangent
-					// Get the next row index
-					std::size_t nextRow = (row == _height - 1) ? (row - 1) : (row + 1);
+				calculateRowTangentForCtrl(sourcePatch, row, col, rowTangent);
 
-					const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
-
-					// First tangent
-					rowTangent[0] = rowNeighbour.vertex - curCtrl.vertex;
-					// Reverse it accordingly
-					rowTangent[0] *= (row == _height - 1) ? -1 : +1;
-				}
-				else
-				{
-					// Two tangents to calculate
-					const PatchControl& rowNeighbour1 = sourcePatch.ctrlAt(row + 1, col);
-					const PatchControl& rowNeighbour2 = sourcePatch.ctrlAt(row - 1, col);
-
-					// First tangent
-					rowTangent[0] = rowNeighbour1.vertex - curCtrl.vertex;
-					rowTangent[1] = rowNeighbour2.vertex - curCtrl.vertex;
-
-					// Reverse the second one
-					rowTangent[1] *= -1;
-
-					// Cull redundant tangents
-					if (rowTangent[1].isParallel(rowTangent[0]))
-					{
-						rowTangent[1] = Vector3(0,0,0);
-					}
-				}
-
-				// If two column tangents are available, take the length-corrected average
-				if (colTangent[1].getLengthSquared() > 0)
-				{
-					// Two column normals to calculate
-					Vector3 normal1 = rowTangent[0].crossProduct(colTangent[0]).getNormalised();
-					Vector3 normal2 = rowTangent[0].crossProduct(colTangent[1]).getNormalised();
-
-					normal = getAverageNormal(normal1, normal2, thickness);
-
-					// Scale the normal down, as it is multiplied with thickness later on
-					normal /= thickness;
-				}
-				else
-				{
-					// One column tangent available, maybe we have a second rowtangent?
-					if (rowTangent[1].getLengthSquared() > 0)
-					{
-						// Two row normals to calculate
-						Vector3 normal1 = rowTangent[0].crossProduct(colTangent[0]).getNormalised();
-						Vector3 normal2 = rowTangent[1].crossProduct(colTangent[0]).getNormalised();
-
-						normal = getAverageNormal(normal1, normal2, thickness);
-
-						// Scale the normal down, as it is multiplied with thickness later on
-						normal /= thickness;
-					}
-					else
-					{
-						normal = rowTangent[0].crossProduct(colTangent[0]);
-						
-						if (normal.getLengthSquared() > 0)
-						{
-							normal.normalise();
-						}
-					}
-				}
+				normal = calculateNormalForTangents(colTangent, rowTangent, thickness);
 			}
 			else
 			{
