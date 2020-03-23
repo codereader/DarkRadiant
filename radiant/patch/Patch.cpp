@@ -2539,9 +2539,6 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 
 	// Notify the patch about the change
 	controlPointsChanged();
-
-	// Texture the patch "naturally"
-	NaturalTexture();
 }
 
 void Patch::stitchTextureFrom(Patch& sourcePatch) {
