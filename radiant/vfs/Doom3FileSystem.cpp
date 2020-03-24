@@ -260,8 +260,17 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     {
         os::foreachItemInDirectory(path, [&](const fs::path& file)
         {
-            // Just insert the name, it will get sorted correctly.
-            filenameList.insert(file.filename().string());
+            try
+            {
+                // Just insert the name, it will get sorted correctly.
+                filenameList.insert(file.filename().string());
+            }
+            catch (std::system_error& ex)
+            {
+                rWarning() << "[vfs] Skipping file " << file.filename().wstring() << 
+                    " - possibly unsupported characters in filename? " << 
+                    "(Exception: " << ex.what() << ")" << std::endl;
+            }
         });
     }
     catch (os::DirectoryNotFoundException&)
