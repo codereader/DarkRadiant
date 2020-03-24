@@ -69,21 +69,31 @@ void DirectoryArchive::traverse(Visitor& visitor, const std::string& root)
 	{
 		// Get the candidate
 		const fs::path& candidate = *it;
-        std::string candidateStr = candidate.generic_string();
 
-		if (fs::is_directory(candidate))
+		try
 		{
-			// Check if we should traverse further
-			if (visitor.visitDirectory(candidateStr.substr(rootLen), os::getDepth(it)+1))
+			auto candidateStr = candidate.generic_string();
+
+			if (fs::is_directory(candidate))
 			{
-				// Visitor returned true, prevent going deeper into it
-				os::disableRecursionPending(it);
+				// Check if we should traverse further
+				if (visitor.visitDirectory(candidateStr.substr(rootLen), os::getDepth(it) + 1))
+				{
+					// Visitor returned true, prevent going deeper into it
+					os::disableRecursionPending(it);
+				}
+			}
+			else
+			{
+				// File
+				visitor.visitFile(candidateStr.substr(rootLen));
 			}
 		}
-		else
+		catch (const std::system_error& ex)
 		{
-			// File
-			visitor.visitFile(candidateStr.substr(rootLen));
+			rWarning() << "[vfs] Skipping file " << candidate.filename().wstring() <<
+				" - possibly unsupported characters in filename? " <<
+				"(Exception: " << ex.what() << ")" << std::endl;
 		}
 	}
 }
