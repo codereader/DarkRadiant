@@ -647,17 +647,22 @@ void TexTool::foreachItem(textool::ItemVisitor& visitor) {
 	}
 }
 
-void TexTool::drawGrid() {
+void TexTool::drawGrid() 
+{
+	const float MAX_NUMBER_OF_GRID_LINES = 256;
+
 	AABB& texSpaceAABB = getVisibleTexSpace();
 
 	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents * _zoomFactor;
 	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents * _zoomFactor;
 
-	if (topLeft[0] > bottomRight[0]) {
+	if (topLeft[0] > bottomRight[0]) 
+	{
 		std::swap(topLeft[0], bottomRight[0]);
 	}
 
-	if (topLeft[1] > bottomRight[1]) {
+	if (topLeft[1] > bottomRight[1]) 
+	{
 		std::swap(topLeft[1], bottomRight[1]);
 	}
 
@@ -666,30 +671,64 @@ void TexTool::drawGrid() {
 	float startY = floor(topLeft[1]) - 1;
 	float endY = ceil(bottomRight[1]) + 1;
 
+	if (startX >= endX || startY >= endY)
+	{
+		return;
+	}
+
 	glBegin(GL_LINES);
+
+	// To avoid drawing millions of grid lines in a window, scale up the grid interval
+	// such that only a maximum number of lines are drawn
+	float yIntStep = 1.0f;
+	while (abs(endY - startY) / yIntStep > MAX_NUMBER_OF_GRID_LINES)
+	{
+		yIntStep *= 2;
+	}
+
+	float xIntStep = 1.0f;
+	while (abs(endX - startX) / xIntStep > MAX_NUMBER_OF_GRID_LINES)
+	{
+		xIntStep *= 2;
+	}
 
 	// Draw the integer grid
 	glColor4f(0.4f, 0.4f, 0.4f, 0.4f);
 
-	for (int y = static_cast<int>(startY); y <= static_cast<int>(endY); y++) {
+	for (float y = startY; y <= endY; y += yIntStep)
+	{
 		glVertex2f(startX, y);
 		glVertex2f(endX, y);
 	}
 
-	for (int x = static_cast<int>(startX); x <= static_cast<int>(endX); x++) {
+	for (float x = startX; x <= endX; x += xIntStep)
+	{
 		glVertex2f(x, startY);
 		glVertex2f(x, endY);
 	}
 
-	if (_gridActive) {
+	if (_gridActive)
+	{
 		// Draw the manipulation grid
 		glColor4f(0.2f, 0.2f, 0.2f, 0.4f);
-		for (float y = startY; y <= endY; y += _grid) {
+
+		float grid = _grid;
+
+		// scale up the grid interval such that only a maximum number of lines are drawn
+		while (abs(endX - startX) / grid > MAX_NUMBER_OF_GRID_LINES || 
+			   abs(endY - startY) / grid > MAX_NUMBER_OF_GRID_LINES)
+		{
+			grid *= 2;
+		}
+
+		for (float y = startY; y <= endY; y += grid) 
+		{
 			glVertex2f(startX, y);
 			glVertex2f(endX, y);
 		}
 
-		for (float x = startX; x <= endX; x += _grid) {
+		for (float x = startX; x <= endX; x += grid) 
+		{
 			glVertex2f(x, startY);
 			glVertex2f(x, endY);
 		}
@@ -706,15 +745,17 @@ void TexTool::drawGrid() {
 	glEnd();
 
 	// Draw coordinate strings
-	for (int y = static_cast<int>(startY); y <= static_cast<int>(endY); y++) {
+	for (float y = startY; y <= endY; y += yIntStep)
+	{
 		glRasterPos2f(topLeft[0] + 0.05f, y + 0.05f);
-		std::string ycoordStr = string::to_string(y) + ".0";
+		std::string ycoordStr = string::to_string(trunc(y)) + ".0";
 		GlobalOpenGL().drawString(ycoordStr);
 	}
 
-	for (int x = static_cast<int>(startX); x <= static_cast<int>(endX); x++) {
+	for (float x = startX; x <= endX; x += xIntStep) 
+	{
 		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f * _zoomFactor);
-		std::string xcoordStr = string::to_string(x) + ".0";
+		std::string xcoordStr = string::to_string(trunc(x)) + ".0";
 		GlobalOpenGL().drawString(xcoordStr);
 	}
 }
