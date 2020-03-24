@@ -50,6 +50,7 @@ private:
 	void populateWindow(); 			// Main window
 	void createDifficultyEditors();
 
+    void editCurrentDifficultyName();
 }; // class DifficultyDialog
 
 } // namespace ui

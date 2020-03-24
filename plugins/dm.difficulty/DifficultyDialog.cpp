@@ -61,6 +61,37 @@ void DifficultyDialog::createDifficultyEditors()
     }
 }
 
+namespace
+{
+    // Simple dialog for editing a difficulty setting name
+    class EditNameDialog: public wxDialog
+    {
+    public:
+        EditNameDialog(wxWindow* parent, const wxString& initialText)
+        : wxDialog(parent, wxID_ANY, _("Difficulty name"))
+        {
+            wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+
+            // Add the edit text box
+            wxTextCtrl* textBox = new wxTextCtrl(this, wxID_ANY, initialText);
+            mainSizer->Add(textBox, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
+            mainSizer->AddSpacer(6);
+
+            // Add the buttons
+            wxSizer* buttons = CreateButtonSizer(wxOK | wxCANCEL);
+            mainSizer->Add(buttons, 0, wxEXPAND | wxBOTTOM, 12);
+
+            SetSizer(mainSizer);
+            Fit();
+
+            // Start with the text selected and focussed to save an extra mouse
+            // click
+            textBox->SelectAll();
+            textBox->SetFocus();
+        }
+    };
+}
+
 void DifficultyDialog::populateWindow()
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -75,6 +106,8 @@ void DifficultyDialog::populateWindow()
         _notebook, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
         wxBU_EXACTFIT | wxBU_NOTEXT
     );
+    editBtn->Bind(wxEVT_BUTTON,
+                  [&] (wxCommandEvent&) { editCurrentDifficultyName(); });
     editBtn->SetBitmap(wxArtProvider::GetBitmap("darkradiant:edit.png"));
     choiceSizer->Add(editBtn, 0, wxEXPAND);
 
@@ -98,6 +131,18 @@ void DifficultyDialog::populateWindow()
 
     Layout();
     Fit();
+}
+
+void DifficultyDialog::editCurrentDifficultyName()
+{
+    // Initialise an EditNameDialog with the current tab text as the initial
+    // name to edit
+    EditNameDialog dialog(this,
+                          _notebook->GetPageText(_notebook->GetSelection()));
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        // OK, change the difficulty name
+    }
 }
 
 void DifficultyDialog::save()
