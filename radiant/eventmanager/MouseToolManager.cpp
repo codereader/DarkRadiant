@@ -30,6 +30,7 @@ const StringSet& MouseToolManager::getDependencies() const
     if (_dependencies.empty())
     {
         _dependencies.insert(MODULE_RADIANT);
+        _dependencies.insert(MODULE_UIMANAGER);
     }
 
     return _dependencies;
