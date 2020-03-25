@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "entitylib.h"
 #include "gamelib.h"
+#include "maplib.h"
 #include "string/string.h"
 #include "registry/registry.h"
 #include "DifficultyEntity.h"
@@ -71,7 +72,7 @@ void DifficultySettingsManager::loadMapSettings() {
 void DifficultySettingsManager::loadDifficultyNames()
 {
     // Locate the worldspawn entity
-    Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
+    Entity* worldspawn = map::current::getWorldspawn();
 
     // Try to locate the difficulty menu entity, where the default names are defined
     IEntityClassPtr menuEclass = GlobalEntityClassManager().findClass(

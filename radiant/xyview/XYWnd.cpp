@@ -34,6 +34,7 @@
 #include "XYRenderer.h"
 #include "gamelib.h"
 #include "scenelib.h"
+#include "maplib.h"
 #include "render/frontend/RenderableCollectionWalker.h"
 
 #include <fmt/format.h>
@@ -939,14 +940,15 @@ void XYWnd::drawGrid()
 
 void XYWnd::drawBlockGrid()
 {
-    if (GlobalMap().getWorldspawn() == NULL) {
-        return; // no worldspawn yet
-    }
+    // Do nothing if there is no worldspawn yet
+    Entity* worldSpawn = map::current::getWorldspawn();
+    if (!worldSpawn)
+        return;
+
     // Set a default blocksize of 1024
     int blockSize = GlobalXYWnd().defaultBlockSize();
 
     // Check the worldspawn for a custom blocksize
-    Entity* worldSpawn = Node_getEntity(GlobalMap().getWorldspawn());
     assert(worldSpawn);
     std::string sizeVal = worldSpawn->getKeyValue("_blocksize");
 

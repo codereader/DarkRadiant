@@ -23,6 +23,7 @@ namespace map
 class MapPositionManager;
 class StartupMapLoader;
 
+/// Main class representing the current map
 class Map :
 	public IMap,
 	public scene::Graph::Observer
