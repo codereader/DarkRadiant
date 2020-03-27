@@ -34,9 +34,24 @@ int SREntity::getHighestIndex()
 
 	for (const auto& i : _list)
 	{
-		if (i.second.getIndex() > index)
+		if (i.getIndex() > index)
 		{
-			index = i.second.getIndex();
+			index = i.getIndex();
+		}
+	}
+
+	return index;
+}
+
+int SREntity::getHighestInheritedIndex()
+{
+	int index = 0;
+
+	for (const auto& i : _list)
+	{
+		if (i.inherited() && i.getIndex() > index)
+		{
+			index = i.getIndex();
 		}
 	}
 
@@ -62,7 +77,7 @@ void SREntity::load(Entity* source)
 	// Instantiate a visitor class with the list of possible keys
 	// and the target list where all the S/Rs are stored
 	// Warning messages are stored in the <_warnings> string
-	SRPropertyLoader visitor(_keys, _list, _warnings);
+	SRPropertyLoader visitor(_keys, *this, _warnings);
 	eclass->forEachClassAttribute(std::ref(visitor));
 
 	// Scan the entity itself after the class has been searched
@@ -77,36 +92,48 @@ void SREntity::load(Entity* source)
 
 void SREntity::remove(int index)
 {
-	auto found = _list.find(index);
+	auto found = findByIndex(index);
 
-	if (found == _list.end() || found->second.inherited())
+	if (found == _list.end() || found->inherited())
 	{
 		return;
 	}
 
 	_list.erase(found);
 
-	// Re-arrange the S/R indices. The parser in the game engine
+	// Re-arrange the S/R indices. Otherwise he parser in the game engine
 	// walks up the indices and stops on the first missing index
 	// not noticing there might be higher indices to follow (#5193)
-	// TODO
+	int highestInheritedIndex = getHighestInheritedIndex();
+	int nextIndex = highestInheritedIndex + 1;
+
+	// Iterate over all non-inherited objects and assign new indices
+	for (auto i = _list.begin(); i != _list.end(); ++i)
+	{
+		if (!i->inherited())
+		{
+			// Found a non-inherited stim, assign the index
+			i->setIndex(nextIndex++);
+		}
+	}
 
 	updateListStores();
 }
 
 int SREntity::duplicate(int fromIndex) 
 {
-	auto found = _list.find(fromIndex);
+	auto found = findByIndex(fromIndex);
 
 	if (found != _list.end())
 	{
 		int index = getHighestIndex() + 1;
 
 		// Copy the object to the new id
-		_list[index] = found->second;
+		_list.push_back(StimResponse(*found));
+
 		// Set the index and the inheritance status
-		_list[index].setInherited(false);
-		_list[index].setIndex(index);
+		_list.back().setInherited(false);
+		_list.back().setIndex(index);
 
 		// Rebuild the liststores
 		updateListStores();
@@ -124,16 +151,12 @@ void SREntity::updateListStores()
 	_responseStore->Clear();
 
 	// Now populate the liststore
-	for (auto& i : _list)
+	for (auto& sr : _list)
 	{
-		int index = i.first;
-		StimResponse& sr = i.second;
+		auto row = sr.get("class") == "S" ? _stimStore->AddItem() : _responseStore->AddItem();
 
-		wxutil::TreeModel::Row row = (sr.get("class") == "S") ?
-			_stimStore->AddItem() : _responseStore->AddItem();
-
-		// Store the ID into the liststore
-		row[getColumns().index] = index;
+		// Store the index into the liststore
+		row[getColumns().index] = sr.getIndex();
 
 		writeToListRow(row, sr);
 
@@ -143,17 +166,20 @@ void SREntity::updateListStores()
 
 int SREntity::add()
 {
-	int index = getHighestIndex() + 1;
+	return add(getHighestIndex() + 1).getIndex();
+}
 
+StimResponse& SREntity::add(int index)
+{
 	// Create a new StimResponse object
-	_list[index] = StimResponse();
+	_list.push_back(StimResponse());
 
 	// Set the index and the inheritance status
-	_list[index].setInherited(false);
-	_list[index].setIndex(index);
-	_list[index].set("class", "S");
+	_list.back().setInherited(false);
+	_list.back().setIndex(index);
+	_list.back().set("class", "S");
 
-	return index;
+	return _list.back();
 }
 
 void SREntity::cleanEntity(Entity* target)
@@ -184,7 +210,7 @@ void SREntity::save(Entity* target)
 
 	for (auto& i : _list)
 	{
-		saver.visit(i.second);
+		saver.visit(i);
 	}
 }
 
@@ -245,9 +271,9 @@ void SREntity::setProperty(int index, const std::string& key, const std::string&
 
 StimResponse& SREntity::get(int index)
 {
-	auto i = _list.find(index);
+	auto i = findByIndex(index);
 
-	return i != _list.end() ? i->second : _emptyStimResponse;
+	return i != _list.end() ? *i : _emptyStimResponse;
 }
 
 const SRListColumns& SREntity::getColumns()
@@ -282,3 +308,17 @@ void SREntity::loadKeys()
 		_keys.push_back(newKey);
 	}
 }
+
+SREntity::StimsAndResponses::iterator SREntity::findByIndex(int index)
+{
+	for (StimsAndResponses::iterator i = _list.begin(); i != _list.end(); ++i)
+	{
+		if (i->getIndex() == index)
+		{
+			return i;
+		}
+	}
+
+	return _list.end();
+}
+

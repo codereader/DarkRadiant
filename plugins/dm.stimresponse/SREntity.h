@@ -57,11 +57,11 @@ public:
 	typedef std::vector<SRKey> KeyList;
 
 	// These are the int-indexed Stims/Responses belonging to an entity
-	typedef std::map<int, StimResponse> StimResponseMap;
+	typedef std::list<StimResponse> StimsAndResponses;
 
 private:
 	// The local lists of S/R and possible keys
-	StimResponseMap _list;
+	StimsAndResponses _list;
 	KeyList _keys;
 
 	// The liststore representation
@@ -101,6 +101,12 @@ public:
 	 * 			the properties before refreshing the treeview.
 	 */
 	int add();
+
+	/** greebo: Adds a new StimResponse and returns the index of the new object.
+	 * 			The ListStore is NOT updated with this call to allow setting of
+	 * 			the properties before refreshing the treeview.
+	 */
+	StimResponse& add(int index);
 
 	/** greebo: Removes the StimResponse object with the given index.
 	 * 			This triggers a refresh of the liststores.
@@ -147,7 +153,10 @@ public:
 	 */
 	wxDataViewItem getIterForIndex(wxutil::TreeModel& targetStore, int index);
 
+	StimsAndResponses::iterator findByIndex(int index);
+
 private:
+
 	/** greebo: Write the values of the passed StimResponse to the
 	 * 	TreeModel using the passed Row.
 	 * 	The index stays untouched.
@@ -159,5 +168,8 @@ private:
 
 	// Returns the highest Stim/Response index number
 	int getHighestIndex();
+
+	// Returns the highest number used by inherited S/R, or 0 if no inherited S/R are present
+	int getHighestInheritedIndex();
 };
 typedef std::shared_ptr<SREntity> SREntityPtr;
