@@ -32,11 +32,11 @@ int SREntity::getHighestId()
 {
 	int id = 0;
 
-	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); ++i)
+	for (const auto& i : _list)
 	{
-		if (i->first > id)
+		if (i.first > id)
 		{
-			id = i->first;
+			id = i.first;
 		}
 	}
 
@@ -47,11 +47,11 @@ int SREntity::getHighestIndex()
 {
 	int index = 0;
 
-	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); ++i)
+	for (const auto& i : _list)
 	{
-		if (i->second.getIndex() > index)
+		if (i.second.getIndex() > index)
 		{
-			index = i->second.getIndex();
+			index = i.second.getIndex();
 		}
 	}
 
@@ -92,7 +92,7 @@ void SREntity::load(Entity* source)
 
 void SREntity::remove(int id)
 {
-	StimResponseMap::iterator found = _list.find(id);
+	auto found = _list.find(id);
 
 	if (found != _list.end() && !found->second.inherited())
 	{
@@ -103,7 +103,7 @@ void SREntity::remove(int id)
 
 int SREntity::duplicate(int fromId) 
 {
-	StimResponseMap::iterator found = _list.find(fromId);
+	auto found = _list.find(fromId);
 
 	if (found != _list.end())
 	{
@@ -132,10 +132,10 @@ void SREntity::updateListStores()
 	_responseStore->Clear();
 
 	// Now populate the liststore
-	for (StimResponseMap::iterator i = _list.begin(); i!= _list.end(); ++i)
+	for (auto& i : _list)
 	{
-		int id = i->first;
-		StimResponse& sr = i->second;
+		int id = i.first;
+		StimResponse& sr = i.second;
 
 		wxutil::TreeModel::Row row = (sr.get("class") == "S") ?
 			_stimStore->AddItem() : _responseStore->AddItem();
@@ -188,9 +188,9 @@ void SREntity::save(Entity* target)
 
 	// Setup the saver object
 	SRPropertySaver saver(target, _keys);
-	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); ++i)
+	for (auto& i : _list)
 	{
-		saver.visit(i->second);
+		saver.visit(i.second);
 	}
 }
 
@@ -251,14 +251,9 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 
 StimResponse& SREntity::get(int id)
 {
-	StimResponseMap::iterator i = _list.find(id);
+	auto i = _list.find(id);
 
-	if (i != _list.end()) {
-		return i->second;
-	}
-	else {
-		return _emptyStimResponse;
-	}
+	return i != _list.end() ? i->second : _emptyStimResponse;
 }
 
 const SRListColumns& SREntity::getColumns()
@@ -282,12 +277,12 @@ void SREntity::loadKeys()
 {
 	xml::NodeList propList = GlobalGameManager().currentGame()->getLocalXPath(GKEY_STIM_PROPERTIES);
 
-	for (std::size_t i = 0; i < propList.size(); ++i)
+	for (const auto& node : propList)
 	{
 		// Create a new key and set the key name / class string
 		SRKey newKey;
-		newKey.key = propList[i].getAttributeValue("name");
-		newKey.classes = propList[i].getAttributeValue("classes");
+		newKey.key = node.getAttributeValue("name");
+		newKey.classes = node.getAttributeValue("classes");
 
 		// Add the key to the list
 		_keys.push_back(newKey);

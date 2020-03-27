@@ -62,6 +62,7 @@ void ResponseEditor::update()
 	_updatesDisabled = true;
 
 	wxPanel* mainPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorResponsePanel");
+	auto removeButton = findNamedObject<wxButton>(_mainPanel, "RemoveResponseButton");
 
 	int id = getIdFromSelection();
 
@@ -107,6 +108,7 @@ void ResponseEditor::update()
 
 		// Update the delete context menu item
 		_contextMenu.remove->Enable(!sr.inherited());
+		removeButton->Enable(!sr.inherited());
 
 		// If there is anything selected, the duplicate item is always active
 		_contextMenu.duplicate->Enable(true);
@@ -135,6 +137,8 @@ void ResponseEditor::update()
 		_contextMenu.disable->Enable(false);
 		_contextMenu.remove->Enable(false);
 		_contextMenu.duplicate->Enable(false);
+
+		removeButton->Enable(false);
 	}
 
 	_updatesDisabled = false;

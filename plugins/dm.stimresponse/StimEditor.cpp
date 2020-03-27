@@ -454,6 +454,7 @@ void StimEditor::update()
 	_updatesDisabled = true; // avoid unwanted callbacks
 
 	wxPanel* mainPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorStimPanel");
+	auto removeButton = findNamedObject<wxButton>(_mainPanel, "RemoveStimButton");
 
 	int id = getIdFromSelection();
 
@@ -590,6 +591,7 @@ void StimEditor::update()
 
 		// Update the delete context menu item
 		_contextMenu.menu->Enable(_contextMenu.remove->GetId(), !sr.inherited());
+		removeButton->Enable(!sr.inherited());
 
 		// Update the "enable/disable" menu items
 		bool state = sr.get("state") == "1";
@@ -605,6 +607,8 @@ void StimEditor::update()
 		_contextMenu.menu->Enable(_contextMenu.enable->GetId(), false);
 		_contextMenu.menu->Enable(_contextMenu.disable->GetId(), false);
 		_contextMenu.menu->Enable(_contextMenu.duplicate->GetId(), false);
+
+		removeButton->Enable(false);
 	}
 
 	_updatesDisabled = false;
