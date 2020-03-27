@@ -64,13 +64,13 @@ void ResponseEditor::update()
 	wxPanel* mainPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorResponsePanel");
 	auto removeButton = findNamedObject<wxButton>(_mainPanel, "RemoveResponseButton");
 
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0 && _entity != NULL)
+	if (index > 0 && _entity != NULL)
 	{
 		mainPanel->Enable(true);
 
-		StimResponse& sr = _entity->get(id);
+		StimResponse& sr = _entity->get(index);
 
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
 		std::string typeToFind = sr.get("type");
@@ -305,13 +305,13 @@ void ResponseEditor::checkBoxToggled(wxCheckBox* toggleButton)
 
 void ResponseEditor::addEffect()
 {
-	if (_entity == NULL) return;
+	if (_entity == nullptr) return;
 
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
-		StimResponse& sr = _entity->get(id);
+		StimResponse& sr = _entity->get(index);
 		int effectIndex = getEffectIdFromSelection();
 
 		// Make sure we have a response
@@ -325,13 +325,13 @@ void ResponseEditor::addEffect()
 
 void ResponseEditor::removeEffect()
 {
-	if (_entity == NULL) return;
+	if (_entity == nullptr) return;
 
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
-		StimResponse& sr = _entity->get(id);
+		StimResponse& sr = _entity->get(index);
 		int effectIndex = getEffectIdFromSelection();
 
 		// Make sure we have a response and anything selected
@@ -346,13 +346,13 @@ void ResponseEditor::removeEffect()
 
 void ResponseEditor::editEffect()
 {
-	if (_entity == NULL) return;
+	if (_entity == nullptr) return;
 
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
-		StimResponse& sr = _entity->get(id);
+		StimResponse& sr = _entity->get(index);
 		int effectIndex = getEffectIdFromSelection();
 
 		// Make sure we have a response and anything selected
@@ -371,11 +371,11 @@ void ResponseEditor::moveEffect(int direction)
 {
 	if (_entity == NULL) return;
 
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
-		StimResponse& sr = _entity->get(id);
+		StimResponse& sr = _entity->get(index);
 		int effectIndex = getEffectIdFromSelection();
 
 		if (sr.get("class") == "R" && effectIndex > 0)
@@ -397,11 +397,11 @@ void ResponseEditor::updateEffectContextMenu()
 
 	bool anythingSelected = curEffectIndex >= 0;
 
-	int srId = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (srId > 0)
+	if (index > 0)
 	{
-		StimResponse& sr = _entity->get(srId);
+		StimResponse& sr = _entity->get(index);
 		highestEffectIndex = sr.highestEffectIndex();
 	}
 
@@ -513,10 +513,10 @@ void ResponseEditor::addSR()
 	if (_entity == NULL) return;
 
 	// Create a new StimResponse object
-	int id = _entity->add();
+	int index = _entity->add();
 
 	// Get a reference to the newly allocated object
-	StimResponse& sr = _entity->get(id);
+	StimResponse& sr = _entity->get(index);
 	sr.set("class", "R");
 
 	// Get the selected stim type name from the combo box
@@ -529,7 +529,7 @@ void ResponseEditor::addSR()
 	_entity->updateListStores();
 
 	// Select the newly created response
-	selectId(id);
+	selectIndex(index);
 }
 
 void ResponseEditor::onEffectItemContextMenu(wxDataViewEvent& ev)

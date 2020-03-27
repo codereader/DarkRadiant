@@ -118,13 +118,13 @@ protected:
 
 	/** greebo: Returns the ID of the currently selected stim/response
 	 *
-	 * @returns: the id (number) of the selected stim or -1 on failure
+	 * @returns: the index (number) of the selected stim or -1 on failure
 	 */
-	int getIdFromSelection();
+	int getIndexFromSelection();
 
-	/** greebo: Selects the given ID in the S/R list
+	/** greebo: Selects the given index in the S/R list
 	 */
-	void selectId(int id);
+	void selectIndex(int index);
 
 	/** greebo: Gets called when the list selection changes
 	 */

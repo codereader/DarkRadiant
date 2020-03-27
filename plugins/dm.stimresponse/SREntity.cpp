@@ -28,21 +28,6 @@ SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
 	load(source);
 }
 
-int SREntity::getHighestId()
-{
-	int id = 0;
-
-	for (const auto& i : _list)
-	{
-		if (i.first > id)
-		{
-			id = i.first;
-		}
-	}
-
-	return id;
-}
-
 int SREntity::getHighestIndex()
 {
 	int index = 0;
@@ -90,36 +75,43 @@ void SREntity::load(Entity* source)
 	updateListStores();
 }
 
-void SREntity::remove(int id)
+void SREntity::remove(int index)
 {
-	auto found = _list.find(id);
+	auto found = _list.find(index);
 
-	if (found != _list.end() && !found->second.inherited())
+	if (found == _list.end() || found->second.inherited())
 	{
-		_list.erase(found);
-		updateListStores();
+		return;
 	}
+
+	_list.erase(found);
+
+	// Re-arrange the S/R indices. The parser in the game engine
+	// walks up the indices and stops on the first missing index
+	// not noticing there might be higher indices to follow (#5193)
+	// TODO
+
+	updateListStores();
 }
 
-int SREntity::duplicate(int fromId) 
+int SREntity::duplicate(int fromIndex) 
 {
-	auto found = _list.find(fromId);
+	auto found = _list.find(fromIndex);
 
 	if (found != _list.end())
 	{
-		int id = getHighestId() + 1;
 		int index = getHighestIndex() + 1;
 
 		// Copy the object to the new id
-		_list[id] = found->second;
+		_list[index] = found->second;
 		// Set the index and the inheritance status
-		_list[id].setInherited(false);
-		_list[id].setIndex(index);
+		_list[index].setInherited(false);
+		_list[index].setIndex(index);
 
 		// Rebuild the liststores
 		updateListStores();
 
-		return id;
+		return index;
 	}
 
 	return -1;
@@ -134,14 +126,14 @@ void SREntity::updateListStores()
 	// Now populate the liststore
 	for (auto& i : _list)
 	{
-		int id = i.first;
+		int index = i.first;
 		StimResponse& sr = i.second;
 
 		wxutil::TreeModel::Row row = (sr.get("class") == "S") ?
 			_stimStore->AddItem() : _responseStore->AddItem();
 
 		// Store the ID into the liststore
-		row[getColumns().id] = id;
+		row[getColumns().index] = index;
 
 		writeToListRow(row, sr);
 
@@ -151,17 +143,17 @@ void SREntity::updateListStores()
 
 int SREntity::add()
 {
-	int id = getHighestId() + 1;
 	int index = getHighestIndex() + 1;
 
 	// Create a new StimResponse object
-	_list[id] = StimResponse();
-	// Set the index and the inheritance status
-	_list[id].setInherited(false);
-	_list[id].setIndex(index);
-	_list[id].set("class", "S");
+	_list[index] = StimResponse();
 
-	return id;
+	// Set the index and the inheritance status
+	_list[index].setInherited(false);
+	_list[index].setIndex(index);
+	_list[index].set("class", "S");
+
+	return index;
 }
 
 void SREntity::cleanEntity(Entity* target)
@@ -179,7 +171,8 @@ void SREntity::cleanEntity(Entity* target)
 
 void SREntity::save(Entity* target)
 {
-	if (target == nullptr) {
+	if (target == nullptr)
+	{
 		return;
 	}
 
@@ -188,15 +181,16 @@ void SREntity::save(Entity* target)
 
 	// Setup the saver object
 	SRPropertySaver saver(target, _keys);
+
 	for (auto& i : _list)
 	{
 		saver.visit(i.second);
 	}
 }
 
-wxDataViewItem SREntity::getIterForId(wxutil::TreeModel& targetStore, int id)
+wxDataViewItem SREntity::getIterForIndex(wxutil::TreeModel& targetStore, int index)
 {
-	return targetStore.FindInteger(id, getColumns().id);
+	return targetStore.FindInteger(index, getColumns().index);
 }
 
 void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
@@ -228,19 +222,19 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	row[cols.inherited] = sr.inherited();
 }
 
-void SREntity::setProperty(int id, const std::string& key, const std::string& value)
+void SREntity::setProperty(int index, const std::string& key, const std::string& value)
 {
 	// First, propagate the SR set() call
-	StimResponse& sr = get(id);
+	StimResponse& sr = get(index);
 	sr.set(key, value);
 
 	wxutil::TreeModel::Ptr targetStore = (sr.get("class") == "S") ? _stimStore : _responseStore;
 
-	wxDataViewItem item = getIterForId(*targetStore, id);
+	wxDataViewItem item = getIterForIndex(*targetStore, index);
 
 	if (!item.IsOk())
 	{
-		rError() << "Cannot find S/R ID in liststore: " << id << std::endl;
+		rError() << "Cannot find S/R index in liststore: " << index << std::endl;
 		return;
 	}
 
@@ -249,9 +243,9 @@ void SREntity::setProperty(int id, const std::string& key, const std::string& va
 	row.SendItemChanged();
 }
 
-StimResponse& SREntity::get(int id)
+StimResponse& SREntity::get(int index)
 {
-	auto i = _list.find(id);
+	auto i = _list.find(index);
 
 	return i != _list.end() ? i->second : _emptyStimResponse;
 }

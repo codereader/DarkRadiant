@@ -31,16 +31,13 @@ struct SRListColumns :
 		index(add(wxutil::TreeModel::Column::Integer)),
 		srClass(add(wxutil::TreeModel::Column::Icon)),
 		caption(add(wxutil::TreeModel::Column::IconText)),
-		inherited(add(wxutil::TreeModel::Column::Boolean)),
-		id(add(wxutil::TreeModel::Column::Integer))
-	{
-	}
+		inherited(add(wxutil::TreeModel::Column::Boolean))
+	{}
 
 	wxutil::TreeModel::Column index;		// S/R index
 	wxutil::TreeModel::Column srClass;		// Type icon
 	wxutil::TreeModel::Column caption;		// Caption String
 	wxutil::TreeModel::Column inherited;	// Inheritance flag
-	wxutil::TreeModel::Column id;			// ID (unique)
 };
 
 /**
@@ -92,42 +89,30 @@ public:
 	void cleanEntity(Entity* target);
 
 	/** greebo: Retrieves the reference to the StimResponse object
-	 * 			having the given integer <id>.
+	 * 			having the given integer <index>.
 	 *
 	 * @returns: The ref to the StimResponse or an empty StimResponse object,
-	 * 			 if the id was not found.
+	 * 			 if the index was not found.
 	 */
-	StimResponse& get(int id);
+	StimResponse& get(int index);
 
-	/** greebo: Adds a new StimResponse and returns the id of the new object.
+	/** greebo: Adds a new StimResponse and returns the index of the new object.
 	 * 			The ListStore is NOT updated with this call to allow setting of
 	 * 			the properties before refreshing the treeview.
 	 */
 	int add();
 
-	/** greebo: Removes the StimResponse object with the given id.
+	/** greebo: Removes the StimResponse object with the given index.
 	 * 			This triggers a refresh of the liststores.
 	 */
-	void remove(int id);
+	void remove(int index);
 
-	/** greebo: Duplicates the stim/response with the given id.
+	/** greebo: Duplicates the stim/response with the given index.
 	 *
-	 * @fromId: The ID of the SR to copy from.
-	 * @returns: the ID of the new duplicate.
+	 * @fromId: The index of the SR to copy from.
+	 * @returns: the index of the new duplicate.
 	 */
-	int duplicate(int fromId);
-
-	/** greebo: Overrides the "state" property of an inherited stim.
-	 * 			As inherited spawnargs can't be altered, a sr_state_N
-	 * 			key/value pair is added to the entity, overriding
-	 * 			the inherited one.
-	 */
-	void setInheritedState(int id, bool enabled);
-
-	/** greebo: Returns TRUE if the inherited stim/response is enabled,
-	 * 			FALSE, if the inherited item is overridden.
-	 */
-	bool getInheritedState(int id);
+	int duplicate(int fromIndex);
 
 	// Static column definition
 	static const SRListColumns& getColumns();
@@ -140,9 +125,9 @@ public:
 	wxutil::TreeModel::Ptr getStimStore();
 	wxutil::TreeModel::Ptr getResponseStore();
 
-	/** greebo: Sets the <key> of the SR with the given <id> to <value>
+	/** greebo: Sets the <key> of the SR with the given <index> to <value>
 	 */
-	void setProperty(int id, const std::string& key, const std::string& value);
+	void setProperty(int index, const std::string& key, const std::string& value);
 
 	/** greebo: Updates the ListStore according to the
 	 * 			values of the current StimResponseMap <_list>
@@ -156,27 +141,23 @@ public:
 
 	/**
 	 * greebo: Returns the treeIter pointing to the row containing the
-	 * StimResponse with the given <id>
+	 * StimResponse with the given <index>
 	 *
 	 * @targetStore: The liststore where the iter should be searched
 	 */
-	wxDataViewItem getIterForId(wxutil::TreeModel& targetStore, int id);
+	wxDataViewItem getIterForIndex(wxutil::TreeModel& targetStore, int index);
 
 private:
 	/** greebo: Write the values of the passed StimResponse to the
-	 * 			TreeModel using the passed Row.
-	 * 			The ID stays untouched.
+	 * 	TreeModel using the passed Row.
+	 * 	The index stays untouched.
 	 *
 	 * @row: The row where the data should be inserted to
 	 * @sr: the StimResponse object containing the source data
 	 */
 	void writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr);
 
-	// Returns the highest currently assigned id
-	int getHighestId();
-
 	// Returns the highest Stim/Response index number
 	int getHighestIndex();
 };
-
 typedef std::shared_ptr<SREntity> SREntityPtr;

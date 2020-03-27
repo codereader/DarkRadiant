@@ -40,7 +40,7 @@ void SRPropertyLoader::parseAttribute(
 	for (std::size_t i = 0; i < _keys.size(); i++) {
 
 		// Construct a regex with the number as match variable
-		std::string exprStr = "^" + prefix + _keys[i].key + "_([0-9])+$";
+		std::string exprStr = "^" + prefix + _keys[i].key + "_([0-9]+)$";
 		std::regex expr(exprStr);
 		std::smatch matches;
 

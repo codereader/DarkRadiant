@@ -404,10 +404,10 @@ void StimEditor::addSR()
 	if (!_entity) return;
 
 	// Create a new StimResponse object
-	int id = _entity->add();
+	int index = _entity->add();
 
 	// Get a reference to the newly allocated object
-	StimResponse& sr = _entity->get(id);
+	StimResponse& sr = _entity->get(index);
 	sr.set("class", "S");
 
 	// Get the selected stim type name from the combo box
@@ -420,7 +420,7 @@ void StimEditor::addSR()
 	_entity->updateListStores();
 
 	// Select the newly created stim
-	selectId(id);
+	selectIndex(index);
 }
 
 // Create the context menus
@@ -456,14 +456,14 @@ void StimEditor::update()
 	wxPanel* mainPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorStimPanel");
 	auto removeButton = findNamedObject<wxButton>(_mainPanel, "RemoveStimButton");
 
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
 		// Update all the widgets
 		mainPanel->Enable(true);
 
-		StimResponse& sr = _entity->get(id);
+		StimResponse& sr = _entity->get(index);
 
 		std::string typeToFind = sr.get("type");
 
