@@ -16,6 +16,7 @@ class NamespaceManager :
 	public Namespaced,
 	public util::Noncopyable
 {
+private:
 	INamespace* _namespace;
 
 	// The attached entity
@@ -34,6 +35,9 @@ class NamespaceManager :
 
 	// lock for this class to avoid double-updates
 	bool _updateMutex;
+
+	// The key defining a name spawnarg, usually "name"
+	std::string _nameKey;
 
 public:
 	NamespaceManager(Doom3Entity& entity);
@@ -75,13 +79,17 @@ public:
 	 */
 	void onKeyErase(const std::string& key, EntityKeyValue& value);
 
+private:
 	/**
 	 * greebo: returns TRUE if the given key is recognised as "name" for the
 	 * selected game type.
 	 */
-	static bool keyIsName(const std::string& key);
+	bool keyIsName(const std::string& key);
 
-private:
+	// Some keyvalues are not referring to names, but to entityDefs, those should not 
+	// change themselves if an incidentially matching name is changed
+	bool keyIsReferringToEntityDef(const std::string& key);
+
 	void detachNameKeys();
 
 	void attachKeyObservers();
