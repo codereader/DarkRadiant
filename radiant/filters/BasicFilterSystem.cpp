@@ -1,6 +1,6 @@
 #include "BasicFilterSystem.h"
 
-#include "InstanceUpdateWalker.h"
+#include <functional>
 
 #include "iradiant.h"
 #include "itextstream.h"
@@ -11,7 +11,8 @@
 #include "ishaders.h"
 #include "modulesystem/StaticModule.h"
 
-#include <functional>
+#include "InstanceUpdateWalker.h"
+#include "SelectByFilterWalker.h"
 
 namespace filters
 {
@@ -68,6 +69,32 @@ void BasicFilterSystem::setAllFilterStatesCmd(const cmd::ArgumentList& args)
 	setAllFilterStates(args.front().getInt() != 0);
 }
 
+void BasicFilterSystem::selectObjectsByFilterCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rMessage() << "Usage: SelectObjectsByFilter FilterName" << std::endl;
+		return;
+	}
+
+	if (!GlobalSceneGraph().root())
+	{
+		rError() << "No map loaded." << std::endl;
+		return;
+	}
+
+	auto f = _availableFilters.find(args[0].getString());
+
+	if (f == _availableFilters.end())
+	{
+		rError() << "Cannot find the filter named " << args[0].getString() << std::endl;
+		return;
+	}
+
+	SelectByFilterWalker walker(*this, f->second, true);
+	GlobalSceneGraph().root()->traverse(walker);
+}
+
 // Initialise the filter system
 void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 {
@@ -97,6 +124,9 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalEventManager().addCommand("ActivateAllFilters", "ActivateAllFilters");
 	GlobalEventManager().addCommand("DeactivateAllFilters", "DeactivateAllFilters");
+
+	GlobalCommandSystem().addCommand("SelectObjectsByFilter",
+		std::bind(&BasicFilterSystem::selectObjectsByFilterCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 }
 
 void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readOnly) 
@@ -153,10 +183,7 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 		).first->second;
 
 		// Add the according toggle command to the eventmanager
-		IEventPtr fEvent = GlobalEventManager().addToggle(
-			filter.getEventName(),
-			std::bind(&XMLFilter::toggle, &inserted, std::placeholders::_1)
-		);
+		auto fEvent = createEventToggle(inserted);
 
 		// If this filter is in our active set, enable it
 		if (activeFilterNames.find(filterName) != activeFilterNames.end())
@@ -164,6 +191,9 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 			fEvent->setToggled(true);
 			_activeFilters.insert(std::make_pair(filterName, inserted));
 		}
+
+		// Add the statement to the command system
+		// TODO
 	}
 }
 
@@ -253,6 +283,11 @@ std::string BasicFilterSystem::getFilterEventName(const std::string& filter)
 	return f != _availableFilters.end() ? f->second.getEventName() : std::string();
 }
 
+bool BasicFilterSystem::getFilterState(const std::string& filter)
+{
+	return _activeFilters.find(filter) != _activeFilters.end();
+}
+
 // Change the state of a named filter
 void BasicFilterSystem::setFilterState(const std::string& filter, bool state) 
 {
@@ -320,10 +355,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	result.first->second.setRules(ruleSet);
 
 	// Add the according toggle command to the eventmanager
-	auto fEvent = GlobalEventManager().addToggle(
-		result.first->second.getEventName(),
-		std::bind(&XMLFilter::toggle, &result.first->second, std::placeholders::_1)
-	);
+	createEventToggle(result.first->second);
 
 	// Clear the cache, the rules have changed
 	_visibilityCache.clear();
@@ -331,6 +363,14 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	_filtersChangedSignal.emit();
 
 	return true;
+}
+
+IEventPtr BasicFilterSystem::createEventToggle(XMLFilter& filter)
+{
+	return GlobalEventManager().addToggle(
+		filter.getEventName(),
+		std::bind(&XMLFilter::toggle, &filter, std::placeholders::_1)
+	);
 }
 
 bool BasicFilterSystem::removeFilter(const std::string& filter) 

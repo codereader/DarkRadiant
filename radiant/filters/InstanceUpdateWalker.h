@@ -1,9 +1,8 @@
 #pragma once
 
-#include "iscenegraph.h"
+#include "inode.h"
 #include "ientity.h"
 #include "iselectable.h"
-#include "ieclass.h"
 #include "ipatch.h"
 #include "ibrush.h"
 
@@ -42,8 +41,8 @@ public:
 };
 
 /**
- * Scenegraph walker to update filtered status of Instances based on the
- * status of their parent entity class.
+ * Scenegraph walker to update filtered status of nodes based on the
+ * currently active set of filters.
  */
 class InstanceUpdateWalker :
 	public scene::NodeVisitor
@@ -69,63 +68,79 @@ public:
 		_brushesAreVisible(_filterSystem.isVisible(FilterRule::TYPE_OBJECT, "brush"))
 	{}
 
-	// Pre-descent walker function
 	bool pre(const scene::INodePtr& node) override
 	{
 		// Check entity eclass and spawnargs
 		if (Node_isEntity(node))
 		{
-			Entity* entity = Node_getEntity(node);
+			bool isVisible = evaluateEntity(node);
 
-			// Check the eclass first
-			bool entityIsVisible = _filterSystem.isEntityVisible(FilterRule::TYPE_ENTITYCLASS, *entity) &&
-								   _filterSystem.isEntityVisible(FilterRule::TYPE_ENTITYKEYVALUE, *entity);
+			setSubgraphFilterStatus(node, isVisible);
 
-			node->traverse(entityIsVisible ? _showWalker : _hideWalker);
-
-			if (!entityIsVisible)
-			{
-				// de-select this node and all children
-				node->traverse(_deselector);
-			}
-
-			// If the entity is hidden, don't traverse the child nodes
-			return entityIsVisible;
+			// If the entity is hidden, don't traverse its child nodes
+			return isVisible;
 		}
 
-		// greebo: Update visibility of Patches
+		// greebo: Check visibility of Patches
 		if (Node_isPatch(node))
 		{
-			auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+			bool isVisible = evaluatePatch(node);
 
-			bool isVisible = _patchesAreVisible && patchNode->getPatch().hasVisibleMaterial();
-
-			node->traverse(isVisible ? _showWalker : _hideWalker);
+			setSubgraphFilterStatus(node, isVisible);
 		}
-		// greebo: Update visibility of Brushes
+		// greebo: Check visibility of Brushes
 		else if (Node_isBrush(node))
 		{
-			auto brush = Node_getIBrush(node);
+			bool isVisible = evaluateBrush(node);
 
-			bool isVisible = _brushesAreVisible && brush->hasVisibleMaterial();
-
-			node->traverse(isVisible ? _showWalker : _hideWalker);
+			setSubgraphFilterStatus(node, isVisible);
 
 			// In case the brush has at least one visible material trigger a fine-grained update
 			if (isVisible)
 			{
-				brush->updateFaceVisibility();
+				Node_getIBrush(node)->updateFaceVisibility();
 			}
-		}
-
-		if (!node->visible())
-		{
-			// de-select this node and all children
-			node->traverse(_deselector);
 		}
 
 		// Continue the traversal
 		return true;
+	}
+
+private:
+	bool evaluateEntity(const scene::INodePtr& node)
+	{
+		assert(Node_isEntity(node));
+
+		Entity* entity = Node_getEntity(node);
+
+		// Check the eclass first
+		return _filterSystem.isEntityVisible(FilterRule::TYPE_ENTITYCLASS, *entity) &&
+			_filterSystem.isEntityVisible(FilterRule::TYPE_ENTITYKEYVALUE, *entity);
+	}
+
+	bool evaluatePatch(const scene::INodePtr& node)
+	{
+		assert(Node_isPatch(node));
+
+		return _patchesAreVisible && Node_getIPatch(node)->hasVisibleMaterial();
+	}
+
+	bool evaluateBrush(const scene::INodePtr& node)
+	{
+		assert(Node_isBrush(node));
+
+		return _brushesAreVisible && Node_getIBrush(node)->hasVisibleMaterial();
+	}
+
+	void setSubgraphFilterStatus(const scene::INodePtr& node, bool isVisible)
+	{
+		node->traverse(isVisible ? _showWalker : _hideWalker);
+
+		if (!isVisible)
+		{
+			// de-select this node and all children
+			node->traverse(_deselector);
+		}
 	}
 };
 
