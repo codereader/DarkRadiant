@@ -110,7 +110,8 @@ bool XMLFilter::isReadOnly() const {
 	return _readonly;
 }
 
-FilterRules XMLFilter::getRuleSet() {
+const FilterRules& XMLFilter::getRuleSet() const
+{
 	return _rules;
 }
 

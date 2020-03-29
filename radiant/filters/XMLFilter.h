@@ -13,9 +13,9 @@ namespace filters
  * these rules.
  */
 
-class XMLFilter {
+class XMLFilter
+{
 private:
-
 	// Text name of filter (from game.xml)
 	std::string _name;
 
@@ -109,7 +109,7 @@ public:
 	bool isReadOnly() const;
 
 	// Returns the ruleset
-	FilterRules getRuleSet();
+	const FilterRules& getRuleSet() const;
 
 	// Applies the given ruleset, replacing the existing one.
 	void setRules(const FilterRules& rules);
