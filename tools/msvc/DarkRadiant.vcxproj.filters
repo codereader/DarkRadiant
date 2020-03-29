@@ -323,6 +323,9 @@
     <Filter Include="src\map\format\portable">
       <UniqueIdentifier>{158557a6-7181-4ced-a45b-210fc3e54b34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\filters">
+      <UniqueIdentifier>{b15324e3-378b-43fe-abfd-1ee2d99c5bd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1596,6 +1599,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetModule.cpp">
       <Filter>src\selection\selectionset</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.cpp">
+      <Filter>src\ui\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filters\FilterContextMenu.cpp">
+      <Filter>src\ui\filters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3224,6 +3233,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\filters\SetObjectSelectionByFilterWalker.h">
       <Filter>src\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h">
+      <Filter>src\ui\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filters\FilterContextMenu.h">
+      <Filter>src\ui\filters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

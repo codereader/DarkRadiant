@@ -15,6 +15,9 @@
 namespace filters
 {
 
+const char* const SELECT_OBJECTS_BY_FILTER_CMD = "SelectObjectsByFilter";
+const char* const DESELECT_OBJECTS_BY_FILTER_CMD = "DeselectObjectsByFilter";
+
 /** FilterSystem implementation class.
  */
 class BasicFilterSystem : 

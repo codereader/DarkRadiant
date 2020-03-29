@@ -17,6 +17,7 @@ public:
 		SECTION_CREATE,	// Create Entity, Create Speaker, etc.
 		SECTION_ACTION, // Make Visportals
 		SECTION_SELECTION_GROUPS, // Selection Groups
+		SECTION_FILTER,	// Filter selectors
 		SECTION_LAYER,	// Layer operations
 		SECTION_USER = 100,
 	};

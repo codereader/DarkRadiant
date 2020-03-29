@@ -587,6 +587,7 @@ void OrthoContextMenu::constructMenu()
     addSectionItems(SECTION_CREATE, true); // no spacer for first category
     addSectionItems(SECTION_ACTION);
 	addSectionItems(SECTION_SELECTION_GROUPS);
+	addSectionItems(SECTION_FILTER);
     addSectionItems(SECTION_LAYER);
 
     // Add the rest of the sections

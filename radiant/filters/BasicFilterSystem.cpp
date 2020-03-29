@@ -141,10 +141,10 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().addCommand("ActivateAllFilters", "ActivateAllFilters");
 	GlobalEventManager().addCommand("DeactivateAllFilters", "DeactivateAllFilters");
 
-	GlobalCommandSystem().addCommand("SelectObjectsByFilter",
+	GlobalCommandSystem().addCommand(SELECT_OBJECTS_BY_FILTER_CMD,
 		std::bind(&BasicFilterSystem::selectObjectsByFilterCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 
-	GlobalCommandSystem().addCommand("DeselectObjectsByFilter",
+	GlobalCommandSystem().addCommand(DESELECT_OBJECTS_BY_FILTER_CMD,
 		std::bind(&BasicFilterSystem::deselectObjectsByFilterCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 }
 
