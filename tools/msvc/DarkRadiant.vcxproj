@@ -1097,7 +1097,7 @@
     <ClInclude Include="..\..\radiant\filetypes\FileTypeRegistry.h" />
     <ClInclude Include="..\..\radiant\filters\BasicFilterSystem.h" />
     <ClInclude Include="..\..\radiant\filters\InstanceUpdateWalker.h" />
-    <ClInclude Include="..\..\radiant\filters\SelectByFilterWalker.h" />
+    <ClInclude Include="..\..\radiant\filters\SetObjectSelectionByFilterWalker.h" />
     <ClInclude Include="..\..\radiant\filters\XMLFilter.h" />
     <ClInclude Include="..\..\radiant\fonts\FontInfo.h" />
     <ClInclude Include="..\..\radiant\fonts\FontLoader.h" />

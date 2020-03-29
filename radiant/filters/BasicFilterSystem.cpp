@@ -12,7 +12,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include "InstanceUpdateWalker.h"
-#include "SelectByFilterWalker.h"
+#include "SetObjectSelectionByFilterWalker.h"
 
 namespace filters
 {
@@ -73,25 +73,41 @@ void BasicFilterSystem::selectObjectsByFilterCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
 	{
-		rMessage() << "Usage: SelectObjectsByFilter FilterName" << std::endl;
+		rMessage() << "Usage: SelectObjectsByFilter \"FilterName\"" << std::endl;
 		return;
 	}
 
+	setObjectSelectionByFilter(args[0].getString(), true);
+}
+
+void BasicFilterSystem::deselectObjectsByFilterCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rMessage() << "Usage: DeselectObjectsByFilter \"FilterName\"" << std::endl;
+		return;
+	}
+
+	setObjectSelectionByFilter(args[0].getString(), false);
+}
+
+void BasicFilterSystem::setObjectSelectionByFilter(const std::string& filterName, bool select)
+{
 	if (!GlobalSceneGraph().root())
 	{
 		rError() << "No map loaded." << std::endl;
 		return;
 	}
 
-	auto f = _availableFilters.find(args[0].getString());
+	auto f = _availableFilters.find(filterName);
 
 	if (f == _availableFilters.end())
 	{
-		rError() << "Cannot find the filter named " << args[0].getString() << std::endl;
+		rError() << "Cannot find the filter named " << filterName << std::endl;
 		return;
 	}
 
-	SelectByFilterWalker walker(*this, f->second, true);
+	SetObjectSelectionByFilterWalker walker(f->second, select);
 	GlobalSceneGraph().root()->traverse(walker);
 }
 
@@ -127,6 +143,9 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalCommandSystem().addCommand("SelectObjectsByFilter",
 		std::bind(&BasicFilterSystem::selectObjectsByFilterCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
+
+	GlobalCommandSystem().addCommand("DeselectObjectsByFilter",
+		std::bind(&BasicFilterSystem::deselectObjectsByFilterCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 }
 
 void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readOnly) 

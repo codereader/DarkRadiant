@@ -52,6 +52,9 @@ private:
 	void setAllFilterStatesCmd(const cmd::ArgumentList& args);
 
 	void selectObjectsByFilterCmd(const cmd::ArgumentList& args);
+	void deselectObjectsByFilterCmd(const cmd::ArgumentList& args);
+
+	void setObjectSelectionByFilter(const std::string& filterName, bool select);
 
 public:
     // FilterSystem implementation

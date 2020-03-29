@@ -3222,7 +3222,7 @@
     <ClInclude Include="..\..\radiant\layers\LayerManager.h">
       <Filter>src\layers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\filters\SelectByFilterWalker.h">
+    <ClInclude Include="..\..\radiant\filters\SetObjectSelectionByFilterWalker.h">
       <Filter>src\filters</Filter>
     </ClInclude>
   </ItemGroup>

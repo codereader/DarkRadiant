@@ -12,7 +12,7 @@
 namespace filters
 {
 
-class SelectByFilterWalker :
+class SetObjectSelectionByFilterWalker :
 	public scene::NodeVisitor
 {
 private:
@@ -20,7 +20,7 @@ private:
 	bool _selectIfFiltered;
 
 public:
-	SelectByFilterWalker(FilterSystem& filterSystem, XMLFilter& filter, bool selectIfFiltered) :
+	SetObjectSelectionByFilterWalker(XMLFilter& filter, bool selectIfFiltered) :
 		_filter(filter),
 		_selectIfFiltered(selectIfFiltered)
 	{}
