@@ -558,10 +558,11 @@ bool BasicFilterSystem::setFilterRules(const std::string& filter,
 	return false; // not found or readonly
 }
 
-void BasicFilterSystem::updateSubgraph(const scene::INodePtr& root) {
+void BasicFilterSystem::updateSubgraph(const scene::INodePtr& root) 
+{
 	// Construct an InstanceUpdateWalker and traverse the scenegraph to update
 	// all instances
-	InstanceUpdateWalker walker;
+	InstanceUpdateWalker walker(*this);
 	root->traverse(walker);
 }
 
