@@ -803,7 +803,6 @@
     <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeManager.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\FilterMenu.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\GroupDialog.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\menu\MenuBar.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\menu\MenuElement.cpp" />
@@ -824,6 +823,7 @@
     <ClCompile Include="..\..\radiant\ui\entitylist\EntityList.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterContextMenu.cpp" />
+    <ClCompile Include="..\..\radiant\ui\filters\FilterMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\grid\GridManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
@@ -1269,7 +1269,6 @@
     <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.h" />
     <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeManager.h" />
     <ClInclude Include="..\..\radiant\uimanager\DialogManager.h" />
-    <ClInclude Include="..\..\radiant\uimanager\FilterMenu.h" />
     <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h" />
     <ClInclude Include="..\..\radiant\uimanager\LocalBitmapArtProvider.h" />
     <ClInclude Include="..\..\radiant\uimanager\menu\MenuBar.h" />
@@ -1294,6 +1293,7 @@
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModelPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterContextMenu.h" />
+    <ClInclude Include="..\..\radiant\ui\filters\FilterMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridItem.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridManager.h" />

@@ -325,7 +325,7 @@ darkradiant_SOURCES = main.cpp \
                       uimanager/colourscheme/ColourScheme.cpp \
                       uimanager/ToolbarManager.cpp \
                       uimanager/DialogManager.cpp \
-                      uimanager/FilterMenu.cpp \
+                      ui/filters/FilterMenu.cpp \
                       uimanager/GroupDialog.cpp \
                       uimanager/menu/MenuManager.cpp \
                       uimanager/menu/MenuFolder.cpp \

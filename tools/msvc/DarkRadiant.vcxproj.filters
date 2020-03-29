@@ -1111,9 +1111,6 @@
     <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp">
       <Filter>src\uimanager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\FilterMenu.cpp">
-      <Filter>src\uimanager</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\GroupDialog.cpp">
       <Filter>src\uimanager</Filter>
     </ClCompile>
@@ -1604,6 +1601,9 @@
       <Filter>src\ui\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\filters\FilterContextMenu.cpp">
+      <Filter>src\ui\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filters\FilterMenu.cpp">
       <Filter>src\ui\filters</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2670,9 +2670,6 @@
     <ClInclude Include="..\..\radiant\uimanager\DialogManager.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\FilterMenu.h">
-      <Filter>src\uimanager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
@@ -3238,6 +3235,9 @@
       <Filter>src\ui\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\filters\FilterContextMenu.h">
+      <Filter>src\ui\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filters\FilterMenu.h">
       <Filter>src\ui\filters</Filter>
     </ClInclude>
   </ItemGroup>
