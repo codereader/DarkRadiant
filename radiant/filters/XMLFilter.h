@@ -97,7 +97,7 @@ public:
 	std::string getEventName() const;
 
 	/**
-	 * greebo: Renames the event to <newName>. This also updates the event name.
+	 * greebo: Renames the filter to <newName>. This also updates the event name.
 	 */
 	void setName(const std::string& newName);
 

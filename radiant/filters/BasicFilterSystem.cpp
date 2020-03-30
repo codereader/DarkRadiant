@@ -470,11 +470,8 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 	// Insert the new filter into the table
 	auto result = _availableFilters.insert(std::make_pair(newFilterName, f->second));
 
-	// Add the according toggle command to the eventmanager
-	auto fEvent = GlobalEventManager().addToggle(
-		result.first->second.getEventName(),
-		std::bind(&XMLFilter::toggle, &result.first->second, std::placeholders::_1)
-	);
+	// Add the toggle command to the eventmanager
+	auto fEvent = createEventToggle(result.first->second);
 
 	if (!fEvent->empty()) 
 	{
