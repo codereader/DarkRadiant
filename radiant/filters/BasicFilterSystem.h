@@ -1,6 +1,5 @@
 #pragma once
 
-#include "XMLFilter.h"
 #include "imodule.h"
 #include "ifilter.h"
 #include "icommandsystem.h"
@@ -11,6 +10,9 @@
 #include <vector>
 #include <string>
 #include <iostream>
+
+#include "XMLFilter.h"
+#include "XmlFilterEventAdapter.h"
 
 namespace filters
 {
@@ -38,6 +40,9 @@ private:
 
     sigc::signal<void> _filtersChangedSignal;
 
+	typedef std::map<std::string, XmlFilterEventAdapter::Ptr> FilterAdapters;
+	FilterAdapters _eventAdapters;
+
 private:
 
 	// Perform a traversal of the scenegraph, setting or clearing the filtered
@@ -50,7 +55,8 @@ private:
 
 	void addFiltersFromXML(const xml::NodeList& nodes, bool readOnly);
 
-	IEventPtr createEventToggle(XMLFilter& filter);
+	//IEventPtr createEventToggle(XMLFilter& filter);
+	XmlFilterEventAdapter::Ptr ensureEventAdapter(XMLFilter& filter);
 
 	void setAllFilterStatesCmd(const cmd::ArgumentList& args);
 

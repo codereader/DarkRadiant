@@ -3240,6 +3240,9 @@
     <ClInclude Include="..\..\radiant\ui\filters\FilterMenu.h">
       <Filter>src\ui\filters</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\filters\XmlFilterEventAdapter.h">
+      <Filter>src\filters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

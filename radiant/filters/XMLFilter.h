@@ -1,5 +1,4 @@
-#ifndef XMLFILTER_H_
-#define XMLFILTER_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -92,18 +91,19 @@ public:
 	 */
 	bool isEntityVisible(const FilterRule::Type type, const Entity& entity) const;
 
-	/** greebo: Returns the name of the toggle event associated to this filter
+	/** greebo: Returns the name of the toggle event associated to this filter.
+	* It's lacking any spaces or other incompatible characters, compared to the actual
+	* name returned in getName().
 	 */
-	std::string getEventName() const;
+	const std::string& getEventName() const;
+
+	// The name of this Filter
+	const std::string& getName() const;
 
 	/**
 	 * greebo: Renames the filter to <newName>. This also updates the event name.
 	 */
 	void setName(const std::string& newName);
-
-	/** greebo: Gets called when the associated Event is fired.
-	 */
-	void toggle(bool newState);
 
 	// Whether this filter is read-only
 	bool isReadOnly() const;
@@ -118,7 +118,4 @@ private:
 	void updateEventName();
 };
 
-
 }
-
-#endif /*XMLFILTER_H_*/
