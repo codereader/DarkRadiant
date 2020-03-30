@@ -45,7 +45,7 @@ CustomClockedComponentEditor::CustomClockedComponentEditor(wxWindow* parent, Com
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 	hbox->Add(_interval, 0, wxEXPAND | wxRIGHT, 6);
-	hbox->Add(new wxStaticText(_panel, wxID_ANY, _("seconds:")), 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);
+	hbox->Add(new wxStaticText(_panel, wxID_ANY, _("seconds:")), 0, wxEXPAND);
 
 	_panel->GetSizer()->Add(hbox, 0, wxBOTTOM | wxEXPAND, 6);
 
