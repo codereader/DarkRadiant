@@ -1,13 +1,14 @@
 #pragma once
 
-#include "ieventmanager.h"
-#include "itextstream.h"
-#include "ifilter.h"
+#include <utility>
 
-#include "XMLFilter.h"
+#include "ieventmanager.h"
+#include "ifilter.h"
 
 namespace filters
 {
+
+class XMLFilter;
 
 /**
  * An object responsible for managing the commands and events 
@@ -18,74 +19,30 @@ class XmlFilterEventAdapter
 private:
     XMLFilter& _filter;
 
-    IEventPtr _toggle;
+    std::pair<std::string, IEventPtr> _toggle;
+    std::pair<std::string, IEventPtr> _selectByFilterCmd;
+    std::pair<std::string, IEventPtr> _deselectByFilterCmd;
 
 public:
     typedef std::shared_ptr<XmlFilterEventAdapter> Ptr;
 
-    XmlFilterEventAdapter(XMLFilter& filter) :
-        _filter(filter)
-    {
-        // Add the corresponding toggle command to the eventmanager
-        _toggle = createEventToggle();
-    }
+    XmlFilterEventAdapter(XMLFilter& filter);
 
-    ~XmlFilterEventAdapter()
-    {
-        // Remove all accelerators from that event before removal
-        GlobalEventManager().disconnectAccelerator(_filter.getEventName());
-
-        // Disable the event in the EventManager, to avoid crashes when calling the menu items
-        GlobalEventManager().disableEvent(_filter.getEventName());
-    }
+    ~XmlFilterEventAdapter();
 
     // Synchronisation routine to notify this class once the filter has been activated
-    void setFilterState(bool isActive)
-    {
-        if (_toggle)
-        {
-            _toggle->setToggled(isActive);
-        }
-    }
+    void setFilterState(bool isActive);
 
     // Post-filter-rename event, to be invoked by the FilterSystem after a rename operation
-    void onEventNameChanged(const std::string& oldEventName, const std::string& newEventName)
-    {
-        auto oldEvent = GlobalEventManager().findEvent(oldEventName);
-
-        // Get the accelerator associated to the old event, if appropriate
-        IAccelerator& oldAccel = GlobalEventManager().findAccelerator(oldEvent);
-
-        // Add the toggle command to the eventmanager
-        _toggle = createEventToggle();
-
-        if (!_toggle->empty())
-        {
-            GlobalEventManager().connectAccelerator(oldAccel, newEventName);
-        }
-        else
-        {
-            rWarning() << "Can't register event after rename, the new event name is already registered!" << std::endl;
-        }
-
-        // Remove the old event from the EventManager
-        GlobalEventManager().removeEvent(oldEventName);
-    }
+    void onEventNameChanged();
 
 private:
     // The command target
-    void toggle(bool newState)
-    {
-        GlobalFilterSystem().setFilterState(_filter.getName(), newState);
-    }
+    void toggle(bool newState);
 
-    IEventPtr createEventToggle()
-    {
-        return GlobalEventManager().addToggle(
-            _filter.getEventName(),
-            std::bind(&XmlFilterEventAdapter::toggle, this, std::placeholders::_1)
-        );
-    }
+    void createSelectDeselectEvents();
+    void removeSelectDeselectEvents();
+    void createEventToggle();
 };
 
 }

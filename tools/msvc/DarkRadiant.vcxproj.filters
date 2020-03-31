@@ -1606,6 +1606,9 @@
     <ClCompile Include="..\..\radiant\ui\filters\FilterMenu.cpp">
       <Filter>src\ui\filters</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\filters\XmlFilterEventAdapter.cpp">
+      <Filter>src\filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">

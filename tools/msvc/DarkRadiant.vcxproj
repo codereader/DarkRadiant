@@ -243,6 +243,7 @@
     <ClCompile Include="..\..\radiant\filetypes\FileTypeRegistry.cpp" />
     <ClCompile Include="..\..\radiant\filters\BasicFilterSystem.cpp" />
     <ClCompile Include="..\..\radiant\filters\XMLFilter.cpp" />
+    <ClCompile Include="..\..\radiant\filters\XmlFilterEventAdapter.cpp" />
     <ClCompile Include="..\..\radiant\fonts\FontLoader.cpp" />
     <ClCompile Include="..\..\radiant\fonts\FontManager.cpp" />
     <ClCompile Include="..\..\radiant\fonts\GlyphInfo.cpp" />

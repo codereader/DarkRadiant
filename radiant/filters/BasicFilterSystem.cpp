@@ -464,8 +464,6 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 		_activeFilters.erase(found);
 	}
 
-	std::string oldEventName = f->second->getEventName();
-
 	// Perform the actual rename procedure
 	f->second->setName(newFilterName);
 
@@ -474,7 +472,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 
 	if (adapter != _eventAdapters.end())
 	{
-		adapter->second->onEventNameChanged(oldEventName, f->second->getEventName());
+		adapter->second->onEventNameChanged();
 
 		// Re-insert the event adapter using a new key
 		auto adapterPtr = adapter->second;
