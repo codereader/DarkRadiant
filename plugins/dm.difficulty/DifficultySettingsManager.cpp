@@ -105,7 +105,8 @@ public:
         }
     }
 
-    // Return the translated name for a key, such as "diff0Default"
+    // Return the translated name for the difficulty level identified by the
+    // given key (e.g. the translated name for "diff0Default" might be "Easy").
     std::string getNameForKey(const std::string& nameKey) const
     {
         if (_menuEclass)
@@ -127,6 +128,12 @@ public:
     }
 };
 
+// Return key for a difficulty level name
+std::string diffNameKeyForLevel(int level)
+{
+    return "diff" + std::to_string(level) + "default";
+}
+
 }
 
 void DifficultySettingsManager::loadDifficultyNames()
@@ -143,7 +150,7 @@ void DifficultySettingsManager::loadDifficultyNames()
     int numLevels = game::current::getValue<int>(GKEY_DIFFICULTY_LEVELS);
     for (int i = 0; i < numLevels; i++)
     {
-        std::string nameKey = "diff" + std::to_string(i) + "default";
+        std::string nameKey = diffNameKeyForLevel(i);
 
         // First, try to find a map-specific name
         if (worldspawn)
@@ -215,12 +222,40 @@ void DifficultySettingsManager::saveSettings()
     }
 }
 
-std::string DifficultySettingsManager::getDifficultyName(int level) {
-    if (level < 0 || level >= static_cast<int>(_difficultyNames.size())) {
+std::string DifficultySettingsManager::getDifficultyName(int level)
+{
+    if (level < 0 || level >= static_cast<int>(_difficultyNames.size()))
+    {
         return "";
     }
 
     return _difficultyNames[level];
+}
+
+void DifficultySettingsManager::setDifficultyName(int level, const std::string& name)
+{
+    if (level < 0 || level >= static_cast<int>(_difficultyNames.size()))
+    {
+        throw std::logic_error(
+            "Invalid difficulty level (" + std::to_string(level) + ")"
+        );
+    }
+
+    _difficultyNames[level] = name;
+
+    // Write the new name into the worldspawn
+    Entity* worldspawn = map::current::getWorldspawn(true);
+    if (worldspawn)
+    {
+        worldspawn->setKeyValue(diffNameKeyForLevel(level), name);
+    }
+    else
+    {
+        throw std::logic_error(
+            "DifficultySettingsManager::setDifficultyName():"
+            " could not find or create worldspawn"
+        );
+    }
 }
 
 } // namespace difficulty

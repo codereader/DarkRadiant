@@ -66,15 +66,19 @@ namespace
     // Simple dialog for editing a difficulty setting name
     class EditNameDialog: public wxDialog
     {
+        wxTextCtrl* _textCtrl = nullptr;
+
     public:
+
+        // Construct and initialise with parent and initial text to edit
         EditNameDialog(wxWindow* parent, const wxString& initialText)
         : wxDialog(parent, wxID_ANY, _("Difficulty name"))
         {
             wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
             // Add the edit text box
-            wxTextCtrl* textBox = new wxTextCtrl(this, wxID_ANY, initialText);
-            mainSizer->Add(textBox, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
+            _textCtrl=  new wxTextCtrl(this, wxID_ANY, initialText);
+            mainSizer->Add(_textCtrl, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
             mainSizer->AddSpacer(6);
 
             // Add the buttons
@@ -86,8 +90,14 @@ namespace
 
             // Start with the text selected and focussed to save an extra mouse
             // click
-            textBox->SelectAll();
-            textBox->SetFocus();
+            _textCtrl->SelectAll();
+            _textCtrl->SetFocus();
+        }
+
+        // Get the result of editing
+        std::string editResult() const
+        {
+            return _textCtrl->GetValue().ToStdString();
         }
     };
 }
@@ -137,11 +147,18 @@ void DifficultyDialog::editCurrentDifficultyName()
 {
     // Initialise an EditNameDialog with the current tab text as the initial
     // name to edit
-    EditNameDialog dialog(this,
-                          _notebook->GetPageText(_notebook->GetSelection()));
+    int curDiffLevel = _notebook->GetSelection(); // assume tabs numbered from 0
+    EditNameDialog dialog(this, _notebook->GetPageText(curDiffLevel));
     if (dialog.ShowModal() == wxID_OK)
     {
-        // OK, change the difficulty name
+        // Successful edit, get the changed name
+        std::string newName = dialog.editResult();
+
+        // Change the difficulty name in the map
+        _settingsManager.setDifficultyName(curDiffLevel, newName);
+
+        // Change the displayed name in the dialog
+        _notebook->SetPageText(curDiffLevel, newName);
     }
 }
 
@@ -171,11 +188,9 @@ int DifficultyDialog::ShowModal()
 // Static command target
 void DifficultyDialog::ShowDialog(const cmd::ArgumentList& args)
 {
-    // Construct a new instance, this enters the main loop
-    DifficultyDialog* editor = new DifficultyDialog;
-
-    editor->ShowModal();
-    editor->Destroy();
+    // Construct a new instance and enter the main loop
+    DifficultyDialog editor;
+    editor.ShowModal();
 }
 
 } // namespace ui
