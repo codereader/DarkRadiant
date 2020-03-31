@@ -6,11 +6,10 @@
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "iregistry.h"
-#include "ieventmanager.h"
 #include "igame.h"
 #include "ishaders.h"
-#include "modulesystem/StaticModule.h"
 
+#include "modulesystem/StaticModule.h"
 #include "InstanceUpdateWalker.h"
 #include "SetObjectSelectionByFilterWalker.h"
 
@@ -107,7 +106,7 @@ void BasicFilterSystem::setObjectSelectionByFilter(const std::string& filterName
 		return;
 	}
 
-	SetObjectSelectionByFilterWalker walker(f->second, select);
+	SetObjectSelectionByFilterWalker walker(*f->second, select);
 	GlobalSceneGraph().root()->traverse(walker);
 }
 
@@ -165,7 +164,7 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 	{
 		// Initialise the XMLFilter object
 		std::string filterName = node.getAttributeValue("name");
-		XMLFilter filter(filterName, readOnly);
+		auto filter = std::make_shared<XMLFilter>(filterName, readOnly);
 
 		// Get all of the filterCriterion children of this node
 		xml::NodeList critNodes = node.getNamedChildren("filterCriterion");
@@ -179,44 +178,37 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 
 			if (typeStr == "texture")
 			{
-				filter.addRule(FilterRule::TYPE_TEXTURE, match, show);
+				filter->addRule(FilterRule::TYPE_TEXTURE, match, show);
 			}
 			else if (typeStr == "entityclass")
 			{
-				filter.addRule(FilterRule::TYPE_ENTITYCLASS, match, show);
+				filter->addRule(FilterRule::TYPE_ENTITYCLASS, match, show);
 			}
 			else if (typeStr == "object")
 			{
-				filter.addRule(FilterRule::TYPE_OBJECT, match, show);
+				filter->addRule(FilterRule::TYPE_OBJECT, match, show);
 			}
 			else if (typeStr == "entitykeyvalue")
 			{
-				filter.addEntityKeyValueRule(critNode.getAttributeValue("key"), match, show);
+				filter->addEntityKeyValueRule(critNode.getAttributeValue("key"), match, show);
 			}
 		}
 
 		// Add this XMLFilter to the list of available filters
-		XMLFilter& inserted = _availableFilters.insert(
+		XMLFilter::Ptr inserted = _availableFilters.insert(
 			std::make_pair(filterName, filter)
 		).first->second;
 
 		bool filterShouldBeActive = activeFilterNames.find(filterName) != activeFilterNames.end();
 
-		auto adapter = ensureEventAdapter(inserted);
-
-		// Add the according toggle command to the eventmanager
-		//auto fEvent = createEventToggle(inserted);
+		auto adapter = ensureEventAdapter(*inserted);
 
 		// If this filter is in our active set, enable it
 		if (filterShouldBeActive)
 		{
-			//fEvent->setToggled(true);
 			adapter->setFilterState(true);
 			_activeFilters.insert(std::make_pair(filterName, inserted));
 		}
-
-		// Add the statement to the command system
-		// TODO
 	}
 }
 
@@ -256,14 +248,14 @@ void BasicFilterSystem::shutdownModule()
 	for (const auto& pair : _availableFilters)
 	{
 		// Don't save stock filters
-		if (pair.second.isReadOnly()) continue;
+		if (pair.second->isReadOnly()) continue;
 
 		// Create a new filter node with a name
 		xml::Node filter = filterParent.createChild("filter");
 		filter.setAttributeValue("name", pair.first);
 
 		// Save all the rules as children to that node
-		const auto& ruleSet = pair.second.getRuleSet();
+		const auto& ruleSet = pair.second->getRuleSet();
 
 		for (const auto& rule : ruleSet)
 		{
@@ -320,7 +312,7 @@ std::string BasicFilterSystem::getFilterEventName(const std::string& filter)
 {
 	auto f = _availableFilters.find(filter);
 
-	return f != _availableFilters.end() ? f->second.getEventName() : std::string();
+	return f != _availableFilters.end() ? f->second->getEventName() : std::string();
 }
 
 bool BasicFilterSystem::getFilterState(const std::string& filter)
@@ -368,19 +360,12 @@ void BasicFilterSystem::updateEvents()
 {
 	for (const auto& pair : _availableFilters)
 	{
-		auto adapter = _eventAdapters.find(pair.second.getName());
+		auto adapter = _eventAdapters.find(pair.second->getName());
 
 		if (adapter != _eventAdapters.end())
 		{
 			adapter->second->setFilterState(getFilterState(pair.first));
 		}
-		/*
-		auto toggle = GlobalEventManager().findEvent(pair.second.getEventName());
-
-		if (!toggle) continue;
-
-		toggle->setToggled(getFilterState(pair.first));
-		*/
 	}
 }
 
@@ -389,7 +374,7 @@ bool BasicFilterSystem::filterIsReadOnly(const std::string& filter)
 	auto f = _availableFilters.find(filter);
 
 	// Return "read-only" if filter is not found
-	return f != _availableFilters.end() ? f->second.isReadOnly() : true;
+	return f != _availableFilters.end() ? f->second->isReadOnly() : true;
 }
 
 bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRules& ruleSet)
@@ -401,18 +386,14 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 		return false; // already exists
 	}
 
-	auto result = _availableFilters.insert(
-		std::make_pair(filterName, XMLFilter(filterName, false))
-	);
+	auto filter = std::make_shared<XMLFilter>(filterName, false);
+	auto result = _availableFilters.insert(std::make_pair(filterName, filter));
 
 	// Apply the ruleset
-	result.first->second.setRules(ruleSet);
+	filter->setRules(ruleSet);
 
 	// Create the event adapter
-	ensureEventAdapter(result.first->second);
-
-	// Add the according toggle command to the eventmanager
-	//createEventToggle(result.first->second);
+	ensureEventAdapter(*filter);
 
 	// Clear the cache, the rules have changed
 	_visibilityCache.clear();
@@ -422,35 +403,17 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	return true;
 }
 
-#if 0
-IEventPtr BasicFilterSystem::createEventToggle(XMLFilter& filter)
-{
-	return GlobalEventManager().addToggle(
-		filter.getEventName(),
-		std::bind(&XMLFilter::toggle, &filter, std::placeholders::_1)
-	);
-}
-#endif
-
 bool BasicFilterSystem::removeFilter(const std::string& filter) 
 {
 	auto f = _availableFilters.find(filter);
 
 	// Refuse to delete if filter is not found or is read only
-	if (f == _availableFilters.end() || f->second.isReadOnly())
+	if (f == _availableFilters.end() || f->second->isReadOnly())
 	{
 		return false;
 	}
 
-	_eventAdapters.erase(f->second.getName());
-
-#if 0
-	// Remove all accelerators from that event before removal
-	GlobalEventManager().disconnectAccelerator(f->second.getEventName());
-
-	// Disable the event in the EventManager, to avoid crashes when calling the menu items
-	GlobalEventManager().disableEvent(f->second.getEventName());
-#endif
+	_eventAdapters.erase(f->second->getName());
 
 	// Check if the filter was active
 	auto found = _activeFilters.find(f->first);
@@ -485,7 +448,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 	auto f = _availableFilters.find(oldFilterName);
 
 	// Refuse to rename non-existent or read-only filters
-	if (f == _availableFilters.end() || f->second.isReadOnly())
+	if (f == _availableFilters.end() || f->second->isReadOnly())
 	{
 		// Filter not found
 		return false;
@@ -501,70 +464,38 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 		_activeFilters.erase(found);
 	}
 
-	std::string oldEventName = f->second.getEventName();
-
-#if 0
-	auto oldEvent = GlobalEventManager().findEvent(oldEventName);
-
-	// Get the accelerator associated to the old event, if appropriate
-	IAccelerator& oldAccel = GlobalEventManager().findAccelerator(oldEvent);
-#endif
+	std::string oldEventName = f->second->getEventName();
 
 	// Perform the actual rename procedure
-	f->second.setName(newFilterName);
+	f->second->setName(newFilterName);
 
 	// Find the adapter to update the event bindings
 	auto adapter = _eventAdapters.find(oldFilterName);
 
 	if (adapter != _eventAdapters.end())
 	{
-		adapter->second->onEventNameChanged(oldEventName, f->second.getEventName());
+		adapter->second->onEventNameChanged(oldEventName, f->second->getEventName());
+
+		// Re-insert the event adapter using a new key
+		auto adapterPtr = adapter->second;
+		_eventAdapters.erase(adapter);
+		adapter = _eventAdapters.insert(std::make_pair(newFilterName, adapterPtr)).first;
+
+		adapter->second->setFilterState(wasActive);
 	}
 
 	// Insert the new filter into the table
 	auto result = _availableFilters.insert(std::make_pair(newFilterName, f->second));
 
-#if 0
-	// Add the toggle command to the eventmanager
-	auto fEvent = createEventToggle(result.first->second);
-
-	if (!fEvent->empty()) 
-	{
-		GlobalEventManager().connectAccelerator(oldAccel, f->second.getEventName());
-	}
-	else 
-	{
-		rWarning() << "Can't register event after rename, the new event name is already registered!" << std::endl;
-	}
-#endif
-
-	if (adapter != _eventAdapters.end())
-	{
-		adapter->second->setFilterState(wasActive);
-	}
-
 	// If this filter is in our active set, enable it
 	if (wasActive)
 	{
-#if 0
-		fEvent->setToggled(true);
-#endif
 		_activeFilters.insert(std::make_pair(newFilterName, f->second));
-	}
-	else 
-	{
-#if 0
-		fEvent->setToggled(false);
-#endif
 	}
 
 	// Remove the old filter from the filtertable
 	_availableFilters.erase(oldFilterName);
 
-#if 0
-	// Remove the old event from the EventManager
-	GlobalEventManager().removeEvent(oldEventName);
-#endif
 	return true;
 }
 
@@ -589,7 +520,7 @@ bool BasicFilterSystem::isVisible(const FilterRule::Type type, const std::string
 		// Delegate the check to the filter object. If a filter returns
 		// false for the visibility check, then the item is filtered
 		// and we don't need any more checks.
-		if (!active.second.isVisible(type, name))
+		if (!active.second->isVisible(type, name))
 		{
 			visFlag = false;
 			break;
@@ -613,7 +544,7 @@ bool BasicFilterSystem::isEntityVisible(const FilterRule::Type type, const Entit
 		// Delegate the check to the filter object. If a filter returns
 		// false for the visibility check, then the item is filtered
 		// and we don't need any more checks.
-		if (!active.second.isEntityVisible(type, entity))
+		if (!active.second->isEntityVisible(type, entity))
 		{
 			visFlag = false;
 			break;
@@ -627,17 +558,17 @@ FilterRules BasicFilterSystem::getRuleSet(const std::string& filter)
 {
 	auto f = _availableFilters.find(filter);
 
-	return f != _availableFilters.end() ? f->second.getRuleSet() : FilterRules();
+	return f != _availableFilters.end() ? f->second->getRuleSet() : FilterRules();
 }
 
 bool BasicFilterSystem::setFilterRules(const std::string& filter, const FilterRules& ruleSet)
 {
 	auto f = _availableFilters.find(filter);
 
-	if (f != _availableFilters.end() && !f->second.isReadOnly())
+	if (f != _availableFilters.end() && !f->second->isReadOnly())
 	{
 		// Apply the ruleset
-		f->second.setRules(ruleSet);
+		f->second->setRules(ruleSet);
 
 		// Clear the cache, the ruleset has changed
 		_visibilityCache.clear();

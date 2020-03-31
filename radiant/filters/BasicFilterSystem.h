@@ -3,14 +3,13 @@
 #include "imodule.h"
 #include "ifilter.h"
 #include "icommandsystem.h"
-#include "ieventmanager.h"
-#include "xmlutil/Node.h"
 
 #include <map>
 #include <vector>
 #include <string>
 #include <iostream>
 
+#include "xmlutil/Node.h"
 #include "XMLFilter.h"
 #include "XmlFilterEventAdapter.h"
 
@@ -27,7 +26,7 @@ class BasicFilterSystem :
 {
 private:
 	// Hashtable of available filters, indexed by name
-	typedef std::map<std::string, XMLFilter> FilterTable;
+	typedef std::map<std::string, XMLFilter::Ptr> FilterTable;
 	FilterTable _availableFilters;
 
 	// Second table containing just the active filters
@@ -55,7 +54,6 @@ private:
 
 	void addFiltersFromXML(const xml::NodeList& nodes, bool readOnly);
 
-	//IEventPtr createEventToggle(XMLFilter& filter);
 	XmlFilterEventAdapter::Ptr ensureEventAdapter(XMLFilter& filter);
 
 	void setAllFilterStatesCmd(const cmd::ArgumentList& args);

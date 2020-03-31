@@ -28,12 +28,17 @@ private:
 	bool _readonly;
 
 public:
+	typedef std::shared_ptr<XMLFilter> Ptr;
 
 	/** Construct an XMLFilter with the given name.
 	 * Pass the read-only flag to indicate whether this filter is
 	 * custom or coming from the "stock" filters in the .game files.
 	 */
 	XMLFilter(const std::string& name, bool readOnly);
+
+	// Noncopyable
+	XMLFilter(const XMLFilter&) = delete;
+	XMLFilter& operator=(const XMLFilter&) = delete;
 
 	/** Add a (non entitykeyvalue) rule to this filter.
 	 *

@@ -57,9 +57,9 @@ public:
         IAccelerator& oldAccel = GlobalEventManager().findAccelerator(oldEvent);
 
         // Add the toggle command to the eventmanager
-        auto newToggle = createEventToggle();
+        _toggle = createEventToggle();
 
-        if (!newToggle->empty())
+        if (!_toggle->empty())
         {
             GlobalEventManager().connectAccelerator(oldAccel, newEventName);
         }
