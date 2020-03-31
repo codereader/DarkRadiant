@@ -75,6 +75,7 @@ public:
 	void disableEvent(const std::string& eventName) override;
 	void enableEvent(const std::string& eventName) override;
 
+	void renameEvent(const std::string& oldEventName, const std::string& newEventName) override;
 	void removeEvent(const std::string& eventName) override;
 
 	void disconnectToolbar(wxToolBar* toolbar) override;

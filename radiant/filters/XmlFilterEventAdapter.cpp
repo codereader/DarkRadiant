@@ -27,7 +27,6 @@ XmlFilterEventAdapter::~XmlFilterEventAdapter()
     removeSelectDeselectEvents();
 }
 
-// Synchronisation routine to notify this class once the filter has been activated
 void XmlFilterEventAdapter::setFilterState(bool isActive)
 {
     if (_toggle.second)
@@ -36,22 +35,14 @@ void XmlFilterEventAdapter::setFilterState(bool isActive)
     }
 }
 
-// Post-filter-rename event, to be invoked by the FilterSystem after a rename operation
 void XmlFilterEventAdapter::onEventNameChanged()
 {
-    // Get the accelerator associated to the old event, if appropriate
-    IAccelerator& oldToggleAccel = GlobalEventManager().findAccelerator(_toggle.second);
-    std::string oldToggleName = _toggle.first;
-
-    // Add the new event
-    createEventToggle();
-
-    GlobalEventManager().connectAccelerator(oldToggleAccel, _toggle.first);
-
-    // Remove the old event from the EventManager
-    GlobalEventManager().removeEvent(oldToggleName);
+    GlobalEventManager().renameEvent(_toggle.first, _filter.getEventName());
+    _toggle.first = _filter.getEventName();
 
     // Re-create the select/deselect events, keeping the accelerators intact
+    // Can't use renameEvent here since the statement needs to be changed and there's no easy
+    // way to assign a new statement to an existing event
     IAccelerator& oldSelectAccel = GlobalEventManager().findAccelerator(_selectByFilterCmd.second);
     IAccelerator& oldDeselectAccel = GlobalEventManager().findAccelerator(_deselectByFilterCmd.second);
 

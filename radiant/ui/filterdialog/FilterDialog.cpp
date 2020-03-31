@@ -47,6 +47,10 @@ FilterDialog::FilterDialog() :
 
 void FilterDialog::save()
 {
+	// In order to have all menu items removed from any event objects
+	// we need to deconstruct the filters menu first
+	FiltersMenu::removeItemsFromMainMenu();
+
 	// Delete filters marked for removal
 	for (FilterMap::const_iterator i = _deletedFilters.begin(); i != _deletedFilters.end(); ++i)
 	{
