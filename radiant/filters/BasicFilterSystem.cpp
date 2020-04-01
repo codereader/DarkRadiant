@@ -280,7 +280,10 @@ void BasicFilterSystem::shutdownModule()
 		}
 	}
 
+	_visibilityCache.clear();
 	_eventAdapters.clear();
+	_activeFilters.clear();
+	_availableFilters.clear();
 }
 
 sigc::signal<void> BasicFilterSystem::filtersChangedSignal() const

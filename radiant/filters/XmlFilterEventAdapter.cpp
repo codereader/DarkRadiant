@@ -1,6 +1,7 @@
 #include "XmlFilterEventAdapter.h"
 
 #include "itextstream.h"
+#include "ieventmanager.h"
 #include "XMLFilter.h"
 #include "BasicFilterSystem.h"
 #include <fmt/format.h>
@@ -18,11 +19,14 @@ XmlFilterEventAdapter::XmlFilterEventAdapter(XMLFilter& filter) :
 
 XmlFilterEventAdapter::~XmlFilterEventAdapter()
 {
-    // Remove all accelerators from that event before removal
-    GlobalEventManager().disconnectAccelerator(_filter.getEventName());
+    if (!GlobalEventManager().findEvent(_filter.getEventName())->empty())
+    {
+        // Remove all accelerators from that event before removal
+        GlobalEventManager().disconnectAccelerator(_filter.getEventName());
 
-    // Disable the event in the EventManager, to avoid crashes when calling the menu items
-    GlobalEventManager().disableEvent(_filter.getEventName());
+        // Disable the event in the EventManager, to avoid crashes when calling the menu items
+        GlobalEventManager().disableEvent(_filter.getEventName());
+    }
 
     removeSelectDeselectEvents();
 }
