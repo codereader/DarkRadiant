@@ -210,6 +210,7 @@ void ScriptingSystem::initialise()
 			PythonConsoleWriterClass consoleWriter(PythonModule::GetModule(), "PythonConsoleWriter");
 			consoleWriter.def(py::init<bool, std::string&>());
 			consoleWriter.def("write", &PythonConsoleWriter::write);
+			consoleWriter.def("flush", &PythonConsoleWriter::flush);
 
 			// Redirect stdio output to our local ConsoleWriter instances
 			py::module::import("sys").attr("stderr") = &_errorWriter;

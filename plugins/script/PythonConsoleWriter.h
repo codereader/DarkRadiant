@@ -45,6 +45,12 @@ public:
 			rMessage() << msg;
 		}
     }
+
+	// Since this class serves as "stdout" it should implement flush()
+	void flush()
+	{
+		// nothing to do here
+	}
 };
 typedef py::class_<PythonConsoleWriter> PythonConsoleWriterClass;
 
