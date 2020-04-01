@@ -195,9 +195,7 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 		}
 
 		// Add this XMLFilter to the list of available filters
-		XMLFilter::Ptr inserted = _availableFilters.insert(
-			std::make_pair(filterName, filter)
-		).first->second;
+		XMLFilter::Ptr inserted = _availableFilters.emplace(filterName, filter).first->second;
 
 		bool filterShouldBeActive = activeFilterNames.find(filterName) != activeFilterNames.end();
 
@@ -207,7 +205,7 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 		if (filterShouldBeActive)
 		{
 			adapter->setFilterState(true);
-			_activeFilters.insert(std::make_pair(filterName, inserted));
+			_activeFilters.emplace(filterName, inserted);
 		}
 	}
 }
@@ -221,8 +219,8 @@ XmlFilterEventAdapter::Ptr BasicFilterSystem::ensureEventAdapter(XMLFilter& filt
 		return existing->second;
 	}
 
-	auto result = _eventAdapters.emplace(std::make_pair(filter.getName(), 
-		std::make_shared<XmlFilterEventAdapter>(filter)));
+	auto result = _eventAdapters.emplace(filter.getName(), 
+		std::make_shared<XmlFilterEventAdapter>(filter));
 
 	return result.first->second;
 }
@@ -299,12 +297,12 @@ void BasicFilterSystem::update()
 	updateScene();
 }
 
-void BasicFilterSystem::forEachFilter(IFilterVisitor& visitor) {
-
+void BasicFilterSystem::forEachFilter(const std::function<void(const std::string & name)>& func)
+{
 	// Visit each filter on the list, passing the name to the visitor
 	for (const auto& pair : _availableFilters)
 	{
-		visitor.visit(pair.first);
+		func(pair.first);
 	}
 }
 
@@ -328,7 +326,7 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state)
 	if (state) 
 	{
 		// Copy the filter to the active filters list
-		_activeFilters.insert(std::make_pair(filter, _availableFilters.find(filter)->second));
+		_activeFilters.emplace(filter, _availableFilters.find(filter)->second);
 	}
 	else 
 	{
@@ -387,7 +385,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	}
 
 	auto filter = std::make_shared<XMLFilter>(filterName, false);
-	auto result = _availableFilters.insert(std::make_pair(filterName, filter));
+	auto result = _availableFilters.emplace(filterName, filter);
 
 	// Apply the ruleset
 	filter->setRules(ruleSet);
@@ -477,18 +475,18 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 		// Re-insert the event adapter using a new key
 		auto adapterPtr = adapter->second;
 		_eventAdapters.erase(adapter);
-		adapter = _eventAdapters.insert(std::make_pair(newFilterName, adapterPtr)).first;
+		adapter = _eventAdapters.emplace(newFilterName, adapterPtr).first;
 
 		adapter->second->setFilterState(wasActive);
 	}
 
 	// Insert the new filter into the table
-	auto result = _availableFilters.insert(std::make_pair(newFilterName, f->second));
+	auto result = _availableFilters.emplace(newFilterName, f->second);
 
 	// If this filter is in our active set, enable it
 	if (wasActive)
 	{
-		_activeFilters.insert(std::make_pair(newFilterName, f->second));
+		_activeFilters.emplace(newFilterName, f->second);
 	}
 
 	// Remove the old filter from the filtertable
@@ -526,7 +524,7 @@ bool BasicFilterSystem::isVisible(const FilterRule::Type type, const std::string
 	}
 
 	// Cache the result and return to caller
-	_visibilityCache.insert(std::make_pair(name, visFlag));
+	_visibilityCache.emplace(name, visFlag);
 
 	return visFlag;
 }

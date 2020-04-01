@@ -20,7 +20,7 @@ FilterContextMenu::FilterContextMenu(OnSelectionFunc& onSelection) :
 void FilterContextMenu::populate()
 {
 	// Clear all existing items
-	for (const MenuItemIdToLayerMapping::value_type& i : _menuItemMapping)
+	for (const auto& pair : _menuItemMapping)
 	{
 		wxMenu* parentMenu = GetParent();
 
@@ -31,19 +31,20 @@ void FilterContextMenu::populate()
 
 		if (parentMenu != nullptr)
 		{
-			parentMenu->Unbind(wxEVT_MENU, &FilterContextMenu::onActivate, this, i.first);
+			parentMenu->Unbind(wxEVT_MENU, &FilterContextMenu::onActivate, this, pair.first);
 		}
 
-		Delete(i.first);
+		Delete(pair.first);
 	}
 
 	_menuItemMapping.clear();
 
-	// Populate the map with all layer names and IDs
-	GlobalFilterSystem().forEachFilter(*this);
+	// Populate the map with all filter names
+	GlobalFilterSystem().forEachFilter(
+		std::bind(&FilterContextMenu::visitFilter, this, std::placeholders::_1));
 }
 
-void FilterContextMenu::visit(const std::string& filterName)
+void FilterContextMenu::visitFilter(const std::string& filterName)
 {
 	// Create a new menuitem
 	wxMenuItem* menuItem = new wxutil::IconTextMenuItem(filterName, FILTER_ICON);

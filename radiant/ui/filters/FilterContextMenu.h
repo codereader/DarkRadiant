@@ -12,8 +12,7 @@ namespace ui
 {
 
 class FilterContextMenu :
-	public wxMenu,
-	public IFilterVisitor
+	public wxMenu
 {
 public:
 	// The function to be called on menu selection, the name of the
@@ -23,19 +22,18 @@ public:
 private:
 	OnSelectionFunc _onSelection;
 
-	typedef std::map<int, std::string> MenuItemIdToLayerMapping;
-	MenuItemIdToLayerMapping _menuItemMapping;
+	typedef std::map<int, std::string> MenuItemIdToFilterMapping;
+	MenuItemIdToFilterMapping _menuItemMapping;
 
 public:
 	FilterContextMenu(OnSelectionFunc& onSelection);
-
-	// IFilterVisitor implementation
-	void visit(const std::string& filterName) override;
 
 	// Loads filer names into the menu, clears existing items first
 	void populate();
 
 private:
+	void visitFilter(const std::string& filterName);
+
 	// wx Callback for menu selections
 	void onActivate(wxCommandEvent& ev);
 };

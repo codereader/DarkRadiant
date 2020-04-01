@@ -15,8 +15,7 @@ namespace ui
  * can be packed into a parent container widget using the getMenuWidget().
  */
 class FilterMenu :
-	public IFilterMenu,
-	public IFilterVisitor
+	public IFilterMenu
 {
 private:
 	std::map<std::string, wxMenuItem*> _filterItems;
@@ -33,8 +32,8 @@ public:
 	// ready for packing into a menu bar.
 	wxMenu* getMenuWidget();
 
-	// IFilterVisitor implementation
-	void visit(const std::string& filterName);
+private:
+	void visitFilter(const std::string& filterName);
 };
 
 } // namespace

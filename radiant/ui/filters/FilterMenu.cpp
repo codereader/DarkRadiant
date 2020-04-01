@@ -18,7 +18,7 @@ FilterMenu::FilterMenu() :
 	_menu(new wxutil::PopupMenu)
 {
 	// Visit the filters in the FilterSystem to populate the menu
-	GlobalFilterSystem().forEachFilter(*this);
+	GlobalFilterSystem().forEachFilter(std::bind(&FilterMenu::visitFilter, this, std::placeholders::_1));
 }
 
 FilterMenu::~FilterMenu()
@@ -36,7 +36,7 @@ FilterMenu::~FilterMenu()
 	_menu = nullptr;
 }
 
-void FilterMenu::visit(const std::string& filterName)
+void FilterMenu::visitFilter(const std::string& filterName)
 {
 	wxMenuItem* item = _menu->Append(new wxutil::IconTextMenuItem(filterName, MENU_ICON));
 	item->SetCheckable(true);
@@ -50,7 +50,7 @@ void FilterMenu::visit(const std::string& filterName)
 		event->connectMenuItem(item);
 	}
 
-	_filterItems.insert(std::make_pair(eventName, item));
+	_filterItems.emplace(eventName, item);
 }
 
 wxMenu* FilterMenu::getMenuWidget()

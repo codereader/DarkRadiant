@@ -92,33 +92,19 @@ void FilterDialog::loadFilters()
 	// Clear first, before population
 	_filters.clear();
 
-	// Local helper class to populate the map
-	class FilterMapPopulator :
-		public IFilterVisitor
+	GlobalFilterSystem().forEachFilter([&] (const std::string& filterName)
 	{
-		FilterMap& _target;
-	public:
-		FilterMapPopulator(FilterMap& target) :
-			_target(target)
-		{}
+		// Get the properties
+		bool state = GlobalFilterSystem().getFilterState(filterName);
+		bool readOnly = GlobalFilterSystem().filterIsReadOnly(filterName);
 
-		void visit(const std::string& filterName)
-		{
-			// Get the properties
-			bool state = GlobalFilterSystem().getFilterState(filterName);
-			bool readOnly = GlobalFilterSystem().filterIsReadOnly(filterName);
+		auto result = _filters.emplace(
+			filterName, std::make_shared<Filter>(filterName, state, readOnly)
+		);
 
-			std::pair<FilterMap::iterator, bool> result = _target.insert(
-				FilterMap::value_type(filterName, FilterPtr(new Filter(filterName, state, readOnly)))
-			);
-
-			// Copy the ruleset from the given filter
-			result.first->second->rules = GlobalFilterSystem().getRuleSet(filterName);
-		}
-
-	} populator(_filters);
-
-	GlobalFilterSystem().forEachFilter(populator);
+		// Copy the ruleset from the given filter
+		result.first->second->rules = GlobalFilterSystem().getRuleSet(filterName);
+	});
 }
 
 void FilterDialog::update()

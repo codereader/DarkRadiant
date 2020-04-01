@@ -74,7 +74,7 @@ public:
 	void updateSubgraph(const scene::INodePtr& root) override;
 
 	// Filter system visit function
-	void forEachFilter(IFilterVisitor& visitor) override;
+	void forEachFilter(const std::function<void(const std::string & name)>& func) override;
 
 	std::string getFilterEventName(const std::string& filter) override;
 

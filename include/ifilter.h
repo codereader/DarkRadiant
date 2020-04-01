@@ -70,17 +70,6 @@ public:
 };
 typedef std::vector<FilterRule> FilterRules;
 
-/** Visitor interface for evaluating the available filters in the
- * FilterSystem.
- */
-struct IFilterVisitor
-{
-    virtual ~IFilterVisitor() {}
-
-	// Visit function
-	virtual void visit(const std::string& filterName) = 0;
-};
-
 const char* const MODULE_FILTERSYSTEM = "FilterSystem";
 
 // Forward declaration
@@ -113,13 +102,13 @@ public:
 	 */
 	virtual void updateSubgraph(const scene::INodePtr& root) = 0;
 
-	/** Visit the available filters, passing each filter's text
-	 * name to the visitor.
+	/** 
+	 * Visit the available filters, passing each filter's text name to the visitor.
 	 *
 	 * @param visitor
-	 * Visitor class implementing the IFilterVisitor interface.
+	 * Function object called with the filter name as argument.
 	 */
-	virtual void forEachFilter(IFilterVisitor& visitor) = 0;
+	virtual void forEachFilter(const std::function<void(const std::string& name)>& func) = 0;
 
 	/** Set the state of the named filter.
 	 *
@@ -217,7 +206,8 @@ public:
 	virtual bool setFilterRules(const std::string& filter, const FilterRules& ruleSet) = 0;
 };
 
-inline FilterSystem& GlobalFilterSystem() {
+inline FilterSystem& GlobalFilterSystem() 
+{
 	// Cache the reference locally
 	static FilterSystem& _filterSystem(
 		*std::static_pointer_cast<FilterSystem>(
