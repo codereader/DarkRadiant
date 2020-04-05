@@ -5,67 +5,82 @@
 #include <regex>
 
 #include "string/convert.h"
+#include "string/predicate.h"
 #include "ConversationCommand.h"
 #include "ConversationCommandLibrary.h"
 
-namespace conversation {
+namespace conversation 
+{
 
-// Required entity visit function
+ConversationKeyExtractor::ConversationKeyExtractor(ConversationMap& map) :
+	_convMap(map),
+	_regexConvNum("conv_(\\d+)_(.*)"), 
+	_regexConvCmd("cmd_(\\d+)_(.*)")
+{
+	assert(_convMap.empty());
+}
+
 void ConversationKeyExtractor::operator()(const std::string& key, const std::string& value) 
 {
 	// Quick discard of any non-conversation keys
-	if (key.substr(0, 4) != "conv") return;
+	if (!string::starts_with(key, "conv")) return;
 
-	// Extract the objective number
-	static const std::regex reConvNum("conv_(\\d+)_(.*)");
+	// Extract the conv index
 	std::smatch results;
-	int iNum;
-
-	if (!std::regex_match(key, results, reConvNum)) {
+	if (!std::regex_match(key, results, _regexConvNum)) 
+	{
 		// No match, abort
 		return;
 	}
 
 	// Get the conversation number
-	iNum = string::convert<int>(results[1].str());
+	int num = string::convert<int>(results[1].str());
 
 	// We now have the conversation number and the substring (everything after
 	// "conv_<n>_" which applies to this conversation.
 	std::string convSubString = results[2];
 
 	// Switch on the substring
-	if (convSubString == "name") {
-		_convMap[iNum].name = value;
+	if (convSubString == "name") 
+	{
+		_convMap[num].name = value;
 	}
-	else if (convSubString == "talk_distance") {
-		_convMap[iNum].talkDistance = string::convert<float>(value, 60);
+	else if (convSubString == "talk_distance") 
+	{
+		_convMap[num].talkDistance = string::convert<float>(value, 60);
 	}
-	else if (convSubString == "actors_must_be_within_talkdistance") {
-		_convMap[iNum].actorsMustBeWithinTalkdistance = (value == "1");
+	else if (convSubString == "actors_must_be_within_talkdistance")
+	{
+		_convMap[num].actorsMustBeWithinTalkdistance = (value == "1");
 	}
-	else if (convSubString == "actors_always_face_each_other_while_talking") {
-		_convMap[iNum].actorsAlwaysFaceEachOther = (value == "1");
+	else if (convSubString == "actors_always_face_each_other_while_talking")
+	{
+		_convMap[num].actorsAlwaysFaceEachOther = (value == "1");
 	}
-	else if (convSubString == "max_play_count") {
-		_convMap[iNum].maxPlayCount = string::convert<int>(value, -1);
+	else if (convSubString == "max_play_count")
+	{
+		_convMap[num].maxPlayCount = string::convert<int>(value, -1);
 	}
-	else if (convSubString.substr(0, 6) == "actor_") {
+	else if (convSubString.substr(0, 6) == "actor_")
+	{
 		// This is an actor definition, extract the number
 		int actorNum = string::convert<int>(convSubString.substr(6), -1);
 
-		if (actorNum == -1) {
+		if (actorNum == -1)
+		{
 			return;
 		}
 
 		// Store the actor in the map
-		_convMap[iNum].actors.insert(Conversation::ActorMap::value_type(actorNum, value));
+		_convMap[num].actors.emplace(actorNum, value);
 	}
-	else if (convSubString.substr(0, 4) == "cmd_") {
-		// This is a conversation command, form a new regex
-		static const std::regex reCommand("cmd_(\\d+)_(.*)");
+	else if (convSubString.substr(0, 4) == "cmd_") 
+	{
+		// This is a conversation command
 		std::smatch cmdResults;
 
-		if (!std::regex_match(convSubString, cmdResults, reCommand)) {
+		if (!std::regex_match(convSubString, cmdResults, _regexConvCmd))
+		{
 			return; // not matching
 		}
 
@@ -73,36 +88,44 @@ void ConversationKeyExtractor::operator()(const std::string& key, const std::str
 		std::string cmdSubStr = cmdResults[2];
 
 		ConversationCommandPtr command;
-		Conversation::CommandMap::iterator found = _convMap[iNum].commands.find(cmdIndex);
+		auto found = _convMap[num].commands.find(cmdIndex);
 
-		if (found != _convMap[iNum].commands.end()) {
+		if (found != _convMap[num].commands.end())
+		{
 			// Command already exists
 			command = found->second;
 		}
-		else {
+		else 
+		{
 			// Command with the given index does not exist yet, create it
-			command = ConversationCommandPtr(new ConversationCommand);
+			command = std::make_shared<ConversationCommand>();
 
 			// Insert this into the map
-			_convMap[iNum].commands[cmdIndex] = command;
+			_convMap[num].commands[cmdIndex] = command;
 		}
 
-		if (cmdSubStr == "type") {
-			try {
+		if (cmdSubStr == "type")
+		{
+			try 
+			{
 				command->type = ConversationCommandLibrary::Instance().findCommandInfo(value).id;
 			}
-			catch (std::runtime_error& e) {
+			catch (std::runtime_error& e) 
+			{
 				rError() << e.what() << std::endl;
 				return;
 			}
 		}
-		else if (cmdSubStr == "actor") {
+		else if (cmdSubStr == "actor") 
+		{
 			command->actor = string::convert<int>(value);
 		}
-		else if (cmdSubStr == "wait_until_finished") {
+		else if (cmdSubStr == "wait_until_finished")
+		{
 			command->waitUntilFinished = (value == "1");
 		}
-		else if (cmdSubStr.substr(0,4) == "arg_") {
+		else if (cmdSubStr.substr(0,4) == "arg_") 
+		{
 			int cmdArgIndex = string::convert<int>(cmdSubStr.substr(4));
 
 			command->arguments[cmdArgIndex] = value;

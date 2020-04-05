@@ -1,5 +1,7 @@
 #include "ConversationEntity.h"
 
+#include <limits>
+
 #include "i18n.h"
 #include "itextstream.h"
 #include "ientity.h"
@@ -9,14 +11,15 @@
 #include "ConversationKeyExtractor.h"
 #include "ConversationCommandLibrary.h"
 
-namespace conversation {
+namespace conversation
+{
 
 // Constructor
 ConversationEntity::ConversationEntity(const scene::INodePtr& node) :
 	_entityNode(node)
 {
 	Entity* entity = Node_getEntity(node);
-	assert(entity != NULL);
+	assert(entity != nullptr);
 
 	// Use an conversationKeyExtractor to populate the ConversationMap from the keys
 	// on the entity
@@ -25,20 +28,30 @@ ConversationEntity::ConversationEntity(const scene::INodePtr& node) :
 }
 
 // Delete the entity's world node
-void ConversationEntity::deleteWorldNode() {
+void ConversationEntity::deleteWorldNode() 
+{
 	// Try to convert the weak_ptr reference to a shared_ptr
 	scene::INodePtr node = _entityNode.lock();
 
-	if (node != NULL && node->getParent() != NULL) {
+	if (node && node->getParent())
+	{
 		node->getParent()->removeChildNode(node);
 	}
 }
 
 // Add a new conversation
-void ConversationEntity::addConversation() {
+void ConversationEntity::addConversation() 
+{
 	// Locate the first unused id
 	int index = 1;
-	while (_conversations.find(index) != _conversations.end()) {
+	while (_conversations.find(index) != _conversations.end()) 
+	{
+		if (index == std::numeric_limits<int>::max())
+		{
+			rError() << "Ran out of conversation indices." << std::endl;
+			throw new std::runtime_error("Ran out of conversation indices.");
+		}
+
 		++index;
 	}
 
@@ -48,20 +61,23 @@ void ConversationEntity::addConversation() {
 	_conversations.insert(ConversationMap::value_type(index, o));
 }
 
-void ConversationEntity::deleteConversation(int index) {
+void ConversationEntity::deleteConversation(int index) 
+{
 	// Look up the conversation with the given index
-	ConversationMap::iterator i = _conversations.find(index);
+	auto i = _conversations.find(index);
 
-	if (i == _conversations.end()) {
+	if (i == _conversations.end()) 
+	{
 		// not found, nothing to do
 		return;
 	}
 
-	// Delete the found element
+	// Delete the found element and move the iterator past it
 	_conversations.erase(i++);
 
 	// Then iterate all the way to the highest index
-	while (i != _conversations.end()) {
+	while (i != _conversations.end()) 
+	{
 		// Decrease the index of this conversation
 		int newIndex = i->first - 1;
 		// Copy the conversation into a temporary object
@@ -71,24 +87,18 @@ void ConversationEntity::deleteConversation(int index) {
 		_conversations.erase(i++);
 
 		// Re-insert with new index
-		_conversations.insert(
-			ConversationMap::value_type(newIndex, temp)
-		);
+		_conversations.insert(std::make_pair(newIndex, temp));
 	}
 }
 
-// Populate a list store with conversations
-void ConversationEntity::populateListStore(wxutil::TreeModel& store,
-										   const ConversationColumns& columns) const
+void ConversationEntity::populateListStore(wxutil::TreeModel& store, const ConversationColumns& columns) const
 {
-	for (ConversationMap::const_iterator i = _conversations.begin();
-		 i != _conversations.end();
-		 ++i)
+	for (const auto& pair : _conversations)
 	{
 		wxutil::TreeModel::Row row = store.AddItem();
 
-		row[columns.index] = i->first;
-		row[columns.name] = i->second.name;
+		row[columns.index] = pair.first;
+		row[columns.name] = pair.second.name;
 
 		row.SendItemAdded();
 	}
@@ -97,13 +107,12 @@ void ConversationEntity::populateListStore(wxutil::TreeModel& store,
 void ConversationEntity::clearEntity(Entity* entity)
 {
 	// Get all keyvalues matching the "obj" prefix.
-	Entity::KeyValuePairs keyValues = entity->getKeyValuePairs("conv_");
+	auto keyValues = entity->getKeyValuePairs("conv_");
 
-	for (Entity::KeyValuePairs::const_iterator i = keyValues.begin();
-		 i != keyValues.end(); ++i)
+	for (const auto& keyValuePair : keyValues)
 	{
 		// Set the spawnarg to empty, which is equivalent to a removal
-		entity->setKeyValue(i->first, "");
+		entity->setKeyValue(keyValuePair.first, "");
 	}
 }
 
@@ -112,18 +121,16 @@ void ConversationEntity::writeToEntity()
 {
 	// Try to convert the weak_ptr reference to a shared_ptr
 	Entity* entity = Node_getEntity(_entityNode.lock());
-	assert(entity != NULL);
+	assert(entity != nullptr);
 
 	// greebo: Remove all conversation-related spawnargs first
 	clearEntity(entity);
 
-	for (ConversationMap::const_iterator i = _conversations.begin();
-		 i != _conversations.end();
-		 ++i)
+	for (const auto& pair : _conversations)
 	{
 		// Obtain the conversation and construct the key prefix from the index
-		const Conversation& conv = i->second;
-		std::string prefix = "conv_" + string::to_string(i->first) + "_";
+		const Conversation& conv = pair.second;
+		std::string prefix = "conv_" + string::to_string(pair.first) + "_";
 
 		// Set the entity keyvalues
 		entity->setKeyValue(prefix + "name", conv.name);
@@ -135,35 +142,33 @@ void ConversationEntity::writeToEntity()
 		entity->setKeyValue(prefix + "max_play_count", string::to_string(conv.maxPlayCount));
 
 		// Write the actor list
-		for (Conversation::ActorMap::const_iterator a = conv.actors.begin();
-			 a != conv.actors.end(); ++a)
+		for (const auto& actor : conv.actors)
 		{
-			std::string actorKey = prefix + "actor_" + string::to_string(a->first);
-			entity->setKeyValue(actorKey, a->second);
+			std::string actorKey = prefix + "actor_" + string::to_string(actor.first);
+			entity->setKeyValue(actorKey, actor.second);
 		}
 
 		// Write all the commands
-		for (Conversation::CommandMap::const_iterator c = conv.commands.begin();
-			 c != conv.commands.end(); ++c)
+		for (const auto& cmd : conv.commands)
 		{
-			std::string cmdPrefix = prefix + "cmd_" + string::to_string(c->first) + "_";
+			std::string cmdPrefix = prefix + "cmd_" + string::to_string(cmd.first) + "_";
 
-			try {
-				const ConversationCommandInfo& cmdInfo =
-					ConversationCommandLibrary::Instance().findCommandInfo(c->second->type);
+			try 
+			{
+				const auto& cmdInfo = ConversationCommandLibrary::Instance().findCommandInfo(cmd.second->type);
 
 				entity->setKeyValue(cmdPrefix + "type", cmdInfo.name);
-				entity->setKeyValue(cmdPrefix + "actor", string::to_string(c->second->actor));
-				entity->setKeyValue(cmdPrefix + "wait_until_finished", c->second->waitUntilFinished ? "1" : "0");
+				entity->setKeyValue(cmdPrefix + "actor", string::to_string(cmd.second->actor));
+				entity->setKeyValue(cmdPrefix + "wait_until_finished", cmd.second->waitUntilFinished ? "1" : "0");
 
-				for (ConversationCommand::ArgumentMap::const_iterator a = c->second->arguments.begin();
-					a != c->second->arguments.end(); ++a)
+				for (const auto& arg : cmd.second->arguments)
 				{
-					entity->setKeyValue(cmdPrefix + "arg_" + string::to_string(a->first), a->second);
+					entity->setKeyValue(cmdPrefix + "arg_" + string::to_string(arg.first), arg.second);
 				}
 			}
-			catch (const std::runtime_error&) {
-				rError() << "Unrecognised conversation command ID: " << c->second->type << std::endl;
+			catch (const std::runtime_error&)
+			{
+				rError() << "Unrecognised conversation command ID: " << cmd.second->type << std::endl;
 			}
 		}
 	}

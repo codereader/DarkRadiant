@@ -1,10 +1,12 @@
 #pragma once
 
+#include <regex>
 #include "Conversation.h"
 
 #include "ientity.h"
 
-namespace conversation {
+namespace conversation 
+{
 
 /**
  * Entity Visitor which extracts conversation keyvalues (of the form "conv_<n>_yyyy")
@@ -12,19 +14,19 @@ namespace conversation {
  */
 class ConversationKeyExtractor
 {
+private:
 	// Map of number->Conversation objects
 	ConversationMap& _convMap;
+
+	const std::regex _regexConvNum;
+	const std::regex _regexConvCmd;
 
 public:
 
 	/**
 	 * Constructor. Sets the map to populate.
 	 */
-	ConversationKeyExtractor(ConversationMap& map) :
-		_convMap(map)
-	{
-		assert(_convMap.empty());
-	}
+	ConversationKeyExtractor(ConversationMap& map);
 
 	/**
 	 * Required visit function.
@@ -32,4 +34,4 @@ public:
 	void operator()(const std::string& key, const std::string& value);
 };
 
-} // namespace conversation
+} // namespace
