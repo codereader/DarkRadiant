@@ -1,6 +1,7 @@
 #include "GameSetupPageTdm.h"
 
 #include <set>
+#include <regex>
 #include "i18n.h"
 #include "imodule.h"
 #include "igame.h"
@@ -213,12 +214,18 @@ void GameSetupPageTdm::validateSettings()
 #endif
 		;
 
-	std::string exeName = _game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE);
+	bool found = false;
+	std::regex exeRegex(_game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE));
 
-	if (!os::fileOrDirExists(darkmodExePath / exeName))
+	os::foreachItemInDirectory(_config.enginePath, [&](const fs::path& path)
+	{
+		found |= std::regex_match(path.filename().string(), exeRegex);
+	});
+
+	if (!found)
 	{
 		// engine executable not present
-		errorMsg += fmt::format(_("The engine executable \"{0}\" could not be found in the specified folder.\n"), exeName);
+		errorMsg += _("The engine executable(s) could not be found in the specified folder.\n");
 	}
 
 	// Check the mod path (=mission path), if not empty
