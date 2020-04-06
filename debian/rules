@@ -20,6 +20,10 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
     INSTALL_TARGET=install
 endif
 
+configure:
+	dh_testdir
+	./autogen.sh
+
 config.status: configure
 	dh_testdir
 	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --enable-darkmod-plugins

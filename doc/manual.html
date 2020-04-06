@@ -435,7 +435,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_initial_configuration">Initial configuration</a>
 <ul class="sectlevel2">
-<li><a href="#_choosing_a_game_type">Choosing a game type</a></li>
+<li><a href="#GameSetup">Choosing a game type</a></li>
 <li><a href="#_interface_layout">Interface layout</a></li>
 <li><a href="#_colour_schemes">Colour schemes</a></li>
 </ul>
@@ -482,26 +482,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#CreatingModels">Creating models</a></li>
 <li><a href="#_creating_a_player_start_marker">Creating a player start marker</a></li>
 <li><a href="#_creating_other_entity_types">Creating other entity types</a></li>
-<li><a href="#_editing_entity_properties">Editing entity properties</a></li>
+<li><a href="#EntityInspector">Editing entity properties</a></li>
+</ul>
+</li>
+<li><a href="#_reparenting_primitives">Reparenting primitives</a>
+<ul class="sectlevel3">
+<li><a href="#_converting_primitives_into_func_static">Converting primitives into func_static</a></li>
+<li><a href="#_selecting_individual_child_primitives">Selecting individual child primitives</a></li>
 </ul>
 </li>
 <li><a href="#_compiling_a_map">Compiling a map</a>
 <ul class="sectlevel3">
 <li><a href="#_preventing_leaks">Preventing leaks</a></li>
-<li><a href="#_locating_leaks_with_a_pointfile">Locating leaks with a pointfile</a></li>
+<li><a href="#PointFile">Locating leaks with a pointfile</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li><a href="#_organising_a_map">Organising a map</a>
 <ul class="sectlevel2">
-<li><a href="#_grouping_objects">Grouping objects</a></li>
-<li><a href="#_working_with_prefabs">Working with prefabs</a>
+<li><a href="#Group">Grouping objects</a></li>
+<li><a href="#WorkingWithPrefabs">Working with prefabs</a>
 <ul class="sectlevel3">
 <li><a href="#_exporting_to_a_prefab">Exporting to a prefab</a></li>
 <li><a href="#ImportPrefab">Importing a prefab</a></li>
 </ul>
 </li>
+<li><a href="#_exporting_models">Exporting models</a></li>
 <li><a href="#_using_layers">Using layers</a>
 <ul class="sectlevel3">
 <li><a href="#_the_layers_window">The Layers window</a></li>
@@ -517,9 +524,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_the_entity_list">The entity list</a></li>
 </ul>
 </li>
+<li><a href="#_dark_mod_features">Dark Mod features</a>
+<ul class="sectlevel2">
+<li><a href="#_the_difficulty_editor">The Difficulty editor</a></li>
+</ul>
+</li>
 <li><a href="#_command_reference">Command reference</a>
 <ul class="sectlevel2">
 <li><a href="#_file_menu">File menu</a></li>
+<li><a href="#_edit_menu">Edit menu</a></li>
 </ul>
 </li>
 <li><a href="#_configuring_darkradiant">Configuring DarkRadiant</a>
@@ -655,11 +668,15 @@ brushes and patches.</p>
  a smoother surface but may lower rendering performance.</p>
 </div>
 <div class="paragraph">
+<p>Brushes and patches together are also referred to as <strong>primitives</strong> (since they
+define the basic geometry of the map), and are typically described as such in
+situations where the distinction between brush and patch is not important.</p>
+</div>
+<div class="paragraph">
 <p>The entities, brushes and patches in a map are arranged in a hierarchy: not
-every entity has children, but every brush and patch must have an entity as a
-parent. Each map therefore starts with a single default entity called the
-<strong>worldspawn</strong>, which acts as the parent for new brushes and patches created in
-DarkRadiant.</p>
+every entity has children, but every primitive must have an entity as a parent.
+Each map therefore starts with a single default entity called the <strong>worldspawn</strong>,
+which acts as the parent for new brushes and patches created in DarkRadiant.</p>
 </div>
 </div>
 </div>
@@ -668,7 +685,7 @@ DarkRadiant.</p>
 <h2 id="_initial_configuration">Initial configuration</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_choosing_a_game_type">Choosing a game type</h3>
+<h3 id="GameSetup">Choosing a game type</h3>
 <div class="paragraph">
 <p>When running DarkRadiant for the first time, the <strong>Game Setup</strong> dialog will be
 shown. This is where you configure the path to the game installation from which
@@ -2139,7 +2156,7 @@ warning will be shown at this point.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_editing_entity_properties">Editing entity properties</h4>
+<h4 id="EntityInspector">Editing entity properties</h4>
 <div class="paragraph">
 <p>Every entity has a list of key/value pairs known as <em>properties</em> or <em>spawnargs</em>.
 These properties are displayed on the <strong>Entity</strong> tab of the editing panel.</p>
@@ -2223,6 +2240,96 @@ text available, the question mark icon will be shown in the <strong>?</strong> c
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reparenting_primitives">Reparenting primitives</h3>
+<div class="paragraph">
+<p>Whenever a new brush or patch is created, it will automatically be made a child
+of the special <strong>worldspawn</strong> entity, which serves as the default entity
+containing all of the primitives which define the world geometry. However,
+<strong>worldspawn</strong> is not the only entity which can contain brushes and patches as
+children.</p>
+</div>
+<div class="paragraph">
+<p>When you create a model using the <a href="#CreatingModels">model selector</a>, DarkRadiant
+will insert a type of entity called a <strong>func_static</strong> into the map to represent
+the model geometry. A <strong>func_static</strong> can contain a model file loaded from disk in
+LWO or ASE format, but it can also be used as a parent for one or more
+primitives created within DarkRadiant. In either case, the behaviour of
+<strong>func_static</strong> is the same: it represents a static mesh which is rendered in
+game but is considered separate from the main world geometry, meaning that it
+does not participate in map compilation, will not seal the map from leaks, and
+will not cause intersecting brushes to be subdivided.</p>
+</div>
+<div class="paragraph">
+<p>It is therefore often useful to make certain brushes and patches — typically
+those which represent "fine detail" rather than entire walls, floors and the
+like — into <strong>func_static</strong> entities to improve in-game performance and reduce the
+chances for map compilation problems caused by excessively complex world
+geometry.</p>
+</div>
+<div class="sect3">
+<h4 id="_converting_primitives_into_func_static">Converting primitives into func_static</h4>
+<div class="paragraph">
+<p>To convert one or more existing primitives into a <strong>func_static</strong> entity, simply
+select all of the primitives, right-click in the 2D window, and choose <strong>Convert
+to func_static</strong>.</p>
+</div>
+<div class="paragraph">
+<p>After converting a primitive, a number of changes are noticeable:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The primitive may be drawn in a different colour.</p>
+</li>
+<li>
+<p>The primitive will no longer be resizeable by dragging its boundary with the
+mouse.</p>
+</li>
+<li>
+<p>When the primitive is selected, the <strong>Entity Inspector</strong> will no longer show the
+<strong>worldspawn</strong> entity, but a new entity with a <strong>classname</strong> of <code>func_static</code>. You
+can set spawnargs on this entity like any other (including giving it a custom
+name).</p>
+</li>
+<li>
+<p>Selecting any primitive contained by a <strong>func_static</strong> will cause a small X/Y/Z
+axis widget to be drawn at the entity&#8217;s origin position (which may be inside one
+of the primitives, or outside all of them, depending on their layout).</p>
+</li>
+<li>
+<p>If there are multiple primitives contained within a single entity, selecting
+any individual primitive will cause all of the entity&#8217;s primitives to be
+selected.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_selecting_individual_child_primitives">Selecting individual child primitives</h4>
+<div class="paragraph">
+<p>As mentioned in the previous section, selecting any primitive which comprises
+part of a <strong>func_static</strong> will cause the entire entity and all of its child
+primitives to be selected together. This allows you to easily move the entire
+static object by simply dragging any one of its primitives.</p>
+</div>
+<div class="paragraph">
+<p>However, it is still possible to perform operations on a single primitive, for
+example resizing a brush, by selecting it with the <strong>TAB</strong> key. Each press of
+<strong>TAB</strong> will cause DarkRadiant to select a different primitive contained within
+the entity, after which it will return to selecting the entire entity. With only
+a single primitive selected, all of the normal operations are possible on that
+primitive, for example deleting or resizing it.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="#EntityInspector">entity inspector</a> widget makes it clear whether you have
+selected an entity or a primitive within that entity, using the text above the
+list of entity properties. If an entire entity is selected, the text will appear
+similar to <code>Entity&nbsp;1</code>, whereas with a primitive selected it will read
+<code>Entity&nbsp;1,&nbsp;Primitive&nbsp;1</code>.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2323,7 +2430,7 @@ the map compiler carries out when it "flood fills" the map interior.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_locating_leaks_with_a_pointfile">Locating leaks with a pointfile</h4>
+<h4 id="PointFile">Locating leaks with a pointfile</h4>
 <div class="paragraph">
 <p>No matter how hard you try to avoid leaks, occasionally they will happen. In
 this case the <strong>pointfile</strong> functionality is helpful to identify the location of
@@ -2361,7 +2468,7 @@ prefab system allows large chunks of map to be reused or shared with other
 mappers.</p>
 </div>
 <div class="sect2">
-<h3 id="_grouping_objects">Grouping objects</h3>
+<h3 id="Group">Grouping objects</h3>
 <div class="paragraph">
 <p>DarkRadiant allows a number of objects to be grouped together, so that they can
 be selected and manipulated as a single unit.</p>
@@ -2406,7 +2513,7 @@ groups will be restored.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_working_with_prefabs">Working with prefabs</h3>
+<h3 id="WorkingWithPrefabs">Working with prefabs</h3>
 <div class="paragraph">
 <p>DarkRadiant allows a collection of objects to be saved to disk as a <strong>prefab</strong>,
 which can then be imported into other maps. You can use prefabs to store
@@ -2498,6 +2605,49 @@ Before inserting the prefab, you can use the
 whether the prefab is automatically grouped as a single object, or inserted as
 separate selectable objects.</p>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exporting_models">Exporting models</h3>
+<div class="paragraph">
+<p>DarkRadiant provides a limited ability to export scene geometry into a number of
+3D model file formats: ASCII Scene Export (ASE), Lightwave (LWO) or
+Wavefront OBJ. This functionality is provided to help with organising
+frequently-used map elements — DarkRadiant is not intended to compete with
+full-featured 3D modelling applications such as Blender or 3DS Max.</p>
+</div>
+<div class="paragraph">
+<p>Exporting to a model is similar to exporting to a prefab, except that models can
+only contain geometry (brushes or patches), not other map entities such as
+lights or speakers. However, unlike prefabs, models can be edited with other 3D
+software, and exporting map geometry as a model might provide a useful template
+for creating map-specific static meshes in a more powerful modelling tool.</p>
+</div>
+<div class="paragraph">
+<p>To export a model:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the geometry to be exported. Note that DarkRadiant currently does not
+complain if you select non-geometry such as lights, however these will not
+appear in the resulting model file.</p>
+</li>
+<li>
+<p>Open the <strong>File</strong> menu and choose <strong>Export selected as model&#8230;&#8203;</strong></p>
+</li>
+<li>
+<p>In the <strong>Output Format</strong> dropdown, choose one of the supported model formats:
+<code>ASCII Scene Export (.ase)</code>, <code>Lightwave Object File (.lwo)</code>, or <code>Wavefront OBJ
+(.obj)</code>.</p>
+</li>
+<li>
+<p>Choose the path for the exported model file in the <strong>File Path</strong> entry box.</p>
+</li>
+<li>
+<p>Click <strong>OK</strong> to export the model.</p>
+</li>
+</ol>
 </div>
 </div>
 <div class="sect2">
@@ -2817,6 +2967,108 @@ list to show only entities which are not currently hidden via filters.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_dark_mod_features">Dark Mod features</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Dark Mod is a considerably more complex game than vanilla Doom 3, and its
+maps therefore include certain settings and features that would be cumbersome to
+configure manually by entering property values on entities. DarkRadiant
+therefore provides a number of Dark Mod specific dialogs which are described in
+this section.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Most Dark Mod features are compiled as separate plugins, and may not be
+built by default on certain platforms. If these features seem to be missing,
+contact the distributor of your DarkRadiant binary package for advice, or
+examine the build options if you are compiling DarkRadiant yourself from source
+code.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_the_difficulty_editor">The Difficulty editor</h3>
+<div class="paragraph">
+<p>Most Dark Mod maps can be played on one of three possible difficulty settings,
+typically named "Easy", "Medium" and "Difficult" (although these names can be
+overridden). The precise effects of each of these difficulty settings are fully
+under the control of the map author, and might include such effects as spawning
+or despawning particular enemies, changing enemy health or patrol routes, or
+modifying the details of objectives.</p>
+</div>
+<div class="paragraph">
+<p>DarkRadiant provides a Difficulty editor dialog to facilitate one particular
+class of difficulty-dependent modification: making global changes to entity
+classes throughout the map. This could be used, for example, to change the
+health of every instance of a particular enemy, or (as shown in the diagram)
+removing a particular enemy type&#8217;s ability to relight torches.</p>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="img/DifficultyEditor.png" alt="DifficultyEditor">
+</div>
+<div class="title">Figure 12. The Difficulty editor, showing a modified property on a particular entity class</div>
+</div>
+<div class="paragraph">
+<p>The Difficulty editor consists of a tabbed widget, where each tab contains the
+settings which correspond to a particular difficulty level. The difficulty names
+are shown for the current map — normally these will be the default values of
+"Easy", "Medium" and "Difficult", but if the current map has customised
+difficulty names DarkRadiant will adjust the tab names accordingly.</p>
+</div>
+<div class="paragraph">
+<p>On the left is a tree view showing all of the property overrides for the current
+difficulty level. Each top-level item is a particular entity class, which
+contains all of the property changes that are made to this entity class in this
+difficulty level. In this example, the <code>ai_builder_guard</code> entity has its
+<code>canLightTorches</code> property set to 0 on the Easy difficulty setting, meaning that
+all enemies of this particular type will not be able to relight torches.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Adding a setting</strong></dt>
+<dd>
+<p>To add a new property setting for the current difficulty
+level, click the <strong>Add</strong> button. The widgets on the right hand side will become
+available, allowing you to choose an entity class, a property ("Spawnarg") to
+change, and the change to make ("Argument"). You can choose a number of
+mathematical operations for the modification, including a simple value
+assignment, or an addition or multiplication. After specifying the values, make
+sure you click the <strong>Save</strong> button to commit the changes into the list view.</p>
+</dd>
+<dt class="hdlist1"><strong>Removing a setting</strong></dt>
+<dd>
+<p>Select an item in the list view and click the <strong>Delete</strong>
+button to remove a particular setting. You can only remove individual
+assignments from the list; to remove all of the assignments for a particular
+entity class, you must select and delete each one individually.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+For details of more advanced difficulty-dependent changes, such as
+modifying the behaviour of a <strong>single</strong> entity (rather than an entire entity
+class), or changing the names of difficulty settings, consult the Dark Mod Wiki.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_command_reference">Command reference</h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -2878,7 +3130,143 @@ then save to this new file name in future.</p>
 <p>Display a file browser to choose a new filename to save this
 map into, without changing the current map name for future <strong>Save</strong> operations.</p>
 </dd>
+<dt class="hdlist1"><strong>Save selected as Map&#8230;&#8203;</strong></dt>
+<dd>
+<p>Choose a file name and save the currently-selected
+items into a new map file without changing the current map name. Equivalent to
+<strong>Save copy as</strong> but it only saves the selected items, not the entire map.</p>
+</dd>
+<dt class="hdlist1"><strong>Save selected as prefab&#8230;&#8203;</strong></dt>
+<dd>
+<p>Equivalent to <strong>Save selected as Map</strong> but it saves
+the selected items into a <a href="#WorkingWithPrefabs">prefab</a> (<code>*.pfb</code>) file in the
+standard prefab location.</p>
+</dd>
+<dt class="hdlist1"><strong>Save selected as Collision Model&#8230;&#8203;</strong></dt>
+<dd>
+<p>Allows a selected map object (typically
+a brush) to be set as the collision model for a particular ASE or LWO model.
+After choosing this option, DarkRadiant will display the model chooser dialog,
+allowing you to choose the particular model that the selected object should be
+associated with. The selected brush is then saved, and associated with the
+model so that subsequent insertions of the same model will use the new
+collision geometry.</p>
+</dd>
+<dt class="hdlist1"><strong>Reload Models/Selected Models/Skins/Scripts/Readable Guis/Materials/Defs/Particles</strong></dt>
+<dd>
+<p>Forces DarkRadiant to re-read the selected category of items from disk,
+refreshing its internal data structures. This is necessary if you have edited
+or re-exported some asset which DarkRadiant is using in the current map and you
+want to see the latest changes.</p>
+</dd>
+<dt class="hdlist1"><strong>Game/Project Setup&#8230;&#8203;</strong></dt>
+<dd>
+<p>Show the <a href="#GameSetup">Game Setup</a> dialog for
+configuring game-specific settings.</p>
+</dd>
+<dt class="hdlist1"><strong>Pointfile</strong></dt>
+<dd>
+<p>Load and show the <a href="#PointFile">pointfile</a> for the current map, if
+there is one. An error dialog will be displayed if there is no current
+pointfile (which is usually the case if the current map has not leaked during
+compilation).</p>
+</dd>
+<dt class="hdlist1"><strong>Exit</strong></dt>
+<dd>
+<p>Exit DarkRadiant, prompting to save the current map if necessary.</p>
+</dd>
 </dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_edit_menu">Edit menu</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Undo</strong></dt>
+<dd>
+<p>Undo the most recent operation.</p>
+</dd>
+<dt class="hdlist1"><strong>Redo</strong></dt>
+<dd>
+<p>Redo the most recently undone operation.</p>
+</dd>
+<dt class="hdlist1"><strong>Copy</strong></dt>
+<dd>
+<p>Copy the selected item(s) to the clipboard.</p>
+</dd>
+<dt class="hdlist1"><strong>Paste</strong></dt>
+<dd>
+<p>Paste the item(s) on the clipboard to their original world location.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Objects copied to the clipboard are represented using the same text format
+which can be found in <code>.map</code> files. This makes it possible to save clipboard
+content into a file and load it later as an actual map fragment.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Paste to camera</strong></dt>
+<dd>
+<p>Paste the item(s) on the clipboard to the current camera
+location, ignoring their original world location.</p>
+</dd>
+<dt class="hdlist1"><strong>Duplicate</strong></dt>
+<dd>
+<p>Make a copy of the currently selected item(s), slightly offset
+from their original position.</p>
+</dd>
+<dt class="hdlist1"><strong>Delete</strong></dt>
+<dd>
+<p>Remove the currently selected item(s).</p>
+</dd>
+<dt class="hdlist1"><strong>Group selection</strong></dt>
+<dd>
+<p>Combine the selected items into a <a href="#Group">group</a>.</p>
+</dd>
+<dt class="hdlist1"><strong>Ungroup selection</strong></dt>
+<dd>
+<p>Split the selected group back into individual objects.</p>
+</dd>
+<dt class="hdlist1"><strong>Reparent primitives</strong></dt>
+<dd>
+<p>Make all selected worldspawn brushes or patches into
+children of the selected func_static (or similar entity). Requires exactly one
+entity to be selected, along with at least one primitive which is currently a
+child of the worldspawn.</p>
+</dd>
+<dt class="hdlist1"><strong>Reparent primitives to worldspawn</strong></dt>
+<dd>
+<p>Unparent the selected primitive from a
+func_static (or similar entity), making it a child of the worldspawn. Before
+using this command you must first select a single primitive with the <strong>TAB</strong> key
+(even if the entity only contains a single primitive), otherwise the whole
+entity will be selected and the command will silently fail.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<img src="img/tip.png" alt="Tip">
+</td>
+<td class="content">
+To unparent <strong>all</strong> of an entity&#8217;s primitives and convert them back into
+worldspawn, just right-click in the 2D view and choose <strong>Revert to worldspawn</strong>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -3335,7 +3723,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-30 21:02:12 GMT
+Last updated 2020-03-10 21:18:41 GMT
 </div>
 </div>
 </body>

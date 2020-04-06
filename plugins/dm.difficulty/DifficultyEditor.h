@@ -24,81 +24,76 @@ namespace ui
  * data is stored in a DifficultySettings instance.
  */
 class DifficultyEditor :
-	public wxEvtHandler,
-	private wxutil::XmlResourceBasedWidget
+    public wxEvtHandler,
+    private wxutil::XmlResourceBasedWidget
 {
-private:
-	// The actual settings we're working with
-	difficulty::DifficultySettingsPtr _settings;
+    // The actual settings we're working with
+    difficulty::DifficultySettingsPtr _settings;
 
-	// GtkNotebook-related widgets
-	wxPanel* _editor;
-	std::string _label; // the actual label
+    // GtkNotebook-related widgets
+    wxPanel* _editor;
 
-	wxutil::TreeView* _settingsView;
+    wxutil::TreeView* _settingsView;
 
-	// The classname dropdown entry field
-	wxComboBox* _classCombo;
-	wxTextCtrl* _spawnArgEntry;
-	wxTextCtrl* _argumentEntry;
-	wxChoice* _appTypeCombo;
+    // The classname dropdown entry field
+    wxComboBox* _classCombo;
+    wxTextCtrl* _spawnArgEntry;
+    wxTextCtrl* _argumentEntry;
+    wxChoice* _appTypeCombo;
 
-	wxButton* _saveSettingButton;
-	wxButton* _deleteSettingButton;
-	wxButton* _createSettingButton;
-	wxButton* _refreshButton;
+    wxButton* _saveSettingButton;
+    wxButton* _deleteSettingButton;
+    wxButton* _createSettingButton;
+    wxButton* _refreshButton;
 
-	// A label containing notes to the user
-	wxStaticText* _noteText;
+    // A label containing notes to the user
+    wxStaticText* _noteText;
 
-	// Mutex for avoiding loopbacks
-	bool _updateActive;
+    // Mutex for avoiding loopbacks
+    bool _updateActive;
 
 public:
-	/**
-	 * greebo: Pass the label string and the difficulty settings object to the
-	 *         constructor. The DifficultySettings should be populated first.
-	 */
-	DifficultyEditor(wxWindow* parent, const std::string& label, const difficulty::DifficultySettingsPtr& settings);
+    /**
+     * greebo: Pass the label string and the difficulty settings object to the
+     *         constructor. The DifficultySettings should be populated first.
+     */
+    DifficultyEditor(wxWindow* parent,
+                     const difficulty::DifficultySettingsPtr& settings);
 
-	// Returns the actual editor widget (contains all controls and views)
-	wxWindow* getEditor();
-
-	// Returns the label for packing into a GtkNotebook tab.
-	std::string getNotebookLabel();
-	std::string getNotebookIconName();
+    // Returns the actual editor widget (contains all controls and views)
+    wxWindow* getWidget();
 
 private:
-	// Creates the widgets
-	void populateWindow();
+    // Creates the widgets
+    void populateWindow();
 
-	// Returns the ID of the selected setting (or -1) if no valid setting is selected
-	int getSelectedSettingId();
+    // Returns the ID of the selected setting (or -1) if no valid setting is selected
+    int getSelectedSettingId();
 
-	// Loads the data from the treeview selection into the editor widgets
-	void updateEditorWidgets();
+    // Loads the data from the treeview selection into the editor widgets
+    void updateEditorWidgets();
 
-	// Prepares the widgets for addition of a new setting
-	void createSetting();
+    // Prepares the widgets for addition of a new setting
+    void createSetting();
 
-	// Saves the setting data from the widgets to the DifficultySettings object
-	void saveSetting();
+    // Saves the setting data from the widgets to the DifficultySettings object
+    void saveSetting();
 
-	// Removes the setting selected in the treeview
-	void deleteSetting();
+    // Removes the setting selected in the treeview
+    void deleteSetting();
 
-	// Highlights the setting (according to the given <id>) in the treeview
-	void selectSettingById(int id);
+    // Highlights the setting (according to the given <id>) in the treeview
+    void selectSettingById(int id);
 
-	// Callback for treeview selection changes
-	void onSettingSelectionChange(wxDataViewEvent& ev);
+    // Callback for treeview selection changes
+    void onSettingSelectionChange(wxDataViewEvent& ev);
 
-	void onSettingCreate(wxCommandEvent& ev);
-	void onSettingSave(wxCommandEvent& ev);
-	void onSettingDelete(wxCommandEvent& ev);
-	void onRefresh(wxCommandEvent& ev);
+    void onSettingCreate(wxCommandEvent& ev);
+    void onSettingSave(wxCommandEvent& ev);
+    void onSettingDelete(wxCommandEvent& ev);
+    void onRefresh(wxCommandEvent& ev);
 
-	void onAppTypeChange(wxCommandEvent& ev);
+    void onAppTypeChange(wxCommandEvent& ev);
 };
 typedef std::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 

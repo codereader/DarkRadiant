@@ -23,118 +23,174 @@ namespace ui
 
 namespace
 {
-	const char* const WINDOW_TITLE = N_("Difficulty Editor");
+    const char* const WINDOW_TITLE = N_("Difficulty Editor");
 }
 
 DifficultyDialog::DifficultyDialog() :
-	DialogBase(_(WINDOW_TITLE))
+    DialogBase(_(WINDOW_TITLE))
 {
-	// Load the settings
-	_settingsManager.loadSettings();
+    // Load the settings
+    _settingsManager.loadSettings();
 
-	// Create the widgets
-	populateWindow();
+    // Create the widgets
+    populateWindow();
 }
 
 void DifficultyDialog::createDifficultyEditors()
 {
-	int numLevels = game::current::getValue<int>(GKEY_DIFFICULTY_LEVELS);
+    int numLevels = game::current::getValue<int>(GKEY_DIFFICULTY_LEVELS);
 
-	for (int i = 0; i < numLevels; i++)
-	{
-		// Acquire the settings object
-		difficulty::DifficultySettingsPtr settings = _settingsManager.getSettings(i);
+    for (int i = 0; i < numLevels; i++)
+    {
+        // Acquire the settings object
+        difficulty::DifficultySettingsPtr settings = _settingsManager.getSettings(i);
+        if (settings)
+        {
+            // Construct the editor for this difficulty level and add it to our
+            // internal list of editors
+            std::string diffName = _settingsManager.getDifficultyName(i);
+            auto editor = std::make_shared<DifficultyEditor>(_notebook,
+                                                             settings);
+            _editors.push_back(editor);
 
-		if (settings != NULL)
-		{
-			_editors.push_back(
-				DifficultyEditorPtr(new DifficultyEditor(
-					_notebook, _settingsManager.getDifficultyName(i), settings)
-				)
-			);
-		}
-	}
+            // Insert the editor's widget as a new page in the choicebook
+            wxWindow* editorWidget = editor->getWidget();
+            editorWidget->Reparent(_notebook);
+            _notebook->AddPage(editorWidget, diffName, false);
+        }
+    }
+}
 
-	// A new image list for the notebook tab icons
-	_imageList.reset(new wxImageList(16, 16));
+namespace
+{
+    // Simple dialog for editing a difficulty setting name
+    class EditNameDialog: public wxDialog
+    {
+        wxTextCtrl* _textCtrl = nullptr;
 
-	// Pack the editors into the notebook
-	for (std::size_t i = 0; i < _editors.size(); i++)
-	{
-		DifficultyEditor& editor = *_editors[i];
+    public:
 
-		wxWindow* editorWidget = editor.getEditor();
-		std::string icon = editor.getNotebookIconName();
+        // Construct and initialise with parent and initial text to edit
+        EditNameDialog(wxWindow* parent, const wxString& initialText)
+        : wxDialog(parent, wxID_ANY, _("Difficulty name"))
+        {
+            wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
-		// Load the icon
-		int imageId = icon.empty() ? -1 : 
-			_imageList->Add(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + icon));
-	
-		editorWidget->Reparent(_notebook);
-		_notebook->AddPage(editorWidget, editor.getNotebookLabel(), false, imageId);
-	}
+            // Add the edit text box
+            _textCtrl=  new wxTextCtrl(this, wxID_ANY, initialText);
+            mainSizer->Add(_textCtrl, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
+            mainSizer->AddSpacer(6);
+
+            // Add the buttons
+            wxSizer* buttons = CreateButtonSizer(wxOK | wxCANCEL);
+            mainSizer->Add(buttons, 0, wxEXPAND | wxBOTTOM, 12);
+
+            SetSizer(mainSizer);
+            Fit();
+
+            // Start with the text selected and focussed to save an extra mouse
+            // click
+            _textCtrl->SelectAll();
+            _textCtrl->SetFocus();
+        }
+
+        // Get the result of editing
+        std::string editResult() const
+        {
+            return _textCtrl->GetValue().ToStdString();
+        }
+    };
 }
 
 void DifficultyDialog::populateWindow()
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
+    SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// Create the notebook and add it to the vbox
-	_notebook = new wxNotebook(this, wxID_ANY);
-	_notebook->SetMinClientSize(wxSize(800, 400));
+    // Create the notebook and add it to the vbox
+    _notebook = new wxChoicebook(this, wxID_ANY);
+    _notebook->SetMinClientSize(wxSize(800, 400));
 
-	// Create and pack the editors
-	createDifficultyEditors();
+    // Add the edit button alongside the dropdown
+    wxSizer* choiceSizer = _notebook->GetControlSizer();
+    wxButton* editBtn = new wxButton(
+        _notebook, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
+        wxBU_EXACTFIT | wxBU_NOTEXT
+    );
+    editBtn->Bind(wxEVT_BUTTON,
+                  [&] (wxCommandEvent&) { editCurrentDifficultyName(); });
+    editBtn->SetBitmap(wxArtProvider::GetBitmap("darkradiant:edit.png"));
+    choiceSizer->Add(editBtn, 0, wxEXPAND);
 
-	GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
+    // Create and pack the editors
+    createDifficultyEditors();
 
-	wxButton* okButton = new wxButton(this, wxID_OK);
-	wxButton* cancelButton = new wxButton(this, wxID_CANCEL);
+    GetSizer()->Add(_notebook, 1, wxEXPAND | wxALL, 12);
 
-	okButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_OK); });
-	cancelButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_CANCEL); });
+    wxButton* okButton = new wxButton(this, wxID_OK);
+    wxButton* cancelButton = new wxButton(this, wxID_CANCEL);
 
-	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	buttonSizer->Add(cancelButton, 0, wxRIGHT, 6);
-	buttonSizer->Add(okButton, 0, wxRIGHT, 6);
+    okButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_OK); });
+    cancelButton->Bind(wxEVT_BUTTON, [&] (wxCommandEvent&) { EndModal(wxID_CANCEL); });
 
-	GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxALL, 12);
+    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+    buttonSizer->Add(cancelButton);
+    buttonSizer->AddSpacer(6);
+    buttonSizer->Add(okButton);
 
-	Layout();
-	Fit();
+    GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxALL, 12);
+
+    Layout();
+    Fit();
+}
+
+void DifficultyDialog::editCurrentDifficultyName()
+{
+    // Initialise an EditNameDialog with the current tab text as the initial
+    // name to edit
+    int curDiffLevel = _notebook->GetSelection(); // assume tabs numbered from 0
+    EditNameDialog dialog(this, _notebook->GetPageText(curDiffLevel));
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        // Successful edit, get the changed name
+        std::string newName = dialog.editResult();
+
+        // Change the difficulty name in the map
+        _settingsManager.setDifficultyName(curDiffLevel, newName);
+
+        // Change the displayed name in the dialog
+        _notebook->SetPageText(curDiffLevel, newName);
+    }
 }
 
 void DifficultyDialog::save()
 {
-	// Consistency check can go here
+    // Consistency check can go here
 
-	// Scoped undo object
-	UndoableCommand command("editDifficulty");
+    // Scoped undo object
+    UndoableCommand command("editDifficulty");
 
-	// Save the working set to the entity
-	_settingsManager.saveSettings();
+    // Save the working set to the entity
+    _settingsManager.saveSettings();
 }
 
 int DifficultyDialog::ShowModal()
 {
-	int returnCode = DialogBase::ShowModal();
+    int returnCode = DialogBase::ShowModal();
 
-	if (returnCode == wxID_OK)
-	{
-		save();
-	}
+    if (returnCode == wxID_OK)
+    {
+        save();
+    }
 
-	return returnCode;
+    return returnCode;
 }
 
 // Static command target
 void DifficultyDialog::ShowDialog(const cmd::ArgumentList& args)
 {
-	// Construct a new instance, this enters the main loop
-	DifficultyDialog* editor = new DifficultyDialog;
-
-	editor->ShowModal();
-	editor->Destroy();
+    // Construct a new instance and enter the main loop
+    DifficultyDialog editor;
+    editor.ShowModal();
 }
 
 } // namespace ui

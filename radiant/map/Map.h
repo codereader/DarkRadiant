@@ -22,6 +22,7 @@ class TextInputStream;
 namespace map
 {
 
+/// Main class representing the current map
 class Map :
 	public IMap,
 	public scene::Graph::Observer

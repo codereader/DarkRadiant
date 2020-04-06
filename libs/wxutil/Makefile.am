@@ -29,6 +29,7 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
                        WindowPosition.cpp \
                        window/TransientWindow.cpp \
                        dialog/Dialog.cpp \
+                       dialog/DialogBase.cpp \
                        dialog/MessageBox.cpp \
                        preview/ModelPreview.cpp \
                        preview/ParticlePreview.cpp \

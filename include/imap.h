@@ -141,3 +141,4 @@ inline IMap& GlobalMapModule()
 	);
 	return _mapModule;
 }
+

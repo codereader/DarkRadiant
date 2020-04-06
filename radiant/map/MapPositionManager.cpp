@@ -1,5 +1,6 @@
 #include "MapPositionManager.h"
 
+#include "maplib.h"
 #include "ientity.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
@@ -56,12 +57,7 @@ MapPositionManager::MapPositionManager()
 
 void MapPositionManager::loadPositions()
 {
-	// Find the worldspawn node
-	const scene::INodePtr& wsNode = GlobalMapModule().getWorldspawn();
-
-	if (!wsNode) return;
-
-	Entity* worldspawn = Node_getEntity(wsNode);
+	Entity* worldspawn = map::current::getWorldspawn();
 
 	if (worldspawn != nullptr) 
 	{
@@ -81,12 +77,7 @@ void MapPositionManager::loadPositions()
 
 void MapPositionManager::savePositions()
 {
-	// Find the worldspawn node
-	const scene::INodePtr& wsNode = GlobalMapModule().getWorldspawn();
-
-	if (!wsNode) return;
-
-	Entity* worldspawn = Node_getEntity(wsNode);
+    Entity* worldspawn = map::current::getWorldspawn();
 
 	for (unsigned int i = 1; i <= MAX_POSITIONS; ++i)
 	{
@@ -100,11 +91,7 @@ void MapPositionManager::savePositions()
 void MapPositionManager::removePositions()
 {
 	// Find the worldspawn node
-	const scene::INodePtr& wsNode = GlobalMapModule().getWorldspawn();
-
-	if (!wsNode) return;
-
-	Entity* worldspawn = Node_getEntity(wsNode);
+    Entity* worldspawn = map::current::getWorldspawn();
 
 	for (unsigned int i = 1; i <= MAX_POSITIONS; ++i) 
 	{
