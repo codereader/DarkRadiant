@@ -184,6 +184,7 @@
     <ClInclude Include="..\..\libs\string\encoding.h">
       <Filter>string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\maplib.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

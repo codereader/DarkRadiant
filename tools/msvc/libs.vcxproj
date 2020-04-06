@@ -155,6 +155,7 @@
     <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\generic\callback.h" />
     <ClInclude Include="..\..\libs\KeyValueStore.h" />
+    <ClInclude Include="..\..\libs\maplib.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />

@@ -190,6 +190,7 @@
     <ClCompile Include="..\..\libs\wxutil\clipboard.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\Dialog.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dialog\DialogBase.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp" />
     <ClCompile Include="..\..\libs\wxutil\DirChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FileChooser.cpp" />
