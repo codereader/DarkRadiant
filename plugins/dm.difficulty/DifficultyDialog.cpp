@@ -9,6 +9,8 @@
 #include "gamelib.h"
 #include "registry/registry.h"
 #include "string/string.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/EntryAbortedException.h"
 
 #include <iostream>
 
@@ -61,47 +63,6 @@ void DifficultyDialog::createDifficultyEditors()
     }
 }
 
-namespace
-{
-    // Simple dialog for editing a difficulty setting name
-    class EditNameDialog: public wxDialog
-    {
-        wxTextCtrl* _textCtrl = nullptr;
-
-    public:
-
-        // Construct and initialise with parent and initial text to edit
-        EditNameDialog(wxWindow* parent, const wxString& initialText)
-        : wxDialog(parent, wxID_ANY, _("Difficulty name"))
-        {
-            wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-
-            // Add the edit text box
-            _textCtrl=  new wxTextCtrl(this, wxID_ANY, initialText);
-            mainSizer->Add(_textCtrl, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
-            mainSizer->AddSpacer(6);
-
-            // Add the buttons
-            wxSizer* buttons = CreateButtonSizer(wxOK | wxCANCEL);
-            mainSizer->Add(buttons, 0, wxEXPAND | wxBOTTOM, 12);
-
-            SetSizer(mainSizer);
-            Fit();
-
-            // Start with the text selected and focussed to save an extra mouse
-            // click
-            _textCtrl->SelectAll();
-            _textCtrl->SetFocus();
-        }
-
-        // Get the result of editing
-        std::string editResult() const
-        {
-            return _textCtrl->GetValue().ToStdString();
-        }
-    };
-}
-
 void DifficultyDialog::populateWindow()
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -148,17 +109,29 @@ void DifficultyDialog::editCurrentDifficultyName()
     // Initialise an EditNameDialog with the current tab text as the initial
     // name to edit
     int curDiffLevel = _notebook->GetSelection(); // assume tabs numbered from 0
-    EditNameDialog dialog(this, _notebook->GetPageText(curDiffLevel));
-    if (dialog.ShowModal() == wxID_OK)
+
+    try
     {
-        // Successful edit, get the changed name
-        std::string newName = dialog.editResult();
+        std::string newName = wxutil::Dialog::TextEntryDialog(
+            _("Difficulty name"),
+            _("New name:"),
+            _notebook->GetPageText(curDiffLevel).ToStdString(),
+            this
+        );
 
-        // Change the difficulty name in the map
-        _settingsManager.setDifficultyName(curDiffLevel, newName);
+        // Don't allow setting it to an empty name
+        if (!newName.empty())
+        {
+            // Change the difficulty name in the map
+            _settingsManager.setDifficultyName(curDiffLevel, newName);
 
-        // Change the displayed name in the dialog
-        _notebook->SetPageText(curDiffLevel, newName);
+            // Change the displayed name in the dialog
+            _notebook->SetPageText(curDiffLevel, newName);
+        }
+    }
+    catch (wxutil::EntryAbortedException&)
+    {
+        // do nothing in case the user hit cancel
     }
 }
 
