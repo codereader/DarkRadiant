@@ -78,6 +78,9 @@ public:
 		return _conversations[iIndex];
 	}
 
+	// Returns the highest used conversation index (will return -1 if no conversations are present)
+	int getHighestIndex();
+
 	/**
 	 * Add a new conversation, starting from the first unused conversation ID.
 	 */
@@ -88,6 +91,12 @@ public:
 	 * numbering is consistent again (deleting obj 2 will re-number 3 => 2, 4 => 3, etc.)
 	 */
 	void deleteConversation(int index);
+
+	/**
+	 * Move the conversation with the given index either up or down.
+	 * Will return the conversation's index after the move
+	 */
+	int moveConversation(int index, bool moveUp);
 
 	/**
 	 * Clear all conversations.

@@ -34,9 +34,17 @@ namespace
 ConversationDialog::ConversationDialog() :
 	DialogBase(_(WINDOW_TITLE)),
 	_entityList(new wxutil::TreeModel(_convEntityColumns, true)),
-	_entityView(NULL),
+	_entityView(nullptr),
 	_convList(new wxutil::TreeModel(_convColumns, true)),
-	_convView(NULL)
+	_convView(nullptr),
+	_addConvButton(nullptr),
+	_editConvButton(nullptr),
+	_deleteConvButton(nullptr),
+	_moveUpConvButton(nullptr),
+	_moveDownConvButton(nullptr),
+	_clearConvButton(nullptr),
+	_addEntityButton(nullptr),
+	_deleteEntityButton(nullptr)
 {
 	// Create the widgets
 	populateWindow();
@@ -87,19 +95,27 @@ void ConversationDialog::populateWindow()
 
 	// Wire up button signals
 	_addConvButton = findNamedObject<wxButton>(this, "ConvDialogAddConvButton");
-	_addConvButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onAddConversation), NULL, this);
+	_addConvButton->Bind(wxEVT_BUTTON, &ConversationDialog::onAddConversation, this);
 	_addConvButton->Enable(false); // not enabled without selection
 
 	_editConvButton = findNamedObject<wxButton>(this, "ConvDialogEditConvButton");
-	_editConvButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onEditConversation), NULL, this);
+	_editConvButton->Bind(wxEVT_BUTTON, &ConversationDialog::onEditConversation, this);
 	_editConvButton->Enable(false); // not enabled without selection
 
-	_deleteConvButton =	findNamedObject<wxButton>(this, "ConvDialogDeleteConvButton");
-	_deleteConvButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onDeleteConversation), NULL, this);
+	_deleteConvButton = findNamedObject<wxButton>(this, "ConvDialogDeleteConvButton");
+	_deleteConvButton->Bind(wxEVT_BUTTON, &ConversationDialog::onDeleteConversation, this);
 	_deleteConvButton->Enable(false); // not enabled without selection
 
+	_moveUpConvButton = findNamedObject<wxButton>(this, "ConvDialogMoveUpConvButton");
+	_moveUpConvButton->Bind(wxEVT_BUTTON, &ConversationDialog::onMoveConversationUpOrDown, this);
+	_moveUpConvButton->Enable(false); // not enabled without selection
+
+	_moveDownConvButton = findNamedObject<wxButton>(this, "ConvDialogMoveDownConvButton");
+	_moveDownConvButton->Bind(wxEVT_BUTTON, &ConversationDialog::onMoveConversationUpOrDown, this);
+	_moveDownConvButton->Enable(false); // not enabled without selection
+
 	_clearConvButton = findNamedObject<wxButton>(this, "ConvDialogClearConvButton");
-	_clearConvButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ConversationDialog::onClearConversations), NULL, this);
+	_clearConvButton->Bind(wxEVT_BUTTON, &ConversationDialog::onClearConversations, this);
 	_clearConvButton->Enable(false); // requires >0 conversations
 
 	// Boldify a few labels
@@ -229,6 +245,8 @@ void ConversationDialog::updateConversationPanelSensitivity()
 		_addConvButton->Enable(false);
 		_editConvButton->Enable(false);
 		_deleteConvButton->Enable(false);
+		_moveUpConvButton->Enable(false);
+		_moveDownConvButton->Enable(false);
 		_clearConvButton->Enable(false);
 	}
 }
@@ -315,18 +333,24 @@ void ConversationDialog::handleConversationSelectionChange()
 {
 	// Get the selection
 	_currentConversation = _convView->GetSelection();
+	int index = getSelectedConvIndex();
 
 	if (_currentConversation.IsOk())
 	{
 		// Enable the edit and delete buttons
 		_editConvButton->Enable(true);
 		_deleteConvButton->Enable(true);
+
+		_moveUpConvButton->Enable(index > 1);
+		_moveDownConvButton->Enable(index < _curEntity->second->getHighestIndex());
 	}
 	else
 	{
-		// Disable the edit and delete buttons
+		// Disable all manipulation buttons
 		_editConvButton->Enable(false);
 		_deleteConvButton->Enable(false);
+		_moveUpConvButton->Enable(false);
+		_moveDownConvButton->Enable(false);
 	}
 }
 
@@ -337,11 +361,21 @@ void ConversationDialog::onAddConversation(wxCommandEvent& ev)
 	refreshConversationList();
 }
 
-void ConversationDialog::onEditConversation(wxCommandEvent& ev)
+int ConversationDialog::getSelectedConvIndex()
 {
+	if (!_currentConversation.IsOk())
+	{
+		return -1;
+	}
+
 	// Retrieve the index of the current conversation
 	wxutil::TreeModel::Row row(_currentConversation, *_convList);
-	int index = row[_convColumns.index].getInteger();
+	return row[_convColumns.index].getInteger();
+}
+
+void ConversationDialog::onEditConversation(wxCommandEvent& ev)
+{
+	int index = getSelectedConvIndex();
 
 	conversation::Conversation& conv = _curEntity->second->getConversation(index);
 
@@ -357,15 +391,30 @@ void ConversationDialog::onEditConversation(wxCommandEvent& ev)
 
 void ConversationDialog::onDeleteConversation(wxCommandEvent& ev)
 {
-	// Get the index of the current conversation
-	wxutil::TreeModel::Row row(_currentConversation, *_convList);
-	int index = row[_convColumns.index].getInteger();
+	int index = getSelectedConvIndex();
 
 	// Tell the ConversationEntity to delete this conversation
 	_curEntity->second->deleteConversation(index);
 
 	// Repopulate the conversation list
 	refreshConversationList();
+}
+
+void ConversationDialog::onMoveConversationUpOrDown(wxCommandEvent& ev)
+{
+	bool moveUp = ev.GetEventObject() == _moveUpConvButton;
+	int index = getSelectedConvIndex();
+
+	int newIndex = _curEntity->second->moveConversation(index, moveUp);
+
+	// Repopulate the conversation list
+	refreshConversationList();
+
+	// Try to select the moved item
+	auto item = _convList->FindInteger(newIndex, _convColumns.index);
+	_convView->Select(item);
+
+	handleConversationSelectionChange();
 }
 
 void ConversationDialog::onClearConversations(wxCommandEvent& ev)

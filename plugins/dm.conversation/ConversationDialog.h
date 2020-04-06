@@ -47,6 +47,8 @@ private:
 	wxButton* _addConvButton;
 	wxButton* _editConvButton;
 	wxButton* _deleteConvButton;
+	wxButton* _moveUpConvButton;
+	wxButton* _moveDownConvButton;
 	wxButton* _clearConvButton;
 
 	wxButton* _addEntityButton;
@@ -90,7 +92,10 @@ private:
 	void onAddConversation(wxCommandEvent& ev);
 	void onEditConversation(wxCommandEvent& ev);
 	void onDeleteConversation(wxCommandEvent& ev);
+	void onMoveConversationUpOrDown(wxCommandEvent& ev);
 	void onClearConversations(wxCommandEvent& ev);
+
+	int getSelectedConvIndex();
 };
 
 } // namespace ui

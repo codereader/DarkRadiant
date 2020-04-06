@@ -39,6 +39,16 @@ void ConversationEntity::deleteWorldNode()
 	}
 }
 
+int ConversationEntity::getHighestIndex()
+{
+	if (_conversations.empty())
+	{
+		return -1;
+	}
+
+	return _conversations.rbegin()->first;
+}
+
 // Add a new conversation
 void ConversationEntity::addConversation() 
 {
@@ -89,6 +99,30 @@ void ConversationEntity::deleteConversation(int index)
 		// Re-insert with new index
 		_conversations.insert(std::make_pair(newIndex, temp));
 	}
+}
+
+int ConversationEntity::moveConversation(int index, bool moveUp)
+{
+	if (moveUp && index <= 1 || !moveUp && index >= getHighestIndex())
+	{
+		return index; // no change
+	}
+
+	int targetIndex = index + (moveUp ? -1 : +1);
+
+	if (_conversations.find(targetIndex) != _conversations.end())
+	{
+		// Swap with existing element
+		std::swap(_conversations[index], _conversations[targetIndex]);
+	}
+	else
+	{
+		// Nothing present at the target index, just move
+		_conversations[targetIndex] = _conversations[index];
+		_conversations.erase(index);
+	}
+
+	return targetIndex;
 }
 
 void ConversationEntity::populateListStore(wxutil::TreeModel& store, const ConversationColumns& columns) const
