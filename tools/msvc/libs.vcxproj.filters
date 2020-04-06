@@ -181,6 +181,9 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\KeyValueStore.h" />
+    <ClInclude Include="..\..\libs\string\encoding.h">
+      <Filter>string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
