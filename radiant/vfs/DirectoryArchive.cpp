@@ -5,6 +5,7 @@
 #include "os/file.h"
 #include "os/dir.h"
 #include "os/fs.h"
+#include "string/encoding.h"
 #include <vector>
 
 #include "DirectoryArchiveFile.h"
@@ -91,7 +92,7 @@ void DirectoryArchive::traverse(Visitor& visitor, const std::string& root)
 		}
 		catch (const std::system_error& ex)
 		{
-			rWarning() << "[vfs] Skipping file " << candidate.filename().wstring() <<
+			rWarning() << "[vfs] Skipping file " << string::to_utf8(candidate.filename().wstring()) <<
 				" - possibly unsupported characters in filename? " <<
 				"(Exception: " << ex.what() << ")" << std::endl;
 		}
