@@ -80,7 +80,7 @@ void DifficultyDialog::populateWindow()
     editBtn->Bind(wxEVT_BUTTON,
                   [&] (wxCommandEvent&) { editCurrentDifficultyName(); });
     editBtn->SetBitmap(wxArtProvider::GetBitmap("darkradiant:edit.png"));
-    choiceSizer->Add(editBtn, 0, wxEXPAND);
+    choiceSizer->Add(editBtn, 0, wxEXPAND | wxLEFT, 6);
 
     // Create and pack the editors
     createDifficultyEditors();
@@ -112,15 +112,15 @@ void DifficultyDialog::editCurrentDifficultyName()
 
     try
     {
+        std::string oldName = _notebook->GetPageText(curDiffLevel).ToStdString();
+
         std::string newName = wxutil::Dialog::TextEntryDialog(
-            _("Difficulty name"),
-            _("New name:"),
-            _notebook->GetPageText(curDiffLevel).ToStdString(),
-            this
+            _("Difficulty name"), _("New name:"),
+            oldName, this
         );
 
         // Don't allow setting it to an empty name
-        if (!newName.empty())
+        if (!newName.empty() && oldName != newName)
         {
             // Change the difficulty name in the map
             _settingsManager.setDifficultyName(curDiffLevel, newName);

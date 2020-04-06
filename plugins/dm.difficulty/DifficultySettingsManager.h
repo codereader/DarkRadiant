@@ -17,6 +17,7 @@ class DifficultySettingsManager
 
     // The names of the difficulty levels
     std::vector<std::string> _difficultyNames;
+    std::vector<std::string> _defaultDifficultyNames;
 
 public:
     // Loads all settings from the entityDefs and the currently loaded map.
