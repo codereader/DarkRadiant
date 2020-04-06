@@ -83,12 +83,13 @@ public:
 
 	/**
 	 * Add a new conversation, starting from the first unused conversation ID.
+	 * Will return the ID of the newly inserted conv
 	 */
-	void addConversation();
+	int addConversation();
 
 	/**
 	 * Delete a numbered conversation. This re-orders all conversations so that the
-	 * numbering is consistent again (deleting obj 2 will re-number 3 => 2, 4 => 3, etc.)
+	 * numbering is consistent again (deleting conv 2 will re-number 3 => 2, 4 => 3, etc.)
 	 */
 	void deleteConversation(int index);
 

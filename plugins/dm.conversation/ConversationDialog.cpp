@@ -357,8 +357,11 @@ void ConversationDialog::handleConversationSelectionChange()
 void ConversationDialog::onAddConversation(wxCommandEvent& ev)
 {
 	// Add a new conversation to the ConversationEntity and refresh the list store
-	_curEntity->second->addConversation();
+	int newIndex = _curEntity->second->addConversation();
+
 	refreshConversationList();
+
+	selectConvByIndex(newIndex);
 }
 
 int ConversationDialog::getSelectedConvIndex()
@@ -371,6 +374,14 @@ int ConversationDialog::getSelectedConvIndex()
 	// Retrieve the index of the current conversation
 	wxutil::TreeModel::Row row(_currentConversation, *_convList);
 	return row[_convColumns.index].getInteger();
+}
+
+void ConversationDialog::selectConvByIndex(int index)
+{
+	auto item = _convList->FindInteger(index, _convColumns.index);
+	_convView->Select(item);
+
+	handleConversationSelectionChange();
 }
 
 void ConversationDialog::onEditConversation(wxCommandEvent& ev)
@@ -411,10 +422,7 @@ void ConversationDialog::onMoveConversationUpOrDown(wxCommandEvent& ev)
 	refreshConversationList();
 
 	// Try to select the moved item
-	auto item = _convList->FindInteger(newIndex, _convColumns.index);
-	_convView->Select(item);
-
-	handleConversationSelectionChange();
+	selectConvByIndex(newIndex);
 }
 
 void ConversationDialog::onClearConversations(wxCommandEvent& ev)

@@ -50,7 +50,7 @@ int ConversationEntity::getHighestIndex()
 }
 
 // Add a new conversation
-void ConversationEntity::addConversation() 
+int ConversationEntity::addConversation() 
 {
 	// Locate the first unused id
 	int index = 1;
@@ -68,7 +68,9 @@ void ConversationEntity::addConversation()
 	// Insert a new conversation at this ID.
 	Conversation o;
 	o.name = _("New Conversation");
-	_conversations.insert(ConversationMap::value_type(index, o));
+	_conversations.insert(std::make_pair(index, o));
+
+	return index;
 }
 
 void ConversationEntity::deleteConversation(int index) 

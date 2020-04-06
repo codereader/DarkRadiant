@@ -96,6 +96,7 @@ private:
 	void onClearConversations(wxCommandEvent& ev);
 
 	int getSelectedConvIndex();
+	void selectConvByIndex(int index);
 };
 
 } // namespace ui
