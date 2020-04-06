@@ -388,7 +388,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	}
 
 	auto filter = std::make_shared<XMLFilter>(filterName, false);
-	auto result = _availableFilters.emplace(filterName, filter);
+	_availableFilters.emplace(filterName, filter);
 
 	// Apply the ruleset
 	filter->setRules(ruleSet);
@@ -484,7 +484,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 	}
 
 	// Insert the new filter into the table
-	auto result = _availableFilters.emplace(newFilterName, f->second);
+	_availableFilters.emplace(newFilterName, f->second);
 
 	// If this filter is in our active set, enable it
 	if (wasActive)
