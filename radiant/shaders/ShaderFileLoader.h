@@ -38,7 +38,7 @@ private:
 
         // Look closer by trying to split up the table name from the decl
         // it can still be a material starting with "table_" (#5188)
-        std::regex expr("^table\s+(.+)$");
+        std::regex expr("^table\\s+(.+)$");
         std::smatch matches;
 
         if (std::regex_match(block.name, matches, expr))
