@@ -41,6 +41,9 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	_headsView->AppendTextColumn("", _columns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+    // Allow searching for the name
+    _headsView->AddSearchColumn(_columns.name);
+
 	FitToScreen(0.7f, 0.6f);
 
 	wxPanel* previewPanel = new wxPanel(splitter, wxID_ANY);
