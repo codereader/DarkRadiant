@@ -3016,11 +3016,12 @@ removing a particular enemy type&#8217;s ability to relight torches.</p>
 <div class="title">Figure 12. The Difficulty editor, showing a modified property on a particular entity class</div>
 </div>
 <div class="paragraph">
-<p>The Difficulty editor consists of a tabbed widget, where each tab contains the
-settings which correspond to a particular difficulty level. The difficulty names
-are shown for the current map — normally these will be the default values of
-"Easy", "Medium" and "Difficult", but if the current map has customised
-difficulty names DarkRadiant will adjust the tab names accordingly.</p>
+<p>The Difficulty editor shows the names of the available difficulty levels in a
+dropdown widget, beneath which are the settings for the selected difficulty
+level. The difficulty names are customisable on a per-map basis — normally these
+will be the default values of "Easy", "Medium" and "Difficult", but if the
+current map has customised difficulty names DarkRadiant will adjust the tab
+names accordingly.</p>
 </div>
 <div class="paragraph">
 <p>On the left is a tree view showing all of the property overrides for the current
@@ -3049,6 +3050,13 @@ button to remove a particular setting. You can only remove individual
 assignments from the list; to remove all of the assignments for a particular
 entity class, you must select and delete each one individually.</p>
 </dd>
+<dt class="hdlist1"><strong>Editing the difficulty name</strong></dt>
+<dd>
+<p>To edit the name of the current difficulty
+level, click the edit button to the right of the dropdown, and enter a new name
+in the text box. The modified name will be written into a property on the
+<code>worldspawn</code> entity and reflected both in game and in DarkRadiant.</p>
+</dd>
 </dl>
 </div>
 <div class="admonitionblock tip">
@@ -3060,7 +3068,7 @@ entity class, you must select and delete each one individually.</p>
 <td class="content">
 For details of more advanced difficulty-dependent changes, such as
 modifying the behaviour of a <strong>single</strong> entity (rather than an entire entity
-class), or changing the names of difficulty settings, consult the Dark Mod Wiki.
+class), consult the Dark Mod Wiki.
 </td>
 </tr>
 </table>
@@ -3723,7 +3731,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-03-10 21:18:41 GMT
+Last updated 2020-04-07 20:18:29 BST
 </div>
 </div>
 </body>
