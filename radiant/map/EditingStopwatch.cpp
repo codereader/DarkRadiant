@@ -11,6 +11,7 @@
 #include "imapinfofile.h"
 
 #include <fmt/format.h>
+#include "string/convert.h"
 #include "modulesystem/StaticModule.h"
 #include "EditingStopwatchInfoFileModule.h"
 
@@ -21,6 +22,7 @@ namespace
 {
 	const int TIMER_INTERVAL_SECS = 1;
 	const char* const STATUS_BAR_ELEMENT = "EditTime";
+	const char* const MAP_PROPERTY_KEY = "EditTimeInSeconds";
 }
 
 EditingStopwatch::EditingStopwatch() :
@@ -114,6 +116,8 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 
 	// Start the clock once the map is done loading
 	case IMap::MapLoaded:
+		// Check if we have a non-empty property on the map root node
+		readFromMapProperties();
 		start();
 		break;
 		
@@ -126,6 +130,7 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 
 	// We start/stop during save operations
 	case IMap::MapSaving:
+		writeToMapProperties();
 		stop();
 		break;
 	case IMap::MapSaved:
@@ -161,6 +166,30 @@ unsigned long EditingStopwatch::getTotalSecondsEdited()
 void EditingStopwatch::setTotalSecondsEdited(unsigned long newValue)
 {
 	_secondsEdited = newValue;
+}
+
+void EditingStopwatch::readFromMapProperties()
+{
+	auto root = GlobalMapModule().getRoot();
+
+	if (root && !root->getProperty(MAP_PROPERTY_KEY).empty())
+	{
+		auto value = string::convert<unsigned long>(root->getProperty(MAP_PROPERTY_KEY));
+
+		rMessage() << "Read " << value << " seconds of total map editing time." << std::endl;
+
+		setTotalSecondsEdited(value);
+	}
+}
+
+void EditingStopwatch::writeToMapProperties()
+{
+	auto root = GlobalMapModule().getRoot();
+
+	if (root)
+	{
+		root->setProperty(MAP_PROPERTY_KEY, string::to_string(getTotalSecondsEdited()));
+	}
 }
 
 // Static module registration

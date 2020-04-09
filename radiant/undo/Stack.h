@@ -27,7 +27,8 @@ class UndoStack
 	// The list of Operations that can be undone
 	Operations _stack;
 
-	// The pending undo operation (a working variable, so to say)
+	// The pending undo operation (will be committed as soon as the first
+	// undoable saves its data to the stack)
 	OperationPtr _pending;
 
 public:
@@ -70,12 +71,13 @@ public:
 	// Allocate a new Operation to work with
 	void start(const std::string& command)
 	{
-		if (_pending)
-		{
-			_pending.reset();
-		}
+		// When starting an operation, we create one and declare it as pending
+		// It will not be added to the stack, it still might end up empty
+		// We will also replace any previously pending operation with the new one
+		// even though it should not happen by design
+		ASSERT_MESSAGE(!_pending, "undo operation already started");
 
-		_pending.reset(new Operation(command));
+		_pending = std::make_shared<Operation>(command);
 	}
 
 	// Finish the current undo operation
@@ -83,22 +85,25 @@ public:
 	{
 		if (_pending)
 		{
+			// The started operation has not been filled with any data
+			// so just discard it without doing anything
 			_pending.reset();
 			return false;
 		}
-		else 
-		{
-			// Rename the last undo operation (it was "unnamed" till now)
-			ASSERT_MESSAGE(!_stack.empty(), "undo stack empty");
-			_stack.back()->setName(command);
-			return true;
-		}
+		
+		// Reaching this point we don't have a *pending* operation
+		// but we need to make sure we have *any* operation at all
+		ASSERT_MESSAGE(!_stack.empty(), "undo stack empty");
+
+		// Rename the last undo operation (it may be "unnamed" till now)
+		_stack.back()->setName(command);
+		return true;
 	}
 
 	// Store an Undoable into the last snapshot
 	void save(IUndoable& undoable)
 	{
-		// Check, if there is still a pending undo command around
+		// Check, if there is still a pending undo operation waiting to be added to the stack
 		if (_pending)
 		{
 			// Save the pending undo command

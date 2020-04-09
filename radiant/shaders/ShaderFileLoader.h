@@ -1,5 +1,7 @@
 #pragma once
 
+#include <regex>
+
 #include "iarchive.h"
 #include "ifilesystem.h"
 
@@ -9,6 +11,7 @@
 
 #include "parser/DefBlockTokeniser.h"
 #include "string/replace.h"
+#include "string/predicate.h"
 
 namespace shaders
 {
@@ -26,6 +29,35 @@ template<typename ShaderLibrary_T> class ShaderFileLoader
 
 private:
 
+    bool parseTable(const parser::BlockTokeniser::Block& block, const vfs::FileInfo& fileInfo)
+    {
+        if (block.name.length() <= 5 || !string::starts_with(block.name, "table"))
+        {
+            return false; // definitely not a table decl
+        }
+
+        // Look closer by trying to split up the table name from the decl
+        // it can still be a material starting with "table_" (#5188)
+        std::regex expr("^table\\s+(.+)$");
+        std::smatch matches;
+
+        if (std::regex_match(block.name, matches, expr))
+        {
+            auto tableName = matches[1].str();
+
+            auto table = std::make_shared<TableDefinition>(tableName, block.contents);
+
+            if (!_library.addTableDefinition(table))
+            {
+                rError() << "[shaders] " << fileInfo.name << ": table " << tableName << " already defined." << std::endl;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     // Parse a shader file with the given contents and filename
     void parseShaderFile(std::istream& inStr, const vfs::FileInfo& fileInfo)
     {
@@ -38,39 +70,25 @@ private:
             // Get the next block
             parser::BlockTokeniser::Block block = tokeniser.nextBlock();
 
-            // Skip tables
-            if (block.name.substr(0, 5) == "table")
+            // Try to parse tables
+            if (parseTable(block, fileInfo))
             {
-                std::string tableName = block.name.substr(6);
-
-                if (tableName.empty())
-                {
-                    rError() << "[shaders] " << fileInfo.name << ": Missing table name." << std::endl;
-                    continue;
-                }
-
-                TableDefinitionPtr table(new TableDefinition(tableName, block.contents));
-
-                if (!_library.addTableDefinition(table))
-                {
-                    rError() << "[shaders] " << fileInfo.name
-                        << ": table " << tableName << " already defined." << std::endl;
-                }
-
-                continue;
+                continue; // table successfully parsed
             }
-            else if (block.name.substr(0, 5) == "skin ")
+            
+            if (block.name.substr(0, 5) == "skin ")
             {
                 continue; // skip skin definition
             }
-            else if (block.name.substr(0, 9) == "particle ")
+            
+            if (block.name.substr(0, 9) == "particle ")
             {
                 continue; // skip particle definition
             }
 
             string::replace_all(block.name, "\\", "/"); // use forward slashes
 
-            ShaderTemplatePtr shaderTemplate(new ShaderTemplate(block.name, block.contents));
+            auto shaderTemplate = std::make_shared<ShaderTemplate>(block.name, block.contents);
 
             // Construct the ShaderDefinition wrapper class
             ShaderDefinition def(shaderTemplate, fileInfo);
@@ -78,8 +96,7 @@ private:
             // Insert into the definitions map, if not already present
             if (!_library.addDefinition(block.name, def))
             {
-                rError() << "[shaders] " << fileInfo.name
-                    << ": shader " << block.name << " already defined." << std::endl;
+                rError() << "[shaders] " << fileInfo.name << ": shader " << block.name << " already defined." << std::endl;
             }
         }
     }
@@ -107,9 +124,9 @@ public:
         for (const vfs::FileInfo& fileInfo: _files)
         {
             // Open the file
-            ArchiveTextFilePtr file = _vfs.openTextFile(fileInfo.fullPath());
+            auto file = _vfs.openTextFile(fileInfo.fullPath());
 
-            if (file != nullptr)
+            if (file)
             {
                 std::istream is(&(file->getInputStream()));
                 parseShaderFile(is, fileInfo);

@@ -37,6 +37,10 @@ public:
 	// Use the isValid() method to check if the load was successful.
 	Document(const std::string& filename);
 
+	// Create a document from the given stream. This will read the whole
+	// stream data into memory, and parse it chunk by chunk.
+	Document(std::istream& stream);
+
 	// Copy constructor (note: does not create an actual copy of the internal xmlDoc)
 	Document(const Document& other);
 
@@ -50,7 +54,7 @@ public:
 	static Document clone(const Document& source);
 
 	// Add a new toplevel node with the given name to this Document
-	void addTopLevelNode(const std::string& name);
+	Node addTopLevelNode(const std::string& name);
 
 	// Returns the top level node (or an empty Node object if none exists)
 	Node getTopLevelNode() const;
@@ -72,6 +76,9 @@ public:
 
     // Saves the file to the disk via xmlSaveFormatFile
     void saveToFile(const std::string& filename) const;
+
+	// Saves the document to a std::string and returns it
+	std::string saveToString() const;
 };
 
 }

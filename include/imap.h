@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "inode.h"
+#include "ikeyvaluestore.h"
 #include <sigc++/signal.h>
 
 // Registry setting for suppressing the map load progress dialog
@@ -17,6 +18,15 @@ class IMapFileChangeTracker;
 // see ientity.h
 class ITargetManager;
 
+// see ilayer.h
+class ILayerManager;
+
+namespace selection 
+{ 
+	class ISelectionSetManager;
+	class ISelectionGroupManager;
+}
+
 namespace scene
 {
 
@@ -25,7 +35,8 @@ namespace scene
  * It also owns the namespace of the corresponding map.
  */
 class IMapRootNode :
-    public virtual INode
+    public virtual INode,
+	public virtual IKeyValueStore
 {
 public:
     virtual ~IMapRootNode() {}
@@ -34,6 +45,16 @@ public:
      * greebo: Returns the namespace of this root.
      */
     virtual const INamespacePtr& getNamespace() = 0;
+
+	/**
+	 * Access the selection group manager of this hierarchy.
+	 */
+	virtual selection::ISelectionGroupManager& getSelectionGroupManager() = 0;
+
+	/**
+	 * Gives access to the selectionset manager in this scene.
+	 */
+	virtual selection::ISelectionSetManager& getSelectionSetManager() = 0;
 
     /**
      * Returns the target manager keeping track of all
@@ -47,6 +68,11 @@ public:
      * up to date or not.
      */
     virtual IMapFileChangeTracker& getUndoChangeTracker() = 0;
+
+	/**
+	 * Provides methods to create and assign layers in this map.
+	 */
+	virtual ILayerManager& getLayerManager() = 0;
 };
 typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
 
@@ -102,10 +128,11 @@ public:
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 
-const std::string MODULE_MAP("Map");
+const char* const MODULE_MAP("Map");
 
 // Application-wide Accessor to the currently active map
-inline IMap& GlobalMapModule() {
+inline IMap& GlobalMapModule()
+{
 	// Cache the reference locally
 	static IMap& _mapModule(
 		*std::static_pointer_cast<IMap>(

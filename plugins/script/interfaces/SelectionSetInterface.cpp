@@ -1,5 +1,8 @@
 #include "SelectionSetInterface.h"
 
+#include "imap.h"
+#include "iselection.h"
+
 namespace script
 {
 
@@ -9,61 +12,108 @@ ScriptSelectionSet::ScriptSelectionSet(const selection::ISelectionSetPtr& set) :
 
 const std::string& ScriptSelectionSet::getName()
 {
-	return (_set != NULL) ? _set->getName() : _emptyStr;
+	return (_set) ? _set->getName() : _emptyStr;
 }
 
 bool ScriptSelectionSet::empty()
 {
-	return (_set != NULL) ? _set->empty() : true;
+	return (_set) ? _set->empty() : true;
 }
 
 void ScriptSelectionSet::select()
 {
-	if (_set != NULL) _set->select();
+	if (_set) _set->select();
 }
 
 void ScriptSelectionSet::deselect()
 {
-	if (_set != NULL) _set->deselect();
+	if (_set) _set->deselect();
 }
 
 void ScriptSelectionSet::clear()
 {
-	if (_set != NULL) _set->clear();
+	if (_set) _set->clear();
 }
 
 void ScriptSelectionSet::assignFromCurrentScene()
 {
-	if (_set != NULL) _set->assignFromCurrentScene();
+	if (_set) _set->assignFromCurrentScene();
 }
 
 std::string ScriptSelectionSet::_emptyStr;
 
 // ---------------------------
 
+inline selection::ISelectionSetManager& GetMapSelectionSetManager()
+{
+	if (!GlobalMapModule().getRoot())
+	{
+		throw std::runtime_error("No map loaded.");
+	}
+
+	return GlobalMapModule().getRoot()->getSelectionSetManager();
+}
+
 void SelectionSetInterface::foreachSelectionSet(selection::ISelectionSetManager::Visitor& visitor)
 {
-	GlobalSelectionSetManager().foreachSelectionSet(visitor);
+	try
+	{
+		GetMapSelectionSetManager().foreachSelectionSet(visitor);
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << ex.what() << std::endl;
+	}
 }
 
 ScriptSelectionSet SelectionSetInterface::createSelectionSet(const std::string& name)
 {
-	return ScriptSelectionSet(GlobalSelectionSetManager().createSelectionSet(name));
+	try
+	{
+		return ScriptSelectionSet(GetMapSelectionSetManager().createSelectionSet(name));
+	}
+	catch (const std::runtime_error & ex)
+	{
+		rError() << ex.what() << std::endl;
+		return ScriptSelectionSet(selection::ISelectionSetPtr());
+	}
 }
 
 void SelectionSetInterface::deleteSelectionSet(const std::string& name)
 {
-	GlobalSelectionSetManager().deleteSelectionSet(name);
+	try
+	{
+		GetMapSelectionSetManager().deleteSelectionSet(name);
+	}
+	catch (const std::runtime_error & ex)
+	{
+		rError() << ex.what() << std::endl;
+	}
 }
 
 void SelectionSetInterface::deleteAllSelectionSets()
 {
-	GlobalSelectionSetManager().deleteAllSelectionSets();
+	try
+	{
+		GetMapSelectionSetManager().deleteAllSelectionSets();
+	}
+	catch (const std::runtime_error & ex)
+	{
+		rError() << ex.what() << std::endl;
+	}
 }
 
 ScriptSelectionSet SelectionSetInterface::findSelectionSet(const std::string& name)
 {
-	return ScriptSelectionSet(GlobalSelectionSetManager().findSelectionSet(name));
+	try
+	{
+		return ScriptSelectionSet(GetMapSelectionSetManager().findSelectionSet(name));
+	}
+	catch (const std::runtime_error & ex)
+	{
+		rError() << ex.what() << std::endl;
+		return ScriptSelectionSet(selection::ISelectionSetPtr());
+	}
 }
 
 // IScriptInterface implementation

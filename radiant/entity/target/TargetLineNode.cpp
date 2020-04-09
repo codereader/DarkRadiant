@@ -1,6 +1,7 @@
 #include "TargetLineNode.h"
 
 #include "../EntityNode.h"
+#include "ilightnode.h"
 
 namespace entity
 {
@@ -49,14 +50,24 @@ std::size_t TargetLineNode::getHighlightFlags()
 
 const Vector3& TargetLineNode::getOwnerPosition() const
 {
-	const AABB& bounds = _owner.worldAABB();
-
-	if (bounds.isValid())
+    try
     {
-		return bounds.getOrigin();
-	}
+        // Try to use the origin if this is a light
+        auto& light = dynamic_cast<ILightNode&>(_owner);
 
-	return _owner.localToWorld().t().getVector3();
+        return light.getSelectAABB().getOrigin();
+    }
+    catch (std::bad_cast&)
+    {
+        const AABB& bounds = _owner.worldAABB();
+
+        if (bounds.isValid())
+        {
+            return bounds.getOrigin();
+        }
+
+        return _owner.localToWorld().t().getVector3();
+    }
 }
 
 }

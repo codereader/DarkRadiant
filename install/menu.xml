@@ -6,15 +6,17 @@
 		<menuItem name="open" caption="&amp;Open..." command="OpenMap" />
 		<menuItem name="import" caption="&amp;Import map..." command="ImportMap" />
 		<menuItem name="loadprefab" caption="Import &amp;prefab..." command="LoadPrefab" />
+		<menuSeparator />
 		<menuItem name="save" caption="&amp;Save" command="SaveMap" />
 		<menuItem name="saveas" caption="Save &amp;as..." command="SaveMapAs" />
 		<menuItem name="saveCopyAs" caption="Save &amp;copy as..." command="SaveMapCopyAs" />
 		<menuSeparator />
-		<menuItem name="saveSelected" caption="&amp;Save selected as Map..." command="SaveSelected" />
-		<menuItem name="saveSelectedPrefab" caption="&amp;Save selected as prefab..." command="SaveSelectedAsPrefab" />
-		<menuItem name="exportSelectedAsModel" caption="&amp;Export selected as model..." command="ExportSelectedAsModelDialog" />
-		<menuItem name="createCM" caption="Save selected as Collision Model..." command="BrushExportCM" />
-		<menuItem name="saveRegion" caption="Save &amp;region..." command="SaveRegion" />
+		<menuItem name="exportMap" caption="&amp;Export Map..." command="ExportMap" />
+		<menuItem name="saveSelected" caption="&amp;Export selected as Map..." command="SaveSelected" />
+		<menuItem name="saveSelectedPrefab" caption="&amp;Export selected as Prefab..." command="SaveSelectedAsPrefab" />
+		<menuItem name="exportSelectedAsModel" caption="&amp;Export selected as Model..." command="ExportSelectedAsModelDialog" />
+		<menuItem name="createCM" caption="Export selected as Collision Model..." command="BrushExportCM" />
+		<menuItem name="saveRegion" caption="Export &amp;Region..." command="SaveRegion" />
 		<menuSeparator />
 		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16red.png" />
 		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16red.png" />

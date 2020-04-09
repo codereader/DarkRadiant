@@ -328,6 +328,21 @@ void EventManager::enableEvent(const std::string& eventName)
 	findEvent(eventName)->setEnabled(true);
 }
 
+void EventManager::renameEvent(const std::string& oldEventName, const std::string& newEventName)
+{
+	auto existing = _events.find(oldEventName);
+
+	if (existing == _events.end())
+	{
+		rError() << "Cannot rename event, this name is not registered: " << oldEventName << std::endl;
+	}
+
+	// Re-insert the event using a new name
+	auto existingEvent = existing->second;
+	_events.erase(existing);
+	_events.insert(std::make_pair(newEventName, existingEvent));
+}
+
 void EventManager::removeEvent(const std::string& eventName) 
 {
 	// Try to lookup the command

@@ -42,5 +42,46 @@
     <!-- Transformation -->
     <bind name="MoveSelectionUP" value="MoveSelectionVertically up" readonly="1" />
     <bind name="MoveSelectionDOWN" value="MoveSelectionVertically down" readonly="1" />
+		<!-- Layer commands -->
+		<bind name="AddSelectionToLayer0" value="AddSelectionToLayer 0" readonly="1" />
+		<bind name="AddSelectionToLayer1" value="AddSelectionToLayer 1" readonly="1" />
+		<bind name="AddSelectionToLayer2" value="AddSelectionToLayer 2" readonly="1" />
+		<bind name="AddSelectionToLayer3" value="AddSelectionToLayer 3" readonly="1" />
+		<bind name="AddSelectionToLayer4" value="AddSelectionToLayer 4" readonly="1" />
+		<bind name="AddSelectionToLayer5" value="AddSelectionToLayer 5" readonly="1" />
+		<bind name="AddSelectionToLayer6" value="AddSelectionToLayer 6" readonly="1" />
+		<bind name="AddSelectionToLayer7" value="AddSelectionToLayer 7" readonly="1" />
+		<bind name="AddSelectionToLayer8" value="AddSelectionToLayer 8" readonly="1" />
+		<bind name="AddSelectionToLayer9" value="AddSelectionToLayer 9" readonly="1" />
+		<bind name="MoveSelectionToLayer0" value="MoveSelectionToLayer 0" readonly="1" />
+		<bind name="MoveSelectionToLayer1" value="MoveSelectionToLayer 1" readonly="1" />
+		<bind name="MoveSelectionToLayer2" value="MoveSelectionToLayer 2" readonly="1" />
+		<bind name="MoveSelectionToLayer3" value="MoveSelectionToLayer 3" readonly="1" />
+		<bind name="MoveSelectionToLayer4" value="MoveSelectionToLayer 4" readonly="1" />
+		<bind name="MoveSelectionToLayer5" value="MoveSelectionToLayer 5" readonly="1" />
+		<bind name="MoveSelectionToLayer6" value="MoveSelectionToLayer 6" readonly="1" />
+		<bind name="MoveSelectionToLayer7" value="MoveSelectionToLayer 7" readonly="1" />
+		<bind name="MoveSelectionToLayer8" value="MoveSelectionToLayer 8" readonly="1" />
+		<bind name="MoveSelectionToLayer9" value="MoveSelectionToLayer 9" readonly="1" />
+		<bind name="ShowLayer0" value="ShowLayer 0" readonly="1" />
+		<bind name="ShowLayer1" value="ShowLayer 1" readonly="1" />
+		<bind name="ShowLayer2" value="ShowLayer 2" readonly="1" />
+		<bind name="ShowLayer3" value="ShowLayer 3" readonly="1" />
+		<bind name="ShowLayer4" value="ShowLayer 4" readonly="1" />
+		<bind name="ShowLayer5" value="ShowLayer 5" readonly="1" />
+		<bind name="ShowLayer6" value="ShowLayer 6" readonly="1" />
+		<bind name="ShowLayer7" value="ShowLayer 7" readonly="1" />
+		<bind name="ShowLayer8" value="ShowLayer 8" readonly="1" />
+		<bind name="ShowLayer9" value="ShowLayer 9" readonly="1" />
+		<bind name="HideLayer0" value="HideLayer 0" readonly="1" />
+		<bind name="HideLayer1" value="HideLayer 1" readonly="1" />
+		<bind name="HideLayer2" value="HideLayer 2" readonly="1" />
+		<bind name="HideLayer3" value="HideLayer 3" readonly="1" />
+		<bind name="HideLayer4" value="HideLayer 4" readonly="1" />
+		<bind name="HideLayer5" value="HideLayer 5" readonly="1" />
+		<bind name="HideLayer6" value="HideLayer 6" readonly="1" />
+		<bind name="HideLayer7" value="HideLayer 7" readonly="1" />
+		<bind name="HideLayer8" value="HideLayer 8" readonly="1" />
+		<bind name="HideLayer9" value="HideLayer 9" readonly="1" />
 	</binds>
 </commandsystem>

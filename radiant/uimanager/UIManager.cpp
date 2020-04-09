@@ -11,7 +11,7 @@
 #include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"
 #include "debugging/debugging.h"
-#include "FilterMenu.h"
+#include "ui/filters/FilterMenu.h"
 #include "wxutil/dialog/MessageBox.h"
 
 #include "animationpreview/MD5AnimationViewer.h"

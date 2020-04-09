@@ -1,8 +1,10 @@
 #include "GameSetupPageTdm.h"
 
 #include <set>
+#include <regex>
 #include "i18n.h"
 #include "imodule.h"
+#include "itextstream.h"
 #include "igame.h"
 
 #include "wxutil/dialog/MessageBox.h"
@@ -15,6 +17,7 @@
 #include <wx/panel.h>
 
 #include "string/trim.h"
+#include "string/encoding.h"
 #include "os/file.h"
 #include "os/path.h"
 #include "os/dir.h"
@@ -213,12 +216,27 @@ void GameSetupPageTdm::validateSettings()
 #endif
 		;
 
-	std::string exeName = _game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE);
+	bool found = false;
+	std::regex exeRegex(_game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE));
 
-	if (!os::fileOrDirExists(darkmodExePath / exeName))
+	os::foreachItemInDirectory(_config.enginePath, [&](const fs::path& path)
+	{
+		try
+		{
+			found |= std::regex_match(path.filename().string(), exeRegex);
+		}
+		catch (const std::system_error& ex)
+		{
+			rWarning() << "[vfs] Skipping file " << string::to_utf8(path.filename().wstring()) <<
+				" - possibly unsupported characters in filename? " <<
+				"(Exception: " << ex.what() << ")" << std::endl;
+		}
+	});
+
+	if (!found)
 	{
 		// engine executable not present
-		errorMsg += fmt::format(_("The engine executable \"{0}\" could not be found in the specified folder.\n"), exeName);
+		errorMsg += _("The engine executable(s) could not be found in the specified folder.\n");
 	}
 
 	// Check the mod path (=mission path), if not empty

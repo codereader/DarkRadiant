@@ -30,7 +30,7 @@ public:
 
 	// Returns all group assignments of this node
 	// The most recently added group is at the back of the list
-	virtual const GroupIds& getGroupIds() = 0;
+	virtual const GroupIds& getGroupIds() const = 0;
 
 	// Special overload to control whether this selectable should propagate
 	// the status change to the group it belongs to.
@@ -77,16 +77,21 @@ public:
 };
 typedef std::shared_ptr<ISelectionGroup> ISelectionGroupPtr;
 
-class ISelectionGroupManager :
-	public RegisterableModule
+class ISelectionGroupManager
 {
 public:
+	typedef std::shared_ptr<ISelectionGroupManager> Ptr;
+
 	virtual ~ISelectionGroupManager() {}
 	
 	// Creates a new selection group. The group is stored within the SelectionGroupManager
 	// so the returned shared_ptr can safely be let go by the client code.
 	// In the pathological case of being run out of IDs this will throw a std::runtime_error
 	virtual ISelectionGroupPtr createSelectionGroup() = 0;
+
+	// Special overload used to create a group with a specific ID. Only intended to be used
+	// by map loading modules to reconstruct persisted group data after parsing.
+	virtual ISelectionGroupPtr createSelectionGroup(std::size_t id) = 0;
 
 	// Tries to get a selection group by ID. Returns an empty ptr if the ID doesn't exist
 	virtual ISelectionGroupPtr getSelectionGroup(std::size_t id) = 0;
@@ -102,19 +107,31 @@ public:
 
 	// Deletes the group with the given ID. All nodes will be removed from this group as well.
 	virtual void deleteSelectionGroup(std::size_t id) = 0;
+
+	// Visit each group with the given functor
+	virtual void foreachSelectionGroup(const std::function<void(ISelectionGroup&)>& func) = 0;
+};
+
+class ISelectionGroupModule :
+	public RegisterableModule
+{
+public:
+	virtual ~ISelectionGroupModule() {}
+
+	virtual ISelectionGroupManager::Ptr createSelectionGroupManager() = 0;
 };
 
 } // namespace
 
-const char* const MODULE_SELECTIONGROUP = "SelectionGroupManager";
+const char* const MODULE_SELECTIONGROUPMODULE = "SelectionGroupModule";
 
-inline selection::ISelectionGroupManager& GlobalSelectionGroupManager()
+inline selection::ISelectionGroupModule& GlobalSelectionGroupModule()
 {
 	// Cache the reference locally
-	static selection::ISelectionGroupManager& _manager(
-		*std::static_pointer_cast<selection::ISelectionGroupManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONGROUP)
+	static selection::ISelectionGroupModule& _module(
+		*std::static_pointer_cast<selection::ISelectionGroupModule>(
+			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONGROUPMODULE)
 		)
 	);
-	return _manager;
+	return _module;
 }

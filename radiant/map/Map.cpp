@@ -16,8 +16,10 @@
 #include "iradiant.h"
 #include "imainframe.h"
 #include "imapresource.h"
+#include "imapinfofile.h"
 #include "iaasfile.h"
 #include "igame.h"
+#include "imapformat.h"
 
 #include "registry/registry.h"
 #include "stream/TextFileInputStream.h"
@@ -37,7 +39,7 @@
 #include "map/StartupMapLoader.h"
 #include "map/RootNode.h"
 #include "map/MapResource.h"
-#include "map/algorithm/Merge.h"
+#include "map/algorithm/Import.h"
 #include "map/algorithm/Export.h"
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
@@ -52,6 +54,7 @@
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
 #include "RenderableAasFile.h"
+#include "MapPropertyInfoFileModule.h"
 
 #include <fmt/format.h>
 #include "algorithm/ChildPrimitives.h"
@@ -79,7 +82,7 @@ Map::Map() :
 void Map::loadMapResourceFromPath(const std::string& path)
 {
 	// Map loading started
-	signal_mapEvent().emit(MapLoading);
+	emitMapEvent(MapLoading);
 
 	_resource = GlobalMapResourceManager().loadFromPath(_mapName);
 
@@ -115,7 +118,7 @@ void Map::loadMapResourceFromPath(const std::string& path)
     }
 
     // Map loading finished, emit the signal
-    signal_mapEvent().emit(MapLoaded);
+    emitMapEvent(MapLoaded);
 }
 
 void Map::updateTitle()
@@ -190,22 +193,9 @@ scene::IMapRootNodePtr Map::getRoot()
     return scene::IMapRootNodePtr();
 }
 
-MapFormatPtr Map::getFormatForFile(const std::string& filename)
-{
-    // Look up the module name which loads the given extension
-    std::string gameType = GlobalGameManager().currentGame()->getKeyValue("type");
-
-    MapFormatPtr mapFormat = GlobalMapFormatManager().getMapFormatForGameType(
-        gameType, os::getExtension(filename));
-
-    ASSERT_MESSAGE(mapFormat != NULL, "map format not found for file " + filename);
-
-    return mapFormat;
-}
-
 MapFormatPtr Map::getFormat()
 {
-    return getFormatForFile(_mapName);
+    return GlobalMapFormatManager().getMapFormatForFilename(_mapName);
 }
 
 // free all map elements, reinitialize the structures that depend on them
@@ -213,13 +203,13 @@ void Map::freeMap()
 {
 	// Fire the map unloading event, 
 	// This will de-select stuff, clear the pointfile, etc.
-	signal_mapEvent().emit(MapUnloading);
+    emitMapEvent(MapUnloading);
 
 	setWorldspawn(scene::INodePtr());
 
 	GlobalSceneGraph().setRoot(scene::IMapRootNodePtr());
 
-	signal_mapEvent().emit(MapUnloaded);
+    emitMapEvent(MapUnloaded);
 
     // Reset the resource pointer
     _resource.reset();
@@ -427,15 +417,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
 	blocker.setMessage(_("Preprocessing"));
 
-	try
-	{
-		signal_mapEvent().emit(IMap::MapSaving);
-	}
-	catch (std::runtime_error& ex)
-	{
-		wxutil::Messagebox::ShowError(
-			fmt::format(_("Failure running map pre-save event:\n{0}"), ex.what()));
-	}
+    emitMapEvent(MapSaving);
 
     // Store the camview position into worldspawn
     saveCameraPosition();
@@ -447,7 +429,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
     // Save the actual map resource
     bool success = _resource->save(mapFormat);
 
-	signal_mapEvent().emit(IMap::MapSaved);
+    emitMapEvent(MapSaved);
 
     // Remove the saved camera position
     removeCameraPosition();
@@ -494,20 +476,10 @@ bool Map::import(const std::string& filename)
             // is not the NULL node
             scene::INodePtr otherRoot = resource->getNode();
 
-            // Adjust all new names to fit into the existing map namespace,
-            // this routine will be changing a lot of names in the importNamespace
-            INamespacePtr nspace = getRoot()->getNamespace();
+            // Adjust all new names to fit into the existing map namespace
+            algorithm::prepareNamesForImport(getRoot(), otherRoot);
 
-            if (nspace)
-            {
-                // Prepare our namespace for import
-                nspace->ensureNoConflicts(otherRoot);
-
-                // Now add the imported names to the local namespace
-                nspace->connect(otherRoot);
-            }
-
-            MergeMap(otherRoot);
+            algorithm::mergeMap(otherRoot);
             success = true;
         }
     }
@@ -530,7 +502,7 @@ bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
 
 	if (!mapFormat)
 	{
-		format = getFormatForFile(filename);
+		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
 	}
 
     bool result = MapResource::saveFile(
@@ -558,7 +530,7 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
 
 	if (!format)
 	{
-		format = getFormatForFile(filename);
+		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
 	}
 
     bool success = MapResource::saveFile(
@@ -757,19 +729,22 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
-    GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
+    GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
+    GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
-		cmd::Signature(cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING, 
-					   cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, 
-					   cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, 
-					   cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL));
+        { cmd::ARGTYPE_STRING, 
+          cmd::ARGTYPE_STRING,
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 
     GlobalEventManager().addCommand("NewMap", "NewMap");
     GlobalEventManager().addCommand("OpenMap", "OpenMap");
     GlobalEventManager().addCommand("ImportMap", "ImportMap");
     GlobalEventManager().addCommand("LoadPrefab", "LoadPrefab");
     GlobalEventManager().addCommand("SaveSelectedAsPrefab", "SaveSelectedAsPrefab");
+    GlobalEventManager().addCommand("ExportMap", "ExportMap");
     GlobalEventManager().addCommand("SaveMap", "SaveMap");
     GlobalEventManager().addCommand("SaveMapAs", "SaveMapAs");
     GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
@@ -836,6 +811,23 @@ void Map::saveMap(const cmd::ArgumentList& args)
 
 void Map::exportMap(const cmd::ArgumentList& args)
 {
+    auto fileInfo = MapFileManager::getMapFileSelection(false, _("Export Map"), filetype::TYPE_MAP_EXPORT);
+
+	if (!fileInfo.fullPath.empty())
+	{
+        GlobalMap().emitMapEvent(MapSaving);
+
+        MapResource::saveFile(*fileInfo.mapFormat,
+            GlobalSceneGraph().root(),
+            traverse,
+            fileInfo.fullPath);
+
+        GlobalMap().emitMapEvent(MapSaved);
+    }
+}
+
+void Map::exportSelection(const cmd::ArgumentList& args)
+{
     MapFileSelection fileInfo =
         MapFileManager::getMapFileSelection(false, _("Export selection"), filetype::TYPE_MAP);
 
@@ -871,79 +863,14 @@ void Map::rename(const std::string& filename) {
     }
 }
 
-void Map::importSelected(std::istream& in)
-{
-    scene::INodePtr root = std::make_shared<scene::BasicRootNode>();
-
-    // Instantiate the default import filter
-    class MapImportFilter :
-        public IMapImportFilter
-    {
-    private:
-        scene::INodePtr _root;
-    public:
-        MapImportFilter(const scene::INodePtr& root) :
-            _root(root)
-        {}
-
-        bool addEntity(const scene::INodePtr& entityNode)
-        {
-            _root->addChildNode(entityNode);
-            return true;
-        }
-
-        bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
-        {
-            if (Node_getEntity(entity)->isContainer())
-            {
-                entity->addChildNode(primitive);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    } importFilter(root);
-
-    MapFormatPtr format = getFormat();
-
-    IMapReaderPtr reader = format->getMapReader(importFilter);
-
-    try
-    {
-        // Start parsing
-        reader->readFromStream(in);
-
-        // Prepare child primitives
-        addOriginToChildPrimitives(root);
-
-        // Adjust all new names to fit into the existing map namespace,
-        // this routine will be changing a lot of names in the importNamespace
-        INamespacePtr nspace = getRoot()->getNamespace();
-        if (nspace)
-        {
-            // Prepare all names, but do not import them into the namesace. This
-            // will happen during the MergeMap call.
-            nspace->ensureNoConflicts(root);
-        }
-
-        MergeMap(root);
-    }
-    catch (IMapReader::FailureException& e)
-    {
-        wxutil::Messagebox::ShowError(
-            fmt::format(_("Failure reading map from clipboard:\n{0}"), e.what()));
-
-        // Clear out the root node, otherwise we end up with half a map
-        scene::NodeRemover remover;
-        root->traverseChildren(remover);
-    }
-}
-
 void Map::exportSelected(std::ostream& out)
 {
-    MapFormatPtr format = getFormat();
+    exportSelected(out, getFormat());
+}
+
+void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
+{
+    assert(format);
 
     IMapWriterPtr writer = format->getMapWriter();
 
@@ -952,6 +879,18 @@ void Map::exportSelected(std::ostream& out)
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
+}
+
+void Map::emitMapEvent(MapEvent ev)
+{
+    try
+    {
+        signal_mapEvent().emit(ev);
+    }
+    catch (std::runtime_error & ex)
+    {
+        wxutil::Messagebox::ShowError(fmt::format(_("Failure running map event {0}:\n{1}"), ev, ex.what()));
+    }
 }
 
 // RegisterableModule implementation
@@ -970,6 +909,7 @@ const StringSet& Map::getDependencies() const
         _dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		_dependencies.insert(MODULE_FILETYPES);
     }
 
@@ -992,6 +932,11 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 	_scaledModelExporter.initialise();
 
 	MapFileManager::registerFileTypes();
+
+    // Register an info file module to save the map property bag
+    GlobalMapInfoFileManager().registerInfoFileModule(
+        std::make_shared<MapPropertyInfoFileModule>()
+    );
 }
 
 void Map::shutdownModule()
@@ -1004,13 +949,4 @@ void Map::shutdownModule()
 	_mapPositionManager.reset();
 }
 
-// Creates the static module instance
-module::StaticModule<Map> staticMapModule;
-
 } // namespace map
-
-// Accessor method containing the singleton Map instance
-map::Map& GlobalMap() 
-{
-    return *map::staticMapModule.getModule();
-}

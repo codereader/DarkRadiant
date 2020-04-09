@@ -202,50 +202,8 @@ typedef std::vector<Argument> ArgumentList;
  */
 typedef std::function<void (const ArgumentList&)> Function;
 
-// A command signature consists just of arguments, no return types
-class Signature :
-	public std::vector<std::size_t>
-{
-public:
-	Signature()
-	{}
-
-	// Additional convenience constructors
-	Signature(std::size_t type1)
-	{
-		push_back(type1);
-	}
-
-	Signature(std::size_t type1, std::size_t type2)
-	{
-		push_back(type1);
-		push_back(type2);
-	}
-
-	Signature(std::size_t type1, std::size_t type2, std::size_t type3)
-	{
-		push_back(type1);
-		push_back(type2);
-		push_back(type3);
-	}
-
-	Signature(std::size_t type1, std::size_t type2, std::size_t type3, std::size_t type4)
-	{
-		push_back(type1);
-		push_back(type2);
-		push_back(type3);
-		push_back(type4);
-	}
-
-	Signature(std::size_t type1, std::size_t type2, std::size_t type3, std::size_t type4, std::size_t type5)
-	{
-		push_back(type1);
-		push_back(type2);
-		push_back(type3);
-		push_back(type4);
-		push_back(type5);
-	}
-};
+// A command signature consists just of arguments, return type is always void
+typedef std::vector<std::size_t> Signature;
 
 /**
  * greebo: Auto-completion information returned by the CommandSystem

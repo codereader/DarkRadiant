@@ -1,5 +1,4 @@
-#ifndef CONVERSATION_H_
-#define CONVERSATION_H_
+#pragma once
 
 #include <string>
 #include <map>
@@ -7,7 +6,8 @@
 
 #include "ConversationCommand.h"
 
-namespace conversation {
+namespace conversation 
+{
 
 /**
  * Data object representing a single Conversation.
@@ -68,5 +68,3 @@ public:
 typedef std::map<int, Conversation> ConversationMap;
 
 }
-
-#endif /* CONVERSATION_H_ */

@@ -129,6 +129,7 @@
     <ClInclude Include="..\..\include\igui.h" />
     <ClInclude Include="..\..\include\iimage.h" />
     <ClInclude Include="..\..\include\iinteractiveview.h" />
+    <ClInclude Include="..\..\include\ikeyvaluestore.h" />
     <ClInclude Include="..\..\include\ilayer.h" />
     <ClInclude Include="..\..\include\ilightnode.h" />
     <ClInclude Include="..\..\include\imainframe.h" />

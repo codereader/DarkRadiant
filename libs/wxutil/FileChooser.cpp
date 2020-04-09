@@ -67,23 +67,23 @@ void FileChooser::construct()
 	// Add the filetype
 	FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(_fileType);
 
-	for (FileTypePatterns::const_iterator i = patterns.begin(); i != patterns.end(); ++i)
+	for (const auto& pattern : patterns)
 	{
-		if (!_open && _fileType == filetype::TYPE_MAP)
+		if (!_open &&  _fileType == filetype::TYPE_MAP_EXPORT)
 		{
-			std::set<map::MapFormatPtr> formats = GlobalMapFormatManager().getMapFormatList(i->extension);
+			auto formats = GlobalMapFormatManager().getMapFormatList(pattern.extension);
 
 			// Pre-select take the default map format for this game type
 			map::MapFormatPtr defaultFormat = GlobalMapFormatManager().getMapFormatForGameType(
-				GlobalGameManager().currentGame()->getKeyValue("type"), i->extension
+				GlobalGameManager().currentGame()->getKeyValue("type"), pattern.extension
 			);
 
-			std::for_each(formats.begin(), formats.end(), [&] (const map::MapFormatPtr& format)
+			for (const map::MapFormatPtr& format : formats)
 			{
 				FileFilter filter;
 
-				filter.caption = format->getMapFormatName() + " " + i->name + " (" + i->pattern + ")";
-				filter.filter = i->pattern;
+				filter.caption = format->getMapFormatName() + " " + pattern.name + " (" + pattern.pattern + ")";
+				filter.filter = pattern.pattern;
 				filter.mapFormatName = format->getMapFormatName();
 
 				_fileFilters.push_back(filter);
@@ -94,17 +94,17 @@ void FileChooser::construct()
 				}
 
                 ++curFormatIdx;
-			});
+			}
 		}
 		else
 		{
 			FileFilter filter;
 
-			filter.caption = i->name + " (" + i->pattern + ")";
-			filter.filter = i->pattern;
+			filter.caption = pattern.name + " (" + pattern.pattern + ")";
+			filter.filter = pattern.pattern;
 
 			// Pre-select the filter matching the default extension
-			if (i->extension == _defaultExt)
+			if (pattern.extension == _defaultExt)
 			{
 				defaultFormatIdx = curFormatIdx;
 			}
@@ -180,6 +180,7 @@ std::string FileChooser::getSelectedFileName()
 	if (!_open											// save operation
 	    && !fileName.empty() 							// valid filename
 	    && !_defaultExt.empty()							// non-empty default extension
+		&& os::getExtension(fileName).empty()			// no extension selected by the user
 	    && !string::iends_with(fileName, _defaultExt)) // no default extension
 	{
 		fileName.append(_defaultExt);

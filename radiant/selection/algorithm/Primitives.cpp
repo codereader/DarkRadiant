@@ -196,7 +196,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 						fmt::format("Couldn't save to file: {0}", cmPath.string()));
 				}
 			}
-			catch (fs::filesystem_error f) {
+			catch (const fs::filesystem_error& f) {
 				rError() << "CollisionModel: " << f.what() << std::endl;
 			}
 
@@ -453,19 +453,17 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 	GlobalSelectionSystem().foreachSelected(visitor);
 
 	// Retrieve the list with all the found models from the visitor
-	ModelFinder::ModelList list = visitor.getList();
+	auto list = visitor.getList();
 
-	ModelFinder::ModelList::iterator iter;
-	for (iter = list.begin(); iter != list.end(); ++iter)
+	for (const auto& model : list)
 	{
-		// one of the models in the SelectionStack
-		const scene::INodePtr& node = *iter;
-
 		// retrieve the AABB
-		AABB brushAABB(node->worldAABB());
+		AABB brushAABB(model->worldAABB());
 
 		// create the brush
 		scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
+
+		brushNode->assignToLayers(model->getLayers());
 
 		if (brushNode != NULL) {
 			scene::addNodeToContainer(brushNode, GlobalMap().findOrInsertWorldspawn());

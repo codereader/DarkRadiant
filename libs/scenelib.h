@@ -1,6 +1,7 @@
 #pragma once
 
 #include "inode.h"
+#include "ilayer.h"
 #include "iscenegraph.h"
 #include "iselectable.h"
 #include "ipatch.h"
@@ -23,45 +24,48 @@ inline bool Node_isPrimitive(const scene::INodePtr& node)
 namespace scene
 {
 
-class ParentPrimitives :
+// Reparents every visited primitive to the parent in the constructor arguments
+class PrimitiveReparentor :
     public scene::NodeVisitor
 {
 private:
     scene::INodePtr _parent;
 
 public:
-    ParentPrimitives(const scene::INodePtr& parent) :
+    PrimitiveReparentor(const scene::INodePtr& parent) :
         _parent(parent)
     {}
 
-    virtual bool pre(const scene::INodePtr& node)
+    virtual bool pre(const scene::INodePtr& node) override
     {
         return false;
     }
 
-    virtual void post(const scene::INodePtr& node) 
+    virtual void post(const scene::INodePtr& node) override
     {
-        if (Node_isPrimitive(node))
+        if (!Node_isPrimitive(node))
         {
-            // We need to keep the hard reference to the node, such that the refcount doesn't reach 0
-            scene::INodePtr nodeRef = node;
-
-            scene::INodePtr oldParent = nodeRef->getParent();
-
-            if (oldParent)
-            {
-                // greebo: remove the node from the old parent first
-                oldParent->removeChildNode(nodeRef);
-            }
-
-            _parent->addChildNode(nodeRef);
+            return;
         }
+
+        // We need to keep the hard reference to the node, such that the refcount doesn't reach 0
+        scene::INodePtr nodeRef = node;
+
+        scene::INodePtr oldParent = nodeRef->getParent();
+
+        if (oldParent)
+        {
+            // greebo: remove the node from the old parent first
+            oldParent->removeChildNode(nodeRef);
+        }
+
+        _parent->addChildNode(nodeRef);
     }
 };
 
 inline void parentPrimitives(const scene::INodePtr& subgraph, const scene::INodePtr& parent)
 {
-    ParentPrimitives visitor(parent);
+    PrimitiveReparentor visitor(parent);
     subgraph->traverseChildren(visitor);
 }
 
@@ -139,10 +143,19 @@ class UpdateNodeVisibilityWalker :
     public NodeVisitor
 {
     std::stack<bool> _visibilityStack;
+
+    scene::IMapRootNodePtr _root;
 public:
-    bool pre(const INodePtr& node) {
+    UpdateNodeVisibilityWalker(const scene::IMapRootNodePtr& root) :
+        _root(root)
+    {
+        assert(_root);
+    }
+
+    bool pre(const INodePtr& node) 
+    {
         // Update the node visibility and store the result
-        bool nodeIsVisible = GlobalLayerSystem().updateNodeVisibility(node);
+        bool nodeIsVisible = _root->getLayerManager().updateNodeVisibility(node);
 
         // Add a new element for this level
         _visibilityStack.push(nodeIsVisible);
@@ -150,13 +163,15 @@ public:
         return true;
     }
 
-    void post(const INodePtr& node) {
+    void post(const INodePtr& node) 
+    {
         // Is this child visible?
         bool childIsVisible = _visibilityStack.top();
 
         _visibilityStack.pop();
 
-        if (childIsVisible) {
+        if (childIsVisible) 
+        {
             // Show the node, regardless whether it was hidden before
             // otherwise the parent would hide the visible children as well
             node->disable(Node::eLayered);
@@ -168,7 +183,8 @@ public:
             Node_setSelected(node, false);
         }
 
-        if (childIsVisible && !_visibilityStack.empty()) {
+        if (childIsVisible && !_visibilityStack.empty()) 
+        {
             // The child was visible, set this parent to true
             _visibilityStack.top() = true;
         }
@@ -179,13 +195,20 @@ public:
  * greebo: This method inserts the given node into the given container
  *         and ensures that the container's layer visibility is updated.
  */
-inline void addNodeToContainer(const INodePtr& node, const INodePtr& container) {
+inline void addNodeToContainer(const INodePtr& node, const INodePtr& container) 
+{
     // Insert the child
     container->addChildNode(node);
 
-    // Ensure that worldspawn is visible
-    UpdateNodeVisibilityWalker walker;
-	container->traverse(walker);
+    // If the container is already connected to a root, check the layer visibility
+    auto rootNode = container->getRootNode();
+
+    if (rootNode)
+    {
+        // Ensure that worldspawn is visible
+        UpdateNodeVisibilityWalker walker(rootNode);
+        container->traverse(walker);
+    }
 }
 
 } // namespace scene

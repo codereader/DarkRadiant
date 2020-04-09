@@ -120,7 +120,7 @@ public:
 
             return static_cast<wxThread::ExitCode>(0);
         }
-        catch (ThreadAbortedException)
+        catch (const ThreadAbortedException&)
         {
             return static_cast<wxThread::ExitCode>(0);
         }

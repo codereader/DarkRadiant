@@ -20,6 +20,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
+#include "map/algorithm/Import.h"
 #include "scene/BasicRootNode.h"
 #include "debugging/debugging.h"
 #include "selection/TransformationVisitors.h"
@@ -130,7 +131,8 @@ public:
 		_cloneRoot(new scene::BasicRootNode)
 	{}
 
-	scene::INodePtr getCloneRoot() {
+	const std::shared_ptr<scene::BasicRootNode>& getCloneRoot()
+	{
 		return _cloneRoot;
 	}
 
@@ -165,10 +167,15 @@ public:
 				sigc::mem_fun(*this, &SelectionCloner::postProcessClonedNode));
 
 			// Add the cloned node and its parent to the list
-			_cloned.insert(Map::value_type(clone, node->getParent()));
+			_cloned.emplace(clone, node->getParent());
 
 			// Insert this node in the root
 			_cloneRoot->addChildNode(clone);
+
+			// Cloned child nodes are assigned the layers of the source nodes
+			// update the layer visibility flags using the layer manager of the source tree
+			scene::UpdateNodeVisibilityWalker visibilityUpdater(node->getRootNode());
+			clone->traverse(visibilityUpdater);
 		}
 	}
 
@@ -179,6 +186,9 @@ public:
 
 		if (groupSelectable)
 		{
+			auto sourceRoot = sourceNode->getRootNode();
+			assert(sourceRoot);
+
 			const IGroupSelectable::GroupIds& groupIds = groupSelectable->getGroupIds();
 
 			// Get the Groups the source node was assigned to, and add the
@@ -187,7 +197,7 @@ public:
 			{
 				// Try to insert the ID, ignore if already exists
 				// Get a new mapping for the given group ID
-				const ISelectionGroupPtr& mappedGroup = getMappedGroup(id);
+				const ISelectionGroupPtr& mappedGroup = getMappedGroup(id, sourceRoot);
 
 				// Assign the new group ID to this clone
 				mappedGroup->addNode(clonedNode);
@@ -196,9 +206,9 @@ public:
 	}
 
 	// Gets the replacement ID for the given group ID
-	const ISelectionGroupPtr& getMappedGroup(std::size_t id)
+	const ISelectionGroupPtr& getMappedGroup(std::size_t id, const scene::IMapRootNodePtr& sourceRoot)
 	{
-		std::pair<GroupMap::iterator, bool> found = _groupMap.insert(GroupMap::value_type(id, ISelectionGroupPtr()));
+		auto found = _groupMap.emplace(id, ISelectionGroupPtr());
 
 		if (!found.second)
 		{
@@ -207,7 +217,7 @@ public:
 		}
 
 		// Insertion was successful, so we didn't cover this ID yet
-		found.first->second = GlobalSelectionGroupManager().createSelectionGroup();
+		found.first->second = sourceRoot->getSelectionGroupManager().createSelectionGroup();
 
 		return found.first->second;
 	}
@@ -215,7 +225,7 @@ public:
 	// Adds the cloned nodes to their designated parents. Pass TRUE to select the nodes.
 	void moveClonedNodes(bool select)
 	{
-		for (Map::value_type pair : _cloned)
+		for (const auto& pair : _cloned)
 		{
 			// Remove the child from the basic container first
 			_cloneRoot->removeChildNode(pair.first);
@@ -223,7 +233,7 @@ public:
 			// Add the node to its parent
 			pair.second->addChildNode(pair.first);
 
-			if (select) 
+			if (select)
 			{
 				Node_setSelected(pair.first, true);
 			}
@@ -238,6 +248,10 @@ void cloneSelected(const cmd::ArgumentList& args)
 		return;
 	}
 
+	// Get the namespace of the current map
+	auto mapRoot = GlobalMapModule().getRoot();
+	if (!mapRoot) return; // not map root (this can happen)
+
 	UndoableCommand undo("cloneSelected");
 
 	SelectionCloner cloner;
@@ -245,23 +259,13 @@ void cloneSelected(const cmd::ArgumentList& args)
 
 	// Create a new namespace and move all cloned nodes into it
 	INamespacePtr clonedNamespace = GlobalNamespaceFactory().createNamespace();
-	assert(clonedNamespace != NULL);
+	assert(clonedNamespace);
 
 	// Move items into the temporary namespace, this will setup the links
 	clonedNamespace->connect(cloner.getCloneRoot());
 
-	// Get the namespace of the current map
-	scene::IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
-	if (mapRoot == NULL) return; // not map root (this can happen)
-
-	INamespacePtr nspace = mapRoot->getNamespace();
-	if (nspace)
-    {
-		// Prepare the nodes for import
-		nspace->ensureNoConflicts(cloner.getCloneRoot());
-		// Now move all nodes into the target namespace
-		nspace->connect(cloner.getCloneRoot());
-	}
+	// Adjust all new names to fit into the existing map namespace
+	map::algorithm::prepareNamesForImport(mapRoot, cloner.getCloneRoot());
 
 	// Unselect the current selection
 	GlobalSelectionSystem().setSelectedAll(false);

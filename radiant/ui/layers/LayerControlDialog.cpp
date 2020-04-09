@@ -19,7 +19,7 @@
 
 #include "wxutil/ScrollWindow.h"
 
-#include "layers/LayerSystem.h"
+#include "layers/LayerManager.h"
 #include "layers/LayerUsageBreakdown.h"
 
 namespace ui
@@ -97,18 +97,28 @@ void LayerControlDialog::createButtons()
     _dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
-void LayerControlDialog::refresh()
+void LayerControlDialog::clearControls()
 {
 	// Delete all wxWidgets objects first
 	_controlContainer->Clear(true);
 
 	// Remove all previously allocated layercontrols
 	_layerControls.clear();
+}
+
+void LayerControlDialog::refresh()
+{
+	clearControls();
+
+	if (!GlobalMapModule().getRoot())
+	{
+		return; // no map present, don't add any layer controls
+	}
 
     std::map<std::string, LayerControlPtr> sortedControls;
 
 	// Traverse the layers
-    scene::getLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+	GlobalMapModule().getRoot()->getLayerManager().foreachLayer([&](int layerID, const std::string& layerName)
     {
         // Create a new layercontrol for each visited layer
         // Store the object in a sorted container
@@ -146,6 +156,13 @@ void LayerControlDialog::refresh()
 
 void LayerControlDialog::update()
 {
+	if (!GlobalMapModule().getRoot())
+	{
+		return;
+	}
+
+	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
 	// Broadcast the update() call
 	for (const LayerControlPtr& control : _layerControls)
 	{
@@ -159,9 +176,9 @@ void LayerControlDialog::update()
     std::size_t numVisible = 0;
     std::size_t numHidden = 0;
 
-    GlobalLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
     {
-        if (GlobalLayerSystem().layerIsVisible(layerID))
+        if (layerSystem.layerIsVisible(layerID))
         {
             numVisible++;
         }
@@ -265,19 +282,7 @@ void LayerControlDialog::_preShow()
 		_rescanSelectionOnIdle = true;
 	});
 
-	// Layer creation/addition/removal triggers a refresh
-	_layersChangedSignal = GlobalLayerSystem().signal_layersChanged().connect(
-		sigc::mem_fun(this, &LayerControlDialog::refresh));
-
-	// Visibility change doesn't repopulate the dialog
-	_layerVisibilityChangedSignal = GlobalLayerSystem().signal_layerVisibilityChanged().connect(
-		sigc::mem_fun(this, &LayerControlDialog::update));
-
-	// Node membership triggers a selection rescan
-	_nodeLayerMembershipChangedSignal = GlobalLayerSystem().signal_nodeMembershipChanged().connect([this]()
-	{
-		_rescanSelectionOnIdle = true;
-	});
+	connectToMapRoot();
 
 	_mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(this, &LayerControlDialog::onMapEvent)
@@ -289,27 +294,68 @@ void LayerControlDialog::_preShow()
 
 void LayerControlDialog::_postHide()
 {
+	disconnectFromMapRoot();
+
 	_mapEventSignal.disconnect();
-	_nodeLayerMembershipChangedSignal.disconnect();
-	_layersChangedSignal.disconnect();
-	_layerVisibilityChangedSignal.disconnect();
 	_selectionChangedSignal.disconnect();
 	_rescanSelectionOnIdle = false;
 }
 
+void LayerControlDialog::connectToMapRoot()
+{
+	// Always disconnect first
+	disconnectFromMapRoot();
+
+	if (GlobalMapModule().getRoot())
+	{
+		auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
+		// Layer creation/addition/removal triggers a refresh
+		_layersChangedSignal = layerSystem.signal_layersChanged().connect(
+			sigc::mem_fun(this, &LayerControlDialog::refresh));
+
+		// Visibility change doesn't repopulate the dialog
+		_layerVisibilityChangedSignal = layerSystem.signal_layerVisibilityChanged().connect(
+			sigc::mem_fun(this, &LayerControlDialog::update));
+
+		// Node membership triggers a selection rescan
+		_nodeLayerMembershipChangedSignal = layerSystem.signal_nodeMembershipChanged().connect([this]()
+		{
+			_rescanSelectionOnIdle = true;
+		});
+	}
+}
+
+void LayerControlDialog::disconnectFromMapRoot()
+{
+	_nodeLayerMembershipChangedSignal.disconnect();
+	_layersChangedSignal.disconnect();
+	_layerVisibilityChangedSignal.disconnect();
+}
+
 void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
 {
-    GlobalLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+	if (!GlobalMapModule().getRoot())
+	{
+		rError() << "Can't show layers, no map loaded." << std::endl;
+		return;
+	}
+
+	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
+	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
     {
-        GlobalLayerSystem().setLayerVisibility(layerID, true);
+		layerSystem.setLayerVisibility(layerID, true);
     });
 }
 
 void LayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
 {
-    GlobalLayerSystem().foreachLayer([&](int layerID, const std::string& layerName)
+	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
+	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
     {
-        GlobalLayerSystem().setLayerVisibility(layerID, false);
+		layerSystem.setLayerVisibility(layerID, false);
     });
 }
 
@@ -318,7 +364,13 @@ void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
 	if (ev == IMap::MapLoaded)
 	{
 		// Rebuild the dialog once a map is loaded
+		connectToMapRoot();
 		refresh();
+	}
+	else if (ev == IMap::MapUnloading)
+	{
+		disconnectFromMapRoot();
+		clearControls();
 	}
 }
 

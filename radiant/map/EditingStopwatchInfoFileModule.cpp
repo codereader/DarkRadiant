@@ -22,6 +22,12 @@ std::string EditingStopwatchInfoFileModule::getName()
 void EditingStopwatchInfoFileModule::onInfoFileSaveStart()
 {}
 
+void EditingStopwatchInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
+void EditingStopwatchInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
+{}
+
 void EditingStopwatchInfoFileModule::onSavePrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
 {}
 

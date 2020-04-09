@@ -7,11 +7,12 @@
 
 class SRPropertyLoader
 {
+private:
 	// The reference to the list of possible key names
 	SREntity::KeyList& _keys;
 
-	// The target list where all the StimResponse objects will be stored
-	SREntity::StimResponseMap& _srMap;
+	// The container hosting the StimResponse objects
+	SREntity& _srEntity;
 
 	// The target string for storing the parse warnings
 	std::string& _warnings;
@@ -19,10 +20,13 @@ class SRPropertyLoader
 	// Local helper class containing all the stimtypes
 	StimTypes _stimTypes;
 
+	// spawnarg prefixes (as defined in the .game file)
+	std::string _prefix;
+	std::string _responseEffectPrefix;
+
 public:
-	// Constructor
 	SRPropertyLoader(SREntity::KeyList& keys,
-					 SREntity::StimResponseMap& srMap,
+					 SREntity& srEntity,
 					 std::string& warnings);
 
 	void visitKeyValue(const std::string& key, const std::string& value);
@@ -31,6 +35,7 @@ public:
 	void operator() (const EntityClassAttribute& attribute);
 
 private:
+	StimResponse& findOrCreate(int index, bool inherited);
 
 	/** greebo: Private helper method that does the attribute analysis
 	 * 			and adds the SR items to the target list

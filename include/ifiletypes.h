@@ -75,6 +75,7 @@ namespace filetype
 
 // Some well-known file type constants
 const char* const TYPE_MAP = "map";
+const char* const TYPE_MAP_EXPORT = "mapexport";
 const char* const TYPE_PREFAB = "prefab";
 const char* const TYPE_REGION = "region";
 const char* const TYPE_MODEL_EXPORT = "modelexport";

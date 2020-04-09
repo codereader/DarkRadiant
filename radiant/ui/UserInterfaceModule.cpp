@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ilayer.h"
+#include "ifilter.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
 
@@ -32,6 +33,7 @@
 #include "ui/entitylist/EntityList.h"
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
+#include "ui/filters/FilterOrthoContextMenuItem.h"
 
 namespace ui
 {
@@ -44,6 +46,9 @@ namespace
 	const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
 	const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
 	const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
+
+	const char* const SELECT_BY_FILTER_TEXT = N_("Select by Filter...");
+	const char* const DESELECT_BY_FILTER_TEXT = N_("Deselect by Filter...");
 }
 
 const std::string& UserInterfaceModule::getName() const
@@ -58,9 +63,10 @@ const StringSet& UserInterfaceModule::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_LAYERSYSTEM);
+		_dependencies.insert(MODULE_LAYERS);
 		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
 		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_FILTERSYSTEM);
 	}
 
 	return _dependencies;
@@ -105,6 +111,19 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalRadiant().signal_radiantStarted().connect(
 		sigc::ptr_fun(LayerControlDialog::onRadiantStartup));
+
+	// Add the filter actions
+	GlobalOrthoContextMenu().addItem(
+		std::make_shared<FilterOrthoContextMenuItem>(_(SELECT_BY_FILTER_TEXT),
+			FilterOrthoContextMenuItem::SelectByFilter),
+		IOrthoContextMenu::SECTION_FILTER
+	);
+
+	GlobalOrthoContextMenu().addItem(
+		std::make_shared<FilterOrthoContextMenuItem>(_(DESELECT_BY_FILTER_TEXT),
+			FilterOrthoContextMenuItem::DeselectByFilter),
+		IOrthoContextMenu::SECTION_FILTER
+	);
 }
 
 void UserInterfaceModule::shutdownModule()

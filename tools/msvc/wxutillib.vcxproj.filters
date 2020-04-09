@@ -153,6 +153,9 @@
     <ClCompile Include="..\..\libs\wxutil\preview\GuiView.cpp">
       <Filter>preview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dialog\DialogBase.cpp">
+      <Filter>dialog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\libs\wxutil\Makefile.am" />

@@ -11,6 +11,8 @@
 #include "math/Vector3.h"
 
 #include "model/ScaledModelExporter.h"
+#include "StartupMapLoader.h"
+#include "MapPositionManager.h"
 
 #include <sigc++/signal.h>
 #include <wx/stopwatch.h>
@@ -19,9 +21,6 @@ class TextInputStream;
 
 namespace map
 {
-
-class MapPositionManager;
-class StartupMapLoader;
 
 /// Main class representing the current map
 class Map :
@@ -148,10 +147,8 @@ public:
 
 	void rename(const std::string& filename);
 
-    /// Import selection from given stream
-	void importSelected(std::istream& in);
-
 	void exportSelected(std::ostream& out);
+	void exportSelected(std::ostream& out, const MapFormatPtr& format);
 
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();
@@ -172,10 +169,6 @@ public:
 	/** greebo: Returns the map format for this map
 	 */
 	MapFormatPtr getFormat();
-
-	/** greebo: Returns the map format for the given filename
-	 */
-	static MapFormatPtr getFormatForFile(const std::string& filename);
 
 	/** greebo: Removes or saves the camera position (into worldspawn)
 	 */
@@ -209,12 +202,13 @@ public:
 	void registerCommands();
 
 	// Static command targets for connection to the EventManager
-	static void exportMap(const cmd::ArgumentList& args);
+	static void exportSelection(const cmd::ArgumentList& args);
 	static void newMap(const cmd::ArgumentList& args);
 	static void openMap(const cmd::ArgumentList& args);
 	static void importMap(const cmd::ArgumentList& args);
 	static void saveMap(const cmd::ArgumentList& args);
 	static void saveMapAs(const cmd::ArgumentList& args);
+	static void exportMap(const cmd::ArgumentList& args);
 
 	/** greebo: Queries a filename from the user and saves a copy
 	 *          of the current map to the specified filename.
@@ -239,9 +233,12 @@ private:
 
 	void loadMapResourceFromPath(const std::string& path);
 
+	void emitMapEvent(MapEvent ev);
+
 }; // class Map
 
 } // namespace map
 
 // Accessor function for the map
+// Function body defined in MapModules.cpp
 map::Map& GlobalMap();

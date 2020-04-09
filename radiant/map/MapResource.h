@@ -27,8 +27,8 @@ private:
 
 	static std::string _infoFileExt;
 
-	// Type of resource "map"
-	std::string _type;
+	// File extension of this resource
+	std::string _extension;
 
 public:
 	// Constructor
@@ -57,10 +57,6 @@ private:
     RootNodePtr loadMapNodeFromStream(std::istream& stream, const std::string& fullPath);
 
 	void connectMap();
-
-	// Returns the map format capable of loading the given stream
-	// The stream pointer is guaranteed to be positioned back to the beginning
-	MapFormatPtr determineMapFormat(std::istream& stream);
 
 	bool loadFile(std::istream& mapStream, const MapFormat& format, 
                   const RootNodePtr& root, const std::string& filename);

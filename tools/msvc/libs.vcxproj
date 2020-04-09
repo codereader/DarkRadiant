@@ -154,6 +154,8 @@
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
     <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\generic\callback.h" />
+    <ClInclude Include="..\..\libs\KeyValueStore.h" />
+    <ClInclude Include="..\..\libs\maplib.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />
@@ -201,6 +203,7 @@
     <ClInclude Include="..\..\libs\stream\utils.h" />
     <ClInclude Include="..\..\libs\string\case_conv.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />
+    <ClInclude Include="..\..\libs\string\encoding.h" />
     <ClInclude Include="..\..\libs\string\join.h" />
     <ClInclude Include="..\..\libs\string\predicate.h" />
     <ClInclude Include="..\..\libs\string\replace.h" />

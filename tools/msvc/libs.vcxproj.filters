@@ -180,6 +180,11 @@
     <ClInclude Include="..\..\libs\render\SimpleFrontendRenderer.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\KeyValueStore.h" />
+    <ClInclude Include="..\..\libs\string\encoding.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\maplib.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

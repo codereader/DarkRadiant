@@ -262,7 +262,10 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
         GlobalSelectionSystem().setSelectedAll(false);
 
         // Move the item to the active layer
-        targetLayers.insert(GlobalLayerSystem().getActiveLayer());
+		if (GlobalMapModule().getRoot())
+		{
+			targetLayers.insert(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
+		}
 
         Node_setSelected(node, true);
     }
@@ -291,10 +294,10 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
             scene::INodePtr primitive = GlobalSelectionSystem().ultimateSelected();
             targetLayers = primitive->getLayers();
         }
-        else
-        {
-            // Otherwise move the item to the active layer
-            targetLayers.insert(GlobalLayerSystem().getActiveLayer());
+        // Otherwise move the item to the active layer
+		else if (GlobalMapModule().getRoot())
+		{
+			targetLayers.insert(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
         }
 
         // Parent the selected primitives to the new node

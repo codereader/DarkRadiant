@@ -404,10 +404,10 @@ void StimEditor::addSR()
 	if (!_entity) return;
 
 	// Create a new StimResponse object
-	int id = _entity->add();
+	int index = _entity->add();
 
 	// Get a reference to the newly allocated object
-	StimResponse& sr = _entity->get(id);
+	StimResponse& sr = _entity->get(index);
 	sr.set("class", "S");
 
 	// Get the selected stim type name from the combo box
@@ -420,7 +420,7 @@ void StimEditor::addSR()
 	_entity->updateListStores();
 
 	// Select the newly created stim
-	selectId(id);
+	selectIndex(index);
 }
 
 // Create the context menus
@@ -454,15 +454,16 @@ void StimEditor::update()
 	_updatesDisabled = true; // avoid unwanted callbacks
 
 	wxPanel* mainPanel = findNamedObject<wxPanel>(_mainPanel, "SREditorStimPanel");
+	auto removeButton = findNamedObject<wxButton>(_mainPanel, "RemoveStimButton");
 
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
 		// Update all the widgets
 		mainPanel->Enable(true);
 
-		StimResponse& sr = _entity->get(id);
+		StimResponse& sr = _entity->get(index);
 
 		std::string typeToFind = sr.get("type");
 
@@ -590,6 +591,7 @@ void StimEditor::update()
 
 		// Update the delete context menu item
 		_contextMenu.menu->Enable(_contextMenu.remove->GetId(), !sr.inherited());
+		removeButton->Enable(!sr.inherited());
 
 		// Update the "enable/disable" menu items
 		bool state = sr.get("state") == "1";
@@ -605,6 +607,8 @@ void StimEditor::update()
 		_contextMenu.menu->Enable(_contextMenu.enable->GetId(), false);
 		_contextMenu.menu->Enable(_contextMenu.disable->GetId(), false);
 		_contextMenu.menu->Enable(_contextMenu.duplicate->GetId(), false);
+
+		removeButton->Enable(false);
 	}
 
 	_updatesDisabled = false;

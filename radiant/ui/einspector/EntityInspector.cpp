@@ -703,14 +703,16 @@ bool EntityInspector::_testDeleteKey()
 {
     if (_selectedEntity.expired()) return false;
 
-    if (getSelectedKey().empty()) return false;
+    auto selectedKey = getSelectedKey();
+
+    if (selectedKey.empty() || selectedKey == "classname")
+    {
+        return false;
+    }
 
     // Make sure the Delete item is only available for explicit
     // (non-inherited) properties
-    if (getListSelectionBool(_columns.isInherited) == false)
-        return true;
-    else
-        return false;
+    return !getListSelectionBool(_columns.isInherited);
 }
 
 void EntityInspector::_onCopyKey()

@@ -10,6 +10,7 @@
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "ieventmanager.h"
+#include "imapformat.h"
 
 #include "scenelib.h"
 #include "selectionlib.h"
@@ -354,7 +355,7 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args)
 
 		if (!fileInfo.mapFormat)
 		{
-			fileInfo.mapFormat = Map::getFormatForFile(fileInfo.fullPath);
+			fileInfo.mapFormat = GlobalMapFormatManager().getMapFormatForFilename(fileInfo.fullPath);
 		}
 
         // Save the map and pass the RegionManager::traverseRegion functor

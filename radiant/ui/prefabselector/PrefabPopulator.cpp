@@ -52,32 +52,33 @@ void PrefabPopulator::visitFile(const vfs::FileInfo& fileInfo)
     _treePopulator.addPath(fileInfo.name);
 }
 
+void PrefabPopulator::searchForFilesMatchingExtension(const std::string& extension)
+{
+	if (path_is_absolute(_prefabBasePath.c_str()))
+	{
+		// Traverse a folder somewhere in the filesystem
+		GlobalFileSystem().forEachFileInAbsolutePath(_prefabBasePath, extension,
+			std::bind(&PrefabPopulator::visitFile, this, std::placeholders::_1), 0);
+	}
+	else
+	{
+		// Traverse the VFS
+		GlobalFileSystem().forEachFile(_prefabBasePath, extension,
+			std::bind(&PrefabPopulator::visitFile, this, std::placeholders::_1), 0);
+	}
+}
+
 wxThread::ExitCode PrefabPopulator::Entry()
 {
     // Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
     FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_PREFAB);
 
-    std::string defaultExt = "";
+	for (const auto& pattern : patterns)
+	{
+		searchForFilesMatchingExtension(pattern.extension);
 
-    if (!patterns.empty())
-    {
-        defaultExt = patterns.begin()->extension; // ".pfb"
-    }
-
-    if (path_is_absolute(_prefabBasePath.c_str()))
-    {
-        // Traverse a folder somewhere in the filesystem
-        GlobalFileSystem().forEachFileInAbsolutePath(_prefabBasePath, defaultExt,
-            std::bind(&PrefabPopulator::visitFile, this, std::placeholders::_1), 0);
-    }
-    else
-    {
-        // Traverse the VFS
-        GlobalFileSystem().forEachFile(_prefabBasePath, defaultExt,
-            std::bind(&PrefabPopulator::visitFile, this, std::placeholders::_1), 0);
-    }
-
-	if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
+		if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
+	}
 
 	// Visit the tree populator in order to fill in the column data
 	_treePopulator.forEachNode(*this);

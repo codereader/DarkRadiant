@@ -222,7 +222,8 @@ std::string Dialog::TextEntryDialog(const std::string& title,
 
 	Dialog::Handle entryHandle = dialog.addEntryBox(prompt);
 
-    // Set the focus on the entry widget
+    // Set the default value and focus on the entry widget
+	dialog.setElementValue(entryHandle, defaultText);
     dialog.setFocus(entryHandle);
 
 	Dialog::Result result = dialog.run();

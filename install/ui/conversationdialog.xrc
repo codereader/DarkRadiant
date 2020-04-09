@@ -46,6 +46,8 @@
 									<size>80,-1</size>
 									<label>Add</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="sizeritem">
@@ -56,6 +58,8 @@
 									<size>80,-1</size>
 									<label>Delete</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 						</object>
@@ -102,6 +106,8 @@
 									<size>80,-1</size>
 									<label>Add</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="sizeritem">
@@ -112,6 +118,32 @@
 									<size>80,-1</size>
 									<label>Edit</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM|wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxButton" name="ConvDialogMoveUpConvButton">
+									<size>80,-1</size>
+									<label>Move Up</label>
+									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxBOTTOM|wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxButton" name="ConvDialogMoveDownConvButton">
+									<size>80,-1</size>
+									<label>Move Down</label>
+									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="sizeritem">
@@ -122,6 +154,8 @@
 									<size>80,-1</size>
 									<label>Delete</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 							<object class="sizeritem">
@@ -132,6 +166,8 @@
 									<size>80,-1</size>
 									<label>Clear</label>
 									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 						</object>
@@ -151,6 +187,8 @@
 						<object class="wxButton" name="ConvDialogCancelButton">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -160,6 +198,8 @@
 						<object class="wxButton" name="ConvDialogOkButton">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>

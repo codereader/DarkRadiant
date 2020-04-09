@@ -107,7 +107,7 @@ bool Curve::parseCurve(const std::string& value) {
 
 		tokeniser.assertNextToken(")");
 	}
-	catch (parser::ParseException p) {
+	catch (const parser::ParseException& p) {
 		rError() << "Curve::parseCurve: " << p.what() << "\n";
 		return false;
 	}

@@ -170,6 +170,9 @@ public:
 	virtual void enableEvent(const std::string& eventName) = 0;
 	virtual void disableEvent(const std::string& eventName) = 0;
 
+	// Renames the given command, keeping accelerator bindings intact
+	virtual void renameEvent(const std::string& oldEventName, const std::string& newEventName) = 0;
+
 	// Removes the given event and disconnects all accelerators from it
 	virtual void removeEvent(const std::string& eventName) = 0;
 

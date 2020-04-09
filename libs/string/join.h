@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "convert.h"
 
 namespace string
 {
@@ -17,12 +18,12 @@ inline std::string join(const ContainerType& parts, const std::string& separator
 	if (parts.empty()) return result;
 
 	typename ContainerType::const_iterator part = parts.begin();
-	result.append(*part++);
+	result.append(to_string(*part++));
 
 	while (part != parts.end())
 	{
 		result.append(separator);
-		result.append(*part++);
+		result.append(to_string(*part++));
 	}
 
 	return result;

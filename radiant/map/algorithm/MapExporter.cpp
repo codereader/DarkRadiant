@@ -6,6 +6,7 @@
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ientity.h"
+#include "imap.h"
 #include "igroupnode.h"
 #include "imainframe.h"
 #include "../../brush/Brush.h"
@@ -87,7 +88,19 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 {
 	try
 	{
-		_writer.beginWriteMap(_mapStream);
+		auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
+
+		if (!mapRoot)
+		{
+			throw std::logic_error("Map node is not a scene::IMapRootNode");
+		}
+
+		_writer.beginWriteMap(mapRoot, _mapStream);
+
+		if (_infoFileExporter)
+		{
+			_infoFileExporter->beginSaveMap(mapRoot);
+		}
 	}
 	catch (IMapWriter::FailureException& ex)
 	{
@@ -99,7 +112,19 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 
 	try
 	{
-		_writer.endWriteMap(_mapStream);
+		auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
+
+		if (!mapRoot)
+		{
+			throw std::logic_error("Map node is not a scene::IMapRootNode");
+		}
+
+		_writer.endWriteMap(mapRoot, _mapStream);
+
+		if (_infoFileExporter)
+		{
+			_infoFileExporter->finishSaveMap(mapRoot);
+		}
 	}
 	catch (IMapWriter::FailureException& ex)
 	{
@@ -123,42 +148,42 @@ bool MapExporter::pre(const scene::INodePtr& node)
 {
 	try
 	{
-		Entity* entity = Node_getEntity(node);
+		auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
-		if (entity != NULL)
+		if (entity)
 		{
 			// Progress dialog handling
 			onNodeProgress();
 			
-			_writer.beginWriteEntity(*entity, _mapStream);
+			_writer.beginWriteEntity(entity, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitEntity(node, _entityNum);
 
 			return true;
 		}
 
-		IBrush* brush = Node_getIBrush(node);
+		auto brush = std::dynamic_pointer_cast<IBrushNode>(node);
 
-		if (brush != NULL && brush->hasContributingFaces())
+		if (brush && brush->getIBrush().hasContributingFaces())
 		{
 			// Progress dialog handling
 			onNodeProgress();
 
-			_writer.beginWriteBrush(*brush, _mapStream);
+			_writer.beginWriteBrush(brush, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
 			return true;
 		}
 
-		IPatch* patch = Node_getIPatch(node);
+		auto patch = std::dynamic_pointer_cast<IPatchNode>(node);
 
-		if (patch != NULL)
+		if (patch)
 		{
 			// Progress dialog handling
 			onNodeProgress();
 
-			_writer.beginWritePatch(*patch, _mapStream);
+			_writer.beginWritePatch(patch, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
@@ -177,30 +202,30 @@ void MapExporter::post(const scene::INodePtr& node)
 {
 	try
 	{
-		Entity* entity = Node_getEntity(node);
+		auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
-		if (entity != NULL)
+		if (entity)
 		{
-			_writer.endWriteEntity(*entity, _mapStream);
+			_writer.endWriteEntity(entity, _mapStream);
 
 			_entityNum++;
 			return;
 		}
 
-		IBrush* brush = Node_getIBrush(node);
+		auto brush = std::dynamic_pointer_cast<IBrushNode>(node);
 
-		if (brush != NULL && brush->hasContributingFaces())
+		if (brush && brush->getIBrush().hasContributingFaces())
 		{
-			_writer.endWriteBrush(*brush, _mapStream);
+			_writer.endWriteBrush(brush, _mapStream);
 			_primitiveNum++;
 			return;
 		}
 
-		IPatch* patch = Node_getIPatch(node);
+		auto patch = std::dynamic_pointer_cast<IPatchNode>(node);
 
-		if (patch != NULL)
+		if (patch)
 		{
-			_writer.endWritePatch(*patch, _mapStream);
+			_writer.endWritePatch(patch, _mapStream);
 			_primitiveNum++;
 			return;
 		}

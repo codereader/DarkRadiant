@@ -19,6 +19,15 @@ RootNode::RootNode(const std::string& name) :
 
     _targetManager = GlobalEntityCreator().createTargetManager();
     assert(_targetManager);
+
+	_selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
+	assert(_selectionGroupManager);
+
+	_selectionSetManager = GlobalSelectionSetModule().createSelectionSetManager();
+	assert(_selectionSetManager);
+
+	_layerManager = GlobalLayerModule().createLayerManager();
+	assert(_layerManager);
 }
 
 RootNode::~RootNode()
@@ -44,7 +53,23 @@ ITargetManager& RootNode::getTargetManager()
     return *_targetManager;
 }
 
-std::string RootNode::name() const {
+selection::ISelectionGroupManager& RootNode::getSelectionGroupManager()
+{
+	return *_selectionGroupManager;
+}
+
+selection::ISelectionSetManager& RootNode::getSelectionSetManager()
+{
+	return *_selectionSetManager;
+}
+
+scene::ILayerManager& RootNode::getLayerManager()
+{
+	return *_layerManager;
+}
+
+std::string RootNode::name() const 
+{
 	return _name;
 }
 
@@ -53,7 +78,8 @@ scene::INode::Type RootNode::getNodeType() const
 	return Type::MapRoot;
 }
 
-void RootNode::setName(const std::string& name) {
+void RootNode::setName(const std::string& name)
+{
 	_name = name;
 }
 

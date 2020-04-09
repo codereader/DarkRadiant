@@ -15,6 +15,7 @@ private:
 
 	// Buffer to hold our output
 	std::stringstream _output;
+	std::stringstream _layerNameBuffer;
 
 	// The list of layernames
 	typedef std::map<int, std::string> LayerNameMap;
@@ -32,6 +33,8 @@ public:
 	std::string getName() override;
 
 	void onInfoFileSaveStart() override;
+	void onBeginSaveMap(const scene::IMapRootNodePtr& root) override;
+	void onFinishSaveMap(const scene::IMapRootNodePtr& root) override;
 	void onSavePrimitive(const INodePtr& node, std::size_t entityNum, std::size_t primitiveNum) override;
 	void onSaveEntity(const INodePtr& node, std::size_t entityNum) override;
 	void writeBlocks(std::ostream& stream) override;

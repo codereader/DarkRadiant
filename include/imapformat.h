@@ -7,13 +7,18 @@ namespace scene
 class NodeVisitor;
 class INode;
 typedef std::shared_ptr<INode> INodePtr;
+class IMapRootNode;
+typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
 }
 
 namespace parser { class DefTokeniser; }
 
-class Entity;
-class IBrush;
-class IPatch;
+class IPatchNode;
+typedef std::shared_ptr<IPatchNode> IPatchNodePtr;
+class IBrushNode;
+typedef std::shared_ptr<IBrushNode> IBrushNodePtr;
+class IEntityNode;
+typedef std::shared_ptr<IEntityNode> IEntityNodePtr;
 
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
@@ -97,25 +102,25 @@ public:
 	 * This is called before writing any nodes, to give an opportunity
 	 * to write a map header and version info.
 	 */
-	virtual void beginWriteMap(std::ostream& stream) = 0;
+	virtual void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) = 0;
 
 	/**
 	 * Called after all nodes have been visited. Note that this method
 	 * should NOT attempt to close the given stream.
 	 */
-	virtual void endWriteMap(std::ostream& stream) = 0;
+	virtual void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) = 0;
 
 	// Entity export methods
-	virtual void beginWriteEntity(const Entity& entity, std::ostream& stream) = 0;
-	virtual void endWriteEntity(const Entity& entity, std::ostream& stream) = 0;
+	virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) = 0;
+	virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) = 0;
 
 	// Brush export methods
-	virtual void beginWriteBrush(const IBrush& brush, std::ostream& stream) = 0;
-	virtual void endWriteBrush(const IBrush& brush, std::ostream& stream) = 0;
+	virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) = 0;
+	virtual void endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) = 0;
 
 	// Patch export methods
-	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream) = 0;
-	virtual void endWritePatch(const IPatch& patch, std::ostream& stream) = 0;
+	virtual void beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream) = 0;
+	virtual void endWritePatch(const IPatchNodePtr& patch, std::ostream& stream) = 0;
 };
 typedef std::shared_ptr<IMapWriter> IMapWriterPtr;
 
@@ -151,6 +156,11 @@ public:
 class IMapImportFilter
 {
 public:
+	/**
+	 * Returns a reference to the root node.
+	 */
+	virtual const scene::IMapRootNodePtr& getRootNode() const = 0;
+
 	/**
 	 * Send an entity node to the import filter. In idTech4 maps all entities
 	 * are immediate children of the root node in the scene, so this is where
@@ -250,9 +260,21 @@ public:
 												 const std::string& extension) = 0;
 
 	/**
-	 * Returns the list of registered map formats.
+	 * Returns the list of all registered map formats.
+	 */
+	virtual std::set<MapFormatPtr> getAllMapFormats() = 0;
+
+	/**
+	 * Returns the list of registered map formats matching the given extension.
 	 */
 	virtual std::set<MapFormatPtr> getMapFormatList(const std::string& extension) = 0;
+
+	/**
+	 * A matching map format is returned, based on the given filename's extension
+	 * and the currently active game type.
+	 * An empty pointer is returned if no format can be found.
+	 */
+	virtual MapFormatPtr getMapFormatForFilename(const std::string& filename) = 0;
 };
 typedef std::shared_ptr<IMapFormatManager> IMapFormatManagerPtr;
 

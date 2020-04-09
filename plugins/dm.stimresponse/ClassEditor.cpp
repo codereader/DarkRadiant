@@ -64,29 +64,27 @@ void ClassEditor::setEntity(const SREntityPtr& entity)
 	_entity = entity;
 }
 
-int ClassEditor::getIdFromSelection()
+int ClassEditor::getIndexFromSelection()
 {
 	wxDataViewItem item = _list->GetSelection();
 
-	if (item.IsOk() && _entity != NULL)
+	if (item.IsOk() && _entity != nullptr)
 	{
 		wxutil::TreeModel::Row row(item, *_list->GetModel());
-		return row[SREntity::getColumns().id].getInteger();
+		return row[SREntity::getColumns().index].getInteger();
 	}
-	else
-	{
-		return -1;
-	}
+	
+	return -1;
 }
 
 void ClassEditor::setProperty(const std::string& key, const std::string& value)
 {
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
 		// Don't edit inherited stims/responses
-		_entity->setProperty(id, key, value);
+		_entity->setProperty(index, key, value);
 	}
 
 	// Call the method of the child class to update the widgets
@@ -156,22 +154,22 @@ void ClassEditor::reloadStimTypes()
 
 void ClassEditor::removeSR()
 {
-	// Get the selected stim ID
-	int id = getIdFromSelection();
+	// Get the selected stim index
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
-		_entity->remove(id);
+		_entity->remove(index);
 	}
 }
 
-void ClassEditor::selectId(int id)
+void ClassEditor::selectIndex(int index)
 {
 	// Setup the selectionfinder to search for the id
 	wxutil::TreeModel* model = dynamic_cast<wxutil::TreeModel*>(_list->GetModel());
 	assert(model != NULL);
 
-	wxDataViewItem item = model->FindInteger(id, SREntity::getColumns().id);
+	wxDataViewItem item = model->FindInteger(index, SREntity::getColumns().index);
 
 	if (item.IsOk())
 	{
@@ -184,13 +182,13 @@ void ClassEditor::selectId(int id)
 
 void ClassEditor::duplicateStimResponse()
 {
-	int id = getIdFromSelection();
+	int index = getIndexFromSelection();
 
-	if (id > 0)
+	if (index > 0)
 	{
-		int newId = _entity->duplicate(id);
+		int newIndex = _entity->duplicate(index);
 		// Select the newly created stim
-		selectId(newId);
+		selectIndex(newIndex);
 	}
 
 	// Call the method of the child class to update the widgets

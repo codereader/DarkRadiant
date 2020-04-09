@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale>
 
 #include "iradiant.h"
 #include "idatastream.h"
@@ -26,6 +27,7 @@
 #include "string/string.h"
 #include "string/join.h"
 #include "string/case_conv.h"
+#include "string/encoding.h"
 #include "os/path.h"
 #include "os/dir.h"
 
@@ -260,8 +262,17 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     {
         os::foreachItemInDirectory(path, [&](const fs::path& file)
         {
-            // Just insert the name, it will get sorted correctly.
-            filenameList.insert(file.filename().string());
+            try
+            {
+                // Just insert the name, it will get sorted correctly.
+                filenameList.insert(file.filename().string());
+            }
+            catch (std::system_error& ex)
+            {
+                rWarning() << "[vfs] Skipping file " << string::to_utf8(file.filename().wstring()) << 
+                    " - possibly unsupported characters in filename? " << 
+                    "(Exception: " << ex.what() << ")" << std::endl;
+            }
         });
     }
     catch (os::DirectoryNotFoundException&)

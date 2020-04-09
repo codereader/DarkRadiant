@@ -1,5 +1,4 @@
-#ifndef XMLFILTER_H_
-#define XMLFILTER_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -13,9 +12,9 @@ namespace filters
  * these rules.
  */
 
-class XMLFilter {
+class XMLFilter
+{
 private:
-
 	// Text name of filter (from game.xml)
 	std::string _name;
 
@@ -29,12 +28,17 @@ private:
 	bool _readonly;
 
 public:
+	typedef std::shared_ptr<XMLFilter> Ptr;
 
 	/** Construct an XMLFilter with the given name.
 	 * Pass the read-only flag to indicate whether this filter is
 	 * custom or coming from the "stock" filters in the .game files.
 	 */
 	XMLFilter(const std::string& name, bool readOnly);
+
+	// Noncopyable
+	XMLFilter(const XMLFilter&) = delete;
+	XMLFilter& operator=(const XMLFilter&) = delete;
 
 	/** Add a (non entitykeyvalue) rule to this filter.
 	 *
@@ -92,24 +96,25 @@ public:
 	 */
 	bool isEntityVisible(const FilterRule::Type type, const Entity& entity) const;
 
-	/** greebo: Returns the name of the toggle event associated to this filter
+	/** greebo: Returns the name of the toggle event associated to this filter.
+	* It's lacking any spaces or other incompatible characters, compared to the actual
+	* name returned in getName().
 	 */
-	std::string getEventName() const;
+	const std::string& getEventName() const;
+
+	// The name of this Filter
+	const std::string& getName() const;
 
 	/**
-	 * greebo: Renames the event to <newName>. This also updates the event name.
+	 * greebo: Renames the filter to <newName>. This also updates the event name.
 	 */
 	void setName(const std::string& newName);
-
-	/** greebo: Gets called when the associated Event is fired.
-	 */
-	void toggle(bool newState);
 
 	// Whether this filter is read-only
 	bool isReadOnly() const;
 
 	// Returns the ruleset
-	FilterRules getRuleSet();
+	const FilterRules& getRuleSet() const;
 
 	// Applies the given ruleset, replacing the existing one.
 	void setRules(const FilterRules& rules);
@@ -118,7 +123,4 @@ private:
 	void updateEventName();
 };
 
-
 }
-
-#endif /*XMLFILTER_H_*/

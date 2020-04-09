@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ilayer.h"
+#include "imap.h"
 
 namespace scene
 {
@@ -29,15 +30,19 @@ public:
 	// Returns true if the node has been "fixed"
 	static bool ProcessNode(const INodePtr& node)
 	{
-		LayerList list = node->getLayers();
+		auto rootNode = node->getRootNode();
+
+		if (!rootNode) return false;
+
+		LayerList list = node->getLayers(); // create a copy of the list
 
 		bool fixed = false;
 
-		for (LayerList::iterator i = list.begin(); i != list.end(); ++i)
+		for (auto id : list)
 		{
-			if (!GlobalLayerSystem().layerExists(*i))
+			if (!rootNode->getLayerManager().layerExists(id))
 			{
-				node->removeFromLayer(*i);
+				node->removeFromLayer(id);
 				fixed = true;
 			}
 		}

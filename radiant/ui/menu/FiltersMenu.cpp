@@ -4,43 +4,17 @@
 #include "ifilter.h"
 #include "iuimanager.h"
 
-namespace ui {
+namespace ui 
+{
 
-	namespace {
+	namespace 
+	{
 		// greebo: These are used for the DarkRadiant main menu
 		const std::string MENU_NAME = "main";
 		const std::string MENU_INSERT_BEFORE = MENU_NAME + "/map";
 		const std::string MENU_FILTERS_NAME = "filters";
 		const std::string MENU_PATH = MENU_NAME + "/" + MENU_FILTERS_NAME;
 		const std::string MENU_ICON = "iconFilter16.png";
-
-		// Local visitor class to populate the filters menu
-		class MenuPopulatingVisitor :
-			public IFilterVisitor
-		{
-			// The path under which the items get added.
-			std::string _targetPath;
-		public:
-			// Pass the target menu path to the constructor
-			MenuPopulatingVisitor(const std::string& targetPath) :
-				_targetPath(targetPath)
-			{}
-
-			// Visitor function
-			void visit(const std::string& filterName)
-			{
-				// Get the menu manager
-				IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-
-				std::string eventName =
-					GlobalFilterSystem().getFilterEventName(filterName);
-
-				// Create the menu item
-				menuManager.add(_targetPath, _targetPath + "_" + filterName,
-								menuItem, filterName,
-								MENU_ICON, eventName);
-			}
-		};
 	}
 
 // Construct menu items
@@ -57,8 +31,15 @@ void FiltersMenu::addItemsToMainMenu()
 						ui::menuFolder, "Fi&lter", "", ""); // empty icon, empty event
 
 	// Visit the filters in the FilterSystem to populate the menu
-	MenuPopulatingVisitor visitor(MENU_PATH);
-	GlobalFilterSystem().forEachFilter(visitor);
+	GlobalFilterSystem().forEachFilter([&](const std::string& filterName)
+	{
+		std::string eventName = GlobalFilterSystem().getFilterEventName(filterName);
+
+		// Create the menu item
+		menuManager.add(MENU_PATH, MENU_PATH + "_" + filterName,
+			menuItem, filterName,
+			MENU_ICON, eventName);
+	});
 
 	menuManager.add(MENU_PATH, "_FiltersSep1", menuSeparator, "", "", "");
 	menuManager.add(MENU_PATH, "ActivateAllFilters", menuItem, _("Activate &all Filters"), MENU_ICON, "ActivateAllFilters");

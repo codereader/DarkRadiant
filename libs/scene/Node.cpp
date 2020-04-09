@@ -154,7 +154,7 @@ void Node::removeFromLayer(int layerId)
 	}
 }
 
-LayerList Node::getLayers() const
+const LayerList& Node::getLayers() const
 {
 	return _layers;
 }
@@ -202,6 +202,28 @@ bool Node::hasChildNodes() const
 void Node::removeAllChildNodes()
 {
 	_children.clear();
+}
+
+IMapRootNodePtr Node::getRootNode()
+{
+	if (getNodeType() == scene::INode::Type::MapRoot)
+	{
+		auto self = getSelf();
+		assert(std::dynamic_pointer_cast<IMapRootNode>(self));
+		return std::dynamic_pointer_cast<IMapRootNode>(self);
+	}
+
+	// Self is not a root node, start with the first ancestor, walking upwards
+	for (auto node = getParent(); node; node = node->getParent())
+	{
+		if (node->getNodeType() == scene::INode::Type::MapRoot)
+		{
+			assert(std::dynamic_pointer_cast<IMapRootNode>(node));
+			return std::dynamic_pointer_cast<IMapRootNode>(node);
+		}
+	}
+
+	return IMapRootNodePtr();
 }
 
 void Node::traverse(NodeVisitor& visitor)

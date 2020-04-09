@@ -70,8 +70,11 @@ scene::INodePtr BrushModuleImpl::createBrush()
 {
 	scene::INodePtr node = std::make_shared<BrushNode>();
 
-	// Move it to the active layer
-	node->moveToLayer(GlobalLayerSystem().getActiveLayer());
+	if (GlobalMapModule().getRoot())
+	{
+		// All brushes are created in the active layer by default
+		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
+	}
 
 	return node;
 }
@@ -120,14 +123,14 @@ void BrushModuleImpl::registerBrushCommands()
 {
 	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
 
-	GlobalCommandSystem().addCommand("BrushMakePrefab", selection::algorithm::brushMakePrefab, cmd::ARGTYPE_INT);
+	GlobalCommandSystem().addCommand("BrushMakePrefab", selection::algorithm::brushMakePrefab, { cmd::ARGTYPE_INT });
 
 	GlobalEventManager().addCommand("BrushCuboid", "BrushCuboid");
 	GlobalEventManager().addCommand("BrushPrism", "BrushPrism");
 	GlobalEventManager().addCommand("BrushCone", "BrushCone");
 	GlobalEventManager().addCommand("BrushSphere", "BrushSphere");
 
-	GlobalCommandSystem().addCommand("BrushMakeSided", selection::algorithm::brushMakeSided, cmd::ARGTYPE_INT);
+	GlobalCommandSystem().addCommand("BrushMakeSided", selection::algorithm::brushMakeSided, { cmd::ARGTYPE_INT });
 
 	// Link the Events to the corresponding statements
 	GlobalEventManager().addCommand("Brush3Sided", "Brush3Sided");

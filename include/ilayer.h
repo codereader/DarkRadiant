@@ -43,7 +43,7 @@ public:
     /**
      * Return the set of layers to which this object is assigned.
      */
-    virtual LayerList getLayers() const = 0;
+    virtual const LayerList& getLayers() const = 0;
 
 	/**
 	 * greebo: This assigns the given node to the given set of layers. Any previous
@@ -53,10 +53,13 @@ public:
 	virtual void assignToLayers(const LayerList& newLayers) = 0;
 };
 
-class ILayerSystem :
-	public RegisterableModule
+class ILayerManager
 {
 public:
+	typedef std::shared_ptr<ILayerManager> Ptr;
+
+	virtual ~ILayerManager() {}
+
 	/**
 	 * greebo: Creates a new layer with the given name.
 	 *
@@ -201,17 +204,26 @@ public:
 	virtual sigc::signal<void> signal_nodeMembershipChanged() = 0;
 };
 
+class ILayerModule :
+	public RegisterableModule
+{
+public:
+	virtual ~ILayerModule() {}
+
+	virtual ILayerManager::Ptr createLayerManager() = 0;
+};
+
 } // namespace scene
 
-const std::string MODULE_LAYERSYSTEM("LayerSystem");
+const char* const MODULE_LAYERS("LayerModule");
 
-inline scene::ILayerSystem& GlobalLayerSystem()
+inline scene::ILayerModule& GlobalLayerModule()
 {
 	// Cache the reference locally
-	static scene::ILayerSystem& _layerSystem(
-		*std::static_pointer_cast<scene::ILayerSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_LAYERSYSTEM)
+	static scene::ILayerModule& _layerModule(
+		*std::static_pointer_cast<scene::ILayerModule>(
+			module::GlobalModuleRegistry().getModule(MODULE_LAYERS)
 		)
 	);
-	return _layerSystem;
+	return _layerModule;
 }

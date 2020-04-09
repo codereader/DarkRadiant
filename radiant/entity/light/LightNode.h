@@ -66,7 +66,7 @@ public:
 	/** greebo: Returns the AABB of the small diamond representation.
 	 *	(use this to select the light against an AABB selectiontest like CompleteTall or similar).
 	 */
-	AABB getSelectAABB() override;
+	AABB getSelectAABB() const override;
 
 	/*greebo: This is a callback function that gets connected in the constructor
 	* Don't know exactly what it does, but it seems to notify the shader cache that the light has moved or

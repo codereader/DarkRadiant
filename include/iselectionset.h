@@ -39,10 +39,12 @@ public:
 };
 typedef std::shared_ptr<ISelectionSet> ISelectionSetPtr;
 
-class ISelectionSetManager :
-	public RegisterableModule
+class ISelectionSetManager
 {
 public:
+	typedef std::shared_ptr<ISelectionSetManager> Ptr;
+
+	virtual ~ISelectionSetManager() {}
 
     /**
      * Signal emitted when the list of selection sets has been changed, by
@@ -95,17 +97,26 @@ public:
 	virtual ISelectionSetPtr findSelectionSet(const std::string& name) = 0;
 };
 
+class ISelectionSetModule :
+	public RegisterableModule
+{
+public:
+	virtual ~ISelectionSetModule() {}
+
+	virtual ISelectionSetManager::Ptr createSelectionSetManager() = 0;
+};
+
 } // namespace
 
-const char* const MODULE_SELECTIONSET = "SelectionSetManager";
+const char* const MODULE_SELECTIONSETS = "SelectionSetModule";
 
-inline selection::ISelectionSetManager& GlobalSelectionSetManager()
+inline selection::ISelectionSetModule& GlobalSelectionSetModule()
 {
 	// Cache the reference locally
-	static selection::ISelectionSetManager& _manager(
-		*std::static_pointer_cast<selection::ISelectionSetManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONSET)
+	static selection::ISelectionSetModule& _module(
+		*std::static_pointer_cast<selection::ISelectionSetModule>(
+			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONSETS)
 		)
 	);
-	return _manager;
+	return _module;
 }

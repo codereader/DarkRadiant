@@ -88,14 +88,13 @@ bool XMLFilter::isEntityVisible(const FilterRule::Type type, const Entity& entit
 	return visible;
 }
 
-// The command target
-void XMLFilter::toggle(bool newState)
-{
-	GlobalFilterSystem().setFilterState(_name, newState);
+const std::string& XMLFilter::getEventName() const {
+	return _eventName;
 }
 
-std::string XMLFilter::getEventName() const {
-	return _eventName;
+const std::string& XMLFilter::getName() const
+{
+	return _name;
 }
 
 void XMLFilter::setName(const std::string& newName) {
@@ -110,7 +109,8 @@ bool XMLFilter::isReadOnly() const {
 	return _readonly;
 }
 
-FilterRules XMLFilter::getRuleSet() {
+const FilterRules& XMLFilter::getRuleSet() const
+{
 	return _rules;
 }
 

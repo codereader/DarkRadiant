@@ -50,11 +50,6 @@ public:
 
 		scene::INodePtr cloned = cloneSingleNode(node);
 
-		if (cloned && _postCloneCallback)
-		{
-			_postCloneCallback(node, cloned);
-		}
-
 		// Insert the cloned node or an empty ptr if not cloneable
 		_path.push(cloned);
 
@@ -72,6 +67,11 @@ public:
 		{
 			// Cloning was successful, add to parent
 			_path.parent()->addChildNode(_path.top());
+
+			if (_postCloneCallback)
+			{
+				_postCloneCallback(node, _path.top());
+			}
 		}
 
 		_path.pop();
@@ -90,18 +90,13 @@ inline scene::INodePtr cloneNodeIncludingDescendants(const scene::INodePtr& node
 {
 	scene::INodePtr clone = cloneSingleNode(node);
 
+	CloneAll visitor(clone, callback);
+	node->traverseChildren(visitor);
+
 	if (callback)
 	{
 		callback(node, clone);
 	}
-
-	CloneAll visitor(clone, callback);
-	node->traverseChildren(visitor);
-
-	// Cloned child nodes are assigned the layers of the source nodes
-	// update the layer visibility flags to make the layers assignemnt take effect
-	scene::UpdateNodeVisibilityWalker visibilityUpdater;
-	clone->traverse(visibilityUpdater);
 
 	return clone;
 }

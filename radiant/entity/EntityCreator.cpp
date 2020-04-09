@@ -76,8 +76,11 @@ IEntityNodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
 {
 	IEntityNodePtr node = createNodeForEntity(eclass);
 
-	// All entities are created in the active layer by default
-	node->moveToLayer(GlobalLayerSystem().getActiveLayer());
+	if (GlobalMapModule().getRoot())
+	{
+		// All entities are created in the active layer by default
+		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
+	}
 
 	node->getEntity().setKeyValue("classname", eclass->getName());
 

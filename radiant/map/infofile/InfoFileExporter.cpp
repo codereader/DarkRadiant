@@ -41,6 +41,22 @@ InfoFileExporter::~InfoFileExporter()
 	});
 }
 
+void InfoFileExporter::beginSaveMap(const scene::IMapRootNodePtr& root)
+{
+	GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
+	{
+		module.onBeginSaveMap(root);
+	});
+}
+
+void InfoFileExporter::finishSaveMap(const scene::IMapRootNodePtr& root)
+{
+	GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)
+	{
+		module.onFinishSaveMap(root);
+	});
+}
+
 void InfoFileExporter::visitEntity(const scene::INodePtr& node, std::size_t entityNum)
 {
 	GlobalMapInfoFileManager().foreachModule([&](IMapInfoFileModule& module)

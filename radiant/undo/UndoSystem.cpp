@@ -25,8 +25,8 @@ namespace
 
 // Constructor
 UndoSystem::UndoSystem() :
-	_undoLevels(64),
-	_activeUndoStack(nullptr)
+	_activeUndoStack(nullptr),
+	_undoLevels(64)
 {}
 
 UndoSystem::~UndoSystem()

@@ -69,6 +69,7 @@ private:
 	void _postHide() override;
 
 	void populateWindow();
+	void clearControls();
 
 	// Update the usage colours on the controls
 	void updateLayerUsage();
@@ -81,6 +82,9 @@ private:
 	void onIdle();
 
 	void onMapEvent(IMap::MapEvent ev);
+
+	void connectToMapRoot();
+	void disconnectFromMapRoot();
 };
 
 } // namespace ui

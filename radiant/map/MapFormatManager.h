@@ -16,13 +16,14 @@ private:
 	MapFormatModules _mapFormats;
 
 public:
-	void registerMapFormat(const std::string& extension, const MapFormatPtr& mapFormat);
-	void unregisterMapFormat(const MapFormatPtr& mapFormat);
+	void registerMapFormat(const std::string& extension, const MapFormatPtr& mapFormat) override;
+	void unregisterMapFormat(const MapFormatPtr& mapFormat) override;
 
-	MapFormatPtr getMapFormatByName(const std::string& mapFormatName);
-	MapFormatPtr getMapFormatForGameType(const std::string& gameType, const std::string& extension);
-
-	std::set<MapFormatPtr> getMapFormatList(const std::string& extension);
+	MapFormatPtr getMapFormatByName(const std::string& mapFormatName) override;
+	MapFormatPtr getMapFormatForGameType(const std::string& gameType, const std::string& extension) override;
+	std::set<MapFormatPtr> getAllMapFormats() override;
+	std::set<MapFormatPtr> getMapFormatList(const std::string& extension) override;
+	MapFormatPtr getMapFormatForFilename(const std::string& filename) override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

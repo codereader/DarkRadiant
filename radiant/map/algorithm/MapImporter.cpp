@@ -19,7 +19,7 @@ namespace
 	std::size_t EMPTY_PRIMITVE_NUM = std::numeric_limits<std::size_t>::max();
 }
 
-MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream) :
+MapImporter::MapImporter(const scene::IMapRootNodePtr& root, std::istream& inputStream) :
 	_root(root),
 	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
 	_entityCount(0),
@@ -43,6 +43,11 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 		// Initialise the text
 		_dlgEntityText = fmt::format(_("Loading entity {0:d}\n"), _entityCount);
 	}
+}
+
+const scene::IMapRootNodePtr& MapImporter::getRootNode() const
+{
+	return _root;
 }
 
 bool MapImporter::addEntity(const scene::INodePtr& entityNode)

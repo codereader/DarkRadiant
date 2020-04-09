@@ -1,21 +1,24 @@
 #include "MapFormatManager.h"
 
 #include "itextstream.h"
+#include "igame.h"
 #include "modulesystem/StaticModule.h"
 
+#include "debugging/debugging.h"
 #include "string/case_conv.h"
+#include "os/path.h"
 
 namespace map
 {
 
 void MapFormatManager::registerMapFormat(const std::string& extension, const MapFormatPtr& mapFormat)
 {
-	_mapFormats.insert(MapFormatModules::value_type(string::to_lower_copy(extension), mapFormat));
+	_mapFormats.insert(std::make_pair(string::to_lower_copy(extension), mapFormat));
 }
 
 void MapFormatManager::unregisterMapFormat(const MapFormatPtr& mapFormat)
 {
-	for (MapFormatModules::iterator i = _mapFormats.begin(); i != _mapFormats.end(); )
+	for (auto i = _mapFormats.begin(); i != _mapFormats.end(); )
 	{
 		if (i->second == mapFormat)
 		{
@@ -30,11 +33,11 @@ void MapFormatManager::unregisterMapFormat(const MapFormatPtr& mapFormat)
 
 MapFormatPtr MapFormatManager::getMapFormatByName(const std::string& mapFormatName) 
 {
-	for (MapFormatModules::const_iterator i = _mapFormats.begin(); i != _mapFormats.end(); ++i)
+	for (const auto& pair : _mapFormats)
 	{
-		if (i->second->getMapFormatName() == mapFormatName)
+		if (pair.second->getMapFormatName() == mapFormatName)
 		{
-			return i->second;
+			return pair.second;
 		}
 	}
 
@@ -46,15 +49,40 @@ MapFormatPtr MapFormatManager::getMapFormatForGameType(const std::string& gameTy
 {
 	std::string extLower = string::to_lower_copy(extension);
 
-	for (MapFormatModules::const_iterator i = _mapFormats.begin(); i != _mapFormats.end(); ++i)
+	for (const auto& pair : _mapFormats)
 	{
-		if (i->first == extLower && i->second->getGameType() == gameType)
+		if (pair.first == extLower && pair.second->getGameType() == gameType)
 		{
-			return i->second;
+			return pair.second;
 		}
 	}
 
 	return MapFormatPtr(); // nothing found
+}
+
+MapFormatPtr MapFormatManager::getMapFormatForFilename(const std::string& filename)
+{
+	if (!GlobalGameManager().currentGame())
+	{
+		return MapFormatPtr();
+	}
+
+	// Look up the module name which loads the given extension
+	std::string gameType = GlobalGameManager().currentGame()->getKeyValue("type");
+
+	return getMapFormatForGameType(gameType, os::getExtension(filename));
+}
+
+std::set<MapFormatPtr> MapFormatManager::getAllMapFormats()
+{
+	std::set<MapFormatPtr> set;
+	
+	for (const auto& fmt : _mapFormats)
+	{
+		set.insert(fmt.second);
+	}
+	
+	return set;
 }
 
 std::set<MapFormatPtr> MapFormatManager::getMapFormatList(const std::string& extension)
@@ -62,7 +90,7 @@ std::set<MapFormatPtr> MapFormatManager::getMapFormatList(const std::string& ext
 	std::set<MapFormatPtr> list;
 	std::string extLower = string::to_lower_copy(extension);
 
-	for (MapFormatModules::iterator it = _mapFormats.find(extLower);
+	for (auto it = _mapFormats.find(extLower);
 		 it != _mapFormats.upper_bound(extLower) && it != _mapFormats.end();
 		 ++it)
 	{

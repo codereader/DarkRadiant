@@ -39,6 +39,9 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 	_setView->AppendTextColumn("", _columns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+	// Allow searching for the name
+	_setView->AddSearchColumn(_columns.name);
+
 	wxBoxSizer* vbox1 = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText* label1 = new wxStaticText(this, wxID_ANY, _("Available Sets"));

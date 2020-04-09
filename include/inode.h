@@ -127,6 +127,9 @@ public:
 	 */
 	virtual void setIsRoot(bool isRoot) = 0;
 
+	//  Searching this node's ancestry, this returns the toplevel/root node
+	virtual IMapRootNodePtr getRootNode() = 0;
+
 	/** greebo: State bit accessor methods. This enables/disables
 	 * 			the bit of the state flag (e.g. hidden, excluded)
 	 */

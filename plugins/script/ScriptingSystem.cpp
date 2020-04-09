@@ -210,6 +210,7 @@ void ScriptingSystem::initialise()
 			PythonConsoleWriterClass consoleWriter(PythonModule::GetModule(), "PythonConsoleWriter");
 			consoleWriter.def(py::init<bool, std::string&>());
 			consoleWriter.def("write", &PythonConsoleWriter::write);
+			consoleWriter.def("flush", &PythonConsoleWriter::flush);
 
 			// Redirect stdio output to our local ConsoleWriter instances
 			py::module::import("sys").attr("stderr") = &_errorWriter;
@@ -458,7 +459,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand(
 		"RunScript",
 		std::bind(&ScriptingSystem::runScriptFile, this, std::placeholders::_1),
-		cmd::ARGTYPE_STRING
+		{ cmd::ARGTYPE_STRING }
 	);
 
 	GlobalCommandSystem().addCommand(
@@ -469,7 +470,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand(
 		"RunScriptCommand",
 		std::bind(&ScriptingSystem::runScriptCommand, this, std::placeholders::_1),
-		cmd::ARGTYPE_STRING
+		{ cmd::ARGTYPE_STRING }
 	);
 
 	// Bind the reloadscripts command to the menu

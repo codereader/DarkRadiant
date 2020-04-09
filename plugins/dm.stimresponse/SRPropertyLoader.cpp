@@ -6,15 +6,12 @@
 #include "gamelib.h"
 #include <regex>
 
-// Constructor
-SRPropertyLoader::SRPropertyLoader(
-	SREntity::KeyList& keys,
-	SREntity::StimResponseMap& srMap,
-	std::string& warnings
-) :
+SRPropertyLoader::SRPropertyLoader(SREntity::KeyList& keys, SREntity& srEntity, std::string& warnings) :
 	_keys(keys),
-	_srMap(srMap),
-	_warnings(warnings)
+	_srEntity(srEntity),
+	_warnings(warnings),
+	_prefix(game::current::getValue<std::string>(GKEY_STIM_RESPONSE_PREFIX)),
+	_responseEffectPrefix(game::current::getValue<std::string>(GKEY_RESPONSE_EFFECT_PREFIX))
 {}
 
 void SRPropertyLoader::visitKeyValue(const std::string& key, const std::string& value)
@@ -27,20 +24,30 @@ void SRPropertyLoader::operator() (const EntityClassAttribute& attribute)
 	parseAttribute(attribute.getName(), attribute.getValue(), true);
 }
 
-/** greebo: Private helper method that does the attribute analysis
- */
-void SRPropertyLoader::parseAttribute(
-	const std::string& key,
-	const std::string& value,
-	bool inherited)
+StimResponse& SRPropertyLoader::findOrCreate(int index, bool inherited)
 {
-	std::string prefix = game::current::getValue<std::string>(GKEY_STIM_RESPONSE_PREFIX);
+	auto& found = _srEntity.get(index);
 
-	// Now cycle through the possible key names and see if we have a match
-	for (std::size_t i = 0; i < _keys.size(); i++) {
+	if (found.getIndex() == index)
+	{
+		return found;
+	}
 
+	// Create the S/R object in case we got an empty S/R back
+	// Insert a new SR object with the given index
+	auto& sr = _srEntity.add(index);
+	sr.setInherited(inherited);
+
+	return sr;
+}
+
+void SRPropertyLoader::parseAttribute(const std::string& key, const std::string& value, bool inherited)
+{
+	// Cycle through the possible key names and see if we have a match
+	for (const auto& srKey : _keys) 
+	{
 		// Construct a regex with the number as match variable
-		std::string exprStr = "^" + prefix + _keys[i].key + "_([0-9])+$";
+		std::string exprStr = "^" + _prefix + srKey.key + "_([0-9]+)$";
 		std::regex expr(exprStr);
 		std::smatch matches;
 
@@ -49,72 +56,61 @@ void SRPropertyLoader::parseAttribute(
 			// Retrieve the S/R index number
 			int index = string::convert<int>(matches[1].str());
 
-			// Check if the S/R with this index already exists
-			SREntity::StimResponseMap::iterator found = _srMap.find(index);
-
-			// Create the S/R object, if it doesn't exist yet
-			if (found == _srMap.end()) {
-				// Insert a new SR object with the given index
-				_srMap[index] = StimResponse();
-				_srMap[index].setIndex(index);
-				_srMap[index].setInherited(inherited);
-			}
+			// Ensure the S/R index exists in the list
+			auto& sr = findOrCreate(index, inherited);
 
 			// Check if the property already exists
-			if (!_srMap[index].get(_keys[i].key).empty()) {
+			if (!sr.get(srKey.key).empty())
+			{
 				// already existing, add to the warnings
 				_warnings += "Warning on StimResponse #" + string::to_string(index) +
-							 ": property " + _keys[i].key + " defined more than once.\n";
+							 ": property " + srKey.key + " defined more than once.\n";
 			}
 
 			// Set the property value on the StimResponse object
-			_srMap[index].set(_keys[i].key, value, inherited);
+			sr.set(srKey.key, value, inherited);
 		}
 	}
 
 	// Check the key for a Response Effect definition
 	{
-		std::string responseEffectPrefix =
-			game::current::getValue<std::string>(GKEY_RESPONSE_EFFECT_PREFIX);
-
 		// This should search for something like "sr_effect_2_3_arg3"
 		// (with the optional postfix "_argN" or "_state")
 		std::string exprStr =
-			"^" + prefix + responseEffectPrefix + "([0-9]+)_([0-9]+)(_arg[0-9]+|_state)*$";
+			"^" + _prefix + _responseEffectPrefix + "([0-9]+)_([0-9]+)(_arg[0-9]+|_state)*$";
 		std::regex expr(exprStr);
 		std::smatch matches;
 
-		if (std::regex_match(key, matches, expr)) {
+		if (std::regex_match(key, matches, expr)) 
+		{
 			// The response index
 			int index = string::convert<int>(matches[1].str());
 			// The effect index
 			int effectIndex = string::convert<int>(matches[2].str());
 
-			// Find the Response for this index
-			SREntity::StimResponseMap::iterator found = _srMap.find(index);
-
-			if (found == _srMap.end()) {
-				// Insert a new SR object with the given index
-				_srMap[index] = StimResponse();
-				_srMap[index].setIndex(index);
-				_srMap[index].setInherited(inherited);
-			}
+			// Ensure the S/R index exists in the list
+			auto& sr = findOrCreate(index, inherited);
 
 			// Get the response effect (or create a new one)
-			ResponseEffect& effect = _srMap[index].getResponseEffect(effectIndex);
+			ResponseEffect& effect = sr.getResponseEffect(effectIndex);
 
 			std::string postfix = matches[3];
-			if (postfix.empty()) {
+
+			if (postfix.empty()) 
+			{
 				// No "_arg1" found, the value is the effect name definition
 				effect.setName(value, inherited);
 			}
-			else if (postfix == "_state") {
+			else if (postfix == "_state") 
+			{
 				// This is a state variable
 				effect.setActive(value != "0", inherited);
 			}
-			else {
+			else 
+			{
 				// Get the argument index from the tail
 				int argIndex = string::convert<int>(postfix.substr(4));
+
 				// Load the value into argument with the index <argIndex>
 				effect.setArgument(argIndex, value, inherited);
 			}

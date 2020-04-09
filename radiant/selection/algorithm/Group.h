@@ -6,8 +6,13 @@
 #include <list>
 #include "CommandNotAvailableException.h"
 
-namespace selection {
-	namespace algorithm {
+namespace selection 
+{
+
+class ISelectionGroupManager;
+
+namespace algorithm 
+{
 
 	class ParentPrimitivesToEntityWalker :
 		public SelectionSystem::Visitor,
@@ -138,6 +143,12 @@ namespace selection {
 	void mergeSelectedEntities(const cmd::ArgumentList& args);
 
 	/**
+	 * Returns the selection group manager of the current map's root node.
+	 * This will fail if there is no map root node, check this first.
+	 */
+	ISelectionGroupManager& getMapSelectionGroupManager();
+
+	/**
 	 * Groups the currently selected elements.
 	 * Will throw a CommandNotAvailableException if it cannot execute.
 	 */
@@ -161,5 +172,10 @@ namespace selection {
 	*/
 	void checkUngroupSelectedAvailable();
 
-	} // namespace algorithm
+	// Command targets
+	void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args);
+	void groupSelectedCmd(const cmd::ArgumentList& args);
+	void ungroupSelectedCmd(const cmd::ArgumentList& args);
+
+} // namespace algorithm
 } // namespace selection

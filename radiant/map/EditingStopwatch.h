@@ -50,6 +50,8 @@ private:
 	void onMapEvent(IMap::MapEvent ev);
 	void onRadiantStartup();
 	void onIntervalReached(wxTimerEvent& ev);
+	void readFromMapProperties();
+	void writeToMapProperties();
 };
 
 }

@@ -412,7 +412,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			Patch& sourcePatch = getLastSelectedPatch();
 			GlobalShaderClipboard().setSource(sourcePatch);
 		}
-		catch (InvalidSelectionException e) {
+		catch (const InvalidSelectionException&) {
 			wxutil::Messagebox::ShowError(
 				_("Can't copy Shader. Couldn't retrieve patch."));
 		}
@@ -422,7 +422,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			Face& sourceFace = getLastSelectedFace();
 			GlobalShaderClipboard().setSource(sourceFace);
 		}
-		catch (InvalidSelectionException e) {
+		catch (const InvalidSelectionException&) {
 			wxutil::Messagebox::ShowError(
 				_("Can't copy Shader. Couldn't retrieve face."));
 		}

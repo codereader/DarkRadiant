@@ -90,6 +90,7 @@ public:
 
 	bool isRoot() const override;
 	void setIsRoot(bool isRoot) override;
+	IMapRootNodePtr getRootNode() override;
 
 	void enable(unsigned int state) override;
 	void disable(unsigned int state) override;
@@ -105,7 +106,7 @@ public:
 	virtual void addToLayer(int layerId) override;
     virtual void removeFromLayer(int layerId) override;
 	virtual void moveToLayer(int layerId) override;
-    virtual LayerList getLayers() const override;
+    virtual const LayerList& getLayers() const override;
 	virtual void assignToLayers(const LayerList& newLayers) override;
 
 	virtual void addChildNode(const INodePtr& node) override;

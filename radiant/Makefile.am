@@ -109,6 +109,7 @@ darkradiant_SOURCES = main.cpp \
                       filetypes/FileTypeRegistry.cpp \
                       filters/BasicFilterSystem.cpp \
                       filters/XMLFilter.cpp \
+                      filters/XmlFilterEventAdapter.cpp \
                       fonts/FontLoader.cpp \
                       fonts/GlyphInfo.cpp \
                       fonts/GlyphSet.cpp \
@@ -119,23 +120,26 @@ darkradiant_SOURCES = main.cpp \
                       image/Doom3ImageLoader.cpp \
                       image/ImageLoaderWx.cpp \
                       image/TGALoader.cpp \
-                      mapdoom3/mapdoom3.cpp \
-                      mapdoom3/Quake3MapFormat.cpp \
-                      mapdoom3/Doom3MapFormat.cpp \
-                      mapdoom3/Doom3MapReader.cpp \
-                      mapdoom3/Doom3PrefabFormat.cpp \
-                      mapdoom3/Quake3MapReader.cpp \
-                      mapdoom3/Doom3MapWriter.cpp \
-                      mapdoom3/primitiveparsers/PatchDef2.cpp \
-                      mapdoom3/primitiveparsers/Patch.cpp \
-                      mapdoom3/primitiveparsers/PatchDef3.cpp \
-                      mapdoom3/primitiveparsers/BrushDef3.cpp \
-                      mapdoom3/primitiveparsers/BrushDef.cpp \
-                      mapdoom3/Quake4MapReader.cpp \
-                      mapdoom3/aas/Doom3AasFileLoader.cpp \
-                      mapdoom3/aas/Doom3AasFileSettings.cpp \
-                      mapdoom3/aas/Doom3AasFile.cpp \
-                      mapdoom3/Quake4MapFormat.cpp \
+                      map/MapModules.cpp \
+                      map/format/Quake3MapFormat.cpp \
+                      map/format/Quake4MapFormat.cpp \
+                      map/format/Doom3MapFormat.cpp \
+                      map/format/Doom3MapReader.cpp \
+                      map/format/Doom3PrefabFormat.cpp \
+                      map/format/portable/PortableMapFormat.cpp \
+                      map/format/portable/PortableMapWriter.cpp \
+                      map/format/portable/PortableMapReader.cpp \
+                      map/format/Quake3MapReader.cpp \
+                      map/format/Doom3MapWriter.cpp \
+                      map/format/primitiveparsers/PatchDef2.cpp \
+                      map/format/primitiveparsers/Patch.cpp \
+                      map/format/primitiveparsers/PatchDef3.cpp \
+                      map/format/primitiveparsers/BrushDef3.cpp \
+                      map/format/primitiveparsers/BrushDef.cpp \
+                      map/format/Quake4MapReader.cpp \
+                      map/aas/Doom3AasFileLoader.cpp \
+                      map/aas/Doom3AasFileSettings.cpp \
+                      map/aas/Doom3AasFile.cpp \
                       md5model/MD5Skeleton.cpp \
                       md5model/plugin.cpp \
                       md5model/MD5Model.cpp \
@@ -274,6 +278,8 @@ darkradiant_SOURCES = main.cpp \
                       ui/common/CommandEntry.cpp \
                       ui/common/EntityChooser.cpp \
                       ui/common/MapPreview.cpp \
+                      ui/filters/FilterContextMenu.cpp \
+                      ui/filters/FilterOrthoContextMenuItem.cpp \
                       ui/menu/FiltersMenu.cpp \
                       ui/prefdialog/GameSetupDialog.cpp \
 					  ui/prefdialog/GameSetupPage.cpp \
@@ -320,7 +326,7 @@ darkradiant_SOURCES = main.cpp \
                       uimanager/colourscheme/ColourScheme.cpp \
                       uimanager/ToolbarManager.cpp \
                       uimanager/DialogManager.cpp \
-                      uimanager/FilterMenu.cpp \
+                      ui/filters/FilterMenu.cpp \
                       uimanager/GroupDialog.cpp \
                       uimanager/menu/MenuManager.cpp \
                       uimanager/menu/MenuFolder.cpp \
@@ -348,8 +354,8 @@ darkradiant_SOURCES = main.cpp \
                       textool/item/PatchVertexItem.cpp \
                       textool/TexTool.cpp \
 					  layers/LayerInfoFileModule.cpp \
-                      layers/LayerCommandTarget.cpp \
-                      layers/LayerSystem.cpp \
+                      layers/LayerModule.cpp \
+                      layers/LayerManager.cpp \
 					  layers/LayerUsageBreakdown.cpp \
                       modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
@@ -364,6 +370,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/selectionset/SelectionSetToolmenu.cpp \
 					  selection/selectionset/SelectionSetInfoFileModule.cpp \
                       selection/selectionset/SelectionSet.cpp \
+                      selection/selectionset/SelectionSetModule.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \
@@ -387,6 +394,7 @@ darkradiant_SOURCES = main.cpp \
                       selection/manipulators/RotateManipulator.cpp \
                       selection/manipulators/ManipulatorComponents.cpp \
                       selection/manipulators/ScaleManipulator.cpp \
+					  selection/group/SelectionGroupModule.cpp \
 					  selection/group/SelectionGroupManager.cpp \
 					  selection/group/SelectionGroupInfoFileModule.cpp \
                       selection/manipulators/TranslateManipulator.cpp \
@@ -408,6 +416,7 @@ darkradiant_SOURCES = main.cpp \
                       map/MapPosition.cpp \
                       map/EditingStopwatch.cpp \
                       map/EditingStopwatchInfoFileModule.cpp \
+                      map/MapPropertyInfoFileModule.cpp \
                       map/FindMapElements.cpp \
 					  map/infofile/InfoFileManager.cpp \
 					  map/infofile/InfoFile.cpp \
@@ -418,6 +427,7 @@ darkradiant_SOURCES = main.cpp \
                       map/algorithm/Traverse.cpp \
 					  map/algorithm/MapExporter.cpp \
                       map/algorithm/MapImporter.cpp \
+                      map/algorithm/Import.cpp \
                       map/algorithm/Export.cpp \
                       map/algorithm/Models.cpp \
                       map/CounterManager.cpp \

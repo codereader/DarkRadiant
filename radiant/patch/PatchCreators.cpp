@@ -2,6 +2,7 @@
 
 #include "ifilter.h"
 #include "ilayer.h"
+#include "imap.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
@@ -24,11 +25,11 @@ scene::INodePtr Doom3PatchCreator::createPatch()
 	// this means that patchDef3 = true in the PatchNode constructor.
 	scene::INodePtr node = std::make_shared<PatchNode>(true);
 
-	// Determine the layer patches should be created in
-	int layer = GlobalLayerSystem().getActiveLayer();
-
-	// Move it to the first visible layer
-	node->moveToLayer(layer);
+	if (GlobalMapModule().getRoot())
+	{
+		// All patches are created in the active layer by default
+		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
+	}
 		
 	return node;
 }
@@ -66,11 +67,11 @@ void Doom3PatchCreator::initialiseModule(const ApplicationContext& ctx)
 void Doom3PatchCreator::registerPatchCommands()
 {
 	// First connect the commands to the code
-	GlobalCommandSystem().addCommand("CreatePatchPrefab", patch::algorithm::createPrefab, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("CreatePatchPrefab", patch::algorithm::createPrefab, { cmd::ARGTYPE_STRING });
 
 	// Two optional integer arguments
 	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::algorithm::createSimplePatch,
-		cmd::Signature(cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL));
+		{ cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 
 	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", selection::algorithm::insertPatchColumnsAtEnd);
 	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", selection::algorithm::insertPatchColumnsAtBeginning);
@@ -140,11 +141,11 @@ scene::INodePtr Doom3PatchDef2Creator::createPatch()
 	// The PatchNodeDoom3 constructor takes false == patchDef2
 	scene::INodePtr node = std::make_shared<PatchNode>(false);
 
-	// Determine the layer patches should be created in
-	int layer = GlobalLayerSystem().getActiveLayer();
-
-	// Move it to the first visible layer
-	node->moveToLayer(layer);
+	if (GlobalMapModule().getRoot())
+	{
+		// All patches are created in the active layer by default
+		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
+	}
 		
 	return node;
 }
