@@ -62,7 +62,8 @@ void LightNode::snapto(float snap) {
 	_light.snapto(snap);
 }
 
-AABB LightNode::getSelectAABB() {
+AABB LightNode::getSelectAABB() const 
+{
 	AABB returnValue = _light.lightAABB();
 
 	default_extents(returnValue.extents);
@@ -70,10 +71,6 @@ AABB LightNode::getSelectAABB() {
 	return returnValue;
 }
 
-/*greebo: This is a callback function that gets connected in the constructor
-* Don't know exactly what it does, but it seems to notify the shader cache that the light has moved or
-* something like that.
-*/
 void LightNode::lightChanged() {
 	GlobalRenderSystem().lightChanged(*this);
 }

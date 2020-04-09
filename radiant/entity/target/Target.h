@@ -2,6 +2,7 @@
 
 #include "inode.h"
 #include "ientity.h"
+#include "ilightnode.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
@@ -65,6 +66,14 @@ public:
 			return Vector3(0,0,0);
 		}
 
+		// Check if we're targeting a light, and use its center in that case (#5151)
+		auto lightNode = dynamic_cast<const ILightNode*>(node);
+
+		if (lightNode != nullptr)
+		{
+			return lightNode->getSelectAABB().getOrigin();
+		}
+		
 		return node->worldAABB().getOrigin();
 	}
 };

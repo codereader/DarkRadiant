@@ -18,7 +18,7 @@ public:
     /** 
 	 * greebo: Get the AABB of the Light "Diamond" representation.
      */
-    virtual AABB getSelectAABB() = 0;
+    virtual AABB getSelectAABB() const = 0;
 };
 typedef std::shared_ptr<ILightNode> ILightNodePtr;
 
