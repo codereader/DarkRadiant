@@ -41,7 +41,7 @@ public:
 	std::size_t getHighlightFlags() override;
 
 private:
-    const Vector3& getOwnerPosition() const;
+    Vector3 getOwnerPosition() const;
 };
 
 }
