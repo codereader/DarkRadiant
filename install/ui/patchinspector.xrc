@@ -106,7 +106,7 @@
 					</object>
 					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+						<flag>wxEXPAND|wxRIGHT</flag>
 						<border>12</border>
 						<object class="wxPanel" name="PatchInspectorTessPanel">
 							<style>wxTAB_TRAVERSAL</style>
@@ -123,8 +123,8 @@
 								</object>
 								<object class="sizeritem">
 									<option>1</option>
-									<flag>wxEXPAND</flag>
-									<border>5</border>
+									<flag>wxEXPAND|wxLEFT</flag>
+									<border>12</border>
 									<object class="wxBoxSizer">
 										<orient>wxVERTICAL</orient>
 										<object class="sizeritem">
@@ -138,7 +138,7 @@
 										</object>
 										<object class="sizeritem">
 											<option>0</option>
-											<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+											<flag>wxEXPAND|wxTOP</flag>
 											<border>6</border>
 											<object class="wxFlexGridSizer">
 												<rows>2</rows>
@@ -164,7 +164,7 @@
 														<style>wxSP_ARROW_KEYS</style>
 														<value>1</value>
 														<min>1</min>
-														<max>32</max>
+														<max>16384</max>
 													</object>
 												</object>
 												<object class="sizeritem">
@@ -184,7 +184,7 @@
 														<style>wxSP_ARROW_KEYS</style>
 														<value>1</value>
 														<min>1</min>
-														<max>32</max>
+														<max>16384</max>
 													</object>
 												</object>
 											</object>
