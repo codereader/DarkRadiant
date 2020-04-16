@@ -490,13 +490,4 @@ int LayerManager::getLowestUnusedLayerID()
 	return -1;
 }
 
-void LayerManager::onMapEvent(IMap::MapEvent ev)
-{
-	if (ev == IMap::MapUnloaded || ev == IMap::MapLoading)
-	{ 
-		// Purge layer info before map is loading or after it has been unloaded
-		reset();
-	}
-}
-
 } // namespace scene
