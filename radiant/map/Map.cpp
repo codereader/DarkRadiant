@@ -62,15 +62,10 @@
 namespace map 
 {
 
-    namespace 
-	{
-        const char* const MAP_UNNAMED_STRING = N_("unnamed.map");
-
-        const char* const GKEY_LAST_CAM_POSITION = "/mapFormat/lastCameraPositionKey";
-        const char* const GKEY_LAST_CAM_ANGLE = "/mapFormat/lastCameraAngleKey";
-        const char* const GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
-        const char* const GKEY_PLAYER_HEIGHT = "/defaults/playerHeight";
-    }
+namespace 
+{
+    const char* const MAP_UNNAMED_STRING = N_("unnamed.map");
+}
 
 Map::Map() :
     _lastCopyMapName(""),
@@ -236,103 +231,6 @@ void Map::focusViews(const Vector3& point, const Vector3& angles) {
     GlobalXYWnd().setOrigin(point);
 }
 
-void Map::removeCameraPosition() {
-    const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
-    const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
-
-    if (_worldSpawnNode != NULL) {
-        // Retrieve the entity from the worldspawn node
-        Entity* worldspawn = Node_getEntity(_worldSpawnNode);
-        assert(worldspawn != NULL); // This must succeed
-
-        worldspawn->setKeyValue(keyLastCamPos, "");
-        worldspawn->setKeyValue(keyLastCamAngle, "");
-    }
-}
-
-/* greebo: Saves the current camera position/angles to worldspawn
- */
-void Map::saveCameraPosition()
-{
-    const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
-    const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
-
-    if (_worldSpawnNode != NULL) {
-        // Retrieve the entity from the worldspawn node
-        Entity* worldspawn = Node_getEntity(_worldSpawnNode);
-        assert(worldspawn != NULL); // This must succeed
-
-        ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
-        if (camWnd == NULL) return;
-
-        worldspawn->setKeyValue(keyLastCamPos,
-                                string::to_string(camWnd->getCameraOrigin()));
-        worldspawn->setKeyValue(keyLastCamAngle,
-                                string::to_string(camWnd->getCameraAngles()));
-    }
-}
-
-/** Find the start position in the map and focus the viewport on it.
- */
-void Map::gotoStartPosition()
-{
-    const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
-    const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
-    const std::string eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
-
-    Vector3 angles(0,0,0);
-    Vector3 origin(0,0,0);
-
-    if (_worldSpawnNode != NULL) {
-        // Retrieve the entity from the worldspawn node
-        Entity* worldspawn = Node_getEntity(_worldSpawnNode);
-        assert(worldspawn != NULL); // This must succeed
-
-        // Try to find a saved "last camera position"
-        const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
-
-        if (savedOrigin != "")
-        {
-            // Construct the vector out of the std::string
-            origin = string::convert<Vector3>(savedOrigin);
-
-            angles = string::convert<Vector3>(
-                worldspawn->getKeyValue(keyLastCamAngle)
-            );
-
-            // Focus the view with the default angle
-            focusViews(origin, angles);
-
-            // Remove the saved entity key value so it doesn't appear during map edit
-            removeCameraPosition();
-
-            return;
-        }
-        else
-        {
-            // Get the player start entity
-            Entity* playerStart = Scene_FindEntityByClass(eClassPlayerStart);
-
-            if (playerStart != NULL)
-            {
-                // Get the entity origin
-                origin = string::convert<Vector3>(
-                    playerStart->getKeyValue("origin")
-                );
-
-                // angua: move the camera upwards a bit
-				origin.z() += game::current::getValue<float>(GKEY_PLAYER_HEIGHT);
-
-                // Check for an angle key, and use it if present
-                angles[ui::CAMERA_YAW] = string::convert<float>(playerStart->getKeyValue("angle"), 0);
-            }
-        }
-    }
-
-    // Focus the view with the given parameters
-    focusViews(origin, angles);
-}
-
 scene::INodePtr Map::findWorldspawn()
 {
 	scene::INodePtr worldspawn;
@@ -396,9 +294,6 @@ void Map::load(const std::string& filename) {
     rMessage() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
     rMessage() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
 
-    // Move the view to a start position
-    gotoStartPosition();
-
     // Let the filtersystem update the filtered status of all instances
     GlobalFilterSystem().update();
 
@@ -419,9 +314,6 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     emitMapEvent(MapSaving);
 
-    // Store the camview position into worldspawn
-    saveCameraPosition();
-
     wxutil::ScopeTimer timer("map save");
 
 	blocker.setMessage(_("Saving Map"));
@@ -430,9 +322,6 @@ bool Map::save(const MapFormatPtr& mapFormat)
     bool success = _resource->save(mapFormat);
 
     emitMapEvent(MapSaved);
-
-    // Remove the saved camera position
-    removeCameraPosition();
 
     if (success)
     {

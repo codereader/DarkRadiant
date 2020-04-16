@@ -2,12 +2,17 @@
 
 #include "maplib.h"
 #include "ientity.h"
+#include "gamelib.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "icommandsystem.h"
 #include "string/string.h"
+#include "entitylib.h"
 #include <functional>
+
+#include "camera/GlobalCamera.h"
+#include "xyview/GlobalXYWnd.h"
 
 namespace map
 {
@@ -16,6 +21,11 @@ namespace map
 	{
 		const std::string SAVE_COMMAND_ROOT = "SavePosition";
 		const std::string LOAD_COMMAND_ROOT = "LoadPosition";
+
+		const char* const GKEY_LAST_CAM_POSITION = "/mapFormat/lastCameraPositionKey";
+		const char* const GKEY_LAST_CAM_ANGLE = "/mapFormat/lastCameraAngleKey";
+		const char* const GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
+		const char* const GKEY_PLAYER_HEIGHT = "/defaults/playerHeight";
 
 		unsigned int MAX_POSITIONS = 10;
 	}
@@ -75,6 +85,83 @@ void MapPositionManager::loadPositions()
 	}
 }
 
+void MapPositionManager::removeLastCameraPosition()
+{
+	const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+	const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
+
+	Entity* worldspawn = map::current::getWorldspawn();
+
+	if (worldspawn != nullptr)
+	{
+		worldspawn->setKeyValue(keyLastCamPos, "");
+		worldspawn->setKeyValue(keyLastCamAngle, "");
+	}
+}
+
+void MapPositionManager::saveLastCameraPosition()
+{
+	const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+	const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
+
+	Entity* worldspawn = map::current::getWorldspawn();
+
+	if (worldspawn != nullptr)
+	{
+		ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+		if (camWnd == NULL) return;
+
+		worldspawn->setKeyValue(keyLastCamPos, string::to_string(camWnd->getCameraOrigin()));
+		worldspawn->setKeyValue(keyLastCamAngle, string::to_string(camWnd->getCameraAngles()));
+	}
+}
+
+void MapPositionManager::gotoLastCameraPosition()
+{
+	const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+	const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
+	const std::string eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
+
+	Vector3 angles(0, 0, 0);
+	Vector3 origin(0, 0, 0);
+
+	Entity* worldspawn = map::current::getWorldspawn();
+
+	if (worldspawn != nullptr)
+	{
+		// Try to find a saved "last camera position"
+		const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
+
+		if (!savedOrigin.empty())
+		{
+			// Construct the vector out of the std::string
+			origin = string::convert<Vector3>(savedOrigin);
+			angles = string::convert<Vector3>(worldspawn->getKeyValue(keyLastCamAngle));
+		}
+		else
+		{
+			// Get the player start entity
+			Entity* playerStart = Scene_FindEntityByClass(eClassPlayerStart);
+
+			if (playerStart != NULL)
+			{
+				// Get the entity origin
+				origin = string::convert<Vector3>(playerStart->getKeyValue("origin"));
+
+				// angua: move the camera upwards a bit
+				origin.z() += game::current::getValue<float>(GKEY_PLAYER_HEIGHT);
+
+				// Check for an angle key, and use it if present
+				angles[ui::CAMERA_YAW] = string::convert<float>(playerStart->getKeyValue("angle"), 0);
+			}
+		}
+	}
+
+	// Focus the view with the given parameters
+	GlobalCamera().focusCamera(origin, angles);
+	GlobalXYWnd().setOrigin(origin);
+}
+
 void MapPositionManager::savePositions()
 {
     Entity* worldspawn = map::current::getWorldspawn();
@@ -108,10 +195,12 @@ void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 	{
 		// Store the map positions into the worldspawn spawnargs
 		savePositions();
+		saveLastCameraPosition();
 	}
 	else if (ev == IMap::MapSaved)
 	{
 		// Remove the map positions again after saving
+		removeLastCameraPosition();
 		removePositions();
 	}
 	else if (ev == IMap::MapLoaded)
@@ -120,6 +209,9 @@ void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 		loadPositions();
 		// Remove them, so that the user doesn't get bothered with them
 		removePositions();
+
+		gotoLastCameraPosition();
+		removeLastCameraPosition();
 	}
 }
 

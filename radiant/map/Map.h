@@ -170,18 +170,6 @@ public:
 	 */
 	MapFormatPtr getFormat();
 
-	/** greebo: Removes or saves the camera position (into worldspawn)
-	 */
-	void removeCameraPosition();
-	void saveCameraPosition();
-
-	/** greebo: Sets the camera to the start position. This uses
-	 * 			the information stored in the worlspawn or
-	 * 			the location of the info_player_start entity.
-	 * 			If neither of these two exist, 0,0,0 is used.
-	 */
-	void gotoStartPosition();
-
 	/** greebo: Asks the user if the current changes should be saved.
 	 *
 	 * @returns: true, if the user gave clearance (map was saved, had no

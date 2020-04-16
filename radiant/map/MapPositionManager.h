@@ -30,6 +30,16 @@ public:
 	void removePositions();
 
 private:
+	/** 
+	* greebo: Sets the camera to the start position. This uses the 
+	* information stored in the worlspawn or the location of the 
+	* info_player_start entity. If neither of these two exist, 0,0,0 is used.
+	 */
+	void gotoLastCameraPosition();
+
+	void saveLastCameraPosition();
+	void removeLastCameraPosition();
+
 	void onMapEvent(IMap::MapEvent ev);
 };
 
