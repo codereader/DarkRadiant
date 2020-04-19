@@ -13,6 +13,7 @@
 
 #include "camera/GlobalCamera.h"
 #include "xyview/GlobalXYWnd.h"
+#include "map/Map.h"
 #include "map/algorithm/MapExporter.h"
 
 namespace map
@@ -23,12 +24,82 @@ namespace map
 		const std::string SAVE_COMMAND_ROOT = "SavePosition";
 		const std::string LOAD_COMMAND_ROOT = "LoadPosition";
 
+		const char* const LAST_CAM_POSITION_KEY = "LastCameraPosition";
+		const char* const LAST_CAM_ANGLE_KEY = "LastCameraAngle";
+
 		const char* const GKEY_LAST_CAM_POSITION = "/mapFormat/lastCameraPositionKey";
 		const char* const GKEY_LAST_CAM_ANGLE = "/mapFormat/lastCameraAngleKey";
 		const char* const GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
 		const char* const GKEY_PLAYER_HEIGHT = "/defaults/playerHeight";
 
 		const unsigned int MAX_POSITIONS = 10;
+
+		bool tryLoadLastPositionFromMapRoot(Vector3& origin, Vector3& angles)
+		{
+			auto mapRoot = GlobalMapModule().getRoot();
+
+			if (mapRoot)
+			{
+				const std::string savedOrigin = mapRoot->getProperty(LAST_CAM_POSITION_KEY);
+
+				if (!savedOrigin.empty())
+				{
+					// Construct the vector out of the std::string
+					origin = string::convert<Vector3>(savedOrigin);
+					angles = string::convert<Vector3>(mapRoot->getProperty(LAST_CAM_ANGLE_KEY));
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		bool tryLoadLastPositionFromWorldspawn(Vector3& origin, Vector3& angles)
+		{
+			const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+			const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
+
+			Entity* worldspawn = map::current::getWorldspawn();
+
+			if (worldspawn != nullptr)
+			{
+				// Try to find a saved "last camera position"
+				const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
+
+				if (!savedOrigin.empty())
+				{
+					// Construct the vector out of the std::string
+					origin = string::convert<Vector3>(savedOrigin);
+					angles = string::convert<Vector3>(worldspawn->getKeyValue(keyLastCamAngle));
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		bool tryGetStartPositionFromPlayerStart(Vector3& origin, Vector3& angles)
+		{
+			// Get the player start entity
+			const std::string eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
+			Entity* playerStart = Scene_FindEntityByClass(eClassPlayerStart);
+
+			if (playerStart != nullptr)
+			{
+				// Get the entity origin
+				origin = string::convert<Vector3>(playerStart->getKeyValue("origin"));
+
+				// angua: move the camera upwards a bit
+				origin.z() += game::current::getValue<float>(GKEY_PLAYER_HEIGHT);
+
+				// Check for an angle key, and use it if present
+				angles[ui::CAMERA_YAW] = string::convert<float>(playerStart->getKeyValue("angle"), 0);
+
+				return true;
+			}
+
+			return false;
+		}
 	}
 
 MapPositionManager::MapPositionManager()
@@ -91,7 +162,7 @@ void MapPositionManager::convertLegacyPositions()
 	}
 }
 
-void MapPositionManager::removeLastCameraPosition()
+void MapPositionManager::removeLegacyCameraPosition()
 {
 	const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
 	const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
@@ -107,19 +178,16 @@ void MapPositionManager::removeLastCameraPosition()
 
 void MapPositionManager::saveLastCameraPosition()
 {
-	const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
-	const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
+	auto mapRoot = GlobalMapModule().getRoot();
+	auto camWnd = GlobalCamera().getActiveCamWnd();
 
-	Entity* worldspawn = map::current::getWorldspawn();
-
-	if (worldspawn != nullptr)
+	if (!mapRoot || !camWnd)
 	{
-		ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
-		if (camWnd == NULL) return;
-
-		worldspawn->setKeyValue(keyLastCamPos, string::to_string(camWnd->getCameraOrigin()));
-		worldspawn->setKeyValue(keyLastCamAngle, string::to_string(camWnd->getCameraAngles()));
+		return;
 	}
+
+	mapRoot->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camWnd->getCameraOrigin()));
+	mapRoot->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camWnd->getCameraAngles()));
 }
 
 void MapPositionManager::gotoLastCameraPosition()
@@ -131,41 +199,14 @@ void MapPositionManager::gotoLastCameraPosition()
 	Vector3 angles(0, 0, 0);
 	Vector3 origin(0, 0, 0);
 
-	Entity* worldspawn = map::current::getWorldspawn();
-
-	if (worldspawn != nullptr)
+	if (tryLoadLastPositionFromMapRoot(origin, angles) ||
+		tryLoadLastPositionFromWorldspawn(origin, angles) ||
+		tryGetStartPositionFromPlayerStart(origin, angles))
 	{
-		// Try to find a saved "last camera position"
-		const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
-
-		if (!savedOrigin.empty())
-		{
-			// Construct the vector out of the std::string
-			origin = string::convert<Vector3>(savedOrigin);
-			angles = string::convert<Vector3>(worldspawn->getKeyValue(keyLastCamAngle));
-		}
-		else
-		{
-			// Get the player start entity
-			Entity* playerStart = Scene_FindEntityByClass(eClassPlayerStart);
-
-			if (playerStart != NULL)
-			{
-				// Get the entity origin
-				origin = string::convert<Vector3>(playerStart->getKeyValue("origin"));
-
-				// angua: move the camera upwards a bit
-				origin.z() += game::current::getValue<float>(GKEY_PLAYER_HEIGHT);
-
-				// Check for an angle key, and use it if present
-				angles[ui::CAMERA_YAW] = string::convert<float>(playerStart->getKeyValue("angle"), 0);
-			}
-		}
+		// Focus the view with the given parameters
+		Map::focusViews(origin, angles);
+		return;
 	}
-
-	// Focus the view with the given parameters
-	GlobalCamera().focusCamera(origin, angles);
-	GlobalXYWnd().setOrigin(origin);
 }
 
 void MapPositionManager::loadMapPositions()
@@ -196,13 +237,8 @@ void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 	switch (ev)
 	{
 	case IMap::MapSaving:
-		// Store the last map position into the worldspawn spawnargs
+		// Store the last map position into the map root's properties
 		saveLastCameraPosition();
-		break;
-
-	case IMap::MapSaved:
-		// Remove the map positions again after saving
-		removeLastCameraPosition();
 		break;
 
 	case IMap::MapLoaded:
@@ -216,7 +252,9 @@ void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 		loadMapPositions();
 
 		gotoLastCameraPosition();
-		removeLastCameraPosition();
+
+		// Remove any legacy keyvalues from worldspawn
+		removeLegacyCameraPosition();
 		break;
 
 	case IMap::MapUnloaded:

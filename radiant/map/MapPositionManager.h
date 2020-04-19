@@ -31,7 +31,7 @@ private:
 	void gotoLastCameraPosition();
 
 	void saveLastCameraPosition();
-	void removeLastCameraPosition();
+	void removeLegacyCameraPosition();
 
 	void onMapEvent(IMap::MapEvent ev);
 };
