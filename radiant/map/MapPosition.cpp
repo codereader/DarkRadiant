@@ -7,11 +7,15 @@
 #include "map/Map.h"
 #include "gamelib.h"
 
-namespace map {
+namespace map
+{
 
-    namespace {
-        const std::string GKEY_MAP_POSROOT = "/mapFormat/mapPositionPosKey";
-        const std::string GKEY_MAP_ANGLEROOT = "/mapFormat/mapPositionAngleKey";
+    namespace 
+    {
+        const char* const GKEY_MAP_POSROOT = "/mapFormat/mapPositionPosKey";
+        const char* const GKEY_MAP_ANGLEROOT = "/mapFormat/mapPositionAngleKey";
+        const char* const POSITION_KEY_FORMAT = "MapPosition{0:d}";
+        const char* const ANGLE_KEY_FORMAT = "MapAngle{0:d}";
     }
 
 MapPosition::MapPosition(unsigned int index) :
@@ -24,78 +28,131 @@ MapPosition::MapPosition(unsigned int index) :
     _angleKey = game::current::getValue<std::string>(GKEY_MAP_ANGLEROOT) + string::to_string(_index);
 }
 
-void MapPosition::load(Entity* entity)
+void MapPosition::loadFrom(Entity* entity)
 {
     // Sanity check
-    if (entity != NULL)
-    {
-        const std::string savedPos = entity->getKeyValue(_posKey);
+    if (entity == nullptr) return;
 
-        if (savedPos != "")
-        {
-            // Construct the vectors out of the std::string
-            _position = string::convert<Vector3>(savedPos);
-            _angle = string::convert<Vector3>(entity->getKeyValue(_angleKey));
-        }
+    const std::string savedPos = entity->getKeyValue(_posKey);
+
+    if (!savedPos.empty())
+    {
+        // Parse the vectors from std::string
+        _position = string::convert<Vector3>(savedPos);
+        _angle = string::convert<Vector3>(entity->getKeyValue(_angleKey));
     }
 }
 
-void MapPosition::save(Entity* entity)
+void MapPosition::removeFrom(Entity* entity)
 {
     // Sanity check
-    if (entity == NULL) return;
-
-    if (!empty())
+    if (entity != nullptr)
     {
-        rMessage() << "Saving to key: " << _posKey << std::endl;
-        entity->setKeyValue(_posKey, string::to_string(_position));
-        entity->setKeyValue(_angleKey, string::to_string(_angle));
-    }
-    else
-    {
-        // This is an empty position, clear the values
-        remove(entity);
-    }
-}
-
-void MapPosition::remove(Entity* entity) {
-    // Sanity check
-    if (entity != NULL) {
         entity->setKeyValue(_posKey, "");
         entity->setKeyValue(_angleKey, "");
     }
 }
 
-void MapPosition::clear() {
+void MapPosition::loadFrom(const scene::IMapRootNodePtr& root)
+{
+    assert(root);
+
+    auto pos = root->getProperty(fmt::format(POSITION_KEY_FORMAT, _index));
+
+    if (!pos.empty())
+    {
+        // Parse the vectors from std::string
+        _position = string::convert<Vector3>(pos);
+
+        auto angle = root->getProperty(fmt::format(ANGLE_KEY_FORMAT, _index));
+        _angle = string::convert<Vector3>(angle);
+    }
+}
+
+void MapPosition::saveTo(const scene::IMapRootNodePtr& root)
+{
+    assert(root);
+
+    if (!empty())
+    {
+        root->setProperty(fmt::format(POSITION_KEY_FORMAT, _index), string::to_string(_position));
+        root->setProperty(fmt::format(ANGLE_KEY_FORMAT, _index), string::to_string(_angle));
+    }
+    else
+    {
+        removeFrom(root);
+    }
+}
+
+void MapPosition::removeFrom(const scene::IMapRootNodePtr& root)
+{
+    root->removeProperty(fmt::format(POSITION_KEY_FORMAT, _index));
+    root->removeProperty(fmt::format(ANGLE_KEY_FORMAT, _index));
+}
+
+void MapPosition::clear()
+{
     _position = Vector3(0,0,0);
     _angle = Vector3(0,0,0);
 }
 
-bool MapPosition::empty() const {
-    return (_position == Vector3(0,0,0) && _angle == Vector3(0,0,0));
+bool MapPosition::empty() const 
+{
+    return _position == Vector3(0,0,0) && _angle == Vector3(0,0,0);
 }
 
-void MapPosition::store(const cmd::ArgumentList& args) {
+void MapPosition::store(const cmd::ArgumentList& args)
+{
+    auto mapRoot = GlobalMapModule().getRoot();
+
+    if (!mapRoot)
+    {
+        rError() << "Cannot store map position, no map loaded." << std::endl;
+        return;
+    }
+
     rMessage() << "Storing map position #" << _index << std::endl;
-    ui::CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
+    
+    auto camwnd = GlobalCamera().getActiveCamWnd();
 
-    if (camwnd != NULL) {
-        _position = camwnd->getCameraOrigin();
-        _angle = camwnd->getCameraAngles();
+    if (!camwnd)
+    {
+        rWarning() << "MapPosition: Couldn't find Camera." << std::endl;
+        return;
+    }
 
-        // Tag the map as modified
-        GlobalMap().setModified(true);
-    }
-    else {
-        rError() << "MapPosition: Warning: Couldn't find Camera." << std::endl;
-    }
+    _position = camwnd->getCameraOrigin();
+    _angle = camwnd->getCameraAngles();
+
+    saveTo(mapRoot);
+
+    // Tag the map as modified
+    GlobalMap().setModified(true);
 }
 
-void MapPosition::recall(const cmd::ArgumentList& args) {
-    if (!empty()) {
+void MapPosition::recall(const cmd::ArgumentList& args) 
+{
+    auto mapRoot = GlobalMapModule().getRoot();
+
+    if (!mapRoot)
+    {
+        rError() << "Cannot recall map position, no map loaded." << std::endl;
+        return;
+    }
+
+    // Refresh our local data from the properties
+    loadFrom(mapRoot);
+
+    if (!empty())
+    {
         rMessage() << "Restoring map position #" << _index << std::endl;
+
         // Focus the view with the default angle
         Map::focusViews(_position, _angle);
+    }
+    else
+    {
+        rMessage() << "Map position #" << _index << " has not been set" << std::endl;
     }
 }
 

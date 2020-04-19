@@ -13,6 +13,7 @@
 
 #include "camera/GlobalCamera.h"
 #include "xyview/GlobalXYWnd.h"
+#include "map/algorithm/MapExporter.h"
 
 namespace map
 {
@@ -27,10 +28,9 @@ namespace map
 		const char* const GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
 		const char* const GKEY_PLAYER_HEIGHT = "/defaults/playerHeight";
 
-		unsigned int MAX_POSITIONS = 10;
+		const unsigned int MAX_POSITIONS = 10;
 	}
 
-// Constructor
 MapPositionManager::MapPositionManager()
 {
 	GlobalMapModule().signal_mapEvent().connect(
@@ -65,23 +65,29 @@ MapPositionManager::MapPositionManager()
 	}
 }
 
-void MapPositionManager::loadPositions()
+void MapPositionManager::convertLegacyPositions()
 {
 	Entity* worldspawn = map::current::getWorldspawn();
+	auto mapRoot = GlobalMapModule().getRoot();
 
-	if (worldspawn != nullptr) 
+	if (worldspawn == nullptr || !mapRoot)
 	{
-		for (unsigned int i = 1; i <= MAX_POSITIONS; ++i)
-		{
-			if (_positions[i])
-			{
-				_positions[i]->load(worldspawn);
-			}
-		}
+		return; // no worldspawn or root
 	}
-	else
+		
+	for (unsigned int i = 1; i <= MAX_POSITIONS; i++)
 	{
-		rError() << "MapPositionManager: Could not locate worldspawn entity.\n";
+		MapPosition pos(i);
+
+		pos.loadFrom(worldspawn);
+
+		if (!pos.empty() && mapRoot)
+		{
+			rMessage() << "Converting legacy map position #" << i << std::endl;
+			pos.saveTo(mapRoot);
+
+			pos.removeFrom(worldspawn);
+		}
 	}
 }
 
@@ -162,57 +168,61 @@ void MapPositionManager::gotoLastCameraPosition()
 	GlobalXYWnd().setOrigin(origin);
 }
 
-void MapPositionManager::savePositions()
+void MapPositionManager::loadMapPositions()
 {
-    Entity* worldspawn = map::current::getWorldspawn();
+	auto mapRoot = GlobalMapModule().getRoot();
 
-	for (unsigned int i = 1; i <= MAX_POSITIONS; ++i)
+	if (!mapRoot)
 	{
-		if (_positions[i])
-		{
-			_positions[i]->save(worldspawn);
-		}
+		return;
+	}
+
+	for (const auto& position : _positions)
+	{
+		position.second->loadFrom(mapRoot);
 	}
 }
 
-void MapPositionManager::removePositions()
+void MapPositionManager::clearPositions()
 {
-	// Find the worldspawn node
-    Entity* worldspawn = map::current::getWorldspawn();
-
-	for (unsigned int i = 1; i <= MAX_POSITIONS; ++i) 
+	for (const auto& position : _positions)
 	{
-		if (_positions[i])
-		{
-			_positions[i]->remove(worldspawn);
-		}
+		position.second->clear();
 	}
 }
 
 void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IMap::MapSaving)
+	switch (ev)
 	{
-		// Store the map positions into the worldspawn spawnargs
-		savePositions();
+	case IMap::MapSaving:
+		// Store the last map position into the worldspawn spawnargs
 		saveLastCameraPosition();
-	}
-	else if (ev == IMap::MapSaved)
-	{
+		break;
+
+	case IMap::MapSaved:
 		// Remove the map positions again after saving
 		removeLastCameraPosition();
-		removePositions();
-	}
-	else if (ev == IMap::MapLoaded)
-	{
-		// Load the stored map positions from the worldspawn entity
-		loadPositions();
-		// Remove them, so that the user doesn't get bothered with them
-		removePositions();
+		break;
+
+	case IMap::MapLoaded:
+		// Load legacy positions from the worldspawn entity
+		// and move them, from now on everything
+		// will be stored to the root node's property bag
+		convertLegacyPositions();
+
+		// After converting the legacy ones, load the positions
+		// from the map root, these take precedence
+		loadMapPositions();
 
 		gotoLastCameraPosition();
 		removeLastCameraPosition();
-	}
+		break;
+
+	case IMap::MapUnloaded:
+		clearPositions();
+		break;
+	};
 }
 
 } // namespace map

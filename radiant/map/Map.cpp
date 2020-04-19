@@ -830,6 +830,7 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 
 void Map::shutdownModule()
 {
+    MapExporter::cleanupEvents();
 	_scaledModelExporter.shutdown();
 
 	GlobalSceneGraph().removeSceneObserver(this);

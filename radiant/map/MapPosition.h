@@ -1,14 +1,15 @@
-#ifndef MAPPOSITION_H_
-#define MAPPOSITION_H_
+#pragma once
 
 #include <string>
 #include "icommandsystem.h"
+#include "imap.h"
 #include "math/Vector3.h"
 #include <memory>
 
 class Entity;
 
-namespace map {
+namespace map 
+{
 
 /** greebo: An instance of such a class manages a single Map Position.
  *
@@ -33,18 +34,19 @@ public:
 
 	/** greebo: Loads the position from the given entity
 	 */
-	void load(Entity* entity);
-
-	/** greebo: Saves the position to the given entity.
-	 *
-	 * If this position is empty, the keys/values are
-	 * removed from the entity.
-	 */
-	void save(Entity* entity);
+	void loadFrom(Entity* entity);
 
 	/** greebo: Removes the values from the given entity
 	 */
-	void remove(Entity* entity);
+	void removeFrom(Entity* entity);
+
+	void loadFrom(const scene::IMapRootNodePtr& root);
+
+	// Store the current position to the map root
+	void saveTo(const scene::IMapRootNodePtr& root);
+
+	// Remove the current position from the given node
+	void removeFrom(const scene::IMapRootNodePtr& root);
 
 	/** greebo: Resets the position/angles to 0,0,0
 	 */
@@ -67,5 +69,3 @@ public:
 typedef std::shared_ptr<MapPosition> MapPositionPtr;
 
 } // namespace map
-
-#endif /*MAPPOSITION_H_*/
