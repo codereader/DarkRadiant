@@ -7,6 +7,8 @@
 #include "imodelsurface.h"
 #include <vector>
 
+#include "math/Vector3.h"
+
 /* Forward decls */
 class AABB;
 class ModelSkin;
@@ -110,6 +112,9 @@ public:
 	// Returns true if this model's scale has been modified
 	// and needs to be written to file
 	virtual bool hasModifiedScale() = 0;
+
+	// Returns the current scale of this model
+	virtual Vector3 getModelScale() = 0;
 };
 typedef std::shared_ptr<ModelNode> ModelNodePtr;
 

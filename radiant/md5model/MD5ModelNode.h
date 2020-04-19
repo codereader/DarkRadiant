@@ -35,6 +35,7 @@ public:
 	const model::IModel& getIModel() const override;
 	model::IModel& getIModel() override;
 	bool hasModifiedScale() override;
+	Vector3 getModelScale() override;
 
 	void lightsChanged();
 
