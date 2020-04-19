@@ -800,6 +800,7 @@ const StringSet& Map::getDependencies() const
 		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		_dependencies.insert(MODULE_FILETYPES);
+		_dependencies.insert(MODULE_MAPRESOURCEMANAGER);
     }
 
     return _dependencies;
@@ -830,7 +831,6 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 
 void Map::shutdownModule()
 {
-    MapExporter::cleanupEvents();
 	_scaledModelExporter.shutdown();
 
 	GlobalSceneGraph().removeSceneObserver(this);

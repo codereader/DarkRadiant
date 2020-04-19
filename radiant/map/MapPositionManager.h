@@ -30,10 +30,12 @@ private:
 	 */
 	void gotoLastCameraPosition();
 
-	void saveLastCameraPosition();
+	void saveLastCameraPosition(const scene::IMapRootNodePtr& root);
 	void removeLegacyCameraPosition();
 
 	void onMapEvent(IMap::MapEvent ev);
+
+	void onPreMapExport(const scene::IMapRootNodePtr& root);
 };
 
 } // namespace map

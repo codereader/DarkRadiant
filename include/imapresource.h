@@ -4,6 +4,8 @@
 #include "imodule.h"
 #include "imap.h"
 
+#include <sigc++/signal.h>
+
 namespace map 
 { 
 	class MapFormat; 
@@ -47,9 +49,19 @@ public:
 	 * Load the named map resource from VFS or from a physical path.
 	 */
 	virtual IMapResourcePtr loadFromPath(const std::string& path) = 0;
+
+	// Signal emitted when a MapExport is starting / is finished
+	typedef sigc::signal<void, const scene::IMapRootNodePtr&> ExportEvent;
+
+	// Event sent out right before a scene is sent to the exporter
+	virtual ExportEvent& signal_onResourceExporting() = 0;
+
+	// Event sent out right after a scene is sent to the exporter
+	virtual ExportEvent& signal_onResourceExported() = 0;
 };
 
-inline IMapResourceManager& GlobalMapResourceManager() {
+inline IMapResourceManager& GlobalMapResourceManager()
+{
 	// Cache the reference locally
 	static IMapResourceManager& _mapResourceManager(
 		*std::static_pointer_cast<IMapResourceManager>(

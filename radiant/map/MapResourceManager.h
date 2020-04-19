@@ -9,8 +9,15 @@ namespace map
 class MapResourceManager :
 	public IMapResourceManager
 {
+private:
+	ExportEvent _resourceExporting;
+	ExportEvent _resourceExported;
+
 public:
 	IMapResourcePtr loadFromPath(const std::string& path) override;
+
+	ExportEvent& signal_onResourceExporting() override;
+	ExportEvent& signal_onResourceExported() override;
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const override;

@@ -55,11 +55,6 @@ private:
 	std::size_t _entityNum;
 	std::size_t _primitiveNum;
 
-	typedef sigc::signal<void, const scene::IMapRootNodePtr&> MapExportEvent;
-
-	static MapExportEvent _preExportSignal;
-	static MapExportEvent _postExportSignal;
-
 public:
 	// The constructor prepares the scene and the output stream
 	MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
@@ -81,14 +76,6 @@ public:
 	// NodeVisitor implementation, is called by the traversal func passed to MapResource
 	bool pre(const scene::INodePtr& node) override;
 	void post(const scene::INodePtr& node) override;
-
-	// Event to get notified before a scene is exported (preparation)
-	static MapExportEvent& signal_preExport();
-
-	// Event to get notified after a scene has been exported (cleanup)
-	static MapExportEvent& signal_postExport();
-
-	static void cleanupEvents();
 
 private:
 	// Common code shared by the constructors

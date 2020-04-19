@@ -6,6 +6,7 @@
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
+#include "imapresource.h"
 #include "icommandsystem.h"
 #include "string/string.h"
 #include "entitylib.h"
@@ -14,7 +15,6 @@
 #include "camera/GlobalCamera.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/Map.h"
-#include "map/algorithm/MapExporter.h"
 
 namespace map
 {
@@ -108,6 +108,10 @@ MapPositionManager::MapPositionManager()
 		sigc::mem_fun(this, &MapPositionManager::onMapEvent)
 	);
 
+	GlobalMapResourceManager().signal_onResourceExporting().connect(sigc::mem_fun(
+		this, &MapPositionManager::onPreMapExport
+	));
+
 	// Create the MapPosition objects and add the commands to the eventmanager
 	for (unsigned int i = 1; i <= MAX_POSITIONS; i++)
 	{
@@ -176,18 +180,17 @@ void MapPositionManager::removeLegacyCameraPosition()
 	}
 }
 
-void MapPositionManager::saveLastCameraPosition()
+void MapPositionManager::saveLastCameraPosition(const scene::IMapRootNodePtr& root)
 {
-	auto mapRoot = GlobalMapModule().getRoot();
 	auto camWnd = GlobalCamera().getActiveCamWnd();
 
-	if (!mapRoot || !camWnd)
+	if (!root || !camWnd)
 	{
 		return;
 	}
 
-	mapRoot->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camWnd->getCameraOrigin()));
-	mapRoot->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camWnd->getCameraAngles()));
+	root->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camWnd->getCameraOrigin()));
+	root->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camWnd->getCameraAngles()));
 }
 
 void MapPositionManager::gotoLastCameraPosition()
@@ -236,11 +239,6 @@ void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 {
 	switch (ev)
 	{
-	case IMap::MapSaving:
-		// Store the last map position into the map root's properties
-		saveLastCameraPosition();
-		break;
-
 	case IMap::MapLoaded:
 		// Load legacy positions from the worldspawn entity
 		// and move them, from now on everything
@@ -261,6 +259,12 @@ void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 		clearPositions();
 		break;
 	};
+}
+
+void MapPositionManager::onPreMapExport(const scene::IMapRootNodePtr& root)
+{
+	// Before any map is exported, save the last cam position to its root node
+	saveLastCameraPosition(root);
 }
 
 } // namespace map

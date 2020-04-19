@@ -6,6 +6,7 @@
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ientity.h"
+#include "imapresource.h"
 #include "imap.h"
 #include "igroupnode.h"
 #include "imainframe.h"
@@ -24,9 +25,6 @@ namespace map
 		const char* const RKEY_FLOAT_PRECISION = "/mapFormat/floatPrecision";
 		const char* const RKEY_MAP_SAVE_STATUS_INTERLEAVE = "user/ui/map/saveStatusInterleave";
 	}
-
-MapExporter::MapExportEvent MapExporter::_preExportSignal;
-MapExporter::MapExportEvent MapExporter::_postExportSignal;
 
 MapExporter::MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root, std::ostream& mapStream, std::size_t nodeCount) :
 	_writer(writer),
@@ -85,16 +83,6 @@ void MapExporter::construct()
 
 	// Add origin to func_* children before writing
 	prepareScene();
-}
-
-MapExporter::MapExportEvent& MapExporter::signal_preExport()
-{
-	return _preExportSignal;
-}
-
-MapExporter::MapExportEvent& MapExporter::signal_postExport()
-{
-	return _postExportSignal;
 }
 
 void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse)
@@ -272,14 +260,14 @@ void MapExporter::prepareScene()
 	// Re-evaluate all brushes, to update the Winding calculations
 	recalculateBrushWindings();
 
-	// Emit the pre-export event to given notifiers a chance to prepare the scene
-	_preExportSignal.emit(_root);
+	// Emit the pre-export event to give subscribers a chance to prepare the scene
+	GlobalMapResourceManager().signal_onResourceExporting().emit(_root);
 }
 
 void MapExporter::finishScene()
 {
-	// Emit the post-export event to given notifiers a chance to cleanup the scene
-	_postExportSignal.emit(_root);
+	// Emit the post-export event to give subscribers a chance to cleanup the scene
+	GlobalMapResourceManager().signal_onResourceExported().emit(_root);
 
 	addOriginToChildPrimitives(_root);
 
@@ -300,12 +288,6 @@ void MapExporter::recalculateBrushWindings()
 
 		return true;
 	});
-}
-
-void MapExporter::cleanupEvents()
-{
-	_preExportSignal.clear();
-	_postExportSignal.clear();
 }
 
 } // namespace
