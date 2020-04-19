@@ -97,6 +97,8 @@ void MapPropertyInfoFileModule::parseBlock(const std::string& blockName, parser:
 			string::replace_all(key, "&quot;", "\"");
 			string::replace_all(value, "&quot;", "\"");
 
+			_store.setProperty(key, value);
+
 			tok.assertNextToken("}");
 		}
 		else if (token == "{")
