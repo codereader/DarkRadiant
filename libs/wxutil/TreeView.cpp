@@ -49,7 +49,8 @@ private:
 };
 
 TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
-	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)
+	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style),
+	_collapseRecursively(true)
 {
 	EnableAutoColumnWidthFix();
 
@@ -58,8 +59,9 @@ TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
 		AssociateModel(model.get());
 	}
 
-	Bind(wxEVT_CHAR, std::bind(&TreeView::_onChar, this, std::placeholders::_1));
-	Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, std::bind(&TreeView::_onItemActivated, this, std::placeholders::_1));	
+	Bind(wxEVT_CHAR, &TreeView::_onChar, this);
+	Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &TreeView::_onItemActivated, this);	
+	Bind(wxEVT_DATAVIEW_ITEM_COLLAPSING, &TreeView::_onItemCollapsing, this);
 }
 
 TreeView* TreeView::Create(wxWindow* parent, long style)
@@ -92,11 +94,11 @@ void TreeView::EnableAutoColumnWidthFix(bool enable)
 {
 	if (enable)
 	{
-		Connect(wxEVT_DATAVIEW_ITEM_EXPANDED, wxDataViewEventHandler(TreeView::_onItemExpanded), NULL, this);
+		Bind(wxEVT_DATAVIEW_ITEM_EXPANDED, &TreeView::_onItemExpanded, this);
 	}
 	else
 	{
-		Disconnect(wxEVT_DATAVIEW_ITEM_EXPANDED, wxDataViewEventHandler(TreeView::_onItemExpanded), NULL, this);
+		Unbind(wxEVT_DATAVIEW_ITEM_EXPANDED, &TreeView::_onItemExpanded, this);
 	}
 }
 
@@ -128,6 +130,11 @@ void TreeView::ExpandTopLevelItems()
 	{
 		Expand(item);
 	}
+}
+
+void TreeView::EnableRecursiveCollapse(bool enabled)
+{
+	_collapseRecursively = enabled;
 }
 
 void TreeView::ResetSortingOnAllColumns()
@@ -179,6 +186,32 @@ void TreeView::Rebuild()
     }
 }
 #endif
+
+void TreeView::CollapseChildren(const wxDataViewItem& item)
+{
+	// Collapse all children that are currently expanded
+	wxDataViewItemArray children;
+	GetModel()->GetChildren(item, children);
+
+	for (const auto& child : children)
+	{
+		if (IsExpanded(child))
+		{
+			Collapse(child);
+		}
+	}
+}
+
+void TreeView::_onItemCollapsing(wxDataViewEvent& ev)
+{
+	ev.Skip();
+
+	if (_collapseRecursively && GetModel() != nullptr)
+	{
+		CollapseChildren(ev.GetItem());
+		return;
+	}
+}
 
 void TreeView::_onItemExpanded(wxDataViewEvent& ev)
 {
