@@ -413,6 +413,8 @@ void TextureBrowser::keyChanged()
         _filter->Hide();
     }
 
+    Layout();
+
     queueUpdate();
     _originInvalid = true;
 }
