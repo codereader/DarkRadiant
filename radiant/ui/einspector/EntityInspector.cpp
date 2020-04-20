@@ -40,6 +40,7 @@
 
 #include <functional>
 #include "string/replace.h"
+#include "registry/Widgets.h"
 #include <regex>
 
 namespace ui {
@@ -52,6 +53,8 @@ namespace
 
     const std::string RKEY_ROOT = "user/ui/entityInspector/";
     const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
+    const std::string RKEY_SHOW_HELP_AREA = RKEY_ROOT + "showHelpArea";
+    const std::string RKEY_SHOW_INHERITED_PROPERTIES = RKEY_ROOT + "showInheritedProperties";
 }
 
 EntityInspector::EntityInspector() :
@@ -80,11 +83,14 @@ void EntityInspector::construct()
     wxBoxSizer* optionsHBox = new wxBoxSizer(wxHORIZONTAL);
 
     _showInheritedCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show inherited properties"));
-    _showInheritedCheckbox->Bind(wxEVT_CHECKBOX, &EntityInspector::_onToggleShowInherited, this);
+    _showInheritedCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
+        handleShowInheritedChanged();
+    });
     
     _showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
-    _showHelpColumnCheckbox->SetValue(false);
-    _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, &EntityInspector::_onToggleShowHelpIcons, this);
+    _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
+        handleShowHelpTextChanged();
+    });
 
     _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
     _primitiveNumLabel->SetFont(_primitiveNumLabel->GetFont().Bold());
@@ -110,6 +116,13 @@ void EntityInspector::construct()
     _mainWidget->GetSizer()->Add(_helpText, 0, wxEXPAND);
 
     _helpText->Hide();
+
+    // Connect to registry key and handle the loaded value
+    registry::bindWidget(_showHelpColumnCheckbox, RKEY_SHOW_HELP_AREA);
+    registry::bindWidget(_showInheritedCheckbox, RKEY_SHOW_INHERITED_PROPERTIES);
+
+    handleShowInheritedChanged();
+    handleShowHelpTextChanged();
     
     // Reload the information from the registry
     restoreSettings();
@@ -921,7 +934,7 @@ void EntityInspector::_onEntryActivate(wxCommandEvent& ev)
     _keyEntry->SetFocus();
 }
 
-void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
+void EntityInspector::handleShowInheritedChanged()
 {
     if (_showInheritedCheckbox->IsChecked())
     {
@@ -933,7 +946,7 @@ void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
     }
 }
 
-void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
+void EntityInspector::handleShowHelpTextChanged()
 {
     bool helpIsVisible = _showHelpColumnCheckbox->IsChecked();
 
@@ -1124,8 +1137,14 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 // Append inherited (entityclass) properties
 void EntityInspector::addClassProperties()
 {
-    assert(!_selectedEntity.expired());
-    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+    auto selectedNode = _selectedEntity.lock();
+
+    if (!selectedNode)
+    {
+        return;
+    }
+
+    Entity* selectedEntity = Node_getEntity(selectedNode);
 
     // Get the entityclass for the current entity
     std::string className = selectedEntity->getKeyValue("classname");
