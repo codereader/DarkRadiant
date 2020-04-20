@@ -66,49 +66,12 @@ public:
 
     bool isVisible()
     {
-        if (!material)
-        {
-            return false;
-        }
-
-        if (!string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
-        {
-            return false;
-        }
-
-        if (_owner._hideUnused && !material->IsInUse())
-        {
-            return false;
-        }
-
-        if (!_owner.getFilter().empty())
-        {
-            std::string textureNameCache(material->getName());
-            std::string textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary material->getName() here
-
-            if (_owner._filterIgnoresTexturePath)
-            {
-				std::size_t lastSlash = textureName.find_last_of('/');
-
-                if (lastSlash != std::string::npos)
-                {
-					textureName.erase(0, lastSlash + 1);
-                }
-            }
-
-			string::to_lower(textureName);
-
-            // case insensitive substring match
-            if (textureName.find(string::to_lower_copy(_owner.getFilter())) == std::string::npos)
-                return false;
-        }
-
-        return true;
+        return _owner.materialIsVisible(material);
     }
 
     void render()
     {
-        if (!_owner.materialIsVisible(material))
+        if (!isVisible())
         {
             return;
         }
