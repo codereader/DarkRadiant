@@ -1,6 +1,7 @@
 #include "ModelScalePreserver.h"
 
 #include "imapresource.h"
+#include "itextstream.h"
 #include "string/convert.h"
 
 namespace map
@@ -23,6 +24,11 @@ ModelScalePreserver::ModelScalePreserver() :
 	);
 	GlobalMapResourceManager().signal_onResourceExported().connect(
 		sigc::mem_fun(this, &ModelScalePreserver::onResourceExported)
+	);
+
+	// After map loading this class will try to reconstruct the scale
+	GlobalMapModule().signal_mapEvent().connect(
+		sigc::mem_fun(this, &ModelScalePreserver::onMapEvent)
 	);
 }
 
@@ -58,23 +64,74 @@ void ModelScalePreserver::onResourceExporting(const scene::IMapRootNodePtr& root
 	// persist that value in the exported scene.
 	// In "regular" map saves, all models already have been processed here at this point,
 	// and their scale is reset, so in this case the following traversal does nothing.
-	forEachScaledModel(root, [](Entity& entity, model::ModelNode& model)
+	forEachScaledModel(root, [this](Entity& entity, model::ModelNode& model)
 	{
 		// Persist the modified scale by placing a special editor spawnarg
-		entity.setKeyValue(MODELSCALE_KEY, string::to_string(model.getModelScale()));
+		entity.setKeyValue(_modelScaleKey, string::to_string(model.getModelScale()));
 	});
 }
 
 void ModelScalePreserver::onResourceExported(const scene::IMapRootNodePtr& root)
 {
 	// In this post-export event, we remove any scale spawnargs added earlier
-	forEachScaledModel(root, [](Entity& entity, model::ModelNode& model)
+	forEachScaledModel(root, [this](Entity& entity, model::ModelNode& model)
 	{
-		if (!entity.getKeyValue(MODELSCALE_KEY).empty())
+		if (!entity.getKeyValue(_modelScaleKey).empty())
 		{
-			entity.setKeyValue(MODELSCALE_KEY, "");
+			entity.setKeyValue(_modelScaleKey, "");
 		}
 	});
+}
+
+void ModelScalePreserver::restoreModelScale(const scene::IMapRootNodePtr& root)
+{
+	root->foreachNode([this](const scene::INodePtr& node)
+	{
+		if (Node_isEntity(node))
+		{
+			Entity* entity = Node_getEntity(node);
+
+			// Search for the editor_ key and apply the scale if found
+			auto savedScale = entity->getKeyValue(_modelScaleKey);
+
+			if (!savedScale.empty())
+			{
+				Vector3 scale = string::convert<Vector3>(savedScale);
+
+				// Find any model nodes below that one
+				node->foreachNode([&](const scene::INodePtr& child)
+				{
+					model::ModelNodePtr model = Node_getModel(child);
+					ITransformablePtr transformable = Node_getTransformable(child);
+
+					if (model && transformable)
+					{
+						rMessage() << "Restoring model scale on node " << child->name() << std::endl;
+
+						transformable->setType(TRANSFORM_PRIMITIVE);
+						transformable->setScale(scale);
+						transformable->freezeTransform();
+					}
+
+					return true;
+				});
+
+				// Clear the spawnarg now that we've applied it
+				entity->setKeyValue(_modelScaleKey, "");
+			}
+		}
+
+		return true;
+	});
+}
+
+void ModelScalePreserver::onMapEvent(IMap::MapEvent ev)
+{
+	if (ev == IMap::MapLoaded)
+	{
+		// After loading, restore the scale if it gets recovered
+		restoreModelScale(GlobalMapModule().getRoot());
+	}
 }
 
 }

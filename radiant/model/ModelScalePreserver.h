@@ -38,9 +38,12 @@ private:
     void forEachScaledModel(const scene::IMapRootNodePtr& root, 
         const std::function<void(Entity&, model::ModelNode&)>& func);
 
-	void onResourceExporting(const scene::IMapRootNodePtr& root);
+    void onResourceExporting(const scene::IMapRootNodePtr& root);
+    void onResourceExported(const scene::IMapRootNodePtr& root);
 
-	void onResourceExported(const scene::IMapRootNodePtr& root);
+    void restoreModelScale(const scene::IMapRootNodePtr& root);
+
+    void onMapEvent(IMap::MapEvent ev);
 };
 
 }
