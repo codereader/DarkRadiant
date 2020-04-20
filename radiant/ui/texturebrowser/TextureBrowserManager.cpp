@@ -66,6 +66,7 @@ void TextureBrowserManager::registerPreferencePage()
     page.appendSpinner(_("Max shadername length"), RKEY_TEXTURE_MAX_NAME_LENGTH, 4, 100, 1);
 
     page.appendCheckBox(_("Show Texture Filter"), RKEY_TEXTURE_SHOW_FILTER);
+    page.appendCheckBox(_("Show \"Other Materials\""), RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
 }
 
 // Static command target

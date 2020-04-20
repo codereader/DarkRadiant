@@ -220,11 +220,13 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
+    _showOtherMaterials(registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
     _maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH)),
     _updateNeeded(true)
 {
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
+    observeKey(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     observeKey(RKEY_TEXTURE_UNIFORM_SIZE);
     observeKey(RKEY_TEXTURE_SHOW_SCROLLBAR);
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
@@ -386,6 +388,7 @@ void TextureBrowser::filterChanged()
 void TextureBrowser::keyChanged()
 {
     _hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
+    _showOtherMaterials = registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     _showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);
     _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
     _showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
@@ -519,7 +522,7 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
         return false;
     }
 
-    if (!string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
+    if (!_showOtherMaterials && !string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
     {
         return false;
     }
