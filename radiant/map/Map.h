@@ -22,6 +22,8 @@ class TextInputStream;
 namespace map
 {
 
+class ModelScalePreserver;
+
 /// Main class representing the current map
 class Map :
 	public IMap,
@@ -46,6 +48,7 @@ class Map :
 	std::unique_ptr<StartupMapLoader> _startupMapLoader;
 	ScaledModelExporter _scaledModelExporter;
 	std::unique_ptr<MapPositionManager> _mapPositionManager;
+	std::unique_ptr<ModelScalePreserver> _modelScalePreserver;
 
     // Map save timer, for displaying "changes from last n minutes will be lost"
     // messages

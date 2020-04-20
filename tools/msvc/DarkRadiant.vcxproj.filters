@@ -1609,6 +1609,9 @@
     <ClCompile Include="..\..\radiant\filters\XmlFilterEventAdapter.cpp">
       <Filter>src\filters</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -3245,6 +3248,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\filters\XmlFilterEventAdapter.h">
       <Filter>src\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h">
+      <Filter>src\model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

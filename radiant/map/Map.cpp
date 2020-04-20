@@ -44,6 +44,7 @@
 #include "map/algorithm/Traverse.h"
 #include "map/algorithm/MapExporter.h"
 #include "model/ModelExporter.h"
+#include "model/ModelScalePreserver.h"
 #include "map/algorithm/Skins.h"
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
@@ -820,6 +821,7 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     registerCommands();
 
 	_scaledModelExporter.initialise();
+    _modelScalePreserver.reset(new ModelScalePreserver);
 
 	MapFileManager::registerFileTypes();
 
@@ -835,6 +837,7 @@ void Map::shutdownModule()
 
 	GlobalSceneGraph().removeSceneObserver(this);
 
+    _modelScalePreserver.reset();
 	_startupMapLoader.reset();
 	_mapPositionManager.reset();
 }
