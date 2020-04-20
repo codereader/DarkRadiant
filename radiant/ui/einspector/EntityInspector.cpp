@@ -935,8 +935,23 @@ void EntityInspector::_onToggleShowInherited(wxCommandEvent& ev)
 
 void EntityInspector::_onToggleShowHelpIcons(wxCommandEvent& ev)
 {
+    bool helpIsVisible = _showHelpColumnCheckbox->IsChecked();
+
     // Set the visibility of the help text panel
-    _helpText->Show(_showHelpColumnCheckbox->IsChecked());
+    _helpText->Show(helpIsVisible);
+
+    if (helpIsVisible)
+    {
+        // Trigger an update of the help contents (#5148)
+        wxDataViewItemArray selectedItems;
+        _keyValueTreeView->GetSelections(selectedItems);
+
+        if (selectedItems.Count() == 1)
+        {
+            wxutil::TreeModel::Row row(selectedItems.front(), *_kvStore);
+            updateHelpText(row);
+        }
+    }
 
     // After showing a packed control we need to call the sizer's layout() method
     _mainWidget->GetSizer()->Layout();
