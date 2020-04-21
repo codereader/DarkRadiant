@@ -8,6 +8,7 @@
 #include "modelskin.h"
 #include "itransformable.h"
 #include "string/replace.h"
+#include "scenelib.h"
 
 ModelKey::ModelKey(scene::INode& parentNode) :
 	_parentNode(parentNode),
@@ -87,19 +88,9 @@ void ModelKey::attachModelNode()
 
 		// The sophisticated check would be like this
 		// GlobalFilterSystem().updateSubgraph(_parentNode.getSelf());
-		
-        // Check the layered flag as first measure (#4141)
-        if (_parentNode.checkStateFlag(scene::Node::eLayered))
-        {
-            _model.node->enable(scene::Node::eLayered);
-        }
 
-		_model.node->setFiltered(_parentNode.isFiltered());
-
-		if (_parentNode.excluded())
-		{
-			_model.node->enable(scene::Node::eExcluded);
-		}
+		// Copy the visibility flags from the parent node (#4141 and #5134)
+		scene::assignVisibilityFlagsFromNode(*_model.node, _parentNode);
 	}
 }
 
