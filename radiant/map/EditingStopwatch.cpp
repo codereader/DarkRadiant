@@ -8,6 +8,7 @@
 #include "itextstream.h"
 #include "imainframe.h"
 #include "imap.h"
+#include "imapresource.h"
 #include "imapinfofile.h"
 
 #include <fmt/format.h>

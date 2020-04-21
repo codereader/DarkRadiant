@@ -4,7 +4,10 @@
 #include <functional>
 #include <sigc++/trackable.h>
 
+#include "imodel.h"
 #include "imap.h"
+
+class Entity;
 
 namespace map
 {

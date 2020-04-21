@@ -1,5 +1,7 @@
 #include "ModelScalePreserver.h"
 
+#include "ientity.h"
+#include "itransformable.h"
 #include "imapresource.h"
 #include "itextstream.h"
 #include "string/convert.h"

@@ -11,6 +11,7 @@
 #include "math/Vector3.h"
 
 #include "model/ScaledModelExporter.h"
+#include "model/ModelScalePreserver.h"
 #include "StartupMapLoader.h"
 #include "MapPositionManager.h"
 
