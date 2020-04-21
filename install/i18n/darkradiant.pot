@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2020-01-12 05:34+0100\n"
+"POT-Creation-Date: 2020-04-21 18:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,7 +84,7 @@ msgstr ""
 msgid "Show camera toolbar"
 msgstr ""
 
-#: ..\..\radiant\camera\FloatingCamWnd.cpp:18 xml_file_content.cpp:62
+#: ..\..\radiant\camera\FloatingCamWnd.cpp:18 xml_file_content.cpp:63
 msgid "Camera"
 msgstr ""
 
@@ -149,7 +149,7 @@ msgstr ""
 msgid "XY View"
 msgstr ""
 
-#: ..\..\radiant\eventmanager\MouseToolGroup.cpp:25 xml_file_content.cpp:50
+#: ..\..\radiant\eventmanager\MouseToolGroup.cpp:25 xml_file_content.cpp:51
 msgid "Camera View"
 msgstr ""
 
@@ -161,24 +161,24 @@ msgstr ""
 msgid "All Files"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:32
+#: ..\..\radiant\layers\LayerManager.cpp:32
 msgid "Default"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:558
+#: ..\..\radiant\layers\LayerModule.cpp:157
 #: ..\..\radiant\particles\editor\ParticleEditor.cpp:1538
 msgid "Enter Name"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:559
+#: ..\..\radiant\layers\LayerModule.cpp:158
 msgid "Enter Layer Name"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:571
+#: ..\..\radiant\layers\LayerModule.cpp:172
 msgid "Cannot create layer with empty name."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:585
+#: ..\..\radiant\layers\LayerModule.cpp:187
 msgid "This name already exists."
 msgstr ""
 
@@ -193,11 +193,21 @@ msgstr ""
 msgid "Unable to create model, classname not found."
 msgstr ""
 
-#: ..\..\radiant\map\algorithm\MapExporter.cpp:114
+#: ..\..\radiant\map\algorithm\Import.cpp:349
+msgid "Unknown map format"
+msgstr ""
+
+#: ..\..\radiant\map\algorithm\Import.cpp:367
+msgid ""
+"Failure reading map from clipboard:\n"
+"{0}"
+msgstr ""
+
+#: ..\..\radiant\map\algorithm\MapExporter.cpp:140
 msgid "Writing map"
 msgstr ""
 
-#: ..\..\radiant\map\algorithm\MapExporter.cpp:222
+#: ..\..\radiant\map\algorithm\MapExporter.cpp:248
 msgid "Writing node {0:d}"
 msgstr ""
 
@@ -206,14 +216,14 @@ msgid "Loading map"
 msgstr ""
 
 #: ..\..\radiant\map\algorithm\MapImporter.cpp:44
-#: ..\..\radiant\map\algorithm\MapImporter.cpp:59
+#: ..\..\radiant\map\algorithm\MapImporter.cpp:64
 msgid "Loading entity {0:d}\n"
 msgstr ""
 
 #: ..\..\radiant\map\algorithm\Models.cpp:98
-#: ..\..\radiant\map\algorithm\Models.cpp:119 ..\..\radiant\map\Map.cpp:111
-#: ..\..\radiant\map\Map.cpp:426 ..\..\radiant\map\Map.cpp:525
-#: ..\..\radiant\map\Map.cpp:553
+#: ..\..\radiant\map\algorithm\Models.cpp:119 ..\..\radiant\map\Map.cpp:110
+#: ..\..\radiant\map\Map.cpp:312 ..\..\radiant\map\Map.cpp:387
+#: ..\..\radiant\map\Map.cpp:415
 #: ..\..\radiant\shaders\Doom3ShaderSystem.cpp:312
 msgid "Processing..."
 msgstr ""
@@ -267,7 +277,7 @@ msgstr ""
 msgid "Brushes: {0:d} ({1:d}) Patches: {2:d} ({3:d}) Entities: {4:d} ({5:d})"
 msgstr ""
 
-#: ..\..\radiant\map\EditingStopwatch.cpp:68
+#: ..\..\radiant\map\EditingStopwatch.cpp:75
 msgid "Time spent on this map"
 msgstr ""
 
@@ -283,99 +293,149 @@ msgstr ""
 msgid "Brush Number:"
 msgstr ""
 
+#: ..\..\radiant\map\format\Doom3MapReader.cpp:49
+#: ..\..\radiant\map\format\Quake3MapReader.cpp:44
+msgid ""
+"Failed parsing entity {0:d}:\n"
+"{1}"
+msgstr ""
+
+#: ..\..\radiant\map\format\Doom3MapReader.cpp:94
+#: ..\..\radiant\map\format\Quake4MapReader.cpp:47
+msgid "Unable to parse map version (parse exception)."
+msgstr ""
+
+#: ..\..\radiant\map\format\Doom3MapReader.cpp:102
+#: ..\..\radiant\map\format\Quake4MapReader.cpp:54
+msgid "Could not recognise map version number format."
+msgstr ""
+
+#: ..\..\radiant\map\format\Doom3MapReader.cpp:110
+#: ..\..\radiant\map\format\Quake4MapReader.cpp:62
+msgid "Incorrect map version: required {0:f}, found {1:f}"
+msgstr ""
+
+#: ..\..\radiant\map\format\Doom3MapReader.cpp:143
+#: ..\..\radiant\map\format\Quake3MapReader.cpp:101
+msgid "Primitive #{0:d}: parse error"
+msgstr ""
+
+#: ..\..\radiant\map\format\Doom3MapReader.cpp:153
+#: ..\..\radiant\map\format\Quake3MapReader.cpp:111
+msgid "Primitive #{0:d}: parse exception {1}"
+msgstr ""
+
+#: ..\..\radiant\map\format\Doom3MapReader.cpp:244
+#: ..\..\radiant\map\format\Quake3MapReader.cpp:202
+msgid "Parsed invalid value '{0}' for key '{1}'"
+msgstr ""
+
+#: ..\..\radiant\map\format\primitiveparsers\BrushDef.cpp:125
+#: ..\..\radiant\map\format\primitiveparsers\BrushDef.cpp:234
+msgid "BrushDefParser: invalid token '{0}'"
+msgstr ""
+
+#: ..\..\radiant\map\format\primitiveparsers\BrushDef3.cpp:115
+msgid "BrushDef3Parser: invalid token '{0}'"
+msgstr ""
+
+#: ..\..\radiant\map\format\primitiveparsers\BrushDef3.cpp:186
+msgid "BrushDef3ParserQuake4: invalid token '{0}'"
+msgstr ""
+
 #: ..\..\radiant\map\infofile\InfoFile.cpp:68
 msgid "Map Info File Version invalid"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:64
+#: ..\..\radiant\map\Map.cpp:68
 msgid "unnamed.map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:111
+#: ..\..\radiant\map\Map.cpp:110
 msgid "Loading textures..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:428
+#: ..\..\radiant\map\Map.cpp:314
 msgid "Preprocessing"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:437
-msgid ""
-"Failure running map pre-save event:\n"
-"{0}"
-msgstr ""
-
-#: ..\..\radiant\map\Map.cpp:445
+#: ..\..\radiant\map\Map.cpp:320
 msgid "Saving Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:484
+#: ..\..\radiant\map\Map.cpp:356
 msgid "Importing..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:578
+#: ..\..\radiant\map\Map.cpp:440
 msgid ""
 "Save changes to map \"{0}\"\n"
 "before closing?"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:585
+#: ..\..\radiant\map\Map.cpp:447
 msgid "{0:d} minutes"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:589
+#: ..\..\radiant\map\Map.cpp:451
 msgid "{0:d} seconds"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:593
+#: ..\..\radiant\map\Map.cpp:455
 msgid ""
 "If you don't save, changes from the last {0}\n"
 "will be lost."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:647
+#: ..\..\radiant\map\Map.cpp:509
 msgid "Save Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:687
+#: ..\..\radiant\map\Map.cpp:549
 msgid "Save Copy As..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:784
+#: ..\..\radiant\map\Map.cpp:649
 msgid "New Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:793 ..\..\radiant\ui\mru\MRU.cpp:96
+#: ..\..\radiant\map\Map.cpp:658 ..\..\radiant\ui\mru\MRU.cpp:96
 msgid "Open Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:797
+#: ..\..\radiant\map\Map.cpp:662
 msgid "Open map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:811
+#: ..\..\radiant\map\Map.cpp:676
 msgid "Import map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:840
+#: ..\..\radiant\map\Map.cpp:704
+msgid "Export Map"
+msgstr ""
+
+#: ..\..\radiant\map\Map.cpp:722
 msgid "Export selection"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:855
+#: ..\..\radiant\map\Map.cpp:737
 msgid "Save selected as Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:936
+#: ..\..\radiant\map\Map.cpp:782
 msgid ""
-"Failure reading map from clipboard:\n"
-"{0}"
+"Failure running map event {0}:\n"
+"{1}"
 msgstr ""
 
 #: ..\..\radiant\map\MapFileManager.cpp:32
+#: ..\..\radiant\map\MapFileManager.cpp:37
+#: ..\..\radiant\map\MapFileManager.cpp:38
 msgid "Map"
 msgstr ""
 
-#: ..\..\radiant\map\MapFileManager.cpp:33 xml_file_content.cpp:91
+#: ..\..\radiant\map\MapFileManager.cpp:33 xml_file_content.cpp:92
 msgid "Region"
 msgstr ""
 
@@ -384,21 +444,25 @@ msgstr ""
 msgid "Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:255 ..\..\radiant\map\MapResource.cpp:527
+#: ..\..\radiant\map\MapFileManager.cpp:35
+msgid "Portable Prefab"
+msgstr ""
+
+#: ..\..\radiant\map\MapResource.cpp:256 ..\..\radiant\map\MapResource.cpp:499
 msgid "File is write-protected: {0}"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:361
+#: ..\..\radiant\map\MapResource.cpp:336
 msgid ""
 "Could not determine map format of file:\n"
 "{0}"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:408
+#: ..\..\radiant\map\MapResource.cpp:381
 msgid "Map loading cancelled"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:420
+#: ..\..\radiant\map\MapResource.cpp:392
 msgid ""
 "Failure reading map file:\n"
 "{0}\n"
@@ -406,17 +470,17 @@ msgid ""
 "{1}"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:483 ..\..\radiant\map\MapResource.cpp:502
+#: ..\..\radiant\map\MapResource.cpp:455 ..\..\radiant\map\MapResource.cpp:474
 msgid ""
 "Failure opening file:\n"
 "{0}"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:600
+#: ..\..\radiant\map\MapResource.cpp:572
 msgid "Map writing cancelled"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:618
+#: ..\..\radiant\map\MapResource.cpp:590
 msgid "Could not open output streams for writing"
 msgstr ""
 
@@ -424,78 +488,28 @@ msgstr ""
 msgid "Could not open pointfile: {0}"
 msgstr ""
 
-#: ..\..\radiant\map\RegionManager.cpp:174
+#: ..\..\radiant\map\RegionManager.cpp:175
 msgid "Warning: Camera not within region, can't set info_player_start."
 msgstr ""
 
-#: ..\..\radiant\map\RegionManager.cpp:262
+#: ..\..\radiant\map\RegionManager.cpp:263
 msgid "Could not set Region: XY Top View not found."
 msgstr ""
 
-#: ..\..\radiant\map\RegionManager.cpp:289
+#: ..\..\radiant\map\RegionManager.cpp:290
 msgid "Could not set Region: please select a single Brush."
 msgstr ""
 
-#: ..\..\radiant\map\RegionManager.cpp:314
+#: ..\..\radiant\map\RegionManager.cpp:315
 msgid "This command is not available in component mode."
 msgstr ""
 
-#: ..\..\radiant\map\RegionManager.cpp:320
+#: ..\..\radiant\map\RegionManager.cpp:321
 msgid "Could not set Region: nothing selected."
 msgstr ""
 
-#: ..\..\radiant\map\RegionManager.cpp:337
+#: ..\..\radiant\map\RegionManager.cpp:338
 msgid "Export region"
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:49
-#: ..\..\radiant\mapdoom3\Quake3MapReader.cpp:44
-msgid ""
-"Failed parsing entity {0:d}:\n"
-"{1}"
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:94
-#: ..\..\radiant\mapdoom3\Quake4MapReader.cpp:47
-msgid "Unable to parse map version (parse exception)."
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:102
-#: ..\..\radiant\mapdoom3\Quake4MapReader.cpp:54
-msgid "Could not recognise map version number format."
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:110
-#: ..\..\radiant\mapdoom3\Quake4MapReader.cpp:62
-msgid "Incorrect map version: required {0:f}, found {1:f}"
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:143
-#: ..\..\radiant\mapdoom3\Quake3MapReader.cpp:101
-msgid "Primitive #{0:d}: parse error"
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:153
-#: ..\..\radiant\mapdoom3\Quake3MapReader.cpp:111
-msgid "Primitive #{0:d}: parse exception {1}"
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\Doom3MapReader.cpp:244
-#: ..\..\radiant\mapdoom3\Quake3MapReader.cpp:202
-msgid "Parsed invalid value '{0}' for key '{1}'"
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\primitiveparsers\BrushDef.cpp:125
-#: ..\..\radiant\mapdoom3\primitiveparsers\BrushDef.cpp:234
-msgid "BrushDefParser: invalid token '{0}'"
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\primitiveparsers\BrushDef3.cpp:115
-msgid "BrushDef3Parser: invalid token '{0}'"
-msgstr ""
-
-#: ..\..\radiant\mapdoom3\primitiveparsers\BrushDef3.cpp:186
-msgid "BrushDef3ParserQuake4: invalid token '{0}'"
 msgstr ""
 
 #: ..\..\radiant\model\ModelExporter.cpp:324
@@ -633,15 +647,15 @@ msgstr ""
 msgid "Cannot create cylinder-cap, patch must have a width of 9."
 msgstr ""
 
-#: ..\..\radiant\patch\Patch.cpp:1624
+#: ..\..\radiant\patch\Patch.cpp:1620
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr ""
 
-#: ..\..\radiant\patch\PatchCreators.cpp:62
+#: ..\..\radiant\patch\PatchCreators.cpp:63
 msgid "Settings/Patch"
 msgstr ""
 
-#: ..\..\radiant\patch\PatchCreators.cpp:63
+#: ..\..\radiant\patch\PatchCreators.cpp:64
 msgid "Patch Subdivide Threshold"
 msgstr ""
 
@@ -706,43 +720,48 @@ msgstr ""
 msgid "Unable to create entity {0}, no brushes selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:242
+#: ..\..\radiant\selection\algorithm\Group.cpp:249
 msgid ""
 "Cannot reparent primitives to entity. Please select at least one brush/patch "
 "and exactly one func_* entity. (The entity has to be selected last.)"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:392
+#: ..\..\radiant\selection\algorithm\Group.cpp:399
 msgid ""
 "Cannot merge entities, the selection must consist of func_* entities only.\n"
 "(The first selected entity will be preserved.)"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:403
+#: ..\..\radiant\selection\algorithm\Group.cpp:409
+#: ..\..\radiant\selection\algorithm\Group.cpp:476
+msgid "No map loaded"
+msgstr ""
+
+#: ..\..\radiant\selection\algorithm\Group.cpp:415
 msgid "Groups can be formed in Primitive and Group Part selection mode only"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:408
+#: ..\..\radiant\selection\algorithm\Group.cpp:420
 msgid "Nothing selected, cannot group anything"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:413
+#: ..\..\radiant\selection\algorithm\Group.cpp:425
 msgid "Select more than one element to form a group"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:439
+#: ..\..\radiant\selection\algorithm\Group.cpp:451
 msgid "The selected elements already form a group"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:465
+#: ..\..\radiant\selection\algorithm\Group.cpp:482
 msgid "Groups can be dissolved in Primitive and Group Part selection mode only"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:470
+#: ..\..\radiant\selection\algorithm\Group.cpp:487
 msgid "Nothing selected, cannot un-group anything"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:490
+#: ..\..\radiant\selection\algorithm\Group.cpp:507
 msgid "The selected elements aren't part of any group"
 msgstr ""
 
@@ -772,11 +791,11 @@ msgid "{0:d} faces were not suitable (had more than 4 vertices)."
 msgstr ""
 
 #: ..\..\radiant\selection\algorithm\Primitives.cpp:393
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:492
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:490
 msgid "No brushes selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:592
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:590
 msgid "At least one brush must be selected for this operation."
 msgstr ""
 
@@ -812,17 +831,17 @@ msgstr ""
 msgid "Can't copy Shader. Please select a single face or patch."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Transformation.cpp:97
+#: ..\..\radiant\selection\algorithm\Transformation.cpp:98
 msgid "Cannot scale by zero value."
 msgstr ""
 
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:81
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:97
+#: ..\..\radiant\selection\group\SelectionGroupModule.cpp:72
+#: ..\..\radiant\selection\group\SelectionGroupModule.cpp:88
 msgid "Ungroup Selection"
 msgstr ""
 
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:84
-#: ..\..\radiant\selection\group\SelectionGroupManager.cpp:91
+#: ..\..\radiant\selection\group\SelectionGroupModule.cpp:75
+#: ..\..\radiant\selection\group\SelectionGroupModule.cpp:82
 msgid "Group Selection"
 msgstr ""
 
@@ -855,27 +874,7 @@ msgstr ""
 msgid "Cycle Face Selection"
 msgstr ""
 
-#: ..\..\radiant\selection\selectionset\SelectionSetManager.cpp:104
-msgid "Selection Set: "
-msgstr ""
-
-#: ..\..\radiant\selection\selectionset\SelectionSetManager.cpp:112
-msgid "Clear Selection Sets"
-msgstr ""
-
-#: ..\..\radiant\selection\selectionset\SelectionSetManager.cpp:223
-msgid "Delete all selection sets?"
-msgstr ""
-
-#: ..\..\radiant\selection\selectionset\SelectionSetManager.cpp:224
-msgid ""
-"This will delete all set definitions. The actual map objects will not be "
-"affected by this step.\n"
-"\n"
-"Continue with that operation?"
-msgstr ""
-
-#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:18
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:24
 msgid ""
 "Enter a name and hit ENTER to save a set.\n"
 "\n"
@@ -885,33 +884,53 @@ msgid ""
 "select the set."
 msgstr ""
 
-#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:62
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:41
+msgid "Selection Set: "
+msgstr ""
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:57
+msgid "Clear Selection Sets"
+msgstr ""
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:173
 msgid "Cannot create selection set"
 msgstr ""
 
-#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:63
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:174
 msgid ""
 "Cannot create a selection set, there is nothing selected in the current "
 "scene."
 msgstr ""
 
-#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:25
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:243
+msgid "Delete all selection sets?"
+msgstr ""
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:244
+msgid ""
+"This will delete all set definitions. The actual map objects will not be "
+"affected by this step.\n"
+"\n"
+"Continue with that operation?"
+msgstr ""
+
+#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:31
 msgid "The name of the shader in the clipboard"
 msgstr ""
 
-#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:89
+#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:95
 msgid "ShaderClipboard: {0}"
 msgstr ""
 
-#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:92
+#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:98
 msgid "Face"
 msgstr ""
 
-#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:95
+#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:101
 msgid "Patch"
 msgstr ""
 
-#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:98
+#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:104
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:356
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:73
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
@@ -919,7 +938,7 @@ msgstr ""
 msgid "Shader"
 msgstr ""
 
-#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:102
+#: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:108
 msgid "ShaderClipboard is empty."
 msgstr ""
 
@@ -1788,17 +1807,17 @@ msgstr ""
 
 #: ..\..\radiant\ui\commandlist\ShortcutChooser.cpp:49
 #: ..\..\plugins\script\ScriptWindow.cpp:85 xml_file_content.cpp:12
-#: xml_file_content.cpp:3 xml_file_content.cpp:7 xml_file_content.cpp:10
-#: xml_file_content.cpp:18 xml_file_content.cpp:8 xml_file_content.cpp:6
-#: xml_file_content.cpp:14 xml_file_content.cpp:15 xml_file_content.cpp:39
+#: xml_file_content.cpp:3 xml_file_content.cpp:7 xml_file_content.cpp:18
+#: xml_file_content.cpp:8 xml_file_content.cpp:6 xml_file_content.cpp:14
+#: xml_file_content.cpp:15 xml_file_content.cpp:39
 msgid "OK"
 msgstr ""
 
 #: ..\..\radiant\ui\commandlist\ShortcutChooser.cpp:52 xml_file_content.cpp:2
-#: xml_file_content.cpp:6 xml_file_content.cpp:9 xml_file_content.cpp:17
-#: xml_file_content.cpp:1 xml_file_content.cpp:10 xml_file_content.cpp:14
-#: xml_file_content.cpp:5 xml_file_content.cpp:13 xml_file_content.cpp:20
-#: xml_file_content.cpp:40
+#: xml_file_content.cpp:6 xml_file_content.cpp:11 xml_file_content.cpp:17
+#: xml_file_content.cpp:1 xml_file_content.cpp:10 xml_file_content.cpp:9
+#: xml_file_content.cpp:14 xml_file_content.cpp:5 xml_file_content.cpp:13
+#: xml_file_content.cpp:20 xml_file_content.cpp:40
 msgid "Cancel"
 msgstr ""
 
@@ -1843,7 +1862,7 @@ msgstr ""
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:192
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:222
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:148
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:453
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:466
 #: ..\..\libs\wxutil\KeyValueTable.cpp:44
 msgid "Value"
 msgstr ""
@@ -1861,7 +1880,7 @@ msgstr ""
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:358
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:391
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:75
-#: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:53
+#: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:56
 #: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:133 xml_file_content.cpp:1
 msgid "Description"
 msgstr ""
@@ -1899,7 +1918,7 @@ msgstr ""
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:145
 #: ..\..\radiant\ui\einspector\AddPropertyDialog.cpp:76
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:448
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:461
 msgid "Property"
 msgstr ""
 
@@ -1915,45 +1934,45 @@ msgstr ""
 msgid "Choose entity class..."
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:82
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:85
 msgid "Show inherited properties"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:85
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:90
 msgid "Show help"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:290
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:303
 msgid "Add property..."
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:295
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:308
 msgid "Delete property"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:303
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:316
 msgid "Copy Spawnarg(s)"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:308
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:321
 msgid "Cut Spawnarg(s)"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:313
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:326
 msgid "Paste Spawnarg(s)"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:325
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:328
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:338
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:341
 #: ..\..\radiant\uimanager\GroupDialog.cpp:30
 msgid "Entity"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1170
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1206
 msgid "Entity {0}"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1181
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1217
 msgid "Entity {0}, Primitive {1}"
 msgstr ""
 
@@ -2041,13 +2060,13 @@ msgstr ""
 msgid "Loading..."
 msgstr ""
 
-#: ..\..\radiant\ui\entitylist\EntityList.cpp:23 xml_file_content.cpp:60
+#: ..\..\radiant\ui\entitylist\EntityList.cpp:23 xml_file_content.cpp:61
 msgid "Entity List"
 msgstr ""
 
 #: ..\..\radiant\ui\entitylist\EntityList.cpp:72
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:182
-#: ..\..\plugins\dm.conversation\ConversationDialog.cpp:78
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:172
+#: ..\..\plugins\dm.conversation\ConversationDialog.cpp:86
 #: xml_file_content.cpp:1
 msgid "Name"
 msgstr ""
@@ -2064,40 +2083,40 @@ msgstr ""
 msgid "Filter Settings"
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:138
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:128
 msgid "enabled"
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:138
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:128
 msgid "disabled"
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:185
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:175
 msgid "State"
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:265
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:255
 msgid "NewFilter"
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:283
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:353
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:273
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:343
 msgid "Empty Filter"
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:284
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:274
 msgid "No rules defined for this filter, cannot insert."
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:297
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:287
 msgid "Name Conflict"
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:298
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:288
 msgid "Cannot add, filter with same name already exists."
 msgstr ""
 
-#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:354
+#: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:344
 msgid "No rules defined for this filter. Delete it?"
 msgstr ""
 
@@ -2211,51 +2230,51 @@ msgstr ""
 msgid "Minor Grid Style"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:50
+#: ..\..\radiant\ui\layers\LayerControl.cpp:51
 msgid ""
 "Indicates whether anything among the current selection is part of this layer."
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:70
+#: ..\..\radiant\ui\layers\LayerControl.cpp:71
 msgid ""
 "Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as "
 "active layer."
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:71
+#: ..\..\radiant\ui\layers\LayerControl.cpp:72
 msgid "Rename this layer"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:72
+#: ..\..\radiant\ui\layers\LayerControl.cpp:73
 msgid "Delete this layer"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:73
+#: ..\..\radiant\ui\layers\LayerControl.cpp:74
 msgid "Toggle layer visibility"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:159
+#: ..\..\radiant\ui\layers\LayerControl.cpp:171
 msgid "Do you really want to delete this layer?"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:163
+#: ..\..\radiant\ui\layers\LayerControl.cpp:175
 msgid "Confirm Layer Deletion"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:184
+#: ..\..\radiant\ui\layers\LayerControl.cpp:202
 msgid "Rename Layer"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:185
+#: ..\..\radiant\ui\layers\LayerControl.cpp:203
 msgid "Enter new Layer Name"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:206
+#: ..\..\radiant\ui\layers\LayerControl.cpp:224
 msgid "Could not rename layer, please try again."
 msgstr ""
 
 #: ..\..\radiant\ui\layers\LayerControlDialog.cpp:35
-#: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:18 xml_file_content.cpp:51
+#: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:19 xml_file_content.cpp:52
 msgid "Layers"
 msgstr ""
 
@@ -2277,7 +2296,7 @@ msgstr ""
 
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:73
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:59
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:111 xml_file_content.cpp:53
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:111 xml_file_content.cpp:54
 msgid "Texture Browser"
 msgstr ""
 
@@ -2369,11 +2388,11 @@ msgstr ""
 msgid "Entities:"
 msgstr ""
 
-#: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:49
+#: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:50
 msgid "Layer"
 msgstr ""
 
-#: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:52
+#: ..\..\radiant\ui\mapinfo\LayerInfoTab.cpp:53
 msgid "Node Count"
 msgstr ""
 
@@ -2476,15 +2495,15 @@ msgstr ""
 msgid "Loading textures"
 msgstr ""
 
-#: ..\..\radiant\ui\menu\FiltersMenu.cpp:64
+#: ..\..\radiant\ui\menu\FiltersMenu.cpp:45
 msgid "Activate &all Filters"
 msgstr ""
 
-#: ..\..\radiant\ui\menu\FiltersMenu.cpp:65
+#: ..\..\radiant\ui\menu\FiltersMenu.cpp:46
 msgid "&Deactivate all Filters"
 msgstr ""
 
-#: ..\..\radiant\ui\menu\FiltersMenu.cpp:68
+#: ..\..\radiant\ui\menu\FiltersMenu.cpp:49
 msgid "Edit Filters..."
 msgstr ""
 
@@ -2677,7 +2696,7 @@ msgstr ""
 msgid "Merge Entities"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76 xml_file_content.cpp:158
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76 xml_file_content.cpp:159
 msgid "Make Visportal"
 msgstr ""
 
@@ -2816,7 +2835,7 @@ msgid "Mod Base (fs_game_base)"
 msgstr ""
 
 #: ..\..\radiant\ui\prefdialog\GameSetupPageIdTech.cpp:70
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:197
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:200
 msgid "Engine path \"{0}\" does not exist.\n"
 msgstr ""
 
@@ -2828,47 +2847,46 @@ msgstr ""
 msgid "The mod path \"{0}\" does not exist.\n"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:76
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:79
 msgid "DarkMod Path"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:84
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:87
 msgid "This is the path where your TheDarkMod.exe is located."
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:88
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:91
 msgid ""
 "The FM folder name of the mission you want to work on, e.g. 'saintlucia'."
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:90
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:93
 msgid "Mission"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:137
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:140
 msgid ""
 "The mission path {0} doesn't exist.\n"
 "Do you intend to start a new mission and create that folder?"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:140
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:143
 msgid "Start a new Mission named {0}?"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:149
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:152
 msgid "Could not create directory"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:149
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:152
 msgid "Failed to create the folder {0}"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:221
-msgid ""
-"The engine executable \"{0}\" could not be found in the specified folder.\n"
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:239
+msgid "The engine executable(s) could not be found in the specified folder.\n"
 msgstr ""
 
-#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:228
+#: ..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp:246
 msgid "The mission path \"{0}\" does not exist.\n"
 msgstr ""
 
@@ -2988,8 +3006,8 @@ msgstr ""
 msgid "Seek in Media Browser"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:273
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:816
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:238
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:784
 msgid "No shader"
 msgstr ""
 
@@ -3015,6 +3033,10 @@ msgstr ""
 
 #: ..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp:68
 msgid "Show Texture Filter"
+msgstr ""
+
+#: ..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp:69
+msgid "Show \"Other Materials\""
 msgstr ""
 
 #: ..\..\radiant\ui\transform\TransformDialog.cpp:26
@@ -3053,24 +3075,32 @@ msgstr ""
 msgid "Z-Axis Scale:"
 msgstr ""
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:42
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:44
 msgid "Create Layer..."
 msgstr ""
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:44
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:46
 msgid "Add to Layer..."
 msgstr ""
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:45
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:47
 msgid "Move to Layer..."
 msgstr ""
 
-#: ..\..\radiant\ui\UserInterfaceModule.cpp:46
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:48
 msgid "Remove from Layer..."
 msgstr ""
 
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:50
+msgid "Select by Filter..."
+msgstr ""
+
+#: ..\..\radiant\ui\UserInterfaceModule.cpp:51
+msgid "Deselect by Filter..."
+msgstr ""
+
 #: ..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp:16
-#: xml_file_content.cpp:141
+#: xml_file_content.cpp:142
 msgid "MD5 Animation Viewer"
 msgstr ""
 
@@ -3103,12 +3133,12 @@ msgstr ""
 
 #: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:92
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:53
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:430
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:445
-#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:439 xml_file_content.cpp:182
-#: xml_file_content.cpp:3 xml_file_content.cpp:7 xml_file_content.cpp:9
-#: xml_file_content.cpp:16 xml_file_content.cpp:2 xml_file_content.cpp:5
-#: xml_file_content.cpp:6 xml_file_content.cpp:18
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:434
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:449
+#: ..\..\plugins\dm.stimresponse\StimEditor.cpp:439 xml_file_content.cpp:183
+#: xml_file_content.cpp:3 xml_file_content.cpp:9 xml_file_content.cpp:16
+#: xml_file_content.cpp:2 xml_file_content.cpp:5 xml_file_content.cpp:6
+#: xml_file_content.cpp:18
 msgid "Delete"
 msgstr ""
 
@@ -3205,7 +3235,7 @@ msgstr ""
 msgid "Show Entity Names"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:206 xml_file_content.cpp:81
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:206 xml_file_content.cpp:82
 msgid "Show Blocks"
 msgstr ""
 
@@ -3213,15 +3243,15 @@ msgstr ""
 msgid "Show Coordinates"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:208 xml_file_content.cpp:84
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:208 xml_file_content.cpp:85
 msgid "Show Axes"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:209 xml_file_content.cpp:83
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:209 xml_file_content.cpp:84
 msgid "Show Window Outline"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:210 xml_file_content.cpp:85
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:210 xml_file_content.cpp:86
 msgid "Show Workzone"
 msgstr ""
 
@@ -3249,7 +3279,7 @@ msgstr ""
 msgid "Drag Camera"
 msgstr ""
 
-#: ..\..\radiant\xyview\tools\ClipperTool.cpp:21 xml_file_content.cpp:152
+#: ..\..\radiant\xyview\tools\ClipperTool.cpp:21 xml_file_content.cpp:153
 #: xml_file_content.cpp:13 xml_file_content.cpp:18
 msgid "Clipper"
 msgstr ""
@@ -3266,19 +3296,19 @@ msgstr ""
 msgid "Zoom View"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:235
+#: ..\..\radiant\xyview\XYWnd.cpp:236
 msgid "XY Top"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:238
+#: ..\..\radiant\xyview\XYWnd.cpp:239
 msgid "XZ Front"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:241
+#: ..\..\radiant\xyview\XYWnd.cpp:242
 msgid "YZ Side"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:504
+#: ..\..\radiant\xyview\XYWnd.cpp:505
 msgid "x: {0:6.1f} y: {1:6.1f} z: {2:6.1f}"
 msgstr ""
 
@@ -3303,7 +3333,7 @@ msgstr ""
 msgid "Conversation Editor"
 msgstr ""
 
-#: ..\..\plugins\dm.conversation\ConversationDialog.cpp:280
+#: ..\..\plugins\dm.conversation\ConversationDialog.cpp:298
 msgid "Unable to create conversation Entity: class '{0}' not found."
 msgstr ""
 
@@ -3358,7 +3388,7 @@ msgstr ""
 msgid "Actors OK"
 msgstr ""
 
-#: ..\..\plugins\dm.conversation\ConversationEntity.cpp:47
+#: ..\..\plugins\dm.conversation\ConversationEntity.cpp:70
 msgid "New Conversation"
 msgstr ""
 
@@ -3371,19 +3401,27 @@ msgstr ""
 msgid "Conversations..."
 msgstr ""
 
-#: ..\..\plugins\dm.difficulty\DifficultyDialog.cpp:26
+#: ..\..\plugins\dm.difficulty\DifficultyDialog.cpp:28
 msgid "Difficulty Editor"
 msgstr ""
 
-#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:76 xml_file_content.cpp:4
+#: ..\..\plugins\dm.difficulty\DifficultyDialog.cpp:118
+msgid "Difficulty name"
+msgstr ""
+
+#: ..\..\plugins\dm.difficulty\DifficultyDialog.cpp:118
+msgid "New name:"
+msgstr ""
+
+#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:60 xml_file_content.cpp:4
 msgid "Setting"
 msgstr ""
 
-#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:91
+#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:75
 msgid "Assign"
 msgstr ""
 
-#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:92
+#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:76
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:51 xml_file_content.cpp:2
 #: xml_file_content.cpp:5 xml_file_content.cpp:8 xml_file_content.cpp:12
 #: xml_file_content.cpp:1 xml_file_content.cpp:3 xml_file_content.cpp:17
@@ -3391,15 +3429,15 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
-#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:93
+#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:77
 msgid "Multiply"
 msgstr ""
 
-#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:94
+#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:78
 msgid "Ignore"
 msgstr ""
 
-#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:152
+#: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:136
 msgid "This default setting is overridden, cannot edit."
 msgstr ""
 
@@ -3605,7 +3643,7 @@ msgstr ""
 msgid "Choose AI Vocal Set"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:44
+#: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:47
 msgid "Available Sets"
 msgstr ""
 
@@ -3741,16 +3779,16 @@ msgstr ""
 msgid "Choose a Gui Definition..."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:141
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:150
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:142
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:152
 msgid "Gui Path"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:146
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:147
 msgid "One-Sided Readable Guis"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:155
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:157
 msgid "Two-Sided Readable Guis"
 msgstr ""
 
@@ -4529,43 +4567,45 @@ msgstr ""
 msgid "Stim/Response..."
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:264
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:268
 msgid "Effect"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:267
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:271
 msgid "Details (double-click to edit)"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:424
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:428
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:433
 msgid "Activate"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:426
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:430
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:435
 msgid "Deactivate"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:428
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:432
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:437 xml_file_content.cpp:11
 msgid "Duplicate"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:435
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:439
 msgid "Add new Effect"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:437 xml_file_content.cpp:6
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:441 xml_file_content.cpp:6
 #: xml_file_content.cpp:13 xml_file_content.cpp:4 xml_file_content.cpp:8
 msgid "Edit"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:440 xml_file_content.cpp:4
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:444 xml_file_content.cpp:7
+#: xml_file_content.cpp:4
 msgid "Move Up"
 msgstr ""
 
-#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:442 xml_file_content.cpp:5
+#: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:446 xml_file_content.cpp:8
+#: xml_file_content.cpp:5
 msgid "Move Down"
 msgstr ""
 
@@ -4581,12 +4621,12 @@ msgstr ""
 msgid "A single entity must be selected to edit Stim/Response properties."
 msgstr ""
 
-#: ..\..\plugins\script\ScriptingSystem.cpp:239
-#: ..\..\plugins\script\ScriptingSystem.cpp:242
+#: ..\..\plugins\script\ScriptingSystem.cpp:240
+#: ..\..\plugins\script\ScriptingSystem.cpp:243
 msgid "Script"
 msgstr ""
 
-#: ..\..\plugins\script\ScriptingSystem.cpp:483
+#: ..\..\plugins\script\ScriptingSystem.cpp:484
 msgid "Reload Scripts"
 msgstr ""
 
@@ -4678,15 +4718,15 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
-#: ..\..\libs\wxutil\TreeView.cpp:225
+#: ..\..\libs\wxutil\TreeView.cpp:258
 msgid "Find: "
 msgstr ""
 
-#: ..\..\libs\wxutil\TreeView.cpp:238
+#: ..\..\libs\wxutil\TreeView.cpp:271
 msgid "Go to next match"
 msgstr ""
 
-#: ..\..\libs\wxutil\TreeView.cpp:239
+#: ..\..\libs\wxutil\TreeView.cpp:272
 msgid "Go to previous match"
 msgstr ""
 
@@ -4723,738 +4763,742 @@ msgid "Save &copy as..."
 msgstr ""
 
 #: xml_file_content.cpp:9
-msgid "&Save selected as Map..."
+msgid "&Export Map..."
 msgstr ""
 
 #: xml_file_content.cpp:10
-msgid "&Save selected as prefab..."
+msgid "&Export selected as Map..."
 msgstr ""
 
 #: xml_file_content.cpp:11
-msgid "&Export selected as model..."
+msgid "&Export selected as Prefab..."
 msgstr ""
 
 #: xml_file_content.cpp:12
-msgid "Save selected as Collision Model..."
+msgid "&Export selected as Model..."
 msgstr ""
 
 #: xml_file_content.cpp:13
-msgid "Save &region..."
+msgid "Export selected as Collision Model..."
 msgstr ""
 
 #: xml_file_content.cpp:14
-msgid "&Reload Models"
+msgid "Export &Region..."
 msgstr ""
 
 #: xml_file_content.cpp:15
-msgid "Reload Selected Models"
+msgid "&Reload Models"
 msgstr ""
 
 #: xml_file_content.cpp:16
+msgid "Reload Selected Models"
+msgstr ""
+
+#: xml_file_content.cpp:17
 msgid "Reload S&kins"
 msgstr ""
 
-#: xml_file_content.cpp:17 xml_file_content.cpp:28
+#: xml_file_content.cpp:18 xml_file_content.cpp:28
 msgid "Reload Materials"
 msgstr ""
 
-#: xml_file_content.cpp:18
+#: xml_file_content.cpp:19
 msgid "Reload Defs"
 msgstr ""
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:20
 msgid "Reload Particles"
 msgstr ""
 
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:21
 msgid "&Game/Project Setup..."
 msgstr ""
 
-#: xml_file_content.cpp:21
+#: xml_file_content.cpp:22
 msgid "&Pointfile"
 msgstr ""
 
-#: xml_file_content.cpp:22
+#: xml_file_content.cpp:23
 msgid "E&xit"
 msgstr ""
 
-#: xml_file_content.cpp:23
+#: xml_file_content.cpp:24
 msgid "&Edit"
 msgstr ""
 
-#: xml_file_content.cpp:24
+#: xml_file_content.cpp:25
 msgid "&Undo"
 msgstr ""
 
-#: xml_file_content.cpp:25
+#: xml_file_content.cpp:26
 msgid "&Redo"
 msgstr ""
 
-#: xml_file_content.cpp:26
+#: xml_file_content.cpp:27
 msgid "&Copy"
 msgstr ""
 
-#: xml_file_content.cpp:27
+#: xml_file_content.cpp:28
 msgid "&Paste"
 msgstr ""
 
-#: xml_file_content.cpp:28
+#: xml_file_content.cpp:29
 msgid "Paste to Camera"
 msgstr ""
 
-#: xml_file_content.cpp:29
+#: xml_file_content.cpp:30
 msgid "&Duplicate"
 msgstr ""
 
-#: xml_file_content.cpp:30
+#: xml_file_content.cpp:31
 msgid "D&elete"
 msgstr ""
 
-#: xml_file_content.cpp:31
+#: xml_file_content.cpp:32
 msgid "Rep&arent Primitives"
 msgstr ""
 
-#: xml_file_content.cpp:32
+#: xml_file_content.cpp:33
 msgid "Reparent Primitives to &Worldspawn"
 msgstr ""
 
-#: xml_file_content.cpp:33
+#: xml_file_content.cpp:34
 msgid "Merge selected Entities"
 msgstr ""
 
-#: xml_file_content.cpp:34
+#: xml_file_content.cpp:35
 msgid "Copy Shader"
 msgstr ""
 
-#: xml_file_content.cpp:35
+#: xml_file_content.cpp:36
 msgid "Paste Shader"
 msgstr ""
 
-#: xml_file_content.cpp:36
+#: xml_file_content.cpp:37
 msgid "Paste Shader (Natural)"
 msgstr ""
 
-#: xml_file_content.cpp:37
+#: xml_file_content.cpp:38
 msgid "C&lear selection"
 msgstr ""
 
-#: xml_file_content.cpp:38
+#: xml_file_content.cpp:39
 msgid "&Invert selection"
 msgstr ""
 
-#: xml_file_content.cpp:39
+#: xml_file_content.cpp:40
 msgid "Select complete t&all"
 msgstr ""
 
-#: xml_file_content.cpp:40
+#: xml_file_content.cpp:41
 msgid "Select i&nside"
 msgstr ""
 
-#: xml_file_content.cpp:41
+#: xml_file_content.cpp:42
 msgid "Select &touching"
 msgstr ""
 
-#: xml_file_content.cpp:42
+#: xml_file_content.cpp:43
 msgid "Select Children"
 msgstr ""
 
-#: xml_file_content.cpp:43
+#: xml_file_content.cpp:44
 msgid "Expand selection to all Siblings"
 msgstr ""
 
-#: xml_file_content.cpp:44
+#: xml_file_content.cpp:45
 msgid "Select all of type"
 msgstr ""
 
-#: xml_file_content.cpp:45
+#: xml_file_content.cpp:46
 msgid "Keyboard Shortcuts..."
 msgstr ""
 
-#: xml_file_content.cpp:46
+#: xml_file_content.cpp:47
 msgid "Mouse Bindings..."
 msgstr ""
 
-#: xml_file_content.cpp:47
+#: xml_file_content.cpp:48
 msgid "Pre&ferences..."
 msgstr ""
 
-#: xml_file_content.cpp:48
+#: xml_file_content.cpp:49
 msgid "V&iew"
 msgstr ""
 
-#: xml_file_content.cpp:49
+#: xml_file_content.cpp:50
 msgid "New XY view"
 msgstr ""
 
-#: xml_file_content.cpp:52
+#: xml_file_content.cpp:53
 msgid "Console View"
 msgstr ""
 
-#: xml_file_content.cpp:54
+#: xml_file_content.cpp:55
 msgid "Media Browser"
 msgstr ""
 
-#: xml_file_content.cpp:55
+#: xml_file_content.cpp:56
 msgid "Entity Inspector"
 msgstr ""
 
-#: xml_file_content.cpp:56
+#: xml_file_content.cpp:57
 msgid "&Light Inspector"
 msgstr ""
 
-#: xml_file_content.cpp:57
+#: xml_file_content.cpp:58
 msgid "&Surface Inspector"
 msgstr ""
 
-#: xml_file_content.cpp:58
+#: xml_file_content.cpp:59
 msgid "&Patch Inspector"
 msgstr ""
 
-#: xml_file_content.cpp:59
+#: xml_file_content.cpp:60
 msgid "&Texture Tool"
 msgstr ""
 
-#: xml_file_content.cpp:61
+#: xml_file_content.cpp:62
 msgid "AAS Area Viewer"
 msgstr ""
 
-#: xml_file_content.cpp:63
+#: xml_file_content.cpp:64
 msgid "&Center"
 msgstr ""
 
-#: xml_file_content.cpp:64
+#: xml_file_content.cpp:65
 msgid "&Up Floor"
 msgstr ""
 
-#: xml_file_content.cpp:65
+#: xml_file_content.cpp:66
 msgid "&Down Floor"
 msgstr ""
 
-#: xml_file_content.cpp:66
+#: xml_file_content.cpp:67
 msgid "Far Clip Plane In"
 msgstr ""
 
-#: xml_file_content.cpp:67
+#: xml_file_content.cpp:68
 msgid "Far Clip Plane Out"
 msgstr ""
 
-#: xml_file_content.cpp:68
+#: xml_file_content.cpp:69
 msgid "Next leak spot"
 msgstr ""
 
-#: xml_file_content.cpp:69
+#: xml_file_content.cpp:70
 msgid "Previous leak spot"
 msgstr ""
 
-#: xml_file_content.cpp:70
+#: xml_file_content.cpp:71
 msgid "Orthographic"
 msgstr ""
 
-#: xml_file_content.cpp:71
+#: xml_file_content.cpp:72
 msgid "Next (XY, XZ, YZ)"
 msgstr ""
 
-#: xml_file_content.cpp:72
+#: xml_file_content.cpp:73
 msgid "XY (Top)"
 msgstr ""
 
-#: xml_file_content.cpp:73
+#: xml_file_content.cpp:74
 msgid "YZ"
 msgstr ""
 
-#: xml_file_content.cpp:74
+#: xml_file_content.cpp:75
 msgid "XZ"
 msgstr ""
 
-#: xml_file_content.cpp:75
+#: xml_file_content.cpp:76
 msgid "&XY 100%"
 msgstr ""
 
-#: xml_file_content.cpp:76
+#: xml_file_content.cpp:77
 msgid "&XY Zoom In"
 msgstr ""
 
-#: xml_file_content.cpp:77
+#: xml_file_content.cpp:78
 msgid "&XY Zoom Out"
 msgstr ""
 
-#: xml_file_content.cpp:78
+#: xml_file_content.cpp:79
 msgid "Show"
 msgstr ""
 
-#: xml_file_content.cpp:79
+#: xml_file_content.cpp:80
 msgid "Show &Angles"
 msgstr ""
 
-#: xml_file_content.cpp:80
+#: xml_file_content.cpp:81
 msgid "Show &Names"
 msgstr ""
 
-#: xml_file_content.cpp:82
+#: xml_file_content.cpp:83
 msgid "Show C&oordinates"
 msgstr ""
 
-#: xml_file_content.cpp:86
+#: xml_file_content.cpp:87
 msgid "Show size info"
 msgstr ""
 
-#: xml_file_content.cpp:87
+#: xml_file_content.cpp:88
 msgid "Hide/Show"
 msgstr ""
 
-#: xml_file_content.cpp:88
+#: xml_file_content.cpp:89
 msgid "Hide Selected"
 msgstr ""
 
-#: xml_file_content.cpp:89
+#: xml_file_content.cpp:90
 msgid "Hide Deselected"
 msgstr ""
 
-#: xml_file_content.cpp:90
+#: xml_file_content.cpp:91
 msgid "Show hidden"
 msgstr ""
 
-#: xml_file_content.cpp:92
+#: xml_file_content.cpp:93
 msgid "&Switch off"
 msgstr ""
 
-#: xml_file_content.cpp:93
+#: xml_file_content.cpp:94
 msgid "Set from &XY view"
 msgstr ""
 
-#: xml_file_content.cpp:94
+#: xml_file_content.cpp:95
 msgid "Set from &Brush"
 msgstr ""
 
-#: xml_file_content.cpp:95
+#: xml_file_content.cpp:96
 msgid "Set from Se&lection"
 msgstr ""
 
-#: xml_file_content.cpp:96
+#: xml_file_content.cpp:97
 msgid "Colours..."
 msgstr ""
 
-#: xml_file_content.cpp:97
+#: xml_file_content.cpp:98
 msgid "Background Image..."
 msgstr ""
 
-#: xml_file_content.cpp:98
+#: xml_file_content.cpp:99
 msgid "Mo&dify"
 msgstr ""
 
-#: xml_file_content.cpp:99 xml_file_content.cpp:16
+#: xml_file_content.cpp:100 xml_file_content.cpp:16
 msgid "Components"
 msgstr ""
 
-#: xml_file_content.cpp:100
+#: xml_file_content.cpp:101
 msgid "&Edges"
 msgstr ""
 
-#: xml_file_content.cpp:101
+#: xml_file_content.cpp:102
 msgid "&Vertices"
 msgstr ""
 
-#: xml_file_content.cpp:102
+#: xml_file_content.cpp:103
 msgid "&Faces"
 msgstr ""
 
-#: xml_file_content.cpp:103
+#: xml_file_content.cpp:104
 msgid "En&tities"
 msgstr ""
 
-#: xml_file_content.cpp:104
+#: xml_file_content.cpp:105
 msgid "Nudge"
 msgstr ""
 
-#: xml_file_content.cpp:105
+#: xml_file_content.cpp:106
 msgid "Nudge Left"
 msgstr ""
 
-#: xml_file_content.cpp:106
+#: xml_file_content.cpp:107
 msgid "Nudge Right"
 msgstr ""
 
-#: xml_file_content.cpp:107
+#: xml_file_content.cpp:108
 msgid "Nudge Up"
 msgstr ""
 
-#: xml_file_content.cpp:108
+#: xml_file_content.cpp:109
 msgid "Nudge Down"
 msgstr ""
 
-#: xml_file_content.cpp:109 xml_file_content.cpp:16
+#: xml_file_content.cpp:110 xml_file_content.cpp:16
 msgid "Rotate"
 msgstr ""
 
-#: xml_file_content.cpp:110
+#: xml_file_content.cpp:111
 msgid "Rotate X"
 msgstr ""
 
-#: xml_file_content.cpp:111
+#: xml_file_content.cpp:112
 msgid "Rotate Y"
 msgstr ""
 
-#: xml_file_content.cpp:112
+#: xml_file_content.cpp:113
 msgid "Rotate Z"
 msgstr ""
 
-#: xml_file_content.cpp:113
+#: xml_file_content.cpp:114
 msgid "Mirror"
 msgstr ""
 
-#: xml_file_content.cpp:114
+#: xml_file_content.cpp:115
 msgid "Mirror &X"
 msgstr ""
 
-#: xml_file_content.cpp:115
+#: xml_file_content.cpp:116
 msgid "Mirror &Y"
 msgstr ""
 
-#: xml_file_content.cpp:116
+#: xml_file_content.cpp:117
 msgid "Mirror &Z"
 msgstr ""
 
-#: xml_file_content.cpp:117 xml_file_content.cpp:10
+#: xml_file_content.cpp:118 xml_file_content.cpp:10
 msgid "Rotate Objects independently"
 msgstr ""
 
-#: xml_file_content.cpp:118
+#: xml_file_content.cpp:119
 msgid "Rotate and scale..."
 msgstr ""
 
-#: xml_file_content.cpp:119
+#: xml_file_content.cpp:120
 msgid "&Grid"
 msgstr ""
 
-#: xml_file_content.cpp:120
+#: xml_file_content.cpp:121
 msgid "Snap selected to grid"
 msgstr ""
 
-#: xml_file_content.cpp:121
+#: xml_file_content.cpp:122
 msgid "Grid0.125"
 msgstr ""
 
-#: xml_file_content.cpp:122
+#: xml_file_content.cpp:123
 msgid "Grid0.25"
 msgstr ""
 
-#: xml_file_content.cpp:123
+#: xml_file_content.cpp:124
 msgid "Grid0.5"
 msgstr ""
 
-#: xml_file_content.cpp:124
+#: xml_file_content.cpp:125
 msgid "Grid1"
 msgstr ""
 
-#: xml_file_content.cpp:125
+#: xml_file_content.cpp:126
 msgid "Grid2"
 msgstr ""
 
-#: xml_file_content.cpp:126
+#: xml_file_content.cpp:127
 msgid "Grid4"
 msgstr ""
 
-#: xml_file_content.cpp:127
+#: xml_file_content.cpp:128
 msgid "Grid8"
 msgstr ""
 
-#: xml_file_content.cpp:128
+#: xml_file_content.cpp:129
 msgid "Grid16"
 msgstr ""
 
-#: xml_file_content.cpp:129
+#: xml_file_content.cpp:130
 msgid "Grid32"
 msgstr ""
 
-#: xml_file_content.cpp:130
+#: xml_file_content.cpp:131
 msgid "Grid64"
 msgstr ""
 
-#: xml_file_content.cpp:131
+#: xml_file_content.cpp:132
 msgid "Grid128"
 msgstr ""
 
-#: xml_file_content.cpp:132
+#: xml_file_content.cpp:133
 msgid "Grid256"
 msgstr ""
 
-#: xml_file_content.cpp:133
+#: xml_file_content.cpp:134
 msgid "M&ap"
 msgstr ""
 
-#: xml_file_content.cpp:134
+#: xml_file_content.cpp:135
 msgid "Find brush..."
 msgstr ""
 
-#: xml_file_content.cpp:135
+#: xml_file_content.cpp:136
 msgid "Find and replace textures..."
 msgstr ""
 
-#: xml_file_content.cpp:136
+#: xml_file_content.cpp:137
 msgid "Map info..."
 msgstr ""
 
-#: xml_file_content.cpp:137
+#: xml_file_content.cpp:138
 msgid "E&ntity"
 msgstr ""
 
-#: xml_file_content.cpp:138
+#: xml_file_content.cpp:139
 msgid "&Revert group to worldspawn"
 msgstr ""
 
-#: xml_file_content.cpp:139
+#: xml_file_content.cpp:140
 msgid "&Connect selected entities"
 msgstr ""
 
-#: xml_file_content.cpp:140
+#: xml_file_content.cpp:141
 msgid "&Bind selected entities"
 msgstr ""
 
-#: xml_file_content.cpp:142
+#: xml_file_content.cpp:143
 msgid "Entity Class Tree..."
 msgstr ""
 
-#: xml_file_content.cpp:143
+#: xml_file_content.cpp:144
 msgid "B&rush"
 msgstr ""
 
-#: xml_file_content.cpp:144
+#: xml_file_content.cpp:145
 msgid "Prism..."
 msgstr ""
 
-#: xml_file_content.cpp:145
+#: xml_file_content.cpp:146
 msgid "Cone..."
 msgstr ""
 
-#: xml_file_content.cpp:146
+#: xml_file_content.cpp:147
 msgid "Sphere..."
 msgstr ""
 
-#: xml_file_content.cpp:147
+#: xml_file_content.cpp:148
 msgid "CSG"
 msgstr ""
 
-#: xml_file_content.cpp:148
+#: xml_file_content.cpp:149
 msgid "Make &Hollow"
 msgstr ""
 
-#: xml_file_content.cpp:149
+#: xml_file_content.cpp:150
 msgid "Make &Room"
 msgstr ""
 
-#: xml_file_content.cpp:150
+#: xml_file_content.cpp:151
 msgid "CSG &Subtract"
 msgstr ""
 
-#: xml_file_content.cpp:151
+#: xml_file_content.cpp:152
 msgid "CSG &Merge"
 msgstr ""
 
-#: xml_file_content.cpp:153
+#: xml_file_content.cpp:154
 msgid "Clip Selection"
 msgstr ""
 
-#: xml_file_content.cpp:154
+#: xml_file_content.cpp:155
 msgid "Split Selection"
 msgstr ""
 
-#: xml_file_content.cpp:155
+#: xml_file_content.cpp:156
 msgid "Flip Clip Orientation"
 msgstr ""
 
-#: xml_file_content.cpp:156
+#: xml_file_content.cpp:157
 msgid "Texture lock"
 msgstr ""
 
-#: xml_file_content.cpp:157
+#: xml_file_content.cpp:158
 msgid "Create Decal Patches"
 msgstr ""
 
-#: xml_file_content.cpp:159
+#: xml_file_content.cpp:160
 msgid "Make Detail"
 msgstr ""
 
-#: xml_file_content.cpp:160
+#: xml_file_content.cpp:161
 msgid "Make Structural"
 msgstr ""
 
-#: xml_file_content.cpp:161
+#: xml_file_content.cpp:162
 msgid "&Patch"
 msgstr ""
 
-#: xml_file_content.cpp:162
+#: xml_file_content.cpp:163
 msgid "Create Simple Patch Mesh"
 msgstr ""
 
-#: xml_file_content.cpp:163
+#: xml_file_content.cpp:164
 msgid "Create End cap"
 msgstr ""
 
-#: xml_file_content.cpp:164
+#: xml_file_content.cpp:165
 msgid "Create Bevel"
 msgstr ""
 
-#: xml_file_content.cpp:165
+#: xml_file_content.cpp:166
 msgid "Create Cone"
 msgstr ""
 
-#: xml_file_content.cpp:166
+#: xml_file_content.cpp:167
 msgid "Create Cylinder"
 msgstr ""
 
-#: xml_file_content.cpp:167
+#: xml_file_content.cpp:168
 msgid "Create Sphere"
 msgstr ""
 
-#: xml_file_content.cpp:168
+#: xml_file_content.cpp:169
 msgid "More cylinders"
 msgstr ""
 
-#: xml_file_content.cpp:169
+#: xml_file_content.cpp:170
 msgid "Create Dense Cylinder"
 msgstr ""
 
-#: xml_file_content.cpp:170
+#: xml_file_content.cpp:171
 msgid "Create Very Dense Cylinder"
 msgstr ""
 
-#: xml_file_content.cpp:171
+#: xml_file_content.cpp:172
 msgid "Create Square Cylinder"
 msgstr ""
 
-#: xml_file_content.cpp:172
+#: xml_file_content.cpp:173
 msgid "Insert"
 msgstr ""
 
-#: xml_file_content.cpp:173
+#: xml_file_content.cpp:174
 msgid "Insert 2 Columns at the beginning"
 msgstr ""
 
-#: xml_file_content.cpp:174
+#: xml_file_content.cpp:175
 msgid "Insert 2 Columns at the end"
 msgstr ""
 
-#: xml_file_content.cpp:175
+#: xml_file_content.cpp:176
 msgid "Insert 2 Rows at the beginning"
 msgstr ""
 
-#: xml_file_content.cpp:176
+#: xml_file_content.cpp:177
 msgid "Insert 2 Rows at the end"
 msgstr ""
 
-#: xml_file_content.cpp:177
+#: xml_file_content.cpp:178
 msgid "Append"
 msgstr ""
 
-#: xml_file_content.cpp:178
+#: xml_file_content.cpp:179
 msgid "Append 2 columns at the beginning"
 msgstr ""
 
-#: xml_file_content.cpp:179
+#: xml_file_content.cpp:180
 msgid "Append 2 columns at the end"
 msgstr ""
 
-#: xml_file_content.cpp:180
+#: xml_file_content.cpp:181
 msgid "Append 2 rows at the beginning"
 msgstr ""
 
-#: xml_file_content.cpp:181
+#: xml_file_content.cpp:182
 msgid "Append 2 rows at the end"
 msgstr ""
 
-#: xml_file_content.cpp:183
+#: xml_file_content.cpp:184
 msgid "Delete 2 columns from the beginning"
 msgstr ""
 
-#: xml_file_content.cpp:184
+#: xml_file_content.cpp:185
 msgid "Delete 2 columns from the end"
 msgstr ""
 
-#: xml_file_content.cpp:185
+#: xml_file_content.cpp:186
 msgid "Delete 2 rows from the beginning"
 msgstr ""
 
-#: xml_file_content.cpp:186
+#: xml_file_content.cpp:187
 msgid "Delete 2 rows from the end"
 msgstr ""
 
-#: xml_file_content.cpp:187
+#: xml_file_content.cpp:188
 msgid "Matrix"
 msgstr ""
 
-#: xml_file_content.cpp:188
+#: xml_file_content.cpp:189
 msgid "Invert"
 msgstr ""
 
-#: xml_file_content.cpp:189
+#: xml_file_content.cpp:190
 msgid "Re-disperse"
 msgstr ""
 
-#: xml_file_content.cpp:190
+#: xml_file_content.cpp:191
 msgid "Rows"
 msgstr ""
 
-#: xml_file_content.cpp:191
+#: xml_file_content.cpp:192
 msgid "Columns"
 msgstr ""
 
-#: xml_file_content.cpp:192
+#: xml_file_content.cpp:193
 msgid "Transpose"
 msgstr ""
 
-#: xml_file_content.cpp:193
+#: xml_file_content.cpp:194
 msgid "Thicken Selected Patches"
 msgstr ""
 
-#: xml_file_content.cpp:194
+#: xml_file_content.cpp:195
 msgid "Cap Selection"
 msgstr ""
 
-#: xml_file_content.cpp:195
+#: xml_file_content.cpp:196
 msgid "Stitch Patch Textures"
 msgstr ""
 
-#: xml_file_content.cpp:196
+#: xml_file_content.cpp:197
 msgid "Bulge patch"
 msgstr ""
 
-#: xml_file_content.cpp:197
+#: xml_file_content.cpp:198
 msgid "&Curve"
 msgstr ""
 
-#: xml_file_content.cpp:198
+#: xml_file_content.cpp:199
 msgid "Create NURBS Curve"
 msgstr ""
 
-#: xml_file_content.cpp:199
+#: xml_file_content.cpp:200
 msgid "Create CatmullRom Curve"
 msgstr ""
 
-#: xml_file_content.cpp:200
+#: xml_file_content.cpp:201
 msgid "Convert NURBS <-> CatmullRom"
 msgstr ""
 
-#: xml_file_content.cpp:201
+#: xml_file_content.cpp:202
 msgid "Append Curve Control Point"
 msgstr ""
 
-#: xml_file_content.cpp:202
+#: xml_file_content.cpp:203
 msgid "Insert Curve Control Points"
 msgstr ""
 
-#: xml_file_content.cpp:203
+#: xml_file_content.cpp:204
 msgid "Remove Curve Control Points"
 msgstr ""
 
-#: xml_file_content.cpp:204
+#: xml_file_content.cpp:205
 msgid "&Help"
 msgstr ""
 
-#: xml_file_content.cpp:205
+#: xml_file_content.cpp:206
 msgid "&About"
 msgstr ""
 
-#: xml_file_content.cpp:206
+#: xml_file_content.cpp:207
 msgid "&User Guide"
 msgstr ""
 
@@ -5887,7 +5931,7 @@ msgstr ""
 msgid "Conversations"
 msgstr ""
 
-#: xml_file_content.cpp:8 xml_file_content.cpp:7
+#: xml_file_content.cpp:10 xml_file_content.cpp:7
 msgid "Clear"
 msgstr ""
 
@@ -6138,7 +6182,7 @@ msgid "Difficulty"
 msgstr ""
 
 #: xml_file_content.cpp:3
-msgid "Iniital State"
+msgid "Initial State"
 msgstr ""
 
 #: xml_file_content.cpp:4 xml_file_content.cpp:20
@@ -6161,8 +6205,8 @@ msgstr ""
 msgid "Enabling Objectives"
 msgstr ""
 
-#: xml_file_content.cpp:10
-msgid "Sucess Logic"
+#: xml_file_content.cpp:10 xml_file_content.cpp:11
+msgid "Success Logic"
 msgstr ""
 
 #: xml_file_content.cpp:11
@@ -6251,10 +6295,6 @@ msgstr ""
 
 #: xml_file_content.cpp:4
 msgid "Objectives"
-msgstr ""
-
-#: xml_file_content.cpp:11
-msgid "Success Logic"
 msgstr ""
 
 #: xml_file_content.cpp:12
