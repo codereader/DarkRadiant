@@ -222,8 +222,6 @@ darkradiant_SOURCES = main.cpp \
                       skins/Doom3SkinCache.cpp \
 					  ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \
-                      ui/entitychooser/EntityClassChooser.cpp \
-                      ui/entitychooser/EntityClassTreePopulator.cpp \
                       ui/eclasstree/EClassTree.cpp \
                       ui/eclasstree/EClassTreeBuilder.cpp \
                       ui/entitylist/EntityList.cpp \

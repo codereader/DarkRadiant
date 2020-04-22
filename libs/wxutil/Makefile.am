@@ -21,6 +21,7 @@ libwxutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
                       $(top_builddir)/libs/math/libmath.la \
                       $(top_builddir)/libs/scene/libscenegraph.la
 libwxutil_la_SOURCES = ConsoleView.cpp \
+                       EntityClassChooser.cpp \
                        FreezePointer.cpp \
                        GLWidget.cpp \
                        KeyValueTable.cpp \

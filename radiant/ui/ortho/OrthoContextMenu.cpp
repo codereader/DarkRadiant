@@ -18,12 +18,12 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/menu/CommandMenuItem.h"
+#include "wxutil/EntityClassChooser.h"
 
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/ModelFinder.h"
 #include "selection/algorithm/Entity.h"
 #include "ui/modelselector/ModelSelector.h"
-#include "ui/entitychooser/EntityClassChooser.h"
 
 #include "string/convert.h"
 #include "math/AABB.h"
@@ -260,7 +260,7 @@ void OrthoContextMenu::addEntity()
     UndoableCommand command("createEntity");
 
     // Display the chooser to select an entity classname
-    std::string cName = EntityClassChooser::chooseEntityClass();
+    std::string cName = wxutil::EntityClassChooser::chooseEntityClass();
 
     if (!cName.empty()) 
     {

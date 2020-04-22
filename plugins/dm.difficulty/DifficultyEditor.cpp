@@ -5,6 +5,7 @@
 
 #include "wxutil/TreeView.h"
 #include "wxutil/ChoiceHelper.h"
+#include "wxutil/EntityClassChooser.h"
 
 #include <wx/panel.h>
 #include <wx/choice.h>
@@ -16,23 +17,14 @@
 
 #include "ClassNameStore.h"
 
+#include "debugging/ScopedDebugTimer.h"
+
 namespace ui
 {
 
 DifficultyEditor::DifficultyEditor(wxWindow* parent,
                                    const difficulty::DifficultySettingsPtr& settings)
-: _settings(settings),
-  _settingsView(nullptr),
-  _classCombo(nullptr),
-  _spawnArgEntry(nullptr),
-  _argumentEntry(nullptr),
-  _appTypeCombo(nullptr),
-  _saveSettingButton(nullptr),
-  _deleteSettingButton(nullptr),
-  _createSettingButton(nullptr),
-  _refreshButton(nullptr),
-  _noteText(nullptr),
-  _updateActive(false)
+: _settings(settings)
 {
 	// The actual editor pane
 	_editor = loadNamedPanel(parent, "DifficultyEditorMainPanel");
@@ -50,6 +42,8 @@ wxWindow* DifficultyEditor::getWidget()
 
 void DifficultyEditor::populateWindow()
 {
+    ScopedDebugTimer timer("DifficultyEditor::populateWindow()");
+
 	wxPanel* viewPanel = findNamedObject<wxPanel>(_editor, "DifficultyEditorTreeViewPanel");
 
 	_settingsView = wxutil::TreeView::CreateWithModel(viewPanel, _settings->getTreeStore());
@@ -65,9 +59,13 @@ void DifficultyEditor::populateWindow()
 	_spawnArgEntry = findNamedObject<wxTextCtrl>(_editor, "DifficultyEditorSpawnarg");
 	_argumentEntry = findNamedObject<wxTextCtrl>(_editor, "DifficultyEditorArgument");
 	
-	_classCombo = findNamedObject<wxComboBox>(_editor, "DifficultyEditorClassName");
-	_classCombo->Append(ClassNameStore::Instance().getStringList());
-	_classCombo->AutoComplete(ClassNameStore::Instance().getStringList());
+    // Set up the class name entry box and button
+	_classEntry = findNamedObject<wxTextCtrl>(_editor, "ClassNameTextBox");
+	_classEntry->AutoComplete(ClassNameStore::Instance().getStringList());
+    wxButton* chooseClassBtn = findNamedObject<wxButton>(_editor, "ChooseClassButton");
+    chooseClassBtn->Bind(
+        wxEVT_BUTTON, [&] (wxCommandEvent&) { chooseEntityClass(); }
+    );
 
 	// AppTypes
 	_appTypeCombo = findNamedObject<wxChoice>(_editor, "DifficultyEditorApplicationType");
@@ -95,6 +93,16 @@ void DifficultyEditor::populateWindow()
 	_noteText = findNamedObject<wxStaticText>(_editor, "DifficultyEditorNoteText");
 
 	makeLabelBold(_editor, "DifficultyEditorSettingLabel");
+}
+
+void DifficultyEditor::chooseEntityClass()
+{
+    // Show dialog and set the entry box text with the chosen entity class
+    std::string chosenEntity = wxutil::EntityClassChooser::chooseEntityClass(
+        _classEntry->GetValue().ToStdString()
+    );
+    if (!chosenEntity.empty())
+        _classEntry->SetValue(chosenEntity);
 }
 
 int DifficultyEditor::getSelectedSettingId()
@@ -141,7 +149,7 @@ void DifficultyEditor::updateEditorWidgets()
 
 			// Now select the eclass passed in the argument
 			// Find the entity using a TreeModel traversor
-			_classCombo->Select(_classCombo->FindString(setting->className));
+			_classEntry->SetValue(setting->className);
 
 			wxutil::ChoiceHelper::SelectItemByStoredId(_appTypeCombo, static_cast<int>(setting->appType));
 
@@ -151,7 +159,7 @@ void DifficultyEditor::updateEditorWidgets()
 			);
 
 			// We have a treeview selection, lock the classname
-			_classCombo->Enable(false);
+			_classEntry->Enable(false);
 
 			// Disable the deletion of default settings
 			_deleteSettingButton->Enable((setting->isDefault) ? false : true);
@@ -184,7 +192,7 @@ void DifficultyEditor::createSetting()
 	findNamedObject<wxPanel>(_editor, "DifficultyEditorSettingsPanel")->Enable(true);
 
 	// Unlock class combo
-	_classCombo->Enable(true);
+	_classEntry->Enable(true);
 	_saveSettingButton->Enable(true);
 
 	_spawnArgEntry->SetValue("");
@@ -200,7 +208,7 @@ void DifficultyEditor::saveSetting()
 	difficulty::SettingPtr setting(new difficulty::Setting);
 
 	// Load the widget contents
-	setting->className = _classCombo->GetStringSelection();
+	setting->className = _classEntry->GetValue();
 	setting->spawnArg = _spawnArgEntry->GetValue();
 	setting->argument = _argumentEntry->GetValue();
 

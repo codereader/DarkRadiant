@@ -2,6 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="DifficultyEditorMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
+		<size>857,238</size>
 		<object class="wxBoxSizer">
 			<orient>wxHORIZONTAL</orient>
 			<object class="sizeritem">
@@ -104,13 +105,31 @@
 									</object>
 								</object>
 								<object class="sizeritem">
-									<option>0</option>
-									<flag>wxALL|wxEXPAND</flag>
+									<option>1</option>
+									<flag>wxEXPAND</flag>
 									<border>6</border>
-									<object class="wxComboBox" name="DifficultyEditorClassName">
-										<style>wxCB_DROPDOWN|wxCB_SORT</style>
-										<value></value>
-										<content />
+									<object class="wxBoxSizer">
+										<orient>wxHORIZONTAL</orient>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</flag>
+											<border>6</border>
+											<object class="wxTextCtrl" name="ClassNameTextBox">
+												<value></value>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALL</flag>
+											<border>6</border>
+											<object class="wxButton" name="ChooseClassButton">
+												<style>wxBU_EXACTFIT</style>
+												<label>...</label>
+												<default>0</default>
+												<markup>0</markup>
+												<bitmap />
+											</object>
+										</object>
 									</object>
 								</object>
 								<object class="sizeritem">

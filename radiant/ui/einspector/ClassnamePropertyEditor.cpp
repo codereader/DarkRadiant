@@ -9,9 +9,9 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include "wxutil/dialog/MessageBox.h"
+#include "wxutil/EntityClassChooser.h"
 
 #include "selection/algorithm/Entity.h"
-#include "ui/entitychooser/EntityClassChooser.h"
 
 namespace ui
 {
@@ -32,7 +32,7 @@ void ClassnamePropertyEditor::onBrowseButtonClick()
 	std::string currentEclass = _entity->getKeyValue(_key);
 
 	// Use the EntityClassChooser dialog to get a selection from the user
-	std::string selection = EntityClassChooser::chooseEntityClass(currentEclass);
+	std::string selection = wxutil::EntityClassChooser::chooseEntityClass(currentEclass);
 
 	// Only apply if the classname has actually changed
 	if (!selection.empty() && selection != currentEclass)
