@@ -21,7 +21,6 @@ namespace ui
 namespace
 {
 	const std::string RKEY_REGULAR_ROOT = "user/ui/mainFrame/regular";
-	const std::string RKEY_REGULAR_TEMP_ROOT = RKEY_REGULAR_ROOT + "/temp";
 }
 
 RegularLayout::RegularLayout(bool regularLeft) :
@@ -30,7 +29,7 @@ RegularLayout::RegularLayout(bool regularLeft) :
 
 std::string RegularLayout::getName()
 {
-	return REGULAR_LAYOUT_NAME;
+	return _regularLeft ? REGULAR_LEFT_LAYOUT_NAME : REGULAR_LAYOUT_NAME;
 }
 
 void RegularLayout::activate()
@@ -132,31 +131,6 @@ void RegularLayout::deactivate()
 	_regular.texCamPane = nullptr;
 }
 
-void RegularLayout::maximiseCameraSize()
-{
-	// Save the current state to the registry
-	saveStateToPath(RKEY_REGULAR_TEMP_ROOT);
-
-	// Maximise the camera
-	if (_regularLeft)
-	{
-		_regular.horizPane->SetSashPosition(0);
-	}
-	else
-	{
-		_regular.horizPane->SetSashPosition(2000000);
-	}
-}
-
-void RegularLayout::restorePanePositions()
-{
-	// Restore state
-	restoreStateFromPath(RKEY_REGULAR_TEMP_ROOT);
-
-	// Remove all previously stored pane information
-	GlobalRegistry().deleteXPath(RKEY_REGULAR_TEMP_ROOT);
-}
-
 void RegularLayout::restoreStateFromPath(const std::string& path)
 {
     // Trigger a proper resize event before setting the sash position
@@ -191,14 +165,31 @@ void RegularLayout::saveStateToPath(const std::string& path)
 
 void RegularLayout::toggleFullscreenCameraView()
 {
-	if (GlobalRegistry().keyExists(RKEY_REGULAR_TEMP_ROOT))
+	if (_savedPositions)
 	{
-		restorePanePositions();
+		_regular.horizPane->SetSashPosition(_savedPositions->horizPanePosition);
+		_regular.texCamPane->SetSashPosition(_savedPositions->texCamPanePosition);
+
+		_savedPositions.reset();
 	}
 	else
 	{
-		// No saved info found in registry, maximise cam
-		maximiseCameraSize();
+		_savedPositions.reset(new SavedPositions{
+			_regular.horizPane->GetSashPosition(),
+			_regular.texCamPane->GetSashPosition()
+		});
+
+		// Maximise the camera
+		if (_regularLeft)
+		{
+			_regular.horizPane->SetSashPosition(2000000); // wx will cap this
+			_regular.texCamPane->SetSashPosition(2000000);
+		}
+		else
+		{
+			_regular.horizPane->SetSashPosition(1);
+			_regular.texCamPane->SetSashPosition(2000000);
+		}
 	}
 }
 
