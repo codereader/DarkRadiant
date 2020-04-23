@@ -18,15 +18,16 @@
 
 namespace ui
 {
+
     namespace
     {
         const std::string RKEY_EMBEDDED_ROOT = "user/ui/mainFrame/embedded";
         const std::string RKEY_HORIZ_POS = RKEY_EMBEDDED_ROOT + "/mainSplitterPos";
         const std::string RKEY_VERT_POS = RKEY_EMBEDDED_ROOT + "/groupCamSplitterPos";
-        const std::string RKEY_EMBEDDED_TEMP_ROOT = RKEY_EMBEDDED_ROOT + "/temp";
     }
 
-std::string EmbeddedLayout::getName() {
+std::string EmbeddedLayout::getName()
+{
     return EMBEDDED_LAYOUT_NAME;
 }
 
@@ -123,13 +124,8 @@ void EmbeddedLayout::deactivate()
     // Those two have been deleted by the above, so NULL the references
     _horizPane = nullptr;
     _groupCamPane = nullptr;
-}
 
-void EmbeddedLayout::maximiseCameraSize()
-{
-    // Maximise the camera, wxWidgets will clip the coordinates
-    _horizPane->SetSashPosition(2000000);
-    _groupCamPane->SetSashPosition(2000000);
+    _savedPositions.reset();
 }
 
 void EmbeddedLayout::restoreStateFromRegistry()
@@ -138,13 +134,23 @@ void EmbeddedLayout::restoreStateFromRegistry()
 
 void EmbeddedLayout::toggleFullscreenCameraView()
 {
-    if (GlobalRegistry().keyExists(RKEY_EMBEDDED_TEMP_ROOT))
+    if (_savedPositions)
     {
+        _horizPane->SetSashPosition(_savedPositions->horizSashPosition);
+        _groupCamPane->SetSashPosition(_savedPositions->groupCamSashPosition);
+
+        _savedPositions.reset();
     }
     else
     {
-        // No saved info found in registry, maximise cam
-        maximiseCameraSize();
+        _savedPositions.reset(new SavedPositions{
+            _horizPane->GetSashPosition(), 
+            _groupCamPane->GetSashPosition()
+        });
+
+        // Maximise the camera, wxWidgets will clip the coordinates
+        _horizPane->SetSashPosition(2000000);
+        _groupCamPane->SetSashPosition(2000000);
     }
 }
 
