@@ -30,6 +30,7 @@ void MapFileManager::registerFileTypes()
 {
 	// Register the map file extension in the FileTypeRegistry
 	GlobalFiletypes().registerPattern(filetype::TYPE_MAP, FileTypePattern(_("Map"), "map", "*.map"));
+	GlobalFiletypes().registerPattern(filetype::TYPE_MAP, FileTypePattern(_("Portable Map"), "mapx", "*.mapx"));
 	GlobalFiletypes().registerPattern(filetype::TYPE_REGION, FileTypePattern(_("Region"), "reg", "*.reg"));
 	GlobalFiletypes().registerPattern(filetype::TYPE_PREFAB, FileTypePattern(_("Prefab"), "pfb", "*.pfb"));
 	GlobalFiletypes().registerPattern(filetype::TYPE_PREFAB, FileTypePattern(_("Portable Prefab"), "pfbx", "*.pfbx"));
