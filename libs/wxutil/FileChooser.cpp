@@ -17,6 +17,11 @@
 namespace wxutil
 {
 
+namespace
+{
+	const char* const WILDCARD_EXTENSION = "*";
+}
+
 FileChooser::FileChooser(const std::string& title,
 						 bool open,
 						 const std::string& fileType,
@@ -84,6 +89,7 @@ void FileChooser::construct()
 
 				filter.caption = format->getMapFormatName() + " " + pattern.name + " (" + pattern.pattern + ")";
 				filter.filter = pattern.pattern;
+				filter.extension = pattern.extension;
 				filter.mapFormatName = format->getMapFormatName();
 
 				_fileFilters.push_back(filter);
@@ -102,6 +108,7 @@ void FileChooser::construct()
 
 			filter.caption = pattern.name + " (" + pattern.pattern + ")";
 			filter.filter = pattern.pattern;
+			filter.extension = pattern.extension;
 
 			// Pre-select the filter matching the default extension
 			if (pattern.extension == _defaultExt)
@@ -120,6 +127,7 @@ void FileChooser::construct()
 
 	filter.caption = _("All Files (*.*)");
 	filter.filter = "*.*";
+	filter.extension = WILDCARD_EXTENSION;
 
 	_fileFilters.push_back(filter);
 	
@@ -158,6 +166,7 @@ void FileChooser::setCurrentPath(const std::string& path)
 	if (!_file.empty())
 	{
 		_dialog->SetFilename(_file);
+		selectFilterIndexFromFilename(_file);
 	}
 }
 
@@ -168,6 +177,38 @@ void FileChooser::setCurrentFile(const std::string& file)
 	if (!_open)
 	{
 		_dialog->SetFilename(_file);
+		selectFilterIndexFromFilename(_file);
+	}
+}
+
+void FileChooser::selectFilterIndexFromFilename(const std::string& filename)
+{
+	if (filename.empty())
+	{
+		return;
+	}
+
+	auto ext = os::getExtension(filename);
+	std::size_t wildCardIndex = std::numeric_limits<std::size_t>::max();
+
+	for (std::size_t i = 0; i < _fileFilters.size(); ++i)
+	{
+		if (string::iequals(ext, _fileFilters[i].extension))
+		{
+			_dialog->SetFilterIndex(i);
+			return;
+		}
+
+		if (_fileFilters[i].extension == WILDCARD_EXTENSION)
+		{
+			wildCardIndex = i;
+		}
+	}
+
+	// Select the * extension if there's no better match
+	if (wildCardIndex < _fileFilters.size())
+	{
+		_dialog->SetFilterIndex(wildCardIndex);
 	}
 }
 

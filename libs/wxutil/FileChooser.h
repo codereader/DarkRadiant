@@ -32,6 +32,7 @@ private:
 	{
 		std::string caption;	// "Doom 3 Map (*.map)"
 		std::string filter;		// "*.map"
+		std::string extension;		// "map"
 		std::string mapFormatName;
 	};
 
@@ -106,6 +107,8 @@ public:
 
 private:
 	static long getStyle(bool open);
+
+	void selectFilterIndexFromFilename(const std::string& filename);
 
 	void construct(); // shared constructor stuff
 };
