@@ -195,6 +195,7 @@ void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 			if (!shader.empty())
 			{
 				setSource(shader);
+				updateMediaBrowsers();
 				break;
 			}
 		}
