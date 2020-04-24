@@ -790,31 +790,15 @@ void EntityInspector::_onCutKey()
 
         // We don't delete any inherited key values
         if (row[_columns.isInherited].getBool()) continue;
+        
+        // Don't delete any classnames either
+        if (key == "classname") continue;
 
         UndoableCommand cmd("cutProperty");
 
         // Clear the key after copying
         selectedEntity->setKeyValue(key, "");
     }
-
-#if 0
-    std::string key = getSelectedKey();
-    std::string value = getListSelection(_columns.value);
-
-    assert(!_selectedEntity.expired());
-    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-
-    if (!key.empty() && selectedEntity != NULL)
-    {
-        _clipBoard.key = key;
-        _clipBoard.value = value;
-
-        UndoableCommand cmd("cutProperty");
-
-        // Clear the key after copying
-        selectedEntity->setKeyValue(key, "");
-    }
-#endif
 }
 
 bool EntityInspector::_testCutKey()
@@ -826,26 +810,16 @@ bool EntityInspector::_testCutKey()
     {
         wxutil::TreeModel::Row row(item, *_kvStore);
 
-        if (!row[_columns.isInherited].getBool())
+        wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+        std::string key = iconAndName.GetText().ToStdString();
+
+        if (!row[_columns.isInherited].getBool() && key != "classname")
         {
-            return true; // we have at least one non-inherited value
+            return true; // we have at least one non-inherited value that is not "classname"
         }
     }
 
     return false;
-#if 0
-    // Make sure the Delete item is only available for explicit
-    // (non-inherited) properties
-    if (getListSelectionBool(_columns.isInherited) == false)
-    {
-        // return true only if selection is not empty
-        return !getSelectedKey().empty();
-    }
-    else
-    {
-        return false;
-    }
-#endif
 }
 
 void EntityInspector::_onPasteKey()
@@ -1151,6 +1125,12 @@ void EntityInspector::addClassProperties()
     IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
         className, true
     );
+
+    if (!eclass)
+    {
+        rWarning() << "No classname on entity '" << selectedEntity->getKeyValue("name") << "'" << std::endl;
+        return;
+    }
 
     // Visit the entity class
     eclass->forEachClassAttribute(
