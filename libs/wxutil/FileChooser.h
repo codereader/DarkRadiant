@@ -34,6 +34,11 @@ private:
 		std::string filter;		// "*.map"
 		std::string extension;		// "map"
 		std::string mapFormatName;
+		bool isDefaultFilter;			// should be selected when dialog is shown
+
+		FileFilter() :
+			isDefaultFilter(false)
+		{}
 	};
 
 	std::vector<FileFilter> _fileFilters;
@@ -111,6 +116,9 @@ private:
 	void selectFilterIndexFromFilename(const std::string& filename);
 
 	void construct(); // shared constructor stuff
+
+	void assembleMapExportFileTypes();
+	void assembleFileTypes();
 };
 
 } // namespace wxutil
