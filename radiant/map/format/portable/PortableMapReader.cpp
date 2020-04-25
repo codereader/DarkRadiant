@@ -472,10 +472,10 @@ bool PortableMapReader::CanLoad(std::istream& stream)
 	// certain signature parts.
 	// This will fail if the XML is oddly formatted with e.g. line-breaks
 	std::string buffer(512, '\0');
-
+	
 	for (int i = 0; i < 25; ++i)
 	{
-		stream.getline(buffer.data(), buffer.length());
+        std::getline(stream, buffer);
 
 		// Check if the format="portable" string is occurring somewhere
 		std::regex pattern(R"(<map[^>]+format=\"portable\")");
