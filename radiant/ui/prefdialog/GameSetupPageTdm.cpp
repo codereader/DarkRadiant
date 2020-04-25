@@ -199,14 +199,15 @@ void GameSetupPageTdm::validateSettings()
 		// Engine path doesn't exist
 		errorMsg += fmt::format(_("Engine path \"{0}\" does not exist.\n"), _config.enginePath);
 	}
+    else
+    {
+        // Check if the TheDarkMod.exe file is in the right place
+        fs::path darkmodExePath = _config.enginePath;
 
-	// Check if the TheDarkMod.exe file is in the right place
-	fs::path darkmodExePath = _config.enginePath;
-
-	// No engine path set so far, search the game file for default values
-	const std::string ENGINE_EXECUTABLE_ATTRIBUTE =
+        // No engine path set so far, search the game file for default values
+        const std::string ENGINE_EXECUTABLE_ATTRIBUTE =
 #if defined(WIN32)
-		"engine_win32"
+        "engine_win32"
 #elif defined(__linux__) || defined (__FreeBSD__)
 		"engine_linux"
 #elif defined(__APPLE__)
@@ -216,28 +217,29 @@ void GameSetupPageTdm::validateSettings()
 #endif
 		;
 
-	bool found = false;
-	std::regex exeRegex(_game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE));
+        bool found = false;
+        std::regex exeRegex(_game->getKeyValue(ENGINE_EXECUTABLE_ATTRIBUTE));
 
-	os::foreachItemInDirectory(_config.enginePath, [&](const fs::path& path)
-	{
-		try
-		{
-			found |= std::regex_match(path.filename().string(), exeRegex);
-		}
-		catch (const std::system_error& ex)
-		{
-			rWarning() << "[vfs] Skipping file " << string::to_utf8(path.filename().wstring()) <<
-				" - possibly unsupported characters in filename? " <<
-				"(Exception: " << ex.what() << ")" << std::endl;
-		}
-	});
+        os::foreachItemInDirectory(_config.enginePath, [&](const fs::path& path)
+        {
+            try
+            {
+                found |= std::regex_match(path.filename().string(), exeRegex);
+            }
+            catch (const std::system_error& ex)
+            {
+                rWarning() << "[vfs] Skipping file " << string::to_utf8(path.filename().wstring()) <<
+                    " - possibly unsupported characters in filename? " <<
+                    "(Exception: " << ex.what() << ")" << std::endl;
+            }
+        });
 
-	if (!found)
-	{
-		// engine executable not present
-		errorMsg += _("The engine executable(s) could not be found in the specified folder.\n");
-	}
+        if (!found)
+        {
+            // engine executable not present
+            errorMsg += _("The engine executable(s) could not be found in the specified folder.\n");
+        }
+    }
 
 	// Check the mod path (=mission path), if not empty
 	if (!_config.modPath.empty() && !os::fileOrDirExists(_config.modPath))
