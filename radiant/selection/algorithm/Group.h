@@ -125,14 +125,21 @@ namespace algorithm
 
 	/**
 	 * greebo: This selects all the children of an entity, given the case
-	 *         that a child of this entity is already selected. For instance,
-	 *         if a child brush of a func_static is selected, this command
-	 *         expands the selection to all other children (but not the
-	 *         func_static entity itself). Select a single primitive of
-	 *         the worldspawn entity and this command will select every primitive
-	 *         that is child of worldspawn.
+	 * that a child of this entity is already selected. For instance,
+	 * if a child brush of a func_static is selected, this command
+	 * expands the selection to all other children (but not the
+	 * func_static entity itself). Select a single primitive of
+	 * the worldspawn entity and this command will select every primitive
+	 * that is child of worldspawn.
 	 */
-	void expandSelectionToEntities(const cmd::ArgumentList& args);
+	void expandSelectionToSiblings(const cmd::ArgumentList& args);
+
+	/**
+	 * greebo: This will select the parent entity of any currently selected 
+	 * primitve. The child primitive will be deselected and the parent entity
+	 * will be selected instead.
+	 */
+	void selectParentEntitiesOfSelected(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: Merges all selected group nodes (func_* entities).

@@ -48,7 +48,8 @@
 		<shortcut command="DeleteSelection" key="BackSpace" />
 		<shortcut command="UnSelectSelection" key="Escape" />
 		<shortcut command="InvertSelection" key="I" />
-		<shortcut command="ExpandSelectionToEntities" key="E" modifiers="CONTROL+ALT" />
+		<shortcut command="ExpandSelectionToSiblings" key="E" modifiers="CONTROL+ALT" />
+		<shortcut command="SelectParentEntities" key="E" modifiers="CONTROL+ALT+SHIFT" />
 		<shortcut command="Preferences" key="P" />
 		<shortcut command="ToggleConsole" key="O" />
 		<shortcut command="EntityList" key="J" />

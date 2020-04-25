@@ -1019,7 +1019,8 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("SelectInside", selectInside);
 	GlobalCommandSystem().addCommand("SelectTouching", selectTouching);
 	GlobalCommandSystem().addCommand("SelectCompleteTall", selectCompleteTall);
-	GlobalCommandSystem().addCommand("ExpandSelectionToEntities", expandSelectionToEntities);
+	GlobalCommandSystem().addCommand("ExpandSelectionToSiblings", expandSelectionToSiblings);
+	GlobalCommandSystem().addCommand("SelectParentEntities", selectParentEntitiesOfSelected);
 	GlobalCommandSystem().addCommand("MergeSelectedEntities", mergeSelectedEntities);
 	GlobalCommandSystem().addCommand("SelectChildren", selectChildren);
 
@@ -1095,7 +1096,8 @@ void registerCommands()
 	GlobalEventManager().addCommand("SelectInside", "SelectInside");
 	GlobalEventManager().addCommand("SelectTouching", "SelectTouching");
 	GlobalEventManager().addCommand("SelectCompleteTall", "SelectCompleteTall");
-	GlobalEventManager().addCommand("ExpandSelectionToEntities", "ExpandSelectionToEntities");
+	GlobalEventManager().addCommand("ExpandSelectionToSiblings", "ExpandSelectionToSiblings");
+	GlobalEventManager().addCommand("SelectParentEntities", "SelectParentEntities");
 	GlobalEventManager().addCommand("MergeSelectedEntities", "MergeSelectedEntities");
 	GlobalEventManager().addCommand("SelectChildren", "SelectChildren");
 
