@@ -328,7 +328,6 @@
 		3AA6E05923B233CA00BF9AD7 /* MenuElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F43C23B1B950008A1B2D /* MenuElement.cpp */; };
 		3AA6E05A23B233CD00BF9AD7 /* MenuBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F43A23B1B950008A1B2D /* MenuBar.cpp */; };
 		3AA6E05B23B233D500BF9AD7 /* GroupDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F43623B1B950008A1B2D /* GroupDialog.cpp */; };
-		3AA6E05C23B233D900BF9AD7 /* FilterMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F43423B1B950008A1B2D /* FilterMenu.cpp */; };
 		3AA6E05D23B233DC00BF9AD7 /* DialogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F43223B1B950008A1B2D /* DialogManager.cpp */; };
 		3AA6E05E23B233DF00BF9AD7 /* ColourSchemeManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F43023B1B950008A1B2D /* ColourSchemeManager.cpp */; };
 		3AA6E05F23B233E200BF9AD7 /* ColourSchemeEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F42E23B1B950008A1B2D /* ColourSchemeEditor.cpp */; };
@@ -513,20 +512,6 @@
 		3AE6F39F239F5D35008A1B2D /* Doom3AasFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F376239F5D35008A1B2D /* Doom3AasFile.cpp */; };
 		3AE6F3A0239F5D35008A1B2D /* Doom3AasFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F378239F5D35008A1B2D /* Doom3AasFileLoader.cpp */; };
 		3AE6F3A1239F5D35008A1B2D /* Doom3AasFileSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F37A239F5D35008A1B2D /* Doom3AasFileSettings.cpp */; };
-		3AE6F3A2239F5D35008A1B2D /* Doom3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F37D239F5D35008A1B2D /* Doom3MapFormat.cpp */; };
-		3AE6F3A3239F5D35008A1B2D /* Doom3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F37F239F5D35008A1B2D /* Doom3MapReader.cpp */; };
-		3AE6F3A4239F5D35008A1B2D /* Doom3MapWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F381239F5D35008A1B2D /* Doom3MapWriter.cpp */; };
-		3AE6F3A5239F5D35008A1B2D /* Doom3PrefabFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F383239F5D35008A1B2D /* Doom3PrefabFormat.cpp */; };
-		3AE6F3A6239F5D35008A1B2D /* mapdoom3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F385239F5D35008A1B2D /* mapdoom3.cpp */; };
-		3AE6F3A7239F5D35008A1B2D /* BrushDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F387239F5D35008A1B2D /* BrushDef.cpp */; };
-		3AE6F3A8239F5D35008A1B2D /* BrushDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F389239F5D35008A1B2D /* BrushDef3.cpp */; };
-		3AE6F3A9239F5D35008A1B2D /* Patch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F38B239F5D35008A1B2D /* Patch.cpp */; };
-		3AE6F3AA239F5D35008A1B2D /* PatchDef2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F38D239F5D35008A1B2D /* PatchDef2.cpp */; };
-		3AE6F3AB239F5D35008A1B2D /* PatchDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F38F239F5D35008A1B2D /* PatchDef3.cpp */; };
-		3AE6F3AC239F5D35008A1B2D /* Quake3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F395239F5D35008A1B2D /* Quake3MapFormat.cpp */; };
-		3AE6F3AD239F5D35008A1B2D /* Quake3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F397239F5D35008A1B2D /* Quake3MapReader.cpp */; };
-		3AE6F3AE239F5D35008A1B2D /* Quake4MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F39A239F5D35008A1B2D /* Quake4MapFormat.cpp */; };
-		3AE6F3AF239F5D35008A1B2D /* Quake4MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F39C239F5D35008A1B2D /* Quake4MapReader.cpp */; };
 		3AE6F3C2239F5DC3008A1B2D /* MD5Anim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3B1239F5DC3008A1B2D /* MD5Anim.cpp */; };
 		3AE6F3C3239F5DC3008A1B2D /* MD5AnimationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3B3239F5DC3008A1B2D /* MD5AnimationCache.cpp */; };
 		3AE6F3C4239F5DC3008A1B2D /* MD5Model.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3B6239F5DC3008A1B2D /* MD5Model.cpp */; };
@@ -1209,9 +1194,7 @@
 		3AF745871E4F861B003465B5 /* GlobalCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743431E4F861A003465B5 /* GlobalCamera.cpp */; };
 		3AF745881E4F861B003465B5 /* Clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7434D1E4F861A003465B5 /* Clipper.cpp */; };
 		3AF745891E4F861B003465B5 /* ClipPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7434F1E4F861A003465B5 /* ClipPoint.cpp */; };
-		3AF7458A1E4F861B003465B5 /* LayerCommandTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743561E4F861A003465B5 /* LayerCommandTarget.cpp */; };
 		3AF7458B1E4F861B003465B5 /* LayerInfoFileModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743581E4F861A003465B5 /* LayerInfoFileModule.cpp */; };
-		3AF7458C1E4F861B003465B5 /* LayerSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7435A1E4F861A003465B5 /* LayerSystem.cpp */; };
 		3AF7458D1E4F861B003465B5 /* LayerUsageBreakdown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7435C1E4F861A003465B5 /* LayerUsageBreakdown.cpp */; };
 		3AF7458E1E4F861B003465B5 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743621E4F861A003465B5 /* Console.cpp */; };
 		3AF7458F1E4F861B003465B5 /* COutRedirector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743641E4F861A003465B5 /* COutRedirector.cpp */; };
@@ -1450,6 +1433,35 @@
 		3AF746C41E4FAE12003465B5 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746BD1E4FAE12003465B5 /* Node.h */; };
 		3AF746C51E4FAE12003465B5 /* XPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AF746BE1E4FAE12003465B5 /* XPathException.h */; };
 		3AF746C71E4FAE63003465B5 /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
+		3AFF03E924548655002B1472 /* DialogBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03E824548655002B1472 /* DialogBase.cpp */; };
+		3AFF03ED245489BF002B1472 /* XmlFilterEventAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03EB245489BF002B1472 /* XmlFilterEventAdapter.cpp */; };
+		3AFF03F1245489FC002B1472 /* LayerManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03EE245489FC002B1472 /* LayerManager.cpp */; };
+		3AFF03F2245489FC002B1472 /* LayerModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03F0245489FC002B1472 /* LayerModule.cpp */; };
+		3AFF03F624548A32002B1472 /* MapModules.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03F324548A32002B1472 /* MapModules.cpp */; };
+		3AFF03F724548A32002B1472 /* MapPropertyInfoFileModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03F424548A32002B1472 /* MapPropertyInfoFileModule.cpp */; };
+		3AFF03FA24548A46002B1472 /* Import.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03F824548A46002B1472 /* Import.cpp */; };
+		3AFF040424548A9D002B1472 /* Doom3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03FC24548A9D002B1472 /* Doom3MapFormat.cpp */; };
+		3AFF040524548A9D002B1472 /* Doom3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF03FE24548A9D002B1472 /* Doom3MapReader.cpp */; };
+		3AFF040624548A9D002B1472 /* Doom3MapWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF040024548A9D002B1472 /* Doom3MapWriter.cpp */; };
+		3AFF040724548A9D002B1472 /* Doom3PrefabFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF040224548A9D002B1472 /* Doom3PrefabFormat.cpp */; };
+		3AFF041224548AAD002B1472 /* Quake3MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF040824548AAD002B1472 /* Quake3MapFormat.cpp */; };
+		3AFF041324548AAD002B1472 /* Quake3MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF040A24548AAD002B1472 /* Quake3MapReader.cpp */; };
+		3AFF041424548AAD002B1472 /* Quake4MapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF040D24548AAD002B1472 /* Quake4MapFormat.cpp */; };
+		3AFF041524548AAD002B1472 /* Quake4MapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF040F24548AAD002B1472 /* Quake4MapReader.cpp */; };
+		3AFF041E24548AC9002B1472 /* PortableMapFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF041824548AC9002B1472 /* PortableMapFormat.cpp */; };
+		3AFF041F24548AC9002B1472 /* PortableMapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF041A24548AC9002B1472 /* PortableMapReader.cpp */; };
+		3AFF042024548AC9002B1472 /* PortableMapWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF041C24548AC9002B1472 /* PortableMapWriter.cpp */; };
+		3AFF042D24548B09002B1472 /* BrushDef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF042324548B09002B1472 /* BrushDef.cpp */; };
+		3AFF042E24548B09002B1472 /* BrushDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF042524548B09002B1472 /* BrushDef3.cpp */; };
+		3AFF042F24548B09002B1472 /* Patch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF042724548B09002B1472 /* Patch.cpp */; };
+		3AFF043024548B09002B1472 /* PatchDef2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF042924548B09002B1472 /* PatchDef2.cpp */; };
+		3AFF043124548B09002B1472 /* PatchDef3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF042B24548B09002B1472 /* PatchDef3.cpp */; };
+		3AFF043724548B8E002B1472 /* ModelScalePreserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF043524548B8E002B1472 /* ModelScalePreserver.cpp */; };
+		3AFF043924548BB3002B1472 /* SelectionGroupModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF043824548BB3002B1472 /* SelectionGroupModule.cpp */; };
+		3AFF043B24548BCC002B1472 /* SelectionSetModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF043A24548BCC002B1472 /* SelectionSetModule.cpp */; };
+		3AFF044324548BFF002B1472 /* FilterContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF043D24548BFF002B1472 /* FilterContextMenu.cpp */; };
+		3AFF044424548BFF002B1472 /* FilterMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF043F24548BFF002B1472 /* FilterMenu.cpp */; };
+		3AFF044524548BFF002B1472 /* FilterOrthoContextMenuItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF044124548BFF002B1472 /* FilterOrthoContextMenuItem.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2821,45 +2833,13 @@
 		3AE6F36B239F5C9F008A1B2D /* ImageTypeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageTypeLoader.h; path = ../../radiant/image/ImageTypeLoader.h; sourceTree = SOURCE_ROOT; };
 		3AE6F36C239F5C9F008A1B2D /* TGALoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TGALoader.cpp; path = ../../radiant/image/TGALoader.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F36D239F5C9F008A1B2D /* TGALoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TGALoader.h; path = ../../radiant/image/TGALoader.h; sourceTree = SOURCE_ROOT; };
-		3AE6F376239F5D35008A1B2D /* Doom3AasFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFile.cpp; path = ../../radiant/mapdoom3/aas/Doom3AasFile.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F377239F5D35008A1B2D /* Doom3AasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFile.h; path = ../../radiant/mapdoom3/aas/Doom3AasFile.h; sourceTree = SOURCE_ROOT; };
-		3AE6F378239F5D35008A1B2D /* Doom3AasFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileLoader.cpp; path = ../../radiant/mapdoom3/aas/Doom3AasFileLoader.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F379239F5D35008A1B2D /* Doom3AasFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileLoader.h; path = ../../radiant/mapdoom3/aas/Doom3AasFileLoader.h; sourceTree = SOURCE_ROOT; };
-		3AE6F37A239F5D35008A1B2D /* Doom3AasFileSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileSettings.cpp; path = ../../radiant/mapdoom3/aas/Doom3AasFileSettings.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F37B239F5D35008A1B2D /* Doom3AasFileSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileSettings.h; path = ../../radiant/mapdoom3/aas/Doom3AasFileSettings.h; sourceTree = SOURCE_ROOT; };
-		3AE6F37C239F5D35008A1B2D /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Util.h; path = ../../radiant/mapdoom3/aas/Util.h; sourceTree = SOURCE_ROOT; };
-		3AE6F37D239F5D35008A1B2D /* Doom3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapFormat.cpp; path = ../../radiant/mapdoom3/Doom3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F37E239F5D35008A1B2D /* Doom3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapFormat.h; path = ../../radiant/mapdoom3/Doom3MapFormat.h; sourceTree = SOURCE_ROOT; };
-		3AE6F37F239F5D35008A1B2D /* Doom3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapReader.cpp; path = ../../radiant/mapdoom3/Doom3MapReader.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F380239F5D35008A1B2D /* Doom3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapReader.h; path = ../../radiant/mapdoom3/Doom3MapReader.h; sourceTree = SOURCE_ROOT; };
-		3AE6F381239F5D35008A1B2D /* Doom3MapWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapWriter.cpp; path = ../../radiant/mapdoom3/Doom3MapWriter.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F382239F5D35008A1B2D /* Doom3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapWriter.h; path = ../../radiant/mapdoom3/Doom3MapWriter.h; sourceTree = SOURCE_ROOT; };
-		3AE6F383239F5D35008A1B2D /* Doom3PrefabFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3PrefabFormat.cpp; path = ../../radiant/mapdoom3/Doom3PrefabFormat.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F384239F5D35008A1B2D /* Doom3PrefabFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3PrefabFormat.h; path = ../../radiant/mapdoom3/Doom3PrefabFormat.h; sourceTree = SOURCE_ROOT; };
-		3AE6F385239F5D35008A1B2D /* mapdoom3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mapdoom3.cpp; path = ../../radiant/mapdoom3/mapdoom3.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F387239F5D35008A1B2D /* BrushDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef.cpp; path = ../../radiant/mapdoom3/primitiveparsers/BrushDef.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F388239F5D35008A1B2D /* BrushDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef.h; path = ../../radiant/mapdoom3/primitiveparsers/BrushDef.h; sourceTree = SOURCE_ROOT; };
-		3AE6F389239F5D35008A1B2D /* BrushDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef3.cpp; path = ../../radiant/mapdoom3/primitiveparsers/BrushDef3.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F38A239F5D35008A1B2D /* BrushDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3.h; path = ../../radiant/mapdoom3/primitiveparsers/BrushDef3.h; sourceTree = SOURCE_ROOT; };
-		3AE6F38B239F5D35008A1B2D /* Patch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Patch.cpp; path = ../../radiant/mapdoom3/primitiveparsers/Patch.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F38C239F5D35008A1B2D /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Patch.h; path = ../../radiant/mapdoom3/primitiveparsers/Patch.h; sourceTree = SOURCE_ROOT; };
-		3AE6F38D239F5D35008A1B2D /* PatchDef2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef2.cpp; path = ../../radiant/mapdoom3/primitiveparsers/PatchDef2.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F38E239F5D35008A1B2D /* PatchDef2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef2.h; path = ../../radiant/mapdoom3/primitiveparsers/PatchDef2.h; sourceTree = SOURCE_ROOT; };
-		3AE6F38F239F5D35008A1B2D /* PatchDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef3.cpp; path = ../../radiant/mapdoom3/primitiveparsers/PatchDef3.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F390239F5D35008A1B2D /* PatchDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef3.h; path = ../../radiant/mapdoom3/primitiveparsers/PatchDef3.h; sourceTree = SOURCE_ROOT; };
-		3AE6F392239F5D35008A1B2D /* BrushDef3Exporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3Exporter.h; path = ../../radiant/mapdoom3/primitivewriters/BrushDef3Exporter.h; sourceTree = SOURCE_ROOT; };
-		3AE6F393239F5D35008A1B2D /* BrushDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDefExporter.h; path = ../../radiant/mapdoom3/primitivewriters/BrushDefExporter.h; sourceTree = SOURCE_ROOT; };
-		3AE6F394239F5D35008A1B2D /* PatchDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDefExporter.h; path = ../../radiant/mapdoom3/primitivewriters/PatchDefExporter.h; sourceTree = SOURCE_ROOT; };
-		3AE6F395239F5D35008A1B2D /* Quake3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapFormat.cpp; path = ../../radiant/mapdoom3/Quake3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F396239F5D35008A1B2D /* Quake3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapFormat.h; path = ../../radiant/mapdoom3/Quake3MapFormat.h; sourceTree = SOURCE_ROOT; };
-		3AE6F397239F5D35008A1B2D /* Quake3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapReader.cpp; path = ../../radiant/mapdoom3/Quake3MapReader.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F398239F5D35008A1B2D /* Quake3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapReader.h; path = ../../radiant/mapdoom3/Quake3MapReader.h; sourceTree = SOURCE_ROOT; };
-		3AE6F399239F5D35008A1B2D /* Quake3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapWriter.h; path = ../../radiant/mapdoom3/Quake3MapWriter.h; sourceTree = SOURCE_ROOT; };
-		3AE6F39A239F5D35008A1B2D /* Quake4MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapFormat.cpp; path = ../../radiant/mapdoom3/Quake4MapFormat.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F39B239F5D35008A1B2D /* Quake4MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapFormat.h; path = ../../radiant/mapdoom3/Quake4MapFormat.h; sourceTree = SOURCE_ROOT; };
-		3AE6F39C239F5D35008A1B2D /* Quake4MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapReader.cpp; path = ../../radiant/mapdoom3/Quake4MapReader.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F39D239F5D35008A1B2D /* Quake4MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapReader.h; path = ../../radiant/mapdoom3/Quake4MapReader.h; sourceTree = SOURCE_ROOT; };
-		3AE6F39E239F5D35008A1B2D /* Quake4MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapWriter.h; path = ../../radiant/mapdoom3/Quake4MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AE6F376239F5D35008A1B2D /* Doom3AasFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFile.cpp; path = ../../radiant/map/aas/Doom3AasFile.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F377239F5D35008A1B2D /* Doom3AasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFile.h; path = ../../radiant/map/aas/Doom3AasFile.h; sourceTree = SOURCE_ROOT; };
+		3AE6F378239F5D35008A1B2D /* Doom3AasFileLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileLoader.cpp; path = ../../radiant/map/aas/Doom3AasFileLoader.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F379239F5D35008A1B2D /* Doom3AasFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileLoader.h; path = ../../radiant/map/aas/Doom3AasFileLoader.h; sourceTree = SOURCE_ROOT; };
+		3AE6F37A239F5D35008A1B2D /* Doom3AasFileSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3AasFileSettings.cpp; path = ../../radiant/map/aas/Doom3AasFileSettings.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F37B239F5D35008A1B2D /* Doom3AasFileSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3AasFileSettings.h; path = ../../radiant/map/aas/Doom3AasFileSettings.h; sourceTree = SOURCE_ROOT; };
+		3AE6F37C239F5D35008A1B2D /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Util.h; path = ../../radiant/map/aas/Util.h; sourceTree = SOURCE_ROOT; };
 		3AE6F3B1239F5DC3008A1B2D /* MD5Anim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5Anim.cpp; path = ../../radiant/md5model/MD5Anim.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F3B2239F5DC3008A1B2D /* MD5Anim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MD5Anim.h; path = ../../radiant/md5model/MD5Anim.h; sourceTree = SOURCE_ROOT; };
 		3AE6F3B3239F5DC3008A1B2D /* MD5AnimationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5AnimationCache.cpp; path = ../../radiant/md5model/MD5AnimationCache.cpp; sourceTree = SOURCE_ROOT; };
@@ -2970,8 +2950,6 @@
 		3AE6F43123B1B950008A1B2D /* ColourSchemeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColourSchemeManager.h; path = ../../radiant/uimanager/colourscheme/ColourSchemeManager.h; sourceTree = SOURCE_ROOT; };
 		3AE6F43223B1B950008A1B2D /* DialogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DialogManager.cpp; path = ../../radiant/uimanager/DialogManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F43323B1B950008A1B2D /* DialogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogManager.h; path = ../../radiant/uimanager/DialogManager.h; sourceTree = SOURCE_ROOT; };
-		3AE6F43423B1B950008A1B2D /* FilterMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterMenu.cpp; path = ../../radiant/uimanager/FilterMenu.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F43523B1B950008A1B2D /* FilterMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterMenu.h; path = ../../radiant/uimanager/FilterMenu.h; sourceTree = SOURCE_ROOT; };
 		3AE6F43623B1B950008A1B2D /* GroupDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GroupDialog.cpp; path = ../../radiant/uimanager/GroupDialog.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F43723B1B950008A1B2D /* GroupDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupDialog.h; path = ../../radiant/uimanager/GroupDialog.h; sourceTree = SOURCE_ROOT; };
 		3AE6F43823B1B950008A1B2D /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../radiant/uimanager/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
@@ -3563,12 +3541,8 @@
 		3AF7434F1E4F861A003465B5 /* ClipPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClipPoint.cpp; path = ../../radiant/clipper/ClipPoint.cpp; sourceTree = SOURCE_ROOT; };
 		3AF743501E4F861A003465B5 /* ClipPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClipPoint.h; path = ../../radiant/clipper/ClipPoint.h; sourceTree = SOURCE_ROOT; };
 		3AF743551E4F861A003465B5 /* AddToLayerWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddToLayerWalker.h; path = ../../radiant/layers/AddToLayerWalker.h; sourceTree = SOURCE_ROOT; };
-		3AF743561E4F861A003465B5 /* LayerCommandTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerCommandTarget.cpp; path = ../../radiant/layers/LayerCommandTarget.cpp; sourceTree = SOURCE_ROOT; };
-		3AF743571E4F861A003465B5 /* LayerCommandTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerCommandTarget.h; path = ../../radiant/layers/LayerCommandTarget.h; sourceTree = SOURCE_ROOT; };
 		3AF743581E4F861A003465B5 /* LayerInfoFileModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerInfoFileModule.cpp; path = ../../radiant/layers/LayerInfoFileModule.cpp; sourceTree = SOURCE_ROOT; };
 		3AF743591E4F861A003465B5 /* LayerInfoFileModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerInfoFileModule.h; path = ../../radiant/layers/LayerInfoFileModule.h; sourceTree = SOURCE_ROOT; };
-		3AF7435A1E4F861A003465B5 /* LayerSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerSystem.cpp; path = ../../radiant/layers/LayerSystem.cpp; sourceTree = SOURCE_ROOT; };
-		3AF7435B1E4F861A003465B5 /* LayerSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerSystem.h; path = ../../radiant/layers/LayerSystem.h; sourceTree = SOURCE_ROOT; };
 		3AF7435C1E4F861A003465B5 /* LayerUsageBreakdown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerUsageBreakdown.cpp; path = ../../radiant/layers/LayerUsageBreakdown.cpp; sourceTree = SOURCE_ROOT; };
 		3AF7435D1E4F861A003465B5 /* LayerUsageBreakdown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerUsageBreakdown.h; path = ../../radiant/layers/LayerUsageBreakdown.h; sourceTree = SOURCE_ROOT; };
 		3AF7435E1E4F861A003465B5 /* MoveToLayerWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MoveToLayerWalker.h; path = ../../radiant/layers/MoveToLayerWalker.h; sourceTree = SOURCE_ROOT; };
@@ -3602,7 +3576,6 @@
 		3AF7437F1E4F861A003465B5 /* MapExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapExporter.h; path = ../../radiant/map/algorithm/MapExporter.h; sourceTree = SOURCE_ROOT; };
 		3AF743801E4F861A003465B5 /* MapImporter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapImporter.cpp; path = ../../radiant/map/algorithm/MapImporter.cpp; sourceTree = SOURCE_ROOT; };
 		3AF743811E4F861A003465B5 /* MapImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapImporter.h; path = ../../radiant/map/algorithm/MapImporter.h; sourceTree = SOURCE_ROOT; };
-		3AF743821E4F861A003465B5 /* Merge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Merge.h; path = ../../radiant/map/algorithm/Merge.h; sourceTree = SOURCE_ROOT; };
 		3AF743831E4F861A003465B5 /* Skins.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Skins.cpp; path = ../../radiant/map/algorithm/Skins.cpp; sourceTree = SOURCE_ROOT; };
 		3AF743841E4F861A003465B5 /* Skins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Skins.h; path = ../../radiant/map/algorithm/Skins.h; sourceTree = SOURCE_ROOT; };
 		3AF743851E4F861A003465B5 /* Traverse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Traverse.cpp; path = ../../radiant/map/algorithm/Traverse.cpp; sourceTree = SOURCE_ROOT; };
@@ -4075,6 +4048,67 @@
 		3AF746BD1E4FAE12003465B5 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Node.h; path = ../../libs/xmlutil/Node.h; sourceTree = SOURCE_ROOT; };
 		3AF746BE1E4FAE12003465B5 /* XPathException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPathException.h; path = ../../libs/xmlutil/XPathException.h; sourceTree = SOURCE_ROOT; };
 		3AF746C81E4FAF3D003465B5 /* boost.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = boost.xcconfig; sourceTree = "<group>"; };
+		3AFF03E724548619002B1472 /* ikeyvaluestore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ikeyvaluestore.h; path = ../../include/ikeyvaluestore.h; sourceTree = "<group>"; };
+		3AFF03E824548655002B1472 /* DialogBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogBase.cpp; sourceTree = "<group>"; };
+		3AFF03EA245489BF002B1472 /* SetObjectSelectionByFilterWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetObjectSelectionByFilterWalker.h; path = ../../radiant/filters/SetObjectSelectionByFilterWalker.h; sourceTree = SOURCE_ROOT; };
+		3AFF03EB245489BF002B1472 /* XmlFilterEventAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlFilterEventAdapter.cpp; path = ../../radiant/filters/XmlFilterEventAdapter.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF03EC245489BF002B1472 /* XmlFilterEventAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XmlFilterEventAdapter.h; path = ../../radiant/filters/XmlFilterEventAdapter.h; sourceTree = SOURCE_ROOT; };
+		3AFF03EE245489FC002B1472 /* LayerManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerManager.cpp; path = ../../radiant/layers/LayerManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF03EF245489FC002B1472 /* LayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerManager.h; path = ../../radiant/layers/LayerManager.h; sourceTree = SOURCE_ROOT; };
+		3AFF03F0245489FC002B1472 /* LayerModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerModule.cpp; path = ../../radiant/layers/LayerModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF03F324548A32002B1472 /* MapModules.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapModules.cpp; path = ../../radiant/map/MapModules.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF03F424548A32002B1472 /* MapPropertyInfoFileModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapPropertyInfoFileModule.cpp; path = ../../radiant/map/MapPropertyInfoFileModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF03F524548A32002B1472 /* MapPropertyInfoFileModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapPropertyInfoFileModule.h; path = ../../radiant/map/MapPropertyInfoFileModule.h; sourceTree = SOURCE_ROOT; };
+		3AFF03F824548A46002B1472 /* Import.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Import.cpp; path = ../../radiant/map/algorithm/Import.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF03F924548A46002B1472 /* Import.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Import.h; path = ../../radiant/map/algorithm/Import.h; sourceTree = SOURCE_ROOT; };
+		3AFF03FC24548A9D002B1472 /* Doom3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapFormat.cpp; path = ../../radiant/map/format/Doom3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF03FD24548A9D002B1472 /* Doom3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapFormat.h; path = ../../radiant/map/format/Doom3MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AFF03FE24548A9D002B1472 /* Doom3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapReader.cpp; path = ../../radiant/map/format/Doom3MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF03FF24548A9D002B1472 /* Doom3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapReader.h; path = ../../radiant/map/format/Doom3MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AFF040024548A9D002B1472 /* Doom3MapWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3MapWriter.cpp; path = ../../radiant/map/format/Doom3MapWriter.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF040124548A9D002B1472 /* Doom3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3MapWriter.h; path = ../../radiant/map/format/Doom3MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AFF040224548A9D002B1472 /* Doom3PrefabFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3PrefabFormat.cpp; path = ../../radiant/map/format/Doom3PrefabFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF040324548A9D002B1472 /* Doom3PrefabFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3PrefabFormat.h; path = ../../radiant/map/format/Doom3PrefabFormat.h; sourceTree = SOURCE_ROOT; };
+		3AFF040824548AAD002B1472 /* Quake3MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapFormat.cpp; path = ../../radiant/map/format/Quake3MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF040924548AAD002B1472 /* Quake3MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapFormat.h; path = ../../radiant/map/format/Quake3MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AFF040A24548AAD002B1472 /* Quake3MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake3MapReader.cpp; path = ../../radiant/map/format/Quake3MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF040B24548AAD002B1472 /* Quake3MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapReader.h; path = ../../radiant/map/format/Quake3MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AFF040C24548AAD002B1472 /* Quake3MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake3MapWriter.h; path = ../../radiant/map/format/Quake3MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AFF040D24548AAD002B1472 /* Quake4MapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapFormat.cpp; path = ../../radiant/map/format/Quake4MapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF040E24548AAD002B1472 /* Quake4MapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapFormat.h; path = ../../radiant/map/format/Quake4MapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AFF040F24548AAD002B1472 /* Quake4MapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Quake4MapReader.cpp; path = ../../radiant/map/format/Quake4MapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF041024548AAD002B1472 /* Quake4MapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapReader.h; path = ../../radiant/map/format/Quake4MapReader.h; sourceTree = SOURCE_ROOT; };
+		3AFF041124548AAD002B1472 /* Quake4MapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Quake4MapWriter.h; path = ../../radiant/map/format/Quake4MapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AFF041724548AC9002B1472 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = ../../radiant/map/format/portable/Constants.h; sourceTree = SOURCE_ROOT; };
+		3AFF041824548AC9002B1472 /* PortableMapFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PortableMapFormat.cpp; path = ../../radiant/map/format/portable/PortableMapFormat.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF041924548AC9002B1472 /* PortableMapFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PortableMapFormat.h; path = ../../radiant/map/format/portable/PortableMapFormat.h; sourceTree = SOURCE_ROOT; };
+		3AFF041A24548AC9002B1472 /* PortableMapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PortableMapReader.cpp; path = ../../radiant/map/format/portable/PortableMapReader.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF041B24548AC9002B1472 /* PortableMapReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PortableMapReader.h; path = ../../radiant/map/format/portable/PortableMapReader.h; sourceTree = SOURCE_ROOT; };
+		3AFF041C24548AC9002B1472 /* PortableMapWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PortableMapWriter.cpp; path = ../../radiant/map/format/portable/PortableMapWriter.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF041D24548AC9002B1472 /* PortableMapWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PortableMapWriter.h; path = ../../radiant/map/format/portable/PortableMapWriter.h; sourceTree = SOURCE_ROOT; };
+		3AFF042324548B09002B1472 /* BrushDef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef.cpp; path = ../../radiant/map/format/primitiveparsers/BrushDef.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF042424548B09002B1472 /* BrushDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef.h; path = ../../radiant/map/format/primitiveparsers/BrushDef.h; sourceTree = SOURCE_ROOT; };
+		3AFF042524548B09002B1472 /* BrushDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushDef3.cpp; path = ../../radiant/map/format/primitiveparsers/BrushDef3.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF042624548B09002B1472 /* BrushDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3.h; path = ../../radiant/map/format/primitiveparsers/BrushDef3.h; sourceTree = SOURCE_ROOT; };
+		3AFF042724548B09002B1472 /* Patch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Patch.cpp; path = ../../radiant/map/format/primitiveparsers/Patch.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF042824548B09002B1472 /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Patch.h; path = ../../radiant/map/format/primitiveparsers/Patch.h; sourceTree = SOURCE_ROOT; };
+		3AFF042924548B09002B1472 /* PatchDef2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef2.cpp; path = ../../radiant/map/format/primitiveparsers/PatchDef2.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF042A24548B09002B1472 /* PatchDef2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef2.h; path = ../../radiant/map/format/primitiveparsers/PatchDef2.h; sourceTree = SOURCE_ROOT; };
+		3AFF042B24548B09002B1472 /* PatchDef3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchDef3.cpp; path = ../../radiant/map/format/primitiveparsers/PatchDef3.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF042C24548B09002B1472 /* PatchDef3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDef3.h; path = ../../radiant/map/format/primitiveparsers/PatchDef3.h; sourceTree = SOURCE_ROOT; };
+		3AFF043224548B1A002B1472 /* BrushDef3Exporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDef3Exporter.h; path = ../../radiant/map/format/primitivewriters/BrushDef3Exporter.h; sourceTree = SOURCE_ROOT; };
+		3AFF043324548B1A002B1472 /* BrushDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrushDefExporter.h; path = ../../radiant/map/format/primitivewriters/BrushDefExporter.h; sourceTree = SOURCE_ROOT; };
+		3AFF043424548B1A002B1472 /* PatchDefExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchDefExporter.h; path = ../../radiant/map/format/primitivewriters/PatchDefExporter.h; sourceTree = SOURCE_ROOT; };
+		3AFF043524548B8E002B1472 /* ModelScalePreserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelScalePreserver.cpp; path = ../../radiant/model/ModelScalePreserver.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF043624548B8E002B1472 /* ModelScalePreserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelScalePreserver.h; path = ../../radiant/model/ModelScalePreserver.h; sourceTree = SOURCE_ROOT; };
+		3AFF043824548BB3002B1472 /* SelectionGroupModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionGroupModule.cpp; path = ../../radiant/selection/group/SelectionGroupModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF043A24548BCC002B1472 /* SelectionSetModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionSetModule.cpp; path = ../../radiant/selection/selectionset/SelectionSetModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF043D24548BFF002B1472 /* FilterContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterContextMenu.cpp; path = ../../radiant/ui/filters/FilterContextMenu.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF043E24548BFF002B1472 /* FilterContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterContextMenu.h; path = ../../radiant/ui/filters/FilterContextMenu.h; sourceTree = SOURCE_ROOT; };
+		3AFF043F24548BFF002B1472 /* FilterMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterMenu.cpp; path = ../../radiant/ui/filters/FilterMenu.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF044024548BFF002B1472 /* FilterMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterMenu.h; path = ../../radiant/ui/filters/FilterMenu.h; sourceTree = SOURCE_ROOT; };
+		3AFF044124548BFF002B1472 /* FilterOrthoContextMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOrthoContextMenuItem.cpp; path = ../../radiant/ui/filters/FilterOrthoContextMenuItem.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF044224548BFF002B1472 /* FilterOrthoContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOrthoContextMenuItem.h; path = ../../radiant/ui/filters/FilterOrthoContextMenuItem.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4290,6 +4324,7 @@
 		3A011FD71E50278400A62BC1 /* dialog */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF03E824548655002B1472 /* DialogBase.cpp */,
 				3A011FD81E50278400A62BC1 /* Dialog.cpp */,
 				3A011FD91E50278400A62BC1 /* Dialog.h */,
 				3A011FDA1E50278400A62BC1 /* DialogBase.h */,
@@ -4989,6 +5024,9 @@
 		3AE6F34A239F5067008A1B2D /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF03EA245489BF002B1472 /* SetObjectSelectionByFilterWalker.h */,
+				3AFF03EB245489BF002B1472 /* XmlFilterEventAdapter.cpp */,
+				3AFF03EC245489BF002B1472 /* XmlFilterEventAdapter.h */,
 				3AE6F34B239F507B008A1B2D /* BasicFilterSystem.cpp */,
 				3AE6F34C239F507B008A1B2D /* BasicFilterSystem.h */,
 				3AE6F34D239F507B008A1B2D /* InstanceUpdateWalker.h */,
@@ -5034,35 +5072,6 @@
 			name = image;
 			sourceTree = "<group>";
 		};
-		3AE6F374239F5D18008A1B2D /* mapdoom3 */ = {
-			isa = PBXGroup;
-			children = (
-				3AE6F375239F5D35008A1B2D /* aas */,
-				3AE6F37D239F5D35008A1B2D /* Doom3MapFormat.cpp */,
-				3AE6F37E239F5D35008A1B2D /* Doom3MapFormat.h */,
-				3AE6F37F239F5D35008A1B2D /* Doom3MapReader.cpp */,
-				3AE6F380239F5D35008A1B2D /* Doom3MapReader.h */,
-				3AE6F381239F5D35008A1B2D /* Doom3MapWriter.cpp */,
-				3AE6F382239F5D35008A1B2D /* Doom3MapWriter.h */,
-				3AE6F383239F5D35008A1B2D /* Doom3PrefabFormat.cpp */,
-				3AE6F384239F5D35008A1B2D /* Doom3PrefabFormat.h */,
-				3AE6F385239F5D35008A1B2D /* mapdoom3.cpp */,
-				3AE6F386239F5D35008A1B2D /* primitiveparsers */,
-				3AE6F391239F5D35008A1B2D /* primitivewriters */,
-				3AE6F395239F5D35008A1B2D /* Quake3MapFormat.cpp */,
-				3AE6F396239F5D35008A1B2D /* Quake3MapFormat.h */,
-				3AE6F397239F5D35008A1B2D /* Quake3MapReader.cpp */,
-				3AE6F398239F5D35008A1B2D /* Quake3MapReader.h */,
-				3AE6F399239F5D35008A1B2D /* Quake3MapWriter.h */,
-				3AE6F39A239F5D35008A1B2D /* Quake4MapFormat.cpp */,
-				3AE6F39B239F5D35008A1B2D /* Quake4MapFormat.h */,
-				3AE6F39C239F5D35008A1B2D /* Quake4MapReader.cpp */,
-				3AE6F39D239F5D35008A1B2D /* Quake4MapReader.h */,
-				3AE6F39E239F5D35008A1B2D /* Quake4MapWriter.h */,
-			);
-			name = mapdoom3;
-			sourceTree = "<group>";
-		};
 		3AE6F375239F5D35008A1B2D /* aas */ = {
 			isa = PBXGroup;
 			children = (
@@ -5075,37 +5084,8 @@
 				3AE6F37C239F5D35008A1B2D /* Util.h */,
 			);
 			name = aas;
-			path = ../../../radiant/mapdoom3/aas;
-			sourceTree = "<group>";
-		};
-		3AE6F386239F5D35008A1B2D /* primitiveparsers */ = {
-			isa = PBXGroup;
-			children = (
-				3AE6F387239F5D35008A1B2D /* BrushDef.cpp */,
-				3AE6F388239F5D35008A1B2D /* BrushDef.h */,
-				3AE6F389239F5D35008A1B2D /* BrushDef3.cpp */,
-				3AE6F38A239F5D35008A1B2D /* BrushDef3.h */,
-				3AE6F38B239F5D35008A1B2D /* Patch.cpp */,
-				3AE6F38C239F5D35008A1B2D /* Patch.h */,
-				3AE6F38D239F5D35008A1B2D /* PatchDef2.cpp */,
-				3AE6F38E239F5D35008A1B2D /* PatchDef2.h */,
-				3AE6F38F239F5D35008A1B2D /* PatchDef3.cpp */,
-				3AE6F390239F5D35008A1B2D /* PatchDef3.h */,
-			);
-			name = primitiveparsers;
-			path = ../../radiant/mapdoom3/primitiveparsers;
-			sourceTree = SOURCE_ROOT;
-		};
-		3AE6F391239F5D35008A1B2D /* primitivewriters */ = {
-			isa = PBXGroup;
-			children = (
-				3AE6F392239F5D35008A1B2D /* BrushDef3Exporter.h */,
-				3AE6F393239F5D35008A1B2D /* BrushDefExporter.h */,
-				3AE6F394239F5D35008A1B2D /* PatchDefExporter.h */,
-			);
-			name = primitivewriters;
-			path = ../../radiant/mapdoom3/primitivewriters;
-			sourceTree = SOURCE_ROOT;
+			path = /Users/greebo/DarkRadiant/radiant/mapdoom3/aas;
+			sourceTree = "<absolute>";
 		};
 		3AE6F3B0239F5D97008A1B2D /* md5model */ = {
 			isa = PBXGroup;
@@ -5269,8 +5249,6 @@
 				3AE6F42B23B1B950008A1B2D /* colourscheme */,
 				3AE6F43223B1B950008A1B2D /* DialogManager.cpp */,
 				3AE6F43323B1B950008A1B2D /* DialogManager.h */,
-				3AE6F43423B1B950008A1B2D /* FilterMenu.cpp */,
-				3AE6F43523B1B950008A1B2D /* FilterMenu.h */,
 				3AE6F43623B1B950008A1B2D /* GroupDialog.cpp */,
 				3AE6F43723B1B950008A1B2D /* GroupDialog.h */,
 				3AE6F43823B1B950008A1B2D /* LocalBitmapArtProvider.h */,
@@ -5957,7 +5935,6 @@
 				3AF743611E4F861A003465B5 /* log */,
 				3AF743741E4F861A003465B5 /* main.cpp */,
 				3AF743771E4F861A003465B5 /* map */,
-				3AE6F374239F5D18008A1B2D /* mapdoom3 */,
 				3AE6F3B0239F5D97008A1B2D /* md5model */,
 				3AF743B11E4F861A003465B5 /* model */,
 				3AE6F3CA23B1B5EA008A1B2D /* modelfile */,
@@ -5994,6 +5971,7 @@
 		3AF475D21E6BEE74006B26C2 /* Include */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF03E724548619002B1472 /* ikeyvaluestore.h */,
 				3AF475D31E6BEE89006B26C2 /* Bounded.h */,
 				3AF475D41E6BEE89006B26C2 /* editable.h */,
 				3AF475D51E6BEE89006B26C2 /* GLProgramAttributes.h */,
@@ -6220,13 +6198,12 @@
 		3AF743541E4F861A003465B5 /* layers */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF03EE245489FC002B1472 /* LayerManager.cpp */,
+				3AFF03EF245489FC002B1472 /* LayerManager.h */,
+				3AFF03F0245489FC002B1472 /* LayerModule.cpp */,
 				3AF743551E4F861A003465B5 /* AddToLayerWalker.h */,
-				3AF743561E4F861A003465B5 /* LayerCommandTarget.cpp */,
-				3AF743571E4F861A003465B5 /* LayerCommandTarget.h */,
 				3AF743581E4F861A003465B5 /* LayerInfoFileModule.cpp */,
 				3AF743591E4F861A003465B5 /* LayerInfoFileModule.h */,
-				3AF7435A1E4F861A003465B5 /* LayerSystem.cpp */,
-				3AF7435B1E4F861A003465B5 /* LayerSystem.h */,
 				3AF7435C1E4F861A003465B5 /* LayerUsageBreakdown.cpp */,
 				3AF7435D1E4F861A003465B5 /* LayerUsageBreakdown.h */,
 				3AF7435E1E4F861A003465B5 /* MoveToLayerWalker.h */,
@@ -6266,6 +6243,11 @@
 		3AF743771E4F861A003465B5 /* map */ = {
 			isa = PBXGroup;
 			children = (
+				3AE6F375239F5D35008A1B2D /* aas */,
+				3AFF03FB24548A86002B1472 /* format */,
+				3AFF03F324548A32002B1472 /* MapModules.cpp */,
+				3AFF03F424548A32002B1472 /* MapPropertyInfoFileModule.cpp */,
+				3AFF03F524548A32002B1472 /* MapPropertyInfoFileModule.h */,
 				3AE6F2651FF78201008A1B2D /* EditingStopwatch.cpp */,
 				3AE6F2661FF78201008A1B2D /* EditingStopwatch.h */,
 				3AE6F2671FF78201008A1B2D /* EditingStopwatchInfoFileModule.cpp */,
@@ -6316,6 +6298,8 @@
 		3AF7437A1E4F861A003465B5 /* algorithm */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF03F824548A46002B1472 /* Import.cpp */,
+				3AFF03F924548A46002B1472 /* Import.h */,
 				3AE6F13A1F496AA1008A1B2D /* Export.cpp */,
 				3AE6F13B1F496AA1008A1B2D /* Export.h */,
 				3AE6F13C1F496AA1008A1B2D /* Models.cpp */,
@@ -6327,7 +6311,6 @@
 				3AF7437F1E4F861A003465B5 /* MapExporter.h */,
 				3AF743801E4F861A003465B5 /* MapImporter.cpp */,
 				3AF743811E4F861A003465B5 /* MapImporter.h */,
-				3AF743821E4F861A003465B5 /* Merge.h */,
 				3AF743831E4F861A003465B5 /* Skins.cpp */,
 				3AF743841E4F861A003465B5 /* Skins.h */,
 				3AF743851E4F861A003465B5 /* Traverse.cpp */,
@@ -6355,6 +6338,8 @@
 		3AF743B11E4F861A003465B5 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF043524548B8E002B1472 /* ModelScalePreserver.cpp */,
+				3AFF043624548B8E002B1472 /* ModelScalePreserver.h */,
 				3AE6F1401F496ACB008A1B2D /* ModelExporter.cpp */,
 				3AE6F1411F496ACB008A1B2D /* ModelExporter.h */,
 				3AF743B21E4F861A003465B5 /* ModelCache.cpp */,
@@ -6604,6 +6589,7 @@
 		3AF744341E4F861B003465B5 /* group */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF043824548BB3002B1472 /* SelectionGroupModule.cpp */,
 				3AF744351E4F861B003465B5 /* SelectionGroup.h */,
 				3AF744361E4F861B003465B5 /* SelectionGroupInfoFileModule.cpp */,
 				3AF744371E4F861B003465B5 /* SelectionGroupInfoFileModule.h */,
@@ -6640,6 +6626,7 @@
 		3AF7445B1E4F861B003465B5 /* selectionset */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF043A24548BCC002B1472 /* SelectionSetModule.cpp */,
 				3AF7445C1E4F861B003465B5 /* SelectionSet.cpp */,
 				3AF7445D1E4F861B003465B5 /* SelectionSet.h */,
 				3AF7445E1E4F861B003465B5 /* SelectionSetInfoFileModule.cpp */,
@@ -6728,6 +6715,7 @@
 		3AF744971E4F861B003465B5 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF043C24548BED002B1472 /* filters */,
 				3AF744981E4F861B003465B5 /* aas */,
 				3AF7449D1E4F861B003465B5 /* about */,
 				3AF744A01E4F861B003465B5 /* brush */,
@@ -7249,6 +7237,88 @@
 			);
 			path = xmlutil;
 			sourceTree = SOURCE_ROOT;
+		};
+		3AFF03FB24548A86002B1472 /* format */ = {
+			isa = PBXGroup;
+			children = (
+				3AFF042224548AF2002B1472 /* primitivewriters */,
+				3AFF042124548AEA002B1472 /* primitiveparsers */,
+				3AFF041624548AB7002B1472 /* portable */,
+				3AFF040824548AAD002B1472 /* Quake3MapFormat.cpp */,
+				3AFF040924548AAD002B1472 /* Quake3MapFormat.h */,
+				3AFF040A24548AAD002B1472 /* Quake3MapReader.cpp */,
+				3AFF040B24548AAD002B1472 /* Quake3MapReader.h */,
+				3AFF040C24548AAD002B1472 /* Quake3MapWriter.h */,
+				3AFF040D24548AAD002B1472 /* Quake4MapFormat.cpp */,
+				3AFF040E24548AAD002B1472 /* Quake4MapFormat.h */,
+				3AFF040F24548AAD002B1472 /* Quake4MapReader.cpp */,
+				3AFF041024548AAD002B1472 /* Quake4MapReader.h */,
+				3AFF041124548AAD002B1472 /* Quake4MapWriter.h */,
+				3AFF03FC24548A9D002B1472 /* Doom3MapFormat.cpp */,
+				3AFF03FD24548A9D002B1472 /* Doom3MapFormat.h */,
+				3AFF03FE24548A9D002B1472 /* Doom3MapReader.cpp */,
+				3AFF03FF24548A9D002B1472 /* Doom3MapReader.h */,
+				3AFF040024548A9D002B1472 /* Doom3MapWriter.cpp */,
+				3AFF040124548A9D002B1472 /* Doom3MapWriter.h */,
+				3AFF040224548A9D002B1472 /* Doom3PrefabFormat.cpp */,
+				3AFF040324548A9D002B1472 /* Doom3PrefabFormat.h */,
+			);
+			name = format;
+			sourceTree = "<group>";
+		};
+		3AFF041624548AB7002B1472 /* portable */ = {
+			isa = PBXGroup;
+			children = (
+				3AFF041724548AC9002B1472 /* Constants.h */,
+				3AFF041824548AC9002B1472 /* PortableMapFormat.cpp */,
+				3AFF041924548AC9002B1472 /* PortableMapFormat.h */,
+				3AFF041A24548AC9002B1472 /* PortableMapReader.cpp */,
+				3AFF041B24548AC9002B1472 /* PortableMapReader.h */,
+				3AFF041C24548AC9002B1472 /* PortableMapWriter.cpp */,
+				3AFF041D24548AC9002B1472 /* PortableMapWriter.h */,
+			);
+			name = portable;
+			sourceTree = "<group>";
+		};
+		3AFF042124548AEA002B1472 /* primitiveparsers */ = {
+			isa = PBXGroup;
+			children = (
+				3AFF042324548B09002B1472 /* BrushDef.cpp */,
+				3AFF042424548B09002B1472 /* BrushDef.h */,
+				3AFF042524548B09002B1472 /* BrushDef3.cpp */,
+				3AFF042624548B09002B1472 /* BrushDef3.h */,
+				3AFF042724548B09002B1472 /* Patch.cpp */,
+				3AFF042824548B09002B1472 /* Patch.h */,
+				3AFF042924548B09002B1472 /* PatchDef2.cpp */,
+				3AFF042A24548B09002B1472 /* PatchDef2.h */,
+				3AFF042B24548B09002B1472 /* PatchDef3.cpp */,
+				3AFF042C24548B09002B1472 /* PatchDef3.h */,
+			);
+			name = primitiveparsers;
+			sourceTree = "<group>";
+		};
+		3AFF042224548AF2002B1472 /* primitivewriters */ = {
+			isa = PBXGroup;
+			children = (
+				3AFF043224548B1A002B1472 /* BrushDef3Exporter.h */,
+				3AFF043324548B1A002B1472 /* BrushDefExporter.h */,
+				3AFF043424548B1A002B1472 /* PatchDefExporter.h */,
+			);
+			name = primitivewriters;
+			sourceTree = "<group>";
+		};
+		3AFF043C24548BED002B1472 /* filters */ = {
+			isa = PBXGroup;
+			children = (
+				3AFF043D24548BFF002B1472 /* FilterContextMenu.cpp */,
+				3AFF043E24548BFF002B1472 /* FilterContextMenu.h */,
+				3AFF043F24548BFF002B1472 /* FilterMenu.cpp */,
+				3AFF044024548BFF002B1472 /* FilterMenu.h */,
+				3AFF044124548BFF002B1472 /* FilterOrthoContextMenuItem.cpp */,
+				3AFF044224548BFF002B1472 /* FilterOrthoContextMenuItem.h */,
+			);
+			name = filters;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -8043,6 +8113,7 @@
 				3A0120661E50278400A62BC1 /* VFSTreePopulator.cpp in Sources */,
 				3A0120471E50278400A62BC1 /* MenuItemAccelerator.cpp in Sources */,
 				3A01206A1E50278400A62BC1 /* WindowPosition.cpp in Sources */,
+				3AFF03E924548655002B1472 /* DialogBase.cpp in Sources */,
 				3AE6F1E21FD1A529008A1B2D /* GuiRenderer.cpp in Sources */,
 				3A0120641E50278400A62BC1 /* TreeView.cpp in Sources */,
 				3A0120591E50278400A62BC1 /* RenderPreview.cpp in Sources */,
@@ -8314,6 +8385,7 @@
 				3AF745D51E4F861B003465B5 /* Entity.cpp in Sources */,
 				3AA6E06A23B2340E00BF9AD7 /* ShaderExpression.cpp in Sources */,
 				3AF745BA1E4F861B003465B5 /* NamespaceFactory.cpp in Sources */,
+				3AFF040524548A9D002B1472 /* Doom3MapReader.cpp in Sources */,
 				3AE6F324239F4CA2008A1B2D /* TargetKey.cpp in Sources */,
 				3AF745CA1E4F861B003465B5 /* GLSLDepthFillProgram.cpp in Sources */,
 				3AF746071E4F861B003465B5 /* AasControl.cpp in Sources */,
@@ -8322,6 +8394,7 @@
 				3AF7460F1E4F861B003465B5 /* MapPreview.cpp in Sources */,
 				3AE6F372239F5C9F008A1B2D /* ImageLoaderWx.cpp in Sources */,
 				3AF745DF1E4F861B003465B5 /* BestPoint.cpp in Sources */,
+				3AFF040724548A9D002B1472 /* Doom3PrefabFormat.cpp in Sources */,
 				3AA6E05A23B233CD00BF9AD7 /* MenuBar.cpp in Sources */,
 				3AF746581E4F861C003465B5 /* UserInterfaceModule.cpp in Sources */,
 				3AE6F29B239F474E008A1B2D /* Doom3FileSystem.cpp in Sources */,
@@ -8345,7 +8418,6 @@
 				3AF745A71E4F861B003465B5 /* MapResource.cpp in Sources */,
 				3AE6F36E239F5C9F008A1B2D /* dds.cpp in Sources */,
 				3AF745781E4F861B003465B5 /* CSG.cpp in Sources */,
-				3AE6F3AA239F5D35008A1B2D /* PatchDef2.cpp in Sources */,
 				3AF746031E4F861B003465B5 /* PatchItem.cpp in Sources */,
 				3AF745C91E4F861B003465B5 /* GLSLBumpProgram.cpp in Sources */,
 				3AF745751E4F861B003465B5 /* BrushModule.cpp in Sources */,
@@ -8358,6 +8430,7 @@
 				3AA6E05D23B233DC00BF9AD7 /* DialogManager.cpp in Sources */,
 				3AF746141E4F861B003465B5 /* TexturePreviewCombo.cpp in Sources */,
 				3AF745C11E4F861B003465B5 /* PatchRenderables.cpp in Sources */,
+				3AFF043724548B8E002B1472 /* ModelScalePreserver.cpp in Sources */,
 				3AF745D91E4F861B003465B5 /* ModelFinder.cpp in Sources */,
 				3AF7465A1E4F861C003465B5 /* GlobalXYWnd.cpp in Sources */,
 				3AF7461C1E4F861B003465B5 /* FloatPropertyEditor.cpp in Sources */,
@@ -8369,6 +8442,8 @@
 				3AE6F31C239F4CA2008A1B2D /* NamespaceManager.cpp in Sources */,
 				3AE6F13E1F496AA1008A1B2D /* Export.cpp in Sources */,
 				3AF7457C1E4F861B003465B5 /* FacePlane.cpp in Sources */,
+				3AFF03F724548A32002B1472 /* MapPropertyInfoFileModule.cpp in Sources */,
+				3AFF043024548B09002B1472 /* PatchDef2.cpp in Sources */,
 				3AE6F2691FF78201008A1B2D /* EditingStopwatch.cpp in Sources */,
 				3AF745B91E4F861B003465B5 /* Namespace.cpp in Sources */,
 				3AF746251E4F861B003465B5 /* Vector3PropertyEditor.cpp in Sources */,
@@ -8388,37 +8463,39 @@
 				3AE6F2AE239F4C19008A1B2D /* EClassManager.cpp in Sources */,
 				3AE6F3C2239F5DC3008A1B2D /* MD5Anim.cpp in Sources */,
 				3AE6F350239F507B008A1B2D /* BasicFilterSystem.cpp in Sources */,
+				3AFF040424548A9D002B1472 /* Doom3MapFormat.cpp in Sources */,
 				3AE6F13F1F496AA1008A1B2D /* Models.cpp in Sources */,
 				3AF745B71E4F861B003465B5 /* ModuleRegistry.cpp in Sources */,
 				3AF746341E4F861B003465B5 /* RegularLayout.cpp in Sources */,
 				3AE6F307239F4CA2008A1B2D /* AngleKey.cpp in Sources */,
+				3AFF041F24548AC9002B1472 /* PortableMapReader.cpp in Sources */,
 				3AF745BD1E4F861B003465B5 /* Patch.cpp in Sources */,
-				3AE6F3AB239F5D35008A1B2D /* PatchDef3.cpp in Sources */,
 				3AF745E61E4F861B003465B5 /* ManipulatorBase.cpp in Sources */,
 				3AF745821E4F861B003465B5 /* Camera.cpp in Sources */,
 				3AA6E05623B233C200BF9AD7 /* MenuManager.cpp in Sources */,
 				3AE6F27E1FF78CD0008A1B2D /* GraphTreeModel.cpp in Sources */,
 				3AF746481E4F861C003465B5 /* ParticlesChooser.cpp in Sources */,
 				3AF745AC1E4F861B003465B5 /* RootNode.cpp in Sources */,
-				3AE6F3A7239F5D35008A1B2D /* BrushDef.cpp in Sources */,
 				3AF746271E4F861B003465B5 /* EntityClassTreePopulator.cpp in Sources */,
 				3AF746301E4F861B003465B5 /* EmbeddedLayout.cpp in Sources */,
 				3AE6F20E1FDC229F008A1B2D /* GameSetupPageIdTech.cpp in Sources */,
 				3AA6E06B23B2340E00BF9AD7 /* ShaderLibrary.cpp in Sources */,
+				3AFF03FA24548A46002B1472 /* Import.cpp in Sources */,
 				3AF7459B1E4F861B003465B5 /* Traverse.cpp in Sources */,
+				3AFF041324548AAD002B1472 /* Quake3MapReader.cpp in Sources */,
 				3AF7463F1E4F861C003465B5 /* MaterialsList.cpp in Sources */,
 				3AA6E06323B233F000BF9AD7 /* AnimationPreview.cpp in Sources */,
 				3AF746061E4F861B003465B5 /* TexToolItem.cpp in Sources */,
-				3AE6F3A4239F5D35008A1B2D /* Doom3MapWriter.cpp in Sources */,
 				3AF745EF1E4F861B003465B5 /* SelectionSet.cpp in Sources */,
 				3AF746011E4F861B003465B5 /* FaceItem.cpp in Sources */,
 				3AA6E06D23B2340E00BF9AD7 /* TableDefinition.cpp in Sources */,
-				3AF7458C1E4F861B003465B5 /* LayerSystem.cpp in Sources */,
 				3AF746261E4F861B003465B5 /* EntityClassChooser.cpp in Sources */,
+				3AFF043B24548BCC002B1472 /* SelectionSetModule.cpp in Sources */,
 				3AF7463C1E4F861C003465B5 /* ShaderInfoTab.cpp in Sources */,
 				3AA6E07123B2342D00BF9AD7 /* ParticleDef.cpp in Sources */,
 				3AF745BB1E4F861B003465B5 /* General.cpp in Sources */,
 				3AF745851E4F861B003465B5 /* CamWnd.cpp in Sources */,
+				3AFF041E24548AC9002B1472 /* PortableMapFormat.cpp in Sources */,
 				3AA6E05223B233B700BF9AD7 /* StatusBarManager.cpp in Sources */,
 				3AE6F31F239F4CA2008A1B2D /* RotationMatrix.cpp in Sources */,
 				3AF7464D1E4F861C003465B5 /* PatchThickenDialog.cpp in Sources */,
@@ -8438,15 +8515,16 @@
 				3AF745881E4F861B003465B5 /* Clipper.cpp in Sources */,
 				3AE6F317239F4CA2008A1B2D /* Light.cpp in Sources */,
 				3AF745911E4F861B003465B5 /* LogStream.cpp in Sources */,
-				3AE6F3AE239F5D35008A1B2D /* Quake4MapFormat.cpp in Sources */,
 				3AF745971E4F861B003465B5 /* ChildPrimitives.cpp in Sources */,
 				3AF7462B1E4F861B003465B5 /* LayerContextMenu.cpp in Sources */,
 				3AF7459E1E4F861B003465B5 /* FindMapElements.cpp in Sources */,
 				3AF746351E4F861B003465B5 /* ScreenUpdateBlocker.cpp in Sources */,
-				3AF7458A1E4F861B003465B5 /* LayerCommandTarget.cpp in Sources */,
 				3AF7464A1E4F861C003465B5 /* CapDialog.cpp in Sources */,
+				3AFF041224548AAD002B1472 /* Quake3MapFormat.cpp in Sources */,
 				3AF745EA1E4F861B003465B5 /* ScaleManipulator.cpp in Sources */,
 				3AE6F29C239F474E008A1B2D /* Doom3FileSystemModule.cpp in Sources */,
+				3AFF041424548AAD002B1472 /* Quake4MapFormat.cpp in Sources */,
+				3AFF03F1245489FC002B1472 /* LayerManager.cpp in Sources */,
 				3AF7465D1E4F861C003465B5 /* MeasurementTool.cpp in Sources */,
 				3AE6F321239F4CA2008A1B2D /* SpeakerNode.cpp in Sources */,
 				3AF7464B1E4F861C003465B5 /* PatchCreateDialog.cpp in Sources */,
@@ -8459,7 +8537,6 @@
 				3AF745E21E4F861B003465B5 /* SelectionGroupManager.cpp in Sources */,
 				3AF7462D1E4F861B003465B5 /* LayerControlDialog.cpp in Sources */,
 				3AF7465C1E4F861C003465B5 /* ClipperTool.cpp in Sources */,
-				3AE6F3A5239F5D35008A1B2D /* Doom3PrefabFormat.cpp in Sources */,
 				3AE6F320239F4CA2008A1B2D /* ShaderParms.cpp in Sources */,
 				3AF745B01E4F861B003465B5 /* NullModel.cpp in Sources */,
 				3AA6E06723B2340E00BF9AD7 /* Doom3ShaderLayer.cpp in Sources */,
@@ -8471,6 +8548,7 @@
 				3AF745A21E4F861B003465B5 /* Map.cpp in Sources */,
 				3AE6F370239F5C9F008A1B2D /* ddslib.cpp in Sources */,
 				3AE6F349239F5033008A1B2D /* FileTypeRegistry.cpp in Sources */,
+				3AFF042024548AC9002B1472 /* PortableMapWriter.cpp in Sources */,
 				3AA6E07623B2342D00BF9AD7 /* RenderableParticleBunch.cpp in Sources */,
 				3AF745E41E4F861B003465B5 /* ManipulationPivot.cpp in Sources */,
 				3AF746551E4F861C003465B5 /* TextureBrowser.cpp in Sources */,
@@ -8478,10 +8556,9 @@
 				3AA6E04F23B2330A00BF9AD7 /* XMLRegistry.cpp in Sources */,
 				3AA6E06223B233ED00BF9AD7 /* MD5AnimationChooser.cpp in Sources */,
 				3AF745C01E4F861B003465B5 /* PatchNode.cpp in Sources */,
+				3AFF03ED245489BF002B1472 /* XmlFilterEventAdapter.cpp in Sources */,
 				3AF745771E4F861B003465B5 /* BrushByPlaneClipper.cpp in Sources */,
 				3AF746501E4F861C003465B5 /* PrefDialog.cpp in Sources */,
-				3AE6F3A2239F5D35008A1B2D /* Doom3MapFormat.cpp in Sources */,
-				3AE6F3A9239F5D35008A1B2D /* Patch.cpp in Sources */,
 				3AA6E05E23B233DF00BF9AD7 /* ColourSchemeManager.cpp in Sources */,
 				3AA6E07E23B2344300BF9AD7 /* PicoModelModule.cpp in Sources */,
 				3AF745F61E4F861B003465B5 /* Texturable.cpp in Sources */,
@@ -8502,9 +8579,13 @@
 				3AA6E05F23B233E200BF9AD7 /* ColourSchemeEditor.cpp in Sources */,
 				3AF745C81E4F861B003465B5 /* GenericVFPProgram.cpp in Sources */,
 				3AF746181E4F861B003465B5 /* ClassnamePropertyEditor.cpp in Sources */,
+				3AFF041524548AAD002B1472 /* Quake4MapReader.cpp in Sources */,
+				3AFF03F624548A32002B1472 /* MapModules.cpp in Sources */,
 				3AF745DB1E4F861B003465B5 /* Planes.cpp in Sources */,
 				3AE6F29D239F474E008A1B2D /* ZipArchive.cpp in Sources */,
+				3AFF044424548BFF002B1472 /* FilterMenu.cpp in Sources */,
 				3AF7461D1E4F861B003465B5 /* LightTextureChooser.cpp in Sources */,
+				3AFF042D24548B09002B1472 /* BrushDef.cpp in Sources */,
 				3AF745FE1E4F861B003465B5 /* Win32Registry.cpp in Sources */,
 				3AF745E91E4F861B003465B5 /* RotateManipulator.cpp in Sources */,
 				3AE6F340239F4FE1008A1B2D /* GlobalKeyEventFilter.cpp in Sources */,
@@ -8514,9 +8595,11 @@
 				3AF746231E4F861B003465B5 /* SoundPropertyEditor.cpp in Sources */,
 				3AF7458B1E4F861B003465B5 /* LayerInfoFileModule.cpp in Sources */,
 				3AF746121E4F861B003465B5 /* ShaderDefinitionView.cpp in Sources */,
+				3AFF044524548BFF002B1472 /* FilterOrthoContextMenuItem.cpp in Sources */,
 				3AF7463A1E4F861C003465B5 /* MapInfoDialog.cpp in Sources */,
 				3AA6E07723B2342D00BF9AD7 /* RenderableParticleStage.cpp in Sources */,
 				3AF746041E4F861B003465B5 /* PatchVertexItem.cpp in Sources */,
+				3AFF040624548A9D002B1472 /* Doom3MapWriter.cpp in Sources */,
 				3AF7458D1E4F861B003465B5 /* LayerUsageBreakdown.cpp in Sources */,
 				3AF746131E4F861B003465B5 /* ShaderSelector.cpp in Sources */,
 				3AF745A61E4F861B003465B5 /* MapPositionManager.cpp in Sources */,
@@ -8526,7 +8609,9 @@
 				3AE6F2831FF78CDB008A1B2D /* EClassTree.cpp in Sources */,
 				3AF7460D1E4F861B003465B5 /* CommandEntry.cpp in Sources */,
 				3AF745CB1E4F861B003465B5 /* GLProgramFactory.cpp in Sources */,
+				3AFF03F2245489FC002B1472 /* LayerModule.cpp in Sources */,
 				3AE6F30A239F4CA2008A1B2D /* CurveEditInstance.cpp in Sources */,
+				3AFF044324548BFF002B1472 /* FilterContextMenu.cpp in Sources */,
 				3AE6F35D239F5C4C008A1B2D /* FontManager.cpp in Sources */,
 				3AF745C71E4F861B003465B5 /* ARBDepthFillProgram.cpp in Sources */,
 				3AA6E07B23B2344300BF9AD7 /* Lwo2Chunk.cpp in Sources */,
@@ -8547,13 +8632,14 @@
 				3AF745A51E4F861B003465B5 /* MapPosition.cpp in Sources */,
 				3AE6F27D1FF78CD0008A1B2D /* EntityList.cpp in Sources */,
 				3AF7458E1E4F861B003465B5 /* Console.cpp in Sources */,
+				3AFF043124548B09002B1472 /* PatchDef3.cpp in Sources */,
 				3AF745BE1E4F861B003465B5 /* PatchCreators.cpp in Sources */,
 				3AF745951E4F861B003465B5 /* main.cpp in Sources */,
+				3AFF043924548BB3002B1472 /* SelectionGroupModule.cpp in Sources */,
 				3AF745BF1E4F861B003465B5 /* PatchModule.cpp in Sources */,
 				3AA6E06823B2340E00BF9AD7 /* Doom3ShaderSystem.cpp in Sources */,
 				3AF7457F1E4F861B003465B5 /* TextureMatrix.cpp in Sources */,
 				3AE6F342239F4FE1008A1B2D /* MouseToolManager.cpp in Sources */,
-				3AA6E05C23B233D900BF9AD7 /* FilterMenu.cpp in Sources */,
 				3AF745ED1E4F861B003465B5 /* SelectedNodeList.cpp in Sources */,
 				3AF745811E4F861B003465B5 /* Winding.cpp in Sources */,
 				3AE6F33E239F4FE1008A1B2D /* Accelerator.cpp in Sources */,
@@ -8586,9 +8672,9 @@
 				3AF745C21E4F861B003465B5 /* PatchTesselation.cpp in Sources */,
 				3AF7465E1E4F861C003465B5 /* XYWnd.cpp in Sources */,
 				3AF7457B1E4F861B003465B5 /* FaceInstance.cpp in Sources */,
+				3AFF042F24548B09002B1472 /* Patch.cpp in Sources */,
 				3AE6F2AD239F4C19008A1B2D /* Doom3EntityClass.cpp in Sources */,
 				3AF745CF1E4F861B003465B5 /* LinearLightList.cpp in Sources */,
-				3AE6F3AF239F5D35008A1B2D /* Quake4MapReader.cpp in Sources */,
 				3AF745941E4F861B003465B5 /* StringLogDevice.cpp in Sources */,
 				3AF745B81E4F861B003465B5 /* ComplexName.cpp in Sources */,
 				3AF7460E1E4F861B003465B5 /* EntityChooser.cpp in Sources */,
@@ -8599,9 +8685,9 @@
 				3AF745DA1E4F861B003465B5 /* Patch.cpp in Sources */,
 				3AE6F26A1FF78201008A1B2D /* EditingStopwatchInfoFileModule.cpp in Sources */,
 				3AF7463E1E4F861C003465B5 /* FiltersMenu.cpp in Sources */,
-				3AE6F3AD239F5D35008A1B2D /* Quake3MapReader.cpp in Sources */,
 				3AF746001E4F861B003465B5 /* BrushItem.cpp in Sources */,
 				3AF745D31E4F861B003465B5 /* View.cpp in Sources */,
+				3AFF042E24548B09002B1472 /* BrushDef3.cpp in Sources */,
 				3AF746021E4F861B003465B5 /* FaceVertexItem.cpp in Sources */,
 				3AE6F12D1E8E9B72008A1B2D /* GridManager.cpp in Sources */,
 				3AF746111E4F861B003465B5 /* ShaderChooser.cpp in Sources */,
@@ -8609,8 +8695,6 @@
 				3AF7462C1E4F861B003465B5 /* LayerControl.cpp in Sources */,
 				3AF746101E4F861B003465B5 /* RenderableAABB.cpp in Sources */,
 				3AE6F3C3239F5DC3008A1B2D /* MD5AnimationCache.cpp in Sources */,
-				3AE6F3A3239F5D35008A1B2D /* Doom3MapReader.cpp in Sources */,
-				3AE6F3AC239F5D35008A1B2D /* Quake3MapFormat.cpp in Sources */,
 				3AF746521E4F861C003465B5 /* PrefPage.cpp in Sources */,
 				3AA6E05523B233BF00BF9AD7 /* MenuSeparator.cpp in Sources */,
 				3AF7460A1E4F861B003465B5 /* QuerySidesDialog.cpp in Sources */,
@@ -8639,7 +8723,6 @@
 				3AE6F1421F496ACB008A1B2D /* ModelExporter.cpp in Sources */,
 				3AF745A91E4F861B003465B5 /* PointFile.cpp in Sources */,
 				3AF7459A1E4F861B003465B5 /* Skins.cpp in Sources */,
-				3AE6F3A6239F5D35008A1B2D /* mapdoom3.cpp in Sources */,
 				3AA6E06F23B2341B00BF9AD7 /* SceneGraph.cpp in Sources */,
 				3AA6E06523B2340E00BF9AD7 /* CameraCubeMapDecl.cpp in Sources */,
 				3AF746391E4F861B003465B5 /* LayerInfoTab.cpp in Sources */,
@@ -8681,7 +8764,6 @@
 				3AE6F344239F4FE1008A1B2D /* Toggle.cpp in Sources */,
 				3AF7457A1E4F861B003465B5 /* Face.cpp in Sources */,
 				3AE6F316239F4CA2008A1B2D /* KeyValueObserver.cpp in Sources */,
-				3AE6F3A8239F5D35008A1B2D /* BrushDef3.cpp in Sources */,
 				3AF745D61E4F861B003465B5 /* General.cpp in Sources */,
 				3AF746461E4F861C003465B5 /* Overlay.cpp in Sources */,
 				3AE6F327239F4CA2008A1B2D /* TargetManager.cpp in Sources */,
