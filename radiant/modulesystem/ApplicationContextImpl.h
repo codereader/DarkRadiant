@@ -48,9 +48,6 @@ public:
     virtual std::ostream& getErrorStream() const override;
     virtual std::mutex& getStreamLock() const override;
 
-	// Exports/deletes the paths to/from the registry
-    virtual void savePathsToRegistry() const override;
-
     virtual const ErrorHandlingFunction& getErrorHandlingFunction() const override;
 
 private:

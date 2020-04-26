@@ -322,13 +322,6 @@ void ApplicationContextImpl::initPaths()
     }
 }
 
-void ApplicationContextImpl::savePathsToRegistry() const {
-	GlobalRegistry().set(RKEY_APP_PATH, _appPath);
-	GlobalRegistry().set(RKEY_HOME_PATH, _homePath);
-	GlobalRegistry().set(RKEY_SETTINGS_PATH, _settingsPath);
-	GlobalRegistry().set(RKEY_BITMAPS_PATH, getBitmapsPath());
-}
-
 const ErrorHandlingFunction& ApplicationContextImpl::getErrorHandlingFunction() const
 {
 	return _errorHandler;

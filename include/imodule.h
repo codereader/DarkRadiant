@@ -21,10 +21,6 @@
 /** greebo: These registry keys can be used application-wide during runtime
  *          to retrieve the various paths.
  */
-const char* const RKEY_APP_PATH = "user/paths/appPath";
-const char* const RKEY_HOME_PATH = "user/paths/homePath";
-const char* const RKEY_SETTINGS_PATH = "user/paths/settingsPath";
-const char* const RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
 const char* const RKEY_MAP_PATH = "user/paths/mapPath";
 const char* const RKEY_PREFAB_PATH = "user/paths/prefabPath";
 
@@ -126,11 +122,6 @@ public:
     // Provides a single mutex object which should be locked by client code
     // before writing to the any of the above streams.
     virtual std::mutex& getStreamLock() const = 0;
-
-	/**
-	 * Sets up the paths and stores them into the registry.
-	 */
-	virtual void savePathsToRegistry() const = 0;
 
 	/**
 	 * Retrieve a function pointer which can handle assertions and runtime errors

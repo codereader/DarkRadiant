@@ -43,12 +43,6 @@ void XMLRegistry::saveToDisk()
     // Make a deep copy of the user tree by copy-constructing it
     RegistryTree copiedTree(_userTree);
 
-    // Don't save these paths into the xml files.
-    copiedTree.deleteXPath(RKEY_APP_PATH);
-    copiedTree.deleteXPath(RKEY_HOME_PATH);
-    copiedTree.deleteXPath(RKEY_SETTINGS_PATH);
-    copiedTree.deleteXPath(RKEY_BITMAPS_PATH);
-
     // Application-relative on other OS
     std::string settingsPath = module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
 
@@ -320,10 +314,6 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
     loadUserFileFromSettingsPath(ctx, "colours.xml", "user/ui");
     loadUserFileFromSettingsPath(ctx, "input.xml", "user/ui");
     loadUserFileFromSettingsPath(ctx, "filters.xml", "user/ui/filtersystem");
-
-    // Now the registry is up and running, tell the context to emit
-    // the the relevant paths to the XMLRegistry
-    ctx.savePathsToRegistry();
 
     // Subscribe to the post-module-shutdown signal to save changes to disk
     module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(

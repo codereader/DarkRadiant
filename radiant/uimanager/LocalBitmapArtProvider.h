@@ -26,7 +26,8 @@ public:
 
 		if (string::starts_with(filename, prefix))
 		{
-			std::string filePath = GlobalRegistry().get(RKEY_BITMAPS_PATH) + filename.substr(prefix.length());
+			const auto& ctx = module::GlobalModuleRegistry().getApplicationContext();
+			std::string filePath = ctx.getBitmapsPath() + filename.substr(prefix.length());
 
 			if (os::fileOrDirExists(filePath))
 			{

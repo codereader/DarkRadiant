@@ -26,7 +26,8 @@
 #include "parser/DefBlockTokeniser.h"
 #include <functional>
 
-namespace {
+namespace 
+{
     const char* TEXTURE_PREFIX = "textures/";
     const char* MISSING_BASEPATH_NODE =
         "Failed to find \"/game/filesystem/shaders/basepath\" node \
@@ -39,6 +40,11 @@ in game descriptor";
     // Default image maps for optional material stages
     const std::string IMAGE_FLAT = "_flat.bmp";
     const std::string IMAGE_BLACK = "_black.bmp";
+
+    inline std::string getBitmapsPath()
+    {
+        return module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
+    }
 
 }
 
@@ -248,15 +254,11 @@ TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(ShaderLayer::Type typ
     {
     case ShaderLayer::DIFFUSE:
     case ShaderLayer::SPECULAR:
-        defaultTex = _textureManager->getBinding(
-            GlobalRegistry().get(RKEY_BITMAPS_PATH) + IMAGE_BLACK
-        );
+        defaultTex = _textureManager->getBinding(getBitmapsPath() + IMAGE_BLACK);
         break;
 
     case ShaderLayer::BUMP:
-        defaultTex = _textureManager->getBinding(
-            GlobalRegistry().get(RKEY_BITMAPS_PATH) + IMAGE_FLAT
-        );
+        defaultTex = _textureManager->getBinding(getBitmapsPath() + IMAGE_FLAT);
         break;
     default:
         break;
