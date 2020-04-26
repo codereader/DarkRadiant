@@ -18,8 +18,15 @@ std::string MapPropertyInfoFileModule::getName()
 	return "Map Properties";
 }
 
+void MapPropertyInfoFileModule::clear()
+{
+	_store.clearProperties();
+}
+
 void MapPropertyInfoFileModule::onInfoFileSaveStart()
-{}
+{
+	clear();
+}
 
 void MapPropertyInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
 {
@@ -62,12 +69,12 @@ void MapPropertyInfoFileModule::writeBlocks(std::ostream& stream)
 
 void MapPropertyInfoFileModule::onInfoFileSaveFinished()
 {
-	_store.clearProperties();
+	clear();
 }
 
 void MapPropertyInfoFileModule::onInfoFileLoadStart()
 {
-	_store.clearProperties();
+	clear();
 }
 
 bool MapPropertyInfoFileModule::canParseBlock(const std::string& blockName)
@@ -123,6 +130,7 @@ void MapPropertyInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& r
 void MapPropertyInfoFileModule::onInfoFileLoadFinished()
 {
 	rMessage() << "[InfoFile]: Parsed " << _store.getPropertyCount() << " map properties." << std::endl;
+	clear();
 }
 
 }

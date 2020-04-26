@@ -28,12 +28,21 @@ std::string SelectionGroupInfoFileModule::getName()
 	return "Selection Groups";
 }
 
-void SelectionGroupInfoFileModule::onInfoFileSaveStart()
+void SelectionGroupInfoFileModule::clear()
 {
+	_groupInfo.clear();
+	_nodeMapping.clear();
+
 	_output.str(std::string());
 	_output.clear();
+	_selectionGroupBuffer.str(std::string());
 	_selectionGroupBuffer.clear();
 	_nodeInfoCount = 0;
+}
+
+void SelectionGroupInfoFileModule::onInfoFileSaveStart()
+{
+	clear();
 }
 
 void SelectionGroupInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
@@ -151,15 +160,12 @@ void SelectionGroupInfoFileModule::writeBlocks(std::ostream& stream)
 
 void SelectionGroupInfoFileModule::onInfoFileSaveFinished()
 {
-	_output.str(std::string());
-	_output.clear();
-	_nodeInfoCount = 0;
+	clear();
 }
 
 void SelectionGroupInfoFileModule::onInfoFileLoadStart()
 {
-	_groupInfo.clear();
-	_nodeMapping.clear();
+	clear();
 }
 
 bool SelectionGroupInfoFileModule::canParseBlock(const std::string& blockName)
@@ -346,8 +352,7 @@ void SelectionGroupInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr
 
 void SelectionGroupInfoFileModule::onInfoFileLoadFinished()
 {
-	_groupInfo.clear();
-	_nodeMapping.clear();
+	clear();
 }
 
 }

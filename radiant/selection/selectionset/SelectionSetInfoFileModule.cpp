@@ -21,6 +21,12 @@ std::string SelectionSetInfoFileModule::getName()
 	return "Selection Set Mapping";
 }
 
+void SelectionSetInfoFileModule::clear()
+{
+	_importInfo.clear();
+	_exportInfo.clear();
+}
+
 void SelectionSetInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
 {
 	// Visit all selection sets and assemble the info into the structures
@@ -39,7 +45,7 @@ void SelectionSetInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& r
 
 void SelectionSetInfoFileModule::onInfoFileSaveStart()
 {
-	_exportInfo.clear();
+	clear();
 }
 
 void SelectionSetInfoFileModule::onSavePrimitive(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum)
@@ -107,12 +113,12 @@ void SelectionSetInfoFileModule::writeBlocks(std::ostream& stream)
 
 void SelectionSetInfoFileModule::onInfoFileSaveFinished()
 {
-	_exportInfo.clear();
+	clear();
 }
 
 void SelectionSetInfoFileModule::onInfoFileLoadStart()
 {
-	_importInfo.clear();
+	clear();
 }
 
 bool SelectionSetInfoFileModule::canParseBlock(const std::string& blockName)
@@ -228,7 +234,7 @@ void SelectionSetInfoFileModule::applyInfoToScene(const scene::IMapRootNodePtr& 
 
 void SelectionSetInfoFileModule::onInfoFileLoadFinished()
 {
-	_importInfo.clear();
+	clear();
 }
 
 }

@@ -58,6 +58,9 @@ public:
 	void parseBlock(const std::string& blockName, parser::DefTokeniser& tok) override;
 	void applyInfoToScene(const scene::IMapRootNodePtr& root, const map::NodeIndexMap& nodeMap) override;
 	void onInfoFileLoadFinished() override;
+
+private:
+	void clear();
 };
 
 }
