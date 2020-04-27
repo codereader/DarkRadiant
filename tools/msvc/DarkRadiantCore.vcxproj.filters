@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\modulesystem">
+      <UniqueIdentifier>{0f4cc898-eaa9-45d2-890b-ebebab99471d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\log">
+      <UniqueIdentifier>{cd303c99-7f3d-4998-8579-15e79b73430e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\radiant\modulesystem\DynamicLibrary.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\ModuleRegistry.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\COutRedirector.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\LogStream.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\LogStreamBuf.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\LogWriter.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\radiant\modulesystem\DynamicLibrary.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\ModuleRegistry.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h">
+      <Filter>src\modulesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\COutRedirector.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogDevice.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogLevels.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogStream.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogStreamBuf.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogWriter.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\PIDFile.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\StringLogDevice.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

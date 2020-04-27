@@ -65,3 +65,4 @@ Makefile.in
 # Portable installation temp folders
 /tools/scripts/DarkRadiant_install.x64
 /tools/scripts/DarkRadiant_install
+/install/*.ilk

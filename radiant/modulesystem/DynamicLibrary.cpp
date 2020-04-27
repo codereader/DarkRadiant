@@ -1,5 +1,6 @@
 #include "DynamicLibrary.h"
 
+#include "string/encoding.h"
 #include "itextstream.h"
 
 namespace module {
@@ -55,9 +56,9 @@ DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& sy
 	return address;
 }
 
-std::string DynamicLibrary::getName() const {
-	std::string out(_name.begin(), _name.end());
-	return out;
+std::string DynamicLibrary::getName() const
+{
+	return string::to_utf8(_name);
 }
 
 /**
