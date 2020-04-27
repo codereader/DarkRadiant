@@ -1,14 +1,12 @@
 #pragma once
 
 #include "icommandsystem.h"
+#include "ilogwriter.h"
 
 #include <wx/panel.h>
 
 #include "wxutil/ConsoleView.h"
 #include "ui/common/CommandEntry.h"
-#include "LogDevice.h"
-
-namespace gtkutil { class ConsoleView; }
 
 namespace ui
 {
@@ -25,7 +23,7 @@ typedef std::shared_ptr<Console> ConsolePtr;
  */
 class Console :
 	public wxPanel,
-	public applog::LogDevice
+	public applog::ILogDevice
 {
 private:
 	wxutil::ConsoleView* _view;
@@ -57,10 +55,7 @@ public:
 	 * The log level indicates which tag is used for colouring the output.
 	 * (Note: this gets called by the LogWriter automatically).
 	 */
-	void writeLog(const std::string& outputStr, applog::ELogLevel level);
-
-private:
-	void shutdown();
+	void writeLog(const std::string& outputStr, applog::ELogLevel level) override;
 };
 
 } // namespace ui

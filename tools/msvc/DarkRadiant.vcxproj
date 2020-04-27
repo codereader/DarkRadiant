@@ -1560,9 +1560,7 @@
     <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h" />
     <ClInclude Include="..\..\radiant\log\Console.h" />
     <ClInclude Include="..\..\radiant\log\COutRedirector.h" />
-    <ClInclude Include="..\..\radiant\log\LogDevice.h" />
     <ClInclude Include="..\..\radiant\log\LogFile.h" />
-    <ClInclude Include="..\..\radiant\log\LogLevels.h" />
     <ClInclude Include="..\..\radiant\log\LogStream.h" />
     <ClInclude Include="..\..\radiant\log\LogStreamBuf.h" />
     <ClInclude Include="..\..\radiant\log\LogWriter.h" />

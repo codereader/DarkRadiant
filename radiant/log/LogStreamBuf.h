@@ -1,10 +1,10 @@
-#ifndef _LOG_STREAM_BUF_H_
-#define _LOG_STREAM_BUF_H_
+#pragma once
 
+#include "ilogwriter.h"
 #include <streambuf>
-#include "LogLevels.h"
 
-namespace applog {
+namespace applog 
+{
 
 /**
  * greebo: The LogStreamBuf adapts the std::streambuf to use to the
@@ -41,5 +41,3 @@ private:
 };
 
 } // namespace applog
-
-#endif /* _LOG_STREAM_BUF_H_ */

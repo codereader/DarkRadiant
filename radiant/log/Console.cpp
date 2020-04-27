@@ -6,7 +6,6 @@
 #include "wxutil/ConsoleView.h"
 #include <wx/sizer.h>
 
-#include "LogLevels.h"
 #include "LogWriter.h"
 #include "StringLogDevice.h"
 

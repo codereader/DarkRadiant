@@ -1,25 +1,26 @@
-#ifndef _STRING_LOG_DEVICE_H_
-#define _STRING_LOG_DEVICE_H_
+#pragma once
 
 #include <sstream>
-#include "LogDevice.h"
 #include <memory>
+#include "ilogwriter.h"
 
-namespace applog {
-
-class StringLogDevice;
-typedef std::shared_ptr<StringLogDevice> StringLogDevicePtr;
+namespace applog
+{
 
 /**
  * greebo: A StringLogDevice is a class which logs into a local string buffer.
  */
 class StringLogDevice :
-	public LogDevice
+	public ILogDevice
 {
+private:
 	std::ostringstream _errorStream;
 	std::ostringstream _warningStream;
 	std::ostringstream _logStream;
+
 public:
+	typedef std::shared_ptr<StringLogDevice> Ptr;
+
 	StringLogDevice();
 	~StringLogDevice();
 
@@ -27,7 +28,7 @@ public:
 	 * greebo: This method gets called by the Writer with
 	 * a logging string as argument.
 	 */
-	void writeLog(const std::string& outputStr, ELogLevel level);
+	void writeLog(const std::string& outputStr, ELogLevel level) override;
 
 	// Returns the temporary buffer for the given level
 	std::string getString(ELogLevel level);
@@ -35,9 +36,7 @@ public:
 	// Destroys the static instance
 	static void destroy();
 
-	static StringLogDevicePtr& InstancePtr();
+	static Ptr& InstancePtr();
 };
 
 } // namespace applog
-
-#endif /* _STRING_LOG_DEVICE_H_ */

@@ -1,15 +1,17 @@
 #pragma once
 
 #include <set>
-#include "LogLevels.h"
-#include "LogDevice.h"
+#include "ilogwriter.h"
 
-namespace applog {
-
-class LogWriter
+namespace applog
 {
+
+class LogWriter :
+	public ILogWriter
+{
+private:
 	// The set of unique log devices
-	typedef std::set<LogDevice*> LogDevices;
+	typedef std::set<ILogDevice*> LogDevices;
 	LogDevices _devices;
 
 public:
@@ -17,15 +19,15 @@ public:
 	 * greebo: Writes the given buffer p with the given length to the
 	 *         various output devices (i.e. Console and Log file).
 	 */
-	void write(const char* p, std::size_t length, ELogLevel level);
+	void write(const char* p, std::size_t length, ELogLevel level) override;
 
 	/**
 	 * greebo: Use these methods to attach/detach a log device from the
 	 *         writer class. After attaching a device, all log output
 	 *         will be written to it.
 	 */
-	void attach(LogDevice* device);
-	void detach(LogDevice* device);
+	void attach(ILogDevice* device) override;
+	void detach(ILogDevice* device) override;
 
 	// Contains the static singleton instance of this writer
 	static LogWriter& Instance();

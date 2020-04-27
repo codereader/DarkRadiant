@@ -39,13 +39,15 @@ std::string StringLogDevice::getString(ELogLevel level)
 	};
 }
 
-void StringLogDevice::destroy() {
-	InstancePtr() = StringLogDevicePtr();
+void StringLogDevice::destroy()
+{
+	InstancePtr().reset();
 }
 
-StringLogDevicePtr& StringLogDevice::InstancePtr() {
-	static StringLogDevicePtr _instance;
-	return _instance;
+StringLogDevice::Ptr& StringLogDevice::InstancePtr()
+{
+	static Ptr _instancePtr;
+	return _instancePtr;
 }
 
 } // namespace applog

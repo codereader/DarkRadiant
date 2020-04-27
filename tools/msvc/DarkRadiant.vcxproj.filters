@@ -2259,13 +2259,7 @@
     <ClInclude Include="..\..\radiant\log\COutRedirector.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogDevice.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\log\LogFile.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogLevels.h">
       <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\LogStream.h">

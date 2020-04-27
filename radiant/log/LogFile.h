@@ -2,16 +2,17 @@
 
 #include <fstream>
 #include <memory>
-#include "LogDevice.h"
+#include "ilogwriter.h"
 
-namespace applog {
+namespace applog
+{
 
 // Shared_ptr forward declaration
 class LogFile;
 typedef std::shared_ptr<LogFile> LogFilePtr;
 
 class LogFile :
-	public LogDevice
+	public ILogDevice
 {
 	// The log file name including path
 	std::string _logFilename;
@@ -36,7 +37,7 @@ public:
 	 * Use this to write a string to the logfile. This usually gets
 	 * called by the LogWriter class, but it can be called independently.
 	 */
-	void writeLog(const std::string& outputStr, ELogLevel level);
+	void writeLog(const std::string& outputStr, ELogLevel level) override;
 
 	// Creates the singleton logfile with the given filename
 	static void create(const std::string& filename);
