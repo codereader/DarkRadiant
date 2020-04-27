@@ -8,7 +8,7 @@ namespace radiant
 
 /// IRadiant implementation class.
 class RadiantModule :
-	public IRadiant
+	public IRadiantBase
 {
     // Our signals
     sigc::signal<void> _radiantStarted;

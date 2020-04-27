@@ -11,7 +11,7 @@ const char* const MODULE_RADIANT("Radiant");
  * \brief
  * Interface to the core application.
  */
-class IRadiant :
+class IRadiantBase :
 	public RegisterableModule
 {
 public:
@@ -23,11 +23,11 @@ public:
     virtual sigc::signal<void> signal_radiantShutdown() const = 0;
 };
 
-inline IRadiant& GlobalRadiant()
+inline IRadiantBase& GlobalRadiant()
 {
 	// Cache the reference locally
-	static IRadiant& _radiant(
-		*std::static_pointer_cast<IRadiant>(
+	static IRadiantBase& _radiant(
+		*std::static_pointer_cast<IRadiantBase>(
 			module::GlobalModuleRegistry().getModule(MODULE_RADIANT)
 		)
 	);
