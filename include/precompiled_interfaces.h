@@ -88,7 +88,6 @@
 #include "ispacepartition.h"
 #include "itexdef.h"
 #include "itextstream.h"
-#include "ithread.h"
 #include "itraceable.h"
 #include "itransformable.h"
 #include "itransformnode.h"

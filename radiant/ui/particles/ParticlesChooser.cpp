@@ -5,7 +5,6 @@
 #include "iparticles.h"
 #include "iuimanager.h"
 #include "iradiant.h"
-#include "ithread.h"
 
 #include "debugging/ScopedDebugTimer.h"
 

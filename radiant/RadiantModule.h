@@ -6,8 +6,6 @@
 namespace radiant
 {
 
-class RadiantThreadManager;
-
 /// IRadiant implementation class.
 class RadiantModule :
 	public IRadiant
@@ -15,9 +13,6 @@ class RadiantModule :
     // Our signals
     sigc::signal<void> _radiantStarted;
     sigc::signal<void> _radiantShutdown;
-    
-    // Thread manager instance
-    mutable std::unique_ptr<RadiantThreadManager> _threadManager;
 
 public:
 
@@ -30,8 +25,6 @@ public:
     // IRadiant implementation
     sigc::signal<void> signal_radiantStarted() const override;
     sigc::signal<void> signal_radiantShutdown() const override;
-
-    ThreadManager& getThreadManager() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

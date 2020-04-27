@@ -1,5 +1,4 @@
 #include "RadiantModule.h"
-#include "RadiantThreadManager.h"
 
 #include <iostream>
 #include <ctime>
@@ -40,19 +39,8 @@ sigc::signal<void> RadiantModule::signal_radiantShutdown() const
     return _radiantShutdown;
 }
 
-ThreadManager& RadiantModule::getThreadManager()
-{
-    if (!_threadManager)
-    {
-        _threadManager.reset(new RadiantThreadManager);
-    }
-    return *_threadManager;
-}
-
 void RadiantModule::broadcastShutdownEvent()
 {
-	_threadManager.reset();
-
     _radiantShutdown.emit();
     _radiantShutdown.clear();
 }

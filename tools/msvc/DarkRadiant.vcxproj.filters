@@ -853,9 +853,6 @@
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp">
       <Filter>src\ui\modelselector</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\RadiantThreadManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp">
       <Filter>src\namespace</Filter>
     </ClCompile>
@@ -2303,9 +2300,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h">
       <Filter>src\ui\modelselector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\RadiantThreadManager.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h">
       <Filter>src\patch\algorithm</Filter>
