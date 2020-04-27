@@ -33,6 +33,9 @@ private:
 	// The currently active game configuration
 	GameConfiguration _config;
 
+	std::string _mapPath;
+	std::string _prefabPath;
+
 public:
 	Manager();
 
@@ -62,6 +65,9 @@ public:
 
 	// Returns the sorted game path list
 	const PathList& getVFSSearchPaths() const override;
+
+	const std::string& getMapPath() override;
+	const std::string& getPrefabPath() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

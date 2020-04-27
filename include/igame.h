@@ -92,6 +92,12 @@ public:
 
 	typedef std::vector<IGamePtr> GameList;
 	virtual const GameList& getSortedGameList() = 0;
+
+	// Returns the absolute path where maps are going to be saved to
+	virtual const std::string& getMapPath() = 0;
+
+	// Returns the absolute path where prefabs are going to be saved to
+	virtual const std::string& getPrefabPath() = 0;
 };
 typedef std::shared_ptr<IGameManager> IGameManagerPtr;
 

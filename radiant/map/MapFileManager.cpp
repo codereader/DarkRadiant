@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "iregistry.h"
+#include "igame.h"
 #include "ifiletypes.h"
 #include "imainframe.h"
 #include "modulesystem/ApplicationContextImpl.h"
@@ -15,8 +16,8 @@ namespace map
 MapFileManager::MapFileManager()
 {
 	// Load the default values
-	_lastDirs[filetype::TYPE_MAP] = GlobalRegistry().get(RKEY_MAP_PATH);
-	_lastDirs[filetype::TYPE_PREFAB] = GlobalRegistry().get(RKEY_PREFAB_PATH);
+	_lastDirs[filetype::TYPE_MAP] = GlobalGameManager().getMapPath();
+	_lastDirs[filetype::TYPE_PREFAB] = GlobalGameManager().getPrefabPath();
 }
 
 // Instance owner method
@@ -50,7 +51,7 @@ MapFileSelection MapFileManager::selectFile(bool open,
 	if (_lastDirs.find(type) == _lastDirs.end())
 	{
 		// Default to the map path, if the type is not yet associated
-		_lastDirs[type] = GlobalRegistry().get(RKEY_MAP_PATH);
+		_lastDirs[type] = GlobalGameManager().getMapPath();
 	}
 
 	// Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)

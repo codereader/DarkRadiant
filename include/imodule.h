@@ -18,12 +18,6 @@
  * \defgroup module Module system
  */
 
-/** greebo: These registry keys can be used application-wide during runtime
- *          to retrieve the various paths.
- */
-const char* const RKEY_MAP_PATH = "user/paths/mapPath";
-const char* const RKEY_PREFAB_PATH = "user/paths/prefabPath";
-
 /**
  * greebo: Compatibility level: a number inlined into all the modules and returned 
  * by their RegisterableModule::getCompatibilityLevel() method.

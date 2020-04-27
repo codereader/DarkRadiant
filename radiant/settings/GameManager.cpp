@@ -252,42 +252,37 @@ void Manager::showGameSetupDialog()
 void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
 {
    // Construct the map path and make sure the folder exists
-   std::string mapPath;
-
    // Get the maps folder (e.g. "maps/")
    std::string mapFolder = currentGame()->getLocalXPath(GKEY_MAPS_FOLDER)[0].getAttributeValue("value");
-   if (mapFolder.empty()) {
+   if (mapFolder.empty())
+   {
       mapFolder = "maps/";
    }
 
    if (_config.modPath.empty() && _config.modBasePath.empty()) 
    {
-      mapPath = baseGamePath + mapFolder;
+	   _mapPath = baseGamePath + mapFolder;
    }
    else if (!_config.modPath.empty())
    {
-      mapPath = _config.modPath + mapFolder;
+	   _mapPath = _config.modPath + mapFolder;
    }
    else // _config.modBasePath is not empty
    { 
-      mapPath = _config.modBasePath + mapFolder;
+	   _mapPath = _config.modBasePath + mapFolder;
    }
 
-   rMessage() << "GameManager: Map path set to " << mapPath << std::endl;
-   os::makeDirectory(mapPath);
-
-   // Save the map path to the registry
-   registry::setValue(RKEY_MAP_PATH, mapPath);
+   rMessage() << "GameManager: Map path set to " << _mapPath << std::endl;
+   os::makeDirectory(_mapPath);
 
    // Setup the prefab path
-   std::string prefabPath = mapPath;
+   _prefabPath = _mapPath;
    std::string pfbFolder = currentGame()->getLocalXPath(GKEY_PREFAB_FOLDER)[0].getAttributeValue("value");
 
    // Replace the "maps/" with "prefabs/"
-   string::replace_last(prefabPath, mapFolder, pfbFolder);
+   string::replace_last(_prefabPath, mapFolder, pfbFolder);
    // Store the path into the registry
-   rMessage() << "GameManager: Prefab path set to " << prefabPath << std::endl;
-   registry::setValue(RKEY_PREFAB_PATH, prefabPath);
+   rMessage() << "GameManager: Prefab path set to " << _prefabPath << std::endl;
 }
 
 void Manager::initialiseVfs()
@@ -354,6 +349,16 @@ void Manager::initialiseVfs()
 const Manager::PathList& Manager::getVFSSearchPaths() const 
 {
 	return GlobalFileSystem().getVfsSearchPaths();
+}
+
+const std::string& Manager::getMapPath()
+{
+	return _mapPath;
+}
+
+const std::string& Manager::getPrefabPath()
+{
+	return _prefabPath;
 }
 
 const std::string& Manager::getEnginePath() const

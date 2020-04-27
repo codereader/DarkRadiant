@@ -4,6 +4,7 @@
 #include "igl.h"
 #include "irender.h"
 #include "iregistry.h"
+#include "igame.h"
 #include "iradiant.h"
 #include "Map.h"
 #include "ui/mru/MRU.h"
@@ -46,7 +47,7 @@ void StartupMapLoader::onRadiantStartup()
 			break;
 		}
 
-		fs::path mapsPath = GlobalRegistry().get(RKEY_MAP_PATH);
+		fs::path mapsPath = GlobalGameManager().getMapPath();
 
 		fs::path fullMapPath = mapsPath / candidate;
 

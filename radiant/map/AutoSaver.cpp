@@ -7,6 +7,7 @@
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
+#include "igame.h"
 #include "imainframe.h"
 #include "ipreferencesystem.h"
 
@@ -284,7 +285,7 @@ void AutoMapSaver::checkSave()
 			if (GlobalMap().isUnnamed())
 			{
 				// Get the maps path (within the mod path)
-				std::string autoSaveFilename = GlobalRegistry().get(RKEY_MAP_PATH);
+				std::string autoSaveFilename = GlobalGameManager().getMapPath();
 
 				// Try to create the map folder, in case there doesn't exist one
 				os::makeDirectory(autoSaveFilename);
