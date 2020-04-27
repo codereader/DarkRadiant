@@ -12,6 +12,7 @@
 #include "wxutil/TreeView.h"
 
 #include <wx/sizer.h>
+#include <wx/thread.h>
 #include <functional>
 
 namespace ui
@@ -83,7 +84,8 @@ wxWindow* ParticlesChooser::createTreeView(wxWindow* parent)
  * Visitor class to retrieve particle system names and add them to a
  * treemodel.
  */
-class ParticlesChooser::ThreadedParticlesLoader
+class ParticlesChooser::ThreadedParticlesLoader :
+	public wxThread
 {
 private:
 	// List store to populate
@@ -97,15 +99,24 @@ public:
 	 * Constructor.
 	 */
 	ThreadedParticlesLoader(wxEvtHandler* finishedHandler) : 
+		wxThread(wxTHREAD_JOINABLE),
 		_store(new wxutil::TreeModel(COLUMNS(), true)),
 		_finishedHandler(finishedHandler)
 	{}
 
-	/**
-	 * Functor operator.
-	 */
-	void operator() (const particles::IParticleDef& def)
+	~ThreadedParticlesLoader()
 	{
+		// We might have a running thread, wait for it
+		if (IsRunning())
+		{
+			Delete();
+		}
+	}
+
+	void visitParticle(const particles::IParticleDef& def)
+	{
+		if (TestDestroy()) return;
+
 		// Add the ".prt" extension to the name fo display in the list
 		std::string prtName = def.getName() + ".prt";
 
@@ -116,17 +127,23 @@ public:
 	}
 
 	// The worker function that will execute in the thread
-    void run()
-    {
+	ExitCode Entry()
+	{
         ScopedDebugTimer timer("ThreadedParticlesLoader::run()");
 
 		// Create and use a ParticlesVisitor to populate the list
-		GlobalParticlesManager().forEachParticleDef(*this);
+		GlobalParticlesManager().forEachParticleDef(
+			std::bind(&ThreadedParticlesLoader::visitParticle, this, std::placeholders::_1));
 
-		wxutil::TreeModel::PopulationFinishedEvent finishedEvent;
-		finishedEvent.SetTreeModel(_store);
+		if (!TestDestroy())
+		{
+			wxutil::TreeModel::PopulationFinishedEvent finishedEvent;
+			finishedEvent.SetTreeModel(_store);
 
-		_finishedHandler->AddPendingEvent(finishedEvent);
+			_finishedHandler->AddPendingEvent(finishedEvent);
+		}
+
+		return static_cast<wxThread::ExitCode>(0);
     }
 };
 
@@ -142,9 +159,7 @@ void ParticlesChooser::populateParticleList()
 	row[COLUMNS().name] = "Loading...";
 	row.SendItemAdded();
 	
-	GlobalRadiant().getThreadManager().execute(
-		std::bind(&ThreadedParticlesLoader::run, _particlesLoader.get())
-    );
+	_particlesLoader->Run();
 }
 
 void ParticlesChooser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
@@ -162,6 +177,8 @@ void ParticlesChooser::onTreeStorePopulationFinished(wxutil::TreeModel::Populati
     {
         setSelectedParticle(_preSelectParticle);
     }
+
+	_particlesLoader.reset();
 }
 
 void ParticlesChooser::onRadiantShutdown()
