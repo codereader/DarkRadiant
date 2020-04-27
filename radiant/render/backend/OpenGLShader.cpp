@@ -504,7 +504,8 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     OpenGLState& previewPass = appendDefaultPass();
 
     // Render the editor texture in legacy mode
-    previewPass.texture0 = _material->getEditorImage()->getGLTexNum();
+    auto editorTex = _material->getEditorImage();
+    previewPass.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
 
     previewPass.setRenderFlag(RENDER_FILL);
     previewPass.setRenderFlag(RENDER_TEXTURE_2D);
