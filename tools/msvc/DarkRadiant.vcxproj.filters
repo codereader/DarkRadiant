@@ -1612,6 +1612,9 @@
     <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp">
+      <Filter>src\modulesystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">

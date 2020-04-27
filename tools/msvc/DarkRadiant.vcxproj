@@ -732,6 +732,7 @@
     <ClCompile Include="..\..\radiant\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
+    <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp" />
     <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\particles\editor\ParticleEditor.cpp" />
     <ClCompile Include="..\..\radiant\particles\ParticleDef.cpp" />

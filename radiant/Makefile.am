@@ -361,6 +361,7 @@ darkradiant_SOURCES = main.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
                       modulesystem/ModuleLoader.cpp \
                       modulesystem/ModuleRegistry.cpp \
+                      modulesystem/StaticModule.cpp \
                       selection/SelectedNodeList.cpp \
 					  selection/clipboard/Clipboard.cpp \
                       selection/shaderclipboard/ShaderClipboard.cpp \
