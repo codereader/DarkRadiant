@@ -3,7 +3,8 @@
 #include "string/encoding.h"
 #include "itextstream.h"
 
-namespace module {
+namespace module
+{
 
 /**
  * =============================== WIN32 ======================================

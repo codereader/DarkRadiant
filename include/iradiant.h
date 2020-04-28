@@ -7,6 +7,22 @@
 
 const char* const MODULE_RADIANT("Radiant");
 
+namespace radiant
+{
+
+/**
+ * Main application host
+ */
+class IRadiant
+{
+public:
+    typedef std::shared_ptr<IRadiant> Ptr;
+
+    virtual ~IRadiant() {}
+};
+
+}
+
 /**
  * \brief
  * Interface to the core application.

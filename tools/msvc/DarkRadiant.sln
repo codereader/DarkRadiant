@@ -5,6 +5,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mathlib", "mathlib.vcxproj", "{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkRadiant", "DarkRadiant.vcxproj", "{8E70385C-223A-4DD1-9B99-28FF2331A2B5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{83D79C71-4E8F-4F78-9D46-EF02D5D5CD89} = {83D79C71-4E8F-4F78-9D46-EF02D5D5CD89}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlutillib", "xmlutillib.vcxproj", "{A15EFB56-927F-411D-A57B-0328321456A2}"
 EndProject
@@ -51,6 +54,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main Binary and Headers", "Main Binary and Headers", "{F0E8C46B-4F20-43B1-9A8D-13A9D0A3BA3D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkRadiantCore", "DarkRadiantCore.vcxproj", "{83D79C71-4E8F-4F78-9D46-EF02D5D5CD89}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modulelib", "modulelib.vcxproj", "{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -188,6 +193,14 @@ Global
 		{83D79C71-4E8F-4F78-9D46-EF02D5D5CD89}.Release|Win32.Build.0 = Release|Win32
 		{83D79C71-4E8F-4F78-9D46-EF02D5D5CD89}.Release|x64.ActiveCfg = Release|x64
 		{83D79C71-4E8F-4F78-9D46-EF02D5D5CD89}.Release|x64.Build.0 = Release|x64
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}.Debug|Win32.ActiveCfg = Debug|Win32
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}.Debug|Win32.Build.0 = Debug|Win32
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}.Debug|x64.ActiveCfg = Debug|x64
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}.Debug|x64.Build.0 = Debug|x64
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}.Release|Win32.ActiveCfg = Release|Win32
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}.Release|Win32.Build.0 = Release|Win32
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}.Release|x64.ActiveCfg = Release|x64
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -209,6 +222,7 @@ Global
 		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3} = {3C3C0B81-D1B7-4EE4-9224-99ECA5774F25}
 		{5EB15BCF-2131-4DE3-B411-FC0D2DEF702F} = {F0E8C46B-4F20-43B1-9A8D-13A9D0A3BA3D}
 		{83D79C71-4E8F-4F78-9D46-EF02D5D5CD89} = {F0E8C46B-4F20-43B1-9A8D-13A9D0A3BA3D}
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215} = {026C3BBE-9A3B-4D21-A49D-12DD9DDF3CBA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7F73C9B-AFA1-4AF0-9F99-7C3A7F503A86}

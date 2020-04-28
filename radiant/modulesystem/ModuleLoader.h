@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "imodule.h"
-#include "DynamicLibrary.h"
+#include "module/DynamicLibrary.h"
 #include "os/fs.h"
 
 namespace module

@@ -13,9 +13,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\radiant\modulesystem\DynamicLibrary.cpp">
-      <Filter>src\modulesystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
@@ -40,11 +37,11 @@
     <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\Radiant.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\modulesystem\DynamicLibrary.h">
-      <Filter>src\modulesystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h">
       <Filter>src\modulesystem</Filter>
     </ClInclude>

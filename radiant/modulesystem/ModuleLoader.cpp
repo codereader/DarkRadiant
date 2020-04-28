@@ -19,12 +19,6 @@ namespace
 	const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory
 	const std::string MODULES_DIR = "modules/"; ///< name of modules directory
 
-#if defined(WIN32)
-	const std::string MODULE_FILE_EXTENSION = ".dll";
-#elif defined(POSIX)
-	const std::string MODULE_FILE_EXTENSION = ".so";
-#endif
-
 	// This is the name of the entry point symbol in the module
 	const char* const SYMBOL_REGISTER_MODULE = "RegisterModule";
 

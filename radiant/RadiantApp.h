@@ -2,6 +2,7 @@
 
 #include <wx/app.h>
 #include "modulesystem/ApplicationContextImpl.h"
+#include "module/CoreModule.h"
 
 /**
 * Main application class required by wxWidgets
@@ -20,6 +21,8 @@ class RadiantApp :
 	// The RadiantApp owns the ApplicationContext which is then passed to the
 	// ModuleRegistry as a refernce.
 	radiant::ApplicationContextImpl _context;
+
+	std::unique_ptr<module::CoreModule> _coreModule;
 
 public:
 	bool OnInit() override;

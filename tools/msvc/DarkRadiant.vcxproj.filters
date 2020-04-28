@@ -442,9 +442,6 @@
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\modulesystem\DynamicLibrary.cpp">
-      <Filter>src\modulesystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
@@ -1777,9 +1774,6 @@
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h">
-      <Filter>src\modulesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modulesystem\DynamicLibrary.h">
       <Filter>src\modulesystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h">

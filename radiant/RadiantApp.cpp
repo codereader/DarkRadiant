@@ -1,11 +1,13 @@
 #include "RadiantApp.h"
 
 #include "i18n.h"
+#include "iradiant.h"
 
 #include "log/LogFile.h"
 #include "log/LogStream.h"
 #include "log/PIDFile.h"
 #include "modulesystem/ModuleRegistry.h"
+#include "module/CoreModule.h"
 
 #include <wx/wxprec.h>
 #include <wx/event.h>
@@ -53,6 +55,18 @@ bool RadiantApp::OnInit()
 	_context.initialise(wxApp::argc, wxApp::argv);
 	module::ModuleRegistry::Instance().setContext(_context);
 
+	try
+	{
+		_coreModule.reset(new module::CoreModule(_context));
+
+		auto* radiant = _coreModule->get();
+	}
+	catch (module::CoreModule::FailureException & ex)
+	{
+		rError() << "Failed to load core module" << std::endl;
+		throw ex;
+	}
+
 	// The settings path is set, start logging now
 	applog::LogFile::create("darkradiant.log");
 
@@ -77,7 +91,7 @@ bool RadiantApp::OnInit()
 	wxInitAllImageHandlers();
 
 	// Register to the start up signal
-	Bind(EV_RadiantStartup, sigc::mem_fun(*this, &RadiantApp::onStartupEvent));
+	Bind(EV_RadiantStartup, &RadiantApp::onStartupEvent, this);
 
 	// Activate the Popup Error Handler
 	_context.initErrorHandler();
@@ -89,6 +103,11 @@ bool RadiantApp::OnInit()
 
 int RadiantApp::OnExit()
 {
+	if (_coreModule)
+	{
+		_coreModule.reset();
+	}
+
 	// Issue a shutdown() call to all the modules
 	module::GlobalModuleRegistry().shutdownModules();
 

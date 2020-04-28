@@ -1,9 +1,14 @@
-#ifndef DYNAMICLIBRARY_H_
-#define DYNAMICLIBRARY_H_
+#pragma once
 
 #include <string>
 #include <vector>
 #include <memory>
+
+#if defined(WIN32)
+const char* const MODULE_FILE_EXTENSION = ".dll";
+#elif defined(POSIX)
+const char* const MODULE_FILE_EXTENSION = ".so";
+#endif
 
 /** greebo: This file declares the classes encapsulating a dynamically linked library.
  *          Each DL class must define a FunctionPointer typedef and a findSymbol() method.
@@ -18,11 +23,13 @@
 
 #include <windows.h>
 
-namespace module {
+namespace module
+{
 
 /** greebo: WIN32 DynamicLibrary. Loads a DLL given in the constructor.
  */
-class DynamicLibrary {
+class DynamicLibrary
+{
 	// The full filename of this library
 	std::wstring _name;
 
@@ -59,9 +66,11 @@ public:
 
 #include <dlfcn.h>
 
-namespace module {
+namespace module
+{
 
-class DynamicLibrary {
+class DynamicLibrary
+{
 	// The full filename of this library
 	std::string _name;
 
@@ -95,12 +104,13 @@ public:
 #error "unsupported platform"
 #endif
 
-namespace module {
-	// Shared ptr typedef
-	typedef std::shared_ptr<DynamicLibrary> DynamicLibraryPtr;
+namespace module
+{
 
-	// A list of allocated libraries
-	typedef std::vector<DynamicLibraryPtr> DynamicLibraryList;
+// Shared ptr typedef
+typedef std::shared_ptr<DynamicLibrary> DynamicLibraryPtr;
+
+// A list of allocated libraries
+typedef std::vector<DynamicLibraryPtr> DynamicLibraryList;
+
 }
-
-#endif /*DYNAMICLIBRARY_H_*/
