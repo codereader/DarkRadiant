@@ -2,7 +2,7 @@
 
 namespace applog {
 
-void LogWriter::write(const char* p, std::size_t length, ELogLevel level)
+void LogWriter::write(const char* p, std::size_t length, LogLevel level)
 {
 	// Convert the buffer to a string
 	std::string output(p, length);

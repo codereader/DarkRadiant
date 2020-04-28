@@ -28,10 +28,10 @@ public:
 	 * greebo: This method gets called by the Writer with
 	 * a logging string as argument.
 	 */
-	void writeLog(const std::string& outputStr, ELogLevel level) override;
+	void writeLog(const std::string& outputStr, LogLevel level) override;
 
 	// Returns the temporary buffer for the given level
-	std::string getString(ELogLevel level);
+	std::string getString(LogLevel level);
 
 	// Destroys the static instance
 	static void destroy();

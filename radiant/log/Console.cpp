@@ -37,15 +37,13 @@ Console::Console(wxWindow* parent) :
 	{
 		applog::StringLogDevice& logger = *applog::StringLogDevice::InstancePtr();
 
-		for (int level = applog::SYS_VERBOSE;
-			 level < applog::SYS_NUM_LOGLEVELS;
-			 level++)
+		for (auto level : applog::AllLogLevels)
 		{
-            std::string bufferedText = logger.getString(static_cast<applog::ELogLevel>(level));
+            std::string bufferedText = logger.getString(static_cast<applog::LogLevel>(level));
 
             if (bufferedText.empty()) continue;
 
-            writeLog(bufferedText + "\n", static_cast<applog::ELogLevel>(level));
+            writeLog(bufferedText + "\n", static_cast<applog::LogLevel>(level));
 		}
 	}
 
@@ -71,22 +69,22 @@ void Console::toggle(const cmd::ArgumentList& args)
 	GlobalGroupDialog().togglePage("console");
 }
 
-void Console::writeLog(const std::string& outputStr, applog::ELogLevel level)
+void Console::writeLog(const std::string& outputStr, applog::LogLevel level)
 {
 	switch (level)
 	{
-		case applog::SYS_VERBOSE:
-		case applog::SYS_STANDARD:
-			_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
-			break;
-		case applog::SYS_WARNING:
-			_view->appendText(outputStr, wxutil::ConsoleView::ModeWarning);
-			break;
-		case applog::SYS_ERROR:
-			_view->appendText(outputStr, wxutil::ConsoleView::ModeError);
-			break;
-		default:
-			_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
+	case applog::LogLevel::Verbose:
+	case applog::LogLevel::Standard:
+		_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
+		break;
+	case applog::LogLevel::Warning:
+		_view->appendText(outputStr, wxutil::ConsoleView::ModeWarning);
+		break;
+	case applog::LogLevel::Error:
+		_view->appendText(outputStr, wxutil::ConsoleView::ModeError);
+		break;
+	default:
+		_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
 	};
 }
 

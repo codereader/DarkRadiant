@@ -5,13 +5,19 @@
 namespace applog
 {
 
-enum ELogLevel
+enum class LogLevel
 {
-	SYS_VERBOSE = 0,
-	SYS_STANDARD,
-	SYS_WARNING,
-	SYS_ERROR,
-	SYS_NUM_LOGLEVELS,
+	Verbose = 0,
+	Standard,
+	Warning,
+	Error,
+};
+
+constexpr LogLevel AllLogLevels[] = {
+	LogLevel::Verbose,
+	LogLevel::Standard,
+	LogLevel::Warning,
+	LogLevel::Error
 };
 
 /**
@@ -29,7 +35,7 @@ public:
 	 * greebo: This method gets called by the ILogWriter with
 	 * a log string as argument.
 	 */
-	virtual void writeLog(const std::string& outputStr, ELogLevel level) = 0;
+	virtual void writeLog(const std::string& outputStr, LogLevel level) = 0;
 };
 
 /**
@@ -46,7 +52,7 @@ public:
 	 * greebo: Writes the given buffer p with the given length to the
 	 * various output devices (i.e. Console and Log file).
 	 */
-	virtual void write(const char* p, std::size_t length, ELogLevel level) = 0;
+	virtual void write(const char* p, std::size_t length, LogLevel level) = 0;
 
 	/**
 	 * greebo: Use these methods to attach/detach a log device from the

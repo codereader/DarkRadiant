@@ -25,7 +25,7 @@ class LogStream :
 private:
     static std::mutex _streamLock;
 public:
-    LogStream(ELogLevel logLevel);
+    LogStream(LogLevel logLevel);
 
     virtual ~LogStream();
 

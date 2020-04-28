@@ -6,7 +6,7 @@
 
 namespace applog {
 
-LogStreamBuf::LogStreamBuf(ELogLevel level, int bufferSize) :
+LogStreamBuf::LogStreamBuf(LogLevel level, int bufferSize) :
     _reserve(nullptr),
 	_level(level)
 {

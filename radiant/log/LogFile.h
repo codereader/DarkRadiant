@@ -36,7 +36,7 @@ public:
 	 * Use this to write a string to the logfile. This usually gets
 	 * called by the LogWriter class, but it can be called independently.
 	 */
-	void writeLog(const std::string& outputStr, ELogLevel level) override;
+	void writeLog(const std::string& outputStr, LogLevel level) override;
 };
 
 } // namespace applog

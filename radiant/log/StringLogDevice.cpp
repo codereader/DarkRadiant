@@ -11,31 +11,33 @@ StringLogDevice::~StringLogDevice() {
 	LogWriter::Instance().detach(this);
 }
 
-void StringLogDevice::writeLog(const std::string& outputStr, ELogLevel level) {
-	switch (level) {
-		case SYS_ERROR:
-			_errorStream << outputStr;
-			break;
-		case SYS_WARNING:
-			_warningStream << outputStr;
-			break;
-		default:
-			_logStream << outputStr;
-	};
-}
-
-std::string StringLogDevice::getString(ELogLevel level)
+void StringLogDevice::writeLog(const std::string& outputStr, LogLevel level)
 {
 	switch (level)
 	{
-		case SYS_ERROR:
-			return  _errorStream.str();
-		case SYS_WARNING:
-			return  _warningStream.str();
-		case SYS_STANDARD:
-			return _logStream.str();
-		default:
-			return "";
+	case LogLevel::Error:
+		_errorStream << outputStr;
+		break;
+	case LogLevel::Warning:
+		_warningStream << outputStr;
+		break;
+	default:
+		_logStream << outputStr;
+	};
+}
+
+std::string StringLogDevice::getString(LogLevel level)
+{
+	switch (level)
+	{
+	case LogLevel::Error:
+		return  _errorStream.str();
+	case LogLevel::Warning:
+		return  _warningStream.str();
+	case LogLevel::Standard:
+		return _logStream.str();
+	default:
+		return "";
 	};
 }
 

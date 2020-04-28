@@ -55,7 +55,7 @@ public:
 	 * The log level indicates which tag is used for colouring the output.
 	 * (Note: this gets called by the LogWriter automatically).
 	 */
-	void writeLog(const std::string& outputStr, applog::ELogLevel level) override;
+	void writeLog(const std::string& outputStr, applog::LogLevel level) override;
 };
 
 } // namespace ui

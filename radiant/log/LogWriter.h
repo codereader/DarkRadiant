@@ -19,7 +19,7 @@ public:
 	 * greebo: Writes the given buffer p with the given length to the
 	 *         various output devices (i.e. Console and Log file).
 	 */
-	void write(const char* p, std::size_t length, ELogLevel level) override;
+	void write(const char* p, std::size_t length, LogLevel level) override;
 
 	/**
 	 * greebo: Use these methods to attach/detach a log device from the

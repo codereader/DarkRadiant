@@ -9,7 +9,7 @@ namespace applog
 
 std::mutex LogStream::_streamLock;
 
-LogStream::LogStream(ELogLevel logLevel) :
+LogStream::LogStream(LogLevel logLevel) :
     std::ostream(new LogStreamBuf(logLevel))
 {}
 
@@ -23,18 +23,21 @@ LogStream::~LogStream()
     }
 }
 
-std::ostream& getGlobalOutputStream() {
-	static applog::LogStream _stream(SYS_STANDARD);
+std::ostream& getGlobalOutputStream()
+{
+	static LogStream _stream(LogLevel::Standard);
 	return _stream;
 }
 
-std::ostream& getGlobalErrorStream() {
-	static applog::LogStream _stream(SYS_ERROR);
+std::ostream& getGlobalErrorStream()
+{
+	static LogStream _stream(LogLevel::Error);
 	return _stream;
 }
 
-std::ostream& getGlobalWarningStream() {
-	static applog::LogStream _stream(SYS_WARNING);
+std::ostream& getGlobalWarningStream()
+{
+	static LogStream _stream(LogLevel::Warning);
 	return _stream;
 }
 

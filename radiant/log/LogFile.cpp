@@ -57,7 +57,7 @@ const std::string& LogFile::getFullPath() const
     return _logFilePath;
 }
 
-void LogFile::writeLog(const std::string& outputStr, ELogLevel level) 
+void LogFile::writeLog(const std::string& outputStr, LogLevel level) 
 {
     _buffer.append(outputStr);
 
