@@ -1,6 +1,9 @@
 #include "iradiant.h"
 #include "module/CoreModule.h"
 
+#include "log/LogStream.h"
+#include "log/LogWriter.h"
+
 namespace radiant
 {
 
@@ -13,7 +16,20 @@ private:
 public:
 	Radiant(ApplicationContext& context) :
 		_context(context)
-	{}
+	{
+		// Set the stream references for rMessage(), redirect std::cout, etc.
+		applog::LogStream::InitialiseStreams();
+	}
+
+	~Radiant()
+	{
+		applog::LogStream::ShutdownStreams();
+	}
+
+	applog::ILogWriter& getLogWriter() override
+	{
+		return applog::LogWriter::Instance();
+	}
 };
 
 }

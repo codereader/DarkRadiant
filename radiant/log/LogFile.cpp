@@ -9,7 +9,6 @@
 
 #include "string/convert.h"
 #include "LogWriter.h"
-#include "modulesystem/ModuleRegistry.h"
 
 namespace applog
 {
@@ -19,25 +18,10 @@ namespace
     const char* const TIME_FMT = "%Y-%m-%d %H:%M:%S";
 }
 
-LogFile::LogFile(const std::string& filename) :
-	_logFilename(
-		module::ModuleRegistry::Instance().getApplicationContext().getSettingsPath() +
-		filename
-	),
-    _logStream(_logFilename.c_str())
-{
-	if (_logStream.good())
-	{
-		// Register this class as logdevice
-		LogWriter::Instance().attach(this);
-	}
-	else
-	{
-        rConsoleError() << "Failed to create log file '"
-				  << _logFilename << ", check write permissions in parent directory." 
-				  << std::endl;
-    }
-}
+LogFile::LogFile(const std::string& fullPath) :
+	_logFilePath(fullPath),
+    _logStream(_logFilePath.c_str())
+{}
 
 LogFile::~LogFile()
 {
@@ -61,6 +45,16 @@ LogFile::~LogFile()
 	_logStream.close();
 
 	LogWriter::Instance().detach(this);
+}
+
+bool LogFile::isOpen()
+{
+    return _logStream.good();
+}
+
+const std::string& LogFile::getFullPath() const
+{
+    return _logFilePath;
 }
 
 void LogFile::writeLog(const std::string& outputStr, ELogLevel level) 
@@ -88,6 +82,7 @@ void LogFile::writeLog(const std::string& outputStr, ELogLevel level)
     }
 }
 
+#if 0
 // Creates the singleton logfile with the given filename
 void LogFile::create(const std::string& filename)
 {
@@ -97,7 +92,7 @@ void LogFile::create(const std::string& filename)
 		InstancePtr() = LogFilePtr(new LogFile(filename));
 
 		// Write the initialisation info to the logfile.
-		rMessage() << "Started logging to " << InstancePtr()->_logFilename << std::endl;
+		rMessage() << "Started logging to " << InstancePtr()->_logFilePath << std::endl;
 
 		rMessage() << "This is " << RADIANT_APPNAME_FULL() << std::endl;
 
@@ -128,5 +123,6 @@ LogFilePtr& LogFile::InstancePtr() {
 	static LogFilePtr _instancePtr;
 	return _instancePtr;
 }
+#endif
 
 } // namespace applog

@@ -3,6 +3,7 @@
 #include <wx/app.h>
 #include "modulesystem/ApplicationContextImpl.h"
 #include "module/CoreModule.h"
+#include "log/LogFile.h"
 
 /**
 * Main application class required by wxWidgets
@@ -24,6 +25,8 @@ class RadiantApp :
 
 	std::unique_ptr<module::CoreModule> _coreModule;
 
+	std::unique_ptr<applog::LogFile> _logFile;
+
 public:
 	bool OnInit() override;
 	int OnExit() override;
@@ -34,5 +37,6 @@ public:
 	bool OnExceptionInMainLoop() override;
 
 private:
+	void createLogFile();
 	void onStartupEvent(wxCommandEvent& ev);
 };

@@ -7,6 +7,8 @@
 
 const char* const MODULE_RADIANT("Radiant");
 
+namespace applog { class ILogWriter;  }
+
 namespace radiant
 {
 
@@ -17,6 +19,12 @@ class IRadiant
 {
 public:
     typedef std::shared_ptr<IRadiant> Ptr;
+
+    /**
+     * Central logging class of the module. Use this to
+     * attach your own ILogDevices to receive logging output.
+     */
+    virtual applog::ILogWriter& getLogWriter() = 0;
 
     virtual ~IRadiant() {}
 };
