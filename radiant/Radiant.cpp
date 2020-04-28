@@ -18,7 +18,7 @@ public:
 		_context(context)
 	{
 		// Set the stream references for rMessage(), redirect std::cout, etc.
-		applog::LogStream::InitialiseStreams();
+		applog::LogStream::InitialiseStreams(getLogWriter());
 	}
 
 	~Radiant()

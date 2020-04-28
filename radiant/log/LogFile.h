@@ -24,8 +24,6 @@ public:
 	 */
 	LogFile(const std::string& fullPath);
 
-	virtual ~LogFile();
-
 	// Returns true if the log stream was successfully opened
 	bool isOpen();
 
@@ -37,6 +35,8 @@ public:
 	 * called by the LogWriter class, but it can be called independently.
 	 */
 	void writeLog(const std::string& outputStr, LogLevel level) override;
+
+	void close();
 };
 
 } // namespace applog

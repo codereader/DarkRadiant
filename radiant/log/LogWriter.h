@@ -1,7 +1,10 @@
 #pragma once
 
 #include <set>
+#include <map>
 #include "ilogwriter.h"
+
+#include "LogStream.h"
 
 namespace applog
 {
@@ -14,12 +17,19 @@ private:
 	typedef std::set<ILogDevice*> LogDevices;
 	LogDevices _devices;
 
+	std::map<LogLevel, LogStream> _streams;
+
 public:
+	LogWriter();
+
 	/**
 	 * greebo: Writes the given buffer p with the given length to the
 	 *         various output devices (i.e. Console and Log file).
 	 */
 	void write(const char* p, std::size_t length, LogLevel level) override;
+
+	std::ostream& getLogStream(LogLevel level) override;
+	std::mutex& getStreamLock() override;
 
 	/**
 	 * greebo: Use these methods to attach/detach a log device from the

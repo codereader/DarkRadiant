@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <mutex>
 
 namespace applog
 {
@@ -41,6 +42,9 @@ public:
 /**
  * Central logging hub, dispatching any incoming log messages 
  * to all attached ILogDevices.
+ *
+ * Also offers the stream references to set up the rMessage/rWarning streams
+ * in every module.
  */
 class ILogWriter
 {
@@ -53,6 +57,17 @@ public:
 	 * various output devices (i.e. Console and Log file).
 	 */
 	virtual void write(const char* p, std::size_t length, LogLevel level) = 0;
+
+	/**
+	 * Returns the stream reference for the given log level. These are used
+	 * to initialise the global rMessage/rWarning streams used by the application.
+	 */
+	virtual std::ostream& getLogStream(LogLevel level) = 0;
+
+	/**
+	 * Returns the synchronization object for writing to the streams.
+	 */
+	virtual std::mutex& getStreamLock() = 0;
 
 	/**
 	 * greebo: Use these methods to attach/detach a log device from the

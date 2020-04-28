@@ -31,7 +31,7 @@ public:
 
     // Gets called immediately after entering main()
     // Sets up the stream references for rMessage(), redirects std::cout, etc.
-    static void InitialiseStreams();
+    static void InitialiseStreams(ILogWriter& logWriter);
 
     // Hands back the original streambuf to std::cout
     static void ShutdownStreams();

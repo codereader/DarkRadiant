@@ -15,11 +15,11 @@ class COutRedirector
 	std::streambuf* _oldCOutStreamBuf;
 	std::streambuf* _oldCErrStreamBuf;
 public:
-	COutRedirector();
+	COutRedirector(ILogWriter& logWriter);
 	~COutRedirector();
 
 	// A call to init() will redirect the std::cout output to the log
-	static void init();
+	static void init(ILogWriter& logWriter);
 
 	// A call to destroy() will stop redirecting std::cout
 	static void destroy();

@@ -1,6 +1,18 @@
 #include "LogWriter.h"
 
-namespace applog {
+#include <cassert>
+#include <tuple>
+
+namespace applog
+{
+
+LogWriter::LogWriter()
+{
+	for (auto level : AllLogLevels)
+	{
+		_streams.emplace(level, level);
+	}
+}
 
 void LogWriter::write(const char* p, std::size_t length, LogLevel level)
 {
@@ -12,6 +24,17 @@ void LogWriter::write(const char* p, std::size_t length, LogLevel level)
     {
 		device->writeLog(output, level);
 	}
+}
+
+std::ostream& LogWriter::getLogStream(LogLevel level)
+{
+	assert(_streams.find(level) != _streams.end());
+	return _streams.at(level);
+}
+
+std::mutex& LogWriter::getStreamLock()
+{
+	return LogStream::GetStreamLock();
 }
 
 void LogWriter::attach(ILogDevice* device)

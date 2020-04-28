@@ -41,29 +41,29 @@ std::ostream& getGlobalWarningStream()
 	return _stream;
 }
 
-void LogStream::InitialiseStreams()
+void LogStream::InitialiseStreams(ILogWriter& logWriter)
 {
     // Instantiate a temporary buffer, which copies the log until the
     // console is ready. The buffer's contents will then be copied over
     StringLogDevice::InstancePtr() = std::make_shared<StringLogDevice>();
 
-	GlobalOutputStream().setStream(getGlobalOutputStream());
-	GlobalWarningStream().setStream(getGlobalWarningStream());
-	GlobalErrorStream().setStream(getGlobalErrorStream());
+	GlobalOutputStream().setStream(logWriter.getLogStream(applog::LogLevel::Standard));
+	GlobalWarningStream().setStream(logWriter.getLogStream(applog::LogLevel::Warning));
+	GlobalErrorStream().setStream(logWriter.getLogStream(applog::LogLevel::Error));
 
 #ifndef NDEBUG
-    GlobalDebugStream().setStream(getGlobalOutputStream());
+    GlobalDebugStream().setStream(logWriter.getLogStream(applog::LogLevel::Verbose));
 #endif
 
-    GlobalOutputStream().setLock(GetStreamLock());
-    GlobalWarningStream().setLock(GetStreamLock());
-    GlobalErrorStream().setLock(GetStreamLock());
-    GlobalDebugStream().setLock(GetStreamLock());
+    GlobalOutputStream().setLock(logWriter.getStreamLock());
+    GlobalWarningStream().setLock(logWriter.getStreamLock());
+    GlobalErrorStream().setLock(logWriter.getStreamLock());
+    GlobalDebugStream().setLock(logWriter.getStreamLock());
 
 #if !defined(POSIX) || !defined(_DEBUG)
 	// Redirect std::cout to the log, except on Linux debug builds where
     // logging to the console is more useful
-	COutRedirector::init();
+	COutRedirector::init(logWriter);
 #endif
 }
 

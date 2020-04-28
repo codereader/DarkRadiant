@@ -23,30 +23,6 @@ LogFile::LogFile(const std::string& fullPath) :
     _logStream(_logFilePath.c_str())
 {}
 
-LogFile::~LogFile()
-{
-#if defined(__linux__)
-	// put_time still unavailable even with GCC 4.9
-    rMessage() << " Closing log file." << std::endl;
-#else
-    std::time_t t = std::time(nullptr);
-    std::tm tm = *std::localtime(&t);
-    rMessage() << std::put_time(&tm, TIME_FMT) << " Closing log file." << std::endl;
-#endif
-
-    // Insert the last few remaining bytes into the stream
-    if (!_buffer.empty())
-    {
-        _logStream << _buffer << std::endl;
-        _buffer.clear();
-    }
-
-	_logStream.flush();
-	_logStream.close();
-
-	LogWriter::Instance().detach(this);
-}
-
 bool LogFile::isOpen()
 {
     return _logStream.good();
@@ -124,5 +100,27 @@ LogFilePtr& LogFile::InstancePtr() {
 	return _instancePtr;
 }
 #endif
+
+void LogFile::close()
+{
+#if defined(__linux__)
+    // put_time still unavailable even with GCC 4.9
+    rMessage() << " Closing log file." << std::endl;
+#else
+    std::time_t t = std::time(nullptr);
+    std::tm tm = *std::localtime(&t);
+    rMessage() << std::put_time(&tm, TIME_FMT) << " Closing log file." << std::endl;
+#endif
+
+    // Insert the last few remaining bytes into the stream
+    if (!_buffer.empty())
+    {
+        _logStream << _buffer << std::endl;
+        _buffer.clear();
+    }
+
+    _logStream.flush();
+    _logStream.close();
+}
 
 } // namespace applog

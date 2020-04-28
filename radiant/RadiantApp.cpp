@@ -50,9 +50,6 @@ bool RadiantApp::OnInit()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	// Set the stream references for rMessage(), redirect std::cout, etc.
-	applog::LogStream::InitialiseStreams();
-
 	// Stop wx's unhelpful debug messages about missing keyboard accel
 	// strings from cluttering up the console
 	wxLog::SetLogLevel(wxLOG_Warning);
@@ -67,6 +64,8 @@ bool RadiantApp::OnInit()
 		_coreModule.reset(new module::CoreModule(_context));
 
 		auto* radiant = _coreModule->get();
+
+		module::initialiseStreams(radiant->getLogWriter());
 	}
 	catch (module::CoreModule::FailureException & ex)
 	{
@@ -151,7 +150,9 @@ int RadiantApp::OnExit()
 		// Close the log file
 		if (_logFile)
 		{
+			_logFile->close();
 			_coreModule->get()->getLogWriter().detach(_logFile.get());
+			_logFile.reset();
 		}
 
 		_coreModule.reset();

@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "itextstream.h"
+#include "ilogwriter.h"
 
 /**
  * \defgroup module Module system
@@ -366,6 +367,25 @@ namespace module
 			std::runtime_error(msg)
 		{}
 	};
+
+	// greebo: This should be called once by each module at load time to initialise
+	// the OutputStreamHolders
+	inline void initialiseStreams(applog::ILogWriter& logWriter)
+	{
+		GlobalOutputStream().setStream(logWriter.getLogStream(applog::LogLevel::Standard));
+		GlobalWarningStream().setStream(logWriter.getLogStream(applog::LogLevel::Warning));
+		GlobalErrorStream().setStream(logWriter.getLogStream(applog::LogLevel::Error));
+
+#ifndef NDEBUG
+		GlobalDebugStream().setStream(logWriter.getLogStream(applog::LogLevel::Verbose));
+#endif
+
+		// Set up the mutex for thread-safe logging
+		GlobalOutputStream().setLock(logWriter.getStreamLock());
+		GlobalWarningStream().setLock(logWriter.getStreamLock());
+		GlobalErrorStream().setLock(logWriter.getStreamLock());
+		GlobalDebugStream().setLock(logWriter.getStreamLock());
+	}
 
 	// greebo: This should be called once by each module at load time to initialise
 	// the OutputStreamHolders
