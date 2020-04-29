@@ -1,5 +1,6 @@
 #include "GLTextureManager.h"
 
+#include "imodule.h"
 #include "iradiant.h"
 #include "itextstream.h"
 #include "texturelib.h"
@@ -113,24 +114,21 @@ TexturePtr GLTextureManager::getShaderNotFound()
 TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
 {
     // Create the texture path
-    std::string fullpath = GlobalRegistry().get("user/paths/bitmapsPath") + filename;
-
-    TexturePtr returnValue;
+    std::string fullpath = module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath() + filename;
 
     // load the image with the ImageFileLoader (which can handle .bmp)
     ImagePtr img = GlobalImageLoader().imageFromFile(fullpath);
 
-    if (img != ImagePtr()) {
+    if (img)
+    {
         // Bind the (processed) texture and get the OpenGL id
         // The getProcessed() call may substitute the passed image by another
-        returnValue = img->bindTexture(filename);
+        return img->bindTexture(filename);
     }
-    else {
-        rError() << "[shaders] Couldn't load Standard Texture texture: "
-                            << filename << "\n";
-    }
+    
+    rError() << "[shaders] Couldn't load Standard Texture texture: " << filename << "\n";
 
-    return returnValue;
+    return TexturePtr();
 }
 
 } // namespace shaders

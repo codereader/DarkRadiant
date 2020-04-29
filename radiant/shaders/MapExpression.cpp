@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "ifilesystem.h"
+#include "imodule.h"
 
 #include <iostream>
 
@@ -16,8 +17,8 @@
 #include "string/predicate.h"
 
 /* CONSTANTS */
-namespace {
-
+namespace
+{
 	// Default image maps for optional material stages
 	const std::string IMAGE_BLACK = "_black.bmp";
 	const std::string IMAGE_CUBICLIGHT = "_cubiclight.bmp";
@@ -33,6 +34,11 @@ namespace {
 	const std::string IMAGE_SCRATCH = "_scratch.bmp";
 	const std::string IMAGE_SPOTLIGHT = "_spotlight.bmp";
 	const std::string IMAGE_WHITE = "_white.bmp";
+
+	inline std::string getBitmapsPath()
+	{
+		return module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
+	}
 }
 
 namespace shaders {
@@ -646,72 +652,72 @@ ImagePtr ImageExpression::getImage() const
 	// Check for some image keywords and load the correct file
 	if (_imgName == "_black") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK
+            getBitmapsPath() + IMAGE_BLACK
         );
 	}
 	else if (_imgName == "_cubiclight") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CUBICLIGHT
+            getBitmapsPath() + IMAGE_CUBICLIGHT
         );
 	}
 	else if (_imgName == "_currentRender") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CURRENTRENDER
+            getBitmapsPath() + IMAGE_CURRENTRENDER
         );
 	}
 	else if (_imgName == "_default") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_DEFAULT
+            getBitmapsPath() + IMAGE_DEFAULT
         );
 	}
 	else if (_imgName == "_flat") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT
+            getBitmapsPath() + IMAGE_FLAT
         );
 	}
 	else if (_imgName == "_fog") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FOG
+            getBitmapsPath() + IMAGE_FOG
         );
 	}
 	else if (_imgName == "_nofalloff") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_NOFALLOFF
+            getBitmapsPath() + IMAGE_NOFALLOFF
         );
 	}
 	else if (_imgName == "_pointlight1") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT1
+            getBitmapsPath() + IMAGE_POINTLIGHT1
         );
 	}
 	else if (_imgName == "_pointlight2") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT2
+            getBitmapsPath() + IMAGE_POINTLIGHT2
         );
 	}
 	else if (_imgName == "_pointlight3") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT3
+            getBitmapsPath() + IMAGE_POINTLIGHT3
         );
 	}
 	else if (_imgName == "_quadratic") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_QUADRATIC
+            getBitmapsPath() + IMAGE_QUADRATIC
         );
 	}
 	else if (_imgName == "_scratch") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SCRATCH
+            getBitmapsPath() + IMAGE_SCRATCH
         );
 	}
 	else if (_imgName == "_spotlight") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SPOTLIGHT
+            getBitmapsPath() + IMAGE_SPOTLIGHT
         );
 	}
 	else if (_imgName == "_white") {
 		return GlobalImageLoader().imageFromFile(
-            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_WHITE
+            getBitmapsPath() + IMAGE_WHITE
         );
 	}
 	else
