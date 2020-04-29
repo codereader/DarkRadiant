@@ -82,7 +82,8 @@ module::StaticModule<OrthoContextMenu> orthoContextMenuModule;
 
 OrthoContextMenu& OrthoContextMenu::Instance()
 {
-    return *orthoContextMenuModule.getModule();
+    return *std::static_pointer_cast<OrthoContextMenu>(
+        module::GlobalModuleRegistry().getModule("OrthoContextMenu"));
 }
 
 // Constructor
@@ -619,7 +620,7 @@ void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
 
 const std::string& OrthoContextMenu::getName() const
 {
-    static std::string _name("OrthoContextMenu");
+    static std::string _name(MODULE_ORTHOCONTEXTMENU);
     return _name;
 }
 

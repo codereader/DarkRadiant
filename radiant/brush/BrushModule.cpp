@@ -157,5 +157,7 @@ module::StaticModule<BrushModuleImpl> staticBrushModule;
 // greebo: The accessor function for the brush module containing the static instance
 BrushModuleImpl& GlobalBrush()
 {
-	return *staticBrushModule.getModule().get();
+	return *std::static_pointer_cast<BrushModuleImpl>(
+		module::GlobalModuleRegistry().getModule(MODULE_BRUSHCREATOR)
+	);
 }

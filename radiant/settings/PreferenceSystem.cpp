@@ -56,5 +56,6 @@ module::StaticModule<PreferenceSystem> preferenceSystemModule;
 
 settings::PreferenceSystem& GetPreferenceSystem()
 {
-	return *settings::preferenceSystemModule.getModule();
+	return *std::static_pointer_cast<settings::PreferenceSystem>(
+		module::GlobalModuleRegistry().getModule(MODULE_PREFERENCESYSTEM));
 }

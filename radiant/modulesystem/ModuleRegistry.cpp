@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <iostream>
 #include "ApplicationContextImpl.h"
-#include "StaticModule.h"
 
 #include <wx/app.h>
 #include <fmt/format.h>
@@ -147,15 +146,6 @@ void ModuleRegistry::loadAndInitialiseModules()
 	}
 
 	_sigModuleInitialisationProgress.emit(_("Searching for Modules"), 0.0f);
-
-	// Pick up all the statically registered modules
-	internal::StaticModuleList::ForEachModule([this](const RegisterableModulePtr& module)
-	{
-		registerModule(module);
-	});
-
-	// Be sure the list is cleared after registration
-	internal::StaticModuleList::Clear();
 
 	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
 

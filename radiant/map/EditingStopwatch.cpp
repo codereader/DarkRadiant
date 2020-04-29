@@ -24,6 +24,7 @@ namespace
 	const int TIMER_INTERVAL_SECS = 1;
 	const char* const STATUS_BAR_ELEMENT = "EditTime";
 	const char* const MAP_PROPERTY_KEY = "EditTimeInSeconds";
+	const char* const MODULE_EDITING_STOPWATCH = "EditingStopwatch";
 }
 
 EditingStopwatch::EditingStopwatch() :
@@ -32,7 +33,7 @@ EditingStopwatch::EditingStopwatch() :
 
 const std::string& EditingStopwatch::getName() const
 {
-	static std::string _name("EditingStopwatch");
+	static std::string _name(MODULE_EDITING_STOPWATCH);
 	return _name;
 }
 
@@ -207,7 +208,8 @@ module::StaticModule<EditingStopwatch> _stopwatchModule;
 
 EditingStopwatch& EditingStopwatch::GetInstanceInternal()
 {
-	return *_stopwatchModule.getModule();
+	return *std::static_pointer_cast<EditingStopwatch>(
+		module::GlobalModuleRegistry().getModule(MODULE_EDITING_STOPWATCH));
 }
 
 }

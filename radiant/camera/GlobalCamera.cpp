@@ -628,5 +628,7 @@ module::StaticModule<GlobalCameraManager> cameraModule;
 // The accessor function to the GlobalCameraManager instance
 ui::GlobalCameraManager& GlobalCamera()
 {
-	return *ui::cameraModule.getModule();
+	return *std::static_pointer_cast<ui::GlobalCameraManager>(
+		module::GlobalModuleRegistry().getModule(MODULE_CAMERA)
+	);
 }

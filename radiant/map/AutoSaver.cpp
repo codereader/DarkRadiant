@@ -43,6 +43,7 @@ namespace
 	const char* RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE = "user/ui/map/maxSnapshotFolderSize";
 	const char* RKEY_AUTOSAVE_SNAPSHOT_FOLDER_SIZE_HISTORY = "user/ui/map/snapshotFolderSizeHistory";
 	const char* GKEY_MAP_EXTENSION = "/mapFormat/fileExtension";
+	const char* const MODULE_AUTOSAVER = "AutomaticMapSaver";
 
 	std::string constructSnapshotName(const fs::path& snapshotPath, const std::string& mapName, int num)
 	{
@@ -364,7 +365,7 @@ void AutoMapSaver::onMapEvent(IMap::MapEvent ev)
 
 const std::string& AutoMapSaver::getName() const
 {
-	static std::string _name("AutomaticMapSaver");
+	static std::string _name(MODULE_AUTOSAVER);
 	return _name;
 }
 
@@ -434,7 +435,8 @@ module::StaticModule<AutoMapSaver> staticAutoSaverModule;
 
 AutoMapSaver& AutoSaver()
 {
-	return *staticAutoSaverModule.getModule();
+	return *std::static_pointer_cast<AutoMapSaver>(
+		module::GlobalModuleRegistry().getModule(MODULE_AUTOSAVER));
 }
 
 } // namespace map

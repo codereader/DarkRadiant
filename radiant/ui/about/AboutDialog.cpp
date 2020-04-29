@@ -96,7 +96,6 @@ void AboutDialog::populateWindow()
 	findNamedObject<wxStaticText>(this, "AboutDialogHeader1")->SetFont(bold);
 	findNamedObject<wxStaticText>(this, "AboutDialogHeader2")->SetFont(bold);
 	findNamedObject<wxStaticText>(this, "AboutDialogHeader3")->SetFont(bold);
-	findNamedObject<wxStaticText>(this, "AboutDialogHeader4")->SetFont(bold);
 }
 
 void AboutDialog::_onClose(wxCommandEvent& ev)

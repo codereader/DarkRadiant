@@ -111,7 +111,8 @@ module::StaticModule<TextureBrowserManager> texBrowserManagerModule;
 
 TextureBrowserManager& TextureBrowserManager::Instance()
 {
-    return *texBrowserManagerModule.getModule();
+    return *std::static_pointer_cast<TextureBrowserManager>(
+        module::GlobalModuleRegistry().getModule(MODULE_TEXTURE_BROWSER_MANAGER));
 }
 
 } // namespace

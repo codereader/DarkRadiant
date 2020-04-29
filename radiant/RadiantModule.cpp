@@ -129,7 +129,9 @@ module::StaticModule<RadiantModule> radiantCoreModule;
 // Return the static Radiant module to other code within the main binary
 RadiantModulePtr getGlobalRadiant()
 {
-	return radiantCoreModule.getModule();
+	return std::static_pointer_cast<RadiantModule>(
+		module::GlobalModuleRegistry().getModule(MODULE_RADIANT)
+	);
 }
 
 } // namespace radiant

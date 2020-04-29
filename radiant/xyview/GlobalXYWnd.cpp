@@ -707,5 +707,6 @@ module::StaticModule<XYWndManager> xyWndModule;
 // Accessor function returning the reference
 ui::XYWndManager& GlobalXYWnd()
 {
-	return *ui::xyWndModule.getModule();
+	return *std::static_pointer_cast<ui::XYWndManager>(
+		module::GlobalModuleRegistry().getModule(MODULE_ORTHOVIEWMANAGER));
 }

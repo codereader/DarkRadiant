@@ -442,12 +442,6 @@
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
-      <Filter>src\modulesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modulesystem\ModuleRegistry.cpp">
-      <Filter>src\modulesystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\namespace\Namespace.cpp">
       <Filter>src\namespace</Filter>
     </ClCompile>
@@ -1756,12 +1750,6 @@
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h">
-      <Filter>src\modulesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h">
-      <Filter>src\modulesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modulesystem\ModuleRegistry.h">
       <Filter>src\modulesystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h">

@@ -431,7 +431,8 @@ module::StaticModule<Manager> gameManagerModule;
 
 Manager& Manager::Instance()
 {
-	return *gameManagerModule.getModule();
+	return *std::static_pointer_cast<Manager>(
+		module::GlobalModuleRegistry().getModule(MODULE_GAMEMANAGER));
 }
 
 } // namespace game

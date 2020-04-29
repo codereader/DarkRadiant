@@ -15,21 +15,19 @@ StaticModuleList::~StaticModuleList()
 	assert(empty());
 }
 
-void StaticModuleList::Add(const RegisterableModulePtr& module)
+void StaticModuleList::Add(const ModuleCreationFunc& creationFunc)
 {
-	Instance().push_back(module);
+	Instance().push_back(creationFunc);
 }
 
-void StaticModuleList::ForEachModule(const std::function<void(const RegisterableModulePtr&)>& func)
+void StaticModuleList::RegisterModules()
 {
-	for (const auto& module : Instance())
+	for (const auto& creationFunc : Instance())
 	{
-		func(module);
+		module::GlobalModuleRegistry().registerModule(creationFunc());
 	}
-}
 
-void StaticModuleList::Clear()
-{
+	// Be sure the list is cleared after registration
 	Instance().clear();
 }
 

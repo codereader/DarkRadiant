@@ -41,6 +41,7 @@ namespace map
 	{
         typedef std::shared_ptr<RegionManager> RegionManagerPtr;
         const std::string GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
+        const char* const MODULE_REGION_MANAGER = "RegionManager";
     }
 
 RegionManager::RegionManager() :
@@ -393,7 +394,7 @@ void RegionManager::initialiseCommands()
 
 const std::string& RegionManager::getName() const
 {
-	static std::string _name("RegionManager");
+	static std::string _name(MODULE_REGION_MANAGER);
 	return _name;
 }
 
@@ -465,5 +466,6 @@ module::StaticModule<RegionManager> staticRegionManagerModule;
 
 map::RegionManager& GlobalRegion()
 {
-	return *map::staticRegionManagerModule.getModule();
+	return *std::static_pointer_cast<map::RegionManager>(
+        module::GlobalModuleRegistry().getModule(map::MODULE_REGION_MANAGER));
 }

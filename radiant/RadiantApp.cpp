@@ -7,6 +7,7 @@
 #include "log/PIDFile.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "module/CoreModule.h"
+#include "modulesystem/StaticModule.h"
 
 #include <wx/wxprec.h>
 #include <wx/event.h>
@@ -148,6 +149,9 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	// Connect the progress callback to the Splash instance.
 	ui::Splash::OnAppStartup();
 #endif
+
+	// Pick up all the statically defined modules and register them
+	module::internal::StaticModuleList::RegisterModules();
 
     try
     {

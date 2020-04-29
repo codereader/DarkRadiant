@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "imodule.h"
 #include "ModuleRegistry.h"
 
@@ -31,17 +32,19 @@ namespace internal
  * and acquired by the ModuleRegistry, after which point
  * this list will be cleared.
  */
+typedef std::function<RegisterableModulePtr()> ModuleCreationFunc;
+
 class StaticModuleList :
-    private std::list<RegisterableModulePtr>
+    private std::list<ModuleCreationFunc>
 {
 public:
+
     ~StaticModuleList();
 
-    static void Add(const RegisterableModulePtr& module);
+    static void Add(const ModuleCreationFunc& creationFunc);
 
-    static void ForEachModule(const std::function<void(const RegisterableModulePtr&)>& func);
-
-    static void Clear();
+    // Creates all pre-registered modules and submits them to the registry
+    static void RegisterModules();
 
 private:
     static StaticModuleList& Instance();
@@ -54,24 +57,14 @@ class StaticModule
 {
     static_assert(std::is_base_of<RegisterableModule, ModuleType>::value, "ModuleType must be of type RegisterableModule");
 
-private:
-	std::string _moduleName;
-
 public:
 	StaticModule()
     {
-        auto module = std::make_shared<ModuleType>();
-		_moduleName = module->getName();
-
-        // Add this to the list in the backend, it will be picked up later
-        internal::StaticModuleList::Add(module);
-	}
-
-	inline std::shared_ptr<ModuleType> getModule()
-    {
-		return std::static_pointer_cast<ModuleType>(
-            GlobalModuleRegistry().getModule(_moduleName)
-		);
+        // Add a creator to the list in the backend, it will be called by the registry later
+        internal::StaticModuleList::Add([]()->RegisterableModulePtr
+        {
+            return std::make_shared<ModuleType>();
+        });
 	}
 };
 

@@ -868,8 +868,6 @@
     <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Traverse.cpp" />
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp" />
-    <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp" />
-    <ClCompile Include="..\..\radiant\modulesystem\ModuleRegistry.cpp" />
     <ClCompile Include="..\..\radiant\namespace\Namespace.cpp" />
     <ClCompile Include="..\..\radiant\namespace\NamespaceFactory.cpp" />
     <ClCompile Include="..\..\radiant\patch\Patch.cpp" />
@@ -1351,8 +1349,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\WorldspawnArgFinder.h" />
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h" />
-    <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h" />
-    <ClInclude Include="..\..\radiant\modulesystem\ModuleRegistry.h" />
     <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h" />
     <ClInclude Include="..\..\radiant\namespace\ComplexName.h" />
     <ClInclude Include="..\..\radiant\namespace\Namespace.h" />
