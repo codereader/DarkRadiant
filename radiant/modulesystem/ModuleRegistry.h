@@ -44,10 +44,9 @@ private:
 	// Dynamic library loader
 	ModuleLoader _loader;
 
-	// Private constructor
+public:
 	ModuleRegistry();
 
-public:
     ~ModuleRegistry();
 
 	// Registers the given module

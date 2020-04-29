@@ -40,6 +40,9 @@
     <ClCompile Include="..\..\radiant\Radiant.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\log\LogFile.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h">
@@ -76,6 +79,9 @@
       <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\StringLogDevice.h">
+      <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\log\LogFile.h">
       <Filter>src\log</Filter>
     </ClInclude>
   </ItemGroup>

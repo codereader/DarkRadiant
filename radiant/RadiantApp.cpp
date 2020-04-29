@@ -4,7 +4,6 @@
 #include "iradiant.h"
 #include "version.h"
 
-#include "log/LogFile.h"
 #include "log/PIDFile.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "module/CoreModule.h"
@@ -34,11 +33,6 @@
 
 // The startup event which will be queued in App::OnInit()
 wxDEFINE_EVENT(EV_RadiantStartup, wxCommandEvent);
-
-namespace
-{
-	const char* const TIME_FMT = "%Y-%m-%d %H:%M:%S";
-}
 
 bool RadiantApp::OnInit()
 {
@@ -72,9 +66,6 @@ bool RadiantApp::OnInit()
 		throw ex;
 	}
 
-	// Attach the logfile to the core binary's logwriter
-	createLogFile();
-
 #ifndef POSIX
 	// Initialise the language based on the settings in the user settings folder
 	language::LanguageManager().init(_context);
@@ -106,56 +97,12 @@ bool RadiantApp::OnInit()
 	return true;
 }
 
-void RadiantApp::createLogFile()
-{
-	_logFile.reset(new applog::LogFile(_context.getSettingsPath() + "darkradiant.log"));
-
-	if (_logFile->isOpen())
-	{
-		_coreModule->get()->getLogWriter().attach(_logFile.get());
-
-		rMessage() << "Started logging to " << _logFile->getFullPath() << std::endl;
-
-		rMessage() << "This is " << RADIANT_APPNAME_FULL() << std::endl;
-
-		std::time_t t = std::time(nullptr);
-		std::tm tm = *std::localtime(&t);
-
-		// Write timestamp and thread information
-		rMessage() << "Today is " << std::put_time(&tm, TIME_FMT) << std::endl;
-
-		// Output the wxWidgets version to the logfile
-		std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
-		wxVersion += string::to_string(wxMINOR_VERSION) + ".";
-		wxVersion += string::to_string(wxRELEASE_NUMBER);
-
-		rMessage() << "wxWidgets Version: " << wxVersion << std::endl;
-	}
-	else
-	{
-		rConsoleError() << "Failed to create log file '"
-			<< _logFile->getFullPath() << ", check write permissions in parent directory."
-			<< std::endl;
-	}
-}
-
 int RadiantApp::OnExit()
 {
 	// Issue a shutdown() call to all the modules
 	module::GlobalModuleRegistry().shutdownModules();
 
-	if (_coreModule)
-	{
-		// Close the log file
-		if (_logFile)
-		{
-			_logFile->close();
-			_coreModule->get()->getLogWriter().detach(_logFile.get());
-			_logFile.reset();
-		}
-
-		_coreModule.reset();
-	}
+	_coreModule.reset();
 
 	return wxApp::OnExit();
 }

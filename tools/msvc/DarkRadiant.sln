@@ -54,6 +54,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main Binary and Headers", "Main Binary and Headers", "{F0E8C46B-4F20-43B1-9A8D-13A9D0A3BA3D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkRadiantCore", "DarkRadiantCore.vcxproj", "{83D79C71-4E8F-4F78-9D46-EF02D5D5CD89}"
+	ProjectSection(ProjectDependencies) = postProject
+		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215} = {76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modulelib", "modulelib.vcxproj", "{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215}"
 EndProject

@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\module\CoreModule.cpp" />
     <ClCompile Include="..\..\libs\module\DynamicLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>

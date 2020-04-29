@@ -1015,7 +1015,6 @@
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
     <ClCompile Include="..\..\radiant\log\Console.cpp" />
-    <ClCompile Include="..\..\radiant\log\LogFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\brush\TextureMatrix.h" />
@@ -1552,7 +1551,6 @@
     <ClInclude Include="..\..\radiant\layers\RemoveFromLayerWalker.h" />
     <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h" />
     <ClInclude Include="..\..\radiant\log\Console.h" />
-    <ClInclude Include="..\..\radiant\log\LogFile.h" />
     <ClInclude Include="..\..\radiant\log\PIDFile.h" />
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h" />
   </ItemGroup>

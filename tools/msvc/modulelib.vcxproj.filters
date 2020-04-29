@@ -2,6 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\..\libs\module\DynamicLibrary.cpp" />
+    <ClCompile Include="..\..\libs\module\CoreModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\module\DynamicLibrary.h" />
