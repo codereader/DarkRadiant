@@ -4,7 +4,8 @@
 #include <mutex>
 #include "LogStreamBuf.h"
 
-namespace applog {
+namespace applog
+{
 
 /**
  * greebo: A LogStream is a specialised std::ostream making
@@ -39,10 +40,5 @@ public:
     // The one and only lock for logging
     static std::mutex& GetStreamLock();
 };
-
-// Accessors to the singleton log streams
-std::ostream& getGlobalOutputStream();
-std::ostream& getGlobalErrorStream();
-std::ostream& getGlobalWarningStream();
 
 } // namespace applog

@@ -23,24 +23,6 @@ LogStream::~LogStream()
     }
 }
 
-std::ostream& getGlobalOutputStream()
-{
-	static LogStream _stream(LogLevel::Standard);
-	return _stream;
-}
-
-std::ostream& getGlobalErrorStream()
-{
-	static LogStream _stream(LogLevel::Error);
-	return _stream;
-}
-
-std::ostream& getGlobalWarningStream()
-{
-	static LogStream _stream(LogLevel::Warning);
-	return _stream;
-}
-
 void LogStream::InitialiseStreams(ILogWriter& logWriter)
 {
     // Instantiate a temporary buffer, which copies the log until the
