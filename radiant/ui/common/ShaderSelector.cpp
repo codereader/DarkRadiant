@@ -93,11 +93,8 @@ void ShaderSelector::setSelection(const std::string& sel)
 	}
 }
 
-// Local functor to populate the tree view with shader names
-
 namespace
 {
-
 	// VFSPopulatorVisitor to fill in column data for the populator tree nodes
 	class DataInserter :
 		public wxutil::VFSTreePopulator::Visitor
@@ -139,66 +136,49 @@ namespace
 			row[_columns.shaderName] = fullPath;
 		}
 	};
-
-	class ShaderNameFunctor
-	{
-	public:
-		// Interesting texture prefixes
-		ShaderSelector::PrefixList& _prefixes;
-
-		// The populator that gets called to add the parsed elements
-		wxutil::VFSTreePopulator& _populator;
-
-		// Constructor
-		ShaderNameFunctor(wxutil::VFSTreePopulator& populator, ShaderSelector::PrefixList& prefixes) :
-			_prefixes(prefixes),
-			_populator(populator)
-		{}
-
-		void visit(const std::string& shaderName)
-		{
-			for (const std::string& prefix : _prefixes)
-			{
-				// Only allow the prefixes passed in the constructor
-				if (!shaderName.empty() && string::istarts_with(shaderName, prefix + "/"))
-				{
-					_populator.addPath(string::to_lower_copy(shaderName));
-					break; // don't consider any further prefixes
-				}
-			}
-		}
-	};
 }
 
 // Create the Tree View
 void ShaderSelector::createTreeView()
 {
-	_treeStore = new wxutil::TreeModel(_shaderTreeColumns);
+    _treeStore = new wxutil::TreeModel(_shaderTreeColumns);
 
-	// Instantiate the helper class that populates the tree according to the paths
-	wxutil::VFSTreePopulator populator(_treeStore);
+    // Instantiate the helper class that populates the tree according to the paths
+    wxutil::VFSTreePopulator populator(_treeStore);
 
-	ShaderNameFunctor func(populator, _prefixes);
-	GlobalMaterialManager().foreachShaderName(std::bind(&ShaderNameFunctor::visit, &func, std::placeholders::_1));
+    // Iterate over material names and pass matching shaders to the populator
+    GlobalMaterialManager().foreachShaderName(
+        [&](const std::string& shaderName)
+        {
+            for (const std::string& prefix : _prefixes)
+            {
+                if (!shaderName.empty() && string::istarts_with(shaderName, prefix + "/"))
+                {
+                    populator.addPath(string::to_lower_copy(shaderName));
+                    break; // don't consider any further prefixes
+                }
+            }
+        }
+    );
 
-	// Now visit the created iterators to load the actual data into the tree
-	DataInserter inserter(_shaderTreeColumns);
-	populator.forEachNode(inserter);
+    // Now visit the created iterators to load the actual data into the tree
+    DataInserter inserter(_shaderTreeColumns);
+    populator.forEachNode(inserter);
 
-	// Tree view
-	_treeView = wxutil::TreeView::CreateWithModel(this, _treeStore, wxDV_NO_HEADER | wxDV_SINGLE);
+    // Tree view
+    _treeView = wxutil::TreeView::CreateWithModel(this, _treeStore, wxDV_NO_HEADER | wxDV_SINGLE);
 
-	// Single visible column, containing the directory/shader name and the icon
-	_treeView->AppendIconTextColumn(_("Value"), _shaderTreeColumns.iconAndName.getColumnIndex(), 
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    // Single visible column, containing the directory/shader name and the icon
+    _treeView->AppendIconTextColumn(_("Value"), _shaderTreeColumns.iconAndName.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-	// Use the TreeModel's full string search function
-	_treeView->AddSearchColumn(_shaderTreeColumns.iconAndName);
+    // Use the TreeModel's full string search function
+    _treeView->AddSearchColumn(_shaderTreeColumns.iconAndName);
 
-	// Get selection and connect the changed callback
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(ShaderSelector::_onSelChange), NULL, this);
+    // Get selection and connect the changed callback
+    _treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(ShaderSelector::_onSelChange), NULL, this);
 
-	GetSizer()->Add(_treeView, 1, wxEXPAND);
+    GetSizer()->Add(_treeView, 1, wxEXPAND);
 }
 
 // Create the preview panel (GL widget and info table)
@@ -212,14 +192,14 @@ void ShaderSelector::createPreview()
 	_glWidget->SetMinClientSize(wxSize(128, 128));
 
 	// Attributes table
-	wxDataViewCtrl* tree = new wxDataViewCtrl(this, wxID_ANY, 
+	wxDataViewCtrl* tree = new wxDataViewCtrl(this, wxID_ANY,
 		wxDefaultPosition, wxDefaultSize, wxDV_NO_HEADER | wxDV_SINGLE);
 
 	tree->AssociateModel(_infoStore.get());
 
-	tree->AppendTextColumn(_("Attribute"), _infoStoreColumns.attribute.getColumnIndex(), 
+	tree->AppendTextColumn(_("Attribute"), _infoStoreColumns.attribute.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
-	tree->AppendTextColumn(_("Value"), _infoStoreColumns.value.getColumnIndex(), 
+	tree->AppendTextColumn(_("Value"), _infoStoreColumns.value.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	sizer->Add(_glWidget, 0, wxEXPAND);
@@ -331,7 +311,7 @@ namespace
 {
 
 // Helper function
-void addInfoItem(wxutil::TreeModel& listStore, const std::string& attr, const std::string& value, 
+void addInfoItem(wxutil::TreeModel& listStore, const std::string& attr, const std::string& value,
 				 int attrCol, int valueCol)
 {
 	wxDataViewItemAttr bold;
