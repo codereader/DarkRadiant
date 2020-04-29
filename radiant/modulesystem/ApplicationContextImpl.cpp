@@ -9,7 +9,6 @@
 #include "os/path.h"
 #include "os/dir.h"
 #include "log/PopupErrorHandler.h"
-#include "log/LogStream.h"
 
 #if defined(WIN32)
 #include <windows.h>
@@ -99,26 +98,6 @@ const ApplicationContext::ArgumentList&
 ApplicationContextImpl::getCmdLineArgs() const
 {
 	return _cmdLineArgs;
-}
-
-std::ostream& ApplicationContextImpl::getOutputStream() const
-{
-    return GlobalOutputStream().getStream();
-}
-
-std::ostream& ApplicationContextImpl::getWarningStream() const
-{
-    return GlobalWarningStream().getStream();
-}
-
-std::ostream& ApplicationContextImpl::getErrorStream() const
-{
-    return GlobalErrorStream().getStream();
-}
-
-std::mutex& ApplicationContextImpl::getStreamLock() const
-{
-    return applog::LogStream::GetStreamLock();
 }
 
 // ============== OS-Specific Implementations go here ===================

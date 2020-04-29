@@ -108,17 +108,6 @@ public:
 	virtual const ArgumentList& getCmdLineArgs() const = 0;
 
 	/**
-	 * Return the reference to the application's output/error streams.
-	 */
-	virtual std::ostream& getOutputStream() const = 0;
-	virtual std::ostream& getErrorStream() const = 0;
-	virtual std::ostream& getWarningStream() const = 0;
-
-    // Provides a single mutex object which should be locked by client code
-    // before writing to the any of the above streams.
-    virtual std::mutex& getStreamLock() const = 0;
-
-	/**
 	 * Retrieve a function pointer which can handle assertions and runtime errors
 	 */
 	virtual const ErrorHandlingFunction& getErrorHandlingFunction() const = 0;
@@ -391,6 +380,7 @@ namespace module
 	// the OutputStreamHolders
 	inline void initialiseStreams(const ApplicationContext& ctx)
 	{
+#if 0 // // TODO CoreModule
 		GlobalOutputStream().setStream(ctx.getOutputStream());
 		GlobalWarningStream().setStream(ctx.getWarningStream());
 		GlobalErrorStream().setStream(ctx.getErrorStream());
@@ -404,6 +394,7 @@ namespace module
 		GlobalWarningStream().setLock(ctx.getStreamLock());
 		GlobalErrorStream().setLock(ctx.getStreamLock());
 		GlobalDebugStream().setLock(ctx.getStreamLock());
+#endif
 	}
 
 	// Helper method initialising a few references and checking a module's

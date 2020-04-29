@@ -8,7 +8,6 @@
 #include "version.h"
 
 #include "string/convert.h"
-#include "LogWriter.h"
 
 namespace applog
 {

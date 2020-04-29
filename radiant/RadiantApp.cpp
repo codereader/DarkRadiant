@@ -5,7 +5,6 @@
 #include "version.h"
 
 #include "log/LogFile.h"
-#include "log/LogStream.h"
 #include "log/PIDFile.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "module/CoreModule.h"

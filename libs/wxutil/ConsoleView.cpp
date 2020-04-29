@@ -53,10 +53,12 @@ void ConsoleView::flushLine()
 
 void ConsoleView::onIdle()
 {
+#if 0 // TODO CoreModule
     // Idle events occur in the main thread - prevent interrupting 
     // threads in the middle of a line
     std::lock_guard<std::mutex> idleLock(
         module::GlobalModuleRegistry().getApplicationContext().getStreamLock());
+#endif
 
     flushLine();
 

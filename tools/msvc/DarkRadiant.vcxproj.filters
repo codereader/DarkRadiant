@@ -811,22 +811,7 @@
     <ClCompile Include="..\..\radiant\log\Console.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\log\COutRedirector.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\log\LogFile.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\log\LogStream.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\log\LogStreamBuf.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\log\LogWriter.cpp">
-      <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp">
@@ -2250,28 +2235,13 @@
     <ClInclude Include="..\..\radiant\log\Console.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\COutRedirector.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\log\LogFile.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogStream.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogStreamBuf.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogWriter.h">
       <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\PIDFile.h">
       <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h">
-      <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\log\StringLogDevice.h">
       <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h">

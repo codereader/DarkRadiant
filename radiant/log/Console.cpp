@@ -6,9 +6,6 @@
 #include "wxutil/ConsoleView.h"
 #include <wx/sizer.h>
 
-#include "LogWriter.h"
-#include "StringLogDevice.h"
-
 #include <functional>
 
 namespace ui {
@@ -26,12 +23,15 @@ Console::Console(wxWindow* parent) :
     GlobalCommandSystem().addCommand("clear",
         std::bind(&Console::clearCmd, this, std::placeholders::_1));
 
+#if 0 // TODO CoreModule
     // Get a lock on the logging system before doing these changes
     std::lock_guard<std::mutex> lock(module::GlobalModuleRegistry().getApplicationContext().getStreamLock());
 
 	// We're ready to catch log output, register ourselves
 	applog::LogWriter::Instance().attach(this);
+#endif
 
+#if 0 // TODO CoreModule
 	// Copy the temporary buffers over
 	if (applog::StringLogDevice::InstancePtr() != NULL)
 	{
@@ -49,6 +49,7 @@ Console::Console(wxWindow* parent) :
 
 	// Destruct the temporary buffer
 	applog::StringLogDevice::destroy();
+#endif
 }
 
 Console::~Console()
@@ -56,7 +57,9 @@ Console::~Console()
 	// TODO - there might be more than one console instance handle this
 	GlobalCommandSystem().removeCommand("clear");
 
+#if 0 // TODO CoreModule
 	applog::LogWriter::Instance().detach(this);
+#endif
 }
 
 void Console::clearCmd(const cmd::ArgumentList& args)
