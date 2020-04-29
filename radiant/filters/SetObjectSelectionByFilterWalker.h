@@ -27,6 +27,11 @@ public:
 
 	bool pre(const scene::INodePtr& node) override
 	{
+		if (!node->visible())
+		{
+			return true;
+		}
+
 		// Check entity eclass and spawnargs
 		if (Node_isEntity(node))
 		{
