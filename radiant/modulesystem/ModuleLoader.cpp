@@ -26,6 +26,10 @@ namespace
 	typedef void(*RegisterModulesFunc)(IModuleRegistry& registry);
 }
 
+ModuleLoader::ModuleLoader(IModuleRegistry& registry) :
+	_registry(registry)
+{}
+
 // Functor operator, gets invoked on directory traversal
 void ModuleLoader::processModuleFile(const fs::path& file)
 {
@@ -36,7 +40,7 @@ void ModuleLoader::processModuleFile(const fs::path& file)
 	rConsole() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
 
 	// Create the encapsulator class
-	DynamicLibraryPtr library = std::make_shared<DynamicLibrary>(fullName);
+	auto library = std::make_shared<DynamicLibrary>(fullName);
 
 	// greebo: Try to find our entry point and invoke it and add the library to the list
 	// on success. If the load fails, the shared pointer won't be added and
@@ -52,9 +56,7 @@ void ModuleLoader::processModuleFile(const fs::path& file)
 	}
 
 	// Library was successfully loaded, lookup the symbol
-	DynamicLibrary::FunctionPointer funcPtr(
-		library->findSymbol(SYMBOL_REGISTER_MODULE)
-	);
+	auto funcPtr = library->findSymbol(SYMBOL_REGISTER_MODULE);
 
 	if (funcPtr == nullptr)
 	{
@@ -65,14 +67,14 @@ void ModuleLoader::processModuleFile(const fs::path& file)
 	}
 
 	// Brute-force conversion of the pointer to the desired type
-	RegisterModulesFunc regFunc = reinterpret_cast<RegisterModulesFunc>(funcPtr);
+	auto regFunc = reinterpret_cast<RegisterModulesFunc>(funcPtr);
 
 	try
 	{
 		// Call the symbol and pass a reference to the ModuleRegistry
 		// This method might throw a ModuleCompatibilityException in its
 		// module::performDefaultInitialisation() routine.
-		regFunc(ModuleRegistry::Instance());
+		regFunc(_registry);
 
 		// Add the library to the static list (for later reference)
 		_dynamicLibraryList.push_back(library);

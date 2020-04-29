@@ -26,6 +26,11 @@ public:
      */
     virtual applog::ILogWriter& getLogWriter() = 0;
 
+    /**
+     * Returns the central module registry instance.
+     */
+    virtual IModuleRegistry& getModuleRegistry() = 0;
+
     virtual ~IRadiant() {}
 };
 

@@ -65,6 +65,11 @@ public:
 		return applog::LogWriter::Instance();
 	}
 
+	IModuleRegistry& getModuleRegistry() override
+	{
+		return *_moduleRegistry;
+	}
+
 private:
 	void createLogFile()
 	{

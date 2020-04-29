@@ -1,8 +1,8 @@
 #pragma once
 
+#include "imodule.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "settings/PreferenceSystem.h"
-#include "modulesystem/ModuleRegistry.h"
 
 #include "os/file.h"
 #include "string/replace.h"
@@ -23,13 +23,13 @@ class PIDFile
 public:
 	PIDFile(const std::string& filename)
 	{
-		module::ModuleRegistry& registry = module::ModuleRegistry::Instance();
+		IModuleRegistry& registry = module::GlobalModuleRegistry();
 		_filename = registry.getApplicationContext().getSettingsPath() + filename;
 
 		FILE* pid = fopen(_filename.c_str(), "r");
 
 		// Check for an existing radiant.pid file
-		if (pid != NULL)
+		if (pid != nullptr)
 		{
 			fclose(pid);
 

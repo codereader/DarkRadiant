@@ -155,7 +155,7 @@ void LanguageManager::init(const ApplicationContext& ctx)
 	LanguageManagerPtr instancePtr(new LanguageManager);
 
 	// Hand that over to the module registry
-    module::ModuleRegistry::Instance().registerModule(instancePtr);
+    module::GlobalModuleRegistry().registerModule(instancePtr);
 
 	// Initialise the module manually
 	instancePtr->initFromContext(ctx);

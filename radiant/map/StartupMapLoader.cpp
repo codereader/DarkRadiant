@@ -8,7 +8,6 @@
 #include "iradiant.h"
 #include "Map.h"
 #include "ui/mru/MRU.h"
-#include "modulesystem/ModuleRegistry.h"
 
 #include "os/path.h"
 #include "os/file.h"
@@ -31,7 +30,7 @@ void StartupMapLoader::onRadiantStartup()
 	std::string mapToLoad = "";
 
     const ApplicationContext::ArgumentList& args(
-        module::ModuleRegistry::Instance().getApplicationContext().getCmdLineArgs()
+        module::GlobalModuleRegistry().getApplicationContext().getCmdLineArgs()
     );
 
     for (const std::string& candidate : args)

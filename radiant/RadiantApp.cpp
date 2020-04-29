@@ -50,7 +50,6 @@ bool RadiantApp::OnInit()
 	// Initialise the context (application path / settings path, is
 	// OS-specific)
 	_context.initialise(wxApp::argc, wxApp::argv);
-	module::ModuleRegistry::Instance().setContext(_context);
 
 	try
 	{
@@ -58,6 +57,7 @@ bool RadiantApp::OnInit()
 
 		auto* radiant = _coreModule->get();
 
+		module::RegistryReference::Instance().setRegistry(radiant->getModuleRegistry());
 		module::initialiseStreams(radiant->getLogWriter());
 	}
 	catch (module::CoreModule::FailureException & ex)
@@ -151,7 +151,7 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 
     try
     {
-        module::ModuleRegistry::Instance().loadAndInitialiseModules();
+		module::GlobalModuleRegistry().loadAndInitialiseModules();
     }
     catch (const std::exception& e)
     {

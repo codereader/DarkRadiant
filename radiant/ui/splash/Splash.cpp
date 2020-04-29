@@ -70,7 +70,7 @@ Splash::Splash() :
 	wxFrame(nullptr, wxID_ANY, wxT("DarkRadiant"), wxDefaultPosition, wxDefaultSize, wxCENTRE),
 	_progressBar(nullptr)
 {
-    const ApplicationContext& ctx = module::ModuleRegistry::Instance().getApplicationContext();
+    const ApplicationContext& ctx = module::GlobalModuleRegistry().getApplicationContext();
 	std::string fullFileName(ctx.getBitmapsPath() + SPLASH_FILENAME);
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
@@ -88,7 +88,7 @@ Splash::Splash() :
 	Show();
 
     // Subscribe to the post-module init event to destroy ourselves
-    module::ModuleRegistry::Instance().signal_allModulesInitialised().connect(
+    module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
         sigc::hide_return(sigc::mem_fun(this, &Splash::Destroy)));
 }
 
@@ -128,7 +128,7 @@ Splash& Splash::Instance()
 void Splash::OnAppStartup()
 {
 	// Connect the module progress callback
-	module::ModuleRegistry::Instance().signal_moduleInitialisationProgress().connect(
+	module::GlobalModuleRegistry().signal_moduleInitialisationProgress().connect(
 		sigc::mem_fun(Instance(), &Splash::setProgressAndText));
 }
 

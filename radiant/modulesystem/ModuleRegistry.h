@@ -9,8 +9,12 @@
 namespace module 
 {
 
-/** greebo: This is the actual implementation of the ModuleRegistry as defined in imodule.h.
- *          See the imodule.h file for a detailed documentation of the public methods.
+/** 
+ * greebo: Implementation of the IModuleRegistry interface defined in imodule.h.
+ * It stores and manages the lifecycle of all modules in DarkRadiant.
+ * 
+ * Use the registerModule() method to add new modules, which will be initialised
+ * during the startup phase, resolving the module dependencies on the go.
  */
 class ModuleRegistry :
 	public IModuleRegistry
@@ -78,9 +82,6 @@ public:
     {
         _context = &context;
     }
-
-	// Contains the singleton instance
-	static ModuleRegistry& Instance();
 
 	// Returns a list of modules
 	std::string getModuleList(const std::string& separator = "\n");

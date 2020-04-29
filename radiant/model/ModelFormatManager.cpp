@@ -1,5 +1,6 @@
 #include "ModelFormatManager.h"
 
+#include "imodule.h"
 #include "i18n.h"
 #include "itextstream.h"
 #include "ifiletypes.h"
@@ -29,7 +30,7 @@ void ModelFormatManager::initialiseModule(const ApplicationContext& ctx)
 
 	_nullModelLoader.reset(new NullModelLoader);
 
-	module::ModuleRegistry::Instance().signal_allModulesInitialised().connect(
+	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
 		sigc::mem_fun(this, &ModelFormatManager::postModuleInitialisation)
 	);
 }

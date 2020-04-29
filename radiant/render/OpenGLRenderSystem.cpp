@@ -47,7 +47,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 {
 	// For the static default rendersystem, the MaterialManager is not existent yet,
 	// hence it will be attached in initialiseModule().
-    if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_SHADERSYSTEM))
 	{
 		_materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
 			sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
@@ -62,7 +62,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
     // If the openGL module is already initialised and a shared context is created
     // trigger a call to extensionsInitialised().
-    if (module::ModuleRegistry::Instance().moduleExists(MODULE_OPENGL) && 
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_OPENGL) &&
         GlobalOpenGL().wxContextValid())
 	{
         extensionsInitialised();

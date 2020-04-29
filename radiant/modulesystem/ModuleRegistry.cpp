@@ -16,7 +16,8 @@ namespace module
 ModuleRegistry::ModuleRegistry() :
 	_modulesInitialised(false),
 	_modulesShutdown(false),
-    _context(nullptr)
+    _context(nullptr),
+	_loader(*this)
 {
 	rMessage() << "ModuleRegistry instantiated." << std::endl;
 
@@ -269,18 +270,6 @@ std::string ModuleRegistry::getModuleList(const std::string& separator)
 	}
 
 	return returnValue;
-}
-
-ModuleRegistry& ModuleRegistry::Instance()
-{
-	static ModuleRegistry _registry;
-	return _registry;
-}
-
-IModuleRegistry& getRegistry()
-{
-	// Retrieve the singleton instance and deliver it
-	return ModuleRegistry::Instance();
 }
 
 } // namespace module

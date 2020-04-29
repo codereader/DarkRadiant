@@ -70,7 +70,7 @@ public:
 	inline std::shared_ptr<ModuleType> getModule()
     {
 		return std::static_pointer_cast<ModuleType>(
-			ModuleRegistry::Instance().getModule(_moduleName)
+            GlobalModuleRegistry().getModule(_moduleName)
 		);
 	}
 };

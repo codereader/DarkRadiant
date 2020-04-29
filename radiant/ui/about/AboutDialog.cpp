@@ -89,13 +89,7 @@ void AboutDialog::populateWindow()
 
 	findNamedObject<wxTextCtrl>(this, "AboutDialogOpenGLExtensions")->SetValue(openGLExtensions);
 	
-	// DarkRadiant modules
-
-	std::string modules = module::ModuleRegistry::Instance().getModuleList(", ");
-	findNamedObject<wxTextCtrl>(this, "AboutDialogDarkRadiantModules")->SetValue(modules);
-
-	findNamedObject<wxButton>(this, "AboutDialogOkButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(AboutDialog::_onClose), NULL, this);
+	findNamedObject<wxButton>(this, "AboutDialogOkButton")->Bind(wxEVT_BUTTON, &AboutDialog::_onClose, this);
 
 	// Make all headers bold
 	wxFont bold = findNamedObject<wxStaticText>(this, "AboutDialogHeader1")->GetFont().Bold();

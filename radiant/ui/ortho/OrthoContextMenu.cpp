@@ -337,7 +337,7 @@ void OrthoContextMenu::callbackAddSpeaker()
     ISoundShaderPtr soundShader;
 
     // If we have an active sound module, query the desired shader from the user
-    if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
     {
         IResourceChooser* chooser = GlobalDialogManager().createSoundShaderChooser();
 
