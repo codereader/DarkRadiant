@@ -29,7 +29,7 @@ public:
 	{
 		if (!node->visible())
 		{
-			return true;
+			return false;
 		}
 
 		// Check entity eclass and spawnargs
