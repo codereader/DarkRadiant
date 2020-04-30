@@ -38,7 +38,7 @@ public:
 			_dependencies.insert(MODULE_SELECTIONSYSTEM);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_MAINFRAME);
-			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_RADIANT_APP);
 		}
 
 		return _dependencies;

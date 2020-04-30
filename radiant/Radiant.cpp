@@ -1,4 +1,4 @@
-#include "iradiant.h"
+#include "Radiant.h"
 
 #include <iomanip>
 #include "version.h"
@@ -21,98 +21,119 @@ namespace
 	const char* const TIME_FMT = "%Y-%m-%d %H:%M:%S";
 }
 
-class Radiant :
-	public IRadiant
+Radiant::Radiant(ApplicationContext& context) :
+	_context(context)
 {
-private:
-	ApplicationContext& _context;
+	// Set the stream references for rMessage(), redirect std::cout, etc.
+	applog::LogStream::InitialiseStreams(getLogWriter());
 
-	std::unique_ptr<applog::LogFile> _logFile;
+	// Attach the logfile to the logwriter
+	createLogFile();
 
-	std::unique_ptr<module::ModuleRegistry> _moduleRegistry;
+	_moduleRegistry.reset(new module::ModuleRegistry);
+	_moduleRegistry->setContext(_context);
+}
 
-public:
-	Radiant(ApplicationContext& context) :
-		_context(context)
+Radiant::~Radiant()
+{
+	_moduleRegistry.reset();
+
+	// Close the log file
+	if (_logFile)
 	{
-		// Set the stream references for rMessage(), redirect std::cout, etc.
-		applog::LogStream::InitialiseStreams(getLogWriter());
-
-		// Attach the logfile to the logwriter
-		createLogFile();
-
-		_moduleRegistry.reset(new module::ModuleRegistry);
-		_moduleRegistry->setContext(_context);
+		_logFile->close();
+		getLogWriter().detach(_logFile.get());
+		_logFile.reset();
 	}
 
-	~Radiant()
+	applog::LogStream::ShutdownStreams();
+}
+
+applog::ILogWriter& Radiant::getLogWriter()
+{
+	return applog::LogWriter::Instance();
+}
+
+module::ModuleRegistry& Radiant::getModuleRegistry()
+{
+	return *_moduleRegistry;
+}
+
+void Radiant::createLogFile()
+{
+	_logFile.reset(new applog::LogFile(_context.getSettingsPath() + "darkradiant.log"));
+
+	if (_logFile->isOpen())
 	{
-		_moduleRegistry.reset();
+		getLogWriter().attach(_logFile.get());
 
-		// Close the log file
-		if (_logFile)
-		{
-			_logFile->close();
-			getLogWriter().detach(_logFile.get());
-			_logFile.reset();
-		}
+		rMessage() << "Started logging to " << _logFile->getFullPath() << std::endl;
 
-		applog::LogStream::ShutdownStreams();
+		rMessage() << "This is " << RADIANT_APPNAME_FULL() << std::endl;
+
+		std::time_t t = std::time(nullptr);
+		std::tm tm = *std::localtime(&t);
+
+		// Write timestamp and thread information
+		rMessage() << "Today is " << std::put_time(&tm, TIME_FMT) << std::endl;
+
+		// Output the wxWidgets version to the logfile
+		std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
+		wxVersion += string::to_string(wxMINOR_VERSION) + ".";
+		wxVersion += string::to_string(wxRELEASE_NUMBER);
+
+		rMessage() << "wxWidgets Version: " << wxVersion << std::endl;
 	}
-
-	applog::ILogWriter& getLogWriter() override
+	else
 	{
-		return applog::LogWriter::Instance();
+		rConsoleError() << "Failed to create log file '"
+			<< _logFile->getFullPath() << ", check write permissions in parent directory."
+			<< std::endl;
 	}
+}
 
-	IModuleRegistry& getModuleRegistry() override
-	{
-		return *_moduleRegistry;
-	}
+const std::string& Radiant::getName() const
+{
+	static std::string _name(MODULE_RADIANT_CORE);
+	return _name;
+}
 
-private:
-	void createLogFile()
-	{
-		_logFile.reset(new applog::LogFile(_context.getSettingsPath() + "darkradiant.log"));
+const StringSet& Radiant::getDependencies() const
+{
+	static StringSet _dependencies;
+	return _dependencies;
+}
 
-		if (_logFile->isOpen())
-		{
-			getLogWriter().attach(_logFile.get());
+void Radiant::initialiseModule(const ApplicationContext& ctx)
+{}
 
-			rMessage() << "Started logging to " << _logFile->getFullPath() << std::endl;
-
-			rMessage() << "This is " << RADIANT_APPNAME_FULL() << std::endl;
-
-			std::time_t t = std::time(nullptr);
-			std::tm tm = *std::localtime(&t);
-
-			// Write timestamp and thread information
-			rMessage() << "Today is " << std::put_time(&tm, TIME_FMT) << std::endl;
-
-			// Output the wxWidgets version to the logfile
-			std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
-			wxVersion += string::to_string(wxMINOR_VERSION) + ".";
-			wxVersion += string::to_string(wxRELEASE_NUMBER);
-
-			rMessage() << "wxWidgets Version: " << wxVersion << std::endl;
-		}
-		else
-		{
-			rConsoleError() << "Failed to create log file '"
-				<< _logFile->getFullPath() << ", check write permissions in parent directory."
-				<< std::endl;
-		}
-	}
-};
+std::shared_ptr<Radiant>& Radiant::InstancePtr()
+{
+	static std::shared_ptr<Radiant> _instancePtr;
+	return _instancePtr;
+}
 
 }
 
 extern "C" DARKRADIANT_DLLEXPORT radiant::IRadiant* SYMBOL_CREATE_RADIANT(ApplicationContext& context)
 {
-	return new radiant::Radiant(context);
+	auto& instancePtr = radiant::Radiant::InstancePtr();
+
+	// Create a new instance, but ensure that this has only be called once
+	assert(!instancePtr);
+
+	instancePtr.reset(new radiant::Radiant(context));
+
+	// Add this module to the registry it's holding
+	instancePtr->getModuleRegistry().registerModule(instancePtr);
+	instancePtr->getModuleRegistry().initialiseCoreModule();
+
+	return instancePtr.get();
 }
 
 extern "C" DARKRADIANT_DLLEXPORT void SYMBOL_DESTROY_RADIANT(radiant::IRadiant* radiant)
 {
-	delete radiant;
+	assert(radiant::Radiant::InstancePtr().get() == radiant);
+
+	radiant::Radiant::InstancePtr().reset();
 }

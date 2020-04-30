@@ -633,7 +633,7 @@ const StringSet& OrthoContextMenu::getDependencies() const
         _dependencies.insert(MODULE_UIMANAGER);
         _dependencies.insert(MODULE_COMMANDSYSTEM);
         _dependencies.insert(MODULE_EVENTMANAGER);
-        _dependencies.insert(MODULE_RADIANT);
+        _dependencies.insert(MODULE_RADIANT_APP);
     }
 
     return _dependencies;

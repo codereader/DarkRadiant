@@ -44,7 +44,7 @@ public:
 		{
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
-			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_RADIANT_APP);
 			_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		}
 

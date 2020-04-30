@@ -1,10 +1,12 @@
 #include "ModuleRegistry.h"
 
 #include "i18n.h"
+#include "iradiant.h"
 #include "itextstream.h"
 #include <stdexcept>
 #include <iostream>
 #include "ApplicationContextImpl.h"
+#include "ModuleLoader.h"
 
 #include <wx/app.h>
 #include <fmt/format.h>
@@ -16,7 +18,7 @@ ModuleRegistry::ModuleRegistry() :
 	_modulesInitialised(false),
 	_modulesShutdown(false),
     _context(nullptr),
-	_loader(*this)
+	_loader(new ModuleLoader(*this))
 {
 	rMessage() << "ModuleRegistry instantiated." << std::endl;
 
@@ -53,7 +55,7 @@ void ModuleRegistry::unloadModules()
         wxTheApp->ProcessIdle();
     }
 
-	_loader.unloadModules();
+	_loader->unloadModules();
 }
 
 void ModuleRegistry::registerModule(const RegisterableModulePtr& module)
@@ -109,16 +111,13 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 		return;
 	}
 
-	// Tag this module as "ready" by inserting it into the initialised list.
-	_initialisedModules.insert(ModulesMap::value_type(name, _uninitialisedModules[name]));
-
-	// Create a shortcut to the module
-	RegisterableModulePtr module = _uninitialisedModules[name];
+	// Tag this module as "ready" by moving it into the initialised list.
+	RegisterableModulePtr module = _initialisedModules.emplace(name, _uninitialisedModules[name]).first->second;
 	const StringSet& dependencies = module->getDependencies();
 
     // Debug builds should ensure that the dependencies don't reference the
     // module itself directly
-    assert(dependencies.find(name) == dependencies.end());
+    assert(dependencies.find(module->getName()) == dependencies.end());
 
 	// Initialise the dependencies first
 	for (const std::string& namedDependency : dependencies)
@@ -129,7 +128,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.9f;
 
 	_sigModuleInitialisationProgress.emit(
-		fmt::format(_("Initialising Module: {0}"), name),
+		fmt::format(_("Initialising Module: {0}"), module->getName()),
 		_progress);
 
 	// Initialise the module itself, now that the dependencies are ready
@@ -137,7 +136,26 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 	module->initialiseModule(*_context);
 }
 
-// Initialise all registered modules
+void ModuleRegistry::initialiseCoreModule()
+{
+	std::string coreModuleName = MODULE_RADIANT_CORE;
+
+	auto moduleIter = _uninitialisedModules.find(coreModuleName);
+
+	assert(moduleIter != _uninitialisedModules.end());
+	assert(_initialisedModules.find(coreModuleName) == _initialisedModules.end());
+
+	// Tag this module as "ready" by inserting it into the initialised list.
+	moduleIter = _initialisedModules.emplace(moduleIter->second->getName(), moduleIter->second).first;
+
+	// We assume that the core module doesn't have any dependencies
+	assert(moduleIter->second->getDependencies().empty());
+
+	moduleIter->second->initialiseModule(*_context);
+
+	_uninitialisedModules.erase(coreModuleName);
+}
+
 void ModuleRegistry::loadAndInitialiseModules()
 {
 	if (_modulesInitialised)
@@ -150,7 +168,7 @@ void ModuleRegistry::loadAndInitialiseModules()
 	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
 
 	// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-	_loader.loadModules(_context->getLibraryPath());
+	_loader->loadModules(_context->getLibraryPath());
 
 	_progress = 0.1f;
 	_sigModuleInitialisationProgress.emit(_("Initialising Modules"), _progress);
@@ -162,6 +180,8 @@ void ModuleRegistry::loadAndInitialiseModules()
 		// (this will return immediately if the module is already initialised).
 		initialiseModuleRecursive(i->first);
 	}
+
+	_uninitialisedModules.clear();
 
 	// Make sure this isn't called again
 	_modulesInitialised = true;

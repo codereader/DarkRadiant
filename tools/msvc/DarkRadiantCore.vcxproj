@@ -44,6 +44,7 @@
     <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h" />
     <ClInclude Include="..\..\radiant\modulesystem\ModuleRegistry.h" />
     <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h" />
+    <ClInclude Include="..\..\radiant\Radiant.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

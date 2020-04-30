@@ -51,7 +51,7 @@ public:
 			_dependencies.insert(MODULE_MAP);
 			_dependencies.insert(MODULE_OPENGL);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
-			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_RADIANT_APP);
 			_dependencies.insert(MODULE_RENDERSYSTEM);
 			_dependencies.insert(MODULE_SHADERSYSTEM);
 			_dependencies.insert(MODULE_UIMANAGER);

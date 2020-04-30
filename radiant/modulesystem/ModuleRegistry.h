@@ -4,10 +4,10 @@
 #include <list>
 #include "imodule.h"
 
-#include "ModuleLoader.h"
-
 namespace module 
 {
+
+class ModuleLoader;
 
 /** 
  * greebo: Implementation of the IModuleRegistry interface defined in imodule.h.
@@ -46,7 +46,7 @@ private:
 	ProgressSignal _sigModuleInitialisationProgress;
 
 	// Dynamic library loader
-	ModuleLoader _loader;
+	std::unique_ptr<ModuleLoader> _loader;
 
 public:
 	ModuleRegistry();
@@ -85,6 +85,10 @@ public:
 
 	// Returns a list of modules
 	std::string getModuleList(const std::string& separator = "\n");
+
+	// Special handling for the radiant core module which we want to be
+	// ready and initialised by the time it is created.
+	void initialiseCoreModule();
 
 private:
 

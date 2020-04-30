@@ -84,5 +84,8 @@
     <ClInclude Include="..\..\radiant\log\LogFile.h">
       <Filter>src\log</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\Radiant.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

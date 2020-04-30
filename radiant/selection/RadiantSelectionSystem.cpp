@@ -848,7 +848,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
         _dependencies.insert(MODULE_RENDERSYSTEM);
         _dependencies.insert(MODULE_EVENTMANAGER);
         _dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_RADIANT_APP);
         _dependencies.insert(MODULE_GRID);
         _dependencies.insert(MODULE_SCENEGRAPH);
         _dependencies.insert(MODULE_MOUSETOOLMANAGER);

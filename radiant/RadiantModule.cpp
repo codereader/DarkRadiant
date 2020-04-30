@@ -54,7 +54,7 @@ void RadiantModule::broadcastStartupEvent()
 // RegisterableModule implementation
 const std::string& RadiantModule::getName() const
 {
-	static std::string _name(MODULE_RADIANT);
+	static std::string _name(MODULE_RADIANT_APP);
 	return _name;
 }
 
@@ -130,7 +130,7 @@ module::StaticModule<RadiantModule> radiantCoreModule;
 RadiantModulePtr getGlobalRadiant()
 {
 	return std::static_pointer_cast<RadiantModule>(
-		module::GlobalModuleRegistry().getModule(MODULE_RADIANT)
+		module::GlobalModuleRegistry().getModule(MODULE_RADIANT_APP)
 	);
 }
 

@@ -1,4 +1,5 @@
-del ..\..\install\*.dll
+for %%i in (..\..\install\*.dll) do if not "%%~nxi"=="DarkRadiantCore.dll" del "%%i"
+
 del ..\..\install\python*.zip
 
 copy ..\..\w32deps\openal\bin\OpenAL32.dll ..\..\install /Y

@@ -796,7 +796,7 @@ const StringSet& Map::getDependencies() const
 
     if (_dependencies.empty())
 	{
-        _dependencies.insert(MODULE_RADIANT);
+        _dependencies.insert(MODULE_RADIANT_APP);
 		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);

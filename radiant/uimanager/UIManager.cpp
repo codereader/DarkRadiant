@@ -83,7 +83,7 @@ const StringSet& UIManager::getDependencies() const
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_RADIANT_APP);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
