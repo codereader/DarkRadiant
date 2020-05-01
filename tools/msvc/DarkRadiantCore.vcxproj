@@ -30,6 +30,7 @@
     <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp" />
     <ClCompile Include="..\..\radiant\Radiant.cpp" />
     <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp" />
+    <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp" />
     <ClCompile Include="..\..\radiant\vfs\DeflatedInputStream.cpp" />
     <ClCompile Include="..\..\radiant\vfs\DirectoryArchive.cpp" />
     <ClCompile Include="..\..\radiant\vfs\Doom3FileSystem.cpp" />
@@ -54,6 +55,10 @@
     <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h" />
     <ClInclude Include="..\..\radiant\Radiant.h" />
     <ClInclude Include="..\..\radiant\settings\LanguageManager.h" />
+    <ClInclude Include="..\..\radiant\undo\Operation.h" />
+    <ClInclude Include="..\..\radiant\undo\Stack.h" />
+    <ClInclude Include="..\..\radiant\undo\StackFiller.h" />
+    <ClInclude Include="..\..\radiant\undo\UndoSystem.h" />
     <ClInclude Include="..\..\radiant\vfs\Archive.h" />
     <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveTextFile.h" />

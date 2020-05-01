@@ -20,6 +20,9 @@
     <Filter Include="src\vfs">
       <UniqueIdentifier>{fae22404-52d3-4653-afb9-c333e87edd41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\undo">
+      <UniqueIdentifier>{365fbce2-bbe0-4f3a-a30a-a4b4dc8f94d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
@@ -75,6 +78,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\vfs\ZipArchive.cpp">
       <Filter>src\vfs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp">
+      <Filter>src\undo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +179,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\vfs\ZipStreamUtils.h">
       <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\undo\Operation.h">
+      <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\undo\Stack.h">
+      <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\undo\StackFiller.h">
+      <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\undo\UndoSystem.h">
+      <Filter>src\undo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

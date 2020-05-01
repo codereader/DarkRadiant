@@ -209,9 +209,6 @@
     <Filter Include="src\ui\entitylist">
       <UniqueIdentifier>{cf31bdd4-5049-41b1-bfe6-fafd3b1e8692}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\undo">
-      <UniqueIdentifier>{89461464-44a7-4235-8355-82fb9252cd48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\image">
       <UniqueIdentifier>{6dc9fca4-5702-4a00-9723-0382b177177f}</UniqueIdentifier>
     </Filter>
@@ -1026,9 +1023,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp">
       <Filter>src\ui\entitylist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp">
-      <Filter>src\undo</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\image\dds.cpp">
       <Filter>src\image</Filter>
@@ -2492,18 +2486,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h">
       <Filter>src\ui\entitylist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\Operation.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\Stack.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\StackFiller.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\UndoSystem.h">
-      <Filter>src\undo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\image\dds.h">
       <Filter>src\image</Filter>
