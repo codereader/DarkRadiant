@@ -8,7 +8,8 @@
 
 #include <functional>
 
-namespace ui {
+namespace ui
+{
 
 Console::Console(wxWindow* parent) :
 	wxPanel(parent, wxID_ANY),
@@ -23,33 +24,11 @@ Console::Console(wxWindow* parent) :
     GlobalCommandSystem().addCommand("clear",
         std::bind(&Console::clearCmd, this, std::placeholders::_1));
 
-#if 0 // TODO CoreModule
     // Get a lock on the logging system before doing these changes
-    std::lock_guard<std::mutex> lock(module::GlobalModuleRegistry().getApplicationContext().getStreamLock());
+    std::lock_guard<std::mutex> lock(GlobalRadiantCore().getLogWriter().getStreamLock());
 
 	// We're ready to catch log output, register ourselves
-	applog::LogWriter::Instance().attach(this);
-#endif
-
-#if 0 // TODO CoreModule
-	// Copy the temporary buffers over
-	if (applog::StringLogDevice::InstancePtr() != NULL)
-	{
-		applog::StringLogDevice& logger = *applog::StringLogDevice::InstancePtr();
-
-		for (auto level : applog::AllLogLevels)
-		{
-            std::string bufferedText = logger.getString(static_cast<applog::LogLevel>(level));
-
-            if (bufferedText.empty()) continue;
-
-            writeLog(bufferedText + "\n", static_cast<applog::LogLevel>(level));
-		}
-	}
-
-	// Destruct the temporary buffer
-	applog::StringLogDevice::destroy();
-#endif
+	GlobalRadiantCore().getLogWriter().attach(this);
 }
 
 Console::~Console()
@@ -57,9 +36,7 @@ Console::~Console()
 	// TODO - there might be more than one console instance handle this
 	GlobalCommandSystem().removeCommand("clear");
 
-#if 0 // TODO CoreModule
-	applog::LogWriter::Instance().detach(this);
-#endif
+	GlobalRadiantCore().getLogWriter().detach(this);
 }
 
 void Console::clearCmd(const cmd::ArgumentList& args)

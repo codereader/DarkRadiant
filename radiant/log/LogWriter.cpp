@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <tuple>
+#include "StringLogDevice.h"
 
 namespace applog
 {
@@ -39,7 +40,31 @@ std::mutex& LogWriter::getStreamLock()
 
 void LogWriter::attach(ILogDevice* device)
 {
+	bool firstDevice = _devices.empty();
+
 	_devices.insert(device);
+
+	if (firstDevice)
+	{
+		// The first device has the honour to receive all the buffered output
+		// Copy the temporary buffers over
+		if (applog::StringLogDevice::InstancePtr())
+		{
+			applog::StringLogDevice& logger = *applog::StringLogDevice::InstancePtr();
+
+			for (auto level : applog::AllLogLevels)
+			{
+				std::string bufferedText = logger.getString(static_cast<applog::LogLevel>(level));
+
+				if (bufferedText.empty()) continue;
+
+				device->writeLog(bufferedText + "\n", static_cast<applog::LogLevel>(level));
+			}
+		}
+
+		// Destruct the temporary buffer
+		applog::StringLogDevice::destroy();
+	}
 }
 
 void LogWriter::detach(ILogDevice* device)

@@ -1,6 +1,7 @@
 #include "ConsoleView.h"
 
 #include "imodule.h"
+#include "iradiant.h"
 #include "string/replace.h"
 
 namespace wxutil
@@ -46,19 +47,16 @@ void ConsoleView::flushLine()
     {
         std::lock_guard<std::mutex> lock(_lineBufferMutex);
 
-        _lineBuffer.push_back(std::make_pair(_bufferMode, std::string()));
+        _lineBuffer.emplace_back(_bufferMode, std::string());
         _lineBuffer.back().second.swap(_buffer);
     }
 }
 
 void ConsoleView::onIdle()
 {
-#if 0 // TODO CoreModule
     // Idle events occur in the main thread - prevent interrupting 
     // threads in the middle of a line
-    std::lock_guard<std::mutex> idleLock(
-        module::GlobalModuleRegistry().getApplicationContext().getStreamLock());
-#endif
+    std::lock_guard<std::mutex> idleLock(GlobalRadiantCore().getLogWriter().getStreamLock());
 
     flushLine();
 
