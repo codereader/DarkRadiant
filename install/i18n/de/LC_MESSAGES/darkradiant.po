@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
 "POT-Creation-Date: 2020-04-21 18:04+0200\n"
-"PO-Revision-Date: 2020-04-21 18:18+0200\n"
+"PO-Revision-Date: 2020-05-01 06:22+0200\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "Language: de\n"
@@ -6984,7 +6984,7 @@ msgstr "lightingModeButton"
 
 #: xml_file_content.cpp:8
 msgid "gridButton"
-msgstr "Grid"
+msgstr "gridButton"
 
 #: xml_file_content.cpp:1
 msgid "Stims"
