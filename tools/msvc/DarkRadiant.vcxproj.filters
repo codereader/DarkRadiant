@@ -215,9 +215,6 @@
     <Filter Include="src\image">
       <UniqueIdentifier>{6dc9fca4-5702-4a00-9723-0382b177177f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\xmlregistry">
-      <UniqueIdentifier>{421b477e-6cea-461c-a852-0f1bfc769c60}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\vfs">
       <UniqueIdentifier>{fecc2923-448e-4630-aba6-57f8ccb49c33}</UniqueIdentifier>
     </Filter>
@@ -1053,12 +1050,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\image\TGALoader.cpp">
       <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\xmlregistry\RegistryTree.cpp">
-      <Filter>src\xmlregistry</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp">
-      <Filter>src\xmlregistry</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\vfs\DeflatedInputStream.cpp">
       <Filter>src\vfs</Filter>
@@ -2552,15 +2543,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\image\TGALoader.h">
       <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\xmlregistry\Autosaver.h">
-      <Filter>src\xmlregistry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\xmlregistry\RegistryTree.h">
-      <Filter>src\xmlregistry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\xmlregistry\XMLRegistry.h">
-      <Filter>src\xmlregistry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\vfs\Archive.h">
       <Filter>src\vfs</Filter>

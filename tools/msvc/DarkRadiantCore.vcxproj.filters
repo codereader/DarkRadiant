@@ -14,6 +14,9 @@
     <Filter Include="src\settings">
       <UniqueIdentifier>{70832d89-edfe-4c33-bf07-290405d6cc28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\xmlregistry">
+      <UniqueIdentifier>{1fb975f1-2fb1-4e33-9ce5-384ed3f28258}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
@@ -48,6 +51,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp">
       <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\xmlregistry\RegistryTree.cpp">
+      <Filter>src\xmlregistry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp">
+      <Filter>src\xmlregistry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +104,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\settings\LanguageManager.h">
       <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xmlregistry\Autosaver.h">
+      <Filter>src\xmlregistry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xmlregistry\RegistryTree.h">
+      <Filter>src\xmlregistry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\xmlregistry\XMLRegistry.h">
+      <Filter>src\xmlregistry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

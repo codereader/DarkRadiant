@@ -29,6 +29,7 @@ public:
 
 	applog::ILogWriter& getLogWriter() override;
 	module::ModuleRegistry& getModuleRegistry() override;
+	void startup() override;
 
 	static std::shared_ptr<Radiant>& InstancePtr();
 

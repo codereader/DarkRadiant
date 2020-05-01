@@ -30,6 +30,8 @@
     <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp" />
     <ClCompile Include="..\..\radiant\Radiant.cpp" />
     <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp" />
+    <ClCompile Include="..\..\radiant\xmlregistry\RegistryTree.cpp" />
+    <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\log\COutRedirector.h" />
@@ -47,6 +49,9 @@
     <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h" />
     <ClInclude Include="..\..\radiant\Radiant.h" />
     <ClInclude Include="..\..\radiant\settings\LanguageManager.h" />
+    <ClInclude Include="..\..\radiant\xmlregistry\Autosaver.h" />
+    <ClInclude Include="..\..\radiant\xmlregistry\RegistryTree.h" />
+    <ClInclude Include="..\..\radiant\xmlregistry\XMLRegistry.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -39,6 +39,12 @@ public:
      */
     virtual IModuleRegistry& getModuleRegistry() = 0;
 
+    /**
+     * Loads and initialises all modules, starting up the 
+     * application.
+     */
+    virtual void startup() = 0;
+
     virtual ~IRadiant() {}
 };
 

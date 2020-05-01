@@ -1003,8 +1003,6 @@
     <ClCompile Include="..\..\radiant\vfs\Doom3FileSystem.cpp" />
     <ClCompile Include="..\..\radiant\vfs\Doom3FileSystemModule.cpp" />
     <ClCompile Include="..\..\radiant\vfs\ZipArchive.cpp" />
-    <ClCompile Include="..\..\radiant\xmlregistry\RegistryTree.cpp" />
-    <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp" />
     <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp" />
@@ -1525,9 +1523,6 @@
     <ClInclude Include="..\..\radiant\vfs\UnixPath.h" />
     <ClInclude Include="..\..\radiant\vfs\ZipArchive.h" />
     <ClInclude Include="..\..\radiant\vfs\ZipStreamUtils.h" />
-    <ClInclude Include="..\..\radiant\xmlregistry\Autosaver.h" />
-    <ClInclude Include="..\..\radiant\xmlregistry\RegistryTree.h" />
-    <ClInclude Include="..\..\radiant\xmlregistry\XMLRegistry.h" />
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />

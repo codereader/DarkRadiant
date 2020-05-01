@@ -10,6 +10,7 @@
 #include "log/LogWriter.h"
 #include "log/LogFile.h"
 #include "modulesystem/ModuleRegistry.h"
+#include "modulesystem/StaticModule.h"
 
 #ifndef POSIX
 #include "settings/LanguageManager.h"
@@ -66,6 +67,22 @@ applog::ILogWriter& Radiant::getLogWriter()
 module::ModuleRegistry& Radiant::getModuleRegistry()
 {
 	return *_moduleRegistry;
+}
+
+void Radiant::startup()
+{
+	// Register the modules hosted in this binary
+	module::internal::StaticModuleList::RegisterModules();
+
+	try
+	{
+		module::GlobalModuleRegistry().loadAndInitialiseModules();
+	}
+	catch (const std::exception & e)
+	{
+		rConsole() << "Exception initialising modules: " << e.what() << std::endl;
+		abort();
+	}
 }
 
 void Radiant::createLogFile()
@@ -128,7 +145,7 @@ extern "C" DARKRADIANT_DLLEXPORT radiant::IRadiant* SYMBOL_CREATE_RADIANT(Applic
 {
 	auto& instancePtr = radiant::Radiant::InstancePtr();
 
-	// Create a new instance, but ensure that this has only be called once
+	// Create a new instance, but ensure that this has only been called once
 	assert(!instancePtr);
 
 	instancePtr.reset(new radiant::Radiant(context));

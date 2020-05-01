@@ -143,16 +143,8 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	// Pick up all the statically defined modules and register them
 	module::internal::StaticModuleList::RegisterModules();
 
-    try
-    {
-		module::GlobalModuleRegistry().loadAndInitialiseModules();
-    }
-    catch (const std::exception& e)
-    {
-        rConsole() << "Exception thrown while initialising ModuleRegistry: "
-                   << e.what() << std::endl;
-        abort();
-    }
+	// Startup the application
+	_coreModule->get()->startup();
 
 	// Scope ends here, PIDFile is deleted by its destructor
 }
