@@ -556,9 +556,6 @@
     <ClCompile Include="..\..\radiant\settings\GameManager.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp">
-      <Filter>src\settings</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\settings\PreferenceSystem.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
@@ -1918,9 +1915,6 @@
       <Filter>src\settings</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\settings\GameManager.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\LanguageManager.h">
       <Filter>src\settings</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\settings\PreferenceSystem.h">

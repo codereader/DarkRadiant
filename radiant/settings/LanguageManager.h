@@ -47,6 +47,9 @@ private:
 	LanguageList _availableLanguages;
 
 public:
+	LanguageManager();
+	~LanguageManager();
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;

@@ -17,10 +17,6 @@
 #include "ui/splash/Splash.h"
 #endif
 
-#ifndef POSIX
-#include "settings/LanguageManager.h"
-#endif
-
 #ifdef POSIX
 #include <libintl.h>
 #endif
@@ -65,11 +61,6 @@ bool RadiantApp::OnInit()
 		rError() << "Failed to load core module" << std::endl;
 		throw ex;
 	}
-
-#ifndef POSIX
-	// Initialise the language based on the settings in the user settings folder
-	language::LanguageManager().init(_context);
-#endif
 
 #if defined(POSIX) && !defined(__APPLE__)
 	// greebo: not sure if this is needed

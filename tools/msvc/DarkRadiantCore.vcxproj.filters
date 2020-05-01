@@ -11,6 +11,9 @@
     <Filter Include="src\log">
       <UniqueIdentifier>{cd303c99-7f3d-4998-8579-15e79b73430e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\settings">
+      <UniqueIdentifier>{70832d89-edfe-4c33-bf07-290405d6cc28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
@@ -42,6 +45,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\log\LogFile.cpp">
       <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp">
+      <Filter>src\settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\Radiant.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\LanguageManager.h">
+      <Filter>src\settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

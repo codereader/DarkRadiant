@@ -11,6 +11,10 @@
 #include "log/LogFile.h"
 #include "modulesystem/ModuleRegistry.h"
 
+#ifndef POSIX
+#include "settings/LanguageManager.h"
+#endif
+
 #include <wx/version.h>
 
 namespace radiant
@@ -32,6 +36,11 @@ Radiant::Radiant(ApplicationContext& context) :
 
 	_moduleRegistry.reset(new module::ModuleRegistry);
 	_moduleRegistry->setContext(_context);
+
+#ifndef POSIX
+	// Initialise the language based on the settings in the user settings folder
+	language::LanguageManager().init(_context);
+#endif
 }
 
 Radiant::~Radiant()
