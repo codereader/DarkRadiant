@@ -40,14 +40,11 @@ std::mutex& LogWriter::getStreamLock()
 
 void LogWriter::attach(ILogDevice* device)
 {
-	bool firstDevice = _devices.empty();
-
 	_devices.insert(device);
 
-	if (firstDevice)
+	if (device->isConsole())
 	{
-		// The first device has the honour to receive all the buffered output
-		// Copy the temporary buffers over
+		// The first console device receives all the buffered output
 		if (applog::StringLogDevice::InstancePtr())
 		{
 			applog::StringLogDevice& logger = *applog::StringLogDevice::InstancePtr();
@@ -62,7 +59,6 @@ void LogWriter::attach(ILogDevice* device)
 			}
 		}
 
-		// Destruct the temporary buffer
 		applog::StringLogDevice::destroy();
 	}
 }

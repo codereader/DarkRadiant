@@ -37,6 +37,17 @@ public:
 	 * a log string as argument.
 	 */
 	virtual void writeLog(const std::string& outputStr, LogLevel level) = 0;
+
+	/**
+	 * If this device is a console, it will be filled with the log output
+	 * that has been collected before it has been attached.
+	 * This is supposed to make it easier to inspect the startup phase opening
+	 * the console viewer in the UI.
+	 */
+	virtual bool isConsole() const 
+	{
+		return false;
+	}
 };
 
 /**

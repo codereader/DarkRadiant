@@ -56,6 +56,11 @@ public:
 	 * (Note: this gets called by the LogWriter automatically).
 	 */
 	void writeLog(const std::string& outputStr, applog::LogLevel level) override;
+
+	bool isConsole() const override
+	{
+		return true; // Receive the buffered log output when attached
+	}
 };
 
 } // namespace ui
