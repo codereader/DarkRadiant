@@ -17,6 +17,9 @@
     <Filter Include="src\xmlregistry">
       <UniqueIdentifier>{1fb975f1-2fb1-4e33-9ce5-384ed3f28258}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\vfs">
+      <UniqueIdentifier>{fae22404-52d3-4653-afb9-c333e87edd41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
@@ -57,6 +60,21 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp">
       <Filter>src\xmlregistry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\vfs\DeflatedInputStream.cpp">
+      <Filter>src\vfs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\vfs\DirectoryArchive.cpp">
+      <Filter>src\vfs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystem.cpp">
+      <Filter>src\vfs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystemModule.cpp">
+      <Filter>src\vfs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\vfs\ZipArchive.cpp">
+      <Filter>src\vfs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +131,48 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\xmlregistry\XMLRegistry.h">
       <Filter>src\xmlregistry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\Archive.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveFile.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveTextFile.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\DeflatedInputStream.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\DirectoryArchive.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\DirectoryArchiveTextFile.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\Doom3FileSystem.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\GenericFileSystem.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\SortedFilenames.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\StoredArchiveFile.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\StoredArchiveTextFile.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\UnixPath.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\ZipArchive.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\vfs\ZipStreamUtils.h">
+      <Filter>src\vfs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

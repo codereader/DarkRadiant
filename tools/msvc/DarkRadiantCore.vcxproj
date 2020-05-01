@@ -30,6 +30,11 @@
     <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp" />
     <ClCompile Include="..\..\radiant\Radiant.cpp" />
     <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\DeflatedInputStream.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\DirectoryArchive.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystem.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystemModule.cpp" />
+    <ClCompile Include="..\..\radiant\vfs\ZipArchive.cpp" />
     <ClCompile Include="..\..\radiant\xmlregistry\RegistryTree.cpp" />
     <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp" />
   </ItemGroup>
@@ -49,6 +54,20 @@
     <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h" />
     <ClInclude Include="..\..\radiant\Radiant.h" />
     <ClInclude Include="..\..\radiant\settings\LanguageManager.h" />
+    <ClInclude Include="..\..\radiant\vfs\Archive.h" />
+    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveTextFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\DeflatedInputStream.h" />
+    <ClInclude Include="..\..\radiant\vfs\DirectoryArchive.h" />
+    <ClInclude Include="..\..\radiant\vfs\DirectoryArchiveTextFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\Doom3FileSystem.h" />
+    <ClInclude Include="..\..\radiant\vfs\GenericFileSystem.h" />
+    <ClInclude Include="..\..\radiant\vfs\SortedFilenames.h" />
+    <ClInclude Include="..\..\radiant\vfs\StoredArchiveFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\StoredArchiveTextFile.h" />
+    <ClInclude Include="..\..\radiant\vfs\UnixPath.h" />
+    <ClInclude Include="..\..\radiant\vfs\ZipArchive.h" />
+    <ClInclude Include="..\..\radiant\vfs\ZipStreamUtils.h" />
     <ClInclude Include="..\..\radiant\xmlregistry\Autosaver.h" />
     <ClInclude Include="..\..\radiant\xmlregistry\RegistryTree.h" />
     <ClInclude Include="..\..\radiant\xmlregistry\XMLRegistry.h" />

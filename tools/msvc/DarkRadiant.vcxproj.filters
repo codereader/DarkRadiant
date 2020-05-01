@@ -215,9 +215,6 @@
     <Filter Include="src\image">
       <UniqueIdentifier>{6dc9fca4-5702-4a00-9723-0382b177177f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\vfs">
-      <UniqueIdentifier>{fecc2923-448e-4630-aba6-57f8ccb49c33}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\uimanager">
       <UniqueIdentifier>{9447d2a6-4742-4c6b-b53c-cd25985c034e}</UniqueIdentifier>
     </Filter>
@@ -1050,21 +1047,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\image\TGALoader.cpp">
       <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\DeflatedInputStream.cpp">
-      <Filter>src\vfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\DirectoryArchive.cpp">
-      <Filter>src\vfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystem.cpp">
-      <Filter>src\vfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystemModule.cpp">
-      <Filter>src\vfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\ZipArchive.cpp">
-      <Filter>src\vfs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp">
       <Filter>src\uimanager</Filter>
@@ -2543,48 +2525,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\image\TGALoader.h">
       <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\Archive.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveFile.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveTextFile.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DeflatedInputStream.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DirectoryArchive.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DirectoryArchiveTextFile.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\Doom3FileSystem.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\GenericFileSystem.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\SortedFilenames.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\StoredArchiveFile.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\StoredArchiveTextFile.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\UnixPath.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\ZipArchive.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\ZipStreamUtils.h">
-      <Filter>src\vfs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\DialogManager.h">
       <Filter>src\uimanager</Filter>
