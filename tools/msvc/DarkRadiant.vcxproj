@@ -784,8 +784,6 @@
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
-    <ClCompile Include="..\..\radiant\settings\Game.cpp" />
-    <ClCompile Include="..\..\radiant\settings\GameManager.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
     <ClCompile Include="..\..\radiant\shaders\CameraCubeMapDecl.cpp" />
     <ClCompile Include="..\..\radiant\shaders\CShader.cpp" />
@@ -1215,8 +1213,6 @@
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiant\selection\SingleItemSelector.h" />
-    <ClInclude Include="..\..\radiant\settings\Game.h" />
-    <ClInclude Include="..\..\radiant\settings\GameManager.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
     <ClInclude Include="..\..\radiant\shaders\CameraCubeMapDecl.h" />
     <ClInclude Include="..\..\radiant\shaders\CShader.h" />

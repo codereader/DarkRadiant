@@ -6,6 +6,8 @@
 
 #include "log/PIDFile.h"
 #include "module/CoreModule.h"
+#include "GameConfigNeededMessage.h"
+#include "ui/prefdialog/GameSetupDialog.h"
 #include "modulesystem/StaticModule.h"
 
 #include <wx/wxprec.h>
@@ -139,6 +141,12 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	// Connect the progress callback to the Splash instance.
 	ui::Splash::OnAppStartup();
 #endif
+
+	// In first-startup scenarios the game configuration is not present
+	// in which case the GameManager will dispatch a message asking 
+	// for showing a dialog or similar. Connect the listener.
+	_coreModule->get()->getMessageBus().addListener(
+		radiant::TypeListener(ui::GameSetupDialog::HandleGameConfigMessage));
 
 	// Pick up all the statically defined modules and register them
 	module::internal::StaticModuleList::RegisterModules();

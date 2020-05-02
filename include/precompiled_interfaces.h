@@ -51,6 +51,7 @@
 #include "imd5model.h"
 #include "imediabrowser.h"
 #include "imenu.h"
+#include "imessagebus.h"
 #include "imodel.h"
 #include "imodelcache.h"
 #include "imodelsurface.h"

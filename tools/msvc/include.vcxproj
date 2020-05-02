@@ -143,6 +143,7 @@
     <ClInclude Include="..\..\include\imd5model.h" />
     <ClInclude Include="..\..\include\imediabrowser.h" />
     <ClInclude Include="..\..\include\imenu.h" />
+    <ClInclude Include="..\..\include\imessagebus.h" />
     <ClInclude Include="..\..\include\imodel.h" />
     <ClInclude Include="..\..\include\imodelcache.h" />
     <ClInclude Include="..\..\include\imodelsurface.h" />

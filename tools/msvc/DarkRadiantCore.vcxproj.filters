@@ -26,6 +26,9 @@
     <Filter Include="src\commandsystem">
       <UniqueIdentifier>{67aed069-dd61-4b65-9c77-c8cfcc11be9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\messagebus">
+      <UniqueIdentifier>{169ccdc4-199a-489e-a87d-81209e0b9252}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
@@ -92,6 +95,12 @@
       <Filter>src\settings</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\settings\PreferenceSystem.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\Game.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\GameManager.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
   </ItemGroup>
@@ -233,6 +242,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\settings\PreferenceSystem.h">
       <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\Game.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\GameManager.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\messagebus\MessageBus.h">
+      <Filter>src\messagebus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -147,11 +147,11 @@
     <ClInclude Include="..\..\libs\debugging\ScenegraphUtils.h" />
     <ClInclude Include="..\..\libs\debugging\ScopedDebugTimer.h" />
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
-    <ClInclude Include="..\..\libs\DirectoryArchiveTextFile.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
     <ClInclude Include="..\..\libs\entitylib.h" />
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
+    <ClInclude Include="..\..\libs\GameConfigNeededMessage.h" />
     <ClInclude Include="..\..\libs\GameConfigUtil.h" />
     <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\generic\callback.h" />

@@ -1531,12 +1531,6 @@
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\Game.cpp">
-      <Filter>src\settings</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\GameManager.cpp">
-      <Filter>src\settings</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -3034,12 +3028,6 @@
       <Filter>src\model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\Game.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\GameManager.h">
       <Filter>src\settings</Filter>
     </ClInclude>
   </ItemGroup>

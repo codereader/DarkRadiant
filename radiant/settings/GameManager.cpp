@@ -2,10 +2,12 @@
 
 #include "i18n.h"
 #include "iregistry.h"
+#include "iradiant.h"
+#include "imessagebus.h"
+#include "icommandsystem.h"
 #include "itextstream.h"
 #include "ifilesystem.h"
 #include "ipreferencesystem.h"
-#include "ui/prefdialog/GameSetupDialog.h"
 
 #include "os/file.h"
 #include "os/dir.h"
@@ -21,6 +23,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
+#include "GameConfigNeededMessage.h"
 
 #include <sigc++/bind.h>
 
@@ -135,7 +138,7 @@ IGamePtr Manager::currentGame()
 	if (_config.gameType.empty())
 	{
 		// No game type selected, bail out, the program will crash anyway on module load
-		wxutil::Messagebox::ShowFatalError(_("GameManager: No game type selected, can't continue."), NULL);
+		wxutil::Messagebox::ShowFatalError(_("GameManager: No game type selected, can't continue."), nullptr);
 	}
 
 	return _games[_config.gameType];
@@ -244,8 +247,19 @@ void Manager::applyConfig(const GameConfiguration& config)
 
 void Manager::showGameSetupDialog()
 {
-	// Paths not valid, ask the user to select something
-	ui::GameSetupDialog::Show(cmd::ArgumentList());
+	// Paths not valid, dispatch a message
+	ConfigurationNeeded message;
+
+	GlobalRadiantCore().getMessageBus().sendMessage(message);
+
+	if (message.isHandled())
+	{
+		applyConfig(message.getConfig());
+	}
+	else
+	{
+		wxutil::Messagebox::ShowFatalError(_("No valid game configuration found, cannot continue."), nullptr);
+	}
 }
 
 void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
@@ -427,11 +441,5 @@ void Manager::loadGameFiles(const std::string& appPath)
 
 // The static module definition (self-registers)
 module::StaticModule<Manager> gameManagerModule;
-
-Manager& Manager::Instance()
-{
-	return *std::static_pointer_cast<Manager>(
-		module::GlobalModuleRegistry().getModule(MODULE_GAMEMANAGER));
-}
 
 } // namespace game

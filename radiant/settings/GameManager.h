@@ -77,9 +77,6 @@ public:
 	// greebo: Stores the given config, initialises VFS and constructs a few secondary paths.
 	void applyConfig(const GameConfiguration& config) override;
 
-	// Module-internal accessor to the GameManager instance
-	static Manager& Instance();
-
 private:
 	/**
 	* greebo: Loads the game type from the saved settings.

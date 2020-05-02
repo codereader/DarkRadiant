@@ -8,6 +8,8 @@ namespace applog { class LogFile; }
 namespace radiant
 {
 
+class MessageBus;
+
 class Radiant :
 	public IRadiant
 {
@@ -17,6 +19,8 @@ private:
 	std::unique_ptr<applog::LogFile> _logFile;
 
 	std::unique_ptr<module::ModuleRegistry> _moduleRegistry;
+
+	std::unique_ptr<MessageBus> _messageBus;
 
 public:
 	Radiant(ApplicationContext& context);
@@ -29,6 +33,7 @@ public:
 
 	applog::ILogWriter& getLogWriter() override;
 	module::ModuleRegistry& getModuleRegistry() override;
+	radiant::IMessageBus& getMessageBus() override;
 	void startup() override;
 
 	static std::shared_ptr<Radiant>& InstancePtr();

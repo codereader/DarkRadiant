@@ -140,7 +140,6 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
-    <ClInclude Include="..\..\libs\DirectoryArchiveTextFile.h" />
     <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h">
       <Filter>stream</Filter>
     </ClInclude>
@@ -186,6 +185,7 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\maplib.h" />
     <ClInclude Include="..\..\libs\GameConfigUtil.h" />
+    <ClInclude Include="..\..\libs\GameConfigNeededMessage.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -13,6 +13,8 @@ namespace applog { class ILogWriter;  }
 namespace radiant
 {
 
+class IMessageBus; // see imessagebus.h
+
 /**
  * Main application host, offering access to the Module Registry
  * and the logging infrastructure.
@@ -38,6 +40,11 @@ public:
      * Returns the central module registry instance.
      */
     virtual IModuleRegistry& getModuleRegistry() = 0;
+
+    /**
+     * Get a reference to the central message handler.
+     */
+    virtual IMessageBus& getMessageBus() = 0;
 
     /**
      * Loads and initialises all modules, starting up the 

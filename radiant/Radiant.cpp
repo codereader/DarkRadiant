@@ -9,8 +9,8 @@
 #include "log/LogStream.h"
 #include "log/LogWriter.h"
 #include "log/LogFile.h"
-#include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
+#include "messagebus/MessageBus.h"
 
 #ifndef POSIX
 #include "settings/LanguageManager.h"
@@ -27,7 +27,8 @@ namespace
 }
 
 Radiant::Radiant(ApplicationContext& context) :
-	_context(context)
+	_context(context),
+	_messageBus(new MessageBus)
 {
 	// Set the stream references for rMessage(), redirect std::cout, etc.
 	applog::LogStream::InitialiseStreams(getLogWriter());
@@ -67,6 +68,11 @@ applog::ILogWriter& Radiant::getLogWriter()
 module::ModuleRegistry& Radiant::getModuleRegistry()
 {
 	return *_moduleRegistry;
+}
+
+radiant::IMessageBus& Radiant::getMessageBus()
+{
+	return *_messageBus;
 }
 
 void Radiant::startup()
