@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\radiant\commandsystem\CommandSystem.cpp" />
     <ClCompile Include="..\..\radiant\log\COutRedirector.cpp" />
     <ClCompile Include="..\..\radiant\log\LogFile.cpp" />
     <ClCompile Include="..\..\radiant\log\LogStream.cpp" />
@@ -30,6 +31,8 @@
     <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp" />
     <ClCompile Include="..\..\radiant\Radiant.cpp" />
     <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp" />
+    <ClCompile Include="..\..\radiant\settings\PreferencePage.cpp" />
+    <ClCompile Include="..\..\radiant\settings\PreferenceSystem.cpp" />
     <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp" />
     <ClCompile Include="..\..\radiant\vfs\DeflatedInputStream.cpp" />
     <ClCompile Include="..\..\radiant\vfs\DirectoryArchive.cpp" />
@@ -40,6 +43,12 @@
     <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\radiant\commandsystem\CaseInsensitiveCompare.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\Command.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\CommandSystem.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\CommandTokeniser.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\Executable.h" />
+    <ClInclude Include="..\..\radiant\commandsystem\Statement.h" />
     <ClInclude Include="..\..\radiant\log\COutRedirector.h" />
     <ClInclude Include="..\..\radiant\log\LogDevice.h" />
     <ClInclude Include="..\..\radiant\log\LogFile.h" />
@@ -55,6 +64,10 @@
     <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h" />
     <ClInclude Include="..\..\radiant\Radiant.h" />
     <ClInclude Include="..\..\radiant\settings\LanguageManager.h" />
+    <ClInclude Include="..\..\radiant\settings\PreferenceItemBase.h" />
+    <ClInclude Include="..\..\radiant\settings\PreferenceItems.h" />
+    <ClInclude Include="..\..\radiant\settings\PreferencePage.h" />
+    <ClInclude Include="..\..\radiant\settings\PreferenceSystem.h" />
     <ClInclude Include="..\..\radiant\undo\Operation.h" />
     <ClInclude Include="..\..\radiant\undo\Stack.h" />
     <ClInclude Include="..\..\radiant\undo\StackFiller.h" />

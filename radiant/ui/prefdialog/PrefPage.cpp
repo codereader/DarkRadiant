@@ -11,7 +11,7 @@
 namespace ui 
 {
 
-PrefPage::PrefPage(wxWindow* parent, const settings::PreferencePage& settingsPage) :
+PrefPage::PrefPage(wxWindow* parent, const IPreferencePage& settingsPage) :
 	wxScrolledWindow(parent, wxID_ANY),
 	_settingsPage(settingsPage)
 {
@@ -34,7 +34,7 @@ PrefPage::PrefPage(wxWindow* parent, const settings::PreferencePage& settingsPag
 	_table = new wxFlexGridSizer(1, 2, 6, 12);
 	overallVBox->Add(_table, 1, wxEXPAND | wxLEFT, 6); // another 12 pixels to the left
 
-	settingsPage.foreachItem([&](const settings::PreferenceItemBasePtr& item)
+	settingsPage.foreachItem([&](const IPreferenceItemBase::Ptr& item)
 	{
 		createItemWidgets(item);
 	});
@@ -64,55 +64,55 @@ void PrefPage::appendNamedWidget(const std::string& name, wxWindow* widget, bool
 	_table->Add(widget, useFullWidth ? 1 : 0, wxEXPAND);
 }
 
-void PrefPage::createItemWidgets(const settings::PreferenceItemBasePtr& item)
+void PrefPage::createItemWidgets(const IPreferenceItemBase::Ptr& item)
 {
 	// Construct a generic item and pass the common values
 	PreferenceItem widget(this, item->getRegistryKey(), _registryBuffer, _resetValuesSignal);
 	
 	// Switch on the item type
-	if (std::dynamic_pointer_cast<settings::PreferenceLabel>(item))
+	if (std::dynamic_pointer_cast<IPreferenceLabel>(item))
 	{
 		wxWindow* label = widget.createLabel(item->getLabel());
 
 		appendNamedWidget("", label);
 	}
-	else if (std::dynamic_pointer_cast<settings::PreferenceEntry>(item))
+	else if (std::dynamic_pointer_cast<IPreferenceEntry>(item))
 	{
 		appendNamedWidget(item->getLabel(), widget.createEntry());
 	}
-	else if (std::dynamic_pointer_cast<settings::PreferenceCheckbox>(item))
+	else if (std::dynamic_pointer_cast<IPreferenceCheckbox>(item))
 	{
 		wxWindow* checkbox = widget.createCheckbox(item->getLabel());
 
 		appendNamedWidget("", checkbox);
 	}
-	else if (std::dynamic_pointer_cast<settings::PreferenceCombobox>(item))
+	else if (std::dynamic_pointer_cast<IPreferenceCombobox>(item))
 	{
-		std::shared_ptr<settings::PreferenceCombobox> info = std::static_pointer_cast<settings::PreferenceCombobox>(item);
+		auto info = std::dynamic_pointer_cast<IPreferenceCombobox>(item);
 
 		wxWindow* combobox = widget.createCombobox(info->getValues(), info->storeValueNotIndex());
 
 		appendNamedWidget(item->getLabel(), combobox, false);
 	}
-	else if (std::dynamic_pointer_cast<settings::PreferencePathEntry>(item))
+	else if (std::dynamic_pointer_cast<IPreferencePathEntry>(item))
 	{
-		std::shared_ptr<settings::PreferencePathEntry> info = std::static_pointer_cast<settings::PreferencePathEntry>(item);
+		auto info = std::dynamic_pointer_cast<IPreferencePathEntry>(item);
 
 		wxWindow* pathEntry = widget.createPathEntry(info->browseDirectories());
 
 		appendNamedWidget(item->getLabel(), pathEntry);
 	}
-	else if (std::dynamic_pointer_cast<settings::PreferenceSpinner>(item))
+	else if (std::dynamic_pointer_cast<IPreferenceSpinner>(item))
 	{
-		std::shared_ptr<settings::PreferenceSpinner> info = std::static_pointer_cast<settings::PreferenceSpinner>(item);
+		auto info = std::dynamic_pointer_cast<IPreferenceSpinner>(item);
 
 		wxWindow* spinner = widget.createSpinner(info->getLower(), info->getUpper(), info->getFraction());
 
 		appendNamedWidget(item->getLabel(), spinner);
 	}
-	else if (std::dynamic_pointer_cast<settings::PreferenceSlider>(item))
+	else if (std::dynamic_pointer_cast<IPreferenceSlider>(item))
 	{
-		std::shared_ptr<settings::PreferenceSlider> info = std::static_pointer_cast<settings::PreferenceSlider>(item);
+		auto info = std::dynamic_pointer_cast<IPreferenceSlider>(item);
 
 		wxWindow* slider = widget.createSlider(info->getLower(), info->getUpper(), 
 			info->getStepIncrement(), info->getPageIncrement());

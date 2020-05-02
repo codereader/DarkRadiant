@@ -30,7 +30,7 @@ private:
 	std::vector<PreferencePagePtr> _children;
 
 	// The registered items
-	std::vector<PreferenceItemBasePtr> _items;
+	std::vector<PreferenceItemBase::Ptr> _items;
 
 public:
 	/** 
@@ -40,7 +40,7 @@ public:
 				   const PreferencePagePtr& parentPage = PreferencePagePtr());
 
 	// Returns the title as displayed on top of the page's area
-	const std::string& getTitle() const;
+	const std::string& getTitle() const override;
 
 	/** 
 	 * greebo: Sets the title caption that is displayed on the right.
@@ -50,10 +50,10 @@ public:
 	void setTitle(const std::string& title) override;
 
 	// greebo: Returns the full path to this page
-	const std::string& getPath() const;
+	const std::string& getPath() const override;
 
 	// greebo: Returns the name (caption) of this Page (e.g. "Settings")
-	const std::string& getName() const;
+	const std::string& getName() const override;
 
 	/** 
 	 * greebo: Performs a recursive lookup of the given path
@@ -64,13 +64,13 @@ public:
 	PreferencePage& createOrFindPage(const std::string& path);
 
 	// Recursively visit all children of this page
-	void foreachChildPage(const std::function<void(PreferencePage&)>& functor);
+	void foreachChildPage(const std::function<void(IPreferencePage&)>& functor);
 
 	// Hit the functor with each item on this page
-	void foreachItem(const std::function<void(const PreferenceItemBasePtr&)>& functor) const;
+	void foreachItem(const std::function<void(const IPreferenceItemBase::Ptr&)>& functor) const;
 	
 	// Returns TRUE if this page doesn't hold any items
-	bool isEmpty() const;
+	bool isEmpty() const override;
 
 	// IPreferencePage implementation
 	void appendCheckBox(const std::string& label, const std::string& registryKey) override;

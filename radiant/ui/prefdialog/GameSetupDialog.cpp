@@ -216,7 +216,7 @@ void GameSetupDialog::Show(const cmd::ArgumentList& args)
 		const game::GameConfiguration& config = page->getConfiguration();
 
 		// Apply the configuration (don't use the GlobalGameManager accessor yet)
-		game::Manager::Instance().applyConfig(config);
+		GlobalGameManager().applyConfig(config);
 	}
 	
 	dialog->Destroy();

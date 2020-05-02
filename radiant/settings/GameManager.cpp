@@ -69,8 +69,7 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 	initialiseGameType();
 
 	// Try to retrieve a persisted game setup from the registry
-	GameConfiguration config;
-	config.loadFromRegistry();
+	GameConfiguration config = GameConfigUtil::LoadFromRegistry();
 
 	// Read command line parameters, these override any existing preference setting
 	// but only if we have a valid engine path
@@ -105,7 +104,7 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 
 	// Check validity of the saved game configuration 
 	// and invoke the UI if it's not a valid one.
-	if (config.pathsValid())
+	if (GameConfigUtil::PathsValid(config))
 	{
 		applyConfig(config);
 	}
@@ -219,7 +218,7 @@ std::string Manager::getUserEnginePath()
 
 void Manager::applyConfig(const GameConfiguration& config)
 {
-	if (!config.pathsValid())
+	if (!GameConfigUtil::PathsValid(config))
 	{
 		rError() << "GameManager: Cannot apply invalid configuration, paths not valid" << std::endl;
 		return;
@@ -227,7 +226,7 @@ void Manager::applyConfig(const GameConfiguration& config)
 
 	// Store the configuration, and persist it to the registry
 	_config = config;
-	_config.saveToRegistry();
+	GameConfigUtil::SaveToRegistry(_config);
 
 	// Extract the fs_game / fs_game_base settings from the mod path
 	std::string fsGame = os::getRelativePath(_config.modPath, _config.enginePath);
@@ -288,7 +287,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
 void Manager::initialiseVfs()
 {
 	// Ensure that all paths are normalised
-	_config.ensurePathsNormalised();
+	GameConfigUtil::EnsurePathsNormalised(_config);
 
 	// The list of paths which will be passed to the VFS init method
 	vfs::SearchPaths vfsSearchPaths;

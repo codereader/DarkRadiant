@@ -62,9 +62,6 @@
     <Filter Include="src\selection\selectionset">
       <UniqueIdentifier>{98b000d2-c908-4b15-9fb2-88e115aa76ab}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\settings">
-      <UniqueIdentifier>{de1e0df6-33c8-4512-b26f-590fc16eed8a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\textool">
       <UniqueIdentifier>{d3a05c23-9351-4bd7-aaee-8f88331f691d}</UniqueIdentifier>
     </Filter>
@@ -266,9 +263,6 @@
     <Filter Include="src\modelfile\picomodel\lwo">
       <UniqueIdentifier>{89aad7bf-df19-49f6-9bbe-ba12cc6221bf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\commandsystem">
-      <UniqueIdentifier>{0144ab59-7413-4941-b438-1318f946d2fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
@@ -316,6 +310,9 @@
     </Filter>
     <Filter Include="src\ui\filters">
       <UniqueIdentifier>{b15324e3-378b-43fe-abfd-1ee2d99c5bd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\settings">
+      <UniqueIdentifier>{89cfcc22-4783-4193-a6c6-ad49ec9f05f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -540,18 +537,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp">
       <Filter>src\selection\selectionset</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\Game.cpp">
-      <Filter>src\settings</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\GameManager.cpp">
-      <Filter>src\settings</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\PreferenceSystem.cpp">
-      <Filter>src\settings</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp">
-      <Filter>src\settings</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp">
       <Filter>src\textool</Filter>
@@ -882,9 +867,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp">
       <Filter>src\brush</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\PreferencePage.cpp">
-      <Filter>src\settings</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItem.cpp">
       <Filter>src\ui\prefdialog</Filter>
@@ -1309,9 +1291,6 @@
     <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\vmap.c">
       <Filter>src\modelfile\picomodel\lwo</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\commandsystem\CommandSystem.cpp">
-      <Filter>src\commandsystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp">
       <Filter>src\eventmanager</Filter>
     </ClCompile>
@@ -1548,6 +1527,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp">
       <Filter>src\modulesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\Game.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\GameManager.cpp">
+      <Filter>src\settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1877,18 +1865,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetToolmenu.h">
       <Filter>src\selection\selectionset</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\Game.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\GameManager.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\PreferenceSystem.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\Win32Registry.h">
-      <Filter>src\settings</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\textool\Rectangle.h">
       <Filter>src\textool</Filter>
@@ -2304,15 +2280,6 @@
     <ClInclude Include="..\..\radiant\brush\TextureMatrix.h">
       <Filter>src\brush</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\PreferencePage.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\PreferenceItemBase.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\PreferenceItems.h">
-      <Filter>src\settings</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItem.h">
       <Filter>src\ui\prefdialog</Filter>
     </ClInclude>
@@ -2456,9 +2423,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPage.h">
       <Filter>src\ui\prefdialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\GameConfiguration.h">
-      <Filter>src\settings</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.h">
       <Filter>src\ui\prefdialog</Filter>
@@ -2778,24 +2742,6 @@
     <ClInclude Include="..\..\radiant\modelfile\picomodel\lwo\lwo2.h">
       <Filter>src\modelfile\picomodel\lwo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\CaseInsensitiveCompare.h">
-      <Filter>src\commandsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\Command.h">
-      <Filter>src\commandsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\CommandSystem.h">
-      <Filter>src\commandsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\CommandTokeniser.h">
-      <Filter>src\commandsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\Executable.h">
-      <Filter>src\commandsystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\Statement.h">
-      <Filter>src\commandsystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h">
       <Filter>src\eventmanager</Filter>
     </ClInclude>
@@ -3086,6 +3032,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h">
       <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\Win32Registry.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\Game.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\GameManager.h">
+      <Filter>src\settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

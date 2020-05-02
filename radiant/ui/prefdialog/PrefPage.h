@@ -19,7 +19,7 @@ class PrefPage :
 {
 private:
 	// The settings page we're representing
-	const settings::PreferencePage& _settingsPage;
+	const IPreferencePage& _settingsPage;
 
 	// We're holding back any registry write operations until the user clicks OK
 	registry::Buffer _registryBuffer;
@@ -32,7 +32,7 @@ private:
 	wxFlexGridSizer* _table;
 
 public:
-	PrefPage(wxWindow* parent, const settings::PreferencePage& settingsPage);
+	PrefPage(wxWindow* parent, const IPreferencePage& settingsPage);
 
 	// Commit all pending registry write operations.
 	void saveChanges();
@@ -43,7 +43,7 @@ public:
 private:
 	void appendNamedWidget(const std::string& name, wxWindow* widget, bool useFullWidth = true);
 
-	void createItemWidgets(const settings::PreferenceItemBasePtr& item);
+	void createItemWidgets(const IPreferenceItemBase::Ptr& item);
 };
 typedef std::shared_ptr<PrefPage> PrefPagePtr;
 

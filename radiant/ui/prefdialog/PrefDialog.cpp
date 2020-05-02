@@ -47,7 +47,7 @@ PrefDialog::PrefDialog(wxWindow* parent) :
 void PrefDialog::createPages()
 {
 	// Now create all pages
-	GetPreferenceSystem().foreachPage([&](settings::PreferencePage& page)
+	GlobalPreferenceSystem().foreachPage([&](IPreferencePage& page)
 	{
 		// Create a page responsible for this settings::PreferencePage
 		PrefPage* pageWidget = new PrefPage(_notebook, page);

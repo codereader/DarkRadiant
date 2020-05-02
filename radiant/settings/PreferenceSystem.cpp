@@ -4,7 +4,6 @@
 #include "itextstream.h"
 
 #include "modulesystem/StaticModule.h"
-#include "ui/prefdialog/PrefDialog.h"
 
 namespace settings
 {
@@ -16,7 +15,7 @@ IPreferencePage& PreferenceSystem::getPage(const std::string& path)
 	return _rootPage->createOrFindPage(path);
 }
 
-void PreferenceSystem::foreachPage(const std::function<void(PreferencePage&)>& functor)
+void PreferenceSystem::foreachPage(const std::function<void(IPreferencePage&)>& functor)
 {
 	ensureRootPage();
 
@@ -52,10 +51,4 @@ void PreferenceSystem::initialiseModule(const ApplicationContext& ctx)
 // Define the static PreferenceSystem module
 module::StaticModule<PreferenceSystem> preferenceSystemModule;
 
-}
-
-settings::PreferenceSystem& GetPreferenceSystem()
-{
-	return *std::static_pointer_cast<settings::PreferenceSystem>(
-		module::GlobalModuleRegistry().getModule(MODULE_PREFERENCESYSTEM));
 }

@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\libs\eclass.h" />
     <ClInclude Include="..\..\libs\entitylib.h" />
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
+    <ClInclude Include="..\..\libs\GameConfigUtil.h" />
     <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\generic\callback.h" />
     <ClInclude Include="..\..\libs\KeyValueStore.h" />

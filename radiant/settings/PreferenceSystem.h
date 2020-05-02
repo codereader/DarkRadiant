@@ -15,9 +15,7 @@ private:
 public:
 	// Looks up a page for the given path and returns it to the client
 	IPreferencePage& getPage(const std::string& path) override;
-
-	// Internal method to walk over the registered pages
-	void foreachPage(const std::function<void(PreferencePage&)>& functor);
+	void foreachPage(const std::function<void(IPreferencePage&)>& functor) override;
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const override;
@@ -29,10 +27,3 @@ private:
 };
 
 } // namespace
-
-/** 
- * greebo: Direct accessor method for the preferencesystem for situations
- * where the actual PreferenceSystemModule is not loaded yet.
- * Everything else should use the GlobalPreferenceSystem() access method.
- */
-settings::PreferenceSystem& GetPreferenceSystem();

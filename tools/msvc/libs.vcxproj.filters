@@ -185,6 +185,7 @@
       <Filter>string</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\maplib.h" />
+    <ClInclude Include="..\..\libs\GameConfigUtil.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

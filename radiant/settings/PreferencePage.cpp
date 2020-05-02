@@ -96,7 +96,7 @@ PreferencePage& PreferencePage::createOrFindPage(const std::string& path)
 	}
 }
 
-void PreferencePage::foreachChildPage(const std::function<void(PreferencePage&)>& functor)
+void PreferencePage::foreachChildPage(const std::function<void(IPreferencePage&)>& functor)
 {
 	for (const PreferencePagePtr& child : _children)
 	{
@@ -108,9 +108,9 @@ void PreferencePage::foreachChildPage(const std::function<void(PreferencePage&)>
 	}
 }
 
-void PreferencePage::foreachItem(const std::function<void(const PreferenceItemBasePtr&)>& functor) const
+void PreferencePage::foreachItem(const std::function<void(const IPreferenceItemBase::Ptr&)>& functor) const
 {
-	for (const PreferenceItemBasePtr& item : _items)
+	for (const IPreferenceItemBase::Ptr& item : _items)
 	{
 		functor(item);
 	}

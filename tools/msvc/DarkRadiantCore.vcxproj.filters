@@ -23,6 +23,9 @@
     <Filter Include="src\undo">
       <UniqueIdentifier>{365fbce2-bbe0-4f3a-a30a-a4b4dc8f94d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\commandsystem">
+      <UniqueIdentifier>{67aed069-dd61-4b65-9c77-c8cfcc11be9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
@@ -81,6 +84,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp">
       <Filter>src\undo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\commandsystem\CommandSystem.cpp">
+      <Filter>src\commandsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\PreferencePage.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\settings\PreferenceSystem.cpp">
+      <Filter>src\settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +203,36 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\undo\UndoSystem.h">
       <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\commandsystem\CaseInsensitiveCompare.h">
+      <Filter>src\commandsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\commandsystem\Command.h">
+      <Filter>src\commandsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\commandsystem\CommandSystem.h">
+      <Filter>src\commandsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\commandsystem\CommandTokeniser.h">
+      <Filter>src\commandsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\commandsystem\Executable.h">
+      <Filter>src\commandsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\commandsystem\Statement.h">
+      <Filter>src\commandsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\PreferenceItemBase.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\PreferenceItems.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\PreferencePage.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\settings\PreferenceSystem.h">
+      <Filter>src\settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

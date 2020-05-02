@@ -7,7 +7,7 @@
 #include "imodule.h"
 #include "iregistry.h"
 #include "Game.h"
-#include "GameConfiguration.h"
+#include "GameConfigUtil.h"
 
 namespace game
 {
@@ -75,7 +75,7 @@ public:
 	void initialiseModule(const ApplicationContext& ctx) override;
 
 	// greebo: Stores the given config, initialises VFS and constructs a few secondary paths.
-	void applyConfig(const GameConfiguration& config);
+	void applyConfig(const GameConfiguration& config) override;
 
 	// Module-internal accessor to the GameManager instance
 	static Manager& Instance();

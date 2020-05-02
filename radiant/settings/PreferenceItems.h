@@ -19,7 +19,8 @@ namespace settings
 {
 
 class PreferenceLabel :
-	public PreferenceItemBase
+	public PreferenceItemBase,
+	public virtual IPreferenceLabel
 {
 public:
 	PreferenceLabel(const std::string& label) :
@@ -28,7 +29,8 @@ public:
 };
 
 class PreferenceEntry :
-	public PreferenceItemBase
+	public PreferenceItemBase,
+	public virtual IPreferenceLabel
 {
 public:
 	PreferenceEntry(const std::string& label, const std::string& registryKey) :
@@ -37,7 +39,8 @@ public:
 };
 
 class PreferenceCheckbox :
-	public PreferenceItemBase
+	public PreferenceItemBase,
+	public virtual IPreferenceCheckbox
 {
 public:
 	PreferenceCheckbox(const std::string& label, const std::string& registryKey) :
@@ -46,7 +49,8 @@ public:
 };
 
 class PreferenceCombobox :
-	public PreferenceItemBase
+	public PreferenceItemBase,
+	public virtual IPreferenceCombobox
 {
 private:
 	ComboBoxValueList _values;
@@ -60,19 +64,20 @@ public:
 		_storeValueNotIndex(storeValueNotIndex)
 	{}
 
-	const ComboBoxValueList& getValues() const
+	const ComboBoxValueList& getValues() const override
 	{
 		return _values;
 	}
 
-	bool storeValueNotIndex() const
+	bool storeValueNotIndex() const override
 	{
 		return _storeValueNotIndex;
 	}
 };
 
 class PreferencePathEntry :
-	public PreferenceItemBase
+	public PreferenceItemBase,
+	public virtual IPreferencePathEntry
 {
 private:
 	bool _browseDirectories;
@@ -83,14 +88,15 @@ public:
 		_browseDirectories(browseDirectories)
 	{}
 
-	bool browseDirectories() const
+	bool browseDirectories() const override
 	{
 		return _browseDirectories;
 	}
 };
 
 class PreferenceSpinner :
-	public PreferenceItemBase
+	public PreferenceItemBase,
+	public virtual IPreferenceSpinner
 {
 private:
 	double _lower;
@@ -105,24 +111,25 @@ public:
 		_fraction(fraction)
 	{}
 
-	double getLower()
+	double getLower() override
 	{
 		return _lower;
 	}
 
-	double getUpper()
+	double getUpper() override
 	{
 		return _upper;
 	}
 
-	int getFraction()
+	int getFraction() override
 	{
 		return _fraction;
 	}
 };
 
 class PreferenceSlider :
-	public PreferenceItemBase
+	public PreferenceItemBase,
+	public virtual IPreferenceSlider
 {
 private:
 	double _lower;
@@ -141,27 +148,27 @@ public:
 		_factor(1)
 	{}
 
-	double getLower()
+	double getLower() override
 	{
 		return _lower;
 	}
 
-	double getUpper()
+	double getUpper() override
 	{
 		return _upper;
 	}
 
-	double getStepIncrement()
+	double getStepIncrement() override
 	{
 		return _stepIncrement;
 	}
 
-	double getPageIncrement()
+	double getPageIncrement() override
 	{
 		return _pageIncrement;
 	}
 
-	int getFactor()
+	int getFactor() override
 	{
 		return _factor;
 	}

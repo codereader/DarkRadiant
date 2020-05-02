@@ -5,7 +5,6 @@
 #include <functional>
 #include <map>
 #include <wx/panel.h>
-#include "settings/GameConfiguration.h"
 
 namespace ui
 {

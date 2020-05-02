@@ -1,11 +1,14 @@
 #pragma once
 
+#include "ipreferencesystem.h"
+
 namespace settings
 {
 
 // Base class for all pereference items. All of them can carry 
 // a title and a registry key
-class PreferenceItemBase
+class PreferenceItemBase :
+	public virtual IPreferenceItemBase
 {
 protected:
 	std::string _registryKey;
@@ -24,21 +27,20 @@ public:
 
 	virtual ~PreferenceItemBase() {}
 
-	virtual const std::string& getLabel() const
+	virtual const std::string& getLabel() const override
 	{
 		return _label;
 	}
 
-	virtual const std::string& getRegistryKey() const
+	virtual const std::string& getRegistryKey() const override
 	{
 		return _registryKey;
 	}
 
-	virtual void setRegistryKey(const std::string& key)
+	virtual void setRegistryKey(const std::string& key) override
 	{
 		_registryKey = key;
 	}
 };
-typedef std::shared_ptr<PreferenceItemBase> PreferenceItemBasePtr;
 
 } // namespace
