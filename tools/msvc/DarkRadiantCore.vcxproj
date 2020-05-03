@@ -19,6 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp" />
+    <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp" />
+    <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp" />
+    <ClCompile Include="..\..\radiantcore\imagefile\Doom3ImageLoader.cpp" />
+    <ClCompile Include="..\..\radiantcore\imagefile\ImageLoaderWx.cpp" />
+    <ClCompile Include="..\..\radiantcore\imagefile\TGALoader.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\MapFormatManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\Namespace.cpp" />
@@ -50,6 +56,13 @@
     <ClCompile Include="..\..\radiantcore\xmlregistry\XMLRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\radiantcore\imagefile\dds.h" />
+    <ClInclude Include="..\..\radiantcore\imagefile\DDSImage.h" />
+    <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h" />
+    <ClInclude Include="..\..\radiantcore\imagefile\Doom3ImageLoader.h" />
+    <ClInclude Include="..\..\radiantcore\imagefile\ImageLoaderWx.h" />
+    <ClInclude Include="..\..\radiantcore\imagefile\ImageTypeLoader.h" />
+    <ClInclude Include="..\..\radiantcore\imagefile\TGALoader.h" />
     <ClInclude Include="..\..\radiantcore\map\format\MapFormatManager.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\ComplexName.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h" />

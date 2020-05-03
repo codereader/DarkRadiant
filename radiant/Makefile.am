@@ -113,12 +113,6 @@ darkradiant_SOURCES = main.cpp \
                       fonts/GlyphInfo.cpp \
                       fonts/GlyphSet.cpp \
                       fonts/FontManager.cpp \
-                      image/dds.cpp \
-                      image/ddslib.cpp \
-                      image/DDSImage.cpp \
-                      image/Doom3ImageLoader.cpp \
-                      image/ImageLoaderWx.cpp \
-                      image/TGALoader.cpp \
                       map/MapModules.cpp \
                       map/format/Quake3MapFormat.cpp \
                       map/format/Quake4MapFormat.cpp \

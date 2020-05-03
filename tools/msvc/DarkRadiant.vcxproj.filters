@@ -203,9 +203,6 @@
     <Filter Include="src\ui\entitylist">
       <UniqueIdentifier>{cf31bdd4-5049-41b1-bfe6-fafd3b1e8692}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\image">
-      <UniqueIdentifier>{6dc9fca4-5702-4a00-9723-0382b177177f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\uimanager">
       <UniqueIdentifier>{9447d2a6-4742-4c6b-b53c-cd25985c034e}</UniqueIdentifier>
     </Filter>
@@ -990,24 +987,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp">
       <Filter>src\ui\entitylist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\image\dds.cpp">
-      <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\image\DDSImage.cpp">
-      <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\image\ddslib.cpp">
-      <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\image\Doom3ImageLoader.cpp">
-      <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\image\ImageLoaderWx.cpp">
-      <Filter>src\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\image\TGALoader.cpp">
-      <Filter>src\image</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp">
       <Filter>src\uimanager</Filter>
@@ -2402,27 +2381,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h">
       <Filter>src\ui\entitylist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\image\dds.h">
-      <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\image\DDSImage.h">
-      <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\image\ddslib.h">
-      <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\image\Doom3ImageLoader.h">
-      <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\image\ImageLoaderWx.h">
-      <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\image\ImageTypeLoader.h">
-      <Filter>src\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\image\TGALoader.h">
-      <Filter>src\image</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\DialogManager.h">
       <Filter>src\uimanager</Filter>

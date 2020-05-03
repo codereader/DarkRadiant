@@ -33,6 +33,12 @@ libradiantcore_la_LDFLAGS = -module -avoid-version \
 
 libradiantcore_la_SOURCES = Radiant.cpp \
                 commandsystem/CommandSystem.cpp \
+                imagefile/dds.cpp \
+                imagefile/ddslib.cpp \
+                imagefile/DDSImage.cpp \
+                imagefile/Doom3ImageLoader.cpp \
+                imagefile/ImageLoaderWx.cpp \
+                imagefile/TGALoader.cpp \
                 log/COutRedirector.cpp \
                 log/LogFile.cpp \
                 log/LogStream.cpp \

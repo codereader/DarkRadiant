@@ -247,12 +247,6 @@
     <ClCompile Include="..\..\radiant\fonts\FontManager.cpp" />
     <ClCompile Include="..\..\radiant\fonts\GlyphInfo.cpp" />
     <ClCompile Include="..\..\radiant\fonts\GlyphSet.cpp" />
-    <ClCompile Include="..\..\radiant\image\dds.cpp" />
-    <ClCompile Include="..\..\radiant\image\DDSImage.cpp" />
-    <ClCompile Include="..\..\radiant\image\ddslib.cpp" />
-    <ClCompile Include="..\..\radiant\image\Doom3ImageLoader.cpp" />
-    <ClCompile Include="..\..\radiant\image\ImageLoaderWx.cpp" />
-    <ClCompile Include="..\..\radiant\image\TGALoader.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerManager.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerModule.cpp" />
@@ -1073,13 +1067,6 @@
     <ClInclude Include="..\..\radiant\fonts\FontManager.h" />
     <ClInclude Include="..\..\radiant\fonts\GlyphInfo.h" />
     <ClInclude Include="..\..\radiant\fonts\GlyphSet.h" />
-    <ClInclude Include="..\..\radiant\image\dds.h" />
-    <ClInclude Include="..\..\radiant\image\DDSImage.h" />
-    <ClInclude Include="..\..\radiant\image\ddslib.h" />
-    <ClInclude Include="..\..\radiant\image\Doom3ImageLoader.h" />
-    <ClInclude Include="..\..\radiant\image\ImageLoaderWx.h" />
-    <ClInclude Include="..\..\radiant\image\ImageTypeLoader.h" />
-    <ClInclude Include="..\..\radiant\image\TGALoader.h" />
     <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\layers\LayerManager.h" />
     <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h" />

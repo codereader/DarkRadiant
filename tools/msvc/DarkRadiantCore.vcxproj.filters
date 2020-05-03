@@ -38,6 +38,9 @@
     <Filter Include="src\map\namespace">
       <UniqueIdentifier>{bbd860af-100a-4da4-9d58-0698fff513f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\imagefile">
+      <UniqueIdentifier>{1de9fe7a-dbc8-403f-bf97-8132e505114c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -126,6 +129,24 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\namespace\NamespaceFactory.cpp">
       <Filter>src\map\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\Doom3ImageLoader.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\ImageLoaderWx.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\TGALoader.cpp">
+      <Filter>src\imagefile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -287,6 +308,27 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\namespace\UniqueNameSet.h">
       <Filter>src\map\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\dds.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\DDSImage.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\Doom3ImageLoader.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\ImageLoaderWx.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\ImageTypeLoader.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\TGALoader.h">
+      <Filter>src\imagefile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
