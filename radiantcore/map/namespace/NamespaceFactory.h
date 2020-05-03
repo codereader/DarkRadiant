@@ -1,5 +1,4 @@
-#ifndef _NAMESPACE_FACTORY_H__
-#define _NAMESPACE_FACTORY_H__
+#pragma once
 
 #include "inamespace.h"
 
@@ -10,12 +9,11 @@ public:
 	/**
 	 * Creates and returns a new Namespace.
 	 */
-	virtual INamespacePtr createNamespace();
+	virtual INamespacePtr createNamespace() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual const std::string& getName() const override;
+	virtual const StringSet& getDependencies() const override;
+	virtual void initialiseModule(const ApplicationContext& ctx) override;
 };
 
-#endif /* _NAMESPACE_FACTORY_H__ */
