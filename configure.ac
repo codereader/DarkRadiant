@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [2.8.0])
+AC_INIT([darkradiant], [2.9.0])
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 
@@ -355,11 +355,13 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  Makefile
                  radiant/Makefile
+                 radiantcore/Makefile
                  install/i18n/Makefile.in
                  doc/Makefile
                  libs/Makefile
                  libs/wxutil/Makefile
                  libs/math/Makefile
+                 libs/module/Makefile
                  libs/scene/Makefile
                  libs/xmlutil/Makefile
                  plugins/Makefile

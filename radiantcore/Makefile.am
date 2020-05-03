@@ -1,7 +1,7 @@
-#pluginsdir = $(pkglibdir)/plugins
+coredir = $(pkglibdir)/
 core_LTLIBRARIES = core.la
 
-core_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
+core_la_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
               -DLOCALEDIR='"$(localedir)"' \
               -DHTMLDIR='"$(htmldir)"' \
@@ -11,7 +11,7 @@ core_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               $(XML_CFLAGS) \
               $(FTGL_CFLAGS)
 
-core_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
+core_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.la \
              $(top_builddir)/libs/wxutil/libwxutil.la \
              $(top_builddir)/libs/xmlutil/libxmlutil.la \
              $(top_builddir)/libs/math/libmath.la
