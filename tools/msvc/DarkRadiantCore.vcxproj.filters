@@ -26,6 +26,9 @@
     <Filter Include="src\messagebus">
       <UniqueIdentifier>{169ccdc4-199a-489e-a87d-81209e0b9252}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\scenegraph">
+      <UniqueIdentifier>{51a3447e-6021-4fc5-8c05-20531489b2a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -93,6 +96,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\Radiant.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\scenegraph\Octree.cpp">
+      <Filter>src\scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraph.cpp">
+      <Filter>src\scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraphFactory.cpp">
+      <Filter>src\scenegraph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -227,6 +239,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\Radiant.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\scenegraph\Octree.h">
+      <Filter>src\scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\scenegraph\OctreeNode.h">
+      <Filter>src\scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraph.h">
+      <Filter>src\scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraphFactory.h">
+      <Filter>src\scenegraph</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

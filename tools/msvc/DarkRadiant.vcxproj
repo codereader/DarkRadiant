@@ -761,9 +761,6 @@
     <ClCompile Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.cpp" />
     <ClCompile Include="..\..\radiant\render\LinearLightList.cpp" />
     <ClCompile Include="..\..\radiant\render\View.cpp" />
-    <ClCompile Include="..\..\radiant\scenegraph\Octree.cpp" />
-    <ClCompile Include="..\..\radiant\scenegraph\SceneGraph.cpp" />
-    <ClCompile Include="..\..\radiant\scenegraph\SceneGraphFactory.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Patch.cpp" />
     <ClCompile Include="..\..\radiant\selection\algorithm\Planes.cpp" />
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp" />
@@ -1183,10 +1180,6 @@
     <ClInclude Include="..\..\radiant\render\backend\OpenGLStateManager.h" />
     <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
-    <ClInclude Include="..\..\radiant\scenegraph\Octree.h" />
-    <ClInclude Include="..\..\radiant\scenegraph\OctreeNode.h" />
-    <ClInclude Include="..\..\radiant\scenegraph\SceneGraph.h" />
-    <ClInclude Include="..\..\radiant\scenegraph\SceneGraphFactory.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Planes.h" />

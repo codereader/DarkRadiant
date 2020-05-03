@@ -206,9 +206,6 @@ darkradiant_SOURCES = main.cpp \
 					  render/RenderSystemFactory.cpp \
 					  render/View.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
-                      scenegraph/SceneGraph.cpp \
-                      scenegraph/Octree.cpp \
-                      scenegraph/SceneGraphFactory.cpp \
                       shaders/CameraCubeMapDecl.cpp \
                       shaders/textures/TextureManipulator.cpp \
                       $(SHADERS_SOURCES) \

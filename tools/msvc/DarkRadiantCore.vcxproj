@@ -29,6 +29,9 @@
     <ClCompile Include="..\..\radiantcore\log\StringLogDevice.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleRegistry.cpp" />
+    <ClCompile Include="..\..\radiantcore\scenegraph\Octree.cpp" />
+    <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraph.cpp" />
+    <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraphFactory.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\Game.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\GameManager.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\LanguageManager.cpp" />
@@ -63,6 +66,10 @@
     <ClInclude Include="..\..\radiantcore\messagebus\MessageBus.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleRegistry.h" />
+    <ClInclude Include="..\..\radiantcore\scenegraph\Octree.h" />
+    <ClInclude Include="..\..\radiantcore\scenegraph\OctreeNode.h" />
+    <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraph.h" />
+    <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraphFactory.h" />
     <ClInclude Include="..\..\radiantcore\settings\Game.h" />
     <ClInclude Include="..\..\radiantcore\settings\GameManager.h" />
     <ClInclude Include="..\..\radiantcore\settings\LanguageManager.h" />

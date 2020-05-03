@@ -41,6 +41,9 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 log/StringLogDevice.cpp \
                 modulesystem/ModuleLoader.cpp \
                 modulesystem/ModuleRegistry.cpp \
+                scenegraph/SceneGraph.cpp \
+                scenegraph/Octree.cpp \
+                scenegraph/SceneGraphFactory.cpp \
                 settings/Game.cpp \
                 settings/GameManager.cpp \
                 settings/LanguageManager.cpp \

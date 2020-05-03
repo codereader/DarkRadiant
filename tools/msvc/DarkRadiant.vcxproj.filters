@@ -275,9 +275,6 @@
     <Filter Include="src\shaders\textures">
       <UniqueIdentifier>{46e8ff59-4a11-4333-b0ec-5c2db40c76fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\scenegraph">
-      <UniqueIdentifier>{14eccd63-41f4-4f83-80ba-0f593bccbc60}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\md5model">
       <UniqueIdentifier>{9ece5d35-1ea4-4651-aa2c-b8a9c80b62da}</UniqueIdentifier>
     </Filter>
@@ -1353,15 +1350,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\shaders\textures\TextureManipulator.cpp">
       <Filter>src\shaders\textures</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\scenegraph\Octree.cpp">
-      <Filter>src\scenegraph</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\scenegraph\SceneGraph.cpp">
-      <Filter>src\scenegraph</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\scenegraph\SceneGraphFactory.cpp">
-      <Filter>src\scenegraph</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\md5model\MD5Anim.cpp">
       <Filter>src\md5model</Filter>
@@ -2825,18 +2813,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\shaders\textures\TextureManipulator.h">
       <Filter>src\shaders\textures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\scenegraph\Octree.h">
-      <Filter>src\scenegraph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\scenegraph\OctreeNode.h">
-      <Filter>src\scenegraph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\scenegraph\SceneGraph.h">
-      <Filter>src\scenegraph</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\scenegraph\SceneGraphFactory.h">
-      <Filter>src\scenegraph</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\md5model\MD5Anim.h">
       <Filter>src\md5model</Filter>
