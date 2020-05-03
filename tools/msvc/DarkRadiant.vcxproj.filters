@@ -29,9 +29,6 @@
     <Filter Include="src\modulesystem">
       <UniqueIdentifier>{2ab7bf93-24a1-444a-aa28-ae77c05ec366}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\namespace">
-      <UniqueIdentifier>{733eeb6e-0b1a-4fb9-89fd-ba073293c814}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\patch">
       <UniqueIdentifier>{2d28a51d-8d67-4abb-9f17-28534f1e1652}</UniqueIdentifier>
     </Filter>
@@ -427,12 +424,6 @@
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\namespace\Namespace.cpp">
-      <Filter>src\namespace</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\namespace\NamespaceFactory.cpp">
-      <Filter>src\namespace</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\patch\Patch.cpp">
       <Filter>src\patch</Filter>
     </ClCompile>
@@ -795,9 +786,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp">
       <Filter>src\ui\modelselector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp">
-      <Filter>src\namespace</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp">
       <Filter>src\patch\algorithm</Filter>
@@ -1682,18 +1670,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h">
       <Filter>src\modulesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\namespace\ComplexName.h">
-      <Filter>src\namespace</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\namespace\Namespace.h">
-      <Filter>src\namespace</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\namespace\NamespaceFactory.h">
-      <Filter>src\namespace</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\namespace\UniqueNameSet.h">
-      <Filter>src\namespace</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\patch\Patch.h">
       <Filter>src\patch</Filter>

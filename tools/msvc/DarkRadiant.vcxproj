@@ -731,7 +731,6 @@
     <ClCompile Include="..\..\radiant\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
-    <ClCompile Include="..\..\radiant\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiant\particles\editor\ParticleEditor.cpp" />
     <ClCompile Include="..\..\radiant\particles\ParticleDef.cpp" />
     <ClCompile Include="..\..\radiant\particles\ParticleNode.cpp" />
@@ -862,8 +861,6 @@
     <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Traverse.cpp" />
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp" />
-    <ClCompile Include="..\..\radiant\namespace\Namespace.cpp" />
-    <ClCompile Include="..\..\radiant\namespace\NamespaceFactory.cpp" />
     <ClCompile Include="..\..\radiant\patch\Patch.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchModule.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchNode.cpp" />
@@ -1317,10 +1314,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\WorldspawnArgFinder.h" />
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h" />
-    <ClInclude Include="..\..\radiant\namespace\ComplexName.h" />
-    <ClInclude Include="..\..\radiant\namespace\Namespace.h" />
-    <ClInclude Include="..\..\radiant\namespace\NamespaceFactory.h" />
-    <ClInclude Include="..\..\radiant\namespace\UniqueNameSet.h" />
     <ClInclude Include="..\..\radiant\patch\Patch.h" />
     <ClInclude Include="..\..\radiant\patch\PatchConstants.h" />
     <ClInclude Include="..\..\radiant\patch\PatchControl.h" />

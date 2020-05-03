@@ -35,6 +35,9 @@
     <Filter Include="src\map\format">
       <UniqueIdentifier>{6492e1c1-fe5d-43a5-b408-674741ae3c92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map\namespace">
+      <UniqueIdentifier>{bbd860af-100a-4da4-9d58-0698fff513f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -114,6 +117,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\format\MapFormatManager.cpp">
       <Filter>src\map\format</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp">
+      <Filter>src\map\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\namespace\Namespace.cpp">
+      <Filter>src\map\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\namespace\NamespaceFactory.cpp">
+      <Filter>src\map\namespace</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +275,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\format\MapFormatManager.h">
       <Filter>src\map\format</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\namespace\ComplexName.h">
+      <Filter>src\map\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h">
+      <Filter>src\map\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\namespace\NamespaceFactory.h">
+      <Filter>src\map\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\namespace\UniqueNameSet.h">
+      <Filter>src\map\namespace</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

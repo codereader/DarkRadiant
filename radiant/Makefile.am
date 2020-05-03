@@ -179,9 +179,6 @@ darkradiant_SOURCES = main.cpp \
                       modelfile/picomodel/pm_terrain.c \
                       modelfile/picomodel/pm_ms3d.c \
                       modelfile/picomodel/pm_3ds.c \
-                      namespace/ComplexName.cpp \
-                      namespace/Namespace.cpp \
-                      namespace/NamespaceFactory.cpp \
                       particles/ParticleNode.cpp \
                       particles/RenderableParticle.cpp \
                       particles/RenderableParticleBunch.cpp \

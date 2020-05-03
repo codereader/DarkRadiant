@@ -20,6 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\map\format\MapFormatManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\namespace\Namespace.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\namespace\NamespaceFactory.cpp" />
     <ClCompile Include="..\..\radiantcore\Radiant.cpp" />
     <ClCompile Include="..\..\radiantcore\commandsystem\CommandSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\log\COutRedirector.cpp" />
@@ -48,6 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\map\format\MapFormatManager.h" />
+    <ClInclude Include="..\..\radiantcore\map\namespace\ComplexName.h" />
+    <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h" />
+    <ClInclude Include="..\..\radiantcore\map\namespace\NamespaceFactory.h" />
+    <ClInclude Include="..\..\radiantcore\map\namespace\UniqueNameSet.h" />
     <ClInclude Include="..\..\radiantcore\Radiant.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\CaseInsensitiveCompare.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\Command.h" />
