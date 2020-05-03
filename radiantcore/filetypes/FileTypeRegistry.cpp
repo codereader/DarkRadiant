@@ -8,23 +8,18 @@
 #include "string/case_conv.h"
 #include "module/StaticModule.h"
 
-FileTypeRegistry::FileTypeRegistry()
-{
-	registerPattern("*", FileTypePattern(_("All Files"), "*", "*.*"));
-}
-
 void FileTypeRegistry::registerPattern(const std::string& fileType, const FileTypePattern& pattern)
 {
 	// Convert the file extension to lowercase
 	std::string fileTypeLower = string::to_lower_copy(fileType);
 
 	// Find or insert the fileType into the map
-	FileTypes::iterator i = _fileTypes.find(fileTypeLower);
+	auto i = _fileTypes.find(fileTypeLower);
 
 	if (i == _fileTypes.end())
 	{
 		// Not found yet, insert an empty pattern list
-		i = _fileTypes.insert(FileTypes::value_type(fileTypeLower, FileTypePatterns())).first;
+		i = _fileTypes.emplace(fileTypeLower, FileTypePatterns()).first;
 	}
 
 	// At this point we have a valid iterator
@@ -52,7 +47,7 @@ void FileTypeRegistry::registerPattern(const std::string& fileType, const FileTy
 FileTypePatterns FileTypeRegistry::getPatternsForType(const std::string& fileType)
 {
 	// Convert the file extension to lowercase and try to find the matching list
-	FileTypes::const_iterator i = _fileTypes.find(string::to_lower_copy(fileType));
+	auto i = _fileTypes.find(string::to_lower_copy(fileType));
 
 	return i != _fileTypes.end() ? i->second : FileTypePatterns();
 }
@@ -72,6 +67,8 @@ const StringSet& FileTypeRegistry::getDependencies() const
 void FileTypeRegistry::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	registerPattern("*", FileTypePattern(_("All Files"), "*", "*.*"));
 }
 
 // Static module instance

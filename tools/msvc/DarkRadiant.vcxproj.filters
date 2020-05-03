@@ -260,9 +260,6 @@
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\filetypes">
-      <UniqueIdentifier>{92c13fe5-4911-4731-a5f0-d6c0ae88ba6a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\shaders">
       <UniqueIdentifier>{73fb0d6a-5dee-4094-8a6b-8860eed0ea87}</UniqueIdentifier>
     </Filter>
@@ -1278,9 +1275,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp">
       <Filter>src\eventmanager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\filetypes\FileTypeRegistry.cpp">
-      <Filter>src\filetypes</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\shaders\CameraCubeMapDecl.cpp">
       <Filter>src\shaders</Filter>
@@ -2687,9 +2681,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h">
       <Filter>src\eventmanager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\filetypes\FileTypeRegistry.h">
-      <Filter>src\filetypes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\shaders\CameraCubeMapDecl.h">
       <Filter>src\shaders</Filter>

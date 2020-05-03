@@ -239,7 +239,6 @@
     <ClCompile Include="..\..\radiant\eventmanager\Statement.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Toggle.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp" />
-    <ClCompile Include="..\..\radiant\filetypes\FileTypeRegistry.cpp" />
     <ClCompile Include="..\..\radiant\filters\BasicFilterSystem.cpp" />
     <ClCompile Include="..\..\radiant\filters\XMLFilter.cpp" />
     <ClCompile Include="..\..\radiant\filters\XmlFilterEventAdapter.cpp" />
@@ -1056,7 +1055,6 @@
     <ClInclude Include="..\..\radiant\eventmanager\Statement.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Toggle.h" />
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h" />
-    <ClInclude Include="..\..\radiant\filetypes\FileTypeRegistry.h" />
     <ClInclude Include="..\..\radiant\filters\BasicFilterSystem.h" />
     <ClInclude Include="..\..\radiant\filters\InstanceUpdateWalker.h" />
     <ClInclude Include="..\..\radiant\filters\SetObjectSelectionByFilterWalker.h" />

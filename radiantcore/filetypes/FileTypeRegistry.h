@@ -24,11 +24,6 @@ private:
 	FileTypes _fileTypes;
 
 public:
-	/*
-	 * Constructor, adds the "All Files" type.
-	 */
-	FileTypeRegistry();
-	
 	// IFileTypeRegistry implementation
 	void registerPattern(const std::string& fileType, const FileTypePattern& pattern) override;
 
@@ -39,4 +34,3 @@ public:
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
 };
-typedef std::shared_ptr<FileTypeRegistry> FileTypeRegistryPtr;

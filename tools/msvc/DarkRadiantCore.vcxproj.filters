@@ -41,6 +41,9 @@
     <Filter Include="src\imagefile">
       <UniqueIdentifier>{1de9fe7a-dbc8-403f-bf97-8132e505114c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\filetypes">
+      <UniqueIdentifier>{47a1f568-f5e5-45cc-ba53-ae308447f576}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -147,6 +150,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\imagefile\ImageLoader.cpp">
       <Filter>src\imagefile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\filetypes\FileTypeRegistry.cpp">
+      <Filter>src\filetypes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -329,6 +335,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\ImageLoader.h">
       <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\filetypes\FileTypeRegistry.h">
+      <Filter>src\filetypes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
