@@ -1,19 +1,19 @@
-libsdir = $(top_srcdir)/libs
+
 AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
               -DLOCALEDIR='"$(localedir)"' \
               -DHTMLDIR='"$(htmldir)"' \
               -I$(top_srcdir)/include \
-              -I$(libsdir) \
+              -I$(top_srcdir)/libs \
               $(LIBSIGC_CFLAGS) \
               $(XML_CFLAGS) \
               $(FTGL_CFLAGS)
 
 # Clusters of source files common to executable and tests
-VFS_SOURCES = vfs/DeflatedInputStream.cpp \
-              vfs/DirectoryArchive.cpp \
-              vfs/Doom3FileSystem.cpp \
-              vfs/ZipArchive.cpp
+#VFS_SOURCES = vfs/DeflatedInputStream.cpp \
+#              vfs/DirectoryArchive.cpp \
+#              vfs/Doom3FileSystem.cpp \
+#              vfs/ZipArchive.cpp
 SHADERS_SOURCES = shaders/Doom3ShaderLayer.cpp \
                   shaders/TableDefinition.cpp \
                   shaders/textures/GLTextureManager.cpp
@@ -37,7 +37,8 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
-                    $(top_builddir)/libs/math/libmath.la
+                    $(top_builddir)/libs/math/libmath.la \
+                    $(top_builddir)/libs/module/libmodule.la
 darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       RadiantModule.cpp \
@@ -335,10 +336,6 @@ darkradiant_SOURCES = main.cpp \
                       uimanager/menu/MenuElement.cpp \
                       uimanager/UIManager.cpp \
                       uimanager/SoundShaderPreview.cpp \
-                      $(VFS_SOURCES) \
-                      vfs/Doom3FileSystemModule.cpp \
-                      xmlregistry/RegistryTree.cpp \
-                      xmlregistry/XMLRegistry.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
                       xyview/tools/ClipperTool.cpp \
 					  xyview/tools/MeasurementTool.cpp \
@@ -356,11 +353,7 @@ darkradiant_SOURCES = main.cpp \
                       layers/LayerModule.cpp \
                       layers/LayerManager.cpp \
 					  layers/LayerUsageBreakdown.cpp \
-                      modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
-                      modulesystem/ModuleLoader.cpp \
-                      modulesystem/ModuleRegistry.cpp \
-                      modulesystem/StaticModule.cpp \
                       selection/SelectedNodeList.cpp \
 					  selection/clipboard/Clipboard.cpp \
                       selection/shaderclipboard/ShaderClipboard.cpp \
@@ -399,10 +392,6 @@ darkradiant_SOURCES = main.cpp \
 					  selection/group/SelectionGroupInfoFileModule.cpp \
                       selection/manipulators/TranslateManipulator.cpp \
                       selection/manipulators/ModelScaleManipulator.cpp \
-                      settings/Game.cpp \
-                      settings/GameManager.cpp \
-                      settings/PreferenceSystem.cpp \
-					  settings/PreferencePage.cpp \
                       settings/Win32Registry.cpp \
 					  patch/algorithm/General.cpp \
 					  patch/algorithm/Prefab.cpp \
@@ -445,12 +434,6 @@ darkradiant_SOURCES = main.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
                       log/Console.cpp \
-                      log/LogStream.cpp \
-                      log/LogWriter.cpp \
-                      log/COutRedirector.cpp \
-                      log/StringLogDevice.cpp \
-                      log/LogStreamBuf.cpp \
-                      log/LogFile.cpp \
                       undo/UndoSystem.cpp \
                       model/ModelCache.cpp \
                       model/ModelScalePreserver.cpp \
@@ -467,8 +450,8 @@ facePlaneTest_SOURCES = test/facePlaneTest.cpp \
                         brush/FacePlane.cpp
 facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
 
-vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
-vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
+#vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
+#vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
 
-shadersTest_SOURCES = test/shadersTest.cpp $(SHADERS_SOURCES) $(VFS_SOURCES)
-shadersTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
+#shadersTest_SOURCES = test/shadersTest.cpp $(SHADERS_SOURCES) #$(VFS_SOURCES)
+#shadersTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
