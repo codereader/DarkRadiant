@@ -397,9 +397,6 @@
     <ClCompile Include="..\..\radiant\map\MapFileManager.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\MapFormatManager.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\MapPosition.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
@@ -1639,9 +1636,6 @@
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\MapFileManager.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\MapFormatManager.h">
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\MapPosition.h">

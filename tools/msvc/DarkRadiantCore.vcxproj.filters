@@ -29,6 +29,12 @@
     <Filter Include="src\scenegraph">
       <UniqueIdentifier>{51a3447e-6021-4fc5-8c05-20531489b2a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map">
+      <UniqueIdentifier>{899ea81c-34a8-4c34-bd28-54a2699f1a4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\map\format">
+      <UniqueIdentifier>{6492e1c1-fe5d-43a5-b408-674741ae3c92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -105,6 +111,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraphFactory.cpp">
       <Filter>src\scenegraph</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\format\MapFormatManager.cpp">
+      <Filter>src\map\format</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,6 +260,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraphFactory.h">
       <Filter>src\scenegraph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\format\MapFormatManager.h">
+      <Filter>src\map\format</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

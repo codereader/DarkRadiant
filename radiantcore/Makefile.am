@@ -39,6 +39,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 log/LogStreamBuf.cpp \
                 log/LogWriter.cpp \
                 log/StringLogDevice.cpp \
+                map/format/MapFormatManager.cpp \
                 modulesystem/ModuleLoader.cpp \
                 modulesystem/ModuleRegistry.cpp \
                 scenegraph/SceneGraph.cpp \

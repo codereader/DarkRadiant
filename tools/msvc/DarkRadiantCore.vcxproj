@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\radiantcore\map\format\MapFormatManager.cpp" />
     <ClCompile Include="..\..\radiantcore\Radiant.cpp" />
     <ClCompile Include="..\..\radiantcore\commandsystem\CommandSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\log\COutRedirector.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="..\..\radiantcore\xmlregistry\XMLRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\radiantcore\map\format\MapFormatManager.h" />
     <ClInclude Include="..\..\radiantcore\Radiant.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\CaseInsensitiveCompare.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\Command.h" />

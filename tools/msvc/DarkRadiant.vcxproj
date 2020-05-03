@@ -852,7 +852,6 @@
     <ClCompile Include="..\..\radiant\map\FindMapElements.cpp" />
     <ClCompile Include="..\..\radiant\map\Map.cpp" />
     <ClCompile Include="..\..\radiant\map\MapFileManager.cpp" />
-    <ClCompile Include="..\..\radiant\map\MapFormatManager.cpp" />
     <ClCompile Include="..\..\radiant\map\MapPosition.cpp" />
     <ClCompile Include="..\..\radiant\map\MapPositionManager.cpp" />
     <ClCompile Include="..\..\radiant\map\MapResource.cpp" />
@@ -1303,7 +1302,6 @@
     <ClInclude Include="..\..\radiant\map\FindMapElements.h" />
     <ClInclude Include="..\..\radiant\map\Map.h" />
     <ClInclude Include="..\..\radiant\map\MapFileManager.h" />
-    <ClInclude Include="..\..\radiant\map\MapFormatManager.h" />
     <ClInclude Include="..\..\radiant\map\MapPosition.h" />
     <ClInclude Include="..\..\radiant\map\MapPositionManager.h" />
     <ClInclude Include="..\..\radiant\map\MapResource.h" />

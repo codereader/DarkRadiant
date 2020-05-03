@@ -424,7 +424,6 @@ darkradiant_SOURCES = main.cpp \
                       map/AutoSaver.cpp \
                       map/StartupMapLoader.cpp \
                       map/MapResourceManager.cpp \
-                      map/MapFormatManager.cpp \
 					  map/AasFileManager.cpp \
 					  map/RenderableAasFile.cpp \
                       clipper/ClipPoint.cpp \
