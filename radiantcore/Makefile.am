@@ -1,7 +1,7 @@
-coredir = $(pkglibdir)/
-core_LTLIBRARIES = core.la
+radiantcoredir = $(pkglibdir)
+radiantcore_LTLIBRARIES = radiantcore.la
 
-core_la_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
+radiantcore_la_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
               -DLOCALEDIR='"$(localedir)"' \
               -DHTMLDIR='"$(htmldir)"' \
@@ -11,12 +11,12 @@ core_la_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               $(XML_CFLAGS) \
               $(FTGL_CFLAGS)
 
-core_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.la \
+radiantcore_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.la \
              $(top_builddir)/libs/wxutil/libwxutil.la \
              $(top_builddir)/libs/xmlutil/libxmlutil.la \
              $(top_builddir)/libs/math/libmath.la
 
-core_la_LDFLAGS = -module -avoid-version \
+radiantcore_la_LDFLAGS = -module -avoid-version \
                     $(XML_LIBS) \
                     $(GLEW_LIBS) \
                     $(GL_LIBS) \
@@ -31,7 +31,7 @@ core_la_LDFLAGS = -module -avoid-version \
                     $(WX_LIBS) \
                     $(Z_LIBS)
 
-core_la_SOURCES = Radiant.cpp \
+radiantcore_la_SOURCES = Radiant.cpp \
                 commandsystem/CommandSystem.cpp \
                 log/COutRedirector.cpp \
                 log/LogFile.cpp \

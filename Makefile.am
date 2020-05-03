@@ -38,8 +38,4 @@ scripts_DATA = $(top_srcdir)/install/scripts/*.py
 commandsdir = $(scriptsdir)/commands
 commands_DATA = $(top_srcdir)/install/scripts/commands/*.py
 
-# Install sourceviewer synax and colour files
-#sourceviewerdir = $(pkglibdir)/sourceviewer
-#sourceviewer_DATA = $(top_srcdir)/install/sourceviewer/*
-
 EXTRA_DIST = config.rpath

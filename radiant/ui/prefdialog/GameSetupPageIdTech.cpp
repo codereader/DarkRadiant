@@ -13,6 +13,7 @@
 #include <wx/panel.h>
 
 #include "string/trim.h"
+#include "registry/registry.h" 
 #include "os/file.h"
 #include "os/path.h"
 #include "settings/Win32Registry.h"

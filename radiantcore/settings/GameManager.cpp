@@ -22,7 +22,6 @@
 
 #include "wxutil/dialog/MessageBox.h"
 #include "module/StaticModule.h"
-#include "modulesystem/ApplicationContextImpl.h"
 #include "GameConfigNeededMessage.h"
 
 #include <sigc++/bind.h>
