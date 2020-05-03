@@ -36,7 +36,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 imagefile/dds.cpp \
                 imagefile/ddslib.cpp \
                 imagefile/DDSImage.cpp \
-                imagefile/Doom3ImageLoader.cpp \
+                imagefile/ImageLoader.cpp \
                 imagefile/ImageLoaderWx.cpp \
                 imagefile/TGALoader.cpp \
                 log/COutRedirector.cpp \

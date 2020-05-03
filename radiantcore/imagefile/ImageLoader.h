@@ -9,29 +9,33 @@ namespace image
 {
 
 /// ImageLoader implementing module
-class Doom3ImageLoader: public ImageLoader
+class ImageLoader: 
+    public IImageLoader
 {
+private:
     // Map of image extension to loader class. Multiple image extensions may
     // map to the same loader class.
     typedef std::map<std::string, ImageTypeLoader::Ptr> LoadersByExtension;
     LoadersByExtension _loadersByExtension;
 
+    ImageTypeLoader::Extensions _extensions;
+
 private:
-    void addLoaderToMap(ImageTypeLoader::Ptr loader);
+    void addLoaderToMap(const ImageTypeLoader::Ptr& loader);
 
 public:
 
     // Construct and initialise loaders
-    Doom3ImageLoader();
+    ImageLoader();
 
     // ImageLoader implementation
-    ImagePtr imageFromVFS(const std::string& vfsPath) const;
-	ImagePtr imageFromFile(const std::string& filename) const;
+    ImagePtr imageFromVFS(const std::string& vfsPath) const override;
+	ImagePtr imageFromFile(const std::string& filename) const override;
 
     // RegisterableModule implementation
-    const std::string& getName() const;
-    const StringSet& getDependencies() const;
-    void initialiseModule(const ApplicationContext&) { }
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const ApplicationContext&) override;
 };
 
 }

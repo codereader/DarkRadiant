@@ -1,4 +1,4 @@
-#include "Doom3ImageLoader.h"
+#include "ImageLoader.h"
 #include "ImageLoaderWx.h"
 #include "TGALoader.h"
 #include "dds.h"
@@ -19,45 +19,21 @@ namespace image
 
 namespace
 {
-
-// Registry key holding texture types
-const char* RKEY_IMAGE_TYPES = "/filetypes/texture//extension";
-
-ImageTypeLoader::Extensions getGameFileImageExtensions()
-{
-	static ImageTypeLoader::Extensions _extensions;
-
-	if (_extensions.empty())
-	{
-		// Load the texture types from the .game file
-		xml::NodeList texTypes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_IMAGE_TYPES);
-
-		for (xml::NodeList::const_iterator i = texTypes.begin();
-			 i != texTypes.end();
-			 ++i)
-		{
-			// Get the file extension
-			std::string extension = i->getContent();
-			string::to_lower(extension);
-            _extensions.push_back(extension);
-		}
-	}
-
-	return _extensions;
+    // Registry key holding texture types
+    const char* const GKEY_IMAGE_TYPES = "/filetypes/texture//extension";
 }
 
-} // namespace
-
-void Doom3ImageLoader::addLoaderToMap(ImageTypeLoader::Ptr loader)
+void ImageLoader::addLoaderToMap(const ImageTypeLoader::Ptr& loader)
 {
-    ImageTypeLoader::Extensions exts = loader->getExtensions();
-    for (auto i = exts.begin(); i != exts.end(); ++i)
+    auto extensions = loader->getExtensions();
+
+    for (const auto& extension : extensions)
     {
-        _loadersByExtension[string::to_lower_copy(*i)] = loader;
+        _loadersByExtension.emplace(string::to_lower_copy(extension), loader);
     }
 }
 
-Doom3ImageLoader::Doom3ImageLoader()
+ImageLoader::ImageLoader()
 {
     // Wx loader (this handles regular image file types like BMP and PNG)
     addLoaderToMap(std::make_shared<ImageLoaderWx>());
@@ -70,17 +46,17 @@ Doom3ImageLoader::Doom3ImageLoader()
 }
 
 // Load image from VFS
-ImagePtr Doom3ImageLoader::imageFromVFS(const std::string& name) const
+ImagePtr ImageLoader::imageFromVFS(const std::string& name) const
 {
-	const ImageTypeLoader::Extensions exts = getGameFileImageExtensions();
-	for (auto i = exts.begin(); i != exts.end(); ++i)
+	for (const auto& extension : _extensions)
 	{
         // Find the loader for this extension
-        auto loaderIter = _loadersByExtension.find(*i);
+        auto loaderIter = _loadersByExtension.find(extension);
+
         if (loaderIter == _loadersByExtension.end())
         {
             rWarning() << "Doom3ImageLoader: failed to find loader"
-                          " for extension '" << *i << "'" << std::endl;
+                          " for extension '" << extension << "'" << std::endl;
             continue;
         }
 
@@ -88,13 +64,13 @@ ImagePtr Doom3ImageLoader::imageFromVFS(const std::string& name) const
 
 		// Construct the full name of the image to load, including the
 		// prefix (e.g. "dds/") and the file extension.
-		std::string fullName = ldr.getPrefix() + name + "." + *i;
+		std::string fullName = ldr.getPrefix() + name + "." + extension;
 
 		// Try to open the file (will fail if the extension does not fit)
-		ArchiveFilePtr file = GlobalFileSystem().openFile(fullName);
+		auto file = GlobalFileSystem().openFile(fullName);
 
 		// Has the file been loaded?
-		if (file != NULL)
+		if (file)
         {
 			// Try to invoke the imageloader with a reference to the
 			// ArchiveFile
@@ -106,13 +82,12 @@ ImagePtr Doom3ImageLoader::imageFromVFS(const std::string& name) const
 	return ImagePtr();
 }
 
-ImagePtr Doom3ImageLoader::imageFromFile(const std::string& filename) const
+ImagePtr ImageLoader::imageFromFile(const std::string& filename) const
 {
     ImagePtr image;
 
     // Construct a DirectoryArchiveFile out of the filename
-    std::shared_ptr<archive::DirectoryArchiveFile> file = 
-        std::make_shared<archive::DirectoryArchiveFile>(filename, filename);
+    auto file = std::make_shared<archive::DirectoryArchiveFile>(filename, filename);
 
     if (!file->failed())
     {
@@ -135,19 +110,38 @@ ImagePtr Doom3ImageLoader::imageFromFile(const std::string& filename) const
     return image;
 }
 
-const std::string& Doom3ImageLoader::getName() const
+const std::string& ImageLoader::getName() const
 {
     static std::string _name(MODULE_IMAGELOADER);
     return _name;
 }
 
-const StringSet& Doom3ImageLoader::getDependencies() const
+const StringSet& ImageLoader::getDependencies() const
 {
-    static StringSet _dependencies; // no dependencies
+    static StringSet _dependencies;
+
+    if (_dependencies.empty())
+    {
+        _dependencies.insert(MODULE_GAMEMANAGER);
+    }
+
     return _dependencies;
 }
 
+void ImageLoader::initialiseModule(const ApplicationContext&)
+{
+    // Load the texture types from the .game file
+    auto texTypes = GlobalGameManager().currentGame()->getLocalXPath(GKEY_IMAGE_TYPES);
+
+    for (const auto& node : texTypes)
+    {
+        // Get the file extension, store it as lowercase
+        std::string extension = node.getContent();
+        _extensions.emplace_back(string::to_lower_copy(extension));
+    }
+}
+
 // Static module instance
-module::StaticModule<Doom3ImageLoader> doom3ImageLoaderModule;
+module::StaticModule<ImageLoader> imageLoaderModule;
 
 } // namespace shaders

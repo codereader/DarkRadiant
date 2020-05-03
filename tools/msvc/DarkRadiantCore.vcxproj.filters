@@ -139,13 +139,13 @@
     <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\imagefile\Doom3ImageLoader.cpp">
-      <Filter>src\imagefile</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\imagefile\ImageLoaderWx.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\imagefile\TGALoader.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\ImageLoader.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
   </ItemGroup>
@@ -318,9 +318,6 @@
     <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h">
       <Filter>src\imagefile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\imagefile\Doom3ImageLoader.h">
-      <Filter>src\imagefile</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\ImageLoaderWx.h">
       <Filter>src\imagefile</Filter>
     </ClInclude>
@@ -328,6 +325,9 @@
       <Filter>src\imagefile</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\TGALoader.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\ImageLoader.h">
       <Filter>src\imagefile</Filter>
     </ClInclude>
   </ItemGroup>
