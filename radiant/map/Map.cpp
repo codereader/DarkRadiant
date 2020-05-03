@@ -52,8 +52,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Transformation.h"
-#include "modulesystem/ModuleRegistry.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "RenderableAasFile.h"
 #include "MapPropertyInfoFileModule.h"
 

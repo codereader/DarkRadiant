@@ -24,7 +24,7 @@
 #include "MouseToolManager.h"
 
 #include "debugging/debugging.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include <iostream>
 
 namespace ui

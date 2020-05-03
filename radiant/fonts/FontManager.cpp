@@ -6,7 +6,7 @@
 #include "iregistry.h"
 #include "igame.h"
 #include "os/path.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include "xmlutil/MissingXMLNodeException.h"
 

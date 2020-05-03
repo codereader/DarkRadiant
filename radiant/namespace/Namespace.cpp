@@ -2,7 +2,7 @@
 
 #include "inameobserver.h"
 #include "itextstream.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include <list>
 

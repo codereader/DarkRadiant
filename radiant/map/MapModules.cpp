@@ -6,7 +6,7 @@
 #include "aas/Doom3AasFileLoader.h"
 
 #include "imapformat.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "Map.h"
 
 // Static module instances

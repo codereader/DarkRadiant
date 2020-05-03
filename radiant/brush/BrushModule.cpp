@@ -15,7 +15,7 @@
 
 #include "registry/registry.h"
 #include "ipreferencesystem.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include "selection/algorithm/Primitives.h"
 

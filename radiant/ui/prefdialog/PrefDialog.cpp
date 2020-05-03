@@ -2,6 +2,7 @@
 
 #include "imainframe.h"
 #include "itextstream.h"
+#include "ipreferencesystem.h"
 
 #include "i18n.h"
 
@@ -13,9 +14,6 @@
 #include "string/split.h"
 #include "string/join.h"
 #include "string/predicate.h"
-
-#include "settings/PreferenceSystem.h"
-#include "settings/PreferencePage.h"
 
 namespace ui
 {

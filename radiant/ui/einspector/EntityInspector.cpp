@@ -14,7 +14,7 @@
 #include "imainframe.h"
 #include "itextstream.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "wxutil/dialog/MessageBox.h"

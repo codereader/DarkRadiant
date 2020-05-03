@@ -16,7 +16,7 @@
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mru/MRU.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "selection/algorithm/General.h"
 #include "brush/csg/CSG.h"
 

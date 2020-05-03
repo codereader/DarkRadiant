@@ -14,7 +14,7 @@
 #include "SelectionGroupInfoFileModule.h"
 #include "wxutil/menu/MenuItem.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace selection
 {

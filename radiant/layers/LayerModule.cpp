@@ -6,7 +6,7 @@
 #include "imapinfofile.h"
 #include "imap.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "LayerManager.h"
 #include "LayerInfoFileModule.h"
 

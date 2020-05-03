@@ -11,7 +11,7 @@
 #include "itexdef.h"
 
 #include "registry/registry.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "ClipPoint.h"
 #include "brush/csg/CSG.h"
 #include "ui/texturebrowser/TextureBrowser.h"

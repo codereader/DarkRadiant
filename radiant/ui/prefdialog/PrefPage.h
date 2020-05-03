@@ -1,9 +1,9 @@
 #pragma once
 
+#include "ipreferencesystem.h"
 #include <wx/scrolwin.h>
 
 #include "registry/buffer.h"
-#include "settings/PreferencePage.h"
 
 class wxFlexGridSizer;
 

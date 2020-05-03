@@ -3,7 +3,7 @@
 #include "MD5ModelLoader.h"
 #include "MD5AnimationCache.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace md5
 {

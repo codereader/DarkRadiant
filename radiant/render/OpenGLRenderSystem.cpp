@@ -4,7 +4,7 @@
 #include "igl.h"
 #include "itextstream.h"
 #include "math/Matrix4.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "backend/GLProgramFactory.h"
 #include "debugging/debugging.h"
 

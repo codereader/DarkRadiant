@@ -22,7 +22,7 @@
 #include "ui/mainframe/TopLevelFrame.h"
 #include "map/Map.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include <functional>
 #include <fmt/format.h>
 

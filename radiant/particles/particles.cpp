@@ -1,7 +1,7 @@
 #include "ParticlesManager.h"
 
 #include "editor/ParticleEditorModule.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 // Static module instances
 module::StaticModule<particles::ParticlesManager> particlesManagerModule;

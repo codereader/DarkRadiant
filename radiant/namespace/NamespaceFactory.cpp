@@ -2,7 +2,7 @@
 #include "itextstream.h"
 
 #include "Namespace.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 INamespacePtr NamespaceFactory::createNamespace() {
 	return NamespacePtr(new Namespace);

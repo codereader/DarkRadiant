@@ -39,7 +39,7 @@
 #include "DirectoryArchiveTextFile.h"
 #include "SortedFilenames.h"
 #include "ZipArchive.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace vfs
 {

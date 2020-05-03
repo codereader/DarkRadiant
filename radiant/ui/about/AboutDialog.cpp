@@ -13,7 +13,6 @@
 #include <wx/button.h>
 #include <wx/textctrl.h>
 
-#include "modulesystem/ModuleRegistry.h"
 #include <fmt/format.h>
 
 namespace ui {

@@ -10,7 +10,7 @@
 #include "Octree.h"
 #include "SceneGraphFactory.h"
 #include "util/ScopedBoolLock.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace scene
 {

@@ -9,7 +9,7 @@
 #include "iradiant.h"
 
 #include <sigc++/sigc++.h>
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include "SelectionSetInfoFileModule.h"
 #include "SelectionSetToolmenu.h"

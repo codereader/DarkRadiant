@@ -10,7 +10,7 @@
 #include "version.h"
 #include "string/string.h"
 #include "wxutil/IConv.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace registry
 {

@@ -1,5 +1,6 @@
 #include "Splash.h"
 
+#include "imodule.h"
 #include <wx/panel.h>
 #include <wx/dcbuffer.h>
 #include <wx/splash.h>
@@ -7,8 +8,6 @@
 #include <wx/app.h>
 #include <sigc++/retype_return.h>
 #include <sigc++/functors/mem_fun.h>
-
-#include "modulesystem/ModuleRegistry.h"
 
 namespace ui
 {

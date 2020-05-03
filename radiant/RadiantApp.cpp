@@ -8,7 +8,7 @@
 #include "module/CoreModule.h"
 #include "GameConfigNeededMessage.h"
 #include "ui/prefdialog/GameSetupDialog.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include <wx/wxprec.h>
 #include <wx/event.h>

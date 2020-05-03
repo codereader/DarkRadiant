@@ -10,7 +10,7 @@
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "iorthocontextmenu.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "selection/algorithm/Group.h"
 
 #include "wxutil/dialog/MessageBox.h"

@@ -1,5 +1,5 @@
 #include "PatchCreators.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 // Define the static patchcreator modules
 module::StaticModule<Doom3PatchCreator> doom3PatchDef3Creator;

@@ -9,7 +9,7 @@
 
 #include "registry/registry.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "selection/algorithm/General.h"
 #include "camera/GlobalCamera.h"
 #include "wxutil/MouseButton.h"

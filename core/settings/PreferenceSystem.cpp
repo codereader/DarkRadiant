@@ -3,7 +3,7 @@
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace settings
 {

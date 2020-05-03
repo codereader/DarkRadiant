@@ -9,7 +9,7 @@
 #include "ipreferencesystem.h"
 #include "iuimanager.h"
 #include "itextstream.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace ui
 {

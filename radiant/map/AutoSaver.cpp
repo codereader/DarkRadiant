@@ -24,7 +24,7 @@
 #include "string/convert.h"
 #include "map/Map.h"
 #include "modulesystem/ApplicationContextImpl.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "wxutil/dialog/MessageBox.h"
 
 #include <fmt/format.h>

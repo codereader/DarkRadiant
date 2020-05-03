@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include "registry/registry.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "Operation.h"
 #include "StackFiller.h"
 

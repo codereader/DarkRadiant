@@ -2,7 +2,6 @@
 
 #include <functional>
 #include "imodule.h"
-#include "ModuleRegistry.h"
 
 /**
  * greebo: Use a StaticModule to define a static RegisterableModule,

@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include "ifilesystem.h"
 #include "iarchive.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include <iostream>
 

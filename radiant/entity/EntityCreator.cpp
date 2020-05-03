@@ -25,7 +25,7 @@
 #include "generic/GenericEntityNode.h"
 #include "eclassmodel/EclassModelNode.h"
 #include "target/TargetManager.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace entity
 {

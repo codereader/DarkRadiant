@@ -1,11 +1,11 @@
 #include "PrefPage.h"
 
 #include "i18n.h"
+#include "ipreferencesystem.h"
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-#include "settings/PreferenceItems.h"
 #include "PreferenceItem.h"
 
 namespace ui 

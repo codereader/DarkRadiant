@@ -1,7 +1,7 @@
 #include "SpacePartitionRenderer.h"
 
 #include "registry/adaptors.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include <functional>
 
 namespace render

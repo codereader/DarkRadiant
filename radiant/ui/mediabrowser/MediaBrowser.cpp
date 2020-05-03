@@ -34,7 +34,7 @@
 #include "ui/common/TexturePreviewCombo.h"
 
 #include "debugging/ScopedDebugTimer.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include <functional>
 #include "string/predicate.h"

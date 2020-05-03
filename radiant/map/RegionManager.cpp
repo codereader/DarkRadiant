@@ -30,7 +30,7 @@
 #include "selection/algorithm/General.h"
 #include "map/MapResource.h"
 #include "map/Map.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include <memory>
 

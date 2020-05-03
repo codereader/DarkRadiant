@@ -19,7 +19,7 @@
 #include <functional>
 
 #include "debugging/ScopedDebugTimer.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace eclass {
 

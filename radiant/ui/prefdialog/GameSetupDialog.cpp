@@ -3,7 +3,6 @@
 #include "imainframe.h"
 #include "i18n.h"
 #include "igame.h"
-#include "modulesystem/ModuleRegistry.h"
 
 #include "wxutil/dialog/MessageBox.h"
 #include "registry/registry.h"
@@ -13,7 +12,6 @@
 #include <wx/choicebk.h>
 #include <wx/stattext.h>
 #include <wx/button.h>
-#include "settings/GameManager.h"
 
 namespace ui
 {

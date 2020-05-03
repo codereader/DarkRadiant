@@ -12,7 +12,7 @@
 #include <functional>
 #include "string/trim.h"
 #include "string/predicate.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace cmd
 {

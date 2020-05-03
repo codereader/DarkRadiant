@@ -1,5 +1,5 @@
 #include "vfs/Doom3FileSystem.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace vfs
 {

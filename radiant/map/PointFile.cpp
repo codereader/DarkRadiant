@@ -18,7 +18,7 @@
 #include "xyview/GlobalXYWnd.h"
 #include <fmt/format.h>
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #ifdef MessageBox
 #undef MessageBox

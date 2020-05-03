@@ -11,7 +11,7 @@
 #include "CameraSettings.h"
 
 #include "registry/registry.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "wxutil/MouseButton.h"
 
 #include "tools/ShaderClipboardTools.h"

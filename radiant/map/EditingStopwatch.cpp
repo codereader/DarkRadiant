@@ -13,7 +13,7 @@
 
 #include <fmt/format.h>
 #include "string/convert.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "EditingStopwatchInfoFileModule.h"
 
 namespace map

@@ -9,7 +9,7 @@
 #include "igame.h"
 #include "ishaders.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "InstanceUpdateWalker.h"
 #include "SetObjectSelectionByFilterWalker.h"
 

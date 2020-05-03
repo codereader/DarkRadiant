@@ -4,7 +4,7 @@
 #include "ifiletypes.h"
 #include "itextstream.h"
 #include "os/path.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "MapResource.h"
 
 namespace map

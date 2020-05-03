@@ -1525,9 +1525,6 @@
     <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp">
-      <Filter>src\modulesystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
@@ -1696,9 +1693,6 @@
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h">
-      <Filter>src\modulesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h">
       <Filter>src\modulesystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\namespace\ComplexName.h">

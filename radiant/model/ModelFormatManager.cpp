@@ -7,7 +7,7 @@
 #include "ipreferencesystem.h"
 #include "string/case_conv.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace model
 {

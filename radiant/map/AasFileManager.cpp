@@ -7,7 +7,7 @@
 #include "ifilesystem.h"
 #include "eclass.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "ui/aas/AasControlDialog.h"
 
 namespace map

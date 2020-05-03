@@ -1,6 +1,6 @@
 #include "PicoModelModule.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace model
 {

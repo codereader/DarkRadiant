@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "igame.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include "debugging/debugging.h"
 #include "string/case_conv.h"

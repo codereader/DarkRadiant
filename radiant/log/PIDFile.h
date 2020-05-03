@@ -2,7 +2,6 @@
 
 #include "imodule.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "settings/PreferenceSystem.h"
 
 #include "os/file.h"
 #include "string/replace.h"

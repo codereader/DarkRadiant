@@ -12,7 +12,7 @@
 
 #include "os/path.h"
 #include "DirectoryArchiveFile.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace image
 {

@@ -13,7 +13,6 @@
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "map/Map.h"
-#include "modulesystem/ModuleRegistry.h"
 
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
@@ -31,7 +30,7 @@
 #include <wx/window.h>
 #include <wx/menu.h>
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace ui
 {

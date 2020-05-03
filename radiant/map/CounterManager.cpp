@@ -4,7 +4,7 @@
 #include "iuimanager.h"
 #include "selectionlib.h"
 #include "string/string.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include <fmt/format.h>
 

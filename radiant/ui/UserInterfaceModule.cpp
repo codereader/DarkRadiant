@@ -9,7 +9,7 @@
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"

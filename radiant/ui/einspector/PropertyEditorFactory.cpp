@@ -15,7 +15,6 @@
 #include "ClassnamePropertyEditor.h"
 #include "AnglePropertyEditor.h"
 
-#include "modulesystem/ModuleRegistry.h"
 #include <regex>
 
 #include <wx/artprov.h>

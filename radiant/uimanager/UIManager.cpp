@@ -1,5 +1,5 @@
 #include "UIManager.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include "i18n.h"
 #include "itextstream.h"

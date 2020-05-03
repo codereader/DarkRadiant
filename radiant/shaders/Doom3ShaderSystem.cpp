@@ -19,7 +19,7 @@
 #include "ShaderExpression.h"
 
 #include "debugging/ScopedDebugTimer.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include "string/predicate.h"
 #include "string/replace.h"

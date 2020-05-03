@@ -21,7 +21,7 @@
 #include "string/case_conv.h"
 
 #include "wxutil/dialog/MessageBox.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
 #include "GameConfigNeededMessage.h"
 

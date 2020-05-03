@@ -12,7 +12,7 @@
 #include "os/path.h"
 #include "os/file.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "NullModelLoader.h"
 #include <functional>
 

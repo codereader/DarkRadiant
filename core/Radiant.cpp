@@ -9,7 +9,7 @@
 #include "log/LogStream.h"
 #include "log/LogWriter.h"
 #include "log/LogFile.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "messagebus/MessageBus.h"
 
 #ifndef POSIX

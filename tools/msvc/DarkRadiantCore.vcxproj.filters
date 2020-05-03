@@ -31,226 +31,220 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\radiant\modulesystem\ModuleLoader.cpp">
+    <ClCompile Include="..\..\core\modulesystem\ModuleLoader.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\modulesystem\ModuleRegistry.cpp">
+    <ClCompile Include="..\..\core\modulesystem\ModuleRegistry.cpp">
       <Filter>src\modulesystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\modulesystem\StaticModule.cpp">
-      <Filter>src\modulesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\log\COutRedirector.cpp">
+    <ClCompile Include="..\..\core\log\COutRedirector.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\log\LogStream.cpp">
+    <ClCompile Include="..\..\core\log\LogStream.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\log\LogStreamBuf.cpp">
+    <ClCompile Include="..\..\core\log\LogStreamBuf.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\log\LogWriter.cpp">
+    <ClCompile Include="..\..\core\log\LogWriter.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp">
+    <ClCompile Include="..\..\core\log\StringLogDevice.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\Radiant.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\log\LogFile.cpp">
+    <ClCompile Include="..\..\core\log\LogFile.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\LanguageManager.cpp">
+    <ClCompile Include="..\..\core\settings\LanguageManager.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\xmlregistry\RegistryTree.cpp">
+    <ClCompile Include="..\..\core\xmlregistry\RegistryTree.cpp">
       <Filter>src\xmlregistry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\xmlregistry\XMLRegistry.cpp">
+    <ClCompile Include="..\..\core\xmlregistry\XMLRegistry.cpp">
       <Filter>src\xmlregistry</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\DeflatedInputStream.cpp">
+    <ClCompile Include="..\..\core\vfs\DeflatedInputStream.cpp">
       <Filter>src\vfs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\DirectoryArchive.cpp">
+    <ClCompile Include="..\..\core\vfs\DirectoryArchive.cpp">
       <Filter>src\vfs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystem.cpp">
+    <ClCompile Include="..\..\core\vfs\Doom3FileSystem.cpp">
       <Filter>src\vfs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\Doom3FileSystemModule.cpp">
+    <ClCompile Include="..\..\core\vfs\Doom3FileSystemModule.cpp">
       <Filter>src\vfs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\vfs\ZipArchive.cpp">
+    <ClCompile Include="..\..\core\vfs\ZipArchive.cpp">
       <Filter>src\vfs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp">
+    <ClCompile Include="..\..\core\undo\UndoSystem.cpp">
       <Filter>src\undo</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\commandsystem\CommandSystem.cpp">
+    <ClCompile Include="..\..\core\commandsystem\CommandSystem.cpp">
       <Filter>src\commandsystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\PreferencePage.cpp">
+    <ClCompile Include="..\..\core\settings\PreferencePage.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\PreferenceSystem.cpp">
+    <ClCompile Include="..\..\core\settings\PreferenceSystem.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\Game.cpp">
+    <ClCompile Include="..\..\core\settings\Game.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\settings\GameManager.cpp">
+    <ClCompile Include="..\..\core\settings\GameManager.cpp">
       <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\Radiant.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\modulesystem\ModuleLoader.h">
+    <ClInclude Include="..\..\core\modulesystem\ModuleLoader.h">
       <Filter>src\modulesystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\modulesystem\ModuleRegistry.h">
+    <ClInclude Include="..\..\core\modulesystem\ModuleRegistry.h">
       <Filter>src\modulesystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\modulesystem\StaticModule.h">
-      <Filter>src\modulesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\log\COutRedirector.h">
+    <ClInclude Include="..\..\core\log\COutRedirector.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogDevice.h">
+    <ClInclude Include="..\..\core\log\LogDevice.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogLevels.h">
+    <ClInclude Include="..\..\core\log\LogLevels.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogStream.h">
+    <ClInclude Include="..\..\core\log\LogStream.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogStreamBuf.h">
+    <ClInclude Include="..\..\core\log\LogStreamBuf.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogWriter.h">
+    <ClInclude Include="..\..\core\log\LogWriter.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\PIDFile.h">
+    <ClInclude Include="..\..\core\log\PIDFile.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h">
+    <ClInclude Include="..\..\core\log\PopupErrorHandler.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\StringLogDevice.h">
+    <ClInclude Include="..\..\core\log\StringLogDevice.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\log\LogFile.h">
+    <ClInclude Include="..\..\core\log\LogFile.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\Radiant.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\LanguageManager.h">
+    <ClInclude Include="..\..\core\settings\LanguageManager.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\xmlregistry\Autosaver.h">
+    <ClInclude Include="..\..\core\xmlregistry\Autosaver.h">
       <Filter>src\xmlregistry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\xmlregistry\RegistryTree.h">
+    <ClInclude Include="..\..\core\xmlregistry\RegistryTree.h">
       <Filter>src\xmlregistry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\xmlregistry\XMLRegistry.h">
+    <ClInclude Include="..\..\core\xmlregistry\XMLRegistry.h">
       <Filter>src\xmlregistry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\Archive.h">
+    <ClInclude Include="..\..\core\vfs\Archive.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveFile.h">
+    <ClInclude Include="..\..\core\vfs\DeflatedArchiveFile.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DeflatedArchiveTextFile.h">
+    <ClInclude Include="..\..\core\vfs\DeflatedArchiveTextFile.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DeflatedInputStream.h">
+    <ClInclude Include="..\..\core\vfs\DeflatedInputStream.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DirectoryArchive.h">
+    <ClInclude Include="..\..\core\vfs\DirectoryArchive.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\DirectoryArchiveTextFile.h">
+    <ClInclude Include="..\..\core\vfs\DirectoryArchiveTextFile.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\Doom3FileSystem.h">
+    <ClInclude Include="..\..\core\vfs\Doom3FileSystem.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\GenericFileSystem.h">
+    <ClInclude Include="..\..\core\vfs\GenericFileSystem.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\SortedFilenames.h">
+    <ClInclude Include="..\..\core\vfs\SortedFilenames.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\StoredArchiveFile.h">
+    <ClInclude Include="..\..\core\vfs\StoredArchiveFile.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\StoredArchiveTextFile.h">
+    <ClInclude Include="..\..\core\vfs\StoredArchiveTextFile.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\UnixPath.h">
+    <ClInclude Include="..\..\core\vfs\UnixPath.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\ZipArchive.h">
+    <ClInclude Include="..\..\core\vfs\ZipArchive.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\vfs\ZipStreamUtils.h">
+    <ClInclude Include="..\..\core\vfs\ZipStreamUtils.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\Operation.h">
+    <ClInclude Include="..\..\core\undo\Operation.h">
       <Filter>src\undo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\Stack.h">
+    <ClInclude Include="..\..\core\undo\Stack.h">
       <Filter>src\undo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\StackFiller.h">
+    <ClInclude Include="..\..\core\undo\StackFiller.h">
       <Filter>src\undo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\UndoSystem.h">
+    <ClInclude Include="..\..\core\undo\UndoSystem.h">
       <Filter>src\undo</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\CaseInsensitiveCompare.h">
+    <ClInclude Include="..\..\core\commandsystem\CaseInsensitiveCompare.h">
       <Filter>src\commandsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\Command.h">
+    <ClInclude Include="..\..\core\commandsystem\Command.h">
       <Filter>src\commandsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\CommandSystem.h">
+    <ClInclude Include="..\..\core\commandsystem\CommandSystem.h">
       <Filter>src\commandsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\CommandTokeniser.h">
+    <ClInclude Include="..\..\core\commandsystem\CommandTokeniser.h">
       <Filter>src\commandsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\Executable.h">
+    <ClInclude Include="..\..\core\commandsystem\Executable.h">
       <Filter>src\commandsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\commandsystem\Statement.h">
+    <ClInclude Include="..\..\core\commandsystem\Statement.h">
       <Filter>src\commandsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\PreferenceItemBase.h">
+    <ClInclude Include="..\..\core\settings\PreferenceItemBase.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\PreferenceItems.h">
+    <ClInclude Include="..\..\core\settings\PreferenceItems.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\PreferencePage.h">
+    <ClInclude Include="..\..\core\settings\PreferencePage.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\PreferenceSystem.h">
+    <ClInclude Include="..\..\core\settings\PreferenceSystem.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\Game.h">
+    <ClInclude Include="..\..\core\settings\Game.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\settings\GameManager.h">
+    <ClInclude Include="..\..\core\settings\GameManager.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\messagebus\MessageBus.h">
+    <ClInclude Include="..\..\core\messagebus\MessageBus.h">
       <Filter>src\messagebus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\Radiant.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

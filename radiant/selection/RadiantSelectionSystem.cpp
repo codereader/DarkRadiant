@@ -10,7 +10,7 @@
 #include "imousetoolmanager.h"
 #include "SelectionPool.h"
 #include "SelectionTest.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "SelectionMouseTools.h"
 #include "ManipulateMouseTool.h"
 #include "selection/algorithm/General.h"
