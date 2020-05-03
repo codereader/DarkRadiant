@@ -60,8 +60,9 @@ bool RadiantApp::OnInit()
 	}
 	catch (module::CoreModule::FailureException & ex)
 	{
-		rError() << "Failed to load core module" << std::endl;
-		throw ex;
+		// Streams are not yet initialised, so log to std::err at this point
+		std::cerr << ex.what() << std::endl;
+		return false;
 	}
 
 #if defined(POSIX) && !defined(__APPLE__)

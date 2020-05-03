@@ -350,6 +350,9 @@ AC_SUBST([CFLAGS])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([LDFLAGS])
 
+# Define the file name of the radiant core module without extension
+AC_DEFINE([CORE_MODULE_LIBRARY], ["libradiantcore"], ["Core module filename without extension, e.g. 'libradiantcore'"])
+
 # Generate output files
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in

@@ -2,20 +2,27 @@
 
 #include "DynamicLibrary.h"
 
+// In Linux the CORE_MODULE_LIBRARY symbol is defined in config.h
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#else
+#define CORE_MODULE_LIBRARY "DarkRadiantCore"
+#endif
+
 namespace module
 {
 
 CoreModule::CoreModule(ApplicationContext& context) :
 	_instance(nullptr)
 {
-	std::string coreModuleFile = std::string("DarkRadiantCore") + MODULE_FILE_EXTENSION;
+	std::string coreModuleFile = std::string(CORE_MODULE_LIBRARY) + MODULE_FILE_EXTENSION;
 
-	fs::path coreModulePath = context.getApplicationPath();
+	fs::path coreModulePath = context.getLibraryPath();
 	coreModulePath /= coreModuleFile;
 
 	if (!fs::exists(coreModulePath))
 	{
-		throw FailureException("Cannot find the main module " + coreModuleFile);
+		throw FailureException("Cannot find the main module " + coreModulePath.string());
 	}
 
 	_coreModuleLibrary.reset(new DynamicLibrary(coreModulePath.string()));
