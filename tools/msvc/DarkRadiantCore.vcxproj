@@ -34,7 +34,6 @@
     <ClCompile Include="..\..\core\settings\LanguageManager.cpp" />
     <ClCompile Include="..\..\core\settings\PreferencePage.cpp" />
     <ClCompile Include="..\..\core\settings\PreferenceSystem.cpp" />
-    <ClCompile Include="..\..\core\undo\UndoSystem.cpp" />
     <ClCompile Include="..\..\core\vfs\DeflatedInputStream.cpp" />
     <ClCompile Include="..\..\core\vfs\DirectoryArchive.cpp" />
     <ClCompile Include="..\..\core\vfs\Doom3FileSystem.cpp" />
@@ -71,10 +70,6 @@
     <ClInclude Include="..\..\core\settings\PreferenceItems.h" />
     <ClInclude Include="..\..\core\settings\PreferencePage.h" />
     <ClInclude Include="..\..\core\settings\PreferenceSystem.h" />
-    <ClInclude Include="..\..\core\undo\Operation.h" />
-    <ClInclude Include="..\..\core\undo\Stack.h" />
-    <ClInclude Include="..\..\core\undo\StackFiller.h" />
-    <ClInclude Include="..\..\core\undo\UndoSystem.h" />
     <ClInclude Include="..\..\core\vfs\Archive.h" />
     <ClInclude Include="..\..\core\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\core\vfs\DeflatedArchiveTextFile.h" />

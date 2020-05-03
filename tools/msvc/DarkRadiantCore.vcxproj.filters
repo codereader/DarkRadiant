@@ -20,9 +20,6 @@
     <Filter Include="src\vfs">
       <UniqueIdentifier>{fae22404-52d3-4653-afb9-c333e87edd41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\undo">
-      <UniqueIdentifier>{365fbce2-bbe0-4f3a-a30a-a4b4dc8f94d6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\commandsystem">
       <UniqueIdentifier>{67aed069-dd61-4b65-9c77-c8cfcc11be9b}</UniqueIdentifier>
     </Filter>
@@ -78,9 +75,6 @@
     </ClCompile>
     <ClCompile Include="..\..\core\vfs\ZipArchive.cpp">
       <Filter>src\vfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\core\undo\UndoSystem.cpp">
-      <Filter>src\undo</Filter>
     </ClCompile>
     <ClCompile Include="..\..\core\commandsystem\CommandSystem.cpp">
       <Filter>src\commandsystem</Filter>
@@ -191,18 +185,6 @@
     </ClInclude>
     <ClInclude Include="..\..\core\vfs\ZipStreamUtils.h">
       <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\undo\Operation.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\undo\Stack.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\undo\StackFiller.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\core\undo\UndoSystem.h">
-      <Filter>src\undo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\core\commandsystem\CaseInsensitiveCompare.h">
       <Filter>src\commandsystem</Filter>

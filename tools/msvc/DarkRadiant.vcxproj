@@ -991,6 +991,7 @@
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\UserInterfaceModule.cpp" />
     <ClCompile Include="..\..\radiant\ui\widgets\Splitter.cpp" />
+    <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp" />
     <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp" />
@@ -1479,6 +1480,10 @@
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
     <ClInclude Include="..\..\radiant\ui\UserInterfaceModule.h" />
     <ClInclude Include="..\..\radiant\ui\widgets\Splitter.h" />
+    <ClInclude Include="..\..\radiant\undo\Operation.h" />
+    <ClInclude Include="..\..\radiant\undo\Stack.h" />
+    <ClInclude Include="..\..\radiant\undo\StackFiller.h" />
+    <ClInclude Include="..\..\radiant\undo\UndoSystem.h" />
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />
