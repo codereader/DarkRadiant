@@ -934,9 +934,6 @@
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\grid\GridManager.cpp">
-      <Filter>src\ui\grid</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\model\ModelExporter.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
@@ -2315,12 +2312,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h">
       <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\grid\GridItem.h">
-      <Filter>src\ui\grid</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\grid\GridManager.h">
-      <Filter>src\ui\grid</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ModelExporter.h">
       <Filter>src\model</Filter>

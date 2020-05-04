@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\filetypes\FileTypeRegistry.cpp" />
+    <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp" />
@@ -59,6 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\filetypes\FileTypeRegistry.h" />
+    <ClInclude Include="..\..\radiantcore\grid\GridItem.h" />
+    <ClInclude Include="..\..\radiantcore\grid\GridManager.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\dds.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\DDSImage.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h" />

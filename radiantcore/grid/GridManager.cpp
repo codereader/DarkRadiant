@@ -113,9 +113,6 @@ void GridManager::registerCommands()
 
 	GlobalCommandSystem().addCommand("GridDown", std::bind(&GridManager::gridDownCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("GridUp", std::bind(&GridManager::gridUpCmd, this, std::placeholders::_1));
-
-	GlobalEventManager().addCommand("GridDown", "GridDown");
-	GlobalEventManager().addCommand("GridUp", "GridUp");
 }
 
 ComboBoxValueList GridManager::getGridList()

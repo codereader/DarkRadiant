@@ -34,6 +34,7 @@ libradiantcore_la_LDFLAGS = -module -avoid-version \
 libradiantcore_la_SOURCES = Radiant.cpp \
                 commandsystem/CommandSystem.cpp \
                 filetypes/FileTypeRegistry.cpp \
+                grid/GridManager.cpp \
                 imagefile/dds.cpp \
                 imagefile/ddslib.cpp \
                 imagefile/DDSImage.cpp \

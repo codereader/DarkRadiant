@@ -47,6 +47,9 @@
     <Filter Include="src\skins">
       <UniqueIdentifier>{5ba83911-a3f4-4f34-8ca2-b498fa0c57bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\grid">
+      <UniqueIdentifier>{79fa6073-1042-4501-9f3f-34c689eaf391}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -159,6 +162,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\skins\Doom3SkinCache.cpp">
       <Filter>src\skins</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp">
+      <Filter>src\grid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,6 +356,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\skins\Doom3SkinCache.h">
       <Filter>src\skins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\grid\GridItem.h">
+      <Filter>src\grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\grid\GridManager.h">
+      <Filter>src\grid</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

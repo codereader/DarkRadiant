@@ -229,7 +229,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/overlay/OverlayDialog.cpp \
                       ui/overlay/Overlay.cpp \
                       ui/splash/Splash.cpp \
-					  ui/grid/GridManager.cpp \
+					  ui/grid/GridUserInterface.cpp \
                       ui/mru/MRUMenuItem.cpp \
                       ui/mru/MRU.cpp \
                       ui/layers/LayerControl.cpp \
