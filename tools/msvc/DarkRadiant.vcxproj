@@ -784,7 +784,6 @@
     <ClCompile Include="..\..\radiant\shaders\TableDefinition.cpp" />
     <ClCompile Include="..\..\radiant\shaders\textures\GLTextureManager.cpp" />
     <ClCompile Include="..\..\radiant\shaders\textures\TextureManipulator.cpp" />
-    <ClCompile Include="..\..\radiant\skins\Doom3SkinCache.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp" />
@@ -1205,8 +1204,6 @@
     <ClInclude Include="..\..\radiant\shaders\textures\GLTextureManager.h" />
     <ClInclude Include="..\..\radiant\shaders\textures\HeightmapCreator.h" />
     <ClInclude Include="..\..\radiant\shaders\textures\TextureManipulator.h" />
-    <ClInclude Include="..\..\radiant\skins\Doom3ModelSkin.h" />
-    <ClInclude Include="..\..\radiant\skins\Doom3SkinCache.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.h" />

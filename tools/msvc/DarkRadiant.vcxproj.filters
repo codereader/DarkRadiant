@@ -245,9 +245,6 @@
     <Filter Include="src\entity\target">
       <UniqueIdentifier>{2bf54469-b319-4cd2-9307-504daf10c7d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\skins">
-      <UniqueIdentifier>{8ce1c78d-15f1-45e8-a2ae-ccf77e7a1b08}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\modelfile">
       <UniqueIdentifier>{fcaedc16-a752-4a69-87a3-212322803b03}</UniqueIdentifier>
     </Filter>
@@ -1152,9 +1149,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\entity\target\TargetManager.cpp">
       <Filter>src\entity\target</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\skins\Doom3SkinCache.cpp">
-      <Filter>src\skins</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\modelfile\AseExporter.cpp">
       <Filter>src\modelfile</Filter>
@@ -2597,12 +2591,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\entity\target\TargetManager.h">
       <Filter>src\entity\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\skins\Doom3ModelSkin.h">
-      <Filter>src\skins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\skins\Doom3SkinCache.h">
-      <Filter>src\skins</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modelfile\AseExporter.h">
       <Filter>src\modelfile</Filter>

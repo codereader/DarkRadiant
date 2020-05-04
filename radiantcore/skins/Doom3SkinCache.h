@@ -6,7 +6,6 @@
 #include "modelskin.h"
 #include "parser/DefTokeniser.h"
 
-#include <future>
 #include <map>
 #include <string>
 #include <vector>
@@ -91,6 +90,5 @@ private:
     */
     void parseFile(std::istream& contents, const std::string& filename);
 };
-typedef std::shared_ptr<Doom3SkinCache> Doom3SkinCachePtr;
 
 } // namespace skins

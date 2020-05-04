@@ -13,7 +13,7 @@ namespace skins
 namespace
 {
     // CONSTANTS
-    const char* SKINS_FOLDER = "skins/";
+    const char* const SKINS_FOLDER = "skins/";
 }
 
 Doom3SkinCache::Doom3SkinCache() :
@@ -25,12 +25,9 @@ ModelSkin& Doom3SkinCache::capture(const std::string& name)
 {
     ensureDefsLoaded();
 
-    NamedSkinMap::iterator i = _namedSkins.find(name);
+    auto i = _namedSkins.find(name);
 
-    if (i != _namedSkins.end())
-        return *(i->second); // dereference shared_ptr
-    else
-        return _nullSkin;
+	return i != _namedSkins.end() ? *(i->second) : _nullSkin;
 }
 
 const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model) 
@@ -71,7 +68,7 @@ void Doom3SkinCache::loadSkinFiles()
             [&] (const vfs::FileInfo& fileInfo)
             {
                 // Open the .skin file and get its contents as a std::string
-                ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(SKINS_FOLDER + fileInfo.name);
+                auto file = GlobalFileSystem().openTextFile(SKINS_FOLDER + fileInfo.name);
                 assert(file);
 
                 std::istream is(&(file->getInputStream()));
@@ -116,7 +113,7 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 
 			modelSkin->setSkinFileName(filename);
 
-			NamedSkinMap::iterator found = _namedSkins.find(skinName);
+			auto found = _namedSkins.find(skinName);
 
 			// Is this already defined?
 			if (found != _namedSkins.end()) 
@@ -130,8 +127,8 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
             {
 				// Add the populated Doom3ModelSkin to the hashtable and the name to the
 				// list of all skins
-				_namedSkins.insert(NamedSkinMap::value_type(skinName, modelSkin));
-				_allSkins.push_back(skinName);
+				_namedSkins.emplace(skinName, modelSkin);
+				_allSkins.emplace_back(skinName);
 			}
 		}
 		catch (parser::ParseException& e)
@@ -161,7 +158,7 @@ Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok)
 	tok.assertNextToken("{");
 
 	// Create the skin object
-	Doom3ModelSkinPtr skin(new Doom3ModelSkin(skinName));
+	auto skin = std::make_shared<Doom3ModelSkin>(skinName);
 
 	// Read key/value pairs until end of decl
 	std::string key = tok.nextToken();

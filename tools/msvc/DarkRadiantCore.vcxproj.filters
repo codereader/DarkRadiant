@@ -44,6 +44,9 @@
     <Filter Include="src\filetypes">
       <UniqueIdentifier>{47a1f568-f5e5-45cc-ba53-ae308447f576}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\skins">
+      <UniqueIdentifier>{5ba83911-a3f4-4f34-8ca2-b498fa0c57bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -153,6 +156,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\filetypes\FileTypeRegistry.cpp">
       <Filter>src\filetypes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\skins\Doom3SkinCache.cpp">
+      <Filter>src\skins</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,6 +344,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\filetypes\FileTypeRegistry.h">
       <Filter>src\filetypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\skins\Doom3ModelSkin.h">
+      <Filter>src\skins</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\skins\Doom3SkinCache.h">
+      <Filter>src\skins</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

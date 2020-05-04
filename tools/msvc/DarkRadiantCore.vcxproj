@@ -48,6 +48,7 @@
     <ClCompile Include="..\..\radiantcore\settings\LanguageManager.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\PreferencePage.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\PreferenceSystem.cpp" />
+    <ClCompile Include="..\..\radiantcore\skins\Doom3SkinCache.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\DeflatedInputStream.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\DirectoryArchive.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystem.cpp" />
@@ -101,6 +102,8 @@
     <ClInclude Include="..\..\radiantcore\settings\PreferenceItems.h" />
     <ClInclude Include="..\..\radiantcore\settings\PreferencePage.h" />
     <ClInclude Include="..\..\radiantcore\settings\PreferenceSystem.h" />
+    <ClInclude Include="..\..\radiantcore\skins\Doom3ModelSkin.h" />
+    <ClInclude Include="..\..\radiantcore\skins\Doom3SkinCache.h" />
     <ClInclude Include="..\..\radiantcore\vfs\Archive.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveTextFile.h" />
