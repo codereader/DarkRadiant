@@ -60,6 +60,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 settings/LanguageManager.cpp \
                 settings/PreferencePage.cpp \
                 settings/PreferenceSystem.cpp \
+                skins/Doom3SkinCache.cpp \
                 vfs/DeflatedInputStream.cpp \
                 vfs/DirectoryArchive.cpp \
                 vfs/Doom3FileSystem.cpp \

@@ -205,7 +205,6 @@ darkradiant_SOURCES = main.cpp \
                       shaders/Doom3ShaderSystem.cpp \
                       shaders/ShaderLibrary.cpp \
                       shaders/ShaderExpression.cpp \
-                      skins/Doom3SkinCache.cpp \
 					  ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
