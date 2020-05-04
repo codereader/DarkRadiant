@@ -57,7 +57,7 @@ public:
     void keyUp();
     void keyDown();
 
-    std::string getAcceleratorString(bool forMenu);
+    std::string getString(bool forMenu) const override;
 
     /**
      * Converts a string representation of a key to the corresponding

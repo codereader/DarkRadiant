@@ -38,13 +38,10 @@ public:
         _shortcutsNode = GlobalRegistry().createKey(_rootKey + "/shortcuts");
     }
 
-    void visit(const std::string& eventName, const IEventPtr& event)
+    void visit(const std::string& eventName, const IAccelerator& accelerator) override
     {
         // Only export events with non-empty name
         if (eventName.empty()) return;
-
-        // Try to find an accelerator connected to this event
-		Accelerator& accelerator = _eventManager.findAccelerator(event);
 
         unsigned int keyVal = accelerator.getKey();
 

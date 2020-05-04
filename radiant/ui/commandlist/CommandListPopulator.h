@@ -21,19 +21,19 @@ private:
 	const CommandList::Columns& _columns;
 
 public:
-	CommandListPopulator(wxutil::TreeModel::Ptr listStore,
+	CommandListPopulator(const wxutil::TreeModel::Ptr& listStore,
 						 const CommandList::Columns& columns) :
 		_listStore(listStore),
 		_columns(columns)
 	{}
 
-	void visit(const std::string& eventName, const IEventPtr& ev)
+	void visit(const std::string& eventName, const IAccelerator& accel) override
 	{
 		// Allocate a new list store element
 		wxutil::TreeModel::Row row = _listStore->AddItem();
 
 		row[_columns.command] = eventName;
-		row[_columns.key] = GlobalEventManager().getAcceleratorStr(ev, true);
+		row[_columns.key] = accel.getString(true);
 
 		row.SendItemAdded();
 	}

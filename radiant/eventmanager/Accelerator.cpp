@@ -71,7 +71,7 @@ void Accelerator::keyDown() {
     _event->keyDown();
 }
 
-std::string Accelerator::getAcceleratorString(bool forMenu)
+std::string Accelerator::getString(bool forMenu) const
 {
     const std::string keyStr = _key != 0 ? Accelerator::getNameFromKeyCode(_key) : "";
 
@@ -79,7 +79,7 @@ std::string Accelerator::getAcceleratorString(bool forMenu)
     {
         // Return a modifier string for a menu
         const std::string modifierStr = forMenu ?
-            wxutil::Modifier::GetModifierStringForMenu(_modifiers) :
+            wxutil::Modifier::GetLocalisedModifierString(_modifiers) :
             wxutil::Modifier::GetModifierString(_modifiers);
 
         const std::string connector = (forMenu) ? "~" : "+";

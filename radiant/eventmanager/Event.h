@@ -79,7 +79,7 @@ protected:
         // Cut off any existing accelerators
         wxString caption = item->GetItemLabel().BeforeFirst('\t');
 
-        wxString accelText = accel.getAcceleratorString(true);
+        wxString accelText = accel.getString(true);
 
         // greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
         item->SetItemLabel(caption + "\t " + accelText);
@@ -92,7 +92,7 @@ protected:
 
     static void setToolItemAccelerator(wxToolBarToolBase* tool, Accelerator& accel)
     {
-        wxString accelText = accel.getAcceleratorString(true);
+        wxString accelText = accel.getString(true);
         std::replace(accelText.begin(), accelText.end(), '~', '-');
 
         tool->SetShortHelp(getCleanToolItemHelpText(tool) + " (" + accelText + ")");

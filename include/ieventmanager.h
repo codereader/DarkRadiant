@@ -47,6 +47,12 @@ public:
     // Get/Set the modifier flags
     virtual void setModifiers(const unsigned int modifiers) = 0;
     virtual unsigned int getModifiers() const = 0;
+
+	// Returns a string representation of this accelerator.
+	// forMenu == true: returns the localised modifier strings
+	// and is using a different separator to prevent wxWidgets 
+	// from assigning accelerators on its own.
+	virtual std::string getString(bool forMenu) const = 0;
 };
 
 class IEvent
@@ -100,15 +106,16 @@ public:
 typedef std::shared_ptr<IEvent> IEventPtr;
 
 // Event visitor class
-class IEventVisitor {
+class IEventVisitor
+{
 public:
     // destructor
 	virtual ~IEventVisitor() {}
 
-	virtual void visit(const std::string& eventName, const IEventPtr& event) = 0;
+	virtual void visit(const std::string& eventName, const IAccelerator& accel) = 0;
 };
 
-const std::string MODULE_EVENTMANAGER("EventManager");
+const char* const MODULE_EVENTMANAGER("EventManager");
 
 // The function object invoked when a ToggleEvent is changing states
 // The passed boolean indicates the new toggle state (true = active/toggled)

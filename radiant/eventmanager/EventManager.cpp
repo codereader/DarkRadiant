@@ -165,7 +165,7 @@ std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu
 {
 	IAccelerator& accelerator = findAccelerator(event);
 
-    return static_cast<Accelerator&>(accelerator).getAcceleratorString(forMenu);
+    return accelerator.getString(forMenu);
 }
 
 // Checks if the eventName is already registered and writes to rWarning, if so
@@ -440,9 +440,10 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 {
 	// Cycle through the event and pass them to the visitor class
-	for (const EventMap::value_type& pair : _events)
+	for (const auto& pair : _events)
 	{
-		eventVisitor.visit(pair.first, pair.second);
+		auto& accel = findAccelerator(pair.second);
+		eventVisitor.visit(pair.first, accel);
 	}
 }
 
@@ -450,12 +451,12 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 Accelerator& EventManager::findAccelerator(const IEventPtr& event)
 {
 	// Cycle through the accelerators and check for matches
-    for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); ++i)
+    for (auto& accel : _accelerators)
     {
-		if (i->match(event))
+		if (accel.match(event))
         {
 			// Return the reference to the found accelerator
-			return (*i);
+			return accel;
 		}
 	}
 
@@ -577,7 +578,7 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 	const unsigned int modifierFlags = wxutil::Modifier::GetStateForKeyEvent(ev);
 
 	// Construct the complete string
-    returnValue += wxutil::Modifier::GetModifierStringForMenu(modifierFlags);
+    returnValue += wxutil::Modifier::GetLocalisedModifierString(modifierFlags);
 	returnValue += (returnValue != "") ? "-" : "";
 
 	returnValue += getKeyString(ev);
