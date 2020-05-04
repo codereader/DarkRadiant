@@ -47,7 +47,6 @@ public:
 
 private:
 	void gridChangeNotify();
-	void gridChanged();
 
 	void loadDefaultValue();
 

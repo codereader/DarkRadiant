@@ -6,9 +6,6 @@
 #include "debugging/debugging.h"
 #include "imodule.h"
 #include "icommandsystem.h"
-#include "imainframe.h"
-#include "ieventmanager.h"
-#include "iuimanager.h"
 #include "ipreferencesystem.h"
 #include "string/string.h"
 
@@ -47,11 +44,8 @@ const StringSet& GridManager::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;
@@ -114,21 +108,8 @@ void GridManager::registerCommands()
 		std::bind(&GridManager::setGridCmd, this, std::placeholders::_1),
 		{ cmd::ARGTYPE_STRING });
 
+	// Grid size shortcuts are defined in commandsystem.xml like "SetGrid4" => "SetGrid 16"
 	// Create shortcut statements that can accept accelerator bindings
-	for (NamedGridItem& i : _gridItems)
-	{
-		std::string statement = "SetGrid " + i.first; // e.g. "SetGrid 64"
-		std::string name = "SetGrid" + i.first; // Makes "SetGrid" to "SetGrid64", for example
-
-		GlobalCommandSystem().addStatement(name, statement);
-#if 0
-		GridItem& gridItem = i.second;
-
-		GlobalEventManager().addToggle(toggleName,
-			std::bind(&GridItem::activate, &gridItem, std::placeholders::_1));
-
-#endif
-	}
 
 	GlobalCommandSystem().addCommand("GridDown", std::bind(&GridManager::gridDownCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("GridUp", std::bind(&GridManager::gridUpCmd, this, std::placeholders::_1));
@@ -244,7 +225,7 @@ void GridManager::setGridSize(GridSize gridSize)
 {
 	_activeGridSize = gridSize;
 
-	gridChanged();
+	gridChangeNotify();
 }
 
 float GridManager::getGridSize() const
@@ -255,29 +236,6 @@ float GridManager::getGridSize() const
 int GridManager::getGridPower() const 
 {
 	return static_cast<int>(_activeGridSize);
-}
-
-void GridManager::gridChanged()
-{
-#if 0
-	for (const NamedGridItem& i : _gridItems)
-	{
-		std::string toggleName = "SetGrid";
-		toggleName += i.first; // Makes "SetGrid" to "SetGrid64", for example
-		const GridItem& gridItem = i.second;
-
-		GlobalEventManager().setToggled(toggleName, _activeGridSize == gridItem.getGridSize());
-	}
-#endif
-
-#if 0
-	GlobalUIManager().getStatusBarManager().setText("GridStatus", fmt::format("{0:g}", getGridSize()));
-#endif
-	gridChangeNotify();
-
-#if 0
-	GlobalMainFrame().updateAllWindows();
-#endif
 }
 
 GridLook GridManager::getLookFromNumber(int i)

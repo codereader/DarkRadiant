@@ -4,7 +4,7 @@
  *
  * Use these methods to set/get the grid size of the xyviews
  */
-
+#include <stdexcept>
 #include "imodule.h"
 #include <sigc++/signal.h>
 
@@ -43,6 +43,8 @@ inline const char* getStringForSize(GridSize size)
 	case GRID_64:  return "64";
 	case GRID_128:  return "128";
 	case GRID_256:  return "256";
+	default:
+		throw new std::logic_error("Grid size not handled in switch!");
 	};
 }
 

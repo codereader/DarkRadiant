@@ -47,7 +47,7 @@ void GridUserInterface::initialiseModule(const ApplicationContext& ctx)
 	{
 		GridSize gridSize = static_cast<GridSize>(size);
 
-		std::string toggleName = std::string("ToggleGrid") + grid::getStringForSize(gridSize);
+		std::string toggleName = std::string("SetGrid") + grid::getStringForSize(gridSize);
 		auto toggle = GlobalEventManager().addToggle(toggleName,
 			std::bind(&GridUserInterface::toggleGrid, this, gridSize, std::placeholders::_1));
 
