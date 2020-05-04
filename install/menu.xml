@@ -181,18 +181,18 @@
 	<subMenu name="grid" caption="&amp;Grid">
 		<menuItem name="snapToGrid" caption="Snap selected to grid" command="SnapToGrid" />
 		<menuSeparator />
-		<menuItem name="grid0.125" caption="Grid0.125" command="SetGrid0.125" />
-		<menuItem name="grid0.25" caption="Grid0.25" command="SetGrid0.25" />
-		<menuItem name="grid0.5" caption="Grid0.5" command="SetGrid0.5" />
-		<menuItem name="grid1" caption="Grid1" command="SetGrid1" />
-		<menuItem name="grid2" caption="Grid2" command="SetGrid2" />
-		<menuItem name="grid4" caption="Grid4" command="SetGrid4" />
-		<menuItem name="grid8" caption="Grid8" command="SetGrid8" />
-		<menuItem name="grid16" caption="Grid16" command="SetGrid16" />
-		<menuItem name="grid32" caption="Grid32" command="SetGrid32" />
-		<menuItem name="grid64" caption="Grid64" command="SetGrid64" />
-		<menuItem name="grid128" caption="Grid128" command="SetGrid128" />
-		<menuItem name="grid256" caption="Grid256" command="SetGrid256" />
+		<menuItem name="grid0.125" caption="Grid0.125" command="ToggleGrid0.125" />
+		<menuItem name="grid0.25" caption="Grid0.25" command="ToggleGrid0.25" />
+		<menuItem name="grid0.5" caption="Grid0.5" command="ToggleGrid0.5" />
+		<menuItem name="grid1" caption="Grid1" command="ToggleGrid1" />
+		<menuItem name="grid2" caption="Grid2" command="ToggleGrid2" />
+		<menuItem name="grid4" caption="Grid4" command="ToggleGrid4" />
+		<menuItem name="grid8" caption="Grid8" command="ToggleGrid8" />
+		<menuItem name="grid16" caption="Grid16" command="ToggleGrid16" />
+		<menuItem name="grid32" caption="Grid32" command="ToggleGrid32" />
+		<menuItem name="grid64" caption="Grid64" command="ToggleGrid64" />
+		<menuItem name="grid128" caption="Grid128" command="ToggleGrid128" />
+		<menuItem name="grid256" caption="Grid256" command="ToggleGrid256" />
 	</subMenu>
 
 	<subMenu name="map" caption="M&amp;ap">

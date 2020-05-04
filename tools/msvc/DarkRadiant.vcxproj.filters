@@ -1474,6 +1474,9 @@
     <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp">
       <Filter>src\undo</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp">
+      <Filter>src\ui\grid</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -2924,6 +2927,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\undo\UndoSystem.h">
       <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h">
+      <Filter>src\ui\grid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
