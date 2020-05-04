@@ -106,22 +106,26 @@ void GridManager::loadDefaultValue()
 void GridManager::populateGridItems()
 {
 	// Populate the GridItem map
-	_gridItems.push_back(GridItems::value_type("0.125", GridItem(GRID_0125, *this)));
-	_gridItems.push_back(GridItems::value_type("0.25", GridItem(GRID_025, *this)));
-	_gridItems.push_back(GridItems::value_type("0.5", GridItem(GRID_05, *this)));
-	_gridItems.push_back(GridItems::value_type("1", GridItem(GRID_1, *this)));
-	_gridItems.push_back(GridItems::value_type("2", GridItem(GRID_2, *this)));
-	_gridItems.push_back(GridItems::value_type("4", GridItem(GRID_4, *this)));
-	_gridItems.push_back(GridItems::value_type("8", GridItem(GRID_8, *this)));
-	_gridItems.push_back(GridItems::value_type("16", GridItem(GRID_16, *this)));
-	_gridItems.push_back(GridItems::value_type("32", GridItem(GRID_32, *this)));
-	_gridItems.push_back(GridItems::value_type("64", GridItem(GRID_64, *this)));
-	_gridItems.push_back(GridItems::value_type("128", GridItem(GRID_128, *this)));
-	_gridItems.push_back(GridItems::value_type("256", GridItem(GRID_256, *this)));
+	_gridItems.emplace_back("0.125", GridItem(GRID_0125, *this));
+	_gridItems.emplace_back("0.25", GridItem(GRID_025, *this));
+	_gridItems.emplace_back("0.5", GridItem(GRID_05, *this));
+	_gridItems.emplace_back("1", GridItem(GRID_1, *this));
+	_gridItems.emplace_back("2", GridItem(GRID_2, *this));
+	_gridItems.emplace_back("4", GridItem(GRID_4, *this));
+	_gridItems.emplace_back("8", GridItem(GRID_8, *this));
+	_gridItems.emplace_back("16", GridItem(GRID_16, *this));
+	_gridItems.emplace_back("32", GridItem(GRID_32, *this));
+	_gridItems.emplace_back("64", GridItem(GRID_64, *this));
+	_gridItems.emplace_back("128", GridItem(GRID_128, *this));
+	_gridItems.emplace_back("256", GridItem(GRID_256, *this));
 }
 
 void GridManager::registerCommands()
 {
+	GlobalCommandSystem().addCommand("SetGrid",
+		std::bind(&GridManager::setGridCmd, this, std::placeholders::_1),
+		{ cmd::ARGTYPE_STRING });
+
 	for (NamedGridItem& i : _gridItems)
 	{
 		std::string toggleName = "SetGrid";
@@ -180,6 +184,36 @@ sigc::signal<void> GridManager::signal_gridChanged() const
 void GridManager::gridChangeNotify()
 {
 	_sigGridChanged();
+}
+
+void GridManager::setGridCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rError() << "Usage: SetGrid [";
+
+		for (const auto& item : _gridItems)
+		{
+			rError() << item.first << "|";
+		}
+
+		rError() << "]" << std::endl;
+		return;
+	}
+
+	// Look up the grid item by the argument string
+	auto gridStr = args[0].getString();
+
+	for (const auto& item : _gridItems)
+	{
+		if (item.first == gridStr)
+		{
+			setGridSize(item.second.getGridSize());
+			return;
+		}
+	}
+
+	rError() << "Unknown grid size: " << gridStr << std::endl;
 }
 
 void GridManager::gridDownCmd(const cmd::ArgumentList& args) 

@@ -59,6 +59,7 @@ private:
 
 	void constructPreferences();
 
+	void setGridCmd(const cmd::ArgumentList& args);
 	void gridUpCmd(const cmd::ArgumentList& args);
 	void gridDownCmd(const cmd::ArgumentList& args);
 
