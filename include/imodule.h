@@ -142,6 +142,10 @@ public:
 		_compatibilityLevel(MODULE_COMPATIBILITY_LEVEL)
 	{}
 
+	// Modules are not copyable
+	RegisterableModule(const RegisterableModule& other) = delete;
+	RegisterableModule& operator=(const RegisterableModule& other) = delete;
+
     /**
 	 * Destructor
 	 */
