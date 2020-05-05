@@ -57,6 +57,7 @@ private:
 	XmlFilterEventAdapter::Ptr ensureEventAdapter(XMLFilter& filter);
 
 	void setFilterStateCmd(const cmd::ArgumentList& args);
+	void toggleFilterStateCmd(const cmd::ArgumentList& args);
 	void setAllFilterStatesCmd(const cmd::ArgumentList& args);
 
 	void selectObjectsByFilterCmd(const cmd::ArgumentList& args);

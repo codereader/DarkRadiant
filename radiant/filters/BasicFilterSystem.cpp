@@ -88,6 +88,25 @@ void BasicFilterSystem::setFilterStateCmd(const cmd::ArgumentList& args)
 	setFilterState(args[0].getString(), args[1].getInt() != 0);
 }
 
+void BasicFilterSystem::toggleFilterStateCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 2)
+	{
+		rMessage() << "Usage: ToggleFilterState <FilterName>" << std::endl;
+		return;
+	}
+
+	std::string filterName = args[0].getString();
+
+	if (_availableFilters.find(filterName) == _availableFilters.end())
+	{
+		rError() << "Unknown filter: " << filterName << std::endl;
+		return;
+	}
+
+	setFilterState(filterName, !getFilterState(filterName));
+}
+
 void BasicFilterSystem::selectObjectsByFilterCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
@@ -157,12 +176,14 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 		std::bind(&BasicFilterSystem::setFilterStateCmd, this, std::placeholders::_1), 
 		{ cmd::ARGTYPE_STRING, cmd::ARGTYPE_INT });
 
+	// Command to toggle a named filter's state
+	GlobalCommandSystem().addCommand("ToggleFilterState",
+		std::bind(&BasicFilterSystem::toggleFilterStateCmd, this, std::placeholders::_1),
+		{ cmd::ARGTYPE_STRING });
+
 	// Register two shortcuts
 	GlobalCommandSystem().addStatement("ActivateAllFilters", "SetAllFilterStates 1", false);
 	GlobalCommandSystem().addStatement("DeactivateAllFilters", "SetAllFilterStates 0", false);
-
-	GlobalEventManager().addCommand("ActivateAllFilters", "ActivateAllFilters");
-	GlobalEventManager().addCommand("DeactivateAllFilters", "DeactivateAllFilters");
 
 	GlobalCommandSystem().addCommand(SELECT_OBJECTS_BY_FILTER_CMD,
 		std::bind(&BasicFilterSystem::selectObjectsByFilterCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });

@@ -13,12 +13,15 @@ XmlFilterEventAdapter::XmlFilterEventAdapter(XMLFilter& filter) :
     _filter(filter)
 {
     // Add the corresponding events/commands
-    createEventToggle();
+    createToggleCommand();
     createSelectDeselectEvents();
 }
 
 XmlFilterEventAdapter::~XmlFilterEventAdapter()
 {
+    GlobalCommandSystem().removeCommand(_toggleCmdName);
+
+#if 0
     if (!GlobalEventManager().findEvent(_filter.getEventName())->empty())
     {
         // Remove all accelerators from that event before removal
@@ -27,23 +30,32 @@ XmlFilterEventAdapter::~XmlFilterEventAdapter()
         // Disable the event in the EventManager, to avoid crashes when calling the menu items
         GlobalEventManager().disableEvent(_filter.getEventName());
     }
+#endif
 
     removeSelectDeselectEvents();
 }
 
 void XmlFilterEventAdapter::setFilterState(bool isActive)
 {
+#if 0
     if (_toggle.second)
     {
         _toggle.second->setToggled(isActive);
     }
+#endif
 }
 
 void XmlFilterEventAdapter::onEventNameChanged()
 {
+    GlobalCommandSystem().removeCommand(_toggleCmdName);
+    createToggleCommand();
+
+#if 0
     GlobalEventManager().renameEvent(_toggle.first, _filter.getEventName());
     _toggle.first = _filter.getEventName();
+#endif
 
+#if 0 // TODO CoreModule
     // Re-create the select/deselect events, keeping the accelerators intact
     // Can't use renameEvent here since the statement needs to be changed and there's no easy
     // way to assign a new statement to an existing event
@@ -63,6 +75,7 @@ void XmlFilterEventAdapter::onEventNameChanged()
     // Remove the old events
     GlobalEventManager().removeEvent(oldSelectEvent);
     GlobalEventManager().removeEvent(oldDeselectEvent);
+#endif
 }
 
 void XmlFilterEventAdapter::toggle(bool newState)
@@ -73,34 +86,39 @@ void XmlFilterEventAdapter::toggle(bool newState)
 void XmlFilterEventAdapter::createSelectDeselectEvents()
 {
     // Select
-    std::string eventName = fmt::format("{0}{1}", "SelectObjectBy", _filter.getEventName());
+    _selectByFilterCmd = fmt::format("{0}{1}", "SelectObjectBy", _filter.getEventName());
 
-    _selectByFilterCmd = std::make_pair(eventName, GlobalEventManager().addCommand(
-        eventName,
+    GlobalCommandSystem().addStatement(_selectByFilterCmd, 
         fmt::format("{0} \"{1}\"", SELECT_OBJECTS_BY_FILTER_CMD, _filter.getName())
-    ));
+    );
 
     // Deselect
-    eventName = fmt::format("{0}{1}", "DeselectObjectBy", _filter.getEventName());
+    _deselectByFilterCmd = fmt::format("{0}{1}", "DeselectObjectBy", _filter.getEventName());
 
-    _deselectByFilterCmd = std::make_pair(eventName, GlobalEventManager().addCommand(
-        eventName,
+    GlobalCommandSystem().addStatement(_deselectByFilterCmd,
         fmt::format("{0} \"{1}\"", DESELECT_OBJECTS_BY_FILTER_CMD, _filter.getName())
-    ));
+    );
 }
 
 void XmlFilterEventAdapter::removeSelectDeselectEvents()
 {
-    GlobalEventManager().removeEvent(_selectByFilterCmd.first);
-    GlobalEventManager().removeEvent(_deselectByFilterCmd.first);
+    GlobalCommandSystem().removeCommand(_selectByFilterCmd);
+    GlobalCommandSystem().removeCommand(_deselectByFilterCmd);
 }
 
-void XmlFilterEventAdapter::createEventToggle()
+void XmlFilterEventAdapter::createToggleCommand()
 {
+    // Remember this name, the filter might change in the meantime
+    _toggleCmdName = _filter.getEventName();
+    GlobalCommandSystem().addStatement(_toggleCmdName,
+        fmt::format("ToggleFilterState \"{0}\"", _filter.getName()), false);
+
+#if 0
     _toggle = std::make_pair(_filter.getEventName(), GlobalEventManager().addToggle(
         _filter.getEventName(),
         std::bind(&XmlFilterEventAdapter::toggle, this, std::placeholders::_1)
     ));
+#endif
 }
 
 }

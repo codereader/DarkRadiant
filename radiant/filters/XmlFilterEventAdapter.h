@@ -19,9 +19,12 @@ class XmlFilterEventAdapter
 private:
     XMLFilter& _filter;
 
+#if 0
     std::pair<std::string, IEventPtr> _toggle;
-    std::pair<std::string, IEventPtr> _selectByFilterCmd;
-    std::pair<std::string, IEventPtr> _deselectByFilterCmd;
+#endif
+    std::string _toggleCmdName;
+    std::string _selectByFilterCmd;
+    std::string _deselectByFilterCmd;
 
 public:
     typedef std::shared_ptr<XmlFilterEventAdapter> Ptr;
@@ -42,7 +45,7 @@ private:
 
     void createSelectDeselectEvents();
     void removeSelectDeselectEvents();
-    void createEventToggle();
+    void createToggleCommand();
 };
 
 }

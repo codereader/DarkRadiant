@@ -1474,6 +1474,9 @@
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp">
       <Filter>src\ui\grid</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filters\FilterUserInterface.cpp">
+      <Filter>src\ui\filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -2921,6 +2924,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h">
       <Filter>src\ui\grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filters\FilterUserInterface.h">
+      <Filter>src\ui\filters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
