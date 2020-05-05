@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <sigc++/connection.h>
 #include "imodule.h"
 
 namespace ui
@@ -12,6 +13,8 @@ class FilterUserInterface :
 private:
 	std::map<std::string, IEventPtr> _toggleFilterEvents;
 
+	sigc::connection _filtersChangedConn;
+
 public:
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
@@ -19,6 +22,7 @@ public:
 	void shutdownModule() override;
 
 private:
+	void onFiltersChanged();
 	void toggleFilter(const std::string& filterName, bool newState);
 };
 

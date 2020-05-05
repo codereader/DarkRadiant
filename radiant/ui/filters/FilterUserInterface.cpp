@@ -2,6 +2,7 @@
 
 #include "ifilter.h"
 #include "ieventmanager.h"
+#include <sigc++/functors/mem_fun.h>
 
 #include "module/StaticModule.h"
 
@@ -40,17 +41,29 @@ void FilterUserInterface::initialiseModule(const ApplicationContext& ctx)
 			std::bind(&FilterUserInterface::toggleFilter, this, std::string(name), std::placeholders::_1)
 		);
 
-		_toggleFilterEvents.emplace(eventName, toggleEvent);
+		_toggleFilterEvents.emplace(name, toggleEvent);
 
 		toggleEvent->setToggled(GlobalFilterSystem().getFilterState(name));
 	});
 
 	GlobalEventManager().addCommand("ActivateAllFilters", "ActivateAllFilters");
 	GlobalEventManager().addCommand("DeactivateAllFilters", "DeactivateAllFilters");
+
+	_filtersChangedConn = GlobalFilterSystem().filtersChangedSignal().connect(
+		sigc::mem_fun(*this, &FilterUserInterface::onFiltersChanged)
+	);
 }
 
 void FilterUserInterface::shutdownModule()
 {
+}
+
+void FilterUserInterface::onFiltersChanged()
+{
+	for (const auto& pair : _toggleFilterEvents)
+	{
+		pair.second->setToggled(GlobalFilterSystem().getFilterState(pair.first));
+	}
 }
 
 void FilterUserInterface::toggleFilter(const std::string& filterName, bool newState)
