@@ -5,6 +5,7 @@
 #include <sigc++/functors/mem_fun.h>
 
 #include "module/StaticModule.h"
+#include "FiltersMainMenu.h"
 
 namespace ui
 {
@@ -52,6 +53,9 @@ void FilterUserInterface::initialiseModule(const ApplicationContext& ctx)
 	_filtersChangedConn = GlobalFilterSystem().filtersChangedSignal().connect(
 		sigc::mem_fun(*this, &FilterUserInterface::onFiltersChanged)
 	);
+
+	// Create the main menu Filter entries
+	FiltersMenu::addItemsToMainMenu();
 }
 
 void FilterUserInterface::shutdownModule()

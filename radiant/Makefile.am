@@ -266,7 +266,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/filters/FilterContextMenu.cpp \
                       ui/filters/FilterOrthoContextMenuItem.cpp \
                       ui/filters/FilterUserInterface.cpp \
-                      ui/menu/FiltersMenu.cpp \
+                      ui/filters/FiltersMainMenu.cpp \
                       ui/prefdialog/GameSetupDialog.cpp \
 					  ui/prefdialog/GameSetupPage.cpp \
                       ui/prefdialog/GameSetupPageIdTech.cpp \

@@ -1,4 +1,4 @@
-#include "FiltersMenu.h"
+#include "FiltersMainMenu.h"
 
 #include "i18n.h"
 #include "ifilter.h"

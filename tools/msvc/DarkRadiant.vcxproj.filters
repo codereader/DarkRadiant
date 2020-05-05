@@ -95,9 +95,6 @@
     <Filter Include="src\ui\mediabrowser">
       <UniqueIdentifier>{e5922210-a649-49bf-b82e-beec1e60ed1c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ui\menu">
-      <UniqueIdentifier>{56aed629-3863-4ab8-9eda-a46d34b9d653}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\modelselector">
       <UniqueIdentifier>{8c0a6529-685d-4a74-a652-4870ee22caf0}</UniqueIdentifier>
     </Filter>
@@ -648,9 +645,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowser.cpp">
       <Filter>src\ui\mediabrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\menu\FiltersMenu.cpp">
-      <Filter>src\ui\menu</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelSelector.cpp">
       <Filter>src\ui\modelselector</Filter>
@@ -1477,6 +1471,9 @@
     <ClCompile Include="..\..\radiant\ui\filters\FilterUserInterface.cpp">
       <Filter>src\ui\filters</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filters\FiltersMainMenu.cpp">
+      <Filter>src\ui\filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1937,9 +1934,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h">
       <Filter>src\ui\mediabrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\menu\FiltersMenu.h">
-      <Filter>src\ui\menu</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelDataInserter.h">
       <Filter>src\ui\modelselector</Filter>
@@ -2926,6 +2920,9 @@
       <Filter>src\ui\grid</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\filters\FilterUserInterface.h">
+      <Filter>src\ui\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filters\FiltersMainMenu.h">
       <Filter>src\ui\filters</Filter>
     </ClInclude>
   </ItemGroup>

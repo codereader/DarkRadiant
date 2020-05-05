@@ -813,6 +813,7 @@
     <ClCompile Include="..\..\radiant\ui\filters\FilterContextMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.cpp" />
+    <ClCompile Include="..\..\radiant\ui\filters\FiltersMainMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterUserInterface.cpp" />
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
@@ -932,7 +933,6 @@
     <ClCompile Include="..\..\radiant\ui\mapinfo\ModelInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowser.cpp" />
-    <ClCompile Include="..\..\radiant\ui\menu\FiltersMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\BindToolDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\ToolMappingDialog.cpp" />
@@ -1238,6 +1238,7 @@
     <ClInclude Include="..\..\radiant\ui\filters\FilterContextMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h" />
+    <ClInclude Include="..\..\radiant\ui\filters\FiltersMainMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterUserInterface.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
@@ -1396,7 +1397,6 @@
     <ClInclude Include="..\..\radiant\ui\mapinfo\ShaderInfoTab.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h" />
-    <ClInclude Include="..\..\radiant\ui\menu\FiltersMenu.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelDataInserter.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h" />

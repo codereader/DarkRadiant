@@ -5,7 +5,7 @@
 #include "imainframe.h"
 #include "idialogmanager.h"
 
-#include "ui/menu/FiltersMenu.h"
+#include "ui/filters/FiltersMainMenu.h"
 
 #include <wx/panel.h>
 #include <wx/stattext.h>

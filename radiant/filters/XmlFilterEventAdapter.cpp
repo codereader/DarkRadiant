@@ -89,14 +89,14 @@ void XmlFilterEventAdapter::createSelectDeselectEvents()
     _selectByFilterCmd = fmt::format("{0}{1}", "SelectObjectBy", _filter.getEventName());
 
     GlobalCommandSystem().addStatement(_selectByFilterCmd, 
-        fmt::format("{0} \"{1}\"", SELECT_OBJECTS_BY_FILTER_CMD, _filter.getName())
+        fmt::format("{0} \"{1}\"", SELECT_OBJECTS_BY_FILTER_CMD, _filter.getName()), false
     );
 
     // Deselect
     _deselectByFilterCmd = fmt::format("{0}{1}", "DeselectObjectBy", _filter.getEventName());
 
     GlobalCommandSystem().addStatement(_deselectByFilterCmd,
-        fmt::format("{0} \"{1}\"", DESELECT_OBJECTS_BY_FILTER_CMD, _filter.getName())
+        fmt::format("{0} \"{1}\"", DESELECT_OBJECTS_BY_FILTER_CMD, _filter.getName()), false
     );
 }
 
