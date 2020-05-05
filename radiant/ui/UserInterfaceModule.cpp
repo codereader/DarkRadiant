@@ -26,7 +26,7 @@
 #include "map/FindMapElements.h"
 #include "ui/mapinfo/MapInfoDialog.h"
 #include "ui/commandlist/CommandList.h"
-#include "ui/filterdialog/FilterDialog.h"
+#include "ui/filters/editor/FilterDialog.h"
 #include "ui/mousetool/ToolMappingDialog.h"
 #include "ui/about/AboutDialog.h"
 #include "ui/eclasstree/EClassTree.h"

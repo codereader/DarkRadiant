@@ -810,6 +810,8 @@
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\EntityList.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp" />
+    <ClCompile Include="..\..\radiant\ui\filters\editor\FilterDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\filters\editor\FilterEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterContextMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.cpp" />
@@ -965,8 +967,6 @@
     <ClCompile Include="..\..\radiant\ui\layers\LayerControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp" />
-    <ClCompile Include="..\..\radiant\ui\filterdialog\FilterDialog.cpp" />
-    <ClCompile Include="..\..\radiant\ui\filterdialog\FilterEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\FloatingLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp" />
@@ -1235,6 +1235,9 @@
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModel.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModelPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h" />
+    <ClInclude Include="..\..\radiant\ui\filters\editor\Filter.h" />
+    <ClInclude Include="..\..\radiant\ui\filters\editor\FilterDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\filters\editor\FilterEditor.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterContextMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h" />
@@ -1433,9 +1436,6 @@
     <ClInclude Include="..\..\radiant\ui\layers\LayerControl.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h" />
-    <ClInclude Include="..\..\radiant\ui\filterdialog\Filter.h" />
-    <ClInclude Include="..\..\radiant\ui\filterdialog\FilterDialog.h" />
-    <ClInclude Include="..\..\radiant\ui\filterdialog\FilterEditor.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\EmbeddedLayout.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\FloatingLayout.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\LayoutCommand.h" />

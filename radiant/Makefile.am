@@ -267,6 +267,8 @@ darkradiant_SOURCES = main.cpp \
                       ui/filters/FilterOrthoContextMenuItem.cpp \
                       ui/filters/FilterUserInterface.cpp \
                       ui/filters/FiltersMainMenu.cpp \
+                      ui/filters/editor/FilterDialog.cpp \
+                      ui/filters/editor/FilterEditor.cpp \
                       ui/prefdialog/GameSetupDialog.cpp \
 					  ui/prefdialog/GameSetupPage.cpp \
                       ui/prefdialog/GameSetupPageIdTech.cpp \
@@ -286,8 +288,6 @@ darkradiant_SOURCES = main.cpp \
                       ui/lightinspector/LightInspector.cpp \
                       ui/commandlist/CommandList.cpp \
                       ui/commandlist/ShortcutChooser.cpp \
-                      ui/filterdialog/FilterDialog.cpp \
-                      ui/filterdialog/FilterEditor.cpp \
                       ui/mainframe/MainFrame.cpp \
                       ui/mainframe/MainFrameLayoutManager.cpp \
                       ui/mainframe/FloatingLayout.cpp \

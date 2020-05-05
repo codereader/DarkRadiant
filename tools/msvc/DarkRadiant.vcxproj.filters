@@ -131,9 +131,6 @@
     <Filter Include="src\ui\layers">
       <UniqueIdentifier>{94c91149-7af7-400d-a5c5-42a4ff3f378a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ui\filterdialog">
-      <UniqueIdentifier>{6b43e169-8b1a-4401-a082-aa687a86be1d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\mainframe">
       <UniqueIdentifier>{66b8e83d-4957-4fde-aad3-11f47b5876cc}</UniqueIdentifier>
     </Filter>
@@ -298,6 +295,9 @@
     </Filter>
     <Filter Include="src\undo">
       <UniqueIdentifier>{482d5c89-ec91-4034-abd0-43e9c0f384e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\filters\editor">
+      <UniqueIdentifier>{9cc90f16-363b-40e1-84ae-be23c59e06c0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -711,12 +711,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp">
       <Filter>src\ui\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\filterdialog\FilterDialog.cpp">
-      <Filter>src\ui\filterdialog</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\filterdialog\FilterEditor.cpp">
-      <Filter>src\ui\filterdialog</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp">
       <Filter>src\ui\mainframe</Filter>
@@ -1474,6 +1468,12 @@
     <ClCompile Include="..\..\radiant\ui\filters\FiltersMainMenu.cpp">
       <Filter>src\ui\filters</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filters\editor\FilterDialog.cpp">
+      <Filter>src\ui\filters\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\filters\editor\FilterEditor.cpp">
+      <Filter>src\ui\filters\editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -2009,15 +2009,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h">
       <Filter>src\ui\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\filterdialog\Filter.h">
-      <Filter>src\ui\filterdialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\filterdialog\FilterDialog.h">
-      <Filter>src\ui\filterdialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\filterdialog\FilterEditor.h">
-      <Filter>src\ui\filterdialog</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\EmbeddedLayout.h">
       <Filter>src\ui\mainframe</Filter>
@@ -2924,6 +2915,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\filters\FiltersMainMenu.h">
       <Filter>src\ui\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filters\editor\Filter.h">
+      <Filter>src\ui\filters\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filters\editor\FilterDialog.h">
+      <Filter>src\ui\filters\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\filters\editor\FilterEditor.h">
+      <Filter>src\ui\filters\editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
