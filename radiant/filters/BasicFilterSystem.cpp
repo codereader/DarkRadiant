@@ -48,8 +48,6 @@ void BasicFilterSystem::setAllFilterStates(bool state)
 	// Update the scenegraph instances
 	update();
 
-	updateEvents();
-
 	_filterConfigChangedSignal.emit();
 
 	// Trigger an immediate scene redraw
@@ -250,7 +248,6 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 		// If this filter is in our active set, enable it
 		if (filterShouldBeActive)
 		{
-			adapter->setFilterState(true);
 			_activeFilters.emplace(filterName, inserted);
 		}
 	}
@@ -392,12 +389,6 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state)
 		_activeFilters.erase(filter);
 	}
 
-	auto adapter = _eventAdapters.find(filter);
-	if (adapter != _eventAdapters.end())
-	{
-		adapter->second->setFilterState(state);
-	}
-
 	// Invalidate the visibility cache to force new values to be
 	// loaded from the filters themselves
 	_visibilityCache.clear();
@@ -409,19 +400,6 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state)
 
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
-}
-
-void BasicFilterSystem::updateEvents() 
-{
-	for (const auto& pair : _availableFilters)
-	{
-		auto adapter = _eventAdapters.find(pair.second->getName());
-
-		if (adapter != _eventAdapters.end())
-		{
-			adapter->second->setFilterState(getFilterState(pair.first));
-		}
-	}
 }
 
 bool BasicFilterSystem::filterIsReadOnly(const std::string& filter) 
@@ -469,21 +447,27 @@ bool BasicFilterSystem::removeFilter(const std::string& filter)
 
 	// Check if the filter was active
 	auto found = _activeFilters.find(f->first);
+	bool wasActive = found != _activeFilters.end();
+
+	if (wasActive)
+	{
+		_activeFilters.erase(found);
+	}
 
 	// Now remove the object from the available filters too
 	_availableFilters.erase(f);
 
-	if (found != _activeFilters.end())
+	_filterCollectionChangedSignal.emit();
+
+	if (wasActive)
 	{
-		_activeFilters.erase(found);
-		
 		// Clear the cache, the rules have changed
 		_visibilityCache.clear();
 
 		_filterConfigChangedSignal.emit();
-	}
 
-	_filterCollectionChangedSignal.emit();
+		update();
+	}
 
 	return true;
 }
@@ -532,8 +516,6 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 		auto adapterPtr = adapter->second;
 		_eventAdapters.erase(adapter);
 		adapter = _eventAdapters.emplace(newFilterName, adapterPtr).first;
-
-		adapter->second->setFilterState(wasActive);
 	}
 
 	// Insert the new filter into the table
@@ -628,6 +610,8 @@ bool BasicFilterSystem::setFilterRules(const std::string& filter, const FilterRu
 		_visibilityCache.clear();
 
 		_filterConfigChangedSignal.emit();
+
+		update();
 
 		return true;
 	}

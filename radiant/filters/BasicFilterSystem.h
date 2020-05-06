@@ -51,8 +51,6 @@ private:
 
 	void updateShaders();
 
-	void updateEvents();
-
 	void addFiltersFromXML(const xml::NodeList& nodes, bool readOnly);
 
 	XmlFilterEventAdapter::Ptr ensureEventAdapter(XMLFilter& filter);

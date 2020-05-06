@@ -2,6 +2,7 @@
 
 #include "ifilter.h"
 #include "ieventmanager.h"
+#include "imainframe.h"
 #include "icommandsystem.h"
 #include <sigc++/functors/mem_fun.h>
 
@@ -70,6 +71,8 @@ void FilterUserInterface::onFilterConfigChanged()
 	{
 		pair.second.second->setToggled(GlobalFilterSystem().getFilterState(pair.first));
 	}
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 void FilterUserInterface::onFilterCollectionChanged()
