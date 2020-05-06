@@ -16,7 +16,7 @@
 namespace filters
 {
 
-namespace 
+namespace
 {
 	// Registry key for .game-defined filters
 	const std::string RKEY_GAME_FILTERS = "/filtersystem//filter";
@@ -50,7 +50,7 @@ void BasicFilterSystem::setAllFilterStates(bool state)
 
 	updateEvents();
 
-	_filtersChangedSignal.emit();
+	_filterConfigChangedSignal.emit();
 
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
@@ -330,11 +330,19 @@ void BasicFilterSystem::shutdownModule()
 	_eventAdapters.clear();
 	_activeFilters.clear();
 	_availableFilters.clear();
+
+	_filterCollectionChangedSignal.clear();
+	_filterConfigChangedSignal.clear();
 }
 
-sigc::signal<void> BasicFilterSystem::filtersChangedSignal() const
+sigc::signal<void> BasicFilterSystem::filterConfigChangedSignal() const
 {
-    return _filtersChangedSignal;
+    return _filterConfigChangedSignal;
+}
+
+sigc::signal<void> BasicFilterSystem::filterCollectionChangedSignal() const
+{
+	return _filterCollectionChangedSignal;
 }
 
 void BasicFilterSystem::update()
@@ -397,7 +405,7 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state)
 	// Update the scenegraph instances
 	update();
 
-	_filtersChangedSignal.emit();
+	_filterConfigChangedSignal.emit();
 
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
@@ -442,10 +450,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	// Create the event adapter
 	ensureEventAdapter(*filter);
 
-	// Clear the cache, the rules have changed
-	_visibilityCache.clear();
-
-	_filtersChangedSignal.emit();
+	_filterCollectionChangedSignal.emit();
 
 	return true;
 }
@@ -465,18 +470,20 @@ bool BasicFilterSystem::removeFilter(const std::string& filter)
 	// Check if the filter was active
 	auto found = _activeFilters.find(f->first);
 
-	if (found != _activeFilters.end()) 
-	{
-		_activeFilters.erase(found);
-	}
-
 	// Now remove the object from the available filters too
 	_availableFilters.erase(f);
 
-	// Clear the cache, the rules have changed
-	_visibilityCache.clear();
+	if (found != _activeFilters.end())
+	{
+		_activeFilters.erase(found);
+		
+		// Clear the cache, the rules have changed
+		_visibilityCache.clear();
 
-	_filtersChangedSignal.emit();
+		_filterConfigChangedSignal.emit();
+	}
+
+	_filterCollectionChangedSignal.emit();
 
 	return true;
 }
@@ -540,6 +547,8 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 
 	// Remove the old filter from the filtertable
 	_availableFilters.erase(oldFilterName);
+
+	_filterCollectionChangedSignal.emit();
 
 	return true;
 }
@@ -618,7 +627,7 @@ bool BasicFilterSystem::setFilterRules(const std::string& filter, const FilterRu
 		// Clear the cache, the ruleset has changed
 		_visibilityCache.clear();
 
-		_filtersChangedSignal.emit();
+		_filterConfigChangedSignal.emit();
 
 		return true;
 	}
@@ -669,7 +678,6 @@ const StringSet& BasicFilterSystem::getDependencies() const
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_GAMEMANAGER);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 

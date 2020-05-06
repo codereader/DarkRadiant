@@ -56,7 +56,7 @@ private:
     void onStepBackClick(wxCommandEvent& ev);
 
     void onSizeAllocate(wxSizeEvent& ev);
-    void filtersChanged();
+    void onFilterConfigChanged();
     void onRenderModeChanged(wxCommandEvent& ev);
 	void onGridButtonClick(wxCommandEvent& ev);
 

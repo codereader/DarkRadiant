@@ -26,7 +26,6 @@
 #include "map/FindMapElements.h"
 #include "ui/mapinfo/MapInfoDialog.h"
 #include "ui/commandlist/CommandList.h"
-#include "ui/filters/editor/FilterDialog.h"
 #include "ui/mousetool/ToolMappingDialog.h"
 #include "ui/about/AboutDialog.h"
 #include "ui/eclasstree/EClassTree.h"
@@ -147,7 +146,6 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("FindBrush", DoFind);
 
 	GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("EditFiltersDialog", FilterDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("FindReplaceTextures", FindAndReplaceShader::ShowDialog);
@@ -176,7 +174,6 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("FindBrush", "FindBrush");
 
 	GlobalEventManager().addCommand("MapInfo", "MapInfo");
-	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
 	GlobalEventManager().addCommand("MouseToolMappingDialog", "MouseToolMappingDialog");
 
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");

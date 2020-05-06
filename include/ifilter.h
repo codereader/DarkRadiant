@@ -82,13 +82,17 @@ class Entity;
  * The filter system provides a mechanism by which certain objects or materials
  * can be hidden from rendered views.
  */
-class FilterSystem :
+class IFilterSystem :
 	public RegisterableModule
 {
 public:
 
-    /// Signal emitted when the state of filters has changed
-    virtual sigc::signal<void> filtersChangedSignal() const = 0;
+    // Signal emitted when the state of filters has changed,
+	// filters have been added or removed, or when rules have been altered
+    virtual sigc::signal<void> filterConfigChangedSignal() const = 0;
+
+	// Signal emitted when filters are added, removed or renamed
+    virtual sigc::signal<void> filterCollectionChangedSignal() const = 0;
 
 	/**
 	 * greebo: Updates all the "Filtered" status of all Instances
@@ -206,11 +210,11 @@ public:
 	virtual bool setFilterRules(const std::string& filter, const FilterRules& ruleSet) = 0;
 };
 
-inline FilterSystem& GlobalFilterSystem() 
+inline IFilterSystem& GlobalFilterSystem()
 {
 	// Cache the reference locally
-	static FilterSystem& _filterSystem(
-		*std::static_pointer_cast<FilterSystem>(
+	static IFilterSystem& _filterSystem(
+		*std::static_pointer_cast<IFilterSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_FILTERSYSTEM)
 		)
 	);

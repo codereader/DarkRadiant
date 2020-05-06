@@ -109,9 +109,9 @@ void RenderPreview::setupToolbars(bool enableAnimation)
     filterToolbar->Realize();
 
     // Get notified of filter changes
-    GlobalFilterSystem().filtersChangedSignal().connect(
-        sigc::mem_fun(this, &RenderPreview::filtersChanged)
-        );
+    GlobalFilterSystem().filterConfigChangedSignal().connect(
+        sigc::mem_fun(this, &RenderPreview::onFilterConfigChanged)
+    );
 
     wxToolBar* renderToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewRenderModeToolbar");
 
@@ -166,7 +166,7 @@ void RenderPreview::updateActiveRenderModeButton()
     }
 }
 
-void RenderPreview::filtersChanged()
+void RenderPreview::onFilterConfigChanged()
 {
     if (!getScene()->root()) return;
 

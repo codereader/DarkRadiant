@@ -48,7 +48,7 @@ class InstanceUpdateWalker :
 	public scene::NodeVisitor
 {
 private:
-	FilterSystem& _filterSystem;
+	IFilterSystem& _filterSystem;
 
 	// Helper visitors to update subgraphs
 	NodeVisibilityUpdater _hideWalker;
@@ -60,7 +60,7 @@ private:
 	bool _brushesAreVisible;
 
 public:
-	InstanceUpdateWalker(FilterSystem& filterSystem) :
+	InstanceUpdateWalker(IFilterSystem& filterSystem) :
 		_filterSystem(filterSystem),
 		_hideWalker(true),
 		_showWalker(false),

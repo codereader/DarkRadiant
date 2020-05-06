@@ -22,7 +22,7 @@ const char* const DESELECT_OBJECTS_BY_FILTER_CMD = "DeselectObjectsByFilter";
 /** FilterSystem implementation class.
  */
 class BasicFilterSystem : 
-	public FilterSystem
+	public IFilterSystem
 {
 private:
 	// Hashtable of available filters, indexed by name
@@ -37,7 +37,8 @@ private:
 	typedef std::map<std::string, bool> StringFlagCache;
 	StringFlagCache _visibilityCache;
 
-    sigc::signal<void> _filtersChangedSignal;
+    sigc::signal<void> _filterConfigChangedSignal;
+    sigc::signal<void> _filterCollectionChangedSignal;
 
 	typedef std::map<std::string, XmlFilterEventAdapter::Ptr> FilterAdapters;
 	FilterAdapters _eventAdapters;
@@ -67,7 +68,8 @@ private:
 
 public:
     // FilterSystem implementation
-    sigc::signal<void> filtersChangedSignal() const override;
+    sigc::signal<void> filterConfigChangedSignal() const override;
+    sigc::signal<void> filterCollectionChangedSignal() const override;
 
 	// Invoke the InstanceUpateWalker to update the filtered status.
 	void update() override;

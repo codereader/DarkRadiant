@@ -146,7 +146,7 @@ void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 	_callbackActive = false;
 }
 
-void EntityList::filtersChanged()
+void EntityList::onFilterConfigChanged()
 {
     // Only react to filter changes if we display visible nodes only otherwise
     // we don't care
@@ -166,7 +166,7 @@ void EntityList::_preHide()
 	_treeModel.disconnectFromSceneGraph();
 
 	// Disconnect from the filters-changed signal
-	_filtersChangedConnection.disconnect();
+	_filtersConfigChangedConn.disconnect();
 
 	// De-register self from the SelectionSystem
 	GlobalSelectionSystem().removeObserver(this);
@@ -191,8 +191,8 @@ void EntityList::_preShow()
 	GlobalSelectionSystem().addObserver(this);
 
 	// Get notified when filters are changing
-	_filtersChangedConnection = GlobalFilterSystem().filtersChangedSignal().connect(
-        sigc::mem_fun(Instance(), &EntityList::filtersChanged)
+	_filtersConfigChangedConn = GlobalFilterSystem().filterConfigChangedSignal().connect(
+        sigc::mem_fun(Instance(), &EntityList::onFilterConfigChanged)
     );
 
 	_callbackActive = true;
