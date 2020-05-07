@@ -135,7 +135,6 @@ public:
 
 	// The same as above, but with event values as argument (event->keyval, event->state)
 	virtual IAccelerator& addAccelerator(wxKeyEvent& ev) = 0;
-	virtual IAccelerator& findAccelerator(const IEventPtr& event) = 0;
 	virtual std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) = 0;
 
 	// Loads all accelerator bindings from the defaults in the stock input.xml

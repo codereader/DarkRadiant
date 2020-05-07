@@ -86,7 +86,6 @@ public:
 	void foreachEvent(IEventVisitor& eventVisitor) override;
 
 	// Tries to locate an accelerator, that is connected to the given command
-	Accelerator& findAccelerator(const IEventPtr& event) override;
     AcceleratorList findAccelerator(wxKeyEvent& ev);
 
 	std::string getEventStr(wxKeyEvent& ev) override;
@@ -94,6 +93,7 @@ public:
 private:
 	void saveEventListToRegistry();
 
+	Accelerator& findAccelerator(const IEventPtr& event);
 	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr);
 
 	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, const IEventPtr& event);

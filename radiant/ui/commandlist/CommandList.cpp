@@ -109,15 +109,7 @@ std::string CommandList::getSelectedCommand()
 	{
 		wxutil::TreeModel::Row row(item, *_listStore);
 
-		const std::string commandName = row[_columns.command];
-
-		IEventPtr ev = GlobalEventManager().findEvent(commandName);
-
-		// Double check, if the command exists
-		if (ev != NULL)
-		{
-			return commandName;
-		}
+		return static_cast<std::string>(row[_columns.command]);
 	}
 
 	return "";
