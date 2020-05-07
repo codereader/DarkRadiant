@@ -20,6 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\filetypes\FileTypeRegistry.cpp" />
+    <ClCompile Include="..\..\radiantcore\filters\BasicFilterSystem.cpp" />
+    <ClCompile Include="..\..\radiantcore\filters\XMLFilter.cpp" />
+    <ClCompile Include="..\..\radiantcore\filters\XmlFilterEventAdapter.cpp" />
     <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp" />
@@ -60,6 +63,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\filetypes\FileTypeRegistry.h" />
+    <ClInclude Include="..\..\radiantcore\filters\BasicFilterSystem.h" />
+    <ClInclude Include="..\..\radiantcore\filters\InstanceUpdateWalker.h" />
+    <ClInclude Include="..\..\radiantcore\filters\SetObjectSelectionByFilterWalker.h" />
+    <ClInclude Include="..\..\radiantcore\filters\XMLFilter.h" />
+    <ClInclude Include="..\..\radiantcore\filters\XmlFilterEventAdapter.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridItem.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridManager.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\dds.h" />

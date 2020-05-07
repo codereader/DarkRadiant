@@ -105,9 +105,6 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Statement.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
-                      filters/BasicFilterSystem.cpp \
-                      filters/XMLFilter.cpp \
-                      filters/XmlFilterEventAdapter.cpp \
                       fonts/FontLoader.cpp \
                       fonts/GlyphInfo.cpp \
                       fonts/GlyphSet.cpp \

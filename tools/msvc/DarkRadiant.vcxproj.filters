@@ -209,9 +209,6 @@
     <Filter Include="src\uimanager\menu">
       <UniqueIdentifier>{31b14db3-7897-48b1-8771-d4e0eac5cb07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\filters">
-      <UniqueIdentifier>{c4c126b2-0502-4871-a86e-41d84399cfc0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\eclassmgr">
       <UniqueIdentifier>{78e18785-008a-4455-b7c5-0a7d7391fec9}</UniqueIdentifier>
     </Filter>
@@ -1024,12 +1021,6 @@
     <ClCompile Include="..\..\radiant\uimanager\menu\MenuSeparator.cpp">
       <Filter>src\uimanager\menu</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\filters\BasicFilterSystem.cpp">
-      <Filter>src\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\filters\XMLFilter.cpp">
-      <Filter>src\filters</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\eclassmgr\Doom3EntityClass.cpp">
       <Filter>src\eclassmgr</Filter>
     </ClCompile>
@@ -1446,9 +1437,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\filters\FilterMenu.cpp">
       <Filter>src\ui\filters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\filters\XmlFilterEventAdapter.cpp">
-      <Filter>src\filters</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp">
       <Filter>src\model</Filter>
@@ -2415,15 +2403,6 @@
     <ClInclude Include="..\..\radiant\uimanager\menu\MenuSeparator.h">
       <Filter>src\uimanager\menu</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\filters\BasicFilterSystem.h">
-      <Filter>src\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\filters\InstanceUpdateWalker.h">
-      <Filter>src\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\filters\XMLFilter.h">
-      <Filter>src\filters</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\eclassmgr\Doom3EntityClass.h">
       <Filter>src\eclassmgr</Filter>
     </ClInclude>
@@ -2874,9 +2853,6 @@
     <ClInclude Include="..\..\radiant\layers\LayerManager.h">
       <Filter>src\layers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\filters\SetObjectSelectionByFilterWalker.h">
-      <Filter>src\filters</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h">
       <Filter>src\ui\filters</Filter>
     </ClInclude>
@@ -2885,9 +2861,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\filters\FilterMenu.h">
       <Filter>src\ui\filters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\filters\XmlFilterEventAdapter.h">
-      <Filter>src\filters</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h">
       <Filter>src\model</Filter>

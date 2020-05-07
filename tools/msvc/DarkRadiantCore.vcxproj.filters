@@ -50,6 +50,9 @@
     <Filter Include="src\grid">
       <UniqueIdentifier>{79fa6073-1042-4501-9f3f-34c689eaf391}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\filters">
+      <UniqueIdentifier>{09da2d20-769e-49aa-8c54-c90486c4c883}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -165,6 +168,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp">
       <Filter>src\grid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\filters\BasicFilterSystem.cpp">
+      <Filter>src\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\filters\XMLFilter.cpp">
+      <Filter>src\filters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\filters\XmlFilterEventAdapter.cpp">
+      <Filter>src\filters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,6 +374,21 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\grid\GridManager.h">
       <Filter>src\grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\filters\BasicFilterSystem.h">
+      <Filter>src\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\filters\InstanceUpdateWalker.h">
+      <Filter>src\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\filters\SetObjectSelectionByFilterWalker.h">
+      <Filter>src\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\filters\XMLFilter.h">
+      <Filter>src\filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\filters\XmlFilterEventAdapter.h">
+      <Filter>src\filters</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
