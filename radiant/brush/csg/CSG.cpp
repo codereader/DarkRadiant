@@ -187,7 +187,8 @@ class SubtractBrushesFromUnselected :
 	std::size_t& _before;
 	std::size_t& _after;
 
-	std::list<scene::INodePtr> _deleteList;
+	BrushPtrVector _unselectedBrushes;
+
 public:
 	SubtractBrushesFromUnselected(const BrushPtrVector& brushlist, std::size_t& before, std::size_t& after) :
 		_brushlist(brushlist),
@@ -195,92 +196,93 @@ public:
 		_after(after)
 	{}
 
-	virtual ~SubtractBrushesFromUnselected() {
-		for (std::list<scene::INodePtr>::iterator i = _deleteList.begin();
-			 i != _deleteList.end(); i++)
+	bool pre(const scene::INodePtr& node) override
+	{
+		if (!node->visible())
 		{
-			scene::removeNodeFromParent(*i);
+			return false;
 		}
-	}
 
-	bool pre(const scene::INodePtr& node) {
+		if (Node_isBrush(node) && !Node_isSelected(node))
+		{
+			_unselectedBrushes.emplace_back(std::dynamic_pointer_cast<BrushNode>(node));
+		}
+
 		return true;
 	}
 
-	void post(const scene::INodePtr& node) {
-		if (!node->visible()) {
-			return;
+	void processUnselectedBrushes()
+	{
+		for (const auto& node : _unselectedBrushes)
+		{
+			processNode(node);
+		}
+	}
+
+private:
+	void processNode(const BrushNodePtr& brushNode)
+	{
+		// Get the parent of this brush
+		scene::INodePtr parent = brushNode->getParent();
+		assert(parent); // parent must not be NULL
+
+		BrushPtrVector buffer[2];
+		std::size_t swap = 0;
+
+		BrushNodePtr original = std::dynamic_pointer_cast<BrushNode>(brushNode->clone());
+
+		//Brush* original = new Brush(*brush);
+		buffer[swap].push_back(original);
+
+		// Iterate over all selected brushes
+		for (const auto& selectedBrush : _brushlist)
+		{
+			for (const auto& target : buffer[swap])
+			{
+				if (Brush_subtract(target, selectedBrush->getBrush(), buffer[1 - swap]))
+				{
+					// greebo: Delete not necessary, nodes get deleted automatically by clear() below
+					// delete (*j);
+				}
+				else
+				{
+					buffer[1 - swap].push_back(target);
+				}
+			}
+
+			buffer[swap].clear();
+			swap = 1 - swap;
 		}
 
-		Brush* brush = Node_getBrush(node);
+		BrushPtrVector& out = buffer[swap];
 
-		if (brush != NULL && !Node_isSelected(node))
+		if (out.size() == 1 && out.back() == original)
 		{
-			BrushNodePtr brushNode = std::dynamic_pointer_cast<BrushNode>(node);
+			// greebo: shared_ptr is taking care of this
+			//delete original;
+		}
+		else
+		{
+			_before++;
 
-			// Get the parent of this brush
-			scene::INodePtr parent = node->getParent();
-			assert(parent != NULL); // parent should not be NULL
-
-			BrushPtrVector buffer[2];
-			std::size_t swap = 0;
-
-			BrushNodePtr original = std::dynamic_pointer_cast<BrushNode>(brushNode->clone());
-
-			//Brush* original = new Brush(*brush);
-			buffer[swap].push_back(original);
-
-			// Iterate over all selected brushes
-			for (BrushPtrVector::const_iterator i(_brushlist.begin()); i != _brushlist.end(); ++i)
+			for (BrushPtrVector::const_iterator i = out.begin(); i != out.end(); ++i)
 			{
-				for (BrushPtrVector::iterator j(buffer[swap].begin());
-					 j != buffer[swap].end(); ++j)
-				{
-					if (Brush_subtract(*j, (*i)->getBrush(), buffer[1 - swap]))
-					{
-						// greebo: Delete not necessary, nodes get deleted automatically by clear() below
-						// delete (*j);
-					}
-					else
-					{
-						buffer[1 - swap].push_back(*j);
-					}
-				}
+				_after++;
 
-				buffer[swap].clear();
-				swap = 1 - swap;
+				scene::INodePtr newBrush = GlobalBrushCreator().createBrush();
+
+				parent->addChildNode(newBrush);
+
+				// Move the new Brush to the same layers as the source node
+				newBrush->assignToLayers(brushNode->getLayers());
+
+				(*i)->getBrush().removeEmptyFaces();
+				ASSERT_MESSAGE(!(*i)->getBrush().empty(), "brush left with no faces after subtract");
+
+				Node_getBrush(newBrush)->copy((*i)->getBrush());
 			}
 
-			BrushPtrVector& out = buffer[swap];
-
-			if (out.size() == 1 && out.back() == original)
-			{
-				// greebo: shared_ptr is taking care of this
-				//delete original;
-			}
-			else
-			{
-				_before++;
-
-				for (BrushPtrVector::const_iterator i = out.begin(); i != out.end(); ++i)
-				{
-					_after++;
-
-					scene::INodePtr newBrush = GlobalBrushCreator().createBrush();
-
-					parent->addChildNode(newBrush);
-
-					// Move the new Brush to the same layers as the source node
-					newBrush->assignToLayers(node->getLayers());
-
-					(*i)->getBrush().removeEmptyFaces();
-					ASSERT_MESSAGE(!(*i)->getBrush().empty(), "brush left with no faces after subtract");
-
-					Node_getBrush(newBrush)->copy((*i)->getBrush());
-				}
-
-			    _deleteList.push_back(node);
-			}
+			scene::removeNodeFromParent(brushNode);
 		}
 	}
 };
@@ -315,11 +317,10 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 	std::size_t before = 0;
 	std::size_t after = 0;
 
-	// instantiate a scoped walker class
-	{
-		SubtractBrushesFromUnselected walker(brushes, before, after);
-		GlobalSceneGraph().root()->traverse(walker);
-	}
+	SubtractBrushesFromUnselected walker(brushes, before, after);
+	GlobalSceneGraph().root()->traverse(walker);
+
+	walker.processUnselectedBrushes();
 
 	rMessage() << "CSG Subtract: Result: "
 		<< after << " fragment" << (after == 1 ? "" : "s")
