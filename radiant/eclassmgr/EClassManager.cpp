@@ -8,7 +8,6 @@
 #include "icommandsystem.h"
 #include "imainframe.h"
 #include "iradiant.h"
-#include "iuimanager.h"
 #include "ifilesystem.h"
 #include "parser/DefTokeniser.h"
 
@@ -29,6 +28,11 @@ EClassManager::EClassManager() :
     _defLoader(std::bind(&EClassManager::loadDefAndResolveInheritance, this)),
 	_curParseStamp(0)
 {}
+
+sigc::signal<void> EClassManager::defsLoadedSignal() const
+{
+	return _defsLoadedSignal;
+}
 
 sigc::signal<void> EClassManager::defsReloadedSignal() const
 {
@@ -168,24 +172,6 @@ void EClassManager::resolveInheritance()
             }
         }
     }
-
-	// greebo: Override the eclass colours of two special entityclasses
-    Vector3 worlspawnColour = ColourSchemes().getColour("default_brush");
-    Vector3 lightColour = ColourSchemes().getColour("light_volumes");
-
-    Doom3EntityClassPtr light = findInternal("light");
-
-	if (light)
-	{
-		light->setColour(lightColour);
-	}
-
-	Doom3EntityClassPtr worldspawn = findInternal("worldspawn");
-
-	if (worldspawn)
-	{
-		worldspawn->setColour(worlspawnColour);
-	}
 }
 
 void EClassManager::ensureDefsLoaded()
@@ -199,6 +185,8 @@ void EClassManager::loadDefAndResolveInheritance()
 {
     parseDefFiles();
     resolveInheritance();
+
+	_defsLoadedSignal.emit();
 }
 
 void EClassManager::realise()
@@ -287,14 +275,15 @@ const std::string& EClassManager::getName() const {
 	return _name;
 }
 
-const StringSet& EClassManager::getDependencies() const {
+const StringSet& EClassManager::getDependencies() const
+{
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}

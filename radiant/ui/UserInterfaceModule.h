@@ -4,6 +4,8 @@
 #include "iorthocontextmenu.h"
 #include "icommandsystem.h"
 
+#include "EntityClassColourManager.h"
+
 namespace ui
 {
 
@@ -17,6 +19,9 @@ namespace ui
 class UserInterfaceModule :
 	public RegisterableModule
 {
+private:
+	std::unique_ptr<EntityClassColourManager> _eClassColourManager;
+
 public:
 	// RegisterableModule
 	const std::string & getName() const override;

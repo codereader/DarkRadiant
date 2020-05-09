@@ -148,31 +148,30 @@ public:
 
     ~Doom3EntityClass();
 
-    /// Set the display colour
-    void setColour(const Vector3& colour);
-
     /// Add a new attribute
     void addAttribute(const EntityClassAttribute& attribute);
 
     // IEntityClass implementation
-    std::string getName() const;
-    const IEntityClass* getParent() const;
-    sigc::signal<void> changedSignal() const;
-    bool isFixedSize() const;
-    AABB getBounds() const;
-    bool isLight() const;
-    const Vector3& getColour() const;
-    const std::string& getWireShader() const;
-    const std::string& getFillShader() const;
-    EntityClassAttribute& getAttribute(const std::string& name);
-    const EntityClassAttribute& getAttribute(const std::string& name) const;
+    std::string getName() const override;
+    const IEntityClass* getParent() const override;
+    sigc::signal<void> changedSignal() const override;
+    bool isFixedSize() const override;
+    AABB getBounds() const override;
+    bool isLight() const override;
+    const Vector3& getColour() const override;
+    /// Set the display colour
+    void setColour(const Vector3& colour) override;
+    const std::string& getWireShader() const override;
+    const std::string& getFillShader() const override;
+    EntityClassAttribute& getAttribute(const std::string& name) override;
+    const EntityClassAttribute& getAttribute(const std::string& name) const override;
     void forEachClassAttribute(std::function<void(const EntityClassAttribute&)>,
-                               bool) const;
+                               bool) const override;
 
-    const std::string& getModelPath() const { return _model; }
-    const std::string& getSkin() const      { return _skin; }
+    const std::string& getModelPath() const override { return _model; }
+    const std::string& getSkin() const override { return _skin; }
 
-	bool isOfType(const std::string& className);
+	bool isOfType(const std::string& className) override;
 
     /// Set a model on this entity class.
     void setModelPath(const std::string& path) {

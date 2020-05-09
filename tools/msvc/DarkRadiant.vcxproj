@@ -1195,6 +1195,7 @@
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h" />
+    <ClInclude Include="..\..\radiant\ui\EntityClassColourManager.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\EntityList.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModel.h" />
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeModelPopulator.h" />

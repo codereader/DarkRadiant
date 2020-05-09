@@ -248,6 +248,9 @@ public:
     /// Return the display colour of this entity class
     virtual const Vector3& getColour() const = 0;
 
+    // Overrides the colour defined in the .def files
+    virtual void setColour(const Vector3& colour) = 0;
+
     /**
      * Get the named Shader used for rendering this entity class in
      * wireframe mode.
@@ -384,6 +387,8 @@ class IEntityClassManager :
     public RegisterableModule
 {
 public:
+    /// Signal emitted when all DEFs have been loaded (after module initialisation)
+    virtual sigc::signal<void> defsLoadedSignal() const = 0;
 
     /// Signal emitted when all DEFs are reloaded
     virtual sigc::signal<void> defsReloadedSignal() const = 0;

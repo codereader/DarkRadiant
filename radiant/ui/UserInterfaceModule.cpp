@@ -125,10 +125,13 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 			FilterOrthoContextMenuItem::DeselectByFilter),
 		IOrthoContextMenu::SECTION_FILTER
 	);
+
+	_eClassColourManager.reset(new EntityClassColourManager);
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+	_eClassColourManager.reset();
 }
 
 void UserInterfaceModule::refreshShadersCmd(const cmd::ArgumentList& args)

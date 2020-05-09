@@ -48,6 +48,7 @@ class EClassManager :
 	// definitions have been parsed
 	std::size_t _curParseStamp;
 
+    sigc::signal<void> _defsLoadedSignal;
     sigc::signal<void> _defsReloadedSignal;
 
 public:
@@ -55,6 +56,7 @@ public:
 	EClassManager();
 
     // IEntityClassManager implementation
+    sigc::signal<void> defsLoadedSignal() const override;
     sigc::signal<void> defsReloadedSignal() const override;
     virtual IEntityClassPtr findOrInsert(const std::string& name,
                                          bool has_brushes) override;
