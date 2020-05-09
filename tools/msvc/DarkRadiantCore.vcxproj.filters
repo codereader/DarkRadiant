@@ -217,6 +217,9 @@
     <ClCompile Include="..\..\radiantcore\shaders\TableDefinition.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\precompiled.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -479,6 +482,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\TableDefinition.h">
       <Filter>src\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\precompiled.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
