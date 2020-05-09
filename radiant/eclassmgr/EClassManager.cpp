@@ -10,6 +10,7 @@
 #include "iradiant.h"
 #include "ifilesystem.h"
 #include "parser/DefTokeniser.h"
+#include "messages/ScopedLongRunningOperation.h"
 
 #include "Doom3EntityClass.h"
 #include "Doom3ModelDef.h"
@@ -322,8 +323,7 @@ void EClassManager::shutdownModule()
 // This takes care of relading the entityDefs and refreshing the scenegraph
 void EClassManager::reloadDefsCmd(const cmd::ArgumentList& args)
 {
-    IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Reloading Defs"),
-        _("Reloading Defs"), true);
+	radiant::ScopedLongRunningOperation operation(_("Reloading Defs"));
 	
     reloadDefs();
 }

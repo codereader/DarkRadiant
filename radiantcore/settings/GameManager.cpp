@@ -22,7 +22,7 @@
 
 #include "wxutil/dialog/MessageBox.h"
 #include "module/StaticModule.h"
-#include "GameConfigNeededMessage.h"
+#include "messages/GameConfigNeededMessage.h"
 
 #include <sigc++/bind.h>
 

@@ -127,10 +127,12 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	);
 
 	_eClassColourManager.reset(new EntityClassColourManager);
+	_longOperationHandler.reset(new LongRunningOperationHandler);
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+	_longOperationHandler.reset();
 	_eClassColourManager.reset();
 }
 

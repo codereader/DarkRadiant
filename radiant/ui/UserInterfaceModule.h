@@ -5,6 +5,7 @@
 #include "icommandsystem.h"
 
 #include "EntityClassColourManager.h"
+#include "LongRunningOperationHandler.h"
 
 namespace ui
 {
@@ -21,6 +22,7 @@ class UserInterfaceModule :
 {
 private:
 	std::unique_ptr<EntityClassColourManager> _eClassColourManager;
+	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 
 public:
 	// RegisterableModule

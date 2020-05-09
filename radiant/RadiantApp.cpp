@@ -6,7 +6,7 @@
 
 #include "log/PIDFile.h"
 #include "module/CoreModule.h"
-#include "GameConfigNeededMessage.h"
+#include "messages/GameConfigNeededMessage.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "module/StaticModule.h"
 

@@ -2811,6 +2811,9 @@
     <ClInclude Include="..\..\radiant\ui\EntityClassColourManager.h">
       <Filter>src\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

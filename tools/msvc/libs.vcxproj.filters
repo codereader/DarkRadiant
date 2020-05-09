@@ -185,7 +185,15 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\maplib.h" />
     <ClInclude Include="..\..\libs\GameConfigUtil.h" />
-    <ClInclude Include="..\..\libs\GameConfigNeededMessage.h" />
+    <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -214,6 +222,9 @@
     </Filter>
     <Filter Include="generic">
       <UniqueIdentifier>{ac492ec5-988b-4dd5-8b6f-a1a23fbd0ce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="messages">
+      <UniqueIdentifier>{bc41bb46-8308-44d2-8380-e67d9e3945a6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@ public:
         _nextId(1)
     {}
 
-    std::size_t addListener(const Listener & listener) override
+    std::size_t addListener(const Listener& listener) override
     {
         std::lock_guard<std::recursive_mutex> guard(_lock);
 

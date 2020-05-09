@@ -151,12 +151,14 @@
     <ClInclude Include="..\..\libs\eclass.h" />
     <ClInclude Include="..\..\libs\entitylib.h" />
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
-    <ClInclude Include="..\..\libs\GameConfigNeededMessage.h" />
     <ClInclude Include="..\..\libs\GameConfigUtil.h" />
     <ClInclude Include="..\..\libs\gamelib.h" />
     <ClInclude Include="..\..\libs\generic\callback.h" />
     <ClInclude Include="..\..\libs\KeyValueStore.h" />
     <ClInclude Include="..\..\libs\maplib.h" />
+    <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h" />
+    <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h" />
+    <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />

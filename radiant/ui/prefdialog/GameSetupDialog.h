@@ -3,7 +3,7 @@
 #include "icommandsystem.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "GameSetupPage.h"
-#include "GameConfigNeededMessage.h"
+#include "messages/GameConfigNeededMessage.h"
 
 class wxChoicebook;
 class wxBookCtrlEvent;
