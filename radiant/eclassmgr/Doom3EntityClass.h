@@ -58,6 +58,7 @@ class Doom3EntityClass
     // Default shader names, in case we don't get any from the parent or otherwise
     static const std::string DefaultWireShader;
     static const std::string DefaultFillShader;
+    static const Vector3 DefaultEntityColour;
 
     // Shader versions of the colour
     std::string _fillShader;

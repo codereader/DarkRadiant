@@ -1,7 +1,6 @@
 #include "Doom3EntityClass.h"
 
 #include "itextstream.h"
-#include "iuimanager.h"
 #include "os/path.h"
 #include "string/convert.h"
 
@@ -197,7 +196,7 @@ public:
 
 const std::string Doom3EntityClass::DefaultWireShader("<0.3 0.3 1>");
 const std::string Doom3EntityClass::DefaultFillShader("(0.3 0.3 1)");
-
+const Vector3 Doom3EntityClass::DefaultEntityColour(0.3, 0.3, 1);
 
 Doom3EntityClass::Doom3EntityClass(const std::string& name) :
     Doom3EntityClass(name, false)
@@ -286,7 +285,7 @@ void Doom3EntityClass::setColour(const Vector3& colour)
     // Set the entity colour to default, if none was specified
     if (_colour == Vector3(-1, -1, -1))
     {
-        _colour = ColourSchemes().getColour("default_entity");
+        _colour = DefaultEntityColour;
     }
 
     // Define fill and wire versions of the entity colour
@@ -443,8 +442,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
     else
     {
         // If no colour is set, assign the default entity colour to this class
-        static Vector3 defaultColour = ColourSchemes().getColour("default_entity");
-        setColour(defaultColour);
+        setColour(DefaultEntityColour);
     }
 }
 
