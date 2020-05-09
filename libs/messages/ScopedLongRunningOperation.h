@@ -16,9 +16,9 @@ class ScopedLongRunningOperation :
 	public util::Noncopyable
 {
 public:
-	ScopedLongRunningOperation(const std::string& title)
+	ScopedLongRunningOperation(const std::string& message)
 	{
-		LongRunningOperationMessage started(OperationEvent::Started, title);
+		LongRunningOperationMessage started(OperationEvent::Started, message);
 		GlobalRadiantCore().getMessageBus().sendMessage(started);
 	}
 

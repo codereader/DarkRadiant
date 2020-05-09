@@ -6,7 +6,6 @@
 #include "irender.h"
 #include "ieventmanager.h"
 #include "icommandsystem.h"
-#include "imainframe.h"
 #include "iradiant.h"
 #include "ifilesystem.h"
 #include "parser/DefTokeniser.h"

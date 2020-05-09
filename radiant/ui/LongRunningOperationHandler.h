@@ -37,16 +37,16 @@ private:
 	{
 		if (message.getType() == radiant::OperationEvent::Started)
 		{
-			std::string title = message.getTitle();
+			std::string description = message.getMessage();
 
-			if (title.empty())
+			if (description.empty())
 			{
-				title = _("Operation in progress");
+				description = _("...crunching...");
 			}
 
 			if (++_level == 1)
 			{
-				_blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(title, std::string());
+				_blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), description);
 			}
 		}
 		else if (message.getType() == radiant::OperationEvent::Finished)

@@ -26,16 +26,16 @@ class LongRunningOperationMessage :
 private:
 	OperationEvent _event;
 
-	std::string _title;
+	std::string _message;
 
 public:
 	LongRunningOperationMessage(OperationEvent ev) :
 		LongRunningOperationMessage(ev, std::string())
 	{}
 
-	LongRunningOperationMessage(OperationEvent ev, const std::string& title) :
+	LongRunningOperationMessage(OperationEvent ev, const std::string& message) :
 		_event(ev),
-		_title(title)
+		_message(message)
 	{}
 
 	OperationEvent getType() const
@@ -43,9 +43,9 @@ public:
 		return _event;
 	}
 
-	const std::string& getTitle() const
+	const std::string& getMessage() const
 	{
-		return _title;
+		return _message;
 	}
 };
 
