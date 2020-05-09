@@ -5,6 +5,8 @@
 #include "ifilter.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
+#include "imainframe.h"
+#include "ishaders.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"
@@ -129,6 +131,20 @@ void UserInterfaceModule::shutdownModule()
 {
 }
 
+void UserInterfaceModule::refreshShadersCmd(const cmd::ArgumentList& args)
+{
+	// Disable screen updates for the scope of this function
+	auto blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
+
+	// Reload the Shadersystem, this will also trigger an 
+	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
+	// is attached to this class as Observer
+	// We can't do this refresh() operation in a thread it seems due to context binding
+	GlobalMaterialManager().refresh();
+
+	GlobalMainFrame().updateAllWindows();
+}
+
 void UserInterfaceModule::registerUICommands()
 {
 	TexTool::registerCommands();
@@ -157,6 +173,9 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
+	GlobalCommandSystem().addCommand("RefreshShaders",
+		std::bind(&UserInterfaceModule::refreshShadersCmd, this, std::placeholders::_1));
+
 	// ----------------------- Bind Events ---------------------------------------
 
 	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
@@ -183,6 +202,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("ExportSelectedAsModelDialog", "ExportSelectedAsModelDialog");
 	GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
 	GlobalEventManager().addCommand("EntityList", "EntityList");
+	GlobalEventManager().addCommand("RefreshShaders", "RefreshShaders");
 }
 
 // Static module registration

@@ -308,20 +308,6 @@ TableDefinitionPtr Doom3ShaderSystem::getTableForName(const std::string& name)
     return _library->getTableForName(name);
 }
 
-void Doom3ShaderSystem::refreshShadersCmd(const cmd::ArgumentList& args)
-{
-    // Disable screen updates for the scope of this function
-    IScopedScreenUpdateBlockerPtr blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
-
-    // Reload the Shadersystem, this will also trigger an 
-    // OpenGLRenderSystem unrealise/realise sequence as the rendersystem
-    // is attached to this class as Observer
-    // We can't do this refresh() operation in a thread it seems due to context binding
-    refresh();
-
-    GlobalMainFrame().updateAllWindows();
-}
-
 const std::string& Doom3ShaderSystem::getName() const
 {
     static std::string _name(MODULE_SHADERSYSTEM);
@@ -337,7 +323,6 @@ const StringSet& Doom3ShaderSystem::getDependencies() const
         _dependencies.insert(MODULE_VIRTUALFILESYSTEM);
         _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_GAMEMANAGER);
-        _dependencies.insert(MODULE_PREFERENCESYSTEM);
     }
 
     return _dependencies;
@@ -346,10 +331,6 @@ const StringSet& Doom3ShaderSystem::getDependencies() const
 void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-    GlobalCommandSystem().addCommand("RefreshShaders", 
-        std::bind(&Doom3ShaderSystem::refreshShadersCmd, this, std::placeholders::_1));
-    GlobalEventManager().addCommand("RefreshShaders", "RefreshShaders");
 
     construct();
     realise();

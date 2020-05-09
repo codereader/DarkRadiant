@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "iorthocontextmenu.h"
+#include "icommandsystem.h"
 
 namespace ui
 {
@@ -25,6 +26,7 @@ public:
 
 private:
 	void registerUICommands();
+	void refreshShadersCmd(const cmd::ArgumentList& args);
 };
 
 }

@@ -128,9 +128,6 @@ private:
     // For methods accessing the ShaderLibrary the parser thread must be done
     void ensureDefsLoaded();
 
-    // The "Flush & Reload Shaders" command target
-    void refreshShadersCmd(const cmd::ArgumentList& args);
-
     // Unloads all the existing shaders and calls activeShadersChangedNotify()
     void freeShaders();
 
