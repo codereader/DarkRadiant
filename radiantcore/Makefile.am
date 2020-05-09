@@ -64,6 +64,17 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 settings/LanguageManager.cpp \
                 settings/PreferencePage.cpp \
                 settings/PreferenceSystem.cpp \
+                shaders/CameraCubeMapDecl.cpp \
+                shaders/textures/GLTextureManager.cpp \
+                shaders/textures/TextureManipulator.cpp \
+                shaders/CShader.cpp \
+                shaders/Doom3ShaderLayer.cpp \
+                shaders/Doom3ShaderSystem.cpp \
+                shaders/MapExpression.cpp \
+                shaders/ShaderExpression.cpp \
+                shaders/ShaderLibrary.cpp \
+                shaders/ShaderTemplate.cpp \
+                shaders/TableDefinition.cpp \
                 skins/Doom3SkinCache.cpp \
                 vfs/DeflatedInputStream.cpp \
                 vfs/DirectoryArchive.cpp \

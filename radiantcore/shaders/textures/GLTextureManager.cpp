@@ -16,7 +16,8 @@ namespace
 
 namespace shaders {
 
-void GLTextureManager::checkBindings() {
+void GLTextureManager::checkBindings()
+{
     // Check the TextureMap for unique pointers and release them
     // as they aren't used by anyone else than this class.
     for (TextureMap::iterator i = _textures.begin();
@@ -24,12 +25,14 @@ void GLTextureManager::checkBindings() {
          /* in-loop increment */)
     {
         // If the std::shared_ptr is unique (i.e. refcount==1), remove it
-        if (i->second.unique()) {
+        if (i->second.use_count() == 1)
+        {
             // Be sure to increment the iterator with a postfix ++,
             // so that the iterator is incremented right before deletion
             _textures.erase(i++);
         }
-        else {
+        else
+        {
             ++i;
         }
     }

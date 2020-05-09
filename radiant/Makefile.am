@@ -14,9 +14,9 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
 #              vfs/DirectoryArchive.cpp \
 #              vfs/Doom3FileSystem.cpp \
 #              vfs/ZipArchive.cpp
-SHADERS_SOURCES = shaders/Doom3ShaderLayer.cpp \
-                  shaders/TableDefinition.cpp \
-                  shaders/textures/GLTextureManager.cpp
+#SHADERS_SOURCES = shaders/Doom3ShaderLayer.cpp \
+#                  shaders/TableDefinition.cpp \
+#                  shaders/textures/GLTextureManager.cpp
 
 # DarkRadiant executable
 bin_PROGRAMS = darkradiant
@@ -193,15 +193,15 @@ darkradiant_SOURCES = main.cpp \
 					  render/RenderSystemFactory.cpp \
 					  render/View.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
-                      shaders/CameraCubeMapDecl.cpp \
-                      shaders/textures/TextureManipulator.cpp \
-                      $(SHADERS_SOURCES) \
-                      shaders/ShaderTemplate.cpp \
-                      shaders/MapExpression.cpp \
-                      shaders/CShader.cpp \
-                      shaders/Doom3ShaderSystem.cpp \
-                      shaders/ShaderLibrary.cpp \
-                      shaders/ShaderExpression.cpp \
+                      #shaders/CameraCubeMapDecl.cpp \
+                      #shaders/textures/TextureManipulator.cpp \
+                      #$(SHADERS_SOURCES) \
+                      #shaders/ShaderTemplate.cpp \
+                      #shaders/MapExpression.cpp \
+                      #shaders/CShader.cpp \
+                      #shaders/Doom3ShaderSystem.cpp \
+                      #shaders/ShaderLibrary.cpp \
+                      #shaders/ShaderExpression.cpp \
 					  ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \

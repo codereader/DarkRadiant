@@ -248,12 +248,6 @@
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\shaders">
-      <UniqueIdentifier>{73fb0d6a-5dee-4094-8a6b-8860eed0ea87}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\shaders\textures">
-      <UniqueIdentifier>{46e8ff59-4a11-4333-b0ec-5c2db40c76fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\md5model">
       <UniqueIdentifier>{9ece5d35-1ea4-4651-aa2c-b8a9c80b62da}</UniqueIdentifier>
     </Filter>
@@ -1245,39 +1239,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp">
       <Filter>src\eventmanager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\CameraCubeMapDecl.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\CShader.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\Doom3ShaderLayer.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\Doom3ShaderSystem.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\MapExpression.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\ShaderExpression.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\ShaderLibrary.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\ShaderTemplate.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\TableDefinition.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\textures\GLTextureManager.cpp">
-      <Filter>src\shaders\textures</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\shaders\textures\TextureManipulator.cpp">
-      <Filter>src\shaders\textures</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\md5model\MD5Anim.cpp">
       <Filter>src\md5model</Filter>
@@ -2630,57 +2591,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h">
       <Filter>src\eventmanager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\CameraCubeMapDecl.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\CShader.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\Doom3ShaderLayer.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\Doom3ShaderSystem.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\MapExpression.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\NamedBindable.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\ShaderDefinition.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\ShaderExpression.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\ShaderFileLoader.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\ShaderLibrary.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\ShaderNameCompareFunctor.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\ShaderTemplate.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\TableDefinition.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\textures\CubeMapTexture.h">
-      <Filter>src\shaders\textures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\textures\GLTextureManager.h">
-      <Filter>src\shaders\textures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\textures\HeightmapCreator.h">
-      <Filter>src\shaders\textures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\shaders\textures\TextureManipulator.h">
-      <Filter>src\shaders\textures</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\md5model\MD5Anim.h">
       <Filter>src\md5model</Filter>
