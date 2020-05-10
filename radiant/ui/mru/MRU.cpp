@@ -53,7 +53,6 @@ MRU::MRU() :
 			commandName,
 			std::bind(&MRUMenuItem::activate, &item, std::placeholders::_1)
 		);
-		GlobalEventManager().addCommand(commandName, commandName);
 	}
 }
 

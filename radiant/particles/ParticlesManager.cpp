@@ -219,7 +219,6 @@ const StringSet& ParticlesManager::getDependencies() const
 	{
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 	}
 
 	return _dependencies;
@@ -235,7 +234,6 @@ void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 
 	// Register the "ReloadParticles" commands
 	GlobalCommandSystem().addCommand("ReloadParticles", std::bind(&ParticlesManager::reloadParticleDefs, this));
-	GlobalEventManager().addCommand("ReloadParticles", "ReloadParticles");
 }
 
 void ParticlesManager::reloadParticleDefs()

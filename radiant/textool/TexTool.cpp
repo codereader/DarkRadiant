@@ -1024,14 +1024,6 @@ void TexTool::registerCommands()
 	GlobalCommandSystem().addCommand("TexToolFlipT", TexTool::texToolFlipT);
 	GlobalCommandSystem().addCommand("TexToolSelectRelated", TexTool::selectRelated);
 
-	GlobalEventManager().addCommand("TextureTool", "TextureTool");
-	GlobalEventManager().addCommand("TexToolGridUp", "TexToolGridUp");
-	GlobalEventManager().addCommand("TexToolGridDown", "TexToolGridDown");
-	GlobalEventManager().addCommand("TexToolSnapToGrid", "TexToolSnapToGrid");
-	GlobalEventManager().addCommand("TexToolMergeItems", "TexToolMergeItems");
-	GlobalEventManager().addCommand("TexToolFlipS", "TexToolFlipS");
-	GlobalEventManager().addCommand("TexToolFlipT", "TexToolFlipT");
-	GlobalEventManager().addCommand("TexToolSelectRelated", "TexToolSelectRelated");
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 	GlobalEventManager().addRegistryToggle("TexToolToggleFaceVertexScalePivot", RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID);
 }

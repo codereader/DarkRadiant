@@ -911,7 +911,6 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
 
 	GlobalCommandSystem().addCommand("UnSelectSelection", std::bind(&RadiantSelectionSystem::deselectCmd, this, std::placeholders::_1));
-	GlobalEventManager().addCommand("UnSelectSelection", "UnSelectSelection");
 
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
 

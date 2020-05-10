@@ -1088,96 +1088,12 @@ void registerCommands()
 	GlobalCommandSystem().addStatement("BrushMakeStructural", "BrushSetDetailFlag structural", false);
 
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
-	GlobalEventManager().addCommand("DeleteSelection", "DeleteSelection");
-	GlobalEventManager().addCommand("ParentSelection", "ParentSelection");
-	GlobalEventManager().addCommand("ParentSelectionToWorldspawn", "ParentSelectionToWorldspawn");
-
-	GlobalEventManager().addCommand("InvertSelection", "InvertSelection");
-	GlobalEventManager().addCommand("SelectInside", "SelectInside");
-	GlobalEventManager().addCommand("SelectTouching", "SelectTouching");
-	GlobalEventManager().addCommand("SelectCompleteTall", "SelectCompleteTall");
-	GlobalEventManager().addCommand("ExpandSelectionToSiblings", "ExpandSelectionToSiblings");
-	GlobalEventManager().addCommand("SelectParentEntities", "SelectParentEntities");
-	GlobalEventManager().addCommand("MergeSelectedEntities", "MergeSelectedEntities");
-	GlobalEventManager().addCommand("SelectChildren", "SelectChildren");
-
-	GlobalEventManager().addCommand("ShowHidden", "ShowHidden");
-	GlobalEventManager().addCommand("HideSelected", "HideSelected");
-	GlobalEventManager().addCommand("HideDeselected", "HideDeselected");
-
-	GlobalEventManager().addCommand("MirrorSelectionX", "MirrorSelectionX");
-	GlobalEventManager().addCommand("RotateSelectionX", "RotateSelectionX");
-	GlobalEventManager().addCommand("MirrorSelectionY", "MirrorSelectionY");
-	GlobalEventManager().addCommand("RotateSelectionY", "RotateSelectionY");
-	GlobalEventManager().addCommand("MirrorSelectionZ", "MirrorSelectionZ");
-	GlobalEventManager().addCommand("RotateSelectionZ", "RotateSelectionZ");
-
-	GlobalEventManager().addCommand("ConvertSelectedToFuncStatic", "ConvertSelectedToFuncStatic");
-	GlobalEventManager().addCommand("RevertToWorldspawn", "RevertToWorldspawn");
-
-	GlobalEventManager().addCommand("SnapToGrid", "SnapToGrid");
-
-	GlobalEventManager().addCommand("SelectAllOfType", "SelectAllOfType");
-	GlobalEventManager().addCommand("GroupCycleForward", "GroupCycleForward");
-	GlobalEventManager().addCommand("GroupCycleBackward", "GroupCycleBackward");
-
-	GlobalEventManager().addCommand("TexRotateClock", "TexRotateClock");
-	GlobalEventManager().addCommand("TexRotateCounter", "TexRotateCounter");
-	GlobalEventManager().addCommand("TexScaleUp", "TexScaleUp");
-	GlobalEventManager().addCommand("TexScaleDown", "TexScaleDown");
-	GlobalEventManager().addCommand("TexScaleLeft", "TexScaleLeft");
-	GlobalEventManager().addCommand("TexScaleRight", "TexScaleRight");
-	GlobalEventManager().addCommand("TexShiftUp", "TexShiftUp");
-	GlobalEventManager().addCommand("TexShiftDown", "TexShiftDown");
-	GlobalEventManager().addCommand("TexShiftLeft", "TexShiftLeft");
-	GlobalEventManager().addCommand("TexShiftRight", "TexShiftRight");
-	GlobalEventManager().addCommand("TexAlignTop", "TexAlignTop");
-	GlobalEventManager().addCommand("TexAlignBottom", "TexAlignBottom");
-	GlobalEventManager().addCommand("TexAlignLeft", "TexAlignLeft");
-	GlobalEventManager().addCommand("TexAlignRight", "TexAlignRight");
-
-	GlobalEventManager().addCommand("NormaliseTexture", "NormaliseTexture");
-
-	GlobalEventManager().addCommand("CopyShader", "CopyShader");
-	GlobalEventManager().addCommand("PasteShader", "PasteShader");
-	GlobalEventManager().addCommand("PasteShaderNatural", "PasteShaderNatural");
-
-	GlobalEventManager().addCommand("FlipTextureX", "FlipTextureX");
-	GlobalEventManager().addCommand("FlipTextureY", "FlipTextureY");
-
-	GlobalEventManager().addCommand("MoveSelectionDOWN", "MoveSelectionDOWN");
-	GlobalEventManager().addCommand("MoveSelectionUP", "MoveSelectionUP");
-	
-	GlobalEventManager().addCommand("SelectNudgeLeft", "SelectNudgeLeft");
-	GlobalEventManager().addCommand("SelectNudgeRight", "SelectNudgeRight");
-	GlobalEventManager().addCommand("SelectNudgeUp", "SelectNudgeUp");
-	GlobalEventManager().addCommand("SelectNudgeDown", "SelectNudgeDown");
-
-	GlobalEventManager().addCommand("CurveAppendControlPoint", "CurveAppendControlPoint");
-	GlobalEventManager().addCommand("CurveRemoveControlPoint", "CurveRemoveControlPoint");
-	GlobalEventManager().addCommand("CurveInsertControlPoint", "CurveInsertControlPoint");
-	GlobalEventManager().addCommand("CurveConvertType", "CurveConvertType");
-
-	GlobalEventManager().addCommand("BrushExportCM", "BrushExportCM");
-	GlobalEventManager().addCommand("CreateDecalsForFaces", "CreateDecalsForFaces");
-
-	GlobalEventManager().addCommand("Copy", "Copy");
-	GlobalEventManager().addCommand("Paste", "Paste");
-	GlobalEventManager().addCommand("PasteToCamera", "PasteToCamera");
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
 	GlobalEventManager().addRegistryToggle("ToggleSnapRotationPivot", "user/ui/snapRotationPivotToGrid");
 	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", RKEY_OFFSET_CLONED_OBJECTS);
 
-	GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");
-    GlobalEventManager().addCommand("BindSelection", "BindSelection");
     GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
-    GlobalEventManager().addCommand("CreateCurveNURBS", "CreateCurveNURBS");
-    GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
-
-	GlobalEventManager().addCommand("FloorSelection", "FloorSelection");
-	GlobalEventManager().addCommand("BrushMakeDetail", "BrushMakeDetail");
-	GlobalEventManager().addCommand("BrushMakeStructural", "BrushMakeStructural");
 }
 
 	} // namespace algorithm

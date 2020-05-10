@@ -222,7 +222,6 @@ AasControlDialog& AasControlDialog::Instance()
 void AasControlDialog::Init()
 {
     GlobalCommandSystem().addCommand("ToggleAasControlDialog", AasControlDialog::Toggle);
-	GlobalEventManager().addCommand("ToggleAasControlDialog", "ToggleAasControlDialog");
 
     GlobalRadiant().signal_radiantStarted().connect(
         sigc::ptr_fun(&AasControlDialog::OnRadiantStartup)

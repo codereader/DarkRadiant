@@ -474,9 +474,6 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	);
 
 	// Bind the reloadscripts command to the menu
-	GlobalEventManager().addCommand("ReloadScripts", "ReloadScripts");
-
-	// Add the menu item
 	IMenuManager& mm = GlobalUIManager().getMenuManager();
 	mm.insert("main/file/refreshShaders", 	// menu location path
 			"ReloadScripts", // name

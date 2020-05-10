@@ -288,11 +288,6 @@ void Clipper::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("ClipSelected", std::bind(&Clipper::clipSelectionCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("SplitSelected", std::bind(&Clipper::splitSelectedCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("FlipClip", std::bind(&Clipper::flipClipperCmd, this, std::placeholders::_1));
-
-	// Connect some events to these commands
-	GlobalEventManager().addCommand("ClipSelected", "ClipSelected");
-	GlobalEventManager().addCommand("SplitSelected", "SplitSelected");
-	GlobalEventManager().addCommand("FlipClip", "FlipClip");
 }
 
 void Clipper::clipSelectionCmd(const cmd::ArgumentList& args) {

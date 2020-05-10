@@ -69,8 +69,6 @@ void GlobalCameraManager::registerCommands()
 	GlobalCommandSystem().addCommand("CameraAngleDown", std::bind(&GlobalCameraManager::pitchDownDiscrete, this, std::placeholders::_1));
 
 	// Bind the events to the commands
-	GlobalEventManager().addCommand("CenterView", "CenterView");
-
 	GlobalEventManager().addToggle(
         "ToggleCubicClip",
         std::bind(&CameraSettings::toggleFarClip, getCameraSettings(), std::placeholders::_1)
@@ -78,33 +76,8 @@ void GlobalCameraManager::registerCommands()
 	// Set the default status of the cubic clip
 	GlobalEventManager().setToggled("ToggleCubicClip", getCameraSettings()->farClipEnabled());
 
-	GlobalEventManager().addCommand("CubicClipZoomIn", "CubicClipZoomIn");
-	GlobalEventManager().addCommand("CubicClipZoomOut", "CubicClipZoomOut");
-
-	GlobalEventManager().addCommand("UpFloor", "UpFloor");
-	GlobalEventManager().addCommand("DownFloor", "DownFloor");
-
 	GlobalEventManager().addWidgetToggle("ToggleCamera");
 	GlobalEventManager().setToggled("ToggleCamera", true);
-
-	// angua: increases and decreases the movement speed of the camera
-	GlobalEventManager().addCommand("CamIncreaseMoveSpeed", "CamIncreaseMoveSpeed");
-	GlobalEventManager().addCommand("CamDecreaseMoveSpeed", "CamDecreaseMoveSpeed");
-
-	GlobalEventManager().addCommand("TogglePreview", "TogglePreview");
-
-	// Insert movement commands
-	GlobalEventManager().addCommand("CameraForward", "CameraForward");
-	GlobalEventManager().addCommand("CameraBack", "CameraBack");
-	GlobalEventManager().addCommand("CameraLeft", "CameraLeft");
-	GlobalEventManager().addCommand("CameraRight", "CameraRight");
-	GlobalEventManager().addCommand("CameraStrafeRight", "CameraStrafeRight");
-	GlobalEventManager().addCommand("CameraStrafeLeft", "CameraStrafeLeft");
-
-	GlobalEventManager().addCommand("CameraUp", "CameraUp");
-	GlobalEventManager().addCommand("CameraDown", "CameraDown");
-	GlobalEventManager().addCommand("CameraAngleUp", "CameraAngleUp");
-	GlobalEventManager().addCommand("CameraAngleDown", "CameraAngleDown");
 
 	GlobalEventManager().addKeyEvent("CameraFreeMoveForward", std::bind(&GlobalCameraManager::onFreelookMoveForwardKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveBack", std::bind(&GlobalCameraManager::onFreelookMoveBackKey, this, std::placeholders::_1));

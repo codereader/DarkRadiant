@@ -156,7 +156,8 @@ void XYWndManager::destroyViews()
 	_activeXY = XYWndPtr();
 }
 
-void XYWndManager::registerCommands() {
+void XYWndManager::registerCommands() 
+{
 	GlobalCommandSystem().addCommand("NewOrthoView", std::bind(&XYWndManager::createXYFloatingOrthoView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("NextView", std::bind(&XYWndManager::toggleActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ZoomIn", std::bind(&XYWndManager::zoomIn, this, std::placeholders::_1));
@@ -167,17 +168,6 @@ void XYWndManager::registerCommands() {
 	GlobalCommandSystem().addCommand("CenterXYViews", std::bind(&XYWndManager::splitViewFocus, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CenterXYView", std::bind(&XYWndManager::focusActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("Zoom100", std::bind(&XYWndManager::zoom100, this, std::placeholders::_1));
-
-	GlobalEventManager().addCommand("NewOrthoView", "NewOrthoView");
-	GlobalEventManager().addCommand("NextView", "NextView");
-	GlobalEventManager().addCommand("ZoomIn", "ZoomIn");
-	GlobalEventManager().addCommand("ZoomOut", "ZoomOut");
-	GlobalEventManager().addCommand("ViewTop", "ViewTop");
-	GlobalEventManager().addCommand("ViewSide", "ViewSide");
-	GlobalEventManager().addCommand("ViewFront", "ViewFront");
-	GlobalEventManager().addCommand("CenterXYViews", "CenterXYViews");
-	GlobalEventManager().addCommand("CenterXYView", "CenterXYView");
-	GlobalEventManager().addCommand("Zoom100", "Zoom100");
 
 	GlobalEventManager().addRegistryToggle("ToggleCrosshairs", RKEY_SHOW_CROSSHAIRS);
 	GlobalEventManager().addRegistryToggle("ToggleGrid", RKEY_SHOW_GRID);

@@ -55,9 +55,6 @@ void GridUserInterface::initialiseModule(const ApplicationContext& ctx)
 
 		GlobalEventManager().setToggled(toggleName, GlobalGrid().getGridPower() == size);
 	}
-
-	GlobalEventManager().addCommand("GridDown", "GridDown");
-	GlobalEventManager().addCommand("GridUp", "GridUp");
 }
 
 void GridUserInterface::shutdownModule()

@@ -63,8 +63,6 @@ public:
 		GlobalCommandSystem().addCommand("DeleteAllSelectionSets",
 			std::bind(&SelectionSetModule::deleteAllSelectionSetsCmd, this, std::placeholders::_1));
 
-		GlobalEventManager().addCommand("DeleteAllSelectionSets", "DeleteAllSelectionSets");
-
 		GlobalMapInfoFileManager().registerInfoFileModule(
 			std::make_shared<SelectionSetInfoFileModule>()
 		);

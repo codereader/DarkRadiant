@@ -106,10 +106,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 	ColourSchemeManager::Instance().loadColourSchemes();
 
 	GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
-	GlobalEventManager().addCommand("AnimationPreview", "AnimationPreview");
-
 	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
-	GlobalEventManager().addCommand("EditColourScheme", "EditColourScheme");
 
 	GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(this, &UIManager::clear)

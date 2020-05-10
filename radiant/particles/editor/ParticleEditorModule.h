@@ -29,7 +29,6 @@ public:
 
 		if (_dependencies.empty())
 		{
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}
@@ -46,7 +45,6 @@ public:
 			"ParticlesEditor",
 			ParticleEditor::DisplayDialog
 		);
-		GlobalEventManager().addCommand("ParticlesEditor", "ParticlesEditor");
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();

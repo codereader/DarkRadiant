@@ -193,9 +193,6 @@ void ModelCache::initialiseModule(const ApplicationContext& ctx)
 		std::bind(&ModelCache::refreshModels, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("RefreshSelectedModels", 
 		std::bind(&ModelCache::refreshSelectedModels, this, std::placeholders::_1));
-
-	GlobalEventManager().addCommand("RefreshModels", "RefreshModels");
-	GlobalEventManager().addCommand("RefreshSelectedModels", "RefreshSelectedModels");
 }
 
 void ModelCache::shutdownModule()

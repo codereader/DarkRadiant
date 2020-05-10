@@ -33,7 +33,6 @@ public:
 		if (_dependencies.empty())
 		{
 			_dependencies.insert(MODULE_ENTITYINSPECTOR);
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_SELECTIONSYSTEM);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
@@ -58,7 +57,6 @@ public:
 		);
 
 		GlobalCommandSystem().addCommand("FixupMapDialog", ui::FixupMapDialog::RunDialog);
-		GlobalEventManager().addCommand("FixupMapDialog", "FixupMapDialog");
 
 		GlobalUIManager().getMenuManager().add("main/map",
 			"FixupMapDialog", ui::menuItem,
@@ -68,7 +66,6 @@ public:
 		);
 
 		GlobalCommandSystem().addCommand("MissionInfoEditDialog", ui::MissionInfoEditDialog::ShowDialog);
-		GlobalEventManager().addCommand("MissionInfoEditDialog", "MissionInfoEditDialog");
 
 		GlobalUIManager().getMenuManager().add("main/map",
 			"MissionInfoEditDialog", ui::menuItem,

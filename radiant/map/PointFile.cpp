@@ -183,10 +183,6 @@ void PointFile::registerCommands()
 	GlobalCommandSystem().addCommand("TogglePointfile", sigc::mem_fun(*this, &PointFile::toggle));
 	GlobalCommandSystem().addCommand("NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot));
 	GlobalCommandSystem().addCommand("PrevLeakSpot", sigc::mem_fun(*this, &PointFile::prevLeakSpot));
-
-	GlobalEventManager().addCommand("TogglePointfile", "TogglePointfile");
-	GlobalEventManager().addCommand("NextLeakSpot", "NextLeakSpot");
-	GlobalEventManager().addCommand("PrevLeakSpot", "PrevLeakSpot");
 }
 
 // RegisterableModule implementation

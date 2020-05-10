@@ -42,7 +42,6 @@ public:
 			_activateCommand,
 			std::bind(&LayoutCommand::activateLayout, this, std::placeholders::_1)
 		);
-		GlobalEventManager().addCommand(_activateCommand, _activateCommand);
 
 		// Add commands to menu
 		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
@@ -69,7 +68,6 @@ public:
 		menuManager.remove(MENU_LAYOUTS_PATH + "/" + _layoutName);
 
 		// Remove event and command
-		GlobalEventManager().removeEvent(_activateCommand);
 		GlobalCommandSystem().removeCommand(_activateCommand);
 	}
 

@@ -993,7 +993,6 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowser::togglePage));
-	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
 
 	// We need to create the liststore and widgets before attaching ourselves
 	// to the material manager as observer, as the attach() call below

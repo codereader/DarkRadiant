@@ -213,10 +213,6 @@ void UndoSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("Undo", std::bind(&UndoSystem::undoCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("Redo", std::bind(&UndoSystem::redoCmd, this, std::placeholders::_1));
 
-	// Bind events to commands
-	GlobalEventManager().addCommand("Undo", "Undo");
-	GlobalEventManager().addCommand("Redo", "Redo");
-
 	_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 
 	// Add self to the key observers to get notified on change

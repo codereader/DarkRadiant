@@ -299,7 +299,6 @@ void EClassManager::initialiseModule(const ApplicationContext& ctx)
 	realise();
 
 	GlobalCommandSystem().addCommand("ReloadDefs", std::bind(&EClassManager::reloadDefsCmd, this, std::placeholders::_1));
-	GlobalEventManager().addCommand("ReloadDefs", "ReloadDefs");
 }
 
 void EClassManager::shutdownModule()

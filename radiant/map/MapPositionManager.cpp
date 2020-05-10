@@ -127,16 +127,6 @@ MapPositionManager::MapPositionManager()
 			LOAD_COMMAND_ROOT + string::to_string(i),
 			std::bind(&MapPosition::recall, _positions[i].get(), std::placeholders::_1)
 		);
-
-		GlobalEventManager().addCommand(
-			SAVE_COMMAND_ROOT + string::to_string(i),
-			SAVE_COMMAND_ROOT + string::to_string(i)
-		);
-
-		GlobalEventManager().addCommand(
-			LOAD_COMMAND_ROOT + string::to_string(i),
-			LOAD_COMMAND_ROOT + string::to_string(i)
-		);
 	}
 }
 

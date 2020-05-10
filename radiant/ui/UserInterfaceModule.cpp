@@ -83,7 +83,6 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 
 	// Register LayerControlDialog
 	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", LayerControlDialog::toggle);
-	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
 
 	// Create a new menu item connected to the CreateNewLayer command
 	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::CommandMenuItem>(
@@ -180,34 +179,6 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("RefreshShaders",
 		std::bind(&UserInterfaceModule::refreshShadersCmd, this, std::placeholders::_1));
-
-	// ----------------------- Bind Events ---------------------------------------
-
-	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
-
-	GlobalEventManager().addCommand("Preferences", "Preferences");
-
-	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
-
-	GlobalEventManager().addCommand("ToggleLightInspector", "ToggleLightInspector");
-	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
-	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");
-	GlobalEventManager().addCommand("OverlayDialog", "OverlayDialog");
-	GlobalEventManager().addCommand("TransformDialog", "TransformDialog");
-
-	GlobalEventManager().addCommand("FindBrush", "FindBrush");
-
-	GlobalEventManager().addCommand("MapInfo", "MapInfo");
-	GlobalEventManager().addCommand("MouseToolMappingDialog", "MouseToolMappingDialog");
-
-	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
-	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
-	GlobalEventManager().addCommand("About", "About");
-	GlobalEventManager().addCommand("ShowUserGuide", "ShowUserGuide");
-	GlobalEventManager().addCommand("ExportSelectedAsModelDialog", "ExportSelectedAsModelDialog");
-	GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
-	GlobalEventManager().addCommand("EntityList", "EntityList");
-	GlobalEventManager().addCommand("RefreshShaders", "RefreshShaders");
 }
 
 // Static module registration

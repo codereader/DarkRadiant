@@ -96,42 +96,6 @@ void Doom3PatchCreator::registerPatchCommands()
 	GlobalCommandSystem().addCommand("ThickenPatch", selection::algorithm::thickenPatches);
 	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::algorithm::stitchTextures);
 	GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge);
-
-	// Then, connect the Events to the commands
-	GlobalEventManager().addCommand("PatchCylinder", "PatchCylinder");
-	GlobalEventManager().addCommand("PatchDenseCylinder", "PatchDenseCylinder");
-	GlobalEventManager().addCommand("PatchVeryDenseCylinder", "PatchVeryDenseCylinder");
-	GlobalEventManager().addCommand("PatchSquareCylinder", "PatchSquareCylinder");
-	GlobalEventManager().addCommand("PatchEndCap", "PatchEndCap");
-	GlobalEventManager().addCommand("PatchBevel", "PatchBevel");
-	GlobalEventManager().addCommand("PatchCone", "PatchCone");
-	GlobalEventManager().addCommand("PatchSphere", "PatchSphere");
-	GlobalEventManager().addCommand("SimplePatchMesh", "SimplePatchMesh");
-
-	GlobalEventManager().addCommand("PatchInsertColumnEnd", "PatchInsertColumnEnd");
-	GlobalEventManager().addCommand("PatchInsertColumnBeginning", "PatchInsertColumnBeginning");
-	GlobalEventManager().addCommand("PatchInsertRowEnd", "PatchInsertRowEnd");
-	GlobalEventManager().addCommand("PatchInsertRowBeginning", "PatchInsertRowBeginning");
-
-	GlobalEventManager().addCommand("PatchDeleteColumnBeginning", "PatchDeleteColumnBeginning");
-	GlobalEventManager().addCommand("PatchDeleteColumnEnd", "PatchDeleteColumnEnd");
-	GlobalEventManager().addCommand("PatchDeleteRowBeginning", "PatchDeleteRowBeginning");
-	GlobalEventManager().addCommand("PatchDeleteRowEnd", "PatchDeleteRowEnd");
-
-	GlobalEventManager().addCommand("PatchAppendColumnBeginning", "PatchAppendColumnBeginning");
-	GlobalEventManager().addCommand("PatchAppendColumnEnd", "PatchAppendColumnEnd");
-	GlobalEventManager().addCommand("PatchAppendRowBeginning", "PatchAppendRowBeginning");
-	GlobalEventManager().addCommand("PatchAppendRowEnd", "PatchAppendRowEnd");
-
-	GlobalEventManager().addCommand("InvertCurve", "InvertCurve");
-	GlobalEventManager().addCommand("RedisperseRows", "RedisperseRows");
-	GlobalEventManager().addCommand("RedisperseCols", "RedisperseCols");
-	GlobalEventManager().addCommand("MatrixTranspose", "MatrixTranspose");
-	GlobalEventManager().addCommand("CapCurrentCurve", "CapCurrentCurve");
-	GlobalEventManager().addCommand("CycleCapTexturePatch", "CycleCapTexturePatch");
-	GlobalEventManager().addCommand("ThickenPatch", "ThickenPatch");
-	GlobalEventManager().addCommand("StitchPatchTexture", "StitchPatchTexture");
-	GlobalEventManager().addCommand("BulgePatch", "BulgePatch");
 }
 
 // --------------------------------------------

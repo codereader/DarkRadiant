@@ -384,12 +384,6 @@ void RegionManager::initialiseCommands()
     GlobalCommandSystem().addCommand("RegionSetXY", std::bind(&RegionManager::setRegionXY, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("RegionSetBrush", std::bind(&RegionManager::setRegionFromBrush, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("RegionSetSelection", std::bind(&RegionManager::setRegionFromSelection, this, std::placeholders::_1));
-
-    GlobalEventManager().addCommand("SaveRegion", "SaveRegion");
-    GlobalEventManager().addCommand("RegionOff", "RegionOff");
-    GlobalEventManager().addCommand("RegionSetXY", "RegionSetXY");
-    GlobalEventManager().addCommand("RegionSetBrush", "RegionSetBrush");
-    GlobalEventManager().addCommand("RegionSetSelection", "RegionSetSelection");
 }
 
 const std::string& RegionManager::getName() const
@@ -405,6 +399,7 @@ const StringSet& RegionManager::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_MAP);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;

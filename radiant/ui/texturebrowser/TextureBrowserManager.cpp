@@ -101,7 +101,6 @@ void TextureBrowserManager::initialiseModule(const ApplicationContext& ctx)
 
     GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
     GlobalCommandSystem().addCommand("ViewTextures", TextureBrowserManager::toggleGroupDialogTexturesTab);
-    GlobalEventManager().addCommand("ViewTextures", "ViewTextures");
 
     registerPreferencePage();
 }

@@ -135,9 +135,6 @@ void CommandSystem::bindCmd(const ArgumentList& args) {
 
 	// Add the statement - bind complete
 	addStatement(args[0].getString(), input);
-
-	// To enable this statement to be triggered via UI, register it as new event
-	GlobalEventManager().addCommand(args[0].getString(), args[0].getString());
 }
 
 void CommandSystem::unbindCmd(const ArgumentList& args) {

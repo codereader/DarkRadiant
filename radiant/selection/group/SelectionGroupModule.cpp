@@ -54,10 +54,6 @@ public:
 		GlobalCommandSystem().addCommand("UngroupSelected", algorithm::ungroupSelectedCmd);
 		GlobalCommandSystem().addCommand("DeleteAllSelectionGroups", algorithm::deleteAllSelectionGroupsCmd);
 
-		GlobalEventManager().addCommand("GroupSelected", "GroupSelected");
-		GlobalEventManager().addCommand("UngroupSelected", "UngroupSelected");
-		GlobalEventManager().addCommand("DeleteAllSelectionGroups", "DeleteAllSelectionGroups");
-
 		GlobalMapModule().signal_mapEvent().connect(
 			sigc::mem_fun(*this, &SelectionGroupModule::onMapEvent)
 		);

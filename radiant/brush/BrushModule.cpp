@@ -124,29 +124,11 @@ void BrushModuleImpl::registerBrushCommands()
 	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
 
 	GlobalCommandSystem().addCommand("BrushMakePrefab", selection::algorithm::brushMakePrefab, { cmd::ARGTYPE_INT });
-
-	GlobalEventManager().addCommand("BrushCuboid", "BrushCuboid");
-	GlobalEventManager().addCommand("BrushPrism", "BrushPrism");
-	GlobalEventManager().addCommand("BrushCone", "BrushCone");
-	GlobalEventManager().addCommand("BrushSphere", "BrushSphere");
-
 	GlobalCommandSystem().addCommand("BrushMakeSided", selection::algorithm::brushMakeSided, { cmd::ARGTYPE_INT });
-
-	// Link the Events to the corresponding statements
-	GlobalEventManager().addCommand("Brush3Sided", "Brush3Sided");
-	GlobalEventManager().addCommand("Brush4Sided", "Brush4Sided");
-	GlobalEventManager().addCommand("Brush5Sided", "Brush5Sided");
-	GlobalEventManager().addCommand("Brush6Sided", "Brush6Sided");
-	GlobalEventManager().addCommand("Brush7Sided", "Brush7Sided");
-	GlobalEventManager().addCommand("Brush8Sided", "Brush8Sided");
-	GlobalEventManager().addCommand("Brush9Sided", "Brush9Sided");
 
 	GlobalCommandSystem().addCommand("TextureNatural", selection::algorithm::naturalTexture);
 	GlobalCommandSystem().addCommand("MakeVisportal", selection::algorithm::makeVisportal);
 	GlobalCommandSystem().addCommand("SurroundWithMonsterclip", selection::algorithm::surroundWithMonsterclip);
-	GlobalEventManager().addCommand("TextureNatural", "TextureNatural");
-	GlobalEventManager().addCommand("MakeVisportal", "MakeVisportal");
-	GlobalEventManager().addCommand("SurroundWithMonsterclip", "SurroundWithMonsterclip");
 }
 
 // -------------------------------------------------------------------------------------

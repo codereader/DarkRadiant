@@ -44,7 +44,6 @@ public:
 		if (_dependencies.empty())
 		{
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_FONTMANAGER);
 			_dependencies.insert(MODULE_GAMEMANAGER);
 			_dependencies.insert(MODULE_MAINFRAME);
@@ -67,10 +66,7 @@ public:
 		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 		GlobalCommandSystem().addCommand("ReadableEditorDialog", ui::ReadableEditorDialog::RunDialog);
-		GlobalEventManager().addCommand("ReadableEditorDialog", "ReadableEditorDialog");
-
 		GlobalCommandSystem().addCommand("ReloadReadables", ui::ReadableReloader::run);
-		GlobalEventManager().addCommand("ReloadReadables", "ReloadReadables");
 
 		GlobalRadiant().signal_radiantStarted().connect(
             sigc::mem_fun(this, &GuiModule::onRadiantStartup)

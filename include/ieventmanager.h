@@ -141,7 +141,7 @@ public:
 	virtual void resetAcceleratorBindings() = 0;
 
 	// Add a command and specify the statement to execute when triggered
-	virtual IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp = false) = 0;
+	virtual IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp) = 0;
 
 	// Creates a new keyevent that calls the given callback when invoked
 	virtual IEventPtr addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback) = 0;

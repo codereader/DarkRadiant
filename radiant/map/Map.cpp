@@ -627,19 +627,6 @@ void Map::registerCommands()
           cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
           cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
           cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
-
-    GlobalEventManager().addCommand("NewMap", "NewMap");
-    GlobalEventManager().addCommand("OpenMap", "OpenMap");
-    GlobalEventManager().addCommand("ImportMap", "ImportMap");
-    GlobalEventManager().addCommand("LoadPrefab", "LoadPrefab");
-    GlobalEventManager().addCommand("SaveSelectedAsPrefab", "SaveSelectedAsPrefab");
-    GlobalEventManager().addCommand("ExportMap", "ExportMap");
-    GlobalEventManager().addCommand("SaveMap", "SaveMap");
-    GlobalEventManager().addCommand("SaveMapAs", "SaveMapAs");
-    GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
-    GlobalEventManager().addCommand("SaveSelected", "SaveSelected");
-	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
-	GlobalEventManager().addCommand("ExportSelectedAsModel", "ExportSelectedAsModel");
 }
 
 // Static command targets

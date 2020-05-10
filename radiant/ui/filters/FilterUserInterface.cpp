@@ -40,9 +40,6 @@ void FilterUserInterface::initialiseModule(const ApplicationContext& ctx)
 	// Create the Toggle objects to connect menu items and toggle buttons
 	refreshFilterToggles();
 
-	GlobalEventManager().addCommand("ActivateAllFilters", "ActivateAllFilters");
-	GlobalEventManager().addCommand("DeactivateAllFilters", "DeactivateAllFilters");
-
 	_filterConfigChangedConn = GlobalFilterSystem().filterConfigChangedSignal().connect(
 		sigc::mem_fun(*this, &FilterUserInterface::onFilterConfigChanged)
 	);
@@ -56,7 +53,6 @@ void FilterUserInterface::initialiseModule(const ApplicationContext& ctx)
 
 	// Editor
 	GlobalCommandSystem().addCommand("EditFiltersDialog", FilterDialog::ShowDialog);
-	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
 }
 
 void FilterUserInterface::shutdownModule()

@@ -403,7 +403,6 @@ void EntityInspector::initialiseModule(const ApplicationContext& ctx)
     );
 
     GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
-    GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");
 }
 
 void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor)

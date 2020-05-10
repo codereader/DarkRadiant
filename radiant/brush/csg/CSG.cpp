@@ -523,11 +523,6 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("CSGMerge", mergeSelectedBrushes);
 	GlobalCommandSystem().addCommand("CSGHollow", hollowSelectedBrushes);
 	GlobalCommandSystem().addCommand("CSGRoom", makeRoomForSelectedBrushes);
-
-	GlobalEventManager().addCommand("CSGSubtract", "CSGSubtract");
-	GlobalEventManager().addCommand("CSGMerge", "CSGMerge");
-	GlobalEventManager().addCommand("CSGHollow", "CSGHollow");
-	GlobalEventManager().addCommand("CSGRoom", "CSGRoom");
 }
 
 } // namespace algorithm

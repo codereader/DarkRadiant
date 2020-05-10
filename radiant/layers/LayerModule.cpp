@@ -82,37 +82,10 @@ public:
 			std::bind(&LayerModule::hideLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
 
-		// Register the statements for layers 0..9
-		// The statements are defined in commandsystem.xml, they just need to be
-		// registered in the event manager module
-		for (int i = 0; i < 10; i++)
-		{
-			GlobalEventManager().addCommand(
-				COMMAND_PREFIX_ADDTOLAYER + string::to_string(i),
-				COMMAND_PREFIX_ADDTOLAYER + string::to_string(i)
-			);
-
-			GlobalEventManager().addCommand(
-				COMMAND_PREFIX_MOVETOLAYER + string::to_string(i),
-				COMMAND_PREFIX_MOVETOLAYER + string::to_string(i)
-			);
-
-			GlobalEventManager().addCommand(
-				COMMAND_PREFIX_SHOWLAYER + string::to_string(i),
-				COMMAND_PREFIX_SHOWLAYER + string::to_string(i)
-			);
-
-			GlobalEventManager().addCommand(
-				COMMAND_PREFIX_HIDELAYER + string::to_string(i),
-				COMMAND_PREFIX_HIDELAYER + string::to_string(i)
-			);
-		}
-
 		// Register the "create layer" command
 		GlobalCommandSystem().addCommand("CreateNewLayer",
 			std::bind(&LayerModule::createLayerCmd, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
-		GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
 
 		GlobalMapInfoFileManager().registerInfoFileModule(
 			std::make_shared<LayerInfoFileModule>()
