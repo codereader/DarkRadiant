@@ -18,13 +18,6 @@ Accelerator::Accelerator(const unsigned int key,
                          _event(event)
 {}
 
-Accelerator::Accelerator(const Accelerator& other) :
-    IAccelerator(),
-    _key(other._key),
-    _modifiers(other._modifiers),
-    _event(other._event)
-{}
-
 // Returns true if the key/modifier combination matches this accelerator
 bool Accelerator::match(const unsigned int key, const unsigned int modifiers) const {
     return (_key == key && _modifiers == modifiers);
@@ -44,6 +37,16 @@ unsigned int Accelerator::getModifiers() const {
     return _modifiers;
 }
 
+const std::string& Accelerator::getStatement() const
+{
+    return _statement;
+}
+
+void Accelerator::setStatement(const std::string& statement)
+{
+    _statement = statement;
+}
+
 void Accelerator::setKey(const unsigned int key) {
     _key = key;
 }
@@ -61,14 +64,6 @@ const IEventPtr& Accelerator::getEvent()
 void Accelerator::setEvent(const IEventPtr& ev)
 {
     _event = ev;
-}
-
-void Accelerator::keyUp() {
-    _event->keyUp();
-}
-
-void Accelerator::keyDown() {
-    _event->keyDown();
 }
 
 std::string Accelerator::getString(bool forMenu) const

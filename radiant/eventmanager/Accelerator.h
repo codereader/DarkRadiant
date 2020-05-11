@@ -24,15 +24,14 @@ class Accelerator :
     // The connected event
     IEventPtr _event;
 
+    // Alternative if event is null: the command to execute
+    std::string _statement;
+
 public:
+    typedef std::shared_ptr<Accelerator> Ptr;
+
     // Construct an accelerator out of the key/modifier plus a command
     Accelerator(const unsigned int key, const unsigned int modifiers, const IEventPtr& event);
-
-    // Copy Constructor
-    Accelerator(const Accelerator& other);
-
-    // Destructor
-    virtual ~Accelerator() {}
 
     // Returns true if the key/modifier combination matches this accelerator
     bool match(const unsigned int key, const unsigned int modifiers) const;
@@ -44,6 +43,11 @@ public:
     unsigned int getKey() const override;
     unsigned int getModifiers() const override;
 
+    // Returns the statement associated to this accelerator, or an empty string
+    // in case it's tied to an Event (check getEvent() in that case)
+    const std::string& getStatement() const;
+    void setStatement(const std::string& statement);
+
     // Make the accelerator use this key/modifier
     void setKey(const unsigned int key) override;
     void setModifiers(const unsigned int modifiers) override;
@@ -52,10 +56,6 @@ public:
     const IEventPtr& getEvent();
     // Connect this modifier to the specified command
     void setEvent(const IEventPtr& ev);
-
-    // Call the connected event keyup/keydown callbacks
-    void keyUp();
-    void keyDown();
 
     std::string getString(bool forMenu) const override;
 
@@ -80,6 +80,6 @@ public:
     static std::string getNameFromKeyCode(unsigned int keyCode);
 };
 
-typedef std::list<Accelerator> AcceleratorList;
+typedef std::list<Accelerator::Ptr> AcceleratorList;
 
 }

@@ -140,21 +140,23 @@ bool GlobalKeyEventFilter::handleAccelerator(wxKeyEvent& keyEvent)
 {
     // The event stays unhandled by the control that it's triggered on
     // check if an accelerator matches this event
-    // Try to find a matching accelerator
+#if 1
+    return _eventManager.handleKeyEvent(keyEvent);
+#else
     AcceleratorList accelList = _eventManager.findAccelerator(keyEvent);
 
     if (!accelList.empty())
     {
         // Pass the execute() call to all found accelerators
-        for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
+        for (const auto& accelerator : accelList)
         {
             if (keyEvent.GetEventType() == wxEVT_KEY_DOWN)
             {
-                i->keyDown();
+                accelerator->keyDown();
             }
             else
             {
-                i->keyUp();
+                accelerator->keyUp();
             }
         }
 
@@ -162,6 +164,7 @@ bool GlobalKeyEventFilter::handleAccelerator(wxKeyEvent& keyEvent)
     }
 
     return false; // no accelerator found
+#endif
 }
 
 } // namespace

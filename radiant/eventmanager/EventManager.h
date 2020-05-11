@@ -86,7 +86,8 @@ public:
 	void foreachEvent(IEventVisitor& eventVisitor) override;
 
 	// Tries to locate an accelerator, that is connected to the given command
-    AcceleratorList findAccelerator(wxKeyEvent& ev);
+	AcceleratorList findAccelerator(wxKeyEvent& ev);
+	bool handleKeyEvent(wxKeyEvent& keyEvent);
 
 	std::string getEventStr(wxKeyEvent& ev) override;
 

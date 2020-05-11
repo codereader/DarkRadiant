@@ -206,6 +206,11 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 	}
 }
 
+bool CommandSystem::commandExists(const std::string& name)
+{
+	return _commands.find(name) != _commands.end();
+}
+
 void CommandSystem::removeCommand(const std::string& name) {
 	CommandMap::iterator i = _commands.find(name);
 
