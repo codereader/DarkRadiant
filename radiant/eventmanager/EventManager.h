@@ -91,7 +91,7 @@ public:
 	void foreachEvent(IEventVisitor& eventVisitor) override;
 
 	// Tries to locate an accelerator, that is connected to the given command
-	AcceleratorList findAccelerator(wxKeyEvent& ev);
+	Accelerator& findAccelerator(wxKeyEvent& ev);
 	bool handleKeyEvent(wxKeyEvent& keyEvent);
 
 	std::string getEventStr(wxKeyEvent& ev) override;
@@ -101,12 +101,12 @@ private:
 
 	Accelerator& findAccelerator(const IEventPtr& event);
 	Accelerator& findAccelerator(const std::string& commandName);
-	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr);
+	Accelerator& findAccelerator(const std::string& key, const std::string& modifierStr);
 
 	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, const IEventPtr& event);
 
 	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
-	AcceleratorList findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
+	Accelerator& findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
 
 	void loadAcceleratorFromList(const xml::NodeList& shortcutList);
 

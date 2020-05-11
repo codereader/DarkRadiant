@@ -9,14 +9,26 @@
 namespace ui
 {
 
+Accelerator::Accelerator() :
+    _key(0),
+    _modifiers(0),
+    _isEmpty(true)
+{}
+
 // Construct an accelerator out of the key/modifier plus a command
 Accelerator::Accelerator(const unsigned int key,
                          const unsigned int modifiers,
                          const IEventPtr& event) :
-                         _key(key),
-                         _modifiers(modifiers),
-                         _event(event)
+    _key(key),
+    _modifiers(modifiers),
+    _event(event),
+    _isEmpty(false)
 {}
+
+Accelerator Accelerator::CreateEmpty()
+{
+    return Accelerator();
+}
 
 // Returns true if the key/modifier combination matches this accelerator
 bool Accelerator::match(const unsigned int key, const unsigned int modifiers) const {
@@ -49,6 +61,7 @@ void Accelerator::setStatement(const std::string& statement)
 
 void Accelerator::setKey(const unsigned int key) {
     _key = key;
+    _isEmpty = _key != 0;
 }
 
 // Make the accelerator use the specified accelerators
@@ -64,6 +77,11 @@ const IEventPtr& Accelerator::getEvent()
 void Accelerator::setEvent(const IEventPtr& ev)
 {
     _event = ev;
+}
+
+bool Accelerator::isEmpty() const
+{
+    return _isEmpty;
 }
 
 std::string Accelerator::getString(bool forMenu) const

@@ -17,6 +17,7 @@ namespace ui
 class Accelerator :
     public IAccelerator
 {
+private:
     // The internally stored key/modifier combination
     unsigned int _key;
     unsigned int _modifiers;
@@ -26,6 +27,11 @@ class Accelerator :
 
     // Alternative if event is null: the command to execute
     std::string _statement;
+
+    bool _isEmpty;
+
+    // Private constructor creating an empty accelerator
+    Accelerator();
 
 public:
     typedef std::shared_ptr<Accelerator> Ptr;
@@ -59,6 +65,8 @@ public:
 
     std::string getString(bool forMenu) const override;
 
+    bool isEmpty() const;
+
     /**
      * Converts a string representation of a key to the corresponding
      * wxKeyCode, e.g. "A" => 65, "TAB" => wxKeyCode::WXK_TAB.
@@ -78,6 +86,9 @@ public:
      * to its uppercase pendant if possible. 'a' => 'A'
      */
     static std::string getNameFromKeyCode(unsigned int keyCode);
+
+    // Create an empty accelerator
+    static Accelerator CreateEmpty();
 };
 
 typedef std::list<Accelerator::Ptr> AcceleratorList;

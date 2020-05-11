@@ -50,9 +50,7 @@ void MenuItem::construct()
 
 	std::string caption = _caption;
 
-#if 1
-	GlobalEventManager().registerMenuItem(_event, shared_from_this());
-#else
+#if 0
 	// Try to lookup the event name
 	IEventPtr event = GlobalEventManager().findEvent(_event);
 
@@ -92,6 +90,10 @@ void MenuItem::construct()
 		// No event attached to this menu item, disable it
 		menu->Enable(_menuItem->GetId(), false);
 	}
+#endif
+
+#if 1
+	GlobalEventManager().registerMenuItem(_event, shared_from_this());
 #endif
 
 	MenuElement::constructChildren();

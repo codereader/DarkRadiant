@@ -93,7 +93,7 @@ void EventManager::shutdownModule()
 // Constructor
 EventManager::EventManager() :
 	_emptyEvent(new Event()),
-	_emptyAccelerator(0, 0, _emptyEvent)
+	_emptyAccelerator(Accelerator::CreateEmpty())
 {}
 
 Accelerator& EventManager::addAccelerator(const std::string& key, const std::string& modifierStr)
@@ -176,10 +176,10 @@ IEventPtr EventManager::findEvent(const std::string& name)
 IEventPtr EventManager::findEvent(wxKeyEvent& ev)
 {
 	// Retrieve the accelerators for this eventkey
-	AcceleratorList accelList = findAccelerator(ev);
+	Accelerator& accel = findAccelerator(ev);
 
 	// Did we find any matching accelerators? If yes, take the first found accelerator
-	return !accelList.empty() ? (*accelList.begin())->getEvent() : _emptyEvent;
+	return accel.getEvent() ? accel.getEvent() : _emptyEvent;
 }
 
 std::string EventManager::getEventName(const IEventPtr& event)
@@ -471,22 +471,37 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 		// Check for a non-empty key string
 		if (key.empty()) continue;
 
+		// Check for duplicate accelerator mappings
+		const auto& existingAccel = findAccelerator(key, modifierStr);
+
+		if (existingAccel.getStatement() == cmd)
+		{
+			rWarning() << "Accelerator " << existingAccel.getString(false) <<
+				" is already mapped to " << cmd << std::endl;
+			continue;
+		}
+
+		// Create the accelerator object
+		Accelerator& accelerator = addAccelerator(key, modifierStr);
+
+		// Update all registered menu items
+		for (const auto& item : _menuItems)
+		{
+			if (item.second->getEvent() == cmd)
+			{
+				item.second->setAccelerator(accelerator.getString(true));
+			}
+		}
+
 		// Try to lookup the command
 		IEventPtr event = findEvent(cmd);
 
 		// Check for valid command definitions were found
 		if (!event->empty())
 		{
-			if (!duplicateAccelerator(key, modifierStr, event))
-			{
-				// Create the accelerator object
-				Accelerator& accelerator = addAccelerator(key, modifierStr);
-
-				// Connect the newly created accelerator to the command
-                event->connectAccelerator(accelerator);
-                accelerator.setEvent(event);
-			}
-
+			// Connect the newly created accelerator to the command
+            event->connectAccelerator(accelerator);
+            accelerator.setEvent(event);
 			continue;
 		}
 
@@ -498,19 +513,7 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 
 			if (signatureIsEmptyOrOptional(signature))
 			{
-				bool accelExists = !findAccelerator(key, modifierStr).empty();
-				
-				if (accelExists)
-				{
-					rWarning() << "EventManager: Shortcut is already taken: " 
-						<< modifierStr << "+" << key << std::endl;
-					continue;
-				}
-
-				Accelerator& accelerator = addAccelerator(key, modifierStr);
-
 				accelerator.setStatement(cmd);
-
 				continue;
 			}
 		}
@@ -583,8 +586,7 @@ void EventManager::saveEventListToRegistry()
 	foreachEvent(visitor);
 }
 
-AcceleratorList EventManager::findAccelerator(
-	const std::string& key, const std::string& modifierStr)
+Accelerator& EventManager::findAccelerator(const std::string& key, const std::string& modifierStr)
 {
 	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
     unsigned int modifierFlags = wxutil::Modifier::GetStateFromModifierString(modifierStr);
@@ -596,7 +598,8 @@ bool EventManager::duplicateAccelerator(const std::string& key,
 										const std::string& modifiers,
 										const IEventPtr& event)
 {
-	AcceleratorList accelList = findAccelerator(key, modifiers);
+#if 0
+	Accelerator& accelerator = findAccelerator(key, modifiers);
 
 	for (const auto& accelerator : accelList)
     {
@@ -606,29 +609,26 @@ bool EventManager::duplicateAccelerator(const std::string& key,
 			return true;
 		}
 	}
-
+#endif
 	return false;
 }
 
-AcceleratorList EventManager::findAccelerator(unsigned int keyVal,
-                                              const unsigned int modifierFlags)
+Accelerator& EventManager::findAccelerator(unsigned int keyVal, unsigned int modifierFlags)
 {
-	AcceleratorList returnList;
-
 	// Cycle through the accelerators and check for matches
-	for (const auto& accelerator : _accelerators)
+	for (auto& accelerator : _accelerators)
     {
 		if (accelerator->match(keyVal, modifierFlags))
 		{
 			// Add the pointer to the found accelerators
-			returnList.push_back(accelerator);
+			return *accelerator;
 		}
 	}
 
-	return returnList;
+	return _emptyAccelerator;
 }
 
-AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
+Accelerator& EventManager::findAccelerator(wxKeyEvent& ev)
 {
 	int keyval = ev.GetKeyCode(); // is always uppercase
 	
@@ -637,41 +637,37 @@ AcceleratorList EventManager::findAccelerator(wxKeyEvent& ev)
 
 bool EventManager::handleKeyEvent(wxKeyEvent& keyEvent)
 {
-	AcceleratorList accelList = findAccelerator(keyEvent);
+	Accelerator& accelerator = findAccelerator(keyEvent);
 
-	// Pass the execute() call to all found accelerators
-	for (const auto& accelerator : accelList)
+	const std::string& statement = accelerator.getStatement();
+
+	if (!statement.empty())
 	{
-		const std::string& statement = accelerator->getStatement();
-
-		if (!statement.empty())
+		if (keyEvent.GetEventType() == wxEVT_KEY_DOWN)
 		{
-			if (keyEvent.GetEventType() == wxEVT_KEY_DOWN)
-			{
-				GlobalCommandSystem().execute(statement);
-			}
-
-			continue;
+			GlobalCommandSystem().execute(statement);
 		}
 
-		auto ev = accelerator->getEvent();
-
-		if (ev)
-		{
-			if (keyEvent.GetEventType() == wxEVT_KEY_DOWN)
-			{
-				ev->keyDown();
-			}
-			else
-			{
-				ev->keyUp();
-			}
-		}
-
-		// Found an accelerator with no event or statement
+		return true;
 	}
 
-	return !accelList.empty(); // accelerators found => true
+	auto ev = accelerator.getEvent();
+
+	if (ev)
+	{
+		if (keyEvent.GetEventType() == wxEVT_KEY_DOWN)
+		{
+			ev->keyDown();
+		}
+		else
+		{
+			ev->keyUp();
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 bool EventManager::isModifier(wxKeyEvent& ev)

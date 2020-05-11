@@ -180,10 +180,12 @@ void Statement::onButtonClicked(wxCommandEvent& ev)
 
 void Statement::connectAccelerator(IAccelerator& accel)
 {
+#if 0
     for (wxMenuItem* item : _menuItems)
     {
         setMenuItemAccelerator(item, static_cast<Accelerator&>(accel));
     }
+#endif
 
     for (wxToolBarToolBase* tool : _toolItems)
     {
@@ -193,10 +195,12 @@ void Statement::connectAccelerator(IAccelerator& accel)
 
 void Statement::disconnectAccelerators()
 {
+#if 0
     for (wxMenuItem* item : _menuItems)
     {
         clearMenuItemAccelerator(item);
     }
+#endif
 
     for (wxToolBarToolBase* tool : _toolItems)
     {
