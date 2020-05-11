@@ -47,6 +47,11 @@ public:
 	virtual const std::string& getEvent() const = 0;
 
 	virtual void setAccelerator(const std::string& accelStr) = 0;
+
+	// Whether this item is a toggle-able item
+	virtual bool isToggle() const = 0;
+
+	virtual void setToggled(bool isToggled) = 0;
 };
 
 } // namespace ui

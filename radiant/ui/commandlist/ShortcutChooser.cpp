@@ -149,8 +149,7 @@ bool ShortcutChooser::assignShortcut()
 				GlobalEventManager().disconnectAccelerator(_commandName);
 
 				// Create a new accelerator and connect it to the selected command
-				IAccelerator& accel = GlobalEventManager().addAccelerator(_savedKeyEvent);
-				GlobalEventManager().connectAccelerator(accel, _commandName);
+				GlobalEventManager().connectAccelerator(_savedKeyEvent, _commandName);
 
 				shortcutsChanged = true;
 			}
@@ -163,8 +162,7 @@ bool ShortcutChooser::assignShortcut()
 			GlobalEventManager().disconnectAccelerator(_commandName);
 
 			// Create a new accelerator and connect it to the selected command
-			IAccelerator& accel = GlobalEventManager().addAccelerator(_savedKeyEvent);
-			GlobalEventManager().connectAccelerator(accel, _commandName);
+			GlobalEventManager().connectAccelerator(_savedKeyEvent, _commandName);
 
 			shortcutsChanged = true;
 		}

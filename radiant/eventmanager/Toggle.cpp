@@ -63,6 +63,11 @@ void Toggle::updateWidgets()
 		(*i)->SetValue(_toggled);
 	}
 
+	for (const auto& item : _menuElements)
+	{
+		item->setToggled(_toggled);
+	}
+
 	_callbackActive = false;
 }
 
@@ -73,6 +78,42 @@ void Toggle::keyDown() {
 
 bool Toggle::isToggled() const {
 	return _toggled;
+}
+
+void Toggle::connectMenuItem(const IMenuElementPtr& item)
+{
+	if (!item->isToggle())
+	{
+		rWarning() << "Cannot connect non-checkable menu item to this event." << std::endl;
+		return;
+	}
+
+	if (_menuElements.find(item) != _menuElements.end())
+	{
+		rWarning() << "Cannot connect to the same menu item more than once." << std::endl;
+		return;
+	}
+
+	_menuElements.insert(item);
+
+	item->setToggled(_toggled);
+}
+
+void Toggle::disconnectMenuItem(const IMenuElementPtr& item)
+{
+	if (!item->isToggle())
+	{
+		rWarning() << "Cannot disconnect from non-checkable menu item." << std::endl;
+		return;
+	}
+
+	if (_menuElements.find(item) == _menuElements.end())
+	{
+		rWarning() << "Cannot disconnect from unconnected menu item." << std::endl;
+		return;
+	}
+
+	_menuElements.erase(item);
 }
 
 void Toggle::connectMenuItem(wxMenuItem* item)

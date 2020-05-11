@@ -16,12 +16,10 @@ Accelerator::Accelerator() :
 {}
 
 // Construct an accelerator out of the key/modifier plus a command
-Accelerator::Accelerator(const unsigned int key,
-                         const unsigned int modifiers,
-                         const IEventPtr& event) :
+Accelerator::Accelerator(const int key,
+                         const unsigned int modifiers) :
     _key(key),
     _modifiers(modifiers),
-    _event(event),
     _isEmpty(false)
 {}
 
@@ -31,7 +29,7 @@ Accelerator Accelerator::CreateEmpty()
 }
 
 // Returns true if the key/modifier combination matches this accelerator
-bool Accelerator::match(const unsigned int key, const unsigned int modifiers) const {
+bool Accelerator::match(const int key, const unsigned int modifiers) const {
     return (_key == key && _modifiers == modifiers);
 }
 
@@ -41,7 +39,7 @@ bool Accelerator::match(const IEventPtr& event) const
     return _event == event && !_event->empty();
 }
 
-unsigned int Accelerator::getKey() const {
+int Accelerator::getKey() const {
     return _key;
 }
 
@@ -59,7 +57,8 @@ void Accelerator::setStatement(const std::string& statement)
     _statement = statement;
 }
 
-void Accelerator::setKey(const unsigned int key) {
+void Accelerator::setKey(const int key)
+{
     _key = key;
     _isEmpty = _key != 0;
 }

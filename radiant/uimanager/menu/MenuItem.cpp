@@ -139,4 +139,19 @@ void MenuItem::deconstruct()
 	}
 }
 
+bool MenuItem::isToggle() const
+{
+	return _menuItem != nullptr && _menuItem->IsCheckable();
+}
+
+void MenuItem::setToggled(bool isToggled)
+{
+	assert(isToggle());
+
+	if (_menuItem != nullptr)
+	{
+		_menuItem->Check(isToggled);
+	}
+}
+
 }

@@ -112,6 +112,14 @@ public:
 
 	virtual void setAccelerator(const std::string& accelStr) override;
 
+	virtual bool isToggle() const override
+	{
+		return false;
+	}
+
+	virtual void setToggled(bool isToggled) override
+	{}
+
 	// Tries to (recursively) locate the MenuElement by looking up the path
 	MenuElementPtr find(const std::string& menuPath);
 

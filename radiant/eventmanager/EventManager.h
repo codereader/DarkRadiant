@@ -24,8 +24,8 @@ private:
 
 	std::multimap<std::string, IMenuElementPtr> _menuItems;
 
-	// The list containing all registered accelerator objects
-	AcceleratorList _accelerators;
+	// The command-to-accelerator map containing all registered shortcuts
+	std::map<std::string, Accelerator::Ptr> _accelerators;
 
 	// The map of all registered events
 	EventMap _events;
@@ -44,9 +44,6 @@ public:
 
 	// Constructor
 	EventManager();
-
-	Accelerator& addAccelerator(const std::string& key, const std::string& modifierStr) override;
-	Accelerator& addAccelerator(wxKeyEvent& ev) override;
 
 	IEventPtr findEvent(const std::string& name) override;
 	IEventPtr findEvent(wxKeyEvent& ev) override;
@@ -74,7 +71,7 @@ public:
 	void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) override;
 
 	// Connects the given accelerator to the given command (identified by the string)
-	void connectAccelerator(IAccelerator& accelerator, const std::string& command) override;
+	void connectAccelerator(wxKeyEvent& keyEvent, const std::string& command) override;
 	void disconnectAccelerator(const std::string& command) override;
 
 	void disableEvent(const std::string& eventName) override;
@@ -98,6 +95,8 @@ public:
 
 private:
 	void saveEventListToRegistry();
+
+	Accelerator& connectAccelerator(int keyCode, unsigned int modifierFlags, const std::string& command);
 
 	Accelerator& findAccelerator(const IEventPtr& event);
 	Accelerator& findAccelerator(const std::string& commandName);

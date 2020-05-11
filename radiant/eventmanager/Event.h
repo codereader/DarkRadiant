@@ -73,6 +73,9 @@ public:
     virtual void connectAccelerator(IAccelerator& accel) {}
     virtual void disconnectAccelerators() {}
 
+    virtual void connectMenuItem(const IMenuElementPtr& item) {}
+    virtual void disconnectMenuItem(const IMenuElementPtr& item) {}
+
 protected:
     static void setMenuItemAccelerator(wxMenuItem* item, Accelerator& accel)
     {

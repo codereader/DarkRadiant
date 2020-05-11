@@ -35,6 +35,8 @@ protected:
 	typedef std::set<wxMenuItem*> MenuItems;
 	MenuItems _menuItems;
 
+	std::set<IMenuElementPtr> _menuElements;
+
 	typedef std::set<wxToolBarToolBase*> ToolItems;
 	ToolItems _toolItems;
 
@@ -84,6 +86,9 @@ public:
 
     virtual void connectAccelerator(IAccelerator& accel);
     virtual void disconnectAccelerators();
+
+	virtual void connectMenuItem(const IMenuElementPtr& item) override;
+	virtual void disconnectMenuItem(const IMenuElementPtr& item) override;
 
 protected:
 	virtual void onMenuItemClicked(wxCommandEvent& ev);

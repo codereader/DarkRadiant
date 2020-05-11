@@ -25,6 +25,9 @@ public:
 		return menuItem;
 	}
 
+	bool isToggle() const override;
+	void setToggled(bool isToggled) override;
+
 protected:
 	virtual void construct() override;
 	virtual void deconstruct() override;

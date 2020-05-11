@@ -19,7 +19,7 @@ class Accelerator :
 {
 private:
     // The internally stored key/modifier combination
-    unsigned int _key;
+    int _key;
     unsigned int _modifiers;
 
     // The connected event
@@ -37,16 +37,16 @@ public:
     typedef std::shared_ptr<Accelerator> Ptr;
 
     // Construct an accelerator out of the key/modifier plus a command
-    Accelerator(const unsigned int key, const unsigned int modifiers, const IEventPtr& event);
+    Accelerator(const int key, const unsigned int modifiers);
 
     // Returns true if the key/modifier combination matches this accelerator
-    bool match(const unsigned int key, const unsigned int modifiers) const;
+    bool match(const int key, const unsigned int modifiers) const;
 
     // Returns true if the event is attached to this Accelerator
     bool match(const IEventPtr& event) const;
 
     // Reads out the interal key/modifier combination of this Accelerator
-    unsigned int getKey() const override;
+    int getKey() const override;
     unsigned int getModifiers() const override;
 
     // Returns the statement associated to this accelerator, or an empty string
@@ -55,7 +55,7 @@ public:
     void setStatement(const std::string& statement);
 
     // Make the accelerator use this key/modifier
-    void setKey(const unsigned int key) override;
+    void setKey(const int key) override;
     void setModifiers(const unsigned int modifiers) override;
 
     // Retrieve the contained event pointer

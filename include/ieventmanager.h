@@ -45,8 +45,8 @@ public:
     virtual ~IAccelerator() {}
 
     // Get/set the key value
-    virtual void setKey(const unsigned int key) = 0;
-    virtual unsigned int getKey() const = 0;
+    virtual void setKey(const int key) = 0;
+    virtual int getKey() const = 0;
 
     // Get/Set the modifier flags
     virtual void setModifiers(const unsigned int modifiers) = 0;
@@ -87,6 +87,9 @@ public:
 
 	virtual void connectToggleButton(wxToggleButton* button) = 0;
 	virtual void disconnectToggleButton(wxToggleButton* button) = 0;
+
+	virtual void connectMenuItem(const ui::IMenuElementPtr& item) = 0;
+	virtual void disconnectMenuItem(const ui::IMenuElementPtr& item) = 0;
 
 	// Exports the current state to the widgets
 	virtual void updateWidgets() = 0;
@@ -129,16 +132,7 @@ class IEventManager :
 	public RegisterableModule
 {
 public:
-	/* Create an accelerator using the given arguments and add it to the list
-	 *
-	 * @key: The symbolic name of the key, e.g. "A", "Esc"
-	 * @modifierStr: A string containing the modifiers, e.g. "Shift+Control" or "Shift"
-	 *
-	 * @returns: the pointer to the newly created accelerator object */
-	virtual IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
-
 	// The same as above, but with event values as argument (event->keyval, event->state)
-	virtual IAccelerator& addAccelerator(wxKeyEvent& ev) = 0;
 	virtual std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) = 0;
 
 	// Loads all accelerator bindings from the defaults in the stock input.xml
@@ -166,7 +160,7 @@ public:
 	virtual std::string getEventName(const IEventPtr& event) = 0;
 
 	// Connects the given accelerator to the given command (identified by the string)
-	virtual void connectAccelerator(IAccelerator& accelerator, const std::string& command) = 0;
+	virtual void connectAccelerator(wxKeyEvent& keyEvent, const std::string& command) = 0;
 	// Disconnects the given command from any accelerators
 	virtual void disconnectAccelerator(const std::string& command) = 0;
 
