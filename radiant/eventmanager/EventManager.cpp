@@ -150,7 +150,24 @@ void EventManager::resetAcceleratorBindings()
 IEventPtr EventManager::findEvent(const std::string& name) 
 {
 	// Try to lookup the command
-	const EventMap::iterator& found = _events.find(name);
+	auto found = _events.find(name);
+
+#if 0
+	if (found == _events.end())
+	{
+		// Try to look up a matching command in the CommandSystem
+		if (GlobalCommandSystem().commandExists(name))
+		{
+			auto signature = GlobalCommandSystem().getSignature(name);
+
+			if (signatureIsEmptyOrOptional(signature))
+			{
+				// Insert a new event wrapping this command
+				found = _events.emplace(name, std::make_shared<Statement>(name)).first;
+			}
+		}
+	}
+#endif
 
 	// if nothing found, return the NullEvent
 	return found != _events.end() ? found->second : _emptyEvent;
@@ -288,6 +305,29 @@ void EventManager::setToggled(const std::string& name, const bool toggled)
 	if (!findEvent(name)->setToggled(toggled))
 	{
 		rWarning() << "EventManager: Event " << name << " is not a Toggle." << std::endl;
+	}
+}
+
+void EventManager::registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item)
+{
+	_menuItems.emplace(eventName, item);
+
+	// Set the accelerator of this menu item
+	auto& accelerator = findAccelerator(eventName);
+	
+	item->setAccelerator(accelerator.getString(true));
+}
+
+void EventManager::unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item)
+{
+	for (auto it = _menuItems.lower_bound(eventName); 
+		 it != _menuItems.end() && it != _menuItems.upper_bound(eventName); ++it)
+	{
+		if (it->second == item)
+		{
+			_menuItems.erase(it);
+			break;
+		}
 	}
 }
 
@@ -450,6 +490,7 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 			continue;
 		}
 
+#if 1
 		// Second chance: look up a matching command
 		if (GlobalCommandSystem().commandExists(cmd))
 		{
@@ -473,6 +514,7 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 				continue;
 			}
 		}
+#endif
 
 		rWarning() << "EventManager: Cannot load shortcut definition (command invalid): " 
 			<< cmd << std::endl;
@@ -498,6 +540,30 @@ Accelerator& EventManager::findAccelerator(const IEventPtr& event)
 		if (accel->match(event))
         {
 			// Return the reference to the found accelerator
+			return *accel;
+		}
+	}
+
+	// Return an empty accelerator if nothing is found
+	return _emptyAccelerator;
+}
+
+Accelerator& EventManager::findAccelerator(const std::string& commandName)
+{
+	auto foundEvent = _events.find(commandName);
+
+	// Cycle through the accelerators and check for matches
+    for (const auto& accel : _accelerators)
+    {
+		if (accel->getStatement() == commandName)
+        {
+			// Return the reference to the found accelerator
+			return *accel;
+		}
+
+		// If we got an event wrapper, check if this accelerator is associated to it
+		if (foundEvent != _events.end() && accel->match(foundEvent->second))
+		{
 			return *accel;
 		}
 	}
@@ -580,7 +646,6 @@ bool EventManager::handleKeyEvent(wxKeyEvent& keyEvent)
 
 		if (!statement.empty())
 		{
-			// TODO: Check if we have a trigger policy
 			if (keyEvent.GetEventType() == wxEVT_KEY_DOWN)
 			{
 				GlobalCommandSystem().execute(statement);

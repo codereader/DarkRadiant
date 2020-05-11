@@ -22,7 +22,8 @@ class wxTopLevelWindow;
 /* greebo: Below are the actual events that are "read" by the views/observers to
  * interpret the mouseclicks. */
 
-namespace ui {
+namespace ui 
+{
 
 	// Enum used for events tracking the key state
 	enum KeyEventType
@@ -31,6 +32,9 @@ namespace ui {
 		KeyReleased,
 	};
 	typedef std::function<void (KeyEventType)> KeyStateChangeCallback;
+
+	class IMenuElement;
+	typedef std::shared_ptr<IMenuElement> IMenuElementPtr;
 
 } // namespace ui
 
@@ -168,6 +172,11 @@ public:
 
 	// Before destruction, it's advisable to disconnect any events from a toolbar's items
 	virtual void disconnectToolbar(wxToolBar* toolbar) = 0;
+
+	// Register the given menu item with the given command. The event manager updates this item
+	// when the accelerator association changes
+	virtual void registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) = 0;
+	virtual void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) = 0;
 
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;

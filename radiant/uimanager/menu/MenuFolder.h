@@ -25,6 +25,11 @@ public:
 	// Clears the needsRefresh flag on this object and all children
 	void refresh();
 
+	eMenuItemType getType() const override
+	{
+		return menuFolder;
+	}
+
 protected:
 	virtual void construct() override;
 	virtual void deconstruct() override;

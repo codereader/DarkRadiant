@@ -17,6 +17,11 @@ public:
 		deconstructChildren();
 	}
 
+	eMenuItemType getType() const override
+	{
+		return menuRoot;
+	}
+
 protected:
 	void construct() override
 	{}

@@ -22,6 +22,8 @@ private:
 	// Each command has a name, this is the map where the name->command association is stored
 	typedef std::map<const std::string, IEventPtr> EventMap;
 
+	std::multimap<std::string, IMenuElementPtr> _menuItems;
+
 	// The list containing all registered accelerator objects
 	AcceleratorList _accelerators;
 
@@ -68,6 +70,9 @@ public:
 
 	void setToggled(const std::string& name, const bool toggled) override;
 
+	void registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) override;
+	void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) override;
+
 	// Connects the given accelerator to the given command (identified by the string)
 	void connectAccelerator(IAccelerator& accelerator, const std::string& command) override;
 	void disconnectAccelerator(const std::string& command) override;
@@ -95,6 +100,7 @@ private:
 	void saveEventListToRegistry();
 
 	Accelerator& findAccelerator(const IEventPtr& event);
+	Accelerator& findAccelerator(const std::string& commandName);
 	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr);
 
 	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, const IEventPtr& event);

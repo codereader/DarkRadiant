@@ -17,19 +17,38 @@ public:
 
 namespace ui
 {
-	/** 
-	 * greebo: The possible menu item types, one of these
-	 * has to be passed when creating menu items.
-	 */
-	enum eMenuItemType
-	{
-		menuNothing,
-		menuRoot,
-		menuBar,
-		menuFolder,
-		menuItem,
-		menuSeparator,
-	};
+
+/** 
+	* greebo: The possible menu item types, one of these
+	* has to be passed when creating menu items.
+	*/
+enum eMenuItemType
+{
+	menuNothing,
+	menuRoot,
+	menuBar,
+	menuFolder,
+	menuItem,
+	menuSeparator,
+};
+
+// Interface of the menu items used by DarkRadiant's MenuManager
+class IMenuElement
+{
+public:
+	virtual ~IMenuElement() {}
+
+	virtual eMenuItemType getType() const = 0;
+
+	// The name of this element
+	virtual const std::string& getName() const = 0;
+
+	// Returns the event/statement that is associated to this item
+	virtual const std::string& getEvent() const = 0;
+
+	virtual void setAccelerator(const std::string& accelStr) = 0;
+};
+
 } // namespace ui
 
 class IMenuManager

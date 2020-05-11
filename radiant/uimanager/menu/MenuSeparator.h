@@ -17,6 +17,11 @@ public:
 
 	virtual wxMenuItem* getMenuItem();
 
+	eMenuItemType getType() const override
+	{
+		return menuSeparator;
+	}
+
 protected:
 	virtual void construct() override;
 	virtual void deconstruct() override;

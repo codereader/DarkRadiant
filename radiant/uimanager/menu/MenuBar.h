@@ -25,6 +25,11 @@ public:
 
 	virtual void setNeedsRefresh(bool needsRefresh) override;
 
+	eMenuItemType getType() const override
+	{
+		return menuBar;
+	}
+
 protected:
 	virtual void construct() override;
 	virtual void deconstruct() override;

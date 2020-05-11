@@ -50,6 +50,9 @@ void MenuItem::construct()
 
 	std::string caption = _caption;
 
+#if 1
+	GlobalEventManager().registerMenuItem(_event, shared_from_this());
+#else
 	// Try to lookup the event name
 	IEventPtr event = GlobalEventManager().findEvent(_event);
 
@@ -63,6 +66,7 @@ void MenuItem::construct()
 	{
 		rWarning() << "MenuElement: Cannot find associated event: " << _event << std::endl;
 	}
+#endif
 
 	// Create a new MenuElement
 	_menuItem = new wxMenuItem(nullptr, _nextMenuItemId++, caption);
@@ -72,11 +76,13 @@ void MenuItem::construct()
 		_menuItem->SetBitmap(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + _icon));
 	}
 
-	_menuItem->SetCheckable(event && event->isToggle());
+	bool isToggle = GlobalEventManager().findEvent(_event)->isToggle();
+	_menuItem->SetCheckable(isToggle);
 
 	int pos = parent->getMenuPosition(shared_from_this());
 	menu->Insert(pos, _menuItem);
 
+#if 0
 	if (event)
 	{
 		event->connectMenuItem(_menuItem);
@@ -86,8 +92,17 @@ void MenuItem::construct()
 		// No event attached to this menu item, disable it
 		menu->Enable(_menuItem->GetId(), false);
 	}
+#endif
 
 	MenuElement::constructChildren();
+}
+
+void MenuItem::setAccelerator(const std::string& accelStr)
+{
+	if (_menuItem == nullptr) return;
+
+	std::string caption = _caption + "\t " + accelStr;
+	_menuItem->SetItemLabel(caption);
 }
 
 void MenuItem::deconstruct()
@@ -100,12 +115,16 @@ void MenuItem::deconstruct()
 		// Try to lookup the event name
 		if (!_event.empty())
 		{
+#if 1
+			GlobalEventManager().unregisterMenuItem(_event, shared_from_this());
+#else
 			IEventPtr event = GlobalEventManager().findEvent(_event);
 
 			if (event)
 			{
 				event->disconnectMenuItem(_menuItem);
 			}
+#endif
 		}
 
 		if (_menuItem->GetMenu() != nullptr)
