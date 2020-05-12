@@ -35,6 +35,8 @@ private:
     typedef std::set<wxButton*> Buttons;
     Buttons _buttons;
 
+    std::map<IMenuElementPtr, sigc::connection> _menuElements;
+
 public:
     Statement(const std::string& statement, bool reactOnKeyUp = false);
 
@@ -57,6 +59,9 @@ public:
     virtual void connectButton(wxButton* button);
     virtual void disconnectButton(wxButton* button);
 
+    virtual void connectMenuItem(const IMenuElementPtr& item) override;
+    virtual void disconnectMenuItem(const IMenuElementPtr& item) override;
+
     virtual bool empty() const;
 
     virtual void connectAccelerator(IAccelerator& accel);
@@ -67,6 +72,8 @@ private:
     void onMenuItemClicked(wxCommandEvent& ev);
     void onToolItemClicked(wxCommandEvent& ev);
     void onButtonClicked(wxCommandEvent& ev);
+
+    void onItemActivated();
 
 }; // class Statement
 

@@ -63,9 +63,9 @@ void Toggle::updateWidgets()
 		(*i)->SetValue(_toggled);
 	}
 
-	for (const auto& item : _menuElements)
+	for (const auto& pair : _menuElements)
 	{
-		item->setToggled(_toggled);
+		pair.first->setToggled(_toggled);
 	}
 
 	_callbackActive = false;
@@ -94,9 +94,15 @@ void Toggle::connectMenuItem(const IMenuElementPtr& item)
 		return;
 	}
 
-	_menuElements.insert(item);
+	_menuElements.emplace(item,
+		item->signal_ItemActivated().connect(sigc::mem_fun(*this, &Toggle::onItemActivated)));
 
 	item->setToggled(_toggled);
+}
+
+void Toggle::onItemActivated()
+{
+	toggle();
 }
 
 void Toggle::disconnectMenuItem(const IMenuElementPtr& item)

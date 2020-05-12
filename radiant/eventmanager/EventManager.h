@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include <wx/event.h>
+#include <sigc++/connection.h>
 
 #include <map>
 #include <list>
@@ -22,7 +23,13 @@ private:
 	// Each command has a name, this is the map where the name->command association is stored
 	typedef std::map<const std::string, IEventPtr> EventMap;
 
-	std::multimap<std::string, IMenuElementPtr> _menuItems;
+	struct ItemConnection
+	{
+		IMenuElementPtr item;
+		sigc::connection itemActivatedConn;
+	};
+
+	std::multimap<std::string, ItemConnection> _menuItems;
 
 	// The command-to-accelerator map containing all registered shortcuts
 	std::map<std::string, Accelerator::Ptr> _accelerators;

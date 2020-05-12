@@ -80,6 +80,9 @@ void MenuItem::construct()
 	int pos = parent->getMenuPosition(shared_from_this());
 	menu->Insert(pos, _menuItem);
 
+	// Wire up the click event
+	menu->Bind(wxEVT_MENU, &MenuItem::onMenuItemClicked, this, _menuItem->GetId());
+
 #if 0
 	if (event)
 	{
@@ -97,6 +100,11 @@ void MenuItem::construct()
 #endif
 
 	MenuElement::constructChildren();
+}
+
+void MenuItem::onMenuItemClicked(wxCommandEvent& ev)
+{
+	signal_ItemActivated().emit();
 }
 
 void MenuItem::setAccelerator(const std::string& accelStr)
@@ -131,6 +139,7 @@ void MenuItem::deconstruct()
 
 		if (_menuItem->GetMenu() != nullptr)
 		{
+			_menuItem->GetMenu()->Unbind(wxEVT_MENU, &MenuItem::onMenuItemClicked, this, _menuItem->GetId());
 			_menuItem->GetMenu()->Remove(_menuItem);
 		}
 

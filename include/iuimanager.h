@@ -52,6 +52,9 @@ public:
 	virtual bool isToggle() const = 0;
 
 	virtual void setToggled(bool isToggled) = 0;
+
+	// Callback triggered when this item is clicked
+	virtual sigc::signal<void>& signal_ItemActivated() = 0;
 };
 
 } // namespace ui

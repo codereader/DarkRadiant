@@ -314,7 +314,9 @@ void EventManager::setToggled(const std::string& name, const bool toggled)
 
 void EventManager::registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item)
 {
-	_menuItems.emplace(eventName, item);
+	auto result = _menuItems.emplace(eventName, ItemConnection());
+
+	result->second.item = item;
 
 	// Set the accelerator of this menu item
 	auto& accelerator = findAccelerator(eventName);
@@ -328,6 +330,14 @@ void EventManager::registerMenuItem(const std::string& eventName, const ui::IMen
 	{
 		evt->connectMenuItem(item);
 	}
+	else
+	{
+		// There's no special event object this item is connected to
+		// just wire up an execute() when this item is clicked
+		result->second.itemActivatedConn = item->signal_ItemActivated().connect(
+			[=]() { GlobalCommandSystem().execute(eventName); }
+		);
+	}
 }
 
 void EventManager::unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item)
@@ -335,8 +345,9 @@ void EventManager::unregisterMenuItem(const std::string& eventName, const ui::IM
 	for (auto it = _menuItems.lower_bound(eventName); 
 		 it != _menuItems.end() && it != _menuItems.upper_bound(eventName); ++it)
 	{
-		if (it->second == item)
+		if (it->second.item == item)
 		{
+			it->second.itemActivatedConn.disconnect();
 			_menuItems.erase(it);
 			break;
 		}
@@ -546,9 +557,9 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 		// Update all registered menu items
 		for (const auto& item : _menuItems)
 		{
-			if (item.second->getEvent() == cmd)
+			if (item.second.item->getEvent() == cmd)
 			{
-				item.second->setAccelerator(accelerator.getString(true));
+				item.second.item->setAccelerator(accelerator.getString(true));
 			}
 		}
 

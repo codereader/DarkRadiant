@@ -52,6 +52,8 @@ protected:
 
 	static int _nextMenuItemId;
 
+	sigc::signal<void> _signalItemActivated;
+
 public:
 	// Constructor, needs a name and a parent specified
 	MenuElement(const MenuElementPtr& parent = MenuElementPtr());
@@ -119,6 +121,11 @@ public:
 
 	virtual void setToggled(bool isToggled) override
 	{}
+
+	virtual sigc::signal<void>& signal_ItemActivated() override
+	{
+		return _signalItemActivated;
+	}
 
 	// Tries to (recursively) locate the MenuElement by looking up the path
 	MenuElementPtr find(const std::string& menuPath);
