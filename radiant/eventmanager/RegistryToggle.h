@@ -9,13 +9,14 @@
 namespace ui
 {
 
-/* greebo: A RegistryToggle is an Toggle Event that changes the value of the
- * attached registry key to "1" / "0" when toggled. The key is stored internally of course.
+/* greebo: A RegistryToggle is a Toggle Event that changes the value of the
+ * attached registry key to "1" / "0" when toggled. The key is stored internally.
  *
- * The only method that is different to an ordinary Toggle is the virtual toggle() method,
+ * The only method different to an ordinary Toggle is the virtual toggle() method,
  * whose only purpose is to toggle the according RegistryKey.
  */
-class RegistryToggle : public Toggle,
+class RegistryToggle : 
+    public Toggle,
     public sigc::trackable
 {
 private:

@@ -113,13 +113,16 @@ void Toggle::disconnectMenuItem(const IMenuElementPtr& item)
 		return;
 	}
 
-	if (_menuElements.find(item) == _menuElements.end())
+	auto found = _menuElements.find(item);
+
+	if (found == _menuElements.end())
 	{
 		rWarning() << "Cannot disconnect from unconnected menu item." << std::endl;
 		return;
 	}
 
-	_menuElements.erase(item);
+	found->second.disconnect();
+	_menuElements.erase(found);
 }
 
 void Toggle::connectMenuItem(wxMenuItem* item)
