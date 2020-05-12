@@ -5,6 +5,7 @@
 
 #include "registry/adaptors.h"
 #include <functional>
+#include <sigc++/connection.h>
 
 namespace ui
 {
@@ -23,32 +24,38 @@ private:
     // The attached registrykey
     const std::string _registryKey;
 
+    sigc::connection _registryConn;
+
     void setState(bool state)
     {
         _toggled = state;
         updateWidgets();
     }
 
+    // Dummy callback for the Toggle base class, we don't need any callbacks...
+    static void doNothing(bool) {}
+
 public:
 
     RegistryToggle(const std::string& registryKey) :
-        Toggle(std::bind(&RegistryToggle::doNothing, this, std::placeholders::_1)),
+        Toggle(doNothing),
         _registryKey(registryKey)
     {
         // Initialise the current state
         _toggled = registry::getValue<bool>(_registryKey);
 
         // Register to get notified on key changes
-        registry::observeBooleanKey(
+        _registryConn = registry::observeBooleanKey(
             _registryKey,
             sigc::bind(sigc::mem_fun(this, &RegistryToggle::setState), true),
             sigc::bind(sigc::mem_fun(this, &RegistryToggle::setState), false)
-            );
-
+        );
     }
 
-    // Dummy callback for the Toggle base class, we don't need any callbacks...
-    void doNothing(bool) {}
+    ~RegistryToggle()
+    {
+        _registryConn.disconnect();
+    }
 
     virtual bool setToggled(const bool toggled)
     {
