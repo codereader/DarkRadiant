@@ -365,20 +365,21 @@ void EventManager::unregisterMenuItem(const std::string& eventName, const ui::IM
 Accelerator& EventManager::connectAccelerator(int keyCode, unsigned int modifierFlags, const std::string& command)
 {
 	auto result = _accelerators.emplace(command, std::make_shared<Accelerator>(keyCode, modifierFlags));
+	Accelerator& accel = *result.first->second;
 
 	// There might be an event to associate
 	auto event = findEvent(command);
 
 	if (!event->empty())
 	{
-		// Command found, connect it to the accelerator by passing its pointer
-		//event->connectAccelerator(accelerator);
-		result.first->second->setEvent(event);
+		accel.setEvent(event);
 	}
 	else
 	{
-		result.first->second->setStatement(command);
+		accel.setStatement(command);
 	}
+
+	setMenuItemAccelerator(command, accel.getString(true));
 
 	return *result.first->second;
 #if 0
@@ -405,6 +406,9 @@ void EventManager::disconnectAccelerator(const std::string& command)
 
 	if (existing != _accelerators.end())
 	{
+		// Clear menu item accelerator string
+		setMenuItemAccelerator(command, std::string());
+
 		if (existing->second->getEvent())
 		{
 			existing->second->getEvent()->disconnectAccelerators();
@@ -441,6 +445,16 @@ void EventManager::disconnectAccelerator(const std::string& command)
 		rWarning() << "EventManager: Unable to disconnect command: " << command << std::endl;
 	}
 #endif
+}
+
+void EventManager::setMenuItemAccelerator(const std::string& command, const std::string& acceleratorStr)
+{
+	auto foundMenuItem = _menuItems.find(command);
+
+	if (foundMenuItem != _menuItems.end())
+	{
+		foundMenuItem->second.item->setAccelerator(acceleratorStr);
+	}
 }
 
 void EventManager::disableEvent(const std::string& eventName) 
