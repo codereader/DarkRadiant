@@ -146,6 +146,11 @@ void EventManager::resetAcceleratorBindings()
 
 	_accelerators.clear();
 
+	for (const auto& pair : _menuItems)
+	{
+		pair.second.item->setAccelerator(std::string());
+	}
+
 	rMessage() << "EventManager: Default shortcuts found in Registry: " << shortcutList.size() << std::endl;
 
 	loadAcceleratorFromList(shortcutList);
@@ -449,11 +454,10 @@ void EventManager::disconnectAccelerator(const std::string& command)
 
 void EventManager::setMenuItemAccelerator(const std::string& command, const std::string& acceleratorStr)
 {
-	auto foundMenuItem = _menuItems.find(command);
-
-	if (foundMenuItem != _menuItems.end())
+	for (auto it = _menuItems.lower_bound(command); 
+		 it != _menuItems.end() && it != _menuItems.upper_bound(command); ++it)
 	{
-		foundMenuItem->second.item->setAccelerator(acceleratorStr);
+		it->second.item->setAccelerator(acceleratorStr);
 	}
 }
 
@@ -568,14 +572,8 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 
 		auto& accelerator = connectAccelerator(keyVal, modifierFlags, cmd);
 
-		// Update all registered menu items
-		for (const auto& item : _menuItems)
-		{
-			if (item.second.item->getEvent() == cmd)
-			{
-				item.second.item->setAccelerator(accelerator.getString(true));
-			}
-		}
+		// Update registered menu item
+		setMenuItemAccelerator(cmd, accelerator.getString(true));
 
 		// Try to lookup the command
 		IEventPtr event = findEvent(cmd);
@@ -616,6 +614,20 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 		auto& accel = findAccelerator(pair.second);
 		eventVisitor.visit(pair.first, accel);
 	}
+
+	// Visit all commands without signatures
+	GlobalCommandSystem().foreachCommand([&](const std::string& command)
+	{
+		auto signature = GlobalCommandSystem().getSignature(command);
+
+		if (signatureIsEmptyOrOptional(signature))
+		{
+			auto accel = _accelerators.find(command);
+
+			eventVisitor.visit(command, 
+				accel != _accelerators.end() ? *accel->second : _emptyAccelerator);
+		}
+	});
 }
 
 // Tries to locate an accelerator, that is connected to the given command
