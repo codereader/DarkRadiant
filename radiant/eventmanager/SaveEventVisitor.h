@@ -1,9 +1,10 @@
 #pragma once
 
-#include "EventManager.h"
+#include "ieventmanager.h"
+#include "iregistry.h"
 
 #include "xmlutil/Node.h"
-
+#include "wxutil/Modifier.h"
 #include "Accelerator.h"
 
 namespace ui
@@ -16,29 +17,22 @@ namespace ui
  *
  * The resulting shortcut nodes are like: user/ui/input/shortcuts/shortcut
  */
-class SaveEventVisitor :
-    public IEventVisitor
+class SaveEventVisitor
 {
-    const std::string _rootKey;
-
     // The node containing all the <shortcut> tags
     xml::Node _shortcutsNode;
 
-    EventManager& _eventManager;
-
 public:
-    SaveEventVisitor(const std::string& rootKey, EventManager& eventManager) :
-        _rootKey(rootKey),
-        _shortcutsNode(nullptr),
-        _eventManager(eventManager)
+    SaveEventVisitor(const std::string& rootKey) :
+        _shortcutsNode(nullptr)
     {
         // Remove any existing shortcut definitions
-        GlobalRegistry().deleteXPath(_rootKey + "//shortcuts");
+        GlobalRegistry().deleteXPath(rootKey + "//shortcuts");
 
-        _shortcutsNode = GlobalRegistry().createKey(_rootKey + "/shortcuts");
+        _shortcutsNode = GlobalRegistry().createKey(rootKey + "/shortcuts");
     }
 
-    void visit(const std::string& eventName, const IAccelerator& accelerator) override
+    void visit(const std::string& eventName, const IAccelerator& accelerator)
     {
         // Only export events with non-empty name
         if (eventName.empty()) return;

@@ -8,6 +8,8 @@
 #include <wx/toolbar.h>
 #include <regex>
 
+#include "string/replace.h"
+
 namespace ui
 {
 
@@ -76,7 +78,7 @@ public:
     virtual void connectMenuItem(const IMenuElementPtr& item) {}
     virtual void disconnectMenuItem(const IMenuElementPtr& item) {}
 
-protected:
+public:
     static void setMenuItemAccelerator(wxMenuItem* item, Accelerator& accel)
     {
         // Cut off any existing accelerators
@@ -95,10 +97,13 @@ protected:
 
     static void setToolItemAccelerator(wxToolBarToolBase* tool, Accelerator& accel)
     {
-        wxString accelText = accel.getString(true);
-        std::replace(accelText.begin(), accelText.end(), '~', '-');
+        setToolItemAccelerator(tool, accel.getString(true));
+    }
 
-        tool->SetShortHelp(getCleanToolItemHelpText(tool) + " (" + accelText + ")");
+    static void setToolItemAccelerator(wxToolBarToolBase* tool, const std::string& accelText)
+    {
+        tool->SetShortHelp(getCleanToolItemHelpText(tool) + 
+            (!accelText.empty() ? " (" + string::replace_all_copy(accelText, "~", "-") + ")" : ""));
     }
 
     static void clearToolItemAccelerator(wxToolBarToolBase* tool)

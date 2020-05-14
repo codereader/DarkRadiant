@@ -200,8 +200,7 @@ void Toggle::connectToolItem(wxToolBarToolBase* item)
 	item->GetToolBar()->ToggleTool(item->GetId(), _toggled);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Connect(item->GetId(), wxEVT_TOOL, 
-		wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Bind(wxEVT_TOOL, &Toggle::onToolItemClicked, this, item->GetId());
 }
 
 void Toggle::disconnectToolItem(wxToolBarToolBase* item)
@@ -215,8 +214,7 @@ void Toggle::disconnectToolItem(wxToolBarToolBase* item)
 	_toolItems.erase(item);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Disconnect(item->GetId(), wxEVT_TOOL, 
-		wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Unbind(wxEVT_TOOL, &Toggle::onToolItemClicked, this, item->GetId());
 }
 
 void Toggle::onToolItemClicked(wxCommandEvent& ev)
@@ -292,11 +290,12 @@ void Toggle::toggle()
 
 void Toggle::connectAccelerator(IAccelerator& accel)
 {
+#if 0
     for (wxMenuItem* item : _menuItems)
     {
         setMenuItemAccelerator(item, static_cast<Accelerator&>(accel));
     }
-
+#endif
     for (wxToolBarToolBase* tool : _toolItems)
     {
         setToolItemAccelerator(tool, static_cast<Accelerator&>(accel));
@@ -305,11 +304,12 @@ void Toggle::connectAccelerator(IAccelerator& accel)
 
 void Toggle::disconnectAccelerators()
 {
+#if 0
     for (wxMenuItem* item : _menuItems)
     {
         clearMenuItemAccelerator(item);
     }
-
+#endif
     for (wxToolBarToolBase* tool : _toolItems)
     {
         clearToolItemAccelerator(tool);

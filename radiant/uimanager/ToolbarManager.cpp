@@ -95,6 +95,8 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node&
 				tooltip, wxITEM_CHECK);
 		}
 
+		GlobalEventManager().registerToolItem(action, toolItem);
+#if 0
 		IEventPtr ev = GlobalEventManager().findEvent(action);
 
 		if (!ev->empty())
@@ -108,6 +110,7 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node&
 		{
 			rError() << "ToolbarManager: Failed to lookup command " << action << std::endl;
 		}
+#endif
 	}
 
 	return toolItem;
@@ -145,6 +148,8 @@ wxToolBar* ToolbarManager::createToolbar(xml::Node& node, wxWindow* parent)
 	{
 		throw std::runtime_error("No elements in toolbar.");
 	}
+
+	// TODO: Subscribe to destroy event to deregister tool items
 
 	return toolbar;
 }

@@ -367,6 +367,42 @@ void EventManager::unregisterMenuItem(const std::string& eventName, const ui::IM
 	}
 }
 
+void EventManager::registerToolItem(const std::string& eventName, wxToolBarToolBase* item)
+{
+	auto result = _toolItems.emplace(eventName, item);
+
+	// Set the accelerator of this menu item
+	auto& accelerator = findAccelerator(eventName);
+
+	Event::setToolItemAccelerator(item, accelerator);
+
+	// Check if we have an event object corresponding to this event name
+	auto evt = findEvent(eventName);
+
+	if (!evt->empty())
+	{
+		evt->connectToolItem(item);
+	}
+	else
+	{
+		// There's no special event object this item is connected to
+		// just wire up an execute() when this item is clicked
+		item->GetToolBar()->Bind(wxEVT_TOOL, &EventManager::onToolItemClicked, this, item->GetId());
+	}
+}
+
+void EventManager::onToolItemClicked(wxCommandEvent& ev)
+{
+	for (const auto & pair : _toolItems)
+	{
+		if (pair.second->GetId() == ev.GetId())
+		{
+			GlobalCommandSystem().execute(pair.first);
+			break;
+		}
+	}
+}
+
 Accelerator& EventManager::connectAccelerator(int keyCode, unsigned int modifierFlags, const std::string& command)
 {
 	auto result = _accelerators.emplace(command, std::make_shared<Accelerator>(keyCode, modifierFlags));
@@ -384,7 +420,9 @@ Accelerator& EventManager::connectAccelerator(int keyCode, unsigned int modifier
 		accel.setStatement(command);
 	}
 
-	setMenuItemAccelerator(command, accel.getString(true));
+	std::string acceleratorStr = accel.getString(true);
+	setMenuItemAccelerator(command, acceleratorStr);
+	setToolItemAccelerator(command, acceleratorStr);
 
 	return *result.first->second;
 #if 0
@@ -452,6 +490,15 @@ void EventManager::disconnectAccelerator(const std::string& command)
 #endif
 }
 
+void EventManager::setToolItemAccelerator(const std::string& command, const std::string& acceleratorStr)
+{
+	for (auto it = _toolItems.lower_bound(command); 
+		 it != _toolItems.end() && it != _toolItems.upper_bound(command); ++it)
+	{
+		Event::setToolItemAccelerator(it->second, acceleratorStr);
+	}
+}
+
 void EventManager::setMenuItemAccelerator(const std::string& command, const std::string& acceleratorStr)
 {
 	for (auto it = _menuItems.lower_bound(command); 
@@ -515,14 +562,6 @@ void EventManager::disconnectToolbar(wxToolBar* toolbar)
 // Loads the default shortcuts from the registry
 void EventManager::loadAccelerators()
 {
-	// TODO
-	//// Register all custom statements as events too to make them shortcut-bindable
-	//// before going ahead
-	//GlobalCommandSystem().foreachStatement([&](const std::string& statementName)
-	//{
-	//	addCommand(statementName, statementName, false);
-	//}, true); // custom statements only
-
 	xml::NodeList shortcutSets = GlobalRegistry().findXPath("user/ui/input//shortcuts");
 
 	// If we have two sets of shortcuts, don't select the stock ones
@@ -570,8 +609,12 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 		int keyVal = Accelerator::getKeyCodeFromName(key);
 		unsigned int modifierFlags = wxutil::Modifier::GetStateFromModifierString(modifierStr);
 
-		auto& accelerator = connectAccelerator(keyVal, modifierFlags, cmd);
+#if 0
+		auto& accelerator = 
+#endif
+		connectAccelerator(keyVal, modifierFlags, cmd);
 
+#if 0
 		// Update registered menu item
 		setMenuItemAccelerator(cmd, accelerator.getString(true));
 
@@ -586,8 +629,9 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
             accelerator.setEvent(event);
 			continue;
 		}
+#endif
 
-#if 1
+#if 0
 		// Second chance: look up a matching command
 		if (GlobalCommandSystem().commandExists(cmd))
 		{
@@ -683,13 +727,24 @@ Accelerator& EventManager::findAccelerator(const std::string& commandName)
 
 void EventManager::saveEventListToRegistry()
 {
-	const std::string rootKey = "user/ui/input";
-
 	// The visitor class to save each event definition into the registry
 	// Note: the SaveEventVisitor automatically wipes all the existing shortcuts from the registry
-	SaveEventVisitor visitor(rootKey, *this);
+	SaveEventVisitor shortcutSaver("user/ui/input");
 
-	foreachEvent(visitor);
+	// We don't use the foreachEvent() iterator here since the CommandSystem
+	// might already have cleared out all registered commands
+	for (const auto& pair : _events)
+	{
+		auto& accel = findAccelerator(pair.second);
+		shortcutSaver.visit(pair.first, accel);
+	}
+
+	for (const auto& pair : _accelerators)
+	{
+		if (pair.second->isEmpty()) continue;
+
+		shortcutSaver.visit(pair.first, *pair.second);
+	}
 }
 
 Accelerator& EventManager::findAccelerator(const std::string& key, const std::string& modifierStr)

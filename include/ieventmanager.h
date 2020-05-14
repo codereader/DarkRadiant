@@ -172,6 +172,8 @@ public:
 	virtual void registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) = 0;
 	virtual void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) = 0;
 
+	virtual void registerToolItem(const std::string& eventName, wxToolBarToolBase* item) = 0;
+
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;
 

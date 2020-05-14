@@ -30,6 +30,7 @@ private:
 	};
 
 	std::multimap<std::string, ItemConnection> _menuItems;
+	std::multimap<std::string, wxToolBarToolBase*> _toolItems;
 
 	// The command-to-accelerator map containing all registered shortcuts
 	std::map<std::string, Accelerator::Ptr> _accelerators;
@@ -77,6 +78,8 @@ public:
 	void registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) override;
 	void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) override;
 
+	void registerToolItem(const std::string& eventName, wxToolBarToolBase* item) override;
+
 	// Connects the given accelerator to the given command (identified by the string)
 	void connectAccelerator(wxKeyEvent& keyEvent, const std::string& command) override;
 	void disconnectAccelerator(const std::string& command) override;
@@ -117,8 +120,10 @@ private:
 	void loadAcceleratorFromList(const xml::NodeList& shortcutList);
 
 	void setMenuItemAccelerator(const std::string& command, const std::string& acceleratorStr);
+	void setToolItemAccelerator(const std::string& command, const std::string& acceleratorStr);
 
 	bool isModifier(wxKeyEvent& ev);
+	void onToolItemClicked(wxCommandEvent& ev);
 };
 
 }

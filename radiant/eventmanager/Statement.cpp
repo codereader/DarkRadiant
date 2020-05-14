@@ -141,8 +141,7 @@ void Statement::connectToolItem(wxToolBarToolBase* item)
 	_toolItems.insert(item);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Connect(item->GetId(), wxEVT_TOOL, 
-		wxCommandEventHandler(Statement::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Bind(wxEVT_TOOL, &Statement::onToolItemClicked, this, item->GetId());
 }
 
 void Statement::disconnectToolItem(wxToolBarToolBase* item)
@@ -156,8 +155,7 @@ void Statement::disconnectToolItem(wxToolBarToolBase* item)
 	_toolItems.erase(item);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Disconnect(item->GetId(), wxEVT_TOOL, 
-		wxCommandEventHandler(Statement::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Unbind(wxEVT_TOOL, &Statement::onToolItemClicked, this, item->GetId());
 }
 
 void Statement::onToolItemClicked(wxCommandEvent& ev)
