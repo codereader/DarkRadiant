@@ -149,9 +149,19 @@ wxToolBar* ToolbarManager::createToolbar(xml::Node& node, wxWindow* parent)
 		throw std::runtime_error("No elements in toolbar.");
 	}
 
-	// TODO: Subscribe to destroy event to deregister tool items
+	toolbar->Bind(wxEVT_DESTROY, &ToolbarManager::onToolbarDestroy, this);
 
 	return toolbar;
+}
+
+void ToolbarManager::onToolbarDestroy(wxWindowDestroyEvent& ev)
+{
+	auto toolbar = wxDynamicCast(ev.GetEventObject(), wxToolBar);
+
+	if (toolbar != nullptr)
+	{
+		GlobalEventManager().disconnectToolbar(toolbar);
+	}
 }
 
 bool ToolbarManager::toolbarExists(const std::string& toolbarName)

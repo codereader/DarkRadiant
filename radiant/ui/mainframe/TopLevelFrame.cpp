@@ -91,6 +91,14 @@ wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
 	return (found != _toolbars.end()) ? found->second.get() : nullptr;
 }
 
+bool TopLevelFrame::Destroy()
+{
+	// Clear out any references to toolbars while the modules are still loaded
+	_toolbars.clear();
+
+	return wxFrame::Destroy();
+}
+
 wxMenuBar* TopLevelFrame::createMenuBar()
 {
     // Return the "main" menubar from the UIManager

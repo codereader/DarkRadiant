@@ -14,6 +14,7 @@
  * Obtain a loaded toolbar by calling getToolbar(<toolbarName>);
  */
 class wxToolBarToolBase;
+class wxWindowDestroyEvent;
 
 namespace ui {
 
@@ -53,6 +54,8 @@ private:
 	wxToolBarToolBase* createToolItem(wxToolBar* toolbar, xml::Node& node);
 
 	bool toolbarExists(const std::string& toolbarName);
+
+	void onToolbarDestroy(wxWindowDestroyEvent& ev);
 };
 
 } // namespace ui

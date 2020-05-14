@@ -550,13 +550,38 @@ void EventManager::removeEvent(const std::string& eventName)
 
 void EventManager::disconnectToolbar(wxToolBar* toolbar)
 {
-	std::for_each(_events.begin(), _events.end(), [&] (EventMap::value_type& pair)
+	for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
+	{
+		for (auto it = _toolItems.begin(); it != _toolItems.end(); ++it)
+		{
+			auto toolItem = toolbar->GetToolByPos(tool);
+
+			if (it->second == toolItem)
+			{
+				auto evt = findEvent(it->first);
+
+				if (!evt->empty())
+				{
+					evt->disconnectToolItem(toolItem);
+				}
+				else
+				{
+					toolbar->Unbind(wxEVT_TOOL, &EventManager::onToolItemClicked, this, toolItem->GetId());
+				}
+
+				_toolItems.erase(it);
+				break;
+			}
+		}
+	}
+
+	for (EventMap::value_type& pair : _events)
 	{
 		for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
 		{
 			pair.second->disconnectToolItem(const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(static_cast<int>(tool))));
 		}
-	});
+	}
 }
 
 // Loads the default shortcuts from the registry
