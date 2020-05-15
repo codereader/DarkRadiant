@@ -82,9 +82,6 @@ public:
 	// Invoke the registered callback and update/notify
 	virtual void toggle();
 
-    virtual void connectAccelerator(IAccelerator& accel);
-    virtual void disconnectAccelerators();
-
 protected:
 	virtual void onMenuItemClicked(wxCommandEvent& ev);
 	virtual void onToolItemClicked(wxCommandEvent& ev);

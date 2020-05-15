@@ -138,12 +138,6 @@ void EventManager::resetAcceleratorBindings()
 		return;
 	}
 
-	// Disconnect all accelerators from all events
-	for (EventMap::value_type& pair : _events)
-	{
-		pair.second->disconnectAccelerators();
-	}
-
 	_accelerators.clear();
 
 	for (const auto& pair : _menuItems)
@@ -490,7 +484,6 @@ void EventManager::disconnectAccelerator(const std::string& command)
 
 		if (existing->second->getEvent())
 		{
-			existing->second->getEvent()->disconnectAccelerators();
 			existing->second->setEvent(_emptyEvent);
 		}
 

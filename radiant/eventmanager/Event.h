@@ -69,9 +69,6 @@ public:
     virtual void connectToggleButton(wxToggleButton* button) {}
     virtual void disconnectToggleButton(wxToggleButton* button) {}
 
-    virtual void connectAccelerator(IAccelerator& accel) {}
-    virtual void disconnectAccelerators() {}
-
 public:
     static void setMenuItemAccelerator(wxMenuItem* item, Accelerator& accel)
     {

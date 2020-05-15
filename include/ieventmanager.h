@@ -94,12 +94,6 @@ public:
 
 	// Returns true, if this is any empty Event (no command attached)
 	virtual bool empty() const = 0;
-
-    // Associate an accelerator to this event (this can trigger an update of the associated widgets)
-    virtual void connectAccelerator(IAccelerator& accel) = 0;
-
-    // Signal to remove the accelerators from this event (might update associated widgets)
-    virtual void disconnectAccelerators() = 0;
 };
 typedef std::shared_ptr<IEvent> IEventPtr;
 

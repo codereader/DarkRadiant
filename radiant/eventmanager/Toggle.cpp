@@ -236,32 +236,4 @@ void Toggle::toggle()
 	updateWidgets();
 }
 
-void Toggle::connectAccelerator(IAccelerator& accel)
-{
-#if 0
-    for (wxMenuItem* item : _menuItems)
-    {
-        setMenuItemAccelerator(item, static_cast<Accelerator&>(accel));
-    }
-#endif
-    for (wxToolBarToolBase* tool : _toolItems)
-    {
-        setToolItemAccelerator(tool, static_cast<Accelerator&>(accel));
-    }
-}
-
-void Toggle::disconnectAccelerators()
-{
-#if 0
-    for (wxMenuItem* item : _menuItems)
-    {
-        clearMenuItemAccelerator(item);
-    }
-#endif
-    for (wxToolBarToolBase* tool : _toolItems)
-    {
-        clearToolItemAccelerator(tool);
-    }
-}
-
 }

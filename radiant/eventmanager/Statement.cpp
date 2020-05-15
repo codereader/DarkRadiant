@@ -142,34 +142,4 @@ void Statement::onToolItemClicked(wxCommandEvent& ev)
 	ev.Skip();
 }
 
-void Statement::connectAccelerator(IAccelerator& accel)
-{
-#if 0
-    for (wxMenuItem* item : _menuItems)
-    {
-        setMenuItemAccelerator(item, static_cast<Accelerator&>(accel));
-    }
-#endif
-
-    for (wxToolBarToolBase* tool : _toolItems)
-    {
-        setToolItemAccelerator(tool, static_cast<Accelerator&>(accel));
-    }
-}
-
-void Statement::disconnectAccelerators()
-{
-#if 0
-    for (wxMenuItem* item : _menuItems)
-    {
-        clearMenuItemAccelerator(item);
-    }
-#endif
-
-    for (wxToolBarToolBase* tool : _toolItems)
-    {
-        clearToolItemAccelerator(tool);
-    }
-}
-
 }
