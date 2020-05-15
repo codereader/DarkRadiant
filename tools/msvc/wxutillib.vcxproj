@@ -157,7 +157,6 @@
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
-    <ClInclude Include="..\..\libs\wxutil\MenuItemAccelerator.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\CommandMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\IconTextMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\MenuItem.h" />
@@ -199,7 +198,6 @@
     <ClCompile Include="..\..\libs\wxutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
     <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\MenuItemAccelerator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\menu\PopupMenu.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ModalProgressDialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />
