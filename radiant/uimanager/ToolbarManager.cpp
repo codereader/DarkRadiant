@@ -12,6 +12,11 @@
 namespace ui
 {
 
+namespace
+{
+	const char* const CMD_VARIANT_NAME = "command";
+}
+
 int ToolbarManager::_nextToolItemId = 100;
 
 void ToolbarManager::initialise()
@@ -55,11 +60,11 @@ wxToolBar* ToolbarManager::getToolbar(const std::string& toolbarName, wxWindow* 
 	}
 }
 
-wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node& node)
+wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml::Node& node)
 {
 	const std::string nodeName = node.getName();
 
-	wxToolBarToolBase* toolItem = NULL;
+	wxToolBarToolBase* toolItem = nullptr;
 
 	if (nodeName == "separator")
 	{
@@ -94,6 +99,8 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node&
 				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
 				tooltip, wxITEM_CHECK);
 		}
+
+		toolItem->SetClientData(new wxVariant(action, CMD_VARIANT_NAME));
 
 		GlobalEventManager().registerToolItem(action, toolItem);
 #if 0
@@ -136,10 +143,10 @@ wxToolBar* ToolbarManager::createToolbar(xml::Node& node, wxWindow* parent)
         // this will not resize the actual icons, just the buttons
         toolbar->SetToolBitmapSize(wxSize(20, 20));
 
-		for (std::size_t i = 0; i < toolItemList.size(); ++i)
+		for (const auto& toolNode : toolItemList)
 		{
 			// Create and get the toolItem with the parsing
-			createToolItem(toolbar, toolItemList[i]);
+			createToolItem(toolbar, toolNode);
 		}
 
 		toolbar->Realize();
@@ -158,9 +165,25 @@ void ToolbarManager::onToolbarDestroy(wxWindowDestroyEvent& ev)
 {
 	auto toolbar = wxDynamicCast(ev.GetEventObject(), wxToolBar);
 
-	if (toolbar != nullptr)
+	if (toolbar == nullptr)
 	{
-		GlobalEventManager().disconnectToolbar(toolbar);
+		return;
+	}
+
+	for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
+	{
+		auto toolItem = toolbar->GetToolByPos(tool);
+
+		auto cmdData = wxDynamicCast(toolItem->GetClientData(), wxVariant);
+
+		if (cmdData != nullptr && cmdData->GetName() == CMD_VARIANT_NAME)
+		{
+			GlobalEventManager().unregisterToolItem(cmdData->GetString().ToStdString(), toolItem);
+
+			// free the client data, the toolbar item doesn't delete it
+			toolItem->SetClientData(nullptr);
+			delete cmdData;
+		}
 	}
 }
 

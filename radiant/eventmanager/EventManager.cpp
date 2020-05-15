@@ -391,6 +391,34 @@ void EventManager::registerToolItem(const std::string& eventName, wxToolBarToolB
 	}
 }
 
+void EventManager::unregisterToolItem(const std::string& eventName, wxToolBarToolBase* item)
+{
+	for (auto it = _toolItems.begin(); it != _toolItems.end(); ++it)
+	{
+		if (it->second == item)
+		{
+			auto evt = findEvent(it->first);
+
+			if (!evt->empty())
+			{
+				evt->disconnectToolItem(item);
+			}
+			else
+			{
+				item->GetToolBar()->Unbind(wxEVT_TOOL, &EventManager::onToolItemClicked, this, item->GetId());
+			}
+
+			_toolItems.erase(it);
+			break;
+		}
+	}
+
+	for (EventMap::value_type& pair : _events)
+	{
+		pair.second->disconnectToolItem(item);
+	}
+}
+
 void EventManager::onToolItemClicked(wxCommandEvent& ev)
 {
 	for (const auto & pair : _toolItems)
@@ -545,42 +573,6 @@ void EventManager::removeEvent(const std::string& eventName)
 
 		// Remove the event from the list
 		_events.erase(i);
-	}
-}
-
-void EventManager::disconnectToolbar(wxToolBar* toolbar)
-{
-	for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
-	{
-		for (auto it = _toolItems.begin(); it != _toolItems.end(); ++it)
-		{
-			auto toolItem = toolbar->GetToolByPos(tool);
-
-			if (it->second == toolItem)
-			{
-				auto evt = findEvent(it->first);
-
-				if (!evt->empty())
-				{
-					evt->disconnectToolItem(toolItem);
-				}
-				else
-				{
-					toolbar->Unbind(wxEVT_TOOL, &EventManager::onToolItemClicked, this, toolItem->GetId());
-				}
-
-				_toolItems.erase(it);
-				break;
-			}
-		}
-	}
-
-	for (EventMap::value_type& pair : _events)
-	{
-		for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
-		{
-			pair.second->disconnectToolItem(const_cast<wxToolBarToolBase*>(toolbar->GetToolByPos(static_cast<int>(tool))));
-		}
 	}
 }
 

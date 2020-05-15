@@ -164,15 +164,13 @@ public:
 	// Disconnects the given command from any accelerators
 	virtual void disconnectAccelerator(const std::string& command) = 0;
 
-	// Before destruction, it's advisable to disconnect any events from a toolbar's items
-	virtual void disconnectToolbar(wxToolBar* toolbar) = 0;
-
 	// Register the given menu item with the given command. The event manager updates this item
 	// when the accelerator association changes
 	virtual void registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) = 0;
 	virtual void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) = 0;
 
 	virtual void registerToolItem(const std::string& eventName, wxToolBarToolBase* item) = 0;
+	virtual void unregisterToolItem(const std::string& eventName, wxToolBarToolBase* item) = 0;
 
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;

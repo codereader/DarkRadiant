@@ -79,6 +79,7 @@ public:
 	void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) override;
 
 	void registerToolItem(const std::string& eventName, wxToolBarToolBase* item) override;
+	void unregisterToolItem(const std::string& eventName, wxToolBarToolBase* item) override;
 
 	// Connects the given accelerator to the given command (identified by the string)
 	void connectAccelerator(wxKeyEvent& keyEvent, const std::string& command) override;
@@ -89,8 +90,6 @@ public:
 
 	void renameEvent(const std::string& oldEventName, const std::string& newEventName) override;
 	void removeEvent(const std::string& eventName) override;
-
-	void disconnectToolbar(wxToolBar* toolbar) override;
 
 	// Loads the default shortcuts from the registry
 	void loadAccelerators() override;
