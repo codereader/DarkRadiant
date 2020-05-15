@@ -35,8 +35,6 @@ protected:
 	typedef std::set<wxMenuItem*> MenuItems;
 	MenuItems _menuItems;
 
-	std::map<IMenuElementPtr, sigc::connection> _menuElements;
-
 	typedef std::set<wxToolBarToolBase*> ToolItems;
 	ToolItems _toolItems;
 
@@ -87,15 +85,10 @@ public:
     virtual void connectAccelerator(IAccelerator& accel);
     virtual void disconnectAccelerators();
 
-	virtual void connectMenuItem(const IMenuElementPtr& item) override;
-	virtual void disconnectMenuItem(const IMenuElementPtr& item) override;
-
 protected:
 	virtual void onMenuItemClicked(wxCommandEvent& ev);
 	virtual void onToolItemClicked(wxCommandEvent& ev);
 	virtual void onToggleButtonClicked(wxCommandEvent& ev);
-
-	void onItemActivated();
 
 }; // class Toggle
 typedef std::shared_ptr<Toggle> TogglePtr;

@@ -148,7 +148,7 @@ void EventManager::resetAcceleratorBindings()
 
 	for (const auto& pair : _menuItems)
 	{
-		pair.second.item->setAccelerator(std::string());
+		Event::setMenuItemAccelerator(pair.second, std::string());
 	}
 
 	rMessage() << "EventManager: Default shortcuts found in Registry: " << shortcutList.size() << std::endl;
@@ -317,16 +317,14 @@ void EventManager::setToggled(const std::string& name, const bool toggled)
 	}
 }
 
-void EventManager::registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item)
+void EventManager::registerMenuItem(const std::string& eventName, wxMenuItem* item)
 {
-	auto result = _menuItems.emplace(eventName, ItemConnection());
-
-	result->second.item = item;
+	auto result = _menuItems.emplace(eventName, item);
 
 	// Set the accelerator of this menu item
 	auto& accelerator = findAccelerator(eventName);
 	
-	item->setAccelerator(accelerator.getString(true));
+	Event::setMenuItemAccelerator(item, accelerator);
 
 	// Check if we have an event object corresponding to this event name
 	auto evt = findEvent(eventName);
@@ -337,33 +335,31 @@ void EventManager::registerMenuItem(const std::string& eventName, const ui::IMen
 	}
 	else
 	{
-		// There's no special event object this item is connected to
-		// just wire up an execute() when this item is clicked
-		result->second.itemActivatedConn = item->signal_ItemActivated().connect(
-			[=]() { GlobalCommandSystem().execute(eventName); }
-		);
+		item->GetMenu()->Bind(wxEVT_MENU, &EventManager::onMenuItemClicked, this, item->GetId());
 	}
 }
 
-void EventManager::unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item)
+void EventManager::unregisterMenuItem(const std::string& eventName, wxMenuItem* item)
 {
 	for (auto it = _menuItems.lower_bound(eventName); 
 		 it != _menuItems.end() && it != _menuItems.upper_bound(eventName); ++it)
 	{
-		if (it->second.item == item)
+		if (it->second != item) continue;
+
+		// Check if we have an event object corresponding to this event name
+		auto evt = findEvent(eventName);
+
+		if (!evt->empty())
 		{
-			it->second.itemActivatedConn.disconnect();
-			_menuItems.erase(it);
-			break;
+			evt->disconnectMenuItem(item);
 		}
-	}
+		else
+		{
+			item->GetMenu()->Unbind(wxEVT_MENU, &EventManager::onMenuItemClicked, this, item->GetId());
+		}
 
-	// Check if we have an event object corresponding to this event name
-	auto evt = findEvent(eventName);
-
-	if (!evt->empty())
-	{
-		evt->disconnectMenuItem(item);
+		_menuItems.erase(it);
+		break;
 	}
 }
 
@@ -422,6 +418,18 @@ void EventManager::unregisterToolItem(const std::string& eventName, wxToolBarToo
 void EventManager::onToolItemClicked(wxCommandEvent& ev)
 {
 	for (const auto & pair : _toolItems)
+	{
+		if (pair.second->GetId() == ev.GetId())
+		{
+			GlobalCommandSystem().execute(pair.first);
+			break;
+		}
+	}
+}
+
+void EventManager::onMenuItemClicked(wxCommandEvent& ev)
+{
+	for (const auto& pair : _menuItems)
 	{
 		if (pair.second->GetId() == ev.GetId())
 		{
@@ -532,7 +540,7 @@ void EventManager::setMenuItemAccelerator(const std::string& command, const std:
 	for (auto it = _menuItems.lower_bound(command); 
 		 it != _menuItems.end() && it != _menuItems.upper_bound(command); ++it)
 	{
-		it->second.item->setAccelerator(acceleratorStr);
+		Event::setMenuItemAccelerator(it->second, acceleratorStr);
 	}
 }
 

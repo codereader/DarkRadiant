@@ -31,9 +31,6 @@ public:
 protected:
 	virtual void construct() override;
 	virtual void deconstruct() override;
-
-private:
-	void onMenuItemClicked(wxCommandEvent& ev);
 };
 
 }

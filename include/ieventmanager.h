@@ -33,9 +33,6 @@ namespace ui
 	};
 	typedef std::function<void (KeyEventType)> KeyStateChangeCallback;
 
-	class IMenuElement;
-	typedef std::shared_ptr<IMenuElement> IMenuElementPtr;
-
 } // namespace ui
 
 class IAccelerator
@@ -84,9 +81,6 @@ public:
 
 	virtual void connectToggleButton(wxToggleButton* button) = 0;
 	virtual void disconnectToggleButton(wxToggleButton* button) = 0;
-
-	virtual void connectMenuItem(const ui::IMenuElementPtr& item) = 0;
-	virtual void disconnectMenuItem(const ui::IMenuElementPtr& item) = 0;
 
 	// Exports the current state to the widgets
 	virtual void updateWidgets() = 0;
@@ -163,8 +157,8 @@ public:
 
 	// Register the given menu item with the given command. The event manager updates this item
 	// when the accelerator association changes
-	virtual void registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) = 0;
-	virtual void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) = 0;
+	virtual void registerMenuItem(const std::string& eventName, wxMenuItem* item) = 0;
+	virtual void unregisterMenuItem(const std::string& eventName, wxMenuItem* item) = 0;
 
 	virtual void registerToolItem(const std::string& eventName, wxToolBarToolBase* item) = 0;
 	virtual void unregisterToolItem(const std::string& eventName, wxToolBarToolBase* item) = 0;

@@ -99,37 +99,6 @@ void Statement::onMenuItemClicked(wxCommandEvent& ev)
 	ev.Skip();
 }
 
-void Statement::connectMenuItem(const IMenuElementPtr& item)
-{
-	if (_menuElements.find(item) != _menuElements.end())
-	{
-		rWarning() << "Cannot connect to the same menu item more than once." << std::endl;
-		return;
-	}
-
-	_menuElements.emplace(item,
-		item->signal_ItemActivated().connect(sigc::mem_fun(*this, &Statement::onItemActivated)));
-}
-
-void Statement::onItemActivated()
-{
-	execute();
-}
-
-void Statement::disconnectMenuItem(const IMenuElementPtr& item)
-{
-	auto found = _menuElements.find(item);
-
-	if (found == _menuElements.end())
-	{
-		rWarning() << "Cannot disconnect from unconnected menu item." << std::endl;
-		return;
-	}
-
-	found->second.disconnect();
-	_menuElements.erase(found);
-}
-
 void Statement::connectToolItem(wxToolBarToolBase* item)
 {
 	if (_toolItems.find(item) != _toolItems.end())

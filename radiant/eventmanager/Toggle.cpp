@@ -63,11 +63,6 @@ void Toggle::updateWidgets()
 		(*i)->SetValue(_toggled);
 	}
 
-	for (const auto& pair : _menuElements)
-	{
-		pair.first->setToggled(_toggled);
-	}
-
 	_callbackActive = false;
 }
 
@@ -78,51 +73,6 @@ void Toggle::keyDown() {
 
 bool Toggle::isToggled() const {
 	return _toggled;
-}
-
-void Toggle::connectMenuItem(const IMenuElementPtr& item)
-{
-	if (!item->isToggle())
-	{
-		rWarning() << "Cannot connect non-checkable menu item to this event." << std::endl;
-		return;
-	}
-
-	if (_menuElements.find(item) != _menuElements.end())
-	{
-		rWarning() << "Cannot connect to the same menu item more than once." << std::endl;
-		return;
-	}
-
-	_menuElements.emplace(item,
-		item->signal_ItemActivated().connect(sigc::mem_fun(*this, &Toggle::onItemActivated)));
-
-	item->setToggled(_toggled);
-}
-
-void Toggle::onItemActivated()
-{
-	toggle();
-}
-
-void Toggle::disconnectMenuItem(const IMenuElementPtr& item)
-{
-	if (!item->isToggle())
-	{
-		rWarning() << "Cannot disconnect from non-checkable menu item." << std::endl;
-		return;
-	}
-
-	auto found = _menuElements.find(item);
-
-	if (found == _menuElements.end())
-	{
-		rWarning() << "Cannot disconnect from unconnected menu item." << std::endl;
-		return;
-	}
-
-	found->second.disconnect();
-	_menuElements.erase(found);
 }
 
 void Toggle::connectMenuItem(wxMenuItem* item)
@@ -145,8 +95,7 @@ void Toggle::connectMenuItem(wxMenuItem* item)
 
 	// Connect the togglebutton to the callback of this class
 	assert(item->GetMenu());
-	item->GetMenu()->Connect(item->GetId(), wxEVT_MENU, 
-		wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
+	item->GetMenu()->Bind(wxEVT_MENU, &Toggle::onMenuItemClicked, this, item->GetId());
 }
 
 void Toggle::disconnectMenuItem(wxMenuItem* item)
@@ -167,8 +116,7 @@ void Toggle::disconnectMenuItem(wxMenuItem* item)
 
 	// Connect the togglebutton to the callback of this class
 	assert(item->GetMenu());
-	item->GetMenu()->Disconnect(item->GetId(), wxEVT_MENU, 
-		wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
+	item->GetMenu()->Unbind(wxEVT_MENU, &Toggle::onMenuItemClicked, this, item->GetId());
 }
 
 void Toggle::onMenuItemClicked(wxCommandEvent& ev)

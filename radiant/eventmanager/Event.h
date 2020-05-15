@@ -72,16 +72,18 @@ public:
     virtual void connectAccelerator(IAccelerator& accel) {}
     virtual void disconnectAccelerators() {}
 
-    virtual void connectMenuItem(const IMenuElementPtr& item) {}
-    virtual void disconnectMenuItem(const IMenuElementPtr& item) {}
-
 public:
     static void setMenuItemAccelerator(wxMenuItem* item, Accelerator& accel)
     {
+        wxString accelText = accel.getString(true);
+
+        setMenuItemAccelerator(item, accelText);
+    }
+
+    static void setMenuItemAccelerator(wxMenuItem* item, const wxString& accelText)
+    {
         // Cut off any existing accelerators
         wxString caption = item->GetItemLabel().BeforeFirst('\t');
-
-        wxString accelText = accel.getString(true);
 
         // greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
         item->SetItemLabel(caption + "\t " + accelText);

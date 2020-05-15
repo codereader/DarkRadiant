@@ -23,13 +23,7 @@ private:
 	// Each command has a name, this is the map where the name->command association is stored
 	typedef std::map<const std::string, IEventPtr> EventMap;
 
-	struct ItemConnection
-	{
-		IMenuElementPtr item;
-		sigc::connection itemActivatedConn;
-	};
-
-	std::multimap<std::string, ItemConnection> _menuItems;
+	std::multimap<std::string, wxMenuItem*> _menuItems;
 	std::multimap<std::string, wxToolBarToolBase*> _toolItems;
 
 	// The command-to-accelerator map containing all registered shortcuts
@@ -75,8 +69,8 @@ public:
 
 	void setToggled(const std::string& name, const bool toggled) override;
 
-	void registerMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) override;
-	void unregisterMenuItem(const std::string& eventName, const ui::IMenuElementPtr& item) override;
+	void registerMenuItem(const std::string& eventName, wxMenuItem* item) override;
+	void unregisterMenuItem(const std::string& eventName, wxMenuItem* item) override;
 
 	void registerToolItem(const std::string& eventName, wxToolBarToolBase* item) override;
 	void unregisterToolItem(const std::string& eventName, wxToolBarToolBase* item) override;
@@ -123,6 +117,7 @@ private:
 
 	bool isModifier(wxKeyEvent& ev);
 	void onToolItemClicked(wxCommandEvent& ev);
+	void onMenuItemClicked(wxCommandEvent& ev);
 };
 
 }
