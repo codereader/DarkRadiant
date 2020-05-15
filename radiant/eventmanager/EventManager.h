@@ -27,7 +27,8 @@ private:
 	std::multimap<std::string, wxToolBarToolBase*> _toolItems;
 
 	// The command-to-accelerator map containing all registered shortcuts
-	std::map<std::string, Accelerator::Ptr> _accelerators;
+	typedef std::map<std::string, Accelerator::Ptr> AcceleratorMap;
+	AcceleratorMap _accelerators;
 
 	// The map of all registered events
 	EventMap _events;
@@ -48,7 +49,7 @@ public:
 	EventManager();
 
 	IEventPtr findEvent(const std::string& name) override;
-	IEventPtr findEvent(wxKeyEvent& ev) override;
+	std::string findEventForAccelerator(wxKeyEvent& ev) override;
 
 	std::string getEventName(const IEventPtr& event) override;
 
@@ -105,8 +106,8 @@ private:
 	Accelerator& findAccelerator(const std::string& commandName);
 	Accelerator& findAccelerator(const std::string& key, const std::string& modifierStr);
 
-	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
-	Accelerator& findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
+	// Returns the iterator to the mapping for the given key comob (convert the key to uppercase before passing it)
+	AcceleratorMap::iterator findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
 
 	void loadAcceleratorFromList(const xml::NodeList& shortcutList);
 

@@ -131,13 +131,14 @@ IEventPtr EventManager::findEvent(const std::string& name)
 	return found != _events.end() ? found->second : _emptyEvent;
 }
 
-IEventPtr EventManager::findEvent(wxKeyEvent& ev)
+std::string EventManager::findEventForAccelerator(wxKeyEvent& ev)
 {
-	// Retrieve the accelerators for this eventkey
-	Accelerator& accel = findAccelerator(ev);
+	int keyval = ev.GetKeyCode(); // is always uppercase
+
+	auto it = findAccelerator(keyval, wxutil::Modifier::GetStateForKeyEvent(ev));
 
 	// Did we find any matching accelerators? If yes, take the first found accelerator
-	return accel.getEvent() ? accel.getEvent() : _emptyEvent;
+	return it != _accelerators.end() ? it->first : std::string();
 }
 
 std::string EventManager::getEventName(const IEventPtr& event)
@@ -635,29 +636,32 @@ Accelerator& EventManager::findAccelerator(const std::string& key, const std::st
 	unsigned int keyVal = Accelerator::getKeyCodeFromName(key);
     unsigned int modifierFlags = wxutil::Modifier::GetStateFromModifierString(modifierStr);
 
-	return findAccelerator(keyVal, modifierFlags);
+	auto it = findAccelerator(keyVal, modifierFlags);
+
+	return it != _accelerators.end() ? *it->second : _emptyAccelerator;
 }
 
-Accelerator& EventManager::findAccelerator(unsigned int keyVal, unsigned int modifierFlags)
+EventManager::AcceleratorMap::iterator EventManager::findAccelerator(unsigned int keyVal, unsigned int modifierFlags)
 {
 	// Cycle through the accelerators and check for matches
-	for (const auto& pair : _accelerators)
+	for (AcceleratorMap::iterator it = _accelerators.begin(); it != _accelerators.end(); ++it)
     {
-		if (pair.second->match(keyVal, modifierFlags))
+		if (it->second->match(keyVal, modifierFlags))
 		{
-			// Add the pointer to the found accelerators
-			return *pair.second;
+			return it;
 		}
 	}
 
-	return _emptyAccelerator;
+	return _accelerators.end();
 }
 
 Accelerator& EventManager::findAccelerator(wxKeyEvent& ev)
 {
 	int keyval = ev.GetKeyCode(); // is always uppercase
 	
-	return findAccelerator(keyval, wxutil::Modifier::GetStateForKeyEvent(ev));
+	auto it = findAccelerator(keyval, wxutil::Modifier::GetStateForKeyEvent(ev));
+
+	return it != _accelerators.end() ? *it->second : _emptyAccelerator;
 }
 
 bool EventManager::handleKeyEvent(wxKeyEvent& keyEvent)

@@ -29,7 +29,6 @@ private:
 
 	// The event name the shortcut will be assigned to
 	std::string _commandName;
-	IEventPtr _event;
 
 public:
 	// Constructor, instantiate this class by specifying the parent window

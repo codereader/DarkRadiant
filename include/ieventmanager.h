@@ -139,7 +139,9 @@ public:
 
 	// Returns the pointer to the command specified by the <given> commandName
 	virtual IEventPtr findEvent(const std::string& name) = 0;
-	virtual IEventPtr findEvent(wxKeyEvent& ev) = 0;
+
+	// Returns the name of the event currently mapped to the given key combo
+	virtual std::string findEventForAccelerator(wxKeyEvent& ev) = 0;
 
 	// Retrieves the event name for the given IEventPtr
 	virtual std::string getEventName(const IEventPtr& event) = 0;
