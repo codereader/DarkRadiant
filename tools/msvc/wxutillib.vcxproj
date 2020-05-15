@@ -135,6 +135,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\libs\wxutil\Button.h" />
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
     <ClInclude Include="..\..\libs\wxutil\clipboard.h" />
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />

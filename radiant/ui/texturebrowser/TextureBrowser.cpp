@@ -346,12 +346,6 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 TextureBrowser::~TextureBrowser()
 {
     GlobalTextureBrowser().unregisterTextureBrowser(this);
-
-    if (_textureToolbar != nullptr)
-    {
-        GlobalEventManager().disconnectToolbar(_textureToolbar);
-        _textureToolbar = nullptr;
-    }
 }
 
 void TextureBrowser::observeKey(const std::string& key)

@@ -18,6 +18,7 @@
 #include <functional>
 
 #include "wxutil/ScrollWindow.h"
+#include "wxutil/Button.h"
 
 #include "layers/LayerManager.h"
 #include "layers/LayerUsageBreakdown.h"
@@ -76,19 +77,14 @@ void LayerControlDialog::createButtons()
 	_showAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Show all"));
 	_hideAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Hide all"));
 
-	_showAllLayers->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControlDialog::onShowAllLayers), NULL, this);
-	_hideAllLayers->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControlDialog::onHideAllLayers), NULL, this);
+	_showAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onShowAllLayers, this);
+	_hideAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onHideAllLayers, this);
 
 	// Create layer button
 	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New"));
 	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
 
-	IEventPtr event = GlobalEventManager().findEvent("CreateNewLayer");
-
-	if (event != NULL)
-	{
-		event->connectButton(createButton);
-	}
+	wxutil::button::connectToCommand(createButton, "CreateNewLayer");
 
 	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxTOP, 6);
 	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT | wxTOP, 6);

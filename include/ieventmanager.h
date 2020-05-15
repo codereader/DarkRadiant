@@ -82,9 +82,6 @@ public:
 	virtual void connectMenuItem(wxMenuItem* item) = 0;
 	virtual void disconnectMenuItem(wxMenuItem* item) = 0;
 
-	virtual void connectButton(wxButton* button) = 0;
-	virtual void disconnectButton(wxButton* button) = 0;
-
 	virtual void connectToggleButton(wxToggleButton* button) = 0;
 	virtual void disconnectToggleButton(wxToggleButton* button) = 0;
 

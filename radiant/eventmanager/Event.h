@@ -66,9 +66,6 @@ public:
     virtual void connectToolItem(wxToolBarToolBase* item) {}
     virtual void disconnectToolItem(wxToolBarToolBase* item) {}
 
-    virtual void connectButton(wxButton* button) {}
-    virtual void disconnectButton(wxButton* button) {}
-
     virtual void connectToggleButton(wxToggleButton* button) {}
     virtual void disconnectToggleButton(wxToggleButton* button) {}
 

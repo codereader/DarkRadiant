@@ -173,40 +173,6 @@ void Statement::onToolItemClicked(wxCommandEvent& ev)
 	ev.Skip();
 }
 
-void Statement::connectButton(wxButton* button)
-{
-	if (_buttons.find(button) != _buttons.end())
-	{
-		rWarning() << "Cannot connect to the same button more than once." << std::endl;
-		return;
-	}
-
-	_buttons.insert(button);
-
-	// Connect the to the callback of this class
-	button->Connect(wxEVT_BUTTON, wxCommandEventHandler(Statement::onButtonClicked), NULL, this);
-}
-
-void Statement::disconnectButton(wxButton* button)
-{
-	if (_buttons.find(button) == _buttons.end())
-	{
-		rWarning() << "Cannot disconnect from unconnected button." << std::endl;
-		return;
-	}
-
-	_buttons.erase(button);
-
-	// Connect the to the callback of this class
-	button->Disconnect(wxEVT_BUTTON, wxCommandEventHandler(Statement::onButtonClicked), NULL, this);
-}
-
-void Statement::onButtonClicked(wxCommandEvent& ev)
-{
-	// Execute the Statement
-	execute();
-}
-
 void Statement::connectAccelerator(IAccelerator& accel)
 {
 #if 0

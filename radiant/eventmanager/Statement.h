@@ -32,9 +32,6 @@ private:
     typedef std::set<wxToolBarToolBase*> ToolItems;
     ToolItems _toolItems;
 
-    typedef std::set<wxButton*> Buttons;
-    Buttons _buttons;
-
     std::map<IMenuElementPtr, sigc::connection> _menuElements;
 
 public:
@@ -56,9 +53,6 @@ public:
     virtual void connectToolItem(wxToolBarToolBase* item);
     virtual void disconnectToolItem(wxToolBarToolBase* item);
 
-    virtual void connectButton(wxButton* button);
-    virtual void disconnectButton(wxButton* button);
-
     virtual void connectMenuItem(const IMenuElementPtr& item) override;
     virtual void disconnectMenuItem(const IMenuElementPtr& item) override;
 
@@ -71,7 +65,6 @@ private:
     // The allback methods that can be connected to a ToolButton or a MenuItem
     void onMenuItemClicked(wxCommandEvent& ev);
     void onToolItemClicked(wxCommandEvent& ev);
-    void onButtonClicked(wxCommandEvent& ev);
 
     void onItemActivated();
 

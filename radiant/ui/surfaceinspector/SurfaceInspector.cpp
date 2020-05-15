@@ -19,6 +19,7 @@
 
 #include "wxutil/ControlButton.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "wxutil/Button.h"
 
 #include "registry/Widgets.h"
 #include "selectionlib.h"
@@ -171,26 +172,26 @@ void SurfaceInspector::connectEvents()
 	// Connect the ToggleTexLock item to the according command
 	GlobalEventManager().findEvent("TogTexLock")->connectToggleButton(_texLockButton);
 
-	GlobalEventManager().findEvent("FlipTextureX")->connectButton(_flipTexture.flipX);
-	GlobalEventManager().findEvent("FlipTextureY")->connectButton(_flipTexture.flipY);
-	GlobalEventManager().findEvent("TextureNatural")->connectButton(_modifyTex.natural);
-	GlobalEventManager().findEvent("NormaliseTexture")->connectButton(_modifyTex.normalise);
-
-	GlobalEventManager().findEvent("TexAlignTop")->connectButton(_alignTexture.top);
-	GlobalEventManager().findEvent("TexAlignBottom")->connectButton(_alignTexture.bottom);
-	GlobalEventManager().findEvent("TexAlignRight")->connectButton(_alignTexture.right);
-	GlobalEventManager().findEvent("TexAlignLeft")->connectButton(_alignTexture.left);
-
-	GlobalEventManager().findEvent("TexShiftLeft")->connectButton(_manipulators[HSHIFT].smaller);
-	GlobalEventManager().findEvent("TexShiftRight")->connectButton(_manipulators[HSHIFT].larger);
-	GlobalEventManager().findEvent("TexShiftUp")->connectButton(_manipulators[VSHIFT].larger);
-	GlobalEventManager().findEvent("TexShiftDown")->connectButton(_manipulators[VSHIFT].smaller);
-	GlobalEventManager().findEvent("TexScaleLeft")->connectButton(_manipulators[HSCALE].smaller);
-	GlobalEventManager().findEvent("TexScaleRight")->connectButton(_manipulators[HSCALE].larger);
-	GlobalEventManager().findEvent("TexScaleUp")->connectButton(_manipulators[VSCALE].larger);
-	GlobalEventManager().findEvent("TexScaleDown")->connectButton(_manipulators[VSCALE].smaller);
-	GlobalEventManager().findEvent("TexRotateClock")->connectButton(_manipulators[ROTATION].larger);
-	GlobalEventManager().findEvent("TexRotateCounter")->connectButton(_manipulators[ROTATION].smaller);
+	wxutil::button::connectToCommand(_flipTexture.flipX, "FlipTextureX");
+	wxutil::button::connectToCommand(_flipTexture.flipY, "FlipTextureY");
+	wxutil::button::connectToCommand(_modifyTex.natural, "TextureNatural");
+	wxutil::button::connectToCommand(_modifyTex.normalise, "NormaliseTexture");
+	
+	wxutil::button::connectToCommand(_alignTexture.top, "TexAlignTop");
+	wxutil::button::connectToCommand(_alignTexture.bottom, "TexAlignBottom");
+	wxutil::button::connectToCommand(_alignTexture.right, "TexAlignRight");
+	wxutil::button::connectToCommand(_alignTexture.left, "TexAlignLeft");
+		
+	wxutil::button::connectToCommand(_manipulators[HSHIFT].smaller, "TexShiftLeft");
+	wxutil::button::connectToCommand(_manipulators[HSHIFT].larger, "TexShiftRight");
+	wxutil::button::connectToCommand(_manipulators[VSHIFT].larger, "TexShiftUp");
+	wxutil::button::connectToCommand(_manipulators[VSHIFT].smaller, "TexShiftDown");
+	wxutil::button::connectToCommand(_manipulators[HSCALE].smaller, "TexScaleLeft");
+	wxutil::button::connectToCommand(_manipulators[HSCALE].larger, "TexScaleRight");
+	wxutil::button::connectToCommand(_manipulators[VSCALE].larger, "TexScaleUp");
+	wxutil::button::connectToCommand(_manipulators[VSCALE].smaller, "TexScaleDown");
+	wxutil::button::connectToCommand(_manipulators[ROTATION].larger, "TexRotateClock");
+	wxutil::button::connectToCommand(_manipulators[ROTATION].smaller, "TexRotateCounter");
 }
 
 void SurfaceInspector::keyChanged()
