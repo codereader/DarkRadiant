@@ -8,6 +8,7 @@
 #include "string/join.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/Modifier.h"
+#include "module/StaticModule.h"
 
 namespace ui
 {
@@ -209,5 +210,7 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
     // Pass the call
     GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
 }
+
+module::StaticModule<MouseToolManager> mouseToolManagerModule;
 
 } // namespace

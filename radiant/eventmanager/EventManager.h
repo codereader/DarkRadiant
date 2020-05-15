@@ -105,8 +105,6 @@ private:
 	Accelerator& findAccelerator(const std::string& commandName);
 	Accelerator& findAccelerator(const std::string& key, const std::string& modifierStr);
 
-	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, const IEventPtr& event);
-
 	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
 	Accelerator& findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
 
