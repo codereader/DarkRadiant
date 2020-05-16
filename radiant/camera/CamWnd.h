@@ -138,9 +138,7 @@ public:
     void removeHandlersMove();
 
     void enableDiscreteMoveEvents();
-    void enableFreeMoveEvents();
     void disableDiscreteMoveEvents();
-    void disableFreeMoveEvents();
 
     // Increases/decreases the far clip plane distance
     void farClipPlaneIn();

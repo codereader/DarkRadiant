@@ -103,14 +103,8 @@ public:
 
 	// Movement commands (the calls are passed on to the Camera class)
 	void moveCameraCmd(const cmd::ArgumentList& args);
-	void moveForwardDiscrete(const cmd::ArgumentList& args);
-	void moveBackDiscrete(const cmd::ArgumentList& args);
-	void moveUpDiscrete(const cmd::ArgumentList& args);
-	void moveDownDiscrete(const cmd::ArgumentList& args);
 	void moveLeftDiscrete(const cmd::ArgumentList& args);
 	void moveRightDiscrete(const cmd::ArgumentList& args);
-	void rotateLeftDiscrete(const cmd::ArgumentList& args);
-	void rotateRightDiscrete(const cmd::ArgumentList& args);
 	void pitchUpDiscrete(const cmd::ArgumentList& args);
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
 
