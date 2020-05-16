@@ -102,6 +102,7 @@ public:
 	void movedNotify();
 
 	// Movement commands (the calls are passed on to the Camera class)
+	void moveCameraCmd(const cmd::ArgumentList& args);
 	void moveForwardDiscrete(const cmd::ArgumentList& args);
 	void moveBackDiscrete(const cmd::ArgumentList& args);
 	void moveUpDiscrete(const cmd::ArgumentList& args);

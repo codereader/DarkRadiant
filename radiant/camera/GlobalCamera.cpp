@@ -13,6 +13,7 @@
 #include "registry/registry.h"
 #include "module/StaticModule.h"
 #include "wxutil/MouseButton.h"
+#include "string/case_conv.h"
 
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
@@ -54,6 +55,9 @@ void GlobalCameraManager::registerCommands()
 	GlobalCommandSystem().addCommand("CamDecreaseMoveSpeed", std::bind(&GlobalCameraManager::decreaseCameraSpeed, this, std::placeholders::_1));
 
 	GlobalCommandSystem().addCommand("TogglePreview", std::bind(&GlobalCameraManager::toggleLightingMode, this, std::placeholders::_1));
+
+	GlobalCommandSystem().addCommand("MoveCamera", std::bind(&GlobalCameraManager::moveCameraCmd, this, std::placeholders::_1),
+		{ cmd::ARGTYPE_STRING, cmd::ARGTYPE_DOUBLE });
 
 	// Insert movement commands
 	//GlobalCommandSystem().addCommand("CameraForward", std::bind(&GlobalCameraManager::moveForwardDiscrete, this, std::placeholders::_1));
@@ -317,6 +321,59 @@ void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angle
 
 // --------------- Keyboard movement methods ------------------------------------------
 
+void GlobalCameraManager::moveCameraCmd(const cmd::ArgumentList& args)
+{
+	auto camWnd = getActiveCamWnd();
+	if (!camWnd) return;
+
+	if (args.size() != 2)
+	{
+		rMessage() << "Usage: MoveCamera <up|down|forward|back|left|right> <units>" << std::endl;
+		rMessage() << "Example: MoveCamera forward '20' performs"
+			<< " a 20 unit move in the forward direction." << std::endl;
+		return;
+	}
+
+	std::string arg = string::to_lower_copy(args[0].getString());
+	double amount = args[1].getDouble();
+
+	if (amount <= 0)
+	{
+		rWarning() << "Unit amount must be > 0" << std::endl;
+		return;
+	}
+
+	if (arg == "up") 
+	{
+		camWnd->getCamera().moveUpDiscrete(amount);
+	}
+	else if (arg == "down") 
+	{
+		camWnd->getCamera().moveDownDiscrete(amount);
+	}
+	else if (arg == "left") 
+	{
+		camWnd->getCamera().moveLeftDiscrete(amount);
+	}
+	if (arg == "right") 
+	{
+		camWnd->getCamera().moveRightDiscrete(amount);
+	}
+	else if (arg == "forward")
+	{
+		camWnd->getCamera().moveForwardDiscrete(amount);
+	}
+	else if (arg == "back")
+	{
+		camWnd->getCamera().moveBackDiscrete(amount);
+	}
+	else
+	{
+		rWarning() << "Unknown direction: " << arg << std::endl;
+		rMessage() << "Possible dDirections are: <up|down|forward|back|left|right>" << std::endl;
+	}
+}
+
 void GlobalCameraManager::onFreelookMoveForwardKey(ui::KeyEventType eventType)
 {
 	auto camWnd = getActiveCamWnd();
@@ -412,7 +469,7 @@ void GlobalCameraManager::onFreelookMoveDownKey(ui::KeyEventType eventType)
 	auto camWnd = getActiveCamWnd();
 	if (!camWnd) return;
 
-	camWnd->getCamera().onDownKey(eventType);
+	camWnd->getCamera().onUpKey(eventType);
 #if 0
 	if (eventType == ui::KeyPressed)
 	{
@@ -429,42 +486,42 @@ void GlobalCameraManager::moveForwardDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	camWnd->getCamera().moveForwardDiscrete();
+	camWnd->getCamera().moveForwardDiscrete(SPEED_MOVE);
 }
 
 void GlobalCameraManager::moveBackDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	camWnd->getCamera().moveBackDiscrete();
+	camWnd->getCamera().moveBackDiscrete(SPEED_MOVE);
 }
 
 void GlobalCameraManager::moveUpDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	camWnd->getCamera().moveUpDiscrete();
+	camWnd->getCamera().moveUpDiscrete(SPEED_MOVE);
 }
 
 void GlobalCameraManager::moveDownDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	camWnd->getCamera().moveDownDiscrete();
+	camWnd->getCamera().moveDownDiscrete(SPEED_MOVE);
 }
 
 void GlobalCameraManager::moveLeftDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	camWnd->getCamera().moveLeftDiscrete();
+	camWnd->getCamera().moveLeftDiscrete(SPEED_MOVE);
 }
 
 void GlobalCameraManager::moveRightDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	camWnd->getCamera().moveRightDiscrete();
+	camWnd->getCamera().moveRightDiscrete(SPEED_MOVE);
 }
 
 void GlobalCameraManager::rotateLeftDiscrete(const cmd::ArgumentList& args) {

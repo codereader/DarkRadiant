@@ -105,12 +105,12 @@ public:
 	void pitchDownDiscrete();
 	void rotateRightDiscrete();
 	void rotateLeftDiscrete();
-	void moveRightDiscrete();
-	void moveLeftDiscrete();
-	void moveDownDiscrete();
-	void moveUpDiscrete();
-	void moveBackDiscrete();
-	void moveForwardDiscrete();
+	void moveRightDiscrete(double units);
+	void moveLeftDiscrete(double units);
+	void moveDownDiscrete(double units);
+	void moveUpDiscrete(double units);
+	void moveBackDiscrete(double units);
+	void moveForwardDiscrete(double units);
 
 	void onForwardKey(ui::KeyEventType eventType);
 	void onBackwardKey(ui::KeyEventType eventType);

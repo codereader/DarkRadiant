@@ -856,7 +856,6 @@ void CamWnd::disableFreeMoveEvents()
 void CamWnd::enableDiscreteMoveEvents()
 {
 #if 0
-    GlobalEventManager().enableEvent("CameraForward");
     GlobalEventManager().enableEvent("CameraBack");
     GlobalEventManager().enableEvent("CameraLeft");
     GlobalEventManager().enableEvent("CameraRight");
@@ -872,7 +871,6 @@ void CamWnd::enableDiscreteMoveEvents()
 void CamWnd::disableDiscreteMoveEvents()
 {
 #if 0
-    GlobalEventManager().disableEvent("CameraForward");
     GlobalEventManager().disableEvent("CameraBack");
     GlobalEventManager().disableEvent("CameraLeft");
     GlobalEventManager().disableEvent("CameraRight");

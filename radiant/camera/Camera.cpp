@@ -302,37 +302,44 @@ void Camera::pitchDownDiscrete() {
 	setAngles(angles);
 }
 
-void Camera::moveForwardDiscrete() {
+void Camera::moveForwardDiscrete(double units)
+{
 	moveUpdateAxes();
-	setOrigin(getOrigin() + forward * SPEED_MOVE);
+	setOrigin(getOrigin() + forward * fabs(units));
 }
 
-void Camera::moveBackDiscrete() {
+void Camera::moveBackDiscrete(double units)
+{
 	moveUpdateAxes();
-	setOrigin(getOrigin() + forward * (-SPEED_MOVE));
+	setOrigin(getOrigin() + forward * (-fabs(units)));
 }
 
-void Camera::moveUpDiscrete() {
+void Camera::moveUpDiscrete(double units)
+{
 	Vector3 origin = getOrigin();
 
-	origin[2] += SPEED_MOVE;
+	origin[2] += fabs(units);
 
 	setOrigin(origin);
 }
 
-void Camera::moveDownDiscrete() {
+void Camera::moveDownDiscrete(double units)
+{
 	Vector3 origin = getOrigin();
-	origin[2] -= SPEED_MOVE;
+	origin[2] -= fabs(units);
 	setOrigin(origin);
 }
 
-void Camera::moveLeftDiscrete() {
+void Camera::moveLeftDiscrete(double units)
+{
 	moveUpdateAxes();
-	setOrigin(getOrigin() + right * (-SPEED_MOVE));
+	setOrigin(getOrigin() + right * (-fabs(units)));
 }
-void Camera::moveRightDiscrete() {
+
+void Camera::moveRightDiscrete(double units)
+{
 	moveUpdateAxes();
-	setOrigin(getOrigin() + right * (SPEED_MOVE));
+	setOrigin(getOrigin() + right * fabs(units));
 }
 
 void Camera::rotateLeftDiscrete() {
@@ -356,7 +363,7 @@ void Camera::onForwardKey(ui::KeyEventType eventType)
 		}
 		else
 		{
-			moveForwardDiscrete();
+			moveForwardDiscrete(SPEED_MOVE);
 		}
 	}
 	else if (freeMoveEnabled)
@@ -375,7 +382,7 @@ void Camera::onBackwardKey(ui::KeyEventType eventType)
 		}
 		else
 		{
-			moveBackDiscrete();
+			moveBackDiscrete(SPEED_MOVE);
 		}
 	}
 	else if (freeMoveEnabled)
@@ -432,7 +439,7 @@ void Camera::onUpKey(ui::KeyEventType eventType)
 		}
 		else
 		{
-			moveUpDiscrete();
+			moveUpDiscrete(SPEED_MOVE);
 		}
 	}
 	else if (freeMoveEnabled)
@@ -451,7 +458,7 @@ void Camera::onDownKey(ui::KeyEventType eventType)
 		}
 		else
 		{
-			moveDownDiscrete();
+			moveDownDiscrete(SPEED_MOVE);
 		}
 	}
 	else if (freeMoveEnabled)
