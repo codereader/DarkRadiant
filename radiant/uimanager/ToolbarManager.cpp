@@ -103,21 +103,6 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml:
 		toolItem->SetClientData(new wxVariant(action, CMD_VARIANT_NAME));
 
 		GlobalEventManager().registerToolItem(action, toolItem);
-#if 0
-		IEventPtr ev = GlobalEventManager().findEvent(action);
-
-		if (!ev->empty())
-		{
-			ev->connectToolItem(toolItem);
-
-			// Tell the event to update the state of this button
-			ev->updateWidgets();
-		}
-		else
-		{
-			rError() << "ToolbarManager: Failed to lookup command " << action << std::endl;
-		}
-#endif
 	}
 
 	return toolItem;

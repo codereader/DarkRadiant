@@ -50,22 +50,6 @@ void MenuItem::construct()
 
 	std::string caption = _caption;
 
-#if 0
-	// Try to lookup the event name
-	IEventPtr event = GlobalEventManager().findEvent(_event);
-
-	if (!event->empty())
-	{
-		// Retrieve an accelerator string formatted for a menu
-		// greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
-		caption = _caption + "\t " + GlobalEventManager().getAcceleratorStr(event, true);
-	}
-	else
-	{
-		rWarning() << "MenuElement: Cannot find associated event: " << _event << std::endl;
-	}
-#endif
-
 	// Create a new MenuElement
 	_menuItem = new wxMenuItem(nullptr, _nextMenuItemId++, caption);
 	
@@ -80,21 +64,7 @@ void MenuItem::construct()
 	int pos = parent->getMenuPosition(shared_from_this());
 	menu->Insert(pos, _menuItem);
 
-#if 0
-	if (event)
-	{
-		event->connectMenuItem(_menuItem);
-	}
-	else
-	{
-		// No event attached to this menu item, disable it
-		menu->Enable(_menuItem->GetId(), false);
-	}
-#endif
-
-#if 1
 	GlobalEventManager().registerMenuItem(_event, _menuItem);
-#endif
 
 	MenuElement::constructChildren();
 }
@@ -117,16 +87,7 @@ void MenuItem::deconstruct()
 		// Try to lookup the event name
 		if (!_event.empty())
 		{
-#if 1
 			GlobalEventManager().unregisterMenuItem(_event, _menuItem);
-#else
-			IEventPtr event = GlobalEventManager().findEvent(_event);
-
-			if (event)
-			{
-				event->disconnectMenuItem(_menuItem);
-			}
-#endif
 		}
 
 		if (_menuItem->GetMenu() != nullptr)
