@@ -94,8 +94,8 @@
 		<shortcut command="CameraMoveRight" key="Right" />
 		<shortcut command="CameraStrafeRight" key="period" />
 		<shortcut command="CameraStrafeLeft" key="comma" />
-		<shortcut command="CameraUp" key="D" />
-		<shortcut command="CameraDown" key="C" />
+		<shortcut command="CameraMoveUp" key="D" />
+		<shortcut command="CameraMoveDown" key="C" />
 		<shortcut command="CameraAngleUp" key="A" />
 		<shortcut command="CameraAngleDown" key="Z" />
 		<shortcut command="Brush3Sided" key="3" modifiers="CONTROL" />

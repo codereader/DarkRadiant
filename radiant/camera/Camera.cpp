@@ -422,4 +422,42 @@ void Camera::onRightKey(ui::KeyEventType eventType)
 	}
 }
 
+void Camera::onUpKey(ui::KeyEventType eventType)
+{
+	if (eventType == ui::KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_UP);
+		}
+		else
+		{
+			moveUpDiscrete();
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_UP);
+	}
+}
+
+void Camera::onDownKey(ui::KeyEventType eventType)
+{
+	if (eventType == ui::KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_DOWN);
+		}
+		else
+		{
+			moveDownDiscrete();
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_DOWN);
+	}
+}
+
 } // namespace

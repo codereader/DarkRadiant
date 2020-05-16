@@ -116,6 +116,8 @@ public:
 	void onBackwardKey(ui::KeyEventType eventType);
 	void onLeftKey(ui::KeyEventType eventType);
 	void onRightKey(ui::KeyEventType eventType);
+	void onUpKey(ui::KeyEventType eventType);
+	void onDownKey(ui::KeyEventType eventType);
 
 }; // class Camera
 
