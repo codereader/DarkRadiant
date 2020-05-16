@@ -81,8 +81,8 @@ void GlobalCameraManager::registerCommands()
 
 	GlobalEventManager().addKeyEvent("CameraMoveForward", std::bind(&GlobalCameraManager::onFreelookMoveForwardKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraMoveBack", std::bind(&GlobalCameraManager::onFreelookMoveBackKey, this, std::placeholders::_1));
-	GlobalEventManager().addKeyEvent("CameraFreeMoveLeft", std::bind(&GlobalCameraManager::onFreelookMoveLeftKey, this, std::placeholders::_1));
-	GlobalEventManager().addKeyEvent("CameraFreeMoveRight", std::bind(&GlobalCameraManager::onFreelookMoveRightKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveLeft", std::bind(&GlobalCameraManager::onFreelookMoveLeftKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveRight", std::bind(&GlobalCameraManager::onFreelookMoveRightKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveUp", std::bind(&GlobalCameraManager::onFreelookMoveUpKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveDown", std::bind(&GlobalCameraManager::onFreelookMoveDownKey, this, std::placeholders::_1));
 }
@@ -355,9 +355,11 @@ void GlobalCameraManager::onFreelookMoveBackKey(ui::KeyEventType eventType)
 
 void GlobalCameraManager::onFreelookMoveLeftKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
+	auto camWnd = getActiveCamWnd();
+	if (!camWnd) return;
 
+	camWnd->getCamera().onLeftKey(eventType);
+#if 0
 	if (eventType == ui::KeyPressed)
 	{
 		camWnd->getCamera().setMovementFlags(MOVE_STRAFELEFT);
@@ -366,13 +368,16 @@ void GlobalCameraManager::onFreelookMoveLeftKey(ui::KeyEventType eventType)
 	{
 		camWnd->getCamera().clearMovementFlags(MOVE_STRAFELEFT);
 	}
+#endif
 }
 
 void GlobalCameraManager::onFreelookMoveRightKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
+	auto camWnd = getActiveCamWnd();
+	if (!camWnd) return;
 
+	camWnd->getCamera().onRightKey(eventType);
+#if 0
 	if (eventType == ui::KeyPressed)
 	{
 		camWnd->getCamera().setMovementFlags(MOVE_STRAFERIGHT);
@@ -381,6 +386,7 @@ void GlobalCameraManager::onFreelookMoveRightKey(ui::KeyEventType eventType)
 	{
 		camWnd->getCamera().clearMovementFlags(MOVE_STRAFERIGHT);
 	}
+#endif
 }
 
 void GlobalCameraManager::onFreelookMoveUpKey(ui::KeyEventType eventType)

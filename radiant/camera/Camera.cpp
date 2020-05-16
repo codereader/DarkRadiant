@@ -350,13 +350,13 @@ void Camera::onForwardKey(ui::KeyEventType eventType)
 {
 	if (eventType == ui::KeyEventType::KeyPressed)
 	{
-		if (!freeMoveEnabled)
+		if (freeMoveEnabled)
 		{
-			moveForwardDiscrete();
+			setMovementFlags(MOVE_FORWARD);
 		}
 		else
 		{
-			setMovementFlags(MOVE_FORWARD);
+			moveForwardDiscrete();
 		}
 	}
 	else if (freeMoveEnabled)
@@ -369,18 +369,56 @@ void Camera::onBackwardKey(ui::KeyEventType eventType)
 {
 	if (eventType == ui::KeyEventType::KeyPressed)
 	{
-		if (!freeMoveEnabled)
+		if (freeMoveEnabled)
 		{
-			moveBackDiscrete();
+			setMovementFlags(MOVE_BACK);
 		}
 		else
 		{
-			setMovementFlags(MOVE_BACK);
+			moveBackDiscrete();
 		}
 	}
 	else if (freeMoveEnabled)
 	{
 		clearMovementFlags(MOVE_BACK);
+	}
+}
+
+void Camera::onLeftKey(ui::KeyEventType eventType)
+{
+	if (eventType == ui::KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_STRAFELEFT);
+		}
+		else
+		{
+			rotateLeftDiscrete();
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_STRAFELEFT);
+	}
+}
+
+void Camera::onRightKey(ui::KeyEventType eventType)
+{
+	if (eventType == ui::KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_STRAFERIGHT);
+		}
+		else
+		{
+			rotateRightDiscrete();
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_STRAFERIGHT);
 	}
 }
 

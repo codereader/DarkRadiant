@@ -90,16 +90,14 @@
 		<shortcut command="TogglePreview" key="F3" />
 		<shortcut command="CameraMoveForward" key="Up" />
 		<shortcut command="CameraMoveBack" key="Down" />
-		<shortcut command="CameraLeft" key="Left" />
-		<shortcut command="CameraRight" key="Right" />
+		<shortcut command="CameraMoveLeft" key="Left" />
+		<shortcut command="CameraMoveRight" key="Right" />
 		<shortcut command="CameraStrafeRight" key="period" />
 		<shortcut command="CameraStrafeLeft" key="comma" />
 		<shortcut command="CameraUp" key="D" />
 		<shortcut command="CameraDown" key="C" />
 		<shortcut command="CameraAngleUp" key="A" />
 		<shortcut command="CameraAngleDown" key="Z" />
-		<shortcut command="CameraFreeMoveLeft" key="Left" />
-		<shortcut command="CameraFreeMoveRight" key="Right" />
 		<shortcut command="Brush3Sided" key="3" modifiers="CONTROL" />
 		<shortcut command="Brush4Sided" key="4" modifiers="CONTROL" />
 		<shortcut command="Brush5Sided" key="5" modifiers="CONTROL" />
