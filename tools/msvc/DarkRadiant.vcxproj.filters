@@ -2580,9 +2580,6 @@
     <ClInclude Include="..\..\radiant\eventmanager\RegistryToggle.h">
       <Filter>src\eventmanager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\eventmanager\SaveEventVisitor.h">
-      <Filter>src\eventmanager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\Statement.h">
       <Filter>src\eventmanager</Filter>
     </ClInclude>
@@ -2813,6 +2810,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\eventmanager\ShortcutSaver.h">
+      <Filter>src\eventmanager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

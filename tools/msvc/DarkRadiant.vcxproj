@@ -1037,7 +1037,7 @@
     <ClInclude Include="..\..\radiant\eventmanager\MouseToolGroup.h" />
     <ClInclude Include="..\..\radiant\eventmanager\MouseToolManager.h" />
     <ClInclude Include="..\..\radiant\eventmanager\RegistryToggle.h" />
-    <ClInclude Include="..\..\radiant\eventmanager\SaveEventVisitor.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\ShortcutSaver.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Statement.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Toggle.h" />
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h" />

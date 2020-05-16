@@ -20,7 +20,7 @@
 #include "WidgetToggle.h"
 #include "RegistryToggle.h"
 #include "KeyEvent.h"
-#include "SaveEventVisitor.h"
+#include "ShortcutSaver.h"
 #include "MouseToolManager.h"
 
 #include "debugging/debugging.h"
@@ -571,7 +571,7 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 		eventVisitor.visit(pair.first, accel);
 	}
 
-	// Visit all commands without signatures
+	// Visit all commands without mandatory parameters
 	GlobalCommandSystem().foreachCommand([&](const std::string& command)
 	{
 		auto signature = GlobalCommandSystem().getSignature(command);
@@ -586,7 +586,6 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 	});
 }
 
-// Tries to locate an accelerator, that is connected to the given command
 Accelerator& EventManager::findAccelerator(const IEventPtr& event)
 {
 	// Cycle through the accelerators and check for matches
@@ -619,15 +618,7 @@ void EventManager::saveEventListToRegistry()
 {
 	// The visitor class to save each event definition into the registry
 	// Note: the SaveEventVisitor automatically wipes all the existing shortcuts from the registry
-	SaveEventVisitor shortcutSaver("user/ui/input");
-
-	// We don't use the foreachEvent() iterator here since the CommandSystem
-	// might already have cleared out all registered commands
-	for (const auto& pair : _events)
-	{
-		auto& accel = findAccelerator(pair.second);
-		shortcutSaver.visit(pair.first, accel);
-	}
+	ShortcutSaver shortcutSaver("user/ui/input");
 
 	for (const auto& pair : _accelerators)
 	{

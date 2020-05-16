@@ -10,20 +10,20 @@
 namespace ui
 {
 
-/* greebo: The visitor class that saves each visited event to the XMLRegistry
+/* greebo: Visitor class saving all bound shortcuts to the XMLRegistry
  *
- * The key the events are saved under is passed to the constructor of this class,
- * for example: user/ui/input is passed.
- *
- * The resulting shortcut nodes are like: user/ui/input/shortcuts/shortcut
+ * The registry key root is passed to the constructor of this class,
+ * for example: "user/ui/input", which results in the shortcuts
+ * saved as: user/ui/input/shortcuts//shortcut
  */
-class SaveEventVisitor
+class ShortcutSaver
 {
+private:
     // The node containing all the <shortcut> tags
     xml::Node _shortcutsNode;
 
 public:
-    SaveEventVisitor(const std::string& rootKey) :
+    ShortcutSaver(const std::string& rootKey) :
         _shortcutsNode(nullptr)
     {
         // Remove any existing shortcut definitions
