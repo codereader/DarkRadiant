@@ -136,6 +136,8 @@ private:
 	// greebo: The construct method registers all the commands
 	void registerCommands();
     void loadCameraStrafeDefinitions();
+
+	void doWithActiveCamWnd(const std::function<void(CamWnd&)>& action);
 };
 
 } // namespace

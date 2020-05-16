@@ -155,9 +155,6 @@ CamWnd::CamWnd(wxWindow* parent) :
 
     constructGUIComponents();
 
-    // Deactivate all commands, just to make sure
-    disableDiscreteMoveEvents();
-
     // Connect the mouse button events
     _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &CamWnd::onGLMouseButtonPress, this);
     _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &CamWnd::onGLMouseButtonPress, this);
@@ -824,43 +821,14 @@ void CamWnd::onSceneGraphChange()
 
 // ----------------------------------------------------------
 
-void CamWnd::enableDiscreteMoveEvents()
-{
-    GlobalEventManager().enableEvent("CameraStrafeRight");
-    GlobalEventManager().enableEvent("CameraStrafeLeft");
-    GlobalEventManager().enableEvent("CameraAngleUp");
-    GlobalEventManager().enableEvent("CameraAngleDown");
-}
-
-void CamWnd::disableDiscreteMoveEvents()
-{
-    GlobalEventManager().disableEvent("CameraStrafeRight");
-    GlobalEventManager().disableEvent("CameraStrafeLeft");
-    GlobalEventManager().disableEvent("CameraAngleUp");
-    GlobalEventManager().disableEvent("CameraAngleDown");
-}
-
 void CamWnd::addHandlersMove()
 {
     _wxGLWidget->Bind(wxEVT_MOTION, &CamWnd::onGLMouseMove, this);
-
-    // Enable either the free-look movement commands or the discrete ones,
-    // depending on the selection
-    if (getCameraSettings()->discreteMovement())
-    {
-        enableDiscreteMoveEvents();
-    }
 }
 
 void CamWnd::removeHandlersMove()
 {
     _wxGLWidget->Unbind(wxEVT_MOTION, &CamWnd::onGLMouseMove, this);
-
-    // Disable either the free-look movement commands or the discrete ones, depending on the selection
-    if (getCameraSettings()->discreteMovement())
-    {
-        disableDiscreteMoveEvents();
-    }
 }
 
 void CamWnd::update()
