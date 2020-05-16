@@ -66,8 +66,6 @@ private:
     // Is true during an active drawing process
     bool _drawing;
 
-    bool _freeMoveEnabled;
-
     // The GL widget
     wxutil::GLWidget* _wxGLWidget;
 

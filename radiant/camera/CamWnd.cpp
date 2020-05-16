@@ -147,7 +147,6 @@ CamWnd::CamWnd(wxWindow* parent) :
     _camera(&_view, Callback(std::bind(&CamWnd::queueDraw, this))),
     _cameraView(_camera, &_view, Callback(std::bind(&CamWnd::update, this))),
     _drawing(false),
-    _freeMoveEnabled(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
     _timerLock(false)
@@ -327,7 +326,7 @@ CamWnd::~CamWnd()
     // Unsubscribe from the global scene graph update
     GlobalSceneGraph().removeSceneObserver(this);
 
-    if (_freeMoveEnabled) {
+    if (_camera.freeMoveEnabled) {
         disableFreeMove();
     }
 
@@ -523,8 +522,8 @@ void CamWnd::changeFloor(const bool up) {
 
 void CamWnd::enableFreeMove()
 {
-    ASSERT_MESSAGE(!_freeMoveEnabled, "EnableFreeMove: free-move was already enabled");
-    _freeMoveEnabled = true;
+    ASSERT_MESSAGE(!_camera.freeMoveEnabled, "EnableFreeMove: free-move was already enabled");
+    _camera.freeMoveEnabled = true;
     _camera.clearMovementFlags(MOVE_ALL);
 
     removeHandlersMove();
@@ -536,8 +535,8 @@ void CamWnd::enableFreeMove()
 
 void CamWnd::disableFreeMove()
 {
-    ASSERT_MESSAGE(_freeMoveEnabled, "DisableFreeMove: free-move was not enabled");
-    _freeMoveEnabled = false;
+    ASSERT_MESSAGE(_camera.freeMoveEnabled, "DisableFreeMove: free-move was not enabled");
+    _camera.freeMoveEnabled = false;
     _camera.clearMovementFlags(MOVE_ALL);
 
     disableFreeMoveEvents();
@@ -549,7 +548,7 @@ void CamWnd::disableFreeMove()
 
 bool CamWnd::freeMoveEnabled() const
 {
-    return _freeMoveEnabled;
+    return _camera.freeMoveEnabled;
 }
 
 void CamWnd::Cam_Draw()
@@ -743,7 +742,7 @@ void CamWnd::Cam_Draw()
 
     // draw the crosshair
 
-    if (_freeMoveEnabled) {
+    if (_camera.freeMoveEnabled) {
         glBegin( GL_LINES );
         glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f + 6 );
         glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f + 2 );
@@ -832,30 +831,36 @@ void CamWnd::onSceneGraphChange()
 
 void CamWnd::enableFreeMoveEvents()
 {
+#if 0
     GlobalEventManager().enableEvent("CameraFreeMoveForward");
     GlobalEventManager().enableEvent("CameraFreeMoveBack");
     GlobalEventManager().enableEvent("CameraFreeMoveLeft");
     GlobalEventManager().enableEvent("CameraFreeMoveRight");
     GlobalEventManager().enableEvent("CameraFreeMoveUp");
     GlobalEventManager().enableEvent("CameraFreeMoveDown");
+#endif
 }
 
 void CamWnd::disableFreeMoveEvents()
 {
+#if 0
     GlobalEventManager().disableEvent("CameraFreeMoveForward");
     GlobalEventManager().disableEvent("CameraFreeMoveBack");
     GlobalEventManager().disableEvent("CameraFreeMoveLeft");
     GlobalEventManager().disableEvent("CameraFreeMoveRight");
     GlobalEventManager().disableEvent("CameraFreeMoveUp");
     GlobalEventManager().disableEvent("CameraFreeMoveDown");
+#endif
 }
 
 void CamWnd::enableDiscreteMoveEvents()
 {
+#if 0
     GlobalEventManager().enableEvent("CameraForward");
     GlobalEventManager().enableEvent("CameraBack");
     GlobalEventManager().enableEvent("CameraLeft");
     GlobalEventManager().enableEvent("CameraRight");
+#endif
     GlobalEventManager().enableEvent("CameraStrafeRight");
     GlobalEventManager().enableEvent("CameraStrafeLeft");
     GlobalEventManager().enableEvent("CameraUp");
@@ -866,10 +871,12 @@ void CamWnd::enableDiscreteMoveEvents()
 
 void CamWnd::disableDiscreteMoveEvents()
 {
+#if 0
     GlobalEventManager().disableEvent("CameraForward");
     GlobalEventManager().disableEvent("CameraBack");
     GlobalEventManager().disableEvent("CameraLeft");
     GlobalEventManager().disableEvent("CameraRight");
+#endif
     GlobalEventManager().disableEvent("CameraStrafeRight");
     GlobalEventManager().disableEvent("CameraStrafeLeft");
     GlobalEventManager().disableEvent("CameraUp");

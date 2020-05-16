@@ -56,10 +56,10 @@ void GlobalCameraManager::registerCommands()
 	GlobalCommandSystem().addCommand("TogglePreview", std::bind(&GlobalCameraManager::toggleLightingMode, this, std::placeholders::_1));
 
 	// Insert movement commands
-	GlobalCommandSystem().addCommand("CameraForward", std::bind(&GlobalCameraManager::moveForwardDiscrete, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("CameraBack", std::bind(&GlobalCameraManager::moveBackDiscrete, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("CameraLeft", std::bind(&GlobalCameraManager::rotateLeftDiscrete, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("CameraRight", std::bind(&GlobalCameraManager::rotateRightDiscrete, this, std::placeholders::_1));
+	//GlobalCommandSystem().addCommand("CameraForward", std::bind(&GlobalCameraManager::moveForwardDiscrete, this, std::placeholders::_1));
+	//GlobalCommandSystem().addCommand("CameraBack", std::bind(&GlobalCameraManager::moveBackDiscrete, this, std::placeholders::_1));
+	//GlobalCommandSystem().addCommand("CameraLeft", std::bind(&GlobalCameraManager::rotateLeftDiscrete, this, std::placeholders::_1));
+	//GlobalCommandSystem().addCommand("CameraRight", std::bind(&GlobalCameraManager::rotateRightDiscrete, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CameraStrafeRight", std::bind(&GlobalCameraManager::moveRightDiscrete, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CameraStrafeLeft", std::bind(&GlobalCameraManager::moveLeftDiscrete, this, std::placeholders::_1));
 
@@ -79,8 +79,8 @@ void GlobalCameraManager::registerCommands()
 	GlobalEventManager().addWidgetToggle("ToggleCamera");
 	GlobalEventManager().setToggled("ToggleCamera", true);
 
-	GlobalEventManager().addKeyEvent("CameraFreeMoveForward", std::bind(&GlobalCameraManager::onFreelookMoveForwardKey, this, std::placeholders::_1));
-	GlobalEventManager().addKeyEvent("CameraFreeMoveBack", std::bind(&GlobalCameraManager::onFreelookMoveBackKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveForward", std::bind(&GlobalCameraManager::onFreelookMoveForwardKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveBack", std::bind(&GlobalCameraManager::onFreelookMoveBackKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveLeft", std::bind(&GlobalCameraManager::onFreelookMoveLeftKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveRight", std::bind(&GlobalCameraManager::onFreelookMoveRightKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveUp", std::bind(&GlobalCameraManager::onFreelookMoveUpKey, this, std::placeholders::_1));
@@ -319,9 +319,11 @@ void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angle
 
 void GlobalCameraManager::onFreelookMoveForwardKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
+	auto camWnd = getActiveCamWnd();
+	if (!camWnd) return;
 
+	camWnd->getCamera().onForwardKey(eventType);
+#if 0
 	if (eventType == ui::KeyPressed)
 	{
 		camWnd->getCamera().setMovementFlags(MOVE_FORWARD);
@@ -330,13 +332,16 @@ void GlobalCameraManager::onFreelookMoveForwardKey(ui::KeyEventType eventType)
 	{
 		camWnd->getCamera().clearMovementFlags(MOVE_FORWARD);
 	}
+#endif
 }
 
 void GlobalCameraManager::onFreelookMoveBackKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
+	auto camWnd = getActiveCamWnd();
+	if (!camWnd) return;
 
+	camWnd->getCamera().onBackwardKey(eventType);
+#if 0
 	if (eventType == ui::KeyPressed)
 	{
 		camWnd->getCamera().setMovementFlags(MOVE_BACK);
@@ -345,6 +350,7 @@ void GlobalCameraManager::onFreelookMoveBackKey(ui::KeyEventType eventType)
 	{
 		camWnd->getCamera().clearMovementFlags(MOVE_BACK);
 	}
+#endif
 }
 
 void GlobalCameraManager::onFreelookMoveLeftKey(ui::KeyEventType eventType)

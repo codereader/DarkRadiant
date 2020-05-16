@@ -391,22 +391,27 @@ void EventManager::onMenuItemClicked(wxCommandEvent& ev)
 
 Accelerator& EventManager::connectAccelerator(int keyCode, unsigned int modifierFlags, const std::string& command)
 {
-	auto result = _accelerators.emplace(command, std::make_shared<Accelerator>(keyCode, modifierFlags));
-	Accelerator& accel = *result.first->second;
+	auto accelerator = std::make_shared<Accelerator>(keyCode, modifierFlags);
 
 	// There might be an event to associate
 	auto event = findEvent(command);
 
 	if (!event->empty())
 	{
-		accel.setEvent(event);
+		accelerator->setEvent(event);
+	}
+	else if (GlobalCommandSystem().commandExists(command))
+	{
+		accelerator->setStatement(command);
 	}
 	else
 	{
-		accel.setStatement(command);
+		return _emptyAccelerator;
 	}
 
-	std::string acceleratorStr = accel.getString(true);
+	auto result = _accelerators.emplace(command, accelerator);
+
+	std::string acceleratorStr = accelerator->getString(true);
 	setMenuItemAccelerator(command, acceleratorStr);
 	setToolItemAccelerator(command, acceleratorStr);
 
@@ -549,10 +554,11 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 		int keyVal = Accelerator::getKeyCodeFromName(key);
 		unsigned int modifierFlags = wxutil::Modifier::GetStateFromModifierString(modifierStr);
 
-		connectAccelerator(keyVal, modifierFlags, cmd);
-
-		rWarning() << "EventManager: Cannot load shortcut definition (command invalid): " 
-			<< cmd << std::endl;
+		if (connectAccelerator(keyVal, modifierFlags, cmd).isEmpty())
+		{
+			rWarning() << "EventManager: Cannot load shortcut definition (command invalid): "
+				<< cmd << std::endl;
+		}
 	}
 }
 

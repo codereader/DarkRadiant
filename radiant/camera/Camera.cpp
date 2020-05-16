@@ -21,6 +21,7 @@ Camera::Camera(render::View* view, const Callback& update) :
 	color(0, 0, 0),
 	projection(Matrix4::getIdentity()),
 	modelview(Matrix4::getIdentity()),
+	freeMoveEnabled(false),
 	movementflags(0),
 	fieldOfView(75.0f),
 	m_mouseMove(std::bind(&Camera::onMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
@@ -343,6 +344,44 @@ void Camera::rotateRightDiscrete() {
 	Vector3 angles = getAngles();
 	angles[CAMERA_YAW] -= SPEED_TURN;
 	setAngles(angles);
+}
+
+void Camera::onForwardKey(ui::KeyEventType eventType)
+{
+	if (eventType == ui::KeyEventType::KeyPressed)
+	{
+		if (!freeMoveEnabled)
+		{
+			moveForwardDiscrete();
+		}
+		else
+		{
+			setMovementFlags(MOVE_FORWARD);
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_FORWARD);
+	}
+}
+
+void Camera::onBackwardKey(ui::KeyEventType eventType)
+{
+	if (eventType == ui::KeyEventType::KeyPressed)
+	{
+		if (!freeMoveEnabled)
+		{
+			moveBackDiscrete();
+		}
+		else
+		{
+			setMovementFlags(MOVE_BACK);
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_BACK);
+	}
 }
 
 } // namespace
