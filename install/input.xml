@@ -197,4 +197,13 @@
     <shortcut command="GroupSelected" key="G" modifiers="CONTROL+SHIFT" />
     <shortcut command="UngroupSelected" key="U" modifiers="CONTROL+SHIFT" />
 	</shortcuts>
+	<commandRemappings>
+		<!-- Commands that have been moved/renamed since 2.8.0 -->
+		<commandRemapping oldname="CameraForward" newname="CameraMoveForward" />
+		<commandRemapping oldname="CameraBack" newname="CameraMoveBack" />
+		<commandRemapping oldname="CameraLeft" newname="CameraMoveLeft" />
+		<commandRemapping oldname="CameraRight" newname="CameraMoveRight" />
+		<commandRemapping oldname="CameraUp" newname="CameraMoveUp" />
+		<commandRemapping oldname="CameraDown" newname="CameraMoveDown" />
+	</commandRemappings>
 </input>

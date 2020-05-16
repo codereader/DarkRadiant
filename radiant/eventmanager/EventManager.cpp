@@ -1,10 +1,8 @@
 #include "EventManager.h"
 
 #include "imodule.h"
-#include "iradiant.h"
 #include "itextstream.h"
 #include "icommandsystem.h"
-#include "iselection.h"
 #include <iostream>
 #include <typeinfo>
 
@@ -21,11 +19,8 @@
 #include "RegistryToggle.h"
 #include "KeyEvent.h"
 #include "ShortcutSaver.h"
-#include "MouseToolManager.h"
 
-#include "debugging/debugging.h"
 #include "module/StaticModule.h"
-#include <iostream>
 
 namespace ui
 {
@@ -62,6 +57,7 @@ const StringSet& EventManager::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;
@@ -523,12 +519,32 @@ void EventManager::loadAccelerators()
 
 void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 {
+	// Load command remappings to migrate legacy shortcuts
+	std::map<std::string, std::string> commandRemap;
+
+	auto remaps = GlobalRegistry().findXPath("user/ui/input//commandRemapping");
+
+	for (const auto& node : remaps)
+	{
+		commandRemap.emplace(node.getAttributeValue("oldname"), node.getAttributeValue("newname"));
+	}
+
 	for (const xml::Node& shortcutNode : shortcutList)
 	{
 		const std::string key = shortcutNode.getAttributeValue("key");
-		const std::string cmd = shortcutNode.getAttributeValue("command");
 		// Get the modifier string (e.g. "SHIFT+ALT")
 		const std::string modifierStr = shortcutNode.getAttributeValue("modifiers");
+
+		std::string cmd = shortcutNode.getAttributeValue("command");
+
+		auto replacement = commandRemap.find(cmd);
+
+		if (replacement != commandRemap.end())
+		{
+			rMessage() << "Mapping shortcut of legacy command " << replacement->first << 
+				" to " << replacement->second << std::endl;
+			cmd = replacement->second;
+		}
 
 		// Check for a non-empty key string
 		if (key.empty()) continue;
