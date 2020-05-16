@@ -53,8 +53,6 @@ public:
 
 	std::string getEventName(const IEventPtr& event) override;
 
-	std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) override;
-
 	void resetAcceleratorBindings() override;
 
 	// Checks if the eventName is already registered and writes to rMessage, if so
@@ -102,7 +100,6 @@ private:
 
 	Accelerator& connectAccelerator(int keyCode, unsigned int modifierFlags, const std::string& command);
 
-	Accelerator& findAccelerator(const IEventPtr& event);
 	Accelerator& findAccelerator(const std::string& commandName);
 	Accelerator& findAccelerator(const std::string& key, const std::string& modifierStr);
 

@@ -155,13 +155,6 @@ std::string EventManager::getEventName(const IEventPtr& event)
 	return std::string();
 }
 
-std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu)
-{
-	IAccelerator& accelerator = findAccelerator(event);
-
-    return accelerator.getString(forMenu);
-}
-
 // Checks if the eventName is already registered and writes to rWarning, if so
 bool EventManager::alreadyRegistered(const std::string& eventName)
 {
@@ -564,42 +557,31 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 
 void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 {
-	// Cycle through the event and pass them to the visitor class
+	// Cycle through all events and pass them to the visitor class
 	for (const auto& pair : _events)
 	{
-		auto& accel = findAccelerator(pair.second);
-		eventVisitor.visit(pair.first, accel);
+		auto accel = _accelerators.find(pair.first);
+		eventVisitor.visit(pair.first, 
+			accel != _accelerators.end() ? *accel->second : _emptyAccelerator);
 	}
 
 	// Visit all commands without mandatory parameters
 	GlobalCommandSystem().foreachCommand([&](const std::string& command)
 	{
+		if (_events.find(command) != _events.end())
+		{
+			return; // skip any commands that have been covered in the event loop above
+		}
+
 		auto signature = GlobalCommandSystem().getSignature(command);
 
 		if (signatureIsEmptyOrOptional(signature))
 		{
 			auto accel = _accelerators.find(command);
-
 			eventVisitor.visit(command, 
 				accel != _accelerators.end() ? *accel->second : _emptyAccelerator);
 		}
 	});
-}
-
-Accelerator& EventManager::findAccelerator(const IEventPtr& event)
-{
-	// Cycle through the accelerators and check for matches
-    for (const auto& pair : _accelerators)
-    {
-		if (pair.second->match(event))
-        {
-			// Return the reference to the found accelerator
-			return *pair.second;
-		}
-	}
-
-	// Return an empty accelerator if nothing is found
-	return _emptyAccelerator;
 }
 
 Accelerator& EventManager::findAccelerator(const std::string& commandName)
