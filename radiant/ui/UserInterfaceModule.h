@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sigc++/connection.h>
+
 #include "imodule.h"
 #include "iorthocontextmenu.h"
 #include "icommandsystem.h"
@@ -23,6 +25,8 @@ class UserInterfaceModule :
 private:
 	std::unique_ptr<EntityClassColourManager> _eClassColourManager;
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
+
+	sigc::connection _entitySettingsConn;
 
 public:
 	// RegisterableModule

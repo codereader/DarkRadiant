@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "ilayer.h"
 #include "ifilter.h"
+#include "ientity.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
@@ -68,6 +69,7 @@ const StringSet& UserInterfaceModule::getDependencies() const
 		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_FILTERSYSTEM);
+		_dependencies.insert(MODULE_ENTITY);
 	}
 
 	return _dependencies;
@@ -127,10 +129,16 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 
 	_eClassColourManager.reset(new EntityClassColourManager);
 	_longOperationHandler.reset(new LongRunningOperationHandler);
+
+	_entitySettingsConn = GlobalEntityModule().getSettings().signal_settingsChanged().connect(
+		[]() { GlobalMainFrame().updateAllWindows(); }
+	);
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+	_entitySettingsConn.disconnect();
+
 	_longOperationHandler.reset();
 	_eClassColourManager.reset();
 }

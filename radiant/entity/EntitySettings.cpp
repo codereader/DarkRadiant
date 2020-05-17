@@ -1,7 +1,6 @@
 #include "EntitySettings.h"
 
 #include "iuimanager.h"
-#include "imainframe.h"
 
 #include "registry/registry.h"
 #include "registry/adaptors.h"
@@ -51,8 +50,7 @@ void EntitySettings::destroy()
 
 void EntitySettings::onSettingsChanged()
 {
-	// Redraw the scene
-	GlobalMainFrame().updateAllWindows();
+	_signalSettingsChanged.emit();
 }
 
 void EntitySettings::loadLightVertexColours()

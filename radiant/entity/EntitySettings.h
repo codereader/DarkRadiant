@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include <sigc++/connection.h>
+#include <sigc++/signal.h>
 #include <memory>
 #include "math/Vector3.h"
 
@@ -68,6 +69,8 @@ private:
 	bool _lightVertexColoursLoaded;
 
 	std::vector<sigc::connection> _registryConnections;
+
+	sigc::signal<void> _signalSettingsChanged;
 
 	// Private constructor
 	EntitySettings();
@@ -157,6 +160,11 @@ public:
 	{
 		_showEntityAngles = value;
 		onSettingsChanged();
+	}
+
+	sigc::signal<void>& signal_settingsChanged() override
+	{
+		return _signalSettingsChanged;
 	}
 
 	// Container for the singleton (ptr)
