@@ -14,7 +14,6 @@ public:
 
     // EntityCreator implementation
 	IEntityNodePtr createEntity(const IEntityClassPtr& eclass) override;
-	void connectEntities(const scene::INodePtr& source, const scene::INodePtr& target) override;
     ITargetManagerPtr createTargetManager() override;
 
 	// RegisterableModule implementation

@@ -317,7 +317,7 @@ public:
 };
 typedef std::shared_ptr<ITargetManager> ITargetManagerPtr;
 
-const std::string MODULE_ENTITYCREATOR("Doom3EntityCreator");
+const char* const MODULE_ENTITYCREATOR("Doom3EntityCreator");
 
 /**
  * \brief
@@ -332,15 +332,12 @@ public:
     /// Create an entity node with the given entity class.
     virtual IEntityNodePtr createEntity(const IEntityClassPtr& eclass) = 0;
 
-    /// Connect the two given entity nodes using the "target" system.
-    virtual void connectEntities(const scene::INodePtr& source,
-                                 const scene::INodePtr& target) = 0;
-
     // Constructs a new targetmanager instance (used by root nodes)
     virtual ITargetManagerPtr createTargetManager() = 0;
 };
 
-inline EntityCreator& GlobalEntityCreator() {
+inline EntityCreator& GlobalEntityCreator()
+{
     // Cache the reference locally
     static EntityCreator& _entityCreator(
         *std::static_pointer_cast<EntityCreator>(

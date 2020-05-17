@@ -102,49 +102,6 @@ IEntityNodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
 	return node;
 }
 
-/* Connect two entities using a "target" key.
- */
-void Doom3EntityCreator::connectEntities(const scene::INodePtr& source,
-                                         const scene::INodePtr& target)
-{
-	// Obtain both entities
-	Entity* e1 = Node_getEntity(source);
-	Entity* e2 = Node_getEntity(target);
-
-	// Check entities are valid
-	if (e1 == NULL || e2 == NULL) {
-		rError() << "entityConnectSelected: both of the selected instances must be an entity\n";
-		return;
-	}
-
-	// Check entities are distinct
-	if (e1 == e2) {
-		rError() << "entityConnectSelected: the selected instances must not both be from the same entity\n";
-		return;
-	}
-
-	// Start the scoped undo session
-	UndoableCommand undo("entityConnectSelected");
-
-	// Find the first unused target key on the source entity
-	for (int i = 0; i < 1024; ++i) {
-
-		// Construct candidate key by appending number to "target"
-		std::string targetKey = fmt::format("target{0:d}", i);
-
-		// If the source entity does not have this key, add it and finish,
-		// otherwise continue looping
-		if (e1->getKeyValue(targetKey).empty())
-		{
-			e1->setKeyValue(targetKey, e2->getKeyValue("name"));
-			break;
-		}
-	}
-
-	// Redraw the scene
-	SceneChangeNotify();
-}
-
 ITargetManagerPtr Doom3EntityCreator::createTargetManager()
 {
     return std::make_shared<TargetManager>();

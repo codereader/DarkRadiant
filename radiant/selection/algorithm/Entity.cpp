@@ -1,5 +1,6 @@
 #include "Entity.h"
 
+#include <limits>
 #include "i18n.h"
 #include "itransformable.h"
 #include "selectionlib.h"
@@ -178,10 +179,44 @@ void connectSelectedEntities(const cmd::ArgumentList& args)
 {
 	if (GlobalSelectionSystem().countSelected() == 2)
 	{
-		GlobalEntityCreator().connectEntities(
-			GlobalSelectionSystem().penultimateSelected(),	// source
-			GlobalSelectionSystem().ultimateSelected()		// target
-		);
+		// Obtain both entities
+		Entity* e1 = Node_getEntity(GlobalSelectionSystem().penultimateSelected()); // source
+		Entity* e2 = Node_getEntity(GlobalSelectionSystem().ultimateSelected()); // target
+
+		// Check entities are valid
+		if (e1 == nullptr || e2 == nullptr)
+		{
+			rError() << "connectSelectedEntities: both of the selected instances must be entities" << std::endl;
+			return;
+		}
+
+		// Check entities are distinct
+		if (e1 == e2) 
+		{
+			rError() << "connectSelectedEntities: the selected entities must be different" << std::endl;
+			return;
+		}
+
+		// Start the scoped undo session
+		UndoableCommand undo("entityConnectSelected");
+
+		// Find the first unused target key on the source entity
+		for (unsigned int i = 0; i < std::numeric_limits<unsigned int>::max(); ++i)
+		{
+			// Construct candidate key by appending number to "target"
+			auto targetKey = fmt::format("target{0:d}", i);
+
+			// If the source entity does not have this key, add it and finish,
+			// otherwise continue looping
+			if (e1->getKeyValue(targetKey).empty())
+			{
+				e1->setKeyValue(targetKey, e2->getKeyValue("name"));
+				break;
+			}
+		}
+
+		// Redraw the scene
+		SceneChangeNotify();
 	}
 	else
 	{
