@@ -3,8 +3,6 @@
 #include "iarchive.h"
 #include "i18n.h"
 #include "iregistry.h"
-#include "irender.h"
-#include "ieventmanager.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
 #include "ifilesystem.h"
@@ -283,8 +281,6 @@ const StringSet& EClassManager::getDependencies() const
 	{
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
