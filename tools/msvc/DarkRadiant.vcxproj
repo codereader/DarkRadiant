@@ -1119,6 +1119,7 @@
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantApp.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
+    <ClInclude Include="..\..\radiant\render\RenderStatistics.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\CommandNotAvailableException.h" />
     <ClInclude Include="..\..\radiant\selection\algorithm\Patch.h" />

@@ -558,9 +558,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h">
       <Filter>src\rendersystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\RenderStatistics.h">
-      <Filter>src\rendersystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\RenderSystemFactory.h">
       <Filter>src\rendersystem</Filter>
     </ClInclude>

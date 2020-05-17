@@ -20,7 +20,7 @@
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
 #include "render/RenderStatistics.h"
-#include "render/frontend/RenderableCollectionWalker.h"
+#include "render/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"

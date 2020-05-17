@@ -150,7 +150,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\LinearLightList.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\RenderStatistics.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\RenderSystemFactory.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\Octree.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\OctreeNode.h" />
