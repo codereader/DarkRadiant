@@ -317,6 +317,34 @@ public:
 };
 typedef std::shared_ptr<ITargetManager> ITargetManagerPtr;
 
+/**
+ * Global entity settings affecting appearance, render options, etc.
+ */
+class IEntitySettings
+{
+public:
+    virtual bool getRenderEntityNames() const = 0;
+    virtual void setRenderEntityNames(bool value) = 0;
+
+    virtual bool getShowAllSpeakerRadii() const = 0;
+    virtual void setShowAllSpeakerRadii(bool value) = 0;
+
+    virtual bool getShowAllLightRadii() const = 0;
+    virtual void setShowAllLightRadii(bool value) = 0;
+
+    virtual bool getDragResizeEntitiesSymmetrically() const = 0;
+    virtual void setDragResizeEntitiesSymmetrically(bool value) = 0;
+
+    virtual bool getAlwaysShowLightVertices() const = 0;
+    virtual void setAlwaysShowLightVertices(bool value) = 0;
+
+    virtual bool getFreeObjectRotation() const = 0;
+    virtual void setFreeObjectRotation(bool value) = 0;
+    
+    virtual bool getShowEntityAngles() const = 0;
+    virtual void setShowEntityAngles(bool value) = 0;
+};
+
 const char* const MODULE_ENTITY("EntityModule");
 
 /**
@@ -334,6 +362,9 @@ public:
 
     // Constructs a new targetmanager instance (used by root nodes)
     virtual ITargetManagerPtr createTargetManager() = 0;
+
+    // Access to the settings manager
+    virtual IEntitySettings& getSettings() = 0;
 };
 
 inline IEntityModule& GlobalEntityModule()

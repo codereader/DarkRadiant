@@ -51,7 +51,7 @@ const AABB& GenericEntity::localAABB() const {
 void GenericEntity::renderArrow(const ShaderPtr& shader, RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	if (EntitySettings::InstancePtr()->showEntityAngles())
+	if (EntitySettings::InstancePtr()->getShowEntityAngles())
 	{
 		collector.addRenderable(shader, m_arrow, localToWorld);
 	}

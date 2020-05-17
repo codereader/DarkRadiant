@@ -24,6 +24,7 @@
 #include "eclassmodel/EclassModelNode.h"
 #include "target/TargetManager.h"
 #include "module/StaticModule.h"
+#include "EntitySettings.h"
 
 namespace entity
 {
@@ -107,6 +108,11 @@ ITargetManagerPtr Doom3EntityModule::createTargetManager()
     return std::make_shared<TargetManager>();
 }
 
+IEntitySettings& Doom3EntityModule::getSettings()
+{
+	return *EntitySettings::InstancePtr();
+}
+
 // RegisterableModule implementation
 const std::string& Doom3EntityModule::getName() const
 {
@@ -118,7 +124,7 @@ const StringSet& Doom3EntityModule::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) 
+	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_MAP);

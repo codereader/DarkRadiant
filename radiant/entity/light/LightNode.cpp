@@ -360,7 +360,7 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 	// check if we should draw the center of the light anyway
 	if (selected
 		&& GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex
-		&& EntitySettings::InstancePtr()->alwaysShowLightVertices())
+		&& EntitySettings::InstancePtr()->getAlwaysShowLightVertices())
 	{
 		if (_light.isProjected())
 		{

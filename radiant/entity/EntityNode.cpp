@@ -236,7 +236,7 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
                                  const VolumeTest& volume) const
 {
 	// Submit renderable text name if required
-	if (EntitySettings::InstancePtr()->renderEntityNames())
+	if (EntitySettings::InstancePtr()->getRenderEntityNames())
     {
 		collector.addRenderable(getWireShader(), _renderableName, localToWorld());
 	}

@@ -247,7 +247,7 @@ void SpeakerNode::renderSolid(RenderableCollector& collector,
 
     // Submit the speaker radius if we are selected or the "show all speaker
     // radii" option is set
-	if (isSelected() || EntitySettings::InstancePtr()->showAllSpeakerRadii())
+	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
     {
 		collector.addRenderable(getFillShader(), _renderableRadii, localToWorld());
     }
@@ -261,7 +261,7 @@ void SpeakerNode::renderWireframe(RenderableCollector& collector,
 
     // Submit the speaker radius if we are selected or the "show all speaker
     // radii" option is set
-	if (isSelected() || EntitySettings::InstancePtr()->showAllSpeakerRadii())
+	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
     {
 		collector.addRenderable(getWireShader(), _renderableRadii, localToWorld());
     }
@@ -306,7 +306,7 @@ void SpeakerNode::setRadiusFromAABB(const AABB& aabb)
 		maxTrans = (fabs(delta.y()) > fabs(delta.z())) ? delta.y() : delta.z();
 	}
 
-	if (EntitySettings::InstancePtr()->dragResizeEntitiesSymmetrically())
+	if (EntitySettings::InstancePtr()->getDragResizeEntitiesSymmetrically())
 	{
 		// For a symmetric AABB change, take the extents delta times 2
 		maxTrans *= 2;

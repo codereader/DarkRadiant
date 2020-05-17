@@ -370,7 +370,7 @@ void Light::snapto(float snap)
 
 void Light::setLightRadius(const AABB& aabb)
 {
-    if (EntitySettings::InstancePtr()->dragResizeEntitiesSymmetrically())
+    if (EntitySettings::InstancePtr()->getDragResizeEntitiesSymmetrically())
     {
         // Leave origin unchanged, calculate the new symmetrical radius
         Vector3 delta = aabb.getExtents() - m_doom3Radius.m_radiusTransformed;
@@ -571,7 +571,7 @@ void Light::renderWireframe(RenderableCollector& collector,
     collector.addRenderable(_owner.getColourShader(), *this, localToWorld);
 
     // Render bounding box if selected or the showAllLighRadii flag is set
-    if (selected || EntitySettings::InstancePtr()->showAllLightRadii())
+    if (selected || EntitySettings::InstancePtr()->getShowAllLightRadii())
     {
         if (isProjected())
         {

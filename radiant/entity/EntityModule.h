@@ -14,6 +14,7 @@ public:
     // EntityCreator implementation
 	IEntityNodePtr createEntity(const IEntityClassPtr& eclass) override;
     ITargetManagerPtr createTargetManager() override;
+	IEntitySettings& getSettings() override;
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const override;

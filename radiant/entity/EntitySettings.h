@@ -27,7 +27,8 @@ typedef std::shared_ptr<EntitySettings> EntitySettingsPtr;
  * variables accordingly. This can be used as some sort of "cache"
  * to avoid slow registry queries during rendering, for instance.
  */
-class EntitySettings
+class EntitySettings :
+	public IEntitySettings
 {
 public:
 	enum LightEditVertexType
@@ -81,34 +82,81 @@ public:
 		return _lightVertexColours[type];
 	}
 
-	bool renderEntityNames() {
+	bool getRenderEntityNames() const override
+	{
 		return _renderEntityNames;
 	}
 
-	bool showAllSpeakerRadii() {
+	void setRenderEntityNames(bool value) override
+	{
+		_renderEntityNames = value;
+		onSettingsChanged();
+	}
+
+	bool getShowAllSpeakerRadii() const override
+	{
 		return _showAllSpeakerRadii;
 	}
 
-	bool showAllLightRadii() {
+	void setShowAllSpeakerRadii(bool value) override
+	{
+		_showAllSpeakerRadii = value;
+		onSettingsChanged();
+	}
+
+	bool getShowAllLightRadii() const override
+	{
 		return _showAllLightRadii;
 	}
 
-	bool dragResizeEntitiesSymmetrically() {
+	void setShowAllLightRadii(bool value) override
+	{
+		_showAllLightRadii = value;
+		onSettingsChanged();
+	}
+
+	bool getDragResizeEntitiesSymmetrically() const override
+	{
 		return _dragResizeEntitiesSymmetrically;
 	}
 
-	bool alwaysShowLightVertices() {
+	void setDragResizeEntitiesSymmetrically(bool value) override
+	{
+		_dragResizeEntitiesSymmetrically = value;
+		onSettingsChanged();
+	}
+
+	bool getAlwaysShowLightVertices() const override
+	{
 		return _alwaysShowLightVertices;
 	}
 
-	bool freeObjectRotation()
+	void setAlwaysShowLightVertices(bool value) override
+	{
+		_alwaysShowLightVertices = value;
+		onSettingsChanged();
+	}
+
+	bool getFreeObjectRotation() const override
 	{
 		return _freeObjectRotation;
 	}
 
-	bool showEntityAngles()
+	void setFreeObjectRotation(bool value) override
+	{
+		_freeObjectRotation = value;
+		onSettingsChanged();
+	}
+
+	bool getShowEntityAngles() const override
 	{
 		return _showEntityAngles;
+	}
+
+	void setShowEntityAngles(bool value) override
+	{
+		_showEntityAngles = value;
+		onSettingsChanged();
 	}
 
 	// Container for the singleton (ptr)
