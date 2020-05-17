@@ -218,7 +218,6 @@
     <ClCompile Include="..\..\radiant\entity\ModelKey.cpp" />
     <ClCompile Include="..\..\radiant\entity\NameKeyObserver.cpp" />
     <ClCompile Include="..\..\radiant\entity\NamespaceManager.cpp" />
-    <ClCompile Include="..\..\radiant\entity\precompiled.cpp" />
     <ClCompile Include="..\..\radiant\entity\RotationKey.cpp" />
     <ClCompile Include="..\..\radiant\entity\RotationMatrix.cpp" />
     <ClCompile Include="..\..\radiant\entity\ShaderParms.cpp" />
@@ -998,7 +997,6 @@
     <ClInclude Include="..\..\radiant\entity\NameKeyObserver.h" />
     <ClInclude Include="..\..\radiant\entity\NamespaceManager.h" />
     <ClInclude Include="..\..\radiant\entity\OriginKey.h" />
-    <ClInclude Include="..\..\radiant\entity\precompiled.h" />
     <ClInclude Include="..\..\radiant\entity\RotationKey.h" />
     <ClInclude Include="..\..\radiant\entity\RotationMatrix.h" />
     <ClInclude Include="..\..\radiant\entity\ShaderParms.h" />

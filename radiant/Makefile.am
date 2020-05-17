@@ -81,7 +81,6 @@ darkradiant_SOURCES = main.cpp \
                       entity/doom3group/Doom3GroupNode.cpp \
                       entity/doom3group/Doom3Group.cpp \
                       entity/NamespaceManager.cpp \
-                      entity/precompiled.cpp \
                       entity/generic/GenericEntity.cpp \
                       entity/generic/GenericEntityNode.cpp \
                       entity/speaker/SpeakerNode.cpp \
