@@ -62,8 +62,6 @@ darkradiant_SOURCES = main.cpp \
                       camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
-                      eclassmgr/Doom3EntityClass.cpp \
-                      eclassmgr/EClassManager.cpp \
                       entity/ShaderParms.cpp \
                       entity/EntitySettings.cpp \
                       entity/KeyValueObserver.cpp \

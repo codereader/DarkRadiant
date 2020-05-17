@@ -59,6 +59,9 @@
     <Filter Include="src\shaders\textures">
       <UniqueIdentifier>{0be56919-d6e3-45b1-96cf-28e13129f819}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\eclass">
+      <UniqueIdentifier>{41cf64a7-ad7b-49b5-8acc-a8d3ad93bddf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -219,6 +222,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\precompiled.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\eclass\Doom3EntityClass.cpp">
+      <Filter>src\eclass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp">
+      <Filter>src\eclass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -485,6 +494,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\precompiled.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\eclass\Doom3EntityClass.h">
+      <Filter>src\eclass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h">
+      <Filter>src\eclass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h">
+      <Filter>src\eclass</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

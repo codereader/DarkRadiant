@@ -196,8 +196,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
-    <ClCompile Include="..\..\radiant\eclassmgr\Doom3EntityClass.cpp" />
-    <ClCompile Include="..\..\radiant\eclassmgr\EClassManager.cpp" />
     <ClCompile Include="..\..\radiant\entity\AngleKey.cpp" />
     <ClCompile Include="..\..\radiant\entity\curve\Curve.cpp" />
     <ClCompile Include="..\..\radiant\entity\curve\CurveCatmullRom.cpp" />
@@ -979,9 +977,6 @@
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\PanViewTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
-    <ClInclude Include="..\..\radiant\eclassmgr\Doom3EntityClass.h" />
-    <ClInclude Include="..\..\radiant\eclassmgr\Doom3ModelDef.h" />
-    <ClInclude Include="..\..\radiant\eclassmgr\EClassManager.h" />
     <ClInclude Include="..\..\radiant\entity\AngleKey.h" />
     <ClInclude Include="..\..\radiant\entity\ColourKey.h" />
     <ClInclude Include="..\..\radiant\entity\curve\Curve.h" />

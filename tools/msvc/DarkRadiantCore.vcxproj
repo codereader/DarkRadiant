@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\radiantcore\eclass\Doom3EntityClass.cpp" />
+    <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp" />
     <ClCompile Include="..\..\radiantcore\filetypes\FileTypeRegistry.cpp" />
     <ClCompile Include="..\..\radiantcore\filters\BasicFilterSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\filters\XMLFilter.cpp" />
@@ -79,6 +81,9 @@
     <ClCompile Include="..\..\radiantcore\xmlregistry\XMLRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\radiantcore\eclass\Doom3EntityClass.h" />
+    <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />
+    <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h" />
     <ClInclude Include="..\..\radiantcore\filetypes\FileTypeRegistry.h" />
     <ClInclude Include="..\..\radiantcore\filters\BasicFilterSystem.h" />
     <ClInclude Include="..\..\radiantcore\filters\InstanceUpdateWalker.h" />

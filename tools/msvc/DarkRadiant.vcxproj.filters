@@ -209,9 +209,6 @@
     <Filter Include="src\uimanager\menu">
       <UniqueIdentifier>{31b14db3-7897-48b1-8771-d4e0eac5cb07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\eclassmgr">
-      <UniqueIdentifier>{78e18785-008a-4455-b7c5-0a7d7391fec9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\entity">
       <UniqueIdentifier>{a5d2441c-f1c4-4448-87e2-3e133676064a}</UniqueIdentifier>
     </Filter>
@@ -1014,12 +1011,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\menu\MenuSeparator.cpp">
       <Filter>src\uimanager\menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\eclassmgr\Doom3EntityClass.cpp">
-      <Filter>src\eclassmgr</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\eclassmgr\EClassManager.cpp">
-      <Filter>src\eclassmgr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\entity\AngleKey.cpp">
       <Filter>src\entity</Filter>
@@ -2363,15 +2354,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\menu\MenuSeparator.h">
       <Filter>src\uimanager\menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\eclassmgr\Doom3EntityClass.h">
-      <Filter>src\eclassmgr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\eclassmgr\Doom3ModelDef.h">
-      <Filter>src\eclassmgr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\eclassmgr\EClassManager.h">
-      <Filter>src\eclassmgr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\entity\AngleKey.h">
       <Filter>src\entity</Filter>

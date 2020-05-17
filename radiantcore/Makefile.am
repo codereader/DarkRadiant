@@ -33,6 +33,8 @@ libradiantcore_la_LDFLAGS = -module -avoid-version \
 
 libradiantcore_la_SOURCES = Radiant.cpp \
                 commandsystem/CommandSystem.cpp \
+                eclass/Doom3EntityClass.cpp \
+                eclass/EClassManager.cpp \
                 filetypes/FileTypeRegistry.cpp \
                 filters/BasicFilterSystem.cpp \
                 filters/XMLFilter.cpp \
