@@ -1,5 +1,5 @@
 #include "GLSLBumpProgram.h"
-#include "render/backend/GLProgramFactory.h"
+#include "../GLProgramFactory.h"
 
 #include "itextstream.h"
 #include "igame.h"

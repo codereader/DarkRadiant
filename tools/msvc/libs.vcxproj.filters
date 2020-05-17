@@ -194,6 +194,9 @@
     <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableCollectionWalker.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

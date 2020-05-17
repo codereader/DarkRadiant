@@ -800,6 +800,8 @@ void RadiantSelectionSystem::releaseShaders()
     TranslateManipulator::_stateFill.reset();
 	RotateManipulator::_stateOuter.reset();
 	RotateManipulator::_pivotPointShader.reset();
+    ModelScaleManipulator::_lineShader.reset();
+    ModelScaleManipulator::_pointShader.reset();
 }
 
 const WorkZone& RadiantSelectionSystem::getWorkZone()

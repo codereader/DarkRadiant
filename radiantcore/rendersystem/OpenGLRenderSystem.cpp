@@ -96,15 +96,6 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 	if (_realised)
 	{
 		shd->realise(name);
-
-#if 0   // greebo: This is causing Camera and XY draw calls which in turn causes 
-        // problems when rendering target lines. Can be reactivated once the target
-        // lines attach only to the rendersystem they belong to.
-
-        // Yield to allow the UI to breathe
-        wxTheApp->ProcessIdle();
-        wxTheApp->Yield();
-#endif
 	}
 
 	// Return the new shader
@@ -200,25 +191,6 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	glHint(GL_FOG_HINT, GL_NICEST);
     glDisable(GL_FOG);
 
-#if 0
-	std::size_t count = 0 ;
-
-	for (OpenGLStates::iterator i = _state_sorted.begin();
-		i != _state_sorted.end();
-		++i)
-	{
-		// Render the OpenGLShaderPass
-		if (!i->second->empty())
-		{
-			count++;
-		}
-	}
-
-	rMessage() << "R1 " << count << " of " << _state_sorted.size() << "\n";
-
-	std::size_t curObject = 0;
-#endif
-
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
@@ -230,11 +202,6 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 		// Render the OpenGLShaderPass
         if (!i->second->empty())
         {
-#if 0
-			rMessage() << curObject << " " << (*i->second);
-			curObject++;
-#endif
-
             i->second->render(current, globalstate, viewer, _time);
         }
 	}
@@ -557,7 +524,7 @@ void OpenGLRenderSystem::shutdownModule()
 	_materialDefsUnloaded.disconnect();
 }
 
-// Define the static ShaderCache module
+// Define the static OpenGLRenderSystem module
 module::StaticModule<OpenGLRenderSystem> openGLRenderSystemModule;
 
 } // namespace render

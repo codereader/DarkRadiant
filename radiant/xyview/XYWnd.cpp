@@ -35,7 +35,7 @@
 #include "gamelib.h"
 #include "scenelib.h"
 #include "maplib.h"
-#include "render/frontend/RenderableCollectionWalker.h"
+#include "render/RenderableCollectionWalker.h"
 
 #include <fmt/format.h>
 #include <functional>

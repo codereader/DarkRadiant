@@ -177,20 +177,8 @@ darkradiant_SOURCES = main.cpp \
                       particles/editor/ParticleEditor.cpp \
                       particles/RenderableParticleStage.cpp \
                       particles/ParticleDef.cpp \
-                      render/backend/glprogram/ARBBumpProgram.cpp \
-                      render/backend/glprogram/ARBDepthFillProgram.cpp \
-					  render/backend/glprogram/GenericVFPProgram.cpp \
-                      render/backend/glprogram/GLSLBumpProgram.cpp \
-                      render/backend/glprogram/GLSLDepthFillProgram.cpp \
-                      render/backend/OpenGLShader.cpp \
-                      render/backend/GLProgramFactory.cpp \
-                      render/backend/OpenGLShaderPass.cpp \
-                      render/LinearLightList.cpp \
                       render/OpenGLModule.cpp \
-                      render/OpenGLRenderSystem.cpp \
-					  render/RenderSystemFactory.cpp \
-					  render/View.cpp \
-                      render/debug/SpacePartitionRenderer.cpp \
+                      render/View.cpp \
                       #shaders/CameraCubeMapDecl.cpp \
                       #shaders/textures/TextureManipulator.cpp \
                       #$(SHADERS_SOURCES) \

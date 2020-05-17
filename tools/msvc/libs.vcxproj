@@ -183,6 +183,7 @@
     <ClInclude Include="..\..\libs\render\Colour4.h" />
     <ClInclude Include="..\..\libs\render\Colour4b.h" />
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h" />
+    <ClInclude Include="..\..\libs\render\RenderableCollectionWalker.h" />
     <ClInclude Include="..\..\libs\render\RenderablePivot.h" />
     <ClInclude Include="..\..\libs\render\RenderableSpacePartition.h" />
     <ClInclude Include="..\..\libs\render\SceneRenderWalker.h" />

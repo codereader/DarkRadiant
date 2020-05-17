@@ -62,6 +62,18 @@
     <Filter Include="src\eclass">
       <UniqueIdentifier>{41cf64a7-ad7b-49b5-8acc-a8d3ad93bddf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\rendersystem">
+      <UniqueIdentifier>{f1bda385-502c-44dc-b20f-af15c35750da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendersystem\backend">
+      <UniqueIdentifier>{2e7346f7-ada4-42cd-b514-cb5af90bcd91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendersystem\debug">
+      <UniqueIdentifier>{35e53ea8-6928-429a-930a-91feb9c2fbac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\rendersystem\backend\glprogram">
+      <UniqueIdentifier>{f32ab934-5059-440b-849e-50a3b55c1668}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -228,6 +240,42 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp">
       <Filter>src\eclass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\LinearLightList.cpp">
+      <Filter>src\rendersystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.cpp">
+      <Filter>src\rendersystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\RenderSystemFactory.cpp">
+      <Filter>src\rendersystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBBumpProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBDepthFillProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.cpp">
+      <Filter>src\rendersystem\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -503,6 +551,51 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h">
       <Filter>src\eclass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\LinearLightList.h">
+      <Filter>src\rendersystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h">
+      <Filter>src\rendersystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\RenderStatistics.h">
+      <Filter>src\rendersystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\RenderSystemFactory.h">
+      <Filter>src\rendersystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateLess.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateManager.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBBumpProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBDepthFillProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h">
+      <Filter>src\rendersystem\debug</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -35,18 +35,6 @@
     <Filter Include="src\render">
       <UniqueIdentifier>{53ac0d31-452b-4324-88e2-3790b4c41113}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\render\backend">
-      <UniqueIdentifier>{8b72b5f7-88c4-4dbc-8f51-4bc41e45e600}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\render\backend\glprogram">
-      <UniqueIdentifier>{eb2caea8-01f5-4c6d-a417-03d426677185}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\render\frontend">
-      <UniqueIdentifier>{ddc1bf01-9b2c-49dd-86e5-d35fe4efa603}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\render\debug">
-      <UniqueIdentifier>{93a24839-8c0c-4a86-8c23-71a55742c27a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\selection">
       <UniqueIdentifier>{572d6738-1b47-4846-9fc3-01478e2213fb}</UniqueIdentifier>
     </Filter>
@@ -415,36 +403,6 @@
     <ClCompile Include="..\..\radiant\render\OpenGLModule.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\render\OpenGLRenderSystem.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\RenderSystemFactory.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\backend\GLProgramFactory.cpp">
-      <Filter>src\render\backend</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\backend\OpenGLShader.cpp">
-      <Filter>src\render\backend</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\backend\OpenGLShaderPass.cpp">
-      <Filter>src\render\backend</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\backend\glprogram\ARBBumpProgram.cpp">
-      <Filter>src\render\backend\glprogram</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.cpp">
-      <Filter>src\render\backend\glprogram</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\backend\glprogram\GLSLBumpProgram.cpp">
-      <Filter>src\render\backend\glprogram</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.cpp">
-      <Filter>src\render\backend\glprogram</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\debug\SpacePartitionRenderer.cpp">
-      <Filter>src\render\debug</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\BestPoint.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
@@ -742,9 +700,6 @@
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\render\LinearLightList.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
@@ -765,9 +720,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp">
       <Filter>src\patch</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\View.cpp">
-      <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp">
       <Filter>src\selection\clipboard</Filter>
@@ -813,9 +765,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp">
       <Filter>src\ui\texturebrowser</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.cpp">
-      <Filter>src\render\backend\glprogram</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp">
       <Filter>src\brush</Filter>
@@ -1414,6 +1363,9 @@
     <ClCompile Include="..\..\radiant\ui\filters\editor\FilterEditor.cpp">
       <Filter>src\ui\filters\editor</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\render\View.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1608,47 +1560,8 @@
     <ClInclude Include="..\..\radiant\patch\PatchTesselation.h">
       <Filter>src\patch</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\render\LinearLightList.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\render\OpenGLModule.h">
       <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\OpenGLRenderSystem.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\RenderStatistics.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\RenderSystemFactory.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\GLProgramFactory.h">
-      <Filter>src\render\backend</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\OpenGLShader.h">
-      <Filter>src\render\backend</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPass.h">
-      <Filter>src\render\backend</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\OpenGLStateLess.h">
-      <Filter>src\render\backend</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\glprogram\ARBBumpProgram.h">
-      <Filter>src\render\backend\glprogram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.h">
-      <Filter>src\render\backend\glprogram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\glprogram\GLSLBumpProgram.h">
-      <Filter>src\render\backend\glprogram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\glprogram\GLSLDepthFillProgram.h">
-      <Filter>src\render\backend\glprogram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\debug\SpacePartitionRenderer.h">
-      <Filter>src\render\debug</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\BestPoint.h">
       <Filter>src\selection</Filter>
@@ -2034,9 +1947,6 @@
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h">
       <Filter>src\patch\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\render\View.h">
-      <Filter>src\render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\clipboard\Clipboard.h">
       <Filter>src\selection\clipboard</Filter>
     </ClInclude>
@@ -2057,9 +1967,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h">
       <Filter>src\ui\mainframe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\frontend\RenderableCollectionWalker.h">
-      <Filter>src\render\frontend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h">
       <Filter>src\ui\prefabselector</Filter>
@@ -2112,17 +2019,11 @@
     <ClInclude Include="..\..\radiant\ui\mousetool\BindToolDialog.h">
       <Filter>src\ui\mousetool</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\OpenGLStateManager.h">
-      <Filter>src\render\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelPopulator.h">
       <Filter>src\ui\modelselector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h">
       <Filter>src\ui\texturebrowser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\glprogram\GenericVFPProgram.h">
-      <Filter>src\render\backend\glprogram</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\TextureMatrix.h">
       <Filter>src\brush</Filter>
@@ -2795,6 +2696,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\ShortcutSaver.h">
       <Filter>src\eventmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\View.h">
+      <Filter>src\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

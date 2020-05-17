@@ -58,6 +58,18 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/namespace/NamespaceFactory.cpp \
                 modulesystem/ModuleLoader.cpp \
                 modulesystem/ModuleRegistry.cpp \
+                render/backend/glprogram/ARBBumpProgram.cpp \
+                render/backend/glprogram/ARBDepthFillProgram.cpp \
+                render/backend/glprogram/GenericVFPProgram.cpp \
+                render/backend/glprogram/GLSLBumpProgram.cpp \
+                render/backend/glprogram/GLSLDepthFillProgram.cpp \
+                render/backend/OpenGLShader.cpp \
+                render/backend/GLProgramFactory.cpp \
+                render/backend/OpenGLShaderPass.cpp \
+                render/LinearLightList.cpp \
+                render/OpenGLRenderSystem.cpp \
+                render/RenderSystemFactory.cpp \
+                render/debug/SpacePartitionRenderer.cpp \
                 scenegraph/SceneGraph.cpp \
                 scenegraph/Octree.cpp \
                 scenegraph/SceneGraphFactory.cpp \

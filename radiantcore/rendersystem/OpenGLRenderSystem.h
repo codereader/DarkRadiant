@@ -6,8 +6,8 @@
 #include "imodule.h"
 #include "backend/OpenGLStateManager.h"
 #include "backend/OpenGLShader.h"
+#include "backend/OpenGLStateLess.h"
 #include "LinearLightList.h"
-#include "render/backend/OpenGLStateLess.h"
 
 namespace render
 {
