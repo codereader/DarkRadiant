@@ -7,8 +7,6 @@
 #include "iscenegraph.h"
 #include "ieventmanager.h"
 #include "inamespace.h"
-#include "ifilter.h"
-#include "ipreferencesystem.h"
 
 #include "entitylib.h"
 #include "gamelib.h"
@@ -153,20 +151,21 @@ ITargetManagerPtr Doom3EntityCreator::createTargetManager()
 }
 
 // RegisterableModule implementation
-const std::string& Doom3EntityCreator::getName() const {
+const std::string& Doom3EntityCreator::getName() const
+{
 	static std::string _name(MODULE_ENTITYCREATOR);
 	return _name;
 }
 
-const StringSet& Doom3EntityCreator::getDependencies() const {
+const StringSet& Doom3EntityCreator::getDependencies() const
+{
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty()) 
+	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_MAP);
-		_dependencies.insert(MODULE_SCENEGRAPH);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_UNDOSYSTEM);
+		_dependencies.insert(MODULE_GAMEMANAGER);
 	}
 
 	return _dependencies;

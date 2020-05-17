@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iregistry.h"
+#include <sigc++/connection.h>
 #include <memory>
 #include "math/Vector3.h"
 
@@ -26,7 +27,7 @@ typedef std::shared_ptr<EntitySettings> EntitySettingsPtr;
  * variables accordingly. This can be used as some sort of "cache"
  * to avoid slow registry queries during rendering, for instance.
  */
-class EntitySettings: public sigc::trackable
+class EntitySettings
 {
 public:
 	enum LightEditVertexType
@@ -64,6 +65,8 @@ private:
 	Vector3 _lightVertexColours[NUM_LIGHT_VERTEX_COLOURS];
 
 	bool _lightVertexColoursLoaded;
+
+	std::vector<sigc::connection> _registryConnections;
 
 	// Private constructor
 	EntitySettings();
@@ -115,9 +118,8 @@ public:
 	static void destroy();
 
 private:
-	void keyChanged();
-    void refreshFromRegistry();
-    void observeKey(const std::string&);
+	void onSettingsChanged();
+    void initialiseAndObserveKey(const std::string& key, bool& targetBool);
 	void loadLightVertexColours();
 };
 

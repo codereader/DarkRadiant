@@ -1,6 +1,5 @@
 #include "Doom3Entity.h"
 
-#include "iradiant.h"
 #include "ieclass.h"
 #include "debugging/debugging.h"
 #include "string/predicate.h"
