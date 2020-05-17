@@ -1,4 +1,4 @@
-#include "EntityCreator.h"
+#include "EntityModule.h"
 #include "EntitySettings.h"
 
 #include "itextstream.h"
@@ -70,7 +70,7 @@ IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
 	return node;
 }
 
-IEntityNodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
+IEntityNodePtr Doom3EntityModule::createEntity(const IEntityClassPtr& eclass)
 {
 	IEntityNodePtr node = createNodeForEntity(eclass);
 
@@ -102,19 +102,19 @@ IEntityNodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
 	return node;
 }
 
-ITargetManagerPtr Doom3EntityCreator::createTargetManager()
+ITargetManagerPtr Doom3EntityModule::createTargetManager()
 {
     return std::make_shared<TargetManager>();
 }
 
 // RegisterableModule implementation
-const std::string& Doom3EntityCreator::getName() const
+const std::string& Doom3EntityModule::getName() const
 {
-	static std::string _name(MODULE_ENTITYCREATOR);
+	static std::string _name(MODULE_ENTITY);
 	return _name;
 }
 
-const StringSet& Doom3EntityCreator::getDependencies() const
+const StringSet& Doom3EntityModule::getDependencies() const
 {
 	static StringSet _dependencies;
 
@@ -128,9 +128,9 @@ const StringSet& Doom3EntityCreator::getDependencies() const
 	return _dependencies;
 }
 
-void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
+void Doom3EntityModule::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << "Doom3EntityCreator::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	LightShader::m_defaultShader = game::current::getValue<std::string>("/defaults/lightShader");
 
@@ -139,15 +139,15 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().addRegistryToggle("ToggleDragResizeEntitiesSymmetrically", RKEY_DRAG_RESIZE_SYMMETRICALLY);
 }
 
-void Doom3EntityCreator::shutdownModule()
+void Doom3EntityModule::shutdownModule()
 {
-	rMessage() << "Doom3EntityCreator::shutdownModule called." << std::endl;
+	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
 	// Destroy the settings instance
 	EntitySettings::destroy();
 }
 
 // Static module instance
-module::StaticModule<Doom3EntityCreator> entityCreatorModule;
+module::StaticModule<Doom3EntityModule> entityModule;
 
 } // namespace entity

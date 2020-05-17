@@ -967,9 +967,6 @@
     <ClCompile Include="..\..\radiant\entity\Doom3Entity.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\EntityCreator.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\entity\EntityNode.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
@@ -1362,6 +1359,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\render\View.cpp">
       <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\entity\EntityModule.cpp">
+      <Filter>src\entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2262,9 +2262,6 @@
     <ClInclude Include="..\..\radiant\entity\Doom3Entity.h">
       <Filter>src\entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\EntityCreator.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\entity\EntityNode.h">
       <Filter>src\entity</Filter>
     </ClInclude>
@@ -2696,6 +2693,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h">
       <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\entity\EntityModule.h">
+      <Filter>src\entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

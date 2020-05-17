@@ -447,7 +447,7 @@ void ObjectivesEditor::_onAddEntity(wxCommandEvent& ev)
     if (eclass) 
     {
         // Construct a Node of this entity type
-        IEntityNodePtr node(GlobalEntityCreator().createEntity(eclass));
+        IEntityNodePtr node(GlobalEntityModule().createEntity(eclass));
 
         // Create a random offset
         node->getEntity().setKeyValue("origin", RandomOrigin::generate(128));

@@ -54,7 +54,7 @@ void createCurve(const std::string& key)
     );
 
     // Create a new entity node deriving from this entityclass
-    IEntityNodePtr curve(GlobalEntityCreator().createEntity(entityClass));
+    IEntityNodePtr curve(GlobalEntityModule().createEntity(entityClass));
 
     // Insert this new node into the scenegraph root
     GlobalSceneGraph().root()->addChildNode(curve);

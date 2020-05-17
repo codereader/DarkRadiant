@@ -152,7 +152,7 @@ void RegionManager::addRegionBrushes()
     IEntityClassPtr playerStart = GlobalEntityClassManager().findOrInsert(eClassPlayerStart, false);
 
     // Create the info_player_start entity
-    _playerStart = GlobalEntityCreator().createEntity(playerStart);
+    _playerStart = GlobalEntityModule().createEntity(playerStart);
 
     ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
 

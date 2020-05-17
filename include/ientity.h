@@ -317,17 +317,17 @@ public:
 };
 typedef std::shared_ptr<ITargetManager> ITargetManagerPtr;
 
-const char* const MODULE_ENTITYCREATOR("Doom3EntityCreator");
+const char* const MODULE_ENTITY("EntityModule");
 
 /**
  * \brief
- * Interface for the entity creator module.
+ * Interface for the entity module.
  */
-class EntityCreator :
+class IEntityModule :
     public RegisterableModule
 {
 public:
-    virtual ~EntityCreator() {}
+    virtual ~IEntityModule() {}
 
     /// Create an entity node with the given entity class.
     virtual IEntityNodePtr createEntity(const IEntityClassPtr& eclass) = 0;
@@ -336,12 +336,12 @@ public:
     virtual ITargetManagerPtr createTargetManager() = 0;
 };
 
-inline EntityCreator& GlobalEntityCreator()
+inline IEntityModule& GlobalEntityModule()
 {
     // Cache the reference locally
-    static EntityCreator& _entityCreator(
-        *std::static_pointer_cast<EntityCreator>(
-            module::GlobalModuleRegistry().getModule(MODULE_ENTITYCREATOR)
+    static IEntityModule& _entityCreator(
+        *std::static_pointer_cast<IEntityModule>(
+            module::GlobalModuleRegistry().getModule(MODULE_ENTITY)
         )
     );
     return _entityCreator;

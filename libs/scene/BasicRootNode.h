@@ -34,7 +34,7 @@ public:
     BasicRootNode()
     {
         _namespace = GlobalNamespaceFactory().createNamespace();
-        _targetManager = GlobalEntityCreator().createTargetManager();
+        _targetManager = GlobalEntityModule().createTargetManager();
         _selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
         _selectionSetManager = GlobalSelectionSetModule().createSelectionSetManager();
         _layerManager = GlobalLayerModule().createLayerManager();

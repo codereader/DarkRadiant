@@ -6,12 +6,11 @@
 namespace entity
 {
 
-/// Implementation of the EntityCreator interface for Doom 3
-class Doom3EntityCreator :
-	public EntityCreator
+/// Implementation of the IEntityModule interface for Doom 3
+class Doom3EntityModule :
+	public IEntityModule
 {
 public:
-
     // EntityCreator implementation
 	IEntityNodePtr createEntity(const IEntityClassPtr& eclass) override;
     ITargetManagerPtr createTargetManager() override;
@@ -22,6 +21,5 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx) override;
 	virtual void shutdownModule() override;
 };
-typedef std::shared_ptr<Doom3EntityCreator> Doom3EntityCreatorPtr;
 
 } // namespace entity

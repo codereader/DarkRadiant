@@ -17,7 +17,7 @@ RootNode::RootNode(const std::string& name) :
 	_namespace = GlobalNamespaceFactory().createNamespace();
 	assert(_namespace);
 
-    _targetManager = GlobalEntityCreator().createTargetManager();
+    _targetManager = GlobalEntityModule().createTargetManager();
     assert(_targetManager);
 
 	_selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();

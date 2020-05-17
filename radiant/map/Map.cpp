@@ -255,7 +255,7 @@ scene::INodePtr Map::findWorldspawn()
 
 scene::INodePtr Map::createWorldspawn()
 {
-	scene::INodePtr worldspawn(GlobalEntityCreator().createEntity(
+	scene::INodePtr worldspawn(GlobalEntityModule().createEntity(
 		GlobalEntityClassManager().findOrInsert("worldspawn", true)));
 
 	// We want the world spawn entity to go for the pole position

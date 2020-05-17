@@ -90,7 +90,7 @@ void ModelPreview::setupSceneGraph()
     {
         _rootNode = std::make_shared<scene::BasicRootNode>();
 
-        _entity = GlobalEntityCreator().createEntity(
+        _entity = GlobalEntityModule().createEntity(
             GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
 
         _rootNode->addChildNode(_entity);
@@ -101,7 +101,7 @@ void ModelPreview::setupSceneGraph()
         getScene()->setRoot(_rootNode);
 
         // Set up the light
-        _light = GlobalEntityCreator().createEntity(
+        _light = GlobalEntityModule().createEntity(
             GlobalEntityClassManager().findClass("light"));
 
         Node_getEntity(_light)->setKeyValue("light_radius", "600 600 600");

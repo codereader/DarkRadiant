@@ -375,7 +375,7 @@ void PortableMapReader::readEntity(const xml::Node& entityTag)
 	}
 
 	// Create the actual entity node
-	auto entityNode = GlobalEntityCreator().createEntity(eclass);
+	auto entityNode = GlobalEntityModule().createEntity(eclass);
 
 	for (const auto& pair : entityKeyValues)
 	{

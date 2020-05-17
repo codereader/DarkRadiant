@@ -137,7 +137,7 @@ scene::INodePtr Quake3MapReader::createEntity(const EntityKeyValues& keyValues)
 	}
 
 	// Create the actual entity node
-    IEntityNodePtr node(GlobalEntityCreator().createEntity(classPtr));
+    IEntityNodePtr node(GlobalEntityModule().createEntity(classPtr));
 
     for (EntityKeyValues::const_iterator i = keyValues.begin();
          i != keyValues.end();

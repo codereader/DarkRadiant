@@ -205,7 +205,7 @@
     <ClCompile Include="..\..\radiant\entity\doom3group\Doom3Group.cpp" />
     <ClCompile Include="..\..\radiant\entity\doom3group\Doom3GroupNode.cpp" />
     <ClCompile Include="..\..\radiant\entity\eclassmodel\EclassModelNode.cpp" />
-    <ClCompile Include="..\..\radiant\entity\EntityCreator.cpp" />
+    <ClCompile Include="..\..\radiant\entity\EntityModule.cpp" />
     <ClCompile Include="..\..\radiant\entity\EntityNode.cpp" />
     <ClCompile Include="..\..\radiant\entity\EntitySettings.cpp" />
     <ClCompile Include="..\..\radiant\entity\generic\GenericEntity.cpp" />
@@ -976,7 +976,7 @@
     <ClInclude Include="..\..\radiant\entity\doom3group\Doom3Group.h" />
     <ClInclude Include="..\..\radiant\entity\doom3group\Doom3GroupNode.h" />
     <ClInclude Include="..\..\radiant\entity\eclassmodel\EclassModelNode.h" />
-    <ClInclude Include="..\..\radiant\entity\EntityCreator.h" />
+    <ClInclude Include="..\..\radiant\entity\EntityModule.h" />
     <ClInclude Include="..\..\radiant\entity\EntityNode.h" />
     <ClInclude Include="..\..\radiant\entity\EntitySettings.h" />
     <ClInclude Include="..\..\radiant\entity\generic\GenericEntity.h" />

@@ -167,7 +167,7 @@ void ParticlePreview::setupSceneGraph()
 	{
         _rootNode = std::make_shared<scene::BasicRootNode>();
         
-		_entity = GlobalEntityCreator().createEntity(
+		_entity = GlobalEntityModule().createEntity(
 			GlobalEntityClassManager().findClass(FUNC_EMITTER_CLASS));
 
         _rootNode->addChildNode(_entity);

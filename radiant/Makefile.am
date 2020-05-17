@@ -93,7 +93,7 @@ darkradiant_SOURCES = main.cpp \
                       entity/curve/CurveEditInstance.cpp \
                       entity/curve/CurveNURBS.cpp \
                       entity/AngleKey.cpp \
-                      entity/EntityCreator.cpp \
+                      entity/EntityModule.cpp \
                       eventmanager/Accelerator.cpp \
                       eventmanager/EventManager.cpp \
                       eventmanager/GlobalKeyEventFilter.cpp \

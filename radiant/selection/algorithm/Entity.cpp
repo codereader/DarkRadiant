@@ -275,7 +275,7 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
     AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
 
     // Create the new node for the entity
-    IEntityNodePtr node(GlobalEntityCreator().createEntity(entityClass));
+    IEntityNodePtr node(GlobalEntityModule().createEntity(entityClass));
 
     GlobalSceneGraph().root()->addChildNode(node);
 

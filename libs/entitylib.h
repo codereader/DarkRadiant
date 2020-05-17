@@ -436,7 +436,7 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
 	assert(eclass);
 
 	// Create a new entity with the given class
-	IEntityNodePtr newNode(GlobalEntityCreator().createEntity(eclass));
+	IEntityNodePtr newNode(GlobalEntityModule().createEntity(eclass));
 
 	Entity* oldEntity = Node_getEntity(oldNode);
 
