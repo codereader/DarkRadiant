@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ientity.h"
 #include "iregistry.h"
 #include <sigc++/connection.h>
 #include <sigc++/signal.h>

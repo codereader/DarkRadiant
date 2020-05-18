@@ -1,6 +1,9 @@
 #include "GridUserInterface.h"
 
 #include <functional>
+#include <fmt/format.h>
+
+#include "i18n.h"
 #include "iuimanager.h"
 #include "imainframe.h"
 

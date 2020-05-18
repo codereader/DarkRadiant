@@ -24,7 +24,7 @@ private:
 	typedef std::map<const std::string, IEventPtr> EventMap;
 
 	std::multimap<std::string, wxMenuItem*> _menuItems;
-	std::multimap<std::string, wxToolBarToolBase*> _toolItems;
+	std::multimap<std::string, const wxToolBarToolBase*> _toolItems;
 
 	// The command-to-accelerator map containing all registered shortcuts
 	typedef std::map<std::string, Accelerator::Ptr> AcceleratorMap;
@@ -71,8 +71,8 @@ public:
 	void registerMenuItem(const std::string& eventName, wxMenuItem* item) override;
 	void unregisterMenuItem(const std::string& eventName, wxMenuItem* item) override;
 
-	void registerToolItem(const std::string& eventName, wxToolBarToolBase* item) override;
-	void unregisterToolItem(const std::string& eventName, wxToolBarToolBase* item) override;
+	void registerToolItem(const std::string& eventName, const wxToolBarToolBase* item) override;
+	void unregisterToolItem(const std::string& eventName, const wxToolBarToolBase* item) override;
 
 	// Connects the given accelerator to the given command (identified by the string)
 	void connectAccelerator(wxKeyEvent& keyEvent, const std::string& command) override;

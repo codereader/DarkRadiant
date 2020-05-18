@@ -73,8 +73,8 @@ public:
 	virtual void connectTopLevelWindow(wxTopLevelWindow* widget) = 0;
 	virtual void disconnectTopLevelWindow(wxTopLevelWindow* widget) = 0;
 
-	virtual void connectToolItem(wxToolBarToolBase* item) = 0;
-	virtual void disconnectToolItem(wxToolBarToolBase* item) = 0;
+	virtual void connectToolItem(const wxToolBarToolBase* item) = 0;
+	virtual void disconnectToolItem(const wxToolBarToolBase* item) = 0;
 
 	virtual void connectMenuItem(wxMenuItem* item) = 0;
 	virtual void disconnectMenuItem(wxMenuItem* item) = 0;
@@ -153,8 +153,8 @@ public:
 	virtual void registerMenuItem(const std::string& eventName, wxMenuItem* item) = 0;
 	virtual void unregisterMenuItem(const std::string& eventName, wxMenuItem* item) = 0;
 
-	virtual void registerToolItem(const std::string& eventName, wxToolBarToolBase* item) = 0;
-	virtual void unregisterToolItem(const std::string& eventName, wxToolBarToolBase* item) = 0;
+	virtual void registerToolItem(const std::string& eventName, const wxToolBarToolBase* item) = 0;
+	virtual void unregisterToolItem(const std::string& eventName, const wxToolBarToolBase* item) = 0;
 
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;

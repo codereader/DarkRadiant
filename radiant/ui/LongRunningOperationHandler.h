@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include "i18n.h"
 #include "iradiant.h"
 #include "imainframe.h"
 #include "messages/LongRunningOperationMessage.h"

@@ -8,6 +8,7 @@
 
 #include <wx/wxprec.h>
 #include <wx/toolbar.h>
+#include <wx/menu.h>
 
 #include "registry/registry.h"
 #include "xmlutil/Node.h"
@@ -258,7 +259,7 @@ void EventManager::setToggled(const std::string& name, const bool toggled)
 
 void EventManager::registerMenuItem(const std::string& eventName, wxMenuItem* item)
 {
-	auto result = _menuItems.emplace(eventName, item);
+	_menuItems.emplace(eventName, item);
 
 	// Set the accelerator of this menu item
 	auto& accelerator = findAccelerator(eventName);
@@ -302,9 +303,9 @@ void EventManager::unregisterMenuItem(const std::string& eventName, wxMenuItem* 
 	}
 }
 
-void EventManager::registerToolItem(const std::string& eventName, wxToolBarToolBase* item)
+void EventManager::registerToolItem(const std::string& eventName, const wxToolBarToolBase* item)
 {
-	auto result = _toolItems.emplace(eventName, item);
+	_toolItems.emplace(eventName, item);
 
 	// Set the accelerator of this menu item
 	auto& accelerator = findAccelerator(eventName);
@@ -326,7 +327,7 @@ void EventManager::registerToolItem(const std::string& eventName, wxToolBarToolB
 	}
 }
 
-void EventManager::unregisterToolItem(const std::string& eventName, wxToolBarToolBase* item)
+void EventManager::unregisterToolItem(const std::string& eventName, const wxToolBarToolBase* item)
 {
 	for (auto it = _toolItems.begin(); it != _toolItems.end(); ++it)
 	{

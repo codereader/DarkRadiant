@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ieventmanager.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "wxutil/DeferredMotionDelta.h"
@@ -112,12 +113,12 @@ public:
 	void moveBackDiscrete(double units);
 	void moveForwardDiscrete(double units);
 
-	void onForwardKey(ui::KeyEventType eventType);
-	void onBackwardKey(ui::KeyEventType eventType);
-	void onLeftKey(ui::KeyEventType eventType);
-	void onRightKey(ui::KeyEventType eventType);
-	void onUpKey(ui::KeyEventType eventType);
-	void onDownKey(ui::KeyEventType eventType);
+	void onForwardKey(KeyEventType eventType);
+	void onBackwardKey(KeyEventType eventType);
+	void onLeftKey(KeyEventType eventType);
+	void onRightKey(KeyEventType eventType);
+	void onUpKey(KeyEventType eventType);
+	void onDownKey(KeyEventType eventType);
 
 }; // class Camera
 

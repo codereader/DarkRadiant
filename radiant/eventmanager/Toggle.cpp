@@ -134,7 +134,7 @@ void Toggle::onMenuItemClicked(wxCommandEvent& ev)
 	ev.Skip();
 }
 
-void Toggle::connectToolItem(wxToolBarToolBase* item)
+void Toggle::connectToolItem(const wxToolBarToolBase* item)
 {
 	if (_toolItems.find(item) != _toolItems.end())
 	{
@@ -151,7 +151,7 @@ void Toggle::connectToolItem(wxToolBarToolBase* item)
 	item->GetToolBar()->Bind(wxEVT_TOOL, &Toggle::onToolItemClicked, this, item->GetId());
 }
 
-void Toggle::disconnectToolItem(wxToolBarToolBase* item)
+void Toggle::disconnectToolItem(const wxToolBarToolBase* item)
 {
 	if (_toolItems.find(item) == _toolItems.end())
 	{

@@ -99,7 +99,7 @@ void Statement::onMenuItemClicked(wxCommandEvent& ev)
 	ev.Skip();
 }
 
-void Statement::connectToolItem(wxToolBarToolBase* item)
+void Statement::connectToolItem(const wxToolBarToolBase* item)
 {
 	if (_toolItems.find(item) != _toolItems.end())
 	{
@@ -113,7 +113,7 @@ void Statement::connectToolItem(wxToolBarToolBase* item)
 	item->GetToolBar()->Bind(wxEVT_TOOL, &Statement::onToolItemClicked, this, item->GetId());
 }
 
-void Statement::disconnectToolItem(wxToolBarToolBase* item)
+void Statement::disconnectToolItem(const wxToolBarToolBase* item)
 {
 	if (_toolItems.find(item) == _toolItems.end())
 	{

@@ -146,15 +146,6 @@ darkradiant_SOURCES = main.cpp \
                       particles/ParticleDef.cpp \
                       render/OpenGLModule.cpp \
                       render/View.cpp \
-                      #shaders/CameraCubeMapDecl.cpp \
-                      #shaders/textures/TextureManipulator.cpp \
-                      #$(SHADERS_SOURCES) \
-                      #shaders/ShaderTemplate.cpp \
-                      #shaders/MapExpression.cpp \
-                      #shaders/CShader.cpp \
-                      #shaders/Doom3ShaderSystem.cpp \
-                      #shaders/ShaderLibrary.cpp \
-                      #shaders/ShaderExpression.cpp \
 					  ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \

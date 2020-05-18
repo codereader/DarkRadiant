@@ -63,8 +63,8 @@ public:
     virtual void connectMenuItem(wxMenuItem* item) {}
     virtual void disconnectMenuItem(wxMenuItem* item) {}
 
-    virtual void connectToolItem(wxToolBarToolBase* item) {}
-    virtual void disconnectToolItem(wxToolBarToolBase* item) {}
+    virtual void connectToolItem(const wxToolBarToolBase* item) {}
+    virtual void disconnectToolItem(const wxToolBarToolBase* item) {}
 
     virtual void connectToggleButton(wxToggleButton* button) {}
     virtual void disconnectToggleButton(wxToggleButton* button) {}
@@ -91,24 +91,29 @@ public:
         item->SetItemLabel(item->GetItemLabel().BeforeFirst('\t'));
     }
 
-    static void setToolItemAccelerator(wxToolBarToolBase* tool, Accelerator& accel)
+    static void setToolItemAccelerator(const wxToolBarToolBase* tool, Accelerator& accel)
     {
         setToolItemAccelerator(tool, accel.getString(true));
     }
 
-    static void setToolItemAccelerator(wxToolBarToolBase* tool, const std::string& accelText)
+    static void setToolItemAccelerator(const wxToolBarToolBase* tool, const std::string& accelText)
     {
-        tool->SetShortHelp(getCleanToolItemHelpText(tool) + 
+        if (tool->GetToolBar() == nullptr)
+        {
+            return;
+        }
+
+        tool->GetToolBar()->SetToolShortHelp(tool->GetId(), getCleanToolItemHelpText(tool) + 
             (!accelText.empty() ? " (" + string::replace_all_copy(accelText, "~", "-") + ")" : ""));
     }
 
-    static void clearToolItemAccelerator(wxToolBarToolBase* tool)
+    static void clearToolItemAccelerator(const wxToolBarToolBase* tool)
     {
         // Remove the accelerator from this tool
-        tool->SetShortHelp(getCleanToolItemHelpText(tool));
+        tool->GetToolBar()->SetToolShortHelp(tool->GetId(), getCleanToolItemHelpText(tool));
     }
 
-    static std::string getCleanToolItemHelpText(wxToolBarToolBase* tool)
+    static std::string getCleanToolItemHelpText(const wxToolBarToolBase* tool)
     {
         std::string prevHelp = tool->GetShortHelp().ToStdString();
 

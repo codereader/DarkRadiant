@@ -166,7 +166,7 @@ void ToolbarManager::onToolbarDestroy(wxWindowDestroyEvent& ev)
 			GlobalEventManager().unregisterToolItem(cmdData->GetString().ToStdString(), toolItem);
 
 			// free the client data, the toolbar item doesn't delete it
-			toolItem->SetClientData(nullptr);
+			toolbar->SetToolClientData(toolItem->GetId(), nullptr);
 			delete cmdData;
 		}
 	}

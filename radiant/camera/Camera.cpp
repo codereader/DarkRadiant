@@ -353,9 +353,9 @@ void Camera::rotateRightDiscrete() {
 	setAngles(angles);
 }
 
-void Camera::onForwardKey(ui::KeyEventType eventType)
+void Camera::onForwardKey(KeyEventType eventType)
 {
-	if (eventType == ui::KeyEventType::KeyPressed)
+	if (eventType == KeyEventType::KeyPressed)
 	{
 		if (freeMoveEnabled)
 		{
@@ -372,9 +372,9 @@ void Camera::onForwardKey(ui::KeyEventType eventType)
 	}
 }
 
-void Camera::onBackwardKey(ui::KeyEventType eventType)
+void Camera::onBackwardKey(KeyEventType eventType)
 {
-	if (eventType == ui::KeyEventType::KeyPressed)
+	if (eventType == KeyEventType::KeyPressed)
 	{
 		if (freeMoveEnabled)
 		{
@@ -391,9 +391,9 @@ void Camera::onBackwardKey(ui::KeyEventType eventType)
 	}
 }
 
-void Camera::onLeftKey(ui::KeyEventType eventType)
+void Camera::onLeftKey(KeyEventType eventType)
 {
-	if (eventType == ui::KeyEventType::KeyPressed)
+	if (eventType == KeyEventType::KeyPressed)
 	{
 		if (freeMoveEnabled)
 		{
@@ -410,9 +410,9 @@ void Camera::onLeftKey(ui::KeyEventType eventType)
 	}
 }
 
-void Camera::onRightKey(ui::KeyEventType eventType)
+void Camera::onRightKey(KeyEventType eventType)
 {
-	if (eventType == ui::KeyEventType::KeyPressed)
+	if (eventType == KeyEventType::KeyPressed)
 	{
 		if (freeMoveEnabled)
 		{
@@ -429,9 +429,9 @@ void Camera::onRightKey(ui::KeyEventType eventType)
 	}
 }
 
-void Camera::onUpKey(ui::KeyEventType eventType)
+void Camera::onUpKey(KeyEventType eventType)
 {
-	if (eventType == ui::KeyEventType::KeyPressed)
+	if (eventType == KeyEventType::KeyPressed)
 	{
 		if (freeMoveEnabled)
 		{
@@ -448,9 +448,9 @@ void Camera::onUpKey(ui::KeyEventType eventType)
 	}
 }
 
-void Camera::onDownKey(ui::KeyEventType eventType)
+void Camera::onDownKey(KeyEventType eventType)
 {
-	if (eventType == ui::KeyEventType::KeyPressed)
+	if (eventType == KeyEventType::KeyPressed)
 	{
 		if (freeMoveEnabled)
 		{
