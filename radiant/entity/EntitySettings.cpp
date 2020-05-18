@@ -1,7 +1,5 @@
 #include "EntitySettings.h"
 
-#include "iuimanager.h"
-
 #include "registry/registry.h"
 #include "registry/adaptors.h"
 
@@ -9,7 +7,7 @@ namespace entity
 {
 
 EntitySettings::EntitySettings() :
-	_lightVertexColoursLoaded(false)
+	_lightVertexColours(static_cast<std::size_t>(LightEditVertexType::NumberOfVertexTypes))
 {
 	// Wire up all booleans to update on registry value changes
 	initialiseAndObserveKey(RKEY_SHOW_ENTITY_NAMES, _renderEntityNames);
@@ -19,6 +17,13 @@ EntitySettings::EntitySettings() :
 	initialiseAndObserveKey(RKEY_ALWAYS_SHOW_LIGHT_VERTICES, _alwaysShowLightVertices);
 	initialiseAndObserveKey(RKEY_FREE_OBJECT_ROTATION, _freeObjectRotation);
 	initialiseAndObserveKey(RKEY_SHOW_ENTITY_ANGLES, _showEntityAngles);
+
+	// Initialise the default colours
+	_lightVertexColours[static_cast<std::size_t>(LightEditVertexType::StartEndDeselected)] = Vector3(0,1,1);
+	_lightVertexColours[static_cast<std::size_t>(LightEditVertexType::StartEndSelected)] = Vector3(0,0,1);
+	_lightVertexColours[static_cast<std::size_t>(LightEditVertexType::Inactive)] = Vector3(1,0,0);
+	_lightVertexColours[static_cast<std::size_t>(LightEditVertexType::Deselected)] = Vector3(0,1,0);
+	_lightVertexColours[static_cast<std::size_t>(LightEditVertexType::Selected)] = Vector3(0,0,1);
 }
 
 void EntitySettings::initialiseAndObserveKey(const std::string& key, bool& targetBool)
@@ -51,17 +56,6 @@ void EntitySettings::destroy()
 void EntitySettings::onSettingsChanged()
 {
 	_signalSettingsChanged.emit();
-}
-
-void EntitySettings::loadLightVertexColours()
-{
-	_lightVertexColoursLoaded = true;
-
-	_lightVertexColours[VERTEX_START_END_DESELECTED] = ColourSchemes().getColour("light_startend_deselected");
-	_lightVertexColours[VERTEX_START_END_SELECTED] = ColourSchemes().getColour("light_startend_selected");
-	_lightVertexColours[VERTEX_INACTIVE] = ColourSchemes().getColour("light_vertex_normal");
-	_lightVertexColours[VERTEX_DESELECTED] = ColourSchemes().getColour("light_vertex_deselected");
-	_lightVertexColours[VERTEX_SELECTED] = ColourSchemes().getColour("light_vertex_selected");
 }
 
 } // namespace entity

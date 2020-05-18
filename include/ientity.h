@@ -317,12 +317,25 @@ public:
 };
 typedef std::shared_ptr<ITargetManager> ITargetManagerPtr;
 
+enum class LightEditVertexType : std::size_t
+{
+    StartEndDeselected,
+    StartEndSelected,
+    Inactive,
+    Deselected,
+    Selected,
+    NumberOfVertexTypes,
+};
+
 /**
  * Global entity settings affecting appearance, render options, etc.
  */
 class IEntitySettings
 {
 public:
+    virtual const Vector3& getLightVertexColour(LightEditVertexType type) const = 0;
+    virtual void setLightVertexColour(LightEditVertexType type, const Vector3& value) = 0;
+
     virtual bool getRenderEntityNames() const = 0;
     virtual void setRenderEntityNames(bool value) = 0;
 

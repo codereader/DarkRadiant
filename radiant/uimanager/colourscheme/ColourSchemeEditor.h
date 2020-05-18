@@ -54,10 +54,12 @@ public:
 
 	int ShowModal();
 
+	// Signal for client code to get notified on colour changes
+	static sigc::signal<void>& signal_ColoursChanged();
+
 private:
 	// private helper functions
 	void populateTree();
-    void createTreeView();
 	void constructWindow();
 	wxSizer* constructColourSelector(ColourItem& colour, const std::string& name);
 	void updateColourSelectors();
@@ -87,10 +89,6 @@ private:
 	void callbackColorChanged(wxColourPickerEvent& ev, ColourItem& item);
 	void callbackDelete(wxCommandEvent& ev);
 	void callbackCopy(wxCommandEvent& ev);
-
-	// Destroy window and delete self, called by both Cancel and window
-	// delete callbacks
-	void doCancel();
 
 	// Updates the windows after a colour change
 	static void updateWindows();

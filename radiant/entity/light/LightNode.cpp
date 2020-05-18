@@ -317,10 +317,10 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 			
 			EntitySettings& settings = *EntitySettings::InstancePtr();
 
-			const Vector3& colourStartEndSelected = settings.getLightVertexColour(EntitySettings::VERTEX_START_END_SELECTED);
-			const Vector3& colourStartEndDeselected = settings.getLightVertexColour(EntitySettings::VERTEX_START_END_DESELECTED);
-			const Vector3& colourVertexSelected = settings.getLightVertexColour(EntitySettings::VERTEX_SELECTED);
-			const Vector3& colourVertexDeselected = settings.getLightVertexColour(EntitySettings::VERTEX_DESELECTED);
+			const Vector3& colourStartEndSelected = settings.getLightVertexColour(LightEditVertexType::StartEndSelected);
+			const Vector3& colourStartEndDeselected = settings.getLightVertexColour(LightEditVertexType::StartEndDeselected);
+			const Vector3& colourVertexSelected = settings.getLightVertexColour(LightEditVertexType::Selected);
+			const Vector3& colourVertexDeselected = settings.getLightVertexColour(LightEditVertexType::Deselected);
 
 			// Update the colour of the light center dot
 			const_cast<Light&>(_light).colourLightTarget() = (_lightTargetInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
@@ -341,13 +341,13 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 			if (_lightCenterInstance.isSelected())
 			{
 				const_cast<Light&>(_light).getDoom3Radius().setCenterColour(
-					EntitySettings::InstancePtr()->getLightVertexColour(EntitySettings::VERTEX_SELECTED));
+					EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Selected));
 				_light.renderLightCentre(collector, volume, localToWorld());
 			}
 			else
 			{
 				const_cast<Light&>(_light).getDoom3Radius().setCenterColour(
-					EntitySettings::InstancePtr()->getLightVertexColour(EntitySettings::VERTEX_DESELECTED));
+					EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Deselected));
 				_light.renderLightCentre(collector, volume, localToWorld());
 			}
 		}
@@ -365,8 +365,8 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 		if (_light.isProjected())
 		{
 			EntitySettings& settings = *EntitySettings::InstancePtr();
-			const Vector3& colourStartEndInactive = settings.getLightVertexColour(EntitySettings::VERTEX_START_END_DESELECTED);
-			const Vector3& colourVertexInactive = settings.getLightVertexColour(EntitySettings::VERTEX_DESELECTED);
+			const Vector3& colourStartEndInactive = settings.getLightVertexColour(LightEditVertexType::StartEndDeselected);
+			const Vector3& colourVertexInactive = settings.getLightVertexColour(LightEditVertexType::Deselected);
 
 			const_cast<Light&>(_light).colourLightStart() = colourStartEndInactive;
 			const_cast<Light&>(_light).colourLightEnd() = colourStartEndInactive;
@@ -379,8 +379,7 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 		}
 		else
 		{
-			const Vector3& colourVertexInactive = EntitySettings::InstancePtr()->getLightVertexColour(
-				EntitySettings::VERTEX_INACTIVE);
+			const Vector3& colourVertexInactive = EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Inactive);
 
 			const_cast<Light&>(_light).getDoom3Radius().setCenterColour(colourVertexInactive);
 			_light.renderLightCentre(collector, volume, localToWorld());

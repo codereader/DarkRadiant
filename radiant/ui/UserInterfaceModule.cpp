@@ -36,6 +36,7 @@
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
+#include "uimanager/colourscheme/ColourSchemeEditor.h"
 
 namespace ui
 {
@@ -130,17 +131,42 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	_eClassColourManager.reset(new EntityClassColourManager);
 	_longOperationHandler.reset(new LongRunningOperationHandler);
 
-	_entitySettingsConn = GlobalEntityModule().getSettings().signal_settingsChanged().connect(
-		[]() { GlobalMainFrame().updateAllWindows(); }
-	);
+	initialiseEntitySettings();
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+	_coloursUpdatedConn.disconnect();
 	_entitySettingsConn.disconnect();
 
 	_longOperationHandler.reset();
 	_eClassColourManager.reset();
+}
+
+void UserInterfaceModule::initialiseEntitySettings()
+{
+	auto& settings = GlobalEntityModule().getSettings();
+
+	_entitySettingsConn = settings.signal_settingsChanged().connect(
+		[]() { GlobalMainFrame().updateAllWindows(); }
+	);
+
+	applyEntityVertexColours();
+
+	_coloursUpdatedConn = ColourSchemeEditor::signal_ColoursChanged().connect(
+		sigc::mem_fun(this, &UserInterfaceModule::applyEntityVertexColours)
+	);
+}
+
+void UserInterfaceModule::applyEntityVertexColours()
+{
+	auto& settings = GlobalEntityModule().getSettings();
+
+	settings.setLightVertexColour(LightEditVertexType::StartEndDeselected, ColourSchemes().getColour("light_startend_deselected"));
+	settings.setLightVertexColour(LightEditVertexType::StartEndSelected, ColourSchemes().getColour("light_startend_selected"));
+	settings.setLightVertexColour(LightEditVertexType::Inactive, ColourSchemes().getColour("light_vertex_normal"));
+	settings.setLightVertexColour(LightEditVertexType::Deselected, ColourSchemes().getColour("light_vertex_deselected"));
+	settings.setLightVertexColour(LightEditVertexType::Selected, ColourSchemes().getColour("light_vertex_selected"));
 }
 
 void UserInterfaceModule::refreshShadersCmd(const cmd::ArgumentList& args)

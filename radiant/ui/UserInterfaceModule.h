@@ -27,6 +27,7 @@ private:
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 
 	sigc::connection _entitySettingsConn;
+	sigc::connection _coloursUpdatedConn;
 
 public:
 	// RegisterableModule
@@ -37,6 +38,8 @@ public:
 
 private:
 	void registerUICommands();
+	void initialiseEntitySettings();
+	void applyEntityVertexColours();
 	void refreshShadersCmd(const cmd::ArgumentList& args);
 };
 

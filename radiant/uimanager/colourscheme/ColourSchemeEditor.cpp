@@ -208,6 +208,8 @@ void ColourSchemeEditor::updateColourSelectors()
 
 void ColourSchemeEditor::updateWindows()
 {
+	signal_ColoursChanged().emit();
+
 	// Call the update, so all colours can be previewed
 	GlobalMainFrame().updateAllWindows();
 	SceneChangeNotify();
@@ -335,10 +337,10 @@ int ColourSchemeEditor::ShowModal()
 	{
 		// Restore all the colour settings from the XMLRegistry, changes get lost
 		ColourSchemeManager::Instance().restoreColourSchemes();
-
-		// Call the update, so all restored colours are displayed
-		updateWindows();
 	}
+
+	// Call the update, so all colours are displayed
+	updateWindows();
 
 	return returnCode;
 }
@@ -348,6 +350,12 @@ void ColourSchemeEditor::DisplayDialog(const cmd::ArgumentList& args)
 	 ColourSchemeEditor* editor = new ColourSchemeEditor;
 	 editor->ShowModal(); // enter main loop
 	 editor->Destroy();
+}
+
+sigc::signal<void>& ColourSchemeEditor::signal_ColoursChanged()
+{
+	static sigc::signal<void> _signal;
+	return _signal;
 }
 
 } // namespace ui

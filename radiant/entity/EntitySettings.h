@@ -31,17 +31,6 @@ typedef std::shared_ptr<EntitySettings> EntitySettingsPtr;
 class EntitySettings :
 	public IEntitySettings
 {
-public:
-	enum LightEditVertexType
-	{
-		VERTEX_START_END_DESELECTED,
-		VERTEX_START_END_SELECTED,
-		VERTEX_INACTIVE,
-		VERTEX_DESELECTED,
-		VERTEX_SELECTED,
-		NUM_LIGHT_VERTEX_COLOURS,
-	};
-
 private:
 	// TRUE if entity names should be drawn
     bool _renderEntityNames;
@@ -64,9 +53,7 @@ private:
 	bool _showEntityAngles;
 
 	// Cached colour values
-	Vector3 _lightVertexColours[NUM_LIGHT_VERTEX_COLOURS];
-
-	bool _lightVertexColoursLoaded;
+	std::vector<Vector3> _lightVertexColours;
 
 	std::vector<sigc::connection> _registryConnections;
 
@@ -75,14 +62,18 @@ private:
 	// Private constructor
 	EntitySettings();
 public:
-	const Vector3& getLightVertexColour(LightEditVertexType type)
+	const Vector3& getLightVertexColour(LightEditVertexType type) const override
 	{
-		if (!_lightVertexColoursLoaded)
-		{
-			loadLightVertexColours();
-		}
+		assert(type != LightEditVertexType::NumberOfVertexTypes);
+		return _lightVertexColours[static_cast<std::size_t>(type)];
+	}
 
-		return _lightVertexColours[type];
+	void setLightVertexColour(LightEditVertexType type, const Vector3& value) override
+	{
+		assert(type != LightEditVertexType::NumberOfVertexTypes);
+		_lightVertexColours[static_cast<std::size_t>(type)] = value;
+
+		onSettingsChanged();
 	}
 
 	bool getRenderEntityNames() const override
@@ -176,7 +167,6 @@ public:
 private:
 	void onSettingsChanged();
     void initialiseAndObserveKey(const std::string& key, bool& targetBool);
-	void loadLightVertexColours();
 };
 
 } // namespace entity
