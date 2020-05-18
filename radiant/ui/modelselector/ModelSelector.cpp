@@ -7,6 +7,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "imainframe.h"
+#include "imodelcache.h"
 #include "imodel.h"
 #include "modelskin.h"
 #include "imodelcache.h"
@@ -26,8 +27,6 @@
 #include <wx/checkbox.h>
 
 #include <functional>
-
-#include "map/algorithm/Models.h"
 
 namespace ui
 {
@@ -484,7 +483,7 @@ void ModelSelector::onReloadModels(wxCommandEvent& ev)
 	_preselectedModel = getSelectedValue(_columns.vfspath);
 
 	// This will fire the models reloaded signal after some time
-	map::algorithm::refreshModels(false);
+	GlobalModelCache().refreshModels(false);
 }
 
 void ModelSelector::onReloadSkins(wxCommandEvent& ev)

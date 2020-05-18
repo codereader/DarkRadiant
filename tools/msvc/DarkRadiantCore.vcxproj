@@ -64,10 +64,12 @@
     <ClCompile Include="..\..\radiantcore\imagefile\ImageLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ImageLoaderWx.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\TGALoader.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\MapFormatManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\Namespace.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\NamespaceFactory.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\ModelCache.cpp" />
     <ClCompile Include="..\..\radiantcore\model\ModelFormatManager.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModelNode.cpp" />
@@ -192,11 +194,13 @@
     <ClInclude Include="..\..\radiantcore\imagefile\ImageLoaderWx.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ImageTypeLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\TGALoader.h" />
+    <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
     <ClInclude Include="..\..\radiantcore\map\format\MapFormatManager.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\ComplexName.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\NamespaceFactory.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\UniqueNameSet.h" />
+    <ClInclude Include="..\..\radiantcore\model\ModelCache.h" />
     <ClInclude Include="..\..\radiantcore\model\ModelFormatManager.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModel.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h" />

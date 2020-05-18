@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "i18n.h"
 #include "ifilesystem.h"
+#include "imodelcache.h"
 #include "iundo.h"
 #include "itextstream.h"
 
@@ -15,8 +16,7 @@
 #include "string/case_conv.h"
 #include "model/ModelExporter.h"
 #include "registry/registry.h"
-#include "Traverse.h"
-#include "Models.h"
+#include "scene/Traverse.h"
 
 namespace map
 {
@@ -127,7 +127,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 		Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
 
 		// It's possible that the export overwrote a model we're already using in this map, refresh it
-		refreshSelectedModels(false);
+		GlobalModelCache().refreshSelectedModels(false);
 	}
 	catch (selection::algorithm::EntityCreationException&)
 	{

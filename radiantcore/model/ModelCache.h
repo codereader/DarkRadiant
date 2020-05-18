@@ -34,6 +34,9 @@ public:
 	void removeModel(const std::string& modelPath) override;
 	void clear() override;
 
+	void refreshModels(bool blockScreenUpdates = true) override;
+	void refreshSelectedModels(bool blockScreenUpdates = true) override;
+
 	// Public events
 	sigc::signal<void> signal_modelsReloaded() override;
 
@@ -45,8 +48,8 @@ public:
 
 private:
 	// Command targets
-	void refreshModels(const cmd::ArgumentList& args);
-	void refreshSelectedModels(const cmd::ArgumentList& args);
+	void refreshModelsCmd(const cmd::ArgumentList& args);
+	void refreshSelectedModelsCmd(const cmd::ArgumentList& args);
 };
 
 } // namespace model

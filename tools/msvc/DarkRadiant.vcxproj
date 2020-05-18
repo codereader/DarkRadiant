@@ -222,7 +222,6 @@
     <ClCompile Include="..\..\radiant\map\algorithm\Import.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp" />
-    <ClCompile Include="..\..\radiant\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiant\map\EditingStopwatch.cpp" />
     <ClCompile Include="..\..\radiant\map\EditingStopwatchInfoFileModule.cpp" />
@@ -679,7 +678,6 @@
     <ClCompile Include="..\..\radiant\modelfile\RenderablePicoModel.cpp" />
     <ClCompile Include="..\..\radiant\modelfile\RenderablePicoSurface.cpp" />
     <ClCompile Include="..\..\radiant\modelfile\WavefrontExporter.cpp" />
-    <ClCompile Include="..\..\radiant\model\ModelCache.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp" />
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
@@ -801,7 +799,6 @@
     <ClCompile Include="..\..\radiant\map\RegionManager.cpp" />
     <ClCompile Include="..\..\radiant\map\RootNode.cpp" />
     <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp" />
-    <ClCompile Include="..\..\radiant\map\algorithm\Traverse.cpp" />
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp" />
     <ClCompile Include="..\..\radiant\patch\Patch.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchModule.cpp" />
@@ -959,7 +956,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\Import.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h" />
-    <ClInclude Include="..\..\radiant\map\algorithm\Models.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiant\map\EditingStopwatch.h" />
     <ClInclude Include="..\..\radiant\map\EditingStopwatchInfoFileModule.h" />
@@ -1013,7 +1009,6 @@
     <ClInclude Include="..\..\radiant\modelfile\RenderablePicoModel.h" />
     <ClInclude Include="..\..\radiant\modelfile\RenderablePicoSurface.h" />
     <ClInclude Include="..\..\radiant\modelfile\WavefrontExporter.h" />
-    <ClInclude Include="..\..\radiant\model\ModelCache.h" />
     <ClInclude Include="..\..\radiant\model\ModelExporter.h" />
     <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h" />
     <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h" />
@@ -1158,7 +1153,6 @@
     <ClInclude Include="..\..\radiant\map\ShaderBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Clone.h" />
-    <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\WorldspawnArgFinder.h" />
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h" />
     <ClInclude Include="..\..\radiant\patch\Patch.h" />

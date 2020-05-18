@@ -16,6 +16,7 @@
 #include <functional>
 
 #include "map/algorithm/Models.h"
+#include "map/algorithm/Export.h"
 
 namespace model 
 {
@@ -167,7 +168,7 @@ sigc::signal<void> ModelCache::signal_modelsReloaded()
 // RegisterableModule implementation
 const std::string& ModelCache::getName() const 
 {
-	static std::string _name("ModelCache");
+	static std::string _name(MODULE_MODELCACHE);
 	return _name;
 }
 
@@ -189,9 +190,9 @@ void ModelCache::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	GlobalCommandSystem().addCommand("RefreshModels", 
-		std::bind(&ModelCache::refreshModels, this, std::placeholders::_1));
+		std::bind(&ModelCache::refreshModelsCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("RefreshSelectedModels", 
-		std::bind(&ModelCache::refreshSelectedModels, this, std::placeholders::_1));
+		std::bind(&ModelCache::refreshSelectedModelsCmd, this, std::placeholders::_1));
 }
 
 void ModelCache::shutdownModule()
@@ -199,12 +200,22 @@ void ModelCache::shutdownModule()
 	clear();
 }
 
-void ModelCache::refreshModels(const cmd::ArgumentList& args)
+void ModelCache::refreshModels(bool blockScreenUpdates)
+{
+	map::algorithm::refreshModels(blockScreenUpdates);
+}
+
+void ModelCache::refreshSelectedModels(bool blockScreenUpdates)
+{
+	map::algorithm::refreshSelectedModels(blockScreenUpdates);
+}
+
+void ModelCache::refreshModelsCmd(const cmd::ArgumentList& args)
 {
 	map::algorithm::refreshModels(true);
 }
 
-void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)
+void ModelCache::refreshSelectedModelsCmd(const cmd::ArgumentList& args)
 {
 	map::algorithm::refreshSelectedModels(true);
 }

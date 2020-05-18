@@ -345,7 +345,6 @@ darkradiant_SOURCES = main.cpp \
                       map/algorithm/MapImporter.cpp \
                       map/algorithm/Import.cpp \
                       map/algorithm/Export.cpp \
-                      map/algorithm/Models.cpp \
                       map/CounterManager.cpp \
                       map/RegionManager.cpp \
                       map/PointFile.cpp \
@@ -361,7 +360,6 @@ darkradiant_SOURCES = main.cpp \
                       clipper/Clipper.cpp \
                       log/Console.cpp \
                       undo/UndoSystem.cpp \
-                      model/ModelCache.cpp \
                       model/ModelScalePreserver.cpp \
                       model/ModelExporter.cpp \
 					  model/ScaledModelExporter.cpp

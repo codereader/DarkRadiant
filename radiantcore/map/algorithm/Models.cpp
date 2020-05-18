@@ -10,7 +10,7 @@
 #include "imodelcache.h"
 #include "iscenegraph.h"
 
-#include "ui/mainframe/ScreenUpdateBlocker.h"
+#include "messages/ScopedLongRunningOperation.h"
 
 namespace map
 {
@@ -90,12 +90,12 @@ public:
 
 void refreshModels(bool blockScreenUpdates)
 {
-	std::unique_ptr<ui::ScreenUpdateBlocker> blocker;
+	std::unique_ptr<radiant::ScopedLongRunningOperation> blocker;
 
 	if (blockScreenUpdates)
 	{
 		// Disable screen updates for the scope of this function
-		blocker.reset(new ui::ScreenUpdateBlocker(_("Processing..."), _("Reloading Models")));
+		blocker.reset(new radiant::ScopedLongRunningOperation(_("Reloading Models")));
 	}
 
 	// Clear the model cache
@@ -111,12 +111,12 @@ void refreshModels(bool blockScreenUpdates)
 
 void refreshSelectedModels(bool blockScreenUpdates)
 {
-	std::unique_ptr<ui::ScreenUpdateBlocker> blocker;
+	std::unique_ptr<radiant::ScopedLongRunningOperation> blocker;
 
 	if (blockScreenUpdates)
 	{
 		// Disable screen updates for the scope of this function
-		blocker.reset(new ui::ScreenUpdateBlocker(_("Processing..."), _("Reloading Models")));
+		blocker.reset(new radiant::ScopedLongRunningOperation(_("Reloading Models")));
 	}
 
 	// Find all models in the current selection

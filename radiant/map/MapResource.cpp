@@ -22,7 +22,7 @@
 #include "os/path.h"
 #include "os/file.h"
 #include "os/fs.h"
-#include "map/algorithm/Traverse.h"
+#include "scene/Traverse.h"
 #include "stream/TextFileInputStream.h"
 #include "scenelib.h"
 
@@ -161,7 +161,7 @@ bool MapResource::save(const MapFormatPtr& mapFormat)
 	if (path_is_absolute(fullpath.c_str()))
 	{
 		// Save the actual file
-		success = saveFile(*format, _mapRoot, map::traverse, fullpath);
+		success = saveFile(*format, _mapRoot, scene::traverse, fullpath);
 	}
 	else
 	{

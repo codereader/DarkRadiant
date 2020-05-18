@@ -170,9 +170,6 @@
     <Filter Include="src\selection\manipulators">
       <UniqueIdentifier>{d29d1907-07b9-4549-a336-642933e4602b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\model">
-      <UniqueIdentifier>{d4ec4e26-57e8-4f14-b256-14521d12ef43}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\grid">
       <UniqueIdentifier>{26ca745d-bd90-4d70-beb3-89010a45515f}</UniqueIdentifier>
     </Filter>
@@ -250,6 +247,9 @@
     </Filter>
     <Filter Include="src\ui\filters\editor">
       <UniqueIdentifier>{9cc90f16-363b-40e1-84ae-be23c59e06c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\model">
+      <UniqueIdentifier>{6c3e2342-691d-460b-afdc-9ef38e58eaea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -357,9 +357,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp">
       <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\Traverse.cpp">
-      <Filter>src\map\algorithm</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp">
       <Filter>src\modulesystem</Filter>
@@ -820,23 +817,8 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\model\ModelCache.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\model\ModelExporter.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp">
       <Filter>src\ui\modelexport</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\Export.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\Models.cpp">
-      <Filter>src\map\algorithm</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\RadiantApp.cpp">
       <Filter>src</Filter>
@@ -1207,9 +1189,6 @@
     <ClCompile Include="..\..\radiant\ui\filters\FilterMenu.cpp">
       <Filter>src\ui\filters</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
@@ -1233,6 +1212,18 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\render\View.cpp">
       <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\model\ModelExporter.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\Export.cpp">
+      <Filter>src\map\algorithm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1387,9 +1378,6 @@
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\Clone.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\Traverse.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\WorldspawnArgFinder.h">
@@ -1992,23 +1980,8 @@
     <ClInclude Include="..\..\radiant\selection\manipulators\ModelScaleManipulator.h">
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\model\ModelCache.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\ModelExporter.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h">
       <Filter>src\ui\modelexport</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\Export.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\Models.h">
-      <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\RadiantApp.h">
       <Filter>src</Filter>
@@ -2367,9 +2340,6 @@
     <ClInclude Include="..\..\radiant\ui\filters\FilterMenu.h">
       <Filter>src\ui\filters</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h">
       <Filter>src\settings</Filter>
     </ClInclude>
@@ -2417,6 +2387,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h">
       <Filter>src\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\ModelExporter.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\Export.h">
+      <Filter>src\map\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

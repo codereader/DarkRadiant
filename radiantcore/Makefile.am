@@ -84,10 +84,12 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 log/LogStreamBuf.cpp \
                 log/LogWriter.cpp \
                 log/StringLogDevice.cpp \
+                map/algorithm/Models.cpp \
                 map/format/MapFormatManager.cpp \
                 map/namespace/ComplexName.cpp \
                 map/namespace/Namespace.cpp \
                 map/namespace/NamespaceFactory.cpp \
+                model/ModelCache.cpp \
                 model/ModelFormatManager.cpp \
                 model/NullModel.cpp \
                 model/NullModelNode.cpp \

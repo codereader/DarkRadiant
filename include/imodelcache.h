@@ -33,6 +33,12 @@ public:
 	 */
 	virtual IModelPtr getModel(const std::string& modelPath) = 0;
 
+	// This reloads all models in the map
+	virtual void refreshModels(bool blockScreenUpdates = true) = 0;
+
+	// This reloads all selected models in the map
+	virtual void refreshSelectedModels(bool blockScreenUpdates = true) = 0;
+
 	// Clears a specific model from the cache
 	virtual void removeModel(const std::string& modelPath) = 0;
 

@@ -2,7 +2,7 @@
 
 #include "scenelib.h"
 
-namespace map {
+namespace scene {
 
 class IncludeSelectedWalker :
 	public scene::NodeVisitor
@@ -65,4 +65,4 @@ void traverse(const scene::INodePtr& root, scene::NodeVisitor& nodeExporter)
 	root->traverseChildren(nodeExporter);
 }
 
-} // namespace map
+} // namespace

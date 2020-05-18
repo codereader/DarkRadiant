@@ -41,7 +41,7 @@
 #include "map/MapResource.h"
 #include "map/algorithm/Import.h"
 #include "map/algorithm/Export.h"
-#include "map/algorithm/Traverse.h"
+#include "scene/Traverse.h"
 #include "map/algorithm/MapExporter.h"
 #include "model/ModelExporter.h"
 #include "model/ModelScalePreserver.h"
@@ -397,7 +397,7 @@ bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
     bool result = MapResource::saveFile(
         *format,
         GlobalSceneGraph().root(),
-        map::traverse, // TraversalFunc
+        scene::traverse, // TraversalFunc
         filename
     );
 
@@ -425,7 +425,7 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
     bool success = MapResource::saveFile(
         *format,
         GlobalSceneGraph().root(),
-        map::traverseSelected, // TraversalFunc
+        scene::traverseSelected, // TraversalFunc
         filename
     );
 
@@ -695,7 +695,7 @@ void Map::exportMap(const cmd::ArgumentList& args)
 
         MapResource::saveFile(*fileInfo.mapFormat,
             GlobalSceneGraph().root(),
-            traverse,
+            scene::traverse,
             fileInfo.fullPath);
 
         GlobalMap().emitMapEvent(MapSaved);
@@ -754,7 +754,7 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
 
     // Pass the traverseSelected function and start writing selected nodes
-    exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
+    exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
 }
 
 void Map::emitMapEvent(MapEvent ev)
@@ -806,9 +806,6 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     // Add the Map-related commands to the EventManager
     registerCommands();
 
-	_scaledModelExporter.initialise();
-    _modelScalePreserver.reset(new ModelScalePreserver);
-
 	MapFileManager::registerFileTypes();
 
     // Register an info file module to save the map property bag
@@ -819,11 +816,8 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 
 void Map::shutdownModule()
 {
-	_scaledModelExporter.shutdown();
-
 	GlobalSceneGraph().removeSceneObserver(this);
 
-    _modelScalePreserver.reset();
 	_startupMapLoader.reset();
 	_mapPositionManager.reset();
 }
