@@ -98,6 +98,9 @@
     <Filter Include="src\entity\target">
       <UniqueIdentifier>{c631249d-5618-4429-bc52-7bf108cc13b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\model">
+      <UniqueIdentifier>{9e9f3eed-43d3-462c-8219-68860002cc87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -396,6 +399,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\entity\speaker\SpeakerRenderables.cpp">
       <Filter>src\entity\speaker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\ModelFormatManager.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\NullModel.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\NullModelNode.cpp">
+      <Filter>src\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -851,6 +863,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\speaker\SpeakerRenderables.h">
       <Filter>src\entity\speaker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\ModelFormatManager.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\NullModel.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\NullModelNode.h">
+      <Filter>src\model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

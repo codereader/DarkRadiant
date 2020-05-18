@@ -88,6 +88,9 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/namespace/ComplexName.cpp \
                 map/namespace/Namespace.cpp \
                 map/namespace/NamespaceFactory.cpp \
+                model/ModelFormatManager.cpp \
+                model/NullModel.cpp \
+                model/NullModelNode.cpp \
                 modulesystem/ModuleLoader.cpp \
                 modulesystem/ModuleRegistry.cpp \
                 rendersystem/backend/glprogram/ARBBumpProgram.cpp \

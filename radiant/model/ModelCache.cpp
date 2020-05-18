@@ -13,7 +13,6 @@
 #include "os/file.h"
 
 #include "module/StaticModule.h"
-#include "NullModelLoader.h"
 #include <functional>
 
 #include "map/algorithm/Models.h"

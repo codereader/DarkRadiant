@@ -364,10 +364,7 @@ darkradiant_SOURCES = main.cpp \
                       model/ModelCache.cpp \
                       model/ModelScalePreserver.cpp \
                       model/ModelExporter.cpp \
-					  model/ModelFormatManager.cpp \
-                      model/NullModel.cpp \
-					  model/ScaledModelExporter.cpp \
-                      model/NullModelNode.cpp 
+					  model/ScaledModelExporter.cpp
 
 check_PROGRAMS = facePlaneTest vfsTest shadersTest
 TESTS = $(check_PROGRAMS)

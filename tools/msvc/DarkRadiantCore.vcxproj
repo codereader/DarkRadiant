@@ -68,6 +68,9 @@
     <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\Namespace.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\NamespaceFactory.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\ModelFormatManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\NullModel.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiantcore\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -194,6 +197,10 @@
     <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\NamespaceFactory.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\UniqueNameSet.h" />
+    <ClInclude Include="..\..\radiantcore\model\ModelFormatManager.h" />
+    <ClInclude Include="..\..\radiantcore\model\NullModel.h" />
+    <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h" />
+    <ClInclude Include="..\..\radiantcore\model\NullModelNode.h" />
     <ClInclude Include="..\..\radiantcore\precompiled.h" />
     <ClInclude Include="..\..\radiantcore\Radiant.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\CaseInsensitiveCompare.h" />

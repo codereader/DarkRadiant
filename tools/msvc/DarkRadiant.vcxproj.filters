@@ -823,15 +823,6 @@
     <ClCompile Include="..\..\radiant\model\ModelCache.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\model\NullModel.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\model\NullModelNode.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\model\ModelFormatManager.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
@@ -2002,18 +1993,6 @@
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ModelCache.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\NullModel.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\NullModelLoader.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\NullModelNode.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\ModelFormatManager.h">
       <Filter>src\model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h">

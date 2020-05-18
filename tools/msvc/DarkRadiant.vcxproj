@@ -681,10 +681,7 @@
     <ClCompile Include="..\..\radiant\modelfile\WavefrontExporter.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelCache.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelExporter.cpp" />
-    <ClCompile Include="..\..\radiant\model\ModelFormatManager.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp" />
-    <ClCompile Include="..\..\radiant\model\NullModel.cpp" />
-    <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\particles\editor\ParticleEditor.cpp" />
     <ClCompile Include="..\..\radiant\particles\ParticleDef.cpp" />
@@ -1018,11 +1015,7 @@
     <ClInclude Include="..\..\radiant\modelfile\WavefrontExporter.h" />
     <ClInclude Include="..\..\radiant\model\ModelCache.h" />
     <ClInclude Include="..\..\radiant\model\ModelExporter.h" />
-    <ClInclude Include="..\..\radiant\model\ModelFormatManager.h" />
     <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h" />
-    <ClInclude Include="..\..\radiant\model\NullModel.h" />
-    <ClInclude Include="..\..\radiant\model\NullModelLoader.h" />
-    <ClInclude Include="..\..\radiant\model\NullModelNode.h" />
     <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h" />
     <ClInclude Include="..\..\radiant\particles\editor\ParticleEditor.h" />
     <ClInclude Include="..\..\radiant\particles\editor\ParticleEditorModule.h" />
