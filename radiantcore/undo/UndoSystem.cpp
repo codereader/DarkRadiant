@@ -3,7 +3,6 @@
 #include "i18n.h"
 
 #include "itextstream.h"
-#include "ieventmanager.h"
 #include "ipreferencesystem.h"
 #include "iscenegraph.h"
 
@@ -198,7 +197,6 @@ const StringSet& UndoSystem::getDependencies() const
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_SCENEGRAPH);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_MAP);
 	}
 

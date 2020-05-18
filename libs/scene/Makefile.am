@@ -6,4 +6,5 @@ libscenegraph_la_LIBADD = $(top_builddir)/libs/math/libmath.la
 libscenegraph_la_SOURCES = InstanceWalkers.cpp \
 			 			  TraversableNodeSet.cpp \
 						  SelectableNode.cpp \
+						  Traverse.cpp \
 						  Node.cpp

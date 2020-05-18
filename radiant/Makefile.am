@@ -359,7 +359,6 @@ darkradiant_SOURCES = main.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
                       log/Console.cpp \
-                      undo/UndoSystem.cpp \
                       model/ModelScalePreserver.cpp \
                       model/ModelExporter.cpp \
 					  model/ScaledModelExporter.cpp

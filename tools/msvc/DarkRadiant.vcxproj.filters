@@ -242,9 +242,6 @@
     <Filter Include="src\settings">
       <UniqueIdentifier>{89cfcc22-4783-4193-a6c6-ad49ec9f05f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\undo">
-      <UniqueIdentifier>{482d5c89-ec91-4034-abd0-43e9c0f384e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\filters\editor">
       <UniqueIdentifier>{9cc90f16-363b-40e1-84ae-be23c59e06c0}</UniqueIdentifier>
     </Filter>
@@ -1191,9 +1188,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp">
       <Filter>src\settings</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\undo\UndoSystem.cpp">
-      <Filter>src\undo</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp">
       <Filter>src\ui\grid</Filter>
@@ -2342,18 +2336,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h">
       <Filter>src\settings</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\Operation.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\Stack.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\StackFiller.h">
-      <Filter>src\undo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\undo\UndoSystem.h">
-      <Filter>src\undo</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h">
       <Filter>src\ui\grid</Filter>

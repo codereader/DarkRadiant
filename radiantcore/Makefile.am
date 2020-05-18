@@ -127,6 +127,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 shaders/ShaderTemplate.cpp \
                 shaders/TableDefinition.cpp \
                 skins/Doom3SkinCache.cpp \
+                undo/UndoSystem.cpp \
                 vfs/DeflatedInputStream.cpp \
                 vfs/DirectoryArchive.cpp \
                 vfs/Doom3FileSystem.cpp \

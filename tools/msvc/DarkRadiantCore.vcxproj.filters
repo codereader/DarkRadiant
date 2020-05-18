@@ -104,6 +104,9 @@
     <Filter Include="src\map\algorithm">
       <UniqueIdentifier>{50635729-2a97-494c-bfa5-8ff464096809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\undo">
+      <UniqueIdentifier>{6329d0d4-000b-4d26-a318-0a4facaaecdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -417,6 +420,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp">
       <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\undo\UndoSystem.cpp">
+      <Filter>src\undo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -890,6 +896,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h">
       <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\undo\Operation.h">
+      <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\undo\Stack.h">
+      <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\undo\StackFiller.h">
+      <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\undo\UndoSystem.h">
+      <Filter>src\undo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
