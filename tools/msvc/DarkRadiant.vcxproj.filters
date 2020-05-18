@@ -197,30 +197,6 @@
     <Filter Include="src\uimanager\menu">
       <UniqueIdentifier>{31b14db3-7897-48b1-8771-d4e0eac5cb07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\entity">
-      <UniqueIdentifier>{a5d2441c-f1c4-4448-87e2-3e133676064a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\entity\curve">
-      <UniqueIdentifier>{a0b7cb30-15d7-4ac1-83da-ed24c665133e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\entity\doom3group">
-      <UniqueIdentifier>{7c1c3269-4dca-48f1-b1d1-f16275a8eff9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\entity\eclassmodel">
-      <UniqueIdentifier>{54c10800-0ab2-4cd4-b35c-2de4b663cfa9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\entity\generic">
-      <UniqueIdentifier>{c7e7c807-b1fa-4cb2-b887-ee2feb781906}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\entity\light">
-      <UniqueIdentifier>{931e5eb7-8447-4543-86eb-6be412987d85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\entity\speaker">
-      <UniqueIdentifier>{78f387d7-fd4d-44f6-9bc5-ccf42b12ce8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\entity\target">
-      <UniqueIdentifier>{2bf54469-b319-4cd2-9307-504daf10c7d6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\modelfile">
       <UniqueIdentifier>{fcaedc16-a752-4a69-87a3-212322803b03}</UniqueIdentifier>
     </Filter>
@@ -961,99 +937,6 @@
     <ClCompile Include="..\..\radiant\uimanager\menu\MenuSeparator.cpp">
       <Filter>src\uimanager\menu</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\AngleKey.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\Doom3Entity.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\EntityNode.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\EntitySettings.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\KeyValue.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\KeyValueObserver.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\ModelKey.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\NameKeyObserver.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\NamespaceManager.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\RotationKey.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\RotationMatrix.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\ShaderParms.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\curve\Curve.cpp">
-      <Filter>src\entity\curve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\curve\CurveCatmullRom.cpp">
-      <Filter>src\entity\curve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\curve\CurveEditInstance.cpp">
-      <Filter>src\entity\curve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\curve\CurveNURBS.cpp">
-      <Filter>src\entity\curve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\doom3group\Doom3Group.cpp">
-      <Filter>src\entity\doom3group</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\doom3group\Doom3GroupNode.cpp">
-      <Filter>src\entity\doom3group</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\eclassmodel\EclassModelNode.cpp">
-      <Filter>src\entity\eclassmodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\generic\GenericEntity.cpp">
-      <Filter>src\entity\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\generic\GenericEntityNode.cpp">
-      <Filter>src\entity\generic</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\light\Light.cpp">
-      <Filter>src\entity\light</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\light\LightNode.cpp">
-      <Filter>src\entity\light</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\light\Renderables.cpp">
-      <Filter>src\entity\light</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\speaker\SpeakerNode.cpp">
-      <Filter>src\entity\speaker</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\speaker\SpeakerRenderables.cpp">
-      <Filter>src\entity\speaker</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\target\TargetableNode.cpp">
-      <Filter>src\entity\target</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\target\TargetKey.cpp">
-      <Filter>src\entity\target</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\target\TargetKeyCollection.cpp">
-      <Filter>src\entity\target</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\target\TargetLineNode.cpp">
-      <Filter>src\entity\target</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\target\TargetManager.cpp">
-      <Filter>src\entity\target</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\modelfile\AseExporter.cpp">
       <Filter>src\modelfile</Filter>
     </ClCompile>
@@ -1359,9 +1242,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\render\View.cpp">
       <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\entity\EntityModule.cpp">
-      <Filter>src\entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2253,141 +2133,6 @@
     <ClInclude Include="..\..\radiant\uimanager\menu\MenuSeparator.h">
       <Filter>src\uimanager\menu</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\AngleKey.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\ColourKey.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\Doom3Entity.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\EntityNode.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\EntitySettings.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\KeyObserverDelegate.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\KeyObserverMap.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\KeyValue.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\KeyValueObserver.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\ModelKey.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\NameKey.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\NameKeyObserver.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\NamespaceManager.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\OriginKey.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\RotationKey.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\RotationMatrix.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\ShaderParms.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\VertexInstance.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\curve\Curve.h">
-      <Filter>src\entity\curve</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\curve\CurveCatmullRom.h">
-      <Filter>src\entity\curve</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\curve\CurveControlPointFunctors.h">
-      <Filter>src\entity\curve</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\curve\CurveEditInstance.h">
-      <Filter>src\entity\curve</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\curve\CurveNURBS.h">
-      <Filter>src\entity\curve</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\curve\RenderableCurve.h">
-      <Filter>src\entity\curve</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\doom3group\Doom3Group.h">
-      <Filter>src\entity\doom3group</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\doom3group\Doom3GroupNode.h">
-      <Filter>src\entity\doom3group</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\eclassmodel\EclassModelNode.h">
-      <Filter>src\entity\eclassmodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\generic\GenericEntity.h">
-      <Filter>src\entity\generic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\generic\GenericEntityNode.h">
-      <Filter>src\entity\generic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\generic\RenderableArrow.h">
-      <Filter>src\entity\generic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\light\Doom3LightRadius.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\light\Light.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\light\LightNode.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\light\LightShader.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\light\Renderables.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\light\RenderableVertices.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\speaker\SpeakerNode.h">
-      <Filter>src\entity\speaker</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\speaker\SpeakerRenderables.h">
-      <Filter>src\entity\speaker</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\target\RenderableTargetLines.h">
-      <Filter>src\entity\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\target\Target.h">
-      <Filter>src\entity\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\target\TargetableNode.h">
-      <Filter>src\entity\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\target\TargetKey.h">
-      <Filter>src\entity\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\target\TargetKeyCollection.h">
-      <Filter>src\entity\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\target\TargetLineNode.h">
-      <Filter>src\entity\target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\target\TargetManager.h">
-      <Filter>src\entity\target</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\modelfile\AseExporter.h">
       <Filter>src\modelfile</Filter>
     </ClInclude>
@@ -2693,9 +2438,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h">
       <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\entity\EntityModule.h">
-      <Filter>src\entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
