@@ -1,20 +1,14 @@
 #include "EntityModule.h"
-#include "EntitySettings.h"
 
 #include "itextstream.h"
-#include "iundo.h"
 #include "imap.h"
-#include "iscenegraph.h"
-#include "ieventmanager.h"
-#include "inamespace.h"
+#include "i18n.h"
 
 #include "entitylib.h"
 #include "gamelib.h"
 
 #include "string/replace.h"
-#include <iostream>
 
-#include "i18n.h"
 #include "Doom3Entity.h"
 
 #include "light/LightNode.h"
@@ -139,10 +133,6 @@ void Doom3EntityModule::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	LightShader::m_defaultShader = game::current::getValue<std::string>("/defaults/lightShader");
-
-	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", RKEY_SHOW_ALL_LIGHT_RADII);
-	GlobalEventManager().addRegistryToggle("ToggleShowAllSpeakerRadii", RKEY_SHOW_ALL_SPEAKER_RADII);
-	GlobalEventManager().addRegistryToggle("ToggleDragResizeEntitiesSymmetrically", RKEY_DRAG_RESIZE_SYMMETRICALLY);
 }
 
 void Doom3EntityModule::shutdownModule()

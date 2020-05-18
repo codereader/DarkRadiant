@@ -327,6 +327,14 @@ enum class LightEditVertexType : std::size_t
     NumberOfVertexTypes,
 };
 
+const char* const RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
+const char* const RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
+const char* const RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
+const char* const RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
+const char* const RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
+const char* const RKEY_FREE_OBJECT_ROTATION = "user/ui/rotateObjectsIndependently";
+const char* const RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
+
 /**
  * Global entity settings affecting appearance, render options, etc.
  */

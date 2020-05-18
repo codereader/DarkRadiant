@@ -71,6 +71,7 @@ const StringSet& UserInterfaceModule::getDependencies() const
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_FILTERSYSTEM);
 		_dependencies.insert(MODULE_ENTITY);
+		_dependencies.insert(MODULE_EVENTMANAGER);
 	}
 
 	return _dependencies;
@@ -156,6 +157,10 @@ void UserInterfaceModule::initialiseEntitySettings()
 	_coloursUpdatedConn = ColourSchemeEditor::signal_ColoursChanged().connect(
 		sigc::mem_fun(this, &UserInterfaceModule::applyEntityVertexColours)
 	);
+
+	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", RKEY_SHOW_ALL_LIGHT_RADII);
+	GlobalEventManager().addRegistryToggle("ToggleShowAllSpeakerRadii", RKEY_SHOW_ALL_SPEAKER_RADII);
+	GlobalEventManager().addRegistryToggle("ToggleDragResizeEntitiesSymmetrically", RKEY_DRAG_RESIZE_SYMMETRICALLY);
 }
 
 void UserInterfaceModule::applyEntityVertexColours()
