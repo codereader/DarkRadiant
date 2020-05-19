@@ -212,12 +212,6 @@
     <Filter Include="src\fonts">
       <UniqueIdentifier>{a921dcd3-1518-490e-baf1-4b75bdd130c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\particles">
-      <UniqueIdentifier>{d15257b7-cc9a-46fc-8d6f-d5faf7958cbe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\particles\editor">
-      <UniqueIdentifier>{3759ffd4-30bf-4406-964a-cf99ad714382}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\widgets">
       <UniqueIdentifier>{6f4f3b4f-0cfb-40db-9826-1bbe750981a7}</UniqueIdentifier>
     </Filter>
@@ -1063,36 +1057,6 @@
     <ClCompile Include="..\..\radiant\fonts\GlyphSet.cpp">
       <Filter>src\fonts</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\ParticleDef.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\ParticleNode.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\ParticleParameter.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\particles.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\ParticlesManager.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\RenderableParticle.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\RenderableParticleBunch.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\RenderableParticleStage.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\StageDef.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\particles\editor\ParticleEditor.cpp">
-      <Filter>src\particles\editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\widgets\Splitter.cpp">
       <Filter>src\ui\widgets</Filter>
     </ClCompile>
@@ -1218,6 +1182,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\algorithm\Export.cpp">
       <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\particles\ParticleEditor.cpp">
+      <Filter>src\ui\particles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2196,42 +2163,6 @@
     <ClInclude Include="..\..\radiant\fonts\GlyphSet.h">
       <Filter>src\fonts</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\ParticleDef.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\ParticleNode.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\ParticleParameter.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\ParticleQuad.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\ParticleRenderInfo.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\ParticlesManager.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\RenderableParticle.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\RenderableParticleBunch.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\RenderableParticleStage.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\StageDef.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\editor\ParticleEditor.h">
-      <Filter>src\particles\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\particles\editor\ParticleEditorModule.h">
-      <Filter>src\particles\editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\widgets\Splitter.h">
       <Filter>src\ui\widgets</Filter>
     </ClInclude>
@@ -2381,6 +2312,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\Export.h">
       <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\particles\ParticleEditor.h">
+      <Filter>src\ui\particles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

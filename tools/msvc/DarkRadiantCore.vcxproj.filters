@@ -107,6 +107,9 @@
     <Filter Include="src\undo">
       <UniqueIdentifier>{6329d0d4-000b-4d26-a318-0a4facaaecdb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\particles">
+      <UniqueIdentifier>{eda86d46-9b16-4fa4-b6cb-f302f83d0f07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -423,6 +426,30 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\undo\UndoSystem.cpp">
       <Filter>src\undo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\particles\ParticlesManager.cpp">
+      <Filter>src\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\particles\ParticleDef.cpp">
+      <Filter>src\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\particles\StageDef.cpp">
+      <Filter>src\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\particles\ParticleNode.cpp">
+      <Filter>src\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\particles\RenderableParticle.cpp">
+      <Filter>src\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\particles\RenderableParticleBunch.cpp">
+      <Filter>src\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\particles\RenderableParticleStage.cpp">
+      <Filter>src\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\particles\ParticleParameter.cpp">
+      <Filter>src\particles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -908,6 +935,36 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\undo\UndoSystem.h">
       <Filter>src\undo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\ParticlesManager.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\StageDef.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\RenderableParticle.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\RenderableParticleBunch.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\RenderableParticleStage.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\ParticleQuad.h">
+      <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\particles\ParticleRenderInfo.h">
+      <Filter>src\particles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

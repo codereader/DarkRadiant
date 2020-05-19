@@ -73,6 +73,14 @@
     <ClCompile Include="..\..\radiantcore\model\ModelFormatManager.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModelNode.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\ParticleDef.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\ParticleNode.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\ParticleParameter.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\ParticlesManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\RenderableParticle.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\RenderableParticleBunch.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\RenderableParticleStage.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\StageDef.cpp" />
     <ClCompile Include="..\..\radiantcore\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -206,6 +214,16 @@
     <ClInclude Include="..\..\radiantcore\model\NullModel.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelNode.h" />
+    <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h" />
+    <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h" />
+    <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h" />
+    <ClInclude Include="..\..\radiantcore\particles\ParticleQuad.h" />
+    <ClInclude Include="..\..\radiantcore\particles\ParticleRenderInfo.h" />
+    <ClInclude Include="..\..\radiantcore\particles\ParticlesManager.h" />
+    <ClInclude Include="..\..\radiantcore\particles\RenderableParticle.h" />
+    <ClInclude Include="..\..\radiantcore\particles\RenderableParticleBunch.h" />
+    <ClInclude Include="..\..\radiantcore\particles\RenderableParticleStage.h" />
+    <ClInclude Include="..\..\radiantcore\particles\StageDef.h" />
     <ClInclude Include="..\..\radiantcore\precompiled.h" />
     <ClInclude Include="..\..\radiantcore\Radiant.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\CaseInsensitiveCompare.h" />

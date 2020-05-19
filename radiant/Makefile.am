@@ -134,16 +134,7 @@ darkradiant_SOURCES = main.cpp \
                       modelfile/picomodel/pm_terrain.c \
                       modelfile/picomodel/pm_ms3d.c \
                       modelfile/picomodel/pm_3ds.c \
-                      particles/ParticleNode.cpp \
-                      particles/RenderableParticle.cpp \
-                      particles/RenderableParticleBunch.cpp \
-                      particles/ParticlesManager.cpp \
-                      particles/StageDef.cpp \
-                      particles/particles.cpp \
-                      particles/ParticleParameter.cpp \
                       particles/editor/ParticleEditor.cpp \
-                      particles/RenderableParticleStage.cpp \
-                      particles/ParticleDef.cpp \
                       render/OpenGLModule.cpp \
                       render/View.cpp \
 					  ui/UserInterfaceModule.cpp \

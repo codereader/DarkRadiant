@@ -207,6 +207,7 @@
 		<menuItem name="bindEntity" caption="&amp;Bind selected entities" command="BindSelection" />
 		<menuItem name="animviewer" caption="MD5 Animation Viewer" command="AnimationPreview" />
 		<menuItem name="entityclasstree" caption="Entity Class Tree..." command="EntityClassTree" icon="icon_classname.png" />
+		<menuItem name="particleEditor" caption="Particle Editor..." command="ParticlesEditor" icon="particle16.png" />
 	</subMenu>
 
 	<subMenu name="brush" caption="B&amp;rush">

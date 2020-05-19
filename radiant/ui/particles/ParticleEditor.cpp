@@ -24,8 +24,6 @@
 #include <wx/stattext.h>
 #include <wx/notebook.h>
 
-#include "../ParticlesManager.h"
-
 #include "os/fs.h"
 #include "os/file.h"
 #include "os/path.h"
@@ -1293,7 +1291,7 @@ void ParticleEditor::setupEditParticle()
     // Generate a temporary name for this particle, and instantiate a copy
     std::string temporaryParticleName = selectedName + EDIT_SUFFIX;
 
-    _currentDef = ParticlesManager::Instance().findOrInsertParticleDef(temporaryParticleName);
+    _currentDef = GlobalParticlesManager().findOrInsertParticleDef(temporaryParticleName);
     _currentDef->setFilename(def->getFilename());
 
     _currentDef->copyFrom(*def);
@@ -1306,7 +1304,7 @@ void ParticleEditor::releaseEditParticle()
 {
     if (_currentDef && string::ends_with(_currentDef->getName(), EDIT_SUFFIX))
     {
-        ParticlesManager::Instance().removeParticleDef(_currentDef->getName());
+        GlobalParticlesManager().removeParticleDef(_currentDef->getName());
     }
 
     _currentDef.reset();
@@ -1367,7 +1365,7 @@ bool ParticleEditor::saveCurrentParticle()
     // Write changes to disk, and return the result
     try
     {
-        ParticlesManager::Instance().saveParticleDef(origDef->getName());
+        GlobalParticlesManager().saveParticleDef(origDef->getName());
         return true;
     }
     catch (std::runtime_error& err)
@@ -1469,24 +1467,24 @@ void ParticleEditor::_onNewParticle(wxCommandEvent& ev)
     createAndSelectNewParticle();
 }
 
-ParticleDefPtr ParticleEditor::createAndSelectNewParticle()
+IParticleDefPtr ParticleEditor::createAndSelectNewParticle()
 {
     std::string particleName = queryNewParticleName();
 
     if (particleName.empty())
     {
-        return ParticleDefPtr(); // no valid name, abort
+        return IParticleDefPtr(); // no valid name, abort
     }
 
     std::string destFile = queryParticleFile();
 
     if (destFile.empty())
     {
-        return ParticleDefPtr(); // no valid destination file
+        return IParticleDefPtr(); // no valid destination file
     }
 
     // Good filename, good destination file, we're set to go
-    ParticleDefPtr particle = ParticlesManager::Instance().findOrInsertParticleDef(particleName);
+    auto particle = GlobalParticlesManager().findOrInsertParticleDef(particleName);
 
     particle->setFilename(destFile);
 
@@ -1589,7 +1587,7 @@ void ParticleEditor::_onCloneCurrentParticle(wxCommandEvent& ev)
     IParticleDefPtr original = GlobalParticlesManager().getDefByName(origName);
 
     // Create a new particle (this will already set up an edit particle, which is empty)
-    ParticleDefPtr newParticle = createAndSelectNewParticle();
+    auto newParticle = createAndSelectNewParticle();
 
     if (!newParticle)
     {

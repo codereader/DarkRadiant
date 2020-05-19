@@ -9,8 +9,6 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
 
-#include "../ParticleDef.h"
-
 class wxSpinCtrlDouble;
 class wxSpinCtrl;
 class wxSpinDoubleEvent;
@@ -43,7 +41,7 @@ private:
     wxDataViewItem _selectedStageIter;
 
     // The particle definition we're working on
-    particles::ParticleDefPtr _currentDef;
+    particles::IParticleDefPtr _currentDef;
 
     bool _callbacksDisabled;
     bool _saveInProgress;
@@ -83,7 +81,7 @@ private:
 
     // Creates a particle with a new name (queried from the user), selects it and returns the particle ref
     // Returns NULL if the user cancelled in some way
-    particles::ParticleDefPtr createAndSelectNewParticle();
+    particles::IParticleDefPtr createAndSelectNewParticle();
 
     // Highlight the named particle in the treeview
     void selectParticleDef(const std::string& particleDefName);

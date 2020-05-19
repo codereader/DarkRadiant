@@ -24,6 +24,7 @@
 #include <functional>
 #include <regex>
 #include "string/predicate.h"
+#include "module/StaticModule.h"
 
 namespace particles
 {
@@ -108,7 +109,7 @@ IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string
 	}
 }
 
-ParticleDefPtr ParticlesManager::findOrInsertParticleDef(const std::string& name)
+IParticleDefPtr ParticlesManager::findOrInsertParticleDef(const std::string& name)
 {
     ensureDefsLoaded();
 
@@ -485,5 +486,7 @@ void ParticlesManager::stripParticleDefFromStream(std::istream& input,
 		output << std::endl;
 	}
 }
+
+module::StaticModule<ParticlesManager> particlesManagerModule;
 
 } // namespace particles

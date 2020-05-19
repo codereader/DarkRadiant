@@ -57,7 +57,7 @@ public:
 		return _filename;
 	}
 
-	void setFilename(const std::string& filename)
+	void setFilename(const std::string& filename) override
 	{
 		_filename = filename;
 	}

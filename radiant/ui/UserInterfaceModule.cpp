@@ -33,6 +33,7 @@
 #include "ui/about/AboutDialog.h"
 #include "ui/eclasstree/EClassTree.h"
 #include "ui/entitylist/EntityList.h"
+#include "ui/particles/ParticleEditor.h"
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
@@ -218,6 +219,9 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("RefreshShaders",
 		std::bind(&UserInterfaceModule::refreshShadersCmd, this, std::placeholders::_1));
+
+	// Add the callback event
+	GlobalCommandSystem().addCommand("ParticlesEditor", ParticleEditor::DisplayDialog);
 }
 
 // Static module registration

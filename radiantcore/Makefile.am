@@ -95,6 +95,14 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 model/NullModelNode.cpp \
                 modulesystem/ModuleLoader.cpp \
                 modulesystem/ModuleRegistry.cpp \
+                particles/ParticleDef.cpp \
+                particles/ParticleNode.cpp \
+                particles/ParticleParameter.cpp \
+                particles/ParticlesManager.cpp \
+                particles/RenderableParticle.cpp \
+                particles/RenderableParticleBunch.cpp \
+                particles/RenderableParticleStage.cpp \
+                particles/StageDef.cpp \
                 rendersystem/backend/glprogram/ARBBumpProgram.cpp \
                 rendersystem/backend/glprogram/ARBDepthFillProgram.cpp \
                 rendersystem/backend/glprogram/GenericVFPProgram.cpp \
