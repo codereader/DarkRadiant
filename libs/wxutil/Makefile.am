@@ -39,6 +39,7 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
                        GLFont.cpp \
                        menu/PopupMenu.cpp \
                        PathEntry.cpp \
+                       Splitter.cpp \
                        TreeModel.cpp \
                        TreeView.cpp \
                        TreeModelFilter.cpp \

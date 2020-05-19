@@ -178,6 +178,7 @@
     <ClInclude Include="..\..\libs\wxutil\ScrollWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />
     <ClInclude Include="..\..\libs\wxutil\SourceView.h" />
+    <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
     <ClInclude Include="..\..\libs\wxutil\TreeModel.h" />
     <ClInclude Include="..\..\libs\wxutil\TreeModelFilter.h" />
     <ClInclude Include="..\..\libs\wxutil\TreeView.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="..\..\libs\wxutil\preview\RenderPreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeModel.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeModelFilter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />

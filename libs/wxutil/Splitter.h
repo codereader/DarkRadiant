@@ -2,7 +2,7 @@
 
 #include <wx/splitter.h>
 
-namespace ui
+namespace wxutil
 {
 
 /// Subclass of wxSplitterWindow that provides splitter position persistence

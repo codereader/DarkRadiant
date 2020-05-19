@@ -212,9 +212,6 @@
     <Filter Include="src\fonts">
       <UniqueIdentifier>{a921dcd3-1518-490e-baf1-4b75bdd130c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ui\widgets">
-      <UniqueIdentifier>{6f4f3b4f-0cfb-40db-9826-1bbe750981a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\map\format">
       <UniqueIdentifier>{a33db67b-1632-47ad-9368-04d014d7d730}</UniqueIdentifier>
     </Filter>
@@ -1056,9 +1053,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\fonts\GlyphSet.cpp">
       <Filter>src\fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\widgets\Splitter.cpp">
-      <Filter>src\ui\widgets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp">
       <Filter>src\ui</Filter>
@@ -2162,9 +2156,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\fonts\GlyphSet.h">
       <Filter>src\fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\widgets\Splitter.h">
-      <Filter>src\ui\widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\Documentation.h">
       <Filter>src\ui</Filter>

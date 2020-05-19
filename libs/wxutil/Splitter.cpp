@@ -4,7 +4,7 @@
 
 #include <wx/event.h>
 
-namespace ui
+namespace wxutil
 {
 
 Splitter::Splitter(wxWindow* parent, const std::string& registryKey, long style,
