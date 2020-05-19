@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="DifficultyEditorMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>857,238</size>
+		<size>669,238</size>
 		<object class="wxBoxSizer">
 			<orient>wxHORIZONTAL</orient>
 			<object class="sizeritem">
@@ -34,6 +34,7 @@
 								<flag></flag>
 								<border>5</border>
 								<object class="wxButton" name="DifficultyEditorAddSettingButton">
+									<tooltip>Add a new item to this difficulty level</tooltip>
 									<label>Add</label>
 									<default>0</default>
 									<markup>0</markup>
@@ -45,6 +46,7 @@
 								<flag>wxLEFT|wxRIGHT</flag>
 								<border>6</border>
 								<object class="wxButton" name="DifficultyEditorDeleteSettingButton">
+									<tooltip>Delete the selected item from this difficulty level</tooltip>
 									<label>Delete</label>
 									<default>0</default>
 									<markup>0</markup>
@@ -115,6 +117,7 @@
 											<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</flag>
 											<border>6</border>
 											<object class="wxTextCtrl" name="ClassNameTextBox">
+												<tooltip>Entity class to modify. Enter an exact class name or start typing to autocomplete.</tooltip>
 												<value></value>
 											</object>
 										</object>
@@ -124,10 +127,11 @@
 											<border>6</border>
 											<object class="wxButton" name="ChooseClassButton">
 												<style>wxBU_EXACTFIT</style>
-												<label>...</label>
+												<tooltip>Use the entity class chooser dialog to select an entity class</tooltip>
+												<label></label>
 												<default>0</default>
 												<markup>0</markup>
-												<bitmap />
+												<bitmap stock_id="darkradiant:treeView16.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 											</object>
 										</object>
 									</object>
@@ -146,6 +150,7 @@
 									<flag>wxALL|wxEXPAND</flag>
 									<border>6</border>
 									<object class="wxTextCtrl" name="DifficultyEditorSpawnarg">
+										<tooltip>Spawnarg to modify on the selected entity class</tooltip>
 										<value></value>
 									</object>
 								</object>
@@ -169,6 +174,7 @@
 											<flag>wxTOP|wxBOTTOM|wxLEFT</flag>
 											<border>6</border>
 											<object class="wxTextCtrl" name="DifficultyEditorArgument">
+												<tooltip>Modification to make to the selected spawnarg</tooltip>
 												<value></value>
 											</object>
 										</object>
@@ -190,6 +196,7 @@
 							<flag>wxALL|wxALIGN_RIGHT</flag>
 							<border>6</border>
 							<object class="wxButton" name="DifficultyEditorSaveSettingButton">
+								<tooltip>Commit the above changes into the list in the left-hand panel</tooltip>
 								<label>Save</label>
 								<default>0</default>
 								<markup>0</markup>
