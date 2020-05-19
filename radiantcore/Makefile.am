@@ -71,6 +71,10 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 filters/BasicFilterSystem.cpp \
                 filters/XMLFilter.cpp \
                 filters/XmlFilterEventAdapter.cpp \
+                fonts/FontLoader.cpp \
+                fonts/GlyphInfo.cpp \
+                fonts/GlyphSet.cpp \
+                fonts/FontManager.cpp \
                 grid/GridManager.cpp \
                 imagefile/dds.cpp \
                 imagefile/ddslib.cpp \

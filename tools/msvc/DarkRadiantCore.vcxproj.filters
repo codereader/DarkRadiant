@@ -110,6 +110,9 @@
     <Filter Include="src\particles">
       <UniqueIdentifier>{eda86d46-9b16-4fa4-b6cb-f302f83d0f07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\fonts">
+      <UniqueIdentifier>{b941367d-6eda-43b5-8d6d-ed46974b796c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -450,6 +453,18 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\particles\ParticleParameter.cpp">
       <Filter>src\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fonts\FontLoader.cpp">
+      <Filter>src\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fonts\FontManager.cpp">
+      <Filter>src\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fonts\GlyphInfo.cpp">
+      <Filter>src\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fonts\GlyphSet.cpp">
+      <Filter>src\fonts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -965,6 +980,21 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\particles\ParticleRenderInfo.h">
       <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fonts\FontInfo.h">
+      <Filter>src\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fonts\FontLoader.h">
+      <Filter>src\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fonts\FontManager.h">
+      <Filter>src\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fonts\GlyphInfo.h">
+      <Filter>src\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fonts\GlyphSet.h">
+      <Filter>src\fonts</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

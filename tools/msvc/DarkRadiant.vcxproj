@@ -204,10 +204,6 @@
     <ClCompile Include="..\..\radiant\eventmanager\Statement.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Toggle.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp" />
-    <ClCompile Include="..\..\radiant\fonts\FontLoader.cpp" />
-    <ClCompile Include="..\..\radiant\fonts\FontManager.cpp" />
-    <ClCompile Include="..\..\radiant\fonts\GlyphInfo.cpp" />
-    <ClCompile Include="..\..\radiant\fonts\GlyphSet.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerManager.cpp" />
     <ClCompile Include="..\..\radiant\layers\LayerModule.cpp" />
@@ -927,11 +923,6 @@
     <ClInclude Include="..\..\radiant\eventmanager\Statement.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Toggle.h" />
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h" />
-    <ClInclude Include="..\..\radiant\fonts\FontInfo.h" />
-    <ClInclude Include="..\..\radiant\fonts\FontLoader.h" />
-    <ClInclude Include="..\..\radiant\fonts\FontManager.h" />
-    <ClInclude Include="..\..\radiant\fonts\GlyphInfo.h" />
-    <ClInclude Include="..\..\radiant\fonts\GlyphSet.h" />
     <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\layers\LayerManager.h" />
     <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h" />

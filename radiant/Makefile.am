@@ -70,10 +70,6 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Statement.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
-                      fonts/FontLoader.cpp \
-                      fonts/GlyphInfo.cpp \
-                      fonts/GlyphSet.cpp \
-                      fonts/FontManager.cpp \
                       map/MapModules.cpp \
                       map/format/Quake3MapFormat.cpp \
                       map/format/Quake4MapFormat.cpp \

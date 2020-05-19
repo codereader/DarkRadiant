@@ -57,6 +57,10 @@
     <ClCompile Include="..\..\radiantcore\filters\BasicFilterSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\filters\XMLFilter.cpp" />
     <ClCompile Include="..\..\radiantcore\filters\XmlFilterEventAdapter.cpp" />
+    <ClCompile Include="..\..\radiantcore\fonts\FontLoader.cpp" />
+    <ClCompile Include="..\..\radiantcore\fonts\FontManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\fonts\GlyphInfo.cpp" />
+    <ClCompile Include="..\..\radiantcore\fonts\GlyphSet.cpp" />
     <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp" />
@@ -194,6 +198,11 @@
     <ClInclude Include="..\..\radiantcore\filters\SetObjectSelectionByFilterWalker.h" />
     <ClInclude Include="..\..\radiantcore\filters\XMLFilter.h" />
     <ClInclude Include="..\..\radiantcore\filters\XmlFilterEventAdapter.h" />
+    <ClInclude Include="..\..\radiantcore\fonts\FontInfo.h" />
+    <ClInclude Include="..\..\radiantcore\fonts\FontLoader.h" />
+    <ClInclude Include="..\..\radiantcore\fonts\FontManager.h" />
+    <ClInclude Include="..\..\radiantcore\fonts\GlyphInfo.h" />
+    <ClInclude Include="..\..\radiantcore\fonts\GlyphSet.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridItem.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridManager.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\dds.h" />

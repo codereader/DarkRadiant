@@ -209,9 +209,6 @@
     <Filter Include="src\md5model">
       <UniqueIdentifier>{9ece5d35-1ea4-4651-aa2c-b8a9c80b62da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\fonts">
-      <UniqueIdentifier>{a921dcd3-1518-490e-baf1-4b75bdd130c7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\map\format">
       <UniqueIdentifier>{a33db67b-1632-47ad-9368-04d014d7d730}</UniqueIdentifier>
     </Filter>
@@ -1041,18 +1038,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\md5model\plugin.cpp">
       <Filter>src\md5model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\fonts\FontLoader.cpp">
-      <Filter>src\fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\fonts\FontManager.cpp">
-      <Filter>src\fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\fonts\GlyphInfo.cpp">
-      <Filter>src\fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\fonts\GlyphSet.cpp">
-      <Filter>src\fonts</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp">
       <Filter>src\ui</Filter>
@@ -2141,21 +2126,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\md5model\RenderableMD5Skeleton.h">
       <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\fonts\FontInfo.h">
-      <Filter>src\fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\fonts\FontLoader.h">
-      <Filter>src\fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\fonts\FontManager.h">
-      <Filter>src\fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\fonts\GlyphInfo.h">
-      <Filter>src\fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\fonts\GlyphSet.h">
-      <Filter>src\fonts</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\Documentation.h">
       <Filter>src\ui</Filter>
