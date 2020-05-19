@@ -58,7 +58,6 @@ ImageLoaderWx::ImageLoaderWx()
 {
     // BMP handler is registered by default; may need to add other formats
     wxImage::AddHandler(new wxPNGHandler);
-    wxImage::AddHandler(new wxJPEGHandler);
 }
 
 ImagePtr ImageLoaderWx::load(ArchiveFile& file) const
@@ -81,7 +80,6 @@ ImageTypeLoader::Extensions ImageLoaderWx::getExtensions() const
     ImageTypeLoader::Extensions extensions;
     extensions.push_back("bmp");
     extensions.push_back("png");
-    extensions.push_back("jpg");
     return extensions;
 }
 

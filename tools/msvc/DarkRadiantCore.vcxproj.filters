@@ -466,6 +466,9 @@
     <ClCompile Include="..\..\radiantcore\fonts\GlyphSet.cpp">
       <Filter>src\fonts</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\JPEGLoader.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -995,6 +998,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\fonts\GlyphSet.h">
       <Filter>src\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\JPEGLoader.h">
+      <Filter>src\imagefile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

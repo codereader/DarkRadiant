@@ -67,6 +67,7 @@
     <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ImageLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ImageLoaderWx.cpp" />
+    <ClCompile Include="..\..\radiantcore\imagefile\JPEGLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\TGALoader.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\MapFormatManager.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="..\..\radiantcore\imagefile\ImageLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ImageLoaderWx.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ImageTypeLoader.h" />
+    <ClInclude Include="..\..\radiantcore\imagefile\JPEGLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\TGALoader.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
     <ClInclude Include="..\..\radiantcore\map\format\MapFormatManager.h" />
@@ -361,6 +363,7 @@
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\zlib.props" />
+    <Import Project="properties\libjpeg.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -371,6 +374,7 @@
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\zlib.props" />
+    <Import Project="properties\libjpeg.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -381,6 +385,7 @@
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\zlib.props" />
+    <Import Project="properties\libjpeg.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -391,6 +396,7 @@
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
     <Import Project="properties\zlib.props" />
+    <Import Project="properties\libjpeg.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

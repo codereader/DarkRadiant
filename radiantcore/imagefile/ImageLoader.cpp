@@ -1,6 +1,7 @@
 #include "ImageLoader.h"
 #include "ImageLoaderWx.h"
 #include "TGALoader.h"
+#include "JPEGLoader.h"
 #include "dds.h"
 
 #include "ifilesystem.h"
@@ -37,6 +38,9 @@ ImageLoader::ImageLoader()
 {
     // Wx loader (this handles regular image file types like BMP and PNG)
     addLoaderToMap(std::make_shared<ImageLoaderWx>());
+
+    // JPEG handler
+    addLoaderToMap(std::make_shared<JPEGLoader>());
 
     // RLE-supporting TGA loader
     addLoaderToMap(std::make_shared<TGALoader>());
