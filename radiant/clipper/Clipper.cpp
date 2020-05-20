@@ -4,8 +4,6 @@
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 #include "iundo.h"
-#include "imainframe.h"
-#include "ieventmanager.h"
 #include "iscenegraph.h"
 #include "iselection.h"
 #include "itexdef.h"
@@ -14,7 +12,7 @@
 #include "module/StaticModule.h"
 #include "ClipPoint.h"
 #include "brush/csg/CSG.h"
-#include "ui/texturebrowser/TextureBrowser.h"
+#include "debugging/debugging.h"
 
 #include <functional>
 
@@ -145,7 +143,6 @@ void Clipper::splitBrushes(const Vector3& p0,
 	Vector3 planePoints[3] = {p0, p1, p2};
 
 	brush::algorithm::splitBrushesByPlane(planePoints, split);
-	GlobalMainFrame().updateAllWindows();
 }
 
 void Clipper::setClipPlane(const Plane3& plane) {
@@ -168,13 +165,13 @@ void Clipper::update() {
 		}
 		setClipPlane(Plane3(planepts));
 	}
-	GlobalMainFrame().updateAllWindows();
+	SceneChangeNotify();
 }
 
 void Clipper::flipClip() {
 	_switch = !_switch;
 	update();
-	GlobalMainFrame().updateAllWindows();
+	SceneChangeNotify();
 }
 
 void Clipper::reset() {
@@ -260,7 +257,6 @@ const StringSet& Clipper::getDependencies() const {
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_MAINFRAME);
 	}
