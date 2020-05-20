@@ -76,11 +76,13 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 fonts/GlyphSet.cpp \
                 fonts/FontManager.cpp \
                 grid/GridManager.cpp \
+                imagefile/BMPLoader.cpp \
                 imagefile/dds.cpp \
                 imagefile/ddslib.cpp \
                 imagefile/DDSImage.cpp \
                 imagefile/ImageLoader.cpp \
                 imagefile/ImageLoaderWx.cpp \
+                imagefile/JPEGLoader.cpp \
                 imagefile/TGALoader.cpp \
                 log/COutRedirector.cpp \
                 log/LogFile.cpp \

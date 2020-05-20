@@ -469,6 +469,9 @@
     <ClCompile Include="..\..\radiantcore\imagefile\JPEGLoader.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\BMPLoader.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1000,6 +1003,9 @@
       <Filter>src\fonts</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\JPEGLoader.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\BMPLoader.h">
       <Filter>src\imagefile</Filter>
     </ClInclude>
   </ItemGroup>

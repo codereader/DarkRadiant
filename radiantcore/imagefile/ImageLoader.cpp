@@ -2,6 +2,7 @@
 #include "ImageLoaderWx.h"
 #include "TGALoader.h"
 #include "JPEGLoader.h"
+#include "BMPLoader.h"
 #include "dds.h"
 
 #include "ifilesystem.h"
@@ -36,8 +37,11 @@ void ImageLoader::addLoaderToMap(const ImageTypeLoader::Ptr& loader)
 
 ImageLoader::ImageLoader()
 {
-    // Wx loader (this handles regular image file types like BMP and PNG)
+    // Wx loader (this handles regular image file types like PNG)
     addLoaderToMap(std::make_shared<ImageLoaderWx>());
+
+    // BMP handler
+    addLoaderToMap(std::make_shared<BMPLoader>());
 
     // JPEG handler
     addLoaderToMap(std::make_shared<JPEGLoader>());

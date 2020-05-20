@@ -62,6 +62,7 @@
     <ClCompile Include="..\..\radiantcore\fonts\GlyphInfo.cpp" />
     <ClCompile Include="..\..\radiantcore\fonts\GlyphSet.cpp" />
     <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\imagefile\BMPLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="..\..\radiantcore\fonts\GlyphSet.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridItem.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridManager.h" />
+    <ClInclude Include="..\..\radiantcore\imagefile\BMPLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\dds.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\DDSImage.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h" />
