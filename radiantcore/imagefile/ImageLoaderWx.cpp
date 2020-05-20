@@ -78,7 +78,6 @@ ImagePtr ImageLoaderWx::load(ArchiveFile& file) const
 ImageTypeLoader::Extensions ImageLoaderWx::getExtensions() const
 {
     ImageTypeLoader::Extensions extensions;
-    extensions.push_back("png");
     return extensions;
 }
 

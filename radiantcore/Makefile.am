@@ -83,6 +83,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 imagefile/ImageLoader.cpp \
                 imagefile/ImageLoaderWx.cpp \
                 imagefile/JPEGLoader.cpp \
+                imagefile/PNGLoader.cpp \
                 imagefile/TGALoader.cpp \
                 log/COutRedirector.cpp \
                 log/LogFile.cpp \

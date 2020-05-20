@@ -472,6 +472,9 @@
     <ClCompile Include="..\..\radiantcore\imagefile\BMPLoader.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\imagefile\PNGLoader.cpp">
+      <Filter>src\imagefile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1006,6 +1009,9 @@
       <Filter>src\imagefile</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\BMPLoader.h">
+      <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\imagefile\PNGLoader.h">
       <Filter>src\imagefile</Filter>
     </ClInclude>
   </ItemGroup>
