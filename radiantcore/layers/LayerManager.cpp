@@ -1,11 +1,7 @@
 #include "LayerManager.h"
 
-#include "iorthocontextmenu.h"
 #include "i18n.h"
-#include "ieventmanager.h"
-#include "iuimanager.h"
 #include "itextstream.h"
-#include "imainframe.h"
 #include "imapinfofile.h"
 #include "icommandsystem.h"
 #include "scene/Node.h"
@@ -17,10 +13,6 @@
 #include "RemoveFromLayerWalker.h"
 #include "SetLayerSelectedWalker.h"
 #include "LayerInfoFileModule.h"
-
-#include "wxutil/dialog/Dialog.h"
-#include "wxutil/dialog/MessageBox.h"
-#include "wxutil/EntryAbortedException.h"
 
 #include <functional>
 

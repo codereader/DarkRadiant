@@ -204,10 +204,6 @@
     <ClCompile Include="..\..\radiant\eventmanager\Statement.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Toggle.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp" />
-    <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp" />
-    <ClCompile Include="..\..\radiant\layers\LayerManager.cpp" />
-    <ClCompile Include="..\..\radiant\layers\LayerModule.cpp" />
-    <ClCompile Include="..\..\radiant\layers\LayerUsageBreakdown.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\AasFileManager.cpp" />
     <ClCompile Include="..\..\radiant\map\aas\Doom3AasFile.cpp" />
@@ -748,6 +744,7 @@
     <ClCompile Include="..\..\radiant\ui\filters\FiltersMainMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterUserInterface.cpp" />
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp" />
+    <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
@@ -923,9 +920,6 @@
     <ClInclude Include="..\..\radiant\eventmanager\Statement.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Toggle.h" />
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h" />
-    <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h" />
-    <ClInclude Include="..\..\radiant\layers\LayerManager.h" />
-    <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\AasFileManager.h" />
     <ClInclude Include="..\..\radiant\map\aas\Doom3AasFile.h" />
     <ClInclude Include="..\..\radiant\map\aas\Doom3AasFileLoader.h" />
@@ -1066,6 +1060,7 @@
     <ClInclude Include="..\..\radiant\ui\filters\FiltersMainMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterUserInterface.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h" />
+    <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
@@ -1268,10 +1263,6 @@
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
-    <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h" />
-    <ClInclude Include="..\..\radiant\layers\MoveToLayerWalker.h" />
-    <ClInclude Include="..\..\radiant\layers\RemoveFromLayerWalker.h" />
-    <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h" />
     <ClInclude Include="..\..\radiant\log\Console.h" />
     <ClInclude Include="..\..\radiant\log\PIDFile.h" />
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h" />

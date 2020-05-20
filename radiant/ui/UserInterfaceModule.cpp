@@ -38,6 +38,7 @@
 #include "modelexport/ExportAsModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
 #include "uimanager/colourscheme/ColourSchemeEditor.h"
+#include "ui/layers/CreateLayerDialog.h"
 
 namespace ui
 {
@@ -222,6 +223,10 @@ void UserInterfaceModule::registerUICommands()
 
 	// Add the callback event
 	GlobalCommandSystem().addCommand("ParticlesEditor", ParticleEditor::DisplayDialog);
+
+	// Register the "create layer" command
+	GlobalCommandSystem().addCommand("CreateNewLayer", CreateLayerDialog::CreateNewLayer,
+		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 }
 
 // Static module registration

@@ -84,6 +84,9 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 imagefile/JPEGLoader.cpp \
                 imagefile/PNGLoader.cpp \
                 imagefile/TGALoader.cpp \
+                layers/LayerInfoFileModule.cpp \
+                layers/LayerModule.cpp \
+                layers/LayerManager.cpp \
                 log/COutRedirector.cpp \
                 log/LogFile.cpp \
                 log/LogStream.cpp \

@@ -128,9 +128,6 @@
     <Filter Include="src\xyview">
       <UniqueIdentifier>{c770bd9e-5b03-48c4-8410-e4db36fd6057}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\layers">
-      <UniqueIdentifier>{49a229c1-445c-4b3b-94d5-6b637f47d65b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\log">
       <UniqueIdentifier>{553b5fe4-8c45-46e9-8be9-f75585fbf389}</UniqueIdentifier>
     </Filter>
@@ -754,9 +751,6 @@
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp">
       <Filter>src\selection\selectionset</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\layers\LayerInfoFileModule.cpp">
-      <Filter>src\layers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupManager.cpp">
       <Filter>src\selection\group</Filter>
     </ClCompile>
@@ -789,9 +783,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp">
       <Filter>src\xyview\tools</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\layers\LayerUsageBreakdown.cpp">
-      <Filter>src\layers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp">
       <Filter>src\ui\mapinfo</Filter>
@@ -1111,12 +1102,6 @@
     <ClCompile Include="..\..\radiant\selection\group\SelectionGroupModule.cpp">
       <Filter>src\selection\group</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\layers\LayerModule.cpp">
-      <Filter>src\layers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\layers\LayerManager.cpp">
-      <Filter>src\layers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetModule.cpp">
       <Filter>src\selection\selectionset</Filter>
     </ClCompile>
@@ -1164,6 +1149,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\particles\ParticleEditor.cpp">
       <Filter>src\ui\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp">
+      <Filter>src\ui\layers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1698,18 +1686,6 @@
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h">
       <Filter>src\xyview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\AddToLayerWalker.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\MoveToLayerWalker.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\RemoveFromLayerWalker.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\SetLayerSelectedWalker.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\log\Console.h">
       <Filter>src\log</Filter>
     </ClInclude>
@@ -1854,9 +1830,6 @@
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h">
       <Filter>src\selection\selectionset</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\LayerInfoFileModule.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\selection\group\SelectionGroup.h">
       <Filter>src\selection\group</Filter>
     </ClInclude>
@@ -1907,9 +1880,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\tools\MeasurementTool.h">
       <Filter>src\xyview\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\LayerUsageBreakdown.h">
-      <Filter>src\layers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h">
       <Filter>src\ui\mapinfo</Filter>
@@ -2214,9 +2184,6 @@
     <ClInclude Include="..\..\radiant\map\algorithm\Import.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\LayerManager.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h">
       <Filter>src\ui\filters</Filter>
     </ClInclude>
@@ -2276,6 +2243,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\particles\ParticleEditor.h">
       <Filter>src\ui\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h">
+      <Filter>src\ui\layers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

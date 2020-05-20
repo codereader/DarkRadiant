@@ -70,6 +70,9 @@
     <ClCompile Include="..\..\radiantcore\imagefile\JPEGLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\PNGLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\TGALoader.cpp" />
+    <ClCompile Include="..\..\radiantcore\layers\LayerInfoFileModule.cpp" />
+    <ClCompile Include="..\..\radiantcore\layers\LayerManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\layers\LayerModule.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\MapFormatManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />
@@ -216,6 +219,12 @@
     <ClInclude Include="..\..\radiantcore\imagefile\JPEGLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\PNGLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\TGALoader.h" />
+    <ClInclude Include="..\..\radiantcore\layers\AddToLayerWalker.h" />
+    <ClInclude Include="..\..\radiantcore\layers\LayerInfoFileModule.h" />
+    <ClInclude Include="..\..\radiantcore\layers\LayerManager.h" />
+    <ClInclude Include="..\..\radiantcore\layers\MoveToLayerWalker.h" />
+    <ClInclude Include="..\..\radiantcore\layers\RemoveFromLayerWalker.h" />
+    <ClInclude Include="..\..\radiantcore\layers\SetLayerSelectedWalker.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
     <ClInclude Include="..\..\radiantcore\map\format\MapFormatManager.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\ComplexName.h" />

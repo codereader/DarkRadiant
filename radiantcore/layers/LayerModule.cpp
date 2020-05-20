@@ -1,6 +1,4 @@
 #include "ilayer.h"
-#include "i18n.h"
-#include "ieventmanager.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
 #include "imapinfofile.h"
@@ -9,10 +7,6 @@
 #include "module/StaticModule.h"
 #include "LayerManager.h"
 #include "LayerInfoFileModule.h"
-
-#include "wxutil/dialog/Dialog.h"
-#include "wxutil/dialog/MessageBox.h"
-#include "wxutil/EntryAbortedException.h"
 
 namespace scene
 {
@@ -54,7 +48,6 @@ public:
 
 		if (_dependencies.empty())
 		{
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		}
@@ -82,11 +75,6 @@ public:
 			std::bind(&LayerModule::hideLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
 
-		// Register the "create layer" command
-		GlobalCommandSystem().addCommand("CreateNewLayer",
-			std::bind(&LayerModule::createLayerCmd, this, std::placeholders::_1),
-			{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
-
 		GlobalMapInfoFileManager().registerInfoFileModule(
 			std::make_shared<LayerInfoFileModule>()
 		);
@@ -98,71 +86,6 @@ public:
 	}
 
 private:
-	// Command target
-	void createLayerCmd(const cmd::ArgumentList& args)
-	{
-		if (!GlobalMapModule().getRoot())
-		{
-			rError() << "No map loaded, cannot create a layer." << std::endl;
-			return;
-		}
-
-		std::string initialName = !args.empty() ? args[0].getString() : "";
-
-		while (true)
-		{
-			// Query the name of the new layer from the user
-			std::string layerName;
-
-			if (!initialName.empty()) 
-			{
-				// If we got a layer name passed through the arguments,
-				// we use this one, but only the first time
-				layerName = initialName;
-				initialName.clear();
-			}
-
-			if (layerName.empty()) 
-			{
-				try 
-				{
-					layerName = wxutil::Dialog::TextEntryDialog(
-						_("Enter Name"),
-						_("Enter Layer Name"),
-						"",
-						GlobalMainFrame().getWxTopLevelWindow()
-					);
-				}
-				catch (wxutil::EntryAbortedException&)
-				{
-					break;
-				}
-			}
-
-			if (layerName.empty())
-			{
-				// Wrong name, let the user try again
-				wxutil::Messagebox::ShowError(_("Cannot create layer with empty name."));
-				continue;
-			}
-
-			// Attempt to create the layer, this will return -1 if the operation fails
-			int layerID = GlobalMapModule().getRoot()->getLayerManager().createLayer(layerName);
-
-			if (layerID != -1)
-			{
-				// Success, break the loop
-				break;
-			}
-			else 
-			{
-				// Wrong name, let the user try again
-				wxutil::Messagebox::ShowError(_("This name already exists."));
-				continue;
-			}
-		}
-	}
-
 	void addSelectionToLayer(const cmd::ArgumentList& args)
 	{
 		if (args.size() != 1)

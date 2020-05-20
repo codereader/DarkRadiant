@@ -160,6 +160,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/grid/GridUserInterface.cpp \
                       ui/mru/MRUMenuItem.cpp \
                       ui/mru/MRU.cpp \
+                      ui/layers/CreateLayerDialog.cpp \
                       ui/layers/LayerControl.cpp \
                       ui/layers/LayerContextMenu.cpp \
                       ui/layers/LayerControlDialog.cpp \
@@ -262,10 +263,6 @@ darkradiant_SOURCES = main.cpp \
                       textool/item/PatchItem.cpp \
                       textool/item/PatchVertexItem.cpp \
                       textool/TexTool.cpp \
-					  layers/LayerInfoFileModule.cpp \
-                      layers/LayerModule.cpp \
-                      layers/LayerManager.cpp \
-					  layers/LayerUsageBreakdown.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
                       selection/SelectedNodeList.cpp \
 					  selection/clipboard/Clipboard.cpp \

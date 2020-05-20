@@ -113,6 +113,9 @@
     <Filter Include="src\fonts">
       <UniqueIdentifier>{b941367d-6eda-43b5-8d6d-ed46974b796c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\layers">
+      <UniqueIdentifier>{15e9c6c7-b206-46ff-aacd-260a9a830d75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -471,6 +474,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\imagefile\PNGLoader.cpp">
       <Filter>src\imagefile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\layers\LayerInfoFileModule.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\layers\LayerManager.cpp">
+      <Filter>src\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\layers\LayerModule.cpp">
+      <Filter>src\layers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1007,6 +1019,24 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\PNGLoader.h">
       <Filter>src\imagefile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\layers\AddToLayerWalker.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\layers\LayerInfoFileModule.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\layers\LayerManager.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\layers\MoveToLayerWalker.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\layers\RemoveFromLayerWalker.h">
+      <Filter>src\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\layers\SetLayerSelectedWalker.h">
+      <Filter>src\layers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
