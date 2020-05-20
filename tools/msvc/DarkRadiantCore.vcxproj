@@ -67,7 +67,6 @@
     <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ImageLoader.cpp" />
-    <ClCompile Include="..\..\radiantcore\imagefile\ImageLoaderWx.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\JPEGLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\PNGLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\TGALoader.cpp" />
@@ -213,7 +212,6 @@
     <ClInclude Include="..\..\radiantcore\imagefile\DDSImage.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ImageLoader.h" />
-    <ClInclude Include="..\..\radiantcore\imagefile\ImageLoaderWx.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ImageTypeLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\JPEGLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\PNGLoader.h" />

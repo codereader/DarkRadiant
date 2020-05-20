@@ -211,9 +211,6 @@
     <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\imagefile\ImageLoaderWx.cpp">
-      <Filter>src\imagefile</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\imagefile\TGALoader.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
@@ -643,9 +640,6 @@
       <Filter>src\imagefile</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h">
-      <Filter>src\imagefile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\imagefile\ImageLoaderWx.h">
       <Filter>src\imagefile</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\ImageTypeLoader.h">

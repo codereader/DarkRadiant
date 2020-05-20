@@ -81,7 +81,6 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 imagefile/ddslib.cpp \
                 imagefile/DDSImage.cpp \
                 imagefile/ImageLoader.cpp \
-                imagefile/ImageLoaderWx.cpp \
                 imagefile/JPEGLoader.cpp \
                 imagefile/PNGLoader.cpp \
                 imagefile/TGALoader.cpp \
