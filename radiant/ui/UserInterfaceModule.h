@@ -41,6 +41,7 @@ private:
 	void initialiseEntitySettings();
 	void applyEntityVertexColours();
 	void applyBrushVertexColours();
+	void applyPatchVertexColours();
 	void refreshShadersCmd(const cmd::ArgumentList& args);
 };
 

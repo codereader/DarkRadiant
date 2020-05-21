@@ -5,6 +5,7 @@
 #include "ifilter.h"
 #include "ientity.h"
 #include "ibrush.h"
+#include "ipatch.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
@@ -156,11 +157,14 @@ void UserInterfaceModule::initialiseEntitySettings()
 	);
 
 	applyEntityVertexColours();
+	applyBrushVertexColours();
+	applyPatchVertexColours();
 
 	_coloursUpdatedConn = ColourSchemeEditor::signal_ColoursChanged().connect(
 		[this]() { 
 			applyEntityVertexColours(); 
 			applyBrushVertexColours(); 
+			applyPatchVertexColours();
 		}
 	);
 
@@ -174,6 +178,14 @@ void UserInterfaceModule::applyBrushVertexColours()
 	auto& settings = GlobalBrushCreator().getSettings();
 
 	settings.setVertexColour(ColourSchemes().getColour("brush_vertices"));
+}
+
+void UserInterfaceModule::applyPatchVertexColours()
+{
+	auto& settings = GlobalPatchCreator(PatchDefType::Def3).getSettings();
+
+	settings.setVertexColour(patch::PatchEditVertexType::Corners, ColourSchemes().getColour("patch_vertex_corner"));
+	settings.setVertexColour(patch::PatchEditVertexType::Inside, ColourSchemes().getColour("patch_vertex_inside"));
 }
 
 void UserInterfaceModule::applyEntityVertexColours()

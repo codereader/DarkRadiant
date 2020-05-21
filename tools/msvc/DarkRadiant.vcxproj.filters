@@ -2256,6 +2256,9 @@
     <ClInclude Include="..\..\radiant\brush\BrushSettings.h">
       <Filter>src\brush</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchSettings.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

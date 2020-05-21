@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IPATCH_H)
-#define INCLUDED_IPATCH_H
+#pragma once
 
 #include "imodule.h"
 
@@ -168,6 +146,27 @@ public:
 	virtual void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) = 0;
 };
 
+namespace patch
+{
+
+enum class PatchEditVertexType : std::size_t
+{
+	Corners,
+	Inside,
+	NumberOfVertexTypes,
+};
+
+class IPatchSettings
+{
+public:
+	virtual ~IPatchSettings() {}
+
+	virtual const Vector3& getVertexColour(PatchEditVertexType type) const = 0;
+	virtual void setVertexColour(PatchEditVertexType type, const Vector3& value) = 0;
+
+	virtual sigc::signal<void>& signal_settingsChanged() = 0;
+};
+
 /* greebo: the abstract base class for a patch-creating class.
  * At the moment, the CommonPatchCreator, Doom3PatchCreator and Doom3PatchDef2Creator derive from this base class.
  */
@@ -177,7 +176,11 @@ class PatchCreator :
 public:
 	// Create a patch and return the sceneNode
 	virtual scene::INodePtr createPatch() = 0;
+
+	virtual IPatchSettings& getSettings() = 0;
 };
+
+}
 
 class Patch;
 class IPatchNode
@@ -236,10 +239,10 @@ enum class PatchDefType
 };
 
 // Acquires the PatchCreator of the given type ("Def2", "Def3")
-inline PatchCreator& GlobalPatchCreator(PatchDefType type)
+inline patch::PatchCreator& GlobalPatchCreator(PatchDefType type)
 {
-	std::shared_ptr<PatchCreator> _patchCreator(
-		std::static_pointer_cast<PatchCreator>(
+	std::shared_ptr<patch::PatchCreator> _patchCreator(
+		std::static_pointer_cast<patch::PatchCreator>(
 			module::GlobalModuleRegistry().getModule(
 				type == PatchDefType::Def2 ? MODULE_PATCHDEF2 : MODULE_PATCHDEF3
 			)
@@ -248,5 +251,3 @@ inline PatchCreator& GlobalPatchCreator(PatchDefType type)
 
 	return *_patchCreator;
 }
-
-#endif

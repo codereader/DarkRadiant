@@ -14,6 +14,9 @@
 #include "patch/algorithm/General.h"
 #include "selection/algorithm/Patch.h"
 
+namespace patch
+{
+
 namespace
 {
 	const char* const RKEY_PATCH_SUBDIVIDE_THRESHOLD = "user/ui/patch/subdivideThreshold";
@@ -30,8 +33,13 @@ scene::INodePtr Doom3PatchCreator::createPatch()
 		// All patches are created in the active layer by default
 		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
 	}
-		
+
 	return node;
+}
+
+IPatchSettings& Doom3PatchCreator::getSettings()
+{
+	return *_settings;
 }
 
 // RegisterableModule implementation
@@ -56,6 +64,8 @@ const StringSet& Doom3PatchCreator::getDependencies() const
 void Doom3PatchCreator::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	_settings.reset(new PatchSettings);
 
 	registerPatchCommands();
 
@@ -110,7 +120,7 @@ scene::INodePtr Doom3PatchDef2Creator::createPatch()
 		// All patches are created in the active layer by default
 		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
 	}
-		
+
 	return node;
 }
 
@@ -137,4 +147,6 @@ const StringSet& Doom3PatchDef2Creator::getDependencies() const
 void Doom3PatchDef2Creator::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
+}
+
 }

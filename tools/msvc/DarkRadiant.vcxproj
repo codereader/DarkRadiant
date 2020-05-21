@@ -992,6 +992,7 @@
     <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
+    <ClInclude Include="..\..\radiant\patch\PatchSettings.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantApp.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />

@@ -1,7 +1,7 @@
 #include "Patch.h"
 
 #include "i18n.h"
-#include "iuimanager.h"
+#include "ipatch.h"
 #include "imainframe.h"
 #include "shaderlib.h"
 #include "irenderable.h"
@@ -27,15 +27,16 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
   return VertexPointer(&array->vertex, sizeof(ArbitraryMeshVertex));
 }
 
-inline const Colour4b colour_for_index(std::size_t i, std::size_t width) {
-  static const Vector3 cornerColourVec = ColourSchemes().getColour("patch_vertex_corner");
-  static const Vector3 insideColourVec = ColourSchemes().getColour("patch_vertex_inside");
-  const Colour4b colour_corner(int(cornerColourVec[0]*255), int(cornerColourVec[1]*255),
-  							   int(cornerColourVec[2]*255), 255);
-  const Colour4b colour_inside(int(insideColourVec[0]*255), int(insideColourVec[1]*255),
-  							   int(insideColourVec[2]*255), 255);
+inline const Colour4b colour_for_index(std::size_t i, std::size_t width)
+{
+	static const Vector3& cornerColourVec = GlobalPatchCreator(PatchDefType::Def3).getSettings().getVertexColour(patch::PatchEditVertexType::Corners);
+	static const Vector3& insideColourVec = GlobalPatchCreator(PatchDefType::Def3).getSettings().getVertexColour(patch::PatchEditVertexType::Inside);
+	const Colour4b colour_corner(int(cornerColourVec[0]*255), int(cornerColourVec[1]*255),
+  								int(cornerColourVec[2]*255), 255);
+	const Colour4b colour_inside(int(insideColourVec[0]*255), int(insideColourVec[1]*255),
+  								int(insideColourVec[2]*255), 255);
 
-  return (i%2 || (i/width)%2) ? colour_inside : colour_corner;
+	return (i%2 || (i/width)%2) ? colour_inside : colour_corner;
 }
 
 inline bool double_valid(double f) {

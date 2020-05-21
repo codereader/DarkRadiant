@@ -341,6 +341,8 @@ const char* const RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
 class IEntitySettings
 {
 public:
+    virtual ~IEntitySettings() {}
+
     virtual const Vector3& getLightVertexColour(LightEditVertexType type) const = 0;
     virtual void setLightVertexColour(LightEditVertexType type, const Vector3& value) = 0;
 

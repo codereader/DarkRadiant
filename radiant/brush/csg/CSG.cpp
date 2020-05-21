@@ -6,10 +6,7 @@
 #include "itextstream.h"
 #include "iundo.h"
 #include "igrid.h"
-#include "iradiant.h"
-#include "imainframe.h"
 #include "iselection.h"
-#include "ieventmanager.h"
 
 #include "scenelib.h"
 #include "shaderlib.h"
