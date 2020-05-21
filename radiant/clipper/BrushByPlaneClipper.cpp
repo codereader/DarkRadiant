@@ -2,7 +2,6 @@
 
 #include "scenelib.h"
 #include "brush/BrushNode.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 
 namespace algorithm
 {
@@ -128,10 +127,10 @@ void BrushByPlaneClipper::getMostUsedTexturing(const Brush& brush) const
 	_mostUsedProjection = TextureProjection();
 
 	// greebo: Get the most used shader of this brush
-	for (Brush::const_iterator i = brush.begin(); i != brush.end(); ++i)
+	for (auto& face : brush)
 	{
 		// Get the shadername
-		const std::string& shader = (*i)->getShader();
+		const std::string& shader = face->getShader();
 
 		// Insert counter, if necessary
 		if (shaderCount.find(shader) == shaderCount.end()) {
@@ -147,20 +146,8 @@ void BrushByPlaneClipper::getMostUsedTexturing(const Brush& brush) const
 			mostUsedShaderCount = shaderCount[shader];
 
 			// Copy the TexDef from the face into the local member
-			(*i)->GetTexdef(_mostUsedProjection);
+			face->GetTexdef(_mostUsedProjection);
 		}
-	}
-
-	// Fall back to the default shader, if nothing found
-	if (_mostUsedShader.empty() || mostUsedShaderCount == 1)
-	{
-		_mostUsedShader = GlobalTextureBrowser().getSelectedShader();
-		
-        // Use the same texture matrix as the first face of the brush
-        if (!brush.empty())
-        {
-            (*brush.begin())->GetTexdef(_mostUsedProjection);
-        }
 	}
 }
 
