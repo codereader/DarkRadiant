@@ -40,6 +40,7 @@ private:
 	void registerUICommands();
 	void initialiseEntitySettings();
 	void applyEntityVertexColours();
+	void applyBrushVertexColours();
 	void refreshShadersCmd(const cmd::ArgumentList& args);
 };
 

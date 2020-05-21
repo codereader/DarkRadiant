@@ -903,6 +903,7 @@
     <ClCompile Include="..\..\radiant\log\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\radiant\brush\BrushSettings.h" />
     <ClInclude Include="..\..\radiant\brush\TextureMatrix.h" />
     <ClInclude Include="..\..\radiant\camera\tools\CameraMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\camera\tools\FreeMoveTool.h" />

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "irender.h"
-#include "iuimanager.h"
 #include "iregistry.h"
 #include "iselection.h"
 #include "iselectiontest.h"
 #include "math/Vector3.h"
 #include "ObservedSelectable.h"
+#include "EntitySettings.h"
 
 class VertexInstance :
 	public OpenGLRenderable,
@@ -28,7 +28,7 @@ public:
 	VertexInstance(Vector3& vertex, const SelectionChangedSlot& observer) :
 		_vertex(vertex),
 		_selectable(observer),
-		_colour(ColourSchemes().getColour("light_vertex_deselected"))
+		_colour(entity::EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Deselected))
 	{}
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -59,9 +59,9 @@ public:
 	void setSelected(bool select) {
 		_selectable.setSelected(select);
 		// Change the colour according to the selection
-		_colour = (select) ?
-			ColourSchemes().getColour("light_vertex_selected") :
-			ColourSchemes().getColour("light_vertex_deselected");
+		_colour = entity::EntitySettings::InstancePtr()->getLightVertexColour(
+			select ? LightEditVertexType::Selected : LightEditVertexType::Deselected
+		);
 	}
 
 	bool isSelected() const {

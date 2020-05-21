@@ -2253,6 +2253,9 @@
     <ClInclude Include="..\..\radiant\clipper\BrushByPlaneClipper.h">
       <Filter>src\clipper</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\brush\BrushSettings.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

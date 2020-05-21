@@ -4,6 +4,7 @@
 #include "ilayer.h"
 #include "ifilter.h"
 #include "ientity.h"
+#include "ibrush.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
@@ -157,12 +158,22 @@ void UserInterfaceModule::initialiseEntitySettings()
 	applyEntityVertexColours();
 
 	_coloursUpdatedConn = ColourSchemeEditor::signal_ColoursChanged().connect(
-		sigc::mem_fun(this, &UserInterfaceModule::applyEntityVertexColours)
+		[this]() { 
+			applyEntityVertexColours(); 
+			applyBrushVertexColours(); 
+		}
 	);
 
 	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", RKEY_SHOW_ALL_LIGHT_RADII);
 	GlobalEventManager().addRegistryToggle("ToggleShowAllSpeakerRadii", RKEY_SHOW_ALL_SPEAKER_RADII);
 	GlobalEventManager().addRegistryToggle("ToggleDragResizeEntitiesSymmetrically", RKEY_DRAG_RESIZE_SYMMETRICALLY);
+}
+
+void UserInterfaceModule::applyBrushVertexColours()
+{
+	auto& settings = GlobalBrushCreator().getSettings();
+
+	settings.setVertexColour(ColourSchemes().getColour("brush_vertices"));
 }
 
 void UserInterfaceModule::applyEntityVertexColours()

@@ -5,12 +5,18 @@
 
 #include "brush/TexDef.h"
 #include "ibrush.h"
+#include "BrushSettings.h"
 
-class BrushModuleImpl : 
+namespace brush
+{
+
+class BrushModuleImpl :
 	public BrushCreator
 {
 private:
 	bool _textureLockEnabled;
+
+	std::unique_ptr<BrushSettings> _settings;
 
 private:
 	void keyChanged();
@@ -18,7 +24,7 @@ private:
 	void registerBrushCommands();
 
 public:
-    // destructor
+	// destructor
 	virtual ~BrushModuleImpl() {}
 
 	// This constructs the brush preferences, initialises static variables, etc.
@@ -33,7 +39,9 @@ public:
 	// --------------- BrushCreator methods ---------------------------------------------
 
 	// Creates a new brush node on the heap and returns it
-	scene::INodePtr createBrush();
+	scene::INodePtr createBrush() override;
+
+	IBrushSettings& getSettings() override;
 
 	// ----------------------------------------------------------------------------------
 
@@ -52,5 +60,7 @@ public:
 
 }; // class BrushModuleImpl
 
+}
+
 // The accessor function declaration
-BrushModuleImpl& GlobalBrush();
+brush::BrushModuleImpl& GlobalBrush();

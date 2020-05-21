@@ -3,7 +3,6 @@
 #include "math/Frustum.h"
 #include "irenderable.h"
 #include "itextstream.h"
-#include "iuimanager.h"
 #include "shaderlib.h"
 
 #include "BrushModule.h"
@@ -1198,8 +1197,8 @@ std::size_t ProximalVertexArray_index(const ProximalVertexArray& array, const Pr
 void Brush::buildBRep() {
   bool degenerate = buildWindings();
 
-  static Vector3 colourVertexVec = ColourSchemes().getColour("brush_vertices");
-  static const Colour4b colour_vertex(int(colourVertexVec[0]*255), int(colourVertexVec[1]*255),
+  static const Vector3& colourVertexVec = GlobalBrush().getSettings().getVertexColour();
+  const Colour4b colour_vertex(int(colourVertexVec[0]*255), int(colourVertexVec[1]*255),
                                    int(colourVertexVec[2]*255), 255);
 
   std::size_t faces_size = 0;

@@ -12,12 +12,32 @@ class Plane3;
 
 const std::string RKEY_ENABLE_TEXTURE_LOCK("user/ui/brush/textureLock");
 
+namespace brush
+{
+
+// Helper class hosting brush-related settings
+class IBrushSettings
+{
+public:
+	virtual ~IBrushSettings() {}
+
+	virtual const Vector3& getVertexColour() const = 0;
+
+	virtual void setVertexColour(const Vector3& colour) = 0;
+
+	virtual sigc::signal<void>& signal_settingsChanged() = 0;
+};
+
 class BrushCreator :
 	public RegisterableModule
 {
 public:
 	virtual scene::INodePtr createBrush() = 0;
+
+	virtual IBrushSettings& getSettings() = 0;
 };
+
+}
 
 // The structure defining a single corner point of an IWinding
 struct WindingVertex
@@ -226,13 +246,13 @@ inline IBrush* Node_getIBrush(const scene::INodePtr& node)
 	return NULL;
 }
 
-const std::string MODULE_BRUSHCREATOR("Doom3BrushCreator");
+const char* const MODULE_BRUSHCREATOR("Doom3BrushCreator");
 
-inline BrushCreator& GlobalBrushCreator()
+inline brush::BrushCreator& GlobalBrushCreator()
 {
 	// Cache the reference locally
-	static BrushCreator& _brushCreator(
-		*std::static_pointer_cast<BrushCreator>(
+	static brush::BrushCreator& _brushCreator(
+		*std::static_pointer_cast<brush::BrushCreator>(
 			module::GlobalModuleRegistry().getModule(MODULE_BRUSHCREATOR)
 		)
 	);

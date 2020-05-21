@@ -21,6 +21,9 @@
 
 // ---------------------------------------------------------------------------------------
 
+namespace brush
+{
+
 void BrushModuleImpl::constructPreferences()
 {
 	// Add a page to the given group
@@ -46,7 +49,7 @@ void BrushModuleImpl::destroy()
 	Brush::m_maxWorldCoord = 0;
 }
 
-void BrushModuleImpl::keyChanged() 
+void BrushModuleImpl::keyChanged()
 {
 	_textureLockEnabled = registry::getValue<bool>(RKEY_ENABLE_TEXTURE_LOCK);
 }
@@ -57,7 +60,7 @@ bool BrushModuleImpl::textureLockEnabled() const {
 
 void BrushModuleImpl::setTextureLock(bool enabled)
 {
-    registry::setValue(RKEY_ENABLE_TEXTURE_LOCK, enabled);
+	registry::setValue(RKEY_ENABLE_TEXTURE_LOCK, enabled);
 }
 
 void BrushModuleImpl::toggleTextureLock() {
@@ -77,6 +80,11 @@ scene::INodePtr BrushModuleImpl::createBrush()
 	}
 
 	return node;
+}
+
+IBrushSettings& BrushModuleImpl::getSettings()
+{
+	return *_settings;
 }
 
 // RegisterableModule implementation
@@ -104,11 +112,13 @@ void BrushModuleImpl::initialiseModule(const ApplicationContext& ctx) {
 
 	construct();
 
+	_settings.reset(new BrushSettings);
+
 	_textureLockEnabled = registry::getValue<bool>(RKEY_ENABLE_TEXTURE_LOCK);
 
 	GlobalRegistry().signalForKey(RKEY_ENABLE_TEXTURE_LOCK).connect(
-        sigc::mem_fun(this, &BrushModuleImpl::keyChanged)
-    );
+		sigc::mem_fun(this, &BrushModuleImpl::keyChanged)
+	);
 
 	// add the preference settings
 	constructPreferences();
@@ -136,10 +146,12 @@ void BrushModuleImpl::registerBrushCommands()
 // Define a static BrushModule
 module::StaticModule<BrushModuleImpl> staticBrushModule;
 
+}
+
 // greebo: The accessor function for the brush module containing the static instance
-BrushModuleImpl& GlobalBrush()
+brush::BrushModuleImpl& GlobalBrush()
 {
-	return *std::static_pointer_cast<BrushModuleImpl>(
+	return *std::static_pointer_cast<brush::BrushModuleImpl>(
 		module::GlobalModuleRegistry().getModule(MODULE_BRUSHCREATOR)
 	);
 }
