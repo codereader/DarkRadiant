@@ -58,9 +58,6 @@ public:
 	void draw(float scale);
 	void getPlanePoints(Vector3 planepts[3], const AABB& bounds) const;
 
-	void splitBrushes(const Vector3& p0,
-					const Vector3& p1, const Vector3& p2,
-					EBrushSplit split);
 	void setClipPlane(const Plane3& plane);
 
 	void update();

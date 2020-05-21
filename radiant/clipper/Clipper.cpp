@@ -136,16 +136,8 @@ void Clipper::getPlanePoints(Vector3 planepts[3], const AABB& bounds) const {
 	}
 }
 
-void Clipper::splitBrushes(const Vector3& p0,
-	const Vector3& p1, const Vector3& p2,
-	EBrushSplit split)
+void Clipper::setClipPlane(const Plane3& plane) 
 {
-	Vector3 planePoints[3] = {p0, p1, p2};
-
-	brush::algorithm::splitBrushesByPlane(planePoints, split);
-}
-
-void Clipper::setClipPlane(const Plane3& plane) {
 	brush::algorithm::setBrushClipPlane(plane);
 }
 
@@ -186,7 +178,7 @@ void Clipper::clip() {
 		AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
 		getPlanePoints(planepts, bounds);
 
-		splitBrushes(planepts[0], planepts[1], planepts[2], (!_switch) ? eFront : eBack);
+		brush::algorithm::splitBrushesByPlane(planepts, !_switch ? eFront : eBack);
 
 		reset();
 		update();
@@ -199,7 +191,7 @@ void Clipper::splitClip() {
 		AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
 		getPlanePoints(planepts, bounds);
 
-		splitBrushes(planepts[0], planepts[1], planepts[2], eFrontAndBack);
+		brush::algorithm::splitBrushesByPlane(planepts, eFrontAndBack);
 
 		reset();
 		update();
