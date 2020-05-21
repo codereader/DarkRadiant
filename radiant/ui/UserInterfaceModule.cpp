@@ -182,7 +182,7 @@ void UserInterfaceModule::applyBrushVertexColours()
 
 void UserInterfaceModule::applyPatchVertexColours()
 {
-	auto& settings = GlobalPatchCreator(PatchDefType::Def3).getSettings();
+	auto& settings = GlobalPatchModule().getSettings();
 
 	settings.setVertexColour(patch::PatchEditVertexType::Corners, ColourSchemes().getColour("patch_vertex_corner"));
 	settings.setVertexColour(patch::PatchEditVertexType::Inside, ColourSchemes().getColour("patch_vertex_inside"));

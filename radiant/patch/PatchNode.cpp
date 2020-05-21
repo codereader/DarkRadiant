@@ -7,7 +7,7 @@
 #include "math/Frustum.h"
 
 // Construct a PatchNode with no arguments
-PatchNode::PatchNode(bool patchDef3) :
+PatchNode::PatchNode(patch::PatchDefType type) :
 	scene::SelectableNode(),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
@@ -15,7 +15,7 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_patch(*this),
     _untransformedOriginChanged(true)
 {
-	m_patch.setFixedSubdivisions(patchDef3, Subdivisions(m_patch.getSubdivisions()));
+	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 
 	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));
 }

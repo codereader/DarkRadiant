@@ -677,7 +677,6 @@
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiant\patch\algorithm\Prefab.cpp" />
-    <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp" />
     <ClCompile Include="..\..\radiant\patch\PatchTesselation.cpp" />
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -992,6 +991,7 @@
     <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\General.h" />
     <ClInclude Include="..\..\radiant\patch\algorithm\Prefab.h" />
+    <ClInclude Include="..\..\radiant\patch\PatchModule.h" />
     <ClInclude Include="..\..\radiant\patch\PatchSettings.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantApp.h" />
@@ -1126,7 +1126,6 @@
     <ClInclude Include="..\..\radiant\patch\PatchConstants.h" />
     <ClInclude Include="..\..\radiant\patch\PatchControl.h" />
     <ClInclude Include="..\..\radiant\patch\PatchControlInstance.h" />
-    <ClInclude Include="..\..\radiant\patch\PatchCreators.h" />
     <ClInclude Include="..\..\radiant\patch\PatchNode.h" />
     <ClInclude Include="..\..\radiant\patch\PatchRenderables.h" />
     <ClInclude Include="..\..\radiant\patch\PatchSavedState.h" />

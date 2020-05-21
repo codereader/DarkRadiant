@@ -20,10 +20,10 @@ namespace algorithm
 void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams, int axis)
 {
 	// Get a shortcut to the patchcreator
-	PatchCreator& patchCreator = GlobalPatchCreator(PatchDefType::Def2);
+	auto& patchCreator = GlobalPatchModule();
 
 	// Create a new patch node
-	scene::INodePtr node(patchCreator.createPatch());
+	scene::INodePtr node(patchCreator.createPatch(patch::PatchDefType::Def2));
 
 	scene::INodePtr parent = sourcePatch->getParent();
 	assert(parent != NULL);
@@ -44,10 +44,10 @@ void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams,
 	{
 		// Allocate four new patches
 		scene::INodePtr nodes[4] = {
-			patchCreator.createPatch(),
-			patchCreator.createPatch(),
-			patchCreator.createPatch(),
-			patchCreator.createPatch()
+			patchCreator.createPatch(patch::PatchDefType::Def2),
+			patchCreator.createPatch(patch::PatchDefType::Def2),
+			patchCreator.createPatch(patch::PatchDefType::Def2),
+			patchCreator.createPatch(patch::PatchDefType::Def2)
 		};
 
 		// Now create the four walls

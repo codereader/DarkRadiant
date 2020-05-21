@@ -670,9 +670,6 @@
     <ClCompile Include="..\..\radiant\patch\algorithm\General.cpp">
       <Filter>src\patch\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\patch\PatchCreators.cpp">
-      <Filter>src\patch</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\clipboard\Clipboard.cpp">
       <Filter>src\selection\clipboard</Filter>
     </ClCompile>
@@ -1324,9 +1321,6 @@
       <Filter>src\patch</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\patch\PatchControlInstance.h">
-      <Filter>src\patch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\patch\PatchCreators.h">
       <Filter>src\patch</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\patch\PatchNode.h">
@@ -2257,6 +2251,9 @@
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\patch\PatchSettings.h">
+      <Filter>src\patch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\patch\PatchModule.h">
       <Filter>src\patch</Filter>
     </ClInclude>
   </ItemGroup>

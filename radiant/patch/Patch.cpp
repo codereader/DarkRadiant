@@ -29,8 +29,8 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
 
 inline const Colour4b colour_for_index(std::size_t i, std::size_t width)
 {
-	static const Vector3& cornerColourVec = GlobalPatchCreator(PatchDefType::Def3).getSettings().getVertexColour(patch::PatchEditVertexType::Corners);
-	static const Vector3& insideColourVec = GlobalPatchCreator(PatchDefType::Def3).getSettings().getVertexColour(patch::PatchEditVertexType::Inside);
+	static const Vector3& cornerColourVec = GlobalPatchModule().getSettings().getVertexColour(patch::PatchEditVertexType::Corners);
+	static const Vector3& insideColourVec = GlobalPatchModule().getSettings().getVertexColour(patch::PatchEditVertexType::Inside);
 	const Colour4b colour_corner(int(cornerColourVec[0]*255), int(cornerColourVec[1]*255),
   								int(cornerColourVec[2]*255), 255);
 	const Colour4b colour_inside(int(insideColourVec[0]*255), int(insideColourVec[1]*255),

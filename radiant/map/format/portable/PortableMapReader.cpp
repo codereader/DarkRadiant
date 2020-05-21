@@ -285,9 +285,9 @@ void PortableMapReader::readPatch(const xml::Node& patchTag, const scene::INodeP
 {
 	bool isFixedSubdiv = patchTag.getAttributeValue(ATTR_PATCH_FIXED_SUBDIV) == ATTR_VALUE_TRUE;
 
-	auto patchType = isFixedSubdiv ? PatchDefType::Def3 : PatchDefType::Def2;
+	auto patchType = isFixedSubdiv ? patch::PatchDefType::Def3 : patch::PatchDefType::Def2;
 
-	scene::INodePtr node = GlobalPatchCreator(patchType).createPatch();
+	scene::INodePtr node = GlobalPatchModule().createPatch(patchType);
 
 	auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 	assert(patchNode);

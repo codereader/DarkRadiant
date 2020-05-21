@@ -49,7 +49,7 @@ class PatchNode :
 
 public:
 	// Construct a PatchNode with no arguments
-	PatchNode(bool patchDef3 = false);
+	PatchNode(patch::PatchDefType type);
 
 	// Copy Constructor
 	PatchNode(const PatchNode& other);

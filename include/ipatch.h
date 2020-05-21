@@ -167,15 +167,23 @@ public:
 	virtual sigc::signal<void>& signal_settingsChanged() = 0;
 };
 
-/* greebo: the abstract base class for a patch-creating class.
- * At the moment, the CommonPatchCreator, Doom3PatchCreator and Doom3PatchDef2Creator derive from this base class.
+enum class PatchDefType
+{
+	Def2,
+	Def3,
+};
+
+/**
+ * Patch management module interface.
  */
-class PatchCreator :
+class IPatchModule :
 	public RegisterableModule
 {
 public:
+	virtual ~IPatchModule() {}
+
 	// Create a patch and return the sceneNode
-	virtual scene::INodePtr createPatch() = 0;
+	virtual scene::INodePtr createPatch(PatchDefType type) = 0;
 
 	virtual IPatchSettings& getSettings() = 0;
 };
@@ -206,48 +214,38 @@ inline bool Node_isPatch(const scene::INodePtr& node)
 
 inline IPatch* Node_getIPatch(const scene::INodePtr& node)
 {
-	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+	auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
-	if (patchNode != NULL)
+	if (patchNode)
 	{
 		return &patchNode->getPatch();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // Casts a node onto a patch
 inline Patch* Node_getPatch(const scene::INodePtr& node)
 {
-	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+	auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
-	if (patchNode != NULL)
+	if (patchNode)
 	{
 		return &patchNode->getPatchInternal();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-const char* const MODULE_PATCHDEF2 = "PatchModuleDef2";
-const char* const MODULE_PATCHDEF3 = "PatchModuleDef3";
+const char* const MODULE_PATCH = "PatchModule";
 
-enum class PatchDefType
+inline patch::IPatchModule& GlobalPatchModule()
 {
-	Def2,
-	Def3,
-};
-
-// Acquires the PatchCreator of the given type ("Def2", "Def3")
-inline patch::PatchCreator& GlobalPatchCreator(PatchDefType type)
-{
-	std::shared_ptr<patch::PatchCreator> _patchCreator(
-		std::static_pointer_cast<patch::PatchCreator>(
-			module::GlobalModuleRegistry().getModule(
-				type == PatchDefType::Def2 ? MODULE_PATCHDEF2 : MODULE_PATCHDEF3
-			)
+	static patch::IPatchModule& _patchCreator(
+		*std::static_pointer_cast<patch::IPatchModule>(
+			module::GlobalModuleRegistry().getModule(MODULE_PATCH)
 		)
 	);
 
-	return *_patchCreator;
+	return _patchCreator;
 }
