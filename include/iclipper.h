@@ -17,22 +17,6 @@ enum PlaneClassification {
     ePlaneOn = 2,
 };
 
-struct BrushSplitType {
-	std::size_t counts[3];
-
-	BrushSplitType() {
-		counts[0] = 0;
-		counts[1] = 0;
-		counts[2] = 0;
-	}
-	BrushSplitType& operator+=(const BrushSplitType& other) {
-		counts[0] += other.counts[0];
-		counts[1] += other.counts[1];
-		counts[2] += other.counts[2];
-		return *this;
-	}
-};
-
 class ClipPoint;
 
 const char* const MODULE_CLIPPER("Clipper");

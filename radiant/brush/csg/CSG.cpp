@@ -24,8 +24,6 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include "BrushByPlaneClipper.h"
-
 namespace brush {
 namespace algorithm {
 
@@ -123,19 +121,6 @@ void makeRoomForSelectedBrushes(const cmd::ArgumentList& args) {
 	SceneChangeNotify();
 }
 
-BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane) {
-	brush.evaluateBRep();
-
-	BrushSplitType split;
-	for (Brush::const_iterator i(brush.begin()); i != brush.end(); ++i) {
-		if ((*i)->contributes()) {
-			split += (*i)->getWinding().classifyPlane(plane);
-		}
-	}
-
-	return split;
-}
-
 // Returns true if fragments have been inserted into the given ret_fragments list
 bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVector& ret_fragments)
 {
@@ -152,7 +137,7 @@ bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVecto
 
 			if (!face.contributes()) continue;
 
-			BrushSplitType split = Brush_classifyPlane(back->getBrush(), face.plane3());
+			BrushSplitType split = back->getBrush().classifyPlane(face.plane3());
 
 			if (split.counts[ePlaneFront] != 0 && split.counts[ePlaneBack] != 0)
 			{
@@ -465,55 +450,6 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 	Node_setSelected(node, true);
 
 	rMessage() << "CSG Merge: Succeeded." << std::endl;
-	SceneChangeNotify();
-}
-
-class BrushSetClipPlane :
-	public SelectionSystem::Visitor
-{
-	Plane3 _plane;
-public:
-	BrushSetClipPlane(const Plane3& plane) :
-		_plane(plane)
-	{}
-
-	virtual ~BrushSetClipPlane() {}
-
-	void visit(const scene::INodePtr& node) const {
-		BrushNodePtr brush = std::dynamic_pointer_cast<BrushNode>(node);
-
-		if (brush != NULL && node->visible()) {
-			brush->setClipPlane(_plane);
-		}
-	}
-};
-
-/**
- * greebo: Sets the "clip plane" of the selected brushes in the scene.
- */
-void setBrushClipPlane(const Plane3& plane) {
-	BrushSetClipPlane walker(plane);
-	GlobalSelectionSystem().foreachSelected(walker);
-}
-
-/**
- * greebo: Splits the selected brushes by the given plane.
- */
-void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split)
-{
-	// Collect all selected brushes
-	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
-
-	// Instantiate a scoped walker
-	BrushByPlaneClipper splitter(
-		planePoints[0],
-		planePoints[1],
-		planePoints[2],
-		split
-	);
-
-	splitter.split(brushes);
-
 	SceneChangeNotify();
 }
 

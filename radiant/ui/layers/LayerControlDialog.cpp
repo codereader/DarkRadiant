@@ -20,8 +20,7 @@
 #include "wxutil/ScrollWindow.h"
 #include "wxutil/Button.h"
 
-#include "layers/LayerManager.h"
-#include "layers/LayerUsageBreakdown.h"
+#include "scene/LayerUsageBreakdown.h"
 
 namespace ui
 {

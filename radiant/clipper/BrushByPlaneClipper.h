@@ -10,7 +10,6 @@
 
 #include "selection/algorithm/Primitives.h"
 
-namespace brush {
 namespace algorithm {
 
 class BrushByPlaneClipper
@@ -45,4 +44,3 @@ private:
 };
 
 } // namespace algorithm
-} // namespace brush

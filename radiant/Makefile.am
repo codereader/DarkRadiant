@@ -53,7 +53,6 @@ darkradiant_SOURCES = main.cpp \
                       brush/Face.cpp \
                       brush/TexDef.cpp \
                       brush/TextureMatrix.cpp \
-                      brush/csg/BrushByPlaneClipper.cpp \
                       brush/csg/CSG.cpp \
                       brush/FacePlane.cpp \
                       camera/Camera.cpp \
@@ -341,6 +340,8 @@ darkradiant_SOURCES = main.cpp \
 					  map/RenderableAasFile.cpp \
                       clipper/ClipPoint.cpp \
                       clipper/Clipper.cpp \
+                      clipper/SplitAlgorithm.cpp \
+                      clipper/BrushByPlaneClipper.cpp \
                       log/Console.cpp \
                       model/ModelScalePreserver.cpp \
                       model/ModelExporter.cpp \

@@ -90,6 +90,27 @@ public:
 	virtual Matrix4 getTexDefMatrix() const = 0;
 };
 
+// Plane classification info used by splitting and CSG algorithms
+struct BrushSplitType 
+{
+	std::size_t counts[3];
+
+	BrushSplitType()
+	{
+		counts[0] = 0;
+		counts[1] = 0;
+		counts[2] = 0;
+	}
+
+	BrushSplitType& operator+=(const BrushSplitType& other)
+	{
+		counts[0] += other.counts[0];
+		counts[1] += other.counts[1];
+		counts[2] += other.counts[2];
+		return *this;
+	}
+};
+
 // Brush Interface
 class IBrush
 {
@@ -158,6 +179,9 @@ public:
 	 * Q3-compatibility feature, set the detail/structural flag
 	 */
 	virtual void setDetailFlag(DetailFlag newValue) = 0;
+
+	// Classify this brush against the given plane, used by clipper and CSG algorithms
+	virtual BrushSplitType classifyPlane(const Plane3& plane) const = 0;
 };
 
 // Forward-declare the Brush object, only accessible from main binary

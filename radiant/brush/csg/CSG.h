@@ -1,5 +1,4 @@
-#ifndef BRUSH_CSG_H_
-#define BRUSH_CSG_H_
+#pragma once
 
 #include "iclipper.h"
 #include "icommandsystem.h"
@@ -46,19 +45,6 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args);
 void mergeSelectedBrushes(const cmd::ArgumentList& args);
 
 /**
- * greebo: Sets the "clip plane" of the selected brushes in the scene.
- */
-void setBrushClipPlane(const Plane3& plane);
-
-// Classifies the given brush (needed for clipping/csg)
-BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane);
-
-/**
- * greebo: Splits the selected brushes by the given plane.
- */
-void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split);
-
-/**
  * Connect the various events to the functions in this namespace
  */
 void registerCommands();
@@ -66,4 +52,3 @@ void registerCommands();
 } // namespace algorihtm
 } // namespace brush
 
-#endif /* BRUSH_CSG_H_ */

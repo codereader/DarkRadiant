@@ -274,9 +274,6 @@
     <ClCompile Include="..\..\radiant\brush\export\CollisionModel.cpp">
       <Filter>src\brush\export</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\brush\csg\BrushByPlaneClipper.cpp">
-      <Filter>src\brush\csg</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\brush\csg\CSG.cpp">
       <Filter>src\brush\csg</Filter>
     </ClCompile>
@@ -1153,6 +1150,12 @@
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp">
       <Filter>src\ui\layers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\clipper\SplitAlgorithm.cpp">
+      <Filter>src\clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\clipper\BrushByPlaneClipper.cpp">
+      <Filter>src\clipper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1217,9 +1220,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\export\Geometry.h">
       <Filter>src\brush\export</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\brush\csg\BrushByPlaneClipper.h">
-      <Filter>src\brush\csg</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\csg\CSG.h">
       <Filter>src\brush\csg</Filter>
@@ -2246,6 +2246,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h">
       <Filter>src\ui\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\clipper\SplitAlgorithm.h">
+      <Filter>src\clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\clipper\BrushByPlaneClipper.h">
+      <Filter>src\clipper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

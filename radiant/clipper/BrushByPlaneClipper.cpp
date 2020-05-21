@@ -1,18 +1,14 @@
 #include "BrushByPlaneClipper.h"
 
-#include "CSG.h"
 #include "scenelib.h"
 #include "brush/BrushNode.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
-namespace brush
-{
-
 namespace algorithm
 {
 
-BrushByPlaneClipper::BrushByPlaneClipper(
-	const Vector3& p0, const Vector3& p1, const Vector3& p2, EBrushSplit split) :
+BrushByPlaneClipper::BrushByPlaneClipper(const Vector3& p0, const Vector3& p1, 
+										 const Vector3& p2, EBrushSplit split) :
 		_p0(p0),
 		_p1(p1),
 		_p2(p2),
@@ -30,10 +26,8 @@ void BrushByPlaneClipper::split(const BrushPtrVector& brushes)
 		return;
 	}
 
-	for (BrushPtrVector::const_iterator i = brushes.begin(); i != brushes.end(); ++i)
+	for (const BrushNodePtr& node : brushes)
 	{
-		const BrushNodePtr& node = *i;
-
 		// Don't clip invisible nodes
 		if (!node->visible())
 		{
@@ -52,9 +46,9 @@ void BrushByPlaneClipper::split(const BrushPtrVector& brushes)
 		// greebo: Analyse the brush to find out which shader is the most used one
 		getMostUsedTexturing(brush);
 
-		BrushSplitType split = Brush_classifyPlane(brush, _split == eFront ? -plane : plane);
+		BrushSplitType split = brush.classifyPlane(_split == eFront ? -plane : plane);
 
-		if (split.counts[ePlaneBack] && split.counts[ePlaneFront])
+		if (split.counts[ePlaneBack] > 0 && split.counts[ePlaneFront] > 0)
 		{
 			// the plane intersects this brush
 			if (_split == eFrontAndBack)
@@ -171,4 +165,3 @@ void BrushByPlaneClipper::getMostUsedTexturing(const Brush& brush) const
 }
 
 } // namespace algorithm
-} // namespace brush

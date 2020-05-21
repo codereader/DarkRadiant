@@ -16,7 +16,6 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
-#include "layers/LayerManager.h"
 #include "LayerControlDialog.h"
 
 namespace ui

@@ -196,6 +196,8 @@
   <ItemGroup>
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
+    <ClCompile Include="..\..\radiant\clipper\BrushByPlaneClipper.cpp" />
+    <ClCompile Include="..\..\radiant\clipper\SplitAlgorithm.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\EventManager.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\GlobalKeyEventFilter.cpp" />
@@ -760,7 +762,6 @@
     <ClCompile Include="..\..\radiant\brush\TextureProjection.cpp" />
     <ClCompile Include="..\..\radiant\brush\Winding.cpp" />
     <ClCompile Include="..\..\radiant\brush\export\CollisionModel.cpp" />
-    <ClCompile Include="..\..\radiant\brush\csg\BrushByPlaneClipper.cpp" />
     <ClCompile Include="..\..\radiant\brush\csg\CSG.cpp" />
     <ClCompile Include="..\..\radiant\camera\Camera.cpp" />
     <ClCompile Include="..\..\radiant\camera\CameraSettings.cpp" />
@@ -908,6 +909,8 @@
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\PanViewTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
+    <ClInclude Include="..\..\radiant\clipper\BrushByPlaneClipper.h" />
+    <ClInclude Include="..\..\radiant\clipper\SplitAlgorithm.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Event.h" />
     <ClInclude Include="..\..\radiant\eventmanager\EventManager.h" />
@@ -1086,7 +1089,6 @@
     <ClInclude Include="..\..\radiant\brush\Winding.h" />
     <ClInclude Include="..\..\radiant\brush\export\CollisionModel.h" />
     <ClInclude Include="..\..\radiant\brush\export\Geometry.h" />
-    <ClInclude Include="..\..\radiant\brush\csg\BrushByPlaneClipper.h" />
     <ClInclude Include="..\..\radiant\brush\csg\CSG.h" />
     <ClInclude Include="..\..\radiant\camera\Camera.h" />
     <ClInclude Include="..\..\radiant\camera\CameraObserver.h" />

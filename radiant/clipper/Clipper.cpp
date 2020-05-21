@@ -11,6 +11,7 @@
 #include "registry/registry.h"
 #include "module/StaticModule.h"
 #include "ClipPoint.h"
+#include "SplitAlgorithm.h"
 #include "brush/csg/CSG.h"
 #include "debugging/debugging.h"
 
@@ -138,7 +139,7 @@ void Clipper::getPlanePoints(Vector3 planepts[3], const AABB& bounds) const {
 
 void Clipper::setClipPlane(const Plane3& plane) 
 {
-	brush::algorithm::setBrushClipPlane(plane);
+	algorithm::setBrushClipPlane(plane);
 }
 
 void Clipper::update() {
@@ -178,7 +179,7 @@ void Clipper::clip() {
 		AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
 		getPlanePoints(planepts, bounds);
 
-		brush::algorithm::splitBrushesByPlane(planepts, !_switch ? eFront : eBack);
+		algorithm::splitBrushesByPlane(planepts, !_switch ? eFront : eBack);
 
 		reset();
 		update();
@@ -191,7 +192,7 @@ void Clipper::splitClip() {
 		AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
 		getPlanePoints(planepts, bounds);
 
-		brush::algorithm::splitBrushesByPlane(planepts, eFrontAndBack);
+		algorithm::splitBrushesByPlane(planepts, eFrontAndBack);
 
 		reset();
 		update();
@@ -246,11 +247,11 @@ const std::string& Clipper::getName() const {
 const StringSet& Clipper::getDependencies() const {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;

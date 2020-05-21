@@ -209,6 +209,8 @@ public:
 	DetailFlag getDetailFlag() const;
 	void setDetailFlag(DetailFlag newValue);
 
+	BrushSplitType classifyPlane(const Plane3& plane) const override;
+
 	void evaluateBRep() const;
 
     void transformChanged();

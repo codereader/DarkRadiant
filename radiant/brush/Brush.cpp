@@ -216,6 +216,23 @@ void Brush::setDetailFlag(DetailFlag newValue)
 	_detailFlag = newValue;
 }
 
+BrushSplitType Brush::classifyPlane(const Plane3& plane) const
+{
+    evaluateBRep();
+
+    BrushSplitType split;
+
+    for (auto face : *this)
+    {
+        if (face->contributes())
+        {
+            split += face->getWinding().classifyPlane(plane);
+        }
+    }
+
+    return split;
+}
+
 void Brush::evaluateBRep() const {
     if(m_planeChanged) {
         m_planeChanged = false;
