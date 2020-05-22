@@ -42,6 +42,7 @@
 #include "ui/filters/FilterOrthoContextMenuItem.h"
 #include "uimanager/colourscheme/ColourSchemeEditor.h"
 #include "ui/layers/CreateLayerDialog.h"
+#include "ui/patch/BulgePatchDialog.h"
 
 namespace ui
 {
@@ -264,6 +265,8 @@ void UserInterfaceModule::registerUICommands()
 	// Register the "create layer" command
 	GlobalCommandSystem().addCommand("CreateNewLayer", CreateLayerDialog::CreateNewLayer,
 		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+
+	GlobalCommandSystem().addCommand("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd);
 }
 
 // Static module registration

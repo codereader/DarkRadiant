@@ -6,8 +6,6 @@
 #include "ipatch.h"
 #include "patch/PatchNode.h"
 #include "patch/Patch.h"
-#include "wxutil/dialog/MessageBox.h"
-#include "ui/patch/BulgePatchDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/algorithm/Primitives.h"
 
@@ -94,22 +92,21 @@ void stitchTextures(const cmd::ArgumentList& args)
 		UndoableCommand undo("patchStitchTexture");
 
 		// Fetch the instances from the selectionsystem
-		const scene::INodePtr& targetNode =
-			GlobalSelectionSystem().ultimateSelected();
-
-		const scene::INodePtr& sourceNode =
-			GlobalSelectionSystem().penultimateSelected();
+		auto targetNode = GlobalSelectionSystem().ultimateSelected();
+		auto sourceNode = GlobalSelectionSystem().penultimateSelected();
 
 		// Cast the instances onto a patch
 		Patch* source = Node_getPatch(sourceNode);
 		Patch* target = Node_getPatch(targetNode);
 
-		if (source != NULL && target != NULL) {
+		if (source && target)
+		{
 			// Stitch the texture leaving the source patch intact
 			target->stitchTextureFrom(*source);
 		}
-		else {
-			wxutil::Messagebox::ShowError(_("Cannot stitch textures. \nCould not cast nodes to patches."));
+		else 
+		{
+			throw cmd::ExecutionFailure(_("Cannot stitch textures. \nCould not cast nodes to patches."));
 		}
 
 		SceneChangeNotify();
@@ -118,45 +115,44 @@ void stitchTextures(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		wxutil::Messagebox::ShowError(_("Cannot stitch patch textures. \nExactly 2 patches must be selected."));
+		throw cmd::ExecutionFailure(_("Cannot stitch patch textures. \nExactly 2 patches must be selected."));
 	}
 }
 
 void bulge(const cmd::ArgumentList& args)
 {
+	if (args.size() != 1)
+	{
+		rWarning() << "Usage: BulgePatch <maxNoiseAmplitude>" << std::endl;
+		return;
+	}
+
 	// Get the list of selected patches
 	PatchPtrVector patches = selection::algorithm::getSelectedPatches();
 
-	if (!patches.empty())
-	{
-		int maxValue = 16;
-
-		// Ask the user to enter a noise value
-		if (ui::BulgePatchDialog::QueryPatchNoise(maxValue))
-		{
-			UndoableCommand cmd("BulgePatch");
-
-			// Cycle through all patches and apply the bulge algorithm
-			for (PatchPtrVector::iterator p = patches.begin(); p != patches.end(); ++p)
-			{
-				Patch& patch = (*p)->getPatchInternal();
-
-				patch.undoSave();
-
-				for (PatchControlIter i = patch.begin(); i != patch.end(); ++i)
-				{
-					PatchControl& control = *i;
-					int randomNumber = int(maxValue * (float(std::rand()) / float(RAND_MAX)));
-					control.vertex.set(control.vertex.x(), control.vertex.y(), control.vertex.z() + randomNumber);
-				}
-
-				patch.controlPointsChanged();
-			}
-		}
-	}
-	else
+	if (patches.empty())
 	{
 		throw cmd::ExecutionFailure(_("Cannot bulge patch. No patches selected."));
+	}
+
+	double maxValue = args[0].getDouble();
+
+	UndoableCommand cmd("BulgePatch");
+
+	// Cycle through all patches and apply the bulge algorithm
+	for (const PatchNodePtr& p : patches)
+	{
+		Patch& patch = p->getPatchInternal();
+
+		patch.undoSave();
+
+		for (PatchControl& control : patch)
+		{
+			int randomNumber = int(maxValue * (float(std::rand()) / float(RAND_MAX)));
+			control.vertex.set(control.vertex.x(), control.vertex.y(), control.vertex.z() + randomNumber);
+		}
+
+		patch.controlPointsChanged();
 	}
 }
 

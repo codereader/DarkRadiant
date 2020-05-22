@@ -20,8 +20,11 @@ public:
 	BulgePatchDialog();
 
 	// Shows the dialog, returns TRUE if the user selected OK.
-	// the given integer reference is then filled with the chosen value
-	static bool QueryPatchNoise(int& noise);
+	// the given float reference is then filled with the chosen value
+	static bool QueryPatchNoise(float& noise);
+
+	// Command target for BulgePatchDialog
+	static void BulgePatchCmd(const cmd::ArgumentList& args);
 };
 
 } // namespace ui

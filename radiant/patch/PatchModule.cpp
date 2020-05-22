@@ -105,7 +105,7 @@ void PatchModule::registerPatchCommands()
 	GlobalCommandSystem().addCommand("CapCurrentCurve", selection::algorithm::capPatch);
 	GlobalCommandSystem().addCommand("ThickenPatch", selection::algorithm::thickenPatches);
 	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::algorithm::stitchTextures);
-	GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge);
+	GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge, { cmd::ARGTYPE_DOUBLE });
 }
 
 module::StaticModule<PatchModule> patchModule;
