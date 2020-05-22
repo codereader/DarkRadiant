@@ -13,6 +13,7 @@
 
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include "module/StaticModule.h"
 
@@ -76,6 +77,7 @@ const StringSet& UserInterfaceModule::getDependencies() const
 		_dependencies.insert(MODULE_FILTERSYSTEM);
 		_dependencies.insert(MODULE_ENTITY);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_RADIANT_CORE);
 	}
 
 	return _dependencies;
@@ -137,6 +139,10 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	_longOperationHandler.reset(new LongRunningOperationHandler);
 
 	initialiseEntitySettings();
+
+	GlobalRadiantCore().getMessageBus().addListener(
+		radiant::TypeListener<radiant::CommandExecutionFailedMessage>(
+			sigc::mem_fun(this, &UserInterfaceModule::handleCommandExecutionFailure)));
 }
 
 void UserInterfaceModule::shutdownModule()
@@ -146,6 +152,14 @@ void UserInterfaceModule::shutdownModule()
 
 	_longOperationHandler.reset();
 	_eClassColourManager.reset();
+}
+
+void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)
+{
+	auto parentWindow = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
+		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
+
+	wxutil::Messagebox::ShowError(msg.getMessage(), parentWindow);
 }
 
 void UserInterfaceModule::initialiseEntitySettings()

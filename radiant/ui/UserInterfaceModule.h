@@ -8,6 +8,7 @@
 
 #include "EntityClassColourManager.h"
 #include "LongRunningOperationHandler.h"
+#include "messages/CommandExecutionFailed.h"
 
 namespace ui
 {
@@ -43,6 +44,8 @@ private:
 	void applyBrushVertexColours();
 	void applyPatchVertexColours();
 	void refreshShadersCmd(const cmd::ArgumentList& args);
+
+	void handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg);
 };
 
 }

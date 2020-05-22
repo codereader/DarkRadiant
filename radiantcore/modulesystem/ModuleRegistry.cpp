@@ -98,16 +98,16 @@ void ModuleRegistry::registerModule(const RegisterableModulePtr& module)
 // Initialise the module (including dependencies, if necessary)
 void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 {
-	// Check if the module exists at all
-	if (_uninitialisedModules.find(name) == _uninitialisedModules.end())
-    {
-		throw std::logic_error("ModuleRegistry: Module doesn't exist: " + name);
-	}
-
 	// Check if the module is already initialised
 	if (_initialisedModules.find(name) != _initialisedModules.end())
     {
 		return;
+	}
+
+	// Check if the module exists at all
+	if (_uninitialisedModules.find(name) == _uninitialisedModules.end())
+	{
+		throw std::logic_error("ModuleRegistry: Module doesn't exist: " + name);
 	}
 
 	// Tag this module as "ready" by moving it into the initialised list.

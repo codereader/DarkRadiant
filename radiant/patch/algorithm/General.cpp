@@ -11,6 +11,8 @@
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/algorithm/Primitives.h"
 
+#include "command/ExecutionFailure.h"
+
 namespace patch
 {
 
@@ -154,7 +156,7 @@ void bulge(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		wxutil::Messagebox::ShowError(_("Cannot bulge patch. No patches selected."));
+		throw cmd::ExecutionFailure(_("Cannot bulge patch. No patches selected."));
 	}
 }
 
