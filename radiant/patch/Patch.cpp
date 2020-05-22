@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "ipatch.h"
-#include "imainframe.h"
 #include "shaderlib.h"
 #include "irenderable.h"
 #include "itextstream.h"
@@ -14,7 +13,6 @@
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
-#include "wxutil/dialog/MessageBox.h"
 #include "ui/patch/PatchInspector.h"
 #include "selection/algorithm/Shader.h"
 

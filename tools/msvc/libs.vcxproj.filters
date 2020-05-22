@@ -197,6 +197,12 @@
     <ClInclude Include="..\..\libs\render\RenderableCollectionWalker.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\command\ExecutionFailure.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -228,6 +234,9 @@
     </Filter>
     <Filter Include="messages">
       <UniqueIdentifier>{bc41bb46-8308-44d2-8380-e67d9e3945a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="command">
+      <UniqueIdentifier>{28a6f09d-36b0-4ff9-bbc6-7c6eb8c4a4f0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

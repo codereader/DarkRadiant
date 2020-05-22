@@ -2,8 +2,10 @@
 
 #include "itextstream.h"
 #include "iregistry.h"
-#include "ieventmanager.h"
+#include "iradiant.h"
 #include "debugging/debugging.h"
+#include "command/ExecutionFailure.h"
+#include "messages/CommandExecutionFailed.h"
 
 #include "CommandTokeniser.h"
 #include "Command.h"
@@ -137,34 +139,31 @@ void CommandSystem::bindCmd(const ArgumentList& args) {
 	addStatement(args[0].getString(), input);
 }
 
-void CommandSystem::unbindCmd(const ArgumentList& args) {
+void CommandSystem::unbindCmd(const ArgumentList& args)
+{
 	// Sanity check
 	if (args.size() != 1) return;
 
 	// First argument is the statement to unbind
-	CommandMap::iterator found = _commands.find(args[0].getString());
+	auto found = _commands.find(args[0].getString());
 
-	if (found == _commands.end()) {
-		rError() << "Cannot unbind: " << args[0].getString()
-			<< ": no such command." << std::endl;
+	if (found == _commands.end())
+	{
+		rError() << "Cannot unbind: " << args[0].getString() << ": no such command." << std::endl;
 		return;
 	}
 
 	// Check if this is actually a statement
-	StatementPtr st = std::dynamic_pointer_cast<Statement>(found->second);
+	auto st = std::dynamic_pointer_cast<Statement>(found->second);
 
-	if (st != NULL && !st->isReadonly())
+	if (st && !st->isReadonly())
 	{
 		// This is a user-statement
 		_commands.erase(found);
-
-		// Unregister this as event too
-		GlobalEventManager().removeEvent(args[0].getString());
 	}
-	else {
-		rError() << "Cannot unbind built-in command: "
-			<< args[0].getString() << std::endl;
-		return;
+	else
+	{
+		rError() << "Cannot unbind built-in command: " << args[0].getString() << std::endl;
 	}
 }
 
@@ -184,23 +183,22 @@ void CommandSystem::listCmds(const ArgumentList& args) {
 
 void CommandSystem::foreachCommand(const std::function<void(const std::string&)>& functor)
 {
-	std::for_each(_commands.begin(), _commands.end(), [&] (const CommandMap::value_type& i)
+	for (const auto& pair : _commands)
 	{
-		functor(i.first);
-	});
+		functor(pair.first);
+	}
 }
 
 void CommandSystem::addCommand(const std::string& name, Function func,
 	const Signature& signature)
 {
 	// Create a new command
-	CommandPtr cmd(new Command(func, signature));
+	auto cmd = std::make_shared<Command>(func, signature);
 
-	std::pair<CommandMap::iterator, bool> result = _commands.insert(
-		CommandMap::value_type(name, cmd)
-	);
+	auto result = _commands.emplace(name, cmd);
 
-	if (!result.second) {
+	if (!result.second)
+	{
 		rError() << "Cannot register command " << name
 			<< ", this command is already registered." << std::endl;
 	}
@@ -211,10 +209,12 @@ bool CommandSystem::commandExists(const std::string& name)
 	return _commands.find(name) != _commands.end();
 }
 
-void CommandSystem::removeCommand(const std::string& name) {
-	CommandMap::iterator i = _commands.find(name);
+void CommandSystem::removeCommand(const std::string& name)
+{
+	auto i = _commands.find(name);
 
-	if (i != _commands.end()) {
+	if (i != _commands.end())
+	{
 		_commands.erase(i);
 	}
 }
@@ -224,16 +224,15 @@ void CommandSystem::addStatement(const std::string& statementName,
 								 bool saveStatementToRegistry)
 {
 	// Remove all whitespace at the front and the tail
-	StatementPtr st(new Statement(
+	auto st = std::make_shared<Statement>(
 		string::trim_copy(str),
 		!saveStatementToRegistry // read-only if we should not save this statement
-	));
-
-	std::pair<CommandMap::iterator, bool> result = _commands.insert(
-		CommandMap::value_type(statementName, st)
 	);
 
-	if (!result.second) {
+	auto result = _commands.emplace(statementName, st);
+
+	if (!result.second)
+	{
 		rError() << "Cannot register statement " << statementName
 			<< ", this statement is already registered." << std::endl;
 	}
@@ -242,26 +241,24 @@ void CommandSystem::addStatement(const std::string& statementName,
 void CommandSystem::foreachStatement(const std::function<void(const std::string&)>& functor,
 									 bool customStatementsOnly)
 {
-	std::for_each(_commands.begin(), _commands.end(), [&] (const CommandMap::value_type& i)
+	for (const auto& pair : _commands)
 	{
-		StatementPtr statement = std::dynamic_pointer_cast<Statement>(i.second);
+		auto statement = std::dynamic_pointer_cast<Statement>(pair.second);
 
 		if (statement && (!customStatementsOnly || !statement->isReadonly()))
 		{
-			functor(i.first);
+			functor(pair.first);
 		}
-	});
+	}
 }
 
-Signature CommandSystem::getSignature(const std::string& name) {
+Signature CommandSystem::getSignature(const std::string& name)
+{
 	// Lookup the named command
-	CommandMap::iterator i = _commands.find(name);
+	auto i = _commands.find(name);
 
-	if (i == _commands.end()) {
-		return Signature(); // not found => empty signature
-	}
-
-	return i->second->getSignature();
+	// not found => empty signature
+	return i != _commands.end() ? i->second->getSignature() : Signature();
 }
 
 namespace local
@@ -277,7 +274,8 @@ namespace local
 	};
 }
 
-void CommandSystem::execute(const std::string& input) {
+void CommandSystem::execute(const std::string& input)
+{
 	// Instantiate a CommandTokeniser to analyse the given input string
 	CommandTokeniser tokeniser(input);
 
@@ -286,7 +284,8 @@ void CommandSystem::execute(const std::string& input) {
 	std::vector<local::Statement> statements;
 	local::Statement curStatement;
 
-	while (tokeniser.hasMoreTokens()) {
+	while (tokeniser.hasMoreTokens())
+	{
 		// Inspect the next token
 		std::string token = tokeniser.nextToken();
 
@@ -324,19 +323,20 @@ void CommandSystem::execute(const std::string& input) {
 	}
 
 	// Now execute the statements
-	for (std::vector<local::Statement>::iterator i = statements.begin();
-		 i != statements.end(); ++i)
+	for (const auto& statement : statements)
 	{
 		// Attempt ordinary command execution
-		executeCommand(i->command, i->args);
+		executeCommand(statement.command, statement.args);
 	}
 }
 
-void CommandSystem::executeCommand(const std::string& name) {
+void CommandSystem::executeCommand(const std::string& name)
+{
 	executeCommand(name, ArgumentList());
 }
 
-void CommandSystem::executeCommand(const std::string& name, const Argument& arg1) {
+void CommandSystem::executeCommand(const std::string& name, const Argument& arg1)
+{
 	ArgumentList args(1);
 	args[0] = arg1;
 
@@ -365,16 +365,29 @@ void CommandSystem::executeCommand(const std::string& name,
 	executeCommand(name, args);
 }
 
-void CommandSystem::executeCommand(const std::string& name, const ArgumentList& args) {
+void CommandSystem::executeCommand(const std::string& name, const ArgumentList& args)
+{
 	// Find the named command
-	CommandMap::const_iterator i = _commands.find(name);
+	auto i = _commands.find(name);
 
-	if (i == _commands.end()) {
+	if (i == _commands.end())
+	{
 		rError() << "Cannot execute command " << name << ": Command not found." << std::endl;
 		return;
 	}
 
-	i->second->execute(args);
+	try
+	{
+		i->second->execute(args);
+	}
+	catch (const ExecutionFailure& ex)
+	{
+		rError() << "Command '" << name << "' failed: " << ex.what() << std::endl;
+		
+		// Dispatch this exception to the messagebus to potential listeners
+		radiant::CommandExecutionFailedMessage message(ex);
+		GlobalRadiantCore().getMessageBus().sendMessage(message);
+	}
 }
 
 AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefix) {
@@ -382,12 +395,12 @@ AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefi
 
 	returnValue.prefix = prefix;
 
-	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i)
+	for (const auto& pair : _commands)
 	{
 		// Check if the command matches the given prefix
-		if (string::istarts_with(i->first, prefix))
+		if (string::istarts_with(pair.first, prefix))
 		{
-			returnValue.candidates.push_back(i->first);
+			returnValue.candidates.push_back(pair.first);
 		}
 	}
 

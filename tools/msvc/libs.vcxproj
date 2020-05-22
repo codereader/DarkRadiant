@@ -142,6 +142,7 @@
     <ClInclude Include="..\..\libs\BasicTexture2D.h" />
     <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
     <ClInclude Include="..\..\libs\character.h" />
+    <ClInclude Include="..\..\libs\command\ExecutionFailure.h" />
     <ClInclude Include="..\..\libs\debugging\debugging.h" />
     <ClInclude Include="..\..\libs\debugging\render.h" />
     <ClInclude Include="..\..\libs\debugging\ScenegraphUtils.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="..\..\libs\generic\callback.h" />
     <ClInclude Include="..\..\libs\KeyValueStore.h" />
     <ClInclude Include="..\..\libs\maplib.h" />
+    <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h" />
     <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h" />
     <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h" />
     <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h" />
