@@ -211,7 +211,7 @@ public:
 
 	BrushSplitType classifyPlane(const Plane3& plane) const override;
 
-	void evaluateBRep() const;
+	void evaluateBRep() const override;
 
     void transformChanged();
     void evaluateTransform();

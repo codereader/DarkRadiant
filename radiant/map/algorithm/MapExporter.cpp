@@ -9,7 +9,6 @@
 #include "imapresource.h"
 #include "imap.h"
 #include "igroupnode.h"
-#include "../../brush/Brush.h"
 
 #include "registry/registry.h"
 #include "string/string.h"
@@ -271,9 +270,9 @@ void MapExporter::recalculateBrushWindings()
 {
 	_root->foreachNode([] (const scene::INodePtr& child)->bool
 	{
-		Brush* brush = Node_getBrush(child);
+		auto* brush = Node_getIBrush(child);
 
-		if (brush != NULL)
+		if (brush != nullptr)
 		{
 			brush->evaluateBRep();
 		}

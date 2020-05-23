@@ -202,6 +202,9 @@ public:
 
 	// Classify this brush against the given plane, used by clipper and CSG algorithms
 	virtual BrushSplitType classifyPlane(const Plane3& plane) const = 0;
+
+	// Method used internally to recalculate the brush windings
+	virtual void evaluateBRep() const = 0;
 };
 
 // Forward-declare the Brush object, only accessible from main binary
