@@ -16,6 +16,7 @@
 #include "string/string.h"
 
 #include "ChildPrimitives.h"
+#include "messages/MapExportOperation.h"
 
 namespace map
 {
@@ -68,7 +69,7 @@ void MapExporter::construct()
 {
 	if (_totalNodeCount > 0 && GlobalMainFrame().isActiveApp())
 	{
-		enableProgressDialog();
+		//enableProgressDialog();
 	}
 
 	// Prepare the output stream
@@ -87,6 +88,9 @@ void MapExporter::construct()
 
 void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse)
 {
+	ExportOperation startedMsg(ExportOperation::Started, _totalNodeCount);
+	GlobalRadiantCore().getMessageBus().sendMessage(startedMsg);
+
 	try
 	{
 		auto mapRoot = std::dynamic_pointer_cast<scene::IMapRootNode>(root);
@@ -243,13 +247,19 @@ void MapExporter::onNodeProgress()
 
 	// Update the dialog text. This will throw an exception if the cancel
 	// button is clicked, which we must catch and handle.
-	if (_dialog && _dialogEventLimiter.readyForEvent())
+	if (_dialogEventLimiter.readyForEvent())
 	{
-		std::string text = fmt::format(_("Writing node {0:d}"), _curNodeCount);
-		_dialog->setTextAndFraction(
-			text, 
-			static_cast<double>(_curNodeCount) / static_cast<double>(_totalNodeCount)
-		);
+		float progressFraction = static_cast<float>(_curNodeCount) / static_cast<float>(_totalNodeCount);
+
+		ExportOperation msg(ExportOperation::Progress, _totalNodeCount, progressFraction);
+		msg.setText(fmt::format(_("Writing node {0:d}"), _curNodeCount));
+
+		GlobalRadiantCore().getMessageBus().sendMessage(msg);
+
+		if (_dialog)
+		{
+			_dialog->setTextAndFraction(msg.getText(), progressFraction);
+		}
 	}
 }
 
@@ -273,6 +283,9 @@ void MapExporter::finishScene()
 
 	// Re-evaluate all brushes, to update the Winding calculations
 	recalculateBrushWindings();
+
+	ExportOperation finishedMsg(ExportOperation::Finished, _totalNodeCount);
+	GlobalRadiantCore().getMessageBus().sendMessage(finishedMsg);
 }
 
 void MapExporter::recalculateBrushWindings()

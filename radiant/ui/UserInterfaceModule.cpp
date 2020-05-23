@@ -43,6 +43,8 @@
 #include "uimanager/colourscheme/ColourSchemeEditor.h"
 #include "ui/layers/CreateLayerDialog.h"
 #include "ui/patch/BulgePatchDialog.h"
+#include "MapExportProgressHandler.h"
+#include "messages/MapExportOperation.h"
 
 namespace ui
 {
@@ -138,6 +140,7 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 
 	_eClassColourManager.reset(new EntityClassColourManager);
 	_longOperationHandler.reset(new LongRunningOperationHandler);
+	_mapExportProgressHandler.reset(new MapExportProgressHandler);
 
 	initialiseEntitySettings();
 

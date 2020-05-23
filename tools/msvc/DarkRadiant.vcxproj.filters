@@ -2130,6 +2130,9 @@
     <ClInclude Include="..\..\radiant\patch\PatchModule.h">
       <Filter>src\patch</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\MapExportProgressHandler.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
