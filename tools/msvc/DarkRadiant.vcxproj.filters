@@ -206,20 +206,8 @@
     <Filter Include="src\md5model">
       <UniqueIdentifier>{9ece5d35-1ea4-4651-aa2c-b8a9c80b62da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\map\format">
-      <UniqueIdentifier>{a33db67b-1632-47ad-9368-04d014d7d730}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\map\format\primitiveparsers">
-      <UniqueIdentifier>{1d0cd8ef-6ea9-4896-9538-99c8a932b57b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\map\format\primitivewriters">
-      <UniqueIdentifier>{212c13a6-062d-43c8-a386-3ab276f15408}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\map\aas">
       <UniqueIdentifier>{6a40fdfb-2b56-41c2-ba54-dbf1ca276a43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\map\format\portable">
-      <UniqueIdentifier>{158557a6-7181-4ced-a45b-210fc3e54b34}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\ui\filters">
       <UniqueIdentifier>{b15324e3-378b-43fe-abfd-1ee2d99c5bd7}</UniqueIdentifier>
@@ -1027,45 +1015,6 @@
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\Doom3MapFormat.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\Doom3MapReader.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\Doom3MapWriter.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\Doom3PrefabFormat.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\Quake3MapFormat.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\Quake3MapReader.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\Quake4MapFormat.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\Quake4MapReader.cpp">
-      <Filter>src\map\format</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\BrushDef.cpp">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\BrushDef3.cpp">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\Patch.cpp">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\PatchDef2.cpp">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\primitiveparsers\PatchDef3.cpp">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\aas\Doom3AasFile.cpp">
       <Filter>src\map\aas</Filter>
     </ClCompile>
@@ -1080,15 +1029,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\MapPropertyInfoFileModule.cpp">
       <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapFormat.cpp">
-      <Filter>src\map\format\portable</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapReader.cpp">
-      <Filter>src\map\format\portable</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\format\portable\PortableMapWriter.cpp">
-      <Filter>src\map\format\portable</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\algorithm\Import.cpp">
       <Filter>src\map\algorithm</Filter>
@@ -2094,60 +2034,6 @@
     <ClInclude Include="..\..\radiant\ui\Documentation.h">
       <Filter>src\ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Doom3MapFormat.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Doom3MapReader.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Doom3MapWriter.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Doom3PrefabFormat.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Quake3MapFormat.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Quake3MapReader.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Quake3MapWriter.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Quake4MapFormat.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Quake4MapReader.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\Quake4MapWriter.h">
-      <Filter>src\map\format</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\primitivewriters\BrushDef3Exporter.h">
-      <Filter>src\map\format\primitivewriters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\primitivewriters\BrushDefExporter.h">
-      <Filter>src\map\format\primitivewriters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\primitivewriters\PatchDefExporter.h">
-      <Filter>src\map\format\primitivewriters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\BrushDef.h">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\BrushDef3.h">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\Patch.h">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\PatchDef2.h">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\primitiveparsers\PatchDef3.h">
-      <Filter>src\map\format\primitiveparsers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\aas\Doom3AasFile.h">
       <Filter>src\map\aas</Filter>
     </ClInclude>
@@ -2162,18 +2048,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\MapPropertyInfoFileModule.h">
       <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapFormat.h">
-      <Filter>src\map\format\portable</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapReader.h">
-      <Filter>src\map\format\portable</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\portable\PortableMapWriter.h">
-      <Filter>src\map\format\portable</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\format\portable\Constants.h">
-      <Filter>src\map\format\portable</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\Import.h">
       <Filter>src\map\algorithm</Filter>

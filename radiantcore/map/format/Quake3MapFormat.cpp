@@ -1,24 +1,13 @@
 #include "Quake3MapFormat.h"
 
-#include "itextstream.h"
-#include "ifiletypes.h"
-#include "ieclass.h"
-#include "ibrush.h"
-#include "ipatch.h"
-#include "igame.h"
-#include "iregistry.h"
-#include "igroupnode.h"
-
 #include "parser/DefTokeniser.h"
-
-
-#include "i18n.h"
-#include "string/string.h"
 
 #include "Quake3MapReader.h"
 #include "Quake3MapWriter.h"
 
 #include "Doom3MapFormat.h"
+
+#include "module/StaticModule.h"
 
 namespace map
 {
@@ -36,13 +25,6 @@ const StringSet& Quake3MapFormat::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_FILETYPES);
-		_dependencies.insert(MODULE_ECLASSMANAGER);
-		_dependencies.insert(MODULE_LAYERS);
-		_dependencies.insert(MODULE_BRUSHCREATOR);
-		_dependencies.insert(MODULE_PATCH);
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_MAPFORMATMANAGER);
 	}
 
@@ -111,5 +93,7 @@ bool Quake3MapFormat::canLoad(std::istream& stream) const
 
 	return false;
 }
+
+module::StaticModule<Quake3MapFormat> q3MapModule;
 
 } // namespace map

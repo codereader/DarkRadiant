@@ -1,8 +1,8 @@
 #include "Doom3PrefabFormat.h"
 
 #include "i18n.h"
-#include "itextstream.h"
-#include "ifiletypes.h"
+
+#include "module/StaticModule.h"
 
 namespace map
 {
@@ -38,5 +38,7 @@ bool Doom3PrefabFormat::allowInfoFileCreation() const
 {
 	return false;
 }
+
+module::StaticModule<Doom3PrefabFormat> d3PrefabModule;
 
 } // namespace

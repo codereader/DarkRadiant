@@ -278,9 +278,12 @@ public:
 };
 typedef std::shared_ptr<IMapFormatManager> IMapFormatManagerPtr;
 
+// Portable Map Format Name is used across module boundaries
+const char* const PORTABLE_MAP_FORMAT_NAME("Portable");
+
 } // namespace map
 
-const std::string MODULE_MAPFORMATMANAGER("MapFormatManager");
+const char* const MODULE_MAPFORMATMANAGER("MapFormatManager");
 
 // Application-wide Accessor to the global map format manager
 inline map::IMapFormatManager& GlobalMapFormatManager()

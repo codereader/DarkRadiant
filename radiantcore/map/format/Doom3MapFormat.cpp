@@ -1,21 +1,13 @@
 #include "Doom3MapFormat.h"
 
 #include "itextstream.h"
-#include "ifiletypes.h"
-#include "ieclass.h"
-#include "ibrush.h"
-#include "ipatch.h"
-#include "igame.h"
-#include "iregistry.h"
-#include "igroupnode.h"
 
 #include "parser/DefTokeniser.h"
 
-#include "i18n.h"
-#include "string/string.h"
-
 #include "Doom3MapReader.h"
 #include "Doom3MapWriter.h"
+
+#include "module/StaticModule.h"
 
 namespace map
 {
@@ -32,12 +24,6 @@ const StringSet& Doom3MapFormat::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_FILETYPES);
-		_dependencies.insert(MODULE_ECLASSMANAGER);
-		_dependencies.insert(MODULE_LAYERS);
-		_dependencies.insert(MODULE_BRUSHCREATOR);
-		_dependencies.insert(MODULE_PATCH);
-		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_MAPFORMATMANAGER);
 	}
 
@@ -107,5 +93,7 @@ bool Doom3MapFormat::canLoad(std::istream& stream) const
 
 	return false;
 }
+
+module::StaticModule<Doom3MapFormat> d3MapModule;
 
 } // namespace map

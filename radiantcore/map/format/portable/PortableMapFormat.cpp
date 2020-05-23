@@ -1,14 +1,11 @@
 #include "PortableMapFormat.h"
 
-#include "ifiletypes.h"
-#include "ieclass.h"
-#include "ibrush.h"
-#include "ipatch.h"
 #include "imapformat.h"
-#include "iregistry.h"
 
 #include "PortableMapReader.h"
 #include "PortableMapWriter.h"
+
+#include "module/StaticModule.h"
 
 namespace map
 {
@@ -17,7 +14,7 @@ namespace format
 {
 
 std::size_t PortableMapFormat::Version = 1;
-const char* PortableMapFormat::Name = "Portable";
+const char* PortableMapFormat::Name = PORTABLE_MAP_FORMAT_NAME;
 
 // RegisterableModule implementation
 const std::string& PortableMapFormat::getName() const
@@ -32,12 +29,6 @@ const StringSet& PortableMapFormat::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_FILETYPES);
-		_dependencies.insert(MODULE_ECLASSMANAGER);
-		_dependencies.insert(MODULE_LAYERS);
-		_dependencies.insert(MODULE_BRUSHCREATOR);
-		_dependencies.insert(MODULE_PATCH);
-		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_MAPFORMATMANAGER);
 	}
 
@@ -90,6 +81,8 @@ bool PortableMapFormat::canLoad(std::istream& stream) const
 {
 	return PortableMapReader::CanLoad(stream);
 }
+
+module::StaticModule<PortableMapFormat> portableMapModule;
 
 }
 

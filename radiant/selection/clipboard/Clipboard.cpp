@@ -2,12 +2,12 @@
 
 #include "iselection.h"
 #include "igrid.h"
+#include "imapformat.h"
 
 #include "wxutil/clipboard.h"
 #include "map/Map.h"
 #include "camera/GlobalCamera.h"
 #include "brush/FaceInstance.h"
-#include "map/format/portable/PortableMapFormat.h"
 #include "map/algorithm/Import.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Transformation.h"
@@ -29,7 +29,7 @@ void copy(const cmd::ArgumentList& args)
 	if (FaceInstance::Selection().empty())
     {
 		// When exporting to the system clipboard, use the portable format
-		auto format = GlobalMapFormatManager().getMapFormatByName(map::format::PortableMapFormat::Name);
+		auto format = GlobalMapFormatManager().getMapFormatByName(map::PORTABLE_MAP_FORMAT_NAME);
 
         // Stream selected objects into a stringstream
         std::stringstream out;

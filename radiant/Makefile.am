@@ -70,22 +70,6 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
                       map/MapModules.cpp \
-                      map/format/Quake3MapFormat.cpp \
-                      map/format/Quake4MapFormat.cpp \
-                      map/format/Doom3MapFormat.cpp \
-                      map/format/Doom3MapReader.cpp \
-                      map/format/Doom3PrefabFormat.cpp \
-                      map/format/portable/PortableMapFormat.cpp \
-                      map/format/portable/PortableMapWriter.cpp \
-                      map/format/portable/PortableMapReader.cpp \
-                      map/format/Quake3MapReader.cpp \
-                      map/format/Doom3MapWriter.cpp \
-                      map/format/primitiveparsers/PatchDef2.cpp \
-                      map/format/primitiveparsers/Patch.cpp \
-                      map/format/primitiveparsers/PatchDef3.cpp \
-                      map/format/primitiveparsers/BrushDef3.cpp \
-                      map/format/primitiveparsers/BrushDef.cpp \
-                      map/format/Quake4MapReader.cpp \
                       map/aas/Doom3AasFileLoader.cpp \
                       map/aas/Doom3AasFileSettings.cpp \
                       map/aas/Doom3AasFile.cpp \
