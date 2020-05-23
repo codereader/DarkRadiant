@@ -5,7 +5,6 @@
 #include "imap.h"
 #include "igame.h"
 
-#include "wxutil/ModalProgressDialog.h"
 #include "../infofile/InfoFileExporter.h"
 #include "EventRateLimiter.h"
 
@@ -41,9 +40,6 @@ private:
 	// The root node of the subgraph to be exported
 	scene::IMapRootNodePtr _root;
 
-	// The progress dialog
-	wxutil::ModalProgressDialogPtr _dialog;
-
     // Event rate limiter for the progress dialog
     EventRateLimiter _dialogEventLimiter;
 
@@ -69,9 +65,6 @@ public:
 
 	// Entry point for traversing the given root node using the given traversal function
 	void exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse);
-
-	void enableProgressDialog();
-	void disableProgressDialog();
 
 	// NodeVisitor implementation, is called by the traversal func passed to MapResource
 	bool pre(const scene::INodePtr& node) override;

@@ -9,7 +9,6 @@
 #include "imapresource.h"
 #include "imap.h"
 #include "igroupnode.h"
-#include "imainframe.h"
 #include "../../brush/Brush.h"
 
 #include "registry/registry.h"
@@ -67,14 +66,9 @@ MapExporter::~MapExporter()
 
 void MapExporter::construct()
 {
-	if (_totalNodeCount > 0 && GlobalMainFrame().isActiveApp())
-	{
-		//enableProgressDialog();
-	}
-
 	// Prepare the output stream
 	game::IGamePtr curGame = GlobalGameManager().currentGame();
-	assert(curGame != NULL);
+	assert(curGame);
 
 	xml::NodeList nodes = curGame->getLocalXPath(RKEY_FLOAT_PRECISION);
 	assert(!nodes.empty());
@@ -137,16 +131,6 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 	}
 
 	// finishScene() is handled through the destructor
-}
-
-void MapExporter::enableProgressDialog()
-{
-	_dialog.reset(new wxutil::ModalProgressDialog(_("Writing map")));
-}
-
-void MapExporter::disableProgressDialog()
-{
-	_dialog.reset();
 }
 
 bool MapExporter::pre(const scene::INodePtr& node)
@@ -255,11 +239,6 @@ void MapExporter::onNodeProgress()
 		msg.setText(fmt::format(_("Writing node {0:d}"), _curNodeCount));
 
 		GlobalRadiantCore().getMessageBus().sendMessage(msg);
-
-		if (_dialog)
-		{
-			_dialog->setTextAndFraction(msg.getText(), progressFraction);
-		}
 	}
 }
 

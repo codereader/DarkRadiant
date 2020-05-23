@@ -35,10 +35,15 @@ private:
 		switch (msg.getType())
 		{
 		case map::ExportOperation::Started:
-			_dialog.reset(new wxutil::ModalProgressDialog(_("Writing map")));
+			if (GlobalMainFrame().isActiveApp())
+			{
+				_dialog.reset(new wxutil::ModalProgressDialog(_("Writing map")));
+			}
 			break;
 
 		case map::ExportOperation::Progress:
+			if (!_dialog) break;
+
 			if (msg.getNumTotalNodes() > 0)
 			{
 				_dialog->setTextAndFraction(msg.getText(), msg.getProgressFraction());
