@@ -120,7 +120,6 @@ bool MapResource::load()
     {
 		// Map not loaded yet, acquire map root node from loader
 		_mapRoot = loadMapNode();
-
 		connectMap();
 		mapSave();
 	}
@@ -249,14 +248,14 @@ bool MapResource::saveBackup()
 	return false;
 }
 
-scene::IMapRootNodePtr MapResource::getNode()
+const scene::IMapRootNodePtr& MapResource::getRootNode()
 {
 	return _mapRoot;
 }
 
-void MapResource::setNode(const scene::IMapRootNodePtr& node)
+void MapResource::clear()
 {
-    _mapRoot = std::dynamic_pointer_cast<RootNode>(node);
+    _mapRoot = std::make_shared<RootNode>("");
 	connectMap();
 }
 

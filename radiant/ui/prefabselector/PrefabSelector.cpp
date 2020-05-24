@@ -503,7 +503,7 @@ void PrefabSelector::handleSelectionChange()
 	if (_mapResource->load())
 	{
 		// Get the node from the resource
-        scene::IMapRootNodePtr root = _mapResource->getNode();
+        const auto& root = _mapResource->getRootNode();
 
 		assert(root);
 
@@ -539,10 +539,10 @@ void PrefabSelector::updateUsageInfo()
 {
 	std::string usage("");
 
-	if (_mapResource != NULL && _mapResource->getNode() != NULL)
+	if (_mapResource && _mapResource->getRootNode())
 	{
 		// Retrieve the root node
-		scene::INodePtr root = _mapResource->getNode();
+		const auto& root = _mapResource->getRootNode();
 
 		// Traverse the root to find the worldspawn
 		map::WorldspawnArgFinder finder("editor_description");

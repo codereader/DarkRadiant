@@ -41,6 +41,8 @@ class IMapRootNode :
 public:
     virtual ~IMapRootNode() {}
 
+	virtual void setName(const std::string& name) = 0;
+
     /**
      * greebo: Returns the namespace of this root.
      */

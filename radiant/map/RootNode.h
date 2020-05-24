@@ -54,6 +54,7 @@ public:
 
 	virtual ~RootNode();
 
+	void setName(const std::string& name) override;
 	// Returns the reference to the Namespace of this rootnode
     const INamespacePtr& getNamespace() override;
     IMapFileChangeTracker& getUndoChangeTracker() override;
@@ -76,8 +77,6 @@ public:
 
 	std::string name() const override;
 	Type getNodeType() const override;
-
-	void setName(const std::string& name);
 
 	// Override scene::Node methods
 	virtual void onChildAdded(const scene::INodePtr& child) override;

@@ -22,6 +22,7 @@ class BasicRootNode :
     public KeyValueStore
 {
 private:
+    std::string _name;
     INamespacePtr _namespace;
     UndoFileChangeTracker _changeTracker;
     ITargetManagerPtr _targetManager;
@@ -42,6 +43,11 @@ public:
 
     virtual ~BasicRootNode()
     {}
+
+    virtual void setName(const std::string& name) override
+    {
+        _name = name;
+    }
 
     const INamespacePtr& getNamespace() override
     {

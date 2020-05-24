@@ -37,7 +37,6 @@
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
 #include "map/StartupMapLoader.h"
-#include "map/RootNode.h"
 #include "map/MapResource.h"
 #include "map/algorithm/Import.h"
 #include "map/algorithm/Export.h"
@@ -89,16 +88,16 @@ void Map::loadMapResourceFromPath(const std::string& path)
     if (isUnnamed() || !_resource->load())
     {
         // Map is unnamed or load failed, reset map resource node to empty
-        _resource->setNode(std::make_shared<RootNode>(""));
+        _resource->clear();
 
-        _resource->getNode()->getUndoChangeTracker().save();
+        _resource->getRootNode()->getUndoChangeTracker().save();
         
         // Rename the map to "unnamed" in any case to avoid overwriting the failed map
         setMapName(_(MAP_UNNAMED_STRING));
     }
 
     // Take the new node and insert it as map root
-    GlobalSceneGraph().setRoot(_resource->getNode());
+    GlobalSceneGraph().setRoot(_resource->getRootNode());
 
 	// Traverse the scenegraph and find the worldspawn
 	findWorldspawn();
@@ -182,7 +181,7 @@ scene::IMapRootNodePtr Map::getRoot()
     if (_resource)
 	{
         // Try to cast the node onto a root node and return
-        return std::dynamic_pointer_cast<scene::IMapRootNode>(_resource->getNode());
+        return _resource->getRootNode();
     }
 
     return scene::IMapRootNodePtr();
@@ -371,7 +370,7 @@ bool Map::import(const std::string& filename)
         {
             // load() returned TRUE, this means that the resource node
             // is not the NULL node
-            scene::INodePtr otherRoot = resource->getNode();
+            const auto& otherRoot = resource->getRootNode();
 
             // Adjust all new names to fit into the existing map namespace
             algorithm::prepareNamesForImport(getRoot(), otherRoot);

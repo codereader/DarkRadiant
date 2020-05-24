@@ -17,7 +17,7 @@ class MapResource :
 	public util::Noncopyable
 {
 private:
-    RootNodePtr _mapRoot;
+    scene::IMapRootNodePtr _mapRoot;
 
 	// Name given during construction
 	std::string _originalName;
@@ -39,8 +39,8 @@ public:
 	bool load() override;
 	void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 
-	scene::IMapRootNodePtr getNode() override;
-    void setNode(const scene::IMapRootNodePtr& node) override;
+	const scene::IMapRootNodePtr& getRootNode() override;
+    void clear() override;
 
 	// Save the map contents to the given filename using the given MapFormat export module
 	// Throws an OperationException if anything prevents successful completion

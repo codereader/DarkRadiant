@@ -46,8 +46,9 @@ public:
 	*/
 	virtual void save(const map::MapFormatPtr& mapFormat = map::MapFormatPtr()) = 0;
 
-    virtual scene::IMapRootNodePtr getNode() = 0;
-    virtual void setNode(const scene::IMapRootNodePtr& node) = 0;
+    virtual const scene::IMapRootNodePtr& getRootNode() = 0;
+
+    virtual void clear() = 0;
 };
 typedef std::shared_ptr<IMapResource> IMapResourcePtr;
 
