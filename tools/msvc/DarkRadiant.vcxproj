@@ -211,7 +211,6 @@
     <ClCompile Include="..\..\radiant\map\aas\Doom3AasFile.cpp" />
     <ClCompile Include="..\..\radiant\map\aas\Doom3AasFileLoader.cpp" />
     <ClCompile Include="..\..\radiant\map\aas\Doom3AasFileSettings.cpp" />
-    <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Export.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\Import.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp" />
@@ -912,7 +911,6 @@
     <ClInclude Include="..\..\radiant\map\aas\Doom3AasFileLoader.h" />
     <ClInclude Include="..\..\radiant\map\aas\Doom3AasFileSettings.h" />
     <ClInclude Include="..\..\radiant\map\aas\Util.h" />
-    <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Export.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\Import.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h" />

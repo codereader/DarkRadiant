@@ -634,9 +634,6 @@
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
@@ -1630,9 +1627,6 @@
       <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h">

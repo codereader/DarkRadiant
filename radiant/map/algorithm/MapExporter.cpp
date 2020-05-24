@@ -13,7 +13,7 @@
 #include "registry/registry.h"
 #include "string/string.h"
 
-#include "ChildPrimitives.h"
+#include "scene/ChildPrimitives.h"
 #include "messages/MapFileOperation.h"
 
 namespace map
@@ -258,7 +258,7 @@ void MapExporter::finishScene()
 	// Emit the post-export event to give subscribers a chance to cleanup the scene
 	GlobalMapResourceManager().signal_onResourceExported().emit(_root);
 
-	addOriginToChildPrimitives(_root);
+	scene::addOriginToChildPrimitives(_root);
 
 	// Re-evaluate all brushes, to update the Winding calculations
 	recalculateBrushWindings();

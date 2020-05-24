@@ -56,7 +56,7 @@
 #include "MapPropertyInfoFileModule.h"
 
 #include <fmt/format.h>
-#include "algorithm/ChildPrimitives.h"
+#include "scene/ChildPrimitives.h"
 
 namespace map 
 {

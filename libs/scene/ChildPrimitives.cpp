@@ -6,7 +6,7 @@
 
 #include "registry/registry.h"
 
-namespace map
+namespace scene
 {
 
 // Local helper to add origins
@@ -15,18 +15,18 @@ class OriginAdder :
 {
 public:
 	// NodeVisitor implementation
-	bool pre(const scene::INodePtr& node)
+	bool pre(const scene::INodePtr& node) override
 	{
 		Entity* entity = Node_getEntity(node);
 
 		// Check for an entity
-		if (entity != NULL)
+		if (entity != nullptr)
 		{
 			// greebo: Check for a Doom3Group
 			scene::GroupNodePtr groupNode = Node_getGroupNode(node);
 
 			// Don't handle the worldspawn children, they're safe&sound
-			if (groupNode != NULL && !entity->isWorldspawn())
+			if (groupNode && !entity->isWorldspawn())
 			{
 				groupNode->addOriginToChildren();
 				// Don't traverse the children
@@ -42,18 +42,18 @@ class OriginRemover :
 	public scene::NodeVisitor
 {
 public:
-	bool pre(const scene::INodePtr& node)
+	bool pre(const scene::INodePtr& node) override
 	{
 		Entity* entity = Node_getEntity(node);
 
 		// Check for an entity
-		if (entity != NULL)
+		if (entity != nullptr)
 		{
 			// greebo: Check for a Doom3Group
 			scene::GroupNodePtr groupNode = Node_getGroupNode(node);
 
 			// Don't handle the worldspawn children, they're safe&sound
-			if (groupNode != NULL && !entity->isWorldspawn())
+			if (groupNode && !entity->isWorldspawn())
 			{
 				groupNode->removeOriginFromChildren();
 				// Don't traverse the children

@@ -5,7 +5,7 @@
 // Forward Decl.
 namespace scene { class INode; typedef std::shared_ptr<INode> INodePtr; }
 
-namespace map
+namespace scene
 {
 
 /**

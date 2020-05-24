@@ -34,7 +34,7 @@
 #include "algorithm/MapExporter.h"
 #include "algorithm/Import.h"
 #include "infofile/InfoFileExporter.h"
-#include "algorithm/ChildPrimitives.h"
+#include "scene/ChildPrimitives.h"
 #include "messages/MapFileOperation.h"
 
 namespace map
@@ -330,7 +330,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 		reader->readFromStream(mapStream);
 
 		// Prepare child primitives
-		addOriginToChildPrimitives(root);
+		scene::addOriginToChildPrimitives(root);
 
 		if (!format.allowInfoFileCreation())
 		{

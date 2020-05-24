@@ -11,7 +11,7 @@
 #include "ientity.h"
 #include "iscenegraph.h"
 #include "scene/BasicRootNode.h"
-#include "map/algorithm/ChildPrimitives.h"
+#include "scene/ChildPrimitives.h"
 #include "map/Map.h"
 #include "scenelib.h"
 #include "entitylib.h"
@@ -355,7 +355,7 @@ void importFromStream(std::istream& stream)
         reader->readFromStream(stream);
 
         // Prepare child primitives
-        addOriginToChildPrimitives(importFilter.getRootNode());
+        scene::addOriginToChildPrimitives(importFilter.getRootNode());
 
         // Adjust all new names to fit into the existing map namespace
         prepareNamesForImport(GlobalMap().getRoot(), importFilter.getRootNode());
