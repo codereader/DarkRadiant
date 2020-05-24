@@ -2,6 +2,7 @@
 
 #include "inode.h"
 #include "imodule.h"
+#include "itextstream.h"
 #include "imap.h"
 
 #include <sigc++/signal.h>
@@ -22,6 +23,17 @@ public:
 
 	virtual bool load() = 0;
 
+	// Exception type thrown by the the MapResource implementation
+	struct OperationException :
+		public std::runtime_error 
+	{
+		OperationException(const std::string& msg) :
+			runtime_error(msg)
+		{
+			rError() << "MapResource operation failed: " << msg << std::endl;
+		}
+	};
+
 	/**
 	* Save this resource
 	*
@@ -29,10 +41,10 @@ public:
 	* format argument is omitted, the format corresponding to the current
 	* game type is used.
 	*
-	* @returns
-	* true if the resource was saved, false otherwise.
+	* Throws an OperationException if anything prevented the save from
+	* completion (user cancellation, I/O errors)
 	*/
-	virtual bool save(const map::MapFormatPtr& mapFormat = map::MapFormatPtr()) = 0;
+	virtual void save(const map::MapFormatPtr& mapFormat = map::MapFormatPtr()) = 0;
 
     virtual scene::IMapRootNodePtr getNode() = 0;
     virtual void setNode(const scene::IMapRootNodePtr& node) = 0;

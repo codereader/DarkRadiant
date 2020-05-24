@@ -37,13 +37,14 @@ public:
 	void rename(const std::string& fullPath) override;
 
 	bool load() override;
-	bool save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
+	void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 
 	scene::IMapRootNodePtr getNode() override;
     void setNode(const scene::IMapRootNodePtr& node) override;
 
 	// Save the map contents to the given filename using the given MapFormat export module
-	static bool saveFile(const MapFormat& format, const scene::IMapRootNodePtr& root,
+	// Throws an OperationException if anything prevents successful completion
+	static void saveFile(const MapFormat& format, const scene::IMapRootNodePtr& root,
 						 const GraphTraversalFunc& traverse, const std::string& filename);
 
 private:
@@ -68,7 +69,8 @@ private:
 	// function is then called with the opened stream. Throws std::runtime_error on stream open failure.
 	void openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor);
 
-	static bool checkIsWriteable(const fs::path& path);
+	// Checks if file can be overwritten (throws on failure)
+	static void throwIfNotWriteable(const fs::path& path);
 };
 // Resource pointer types
 typedef std::shared_ptr<MapResource> MapResourcePtr;

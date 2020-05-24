@@ -318,16 +318,24 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
 	blocker.setMessage(_("Saving Map"));
 
+    bool success = false;
+
     // Save the actual map resource
-    bool success = _resource->save(mapFormat);
-
-    emitMapEvent(MapSaved);
-
-    if (success)
+    try
     {
+        _resource->save(mapFormat);
+
         // Clear the modified flag
         setModified(false);
+
+        success = true;
     }
+    catch (IMapResource::OperationException & ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what());
+    }
+
+    emitMapEvent(MapSaved);
 
     _saveInProgress = false;
 
@@ -378,9 +386,9 @@ bool Map::import(const std::string& filename)
     return success;
 }
 
-bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
+void Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
 {
-    if (_saveInProgress) return false; // safeguard
+    if (_saveInProgress) return; // safeguard
 
     // Disable screen updates for the scope of this function
     ui::ScreenUpdateBlocker blocker(_("Processing..."), os::getFilename(filename));
@@ -394,21 +402,21 @@ bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
 		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
 	}
 
-    bool result = MapResource::saveFile(
-        *format,
-        GlobalSceneGraph().root(),
-        scene::traverse, // TraversalFunc
-        filename
-    );
+    try
+    {
+        MapResource::saveFile(*format, GlobalSceneGraph().root(), scene::traverse, filename);
+    }
+    catch (const IMapResource::OperationException& ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what());
+    }
 
     _saveInProgress = false;
-
-    return result;
 }
 
-bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapFormat)
+void Map::saveSelected(const std::string& filename, const MapFormatPtr& mapFormat)
 {
-    if (_saveInProgress) return false; // safeguard
+    if (_saveInProgress) return; // safeguard
 
     // Disable screen updates for the scope of this function
     ui::ScreenUpdateBlocker blocker(_("Processing..."), os::getFilename(filename));
@@ -422,16 +430,21 @@ bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
 		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
 	}
 
-    bool success = MapResource::saveFile(
-        *format,
-        GlobalSceneGraph().root(),
-        scene::traverseSelected, // TraversalFunc
-        filename
-    );
+    try
+    {
+        MapResource::saveFile(
+            *format,
+            GlobalSceneGraph().root(),
+            scene::traverseSelected, // TraversalFunc
+            filename
+        );
+    }
+    catch (const IMapResource::OperationException& ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what());
+    }
 
     _saveInProgress = false;
-
-    return success;
 }
 
 std::string Map::getSaveConfirmationText() const
@@ -537,7 +550,7 @@ bool Map::saveAs()
     }
 }
 
-bool Map::saveCopyAs()
+void Map::saveCopyAs()
 {
     // Let's see if we can remember a
     if (_lastCopyMapName.empty()) {
@@ -553,11 +566,8 @@ bool Map::saveCopyAs()
         _lastCopyMapName = fileInfo.fullPath;
 
         // Return the result of the actual save method
-		return saveDirect(fileInfo.fullPath, fileInfo.mapFormat);
+		saveDirect(fileInfo.fullPath, fileInfo.mapFormat);
     }
-
-    // Not executed, return false
-    return false;
 }
 
 void Map::loadPrefabAt(const Vector3& targetCoords)

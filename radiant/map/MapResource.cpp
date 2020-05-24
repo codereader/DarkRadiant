@@ -37,6 +37,7 @@
 #include "algorithm/Import.h"
 #include "infofile/InfoFileExporter.h"
 #include "algorithm/ChildPrimitives.h"
+#include "messages/MapExportOperation.h"
 
 namespace map
 {
@@ -127,17 +128,17 @@ bool MapResource::load()
 	return _mapRoot != nullptr;
 }
 
-bool MapResource::save(const MapFormatPtr& mapFormat)
+void MapResource::save(const MapFormatPtr& mapFormat)
 {
 	// For saving, take the default map format for this game type
 	MapFormatPtr format = mapFormat ? mapFormat : GlobalMapFormatManager().getMapFormatForGameType(
 		GlobalGameManager().currentGame()->getKeyValue("type"), _extension
 	);
 
-	if (format == NULL)
+	if (!format)
 	{
 		rError() << "Could not locate map format module." << std::endl;
-		return false;
+		throw OperationException(_("Failed to locate map format module"));
 	}
 
 	rMessage() << "Using " << format->getMapFormatName() << " format to save the resource." << std::endl;
@@ -145,37 +146,23 @@ bool MapResource::save(const MapFormatPtr& mapFormat)
 	std::string fullpath = _path + _name;
 
 	// Save a backup of the existing file (rename it to .bak) if it exists in the first place
-	if (os::fileOrDirExists(fullpath))
+	if (os::fileOrDirExists(fullpath) && !saveBackup())
 	{
-		if (!saveBackup())
-		{
-			// angua: if backup creation is not possible, still save the map
-			// but create message in the console
-			rError() << "Could not create backup (Map is possibly open in Doom3)" << std::endl;
-			// return false;
-		}
+		// angua: if backup creation is not possible, still save the map
+		// but create message in the console
+		rError() << "Could not create backup (Map is possibly open in Doom3)" << std::endl;
 	}
 
-	bool success = false;
-
-	if (path_is_absolute(fullpath.c_str()))
-	{
-		// Save the actual file
-		success = saveFile(*format, _mapRoot, scene::traverse, fullpath);
-	}
-	else
+	if (!path_is_absolute(fullpath.c_str()))
 	{
 		rError() << "Map path is not absolute: " << fullpath << std::endl;
-		success = false;
+		throw OperationException(fmt::format(_("Map path is not absolute: {0}"), fullpath));
 	}
 
-	if (success)
-	{
-  		mapSave();
-  		return true;
-	}
+	// Save the actual file (throws on fail)
+	saveFile(*format, _mapRoot, scene::traverse, fullpath);
 
-	return false;
+	mapSave();
 }
 
 bool MapResource::saveBackup()
@@ -487,7 +474,7 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 	}
 }
 
-bool MapResource::checkIsWriteable(const fs::path& path)
+void MapResource::throwIfNotWriteable(const fs::path& path)
 {
 	// Check writeability of the given file
 	if (os::fileOrDirExists(path.string()) && !os::fileIsWritable(path))
@@ -495,16 +482,11 @@ bool MapResource::checkIsWriteable(const fs::path& path)
 		// File is write-protected
 		rError() << "File is write-protected." << std::endl;
 
-		wxutil::Messagebox::ShowError(
-			fmt::format(_("File is write-protected: {0}"), path.string()));
-
-		return false;
+		throw OperationException(fmt::format(_("File is write-protected: {0}"), path.string()));
 	}
-
-	return true;
 }
 
-bool MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr& root,
+void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr& root,
 						   const GraphTraversalFunc& traverse, const std::string& filename)
 {
 	// Actual output file paths
@@ -513,84 +495,82 @@ bool MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 	auxFile.replace_extension(_infoFileExt);
 
 	// Check writeability of the primary output file
-	if (!checkIsWriteable(outFile)) return false;
+	throwIfNotWriteable(outFile);
 
 	// Test opening the output file
 	rMessage() << "Opening file " << outFile.string();
 
 	// Open the stream to the primary output file
-	std::unique_ptr<std::ofstream> outFileStream(new std::ofstream(outFile.string()));
+	std::ofstream outFileStream(outFile.string());
 	std::unique_ptr<std::ofstream> auxFileStream; // aux stream is optional
 
 	// Check writeability of the auxiliary output file if necessary
 	if (format.allowInfoFileCreation())
 	{
-		if (!checkIsWriteable(auxFile)) return false;
-
 		rMessage() << " and auxiliary file " << auxFile.string();
+
+		throwIfNotWriteable(auxFile);
 
 		auxFileStream.reset(new std::ofstream(auxFile.string()));
 	}
 
 	rMessage() << " for writing... ";
 
-	if (outFileStream->is_open() && (!auxFileStream || auxFileStream->is_open()))
+	if (!outFileStream.is_open())
 	{
-		rMessage() << "success" << std::endl;
+		throw OperationException(fmt::format(_("Could not open file for writing: {0}"), outFile.string()));
+	}
 
-		// Check the total count of nodes to traverse
-		NodeCounter counter;
-		traverse(root, counter);
+	if (auxFileStream && !auxFileStream->is_open())
+	{
+		throw OperationException(fmt::format(_("Could not open file for writing: {0}"), auxFile.string()));
+	}
+
+	rMessage() << "success" << std::endl;
+
+	// Check the total count of nodes to traverse
+	NodeCounter counter;
+	traverse(root, counter);
 		
-		// Acquire the MapWriter from the MapFormat class
-		IMapWriterPtr mapWriter = format.getMapWriter();
+	// Acquire the MapWriter from the MapFormat class
+	IMapWriterPtr mapWriter = format.getMapWriter();
 
-		// Create our main MapExporter walker, and pass the desired 
-		// writer to it. The constructor will prepare the scene
-		// and the destructor will clean it up afterwards. That way
-		// we ensure a nice and tidy scene when exceptions are thrown.
-		MapExporterPtr exporter;
+	// Create our main MapExporter walker, and pass the desired 
+	// writer to it. The constructor will prepare the scene
+	// and the destructor will clean it up afterwards. That way
+	// we ensure a nice and tidy scene when exceptions are thrown.
+	MapExporterPtr exporter;
 		
-		if (format.allowInfoFileCreation())
-		{
-			exporter.reset(new MapExporter(*mapWriter, root, *outFileStream, *auxFileStream, counter.getCount()));
-		}
-		else
-		{
-			exporter.reset(new MapExporter(*mapWriter, root, *outFileStream, counter.getCount())); // no aux stream
-		}
-
-		bool cancelled = false;
-
-		try
-		{
-			// Pass the traversal function and the root of the subgraph to export
-			exporter->exportMap(root, traverse);
-		}
-		catch (wxutil::ModalProgressDialog::OperationAbortedException&)
-		{
-			wxutil::Messagebox::ShowError(_("Map writing cancelled"));
-
-			cancelled = true;
-		}
-
-		exporter.reset();
-
-		outFileStream->close();
-
-		if (auxFileStream)
-		{
-			auxFileStream->close();
-		}
-
-		return !cancelled;
+	if (format.allowInfoFileCreation())
+	{
+		exporter.reset(new MapExporter(*mapWriter, root, outFileStream, *auxFileStream, counter.getCount()));
 	}
 	else
 	{
-		wxutil::Messagebox::ShowError(_("Could not open output streams for writing"));
+		exporter.reset(new MapExporter(*mapWriter, root, outFileStream, counter.getCount())); // no aux stream
+	}
 
-		rError() << "failure" << std::endl;
-		return false;
+	try
+	{
+		// Pass the traversal function and the root of the subgraph to export
+		exporter->exportMap(root, traverse);
+	}
+	catch (ExportOperation::OperationCancelled&)
+	{
+		throw OperationException(_("Map writing cancelled"));
+	}
+
+	exporter.reset();
+
+	// Check for any stream failures now that we're done writing
+	if (outFileStream.fail())
+	{
+		throw OperationException(fmt::format(_("Failure writing to file {0}"), outFile.string()));
+	}
+
+	if (auxFileStream && auxFileStream->fail())
+	{
+		throw OperationException(fmt::format(_("Failure writing to file {0}"), auxFile.string()));
 	}
 }
 

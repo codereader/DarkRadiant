@@ -5,6 +5,7 @@
 
 #include "messages/MapExportOperation.h"
 #include "wxutil/ModalProgressDialog.h"
+#include "wxutil/dialog/MessageBox.h"
 
 namespace ui
 {
@@ -32,33 +33,40 @@ public:
 private:
 	void handleMapExportMessage(map::ExportOperation& msg)
 	{
-		switch (msg.getType())
+		try
 		{
-		case map::ExportOperation::Started:
-			if (GlobalMainFrame().isActiveApp())
+			switch (msg.getType())
 			{
-				_dialog.reset(new wxutil::ModalProgressDialog(_("Writing map")));
-			}
-			break;
+			case map::ExportOperation::Started:
+				if (GlobalMainFrame().isActiveApp())
+				{
+					_dialog.reset(new wxutil::ModalProgressDialog(_("Writing map")));
+				}
+				break;
 
-		case map::ExportOperation::Progress:
-			if (!_dialog) break;
+			case map::ExportOperation::Progress:
+				if (!_dialog) break;
 
-			if (msg.getNumTotalNodes() > 0)
-			{
-				_dialog->setTextAndFraction(msg.getText(), msg.getProgressFraction());
-			}
-			else
-			{
-				_dialog->setText(msg.getText());
-				_dialog->Pulse();
-			}
-			break;
+				if (msg.getNumTotalNodes() > 0)
+				{
+					_dialog->setTextAndFraction(msg.getText(), msg.getProgressFraction());
+				}
+				else
+				{
+					_dialog->setText(msg.getText());
+					_dialog->Pulse();
+				}
+				break;
 
-		case map::ExportOperation::Finished:
-			_dialog.reset();
-			break;
-		};
+			case map::ExportOperation::Finished:
+				_dialog.reset();
+				break;
+			};
+		}
+		catch (const wxutil::ModalProgressDialog::OperationAbortedException&)
+		{
+			msg.cancelOperation();
+		}
 	}
 };
 

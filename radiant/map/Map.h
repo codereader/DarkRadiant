@@ -112,13 +112,11 @@ public:
 	 * greebo: Saves a copy of the current map (asks for filename using
 	 * a dialog window).
 	 */
-	bool saveCopyAs();
+	void saveCopyAs();
 
 	/** greebo: Saves the current selection to the target <filename>.
-	 *
-	 * @returns: true on success.
 	 */
-	bool saveSelected(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
+	void saveSelected(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
 
 	/** greebo: Loads the map from the given filename
 	 */
@@ -134,10 +132,8 @@ public:
 	 * greebo: Exports the current map directly to the given filename.
 	 * This skips any "modified" or "unnamed" checks, it just dumps
 	 * the current scenegraph content to the file.
-	 *
-	 * @returns: true on success, false on failure.
 	 */
-	bool saveDirect(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
+	void saveDirect(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
 
 	/** greebo: Creates a new map file.
 	 *
