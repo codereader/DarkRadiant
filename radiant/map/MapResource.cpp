@@ -9,7 +9,6 @@
 #include "iarchive.h"
 #include "igroupnode.h"
 #include "ifilesystem.h"
-#include "imainframe.h"
 #include "iregistry.h"
 #include "imapinfofile.h"
 
@@ -17,7 +16,6 @@
 #include "map/RootNode.h"
 #include "mapfile.h"
 #include "gamelib.h"
-#include "wxutil/dialog/MessageBox.h"
 #include "debugging/debugging.h"
 #include "os/path.h"
 #include "os/file.h"
@@ -181,34 +179,35 @@ bool MapResource::saveBackup()
 		fs::path auxFile = fullpath;
 		auxFile.replace_extension(_infoFileExt);
 
-		if (os::fileIsWritable(fullpath.string()))
-		{
-			fs::path backup = fullpath;
-			backup.replace_extension(".bak");
+		fs::path backup = fullpath;
+		backup.replace_extension(".bak");
 			
-			// replace_extension() doesn't accept something like ".darkradiant.bak", so roll our own
-			fs::path auxFileBackup = auxFile.string() + ".bak";
+		// replace_extension() doesn't accept something like ".darkradiant.bak", so roll our own
+		fs::path auxFileBackup = auxFile.string() + ".bak";
 
-			bool errorOccurred = false;
+		bool errorOccurred = false;
 
-			try
+		try
+		{
+			// remove backup
+			if (fs::exists(backup))
 			{
-				// remove backup
-				if (fs::exists(backup))
-				{
-					fs::remove(backup);
-				}
-
-				// rename current to backup
-				fs::rename(fullpath, backup);
-			}
-			catch (fs::filesystem_error& ex)
-			{
-				rWarning() << "Error while creating backups: " << ex.what() << 
-					", the file is possibly opened by the game." << std::endl;
-				errorOccurred = true;
+				fs::remove(backup);
 			}
 
+			// rename current to backup
+			fs::rename(fullpath, backup);
+		}
+		catch (fs::filesystem_error& ex)
+		{
+			rWarning() << "Error while creating backups: " << ex.what() << 
+				", the file is possibly opened by the game." << std::endl;
+			errorOccurred = true;
+		}
+
+		// Handle the .darkradiant file only if the above succeeded
+		if (!errorOccurred)
+		{
 			try
 			{
 				// remove aux file backup
@@ -224,25 +223,15 @@ bool MapResource::saveBackup()
 					fs::rename(auxFile, auxFileBackup);
 				}
 			}
-			catch (fs::filesystem_error& ex)
+			catch (fs::filesystem_error & ex)
 			{
-				rWarning() << "Error while creating backups: " << ex.what() << 
+				rWarning() << "Error while creating backups: " << ex.what() <<
 					", the file is possibly opened by the game." << std::endl;
 				errorOccurred = true;
 			}
-
-			return !errorOccurred;
 		}
-		else
-		{
-			rError() << "map path is not writeable: " << fullpath.string() << std::endl;
 
-			// File is write-protected
-			wxutil::Messagebox::ShowError(
-				fmt::format(_("File is write-protected: {0}"), fullpath.string()));
-
-			return false;
-		}
+		return !errorOccurred;
 	}
 
 	return false;
