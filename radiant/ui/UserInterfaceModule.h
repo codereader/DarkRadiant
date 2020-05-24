@@ -8,7 +8,7 @@
 
 #include "EntityClassColourManager.h"
 #include "LongRunningOperationHandler.h"
-#include "MapExportProgressHandler.h"
+#include "MapFileProgressHandler.h"
 #include "messages/CommandExecutionFailed.h"
 
 namespace ui
@@ -27,7 +27,7 @@ class UserInterfaceModule :
 private:
 	std::unique_ptr<EntityClassColourManager> _eClassColourManager;
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
-	std::unique_ptr<MapExportProgressHandler> _mapExportProgressHandler;
+	std::unique_ptr<MapFileProgressHandler> _mapFileProgressHandler;
 
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;

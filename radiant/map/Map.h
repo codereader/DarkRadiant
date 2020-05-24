@@ -219,6 +219,8 @@ private:
 
 	void emitMapEvent(MapEvent ev);
 
+	void clearMapResource();
+
 }; // class Map
 
 } // namespace map

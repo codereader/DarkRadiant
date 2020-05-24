@@ -203,7 +203,7 @@
     <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h">
       <Filter>messages</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\messages\MapExportOperation.h">
+    <ClInclude Include="..\..\libs\messages\MapFileOperation.h">
       <Filter>messages</Filter>
     </ClInclude>
   </ItemGroup>

@@ -14,7 +14,7 @@
 #include "string/string.h"
 
 #include "ChildPrimitives.h"
-#include "messages/MapExportOperation.h"
+#include "messages/MapFileOperation.h"
 
 namespace map
 {
@@ -25,8 +25,8 @@ namespace map
 		const char* const RKEY_MAP_SAVE_STATUS_INTERLEAVE = "user/ui/map/saveStatusInterleave";
 	}
 
-MapExporter::MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root, std::ostream& mapStream, std::size_t nodeCount) :
-	_writer(writer),
+MapExporter::MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& root, std::ostream& mapStream, std::size_t nodeCount) :
+	_writer(format.getMapWriter()),
 	_mapStream(mapStream),
 	_root(root),
 	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
@@ -38,9 +38,9 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
 	construct();
 }
 
-MapExporter::MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
+MapExporter::MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::ostream& auxStream, std::size_t nodeCount) :
-	_writer(writer),
+	_writer(format.getMapWriter()),
 	_mapStream(mapStream),
 	_infoFileExporter(new InfoFileExporter(auxStream)),
 	_root(root),
@@ -81,7 +81,7 @@ void MapExporter::construct()
 
 void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse)
 {
-	ExportOperation startedMsg(ExportOperation::Started, _totalNodeCount);
+	FileOperation startedMsg(FileOperation::Started, _totalNodeCount > 0);
 	GlobalRadiantCore().getMessageBus().sendMessage(startedMsg);
 
 	try
@@ -93,7 +93,7 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 			throw std::logic_error("Map node is not a scene::IMapRootNode");
 		}
 
-		_writer.beginWriteMap(mapRoot, _mapStream);
+		_writer->beginWriteMap(mapRoot, _mapStream);
 
 		if (_infoFileExporter)
 		{
@@ -117,7 +117,7 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 			throw std::logic_error("Map node is not a scene::IMapRootNode");
 		}
 
-		_writer.endWriteMap(mapRoot, _mapStream);
+		_writer->endWriteMap(mapRoot, _mapStream);
 
 		if (_infoFileExporter)
 		{
@@ -143,7 +143,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			// Progress dialog handling
 			onNodeProgress();
 			
-			_writer.beginWriteEntity(entity, _mapStream);
+			_writer->beginWriteEntity(entity, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitEntity(node, _entityNum);
 
@@ -157,7 +157,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			// Progress dialog handling
 			onNodeProgress();
 
-			_writer.beginWriteBrush(brush, _mapStream);
+			_writer->beginWriteBrush(brush, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
@@ -171,7 +171,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			// Progress dialog handling
 			onNodeProgress();
 
-			_writer.beginWritePatch(patch, _mapStream);
+			_writer->beginWritePatch(patch, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
@@ -194,7 +194,7 @@ void MapExporter::post(const scene::INodePtr& node)
 
 		if (entity)
 		{
-			_writer.endWriteEntity(entity, _mapStream);
+			_writer->endWriteEntity(entity, _mapStream);
 
 			_entityNum++;
 			return;
@@ -204,7 +204,7 @@ void MapExporter::post(const scene::INodePtr& node)
 
 		if (brush && brush->getIBrush().hasContributingFaces())
 		{
-			_writer.endWriteBrush(brush, _mapStream);
+			_writer->endWriteBrush(brush, _mapStream);
 			_primitiveNum++;
 			return;
 		}
@@ -213,7 +213,7 @@ void MapExporter::post(const scene::INodePtr& node)
 
 		if (patch)
 		{
-			_writer.endWritePatch(patch, _mapStream);
+			_writer->endWritePatch(patch, _mapStream);
 			_primitiveNum++;
 			return;
 		}
@@ -232,9 +232,10 @@ void MapExporter::onNodeProgress()
 	// button is clicked, which we must catch and handle.
 	if (_dialogEventLimiter.readyForEvent())
 	{
-		float progressFraction = static_cast<float>(_curNodeCount) / static_cast<float>(_totalNodeCount);
+		float progressFraction = _totalNodeCount > 0 ? 
+			static_cast<float>(_curNodeCount) / static_cast<float>(_totalNodeCount) : 0.0f;
 
-		ExportOperation msg(ExportOperation::Progress, _totalNodeCount, progressFraction);
+		FileOperation msg(FileOperation::Progress, _totalNodeCount > 0, progressFraction);
 		msg.setText(fmt::format(_("Writing node {0:d}"), _curNodeCount));
 
 		GlobalRadiantCore().getMessageBus().sendMessage(msg);
@@ -262,7 +263,7 @@ void MapExporter::finishScene()
 	// Re-evaluate all brushes, to update the Winding calculations
 	recalculateBrushWindings();
 
-	ExportOperation finishedMsg(ExportOperation::Finished, _totalNodeCount);
+	FileOperation finishedMsg(FileOperation::Finished, _totalNodeCount > 0);
 	GlobalRadiantCore().getMessageBus().sendMessage(finishedMsg);
 }
 

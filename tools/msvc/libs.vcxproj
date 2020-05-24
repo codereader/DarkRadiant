@@ -160,7 +160,7 @@
     <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h" />
     <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h" />
     <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h" />
-    <ClInclude Include="..\..\libs\messages\MapExportOperation.h" />
+    <ClInclude Include="..\..\libs\messages\MapFileOperation.h" />
     <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />

@@ -3,14 +3,14 @@
 #include "iradiant.h"
 #include <sigc++/functors/mem_fun.h>
 
-#include "messages/MapExportOperation.h"
+#include "messages/MapFileOperation.h"
 #include "wxutil/ModalProgressDialog.h"
 #include "wxutil/dialog/MessageBox.h"
 
 namespace ui
 {
 
-class MapExportProgressHandler
+class MapFileProgressHandler
 {
 private:
 	std::size_t _msgSubscription;
@@ -18,36 +18,36 @@ private:
 	wxutil::ModalProgressDialogPtr _dialog;
 
 public:
-	MapExportProgressHandler()
+	MapFileProgressHandler()
 	{
 		_msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
-			radiant::TypeListener<map::ExportOperation>(
-				sigc::mem_fun(this, &MapExportProgressHandler::handleMapExportMessage)));
+			radiant::TypeListener<map::FileOperation>(
+				sigc::mem_fun(this, &MapFileProgressHandler::handleMapExportMessage)));
 	}
 
-	~MapExportProgressHandler()
+	~MapFileProgressHandler()
 	{
 		GlobalRadiantCore().getMessageBus().removeListener(_msgSubscription);
 	}
 
 private:
-	void handleMapExportMessage(map::ExportOperation& msg)
+	void handleMapExportMessage(map::FileOperation& msg)
 	{
 		try
 		{
 			switch (msg.getType())
 			{
-			case map::ExportOperation::Started:
+			case map::FileOperation::Started:
 				if (GlobalMainFrame().isActiveApp())
 				{
 					_dialog.reset(new wxutil::ModalProgressDialog(_("Writing map")));
 				}
 				break;
 
-			case map::ExportOperation::Progress:
+			case map::FileOperation::Progress:
 				if (!_dialog) break;
 
-				if (msg.getNumTotalNodes() > 0)
+				if (msg.canCalculateProgress())
 				{
 					_dialog->setTextAndFraction(msg.getText(), msg.getProgressFraction());
 				}
@@ -58,7 +58,7 @@ private:
 				}
 				break;
 
-			case map::ExportOperation::Finished:
+			case map::FileOperation::Finished:
 				_dialog.reset();
 				break;
 			};

@@ -18,7 +18,8 @@ namespace map
  * During map parsing the methods addEntity/addPrimitiveToEntity are called
  * by the parser module to insert the newly created nodes into the scene.
  *
- * This IMapImportFilter implementation is handling the modal progress dialog too.
+ * This IMapImportFilter implementation will be sending messages across
+ * the wire for the UI to react to, displaying progress, etc.
  */
 class MapImporter :
 	public IMapImportFilter

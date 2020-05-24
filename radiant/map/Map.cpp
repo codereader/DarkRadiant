@@ -73,6 +73,17 @@ Map::Map() :
 	_mapSaveTimer.Pause();
 }
 
+void Map::clearMapResource()
+{
+    // Map is unnamed or load failed, reset map resource node to empty
+    _resource->clear();
+
+    _resource->getRootNode()->getUndoChangeTracker().save();
+
+    // Rename the map to "unnamed" in any case to avoid overwriting the failed map
+    setMapName(_(MAP_UNNAMED_STRING));
+}
+
 void Map::loadMapResourceFromPath(const std::string& path)
 {
 	// Map loading started
@@ -85,15 +96,17 @@ void Map::loadMapResourceFromPath(const std::string& path)
         return;
     }
 
-    if (isUnnamed() || !_resource->load())
+    try
     {
-        // Map is unnamed or load failed, reset map resource node to empty
-        _resource->clear();
-
-        _resource->getRootNode()->getUndoChangeTracker().save();
-        
-        // Rename the map to "unnamed" in any case to avoid overwriting the failed map
-        setMapName(_(MAP_UNNAMED_STRING));
+        if (isUnnamed() || !_resource->load())
+        {
+            clearMapResource();
+        }
+    }
+    catch (const IMapResource::OperationException & ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what());
+        clearMapResource();
     }
 
     // Take the new node and insert it as map root
@@ -757,10 +770,8 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
 {
     assert(format);
 
-    IMapWriterPtr writer = format->getMapWriter();
-
     // Create our main MapExporter walker for traversal
-    MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
+    MapExporter exporter(*format, GlobalSceneGraph().root(), out);
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);

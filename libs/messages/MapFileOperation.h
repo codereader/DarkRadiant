@@ -7,13 +7,13 @@ namespace map
 {
 
 /**
- * Message sent when the export code is about to start writing
- * to its output stream.
+ * Message sent when the import/export code is about to start 
+ * working on a stream.
  * 
  * If any listener wishes to cancel the operation, the cancel() 
  * method is available, which will throw an internal exception.
  */
-class ExportOperation :
+class FileOperation :
     public radiant::IMessage
 {
 public:
@@ -36,19 +36,37 @@ public:
 private:
     EventType _type;
     float _progressFraction;
-    std::size_t _numTotalNodes;
+    bool _canCalculateProgress;
     std::string _message;
 
 public:
-    ExportOperation(EventType type, std::size_t numTotalNodes) :
-        ExportOperation(type, numTotalNodes, 0)
+    FileOperation(EventType type, bool canCalculateProgress) :
+        FileOperation(type, canCalculateProgress, 0.0f)
     {}
 
-    ExportOperation(EventType type, std::size_t numTotalNodes, float progressFraction) :
+    FileOperation(EventType type, bool canCalculateProgress, float progressFraction) :
         _type(type),
         _progressFraction(progressFraction),
-        _numTotalNodes(numTotalNodes)
-    {}
+        _canCalculateProgress(canCalculateProgress)
+    {
+        if (_progressFraction < 0)
+        {
+            _progressFraction = 0;
+        }
+        else if (_progressFraction > 1.0f)
+        {
+            _progressFraction = 1.0f;
+        }
+
+        if (_type == Started)
+        {
+            _progressFraction = 0;
+        }
+        else if (_type == Finished)
+        {
+            _progressFraction = 1;
+        }
+    }
 
     const std::string& getText() const
     {
@@ -65,14 +83,16 @@ public:
         return _type;
     }
 
+    // If canCalculateProgress() is true, this indicates the progress in the range of [0..1]
     float getProgressFraction() const
     {
         return _progressFraction;
     }
 
-    std::size_t getNumTotalNodes() const
+    // Whether the information in this message can be used to show a meaningful progress meter
+    bool canCalculateProgress() const
     {
-        return _numTotalNodes;
+        return _canCalculateProgress;
     }
 
     // Call this to cancel the ongoing export process

@@ -21,6 +21,12 @@ public:
 	// Renames this map resource to the new path
 	virtual void rename(const std::string& fullPath) = 0;
 
+	/**
+	 * Attempts to load the resource from disk. Returns true
+	 * on success, in which case the getRootNode() method can be
+	 * used to acquire a reference to the parsed map.
+	 * Will throw an OperationException on failure.
+	 */
 	virtual bool load() = 0;
 
 	// Exception type thrown by the the MapResource implementation

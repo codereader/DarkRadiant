@@ -28,8 +28,8 @@ class MapExporter :
 	public scene::NodeVisitor
 {
 private:
-	// The actual map format for writing nodes to the stream
-	IMapWriter& _writer;
+	// The map format exporter
+	IMapWriterPtr _writer;
 
 	// The stream we're writing to
 	std::ostream& _mapStream;
@@ -53,11 +53,11 @@ private:
 
 public:
 	// The constructor prepares the scene and the output stream
-	MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
+	MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::size_t nodeCount = 0);
 
 	// Additional constructor allowed to write to the auxiliary .darkradiant file
-	MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
+	MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::ostream& auxStream, std::size_t nodeCount = 0);
 
 	// Cleans up the scene on destruction

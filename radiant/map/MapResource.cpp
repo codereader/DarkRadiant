@@ -37,7 +37,7 @@
 #include "algorithm/Import.h"
 #include "infofile/InfoFileExporter.h"
 #include "algorithm/ChildPrimitives.h"
-#include "messages/MapExportOperation.h"
+#include "messages/MapFileOperation.h"
 
 namespace map
 {
@@ -292,21 +292,14 @@ RootNodePtr MapResource::loadMapNode()
         return rootNode;
 	}
 
-	try
-	{
-		// Build the map path
-		std::string fullpath = _path + _name;
+	// Build the map path
+	std::string fullpath = _path + _name;
 
-		// Open a stream (from physical file or VFS)
-		openFileStream(fullpath, [&](std::istream& mapStream)
-		{
-			rootNode = loadMapNodeFromStream(mapStream, fullpath);
-		});
-	}
-	catch (std::runtime_error& ex)
+	// Open a stream (from physical file or VFS)
+	openFileStream(fullpath, [&](std::istream& mapStream)
 	{
-		wxutil::Messagebox::ShowError(ex.what());
-	}
+		rootNode = loadMapNodeFromStream(mapStream, fullpath);
+	});
 
 	return rootNode;
 }
@@ -318,8 +311,7 @@ RootNodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::
 
 	if (!format)
 	{
-		throw std::runtime_error(
-			fmt::format(_("Could not determine map format of file:\n{0}"), fullpath));
+		throw OperationException(fmt::format(_("Could not determine map format of file:\n{0}"), fullpath));
 	}
 
 	// Create a new map root node
@@ -531,22 +523,19 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 	NodeCounter counter;
 	traverse(root, counter);
 		
-	// Acquire the MapWriter from the MapFormat class
-	IMapWriterPtr mapWriter = format.getMapWriter();
-
 	// Create our main MapExporter walker, and pass the desired 
-	// writer to it. The constructor will prepare the scene
+	// format to it. The constructor will prepare the scene
 	// and the destructor will clean it up afterwards. That way
 	// we ensure a nice and tidy scene when exceptions are thrown.
 	MapExporterPtr exporter;
 		
 	if (format.allowInfoFileCreation())
 	{
-		exporter.reset(new MapExporter(*mapWriter, root, outFileStream, *auxFileStream, counter.getCount()));
+		exporter.reset(new MapExporter(format, root, outFileStream, *auxFileStream, counter.getCount()));
 	}
 	else
 	{
-		exporter.reset(new MapExporter(*mapWriter, root, outFileStream, counter.getCount())); // no aux stream
+		exporter.reset(new MapExporter(format, root, outFileStream, counter.getCount())); // no aux stream
 	}
 
 	try
@@ -554,7 +543,7 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 		// Pass the traversal function and the root of the subgraph to export
 		exporter->exportMap(root, traverse);
 	}
-	catch (ExportOperation::OperationCancelled&)
+	catch (FileOperation::OperationCancelled&)
 	{
 		throw OperationException(_("Map writing cancelled"));
 	}
