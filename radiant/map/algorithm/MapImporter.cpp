@@ -3,12 +3,13 @@
 #include "i18n.h"
 #include "ientity.h"
 #include "imap.h"
+#include "iradiant.h"
 #include "imainframe.h"
 
 #include <fmt/format.h>
 #include "registry/registry.h"
 #include "string/string.h"
-#include "wxutil/dialog/MessageBox.h"
+#include "messages/MapFileOperation.h"
 
 namespace map
 {
@@ -34,15 +35,11 @@ MapImporter::MapImporter(const scene::IMapRootNodePtr& root, std::istream& input
 	// Move the pointer back to the beginning of the file
 	_inputStream.seekg(0, std::ios::beg);
 
-	bool showProgressDialog = !registry::getValue<bool>(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG);
+	FileOperation startedMsg(FileOperation::Type::Import, FileOperation::Started, _fileSize > 0);
+	GlobalRadiantCore().getMessageBus().sendMessage(startedMsg);
 
-	if (showProgressDialog)
-	{
-		_dialog.reset(new wxutil::ModalProgressDialog(_("Loading map")));
-
-		// Initialise the text
-		_dlgEntityText = fmt::format(_("Loading entity {0:d}\n"), _entityCount);
-	}
+	// Initialise the text
+	_dlgEntityText = fmt::format(_("Loading entity {0:d}\n"), _entityCount);
 }
 
 const scene::IMapRootNodePtr& MapImporter::getRootNode() const
@@ -58,18 +55,14 @@ bool MapImporter::addEntity(const scene::INodePtr& entityNode)
 
 	_entityCount++;
 
-	if (_dialog)
-	{
-		// Update the dialog text
-		_dlgEntityText = fmt::format(_("Loading entity {0:d}\n"), _entityCount);
+	// Update the dialog text
+	_dlgEntityText = fmt::format(_("Loading entity {0:d}\n"), _entityCount);
 
-		// Update the dialog text. This will throw an exception if the cancel
-		// button is clicked, which we must catch and handle.
-		if (_dialogEventLimiter.readyForEvent())
-		{
-			// Let the OperationAbortedException fall through, it will be caught in the MapResource class
-			_dialog->setTextAndFraction(_dlgEntityText, getProgressFraction());
-		}
+	if (_dialogEventLimiter.readyForEvent())
+	{
+		FileOperation msg(FileOperation::Type::Import, FileOperation::Progress, _fileSize > 0, getProgressFraction());
+		msg.setText(_dlgEntityText);
+		GlobalRadiantCore().getMessageBus().sendMessage(msg);
 	}
 
 	_root->addChildNode(entityNode);
@@ -84,13 +77,13 @@ bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const s
 
 	_primitiveCount++;
 
-	if (_dialog && _dialogEventLimiter.readyForEvent())
-    {
-		_dialog->setTextAndFraction(
-            _dlgEntityText + "Primitive " + string::to_string(_primitiveCount),
-			getProgressFraction()
-        );
-    }
+	if (_dialogEventLimiter.readyForEvent())
+	{
+		// Update the dialog text
+		FileOperation msg(FileOperation::Type::Import, FileOperation::Progress, _fileSize > 0, getProgressFraction());
+		msg.setText(_dlgEntityText + fmt::format(_("Primitive {0:d}"), _primitiveCount));
+		GlobalRadiantCore().getMessageBus().sendMessage(msg);
+	}
 
 	if (Node_getEntity(entity)->isContainer())
 	{
@@ -108,10 +101,10 @@ const NodeIndexMap& MapImporter::getNodeMap() const
 	return _nodes;
 }
 
-double MapImporter::getProgressFraction()
+float MapImporter::getProgressFraction()
 {
 	long readBytes = static_cast<long>(_inputStream.tellg());
-	return static_cast<double>(readBytes) / _fileSize;
+	return static_cast<float>(readBytes) / _fileSize;
 }
 
 } // namespace

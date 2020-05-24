@@ -376,9 +376,10 @@ bool Map::import(const std::string& filename)
 
     bool success = false;
 
-    {
-        IMapResourcePtr resource = GlobalMapResourceManager().loadFromPath(filename);
+    IMapResourcePtr resource = GlobalMapResourceManager().loadFromPath(filename);
 
+    try
+    {
         if (resource->load())
         {
             // load() returned TRUE, this means that the resource node
@@ -391,9 +392,13 @@ bool Map::import(const std::string& filename)
             algorithm::mergeMap(otherRoot);
             success = true;
         }
-    }
 
-    SceneChangeNotify();
+        SceneChangeNotify();
+    }
+    catch (const IMapResource::OperationException& ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what());
+    }
 
     return success;
 }

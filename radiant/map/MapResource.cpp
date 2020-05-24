@@ -354,26 +354,22 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		return true;
 	}
-	catch (wxutil::ModalProgressDialog::OperationAbortedException&)
+	catch (map::FileOperation::OperationCancelled&)
 	{
-		wxutil::Messagebox::ShowError(_("Map loading cancelled"));
-
 		// Clear out the root node, otherwise we end up with half a map
 		scene::NodeRemover remover;
 		root->traverseChildren(remover);
 
-		return false;
+		throw OperationException(_("Map loading cancelled"));
 	}
 	catch (IMapReader::FailureException& e)
 	{
-		wxutil::Messagebox::ShowError(
-				fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), filename, e.what()));
-
 		// Clear out the root node, otherwise we end up with half a map
 		scene::NodeRemover remover;
 		root->traverseChildren(remover);
-
-		return false;
+		
+		throw OperationException(
+				fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), filename, e.what()));
 	}
 }
 

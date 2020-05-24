@@ -17,7 +17,13 @@ class FileOperation :
     public radiant::IMessage
 {
 public:
-    enum EventType
+    enum class Type
+    {
+        Import,
+        Export,
+    };
+
+    enum MessageType
     {
         Started,  // operation started, called once
         Progress, // operation in progress, called 0..N times
@@ -34,18 +40,20 @@ public:
     };
 
 private:
-    EventType _type;
+    Type _type;
+    MessageType _msgType;
     float _progressFraction;
     bool _canCalculateProgress;
     std::string _message;
 
 public:
-    FileOperation(EventType type, bool canCalculateProgress) :
-        FileOperation(type, canCalculateProgress, 0.0f)
+    FileOperation(Type operationType, MessageType msgType, bool canCalculateProgress) :
+        FileOperation(operationType, msgType, canCalculateProgress, 0.0f)
     {}
 
-    FileOperation(EventType type, bool canCalculateProgress, float progressFraction) :
-        _type(type),
+    FileOperation(Type operationType, MessageType msgType, bool canCalculateProgress, float progressFraction) :
+        _type(operationType),
+        _msgType(msgType),
         _progressFraction(progressFraction),
         _canCalculateProgress(canCalculateProgress)
     {
@@ -58,11 +66,11 @@ public:
             _progressFraction = 1.0f;
         }
 
-        if (_type == Started)
+        if (_msgType == Started)
         {
             _progressFraction = 0;
         }
-        else if (_type == Finished)
+        else if (_msgType == Finished)
         {
             _progressFraction = 1;
         }
@@ -78,9 +86,14 @@ public:
         _message = message;
     }
 
-    EventType getType() const
+    Type getOperationType() const
     {
         return _type;
+    }
+
+    MessageType getMessageType() const
+    {
+        return _msgType;
     }
 
     // If canCalculateProgress() is true, this indicates the progress in the range of [0..1]

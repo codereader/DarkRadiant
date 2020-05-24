@@ -1,11 +1,13 @@
 #pragma once
 
+#include "imap.h"
 #include "iradiant.h"
 #include <sigc++/functors/mem_fun.h>
 
 #include "messages/MapFileOperation.h"
 #include "wxutil/ModalProgressDialog.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "registry/registry.h"
 
 namespace ui
 {
@@ -35,12 +37,13 @@ private:
 	{
 		try
 		{
-			switch (msg.getType())
+			switch (msg.getMessageType())
 			{
 			case map::FileOperation::Started:
-				if (GlobalMainFrame().isActiveApp())
+				if (GlobalMainFrame().isActiveApp() && !registry::getValue<bool>(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG))
 				{
-					_dialog.reset(new wxutil::ModalProgressDialog(_("Writing map")));
+					_dialog.reset(new wxutil::ModalProgressDialog(
+						msg.getOperationType() == map::FileOperation::Type::Export ? _("Writing map") : _("Loading map")));
 				}
 				break;
 
@@ -65,6 +68,7 @@ private:
 		}
 		catch (const wxutil::ModalProgressDialog::OperationAbortedException&)
 		{
+			_dialog.reset();
 			msg.cancelOperation();
 		}
 	}

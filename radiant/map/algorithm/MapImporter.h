@@ -5,7 +5,6 @@
 #include "imapinfofile.h"
 #include <map>
 
-#include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 
 namespace map
@@ -26,9 +25,6 @@ class MapImporter :
 {
 private:
 	scene::IMapRootNodePtr _root;
-
-	// The progress dialog
-	wxutil::ModalProgressDialogPtr _dialog;
 
 	// The progress dialog text for the current entity
 	std::string _dlgEntityText;
@@ -57,7 +53,7 @@ public:
 	const NodeIndexMap& getNodeMap() const;
 
 private:
-	double getProgressFraction();
+	float getProgressFraction();
 };
 
 } // namespace

@@ -81,7 +81,7 @@ void MapExporter::construct()
 
 void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse)
 {
-	FileOperation startedMsg(FileOperation::Started, _totalNodeCount > 0);
+	FileOperation startedMsg(FileOperation::Type::Export, FileOperation::Started, _totalNodeCount > 0);
 	GlobalRadiantCore().getMessageBus().sendMessage(startedMsg);
 
 	try
@@ -235,7 +235,7 @@ void MapExporter::onNodeProgress()
 		float progressFraction = _totalNodeCount > 0 ? 
 			static_cast<float>(_curNodeCount) / static_cast<float>(_totalNodeCount) : 0.0f;
 
-		FileOperation msg(FileOperation::Progress, _totalNodeCount > 0, progressFraction);
+		FileOperation msg(FileOperation::Type::Export, FileOperation::Progress, _totalNodeCount > 0, progressFraction);
 		msg.setText(fmt::format(_("Writing node {0:d}"), _curNodeCount));
 
 		GlobalRadiantCore().getMessageBus().sendMessage(msg);
@@ -263,7 +263,7 @@ void MapExporter::finishScene()
 	// Re-evaluate all brushes, to update the Winding calculations
 	recalculateBrushWindings();
 
-	FileOperation finishedMsg(FileOperation::Finished, _totalNodeCount > 0);
+	FileOperation finishedMsg(FileOperation::Type::Export, FileOperation::Finished, _totalNodeCount > 0);
 	GlobalRadiantCore().getMessageBus().sendMessage(finishedMsg);
 }
 
