@@ -3,7 +3,7 @@
 #include "iundo.h"
 #include "mapfile.h"
 #include "imodel.h"
-#include "picomodel/picomodel.h"
+#include "lib/picomodel.h"
 #include "math/AABB.h"
 #include "imodelsurface.h"
 

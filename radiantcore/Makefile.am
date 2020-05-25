@@ -114,14 +114,46 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/namespace/ComplexName.cpp \
                 map/namespace/Namespace.cpp \
                 map/namespace/NamespaceFactory.cpp \
-                md5model/MD5Skeleton.cpp \
-                md5model/MD5Module.cpp \
-                md5model/MD5Model.cpp \
-                md5model/MD5ModelLoader.cpp \
-                md5model/MD5AnimationCache.cpp \
-                md5model/MD5Surface.cpp \
-                md5model/MD5Anim.cpp \
-                md5model/MD5ModelNode.cpp \
+                model/md5/MD5Skeleton.cpp \
+                model/md5/MD5Module.cpp \
+                model/md5/MD5Model.cpp \
+                model/md5/MD5ModelLoader.cpp \
+                model/md5/MD5AnimationCache.cpp \
+                model/md5/MD5Surface.cpp \
+                model/md5/MD5Anim.cpp \
+                model/md5/MD5ModelNode.cpp \
+                model/export/AseExporter.cpp \
+                model/export/Lwo2Chunk.cpp \
+                model/export/Lwo2Exporter.cpp \
+                model/export/WavefrontExporter.cpp \
+                model/picomodel/PicoModelLoader.cpp \
+                model/picomodel/PicoModelModule.cpp \
+                model/picomodel/PicoModelNode.cpp \
+                model/picomodel/RenderablePicoModel.cpp \
+                model/picomodel/RenderablePicoSurface.cpp \
+                model/picomodel/lib/pm_md3.c \
+                model/picomodel/lib/pm_md2.c \
+                model/picomodel/lib/pm_obj.c \
+                model/picomodel/lib/picointernal.c \
+                model/picomodel/lib/picomodules.c \
+                model/picomodel/lib/pm_lwo.c \
+                model/picomodel/lib/pm_mdc.c \
+                model/picomodel/lib/pm_fm.c \
+                model/picomodel/lib/pm_ase.c \
+                model/picomodel/lib/picomodel.c \
+                model/picomodel/lib/lwo/envelope.c \
+                model/picomodel/lib/lwo/surface.c \
+                model/picomodel/lib/lwo/clip.c \
+                model/picomodel/lib/lwo/lwob.c \
+                model/picomodel/lib/lwo/lwio.c \
+                model/picomodel/lib/lwo/lwo2.c \
+                model/picomodel/lib/lwo/list.c \
+                model/picomodel/lib/lwo/pntspols.c \
+                model/picomodel/lib/lwo/vmap.c \
+                model/picomodel/lib/lwo/vecmath.c \
+                model/picomodel/lib/pm_terrain.c \
+                model/picomodel/lib/pm_ms3d.c \
+                model/picomodel/lib/pm_3ds.c \
                 model/ModelCache.cpp \
                 model/ModelFormatManager.cpp \
                 model/NullModel.cpp \

@@ -191,15 +191,6 @@
     <Filter Include="src\uimanager\menu">
       <UniqueIdentifier>{31b14db3-7897-48b1-8771-d4e0eac5cb07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\modelfile">
-      <UniqueIdentifier>{fcaedc16-a752-4a69-87a3-212322803b03}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\modelfile\picomodel">
-      <UniqueIdentifier>{3e0c27ae-26a9-42cf-8d13-c937f0311f9e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\modelfile\picomodel\lwo">
-      <UniqueIdentifier>{89aad7bf-df19-49f6-9bbe-ba12cc6221bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
@@ -861,102 +852,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\menu\MenuSeparator.cpp">
       <Filter>src\uimanager\menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\AseExporter.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\Lwo2Chunk.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\Lwo2Exporter.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\PicoModelLoader.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\PicoModelModule.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\PicoModelNode.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\RenderablePicoModel.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\RenderablePicoSurface.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\WavefrontExporter.cpp">
-      <Filter>src\modelfile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\picointernal.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\picomodel.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\picomodules.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_3ds.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_ase.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_fm.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_lwo.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_md2.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_md3.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_mdc.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_ms3d.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_obj.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\pm_terrain.c">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\clip.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\envelope.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\list.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\lwio.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\lwo2.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\lwob.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\pntspols.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\surface.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\vecmath.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modelfile\picomodel\lwo\vmap.c">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp">
       <Filter>src\eventmanager</Filter>
@@ -1896,48 +1791,6 @@
     <ClInclude Include="..\..\radiant\uimanager\menu\MenuSeparator.h">
       <Filter>src\uimanager\menu</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\AseExporter.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\Lwo2Chunk.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\Lwo2Exporter.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\ModelExporterBase.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\PicoModelLoader.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\PicoModelModule.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\PicoModelNode.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\RenderablePicoModel.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\RenderablePicoSurface.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\WavefrontExporter.h">
-      <Filter>src\modelfile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\picomodel\picointernal.h">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\picomodel\picomodel.h">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\picomodel\pm_fm.h">
-      <Filter>src\modelfile\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modelfile\picomodel\lwo\lwo2.h">
-      <Filter>src\modelfile\picomodel\lwo</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h">
       <Filter>src\eventmanager</Filter>
     </ClInclude>
@@ -2103,9 +1956,6 @@
     </None>
     <None Include="..\innosetup\darkradiant.x64.iss">
       <Filter>innosetup</Filter>
-    </None>
-    <None Include="..\..\radiant\modelfile\Makefile.am">
-      <Filter>src\modelfile</Filter>
     </None>
   </ItemGroup>
 </Project>

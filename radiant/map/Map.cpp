@@ -831,6 +831,9 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     // Add the Map-related commands to the EventManager
     registerCommands();
 
+    _scaledModelExporter.initialise();
+    _modelScalePreserver.reset(new ModelScalePreserver);
+
 	MapFileManager::registerFileTypes();
 
     // Register an info file module to save the map property bag
@@ -841,7 +844,11 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 
 void Map::shutdownModule()
 {
+    _scaledModelExporter.shutdown();
+
 	GlobalSceneGraph().removeSceneObserver(this);
+
+    _modelScalePreserver.reset();
 
 	_startupMapLoader.reset();
 	_mapPositionManager.reset();

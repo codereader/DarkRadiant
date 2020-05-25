@@ -10,6 +10,8 @@
 #include "imodule.h"
 #include "math/Vector3.h"
 
+#include "model/ScaledModelExporter.h"
+#include "model/ModelScalePreserver.h"
 #include "StartupMapLoader.h"
 #include "MapPositionManager.h"
 
@@ -45,7 +47,9 @@ class Map :
 
 	// A local helper object, observing the radiant module
 	std::unique_ptr<StartupMapLoader> _startupMapLoader;
+	ScaledModelExporter _scaledModelExporter;
 	std::unique_ptr<MapPositionManager> _mapPositionManager;
+	std::unique_ptr<ModelScalePreserver> _modelScalePreserver;
 
     // Map save timer, for displaying "changes from last n minutes will be lost"
     // messages

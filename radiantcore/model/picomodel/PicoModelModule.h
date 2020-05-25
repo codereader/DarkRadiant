@@ -9,13 +9,10 @@
 
 #include "os/path.h"
 #include <stdio.h>
-#include "picomodel/picomodel.h"
+#include "lib/picomodel.h"
 
 #include "string/case_conv.h"
 #include "PicoModelLoader.h"
-#include "AseExporter.h"
-#include "Lwo2Exporter.h"
-#include "WavefrontExporter.h"
 
 namespace model
 {
@@ -73,10 +70,6 @@ public:
 				}
 			}
 		}
-
-		GlobalModelFormatManager().registerExporter(std::make_shared<AseExporter>());
-		GlobalModelFormatManager().registerExporter(std::make_shared<Lwo2Exporter>());
-		GlobalModelFormatManager().registerExporter(std::make_shared<WavefrontExporter>());
 	}
 
 private:

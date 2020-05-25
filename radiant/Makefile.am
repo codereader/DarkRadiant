@@ -73,38 +73,6 @@ darkradiant_SOURCES = main.cpp \
                       map/aas/Doom3AasFileLoader.cpp \
                       map/aas/Doom3AasFileSettings.cpp \
                       map/aas/Doom3AasFile.cpp \
-                      modelfile/AseExporter.cpp \
-                      modelfile/Lwo2Chunk.cpp \
-                      modelfile/Lwo2Exporter.cpp \
-                      modelfile/PicoModelLoader.cpp \
-                      modelfile/PicoModelModule.cpp \
-                      modelfile/PicoModelNode.cpp \
-                      modelfile/RenderablePicoModel.cpp \
-                      modelfile/RenderablePicoSurface.cpp \
-                      modelfile/WavefrontExporter.cpp \
-                      modelfile/picomodel/pm_md3.c \
-                      modelfile/picomodel/pm_md2.c \
-                      modelfile/picomodel/pm_obj.c \
-                      modelfile/picomodel/picointernal.c \
-                      modelfile/picomodel/picomodules.c \
-                      modelfile/picomodel/pm_lwo.c \
-                      modelfile/picomodel/pm_mdc.c \
-                      modelfile/picomodel/pm_fm.c \
-                      modelfile/picomodel/pm_ase.c \
-                      modelfile/picomodel/picomodel.c \
-                      modelfile/picomodel/lwo/envelope.c \
-                      modelfile/picomodel/lwo/surface.c \
-                      modelfile/picomodel/lwo/clip.c \
-                      modelfile/picomodel/lwo/lwob.c \
-                      modelfile/picomodel/lwo/lwio.c \
-                      modelfile/picomodel/lwo/lwo2.c \
-                      modelfile/picomodel/lwo/list.c \
-                      modelfile/picomodel/lwo/pntspols.c \
-                      modelfile/picomodel/lwo/vmap.c \
-                      modelfile/picomodel/lwo/vecmath.c \
-                      modelfile/picomodel/pm_terrain.c \
-                      modelfile/picomodel/pm_ms3d.c \
-                      modelfile/picomodel/pm_3ds.c \
                       particles/editor/ParticleEditor.cpp \
                       render/OpenGLModule.cpp \
                       render/View.cpp \

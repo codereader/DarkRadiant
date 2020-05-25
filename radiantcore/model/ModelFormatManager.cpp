@@ -9,6 +9,10 @@
 
 #include "module/StaticModule.h"
 
+#include "export/AseExporter.h"
+#include "export/Lwo2Exporter.h"
+#include "export/WavefrontExporter.h"
+
 namespace model
 {
 
@@ -33,6 +37,11 @@ void ModelFormatManager::initialiseModule(const ApplicationContext& ctx)
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
 		sigc::mem_fun(this, &ModelFormatManager::postModuleInitialisation)
 	);
+
+	// Register the built-in model exporters
+	registerExporter(std::make_shared<AseExporter>());
+	registerExporter(std::make_shared<Lwo2Exporter>());
+	registerExporter(std::make_shared<WavefrontExporter>());
 }
 
 void ModelFormatManager::postModuleInitialisation()
