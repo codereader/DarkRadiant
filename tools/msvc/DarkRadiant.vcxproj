@@ -322,7 +322,6 @@
     <ClCompile Include="..\..\radiant\clipper\Clipper.cpp" />
     <ClCompile Include="..\..\radiant\clipper\ClipPoint.cpp" />
     <ClCompile Include="..\..\radiant\map\AutoSaver.cpp" />
-    <ClCompile Include="..\..\radiant\map\CounterManager.cpp" />
     <ClCompile Include="..\..\radiant\map\FindMapElements.cpp" />
     <ClCompile Include="..\..\radiant\map\Map.cpp" />
     <ClCompile Include="..\..\radiant\map\MapFileManager.cpp" />
@@ -610,7 +609,6 @@
     <ClInclude Include="..\..\radiant\clipper\Clipper.h" />
     <ClInclude Include="..\..\radiant\clipper\ClipPoint.h" />
     <ClInclude Include="..\..\radiant\map\AutoSaver.h" />
-    <ClInclude Include="..\..\radiant\map\CounterManager.h" />
     <ClInclude Include="..\..\radiant\map\EntityBreakdown.h" />
     <ClInclude Include="..\..\radiant\map\FindMapElements.h" />
     <ClInclude Include="..\..\radiant\map\Map.h" />

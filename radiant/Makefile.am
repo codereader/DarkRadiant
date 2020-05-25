@@ -270,7 +270,6 @@ darkradiant_SOURCES = main.cpp \
                       map/algorithm/MapImporter.cpp \
                       map/algorithm/Import.cpp \
                       map/algorithm/Export.cpp \
-                      map/CounterManager.cpp \
                       map/RegionManager.cpp \
                       map/PointFile.cpp \
                       map/MapPositionManager.cpp \

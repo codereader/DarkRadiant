@@ -74,6 +74,7 @@
     <ClCompile Include="..\..\radiantcore\layers\LayerManager.cpp" />
     <ClCompile Include="..\..\radiantcore\layers\LayerModule.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\Doom3MapFormat.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\Doom3MapReader.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\Doom3MapWriter.cpp" />
@@ -673,6 +674,7 @@
     <ClInclude Include="..\..\radiantcore\layers\RemoveFromLayerWalker.h" />
     <ClInclude Include="..\..\radiantcore\layers\SetLayerSelectedWalker.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
+    <ClInclude Include="..\..\radiantcore\map\CounterManager.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapFormat.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapReader.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapWriter.h" />

@@ -676,6 +676,9 @@
     <ClCompile Include="..\..\radiantcore\model\export\WavefrontExporter.cpp">
       <Filter>src\model\export</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1364,6 +1367,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\export\WavefrontExporter.h">
       <Filter>src\model\export</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\CounterManager.h">
+      <Filter>src\map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

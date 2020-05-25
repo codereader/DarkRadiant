@@ -277,9 +277,6 @@
     <ClCompile Include="..\..\radiant\map\AutoSaver.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\CounterManager.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\FindMapElements.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
@@ -1057,9 +1054,6 @@
       <Filter>src\clipper</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\AutoSaver.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\CounterManager.h">
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\EntityBreakdown.h">
