@@ -1,11 +1,6 @@
-#include "aas/Doom3AasFileLoader.h"
-
 #include "imapformat.h"
 #include "module/StaticModule.h"
 #include "Map.h"
-
-// Static module instances
-module::StaticModule<map::Doom3AasFileLoader> d3AasModule;
 
 // Creates the static module instance
 module::StaticModule<map::Map> staticMapModule;

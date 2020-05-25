@@ -5,6 +5,7 @@
 #include "parser/DefTokeniser.h"
 #include "string/convert.h"
 #include "Doom3AasFile.h"
+#include "module/StaticModule.h"
 
 namespace map
 {
@@ -123,5 +124,8 @@ void Doom3AasFileLoader::shutdownModule()
 	// Unregister now that we're shutting down
 	GlobalAasFileManager().unregisterLoader(shared_from_this());
 }
+
+// Static module instances
+module::StaticModule<Doom3AasFileLoader> d3AasModule;
 
 }

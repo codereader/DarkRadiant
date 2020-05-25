@@ -70,9 +70,6 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
                       map/MapModules.cpp \
-                      map/aas/Doom3AasFileLoader.cpp \
-                      map/aas/Doom3AasFileSettings.cpp \
-                      map/aas/Doom3AasFile.cpp \
                       particles/editor/ParticleEditor.cpp \
                       render/OpenGLModule.cpp \
                       render/View.cpp \

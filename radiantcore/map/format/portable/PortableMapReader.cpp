@@ -15,7 +15,6 @@
 #include "scenelib.h"
 #include "string/convert.h"
 #include "xmlutil/Document.h"
-#include "selection/group/SelectionGroupManager.h"
 
 namespace map
 {

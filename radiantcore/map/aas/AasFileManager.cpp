@@ -8,7 +8,6 @@
 #include "eclass.h"
 
 #include "module/StaticModule.h"
-#include "ui/aas/AasControlDialog.h"
 
 namespace map
 {
@@ -159,9 +158,6 @@ const StringSet& AasFileManager::getDependencies() const
 void AasFileManager::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
-    // Initialise the UI
-    ui::AasControlDialog::Init();
 }
 
 // Define the static AasFileManager module

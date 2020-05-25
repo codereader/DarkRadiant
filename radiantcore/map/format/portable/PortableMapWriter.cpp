@@ -12,7 +12,6 @@
 #include "math/Plane3.h"
 #include "math/Matrix4.h"
 #include "string/convert.h"
-#include "selection/group/SelectionGroupManager.h"
 #include "PortableMapFormat.h"
 #include "Constants.h"
 

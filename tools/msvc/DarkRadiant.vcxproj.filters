@@ -194,9 +194,6 @@
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\map\aas">
-      <UniqueIdentifier>{6a40fdfb-2b56-41c2-ba54-dbf1ca276a43}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\filters">
       <UniqueIdentifier>{b15324e3-378b-43fe-abfd-1ee2d99c5bd7}</UniqueIdentifier>
     </Filter>
@@ -697,9 +694,6 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp">
       <Filter>src\ui\aas</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\AasFileManager.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
@@ -876,15 +870,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp">
       <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\aas\Doom3AasFile.cpp">
-      <Filter>src\map\aas</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\aas\Doom3AasFileLoader.cpp">
-      <Filter>src\map\aas</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\aas\Doom3AasFileSettings.cpp">
-      <Filter>src\map\aas</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\map\MapModules.cpp">
       <Filter>src\map</Filter>
@@ -1602,9 +1587,6 @@
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h">
       <Filter>src\ui\aas</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\AasFileManager.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\map\RenderableAasFile.h">
       <Filter>src\map</Filter>
     </ClInclude>
@@ -1820,18 +1802,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\Documentation.h">
       <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\aas\Doom3AasFile.h">
-      <Filter>src\map\aas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\aas\Doom3AasFileLoader.h">
-      <Filter>src\map\aas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\aas\Doom3AasFileSettings.h">
-      <Filter>src\map\aas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\aas\Util.h">
-      <Filter>src\map\aas</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\MapPropertyInfoFileModule.h">
       <Filter>src\map</Filter>

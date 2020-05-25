@@ -17,6 +17,7 @@
 
 #include "module/StaticModule.h"
 
+#include "ui/aas/AasControlDialog.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
 #include "ui/layers/LayerControlDialog.h"
@@ -145,6 +146,9 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	GlobalRadiantCore().getMessageBus().addListener(
 		radiant::TypeListener<radiant::CommandExecutionFailedMessage>(
 			sigc::mem_fun(this, &UserInterfaceModule::handleCommandExecutionFailure)));
+
+	// Initialise the AAS UI
+	ui::AasControlDialog::Init();
 }
 
 void UserInterfaceModule::shutdownModule()

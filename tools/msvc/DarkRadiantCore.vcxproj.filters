@@ -140,6 +140,9 @@
     <Filter Include="src\model\export">
       <UniqueIdentifier>{975c8206-2247-4f17-8c9c-3ce92a9befe7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map\aas">
+      <UniqueIdentifier>{0799e008-2d85-402f-8199-9c5774ff619c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -678,6 +681,18 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp">
       <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\aas\Doom3AasFile.cpp">
+      <Filter>src\map\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\aas\Doom3AasFileLoader.cpp">
+      <Filter>src\map\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\aas\Doom3AasFileSettings.cpp">
+      <Filter>src\map\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\aas\AasFileManager.cpp">
+      <Filter>src\map\aas</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1370,6 +1385,21 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\CounterManager.h">
       <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\aas\Doom3AasFile.h">
+      <Filter>src\map\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\aas\Doom3AasFileLoader.h">
+      <Filter>src\map\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\aas\Doom3AasFileSettings.h">
+      <Filter>src\map\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\aas\Util.h">
+      <Filter>src\map\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\aas\AasFileManager.h">
+      <Filter>src\map\aas</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

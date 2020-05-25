@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "igl.h"
 #include "iscenegraph.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
 #include <fstream>
@@ -199,7 +198,6 @@ const StringSet& PointFile::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_MAP);
 	}

@@ -93,6 +93,9 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 log/LogStreamBuf.cpp \
                 log/LogWriter.cpp \
                 log/StringLogDevice.cpp \
+                map/aas/Doom3AasFileLoader.cpp \
+                map/aas/Doom3AasFileSettings.cpp \
+                map/aas/Doom3AasFile.cpp \
                 map/algorithm/Models.cpp \
                 map/format/MapFormatManager.cpp \
                 map/format/Quake3MapFormat.cpp \
