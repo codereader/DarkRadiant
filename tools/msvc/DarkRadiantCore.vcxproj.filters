@@ -125,6 +125,9 @@
     <Filter Include="src\map\format\primitiveparsers">
       <UniqueIdentifier>{14d01f25-2d8c-4df6-b0ee-14629a2d13ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\model\md5">
+      <UniqueIdentifier>{29be273d-ab50-438d-b093-68823b761c71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -540,6 +543,30 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\format\primitiveparsers\PatchDef3.cpp">
       <Filter>src\map\format\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\md5\MD5Anim.cpp">
+      <Filter>src\model\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\md5\MD5AnimationCache.cpp">
+      <Filter>src\model\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\md5\MD5Model.cpp">
+      <Filter>src\model\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\md5\MD5ModelLoader.cpp">
+      <Filter>src\model\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\md5\MD5ModelNode.cpp">
+      <Filter>src\model\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\md5\MD5Skeleton.cpp">
+      <Filter>src\model\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\md5\MD5Surface.cpp">
+      <Filter>src\model\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\md5\MD5Module.cpp">
+      <Filter>src\model\md5</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1160,6 +1187,33 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\format\primitiveparsers\PatchDef3.h">
       <Filter>src\map\format\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\MD5Anim.h">
+      <Filter>src\model\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\MD5AnimationCache.h">
+      <Filter>src\model\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\MD5DataStructures.h">
+      <Filter>src\model\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\MD5Model.h">
+      <Filter>src\model\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\MD5ModelLoader.h">
+      <Filter>src\model\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\MD5ModelNode.h">
+      <Filter>src\model\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\MD5Skeleton.h">
+      <Filter>src\model\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\MD5Surface.h">
+      <Filter>src\model\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\md5\RenderableMD5Skeleton.h">
+      <Filter>src\model\md5</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

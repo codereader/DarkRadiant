@@ -114,6 +114,14 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/namespace/ComplexName.cpp \
                 map/namespace/Namespace.cpp \
                 map/namespace/NamespaceFactory.cpp \
+                md5model/MD5Skeleton.cpp \
+                md5model/MD5Module.cpp \
+                md5model/MD5Model.cpp \
+                md5model/MD5ModelLoader.cpp \
+                md5model/MD5AnimationCache.cpp \
+                md5model/MD5Surface.cpp \
+                md5model/MD5Anim.cpp \
+                md5model/MD5ModelNode.cpp \
                 model/ModelCache.cpp \
                 model/ModelFormatManager.cpp \
                 model/NullModel.cpp \

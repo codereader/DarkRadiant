@@ -203,9 +203,6 @@
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\md5model">
-      <UniqueIdentifier>{9ece5d35-1ea4-4651-aa2c-b8a9c80b62da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\map\aas">
       <UniqueIdentifier>{6a40fdfb-2b56-41c2-ba54-dbf1ca276a43}</UniqueIdentifier>
     </Filter>
@@ -984,30 +981,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp">
       <Filter>src\eventmanager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\md5model\MD5Anim.cpp">
-      <Filter>src\md5model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\md5model\MD5AnimationCache.cpp">
-      <Filter>src\md5model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\md5model\MD5Model.cpp">
-      <Filter>src\md5model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\md5model\MD5ModelLoader.cpp">
-      <Filter>src\md5model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\md5model\MD5ModelNode.cpp">
-      <Filter>src\md5model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\md5model\MD5Skeleton.cpp">
-      <Filter>src\md5model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\md5model\MD5Surface.cpp">
-      <Filter>src\md5model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\md5model\plugin.cpp">
-      <Filter>src\md5model</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp">
       <Filter>src\ui</Filter>
@@ -1997,33 +1970,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h">
       <Filter>src\eventmanager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\MD5Anim.h">
-      <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\MD5AnimationCache.h">
-      <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\MD5DataStructures.h">
-      <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\MD5Model.h">
-      <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\MD5ModelLoader.h">
-      <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\MD5ModelNode.h">
-      <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\MD5Skeleton.h">
-      <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\MD5Surface.h">
-      <Filter>src\md5model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\md5model\RenderableMD5Skeleton.h">
-      <Filter>src\md5model</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\Documentation.h">
       <Filter>src\ui</Filter>
