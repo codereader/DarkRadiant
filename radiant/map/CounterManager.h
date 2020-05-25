@@ -1,59 +1,43 @@
 #pragma once
 
 #include "icounter.h"
-#include "iuimanager.h"
-#include "wxutil/event/SingleIdleCallback.h"
 
 #include <sigc++/connection.h>
 #include <map>
 #include <memory>
 
-namespace map {
+namespace map
+{
+
+class CounterManager;
 
 class Counter :
 	public ICounter
 {
-	Observer* _observer;
+private:
+	CounterManager& _owner;
 	std::size_t _count;
+
 public:
-	Counter(Observer* observer = NULL) :
-		_observer(observer),
-		_count(0)
-	{}
+	Counter(CounterManager& owner);
 
 	virtual ~Counter() {}
 
-	void increment() {
-		++_count;
-
-		if (_observer != NULL) {
-			_observer->countChanged();
-		}
-	}
-
-	void decrement() {
-		--_count;
-
-		if (_observer != NULL) {
-			_observer->countChanged();
-		}
-	}
-
-	std::size_t get() const {
-		return _count;
-	}
+	void increment() override;
+	void decrement() override;
+	
+	std::size_t get() const override;
 };
 typedef std::shared_ptr<Counter> CounterPtr;
 
 class CounterManager :
-	public ICounterManager,
-	public ICounter::Observer,
-	protected wxutil::SingleIdleCallback
+	public ICounterManager
 {
+private:
 	typedef std::map<CounterType, CounterPtr> CounterMap;
 	CounterMap _counters;
 
-	sigc::connection _selectionChangedConn;
+	sigc::signal<void> _signalCountersChanged;
 
 public:
 	CounterManager();
@@ -62,16 +46,13 @@ public:
 
 	ICounter& getCounter(CounterType counter) override;
 
-	// ICounter::Observer implementation
-	void countChanged() override;
+	sigc::signal<void>& signal_countersChanged() override;
+
+	void onCounterChanged();
 
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
-	void shutdownModule() override;
-
-protected:
-	void onIdle() override;
 };
 
 } // namespace map
