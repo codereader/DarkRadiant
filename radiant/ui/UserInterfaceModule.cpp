@@ -44,6 +44,7 @@
 #include "uimanager/colourscheme/ColourSchemeEditor.h"
 #include "ui/layers/CreateLayerDialog.h"
 #include "ui/patch/BulgePatchDialog.h"
+#include "ui/selectionset/SelectionSetToolmenu.h"
 
 namespace ui
 {
@@ -148,7 +149,9 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 			sigc::mem_fun(this, &UserInterfaceModule::handleCommandExecutionFailure)));
 
 	// Initialise the AAS UI
-	ui::AasControlDialog::Init();
+	AasControlDialog::Init();
+
+	SelectionSetToolmenu::Init();
 }
 
 void UserInterfaceModule::shutdownModule()

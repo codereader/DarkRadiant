@@ -12,7 +12,6 @@
 #include "module/StaticModule.h"
 
 #include "SelectionSetInfoFileModule.h"
-#include "SelectionSetToolmenu.h"
 #include "SelectionSetManager.h"
 
 namespace selection
@@ -21,9 +20,6 @@ namespace selection
 class SelectionSetModule :
 	public ISelectionSetModule
 {
-private:
-	std::unique_ptr<SelectionSetToolmenu> _toolMenu;
-
 public:
 	ISelectionSetManager::Ptr createSelectionSetManager() override
 	{
@@ -42,9 +38,7 @@ public:
 
 		if (_dependencies.empty())
 		{
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
-			_dependencies.insert(MODULE_RADIANT_APP);
 			_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		}
 
@@ -55,11 +49,6 @@ public:
 	{
 		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-		// Register for the startup event
-		GlobalRadiant().signal_radiantStarted().connect(
-			sigc::mem_fun(this, &SelectionSetModule::onRadiantStartup)
-		);
-
 		GlobalCommandSystem().addCommand("DeleteAllSelectionSets",
 			std::bind(&SelectionSetModule::deleteAllSelectionSetsCmd, this, std::placeholders::_1));
 
@@ -69,12 +58,6 @@ public:
 	}
 
 private:
-	void onRadiantStartup()
-	{
-		// Construct a new tool menu object
-		_toolMenu.reset(new SelectionSetToolmenu);
-	}
-
 	void deleteAllSelectionSetsCmd(const cmd::ArgumentList& args)
 	{
 		if (!GlobalMapModule().getRoot())

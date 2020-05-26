@@ -10,7 +10,7 @@ class wxComboBox;
 class wxCommandEvent;
 class wxToolBarToolBase;
 
-namespace selection
+namespace ui
 {
 
 class SelectionSetToolmenu
@@ -23,8 +23,14 @@ private:
 
 	wxToolBarToolBase* _clearAllButton;
 
+	// Constructed and destructed during the Radiant startup/shutdown events
+	static std::unique_ptr<SelectionSetToolmenu> _instance;
+
 public:
 	SelectionSetToolmenu();
+	~SelectionSetToolmenu();
+
+	static void Init();
 
 private:
 	// Updates the available list items and widget sensitivity

@@ -170,6 +170,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
+                      ui/selectionset/SelectionSetToolmenu.cpp \
                       uimanager/SoundChooser.cpp \
                       uimanager/StatusBarManager.cpp \
                       uimanager/animationpreview/MD5AnimationChooser.cpp \
@@ -210,7 +211,6 @@ darkradiant_SOURCES = main.cpp \
                       selection/shaderclipboard/Texturable.cpp \
 					  selection/shaderclipboard/ClosestTexturableFinder.cpp \
                       selection/selectionset/SelectionSetManager.cpp \
-                      selection/selectionset/SelectionSetToolmenu.cpp \
 					  selection/selectionset/SelectionSetInfoFileModule.cpp \
                       selection/selectionset/SelectionSet.cpp \
                       selection/selectionset/SelectionSetModule.cpp \

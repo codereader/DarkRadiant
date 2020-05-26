@@ -16,7 +16,7 @@
 #include <wx/stattext.h>
 #include <wx/artprov.h>
 
-namespace selection
+namespace ui
 {
 
 namespace
@@ -28,6 +28,8 @@ namespace
 	// Tool items created by the ToolBarManager carry ID >= 100
 	const int CLEAR_TOOL_ID = 1;
 }
+
+std::unique_ptr<SelectionSetToolmenu> SelectionSetToolmenu::_instance;
 
 SelectionSetToolmenu::SelectionSetToolmenu() :
 	_dropdownToolId(wxID_NONE)
@@ -81,6 +83,18 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 	update();
 }
 
+SelectionSetToolmenu::~SelectionSetToolmenu()
+{}
+
+void SelectionSetToolmenu::Init()
+{
+	GlobalRadiant().signal_radiantStarted().connect([&]()
+	{
+		// Construct a new tool menu object on startup
+		_instance.reset(new SelectionSetToolmenu);
+	});
+}
+
 void SelectionSetToolmenu::onRadiantShutdown()
 {
 	if (_dropdownToolId != wxID_NONE)
@@ -92,6 +106,8 @@ void SelectionSetToolmenu::onRadiantShutdown()
 	_dropdown = nullptr;
 
 	_mapEventHandler.disconnect();
+
+	_instance.reset();
 }
 
 void SelectionSetToolmenu::onMapEvent(IMap::MapEvent ev)
@@ -142,7 +158,7 @@ void SelectionSetToolmenu::update()
 
 	bool hasSelectionSets = false;
 
-	root->getSelectionSetManager().foreachSelectionSet([&] (const ISelectionSetPtr& set)
+	root->getSelectionSetManager().foreachSelectionSet([&] (const selection::ISelectionSetPtr& set)
 	{
 		_dropdown->Append(set->getName());
 		hasSelectionSets = true;

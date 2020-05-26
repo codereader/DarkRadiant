@@ -206,6 +206,9 @@
     <Filter Include="src\model">
       <UniqueIdentifier>{6c3e2342-691d-460b-afdc-9ef38e58eaea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\selectionset">
+      <UniqueIdentifier>{44f6abf2-2b6d-46ce-8c41-291f862855f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -377,9 +380,6 @@
       <Filter>src\selection\selectionset</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetManager.cpp">
-      <Filter>src\selection\selectionset</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp">
       <Filter>src\selection\selectionset</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp">
@@ -940,6 +940,9 @@
     <ClCompile Include="..\..\radiant\clipper\BrushByPlaneClipper.cpp">
       <Filter>src\clipper</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp">
+      <Filter>src\ui\selectionset</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1195,9 +1198,6 @@
       <Filter>src\selection\selectionset</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetManager.h">
-      <Filter>src\selection\selectionset</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetToolmenu.h">
       <Filter>src\selection\selectionset</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\textool\Rectangle.h">
@@ -1889,6 +1889,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h">
+      <Filter>src\ui\selectionset</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
