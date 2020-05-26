@@ -86,6 +86,7 @@
 				action="hide" />
 			<filterCriterion type="texture" match="textures/common/clip(_plusmovables)*$" action="hide" />
 			<filterCriterion type="texture" match="textures/common/moveableclipmodel" action="hide" />
+			<filterCriterion type="texture" match="textures/common/monster_player_clip_wood" action="hide" />
 		</filter>
 		<filter name="Trigger Textures">
 			<filterCriterion
