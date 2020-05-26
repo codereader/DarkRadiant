@@ -573,6 +573,10 @@
     <ClCompile Include="..\..\radiantcore\scenegraph\Octree.cpp" />
     <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraph.cpp" />
     <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraphFactory.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\selectionset\SelectionSet.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\selectionset\SelectionSetInfoFileModule.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\selectionset\SelectionSetManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\selectionset\SelectionSetModule.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\Game.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\GameManager.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\LanguageManager.cpp" />
@@ -788,6 +792,9 @@
     <ClInclude Include="..\..\radiantcore\scenegraph\OctreeNode.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraph.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraphFactory.h" />
+    <ClInclude Include="..\..\radiantcore\selection\selectionset\SelectionSet.h" />
+    <ClInclude Include="..\..\radiantcore\selection\selectionset\SelectionSetInfoFileModule.h" />
+    <ClInclude Include="..\..\radiantcore\selection\selectionset\SelectionSetManager.h" />
     <ClInclude Include="..\..\radiantcore\settings\Game.h" />
     <ClInclude Include="..\..\radiantcore\settings\GameManager.h" />
     <ClInclude Include="..\..\radiantcore\settings\LanguageManager.h" />

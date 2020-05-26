@@ -255,8 +255,6 @@
     <ClCompile Include="..\..\radiant\selection\manipulators\ScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\manipulators\TranslateManipulator.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
-    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.cpp" />
-    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetModule.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp" />
@@ -351,8 +349,6 @@
     <ClCompile Include="..\..\radiant\selection\algorithm\Transformation.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp" />
     <ClCompile Include="..\..\radiant\selection\shaderclipboard\Texturable.cpp" />
-    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSet.cpp" />
-    <ClCompile Include="..\..\radiant\selection\selectionset\SelectionSetManager.cpp" />
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp" />
     <ClCompile Include="..\..\radiant\textool\TexToolItem.cpp" />
     <ClCompile Include="..\..\radiant\textool\item\BrushItem.cpp" />
@@ -517,7 +513,6 @@
     <ClInclude Include="..\..\radiant\selection\Rectangle.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionPool.h" />
-    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetInfoFileModule.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiant\selection\SingleItemSelector.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
@@ -650,8 +645,6 @@
     <ClInclude Include="..\..\radiant\selection\algorithm\Transformation.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\ShaderClipboard.h" />
     <ClInclude Include="..\..\radiant\selection\shaderclipboard\Texturable.h" />
-    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSet.h" />
-    <ClInclude Include="..\..\radiant\selection\selectionset\SelectionSetManager.h" />
     <ClInclude Include="..\..\radiant\textool\Rectangle.h" />
     <ClInclude Include="..\..\radiant\textool\RenderableItem.h" />
     <ClInclude Include="..\..\radiant\textool\Selectable.h" />

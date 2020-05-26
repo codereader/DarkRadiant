@@ -187,6 +187,10 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 scenegraph/SceneGraph.cpp \
                 scenegraph/Octree.cpp \
                 scenegraph/SceneGraphFactory.cpp \
+                selection/selectionset/SelectionSetManager.cpp \
+                selection/selectionset/SelectionSetInfoFileModule.cpp \
+                selection/selectionset/SelectionSet.cpp \
+                selection/selectionset/SelectionSetModule.cpp \
                 settings/Game.cpp \
                 settings/GameManager.cpp \
                 settings/LanguageManager.cpp \

@@ -210,10 +210,6 @@ darkradiant_SOURCES = main.cpp \
                       selection/shaderclipboard/ShaderClipboard.cpp \
                       selection/shaderclipboard/Texturable.cpp \
 					  selection/shaderclipboard/ClosestTexturableFinder.cpp \
-                      selection/selectionset/SelectionSetManager.cpp \
-					  selection/selectionset/SelectionSetInfoFileModule.cpp \
-                      selection/selectionset/SelectionSet.cpp \
-                      selection/selectionset/SelectionSetModule.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \
