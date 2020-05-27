@@ -149,6 +149,17 @@ public:
 namespace patch
 {
 
+// The cap types for a patch
+enum class CapType
+{
+	None,
+	Bevel,
+	EndCap,
+	InvertedBevel,
+	InvertedEndCap,
+	Cylinder,
+};
+
 enum class PatchEditVertexType : std::size_t
 {
 	Corners,

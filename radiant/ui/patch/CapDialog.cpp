@@ -8,6 +8,9 @@
 #include <wx/statbmp.h>
 #include <wx/artprov.h>
 
+#include "selectionlib.h"
+#include "wxutil/dialog/MessageBox.h"
+
 namespace ui
 {
 
@@ -36,20 +39,20 @@ PatchCapDialog::PatchCapDialog() :
 
 	_dialog->GetSizer()->Add(sizer, 0, wxEXPAND | wxALL, 12);
 
-	addItemToTable(sizer, "cap_bevel.png", eCapBevel);
-	addItemToTable(sizer, "cap_ibevel.png", eCapIBevel);
-	addItemToTable(sizer, "cap_endcap.png", eCapEndCap);
-	addItemToTable(sizer, "cap_iendcap.png", eCapIEndCap);
-	addItemToTable(sizer, "cap_cylinder.png", eCapCylinder);
+	addItemToTable(sizer, "cap_bevel.png", patch::CapType::Bevel);
+	addItemToTable(sizer, "cap_ibevel.png", patch::CapType::InvertedBevel);
+	addItemToTable(sizer, "cap_endcap.png", patch::CapType::EndCap);
+	addItemToTable(sizer, "cap_iendcap.png", patch::CapType::InvertedEndCap);
+	addItemToTable(sizer, "cap_cylinder.png", patch::CapType::Cylinder);
 }
 
-void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& image, EPatchCap type)
+void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& image, patch::CapType type)
 {
 	wxStaticBitmap* img = new wxStaticBitmap(_dialog, wxID_ANY, 
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + image));
 
 	wxRadioButton* radioButton = new wxRadioButton(_dialog, wxID_ANY, _(CAPTYPE_NAMES[type]), 
-		wxDefaultPosition, wxDefaultSize, type == eCapBevel ? wxRB_GROUP : 0);
+		wxDefaultPosition, wxDefaultSize, type == patch::CapType::Bevel ? wxRB_GROUP : 0);
 
 	sizer->Add(img, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);
 	sizer->Add(radioButton, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxRIGHT, 12);
@@ -58,20 +61,35 @@ void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& i
 	_radioButtons[type] = radioButton;
 }
 
-EPatchCap PatchCapDialog::getSelectedCapType()
+patch::CapType PatchCapDialog::getSelectedCapType()
 {
-	if (_result != RESULT_OK) return eNumCapTypes;
+	if (_result != RESULT_OK) return patch::CapType::None;
 
-	for (RadioButtons::const_iterator i = _radioButtons.begin();
-		 i != _radioButtons.end(); ++i)
+	for (const auto& pair : _radioButtons)
 	{
-		if (i->second->GetValue())
+		if (pair.second->GetValue())
 		{
-			return i->first;
+			return pair.first;
 		}
 	}
 
-	return eNumCapTypes; // invalid
+	return patch::CapType::None; // invalid
+}
+
+void PatchCapDialog::Show(const cmd::ArgumentList & args)
+{
+	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
+	{
+		wxutil::Messagebox::ShowError(_("Cannot create caps, no patches selected."));
+		return;
+	}
+
+	PatchCapDialog dialog;
+
+	if (dialog.run() == IDialog::RESULT_OK)
+	{
+		GlobalCommandSystem().execute("CapSelectedPatches");
+	}
 }
 
 } // namespace ui

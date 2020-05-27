@@ -1,5 +1,6 @@
-#ifndef CONSTANTS_H_
-#define CONSTANTS_H_
+#pragma once
+
+#include "ipatch.h"
 
 // Minimum height and width of a patch
 #define MIN_PATCH_WIDTH 3
@@ -11,16 +12,6 @@ const std::size_t MAX_PATCH_HEIGHT = 99;
 
 #define MAX_PATCH_ROWCTRL (((MAX_PATCH_WIDTH-1)-1)/2)
 #define MAX_PATCH_COLCTRL (((MAX_PATCH_HEIGHT-1)-1)/2)
-
-// The cap types for a patch
-enum EPatchCap {
-	eCapBevel,
-	eCapEndCap,
-	eCapIBevel,
-	eCapIEndCap,
-	eCapCylinder,
-	eNumCapTypes
-};
 
 // The pre-defined patch types
 enum EPatchPrefab {
@@ -35,8 +26,8 @@ enum EPatchPrefab {
   eSphere,
 };
 
-enum EMatrixMajor {
-  ROW, COL,
+enum EMatrixMajor
+{
+    ROW, 
+    COL,
 };
-
-#endif /*CONSTANTS_H_*/

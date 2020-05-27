@@ -299,7 +299,7 @@
 
 		<menuSeparator />
 		<menuItem name="thickenPatches" caption="Thicken Selected Patches" command="ThickenPatch" />
-		<menuItem name="capselection" caption="Cap Selection" command="CapCurrentCurve" icon="curve_cap.png" />
+		<menuItem name="capselection" caption="Cap Selection" command="PatchCapDialog" icon="curve_cap.png" />
 		<menuSeparator />
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
     <menuItem name="bulgePatch" caption="Bulge Patch..." command="BulgePatchDialog" />

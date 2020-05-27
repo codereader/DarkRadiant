@@ -38,6 +38,7 @@
 #include "ui/eclasstree/EClassTree.h"
 #include "ui/entitylist/EntityList.h"
 #include "ui/particles/ParticleEditor.h"
+#include "ui/patch/CapDialog.h"
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
@@ -276,6 +277,7 @@ void UserInterfaceModule::registerUICommands()
 		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
 	GlobalCommandSystem().addCommand("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd);
+	GlobalCommandSystem().addCommand("PatchCapDialog", PatchCapDialog::Show);
 }
 
 // Static module registration

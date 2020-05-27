@@ -6,15 +6,16 @@
 #include "ipatch.h"
 #include "igrid.h"
 #include "itextstream.h"
+#include "iorthoview.h"
 
 #include "scenelib.h"
+#include "shaderlib.h"
 #include "patch/Patch.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/patch/PatchCreateDialog.h"
-#include "xyview/GlobalXYWnd.h"
 
 #include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/General.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "selectionlib.h"
 
 #include "string/case_conv.h"
@@ -24,6 +25,22 @@ namespace patch
 
 namespace algorithm
 {
+
+namespace
+{
+	// Gets the active/selected shader or the default fallback value
+	inline std::string getSelectedShader()
+	{
+		auto selectedShader = GlobalShaderClipboard().getSource().getShader();
+
+		if (selectedShader.empty())
+		{
+			selectedShader = texdef_name_default();
+		}
+
+		return selectedShader;
+	}
+}
 
 void constructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab eType, 
 					 EViewType viewType, std::size_t width, std::size_t height)
@@ -76,9 +93,9 @@ void createPrefabInternal(EPatchPrefab prefabType, const std::string& undoCmdNam
 	UndoableCommand undo(undoCmdName);
 
 	constructPrefab(getDefaultBoundsFromSelection(), 
-					GlobalTextureBrowser().getSelectedShader(), 
+					getSelectedShader(),
 					prefabType, 
-					GlobalXYWnd().getActiveViewType());
+					GlobalXYWndManager().getActiveViewType());
 }
 
 void createPrefab(const cmd::ArgumentList& args)
@@ -229,8 +246,8 @@ void createSimplePatch(const cmd::ArgumentList& args)
 
 	// Call the PatchConstruct routine (GtkRadiant legacy)
 	constructPrefab(bounds,
-					GlobalTextureBrowser().getSelectedShader(),
-					ePlane, GlobalXYWnd().getActiveViewType(),
+					getSelectedShader(),
+					ePlane, GlobalXYWndManager().getActiveViewType(),
 					width, height);
 }
 

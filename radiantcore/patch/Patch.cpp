@@ -803,7 +803,7 @@ void Patch::appendPoints(bool columns, bool beginning) {
 	controlPointsChanged();
 }
 
-Patch* Patch::MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirst)
+Patch* Patch::MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool bFirst)
 {
   std::size_t i, width, height;
 
@@ -1277,11 +1277,11 @@ void Patch::removePoints(bool columns, std::size_t index) {
 	}
 }
 
-void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
+void Patch::ConstructSeam(patch::CapType eType, Vector3* p, std::size_t width)
 {
   switch(eType)
   {
-  case eCapIBevel:
+  case patch::CapType::InvertedBevel:
     {
       setDims(3, 3);
       _ctrl[0].vertex = p[0];
@@ -1295,7 +1295,7 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
       _ctrl[8].vertex = p[1];
     }
     break;
-  case eCapBevel:
+  case patch::CapType::Bevel:
     {
       setDims(3, 3);
       Vector3 p3(p[2] + (p[0] - p[1]));
@@ -1310,7 +1310,7 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
       _ctrl[8].vertex = p[0];
     }
     break;
-  case eCapEndCap:
+  case patch::CapType::EndCap:
     {
       Vector3 p5(p[0].mid(p[4]));
 
@@ -1326,7 +1326,7 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
       _ctrl[8].vertex = p[2];
     }
     break;
-  case eCapIEndCap:
+  case patch::CapType::InvertedEndCap:
     {
       setDims(5, 3);
       _ctrl[0].vertex = p[4];
@@ -1346,7 +1346,7 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
       _ctrl[14].vertex = p[1];
     }
     break;
-  case eCapCylinder:
+  case patch::CapType::Cylinder:
     {
       std::size_t mid = (width - 1) >> 1;
 

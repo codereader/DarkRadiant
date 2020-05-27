@@ -8,11 +8,10 @@
 #include "patch/PatchNode.h"
 #include "ui/patch/PatchInspector.h"
 #include "ui/patch/PatchThickenDialog.h"
-#include "ui/texturebrowser/TextureBrowser.h"
-#include "ui/patch/CapDialog.h"
 #include "wxutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/Primitives.h"
+#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "patch/algorithm/Prefab.h"
 #include "patch/algorithm/General.h"
 
@@ -53,34 +52,50 @@ void transposePatch(const cmd::ArgumentList& args)
 	ui::PatchInspector::Instance().queueUpdate();
 }
 
-void createPatchCaps(const std::string& shader)
+patch::CapType getPatchCapTypeForString(const std::string& capTypeStr)
 {
-	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
-	{
-		wxutil::Messagebox::ShowError(_("Cannot create caps, no patches selected."));
-		return;
-	}
+	if (capTypeStr == "bevel") return patch::CapType::Bevel;
+	if (capTypeStr == "invertedbevel") return patch::CapType::InvertedBevel;
+	if (capTypeStr == "endcap") return patch::CapType::EndCap;
+	if (capTypeStr == "invertedendcap") return patch::CapType::InvertedEndCap;
+	if (capTypeStr == "cylinder") return patch::CapType::Cylinder;
 
-	ui::PatchCapDialog dialog;
-
-	if (dialog.run() == ui::IDialog::RESULT_OK)
-	{
-		PatchPtrVector patchNodes = getSelectedPatches();
-
-		std::for_each(patchNodes.begin(), patchNodes.end(), [&] (PatchNodePtr& patchNode)
-		{
-			patch::algorithm::createCaps(patchNode->getPatchInternal(), patchNode->getParent(), dialog.getSelectedCapType(), shader);
-		});
-	}
+	throw std::logic_error("Invalid cap type encountered: " + capTypeStr);
 }
 
 void capPatch(const cmd::ArgumentList& args)
 {
-	// FIXME: add support for patch cap creation
-	// Patch_CapCurrent();
-	UndoableCommand undo("patchCreateCaps");
+	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
+	{
+		rWarning() << "No patches selected." << std::endl;
+		return;
+	}
 
-	createPatchCaps(GlobalTextureBrowser().getSelectedShader());
+	if (args.empty())
+	{
+		rWarning() << "Usage: CapSelectedPatches <bevel|invertedbevel|endcap|invertedendcap|cylinder>" << std::endl;
+		return;
+	}
+
+	try
+	{
+		// Parse the type
+		auto capType = getPatchCapTypeForString(args[0].getString());
+
+		UndoableCommand undo("patchCreateCaps");
+
+		auto patchNodes = getSelectedPatches();
+
+		for (const auto& patchNode : patchNodes)
+		{
+			patch::algorithm::createCaps(patchNode->getPatchInternal(), patchNode->getParent(), 
+				capType, GlobalShaderClipboard().getSource().getShader());
+		}
+	}
+	catch (const std::logic_error& ex)
+	{
+		rError() << ex.what() << std::endl;
+	}
 }
 
 void insertPatchColumnsAtEnd(const cmd::ArgumentList& args)

@@ -251,8 +251,8 @@ public:
 	void TransposeMatrix();
 	void Redisperse(EMatrixMajor mt);
 	void InsertRemove(bool bInsert, bool bColumn, bool bFirst);
-  	Patch* MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirst);
-	void ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width);
+  	Patch* MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool bFirst);
+	void ConstructSeam(patch::CapType eType, Vector3* p, std::size_t width);
 
 	void FlipTexture(int nAxis);
 

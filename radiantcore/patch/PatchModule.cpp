@@ -102,7 +102,7 @@ void PatchModule::registerPatchCommands()
 	GlobalCommandSystem().addCommand("RedisperseRows", selection::algorithm::redispersePatchRows);
 	GlobalCommandSystem().addCommand("RedisperseCols", selection::algorithm::redispersePatchCols);
 	GlobalCommandSystem().addCommand("MatrixTranspose", selection::algorithm::transposePatch);
-	GlobalCommandSystem().addCommand("CapCurrentCurve", selection::algorithm::capPatch);
+	GlobalCommandSystem().addCommand("CapSelectedPatches", selection::algorithm::capPatch, { cmd::ARGTYPE_STRING });
 	GlobalCommandSystem().addCommand("ThickenPatch", selection::algorithm::thickenPatches);
 	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::algorithm::stitchTextures);
 	GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge, { cmd::ARGTYPE_DOUBLE });
