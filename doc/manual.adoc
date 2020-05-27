@@ -1108,6 +1108,26 @@ list of entity properties. If an entire entity is selected, the text will appear
 similar to `Entity&nbsp;1`, whereas with a primitive selected it will read
 `Entity&nbsp;1,&nbsp;Primitive&nbsp;1`.
 
+==== Adding or removing primitives
+
+Once you have created a *func_static* or similar entity from a number of
+primitives, you can add or remove primitives without needing to create a new
+entity from scratch.
+
+*Adding a primitive*:: Select the entity, then expand the selection (i.e. using
+ *Shift + Left click*) to include one or more existing primitives to add to this
+ entity. Then choose *Edit -> Reparent primitives*.
+
+*Removing a primitive*:: Use the *TAB* key to select the individual primitive to
+ remove (you must do this even if there is only one primitive in the entity),
+ then choose *Edit -> Reparent primitives to worldspawn*. The removed primitive
+ will still exist in the map but it will be a regular worldspawn brush or patch,
+ not parented to any other entity.
+
+*Unparenting all primitives*:: With the entity selected, simply right-click in
+ the 2D view and choose *Revert to worldspawn* to turn all of the primitives
+ back into worldspawn.
+
 === Compiling a map
 
 DarkRadiant does not include functionality for compiling a map into the form

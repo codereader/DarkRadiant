@@ -489,6 +489,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_converting_primitives_into_func_static">Converting primitives into func_static</a></li>
 <li><a href="#_selecting_individual_child_primitives">Selecting individual child primitives</a></li>
+<li><a href="#_adding_or_removing_primitives">Adding or removing primitives</a></li>
 </ul>
 </li>
 <li><a href="#_compiling_a_map">Compiling a map</a>
@@ -2331,6 +2332,38 @@ similar to <code>Entity&nbsp;1</code>, whereas with a primitive selected it will
 <code>Entity&nbsp;1,&nbsp;Primitive&nbsp;1</code>.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_adding_or_removing_primitives">Adding or removing primitives</h4>
+<div class="paragraph">
+<p>Once you have created a <strong>func_static</strong> or similar entity from a number of
+primitives, you can add or remove primitives without needing to create a new
+entity from scratch.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Adding a primitive</strong></dt>
+<dd>
+<p>Select the entity, then expand the selection (i.e. using
+<strong>Shift + Left click</strong>) to include one or more existing primitives to add to this
+entity. Then choose <strong>Edit &#8594; Reparent primitives</strong>.</p>
+</dd>
+<dt class="hdlist1"><strong>Removing a primitive</strong></dt>
+<dd>
+<p>Use the <strong>TAB</strong> key to select the individual primitive to
+remove (you must do this even if there is only one primitive in the entity),
+then choose <strong>Edit &#8594; Reparent primitives to worldspawn</strong>. The removed primitive
+will still exist in the map but it will be a regular worldspawn brush or patch,
+not parented to any other entity.</p>
+</dd>
+<dt class="hdlist1"><strong>Unparenting all primitives</strong></dt>
+<dd>
+<p>With the entity selected, simply right-click in
+the 2D view and choose <strong>Revert to worldspawn</strong> to turn all of the primitives
+back into worldspawn.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_compiling_a_map">Compiling a map</h3>
@@ -3731,7 +3764,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-07 20:18:29 BST
+Last updated 2020-05-27 20:50:27 BST
 </div>
 </div>
 </body>
