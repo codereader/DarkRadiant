@@ -9,7 +9,6 @@
 
 #include "scenelib.h"
 #include "patch/Patch.h"
-#include "map/Map.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/patch/PatchCreateDialog.h"
 #include "xyview/GlobalXYWnd.h"
@@ -32,7 +31,7 @@ void constructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab e
 	GlobalSelectionSystem().setSelectedAll(false);
 
 	scene::INodePtr node(GlobalPatchModule().createPatch(patch::PatchDefType::Def2));
-	GlobalMap().findOrInsertWorldspawn()->addChildNode(node);
+	GlobalMapModule().findOrInsertWorldspawn()->addChildNode(node);
 
 	Patch* patch = Node_getPatch(node);
 	patch->setShader(shader);
