@@ -104,6 +104,7 @@ public:
 
 	// Sets the origin of all available views
 	void setOrigin(const Vector3& origin) override;
+	Vector3 getActiveViewOrigin() override;
 
 	// Sets the scale of all available views
 	void setScale(float scale) override;

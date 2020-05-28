@@ -7,12 +7,12 @@
 #include "imainframe.h"
 #include "itransformable.h"
 #include "ientity.h"
+#include "iorthoview.h"
 
 #include "scenelib.h"
-#include "wxutil/dialog/MessageBox.h"
 #include "selectionlib.h"
 #include "gamelib.h"
-#include "xyview/GlobalXYWnd.h"
+#include "command/ExecutionNotPossible.h"
 
 namespace selection
 {
@@ -75,7 +75,7 @@ void createCurve(const std::string& key)
     ITransformablePtr transformable = Node_getTransformable(curve);
     if (transformable != NULL) {
         // Translate the entity to the center of the current workzone
-        transformable->setTranslation(GlobalXYWnd().getActiveXY()->getOrigin());
+        transformable->setTranslation(GlobalXYWndManager().getActiveViewOrigin());
         transformable->freezeTransform();
     }
 }
@@ -169,106 +169,108 @@ public:
 	}
 };
 
-void appendCurveControlPoint(const cmd::ArgumentList& args) {
+void appendCurveControlPoint(const cmd::ArgumentList& args)
+{
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	if (info.entityCount > 0) {
-		UndoableCommand command("curveAppendControlPoint");
-
-		// The functor object
-		CurveControlPointAppender appender;
-
-		// Traverse the selection applying the functor
-		GlobalSelectionSystem().foreachSelected(
-			SelectedCurveVisitor(appender)
-		);
-	}
-	else {
-		wxutil::Messagebox::ShowError(
+	if (info.entityCount == 0)
+	{
+		throw cmd::ExecutionNotPossible(
 			_("Can't append curve point - no entities with curve selected.")
 		);
 	}
+
+	UndoableCommand command("curveAppendControlPoint");
+
+	// The functor object
+	CurveControlPointAppender appender;
+
+	// Traverse the selection applying the functor
+	GlobalSelectionSystem().foreachSelected(
+		SelectedCurveVisitor(appender)
+	);
 }
 
-void removeCurveControlPoints(const cmd::ArgumentList& args) {
+void removeCurveControlPoints(const cmd::ArgumentList& args)
+{
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
-		wxutil::Messagebox::ShowError(
+		throw cmd::ExecutionNotPossible(
 			_("Can't remove curve points - must be in vertex editing mode.")
 		);
-		return;
 	}
 
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	if (info.entityCount > 0) {
-		UndoableCommand command("curveRemoveControlPoints");
-
-		// The functor object
-		CurveControlPointRemover remover;
-
-		// Traverse the selection applying the functor
-		GlobalSelectionSystem().foreachSelected(
-			SelectedCurveVisitor(remover)
-		);
-	}
-	else {
-		wxutil::Messagebox::ShowError(
+	if (info.entityCount == 0)
+	{
+		throw cmd::ExecutionNotPossible(
 			_("Can't remove curve points - no entities with curves selected.")
 		);
 	}
+
+	UndoableCommand command("curveRemoveControlPoints");
+
+	// The functor object
+	CurveControlPointRemover remover;
+
+	// Traverse the selection applying the functor
+	GlobalSelectionSystem().foreachSelected(
+		SelectedCurveVisitor(remover)
+	);
 }
 
-void insertCurveControlPoints(const cmd::ArgumentList& args) {
+void insertCurveControlPoints(const cmd::ArgumentList& args)
+{
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
-		wxutil::Messagebox::ShowError(
+		throw cmd::ExecutionNotPossible(
 			_("Can't insert curve points - must be in vertex editing mode.")
 		);
-		return;
 	}
 
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	if (info.entityCount > 0) {
-		UndoableCommand command("curveInsertControlPoints");
-
-		// The functor object
-		CurveControlPointInserter inserter;
-
-		// Traverse the selection applying the functor
-		GlobalSelectionSystem().foreachSelected(
-			SelectedCurveVisitor(inserter)
-		);
-	}
-	else {
-		wxutil::Messagebox::ShowError(
+	if (info.entityCount == 0)
+	{
+		throw cmd::ExecutionNotPossible(
 			_("Can't insert curve points - no entities with curves selected.")
 		);
 	}
+	
+	UndoableCommand command("curveInsertControlPoints");
+
+	// The functor object
+	CurveControlPointInserter inserter;
+
+	// Traverse the selection applying the functor
+	GlobalSelectionSystem().foreachSelected(
+		SelectedCurveVisitor(inserter)
+	);
 }
 
-void convertCurveTypes(const cmd::ArgumentList& args) {
+void convertCurveTypes(const cmd::ArgumentList& args)
+{
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	if (info.entityCount > 0) {
-		UndoableCommand command("curveConvertType");
-
-		// The functor object
-		CurveConverter converter;
-
-		// Traverse the selection applying the functor
-		GlobalSelectionSystem().foreachSelected(
-			SelectedCurveVisitor(converter)
-		);
-	}
-	else {
-		wxutil::Messagebox::ShowError(
+	if (info.entityCount == 0)
+	{
+		throw cmd::ExecutionNotPossible(
 			_("Can't convert curves - no entities with curves selected.")
 		);
 	}
+
+	UndoableCommand command("curveConvertType");
+
+	// The functor object
+	CurveConverter converter;
+
+	// Traverse the selection applying the functor
+	GlobalSelectionSystem().foreachSelected(
+		SelectedCurveVisitor(converter)
+	);
 }
 
 } // namespace algorithm

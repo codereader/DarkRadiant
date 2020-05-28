@@ -315,6 +315,16 @@ void XYWndManager::setOrigin(const Vector3& origin) {
 	}
 }
 
+Vector3 XYWndManager::getActiveViewOrigin()
+{
+	if (!_activeXY) 
+	{
+		return Vector3(0, 0, 0);
+	}
+
+	return _activeXY->getOrigin();
+}
+
 void XYWndManager::setScale(float scale) {
 	for (XYWndMap::iterator i = _xyWnds.begin();
 		 i != _xyWnds.end();

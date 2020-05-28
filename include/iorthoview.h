@@ -67,6 +67,9 @@ public:
 	// Sets the origin of all available views
 	virtual void setOrigin(const Vector3& origin) = 0;
 
+    // Returns the origin of the currently active ortho view
+    virtual Vector3 getActiveViewOrigin() = 0;
+
 	// Sets the scale of all available views
 	virtual void setScale(float scale) = 0;
 
