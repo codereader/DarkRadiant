@@ -243,7 +243,7 @@
 	</subMenu>
 
 	<subMenu name="patch" caption="&amp;Patch">
-		<menuItem name="simplePatch" caption="Create Simple Patch Mesh" command="SimplePatchMesh" />
+		<menuItem name="simplePatch" caption="Create Simple Patch Mesh" command="CreateSimplePatchDialog" />
 		<menuSeparator />
 		<menuItem name="endcap" caption="Create End cap" command="PatchEndCap" />
 		<menuItem name="bevel" caption="Create Bevel" command="PatchBevel" />
@@ -298,7 +298,7 @@
 		</subMenu>
 
 		<menuSeparator />
-		<menuItem name="thickenPatches" caption="Thicken Selected Patches" command="ThickenPatch" />
+		<menuItem name="thickenPatches" caption="Thicken Selected Patches" command="ThickenPatchDialog" />
 		<menuItem name="capselection" caption="Cap Selection" command="PatchCapDialog" icon="curve_cap.png" />
 		<menuSeparator />
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />

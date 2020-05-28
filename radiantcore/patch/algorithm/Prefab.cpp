@@ -11,12 +11,11 @@
 #include "scenelib.h"
 #include "shaderlib.h"
 #include "patch/Patch.h"
-#include "ui/patch/PatchCreateDialog.h"
 
-#include "wxutil/dialog/MessageBox.h"
 #include "selection/algorithm/General.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "selectionlib.h"
+#include "command/ExecutionFailure.h"
 
 #include "string/case_conv.h"
 
@@ -205,6 +204,10 @@ void createSimplePatch(const cmd::ArgumentList& args)
 	std::size_t height = 0;
 	bool removeSelectedBrush = false;
 
+	if (args.empty() || args.size() > 3)
+	{
+		throw cmd::ExecutionFailure(_("Invalid number of arguments"));
+	}
 	if (args.size() == 1)
 	{
 		// Try to convert the arguments to actual integers and do the range checks
@@ -215,65 +218,58 @@ void createSimplePatch(const cmd::ArgumentList& args)
 		width = checkPatchDimension(args[0].getInt());
 		height = checkPatchDimension(args[1].getInt());
 	}
+	else if (args.size() == 3)
+	{
+		width = checkPatchDimension(args[0].getInt());
+		height = checkPatchDimension(args[1].getInt());
+		removeSelectedBrush = args[2].getBoolean();
+	}
 
 	// Only fire the dialog if no or invalid command arguments are given
 	if (width == 0 || height == 0)
 	{
-		ui::PatchCreateDialog dialog;
+		UndoableCommand undo("patchCreatePlane");
 
-		if (dialog.run() == ui::IDialog::RESULT_OK)
+		// Retrieve the boundaries before any delete operation
+		AABB bounds = getDefaultBoundsFromSelection();
+
+		if (removeSelectedBrush)
 		{
-			width = dialog.getSelectedWidth();
-			height = dialog.getSelectedHeight();
-			removeSelectedBrush = dialog.getRemoveSelectedBrush();
+			// Delete the selection, the should be only one brush selected
+			selection::algorithm::deleteSelection();
 		}
-		else
-		{
-			return; // dialog cancelled
-		}
+
+		// Call the PatchConstruct routine (GtkRadiant legacy)
+		constructPrefab(bounds,
+			getSelectedShader(),
+			ePlane, GlobalXYWndManager().getActiveViewType(),
+			width, height);
 	}
-
-	UndoableCommand undo("patchCreatePlane");
-
-	// Retrieve the boundaries before any delete operation
-	AABB bounds = getDefaultBoundsFromSelection();
-
-	if (removeSelectedBrush)
-	{
-		// Delete the selection, the should be only one brush selected
-		selection::algorithm::deleteSelection();
-	}
-
-	// Call the PatchConstruct routine (GtkRadiant legacy)
-	constructPrefab(bounds,
-					getSelectedShader(),
-					ePlane, GlobalXYWndManager().getActiveViewType(),
-					width, height);
 }
 
-void createCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, const std::string& shader)
+void createCaps(Patch& patch, const scene::INodePtr& parent, CapType type, const std::string& shader)
 {
-	if ((type == eCapEndCap || type == eCapIEndCap) && patch.getWidth() != 5)
+	if ((type == CapType::EndCap || type == CapType::InvertedEndCap) && patch.getWidth() != 5)
 	{
 		rError() << "cannot create end-cap - patch width != 5" << std::endl;
 
-		wxutil::Messagebox::ShowError(_("Cannot create end-cap, patch must have a width of 5."));
+		throw cmd::ExecutionFailure(_("Cannot create end-cap, patch must have a width of 5."));
 
 		return;
 	}
 
-	if ((type == eCapBevel || type == eCapIBevel) && patch.getWidth() != 3)
+	if ((type == CapType::Bevel || type == CapType::InvertedBevel) && patch.getWidth() != 3)
 	{
-		wxutil::Messagebox::ShowError(_("Cannot create bevel-cap, patch must have a width of 3."));
+		throw cmd::ExecutionFailure(_("Cannot create bevel-cap, patch must have a width of 3."));
 
 		rError() << "cannot create bevel-cap - patch width != 3" << std::endl;
 		return;
 
 	}
 
-	if (type == eCapCylinder && patch.getWidth() != 9)
+	if (type == CapType::Cylinder && patch.getWidth() != 9)
 	{
-		wxutil::Messagebox::ShowError(_("Cannot create cylinder-cap, patch must have a width of 9."));
+		throw cmd::ExecutionFailure(_("Cannot create cylinder-cap, patch must have a width of 9."));
 
 		rError() << "cannot create cylinder-cap - patch width != 9" << std::endl;
 		return;

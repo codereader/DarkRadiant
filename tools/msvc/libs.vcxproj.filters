@@ -206,6 +206,12 @@
     <ClInclude Include="..\..\libs\messages\MapFileOperation.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\command\ExecutionNotPossible.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\TextureChanged.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

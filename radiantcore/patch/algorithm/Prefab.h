@@ -38,7 +38,7 @@ void createSimplePatch(const cmd::ArgumentList& args);
 
 // Constructs the given cap type for the patch, creating new patches, and inserting them to the given parent
 // The parent node must not be NULL.
-void createCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, const std::string& shader);
+void createCaps(Patch& patch, const scene::INodePtr& parent, CapType type, const std::string& shader);
 
 } // namespace
 

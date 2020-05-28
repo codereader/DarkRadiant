@@ -143,6 +143,7 @@
     <ClInclude Include="..\..\libs\BasicUndoMemento.h" />
     <ClInclude Include="..\..\libs\character.h" />
     <ClInclude Include="..\..\libs\command\ExecutionFailure.h" />
+    <ClInclude Include="..\..\libs\command\ExecutionNotPossible.h" />
     <ClInclude Include="..\..\libs\debugging\debugging.h" />
     <ClInclude Include="..\..\libs\debugging\render.h" />
     <ClInclude Include="..\..\libs\debugging\ScenegraphUtils.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h" />
     <ClInclude Include="..\..\libs\messages\MapFileOperation.h" />
     <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h" />
+    <ClInclude Include="..\..\libs\messages\TextureChanged.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />

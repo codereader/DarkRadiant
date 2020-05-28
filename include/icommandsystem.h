@@ -124,6 +124,11 @@ public:
 		return _strValue;
 	}
 
+	bool getBoolean() const
+	{
+		return getInt() != 0;
+	}
+
 	int getInt() const
 	{
 		return _intValue;

@@ -120,12 +120,12 @@
 		<shortcut command="PatchDeleteColumnEnd" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchDeleteRowEnd" key="KP_Subtract" modifiers="CONTROL" />
 		<shortcut command="TextureNatural" key="N" modifiers="CONTROL" />
-		<shortcut command="SimplePatchMesh" key="P" modifiers="SHIFT" />
+		<shortcut command="CreateSimplePatchMesh" key="P" modifiers="SHIFT" />
 		<shortcut command="InvertCurve" key="I" modifiers="CONTROL" />
 		<shortcut command="RedisperseRows" key="E" modifiers="CONTROL" />
 		<shortcut command="RedisperseCols" key="E" modifiers="SHIFT+CONTROL" />
 		<shortcut command="MatrixTranspose" key="M" modifiers="SHIFT+CONTROL" />
-		<shortcut command="CapCurrentCurve" key="C" modifiers="SHIFT" />
+		<shortcut command="PatchCapDialog" key="C" modifiers="SHIFT" />
 		<shortcut command="NextLeakSpot" key="K" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PrevLeakSpot" key="L" modifiers="SHIFT+CONTROL" />
 		<shortcut command="SurfaceInspector" key="S" />
@@ -144,7 +144,7 @@
 		<shortcut command="DragVertices" key="V" />
 		<shortcut command="DragEdges" key="E" />
 		<shortcut command="DragFaces" key="F" />
-		<shortcut command="ThickenPatch" key="T" modifiers="CONTROL" />
+		<shortcut command="ThickenPatchDialog" key="T" modifiers="CONTROL" />
 		<shortcut command="ToggleShowAllLightRadii" key="F" modifiers="CONTROL+SHIFT+ALT" />
 		<shortcut command="ToggleClipper" key="X" />
 		<shortcut command="MouseTranslate" key="W" />

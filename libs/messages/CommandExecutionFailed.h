@@ -12,7 +12,7 @@ namespace radiant
  * is stored internally and shipped with it.
  */
 class CommandExecutionFailedMessage :
-	public radiant::IMessage
+	public IMessage
 {
 private:
 	const cmd::ExecutionFailure& _exception;

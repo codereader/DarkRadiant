@@ -5,6 +5,7 @@
 #include "iradiant.h"
 #include "debugging/debugging.h"
 #include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
 #include "messages/CommandExecutionFailed.h"
 
 #include "CommandTokeniser.h"
@@ -384,6 +385,14 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 	{
 		rError() << "Command '" << name << "' failed: " << ex.what() << std::endl;
 		
+		// Dispatch this exception to the messagebus to potential listeners
+		radiant::CommandExecutionFailedMessage message(ex);
+		GlobalRadiantCore().getMessageBus().sendMessage(message);
+	}
+	catch (const ExecutionNotPossible & ex)
+	{
+		rError() << "Command '" << name << "' cannot be executed: " << ex.what() << std::endl;
+
 		// Dispatch this exception to the messagebus to potential listeners
 		radiant::CommandExecutionFailedMessage message(ex);
 		GlobalRadiantCore().getMessageBus().sendMessage(message);

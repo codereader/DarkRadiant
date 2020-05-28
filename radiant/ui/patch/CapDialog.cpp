@@ -9,6 +9,8 @@
 #include <wx/artprov.h>
 
 #include "selectionlib.h"
+#include "command/ExecutionNotPossible.h"
+#include "command/ExecutionFailure.h"
 #include "wxutil/dialog/MessageBox.h"
 
 namespace ui
@@ -18,7 +20,7 @@ namespace
 {
 	const char* WINDOW_TITLE = N_("Create Cap Patch");
 
-	const char* const CAPTYPE_NAMES[eNumCapTypes] =
+	const char* const CAPTYPE_NAMES[5] =
 	{
 		N_("Bevel"),
 		N_("End Cap"),
@@ -51,7 +53,7 @@ void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& i
 	wxStaticBitmap* img = new wxStaticBitmap(_dialog, wxID_ANY, 
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + image));
 
-	wxRadioButton* radioButton = new wxRadioButton(_dialog, wxID_ANY, _(CAPTYPE_NAMES[type]), 
+	wxRadioButton* radioButton = new wxRadioButton(_dialog, wxID_ANY, _(CAPTYPE_NAMES[static_cast<std::size_t>(type)]), 
 		wxDefaultPosition, wxDefaultSize, type == patch::CapType::Bevel ? wxRB_GROUP : 0);
 
 	sizer->Add(img, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);
@@ -76,19 +78,31 @@ patch::CapType PatchCapDialog::getSelectedCapType()
 	return patch::CapType::None; // invalid
 }
 
+std::string PatchCapDialog::getSelectedCapTypeString()
+{
+	switch (getSelectedCapType())
+	{
+	case patch::CapType::Bevel: return "bevel";
+	case patch::CapType::EndCap: return "endcap";
+	case patch::CapType::InvertedBevel: return "invertedbevel";
+	case patch::CapType::InvertedEndCap: return "invertedendcap";
+	case patch::CapType::Cylinder: return "cylinder";
+	default: throw cmd::ExecutionFailure("Invalid cap type selected");
+	};
+}
+
 void PatchCapDialog::Show(const cmd::ArgumentList & args)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
 	{
-		wxutil::Messagebox::ShowError(_("Cannot create caps, no patches selected."));
-		return;
+		throw cmd::ExecutionNotPossible(_("Cannot create caps, no patches selected."));
 	}
 
 	PatchCapDialog dialog;
 
 	if (dialog.run() == IDialog::RESULT_OK)
 	{
-		GlobalCommandSystem().execute("CapSelectedPatches");
+		GlobalCommandSystem().executeCommand("CapSelectedPatches", dialog.getSelectedCapTypeString());
 	}
 }
 

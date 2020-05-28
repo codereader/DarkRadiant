@@ -3,12 +3,10 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "selectionlib.h"
+#include "command/ExecutionNotPossible.h"
 
 #include "patch/Patch.h"
 #include "patch/PatchNode.h"
-#include "ui/patch/PatchInspector.h"
-#include "ui/patch/PatchThickenDialog.h"
-#include "wxutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
@@ -48,8 +46,6 @@ void transposePatch(const cmd::ArgumentList& args)
 	UndoableCommand undo("patchTranspose");
 
 	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.TransposeMatrix(); });
-
-	ui::PatchInspector::Instance().queueUpdate();
 }
 
 patch::CapType getPatchCapTypeForString(const std::string& capTypeStr)
@@ -67,8 +63,7 @@ void capPatch(const cmd::ArgumentList& args)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
 	{
-		rWarning() << "No patches selected." << std::endl;
-		return;
+		throw cmd::ExecutionNotPossible(_("Cannot create caps, no patches selected."));
 	}
 
 	if (args.empty())
@@ -189,27 +184,29 @@ void appendPatchRowsAtEnd(const cmd::ArgumentList& args)
  */
 void thickenPatches(const cmd::ArgumentList& args)
 {
-	// Get all the selected patches
-	PatchPtrVector patchList = getSelectedPatches();
-
-	if (!patchList.empty())
+	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
 	{
-		UndoableCommand undo("patchThicken");
-
-		ui::PatchThickenDialog dialog;
-
-		if (dialog.run() == ui::IDialog::RESULT_OK)
-		{
-			// Go through the list and thicken all the found ones
-			for (std::size_t i = 0; i < patchList.size(); i++)
-			{
-				patch::algorithm::thicken(patchList[i], dialog.getThickness(), dialog.getCeateSeams(), dialog.getAxis());
-			}
-		}
+		throw cmd::ExecutionNotPossible(_("Cannot thicken patch. Nothing selected."));
 	}
-	else
+
+	// Check arguments
+	if (args.size() != 3)
 	{
-		wxutil::Messagebox::ShowError(_("Cannot thicken patch. Nothing selected."));
+		rWarning() << "Usage: ThickenSelectedPatches <thickness> <create_seams:1|0> <axis:0|1|2>" << std::endl;
+		return;
+	}
+
+	double thickness = args[0].getDouble();
+	bool createSeams = args[1].getInt() != 0;
+	int axis = args[2].getInt();
+
+	UndoableCommand undo("patchThicken");
+
+	auto patches = getSelectedPatches();
+
+	for (const PatchNodePtr& patch : patches)
+	{
+		patch::algorithm::thicken(patch, thickness, createSeams, axis);
 	}
 }
 

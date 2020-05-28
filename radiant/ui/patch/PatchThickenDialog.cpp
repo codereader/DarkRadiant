@@ -3,6 +3,8 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "string/convert.h"
+#include "selectionlib.h"
+#include "command/ExecutionNotPossible.h"
 
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
@@ -55,6 +57,25 @@ int PatchThickenDialog::getAxis()
 	{
 		// Extrude along normals
 		return 3;
+	}
+}
+
+void PatchThickenDialog::Show(const cmd::ArgumentList& args)
+{
+	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
+	{
+		throw cmd::ExecutionNotPossible(_("Cannot thicken patch. Nothing selected."));
+	}
+
+	PatchThickenDialog dialog;
+
+	if (dialog.run() == IDialog::RESULT_OK)
+	{
+		GlobalCommandSystem().executeCommand("ThickenSelectedPatches",
+			{ cmd::Argument(dialog.getThickness()), 
+			  cmd::Argument(dialog.getCeateSeams() ? 1 : 0),
+			  cmd::Argument(dialog.getAxis()) }
+		);
 	}
 }
 

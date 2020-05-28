@@ -85,4 +85,17 @@ bool PatchCreateDialog::getRemoveSelectedBrush()
 	return findNamedObject<wxCheckBox>(_dialog, "PatchCreateRemoveSelectedBrush")->GetValue();
 }
 
+void PatchCreateDialog::Show(const cmd::ArgumentList& args)
+{
+	PatchCreateDialog dialog;
+
+	if (dialog.run() == IDialog::RESULT_OK)
+	{
+		GlobalCommandSystem().executeCommand("CreateSimplePatchMesh",
+			{ cmd::Argument(dialog.getSelectedWidth()), 
+			  cmd::Argument(dialog.getSelectedHeight()), 
+			  cmd::Argument(dialog.getRemoveSelectedBrush() ? 1 : 0) });
+	}
+}
+
 } // namespace ui

@@ -31,6 +31,8 @@ public:
 	static void Show(const cmd::ArgumentList& args);
 
 private:
+	std::string getSelectedCapTypeString();
+
 	void addItemToTable(wxFlexGridSizer* sizer, const std::string& image, patch::CapType type);
 };
 

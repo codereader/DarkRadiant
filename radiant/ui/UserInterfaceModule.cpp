@@ -14,6 +14,7 @@
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "messages/TextureChanged.h"
 
 #include "module/StaticModule.h"
 
@@ -39,11 +40,13 @@
 #include "ui/entitylist/EntityList.h"
 #include "ui/particles/ParticleEditor.h"
 #include "ui/patch/CapDialog.h"
+#include "ui/patch/PatchThickenDialog.h"
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
 #include "uimanager/colourscheme/ColourSchemeEditor.h"
 #include "ui/layers/CreateLayerDialog.h"
+#include "ui/patch/PatchCreateDialog.h"
 #include "ui/patch/BulgePatchDialog.h"
 #include "ui/selectionset/SelectionSetToolmenu.h"
 
@@ -145,9 +148,12 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 
 	initialiseEntitySettings();
 
-	GlobalRadiantCore().getMessageBus().addListener(
+	_execFailedListener = GlobalRadiantCore().getMessageBus().addListener(
 		radiant::TypeListener<radiant::CommandExecutionFailedMessage>(
 			sigc::mem_fun(this, &UserInterfaceModule::handleCommandExecutionFailure)));
+
+	_textureChangedListener = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::TypeListener(UserInterfaceModule::HandleTextureChanged));
 
 	// Initialise the AAS UI
 	AasControlDialog::Init();
@@ -157,6 +163,9 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 
 void UserInterfaceModule::shutdownModule()
 {
+	GlobalRadiantCore().getMessageBus().removeListener(_textureChangedListener);
+	GlobalRadiantCore().getMessageBus().removeListener(_execFailedListener);
+
 	_coloursUpdatedConn.disconnect();
 	_entitySettingsConn.disconnect();
 
@@ -278,6 +287,13 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd);
 	GlobalCommandSystem().addCommand("PatchCapDialog", PatchCapDialog::Show);
+	GlobalCommandSystem().addCommand("ThickenPatchDialog", PatchThickenDialog::Show);
+	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
+}
+
+void UserInterfaceModule::HandleTextureChanged(radiant::TextureChangedMessage& msg)
+{
+	ui::SurfaceInspector::update();
 }
 
 // Static module registration

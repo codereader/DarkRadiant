@@ -1,5 +1,6 @@
 #pragma once
 
+#include "icommandsystem.h"
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
@@ -22,6 +23,8 @@ public:
 	float getThickness();
 	bool getCeateSeams();
 	int getAxis();
+
+	static void Show(const cmd::ArgumentList& args);
 };
 
 } // namespace

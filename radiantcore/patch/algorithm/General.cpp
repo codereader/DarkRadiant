@@ -6,9 +6,10 @@
 #include "ipatch.h"
 #include "patch/PatchNode.h"
 #include "patch/Patch.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
+#include "messages/TextureChanged.h"
 #include "selection/algorithm/Primitives.h"
 
+#include "string/convert.h"
 #include "command/ExecutionFailure.h"
 
 namespace patch
@@ -19,6 +20,8 @@ namespace algorithm
 
 void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams, int axis)
 {
+	if (axis < 0 || axis > 3)  throw cmd::ExecutionFailure(fmt::format(_("Invalid axis value: {0}"), string::to_string(axis)));
+	
 	// Get a shortcut to the patchcreator
 	auto& patchCreator = GlobalPatchModule();
 
@@ -110,8 +113,9 @@ void stitchTextures(const cmd::ArgumentList& args)
 		}
 
 		SceneChangeNotify();
+
 		// Update the Texture Tools
-		ui::SurfaceInspector::update();
+		radiant::TextureChangedMessage::Send();
 	}
 	else
 	{

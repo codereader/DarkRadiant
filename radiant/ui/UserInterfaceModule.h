@@ -10,6 +10,7 @@
 #include "LongRunningOperationHandler.h"
 #include "MapFileProgressHandler.h"
 #include "messages/CommandExecutionFailed.h"
+#include "messages/TextureChanged.h"
 
 namespace ui
 {
@@ -32,6 +33,9 @@ private:
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;
 
+	std::size_t _execFailedListener;
+	std::size_t _textureChangedListener;
+
 public:
 	// RegisterableModule
 	const std::string & getName() const override;
@@ -48,6 +52,7 @@ private:
 	void refreshShadersCmd(const cmd::ArgumentList& args);
 
 	void handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg);
+	static void HandleTextureChanged(radiant::TextureChangedMessage& msg);
 };
 
 }
