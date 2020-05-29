@@ -10,11 +10,6 @@ namespace selection
 namespace algorithm
 {
 
-namespace
-{
-	const std::string RKEY_OFFSET_CLONED_OBJECTS = "user/ui/offsetClonedObjects";
-}
-
 /**
  * Applies the given quaternion to the current selection.
  */

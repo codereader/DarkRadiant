@@ -1,16 +1,16 @@
 #include "Group.h"
 
-#include "i18n.h"
 #include <set>
+#include "i18n.h"
 #include "igroupnode.h"
-#include "imainframe.h"
 #include "itextstream.h"
 #include "iselectiongroup.h"
+#include "imap.h"
 #include "selectionlib.h"
 #include "entitylib.h"
-#include "map/Map.h"
 #include "scene/SelectableNode.h"
-#include "wxutil/dialog/MessageBox.h"
+#include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
 #include "selection/algorithm/Entity.h"
 
 namespace selection {
@@ -35,7 +35,7 @@ void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
 	}
 	catch (EntityCreationException& e)
 	{
-		wxutil::Messagebox::ShowError(e.what());
+		throw cmd::ExecutionFailure(e.what());
 	}
 }
 
@@ -55,7 +55,7 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 	GlobalSelectionSystem().setSelectedAll(false);
 
 	// Get the worldspawn node
-	scene::INodePtr worldspawnNode = GlobalMap().findOrInsertWorldspawn();
+	scene::INodePtr worldspawnNode = GlobalMapModule().findOrInsertWorldspawn();
 
 	Entity* worldspawn = Node_getEntity(worldspawnNode);
 
@@ -80,9 +80,6 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 		// Select the reparented primitives after moving them to worldspawn
 		reparentor.selectReparentedPrimitives();
 	}
-
-	// Flag the map as changed
-	GlobalMap().setModified(true);
 }
 
 void ParentPrimitivesToEntityWalker::reparent()
@@ -246,10 +243,9 @@ void parentSelection(const cmd::ArgumentList& args)
 	// Retrieve the selection information structure
 	if (!curSelectionIsSuitableForReparent())
 	{
-		wxutil::Messagebox::ShowError(_("Cannot reparent primitives to entity. "
+		throw cmd::ExecutionNotPossible(_("Cannot reparent primitives to entity. "
 						 "Please select at least one brush/patch and exactly one func_* entity. "
 						 "(The entity has to be selected last.)"));
-		return;
 	}
 
 	UndoableCommand undo("parentSelectedPrimitives");
@@ -266,7 +262,7 @@ void parentSelection(const cmd::ArgumentList& args)
 void parentSelectionToWorldspawn(const cmd::ArgumentList& args) {
 	UndoableCommand undo("parentSelectedPrimitives");
 
-	scene::INodePtr world = GlobalMap().findOrInsertWorldspawn();
+	scene::INodePtr world = GlobalMapModule().findOrInsertWorldspawn();
 	if (world == NULL) return;
 
 	// Take the last selected item (this should be an entity)
@@ -442,7 +438,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		wxutil::Messagebox::ShowError(_("Cannot merge entities, "
+		throw cmd::ExecutionNotPossible(_("Cannot merge entities, "
 							 "the selection must consist of func_* entities only.\n"
 							 "(The first selected entity will be preserved.)"));
 	}
@@ -450,7 +446,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 
 void checkGroupSelectedAvailable()
 {
-	if (!GlobalMap().getRoot())
+	if (!GlobalMapModule().getRoot())
 	{
 		throw CommandNotAvailableException(_("No map loaded"));
 	}
@@ -512,12 +508,12 @@ void groupSelected()
 		group->addNode(node);
 	});
 
-	GlobalMainFrame().updateAllWindows();
+	SceneChangeNotify();
 }
 
 void checkUngroupSelectedAvailable()
 {
-	if (!GlobalMap().getRoot())
+	if (!GlobalMapModule().getRoot())
 	{
 		throw CommandNotAvailableException(_("No map loaded"));
 	}
@@ -584,12 +580,12 @@ void ungroupSelected()
 		selGroupMgr.deleteSelectionGroup(id);
 	});
 
-	GlobalMainFrame().updateAllWindows();
+	SceneChangeNotify();
 }
 
 void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args)
 {
-	if (!GlobalMap().getRoot())
+	if (!GlobalMapModule().getRoot())
 	{
 		rError() << "No map loaded, cannot delete groups." << std::endl;
 		return;
@@ -605,10 +601,10 @@ void groupSelectedCmd(const cmd::ArgumentList& args)
 	{
 		groupSelected();
 	}
-	catch (CommandNotAvailableException & ex)
+	catch (CommandNotAvailableException& ex)
 	{
 		rError() << ex.what() << std::endl;
-		wxutil::Messagebox::ShowError(ex.what());
+		throw cmd::ExecutionNotPossible(ex.what());
 	}
 }
 
@@ -621,7 +617,7 @@ void ungroupSelectedCmd(const cmd::ArgumentList& args)
 	catch (CommandNotAvailableException & ex)
 	{
 		rError() << ex.what() << std::endl;
-		wxutil::Messagebox::ShowError(ex.what());
+		throw cmd::ExecutionNotPossible(ex.what());
 	}
 }
 

@@ -34,6 +34,11 @@ namespace selection
 namespace algorithm
 {
 
+namespace
+{
+	const std::string RKEY_OFFSET_CLONED_OBJECTS = "user/ui/offsetClonedObjects";
+}
+
 void rotateSelected(const Quaternion& rotation)
 {
 	// Perform the rotation according to the current mode

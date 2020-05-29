@@ -4,16 +4,13 @@
 #include "iselection.h"
 #include "iundo.h"
 #include "igrid.h"
-#include "ieventmanager.h"
 #include "imodelsurface.h"
 #include "scenelib.h"
 #include "iselectiontest.h"
 #include "itraceable.h"
 
 #include "math/Ray.h"
-#include "map/Map.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "string/convert.h"
 #include "selectionlib.h"
 #include "entitylib.h"
@@ -93,7 +90,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		// fall back to the one selected in the texture browser
 		if (shaders.empty())
 		{
-			shaders.insert(GlobalTextureBrowser().getSelectedShader());
+			shaders.insert(GlobalShaderClipboard().getSource().getShader());
 		}
 
 		// Deselect all faces
@@ -146,7 +143,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		{
 			// No entities found, select all elements with textures 
 			// matching the one in the texture browser
-			const std::string& shader = GlobalTextureBrowser().getSelectedShader();
+			auto shader = GlobalShaderClipboard().getSource().getShader();
 
 			scene::foreachVisibleBrush([&] (Brush& brush)
 			{
@@ -1086,14 +1083,6 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("BrushSetDetailFlag", brushSetDetailFlag, { cmd::ARGTYPE_STRING });
 	GlobalCommandSystem().addStatement("BrushMakeDetail", "BrushSetDetailFlag detail", false);
 	GlobalCommandSystem().addStatement("BrushMakeStructural", "BrushSetDetailFlag structural", false);
-
-	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
-
-	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
-	GlobalEventManager().addRegistryToggle("ToggleSnapRotationPivot", "user/ui/snapRotationPivotToGrid");
-	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", RKEY_OFFSET_CLONED_OBJECTS);
-
-    GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
 }
 
 	} // namespace algorithm

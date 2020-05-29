@@ -11,6 +11,7 @@
 #include "wxutil/dialog/MessageBox.h"
 
 #include "selection/algorithm/Entity.h"
+#include "command/ExecutionFailure.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
 namespace ui
@@ -44,7 +45,7 @@ void ClassnamePropertyEditor::onBrowseButtonClick()
 			// Apply the classname change to the entity, this requires some algorithm
 			selection::algorithm::setEntityClassname(selection);
 		}
-		catch (std::runtime_error& ex)
+		catch (cmd::ExecutionFailure & ex)
 		{
 			wxutil::Messagebox::ShowError(ex.what());
 		}

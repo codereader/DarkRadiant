@@ -9,12 +9,12 @@
 #include "itextstream.h"
 #include "entitylib.h"
 #include "gamelib.h"
-#include "wxutil/dialog/MessageBox.h"
+#include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
 
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/Group.h"
-#include "map/Map.h"
 #include "eclass.h"
 
 namespace selection 
@@ -104,12 +104,12 @@ void setEntityClassname(const std::string& classname)
 {
 	if (classname.empty())
 	{
-		throw std::runtime_error(_("Cannot set classname to an empty string."));
+		throw cmd::ExecutionFailure(_("Cannot set classname to an empty string."));
 	}
 
 	if (classname == "worldspawn")
 	{
-		throw std::runtime_error(_("Cannot change classname to worldspawn."));
+		throw cmd::ExecutionFailure(_("Cannot change classname to worldspawn."));
 	}
 
 	std::set<scene::INodePtr> entitiesToProcess;
@@ -128,7 +128,7 @@ void setEntityClassname(const std::string& classname)
 			}
 			else
 			{
-				throw std::runtime_error(_("Cannot change classname of worldspawn entity."));
+				throw cmd::ExecutionFailure(_("Cannot change classname of worldspawn entity."));
 			}
 		}
 	});
@@ -143,16 +143,19 @@ void setEntityClassname(const std::string& classname)
 	}
 }
 
-void bindEntities(const cmd::ArgumentList& args) {
+void bindEntities(const cmd::ArgumentList& args)
+{
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	if (info.totalCount == 2 && info.entityCount == 2) {
+	if (info.totalCount == 2 && info.entityCount == 2)
+	{
 		UndoableCommand command("bindEntities");
 
 		Entity* first = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
 		Entity* second = Node_getEntity(GlobalSelectionSystem().penultimateSelected());
 
-		if (first != NULL && second != NULL) {
+		if (first != NULL && second != NULL)
+		{
 			// Get the bind key
 			std::string bindKey = game::current::getValue<std::string>(GKEY_BIND_KEY);
 
@@ -164,13 +167,14 @@ void bindEntities(const cmd::ArgumentList& args) {
 			// Set the spawnarg
 			second->setKeyValue(bindKey, first->getKeyValue("name"));
 		}
-		else {
-			wxutil::Messagebox::ShowError(
-				_("Critical: Cannot find selected entities."));
+		else
+		{
+			throw cmd::ExecutionFailure(_("Critical: Cannot find selected entities."));
 		}
 	}
-	else {
-		wxutil::Messagebox::ShowError(
+	else
+	{
+		throw cmd::ExecutionNotPossible(
 			_("Exactly two entities must be selected for this operation."));
 	}
 }
@@ -220,7 +224,7 @@ void connectSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		wxutil::Messagebox::ShowError(
+		throw cmd::ExecutionNotPossible(
 			_("Exactly two entities must be selected for this operation."));
 	}
 }
@@ -360,9 +364,6 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
                                       string::to_string(bounds.getExtents()));
     }
 
-    // Flag the map as unsaved after creating the entity
-    GlobalMap().setModified(true);
-
     // Check for auto-setting key values. TODO: use forEachClassAttribute
     // directly here.
     eclass::AttributeList list = eclass::getSpawnargsWithPrefix(
@@ -371,11 +372,11 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 
     if (!list.empty())
     {
-        for (eclass::AttributeList::const_iterator i = list.begin(); i != list.end(); ++i)
+        for (const auto& attr : list)
         {
             // Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
-            std::string key = i->getName().substr(i->getName().find_first_of(' ') + 1);
-            node->getEntity().setKeyValue(key, i->getValue());
+            std::string key = attr.getName().substr(attr.getName().find_first_of(' ') + 1);
+            node->getEntity().setKeyValue(key, attr.getValue());
         }
     }
 

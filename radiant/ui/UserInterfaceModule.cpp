@@ -289,6 +289,14 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("PatchCapDialog", PatchCapDialog::Show);
 	GlobalCommandSystem().addCommand("ThickenPatchDialog", PatchThickenDialog::Show);
 	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
+
+	// Set up the CloneSelection command to react on key up events only
+	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
+
+	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
+	GlobalEventManager().addRegistryToggle("ToggleSnapRotationPivot", "user/ui/snapRotationPivotToGrid");
+	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", "user/ui/offsetClonedObjects");
+	GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
 }
 
 void UserInterfaceModule::HandleTextureChanged(radiant::TextureChangedMessage& msg)
