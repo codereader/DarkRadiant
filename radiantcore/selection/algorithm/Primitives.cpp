@@ -8,29 +8,29 @@
 #include "itextstream.h"
 #include "iundo.h"
 #include "igame.h"
-#include "imainframe.h"
+#include "iorthoview.h"
+
 #include "brush/BrushModule.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
 #include "patch/PatchNode.h"
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
-#include "wxutil/dialog/MessageBox.h"
-#include "map/Map.h"
 #include "os/fs.h"
 #include "gamelib.h"
 #include "ui/modelselector/ModelSelector.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/brush/QuerySidesDialog.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "scenelib.h"
 #include "selectionlib.h"
+#include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
+#include "messages/NotificationMessage.h"
 
 #include "string/case_conv.h"
 #include <fmt/format.h>
 
 #include "ModelFinder.h"
-#include "xyview/GlobalXYWnd.h"
 
 namespace selection
 {
@@ -45,9 +45,9 @@ namespace
 	const char* const GKEY_VISPORTAL_SHADER = "/defaults/visportalShader";
 	const char* const GKEY_MONSTERCLIP_SHADER = "/defaults/monsterClipShader";
 
-	const std::string ERRSTR_WRONG_SELECTION =
-			"Can't export, create and select a func_* entity\
-				containing the collision hull primitives.";
+	const char* const ERRSTR_WRONG_SELECTION =
+			N_("Can't export, create and select a func_* entity\
+				containing the collision hull primitives.");
 }
 
 void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor)
@@ -135,7 +135,8 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 	// Check the current selection state
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	if (info.totalCount == info.entityCount && info.totalCount == 1) {
+	if (info.totalCount == info.entityCount && info.totalCount == 1)
+	{
 		// Retrieve the node, instance and entity
 		const scene::INodePtr& entityNode = GlobalSelectionSystem().ultimateSelected();
 
@@ -192,11 +193,12 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 					rMessage() << "CollisionModel saved to " << cmPath.string() << std::endl;
 				}
 				else {
-					wxutil::Messagebox::ShowError(
-						fmt::format("Couldn't save to file: {0}", cmPath.string()));
+					throw cmd::ExecutionFailure(
+						fmt::format(_("Couldn't save to file: {0}"), cmPath.string()));
 				}
 			}
-			catch (const fs::filesystem_error& f) {
+			catch (const fs::filesystem_error& f)
+			{
 				rError() << "CollisionModel: " << f.what() << std::endl;
 			}
 
@@ -210,9 +212,9 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 			Node_setSelected(entityNode, true);
 		}
 	}
-	else {
-		wxutil::Messagebox::ShowError(
-			_(ERRSTR_WRONG_SELECTION.c_str()));
+	else 
+	{
+		throw cmd::ExecutionNotPossible(_(ERRSTR_WRONG_SELECTION));
 	}
 }
 
@@ -239,8 +241,9 @@ public:
 			// Create a new decal patch
 			scene::INodePtr patchNode = GlobalPatchModule().createPatch(patch::PatchDefType::Def3);
 
-			if (patchNode == NULL) {
-				wxutil::Messagebox::ShowError(_("Could not create patch."));
+			if (patchNode == NULL)
+			{
+				throw cmd::ExecutionFailure(_("Could not create patch."));
 				return;
 			}
 
@@ -320,7 +323,7 @@ public:
 			patch->FlipTexture(1);
 
 			// Insert the patch into worldspawn
-			scene::INodePtr worldSpawnNode = GlobalMap().findOrInsertWorldspawn();
+			scene::INodePtr worldSpawnNode = GlobalMapModule().findOrInsertWorldspawn();
 			assert(worldSpawnNode); // This must be non-NULL, otherwise we won't have faces
 
 			worldSpawnNode->addChildNode(patchNode);
@@ -354,11 +357,12 @@ public:
 	}
 };
 
-void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
+void createDecalsForSelectedFaces(const cmd::ArgumentList& args)
+{
 	// Sanity check
 	if (FaceInstance::Selection().empty())
 	{
-		wxutil::Messagebox::ShowError(_("No faces selected."));
+		throw cmd::ExecutionNotPossible(_("No faces selected."));
 		return;
 	}
 
@@ -377,8 +381,9 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	// Check how many faces were not suitable
 	int unsuitableWindings = creator.getNumUnsuitableWindings();
 
-	if (unsuitableWindings > 0) {
-		wxutil::Messagebox::ShowError(
+	if (unsuitableWindings > 0)
+	{
+		radiant::NotificationMessage::Send(
 			fmt::format(_("{0:d} faces were not suitable (had more than 4 vertices)."), unsuitableWindings)
 		);
 	}
@@ -390,7 +395,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 
 	if (brushes.size() <= 0)
 	{
-		wxutil::Messagebox::ShowError(_("No brushes selected."));
+		throw cmd::ExecutionNotPossible(_("No brushes selected."));
 		return;
 	}
 
@@ -466,7 +471,7 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 		brushNode->assignToLayers(model->getLayers());
 
 		if (brushNode != NULL) {
-			scene::addNodeToContainer(brushNode, GlobalMap().findOrInsertWorldspawn());
+			scene::addNodeToContainer(brushNode, GlobalMapModule().findOrInsertWorldspawn());
 
 			Brush* theBrush = Node_getBrush(brushNode);
 
@@ -487,7 +492,7 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
-		wxutil::Messagebox::ShowError(_("No brushes selected."));
+		throw cmd::ExecutionNotPossible(_("No brushes selected."));
 		return;
 	}
 
@@ -501,7 +506,7 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 
 int GetViewAxis()
 {
-	switch(GlobalXYWnd().getActiveViewType())
+	switch(GlobalXYWndManager().getActiveViewType())
 	{
 	case XY:
 		return 2;
@@ -587,7 +592,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
 		// Display a modal error dialog
-		wxutil::Messagebox::ShowError(_("At least one brush must be selected for this operation."));
+		throw cmd::ExecutionNotPossible(_("At least one brush must be selected for this operation."));
 		return;
 	}
 
@@ -602,7 +607,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		int minSides = 3;
 		int maxSides = static_cast<int>(Brush::PRISM_MAX_SIDES);
 
-		const std::string& shader = GlobalTextureBrowser().getSelectedShader();
+		const std::string& shader = GlobalShaderClipboard().getSource().getShader();
 
 		switch (type)
 		{
@@ -664,7 +669,7 @@ void brushMakeSided(const cmd::ArgumentList& args)
 	}
 
 	std::size_t numSides = static_cast<std::size_t>(input);
-	constructBrushPrefabs(eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
+	constructBrushPrefabs(eBrushPrism, numSides, GlobalShaderClipboard().getSource().getShader());
 }
 
 void brushSetDetailFlag(const cmd::ArgumentList& args)

@@ -11,6 +11,7 @@
 #include "MapFileProgressHandler.h"
 #include "messages/CommandExecutionFailed.h"
 #include "messages/TextureChanged.h"
+#include "messages/NotificationMessage.h"
 
 namespace ui
 {
@@ -35,6 +36,7 @@ private:
 
 	std::size_t _execFailedListener;
 	std::size_t _textureChangedListener;
+	std::size_t _notificationListener;
 
 public:
 	// RegisterableModule
@@ -53,6 +55,7 @@ private:
 
 	void handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg);
 	static void HandleTextureChanged(radiant::TextureChangedMessage& msg);
+	static void HandleNotificationMessage(radiant::NotificationMessage& msg);
 };
 
 }

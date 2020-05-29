@@ -8,6 +8,7 @@
 #include "selectionlib.h"
 #include "selection/algorithm/Primitives.h"
 #include "ui/texturebrowser/TextureBrowser.h"
+#include "command/ExecutionNotPossible.h"
 #include "map/Map.h"
 #include "XYMouseToolEvent.h"
 
@@ -114,6 +115,10 @@ MouseTool::Result BrushCreatorTool::onMouseMove(Event& ev)
             AABB::createFromMinMax(startPos, endPos),
             GlobalTextureBrowser().getSelectedShader()
             );
+    }
+    catch (cmd::ExecutionNotPossible & ex)
+    {
+        return Result::Ignored;
     }
     catch (std::bad_cast&)
     {

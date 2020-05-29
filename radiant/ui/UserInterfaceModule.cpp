@@ -155,6 +155,9 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	_textureChangedListener = GlobalRadiantCore().getMessageBus().addListener(
 		radiant::TypeListener(UserInterfaceModule::HandleTextureChanged));
 
+	_notificationListener = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::TypeListener(UserInterfaceModule::HandleNotificationMessage));
+
 	// Initialise the AAS UI
 	AasControlDialog::Init();
 
@@ -165,6 +168,7 @@ void UserInterfaceModule::shutdownModule()
 {
 	GlobalRadiantCore().getMessageBus().removeListener(_textureChangedListener);
 	GlobalRadiantCore().getMessageBus().removeListener(_execFailedListener);
+	GlobalRadiantCore().getMessageBus().removeListener(_notificationListener);
 
 	_coloursUpdatedConn.disconnect();
 	_entitySettingsConn.disconnect();
@@ -180,6 +184,14 @@ void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutio
 		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
 
 	wxutil::Messagebox::ShowError(msg.getMessage(), parentWindow);
+}
+
+void UserInterfaceModule::HandleNotificationMessage(radiant::NotificationMessage& msg)
+{
+	auto parentWindow = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
+		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
+
+	wxutil::Messagebox::Show(_("Notification"), msg.getMessage(), IDialog::MessageType::MESSAGE_CONFIRM, parentWindow);
 }
 
 void UserInterfaceModule::initialiseEntitySettings()
