@@ -212,6 +212,9 @@
     <ClInclude Include="..\..\libs\messages\TextureChanged.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\messages\NotificationMessage.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

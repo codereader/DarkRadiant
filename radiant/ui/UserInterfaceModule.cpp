@@ -43,6 +43,7 @@
 #include "ui/patch/PatchThickenDialog.h"
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
+#include "modelexport/ExportCollisionModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
 #include "uimanager/colourscheme/ColourSchemeEditor.h"
 #include "ui/layers/CreateLayerDialog.h"
@@ -301,6 +302,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("PatchCapDialog", PatchCapDialog::Show);
 	GlobalCommandSystem().addCommand("ThickenPatchDialog", PatchThickenDialog::Show);
 	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
+
+	GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
 
 	// Set up the CloneSelection command to react on key up events only
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp

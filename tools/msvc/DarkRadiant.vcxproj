@@ -272,6 +272,7 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
     <ClCompile Include="..\..\radiant\camera\Camera.cpp" />
     <ClCompile Include="..\..\radiant\camera\CameraSettings.cpp" />
@@ -472,6 +473,7 @@
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
     <ClInclude Include="..\..\radiant\camera\Camera.h" />
     <ClInclude Include="..\..\radiant\camera\CameraObserver.h" />

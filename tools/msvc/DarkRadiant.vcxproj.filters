@@ -721,6 +721,9 @@
     <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp">
       <Filter>src\ui\selectionset</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp">
+      <Filter>src\ui\modelexport</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1400,6 +1403,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h">
       <Filter>src\ui\selectionset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h">
+      <Filter>src\ui\modelexport</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

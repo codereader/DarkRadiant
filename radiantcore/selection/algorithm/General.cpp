@@ -1066,7 +1066,7 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("CurveInsertControlPoint", insertCurveControlPoints);
 	GlobalCommandSystem().addCommand("CurveConvertType", convertCurveTypes);
 
-	GlobalCommandSystem().addCommand("BrushExportCM", createCMFromSelection);
+	GlobalCommandSystem().addCommand("ExportSelectedAsCollisionModel", createCMFromSelection, { cmd::ARGTYPE_STRING });
 
 	GlobalCommandSystem().addCommand("CreateDecalsForFaces", createDecalsForSelectedFaces);
 

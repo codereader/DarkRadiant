@@ -18,7 +18,6 @@
 #include "brush/export/CollisionModel.h"
 #include "os/fs.h"
 #include "gamelib.h"
-#include "ui/modelselector/ModelSelector.h"
 #include "ui/brush/QuerySidesDialog.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "scenelib.h"
@@ -44,10 +43,6 @@ namespace
 	const char* const GKEY_NODRAW_SHADER = "/defaults/nodrawShader";
 	const char* const GKEY_VISPORTAL_SHADER = "/defaults/visportalShader";
 	const char* const GKEY_MONSTERCLIP_SHADER = "/defaults/monsterClipShader";
-
-	const char* const ERRSTR_WRONG_SELECTION =
-			N_("Can't export, create and select a func_* entity\
-				containing the collision hull primitives.");
 }
 
 void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor)
@@ -131,90 +126,101 @@ FacePtrVector getSelectedFaces()
 }
 
 // Try to create a CM from the selected entity
-void createCMFromSelection(const cmd::ArgumentList& args) {
+void createCMFromSelection(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rWarning() << "Usage: ExportSelectedAsCollisionModel <modelPath>" << std::endl;
+		return;
+	}
+
 	// Check the current selection state
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	if (info.totalCount == info.entityCount && info.totalCount == 1)
+	if (info.totalCount != info.entityCount || info.entityCount != 1)
 	{
-		// Retrieve the node, instance and entity
-		const scene::INodePtr& entityNode = GlobalSelectionSystem().ultimateSelected();
-
-		// Try to retrieve the group node
-		scene::GroupNodePtr groupNode = Node_getGroupNode(entityNode);
-
-		// Remove the entity origin from the brushes
-		if (groupNode != NULL) {
-			groupNode->removeOriginFromChildren();
-
-			// Deselect the node
-			Node_setSelected(entityNode, false);
-
-			// Select all the child nodes
-			entityNode->foreachNode([] (const scene::INodePtr& child)->bool
-			{
-				Node_setSelected(child, true);
-				return true;
-			});
-
-			BrushPtrVector brushes = algorithm::getSelectedBrushes();
-
-			// Create a new collisionmodel on the heap using a shared_ptr
-			cmutil::CollisionModelPtr cm(new cmutil::CollisionModel());
-
-			// Add all the brushes to the collision model
-			for (std::size_t i = 0; i < brushes.size(); i++) {
-				cm->addBrush(brushes[i]->getBrush());
-			}
-
-			ui::ModelSelectorResult modelAndSkin = ui::ModelSelector::chooseModel("", false, false);
-			std::string basePath = GlobalGameManager().getModPath();
-
-			std::string modelPath = basePath + modelAndSkin.model;
-
-			std::string newExtension = "." + game::current::getValue<std::string>(GKEY_CM_EXT);
-
-			// Set the model string to correctly associate the clipmodel
-			cm->setModel(modelAndSkin.model);
-
-			try {
-				// create the new autosave filename by changing the extension
-				fs::path cmPath = os::replaceExtension(modelPath, newExtension);
-
-				// Open the stream to the output file
-				std::ofstream outfile(cmPath.string().c_str());
-
-				if (outfile.is_open()) {
-					// Insert the CollisionModel into the stream
-					outfile << *cm;
-					// Close the file
-					outfile.close();
-
-					rMessage() << "CollisionModel saved to " << cmPath.string() << std::endl;
-				}
-				else {
-					throw cmd::ExecutionFailure(
-						fmt::format(_("Couldn't save to file: {0}"), cmPath.string()));
-				}
-			}
-			catch (const fs::filesystem_error& f)
-			{
-				rError() << "CollisionModel: " << f.what() << std::endl;
-			}
-
-			// De-select the child brushes
-			GlobalSelectionSystem().setSelectedAll(false);
-
-			// Re-add the origin to the brushes
-			groupNode->addOriginToChildren();
-
-			// Re-select the node
-			Node_setSelected(entityNode, true);
-		}
+		throw cmd::ExecutionNotPossible(_("Can't export, create and select a func_* entity\
+				containing the collision hull primitives."));
 	}
-	else 
+
+	std::string model = args[0].getString();
+
+	// Retrieve the node, instance and entity
+	const scene::INodePtr& entityNode = GlobalSelectionSystem().ultimateSelected();
+
+	// Try to retrieve the group node
+	scene::GroupNodePtr groupNode = Node_getGroupNode(entityNode);
+
+	// Remove the entity origin from the brushes
+	if (groupNode)
 	{
-		throw cmd::ExecutionNotPossible(_(ERRSTR_WRONG_SELECTION));
+		groupNode->removeOriginFromChildren();
+
+		// Deselect the node
+		Node_setSelected(entityNode, false);
+
+		// Select all the child nodes
+		entityNode->foreachNode([] (const scene::INodePtr& child)->bool
+		{
+			Node_setSelected(child, true);
+			return true;
+		});
+
+		BrushPtrVector brushes = algorithm::getSelectedBrushes();
+
+		// Create a new collisionmodel on the heap using a shared_ptr
+		cmutil::CollisionModelPtr cm(new cmutil::CollisionModel());
+
+		// Add all the brushes to the collision model
+		for (std::size_t i = 0; i < brushes.size(); i++) {
+			cm->addBrush(brushes[i]->getBrush());
+		}
+
+		std::string basePath = GlobalGameManager().getModPath();
+
+		std::string modelPath = basePath + model;
+
+		std::string newExtension = "." + game::current::getValue<std::string>(GKEY_CM_EXT);
+
+		// Set the model string to correctly associate the clipmodel
+		cm->setModel(model);
+
+		try
+		{
+			// create the new autosave filename by changing the extension
+			fs::path cmPath = os::replaceExtension(modelPath, newExtension);
+
+			// Open the stream to the output file
+			std::ofstream outfile(cmPath.string());
+
+			if (outfile.is_open())
+			{
+				// Insert the CollisionModel into the stream
+				outfile << *cm;
+
+				// Close the file
+				outfile.close();
+
+				rMessage() << "CollisionModel saved to " << cmPath.string() << std::endl;
+			}
+			else
+			{
+				throw cmd::ExecutionFailure(fmt::format(_("Couldn't save to file: {0}"), cmPath.string()));
+			}
+		}
+		catch (const fs::filesystem_error& f)
+		{
+			rError() << "CollisionModel: " << f.what() << std::endl;
+		}
+
+		// De-select the child brushes
+		GlobalSelectionSystem().setSelectedAll(false);
+
+		// Re-add the origin to the brushes
+		groupNode->addOriginToChildren();
+
+		// Re-select the node
+		Node_setSelected(entityNode, true);
 	}
 }
 
