@@ -13,8 +13,6 @@
 class RenderableCollector;
 class Ray;
 
-const std::size_t c_brush_maxFaces = 1024;
-
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
 inline bool plane3_inside(const Plane3& self, const Plane3& other)
 {
@@ -31,9 +29,9 @@ inline FaceVertexId next_edge(const Faces& faces, FaceVertexId faceVertex) {
 	std::size_t adjacent_face = faces[faceVertex.getFace()]->getWinding()[faceVertex.getVertex()].adjacent;
 	std::size_t adjacent_vertex = faces[adjacent_face]->getWinding().findAdjacent(faceVertex.getFace());
 
-	ASSERT_MESSAGE(adjacent_vertex != c_brush_maxFaces, "connectivity data invalid");
+	ASSERT_MESSAGE(adjacent_vertex != brush::c_brush_maxFaces, "connectivity data invalid");
 
-	if (adjacent_vertex == c_brush_maxFaces) {
+	if (adjacent_vertex == brush::c_brush_maxFaces) {
 		return faceVertex;
 	}
 
@@ -52,7 +50,7 @@ struct EdgeFaces {
 	std::size_t second;
 
 	EdgeFaces()
-		: first(c_brush_maxFaces), second(c_brush_maxFaces)
+		: first(brush::c_brush_maxFaces), second(brush::c_brush_maxFaces)
 	{}
 
 	EdgeFaces(const std::size_t _first, const std::size_t _second)
@@ -129,16 +127,6 @@ private:
 	DetailFlag _detailFlag;
 	
 public:
-	// Public constants
-	static const std::size_t PRISM_MIN_SIDES;
-	static const std::size_t PRISM_MAX_SIDES;
-
-	static const std::size_t CONE_MIN_SIDES;
-	static const std::size_t CONE_MAX_SIDES;
-
-	static const std::size_t SPHERE_MIN_SIDES;
-	static const std::size_t SPHERE_MAX_SIDES;
-
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
 	class BrushUndoMemento : 
 		public IUndoMemento

@@ -12,9 +12,9 @@
 		<bind name="Brush9Sided" value="BrushMakeSided 9" readonly="1" />
 		<!-- Brush Prefab commands -->
 		<bind name="BrushCuboid" value="BrushMakePrefab 0" readonly="1" />
-		<bind name="BrushPrism" value="BrushMakePrefab 1" readonly="1" />
-		<bind name="BrushCone" value="BrushMakePrefab 2" readonly="1" />
-		<bind name="BrushSphere" value="BrushMakePrefab 3" readonly="1" />
+		<bind name="BrushPrism" value="QueryBrushPrefabSidesDialog 1" readonly="1" />
+		<bind name="BrushCone" value="QueryBrushPrefabSidesDialog 2" readonly="1" />
+		<bind name="BrushSphere" value="QueryBrushPrefabSidesDialog 3" readonly="1" />
 		<!-- Patch Prefab commands -->
 		<bind name="PatchCylinder" value="CreatePatchPrefab cylinder" readonly="1" />
 		<bind name="PatchDenseCylinder" value="CreatePatchPrefab densecylinder" readonly="1" />

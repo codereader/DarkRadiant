@@ -50,6 +50,7 @@
 #include "ui/patch/PatchCreateDialog.h"
 #include "ui/patch/BulgePatchDialog.h"
 #include "ui/selectionset/SelectionSetToolmenu.h"
+#include "ui/brush/QuerySidesDialog.h"
 
 namespace ui
 {
@@ -304,6 +305,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
 
 	GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
+	GlobalCommandSystem().addCommand("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show);
 
 	// Set up the CloneSelection command to react on key up events only
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp

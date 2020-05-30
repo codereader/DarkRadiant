@@ -20,15 +20,6 @@ typedef std::vector<BrushNodePtr> BrushPtrVector;
 typedef std::vector<Face*> FacePtrVector;
 class TextureProjection;
 
-enum EBrushPrefab
-{
-	eBrushCuboid = 0,
-	eBrushPrism,
-	eBrushCone,
-	eBrushSphere,
-	eNumPrefabTypes,
-};
-
 namespace selection {
 
 	/** greebo: This is thrown if some of the routines
@@ -128,7 +119,7 @@ namespace selection {
 	 * Constructs a prefab of the given brush type, for each selected brush.
 	 * The given number of sides and the given shader are assigned to the newly designed brush.
 	 */
-	void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::string& shader);
+	void constructBrushPrefabs(brush::PrefabType type, std::size_t sides, const std::string& shader);
 
 	/**
 	 * Command target for brush commands like "BrushMakePrefab 0", "BrushMakePrefab 1", etc.

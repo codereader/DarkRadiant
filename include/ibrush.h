@@ -37,6 +37,27 @@ public:
 	virtual IBrushSettings& getSettings() = 0;
 };
 
+enum class PrefabType : int
+{
+	Cuboid = 0,
+	Prism,
+	Cone,
+	Sphere,
+	NumPrefabTypes,
+};
+
+// Public constants
+const std::size_t c_brush_maxFaces = 1024;
+
+const std::size_t PRISM_MIN_SIDES = 3;
+const std::size_t PRISM_MAX_SIDES = c_brush_maxFaces - 2;
+
+const std::size_t CONE_MIN_SIDES = 3;
+const std::size_t CONE_MAX_SIDES = 32;
+
+const std::size_t SPHERE_MIN_SIDES = 3;
+const std::size_t SPHERE_MAX_SIDES = 7;
+
 }
 
 // The structure defining a single corner point of an IWinding

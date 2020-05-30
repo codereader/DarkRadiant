@@ -7,6 +7,7 @@
 #include "ientity.h"
 #include "itextstream.h"
 #include "iundo.h"
+#include "ibrush.h"
 #include "igame.h"
 #include "iorthoview.h"
 
@@ -18,7 +19,6 @@
 #include "brush/export/CollisionModel.h"
 #include "os/fs.h"
 #include "gamelib.h"
-#include "ui/brush/QuerySidesDialog.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "scenelib.h"
 #include "selectionlib.h"
@@ -524,11 +524,11 @@ int GetViewAxis()
 	return 2;
 }
 
-void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, std::size_t sides, const std::string& shader)
+void constructBrushPrefab(Brush& brush, brush::PrefabType type, const AABB& bounds, std::size_t sides, const std::string& shader)
 {
 	switch(type)
 	{
-	case eBrushCuboid:
+	case brush::PrefabType::Cuboid:
 	{
 		UndoableCommand undo("brushCuboid");
 
@@ -536,7 +536,7 @@ void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, s
 	}
 	break;
 
-	case eBrushPrism:
+	case brush::PrefabType::Prism:
 	{
 		int axis = GetViewAxis();
 		std::ostringstream command;
@@ -547,7 +547,7 @@ void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, s
 	}
 	break;
 
-	case eBrushCone:
+	case brush::PrefabType::Cone:
 	{
 		std::ostringstream command;
 		command << "brushCone -sides " << sides;
@@ -557,7 +557,7 @@ void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, s
 	}
 	break;
 
-	case eBrushSphere:
+	case brush::PrefabType::Sphere:
 	{
 		std::ostringstream command;
 		command << "brushSphere -sides " << sides;
@@ -572,7 +572,7 @@ void constructBrushPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, s
 	}
 }
 
-void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::string& shader)
+void constructBrushPrefabs(brush::PrefabType type, std::size_t sides, const std::string& shader)
 {
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
 	{
@@ -585,75 +585,44 @@ void constructBrushPrefabs(EBrushPrefab type, std::size_t sides, const std::stri
 
 void brushMakePrefab(const cmd::ArgumentList& args)
 {
-	if (args.size() != 1)
-	{
-		rError() << "Usage: " << std::endl
-			<< "BrushMakePrefab " << eBrushCuboid << " --> cuboid " << std::endl
-			<< "BrushMakePrefab " << eBrushPrism  << " --> prism " << std::endl
-			<< "BrushMakePrefab " << eBrushCone  << " --> cone " << std::endl
-			<< "BrushMakePrefab " << eBrushSphere << " --> sphere " << std::endl;
-		return;
-	}
-
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
 		// Display a modal error dialog
 		throw cmd::ExecutionNotPossible(_("At least one brush must be selected for this operation."));
+	}
+
+	if (args.empty() || args.size() > 2 || (args.size() == 2 && args[0].getInt() == 0))
+	{
+		rError() << "Usage: " << std::endl
+			<< "BrushMakePrefab " << static_cast<int>(brush::PrefabType::Cuboid) << " --> cuboid (4 sides)" << std::endl
+			<< "BrushMakePrefab " << static_cast<int>(brush::PrefabType::Prism)  << " <numSides> --> prism " << std::endl
+			<< "BrushMakePrefab " << static_cast<int>(brush::PrefabType::Cone)  << " <numSides> --> cone " << std::endl
+			<< "BrushMakePrefab " << static_cast<int>(brush::PrefabType::Sphere) << " <numSides> --> sphere " << std::endl;
 		return;
 	}
 
 	// First argument contains the number of sides
 	int input = args[0].getInt();
 
-	if (input >= eBrushCuboid && input < eNumPrefabTypes)
+	int sides = input != 0 ? args[1].getInt() : 4; // cuboids always have 4 sides
+
+	if (input >= static_cast<int>(brush::PrefabType::Cuboid) && input < static_cast<int>(brush::PrefabType::NumPrefabTypes))
 	{
 		// Boundary checks passed
-		EBrushPrefab type = static_cast<EBrushPrefab>(input);
+		auto type = static_cast<brush::PrefabType>(input);
 
-		int minSides = 3;
-		int maxSides = static_cast<int>(Brush::PRISM_MAX_SIDES);
+		const auto& shader = GlobalShaderClipboard().getSource().getShader();
 
-		const std::string& shader = GlobalShaderClipboard().getSource().getShader();
-
-		switch (type)
-		{
-		case eBrushCuboid:
-			// Cuboids don't need to query the number of sides
-			constructBrushPrefabs(type, 0, shader);
-			return;
-
-		case eBrushPrism:
-			minSides = static_cast<int>(Brush::PRISM_MIN_SIDES);
-			maxSides = static_cast<int>(Brush::PRISM_MAX_SIDES);
-			break;
-
-		case eBrushCone:
-			minSides = static_cast<int>(Brush::CONE_MIN_SIDES);
-			maxSides = static_cast<int>(Brush::CONE_MAX_SIDES);
-			break;
-
-		case eBrushSphere:
-			minSides = static_cast<int>(Brush::SPHERE_MIN_SIDES);
-			maxSides = static_cast<int>(Brush::SPHERE_MAX_SIDES);
-			break;
-		default:
-			maxSides = 9999;
-		};
-
-		int sides = ui::QuerySidesDialog::QueryNumberOfSides(minSides, maxSides);
-
-		if (sides != -1)
-		{
-			constructBrushPrefabs(type, sides, shader);
-		}
+		// Cuboids ignore the sides argument
+		constructBrushPrefabs(type, sides, shader);
 	}
 	else
 	{
 		rError() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl
-			<< eBrushCuboid << " = cuboid " << std::endl
-			<< eBrushPrism  << " = prism " << std::endl
-			<< eBrushCone  << " = cone " << std::endl
-			<< eBrushSphere << " = sphere " << std::endl;
+			<< static_cast<int>(brush::PrefabType::Cuboid) << " = cuboid " << std::endl
+			<< static_cast<int>(brush::PrefabType::Prism)  << " = prism " << std::endl
+			<< static_cast<int>(brush::PrefabType::Cone)  << " = cone " << std::endl
+			<< static_cast<int>(brush::PrefabType::Sphere) << " = sphere " << std::endl;
 	}
 }
 
@@ -675,7 +644,7 @@ void brushMakeSided(const cmd::ArgumentList& args)
 	}
 
 	std::size_t numSides = static_cast<std::size_t>(input);
-	constructBrushPrefabs(eBrushPrism, numSides, GlobalShaderClipboard().getSource().getShader());
+	constructBrushPrefabs(brush::PrefabType::Prism, numSides, GlobalShaderClipboard().getSource().getShader());
 }
 
 void brushSetDetailFlag(const cmd::ArgumentList& args)

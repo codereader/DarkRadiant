@@ -35,15 +35,6 @@ namespace {
     }
 }
 
-const std::size_t Brush::PRISM_MIN_SIDES = 3;
-const std::size_t Brush::PRISM_MAX_SIDES = c_brush_maxFaces - 2;
-
-const std::size_t Brush::CONE_MIN_SIDES = 3;
-const std::size_t Brush::CONE_MAX_SIDES = 32;
-
-const std::size_t Brush::SPHERE_MIN_SIDES = 3;
-const std::size_t Brush::SPHERE_MAX_SIDES = 7;
-
 Brush::Brush(BrushNode& owner) :
     _owner(owner),
     _undoStateSaver(nullptr),
@@ -363,7 +354,7 @@ void Brush::importState(const IUndoMementoPtr& state)
 
 /// \brief Appends a copy of \p face to the end of the face list.
 FacePtr Brush::addFace(const Face& face) {
-    if (m_faces.size() == c_brush_maxFaces) {
+    if (m_faces.size() == brush::c_brush_maxFaces) {
         return FacePtr();
     }
     undoSave();
@@ -374,7 +365,7 @@ FacePtr Brush::addFace(const Face& face) {
 
 /// \brief Appends a new face constructed from the parameters to the end of the face list.
 FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection) {
-    if(m_faces.size() == c_brush_maxFaces) {
+    if(m_faces.size() == brush::c_brush_maxFaces) {
         return FacePtr();
     }
     undoSave();
@@ -678,15 +669,15 @@ void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis, cons
 {
     TextureProjection projection;
 
-    if (sides < PRISM_MIN_SIDES)
+    if (sides < brush::PRISM_MIN_SIDES)
     {
-        rError() << "brushPrism: sides " << sides << ": too few sides, minimum is " << PRISM_MIN_SIDES << std::endl;
+        rError() << "brushPrism: sides " << sides << ": too few sides, minimum is " << brush::PRISM_MIN_SIDES << std::endl;
         return;
     }
 
-    if (sides > PRISM_MAX_SIDES)
+    if (sides > brush::PRISM_MAX_SIDES)
     {
-        rError() << "brushPrism: sides " << sides << ": too many sides, maximum is " << PRISM_MAX_SIDES << std::endl;
+        rError() << "brushPrism: sides " << sides << ": too many sides, maximum is " << brush::PRISM_MAX_SIDES << std::endl;
         return;
     }
 
@@ -755,15 +746,15 @@ void Brush::constructCone(const AABB& bounds, std::size_t sides, const std::stri
 {
     TextureProjection projection;
 
-    if (sides < CONE_MIN_SIDES)
+    if (sides < brush::CONE_MIN_SIDES)
     {
-        rError() << "brushCone: sides " << sides << ": too few sides, minimum is " << CONE_MIN_SIDES << std::endl;
+        rError() << "brushCone: sides " << sides << ": too few sides, minimum is " << brush::CONE_MIN_SIDES << std::endl;
         return;
     }
 
-    if (sides > CONE_MAX_SIDES)
+    if (sides > brush::CONE_MAX_SIDES)
     {
-        rError() << "brushCone: sides " << sides << ": too many sides, maximum is " << CONE_MAX_SIDES << std::endl;
+        rError() << "brushCone: sides " << sides << ": too many sides, maximum is " << brush::CONE_MAX_SIDES << std::endl;
         return;
     }
 
@@ -814,14 +805,14 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides, const std::st
 {
     TextureProjection projection;
 
-    if (sides < SPHERE_MIN_SIDES)
+    if (sides < brush::SPHERE_MIN_SIDES)
     {
-        rError() << "brushSphere: sides " << sides << ": too few sides, minimum is " << SPHERE_MIN_SIDES << std::endl;
+        rError() << "brushSphere: sides " << sides << ": too few sides, minimum is " << brush::SPHERE_MIN_SIDES << std::endl;
         return;
     }
-    if (sides > SPHERE_MAX_SIDES)
+    if (sides > brush::SPHERE_MAX_SIDES)
     {
-        rError() << "brushSphere: sides " << sides << ": too many sides, maximum is " << SPHERE_MAX_SIDES << std::endl;
+        rError() << "brushSphere: sides " << sides << ": too many sides, maximum is " << brush::SPHERE_MAX_SIDES << std::endl;
         return;
     }
 
@@ -989,7 +980,7 @@ void Brush::removeDegenerateEdges() {
             if (Edge_isDegenerate(winding[index].vertex, winding[next].vertex)) {
                 Winding& other = m_faces[winding[index].adjacent]->getWinding();
                 std::size_t adjacent = other.findAdjacent(i);
-                if (adjacent != c_brush_maxFaces) {
+                if (adjacent != brush::c_brush_maxFaces) {
                     other.erase(other.begin() + adjacent);
                 }
 
@@ -1017,7 +1008,7 @@ void Brush::removeDegenerateFaces() {
             {
                 Winding& winding = m_faces[degen[0].adjacent]->getWinding();
                 std::size_t index = winding.findAdjacent(i);
-                if (index != c_brush_maxFaces) {
+                if (index != brush::c_brush_maxFaces) {
                     winding[index].adjacent = degen[1].adjacent;
                 }
             }
@@ -1026,7 +1017,7 @@ void Brush::removeDegenerateFaces() {
                 Winding& winding = m_faces[degen[1].adjacent]->getWinding();
                 std::size_t index = winding.findAdjacent(i);
 
-                if (index != c_brush_maxFaces) {
+                if (index != brush::c_brush_maxFaces) {
                     winding[index].adjacent = degen[0].adjacent;
                 }
             }
@@ -1068,8 +1059,8 @@ void Brush::verifyConnectivityGraph() {
                 WindingVertex& vertex = winding[j];
 
                 // remove unidirectional graph edges
-                if (vertex.adjacent == c_brush_maxFaces
-                    || m_faces[vertex.adjacent]->getWinding().findAdjacent(i) == c_brush_maxFaces)
+                if (vertex.adjacent == brush::c_brush_maxFaces
+                    || m_faces[vertex.adjacent]->getWinding().findAdjacent(i) == brush::c_brush_maxFaces)
                 {
                     // Delete the offending vertex and leave the index j where it is
                     winding.erase(winding.begin() + j);
@@ -1178,7 +1169,7 @@ public:
                 return true;
             v = v->m_next;
             //ASSERT_MESSAGE(DEBUG_LOOP < c_brush_maxFaces, "infinite loop");
-            if (!(DEBUG_LOOP < c_brush_maxFaces)) {
+            if (!(DEBUG_LOOP < brush::c_brush_maxFaces)) {
                 break;
             }
             ++DEBUG_LOOP;
