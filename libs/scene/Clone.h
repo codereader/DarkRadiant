@@ -4,51 +4,51 @@
 #include "iscenegraph.h"
 #include <functional>
 
-namespace map
+namespace scene
 {
 
-inline scene::CloneablePtr Node_getCloneable(const scene::INodePtr& node)
+inline CloneablePtr Node_getCloneable(const INodePtr& node)
 {
-	return std::dynamic_pointer_cast<scene::Cloneable>(node);
+	return std::dynamic_pointer_cast<Cloneable>(node);
 }
 
 /**
  * greebo: Attempts to clone the given node. Returns the cloned node
  * on success or an empty INodePtr if the node is not cloneable.
  */
-inline scene::INodePtr cloneSingleNode(const scene::INodePtr& node)
+inline INodePtr cloneSingleNode(const INodePtr& node)
 {
-	scene::CloneablePtr cloneable = Node_getCloneable(node);
+	CloneablePtr cloneable = Node_getCloneable(node);
 
 	// Return an empty node if not cloneable
-	return cloneable ? cloneable->clone() : scene::INodePtr();
+	return cloneable ? cloneable->clone() : INodePtr();
 }
 
 // Function that is invoked after a node has been cloned, called with <sourceNode, clonedNode>
-typedef std::function<void(const scene::INodePtr&, const scene::INodePtr&)> PostCloneCallback;
+typedef std::function<void(const INodePtr&, const INodePtr&)> PostCloneCallback;
 
 class CloneAll :
-	public scene::NodeVisitor
+	public NodeVisitor
 {
 private:
-	scene::Path _path;
+	Path _path;
 
 	PostCloneCallback _postCloneCallback;
 
 public:
-	CloneAll(const scene::INodePtr& root, const PostCloneCallback& callback) :
+	CloneAll(const INodePtr& root, const PostCloneCallback& callback) :
 		_path(root),
 		_postCloneCallback(callback)
 	{}
 
-	bool pre(const scene::INodePtr& node) override
+	bool pre(const INodePtr& node) override
 	{
 		if (node->isRoot())
 		{
 			return false;
 		}
 
-		scene::INodePtr cloned = cloneSingleNode(node);
+		INodePtr cloned = cloneSingleNode(node);
 
 		// Insert the cloned node or an empty ptr if not cloneable
 		_path.push(cloned);
@@ -56,7 +56,7 @@ public:
 		return true;
 	}
 
-	void post(const scene::INodePtr& node) override
+	void post(const INodePtr& node) override
 	{
 		if (node->isRoot())
 		{
@@ -85,10 +85,9 @@ public:
  * 
  * @returns: the cloned node (which might own cloned children).
  */
-inline scene::INodePtr cloneNodeIncludingDescendants(const scene::INodePtr& node, 
-	const PostCloneCallback& callback)
+inline INodePtr cloneNodeIncludingDescendants(const INodePtr& node, const PostCloneCallback& callback)
 {
-	scene::INodePtr clone = cloneSingleNode(node);
+	INodePtr clone = cloneSingleNode(node);
 
 	CloneAll visitor(clone, callback);
 	node->traverseChildren(visitor);
@@ -101,4 +100,4 @@ inline scene::INodePtr cloneNodeIncludingDescendants(const scene::INodePtr& node
 	return clone;
 }
 
-} // namespace map
+} // namespace

@@ -107,19 +107,19 @@ void FixedWinding::createInfinite(const Plane3& plane, double infinity) {
 	DoubleLine r1, r2, r3, r4;
 	r1.origin = (org - vright) + vup;
 	r1.direction = vright.getNormalised();
-	push_back(FixedWindingVertex(r1.origin, r1, c_brush_maxFaces));
+	push_back(FixedWindingVertex(r1.origin, r1, brush::c_brush_maxFaces));
 
 	r2.origin = org + vright + vup;
 	r2.direction = (-vup).getNormalised();
-	push_back(FixedWindingVertex(r2.origin, r2, c_brush_maxFaces));
+	push_back(FixedWindingVertex(r2.origin, r2, brush::c_brush_maxFaces));
 
 	r3.origin = (org + vright) - vup;
 	r3.direction = (-vright).getNormalised();
-	push_back(FixedWindingVertex(r3.origin, r3, c_brush_maxFaces));
+	push_back(FixedWindingVertex(r3.origin, r3, brush::c_brush_maxFaces));
 
 	r4.origin = (org - vright) - vup;
 	r4.direction = vup.getNormalised();
-	push_back(FixedWindingVertex(r4.origin, r4, c_brush_maxFaces));
+	push_back(FixedWindingVertex(r4.origin, r4, brush::c_brush_maxFaces));
 }
 
 /// \brief Clip \p winding which lies on \p plane by \p clipPlane, resulting in \p clipped.

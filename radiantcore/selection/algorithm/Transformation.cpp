@@ -17,7 +17,7 @@
 
 #include "scenelib.h"
 #include "registry/registry.h"
-#include "map/algorithm/Clone.h"
+#include "scene/Clone.h"
 #include "map/algorithm/Import.h"
 #include "scene/BasicRootNode.h"
 #include "debugging/debugging.h"
@@ -189,7 +189,7 @@ public:
 		if (Node_isSelected(node))
 		{
 			// Clone the current node
-			scene::INodePtr clone = map::cloneNodeIncludingDescendants(node,
+			scene::INodePtr clone = scene::cloneNodeIncludingDescendants(node,
 				sigc::mem_fun(*this, &SelectionCloner::postProcessClonedNode));
 
 			// Add the cloned node and its parent to the list

@@ -188,7 +188,7 @@ const AABB& BrushNode::getSelectedComponentsBounds() const {
 void BrushNode::selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) {
 	test.BeginMesh(localToWorld());
 
-	PlanePointer brushPlanes[c_brush_maxFaces];
+	PlanePointer brushPlanes[brush::c_brush_maxFaces];
 	PlanesIterator j = brushPlanes;
 
 	for (Brush::const_iterator i = m_brush.begin(); i != m_brush.end(); ++i) {
@@ -400,10 +400,10 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 	m_viewChanged = false;
 
 	// Array of booleans to indicate which faces are visible
-	static bool faces_visible[c_brush_maxFaces];
+	static bool faces_visible[brush::c_brush_maxFaces];
 
 	// Will hold the indices of all visible faces (from the current viewpoint)
-	static std::size_t visibleFaceIndices[c_brush_maxFaces];
+	static std::size_t visibleFaceIndices[brush::c_brush_maxFaces];
 
 	std::size_t numVisibleFaces(0);
 	bool* j = faces_visible;

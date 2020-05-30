@@ -8,12 +8,6 @@
     <Filter Include="src\camera">
       <UniqueIdentifier>{ad6d0e12-fb85-4133-aecd-986e24357256}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\map">
-      <UniqueIdentifier>{96702763-dfdc-413b-80f8-e1e5607ec9cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\map\algorithm">
-      <UniqueIdentifier>{892adc31-2e7d-4375-8f68-20e356adc856}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\modulesystem">
       <UniqueIdentifier>{2ab7bf93-24a1-444a-aa28-ae77c05ec366}</UniqueIdentifier>
     </Filter>
@@ -125,9 +119,6 @@
     <Filter Include="src\ui\aas">
       <UniqueIdentifier>{320a8b8c-db98-4f20-bb92-b66812bb5a53}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\map\infofile">
-      <UniqueIdentifier>{04d7b32b-b95b-41a1-93c1-3c623749b4eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\grid">
       <UniqueIdentifier>{26ca745d-bd90-4d70-beb3-89010a45515f}</UniqueIdentifier>
     </Filter>
@@ -164,9 +155,6 @@
     <Filter Include="src\ui\filters\editor">
       <UniqueIdentifier>{9cc90f16-363b-40e1-84ae-be23c59e06c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\model">
-      <UniqueIdentifier>{6c3e2342-691d-460b-afdc-9ef38e58eaea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\selectionset">
       <UniqueIdentifier>{44f6abf2-2b6d-46ce-8c41-291f862855f6}</UniqueIdentifier>
     </Filter>
@@ -192,42 +180,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\camera\GlobalCamera.cpp">
       <Filter>src\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\AutoSaver.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\FindMapElements.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\Map.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\MapFileManager.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\MapPosition.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\MapPositionManager.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\MapResource.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\MapResourceManager.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\PointFile.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\RegionManager.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\RootNode.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp">
-      <Filter>src\map</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp">
       <Filter>src\modulesystem</Filter>
@@ -466,12 +418,6 @@
     <ClCompile Include="..\..\radiant\log\Console.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\MapImporter.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
@@ -480,9 +426,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp">
       <Filter>src\ui\modelselector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\Skins.cpp">
-      <Filter>src\map\algorithm</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp">
       <Filter>src\ui\mainframe</Filter>
@@ -520,18 +463,6 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp">
       <Filter>src\ui\aas</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\RenderableAasFile.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\infofile\InfoFileManager.cpp">
-      <Filter>src\map\infofile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\infofile\InfoFile.cpp">
-      <Filter>src\map\infofile</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\infofile\InfoFileExporter.cpp">
-      <Filter>src\map\infofile</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp">
       <Filter>src\xyview\tools</Filter>
     </ClCompile>
@@ -558,12 +489,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.cpp">
       <Filter>src\ui\prefdialog</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\EditingStopwatch.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\EditingStopwatchInfoFileModule.cpp">
-      <Filter>src\map</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp">
       <Filter>src\ui\eclasstree</Filter>
@@ -661,15 +586,6 @@
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\map\MapModules.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\MapPropertyInfoFileModule.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\Import.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.cpp">
       <Filter>src\ui\filters</Filter>
     </ClCompile>
@@ -699,18 +615,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\render\View.cpp">
       <Filter>src\render</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\model\ModelExporter.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp">
-      <Filter>src\model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\map\algorithm\Export.cpp">
-      <Filter>src\map\algorithm</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\particles\ParticleEditor.cpp">
       <Filter>src\ui\particles</Filter>
@@ -752,60 +656,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\RadiantCameraView.h">
       <Filter>src\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\AutoSaver.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\EntityBreakdown.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\FindMapElements.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\Map.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\MapFileManager.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\MapPosition.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\MapPositionManager.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\MapResource.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\MapResourceManager.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\ModelBreakdown.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\PointFile.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\RegionManager.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\RegionWalkers.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\RootNode.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\ShaderBreakdown.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\StartupMapLoader.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\Clone.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\WorldspawnArgFinder.h">
-      <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h">
       <Filter>src\modulesystem</Filter>
@@ -1086,20 +936,11 @@
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h">
       <Filter>src\log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\precompiled.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h">
       <Filter>src\ui\modelselector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\Skins.h">
-      <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h">
       <Filter>src\ui\mainframe</Filter>
@@ -1167,18 +1008,6 @@
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h">
       <Filter>src\ui\aas</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\RenderableAasFile.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\infofile\InfoFileManager.h">
-      <Filter>src\map\infofile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\infofile\InfoFile.h">
-      <Filter>src\map\infofile</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\infofile\InfoFileExporter.h">
-      <Filter>src\map\infofile</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\tools\MeasurementTool.h">
       <Filter>src\xyview\tools</Filter>
     </ClInclude>
@@ -1205,12 +1034,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPageTdm.h">
       <Filter>src\ui\prefdialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\EditingStopwatch.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\EditingStopwatchInfoFileModule.h">
-      <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h">
       <Filter>src\ui\eclasstree</Filter>
@@ -1329,12 +1152,6 @@
     <ClInclude Include="..\..\radiant\ui\Documentation.h">
       <Filter>src\ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\map\MapPropertyInfoFileModule.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\Import.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h">
       <Filter>src\ui\filters</Filter>
     </ClInclude>
@@ -1379,18 +1196,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h">
       <Filter>src\render</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\ModelExporter.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\model\ScaledModelExporter.h">
-      <Filter>src\model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\map\algorithm\Export.h">
-      <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\particles\ParticleEditor.h">
       <Filter>src\ui\particles</Filter>

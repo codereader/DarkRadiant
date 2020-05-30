@@ -58,5 +58,8 @@
     <ClInclude Include="..\..\libs\scene\ChildPrimitives.h">
       <Filter>scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\Clone.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

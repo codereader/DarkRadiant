@@ -179,6 +179,7 @@
     <ClInclude Include="..\..\libs\picomodel.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
     <ClInclude Include="..\..\libs\RandomOrigin.h" />
+    <ClInclude Include="..\..\libs\Rectangle.h" />
     <ClInclude Include="..\..\libs\registry\adaptors.h" />
     <ClInclude Include="..\..\libs\registry\buffer.h" />
     <ClInclude Include="..\..\libs\registry\CachedKey.h" />

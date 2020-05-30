@@ -1,6 +1,7 @@
 #include "FaceInstance.h"
 
 #include "ifilter.h"
+#include "ibrush.h"
 #include "irenderable.h"
 #include "iscenegraph.h"
 
@@ -356,7 +357,7 @@ void FaceInstance::update_selection_vertex() {
 		if (m_vertexSelection.size() == 1) {
 				std::size_t index = getFace().getWinding().findAdjacent(*m_vertexSelection.begin());
 
-				if (index != c_brush_maxFaces) {
+				if (index != brush::c_brush_maxFaces) {
 						update_move_planepts_vertex(index);
 					}
 			}
@@ -364,8 +365,8 @@ void FaceInstance::update_selection_vertex() {
 				std::size_t index = getFace().getWinding().findAdjacent(*m_vertexSelection.begin());
 				std::size_t other = getFace().getWinding().findAdjacent(*(++m_vertexSelection.begin()));
 
-				if (index != c_brush_maxFaces
-						&& other != c_brush_maxFaces) {
+				if (index != brush::c_brush_maxFaces
+						&& other != brush::c_brush_maxFaces) {
 						update_move_planepts_vertex2(index, other);
 					}
 			}
@@ -410,7 +411,7 @@ void FaceInstance::update_selection_edge() {
 		if (m_edgeSelection.size() == 1) {
 				std::size_t index = getFace().getWinding().findAdjacent(*m_edgeSelection.begin());
 
-				if (index != c_brush_maxFaces) {
+				if (index != brush::c_brush_maxFaces) {
 						update_move_planepts_edge(index);
 					}
 			}

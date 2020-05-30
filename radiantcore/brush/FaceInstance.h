@@ -61,7 +61,7 @@ public:
 	void SelectedVertices_foreach(Functor functor) const {
 		for (VertexSelection::const_iterator i = m_vertexSelection.begin(); i != m_vertexSelection.end(); ++i) {
 			std::size_t index = getFace().getWinding().findAdjacent(*i);
-			if (index != c_brush_maxFaces) {
+			if (index != brush::c_brush_maxFaces) {
 					functor(getFace().getWinding()[index].vertex);
 				}
 		}
@@ -71,7 +71,7 @@ public:
 	void SelectedEdges_foreach(Functor functor) const {
 		for (VertexSelection::const_iterator i = m_edgeSelection.begin(); i != m_edgeSelection.end(); ++i) {
 			std::size_t index = getFace().getWinding().findAdjacent(*i);
-			if (index != c_brush_maxFaces) {
+			if (index != brush::c_brush_maxFaces) {
 					const Winding& winding = getFace().getWinding();
 					std::size_t adjacent = winding.next(index);
 					functor(winding[index].vertex.mid(winding[adjacent].vertex));

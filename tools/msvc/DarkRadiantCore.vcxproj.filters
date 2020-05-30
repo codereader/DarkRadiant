@@ -182,6 +182,9 @@
     <Filter Include="src\selection\shaderclipboard">
       <UniqueIdentifier>{9ab28551-0a25-4f8e-8d2a-dbe5a0c67166}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map\infofile">
+      <UniqueIdentifier>{173c49d4-e3f3-4e6c-be39-c33a2f270d5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -915,6 +918,90 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\Texturable.cpp">
       <Filter>src\selection\shaderclipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\algorithm\Export.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\algorithm\Import.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\algorithm\MapExporter.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\infofile\InfoFile.cpp">
+      <Filter>src\map\infofile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\infofile\InfoFileExporter.cpp">
+      <Filter>src\map\infofile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\infofile\InfoFileManager.cpp">
+      <Filter>src\map\infofile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\AutoSaver.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\EditingStopwatch.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\FindMapElements.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\Map.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapFileManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapModules.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapPosition.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapPositionManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapPropertyInfoFileModule.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapResource.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapResourceManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\PointFile.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\RegionManager.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\RenderableAasFile.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\RootNode.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\StartupMapLoader.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\export\ModelExporter.cpp">
+      <Filter>src\model\export</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\export\ModelScalePreserver.cpp">
+      <Filter>src\model\export</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\export\ScaledModelExporter.cpp">
+      <Filter>src\model\export</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1779,9 +1866,6 @@
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\Rectangle.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\Remap.h">
       <Filter>src\selection</Filter>
     </ClInclude>
@@ -1892,6 +1976,102 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\Texturable.h">
       <Filter>src\selection\shaderclipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\algorithm\Export.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\algorithm\Import.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\algorithm\MapExporter.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\algorithm\WorldspawnArgFinder.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\infofile\InfoFile.h">
+      <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\infofile\InfoFileExporter.h">
+      <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\infofile\InfoFileManager.h">
+      <Filter>src\map\infofile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\AutoSaver.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\EditingStopwatch.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\EntityBreakdown.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\FindMapElements.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\Map.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapFileManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapPosition.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapPositionManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapPropertyInfoFileModule.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapResource.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapResourceManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\ModelBreakdown.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\PointFile.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\RegionManager.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\RegionWalkers.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\RenderableAasFile.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\RootNode.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\ShaderBreakdown.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\StartupMapLoader.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\export\ModelExporter.h">
+      <Filter>src\model\export</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\export\ModelScalePreserver.h">
+      <Filter>src\model\export</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\export\ScaledModelExporter.h">
+      <Filter>src\model\export</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

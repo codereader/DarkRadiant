@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\include\iselectiontest.h" />
     <ClInclude Include="..\..\include\iselection.h" />
     <ClInclude Include="..\..\include\iselectionset.h" />
+    <ClInclude Include="..\..\include\ishaderclipboard.h" />
     <ClInclude Include="..\..\include\ishaderexpression.h" />
     <ClInclude Include="..\..\include\ishaders.h" />
     <ClInclude Include="..\..\include\isound.h" />

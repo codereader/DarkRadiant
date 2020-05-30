@@ -214,14 +214,14 @@ std::size_t Winding::findAdjacent(std::size_t face) const
 {
 	for (std::size_t i = 0; i < size(); ++i)
 	{
-		ASSERT_MESSAGE((*this)[i].adjacent != c_brush_maxFaces, "edge connectivity data is invalid");
+		ASSERT_MESSAGE((*this)[i].adjacent != brush::c_brush_maxFaces, "edge connectivity data is invalid");
 		if ((*this)[i].adjacent == face)
 		{
 			return i;
 		}
 	}
 
-	return c_brush_maxFaces;
+	return brush::c_brush_maxFaces;
 }
 
 std::size_t Winding::opposite(const std::size_t index, const std::size_t other) const
@@ -229,7 +229,7 @@ std::size_t Winding::opposite(const std::size_t index, const std::size_t other) 
 	ASSERT_MESSAGE(index < size() && other < size(), "Winding::opposite: index out of range");
 
 	float dist_best = 0;
-	std::size_t index_best = c_brush_maxFaces;
+	std::size_t index_best = brush::c_brush_maxFaces;
 
 	Ray edge = Ray::createForPoints((*this)[index].vertex, (*this)[other].vertex);
 

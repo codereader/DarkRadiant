@@ -111,7 +111,7 @@ void ShaderClipboard::updateStatusText()
 	GlobalUIManager().getStatusBarManager().setText("ShaderClipBoard", statusText);
 }
 
-void ShaderClipboard::setSource(SelectionTest& test) 
+void ShaderClipboard::pickFromSelectionTest(SelectionTest& test)
 {
 	if (_updatesDisabled) return; // loopback guard
 
@@ -119,6 +119,21 @@ void ShaderClipboard::setSource(SelectionTest& test)
 
 	updateMediaBrowsers();
     _signalSourceChanged.emit();
+}
+
+void ShaderClipboard::pasteShader(SelectionTest& test, PasteMode mode, bool pasteToAllFaces)
+{
+	selection::algorithm::pasteShader(test, mode == PasteMode::Projected, pasteToAllFaces);
+}
+
+void ShaderClipboard::pasteTextureCoords(SelectionTest& test)
+{
+	selection::algorithm::pasteTextureCoords(test);
+}
+
+void ShaderClipboard::pasteMaterialName(SelectionTest& test)
+{
+	selection::algorithm::pasteShaderName(test);
 }
 
 void ShaderClipboard::setSource(std::string shader)

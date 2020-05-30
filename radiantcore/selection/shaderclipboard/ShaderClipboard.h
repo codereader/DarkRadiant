@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imap.h"
+#include "ishaderclipboard.h"
 #include "Texturable.h"
 #include <sigc++/signal.h>
 #include <sigc++/trackable.h>
@@ -9,6 +10,7 @@ namespace selection
 {
 
 class ShaderClipboard :
+	public IShaderClipboard,
 	public sigc::trackable
 {
 private:
@@ -21,11 +23,6 @@ private:
 
 public:
 	ShaderClipboard();
-
-	/** greebo: Tries to find the best source Texturable object
-	 * 			with the given SelectionTest (SelectionVolume)
-	 */
-	void setSource(SelectionTest& test);
 
 	/** greebo: Sets the source patch to the given <sourcePatch>
 	 */
@@ -54,6 +51,13 @@ public:
 	 */
 	void clear();
 
+	// IShaderClipboard implementation
+
+	void pickFromSelectionTest(SelectionTest& test) override;
+	void pasteShader(SelectionTest& test, PasteMode mode, bool pasteToAllFaces) override;
+	void pasteTextureCoords(SelectionTest& test) override;
+	void pasteMaterialName(SelectionTest& test) override;
+
 private:
 	// UndoSystem callbacks
 	void onUndoRedoOperation();
@@ -76,5 +80,3 @@ private:
 };
 
 } // namespace selection
-
-selection::ShaderClipboard& GlobalShaderClipboard();

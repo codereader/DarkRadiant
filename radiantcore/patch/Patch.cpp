@@ -14,6 +14,7 @@
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
 #include "ui/patch/PatchInspector.h"
+#include "command/ExecutionFailure.h"
 #include "selection/algorithm/Shader.h"
 
 #include "PatchSavedState.h"
@@ -1615,7 +1616,7 @@ void Patch::pasteTextureNatural(const Face* face)
 
 	if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f)
     {
-		throw selection::algorithm::InvalidOperationException(
+		throw cmd::ExecutionFailure(
 			_("Sorry. Patch is not suitable for this kind of operation.")
 	    );
 	}

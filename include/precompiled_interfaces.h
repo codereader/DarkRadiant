@@ -83,6 +83,7 @@
 #include "iselectiongroup.h"
 #include "iselectionset.h"
 #include "iselectiontest.h"
+#include "ishaderclipboard.h"
 #include "ishaderexpression.h"
 #include "ishaders.h"
 #include "isound.h"

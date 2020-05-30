@@ -14,7 +14,7 @@
 #include "selection/algorithm/General.h"
 #include "string/convert.h"
 #include "string/case_conv.h"
-#include "model/ModelExporter.h"
+#include "model/export/ModelExporter.h"
 #include "registry/registry.h"
 #include "scene/Traverse.h"
 

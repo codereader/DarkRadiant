@@ -215,6 +215,7 @@
     <ClInclude Include="..\..\libs\messages\NotificationMessage.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\Rectangle.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

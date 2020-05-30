@@ -19,7 +19,7 @@
 #include "RadiantCameraView.h"
 #include "Camera.h"
 
-#include "selection/Rectangle.h"
+#include "Rectangle.h"
 #include <memory>
 #include "util/Noncopyable.h"
 #include <sigc++/connection.h>

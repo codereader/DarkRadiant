@@ -191,7 +191,7 @@ void applyClipboardPatchToFace(Face& target)
     target.applyDefaultTextureScale();
 }
 
-// Function may leak an InvalidOperationException if the source/target combination doesn't work out
+// Function may leak a cmd::ExecutionFailure if the source/target combination doesn't work out
 void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush)
 {
 	// Get a reference to the source Texturable in the clipboard
@@ -303,7 +303,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush)
 
 	if (target.isPatch() && entireBrush)
     {
-		throw InvalidOperationException(
+		throw cmd::ExecutionFailure(
 			_("Can't paste shader to entire brush.\nTarget is not a brush."));
 	}
 	else
@@ -342,8 +342,8 @@ void pasteTextureCoords(SelectionTest& test)
 		}
 		else
         {
-            throw InvalidOperationException(
-                _("Can't paste Texture Coordinates.\nTarget patch dimensions must match."));
+            throw cmd::ExecutionFailure(
+				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."));
 		}
 	}
 	else
@@ -351,14 +351,12 @@ void pasteTextureCoords(SelectionTest& test)
 		if (source.isPatch())
         {
 			// Nothing to do, this works for patches only
-			throw InvalidOperationException(
-                _("Can't paste Texture Coordinates from patches to faces."));
+			throw cmd::ExecutionFailure(_("Can't paste Texture Coordinates from patches to faces."));
 		}
 		else
         {
 			// Nothing to do, this works for patches only
-			throw InvalidOperationException(
-				_("Can't paste Texture Coordinates from faces."));
+			throw cmd::ExecutionFailure(_("Can't paste Texture Coordinates from faces."));
 		}
 	}
 
@@ -451,36 +449,22 @@ public:
 
 	void operator()(Patch& patch)
 	{
-        try
-        {
-            Texturable target;
-            target.patch = &patch;
-            target.node = patch.getPatchNode().shared_from_this();
+        Texturable target;
+        target.patch = &patch;
+        target.node = patch.getPatchNode().shared_from_this();
 
-            // Apply the shader (projected, not to the entire brush)
-            applyClipboardToTexturable(target, !_natural, false);
-        }
-        catch (InvalidOperationException& ex)
-        {
-			throw cmd::ExecutionFailure(ex.what());
-        }
+        // Apply the shader (projected, not to the entire brush)
+        applyClipboardToTexturable(target, !_natural, false);
 	}
 
 	void operator()(Face& face)
 	{
-        try
-        {
-		    Texturable target;
-		    target.face = &face;
-		    target.node = face.getBrush().getBrushNode().shared_from_this();
+		Texturable target;
+		target.face = &face;
+		target.node = face.getBrush().getBrushNode().shared_from_this();
 
-		    // Apply the shader (projected, not to the entire brush)
-		    applyClipboardToTexturable(target, !_natural, false);
-        }
-        catch (InvalidOperationException& ex)
-        {
-			throw cmd::ExecutionFailure(ex.what());
-        }
+		// Apply the shader (projected, not to the entire brush)
+		applyClipboardToTexturable(target, !_natural, false);
 	}
 };
 

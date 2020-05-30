@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\libs\scene\BasicRootNode.h" />
     <ClInclude Include="..\..\libs\scene\ChildPrimitives.h" />
+    <ClInclude Include="..\..\libs\scene\Clone.h" />
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h" />
     <ClInclude Include="..\..\libs\scene\LayerUsageBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\LayerValidityCheckWalker.h" />

@@ -578,7 +578,7 @@ bool Face::contributes() const {
 
 bool Face::is_bounded() const {
     for (Winding::const_iterator i = m_winding.begin(); i != m_winding.end(); ++i) {
-        if (i->adjacent == c_brush_maxFaces) {
+        if (i->adjacent == brush::c_brush_maxFaces) {
             return false;
         }
     }

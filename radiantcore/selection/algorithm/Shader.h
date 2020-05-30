@@ -23,16 +23,6 @@ namespace selection
 	namespace algorithm
     {
 
-    // Thrown when a shader operation cannot be performed due to 
-    // the reason specified in the message string.
-    class InvalidOperationException : public std::logic_error
-    {
-    public:
-        InvalidOperationException(const std::string& msg) :
-            std::logic_error(msg)
-        {}
-    };
-
 	/** greebo: Retrieves the shader name from the current selection.
 	 *
 	 * @returns: the name of the shader that is shared by every selected instance or
@@ -57,7 +47,7 @@ namespace selection
 	 * @entireBrush: Set this to TRUE if all brush faces should be textured,
 	 * given the case that the SelectionTest is resulting in a brush.
      *
-     * @throws: InvalidOperationException when the current selection
+     * @throws: cmd::ExecutionFailure when the current selection
      * is not suitable.
 	 */
 	void pasteShader(SelectionTest& test, bool projected, bool entireBrush = false);
@@ -69,7 +59,7 @@ namespace selection
 	 * an error message is displayed otherwise.
 	 *
 	 * @test: the SelectionTest needed (usually a SelectionVolume).
-     * @throws: InvalidOperationException when the current selection
+     * @throws: cmd::ExecutionFailure when the current selection
      * is not suitable.
 	 */
 	void pasteTextureCoords(SelectionTest& test);

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "imousetool.h"
+#include "ishaderclipboard.h"
 #include "i18n.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
-#include "selection/algorithm/Shader.h"
+#include "command/ExecutionFailure.h"
 #include "CameraMouseToolEvent.h"
 #include <functional>
 #include "wxutil/dialog/MessageBox.h"
@@ -53,7 +53,7 @@ protected:
 
             return Result::Activated;
         }
-        catch (selection::algorithm::InvalidOperationException& ex)
+        catch (const cmd::ExecutionFailure& ex)
         {
             // Some operations fail and want to notify the user
             // we do this here to not steal the focus from our window
@@ -85,7 +85,7 @@ protected:
 
             return Result::Continued;
         }
-        catch (selection::algorithm::InvalidOperationException& ex)
+        catch (const cmd::ExecutionFailure& ex)
         {
             // Some operations fail and want to notify the user
             // we do this here to not steal the focus from our window
@@ -126,7 +126,7 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Set the source texturable from the given test
-        GlobalShaderClipboard().setSource(selectionTest);
+        GlobalShaderClipboard().pickFromSelectionTest(selectionTest);
     }
 };
 
@@ -143,9 +143,9 @@ public:
 private:
     void onAction(SelectionTest& selectionTest)
     {
-        // Paste the shader projected (TRUE), but not to an entire brush (FALSE)
-        // The InvalidOperationExceptions are handled by the calling code in the base class
-        selection::algorithm::pasteShader(selectionTest, true, false);
+        // Paste the shader projected, but not to an entire brush (FALSE)
+        // The ExecutionFailure exceptions are handled by the calling code in the base class
+        GlobalShaderClipboard().pasteShader(selectionTest, selection::PasteMode::Projected, false);
     }
 };
 
@@ -163,8 +163,8 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Paste the shader naturally (FALSE), but not to an entire brush (FALSE)
-        // The InvalidOperationExceptions are handled by the calling code in the base class
-        selection::algorithm::pasteShader(selectionTest, false, false);
+        // The ExecutionFailure exceptions are handled by the calling code in the base class
+        GlobalShaderClipboard().pasteShader(selectionTest, selection::PasteMode::Natural, false);
     }
 };
 
@@ -182,8 +182,8 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Clone the texture coordinates from the patch in the clipboard
-        // The InvalidOperationExceptions are handled by the calling code in the base class
-        selection::algorithm::pasteTextureCoords(selectionTest);
+        // The ExecutionFailure exceptions are handled by the calling code in the base class
+        GlobalShaderClipboard().pasteTextureCoords(selectionTest);
     }
 };
 
@@ -201,8 +201,8 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Paste the shader projected (TRUE), and to the entire brush (TRUE)
-        // The InvalidOperationExceptions are handled by the calling code in the base class
-        selection::algorithm::pasteShader(selectionTest, true, true);
+        // The ExecutionFailure exceptions are handled by the calling code in the base class
+        GlobalShaderClipboard().pasteShader(selectionTest, selection::PasteMode::Projected, true);
     }
 };
 
@@ -220,8 +220,8 @@ private:
     void onAction(SelectionTest& selectionTest)
     {
         // Paste the shader name only
-        // The InvalidOperationExceptions are handled by the calling code in the base class
-        selection::algorithm::pasteShaderName(selectionTest);
+        // The ExecutionFailure exceptions are handled by the calling code in the base class
+        GlobalShaderClipboard().pasteMaterialName(selectionTest);
     }
 };
 
