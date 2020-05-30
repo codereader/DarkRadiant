@@ -1,7 +1,6 @@
 #include "Shader.h"
 
 #include "i18n.h"
-#include "imainframe.h"
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
@@ -9,7 +8,9 @@
 #include "igroupnode.h"
 #include "selectionlib.h"
 #include "registry/registry.h"
-#include "wxutil/dialog/MessageBox.h"
+#include "messages/TextureChanged.h"
+#include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
 #include "string/string.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
@@ -18,7 +19,6 @@
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/shaderclipboard/ClosestTexturableFinder.h"
 
 #include "string/case_conv.h"
@@ -161,7 +161,7 @@ void applyShaderToSelection(const std::string& shaderName)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 /** greebo: Applies the shader from the clipboard's face to the given <target> face
@@ -314,7 +314,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void pasteTextureCoords(SelectionTest& test)
@@ -364,7 +364,7 @@ void pasteTextureCoords(SelectionTest& test)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void pasteShaderName(SelectionTest& test) 
@@ -398,39 +398,44 @@ void pasteShaderName(SelectionTest& test)
 	SceneChangeNotify();
 
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
-void pickShaderFromSelection(const cmd::ArgumentList& args) {
+void pickShaderFromSelection(const cmd::ArgumentList& args)
+{
 	GlobalShaderClipboard().clear();
 
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
 	// Check for a single patch
-	if (info.totalCount == 1 && info.patchCount == 1) {
-		try {
+	if (info.totalCount == 1 && info.patchCount == 1)
+	{
+		try
+		{
 			Patch& sourcePatch = getLastSelectedPatch();
 			GlobalShaderClipboard().setSource(sourcePatch);
 		}
-		catch (const InvalidSelectionException&) {
-			wxutil::Messagebox::ShowError(
-				_("Can't copy Shader. Couldn't retrieve patch."));
+		catch (const InvalidSelectionException&)
+		{
+			throw cmd::ExecutionNotPossible(_("Can't copy Shader. Couldn't retrieve patch."));
 		}
 	}
-	else if (selectedFaceCount() == 1) {
-		try {
+	else if (selectedFaceCount() == 1)
+	{
+		try
+		{
 			Face& sourceFace = getLastSelectedFace();
 			GlobalShaderClipboard().setSource(sourceFace);
 		}
-		catch (const InvalidSelectionException&) {
-			wxutil::Messagebox::ShowError(
-				_("Can't copy Shader. Couldn't retrieve face."));
+		catch (const InvalidSelectionException&)
+		{
+			throw cmd::ExecutionNotPossible(_("Can't copy Shader. Couldn't retrieve face."));
 		}
 	}
-	else {
+	else
+	{
 		// Nothing to do, this works for patches only
-		wxutil::Messagebox::ShowError(
-			_("Can't copy Shader. Please select a single face or patch."));
+		throw cmd::ExecutionNotPossible(_("Can't copy Shader. Please select a single face or patch."));
 	}
 }
 
@@ -457,7 +462,7 @@ public:
         }
         catch (InvalidOperationException& ex)
         {
-            wxutil::Messagebox::ShowError(ex.what());
+			throw cmd::ExecutionFailure(ex.what());
         }
 	}
 
@@ -474,7 +479,7 @@ public:
         }
         catch (InvalidOperationException& ex)
         {
-            wxutil::Messagebox::ShowError(ex.what());
+			throw cmd::ExecutionFailure(ex.what());
         }
 	}
 };
@@ -495,7 +500,7 @@ void pasteShaderToSelection(const cmd::ArgumentList& args)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void pasteShaderNaturalToSelection(const cmd::ArgumentList& args)
@@ -515,7 +520,7 @@ void pasteShaderNaturalToSelection(const cmd::ArgumentList& args)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 TextureProjection getSelectedTextureProjection()
@@ -557,7 +562,7 @@ void fitTexture(const float repeatS, const float repeatT)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void flipTexture(unsigned int flipAxis)
@@ -603,7 +608,7 @@ void naturalTexture(const cmd::ArgumentList& args)
 	SceneChangeNotify();
 
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void applyTexDefToFaces(TexDef& texDef)
@@ -614,7 +619,7 @@ void applyTexDefToFaces(TexDef& texDef)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void shiftTexture(const Vector2& shift) 
@@ -629,7 +634,7 @@ void shiftTexture(const Vector2& shift)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void scaleTexture(const Vector2& scale)
@@ -661,7 +666,7 @@ void scaleTexture(const Vector2& scale)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void rotateTexture(const float angle)
@@ -676,7 +681,7 @@ void rotateTexture(const float angle)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void shiftTextureLeft() {
@@ -824,7 +829,7 @@ void alignTexture(EAlignType align)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 void alignTextureCmd(const cmd::ArgumentList& args)
@@ -868,7 +873,7 @@ void normaliseTexture(const cmd::ArgumentList& args)
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::update();
+	radiant::TextureChangedMessage::Send();
 }
 
 /** greebo: This replaces the shader of the visited face/patch with <replace>
