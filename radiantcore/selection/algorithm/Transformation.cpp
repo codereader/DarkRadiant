@@ -9,22 +9,21 @@
 #include "iundo.h"
 #include "imap.h"
 #include "igrid.h"
+#include "iorthoview.h"
 #include "inamespace.h"
 #include "iselection.h"
-#include "imainframe.h"
 #include "itextstream.h"
 #include "iselectiongroup.h"
 
 #include "scenelib.h"
 #include "registry/registry.h"
-#include "wxutil/dialog/MessageBox.h"
-#include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
 #include "map/algorithm/Import.h"
 #include "scene/BasicRootNode.h"
 #include "debugging/debugging.h"
 #include "selection/TransformationVisitors.h"
 #include "selection/SceneWalkers.h"
+#include "command/ExecutionFailure.h"
 
 #include "string/case_conv.h"
 
@@ -70,6 +69,17 @@ void rotateSelected(const Vector3& eulerXYZ)
 	rotateSelected(Quaternion::createForEulerXYZDegrees(eulerXYZ));
 }
 
+void rotateSelectedEulerXYZ(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rWarning() << "Usage: RotateSelectedEulerXYZ <eulerAngles:Vector3>" << std::endl;
+		return;
+	}
+
+	rotateSelected(args[0].getVector3());
+}
+
 // greebo: see header for documentation
 void scaleSelected(const Vector3& scaleXYZ)
 {
@@ -100,8 +110,19 @@ void scaleSelected(const Vector3& scaleXYZ)
 	}
 	else 
 	{
-		wxutil::Messagebox::ShowError(_("Cannot scale by zero value."));
+		throw cmd::ExecutionFailure(_("Cannot scale by zero value."));
 	}
+}
+
+void scaleSelected(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rWarning() << "Usage: ScaleSelected <scale:Vector3>" << std::endl;
+		return;
+	}
+
+	scaleSelected(args[0].getVector3());
 }
 
 /** greebo: A visitor class cloning the visited selected items.

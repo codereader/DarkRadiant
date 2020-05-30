@@ -15,7 +15,7 @@
 #include "ManipulateMouseTool.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Primitives.h"
-#include "xyview/GlobalXYWnd.h"
+#include "selection/algorithm/Transformation.h"
 #include "SceneWalkers.h"
 
 #include "manipulators/DragManipulator.h"
@@ -913,6 +913,9 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
 
 	GlobalCommandSystem().addCommand("UnSelectSelection", std::bind(&RadiantSelectionSystem::deselectCmd, this, std::placeholders::_1));
+
+    GlobalCommandSystem().addCommand("RotateSelectedEulerXYZ", selection::algorithm::rotateSelectedEulerXYZ, { cmd::ARGTYPE_VECTOR3 });
+    GlobalCommandSystem().addCommand("ScaleSelected", selection::algorithm::scaleSelected, { cmd::ARGTYPE_VECTOR3 });
 
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
 

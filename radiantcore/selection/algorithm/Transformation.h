@@ -25,6 +25,11 @@ void rotateSelected(const Quaternion& rotation);
 	*/
 void rotateSelected(const Vector3& eulerXYZ);
 
+/**
+ * Command adapter for rotateSelected(Vector3)
+ */
+void rotateSelectedEulerXYZ(const cmd::ArgumentList& args);
+
 /** greebo: Scales the current selection with the given vector.
 	* 			this emits an error if one of the vector's components
 	* 			are zero.
@@ -35,6 +40,11 @@ void rotateSelected(const Vector3& eulerXYZ);
 	* Note: this is an undoable command.
 	*/
 void scaleSelected(const Vector3& scaleXYZ);
+
+/**
+ * Command adapter for scaleSelected(Vector3)
+ */
+void scaleSelected(const cmd::ArgumentList& args);
 
 /** 
  * greebo: This duplicates the current selection (that's what happening

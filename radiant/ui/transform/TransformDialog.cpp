@@ -1,6 +1,7 @@
 #include "TransformDialog.h"
 
 #include "i18n.h"
+#include "icommandsystem.h"
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
@@ -15,8 +16,6 @@
 #include <wx/stattext.h>
 #include <wx/artprov.h>
 #include <functional>
-
-#include "selection/algorithm/Transformation.h"
 
 namespace ui
 {
@@ -271,7 +270,7 @@ void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)
 		eulerXYZ[row->axis] = step * row->direction;
 
 		// Pass the call to the algorithm functions
-		selection::algorithm::rotateSelected(eulerXYZ);
+		GlobalCommandSystem().executeCommand("RotateSelectedEulerXYZ", eulerXYZ);
 	}
 	else
 	{
@@ -282,7 +281,7 @@ void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)
 		scaleXYZ[row->axis] = step;
 
 		// Pass the call to the algorithm functions
-		selection::algorithm::scaleSelected(scaleXYZ);
+		GlobalCommandSystem().executeCommand("ScaleSelected", scaleXYZ);
 	}
 }
 
@@ -301,7 +300,7 @@ void TransformDialog::onClickSmaller(wxCommandEvent& ev, EntryRow* row)
 		eulerXYZ[row->axis] = -step * row->direction;
 
 		// Pass the call to the algorithm functions
-		selection::algorithm::rotateSelected(eulerXYZ);
+		GlobalCommandSystem().executeCommand("RotateSelectedEulerXYZ", eulerXYZ);
 	}
 	else
 	{
@@ -312,7 +311,7 @@ void TransformDialog::onClickSmaller(wxCommandEvent& ev, EntryRow* row)
 		scaleXYZ[row->axis] = 1/step;
 
 		// Pass the call to the algorithm functions
-		selection::algorithm::scaleSelected(scaleXYZ);
+		GlobalCommandSystem().executeCommand("ScaleSelected", scaleXYZ);
 	}
 }
 
