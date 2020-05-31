@@ -3,9 +3,9 @@
 #include "i18n.h"
 #include "idialogmanager.h"
 #include "iscenegraph.h"
+#include "iorthoview.h"
 #include "iradiant.h"
 #include "scenelib.h"
-#include "xyview/GlobalXYWnd.h"
 #include "selection/algorithm/General.h"
 
 /** greebo:  This file contains code from map.cpp concerning the lookup
@@ -82,11 +82,7 @@ void SelectBrush (int entitynum, int brushnum)
   {
 	  Node_setSelected(path.top(), true);
 
-    ui::XYWndPtr xyView = GlobalXYWnd().getActiveXY();
-
-    if (xyView) {
-    	xyView->positionView(path.top()->worldAABB().origin);
-    }
+      GlobalXYWndManager().positionActiveView(path.top()->worldAABB().origin);
   }
 }
 

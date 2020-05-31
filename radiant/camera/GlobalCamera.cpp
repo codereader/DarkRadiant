@@ -302,6 +302,15 @@ void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angle
 	});
 }
 
+ICameraView& GlobalCameraManager::getActiveView()
+{
+	auto camWnd = getActiveCamWnd();
+
+	if (!camWnd) throw std::runtime_error("No active camera view present");
+
+	return *camWnd;
+}
+
 // --------------- Keyboard movement methods ------------------------------------------
 
 void GlobalCameraManager::moveCameraCmd(const cmd::ArgumentList& args)

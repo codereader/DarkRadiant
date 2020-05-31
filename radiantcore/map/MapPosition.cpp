@@ -1,7 +1,7 @@
 #include "MapPosition.h"
 
-#include "camera/GlobalCamera.h"
 #include "ientity.h"
+#include "icamera.h"
 #include "itextstream.h"
 #include "string/string.h"
 #include "map/Map.h"
@@ -10,13 +10,13 @@
 namespace map
 {
 
-    namespace 
-    {
-        const char* const GKEY_MAP_POSROOT = "/mapFormat/mapPositionPosKey";
-        const char* const GKEY_MAP_ANGLEROOT = "/mapFormat/mapPositionAngleKey";
-        const char* const POSITION_KEY_FORMAT = "MapPosition{0:d}";
-        const char* const ANGLE_KEY_FORMAT = "MapAngle{0:d}";
-    }
+namespace 
+{
+    const char* const GKEY_MAP_POSROOT = "/mapFormat/mapPositionPosKey";
+    const char* const GKEY_MAP_ANGLEROOT = "/mapFormat/mapPositionAngleKey";
+    const char* const POSITION_KEY_FORMAT = "MapPosition{0:d}";
+    const char* const ANGLE_KEY_FORMAT = "MapAngle{0:d}";
+}
 
 MapPosition::MapPosition(unsigned int index) :
     _index(index),
@@ -113,21 +113,22 @@ void MapPosition::store(const cmd::ArgumentList& args)
 
     rMessage() << "Storing map position #" << _index << std::endl;
     
-    auto camwnd = GlobalCamera().getActiveCamWnd();
-
-    if (!camwnd)
+    try
     {
-        rWarning() << "MapPosition: Couldn't find Camera." << std::endl;
-        return;
+        auto& cameraView = GlobalCameraView().getActiveView();
+
+        _position = cameraView.getCameraOrigin();
+        _angle = cameraView.getCameraAngles();
+
+        saveTo(mapRoot);
+
+        // Tag the map as modified
+        GlobalMap().setModified(true);
     }
-
-    _position = camwnd->getCameraOrigin();
-    _angle = camwnd->getCameraAngles();
-
-    saveTo(mapRoot);
-
-    // Tag the map as modified
-    GlobalMap().setModified(true);
+    catch (const std::runtime_error& ex)
+    {
+        rError() << "Exception saving camera position: " << ex.what() << std::endl;
+    }
 }
 
 void MapPosition::recall(const cmd::ArgumentList& args) 

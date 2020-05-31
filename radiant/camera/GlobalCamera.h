@@ -69,7 +69,8 @@ public:
 
 	/** greebo: Sets the camera to the given point/angle.
 	 */
-	void focusCamera(const Vector3& point, const Vector3& angles);
+	void focusCamera(const Vector3& point, const Vector3& angles) override;
+	ICameraView& getActiveView() override;
 
 	// Toggles between lighting and solid rendering mode (passes the call to the CameraSettings class)
 	void toggleLightingMode(const cmd::ArgumentList& args);

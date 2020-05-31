@@ -15,6 +15,9 @@ public:
 	virtual Vector3 getCameraOrigin() const = 0;
 	virtual void setCameraOrigin(const Vector3& newOrigin) = 0;
 
+	virtual Vector3 getCameraAngles() const = 0;
+	virtual void setCameraAngles(const Vector3& newAngles) = 0;
+
 	// Returns the vector pointing to the "right"
 	virtual Vector3 getRightVector() const = 0;
 	// Returns the vector pointing "up"
