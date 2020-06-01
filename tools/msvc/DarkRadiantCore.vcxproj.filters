@@ -991,9 +991,6 @@
     <ClCompile Include="..\..\radiantcore\map\RootNode.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\map\StartupMapLoader.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\export\ModelExporter.cpp">
       <Filter>src\model\export</Filter>
     </ClCompile>
@@ -2059,9 +2056,6 @@
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\ShaderBreakdown.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\StartupMapLoader.h">
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\export\ModelExporter.h">

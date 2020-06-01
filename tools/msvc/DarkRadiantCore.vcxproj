@@ -140,7 +140,6 @@
     <ClCompile Include="..\..\radiantcore\map\RegionManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiantcore\map\RootNode.cpp" />
-    <ClCompile Include="..\..\radiantcore\map\StartupMapLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\AseExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\Lwo2Chunk.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\Lwo2Exporter.cpp" />
@@ -855,7 +854,6 @@
     <ClInclude Include="..\..\radiantcore\map\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiantcore\map\RootNode.h" />
     <ClInclude Include="..\..\radiantcore\map\ShaderBreakdown.h" />
-    <ClInclude Include="..\..\radiantcore\map\StartupMapLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\export\AseExporter.h" />
     <ClInclude Include="..\..\radiantcore\model\export\Lwo2Chunk.h" />
     <ClInclude Include="..\..\radiantcore\model\export\Lwo2Exporter.h" />

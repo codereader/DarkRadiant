@@ -6,24 +6,14 @@
 #include "iregistry.h"
 #include "igame.h"
 #include "iradiant.h"
-#include "Map.h"
 #include "ui/mru/MRU.h"
+#include "module/StaticModule.h"
 
 #include "os/path.h"
 #include "os/file.h"
 
 namespace map 
 {
-
-StartupMapLoader::StartupMapLoader()
-{
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(*this, &StartupMapLoader::onRadiantStartup)
-	);
-	GlobalRadiant().signal_radiantShutdown().connect(
-		sigc::mem_fun(*this, &StartupMapLoader::onRadiantShutdown)
-	);
-}
 
 void StartupMapLoader::onRadiantStartup()
 {
@@ -35,7 +25,8 @@ void StartupMapLoader::onRadiantStartup()
 
     for (const std::string& candidate : args)
     {
-		if (os::getExtension(candidate) != "map") continue;
+		if (os::getExtension(candidate) != "map" && 
+			os::getExtension(candidate) != "mapx") continue;
 
 		// We have a map file, check if it exists (and where)
 
@@ -70,10 +61,6 @@ void StartupMapLoader::onRadiantStartup()
 		{
 			loadMapSafe(lastMap);
 		}
-		else
-		{
-			GlobalMap().createNew();
-		}
 	}
 }
 
@@ -82,14 +69,14 @@ void StartupMapLoader::loadMapSafe(const std::string& mapToLoad)
 	// Check if we have a valid openGL context, otherwise postpone the load
 	if (GlobalOpenGL().wxContextValid())
 	{
-		GlobalMap().load(mapToLoad);
+		GlobalCommandSystem().executeCommand("OpenMap", mapToLoad);
 		return;
 	}
 
 	// No valid context, subscribe to the extensionsInitialised signal
 	GlobalRenderSystem().signal_extensionsInitialised().connect([mapToLoad]()
 	{
-		GlobalMap().load(mapToLoad);
+		GlobalCommandSystem().executeCommand("OpenMap", mapToLoad);
 	});
 }
 
@@ -97,5 +84,37 @@ void StartupMapLoader::onRadiantShutdown()
 {
 	GlobalMRU().saveRecentFiles();
 }
+
+const std::string& StartupMapLoader::getName() const
+{
+	static std::string _name("StartupMapLoader");
+	return _name;
+}
+
+const StringSet& StartupMapLoader::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_RADIANT_APP);
+	}
+
+	return _dependencies;
+}
+
+void StartupMapLoader::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(*this, &StartupMapLoader::onRadiantStartup)
+	);
+	GlobalRadiant().signal_radiantShutdown().connect(
+		sigc::mem_fun(*this, &StartupMapLoader::onRadiantShutdown)
+	);
+}
+
+module::StaticModule<StartupMapLoader> startupMapLoader;
 
 } // namespace map

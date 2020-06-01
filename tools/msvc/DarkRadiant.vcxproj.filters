@@ -158,6 +158,9 @@
     <Filter Include="src\ui\selectionset">
       <UniqueIdentifier>{44f6abf2-2b6d-46ce-8c41-291f862855f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map">
+      <UniqueIdentifier>{8d1f0555-13d0-4735-ad5e-26bdf8578bc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -627,6 +630,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp">
       <Filter>src\ui\modelexport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp">
+      <Filter>src\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1211,6 +1217,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h">
       <Filter>src\ui\modelexport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\StartupMapLoader.h">
+      <Filter>src\map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

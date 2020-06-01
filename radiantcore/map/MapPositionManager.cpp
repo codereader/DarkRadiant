@@ -2,6 +2,7 @@
 
 #include "maplib.h"
 #include "ientity.h"
+#include "icamera.h"
 #include "gamelib.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
@@ -12,8 +13,6 @@
 #include "entitylib.h"
 #include <functional>
 
-#include "camera/GlobalCamera.h"
-#include "xyview/GlobalXYWnd.h"
 #include "map/Map.h"
 
 namespace map
@@ -172,15 +171,22 @@ void MapPositionManager::removeLegacyCameraPosition()
 
 void MapPositionManager::saveLastCameraPosition(const scene::IMapRootNodePtr& root)
 {
-	auto camWnd = GlobalCamera().getActiveCamWnd();
-
-	if (!root || !camWnd)
+	if (!root)
 	{
 		return;
 	}
 
-	root->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camWnd->getCameraOrigin()));
-	root->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camWnd->getCameraAngles()));
+	try
+	{
+		auto& camView = GlobalCameraView().getActiveView();
+
+		root->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camView.getCameraOrigin()));
+		root->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camView.getCameraAngles()));
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << "Cannot save last camera position: " << ex.what() << std::endl;
+	}
 }
 
 void MapPositionManager::gotoLastCameraPosition()

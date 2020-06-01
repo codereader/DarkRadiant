@@ -31,19 +31,16 @@
 #include "wxutil/ScopeTimer.h"
 
 #include "brush/BrushModule.h"
-#include "xyview/GlobalXYWnd.h"
-#include "camera/GlobalCamera.h"
 #include "scene/BasicRootNode.h"
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
-#include "map/StartupMapLoader.h"
 #include "map/MapResource.h"
 #include "map/algorithm/Import.h"
 #include "map/algorithm/Export.h"
 #include "scene/Traverse.h"
 #include "map/algorithm/MapExporter.h"
-#include "model/ModelExporter.h"
-#include "model/ModelScalePreserver.h"
+#include "model/export/ModelExporter.h"
+#include "model/export/ModelScalePreserver.h"
 #include "map/algorithm/Skins.h"
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
@@ -638,7 +635,7 @@ void Map::saveMapCopyAs(const cmd::ArgumentList& args)
 void Map::registerCommands()
 {
     GlobalCommandSystem().addCommand("NewMap", Map::newMap);
-    GlobalCommandSystem().addCommand("OpenMap", Map::openMap);
+    GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
     GlobalCommandSystem().addCommand("LoadPrefab", Map::loadPrefab);
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
@@ -671,10 +668,16 @@ void Map::openMap(const cmd::ArgumentList& args)
     if (!GlobalMap().askForSave(_("Open Map")))
         return;
 
-    // Get the map file name to load
-    MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
+    std::string fullPath;
 
-    if (!fileInfo.fullPath.empty())
+    if (args.empty())
+    {
+        // No arguments passed, get the map file name to load
+        MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
+        fullPath = fileInfo.fullPath;
+    }
+
+    if (!fullPath.empty())
 	{
         GlobalMRU().insert(fileInfo.fullPath);
 
