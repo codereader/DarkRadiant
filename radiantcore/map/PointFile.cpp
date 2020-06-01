@@ -3,25 +3,18 @@
 #include "i18n.h"
 #include "igl.h"
 #include "iscenegraph.h"
-#include "imainframe.h"
 #include "itextstream.h"
+#include "icamera.h"
 #include <fstream>
 #include <iostream>
 
-#include "wxutil/dialog/MessageBox.h"
 #include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "map/Map.h"
-#include "camera/GlobalCamera.h"
-#include "camera/CamWnd.h"
-#include "xyview/GlobalXYWnd.h"
 #include <fmt/format.h>
 
 #include "module/StaticModule.h"
-
-#ifdef MessageBox
-#undef MessageBox
-#endif
+#include "command/ExecutionFailure.h"
 
 namespace map
 {
@@ -83,17 +76,15 @@ void PointFile::parse()
 {
 	// Pointfile is the same as the map file but with a .lin extension
 	// instead of .map
-	std::string mapName = GlobalMap().getMapName();
+	std::string mapName = GlobalMapModule().getMapName();
 	std::string pfName = mapName.substr(0, mapName.rfind(".")) + ".lin";
 
 	// Open the pointfile and get its input stream if possible
-	std::ifstream inFile(pfName.c_str());
+	std::ifstream inFile(pfName);
 
 	if (!inFile) 
 	{
-		wxutil::Messagebox::ShowError(
-			fmt::format(_("Could not open pointfile: {0}"), pfName));
-		return;
+		throw cmd::ExecutionFailure(fmt::format(_("Could not open pointfile: {0}"), pfName));
 	}
 
 	// Pointfile is a list of float vectors, one per line, with components
@@ -135,26 +126,31 @@ void PointFile::advance(bool forward)
 		_curPos--;
 	}
 
-	ui::CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-
-	if (!cam) return;
-
-	cam->setCameraOrigin(_points[_curPos].vertex);
-
-	GlobalXYWnd().getActiveXY()->setOrigin(_points[_curPos].vertex);
-
+	try
 	{
-		Vector3 dir((_points[_curPos+1].vertex - cam->getCameraOrigin()).getNormalised());
-		Vector3 angles(cam->getCameraAngles());
+		auto& cam = GlobalCameraView().getActiveView();
 
-		angles[ui::CAMERA_YAW] = radians_to_degrees(atan2(dir[1], dir[0]));
-        angles[ui::CAMERA_PITCH] = radians_to_degrees(asin(dir[2]));
+		cam.setCameraOrigin(_points[_curPos].vertex);
 
-		cam->setCameraAngles(angles);
+		GlobalXYWndManager().setOrigin(_points[_curPos].vertex);
+
+		{
+			Vector3 dir((_points[_curPos + 1].vertex - cam.getCameraOrigin()).getNormalised());
+			Vector3 angles(cam.getCameraAngles());
+
+			angles[ui::CAMERA_YAW] = radians_to_degrees(atan2(dir[1], dir[0]));
+			angles[ui::CAMERA_PITCH] = radians_to_degrees(asin(dir[2]));
+
+			cam.setCameraAngles(angles);
+		}
+
+		// Redraw the scene
+		SceneChangeNotify();
 	}
-
-	// Redraw the scene
-	SceneChangeNotify();
+	catch (const std::runtime_error& ex)
+	{
+		rError() << "Cannot set camera view position: " << ex.what() << std::endl;
+	}
 }
 
 void PointFile::nextLeakSpot(const cmd::ArgumentList& args)

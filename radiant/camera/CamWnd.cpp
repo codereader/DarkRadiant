@@ -15,7 +15,6 @@
 #include "iselectiontest.h"
 #include "selectionlib.h"
 #include "gamelib.h"
-#include "map/Map.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"
 #include "GlobalCamera.h"

@@ -12,7 +12,6 @@
 
 #include "model/export/ScaledModelExporter.h"
 #include "model/export/ModelScalePreserver.h"
-#include "StartupMapLoader.h"
 #include "MapPositionManager.h"
 
 #include <sigc++/signal.h>
@@ -46,7 +45,6 @@ class Map :
 	bool _saveInProgress;
 
 	// A local helper object, observing the radiant module
-	std::unique_ptr<StartupMapLoader> _startupMapLoader;
 	ScaledModelExporter _scaledModelExporter;
 	std::unique_ptr<MapPositionManager> _mapPositionManager;
 	std::unique_ptr<ModelScalePreserver> _modelScalePreserver;
