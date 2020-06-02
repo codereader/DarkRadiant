@@ -474,6 +474,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#MediaTab">The Media tab</a></li>
 <li><a href="#TexturesTab">The Textures tab</a></li>
 <li><a href="#SurfaceInspector">Using the Surface Inspector</a></li>
+<li><a href="#_using_the_shader_clipboard">Using the shader clipboard</a></li>
 </ul>
 </li>
 <li><a href="#_working_with_entities">Working with entities</a>
@@ -1885,6 +1886,96 @@ resized), you will want to disable <strong>Texture Lock</strong>.</p></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect3">
+<h4 id="_using_the_shader_clipboard">Using the shader clipboard</h4>
+<div class="paragraph">
+<p>While constructing a map it will frequently be necessary to apply the same
+texture to several different surfaces such that they appear seamless in game. In
+order to assist with this, DarkRadiant provides a <strong>shader clipboard</strong> which
+allows shaders to be copied and pasted between primitives, and is independent of
+the main clipboard used for copying and pasting other objects.</p>
+</div>
+<div class="sect4">
+<h5 id="_copying_a_shader">Copying a shader</h5>
+<div class="paragraph">
+<p>There are two ways to copy a shader to the shader clipboard.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select a <em>single face</em> (not an entire brush) with <strong>Ctrl + Shift + Left click</strong>
+in the 3D view, then choose <strong>Edit &#8594; Copy shader</strong>.</p>
+</li>
+<li>
+<p>Directly <strong>Middle click</strong> the face in the 3D view (there is no need to select
+it first).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In both cases, the <strong>ShaderClipboard</strong> section of the bottom status bar will
+update to show the new value of the shader clipboard. If the <strong>Media</strong> or
+<strong>Textures</strong> tab is visible, their contents will also update to view the selected
+shader.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="img/note.png" alt="Note">
+</td>
+<td class="content">
+Selecting a texture explicitly in the <strong>Media</strong> or <strong>Textures</strong> tabs will also
+update the shader clipboard with the selected shader.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_pasting_a_shader">Pasting a shader</h5>
+<div class="paragraph">
+<p>Once a shader is on the shader clipboard, it can be pasted onto another surface
+in a number of ways:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Select the destination face with <strong>Ctrl + Shift + Left click</strong>, then choose
+<strong>Edit &#8594; Paste shader</strong> or <strong>Edit &#8594; Paste shader (natural)</strong>.</p>
+</li>
+<li>
+<p>Directly <strong>Middle click</strong> the destination face while holding down either <strong>Ctrl</strong>
+(to paste the shader in projected coordinates) or <strong>Shift</strong> (to paste the shader
+with natural coordinates).</p>
+</li>
+</ol>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Natural or projected pasting</div>
+<div class="paragraph">
+<p>The difference between natural and projected coordinates is apparent when
+pasting a shader onto a curved patch.</p>
+</div>
+<div class="paragraph">
+<p>With <strong>projected</strong> coordinates (<strong>Ctrl + Middle click</strong>) the texture on the patch
+will be aligned identically to the texture on the source face, which might
+result in a stretched texture depending on the angle between the patch and the
+source face.</p>
+</div>
+<div class="paragraph">
+<p>With <strong>natural</strong> coordinates (<strong>Shift + Middle click</strong>) the texture will flow over
+the curved surface in a more natural manner.</p>
+</div>
+<div class="paragraph">
+<p>When pasting a shader onto a flat brush face, there may be little or no
+difference between the two options.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -3764,7 +3855,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-27 20:50:27 BST
+Last updated 2020-06-02 20:50:59 BST
 </div>
 </div>
 </body>
