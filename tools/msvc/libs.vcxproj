@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\libs\generic\callback.h" />
     <ClInclude Include="..\..\libs\KeyValueStore.h" />
     <ClInclude Include="..\..\libs\maplib.h" />
+    <ClInclude Include="..\..\libs\messages\AutomaticMapSaveRequest.h" />
     <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h" />
     <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h" />
     <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h" />

@@ -121,6 +121,9 @@ public:
 	EViewType getActiveViewType() const override;
 	void setActiveViewType(EViewType viewType) override;
 
+	IOrthoView& getActiveView() override;
+	IOrthoView& getViewByType(EViewType viewType) override;
+
 	void toggleActiveView(const cmd::ArgumentList& args);
 
 	// Retrieves the pointer to the first view matching the given view type

@@ -114,8 +114,8 @@ public:
     static const std::string getViewTypeStr(EViewType viewtype);
 
     void positionView(const Vector3& position);
-    const Vector3& getOrigin();
-    void setOrigin(const Vector3& origin);
+    const Vector3& getOrigin() const override;
+    void setOrigin(const Vector3& origin) override;
     void scroll(int x, int y) override;
     Vector4 getWindowCoordinates();
 
@@ -128,9 +128,6 @@ public:
     void snapToGrid(Vector3& point) override;
 
     void mouseToPoint(int x, int y, Vector3& point);
-
-    void beginMove();
-    void endMove();
 
     void zoomIn() override;
     void zoomOut() override;
@@ -149,8 +146,8 @@ public:
     void setScale(float f);
     float getScale() const override;
 
-    int getWidth() const;
-    int getHeight() const;
+    int getWidth() const override;
+    int getHeight() const override;
 
     // greebo: CameraObserver implementation; gets called when the camera is moved
     void cameraMoved() override;

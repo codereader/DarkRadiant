@@ -12,11 +12,23 @@ namespace radiant
 class NotificationMessage :
     public IMessage
 {
+public:
+    enum Type
+    {
+        Information,
+        Warning,
+        Error,
+    };
+
 private:
     std::string _message;
+
+    Type _type;
+
 public:
-    NotificationMessage(const std::string& message) :
-        _message(message)
+    NotificationMessage(const std::string& message, Type type) :
+        _message(message),
+        _type(type)
     {}
 
     const std::string& getMessage() const
@@ -24,10 +36,27 @@ public:
         return _message;
     }
 
-    // Convenience method, creating an instance and dispatching it to the message bus
-    static void Send(const std::string& message)
+    Type getType() const
     {
-        NotificationMessage msg(message);
+        return _type;
+    }
+
+    // Convenience method, creating an instance and dispatching it to the message bus
+    static void SendInformation(const std::string& message)
+    {
+        NotificationMessage msg(message, Information);
+        GlobalRadiantCore().getMessageBus().sendMessage(msg);
+    }
+
+    static void SendWarning(const std::string& message)
+    {
+        NotificationMessage msg(message, Warning);
+        GlobalRadiantCore().getMessageBus().sendMessage(msg);
+    }
+
+    static void SendError(const std::string& message)
+    {
+        NotificationMessage msg(message, Error);
         GlobalRadiantCore().getMessageBus().sendMessage(msg);
     }
 };

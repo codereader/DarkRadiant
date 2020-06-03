@@ -147,6 +147,7 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	_eClassColourManager.reset(new EntityClassColourManager);
 	_longOperationHandler.reset(new LongRunningOperationHandler);
 	_mapFileProgressHandler.reset(new MapFileProgressHandler);
+	_autoSaveRequestHandler.reset(new AutoSaveRequestHandler);
 
 	initialiseEntitySettings();
 
@@ -178,6 +179,7 @@ void UserInterfaceModule::shutdownModule()
 	_longOperationHandler.reset();
 	_eClassColourManager.reset();
 	_mapFileProgressHandler.reset();
+	_autoSaveRequestHandler.reset();
 }
 
 void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)
@@ -193,7 +195,18 @@ void UserInterfaceModule::HandleNotificationMessage(radiant::NotificationMessage
 	auto parentWindow = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
 		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
 
-	wxutil::Messagebox::Show(_("Notification"), msg.getMessage(), IDialog::MessageType::MESSAGE_CONFIRM, parentWindow);
+	switch (msg.getType())
+	{
+	case radiant::NotificationMessage::Information:
+		wxutil::Messagebox::Show(_("Notification"), msg.getMessage(), IDialog::MessageType::MESSAGE_CONFIRM, parentWindow);
+		break;
+	case radiant::NotificationMessage::Warning:
+		wxutil::Messagebox::Show(_("Warning"), msg.getMessage(), IDialog::MessageType::MESSAGE_WARNING, parentWindow);
+		break;
+	case radiant::NotificationMessage::Error:
+		wxutil::Messagebox::Show(_("Error"), msg.getMessage(), IDialog::MessageType::MESSAGE_ERROR, parentWindow);
+		break;
+	};
 }
 
 void UserInterfaceModule::initialiseEntitySettings()
@@ -318,7 +331,7 @@ void UserInterfaceModule::registerUICommands()
 
 void UserInterfaceModule::HandleTextureChanged(radiant::TextureChangedMessage& msg)
 {
-	ui::SurfaceInspector::update();
+	SurfaceInspector::update();
 }
 
 // Static module registration

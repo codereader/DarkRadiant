@@ -216,6 +216,9 @@
       <Filter>messages</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\Rectangle.h" />
+    <ClInclude Include="..\..\libs\messages\AutomaticMapSaveRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

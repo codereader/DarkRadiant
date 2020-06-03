@@ -409,6 +409,7 @@
     <ClInclude Include="..\..\radiant\uimanager\UIManager.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\AutoSaveRequestHandler.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h" />

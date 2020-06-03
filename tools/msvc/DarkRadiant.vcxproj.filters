@@ -1221,6 +1221,9 @@
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h">
       <Filter>src\map</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\AutoSaveRequestHandler.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

@@ -3,6 +3,8 @@
 #include "i18n.h"
 #include "brush/TexDef.h"
 #include "ibrush.h"
+#include "icamera.h"
+#include "iorthoview.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "imainframe.h"
@@ -23,14 +25,13 @@
 #include "brush/Brush.h"
 #include "RegionWalkers.h"
 #include "MapFileManager.h"
-#include "xyview/GlobalXYWnd.h"
-#include "camera/GlobalCamera.h"
 #include "ui/mru/MRU.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/General.h"
 #include "map/MapResource.h"
 #include "map/Map.h"
 #include "module/StaticModule.h"
+#include "command/ExecutionFailure.h"
 
 #include <memory>
 
@@ -131,7 +132,8 @@ void RegionManager::setRegionFromXY(Vector2 topLeft, Vector2 lowerRight) {
 
 void RegionManager::addRegionBrushes()
 {
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++)
+    {
         // Create a new brush
         _brushes[i] = GlobalBrushCreator().createBrush();
 
@@ -148,34 +150,41 @@ void RegionManager::addRegionBrushes()
     constructRegionBrushes(_brushes, min, max);
 
     // Get the player start EClass pointer
-    const std::string eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
-    IEntityClassPtr playerStart = GlobalEntityClassManager().findOrInsert(eClassPlayerStart, false);
+    auto eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
+    auto playerStart = GlobalEntityClassManager().findOrInsert(eClassPlayerStart, false);
 
     // Create the info_player_start entity
     _playerStart = GlobalEntityModule().createEntity(playerStart);
 
-    ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+    try
+    {
+        auto& camView = GlobalCameraView().getActiveView();
 
-    if (camWnd != NULL) {
         // Obtain the camera origin = player start point
-        Vector3 camOrigin = camWnd->getCameraOrigin();
+        Vector3 camOrigin = camView.getCameraOrigin();
         // Get the start angle of the player start point
-        float angle = camWnd->getCameraAngles()[ui::CAMERA_YAW];
+        float angle = camView.getCameraAngles()[ui::CAMERA_YAW];
 
         // Check if the camera origin is within the region
-        if (_bounds.intersects(camOrigin))
+        if (!_bounds.intersects(camOrigin))
         {
-            // Set the origin key of the playerStart entity
-            _playerStart->getEntity().setKeyValue("origin",
-                                                  string::to_string(camOrigin));
-            _playerStart->getEntity().setKeyValue("angle",
-                                                  string::to_string(angle));
-        }
-        else {
-            wxutil::Messagebox::ShowError(
+            throw cmd::ExecutionFailure(
                 _("Warning: Camera not within region, can't set info_player_start.")
             );
         }
+
+        // Set the origin key of the playerStart entity
+        _playerStart->getEntity().setKeyValue("origin", string::to_string(camOrigin));
+        _playerStart->getEntity().setKeyValue("angle", string::to_string(angle));
+    }
+    catch (const cmd::ExecutionFailure& ex)
+    {
+        throw ex; // let this one slip through
+    }
+    catch (const std::runtime_error&)
+    {
+        // CamWnd not available, log this
+        throw cmd::ExecutionFailure("Failed to read camera position.");
     }
 
     // Insert the info_player_start into the scenegraph root
@@ -241,30 +250,34 @@ void RegionManager::disableRegion(const cmd::ArgumentList& args) {
     SceneChangeNotify();
 }
 
-void RegionManager::setRegionXY(const cmd::ArgumentList& args) {
-    // Obtain the current XY orthoview, if there is one
-    ui::XYWndPtr xyWnd = GlobalXYWnd().getView(XY);
+void RegionManager::setRegionXY(const cmd::ArgumentList& args)
+{
+    try
+    {
+        // Obtain the current XY orthoview, if there is one
+        auto& xyWnd = GlobalXYWndManager().getViewByType(XY);
+        const auto& origin = xyWnd.getOrigin();
 
-    if (xyWnd) {
         Vector2 topLeft(
-            xyWnd->getOrigin()[0] - 0.5f * xyWnd->getWidth() / xyWnd->getScale(),
-            xyWnd->getOrigin()[1] - 0.5f * xyWnd->getHeight() / xyWnd->getScale()
+            origin[0] - 0.5f * xyWnd.getWidth() / xyWnd.getScale(),
+            origin[1] - 0.5f * xyWnd.getHeight() / xyWnd.getScale()
         );
 
         Vector2 lowerRight(
-            xyWnd->getOrigin()[0] + 0.5f * xyWnd->getWidth() / xyWnd->getScale(),
-            xyWnd->getOrigin()[1] + 0.5f * xyWnd->getHeight() / xyWnd->getScale()
+            origin[0] + 0.5f * xyWnd.getWidth() / xyWnd.getScale(),
+            origin[1] + 0.5f * xyWnd.getHeight() / xyWnd.getScale()
         );
 
         // Set the bounds from the calculated XY rectangle
         setRegionFromXY(topLeft, lowerRight);
+
+        SceneChangeNotify();
     }
-    else {
-        wxutil::Messagebox::ShowError(
-            _("Could not set Region: XY Top View not found."));
+    catch (const std::runtime_error& ex)
+    {
         disable();
+        throw cmd::ExecutionFailure(_("Could not set Region: XY Top View not found."));
     }
-    SceneChangeNotify();
 }
 
 void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {

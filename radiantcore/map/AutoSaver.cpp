@@ -8,7 +8,6 @@
 #include "iscenegraph.h"
 #include "iradiant.h"
 #include "igame.h"
-#include "imainframe.h"
 #include "ipreferencesystem.h"
 
 #include "registry/registry.h"
@@ -23,12 +22,11 @@
 #include "string/string.h"
 #include "string/convert.h"
 #include "map/Map.h"
-#include "modulesystem/ApplicationContextImpl.h"
 #include "module/StaticModule.h"
-#include "wxutil/dialog/MessageBox.h"
+#include "messages/NotificationMessage.h"
+#include "messages/AutomaticMapSaveRequest.h"
 
 #include <fmt/format.h>
-#include <wx/frame.h>
 
 namespace map 
 {
@@ -118,7 +116,7 @@ void AutoMapSaver::saveSnapshot()
 	// 3. inc that and save the map
 
 	// Construct the fs::path class out of the full map path (throws on fail)
-	fs::path fullPath = GlobalMap().getMapName();
+	fs::path fullPath = GlobalMapModule().getMapName();
 
 	// Append the the snapshot folder to the path
 	fs::path snapshotPath = fullPath;
@@ -203,9 +201,9 @@ void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& exi
 			" take up more than " << maxSnapshotFolderSize << " MB. You might consider cleaning it up." << std::endl;
 
 		// Notify the user
-		wxutil::Messagebox::Show(_("Snapshot Folder Size Warning"),
+		radiant::NotificationMessage::SendWarning(
 			fmt::format(_("The snapshots saved for this map are exceeding the configured size limit."
-				"\nConsider cleaning up the folder {0}"), snapshotPath.string()), ui::IDialog::MessageType::MESSAGE_WARNING);
+				"\nConsider cleaning up the folder {0}"), snapshotPath.string()));
 	}
 	else
 	{
@@ -233,32 +231,19 @@ void AutoMapSaver::collectExistingSnapshots(std::map<int, std::string>& existing
 
 void AutoMapSaver::checkSave()
 {
-	if (!GlobalMainFrame().screenUpdatesEnabled())
-	{
-		return;
-	}
-
-	// greebo: Check if we have a valid main window to grab the pointer
-	wxFrame* mainWindow = GlobalMainFrame().getWxTopLevelWindow();
-
-	if (mainWindow == NULL || !mainWindow->IsActive())
-	{
-		rMessage() << "AutoSaver: Main window not present or not shown on screen, " <<
-			 "will wait for another period." << std::endl;
-		return;
-	}
-
 	// Check, if changes have been made since the last autosave
-    if (!GlobalSceneGraph().root() ||
+	if (!GlobalSceneGraph().root() ||
 		_changes == GlobalSceneGraph().root()->getUndoChangeTracker().changes())
 	{
 		return;
 	}
 
-	// Check if the user is currently pressing a mouse button
-	// Don't start the save if the user is holding a mouse button
-	if (wxGetMouseState().ButtonIsDown(wxMOUSE_BTN_ANY)) 
+	AutomaticMapSaveRequest request;
+	GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+	if (request.isDenied())
 	{
+		rMessage() << "Auto save skipped: " << request.getReason() << std::endl;
 		return;
 	}
 

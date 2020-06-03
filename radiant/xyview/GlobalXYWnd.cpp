@@ -319,10 +319,34 @@ Vector3 XYWndManager::getActiveViewOrigin()
 {
 	if (!_activeXY) 
 	{
-		return Vector3(0, 0, 0);
+		throw std::runtime_error("No active view found");
 	}
 
 	return _activeXY->getOrigin();
+}
+
+IOrthoView& XYWndManager::getActiveView()
+{
+	if (!_activeXY)
+	{
+		throw std::runtime_error("No active view found");
+	}
+
+	return *_activeXY;
+}
+
+// Return the first view matching the given viewType
+IOrthoView& XYWndManager::getViewByType(EViewType viewType)
+{
+	for (auto& pair : _xyWnds)
+	{
+		if (pair.second->getViewType() == viewType)
+		{
+			return *pair.second;
+		}
+	}
+	
+	throw std::runtime_error("No matching view found");
 }
 
 void XYWndManager::setScale(float scale) {

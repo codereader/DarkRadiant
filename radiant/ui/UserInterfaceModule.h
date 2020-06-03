@@ -8,6 +8,7 @@
 
 #include "EntityClassColourManager.h"
 #include "LongRunningOperationHandler.h"
+#include "AutoSaveRequestHandler.h"
 #include "MapFileProgressHandler.h"
 #include "messages/CommandExecutionFailed.h"
 #include "messages/TextureChanged.h"
@@ -30,6 +31,7 @@ private:
 	std::unique_ptr<EntityClassColourManager> _eClassColourManager;
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 	std::unique_ptr<MapFileProgressHandler> _mapFileProgressHandler;
+	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;
 
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;

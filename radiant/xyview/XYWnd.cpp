@@ -291,7 +291,8 @@ bool XYWnd::isActive() const {
     return _isActive;
 };
 
-const Vector3& XYWnd::getOrigin() {
+const Vector3& XYWnd::getOrigin() const 
+{
     return _origin;
 }
 
