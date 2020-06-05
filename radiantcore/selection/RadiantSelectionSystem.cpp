@@ -30,6 +30,11 @@
 namespace selection
 {
 
+namespace
+{
+    const std::string RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
+}
+
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
@@ -95,7 +100,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
         case ePrimitive:
         {
             // Do we have a camera view (filled rendering?)
-            if (view.fill() || !GlobalXYWnd().higherEntitySelectionPriority())
+            if (view.fill() || !higherEntitySelectionPriority())
             {
                 // Test for any visible elements (primitives, entities), but don't select child primitives
                 AnySelector anyTester(selector, test);
@@ -179,6 +184,11 @@ void RadiantSelectionSystem::pivotChanged()
 
 void RadiantSelectionSystem::pivotChangedSelection(const ISelectable& selectable) {
     pivotChanged();
+}
+
+bool RadiantSelectionSystem::higherEntitySelectionPriority() const
+{
+    return registry::getValue<bool>(RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
 // Sets the current selection mode (Entity, Component or Primitive)

@@ -19,6 +19,7 @@
 #include "imapinfofile.h"
 #include "iaasfile.h"
 #include "igame.h"
+#include "imru.h"
 #include "imapformat.h"
 
 #include "registry/registry.h"
@@ -42,9 +43,7 @@
 #include "model/export/ModelExporter.h"
 #include "model/export/ModelScalePreserver.h"
 #include "map/algorithm/Skins.h"
-#include "ui/mru/MRU.h"
-#include "ui/mainframe/ScreenUpdateBlocker.h"
-#include "ui/prefabselector/PrefabSelector.h"
+#include "messages/ScopedLongRunningOperation.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Transformation.h"
@@ -115,7 +114,7 @@ void Map::loadMapResourceFromPath(const std::string& path)
     // Associate the Scenegaph with the global RenderSystem
     // This usually takes a while since all editor textures are loaded - display a dialog to inform the user
     {
-        ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading textures..."), true); // force display
+        radiant::ScopedLongRunningOperation blocker(_("Loading textures..."));
 
         GlobalSceneGraph().root()->setRenderSystem(std::dynamic_pointer_cast<RenderSystem>(
             module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
@@ -234,10 +233,11 @@ void Map::setModified(bool modifiedFlag)
 }
 
 // move the view to a certain position
-void Map::focusViews(const Vector3& point, const Vector3& angles) {
+void Map::focusViews(const Vector3& point, const Vector3& angles)
+{
     // Set the camera and the views to the given point
-    GlobalCamera().focusCamera(point, angles);
-    GlobalXYWnd().setOrigin(point);
+    GlobalCameraView().focusCamera(point, angles);
+    GlobalXYWndManager().setOrigin(point);
 }
 
 scene::INodePtr Map::findWorldspawn()
@@ -317,15 +317,11 @@ bool Map::save(const MapFormatPtr& mapFormat)
     _saveInProgress = true;
 
     // Disable screen updates for the scope of this function
-    ui::ScreenUpdateBlocker blocker(_("Processing..."), "");
-
-	blocker.setMessage(_("Preprocessing"));
+    radiant::ScopedLongRunningOperation blocker(_("Saving Map..."));
 
     emitMapEvent(MapSaving);
 
     wxutil::ScopeTimer timer("map save");
-
-	blocker.setMessage(_("Saving Map"));
 
     bool success = false;
 
@@ -369,7 +365,7 @@ void Map::createNew() {
 
 bool Map::import(const std::string& filename)
 {
-    ui::ScreenUpdateBlocker blocker(_("Importing..."), filename);
+    radiant::ScopedLongRunningOperation blocker(_("Importing..."));
 
     bool success = false;
 
@@ -405,7 +401,7 @@ void Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
     if (_saveInProgress) return; // safeguard
 
     // Disable screen updates for the scope of this function
-    ui::ScreenUpdateBlocker blocker(_("Processing..."), os::getFilename(filename));
+    radiant::ScopedLongRunningOperation blocker(_("Saving..."));
 
     _saveInProgress = true;
 
@@ -433,7 +429,7 @@ void Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
     if (_saveInProgress) return; // safeguard
 
     // Disable screen updates for the scope of this function
-    ui::ScreenUpdateBlocker blocker(_("Processing..."), os::getFilename(filename));
+    radiant::ScopedLongRunningOperation blocker(_("Saving..."));
 
     _saveInProgress = true;
 
@@ -584,14 +580,20 @@ void Map::saveCopyAs()
     }
 }
 
-void Map::loadPrefabAt(const Vector3& targetCoords)
+void Map::loadPrefabAt(const cmd::ArgumentList& args)
 {
-    /*MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(true, _("Load Prefab"), filetype::TYPE_PREFAB);*/
+    if (args.size() < 2 || args.size() > 3)
+    {
+        rWarning() << "Usage: " << LOAD_PREFAB_AT_CMD << 
+            " <prefabPath:String> <targetCoords:Vector3> [insertAsGroup:0|1]" << std::endl;
+        return;
+    }
 
-	ui::PrefabSelector::Result result = ui::PrefabSelector::ChoosePrefab();
+    auto prefabPath = args[0].getString();
+    auto targetCoords = args[1].getVector3();
+    auto insertAsGroup = args.size() > 2 ? args[2].getBoolean() : false;
 
-	if (!result.prefabPath.empty())
+	if (!prefabPath.empty())
 	{
         UndoableCommand undo("loadPrefabAt");
 
@@ -599,7 +601,7 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
         GlobalSelectionSystem().setSelectedAll(false);
 
         // Now import the prefab (imported items get selected)
-		import(result.prefabPath);
+		import(prefabPath);
 
         // Switch texture lock on
         bool prevTexLockState = GlobalBrush().textureLockEnabled();
@@ -612,7 +614,7 @@ void Map::loadPrefabAt(const Vector3& targetCoords)
         GlobalBrush().setTextureLock(prevTexLockState);
 
 		// Check whether we should group the prefab parts
-		if (result.insertAsGroup && GlobalSelectionSystem().countSelected() > 1)
+		if (insertAsGroup && GlobalSelectionSystem().countSelected() > 1)
 		{
 			try
 			{
@@ -637,7 +639,8 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("NewMap", Map::newMap);
     GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
-    GlobalCommandSystem().addCommand("LoadPrefab", Map::loadPrefab);
+    GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
+        { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
     GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
@@ -679,10 +682,10 @@ void Map::openMap(const cmd::ArgumentList& args)
 
     if (!fullPath.empty())
 	{
-        GlobalMRU().insert(fileInfo.fullPath);
+        GlobalMRU().insert(fullPath);
 
         GlobalMap().freeMap();
-        GlobalMap().load(fileInfo.fullPath);
+        GlobalMap().load(fullPath);
     }
 }
 
@@ -741,10 +744,6 @@ void Map::exportSelection(const cmd::ArgumentList& args)
 	{
 		GlobalMap().saveSelected(fileInfo.fullPath, fileInfo.mapFormat);
     }
-}
-
-void Map::loadPrefab(const cmd::ArgumentList& args) {
-    GlobalMap().loadPrefabAt(Vector3(0,0,0));
 }
 
 void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args)
@@ -826,7 +825,6 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
     // Register for the startup event
-    _startupMapLoader.reset(new StartupMapLoader);
 	_mapPositionManager.reset(new MapPositionManager);
 
     GlobalSceneGraph().addSceneObserver(this);
@@ -852,8 +850,6 @@ void Map::shutdownModule()
 	GlobalSceneGraph().removeSceneObserver(this);
 
     _modelScalePreserver.reset();
-
-	_startupMapLoader.reset();
 	_mapPositionManager.reset();
 }
 

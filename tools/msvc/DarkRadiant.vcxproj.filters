@@ -325,12 +325,6 @@
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelSelector.cpp">
       <Filter>src\ui\modelselector</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\mru\MRU.cpp">
-      <Filter>src\ui\mru</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\mru\MRUMenuItem.cpp">
-      <Filter>src\ui\mru</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\ortho\OrthoContextMenu.cpp">
       <Filter>src\ui\ortho</Filter>
     </ClCompile>
@@ -634,6 +628,9 @@
     <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\MapCommands.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -824,15 +821,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h">
       <Filter>src\ui\modelselector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mru\MRU.h">
-      <Filter>src\ui\mru</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mru\MRUList.h">
-      <Filter>src\ui\mru</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mru\MRUMenuItem.h">
-      <Filter>src\ui\mru</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\ortho\OrthoContextMenu.h">
       <Filter>src\ui\ortho</Filter>
@@ -1222,6 +1210,12 @@
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\AutoSaveRequestHandler.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mru\MRUMenu.h">
+      <Filter>src\ui\mru</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\MapCommands.h">
       <Filter>src\ui</Filter>
     </ClInclude>
   </ItemGroup>

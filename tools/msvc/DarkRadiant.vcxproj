@@ -255,6 +255,7 @@
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
+    <ClCompile Include="..\..\radiant\ui\MapCommands.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp" />
@@ -313,8 +314,6 @@
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\BindToolDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\ToolMappingDialog.cpp" />
-    <ClCompile Include="..\..\radiant\ui\mru\MRU.cpp" />
-    <ClCompile Include="..\..\radiant\ui\mru\MRUMenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\ortho\OrthoContextMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\overlay\Overlay.cpp" />
     <ClCompile Include="..\..\radiant\ui\overlay\OverlayDialog.cpp" />
@@ -430,6 +429,7 @@
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
+    <ClInclude Include="..\..\radiant\ui\MapCommands.h" />
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
@@ -500,9 +500,7 @@
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\BindToolDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\ToolMappingDialog.h" />
-    <ClInclude Include="..\..\radiant\ui\mru\MRU.h" />
-    <ClInclude Include="..\..\radiant\ui\mru\MRUList.h" />
-    <ClInclude Include="..\..\radiant\ui\mru\MRUMenuItem.h" />
+    <ClInclude Include="..\..\radiant\ui\mru\MRUMenu.h" />
     <ClInclude Include="..\..\radiant\ui\ortho\OrthoContextMenu.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\Overlay.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayDialog.h" />

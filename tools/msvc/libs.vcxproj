@@ -205,6 +205,9 @@
     <ClInclude Include="..\..\libs\RGBAImage.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />
+    <ClInclude Include="..\..\libs\selection\Device.h" />
+    <ClInclude Include="..\..\libs\selection\OccludeSelector.h" />
+    <ClInclude Include="..\..\libs\selection\SingleItemSelector.h" />
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h" />
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />

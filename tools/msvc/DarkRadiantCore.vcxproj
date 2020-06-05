@@ -133,6 +133,7 @@
     <ClCompile Include="..\..\radiantcore\map\MapPropertyInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapResource.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapResourceManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\mru\MRU.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\Namespace.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\NamespaceFactory.cpp" />
@@ -844,6 +845,8 @@
     <ClInclude Include="..\..\radiantcore\map\MapResource.h" />
     <ClInclude Include="..\..\radiantcore\map\MapResourceManager.h" />
     <ClInclude Include="..\..\radiantcore\map\ModelBreakdown.h" />
+    <ClInclude Include="..\..\radiantcore\map\mru\MRU.h" />
+    <ClInclude Include="..\..\radiantcore\map\mru\MRUList.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\ComplexName.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\NamespaceFactory.h" />
@@ -964,7 +967,6 @@
     <ClInclude Include="..\..\radiantcore\selection\BestPoint.h" />
     <ClInclude Include="..\..\radiantcore\selection\BestSelector.h" />
     <ClInclude Include="..\..\radiantcore\selection\clipboard\Clipboard.h" />
-    <ClInclude Include="..\..\radiantcore\selection\Device.h" />
     <ClInclude Include="..\..\radiantcore\selection\group\SelectionGroup.h" />
     <ClInclude Include="..\..\radiantcore\selection\group\SelectionGroupInfoFileModule.h" />
     <ClInclude Include="..\..\radiantcore\selection\group\SelectionGroupManager.h" />
@@ -978,7 +980,6 @@
     <ClInclude Include="..\..\radiantcore\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h" />
-    <ClInclude Include="..\..\radiantcore\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\radiantcore\selection\Pivot2World.h" />
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiantcore\selection\Remap.h" />
@@ -994,7 +995,6 @@
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.h" />
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\Texturable.h" />
-    <ClInclude Include="..\..\radiantcore\selection\SingleItemSelector.h" />
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h" />
     <ClInclude Include="..\..\radiantcore\settings\Game.h" />
     <ClInclude Include="..\..\radiantcore\settings\GameManager.h" />

@@ -151,6 +151,7 @@
     <ClInclude Include="..\..\include\imousetool.h" />
     <ClInclude Include="..\..\include\imousetoolevent.h" />
     <ClInclude Include="..\..\include\imousetoolmanager.h" />
+    <ClInclude Include="..\..\include\imru.h" />
     <ClInclude Include="..\..\include\inameobserver.h" />
     <ClInclude Include="..\..\include\inamespace.h" />
     <ClInclude Include="..\..\include\inode.h" />

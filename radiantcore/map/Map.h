@@ -175,10 +175,6 @@ public:
 	 */
 	bool askForSave(const std::string& title);
 
-	/** greebo: Loads a prefab and translates it to the given target coordinates
-	 */
-	void loadPrefabAt(const Vector3& targetCoords);
-
 	/** greebo: Focus the XYViews and the Camera to the given point/angle.
 	 */
 	static void focusViews(const Vector3& point, const Vector3& angles);
@@ -201,12 +197,15 @@ public:
 	 */
 	static void saveMapCopyAs(const cmd::ArgumentList& args);
 
-	/** greebo: Asks the user for the .pfb file and imports/exports the file/selection
+	/** greebo: Asks the user for the .pfb file and exports the file/selection
 	 */
-	static void loadPrefab(const cmd::ArgumentList& args);
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);
 
 private:
+	/** greebo: Loads a prefab and translates it to the given target coordinates
+	 */
+	void loadPrefabAt(const cmd::ArgumentList& args);
+
 	/**
 	 * greebo: Tries to locate the worldspawn in the global scenegraph and 
 	 * stores it into the local member variable.

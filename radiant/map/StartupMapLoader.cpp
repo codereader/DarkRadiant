@@ -1,6 +1,7 @@
 #include "StartupMapLoader.h"
 
 #include "imodule.h"
+#include "imap.h"
 #include "igl.h"
 #include "irender.h"
 #include "iregistry.h"
@@ -53,11 +54,11 @@ void StartupMapLoader::onRadiantStartup()
 	{
 		loadMapSafe(mapToLoad);
 	}
-	else
+	else if (registry::getValue<bool>(RKEY_LOAD_LAST_MAP))
 	{
 		std::string lastMap = GlobalMRU().getLastMapName();
 
-		if (GlobalMRU().loadLastMap() && !lastMap.empty() && os::fileOrDirExists(lastMap))
+		if (!lastMap.empty() && os::fileOrDirExists(lastMap))
 		{
 			loadMapSafe(lastMap);
 		}

@@ -13,6 +13,7 @@
 #include "messages/CommandExecutionFailed.h"
 #include "messages/TextureChanged.h"
 #include "messages/NotificationMessage.h"
+#include "ui/mru/MRUMenu.h"
 
 namespace ui
 {
@@ -39,6 +40,8 @@ private:
 	std::size_t _execFailedListener;
 	std::size_t _textureChangedListener;
 	std::size_t _notificationListener;
+
+	std::unique_ptr<MRUMenu> _mruMenu;
 
 public:
 	// RegisterableModule

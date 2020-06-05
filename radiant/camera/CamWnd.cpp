@@ -7,6 +7,8 @@
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
+#include "iorthoview.h"
+#include "icamera.h"
 
 #include <time.h>
 #include <fmt/format.h>
@@ -39,9 +41,9 @@ namespace
 {
     const std::size_t MSEC_PER_FRAME = 16;
 
-    const std::string FAR_CLIP_IN_TEXT = "Move far clip plane closer";
-    const std::string FAR_CLIP_OUT_TEXT = "Move far clip plane further away";
-    const std::string FAR_CLIP_DISABLED_TEXT = " (currently disabled in preferences)";
+    const char* const FAR_CLIP_IN_TEXT = N_("Move far clip plane closer");
+    const char* const FAR_CLIP_OUT_TEXT = N_("Move far clip plane further away");
+    const char* const FAR_CLIP_DISABLED_TEXT = N_(" (currently disabled in preferences)");
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 }
 
@@ -296,8 +298,8 @@ void CamWnd::setFarClipButtonSensitivity()
     miscToolbar->EnableTool(clipPlaneOutButton->GetId(), enabled);
 
     // Update tooltips so users know why they are disabled
-    clipPlaneInButton->SetShortHelp(FAR_CLIP_IN_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT));
-    clipPlaneOutButton->SetShortHelp(FAR_CLIP_OUT_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT));
+    clipPlaneInButton->SetShortHelp(fmt::format("{0}{1}", _(FAR_CLIP_IN_TEXT), (enabled ? "" : _(FAR_CLIP_DISABLED_TEXT))));
+    clipPlaneOutButton->SetShortHelp(fmt::format("{0}{1}", _(FAR_CLIP_OUT_TEXT), (enabled ? "" : _(FAR_CLIP_DISABLED_TEXT))));
 }
 
 void CamWnd::constructGUIComponents()
@@ -488,7 +490,9 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
         AABB found = finder.getNode()->worldAABB();
 
         // Focus the view at the center of the found AABB
-        map::Map::focusViews(found.origin, getCameraAngles());
+        // Set the camera and the views to the given point
+        GlobalCameraManager().focusCamera(found.origin, getCameraAngles());
+        GlobalXYWndManager().setOrigin(found.origin);
     }
 }
 

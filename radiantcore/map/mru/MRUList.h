@@ -2,7 +2,7 @@
 
 #include <list>
 
-namespace ui
+namespace map
 {
 
 /* greebo: The MRUList maintains the recent file paths in a FIFO-style

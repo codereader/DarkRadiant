@@ -219,6 +219,15 @@
     <ClInclude Include="..\..\libs\messages\AutomaticMapSaveRequest.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\selection\OccludeSelector.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\SingleItemSelector.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\Device.h">
+      <Filter>selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -253,6 +262,9 @@
     </Filter>
     <Filter Include="command">
       <UniqueIdentifier>{28a6f09d-36b0-4ff9-bbc6-7c6eb8c4a4f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="selection">
+      <UniqueIdentifier>{7ecd5188-5568-43ac-8a64-0ca4c7c751b0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

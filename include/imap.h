@@ -8,6 +8,11 @@
 // Registry setting for suppressing the map load progress dialog
 const char* const RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG = "user/ui/map/suppressMapLoadDialog";
 
+// Whether to load the most recently used map on app startup
+const char* const RKEY_LOAD_LAST_MAP = "user/ui/map/loadLastMap";
+
+const char* const LOAD_PREFAB_AT_CMD = "LoadPrefabAt";
+
 // Namespace forward declaration
 class INamespace;
 typedef std::shared_ptr<INamespace> INamespacePtr;

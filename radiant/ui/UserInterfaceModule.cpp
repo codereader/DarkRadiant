@@ -4,6 +4,7 @@
 #include "ilayer.h"
 #include "ifilter.h"
 #include "ientity.h"
+#include "imru.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "iorthocontextmenu.h"
@@ -18,6 +19,7 @@
 
 #include "module/StaticModule.h"
 
+#include "MapCommands.h"
 #include "ui/aas/AasControlDialog.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
@@ -87,6 +89,7 @@ const StringSet& UserInterfaceModule::getDependencies() const
 		_dependencies.insert(MODULE_ENTITY);
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_RADIANT_CORE);
+		_dependencies.insert(MODULE_MRU_MANAGER);
 	}
 
 	return _dependencies;
@@ -165,6 +168,8 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	AasControlDialog::Init();
 
 	SelectionSetToolmenu::Init();
+
+	_mruMenu.reset(new MRUMenu);
 }
 
 void UserInterfaceModule::shutdownModule()
@@ -180,6 +185,8 @@ void UserInterfaceModule::shutdownModule()
 	_eClassColourManager.reset();
 	_mapFileProgressHandler.reset();
 	_autoSaveRequestHandler.reset();
+	
+	_mruMenu.reset();
 }
 
 void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)
@@ -327,6 +334,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addRegistryToggle("ToggleSnapRotationPivot", "user/ui/snapRotationPivotToGrid");
 	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", "user/ui/offsetClonedObjects");
 	GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
+
+	GlobalCommandSystem().addCommand("LoadPrefab", ui::loadPrefabDialog);
 }
 
 void UserInterfaceModule::HandleTextureChanged(radiant::TextureChangedMessage& msg)

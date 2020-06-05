@@ -68,7 +68,6 @@ public:
 	bool showAxes() const;
 	bool showWorkzone() const;
 	bool showSizeInfo() const;
-	bool higherEntitySelectionPriority() const;
 
 	unsigned int defaultBlockSize() const;
 

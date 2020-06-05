@@ -46,7 +46,6 @@ namespace
 	const std::string RKEY_SHOW_WORKZONE = RKEY_XYVIEW_ROOT + "/showWorkzone";
 	const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
 	const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
-	const std::string RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
 
     const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
@@ -218,11 +217,6 @@ void XYWndManager::refreshFromRegistry()
 	_showWorkzone = registry::getValue<bool>(RKEY_SHOW_WORKZONE);
 	_defaultBlockSize = registry::getValue<int>(RKEY_DEFAULT_BLOCKSIZE);
 	updateAllViews();
-}
-
-bool XYWndManager::higherEntitySelectionPriority() const 
-{
-	return registry::getValue<bool>(RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
 bool XYWndManager::chaseMouse() const {

@@ -175,6 +175,8 @@ protected:
 						 SelectionSystem::EComponentMode componentMode);
 
 private:
+	bool higherEntitySelectionPriority() const;
+
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
 
 	std::size_t getManipulatorIdForType(Manipulator::Type type);

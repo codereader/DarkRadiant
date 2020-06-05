@@ -1,44 +1,40 @@
 #include "MRU.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
-#include "imainframe.h"
 #include "icommandsystem.h"
 #include "ipreferencesystem.h"
-#include "iuimanager.h"
+
 #include "string/string.h"
+#include <fmt/format.h>
 #include "os/file.h"
 #include "registry/registry.h"
-#include "wxutil/dialog/MessageBox.h"
-#include "wxutil/IConv.h"
-#include <wx/menuitem.h>
+#include "command/ExecutionFailure.h"
+#include "module/StaticModule.h"
 
-#include "map/Map.h"
+namespace map
+{
 
-namespace ui {
+namespace
+{
+	const std::string RKEY_MAP_ROOT = "user/ui/map";
+	const std::string RKEY_MAP_MRUS = RKEY_MAP_ROOT + "/MRU";
+	const std::string RKEY_MRU_LENGTH = RKEY_MAP_ROOT + "/numMRU";
 
-	namespace {
-		const std::string RKEY_MAP_ROOT = "user/ui/map";
-		const std::string RKEY_MAP_MRUS = RKEY_MAP_ROOT + "/MRU";
-		const std::string RKEY_MRU_LENGTH = RKEY_MAP_ROOT + "/numMRU";
-		const std::string RKEY_LOAD_LAST_MAP = RKEY_MAP_ROOT + "/loadLastMap";
+#if 0
+	const char* const RECENT_FILES_CAPTION = N_("Recently used Maps");
+#endif
+}
 
-		const char* const RECENT_FILES_CAPTION = N_("Recently used Maps");
-	}
-
+#if 0
 MRU::MRU() :
 	_numMaxFiles(registry::getValue<int>(RKEY_MRU_LENGTH)),
-	_loadLastMap(registry::getValue<bool>(RKEY_LOAD_LAST_MAP)),
-	_list(_numMaxFiles),
+	_list(_numMaxFiles)
+#if 0
+	,
 	_emptyMenuItem(_(RECENT_FILES_CAPTION), *this, 0)
+#endif
 {
-	GlobalRegistry().signalForKey(RKEY_MRU_LENGTH).connect(
-        sigc::mem_fun(this, &MRU::keyChanged)
-    );
-
-	// Add the preference settings
-	constructPreferences();
-
+#if 0
 	// Create _numMaxFiles menu items
 	for (std::size_t i = 0; i < _numMaxFiles; i++) {
 
@@ -54,6 +50,13 @@ MRU::MRU() :
 			std::bind(&MRUMenuItem::activate, &item, std::placeholders::_1)
 		);
 	}
+#endif
+}
+#endif
+
+sigc::signal<void>& MRU::signal_MapListChanged()
+{
+	return _signalMapListChanged;
 }
 
 void MRU::loadRecentFiles()
@@ -63,12 +66,12 @@ void MRU::loadRecentFiles()
 	for (std::size_t i = _numMaxFiles; i > 0; i--)
 	{
 		const std::string key = RKEY_MAP_MRUS + "/map" + string::to_string(i);
-		const std::string fileName = GlobalRegistry().get(key);
+		auto fileName = registry::getValue<std::string>(key);
 
 		if (!fileName.empty())
 		{
 			// Insert the item into the filelist
-			_list.insert(fileName);
+			_list->insert(fileName);
 		}
 	}
 }
@@ -81,17 +84,18 @@ void MRU::saveRecentFiles()
 	std::size_t counter = 1;
 
 	// Now wade through the list and save them in the correct order
-	for (MRUList::const_iterator i = _list.begin(); i != _list.end(); ++counter, ++i)
+	for (MRUList::const_iterator i = _list->begin(); i != _list->end(); ++counter, ++i)
 	{
 		const std::string key = RKEY_MAP_MRUS + "/map" + string::to_string(counter);
 
 		// Save the string into the registry
-		GlobalRegistry().set(key, (*i));
+		registry::setValue(key, (*i));
 	}
 }
 
 void MRU::loadMap(const std::string& fileName)
 {
+#if 0 // TODO
 	if (GlobalMap().askForSave(_("Open Map")))
 	{
 		if (os::fileIsReadable(fileName))
@@ -111,14 +115,7 @@ void MRU::loadMap(const std::string& fileName)
 				fmt::format(_("Could not read map file: {0}"), fileName));
 		}
 	}
-}
-
-void MRU::keyChanged()
-{
-	// greebo: Don't load the new number of maximum files from the registry,
-	// this would mess up the existing widgets, wait for the DarkRadiant restart instead
-	//_numMaxFiles = registry::getValue<int>(RKEY_MRU_LENGTH);
-	_loadLastMap = registry::getValue<bool>(RKEY_LOAD_LAST_MAP);
+#endif
 }
 
 // Construct the MRU preference page and add it to the given group
@@ -130,6 +127,7 @@ void MRU::constructPreferences()
 	page.appendCheckBox(_("Open last map on startup"), RKEY_LOAD_LAST_MAP);
 }
 
+#if 0
 void MRU::initialise()
 {
 	// Construct the MRU commands and menu structure
@@ -140,14 +138,27 @@ void MRU::initialise()
 
 	updateMenu();
 }
-
-bool MRU::loadLastMap() const {
-	return _loadLastMap;
-}
+#endif
 
 std::string MRU::getLastMapName()
 {
-	return _list.empty() ? "" : *_list.begin();
+	return _list->empty() ? "" : *_list->begin();
+}
+
+std::size_t MRU::getMaxNumberOfItems() const
+{
+	return _numMaxFiles;
+}
+
+void MRU::foreachItem(const ItemFunctor& functor)
+{
+	std::size_t counter = 1;
+
+	// Now wade through the list and save them in the correct order
+	for (auto i = _list->begin(); i != _list->end(); ++counter, ++i)
+	{
+		functor(counter, *i);
+	}
 }
 
 void MRU::insert(const std::string& fileName) {
@@ -155,16 +166,20 @@ void MRU::insert(const std::string& fileName) {
 	if (!fileName.empty())
 	{
 		// Insert the item into the filelist
-		_list.insert(fileName);
+		_list->insert(fileName);
 
+#if 0
 		// Update the widgets
 		updateMenu();
-
+#endif
 		// Persist MRU to the registry on each change
 		saveRecentFiles();
+
+		_signalMapListChanged.emit();
 	}
 }
 
+#if 0
 void MRU::updateMenu()
 {
 	// Get the menumanager
@@ -249,14 +264,70 @@ void MRU::constructMenu()
 	// Call the update routine to load the values into the widgets
 	updateMenu();
 }
+#endif
 
-// -------------------------------------------------------------------------------------
-
-} // namespace ui
-
-// The accessor function to the MRU instance
-ui::MRU& GlobalMRU() 
+void MRU::loadMRUMap(const cmd::ArgumentList& args)
 {
-	static ui::MRU _mruInstance;
-	return _mruInstance;
+	if (args.size() != 1)
+	{
+		rError() << "Usage: LoadMRUMap <index:1..N>" << std::endl;
+		return;
+	}
+
+	int index = args[0].getInt();
+
+	if (index < 1 || index > _numMaxFiles)
+	{
+		throw cmd::ExecutionFailure(fmt::format(_("Index out of range: {0:d}"), index));
+	}
+
+	// TODO
 }
+
+const std::string& MRU::getName() const
+{
+	static std::string _name(MODULE_MRU_MANAGER);
+	return _name;
+}
+
+const StringSet& MRU::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
+	}
+
+	return _dependencies;
+}
+
+void MRU::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	constructPreferences();
+
+	_numMaxFiles = registry::getValue<std::size_t>(RKEY_MRU_LENGTH);
+	_list.reset(new MRUList(_numMaxFiles));
+
+	GlobalCommandSystem().addCommand(LOAD_MRU_MAP_CMD,
+		std::bind(&MRU::loadMRUMap, this, std::placeholders::_1));
+
+	// Create shortcuts for the items we hold
+	for (std::size_t i = 1; i <= _numMaxFiles; i++)
+	{
+		auto statementName = fmt::format(LOAD_MRU_STATEMENT_FORMAT, i);
+		auto statementValue = fmt::format("{0} {0:d}", LOAD_MRU_MAP_CMD, i);
+
+		GlobalCommandSystem().addStatement(statementName, statementValue);
+	}
+
+	// Load the most recently used files list from the registry
+	loadRecentFiles();
+}
+
+module::StaticModule<MRU> mruModule;
+
+} // namespace
