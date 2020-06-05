@@ -111,6 +111,11 @@ void ShaderClipboard::updateStatusText()
 	GlobalUIManager().getStatusBarManager().setText("ShaderClipBoard", statusText);
 }
 
+std::string ShaderClipboard::getShaderName()
+{
+	return getSource().getShader();
+}
+
 void ShaderClipboard::pickFromSelectionTest(SelectionTest& test)
 {
 	if (_updatesDisabled) return; // loopback guard
@@ -134,6 +139,11 @@ void ShaderClipboard::pasteTextureCoords(SelectionTest& test)
 void ShaderClipboard::pasteMaterialName(SelectionTest& test)
 {
 	selection::algorithm::pasteShaderName(test);
+}
+
+ShaderClipboard& ShaderClipboard::Instance()
+{
+	return static_cast<ShaderClipboard&>(GlobalShaderClipboard());
 }
 
 void ShaderClipboard::setSource(std::string shader)

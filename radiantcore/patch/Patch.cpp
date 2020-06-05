@@ -13,7 +13,6 @@
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
-#include "ui/patch/PatchInspector.h"
 #include "command/ExecutionFailure.h"
 #include "selection/algorithm/Shader.h"
 

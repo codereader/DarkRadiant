@@ -90,7 +90,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		// fall back to the one selected in the texture browser
 		if (shaders.empty())
 		{
-			shaders.insert(GlobalShaderClipboard().getSource().getShader());
+			shaders.insert(ShaderClipboard::Instance().getSource().getShader());
 		}
 
 		// Deselect all faces
@@ -143,7 +143,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		{
 			// No entities found, select all elements with textures 
 			// matching the one in the texture browser
-			auto shader = GlobalShaderClipboard().getSource().getShader();
+			auto shader = ShaderClipboard::Instance().getSource().getShader();
 
 			scene::foreachVisibleBrush([&] (Brush& brush)
 			{

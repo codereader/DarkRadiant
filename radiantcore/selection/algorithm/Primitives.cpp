@@ -314,7 +314,7 @@ public:
 			}
 
 			// Use the texture in the clipboard, if it's a decal texture
-			Texturable& clipboard = GlobalShaderClipboard().getSource();
+			Texturable& clipboard = ShaderClipboard::Instance().getSource();
 
 			if (!clipboard.empty())
 			{
@@ -389,7 +389,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args)
 
 	if (unsuitableWindings > 0)
 	{
-		radiant::NotificationMessage::Send(
+		radiant::NotificationMessage::SendInformation(
 			fmt::format(_("{0:d} faces were not suitable (had more than 4 vertices)."), unsuitableWindings)
 		);
 	}
@@ -611,7 +611,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		// Boundary checks passed
 		auto type = static_cast<brush::PrefabType>(input);
 
-		const auto& shader = GlobalShaderClipboard().getSource().getShader();
+		const auto& shader = ShaderClipboard::Instance().getSource().getShader();
 
 		// Cuboids ignore the sides argument
 		constructBrushPrefabs(type, sides, shader);
@@ -644,7 +644,7 @@ void brushMakeSided(const cmd::ArgumentList& args)
 	}
 
 	std::size_t numSides = static_cast<std::size_t>(input);
-	constructBrushPrefabs(brush::PrefabType::Prism, numSides, GlobalShaderClipboard().getSource().getShader());
+	constructBrushPrefabs(brush::PrefabType::Prism, numSides, ShaderClipboard::Instance().getSource().getShader());
 }
 
 void brushSetDetailFlag(const cmd::ArgumentList& args)

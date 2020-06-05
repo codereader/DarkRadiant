@@ -84,7 +84,7 @@ void capPatch(const cmd::ArgumentList& args)
 		for (const auto& patchNode : patchNodes)
 		{
 			patch::algorithm::createCaps(patchNode->getPatchInternal(), patchNode->getParent(), 
-				capType, GlobalShaderClipboard().getSource().getShader());
+				capType, GlobalShaderClipboard().getShaderName());
 		}
 	}
 	catch (const std::logic_error& ex)

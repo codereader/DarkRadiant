@@ -166,9 +166,10 @@ void applyShaderToSelection(const std::string& shaderName)
 
 /** greebo: Applies the shader from the clipboard's face to the given <target> face
  */
-void applyClipboardFaceToFace(Face& target) {
+void applyClipboardFaceToFace(Face& target)
+{
 	// Get a reference to the source Texturable in the clipboard
-	Texturable& source = GlobalShaderClipboard().getSource();
+	Texturable& source = ShaderClipboard::Instance().getSource();
 
 	target.applyShaderFromFace(*(source.face));
 }
@@ -178,7 +179,7 @@ void applyClipboardFaceToFace(Face& target) {
 void applyClipboardPatchToFace(Face& target)
 {
 	// Get a reference to the source Texturable in the clipboard
-	Texturable& source = GlobalShaderClipboard().getSource();
+	Texturable& source = ShaderClipboard::Instance().getSource();
 
 	// Apply a default projection to the face
 	TextureProjection projection;
@@ -195,7 +196,7 @@ void applyClipboardPatchToFace(Face& target)
 void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush)
 {
 	// Get a reference to the source Texturable in the clipboard
-	Texturable& source = GlobalShaderClipboard().getSource();
+	Texturable& source = ShaderClipboard::Instance().getSource();
 
 	// Check the basic conditions
 	if (!target.empty() && !source.empty())
@@ -329,7 +330,7 @@ void pasteTextureCoords(SelectionTest& test)
 	GlobalSceneGraph().root()->traverseChildren(finder);
 
 	// Get a reference to the source Texturable in the clipboard
-	Texturable& source = GlobalShaderClipboard().getSource();
+	Texturable& source = ShaderClipboard::Instance().getSource();
 
 	// Check the basic conditions
 	if (target.isPatch() && source.isPatch())
@@ -382,7 +383,7 @@ void pasteShaderName(SelectionTest& test)
 	UndoableCommand undo("pasteTextureName");
 
 	// Get a reference to the source Texturable in the clipboard
-	Texturable& source = GlobalShaderClipboard().getSource();
+	Texturable& source = ShaderClipboard::Instance().getSource();
 
 	if (target.isPatch())
 	{
@@ -411,7 +412,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args)
 		try
 		{
 			Patch& sourcePatch = getLastSelectedPatch();
-			GlobalShaderClipboard().setSource(sourcePatch);
+			ShaderClipboard::Instance().setSource(sourcePatch);
 		}
 		catch (const InvalidSelectionException&)
 		{
@@ -423,7 +424,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args)
 		try
 		{
 			Face& sourceFace = getLastSelectedFace();
-			GlobalShaderClipboard().setSource(sourceFace);
+			ShaderClipboard::Instance().setSource(sourceFace);
 		}
 		catch (const InvalidSelectionException&)
 		{
@@ -470,7 +471,7 @@ public:
 
 void pasteShaderToSelection(const cmd::ArgumentList& args)
 {
-	if (GlobalShaderClipboard().getSource().empty())
+	if (ShaderClipboard::Instance().getSource().empty())
 	{
 		return;
 	}
@@ -489,7 +490,7 @@ void pasteShaderToSelection(const cmd::ArgumentList& args)
 
 void pasteShaderNaturalToSelection(const cmd::ArgumentList& args)
 {
-	if (GlobalShaderClipboard().getSource().empty())
+	if (ShaderClipboard::Instance().getSource().empty())
 	{
 		return;
 	}

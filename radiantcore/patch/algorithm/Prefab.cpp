@@ -7,13 +7,13 @@
 #include "igrid.h"
 #include "itextstream.h"
 #include "iorthoview.h"
+#include "ishaderclipboard.h"
 
 #include "scenelib.h"
 #include "shaderlib.h"
 #include "patch/Patch.h"
 
 #include "selection/algorithm/General.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "selectionlib.h"
 #include "command/ExecutionFailure.h"
 
@@ -30,7 +30,7 @@ namespace
 	// Gets the active/selected shader or the default fallback value
 	inline std::string getSelectedShader()
 	{
-		auto selectedShader = GlobalShaderClipboard().getSource().getShader();
+		auto selectedShader = GlobalShaderClipboard().getShaderName();
 
 		if (selectedShader.empty())
 		{

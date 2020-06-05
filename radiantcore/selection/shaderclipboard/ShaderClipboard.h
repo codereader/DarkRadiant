@@ -45,18 +45,17 @@ public:
      */
     sigc::signal<void> signal_sourceChanged() const;
 
-	/** greebo: Clears both the source and target texturables.
-	 * 			Call this as soon as the objects might be deleted
-	 * 			or the map is changed.
-	 */
-	void clear();
-
 	// IShaderClipboard implementation
 
+	void clear() override;
+	std::string getShaderName() override;
 	void pickFromSelectionTest(SelectionTest& test) override;
 	void pasteShader(SelectionTest& test, PasteMode mode, bool pasteToAllFaces) override;
 	void pasteTextureCoords(SelectionTest& test) override;
 	void pasteMaterialName(SelectionTest& test) override;
+
+	// Module-internal accessor
+	static ShaderClipboard& Instance();
 
 private:
 	// UndoSystem callbacks

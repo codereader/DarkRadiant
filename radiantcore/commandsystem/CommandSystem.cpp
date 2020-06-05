@@ -381,17 +381,17 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 	{
 		i->second->execute(args);
 	}
-	catch (const ExecutionFailure& ex)
+	catch (const ExecutionNotPossible& ex)
 	{
-		rError() << "Command '" << name << "' failed: " << ex.what() << std::endl;
-		
+		rError() << "Command '" << name << "' cannot be executed: " << ex.what() << std::endl;
+
 		// Dispatch this exception to the messagebus to potential listeners
 		radiant::CommandExecutionFailedMessage message(ex);
 		GlobalRadiantCore().getMessageBus().sendMessage(message);
 	}
-	catch (const ExecutionNotPossible & ex)
+	catch (const ExecutionFailure& ex)
 	{
-		rError() << "Command '" << name << "' cannot be executed: " << ex.what() << std::endl;
+		rError() << "Command '" << name << "' failed: " << ex.what() << std::endl;
 
 		// Dispatch this exception to the messagebus to potential listeners
 		radiant::CommandExecutionFailedMessage message(ex);

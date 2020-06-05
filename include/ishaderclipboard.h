@@ -26,6 +26,11 @@ class IShaderClipboard :
 public:
     virtual ~IShaderClipboard() {}
 
+	virtual void clear() = 0;
+
+	// Returns the material name of the object in the clipboard (or an empty string)
+	virtual std::string getShaderName() = 0;
+
 	virtual void pickFromSelectionTest(SelectionTest& test) = 0;
 
 	/**

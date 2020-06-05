@@ -2,7 +2,7 @@
 
 #include "math/AABB.h"
 #include "ilightnode.h"
-#include "xyview/GlobalXYWnd.h"
+#include "iorthoview.h"
 
 /**
   SelectionPolicy for SelectByBounds
