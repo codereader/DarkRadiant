@@ -218,6 +218,10 @@
     <ClCompile Include="..\..\radiant\RadiantApp.cpp" />
     <ClCompile Include="..\..\radiant\RadiantModule.cpp" />
     <ClCompile Include="..\..\radiant\render\View.cpp" />
+    <ClCompile Include="..\..\radiant\selection\BestPoint.cpp" />
+    <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
+    <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
+    <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.cpp" />
@@ -384,6 +388,10 @@
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
+    <ClInclude Include="..\..\radiant\selection\BestPoint.h" />
+    <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
+    <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
+    <ClInclude Include="..\..\radiant\selection\SelectionTest.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.h" />
@@ -499,6 +507,7 @@
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\BindToolDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\mousetool\RegistrationHelper.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\ToolMappingDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mru\MRUMenu.h" />
     <ClInclude Include="..\..\radiant\ui\ortho\OrthoContextMenu.h" />

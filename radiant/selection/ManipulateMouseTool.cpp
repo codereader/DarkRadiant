@@ -5,9 +5,9 @@
 #include "iundo.h"
 #include "iscenegraph.h"
 #include "registry/registry.h"
-#include "Device.h"
+#include "selection/Device.h"
 #include "Rectangle.h"
-#include "Pivot2World.h"
+#include "selection/Pivot2World.h"
 #include "SelectionTest.h"
 #include "SceneWalkers.h"
 #include <fmt/format.h>

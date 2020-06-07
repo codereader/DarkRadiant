@@ -2,11 +2,11 @@
 
 #include "iselection.h"
 #include "igrid.h"
+#include "icamera.h"
 #include "imapformat.h"
 
 #include "wxutil/clipboard.h"
 #include "map/Map.h"
-#include "camera/GlobalCamera.h"
 #include "brush/FaceInstance.h"
 #include "map/algorithm/Import.h"
 #include "selection/algorithm/General.h"
@@ -59,18 +59,24 @@ void paste(const cmd::ArgumentList& args)
 
 void pasteToCamera(const cmd::ArgumentList& args)
 {
-	ui::CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
-	if (camWnd == NULL) return;
+	try
+	{
+		auto& camWnd = GlobalCameraView().getActiveView();
 
-	UndoableCommand undo("pasteToCamera");
-	pasteToMap();
+		UndoableCommand undo("pasteToCamera");
+		pasteToMap();
 
-	// Work out the delta
-	Vector3 mid = algorithm::getCurrentSelectionCenter();
-	Vector3 delta = camWnd->getCameraOrigin().getSnapped(GlobalGrid().getGridSize()) - mid;
+		// Work out the delta
+		Vector3 mid = algorithm::getCurrentSelectionCenter();
+		Vector3 delta = camWnd.getCameraOrigin().getSnapped(GlobalGrid().getGridSize()) - mid;
 
-	// Move to camera
-	algorithm::translateSelected(delta);
+		// Move to camera
+		algorithm::translateSelected(delta);
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << "Cannot paste to camera: " << ex.what() << std::endl;
+	}
 }
 
 } // namespace

@@ -10,7 +10,7 @@ class RenderableCollector;
 namespace render { class View; }
 
 class ISelectable;
-
+class SelectionTest;
 
 namespace scene
 {
@@ -283,8 +283,11 @@ public:
 	virtual void onManipulationChanged() = 0;
 	virtual void onManipulationEnd() = 0;
 
+	// Deprecated
     virtual void SelectPoint(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;
-    virtual void SelectArea(const render::View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;
+    virtual void selectPoint(SelectionTest& test, EModifier modifier, bool face) = 0;
+    
+	virtual void SelectArea(const render::View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;
     
 	/**
 	 * Returns the current "work zone", which is defined by the

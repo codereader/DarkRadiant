@@ -19,9 +19,6 @@ private:
 	// This gets called as soon as the mainframe starts up
 	void onRadiantStartup();
 
-	// Called when the mainframe shuts down
-	void onRadiantShutdown();
-
 	void loadMapSafe(const std::string& map);
 };
 

@@ -9,10 +9,8 @@
 #include "ipreferencesystem.h"
 #include "imousetoolmanager.h"
 #include "SelectionPool.h"
-#include "SelectionTest.h"
 #include "module/StaticModule.h"
-#include "SelectionMouseTools.h"
-#include "ManipulateMouseTool.h"
+#include "brush/csg/CSG.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Transformation.h"
@@ -550,6 +548,44 @@ void RadiantSelectionSystem::deselectAll() {
     }
 }
 
+void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier, bool face)
+{
+    // If the user is holding the replace modifiers (default: Alt-Shift), deselect the current selection
+    if (modifier == SelectionSystem::eReplace) {
+        if (face) {
+            setSelectedAllComponents(false);
+        }
+        else {
+            deselectAll();
+        }
+    }
+
+    {
+        // The possible candidates are stored in the SelectablesSet
+        SelectablesList candidates;
+
+        if (face)
+        {
+            SelectionPool selector;
+
+            ComponentSelector selectionTester(selector, test, eFace);
+            GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
+
+            // Load them all into the vector
+            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
+            {
+                candidates.push_back(i->second);
+            }
+        }
+        else {
+            testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
+        }
+
+        // Was the selection test successful (have we found anything to select)?
+        performPointSelection(candidates, modifier);
+    }
+}
+
 /* greebo: This gets called by SelectObserver if the user just clicks into the scene (without dragging)
  * It checks for any possible targets (in the "line of click") and takes the actions according
  * to the modifiers that are held down (Alt-Shift, etc.)
@@ -560,7 +596,6 @@ void RadiantSelectionSystem::SelectPoint(const render::View& view,
                                          SelectionSystem::EModifier modifier,
                                          bool face)
 {
-    ASSERT_MESSAGE(fabs(device_point[0]) <= 1.0f && fabs(device_point[1]) <= 1.0f, "point-selection error");
     // If the user is holding the replace modifiers (default: Alt-Shift), deselect the current selection
     if (modifier == SelectionSystem::eReplace) {
         if (face) {
@@ -922,6 +957,9 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().setToggled("DragEntities", false);
 	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
 
+    selection::algorithm::registerCommands();
+    brush::algorithm::registerCommands();
+
 	GlobalCommandSystem().addCommand("UnSelectSelection", std::bind(&RadiantSelectionSystem::deselectCmd, this, std::placeholders::_1));
 
     GlobalCommandSystem().addCommand("RotateSelectedEulerXYZ", selection::algorithm::rotateSelectedEulerXYZ, { cmd::ARGTYPE_VECTOR3 });
@@ -938,22 +976,6 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
     );
 
     GlobalRenderSystem().attachRenderable(*this);
-
-    // Orthoview: manipulate and all the non-face selection tools
-    ui::IMouseToolGroup& orthoGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::OrthoView);
-
-    orthoGroup.registerMouseTool(std::make_shared<ui::ManipulateMouseTool>(*this));
-    orthoGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseTool>());
-    orthoGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>());
-
-    // Camera: manipulation plus all selection tools, including the face-only tools
-    ui::IMouseToolGroup& camGroup = GlobalMouseToolManager().getGroup(ui::IMouseToolGroup::Type::CameraView);
-
-    camGroup.registerMouseTool(std::make_shared<ui::ManipulateMouseTool>(*this));
-    camGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseTool>());
-    camGroup.registerMouseTool(std::make_shared<ui::DragSelectionMouseToolFaceOnly>());
-    camGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseTool>());
-    camGroup.registerMouseTool(std::make_shared<ui::CycleSelectionMouseToolFaceOnly>());
 
 	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &RadiantSelectionSystem::onMapEvent));

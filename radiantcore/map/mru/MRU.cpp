@@ -328,6 +328,11 @@ void MRU::initialiseModule(const ApplicationContext& ctx)
 	loadRecentFiles();
 }
 
+void MRU::shutdownModule()
+{
+	saveRecentFiles();
+}
+
 module::StaticModule<MRU> mruModule;
 
 } // namespace

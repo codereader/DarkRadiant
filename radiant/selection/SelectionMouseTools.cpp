@@ -4,7 +4,9 @@
 #include "i18n.h"
 #include "iuimanager.h"
 #include "registry/registry.h"
-#include "Device.h"
+#include "selection/Device.h"
+#include "Rectangle.h"
+#include "selection/SelectionTest.h"
 #include "igl.h"
 
 namespace ui
@@ -135,9 +137,17 @@ void DragSelectionMouseTool::testSelect(MouseTool::Event& ev)
     }
     else
     {
+        // Copy the view to create a scissored volume
+        render::View scissored(_view);
+        // Create a volume out of a small box with 2*epsilon edge length
+        ConstructSelectionTest(scissored, 
+            selection::Rectangle::ConstructFromPoint(ev.getDevicePosition(), _epsilon));
+
+        // Create a selection test using that volume
+        SelectionVolume volume(scissored);
+
         // Mouse has barely moved, call the point selection routine
-        GlobalSelectionSystem().SelectPoint(_view, ev.getDevicePosition(),
-                                            _epsilon, SelectionSystem::eToggle, isFaceOperation);
+        GlobalSelectionSystem().selectPoint(volume, SelectionSystem::eToggle, isFaceOperation);
     }
 
     // Reset the mouse position to zero, this mouse operation is finished so far

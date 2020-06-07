@@ -3,7 +3,6 @@
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
 
-#include "selection/SelectionTest.h"
 #include "selection/SelectionPool.h"
 #include "selection/BasicSelectable.h"
 #include "selection/ManipulationPivot.h"
@@ -58,10 +57,10 @@ public:
 	bool isSelected() const override;
 
 private:
-	void testSelectPrimitiveMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
-	void testSelectGroupPartMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
-	void testSelectEntityMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
-	void testSelectComponentMode(const render::View& view, SelectionVolume& test, SelectionPool& selector);
+	void testSelectPrimitiveMode(const render::View& view, SelectionTest& test, SelectionPool& selector);
+	void testSelectGroupPartMode(const render::View& view, SelectionTest& test, SelectionPool& selector);
+	void testSelectEntityMode(const render::View& view, SelectionTest& test, SelectionPool& selector);
+	void testSelectComponentMode(const render::View& view, SelectionTest& test, SelectionPool& selector);
 };
 
 }

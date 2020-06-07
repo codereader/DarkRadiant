@@ -134,6 +134,7 @@ public:
 
 	void deselectAll();
 
+	void selectPoint(SelectionTest& test, EModifier modifier, bool face) override;
 	void SelectPoint(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon, EModifier modifier, bool face) override;
 	void SelectArea(const render::View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face) override;
 

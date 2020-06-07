@@ -10,19 +10,16 @@
 #include "ieventmanager.h"
 #include "i18n.h"
 #include "imainframe.h"
+#include "ishaderclipboard.h"
 
 #include "scene/Node.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
-#include "ui/mru/MRU.h"
 
 #include "module/StaticModule.h"
-#include "selection/algorithm/General.h"
-#include "brush/csg/CSG.h"
 
 #include "ui/modelselector/ModelSelector.h"
 #include "EventRateLimiter.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include <wx/app.h>
 
@@ -79,9 +76,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 	// Reset the node id count
   	scene::Node::resetIds();
 
-    selection::algorithm::registerCommands();
-	brush::algorithm::registerCommands();
-
     // Subscribe for the post-module init event
     module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
         sigc::mem_fun(this, &RadiantModule::postModuleInitialisation));
@@ -97,9 +91,6 @@ void RadiantModule::shutdownModule()
 
 void RadiantModule::postModuleInitialisation()
 {
-	// Construct the MRU commands and menu structure, load the recently used files
-	GlobalMRU().initialise();
-
     // Initialise the mainframe
     GlobalMainFrame().construct();
 

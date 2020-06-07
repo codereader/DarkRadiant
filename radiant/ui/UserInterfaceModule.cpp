@@ -9,6 +9,7 @@
 #include "ipatch.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
+#include "imousetool.h"
 #include "imainframe.h"
 #include "ishaders.h"
 
@@ -53,6 +54,7 @@
 #include "ui/patch/BulgePatchDialog.h"
 #include "ui/selectionset/SelectionSetToolmenu.h"
 #include "ui/brush/QuerySidesDialog.h"
+#include "ui/mousetool/RegistrationHelper.h"
 
 namespace ui
 {
@@ -90,6 +92,7 @@ const StringSet& UserInterfaceModule::getDependencies() const
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_RADIANT_CORE);
 		_dependencies.insert(MODULE_MRU_MANAGER);
+		_dependencies.insert(MODULE_MOUSETOOLMANAGER);
 	}
 
 	return _dependencies;
@@ -170,6 +173,8 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	SelectionSetToolmenu::Init();
 
 	_mruMenu.reset(new MRUMenu);
+
+	MouseToolRegistrationHelper::RegisterTools();
 }
 
 void UserInterfaceModule::shutdownModule()

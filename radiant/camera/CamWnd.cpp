@@ -342,7 +342,10 @@ SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
 
     // Copy the current view and constrain it to a small rectangle
     render::View scissored(_view);
-    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(point, deviceEpsilon));
+
+    auto rect = selection::Rectangle::ConstructFromPoint(point, deviceEpsilon);
+    scissored.EnableScissor(rect.min[0], rect.max[0],
+                            rect.min[1], rect.max[1]);
 
     return SelectionTestPtr(new SelectionVolume(scissored));
 }

@@ -161,6 +161,9 @@
     <Filter Include="src\map">
       <UniqueIdentifier>{8d1f0555-13d0-4735-ad5e-26bdf8578bc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\selection">
+      <UniqueIdentifier>{fcadd723-1718-42a6-82d4-41aabf92dabe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -630,6 +633,18 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\MapCommands.cpp">
       <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\BestPoint.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp">
+      <Filter>src\selection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1217,6 +1232,21 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\MapCommands.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\BestPoint.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SelectionTest.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mousetool\RegistrationHelper.h">
+      <Filter>src\ui\mousetool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

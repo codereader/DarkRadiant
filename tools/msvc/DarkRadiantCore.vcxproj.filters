@@ -823,12 +823,6 @@
     <ClCompile Include="..\..\radiantcore\patch\algorithm\Prefab.cpp">
       <Filter>src\patch\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\selection\BestPoint.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\selection\ManipulateMouseTool.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\ManipulationPivot.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
@@ -836,12 +830,6 @@
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\SelectedNodeList.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\selection\SelectionMouseTools.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\selection\SelectionTest.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\TransformationVisitors.cpp">
@@ -1005,6 +993,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\mru\MRU.cpp">
       <Filter>src\map\mru</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\SelectionTestWalkers.cpp">
+      <Filter>src\selection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1845,19 +1836,10 @@
     <ClInclude Include="..\..\radiantcore\selection\BasicSelectable.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\BestPoint.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\BestSelector.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\ManipulateMouseTool.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\ManipulationPivot.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\Pivot2World.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h">
@@ -1875,13 +1857,7 @@
     <ClInclude Include="..\..\radiantcore\selection\SelectedNodeList.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\SelectionMouseTools.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\SelectionPool.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\SelectionTest.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h">
@@ -2069,6 +2045,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\mru\MRUList.h">
       <Filter>src\map\mru</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\SelectionTestWalkers.h">
+      <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

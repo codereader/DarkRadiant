@@ -7,7 +7,7 @@
 #include "iregistry.h"
 #include "igame.h"
 #include "iradiant.h"
-#include "ui/mru/MRU.h"
+#include "imru.h"
 #include "module/StaticModule.h"
 
 #include "os/path.h"
@@ -81,11 +81,6 @@ void StartupMapLoader::loadMapSafe(const std::string& mapToLoad)
 	});
 }
 
-void StartupMapLoader::onRadiantShutdown()
-{
-	GlobalMRU().saveRecentFiles();
-}
-
 const std::string& StartupMapLoader::getName() const
 {
 	static std::string _name("StartupMapLoader");
@@ -110,9 +105,6 @@ void StartupMapLoader::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalRadiant().signal_radiantStarted().connect(
 		sigc::mem_fun(*this, &StartupMapLoader::onRadiantStartup)
-	);
-	GlobalRadiant().signal_radiantShutdown().connect(
-		sigc::mem_fun(*this, &StartupMapLoader::onRadiantShutdown)
 	);
 }
 

@@ -207,6 +207,7 @@
     <ClInclude Include="..\..\libs\selectionlib.h" />
     <ClInclude Include="..\..\libs\selection\Device.h" />
     <ClInclude Include="..\..\libs\selection\OccludeSelector.h" />
+    <ClInclude Include="..\..\libs\selection\Pivot2World.h" />
     <ClInclude Include="..\..\libs\selection\SingleItemSelector.h" />
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h" />
