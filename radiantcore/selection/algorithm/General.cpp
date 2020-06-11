@@ -14,6 +14,7 @@
 #include "string/convert.h"
 #include "selectionlib.h"
 #include "entitylib.h"
+#include "scene/SelectionIndex.h"
 
 #include "SelectionPolicies.h"
 #include "selection/SceneWalkers.h"
@@ -24,6 +25,7 @@
 #include "selection/algorithm/Curves.h"
 #include "selection/algorithm/Entity.h"
 #include "selection/algorithm/GroupCycle.h"
+#include "selection/algorithm/Shader.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
 #include "patch/Patch.h"
@@ -82,7 +84,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		std::set<std::string> shaders;
 
 		// SELECT DISTINCT shader FROM selected_faces
-		forEachSelectedFaceComponent([&] (Face& face)
+		forEachSelectedFaceComponent([&] (IFace& face)
 		{
 			shaders.insert(face.getShader());
 		});
@@ -701,98 +703,6 @@ Vector3 getCurrentSelectionCenter()
 	return getCurrentSelectionBounds().getOrigin().getSnapped();
 }
 
-class PrimitiveFindIndexWalker :
-	public scene::NodeVisitor
-{
-	scene::INodePtr _node;
-	std::size_t& _count;
-public:
-	PrimitiveFindIndexWalker(const scene::INodePtr& node, std::size_t& count) :
-		_node(node),
-		_count(count)
-	{}
-
-	bool pre(const scene::INodePtr& node)
-	{
-		if (Node_isPrimitive(node))
-		{
-			// Have we found the node?
-			if (_node == node)
-			{
-				// Yes, found, set needle to NULL
-				_node = scene::INodePtr();
-			}
-
-			// As long as the needle is non-NULL, increment the counter
-			if (_node != NULL)
-			{
-				++_count;
-			}
-		}
-
-		return true;
-	}
-};
-
-class EntityFindIndexWalker :
-	public scene::NodeVisitor
-{
-	scene::INodePtr _node;
-	std::size_t& _count;
-public:
-	EntityFindIndexWalker(const scene::INodePtr& node, std::size_t& count) :
-		_node(node),
-		_count(count)
-	{}
-
-	bool pre(const scene::INodePtr& node)
-	{
-		if (Node_isEntity(node))
-		{
-			// Have we found the node?
-			if (_node == node)
-			{
-				// Yes, found, set needle to NULL
-				_node = scene::INodePtr();
-			}
-
-			// As long as the needle is non-NULL, increment the counter
-			if (_node != NULL)
-			{
-				++_count;
-			}
-		}
-
-		return true;
-	}
-};
-
-void getSelectionIndex(std::size_t& ent, std::size_t& brush)
-{
-	if (GlobalSelectionSystem().countSelected() != 0)
-	{
-		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
-		
-		if (Node_isEntity(node))
-		{
-			// Selection is an entity, find its index
-			EntityFindIndexWalker walker(node, ent);
-			GlobalSceneGraph().root()->traverse(walker);
-		}
-		else if (Node_isPrimitive(node))
-		{
-			scene::INodePtr parent = node->getParent();
-
-			// Node is a primitive, find parent entity and child index
-			EntityFindIndexWalker walker(parent, ent);
-			GlobalSceneGraph().root()->traverse(walker);
-
-			PrimitiveFindIndexWalker brushWalker(node, brush);
-			parent->traverse(brushWalker);
-		}
-	}
-}
-
 void snapSelectionToGrid(const cmd::ArgumentList& args)
 {
 	float gridSize = GlobalGrid().getGridSize();
@@ -1056,6 +966,9 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("PasteShader", pasteShaderToSelection);
 	GlobalCommandSystem().addCommand("PasteShaderNatural", pasteShaderNaturalToSelection);
 
+	GlobalCommandSystem().addCommand("SelectItemsByShader", selectItemsByShaderCmd, { cmd::ARGTYPE_STRING });
+	GlobalCommandSystem().addCommand("DeselectItemsByShader", deselectItemsByShaderCmd, { cmd::ARGTYPE_STRING });
+
 	GlobalCommandSystem().addCommand("FlipTextureX", flipTextureS);
 	GlobalCommandSystem().addCommand("FlipTextureY", flipTextureT);
 
@@ -1083,6 +996,9 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("BrushSetDetailFlag", brushSetDetailFlag, { cmd::ARGTYPE_STRING });
 	GlobalCommandSystem().addStatement("BrushMakeDetail", "BrushSetDetailFlag detail", false);
 	GlobalCommandSystem().addStatement("BrushMakeStructural", "BrushSetDetailFlag structural", false);
+
+	GlobalCommandSystem().addCommand(scene::SELECT_NODE_BY_INDEX_CMD, scene::selectNodeByIndex, 
+		{ cmd::ARGTYPE_INT, cmd::ARGTYPE_INT });
 }
 
 	} // namespace algorithm

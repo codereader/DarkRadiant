@@ -10,8 +10,7 @@ namespace selection
 {
 
 class ShaderClipboard :
-	public IShaderClipboard,
-	public sigc::trackable
+	public IShaderClipboard
 {
 private:
 	// The source and target Texturables

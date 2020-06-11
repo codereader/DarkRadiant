@@ -1,6 +1,6 @@
 #pragma once
 
-#include "map/EntityBreakdown.h"
+#include "scene/EntityBreakdown.h"
 
 #include <wx/panel.h>
 #include "wxutil/TreeView.h"
@@ -13,7 +13,7 @@ class EntityInfoTab :
 {
 private:
 	// The helper class counting the entities in the map
-	map::EntityBreakdown _entityBreakdown;
+	scene::EntityBreakdown _entityBreakdown;
 
 	// Treemodel definition
 	struct ListColumns :

@@ -8,8 +8,6 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-#include "selection/algorithm/Shader.h"
-
 namespace ui
 {
 
@@ -67,9 +65,7 @@ void ShaderInfoTab::construct()
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Populate the liststore with the entity count information
-    for (map::ShaderBreakdown::Map::const_iterator i = _shaderBreakdown.begin();
-		 i != _shaderBreakdown.end();
-		 ++i)
+    for (auto i = _shaderBreakdown.begin(); i != _shaderBreakdown.end(); ++i)
 	{
 		wxutil::TreeModel::Row row = _listStore->AddItem();
 
@@ -117,11 +113,11 @@ void ShaderInfoTab::_onSelectItems(bool select)
 
 	if (select)
 	{
-		selection::algorithm::selectItemsByShader(shader);
+		GlobalCommandSystem().executeCommand("SelectItemsByShader", shader);
 	}
 	else
 	{
-		selection::algorithm::deselectItemsByShader(shader);
+		GlobalCommandSystem().executeCommand("DeselectItemsByShader", shader);
 	}
 }
 

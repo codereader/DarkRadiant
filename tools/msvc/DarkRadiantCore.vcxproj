@@ -104,7 +104,6 @@
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatch.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.cpp" />
-    <ClCompile Include="..\..\radiantcore\map\FindMapElements.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\Doom3MapFormat.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\Doom3MapReader.cpp" />
     <ClCompile Include="..\..\radiantcore\map\format\Doom3MapWriter.cpp" />
@@ -139,7 +138,6 @@
     <ClCompile Include="..\..\radiantcore\map\namespace\NamespaceFactory.cpp" />
     <ClCompile Include="..\..\radiantcore\map\PointFile.cpp" />
     <ClCompile Include="..\..\radiantcore\map\RegionManager.cpp" />
-    <ClCompile Include="..\..\radiantcore\map\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiantcore\map\RootNode.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\AseExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\Lwo2Chunk.cpp" />
@@ -807,7 +805,6 @@
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatch.h" />
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.h" />
     <ClInclude Include="..\..\radiantcore\map\EntityBreakdown.h" />
-    <ClInclude Include="..\..\radiantcore\map\FindMapElements.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapFormat.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapReader.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapWriter.h" />
@@ -851,7 +848,6 @@
     <ClInclude Include="..\..\radiantcore\map\PointFile.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionManager.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionWalkers.h" />
-    <ClInclude Include="..\..\radiantcore\map\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiantcore\map\RootNode.h" />
     <ClInclude Include="..\..\radiantcore\map\ShaderBreakdown.h" />
     <ClInclude Include="..\..\radiantcore\model\export\AseExporter.h" />

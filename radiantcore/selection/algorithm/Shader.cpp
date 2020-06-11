@@ -29,134 +29,11 @@ namespace selection
 namespace algorithm
 {
 
-class AmbiguousShaderException:
-	public std::runtime_error
-{
-public:
-	// Constructor
-	AmbiguousShaderException(const std::string& what):
-		std::runtime_error(what)
-	{}
-};
-
-/** greebo: Cycles through all the Patches/Faces and throws as soon as
- * at least two different non-empty shader names are found.
- *
- * @throws: AmbiguousShaderException
- */
-class UniqueShaderFinder
-{
-	// The string containing the result
-	std::string& _shader;
-
-public:
-	UniqueShaderFinder(std::string& shader) :
-		_shader(shader)
-	{}
-
-	void operator()(Face& face) const
-	{
-		compareShader(face.getShader());
-	}
-
-	void operator()(FaceInstance& faceInstance) const
-	{
-		compareShader(faceInstance.getFace().getShader());
-	}
-
-	void operator()(Patch& patch) const
-	{
-		compareShader(patch.getShader());
-	}
-
-private:
-	void compareShader(const std::string& foundShader) const
-	{
-		if (foundShader != "$NONE" && _shader != "$NONE" &&
-			_shader != foundShader)
-		{
-			throw AmbiguousShaderException(foundShader);
-		}
-
-		_shader = foundShader;
-	}
-};
-
-std::string getShaderFromSelection() 
-{
-	std::string returnValue("");
-
-	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
-
-	if (selectionInfo.totalCount > 0)
-	{
-		std::string faceShader("$NONE");
-		std::string patchShader("$NONE");
-
-		// PATCHES
-		if (selectionInfo.patchCount > 0)
-		{
-			// Try to get the unique shader from the selected patches
-			try 
-			{
-				// Go through all the selected patches
-				GlobalSelectionSystem().foreachPatch(UniqueShaderFinder(patchShader));
-			}
-			catch (AmbiguousShaderException&) {
-				patchShader = "";
-			}
-		}
-
-		// BRUSHES
-		// If there are no FaceInstances selected, cycle through the brushes
-		if (FaceInstance::Selection().empty())
-		{
-			// Try to get the unique shader from the selected brushes
-			try
-			{
-				// Go through all the selected brushes and their faces
-				GlobalSelectionSystem().foreachFace(UniqueShaderFinder(faceShader));
-			}
-			catch (AmbiguousShaderException&)
-			{
-				faceShader = "";
-			}
-		}
-		else
-		{
-			// Try to get the unique shader from the faces
-			try
-			{
-				forEachSelectedFaceComponent(UniqueShaderFinder(faceShader));
-			}
-			catch (AmbiguousShaderException&) {
-				faceShader = "";
-			}
-		}
-
-		// Both faceShader and patchShader found?
-		if (faceShader != "$NONE" && patchShader != "$NONE") {
-			// Compare them and return one of them, if they are equal
-			returnValue = (faceShader == patchShader) ? patchShader : "";
-		}
-		else if (faceShader != "$NONE") {
-			// Only a faceShader has been found
-			returnValue = faceShader;
-		}
-		else if (patchShader != "$NONE") {
-			// Only a patchShader has been found
-			returnValue = patchShader;
-		}
-	}
-
-	return returnValue;
-}
-
 void applyShaderToSelection(const std::string& shaderName)
 {
 	UndoableCommand undo("setShader");
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.setShader(shaderName); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.setShader(shaderName); });
 	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.setShader(shaderName); });
 
 	SceneChangeNotify();
@@ -458,7 +335,7 @@ public:
         applyClipboardToTexturable(target, !_natural, false);
 	}
 
-	void operator()(Face& face)
+	void operator()(IFace& face)
 	{
 		Texturable target;
 		target.face = &face;
@@ -991,22 +868,22 @@ void deselectItemsByShader(const std::string& shaderName)
 	GlobalSceneGraph().root()->traverseChildren(selector);
 }
 
-void selectItemsByShader(const cmd::ArgumentList& args)
+void selectItemsByShaderCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() < 1)
 	{
-		rMessage() << "Usage: selectItemsByShader <SHADERNAME>" << std::endl;
+		rMessage() << "Usage: SelectItemsByShader <SHADERNAME>" << std::endl;
 		return;
 	}
 
 	selectItemsByShader(args[0].getString());
 }
 
-void deselectItemsByShader(const cmd::ArgumentList& args)
+void deselectItemsByShaderCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() < 1)
 	{
-		rMessage() << "Usage: selectItemsByShader <SHADERNAME>" << std::endl;
+		rMessage() << "Usage: DeselectItemsByShader <SHADERNAME>" << std::endl;
 		return;
 	}
 

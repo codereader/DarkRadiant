@@ -32,6 +32,7 @@ typedef sigc::slot<void, const ISelectable&> SelectionChangedSlot;
 
 class SelectionInfo;
 class Face;
+class IFace;
 class Brush;
 class Patch;
 
@@ -264,7 +265,7 @@ public:
 	 * Singly selected faces (those which have been selected in component mode) are 
 	 * considered as well by this method.
 	 */
-	virtual void foreachFace(const std::function<void(Face&)>& functor) = 0;
+	virtual void foreachFace(const std::function<void(IFace&)>& functor) = 0;
 
 	/**
 	 * Call the given functor for each selected patch. Selected group nodes like func_statics
@@ -282,6 +283,7 @@ public:
 	virtual void onManipulationStart() = 0;
 	virtual void onManipulationChanged() = 0;
 	virtual void onManipulationEnd() = 0;
+	virtual void onManipulationCancelled() = 0;
 
 	// Deprecated
     virtual void SelectPoint(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;

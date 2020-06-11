@@ -5,9 +5,9 @@
 
 #include "math/Vector2.h"
 #include "math/Vector3.h"
+#include "math/Matrix4.h"
 #include <vector>
 
-class Matrix4;
 class Plane3;
 
 const std::string RKEY_ENABLE_TEXTURE_LOCK("user/ui/brush/textureLock");
@@ -129,6 +129,13 @@ public:
 	 * tx and ty hold the shift
 	 */
 	virtual Matrix4 getTexDefMatrix() const = 0;
+
+	/**
+	 * The matrix used to project world coordinates to U/V space.
+	 */
+	virtual Matrix4 getProjectionMatrix() = 0;
+
+	virtual void setProjectionMatrix(const Matrix4& projection) = 0;
 };
 
 // Plane classification info used by splitting and CSG algorithms

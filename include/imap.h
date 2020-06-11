@@ -132,6 +132,12 @@ public:
 	* Returns the name of the map.
 	*/
 	virtual std::string getMapName() const = 0;
+
+	// Returns true if the map has unsaved changes.
+	virtual bool isModified() const = 0;
+
+	// Sets the modified status of this map
+	virtual void setModified(bool modifiedFlag) = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

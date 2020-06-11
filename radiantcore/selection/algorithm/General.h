@@ -108,10 +108,6 @@ namespace selection
 	// Calculates the axis-aligned bounding box of the selection components.
 	AABB getCurrentComponentSelectionBounds();
 
-	// Finds the index of the selected entity and primitive and 
-	// writes the result back into the given numbers. Does nothing if no selection is present.
-	void getSelectionIndex(std::size_t& ent, std::size_t& brush);
-
 	/**
 	 * Snaps the current (component) selection to the grid.
 	 */

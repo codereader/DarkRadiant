@@ -14,8 +14,6 @@
 #include <wx/artprov.h>
 #include <memory>
 
-#include "map/RenderableAasFile.h"
-
 namespace ui
 {
 

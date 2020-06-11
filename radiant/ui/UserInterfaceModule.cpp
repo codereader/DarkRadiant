@@ -34,7 +34,6 @@
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/transform/TransformDialog.h"
 #include "ui/findshader/FindShader.h"
-#include "map/FindMapElements.h"
 #include "ui/mapinfo/MapInfoDialog.h"
 #include "ui/commandlist/CommandList.h"
 #include "ui/mousetool/ToolMappingDialog.h"
@@ -54,6 +53,7 @@
 #include "ui/patch/BulgePatchDialog.h"
 #include "ui/selectionset/SelectionSetToolmenu.h"
 #include "ui/brush/QuerySidesDialog.h"
+#include "ui/brush/FindBrush.h"
 #include "ui/mousetool/RegistrationHelper.h"
 
 namespace ui
@@ -300,7 +300,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
 	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
 
-	GlobalCommandSystem().addCommand("FindBrush", DoFind);
+	GlobalCommandSystem().addCommand("FindBrush", FindBrushDialog::Show);
 
 	GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);

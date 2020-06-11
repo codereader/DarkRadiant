@@ -3,7 +3,7 @@
 #include <wx/event.h>
 #include <memory>
 #include "iaasfile.h"
-#include "map/RenderableAasFile.h"
+#include "RenderableAasFile.h"
 
 class wxWindow;
 class wxButton;

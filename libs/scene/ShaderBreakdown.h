@@ -1,5 +1,4 @@
-#ifndef SHADERBREAKDOWN_H_
-#define SHADERBREAKDOWN_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -7,10 +6,8 @@
 #include "ibrush.h"
 #include "iscenegraph.h"
 
-#include "patch/Patch.h"
-#include "brush/Brush.h"
-
-namespace map {
+namespace scene
+{
 
 /**
  * greebo: This object traverses the scenegraph on construction
@@ -37,29 +34,29 @@ private:
 	mutable Map _map;
 
 public:
-	ShaderBreakdown() {
+	ShaderBreakdown()
+	{
 		_map.clear();
 		GlobalSceneGraph().root()->traverseChildren(*this);
 	}
 
-	bool pre(const scene::INodePtr& node) {
-
+	bool pre(const scene::INodePtr& node) override
+	{
 		// Check if this node is a patch
-		Patch* patch = Node_getPatch(node);
-
-		if (patch != NULL) {
-			increaseShaderCount(patch->getShader(), false);
+		if (Node_isPatch(node))
+		{
+			increaseShaderCount(Node_getIPatch(node)->getShader(), false);
 			return false;
 		}
 
-		Brush* brush = Node_getBrush(node);
-
-		if (brush != NULL) 
+		if (Node_isBrush(node))
         {
-            brush->forEachFace([this] (Face& face)
+			auto brush = Node_getIBrush(node);
+			
+			for (std::size_t i = 0; i < brush->getNumFaces(); ++i)
             {
-                increaseShaderCount(face.getShader(), true);
-            });
+                increaseShaderCount(brush->getFace(i).getShader(), true);
+            }
 
 			return false;
 		}
@@ -68,44 +65,47 @@ public:
 	}
 
 	// Accessor method to retrieve the shader breakdown map
-	const Map& getMap() const {
+	const Map& getMap() const
+	{
 		return _map;
 	}
 
-	Map::const_iterator begin() const {
+	Map::const_iterator begin() const
+	{
 		return _map.begin();
 	}
 
-	Map::const_iterator end() const {
+	Map::const_iterator end() const
+	{
 		return _map.end();
 	}
 
 private:
 	// Local helper to increase the shader occurrence count
-	void increaseShaderCount(const std::string& shaderName, bool isFace) {
+	void increaseShaderCount(const std::string& shaderName, bool isFace)
+	{
 		// Try to look up the shader in the map
-		Map::iterator found = _map.find(shaderName);
+		auto found = _map.find(shaderName);
 
-		if (found == _map.end()) {
+		if (found == _map.end())
+		{
 			// Shader not yet registered, create new entry
-			std::pair<Map::iterator, bool> result = _map.insert(
-				Map::value_type(shaderName, ShaderCount())
-			);
+			auto result = _map.emplace(shaderName, ShaderCount());
 
 			found = result.first;
 		}
 
 		// Iterator is valid at this point, increase the counter
-		if (isFace) {
+		if (isFace)
+		{
 			found->second.faceCount++;
 		}
-		else {
+		else
+		{
 			found->second.patchCount++;
 		}
 	}
 
 }; // class ShaderBreakdown
 
-} // namespace map
-
-#endif /* SHADERBREAKDOWN_H_ */
+} // namespace

@@ -129,7 +129,7 @@ public:
 	void foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor) override;
 
 	void foreachBrush(const std::function<void(Brush&)>& functor) override;
-	void foreachFace(const std::function<void(Face&)>& functor) override;
+	void foreachFace(const std::function<void(IFace&)>& functor) override;
 	void foreachPatch(const std::function<void(Patch&)>& functor) override;
 
 	void deselectAll();
@@ -141,6 +141,7 @@ public:
 	void onManipulationStart() override;
 	void onManipulationChanged() override;
 	void onManipulationEnd() override;
+	void onManipulationCancelled() override;
 
 	const WorkZone& getWorkZone() override;
 

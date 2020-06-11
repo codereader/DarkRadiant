@@ -3,7 +3,6 @@
 #include "itextstream.h"
 #include "i18n.h"
 #include "iuimanager.h"
-#include "map/Map.h"
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
 #include <wx/menu.h>

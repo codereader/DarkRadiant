@@ -41,7 +41,7 @@ namespace selection {
 	 * Call the given functor for each selected face,
 	 * only considering faces that were selected in component selection mode.
 	 */
-	void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor);
+	void forEachSelectedFaceComponent(const std::function<void(IFace&)>& functor);
 
 	/** greebo: Returns the number of the selected face instances.
 	 */

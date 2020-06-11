@@ -42,6 +42,17 @@ struct PatchMesh
 	std::vector<VertexNT> vertices;
 };
 
+struct PatchRenderIndices
+{
+	// The indices, arranged in the way it's expected by GL_QUAD_STRIPS
+	// The number of indices is (lenStrips*numStrips)
+	std::vector<unsigned int> indices;
+
+	// Strip index layout
+	std::size_t numStrips;
+	std::size_t lenStrips;
+};
+
 typedef BasicVector2<unsigned int> Subdivisions;
 
 // The abstract base class for a Doom3-compatible patch
@@ -89,6 +100,9 @@ public:
 
 	// Returns a copy of the fully tesselated patch geometry (slow!)
 	virtual PatchMesh getTesselatedPatchMesh() const = 0;
+
+	// Returns a copy of the render indices which can be passed to GL_QUAD_STRIPS (slow)
+	virtual PatchRenderIndices getRenderIndices() const = 0;
 
 	/**
 	 * greebo: Inserts two columns before and after the column with index <colIndex>.
@@ -144,6 +158,8 @@ public:
 	 * @divisions: a two-component vector containing the desired subdivisions
 	 */
 	virtual void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) = 0;
+
+	virtual void undoSave() = 0;
 };
 
 namespace patch

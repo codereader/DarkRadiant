@@ -1,6 +1,9 @@
 #pragma once
 
+#include <stdexcept>
 #include "iselection.h"
+#include "ibrush.h"
+#include "ipatch.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
@@ -58,5 +61,118 @@ struct WorkZone
 		bounds(AABB::createFromMinMax(min, max))
 	{}
 };
+
+namespace detail
+{
+
+class AmbiguousShaderException :
+	public std::runtime_error
+{
+public:
+	// Constructor
+	AmbiguousShaderException(const std::string& what) :
+		std::runtime_error(what)
+	{}
+};
+
+/** 
+ * greebo: Helper objects that compares each object passed
+ * into it, throwing an AmbiguousShaderException as soon as
+ * at least two different non-empty shader names are found.
+ */
+class UniqueShaderFinder
+{
+	// The string containing the result
+	std::string _shader;
+
+public:
+	const std::string& getFoundShader() const
+	{
+		return _shader;
+	}
+
+	void checkFace(IFace& face)
+	{
+		checkShader(face.getShader());
+	}
+
+	void checkBrush(IBrush& brush)
+	{
+		for (std::size_t i = 0; i < brush.getNumFaces(); ++i)
+		{
+			checkFace(brush.getFace(i));
+		}
+	}
+
+	void checkPatch(IPatch& patch)
+	{
+		checkShader(patch.getShader());
+	}
+
+private:
+	void checkShader(const std::string& foundShader)
+	{
+		if (foundShader.empty())
+		{
+			return;
+		}
+
+		if (_shader.empty())
+		{
+			// No shader encountered yet, take this one
+			_shader = foundShader;
+		} 
+		else if (_shader != foundShader)
+		{
+			throw AmbiguousShaderException(foundShader);
+		}
+
+		// found shader is the same as _shader, all is well
+	}
+};
+
+}
+
+/** 
+ * greebo: Retrieves the shader name from the current selection.
+ * @returns: the name of the shader that is shared by every selected instance or
+ * the empty string "" otherwise.
+ */
+inline std::string getShaderFromSelection()
+{
+	try
+	{
+		detail::UniqueShaderFinder finder;
+		
+		if (GlobalSelectionSystem().countSelectedComponents() > 0)
+		{
+			// Check each selected face
+			GlobalSelectionSystem().foreachFace([&](IFace& face)
+			{
+				finder.checkFace(face);
+			});
+		}
+		else
+		{
+			GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+			{
+				if (Node_isBrush(node))
+				{
+					finder.checkBrush(*Node_getIBrush(node));
+				}
+				else if (Node_isPatch(node))
+				{
+					finder.checkPatch(*Node_getIPatch(node));
+				}
+			});
+		}
+
+		return finder.getFoundShader();
+	}
+	catch (const detail::AmbiguousShaderException&)
+	{
+		return std::string(); // return an empty string
+	}
+}
 
 } // namespace selection

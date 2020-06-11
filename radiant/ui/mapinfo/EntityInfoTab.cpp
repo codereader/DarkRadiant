@@ -52,9 +52,7 @@ void EntityInfoTab::populateTab()
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Populate the liststore with the entity count information
-    for (map::EntityBreakdown::Map::const_iterator i = _entityBreakdown.begin();
-		 i != _entityBreakdown.end();
-		 i++)
+	for (auto i = _entityBreakdown.begin(); i != _entityBreakdown.end(); ++i)
 	{
 		wxutil::TreeModel::Row row = _listStore->AddItem();
 

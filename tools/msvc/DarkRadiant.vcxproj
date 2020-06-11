@@ -244,6 +244,8 @@
     <ClCompile Include="..\..\radiant\uimanager\UIManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp" />
+    <ClCompile Include="..\..\radiant\ui\brush\FindBrush.cpp" />
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp" />
@@ -416,7 +418,9 @@
     <ClInclude Include="..\..\radiant\uimanager\UIManager.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\aas\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiant\ui\AutoSaveRequestHandler.h" />
+    <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h" />

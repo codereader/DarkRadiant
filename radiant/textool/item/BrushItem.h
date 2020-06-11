@@ -1,20 +1,20 @@
-#ifndef BRUSHITEM_H_
-#define BRUSHITEM_H_
+#pragma once
 
-#include "brush/Brush.h"
+#include "ibrush.h"
 #include "textool/TexToolItem.h"
 
-namespace textool {
+namespace textool
+{
 
 class BrushItem :
 	public TexToolItem
 {
 	// The brush this control is referring to
-	Brush& _sourceBrush;
+	IBrush& _sourceBrush;
 
 public:
 	// Constructor, allocates all child FacItems
-	BrushItem(Brush& sourceBrush);
+	BrushItem(IBrush& sourceBrush);
 
     // destructor
 	virtual ~BrushItem() {}
@@ -30,6 +30,4 @@ public:
 
 }; // class BrushItem
 
-} // namespace TexTool
-
-#endif /*BRUSHITEM_H_*/
+} // namespace

@@ -139,12 +139,13 @@ void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() < 2 || args.size() > 6)
 	{
-		rMessage() << "Usage: ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>]" << std::endl;
+		rMessage() << "Usage: ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]" << std::endl;
 		rMessage() << "   <Path> must be an absolute file system path" << std::endl;
 		rMessage() << "   pass [<CenterObjects>] as 1 to center objects around the origin" << std::endl;
 		rMessage() << "   pass [<SkipCaulk>] as 1 to skip caulked surfaces" << std::endl;
 		rMessage() << "   pass [<ReplaceSelectionWithModel>] as 1 to delete the selection and put the exported model in its place" << std::endl;
 		rMessage() << "   pass [<UseEntityOrigin>] as 1 to use the entity origin as export origin (only applicable if a single entity is selected)" << std::endl;
+		rMessage() << "   pass [<ExportLightsAsObjects>] as 1 to export lights as small polyhedric objects" << std::endl;
 		return;
 	}
 
@@ -156,6 +157,7 @@ void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 	options.centerObjects = false;
 	options.replaceSelectionWithModel = false;
 	options.useEntityOrigin = false;
+	options.exportLightsAsObjects = false;
 
 	if (args.size() >= 3)
 	{
@@ -175,6 +177,11 @@ void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 	if (args.size() >= 6)
 	{
 		options.useEntityOrigin = (args[5].getInt() != 0);
+	}
+
+	if (args.size() >= 7)
+	{
+		options.exportLightsAsObjects = (args[6].getInt() != 0);
 	}
 
 	try

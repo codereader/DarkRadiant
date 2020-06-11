@@ -1,6 +1,6 @@
 #pragma once
 
-#include "map/ShaderBreakdown.h"
+#include "scene/ShaderBreakdown.h"
 
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/TreeView.h"
@@ -14,7 +14,7 @@ class ShaderInfoTab :
 {
 private:
 	// The helper class counting the shaders in the map
-	map::ShaderBreakdown _shaderBreakdown;
+	scene::ShaderBreakdown _shaderBreakdown;
 
 	// Treemodel definition
 	struct ListColumns :

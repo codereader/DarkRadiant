@@ -45,7 +45,7 @@ namespace
 	const char* const GKEY_MONSTERCLIP_SHADER = "/defaults/monsterClipShader";
 }
 
-void forEachSelectedFaceComponent(const std::function<void(Face&)>& functor)
+void forEachSelectedFaceComponent(const std::function<void(IFace&)>& functor)
 {
 	std::for_each(FaceInstance::Selection().begin(), FaceInstance::Selection().end(),
 		[&] (FaceInstance* instance) { functor(instance->getFace()); });

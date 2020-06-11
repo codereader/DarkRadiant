@@ -1857,6 +1857,20 @@ PatchTesselation& Patch::getTesselation()
 	return _mesh;
 }
 
+PatchRenderIndices Patch::getRenderIndices() const
+{
+	// Ensure the tesselation is up to date
+	const_cast<Patch&>(*this).updateTesselation();
+	
+	PatchRenderIndices info;
+
+	info.indices = _mesh.indices;
+	info.lenStrips = _mesh.lenStrips;
+	info.numStrips = _mesh.numStrips;
+
+	return info;
+}
+
 PatchMesh Patch::getTesselatedPatchMesh() const
 {
 	// Ensure the tesselation is up to date

@@ -4,6 +4,7 @@
 #include "imodel.h"
 #include "iselection.h"
 #include "ifiletypes.h"
+#include "icommandsystem.h"
 #include "igame.h"
 
 #include <stdexcept>
@@ -24,7 +25,6 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/ChoiceHelper.h"
 #include "wxutil/PathEntry.h"
-#include "map/algorithm/Export.h"
 
 namespace ui
 {
@@ -165,26 +165,24 @@ void ExportAsModelDialog::populateWindow()
 
 void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 {
-	map::algorithm::ModelExportOptions options;
+	bool centerObjects = findNamedObject<wxCheckBox>(this, "ExportDialogCenterObjects")->GetValue();
+	bool skipCaulk = findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->GetValue();
+	std::string outputFilename = findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->getValue();
+	std::string outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
+	bool replaceSelectionWithModel = findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel")->GetValue();
+	bool useEntityOrigin = findNamedObject<wxCheckBox>(this, "ExportDialogUseEntityOrigin")->GetValue();
+	bool exportLightsAsObjects = findNamedObject<wxCheckBox>(this, "ExportDialogExportLightsAsObjects")->GetValue();
 
-	options.centerObjects = findNamedObject<wxCheckBox>(this, "ExportDialogCenterObjects")->GetValue();
-	options.skipCaulk = findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->GetValue();
-	options.outputFilename = findNamedObject<wxutil::PathEntry>(this, "ExportDialogFilePicker")->getValue();
-	options.outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
-	options.replaceSelectionWithModel = findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel")->GetValue();
-	options.useEntityOrigin = findNamedObject<wxCheckBox>(this, "ExportDialogUseEntityOrigin")->GetValue();
-	options.exportLightsAsObjects = findNamedObject<wxCheckBox>(this, "ExportDialogExportLightsAsObjects")->GetValue();
-
-	if (options.outputFilename.empty())
+	if (outputFilename.empty())
 	{
 		wxutil::Messagebox::Show(_("Empty Filename"), _("No filename specified, cannot run exporter"), IDialog::MessageType::MESSAGE_ERROR);
 		return;
 	}
 
 	// Check if the target file already exists
-	if (os::fileOrDirExists(options.outputFilename) && 
+	if (os::fileOrDirExists(outputFilename) &&
 		wxutil::Messagebox::Show(_("Confirm Replacement"), 
-			fmt::format(_("The file {0} already exists.\nReplace this file?"), options.outputFilename),
+			fmt::format(_("The file {0} already exists.\nReplace this file?"), outputFilename),
 			IDialog::MessageType::MESSAGE_ASK) != IDialog::RESULT_YES)
 	{
 		return; // abort
@@ -194,7 +192,18 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 
 	try
 	{
-		map::algorithm::exportSelectedAsModel(options);
+		// ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]
+		cmd::ArgumentList argList;
+
+		argList.push_back(outputFilename);
+		argList.push_back(outputFormat);
+		argList.push_back(centerObjects);
+		argList.push_back(skipCaulk);
+		argList.push_back(replaceSelectionWithModel);
+		argList.push_back(useEntityOrigin);
+		argList.push_back(exportLightsAsObjects);
+
+		GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
 
 		// Close the dialog
 		EndModal(wxID_OK);

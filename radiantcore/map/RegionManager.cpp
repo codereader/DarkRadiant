@@ -273,7 +273,7 @@ void RegionManager::setRegionXY(const cmd::ArgumentList& args)
 
         SceneChangeNotify();
     }
-    catch (const std::runtime_error& ex)
+    catch (const std::runtime_error&)
     {
         disable();
         throw cmd::ExecutionFailure(_("Could not set Region: XY Top View not found."));

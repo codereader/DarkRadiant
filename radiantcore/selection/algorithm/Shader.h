@@ -23,13 +23,6 @@ namespace selection
 	namespace algorithm
     {
 
-	/** greebo: Retrieves the shader name from the current selection.
-	 *
-	 * @returns: the name of the shader that is shared by every selected instance or
-	 * the empty string "" otherwise.
-	 */
-	std::string getShaderFromSelection();
-
 	/** greebo: Applies the given shader to the current selection.
 	 */
 	void applyShaderToSelection(const std::string& shaderName);
@@ -209,8 +202,8 @@ namespace selection
 	void deselectItemsByShader(const std::string& shaderName);
 
 	// Command target to (de-)select items by shader name
-	void selectItemsByShader(const cmd::ArgumentList& args);
-	void deselectItemsByShader(const cmd::ArgumentList& args);
+	void selectItemsByShaderCmd(const cmd::ArgumentList& args);
+	void deselectItemsByShaderCmd(const cmd::ArgumentList& args);
 
 	} // namespace algorithm
 } // namespace selection

@@ -48,7 +48,6 @@
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Transformation.h"
 #include "module/StaticModule.h"
-#include "RenderableAasFile.h"
 #include "MapPropertyInfoFileModule.h"
 
 #include <fmt/format.h>
@@ -841,6 +840,10 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     GlobalMapInfoFileManager().registerInfoFileModule(
         std::make_shared<MapPropertyInfoFileModule>()
     );
+
+    GlobalRadiant().signal_radiantShutdown().connect(
+        sigc::mem_fun(this, &Map::onRadiantShutdown)
+    );
 }
 
 void Map::shutdownModule()
@@ -851,6 +854,11 @@ void Map::shutdownModule()
 
     _modelScalePreserver.reset();
 	_mapPositionManager.reset();
+}
+
+void Map::onRadiantShutdown()
+{
+    freeMap();
 }
 
 } // namespace map

@@ -646,6 +646,12 @@
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp">
+      <Filter>src\ui\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\brush\FindBrush.cpp">
+      <Filter>src\ui\brush</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1247,6 +1253,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mousetool\RegistrationHelper.h">
       <Filter>src\ui\mousetool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\aas\RenderableAasFile.h">
+      <Filter>src\ui\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h">
+      <Filter>src\ui\brush</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

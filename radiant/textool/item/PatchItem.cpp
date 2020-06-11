@@ -1,26 +1,25 @@
 #include "PatchItem.h"
 
 #include "PatchVertexItem.h"
-#include "patch/Patch.h"
 
-namespace textool {
+namespace textool
+{
 
-PatchItem::PatchItem(Patch& sourcePatch) :
+PatchItem::PatchItem(IPatch& sourcePatch) :
 	_sourcePatch(sourcePatch)
 {
 	// Add all the patch control vertices as children to this class
-	for (PatchControlIter i = _sourcePatch.begin(); i != _sourcePatch.end(); i++) {
-		// Allocate a new vertex children on the heap
-		TexToolItemPtr patchVertexItem(
-			new PatchVertexItem(*i)
-		);
-
-		// Add it to the children of this patch
-		_children.push_back(patchVertexItem);
+	for (std::size_t c = 0; c < _sourcePatch.getWidth(); c++)
+	{
+		for (std::size_t r = 0; r < _sourcePatch.getHeight(); r++)
+		{
+			_children.emplace_back(new PatchVertexItem(_sourcePatch.ctrlAt(r, c)));
+		}
 	}
 }
 
-void PatchItem::render() {
+void PatchItem::render()
+{
 	glEnable(GL_BLEND);
 	glBlendColor(0,0,0, 0.3f);
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
@@ -28,18 +27,19 @@ void PatchItem::render() {
 	glColor3f(1, 1, 1);
 
 	// Get the tesselation and the first
-	PatchTesselation& tess = _sourcePatch.getTesselation();
+	auto tess = _sourcePatch.getTesselatedPatchMesh();
 
-	const RenderIndex* strip_indices = &tess.indices.front();
+	auto renderInfo = _sourcePatch.getRenderIndices();
+	auto* strip_indices = &renderInfo.indices.front();
 
-	for (std::size_t i = 0; i < tess.numStrips; i++, strip_indices += tess.lenStrips)
+	for (std::size_t i = 0; i < renderInfo.numStrips; i++, strip_indices += renderInfo.lenStrips)
 	{
 		glBegin(GL_QUAD_STRIP);
 
-		for (std::size_t offset = 0; offset < tess.lenStrips; offset++)
+		for (std::size_t offset = 0; offset < renderInfo.lenStrips; offset++)
 		{
 			// Retrieve the mesh vertex from the line strip
-			ArbitraryMeshVertex& meshVertex = tess.vertices[*(strip_indices + offset)];
+			auto& meshVertex = tess.vertices[*(strip_indices + offset)];
 			glVertex2d(meshVertex.texcoord[0], meshVertex.texcoord[1]);
 		}
 
@@ -52,7 +52,8 @@ void PatchItem::render() {
 	TexToolItem::render();
 }
 
-void PatchItem::beginTransformation() {
+void PatchItem::beginTransformation() 
+{
 	// Call the default routine
 	TexToolItem::beginTransformation();
 	// Save the patch undomemento

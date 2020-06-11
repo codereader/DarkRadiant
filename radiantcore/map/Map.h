@@ -153,10 +153,10 @@ public:
 
 	/** greebo: Returns true if the map has unsaved changes.
 	 */
-	bool isModified() const;
+	bool isModified() const override;
 
 	// Sets the modified status of this map
-	void setModified(bool modifiedFlag);
+	void setModified(bool modifiedFlag) override;
 
 	// Updates the window title of the mainframe
 	void updateTitle();
@@ -221,6 +221,8 @@ private:
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
+
+	void onRadiantShutdown();
 
 }; // class Map
 

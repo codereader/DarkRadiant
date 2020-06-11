@@ -195,6 +195,8 @@ public:
 
 	PatchTesselation& getTesselation();
 
+	PatchRenderIndices getRenderIndices() const override;
+
 	// Returns a copy of the tesselated geometry
 	PatchMesh getTesselatedPatchMesh() const override;
 
@@ -325,7 +327,7 @@ public:
 	void createThickenedWall(const Patch& sourcePatch, const Patch& targetPatch, const int wallIndex);
 
 	// called just before an action to save the undo state
-	void undoSave();
+	void undoSave() override;
 
 	// Save the current patch state into a new UndoMemento instance (allocated on heap) and return it to the undo observer
 	IUndoMementoPtr exportState() const override;

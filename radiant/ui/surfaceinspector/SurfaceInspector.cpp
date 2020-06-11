@@ -608,7 +608,7 @@ void SurfaceInspector::doUpdate()
 	_modifyTex.normalise->Enable(applySensitivity);
 
 	// Current shader name
-	_shaderEntry->SetValue(selection::algorithm::getShaderFromSelection());
+	_shaderEntry->SetValue(selection::getShaderFromSelection());
 
 	if (valueSensitivity)
 	{

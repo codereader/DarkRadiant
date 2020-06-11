@@ -1,5 +1,4 @@
-#ifndef MODELBREAKDOWN_H_
-#define MODELBREAKDOWN_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -7,7 +6,8 @@
 #include "imodel.h"
 #include "modelskin.h"
 
-namespace map {
+namespace scene
+{
 
 /**
  * greebo: This object traverses the scenegraph on construction
@@ -37,25 +37,27 @@ private:
 	mutable Map _map;
 
 public:
-	ModelBreakdown() {
+	ModelBreakdown()
+	{
 		_map.clear();
 		GlobalSceneGraph().root()->traverseChildren(*this);
 	}
 
-	bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& node) override
+	{
 		// Check if this node is a model
 		model::ModelNodePtr modelNode = Node_getModel(node);
 
-		if (modelNode != NULL) {
+		if (modelNode)
+		{
 			// Get the actual model from the node
 			const model::IModel& model = modelNode->getIModel();
 
 			Map::iterator found = _map.find(model.getModelPath());
 
-			if (found == _map.end()) {
-				std::pair<Map::iterator, bool> result = _map.insert(
-					Map::value_type(model.getModelPath(), ModelCount())
-				);
+			if (found == _map.end())
+			{
+				auto result = _map.emplace(model.getModelPath(), ModelCount());
 
 				found = result.first;
 
@@ -71,16 +73,17 @@ public:
 			modelCount.count++;
 
 			// Increase the skin count, check if we have a skinnable model
-			SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(node);
+			auto skinned = std::dynamic_pointer_cast<SkinnedModel>(node);
 
-			if (skinned != NULL) {
+			if (skinned)
+			{
 				std::string skinName = skinned->getSkin();
 
-				ModelCount::SkinCountMap::iterator foundSkin = modelCount.skinCount.find(skinName);
+				auto foundSkin = modelCount.skinCount.find(skinName);
 
-				if (foundSkin == modelCount.skinCount.end()) {
-					std::pair<ModelCount::SkinCountMap::iterator, bool> result =
-						modelCount.skinCount.insert(ModelCount::SkinCountMap::value_type(skinName, 0));
+				if (foundSkin == modelCount.skinCount.end())
+				{
+					auto result = modelCount.skinCount.emplace(skinName, 0);
 
 					foundSkin = result.first;
 				}
@@ -93,7 +96,8 @@ public:
 	}
 
 	// Accessor method to retrieve the entity breakdown map
-	const Map& getMap() const {
+	const Map& getMap() const
+	{
 		return _map;
 	}
 
@@ -102,10 +106,9 @@ public:
 		std::set<std::string> skinMap;
 
 		// Determine the number of distinct skins
-		for (Map::const_iterator m = _map.begin(); m != _map.end(); ++m)
+		for (auto m = _map.begin(); m != _map.end(); ++m)
 		{
-			for (ModelCount::SkinCountMap::const_iterator s = m->second.skinCount.begin();
-				 s != m->second.skinCount.end(); ++s)
+			for (auto s = m->second.skinCount.begin(); s != m->second.skinCount.end(); ++s)
 			{
 				if (!s->first.empty())
 				{
@@ -117,16 +120,15 @@ public:
 		return skinMap.size();
 	}
 
-	Map::const_iterator begin() const {
+	Map::const_iterator begin() const
+	{
 		return _map.begin();
 	}
 
-	Map::const_iterator end() const {
+	Map::const_iterator end() const
+	{
 		return _map.end();
 	}
+};
 
-}; // class ModelBreakdown
-
-} // namespace map
-
-#endif /* MODELBREAKDOWN_H_ */
+} // namespace

@@ -1,10 +1,10 @@
-#ifndef PATCHVERTEXITEM_H_
-#define PATCHVERTEXITEM_H_
+#pragma once
 
 #include "textool/TexToolItem.h"
 #include "ipatch.h"
 
-namespace textool {
+namespace textool
+{
 
 class PatchVertexItem :
 	public TexToolItem
@@ -46,6 +46,5 @@ public:
 	virtual void flipSelected(const int& axis);
 };
 
-} // namespace TexTool
+} // namespace
 
-#endif /*PATCHVERTEXITEM_H_*/

@@ -943,9 +943,6 @@
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\map\FindMapElements.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\Map.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
@@ -974,9 +971,6 @@
       <Filter>src\map</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\RegionManager.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\map\RenderableAasFile.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\RootNode.cpp">
@@ -1986,9 +1980,6 @@
     <ClInclude Include="..\..\radiantcore\map\EntityBreakdown.h">
       <Filter>src\map</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\FindMapElements.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\Map.h">
       <Filter>src\map</Filter>
     </ClInclude>
@@ -2020,9 +2011,6 @@
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\RegionWalkers.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\RenderableAasFile.h">
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\RootNode.h">

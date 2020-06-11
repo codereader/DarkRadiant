@@ -511,7 +511,7 @@ void RadiantSelectionSystem::foreachBrush(const std::function<void(Brush&)>& fun
     }
 }
 
-void RadiantSelectionSystem::foreachFace(const std::function<void(Face&)>& functor)
+void RadiantSelectionSystem::foreachFace(const std::function<void(IFace&)>& functor)
 {
 	FaceSelectionWalker walker(functor);
 
@@ -809,13 +809,77 @@ void RadiantSelectionSystem::onManipulationChanged()
 
 void RadiantSelectionSystem::onManipulationEnd()
 {
-	_pivot.endOperation();
+    GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
+
+    _pivot.endOperation();
 
 	// The selection bounds have possibly changed, request an idle callback
 	_requestWorkZoneRecalculation = true;
 	_requestSceneGraphChange = true;
 
+    const selection::ManipulatorPtr& activeManipulator = getActiveManipulator();
+    assert(activeManipulator);
+
+    // greebo: Deselect all faces if we are in brush and drag mode
+    if ((Mode() == SelectionSystem::ePrimitive || Mode() == SelectionSystem::eGroupPart) &&
+        activeManipulator->getType() == selection::Manipulator::Drag)
+    {
+        SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
+        GlobalSceneGraph().root()->traverse(faceSelector);
+    }
+
+    // Remove all degenerated brushes from the scene graph (should emit a warning)
+    foreachSelected(RemoveDegenerateBrushWalker());
+
+    pivotChanged();
+    activeManipulator->setSelected(false);
+
 	requestIdleCallback();
+}
+
+void RadiantSelectionSystem::onManipulationCancelled()
+{
+    const selection::ManipulatorPtr& activeManipulator = getActiveManipulator();
+    assert(activeManipulator);
+
+    // Unselect any currently selected manipulators to be sure
+    activeManipulator->setSelected(false);
+
+    // Tell all the scene objects to revert their transformations
+    foreachSelected([](const scene::INodePtr& node)
+    {
+        ITransformablePtr transform = Node_getTransformable(node);
+
+        if (transform)
+        {
+            transform->revertTransform();
+        }
+
+        // In case of entities, we need to inform the child nodes as well
+        if (Node_getEntity(node))
+        {
+            node->foreachNode([&](const scene::INodePtr& child)
+            {
+                ITransformablePtr transform = Node_getTransformable(child);
+
+                if (transform)
+                {
+                    transform->revertTransform();
+                }
+
+                return true;
+            });
+        }
+    });
+
+    // greebo: Deselect all faces if we are in brush and drag mode
+    if (Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::Manipulator::Drag)
+    {
+        SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
+        GlobalSceneGraph().root()->traverse(faceSelector);
+    }
+
+    pivotChanged();
 }
 
 void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 

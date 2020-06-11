@@ -20,7 +20,6 @@
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/EmbeddedLayout.h"
 #include "ui/mainframe/TopLevelFrame.h"
-#include "map/Map.h"
 
 #include "module/StaticModule.h"
 #include <functional>
@@ -261,13 +260,10 @@ void MainFrame::removeLayout()
 
 void MainFrame::preDestructionCleanup()
 {
-    // Unload the map (user has already been prompted to save, if appropriate)
-    GlobalMap().freeMap();
-
 	saveWindowPosition();
 
     // Free the layout
-    if (_currentLayout != NULL)
+    if (_currentLayout)
     {
         removeLayout();
     }
@@ -279,7 +275,7 @@ void MainFrame::preDestructionCleanup()
 void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 {
     // If the event is vetoable, first check for unsaved data before closing
-    if (ev.CanVeto() && !GlobalMap().askForSave(_("Exit DarkRadiant")))
+    if (ev.CanVeto() && false /*!GlobalMap().askForSave(_("Exit DarkRadiant"))*/) // TODO
     {
         // Do nothing
         ev.Veto();
