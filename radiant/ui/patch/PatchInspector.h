@@ -13,11 +13,6 @@
 #include "wxutil/event/SingleIdleCallback.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
-class Patch;
-class PatchNode;
-typedef std::shared_ptr<PatchNode> PatchNodePtr;
-typedef std::weak_ptr<PatchNode> PatchNodeWeakPtr;
-
 namespace wxutil { class ControlButton; }
 class wxChoice;
 class wxPanel;
@@ -26,10 +21,6 @@ class wxSizer;
 
 namespace ui
 {
-
-// Forward declaration
-class PatchInspector;
-typedef std::shared_ptr<PatchInspector> PatchInspectorPtr;
 
 class PatchInspector : 
 	public wxutil::TransientWindow,
@@ -60,7 +51,7 @@ private:
 	std::size_t _patchCols;
 
 	// The pointer to the active patch node (only non-NULL if there is a single patch selected)
-	PatchNodeWeakPtr _patch;
+	std::weak_ptr<IPatchNode> _patch;
 
 	// If this is set to TRUE, the GTK callbacks will be disabled
 	bool _updateActive;
@@ -145,7 +136,7 @@ public:
 	void onPatchDestruction();
 
 private:
-	void setPatch(const PatchNodePtr& patch);
+	void setPatch(const IPatchNodePtr& patch);
 
 	// Updates the widgets (this is private, use queueUpdate() instead)
 	void update();
@@ -157,7 +148,7 @@ private:
 	void repopulateVertexChooser();
 
 	// This is where the static shared_ptr of the singleton instance is held.
-	static PatchInspectorPtr& InstancePtr();
+	static std::shared_ptr<PatchInspector>& InstancePtr();
 
 	// Called by wxWidgets when the system is idle
 	void onIdle(wxIdleEvent& ev);
