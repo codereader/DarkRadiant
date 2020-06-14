@@ -34,7 +34,7 @@ class SelectionInfo;
 class Face;
 class IFace;
 class Brush;
-class Patch;
+class IPatch;
 
 namespace selection 
 { 
@@ -271,7 +271,7 @@ public:
 	 * Call the given functor for each selected patch. Selected group nodes like func_statics
 	 * are traversed recursively, invoking the functor for each visible patch in question.
 	 */
-	virtual void foreachPatch(const std::function<void(Patch&)>& functor) = 0;
+	virtual void foreachPatch(const std::function<void(IPatch&)>& functor) = 0;
 
     /// Signal emitted when the selection is changed
     virtual SelectionChangedSignal signal_selectionChanged() const = 0;

@@ -965,6 +965,7 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("CopyShader", pickShaderFromSelection);
 	GlobalCommandSystem().addCommand("PasteShader", pasteShaderToSelection);
 	GlobalCommandSystem().addCommand("PasteShaderNatural", pasteShaderNaturalToSelection);
+	GlobalCommandSystem().addCommand("SetShaderOnSelection", applyShaderToSelectionCmd);
 
 	GlobalCommandSystem().addCommand("SelectItemsByShader", selectItemsByShaderCmd, { cmd::ARGTYPE_STRING });
 	GlobalCommandSystem().addCommand("DeselectItemsByShader", deselectItemsByShaderCmd, { cmd::ARGTYPE_STRING });
@@ -989,6 +990,7 @@ void registerCommands()
 
 	GlobalCommandSystem().addCommand("ConnectSelection", connectSelectedEntities);
     GlobalCommandSystem().addCommand("BindSelection", bindEntities);
+    GlobalCommandSystem().addCommand("SetEntityKeyValue", setEntityKeyValueOnSelection);
     GlobalCommandSystem().addCommand("CreateCurveNURBS", createCurveNURBS);
     GlobalCommandSystem().addCommand("CreateCurveCatmullRom", createCurveCatmullRom);
 

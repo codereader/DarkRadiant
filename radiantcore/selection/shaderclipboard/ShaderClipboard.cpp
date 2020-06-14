@@ -146,7 +146,7 @@ ShaderClipboard& ShaderClipboard::Instance()
 	return static_cast<ShaderClipboard&>(GlobalShaderClipboard());
 }
 
-void ShaderClipboard::setSource(std::string shader)
+void ShaderClipboard::setSourceShader(std::string shader)
 {
 	if (_updatesDisabled) return; // loopback guard
 

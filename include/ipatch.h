@@ -160,6 +160,10 @@ public:
 	virtual void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) = 0;
 
 	virtual void undoSave() = 0;
+
+	// This translates the texture as much towards the origin in texture space as possible 
+	// without changing its appearance.
+	virtual void normaliseTexture() = 0;
 };
 
 namespace patch

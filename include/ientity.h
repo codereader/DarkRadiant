@@ -390,6 +390,15 @@ public:
 
     // Access to the settings manager
     virtual IEntitySettings& getSettings() = 0;
+
+    /**
+     * Create an instance of the given entity at the given position, and return
+     * the Node containing the new entity.
+     *
+     * @returns: the scene::IEntityNodePtr referring to the new entity.
+     * @throws: cmd::ExecutionFailure if anything goes wrong or the selection is not suitable.
+     */
+    virtual IEntityNodePtr createEntityFromSelection(const std::string& name, const Vector3& origin) = 0;
 };
 
 inline IEntityModule& GlobalEntityModule()

@@ -4,15 +4,15 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "imousetoolmanager.h"
+#include "ishaderclipboard.h"
 
 #include "ui/common/ShaderChooser.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
-#include "selection/algorithm/Shader.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/Modifier.h"
 #include "camera/tools/ShaderClipboardTools.h"
 #include "registry/registry.h"
+#include "shaderlib.h"
 
 #include <wx/button.h>
 #include <wx/stattext.h>
@@ -98,7 +98,7 @@ void FindAndReplaceShader::performReplace()
 
 	bool selectedOnly = findNamedObject<wxCheckBox>(this, "FindReplaceDialogSearchCurSelection")->GetValue();
 
-	int replaced = selection::algorithm::findAndReplaceShader(find, replace, selectedOnly);
+	int replaced = scene::findAndReplaceShader(find, replace, selectedOnly);
 
 	wxStaticText* status = findNamedObject<wxStaticText>(this, "FindReplaceDialogStatusLabel");
 	status->SetLabel(fmt::format(_(COUNT_TEXT), replaced));
@@ -194,7 +194,7 @@ void FindAndReplaceShader::onShaderClipboardChanged()
 {
     if (_lastFocusedEntry)
     {
-        _lastFocusedEntry->SetValue(GlobalShaderClipboard().getSource().getShader());
+        _lastFocusedEntry->SetValue(GlobalShaderClipboard().getShaderName());
     }
 }
 

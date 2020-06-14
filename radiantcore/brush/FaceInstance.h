@@ -150,7 +150,7 @@ public:
 
 	bool faceIsVisible() const
 	{
-		return m_face->faceIsVisible();
+		return m_face->isVisible();
 	}
 
 	void updateFaceVisibility();

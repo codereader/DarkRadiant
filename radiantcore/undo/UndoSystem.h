@@ -67,6 +67,8 @@ public:
 
 	void start() override;
 
+	bool operationStarted() const override;
+
 	// greebo: This finishes the current operation and
 	// removes it instantly from the stack
 	void cancel() override;

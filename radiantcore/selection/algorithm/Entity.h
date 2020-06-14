@@ -17,14 +17,12 @@ namespace algorithm
  * This doesn't open an UndoableCommand session, take care of this in the 
  * client code.
  *
- * Throws a std::runtime_error in case the keyvalue cannot be applied.
+ * Throws a cmd::ExecutionFailure in case the keyvalue cannot be applied.
  */
-void setEntityKeyvalue(const std::string& key, const std::string& value);
+void setEntityKeyValue(const std::string& key, const std::string& value);
 
-/**
- * greebo: Changes the classname of the currently selected entities.
- */
-void setEntityClassname(const std::string& classname);
+// Command adaptor wrapping the setEntityKeyvalue function above
+void setEntityKeyValueOnSelection(const cmd::ArgumentList& args);
 
 /**
  * greebo: "Binds" the selected entites together by setting the "bind"
@@ -38,28 +36,6 @@ void bindEntities(const cmd::ArgumentList& args);
  * the first selected entity is targetting the second.
  */
 void connectSelectedEntities(const cmd::ArgumentList& args);
-
-
-/** 
- * Exception thrown when the incorrect number of brushes is selected when
- * creating an entity.
- */
-class EntityCreationException : public std::runtime_error
-{
-public:
-	EntityCreationException(const std::string& what)
-	: std::runtime_error(what) {}
-};
-
-/**
- * Create an instance of the given entity at the given position, and return
- * the Node containing the new entity. If the incorrect number of brushes
- * is selected, an EntityCreationException will be thrown.
- *
- * @returns
- * A scene::INodePtr containing the new entity.
- */
-scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3& origin);
 
 } // namespace algorithm
 } // namespace selection

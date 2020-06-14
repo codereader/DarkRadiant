@@ -850,9 +850,6 @@
     <ClCompile Include="..\..\radiantcore\selection\algorithm\GroupCycle.cpp">
       <Filter>src\selection\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\selection\algorithm\ModelFinder.cpp">
-      <Filter>src\selection\algorithm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Patch.cpp">
       <Filter>src\selection\algorithm</Filter>
     </ClCompile>
@@ -1812,9 +1809,6 @@
     <ClInclude Include="..\..\radiantcore\patch\PatchSavedState.h">
       <Filter>src\patch</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\patch\PatchSceneWalk.h">
-      <Filter>src\patch</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\patch\PatchSettings.h">
       <Filter>src\patch</Filter>
     </ClInclude>
@@ -1873,9 +1867,6 @@
       <Filter>src\selection\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\algorithm\GroupCycle.h">
-      <Filter>src\selection\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\algorithm\ModelFinder.h">
       <Filter>src\selection\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Patch.h">

@@ -160,7 +160,7 @@ protected:
 class PatchSelectionWalker :
 	public SelectionWalker
 {
-	typedef std::function<void(Patch&)> VisitFunc;
+	typedef std::function<void(IPatch&)> VisitFunc;
 	VisitFunc _functor;
 public:
 	PatchSelectionWalker(const VisitFunc& functor) :
@@ -170,11 +170,9 @@ public:
 protected:
 	void handleNode(const scene::INodePtr& node)
 	{
-		Patch* patch = Node_getPatch(node);
-
-		if (patch != NULL)
+		if (Node_isPatch(node))
 		{
-			_functor(*patch);
+			_functor(*Node_getIPatch(node));
 		}
 	}
 };
@@ -199,7 +197,7 @@ protected:
 		{
 			brush->forEachFace([&] (Face& face)
 			{
-				if (face.faceIsVisible())
+				if (face.isVisible())
 				{
 					_functor(face);
 				}

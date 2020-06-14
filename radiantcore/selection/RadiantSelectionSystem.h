@@ -130,7 +130,7 @@ public:
 
 	void foreachBrush(const std::function<void(Brush&)>& functor) override;
 	void foreachFace(const std::function<void(IFace&)>& functor) override;
-	void foreachPatch(const std::function<void(Patch&)>& functor) override;
+	void foreachPatch(const std::function<void(IPatch&)>& functor) override;
 
 	void deselectAll();
 

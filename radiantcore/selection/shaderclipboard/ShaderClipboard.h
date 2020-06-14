@@ -33,7 +33,7 @@ public:
 
 	/** greebo: Sets the source face to the given <shader>
 	 */
-	void setSource(std::string shader);
+	void setSourceShader(const std::string& shader) override;
 
 	/** greebo: Retrieves the current source Texturable
 	 */
@@ -42,7 +42,7 @@ public:
     /**
      * Is emitted when the shader source changes.
      */
-    sigc::signal<void> signal_sourceChanged() const;
+    sigc::signal<void>& signal_sourceChanged() const;
 
 	// IShaderClipboard implementation
 

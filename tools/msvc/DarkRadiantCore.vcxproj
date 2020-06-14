@@ -628,7 +628,6 @@
     <ClCompile Include="..\..\radiantcore\selection\algorithm\General.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Group.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\algorithm\GroupCycle.cpp" />
-    <ClCompile Include="..\..\radiantcore\selection\algorithm\ModelFinder.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Patch.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Planes.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Primitives.cpp" />
@@ -901,7 +900,6 @@
     <ClInclude Include="..\..\radiantcore\patch\PatchNode.h" />
     <ClInclude Include="..\..\radiantcore\patch\PatchRenderables.h" />
     <ClInclude Include="..\..\radiantcore\patch\PatchSavedState.h" />
-    <ClInclude Include="..\..\radiantcore\patch\PatchSceneWalk.h" />
     <ClInclude Include="..\..\radiantcore\patch\PatchSettings.h" />
     <ClInclude Include="..\..\radiantcore\patch\PatchTesselation.h" />
     <ClInclude Include="..\..\radiantcore\precompiled.h" />
@@ -949,7 +947,6 @@
     <ClInclude Include="..\..\radiantcore\selection\algorithm\General.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Group.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\GroupCycle.h" />
-    <ClInclude Include="..\..\radiantcore\selection\algorithm\ModelFinder.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Patch.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Planes.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Primitives.h" />

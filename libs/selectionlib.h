@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include "iselection.h"
 #include "ibrush.h"
+#include "igroupnode.h"
+#include "ientity.h"
 #include "ipatch.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
@@ -173,6 +175,38 @@ inline std::string getShaderFromSelection()
 	{
 		return std::string(); // return an empty string
 	}
+}
+
+/**
+ * Tests the current selection and returns true if the selection is suitable
+ * for reparenting the selected primitives to the (last) selected entity.
+ */
+inline bool curSelectionIsSuitableForReparent()
+{
+	// Retrieve the selection information structure
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+	if (info.totalCount <= 1 || info.entityCount != 1)
+	{
+		return false;
+	}
+
+	scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
+	Entity* entity = Node_getEntity(lastSelected);
+
+	// Reject non-entities or models
+	if (entity == nullptr || entity->isModel())
+	{
+		return false;
+	}
+
+	// Accept only group nodes as parent
+	if (!Node_getGroupNode(lastSelected))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 } // namespace selection

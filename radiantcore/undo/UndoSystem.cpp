@@ -72,6 +72,11 @@ void UndoSystem::start()
 	trackersBegin();
 }
 
+bool UndoSystem::operationStarted() const
+{
+	return _activeUndoStack != nullptr;
+}
+
 void UndoSystem::cancel()
 {
 	// Try to add the last operation as "temp"

@@ -51,7 +51,7 @@ inline void foreachVisibleFaceInstance(const FaceInstanceVisitFunc& functor)
 	{
 		brush.getBrushNode().forEachFaceInstance([&] (FaceInstance& instance)
 		{
-			if (instance.getFace().faceIsVisible())
+			if (instance.getFace().isVisible())
 			{
 				functor(instance);
 			}

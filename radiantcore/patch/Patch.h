@@ -261,7 +261,7 @@ public:
 	/** greebo: This translates the texture as much towards
 	 * 			the origin as possible. The patch appearance stays unchanged.
 	 */
-	void normaliseTexture();
+	void normaliseTexture() override;
 
 	/** greebo: Translate all control vertices in texture space
 	 * with the given translation vector (helper method, no undoSave() call)

@@ -526,7 +526,7 @@ void RadiantSelectionSystem::foreachFace(const std::function<void(IFace&)>& func
 	algorithm::forEachSelectedFaceComponent(functor);
 }
 
-void RadiantSelectionSystem::foreachPatch(const std::function<void(Patch&)>& functor)
+void RadiantSelectionSystem::foreachPatch(const std::function<void(IPatch&)>& functor)
 {
 	PatchSelectionWalker walker(functor);
 

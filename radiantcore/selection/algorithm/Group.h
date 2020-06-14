@@ -65,30 +65,6 @@ namespace algorithm
 		}
 	};
 
-	// Checks the current selection to see whether it consists of
-	// group nodes only.
-	class GroupNodeChecker :
-		public SelectionSystem::Visitor
-	{
-		mutable bool _onlyGroups;
-		mutable std::size_t _numGroups;
-		mutable scene::INodePtr _firstGroupNode;
-	public:
-		GroupNodeChecker();
-
-		void visit(const scene::INodePtr& node) const;
-
-		// Returns true if the current selection consists of group nodes only
-		// Returns false if any selected node is a non-group or if nothing is selected.
-		bool onlyGroupsAreSelected() const;
-
-		// Returns the number of group nodes in the current selection
-		std::size_t selectedGroupCount() const;
-
-		// Returns the first group node of the selection or NULL if nothing selected
-		scene::INodePtr getFirstSelectedGroupNode() const;
-	};
-
 	/**
 	 * greebo: Takes the selected primitives and converts them to func_static.
 	 */
@@ -98,12 +74,6 @@ namespace algorithm
 	 * back to worldspawn and deletes the entity thereafter.
 	 */
 	void revertGroupToWorldSpawn(const cmd::ArgumentList& args);
-
-	/**
-	 * Tests the current selection and returns true if the selection is suitable
-	 * for reparenting the selected primitives to the (last) selected entity.
-	 */
-	bool curSelectionIsSuitableForReparent();
 
 	/** greebo: This re-parents the selected primitives to an entity. The entity has to
 	 * 			be selected last. Emits an error message if the selection doesn't meet

@@ -31,6 +31,9 @@ public:
 	// Returns the material name of the object in the clipboard (or an empty string)
 	virtual std::string getShaderName() = 0;
 
+	// Sets the content of the shaderclipboard to the given material
+	virtual void setSourceShader(const std::string& shader) = 0;
+
 	virtual void pickFromSelectionTest(SelectionTest& test) = 0;
 
 	/**
@@ -56,6 +59,11 @@ public:
 	 * Will leave the rest of the surface properties unchanged, if possible.
 	 */
 	virtual void pasteMaterialName(SelectionTest& test) = 0;
+
+	/**
+	 * Is emitted when the shader source changes.
+	 */
+	virtual sigc::signal<void>& signal_sourceChanged() = 0;
 };
 
 } // namespace

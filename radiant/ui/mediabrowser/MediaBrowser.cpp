@@ -25,8 +25,6 @@
 
 #include "registry/registry.h"
 #include "shaderlib.h"
-#include "selection/algorithm/Shader.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "string/string.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/common/ShaderDefinitionView.h"
@@ -471,7 +469,7 @@ void MediaBrowser::construct()
 		if (!isDirectorySelected() && !selection.empty())
 		{
 			// Pass shader name to the selection system
-			selection::algorithm::applyShaderToSelection(selection);
+			GlobalCommandSystem().executeCommand("SetShaderOnSelection", selection);
 		}
 	});
 
@@ -816,7 +814,7 @@ bool MediaBrowser::_testLoadInTexView()
 void MediaBrowser::_onApplyToSel()
 {
 	// Pass shader name to the selection system
-	selection::algorithm::applyShaderToSelection(getSelection());
+	GlobalCommandSystem().executeCommand("SetShaderOnSelection", getSelection());
 }
 
 // Check if a single non-directory texture is selected (used by multiple menu
@@ -843,11 +841,11 @@ void MediaBrowser::_onSelectItems(bool select)
 
     if (select)
     {
-        selection::algorithm::selectItemsByShader(shaderName);
+		GlobalCommandSystem().executeCommand("SelectItemsByShader", shaderName);
     }
     else
     {
-        selection::algorithm::deselectItemsByShader(shaderName);
+		GlobalCommandSystem().executeCommand("DeselectItemsByShader", shaderName);
     }
 }
 
@@ -947,7 +945,7 @@ void MediaBrowser::handleSelectionChange()
 	if (!isDirectorySelected())
 	{
 		_preview->SetTexture(getSelection());
-		GlobalShaderClipboard().setSource(getSelection());
+		GlobalShaderClipboard().setSourceShader(getSelection());
 	}
 	else
 	{

@@ -626,6 +626,11 @@ void Face::normaliseTexture() {
     texdefChanged();
 }
 
+bool Face::isVisible() const
+{
+    return _faceIsVisible;
+}
+
 void Face::updateFaceVisibility()
 {
     _faceIsVisible = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();

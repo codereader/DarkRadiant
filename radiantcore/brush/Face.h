@@ -202,10 +202,7 @@ public:
 	bool contributes() const;
 	bool is_bounded() const;
 
-	bool faceIsVisible() const
-	{
-		return _faceIsVisible;
-	}
+	bool isVisible() const override;
 
 	void updateFaceVisibility();
 

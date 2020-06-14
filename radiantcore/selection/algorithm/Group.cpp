@@ -9,6 +9,7 @@
 #include "selectionlib.h"
 #include "entitylib.h"
 #include "scene/SelectableNode.h"
+#include "scene/GroupNodeChecker.h"
 #include "command/ExecutionFailure.h"
 #include "command/ExecutionNotPossible.h"
 #include "selection/algorithm/Entity.h"
@@ -170,71 +171,6 @@ void GroupNodeCollector::visit(const scene::INodePtr& node) const
 	{
 		_groupNodes.push_back(node);
 	}
-}
-
-GroupNodeChecker::GroupNodeChecker() :
-	_onlyGroups(true),
-	_numGroups(0)
-{}
-
-void GroupNodeChecker::visit(const scene::INodePtr& node) const
-{
-	if (!scene::hasChildPrimitives(node))
-	{
-		_onlyGroups = false;
-	}
-	else
-	{
-		_numGroups++;
-
-		if (_firstGroupNode == NULL)
-		{
-			_firstGroupNode = node;
-		}
-	}
-}
-
-bool GroupNodeChecker::onlyGroupsAreSelected() const
-{
-	return _numGroups > 0 && _onlyGroups;
-}
-
-std::size_t GroupNodeChecker::selectedGroupCount() const
-{
-	return _numGroups;
-}
-
-scene::INodePtr GroupNodeChecker::getFirstSelectedGroupNode() const
-{
-	return _firstGroupNode;
-}
-
-bool curSelectionIsSuitableForReparent()
-{
-	// Retrieve the selection information structure
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-
-	if (info.totalCount <= 1 || info.entityCount != 1)
-	{
-		return false;
-	}
-
-	scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
-	Entity* entity = Node_getEntity(lastSelected);
-
-	// Reject non-entities or models
-	if (entity == nullptr || entity->isModel())
-	{
-		return false;
-	}
-
-	// Accept only group nodes as parent
-	if (!Node_getGroupNode(lastSelected))
-	{
-		return false;
-	}
-
-	return true;
 }
 
 // re-parents the selected brushes/patches
@@ -409,7 +345,7 @@ void selectParentEntitiesOfSelected(const cmd::ArgumentList& args)
 void mergeSelectedEntities(const cmd::ArgumentList& args)
 {
 	// Check the current selection, must consist of group nodes only
-	GroupNodeChecker walker;
+	scene::GroupNodeChecker walker;
 	GlobalSelectionSystem().foreachSelected(walker);
 
 	if (walker.onlyGroupsAreSelected() && walker.selectedGroupCount() > 1)

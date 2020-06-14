@@ -15,11 +15,11 @@
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
 #include "brush/TextureProjection.h"
-#include "patch/PatchSceneWalk.h"
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "selection/shaderclipboard/ClosestTexturableFinder.h"
+#include "scene/Traverse.h"
 
 #include "string/case_conv.h"
 
@@ -39,6 +39,17 @@ void applyShaderToSelection(const std::string& shaderName)
 	SceneChangeNotify();
 	// Update the Texture Tools
 	radiant::TextureChangedMessage::Send();
+}
+
+void applyShaderToSelectionCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1 || args[0].getString().empty())
+	{
+		rMessage() << "SetShaderOnSelection <shadername>" << std::endl;
+		return;
+	}
+
+	applyShaderToSelection(args[0].getString());
 }
 
 /** greebo: Applies the shader from the clipboard's face to the given <target> face
@@ -730,86 +741,12 @@ void normaliseTexture(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("normaliseTexture");
 
-	GlobalSelectionSystem().foreachFace([] (Face& face) { face.normaliseTexture(); });
-	GlobalSelectionSystem().foreachPatch([] (Patch& patch) { patch.normaliseTexture(); });
+	GlobalSelectionSystem().foreachFace([] (IFace& face) { face.normaliseTexture(); });
+	GlobalSelectionSystem().foreachPatch([] (IPatch& patch) { patch.normaliseTexture(); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
 	radiant::TextureChangedMessage::Send();
-}
-
-/** greebo: This replaces the shader of the visited face/patch with <replace>
- * 			if the face is textured with <find> and increases the given <counter>.
- */
-class ShaderReplacer
-{
-	const std::string _find;
-	const std::string _replace;
-	mutable int _counter;
-public:
-	ShaderReplacer(const std::string& find, const std::string& replace) :
-		_find(find),
-		_replace(replace),
-		_counter(0)
-	{}
-
-	int getReplacedCount() const {
-		return _counter;
-	}
-
-	void operator()(Face& face) const {
-		if (face.getShader() == _find) {
-			face.setShader(_replace);
-			_counter++;
-		}
-	}
-
-	// BrushInstanceVisitor implementation
-	void operator()(FaceInstance& face) const
-	{
-		if (face.getFace().getShader() == _find) {
-			face.getFace().setShader(_replace);
-			_counter++;
-		}
-	}
-
-	void operator()(Patch& patch) const {
-		if (patch.getShader() == _find) {
-			patch.setShader(_replace);
-			_counter++;
-		}
-	}
-};
-
-int findAndReplaceShader(const std::string& find,
-	const std::string& replace, bool selectedOnly)
-{
-	std::string command("textureFindReplace");
-	command += "-find " + find + " -replace " + replace;
-	UndoableCommand undo(command);
-
-	// Construct a visitor class
-	ShaderReplacer replacer(find, replace);
-
-	if (selectedOnly)
-	{
-		if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-		{
-			// Find & replace all the brush and patch shaders
-            GlobalSelectionSystem().foreachFace(std::ref(replacer));
-            GlobalSelectionSystem().foreachPatch(std::ref(replacer));
-		}
-		
-		// Search the single selected faces in any case
-		forEachSelectedFaceComponent(std::ref(replacer));
-	}
-	else
-	{
-		scene::foreachVisibleFaceInstance(std::ref(replacer));
-        scene::foreachVisiblePatch(std::ref(replacer));
-	}
-
-	return replacer.getReplacedCount();
 }
 
 class ByShaderSelector :

@@ -30,6 +30,9 @@
     <ClCompile Include="..\..\libs\scene\SelectionIndex.cpp">
       <Filter>scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\scene\ModelFinder.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h">
@@ -74,6 +77,12 @@
       <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\scene\ShaderBreakdown.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\GroupNodeChecker.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\ModelFinder.h">
       <Filter>scene</Filter>
     </ClInclude>
   </ItemGroup>

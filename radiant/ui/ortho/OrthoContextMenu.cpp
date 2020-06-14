@@ -8,29 +8,29 @@
 #include "iresourcechooser.h"
 #include "idialogmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
+#include "selectionlib.h"
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
 #include "iuimanager.h"
 #include "imainframe.h"
-#include "map/Map.h"
 
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/menu/CommandMenuItem.h"
 
-#include "selection/algorithm/Group.h"
-#include "selection/algorithm/ModelFinder.h"
-#include "selection/algorithm/Entity.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
 #include "string/convert.h"
+#include "scene/GroupNodeChecker.h"
+#include "scene/ModelFinder.h"
 #include "math/AABB.h"
 
 #include <wx/window.h>
 #include <wx/menu.h>
 
 #include "module/StaticModule.h"
+#include "command/ExecutionFailure.h"
 
 namespace ui
 {
@@ -144,14 +144,14 @@ void OrthoContextMenu::analyseSelection()
     if (_selectionInfo.onlyEntitiesSelected)
     {
         // Check for group nodes
-        selection::algorithm::GroupNodeChecker walker;
+        scene::GroupNodeChecker walker;
         GlobalSelectionSystem().foreachSelected(walker);
 
         _selectionInfo.onlyGroupsSelected = walker.onlyGroupsAreSelected();
         _selectionInfo.singleGroupSelected = walker.selectedGroupCount() == 1 && !Node_isWorldspawn(walker.getFirstSelectedGroupNode());
 
         // Create a ModelFinder and check whether only models were selected
-        selection::algorithm::ModelFinder visitor;
+        scene::ModelFinder visitor;
         GlobalSelectionSystem().foreachSelected(visitor);
 
         // enable the "Add MonsterClip" entry only if at least one model is selected
@@ -221,7 +221,7 @@ bool OrthoContextMenu::checkMergeEntities()
 
 bool OrthoContextMenu::checkReparentPrimitives()
 {
-    return selection::algorithm::curSelectionIsSuitableForReparent();
+    return selection::curSelectionIsSuitableForReparent();
 }
 
 bool OrthoContextMenu::checkRevertToWorldspawnPartial()
@@ -268,9 +268,9 @@ void OrthoContextMenu::addEntity()
         // wrong number of brushes is selected.
         try
 		{
-            selection::algorithm::createEntityFromSelection(cName, _lastPoint);
+            GlobalEntityModule().createEntityFromSelection(cName, _lastPoint);
         }
-        catch (selection::algorithm::EntityCreationException& e)
+        catch (cmd::ExecutionFailure& e)
 		{
             wxutil::Messagebox::ShowError(e.what());
         }
@@ -284,15 +284,16 @@ void OrthoContextMenu::addPlayerStart()
     try
     {
         // Create the player start entity
-        scene::INodePtr playerStartNode = selection::algorithm::createEntityFromSelection(
+        auto playerStartNode = GlobalEntityModule().createEntityFromSelection(
             PLAYERSTART_CLASSNAME, _lastPoint
         );
-        Entity* playerStart = Node_getEntity(playerStartNode);
+        auto& playerStart = playerStartNode->getEntity();
 
         // Set a default angle
-        playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
+        playerStart.setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
     }
-    catch (selection::algorithm::EntityCreationException& e) {
+    catch (cmd::ExecutionFailure& e)
+    {
         wxutil::Messagebox::ShowError(e.what());
     }
 }
@@ -306,7 +307,7 @@ void OrthoContextMenu::callbackMovePlayerStart()
 
     Entity* playerStart = walker.getEntity();
 
-    if (playerStart != NULL)
+    if (playerStart != nullptr)
     {
         playerStart->setKeyValue("origin", string::to_string(_lastPoint));
     }
@@ -318,18 +319,18 @@ void OrthoContextMenu::callbackAddLight()
 
     try 
 	{
-        selection::algorithm::createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
+        GlobalEntityModule().createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
     }
-    catch (selection::algorithm::EntityCreationException&)
+    catch (cmd::ExecutionFailure& e)
 	{
-        wxutil::Messagebox::ShowError(_("Unable to create light, classname not found."));
+        wxutil::Messagebox::ShowError(fmt::format(_("Unable to create light: {0}"), e.what()));
     }
 }
 
 void OrthoContextMenu::callbackAddPrefab()
 {
     // Pass the call to the map algorithm and give the lastPoint coordinate as argument
-    GlobalMap().loadPrefabAt(_lastPoint);
+    GlobalCommandSystem().executeCommand(LOAD_PREFAB_AT_CMD, _lastPoint);
 }
 
 void OrthoContextMenu::callbackAddSpeaker()
@@ -362,30 +363,29 @@ void OrthoContextMenu::callbackAddSpeaker()
     try
     {
         // Create the speaker entity
-        scene::INodePtr spkNode = selection::algorithm::createEntityFromSelection(
+        auto spkNode = GlobalEntityModule().createEntityFromSelection(
             SPEAKER_CLASSNAME, _lastPoint
         );
 
         if (soundShader)
         {
             // Set the shader keyvalue
-            Entity* entity = Node_getEntity(spkNode);
-            assert(entity);
+            Entity& entity = spkNode->getEntity();
 
-            entity->setKeyValue("s_shader", soundShader->getName());
+            entity.setKeyValue("s_shader", soundShader->getName());
 
             // Initialise the speaker with suitable distance values
             SoundRadii radii = soundShader->getRadii();
 
-            entity->setKeyValue("s_mindistance", string::to_string(radii.getMin(true)));
-            entity->setKeyValue("s_maxdistance",
+            entity.setKeyValue("s_mindistance", string::to_string(radii.getMin(true)));
+            entity.setKeyValue("s_maxdistance",
                 (radii.getMax(true) > 0 ? string::to_string(radii.getMax(true)) : "10")
             );
         }
     }
-    catch (selection::algorithm::EntityCreationException&) 
+    catch (cmd::ExecutionFailure& e) 
     {
-        wxutil::Messagebox::ShowError(_("Unable to create speaker, classname not found."));
+        wxutil::Messagebox::ShowError(fmt::format(_("Unable to create speaker: {0}"), e.what()));
     }
 }
 
@@ -402,30 +402,31 @@ void OrthoContextMenu::callbackAddModel()
         ModelSelectorResult ms = ui::ModelSelector::chooseModel("", true, true);
 
         // If a model was selected, create the entity and set its model key
-        if (!ms.model.empty())
+        if (ms.model.empty())
         {
-            try {
-                scene::INodePtr modelNode = selection::algorithm::createEntityFromSelection(
-                    MODEL_CLASSNAME,
-                    _lastPoint
-                );
-
-                //Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
-                Node_getEntity(modelNode)->setKeyValue("model", ms.model);
-                Node_getEntity(modelNode)->setKeyValue("skin", ms.skin);
-
-                // If 'createClip' is ticked, create a clip brush
-                if (ms.createClip)
-                {
-                    GlobalCommandSystem().execute("SurroundWithMonsterclip");
-                }
-            }
-            catch (selection::algorithm::EntityCreationException&)
-            {
-                wxutil::Messagebox::ShowError(_("Unable to create model, classname not found."));
-            }
+            return;
         }
 
+        try
+        {
+            auto modelNode = GlobalEntityModule().createEntityFromSelection(
+                MODEL_CLASSNAME, _lastPoint
+            );
+
+            //Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
+            modelNode->getEntity().setKeyValue("model", ms.model);
+            modelNode->getEntity().setKeyValue("skin", ms.skin);
+
+            // If 'createClip' is ticked, create a clip brush
+            if (ms.createClip)
+            {
+                GlobalCommandSystem().execute("SurroundWithMonsterclip");
+            }
+        }
+        catch (cmd::ExecutionFailure& e)
+        {
+            wxutil::Messagebox::ShowError(fmt::format(_("Unable to create model: {0}"), e.what()));
+        }
     }
     else
     {

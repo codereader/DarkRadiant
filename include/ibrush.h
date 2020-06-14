@@ -94,6 +94,10 @@ public:
 	// Submits the current state to the UndoSystem, to make further actions undo-able
 	virtual void undoSave() = 0;
 
+	// Returns true if the texture of this face is not filtered out
+	// This doesn't take into account whether the owning brush is visible or not
+	virtual bool isVisible() const = 0;
+
 	// Shader accessors
 	virtual const std::string& getShader() const = 0;
 	virtual void setShader(const std::string& name) = 0;

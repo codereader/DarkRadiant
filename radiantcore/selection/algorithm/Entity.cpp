@@ -25,7 +25,7 @@ namespace algorithm
 
 const char* const GKEY_BIND_KEY("/defaults/bindKey");
 
-void setEntityKeyvalue(const scene::INodePtr& node, const std::string& key, const std::string& value)
+void setEntityKeyValue(const scene::INodePtr& node, const std::string& key, const std::string& value)
 {
 	Entity* entity = Node_getEntity(node);
 
@@ -64,43 +64,7 @@ void setEntityKeyvalue(const scene::INodePtr& node, const std::string& key, cons
 	}
 }
 
-void setEntityKeyvalue(const std::string& key, const std::string& value)
-{
-	if (key.empty()) return;
-
-	if (key == "name")
-	{
-		// Check the global namespace if this change is ok
-		scene::IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
-
-		if (mapRoot)
-		{
-			INamespacePtr nspace = mapRoot->getNamespace();
-
-			if (nspace && nspace->nameExists(value))
-			{
-				// name exists, cancel the change
-				throw std::runtime_error(fmt::format(_("The name {0} already exists in this map!"), value));
-			}
-		}
-	}
-
-	// Detect classname changes
-	if (key == "classname")
-	{
-		// Classname changes are handled in a special way
-		setEntityClassname(value);
-		return;
-	}
-		
-	// Regular key change, set value on all selected entities
-	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
-	{
-		setEntityKeyvalue(node, key, value);
-	});
-}
-
-void setEntityClassname(const std::string& classname) 
+void setEntityClassname(const std::string& classname)
 {
 	if (classname.empty())
 	{
@@ -141,6 +105,55 @@ void setEntityClassname(const std::string& classname)
 		// Select the new entity node
 		Node_setSelected(newNode, true);
 	}
+}
+
+void setEntityKeyValue(const std::string& key, const std::string& value)
+{
+	if (key.empty()) return;
+
+	if (key == "name")
+	{
+		// Check the global namespace if this change is ok
+		scene::IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
+
+		if (mapRoot)
+		{
+			INamespacePtr nspace = mapRoot->getNamespace();
+
+			if (nspace && nspace->nameExists(value))
+			{
+				// name exists, cancel the change
+				throw cmd::ExecutionFailure(fmt::format(_("The name {0} already exists in this map!"), value));
+			}
+		}
+	}
+
+	// Detect classname changes
+	if (key == "classname")
+	{
+		// Classname changes are handled in a special way
+		setEntityClassname(value);
+		return;
+	}
+	
+	// Regular key change, set value on all selected entities
+	GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+	{
+		setEntityKeyValue(node, key, value);
+	});
+}
+
+void setEntityKeyValueOnSelection(const cmd::ArgumentList& args)
+{
+	if (args.size() != 2)
+	{
+		rWarning() << "Usage: SetEntityKeyValue <key> <value>" << std::endl;
+		return;
+	}
+
+	UndoableCommand cmd("SetEntityKeyValue");
+
+	setEntityKeyValue(args[0].getString(), args[1].getString());
 }
 
 void bindEntities(const cmd::ArgumentList& args)
@@ -227,161 +240,6 @@ void connectSelectedEntities(const cmd::ArgumentList& args)
 		throw cmd::ExecutionNotPossible(
 			_("Exactly two entities must be selected for this operation."));
 	}
-}
-
-// Default radius of lights is 320 (Q4) rather than 300 (D3)
-// since the grid is usually a multiple of 8.
-const float DEFAULT_LIGHT_RADIUS = 320;
-
-// Function to return an AABB based on the current workzone AABB (retrieved
-// from the currently selected brushes), or to use the default light radius
-// if the workzone AABB is not valid or none is available.
-AABB Doom3Light_getBounds(AABB aabb)
-{
-    // If the extents are 0 or invalid (-1), replace with the default radius
-    for (int i = 0; i < 3; i++)
-	{
-        if (aabb.extents[i] <= 0)
-		{
-            aabb.extents[i] = DEFAULT_LIGHT_RADIUS;
-		}
-    }
-
-    return aabb;
-}
-
-/**
- * Create an instance of the given entity at the given position, and return
- * the Node containing the new entity.
- *
- * @returns: the scene::INodePtr referring to the new entity.
- */
-scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3& origin)
-{
-    // Obtain the structure containing the selection counts
-    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-
-    IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(name, true);
-
-    // TODO: to be replaced by inheritance-based class detection
-    bool isModel = (info.totalCount == 0 && name == "func_static");
-
-    // Some entities are based on the size of the currently-selected primitive(s)
-    bool primitivesSelected = info.brushCount > 0 || info.patchCount > 0;
-
-    if (!(entityClass->isFixedSize() || isModel) && !primitivesSelected) {
-        throw EntityCreationException(
-            fmt::format(_("Unable to create entity {0}, no brushes selected."), name)
-        );
-    }
-
-    // Get the selection workzone bounds
-    AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
-
-    // Create the new node for the entity
-    IEntityNodePtr node(GlobalEntityModule().createEntity(entityClass));
-
-    GlobalSceneGraph().root()->addChildNode(node);
-
-    // The layer list we're moving the newly created node/subgraph into
-    scene::LayerList targetLayers;
-
-    if (entityClass->isFixedSize() || (isModel && !primitivesSelected))
-    {
-        selection::algorithm::deleteSelection();
-
-        ITransformablePtr transform = Node_getTransformable(node);
-
-        if (transform != 0) {
-            transform->setType(TRANSFORM_PRIMITIVE);
-            transform->setTranslation(origin);
-            transform->freezeTransform();
-        }
-
-        GlobalSelectionSystem().setSelectedAll(false);
-
-        // Move the item to the active layer
-		if (GlobalMapModule().getRoot())
-		{
-			targetLayers.insert(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
-		}
-
-        Node_setSelected(node, true);
-    }
-    else // brush-based entity
-    {
-        // Add selected brushes as children of non-fixed entity
-        node->getEntity().setKeyValue("model",
-                                      node->getEntity().getKeyValue("name"));
-
-        // Take the selection center as new origin
-        Vector3 newOrigin = selection::algorithm::getCurrentSelectionCenter();
-        node->getEntity().setKeyValue("origin", string::to_string(newOrigin));
-
-        // If there is an "editor_material" class attribute, apply this shader
-        // to all of the selected primitives before parenting them
-        std::string material = node->getEntity().getEntityClass()->getAttribute("editor_material").getValue();
-
-        if (!material.empty())
-		{
-            selection::algorithm::applyShaderToSelection(material);
-        }
-
-        // If we had primitives to reparent, the new entity should inherit the layer info from them
-        if (primitivesSelected)
-        {
-            scene::INodePtr primitive = GlobalSelectionSystem().ultimateSelected();
-            targetLayers = primitive->getLayers();
-        }
-        // Otherwise move the item to the active layer
-		else if (GlobalMapModule().getRoot())
-		{
-			targetLayers.insert(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
-        }
-
-        // Parent the selected primitives to the new node
-        selection::algorithm::ParentPrimitivesToEntityWalker walker(node);
-        GlobalSelectionSystem().foreachSelected(walker);
-        walker.reparent();
-
-        // De-select the children and select the newly created parent entity
-        GlobalSelectionSystem().setSelectedAll(false);
-        Node_setSelected(node, true);
-    }
-
-    // Assign the layers - including all child nodes (#2864)
-    scene::AssignNodeToLayersWalker layerWalker(targetLayers);
-    node->traverse(layerWalker);
-
-    // Set the light radius and origin
-
-    if (entityClass->isLight() && primitivesSelected)
-    {
-        AABB bounds(Doom3Light_getBounds(workzone));
-        node->getEntity().setKeyValue("origin",
-                                      string::to_string(bounds.getOrigin()));
-        node->getEntity().setKeyValue("light_radius",
-                                      string::to_string(bounds.getExtents()));
-    }
-
-    // Check for auto-setting key values. TODO: use forEachClassAttribute
-    // directly here.
-    eclass::AttributeList list = eclass::getSpawnargsWithPrefix(
-        *entityClass, "editor_setKeyValue"
-    );
-
-    if (!list.empty())
-    {
-        for (const auto& attr : list)
-        {
-            // Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
-            std::string key = attr.getName().substr(attr.getName().find_first_of(' ') + 1);
-            node->getEntity().setKeyValue(key, attr.getValue());
-        }
-    }
-
-    // Return the new node
-    return node;
 }
 
 } // namespace algorithm

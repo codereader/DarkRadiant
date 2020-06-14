@@ -27,6 +27,9 @@ namespace selection
 	 */
 	void applyShaderToSelection(const std::string& shaderName);
 
+	// Command wrapper of the above
+	void applyShaderToSelectionCmd(const cmd::ArgumentList& args);
+
 	/** 
      * greebo: Applies the shader in the clipboard to the nearest
 	 * texturable object (using the given SelectionTest)

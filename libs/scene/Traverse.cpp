@@ -1,8 +1,11 @@
 #include "Traverse.h"
 
 #include "scenelib.h"
+#include "ibrush.h"
+#include "ipatch.h"
 
-namespace scene {
+namespace scene
+{
 
 class IncludeSelectedWalker :
 	public scene::NodeVisitor
@@ -63,6 +66,41 @@ void traverse(const scene::INodePtr& root, scene::NodeVisitor& nodeExporter)
 {
 	// Just traverse the root using the given nodeExporter, no special rules
 	root->traverseChildren(nodeExporter);
+}
+
+void foreachVisibleFace(const std::function<void(IFace&)>& functor)
+{
+	GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)->bool
+	{
+		if (Node_isBrush(node) && node->visible())
+		{
+			auto* brush = Node_getIBrush(node);
+			for (std::size_t i = 0; i < brush->getNumFaces(); ++i)
+			{
+				auto& face = brush->getFace(i);
+
+				if (face.isVisible())
+				{
+					functor(face);
+				}
+			}
+		}
+
+		return true;
+	});
+}
+
+void foreachVisiblePatch(const std::function<void(IPatch&)>& functor)
+{
+	GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)->bool
+	{
+		if (Node_isPatch(node) && node->visible())
+		{
+			functor(*Node_getIPatch(node));
+		}
+
+		return true;
+	});
 }
 
 } // namespace
