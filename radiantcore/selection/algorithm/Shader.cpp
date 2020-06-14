@@ -438,6 +438,17 @@ void fitTexture(const float repeatS, const float repeatT)
 	radiant::TextureChangedMessage::Send();
 }
 
+void fitTextureCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 2)
+	{
+		rWarning() << "Usage: FitTexture <repeatU> <repeatV>" << std::endl;
+		return;
+	}
+
+	fitTexture(args[0].getDouble(), args[1].getDouble())
+}
+
 void flipTexture(unsigned int flipAxis)
 {
 	UndoableCommand undo("flipTexture");

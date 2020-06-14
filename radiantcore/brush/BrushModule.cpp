@@ -16,6 +16,7 @@
 #include "registry/registry.h"
 #include "ipreferencesystem.h"
 #include "module/StaticModule.h"
+#include "messages/TextureChanged.h"
 
 #include "selection/algorithm/Primitives.h"
 
@@ -122,10 +123,22 @@ void BrushModuleImpl::initialiseModule(const ApplicationContext& ctx) {
 
 	// add the preference settings
 	constructPreferences();
+
+	// Set up the link to send TextureChangedMessages
+	_brushFaceShaderChanged = Brush::signal_faceShaderChanged().connect(
+		[] { radiant::TextureChangedMessage::Send(); });
+
+	_faceTexDefChanged = Face::signal_texdefChanged().connect(
+		[] { radiant::TextureChangedMessage::Send(); });
 }
 
-void BrushModuleImpl::shutdownModule() {
+void BrushModuleImpl::shutdownModule()
+{
 	rMessage() << "BrushModuleImpl::shutdownModule called." << std::endl;
+
+	_brushFaceShaderChanged.disconnect();
+	_faceTexDefChanged.disconnect();
+
 	destroy();
 }
 

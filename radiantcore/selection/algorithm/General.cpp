@@ -956,6 +956,7 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("TexShift", shiftTextureCmd, { cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_STRING });
 
 	GlobalCommandSystem().addCommand("TexAlign", alignTextureCmd, { cmd::ARGTYPE_STRING });
+	GlobalCommandSystem().addCommand("FitTexture", fitTextureCmd, { cmd::ARGTYPE_DOUBLE, cmd::ARGTYPE_DOUBLE });
 
 	// Add the nudge commands (one general, four specialised ones)
 	GlobalCommandSystem().addCommand("NudgeSelected", nudgeSelectedCmd, { cmd::ARGTYPE_STRING });
@@ -965,7 +966,7 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("CopyShader", pickShaderFromSelection);
 	GlobalCommandSystem().addCommand("PasteShader", pasteShaderToSelection);
 	GlobalCommandSystem().addCommand("PasteShaderNatural", pasteShaderNaturalToSelection);
-	GlobalCommandSystem().addCommand("SetShaderOnSelection", applyShaderToSelectionCmd);
+	GlobalCommandSystem().addCommand("SetShaderOnSelection", applyShaderToSelectionCmd, { cmd::ARGTYPE_STRING });
 
 	GlobalCommandSystem().addCommand("SelectItemsByShader", selectItemsByShaderCmd, { cmd::ARGTYPE_STRING });
 	GlobalCommandSystem().addCommand("DeselectItemsByShader", deselectItemsByShaderCmd, { cmd::ARGTYPE_STRING });

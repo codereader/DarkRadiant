@@ -1947,9 +1947,6 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\algorithm\WorldspawnArgFinder.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\infofile\InfoFile.h">
       <Filter>src\map\infofile</Filter>
     </ClInclude>

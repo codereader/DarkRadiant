@@ -28,12 +28,6 @@
 
 #include "textool/TexTool.h"
 #include "ui/patch/PatchInspector.h"
-#include "brush/TextureProjection.h"
-#include "selection/algorithm/Primitives.h"
-#include "selection/algorithm/Shader.h"
-#include "brush/Face.h"
-#include "brush/Brush.h"
-#include "patch/Patch.h"
 
 namespace ui
 {
@@ -469,7 +463,7 @@ SurfaceInspector& SurfaceInspector::Instance()
 void SurfaceInspector::emitShader()
 {
 	// Apply it to the selection
-	selection::algorithm::applyShaderToSelection(_shaderEntry->GetValue().ToStdString());
+	GlobalCommandSystem().executeCommand("SetShaderOnSelection", _shaderEntry->GetValue().ToStdString());
 
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
@@ -627,7 +621,7 @@ void SurfaceInspector::fitTexture()
 
 	if (repeatX > 0.0 && repeatY > 0.0)
 	{
-		selection::algorithm::fitTexture(repeatX, repeatY);
+		GlobalCommandSystem().executeCommand("FitTexture", repeatX, repeatY);
 	}
 	else
 	{
@@ -689,9 +683,10 @@ void SurfaceInspector::_preShow()
 
 	// Disconnect everything, in some cases we get two consecutive Show() calls in wxGTK
 	_selectionChanged.disconnect();
-	_brushFaceShaderChanged.disconnect();
-	_faceTexDefChanged.disconnect();
-	_patchTextureChanged.disconnect();
+
+	GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
+	_textureMessageHandler = 0;
+
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
 
@@ -704,18 +699,18 @@ void SurfaceInspector::_preShow()
 	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
 		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
 
-	// Get notified about face shader changes
-	_brushFaceShaderChanged = Brush::signal_faceShaderChanged().connect(
-		[this] { _updateNeeded = true; });
-
-	_faceTexDefChanged = Face::signal_texdefChanged().connect(
-		[this] { _updateNeeded = true; });
-
-	_patchTextureChanged = Patch::signal_patchTextureChanged().connect(
-		[this] { _updateNeeded = true; });
+	// Get notified about texture changes
+	_textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::TypeListener<radiant::TextureChangedMessage>(
+			sigc::mem_fun(this, &SurfaceInspector::handleTextureChangedMessage)));
 
 	// Re-scan the selection
 	doUpdate();
+}
+
+void SurfaceInspector::handleTextureChangedMessage(radiant::TextureChangedMessage& msg)
+{
+	_updateNeeded = true;
 }
 
 void SurfaceInspector::_postShow()
@@ -729,10 +724,10 @@ void SurfaceInspector::_preHide()
 {
 	TransientWindow::_preHide();
 
+	GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
+	_textureMessageHandler = 0;
+
 	_selectionChanged.disconnect();
-	_patchTextureChanged.disconnect();
-	_faceTexDefChanged.disconnect();
-	_brushFaceShaderChanged.disconnect();
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
 }

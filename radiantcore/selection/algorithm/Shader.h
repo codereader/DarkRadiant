@@ -109,6 +109,9 @@ namespace selection
 	 */
 	void fitTexture(const float repeatS, const float repeatT);
 
+	// Command target wrapping the above
+	void fitTextureCmd(const cmd::ArgumentList& args);
+
 	/** greebo: Flips the texture about the given <flipAxis>
 	 *
 	 * @flipAxis: 0 = flip S, 1 = flip T

@@ -6,6 +6,7 @@
 #include "iradiant.h"
 #include "wxutil/window/TransientWindow.h"
 #include "ui/common/ShaderChooser.h"
+#include "messages/TextureChanged.h"
 
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
@@ -89,9 +90,7 @@ class SurfaceInspector :
 
 	bool _updateNeeded;
 
-	sigc::connection _brushFaceShaderChanged;
-	sigc::connection _faceTexDefChanged;
-	sigc::connection _patchTextureChanged;
+	std::size_t _textureMessageHandler;
 	sigc::connection _selectionChanged;
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
@@ -173,6 +172,8 @@ private:
 	// Called by wxWidgets when the system is idle
 	void onIdle(wxIdleEvent& ev);
 
+	void handleTextureChangedMessage(radiant::TextureChangedMessage& msg);
+
 }; // class SurfaceInspector
 
-} // namespace ui
+} // namespace

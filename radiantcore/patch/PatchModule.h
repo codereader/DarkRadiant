@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "ipatch.h"
 #include "PatchSettings.h"
 
@@ -12,6 +13,8 @@ class PatchModule :
 private:
 	std::unique_ptr<PatchSettings> _settings;
 
+	sigc::connection _patchTextureChanged;
+
 public:
 	// PatchCreator implementation
 	scene::INodePtr createPatch(PatchDefType type) override;
@@ -19,9 +22,10 @@ public:
 	IPatchSettings& getSettings() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
 	void registerPatchCommands();

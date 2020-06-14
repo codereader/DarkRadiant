@@ -17,8 +17,6 @@
 
 #include "registry/registry.h"
 #include "shaderlib.h"
-#include "selection/algorithm/Shader.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include "string/predicate.h"
 #include <functional>
@@ -694,10 +692,10 @@ void TextureBrowser::selectTextureAt(int mx, int my)
         setSelectedShader(shader->getName());
 
         // Apply the shader to the current selection
-        selection::algorithm::applyShaderToSelection(shader->getName());
+        GlobalCommandSystem().executeCommand("SetShaderOnSelection", shader->getName());
 
 		// Copy the shader name to the clipboard too
-		GlobalShaderClipboard().setSource(shader->getName());
+		GlobalShaderClipboard().setSourceShader(shader->getName());
     }
 }
 

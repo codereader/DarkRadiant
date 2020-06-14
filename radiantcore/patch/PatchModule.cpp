@@ -15,6 +15,7 @@
 #include "selection/algorithm/Patch.h"
 
 #include "module/StaticModule.h"
+#include "messages/TextureChanged.h"
 
 namespace patch
 {
@@ -72,6 +73,14 @@ void PatchModule::initialiseModule(const ApplicationContext& ctx)
 	// Construct and Register the patch-related preferences
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Patch"));
 	page.appendEntry(_("Patch Subdivide Threshold"), RKEY_PATCH_SUBDIVIDE_THRESHOLD);
+
+	_patchTextureChanged = Patch::signal_patchTextureChanged().connect(
+		[] { radiant::TextureChangedMessage::Send(); });
+}
+
+void PatchModule::shutdownModule()
+{
+	_patchTextureChanged.disconnect();
 }
 
 void PatchModule::registerPatchCommands()

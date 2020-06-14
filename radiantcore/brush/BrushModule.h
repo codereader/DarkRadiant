@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sigc++/connection.h>
+
 #include "iregistry.h"
 #include "imodule.h"
 
@@ -17,6 +19,9 @@ private:
 	bool _textureLockEnabled;
 
 	std::unique_ptr<BrushSettings> _settings;
+
+	sigc::connection _brushFaceShaderChanged;
+	sigc::connection _faceTexDefChanged;
 
 private:
 	void keyChanged();

@@ -35,8 +35,6 @@ public:
     {
         std::lock_guard<std::recursive_mutex> guard(_lock);
 
-        assert(_listeners.find(listenerId) != _listeners.end());
-
         _listeners.erase(listenerId);
     }
 
