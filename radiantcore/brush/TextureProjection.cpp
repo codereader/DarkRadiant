@@ -20,14 +20,14 @@ TextureProjection::TextureProjection(const TextureMatrix& otherMatrix) :
 TextureMatrix TextureProjection::GetDefaultProjection()
 {
     // Cache the registry key because this constructor is called a lot
-    static registry::CachedKey<float> scale(
+    static registry::CachedKey<float> scaleKey(
         "user/ui/textures/defaultTextureScale"
     );
 
     TexDef tempTexDef;
 
-    tempTexDef._scale[0] = scale.get();
-    tempTexDef._scale[1] = scale.get();
+    double scale = scaleKey.get();
+    tempTexDef.setScale(Vector2(scale, scale));
 
     return TextureMatrix(tempTexDef);
 }
@@ -211,22 +211,32 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
     normalise((float)width, (float)height);
 }
 
-void TextureProjection::flipTexture(unsigned int flipAxis) {
+void TextureProjection::flipTexture(unsigned int flipAxis)
+{
     // Retrieve the "fake" texture coordinates (shift, scale, rotation)
     TexDef texdef = matrix.getFakeTexCoords();
 
     // Check for x flip (x-component not zero)
-    if (flipAxis == 0) {
+    if (flipAxis == 0)
+    {
         // Invert the x scale and rotate 180°
-        texdef._scale[0] *= -1;
-        texdef._rotate -= 180;
+        auto scale = texdef.getScale();
+        scale[0] *= -1;
+        texdef.setScale(scale);
+
+        texdef.setRotation(texdef.getRotation() - 180);
     }
-    else if (flipAxis == 1) {
+    else if (flipAxis == 1)
+    {
         // Invert the y scale and rotate 180°
-        texdef._scale[1] *= -1;
-        texdef._rotate -= 180;
+        auto scale = texdef.getScale();
+        scale[1] *= -1;
+        texdef.setScale(scale);
+
+        texdef.setRotation(texdef.getRotation() - 180);
     }
-    else {
+    else
+    {
         // Do nothing, leave the TextureMatrix untouched
         return;
     }

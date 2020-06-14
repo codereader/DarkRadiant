@@ -45,6 +45,32 @@ TexDef::TexDef(double width, double height, const Matrix4& transform)
 	}
 }
 
+double TexDef::getRotation() const
+{
+	return _rotate;
+}
+
+void TexDef::setRotation(double rotation)
+{
+	_rotate = rotation;
+}
+
+Vector2 TexDef::getShift() const
+{
+	return Vector2(_shift);
+}
+
+Vector2 TexDef::getScale() const
+{
+	return Vector2(_scale);
+}
+
+void TexDef::setScale(const Vector2& scale)
+{
+	_scale[0] = scale[0];
+	_scale[1] = scale[1];
+}
+
 void TexDef::shift(double s, double t)
 {
 	_shift[0] += s;

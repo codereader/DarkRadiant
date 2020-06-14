@@ -25,18 +25,23 @@ TextureMatrix::TextureMatrix(const Matrix4& transform) {
 }
 
 // Construct a TextureMatrix out of "fake" shift scale rot definitions
-TextureMatrix::TextureMatrix(const TexDef& texdef) {
-	float r = degrees_to_radians(-texdef._rotate);
+TextureMatrix::TextureMatrix(const TexDef& texdef)
+{
+	float r = degrees_to_radians(-texdef.getRotation());
 	float c = cos(r);
 	float s = sin(r);
-	float x = 1.0f / texdef._scale[0];
-	float y = 1.0f / texdef._scale[1];
+
+	auto scale = texdef.getScale();
+	float x = 1.0f / scale[0];
+	float y = 1.0f / scale[1];
+
+	auto shift = texdef.getShift();
 	coords[0][0] = x * c;
 	coords[1][0] = x * s;
 	coords[0][1] = y * -s;
 	coords[1][1] = y * c;
-	coords[0][2] = -texdef._shift[0];
-	coords[1][2] = texdef._shift[1];
+	coords[0][2] = -shift[0];
+	coords[1][2] = shift[1];
 }
 
 // shift a texture (texture adjustments) along it's current texture axes
@@ -59,26 +64,28 @@ void TextureMatrix::scale(float s, float t, std::size_t shaderWidth, std::size_t
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
 
-	float newXScale = texdef._scale[0] + s;
-	float newYScale = texdef._scale[1] + t;
+	auto scale = texdef.getScale();
+	double newXScale = scale[0] + s;
+	double newYScale = scale[1] + t;
 
 	// Don't allow zero (or almost zero) scale values
-	if (float_equal_epsilon(newXScale, 0, 1e-5f) ||
-		float_equal_epsilon(newYScale, 0, 1e-5f))
+	if (float_equal_epsilon(newXScale, 0, 1e-5) ||
+		float_equal_epsilon(newYScale, 0, 1e-5))
 	{
 		return;
 	}
 
 	// Don't allow sign changes
-	if ((newXScale*texdef._scale[0]) < 0.0f ||
-		(newYScale*texdef._scale[1]) < 0.0f)
+	if ((newXScale*scale[0]) < 0.0 ||
+		(newYScale*scale[1]) < 0.0)
 	{
 		return;
 	}
 
 	// update
-	texdef._scale[0] = newXScale;
-	texdef._scale[1] = newYScale;
+	scale[0] = newXScale;
+	scale[1] = newYScale;
+	texdef.setScale(scale);
 
 	// compute new normalized texture matrix
 	*this = TextureMatrix(texdef);
@@ -97,7 +104,7 @@ void TextureMatrix::rotate(float angle, std::size_t shaderWidth, std::size_t sha
 	TexDef texdef = getFakeTexCoords();
 
 	// update
-	texdef._rotate += angle;
+	texdef.setRotation(texdef.getRotation() + angle);
 
 	// compute new normalized texture matrix
 	*this = TextureMatrix(texdef);

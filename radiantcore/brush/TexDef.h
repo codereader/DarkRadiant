@@ -22,6 +22,12 @@ public:
 	// Destructor
 	virtual ~TexDef() {}
 
+	Vector2 getShift() const;
+	Vector2 getScale() const;
+	void setScale(const Vector2& scale);
+	double getRotation() const;
+	void setRotation(double rotation);
+
 	void shift(double s, double t);
 	void scale(double s, double t);
 	void rotate(double angle);
@@ -47,6 +53,7 @@ public:
 	static TexDef CreateFromShiftScaleRotation(const ShiftScaleRotation& scr);
 
 	friend std::ostream& operator<<(std::ostream& st, const TexDef& texdef);
+	friend struct TextureMatrix; // for TextureMatrix::getFakeTexCoords
 };
 
 inline std::ostream& operator<<(std::ostream& st, const TexDef& texdef)
