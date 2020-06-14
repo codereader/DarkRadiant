@@ -471,68 +471,55 @@ void SurfaceInspector::emitShader()
 
 void SurfaceInspector::emitTexDef()
 {
-	TexDef shiftScaleRotate;
+	ShiftScaleRotation shiftScaleRotate;
 
-	shiftScaleRotate._shift[0] = string::convert<float>(_manipulators[HSHIFT].value->GetValue().ToStdString());
-	shiftScaleRotate._shift[1] = string::convert<float>(_manipulators[VSHIFT].value->GetValue().ToStdString());
-	shiftScaleRotate._scale[0] = string::convert<float>(_manipulators[HSCALE].value->GetValue().ToStdString());
-	shiftScaleRotate._scale[1] = string::convert<float>(_manipulators[VSCALE].value->GetValue().ToStdString());
-	shiftScaleRotate._rotate = string::convert<float>(_manipulators[ROTATION].value->GetValue().ToStdString());
+	shiftScaleRotate.shift[0] = string::convert<float>(_manipulators[HSHIFT].value->GetValue().ToStdString());
+	shiftScaleRotate.shift[1] = string::convert<float>(_manipulators[VSHIFT].value->GetValue().ToStdString());
+	shiftScaleRotate.scale[0] = string::convert<float>(_manipulators[HSCALE].value->GetValue().ToStdString());
+	shiftScaleRotate.scale[1] = string::convert<float>(_manipulators[VSCALE].value->GetValue().ToStdString());
+	shiftScaleRotate.rotate = string::convert<float>(_manipulators[ROTATION].value->GetValue().ToStdString());
 
 	// Apply it to the selection
-	selection::algorithm::applyTexDefToFaces(shiftScaleRotate);
+	UndoableCommand undo("textureDefinitionSetSelected");
 
+	GlobalSelectionSystem().foreachFace([&](IFace& face)
+	{ 
+		face.setShiftScaleRotation(shiftScaleRotate); 
+	});
+
+	SceneChangeNotify();
+	
+	// Update the Texture Tools
+	radiant::TextureChangedMessage::Send();
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
 }
 
 void SurfaceInspector::updateTexDef()
 {
-    try
-    {
-        Face& face = selection::algorithm::getLastSelectedFace();
-
+	if (GlobalSelectionSystem().getSelectedFaceCount() == 1)
+	{
         // This call should return a meaningful value, since we only get here when only
         // a single face is selected
-        TextureProjection curProjection;
-        face.GetTexdef(curProjection);
+        auto& face = GlobalSelectionSystem().getSingleSelectedFace();
 
-        // Multiply the texture dimensions to the projection matrix such that 
-        // the shift/scale/rotation represent pixel values within the image.
-        Vector2 shaderDims(face.getFaceShader().getWidth(), face.getFaceShader().getHeight());
-
-        TextureMatrix bpTexDef= curProjection.matrix;
-        bpTexDef.applyShaderDimensions(static_cast<std::size_t>(shaderDims[0]), static_cast<std::size_t>(shaderDims[1]));
-
-	    // Calculate the "fake" texture properties (shift/scale/rotation)
-	    TexDef texdef = bpTexDef.getFakeTexCoords();
-
-	    if (shaderDims != Vector2(0,0))
-        {
-		    // normalize again to hide the ridiculously high scale values that get created when using texlock
-  		    texdef._shift[0] = float_mod(texdef._shift[0], shaderDims[0]);
-  		    texdef._shift[1] = float_mod(texdef._shift[1], shaderDims[1]);
-	    }
+		auto texdef = face.getShiftScaleRotation();
 
 	    // Snap the floating point variables to the max resolution to avoid things like "1.45e-14"
-	    texdef._shift[0] = float_snapped(texdef._shift[0], MAX_FLOAT_RESOLUTION);
-	    texdef._shift[1] = float_snapped(texdef._shift[1], MAX_FLOAT_RESOLUTION);
-	    texdef._scale[0] = float_snapped(texdef._scale[0], MAX_FLOAT_RESOLUTION);
-	    texdef._scale[1] = float_snapped(texdef._scale[1], MAX_FLOAT_RESOLUTION);
-	    texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
+	    texdef.shift[0] = float_snapped(texdef.shift[0], MAX_FLOAT_RESOLUTION);
+	    texdef.shift[1] = float_snapped(texdef.shift[1], MAX_FLOAT_RESOLUTION);
+	    texdef.scale[0] = float_snapped(texdef.scale[0], MAX_FLOAT_RESOLUTION);
+	    texdef.scale[1] = float_snapped(texdef.scale[1], MAX_FLOAT_RESOLUTION);
+	    texdef.rotate = float_snapped(texdef.rotate, MAX_FLOAT_RESOLUTION);
 
 	    // Load the values into the widgets
-	    _manipulators[HSHIFT].value->SetValue(string::to_string(texdef._shift[0]));
-	    _manipulators[VSHIFT].value->SetValue(string::to_string(texdef._shift[1]));
+	    _manipulators[HSHIFT].value->SetValue(string::to_string(texdef.shift[0]));
+	    _manipulators[VSHIFT].value->SetValue(string::to_string(texdef.shift[1]));
 
-	    _manipulators[HSCALE].value->SetValue(string::to_string(texdef._scale[0]));
-	    _manipulators[VSCALE].value->SetValue(string::to_string(texdef._scale[1]));
+	    _manipulators[HSCALE].value->SetValue(string::to_string(texdef.scale[0]));
+	    _manipulators[VSCALE].value->SetValue(string::to_string(texdef.scale[1]));
 
-	    _manipulators[ROTATION].value->SetValue(string::to_string(texdef._rotate));
-    }
-    catch (selection::InvalidSelectionException&)
-    {
-        rError() << "Can't update texdef, since more than one face is selected." << std::endl;
+	    _manipulators[ROTATION].value->SetValue(string::to_string(texdef.rotate));
     }
 }
 
@@ -569,7 +556,7 @@ void SurfaceInspector::doUpdate()
 	valueSensitivity = (selectionInfo.patchCount == 0 &&
 						selectionInfo.totalCount > 0 &&
 						selectionInfo.entityCount == 0 &&
-						selection::algorithm::selectedFaceCount() == 1);
+						GlobalSelectionSystem().getSelectedFaceCount() == 1);
 
 	_manipulators[HSHIFT].value->Enable(valueSensitivity);
 	_manipulators[VSHIFT].value->Enable(valueSensitivity);

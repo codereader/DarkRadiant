@@ -43,18 +43,6 @@ namespace selection {
 	 */
 	void forEachSelectedFaceComponent(const std::function<void(IFace&)>& functor);
 
-	/** greebo: Returns the number of the selected face instances.
-	 */
-	int selectedFaceCount();
-
-	/** greebo: Retrieves the reference to the last selected face.
-	 *
-	 * Throws an selection::InvalidSelectionException on failure.
-	 *
-	 * @returns: the Face& reference of the last element.
-	 */
-	Face& getLastSelectedFace();
-
 	/** greebo: Retrieves the first selected patch.
 	 *
 	 * Throws an selection::InvalidSelectionException on failure.

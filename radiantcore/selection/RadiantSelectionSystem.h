@@ -132,6 +132,9 @@ public:
 	void foreachFace(const std::function<void(IFace&)>& functor) override;
 	void foreachPatch(const std::function<void(IPatch&)>& functor) override;
 
+	std::size_t getSelectedFaceCount() override;
+	IFace& getSingleSelectedFace() override;
+
 	void deselectAll();
 
 	void selectPoint(SelectionTest& test, EModifier modifier, bool face) override;

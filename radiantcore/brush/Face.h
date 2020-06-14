@@ -144,6 +144,9 @@ public:
     // The incoming values are measured in pixels and will be scaled internally.
     void setTexdef(const TexDef& texDef);
 
+	ShiftScaleRotation getShiftScaleRotation() override;
+	void setShiftScaleRotation(const ShiftScaleRotation& scr) override;
+
 	/**
 	 * greebo: Copies the shader (texdef) from the other face,
 	 * and attempts to move the texture such that the transition

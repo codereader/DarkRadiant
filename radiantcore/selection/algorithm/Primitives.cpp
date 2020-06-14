@@ -51,11 +51,6 @@ void forEachSelectedFaceComponent(const std::function<void(IFace&)>& functor)
 		[&] (FaceInstance* instance) { functor(instance->getFace()); });
 }
 
-int selectedFaceCount()
-{
-	return static_cast<int>(FaceInstance::Selection().size());
-}
-
 Patch& getLastSelectedPatch() {
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount > 0 &&
 		GlobalSelectionSystem().getSelectionInfo().patchCount > 0)
@@ -100,18 +95,6 @@ BrushPtrVector getSelectedBrushes()
 	});
 
 	return returnVector;
-}
-
-Face& getLastSelectedFace()
-{
-	if (selectedFaceCount() == 1)
-	{
-		return FaceInstance::Selection().back()->getFace();
-	}
-	else
-	{
-		throw selection::InvalidSelectionException(string::to_string(selectedFaceCount()));
-	}
 }
 
 FacePtrVector getSelectedFaces()

@@ -478,8 +478,8 @@ void naturalTexture(const cmd::ArgumentList& args)
 
     float naturalScale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
 
-    shiftScaleRotation._scale[0] = naturalScale;
-    shiftScaleRotation._scale[1] = naturalScale;
+    shiftScaleRotation.scale[0] = naturalScale;
+    shiftScaleRotation.scale[1] = naturalScale;
 
 	// Patches
 	GlobalSelectionSystem().foreachPatch(
@@ -491,17 +491,6 @@ void naturalTexture(const cmd::ArgumentList& args)
 
 	SceneChangeNotify();
 
-	// Update the Texture Tools
-	radiant::TextureChangedMessage::Send();
-}
-
-void applyTexDefToFaces(TexDef& texDef)
-{
-    UndoableCommand undo("textureDefinitionSetSelected");
-
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.setTexdef(texDef); });
-
-	SceneChangeNotify();
 	// Update the Texture Tools
 	radiant::TextureChangedMessage::Send();
 }

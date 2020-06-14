@@ -15,6 +15,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Transformation.h"
 #include "SceneWalkers.h"
+#include "command/ExecutionFailure.h"
 
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
@@ -535,6 +536,23 @@ void RadiantSelectionSystem::foreachPatch(const std::function<void(IPatch&)>& fu
          /* in-loop increment */)
     {
 		walker.visit((i++)->first); // Handles group nodes recursively
+    }
+}
+
+std::size_t RadiantSelectionSystem::getSelectedFaceCount()
+{
+    return FaceInstance::Selection().size();
+}
+
+IFace& RadiantSelectionSystem::getSingleSelectedFace()
+{
+    if (getSelectedFaceCount() == 1)
+    {
+        return FaceInstance::Selection().back()->getFace();
+    }
+    else
+    {
+        throw cmd::ExecutionFailure(string::to_string(getSelectedFaceCount()));
     }
 }
 

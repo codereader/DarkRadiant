@@ -273,6 +273,13 @@ public:
 	 */
 	virtual void foreachPatch(const std::function<void(IPatch&)>& functor) = 0;
 
+	// Returns the number of currently selected faces
+	virtual std::size_t getSelectedFaceCount() = 0;
+
+	// Returns the reference to the singly selected face 
+	// Calling this will cause an cmd::ExecutionFailure if getSelectedFaceCount() != 1
+	virtual IFace& getSingleSelectedFace() = 0;
+
     /// Signal emitted when the selection is changed
     virtual SelectionChangedSignal signal_selectionChanged() const = 0;
 

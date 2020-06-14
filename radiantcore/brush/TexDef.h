@@ -1,12 +1,17 @@
-#ifndef TEXDEF_H_
-#define TEXDEF_H_
+#pragma once
 
-#include "itexdef.h"
 #include <iostream>
+#include "ibrush.h"
 
 class Matrix4;
 
-class TexDef : public GenericTextureDefinition {
+class TexDef
+{
+private:
+	double	_shift[2];
+	double	_rotate;
+	double	_scale[2];
+
 public:
 	// Constructor
 	TexDef();
@@ -33,12 +38,20 @@ public:
 	 * are (-shift)*(1/scale)*(-rotate) with x translation sign flipped.
 	 * This would really make more sense if it was inverseof(shift*rotate*scale).. oh well.*/
 	Matrix4 getTransform(double width, double height) const;
+
+	// Converts this instance's values to a ShiftScaleRotation structure
+	// Since TexDef is using the same format to store its values internally
+	// this is equivalent to a few simple assignment or copy operations.
+	ShiftScaleRotation getShiftScaleRotation() const;
+
+	static TexDef CreateFromShiftScaleRotation(const ShiftScaleRotation& scr);
+
+	friend std::ostream& operator<<(std::ostream& st, const TexDef& texdef);
 };
 
-inline std::ostream& operator<< (std::ostream& st, const TexDef& texdef) {
+inline std::ostream& operator<<(std::ostream& st, const TexDef& texdef)
+{
 	st << "Scale: <" << texdef._scale[0] << ", " << texdef._scale[1] << ">, ";
 	st << "Rotation: <" << texdef._rotate << ">";
 	return st;
 }
-
-#endif /*TEXDEF_H_*/

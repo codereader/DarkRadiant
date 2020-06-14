@@ -182,7 +182,6 @@
     <ClInclude Include="..\..\include\ishaders.h" />
     <ClInclude Include="..\..\include\isound.h" />
     <ClInclude Include="..\..\include\ispacepartition.h" />
-    <ClInclude Include="..\..\include\itexdef.h" />
     <ClInclude Include="..\..\include\itextstream.h" />
     <ClInclude Include="..\..\include\itraceable.h" />
     <ClInclude Include="..\..\include\itransformable.h" />

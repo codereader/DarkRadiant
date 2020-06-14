@@ -84,6 +84,20 @@ struct WindingVertex
 // each of which holding information about a single corner point.
 typedef std::vector<WindingVertex> IWinding;
 
+/**
+ * greebo: The texture definition structure containing the scale,
+ * rotation and shift values of an applied texture.
+ * At some places this is referred to as "fake" texture coordinates.
+ * This is not what is actually saved to the .map file, but it makes
+ * texture manipulations in the Surface Inspector much more human-readable.
+ */
+struct ShiftScaleRotation
+{
+	double	shift[2];
+	double	rotate;
+	double	scale[2];
+};
+
 // Interface for a face plane
 class IFace
 {
@@ -140,6 +154,14 @@ public:
 	virtual Matrix4 getProjectionMatrix() = 0;
 
 	virtual void setProjectionMatrix(const Matrix4& projection) = 0;
+
+	/**
+	 * Calculates and returns the texture definition as shift/scale/rotate.
+	 * This is not what is actually saved to the .map file, but it makes
+	 * texture manipulations in the Surface Inspector much more human-readable.
+	 */
+	virtual ShiftScaleRotation getShiftScaleRotation() = 0;
+	virtual void setShiftScaleRotation(const ShiftScaleRotation& scr) = 0;
 };
 
 // Plane classification info used by splitting and CSG algorithms
