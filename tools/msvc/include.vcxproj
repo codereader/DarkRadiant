@@ -164,6 +164,7 @@
     <ClInclude Include="..\..\include\ipath.h" />
     <ClInclude Include="..\..\include\ipreferencesystem.h" />
     <ClInclude Include="..\..\include\iradiant.h" />
+    <ClInclude Include="..\..\include\iregion.h" />
     <ClInclude Include="..\..\include\iregistry.h" />
     <ClInclude Include="..\..\include\irender.h" />
     <ClInclude Include="..\..\include\irenderable.h" />

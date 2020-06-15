@@ -38,12 +38,11 @@
 namespace map
 {
 
-    namespace
-	{
-        typedef std::shared_ptr<RegionManager> RegionManagerPtr;
-        const std::string GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
-        const char* const MODULE_REGION_MANAGER = "RegionManager";
-    }
+namespace
+{
+    typedef std::shared_ptr<RegionManager> RegionManagerPtr;
+    const std::string GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
+}
 
 RegionManager::RegionManager() :
     _active(false)
@@ -102,6 +101,17 @@ void RegionManager::getMinMax(Vector3& regionMin, Vector3& regionMax) const {
         regionMin = Vector3(1,1,1)*_worldMin;
         regionMax = Vector3(1,1,1)*_worldMax;
     }
+}
+
+AABB RegionManager::getRegionBounds()
+{
+    if (isEnabled())
+    {
+        return _bounds;
+    }
+
+    // Set the region bounds to the maximum available size
+    return AABB(Vector3(0, 0, 0), Vector3(_worldMax, _worldMax, _worldMax));
 }
 
 void RegionManager::setRegion(const AABB& aabb, bool autoEnable) {
@@ -470,10 +480,4 @@ AABB RegionManager::getVisibleBounds()
 
 module::StaticModule<RegionManager> staticRegionManagerModule;
 
-} // namespace map
-
-map::RegionManager& GlobalRegion()
-{
-	return *std::static_pointer_cast<map::RegionManager>(
-        module::GlobalModuleRegistry().getModule(map::MODULE_REGION_MANAGER));
-}
+} // namespace

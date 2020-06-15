@@ -29,11 +29,6 @@
 namespace selection
 {
 
-namespace
-{
-    const std::string RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
-}
-
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
@@ -937,6 +932,11 @@ const WorkZone& RadiantSelectionSystem::getWorkZone()
     flushIdleCallback();
 
     return _workZone;
+}
+
+Vector3 RadiantSelectionSystem::getCurrentSelectionCenter()
+{
+    return algorithm::getCurrentSelectionCenter();
 }
 
 /* greebo: Renders the currently active manipulator by setting the render state and

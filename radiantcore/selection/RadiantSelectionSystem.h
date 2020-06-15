@@ -147,6 +147,7 @@ public:
 	void onManipulationCancelled() override;
 
 	const WorkZone& getWorkZone() override;
+	Vector3 getCurrentSelectionCenter() override;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;

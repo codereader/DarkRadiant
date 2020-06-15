@@ -310,6 +310,9 @@ public:
 	 * Note: the struct is defined in selectionlib.h.
 	 */
 	virtual const selection::WorkZone& getWorkZone() = 0;
+
+	// Returns the center point of the current selection
+	virtual Vector3 getCurrentSelectionCenter() = 0;
 };
 
 const char* const MODULE_SELECTIONSYSTEM("SelectionSystem");

@@ -10,7 +10,6 @@
 #include "registry/registry.h"
 
 #include "module/StaticModule.h"
-#include "selection/algorithm/General.h"
 #include "camera/GlobalCamera.h"
 #include "wxutil/MouseButton.h"
 
@@ -603,8 +602,9 @@ Vector3 XYWndManager::getFocusPosition()
 {
 	Vector3 position(0,0,0);
 
-	if (GlobalSelectionSystem().countSelected() != 0) {
-		position = selection::algorithm::getCurrentSelectionCenter();
+	if (GlobalSelectionSystem().countSelected() != 0) 
+	{
+		position = GlobalSelectionSystem().getCurrentSelectionCenter();
 	}
 	else {
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();

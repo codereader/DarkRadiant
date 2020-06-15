@@ -1,7 +1,7 @@
 #pragma once
 
 #include <list>
-#include "imodule.h"
+#include "iregion.h"
 #include "icommandsystem.h"
 #include "math/AABB.h"
 #include "math/Vector2.h"
@@ -23,10 +23,11 @@
  * the file together with an info_player_start entity.
  * The info_player_start is placed at the current camera position.
  */
-namespace map {
+namespace map
+{
 
 class RegionManager :
-	public RegisterableModule
+	public IRegionManager
 {
 	// TRUE, if regioning is active
 	bool _active;
@@ -72,6 +73,7 @@ public:
 	 *
 	 * Note: If region is inactive, the maximum possible bounds are returned.
 	 */
+	AABB getRegionBounds() override;
 	void getMinMax(Vector3& regionMin, Vector3& regionMax) const;
 
 	/** greebo: Sets the region bounds according to the given <aabb>
@@ -91,9 +93,9 @@ public:
 	void setRegionFromXY(Vector2 topLeft, Vector2 lowerRight);
 
 	// RegisterableModule
-	virtual const std::string& getName() const override;
-	virtual const StringSet& getDependencies() const override;
-	virtual void initialiseModule(const ApplicationContext& ctx) override;
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
 
 private:
 	/** greebo: Adds the bounding brushes that enclose the current region.
@@ -153,7 +155,4 @@ private:
 	AABB getVisibleBounds();
 };
 
-} // namespace map
-
-// Use this to call the non-static member methods.
-map::RegionManager& GlobalRegion();
+} // namespace

@@ -7,6 +7,8 @@ template<typename Element>
 class BasicVector3;
 typedef BasicVector3<double> Vector3;
 
+const char* const RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
+
 // Possible types of the orthogonal view window
 enum EViewType
 {
