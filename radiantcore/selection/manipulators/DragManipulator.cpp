@@ -31,7 +31,7 @@ DragManipulator::Component* DragManipulator::getActiveComponent()
     return _dragSelectable.isSelected() ? &_freeDragComponent : &_freeResizeComponent;
 }
 
-void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
+void DragManipulator::testSelect(const VolumeTest& view, const Matrix4& pivot2world)
 {
 	_resizeModeActive = false;
 
@@ -60,7 +60,7 @@ void DragManipulator::testSelect(const render::View& view, const Matrix4& pivot2
 	}
 }
 
-void DragManipulator::testSelectPrimitiveMode(const render::View& view, SelectionTest& test, SelectionPool& selector)
+void DragManipulator::testSelectPrimitiveMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
 	SingleItemSelector itemSelector;
 
@@ -102,7 +102,7 @@ void DragManipulator::testSelectPrimitiveMode(const render::View& view, Selectio
 	_resizeModeActive = algorithm::testSelectPlanes(selector, test);
 }
 
-void DragManipulator::testSelectGroupPartMode(const render::View& view, SelectionTest& test, SelectionPool& selector)
+void DragManipulator::testSelectGroupPartMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
 	// Find all primitives that are selectable
 	SingleItemSelector itemSelector;
@@ -121,7 +121,7 @@ void DragManipulator::testSelectGroupPartMode(const render::View& view, Selectio
 	_resizeModeActive = algorithm::testSelectPlanes(selector, test);
 }
 
-void DragManipulator::testSelectEntityMode(const render::View& view, SelectionTest& test, SelectionPool& selector)
+void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
 	// Create a boolean selection pool (can have exactly one selectable or none)
 	SingleItemSelector itemSelector;
@@ -137,7 +137,7 @@ void DragManipulator::testSelectEntityMode(const render::View& view, SelectionTe
 	}
 }
 
-void DragManipulator::testSelectComponentMode(const render::View& view, SelectionTest& test, SelectionPool& selector)
+void DragManipulator::testSelectComponentMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
 	BestSelector bestSelector;
 

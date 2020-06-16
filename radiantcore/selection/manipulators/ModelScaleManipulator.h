@@ -38,7 +38,7 @@ public:
 
 	Type getType() const override;
 	Component* getActiveComponent() override;
-	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
+	void testSelect(const VolumeTest& view, const Matrix4& pivot2world) override;
 	void setSelected(bool select) override;
 	bool isSelected() const override;
 	void render(RenderableCollector& collector, const VolumeTest& volume) override;

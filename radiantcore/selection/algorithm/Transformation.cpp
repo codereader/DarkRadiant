@@ -114,7 +114,7 @@ void scaleSelected(const Vector3& scaleXYZ)
 	}
 }
 
-void scaleSelected(const cmd::ArgumentList& args)
+void scaleSelectedCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
 	{

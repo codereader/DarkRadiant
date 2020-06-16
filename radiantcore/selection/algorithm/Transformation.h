@@ -44,7 +44,7 @@ void scaleSelected(const Vector3& scaleXYZ);
 /**
  * Command adapter for scaleSelected(Vector3)
  */
-void scaleSelected(const cmd::ArgumentList& args);
+void scaleSelectedCmd(const cmd::ArgumentList& args);
 
 /** 
  * greebo: This duplicates the current selection (that's what happening

@@ -52,15 +52,15 @@ public:
 
 	Type getType() const override;
 	Component* getActiveComponent() override;
-	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
+	void testSelect(const VolumeTest& view, const Matrix4& pivot2world) override;
 	void setSelected(bool select) override;
 	bool isSelected() const override;
 
 private:
-	void testSelectPrimitiveMode(const render::View& view, SelectionTest& test, SelectionPool& selector);
-	void testSelectGroupPartMode(const render::View& view, SelectionTest& test, SelectionPool& selector);
-	void testSelectEntityMode(const render::View& view, SelectionTest& test, SelectionPool& selector);
-	void testSelectComponentMode(const render::View& view, SelectionTest& test, SelectionPool& selector);
+	void testSelectPrimitiveMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
+	void testSelectGroupPartMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
+	void testSelectEntityMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
+	void testSelectComponentMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
 };
 
 }

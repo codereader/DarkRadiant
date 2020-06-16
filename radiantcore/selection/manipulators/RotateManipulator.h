@@ -70,7 +70,7 @@ public:
 	void render(RenderableCollector& collector, const VolumeTest& volume) override;
 	void render(const RenderInfo& info) const override;
 
-	void testSelect(const render::View& view, const Matrix4& pivot2world) override;
+	void testSelect(const VolumeTest& view, const Matrix4& pivot2world) override;
 
 	Component* getActiveComponent() override;
 

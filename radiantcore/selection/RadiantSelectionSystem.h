@@ -138,8 +138,7 @@ public:
 	void deselectAll();
 
 	void selectPoint(SelectionTest& test, EModifier modifier, bool face) override;
-	void SelectPoint(const render::View& view, const Vector2& device_point, const Vector2& device_epsilon, EModifier modifier, bool face) override;
-	void SelectArea(const render::View& view, const Vector2& device_point, const Vector2& device_delta, EModifier modifier, bool face) override;
+	void selectArea(SelectionTest& test, EModifier modifier, bool face) override;
 
 	void onManipulationStart() override;
 	void onManipulationChanged() override;
@@ -177,7 +176,7 @@ protected:
 
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
-						 const render::View& view, SelectionSystem::EMode mode,
+						 const VolumeTest& view, SelectionSystem::EMode mode,
 						 SelectionSystem::EComponentMode componentMode);
 
 private:

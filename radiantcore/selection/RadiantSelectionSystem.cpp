@@ -15,6 +15,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Transformation.h"
 #include "SceneWalkers.h"
+#include "SelectionTestWalkers.h"
 #include "command/ExecutionFailure.h"
 
 #include "manipulators/DragManipulator.h"
@@ -69,7 +70,7 @@ void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool i
 }
 
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
-                                             const render::View& view, SelectionSystem::EMode mode,
+                                             const VolumeTest& view, SelectionSystem::EMode mode,
                                              SelectionSystem::EComponentMode componentMode)
 {
     // The (temporary) storage pool
@@ -599,6 +600,7 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
     }
 }
 
+#if 0
 /* greebo: This gets called by SelectObserver if the user just clicks into the scene (without dragging)
  * It checks for any possible targets (in the "line of click") and takes the actions according
  * to the modifiers that are held down (Alt-Shift, etc.)
@@ -650,6 +652,7 @@ void RadiantSelectionSystem::SelectPoint(const render::View& view,
 		performPointSelection(candidates, modifier);
     }
 }
+#endif
 
 namespace algorithm
 {
@@ -742,6 +745,7 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 	};
 }
 
+#if 0
 /* greebo: This gets called by the SelectObserver if the user drags a box and holds down
  * any of the selection modifiers. Possible selection candidates are determined and selected/deselected
  */
@@ -801,6 +805,62 @@ void RadiantSelectionSystem::SelectArea(const render::View& view,
 		{
 			algorithm::setSelectionStatus(state.first, state.second);
 		}
+    }
+}
+#endif
+
+void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EModifier modifier, bool face)
+{
+    // If we are in replace mode, deselect all the components or previous selections
+    if (modifier == SelectionSystem::eReplace) 
+    {
+        if (face)
+        {
+            setSelectedAllComponents(false);
+        }
+        else
+        {
+            deselectAll();
+        }
+    }
+
+    {
+        // The posssible candidates go here
+        SelectionPool pool;
+
+        SelectablesList candidates;
+
+        if (face)
+        {
+            ComponentSelector selectionTester(pool, test, eFace);
+            GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
+
+            // Load them all into the vector
+            for (SelectionPool::const_iterator i = pool.begin(); i != pool.end(); ++i)
+            {
+                candidates.push_back(i->second);
+            }
+        }
+        else 
+        {
+            testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
+        }
+
+        // Since toggling a selectable might trigger a group-selection
+        // we need to keep track of the desired state of each selectable 
+        typedef std::map<ISelectable*, bool> SelectablesMap;
+        SelectablesMap selectableStates;
+
+        for (ISelectable* selectable : candidates)
+        {
+            bool desiredState = !(modifier == SelectionSystem::eToggle && selectable->isSelected());
+            selectableStates.insert(SelectablesMap::value_type(selectable, desiredState));
+        }
+
+        for (const auto& state : selectableStates)
+        {
+            algorithm::setSelectionStatus(state.first, state.second);
+        }
     }
 }
 
@@ -1045,7 +1105,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("UnSelectSelection", std::bind(&RadiantSelectionSystem::deselectCmd, this, std::placeholders::_1));
 
     GlobalCommandSystem().addCommand("RotateSelectedEulerXYZ", selection::algorithm::rotateSelectedEulerXYZ, { cmd::ARGTYPE_VECTOR3 });
-    GlobalCommandSystem().addCommand("ScaleSelected", selection::algorithm::scaleSelected, { cmd::ARGTYPE_VECTOR3 });
+    GlobalCommandSystem().addCommand("ScaleSelected", selection::algorithm::scaleSelectedCmd, { cmd::ARGTYPE_VECTOR3 });
 
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
 

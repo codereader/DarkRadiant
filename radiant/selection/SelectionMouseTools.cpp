@@ -132,8 +132,14 @@ void DragSelectionMouseTool::testSelect(MouseTool::Event& ev)
     // If the mouse pointer has moved more than <epsilon>, this is considered a drag operation
     if (fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
     {
+        // Construct the selection test according to the area the user covered with his drag
+        render::View scissored(_view);
+        ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromArea(_start, delta));
+
+        SelectionVolume volume(scissored);
+
         // Call the selectArea command that does the actual selecting
-        GlobalSelectionSystem().SelectArea(_view, _start, delta, SelectionSystem::eToggle, isFaceOperation);
+        GlobalSelectionSystem().selectArea(volume, SelectionSystem::eToggle, isFaceOperation);
     }
     else
     {
@@ -239,8 +245,15 @@ void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)
     // If we already replaced a selection, switch to cycle mode
     // eReplace should only be active during the first call without mouse movement
     SelectionSystem::EModifier modifier = _mouseMovedSinceLastSelect ? SelectionSystem::eReplace : SelectionSystem::eCycle;
+    
+    // Copy the view to create a scissored volume
+    render::View scissored(_view);
+    // Create a volume out of a small box with 2*epsilon edge length
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(curPos, _epsilon));
 
-    GlobalSelectionSystem().SelectPoint(_view, curPos, _epsilon, modifier, selectFacesOnly());
+    // Create a selection test using that volume
+    SelectionVolume volume(scissored);
+    GlobalSelectionSystem().selectPoint(volume, modifier, selectFacesOnly());
 
     // Remember this position
     _lastSelectPos = curPos;
