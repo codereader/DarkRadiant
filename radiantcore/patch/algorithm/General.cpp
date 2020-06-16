@@ -82,7 +82,7 @@ void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams,
 	}
 
 	// Invert the target patch so that it faces the opposite direction
-	targetPatch->InvertMatrix();
+	targetPatch->invertMatrix();
 }
 
 void stitchTextures(const cmd::ArgumentList& args)

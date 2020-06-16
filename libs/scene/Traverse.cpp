@@ -90,13 +90,13 @@ void foreachVisibleFace(const std::function<void(IFace&)>& functor)
 	});
 }
 
-void foreachVisiblePatch(const std::function<void(IPatch&)>& functor)
+void foreachVisiblePatch(const std::function<void(const IPatchNodePtr&)>& functor)
 {
 	GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)->bool
 	{
 		if (Node_isPatch(node) && node->visible())
 		{
-			functor(*Node_getIPatch(node));
+			functor(std::dynamic_pointer_cast<IPatchNode>(node));
 		}
 
 		return true;

@@ -164,6 +164,26 @@ public:
 	// This translates the texture as much towards the origin in texture space as possible 
 	// without changing its appearance.
 	virtual void normaliseTexture() = 0;
+
+	// Flips the control point matrix such that the patch is facing the opposite direction
+	virtual void invertMatrix() = 0;
+
+	/**
+	 * greebo: This algorithm will transpose the patch matrix
+	 * such that the actual control vertex contents remain the same
+	 * but their indices in the patch matrix change.
+	 * Rows become columns and vice versa.
+	 */
+	virtual void transposeMatrix() = 0;
+
+	// Tries to rearrange the row vertices to be spaced out more evenly
+	virtual void redisperseRows() = 0;
+
+	// Tries to rearrange the column vertices to be spaced out more evenly
+	virtual void redisperseColumns() = 0;
+
+	// Insert or remove columns or rows at the beginning or at the end
+	virtual void insertRemove(bool insert, bool column, bool first) = 0;
 };
 
 namespace patch

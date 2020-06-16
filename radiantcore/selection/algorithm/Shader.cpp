@@ -34,7 +34,7 @@ void applyShaderToSelection(const std::string& shaderName)
 	UndoableCommand undo("setShader");
 
 	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.setShader(shaderName); });
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.setShader(shaderName); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.setShader(shaderName); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -307,12 +307,12 @@ void pickShaderFromSelection(const cmd::ArgumentList& args)
 			throw cmd::ExecutionNotPossible(_("Can't copy Shader. Couldn't retrieve patch."));
 		}
 	}
-	else if (selectedFaceCount() == 1)
+	else if (FaceInstance::Selection().size() == 1)
 	{
 		try
 		{
-			Face& sourceFace = getLastSelectedFace();
-			ShaderClipboard::Instance().setSource(sourceFace);
+			auto sourceFace = FaceInstance::Selection().back();
+			ShaderClipboard::Instance().setSource(sourceFace->getFace());
 		}
 		catch (const InvalidSelectionException&)
 		{
@@ -336,7 +336,7 @@ public:
 		_natural(natural)
 	{}
 
-	void operator()(Patch& patch)
+	void operator()(IPatch& patch)
 	{
         Texturable target;
         target.patch = &patch;
@@ -400,7 +400,7 @@ TextureProjection getSelectedTextureProjection()
 {
 	TextureProjection returnValue;
 
-	if (selectedFaceCount() == 1)
+	if (FaceInstance::Selection().size() == 1)
 	{
 		// Get the last selected face instance from the global
 		FaceInstance& faceInstance = *FaceInstance::Selection().back();
@@ -414,7 +414,7 @@ Vector2 getSelectedFaceShaderSize()
 {
 	Vector2 returnValue(0,0);
 
-	if (selectedFaceCount() == 1)
+	if (FaceInstance::Selection().size() == 1)
 	{
 		// Get the last selected face instance from the global
 		FaceInstance& faceInstance = *FaceInstance::Selection().back();

@@ -13,7 +13,6 @@
 
 #include "brush/BrushModule.h"
 #include "brush/BrushVisit.h"
-#include "patch/PatchSceneWalk.h"
 #include "patch/PatchNode.h"
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
@@ -21,6 +20,7 @@
 #include "gamelib.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "scenelib.h"
+#include "scene/ModelFinder.h"
 #include "selectionlib.h"
 #include "command/ExecutionFailure.h"
 #include "command/ExecutionNotPossible.h"
@@ -28,8 +28,6 @@
 
 #include "string/case_conv.h"
 #include <fmt/format.h>
-
-#include "ModelFinder.h"
 
 namespace selection
 {
@@ -77,9 +75,12 @@ PatchPtrVector getSelectedPatches()
 {
 	PatchPtrVector returnVector;
 
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch)
+	GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
 	{
-		returnVector.push_back(std::static_pointer_cast<PatchNode>(patch.getPatchNode().shared_from_this()));
+		if (Node_isPatch(node))
+		{
+			returnVector.emplace_back(std::dynamic_pointer_cast<PatchNode>(node));
+		}
 	});
 
 	return returnVector;
@@ -443,7 +444,7 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 	UndoableCommand command("addMonsterclip");
 
 	// create a ModelFinder and retrieve the modelList
-	ModelFinder visitor;
+	scene::ModelFinder visitor;
 	GlobalSelectionSystem().foreachSelected(visitor);
 
 	// Retrieve the list with all the found models from the visitor

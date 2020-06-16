@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "ifilesystem.h"
 #include "imodelcache.h"
+#include "ientity.h"
 #include "iundo.h"
 #include "itextstream.h"
 
@@ -17,6 +18,7 @@
 #include "model/export/ModelExporter.h"
 #include "registry/registry.h"
 #include "scene/Traverse.h"
+#include "command/ExecutionFailure.h"
 
 namespace map
 {
@@ -122,16 +124,16 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 			modelPos = -exporter.getCenterTransform().t().getVector3();
 		}
 
-		scene::INodePtr modelNode = selection::algorithm::createEntityFromSelection("func_static", modelPos);
+		scene::INodePtr modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);
 		
 		Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
 
 		// It's possible that the export overwrote a model we're already using in this map, refresh it
 		GlobalModelCache().refreshSelectedModels(false);
 	}
-	catch (selection::algorithm::EntityCreationException&)
+	catch (cmd::ExecutionFailure& ex)
 	{
-		throw std::runtime_error(_("Unable to create model, classname not found."));
+		throw std::runtime_error(fmt::format(_("Unable to create model: {0}"), ex.what()));
 	}
 }
 

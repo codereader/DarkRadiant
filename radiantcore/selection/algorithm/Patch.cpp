@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "imainframe.h"
+#include "ipatch.h"
 #include "selectionlib.h"
 #include "command/ExecutionNotPossible.h"
 
@@ -23,7 +24,7 @@ void invertPatch(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchInvert");
 
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InvertMatrix(); } );
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.invertMatrix(); } );
 	SceneChangeNotify();
 }
 
@@ -31,21 +32,21 @@ void redispersePatchRows(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchRedisperseRows");
 
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.Redisperse(ROW); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.redisperseRows(); });
 }
 
 void redispersePatchCols(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchRedisperseColumns");
 
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.Redisperse(COL); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.redisperseColumns(); });
 }
 
 void transposePatch(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchTranspose");
 
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.TransposeMatrix(); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.transposeMatrix(); });
 }
 
 patch::CapType getPatchCapTypeForString(const std::string& capTypeStr)
@@ -97,84 +98,84 @@ void insertPatchColumnsAtEnd(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchInsertColumnsAtEnd");
 	// true = insert, true = columns, false = end
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(true, true, false); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(true, true, false); });
 }
 
 void insertPatchColumnsAtBeginning(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchInsertColumnsAtBeginning");
 	// true = insert, true = columns, true = at beginning
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(true, true, true); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(true, true, true); });
 }
 
 void insertPatchRowsAtEnd(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchInsertRowsAtEnd");
 	// true = insert, false = rows, false = at end
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(true, false, false); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(true, false, false); });
 }
 
 void insertPatchRowsAtBeginning(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchInsertRowsAtBeginning");
 	// true = insert, false = rows, true = at beginning
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(true, false, true); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(true, false, true); });
 }
 
 void deletePatchColumnsFromBeginning(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchDeleteColumnsFromBeginning");
 	// false = delete, true = columns, true = at beginning
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(false, true, true); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(false, true, true); });
 }
 
 void deletePatchColumnsFromEnd(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchDeleteColumnsFromEnd");
 	// false = delete, true = columns, false = at end
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(false, true, false); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(false, true, false); });
 }
 
 void deletePatchRowsFromBeginning(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchDeleteRowsFromBeginning");
 	// false = delete, false = rows, true = at beginning
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(false, false, true); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(false, false, true); });
 }
 
 void deletePatchRowsFromEnd(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchDeleteRowsFromEnd");
 	// false = delete, false = rows, false = at end
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.InsertRemove(false, false, false); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.insertRemove(false, false, false); });
 }
 
 void appendPatchColumnsAtBeginning(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchAppendColumnsAtBeginning");
 	// true = columns, true = at the beginning
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(true, true); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.appendPoints(true, true); });
 }
 
 void appendPatchColumnsAtEnd(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchAppendColumnsAtEnd");
 	// true = columns, false = at the end
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(true, false); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.appendPoints(true, false); });
 }
 
 void appendPatchRowsAtBeginning(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchAppendRowsAtBeginning");
 	// false = rows, true = at the beginning
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(false, true); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.appendPoints(false, true); });
 }
 
 void appendPatchRowsAtEnd(const cmd::ArgumentList& args)
 {
 	UndoableCommand undo("patchAppendRowsAtEnd");
 	// false = rows, false = at the end
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.appendPoints(false, false); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.appendPoints(false, false); });
 }
 
 /** 

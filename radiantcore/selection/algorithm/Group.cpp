@@ -3,6 +3,7 @@
 #include <set>
 #include "i18n.h"
 #include "igroupnode.h"
+#include "ientity.h"
 #include "itextstream.h"
 #include "iselectiongroup.h"
 #include "imap.h"
@@ -30,14 +31,7 @@ void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
 	UndoableCommand command("convertSelectedToFuncStatic");
 
 	// Attempt to create a func_static entity
-	try
-	{
-		createEntityFromSelection("func_static", Vector3(0,0,0));
-	}
-	catch (EntityCreationException& e)
-	{
-		throw cmd::ExecutionFailure(e.what());
-	}
+	GlobalEntityModule().createEntityFromSelection("func_static", Vector3(0,0,0));
 }
 
 void revertGroupToWorldSpawn(const cmd::ArgumentList& args)

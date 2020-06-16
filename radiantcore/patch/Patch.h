@@ -242,17 +242,13 @@ public:
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
 	void constructBevel(const AABB& aabb, EViewType viewType);
 	void constructEndcap(const AABB& aabb, EViewType viewType);
-	void InvertMatrix();
+	void invertMatrix() override;
 
-	/**
-	 * greebo: This algorithm will transpose the patch matrix
-	 * such that the actual control vertex contents remain the same
-	 * but their indices in the patch matrix change.
-	 * Rows become columns and vice versa.
-	 */
-	void TransposeMatrix();
+	void transposeMatrix() override;
 	void Redisperse(EMatrixMajor mt);
-	void InsertRemove(bool bInsert, bool bColumn, bool bFirst);
+	void redisperseRows() override;
+	void redisperseColumns() override;
+	void insertRemove(bool insert, bool column, bool first) override;
   	Patch* MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool bFirst);
 	void ConstructSeam(patch::CapType eType, Vector3* p, std::size_t width);
 

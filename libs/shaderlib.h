@@ -90,6 +90,11 @@ public:
 			_counter++;
 		}
 	}
+
+	void operator()(const IPatchNodePtr& node)
+	{
+		(*this)(node->getPatch());
+	}
 };
 
 inline int findAndReplaceShader(const std::string& find, const std::string& replace, bool selectedOnly)

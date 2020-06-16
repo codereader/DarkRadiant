@@ -1,7 +1,8 @@
 #pragma once
 
 #include "inode.h"
-class IPatch;
+class IPatchNode;
+typedef std::shared_ptr<IPatchNode> IPatchNodePtr;
 class IFace;
 
 namespace scene 
@@ -24,6 +25,6 @@ void foreachVisibleFace(const std::function<void(IFace&)>& functor);
 /**
  * Visit each visible patch node in the global scene graph.
  */
-void foreachVisiblePatch(const std::function<void(IPatch&)>& functor);
+void foreachVisiblePatch(const std::function<void(const IPatchNodePtr&)>& functor);
 
 } // namespace

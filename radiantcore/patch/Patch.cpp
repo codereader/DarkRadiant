@@ -592,7 +592,7 @@ void Patch::updateTesselation()
     }
 }
 
-void Patch::InvertMatrix()
+void Patch::invertMatrix()
 {
   undoSave();
 
@@ -601,7 +601,7 @@ void Patch::InvertMatrix()
   controlPointsChanged();
 }
 
-void Patch::TransposeMatrix()
+void Patch::transposeMatrix()
 {
 	undoSave();
 
@@ -665,30 +665,43 @@ void Patch::Redisperse(EMatrixMajor mt)
   controlPointsChanged();
 }
 
-void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
+void Patch::redisperseRows()
+{
+	Redisperse(ROW);
+}
+
+void Patch::redisperseColumns()
+{
+	Redisperse(COL);
+}
+
+void Patch::insertRemove(bool insert, bool column, bool first)
+{
 	undoSave();
 
-	try {
-		if (bInsert) {
+	try
+	{
+		if (insert)
+		{
 			// Decide whether we should insert rows or columns
-			if (bColumn) {
+			if (column) {
 				// The insert point is 1 for "beginning" and width-2 for "end"
-				insertColumns(bFirst ? 1 : _width-2);
+				insertColumns(first ? 1 : _width-2);
 			}
 			else {
 				// The insert point is 1 for "beginning" and height-2 for "end"
-				insertRows(bFirst ? 1 : _height-2);
+				insertRows(first ? 1 : _height-2);
 			}
 		}
 		else {
 			// Col/Row Removal
-			if (bColumn) {
+			if (column) {
 				// Column removal, pass TRUE
-				removePoints(true, bFirst ? 2 : _width - 3);
+				removePoints(true, first ? 2 : _width - 3);
 			}
 			else {
 				// Row removal, pass FALSE
-				removePoints(false, bFirst ? 2 : _height - 3);
+				removePoints(false, first ? 2 : _height - 3);
 			}
 		}
 	}
@@ -2000,7 +2013,7 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 
 	if (viewType == XZ)
 	{
-		InvertMatrix();
+		invertMatrix();
 	}
 }
 
@@ -2044,7 +2057,7 @@ void Patch::constructEndcap(const AABB& aabb, EViewType viewType)
 
 	if (viewType != XZ)
 	{
-		InvertMatrix();
+		invertMatrix();
 	}
 }
 
@@ -2246,18 +2259,18 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 
 		if (eType == eDenseCylinder)
 		{
-			InsertRemove(true, false, true);
+			insertRemove(true, false, true);
 		}
 
 		if (eType == eVeryDenseCylinder)
 		{
-			InsertRemove(true, false, false);
-			InsertRemove(true, false, true);
+			insertRemove(true, false, false);
+			insertRemove(true, false, true);
 		}
 
 		if (viewType == XZ)
 		{
-			InvertMatrix();
+			invertMatrix();
 		}
 	}
 
@@ -2593,7 +2606,7 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 	}
 
 	if (wallIndex == 0 || wallIndex == 3) {
-		InvertMatrix();
+		invertMatrix();
 	}
 
 	// Notify the patch about the change

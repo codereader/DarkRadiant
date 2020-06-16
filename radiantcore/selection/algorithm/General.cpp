@@ -27,7 +27,6 @@
 #include "selection/algorithm/GroupCycle.h"
 #include "selection/algorithm/Shader.h"
 #include "brush/BrushVisit.h"
-#include "patch/PatchSceneWalk.h"
 #include "patch/Patch.h"
 #include "patch/PatchNode.h"
 
@@ -108,11 +107,11 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		});
 
 		// Select all visible patches carrying any of the shaders in the set
-		scene::foreachVisiblePatch([&] (Patch& patch)
+		scene::foreachVisiblePatch([&] (const IPatchNodePtr& node)
 		{
-			if (shaders.find(patch.getShader()) != shaders.end())
+			if (shaders.find(node->getPatch().getShader()) != shaders.end())
 			{
-				patch.getPatchNode().setSelected(true);
+				Node_setSelected(std::dynamic_pointer_cast<scene::INode>(node), true);
 			} 
 		});
 	}
@@ -156,11 +155,11 @@ void selectAllOfType(const cmd::ArgumentList& args)
 			});
 
 			// Select all visible patches carrying any of the shaders in the set
-			scene::foreachVisiblePatch([&] (Patch& patch)
+			scene::foreachVisiblePatch([&] (const IPatchNodePtr& node)
 			{
-				if (patch.getShader() == shader)
+				if (node->getPatch().getShader() == shader)
 				{
-					patch.getPatchNode().setSelected(true);
+					Node_setSelected(std::dynamic_pointer_cast<scene::INode>(node), true);
 				} 
 			});
 		}
