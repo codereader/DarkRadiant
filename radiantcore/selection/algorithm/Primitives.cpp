@@ -482,7 +482,6 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 0)
 	{
 		throw cmd::ExecutionNotPossible(_("No brushes selected."));
-		return;
 	}
 
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
@@ -491,6 +490,18 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 	});
 
 	SceneChangeNotify();
+}
+
+void resizeSelectedBrushesToBounds(const cmd::ArgumentList& args)
+{
+	if (args.size() != 3)
+	{
+		rWarning() << "Usage: ResizeSelectedBrushesToBounds <AABBminPoint> <AABBmaxPoint> <shaderName>" << std::endl;
+		return;
+	}
+
+	auto bounds = AABB::createFromMinMax(args[0].getVector3(), args[1].getVector3());
+	resizeBrushesToBounds(bounds, args[2].getString());
 }
 
 int GetViewAxis()

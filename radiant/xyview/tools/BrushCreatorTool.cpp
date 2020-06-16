@@ -6,10 +6,8 @@
 #include "scenelib.h"
 #include "itextstream.h"
 #include "selectionlib.h"
-#include "selection/algorithm/Primitives.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "command/ExecutionNotPossible.h"
-#include "map/Map.h"
 #include "XYMouseToolEvent.h"
 
 namespace ui
@@ -100,10 +98,9 @@ MouseTool::Result BrushCreatorTool::onMouseMove(Event& ev)
 
             if (_brush)
             {
-                // Brush could be created
-
+                // Brush was created
                 // Insert the brush into worldspawn
-                scene::INodePtr worldspawn = GlobalMap().findOrInsertWorldspawn();
+                auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
                 scene::addNodeToContainer(_brush, worldspawn);
             }
         }
@@ -111,12 +108,11 @@ MouseTool::Result BrushCreatorTool::onMouseMove(Event& ev)
         // Make sure the brush is selected
         Node_setSelected(_brush, true);
 
-        selection::algorithm::resizeBrushesToBounds(
-            AABB::createFromMinMax(startPos, endPos),
-            GlobalTextureBrowser().getSelectedShader()
-            );
+        // Dispatch the command
+        GlobalCommandSystem().executeCommand("ResizeSelectedBrushesToBounds", 
+            startPos, endPos, GlobalTextureBrowser().getSelectedShader());
     }
-    catch (cmd::ExecutionNotPossible & ex)
+    catch (cmd::ExecutionNotPossible&)
     {
         return Result::Ignored;
     }

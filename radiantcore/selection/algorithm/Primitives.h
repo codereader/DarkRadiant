@@ -104,6 +104,11 @@ namespace selection {
 	void resizeBrushesToBounds(const AABB& aabb, const std::string& shader);
 
 	/**
+	 * Resizes all selected brushes to fit the bounding box defined by the two points.
+	 */
+	void resizeSelectedBrushesToBounds(const cmd::ArgumentList& args);
+
+	/**
 	 * Constructs a prefab of the given brush type, for each selected brush.
 	 * The given number of sides and the given shader are assigned to the newly designed brush.
 	 */
