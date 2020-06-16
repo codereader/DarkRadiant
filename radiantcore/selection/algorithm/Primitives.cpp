@@ -309,8 +309,8 @@ public:
 			}
 
 			// Fit the texture on it
-			patch->SetTextureRepeat(1,1);
-			patch->FlipTexture(1);
+			patch->fitTexture(1,1);
+			patch->flipTexture(1);
 
 			// Insert the patch into worldspawn
 			scene::INodePtr worldSpawnNode = GlobalMapModule().findOrInsertWorldspawn();

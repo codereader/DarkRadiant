@@ -69,7 +69,7 @@ void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams,
 				parent->addChildNode(nodes[i]);
 
 				// Now the shader is realised, apply natural scale
-				wallPatch->NaturalTexture();
+				wallPatch->scaleTextureNaturally();
 
 				// Now select the newly created patch
 				Node_setSelected(nodes[i], true);

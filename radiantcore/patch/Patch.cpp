@@ -856,7 +856,7 @@ Patch* Patch::MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool 
   patch->ConstructSeam(eType, &p.front(), width);
 
   // greebo: Apply natural texture to that patch, to fix the texcoord==1.#INF bug.
-  patch->NaturalTexture();
+  patch->scaleTextureNaturally();
   return patch;
 }
 
@@ -1942,7 +1942,7 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
     vTmp[y]+=yAdj;
   }
 
-  NaturalTexture();
+  scaleTextureNaturally();
 }
 
 // Returns the dimension for the given viewtype, used by the patch prefab routines
@@ -2265,7 +2265,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 		}
 	}
 
-	NaturalTexture();
+	scaleTextureNaturally();
 }
 
 namespace

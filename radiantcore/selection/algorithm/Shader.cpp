@@ -338,22 +338,38 @@ public:
 
 	void operator()(IPatch& patch)
 	{
-        Texturable target;
-        target.patch = &patch;
-        target.node = patch.getPatchNode().shared_from_this();
+		try
+		{
+			Texturable target;
 
-        // Apply the shader (projected, not to the entire brush)
-        applyClipboardToTexturable(target, !_natural, false);
+			Patch& targetPatch = dynamic_cast<Patch&>(patch);
+
+			target.patch = &targetPatch;
+			target.node = targetPatch.getPatchNode().shared_from_this();
+
+			// Apply the shader (projected, not to the entire brush)
+			applyClipboardToTexturable(target, !_natural, false);
+		}
+		catch (const std::bad_cast&)
+		{}
 	}
 
 	void operator()(IFace& face)
 	{
-		Texturable target;
-		target.face = &face;
-		target.node = face.getBrush().getBrushNode().shared_from_this();
+		try
+		{
+			Texturable target;
 
-		// Apply the shader (projected, not to the entire brush)
-		applyClipboardToTexturable(target, !_natural, false);
+			// Downcast the IFace reference
+			Face& targetFace = dynamic_cast<Face&>(face);
+			target.face = &targetFace;
+			target.node = targetFace.getBrush().getBrushNode().shared_from_this();
+
+			// Apply the shader (projected, not to the entire brush)
+			applyClipboardToTexturable(target, !_natural, false);
+		}
+		catch (const std::bad_cast&)
+		{}
 	}
 };
 
