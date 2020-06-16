@@ -155,18 +155,18 @@ public:
 	void applyShaderFromFace(const Face& other);
 
     // s and t are texture coordinates
-	void shiftTexdef(float s, float t);
+	void shiftTexdef(float s, float t) override;
 
     // Same as above, but with pixel values
-    void shiftTexdefByPixels(float sPixels, float tPixels);
+    void shiftTexdefByPixels(float sPixels, float tPixels) override;
 
     // Scale the texdef by the given factors in s and t direction
     // Passing s=1.05 will scale the texture to 105% in the s dimension
-	void scaleTexdef(float sFactor, float tFactor);
-	void rotateTexdef(float angle);
-	void fitTexture(float s_repeat, float t_repeat);
-	void flipTexture(unsigned int flipAxis);
-	void alignTexture(EAlignType align);
+	void scaleTexdef(float sFactor, float tFactor) override;
+	void rotateTexdef(float angle) override;
+	void fitTexture(float s_repeat, float t_repeat) override;
+	void flipTexture(unsigned int flipAxis) override;
+	void alignTexture(AlignEdge alignType) override;
 
 	/** greebo: This translates the texture as much towards
 	 * 	the origin as possible. The face appearance stays unchanged.

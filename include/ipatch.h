@@ -184,6 +184,33 @@ public:
 
 	// Insert or remove columns or rows at the beginning or at the end
 	virtual void insertRemove(bool insert, bool column, bool first) = 0;
+
+	virtual void translateTexture(float s, float t) = 0;
+
+	// Rotates the texture of the patch by the given angle (in degrees)
+	virtual void rotateTexture(float angle) = 0;
+
+	// Scales the patch texture by the given factors (pass 1.05 for a +0.05 scale)
+	virtual void scaleTexture(float s, float t) = 0;
+
+	virtual void fitTexture(float repeatS, float repeatT) = 0;
+
+	// Flips the texture by the given flipAxis (0 == x-axis, 1 == y-axis)
+	virtual void flipTexture(int axis) = 0;
+
+	// Applies the "natural" scale to this patch
+	virtual void scaleTextureNaturally() = 0;
+
+	enum class AlignEdge
+	{
+		Top,
+		Bottom,
+		Left,
+		Right,
+	};
+
+	// Alligns the assigned texture at the given edge (if possible)
+	virtual void alignTexture(AlignEdge type) = 0;
 };
 
 namespace patch

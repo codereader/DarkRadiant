@@ -860,29 +860,31 @@ Patch* Patch::MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool 
   return patch;
 }
 
-void Patch::FlipTexture(int nAxis)
+void Patch::flipTexture(int nAxis)
 {
-  undoSave();
+	undoSave();
 
-  for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
-  {
-    i->texcoord[nAxis] = -i->texcoord[nAxis];
-  }
+	for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
+	{
+		i->texcoord[nAxis] = -i->texcoord[nAxis];
+	}
 
-  controlPointsChanged();
+	controlPointsChanged();
 }
 
 /** greebo: Helper function that shifts all control points in
  * texture space about <s,t>
  */
-void Patch::translateTexCoords(Vector2 translation) {
+void Patch::translateTexCoords(const Vector2& translation)
+{
 	// Cycle through all control points and shift them in texture space
-	for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
+	for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
+	{
     	i->texcoord += translation;
   	}
 }
 
-void Patch::TranslateTexture(float s, float t)
+void Patch::translateTexture(float s, float t)
 {
     undoSave();
 
@@ -894,20 +896,20 @@ void Patch::TranslateTexture(float s, float t)
     controlPointsChanged();
 }
 
-void Patch::ScaleTexture(float s, float t)
+void Patch::scaleTexture(float s, float t)
 {
-  undoSave();
+	undoSave();
 
-  for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
-  {
-    (*i).texcoord[0] *= s;
-    (*i).texcoord[1] *= t;
-  }
+	for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
+	{
+		i->texcoord[0] *= s;
+		i->texcoord[1] *= t;
+	}
 
-  controlPointsChanged();
+	controlPointsChanged();
 }
 
-void Patch::RotateTexture(float angle)
+void Patch::rotateTexture(float angle)
 {
   undoSave();
 
@@ -925,9 +927,7 @@ void Patch::RotateTexture(float angle)
   controlPointsChanged();
 }
 
-/* greebo: Tile the selected texture on the patch (s times t)
- */
-void Patch::SetTextureRepeat(float s, float t)
+void Patch::fitTexture(float s, float t)
 {
 	// Save the current patch state to the undoMemento
 	undoSave();
@@ -966,16 +966,7 @@ void Patch::SetTextureRepeat(float s, float t)
 	controlPointsChanged();
 }
 
-/* uses longest parallel chord to calculate texture coords for each row/col
- * greebo: The default texture scale is used when applying "Natural" texturing.
- * Note: all the comments in this method are by myself, so be careful... ;)
- *
- * The applied texture is never stretched more than the default
- * texture scale. So if the default texture scale is 0.5, the texture coordinates
- * are set such that the scaling never exceeds this value. (Don't know why
- * this is called "Natural" but so what...)
- */
-void Patch::NaturalTexture() {
+void Patch::scaleTextureNaturally() {
 
 	// Save the undo memento
 	undoSave();
@@ -1777,7 +1768,7 @@ void Patch::pasteTextureCoordinates(const Patch* otherPatch) {
 	}
 }
 
-void Patch::alignTexture(EAlignType align)
+void Patch::alignTexture(AlignEdge align)
 {
 	if (isDegenerate()) return;
 
@@ -1831,19 +1822,19 @@ void Patch::alignTexture(EAlignType align)
 
 	switch (align)
 	{
-	case ALIGN_TOP:
+	case IPatch::AlignEdge::Top:
 		coordIndex = topEdge;
 		dim = 1;
 		break;
-	case ALIGN_BOTTOM:
+	case IPatch::AlignEdge::Bottom:
 		coordIndex = bottomEdge;
 		dim = 1;
 		break;
-	case ALIGN_LEFT:
+	case IPatch::AlignEdge::Left:
 		coordIndex = leftEdge;
 		dim = 0;
 		break;
-	case ALIGN_RIGHT:
+	case IPatch::AlignEdge::Right:
 		coordIndex = rightEdge;
 		dim = 0;
 		break;

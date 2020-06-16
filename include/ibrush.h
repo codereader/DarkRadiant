@@ -119,6 +119,10 @@ public:
 	// Shifts the texture by the given s,t amount in texture space
 	virtual void shiftTexdef(float s, float t) = 0;
 
+	// Convenience wrapper to shift the assigned texture by the given amount of pixels
+	// the passed values are scaled accordingly and passed on to shiftTexdef()
+	virtual void shiftTexdefByPixels(float s, float t) = 0;
+
 	// Scales the tex def by the given factors in texture space
 	virtual void scaleTexdef(float s, float t) = 0;
 
@@ -133,6 +137,17 @@ public:
 
 	// This translates the texture as much towards the origin in texture space as possible without changing the world appearance.
 	virtual void normaliseTexture() = 0;
+
+	enum class AlignEdge
+	{
+		Top,
+		Bottom,
+		Left,
+		Right,
+	};
+
+	// If possible, aligns the assigned texture at the given anchor edge
+	virtual void alignTexture(AlignEdge alignType) = 0;
 
 	// Get access to the actual Winding object
 	virtual IWinding& getWinding() = 0;

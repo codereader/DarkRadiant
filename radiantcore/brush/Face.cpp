@@ -548,7 +548,7 @@ void Face::flipTexture(unsigned int flipAxis) {
     texdefChanged();
 }
 
-void Face::alignTexture(EAlignType align)
+void Face::alignTexture(AlignEdge align)
 {
     undoSave();
     _texdef.alignTexture(align, m_winding);

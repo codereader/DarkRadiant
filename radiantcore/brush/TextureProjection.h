@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ibrush.h"
 #include "texturelib.h"
 #include "Winding.h"
 #include "math/AABB.h"
@@ -59,7 +60,7 @@ public:
     void flipTexture(unsigned int flipAxis);
 
     // Aligns this texture to the given edge of the winding
-    void alignTexture(EAlignType align, const Winding& winding);
+    void alignTexture(IFace::AlignEdge align, const Winding& winding);
 
     // greebo: Saves the texture definitions into the brush winding points
     void emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;

@@ -430,8 +430,8 @@ void fitTexture(const float repeatS, const float repeatT)
 {
 	UndoableCommand command("fitTexture");
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.fitTexture(repeatS, repeatT); });
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.SetTextureRepeat(repeatS, repeatT); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.fitTexture(repeatS, repeatT); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.fitTexture(repeatS, repeatT); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -446,15 +446,15 @@ void fitTextureCmd(const cmd::ArgumentList& args)
 		return;
 	}
 
-	fitTexture(args[0].getDouble(), args[1].getDouble())
+	fitTexture(args[0].getDouble(), args[1].getDouble());
 }
 
 void flipTexture(unsigned int flipAxis)
 {
 	UndoableCommand undo("flipTexture");
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.flipTexture(flipAxis); });
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.FlipTexture(flipAxis); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.flipTexture(flipAxis); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.flipTexture(flipAxis); });
 
 	SceneChangeNotify();
 }
@@ -474,7 +474,7 @@ void naturalTexture(const cmd::ArgumentList& args)
 	UndoableCommand undo("naturalTexture");
 
     // Construct the "naturally" scaled Texdef structure
-    TexDef shiftScaleRotation;
+	ShiftScaleRotation shiftScaleRotation;
 
     float naturalScale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
 
@@ -483,10 +483,10 @@ void naturalTexture(const cmd::ArgumentList& args)
 
 	// Patches
 	GlobalSelectionSystem().foreachPatch(
-        [] (Patch& patch) { patch.NaturalTexture(); }
+        [] (IPatch& patch) { patch.scaleTextureNaturally(); }
     );
 	GlobalSelectionSystem().foreachFace(
-        [&] (Face& face) { face.setTexdef(shiftScaleRotation); }
+        [&] (IFace& face) { face.setShiftScaleRotation(shiftScaleRotation); }
     );
 
 	SceneChangeNotify();
@@ -502,8 +502,8 @@ void shiftTexture(const Vector2& shift)
 
 	UndoableCommand undo(command);
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.shiftTexdefByPixels(shift[0], shift[1]); });
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.TranslateTexture(shift[0], shift[1]); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.shiftTexdefByPixels(shift[0], shift[1]); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.translateTexture(shift[0], shift[1]); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -534,8 +534,8 @@ void scaleTexture(const Vector2& scale)
 		}
 	}
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.scaleTexdef(scale[0], scale[1]); });
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.ScaleTexture(patchScale[0], patchScale[1]); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.scaleTexdef(scale[0], scale[1]); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.scaleTexture(patchScale[0], patchScale[1]); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -549,8 +549,8 @@ void rotateTexture(const float angle)
 
 	UndoableCommand undo(command);
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.rotateTexdef(angle); });
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.RotateTexture(angle); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.rotateTexdef(angle); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.rotateTexture(angle); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -679,26 +679,37 @@ void alignTexture(EAlignType align)
 	std::string command("alignTexture: ");
 	command += "edge=";
 
+	IFace::AlignEdge faceAlignEdge = IFace::AlignEdge::Top;
+	IPatch::AlignEdge patchAlignEdge = IPatch::AlignEdge::Top;
+
 	switch (align)
 	{
 	case ALIGN_TOP:
 		command += "top";
+		patchAlignEdge = IPatch::AlignEdge::Top;
+		faceAlignEdge = IFace::AlignEdge::Top;
 		break;
 	case ALIGN_BOTTOM:
 		command += "bottom";
+		patchAlignEdge = IPatch::AlignEdge::Bottom;
+		faceAlignEdge = IFace::AlignEdge::Bottom;
 		break;
 	case ALIGN_LEFT:
 		command += "left";
+		patchAlignEdge = IPatch::AlignEdge::Left;
+		faceAlignEdge = IFace::AlignEdge::Left;
 		break;
 	case ALIGN_RIGHT:
 		command += "right";
+		patchAlignEdge = IPatch::AlignEdge::Right;
+		faceAlignEdge = IFace::AlignEdge::Right;
 		break;
 	};
 
 	UndoableCommand undo(command);
 
-	GlobalSelectionSystem().foreachFace([&] (Face& face) { face.alignTexture(align); });
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch) { patch.alignTexture(align); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.alignTexture(faceAlignEdge); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.alignTexture(patchAlignEdge); });
 
 	SceneChangeNotify();
 	// Update the Texture Tools

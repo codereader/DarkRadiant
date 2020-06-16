@@ -244,7 +244,7 @@ void TextureProjection::flipTexture(unsigned int flipAxis)
     matrix = TextureMatrix(texdef);
 }
 
-void TextureProjection::alignTexture(EAlignType align, const Winding& winding)
+void TextureProjection::alignTexture(IFace::AlignEdge align, const Winding& winding)
 {
     if (winding.empty()) return;
 
@@ -282,19 +282,19 @@ void TextureProjection::alignTexture(EAlignType align, const Winding& winding)
 
     switch (align)
     {
-    case ALIGN_TOP:
+    case IFace::AlignEdge::Top:
         windingIndex = topEdge;
         dim = 1;
         break;
-    case ALIGN_BOTTOM:
+    case IFace::AlignEdge::Bottom:
         windingIndex = bottomEdge;
         dim = 1;
         break;
-    case ALIGN_LEFT:
+    case IFace::AlignEdge::Left:
         windingIndex = leftEdge;
         dim = 0;
         break;
-    case ALIGN_RIGHT:
+    case IFace::AlignEdge::Right:
         windingIndex = rightEdge;
         dim = 0;
         break;

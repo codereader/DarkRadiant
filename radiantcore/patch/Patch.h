@@ -252,7 +252,7 @@ public:
   	Patch* MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool bFirst);
 	void ConstructSeam(patch::CapType eType, Vector3* p, std::size_t width);
 
-	void FlipTexture(int nAxis);
+	void flipTexture(int axis) override;
 
 	/** greebo: This translates the texture as much towards
 	 * 			the origin as possible. The patch appearance stays unchanged.
@@ -262,17 +262,24 @@ public:
 	/** greebo: Translate all control vertices in texture space
 	 * with the given translation vector (helper method, no undoSave() call)
 	 */
-	void translateTexCoords(Vector2 translation);
+	void translateTexCoords(const Vector2& translation);
 
 	// This is the same as above, but with undoSave() for use in command sequences
-	void TranslateTexture(float s, float t);
-	void ScaleTexture(float s, float t);
-	void RotateTexture(float angle);
-	void SetTextureRepeat(float s, float t); // call with s=1 t=1 for FIT
-	void NaturalTexture();
+	void translateTexture(float s, float t) override;
+	void scaleTexture(float s, float t) override;
+	void rotateTexture(float angle) override;
+	void fitTexture(float repeatS, float repeatT) override; // call with s=1 t=1 for FIT
+
+	/* uses longest parallel chord to calculate texture coords for each row/col
+	 * greebo: The default texture scale is used when applying "Natural" texturing.
+	 * The applied texture is never stretched more than the default
+	 * texture scale. So if the default texture scale is 0.5, the texture coordinates
+	 * are set such that the scaling never exceeds this value.
+	 */
+	void scaleTextureNaturally();
 
 	// Aligns the patch texture along the given side/border - if possible
-	void alignTexture(EAlignType align);
+	void alignTexture(AlignEdge type) override;
 
 	/* greebo: This basically projects all the patch vertices into the brush plane and
 	 * transforms the projected coordinates into the texture plane space */
