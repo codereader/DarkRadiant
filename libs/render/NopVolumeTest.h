@@ -18,9 +18,11 @@ private:
 	Matrix4 _viewPort;
 	Matrix4 _projection;
 	Matrix4 _modelView;
+	Matrix4 _viewProjection;
 
 public:
 	NopVolumeTest() :
+		_viewProjection(Matrix4::getIdentity()),
 		_viewPort(Matrix4::getIdentity()),
 		_projection(Matrix4::getIdentity()),
 		_modelView(Matrix4::getIdentity())
@@ -59,6 +61,11 @@ public:
 	virtual bool fill() const
 	{ 
 		return true;
+	}
+
+	virtual const Matrix4& GetViewProjection() const
+	{
+		return _viewProjection;
 	}
 
 	virtual const Matrix4& GetViewport() const

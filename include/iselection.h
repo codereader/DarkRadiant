@@ -113,7 +113,7 @@ public:
 	*/
 	virtual Component* getActiveComponent() = 0;
 
-	virtual void testSelect(const VolumeTest& view, const Matrix4& pivot2world) {}
+	virtual void testSelect(SelectionTest& test, const Matrix4& pivot2world) {}
 
 	// Renders the manipulator's visual representation to the scene
 	virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;

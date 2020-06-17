@@ -218,7 +218,6 @@
     <ClCompile Include="..\..\radiant\RadiantApp.cpp" />
     <ClCompile Include="..\..\radiant\RadiantModule.cpp" />
     <ClCompile Include="..\..\radiant\render\View.cpp" />
-    <ClCompile Include="..\..\radiant\selection\BestPoint.cpp" />
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
@@ -390,7 +389,6 @@
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
-    <ClInclude Include="..\..\radiant\selection\BestPoint.h" />
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h" />

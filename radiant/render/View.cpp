@@ -126,7 +126,7 @@ VolumeIntersectionValue View::TestAABB(const AABB& aabb, const Matrix4& localToW
 	return _frustum.testIntersection(aabb, localToWorld);
 }
 
-const Matrix4& View::GetViewMatrix() const
+const Matrix4& View::GetViewProjection() const
 {
 	return _viewproj;
 }

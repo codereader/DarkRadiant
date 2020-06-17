@@ -231,6 +231,9 @@
     <ClInclude Include="..\..\libs\selection\Pivot2World.h">
       <Filter>selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\selection\BestPoint.h">
+      <Filter>selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

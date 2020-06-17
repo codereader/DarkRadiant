@@ -2,8 +2,7 @@
 
 #include "../Remap.h"
 #include "../SelectionPool.h"
-#include "../BestPoint.h"
-#include "render/View.h"
+#include "selection/BestPoint.h"
 
 #include "registry/registry.h"
 
@@ -91,9 +90,10 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
     }
 }
 
-void TranslateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
+void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
-    _pivot2World.update(_pivot.getMatrix4(), view.GetModelview(), view.GetProjection(), view.GetViewport());
+    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(), 
+        test.getVolume().GetProjection(), test.getVolume().GetViewport());
 
     SelectionPool selector;
 
@@ -107,7 +107,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
     bool show_z = manipulator_show_axis(_pivot2World, z);
 
     {
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._viewpointSpace));
+		Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._viewpointSpace));
 
       {
         SelectionIntersection best;
@@ -121,7 +121,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
     }
 
     {
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._worldSpace));
+		Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._worldSpace));
 
       if(show_x)
       {
@@ -156,7 +156,7 @@ void TranslateManipulator::testSelect(const render::View& view, const Matrix4& p
 
     	if (registry::getValue<bool>(RKEY_TRANSLATE_CONSTRAINED)) {
 	    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence
-	    	Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._worldSpace));
+	    	Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._worldSpace));
 
 	    	// Get the (relative?) distance from the mouse pointer to the manipulator
 	    	Vector3 delta = local2view.t().getProjected();

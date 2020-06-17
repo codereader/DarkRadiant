@@ -4,7 +4,6 @@
 #include "selection/SelectionPool.h"
 #include "selection/BestPoint.h"
 #include "selection/TransformationVisitors.h"
-#include "render/View.h"
 
 namespace selection
 {
@@ -46,14 +45,15 @@ void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& 
 #endif
 }
 
-void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
+void ScaleManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
-    _pivot2World.update(_pivot.getMatrix4(), view.GetModelview(), view.GetProjection(), view.GetViewport());
+    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(), 
+        test.getVolume().GetProjection(), test.getVolume().GetViewport());
 
     SelectionPool selector;
 
     {
-      Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._worldSpace));
+      Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._worldSpace));
 
     {
         SelectionIntersection best;
@@ -75,7 +75,7 @@ void ScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot
     }
 
     {
-		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._viewpointSpace));
+		Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._viewpointSpace));
 
       {
         SelectionIntersection best;

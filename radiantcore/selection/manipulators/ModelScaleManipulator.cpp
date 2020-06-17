@@ -1,6 +1,5 @@
 #include "ModelScaleManipulator.h"
 
-#include "render/View.h"
 #include "debugging/ScenegraphUtils.h"
 
 namespace selection
@@ -22,7 +21,7 @@ ModelScaleManipulator::Component* ModelScaleManipulator::getActiveComponent()
 	return &_scaleComponent;
 }
 
-void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
+void ModelScaleManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
 	_curManipulatable.reset();
 	_scaleComponent.setEntityNode(scene::INodePtr());
@@ -39,7 +38,7 @@ void ModelScaleManipulator::testSelect(const render::View& view, const Matrix4& 
 
 		for (std::size_t i = 0; i < 8; ++i)
 		{
-			if (view.TestPoint(points[i]))
+			if (test.getVolume().TestPoint(points[i]))
 			{
 				_curManipulatable = node;
 

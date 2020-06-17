@@ -114,8 +114,10 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 			render::View scissored(view);
 			ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
 
+			SelectionVolume test(scissored);
+
 			// The manipulator class checks on its own, if any of its components can be selected
-			activeManipulator->testSelect(scissored, pivot2World);
+			activeManipulator->testSelect(test, pivot2World);
 		}
 
 		// Save the pivot2world matrix

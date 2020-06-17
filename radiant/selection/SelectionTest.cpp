@@ -12,7 +12,7 @@ inline SelectionIntersection select_point_from_clipped(Vector4& clipped) {
 
 void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided)
 {
-    _local2view = _view.GetViewMatrix().getMultipliedBy(localToWorld);
+    _local2view = _view.GetViewProjection().getMultipliedBy(localToWorld);
 
     // Cull back-facing polygons based on winding being clockwise or counter-clockwise.
     // Don't cull if the view is wireframe and the polygons are two-sided.

@@ -6,7 +6,6 @@
 #include "iscenegraph.h"
 #include "iuimanager.h"
 #include "imediabrowser.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "ClosestTexturableFinder.h"
 
 #include "patch/PatchNode.h"

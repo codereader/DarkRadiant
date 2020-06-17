@@ -640,9 +640,6 @@
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\BestPoint.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
@@ -1243,9 +1240,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\BestPoint.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h">

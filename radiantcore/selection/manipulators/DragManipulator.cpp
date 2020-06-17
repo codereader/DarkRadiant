@@ -31,26 +31,25 @@ DragManipulator::Component* DragManipulator::getActiveComponent()
     return _dragSelectable.isSelected() ? &_freeDragComponent : &_freeResizeComponent;
 }
 
-void DragManipulator::testSelect(const VolumeTest& view, const Matrix4& pivot2world)
+void DragManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
 	_resizeModeActive = false;
 
     SelectionPool selector;
-    SelectionVolume test(view);
 
 	switch (GlobalSelectionSystem().Mode())
 	{
 	case SelectionSystem::ePrimitive:
-		testSelectPrimitiveMode(view, test, selector);
+		testSelectPrimitiveMode(test.getVolume(), test, selector);
 		break;
 	case SelectionSystem::eGroupPart:
-		testSelectGroupPartMode(view, test, selector);
+		testSelectGroupPartMode(test.getVolume(), test, selector);
 		break;
 	case SelectionSystem::eEntity:
-		testSelectEntityMode(view, test, selector);
+		testSelectEntityMode(test.getVolume(), test, selector);
 		break;
 	case SelectionSystem::eComponent:
-		testSelectComponentMode(view, test, selector);
+		testSelectComponentMode(test.getVolume(), test, selector);
 		break;
 	};
 

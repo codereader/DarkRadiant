@@ -205,6 +205,7 @@
     <ClInclude Include="..\..\libs\RGBAImage.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />
+    <ClInclude Include="..\..\libs\selection\BestPoint.h" />
     <ClInclude Include="..\..\libs\selection\Device.h" />
     <ClInclude Include="..\..\libs\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\libs\selection\Pivot2World.h" />

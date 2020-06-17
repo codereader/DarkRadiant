@@ -4,7 +4,6 @@
 #include "selection/SelectionPool.h"
 #include "selection/BestPoint.h"
 #include "selection/TransformationVisitors.h"
-#include "render/View.h"
 #include <fmt/format.h>
 
 namespace selection
@@ -171,14 +170,15 @@ void RotateManipulator::render(const RenderInfo& info) const
 	}
 }
 
-void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivot2world)
+void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
-    _pivot2World.update(_pivot.getMatrix4(), view.GetModelview(), view.GetProjection(), view.GetViewport());
+    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(), 
+        test.getVolume().GetProjection(), test.getVolume().GetViewport());
     updateCircleTransforms();
 
     SelectionPool selector;
 
-	if (view.TestPoint(_pivot.getVector3()))
+	if (test.getVolume().TestPoint(_pivot.getVector3()))
 	{
 		selector.addSelectable(SelectionIntersection(0, 0), &_selectablePivotPoint);
 	}
@@ -186,7 +186,7 @@ void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivo
 	{
 		{
 			{
-				Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldX));
+				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldX));
 
 				SelectionIntersection best;
 				LineStrip_BestPoint(local2view, &_circleX.front(), _circleX.size(), best);
@@ -194,7 +194,7 @@ void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivo
 			}
 
 			{
-				Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldY));
+				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldY));
 
 				SelectionIntersection best;
 				LineStrip_BestPoint(local2view, &_circleY.front(), _circleY.size(), best);
@@ -202,7 +202,7 @@ void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivo
 			}
 
 			{
-				Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldZ));
+				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldZ));
 
 				SelectionIntersection best;
 				LineStrip_BestPoint(local2view, &_circleZ.front(), _circleZ.size(), best);
@@ -211,7 +211,7 @@ void RotateManipulator::testSelect(const render::View& view, const Matrix4& pivo
 		}
 
 		{
-			Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot2World._viewpointSpace));
+			Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._viewpointSpace));
 
 			{
 				SelectionIntersection best;
