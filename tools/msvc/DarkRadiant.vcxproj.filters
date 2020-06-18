@@ -164,6 +164,9 @@
     <Filter Include="src\selection">
       <UniqueIdentifier>{fcadd723-1718-42a6-82d4-41aabf92dabe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\shaderclipboard">
+      <UniqueIdentifier>{f4546842-2dad-4e9d-bc49-d4888d8776db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1253,6 +1256,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h">
       <Filter>src\ui\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\shaderclipboard\ShaderClipboardStatus.h">
+      <Filter>src\ui\shaderclipboard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

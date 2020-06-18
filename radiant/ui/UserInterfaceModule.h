@@ -10,6 +10,7 @@
 #include "LongRunningOperationHandler.h"
 #include "AutoSaveRequestHandler.h"
 #include "MapFileProgressHandler.h"
+#include "shaderclipboard/ShaderClipboardStatus.h"
 #include "messages/CommandExecutionFailed.h"
 #include "messages/TextureChanged.h"
 #include "messages/NotificationMessage.h"
@@ -33,6 +34,7 @@ private:
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 	std::unique_ptr<MapFileProgressHandler> _mapFileProgressHandler;
 	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;
+	std::unique_ptr<ShaderClipboardStatus> _shaderClipboardStatus;
 
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;

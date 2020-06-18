@@ -4,13 +4,11 @@
 #include "imap.h"
 #include "iselectiontest.h"
 #include "iscenegraph.h"
-#include "iuimanager.h"
-#include "imediabrowser.h"
 #include "ClosestTexturableFinder.h"
 
+#include "util/ScopedBoolLock.h"
 #include "patch/PatchNode.h"
 #include "brush/BrushNode.h"
-#include <fmt/format.h>
 
 namespace selection 
 {
@@ -22,33 +20,45 @@ namespace
 
 ShaderClipboard::ShaderClipboard() :
 	_updatesDisabled(false)
+{}
+
+ShaderClipboard::SourceType ShaderClipboard::getSourceType() const
 {
-	GlobalUIManager().getStatusBarManager().addTextElement(
-		"ShaderClipBoard",
-		"icon_texture.png",
-		IStatusBarManager::POS_SHADERCLIPBOARD,
-		_("The name of the shader in the clipboard")
-	);
+	if (_source.empty())
+	{
+		return SourceType::Empty;
+	}
 
-	GlobalUndoSystem().signal_postUndo().connect(
-		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
-	GlobalUndoSystem().signal_postRedo().connect(
-		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
+	if (_source.isFace())
+	{
+		return SourceType::Face;
+	}
+	else if (_source.isPatch())
+	{
+		return SourceType::Patch;
+	}
+	else if (_source.isShader())
+	{
+		return SourceType::Shader;
+	}
 
-	GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(*this, &ShaderClipboard::onMapEvent));
+	return SourceType::Empty;
+}
+
+void ShaderClipboard::sourceChanged()
+{
+	util::ScopedBoolLock lock(_updatesDisabled); // prevent loopbacks
+
+	_signalSourceChanged.emit();
 }
 
 void ShaderClipboard::clear() 
 {
+	if (_updatesDisabled) return;
+
 	_source.clear();
 
-	_updatesDisabled = true;
-
-	// Update the status bar information
-	updateStatusText();
-
-	_updatesDisabled = false;
+	sourceChanged();
 }
 
 void ShaderClipboard::onUndoRedoOperation()
@@ -60,7 +70,8 @@ void ShaderClipboard::onUndoRedoOperation()
 	}
 }
 
-Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
+Texturable ShaderClipboard::getTexturable(SelectionTest& test)
+{
 	// Initialise an empty Texturable structure
 	Texturable returnValue;
 
@@ -68,46 +79,6 @@ Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 	GlobalSceneGraph().root()->traverseChildren(finder);
 
 	return returnValue;
-}
-
-void ShaderClipboard::updateMediaBrowsers()
-{
-	// Avoid nasty loopbacks
-	_updatesDisabled = true;
-
-	// Set the active shader in the Texture window as well
-	GlobalTextureBrowser().setSelectedShader(_source.getShader());
-
-	std::string sourceShader = _source.getShader();
-	GlobalMediaBrowser().setSelection(sourceShader);
-
-	_updatesDisabled = false;
-
-	updateStatusText();
-}
-
-void ShaderClipboard::updateStatusText()
-{
-	std::string statusText;
-
-	if (!_source.empty()) {
-		statusText = fmt::format(_("ShaderClipboard: {0}"), _source.getShader());
-
-		if (_source.isFace()) {
-			statusText += std::string(" (") + _("Face") + ")";
-		}
-		else if (_source.isPatch()) {
-			statusText += std::string(" (") + _("Patch") + ")";
-		}
-		else if (_source.isShader()) {
-			statusText += std::string(" (") + _("Shader") + ")";
-		}
-	}
-	else {
-		statusText = _("ShaderClipboard is empty.");
-	}
-
-	GlobalUIManager().getStatusBarManager().setText("ShaderClipBoard", statusText);
 }
 
 std::string ShaderClipboard::getShaderName()
@@ -121,8 +92,7 @@ void ShaderClipboard::pickFromSelectionTest(SelectionTest& test)
 
 	_source = getTexturable(test);
 
-	updateMediaBrowsers();
-    _signalSourceChanged.emit();
+	sourceChanged();
 }
 
 void ShaderClipboard::pasteShader(SelectionTest& test, PasteMode mode, bool pasteToAllFaces)
@@ -145,18 +115,14 @@ ShaderClipboard& ShaderClipboard::Instance()
 	return static_cast<ShaderClipboard&>(GlobalShaderClipboard());
 }
 
-void ShaderClipboard::setSourceShader(std::string shader)
+void ShaderClipboard::setSourceShader(const std::string& shader)
 {
 	if (_updatesDisabled) return; // loopback guard
 
 	_source.clear();
 	_source.shader = shader;
 
-	// Don't update the media browser without loopback guards
-	// if this is desired, one will have to implement them
-	updateStatusText();
-
-    _signalSourceChanged.emit();
+	sourceChanged();
 }
 
 void ShaderClipboard::setSource(Patch& sourcePatch)
@@ -167,8 +133,7 @@ void ShaderClipboard::setSource(Patch& sourcePatch)
 	_source.patch = &sourcePatch;
 	_source.node = sourcePatch.getPatchNode().shared_from_this();
 
-	updateMediaBrowsers();
-    _signalSourceChanged.emit();
+	sourceChanged();
 }
 
 void ShaderClipboard::setSource(Face& sourceFace) 
@@ -179,16 +144,15 @@ void ShaderClipboard::setSource(Face& sourceFace)
 	_source.face = &sourceFace;
 	_source.node = sourceFace.getBrush().getBrushNode().shared_from_this();
 
-	updateMediaBrowsers();
-
-    _signalSourceChanged.emit();
+	sourceChanged();
 }
 
-Texturable& ShaderClipboard::getSource() {
+Texturable& ShaderClipboard::getSource()
+{
 	return _source;
 }
 
-sigc::signal<void> ShaderClipboard::signal_sourceChanged() const
+sigc::signal<void>& ShaderClipboard::signal_sourceChanged()
 {
     return _signalSourceChanged;
 }
@@ -218,8 +182,7 @@ void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 			
 			if (!shader.empty())
 			{
-				setSource(shader);
-				updateMediaBrowsers();
+				setSourceShader(shader);
 				break;
 			}
 		}
@@ -228,12 +191,43 @@ void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 	};
 }
 
-} // namespace selection
-
-// global accessor function
-selection::ShaderClipboard& GlobalShaderClipboard()
+const std::string& ShaderClipboard::getName() const
 {
-	static selection::ShaderClipboard _instance;
-
-	return _instance;
+	static std::string _name(MODULE_SHADERCLIPBOARD);
+	return _name;
 }
+
+const StringSet& ShaderClipboard::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_UNDOSYSTEM);
+		_dependencies.insert(MODULE_MAP);
+	}
+
+	return _dependencies;
+}
+
+void ShaderClipboard::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	_postUndoConn = GlobalUndoSystem().signal_postUndo().connect(
+		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
+	_postRedoConn = GlobalUndoSystem().signal_postRedo().connect(
+		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
+
+	_mapEventConn = GlobalMapModule().signal_mapEvent().connect(
+		sigc::mem_fun(this, &ShaderClipboard::onMapEvent));
+}
+
+void ShaderClipboard::shutdownModule()
+{
+	_postUndoConn.disconnect();
+	_postRedoConn.disconnect();
+	_mapEventConn.disconnect();
+}
+
+} // namespace

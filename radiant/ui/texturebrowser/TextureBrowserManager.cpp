@@ -2,8 +2,10 @@
 #include "TextureBrowser.h"
 
 #include <list>
+#include <sigc++/functors/mem_fun.h>
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "ishaderclipboard.h"
 #include "icommandsystem.h"
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
@@ -90,6 +92,7 @@ const StringSet& TextureBrowserManager::getDependencies() const
         _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_EVENTMANAGER);
         _dependencies.insert(MODULE_COMMANDSYSTEM);
+        _dependencies.insert(MODULE_SHADERCLIPBOARD);
     }
 
     return _dependencies;
@@ -103,6 +106,22 @@ void TextureBrowserManager::initialiseModule(const ApplicationContext& ctx)
     GlobalCommandSystem().addCommand("ViewTextures", TextureBrowserManager::toggleGroupDialogTexturesTab);
 
     registerPreferencePage();
+
+    _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
+        sigc::mem_fun(this, &TextureBrowserManager::onShaderClipboardSourceChanged)
+    );
+}
+
+void TextureBrowserManager::shutdownModule()
+{
+    _shaderClipboardConn.disconnect();
+}
+
+void TextureBrowserManager::onShaderClipboardSourceChanged()
+{
+    // Get the shaderclipboard shader and try to highlight it
+    // if the shader name is empty, it will unfocus the selection
+    setSelectedShader(GlobalShaderClipboard().getShaderName());
 }
 
 // Define the static module

@@ -643,6 +643,11 @@ void TextureBrowser::onActiveShadersChanged()
 
 void TextureBrowser::focus(const std::string& name)
 {
+    if (name.empty())
+    {
+        return;
+    }
+
     for (const TextureTile& tile : _tiles)
     {
         // we have found when texdef->name and the shader name match

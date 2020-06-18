@@ -31,6 +31,17 @@ public:
 	// Returns the material name of the object in the clipboard (or an empty string)
 	virtual std::string getShaderName() = 0;
 
+	enum class SourceType
+	{
+		Empty,
+		Face,
+		Patch,
+		Shader,
+	};
+
+	// Returns the type of element in the shaderclipboard's source slot
+	virtual SourceType getSourceType() const = 0;
+
 	// Sets the content of the shaderclipboard to the given material
 	virtual void setSourceShader(const std::string& shader) = 0;
 

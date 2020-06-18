@@ -5,6 +5,7 @@
 #include "Texturable.h"
 #include <sigc++/signal.h>
 #include <sigc++/trackable.h>
+#include <sigc++/connection.h>
 
 namespace selection 
 {
@@ -20,8 +21,14 @@ private:
 
     sigc::signal<void> _signalSourceChanged;
 
+	sigc::connection _postUndoConn;
+	sigc::connection _postRedoConn;
+	sigc::connection _mapEventConn;
+
 public:
 	ShaderClipboard();
+
+	SourceType getSourceType() const override;
 
 	/** greebo: Sets the source patch to the given <sourcePatch>
 	 */
@@ -42,7 +49,7 @@ public:
     /**
      * Is emitted when the shader source changes.
      */
-    sigc::signal<void>& signal_sourceChanged() const;
+    sigc::signal<void>& signal_sourceChanged() override;
 
 	// IShaderClipboard implementation
 
@@ -56,20 +63,20 @@ public:
 	// Module-internal accessor
 	static ShaderClipboard& Instance();
 
+	// RegisterableModule
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
+
 private:
+	// Fires the signal, disabling updates to avoid loops
+	void sourceChanged();
+
 	// UndoSystem callbacks
 	void onUndoRedoOperation();
 
 	void onMapEvent(IMap::MapEvent ev);
-
-	/** greebo: Updates the shader information in the status bar.
-	 */
-	void updateStatusText();
-
-	/** greebo: Sets the media browser / texwindow focus to the
-	 * 			new source shader.
-	 */
-	void updateMediaBrowsers();
 
 	/** greebo: Retrieves the best texturable object from the
 	 * 			given SelectionTest.

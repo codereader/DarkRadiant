@@ -7,7 +7,7 @@
 #include "iselectiontest.h"
 
 #include "render/View.h"
-#include "BestPoint.h"
+#include "selection/BestPoint.h"
 
 class SelectionVolume : public SelectionTest {
   Matrix4 _local2view;

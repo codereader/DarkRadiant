@@ -7,6 +7,7 @@
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "ishaders.h"
+#include "ishaderclipboard.h"
 #include "ieventmanager.h"
 
 #include "wxutil/MultiMonitor.h"
@@ -981,6 +982,7 @@ const StringSet& MediaBrowser::getDependencies() const
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_SHADERSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_SHADERCLIPBOARD);
 	}
 
 	return _dependencies;
@@ -1014,13 +1016,23 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 
 	// Start loading materials
 	populate();
+
+	_shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
+		sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)
+	);
 }
 
 void MediaBrowser::shutdownModule()
 {
+	_shaderClipboardConn.disconnect();
 	_emptyFavouritesLabel = wxDataViewItem();
 	_materialDefsLoaded.disconnect();
 	_materialDefsUnloaded.disconnect();
+}
+
+void MediaBrowser::onShaderClipboardSourceChanged()
+{
+	setSelection(GlobalShaderClipboard().getShaderName());
 }
 
 // Static module
