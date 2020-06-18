@@ -37,10 +37,8 @@ public:
 		delete[] pixels;
 	}
 
-	virtual byte* getMipMapPixels(std::size_t mipMapIndex) const
+	uint8_t* getPixels() const override
 	{
-		assert(mipMapIndex == 0); // only one mipmap is allowed here
-
 		return reinterpret_cast<byte*>(pixels);
 	}
 
@@ -77,7 +75,7 @@ public:
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA,
 			static_cast<GLint>(getWidth(0)), static_cast<GLint>(getHeight(0)),
 			GL_RGBA, GL_UNSIGNED_BYTE,
-			getMipMapPixels(0)
+			getPixels()
 		);
 
 		// Un-bind the texture

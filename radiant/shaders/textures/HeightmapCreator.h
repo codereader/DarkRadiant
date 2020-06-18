@@ -22,8 +22,8 @@ ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 
 	ImagePtr normalMap (new RGBAImage(width, height));
 
-	byte* in = heightMap->getMipMapPixels(0);
-	byte* out = normalMap->getMipMapPixels(0);
+	byte* in = heightMap->getPixels();
+	byte* out = normalMap->getPixels();
 
 	struct KernelElement
 	{

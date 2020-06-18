@@ -42,7 +42,7 @@ void CameraCubeMapDecl::bindDirection(const std::string& dir,
         0,                    //border
         GL_RGBA,               //format
         GL_UNSIGNED_BYTE,     //type
-        img->getMipMapPixels(0)
+        img->getPixels()
     );
     debug::assertNoGlErrors();
 }

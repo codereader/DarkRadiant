@@ -61,21 +61,19 @@ class Image
 {
 public:
 
-	/**
-	 * greebo: Returns the specified mipmap pixel data.
-	 */
-	virtual byte* getMipMapPixels(std::size_t mipMapIndex) const = 0;
+    /// Return the start of the pixel data for this image
+    virtual uint8_t* getPixels() const = 0;
 
-	/**
-	 * greebo: Returns the dimension of the specified mipmap.
-	 */
-	virtual std::size_t getWidth(std::size_t mipMapIndex) const = 0;
-	virtual std::size_t getHeight(std::size_t mipMapIndex) const = 0;
+    /**
+     * greebo: Returns the dimension of the specified mipmap.
+     */
+    virtual std::size_t getWidth(std::size_t mipMapIndex) const = 0;
+    virtual std::size_t getHeight(std::size_t mipMapIndex) const = 0;
 
-	// greebo: Returns TRUE whether this image is precompressed (DDS)
-	virtual bool isPrecompressed() const {
-		return false;
-	}
+    // greebo: Returns TRUE whether this image is precompressed (DDS)
+    virtual bool isPrecompressed() const {
+        return false;
+    }
 };
 typedef std::shared_ptr<Image> ImagePtr;
 
@@ -83,7 +81,7 @@ class ArchiveFile;
 
 /// Module responsible for loading images from VFS or disk filesystem
 class ImageLoader :
-	public RegisterableModule
+    public RegisterableModule
 {
 public:
 
@@ -100,11 +98,11 @@ public:
      */
     virtual ImagePtr imageFromVFS(const std::string& vfsPath) const = 0;
 
-	/**
+    /**
      * \brief
      * Load an image from a filesystem path.
      */
-	virtual ImagePtr imageFromFile(const std::string& filename) const = 0;
+    virtual ImagePtr imageFromFile(const std::string& filename) const = 0;
 };
 
 typedef std::shared_ptr<ImageLoader> ImageLoaderPtr;

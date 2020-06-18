@@ -112,7 +112,7 @@ public:
     /**
      * greebo: Returns the specified mipmap pixel data.
      */
-    virtual byte* getMipMapPixels(std::size_t mipMapIndex) const {
+    byte* getMipMapPixels(std::size_t mipMapIndex) const {
         assert(mipMapIndex < _mipMapInfo.size());
 
         return _pixelData + _mipMapInfo[mipMapIndex].offset;
@@ -131,6 +131,12 @@ public:
         assert(mipMapIndex < _mipMapInfo.size());
 
         return _mipMapInfo[mipMapIndex].height;
+    }
+
+    /* Image implementation */
+    uint8_t* getPixels() const override
+    {
+        return getMipMapPixels(0);
     }
 
     /* BindableTexture implementation */
