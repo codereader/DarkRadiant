@@ -69,19 +69,20 @@ class DDSImage: public Image, public util::Noncopyable
     MipMapInfoList _mipMapInfo;
 
 public:
-    RGBAPixel* pixels;
-    unsigned int width, height;
 
     // Pass the required memory size to the constructor
     DDSImage(std::size_t size) :
         _pixelData(NULL),
         _memSize(size)
     {
-        allocateMemory();
+        _pixelData = new byte[_memSize];
     }
 
-    ~DDSImage() {
-        releaseMemory();
+    ~DDSImage()
+    {
+        // Check if we have something to do at all
+        if (_pixelData)
+            delete[] _pixelData;
     }
 
     void setFormat(GLuint format)
@@ -106,27 +107,6 @@ public:
         info.offset = offset;
 
         _mipMapInfo.push_back(info);
-    }
-
-
-    /**
-     * Allocates the memory as declared in the constructor.
-     * This will release any previously allocated memory.
-     */
-    void allocateMemory()
-    {
-        // Release memory first
-        releaseMemory();
-
-        _pixelData = new byte[_memSize];
-    }
-
-    void releaseMemory() {
-        // Check if we have something to do at all
-        if (_pixelData == NULL) return;
-
-        delete[] _pixelData;
-        _pixelData = NULL;
     }
 
     /**
