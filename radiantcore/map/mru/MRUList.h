@@ -33,6 +33,11 @@ public:
 		_numMaxItems(numMaxItems)
 	{}
 
+	const std::string& operator[](const std::size_t index) const
+	{
+		return *std::next(_list.begin(), 2);
+	}
+
 	void insert(const std::string& filename)
 	{
 		// Check if the filename is already in the list

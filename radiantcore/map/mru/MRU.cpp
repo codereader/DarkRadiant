@@ -19,40 +19,7 @@ namespace
 	const std::string RKEY_MAP_ROOT = "user/ui/map";
 	const std::string RKEY_MAP_MRUS = RKEY_MAP_ROOT + "/MRU";
 	const std::string RKEY_MRU_LENGTH = RKEY_MAP_ROOT + "/numMRU";
-
-#if 0
-	const char* const RECENT_FILES_CAPTION = N_("Recently used Maps");
-#endif
 }
-
-#if 0
-MRU::MRU() :
-	_numMaxFiles(registry::getValue<int>(RKEY_MRU_LENGTH)),
-	_list(_numMaxFiles)
-#if 0
-	,
-	_emptyMenuItem(_(RECENT_FILES_CAPTION), *this, 0)
-#endif
-{
-#if 0
-	// Create _numMaxFiles menu items
-	for (std::size_t i = 0; i < _numMaxFiles; i++) {
-
-		_menuItems.push_back(MRUMenuItem(string::to_string(i), *this, i+1));
-
-		MRUMenuItem& item = (*_menuItems.rbegin());
-
-		const std::string commandName = std::string("MRUOpen") + string::to_string(i+1);
-
-		// Connect the command to the last inserted menuItem
-		GlobalCommandSystem().addCommand(
-			commandName,
-			std::bind(&MRUMenuItem::activate, &item, std::placeholders::_1)
-		);
-	}
-#endif
-}
-#endif
 
 sigc::signal<void>& MRU::signal_MapListChanged()
 {
@@ -93,32 +60,6 @@ void MRU::saveRecentFiles()
 	}
 }
 
-void MRU::loadMap(const std::string& fileName)
-{
-#if 0 // TODO
-	if (GlobalMap().askForSave(_("Open Map")))
-	{
-		if (os::fileIsReadable(fileName))
-		{
-			// Shut down the current map
-			GlobalMap().freeMap();
-
-			// Load the file
-			GlobalMap().load(fileName);
-
-			// Update the MRU list with this file
-			insert(fileName);
-		}
-		else
-		{
-			wxutil::Messagebox::ShowError(
-				fmt::format(_("Could not read map file: {0}"), fileName));
-		}
-	}
-#endif
-}
-
-// Construct the MRU preference page and add it to the given group
 void MRU::constructPreferences()
 {
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Map Files"));
@@ -126,19 +67,6 @@ void MRU::constructPreferences()
 	page.appendEntry(_("Number of most recently used files"), RKEY_MRU_LENGTH);
 	page.appendCheckBox(_("Open last map on startup"), RKEY_LOAD_LAST_MAP);
 }
-
-#if 0
-void MRU::initialise()
-{
-	// Construct the MRU commands and menu structure
-	constructMenu();
-
-	// Initialise the most recently used files list
-	loadRecentFiles();
-
-	updateMenu();
-}
-#endif
 
 std::string MRU::getLastMapName()
 {
@@ -168,103 +96,12 @@ void MRU::insert(const std::string& fileName) {
 		// Insert the item into the filelist
 		_list->insert(fileName);
 
-#if 0
-		// Update the widgets
-		updateMenu();
-#endif
 		// Persist MRU to the registry on each change
 		saveRecentFiles();
 
 		_signalMapListChanged.emit();
 	}
 }
-
-#if 0
-void MRU::updateMenu()
-{
-	// Get the menumanager
-	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-
-	for (std::size_t i = _numMaxFiles; i > 0; i--)
-	{
-		menuManager.remove("main/file/MRU" + string::to_string(i));
-	}
-
-	menuManager.remove("main/file/mruempty");
-
-	if (_list.empty())
-	{
-		// Create the "empty" MRU menu item (the desensitised one)
-		menuManager.insert(
-			"main/file/mruseparator",
-			"mruempty",
-			ui::menuItem,
-			RECENT_FILES_CAPTION,
-			"", // empty icon
-			"" // empty event
-		);
-
-		return;
-	}
-	
-	// Set the iterator to the first filename in the list
-	MRUList::iterator i = _list.begin();
-
-	// Add all the created widgets to the menu
-	for (MRUMenuItem& item : _menuItems)
-	{
-		// The default string to be loaded into the widget (i.e. "inactive")
-		std::string filename;
-
-		// If the end of the list is reached, do nothing, otherwise increase the iterator
-		if (i != _list.end())
-		{
-			filename = (*i);
-			i++;
-		}
-
-		if (filename.empty())
-		{
-			continue;
-		}
-
-		std::string label = string::to_string(item.getIndex()) + " - " + filename;
-
-		const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
-
-		// Create the menu item
-		menuManager.insert(
-			"main/file/mruseparator",
-			"MRU" + string::to_string(item.getIndex()),
-			ui::menuItem,
-			label,
-			"", // empty icon
-			commandName
-		);
-
-		item.setMapFilename(filename);
-	}
-}
-
-void MRU::constructMenu()
-{
-	// Get the menumanager
-	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-
-	// Insert the last separator to split the MRU file list from the "Exit" command.
-	menuManager.insert(
-		"main/file/exit",
-		"mruseparator",
-		ui::menuSeparator,
-		"", // empty caption
-		"", // empty icon
-		"" // empty command
-	);
-
-	// Call the update routine to load the values into the widgets
-	updateMenu();
-}
-#endif
 
 void MRU::loadMRUMap(const cmd::ArgumentList& args)
 {
@@ -281,7 +118,14 @@ void MRU::loadMRUMap(const cmd::ArgumentList& args)
 		throw cmd::ExecutionFailure(fmt::format(_("Index out of range: {0:d}"), index));
 	}
 
-	// TODO
+	// Look up the item with the given index and execute it
+	foreachItem([=](std::size_t n, const std::string& filename)
+	{
+		if (index == n)
+		{
+			GlobalCommandSystem().executeCommand("OpenMap", filename);
+		}
+	});
 }
 
 const std::string& MRU::getName() const
@@ -319,7 +163,7 @@ void MRU::initialiseModule(const ApplicationContext& ctx)
 	for (std::size_t i = 1; i <= _numMaxFiles; i++)
 	{
 		auto statementName = fmt::format(LOAD_MRU_STATEMENT_FORMAT, i);
-		auto statementValue = fmt::format("{0} {0:d}", LOAD_MRU_MAP_CMD, i);
+		auto statementValue = fmt::format("{0} {1:d}", LOAD_MRU_MAP_CMD, i);
 
 		GlobalCommandSystem().addStatement(statementName, statementValue);
 	}
