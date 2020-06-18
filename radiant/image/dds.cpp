@@ -64,7 +64,7 @@ class DDSImage: public Image, public util::Noncopyable
     std::size_t _memSize;
 
     // The compression format ID
-    GLuint _format;
+    GLenum _format = 0;
 
     MipMapInfoList _mipMapInfo;
 
@@ -85,7 +85,7 @@ public:
             delete[] _pixelData;
     }
 
-    void setFormat(GLuint format)
+    void setFormat(GLenum format)
     {
         _format = format;
     }
@@ -167,9 +167,9 @@ public:
             // Handle unsupported format error
             if (glGetError() == GL_INVALID_ENUM)
             {
-                rConsoleError() << "[DDSImage] Unable to bind texture '"
-                          << name << "'; unsupported texture format"
-                          << std::endl;
+                rError() << "[DDSImage] Unable to bind texture '" << name
+                         << "': unsupported texture format " << _format
+                         << std::endl;
 
                 return TexturePtr();
             }
@@ -260,6 +260,8 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
             image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT5_EXT);
             break;
         default:
+            rError() << "DDS file has unknown format (" << pixelFormat << ")"
+                     << std::endl;
             break;
     };
 
