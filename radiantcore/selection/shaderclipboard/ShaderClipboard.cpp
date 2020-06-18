@@ -9,6 +9,7 @@
 #include "util/ScopedBoolLock.h"
 #include "patch/PatchNode.h"
 #include "brush/BrushNode.h"
+#include "module/StaticModule.h"
 
 namespace selection 
 {
@@ -229,5 +230,8 @@ void ShaderClipboard::shutdownModule()
 	_postRedoConn.disconnect();
 	_mapEventConn.disconnect();
 }
+
+// Define the static module
+module::StaticModule<ShaderClipboard> shaderClipboardModule;
 
 } // namespace
