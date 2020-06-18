@@ -2,8 +2,10 @@
 
 #include <stdexcept>
 #include "iscenegraph.h"
+#include "iorthoview.h"
 #include "ientity.h"
 #include "scenelib.h"
+#include "command/ExecutionFailure.h"
 
 namespace scene
 {
@@ -134,7 +136,112 @@ std::pair<std::size_t, std::size_t> getNodeIndices(const scene::INodePtr& node)
 	return result;
 }
 
-void selectNodeByIndex(const cmd::ArgumentList& args)
+class BrushFindByIndexWalker :
+	public scene::NodeVisitor
+{
+private:
+	std::size_t _index;
+	scene::INodePtr _brush;
+
+public:
+	BrushFindByIndexWalker(std::size_t index) : 
+		_index(index)
+	{}
+
+	const scene::INodePtr& getFoundNode() const
+	{
+		return _brush;
+	}
+
+	bool pre(const scene::INodePtr& node) override
+	{
+		if (_brush) return false; // already found
+
+		if (Node_isPrimitive(node) && _index-- == 0)
+		{
+			_brush = node; // found it
+		}
+
+		return false;
+	}
+};
+
+class EntityFindByIndexWalker :
+	public scene::NodeVisitor
+{
+private:
+	std::size_t _index;
+	scene::INodePtr _entity;
+
+public:
+	EntityFindByIndexWalker(std::size_t index) : 
+		_index(index)
+	{}
+
+	const scene::INodePtr& getFoundNode() const
+	{
+		return _entity;
+	}
+
+	bool pre(const scene::INodePtr& node) override
+	{
+		if (_entity) return false; // already found
+
+		if (Node_isEntity(node) && _index-- == 0)
+		{
+			_entity = node;
+		}
+
+		return false;
+	}
+};
+
+scene::Path findMapElementByIndex(std::size_t entityNum, std::size_t brushNum)
+{
+	scene::Path path;
+	path.push(GlobalSceneGraph().root());
+
+	EntityFindByIndexWalker entityFinder(entityNum);
+	GlobalSceneGraph().root()->traverseChildren(entityFinder);
+
+	auto foundEntity = entityFinder.getFoundNode();
+
+	if (foundEntity)
+	{
+		path.push(foundEntity);
+
+		BrushFindByIndexWalker brushFinder(brushNum);
+		foundEntity->traverseChildren(brushFinder);
+
+		auto foundBrush = brushFinder.getFoundNode();
+
+		if (foundBrush)
+		{
+			path.push(foundBrush);
+		}
+	}
+
+	return path;
+}
+
+inline bool Node_hasChildren(scene::INodePtr node)
+{
+	return node->hasChildNodes();
+}
+
+void selectNodeByIndex(std::size_t entitynum, std::size_t brushnum)
+{
+	scene::Path path = findMapElementByIndex(entitynum, brushnum);
+
+	if (path.size() == 3 || (path.size() == 2 && !Node_hasChildren(path.top())))
+	{
+		Node_setSelected(path.top(), true);
+
+		GlobalXYWndManager().positionActiveView(path.top()->worldAABB().origin);
+	}
+}
+
+void selectNodeByIndexCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 2)
 	{
@@ -145,7 +252,12 @@ void selectNodeByIndex(const cmd::ArgumentList& args)
 	int entityNumber = args[0].getInt();
 	int brushNumber = args[1].getInt();
 
-	// TODO
+	if (entityNumber < 0 && brushNumber < 0)
+	{
+		throw cmd::ExecutionFailure("The Entity and Brush numbers must not be negative.");
+	}
+		
+	selectNodeByIndex(static_cast<std::size_t>(entityNumber), static_cast<std::size_t>(brushNumber));
 }
 
 }

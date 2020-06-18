@@ -18,6 +18,9 @@ const char* const SELECT_NODE_BY_INDEX_CMD = "SelectNodeByIndex";
  */
 std::pair<std::size_t, std::size_t> getNodeIndices(const scene::INodePtr& node);
 
-void selectNodeByIndex(const cmd::ArgumentList& args);
+// Selects the map element given by the two numbers
+void selectNodeByIndex(std::size_t entitynum, std::size_t brushnum);
+
+void selectNodeByIndexCmd(const cmd::ArgumentList& args);
 
 }

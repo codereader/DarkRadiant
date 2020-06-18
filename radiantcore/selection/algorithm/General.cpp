@@ -999,7 +999,7 @@ void registerCommands()
 	GlobalCommandSystem().addStatement("BrushMakeDetail", "BrushSetDetailFlag detail", false);
 	GlobalCommandSystem().addStatement("BrushMakeStructural", "BrushSetDetailFlag structural", false);
 
-	GlobalCommandSystem().addCommand(scene::SELECT_NODE_BY_INDEX_CMD, scene::selectNodeByIndex, 
+	GlobalCommandSystem().addCommand(scene::SELECT_NODE_BY_INDEX_CMD, scene::selectNodeByIndexCmd,
 		{ cmd::ARGTYPE_INT, cmd::ARGTYPE_INT });
 }
 
