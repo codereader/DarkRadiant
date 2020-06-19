@@ -157,7 +157,7 @@ void MRU::initialiseModule(const ApplicationContext& ctx)
 	_list.reset(new MRUList(_numMaxFiles));
 
 	GlobalCommandSystem().addCommand(LOAD_MRU_MAP_CMD,
-		std::bind(&MRU::loadMRUMap, this, std::placeholders::_1));
+		std::bind(&MRU::loadMRUMap, this, std::placeholders::_1), { cmd::ARGTYPE_INT });
 
 	// Create shortcuts for the items we hold
 	for (std::size_t i = 1; i <= _numMaxFiles; i++)

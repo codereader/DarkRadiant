@@ -57,7 +57,8 @@ private:
 	{
 		clearMenu();
 
-		std::vector<std::string> filenames(GlobalMRU().getMaxNumberOfItems());
+		std::vector<std::string> filenames;
+		filenames.reserve(GlobalMRU().getMaxNumberOfItems());
 
 		GlobalMRU().foreachItem([&](std::size_t index, const std::string& filename)
 		{

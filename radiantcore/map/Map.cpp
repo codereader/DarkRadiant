@@ -672,7 +672,11 @@ void Map::openMap(const cmd::ArgumentList& args)
 
     std::string fullPath;
 
-    if (args.empty())
+    if (!args.empty())
+    {
+        fullPath = args[0].getString();
+    }
+    else
     {
         // No arguments passed, get the map file name to load
         MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
