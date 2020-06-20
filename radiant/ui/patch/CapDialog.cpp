@@ -20,14 +20,17 @@ namespace
 {
 	const char* WINDOW_TITLE = N_("Create Cap Patch");
 
-	const char* const CAPTYPE_NAMES[5] =
+	inline std::string getCapTypeName(patch::CapType capType)
 	{
-		N_("Bevel"),
-		N_("End Cap"),
-		N_("Inverted Bevel"),
-		N_("Inverted Endcap"),
-		N_("Cylinder"),
-	};
+		switch (capType)
+		{
+		case patch::CapType::Bevel: return _("Bevel");
+		case patch::CapType::EndCap: return _("End Cap");
+		case patch::CapType::InvertedBevel: return _("Inverted Bevel");
+		case patch::CapType::InvertedEndCap: return _("Inverted Endcap");
+		case patch::CapType::Cylinder: return _("Cylinder");
+		};
+	}
 }
 
 PatchCapDialog::PatchCapDialog() :
@@ -53,7 +56,7 @@ void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& i
 	wxStaticBitmap* img = new wxStaticBitmap(_dialog, wxID_ANY, 
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + image));
 
-	wxRadioButton* radioButton = new wxRadioButton(_dialog, wxID_ANY, _(CAPTYPE_NAMES[static_cast<std::size_t>(type)]), 
+	wxRadioButton* radioButton = new wxRadioButton(_dialog, wxID_ANY, getCapTypeName(type),
 		wxDefaultPosition, wxDefaultSize, type == patch::CapType::Bevel ? wxRB_GROUP : 0);
 
 	sizer->Add(img, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);

@@ -127,7 +127,7 @@ public:
 		_shouldFinish(false)
 	{
 		// Avoid double-starting undo operations
-		if (GlobalUndoSystem().operationStarted())
+		if (!GlobalUndoSystem().operationStarted())
 		{
 			GlobalUndoSystem().start();
 			_shouldFinish = true;
