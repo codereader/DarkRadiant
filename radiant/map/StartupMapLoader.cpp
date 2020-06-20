@@ -63,6 +63,10 @@ void StartupMapLoader::onRadiantStartup()
 			loadMapSafe(lastMap);
 		}
 	}
+	else
+	{
+		GlobalMapModule().createNewMap();
+	}
 }
 
 void StartupMapLoader::loadMapSafe(const std::string& mapToLoad)

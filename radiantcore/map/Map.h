@@ -61,19 +61,19 @@ private:
 public:
 	Map();
 
-	virtual MapEventSignal signal_mapEvent() const override;
-	virtual const scene::INodePtr& getWorldspawn() override;
-	virtual const scene::INodePtr& findOrInsertWorldspawn() override;
-	virtual scene::IMapRootNodePtr getRoot() override;
+	MapEventSignal signal_mapEvent() const override;
+	const scene::INodePtr& getWorldspawn() override;
+	const scene::INodePtr& findOrInsertWorldspawn() override;
+	scene::IMapRootNodePtr getRoot() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const override;
-	virtual const StringSet& getDependencies() const override;
-	virtual void initialiseModule(const ApplicationContext& ctx) override;
-	virtual void shutdownModule() override;
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 	// Gets called when a node is removed from the scenegraph
-	virtual void onSceneNodeErase(const scene::INodePtr& node) override;
+	void onSceneNodeErase(const scene::INodePtr& node) override;
 
 	/** greebo: Returns true if the map has not been named yet.
 	 */
@@ -137,12 +137,6 @@ public:
 	 */
 	void saveDirect(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
 
-	/** greebo: Creates a new map file.
-	 *
-	 * Note: Can't be called "new" as this is a reserved word...
-	 */
-	void createNew();
-
 	void rename(const std::string& filename);
 
 	void exportSelected(std::ostream& out);
@@ -157,6 +151,9 @@ public:
 
 	// Sets the modified status of this map
 	void setModified(bool modifiedFlag) override;
+
+	// greebo: Creates a new, empty map file.
+	void createNewMap() override;
 
 	// Updates the window title of the mainframe
 	void updateTitle();
@@ -202,6 +199,7 @@ public:
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);
 
 private:
+
 	/** greebo: Loads a prefab and translates it to the given target coordinates
 	 */
 	void loadPrefabAt(const cmd::ArgumentList& args);

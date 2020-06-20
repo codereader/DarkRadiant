@@ -24,7 +24,7 @@ public:
 	{
 		_msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
 			radiant::TypeListener<map::FileOperation>(
-				sigc::mem_fun(this, &MapFileProgressHandler::handleMapExportMessage)));
+				sigc::mem_fun(this, &MapFileProgressHandler::handleFileOperation)));
 	}
 
 	~MapFileProgressHandler()
@@ -33,7 +33,7 @@ public:
 	}
 
 private:
-	void handleMapExportMessage(map::FileOperation& msg)
+	void handleFileOperation(map::FileOperation& msg)
 	{
 		try
 		{

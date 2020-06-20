@@ -138,6 +138,10 @@ public:
 
 	// Sets the modified status of this map
 	virtual void setModified(bool modifiedFlag) = 0;
+
+	// Caution: this is upposed to be called on startup, since it doesn't ask the user
+	// whether to save the current map. Use the "NewMap" command for regular purposes.
+	virtual void createNewMap() = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

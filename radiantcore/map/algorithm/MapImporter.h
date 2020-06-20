@@ -46,6 +46,8 @@ private:
 public:
 	MapImporter(const scene::IMapRootNodePtr& root, std::istream& inputStream);
 
+	~MapImporter();
+
 	const scene::IMapRootNodePtr& getRootNode() const override;
 	bool addEntity(const scene::INodePtr& entityNode) override;
 	bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity) override;

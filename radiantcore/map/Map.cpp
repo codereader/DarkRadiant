@@ -350,7 +350,8 @@ bool Map::save(const MapFormatPtr& mapFormat)
     return success;
 }
 
-void Map::createNew() {
+void Map::createNewMap()
+{
     setMapName(_(MAP_UNNAMED_STRING));
 
 	loadMapResourceFromPath(_mapName);
@@ -661,7 +662,7 @@ void Map::newMap(const cmd::ArgumentList& args)
     if (GlobalMap().askForSave(_("New Map")))
 	{
         GlobalMap().freeMap();
-        GlobalMap().createNew();
+        GlobalMap().createNewMap();
     }
 }
 
