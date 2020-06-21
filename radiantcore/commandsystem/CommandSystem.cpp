@@ -358,7 +358,7 @@ void CommandSystem::executeCommand(const std::string& name,
 	const Argument& arg1, const Argument& arg2,
 	const Argument& arg3)
 {
-	ArgumentList args(2);
+	ArgumentList args(3);
 	args[0] = arg1;
 	args[1] = arg2;
 	args[2] = arg3;
