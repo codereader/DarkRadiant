@@ -63,6 +63,7 @@ void ModalProgressDialog::setTextAndFraction(const std::string& text, double fra
 	int newValue = static_cast<int>(fraction * 100);
 
 	Update(newValue, text);
+	Fit();
 }
 
 } // namespace
