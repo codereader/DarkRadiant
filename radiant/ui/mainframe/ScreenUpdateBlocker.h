@@ -3,7 +3,7 @@
 #include "imainframe.h"
 #include <memory>
 
-#include "wxutil/window/TransientWindow.h"
+#include "wxutil/ModalProgressDialog.h"
 
 class wxGauge;
 class wxStaticText;
@@ -13,14 +13,15 @@ namespace ui
 
 class ScreenUpdateBlocker :
 	public IScopedScreenUpdateBlocker,
-	public wxutil::TransientWindow
+	public wxutil::ModalProgressDialog
 {
 private:
 	std::unique_ptr<wxWindowDisabler> _disabler;
 
+#if 0
 	wxStaticText* _message;
 	wxGauge* _gauge;
-
+#endif
 	// Once we received a call to setProgress() further calls to pulse() are forbidden
 	bool _pulseAllowed;
 
@@ -31,10 +32,14 @@ public:
 	void pulse();
 	void setProgress(float progress);
 	void setMessage(const std::string& message);
+	void setMessageAndProgress(const std::string& message, float progress);
 
 	~ScreenUpdateBlocker();
 
 private:
+	void doSetProgress(float progress);
+	void doSetMessage(const std::string& message);
+
 	// Called whenever the main window is changing its "active" state property.
 	void onMainWindowFocus(wxFocusEvent& ev);
 	void onCloseEvent(wxCloseEvent& ev);

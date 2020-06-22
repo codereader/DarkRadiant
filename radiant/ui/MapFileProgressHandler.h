@@ -7,6 +7,7 @@
 #include "messages/MapFileOperation.h"
 #include "wxutil/ModalProgressDialog.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "registry/registry.h"
 
 namespace ui
@@ -17,7 +18,7 @@ class MapFileProgressHandler
 private:
 	std::size_t _msgSubscription;
 
-	wxutil::ModalProgressDialogPtr _dialog;
+	std::unique_ptr<ScreenUpdateBlocker> _blocker;
 
 public:
 	MapFileProgressHandler()
@@ -42,33 +43,34 @@ private:
 			case map::FileOperation::Started:
 				if (GlobalMainFrame().isActiveApp() && !registry::getValue<bool>(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG))
 				{
-					_dialog.reset(new wxutil::ModalProgressDialog(
-						msg.getOperationType() == map::FileOperation::Type::Export ? _("Writing map") : _("Loading map")));
+					_blocker.reset(new ScreenUpdateBlocker(
+						msg.getOperationType() == map::FileOperation::Type::Export ? _("Writing map") : _("Loading map"),
+						_("Processing..."), true));
 				}
 				break;
 
 			case map::FileOperation::Progress:
-				if (!_dialog) break;
+				if (!_blocker) break;
 
 				if (msg.canCalculateProgress())
 				{
-					_dialog->setTextAndFraction(msg.getText(), msg.getProgressFraction());
+					_blocker->setMessageAndProgress(msg.getText(), msg.getProgressFraction());
 				}
 				else
 				{
-					_dialog->setText(msg.getText());
-					_dialog->Pulse();
+					_blocker->setMessage(msg.getText());
+					_blocker->pulse();
 				}
 				break;
 
 			case map::FileOperation::Finished:
-				_dialog.reset();
+				_blocker.reset();
 				break;
 			};
 		}
 		catch (const wxutil::ModalProgressDialog::OperationAbortedException&)
 		{
-			_dialog.reset();
+			_blocker.reset();
 			msg.cancelOperation();
 		}
 	}
