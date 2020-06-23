@@ -90,14 +90,14 @@ ImagePtr MapExpression::getResampled(const ImagePtr& input, std::size_t width, s
 	}
 
 	// Check if the dimensions differ from the desired ones
-	if (width != input->getWidth(0) || height != input->getHeight(0)) {
+	if (width != input->getWidth() || height != input->getHeight()) {
 		// Allocate a new image buffer
 		ImagePtr resampled (new RGBAImage(width, height));
 
 		// Resample the texture to match the dimensions of the first image
 		TextureManipulator::instance().resampleTexture(
 			input->getPixels(),
-			input->getWidth(0), input->getHeight(0),
+			input->getWidth(), input->getHeight(),
 			resampled->getPixels(),
 			width, height, 4
 		);
@@ -153,8 +153,8 @@ ImagePtr AddNormalsExpression::getImage() const {
 
     if (imgOne == NULL) return ImagePtr();
 
-    std::size_t width = imgOne->getWidth(0);
-    std::size_t height = imgOne->getHeight(0);
+    std::size_t width = imgOne->getWidth();
+    std::size_t height = imgOne->getHeight();
 
     ImagePtr imgTwo = mapExpTwo->getImage();
 
@@ -232,8 +232,8 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 		return normalMap;
 	}
 
-	std::size_t width = normalMap->getWidth(0);
-	std::size_t height = normalMap->getHeight(0);
+	std::size_t width = normalMap->getWidth();
+	std::size_t height = normalMap->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
@@ -309,8 +309,8 @@ ImagePtr AddExpression::getImage() const {
 
     if (imgOne == NULL) return ImagePtr();
 
-    std::size_t width = imgOne->getWidth(0);
-    std::size_t height = imgOne->getHeight(0);
+    std::size_t width = imgOne->getWidth();
+    std::size_t height = imgOne->getHeight();
 
 	ImagePtr imgTwo = mapExpTwo->getImage();
 
@@ -388,8 +388,8 @@ ImagePtr ScaleExpression::getImage() const {
 		return img;
 	}
 
-    std::size_t width = img->getWidth(0);
-    std::size_t height = img->getHeight(0);
+    std::size_t width = img->getWidth();
+    std::size_t height = img->getHeight();
 
     if (scaleRed < 0 || scaleGreen < 0 || scaleBlue < 0 || scaleAlpha < 0) {
         rConsole() << "[shaders] ScaleExpression: Invalid scale values found." << std::endl;
@@ -450,8 +450,8 @@ ImagePtr InvertAlphaExpression::getImage() const {
 		return img;
 	}
 
-	std::size_t width = img->getWidth(0);
-	std::size_t height = img->getHeight(0);
+	std::size_t width = img->getWidth();
+	std::size_t height = img->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
@@ -500,8 +500,8 @@ ImagePtr InvertColorExpression::getImage() const {
 		return img;
 	}
 
-	std::size_t width = img->getWidth(0);
-	std::size_t height = img->getHeight(0);
+	std::size_t width = img->getWidth();
+	std::size_t height = img->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
@@ -548,8 +548,8 @@ ImagePtr MakeIntensityExpression::getImage() const {
 		return img;
 	}
 
-	std::size_t width = img->getWidth(0);
-	std::size_t height = img->getHeight(0);
+	std::size_t width = img->getWidth();
+	std::size_t height = img->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
@@ -598,8 +598,8 @@ ImagePtr MakeAlphaExpression::getImage() const {
 		return img;
 	}
 
-	std::size_t width = img->getWidth(0);
-	std::size_t height = img->getHeight(0);
+	std::size_t width = img->getWidth();
+	std::size_t height = img->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 

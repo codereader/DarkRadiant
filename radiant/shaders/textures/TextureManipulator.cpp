@@ -62,7 +62,7 @@ void TextureManipulator::keyChanged()
 
 Vector3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
 	// Calculate the number of pixels in this image
-	std::size_t numPixels = input->getWidth(0) * input->getHeight(0);
+	std::size_t numPixels = input->getWidth() * input->getHeight();
 
 	// Calculate the pixel step value, ensuring it is greater than 0
 	int incr = static_cast<int>(static_cast<float>(numPixels) / 20.0f);
@@ -108,8 +108,8 @@ ImagePtr TextureManipulator::getProcessedImage(const ImagePtr& input) {
 
 ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 
-	std::size_t width = input->getWidth(0);
-	std::size_t height = input->getHeight(0);
+	std::size_t width = input->getWidth();
+	std::size_t height = input->getHeight();
 	byte* sourcePixels = input->getPixels();
 
 	ImagePtr output;
@@ -180,7 +180,7 @@ ImagePtr TextureManipulator::processGamma(const ImagePtr& input) {
 	}
 
 	// Calculate the number of pixels in this image
-	std::size_t numPixels = input->getWidth(0) * input->getHeight(0);
+	std::size_t numPixels = input->getWidth() * input->getHeight();
 
 	// Set the pixel pointer to the very first pixel
 	byte* pixels = input->getPixels();

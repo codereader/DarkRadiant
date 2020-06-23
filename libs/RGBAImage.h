@@ -6,9 +6,10 @@
 #include <memory>
 #include "util/Noncopyable.h"
 
+/// A single pixel with 8-bit RGBA components
 struct RGBAPixel
 {
-	unsigned char red, green, blue, alpha;
+	uint8_t red, green, blue, alpha;
 };
 
 /**
@@ -37,22 +38,19 @@ public:
 		delete[] pixels;
 	}
 
+    /* Image implementation */
 	uint8_t* getPixels() const override
 	{
 		return reinterpret_cast<byte*>(pixels);
 	}
 
-	virtual std::size_t getWidth(std::size_t mipMapIndex) const
+	std::size_t getWidth() const override
 	{
-		assert(mipMapIndex == 0); // only one mipmap is allowed here
-
 		return width;
 	}
 
-	virtual std::size_t getHeight(std::size_t mipMapIndex) const
+	std::size_t getHeight() const override
 	{
-		assert(mipMapIndex == 0); // only one mipmap is allowed here
-
 		return height;
 	}
 
@@ -73,7 +71,7 @@ public:
 
 		// Download the image to OpenGL
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA,
-			static_cast<GLint>(getWidth(0)), static_cast<GLint>(getHeight(0)),
+			static_cast<GLint>(getWidth()), static_cast<GLint>(getHeight()),
 			GL_RGBA, GL_UNSIGNED_BYTE,
 			getPixels()
 		);
@@ -83,8 +81,8 @@ public:
 
         // Construct texture object
         BasicTexture2DPtr tex2DObject(new BasicTexture2D(textureNum, name));
-        tex2DObject->setWidth(getWidth(0));
-        tex2DObject->setHeight(getHeight(0));
+        tex2DObject->setWidth(getWidth());
+        tex2DObject->setHeight(getHeight());
 
         debug::assertNoGlErrors();
 

@@ -118,26 +118,10 @@ public:
         return _pixelData + _mipMapInfo[mipMapIndex].offset;
     }
 
-    /**
-     * greebo: Returns the dimension of the specified mipmap.
-     */
-    virtual std::size_t getWidth(std::size_t mipMapIndex) const {
-        assert(mipMapIndex < _mipMapInfo.size());
-
-        return _mipMapInfo[mipMapIndex].width;
-    }
-
-    virtual std::size_t getHeight(std::size_t mipMapIndex) const {
-        assert(mipMapIndex < _mipMapInfo.size());
-
-        return _mipMapInfo[mipMapIndex].height;
-    }
-
     /* Image implementation */
-    uint8_t* getPixels() const override
-    {
-        return getMipMapPixels(0);
-    }
+    uint8_t* getPixels() const override { return getMipMapPixels(0); }
+    std::size_t getWidth() const override { return _mipMapInfo[0].width; }
+    std::size_t getHeight() const override { return _mipMapInfo[0].height; }
 
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const
@@ -190,8 +174,8 @@ public:
 
         // Create and return texture object
         BasicTexture2DPtr texObj(new BasicTexture2D(textureNum, name));
-        texObj->setWidth(getWidth(0));
-        texObj->setHeight(getHeight(0));
+        texObj->setWidth(getWidth());
+        texObj->setHeight(getHeight());
 
         debug::assertNoGlErrors();
 

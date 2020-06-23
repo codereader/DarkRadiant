@@ -56,6 +56,7 @@ public:
 
 typedef std::shared_ptr<BindableTexture> BindableTexturePtr;
 
+/// Representation of a 2D image texture in an unspecified format
 class Image
 : public BindableTexture
 {
@@ -64,11 +65,11 @@ public:
     /// Return the start of the pixel data for this image
     virtual uint8_t* getPixels() const = 0;
 
-    /**
-     * greebo: Returns the dimension of the specified mipmap.
-     */
-    virtual std::size_t getWidth(std::size_t mipMapIndex) const = 0;
-    virtual std::size_t getHeight(std::size_t mipMapIndex) const = 0;
+    /// Return the width of the image in pixels
+    virtual std::size_t getWidth() const = 0;
+
+    /// Return the height of the image in pixels
+    virtual std::size_t getHeight() const = 0;
 
     // greebo: Returns TRUE whether this image is precompressed (DDS)
     virtual bool isPrecompressed() const {
