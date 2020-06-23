@@ -58,32 +58,20 @@ typedef std::vector<MipMapInfo> MipMapInfoList;
 class DDSImage: public Image, public util::Noncopyable
 {
     // The actual pixels
-    byte* _pixelData;
-
-    // The amount of memory used by the image data
-    std::size_t _memSize;
+    mutable std::vector<uint8_t> _pixelData;
 
     // The compression format ID
     GLenum _format = 0;
 
+    // Metadata for each mipmap. All pixel data is stored in _pixelData, with
+    // the offset to each mipmap stored in the _mipMapInfo list.
     MipMapInfoList _mipMapInfo;
 
 public:
 
     // Pass the required memory size to the constructor
-    DDSImage(std::size_t size) :
-        _pixelData(NULL),
-        _memSize(size)
-    {
-        _pixelData = new byte[_memSize];
-    }
-
-    ~DDSImage()
-    {
-        // Check if we have something to do at all
-        if (_pixelData)
-            delete[] _pixelData;
-    }
+    DDSImage(std::size_t size): _pixelData(size)
+    {}
 
     void setFormat(GLenum format)
     {
@@ -115,7 +103,7 @@ public:
     byte* getMipMapPixels(std::size_t mipMapIndex) const {
         assert(mipMapIndex < _mipMapInfo.size());
 
-        return _pixelData + _mipMapInfo[mipMapIndex].offset;
+        return _pixelData.data() + _mipMapInfo[mipMapIndex].offset;
     }
 
     /* Image implementation */
@@ -151,7 +139,7 @@ public:
                 static_cast<GLsizei>(mipMap.height),
                 0,
                 static_cast<GLsizei>(mipMap.size),
-                _pixelData + mipMap.offset
+                _pixelData.data() + mipMap.offset
             );
 
             // Handle unsupported format error
