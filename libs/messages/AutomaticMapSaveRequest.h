@@ -16,6 +16,11 @@ public:
     AutomaticMapSaveRequest()
     {}
 
+    std::size_t getId() const override
+    {
+        return Type::AutomaticMapSaveRequest;
+    }
+
     // Deny this request to prevent the save from happening
     void denyWithReason(const std::string& reason)
     {

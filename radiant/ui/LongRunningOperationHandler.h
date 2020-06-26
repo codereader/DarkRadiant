@@ -26,7 +26,7 @@ public:
 	LongRunningOperationHandler() :
 		_level(0)
 	{
-		GlobalRadiantCore().getMessageBus().addListener(
+		GlobalRadiantCore().getMessageBus().addListener(radiant::IMessage::Type::LongRunningOperation,
 			radiant::TypeListener<radiant::LongRunningOperationMessage>(
 				std::bind(&LongRunningOperationHandler::onMessage, this, std::placeholders::_1)
 			)

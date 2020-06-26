@@ -158,13 +158,16 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	initialiseEntitySettings();
 
 	_execFailedListener = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::IMessage::Type::CommandExecutionFailed,
 		radiant::TypeListener<radiant::CommandExecutionFailedMessage>(
 			sigc::mem_fun(this, &UserInterfaceModule::handleCommandExecutionFailure)));
 
 	_textureChangedListener = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::IMessage::Type::TextureChanged,
 		radiant::TypeListener(UserInterfaceModule::HandleTextureChanged));
 
 	_notificationListener = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::IMessage::Type::Notification,
 		radiant::TypeListener(UserInterfaceModule::HandleNotificationMessage));
 
 	// Initialise the AAS UI

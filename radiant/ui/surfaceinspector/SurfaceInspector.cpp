@@ -688,6 +688,7 @@ void SurfaceInspector::_preShow()
 
 	// Get notified about texture changes
 	_textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::IMessage::Type::TextureChanged,
 		radiant::TypeListener<radiant::TextureChangedMessage>(
 			sigc::mem_fun(this, &SurfaceInspector::handleTextureChangedMessage)));
 

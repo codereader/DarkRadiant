@@ -27,6 +27,11 @@ public:
 	ConfigurationNeeded()
 	{}
 
+	std::size_t getId() const override
+	{
+		return Type::GameConfigNeeded;
+	}
+
 	const GameConfiguration& getConfig() const
 	{
 		return _config;

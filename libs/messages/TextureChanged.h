@@ -18,6 +18,11 @@ public:
 	TextureChangedMessage()
 	{}
 
+    std::size_t getId() const override
+    {
+        return Type::TextureChanged;
+    }
+
     // Convenience method
     static void Send()
     {

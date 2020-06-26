@@ -22,6 +22,11 @@ public:
 		_exception(exception)
 	{}
 
+	std::size_t getId() const override
+	{
+		return Type::CommandExecutionFailed;
+	}
+
 	std::string getMessage() const
 	{
 		return _exception.what();

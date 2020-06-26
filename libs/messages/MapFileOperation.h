@@ -76,6 +76,11 @@ public:
         }
     }
 
+    std::size_t getId() const override
+    {
+        return IMessage::Type::MapFileOperation;
+    }
+
     const std::string& getText() const
     {
         return _message;

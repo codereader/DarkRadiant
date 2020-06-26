@@ -38,6 +38,11 @@ public:
 		_message(message)
 	{}
 
+	std::size_t getId() const override
+	{
+		return Type::LongRunningOperation;
+	}
+
 	OperationEvent getType() const
 	{
 		return _event;

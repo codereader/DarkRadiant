@@ -36,6 +36,11 @@ public:
         return _message;
     }
 
+    std::size_t getId() const override
+    {
+        return IMessage::Type::Notification;
+    }
+
     Type getType() const
     {
         return _type;

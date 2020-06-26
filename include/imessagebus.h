@@ -19,6 +19,10 @@ protected:
 public:
     virtual ~IMessage() {}
 
+    // Returns a unique ID of this message, see IMessage::Type enum
+    // for well-known types
+    virtual std::size_t getId() const = 0;
+
     // Returns true if this message has been handled
     bool isHandled() const
     {
@@ -29,13 +33,31 @@ public:
     {
         _handled = handled;
     }
+
+public:
+    // Pre-defined message type IDs.
+    // Plugin code can define their own IDs in the range of 1000+
+    enum Type : std::size_t
+    {
+        AutomaticMapSaveRequest,
+        CommandExecutionFailed,
+        GameConfigNeeded,
+        LongRunningOperation,
+        MapFileOperation,
+        Notification,
+        TextureChanged,
+
+        UserDefinedMessagesGoHigherThanThis = 999,
+    };
 };
 
 /**
  * General-purpose handler used to send and process message to registered listeners.
  * Client code can send arbitrary message objects as long as they are deriving from 
  * IMessage. 
- * To receive the message, client code needs to add a listener.
+ * Listeners need to subscribe to each message type they're interested in.
+ * To receive the message, client code needs to add a listener, which can either 
+ * listen for a specific type of messages or all of them.
  */
 class IMessageBus
 {
@@ -45,10 +67,10 @@ public:
     typedef std::function<void(IMessage&)> Listener;
 
     /**
-     * Register a listener which gets called with the message as argument.
-     * An ID of the listener will be returned which can be used for unsubscription.
+     * Registers a listener that is only called when the give message type
+     * is sent across the wire. Use the returned ID to unsubscribe the listener.
      */
-    virtual std::size_t addListener(const Listener& listener) = 0;
+    virtual std::size_t addListener(std::size_t messageType, const Listener& listener) = 0;
 
     /**
      * Unsubscribe the given listener.
@@ -56,8 +78,8 @@ public:
     virtual void removeListener(std::size_t listenerId) = 0;
 
     /**
-     * Send the given message along the wire. Clients need to construct
-     * the message themselves, and check the possible result.
+     * Send the given message to the given channel. The channel ID refers to 
+     * a given message type and must have been acquired using getChannelId() beforehand.
      */
     virtual void sendMessage(IMessage& message) = 0;
 };
@@ -73,22 +95,21 @@ class TypeListener :
 public:
     TypeListener(void (*specialisedFunc)(T&)) :
         std::function<void(T&)>(specialisedFunc)
-    {}
+    {
+        static_assert(std::is_base_of<IMessage, T>::value, "Listener must accept IMessage types");
+    }
 
     TypeListener(const std::function<void(T&)>& specialisedFunc) :
         std::function<void(T&)>(specialisedFunc)
-    {}
+    {
+        static_assert(std::is_base_of<IMessage, T>::value, "Listener must accept IMessage types");
+    }
 
     // Fulfills the Listener function signature
     void operator()(IMessage& message)
     {
         // Perform a type cast and dispatch to our base class' call operator
-        try
-        {
-            std::function<void(T&)>::operator()(dynamic_cast<T&>(message));
-        }
-        catch (std::bad_cast&)
-        {}
+        std::function<void(T&)>::operator()(static_cast<T&>(message));
     }
 };
 
