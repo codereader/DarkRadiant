@@ -9,14 +9,17 @@ namespace ui
 {
 
 class ScreenUpdateBlocker :
-	public IScopedScreenUpdateBlocker,
-	public wxutil::ModalProgressDialog
+	public IScopedScreenUpdateBlocker
 {
 private:
+	wxutil::ModalProgressDialog* _dialog;
+
 	std::unique_ptr<wxWindowDisabler> _disabler;
 
 	// Once we received a call to setProgress() further calls to pulse() are forbidden
 	bool _pulseAllowed;
+
+	std::string _title;
 
 public:
 	// Pass the window title and the text message to the constructor
@@ -36,6 +39,8 @@ private:
 	// Called whenever the main window is changing its "active" state property.
 	void onMainWindowFocus(wxFocusEvent& ev);
 	void onCloseEvent(wxCloseEvent& ev);
+
+	void showModalProgressDialog();
 };
 
 } // namespace ui
