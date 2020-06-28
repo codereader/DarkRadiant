@@ -16,6 +16,7 @@
 #include "registry/Widgets.h"
 #include "selectionlib.h"
 #include "wxutil/ControlButton.h"
+#include "util/ScopedBoolLock.h"
 
 #include <functional>
 
@@ -199,7 +200,9 @@ void PatchInspector::queueUpdate()
 
 void PatchInspector::update()
 {
-	_updateActive = true;
+	util::ScopedBoolLock lock(_updateActive);
+
+	_updateNeeded = false;
 
 	auto patch = _patch.lock();
 
@@ -217,8 +220,6 @@ void PatchInspector::update()
 		// Load the data from the currently selected vertex
 		loadControlVertex();
 	}
-
-	_updateActive = false;
 }
 
 void PatchInspector::loadControlVertex()
