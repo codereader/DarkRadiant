@@ -90,7 +90,7 @@ void PatchModule::registerPatchCommands()
 
 	// Two optional integer arguments
 	GlobalCommandSystem().addCommand("CreateSimplePatchMesh", patch::algorithm::createSimplePatch,
-		{ cmd::ARGTYPE_INT, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT }); // dimX, dimY, removeSelectedBrush
+		{ cmd::ARGTYPE_INT, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL }); // dimX, dimY, removeSelectedBrush
 
 	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", selection::algorithm::insertPatchColumnsAtEnd);
 	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", selection::algorithm::insertPatchColumnsAtBeginning);
