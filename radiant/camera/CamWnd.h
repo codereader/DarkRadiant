@@ -95,7 +95,6 @@ public:
     void queueDraw() override;
     void forceRedraw() override;
 
-    void draw();
     void update();
 
     // The callback when the scene gets changed
@@ -166,7 +165,7 @@ private:
     void updateToolbarVisibility();
 
     void Cam_Draw();
-    void onRender();
+    bool onRender();
     void drawTime();
 
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));

@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "itextstream.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
 #include "iradiant.h"
@@ -940,8 +941,13 @@ void TextureBrowser::onIdle(wxIdleEvent& ev)
     }
 }
 
-void TextureBrowser::onRender()
+bool TextureBrowser::onRender()
 {
+    if (!GlobalMainFrame().screenUpdatesEnabled())
+    {
+        return false;
+    }
+
 	debug::assertNoGlErrors();
 
     if (_updateNeeded)
@@ -952,6 +958,8 @@ void TextureBrowser::onRender()
     draw();
 
     debug::assertNoGlErrors();
+
+    return true;
 }
 
 } // namespace ui

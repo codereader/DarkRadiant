@@ -51,7 +51,7 @@ public:
 
 protected:
 	// Performs the actual GL setup and drawing
-	virtual void draw();
+	virtual bool draw();
 
 	// Calculates the visible area
 	virtual void setGLViewPort();

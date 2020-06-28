@@ -78,9 +78,9 @@ void GuiView::setGLViewPort()
 	debug::assertNoGlErrors();
 }
 
-void GuiView::draw()
+bool GuiView::draw()
 {
-	if (_gui == NULL) return;
+	if (!_gui) return false;
 
 	debug::assertNoGlErrors();
 
@@ -117,6 +117,8 @@ void GuiView::draw()
 	debug::assertNoGlErrors();
 
 	_renderer.render();
+
+	return true;
 }
 
 void GuiView::onSizeAllocate(wxSizeEvent& ev)

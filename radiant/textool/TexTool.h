@@ -184,7 +184,7 @@ private:
 	 */
 	Vector2 getTextureCoords(const double& x, const double& y);
 
-	void onGLDraw();
+	bool onGLDraw();
 	void onGLResize(wxSizeEvent& ev);
 
 	// The callbacks for capturing the mouse events

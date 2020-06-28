@@ -1540,14 +1540,19 @@ void XYWnd::onGLResize(wxSizeEvent& ev)
 	ev.Skip();
 }
 
-void XYWnd::onRender()
+bool XYWnd::onRender()
 {
 	if (GlobalMainFrame().screenUpdatesEnabled())
 	{
         util::ScopedBoolLock drawLock(_drawing);
 
 		draw();
+
+        return true;
 	}
+    
+
+    return false; // nothing rendered
 }
 
 void XYWnd::onGLWindowScroll(wxMouseEvent& ev)

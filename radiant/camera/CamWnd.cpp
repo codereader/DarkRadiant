@@ -780,14 +780,9 @@ void CamWnd::Cam_Draw()
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-void CamWnd::onRender()
+bool CamWnd::onRender()
 {
-    draw();
-}
-
-void CamWnd::draw()
-{
-    if (_drawing) return;
+    if (_drawing) return false;
 
     util::ScopedBoolLock lock(_drawing);
 
@@ -798,7 +793,11 @@ void CamWnd::draw()
         Cam_Draw();
 
         debug::assertNoGlErrors();
+
+        return true;
     }
+
+    return false;
 }
 
 void CamWnd::benchmark()

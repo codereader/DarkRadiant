@@ -41,7 +41,7 @@ class RenderPreview :
 {
 private:
     void connectToolbarSignals();
-    void drawPreview();
+    bool drawPreview();
     void onGLScroll(wxMouseEvent& ev);
 	void onGLMouseClick(wxMouseEvent& ev);
     void onGLMouseRelease(wxMouseEvent& ev);

@@ -99,12 +99,12 @@ void TexturePreviewCombo::_onContextMenu(wxDataViewEvent& ev)
 }
 
 // CALLBACKS
-void TexturePreviewCombo::_onRender()
+bool TexturePreviewCombo::_onRender()
 {
 	// Get the viewport size from the GL widget
 	wxSize req = _glWidget->GetClientSize();
 
-	if (req.GetWidth() == 0 || req.GetHeight() == 0) return;
+	if (req.GetWidth() == 0 || req.GetHeight() == 0) return false;
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -167,6 +167,8 @@ void TexturePreviewCombo::_onRender()
 	}
 
 	glPopAttrib();
+
+	return true;
 }
 
 }

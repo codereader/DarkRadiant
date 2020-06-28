@@ -419,9 +419,9 @@ RenderStateFlags RenderPreview::getRenderFlagsWireframe()
            RENDER_PROGRAM;
 }
 
-void RenderPreview::drawPreview()
+bool RenderPreview::drawPreview()
 {
-    if (_renderingInProgress) return; // avoid double-entering this method
+    if (_renderingInProgress) return false; // avoid double-entering this method
 
     if (!_initialised)
     {
@@ -451,7 +451,7 @@ void RenderPreview::drawPreview()
 	{
 		// a return value of false means to cancel rendering
 		drawTime();
-		return;
+		return true; // swap buffers
 	}
 
     // Set up the camera
@@ -489,6 +489,8 @@ void RenderPreview::drawPreview()
 
     // Draw the render time
     drawTime();
+
+    return true;
 }
 
 void RenderPreview::renderWireFrame()

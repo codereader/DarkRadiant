@@ -185,7 +185,7 @@ private:
     void handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int state);
 
     // wxGLWidget-attached render method
-    void onRender();
+    bool onRender();
     void onGLResize(wxSizeEvent& ev);
     void onGLWindowScroll(wxMouseEvent& ev);
 

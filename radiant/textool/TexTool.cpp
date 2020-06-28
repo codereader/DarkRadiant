@@ -737,11 +737,11 @@ void TexTool::drawGrid()
 	}
 }
 
-void TexTool::onGLDraw()
+bool TexTool::onGLDraw()
 {
 	if (_updateNeeded)
 	{
-		return; // stop here, wait for the next idle event to refresh
+		return false; // stop here, wait for the next idle event to refresh
 	}
 
 	// Initialise the viewport
@@ -761,14 +761,15 @@ void TexTool::onGLDraw()
 	// Do nothing, if the shader name is empty
 	if (_shader == NULL || _shader->getName().empty())
 	{
-		return;
+		return true;
 	}
 
 	AABB& selAABB = getExtents();
 
 	// Is there a valid selection?
-	if (!selAABB.isValid()) {
-		return;
+	if (!selAABB.isValid())
+	{
+		return true;
 	}
 
 	AABB& texSpaceAABB = getVisibleTexSpace();
@@ -845,6 +846,8 @@ void TexTool::onGLDraw()
 		glEnd();
 		glDisable(GL_BLEND);
 	}
+
+	return true;
 }
 
 void TexTool::onGLResize(wxSizeEvent& ev)
