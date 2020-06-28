@@ -226,7 +226,7 @@ void createSimplePatch(const cmd::ArgumentList& args)
 	}
 
 	// Only fire the dialog if no or invalid command arguments are given
-	if (width == 0 || height == 0)
+	if (width != 0 && height != 0)
 	{
 		UndoableCommand undo("patchCreatePlane");
 

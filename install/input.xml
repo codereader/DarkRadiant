@@ -120,7 +120,7 @@
 		<shortcut command="PatchDeleteColumnEnd" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchDeleteRowEnd" key="KP_Subtract" modifiers="CONTROL" />
 		<shortcut command="TextureNatural" key="N" modifiers="CONTROL" />
-		<shortcut command="CreateSimplePatchMesh" key="P" modifiers="SHIFT" />
+		<shortcut command="CreateSimplePatchDialog" key="P" modifiers="SHIFT" />
 		<shortcut command="InvertCurve" key="I" modifiers="CONTROL" />
 		<shortcut command="RedisperseRows" key="E" modifiers="CONTROL" />
 		<shortcut command="RedisperseCols" key="E" modifiers="SHIFT+CONTROL" />
