@@ -213,6 +213,9 @@ void PatchInspector::update()
 			patch->getPatch().getHeight() != _patchRows)
 		{
 			// Patch matrix got changed
+			_patchRows = patch->getPatch().getHeight();
+			_patchCols = patch->getPatch().getWidth();
+
 			clearVertexChooser();
 			repopulateVertexChooser();
 		}
