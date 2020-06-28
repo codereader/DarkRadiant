@@ -17,7 +17,6 @@
 #include "ipreferencesystem.h"
 #include "module/StaticModule.h"
 #include "messages/TextureChanged.h"
-#include "debugging/ScopedDebugTimer.h"
 
 #include "selection/algorithm/Primitives.h"
 
@@ -143,23 +142,9 @@ void BrushModuleImpl::shutdownModule()
 	destroy();
 }
 
-void benchmarkMessagebus(const cmd::ArgumentList& args)
-{
-	int count = args[0].getInt();
-
-	ScopedDebugTimer timer("TextureChangedMessage");
-
-	for (int i = 0; i < count; ++i)
-	{
-		radiant::TextureChangedMessage::Send();
-	}
-}
-
 void BrushModuleImpl::registerBrushCommands()
 {
 	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
-
-	GlobalCommandSystem().addCommand("BenchmarkMessagebus", benchmarkMessagebus, { cmd::ARGTYPE_INT });
 
 	GlobalCommandSystem().addCommand("BrushMakePrefab", selection::algorithm::brushMakePrefab, { cmd::ARGTYPE_INT, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 	GlobalCommandSystem().addCommand("BrushMakeSided", selection::algorithm::brushMakeSided, { cmd::ARGTYPE_INT });
