@@ -295,6 +295,7 @@ const Vector3& XYWnd::getOrigin() const
 void XYWnd::setOrigin(const Vector3& origin) {
     _origin = origin;
     updateModelview();
+    queueDraw();
 }
 
 void XYWnd::scroll(int x, int y)
