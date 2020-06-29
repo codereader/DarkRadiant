@@ -85,31 +85,38 @@ void GlobalCameraManager::registerCommands()
 	GlobalEventManager().addKeyEvent("CameraMoveDown", std::bind(&GlobalCameraManager::onFreelookMoveDownKey, this, std::placeholders::_1));
 }
 
-CamWndPtr GlobalCameraManager::getActiveCamWnd() {
+CamWndPtr GlobalCameraManager::getActiveCamWnd()
+{
 	// Sanity check in debug builds
-	assert(_cameras.find(_activeCam) != _cameras.end());
+	assert(_activeCam == -1 || _cameras.find(_activeCam) != _cameras.end());
+
+	if (_activeCam == -1) return CamWndPtr();
 
 	CamWndPtr cam = _cameras[_activeCam].lock();
 
-	if (cam == NULL) {
+	if (!cam)
+	{
 		// Camera is not used anymore, remove it
 		removeCamWnd(_activeCam);
 
 		// Find a new active camera
-		if (!_cameras.empty()) {
+		if (!_cameras.empty())
+		{
 			_activeCam = _cameras.begin()->first;
 		}
-		else {
+		else
+		{
 			// No more cameras available
 			_activeCam = -1;
 		}
 
-		if (_activeCam != -1) {
+		if (_activeCam != -1)
+		{
 			cam = _cameras[_activeCam].lock();
 		}
 	}
 
-	return (_activeCam != -1) ? cam : CamWndPtr();
+	return cam;
 }
 
 CamWndPtr GlobalCameraManager::createCamWnd(wxWindow* parent)

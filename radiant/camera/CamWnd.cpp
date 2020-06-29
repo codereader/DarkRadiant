@@ -494,7 +494,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 
         // Focus the view at the center of the found AABB
         // Set the camera and the views to the given point
-        GlobalCameraManager().focusCamera(found.origin, getCameraAngles());
+        GlobalCameraView().focusCamera(found.origin, getCameraAngles());
         GlobalXYWndManager().setOrigin(found.origin);
     }
 }
