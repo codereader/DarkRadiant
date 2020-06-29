@@ -335,7 +335,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
 
 	GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
-	GlobalCommandSystem().addCommand("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show);
+	GlobalCommandSystem().addCommand("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show, { cmd::ARGTYPE_INT });
 
 	// Set up the CloneSelection command to react on key up events only
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
