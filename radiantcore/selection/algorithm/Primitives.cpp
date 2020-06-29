@@ -586,7 +586,10 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		throw cmd::ExecutionNotPossible(_("At least one brush must be selected for this operation."));
 	}
 
-	if (args.empty() || args.size() > 2 || (args.size() == 2 && args[0].getInt() == 0))
+	if (args.empty() || 
+		args.size() > 2 || 
+		(args[0].getInt() == 0 && args.size() > 1) || 
+		(args[0].getInt() != 0 && args.size() < 2))
 	{
 		rError() << "Usage: " << std::endl
 			<< "BrushMakePrefab " << static_cast<int>(brush::PrefabType::Cuboid) << " --> cuboid (4 sides)" << std::endl
@@ -596,7 +599,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		return;
 	}
 
-	// First argument contains the number of sides
+	// First argument contains the type
 	int input = args[0].getInt();
 
 	int sides = input != 0 ? args[1].getInt() : 4; // cuboids always have 4 sides
