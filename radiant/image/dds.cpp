@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <stdlib.h>
 #include <algorithm>
+#include <map>
 
 #include "ifilesystem.h"
 #include "iarchive.h"
@@ -73,6 +74,7 @@ public:
     DDSImage(std::size_t size): _pixelData(size)
     {}
 
+    // Set the compression format. 0 means uncompressed.
     void setFormat(GLenum format)
     {
         _format = format;
@@ -216,22 +218,18 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     DDSImagePtr image(new DDSImage(size));
 
     // Set the format of this DDS image
-    switch (pixelFormat)
+    static const std::map<ddsPF_t, GLenum> GL_FORMAT_FOR_DDS
     {
-        case DDS_PF_DXT1:
-            image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT);
-            break;
-        case DDS_PF_DXT3:
-            image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT3_EXT);
-            break;
-        case DDS_PF_DXT5:
-            image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT5_EXT);
-            break;
-        default:
-            rError() << "DDS file has unknown format (" << pixelFormat << ")"
-                     << std::endl;
-            break;
+        { DDS_PF_DXT1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT },
+        { DDS_PF_DXT3, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT },
+        { DDS_PF_DXT5, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT },
+        { DDS_PF_ARGB8888, 0 }
     };
+
+    if (GL_FORMAT_FOR_DDS.count(pixelFormat) < 1)
+        rError() << "Unknown DDS format (" << pixelFormat << ")" << std::endl;
+    else
+        image->setFormat(GL_FORMAT_FOR_DDS.at(pixelFormat));
 
     // Load the mipmaps into the allocated memory
     for (std::size_t i = 0; i < mipMapInfo.size(); ++i)
