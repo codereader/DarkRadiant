@@ -940,7 +940,6 @@
     <ClInclude Include="..\..\radiantcore\scenegraph\OctreeNode.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraph.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraphFactory.h" />
-    <ClInclude Include="..\..\radiantcore\selection\algorithm\CommandNotAvailableException.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Curves.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Entity.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\General.h" />

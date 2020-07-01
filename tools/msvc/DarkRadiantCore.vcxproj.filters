@@ -1851,9 +1851,6 @@
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\algorithm\CommandNotAvailableException.h">
-      <Filter>src\selection\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Curves.h">
       <Filter>src\selection\algorithm</Filter>
     </ClInclude>

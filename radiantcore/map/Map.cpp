@@ -48,6 +48,7 @@
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Transformation.h"
 #include "module/StaticModule.h"
+#include "command/ExecutionNotPossible.h"
 #include "MapPropertyInfoFileModule.h"
 
 #include <fmt/format.h>
@@ -620,7 +621,7 @@ void Map::loadPrefabAt(const cmd::ArgumentList& args)
 			{
 				selection::algorithm::groupSelected();
 			}
-			catch (selection::algorithm::CommandNotAvailableException& ex)
+			catch (cmd::ExecutionNotPossible& ex)
 			{
 				// Ignore grouping errors on prefab insert, just log the message
 				rError() << "Error grouping the prefab: " << ex.what() << std::endl;

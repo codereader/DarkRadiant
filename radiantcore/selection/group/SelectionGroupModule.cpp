@@ -15,6 +15,7 @@
 #include "wxutil/menu/MenuItem.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "module/StaticModule.h"
+#include "command/ExecutionNotPossible.h"
 
 namespace selection
 {
@@ -77,13 +78,13 @@ public:
 		GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
 			new wxutil::IconTextMenuItem(_("Group Selection"), "group_selection.png"),
 			[]() { algorithm::groupSelected(); },
-			[]() { return algorithm::CommandNotAvailableException::ToBool(algorithm::checkGroupSelectedAvailable); }),
+			[]() { return cmd::ExecutionNotPossible::ToBool(algorithm::checkGroupSelectedAvailable); }),
 			ui::IOrthoContextMenu::SECTION_SELECTION_GROUPS);
 
 		GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
 			new wxutil::IconTextMenuItem(_("Ungroup Selection"), "ungroup_selection.png"),
 			[]() { algorithm::ungroupSelected(); },
-			[]() { return algorithm::CommandNotAvailableException::ToBool(algorithm::checkUngroupSelectedAvailable); }),
+			[]() { return cmd::ExecutionNotPossible::ToBool(algorithm::checkUngroupSelectedAvailable); }),
 			ui::IOrthoContextMenu::SECTION_SELECTION_GROUPS);
 	}
 

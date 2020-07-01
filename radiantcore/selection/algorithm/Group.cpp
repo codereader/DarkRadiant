@@ -378,23 +378,23 @@ void checkGroupSelectedAvailable()
 {
 	if (!GlobalMapModule().getRoot())
 	{
-		throw CommandNotAvailableException(_("No map loaded"));
+		throw cmd::ExecutionNotPossible(_("No map loaded"));
 	}
 
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive &&
 		GlobalSelectionSystem().Mode() != SelectionSystem::eGroupPart)
 	{
-		throw CommandNotAvailableException(_("Groups can be formed in Primitive and Group Part selection mode only"));
+		throw cmd::ExecutionNotPossible(_("Groups can be formed in Primitive and Group Part selection mode only"));
 	}
 
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
 	{
-		throw CommandNotAvailableException(_("Nothing selected, cannot group anything"));
+		throw cmd::ExecutionNotPossible(_("Nothing selected, cannot group anything"));
 	}
 
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 1)
 	{
-		throw CommandNotAvailableException(_("Select more than one element to form a group"));
+		throw cmd::ExecutionNotPossible(_("Select more than one element to form a group"));
 		return;
 	}
 
@@ -420,7 +420,7 @@ void checkGroupSelectedAvailable()
 
 	if (!hasUngroupedNode && groupIds.size() == 1)
 	{
-		throw CommandNotAvailableException(_("The selected elements already form a group"));
+		throw cmd::ExecutionNotPossible(_("The selected elements already form a group"));
 	}
 }
 
@@ -445,18 +445,18 @@ void checkUngroupSelectedAvailable()
 {
 	if (!GlobalMapModule().getRoot())
 	{
-		throw CommandNotAvailableException(_("No map loaded"));
+		throw cmd::ExecutionNotPossible(_("No map loaded"));
 	}
 
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive &&
 		GlobalSelectionSystem().Mode() != SelectionSystem::eGroupPart)
 	{
-		throw CommandNotAvailableException(_("Groups can be dissolved in Primitive and Group Part selection mode only"));
+		throw cmd::ExecutionNotPossible(_("Groups can be dissolved in Primitive and Group Part selection mode only"));
 	}
 
 	if (GlobalSelectionSystem().getSelectionInfo().totalCount == 0)
 	{
-		throw CommandNotAvailableException(_("Nothing selected, cannot un-group anything"));
+		throw cmd::ExecutionNotPossible(_("Nothing selected, cannot un-group anything"));
 	}
 
 	// Check if the current selection already is member of the same group
@@ -476,7 +476,7 @@ void checkUngroupSelectedAvailable()
 
 	if (hasOnlyUngroupedNodes)
 	{
-		throw CommandNotAvailableException(_("The selected elements aren't part of any group"));
+		throw cmd::ExecutionNotPossible(_("The selected elements aren't part of any group"));
 	}
 }
 
@@ -527,28 +527,12 @@ void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args)
 
 void groupSelectedCmd(const cmd::ArgumentList& args)
 {
-	try
-	{
-		groupSelected();
-	}
-	catch (CommandNotAvailableException& ex)
-	{
-		rError() << ex.what() << std::endl;
-		throw cmd::ExecutionNotPossible(ex.what());
-	}
+	groupSelected();
 }
 
 void ungroupSelectedCmd(const cmd::ArgumentList& args)
 {
-	try
-	{
-		ungroupSelected();
-	}
-	catch (CommandNotAvailableException & ex)
-	{
-		rError() << ex.what() << std::endl;
-		throw cmd::ExecutionNotPossible(ex.what());
-	}
+	ungroupSelected();
 }
 
 } // namespace algorithm
