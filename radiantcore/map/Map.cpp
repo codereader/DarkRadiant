@@ -27,6 +27,7 @@
 #include "entitylib.h"
 #include "gamelib.h"
 #include "os/path.h"
+#include "os/file.h"
 #include "wxutil/IConv.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/ScopeTimer.h"
@@ -669,28 +670,49 @@ void Map::newMap(const cmd::ArgumentList& args)
 
 void Map::openMap(const cmd::ArgumentList& args)
 {
-    if (!GlobalMap().askForSave(_("Open Map")))
-        return;
+    if (!GlobalMap().askForSave(_("Open Map"))) return;
 
-    std::string fullPath;
+    std::string candidate;
 
     if (!args.empty())
     {
-        fullPath = args[0].getString();
+        candidate = args[0].getString();
     }
     else
     {
         // No arguments passed, get the map file name to load
         MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
-        fullPath = fileInfo.fullPath;
+        candidate = fileInfo.fullPath;
     }
 
-    if (!fullPath.empty())
+    std::string mapToLoad;
+
+    if (os::fileOrDirExists(candidate))
+    {
+        mapToLoad = candidate;
+    }
+    else
+    {
+        // Next, try to look up the map in the regular maps path
+        fs::path mapsPath = GlobalGameManager().getMapPath();
+        fs::path fullMapPath = mapsPath / candidate;
+
+        if (os::fileOrDirExists(fullMapPath.string()))
+        {
+            mapToLoad = fullMapPath.string();
+        }
+        else
+        {
+            throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), fullMapPath.string()));
+        }
+    }
+
+    if (!mapToLoad.empty())
 	{
-        GlobalMRU().insert(fullPath);
+        GlobalMRU().insert(mapToLoad);
 
         GlobalMap().freeMap();
-        GlobalMap().load(fullPath);
+        GlobalMap().load(mapToLoad);
     }
 }
 
