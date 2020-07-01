@@ -10,6 +10,7 @@
 #include "registry/Widgets.h"
 
 #include "wxutil/ControlButton.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -305,6 +306,12 @@ void TransformDialog::onClickSmaller(wxCommandEvent& ev, EntryRow* row)
 	else
 	{
 		// Do a scale
+		if (float_equal_epsilon(step, 0.0f, 0.0001f))
+		{
+			wxutil::Messagebox::ShowError(_("Cannot scale by zero or near-zero values"));
+			return;
+		}
+		
 		Vector3 scaleXYZ(1,1,1);
 
 		// Store the value into the right axis
