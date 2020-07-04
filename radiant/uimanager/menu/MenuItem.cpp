@@ -66,6 +66,12 @@ void MenuItem::construct()
 
 	GlobalEventManager().registerMenuItem(_event, _menuItem);
 
+	if (_event.empty())
+	{
+		// Disable items without event
+		menu->Enable(_menuItem->GetId(), false);
+	}
+
 	MenuElement::constructChildren();
 }
 
