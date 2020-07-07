@@ -41,10 +41,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <memory.h>
 
-#if !defined(_MSC_VER)
-#include <stdint.h> // greebo: This isn't needed in VC++ 2005
-#endif
-
 /* endian tomfoolery */
 typedef union
 {
@@ -131,7 +127,15 @@ float DDSBigFloat( float src ) {
 
 #endif /*__BIG_ENDIAN__*/
 
-
+std::ostream& operator<< (std::ostream& os, const DDSHeader& h)
+{
+    os << "DDSHeader { " << (h.isValid() ? "VALID" : "INVALID")
+       << " | " << h.width << "x" << h.height
+       << " | " << (h.isCompressed() ? "Compressed" : "Uncompressed")
+       << " | " << h.mipMapCount << " mipmaps"
+       << " }";
+    return os;
+}
 
 /*
 DDSDecodePixelFormat()

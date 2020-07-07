@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include <cstdint>
+#include <ostream>
 
 /* dds definition */
 enum ddsPF_t
@@ -99,52 +100,63 @@ struct ddsMultiSampleCaps_t
     unsigned short      bltMSTypes;
 };
 
-struct ddsPixelFormat_t
+/// Flags for DDSPixelFormat
+enum DDSPixelFormatFlags
 {
-    unsigned int        size;
-    unsigned int        flags;
-    unsigned char       fourCC[4];
+    DDPF_ALPHAPIXELS = 0x1,
+    DDPF_ALPHA = 0x2,
+    DDPF_FOURCC = 0x4,
+    DDPF_RGB = 0x40,
+    DDPF_YUV = 0x200,
+    DDPF_LUMINANCE = 0x20000
+};
+
+struct DDSPixelFormat
+{
+    uint32_t        size;
+    uint32_t        flags;
+    uint8_t         fourCC[4];
     union
     {
-        unsigned int    rgbBitCount;
-        unsigned int    yuvBitCount;
-        unsigned int    zBufferBitDepth;
-        unsigned int    alphaBitDepth;
-        unsigned int    luminanceBitCount;
-        unsigned int    bumpBitCount;
-        unsigned int    privateFormatBitCount;
+        uint32_t    rgbBitCount;
+        uint32_t    yuvBitCount;
+        uint32_t    zBufferBitDepth;
+        uint32_t    alphaBitDepth;
+        uint32_t    luminanceBitCount;
+        uint32_t    bumpBitCount;
+        uint32_t    privateFormatBitCount;
     };
     union
     {
-        unsigned int    rBitMask;
-        unsigned int    yBitMask;
-        unsigned int    stencilBitDepth;
-        unsigned int    luminanceBitMask;
-        unsigned int    bumpDuBitMask;
-        unsigned int    operations;
+        uint32_t    rBitMask;
+        uint32_t    yBitMask;
+        uint32_t    stencilBitDepth;
+        uint32_t    luminanceBitMask;
+        uint32_t    bumpDuBitMask;
+        uint32_t    operations;
     };
     union
     {
-        unsigned int    gBitMask;
-        unsigned int    uBitMask;
-        unsigned int    zBitMask;
-        unsigned int    bumpDvBitMask;
-        ddsMultiSampleCaps_t    multiSampleCaps;
+        uint32_t    gBitMask;
+        uint32_t    uBitMask;
+        uint32_t    zBitMask;
+        uint32_t    bumpDvBitMask;
+        ddsMultiSampleCaps_t multiSampleCaps;
     };
     union
     {
-        unsigned int    bBitMask;
-        unsigned int    vBitMask;
-        unsigned int    stencilBitMask;
-        unsigned int    bumpLuminanceBitMask;
+        uint32_t    bBitMask;
+        uint32_t    vBitMask;
+        uint32_t    stencilBitMask;
+        uint32_t    bumpLuminanceBitMask;
     };
     union
     {
-        unsigned int    rgbAlphaBitMask;
-        unsigned int    yuvAlphaBitMask;
-        unsigned int    luminanceAlphaBitMask;
-        unsigned int    rgbZBitMask;
-        unsigned int    yuvZBitMask;
+        uint32_t    rgbAlphaBitMask;
+        uint32_t    yuvAlphaBitMask;
+        uint32_t    luminanceAlphaBitMask;
+        uint32_t    rgbZBitMask;
+        uint32_t    yuvZBitMask;
     };
 };
 
@@ -173,13 +185,8 @@ struct DDSHeader
         int32_t         pitch;
         uint32_t        linearSize;
     };
-    uint32_t            backBufferCount;
-    union
-    {
-        uint32_t        mipMapCount;
-        uint32_t        refreshRate;
-        uint32_t        srcVBHandle;
-    };
+    uint32_t            depth;
+    uint32_t            mipMapCount;
     uint32_t            alphaBitDepth;
     uint32_t            reserved;
     uint32_t            surface;
@@ -191,10 +198,36 @@ struct DDSHeader
     ddsColorKey_t       ckDestBlt;
     ddsColorKey_t       ckSrcOverlay;
     ddsColorKey_t       ckSrcBlt;
-    ddsPixelFormat_t    pixelFormat;
+    DDSPixelFormat      pixelFormat;
     ddsCaps_t           ddsCaps;
     uint32_t            textureStage;
+
+    /// Test if a particular flag is set
+    bool testFlag(uint32_t flag) const
+    {
+        return (flags & flag) > 0;
+    }
+
+    /// Test if this DDSHeader represents a valid DDS image
+    bool isValid() const
+    {
+        return size == 124                  // fixed size structure
+            && pixelFormat.size == 32
+            && testFlag(DDSD_CAPS)          // required in every DDS file
+            && testFlag(DDSD_HEIGHT)        // required in every DDS file
+            && testFlag(DDSD_WIDTH)         // required in every DDS file
+            && testFlag(DDSD_PIXELFORMAT);  // required in every DDS file
+    }
+
+    /// Test if this DDS image is compressed (DXTx)
+    bool isCompressed() const
+    {
+        return pixelFormat.flags & DDPF_FOURCC;
+    }
 };
+
+// Debug output for DDSHeader
+std::ostream& operator<< (std::ostream& os, const DDSHeader& h);
 
 struct ddsBuffer_t
 {
