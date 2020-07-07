@@ -35,15 +35,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------------- */
 
-
-
-/* marker */
-#define DDSLIB_C
-
-
+#include "ddslib.h"
 
 /* dependencies */
-#include "ddslib.h"
+#include <stdio.h>
+#include <memory.h>
 
 #if !defined(_MSC_VER)
 #include <stdint.h> // greebo: This isn't needed in VC++ 2005
@@ -879,4 +875,3 @@ int DDSDecompress( const DDSHeader* header, const unsigned char* buffer, unsigne
 	/* return to sender */
 	return r;
 }
-
