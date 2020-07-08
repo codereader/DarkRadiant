@@ -224,6 +224,29 @@ struct DDSHeader
     {
         return pixelFormat.flags & DDPF_FOURCC;
     }
+
+    /// Return the FOURCC compression format, if any
+    std::string getCompressionFormat() const
+    {
+        if (isCompressed())
+            // Return FOURCC as a string
+            return std::string(
+                reinterpret_cast<const char*>(&pixelFormat.fourCC[0]),
+                4
+            );
+        else
+            // Uncompressed, return nothing
+            return "";
+    }
+
+    /// Return number of RGB bits (uncompressed) or 0 (compressed)
+    int getRGBBits() const
+    {
+        if (!isCompressed() && (pixelFormat.flags & DDPF_RGB))
+            return pixelFormat.rgbBitCount;
+        else
+            return 0;
+    }
 };
 
 // Debug output for DDSHeader

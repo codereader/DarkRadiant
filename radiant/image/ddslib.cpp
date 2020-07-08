@@ -59,70 +59,25 @@ floatSwapUnion;
 
 #ifdef __BIG_ENDIAN__
 
-int   DDSBigLong( int src ) {
-	return src;
-}
-short DDSBigShort( short src ) {
-	return src;
-}
-float DDSBigFloat( float src ) {
-	return src;
-}
-
-int DDSLittleLong( int src ) {
+int DDSLong( int src ) {
 	return ((src & 0xFF000000) >> 24) |
 	       ((src & 0x00FF0000) >> 8) |
 	       ((src & 0x0000FF00) << 8) |
 	       ((src & 0x000000FF) << 24);
 }
 
-short DDSLittleShort( short src ) {
+short DDSShort( short src ) {
 	return ((src & 0xFF00) >> 8) |
 	       ((src & 0x00FF) << 8);
-}
-
-float DDSLittleFloat( float src ) {
-	floatSwapUnion in,out;
-	in.f = src;
-	out.c[ 0 ] = in.c[ 3 ];
-	out.c[ 1 ] = in.c[ 2 ];
-	out.c[ 2 ] = in.c[ 1 ];
-	out.c[ 3 ] = in.c[ 0 ];
-	return out.f;
 }
 
 #else /*__BIG_ENDIAN__*/
 
-int   DDSLittleLong( int src ) {
+int   DDSLong( int src ) {
 	return src;
 }
-short DDSLittleShort( short src ) {
+short DDSShort( short src ) {
 	return src;
-}
-float DDSLittleFloat( float src ) {
-	return src;
-}
-
-int DDSBigLong( int src ) {
-	return ((src & 0xFF000000) >> 24) |
-	       ((src & 0x00FF0000) >> 8) |
-	       ((src & 0x0000FF00) << 8) |
-	       ((src & 0x000000FF) << 24);
-}
-
-short DDSBigShort( short src ) {
-	return ((src & 0xFF00) >> 8) |
-	       ((src & 0x00FF) << 8);
-}
-
-float DDSBigFloat( float src ) {
-	floatSwapUnion in,out;
-	in.f = src;
-	out.c[ 0 ] = in.c[ 3 ];
-	out.c[ 1 ] = in.c[ 2 ];
-	out.c[ 2 ] = in.c[ 1 ];
-	out.c[ 3 ] = in.c[ 0 ];
-	return out.f;
 }
 
 #endif /*__BIG_ENDIAN__*/
@@ -130,10 +85,16 @@ float DDSBigFloat( float src ) {
 std::ostream& operator<< (std::ostream& os, const DDSHeader& h)
 {
     os << "DDSHeader { " << (h.isValid() ? "VALID" : "INVALID")
-       << " | " << h.width << "x" << h.height
-       << " | " << (h.isCompressed() ? "Compressed" : "Uncompressed")
-       << " | " << h.mipMapCount << " mipmaps"
+       << " | " << h.width << "x" << h.height;
+
+    if (h.isCompressed())
+       os << " | " << h.getCompressionFormat();
+    else
+       os << " | " << h.getRGBBits() << " bit RGB";
+
+    os << " | " << h.mipMapCount << " mipmaps"
        << " }";
+
     return os;
 }
 
@@ -189,14 +150,14 @@ int DDSGetInfo(const DDSHeader* header, int *width, int *height, ddsPF_t *pf ) {
 	/* test dds header */
 	if( *((int*) header->magic) != *((int*) "DDS ") )
 		return -1;
-	if( DDSLittleLong( header->size ) != 124 )
+	if( DDSLong( header->size ) != 124 )
 		return -1;
 
 	/* extract width and height */
 	if( width != NULL )
-		*width = DDSLittleLong( header->width );
+		*width = DDSLong( header->width );
 	if( height != NULL )
-		*height = DDSLittleLong( header->height );
+		*height = DDSLong( header->height );
 
 	/* get pixel format */
 	DDSDecodePixelFormat( header, pf );
@@ -215,7 +176,7 @@ static void DDSGetColorBlockColors( ddsColorBlock_t *block, ddsColor_t colors[ 4
 
 
 	/* color 0 */
-	word = DDSLittleShort( block->colors[ 0 ] );
+	word = DDSShort( block->colors[ 0 ] );
 	colors[ 0 ].a = 0xff;
 
 	/* extract rgb bits */
@@ -232,7 +193,7 @@ static void DDSGetColorBlockColors( ddsColorBlock_t *block, ddsColor_t colors[ 4
 	colors[ 0 ].r |= (colors[ 0 ].r >> 5);
 
 	/* same for color 1 */
-	word = DDSLittleShort( block->colors[ 1 ] );
+	word = DDSShort( block->colors[ 1 ] );
 	colors[ 1 ].a = 0xff;
 
 	/* extract rgb bits */
@@ -345,7 +306,7 @@ static void DDSDecodeAlphaExplicit( unsigned int *pixel, ddsAlphaBlockExplicit_t
 
 	/* walk rows */
 	for( row = 0; row < 4; row++, pixel += (width - 4) ) {
-		word = DDSLittleShort( alphaBlock->row[ row ] );
+		word = DDSShort( alphaBlock->row[ row ] );
 
 		/* walk pixels */
 		for( pix = 0; pix < 4; pix++ ) {
