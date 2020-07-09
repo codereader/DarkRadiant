@@ -4,13 +4,14 @@
 #include "igrid.h"
 #include "icamera.h"
 #include "imapformat.h"
+#include "iclipboard.h"
 
-#include "wxutil/clipboard.h"
 #include "map/Map.h"
 #include "brush/FaceInstance.h"
 #include "map/algorithm/Import.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Transformation.h"
+#include "command/ExecutionNotPossible.h"
 
 namespace selection
 {
@@ -20,7 +21,12 @@ namespace clipboard
 
 void pasteToMap()
 {
-    std::stringstream stream(wxutil::pasteFromClipboard());
+	if (!module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
+	{
+		throw cmd::ExecutionNotPossible(_("No clipboard module attached, cannot perform this action."));
+	}
+
+    std::stringstream stream(GlobalClipboard().getString());
 	map::algorithm::importFromStream(stream);
 }
 
@@ -28,6 +34,11 @@ void copy(const cmd::ArgumentList& args)
 {
 	if (FaceInstance::Selection().empty())
     {
+		if (!module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
+		{
+			throw cmd::ExecutionNotPossible(_("No clipboard module attached, cannot perform this action."));
+		}
+
 		// When exporting to the system clipboard, use the portable format
 		auto format = GlobalMapFormatManager().getMapFormatByName(map::PORTABLE_MAP_FORMAT_NAME);
 
@@ -36,7 +47,7 @@ void copy(const cmd::ArgumentList& args)
         GlobalMap().exportSelected(out, format);
 
         // Copy the resulting string to the clipboard
-        wxutil::copyToClipboard(out.str());
+		GlobalClipboard().setString(out.str());
 	}
 	else
 	{

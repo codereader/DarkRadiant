@@ -103,6 +103,7 @@
     <ClInclude Include="..\..\include\ibrush.h" />
     <ClInclude Include="..\..\include\icamera.h" />
     <ClInclude Include="..\..\include\icameraview.h" />
+    <ClInclude Include="..\..\include\iclipboard.h" />
     <ClInclude Include="..\..\include\iclipper.h" />
     <ClInclude Include="..\..\include\icommandsystem.h" />
     <ClInclude Include="..\..\include\icounter.h" />

@@ -195,6 +195,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
+    <ClCompile Include="..\..\radiant\clipboard\ClipboardModule.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\EventManager.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\GlobalKeyEventFilter.cpp" />
@@ -371,6 +372,7 @@
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\PanViewTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\ShaderClipboardTools.h" />
+    <ClInclude Include="..\..\radiant\clipboard\ClipboardModule.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Event.h" />
     <ClInclude Include="..\..\radiant\eventmanager\EventManager.h" />

@@ -78,7 +78,6 @@
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
-    <ClInclude Include="..\..\libs\wxutil\clipboard.h" />
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\wxutil\ControlButton.h" />
     <ClInclude Include="..\..\libs\wxutil\DeferredMotionDelta.h" />
@@ -137,7 +136,6 @@
     <ClCompile Include="..\..\libs\wxutil\TreeModelFilter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\VFSTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\clipboard.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\DirChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FileChooser.cpp" />

@@ -137,7 +137,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\libs\wxutil\Button.h" />
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
-    <ClInclude Include="..\..\libs\wxutil\clipboard.h" />
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\wxutil\ControlButton.h" />
     <ClInclude Include="..\..\libs\wxutil\DeferredMotionDelta.h" />
@@ -188,7 +187,6 @@
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libs\wxutil\clipboard.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\Dialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\DialogBase.cpp" />

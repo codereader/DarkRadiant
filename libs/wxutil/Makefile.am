@@ -47,6 +47,5 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
                        MouseToolHandler.cpp \
                        SerialisableWidgets.cpp \
                        SourceView.cpp \
-                       clipboard.cpp \
                        DirChooser.cpp \
                        FileChooser.cpp
