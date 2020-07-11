@@ -13,7 +13,8 @@ private:
     std::string _reason;
 
 public:
-    AutomaticMapSaveRequest()
+    AutomaticMapSaveRequest() :
+        _denied(false)
     {}
 
     std::size_t getId() const override

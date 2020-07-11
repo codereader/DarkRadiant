@@ -17,7 +17,8 @@ private:
     bool _denied;
 
 public:
-    ApplicationShutdownRequest()
+    ApplicationShutdownRequest() :
+        _denied(false)
     {}
 
     std::size_t getId() const override
