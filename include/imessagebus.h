@@ -39,6 +39,7 @@ public:
     // Plugin code can define their own IDs in the range of 1000+
     enum Type : std::size_t
     {
+        ApplicationShutdownRequest,
         AutomaticMapSaveRequest,
         CommandExecutionFailed,
         GameConfigNeeded,

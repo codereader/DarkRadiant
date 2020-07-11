@@ -234,6 +234,9 @@
     <ClInclude Include="..\..\libs\selection\BestPoint.h">
       <Filter>selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ApplicationShutdownRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

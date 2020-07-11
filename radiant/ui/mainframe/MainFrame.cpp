@@ -22,6 +22,7 @@
 #include "ui/mainframe/TopLevelFrame.h"
 
 #include "module/StaticModule.h"
+#include "messages/ApplicationShutdownRequest.h"
 #include <functional>
 #include <fmt/format.h>
 
@@ -274,31 +275,36 @@ void MainFrame::preDestructionCleanup()
 
 void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 {
-    // If the event is vetoable, first check for unsaved data before closing
-    if (ev.CanVeto() && false /*!GlobalMap().askForSave(_("Exit DarkRadiant"))*/) // TODO
+    // If the event is vetoable, issue the shutdown message and get the green light
+    if (ev.CanVeto())
     {
-        // Do nothing
-        ev.Veto();
+		radiant::ApplicationShutdownRequest request;
+		GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+		if (request.isDenied())
+		{
+			// Keep running
+			ev.Veto();
+			return;
+		}
     }
-    else
-    {
-        wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
+    
+    wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
 
-        _topLevelWindow->Hide();
+    _topLevelWindow->Hide();
 
-        // Invoke cleanup code which still needs the GUI hierarchy to be
-        // present
-        preDestructionCleanup();
+    // Invoke cleanup code which still needs the GUI hierarchy to be
+    // present
+    preDestructionCleanup();
 
-        // Destroy the actual window
-        _topLevelWindow->Destroy();
+    // Destroy the actual window
+    _topLevelWindow->Destroy();
 
-        // wxWidgets is supposed to quit when the main window is destroyed, but
-        // it doesn't so we need to exit the main loop manually. Probably we
-        // are keeping some other window around internally which makes wx think
-        // that the application is still needed.
-        wxTheApp->ExitMainLoop();
-    }
+    // wxWidgets is supposed to quit when the main window is destroyed, but
+    // it doesn't so we need to exit the main loop manually. Probably we
+    // are keeping some other window around internally which makes wx think
+    // that the application is still needed.
+    wxTheApp->ExitMainLoop();
 }
 
 wxFrame* MainFrame::getWxTopLevelWindow()
