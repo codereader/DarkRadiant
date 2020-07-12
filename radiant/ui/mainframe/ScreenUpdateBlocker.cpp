@@ -63,6 +63,10 @@ ScreenUpdateBlocker::~ScreenUpdateBlocker()
 
     // Re-draw the scene to clear any artefacts in the buffer
     GlobalMainFrame().updateAllWindows();
+
+	// Run one idle event loop, to allow wxWidgets to clean up the
+	// modal progress dialog window
+	wxTheApp->ProcessIdle();
 }
 
 void ScreenUpdateBlocker::pulse()

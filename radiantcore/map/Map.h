@@ -13,6 +13,7 @@
 #include "model/export/ScaledModelExporter.h"
 #include "model/export/ModelScalePreserver.h"
 #include "MapPositionManager.h"
+#include "messages/ApplicationShutdownRequest.h"
 
 #include <sigc++/signal.h>
 #include <wx/stopwatch.h>
@@ -54,6 +55,8 @@ class Map :
     wxStopWatch _mapSaveTimer;
 
 	MapEventSignal _mapEvent;
+
+	std::size_t _shutdownListener;
 
 private:
     std::string getSaveConfirmationText() const;
@@ -165,13 +168,6 @@ public:
 	 */
 	MapFormatPtr getFormat();
 
-	/** greebo: Asks the user if the current changes should be saved.
-	 *
-	 * @returns: true, if the user gave clearance (map was saved, had no
-	 * 			 changes to be saved, etc.), false, if the user hit "cancel".
-	 */
-	bool askForSave(const std::string& title);
-
 	/** greebo: Focus the XYViews and the Camera to the given point/angle.
 	 */
 	static void focusViews(const Vector3& point, const Vector3& angles);
@@ -199,6 +195,15 @@ public:
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);
 
 private:
+	/** 
+	 * greebo: Asks the user if the current changes should be saved.
+	 *
+	 * @returns: true, if the user gave clearance (map was saved, had no
+	 * changes to be saved, etc.), false, if the user hit "cancel".
+	 */
+	bool askForSave(const std::string& title);
+
+	void handleShutdownRequest(radiant::ApplicationShutdownRequest& request);
 
 	/** greebo: Loads a prefab and translates it to the given target coordinates
 	 */

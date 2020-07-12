@@ -65,7 +65,8 @@ namespace
 
 Map::Map() :
     _lastCopyMapName(""),
-    _saveInProgress(false)
+    _saveInProgress(false),
+    _shutdownListener(0)
 {
 	_mapSaveTimer.Pause();
 }
@@ -492,13 +493,13 @@ bool Map::askForSave(const std::string& title)
     }
 
     // Ask the user
-    ui::IDialogPtr msgBox = GlobalDialogManager().createMessageBox(
+    auto msgBox = GlobalDialogManager().createMessageBox(
         title,
         getSaveConfirmationText(),
         ui::IDialog::MESSAGE_SAVECONFIRMATION
     );
 
-    ui::IDialog::Result result = msgBox->run();
+    auto result = msgBox->run();
 
     if (result == ui::IDialog::RESULT_CANCELLED)
     {
@@ -872,16 +873,31 @@ void Map::initialiseModule(const ApplicationContext& ctx)
     GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(this, &Map::onRadiantShutdown)
     );
+
+    _shutdownListener = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::ApplicationShutdownRequest,
+        radiant::TypeListener<radiant::ApplicationShutdownRequest>(
+            sigc::mem_fun(this, &Map::handleShutdownRequest)));
 }
 
 void Map::shutdownModule()
 {
+    GlobalRadiantCore().getMessageBus().removeListener(_shutdownListener);
+
     _scaledModelExporter.shutdown();
 
 	GlobalSceneGraph().removeSceneObserver(this);
 
     _modelScalePreserver.reset();
 	_mapPositionManager.reset();
+}
+
+void Map::handleShutdownRequest(radiant::ApplicationShutdownRequest& request)
+{
+    if (!askForSave(_("Exit DarkRadiant")))
+    {
+        request.deny();
+    }
 }
 
 void Map::onRadiantShutdown()
