@@ -205,7 +205,14 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
         mipMap.offset = offset;
         mipMap.width = width;
         mipMap.height = height;
-        mipMap.size = std::max( width, 4 ) / 4 * std::max( height, 4 ) / 4 * blockBytes;
+
+        // Calculate size in bytes for this mipmap. For compressed formats,
+        // this is based on the block size, otherwise it derives from the bytes
+        // per pixel.
+        if (header.isCompressed())
+            mipMap.size = std::max( width, 4 ) / 4 * std::max( height, 4 ) / 4 * blockBytes;
+        else
+            mipMap.size = width * height * (header.getRGBBits() / 8);
 
         // Update the offset for the next mipmap
         offset += mipMap.size;
