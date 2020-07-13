@@ -209,15 +209,16 @@ struct DDSHeader
     }
 
     /// Test if this DDSHeader represents a valid DDS image
-    bool isValid() const
-    {
-        return size == 124                  // fixed size structure
-            && pixelFormat.size == 32
-            && testFlag(DDSD_CAPS)          // required in every DDS file
-            && testFlag(DDSD_HEIGHT)        // required in every DDS file
-            && testFlag(DDSD_WIDTH)         // required in every DDS file
-            && testFlag(DDSD_PIXELFORMAT);  // required in every DDS file
-    }
+    bool isValid() const;
+
+    /// Return the width of this DDS image
+    int getWidth() const;
+
+    /// Return the height of this DDS image
+    int getHeight() const;
+
+    /// Return the number of mipmaps (at least 1)
+    int getMipMapCount() const;
 
     /// Test if this DDS image is compressed (DXTx)
     bool isCompressed() const

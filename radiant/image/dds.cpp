@@ -170,31 +170,35 @@ typedef std::shared_ptr<DDSImage> DDSImagePtr;
 
 DDSImagePtr LoadDDSFromStream(InputStream& stream)
 {
-    int width(0), height(0);
-    ddsPF_t pixelFormat;
-
     // Load the header
     typedef StreamBase::byte_type byteType;
     DDSHeader header;
     stream.read(reinterpret_cast<byteType*>(&header), sizeof(header));
 
-    if (DDSGetInfo(&header, &width, &height, &pixelFormat) == -1) {
-        return DDSImagePtr();
+    std::cout << header << std::endl;
+
+    // Reject any invalid DDS structure
+    if (!header.isValid())
+    {
+        rError() << "Invalid DDS header" << std::endl;
     }
 
-    // Get the number of mipmaps from the file
-    std::size_t mipMapCount = (header.flags & DDSD_MIPMAPCOUNT) ? header.mipMapCount : 1;
+    // Extract basic metadata: width, height, format and mipmap count
+    int width = header.getWidth(), height = header.getHeight();
+    std::string compressionFormat = header.getCompressionFormat();
+    std::size_t mipMapCount = header.getMipMapCount();
 
     MipMapInfoList mipMapInfo;
     mipMapInfo.resize(mipMapCount);
 
     // Calculate the total memory requirements (greebo: DXT1 has 8 bytes per block)
-    std::size_t blockBytes = (pixelFormat == DDS_PF_DXT1) ? 8 : 16;
+    std::size_t blockBytes = (compressionFormat == "DXT1") ? 8 : 16;
 
     std::size_t size = 0;
     std::size_t offset = 0;
 
-    for (std::size_t i = 0; i < mipMapCount; ++i) {
+    for (std::size_t i = 0; i < mipMapCount; ++i)
+    {
         // Create a new mipmap structure
         MipMapInfo& mipMap = mipMapInfo[i];
 
@@ -218,18 +222,18 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     DDSImagePtr image(new DDSImage(size));
 
     // Set the format of this DDS image
-    static const std::map<ddsPF_t, GLenum> GL_FORMAT_FOR_DDS
+    static const std::map<std::string, GLenum> GL_FORMAT_FOR_DDS
     {
-        { DDS_PF_DXT1, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT },
-        { DDS_PF_DXT3, GL_COMPRESSED_RGBA_S3TC_DXT3_EXT },
-        { DDS_PF_DXT5, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT },
-        { DDS_PF_ARGB8888, 0 }
+        { "DXT1", GL_COMPRESSED_RGBA_S3TC_DXT1_EXT },
+        { "DXT3", GL_COMPRESSED_RGBA_S3TC_DXT3_EXT },
+        { "DXT5", GL_COMPRESSED_RGBA_S3TC_DXT5_EXT },
+        { "", 0 }
     };
 
-    if (GL_FORMAT_FOR_DDS.count(pixelFormat) < 1)
-        rError() << "Unknown DDS format (" << pixelFormat << ")" << std::endl;
+    if (GL_FORMAT_FOR_DDS.count(compressionFormat) < 1)
+        rError() << "Unknown DDS format (" << compressionFormat << ")" << std::endl;
     else
-        image->setFormat(GL_FORMAT_FOR_DDS.at(pixelFormat));
+        image->setFormat(GL_FORMAT_FOR_DDS.at(compressionFormat));
 
     // Load the mipmaps into the allocated memory
     for (std::size_t i = 0; i < mipMapInfo.size(); ++i)

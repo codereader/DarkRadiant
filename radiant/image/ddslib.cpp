@@ -98,6 +98,46 @@ std::ostream& operator<< (std::ostream& os, const DDSHeader& h)
     return os;
 }
 
+namespace
+{
+
+bool fourCCEqual(const char* l, const char* r)
+{
+    return *reinterpret_cast<const uint32_t*>(l)
+        == *reinterpret_cast<const uint32_t*>(r);
+}
+
+}
+
+bool DDSHeader::isValid() const
+{
+    return fourCCEqual(magic, "DDS ")
+        && size == 124                  // fixed size structure
+        && pixelFormat.size == 32
+        && testFlag(DDSD_CAPS)          // required in every DDS file
+        && testFlag(DDSD_HEIGHT)        // required in every DDS file
+        && testFlag(DDSD_WIDTH)         // required in every DDS file
+        && testFlag(DDSD_PIXELFORMAT);  // required in every DDS file
+}
+
+int DDSHeader::getWidth() const
+{
+    return DDSLong(width);
+}
+
+int DDSHeader::getHeight() const
+{
+    return DDSLong(height);
+}
+
+int DDSHeader::getMipMapCount() const
+{
+    if (testFlag(DDSD_MIPMAPCOUNT))
+       return mipMapCount;
+    else
+       return 1;
+}
+
 /*
 DDSDecodePixelFormat()
 determines which pixel format the dds texture is in
