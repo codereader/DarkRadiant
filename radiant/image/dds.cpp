@@ -61,8 +61,10 @@ class DDSImage: public Image, public util::Noncopyable
     // The actual pixels
     mutable std::vector<uint8_t> _pixelData;
 
-    // The compression format ID
+    // The GL format of the texture data, and a boolean flag to indicate if we
+    // need to upload with glCompressedTexImage2D rather than glTexImage2D
     GLenum _format = 0;
+    bool _compressed = true;
 
     // Metadata for each mipmap. All pixel data is stored in _pixelData, with
     // the offset to each mipmap stored in the _mipMapInfo list.
@@ -74,10 +76,11 @@ public:
     DDSImage(std::size_t size): _pixelData(size)
     {}
 
-    // Set the compression format. 0 means uncompressed.
-    void setFormat(GLenum format)
+    // Set the compression format
+    void setFormat(GLenum format, bool compressed)
     {
         _format = format;
+        _compressed = compressed;
     }
 
     // Add a new mipmap with the given parameters and return a pointer to its
@@ -123,22 +126,36 @@ public:
         {
             const MipMapInfo& mipMap = _mipMapInfo[i];
 
-            glCompressedTexImage2D(
-                GL_TEXTURE_2D,
-                static_cast<GLint>(i),
-                _format,
-                static_cast<GLsizei>(mipMap.width),
-                static_cast<GLsizei>(mipMap.height),
-                0,
-                static_cast<GLsizei>(mipMap.size),
-                _pixelData.data() + mipMap.offset
-            );
+            if (_compressed)
+            {
+                glCompressedTexImage2D(
+                    GL_TEXTURE_2D, static_cast<GLint>(i), _format,
+                    static_cast<GLsizei>(mipMap.width),
+                    static_cast<GLsizei>(mipMap.height),
+                    0, static_cast<GLsizei>(mipMap.size),
+                    _pixelData.data() + mipMap.offset
+                );
+            }
+            else
+            {
+                // For uncompressed textures the format specifies the layout in
+                // memory, not the internal format we want OpenGL to use (which
+                // is always GL_RGB).
+                glTexImage2D(
+                    GL_TEXTURE_2D, static_cast<GLint>(i), GL_RGB,
+                    static_cast<GLsizei>(mipMap.width),
+                    static_cast<GLsizei>(mipMap.height),
+                    0, _format, GL_UNSIGNED_BYTE,
+                    _pixelData.data() + mipMap.offset
+                );
+            }
 
             // Handle unsupported format error
             if (glGetError() == GL_INVALID_ENUM)
             {
                 rError() << "[DDSImage] Unable to bind texture '" << name
                          << "': unsupported texture format " << _format
+                         << (_compressed ? " (compressed)" : " (uncompressed)")
                          << std::endl;
 
                 return TexturePtr();
@@ -168,6 +185,21 @@ public:
 };
 typedef std::shared_ptr<DDSImage> DDSImagePtr;
 
+// Map DDS FOURCC values to GLenum compression formats
+static const std::map<std::string, GLenum> GL_FMT_FOR_FOURCC
+{
+    { "DXT1", GL_COMPRESSED_RGBA_S3TC_DXT1_EXT },
+    { "DXT3", GL_COMPRESSED_RGBA_S3TC_DXT3_EXT },
+    { "DXT5", GL_COMPRESSED_RGBA_S3TC_DXT5_EXT },
+};
+
+// Map uncompressed DDS bit depths to GLenum memory layouts
+static const std::map<int, GLenum> GL_FMT_FOR_BITDEPTH
+{
+    { 24, GL_RGB },
+    { 32, GL_RGBA }
+};
+
 DDSImagePtr LoadDDSFromStream(InputStream& stream)
 {
     // Load the header
@@ -186,6 +218,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     // Extract basic metadata: width, height, format and mipmap count
     int width = header.getWidth(), height = header.getHeight();
     std::string compressionFormat = header.getCompressionFormat();
+    int bitDepth = header.getRGBBits();
     std::size_t mipMapCount = header.getMipMapCount();
 
     MipMapInfoList mipMapInfo;
@@ -212,7 +245,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
         if (header.isCompressed())
             mipMap.size = std::max( width, 4 ) / 4 * std::max( height, 4 ) / 4 * blockBytes;
         else
-            mipMap.size = width * height * (header.getRGBBits() / 8);
+            mipMap.size = width * height * (bitDepth / 8);
 
         // Update the offset for the next mipmap
         offset += mipMap.size;
@@ -229,18 +262,12 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     DDSImagePtr image(new DDSImage(size));
 
     // Set the format of this DDS image
-    static const std::map<std::string, GLenum> GL_FORMAT_FOR_DDS
-    {
-        { "DXT1", GL_COMPRESSED_RGBA_S3TC_DXT1_EXT },
-        { "DXT3", GL_COMPRESSED_RGBA_S3TC_DXT3_EXT },
-        { "DXT5", GL_COMPRESSED_RGBA_S3TC_DXT5_EXT },
-        { "", 0 }
-    };
-
-    if (GL_FORMAT_FOR_DDS.count(compressionFormat) < 1)
-        rError() << "Unknown DDS format (" << compressionFormat << ")" << std::endl;
+    if (GL_FMT_FOR_FOURCC.count(compressionFormat) == 1)
+        image->setFormat(GL_FMT_FOR_FOURCC.at(compressionFormat), true);
+    else if (GL_FMT_FOR_BITDEPTH.count(bitDepth) == 1)
+        image->setFormat(GL_FMT_FOR_BITDEPTH.at(bitDepth), false);
     else
-        image->setFormat(GL_FORMAT_FOR_DDS.at(compressionFormat));
+        rError() << "Unknown DDS format (" << compressionFormat << ")" << std::endl;
 
     // Load the mipmaps into the allocated memory
     for (std::size_t i = 0; i < mipMapInfo.size(); ++i)
