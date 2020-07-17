@@ -8,6 +8,7 @@
 #include "wxutil/FileChooser.h"
 #include "wxutil/IConv.h"
 #include "os/path.h"
+#include "messages/FileSelectionRequest.h"
 
 namespace map
 {
@@ -84,14 +85,29 @@ MapFileSelection MapFileManager::selectFile(bool open,
 	return fileInfo;
 }
 
-/* PUBLIC INTERFACE METHODS */
-
 MapFileSelection MapFileManager::getMapFileSelection(bool open,
 										 const std::string& title,
 										 const std::string& type,
 										 const std::string& defaultFile)
 {
+#if 1
+	auto mode = open ? 
+		radiant::FileSelectionRequest::Mode::Open : 
+		radiant::FileSelectionRequest::Mode::Save;
+
+	radiant::FileSelectionRequest request(mode, title, type, defaultFile);
+	GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+	MapFileSelection result;
+
+	result.fullPath = request.getResult().fullPath;
+	result.mapFormatName = request.getResult().mapFormatName;
+	result.mapFormat = request.getResult().mapFormat;
+
+	return result;
+#else
 	return getInstance().selectFile(open, title, type, defaultFile);
+#endif
 }
 
 } // namespace map
