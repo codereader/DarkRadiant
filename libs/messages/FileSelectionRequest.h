@@ -29,9 +29,6 @@ public:
 
         // For save dialogs, a specific map format might have been selected
         std::string mapFormatName;
-
-        // The reference to the named mapformat above. Can be an empty pointer.
-        map::MapFormatPtr mapFormat;
     };
 
 private:

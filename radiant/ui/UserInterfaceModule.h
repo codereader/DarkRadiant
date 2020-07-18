@@ -8,6 +8,7 @@
 
 #include "EntityClassColourManager.h"
 #include "LongRunningOperationHandler.h"
+#include "FileSelectionRequestHandler.h"
 #include "AutoSaveRequestHandler.h"
 #include "MapFileProgressHandler.h"
 #include "shaderclipboard/ShaderClipboardStatus.h"
@@ -34,6 +35,7 @@ private:
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 	std::unique_ptr<MapFileProgressHandler> _mapFileProgressHandler;
 	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;
+	std::unique_ptr<FileSelectionRequestHandler> _fileSelectionRequestHandler;
 	std::unique_ptr<ShaderClipboardStatus> _shaderClipboardStatus;
 
 	sigc::connection _entitySettingsConn;

@@ -161,6 +161,7 @@
     <ClInclude Include="..\..\libs\messages\ApplicationShutdownRequest.h" />
     <ClInclude Include="..\..\libs\messages\AutomaticMapSaveRequest.h" />
     <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h" />
+    <ClInclude Include="..\..\libs\messages\FileSelectionRequest.h" />
     <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h" />
     <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h" />
     <ClInclude Include="..\..\libs\messages\MapFileOperation.h" />

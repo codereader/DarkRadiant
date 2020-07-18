@@ -237,6 +237,9 @@
     <ClInclude Include="..\..\libs\messages\ApplicationShutdownRequest.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\messages\FileSelectionRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

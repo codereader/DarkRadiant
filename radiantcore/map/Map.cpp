@@ -692,7 +692,7 @@ void Map::openMap(const cmd::ArgumentList& args)
     {
         mapToLoad = candidate;
     }
-    else
+    else if (!candidate.empty())
     {
         // Next, try to look up the map in the regular maps path
         fs::path mapsPath = GlobalGameManager().getMapPath();

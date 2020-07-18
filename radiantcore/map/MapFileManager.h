@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <map>
 #include "imapformat.h"
 
 namespace map
@@ -31,24 +30,7 @@ public:
  */
 class MapFileManager
 {
-	// The mapping between type and last viewed path
-	// like "map" => "/usr/local/game/doom3/maps/"
-	// and "prefab" => "~/.doom3/darkmod/prefabs/"
-	typedef std::map<std::string, std::string> PathMap;
-	PathMap _lastDirs;
-
-private:
-
-	// Static instance owner
-	static MapFileManager& getInstance();
-
-	// Utility function to display a file chooser and return the selected path
-	MapFileSelection selectFile(bool open, const std::string& title, const std::string& type, const std::string& defaultFile);
-
 public:
-	// Constructor, loads the default map and prefab paths
-	MapFileManager();
-
 	/**
 	 * Query the user for a map file to load or save.
 	 *

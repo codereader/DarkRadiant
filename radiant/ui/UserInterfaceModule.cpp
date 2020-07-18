@@ -154,6 +154,7 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	_longOperationHandler.reset(new LongRunningOperationHandler);
 	_mapFileProgressHandler.reset(new MapFileProgressHandler);
 	_autoSaveRequestHandler.reset(new AutoSaveRequestHandler);
+	_fileSelectionRequestHandler.reset(new FileSelectionRequestHandler);
 
 	initialiseEntitySettings();
 
@@ -193,6 +194,7 @@ void UserInterfaceModule::shutdownModule()
 	_longOperationHandler.reset();
 	_eClassColourManager.reset();
 	_mapFileProgressHandler.reset();
+	_fileSelectionRequestHandler.reset();
 	_autoSaveRequestHandler.reset();
 	_shaderClipboardStatus.reset();
 	

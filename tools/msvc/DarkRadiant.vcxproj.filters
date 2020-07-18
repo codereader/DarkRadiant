@@ -1269,6 +1269,9 @@
     <ClInclude Include="..\..\radiant\clipboard\ClipboardModule.h">
       <Filter>src\clipboard</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\FileSelectionRequestHandler.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
