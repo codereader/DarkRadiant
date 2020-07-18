@@ -20,6 +20,7 @@
 
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/entitychooser/EntityClassChooser.h"
+#include "ui/prefabselector/PrefabSelector.h"
 
 #include "string/convert.h"
 #include "scene/GroupNodeChecker.h"
@@ -329,8 +330,14 @@ void OrthoContextMenu::callbackAddLight()
 
 void OrthoContextMenu::callbackAddPrefab()
 {
-    // Pass the call to the map algorithm and give the lastPoint coordinate as argument
-    GlobalCommandSystem().executeCommand(LOAD_PREFAB_AT_CMD, _lastPoint);
+    auto result = PrefabSelector::ChoosePrefab();
+
+    if (!result.prefabPath.empty())
+    {
+        // Pass the call to the map algorithm and give the lastPoint coordinate as argument
+        GlobalCommandSystem().executeCommand(LOAD_PREFAB_AT_CMD, 
+            result.prefabPath, _lastPoint, result.insertAsGroup);
+    }
 }
 
 void OrthoContextMenu::callbackAddSpeaker()
