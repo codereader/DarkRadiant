@@ -207,8 +207,6 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     DDSHeader header;
     stream.read(reinterpret_cast<byteType*>(&header), sizeof(header));
 
-    std::cout << header << std::endl;
-
     // Reject any invalid DDS structure
     if (!header.isValid())
     {
