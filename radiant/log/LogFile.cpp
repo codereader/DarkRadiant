@@ -21,7 +21,7 @@ namespace
 
 LogFile::LogFile(const std::string& filename) :
 	_logFilename(
-		module::ModuleRegistry::Instance().getApplicationContext().getSettingsPath() +
+		module::ModuleRegistry::Instance().getApplicationContext().getCacheDataPath() +
 		filename
 	),
     _logStream(_logFilename.c_str())

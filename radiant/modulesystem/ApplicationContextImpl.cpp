@@ -89,6 +89,11 @@ std::string ApplicationContextImpl::getSettingsPath() const
     return _settingsPath;
 }
 
+std::string ApplicationContextImpl::getCacheDataPath() const
+{
+    return _cachePath;
+}
+
 std::string ApplicationContextImpl::getBitmapsPath() const
 {
     //wxMessageOutputDebug().Output(wxString("RTD Path is ") + getRuntimeDataPath());
@@ -216,10 +221,27 @@ std::string getExecutablePath(char* argv[])
 
 // Get an environment variable as a string (because getenv() can return nullptr
 // and it is not safe to construct a string from a nullptr)
-std::string strenv(const char* key)
+std::string strenv(const std::string& key)
 {
-    const char* v = getenv(key);
+    const char* v = getenv(key.c_str());
     return v ? std::string(v) : std::string();
+}
+
+// Get an XDG path, checking the respective environment variable first, then
+// falling back to a default in $HOME
+std::string getXDGPath(const std::string& envVar, const std::string& fallback)
+{
+    std::string xdgVar = strenv(envVar);
+    if (xdgVar.empty())
+    {
+        // Use default path within $HOME/fallback
+        static const std::string HOME_DIR = strenv("HOME");
+        return os::standardPathWithSlash(HOME_DIR) + fallback + "/darkradiant/";
+    }
+    else
+    {
+        return os::standardPathWithSlash(xdgVar);
+    }
 }
 
 } // namespace
@@ -242,22 +264,17 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
     initArgs(argc, argv);
 
     // Initialise the home directory path
-    std::string xdgConfig = strenv("XDG_CONFIG_HOME");
-    if (xdgConfig.empty())
-    {
-        // Use default path within $HOME/.config
-        std::string homedir = strenv("HOME");
-        _homePath = os::standardPathWithSlash(homedir) + ".config/darkradiant/";
-    }
-    else
-    {
-        // Use the user-provided XDG_CONFIG_HOME override, which should be an
-        // absolute path
-        _homePath = xdgConfig;
-    }
-
-    // Create the home path if it doesn't exist
+    _homePath = getXDGPath("XDG_CONFIG_HOME", ".config");
     os::makeDirectory(_homePath);
+
+    // Initialise the cache path. Same as _homePath on Mac, whereas on Linux we
+    // want to follow the FreeDesktop standard.
+#if defined(__linux__)
+    _cachePath = getXDGPath("XDG_CACHE_HOME", ".cache");
+#else
+    _cachePath = _homePath;
+#endif
+    os::makeDirectory(_cachePath);
 
     _appPath = getExecutablePath(argv);
     ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
