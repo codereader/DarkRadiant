@@ -45,7 +45,6 @@ void XMLRegistry::saveToDisk()
 
     // Don't save these paths into the xml files.
     copiedTree.deleteXPath(RKEY_APP_PATH);
-    copiedTree.deleteXPath(RKEY_HOME_PATH);
     copiedTree.deleteXPath(RKEY_SETTINGS_PATH);
     copiedTree.deleteXPath(RKEY_BITMAPS_PATH);
 

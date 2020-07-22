@@ -22,7 +22,6 @@
  *          to retrieve the various paths.
  */
 const char* const RKEY_APP_PATH = "user/paths/appPath";
-const char* const RKEY_HOME_PATH = "user/paths/homePath";
 const char* const RKEY_SETTINGS_PATH = "user/paths/settingsPath";
 const char* const RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
 const char* const RKEY_MAP_PATH = "user/paths/mapPath";

@@ -26,7 +26,7 @@ namespace radiant
 std::string ApplicationContextImpl::getApplicationPath() const
 {
     //wxMessageOutputDebug().Output(wxString("Application Path is ") + _appPath);
-	return _appPath;
+    return _appPath;
 }
 
 std::string ApplicationContextImpl::getLibraryPath() const
@@ -86,19 +86,19 @@ std::string ApplicationContextImpl::getHTMLPath() const
 
 std::string ApplicationContextImpl::getSettingsPath() const
 {
-	return _settingsPath;
+    return _settingsPath;
 }
 
 std::string ApplicationContextImpl::getBitmapsPath() const
 {
     //wxMessageOutputDebug().Output(wxString("RTD Path is ") + getRuntimeDataPath());
-	return getRuntimeDataPath() + "bitmaps/";
+    return getRuntimeDataPath() + "bitmaps/";
 }
 
 const ApplicationContext::ArgumentList&
 ApplicationContextImpl::getCmdLineArgs() const
 {
-	return _cmdLineArgs;
+    return _cmdLineArgs;
 }
 
 std::ostream& ApplicationContextImpl::getOutputStream() const
@@ -180,70 +180,90 @@ std::string getExecutablePath(char* argv[])
 {
     char buf[PATH_MAX];
 
-	// Now read the symbolic link
-	int ret = readlink(LINK_NAME, buf, PATH_MAX);
+    // Now read the symbolic link
+    int ret = readlink(LINK_NAME, buf, PATH_MAX);
 
-	if (ret == -1)
+    if (ret == -1)
     {
-		rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'\n";
+        rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'\n";
 
-		const char* path = realpath(argv[0], buf);
+        const char* path = realpath(argv[0], buf);
 
-		if (path == nullptr)
+        if (path == nullptr)
         {
-			// In case of an error, leave the handling up to the caller
-			return std::string();
-		}
-	}
+            // In case of an error, leave the handling up to the caller
+            return std::string();
+        }
+    }
 
-	/* Ensure proper NUL termination */
-	buf[ret] = '\0';
+    /* Ensure proper NUL termination */
+    buf[ret] = '\0';
 
-	/* delete the program name */
-	*(strrchr(buf, '/')) = '\0';
+    /* delete the program name */
+    *(strrchr(buf, '/')) = '\0';
 
-	// NOTE: we build app path with a trailing '/'
-	// it's a general convention in Radiant to have the slash at the end of directories
-	if (buf[strlen(buf)-1] != '/')
+    // NOTE: we build app path with a trailing '/'
+    // it's a general convention in Radiant to have the slash at the end of directories
+    if (buf[strlen(buf)-1] != '/')
     {
-		strcat(buf, "/");
-	}
+        strcat(buf, "/");
+    }
 
-	return std::string(buf);
+    return std::string(buf);
 }
 
 #endif
 
+// Get an environment variable as a string (because getenv() can return nullptr
+// and it is not safe to construct a string from a nullptr)
+std::string strenv(const char* key)
+{
+    const char* v = getenv(key);
+    return v ? std::string(v) : std::string();
 }
+
+} // namespace
 
 void ApplicationContextImpl::initialise(int argc, char* argv[])
 {
-	// Give away unnecessary root privileges.
-	// Important: must be done before calling gtk_init().
-	char *loginname;
-	struct passwd *pw;
-	seteuid(getuid());
+    // Give away unnecessary root privileges.
+    // Important: must be done before calling gtk_init().
+    char *loginname;
+    struct passwd *pw;
+    seteuid(getuid());
 
-	if (geteuid() == 0 &&
-		(loginname = getlogin()) != 0 &&
-		(pw = getpwnam(loginname)) != 0)
-	{
-		setuid(pw->pw_uid);
-	}
+    if (geteuid() == 0 &&
+        (loginname = getlogin()) != 0 &&
+        (pw = getpwnam(loginname)) != 0)
+    {
+        setuid(pw->pw_uid);
+    }
 
-	initArgs(argc, argv);
+    initArgs(argc, argv);
 
     // Initialise the home directory path
-    std::string homedir = getenv("HOME");
-    std::string home = os::standardPathWithSlash(homedir) + ".darkradiant/";
-    os::makeDirectory(home);
-    _homePath = home;
+    std::string xdgConfig = strenv("XDG_CONFIG_HOME");
+    if (xdgConfig.empty())
+    {
+        // Use default path within $HOME/.config
+        std::string homedir = strenv("HOME");
+        _homePath = os::standardPathWithSlash(homedir) + ".config/darkradiant/";
+    }
+    else
+    {
+        // Use the user-provided XDG_CONFIG_HOME override, which should be an
+        // absolute path
+        _homePath = xdgConfig;
+    }
 
-	_appPath = getExecutablePath(argv);
+    // Create the home path if it doesn't exist
+    os::makeDirectory(_homePath);
+
+    _appPath = getExecutablePath(argv);
     ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
 
-	// Initialise the relative paths
-	initPaths();
+    // Initialise the relative paths
+    initPaths();
 }
 
 // ================ WIN32 ====================
@@ -251,46 +271,46 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 
 void ApplicationContextImpl::initialise(int argc, char* argv[])
 {
-	initArgs(argc, argv);
+    initArgs(argc, argv);
 
     // Get application data directory from environment
-	std::string appData = getenv("APPDATA");
-	if (appData.empty())
+    std::string appData = strenv("APPDATA");
+    if (appData.empty())
     {
-		throw std::runtime_error(
+        throw std::runtime_error(
             "Critical: cannot find APPDATA environment variable."
         );
-	}
+    }
 
     // Construct DarkRadiant home directory
-	_homePath = appData + "\\DarkRadiant";
-	if (!os::makeDirectory(_homePath))
+    _homePath = appData + "\\DarkRadiant";
+    if (!os::makeDirectory(_homePath))
     {
         rConsoleError() << "ApplicationContextImpl: could not create home directory "
                   << "'" << _homePath << "'" << std::endl;
     }
 
-	{
-		// get path to the editor
-		wchar_t filename[MAX_PATH+1];
-		GetModuleFileName(0, filename, MAX_PATH);
-		wchar_t* last_separator = wcsrchr(filename, '\\');
-		if (last_separator != 0) {
-			*(last_separator+1) = '\0';
-		}
-		else {
-			filename[0] = '\0';
-		}
+    {
+        // get path to the editor
+        wchar_t filename[MAX_PATH+1];
+        GetModuleFileName(0, filename, MAX_PATH);
+        wchar_t* last_separator = wcsrchr(filename, '\\');
+        if (last_separator != 0) {
+            *(last_separator+1) = '\0';
+        }
+        else {
+            filename[0] = '\0';
+        }
 
-		// convert to std::string
-		std::wstring wide(filename);
-		std::string appPathNarrow(wide.begin(), wide.end());
+        // convert to std::string
+        std::wstring wide(filename);
+        std::string appPathNarrow(wide.begin(), wide.end());
 
-		// Make sure we have forward slashes
-		_appPath = os::standardPath(appPathNarrow);
-	}
-	// Initialise the relative paths
-	initPaths();
+        // Make sure we have forward slashes
+        _appPath = os::standardPath(appPathNarrow);
+    }
+    // Initialise the relative paths
+    initPaths();
 }
 
 #else
@@ -301,21 +321,21 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 
 void ApplicationContextImpl::initArgs(int argc, char* argv[])
 {
-	// Store the arguments locally, ignore the first one
-	for (int i = 1; i < argc; i++) {
-		_cmdLineArgs.push_back(argv[i]);
-	}
+    // Store the arguments locally, ignore the first one
+    for (int i = 1; i < argc; i++) {
+        _cmdLineArgs.push_back(argv[i]);
+    }
 }
 
 void ApplicationContextImpl::initPaths()
 {
-	// Ensure that the homepath ends with a slash
-	_homePath = os::standardPathWithSlash(_homePath);
-	_appPath = os::standardPathWithSlash(_appPath);
+    // Ensure that the homepath ends with a slash
+    _homePath = os::standardPathWithSlash(_homePath);
+    _appPath = os::standardPathWithSlash(_appPath);
 
-	// Make sure the home/settings folder exists (attempt to create it)
-	_settingsPath = _homePath;
-	if (!os::makeDirectory(_settingsPath))
+    // Make sure the home/settings folder exists (attempt to create it)
+    _settingsPath = _homePath;
+    if (!os::makeDirectory(_settingsPath))
     {
         rConsoleError() << "ApplicationContextImpl: unable to create settings path '"
                   << _settingsPath << "'" << std::endl;
@@ -323,25 +343,24 @@ void ApplicationContextImpl::initPaths()
 }
 
 void ApplicationContextImpl::savePathsToRegistry() const {
-	GlobalRegistry().set(RKEY_APP_PATH, _appPath);
-	GlobalRegistry().set(RKEY_HOME_PATH, _homePath);
-	GlobalRegistry().set(RKEY_SETTINGS_PATH, _settingsPath);
-	GlobalRegistry().set(RKEY_BITMAPS_PATH, getBitmapsPath());
+    GlobalRegistry().set(RKEY_APP_PATH, _appPath);
+    GlobalRegistry().set(RKEY_SETTINGS_PATH, _settingsPath);
+    GlobalRegistry().set(RKEY_BITMAPS_PATH, getBitmapsPath());
 }
 
 const ErrorHandlingFunction& ApplicationContextImpl::getErrorHandlingFunction() const
 {
-	return _errorHandler;
+    return _errorHandler;
 }
 
 void ApplicationContextImpl::initErrorHandler()
 {
 #ifdef _DEBUG
-	// Use the PopupErrorHandler, which displays a popup box
-	_errorHandler = radiant::PopupErrorHandler::HandleError;
+    // Use the PopupErrorHandler, which displays a popup box
+    _errorHandler = radiant::PopupErrorHandler::HandleError;
 
-	// Initialise the function pointer in our binary's scope
-	GlobalErrorHandler() = _errorHandler;
+    // Initialise the function pointer in our binary's scope
+    GlobalErrorHandler() = _errorHandler;
 #endif
 }
 
