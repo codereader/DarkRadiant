@@ -139,7 +139,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
 void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 {
-	if (args.size() < 2 || args.size() > 6)
+	if (args.size() < 2 || args.size() > 7)
 	{
 		rMessage() << "Usage: ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]" << std::endl;
 		rMessage() << "   <Path> must be an absolute file system path" << std::endl;
