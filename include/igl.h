@@ -32,7 +32,7 @@ public:
 	/// \brief Is true if the global shared OpenGL context is valid.
     virtual bool wxContextValid() const = 0;
 
-    // Returns true if openGL supports ARB or GLSL lighting
+    // Returns true if openGL supports GLSL lighting
     virtual bool shaderProgramsAvailable() const = 0;
 
     // Sets the flag whether shader programs are available. 

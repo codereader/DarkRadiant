@@ -13,89 +13,89 @@
 namespace render {
 
 namespace {
-	// Polygon stipple pattern
-	const GLubyte POLYGON_STIPPLE_PATTERN[132] = {
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
- 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
- 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
- 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
- 	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	      0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55
-	};
+    // Polygon stipple pattern
+    const GLubyte POLYGON_STIPPLE_PATTERN[132] = {
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
+          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55
+    };
 }
 
 /**
  * Main constructor.
  */
 OpenGLRenderSystem::OpenGLRenderSystem() :
-	_realised(false),
+    _realised(false),
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
-	_currentShaderProgram(SHADER_PROGRAM_NONE),
-	_time(0),
-	m_lightsChanged(true),
-	m_traverseRenderablesMutex(false)
+    _currentShaderProgram(SHADER_PROGRAM_NONE),
+    _time(0),
+    m_lightsChanged(true),
+    m_traverseRenderablesMutex(false)
 {
-	// For the static default rendersystem, the MaterialManager is not existent yet,
-	// hence it will be attached in initialiseModule().
+    // For the static default rendersystem, the MaterialManager is not existent yet,
+    // hence it will be attached in initialiseModule().
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_SHADERSYSTEM))
-	{
-		_materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
-			sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
-		_materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
-			sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
+    {
+        _materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
+            sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
+        _materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
+            sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
 
-		if (GlobalMaterialManager().isRealised())
-		{
-			realise();
-		}
-	}
+        if (GlobalMaterialManager().isRealised())
+        {
+            realise();
+        }
+    }
 
     // If the openGL module is already initialised and a shared context is created
     // trigger a call to extensionsInitialised().
     if (module::ModuleRegistry::Instance().moduleExists(MODULE_OPENGL) && 
         GlobalOpenGL().wxContextValid())
-	{
+    {
         extensionsInitialised();
-	}
+    }
 }
 
 OpenGLRenderSystem::~OpenGLRenderSystem()
 {
-	_materialDefsLoaded.disconnect();
-	_materialDefsUnloaded.disconnect();
+    _materialDefsLoaded.disconnect();
+    _materialDefsUnloaded.disconnect();
 }
 
 ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 {
-	// Usual ritual, check cache and return if found, otherwise create/
-	// insert/return.
-	ShaderMap::const_iterator i = _shaders.find(name);
+    // Usual ritual, check cache and return if found, otherwise create/
+    // insert/return.
+    ShaderMap::const_iterator i = _shaders.find(name);
 
-	if (i != _shaders.end())
-	{
+    if (i != _shaders.end())
+    {
         return i->second;
-	}
+    }
 
-	// Either the shader was not found, or the weak pointer failed to lock
-	// because the shader had been deleted. Either way, create a new shader
-	// and insert into the cache.
-	OpenGLShaderPtr shd(new OpenGLShader(*this));
-	_shaders[name] = shd;
+    // Either the shader was not found, or the weak pointer failed to lock
+    // because the shader had been deleted. Either way, create a new shader
+    // and insert into the cache.
+    OpenGLShaderPtr shd(new OpenGLShader(*this));
+    _shaders[name] = shd;
 
-	// Realise the shader if the cache is realised
-	if (_realised)
-	{
-		shd->realise(name);
+    // Realise the shader if the cache is realised
+    if (_realised)
+    {
+        shd->realise(name);
 
 #if 0   // greebo: This is causing Camera and XY draw calls which in turn causes 
         // problems when rendering target lines. Can be reactivated once the target
@@ -105,10 +105,10 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
         wxTheApp->ProcessIdle();
         wxTheApp->Yield();
 #endif
-	}
+    }
 
-	// Return the new shader
-	return shd;
+    // Return the new shader
+    return shd;
 }
 
 /*
@@ -120,50 +120,50 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
                                const Matrix4& projection,
                                const Vector3& viewer)
 {
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-	// Set the projection and modelview matrices
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixd(projection);
+    // Set the projection and modelview matrices
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd(projection);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixd(modelview);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixd(modelview);
 
-	// global settings that are not set in renderstates
+    // global settings that are not set in renderstates
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
     glPolygonOffset(-1, 1);
 
-	// Set polygon stipple pattern from constant
-	glPolygonStipple(POLYGON_STIPPLE_PATTERN);
+    // Set polygon stipple pattern from constant
+    glPolygonStipple(POLYGON_STIPPLE_PATTERN);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
     if (GLEW_VERSION_1_3) {
-		glActiveTexture(GL_TEXTURE0);
-		glClientActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0);
+        glClientActiveTexture(GL_TEXTURE0);
     }
 
     if (GLEW_ARB_shader_objects) {
-		glUseProgramObjectARB(0);
-		glDisableVertexAttribArrayARB(c_attr_TexCoord0);
-		glDisableVertexAttribArrayARB(c_attr_Tangent);
-		glDisableVertexAttribArrayARB(c_attr_Binormal);
+        glUseProgramObjectARB(0);
+        glDisableVertexAttribArrayARB(c_attr_TexCoord0);
+        glDisableVertexAttribArrayARB(c_attr_Tangent);
+        glDisableVertexAttribArrayARB(c_attr_Binormal);
     }
 
     if (globalstate & RENDER_TEXTURE_2D) {
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
 
-	// Construct default OpenGL state
-	OpenGLState current;
+    // Construct default OpenGL state
+    OpenGLState current;
 
     // Set up initial GL state. This MUST MATCH the defaults in the OpenGLState
     // object, otherwise required state changes may not occur.
     glLineStipple(current.m_linestipple_factor,
-    			  current.m_linestipple_pattern);
+                  current.m_linestipple_pattern);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
@@ -188,7 +188,7 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
     glDisable(GL_LINE_STIPPLE);
     glDisable(GL_POLYGON_STIPPLE);
     glDisable(GL_POLYGON_OFFSET_LINE);
-	glDisable(GL_POLYGON_OFFSET_FILL); // greebo: otherwise tiny gap lines between brushes are visible
+    glDisable(GL_POLYGON_OFFSET_FILL); // greebo: otherwise tiny gap lines between brushes are visible
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glColor4f(1,1,1,1);
@@ -197,49 +197,49 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
     glLineWidth(1);
     glPointSize(1);
 
-	glHint(GL_FOG_HINT, GL_NICEST);
+    glHint(GL_FOG_HINT, GL_NICEST);
     glDisable(GL_FOG);
 
 #if 0
-	std::size_t count = 0 ;
+    std::size_t count = 0 ;
 
-	for (OpenGLStates::iterator i = _state_sorted.begin();
-		i != _state_sorted.end();
-		++i)
-	{
-		// Render the OpenGLShaderPass
-		if (!i->second->empty())
-		{
-			count++;
-		}
-	}
+    for (OpenGLStates::iterator i = _state_sorted.begin();
+        i != _state_sorted.end();
+        ++i)
+    {
+        // Render the OpenGLShaderPass
+        if (!i->second->empty())
+        {
+            count++;
+        }
+    }
 
-	rMessage() << "R1 " << count << " of " << _state_sorted.size() << "\n";
+    rMessage() << "R1 " << count << " of " << _state_sorted.size() << "\n";
 
-	std::size_t curObject = 0;
+    std::size_t curObject = 0;
 #endif
 
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
     // state, which it can change.
-	for (OpenGLStates::iterator i = _state_sorted.begin();
-		i != _state_sorted.end();
-		++i)
-	{
-		// Render the OpenGLShaderPass
+    for (OpenGLStates::iterator i = _state_sorted.begin();
+        i != _state_sorted.end();
+        ++i)
+    {
+        // Render the OpenGLShaderPass
         if (!i->second->empty())
         {
 #if 0
-			rMessage() << curObject << " " << (*i->second);
-			curObject++;
+            rMessage() << curObject << " " << (*i->second);
+            curObject++;
 #endif
 
             i->second->render(current, globalstate, viewer, _time);
         }
-	}
+    }
 
-	glPopAttrib();
+    glPopAttrib();
 }
 
 void OpenGLRenderSystem::realise()
@@ -270,27 +270,27 @@ void OpenGLRenderSystem::realise()
 void OpenGLRenderSystem::unrealise()
 {
     if (!_realised) {
-    	return;
+        return;
     }
 
     _realised = false;
 
-	// Unrealise the OpenGLShader objects
-	for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i)
-	{
+    // Unrealise the OpenGLShader objects
+    for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+    {
         OpenGLShaderPtr sp = i->second;
         assert(sp);
 
         sp->unrealise();
     }
 
-	if (GlobalOpenGL().wxContextValid()
+    if (GlobalOpenGL().wxContextValid()
         && GlobalOpenGL().shaderProgramsAvailable()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
-		// Unrealise the GLPrograms
+        // Unrealise the GLPrograms
         _glProgramFactory->unrealise();
-	}
+    }
 }
 
 GLProgramFactory& OpenGLRenderSystem::getGLProgramFactory()
@@ -300,17 +300,17 @@ GLProgramFactory& OpenGLRenderSystem::getGLProgramFactory()
 
 std::size_t OpenGLRenderSystem::getTime() const
 {
-	return _time;
+    return _time;
 }
 
 void OpenGLRenderSystem::setTime(std::size_t milliSeconds)
 {
-	_time = milliSeconds;
+    _time = milliSeconds;
 }
 
 RenderSystem::ShaderProgram OpenGLRenderSystem::getCurrentShaderProgram() const
 {
-	return _currentShaderProgram;
+    return _currentShaderProgram;
 }
 
 void OpenGLRenderSystem::setShaderProgram(RenderSystem::ShaderProgram newProg)
@@ -319,8 +319,8 @@ void OpenGLRenderSystem::setShaderProgram(RenderSystem::ShaderProgram newProg)
 
     if (oldProgram != newProg)
     {
-		unrealise();
-		GlobalMaterialManager().setLightingEnabled(
+        unrealise();
+        GlobalMaterialManager().setLightingEnabled(
             newProg == SHADER_PROGRAM_INTERACTION
         );
     }
@@ -336,95 +336,46 @@ void OpenGLRenderSystem::setShaderProgram(RenderSystem::ShaderProgram newProg)
 void OpenGLRenderSystem::extensionsInitialised()
 {
     // Determine if lighting is available based on GL extensions
-	bool glslLightingAvailable = GLEW_VERSION_2_0 ? true : false;
-    bool arbLightingAvailable  = GLEW_VERSION_1_3
-                                 && GLEW_ARB_vertex_program
-                                 && GLEW_ARB_fragment_program;
+    bool haveGLSL = GLEW_VERSION_2_0 ? true : false;
 
 #if defined(DEBUG_NO_LIGHTING)
-    glslLightingAvailable = arbLightingAvailable = false;
+    haveGLSL = false;
 #endif
 
     rConsole() << "[OpenGLRenderSystem] GLSL shading "
-              << (glslLightingAvailable ? "IS" : "IS NOT" ) << " available."
-              << std::endl;
-    rConsole() << "[OpenGLRenderSystem] ARB shading "
-              << (arbLightingAvailable ? "IS" : "IS NOT" ) << " available."
-              << std::endl;
-
-    // Tell the GLProgramFactory which to use
-    if (glslLightingAvailable)
-    {
-        _glProgramFactory->setUsingGLSL(true);
-    }
-    else
-    {
-        _glProgramFactory->setUsingGLSL(false);
-    }
-
-    // Set internal flags
-    bool shaderProgramsAvailable = glslLightingAvailable || arbLightingAvailable;
+               << (haveGLSL ? "IS" : "IS NOT" ) << " available.\n";
 
     // Set the flag in the openGL module
-    GlobalOpenGL().setShaderProgramsAvailable(shaderProgramsAvailable);
+    GlobalOpenGL().setShaderProgramsAvailable(haveGLSL);
 
     // Inform the user of missing extensions
-    if (!shaderProgramsAvailable)
+    if (!haveGLSL)
     {
-		rMessage() << "GL shading requires OpenGL features not"
-                             << " supported by your graphics drivers:\n";
+        rWarning() << "Light rendering requires OpenGL 2.0 or newer.\n";
+    }
 
-		if (!GLEW_VERSION_2_0) {
-			rMessage() << "  GL version 2.0 or better\n";
-		}
+    // Now that GL extensions are done, we can realise our shaders
+    // This was previously done explicitly by the OpenGLModule after the
+    // shared context was created. But we need realised shaders before
+    // we can fire off the "extensions initialised" signal, map loading
+    // code might rely on materials being constructed.
+    realise();
 
-		if (!GLEW_ARB_shader_objects) {
-			rMessage() << "  GL_ARB_shader_objects\n";
-		}
-
-		if (!GLEW_ARB_vertex_shader) {
-			rMessage() << "  GL_ARB_vertex_shader\n";
-		}
-
-		if (!GLEW_ARB_fragment_shader) {
-			rMessage() << "  GL_ARB_fragment_shader\n";
-		}
-
-		if (!GLEW_ARB_shading_language_100) {
-			rMessage() << "  GL_ARB_shading_language_100\n";
-		}
-
-		if (!GLEW_ARB_vertex_program) {
-			rMessage() << "  GL_ARB_vertex_program\n";
-		}
-
-		if (!GLEW_ARB_fragment_program) {
-			rMessage() << "  GL_ARB_fragment_program\n";
-		}
-	}
-
-	// Now that GL extensions are done, we can realise our shaders
-	// This was previously done explicitly by the OpenGLModule after the
-	// shared context was created. But we need realised shaders before
-	// we can fire off the "extensions initialised" signal, map loading
-	// code might rely on materials being constructed.
-	realise();
-
-	// Notify all our observers
-	_sigExtensionsInitialised();
+    // Notify all our observers
+    _sigExtensionsInitialised();
 }
 
 sigc::signal<void> OpenGLRenderSystem::signal_extensionsInitialised()
 {
-	return _sigExtensionsInitialised;
+    return _sigExtensionsInitialised;
 }
 
 LightList& OpenGLRenderSystem::attachLitObject(LitObject& object)
 {
-	return m_lightLists.insert(
-		LightLists::value_type(
-			&object,
-			LinearLightList(
+    return m_lightLists.insert(
+        LightLists::value_type(
+            &object,
+            LinearLightList(
                 object,
                 m_lights,
                 std::bind(
@@ -438,15 +389,15 @@ LightList& OpenGLRenderSystem::attachLitObject(LitObject& object)
 
 void OpenGLRenderSystem::detachLitObject(LitObject& object) 
 {
-	m_lightLists.erase(&object);
+    m_lightLists.erase(&object);
 }
 
 void OpenGLRenderSystem::litObjectChanged(LitObject& object) 
 {
-	LightLists::iterator i = m_lightLists.find(&object);
+    LightLists::iterator i = m_lightLists.find(&object);
     assert(i != m_lightLists.end());
 
-	i->second.setDirty();
+    i->second.setDirty();
 }
 
 void OpenGLRenderSystem::attachLight(RendererLight& light)
@@ -472,22 +423,22 @@ void OpenGLRenderSystem::propagateLightChangedFlagToAllLights()
 {
     if (m_lightsChanged)
     {
-    	m_lightsChanged = false;
-    	for (LightLists::iterator i = m_lightLists.begin();
+        m_lightsChanged = false;
+        for (LightLists::iterator i = m_lightLists.begin();
              i != m_lightLists.end();
              ++i) 
         {
-    		i->second.setDirty();
-    	}
-	}
+            i->second.setDirty();
+        }
+    }
 }
 
 void OpenGLRenderSystem::insertSortedState(const OpenGLStates::value_type& val) {
-	_state_sorted.insert(val);
+    _state_sorted.insert(val);
 }
 
 void OpenGLRenderSystem::eraseSortedState(const OpenGLStates::key_type& key) {
-	_state_sorted.erase(key);
+    _state_sorted.erase(key);
 }
 
 // renderables
@@ -507,54 +458,54 @@ void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) c
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "for-each during traversal");
     m_traverseRenderablesMutex = true;
     for (Renderables::const_iterator i = m_renderables.begin(); i != m_renderables.end(); ++i) {
-    	callback(*(*i));
-	}
-	m_traverseRenderablesMutex = false;
+        callback(*(*i));
+    }
+    m_traverseRenderablesMutex = false;
 }
 
 // RegisterableModule implementation
 const std::string& OpenGLRenderSystem::getName() const
 {
-	static std::string _name(MODULE_RENDERSYSTEM);
-	return _name;
+    static std::string _name(MODULE_RENDERSYSTEM);
+    return _name;
 }
 
 const StringSet& OpenGLRenderSystem::getDependencies() const
 {
-	static StringSet _dependencies;
+    static StringSet _dependencies;
 
-	if (_dependencies.empty()) 
-	{
-		_dependencies.insert(MODULE_SHADERSYSTEM);
-		_dependencies.insert(MODULE_OPENGL);
-	}
+    if (_dependencies.empty()) 
+    {
+        _dependencies.insert(MODULE_SHADERSYSTEM);
+        _dependencies.insert(MODULE_OPENGL);
+    }
 
-	return _dependencies;
+    return _dependencies;
 }
 
 void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	_materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
-		sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
-	_materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
-		sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
+    _materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
+        sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
+    _materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
+        sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
 
-	if (GlobalMaterialManager().isRealised())
-	{
-		realise();
-	}
+    if (GlobalMaterialManager().isRealised())
+    {
+        realise();
+    }
 
-	// greebo: Don't realise the module yet, this must wait
-	// until the shared GL context has been created (this
-	// happens as soon as the first GL widget has been realised).
+    // greebo: Don't realise the module yet, this must wait
+    // until the shared GL context has been created (this
+    // happens as soon as the first GL widget has been realised).
 }
 
 void OpenGLRenderSystem::shutdownModule()
 {
-	_materialDefsLoaded.disconnect();
-	_materialDefsUnloaded.disconnect();
+    _materialDefsLoaded.disconnect();
+    _materialDefsUnloaded.disconnect();
 }
 
 // Define the static ShaderCache module

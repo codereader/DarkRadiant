@@ -1,7 +1,5 @@
 #include "GLProgramFactory.h"
 
-#include "glprogram/ARBBumpProgram.h"
-#include "glprogram/ARBDepthFillProgram.h"
 #include "glprogram/GLSLDepthFillProgram.h"
 #include "glprogram/GLSLBumpProgram.h"
 #include "glprogram/GenericVFPProgram.h"
@@ -21,7 +19,8 @@ namespace render
 // Constructor, populates map with GLProgram instances
 GLProgramFactory::GLProgramFactory()
 {
-    setUsingGLSL(false);
+    _builtInPrograms["depthFill"] = std::make_shared<GLSLDepthFillProgram>();
+    _builtInPrograms["bumpMap"] = std::make_shared<GLSLBumpProgram>();
 }
 
 GLProgram* GLProgramFactory::getBuiltInProgram(const std::string& name)
@@ -55,20 +54,6 @@ GLProgram* GLProgramFactory::getProgram(const std::string& vertexProgramFilename
         std::make_pair(filePair, std::make_shared<GenericVFPProgram>(vertexProgramFilename, fragmentProgramFilename)));
 
     return result.first->second.get();
-}
-
-void GLProgramFactory::setUsingGLSL(bool useGLSL)
-{
-    if (useGLSL)
-    {
-        _builtInPrograms["depthFill"] = std::make_shared<GLSLDepthFillProgram>();
-        _builtInPrograms["bumpMap"] = std::make_shared<GLSLBumpProgram>();
-    }
-    else
-    {
-        _builtInPrograms["depthFill"] = std::make_shared<ARBDepthFillProgram>();
-        _builtInPrograms["bumpMap"] = std::make_shared<ARBBumpProgram>();
-    }
 }
 
 // Realise the program factory.
@@ -107,8 +92,7 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename,
 	if (!file.is_open())
     {
         throw std::runtime_error(
-            "GLProgramFactory::createARBProgram() failed to open file: "
-            + absFileName
+            "GLProgramFactory: failed to open file: " + absFileName
         );
     }
 
@@ -237,45 +221,6 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 
     // Return the linked program
     return program;
-}
-
-GLuint GLProgramFactory::createARBProgram(const std::string& filename,
-                                          GLenum type)
-{
-    // Get the file contents without NULL terminator
-    CharBufPtr buffer = getFileAsBuffer(filename, false);
-
-    // Bind the program data into OpenGL
-    debug::assertNoGlErrors();
-
-    GLuint programID;
-    glGenProgramsARB(1, &programID);
-    glBindProgramARB(type, programID);
-
-	glProgramStringARB(
-        type,
-        GL_PROGRAM_FORMAT_ASCII_ARB,
-        GLsizei(buffer->size()),
-        &buffer->front()
-    );
-
-    // Check for GL errors and throw exception if there is a problem
-	if (GL_INVALID_OPERATION == glGetError())
-    {
-		GLint errPos;
-		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errPos);
-		const GLubyte* errString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
-
-        // Construct user-readable error string
-        std::string error("GL program error: ");
-        error += filename + "(" + string::to_string(errPos) + "): \n\n";
-        error += std::string(reinterpret_cast<const char*>(errString));
-
-        rConsoleError() << error << std::endl;
-	}
-
-    // Return the new program
-    return programID;
 }
 
 // Get the path of a GL program file

@@ -192,8 +192,6 @@ darkradiant_SOURCES = main.cpp \
                       particles/editor/ParticleEditor.cpp \
                       particles/RenderableParticleStage.cpp \
                       particles/ParticleDef.cpp \
-                      render/backend/glprogram/ARBBumpProgram.cpp \
-                      render/backend/glprogram/ARBDepthFillProgram.cpp \
 					  render/backend/glprogram/GenericVFPProgram.cpp \
                       render/backend/glprogram/GLSLBumpProgram.cpp \
                       render/backend/glprogram/GLSLDepthFillProgram.cpp \
