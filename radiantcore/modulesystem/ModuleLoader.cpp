@@ -84,6 +84,11 @@ void ModuleLoader::processModuleFile(const fs::path& file)
 		// Report this error and don't add the module to the _dynamicLibraryList
 		rError() << "Compatibility mismatch loading library " << library->getName() << std::endl;
 	}
+	catch (std::runtime_error& ex)
+	{
+		// Report this error and don't add the module to the _dynamicLibraryList
+		rError() << "Failure registering module " << library->getName() << ": " << ex.what() << std::endl;
+	}
 }
 
 void ModuleLoader::loadModules(const std::string& root)

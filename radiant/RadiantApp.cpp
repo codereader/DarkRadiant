@@ -58,7 +58,7 @@ bool RadiantApp::OnInit()
 		module::RegistryReference::Instance().setRegistry(radiant->getModuleRegistry());
 		module::initialiseStreams(radiant->getLogWriter());
 	}
-	catch (module::CoreModule::FailureException & ex)
+	catch (module::CoreModule::FailureException& ex)
 	{
 		// Streams are not yet initialised, so log to std::err at this point
 		std::cerr << ex.what() << std::endl;

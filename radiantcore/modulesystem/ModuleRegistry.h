@@ -71,6 +71,8 @@ public:
 	// Get the application context info structure
     const ApplicationContext& getApplicationContext() const override;
 
+	applog::ILogWriter& getApplicationLogWriter() override;
+
     sigc::signal<void> signal_allModulesInitialised() const override;
 	ProgressSignal signal_moduleInitialisationProgress() const override;
     sigc::signal<void> signal_allModulesUninitialised() const override;

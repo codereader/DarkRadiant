@@ -248,6 +248,21 @@ const ApplicationContext& ModuleRegistry::getApplicationContext() const
 	return *_context;
 }
 
+applog::ILogWriter& ModuleRegistry::getApplicationLogWriter()
+{
+	auto moduleIter = _initialisedModules.find(MODULE_RADIANT_CORE);
+
+	if (moduleIter == _initialisedModules.end())
+	{
+		throw std::runtime_error("Core module not available.");
+	}
+
+	auto coreModule = std::dynamic_pointer_cast<radiant::IRadiant>(moduleIter->second);
+	assert(coreModule);
+
+	return coreModule->getLogWriter();
+}
+
 sigc::signal<void> ModuleRegistry::signal_allModulesInitialised() const
 {
     return _sigAllModulesInitialised;

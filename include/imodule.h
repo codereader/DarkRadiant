@@ -278,6 +278,15 @@ public:
 	 */
 	virtual const ApplicationContext& getApplicationContext() const = 0;
 
+	/**
+	 * Callable during the module registration phase, this method attempts
+	 * to locate the default application log writer instance. It is usually
+	 * hosted in the IRadiant implementation, which is where this method 
+	 * will attempt to look for. If the core module happens to be unavailable
+	 * at the time this method is called, a std::runtime_error will be thrown.
+	 */
+	virtual applog::ILogWriter& getApplicationLogWriter() = 0;
+
     /**
      * Invoked when all modules have been initialised.
      */
@@ -380,27 +389,6 @@ namespace module
 		GlobalDebugStream().setLock(logWriter.getStreamLock());
 	}
 
-	// greebo: This should be called once by each module at load time to initialise
-	// the OutputStreamHolders
-	inline void initialiseStreams(const ApplicationContext& ctx)
-	{
-#if 0 // // TODO CoreModule
-		GlobalOutputStream().setStream(ctx.getOutputStream());
-		GlobalWarningStream().setStream(ctx.getWarningStream());
-		GlobalErrorStream().setStream(ctx.getErrorStream());
-
-#ifndef NDEBUG
-		GlobalDebugStream().setStream(ctx.getOutputStream());
-#endif
-
-		// Set up the mutex for thread-safe logging
-		GlobalOutputStream().setLock(ctx.getStreamLock());
-		GlobalWarningStream().setLock(ctx.getStreamLock());
-		GlobalErrorStream().setLock(ctx.getStreamLock());
-		GlobalDebugStream().setLock(ctx.getStreamLock());
-#endif
-	}
-
 	// Helper method initialising a few references and checking a module's
 	// compatibility level with the one reported by the ModuleRegistry
 	inline void performDefaultInitialisation(IModuleRegistry& registry)
@@ -410,8 +398,8 @@ namespace module
 			throw ModuleCompatibilityException("Compatibility level mismatch");
 		}
 
-		// Initialise the streams using the given application context
-		initialiseStreams(registry.getApplicationContext());
+		// Initialise the streams using the central application log writer instance
+		initialiseStreams(registry.getApplicationLogWriter());
 
 		// Remember the reference to the ModuleRegistry
 		RegistryReference::Instance().setRegistry(registry);
