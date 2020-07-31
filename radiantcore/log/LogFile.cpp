@@ -2,7 +2,6 @@
 
 #include <iomanip>
 #include <thread>
-#include <wx/version.h>
 #include "imodule.h"
 #include "itextstream.h"
 #include "version.h"
@@ -56,49 +55,6 @@ void LogFile::writeLog(const std::string& outputStr, LogLevel level)
         _logStream.flush();
     }
 }
-
-#if 0
-// Creates the singleton logfile with the given filename
-void LogFile::create(const std::string& filename)
-{
-	if (InstancePtr() == NULL)
-    {
-		// No logfile yet, create one
-		InstancePtr() = LogFilePtr(new LogFile(filename));
-
-		// Write the initialisation info to the logfile.
-		rMessage() << "Started logging to " << InstancePtr()->_logFilePath << std::endl;
-
-		rMessage() << "This is " << RADIANT_APPNAME_FULL() << std::endl;
-
-#if !defined(__linux__)
-        std::time_t t = std::time(nullptr);
-        std::tm tm = *std::localtime(&t);
-
-        // Write timestamp and thread information
-        rMessage() << "Today is " << std::put_time(&tm, TIME_FMT) << std::endl;
-#endif
-
-		// Output the wxWidgets version to the logfile
-        std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
-		wxVersion += string::to_string(wxMINOR_VERSION) + ".";
-		wxVersion += string::to_string(wxRELEASE_NUMBER);
-
-        rMessage() << "wxWidgets Version: " << wxVersion << std::endl;
-	}
-}
-
-// Closes the singleton log instance
-void LogFile::close() {
-	// Clear the pointer, this destructs any open logfile instance
-	InstancePtr() = LogFilePtr();
-}
-
-LogFilePtr& LogFile::InstancePtr() {
-	static LogFilePtr _instancePtr;
-	return _instancePtr;
-}
-#endif
 
 void LogFile::close()
 {
