@@ -269,7 +269,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
             }
             catch (std::system_error& ex)
             {
-                rWarning() << "[vfs] Skipping file " << string::to_utf8(file.filename().wstring()) << 
+                rWarning() << "[vfs] Skipping file " << string::unicode_to_utf8(file.filename().wstring()) <<
                     " - possibly unsupported characters in filename? " << 
                     "(Exception: " << ex.what() << ")" << std::endl;
             }

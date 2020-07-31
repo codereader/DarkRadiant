@@ -9,7 +9,7 @@
 
 #include "version.h"
 #include "string/string.h"
-#include "wxutil/IConv.h"
+#include "string/encoding.h"
 #include "module/StaticModule.h"
 
 namespace registry
@@ -191,7 +191,7 @@ std::string XMLRegistry::get(const std::string& key)
     if (!nodeList.empty())
     {
         // Convert the UTF-8 string back to locale and return
-        return wxutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
+        return string::utf8_to_mb(nodeList[0].getAttributeValue("value"));
     }
     
     return std::string();
@@ -203,7 +203,7 @@ void XMLRegistry::set(const std::string& key, const std::string& value)
 
     // Create or set the value in the user tree, the default tree stays untouched
     // Convert the string to UTF-8 before storing it into the RegistryTree
-    _userTree.set(key, wxutil::IConv::localeToUTF8(value));
+    _userTree.set(key, string::mb_to_utf8(value));
 
     _changesSinceLastSave++;
 

@@ -59,7 +59,7 @@ DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& sy
 
 std::string DynamicLibrary::getName() const
 {
-	return string::to_utf8(_name);
+	return string::unicode_to_utf8(_name);
 }
 
 /**
