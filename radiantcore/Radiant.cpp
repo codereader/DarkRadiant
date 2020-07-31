@@ -16,8 +16,6 @@
 #include "settings/LanguageManager.h"
 #endif
 
-#include <wx/version.h>
-
 namespace radiant
 {
 
@@ -108,13 +106,6 @@ void Radiant::createLogFile()
 
 		// Write timestamp and thread information
 		rMessage() << "Today is " << std::put_time(&tm, TIME_FMT) << std::endl;
-
-		// Output the wxWidgets version to the logfile
-		std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
-		wxVersion += string::to_string(wxMINOR_VERSION) + ".";
-		wxVersion += string::to_string(wxRELEASE_NUMBER);
-
-		rMessage() << "wxWidgets Version: " << wxVersion << std::endl;
 	}
 	else
 	{

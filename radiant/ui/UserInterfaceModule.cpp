@@ -17,6 +17,7 @@
 #include "wxutil/MultiMonitor.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "messages/TextureChanged.h"
+#include "string/string.h"
 
 #include "module/StaticModule.h"
 
@@ -55,6 +56,8 @@
 #include "ui/brush/QuerySidesDialog.h"
 #include "ui/brush/FindBrush.h"
 #include "ui/mousetool/RegistrationHelper.h"
+
+#include <wx/version.h>
 
 namespace ui
 {
@@ -101,6 +104,13 @@ const StringSet& UserInterfaceModule::getDependencies() const
 void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	// Output the wxWidgets version to the logfile
+	std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
+	wxVersion += string::to_string(wxMINOR_VERSION) + ".";
+	wxVersion += string::to_string(wxRELEASE_NUMBER);
+
+	rMessage() << "wxWidgets Version: " << wxVersion << std::endl;
 
 	wxutil::MultiMonitor::printMonitorInfo();
 
