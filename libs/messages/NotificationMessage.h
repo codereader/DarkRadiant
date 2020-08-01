@@ -21,15 +21,31 @@ public:
     };
 
 private:
+    std::string _title;
     std::string _message;
 
     Type _type;
 
 public:
     NotificationMessage(const std::string& message, Type type) :
+        NotificationMessage(std::string(), message, type)
+    {}
+
+    NotificationMessage(const std::string& title, const std::string& message, Type type) :
+        _title(title),
         _message(message),
         _type(type)
     {}
+
+    const std::string& getTitle() const
+    {
+        return _title;
+    }
+
+    bool hasTitle() const
+    {
+        return !_title.empty();
+    }
 
     const std::string& getMessage() const
     {
@@ -47,21 +63,21 @@ public:
     }
 
     // Convenience method, creating an instance and dispatching it to the message bus
-    static void SendInformation(const std::string& message)
+    static void SendInformation(const std::string& message, const std::string& title = std::string())
     {
-        NotificationMessage msg(message, Information);
+        NotificationMessage msg(title, message, Information);
         GlobalRadiantCore().getMessageBus().sendMessage(msg);
     }
 
-    static void SendWarning(const std::string& message)
+    static void SendWarning(const std::string& message, const std::string& title = std::string())
     {
-        NotificationMessage msg(message, Warning);
+        NotificationMessage msg(title, message, Warning);
         GlobalRadiantCore().getMessageBus().sendMessage(msg);
     }
 
-    static void SendError(const std::string& message)
+    static void SendError(const std::string& message, const std::string& title = std::string())
     {
-        NotificationMessage msg(message, Error);
+        NotificationMessage msg(title, message, Error);
         GlobalRadiantCore().getMessageBus().sendMessage(msg);
     }
 };

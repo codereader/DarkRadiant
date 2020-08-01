@@ -227,13 +227,18 @@ void UserInterfaceModule::HandleNotificationMessage(radiant::NotificationMessage
 	switch (msg.getType())
 	{
 	case radiant::NotificationMessage::Information:
-		wxutil::Messagebox::Show(_("Notification"), msg.getMessage(), IDialog::MessageType::MESSAGE_CONFIRM, parentWindow);
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Notification"), 
+			msg.getMessage(), IDialog::MessageType::MESSAGE_CONFIRM, parentWindow);
 		break;
+
 	case radiant::NotificationMessage::Warning:
-		wxutil::Messagebox::Show(_("Warning"), msg.getMessage(), IDialog::MessageType::MESSAGE_WARNING, parentWindow);
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Warning"), 
+			msg.getMessage(), IDialog::MessageType::MESSAGE_WARNING, parentWindow);
 		break;
+
 	case radiant::NotificationMessage::Error:
-		wxutil::Messagebox::Show(_("Error"), msg.getMessage(), IDialog::MessageType::MESSAGE_ERROR, parentWindow);
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Error"), 
+			msg.getMessage(), IDialog::MessageType::MESSAGE_ERROR, parentWindow);
 		break;
 	};
 }

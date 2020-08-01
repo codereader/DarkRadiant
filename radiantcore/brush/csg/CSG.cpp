@@ -17,12 +17,14 @@
 #include "brush/BrushNode.h"
 #include "brush/BrushVisit.h"
 #include "selection/algorithm/Primitives.h"
+#include "messages/NotificationMessage.h"
+#include "command/ExecutionNotPossible.h"
 
-#include "wxutil/dialog/MessageBox.h"
-#include "wxutil/dialog/MessageBox.h"
+namespace brush
+{
 
-namespace brush {
-namespace algorithm {
+namespace algorithm
+{
 
 const std::string RKEY_EMIT_CSG_SUBTRACT_WARNING("user/ui/brush/emitCSGSubtractWarning");
 
@@ -271,10 +273,11 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 {
 	if (registry::getValue<bool>(RKEY_EMIT_CSG_SUBTRACT_WARNING))
 	{
-		wxutil::Messagebox::Show(_("This Is Not Dromed Warning"),
+		radiant::NotificationMessage::SendInformation(
 			_("Note: be careful when using the CSG tool, as you might end up\n"
 			"with an unnecessary number of tiny brushes and/or leaks.\n"
-			"This popup will not be shown again."), ui::IDialog::MESSAGE_CONFIRM);
+			"This popup will not be shown again."), 
+			_("This Is Not Dromed Warning"));
 
 		// Disable this warning
         registry::setValue(RKEY_EMIT_CSG_SUBTRACT_WARNING, false);
@@ -283,10 +286,9 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 	// Collect all selected brushes
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 
-	if (brushes.empty()) {
-		rMessage() << _("CSG Subtract: No brushes selected.") << std::endl;
-		wxutil::Messagebox::ShowError(_("CSG Subtract: No brushes selected."));
-		return;
+	if (brushes.empty())
+	{
+		throw cmd::ExecutionNotPossible(_("CSG Subtract: No brushes selected."));
 	}
 
 	rMessage() << "CSG Subtract: Subtracting " << brushes.size() << " brushes.\n";
@@ -394,16 +396,14 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 	// Get the current selection
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 
-	if (brushes.empty()) {
-		rMessage() << _("CSG Merge: No brushes selected.") << std::endl;
-		wxutil::Messagebox::ShowError(_("CSG Merge: No brushes selected."));
-		return;
+	if (brushes.empty())
+	{
+		throw cmd::ExecutionNotPossible(_("CSG Merge: No brushes selected."));
 	}
 
-	if (brushes.size() < 2) {
-		rMessage() << "CSG Merge: At least two brushes have to be selected.\n";
-		wxutil::Messagebox::ShowError("CSG Merge: At least two brushes have to be selected.");
-		return;
+	if (brushes.size() < 2)
+	{
+		throw cmd::ExecutionNotPossible("CSG Merge: At least two brushes have to be selected.");
 	}
 
 	rMessage() << "CSG Merge: Merging " << brushes.size() << " brushes." << std::endl;
@@ -431,8 +431,7 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 	// Attempt to merge the selected brushes into the new one
 	if (!Brush_merge(*brush, brushes, true))
 	{
-		rWarning() << "CSG Merge: Failed - result would not be convex." << std::endl;
-		return;
+		throw cmd::ExecutionFailure(_("CSG Merge: Failed - result would not be convex"));
 	}
 
 	ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after merge");
