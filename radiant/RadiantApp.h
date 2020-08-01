@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/app.h>
+#include <sigc++/connection.h>
 #include "modulesystem/ApplicationContextImpl.h"
 #include "module/CoreModule.h"
 
@@ -19,10 +20,12 @@ class RadiantApp :
 	public wxApp
 {
 	// The RadiantApp owns the ApplicationContext which is then passed to the
-	// ModuleRegistry as a refernce.
+	// ModuleRegistry as a reference.
 	radiant::ApplicationContextImpl _context;
 
 	std::unique_ptr<module::CoreModule> _coreModule;
+
+	sigc::connection _modulesUnloadingHandler;
 
 public:
 	bool OnInit() override;
@@ -35,4 +38,5 @@ public:
 
 private:
 	void onStartupEvent(wxCommandEvent& ev);
+	void onModulesUnloading();
 };

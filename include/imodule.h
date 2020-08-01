@@ -290,7 +290,7 @@ public:
     /**
      * Invoked when all modules have been initialised.
      */
-    virtual sigc::signal<void> signal_allModulesInitialised() const = 0;
+    virtual sigc::signal<void>& signal_allModulesInitialised() = 0;
 
 	/**
 	 * Progress function called during module loading and intialisation.
@@ -299,12 +299,18 @@ public:
 	 * will be in the range [0.0f..1.0f].
 	 */
 	typedef sigc::signal<void, const std::string&, float> ProgressSignal;
-	virtual ProgressSignal signal_moduleInitialisationProgress() const = 0;
+	virtual ProgressSignal& signal_moduleInitialisationProgress() = 0;
 
     /**
     * Invoked when all modules have been shut down (i.e. after shutdownModule()).
     */
-    virtual sigc::signal<void> signal_allModulesUninitialised() const = 0;
+    virtual sigc::signal<void>& signal_allModulesUninitialised() = 0;
+
+	/**
+	* Invoked right before the module binaries will be unloaded, which will
+	* trigger the destruction of any static instances in them.
+	*/
+	virtual sigc::signal<void>& signal_modulesUnloading() = 0;
 
 	// The compatibility level this Registry instance was compiled against.
 	// Old module registrations will be rejected by the registry anyway,

@@ -152,8 +152,25 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	// Pick up all the statically defined modules and register them
 	module::internal::StaticModuleList::RegisterModules();
 
+	// Register to the modules unloading event, we need to get notified
+	// before the DLLs/SOs are relased to give wxWidgets a chance to clean up
+	_modulesUnloadingHandler = _coreModule->get()->getModuleRegistry().signal_modulesUnloading()
+		.connect(sigc::mem_fun(this, &RadiantApp::onModulesUnloading));
+
 	// Startup the application
 	_coreModule->get()->startup();
 
 	// Scope ends here, PIDFile is deleted by its destructor
+}
+
+void RadiantApp::onModulesUnloading()
+{
+	// We need to delete all pending objects before unloading modules
+	// wxWidgets needs a chance to delete them before memory access is denied
+	if (wxTheApp != nullptr)
+	{
+		wxTheApp->ProcessIdle();
+	}
+
+	_modulesUnloadingHandler.disconnect();
 }

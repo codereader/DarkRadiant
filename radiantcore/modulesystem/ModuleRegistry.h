@@ -43,6 +43,7 @@ private:
     // Signals fired after ALL modules have been initialised or shut down.
     sigc::signal<void> _sigAllModulesInitialised;
 	sigc::signal<void> _sigAllModulesUninitialised;
+	sigc::signal<void> _sigModulesUnloading;
 	ProgressSignal _sigModuleInitialisationProgress;
 
 	// Dynamic library loader
@@ -73,9 +74,10 @@ public:
 
 	applog::ILogWriter& getApplicationLogWriter() override;
 
-    sigc::signal<void> signal_allModulesInitialised() const override;
-	ProgressSignal signal_moduleInitialisationProgress() const override;
-    sigc::signal<void> signal_allModulesUninitialised() const override;
+    sigc::signal<void>& signal_allModulesInitialised() override;
+	ProgressSignal& signal_moduleInitialisationProgress() override;
+    sigc::signal<void>& signal_allModulesUninitialised() override;
+    sigc::signal<void>& signal_modulesUnloading() override;
 
 	std::size_t getCompatibilityLevel() const override;
 

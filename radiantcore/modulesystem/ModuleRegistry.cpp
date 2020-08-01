@@ -7,7 +7,6 @@
 #include <iostream>
 #include "ModuleLoader.h"
 
-#include <wx/app.h>
 #include <fmt/format.h>
 
 namespace module
@@ -47,12 +46,8 @@ void ModuleRegistry::unloadModules()
     
 	tempMap.clear();
 
-    // We need to delete all pending objects before unloading modules
-    // wxWidgets needs a chance to delete them before memory access is denied
-    if (wxTheApp != NULL)
-    {
-        wxTheApp->ProcessIdle();
-    }
+	// Send out the signal that the DLLs/SOs will be unloaded
+	signal_modulesUnloading().emit();
 
 	_loader->unloadModules();
 }
@@ -131,7 +126,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 		_progress);
 
 	// Initialise the module itself, now that the dependencies are ready
-    wxASSERT(_context);
+    assert(_context);
 	module->initialiseModule(*_context);
 }
 
@@ -244,7 +239,7 @@ RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
 
 const ApplicationContext& ModuleRegistry::getApplicationContext() const
 {
-    wxASSERT(_context);
+    assert(_context);
 	return *_context;
 }
 
@@ -263,19 +258,24 @@ applog::ILogWriter& ModuleRegistry::getApplicationLogWriter()
 	return coreModule->getLogWriter();
 }
 
-sigc::signal<void> ModuleRegistry::signal_allModulesInitialised() const
+sigc::signal<void>& ModuleRegistry::signal_allModulesInitialised()
 {
     return _sigAllModulesInitialised;
 }
 
-ModuleRegistry::ProgressSignal ModuleRegistry::signal_moduleInitialisationProgress() const
+ModuleRegistry::ProgressSignal& ModuleRegistry::signal_moduleInitialisationProgress()
 {
 	return _sigModuleInitialisationProgress;
 }
 
-sigc::signal<void> ModuleRegistry::signal_allModulesUninitialised() const
+sigc::signal<void>& ModuleRegistry::signal_allModulesUninitialised()
 {
     return _sigAllModulesUninitialised;
+}
+
+sigc::signal<void>& ModuleRegistry::signal_modulesUnloading()
+{
+    return _sigModulesUnloading;
 }
 
 std::size_t ModuleRegistry::getCompatibilityLevel() const
