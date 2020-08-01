@@ -2,8 +2,7 @@
 
 #include "itextstream.h"
 #include "string/split.h"
-
-#include "wxutil/IConv.h"
+#include "string/encoding.h"
 
 namespace registry
 {
@@ -165,7 +164,7 @@ std::string RegistryTree::get(const std::string& key)
 	if (!nodeList.empty())
 	{
 		// Get and convert the value
-		return wxutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
+		return string::utf8_to_mb(nodeList[0].getAttributeValue("value"));
 	}
 
 	return std::string();
