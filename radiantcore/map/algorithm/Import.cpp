@@ -15,7 +15,7 @@
 #include "map/Map.h"
 #include "scenelib.h"
 #include "entitylib.h"
-#include "wxutil/dialog/MessageBox.h"
+#include "command/ExecutionFailure.h"
 
 #include "string/join.h"
 
@@ -364,11 +364,11 @@ void importFromStream(std::istream& stream)
     }
     catch (IMapReader::FailureException& ex)
     {
-        wxutil::Messagebox::ShowError(fmt::format(_("Failure reading map from clipboard:\n{0}"), ex.what()));
-
         // Clear out the root node, otherwise we end up with half a map
         scene::NodeRemover remover;
         importFilter.getRootNode()->traverseChildren(remover);
+        
+		throw cmd::ExecutionFailure(fmt::format(_("Failure reading map from clipboard:\n{0}"), ex.what()));
     }
 }
 
