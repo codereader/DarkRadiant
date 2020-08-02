@@ -16,7 +16,7 @@
 #include "messages/ApplicationShutdownRequest.h"
 
 #include <sigc++/signal.h>
-#include <wx/stopwatch.h>
+#include "time/StopWatch.h"
 
 class TextInputStream;
 
@@ -52,7 +52,7 @@ class Map :
 
     // Map save timer, for displaying "changes from last n minutes will be lost"
     // messages
-    wxStopWatch _mapSaveTimer;
+    util::StopWatch _mapSaveTimer;
 
 	MapEventSignal _mapEvent;
 

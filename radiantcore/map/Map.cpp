@@ -67,9 +67,7 @@ Map::Map() :
     _lastCopyMapName(""),
     _saveInProgress(false),
     _shutdownListener(0)
-{
-	_mapSaveTimer.Pause();
-}
+{}
 
 void Map::clearMapResource()
 {
@@ -231,7 +229,7 @@ void Map::setModified(bool modifiedFlag)
     updateTitle();
 
     // Reset the map save timer
-    _mapSaveTimer.Start();
+    _mapSaveTimer.restart();
 }
 
 // move the view to a certain position
@@ -465,7 +463,7 @@ std::string Map::getSaveConfirmationText() const
     std::string primaryText = fmt::format(_("Save changes to map \"{0}\"\nbefore closing?"), _mapName);
 
     // Display "x seconds" or "x minutes"
-    int seconds = static_cast<int>(_mapSaveTimer.Time() / 1000);
+    int seconds = static_cast<int>(_mapSaveTimer.getSecondsPassed());
     std::string timeString;
     if (seconds > 120)
     {

@@ -240,6 +240,9 @@
     <ClInclude Include="..\..\libs\messages\FileSelectionRequest.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\time\StopWatch.h">
+      <Filter>time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -277,6 +280,9 @@
     </Filter>
     <Filter Include="selection">
       <UniqueIdentifier>{7ecd5188-5568-43ac-8a64-0ca4c7c751b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{ac5674ae-1705-4c6c-8b17-955f44c154c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
