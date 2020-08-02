@@ -33,11 +33,13 @@ public:
 
 	// Returns the seconds passed since the last call to restart()
 	// If restart() has never been called, this is the time since construction
-	double getSecondsPassed() const
+	std::size_t getSecondsPassed() const
 	{
 		auto endTime = _clock.now();
 
-		return std::chrono::duration_cast<std::chrono::seconds>(endTime - _start).count();
+		auto seconds = std::chrono::duration_cast<std::chrono::seconds>(endTime - _start).count();
+
+		return static_cast<std::size_t>(seconds);
 	}
 };
 
