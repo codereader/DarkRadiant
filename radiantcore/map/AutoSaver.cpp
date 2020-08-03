@@ -97,14 +97,14 @@ void AutoMapSaver::startTimer()
 {
 	if (!_timer) return;
 
-	_timer->Start(static_cast<int>(_interval * 1000));
+	_timer->start(_interval * 1000);
 }
 
 void AutoMapSaver::stopTimer()
 {
 	if (!_timer) return;
 
-	_timer->Stop();
+	_timer->stop();
 }
 
 void AutoMapSaver::saveSnapshot() 
@@ -326,7 +326,7 @@ void AutoMapSaver::constructPreferences()
 	page.appendEntry(_("Max total Snapshot size per map (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
 }
 
-void AutoMapSaver::onIntervalReached(wxTimerEvent& ev)
+void AutoMapSaver::onIntervalReached()
 {
 	checkSave();
 }
@@ -374,11 +374,9 @@ void AutoMapSaver::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	_timer.reset(new wxTimer(this));
+	_timer.reset(new util::Timer(_interval * 1000, std::bind(&AutoMapSaver::onIntervalReached, this)));
 
 	constructPreferences();
-
-	Connect(wxEVT_TIMER, wxTimerEventHandler(AutoMapSaver::onIntervalReached), NULL, this);
 
 	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
 		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)

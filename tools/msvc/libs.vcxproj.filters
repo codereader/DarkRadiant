@@ -243,6 +243,9 @@
     <ClInclude Include="..\..\libs\time\StopWatch.h">
       <Filter>time</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\time\Timer.h">
+      <Filter>time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

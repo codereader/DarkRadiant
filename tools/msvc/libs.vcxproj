@@ -234,6 +234,7 @@
     <ClInclude Include="..\..\libs\texturelib.h" />
     <ClInclude Include="..\..\libs\ThreadedDefLoader.h" />
     <ClInclude Include="..\..\libs\time\StopWatch.h" />
+    <ClInclude Include="..\..\libs\time\Timer.h" />
     <ClInclude Include="..\..\libs\Transformable.h" />
     <ClInclude Include="..\..\libs\transformlib.h" />
     <ClInclude Include="..\..\libs\UndoFileChangeTracker.h" />

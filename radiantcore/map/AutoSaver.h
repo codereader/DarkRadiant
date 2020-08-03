@@ -8,9 +8,8 @@
 
 #include <vector>
 #include <sigc++/connection.h>
-#include <wx/timer.h>
-#include <wx/sharedptr.h>
 #include "os/fs.h"
+#include "time/Timer.h"
 
 /* greebo: The AutoMapSaver class lets itself being called in distinct intervals
  * and saves the map files either to snapshots or to a single yyyy.autosave.map file.
@@ -20,7 +19,6 @@ namespace map
 {
 
 class AutoMapSaver : 
-	public wxEvtHandler,
 	public RegisterableModule
 {
 	// TRUE, if autosaving is enabled
@@ -33,7 +31,7 @@ class AutoMapSaver :
 	unsigned long _interval;
 
 	// The timer object that triggers the callback
-	wxSharedPtr<wxTimer> _timer;
+	std::unique_ptr<util::Timer> _timer;
 
 	std::size_t _changes;
 
@@ -74,7 +72,7 @@ private:
 	void saveSnapshot();
 
 	// This gets called when the interval time is over
-	void onIntervalReached(wxTimerEvent& ev);
+	void onIntervalReached();
 
 	void collectExistingSnapshots(std::map<int, std::string>& existingSnapshots,
 		const fs::path& snapshotPath, const std::string& mapName);
