@@ -34,6 +34,7 @@
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
+#include "gameconnection/GameConnection.h"
 
 namespace ui
 {
@@ -159,6 +160,10 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
+	GlobalCommandSystem().addCommand("GameConnectionReloadMap", GameConnection::ReloadMap);
+	GlobalCommandSystem().addCommand("GameConnectionEnableCameraSync", GameConnection::EnableCameraSync);
+	GlobalCommandSystem().addCommand("GameConnectionDisableCameraSync", GameConnection::DisableCameraSync);
+
 	// ----------------------- Bind Events ---------------------------------------
 
 	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
@@ -186,6 +191,10 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("ExportSelectedAsModelDialog", "ExportSelectedAsModelDialog");
 	GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
 	GlobalEventManager().addCommand("EntityList", "EntityList");
+
+	GlobalEventManager().addCommand("GameConnectionReloadMap", "GameConnectionReloadMap");
+	GlobalEventManager().addCommand("GameConnectionEnableCameraSync", "GameConnectionEnableCameraSync");
+	GlobalEventManager().addCommand("GameConnectionDisableCameraSync", "GameConnectionDisableCameraSync");
 }
 
 // Static module registration

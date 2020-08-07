@@ -319,4 +319,10 @@
 		<menuItem name="about" caption="&amp;About" command="About" />
 		<menuItem name="userGuide" caption="&amp;User Guide" command="ShowUserGuide" />
 	</subMenu>
+
+	<subMenu name="gamecon" caption="Connection">
+		<menuItem name="reloadMap" caption="Reload map in game" command="GameConnectionReloadMap" />
+		<menuItem name="enableCameraSync" caption="Enable camera synchronization" icon="texwindow_findandreplace.png" command="GameConnectionEnableCameraSync" />
+		<menuItem name="disableCameraSync" caption="Disable camera synchronization" icon="texwindow_findandreplace.png" command="GameConnectionDisableCameraSync" />
+	</subMenu>
 </menu>
