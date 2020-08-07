@@ -42,6 +42,12 @@ void GameConnection::Think() {
     if (_seqnoInProgress) {
         //check if full response is here
         if (_connection->ReadMessage(_response)) {
+            //validate and remove preamble
+            int responseSeqno, lineLen;
+            int ret = sscanf(_response.data(), "response %d\n%n", &responseSeqno, &lineLen);
+            assert(ret == 1);
+            assert(responseSeqno == _seqnoInProgress);
+            _response.erase(_response.begin(), _response.begin() + lineLen);
             //mark request as "no longer in progress"
             //note: response can be used in outer function
             _seqnoInProgress = 0;
@@ -50,6 +56,7 @@ void GameConnection::Think() {
     else {
         //doing nothing now: send async command if present
         bool sentAsync = SendAsyncCommand();
+        sentAsync = false;  //unused
     }
     _connection->Think();
 }
