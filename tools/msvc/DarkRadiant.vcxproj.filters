@@ -326,6 +326,9 @@
     <Filter Include="src\ui\filters">
       <UniqueIdentifier>{b15324e3-378b-43fe-abfd-1ee2d99c5bd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\gameconnection">
+      <UniqueIdentifier>{7863bf5e-8086-4cac-b64d-4f8a6746d006}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1611,6 +1614,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp">
       <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\GameConnection.cpp">
+      <Filter>src\gameconnection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\MessageTcp.cpp">
+      <Filter>src\gameconnection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -3251,6 +3260,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h">
       <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\GameConnection.h">
+      <Filter>src\gameconnection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\MessageTcp.h">
+      <Filter>src\gameconnection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
