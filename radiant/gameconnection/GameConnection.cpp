@@ -69,7 +69,15 @@ void GameConnection::WaitAction() {
 
 bool GameConnection::SendAsyncCommand() {
     if (_cameraOutPending) {
-        //TODO: send "setviewpos" action
+        std::string text;
+        text = ActionPreamble("conexec");
+        text += "content:\n";
+        text += fmt::format(
+            "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}\n",
+            _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
+            -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
+        );
+        Send(text);
         _cameraOutPending = false;
         return true;
     }
@@ -84,16 +92,20 @@ void GameConnection::Finish() {
         WaitAction();
 }
 
+void GameConnection::Send(const std::string &request) {
+    int seqno = g_gameConnection.NewSeqno();
+    std::string fullMessage = SeqnoPreamble(seqno) + request;
+    _connection->WriteMessage(fullMessage.data(), fullMessage.size());
+    _seqnoInProgress = seqno;
+}
+
 std::string GameConnection::Execute(const std::string &request) {
     //make sure current request is finished (if any)
     WaitAction();
     assert(_seqnoInProgress == 0);
 
     //prepend seqno line and send message
-    int seqno = g_gameConnection.NewSeqno();
-    std::string fullMessage = SeqnoPreamble(seqno) + request;
-    _connection->WriteMessage(fullMessage.data(), fullMessage.size());
-    _seqnoInProgress = seqno;
+    Send(request);
 
     //wait until response is ready
     WaitAction();
@@ -112,6 +124,7 @@ void GameConnection::ReloadMap(const cmd::ArgumentList& args) {
 }
 
 void GameConnection::UpdateCamera() {
+    Connect();
     if (auto pCamWnd = GlobalCamera().getActiveCamWnd()) {
         Vector3 orig = pCamWnd->getCameraOrigin(), angles = pCamWnd->getCameraAngles();
         _cameraOutData[0] = orig;

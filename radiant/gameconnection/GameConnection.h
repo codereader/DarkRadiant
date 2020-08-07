@@ -50,6 +50,8 @@ private:
 	//if there are any pending async commands (camera update), send one now (non-blocking)
 	bool SendAsyncCommand();
 
+	void Send(const std::string &request);
+
 	void WaitAction();
 
 	CameraObserver *GetCameraObserver() const { return _cameraObserver.get(); }
