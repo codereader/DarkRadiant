@@ -1,6 +1,7 @@
 #include "icommandsystem.h"
 
 class MessageTcp;
+class CameraObserver;
 
 class GameConnection {
 public:
@@ -15,7 +16,12 @@ public:
 	//flush async commands (e.g. camera update) and wait for them to finish
 	void Finish();
 
+	//called from camera modification callback: schedules async "setviewpos" action
+	void UpdateCamera();
+
 	static void ReloadMap(const cmd::ArgumentList& args);
+	static void EnableCameraSync(const cmd::ArgumentList& args);
+	static void DisableCameraSync(const cmd::ArgumentList& args);
 
 private:
 	//connection to TDM game
@@ -31,7 +37,9 @@ private:
 	//true: cameraOutData has new camera position, should be sent to TDM
 	bool _cameraOutPending = false;
 	//data for camera position (setviewpos format: X Y Z pitch yaw roll)
-	double _cameraOutData[6];
+	Vector3 _cameraOutData[2];
+	//the observer put onto global camera when camera sync is enabled
+	std::unique_ptr<CameraObserver> _cameraObserver;
 
 
 	int NewSeqno() { return ++_seqno; }
@@ -43,6 +51,9 @@ private:
 	bool SendAsyncCommand();
 
 	void WaitAction();
+
+	CameraObserver *GetCameraObserver() const { return _cameraObserver.get(); }
+	void SetCameraObserver(bool enable);
 
 };
 extern GameConnection g_gameConnection;

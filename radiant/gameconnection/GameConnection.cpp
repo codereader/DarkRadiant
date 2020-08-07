@@ -3,6 +3,7 @@
 #undef max
 #include "GameConnection.h"
 #include "MessageTCP.h"
+#include "Camera/GlobalCamera.h"
 
 
 zmq::context_t g_ZeroMqContext;
@@ -108,4 +109,37 @@ void GameConnection::ReloadMap(const cmd::ArgumentList& args) {
     text += "content:\n";
     text += "reloadMap\n";  //that's the console command we would execute
     g_gameConnection.Execute(text);
+}
+
+void GameConnection::UpdateCamera() {
+    if (auto pCamWnd = GlobalCamera().getActiveCamWnd()) {
+        Vector3 orig = pCamWnd->getCameraOrigin(), angles = pCamWnd->getCameraAngles();
+        _cameraOutData[0] = orig;
+        _cameraOutData[1] = angles;
+        _cameraOutPending = true;
+    }
+    Think();
+}
+
+class GameConnectionCameraObserver : public CameraObserver {
+public:
+    GameConnection *_owner = nullptr;
+    GameConnectionCameraObserver(GameConnection *owner) : _owner(owner) {}
+	virtual void cameraMoved() override {
+        _owner->UpdateCamera();
+    }
+};
+void GameConnection::SetCameraObserver(bool enable) {
+    if (enable && !_cameraObserver)
+        _cameraObserver.reset(new GameConnectionCameraObserver(&g_gameConnection));
+    if (!enable && _cameraObserver)
+        _cameraObserver.reset();
+}
+void GameConnection::EnableCameraSync(const cmd::ArgumentList& args) {
+    g_gameConnection.SetCameraObserver(true);
+    GlobalCamera().addCameraObserver(g_gameConnection.GetCameraObserver());
+}
+void GameConnection::DisableCameraSync(const cmd::ArgumentList& args) {
+    GlobalCamera().removeCameraObserver(g_gameConnection.GetCameraObserver());
+    g_gameConnection.SetCameraObserver(false);
 }
