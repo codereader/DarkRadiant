@@ -63,7 +63,7 @@ void GameConnection::Think() {
 }
 
 void GameConnection::WaitAction() {
-    if (_seqnoInProgress)
+    while (_seqnoInProgress)
         Think();
 }
 
