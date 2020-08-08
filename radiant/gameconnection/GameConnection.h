@@ -59,6 +59,10 @@ private:
 	//wait until the currently executed request is finished
 	void WaitAction();
 
+	//set noclip/god/notarget to specific state (blocking)
+	//toggleCommand is the command which toggles state
+	//offKeyword is the part of phrase printed to game console when the state becomes disabled
+	void ExecuteSetTogglableFlag(const char *toggleCommand, bool enable, const char *offKeyword);
 
 	CameraObserver *GetCameraObserver() const { return _cameraObserver.get(); }
 	//make sure camera observer is present iff enable == true

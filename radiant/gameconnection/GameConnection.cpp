@@ -78,7 +78,6 @@ void GameConnection::WaitAction() {
         Think();
 }
 
-
 void GameConnection::Finish() {
     //wait for current request in progress to finish
     WaitAction();
@@ -118,13 +117,32 @@ bool GameConnection::Connect() {
 }
 
 
+void GameConnection::ExecuteSetTogglableFlag(const char *toggleCommand, bool enable, const char *offKeyword) {
+    if (!g_gameConnection.Connect())
+        return;
+    std::string text;
+    text = ActionPreamble("conexec");
+    text += "content:\n";
+    text += toggleCommand;
+    text += "\n";
+    int attempt;
+    for (attempt = 0; attempt < 2; attempt++) {
+        std::string response = g_gameConnection.Execute(text);
+        bool isEnabled = (response.find(offKeyword) == std::string::npos);
+        if (enable == isEnabled)
+            break;
+        //wrong state: toggle it again
+    }
+    assert(attempt < 2);    //two toggles not enough?...
+}
+
 void GameConnection::ReloadMap(const cmd::ArgumentList& args) {
     if (!g_gameConnection.Connect())
         return;
     std::string text;
     text = ActionPreamble("conexec");
     text += "content:\n";
-    text += "reloadMap\n";  //that's the console command we would execute
+    text += "reloadMap\n";
     g_gameConnection.Execute(text);
 }
 
@@ -153,6 +171,11 @@ void GameConnection::SetCameraObserver(bool enable) {
         _cameraObserver.reset(new GameConnectionCameraObserver(&g_gameConnection));
     if (!enable && _cameraObserver)
         _cameraObserver.reset();
+    if (enable) {
+        ExecuteSetTogglableFlag("god", true, "OFF");
+        ExecuteSetTogglableFlag("noclip", true, "OFF");
+        ExecuteSetTogglableFlag("notarget", true, "OFF");
+    }
 }
 void GameConnection::EnableCameraSync(const cmd::ArgumentList& args) {
     g_gameConnection.SetCameraObserver(true);
