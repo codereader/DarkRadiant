@@ -9,33 +9,44 @@
 zmq::context_t g_ZeroMqContext;
 GameConnection g_gameConnection;
 
-std::string SeqnoPreamble(int seq) {
+
+static std::string SeqnoPreamble(int seq) {
     return fmt::format("seqno {}\n", seq);
 }
-std::string MessagePreamble(std::string type) {
+static std::string MessagePreamble(std::string type) {
     return fmt::format("message \"{}\"\n", type);
 }
-std::string ActionPreamble(std::string type) {
+static std::string ActionPreamble(std::string type) {
     return MessagePreamble("action") + fmt::format("action \"{}\"\n", type);
 }
-std::string QueryPreamble(std::string type) {
+static std::string QueryPreamble(std::string type) {
     return MessagePreamble("query") + fmt::format("query \"{}\"\n", type);
 }
 
-bool GameConnection::Connect() {
-    if (_connection && _connection->IsAlive())
-        return true;    //already connected
 
-    if (_connection)
-        _connection.reset();
+void GameConnection::SendRequest(const std::string &request) {
+    assert(_seqnoInProgress == 0);
+    int seqno = g_gameConnection.NewSeqno();
+    std::string fullMessage = SeqnoPreamble(seqno) + request;
+    _connection->WriteMessage(fullMessage.data(), fullMessage.size());
+    _seqnoInProgress = seqno;
+}
 
-    //connection using ZeroMQ socket
-    std::unique_ptr<zmq::socket_t> zmqConnection(new zmq::socket_t(g_ZeroMqContext, ZMQ_STREAM));
-    zmqConnection->connect(fmt::format("tcp://127.0.0.1:{}", 3879));
-
-    _connection.reset(new MessageTcp());
-    _connection->Init(std::move(zmqConnection));
-    return _connection->IsAlive();
+bool GameConnection::SendAnyAsync() {
+    if (_cameraOutPending) {
+        std::string text;
+        text = ActionPreamble("conexec");
+        text += "content:\n";
+        text += fmt::format(
+            "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}\n",
+            _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
+            -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
+        );
+        SendRequest(text);
+        _cameraOutPending = false;
+        return true;
+    }
+    return false;
 }
 
 void GameConnection::Think() {
@@ -56,7 +67,7 @@ void GameConnection::Think() {
     }
     else {
         //doing nothing now: send async command if present
-        bool sentAsync = SendAsyncCommand();
+        bool sentAsync = SendAnyAsync();
         sentAsync = false;  //unused
     }
     _connection->Think();
@@ -67,36 +78,13 @@ void GameConnection::WaitAction() {
         Think();
 }
 
-bool GameConnection::SendAsyncCommand() {
-    if (_cameraOutPending) {
-        std::string text;
-        text = ActionPreamble("conexec");
-        text += "content:\n";
-        text += fmt::format(
-            "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}\n",
-            _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
-            -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
-        );
-        Send(text);
-        _cameraOutPending = false;
-        return true;
-    }
-    return false;
-}
 
 void GameConnection::Finish() {
     //wait for current request in progress to finish
     WaitAction();
     //send pending async commands and wait for them to finish
-    while (SendAsyncCommand())
+    while (SendAnyAsync())
         WaitAction();
-}
-
-void GameConnection::Send(const std::string &request) {
-    int seqno = g_gameConnection.NewSeqno();
-    std::string fullMessage = SeqnoPreamble(seqno) + request;
-    _connection->WriteMessage(fullMessage.data(), fullMessage.size());
-    _seqnoInProgress = seqno;
 }
 
 std::string GameConnection::Execute(const std::string &request) {
@@ -105,13 +93,30 @@ std::string GameConnection::Execute(const std::string &request) {
     assert(_seqnoInProgress == 0);
 
     //prepend seqno line and send message
-    Send(request);
+    SendRequest(request);
 
     //wait until response is ready
     WaitAction();
 
     return std::string(_response.begin(), _response.end());
 }
+
+bool GameConnection::Connect() {
+    if (_connection && _connection->IsAlive())
+        return true;    //already connected
+
+    if (_connection)
+        _connection.reset();
+
+    //connection using ZeroMQ socket
+    std::unique_ptr<zmq::socket_t> zmqConnection(new zmq::socket_t(g_ZeroMqContext, ZMQ_STREAM));
+    zmqConnection->connect(fmt::format("tcp://127.0.0.1:{}", 3879));
+
+    _connection.reset(new MessageTcp());
+    _connection->Init(std::move(zmqConnection));
+    return _connection->IsAlive();
+}
+
 
 void GameConnection::ReloadMap(const cmd::ArgumentList& args) {
     if (!g_gameConnection.Connect())
@@ -129,6 +134,7 @@ void GameConnection::UpdateCamera() {
         Vector3 orig = pCamWnd->getCameraOrigin(), angles = pCamWnd->getCameraAngles();
         _cameraOutData[0] = orig;
         _cameraOutData[1] = angles;
+        //note: the update is not necessarily sent right now
         _cameraOutPending = true;
     }
     Think();
