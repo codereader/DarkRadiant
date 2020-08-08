@@ -24,6 +24,11 @@ static std::string QueryPreamble(std::string type) {
 }
 
 
+std::string GameConnection::ComposeConExecRequest(std::string consoleLine) {
+    assert(consoleLine.find('\n') == std::string::npos);
+    return ActionPreamble("conexec") + "content:\n" + consoleLine + "\n";
+}
+
 void GameConnection::SendRequest(const std::string &request) {
     assert(_seqnoInProgress == 0);
     int seqno = g_gameConnection.NewSeqno();
@@ -34,14 +39,11 @@ void GameConnection::SendRequest(const std::string &request) {
 
 bool GameConnection::SendAnyAsync() {
     if (_cameraOutPending) {
-        std::string text;
-        text = ActionPreamble("conexec");
-        text += "content:\n";
-        text += fmt::format(
+        std::string text = ComposeConExecRequest(fmt::format(
             "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}\n",
             _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
             -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
-        );
+        ));
         SendRequest(text);
         _cameraOutPending = false;
         return true;
@@ -120,11 +122,7 @@ bool GameConnection::Connect() {
 void GameConnection::ExecuteSetTogglableFlag(const char *toggleCommand, bool enable, const char *offKeyword) {
     if (!g_gameConnection.Connect())
         return;
-    std::string text;
-    text = ActionPreamble("conexec");
-    text += "content:\n";
-    text += toggleCommand;
-    text += "\n";
+    std::string text = ComposeConExecRequest(toggleCommand);
     int attempt;
     for (attempt = 0; attempt < 2; attempt++) {
         std::string response = g_gameConnection.Execute(text);
@@ -139,10 +137,7 @@ void GameConnection::ExecuteSetTogglableFlag(const char *toggleCommand, bool ena
 void GameConnection::ReloadMap(const cmd::ArgumentList& args) {
     if (!g_gameConnection.Connect())
         return;
-    std::string text;
-    text = ActionPreamble("conexec");
-    text += "content:\n";
-    text += "reloadMap\n";
+    std::string text = ComposeConExecRequest("reloadMap");
     g_gameConnection.Execute(text);
 }
 

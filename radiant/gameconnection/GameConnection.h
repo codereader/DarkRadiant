@@ -46,6 +46,9 @@ private:
 	//every request should get unique seqno, otherwise we won't be able to distinguish their responses
 	int NewSeqno() { return ++_seqno; }
 
+	//given a command to be executed in game console (no EOLs), returns its full response text (except for seqno)
+	static std::string ComposeConExecRequest(std::string consoleLine);
+
 	//prepend seqno to specified request and send it to game
 	void SendRequest(const std::string &request);
 
