@@ -23,6 +23,7 @@ public:
 	static void ReloadMap(const cmd::ArgumentList& args);
 	static void EnableCameraSync(const cmd::ArgumentList& args);
 	static void DisableCameraSync(const cmd::ArgumentList& args);
+	static void PauseGame(const cmd::ArgumentList& args);
 
 private:
 	//connection to TDM game (i.e. the socket with custom message framing)

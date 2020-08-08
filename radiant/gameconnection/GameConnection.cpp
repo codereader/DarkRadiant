@@ -40,7 +40,7 @@ void GameConnection::SendRequest(const std::string &request) {
 bool GameConnection::SendAnyAsync() {
     if (_cameraOutPending) {
         std::string text = ComposeConExecRequest(fmt::format(
-            "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}\n",
+            "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}",
             _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
             -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
         ));
@@ -136,13 +136,13 @@ void GameConnection::ExecuteSetTogglableFlag(const std::string &toggleCommand, b
 
 std::string GameConnection::ExecuteGetCvarValue(const std::string &cvarName, std::string *defaultValue) {
     if (!g_gameConnection.Connect())
-        return;
+        return "";
     std::string text = ComposeConExecRequest(cvarName);
     std::string response = g_gameConnection.Execute(text);
     //parse response (imagine how easy that would be with regex...)
     while (response.size() && isspace(response.back()))
         response.pop_back();
-    std::string expLeft = fmt::format("\"{}\"is:\"", cvarName);
+    std::string expLeft = fmt::format("\"{}\" is:\"", cvarName);
     std::string expMid = "\" default:\"";
     std::string expRight = "\"";
     int posLeft = response.find(expLeft);
@@ -166,6 +166,15 @@ void GameConnection::ReloadMap(const cmd::ArgumentList& args) {
     if (!g_gameConnection.Connect())
         return;
     std::string text = ComposeConExecRequest("reloadMap");
+    g_gameConnection.Execute(text);
+}
+
+void GameConnection::PauseGame(const cmd::ArgumentList& args) {
+    if (!g_gameConnection.Connect())
+        return;
+    std::string value = g_gameConnection.ExecuteGetCvarValue("g_stopTime");
+    std::string oppositeValue = (value == "0" ? "1" : "0");
+    std::string text = ComposeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
     g_gameConnection.Execute(text);
 }
 
