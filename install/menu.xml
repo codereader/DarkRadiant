@@ -321,8 +321,9 @@
 	</subMenu>
 
 	<subMenu name="gamecon" caption="Connection">
+		<menuItem name="enableCameraSync" caption="Enable camera synchronization" command="GameConnectionEnableCameraSync" />
+		<menuItem name="disableCameraSync" caption="Disable camera synchronization" command="GameConnectionDisableCameraSync" />
+		<menuItem name="pauseGame" caption="Pause game" command="GameConnectionPauseGame" />
 		<menuItem name="reloadMap" caption="Reload map in game" command="GameConnectionReloadMap" />
-		<menuItem name="enableCameraSync" caption="Enable camera synchronization" icon="texwindow_findandreplace.png" command="GameConnectionEnableCameraSync" />
-		<menuItem name="disableCameraSync" caption="Disable camera synchronization" icon="texwindow_findandreplace.png" command="GameConnectionDisableCameraSync" />
 	</subMenu>
 </menu>

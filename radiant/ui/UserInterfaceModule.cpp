@@ -163,6 +163,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("GameConnectionReloadMap", GameConnection::ReloadMap);
 	GlobalCommandSystem().addCommand("GameConnectionEnableCameraSync", GameConnection::EnableCameraSync);
 	GlobalCommandSystem().addCommand("GameConnectionDisableCameraSync", GameConnection::DisableCameraSync);
+	GlobalCommandSystem().addCommand("GameConnectionPauseGame", GameConnection::PauseGame);
 
 	// ----------------------- Bind Events ---------------------------------------
 
@@ -195,6 +196,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("GameConnectionReloadMap", "GameConnectionReloadMap");
 	GlobalEventManager().addCommand("GameConnectionEnableCameraSync", "GameConnectionEnableCameraSync");
 	GlobalEventManager().addCommand("GameConnectionDisableCameraSync", "GameConnectionDisableCameraSync");
+	GlobalEventManager().addCommand("GameConnectionPauseGame", "GameConnectionPauseGame");
 }
 
 // Static module registration
