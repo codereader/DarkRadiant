@@ -119,7 +119,7 @@ bool GameConnection::Connect() {
 }
 
 
-void GameConnection::ExecuteSetTogglableFlag(const char *toggleCommand, bool enable, const char *offKeyword) {
+void GameConnection::ExecuteSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword) {
     if (!g_gameConnection.Connect())
         return;
     std::string text = ComposeConExecRequest(toggleCommand);
@@ -132,6 +132,34 @@ void GameConnection::ExecuteSetTogglableFlag(const char *toggleCommand, bool ena
         //wrong state: toggle it again
     }
     assert(attempt < 2);    //two toggles not enough?...
+}
+
+std::string GameConnection::ExecuteGetCvarValue(const std::string &cvarName, std::string *defaultValue) {
+    if (!g_gameConnection.Connect())
+        return;
+    std::string text = ComposeConExecRequest(cvarName);
+    std::string response = g_gameConnection.Execute(text);
+    //parse response (imagine how easy that would be with regex...)
+    while (response.size() && isspace(response.back()))
+        response.pop_back();
+    std::string expLeft = fmt::format("\"{}\"is:\"", cvarName);
+    std::string expMid = "\" default:\"";
+    std::string expRight = "\"";
+    int posLeft = response.find(expLeft);
+    int posMid = response.find(expMid);
+    if (posLeft < 0 || posMid < 0) {
+        rError() << fmt::format("ExecuteGetCvarValue: can't parse value of {}", cvarName);
+        return "";
+    }
+    int posLeftEnd = posLeft + expLeft.size();
+    int posMidEnd = posMid + expMid.size();
+    int posRight = response.size() - expRight.size();
+    std::string currValue = response.substr(posLeftEnd, posMid - posLeftEnd);
+    std::string defValue = response.substr(posMidEnd, posRight - posMidEnd);
+    //return results
+    if (defaultValue)
+        *defaultValue = defValue;
+    return currValue;
 }
 
 void GameConnection::ReloadMap(const cmd::ArgumentList& args) {
