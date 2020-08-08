@@ -175,6 +175,9 @@ void GameConnection::SetCameraObserver(bool enable) {
         ExecuteSetTogglableFlag("god", true, "OFF");
         ExecuteSetTogglableFlag("noclip", true, "OFF");
         ExecuteSetTogglableFlag("notarget", true, "OFF");
+        //sync camera location right now
+        UpdateCamera();
+        Finish();
     }
 }
 void GameConnection::EnableCameraSync(const cmd::ArgumentList& args) {
