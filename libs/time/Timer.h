@@ -2,25 +2,33 @@
 
 #include <condition_variable>
 #include <mutex>
+#include <stdexcept>
 #include <functional>
 #include <thread>
+#include <memory>
 
 namespace util
 {
 
+/**
+ * Timer class able to fire a callback in regular intervals.
+ * Pass the callback function to be invoked on interval reach to the constructor.
+ *
+ * Use the start() method to enable the timer (which is disabled after construction)
+ * Use the stop() method to disable the timer.
+ */
 class Timer
 {
 private:
-	bool _cancel;
 	std::condition_variable _condition;
 	std::mutex _lock;
 	std::unique_ptr<std::thread> _worker;
+	std::shared_ptr<bool> _cancellationToken;
 	std::size_t _intervalMsecs;
 	std::function<void()> _intervalReached;
 
 public:
 	Timer(std::size_t intervalMsecs, const std::function<void()>& intervalReached) :
-		_cancel(false),
 		_intervalMsecs(intervalMsecs),
 		_intervalReached(intervalReached)
 	{
@@ -46,15 +54,17 @@ public:
 			_intervalMsecs = intervalMsecs;
 		}
 
-		// At this point, no thread is running, so no need to lock this
-		_cancel = false;
-
 		if (_intervalMsecs == 0)
 		{
 			throw std::runtime_error("Cannot start timer interval set to 0");
 		}
 
-		_worker.reset(new std::thread(std::bind(&Timer::run, this)));
+		// Allocate a new cancellation token and remember it
+		// The new thread will keep a reference to this exact bool instance
+		_cancellationToken = std::make_shared<bool>(false);
+
+		// Spawn the thread, passing the reference to the token
+		_worker.reset(new std::thread(std::bind(&Timer::run, this, _cancellationToken)));
 	}
 
 	void stop()
@@ -64,40 +74,63 @@ public:
 			return;
 		}
 
+		// If we have a running worker, we also need a token for it
+		assert(_cancellationToken);
+
 		{
-			// Wait for the existing worker to stop
+			// Set the cancel signal of the existing thread
+			// Accessing the shared bool instance requires a lock
 			std::lock_guard<std::mutex> lock(_lock);
-			_cancel = true;
+			*_cancellationToken = true;
 		}
 
-		_condition.notify_one();
+		// In case we got here from the thread itself
+		// (client callback is stopping the timer)
+		// don't attempt to join our own thread
+		if (_worker->get_id() == std::this_thread::get_id())
+		{
+			// Just detach the thread, the cancel token is already set to true
+			_worker->detach();
+		}
+		else
+		{
+			// Send the signal to wake up the running thread to check the token
+			_condition.notify_one();
 
-		_worker->join();
+			// Wait for the existing worker to stop
+			_worker->join();
+		}
+
+		// Clear out the references, we're ready to start another worker
 		_worker.reset();
+		_cancellationToken.reset();
 	}
 
 private:
-	void run()
+	void run(std::shared_ptr<bool> token)
 	{
+		// Store the reference to the cancellation token locally
+		std::shared_ptr<bool> cancellationToken(token);
+
 		while (true)
 		{
-			// Acquire the lock
+			// Acquire the lock to access the token
 			std::unique_lock<std::mutex> lock(_lock);
+
+			// Check cancel flag before and after the wait state
+			if (*cancellationToken) return;
 
 			// Wait for the interval or until the cancel flag is hit
 			// this will unlock the mutex
-			_condition.wait_for(lock, std::chrono::milliseconds(_intervalMsecs), [this]
+			_condition.wait_for(lock, std::chrono::milliseconds(_intervalMsecs), [&]
 			{
-				return _cancel;
+				return *cancellationToken;
 			});
 
-			if (_cancel)
-			{
-				return;
-			}
+			if (*cancellationToken) return; // on cancel signal, break this loop
 
 			// Unlock the mutex such that the callback is able
-			// to acquire it (e.g. to cancel the thread)
+			// to acquire it (e.g. to set the cancel signal)
 			lock.unlock();
 
 			// Interval reached
