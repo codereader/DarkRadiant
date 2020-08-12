@@ -6,7 +6,6 @@
 #include "SelectionSet.h"
 
 #include <sigc++/signal.h>
-#include <wx/event.h>
 
 namespace selection
 {
@@ -15,8 +14,7 @@ class SelectionSetToolmenu;
 
 class SelectionSetManager :
 	public ISelectionSetManager,
-	public std::enable_shared_from_this<SelectionSetManager>,
-	public wxEvtHandler
+	public std::enable_shared_from_this<SelectionSetManager>
 {
     // Signal emitted when contents changes
     sigc::signal<void> _sigSelectionSetsChanged;
