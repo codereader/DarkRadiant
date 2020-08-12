@@ -316,56 +316,49 @@ RootNodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::
 
 bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, const RootNodePtr& root, const std::string& filename)
 {
-	// Our importer taking care of scene insertion
-	MapImporter importFilter(root, mapStream);
-
-	// Acquire a map reader/parser
-	IMapReaderPtr reader = format.getMapReader(importFilter);
-
 	try
 	{
-		try
+		// Our importer taking care of scene insertion
+		MapImporter importFilter(root, mapStream);
+
+		// Acquire a map reader/parser
+		IMapReaderPtr reader = format.getMapReader(importFilter);
+
+		rMessage() << "Using " << format.getMapFormatName() << " format to load the data." << std::endl;
+
+		// Start parsing
+		reader->readFromStream(mapStream);
+
+		// Prepare child primitives
+		scene::addOriginToChildPrimitives(root);
+
+		if (!format.allowInfoFileCreation())
 		{
-			rMessage() << "Using " << format.getMapFormatName() << " format to load the data." << std::endl;
-
-			// Start parsing
-			reader->readFromStream(mapStream);
-
-			// Prepare child primitives
-			scene::addOriginToChildPrimitives(root);
-
-			if (!format.allowInfoFileCreation())
-			{
-				// No info file handling, just return success
-				return true;
-			}
-
-			// Check for an additional info file
-			loadInfoFile(root, filename, importFilter.getNodeMap());
-
+			// No info file handling, just return success
 			return true;
 		}
-		catch (map::FileOperation::OperationCancelled&)
-		{
-			// Clear out the root node, otherwise we end up with half a map
-			scene::NodeRemover remover;
-			root->traverseChildren(remover);
 
-			throw OperationException(_("Map loading cancelled"));
-		}
-		catch (IMapReader::FailureException & e)
-		{
-			// Clear out the root node, otherwise we end up with half a map
-			scene::NodeRemover remover;
-			root->traverseChildren(remover);
+		// Check for an additional info file
+		loadInfoFile(root, filename, importFilter.getNodeMap());
 
-			throw OperationException(
-				fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), filename, e.what()));
-		}
+		return true;
 	}
-	catch (const OperationException& ex)
+	catch (map::FileOperation::OperationCancelled&)
 	{
-		rError() << ex.what() << std::endl;
+		// Clear out the root node, otherwise we end up with half a map
+		scene::NodeRemover remover;
+		root->traverseChildren(remover);
+
+		throw OperationException(_("Map loading cancelled"));
+	}
+	catch (IMapReader::FailureException& e)
+	{
+		// Clear out the root node, otherwise we end up with half a map
+		scene::NodeRemover remover;
+		root->traverseChildren(remover);
+		
+		throw OperationException(
+				fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), filename, e.what()));
 	}
 }
 

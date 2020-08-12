@@ -58,6 +58,7 @@ void MapFileProgressHandler::handleFileOperation(map::FileOperation& msg)
 	// A previous _blocker update might indicate a cancel operation, propagate this info
 	if (_wasCancelled)
 	{
+		_wasCancelled = false;
 		msg.cancelOperation();
 		return;
 	}
