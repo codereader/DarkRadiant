@@ -21,7 +21,7 @@ LongRunningOperationHandler::LongRunningOperationHandler() :
 
 void LongRunningOperationHandler::onMessage(radiant::LongRunningOperationMessage& message)
 {
-	std::lock_guard<std::mutex> lock(_lock);
+	auto lock = std::make_unique< std::lock_guard<std::mutex> >(_lock);
 
 	if (message.getType() == radiant::OperationEvent::Started)
 	{
@@ -60,6 +60,9 @@ void LongRunningOperationHandler::onMessage(radiant::LongRunningOperationMessage
 			});
 		}
 	}
+
+	lock.reset();
+	wxTheApp->Yield();
 }
 
 }
