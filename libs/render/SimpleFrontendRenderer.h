@@ -20,19 +20,19 @@ public:
 
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override
 	{
-		shader->addRenderable(renderable, world);
+		shader->addRenderable(renderable, world, nullptr, nullptr);
 	}
 
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
 		const Matrix4& world, const IRenderEntity& entity) override
 	{
-		shader->addRenderable(renderable, world, entity);
+		shader->addRenderable(renderable, world, nullptr, &entity);
 	}
 
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
 		const Matrix4& world, const IRenderEntity& entity, const LightList& lights) override
 	{
-		shader->addRenderable(renderable, world, entity, &lights);
+		shader->addRenderable(renderable, world, &lights, &entity);
 	}
 
 	bool supportsFullMaterials() const override

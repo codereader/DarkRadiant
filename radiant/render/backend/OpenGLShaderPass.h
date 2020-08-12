@@ -66,7 +66,6 @@ class OpenGLShaderPass
 	
 	// Renderables sorted by RenderEntity
 	typedef std::map<const IRenderEntity*, Renderables> RenderablesByEntity;
-
 	RenderablesByEntity _renderables;
 
 private:
@@ -126,21 +125,20 @@ public:
 	{}
 
 	/**
-	 * Add a renderable to this state bucket with the given object transform
-	 * matrix and light.
+     * \brief
+     * Add a renderable to this shader pass the given object transform matrix
+     * and light.
+     *
+     * \param light
+     * Single light illuminating this renderable. When Shader::addRenderable
+     * accepts a LIST of lights, this list is then broken up into individual
+     * lights which are submitted to the shader passes one by one (so the same
+     * renderable will be submitted once for each light).
 	 */
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
-					   const RendererLight* light = 0);
-
-	/**
-	 * Add a renderable to this state bucket with the given object transform
-	 * matrix and light.
-	 */
-	void addRenderable(const OpenGLRenderable& renderable,
-					   const Matrix4& modelview,
-					   const IRenderEntity& entity,
-					   const RendererLight* light = 0);
+					   const RendererLight* light = nullptr,
+                       const IRenderEntity* entity = nullptr);
 
 	/**
 	 * Return the OpenGL state associated with this bucket.

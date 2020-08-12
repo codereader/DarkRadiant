@@ -74,15 +74,15 @@ public:
 		{
 			if (_state.highlightAsGroupMember)
 			{
-				_selectedShaderGroup->addRenderable(renderable, world, entity);
+				_selectedShaderGroup->addRenderable(renderable, world, nullptr, &entity);
 			}
 			else
 			{
-				_selectedShader->addRenderable(renderable, world, entity);
+				_selectedShader->addRenderable(renderable, world, nullptr, &entity);
 			}
 		}
 
-		shader->addRenderable(renderable, world, entity);
+		shader->addRenderable(renderable, world, nullptr, &entity);
 	}
 
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
@@ -92,15 +92,15 @@ public:
 		{
 			if (_state.highlightAsGroupMember)
 			{
-				_selectedShaderGroup->addRenderable(renderable, world, entity, &lights);
+				_selectedShaderGroup->addRenderable(renderable, world, &lights, &entity);
 			}
 			else
 			{
-				_selectedShader->addRenderable(renderable, world, entity, &lights);
+				_selectedShader->addRenderable(renderable, world, &lights, &entity);
 			}
 		}
 
-		shader->addRenderable(renderable, world, entity, &lights);
+		shader->addRenderable(renderable, world, &lights, &entity);
 	}
 
 	void render(const Matrix4& modelview, const Matrix4& projection)

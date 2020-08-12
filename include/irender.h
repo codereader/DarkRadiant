@@ -94,7 +94,9 @@ const unsigned RENDER_TEXTURE_CUBEMAP = 1 << 18;
 /**
  * Normal map information will be used during rendering. If enabled, objects
  * should submit normal/tangent/bitangent vertex attributes to enable normal
- * mapping.
+ * mapping. Also used by shader passes to signal that they care about lighting
+ * (and need to be provided with a list of incident lights along with
+ * renderable objects).
  */
 const unsigned RENDER_BUMP = 1 << 19;
 
@@ -431,30 +433,27 @@ public:
     virtual ~Shader() {}
 
 	/**
+     * \brief
 	 * Attach a renderable object to this Shader, which will be rendered using
 	 * this Shader when the render backend is activated.
 	 *
-	 * @param renderable
+	 * \param renderable
 	 * The OpenGLRenderable object to add.
 	 *
-	 * @param modelview
+	 * \param modelview
 	 * The modelview transform for this object.
 	 *
-	 * @param lights
-	 * A LightList containing all of the lights which should illuminate this
-	 * object.
+	 * \param lights
+     * Optional LightList containing all of the lights which should illuminate
+     * this object.
+     *
+     * \param entity
+     * Optional IRenderEntity exposing entity-related render parameters.
 	 */
 	virtual void addRenderable(const OpenGLRenderable& renderable,
 							   const Matrix4& modelview,
-							   const LightList* lights = 0) = 0;
-
-	/**
-	 * Like above, but taking an additional IRenderEntity argument.
-	 */
-	virtual void addRenderable(const OpenGLRenderable& renderable,
-							   const Matrix4& modelview,
-							   const IRenderEntity& entity,
-							   const LightList* lights = 0) = 0;
+							   const LightList* lights = nullptr,
+                               const IRenderEntity* entity = nullptr) = 0;
 
     /**
      * \brief

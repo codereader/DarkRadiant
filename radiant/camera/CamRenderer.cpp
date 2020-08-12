@@ -37,15 +37,15 @@ void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable&
 {
 	if (_state.highlightPrimitives)
 	{
-		_highlightedPrimitiveShader->addRenderable(renderable, world);
+		_highlightedPrimitiveShader->addRenderable(renderable, world, nullptr, nullptr);
 	}
 
 	if (_state.highlightFaces)
 	{
-		_highlightedFaceShader->addRenderable(renderable, world);
+		_highlightedFaceShader->addRenderable(renderable, world, nullptr, nullptr);
 	}
 
-	shader->addRenderable(renderable, world);
+	shader->addRenderable(renderable, world, nullptr, nullptr);
 }
 
 void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
@@ -53,15 +53,15 @@ void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable&
 {
 	if (_state.highlightPrimitives)
 	{
-		_highlightedPrimitiveShader->addRenderable(renderable, world, entity);
+		_highlightedPrimitiveShader->addRenderable(renderable, world, nullptr, &entity);
 	}
 
 	if (_state.highlightFaces)
 	{
-		_highlightedFaceShader->addRenderable(renderable, world, entity);
+		_highlightedFaceShader->addRenderable(renderable, world, nullptr, &entity);
 	}
 
-	shader->addRenderable(renderable, world, entity);
+	shader->addRenderable(renderable, world, nullptr, &entity);
 }
 
 void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
@@ -69,15 +69,15 @@ void CamRenderer::addRenderable(const ShaderPtr& shader, const OpenGLRenderable&
 {
 	if (_state.highlightPrimitives)
 	{
-		_highlightedPrimitiveShader->addRenderable(renderable, world, entity, &lights);
+		_highlightedPrimitiveShader->addRenderable(renderable, world, &lights, &entity);
 	}
 
 	if (_state.highlightFaces)
 	{
-		_highlightedFaceShader->addRenderable(renderable, world, entity, &lights);
+		_highlightedFaceShader->addRenderable(renderable, world, &lights, &entity);
 	}
 
-	shader->addRenderable(renderable, world, entity, &lights);
+	shader->addRenderable(renderable, world, &lights, &entity);
 }
 
 void CamRenderer::render(const Matrix4& modelview, const Matrix4& projection)
