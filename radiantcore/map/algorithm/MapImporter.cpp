@@ -45,8 +45,8 @@ MapImporter::MapImporter(const scene::IMapRootNodePtr& root, std::istream& input
 MapImporter::~MapImporter()
 {
 	// Send the final finished message to give the UI a chance to close progress dialogs
-	FileOperation startedMsg(FileOperation::Type::Import, FileOperation::Finished, _fileSize > 0);
-	GlobalRadiantCore().getMessageBus().sendMessage(startedMsg);
+	FileOperation finishedMsg(FileOperation::Type::Import, FileOperation::Finished, _fileSize > 0);
+	GlobalRadiantCore().getMessageBus().sendMessage(finishedMsg);
 }
 
 const scene::IMapRootNodePtr& MapImporter::getRootNode() const

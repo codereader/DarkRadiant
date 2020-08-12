@@ -99,7 +99,7 @@ void Map::loadMapResourceFromPath(const std::string& path)
             clearMapResource();
         }
     }
-    catch (const IMapResource::OperationException & ex)
+    catch (IMapResource::OperationException& ex)
     {
         wxutil::Messagebox::ShowError(ex.what());
         clearMapResource();

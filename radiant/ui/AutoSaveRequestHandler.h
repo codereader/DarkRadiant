@@ -36,10 +36,8 @@ private:
 			return;
 		}
 
-		// greebo: Check if we have a valid main window to grab the pointer
-		auto* mainWindow = GlobalMainFrame().getWxTopLevelWindow();
-
-		if (mainWindow == nullptr || !mainWindow->IsActive())
+		// greebo: Check if we are in focus
+		if (!GlobalMainFrame().isActiveApp())
 		{
 			msg.denyWithReason("Main window not present or not shown on screen, "
 				"will wait for another period.");

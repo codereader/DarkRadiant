@@ -1,9 +1,6 @@
 #pragma once
 
-#include <functional>
-#include "i18n.h"
-#include "iradiant.h"
-#include "imainframe.h"
+#include <mutex>
 #include "messages/LongRunningOperationMessage.h"
 
 namespace ui
@@ -22,44 +19,13 @@ private:
 
 	IScopedScreenUpdateBlockerPtr _blocker;
 
+	std::mutex _lock;
+
 public:
-	LongRunningOperationHandler() :
-		_level(0)
-	{
-		GlobalRadiantCore().getMessageBus().addListener(radiant::IMessage::Type::LongRunningOperation,
-			radiant::TypeListener<radiant::LongRunningOperationMessage>(
-				std::bind(&LongRunningOperationHandler::onMessage, this, std::placeholders::_1)
-			)
-		);
-	}
+	LongRunningOperationHandler();
 
 private:
-	void onMessage(radiant::LongRunningOperationMessage& message)
-	{
-		if (message.getType() == radiant::OperationEvent::Started)
-		{
-			std::string description = message.getMessage();
-
-			if (description.empty())
-			{
-				description = _("...crunching...");
-			}
-
-			if (++_level == 1)
-			{
-				_blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), description);
-			}
-		}
-		else if (message.getType() == radiant::OperationEvent::Finished)
-		{
-			assert(_level > 0);
-
-			if (_level > 0 && --_level == 0)
-			{
-				_blocker.reset();
-			}
-		}
-	}
+	void onMessage(radiant::LongRunningOperationMessage& message);
 };
 
 }

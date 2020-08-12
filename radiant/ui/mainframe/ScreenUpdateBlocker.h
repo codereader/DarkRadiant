@@ -2,6 +2,7 @@
 
 #include "imainframe.h"
 #include <memory>
+#include <mutex>
 
 #include "wxutil/ModalProgressDialog.h"
 
@@ -12,6 +13,8 @@ class ScreenUpdateBlocker :
 	public IScopedScreenUpdateBlocker
 {
 private:
+	std::mutex _dialogLock;
+
 	wxutil::ModalProgressDialog* _dialog;
 
 	std::unique_ptr<wxWindowDisabler> _disabler;

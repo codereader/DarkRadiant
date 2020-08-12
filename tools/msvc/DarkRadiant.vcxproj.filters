@@ -658,6 +658,12 @@
     <ClCompile Include="..\..\radiant\clipboard\ClipboardModule.cpp">
       <Filter>src\clipboard</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\MapFileProgressHandler.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1270,6 +1276,9 @@
       <Filter>src\clipboard</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\FileSelectionRequestHandler.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\DispatchEvent.h">
       <Filter>src\ui</Filter>
     </ClInclude>
   </ItemGroup>

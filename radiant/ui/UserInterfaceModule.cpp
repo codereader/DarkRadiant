@@ -190,10 +190,14 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 	_shaderClipboardStatus.reset(new ShaderClipboardStatus);
 
 	MouseToolRegistrationHelper::RegisterTools();
+
+	wxTheApp->Bind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+	wxTheApp->Unbind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
+
 	GlobalRadiantCore().getMessageBus().removeListener(_textureChangedListener);
 	GlobalRadiantCore().getMessageBus().removeListener(_execFailedListener);
 	GlobalRadiantCore().getMessageBus().removeListener(_notificationListener);
@@ -209,6 +213,12 @@ void UserInterfaceModule::shutdownModule()
 	_shaderClipboardStatus.reset();
 	
 	_mruMenu.reset();
+}
+
+void UserInterfaceModule::dispatch(const std::function<void()>& action)
+{
+	// Store this action in the event queue, it will be handled during the next event loop
+	wxTheApp->QueueEvent(new DispatchEvent(DISPATCH_EVENT, wxID_ANY, action));
 }
 
 void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)
@@ -241,6 +251,12 @@ void UserInterfaceModule::HandleNotificationMessage(radiant::NotificationMessage
 			msg.getMessage(), IDialog::MessageType::MESSAGE_ERROR, parentWindow);
 		break;
 	};
+}
+
+void UserInterfaceModule::onDispatchEvent(DispatchEvent& evt)
+{
+	const auto& action = evt.GetAction();
+	action();
 }
 
 void UserInterfaceModule::initialiseEntitySettings()
@@ -372,5 +388,11 @@ void UserInterfaceModule::HandleTextureChanged(radiant::TextureChangedMessage& m
 
 // Static module registration
 module::StaticModule<UserInterfaceModule> userInterfaceModule;
+
+UserInterfaceModule& GetUserInterfaceModule()
+{
+	return *std::static_pointer_cast<UserInterfaceModule>(
+		GlobalRadiantCore().getModuleRegistry().getModule("UserInterfaceModule"));
+}
 
 }

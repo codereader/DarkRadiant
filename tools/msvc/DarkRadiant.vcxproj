@@ -260,8 +260,10 @@
     <ClCompile Include="..\..\radiant\ui\filters\FilterUserInterface.cpp" />
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\MapCommands.cpp" />
+    <ClCompile Include="..\..\radiant\ui\MapFileProgressHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp" />
@@ -421,6 +423,7 @@
     <ClInclude Include="..\..\radiant\ui\aas\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiant\ui\AutoSaveRequestHandler.h" />
     <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h" />
+    <ClInclude Include="..\..\radiant\ui\DispatchEvent.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.h" />
