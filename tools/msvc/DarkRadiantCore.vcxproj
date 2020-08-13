@@ -1024,7 +1024,6 @@
     <ClInclude Include="..\..\radiantcore\vfs\UnixPath.h" />
     <ClInclude Include="..\..\radiantcore\vfs\ZipArchive.h" />
     <ClInclude Include="..\..\radiantcore\vfs\ZipStreamUtils.h" />
-    <ClInclude Include="..\..\radiantcore\xmlregistry\Autosaver.h" />
     <ClInclude Include="..\..\radiantcore\xmlregistry\RegistryTree.h" />
     <ClInclude Include="..\..\radiantcore\xmlregistry\XMLRegistry.h" />
   </ItemGroup>

@@ -1029,9 +1029,6 @@
     <ClInclude Include="..\..\radiantcore\settings\LanguageManager.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\xmlregistry\Autosaver.h">
-      <Filter>src\xmlregistry</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\xmlregistry\RegistryTree.h">
       <Filter>src\xmlregistry</Filter>
     </ClInclude>

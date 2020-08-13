@@ -23,10 +23,11 @@
 
 #include "iregistry.h"
 #include <map>
+#include <mutex>
 
 #include "imodule.h"
 #include "RegistryTree.h"
-#include "Autosaver.h"
+#include "time/Timer.h"
 
 namespace registry
 {
@@ -59,7 +60,9 @@ private:
 	bool _shutdown;
 
 	// Auto-save helper
-	std::unique_ptr<Autosaver> _autosaver;
+	std::unique_ptr<util::Timer> _autosaveTimer;
+
+	std::mutex _writeLock;
 
 public:
 	/* Constructor:
@@ -123,6 +126,7 @@ public:
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const ApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
 	void loadUserFileFromSettingsPath(const ApplicationContext& ctx,
@@ -132,6 +136,8 @@ private:
 
 	// Invoked after all modules have been uninitialised
 	void shutdown();
+
+	void onAutoSaveTimerIntervalReached();
 };
 typedef std::shared_ptr<XMLRegistry> XMLRegistryPtr;
 

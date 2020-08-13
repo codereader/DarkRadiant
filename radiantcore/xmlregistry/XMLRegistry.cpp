@@ -28,7 +28,7 @@ void XMLRegistry::shutdown()
     saveToDisk();
 
     _shutdown = true;
-    _autosaver.reset();
+    _autosaveTimer.reset();
 }
 
 void XMLRegistry::saveToDisk()
@@ -39,6 +39,8 @@ void XMLRegistry::saveToDisk()
     {
         return;
     }
+    
+    std::lock_guard<std::mutex> lock(_writeLock);
 
     // Make a deep copy of the user tree by copy-constructing it
     RegistryTree copiedTree(_userTree);
@@ -118,6 +120,8 @@ bool XMLRegistry::keyExists(const std::string& key)
 
 void XMLRegistry::deleteXPath(const std::string& path) 
 {
+    std::lock_guard<std::mutex> lock(_writeLock);
+
     assert(!_shutdown);
 
     // Add the toplevel node to the path if required
@@ -139,6 +143,8 @@ xml::Node XMLRegistry::createKeyWithName(const std::string& path,
                                          const std::string& key,
                                          const std::string& name)
 {
+    std::lock_guard<std::mutex> lock(_writeLock);
+
     assert(!_shutdown);
 
     _changesSinceLastSave++;
@@ -149,6 +155,8 @@ xml::Node XMLRegistry::createKeyWithName(const std::string& path,
 
 xml::Node XMLRegistry::createKey(const std::string& key)
 {
+    std::lock_guard<std::mutex> lock(_writeLock);
+
     assert(!_shutdown);
 
     _changesSinceLastSave++;
@@ -159,6 +167,8 @@ xml::Node XMLRegistry::createKey(const std::string& key)
 void XMLRegistry::setAttribute(const std::string& path,
     const std::string& attrName, const std::string& attrValue)
 {
+    std::lock_guard<std::mutex> lock(_writeLock);
+
     assert(!_shutdown);
 
     _changesSinceLastSave++;
@@ -199,13 +209,17 @@ std::string XMLRegistry::get(const std::string& key)
 
 void XMLRegistry::set(const std::string& key, const std::string& value) 
 {
-    assert(!_shutdown);
+    {
+        std::lock_guard<std::mutex> lock(_writeLock);
 
-    // Create or set the value in the user tree, the default tree stays untouched
-    // Convert the string to UTF-8 before storing it into the RegistryTree
-    _userTree.set(key, string::mb_to_utf8(value));
+        assert(!_shutdown);
 
-    _changesSinceLastSave++;
+        // Create or set the value in the user tree, the default tree stays untouched
+        // Convert the string to UTF-8 before storing it into the RegistryTree
+        _userTree.set(key, string::mb_to_utf8(value));
+
+        _changesSinceLastSave++;
+    }
 
     // Notify the observers
     emitSignalForKey(key);
@@ -213,6 +227,8 @@ void XMLRegistry::set(const std::string& key, const std::string& value)
 
 void XMLRegistry::import(const std::string& importFilePath, const std::string& parentKey, Tree tree)
 {
+    std::lock_guard<std::mutex> lock(_writeLock);
+
     assert(!_shutdown);
 
     switch (tree) 
@@ -319,10 +335,34 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
     module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(
         sigc::mem_fun(this, &XMLRegistry::shutdown));
 
-    _autosaver.reset(new Autosaver([this]() 
+    _autosaveTimer.reset(new util::Timer(2000,
+        sigc::mem_fun(this, &XMLRegistry::onAutoSaveTimerIntervalReached)));
+    
+    module::GlobalModuleRegistry().signal_allModulesInitialised().connect([this]()
     {
-        return _changesSinceLastSave > 0;
-    }));
+        _autosaveTimer->start();
+    });
+}
+
+void XMLRegistry::shutdownModule()
+{
+    _autosaveTimer->stop();
+}
+
+void XMLRegistry::onAutoSaveTimerIntervalReached()
+{
+    {
+        std::lock_guard<std::mutex> lock(_writeLock);
+
+        if (_changesSinceLastSave == 0)
+        {
+            return;
+        }
+    }
+
+    rMessage() << "Auto-saving registry to user settings path." << std::endl;
+
+    saveToDisk();
 }
 
 // Static module instance
