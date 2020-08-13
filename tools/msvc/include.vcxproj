@@ -111,6 +111,7 @@
     <ClInclude Include="..\..\include\idatastream.h" />
     <ClInclude Include="..\..\include\idialogmanager.h" />
     <ClInclude Include="..\..\include\ieclass.h" />
+    <ClInclude Include="..\..\include\ieditstopwatch.h" />
     <ClInclude Include="..\..\include\ientity.h" />
     <ClInclude Include="..\..\include\ientityinspector.h" />
     <ClInclude Include="..\..\include\ieventmanager.h" />

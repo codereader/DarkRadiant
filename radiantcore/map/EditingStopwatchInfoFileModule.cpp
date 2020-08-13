@@ -1,7 +1,7 @@
 #include "EditingStopwatchInfoFileModule.h"
 
 #include "itextstream.h"
-#include "EditingStopwatch.h"
+#include "ieditstopwatch.h"
 #include "parser/DefTokeniser.h"
 #include "string/convert.h"
 
@@ -41,7 +41,7 @@ void EditingStopwatchInfoFileModule::writeBlocks(std::ostream& stream)
 
 	stream << "\t{" << std::endl;
 
-	unsigned long secondsEdited = EditingStopwatch::GetInstanceInternal().getTotalSecondsEdited();
+	unsigned long secondsEdited = GlobalMapEditStopwatch().getTotalSecondsEdited();
 
 	// TotalSecondsEdited { 4 }
 	stream << "\t\t" << TOTAL_SECONDS_EDITED << " { " << secondsEdited  << " }" << std::endl;
@@ -86,7 +86,7 @@ void EditingStopwatchInfoFileModule::parseBlock(const std::string& blockName, pa
 			rMessage() << "[InfoFile]: Parsed map editing time." << std::endl;
 
 			// Apply the parsed value
-			EditingStopwatch::GetInstanceInternal().setTotalSecondsEdited(secondsEdited);
+			GlobalMapEditStopwatch().setTotalSecondsEdited(secondsEdited);
 		}
 		else if (token == "{")
 		{

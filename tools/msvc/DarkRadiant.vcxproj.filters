@@ -170,6 +170,9 @@
     <Filter Include="src\clipboard">
       <UniqueIdentifier>{a12b340c-f537-4113-bc7c-2bbfb35b8d0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\statusbar">
+      <UniqueIdentifier>{ef5c6dc4-3f56-434e-b371-f2804f9088ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1280,6 +1283,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\DispatchEvent.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.h">
+      <Filter>src\ui\statusbar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,6 +13,7 @@
 #include "AutoSaveRequestHandler.h"
 #include "MapFileProgressHandler.h"
 #include "shaderclipboard/ShaderClipboardStatus.h"
+#include "statusbar/EditingStopwatchStatus.h"
 #include "messages/CommandExecutionFailed.h"
 #include "messages/TextureChanged.h"
 #include "messages/NotificationMessage.h"
@@ -40,6 +41,7 @@ private:
 	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;
 	std::unique_ptr<FileSelectionRequestHandler> _fileSelectionRequestHandler;
 	std::unique_ptr<ShaderClipboardStatus> _shaderClipboardStatus;
+	std::unique_ptr<EditingStopwatchStatus> _editStopwatchStatus;
 
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;

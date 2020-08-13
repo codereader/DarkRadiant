@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imodule.h"
+#include "ieditstopwatch.h"
 #include "imap.h"
 
 #include <memory>
@@ -17,7 +17,7 @@ namespace map
 * as long as the application is in focus.
 */
 class EditingStopwatch :
-	public RegisterableModule,
+	public IMapEditStopwatch,
 	public wxEvtHandler
 {
 private:
@@ -29,6 +29,8 @@ private:
 	// Helper object to get called per second
 	std::unique_ptr<wxTimer> _timer;
 
+	sigc::signal<void> _sigTimerChanged;
+
 public:
 	EditingStopwatch();
 
@@ -37,14 +39,13 @@ public:
 	void initialiseModule(const ApplicationContext& ctx) override;
 	void shutdownModule() override;
 
-	void start();
-	void stop();
+	void start() override;
+	void stop() override;
 
-	unsigned long getTotalSecondsEdited();
-	void setTotalSecondsEdited(unsigned long newValue);
+	unsigned long getTotalSecondsEdited() override;
+	void setTotalSecondsEdited(unsigned long newValue) override;
 
-	// Internal accessor to the module
-	static EditingStopwatch& GetInstanceInternal();
+	sigc::signal<void>& sig_TimerChanged() override;
 
 private:
 	void onMapEvent(IMap::MapEvent ev);

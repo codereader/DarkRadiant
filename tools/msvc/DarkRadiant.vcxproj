@@ -540,6 +540,7 @@
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h" />
     <ClInclude Include="..\..\radiant\ui\shaderclipboard\ShaderClipboardStatus.h" />
+    <ClInclude Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h" />

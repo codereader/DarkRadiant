@@ -4,7 +4,6 @@
 
 #include "i18n.h"
 #include "iradiant.h"
-#include "iuimanager.h"
 #include "itextstream.h"
 #include "imainframe.h"
 #include "imap.h"
@@ -22,9 +21,8 @@ namespace map
 namespace
 {
 	const int TIMER_INTERVAL_SECS = 1;
-	const char* const STATUS_BAR_ELEMENT = "EditTime";
+	
 	const char* const MAP_PROPERTY_KEY = "EditTimeInSeconds";
-	const char* const MODULE_EDITING_STOPWATCH = "EditingStopwatch";
 }
 
 EditingStopwatch::EditingStopwatch() :
@@ -46,7 +44,6 @@ const StringSet& EditingStopwatch::getDependencies() const
 		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		_dependencies.insert(MODULE_MAPRESOURCEMANAGER);
-		_dependencies.insert(MODULE_UIMANAGER);
 	}
 
 	return _dependencies;
@@ -71,11 +68,6 @@ void EditingStopwatch::initialiseModule(const ApplicationContext& ctx)
 	// Register the timer when the application has come up
 	GlobalRadiant().signal_radiantStarted().connect(
 		sigc::mem_fun(*this, &EditingStopwatch::onRadiantStartup));
-
-	// Add the status bar element
-	GlobalUIManager().getStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "stopwatch.png", 
-		IStatusBarManager::POS_MAP_EDIT_TIME, _("Time spent on this map"));
-	GlobalUIManager().getStatusBarManager().setText(STATUS_BAR_ELEMENT, "00:00:00");
 }
 
 void EditingStopwatch::shutdownModule()
@@ -94,17 +86,10 @@ void EditingStopwatch::onRadiantStartup()
 
 void EditingStopwatch::onIntervalReached(wxTimerEvent& ev)
 {
+	// TODO: Send signal over messagebus
 	if (GlobalMainFrame().isActiveApp() && GlobalMainFrame().screenUpdatesEnabled())
 	{
-		_secondsEdited += TIMER_INTERVAL_SECS;
-
-		// Format the time and pass it to the status bar
-		unsigned long hours = _secondsEdited / 3600;
-		unsigned long minutes = (_secondsEdited % 3600) / 60;
-		unsigned long seconds = _secondsEdited % 60;
-
-		GlobalUIManager().getStatusBarManager().setText(STATUS_BAR_ELEMENT,
-			fmt::format("{0:02d}:{1:02d}:{2:02d}", hours, minutes, seconds));
+		setTotalSecondsEdited(getTotalSecondsEdited() + TIMER_INTERVAL_SECS);
 	}
 }
 
@@ -179,6 +164,12 @@ unsigned long EditingStopwatch::getTotalSecondsEdited()
 void EditingStopwatch::setTotalSecondsEdited(unsigned long newValue)
 {
 	_secondsEdited = newValue;
+	_sigTimerChanged.emit();
+}
+
+sigc::signal<void>& EditingStopwatch::sig_TimerChanged()
+{
+	return _sigTimerChanged;
 }
 
 void EditingStopwatch::readFromMapProperties()
@@ -205,11 +196,5 @@ void EditingStopwatch::writeToMapProperties(const scene::IMapRootNodePtr& root)
 
 // Static module registration
 module::StaticModule<EditingStopwatch> _stopwatchModule;
-
-EditingStopwatch& EditingStopwatch::GetInstanceInternal()
-{
-	return *std::static_pointer_cast<EditingStopwatch>(
-		module::GlobalModuleRegistry().getModule(MODULE_EDITING_STOPWATCH));
-}
 
 }
