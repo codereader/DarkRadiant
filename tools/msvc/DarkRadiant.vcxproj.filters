@@ -667,6 +667,9 @@
     <ClCompile Include="..\..\radiant\ui\MapFileProgressHandler.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.cpp">
+      <Filter>src\ui\statusbar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">

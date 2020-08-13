@@ -4,8 +4,8 @@
 #include "imap.h"
 
 #include <memory>
-#include <wx/event.h>
-#include <wx/timer.h>
+#include <mutex>
+#include "time/Timer.h"
 #include <sigc++/connection.h>
 
 namespace map
@@ -17,8 +17,7 @@ namespace map
 * as long as the application is in focus.
 */
 class EditingStopwatch :
-	public IMapEditStopwatch,
-	public wxEvtHandler
+	public IMapEditStopwatch
 {
 private:
 	sigc::connection _mapSignal;
@@ -27,9 +26,11 @@ private:
 	unsigned long _secondsEdited;
 
 	// Helper object to get called per second
-	std::unique_ptr<wxTimer> _timer;
+	std::unique_ptr<util::Timer> _timer;
 
 	sigc::signal<void> _sigTimerChanged;
+
+	std::recursive_mutex _timingMutex;
 
 public:
 	EditingStopwatch();
@@ -52,7 +53,7 @@ private:
 
 	void onMapEvent(IMap::MapEvent ev);
 	void onRadiantStartup();
-	void onIntervalReached(wxTimerEvent& ev);
+	void onIntervalReached();
 	void readFromMapProperties();
 	void writeToMapProperties(const scene::IMapRootNodePtr& root);
 	void onResourceExporting(const scene::IMapRootNodePtr& root);

@@ -342,6 +342,7 @@
     <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp" />
     <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp" />
+    <ClCompile Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\transform\TransformDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp" />

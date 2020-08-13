@@ -2,7 +2,6 @@
 
 #include <sigc++/functors/mem_fun.h>
 
-#include "i18n.h"
 #include "iradiant.h"
 #include "itextstream.h"
 #include "imap.h"
@@ -78,13 +77,13 @@ void EditingStopwatch::shutdownModule()
 
 void EditingStopwatch::onRadiantStartup()
 {
-	Bind(wxEVT_TIMER, sigc::mem_fun(*this, &EditingStopwatch::onIntervalReached));
+	_timer.reset(new util::Timer(TIMER_INTERVAL_SECS * 1000, 
+		sigc::mem_fun(*this, &EditingStopwatch::onIntervalReached)));
 
-	_timer.reset(new wxTimer(this));
 	start();
 }
 
-void EditingStopwatch::onIntervalReached(wxTimerEvent& ev)
+void EditingStopwatch::onIntervalReached()
 {
 	if (applicationIsActive())
 	{
@@ -151,7 +150,7 @@ void EditingStopwatch::start()
 {
 	if (_timer)
 	{
-		_timer->Start(TIMER_INTERVAL_SECS * 1000);
+		_timer->start(TIMER_INTERVAL_SECS * 1000);
 	}
 }
 
@@ -159,17 +158,21 @@ void EditingStopwatch::stop()
 {
 	if (_timer)
 	{
-		_timer->Stop();
+		_timer->stop();
 	}
 }
 
 unsigned long EditingStopwatch::getTotalSecondsEdited()
 {
+	std::lock_guard<std::recursive_mutex> lock(_timingMutex);
+
 	return _secondsEdited;
 }
 
 void EditingStopwatch::setTotalSecondsEdited(unsigned long newValue)
 {
+	std::lock_guard<std::recursive_mutex> lock(_timingMutex);
+	
 	_secondsEdited = newValue;
 	_sigTimerChanged.emit();
 }

@@ -10,15 +10,12 @@
 namespace ui
 {
 
-namespace
-{
-	const char* const STATUS_BAR_ELEMENT = "ShaderClipBoard";
-}
-
 class ShaderClipboardStatus
 {
 private:
 	sigc::connection _conn;
+
+	const char* const STATUS_BAR_ELEMENT = "ShaderClipBoard";
 
 public:
 	ShaderClipboardStatus()
