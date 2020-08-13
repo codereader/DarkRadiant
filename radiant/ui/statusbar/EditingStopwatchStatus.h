@@ -2,10 +2,12 @@
 
 #include "i18n.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 #include "ieditstopwatch.h"
 #include <sigc++/connection.h>
 #include <sigc++/functors/mem_fun.h>
 #include <fmt/format.h>
+#include "messages/ApplicationIsActiveRequest.h"
 
 namespace ui
 {
@@ -17,12 +19,19 @@ private:
 
 	const char* const STATUS_BAR_ELEMENT = "EditTime";
 
+	std::size_t _msgSubscription;
+
 public:
 	EditingStopwatchStatus()
 	{
 		_conn = GlobalMapEditStopwatch().sig_TimerChanged().connect(
 			sigc::mem_fun(this, &EditingStopwatchStatus::onTimerChanged)
 		);
+
+		_msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+			radiant::IMessage::Type::ApplicationIsActiveQuery,
+			radiant::TypeListener<radiant::ApplicationIsActiveRequest>(
+				sigc::mem_fun(this, &EditingStopwatchStatus::handleRequest)));
 
 		// Add the status bar element
 		GlobalUIManager().getStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "stopwatch.png",
@@ -33,10 +42,18 @@ public:
 
 	~EditingStopwatchStatus()
 	{
+		GlobalRadiantCore().getMessageBus().removeListener(_msgSubscription);
 		_conn.disconnect();
 	}
 
 private:
+	void handleRequest(radiant::ApplicationIsActiveRequest& msg)
+	{
+		msg.setApplicationIsActive(
+			GlobalMainFrame().isActiveApp() && GlobalMainFrame().screenUpdatesEnabled()
+		);
+	}
+
 	void onTimerChanged()
 	{
 		auto secondsEdited = GlobalMapEditStopwatch().getTotalSecondsEdited();

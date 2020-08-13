@@ -5,7 +5,6 @@
 #include "i18n.h"
 #include "iradiant.h"
 #include "itextstream.h"
-#include "imainframe.h"
 #include "imap.h"
 #include "imapresource.h"
 #include "imapinfofile.h"
@@ -14,6 +13,7 @@
 #include "string/convert.h"
 #include "module/StaticModule.h"
 #include "EditingStopwatchInfoFileModule.h"
+#include "messages/ApplicationIsActiveRequest.h"
 
 namespace map
 {
@@ -86,11 +86,18 @@ void EditingStopwatch::onRadiantStartup()
 
 void EditingStopwatch::onIntervalReached(wxTimerEvent& ev)
 {
-	// TODO: Send signal over messagebus
-	if (GlobalMainFrame().isActiveApp() && GlobalMainFrame().screenUpdatesEnabled())
+	if (applicationIsActive())
 	{
 		setTotalSecondsEdited(getTotalSecondsEdited() + TIMER_INTERVAL_SECS);
 	}
+}
+
+bool EditingStopwatch::applicationIsActive()
+{
+	radiant::ApplicationIsActiveRequest msg;
+	GlobalRadiantCore().getMessageBus().sendMessage(msg);
+
+	return msg.getApplicationIsActive();
 }
 
 void EditingStopwatch::onMapEvent(IMap::MapEvent ev)

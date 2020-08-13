@@ -246,6 +246,9 @@
     <ClInclude Include="..\..\libs\time\Timer.h">
       <Filter>time</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ApplicationIsActiveRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

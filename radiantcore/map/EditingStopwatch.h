@@ -48,6 +48,8 @@ public:
 	sigc::signal<void>& sig_TimerChanged() override;
 
 private:
+	bool applicationIsActive();
+
 	void onMapEvent(IMap::MapEvent ev);
 	void onRadiantStartup();
 	void onIntervalReached(wxTimerEvent& ev);

@@ -48,6 +48,7 @@ public:
         FileSelectionRequest,
         Notification,
         TextureChanged,
+        ApplicationIsActiveQuery,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };
