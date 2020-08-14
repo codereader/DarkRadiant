@@ -340,19 +340,27 @@ namespace module
 		IModuleRegistry* _registry;
 	public:
 		RegistryReference() :
-			_registry(NULL)
+			_registry(nullptr)
 		{}
 
-		inline void setRegistry(IModuleRegistry& registry) {
+		inline void setRegistry(IModuleRegistry& registry)
+		{
 			_registry = &registry;
 		}
 
-		inline IModuleRegistry& getRegistry() {
-			assert(_registry); // must not be NULL
+		inline IModuleRegistry& getRegistry() const
+		{
+			assert(_registry); // must not be empty
 			return *_registry;
 		}
 
-		static RegistryReference& Instance() {
+		inline bool isEmpty() const
+		{
+			return _registry == nullptr;
+		}
+
+		static RegistryReference& Instance()
+		{
 			static RegistryReference _registryRef;
 			return _registryRef;
 		}
@@ -364,6 +372,12 @@ namespace module
 	inline IModuleRegistry& GlobalModuleRegistry() 
 	{
 		return RegistryReference::Instance().getRegistry();
+	}
+
+	// Returns true if we have a registry instance known to this binary
+	inline bool IsGlobalModuleRegistryAvailable()
+	{
+		return !RegistryReference::Instance().isEmpty();
 	}
 
 	// Exception thrown if the module being loaded is incompatible with the main binary

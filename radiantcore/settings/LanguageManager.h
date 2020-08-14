@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "imodule.h"
+#include "i18n.h"
 #include <vector>
 #include <map>
 #include <memory>
@@ -12,7 +13,7 @@ namespace language
 {
 
 class LanguageManager :
-	public RegisterableModule
+	public ILanguageManager
 {
 private:
 	// The current language string (e.g. "en_US")
@@ -59,6 +60,8 @@ public:
 	// Method used to instantiate and register the module, and load settings
 	// This is called by main() even before any other modules are loaded
 	static void init(const ApplicationContext& ctx);
+
+	std::string getLocalizedString(const char* stringToLocalise) override;
 
 private:
 	void initFromContext(const ApplicationContext& ctx);

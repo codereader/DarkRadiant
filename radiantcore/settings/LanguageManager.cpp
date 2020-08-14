@@ -14,6 +14,7 @@
 #include "os/file.h"
 #include "os/fs.h"
 #include "registry/registry.h"
+#include "module/StaticModule.h"
 #include "string/case_conv.h"
 
 namespace language
@@ -162,7 +163,7 @@ void LanguageManager::init(const ApplicationContext& ctx)
 	// Hand that over to the module registry
     module::GlobalModuleRegistry().registerModule(instancePtr);
 
-	// Initialise the module manually
+	// Pre-initialise the module manually
 	instancePtr->initFromContext(ctx);
 }
 
@@ -183,6 +184,11 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
 	// Keep locale set to "C" for faster stricmp in Windows builds
 	_wxLocale.reset(new wxLocale(_curLanguage, _curLanguage, "C"));
 	_wxLocale->AddCatalog(GETTEXT_PACKAGE);
+}
+
+std::string LanguageManager::getLocalizedString(const char* stringToLocalise)
+{
+	return stringToLocalise; // TODO
 }
 
 std::string LanguageManager::loadLanguageSetting()
