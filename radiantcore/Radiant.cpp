@@ -37,9 +37,11 @@ Radiant::Radiant(ApplicationContext& context) :
 	_moduleRegistry.reset(new module::ModuleRegistry);
 	_moduleRegistry->setContext(_context);
 
+#if 0
 #ifndef POSIX
 	// Initialise the language based on the settings in the user settings folder
 	language::LanguageManager().init(_context);
+#endif
 #endif
 }
 

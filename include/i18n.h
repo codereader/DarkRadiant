@@ -3,6 +3,17 @@
 #include <string>
 #include "imodule.h"
 
+class ILocalisationProvider
+{
+public:
+	virtual ~ILocalisationProvider() {}
+
+	typedef std::shared_ptr<ILocalisationProvider> Ptr;
+
+	// Returns the localised version of the given string
+	virtual std::string getLocalisedString(const char* stringToLocalise) = 0;
+};
+
 class ILanguageManager :
 	public RegisterableModule
 {
@@ -10,11 +21,16 @@ public:
 	virtual ~ILanguageManager() {}
 
 	/**
-	 * Returns the localized version of the given input string
-	 * or the unmodified string if no suitable localization provider
+	 * Registers the given provider, which will be used to resolve localised strings.
+	 */
+	virtual void registerProvider(const ILocalisationProvider::Ptr& instance) = 0;
+
+	/**
+	 * Returns the localised version of the given input string
+	 * or the unmodified string if no suitable localisation provider
 	 * was found.
 	 */
-	virtual std::string getLocalizedString(const char* stringToLocalise) = 0;
+	virtual std::string getLocalisedString(const char* stringToLocalise) = 0;
 };
 
 const char* const MODULE_LANGUAGEMANAGER("LanguageManager");
@@ -38,8 +54,6 @@ inline ILanguageManager& GlobalLanguageManager()
 	#define WXINTL_NO_GETTEXT_MACRO
 #endif
 
-//#include <wx/intl.h>
-
 // Custom translation macros _, N_ and C_
 
 inline std::string _(const char* s)
@@ -54,7 +68,7 @@ inline std::string _(const char* s)
 		return s; // still too early
 	}
 
-	return GlobalLanguageManager().getLocalizedString(s);
+	return GlobalLanguageManager().getLocalisedString(s);
 }
 
 // Macro used to decorate a string as localizable, such that it is recognised

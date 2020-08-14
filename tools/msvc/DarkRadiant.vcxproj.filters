@@ -670,6 +670,9 @@
     <ClCompile Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.cpp">
       <Filter>src\ui\statusbar</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\LocalisationModule.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -1289,6 +1292,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.h">
       <Filter>src\ui\statusbar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\LocalisationModule.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
