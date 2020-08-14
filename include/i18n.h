@@ -2,6 +2,10 @@
 
 #include <string>
 #include "imodule.h"
+#include "iradiant.h"
+
+namespace language
+{
 
 class ILocalisationProvider
 {
@@ -14,8 +18,7 @@ public:
 	virtual std::string getLocalisedString(const char* stringToLocalise) = 0;
 };
 
-class ILanguageManager :
-	public RegisterableModule
+class ILanguageManager
 {
 public:
 	virtual ~ILanguageManager() {}
@@ -33,18 +36,12 @@ public:
 	virtual std::string getLocalisedString(const char* stringToLocalise) = 0;
 };
 
-const char* const MODULE_LANGUAGEMANAGER("LanguageManager");
+}
 
 // This is the accessor for the global language manager module
-inline ILanguageManager& GlobalLanguageManager()
+inline language::ILanguageManager& GlobalLanguageManager()
 {
-	// Cache the reference locally
-	static ILanguageManager& _instance(
-		*std::static_pointer_cast<ILanguageManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_LANGUAGEMANAGER)
-		)
-	);
-	return _instance;
+	return GlobalRadiantCore().getLanguageManager();
 }
 
 #define GETTEXT_PACKAGE "darkradiant"
@@ -63,7 +60,7 @@ inline std::string _(const char* s)
 		return s; // it's still too early for this call, return the unmodified string
 	}
 
-	if (!module::GlobalModuleRegistry().moduleExists(MODULE_LANGUAGEMANAGER))
+	if (!module::GlobalModuleRegistry().moduleExists(MODULE_RADIANT_CORE))
 	{
 		return s; // still too early
 	}

@@ -9,6 +9,7 @@ const char* const MODULE_RADIANT_APP("Radiant");
 const char* const MODULE_RADIANT_CORE("RadiantCore");
 
 namespace applog { class ILogWriter;  }
+namespace language { class ILanguageManager; } // see "i18n.h"
 
 namespace radiant
 {
@@ -45,6 +46,12 @@ public:
      * Get a reference to the central message handler.
      */
     virtual IMessageBus& getMessageBus() = 0;
+
+    /**
+     * Get a reference to the Language Manager instance
+     * used to resolve localised string resources.
+     */
+    virtual language::ILanguageManager& getLanguageManager() = 0;
 
     /**
      * Loads and initialises all modules, starting up the 

@@ -4,6 +4,7 @@
 #include "modulesystem/ModuleRegistry.h"
 
 namespace applog { class LogFile; }
+namespace language { class LanguageManager; }
 
 namespace radiant
 {
@@ -22,6 +23,8 @@ private:
 
 	std::unique_ptr<MessageBus> _messageBus;
 
+	std::unique_ptr<language::LanguageManager> _languageManager;
+
 public:
 	Radiant(ApplicationContext& context);
 
@@ -34,6 +37,7 @@ public:
 	applog::ILogWriter& getLogWriter() override;
 	module::ModuleRegistry& getModuleRegistry() override;
 	radiant::IMessageBus& getMessageBus() override;
+	language::ILanguageManager& getLanguageManager() override;
 	void startup() override;
 
 	static std::shared_ptr<Radiant>& InstancePtr();

@@ -1,4 +1,4 @@
-#include "LocalisationModule.h"
+#include "LocalisationProvider.h"
 
 #include <fstream>
 #include <stdexcept>
@@ -9,7 +9,6 @@
 
 #include "string/case_conv.h"
 #include "os/path.h"
-#include "module/StaticModule.h"
 
 #include <wx/translation.h>
 
@@ -32,51 +31,8 @@ public:
 	{}
 };
 
-// Local helper class acting as ILocalisationProvider
-// To resolve the localised strings, it dispatches the call to the wx framework
-class LocalisationProviderWx :
-	public ILocalisationProvider
+LocalisationProvider::LocalisationProvider(ApplicationContext& ctx)
 {
-public:
-	std::string getLocalisedString(const char* stringToLocalise) override
-	{
-		return wxGetTranslation(stringToLocalise).ToStdString();
-	}
-};
-
-LocalisationModule::LocalisationModule()
-{} // constructor needed for wxLocale pimpl
-
-LocalisationModule::~LocalisationModule()
-{} // destructor needed for wxLocale pimpl
-
-const std::string& LocalisationModule::getName() const
-{
-	static std::string _name("LocalisationProviders");
-	return _name;
-}
-
-const StringSet& LocalisationModule::getDependencies() const
-{
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_LANGUAGEMANAGER);
-		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_XMLREGISTRY);
-	}
-
-	return _dependencies;
-}
-
-void LocalisationModule::initialiseModule(const ApplicationContext& ctx)
-{
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-	// Register the provider with the core
-	GlobalLanguageManager().registerProvider(std::make_shared<LocalisationProviderWx>());
-
 	// Point wxWidgets to the folder where the catalog files are stored
 	_i18nPath = os::standardPathWithSlash(ctx.getApplicationPath() + "i18n");
 	wxFileTranslationsLoader::AddCatalogLookupPathPrefix(_i18nPath);
@@ -96,6 +52,17 @@ void LocalisationModule::initialiseModule(const ApplicationContext& ctx)
 	// Keep locale set to "C" for faster stricmp in Windows builds
 	_wxLocale.reset(new wxLocale(_curLanguage, _curLanguage, "C"));
 	_wxLocale->AddCatalog(GETTEXT_PACKAGE);
+}
+
+std::string LocalisationProvider::getLocalisedString(const char* stringToLocalise)
+{
+	return wxGetTranslation(stringToLocalise).ToStdString();
+}
+
+#if 0
+void LocalisationProvider::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
 	int curLangIndex = 0; // english
 
@@ -136,8 +103,10 @@ void LocalisationModule::initialiseModule(const ApplicationContext& ctx)
 
 	page.appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant\nafter changing the language setting."));
 }
+#endif
 
-void LocalisationModule::shutdownModule()
+#if 0
+void LocalisationProvider::shutdownModule()
 {
 	// Get the language setting from the registry (this is an integer)
 	// and look up the language code (two digit)
@@ -153,8 +122,9 @@ void LocalisationModule::shutdownModule()
 	// Save the language code to the settings file
 	saveLanguageSetting(_supportedLanguages[langIndex].twoDigitCode);
 }
+#endif
 
-std::string LocalisationModule::loadLanguageSetting()
+std::string LocalisationProvider::loadLanguageSetting()
 {
 	std::string language = DEFAULT_LANGUAGE;
 
@@ -169,7 +139,7 @@ std::string LocalisationModule::loadLanguageSetting()
 	return language;
 }
 
-void LocalisationModule::saveLanguageSetting(const std::string& language)
+void LocalisationProvider::saveLanguageSetting(const std::string& language)
 {
 	std::ofstream str(_languageSettingFile.c_str());
 
@@ -179,7 +149,7 @@ void LocalisationModule::saveLanguageSetting(const std::string& language)
 	str.close();
 }
 
-void LocalisationModule::loadSupportedLanguages()
+void LocalisationProvider::loadSupportedLanguages()
 {
 	_supportedLanguages.clear();
 
@@ -189,7 +159,7 @@ void LocalisationModule::loadSupportedLanguages()
 	_supportedLanguages[index++] = Language("de", _("German"));
 }
 
-void LocalisationModule::findAvailableLanguages()
+void LocalisationProvider::findAvailableLanguages()
 {
 	// English (index 0) is always available
 	_availableLanguages.push_back(0);
@@ -216,7 +186,7 @@ void LocalisationModule::findAvailableLanguages()
 	rMessage() << "Found " << _availableLanguages.size() << " language folders." << std::endl;
 }
 
-int LocalisationModule::getLanguageIndex(const std::string& languageCode)
+int LocalisationProvider::getLanguageIndex(const std::string& languageCode)
 {
 	std::string code = string::to_lower_copy(languageCode);
 
@@ -230,7 +200,5 @@ int LocalisationModule::getLanguageIndex(const std::string& languageCode)
 
 	throw UnknownLanguageException("Unknown language: " + languageCode);
 }
-
-module::StaticModule<LocalisationModule> localisationModule;
 
 }

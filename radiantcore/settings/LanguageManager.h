@@ -1,94 +1,26 @@
 #pragma once
 
-#include "iregistry.h"
-#include "imodule.h"
 #include "i18n.h"
-#include <vector>
-#include <map>
 #include <memory>
-
-class wxLocale;
 
 namespace language
 {
 
+/**
+ * Service class dispatching the getLocalisedString() lookup calls
+ * to the attached localisation provider.
+ */
 class LanguageManager :
 	public ILanguageManager
 {
 private:
-#if 0
-	// The current language string (e.g. "en_US")
-	std::string _curLanguage;
-	std::string _languageSettingFile;
-
-	// The path where all the languages are stored
-	std::string _i18nPath;
-
-	std::unique_ptr<wxLocale> _wxLocale;
-
-	struct Language
-	{
-		std::string twoDigitCode; // "en"
-		std::string displayName;  // "English"
-
-		Language()
-		{}
-
-		Language(const std::string& twoDigitCode_, const std::string& displayName_) :
-			twoDigitCode(twoDigitCode_),
-			displayName(displayName_)
-		{}
-	};
-
-	// Supported languages
-	typedef std::map<int, Language> LanguageMap;
-	LanguageMap _supportedLanguages;
-
-	// Available languages (for the preference page)
-	typedef std::vector<int> LanguageList;
-	LanguageList _availableLanguages;
-#endif
 	// For now, we only hold one provider instance
 	ILocalisationProvider::Ptr _provider;
 
 public:
-	LanguageManager();
-	~LanguageManager();
-
-	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
-	void shutdownModule();
-
-#if 0
-	// Method used to instantiate and register the module, and load settings
-	// This is called by main() even before any other modules are loaded
-	static void init(const ApplicationContext& ctx);
-#endif
-
 	void registerProvider(const ILocalisationProvider::Ptr& instance) override;
 
 	std::string getLocalisedString(const char* stringToLocalise) override;
-
-private:
-	void initFromContext(const ApplicationContext& ctx);
-
-	// Loads the language setting from the .language in the user settings folder
-	std::string loadLanguageSetting();
-
-	// Saves the language setting to the .language in the user settings folder
-	void saveLanguageSetting(const std::string& language);
-
-	// Fills the array of supported languages
-	void loadSupportedLanguages();
-
-	// Searches for available language .mo files
-	void findAvailableLanguages();
-
-	// Returns the language index for the given two-digit code
-	int getLanguageIndex(const std::string& languageCode);
 };
-typedef std::shared_ptr<LanguageManager> LanguageManagerPtr;
 
 } // namespace

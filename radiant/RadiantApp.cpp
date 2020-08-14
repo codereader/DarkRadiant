@@ -9,6 +9,7 @@
 #include "messages/GameConfigNeededMessage.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "module/StaticModule.h"
+#include "LocalisationProvider.h"
 
 #include <wx/wxprec.h>
 #include <wx/event.h>
@@ -64,6 +65,10 @@ bool RadiantApp::OnInit()
 		std::cerr << ex.what() << std::endl;
 		return false;
 	}
+
+	// Register the localisation helper before initialising the modules
+	auto& languageManager = _coreModule->get()->getLanguageManager();
+	languageManager.registerProvider(std::make_shared<ui::LocalisationProvider>(_context));
 
 #if defined(POSIX) && !defined(__APPLE__)
 	// greebo: not sure if this is needed

@@ -11,10 +11,7 @@
 #include "log/LogFile.h"
 #include "module/StaticModule.h"
 #include "messagebus/MessageBus.h"
-
-#ifndef POSIX
 #include "settings/LanguageManager.h"
-#endif
 
 namespace radiant
 {
@@ -37,6 +34,7 @@ Radiant::Radiant(ApplicationContext& context) :
 	_moduleRegistry.reset(new module::ModuleRegistry);
 	_moduleRegistry->setContext(_context);
 
+	_languageManager.reset(new language::LanguageManager);
 #if 0
 #ifndef POSIX
 	// Initialise the language based on the settings in the user settings folder
@@ -73,6 +71,11 @@ module::ModuleRegistry& Radiant::getModuleRegistry()
 radiant::IMessageBus& Radiant::getMessageBus()
 {
 	return *_messageBus;
+}
+
+language::ILanguageManager& Radiant::getLanguageManager()
+{
+	return *_languageManager;
 }
 
 void Radiant::startup()

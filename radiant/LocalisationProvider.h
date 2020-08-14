@@ -5,8 +5,10 @@
 namespace ui
 {
 
-class LocalisationModule :
-	public RegisterableModule
+// Helper class acting as ILocalisationProvider.
+// To resolve the localised strings, it dispatches the call to the wx framework
+class LocalisationProvider :
+	public language::ILocalisationProvider
 {
 private:
 	// The current language string (e.g. "en_US")
@@ -41,13 +43,9 @@ private:
 	LanguageList _availableLanguages;
 
 public:
-	LocalisationModule();
-	~LocalisationModule();
+	LocalisationProvider(ApplicationContext& context);
 
-	const std::string& getName() const override;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx) override;
-	void shutdownModule() override;
+	std::string getLocalisedString(const char* stringToLocalise) override;
 
 private:
 	// Loads the language setting from the .language in the user settings folder
