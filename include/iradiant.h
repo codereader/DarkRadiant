@@ -55,11 +55,22 @@ public:
 
     /**
      * Loads and initialises all modules, starting up the 
-     * application.
+     * application. Might throw a StartupFailure exception
+     * on unrecoverable errors.
      */
     virtual void startup() = 0;
 
     virtual ~IRadiant() {}
+
+    // Exception thrown during Radiant startup
+    class StartupFailure :
+        public std::runtime_error
+    {
+    public:
+        StartupFailure(const std::string& msg) :
+            runtime_error(msg)
+        {}
+    };
 };
 
 }

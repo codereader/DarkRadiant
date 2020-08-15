@@ -80,17 +80,17 @@ language::ILanguageManager& Radiant::getLanguageManager()
 
 void Radiant::startup()
 {
-	// Register the modules hosted in this binary
-	module::internal::StaticModuleList::RegisterModules();
-
 	try
 	{
+		// Register the modules hosted in this binary
+		module::internal::StaticModuleList::RegisterModules();
+
 		module::GlobalModuleRegistry().loadAndInitialiseModules();
 	}
-	catch (const std::exception & e)
+	catch (const std::exception& e)
 	{
 		rConsole() << "Exception initialising modules: " << e.what() << std::endl;
-		abort();
+		throw StartupFailure(e.what()); // translate the exception
 	}
 }
 

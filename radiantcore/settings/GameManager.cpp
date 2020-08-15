@@ -20,7 +20,6 @@
 #include "string/split.h"
 #include "string/case_conv.h"
 
-#include "wxutil/dialog/MessageBox.h"
 #include "module/StaticModule.h"
 #include "messages/GameConfigNeededMessage.h"
 
@@ -137,7 +136,7 @@ IGamePtr Manager::currentGame()
 	if (_config.gameType.empty())
 	{
 		// No game type selected, bail out, the program will crash anyway on module load
-		wxutil::Messagebox::ShowFatalError(_("GameManager: No game type selected, can't continue."), nullptr);
+		throw std::runtime_error(_("GameManager: No game type selected, can't continue."));
 	}
 
 	return _games[_config.gameType];
@@ -152,11 +151,8 @@ void Manager::initialiseGameType()
 {
 	if (_games.empty())
 	{
-		// No game types available, bail out, the program would crash anyway on
-		// module load
-		wxutil::Messagebox::ShowFatalError(
-			_("GameManager: No valid game files found, can't continue."), nullptr
-		);
+		// No game types available, bail out, the program would crash anyway on module load
+		throw std::runtime_error(_("GameManager: No valid game files found, can't continue."));
 	}
 
 	// Find the user's selected game from the XML registry, and attempt to find
@@ -172,9 +168,7 @@ void Manager::initialiseGameType()
 
 		if (_sortedGames.empty())
 		{
-			wxutil::Messagebox::ShowFatalError(
-				"GameManager: Sorted game list is empty, can't continue.", nullptr
-			);
+			throw std::runtime_error("GameManager: Sorted game list is empty, can't continue.");
 		}
 
 		registry::setValue(RKEY_GAME_TYPE, _sortedGames.front()->getKeyValue("name"));
@@ -191,7 +185,7 @@ void Manager::initialiseGameType()
 	else 
 	{
 		// No game type selected, bail out, the program would crash anyway on module load
-		wxutil::Messagebox::ShowFatalError(_("No game type selected."));
+		throw std::runtime_error(_("No game type selected."));
 	}
 }
 
@@ -257,7 +251,7 @@ void Manager::showGameSetupDialog()
 	}
 	else
 	{
-		wxutil::Messagebox::ShowFatalError(_("No valid game configuration found, cannot continue."), nullptr);
+		throw std::runtime_error(_("No valid game configuration found, cannot continue."));
 	}
 }
 

@@ -169,8 +169,17 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	_modulesUnloadingHandler = _coreModule->get()->getModuleRegistry().signal_modulesUnloading()
 		.connect(sigc::mem_fun(this, &RadiantApp::onModulesUnloading));
 
-	// Startup the application
-	_coreModule->get()->startup();
+	try
+	{
+		// Startup the application
+		_coreModule->get()->startup();
+	}
+	catch (const radiant::IRadiant::StartupFailure& ex)
+	{
+		// An unhandled exception during module initialisation => display a popup and exit
+		rError() << "Unhandled Exception: " << ex.what() << std::endl;
+		wxutil::Messagebox::ShowFatalError(ex.what(), nullptr);
+	}
 
 	// Scope ends here, PIDFile is deleted by its destructor
 }
