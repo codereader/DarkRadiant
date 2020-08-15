@@ -44,6 +44,9 @@
 		<menuItem name="duplicate" caption="&amp;Duplicate" command="CloneSelection" />
 		<menuItem name="delete" caption="D&amp;elete" command="DeleteSelection" />
 		<menuSeparator />
+		<menuItem name="groupSelected" caption="Group Selection" command="GroupSelected" icon="group_selection.png" />
+		<menuItem name="ungroupSelected" caption="Ungroup Selection" command="UngroupSelected" icon="ungroup_selection.png" />
+		<menuSeparator />
 		<menuItem name="parent" caption="Rep&amp;arent Primitives" command="ParentSelection" />
 		<menuItem name="parenttoworldspawn" caption="Reparent Primitives to &amp;Worldspawn" command="ParentSelectionToWorldspawn" />
 		<menuItem name="mergeentities" caption="Merge selected Entities" command="MergeSelectedEntities" icon="cmenu_merge_entities.png" />
