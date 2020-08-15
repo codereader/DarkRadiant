@@ -9,7 +9,7 @@
 #include "messages/GameConfigNeededMessage.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "module/StaticModule.h"
-#include "LocalisationProvider.h"
+#include "settings/LocalisationProvider.h"
 
 #include <wx/wxprec.h>
 #include <wx/event.h>
@@ -67,8 +67,9 @@ bool RadiantApp::OnInit()
 	}
 
 	// Register the localisation helper before initialising the modules
-	ui::LocalisationProvider::Initialise(_context);
-	_coreModule->get()->getLanguageManager().registerProvider(ui::LocalisationProvider::Instance());
+	settings::LocalisationProvider::Initialise(_context);
+	auto& languageManager = _coreModule->get()->getLanguageManager();
+	languageManager.registerProvider(settings::LocalisationProvider::Instance());
 
 #if defined(POSIX) && !defined(__APPLE__)
 	// greebo: not sure if this is needed
@@ -105,7 +106,7 @@ int RadiantApp::OnExit()
 	languageManager.clearProvider();
 
 	// Clean up static resources
-	ui::LocalisationProvider::Cleanup();
+	settings::LocalisationProvider::Cleanup();
 
 	_coreModule.reset();
 

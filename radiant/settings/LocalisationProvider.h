@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 
-namespace ui
+namespace settings
 {
 
 // Helper class acting as ILocalisationProvider.
@@ -11,6 +11,8 @@ class LocalisationProvider :
 	public language::ILocalisationProvider
 {
 public:
+	static const char* const RKEY_LANGUAGE;
+
 	struct Language
 	{
 		std::string twoDigitCode; // "en"

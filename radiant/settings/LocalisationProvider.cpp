@@ -4,23 +4,20 @@
 #include <stdexcept>
 
 #include "itextstream.h"
-#include "ipreferencesystem.h"
 #include "registry/registry.h"
 
 #include "string/case_conv.h"
 #include "os/path.h"
-#include "module/StaticModule.h"
 
 #include <wx/translation.h>
 
-namespace ui
+namespace settings
 {
 
 namespace
 {
 	const char* const LANGUAGE_SETTING_FILE = "darkradiant.language";
 	const char* const DEFAULT_LANGUAGE = "en";
-	const std::string RKEY_LANGUAGE("user/ui/language");
 }
 
 class UnknownLanguageException :
@@ -31,6 +28,8 @@ public:
 		std::runtime_error(what)
 	{}
 };
+
+const char* const LocalisationProvider::RKEY_LANGUAGE = "user/ui/language";
 
 LocalisationProvider::LocalisationProvider(ApplicationContext& ctx)
 {
@@ -203,61 +202,5 @@ void LocalisationProvider::saveLanguageSetting()
 	// Save the language code to the settings file
 	saveLanguageSetting(_supportedLanguages[langIndex].twoDigitCode);
 }
-
-// Localisation module, taking care of the Preferences page
-
-class LocalisationModule :
-	public RegisterableModule
-{
-public:
-	const std::string& getName() const override
-	{
-		static std::string _name("LocalisationModule");
-		return _name;
-	}
-
-	const StringSet& getDependencies() const override
-	{
-		static StringSet _dependencies;
-
-		if (_dependencies.empty())
-		{
-			_dependencies.insert(MODULE_PREFERENCESYSTEM);
-			_dependencies.insert(MODULE_XMLREGISTRY);
-		}
-
-		return _dependencies;
-	}
-
-	void initialiseModule(const ApplicationContext& ctx) override
-	{
-		rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-		// Construct the list of available languages
-		ComboBoxValueList langs;
-
-		LocalisationProvider::Instance()->foreachAvailableLanguage([&](const LocalisationProvider::Language& lang)
-		{
-			langs.emplace_back(lang.twoDigitCode + " - " + lang.displayName);
-		});
-
-		// Load the currently selected index into the registry
-		registry::setValue(RKEY_LANGUAGE, LocalisationProvider::Instance()->getCurrentLanguageIndex());
-		GlobalRegistry().setAttribute(RKEY_LANGUAGE, "volatile", "1"); // don't save this to user.xml
-
-		// Add Preferences
-		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Language"));
-		page.appendCombo(_("Language"), RKEY_LANGUAGE, langs);
-
-		page.appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant\nafter changing the language setting."));
-	}
-
-	void shutdownModule()
-	{
-		LocalisationProvider::Instance()->saveLanguageSetting();
-	}
-};
-
-module::StaticModule<LocalisationModule> localisationModule;
 
 }

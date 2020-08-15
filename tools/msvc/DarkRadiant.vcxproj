@@ -204,7 +204,6 @@
     <ClCompile Include="..\..\radiant\eventmanager\Statement.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Toggle.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp" />
-    <ClCompile Include="..\..\radiant\LocalisationProvider.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp" />
     <ClCompile Include="..\..\radiant\precompiled.cpp">
@@ -223,6 +222,8 @@
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
+    <ClCompile Include="..\..\radiant\settings\LocalisationModule.cpp" />
+    <ClCompile Include="..\..\radiant\settings\LocalisationProvider.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.cpp" />
@@ -389,7 +390,6 @@
     <ClInclude Include="..\..\radiant\eventmanager\Statement.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Toggle.h" />
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h" />
-    <ClInclude Include="..\..\radiant\LocalisationProvider.h" />
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantApp.h" />
@@ -399,6 +399,8 @@
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionTest.h" />
+    <ClInclude Include="..\..\radiant\settings\LocalisationModule.h" />
+    <ClInclude Include="..\..\radiant\settings\LocalisationProvider.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.h" />
