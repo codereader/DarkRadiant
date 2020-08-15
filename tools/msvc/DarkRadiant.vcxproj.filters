@@ -1621,6 +1621,9 @@
     <ClCompile Include="..\..\radiant\gameconnection\MessageTcp.cpp">
       <Filter>src\gameconnection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.cpp">
+      <Filter>src\gameconnection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
@@ -3265,6 +3268,9 @@
       <Filter>src\gameconnection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\gameconnection\MessageTcp.h">
+      <Filter>src\gameconnection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.h">
       <Filter>src\gameconnection</Filter>
     </ClInclude>
   </ItemGroup>

@@ -252,6 +252,7 @@
     <ClCompile Include="..\..\radiant\fonts\FontManager.cpp" />
     <ClCompile Include="..\..\radiant\fonts\GlyphInfo.cpp" />
     <ClCompile Include="..\..\radiant\fonts\GlyphSet.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.cpp" />
     <ClCompile Include="..\..\radiant\gameconnection\GameConnection.cpp" />
     <ClCompile Include="..\..\radiant\gameconnection\MessageTcp.cpp" />
     <ClCompile Include="..\..\radiant\image\dds.cpp" />
@@ -1115,6 +1116,7 @@
     <ClInclude Include="..\..\radiant\fonts\FontManager.h" />
     <ClInclude Include="..\..\radiant\fonts\GlyphInfo.h" />
     <ClInclude Include="..\..\radiant\fonts\GlyphSet.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.h" />
     <ClInclude Include="..\..\radiant\gameconnection\GameConnection.h" />
     <ClInclude Include="..\..\radiant\gameconnection\MessageTcp.h" />
     <ClInclude Include="..\..\radiant\image\dds.h" />
