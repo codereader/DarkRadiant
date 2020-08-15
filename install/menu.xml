@@ -324,6 +324,9 @@
 		<menuItem name="enableCameraSync" caption="Enable camera synchronization" command="GameConnectionEnableCameraSync" />
 		<menuItem name="disableCameraSync" caption="Disable camera synchronization" command="GameConnectionDisableCameraSync" />
 		<menuItem name="pauseGame" caption="Pause game" command="GameConnectionPauseGame" />
-		<menuItem name="reloadMap" caption="Reload map in game" command="GameConnectionReloadMap" />
+		<menuItem name="reloadMap" caption="Reload map from .map file" command="GameConnectionReloadMap" />
+		<menuItem name="enableMapObserver" caption="Enable observing map changes" command="GameConnectionEnableMapObserver" />
+		<menuItem name="disableMapObserver" caption="Disable observing map changes" command="GameConnectionDisableMapObserver" />
+		<menuItem name="updateMap" caption="Reload map from current session" command="GameConnectionUpdateMap" />
 	</subMenu>
 </menu>
