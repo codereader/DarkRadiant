@@ -20,6 +20,8 @@ private:
 public:
 	void registerProvider(const ILocalisationProvider::Ptr& instance) override;
 
+	void clearProvider() override;
+
 	std::string getLocalisedString(const char* stringToLocalise) override;
 };
 

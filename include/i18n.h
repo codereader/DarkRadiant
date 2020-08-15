@@ -29,6 +29,11 @@ public:
 	virtual void registerProvider(const ILocalisationProvider::Ptr& instance) = 0;
 
 	/**
+	 * Removes references to the localisation provider.
+	 */
+	virtual void clearProvider() = 0;
+
+	/**
 	 * Returns the localised version of the given input string
 	 * or the unmodified string if no suitable localisation provider
 	 * was found.

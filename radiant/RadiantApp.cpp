@@ -67,8 +67,8 @@ bool RadiantApp::OnInit()
 	}
 
 	// Register the localisation helper before initialising the modules
-	auto& languageManager = _coreModule->get()->getLanguageManager();
-	languageManager.registerProvider(std::make_shared<ui::LocalisationProvider>(_context));
+	ui::LocalisationProvider::Initialise(_context);
+	_coreModule->get()->getLanguageManager().registerProvider(ui::LocalisationProvider::Instance());
 
 #if defined(POSIX) && !defined(__APPLE__)
 	// greebo: not sure if this is needed
@@ -100,6 +100,12 @@ int RadiantApp::OnExit()
 {
 	// Issue a shutdown() call to all the modules
 	module::GlobalModuleRegistry().shutdownModules();
+
+	auto& languageManager = _coreModule->get()->getLanguageManager();
+	languageManager.clearProvider();
+
+	// Clean up static resources
+	ui::LocalisationProvider::Cleanup();
 
 	_coreModule.reset();
 

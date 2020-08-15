@@ -10,16 +10,7 @@ namespace ui
 class LocalisationProvider :
 	public language::ILocalisationProvider
 {
-private:
-	// The current language string (e.g. "en_US")
-	std::string _curLanguage;
-	std::string _languageSettingFile;
-
-	// The path where all the languages are stored
-	std::string _i18nPath;
-
-	std::unique_ptr<wxLocale> _wxLocale;
-
+public:
 	struct Language
 	{
 		std::string twoDigitCode; // "en"
@@ -34,6 +25,18 @@ private:
 		{}
 	};
 
+private:
+	// The current language string (e.g. "en_US")
+	std::string _curLanguage;
+	int _curLanguageIndex;
+
+	std::string _languageSettingFile;
+
+	// The path where all the languages are stored
+	std::string _i18nPath;
+
+	std::unique_ptr<wxLocale> _wxLocale;
+
 	// Supported languages
 	typedef std::map<int, Language> LanguageMap;
 	LanguageMap _supportedLanguages;
@@ -42,10 +45,28 @@ private:
 	typedef std::vector<int> LanguageList;
 	LanguageList _availableLanguages;
 
-public:
 	LocalisationProvider(ApplicationContext& context);
+	LocalisationProvider(const LocalisationProvider& other) = delete;
 
+public:
 	std::string getLocalisedString(const char* stringToLocalise) override;
+
+	void foreachAvailableLanguage(const std::function<void(const Language&)>& functor);
+
+	// The currently selected language, as index into the list of available languages
+	int getCurrentLanguageIndex() const;
+
+	// Persists the current language selection to the file on disk
+	void saveLanguageSetting();
+
+	// Singleton instance setting up the shared collections
+	static std::shared_ptr<LocalisationProvider>& Instance();
+
+	// Sets up available and supported language collections
+	static void Initialise(ApplicationContext& context);
+
+	// Cleans up shared static resources allocated at startup
+	static void Cleanup();
 
 private:
 	// Loads the language setting from the .language in the user settings folder
@@ -53,7 +74,7 @@ private:
 
 	// Saves the language setting to the .language in the user settings folder
 	void saveLanguageSetting(const std::string& language);
-	
+
 	// Fills the array of supported languages
 	void loadSupportedLanguages();
 

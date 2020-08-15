@@ -9,6 +9,7 @@
 
 #include "string/case_conv.h"
 #include "os/path.h"
+#include "module/StaticModule.h"
 
 #include <wx/translation.h>
 
@@ -54,75 +55,26 @@ LocalisationProvider::LocalisationProvider(ApplicationContext& ctx)
 	_wxLocale->AddCatalog(GETTEXT_PACKAGE);
 }
 
+std::shared_ptr<LocalisationProvider>& LocalisationProvider::Instance()
+{
+	static std::shared_ptr<LocalisationProvider> _instancePtr;
+	return _instancePtr;
+}
+
+void LocalisationProvider::Initialise(ApplicationContext& context)
+{
+	Instance().reset(new LocalisationProvider(context));
+}
+
+void LocalisationProvider::Cleanup()
+{
+	Instance().reset();
+}
+
 std::string LocalisationProvider::getLocalisedString(const char* stringToLocalise)
 {
 	return wxGetTranslation(stringToLocalise).ToStdString();
 }
-
-#if 0
-void LocalisationProvider::initialiseModule(const ApplicationContext& ctx)
-{
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-	int curLangIndex = 0; // english
-
-	try
-	{
-		int index = getLanguageIndex(_curLanguage);
-
-		// Get the offset into the array of available languages
-		auto found = std::find(_availableLanguages.begin(), _availableLanguages.end(), index);
-
-		if (found != _availableLanguages.end())
-		{
-			curLangIndex = static_cast<int>(std::distance(_availableLanguages.begin(), found));
-		}
-	}
-	catch (UnknownLanguageException&)
-	{
-		rWarning() << "Warning, unknown language found in " <<
-			LANGUAGE_SETTING_FILE << ", reverting to English" << std::endl;
-	}
-
-	// Construct the list of available languages
-	ComboBoxValueList langs;
-
-	for (int code : _availableLanguages)
-	{
-		const Language& lang = _supportedLanguages[code];
-		langs.emplace_back(lang.twoDigitCode + " - " + lang.displayName);
-	}
-
-	// Load the currently selected index into the registry
-	registry::setValue(RKEY_LANGUAGE, curLangIndex);
-	GlobalRegistry().setAttribute(RKEY_LANGUAGE, "volatile", "1"); // don't save this to user.xml
-
-	// Add Preferences
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Language"));
-	page.appendCombo(_("Language"), RKEY_LANGUAGE, langs);
-
-	page.appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant\nafter changing the language setting."));
-}
-#endif
-
-#if 0
-void LocalisationProvider::shutdownModule()
-{
-	// Get the language setting from the registry (this is an integer)
-	// and look up the language code (two digit)
-	int langNum = registry::getValue<int>(RKEY_LANGUAGE);
-
-	assert(langNum >= 0 && langNum < static_cast<int>(_availableLanguages.size()));
-
-	// Look up the language index in the list of available languages
-	int langIndex = _availableLanguages[langNum];
-
-	assert(_supportedLanguages.find(langIndex) != _supportedLanguages.end());
-
-	// Save the language code to the settings file
-	saveLanguageSetting(_supportedLanguages[langIndex].twoDigitCode);
-}
-#endif
 
 std::string LocalisationProvider::loadLanguageSetting()
 {
@@ -147,6 +99,40 @@ void LocalisationProvider::saveLanguageSetting(const std::string& language)
 
 	str.flush();
 	str.close();
+}
+
+void LocalisationProvider::foreachAvailableLanguage(const std::function<void(const Language&)>& functor)
+{
+	for (int code : _availableLanguages)
+	{
+		functor(_supportedLanguages[code]);
+	}
+}
+
+int LocalisationProvider::getCurrentLanguageIndex() const
+{
+	// Set up the indices
+	int curLanguageIndex = 0; // english
+
+	try
+	{
+		int index = LocalisationProvider::Instance()->getLanguageIndex(_curLanguage);
+
+		// Get the offset into the array of available languages
+		auto found = std::find(_availableLanguages.begin(), _availableLanguages.end(), index);
+
+		if (found != _availableLanguages.end())
+		{
+			curLanguageIndex = static_cast<int>(std::distance(_availableLanguages.begin(), found));
+		}
+	}
+	catch (UnknownLanguageException&)
+	{
+		rWarning() << "Warning, unknown language found in " <<
+			LANGUAGE_SETTING_FILE << ", reverting to English" << std::endl;
+	}
+
+	return curLanguageIndex;
 }
 
 void LocalisationProvider::loadSupportedLanguages()
@@ -200,5 +186,78 @@ int LocalisationProvider::getLanguageIndex(const std::string& languageCode)
 
 	throw UnknownLanguageException("Unknown language: " + languageCode);
 }
+
+void LocalisationProvider::saveLanguageSetting()
+{
+	// Get the language setting from the registry (this is an integer)
+	// and look up the language code (two digit)
+	int langNum = registry::getValue<int>(RKEY_LANGUAGE);
+
+	assert(langNum >= 0 && langNum < static_cast<int>(_availableLanguages.size()));
+
+	// Look up the language index in the list of available languages
+	int langIndex = _availableLanguages[langNum];
+
+	assert(_supportedLanguages.find(langIndex) != _supportedLanguages.end());
+
+	// Save the language code to the settings file
+	saveLanguageSetting(_supportedLanguages[langIndex].twoDigitCode);
+}
+
+// Localisation module, taking care of the Preferences page
+
+class LocalisationModule :
+	public RegisterableModule
+{
+public:
+	const std::string& getName() const override
+	{
+		static std::string _name("LocalisationModule");
+		return _name;
+	}
+
+	const StringSet& getDependencies() const override
+	{
+		static StringSet _dependencies;
+
+		if (_dependencies.empty())
+		{
+			_dependencies.insert(MODULE_PREFERENCESYSTEM);
+			_dependencies.insert(MODULE_XMLREGISTRY);
+		}
+
+		return _dependencies;
+	}
+
+	void initialiseModule(const ApplicationContext& ctx) override
+	{
+		rMessage() << getName() << "::initialiseModule called" << std::endl;
+
+		// Construct the list of available languages
+		ComboBoxValueList langs;
+
+		LocalisationProvider::Instance()->foreachAvailableLanguage([&](const LocalisationProvider::Language& lang)
+		{
+			langs.emplace_back(lang.twoDigitCode + " - " + lang.displayName);
+		});
+
+		// Load the currently selected index into the registry
+		registry::setValue(RKEY_LANGUAGE, LocalisationProvider::Instance()->getCurrentLanguageIndex());
+		GlobalRegistry().setAttribute(RKEY_LANGUAGE, "volatile", "1"); // don't save this to user.xml
+
+		// Add Preferences
+		IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Language"));
+		page.appendCombo(_("Language"), RKEY_LANGUAGE, langs);
+
+		page.appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant\nafter changing the language setting."));
+	}
+
+	void shutdownModule()
+	{
+		LocalisationProvider::Instance()->saveLanguageSetting();
+	}
+};
+
+module::StaticModule<LocalisationModule> localisationModule;
 
 }
