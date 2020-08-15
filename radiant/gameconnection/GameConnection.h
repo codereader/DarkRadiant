@@ -1,4 +1,5 @@
 #include "icommandsystem.h"
+#include "iscenegraph.h"
 
 class MessageTcp;
 class CameraObserver;
@@ -19,11 +20,19 @@ public:
 	//called from camera modification callback: schedules async "setviewpos" action
 	void UpdateCamera();
 
+	//called from entity/scene observers: remember that entity with given name has been changed
+	//  type == -1: entity has been removed
+	//  type ==  0: entity has been modified
+	//  type ==  1: entity has been added
+	void EntityUpdated(const std::string &name, int type);
 
 	static void ReloadMap(const cmd::ArgumentList& args);
 	static void EnableCameraSync(const cmd::ArgumentList& args);
 	static void DisableCameraSync(const cmd::ArgumentList& args);
 	static void PauseGame(const cmd::ArgumentList& args);
+	static void EnableMapObserver(const cmd::ArgumentList& args);	//TODO: enable always
+	static void DisableMapObserver(const cmd::ArgumentList& args);	//TODO: enable always
+	static void UpdateMap(const cmd::ArgumentList& args);
 
 private:
 	//connection to TDM game (i.e. the socket with custom message framing)
@@ -43,6 +52,12 @@ private:
 	//the observer put onto global camera when camera sync is enabled
 	std::unique_ptr<CameraObserver> _cameraObserver;
 
+	//the observer put onto global scene when map sync is enabled
+	std::unique_ptr<scene::Graph::Observer> _sceneObserver;
+	//observers put on every entity on scene
+	std::map<IEntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
+	//set of entities with changes since last update: -1 - deleted, 1 - added, 0 - modified
+	std::map<std::string, int> _entityChangesPending;
 
 	//every request should get unique seqno, otherwise we won't be able to distinguish their responses
 	int NewSeqno() { return ++_seqno; }
@@ -75,5 +90,14 @@ private:
 	//make sure camera observer is present iff enable == true
 	void SetCameraObserver(bool enable);
 
+	scene::Graph::Observer *GetSceneObserver() const { return _sceneObserver.get(); }
+	//make sure scene observer is present iff enable == true
+	void SetSceneObserver(bool enable);
+	//add/remove entity observers on the set of entity nodes
+	void SetEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable);
+
+
+	//friend zone:
+	friend class GameConnectionSceneObserver;
 };
 extern GameConnection g_gameConnection;
