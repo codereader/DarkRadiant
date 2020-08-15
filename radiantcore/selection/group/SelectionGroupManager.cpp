@@ -13,13 +13,10 @@
 #include "module/StaticModule.h"
 #include "selection/algorithm/Group.h"
 
-#include "wxutil/dialog/MessageBox.h"
 #include "selectionlib.h"
 #include "SelectionGroup.h"
 #include "scene/SelectableNode.h"
 #include "SelectionGroupInfoFileModule.h"
-#include "wxutil/menu/MenuItem.h"
-#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace selection
 {

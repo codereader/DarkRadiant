@@ -20,7 +20,6 @@
 #include "shaderlib.h"
 #include "gamelib.h"
 #include "string/string.h"
-#include "wxutil/dialog/MessageBox.h"
 
 #include "registry/registry.h"
 #include "brush/Brush.h"
@@ -32,6 +31,7 @@
 #include "map/Map.h"
 #include "module/StaticModule.h"
 #include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
 
 #include <memory>
 
@@ -173,7 +173,7 @@ void RegionManager::addRegionBrushes()
         // Obtain the camera origin = player start point
         Vector3 camOrigin = camView.getCameraOrigin();
         // Get the start angle of the player start point
-        float angle = camView.getCameraAngles()[ui::CAMERA_YAW];
+        auto angle = camView.getCameraAngles()[ui::CAMERA_YAW];
 
         // Check if the camera origin is within the region
         if (!_bounds.intersects(camOrigin))
@@ -290,7 +290,8 @@ void RegionManager::setRegionXY(const cmd::ArgumentList& args)
     }
 }
 
-void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {
+void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args)
+{
     const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
     // Check, if exactly one brush is selected
@@ -309,20 +310,22 @@ void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {
 
         SceneChangeNotify();
     }
-    else {
-        wxutil::Messagebox::ShowError(
-            _("Could not set Region: please select a single Brush."));
+    else 
+    {
         disable();
+        throw cmd::ExecutionFailure(_("Could not set Region: please select a single Brush."));
     }
 }
 
-void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
+void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args)
+{
     const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
     // Check, if there is anything selected
-    if (info.totalCount > 0) {
-        if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-
+    if (info.totalCount > 0)
+    {
+        if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
+        {
             // Obtain the selection size (its min/max vectors)
             AABB regionBounds = GlobalSelectionSystem().getWorkZone().bounds;
 
@@ -335,15 +338,16 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
             // Re-draw the scene
             SceneChangeNotify();
         }
-        else {
-            wxutil::Messagebox::ShowError(_("This command is not available in component mode."));
+        else
+        {
             disable();
+            throw cmd::ExecutionNotPossible(_("This command is not available in component mode."));
         }
     }
-    else {
-        wxutil::Messagebox::ShowError(
-            _("Could not set Region: nothing selected."));
+    else
+    {
         disable();
+        throw cmd::ExecutionNotPossible(_("Cannot set Region: nothing selected."));
     }
 }
 
