@@ -143,6 +143,13 @@ public:
 	 */
 	bool saveDirect(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
 
+	/**
+	 * stgatilov: Saves only entities with specified names to in-memory map patch.
+	 * This diff is intended to be consumed by TheDarkMod automation for HotReload purposes.
+	 * TODO: What about patches and brushes?
+	 */
+	std::string saveMapDiff(const std::map<std::string, int> &entityStatuses);
+
 	/** greebo: Creates a new map file.
 	 *
 	 * Note: Can't be called "new" as this is a reserved word...
