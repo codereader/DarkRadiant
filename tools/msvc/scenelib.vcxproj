@@ -129,6 +129,7 @@
     <ClInclude Include="..\..\libs\scene\ChildPrimitives.h" />
     <ClInclude Include="..\..\libs\scene\Clone.h" />
     <ClInclude Include="..\..\libs\scene\EntityBreakdown.h" />
+    <ClInclude Include="..\..\libs\scene\Group.h" />
     <ClInclude Include="..\..\libs\scene\GroupNodeChecker.h" />
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h" />
     <ClInclude Include="..\..\libs\scene\LayerUsageBreakdown.h" />

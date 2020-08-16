@@ -124,30 +124,6 @@ namespace algorithm
 	 */
 	ISelectionGroupManager& getMapSelectionGroupManager();
 
-	/**
-	 * Groups the currently selected elements.
-	 * Will throw cmd::ExecutionNotPossible if it cannot execute.
-	 */
-	void groupSelected();
-
-	/**
-	 * Returns if the groupSelected command is able to execute
-	 * at this point, otherwise throws cmd::ExecutionNotPossible
-	 */
-	void checkGroupSelectedAvailable();
-
-	/**
-	 * Resolve the currently selected group.
-	 * Will throw cmd::ExecutionNotPossible if it cannot execute.
-	 */
-	void ungroupSelected();
-
-	/**
-	* Returns if the ungroupSelected command is able to execute
-	* at this point, otherwise throws cmd::ExecutionNotPossible.
-	*/
-	void checkUngroupSelectedAvailable();
-
 	// Command targets
 	void deleteAllSelectionGroupsCmd(const cmd::ArgumentList& args);
 	void groupSelectedCmd(const cmd::ArgumentList& args);

@@ -18,6 +18,8 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "messages/TextureChanged.h"
 #include "string/string.h"
+#include "scene/Group.h"
+#include "command/ExecutionNotPossible.h"
 
 #include "module/StaticModule.h"
 
@@ -159,6 +161,18 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 			FilterOrthoContextMenuItem::DeselectByFilter),
 		IOrthoContextMenu::SECTION_FILTER
 	);
+
+	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
+		new wxutil::IconTextMenuItem(_("Group Selection"), "group_selection.png"),
+		[]() { selection::groupSelected(); },
+		[]() { return cmd::ExecutionNotPossible::ToBool(selection::checkGroupSelectedAvailable); }),
+		IOrthoContextMenu::SECTION_SELECTION_GROUPS);
+
+	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
+		new wxutil::IconTextMenuItem(_("Ungroup Selection"), "ungroup_selection.png"),
+		[]() { selection::ungroupSelected(); },
+		[]() { return cmd::ExecutionNotPossible::ToBool(selection::checkUngroupSelectedAvailable); }),
+		IOrthoContextMenu::SECTION_SELECTION_GROUPS);
 
 	_eClassColourManager.reset(new EntityClassColourManager);
 	_longOperationHandler.reset(new LongRunningOperationHandler);

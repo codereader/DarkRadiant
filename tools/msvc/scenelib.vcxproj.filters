@@ -85,5 +85,8 @@
     <ClInclude Include="..\..\libs\scene\ModelFinder.h">
       <Filter>scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\Group.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

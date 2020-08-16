@@ -1,21 +1,14 @@
 #include <functional>
 
 #include "iselectiongroup.h"
-#include "i18n.h"
 #include "icommandsystem.h"
-#include "ieventmanager.h"
 #include "imap.h"
-#include "iradiant.h"
-#include "iorthocontextmenu.h"
 
 #include "SelectionGroupManager.h"
 
 #include "selection/algorithm/Group.h"
 #include "SelectionGroupInfoFileModule.h"
-#include "wxutil/menu/MenuItem.h"
-#include "wxutil/menu/IconTextMenuItem.h"
 #include "module/StaticModule.h"
-#include "command/ExecutionNotPossible.h"
 
 namespace selection
 {
@@ -37,9 +30,7 @@ public:
 		if (_dependencies.empty())
 		{
 			_dependencies.insert(MODULE_SELECTIONSYSTEM);
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
-			_dependencies.insert(MODULE_RADIANT_APP);
 			_dependencies.insert(MODULE_MAP);
 			_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		}
@@ -62,18 +53,6 @@ public:
 		GlobalMapInfoFileManager().registerInfoFileModule(
 			std::make_shared<SelectionGroupInfoFileModule>()
 		);
-
-		GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
-			new wxutil::IconTextMenuItem(_("Group Selection"), "group_selection.png"),
-			[]() { algorithm::groupSelected(); },
-			[]() { return cmd::ExecutionNotPossible::ToBool(algorithm::checkGroupSelectedAvailable); }),
-			ui::IOrthoContextMenu::SECTION_SELECTION_GROUPS);
-
-		GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
-			new wxutil::IconTextMenuItem(_("Ungroup Selection"), "ungroup_selection.png"),
-			[]() { algorithm::ungroupSelected(); },
-			[]() { return cmd::ExecutionNotPossible::ToBool(algorithm::checkUngroupSelectedAvailable); }),
-			ui::IOrthoContextMenu::SECTION_SELECTION_GROUPS);
 	}
 
 	ISelectionGroupManager::Ptr createSelectionGroupManager() override

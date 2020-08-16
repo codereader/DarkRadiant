@@ -47,6 +47,7 @@
 #include "messages/ScopedLongRunningOperation.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
+#include "scene/Group.h"
 #include "selection/algorithm/Transformation.h"
 #include "module/StaticModule.h"
 #include "command/ExecutionNotPossible.h"
@@ -619,7 +620,7 @@ void Map::loadPrefabAt(const cmd::ArgumentList& args)
 		{
 			try
 			{
-				selection::algorithm::groupSelected();
+				selection::groupSelected();
 			}
 			catch (cmd::ExecutionNotPossible& ex)
 			{
