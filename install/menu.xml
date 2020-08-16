@@ -321,12 +321,13 @@
 	</subMenu>
 
 	<subMenu name="gamecon" caption="Connection">
-		<menuItem name="enableCameraSync" caption="Enable camera synchronization" command="GameConnectionEnableCameraSync" />
-		<menuItem name="disableCameraSync" caption="Disable camera synchronization" command="GameConnectionDisableCameraSync" />
-		<menuItem name="pauseGame" caption="Pause game" command="GameConnectionPauseGame" />
+		<menuItem name="cameraSyncEnable" caption="Enable camera synchronization" command="GameConnectionCameraSyncEnable" />
+		<menuItem name="cameraSyncDisable" caption="Disable camera synchronization" command="GameConnectionCameraSyncDisable" />
 		<menuItem name="reloadMap" caption="Reload map from .map file" command="GameConnectionReloadMap" />
-		<menuItem name="enableMapObserver" caption="Enable observing map changes" command="GameConnectionEnableMapObserver" />
-		<menuItem name="disableMapObserver" caption="Disable observing map changes" command="GameConnectionDisableMapObserver" />
-		<menuItem name="updateMap" caption="Reload map from current session" command="GameConnectionUpdateMap" />
+		<menuItem name="updateMapOff" caption="Disable map update mode" command="GameConnectionUpdateMapOff" />
+		<menuItem name="updateMapOn" caption="Enable map update mode" command="GameConnectionUpdateMapOn" />
+		<menuItem name="updateMapAlways" caption="Always update map immediately after change" command="GameConnectionUpdateMapAlways" />
+		<menuItem name="updateMap" caption="Update map right now" command="GameConnectionUpdateMap" />
+		<menuItem name="pauseGame" caption="Pause game" command="GameConnectionPauseGame" />
 	</subMenu>
 </menu>

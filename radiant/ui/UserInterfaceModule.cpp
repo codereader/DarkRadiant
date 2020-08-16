@@ -160,13 +160,14 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
+	GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable", GameConnection::CameraSyncEnable);
+	GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable", GameConnection::CameraSyncDisable);
 	GlobalCommandSystem().addCommand("GameConnectionReloadMap", GameConnection::ReloadMap);
-	GlobalCommandSystem().addCommand("GameConnectionEnableCameraSync", GameConnection::EnableCameraSync);
-	GlobalCommandSystem().addCommand("GameConnectionDisableCameraSync", GameConnection::DisableCameraSync);
-	GlobalCommandSystem().addCommand("GameConnectionPauseGame", GameConnection::PauseGame);
-	GlobalCommandSystem().addCommand("GameConnectionEnableMapObserver", GameConnection::EnableMapObserver);
-	GlobalCommandSystem().addCommand("GameConnectionDisableMapObserver", GameConnection::DisableMapObserver);
+	GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff", GameConnection::UpdateMapOff);
+	GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn", GameConnection::UpdateMapOn);
+	GlobalCommandSystem().addCommand("GameConnectionUpdateMapAlways", GameConnection::UpdateMapAlways);
 	GlobalCommandSystem().addCommand("GameConnectionUpdateMap", GameConnection::UpdateMap);
+	GlobalCommandSystem().addCommand("GameConnectionPauseGame", GameConnection::PauseGame);
 
 	// ----------------------- Bind Events ---------------------------------------
 
@@ -196,13 +197,14 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
 	GlobalEventManager().addCommand("EntityList", "EntityList");
 
+	GlobalEventManager().addCommand("GameConnectionCameraSyncEnable", "GameConnectionCameraSyncEnable");
+	GlobalEventManager().addCommand("GameConnectionCameraSyncDisable", "GameConnectionCameraSyncDisable");
 	GlobalEventManager().addCommand("GameConnectionReloadMap", "GameConnectionReloadMap");
-	GlobalEventManager().addCommand("GameConnectionEnableCameraSync", "GameConnectionEnableCameraSync");
-	GlobalEventManager().addCommand("GameConnectionDisableCameraSync", "GameConnectionDisableCameraSync");
-	GlobalEventManager().addCommand("GameConnectionPauseGame", "GameConnectionPauseGame");
-	GlobalEventManager().addCommand("GameConnectionEnableMapObserver", "GameConnectionEnableMapObserver");
-	GlobalEventManager().addCommand("GameConnectionDisableMapObserver", "GameConnectionDisableMapObserver");
+	GlobalEventManager().addCommand("GameConnectionUpdateMapOff", "GameConnectionUpdateMapOff");
+	GlobalEventManager().addCommand("GameConnectionUpdateMapOn", "GameConnectionUpdateMapOn");
+	GlobalEventManager().addCommand("GameConnectionUpdateMapAlways", "GameConnectionUpdateMapAlways");
 	GlobalEventManager().addCommand("GameConnectionUpdateMap", "GameConnectionUpdateMap");
+	GlobalEventManager().addCommand("GameConnectionPauseGame", "GameConnectionPauseGame");
 }
 
 // Static module registration
