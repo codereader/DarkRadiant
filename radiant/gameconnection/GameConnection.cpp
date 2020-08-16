@@ -8,6 +8,8 @@
 #include "ientity.h"
 #include "map/Map.h"
 
+//this is how often this class "thinks" when idle
+static const int GAMECONNECTION_THINK_INTERVAL = 123;
 
 zmq::context_t g_ZeroMqContext;
 GameConnection g_gameConnection;
@@ -112,14 +114,39 @@ bool GameConnection::Connect() {
     if (_connection)
         _connection.reset();
 
+    if (_thinkTimer)
+        _thinkTimer.reset();
+
     //connection using ZeroMQ socket
     std::unique_ptr<zmq::socket_t> zmqConnection(new zmq::socket_t(g_ZeroMqContext, ZMQ_STREAM));
     zmqConnection->connect(fmt::format("tcp://127.0.0.1:{}", 3879));
 
     _connection.reset(new MessageTcp());
     _connection->Init(std::move(zmqConnection));
-    return _connection->IsAlive();
+    if (!_connection->IsAlive())
+        return false;
+
+    _thinkTimer.reset(new wxTimer());
+    _thinkTimer->Connect(wxEVT_TIMER, wxTimerEventHandler(GameConnection::onTimerEvent), NULL, this);
+    _thinkTimer->Start(GAMECONNECTION_THINK_INTERVAL);
+
+    return true;
 }
+
+void GameConnection::Disconnect() {
+    if (_connection) {
+        Finish();
+        _connection.reset();
+    }
+    if (_thinkTimer) {
+        _thinkTimer->Stop();
+        _thinkTimer.reset();
+    }
+}
+GameConnection::~GameConnection() {
+    Disconnect();
+};
+
 
 
 void GameConnection::ExecuteSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword) {

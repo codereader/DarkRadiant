@@ -4,11 +4,17 @@
 class MessageTcp;
 class CameraObserver;
 
-class GameConnection {
+class GameConnection : public wxEvtHandler {
 public:
+	~GameConnection();
+
 	//connect to TDM instance if not connected yet
 	//return false if failed to connect
 	bool Connect();
+
+	//disconnect from TDM instance if connected
+	//note: blocks until pending requests are processed
+	void Disconnect();
 
 	//send given request synchronously, i.e. wait until its completition
 	//returns response content
@@ -37,6 +43,9 @@ public:
 private:
 	//connection to TDM game (i.e. the socket with custom message framing)
 	std::unique_ptr<MessageTcp> _connection;
+	//when connected, this timer calls Think periodically
+	std::unique_ptr<wxTimer> _thinkTimer;
+	void onTimerEvent(wxTimerEvent& ev) { Think(); }
 	//sequence number of the last sent request (incremented sequentally)
 	int _seqno = 0;
 
