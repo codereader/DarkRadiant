@@ -32,13 +32,21 @@ public:
 	//  type ==  1: entity has been added
 	void EntityUpdated(const std::string &name, int type);
 
+	//camera sync:
+	static void CameraSyncEnable(const cmd::ArgumentList& args);
+	static void CameraSyncDisable(const cmd::ArgumentList& args);
+	static void CameraBackSync(const cmd::ArgumentList& args);
+	//reload map from .map file:
+	static void ReloadMapEnable(const cmd::ArgumentList& args);
+	static void ReloadMapDisable(const cmd::ArgumentList& args);
 	static void ReloadMap(const cmd::ArgumentList& args);
-	static void EnableCameraSync(const cmd::ArgumentList& args);
-	static void DisableCameraSync(const cmd::ArgumentList& args);
-	static void PauseGame(const cmd::ArgumentList& args);
-	static void EnableMapObserver(const cmd::ArgumentList& args);	//TODO: enable always
-	static void DisableMapObserver(const cmd::ArgumentList& args);	//TODO: enable always
+	//reload map fast without saving:
+	static void UpdateMapOff(const cmd::ArgumentList& args);
+	static void UpdateMapOn(const cmd::ArgumentList& args);
+	static void UpdateMapAlways(const cmd::ArgumentList& args);
 	static void UpdateMap(const cmd::ArgumentList& args);
+	//game:
+	static void PauseGame(const cmd::ArgumentList& args);
 
 private:
 	//connection to TDM game (i.e. the socket with custom message framing)
@@ -61,8 +69,10 @@ private:
 	//the observer put onto global camera when camera sync is enabled
 	std::unique_ptr<CameraObserver> _cameraObserver;
 
-	//the observer put onto global scene when map sync is enabled
+	//the observer put onto global scene when "update map" is enabled
 	std::unique_ptr<scene::Graph::Observer> _sceneObserver;
+	//set to true when "update map" is set to "always"
+	bool _updateMapAlways = false;
 	//observers put on every entity on scene
 	std::map<IEntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
 	//set of entities with changes since last update: -1 - deleted, 1 - added, 0 - modified
@@ -95,16 +105,17 @@ private:
 	//learn state of the specified cvar (blocking)
 	std::string ExecuteGetCvarValue(const std::string &cvarName, std::string *defaultValue = nullptr);
 
-	CameraObserver *GetCameraObserver() const { return _cameraObserver.get(); }
-	//make sure camera observer is present iff enable == true
+	//make sure camera observer is present iff enable == true, and attach/detach it to global camera
 	void SetCameraObserver(bool enable);
 
-	scene::Graph::Observer *GetSceneObserver() const { return _sceneObserver.get(); }
-	//make sure scene observer is present iff enable == true
+	//make sure scene observer is present iff enable == true, and attach/detach it to global scene
 	void SetSceneObserver(bool enable);
 	//add/remove entity observers on the set of entity nodes
 	void SetEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable);
-
+	//implementation of "update map" level toggling
+	void SetUpdateMapLevel(bool on, bool always);
+	//send map update to TDM right now
+	void DoUpdateMap();
 
 	//friend zone:
 	friend class GameConnectionSceneObserver;

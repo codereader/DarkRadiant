@@ -43,6 +43,11 @@ void GameConnection::SendRequest(const std::string &request) {
 }
 
 bool GameConnection::SendAnyAsync() {
+    if (_entityChangesPending.size() && _updateMapAlways) {
+        //note: this is blocking
+        DoUpdateMap();
+        return true;
+    }
     if (_cameraOutPending) {
         std::string text = ComposeConExecRequest(fmt::format(
             "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}",
@@ -230,11 +235,15 @@ public:
     }
 };
 void GameConnection::SetCameraObserver(bool enable) {
-    if (enable && !_cameraObserver)
-        _cameraObserver.reset(new GameConnectionCameraObserver(&g_gameConnection));
-    if (!enable && _cameraObserver)
+    if (!enable && _cameraObserver) {
+        GlobalCamera().removeCameraObserver(_cameraObserver.get());
         _cameraObserver.reset();
+    }
     if (enable) {
+        if (!_cameraObserver) {
+            _cameraObserver.reset(new GameConnectionCameraObserver(&g_gameConnection));
+            GlobalCamera().addCameraObserver(_cameraObserver.get());
+        }
         ExecuteSetTogglableFlag("god", true, "OFF");
         ExecuteSetTogglableFlag("noclip", true, "OFF");
         ExecuteSetTogglableFlag("notarget", true, "OFF");
@@ -243,12 +252,10 @@ void GameConnection::SetCameraObserver(bool enable) {
         Finish();
     }
 }
-void GameConnection::EnableCameraSync(const cmd::ArgumentList& args) {
+void GameConnection::CameraSyncEnable(const cmd::ArgumentList& args) {
     g_gameConnection.SetCameraObserver(true);
-    GlobalCamera().addCameraObserver(g_gameConnection.GetCameraObserver());
 }
-void GameConnection::DisableCameraSync(const cmd::ArgumentList& args) {
-    GlobalCamera().removeCameraObserver(g_gameConnection.GetCameraObserver());
+void GameConnection::CameraSyncDisable(const cmd::ArgumentList& args) {
     g_gameConnection.SetCameraObserver(false);
 }
 
@@ -348,31 +355,47 @@ void GameConnection::SetSceneObserver(bool enable) {
         SetEntityObservers(entityNodes, true);
         if (!_sceneObserver)
             _sceneObserver.reset(new GameConnectionSceneObserver());
+        GlobalSceneGraph().addSceneObserver(_sceneObserver.get());
     }
     else {
-        if (_sceneObserver)
+        if (_sceneObserver) {
+            GlobalSceneGraph().removeSceneObserver(_sceneObserver.get());
             _sceneObserver.reset();
+        }
         SetEntityObservers(entityNodes, false);
         assert(_entityObservers.empty());
+        _entityChangesPending.clear();
     }
 }
-void GameConnection::EnableMapObserver(const cmd::ArgumentList& args) {
-    g_gameConnection.SetSceneObserver(true);
-    GlobalSceneGraph().addSceneObserver(g_gameConnection.GetSceneObserver());
+void GameConnection::SetUpdateMapLevel(bool on, bool always) {
+    if (on && !_sceneObserver) {
+        //save map to file, and reload from file, to ensure DR and TDM are in sync
+        GlobalCommandSystem().executeCommand("SaveMap");
+        ReloadMap(cmd::ArgumentList());
+    }
+    SetSceneObserver(on);
+    _updateMapAlways = always;
 }
-void GameConnection::DisableMapObserver(const cmd::ArgumentList& args) {
-    GlobalSceneGraph().removeSceneObserver(g_gameConnection.GetSceneObserver());
-    g_gameConnection.SetSceneObserver(false);
+void GameConnection::DoUpdateMap() {
+    std::string diff = GlobalMap().saveMapDiff(_entityChangesPending);
+    if (diff.empty()) {
+        return; //TODO: fail
+    }
+    std::string response = Execute(ActionPreamble("reloadmap-diff") + "content:\n" + diff);
+    if (response.find("HotReload: SUCCESS") != std::string::npos)
+        _entityChangesPending.clear();
+}
+void GameConnection::UpdateMapOff(const cmd::ArgumentList& args) {
+    g_gameConnection.SetUpdateMapLevel(false, false);
+}
+void GameConnection::UpdateMapOn(const cmd::ArgumentList& args) {
+    g_gameConnection.SetUpdateMapLevel(true, false);
+}
+void GameConnection::UpdateMapAlways(const cmd::ArgumentList& args) {
+    g_gameConnection.SetUpdateMapLevel(true, true);
 }
 void GameConnection::UpdateMap(const cmd::ArgumentList& args) {
     if (!g_gameConnection.Connect())
         return;
-    std::string diff = GlobalMap().saveMapDiff(g_gameConnection._entityChangesPending);
-    if (diff.empty()) {
-        return; //TODO: fail
-    }
-
-    std::string response = g_gameConnection.Execute(ActionPreamble("reloadmap-diff") + "content:\n" + diff);
-    if (response.find("HotReload: SUCCESS") != std::string::npos)
-        g_gameConnection._entityChangesPending.clear();
+    g_gameConnection.DoUpdateMap();
 }
