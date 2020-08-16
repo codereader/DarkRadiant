@@ -14,7 +14,6 @@
 #include "ifilter.h"
 #include "icounter.h"
 #include "iradiant.h"
-#include "imainframe.h"
 #include "imapresource.h"
 #include "imapinfofile.h"
 #include "iaasfile.h"
@@ -53,7 +52,6 @@
 #include "messages/NotificationMessage.h"
 
 #include <fmt/format.h>
-#include <wx/frame.h>
 #include "scene/ChildPrimitives.h"
 
 namespace map 
@@ -125,23 +123,10 @@ void Map::loadMapResourceFromPath(const std::string& path)
     emitMapEvent(MapLoaded);
 }
 
-void Map::updateTitle()
-{
-    std::string title = _mapName;
-
-    if (m_modified)
-	{
-        title += " *";
-    }
-
-	if (GlobalMainFrame().getWxTopLevelWindow())
-    {
-		GlobalMainFrame().getWxTopLevelWindow()->SetTitle(title);
-    }
-}
-
 void Map::setMapName(const std::string& newName)
 {
+    bool mapNameChanged = _mapName != newName;
+
     // Store the name into the member
     _mapName = newName;
 
@@ -151,11 +136,11 @@ void Map::setMapName(const std::string& newName)
         _resource->rename(newName);
     }
 
-    // Update the title of the main window
-    updateTitle();
-
-    // Fire the signal to any observers
-    signal_mapNameChanged().emit();
+    if (mapNameChanged)
+    {
+        // Fire the signal to any observers
+        signal_mapNameChanged().emit();
+    }
 }
 
 sigc::signal<void>& Map::signal_mapNameChanged()
@@ -228,18 +213,28 @@ void Map::freeMap()
     _resource.reset();
 }
 
-bool Map::isModified() const {
+bool Map::isModified() const
+{
     return m_modified;
 }
 
-// Set the modified flag
 void Map::setModified(bool modifiedFlag)
 {
-    m_modified = modifiedFlag;
-    updateTitle();
+    if (m_modified != modifiedFlag)
+    {
+        m_modified = modifiedFlag;
+
+        // when the map is modified, let the listeners now
+        signal_modifiedChanged().emit();
+    }
 
     // Reset the map save timer
     _mapSaveTimer.restart();
+}
+
+sigc::signal<void>& Map::signal_modifiedChanged()
+{
+    return _mapModifiedChangedSignal;
 }
 
 // move the view to a certain position

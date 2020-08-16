@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "RadiantModule.h"
 #include "igroupdialog.h"
+#include "imap.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "ipreferencesystem.h"
@@ -25,6 +26,7 @@
 #include "messages/ApplicationShutdownRequest.h"
 #include <functional>
 #include <fmt/format.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <wx/display.h>
 
@@ -70,6 +72,7 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
 		_dependencies.insert(MODULE_CAMERA);
+		_dependencies.insert(MODULE_MAP);
 	}
 
 	return _dependencies;
@@ -135,11 +138,22 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	// Load the value and act
 	setDesktopCompositionEnabled(!registry::getValue<bool>(RKEY_DISABLE_WIN_DESKTOP_COMP));
 #endif
+
+	_mapNameChangedConn = GlobalMapModule().signal_mapNameChanged().connect(
+		sigc::mem_fun(this, &MainFrame::updateTitle)
+	);
+
+	_mapModifiedChangedConn = GlobalMapModule().signal_modifiedChanged().connect(
+		sigc::mem_fun(this, &MainFrame::updateTitle)
+	);
 }
 
 void MainFrame::shutdownModule()
 {
 	rMessage() << "MainFrame::shutdownModule called." << std::endl;
+
+	_mapNameChangedConn.disconnect();
+	_mapModifiedChangedConn.disconnect();
 
 	disableScreenUpdates();
 }
@@ -271,6 +285,23 @@ void MainFrame::preDestructionCleanup()
 
 	// Broadcast shutdown event to RadiantListeners
 	radiant::getGlobalRadiant()->broadcastShutdownEvent();
+}
+
+void MainFrame::updateTitle()
+{
+	if (_topLevelWindow == nullptr)
+	{
+		return;
+	}
+
+	std::string title = GlobalMapModule().getMapName();
+
+	if (GlobalMapModule().isModified())
+	{
+		title += " *";
+	}
+
+	_topLevelWindow->SetTitle(title);
 }
 
 void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)

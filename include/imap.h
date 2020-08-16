@@ -144,6 +144,11 @@ public:
 	// Sets the modified status of this map
 	virtual void setModified(bool modifiedFlag) = 0;
 
+	/**
+	 * Signal fired when the modified status of this map has changed.
+	 */
+	virtual sigc::signal<void>& signal_modifiedChanged() = 0;
+
 	// Caution: this is upposed to be called on startup, since it doesn't ask the user
 	// whether to save the current map. Use the "NewMap" command for regular purposes.
 	virtual void createNewMap() = 0;

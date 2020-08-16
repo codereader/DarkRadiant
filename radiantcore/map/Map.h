@@ -37,6 +37,7 @@ class Map :
 	std::string _lastCopyMapName;
 
 	sigc::signal<void> _mapNameChangedSignal;
+	sigc::signal<void> _mapModifiedChangedSignal;
 
 	// Pointer to the resource for this map
 	IMapResourcePtr _resource;
@@ -159,11 +160,10 @@ public:
 	// Sets the modified status of this map
 	void setModified(bool modifiedFlag) override;
 
+	sigc::signal<void>& signal_modifiedChanged() override;
+
 	// greebo: Creates a new, empty map file.
 	void createNewMap() override;
-
-	// Updates the window title of the mainframe
-	void updateTitle();
 
 	// Accessor methods for the worldspawn node
 	void setWorldspawn(const scene::INodePtr& node);
