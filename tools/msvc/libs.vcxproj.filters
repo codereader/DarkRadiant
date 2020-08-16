@@ -249,6 +249,9 @@
     <ClInclude Include="..\..\libs\messages\ApplicationIsActiveRequest.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\time\ScopeTimer.h">
+      <Filter>time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

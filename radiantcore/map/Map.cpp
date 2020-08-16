@@ -29,7 +29,7 @@
 #include "os/path.h"
 #include "os/file.h"
 #include "wxutil/IConv.h"
-#include "wxutil/ScopeTimer.h"
+#include "time/ScopeTimer.h"
 
 #include "brush/BrushModule.h"
 #include "scene/BasicRootNode.h"
@@ -293,7 +293,7 @@ void Map::load(const std::string& filename) {
     setMapName(filename);
 
     {
-        wxutil::ScopeTimer timer("map load");
+        util::ScopeTimer timer("map load");
 
 		loadMapResourceFromPath(_mapName);
     }
@@ -323,7 +323,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     emitMapEvent(MapSaving);
 
-    wxutil::ScopeTimer timer("map save");
+    util::ScopeTimer timer("map save");
 
     bool success = false;
 

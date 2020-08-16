@@ -32,7 +32,7 @@ public:
 	}
 
 	// Returns the seconds passed since the last call to restart()
-	// If restart() has never been called, this is the time since construction
+	// If restart() has never been called, this is the duration since construction
 	std::size_t getSecondsPassed() const
 	{
 		auto endTime = _clock.now();
@@ -40,6 +40,17 @@ public:
 		auto seconds = std::chrono::duration_cast<std::chrono::seconds>(endTime - _start).count();
 
 		return static_cast<std::size_t>(seconds);
+	}
+
+	// Returns the milliseconds passed since the last call to restart()
+	// If restart() has never been called, this is the duration since construction
+	std::size_t getMilliSecondsPassed() const
+	{
+		auto endTime = _clock.now();
+
+		auto msecs = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - _start).count();
+
+		return static_cast<std::size_t>(msecs);
 	}
 };
 
