@@ -29,7 +29,6 @@
 #include "os/path.h"
 #include "os/file.h"
 #include "wxutil/IConv.h"
-#include "wxutil/dialog/MessageBox.h"
 #include "wxutil/ScopeTimer.h"
 
 #include "brush/BrushModule.h"
@@ -52,8 +51,10 @@
 #include "module/StaticModule.h"
 #include "command/ExecutionNotPossible.h"
 #include "MapPropertyInfoFileModule.h"
+#include "messages/NotificationMessage.h"
 
 #include <fmt/format.h>
+#include <wx/frame.h>
 #include "scene/ChildPrimitives.h"
 
 namespace map 
@@ -102,7 +103,7 @@ void Map::loadMapResourceFromPath(const std::string& path)
     }
     catch (IMapResource::OperationException& ex)
     {
-        wxutil::Messagebox::ShowError(ex.what());
+        radiant::NotificationMessage::SendError(ex.what());
         clearMapResource();
     }
 
@@ -338,7 +339,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
     }
     catch (IMapResource::OperationException & ex)
     {
-        wxutil::Messagebox::ShowError(ex.what());
+        radiant::NotificationMessage::SendError(ex.what());
     }
 
     emitMapEvent(MapSaved);
@@ -392,7 +393,7 @@ bool Map::import(const std::string& filename)
     }
     catch (const IMapResource::OperationException& ex)
     {
-        wxutil::Messagebox::ShowError(ex.what());
+        radiant::NotificationMessage::SendError(ex.what());
     }
 
     return success;
@@ -420,7 +421,7 @@ void Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
     }
     catch (const IMapResource::OperationException& ex)
     {
-        wxutil::Messagebox::ShowError(ex.what());
+        radiant::NotificationMessage::SendError(ex.what());
     }
 
     _saveInProgress = false;
@@ -453,7 +454,7 @@ void Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
     }
     catch (const IMapResource::OperationException& ex)
     {
-        wxutil::Messagebox::ShowError(ex.what());
+        radiant::NotificationMessage::SendError(ex.what());
     }
 
     _saveInProgress = false;
@@ -821,7 +822,7 @@ void Map::emitMapEvent(MapEvent ev)
     }
     catch (std::runtime_error & ex)
     {
-        wxutil::Messagebox::ShowError(fmt::format(_("Failure running map event {0}:\n{1}"), ev, ex.what()));
+        radiant::NotificationMessage::SendError(fmt::format(_("Failure running map event {0}:\n{1}"), ev, ex.what()));
     }
 }
 
