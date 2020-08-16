@@ -36,6 +36,8 @@ class Map :
 	// The name of the last "save copy as" filename
 	std::string _lastCopyMapName;
 
+	sigc::signal<void> _mapNameChangedSignal;
+
 	// Pointer to the resource for this map
 	IMapResourcePtr _resource;
 
@@ -87,9 +89,11 @@ public:
 	 */
 	void setMapName(const std::string& newName);
 
-	/** greebo: Returns the name of this class
+	/** greebo: Returns the name of this map
 	 */
 	std::string getMapName() const override;
+
+	sigc::signal<void>& signal_mapNameChanged() override;
 
 	/**
 	 * greebo: Saves the current map, doesn't ask for any filenames,

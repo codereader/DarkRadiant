@@ -28,7 +28,6 @@
 #include "gamelib.h"
 #include "os/path.h"
 #include "os/file.h"
-#include "wxutil/IConv.h"
 #include "time/ScopeTimer.h"
 
 #include "brush/BrushModule.h"
@@ -141,7 +140,8 @@ void Map::updateTitle()
     }
 }
 
-void Map::setMapName(const std::string& newName) {
+void Map::setMapName(const std::string& newName)
+{
     // Store the name into the member
     _mapName = newName;
 
@@ -153,6 +153,14 @@ void Map::setMapName(const std::string& newName) {
 
     // Update the title of the main window
     updateTitle();
+
+    // Fire the signal to any observers
+    signal_mapNameChanged().emit();
+}
+
+sigc::signal<void>& Map::signal_mapNameChanged()
+{
+    return _mapNameChangedSignal;
 }
 
 std::string Map::getMapName() const {

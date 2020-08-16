@@ -133,6 +133,11 @@ public:
 	*/
 	virtual std::string getMapName() const = 0;
 
+	/**
+	 * Signal fired when the name of this map is changing.
+	 */
+	virtual sigc::signal<void>& signal_mapNameChanged() = 0;
+
 	// Returns true if the map has unsaved changes.
 	virtual bool isModified() const = 0;
 
