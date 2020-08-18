@@ -65,14 +65,8 @@ void RenderableParticle::renderSolid(RenderableCollector& collector,
 			// Skip invisible stages
 			if (!stage->getDef().isVisible()) continue;
 
-			if (entity)
-			{
-				collector.addRenderable(pair.second.shader, *stage, localToWorld, *entity);
-			}
-			else
-			{
-				collector.addRenderable(pair.second.shader, *stage, localToWorld);
-			}
+            collector.addRenderable(pair.second.shader, *stage, localToWorld,
+                                    nullptr, entity);
 		}
 	}
 }

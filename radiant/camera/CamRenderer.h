@@ -47,10 +47,7 @@ public:
     // RenderableCollector implementation
     bool supportsFullMaterials() const override;
 	void setHighlightFlag(Highlight::Flags flags, bool enabled) override;
-
-	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable, const Matrix4& world) override;
 	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
-		const Matrix4& world, const IRenderEntity& entity) override;
-	void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
-		const Matrix4& world, const IRenderEntity& entity, const LightList& lights) override;
+                       const Matrix4& world, const LightList* lights,
+                       const IRenderEntity* entity) override;
 };

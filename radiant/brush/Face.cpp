@@ -43,7 +43,7 @@ Face::Face(Brush& owner) :
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-	setupSurfaceShader();
+    setupSurfaceShader();
 
     m_plane.initialiseFromPoints(
         Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0)
@@ -66,7 +66,7 @@ Face::Face(
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-	setupSurfaceShader();
+    setupSurfaceShader();
     m_plane.initialiseFromPoints(p0, p1, p2);
     planeChanged();
     shaderChanged();
@@ -78,7 +78,7 @@ Face::Face(Brush& owner, const Plane3& plane) :
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-	setupSurfaceShader();
+    setupSurfaceShader();
     m_plane.setPlane(plane);
     planeChanged();
     shaderChanged();
@@ -91,7 +91,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
-	setupSurfaceShader();
+    setupSurfaceShader();
     m_plane.setPlane(plane);
 
     _texdef.matrix = TextureMatrix(texdef);
@@ -110,26 +110,26 @@ Face::Face(Brush& owner, const Face& other) :
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible)
 {
-	setupSurfaceShader();
+    setupSurfaceShader();
     planepts_assign(m_move_planepts, other.m_move_planepts);
     planeChanged();
 }
 
 Face::~Face()
 {
-	_surfaceShaderRealised.disconnect();
+    _surfaceShaderRealised.disconnect();
 }
 
 void Face::setupSurfaceShader()
 {
-	_surfaceShaderRealised = _shader.signal_Realised().connect(
-		sigc::mem_fun(*this, &Face::realiseShader));
+    _surfaceShaderRealised = _shader.signal_Realised().connect(
+        sigc::mem_fun(*this, &Face::realiseShader));
 
-	// If we're already in realised state, call realiseShader right away
-	if (_shader.isRealised())
-	{
-		realiseShader();
-	}
+    // If we're already in realised state, call realiseShader right away
+    if (_shader.isRealised())
+    {
+        realiseShader();
+    }
 }
 
 Brush& Face::getBrush()
@@ -154,7 +154,7 @@ void Face::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 
     _shader.setInUse(true);
 
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+    _undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
 
 void Face::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
@@ -169,7 +169,7 @@ void Face::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 void Face::undoSave()
 {
     if (_undoStateSaver)
-	{
+    {
         _undoStateSaver->save(*this);
     }
 }
@@ -184,7 +184,7 @@ void Face::importState(const IUndoMementoPtr& data)
 {
     undoSave();
 
-	std::static_pointer_cast<SavedState>(data)->exportState(*this);
+    std::static_pointer_cast<SavedState>(data)->exportState(*this);
 
     planeChanged();
     _owner.onFaceConnectivityChanged();
@@ -225,15 +225,17 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
 }
 
 void Face::renderSolid(RenderableCollector& collector, const Matrix4& localToWorld,
-	const IRenderEntity& entity, const LightList& lights) const
+    const IRenderEntity& entity, const LightList& lights) const
 {
-	collector.addRenderable(_shader.getGLShader(), m_winding, localToWorld, entity, lights);
+    collector.addRenderable(_shader.getGLShader(), m_winding, localToWorld,
+                            &lights, &entity);
 }
 
 void Face::renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
-	const IRenderEntity& entity) const
+    const IRenderEntity& entity) const
 {
-	collector.addRenderable(entity.getWireShader(), m_winding, localToWorld, entity);
+    collector.addRenderable(entity.getWireShader(), m_winding, localToWorld,
+                            nullptr, &entity);
 }
 
 void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -390,7 +392,7 @@ void Face::texdefChanged()
     EmitTextureCoordinates();
 
     // Fire the signal to update the Texture Tools
-	signal_texdefChanged().emit();
+    signal_texdefChanged().emit();
 }
 
 const TextureProjection& Face::getProjection() const
@@ -420,18 +422,18 @@ void Face::setTexdef(const TexDef& texDef)
     TextureProjection projection;
     
     // Construct the BPTexDef out of the TexDef by using the according constructor
-	projection.matrix = TextureMatrix(texDef);
+    projection.matrix = TextureMatrix(texDef);
 
     // The bprimitive texdef needs to be scaled using our current texture dims
     float width = _shader.getWidth();
     float height = _shader.getHeight();
 
     projection.matrix.coords[0][0] /= width;
-	projection.matrix.coords[0][1] /= width;
-	projection.matrix.coords[0][2] /= width;
-	projection.matrix.coords[1][0] /= height;
-	projection.matrix.coords[1][1] /= height;
-	projection.matrix.coords[1][2] /= height;
+    projection.matrix.coords[0][1] /= width;
+    projection.matrix.coords[0][2] /= width;
+    projection.matrix.coords[1][0] /= height;
+    projection.matrix.coords[1][1] /= height;
+    projection.matrix.coords[1][2] /= height;
 
     SetTexdef(projection);
 }
@@ -622,6 +624,6 @@ void Face::updateFaceVisibility()
 
 sigc::signal<void>& Face::signal_texdefChanged()
 {
-	static sigc::signal<void> _sigTexdefChanged;
-	return _sigTexdefChanged;
+    static sigc::signal<void> _sigTexdefChanged;
+    return _sigTexdefChanged;
 }

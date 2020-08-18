@@ -14,184 +14,185 @@ inline void Surface_addLight(const MD5Surface& surface,
                              const Matrix4& localToWorld,
                              const RendererLight& light)
 {
-	if (light.intersectsAABB(
+    if (light.intersectsAABB(
             AABB::createFromOrientedAABB(surface.localAABB(), localToWorld)
         )
     )
     {
-		lights.addLight(light);
-	}
+        lights.addLight(light);
+    }
 }
 
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
-	_model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
-	_surfaceLightLists(_model->size())
+    _model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
+    _surfaceLightLists(_model->size())
 {
-	_lightList = &GlobalRenderSystem().attachLitObject(*this);
+    _lightList = &GlobalRenderSystem().attachLitObject(*this);
 
-	Node::setTransformChangedCallback((std::bind(&MD5ModelNode::lightsChanged, this)));
+    Node::setTransformChangedCallback((std::bind(&MD5ModelNode::lightsChanged, this)));
 }
 
 const model::IModel& MD5ModelNode::getIModel() const {
-	return *_model;
+    return *_model;
 }
 
 model::IModel& MD5ModelNode::getIModel() {
-	return *_model;
+    return *_model;
 }
 
 bool MD5ModelNode::hasModifiedScale()
 {
-	return false; // not supported
+    return false; // not supported
 }
 
 void MD5ModelNode::lightsChanged()
 {
-	_lightList->setDirty();
+    _lightList->setDirty();
 }
 
 MD5ModelNode::~MD5ModelNode()
 {
-	GlobalRenderSystem().detachLitObject(*this);
+    GlobalRenderSystem().detachLitObject(*this);
 }
 
 void MD5ModelNode::setModel(const MD5ModelPtr& model) {
-	_model = model;
+    _model = model;
 }
 
 const MD5ModelPtr& MD5ModelNode::getModel() const {
-	return _model;
+    return _model;
 }
 
 // Bounded implementation
 const AABB& MD5ModelNode::localAABB() const {
-	return _model->localAABB();
+    return _model->localAABB();
 }
 
 std::string MD5ModelNode::name() const {
-	return _model->getFilename();
+    return _model->getFilename();
 }
 
 scene::INode::Type MD5ModelNode::getNodeType() const
 {
-	return Type::Model;
+    return Type::Model;
 }
 
 void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test) {
-	_model->testSelect(selector, test, localToWorld());
+    _model->testSelect(selector, test, localToWorld());
 }
 
 bool MD5ModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 {
-	return _model->getIntersection(ray, intersection, localToWorld());
+    return _model->getIntersection(ray, intersection, localToWorld());
 }
 
 bool MD5ModelNode::intersectsLight(const RendererLight& light) const
 {
-	return light.intersectsAABB(worldAABB());
+    return light.intersectsAABB(worldAABB());
 }
 
 void MD5ModelNode::insertLight(const RendererLight& light) {
-	const Matrix4& l2w = localToWorld();
+    const Matrix4& l2w = localToWorld();
 
-	_surfaceLightLists.resize(_model->size());
+    _surfaceLightLists.resize(_model->size());
 
-	SurfaceLightLists::iterator j = _surfaceLightLists.begin();
-	for (MD5Model::const_iterator i = _model->begin(); i != _model->end(); ++i) {
-		Surface_addLight(*i->surface, *j++, l2w, light);
-	}
+    SurfaceLightLists::iterator j = _surfaceLightLists.begin();
+    for (MD5Model::const_iterator i = _model->begin(); i != _model->end(); ++i) {
+        Surface_addLight(*i->surface, *j++, l2w, light);
+    }
 }
 
 void MD5ModelNode::clearLights() {
-	for (SurfaceLightLists::iterator i = _surfaceLightLists.begin();
-		 i != _surfaceLightLists.end(); ++i)
-	{
-		i->clear();
-	}
+    for (SurfaceLightLists::iterator i = _surfaceLightLists.begin();
+         i != _surfaceLightLists.end(); ++i)
+    {
+        i->clear();
+    }
 }
 
 void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	_lightList->calculateIntersectingLights();
+    _lightList->calculateIntersectingLights();
 
-	assert(_renderEntity);
+    assert(_renderEntity);
 
-	render(collector, volume, localToWorld(), *_renderEntity);
+    render(collector, volume, localToWorld(), *_renderEntity);
 }
 
 void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	assert(_renderEntity);
+    assert(_renderEntity);
 
-	render(collector, volume, localToWorld(), *_renderEntity);
+    render(collector, volume, localToWorld(), *_renderEntity);
 }
 
 void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	Node::setRenderSystem(renderSystem);
+    Node::setRenderSystem(renderSystem);
 
-	_model->setRenderSystem(renderSystem);
+    _model->setRenderSystem(renderSystem);
 }
 
 void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volume,
-		const Matrix4& localToWorld, const IRenderEntity& entity) const
+        const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
-	// Do some rough culling (per model, not per surface)
-	if (volume.TestAABB(localAABB(), localToWorld) == VOLUME_OUTSIDE)
-	{
-		return;
-	}
+    // Do some rough culling (per model, not per surface)
+    if (volume.TestAABB(localAABB(), localToWorld) == VOLUME_OUTSIDE)
+    {
+        return;
+    }
 
-	SurfaceLightLists::const_iterator j = _surfaceLightLists.begin();
+    SurfaceLightLists::const_iterator j = _surfaceLightLists.begin();
 
-	// greebo: Iterate over all MD5 surfaces and render them
-	for (MD5Model::const_iterator i = _model->begin();
-		 i != _model->end();
-		 ++i, ++j)
-	{
-		assert(i->shader);
+    // greebo: Iterate over all MD5 surfaces and render them
+    for (MD5Model::const_iterator i = _model->begin();
+         i != _model->end();
+         ++i, ++j)
+    {
+        assert(i->shader);
 
-		// Get the Material to test the shader name against the filter system
-		const MaterialPtr& surfaceShader = i->shader->getMaterial();
+        // Get the Material to test the shader name against the filter system
+        const MaterialPtr& surfaceShader = i->shader->getMaterial();
 
-		if (surfaceShader->isVisible())
-		{
-			//collector.setLights(*j);
-			if (collector.supportsFullMaterials())
-			{
-				assert(i->shader); // shader must be captured at this point
-				collector.addRenderable(i->shader, *i->surface, localToWorld, entity, *j);
-			}
-			else
-			{
-				collector.addRenderable(entity.getWireShader(), *i->surface, localToWorld, entity);
-			}
-		}
-	}
+        if (surfaceShader->isVisible())
+        {
+            if (collector.supportsFullMaterials())
+            {
+                assert(i->shader); // shader must be captured at this point
+                collector.addRenderable(i->shader, *i->surface, localToWorld,
+                                        &(*j), &entity);
+            }
+            else
+            {
+                collector.addRenderable(entity.getWireShader(), *i->surface,
+                                        localToWorld, nullptr, &entity);
+            }
+        }
+    }
 
-	// Uncomment to render the skeleton
-	//collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
-	//collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
+    // Uncomment to render the skeleton
+    //collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
+    //collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
 }
 
 // Returns the name of the currently active skin
 std::string MD5ModelNode::getSkin() const {
-	return _skin;
+    return _skin;
 }
 
 void MD5ModelNode::skinChanged(const std::string& newSkinName)
 {
-	// greebo: Store the new skin name locally
-	_skin = newSkinName;
+    // greebo: Store the new skin name locally
+    _skin = newSkinName;
 
-	// greebo: Acquire the ModelSkin reference from the SkinCache
-	// Note: This always returns a valid reference
-	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
+    // greebo: Acquire the ModelSkin reference from the SkinCache
+    // Note: This always returns a valid reference
+    ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
 
-	_model->applySkin(skin);
+    _model->applySkin(skin);
 
-	// Refresh the scene
-	GlobalSceneGraph().sceneChanged();
+    // Refresh the scene
+    GlobalSceneGraph().sceneChanged();
 }
 
 } // namespace md5
