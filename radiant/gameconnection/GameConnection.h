@@ -1,8 +1,12 @@
 #include "icommandsystem.h"
 #include "iscenegraph.h"
 
-class MessageTcp;
+
 class CameraObserver;
+
+namespace gameconn {
+
+class MessageTcp;
 
 class GameConnection : public wxEvtHandler {
 public:
@@ -121,3 +125,5 @@ private:
 	friend class GameConnectionSceneObserver;
 };
 extern GameConnection g_gameConnection;
+
+}

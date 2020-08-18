@@ -8,6 +8,9 @@
 #include "ientity.h"
 #include "map/Map.h"
 
+
+namespace gameconn {
+
 //this is how often this class "thinks" when idle
 static const int GAMECONNECTION_THINK_INTERVAL = 123;
 
@@ -38,7 +41,7 @@ void GameConnection::SendRequest(const std::string &request) {
     assert(_seqnoInProgress == 0);
     int seqno = g_gameConnection.NewSeqno();
     std::string fullMessage = SeqnoPreamble(seqno) + request;
-    _connection->WriteMessage(fullMessage.data(), fullMessage.size());
+    _connection->writeMessage(fullMessage.data(), fullMessage.size());
     _seqnoInProgress = seqno;
 }
 
@@ -62,10 +65,10 @@ bool GameConnection::SendAnyAsync() {
 }
 
 void GameConnection::Think() {
-    _connection->Think();
+    _connection->think();
     if (_seqnoInProgress) {
         //check if full response is here
-        if (_connection->ReadMessage(_response)) {
+        if (_connection->readMessage(_response)) {
             //validate and remove preamble
             int responseSeqno, lineLen;
             int ret = sscanf(_response.data(), "response %d\n%n", &responseSeqno, &lineLen);
@@ -82,7 +85,7 @@ void GameConnection::Think() {
         bool sentAsync = SendAnyAsync();
         sentAsync = false;  //unused
     }
-    _connection->Think();
+    _connection->think();
 }
 
 void GameConnection::WaitAction() {
@@ -113,7 +116,7 @@ std::string GameConnection::Execute(const std::string &request) {
 }
 
 bool GameConnection::Connect() {
-    if (_connection && _connection->IsAlive())
+    if (_connection && _connection->isAlive())
         return true;    //already connected
 
     if (_connection)
@@ -127,8 +130,8 @@ bool GameConnection::Connect() {
     zmqConnection->connect(fmt::format("tcp://127.0.0.1:{}", 3879));
 
     _connection.reset(new MessageTcp());
-    _connection->Init(std::move(zmqConnection));
-    if (!_connection->IsAlive())
+    _connection->init(std::move(zmqConnection));
+    if (!_connection->isAlive())
         return false;
 
     _thinkTimer.reset(new wxTimer());
@@ -398,4 +401,6 @@ void GameConnection::UpdateMap(const cmd::ArgumentList& args) {
     if (!g_gameConnection.Connect())
         return;
     g_gameConnection.DoUpdateMap();
+}
+
 }
