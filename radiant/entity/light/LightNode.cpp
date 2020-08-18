@@ -72,7 +72,7 @@ AABB LightNode::getSelectAABB() const
 }
 
 void LightNode::lightChanged() {
-	GlobalRenderSystem().lightChanged(*this);
+	GlobalRenderSystem().lightChanged();
 }
 
 const AABB& LightNode::localAABB() const {

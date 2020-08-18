@@ -404,17 +404,17 @@ void OpenGLRenderSystem::attachLight(RendererLight& light)
 {
     ASSERT_MESSAGE(m_lights.find(&light) == m_lights.end(), "light could not be attached");
     m_lights.insert(&light);
-    lightChanged(light);
+    lightChanged();
 }
 
 void OpenGLRenderSystem::detachLight(RendererLight& light)
 {
     ASSERT_MESSAGE(m_lights.find(&light) != m_lights.end(), "light could not be detached");
     m_lights.erase(&light);
-    lightChanged(light);
+    lightChanged();
 }
 
-void OpenGLRenderSystem::lightChanged(RendererLight& light)
+void OpenGLRenderSystem::lightChanged()
 {
     m_lightsChanged = true;
 }

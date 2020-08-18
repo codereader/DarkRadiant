@@ -94,7 +94,7 @@ public:
     // Attach and detach light sources
 	void attachLight(RendererLight& light) override;
 	void detachLight(RendererLight& light) override;
-	void lightChanged(RendererLight& light) override;
+	void lightChanged() override;
 
 	typedef std::set<const Renderable*> Renderables;
 	Renderables m_renderables;

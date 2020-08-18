@@ -634,13 +634,13 @@ public:
 
     /**
      * \brief
-     * Indicate that the given light source has been modified.
+     * Indicate that the scene lights have changed.
      */
-    virtual void lightChanged(RendererLight& light) = 0;
+    virtual void lightChanged() = 0;
 
-  virtual void attachRenderable(const Renderable& renderable) = 0;
-  virtual void detachRenderable(const Renderable& renderable) = 0;
-  virtual void forEachRenderable(const RenderableCallback& callback) const = 0;
+    virtual void attachRenderable(const Renderable& renderable) = 0;
+    virtual void detachRenderable(const Renderable& renderable) = 0;
+    virtual void forEachRenderable(const RenderableCallback& callback) const = 0;
 
   	// Initialises the OpenGL extensions
     virtual void extensionsInitialised() = 0;
