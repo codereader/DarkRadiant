@@ -652,7 +652,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 
     // Get the light shader and examine its first (and only valid) layer
     const MaterialPtr& lightShader = light->getShader()->getMaterial();
-    ShaderLayer* layer = lightShader->firstLayer();
+    ShaderLayer* layer = lightShader ? lightShader->firstLayer() : nullptr;
     if (!layer) return;
 
     // Calculate viewer location in object space
