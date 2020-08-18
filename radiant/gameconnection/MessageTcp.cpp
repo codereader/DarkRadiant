@@ -4,9 +4,12 @@
 #include <zmq.hpp>
 
 
+namespace gameconn {
+
+MessageTcp::~MessageTcp() {}
 MessageTcp::MessageTcp() {}
 
-void MessageTcp::Init(std::unique_ptr<zmq::socket_t> &&connection) {
+void MessageTcp::init(std::unique_ptr<zmq::socket_t> &&connection) {
 	tcp = std::move(connection);
 
 	assert(tcp->getsockopt<int>(ZMQ_TYPE) == ZMQ_STREAM);
@@ -21,17 +24,17 @@ void MessageTcp::Init(std::unique_ptr<zmq::socket_t> &&connection) {
 	outputPos = 0;
 }
 
-bool MessageTcp::IsAlive() const {
+bool MessageTcp::isAlive() const {
 	return tcp.get() && (*tcp);	//TODO: IsAlive?
 }
 
-bool MessageTcp::ReadMessage(std::vector<char> &message) {
+bool MessageTcp::readMessage(std::vector<char> &message) {
 	message.clear();
-	Think();
+	think();
 
 	const char *buffer = inputBuffer.data() + inputPos;
 	int remains = inputBuffer.size() - inputPos;
-	auto Pull = [&](void *ptr, int size) -> void {
+	auto pull = [&](void *ptr, int size) -> void {
 		assert(size <= remains);
 		memcpy(ptr, buffer, size);
 		buffer += size;
@@ -44,13 +47,13 @@ bool MessageTcp::ReadMessage(std::vector<char> &message) {
 	char magic[5] = {0};
 
 	//note: little-endianness is assumed
-	Pull(magic, 4);
+	pull(magic, 4);
 	if (strcmp(magic, "TDM[") != 0)
 		goto zomg;
-	Pull(&len, 4);
+	pull(&len, 4);
 	if (len < 0)
 		goto zomg;
-	Pull(magic, 4);
+	pull(magic, 4);
 	if (strcmp(magic, "]   ") != 0)
 		goto zomg;
 
@@ -59,17 +62,17 @@ bool MessageTcp::ReadMessage(std::vector<char> &message) {
 
 	message.reserve(len + 1);
 	message.resize(len);
-	Pull(message.data(), len);
+	pull(message.data(), len);
 	message.data()[len] = '\0';
 
-	Pull(magic, 4);
+	pull(magic, 4);
 	if (strcmp(magic, "   (") != 0)
 		goto zomg;
 	int len2;
-	Pull(&len2, 4);
+	pull(&len2, 4);
 	if (len2 != len)
 		goto zomg;
-	Pull(magic, 4);
+	pull(magic, 4);
 	if (strcmp(magic, ")TDM") != 0)
 		goto zomg;
 
@@ -79,39 +82,39 @@ bool MessageTcp::ReadMessage(std::vector<char> &message) {
 zomg:
 	rError() << "ERROR: MessageTCP: wrong message format\n";
 	message.clear();
-	Init({});
+	init({});
 	return false;
 }
 
-void MessageTcp::WriteMessage(const char *message, int len) {
+void MessageTcp::writeMessage(const char *message, int len) {
 	int where = outputBuffer.size();
 	outputBuffer.resize(where + len + 24);
-	auto Push = [&](const void *ptr, int size) -> void {
+	auto push = [&](const void *ptr, int size) -> void {
 		memcpy(&outputBuffer[where], ptr, size);
 		where += size;
 	};
 
 	//note: little-endianness is assumed
-	Push("TDM[", 4);
-	Push(&len, 4);
-	Push("]   ", 4);
-	Push(message, len);
-	Push("   (", 4);
-	Push(&len, 4);
-	Push(")TDM", 4);
+	push("TDM[", 4);
+	push(&len, 4);
+	push("]   ", 4);
+	push(message, len);
+	push("   (", 4);
+	push(&len, 4);
+	push(")TDM", 4);
 
 	assert(where == outputBuffer.size());
 
-	Think();
+	think();
 }
 
-void MessageTcp::Think() {
+void MessageTcp::think() {
 	if (!tcp)
 		return;
 	static const int BUFFER_SIZE = 1024;
 
 	//if data in buffer is too far from start, then it is moved to the beginning
-	auto CompactBuffer = [](std::vector<char> &vec, int &pos) -> void {
+	auto compactBuffer = [](std::vector<char> &vec, int &pos) -> void {
 		int remains = vec.size() - pos;
 		if (pos > remains + BUFFER_SIZE) {
 			memcpy(vec.data(), vec.data() + pos, remains);
@@ -120,7 +123,7 @@ void MessageTcp::Think() {
 		}
 	};
 
-	CompactBuffer(inputBuffer, inputPos);
+	compactBuffer(inputBuffer, inputPos);
 
 	//fetch incoming data from socket
 	static_assert(BUFFER_SIZE >= 256);	//ZeroMQ identity fits
@@ -152,11 +155,13 @@ void MessageTcp::Think() {
 		outputPos += written;
 	}
 
-	CompactBuffer(outputBuffer, outputPos);
+	compactBuffer(outputBuffer, outputPos);
 
 	return;
 
 onerror:
 	rError() << "Automation lost connection\n";
 	tcp.reset();
+}
+
 }

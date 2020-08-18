@@ -7,20 +7,24 @@ namespace zmq {
 	class socket_t;
 }
 
+namespace gameconn {
+
 /**
  * Framed protocol on top of raw socket.
- * Note: operates on arrays only, not very efficient (especially in terms of memory).
+ * Operates on arrays only, not very efficient (especially in terms of memory).
+ * Note: almost the same class is used in TheDarkMod source code.
  */
 class MessageTcp {
 public:
 	MessageTcp();
-	void Init(std::unique_ptr<zmq::socket_t> &&connection);
+	~MessageTcp();
+	void init(std::unique_ptr<zmq::socket_t> &&connection);
 
-	bool ReadMessage(std::vector<char> &message);
-	void WriteMessage(const char *message, int len);
+	bool readMessage(std::vector<char> &message);
+	void writeMessage(const char *message, int len);
 
-	void Think();
-	bool IsAlive() const;
+	void think();
+	bool isAlive() const;
 
 private:
 	std::unique_ptr<zmq::socket_t> tcp;
@@ -31,3 +35,5 @@ private:
 	std::vector<char> outputBuffer;
 	int outputPos;
 };
+
+}
