@@ -18,53 +18,53 @@ zmq::context_t g_ZeroMqContext;
 GameConnection g_gameConnection;
 
 
-static std::string SeqnoPreamble(int seq) {
+static std::string seqnoPreamble(int seq) {
     return fmt::format("seqno {}\n", seq);
 }
-static std::string MessagePreamble(std::string type) {
+static std::string messagePreamble(std::string type) {
     return fmt::format("message \"{}\"\n", type);
 }
-static std::string ActionPreamble(std::string type) {
-    return MessagePreamble("action") + fmt::format("action \"{}\"\n", type);
+static std::string actionPreamble(std::string type) {
+    return messagePreamble("action") + fmt::format("action \"{}\"\n", type);
 }
-static std::string QueryPreamble(std::string type) {
-    return MessagePreamble("query") + fmt::format("query \"{}\"\n", type);
+static std::string queryPreamble(std::string type) {
+    return messagePreamble("query") + fmt::format("query \"{}\"\n", type);
 }
 
 
-std::string GameConnection::ComposeConExecRequest(std::string consoleLine) {
+std::string GameConnection::composeConExecRequest(std::string consoleLine) {
     assert(consoleLine.find('\n') == std::string::npos);
-    return ActionPreamble("conexec") + "content:\n" + consoleLine + "\n";
+    return actionPreamble("conexec") + "content:\n" + consoleLine + "\n";
 }
 
-void GameConnection::SendRequest(const std::string &request) {
+void GameConnection::sendRequest(const std::string &request) {
     assert(_seqnoInProgress == 0);
-    int seqno = g_gameConnection.NewSeqno();
-    std::string fullMessage = SeqnoPreamble(seqno) + request;
+    int seqno = g_gameConnection.newSeqno();
+    std::string fullMessage = seqnoPreamble(seqno) + request;
     _connection->writeMessage(fullMessage.data(), fullMessage.size());
     _seqnoInProgress = seqno;
 }
 
-bool GameConnection::SendAnyAsync() {
+bool GameConnection::sendAnyPendingAsync() {
     if (_entityChangesPending.size() && _updateMapAlways) {
         //note: this is blocking
-        DoUpdateMap();
+        doUpdateMap();
         return true;
     }
     if (_cameraOutPending) {
-        std::string text = ComposeConExecRequest(fmt::format(
+        std::string text = composeConExecRequest(fmt::format(
             "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}",
             _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
             -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
         ));
-        SendRequest(text);
+        sendRequest(text);
         _cameraOutPending = false;
         return true;
     }
     return false;
 }
 
-void GameConnection::Think() {
+void GameConnection::think() {
     _connection->think();
     if (_seqnoInProgress) {
         //check if full response is here
@@ -82,40 +82,40 @@ void GameConnection::Think() {
     }
     else {
         //doing nothing now: send async command if present
-        bool sentAsync = SendAnyAsync();
+        bool sentAsync = sendAnyPendingAsync();
         sentAsync = false;  //unused
     }
     _connection->think();
 }
 
-void GameConnection::WaitAction() {
+void GameConnection::waitAction() {
     while (_seqnoInProgress)
-        Think();
+        think();
 }
 
-void GameConnection::Finish() {
+void GameConnection::finish() {
     //wait for current request in progress to finish
-    WaitAction();
+    waitAction();
     //send pending async commands and wait for them to finish
-    while (SendAnyAsync())
-        WaitAction();
+    while (sendAnyPendingAsync())
+        waitAction();
 }
 
-std::string GameConnection::Execute(const std::string &request) {
+std::string GameConnection::executeRequest(const std::string &request) {
     //make sure current request is finished (if any)
-    WaitAction();
+    waitAction();
     assert(_seqnoInProgress == 0);
 
     //prepend seqno line and send message
-    SendRequest(request);
+    sendRequest(request);
 
     //wait until response is ready
-    WaitAction();
+    waitAction();
 
     return std::string(_response.begin(), _response.end());
 }
 
-bool GameConnection::Connect() {
+bool GameConnection::connect() {
     if (_connection && _connection->isAlive())
         return true;    //already connected
 
@@ -141,9 +141,9 @@ bool GameConnection::Connect() {
     return true;
 }
 
-void GameConnection::Disconnect() {
+void GameConnection::disconnect() {
     if (_connection) {
-        Finish();
+        finish();
         _connection.reset();
     }
     if (_thinkTimer) {
@@ -152,18 +152,18 @@ void GameConnection::Disconnect() {
     }
 }
 GameConnection::~GameConnection() {
-    Disconnect();
+    disconnect();
 };
 
 
 
-void GameConnection::ExecuteSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword) {
-    if (!g_gameConnection.Connect())
+void GameConnection::executeSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword) {
+    if (!g_gameConnection.connect())
         return;
-    std::string text = ComposeConExecRequest(toggleCommand);
+    std::string text = composeConExecRequest(toggleCommand);
     int attempt;
     for (attempt = 0; attempt < 2; attempt++) {
-        std::string response = g_gameConnection.Execute(text);
+        std::string response = g_gameConnection.executeRequest(text);
         bool isEnabled = (response.find(offKeyword) == std::string::npos);
         if (enable == isEnabled)
             break;
@@ -172,11 +172,11 @@ void GameConnection::ExecuteSetTogglableFlag(const std::string &toggleCommand, b
     assert(attempt < 2);    //two toggles not enough?...
 }
 
-std::string GameConnection::ExecuteGetCvarValue(const std::string &cvarName, std::string *defaultValue) {
-    if (!g_gameConnection.Connect())
+std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std::string *defaultValue) {
+    if (!g_gameConnection.connect())
         return "";
-    std::string text = ComposeConExecRequest(cvarName);
-    std::string response = g_gameConnection.Execute(text);
+    std::string text = composeConExecRequest(cvarName);
+    std::string response = g_gameConnection.executeRequest(text);
     //parse response (imagine how easy that would be with regex...)
     while (response.size() && isspace(response.back()))
         response.pop_back();
@@ -200,24 +200,24 @@ std::string GameConnection::ExecuteGetCvarValue(const std::string &cvarName, std
     return currValue;
 }
 
-void GameConnection::ReloadMap(const cmd::ArgumentList& args) {
-    if (!g_gameConnection.Connect())
+void GameConnection::reloadMap(const cmd::ArgumentList& args) {
+    if (!g_gameConnection.connect())
         return;
-    std::string text = ComposeConExecRequest("reloadMap");
-    g_gameConnection.Execute(text);
+    std::string text = composeConExecRequest("reloadMap");
+    g_gameConnection.executeRequest(text);
 }
 
-void GameConnection::PauseGame(const cmd::ArgumentList& args) {
-    if (!g_gameConnection.Connect())
+void GameConnection::pauseGame(const cmd::ArgumentList& args) {
+    if (!g_gameConnection.connect())
         return;
-    std::string value = g_gameConnection.ExecuteGetCvarValue("g_stopTime");
+    std::string value = g_gameConnection.executeGetCvarValue("g_stopTime");
     std::string oppositeValue = (value == "0" ? "1" : "0");
-    std::string text = ComposeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
-    g_gameConnection.Execute(text);
+    std::string text = composeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
+    g_gameConnection.executeRequest(text);
 }
 
-void GameConnection::UpdateCamera() {
-    Connect();
+void GameConnection::updateCamera() {
+    connect();
     if (auto pCamWnd = GlobalCamera().getActiveCamWnd()) {
         Vector3 orig = pCamWnd->getCameraOrigin(), angles = pCamWnd->getCameraAngles();
         _cameraOutData[0] = orig;
@@ -225,7 +225,7 @@ void GameConnection::UpdateCamera() {
         //note: the update is not necessarily sent right now
         _cameraOutPending = true;
     }
-    Think();
+    think();
 }
 
 
@@ -234,10 +234,10 @@ public:
     GameConnection *_owner = nullptr;
     GameConnectionCameraObserver(GameConnection *owner) : _owner(owner) {}
 	virtual void cameraMoved() override {
-        _owner->UpdateCamera();
+        _owner->updateCamera();
     }
 };
-void GameConnection::SetCameraObserver(bool enable) {
+void GameConnection::setCameraObserver(bool enable) {
     if (!enable && _cameraObserver) {
         GlobalCamera().removeCameraObserver(_cameraObserver.get());
         _cameraObserver.reset();
@@ -247,23 +247,23 @@ void GameConnection::SetCameraObserver(bool enable) {
             _cameraObserver.reset(new GameConnectionCameraObserver(&g_gameConnection));
             GlobalCamera().addCameraObserver(_cameraObserver.get());
         }
-        ExecuteSetTogglableFlag("god", true, "OFF");
-        ExecuteSetTogglableFlag("noclip", true, "OFF");
-        ExecuteSetTogglableFlag("notarget", true, "OFF");
+        executeSetTogglableFlag("god", true, "OFF");
+        executeSetTogglableFlag("noclip", true, "OFF");
+        executeSetTogglableFlag("notarget", true, "OFF");
         //sync camera location right now
-        UpdateCamera();
-        Finish();
+        updateCamera();
+        finish();
     }
 }
-void GameConnection::CameraSyncEnable(const cmd::ArgumentList& args) {
-    g_gameConnection.SetCameraObserver(true);
+void GameConnection::cameraSyncEnable(const cmd::ArgumentList& args) {
+    g_gameConnection.setCameraObserver(true);
 }
-void GameConnection::CameraSyncDisable(const cmd::ArgumentList& args) {
-    g_gameConnection.SetCameraObserver(false);
+void GameConnection::cameraSyncDisable(const cmd::ArgumentList& args) {
+    g_gameConnection.setCameraObserver(false);
 }
 
 
-static std::vector<IEntityNodePtr> GetEntitiesInNode(const scene::INodePtr &node) {
+static std::vector<IEntityNodePtr> getEntitiesInNode(const scene::INodePtr &node) {
     struct MyVisitor : scene::NodeVisitor {
         std::set<IEntityNodePtr> v;
         virtual bool pre(const scene::INodePtr& node) override {
@@ -282,46 +282,46 @@ class GameConnectionEntityObserver : public Entity::Observer {
 public:
     std::string _entityName;
     bool _enabled = false;
-    void Enable() { _enabled = true; }
+    void enable() { _enabled = true; }
     virtual void onKeyInsert(const std::string& key, EntityKeyValue& value) override {
         if (key == "name")
             _entityName = value.get();      //happens when installing observer
         if (_enabled)
-            g_gameConnection.EntityUpdated(_entityName, 0);
+            g_gameConnection.entityUpdated(_entityName, 0);
     }
     virtual void onKeyChange(const std::string& key, const std::string& val) override {
         if (_enabled) {
             if (key == "name") {
                 //renaming is equivalent to deleting old entity and adding new
-                g_gameConnection.EntityUpdated(_entityName, -1);
-                g_gameConnection.EntityUpdated(val, 1);
+                g_gameConnection.entityUpdated(_entityName, -1);
+                g_gameConnection.entityUpdated(val, 1);
             }
             else {
-                g_gameConnection.EntityUpdated(_entityName, 0);
+                g_gameConnection.entityUpdated(_entityName, 0);
             }
         }
     }
     virtual void onKeyErase(const std::string& key, EntityKeyValue& value) override {
         if (_enabled)
-            g_gameConnection.EntityUpdated(_entityName, 0);
+            g_gameConnection.entityUpdated(_entityName, 0);
     }
 };
 class GameConnectionSceneObserver : public scene::Graph::Observer {
 public:
     virtual void onSceneNodeInsert(const scene::INodePtr& node) override {
-        auto entityNodes = GetEntitiesInNode(node);
+        auto entityNodes = getEntitiesInNode(node);
         for (const IEntityNodePtr &entNode : entityNodes)
-            g_gameConnection.EntityUpdated(entNode->name(), 1);
-        g_gameConnection.SetEntityObservers(entityNodes, true);
+            g_gameConnection.entityUpdated(entNode->name(), 1);
+        g_gameConnection.setEntityObservers(entityNodes, true);
     }
     virtual void onSceneNodeErase(const scene::INodePtr& node) override {
-        auto entityNodes = GetEntitiesInNode(node);
-        g_gameConnection.SetEntityObservers(entityNodes, false);
+        auto entityNodes = getEntitiesInNode(node);
+        g_gameConnection.setEntityObservers(entityNodes, false);
         for (const IEntityNodePtr &entNode : entityNodes)
-            g_gameConnection.EntityUpdated(entNode->name(), -1);
+            g_gameConnection.entityUpdated(entNode->name(), -1);
     }
 };
-void GameConnection::SetEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable) {
+void GameConnection::setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable) {
     if (enable) {
         for (auto entNode : entityNodes) {
             if (_entityObservers.count(entNode.get()))
@@ -329,7 +329,7 @@ void GameConnection::SetEntityObservers(const std::vector<IEntityNodePtr> &entit
             GameConnectionEntityObserver *observer = new GameConnectionEntityObserver();
             entNode->getEntity().attachObserver(observer);
             _entityObservers[entNode.get()] = observer;
-            observer->Enable();
+            observer->enable();
         }
     }
     else {
@@ -343,7 +343,7 @@ void GameConnection::SetEntityObservers(const std::vector<IEntityNodePtr> &entit
         }
     }
 }
-void GameConnection::EntityUpdated(const std::string &name, int type) {
+void GameConnection::entityUpdated(const std::string &name, int type) {
     int &status = _entityChangesPending[name];
     status += type;
     if (std::abs(status) > 1) {
@@ -352,10 +352,10 @@ void GameConnection::EntityUpdated(const std::string &name, int type) {
         status = (status < 0 ? -1 : 1);
     }
 }
-void GameConnection::SetSceneObserver(bool enable) {
-    auto entityNodes = GetEntitiesInNode(GlobalSceneGraph().root());
+void GameConnection::setSceneObserver(bool enable) {
+    auto entityNodes = getEntitiesInNode(GlobalSceneGraph().root());
     if (enable) {
-        SetEntityObservers(entityNodes, true);
+        setEntityObservers(entityNodes, true);
         if (!_sceneObserver)
             _sceneObserver.reset(new GameConnectionSceneObserver());
         GlobalSceneGraph().addSceneObserver(_sceneObserver.get());
@@ -365,42 +365,42 @@ void GameConnection::SetSceneObserver(bool enable) {
             GlobalSceneGraph().removeSceneObserver(_sceneObserver.get());
             _sceneObserver.reset();
         }
-        SetEntityObservers(entityNodes, false);
+        setEntityObservers(entityNodes, false);
         assert(_entityObservers.empty());
         _entityChangesPending.clear();
     }
 }
-void GameConnection::SetUpdateMapLevel(bool on, bool always) {
+void GameConnection::setUpdateMapLevel(bool on, bool always) {
     if (on && !_sceneObserver) {
         //save map to file, and reload from file, to ensure DR and TDM are in sync
         GlobalCommandSystem().executeCommand("SaveMap");
-        ReloadMap(cmd::ArgumentList());
+        reloadMap(cmd::ArgumentList());
     }
-    SetSceneObserver(on);
+    setSceneObserver(on);
     _updateMapAlways = always;
 }
-void GameConnection::DoUpdateMap() {
+void GameConnection::doUpdateMap() {
     std::string diff = GlobalMap().saveMapDiff(_entityChangesPending);
     if (diff.empty()) {
         return; //TODO: fail
     }
-    std::string response = Execute(ActionPreamble("reloadmap-diff") + "content:\n" + diff);
+    std::string response = executeRequest(actionPreamble("reloadmap-diff") + "content:\n" + diff);
     if (response.find("HotReload: SUCCESS") != std::string::npos)
         _entityChangesPending.clear();
 }
-void GameConnection::UpdateMapOff(const cmd::ArgumentList& args) {
-    g_gameConnection.SetUpdateMapLevel(false, false);
+void GameConnection::updateMapOff(const cmd::ArgumentList& args) {
+    g_gameConnection.setUpdateMapLevel(false, false);
 }
-void GameConnection::UpdateMapOn(const cmd::ArgumentList& args) {
-    g_gameConnection.SetUpdateMapLevel(true, false);
+void GameConnection::updateMapOn(const cmd::ArgumentList& args) {
+    g_gameConnection.setUpdateMapLevel(true, false);
 }
-void GameConnection::UpdateMapAlways(const cmd::ArgumentList& args) {
-    g_gameConnection.SetUpdateMapLevel(true, true);
+void GameConnection::updateMapAlways(const cmd::ArgumentList& args) {
+    g_gameConnection.setUpdateMapLevel(true, true);
 }
-void GameConnection::UpdateMap(const cmd::ArgumentList& args) {
-    if (!g_gameConnection.Connect())
+void GameConnection::updateMap(const cmd::ArgumentList& args) {
+    if (!g_gameConnection.connect())
         return;
-    g_gameConnection.DoUpdateMap();
+    g_gameConnection.doUpdateMap();
 }
 
 }
