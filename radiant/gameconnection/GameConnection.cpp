@@ -53,17 +53,7 @@ bool GameConnection::sendAnyPendingAsync() {
         doUpdateMap();
         return true;
     }
-    if (_cameraOutPending) {
-        std::string text = composeConExecRequest(fmt::format(
-            "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}",
-            _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
-            -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
-        ));
-        sendRequest(text);
-        _cameraOutPending = false;
-        return true;
-    }
-    return false;
+    return sendPendingCameraUpdate();
 }
 
 void GameConnection::think() {
@@ -233,14 +223,27 @@ std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std
 
 void GameConnection::updateCamera() {
     connect();
-    if (auto pCamWnd = GlobalCamera().getActiveCamWnd()) {
-        Vector3 orig = pCamWnd->getCameraOrigin(), angles = pCamWnd->getCameraAngles();
+    if (auto camWnd = GlobalCamera().getActiveCamWnd()) {
+        Vector3 orig = camWnd->getCameraOrigin(), angles = camWnd->getCameraAngles();
         _cameraOutData[0] = orig;
         _cameraOutData[1] = angles;
         //note: the update is not necessarily sent right now
         _cameraOutPending = true;
     }
     think();
+}
+bool GameConnection::sendPendingCameraUpdate() {
+    if (_cameraOutPending) {
+        std::string text = composeConExecRequest(fmt::format(
+            "setviewpos  {:0.3f} {:0.3f} {:0.3f}  {:0.3f} {:0.3f} {:0.3f}",
+            _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
+            -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
+        ));
+        sendRequest(text);
+        _cameraOutPending = false;
+        return true;
+    }
+    return false;
 }
 class GameConnection_CameraObserver : public CameraObserver {
     GameConnection &_owner;
@@ -266,6 +269,19 @@ void GameConnection::setCameraSyncEnabled(bool enable) {
         //sync camera location right now
         updateCamera();
         finish();
+    }
+}
+void GameConnection::backSyncCamera() {
+    if (!connect())
+        return;
+    std::string text = executeRequest(composeConExecRequest("getviewpos"));
+    Vector3 orig, angles;
+    if (sscanf(text.c_str(), "%lf%lf%lf%lf%lf%lf", &orig.x(), &orig.y(), &orig.z(), &angles.x(), &angles.y(), &angles.z()) == 6) {
+        if (auto camWnd = GlobalCamera().getActiveCamWnd()) {
+            angles.x() *= -1.0;
+            camWnd->setCameraOrigin(orig);
+            camWnd->setCameraAngles(angles);
+        }
     }
 }
 

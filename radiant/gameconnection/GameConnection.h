@@ -35,6 +35,8 @@ public:
 
 	//make sure camera observer is present iff enable == true, and attach/detach it to global camera
 	void setCameraSyncEnabled(bool enable);
+	//copy camera position from the game to DR view
+	void backSyncCamera();
 
 	//pause game if it is live, unpause if it is paused
 	void togglePauseGame();
@@ -104,8 +106,10 @@ private:
 	//learn state of the specified cvar (blocking)
 	std::string executeGetCvarValue(const std::string &cvarName, std::string *defaultValue = nullptr);
 
-	//called from camera modification callback: schedules async "setviewpos" action
+	//called from camera modification callback: schedules async "setviewpos" action for future
 	void updateCamera();
+	//send request for camera update, which is pending yet
+	bool sendPendingCameraUpdate();
 
 	//friend zone:
 	friend class GameConnection_CameraObserver;
