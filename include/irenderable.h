@@ -9,7 +9,7 @@ class RenderSystem;
 typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 
 class OpenGLRenderable;
-class LightList;
+class LightSources;
 class Matrix4;
 class IRenderEntity;
 
@@ -45,7 +45,7 @@ public:
     * it is rendered.
     *
     * \param lights
-    * Optional LightList containing lights illuminating this Renderable.
+    * Optional LightSources containing lights illuminating this Renderable.
     *
     * \param entity
     * Optional IRenderEntity exposing parameters which affect the rendering of
@@ -54,7 +54,7 @@ public:
     virtual void addRenderable(const ShaderPtr& shader,
                                const OpenGLRenderable& renderable,
                                const Matrix4& world,
-                               const LightList* lights = nullptr,
+                               const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
 
     /**

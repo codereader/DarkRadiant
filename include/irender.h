@@ -247,19 +247,36 @@ typedef std::function<void(const RendererLight&)> RendererLightCallback;
 
 /**
  * \brief
- * A list of lights which may intersect an object
+ * Simple container of light sources
+ *
+ * This is a storage class used to represent all light sources which fall upon
+ * a particular object. It is passed to the RenderSystem at render time to
+ * provide the list of lights which intersect the Renderable being submitted.
+ */
+class LightSources
+{
+public:
+
+    /// Invoke a callback on all contained lights.
+    virtual void forEachLight(const RendererLightCallback& callback) const = 0;
+};
+
+/**
+ * \brief
+ * A list of lights which might (but don't necessarily) intersect a LitObject
  *
  * A LightList is responsible for calculating which lights intersect a
  * particular object. Although there is nothing exposed in the interface, the
  * LightList holds a reference to a single lit object, and it is the
  * intersection with this object which is calculated.
  *
- * \internal
- * This interface doesn't really make any sense, and its purpose is not clear.
- * It seems to be basically a set of callback functions which need to be invoked
- * at the right time during the render process, but these shouldn't really be
- * the responsibility of anything outside the renderer itself.
+ * LightLists are constructed by the RenderSystem and returned to each
+ * LitObject as the result of calling RenderSystem::attachLitObject(). The
+ * LitObject is then responsible for storing the LightList and passing it (or a
+ * more optimised LightSources container based on additional tests) to the
+ * RenderableCollector at render time.
  *
+ * \internal
  * As of 2011-01-09/r6927 the calling sequence seems to be as follows:
  *
  * 1. Illuminated object (e.g. patch, brush) adds itself to the RenderSystem
@@ -306,18 +323,28 @@ typedef std::function<void(const RendererLight&)> RendererLightCallback;
  * were multiple lights illuminating it.
  */
 class LightList
+: public LightSources
 {
 public:
     virtual ~LightList() {}
 
-    /// Trigger the LightList to recalculate which lights intersect its object
+    /**
+     * \brief
+     * Trigger the LightList to recalculate which lights intersect its object
+     *
+     * For each light, this method will call the LitObject::intersectsLight()
+     * method to test whether the light intersects the contained lit object. If
+     * the light does intersect, it will be passed to the object's
+     * insertLight() method for internal storage (and possibly further
+     * intersection tests). The LightList will also store all the intersecting
+     * lights internally, and expose them through its own forEachLight()
+     * method, for objects which do not wish to perform additional tests but
+     * just return the LightList to the renderer directly.
+     */
     virtual void calculateIntersectingLights() const = 0;
 
     /// Set the dirty flag, informing the LightList that an update is required
     virtual void setDirty() = 0;
-
-    /// Invoke a callback on all contained lights.
-    virtual void forEachLight(const RendererLightCallback& callback) const = 0;
 };
 
 const int c_attr_TexCoord0 = 1;
@@ -444,15 +471,15 @@ public:
 	 * The modelview transform for this object.
 	 *
 	 * \param lights
-     * Optional LightList containing all of the lights which should illuminate
-     * this object.
+     * Optional LightSources containing all of the lights which illuminate this
+     * object.
      *
      * \param entity
      * Optional IRenderEntity exposing entity-related render parameters.
 	 */
 	virtual void addRenderable(const OpenGLRenderable& renderable,
 							   const Matrix4& modelview,
-							   const LightList* lights = nullptr,
+							   const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
 
     /**

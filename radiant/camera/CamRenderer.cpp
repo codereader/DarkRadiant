@@ -35,7 +35,7 @@ void CamRenderer::setHighlightFlag(Highlight::Flags flags, bool enabled)
 
 void CamRenderer::addRenderable(const ShaderPtr& shader,
                                 const OpenGLRenderable& renderable,
-                                const Matrix4& world, const LightList* lights,
+                                const Matrix4& world, const LightSources* lights,
                                 const IRenderEntity* entity)
 {
     if (_state.highlightPrimitives)

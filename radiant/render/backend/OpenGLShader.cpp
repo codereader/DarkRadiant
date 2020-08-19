@@ -59,7 +59,7 @@ void OpenGLShader::destroy()
 
 void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 								 const Matrix4& modelview,
-								 const LightList* lights,
+								 const LightSources* lights,
                                  const IRenderEntity* entity)
 {
     if (!_isVisible) return;

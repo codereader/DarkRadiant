@@ -224,8 +224,9 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
     }
 }
 
-void Face::renderSolid(RenderableCollector& collector, const Matrix4& localToWorld,
-    const IRenderEntity& entity, const LightList& lights) const
+void Face::renderSolid(RenderableCollector& collector,
+                       const Matrix4& localToWorld, const IRenderEntity& entity,
+                       const LightSources& lights) const
 {
     collector.addRenderable(_shader.getGLShader(), m_winding, localToWorld,
                             &lights, &entity);

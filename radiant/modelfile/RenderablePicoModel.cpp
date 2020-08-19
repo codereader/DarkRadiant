@@ -102,8 +102,10 @@ void RenderablePicoModel::foreachVisibleSurface(const std::function<void(const S
     }
 }
 
-void RenderablePicoModel::renderSolid(RenderableCollector& rend, const Matrix4& localToWorld,
-    const IRenderEntity& entity, const LightList& lights) const
+void RenderablePicoModel::renderSolid(RenderableCollector& rend,
+                                      const Matrix4& localToWorld,
+                                      const IRenderEntity& entity,
+                                      const LightSources& lights) const
 {
     // Submit renderables from each surface
     foreachVisibleSurface([&](const Surface& s)
