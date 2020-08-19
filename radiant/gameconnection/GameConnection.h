@@ -1,3 +1,4 @@
+#include "igameconnection.h"
 #include "icommandsystem.h"
 #include "iscenegraph.h"
 
@@ -8,9 +9,21 @@ namespace gameconn {
 
 class MessageTcp;
 
-class GameConnection : public wxEvtHandler {
+/**
+ * stgatilov: This is TheDarkMod-only system for connecting to game process via socket.
+ * It allows features like:
+ *  - immediate camera synchronization
+ *  - updating edited entities in game immediately (aka "hot reload")
+ */
+class GameConnection :
+	public IGameConnection,
+	public wxEvtHandler			//note: everything before this base must have no data members!
+{
 public:
 	~GameConnection();
+
+	//returns GlobalGameConnection converted to implementation class
+	static GameConnection& instance();
 
 	//connect to TDM instance if not connected yet
 	//return false if failed to connect
@@ -51,6 +64,12 @@ public:
 	static void updateMap(const cmd::ArgumentList& args);
 	//game:
 	static void pauseGame(const cmd::ArgumentList& args);
+
+	//RegisterableModule implementation
+	virtual const std::string& getName() const override;
+	virtual const StringSet& getDependencies() const override;
+	virtual void initialiseModule(const ApplicationContext& ctx) override;
+	virtual void shutdownModule() override;
 
 private:
 	//connection to TDM game (i.e. the socket with custom message framing)
@@ -124,6 +143,7 @@ private:
 	//friend zone:
 	friend class GameConnectionSceneObserver;
 };
-extern GameConnection g_gameConnection;
 
 }
+
+using gameconn::GameConnection;

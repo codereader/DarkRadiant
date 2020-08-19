@@ -7,16 +7,19 @@
 #include "inode.h"
 #include "ientity.h"
 #include "map/Map.h"
+#include "modulesystem/StaticModule.h"
+
+
+//note: I have no idea where to put it
+//I guess if another user of ZeroMQ appears,
+//then this context should go to independent common place.
+zmq::context_t g_ZeroMqContext;
 
 
 namespace gameconn {
 
 //this is how often this class "thinks" when idle
-static const int GAMECONNECTION_THINK_INTERVAL = 123;
-
-zmq::context_t g_ZeroMqContext;
-GameConnection g_gameConnection;
-
+static const int THINK_INTERVAL = 123;
 
 static std::string seqnoPreamble(int seq) {
     return fmt::format("seqno {}\n", seq);
@@ -39,7 +42,7 @@ std::string GameConnection::composeConExecRequest(std::string consoleLine) {
 
 void GameConnection::sendRequest(const std::string &request) {
     assert(_seqnoInProgress == 0);
-    int seqno = g_gameConnection.newSeqno();
+    int seqno = newSeqno();
     std::string fullMessage = seqnoPreamble(seqno) + request;
     _connection->writeMessage(fullMessage.data(), fullMessage.size());
     _seqnoInProgress = seqno;
@@ -72,7 +75,7 @@ void GameConnection::think() {
             //validate and remove preamble
             int responseSeqno, lineLen;
             int ret = sscanf(_response.data(), "response %d\n%n", &responseSeqno, &lineLen);
-            assert(ret == 1);
+            assert(ret == 1); ret;
             assert(responseSeqno == _seqnoInProgress);
             _response.erase(_response.begin(), _response.begin() + lineLen);
             //mark request as "no longer in progress"
@@ -136,7 +139,7 @@ bool GameConnection::connect() {
 
     _thinkTimer.reset(new wxTimer());
     _thinkTimer->Connect(wxEVT_TIMER, wxTimerEventHandler(GameConnection::onTimerEvent), NULL, this);
-    _thinkTimer->Start(GAMECONNECTION_THINK_INTERVAL);
+    _thinkTimer->Start(THINK_INTERVAL);
 
     return true;
 }
@@ -151,19 +154,45 @@ void GameConnection::disconnect() {
         _thinkTimer.reset();
     }
 }
+
+GameConnection& GameConnection::instance() {
+    auto ptr = dynamic_cast<GameConnection*>(GlobalGameConnection());
+    assert(ptr);
+    return *ptr;
+}
 GameConnection::~GameConnection() {
     disconnect();
 };
 
+const std::string& GameConnection::getName() const {
+	static std::string _name = MODULE_GAMECONNECTION;
+	return _name;
+}
+const StringSet& GameConnection::getDependencies() const {
+	static StringSet _dependencies;
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_CAMERA);
+        _dependencies.insert(MODULE_COMMANDSYSTEM);
+        _dependencies.insert(MODULE_MAP);
+        _dependencies.insert(MODULE_SCENEGRAPH);
+	}
+	return _dependencies;
+}
+void GameConnection::initialiseModule(const ApplicationContext& ctx) {
+}
+void GameConnection::shutdownModule() {
+    disconnect();
+}
+module::StaticModule<GameConnection> gameConnectionModule;
 
 
 void GameConnection::executeSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword) {
-    if (!g_gameConnection.connect())
+    if (!connect())
         return;
     std::string text = composeConExecRequest(toggleCommand);
     int attempt;
     for (attempt = 0; attempt < 2; attempt++) {
-        std::string response = g_gameConnection.executeRequest(text);
+        std::string response = executeRequest(text);
         bool isEnabled = (response.find(offKeyword) == std::string::npos);
         if (enable == isEnabled)
             break;
@@ -173,10 +202,10 @@ void GameConnection::executeSetTogglableFlag(const std::string &toggleCommand, b
 }
 
 std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std::string *defaultValue) {
-    if (!g_gameConnection.connect())
+    if (!connect())
         return "";
     std::string text = composeConExecRequest(cvarName);
-    std::string response = g_gameConnection.executeRequest(text);
+    std::string response = executeRequest(text);
     //parse response (imagine how easy that would be with regex...)
     while (response.size() && isspace(response.back()))
         response.pop_back();
@@ -201,19 +230,19 @@ std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std
 }
 
 void GameConnection::reloadMap(const cmd::ArgumentList& args) {
-    if (!g_gameConnection.connect())
+    if (!instance().connect())
         return;
     std::string text = composeConExecRequest("reloadMap");
-    g_gameConnection.executeRequest(text);
+    instance().executeRequest(text);
 }
 
 void GameConnection::pauseGame(const cmd::ArgumentList& args) {
-    if (!g_gameConnection.connect())
+    if (!instance().connect())
         return;
-    std::string value = g_gameConnection.executeGetCvarValue("g_stopTime");
+    std::string value = instance().executeGetCvarValue("g_stopTime");
     std::string oppositeValue = (value == "0" ? "1" : "0");
     std::string text = composeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
-    g_gameConnection.executeRequest(text);
+    instance().executeRequest(text);
 }
 
 void GameConnection::updateCamera() {
@@ -244,7 +273,7 @@ void GameConnection::setCameraObserver(bool enable) {
     }
     if (enable) {
         if (!_cameraObserver) {
-            _cameraObserver.reset(new GameConnectionCameraObserver(&g_gameConnection));
+            _cameraObserver.reset(new GameConnectionCameraObserver(this));
             GlobalCamera().addCameraObserver(_cameraObserver.get());
         }
         executeSetTogglableFlag("god", true, "OFF");
@@ -256,10 +285,10 @@ void GameConnection::setCameraObserver(bool enable) {
     }
 }
 void GameConnection::cameraSyncEnable(const cmd::ArgumentList& args) {
-    g_gameConnection.setCameraObserver(true);
+    instance().setCameraObserver(true);
 }
 void GameConnection::cameraSyncDisable(const cmd::ArgumentList& args) {
-    g_gameConnection.setCameraObserver(false);
+    instance().setCameraObserver(false);
 }
 
 
@@ -287,23 +316,23 @@ public:
         if (key == "name")
             _entityName = value.get();      //happens when installing observer
         if (_enabled)
-            g_gameConnection.entityUpdated(_entityName, 0);
+            GameConnection::instance().entityUpdated(_entityName, 0);
     }
     virtual void onKeyChange(const std::string& key, const std::string& val) override {
         if (_enabled) {
             if (key == "name") {
                 //renaming is equivalent to deleting old entity and adding new
-                g_gameConnection.entityUpdated(_entityName, -1);
-                g_gameConnection.entityUpdated(val, 1);
+                GameConnection::instance().entityUpdated(_entityName, -1);
+                GameConnection::instance().entityUpdated(val, 1);
             }
             else {
-                g_gameConnection.entityUpdated(_entityName, 0);
+                GameConnection::instance().entityUpdated(_entityName, 0);
             }
         }
     }
     virtual void onKeyErase(const std::string& key, EntityKeyValue& value) override {
         if (_enabled)
-            g_gameConnection.entityUpdated(_entityName, 0);
+            GameConnection::instance().entityUpdated(_entityName, 0);
     }
 };
 class GameConnectionSceneObserver : public scene::Graph::Observer {
@@ -311,14 +340,14 @@ public:
     virtual void onSceneNodeInsert(const scene::INodePtr& node) override {
         auto entityNodes = getEntitiesInNode(node);
         for (const IEntityNodePtr &entNode : entityNodes)
-            g_gameConnection.entityUpdated(entNode->name(), 1);
-        g_gameConnection.setEntityObservers(entityNodes, true);
+            GameConnection::instance().entityUpdated(entNode->name(), 1);
+        GameConnection::instance().setEntityObservers(entityNodes, true);
     }
     virtual void onSceneNodeErase(const scene::INodePtr& node) override {
         auto entityNodes = getEntitiesInNode(node);
-        g_gameConnection.setEntityObservers(entityNodes, false);
+        GameConnection::instance().setEntityObservers(entityNodes, false);
         for (const IEntityNodePtr &entNode : entityNodes)
-            g_gameConnection.entityUpdated(entNode->name(), -1);
+            GameConnection::instance().entityUpdated(entNode->name(), -1);
     }
 };
 void GameConnection::setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable) {
@@ -389,18 +418,18 @@ void GameConnection::doUpdateMap() {
         _entityChangesPending.clear();
 }
 void GameConnection::updateMapOff(const cmd::ArgumentList& args) {
-    g_gameConnection.setUpdateMapLevel(false, false);
+    instance().setUpdateMapLevel(false, false);
 }
 void GameConnection::updateMapOn(const cmd::ArgumentList& args) {
-    g_gameConnection.setUpdateMapLevel(true, false);
+    instance().setUpdateMapLevel(true, false);
 }
 void GameConnection::updateMapAlways(const cmd::ArgumentList& args) {
-    g_gameConnection.setUpdateMapLevel(true, true);
+    instance().setUpdateMapLevel(true, true);
 }
 void GameConnection::updateMap(const cmd::ArgumentList& args) {
-    if (!g_gameConnection.connect())
+    if (!instance().connect())
         return;
-    g_gameConnection.doUpdateMap();
+    instance().doUpdateMap();
 }
 
 }
