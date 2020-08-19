@@ -49,7 +49,7 @@ void GameConnection::sendRequest(const std::string &request) {
 }
 
 bool GameConnection::sendAnyPendingAsync() {
-    if (_entityChangesPending.size() && _updateMapAlways) {
+    if (_mapObserver.getChanges().size() && _updateMapAlways) {
         //note: this is blocking
         doUpdateMap();
         return true;
@@ -292,130 +292,23 @@ void GameConnection::cameraSyncDisable(const cmd::ArgumentList& args) {
 }
 
 
-static std::vector<IEntityNodePtr> getEntitiesInNode(const scene::INodePtr &node) {
-    struct MyVisitor : scene::NodeVisitor {
-        std::set<IEntityNodePtr> v;
-        virtual bool pre(const scene::INodePtr& node) override {
-            if (IEntityNodePtr ptr = std::dynamic_pointer_cast<IEntityNode, scene::INode>(node)) {
-                v.insert(ptr);
-                return false;
-            }
-            return true;
-        }
-    };
-    MyVisitor visitor;
-    node->traverse(visitor);
-    return std::vector<IEntityNodePtr>(visitor.v.begin(), visitor.v.end());
-}
-class GameConnectionEntityObserver : public Entity::Observer {
-public:
-    std::string _entityName;
-    bool _enabled = false;
-    void enable() { _enabled = true; }
-    virtual void onKeyInsert(const std::string& key, EntityKeyValue& value) override {
-        if (key == "name")
-            _entityName = value.get();      //happens when installing observer
-        if (_enabled)
-            GameConnection::instance().entityUpdated(_entityName, 0);
-    }
-    virtual void onKeyChange(const std::string& key, const std::string& val) override {
-        if (_enabled) {
-            if (key == "name") {
-                //renaming is equivalent to deleting old entity and adding new
-                GameConnection::instance().entityUpdated(_entityName, -1);
-                GameConnection::instance().entityUpdated(val, 1);
-            }
-            else {
-                GameConnection::instance().entityUpdated(_entityName, 0);
-            }
-        }
-    }
-    virtual void onKeyErase(const std::string& key, EntityKeyValue& value) override {
-        if (_enabled)
-            GameConnection::instance().entityUpdated(_entityName, 0);
-    }
-};
-class GameConnectionSceneObserver : public scene::Graph::Observer {
-public:
-    virtual void onSceneNodeInsert(const scene::INodePtr& node) override {
-        auto entityNodes = getEntitiesInNode(node);
-        for (const IEntityNodePtr &entNode : entityNodes)
-            GameConnection::instance().entityUpdated(entNode->name(), 1);
-        GameConnection::instance().setEntityObservers(entityNodes, true);
-    }
-    virtual void onSceneNodeErase(const scene::INodePtr& node) override {
-        auto entityNodes = getEntitiesInNode(node);
-        GameConnection::instance().setEntityObservers(entityNodes, false);
-        for (const IEntityNodePtr &entNode : entityNodes)
-            GameConnection::instance().entityUpdated(entNode->name(), -1);
-    }
-};
-void GameConnection::setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable) {
-    if (enable) {
-        for (auto entNode : entityNodes) {
-            if (_entityObservers.count(entNode.get()))
-                continue;   //already tracked
-            GameConnectionEntityObserver *observer = new GameConnectionEntityObserver();
-            entNode->getEntity().attachObserver(observer);
-            _entityObservers[entNode.get()] = observer;
-            observer->enable();
-        }
-    }
-    else {
-        for (auto entNode : entityNodes) {
-            if (!_entityObservers.count(entNode.get()))
-                continue;   //not tracked
-            Entity::Observer* observer = _entityObservers[entNode.get()];
-            entNode->getEntity().detachObserver(observer);
-            delete observer;
-            _entityObservers.erase(entNode.get());
-        }
-    }
-}
-void GameConnection::entityUpdated(const std::string &name, int type) {
-    int &status = _entityChangesPending[name];
-    status += type;
-    if (std::abs(status) > 1) {
-        //added an already added entity, or removed an already removed one: should not happen
-        assert(false);
-        status = (status < 0 ? -1 : 1);
-    }
-}
-void GameConnection::setSceneObserver(bool enable) {
-    auto entityNodes = getEntitiesInNode(GlobalSceneGraph().root());
-    if (enable) {
-        setEntityObservers(entityNodes, true);
-        if (!_sceneObserver)
-            _sceneObserver.reset(new GameConnectionSceneObserver());
-        GlobalSceneGraph().addSceneObserver(_sceneObserver.get());
-    }
-    else {
-        if (_sceneObserver) {
-            GlobalSceneGraph().removeSceneObserver(_sceneObserver.get());
-            _sceneObserver.reset();
-        }
-        setEntityObservers(entityNodes, false);
-        assert(_entityObservers.empty());
-        _entityChangesPending.clear();
-    }
-}
 void GameConnection::setUpdateMapLevel(bool on, bool always) {
-    if (on && !_sceneObserver) {
+    if (on && !_mapObserver.isEnabled()) {
         //save map to file, and reload from file, to ensure DR and TDM are in sync
         GlobalCommandSystem().executeCommand("SaveMap");
         reloadMap(cmd::ArgumentList());
     }
-    setSceneObserver(on);
+    _mapObserver.setEnabled(on);
     _updateMapAlways = always;
 }
 void GameConnection::doUpdateMap() {
-    std::string diff = GlobalMap().saveMapDiff(_entityChangesPending);
+    std::string diff = GlobalMap().saveMapDiff(_mapObserver.getChanges());
     if (diff.empty()) {
         return; //TODO: fail
     }
     std::string response = executeRequest(actionPreamble("reloadmap-diff") + "content:\n" + diff);
     if (response.find("HotReload: SUCCESS") != std::string::npos)
-        _entityChangesPending.clear();
+        _mapObserver.clear();
 }
 void GameConnection::updateMapOff(const cmd::ArgumentList& args) {
     instance().setUpdateMapLevel(false, false);

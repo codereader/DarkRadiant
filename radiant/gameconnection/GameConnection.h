@@ -1,6 +1,7 @@
 #include "igameconnection.h"
 #include "icommandsystem.h"
 #include "iscenegraph.h"
+#include "MapObserver.h"
 
 
 class CameraObserver;
@@ -42,12 +43,6 @@ public:
 
 	//called from camera modification callback: schedules async "setviewpos" action
 	void updateCamera();
-
-	//called from entity/scene observers: remember that entity with given name has been changed
-	//  type == -1: entity has been removed
-	//  type ==  0: entity has been modified
-	//  type ==  1: entity has been added
-	void entityUpdated(const std::string &name, int type);
 
 	//camera sync:
 	static void cameraSyncEnable(const cmd::ArgumentList& args);
@@ -92,14 +87,10 @@ private:
 	//the observer put onto global camera when camera sync is enabled
 	std::unique_ptr<CameraObserver> _cameraObserver;
 
-	//the observer put onto global scene when "update map" is enabled
-	std::unique_ptr<scene::Graph::Observer> _sceneObserver;
+	//observes over changes to map data
+	MapObserver _mapObserver;
 	//set to true when "update map" is set to "always"
 	bool _updateMapAlways = false;
-	//observers put on every entity on scene
-	std::map<IEntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
-	//set of entities with changes since last update: -1 - deleted, 1 - added, 0 - modified
-	std::map<std::string, int> _entityChangesPending;
 
 	//every request should get unique seqno, otherwise we won't be able to distinguish their responses
 	int newSeqno() { return ++_seqno; }
@@ -131,10 +122,6 @@ private:
 	//make sure camera observer is present iff enable == true, and attach/detach it to global camera
 	void setCameraObserver(bool enable);
 
-	//make sure scene observer is present iff enable == true, and attach/detach it to global scene
-	void setSceneObserver(bool enable);
-	//add/remove entity observers on the set of entity nodes
-	void setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable);
 	//implementation of "update map" level toggling
 	void setUpdateMapLevel(bool on, bool always);
 	//send map update to TDM right now
