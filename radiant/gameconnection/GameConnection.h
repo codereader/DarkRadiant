@@ -22,21 +22,15 @@ class GameConnection :
 {
 public:
 	~GameConnection();
-
 	//returns GlobalGameConnection converted to implementation class
 	static GameConnection& instance();
 
 	//connect to TDM instance if not connected yet
 	//return false if failed to connect
 	bool connect();
-
 	//disconnect from TDM instance if connected
 	//note: blocks until pending requests are processed
 	void disconnect();
-
-	//send given request synchronously, i.e. wait until its completition
-	//returns response content
-	std::string executeRequest(const std::string &request);
 
 	//flush all async commands (e.g. camera update) and wait until everything finishes
 	void finish();
@@ -92,30 +86,31 @@ private:
 	//set to true when "update map" is set to "always"
 	bool _updateMapAlways = false;
 
+	
 	//every request should get unique seqno, otherwise we won't be able to distinguish their responses
 	int newSeqno() { return ++_seqno; }
-
 	//given a command to be executed in game console (no EOLs), returns its full response text (except for seqno)
 	static std::string composeConExecRequest(std::string consoleLine);
 
 	//prepend seqno to specified request and send it to game
 	void sendRequest(const std::string &request);
-
 	//if there are any pending async commands (camera update), send one now
 	//returns true iff anything was sent to game
 	bool sendAnyPendingAsync();
 
 	//check how socket is doing, accept responses and send pending async requests 
+	//this should be done regularly: in fact, timer calls it often
 	void think();
-
 	//wait until the currently executed request is finished
 	void waitAction();
 
+	//send given request synchronously, i.e. wait until its completition (blocking)
+	//returns response content
+	std::string executeRequest(const std::string &request);
 	//set noclip/god/notarget to specific state (blocking)
 	//toggleCommand is the command which toggles state
 	//offKeyword is the part of phrase printed to game console when the state becomes disabled
 	void executeSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword);
-
 	//learn state of the specified cvar (blocking)
 	std::string executeGetCvarValue(const std::string &cvarName, std::string *defaultValue = nullptr);
 
