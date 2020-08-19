@@ -22,8 +22,6 @@ class GameConnection :
 {
 public:
 	~GameConnection();
-	//returns GlobalGameConnection converted to implementation class
-	static GameConnection& instance();
 
 	//connect to TDM instance if not connected yet
 	//return false if failed to connect
@@ -35,24 +33,18 @@ public:
 	//flush all async commands (e.g. camera update) and wait until everything finishes
 	void finish();
 
-	//called from camera modification callback: schedules async "setviewpos" action
-	void updateCamera();
+	//make sure camera observer is present iff enable == true, and attach/detach it to global camera
+	void setCameraSyncEnabled(bool enable);
 
-	//camera sync:
-	static void cameraSyncEnable(const cmd::ArgumentList& args);
-	static void cameraSyncDisable(const cmd::ArgumentList& args);
-	static void cameraBackSync(const cmd::ArgumentList& args);
-	//reload map from .map file:
-	static void reloadMapEnable(const cmd::ArgumentList& args);
-	static void reloadMapDisable(const cmd::ArgumentList& args);
-	static void reloadMap(const cmd::ArgumentList& args);
-	//reload map fast without saving:
-	static void updateMapOff(const cmd::ArgumentList& args);
-	static void updateMapOn(const cmd::ArgumentList& args);
-	static void updateMapAlways(const cmd::ArgumentList& args);
-	static void updateMap(const cmd::ArgumentList& args);
-	//game:
-	static void pauseGame(const cmd::ArgumentList& args);
+	//pause game if it is live, unpause if it is paused
+	void togglePauseGame();
+
+	//ask TDM to reload .map file from disk
+	void reloadMap();
+	//implementation of "update map" level toggling
+	void setUpdateMapLevel(bool on, bool always);
+	//send map update to TDM right now
+	void doUpdateMap();
 
 	//RegisterableModule implementation
 	virtual const std::string& getName() const override;
@@ -88,25 +80,23 @@ private:
 
 	
 	//every request should get unique seqno, otherwise we won't be able to distinguish their responses
-	int newSeqno() { return ++_seqno; }
-	//given a command to be executed in game console (no EOLs), returns its full response text (except for seqno)
-	static std::string composeConExecRequest(std::string consoleLine);
-
+	int newSeqno();
 	//prepend seqno to specified request and send it to game
 	void sendRequest(const std::string &request);
 	//if there are any pending async commands (camera update), send one now
 	//returns true iff anything was sent to game
 	bool sendAnyPendingAsync();
-
 	//check how socket is doing, accept responses and send pending async requests 
 	//this should be done regularly: in fact, timer calls it often
 	void think();
 	//wait until the currently executed request is finished
 	void waitAction();
-
 	//send given request synchronously, i.e. wait until its completition (blocking)
 	//returns response content
 	std::string executeRequest(const std::string &request);
+
+	//given a command to be executed in game console (no EOLs), returns its full response text (except for seqno)
+	static std::string composeConExecRequest(std::string consoleLine);
 	//set noclip/god/notarget to specific state (blocking)
 	//toggleCommand is the command which toggles state
 	//offKeyword is the part of phrase printed to game console when the state becomes disabled
@@ -114,16 +104,11 @@ private:
 	//learn state of the specified cvar (blocking)
 	std::string executeGetCvarValue(const std::string &cvarName, std::string *defaultValue = nullptr);
 
-	//make sure camera observer is present iff enable == true, and attach/detach it to global camera
-	void setCameraObserver(bool enable);
-
-	//implementation of "update map" level toggling
-	void setUpdateMapLevel(bool on, bool always);
-	//send map update to TDM right now
-	void doUpdateMap();
+	//called from camera modification callback: schedules async "setviewpos" action
+	void updateCamera();
 
 	//friend zone:
-	friend class GameConnectionSceneObserver;
+	friend class GameConnection_CameraObserver;
 };
 
 }

@@ -35,9 +35,8 @@ static std::string queryPreamble(std::string type) {
 }
 
 
-std::string GameConnection::composeConExecRequest(std::string consoleLine) {
-    assert(consoleLine.find('\n') == std::string::npos);
-    return actionPreamble("conexec") + "content:\n" + consoleLine + "\n";
+int GameConnection::newSeqno() {
+    return ++_seqno;
 }
 
 void GameConnection::sendRequest(const std::string &request) {
@@ -155,14 +154,11 @@ void GameConnection::disconnect() {
     }
 }
 
-GameConnection& GameConnection::instance() {
-    auto ptr = dynamic_cast<GameConnection*>(GlobalGameConnection());
-    assert(ptr);
-    return *ptr;
-}
 GameConnection::~GameConnection() {
     disconnect();
 };
+
+//-------------------------------------------------------------
 
 const std::string& GameConnection::getName() const {
 	static std::string _name = MODULE_GAMECONNECTION;
@@ -185,6 +181,12 @@ void GameConnection::shutdownModule() {
 }
 module::StaticModule<GameConnection> gameConnectionModule;
 
+//-------------------------------------------------------------
+
+std::string GameConnection::composeConExecRequest(std::string consoleLine) {
+    assert(consoleLine.find('\n') == std::string::npos);
+    return actionPreamble("conexec") + "content:\n" + consoleLine + "\n";
+}
 
 void GameConnection::executeSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword) {
     if (!connect())
@@ -229,22 +231,6 @@ std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std
     return currValue;
 }
 
-void GameConnection::reloadMap(const cmd::ArgumentList& args) {
-    if (!instance().connect())
-        return;
-    std::string text = composeConExecRequest("reloadMap");
-    instance().executeRequest(text);
-}
-
-void GameConnection::pauseGame(const cmd::ArgumentList& args) {
-    if (!instance().connect())
-        return;
-    std::string value = instance().executeGetCvarValue("g_stopTime");
-    std::string oppositeValue = (value == "0" ? "1" : "0");
-    std::string text = composeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
-    instance().executeRequest(text);
-}
-
 void GameConnection::updateCamera() {
     connect();
     if (auto pCamWnd = GlobalCamera().getActiveCamWnd()) {
@@ -256,24 +242,22 @@ void GameConnection::updateCamera() {
     }
     think();
 }
-
-
-class GameConnectionCameraObserver : public CameraObserver {
+class GameConnection_CameraObserver : public CameraObserver {
+    GameConnection &_owner;
 public:
-    GameConnection *_owner = nullptr;
-    GameConnectionCameraObserver(GameConnection *owner) : _owner(owner) {}
+    GameConnection_CameraObserver(GameConnection &owner) : _owner(owner) {}
 	virtual void cameraMoved() override {
-        _owner->updateCamera();
+        _owner.updateCamera();
     }
 };
-void GameConnection::setCameraObserver(bool enable) {
+void GameConnection::setCameraSyncEnabled(bool enable) {
     if (!enable && _cameraObserver) {
         GlobalCamera().removeCameraObserver(_cameraObserver.get());
         _cameraObserver.reset();
     }
     if (enable) {
         if (!_cameraObserver) {
-            _cameraObserver.reset(new GameConnectionCameraObserver(this));
+            _cameraObserver.reset(new GameConnection_CameraObserver(*this));
             GlobalCamera().addCameraObserver(_cameraObserver.get());
         }
         executeSetTogglableFlag("god", true, "OFF");
@@ -284,24 +268,34 @@ void GameConnection::setCameraObserver(bool enable) {
         finish();
     }
 }
-void GameConnection::cameraSyncEnable(const cmd::ArgumentList& args) {
-    instance().setCameraObserver(true);
-}
-void GameConnection::cameraSyncDisable(const cmd::ArgumentList& args) {
-    instance().setCameraObserver(false);
+
+void GameConnection::togglePauseGame() {
+    if (!connect())
+        return;
+    std::string value = executeGetCvarValue("g_stopTime");
+    std::string oppositeValue = (value == "0" ? "1" : "0");
+    std::string text = composeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
+    executeRequest(text);
 }
 
-
+void GameConnection::reloadMap() {
+    if (!connect())
+        return;
+    std::string text = composeConExecRequest("reloadMap");
+    executeRequest(text);
+}
 void GameConnection::setUpdateMapLevel(bool on, bool always) {
     if (on && !_mapObserver.isEnabled()) {
         //save map to file, and reload from file, to ensure DR and TDM are in sync
         GlobalCommandSystem().executeCommand("SaveMap");
-        reloadMap(cmd::ArgumentList());
+        reloadMap();
     }
     _mapObserver.setEnabled(on);
     _updateMapAlways = always;
 }
 void GameConnection::doUpdateMap() {
+    if (!connect())
+        return;
     std::string diff = GlobalMap().saveMapDiff(_mapObserver.getChanges());
     if (diff.empty()) {
         return; //TODO: fail
@@ -309,20 +303,6 @@ void GameConnection::doUpdateMap() {
     std::string response = executeRequest(actionPreamble("reloadmap-diff") + "content:\n" + diff);
     if (response.find("HotReload: SUCCESS") != std::string::npos)
         _mapObserver.clear();
-}
-void GameConnection::updateMapOff(const cmd::ArgumentList& args) {
-    instance().setUpdateMapLevel(false, false);
-}
-void GameConnection::updateMapOn(const cmd::ArgumentList& args) {
-    instance().setUpdateMapLevel(true, false);
-}
-void GameConnection::updateMapAlways(const cmd::ArgumentList& args) {
-    instance().setUpdateMapLevel(true, true);
-}
-void GameConnection::updateMap(const cmd::ArgumentList& args) {
-    if (!instance().connect())
-        return;
-    instance().doUpdateMap();
 }
 
 }

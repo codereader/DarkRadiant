@@ -160,14 +160,24 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
-	GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable", GameConnection::cameraSyncEnable);
-	GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable", GameConnection::cameraSyncDisable);
-	GlobalCommandSystem().addCommand("GameConnectionReloadMap", GameConnection::reloadMap);
-	GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff", GameConnection::updateMapOff);
-	GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn", GameConnection::updateMapOn);
-	GlobalCommandSystem().addCommand("GameConnectionUpdateMapAlways", GameConnection::updateMapAlways);
-	GlobalCommandSystem().addCommand("GameConnectionUpdateMap", GameConnection::updateMap);
-	GlobalCommandSystem().addCommand("GameConnectionPauseGame", GameConnection::pauseGame);
+	if (GameConnection *gameconn = dynamic_cast<GameConnection*>(GlobalGameConnection())) {
+		GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(true); });
+		GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(false); });
+		GlobalCommandSystem().addCommand("GameConnectionReloadMap",
+			[gameconn](const cmd::ArgumentList&) { gameconn->reloadMap(); });
+		GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setUpdateMapLevel(false, false); });
+		GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setUpdateMapLevel(true, false); });
+		GlobalCommandSystem().addCommand("GameConnectionUpdateMapAlways",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setUpdateMapLevel(true, true); });
+		GlobalCommandSystem().addCommand("GameConnectionUpdateMap",
+			[gameconn](const cmd::ArgumentList&) { gameconn->doUpdateMap(); });
+		GlobalCommandSystem().addCommand("GameConnectionPauseGame",
+			[gameconn](const cmd::ArgumentList&) { gameconn->togglePauseGame(); });
+	}
 
 	// ----------------------- Bind Events ---------------------------------------
 
