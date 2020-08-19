@@ -165,6 +165,8 @@ void UserInterfaceModule::registerUICommands()
 			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(true); });
 		GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable",
 			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(false); });
+		GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
+			[gameconn](const cmd::ArgumentList&) { gameconn->backSyncCamera(); });
 		GlobalCommandSystem().addCommand("GameConnectionReloadMap",
 			[gameconn](const cmd::ArgumentList&) { gameconn->reloadMap(); });
 		GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff",
@@ -209,6 +211,7 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalEventManager().addCommand("GameConnectionCameraSyncEnable", "GameConnectionCameraSyncEnable");
 	GlobalEventManager().addCommand("GameConnectionCameraSyncDisable", "GameConnectionCameraSyncDisable");
+	GlobalEventManager().addCommand("GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera");
 	GlobalEventManager().addCommand("GameConnectionReloadMap", "GameConnectionReloadMap");
 	GlobalEventManager().addCommand("GameConnectionUpdateMapOff", "GameConnectionUpdateMapOff");
 	GlobalEventManager().addCommand("GameConnectionUpdateMapOn", "GameConnectionUpdateMapOn");

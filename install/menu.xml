@@ -323,6 +323,7 @@
 	<subMenu name="gamecon" caption="Connection">
 		<menuItem name="cameraSyncEnable" caption="Enable camera synchronization" command="GameConnectionCameraSyncEnable" />
 		<menuItem name="cameraSyncDisable" caption="Disable camera synchronization" command="GameConnectionCameraSyncDisable" />
+		<menuItem name="backSyncCamera" caption="Sync camera back now" command="GameConnectionBackSyncCamera" />
 		<menuItem name="reloadMap" caption="Reload map from .map file" command="GameConnectionReloadMap" />
 		<menuItem name="updateMapOff" caption="Disable map update mode" command="GameConnectionUpdateMapOff" />
 		<menuItem name="updateMapOn" caption="Enable map update mode" command="GameConnectionUpdateMapOn" />
