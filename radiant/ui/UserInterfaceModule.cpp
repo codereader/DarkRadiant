@@ -160,14 +160,14 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
-	GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable", GameConnection::CameraSyncEnable);
-	GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable", GameConnection::CameraSyncDisable);
-	GlobalCommandSystem().addCommand("GameConnectionReloadMap", GameConnection::ReloadMap);
-	GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff", GameConnection::UpdateMapOff);
-	GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn", GameConnection::UpdateMapOn);
-	GlobalCommandSystem().addCommand("GameConnectionUpdateMapAlways", GameConnection::UpdateMapAlways);
-	GlobalCommandSystem().addCommand("GameConnectionUpdateMap", GameConnection::UpdateMap);
-	GlobalCommandSystem().addCommand("GameConnectionPauseGame", GameConnection::PauseGame);
+	GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable", GameConnection::cameraSyncEnable);
+	GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable", GameConnection::cameraSyncDisable);
+	GlobalCommandSystem().addCommand("GameConnectionReloadMap", GameConnection::reloadMap);
+	GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff", GameConnection::updateMapOff);
+	GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn", GameConnection::updateMapOn);
+	GlobalCommandSystem().addCommand("GameConnectionUpdateMapAlways", GameConnection::updateMapAlways);
+	GlobalCommandSystem().addCommand("GameConnectionUpdateMap", GameConnection::updateMap);
+	GlobalCommandSystem().addCommand("GameConnectionPauseGame", GameConnection::pauseGame);
 
 	// ----------------------- Bind Events ---------------------------------------
 
