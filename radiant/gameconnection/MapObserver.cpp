@@ -98,19 +98,21 @@ void MapObserver::setEntityObservers(const std::vector<IEntityNodePtr> &entityNo
 }
 
 void MapObserver::setEnabled(bool enable) {
-    auto entityNodes = getEntitiesInNode(GlobalSceneGraph().root());
     if (enable) {
+        auto entityNodes = getEntitiesInNode(GlobalSceneGraph().root());
         setEntityObservers(entityNodes, true);
-        if (!_sceneObserver)
+        if (!_sceneObserver) {
             _sceneObserver.reset(new MapObserver_SceneObserver(*this));
-        GlobalSceneGraph().addSceneObserver(_sceneObserver.get());
+            GlobalSceneGraph().addSceneObserver(_sceneObserver.get());
+        }
     }
     else {
         if (_sceneObserver) {
             GlobalSceneGraph().removeSceneObserver(_sceneObserver.get());
             _sceneObserver.reset();
+            auto entityNodes = getEntitiesInNode(GlobalSceneGraph().root());
+            setEntityObservers(entityNodes, false);
         }
-        setEntityObservers(entityNodes, false);
         assert(_entityObservers.empty());
         _entityChanges.clear();
     }
