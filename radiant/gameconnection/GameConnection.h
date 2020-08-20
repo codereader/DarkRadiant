@@ -65,6 +65,8 @@ private:
 	//when connected, this timer calls Think periodically
 	std::unique_ptr<wxTimer> _thinkTimer;
 	void onTimerEvent(wxTimerEvent& ev) { think(); }
+	//signal listener for when map is saved, loaded, unloaded, etc.
+	std::unique_ptr<sigc::connection> _mapEventListener;
 	//sequence number of the last sent request (incremented sequentally)
 	int _seqno = 0;
 
@@ -82,8 +84,8 @@ private:
 
 	//observes over changes to map data
 	MapObserver _mapObserver;
-	//signal listener for when map is saved
-	std::unique_ptr<sigc::connection> _mapSaveListener;
+	//set to true when "reload map automatically" is on
+	bool _autoReloadMap = false;
 	//set to true when "update map" is set to "always"
 	bool _updateMapAlways = false;
 

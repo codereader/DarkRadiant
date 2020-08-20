@@ -114,9 +114,10 @@ bool GameConnection::connect() {
 
     if (_connection)
         _connection.reset();
-
     if (_thinkTimer)
         _thinkTimer.reset();
+    if (_mapEventListener)
+        _mapEventListener.reset();
 
     //connection using ZeroMQ socket
     std::unique_ptr<zmq::socket_t> zmqConnection(new zmq::socket_t(g_ZeroMqContext, ZMQ_STREAM));
@@ -131,10 +132,18 @@ bool GameConnection::connect() {
     _thinkTimer->Connect(wxEVT_TIMER, wxTimerEventHandler(GameConnection::onTimerEvent), NULL, this);
     _thinkTimer->Start(THINK_INTERVAL);
 
+    _mapEventListener.reset(new sigc::connection(
+        GlobalMap().signal_mapEvent().connect(
+            sigc::mem_fun(*this, &GameConnection::onMapEvent)
+        )
+    ));
+
     return true;
 }
 
 void GameConnection::disconnect() {
+    setUpdateMapLevel(false, false);
+    setCameraSyncEnabled(false);
     if (_connection) {
         finish();
         _connection.reset();
@@ -143,6 +152,8 @@ void GameConnection::disconnect() {
         _thinkTimer->Stop();
         _thinkTimer.reset();
     }
+    if (_mapEventListener)
+        _mapEventListener.reset();
 }
 
 GameConnection::~GameConnection() {
@@ -302,22 +313,16 @@ void GameConnection::reloadMap() {
     executeRequest(text);
 }
 void GameConnection::onMapEvent(IMap::MapEvent ev) {
-    if (ev == IMap::MapSaved) {
+    if (ev == IMap::MapSaved && _autoReloadMap) {
         reloadMap();
         _mapObserver.clear();
     }
+    if (ev == IMap::MapLoading || ev == IMap::MapUnloading) {
+        disconnect();
+    }
 }
 void GameConnection::setAutoReloadMapEnabled(bool enable) {
-    if (enable && !_mapSaveListener) {
-        _mapSaveListener.reset(new sigc::connection(
-            GlobalMap().signal_mapEvent().connect(
-                sigc::mem_fun(*this, &GameConnection::onMapEvent)
-            )
-        ));
-    }
-    if (!enable && _mapSaveListener) {
-        _mapSaveListener.reset();
-    }
+    _autoReloadMap = enable;
 }
 void GameConnection::setUpdateMapLevel(bool on, bool always) {
     if (on && !_mapObserver.isEnabled()) {
