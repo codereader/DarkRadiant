@@ -5,6 +5,9 @@
 
 
 class CameraObserver;
+namespace sigc {
+	struct connection;
+}
 
 namespace gameconn {
 
@@ -43,6 +46,8 @@ public:
 
 	//ask TDM to reload .map file from disk
 	void reloadMap();
+	//when enabled, forces TDM to reload .map from disk automatically after every map save
+	void setAutoReloadMapEnabled(bool enable);
 	//implementation of "update map" level toggling
 	void setUpdateMapLevel(bool on, bool always);
 	//send map update to TDM right now
@@ -77,6 +82,8 @@ private:
 
 	//observes over changes to map data
 	MapObserver _mapObserver;
+	//signal listener for when map is saved
+	std::unique_ptr<sigc::connection> _mapSaveListener;
 	//set to true when "update map" is set to "always"
 	bool _updateMapAlways = false;
 
@@ -110,6 +117,9 @@ private:
 	void updateCamera();
 	//send request for camera update, which is pending yet
 	bool sendPendingCameraUpdate();
+
+	//signal observer on map saving
+	void onMapEvent(IMap::MapEvent ev);
 
 	//friend zone:
 	friend class GameConnection_CameraObserver;

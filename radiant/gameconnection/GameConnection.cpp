@@ -8,6 +8,7 @@
 #include "ientity.h"
 #include "map/Map.h"
 #include "modulesystem/StaticModule.h"
+#include <sigc++/signal.h>
 
 
 //note: I have no idea where to put it
@@ -151,18 +152,18 @@ GameConnection::~GameConnection() {
 //-------------------------------------------------------------
 
 const std::string& GameConnection::getName() const {
-	static std::string _name = MODULE_GAMECONNECTION;
-	return _name;
+    static std::string _name = MODULE_GAMECONNECTION;
+    return _name;
 }
 const StringSet& GameConnection::getDependencies() const {
-	static StringSet _dependencies;
-	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_CAMERA);
+    static StringSet _dependencies;
+    if (_dependencies.empty()) {
+        _dependencies.insert(MODULE_CAMERA);
         _dependencies.insert(MODULE_COMMANDSYSTEM);
         _dependencies.insert(MODULE_MAP);
         _dependencies.insert(MODULE_SCENEGRAPH);
-	}
-	return _dependencies;
+    }
+    return _dependencies;
 }
 void GameConnection::initialiseModule(const ApplicationContext& ctx) {
 }
@@ -249,7 +250,7 @@ class GameConnection_CameraObserver : public CameraObserver {
     GameConnection &_owner;
 public:
     GameConnection_CameraObserver(GameConnection &owner) : _owner(owner) {}
-	virtual void cameraMoved() override {
+    virtual void cameraMoved() override {
         _owner.updateCamera();
     }
 };
@@ -299,6 +300,24 @@ void GameConnection::reloadMap() {
         return;
     std::string text = composeConExecRequest("reloadMap");
     executeRequest(text);
+}
+void GameConnection::onMapEvent(IMap::MapEvent ev) {
+    if (ev == IMap::MapSaved) {
+        reloadMap();
+        _mapObserver.clear();
+    }
+}
+void GameConnection::setAutoReloadMapEnabled(bool enable) {
+    if (enable && !_mapSaveListener) {
+        _mapSaveListener.reset(new sigc::connection(
+            GlobalMap().signal_mapEvent().connect(
+                sigc::mem_fun(*this, &GameConnection::onMapEvent)
+            )
+        ));
+    }
+    if (!enable && _mapSaveListener) {
+        _mapSaveListener.reset();
+    }
 }
 void GameConnection::setUpdateMapLevel(bool on, bool always) {
     if (on && !_mapObserver.isEnabled()) {
