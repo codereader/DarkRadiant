@@ -169,6 +169,10 @@ void UserInterfaceModule::registerUICommands()
 			[gameconn](const cmd::ArgumentList&) { gameconn->backSyncCamera(); });
 		GlobalCommandSystem().addCommand("GameConnectionReloadMap",
 			[gameconn](const cmd::ArgumentList&) { gameconn->reloadMap(); });
+		GlobalCommandSystem().addCommand("GameConnectionReloadMapAutoEnable",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setAutoReloadMapEnabled(true); });
+		GlobalCommandSystem().addCommand("GameConnectionReloadMapAutoDisable",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setAutoReloadMapEnabled(false); });
 		GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff",
 			[gameconn](const cmd::ArgumentList&) { gameconn->setUpdateMapLevel(false, false); });
 		GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn",
@@ -213,6 +217,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("GameConnectionCameraSyncDisable", "GameConnectionCameraSyncDisable");
 	GlobalEventManager().addCommand("GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera");
 	GlobalEventManager().addCommand("GameConnectionReloadMap", "GameConnectionReloadMap");
+	GlobalEventManager().addCommand("GameConnectionReloadMapAutoEnable", "GameConnectionReloadMapAutoEnable");
+	GlobalEventManager().addCommand("GameConnectionReloadMapAutoDisable", "GameConnectionReloadMapAutoDisable");
 	GlobalEventManager().addCommand("GameConnectionUpdateMapOff", "GameConnectionUpdateMapOff");
 	GlobalEventManager().addCommand("GameConnectionUpdateMapOn", "GameConnectionUpdateMapOn");
 	GlobalEventManager().addCommand("GameConnectionUpdateMapAlways", "GameConnectionUpdateMapAlways");
