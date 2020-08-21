@@ -33,7 +33,6 @@ namespace selection
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
-    _requestSceneGraphChange(false),
     _requestWorkZoneRecalculation(true),
     _defaultManipulatorType(Manipulator::Drag),
     _mode(ePrimitive),
@@ -349,12 +348,8 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     // Check if the number of selected primitives in the list matches the value of the selection counter
     ASSERT_MESSAGE(_selection.size() == _countPrimitive, "selection-tracking error");
 
-    // Schedule an idle callback
-    requestIdleCallback();
-
     _requestWorkZoneRecalculation = true;
-    _requestSceneGraphChange = true;
-
+   
 	// When everything is deselected, release the pivot user lock
 	if (_selection.empty())
 	{
@@ -390,11 +385,7 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
     // Check if the number of selected components in the list matches the value of the selection counter
     ASSERT_MESSAGE(_componentSelection.size() == _countComponent, "component selection-tracking error");
 
-    // Schedule an idle callback
-    requestIdleCallback();
-
     _requestWorkZoneRecalculation = true;
-    _requestSceneGraphChange = true;
 
 	if (_componentSelection.empty())
 	{
@@ -873,7 +864,6 @@ void RadiantSelectionSystem::onManipulationStart()
 void RadiantSelectionSystem::onManipulationChanged()
 {
 	_requestWorkZoneRecalculation = true;
-	_requestSceneGraphChange = false;
 
 	GlobalSceneGraph().sceneChanged();
 }
@@ -884,9 +874,8 @@ void RadiantSelectionSystem::onManipulationEnd()
 
     _pivot.endOperation();
 
-	// The selection bounds have possibly changed, request an idle callback
+	// The selection bounds have possibly changed
 	_requestWorkZoneRecalculation = true;
-	_requestSceneGraphChange = true;
 
     const selection::ManipulatorPtr& activeManipulator = getActiveManipulator();
     assert(activeManipulator);
@@ -905,7 +894,7 @@ void RadiantSelectionSystem::onManipulationEnd()
     pivotChanged();
     activeManipulator->setSelected(false);
 
-	requestIdleCallback();
+    GlobalSceneGraph().sceneChanged();
 }
 
 void RadiantSelectionSystem::onManipulationCancelled()
@@ -1081,9 +1070,9 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
 	// Add manipulators
 	registerManipulator(std::make_shared<DragManipulator>(_pivot));
 	registerManipulator(std::make_shared<ClipManipulator>());
-	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64));
-	registerManipulator(std::make_shared<ScaleManipulator>(_pivot, 0, 64));
-	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64));
+	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64.0f));
+	registerManipulator(std::make_shared<ScaleManipulator>(_pivot, 0, 64.0f));
+	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));
 	registerManipulator(std::make_shared<ModelScaleManipulator>(_pivot));
 
 	_defaultManipulatorType = Manipulator::Drag;
@@ -1172,18 +1161,6 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& 
 		activateDefaultMode();
 		onComponentModeChanged();
 	}
-}
-
-void RadiantSelectionSystem::onIdle()
-{
-    // System is idle
-    // Check if we should notify the scenegraph
-    if (_requestSceneGraphChange)
-    {
-        _requestSceneGraphChange = false;
-
-        GlobalSceneGraph().sceneChanged();
-    }
 }
 
 std::size_t RadiantSelectionSystem::getManipulatorIdForType(Manipulator::Type type)

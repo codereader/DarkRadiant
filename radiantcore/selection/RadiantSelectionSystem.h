@@ -10,7 +10,6 @@
 
 #include "selectionlib.h"
 #include "math/Matrix4.h"
-#include "wxutil/event/SingleIdleCallback.h"
 #include "SelectedNodeList.h"
 
 #include "ManipulationPivot.h"
@@ -20,8 +19,7 @@ namespace selection
 
 class RadiantSelectionSystem :
 	public SelectionSystem,
-	public Renderable,
-	protected wxutil::SingleIdleCallback
+	public Renderable
 {
 	ManipulationPivot _pivot;
 
@@ -34,7 +32,6 @@ class RadiantSelectionSystem :
 	// When this is set to TRUE, the idle callback will emit a scenegraph change call
 	// This is to avoid massive calls to GlobalSceneGraph().sceneChanged() on each
 	// and every selection change.
-	mutable bool _requestSceneGraphChange;
 	mutable bool _requestWorkZoneRecalculation;
 
 	// A simple set that gets filled after the SelectableSortedSet is populated.
@@ -171,9 +168,6 @@ public:
 	virtual void shutdownModule() override;
 
 protected:
-	// Called when the app is idle to recalculate the workzone (if necessary)
-	virtual void onIdle() override;
-
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
 						 const VolumeTest& view, SelectionSystem::EMode mode,
