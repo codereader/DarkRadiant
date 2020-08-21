@@ -69,8 +69,6 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Statement.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
-                      map/MapModules.cpp \
-                      particles/editor/ParticleEditor.cpp \
                       render/OpenGLModule.cpp \
                       render/View.cpp \
 					  ui/UserInterfaceModule.cpp \
@@ -92,14 +90,14 @@ darkradiant_SOURCES = main.cpp \
                       ui/mapinfo/ModelInfoTab.cpp \
 					  ui/mapinfo/LayerInfoTab.cpp \
                       ui/mediabrowser/MediaBrowser.cpp \
+                      ui/particles/ParticleEditor.cpp \
                       ui/particles/ParticlesChooser.cpp \
                       ui/brush/QuerySidesDialog.cpp \
+                      ui/brush/FindBrush.cpp \
                       ui/overlay/OverlayDialog.cpp \
                       ui/overlay/Overlay.cpp \
                       ui/splash/Splash.cpp \
 					  ui/grid/GridUserInterface.cpp \
-                      ui/mru/MRUMenuItem.cpp \
-                      ui/mru/MRU.cpp \
                       ui/layers/CreateLayerDialog.cpp \
                       ui/layers/LayerControl.cpp \
                       ui/layers/LayerContextMenu.cpp \
@@ -166,11 +164,16 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
                       ui/mainframe/TopLevelFrame.cpp \
                       ui/modelexport/ExportAsModelDialog.cpp \
+                      ui/modelexport/ExportCollisionModelDialog.cpp \
                       ui/mousetool/BindToolDialog.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
                       ui/selectionset/SelectionSetToolmenu.cpp \
+                      ui/LongRunningOperationHandler.cpp \
+                      ui/MapCommands.cpp \
+                      ui/MapFileProgressHandler.cpp \
+                      ui/statusbar/EditingStopwatchStatus.cpp \
                       uimanager/SoundChooser.cpp \
                       uimanager/StatusBarManager.cpp \
                       uimanager/animationpreview/MD5AnimationChooser.cpp \
@@ -205,78 +208,16 @@ darkradiant_SOURCES = main.cpp \
                       textool/item/PatchVertexItem.cpp \
                       textool/TexTool.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
-                      selection/SelectedNodeList.cpp \
-					  selection/clipboard/Clipboard.cpp \
-                      selection/shaderclipboard/ShaderClipboard.cpp \
-                      selection/shaderclipboard/Texturable.cpp \
-					  selection/shaderclipboard/ClosestTexturableFinder.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \
-                      selection/manipulators/ManipulatorBase.cpp \
-                      selection/TransformationVisitors.cpp \
-                      selection/algorithm/Transformation.cpp \
-                      selection/algorithm/GroupCycle.cpp \
-                      selection/algorithm/Curves.cpp \
-                      selection/algorithm/Entity.cpp \
-                      selection/algorithm/Shader.cpp \
-					  selection/algorithm/Patch.cpp \
-                      selection/algorithm/Primitives.cpp \
-                      selection/algorithm/Group.cpp \
-                      selection/algorithm/ModelFinder.cpp \
-                      selection/algorithm/General.cpp \
-					  selection/algorithm/Planes.cpp \
-                      selection/BestPoint.cpp \
-					  selection/ManipulationPivot.cpp \
-                      selection/manipulators/DragManipulator.cpp \
-                      selection/RadiantSelectionSystem.cpp \
-                      selection/manipulators/RotateManipulator.cpp \
-                      selection/manipulators/ManipulatorComponents.cpp \
-                      selection/manipulators/ScaleManipulator.cpp \
-					  selection/group/SelectionGroupModule.cpp \
-					  selection/group/SelectionGroupManager.cpp \
-					  selection/group/SelectionGroupInfoFileModule.cpp \
-                      selection/manipulators/TranslateManipulator.cpp \
-                      selection/manipulators/ModelScaleManipulator.cpp \
                       settings/Win32Registry.cpp \
-					  patch/algorithm/General.cpp \
-					  patch/algorithm/Prefab.cpp \
-                      patch/Patch.cpp \
-					  patch/PatchCreators.cpp \
-                      patch/PatchNode.cpp \
-                      patch/PatchModule.cpp \
-                      patch/PatchRenderables.cpp \
-                      patch/PatchTesselation.cpp \
-                      map/RootNode.cpp \
-                      map/MapPosition.cpp \
-                      map/EditingStopwatch.cpp \
-                      map/EditingStopwatchInfoFileModule.cpp \
-                      map/MapPropertyInfoFileModule.cpp \
-                      map/FindMapElements.cpp \
-					  map/infofile/InfoFileManager.cpp \
-					  map/infofile/InfoFile.cpp \
-					  map/infofile/InfoFileExporter.cpp \
-                      map/MapFileManager.cpp \
-                      map/algorithm/Skins.cpp \
-                      map/algorithm/Traverse.cpp \
-					  map/algorithm/MapExporter.cpp \
-                      map/algorithm/MapImporter.cpp \
-                      map/algorithm/Import.cpp \
-                      map/algorithm/Export.cpp \
-                      map/RegionManager.cpp \
-                      map/PointFile.cpp \
-                      map/MapPositionManager.cpp \
-                      map/MapResource.cpp \
-                      map/Map.cpp \
-                      map/AutoSaver.cpp \
+                      settings/LocalisationModule.cpp \
+                      settings/LocalisationProvider.cpp \
                       map/StartupMapLoader.cpp \
-                      map/MapResourceManager.cpp \
-					  map/AasFileManager.cpp \
-					  map/RenderableAasFile.cpp \
+                      radiant/clipboard/ClipboardModule.cpp \
                       clipper/ClipPoint.cpp \
-                      clipper/Clipper.cpp \
                       clipper/SplitAlgorithm.cpp \
-                      clipper/BrushByPlaneClipper.cpp \
                       log/Console.cpp \
                       model/ModelScalePreserver.cpp \
                       model/ModelExporter.cpp \

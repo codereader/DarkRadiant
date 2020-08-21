@@ -9,4 +9,7 @@ libscenegraph_la_SOURCES = InstanceWalkers.cpp \
 						  LayerUsageBreakdown.cpp \
 						  SelectableNode.cpp \
 						  Traverse.cpp \
+						  ModelFinder.cpp \
+						  SelectionIndex.cpp \
+						  Traverse.cpp \
 						  Node.cpp

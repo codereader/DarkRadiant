@@ -32,6 +32,21 @@ libradiantcore_la_LDFLAGS = -module -avoid-version \
                     $(Z_LIBS)
 
 libradiantcore_la_SOURCES = Radiant.cpp \
+                brush/Brush.cpp \
+                brush/BrushModule.cpp \
+                brush/BrushNode.cpp \
+                brush/Face.cpp \
+                brush/FaceInstance.cpp \
+                brush/FacePlane.cpp \
+                brush/FixedWinding.cpp \
+                brush/TexDef.cpp \
+                brush/TextureMatrix.cpp \
+                brush/TextureProjection.cpp \
+                brush/csg/CSG.cpp \
+                clipper/BrushByPlaneClipper.cpp \
+                clipper/ClipPoint.cpp \
+                clipper/Clipper.cpp \
+                clipper/SplitAlgorithm.cpp \
                 commandsystem/CommandSystem.cpp \
                 eclass/Doom3EntityClass.cpp \
                 eclass/EClassManager.cpp \
@@ -96,7 +111,12 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/aas/Doom3AasFileLoader.cpp \
                 map/aas/Doom3AasFileSettings.cpp \
                 map/aas/Doom3AasFile.cpp \
+                map/algorithm/Export.cpp \
+                map/algorithm/Import.cpp \
+                map/algorithm/MapExporter.cpp \
+                map/algorithm/MapImporter.cpp \
                 map/algorithm/Models.cpp \
+                map/algorithm/Skins.cpp \
                 map/format/MapFormatManager.cpp \
                 map/format/Quake3MapFormat.cpp \
                 map/format/Quake4MapFormat.cpp \
@@ -114,10 +134,27 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/format/primitiveparsers/BrushDef3.cpp \
                 map/format/primitiveparsers/BrushDef.cpp \
                 map/format/Quake4MapReader.cpp \
+                map/infofile/InfoFile.cpp \
+                map/infofile/InfoFileExporter.cpp \
+                map/mru/MRU.cpp \
                 map/namespace/ComplexName.cpp \
                 map/namespace/Namespace.cpp \
                 map/namespace/NamespaceFactory.cpp \
+                map/AutoSaver.cpp \
                 map/CounterManager.cpp \
+                map/EditingStopwatch.cpp \
+                map/EditingStopwatchInfoFileModule.cpp \
+                map/Map.cpp \
+                map/MapFileManager.cpp \
+                map/MapModules.cpp \
+                map/MapPosition.cpp \
+                map/MapPositionManager.cpp \
+                map/MapPropertyInfoFileModule.cpp \
+                map/MapResource.cpp \
+                map/MapResourceManager.cpp \
+                map/PointFile.cpp \
+                map/RegionManager.cpp \
+                map/RootNode.cpp \
                 model/md5/MD5Skeleton.cpp \
                 model/md5/MD5Module.cpp \
                 model/md5/MD5Model.cpp \
@@ -172,6 +209,13 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 particles/RenderableParticleBunch.cpp \
                 particles/RenderableParticleStage.cpp \
                 particles/StageDef.cpp \
+                patch/Patch.cpp \
+                patch/PatchModule.cpp \
+                patch/PatchNode.cpp \
+                patch/PatchRenderables.cpp \
+                patch/PatchTesselation.cpp \
+                patch/algorithm/General.cpp \
+                patch/algorithm/Prefab.cpp \
                 rendersystem/backend/glprogram/ARBBumpProgram.cpp \
                 rendersystem/backend/glprogram/ARBDepthFillProgram.cpp \
                 rendersystem/backend/glprogram/GenericVFPProgram.cpp \
@@ -187,10 +231,38 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 scenegraph/SceneGraph.cpp \
                 scenegraph/Octree.cpp \
                 scenegraph/SceneGraphFactory.cpp \
+                selection/algorithm/Curves.cpp \
+                selection/algorithm/Entity.cpp \
+                selection/algorithm/General.cpp \
+                selection/algorithm/Group.cpp \
+                selection/algorithm/GroupCycle.cpp \
+                selection/algorithm/Patch.cpp \
+                selection/algorithm/Planes.cpp \
+                selection/algorithm/Primitives.cpp \
+                selection/algorithm/Shader.cpp \
+                selection/algorithm/Transformation.cpp \
+                selection/clipboard/Clipboard.cpp \
+                selection/group/SelectionGroupInfoFileModule.cpp \
+                selection/group/SelectionGroupManager.cpp \
+                selection/group/SelectionGroupModule.cpp \
+                selection/manipulators/ManipulatorBase.cpp \
+                selection/manipulators/ManipulatorComponents.cpp \
+                selection/manipulators/RotateManipulator.cpp \
+                selection/manipulators/ModelScaleManipulator.cpp \
+                selection/manipulators/ScaleManipulator.cpp \
+                selection/manipulators/TranslateManipulator.cpp \
                 selection/selectionset/SelectionSetManager.cpp \
                 selection/selectionset/SelectionSetInfoFileModule.cpp \
                 selection/selectionset/SelectionSet.cpp \
                 selection/selectionset/SelectionSetModule.cpp \
+                selection/shaderclipboard/ClosestTexturableFinder.cpp \
+                selection/shaderclipboard/ShaderClipboard.cpp \
+                selection/shaderclipboard/Texturable.cpp \
+                selection/RadiantSelectionSystem.cpp \
+                selection/ManipulationPivot.cpp \
+                selection/SelectedNodeList.cpp \
+                selection/SelectionTestWalkers.cpp \
+                selection/TransformationVisitors.cpp \
                 settings/Game.cpp \
                 settings/GameManager.cpp \
                 settings/LanguageManager.cpp \
