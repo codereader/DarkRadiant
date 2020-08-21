@@ -876,8 +876,6 @@ void RadiantSelectionSystem::onManipulationChanged()
 	_requestSceneGraphChange = false;
 
 	GlobalSceneGraph().sceneChanged();
-
-	requestIdleCallback();
 }
 
 void RadiantSelectionSystem::onManipulationEnd()
@@ -988,8 +986,33 @@ void RadiantSelectionSystem::releaseShaders()
 
 const WorkZone& RadiantSelectionSystem::getWorkZone()
 {
-    // Flush any pending idle callbacks, we need the workzone now
-    flushIdleCallback();
+    // Check if we should recalculate the workzone
+    if (_requestWorkZoneRecalculation)
+    {
+        _requestWorkZoneRecalculation = false;
+
+        // When no items are selected, leave a (valid) workzone alone to allow
+        // for creation of new elements within the bounds of a previous selection
+        if (_selectionInfo.totalCount > 0 || !_workZone.bounds.isValid())
+        {
+            // Recalculate the workzone based on the current selection
+            AABB bounds = algorithm::getCurrentSelectionBounds();
+
+            if (bounds.isValid())
+            {
+                _workZone.max = bounds.origin + bounds.extents;
+                _workZone.min = bounds.origin - bounds.extents;
+            }
+            else
+            {
+                // A zero-sized workzone doesn't make much sense, set to default
+                _workZone.max = Vector3(64, 64, 64);
+                _workZone.min = Vector3(-64, -64, -64);
+            }
+
+            _workZone.bounds = bounds;
+        }
+    }
 
     return _workZone;
 }
@@ -1019,7 +1042,6 @@ void RadiantSelectionSystem::onSceneBoundsChanged()
     pivotChanged();
 
     _requestWorkZoneRecalculation = true;
-    requestIdleCallback();
 }
 
 // RegisterableModule implementation
@@ -1154,36 +1176,7 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& 
 
 void RadiantSelectionSystem::onIdle()
 {
-    // System is idle, check for pending tasks
-
-    // Check if we should recalculate the workzone
-    if (_requestWorkZoneRecalculation)
-    {
-        _requestWorkZoneRecalculation = false;
-
-        // When no items are selected, leave a (valid) workzone alone to allow
-        // for creation of new elements within the bounds of a previous selection
-        if (_selectionInfo.totalCount > 0 || !_workZone.bounds.isValid())
-        {
-            // Recalculate the workzone based on the current selection
-			AABB bounds = algorithm::getCurrentSelectionBounds();
-
-            if (bounds.isValid())
-            {
-                _workZone.max = bounds.origin + bounds.extents;
-                _workZone.min = bounds.origin - bounds.extents;
-            }
-            else
-            {
-                // A zero-sized workzone doesn't make much sense, set to default
-                _workZone.max = Vector3(64,64,64);
-                _workZone.min = Vector3(-64,-64,-64);
-            }
-
-            _workZone.bounds = bounds;
-        }
-    }
-
+    // System is idle
     // Check if we should notify the scenegraph
     if (_requestSceneGraphChange)
     {
