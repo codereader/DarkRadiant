@@ -1063,7 +1063,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="properties\DarkRadiant Core Library.props" />
-    <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
@@ -1075,7 +1074,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release Win32.props" />
     <Import Project="properties\DarkRadiant Core Library.props" />
-    <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
@@ -1087,7 +1085,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Debug x64.props" />
     <Import Project="properties\DarkRadiant Core Library.props" />
-    <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
@@ -1099,7 +1096,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="properties\DarkRadiant Base Release x64.props" />
     <Import Project="properties\DarkRadiant Core Library.props" />
-    <Import Project="properties\wxWidgets.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
     <Import Project="properties\ftgl.props" />
