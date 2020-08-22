@@ -309,7 +309,7 @@ void GameConnection::togglePauseGame() {
 void GameConnection::reloadMap() {
     if (!connect())
         return;
-    std::string text = composeConExecRequest("reloadMap");
+    std::string text = composeConExecRequest("reloadMap nocheck");
     executeRequest(text);
 }
 void GameConnection::onMapEvent(IMap::MapEvent ev) {
