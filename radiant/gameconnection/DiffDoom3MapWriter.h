@@ -5,6 +5,8 @@
 namespace map
 {
 
+class DiffStatus;
+
 /**
  * Doom 3 map-patch writer for TheDarkMod hot reload / game connection feature.
  *
@@ -12,12 +14,12 @@ namespace map
  */
 class DiffDoom3MapWriter : public map::Doom3MapWriter
 {
-	const std::map<std::string, int> *_entityStatuses = nullptr;
+	const std::map<std::string, DiffStatus> *_entityStatuses = nullptr;
 
 	void writeEntityPreamble(const std::string &name, std::ostream& stream);
 public:
 	DiffDoom3MapWriter();
-	void setStatuses(const std::map<std::string, int> &entityStatuses);
+	void setStatuses(const std::map<std::string, DiffStatus> &entityStatuses);
 
 	virtual void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
 	virtual void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;

@@ -1,6 +1,6 @@
 #include "icommandsystem.h"
 #include "iscenegraph.h"
-
+#include "DiffStatus.h"
 
 namespace gameconn {
 
@@ -23,13 +23,12 @@ public:
 	//(clears list of pending changes)
 	void clear();
 
-	typedef std::map<std::string, int> ChangeSet;
 	//returns pending entity change since last clear (or since enabled)
-	const ChangeSet &getChanges() const;
+	const map::DiffEntityStatuses &getChanges() const;
 
 private:
-	//receives events about entity changes: type = -1 is removed, 1 is addition, 0 is modification
-	void entityUpdated(const std::string &name, int type);
+	//receives events about entity changes
+	void entityUpdated(const std::string &name, map::DiffStatus diff);
 	//add/remove entity observers on the set of entity nodes
 	void setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable);
 
@@ -37,8 +36,8 @@ private:
 	std::unique_ptr<scene::Graph::Observer> _sceneObserver;
 	//observers put on every entity on scene
 	std::map<IEntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
-	//set of entities with changes since last clear: -1 - removed, 1 - added, 0 - modified
-	std::map<std::string, int> _entityChanges;
+	//set of entities with changes since last clear
+	map::DiffEntityStatuses _entityChanges;
 
 	//internal classes can call private methods
 	friend class MapObserver_EntityObserver;

@@ -61,6 +61,7 @@
 #include "algorithm/ChildPrimitives.h"
 
 #include "gameconnection/DiffDoom3MapWriter.h"
+#include "gameconnection/DiffStatus.h"
 
 namespace map 
 {
@@ -409,7 +410,7 @@ bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
     return result;
 }
 
-std::string Map::saveMapDiff(const std::map<std::string, int> &entityStatuses) {
+std::string Map::saveMapDiff(const DiffEntityStatuses &entityStatuses) {
     if (_saveInProgress) return "";     // fail if during proper map save
 
     scene::IMapRootNodePtr root = GlobalSceneGraph().root();
@@ -430,8 +431,9 @@ std::string Map::saveMapDiff(const std::map<std::string, int> &entityStatuses) {
     //write removal stubs (no actual spawnargs)
     for (const auto &pNS : entityStatuses) {
         const std::string &name = pNS.first;
-        int status = pNS.second;
-        if (status < 0)
+        DiffStatus status = pNS.second;
+        assert(status.isModified());    //(don't put untouched entities into map)
+        if (status.isRemoved())
             writer.writeRemoveEntityStub(pNS.first, outStream);
     }
 

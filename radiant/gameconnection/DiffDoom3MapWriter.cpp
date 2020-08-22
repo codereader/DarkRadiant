@@ -1,11 +1,12 @@
 #include "DiffDoom3MapWriter.h"
+#include "DiffStatus.h"
 
 namespace map
 {
 
 DiffDoom3MapWriter::DiffDoom3MapWriter() {}
 
-void DiffDoom3MapWriter::setStatuses(const std::map<std::string, int> &entityStatuses) {
+void DiffDoom3MapWriter::setStatuses(const std::map<std::string, DiffStatus> &entityStatuses) {
 	_entityStatuses = &entityStatuses;
 }
 
@@ -13,8 +14,15 @@ void DiffDoom3MapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::
 void DiffDoom3MapWriter::endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) {}
 
 void DiffDoom3MapWriter::writeEntityPreamble(const std::string &name, std::ostream& stream) {
-	int status = _entityStatuses->at(name);
-	const char *statusWord = (status > 0 ? "add" : (status < 0 ? "remove" : "modify"));
+	DiffStatus status = _entityStatuses->at(name);
+	assert(status.isModified());
+	const char *statusWord = "modify";
+	if (status.needsRespawn())
+		statusWord = "modify_respawn";
+	if (status.isAdded())
+		statusWord = "add";
+	if (status.isRemoved())
+		statusWord = "remove";
 	stream << statusWord << " entity" << std::endl;
 }
 

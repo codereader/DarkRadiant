@@ -35,23 +35,23 @@ public:
         if (key == "name")
             _entityName = value.get();      //happens when installing observer
         if (_enabled)
-            _owner.entityUpdated(_entityName, 0);
+            _owner.entityUpdated(_entityName, map::DiffStatus::modified());
     }
     virtual void onKeyChange(const std::string& key, const std::string& val) override {
         if (_enabled) {
             if (key == "name") {
                 //renaming is equivalent to deleting old entity and adding new
-                _owner.entityUpdated(_entityName, -1);
-                _owner.entityUpdated(val, 1);
+                _owner.entityUpdated(_entityName, map::DiffStatus::removed());
+                _owner.entityUpdated(val, map::DiffStatus::added());
             }
             else {
-                _owner.entityUpdated(_entityName, 0);
+                _owner.entityUpdated(_entityName, map::DiffStatus::modified());
             }
         }
     }
     virtual void onKeyErase(const std::string& key, EntityKeyValue& value) override {
         if (_enabled)
-            _owner.entityUpdated(_entityName, 0);
+            _owner.entityUpdated(_entityName, map::DiffStatus::modified());
     }
 };
 
@@ -63,14 +63,14 @@ public:
     virtual void onSceneNodeInsert(const scene::INodePtr& node) override {
         auto entityNodes = getEntitiesInNode(node);
         for (const IEntityNodePtr &entNode : entityNodes)
-            _owner.entityUpdated(entNode->name(), 1);
+            _owner.entityUpdated(entNode->name(), map::DiffStatus::added());
         _owner.setEntityObservers(entityNodes, true);
     }
     virtual void onSceneNodeErase(const scene::INodePtr& node) override {
         auto entityNodes = getEntitiesInNode(node);
         _owner.setEntityObservers(entityNodes, false);
         for (const IEntityNodePtr &entNode : entityNodes)
-            _owner.entityUpdated(entNode->name(), -1);
+            _owner.entityUpdated(entNode->name(), map::DiffStatus::removed());
     }
 };
 
@@ -130,17 +130,12 @@ MapObserver::~MapObserver() {
     setEnabled(false);
 }
 
-void MapObserver::entityUpdated(const std::string &name, int type) {
-    int &status = _entityChanges[name];
-    status += type;
-    if (std::abs(status) > 1) {
-        //added an already added entity, or removed an already removed one: should not happen
-        assert(false);
-        status = (status < 0 ? -1 : 1);
-    }
+void MapObserver::entityUpdated(const std::string &name, map::DiffStatus diff) {
+    map::DiffStatus &status = _entityChanges[name];
+    status = status.combine(diff);
 }
 
-const MapObserver::ChangeSet &MapObserver::getChanges() const {
+const map::DiffEntityStatuses &MapObserver::getChanges() const {
     return _entityChanges;
 }
 

@@ -24,6 +24,7 @@ namespace map
 {
 
 class ModelScalePreserver;
+class DiffStatus;
 
 /// Main class representing the current map
 class Map :
@@ -148,7 +149,7 @@ public:
 	 * This diff is intended to be consumed by TheDarkMod automation for HotReload purposes.
 	 * TODO: What about patches and brushes?
 	 */
-	std::string saveMapDiff(const std::map<std::string, int> &entityStatuses);
+	std::string saveMapDiff(const std::map<std::string, DiffStatus> &entityStatuses);
 
 	/** greebo: Creates a new map file.
 	 *
