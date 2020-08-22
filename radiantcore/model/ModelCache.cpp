@@ -185,7 +185,7 @@ const StringSet& ModelCache::getDependencies() const
 	return _dependencies;
 }
 
-void ModelCache::initialiseModule(const ApplicationContext& ctx)
+void ModelCache::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

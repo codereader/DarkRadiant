@@ -73,7 +73,7 @@ public:
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void initialiseModule(const IApplicationContext& ctx);
 
 	// Command targets
 	void clipSelectionCmd(const cmd::ArgumentList& args);

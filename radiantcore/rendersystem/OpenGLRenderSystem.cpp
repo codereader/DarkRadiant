@@ -499,7 +499,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 	return _dependencies;
 }
 
-void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
+void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

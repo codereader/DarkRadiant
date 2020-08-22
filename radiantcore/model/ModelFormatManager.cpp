@@ -28,7 +28,7 @@ const StringSet& ModelFormatManager::getDependencies() const
 	return _dependencies;
 }
 
-void ModelFormatManager::initialiseModule(const ApplicationContext& ctx)
+void ModelFormatManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

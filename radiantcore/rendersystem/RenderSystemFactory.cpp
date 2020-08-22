@@ -25,7 +25,7 @@ const StringSet& RenderSystemFactory::getDependencies() const
 	return _dependencies;
 }
 
-void RenderSystemFactory::initialiseModule(const ApplicationContext& ctx)
+void RenderSystemFactory::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }

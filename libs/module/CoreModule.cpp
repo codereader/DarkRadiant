@@ -12,7 +12,7 @@
 namespace module
 {
 
-CoreModule::CoreModule(ApplicationContext& context) :
+CoreModule::CoreModule(IApplicationContext& context) :
 	_instance(nullptr)
 {
 	std::string coreModuleFile = std::string(CORE_MODULE_LIBRARY) + MODULE_FILE_EXTENSION;

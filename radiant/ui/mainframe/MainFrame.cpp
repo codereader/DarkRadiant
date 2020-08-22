@@ -78,7 +78,7 @@ const StringSet& MainFrame::getDependencies() const
 	return _dependencies;
 }
 
-void MainFrame::initialiseModule(const ApplicationContext& ctx)
+void MainFrame::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "MainFrame::initialiseModule called." << std::endl;
 

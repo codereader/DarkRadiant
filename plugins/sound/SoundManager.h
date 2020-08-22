@@ -50,7 +50,7 @@ public:
 	// RegisterableModule implementation
 	virtual const std::string& getName() const override;
 	virtual const StringSet& getDependencies() const override;
-	virtual void initialiseModule(const ApplicationContext& ctx) override;
+	virtual void initialiseModule(const IApplicationContext& ctx) override;
 };
 typedef std::shared_ptr<SoundManager> SoundManagerPtr;
 

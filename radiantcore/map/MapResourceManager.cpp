@@ -47,7 +47,7 @@ const StringSet& MapResourceManager::getDependencies() const
 	return _dependencies;
 }
 
-void MapResourceManager::initialiseModule(const ApplicationContext& ctx)
+void MapResourceManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "MapResourceManager::initialiseModule called." << std::endl;
 }

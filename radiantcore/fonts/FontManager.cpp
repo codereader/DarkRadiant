@@ -52,7 +52,7 @@ const StringSet& FontManager::getDependencies() const
 	return _dependencies;
 }
 
-void FontManager::initialiseModule(const ApplicationContext& ctx)
+void FontManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 

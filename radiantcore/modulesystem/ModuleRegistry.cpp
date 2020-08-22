@@ -237,7 +237,7 @@ RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
 	return returnValue;
 }
 
-const ApplicationContext& ModuleRegistry::getApplicationContext() const
+const IApplicationContext& ModuleRegistry::getApplicationContext() const
 {
     assert(_context);
 	return *_context;

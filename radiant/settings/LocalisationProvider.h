@@ -51,7 +51,7 @@ private:
 	typedef std::vector<int> LanguageList;
 	LanguageList _availableLanguages;
 
-	LocalisationProvider(ApplicationContext& context);
+	LocalisationProvider(IApplicationContext& context);
 	LocalisationProvider(const LocalisationProvider& other) = delete;
 
 public:
@@ -69,7 +69,7 @@ public:
 	static std::shared_ptr<LocalisationProvider>& Instance();
 
 	// Sets up available and supported language collections
-	static void Initialise(ApplicationContext& context);
+	static void Initialise(IApplicationContext& context);
 
 	// Cleans up shared static resources allocated at startup
 	static void Cleanup();

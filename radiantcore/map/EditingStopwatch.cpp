@@ -48,7 +48,7 @@ const StringSet& EditingStopwatch::getDependencies() const
 	return _dependencies;
 }
 
-void EditingStopwatch::initialiseModule(const ApplicationContext& ctx)
+void EditingStopwatch::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

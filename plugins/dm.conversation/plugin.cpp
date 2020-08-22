@@ -34,7 +34,7 @@ public:
 		return _dependencies;
 	}
 
-	virtual void initialiseModule(const ApplicationContext& ctx) {
+	virtual void initialiseModule(const IApplicationContext& ctx) {
 		rMessage() << getName() << "::initialiseModule called.\n";
 
 		// Add the callback event

@@ -646,7 +646,7 @@ const StringSet& OrthoContextMenu::getDependencies() const
     return _dependencies;
 }
 
-void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
+void OrthoContextMenu::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalRadiant().signal_radiantStarted().connect(
         sigc::mem_fun(this, &OrthoContextMenu::constructMenu)

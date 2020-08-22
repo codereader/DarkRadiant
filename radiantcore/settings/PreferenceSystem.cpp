@@ -43,7 +43,7 @@ const StringSet& PreferenceSystem::getDependencies() const
 	return _dependencies;
 }
 
-void PreferenceSystem::initialiseModule(const ApplicationContext& ctx)
+void PreferenceSystem::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "PreferenceSystem::initialiseModule called" << std::endl;
 }

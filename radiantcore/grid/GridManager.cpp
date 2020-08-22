@@ -51,7 +51,7 @@ const StringSet& GridManager::getDependencies() const
 	return _dependencies;
 }
 
-void GridManager::initialiseModule(const ApplicationContext& ctx)
+void GridManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "GridManager::initialiseModule called.\n";
 

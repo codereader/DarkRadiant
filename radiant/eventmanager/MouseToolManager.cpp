@@ -37,7 +37,7 @@ const StringSet& MouseToolManager::getDependencies() const
     return _dependencies;
 }
 
-void MouseToolManager::initialiseModule(const ApplicationContext& ctx)
+void MouseToolManager::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalRadiant().signal_radiantStarted().connect(
         sigc::mem_fun(this, &MouseToolManager::onRadiantStartup));

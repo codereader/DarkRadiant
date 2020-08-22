@@ -72,7 +72,7 @@ public:
 	// RegisterableModule implementation
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
-	void initialiseModule(const ApplicationContext& ctx) override;
+	void initialiseModule(const IApplicationContext& ctx) override;
 
 	// greebo: Stores the given config, initialises VFS and constructs a few secondary paths.
 	void applyConfig(const GameConfiguration& config) override;

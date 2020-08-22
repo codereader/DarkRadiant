@@ -648,7 +648,7 @@ void XYWndManager::observeKey(const std::string& key)
     );
 }
 
-void XYWndManager::initialiseModule(const ApplicationContext& ctx)
+void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

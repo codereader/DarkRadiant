@@ -57,7 +57,7 @@ const StringSet& MD5AnimationCache::getDependencies() const
 	return _dependencies;
 }
 
-void MD5AnimationCache::initialiseModule(const ApplicationContext& ctx)
+void MD5AnimationCache::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }

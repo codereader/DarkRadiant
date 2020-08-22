@@ -220,7 +220,7 @@ void Doom3SkinCache::refresh()
     _defLoader.start();
 }
 
-void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx)
+void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "Doom3SkinCache::initialiseModule called" << std::endl;
 

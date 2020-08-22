@@ -31,7 +31,7 @@ const StringSet& Quake3MapFormat::getDependencies() const
 	return _dependencies;
 }
 
-void Quake3MapFormat::initialiseModule(const ApplicationContext& ctx)
+void Quake3MapFormat::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 

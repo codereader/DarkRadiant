@@ -7,7 +7,7 @@ namespace radiant
 {
 
 class ApplicationContextBase :
-	public ApplicationContext
+	public IApplicationContext
 {
 	// The app + home paths
 	std::string _appPath;

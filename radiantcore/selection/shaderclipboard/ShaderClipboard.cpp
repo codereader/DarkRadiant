@@ -211,7 +211,7 @@ const StringSet& ShaderClipboard::getDependencies() const
 	return _dependencies;
 }
 
-void ShaderClipboard::initialiseModule(const ApplicationContext& ctx)
+void ShaderClipboard::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

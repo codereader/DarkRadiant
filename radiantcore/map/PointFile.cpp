@@ -202,7 +202,7 @@ const StringSet& PointFile::getDependencies() const
 	return _dependencies;
 }
 
-void PointFile::initialiseModule(const ApplicationContext& ctx)
+void PointFile::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 

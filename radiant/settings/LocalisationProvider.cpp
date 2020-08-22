@@ -33,7 +33,7 @@ public:
 
 const char* const LocalisationProvider::RKEY_LANGUAGE = "user/ui/language";
 
-LocalisationProvider::LocalisationProvider(ApplicationContext& ctx)
+LocalisationProvider::LocalisationProvider(IApplicationContext& ctx)
 {
 	// Point wxWidgets to the folder where the catalog files are stored
 	_i18nPath = os::standardPathWithSlash(ctx.getApplicationPath() + "i18n");
@@ -62,7 +62,7 @@ std::shared_ptr<LocalisationProvider>& LocalisationProvider::Instance()
 	return _instancePtr;
 }
 
-void LocalisationProvider::Initialise(ApplicationContext& context)
+void LocalisationProvider::Initialise(IApplicationContext& context)
 {
 	Instance().reset(new LocalisationProvider(context));
 }

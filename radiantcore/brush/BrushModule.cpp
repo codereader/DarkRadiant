@@ -108,7 +108,7 @@ const StringSet& BrushModuleImpl::getDependencies() const {
 	return _dependencies;
 }
 
-void BrushModuleImpl::initialiseModule(const ApplicationContext& ctx) {
+void BrushModuleImpl::initialiseModule(const IApplicationContext& ctx) {
 	rMessage() << "BrushModuleImpl::initialiseModule called." << std::endl;
 
 	construct();

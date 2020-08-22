@@ -60,7 +60,7 @@ const StringSet& Manager::getDependencies() const
 	return _dependencies;
 }
 
-void Manager::initialiseModule(const ApplicationContext& ctx)
+void Manager::initialiseModule(const IApplicationContext& ctx)
 {
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles(ctx.getRuntimeDataPath());
@@ -76,7 +76,7 @@ void Manager::initialiseModule(const ApplicationContext& ctx)
 	// but only if we have a valid engine path
 	if (!config.enginePath.empty())
 	{
-		const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
+		const auto& args = ctx.getCmdLineArgs();
 
 		for (const std::string& arg : args)
 		{

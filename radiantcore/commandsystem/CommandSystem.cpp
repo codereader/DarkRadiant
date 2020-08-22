@@ -42,7 +42,7 @@ const StringSet& CommandSystem::getDependencies() const {
 	return _dependencies;
 }
 
-void CommandSystem::initialiseModule(const ApplicationContext& ctx)
+void CommandSystem::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "CommandSystem::initialiseModule called." << std::endl;
 

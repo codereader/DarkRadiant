@@ -17,7 +17,7 @@ class DynamicLibrary;
 class CoreModule
 {
 private:
-	typedef radiant::IRadiant* (*CreateRadiantFunc)(ApplicationContext& context);
+	typedef radiant::IRadiant* (*CreateRadiantFunc)(IApplicationContext& context);
 	typedef void (*DestroyRadiantFunc)(radiant::IRadiant* radiant);
 
 	radiant::IRadiant* _instance;
@@ -34,7 +34,7 @@ public:
 		{}
 	};
 
-	CoreModule(ApplicationContext& context);
+	CoreModule(IApplicationContext& context);
 
 	~CoreModule();
 

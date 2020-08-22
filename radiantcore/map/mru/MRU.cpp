@@ -148,7 +148,7 @@ const StringSet& MRU::getDependencies() const
 	return _dependencies;
 }
 
-void MRU::initialiseModule(const ApplicationContext& ctx)
+void MRU::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

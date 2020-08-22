@@ -35,7 +35,7 @@ const StringSet& PortableMapFormat::getDependencies() const
 	return _dependencies;
 }
 
-void PortableMapFormat::initialiseModule(const ApplicationContext& ctx)
+void PortableMapFormat::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 

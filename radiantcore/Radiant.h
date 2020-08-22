@@ -15,7 +15,7 @@ class Radiant :
 	public IRadiant
 {
 private:
-	ApplicationContext& _context;
+	IApplicationContext& _context;
 
 	std::unique_ptr<applog::LogFile> _logFile;
 
@@ -26,13 +26,13 @@ private:
 	std::unique_ptr<language::LanguageManager> _languageManager;
 
 public:
-	Radiant(ApplicationContext& context);
+	Radiant(IApplicationContext& context);
 
 	~Radiant();
 
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
-	void initialiseModule(const ApplicationContext& ctx) override;
+	void initialiseModule(const IApplicationContext& ctx) override;
 
 	applog::ILogWriter& getLogWriter() override;
 	module::ModuleRegistry& getModuleRegistry() override;

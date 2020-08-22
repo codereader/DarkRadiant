@@ -111,7 +111,7 @@ const StringSet& Doom3AasFileLoader::getDependencies() const
 	return _dependencies;
 }
 
-void Doom3AasFileLoader::initialiseModule(const ApplicationContext& ctx)
+void Doom3AasFileLoader::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 

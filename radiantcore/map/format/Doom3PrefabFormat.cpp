@@ -14,7 +14,7 @@ const std::string& Doom3PrefabFormat::getName() const
 	return _name;
 }
 
-void Doom3PrefabFormat::initialiseModule(const ApplicationContext& ctx)
+void Doom3PrefabFormat::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 

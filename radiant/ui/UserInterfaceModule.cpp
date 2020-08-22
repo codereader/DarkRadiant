@@ -103,7 +103,7 @@ const StringSet& UserInterfaceModule::getDependencies() const
 	return _dependencies;
 }
 
-void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
+void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

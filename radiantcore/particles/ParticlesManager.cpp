@@ -225,7 +225,7 @@ const StringSet& ParticlesManager::getDependencies() const
 	return _dependencies;
 }
 
-void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
+void ParticlesManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "ParticlesManager::initialiseModule called" << std::endl;
 

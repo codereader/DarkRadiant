@@ -69,7 +69,7 @@ const StringSet& RadiantModule::getDependencies() const
 	return _dependencies;
 }
 
-void RadiantModule::initialiseModule(const ApplicationContext& ctx)
+void RadiantModule::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

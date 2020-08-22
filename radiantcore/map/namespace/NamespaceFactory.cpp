@@ -23,7 +23,7 @@ const StringSet& NamespaceFactory::getDependencies() const
 	return _dependencies;
 }
 
-void NamespaceFactory::initialiseModule(const ApplicationContext& ctx)
+void NamespaceFactory::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called.\n";
 }

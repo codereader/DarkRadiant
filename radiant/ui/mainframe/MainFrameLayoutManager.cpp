@@ -78,7 +78,7 @@ const StringSet& MainFrameLayoutManager::getDependencies() const
 	return _dependencies;
 }
 
-void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx)
+void MainFrameLayoutManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "MainFrameLayoutManager::initialiseModule called." << std::endl;
 

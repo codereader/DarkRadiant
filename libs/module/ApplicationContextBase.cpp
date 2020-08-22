@@ -15,8 +15,6 @@
 #include <windows.h>
 #endif
 
-//#include <wx/msgout.h>
-
 namespace radiant
 {
 
@@ -25,7 +23,6 @@ namespace radiant
  */
 std::string ApplicationContextBase::getApplicationPath() const
 {
-    //wxMessageOutputDebug().Output(wxString("Application Path is ") + _appPath);
 	return _appPath;
 }
 
@@ -91,12 +88,10 @@ std::string ApplicationContextBase::getSettingsPath() const
 
 std::string ApplicationContextBase::getBitmapsPath() const
 {
-    //wxMessageOutputDebug().Output(wxString("RTD Path is ") + getRuntimeDataPath());
 	return getRuntimeDataPath() + "bitmaps/";
 }
 
-const ApplicationContext::ArgumentList&
-ApplicationContextBase::getCmdLineArgs() const
+const IApplicationContext::ArgumentList& ApplicationContextBase::getCmdLineArgs() const
 {
 	return _cmdLineArgs;
 }

@@ -40,7 +40,7 @@ public:
 		return _dependencies;
 	}
 
-	void initialiseModule(const ApplicationContext& ctx)
+	void initialiseModule(const IApplicationContext& ctx)
 	{
 		PicoInit();
 		PicoSetMallocFunc(malloc);

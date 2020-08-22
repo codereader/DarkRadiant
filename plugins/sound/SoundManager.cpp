@@ -145,13 +145,11 @@ void SoundManager::ensureShadersLoaded()
     _defLoader.ensureFinished();
 }
 
-void SoundManager::initialiseModule(const ApplicationContext& ctx)
+void SoundManager::initialiseModule(const IApplicationContext& ctx)
 {
     // Create the SoundPlayer if sound is not disabled
-    const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
-    ApplicationContext::ArgumentList::const_iterator found(
-        std::find(args.begin(), args.end(), "--disable-sound")
-    );
+    const auto& args = ctx.getCmdLineArgs();
+    auto found = std::find(args.begin(), args.end(), "--disable-sound");
 
     if (found == args.end())
     {

@@ -338,7 +338,7 @@ const StringSet& SceneGraphModule::getDependencies() const
 	return _dependencies;
 }
 
-void SceneGraphModule::initialiseModule(const ApplicationContext& ctx)
+void SceneGraphModule::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 }

@@ -369,7 +369,7 @@ const StringSet& AutoMapSaver::getDependencies() const
 	return _dependencies;
 }
 
-void AutoMapSaver::initialiseModule(const ApplicationContext& ctx)
+void AutoMapSaver::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

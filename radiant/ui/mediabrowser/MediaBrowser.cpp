@@ -989,7 +989,7 @@ const StringSet& MediaBrowser::getDependencies() const
 	return _dependencies;
 }
 
-void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
+void MediaBrowser::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

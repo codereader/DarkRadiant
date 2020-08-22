@@ -49,7 +49,7 @@ const StringSet& ClipboardModule::getDependencies() const
 	return _dependencies;
 }
 
-void ClipboardModule::initialiseModule(const ApplicationContext& ctx)
+void ClipboardModule::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }

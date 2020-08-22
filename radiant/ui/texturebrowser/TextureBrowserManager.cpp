@@ -98,7 +98,7 @@ const StringSet& TextureBrowserManager::getDependencies() const
     return _dependencies;
 }
 
-void TextureBrowserManager::initialiseModule(const ApplicationContext& ctx)
+void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 

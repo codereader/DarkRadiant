@@ -287,7 +287,7 @@ const StringSet& EClassManager::getDependencies() const
 	return _dependencies;
 }
 
-void EClassManager::initialiseModule(const ApplicationContext& ctx)
+void EClassManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "EntityClassDoom3::initialiseModule called." << std::endl;
 

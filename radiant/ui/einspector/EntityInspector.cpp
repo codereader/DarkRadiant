@@ -389,7 +389,7 @@ const StringSet& EntityInspector::getDependencies() const
     return _dependencies;
 }
 
-void EntityInspector::initialiseModule(const ApplicationContext& ctx)
+void EntityInspector::initialiseModule(const IApplicationContext& ctx)
 {
     construct();
 

@@ -208,7 +208,7 @@ const StringSet& UndoSystem::getDependencies() const
 	return _dependencies;
 }
 
-void UndoSystem::initialiseModule(const ApplicationContext& ctx)
+void UndoSystem::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "UndoSystem::initialiseModule called" << std::endl;
 

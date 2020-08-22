@@ -69,7 +69,7 @@ Splash::Splash() :
 	wxFrame(nullptr, wxID_ANY, wxT("DarkRadiant"), wxDefaultPosition, wxDefaultSize, wxCENTRE),
 	_progressBar(nullptr)
 {
-    const ApplicationContext& ctx = module::GlobalModuleRegistry().getApplicationContext();
+    const auto& ctx = module::GlobalModuleRegistry().getApplicationContext();
 	std::string fullFileName(ctx.getBitmapsPath() + SPLASH_FILENAME);
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);

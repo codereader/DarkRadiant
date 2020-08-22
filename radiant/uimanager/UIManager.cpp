@@ -96,7 +96,7 @@ const StringSet& UIManager::getDependencies() const
 	return _dependencies;
 }
 
-void UIManager::initialiseModule(const ApplicationContext& ctx)
+void UIManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 

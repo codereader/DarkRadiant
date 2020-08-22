@@ -255,7 +255,7 @@ void XMLRegistry::emitSignalForKey(const std::string& changedKey)
     }
 }
 
-void XMLRegistry::loadUserFileFromSettingsPath(const ApplicationContext& ctx, 
+void XMLRegistry::loadUserFileFromSettingsPath(const IApplicationContext& ctx,
     const std::string& filename, const std::string& baseXPath)
 {
     std::string userSettingsFile = ctx.getSettingsPath() + filename;
@@ -295,7 +295,7 @@ const StringSet& XMLRegistry::getDependencies() const
     return _dependencies;
 }
 
-void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
+void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << "XMLRegistry::initialiseModule called" << std::endl;
 

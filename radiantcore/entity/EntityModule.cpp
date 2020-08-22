@@ -283,7 +283,7 @@ const StringSet& Doom3EntityModule::getDependencies() const
 	return _dependencies;
 }
 
-void Doom3EntityModule::initialiseModule(const ApplicationContext& ctx)
+void Doom3EntityModule::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

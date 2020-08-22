@@ -560,7 +560,7 @@ const StringSet& Doom3FileSystem::getDependencies() const
     return _dependencies;
 }
 
-void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx)
+void Doom3FileSystem::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called" << std::endl;
 }

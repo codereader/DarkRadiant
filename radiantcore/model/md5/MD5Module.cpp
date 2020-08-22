@@ -31,7 +31,7 @@ public:
 		return _dependencies;
 	}
 
-	void initialiseModule(const ApplicationContext& ctx)
+	void initialiseModule(const IApplicationContext& ctx)
 	{
 		GlobalModelFormatManager().registerImporter(std::make_shared<md5::MD5ModelLoader>());
 	}

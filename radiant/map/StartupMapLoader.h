@@ -13,7 +13,7 @@ class StartupMapLoader :
 public:
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
-	void initialiseModule(const ApplicationContext& ctx) override;
+	void initialiseModule(const IApplicationContext& ctx) override;
 
 private:
 	// This gets called as soon as the mainframe starts up

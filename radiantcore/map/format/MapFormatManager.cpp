@@ -113,7 +113,7 @@ const StringSet& MapFormatManager::getDependencies() const
 	return _dependencies;
 }
 
-void MapFormatManager::initialiseModule(const ApplicationContext& ctx)
+void MapFormatManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }

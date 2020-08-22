@@ -29,7 +29,7 @@ const StringSet& LocalisationModule::getDependencies() const
 	return _dependencies;
 }
 
-void LocalisationModule::initialiseModule(const ApplicationContext& ctx)
+void LocalisationModule::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 

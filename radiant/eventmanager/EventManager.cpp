@@ -64,7 +64,7 @@ const StringSet& EventManager::getDependencies() const
 	return _dependencies;
 }
 
-void EventManager::initialiseModule(const ApplicationContext& ctx)
+void EventManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

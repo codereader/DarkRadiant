@@ -125,11 +125,11 @@ public:
 	// RegisterableModule implementation
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
-	void initialiseModule(const ApplicationContext& ctx) override;
+	void initialiseModule(const IApplicationContext& ctx) override;
 	void shutdownModule() override;
 
 private:
-	void loadUserFileFromSettingsPath(const ApplicationContext& ctx,
+	void loadUserFileFromSettingsPath(const IApplicationContext& ctx,
 		const std::string& filename, const std::string& baseXPath);
 
 	void emitSignalForKey(const std::string& changedKey);

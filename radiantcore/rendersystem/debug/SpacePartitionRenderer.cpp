@@ -41,7 +41,7 @@ const StringSet& SpacePartitionRenderer::getDependencies() const
 	return _dependencies;
 }
 
-void SpacePartitionRenderer::initialiseModule(const ApplicationContext& ctx)
+void SpacePartitionRenderer::initialiseModule(const IApplicationContext& ctx)
 {
     registry::observeBooleanKey(
         RKEY_RENDER_SPACE_PARTITION,

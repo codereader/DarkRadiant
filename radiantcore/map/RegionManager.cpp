@@ -432,7 +432,7 @@ const StringSet& RegionManager::getDependencies() const
 	return _dependencies;
 }
 
-void RegionManager::initialiseModule(const ApplicationContext& ctx)
+void RegionManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

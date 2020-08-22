@@ -22,7 +22,7 @@ void StartupMapLoader::onRadiantStartup()
 {
 	std::string mapToLoad = "";
 
-    const ApplicationContext::ArgumentList& args(
+    const auto& args(
         module::GlobalModuleRegistry().getApplicationContext().getCmdLineArgs()
     );
 
@@ -105,7 +105,7 @@ const StringSet& StartupMapLoader::getDependencies() const
 	return _dependencies;
 }
 
-void StartupMapLoader::initialiseModule(const ApplicationContext& ctx)
+void StartupMapLoader::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

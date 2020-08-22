@@ -35,7 +35,7 @@ private:
 	bool _modulesShutdown;
 
     // Pointer to the application context
-	ApplicationContext* _context;
+	IApplicationContext* _context;
 
 	// For progress meter in the splash screen
 	float _progress;
@@ -70,7 +70,7 @@ public:
     bool moduleExists(const std::string& name) const override;
 
 	// Get the application context info structure
-    const ApplicationContext& getApplicationContext() const override;
+    const IApplicationContext& getApplicationContext() const override;
 
 	applog::ILogWriter& getApplicationLogWriter() override;
 
@@ -81,8 +81,7 @@ public:
 
 	std::size_t getCompatibilityLevel() const override;
 
-    /// Invoked by RadiantApp to set the application context
-	void setContext(ApplicationContext& context)
+	void setContext(IApplicationContext& context)
     {
         _context = &context;
     }

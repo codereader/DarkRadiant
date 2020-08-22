@@ -33,7 +33,7 @@ const StringSet& FilterUserInterface::getDependencies() const
 	return _dependencies;
 }
 
-void FilterUserInterface::initialiseModule(const ApplicationContext& ctx)
+void FilterUserInterface::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

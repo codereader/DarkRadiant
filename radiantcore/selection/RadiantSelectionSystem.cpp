@@ -1059,7 +1059,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
     return _dependencies;
 }
 
-void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) 
+void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx) 
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 

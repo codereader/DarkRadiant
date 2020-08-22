@@ -181,7 +181,7 @@ const StringSet& OpenGLModule::getDependencies() const {
 	return _dependencies;
 }
 
-void OpenGLModule::initialiseModule(const ApplicationContext& ctx) {
+void OpenGLModule::initialiseModule(const IApplicationContext& ctx) {
 	rMessage() << "OpenGL::initialiseModule called.\n";
 }
 

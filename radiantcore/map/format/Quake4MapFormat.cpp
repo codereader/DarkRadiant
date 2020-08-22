@@ -30,7 +30,7 @@ const StringSet& Quake4MapFormat::getDependencies() const
 	return _dependencies;
 }
 
-void Quake4MapFormat::initialiseModule(const ApplicationContext& ctx)
+void Quake4MapFormat::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 

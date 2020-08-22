@@ -16,7 +16,7 @@ class SpacePartitionRenderer : public RegisterableModule
 public:
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
+	void initialiseModule(const IApplicationContext& ctx);
 	void shutdownModule();
 
 	void toggle(const cmd::ArgumentList& args);

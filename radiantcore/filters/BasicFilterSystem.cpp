@@ -147,7 +147,7 @@ void BasicFilterSystem::setObjectSelectionByFilter(const std::string& filterName
 	GlobalSceneGraph().root()->traverse(walker);
 }
 
-void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
+void BasicFilterSystem::initialiseModule(const IApplicationContext& ctx)
 {
 	game::IGamePtr game = GlobalGameManager().currentGame();
 	assert(game);

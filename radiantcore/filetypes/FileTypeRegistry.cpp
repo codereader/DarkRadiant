@@ -64,7 +64,7 @@ const StringSet& FileTypeRegistry::getDependencies() const
 	return _dependencies;
 }
 
-void FileTypeRegistry::initialiseModule(const ApplicationContext& ctx)
+void FileTypeRegistry::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

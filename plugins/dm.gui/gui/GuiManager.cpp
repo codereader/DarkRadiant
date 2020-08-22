@@ -210,7 +210,7 @@ const StringSet& GuiManager::getDependencies() const
 	return _dependencies;
 }
 
-void GuiManager::initialiseModule(const ApplicationContext& ctx)
+void GuiManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

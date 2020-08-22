@@ -9,9 +9,9 @@ class RadiantTest :
 protected:
 	// The RadiantApp owns the ApplicationContext which is then passed to the
 	// ModuleRegistry as a reference.
-	radiant::ApplicationContextBase _context;
+	//radiant::ApplicationContextBase _context;
 
-	std::unique_ptr<module::CoreModule> _coreModule;
+	//std::unique_ptr<module::CoreModule> _coreModule;
 
 protected:
 	RadiantTest()

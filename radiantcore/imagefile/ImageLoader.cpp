@@ -136,7 +136,7 @@ const StringSet& ImageLoader::getDependencies() const
     return _dependencies;
 }
 
-void ImageLoader::initialiseModule(const ApplicationContext&)
+void ImageLoader::initialiseModule(const IApplicationContext&)
 {
     // Load the texture types from the .game file
     auto texTypes = GlobalGameManager().currentGame()->getLocalXPath(GKEY_IMAGE_TYPES);

@@ -32,7 +32,7 @@ const StringSet& GridUserInterface::getDependencies() const
 	return _dependencies;
 }
 
-void GridUserInterface::initialiseModule(const ApplicationContext& ctx)
+void GridUserInterface::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

@@ -257,7 +257,7 @@ const StringSet& Clipper::getDependencies() const {
 	return _dependencies;
 }
 
-void Clipper::initialiseModule(const ApplicationContext& ctx)
+void Clipper::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "Clipper::initialiseModule called\n";
 

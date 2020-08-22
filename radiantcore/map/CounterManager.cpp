@@ -70,7 +70,7 @@ const StringSet& CounterManager::getDependencies() const
 	return _dependencies;
 }
 
-void CounterManager::initialiseModule(const ApplicationContext& ctx)
+void CounterManager::initialiseModule(const IApplicationContext& ctx)
 {
 }
 

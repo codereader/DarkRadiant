@@ -23,7 +23,7 @@ const StringSet& SceneGraphFactory::getDependencies() const
 	return _dependencies;
 }
 
-void SceneGraphFactory::initialiseModule(const ApplicationContext& ctx)
+void SceneGraphFactory::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }

@@ -130,7 +130,7 @@ public:
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
-	void initialiseModule(const ApplicationContext& ctx);
+	void initialiseModule(const IApplicationContext& ctx);
 	void shutdownModule();
 
 private:

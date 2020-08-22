@@ -328,7 +328,7 @@ const StringSet& Doom3ShaderSystem::getDependencies() const
     return _dependencies;
 }
 
-void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx)
+void Doom3ShaderSystem::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called" << std::endl;
 

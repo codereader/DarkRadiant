@@ -51,7 +51,7 @@ inline ErrorHandlingFunction& GlobalErrorHandler()
  *
  * \ingroup module
  */
-class ApplicationContext
+class IApplicationContext
 {
 public:
 
@@ -64,7 +64,7 @@ public:
     /**
 	 * Destructor
 	 */
-	virtual ~ApplicationContext() {}
+	virtual ~IApplicationContext() {}
 
 	/**
 	 * Return the application path of the current Radiant instance.
@@ -180,7 +180,7 @@ public:
 	 * @param ctx
 	 * The ApplicationContext of the running Radiant application.
 	 */
-	virtual void initialiseModule(const ApplicationContext& ctx) = 0;
+	virtual void initialiseModule(const IApplicationContext& ctx) = 0;
 
 	/**
 	 * Optional shutdown routine. Allows the module to de-register itself,
@@ -276,7 +276,7 @@ public:
 	 * streams. The latter can be used by modules to initialise their
 	 * rMessage/globalErrorStreams().
 	 */
-	virtual const ApplicationContext& getApplicationContext() const = 0;
+	virtual const IApplicationContext& getApplicationContext() const = 0;
 
 	/**
 	 * Callable during the module registration phase, this method attempts

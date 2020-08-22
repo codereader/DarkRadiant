@@ -49,7 +49,7 @@ const StringSet& InfoFileManager::getDependencies() const
 	return _dependencies;
 }
 
-void InfoFileManager::initialiseModule(const ApplicationContext& ctx)
+void InfoFileManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }

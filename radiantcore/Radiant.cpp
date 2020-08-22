@@ -21,7 +21,7 @@ namespace
 	const char* const TIME_FMT = "%Y-%m-%d %H:%M:%S";
 }
 
-Radiant::Radiant(ApplicationContext& context) :
+Radiant::Radiant(IApplicationContext& context) :
 	_context(context),
 	_messageBus(new MessageBus)
 {
@@ -132,7 +132,7 @@ const StringSet& Radiant::getDependencies() const
 	return _dependencies;
 }
 
-void Radiant::initialiseModule(const ApplicationContext& ctx)
+void Radiant::initialiseModule(const IApplicationContext& ctx)
 {}
 
 std::shared_ptr<Radiant>& Radiant::InstancePtr()
@@ -143,7 +143,7 @@ std::shared_ptr<Radiant>& Radiant::InstancePtr()
 
 }
 
-extern "C" DARKRADIANT_DLLEXPORT radiant::IRadiant* SYMBOL_CREATE_RADIANT(ApplicationContext& context)
+extern "C" DARKRADIANT_DLLEXPORT radiant::IRadiant* SYMBOL_CREATE_RADIANT(IApplicationContext& context)
 {
 	auto& instancePtr = radiant::Radiant::InstancePtr();
 

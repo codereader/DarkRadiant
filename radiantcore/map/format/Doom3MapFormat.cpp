@@ -30,7 +30,7 @@ const StringSet& Doom3MapFormat::getDependencies() const
 	return _dependencies;
 }
 
-void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
+void Doom3MapFormat::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << ": initialiseModule called." << std::endl;
 

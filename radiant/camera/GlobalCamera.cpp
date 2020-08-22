@@ -510,7 +510,7 @@ const StringSet& GlobalCameraManager::getDependencies() const
 	return _dependencies;
 }
 
-void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
+void GlobalCameraManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 

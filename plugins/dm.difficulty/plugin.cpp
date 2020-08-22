@@ -41,7 +41,7 @@ public:
 		return _dependencies;
 	}
 
-	void initialiseModule(const ApplicationContext& ctx)
+	void initialiseModule(const IApplicationContext& ctx)
 	{
 		rMessage() << getName() << "::initialiseModule called." << std::endl;
 

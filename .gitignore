@@ -66,3 +66,6 @@ Makefile.in
 /tools/scripts/DarkRadiant_install.x64
 /tools/scripts/DarkRadiant_install
 /install/*.ilk
+/tools/msvc/Tests/x64
+/tools/msvc/x64
+/tools/msvc/packages

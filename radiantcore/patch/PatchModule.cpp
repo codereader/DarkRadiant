@@ -62,7 +62,7 @@ const StringSet& PatchModule::getDependencies() const
 	return _dependencies;
 }
 
-void PatchModule::initialiseModule(const ApplicationContext& ctx)
+void PatchModule::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
