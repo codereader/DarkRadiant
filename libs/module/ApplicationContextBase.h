@@ -32,12 +32,12 @@ public:
 	virtual void initialise(int argc, char* argv[]);
 
     /* ApplicationContext implementation */
-    std::string getApplicationPath() const override;
-    std::string getLibraryPath() const override;
-    std::string getRuntimeDataPath() const override;
-    std::string getHTMLPath() const override;
-    std::string getSettingsPath() const override;
-    std::string getBitmapsPath() const override;
+    virtual std::string getApplicationPath() const override;
+    virtual std::string getLibraryPath() const override;
+    virtual std::string getRuntimeDataPath() const override;
+    virtual std::string getHTMLPath() const override;
+    virtual std::string getSettingsPath() const override;
+    virtual std::string getBitmapsPath() const override;
     const ArgumentList& getCmdLineArgs() const override;
 
     const ErrorHandlingFunction& getErrorHandlingFunction() const override;
