@@ -3279,6 +3279,9 @@
     <ClInclude Include="..\..\radiant\gameconnection\MapObserver.h">
       <Filter>src\gameconnection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\DiffStatus.h">
+      <Filter>src\gameconnection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

@@ -1118,6 +1118,7 @@
     <ClInclude Include="..\..\radiant\fonts\GlyphInfo.h" />
     <ClInclude Include="..\..\radiant\fonts\GlyphSet.h" />
     <ClInclude Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\DiffStatus.h" />
     <ClInclude Include="..\..\radiant\gameconnection\GameConnection.h" />
     <ClInclude Include="..\..\radiant\gameconnection\MapObserver.h" />
     <ClInclude Include="..\..\radiant\gameconnection\MessageTcp.h" />
