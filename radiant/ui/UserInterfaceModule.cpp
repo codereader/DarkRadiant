@@ -183,6 +183,8 @@ void UserInterfaceModule::registerUICommands()
 			[gameconn](const cmd::ArgumentList&) { gameconn->doUpdateMap(); });
 		GlobalCommandSystem().addCommand("GameConnectionPauseGame",
 			[gameconn](const cmd::ArgumentList&) { gameconn->togglePauseGame(); });
+		GlobalCommandSystem().addCommand("GameConnectionRespawnSelected",
+			[gameconn](const cmd::ArgumentList&) { gameconn->respawnSelectedEntities(); });
 	}
 
 	// ----------------------- Bind Events ---------------------------------------
@@ -224,6 +226,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("GameConnectionUpdateMapAlways", "GameConnectionUpdateMapAlways");
 	GlobalEventManager().addCommand("GameConnectionUpdateMap", "GameConnectionUpdateMap");
 	GlobalEventManager().addCommand("GameConnectionPauseGame", "GameConnectionPauseGame");
+	GlobalEventManager().addCommand("GameConnectionRespawnSelected", "GameConnectionRespawnSelected");
 }
 
 // Static module registration

@@ -335,5 +335,6 @@
 		<menuItem name="updateMap" caption="Update map right now" command="GameConnectionUpdateMap" />
 		<menuSeparator />
 		<menuItem name="pauseGame" caption="Pause game" command="GameConnectionPauseGame" />
+		<menuItem name="respawnSelected" caption="Respawn selected entities" command="GameConnectionRespawnSelected" />
 	</subMenu>
 </menu>
