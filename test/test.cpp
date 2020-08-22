@@ -1,5 +1,3 @@
-#include "pch.h"
-
 #include "RadiantTest.h"
 
 TEST_F(RadiantTest, BaseTest) {
