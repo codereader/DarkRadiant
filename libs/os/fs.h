@@ -93,4 +93,10 @@ namespace os
 		return fs::change_extension(input, newExt).string();
 #endif
 	}
+
+	// Returns the path to a folder suitable to contain temporary files
+	inline fs::path getTemporaryPath()
+	{
+		return fs::temp_directory_path().string();
+	}
 }

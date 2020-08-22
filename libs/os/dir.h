@@ -104,4 +104,23 @@ inline bool makeDirectory(const std::string& name)
 	}
 }
 
+/**
+ * Deletes the contents of the given directory. Returns true on success.
+ */
+inline bool removeDirectory(const std::string& path)
+{
+	try
+	{
+		fs::remove_all(path);
+		return true;
+	}
+	catch (fs::filesystem_error& ex)
+	{
+		rConsoleError() << "os::removeDirectory(" << path << ") failed with error "
+			<< ex.what() << " (" << ex.code().value() << ")" << std::endl;
+
+		return false;
+	}
+}
+
 } // namespace os
