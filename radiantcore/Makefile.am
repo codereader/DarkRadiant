@@ -12,7 +12,6 @@ libradiantcore_la_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               $(FTGL_CFLAGS)
 
 libradiantcore_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.la \
-             $(top_builddir)/libs/wxutil/libwxutil.la \
              $(top_builddir)/libs/xmlutil/libxmlutil.la \
              $(top_builddir)/libs/math/libmath.la
 
@@ -28,7 +27,6 @@ libradiantcore_la_LDFLAGS = -module -avoid-version \
                     $(FILESYSTEM_LIBS) \
                     $(DL_LIBS) \
                     $(INTL_LIBS) \
-                    $(WX_LIBS) \
                     $(Z_LIBS)
 
 libradiantcore_la_SOURCES = Radiant.cpp \
