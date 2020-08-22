@@ -1293,6 +1293,9 @@
     <ClInclude Include="..\..\radiant\settings\LocalisationModule.h">
       <Filter>src\settings</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ApplicationContext.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

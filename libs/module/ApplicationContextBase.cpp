@@ -302,17 +302,9 @@ const ErrorHandlingFunction& ApplicationContextBase::getErrorHandlingFunction() 
 	return _errorHandler;
 }
 
-void ApplicationContextBase::initErrorHandler()
+void ApplicationContextBase::setErrorHandlingFunction(const ErrorHandlingFunction& function)
 {
-#if 0
-#ifdef _DEBUG
-	// Use the PopupErrorHandler, which displays a popup box
-	_errorHandler = radiant::PopupErrorHandler::HandleError;
-
-	// Initialise the function pointer in our binary's scope
-	GlobalErrorHandler() = _errorHandler;
-#endif
-#endif
+	_errorHandler = function;
 }
 
 } // namespace module

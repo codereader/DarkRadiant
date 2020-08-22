@@ -9,6 +9,7 @@ namespace radiant
 class ApplicationContextBase :
 	public IApplicationContext
 {
+private:
 	// The app + home paths
 	std::string _appPath;
 	std::string _homePath;
@@ -28,10 +29,7 @@ public:
 	/**
 	 * Initialises the context with the arguments given to main().
 	 */
-	void initialise(int argc, char* argv[]);
-
-	// Initialises the function handling pointers for debug builds
-	void initErrorHandler();
+	virtual void initialise(int argc, char* argv[]);
 
     /* ApplicationContext implementation */
     std::string getApplicationPath() const override;
@@ -42,7 +40,10 @@ public:
     std::string getBitmapsPath() const override;
     const ArgumentList& getCmdLineArgs() const override;
 
-    virtual const ErrorHandlingFunction& getErrorHandlingFunction() const override;
+    const ErrorHandlingFunction& getErrorHandlingFunction() const override;
+
+protected:
+	void setErrorHandlingFunction(const ErrorHandlingFunction& function);
 
 private:
 	// Sets up the bitmap path and settings path

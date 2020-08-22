@@ -89,9 +89,6 @@ bool RadiantApp::OnInit()
 	// Register to the start up signal
 	Bind(EV_RadiantStartup, &RadiantApp::onStartupEvent, this);
 
-	// Activate the Popup Error Handler
-	_context.initErrorHandler();
-
 	AddPendingEvent(wxCommandEvent(EV_RadiantStartup));
 
 	return true;
