@@ -70,28 +70,41 @@ std::string DynamicLibrary::getName() const
 DynamicLibrary::DynamicLibrary(const std::string& filename) :
 	_name(filename),
 	_dlHandle(dlopen(_name.c_str(), RTLD_NOW)) // load the file using the OS function dlopen
-{}
+{
+	if (_dlHandle == nullptr)
+	{
+		const char* msg = dlerror();
+		rConsoleError() << "Error opening library: " << msg << std::endl;
+	}
+}
 
-DynamicLibrary::~DynamicLibrary() {
-	if (!failed()) {
+DynamicLibrary::~DynamicLibrary() 
+{
+	if (!failed()) 
+	{
 		dlclose(_dlHandle);
 	}
 }
 
-bool DynamicLibrary::failed() {
-	return _dlHandle == 0;
+bool DynamicLibrary::failed() 
+{
+	return _dlHandle == nullptr;
 }
 
 // Find a symbol in the library
-DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& symbol) {
+DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& symbol)
+{
 	// Try to obtain the function pointer and cast it to a void* pointer
 	FunctionPointer p = reinterpret_cast<FunctionPointer>(
 		dlsym(_dlHandle, symbol.c_str())
 	);
 
-	if (p == 0) {
+	if (p == nullptr)
+	{
 		const char* error = dlerror();
-		if (error != NULL) {
+
+		if (error != nullptr) 
+		{
             rConsoleError() << error << std::endl;
 		}
 	}
@@ -99,7 +112,8 @@ DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& sy
 	return p;
 }
 
-std::string DynamicLibrary::getName() const {
+std::string DynamicLibrary::getName() const
+{
 	return _name;
 }
 

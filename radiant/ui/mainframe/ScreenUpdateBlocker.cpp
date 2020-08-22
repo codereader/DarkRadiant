@@ -35,7 +35,6 @@ void ScreenUpdateBlocker::showModalProgressDialog()
 	_dialog = new wxutil::ModalProgressDialog(_title, GlobalMainFrame().getWxTopLevelWindow());
 
 	_dialog->Bind(wxEVT_CLOSE_WINDOW, &ScreenUpdateBlocker::onCloseEvent, this);
-	_dialog->Bind(wxEVT_IDLE, [&](wxIdleEvent&) { pulse(); });
 
 	// Show this window immediately
 	_dialog->Show();

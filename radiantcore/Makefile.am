@@ -42,7 +42,9 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 brush/TexDef.cpp \
                 brush/TextureMatrix.cpp \
                 brush/TextureProjection.cpp \
+                brush/Winding.cpp \
                 brush/csg/CSG.cpp \
+                brush/export/CollisionModel.cpp \
                 clipper/BrushByPlaneClipper.cpp \
                 clipper/ClipPoint.cpp \
                 clipper/Clipper.cpp \
@@ -108,6 +110,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 log/LogStreamBuf.cpp \
                 log/LogWriter.cpp \
                 log/StringLogDevice.cpp \
+                map/aas/AasFileManager.cpp \
                 map/aas/Doom3AasFileLoader.cpp \
                 map/aas/Doom3AasFileSettings.cpp \
                 map/aas/Doom3AasFile.cpp \
@@ -136,6 +139,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/format/Quake4MapReader.cpp \
                 map/infofile/InfoFile.cpp \
                 map/infofile/InfoFileExporter.cpp \
+                map/infofile/InfoFileManager.cpp \
                 map/mru/MRU.cpp \
                 map/namespace/ComplexName.cpp \
                 map/namespace/Namespace.cpp \
@@ -166,6 +170,9 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 model/export/AseExporter.cpp \
                 model/export/Lwo2Chunk.cpp \
                 model/export/Lwo2Exporter.cpp \
+                model/export/ModelExporter.cpp \
+                model/export/ModelScalePreserver.cpp \
+                model/export/ScaledModelExporter.cpp \
                 model/export/WavefrontExporter.cpp \
                 model/picomodel/PicoModelLoader.cpp \
                 model/picomodel/PicoModelModule.cpp \
@@ -245,6 +252,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 selection/group/SelectionGroupInfoFileModule.cpp \
                 selection/group/SelectionGroupManager.cpp \
                 selection/group/SelectionGroupModule.cpp \
+                selection/manipulators/DragManipulator.cpp \
                 selection/manipulators/ManipulatorBase.cpp \
                 selection/manipulators/ManipulatorComponents.cpp \
                 selection/manipulators/RotateManipulator.cpp \
