@@ -35,6 +35,8 @@ public:
 
 	wxToolBar* getToolbar(IMainFrame::Toolbar type);
 
+	virtual bool Destroy() override;
+
 private:
 	wxMenuBar* createMenuBar();
 

@@ -250,12 +250,12 @@ void ShaderSelector::updateInfoTable()
 }
 
 // Callback to redraw the GL widget
-void ShaderSelector::onPreviewRender()
+bool ShaderSelector::onPreviewRender()
 {
 	// Get the viewport size from the GL widget
 	wxSize req = _glWidget->GetClientSize();
 
-	if (req.GetWidth() == 0 || req.GetHeight() == 0) return;
+	if (req.GetWidth() == 0 || req.GetHeight() == 0) return false;
 
 	glViewport(0, 0, req.GetWidth(), req.GetHeight());
 
@@ -325,6 +325,8 @@ void ShaderSelector::onPreviewRender()
 		glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() + hfHeight);
 		glEnd();
 	}
+
+	return true;
 }
 
 namespace

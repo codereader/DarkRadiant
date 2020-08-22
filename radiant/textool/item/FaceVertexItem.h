@@ -1,7 +1,6 @@
-#ifndef FACE_VERTEX_ITEM_H_
-#define FACE_VERTEX_ITEM_H_
+#pragma once
 
-#include "brush/Face.h"
+#include "ibrush.h"
 #include "math/AABB.h"
 #include "textool/TexToolItem.h"
 
@@ -14,7 +13,7 @@ class FaceVertexItem :
 	public TexToolItem
 {
 	// The face this control is referring to
-	Face& _sourceFace;
+	IFace& _sourceFace;
 
 	WindingVertex& _windingVertex;
 
@@ -22,7 +21,7 @@ class FaceVertexItem :
 
 public:
 	// Constructor, allocates all child FacItems
-	FaceVertexItem(Face& sourceFace, WindingVertex& windingVertex, FaceItem& parent);
+	FaceVertexItem(IFace& sourceFace, WindingVertex& windingVertex, FaceItem& parent);
 
     // destructor
 	virtual ~FaceVertexItem() {}
@@ -49,6 +48,5 @@ private:
 	AABB getTexAABB();
 };
 
-} // namespace textool
+} // namespace
 
-#endif /* FACE_VERTEX_ITEM_H_ */

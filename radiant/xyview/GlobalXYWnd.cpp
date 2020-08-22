@@ -9,8 +9,7 @@
 
 #include "registry/registry.h"
 
-#include "modulesystem/StaticModule.h"
-#include "selection/algorithm/General.h"
+#include "module/StaticModule.h"
 #include "camera/GlobalCamera.h"
 #include "wxutil/MouseButton.h"
 
@@ -46,7 +45,6 @@ namespace
 	const std::string RKEY_SHOW_WORKZONE = RKEY_XYVIEW_ROOT + "/showWorkzone";
 	const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
 	const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
-	const std::string RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
 
     const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
@@ -156,7 +154,8 @@ void XYWndManager::destroyViews()
 	_activeXY = XYWndPtr();
 }
 
-void XYWndManager::registerCommands() {
+void XYWndManager::registerCommands() 
+{
 	GlobalCommandSystem().addCommand("NewOrthoView", std::bind(&XYWndManager::createXYFloatingOrthoView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("NextView", std::bind(&XYWndManager::toggleActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ZoomIn", std::bind(&XYWndManager::zoomIn, this, std::placeholders::_1));
@@ -167,17 +166,6 @@ void XYWndManager::registerCommands() {
 	GlobalCommandSystem().addCommand("CenterXYViews", std::bind(&XYWndManager::splitViewFocus, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CenterXYView", std::bind(&XYWndManager::focusActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("Zoom100", std::bind(&XYWndManager::zoom100, this, std::placeholders::_1));
-
-	GlobalEventManager().addCommand("NewOrthoView", "NewOrthoView");
-	GlobalEventManager().addCommand("NextView", "NextView");
-	GlobalEventManager().addCommand("ZoomIn", "ZoomIn");
-	GlobalEventManager().addCommand("ZoomOut", "ZoomOut");
-	GlobalEventManager().addCommand("ViewTop", "ViewTop");
-	GlobalEventManager().addCommand("ViewSide", "ViewSide");
-	GlobalEventManager().addCommand("ViewFront", "ViewFront");
-	GlobalEventManager().addCommand("CenterXYViews", "CenterXYViews");
-	GlobalEventManager().addCommand("CenterXYView", "CenterXYView");
-	GlobalEventManager().addCommand("Zoom100", "Zoom100");
 
 	GlobalEventManager().addRegistryToggle("ToggleCrosshairs", RKEY_SHOW_CROSSHAIRS);
 	GlobalEventManager().addRegistryToggle("ToggleGrid", RKEY_SHOW_GRID);
@@ -228,11 +216,6 @@ void XYWndManager::refreshFromRegistry()
 	_showWorkzone = registry::getValue<bool>(RKEY_SHOW_WORKZONE);
 	_defaultBlockSize = registry::getValue<int>(RKEY_DEFAULT_BLOCKSIZE);
 	updateAllViews();
-}
-
-bool XYWndManager::higherEntitySelectionPriority() const 
-{
-	return registry::getValue<bool>(RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
 bool XYWndManager::chaseMouse() const {
@@ -323,6 +306,40 @@ void XYWndManager::setOrigin(const Vector3& origin) {
 	{
 		i->second->setOrigin(origin);
 	}
+}
+
+Vector3 XYWndManager::getActiveViewOrigin()
+{
+	if (!_activeXY) 
+	{
+		throw std::runtime_error("No active view found");
+	}
+
+	return _activeXY->getOrigin();
+}
+
+IOrthoView& XYWndManager::getActiveView()
+{
+	if (!_activeXY)
+	{
+		throw std::runtime_error("No active view found");
+	}
+
+	return *_activeXY;
+}
+
+// Return the first view matching the given viewType
+IOrthoView& XYWndManager::getViewByType(EViewType viewType)
+{
+	for (auto& pair : _xyWnds)
+	{
+		if (pair.second->getViewType() == viewType)
+		{
+			return *pair.second;
+		}
+	}
+	
+	throw std::runtime_error("No matching view found");
 }
 
 void XYWndManager::setScale(float scale) {
@@ -585,8 +602,9 @@ Vector3 XYWndManager::getFocusPosition()
 {
 	Vector3 position(0,0,0);
 
-	if (GlobalSelectionSystem().countSelected() != 0) {
-		position = selection::algorithm::getCurrentSelectionCenter();
+	if (GlobalSelectionSystem().countSelected() != 0) 
+	{
+		position = GlobalSelectionSystem().getCurrentSelectionCenter();
 	}
 	else {
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
@@ -707,5 +725,6 @@ module::StaticModule<XYWndManager> xyWndModule;
 // Accessor function returning the reference
 ui::XYWndManager& GlobalXYWnd()
 {
-	return *ui::xyWndModule.getModule();
+	return *std::static_pointer_cast<ui::XYWndManager>(
+		module::GlobalModuleRegistry().getModule(MODULE_ORTHOVIEWMANAGER));
 }

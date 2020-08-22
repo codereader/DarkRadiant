@@ -50,20 +50,6 @@ void MenuItem::construct()
 
 	std::string caption = _caption;
 
-	// Try to lookup the event name
-	IEventPtr event = GlobalEventManager().findEvent(_event);
-
-	if (!event->empty())
-	{
-		// Retrieve an accelerator string formatted for a menu
-		// greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
-		caption = _caption + "\t " + GlobalEventManager().getAcceleratorStr(event, true);
-	}
-	else
-	{
-		rWarning() << "MenuElement: Cannot find associated event: " << _event << std::endl;
-	}
-
 	// Create a new MenuElement
 	_menuItem = new wxMenuItem(nullptr, _nextMenuItemId++, caption);
 	
@@ -72,22 +58,29 @@ void MenuItem::construct()
 		_menuItem->SetBitmap(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + _icon));
 	}
 
-	_menuItem->SetCheckable(event && event->isToggle());
+	bool isToggle = GlobalEventManager().findEvent(_event)->isToggle();
+	_menuItem->SetCheckable(isToggle);
 
 	int pos = parent->getMenuPosition(shared_from_this());
 	menu->Insert(pos, _menuItem);
 
-	if (event)
+	GlobalEventManager().registerMenuItem(_event, _menuItem);
+
+	if (_event.empty())
 	{
-		event->connectMenuItem(_menuItem);
-	}
-	else
-	{
-		// No event attached to this menu item, disable it
+		// Disable items without event
 		menu->Enable(_menuItem->GetId(), false);
 	}
 
 	MenuElement::constructChildren();
+}
+
+void MenuItem::setAccelerator(const std::string& accelStr)
+{
+	if (_menuItem == nullptr) return;
+
+	std::string caption = _caption + "\t " + accelStr;
+	_menuItem->SetItemLabel(caption);
 }
 
 void MenuItem::deconstruct()
@@ -100,12 +93,7 @@ void MenuItem::deconstruct()
 		// Try to lookup the event name
 		if (!_event.empty())
 		{
-			IEventPtr event = GlobalEventManager().findEvent(_event);
-
-			if (event)
-			{
-				event->disconnectMenuItem(_menuItem);
-			}
+			GlobalEventManager().unregisterMenuItem(_event, _menuItem);
 		}
 
 		if (_menuItem->GetMenu() != nullptr)
@@ -115,6 +103,21 @@ void MenuItem::deconstruct()
 
 		delete _menuItem;
 		_menuItem = nullptr;
+	}
+}
+
+bool MenuItem::isToggle() const
+{
+	return _menuItem != nullptr && _menuItem->IsCheckable();
+}
+
+void MenuItem::setToggled(bool isToggled)
+{
+	assert(isToggle());
+
+	if (_menuItem != nullptr)
+	{
+		_menuItem->Check(isToggled);
 	}
 }
 

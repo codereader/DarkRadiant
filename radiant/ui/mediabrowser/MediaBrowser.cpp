@@ -7,6 +7,7 @@
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "ishaders.h"
+#include "ishaderclipboard.h"
 #include "ieventmanager.h"
 
 #include "wxutil/MultiMonitor.h"
@@ -19,14 +20,13 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/radiobut.h>
+#include <wx/frame.h>
 
 #include <iostream>
 #include <map>
 
 #include "registry/registry.h"
 #include "shaderlib.h"
-#include "selection/algorithm/Shader.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 #include "string/string.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/common/ShaderDefinitionView.h"
@@ -34,7 +34,7 @@
 #include "ui/common/TexturePreviewCombo.h"
 
 #include "debugging/ScopedDebugTimer.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include <functional>
 #include "string/predicate.h"
@@ -471,7 +471,7 @@ void MediaBrowser::construct()
 		if (!isDirectorySelected() && !selection.empty())
 		{
 			// Pass shader name to the selection system
-			selection::algorithm::applyShaderToSelection(selection);
+			GlobalCommandSystem().executeCommand("SetShaderOnSelection", selection);
 		}
 	});
 
@@ -816,7 +816,7 @@ bool MediaBrowser::_testLoadInTexView()
 void MediaBrowser::_onApplyToSel()
 {
 	// Pass shader name to the selection system
-	selection::algorithm::applyShaderToSelection(getSelection());
+	GlobalCommandSystem().executeCommand("SetShaderOnSelection", getSelection());
 }
 
 // Check if a single non-directory texture is selected (used by multiple menu
@@ -843,11 +843,11 @@ void MediaBrowser::_onSelectItems(bool select)
 
     if (select)
     {
-        selection::algorithm::selectItemsByShader(shaderName);
+		GlobalCommandSystem().executeCommand("SelectItemsByShader", shaderName);
     }
     else
     {
-        selection::algorithm::deselectItemsByShader(shaderName);
+		GlobalCommandSystem().executeCommand("DeselectItemsByShader", shaderName);
     }
 }
 
@@ -947,7 +947,7 @@ void MediaBrowser::handleSelectionChange()
 	if (!isDirectorySelected())
 	{
 		_preview->SetTexture(getSelection());
-		GlobalShaderClipboard().setSource(getSelection());
+		GlobalShaderClipboard().setSourceShader(getSelection());
 	}
 	else
 	{
@@ -983,6 +983,7 @@ const StringSet& MediaBrowser::getDependencies() const
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_SHADERSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_SHADERCLIPBOARD);
 	}
 
 	return _dependencies;
@@ -993,7 +994,6 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowser::togglePage));
-	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
 
 	// We need to create the liststore and widgets before attaching ourselves
 	// to the material manager as observer, as the attach() call below
@@ -1017,13 +1017,23 @@ void MediaBrowser::initialiseModule(const ApplicationContext& ctx)
 
 	// Start loading materials
 	populate();
+
+	_shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
+		sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)
+	);
 }
 
 void MediaBrowser::shutdownModule()
 {
+	_shaderClipboardConn.disconnect();
 	_emptyFavouritesLabel = wxDataViewItem();
 	_materialDefsLoaded.disconnect();
 	_materialDefsUnloaded.disconnect();
+}
+
+void MediaBrowser::onShaderClipboardSourceChanged()
+{
+	setSelection(GlobalShaderClipboard().getShaderName());
 }
 
 // Static module

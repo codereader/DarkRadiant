@@ -1,19 +1,11 @@
-#ifndef ICOUNTER_H_
-#define ICOUNTER_H_
+#pragma once
 
 #include <cstddef>
 #include "imodule.h"
 
-class ICounter {
+class ICounter
+{
 public:
-	class Observer
-	{
-	public:
-		virtual ~Observer() {}
-		// Gets called by the Counter class on count change
-		virtual void countChanged() = 0;
-	};
-
     /** Destructor */
 	virtual ~ICounter() {}
 
@@ -35,7 +27,7 @@ enum CounterType
 	counterEntities,
 };
 
-const std::string MODULE_COUNTER("Counters");
+const char* const MODULE_COUNTER("Counters");
 
 /** greebo: This abstract class defines the interface to the core application.
  * 			Use this to access methods from the main codebase in radiant/
@@ -46,6 +38,8 @@ class ICounterManager :
 public:
 	// Returns the Counter object of the given type
 	virtual ICounter& getCounter(CounterType counter) = 0;
+
+	virtual sigc::signal<void>& signal_countersChanged() = 0;
 };
 
 inline ICounterManager& GlobalCounters()
@@ -58,5 +52,3 @@ inline ICounterManager& GlobalCounters()
 	);
 	return _counters;
 }
-
-#endif /*ICOUNTER_H_*/

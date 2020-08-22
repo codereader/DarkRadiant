@@ -3,7 +3,6 @@
 #include "iuimanager.h"
 #include "imap.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "layers/LayerManager.h"
 
 namespace ui
 {

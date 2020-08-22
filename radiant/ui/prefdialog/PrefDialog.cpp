@@ -2,6 +2,7 @@
 
 #include "imainframe.h"
 #include "itextstream.h"
+#include "ipreferencesystem.h"
 
 #include "i18n.h"
 
@@ -13,9 +14,6 @@
 #include "string/split.h"
 #include "string/join.h"
 #include "string/predicate.h"
-
-#include "settings/PreferenceSystem.h"
-#include "settings/PreferencePage.h"
 
 namespace ui
 {
@@ -47,7 +45,7 @@ PrefDialog::PrefDialog(wxWindow* parent) :
 void PrefDialog::createPages()
 {
 	// Now create all pages
-	GetPreferenceSystem().foreachPage([&](settings::PreferencePage& page)
+	GlobalPreferenceSystem().foreachPage([&](IPreferencePage& page)
 	{
 		// Create a page responsible for this settings::PreferencePage
 		PrefPage* pageWidget = new PrefPage(_notebook, page);

@@ -95,8 +95,7 @@ void Toggle::connectMenuItem(wxMenuItem* item)
 
 	// Connect the togglebutton to the callback of this class
 	assert(item->GetMenu());
-	item->GetMenu()->Connect(item->GetId(), wxEVT_MENU, 
-		wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
+	item->GetMenu()->Bind(wxEVT_MENU, &Toggle::onMenuItemClicked, this, item->GetId());
 }
 
 void Toggle::disconnectMenuItem(wxMenuItem* item)
@@ -117,8 +116,7 @@ void Toggle::disconnectMenuItem(wxMenuItem* item)
 
 	// Connect the togglebutton to the callback of this class
 	assert(item->GetMenu());
-	item->GetMenu()->Disconnect(item->GetId(), wxEVT_MENU, 
-		wxCommandEventHandler(Toggle::onMenuItemClicked), NULL, this);
+	item->GetMenu()->Unbind(wxEVT_MENU, &Toggle::onMenuItemClicked, this, item->GetId());
 }
 
 void Toggle::onMenuItemClicked(wxCommandEvent& ev)
@@ -136,7 +134,7 @@ void Toggle::onMenuItemClicked(wxCommandEvent& ev)
 	ev.Skip();
 }
 
-void Toggle::connectToolItem(wxToolBarToolBase* item)
+void Toggle::connectToolItem(const wxToolBarToolBase* item)
 {
 	if (_toolItems.find(item) != _toolItems.end())
 	{
@@ -150,11 +148,10 @@ void Toggle::connectToolItem(wxToolBarToolBase* item)
 	item->GetToolBar()->ToggleTool(item->GetId(), _toggled);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Connect(item->GetId(), wxEVT_TOOL, 
-		wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Bind(wxEVT_TOOL, &Toggle::onToolItemClicked, this, item->GetId());
 }
 
-void Toggle::disconnectToolItem(wxToolBarToolBase* item)
+void Toggle::disconnectToolItem(const wxToolBarToolBase* item)
 {
 	if (_toolItems.find(item) == _toolItems.end())
 	{
@@ -165,8 +162,7 @@ void Toggle::disconnectToolItem(wxToolBarToolBase* item)
 	_toolItems.erase(item);
 
 	// Connect the to the callback of this class
-	item->GetToolBar()->Disconnect(item->GetId(), wxEVT_TOOL, 
-		wxCommandEventHandler(Toggle::onToolItemClicked), NULL, this);
+	item->GetToolBar()->Unbind(wxEVT_TOOL, &Toggle::onToolItemClicked, this, item->GetId());
 }
 
 void Toggle::onToolItemClicked(wxCommandEvent& ev)
@@ -238,32 +234,6 @@ void Toggle::toggle()
 
 	// Update any attached GtkObjects in any case
 	updateWidgets();
-}
-
-void Toggle::connectAccelerator(IAccelerator& accel)
-{
-    for (wxMenuItem* item : _menuItems)
-    {
-        setMenuItemAccelerator(item, static_cast<Accelerator&>(accel));
-    }
-
-    for (wxToolBarToolBase* tool : _toolItems)
-    {
-        setToolItemAccelerator(tool, static_cast<Accelerator&>(accel));
-    }
-}
-
-void Toggle::disconnectAccelerators()
-{
-    for (wxMenuItem* item : _menuItems)
-    {
-        clearMenuItemAccelerator(item);
-    }
-
-    for (wxToolBarToolBase* tool : _toolItems)
-    {
-        clearToolItemAccelerator(tool);
-    }
 }
 
 }

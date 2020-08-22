@@ -2,17 +2,15 @@
 
 #include "iuimanager.h"
 #include "igroupdialog.h"
+#include "iradiant.h"
 
 #include "wxutil/ConsoleView.h"
 #include <wx/sizer.h>
 
-#include "LogLevels.h"
-#include "LogWriter.h"
-#include "StringLogDevice.h"
-
 #include <functional>
 
-namespace ui {
+namespace ui
+{
 
 Console::Console(wxWindow* parent) :
 	wxPanel(parent, wxID_ANY),
@@ -28,30 +26,10 @@ Console::Console(wxWindow* parent) :
         std::bind(&Console::clearCmd, this, std::placeholders::_1));
 
     // Get a lock on the logging system before doing these changes
-    std::lock_guard<std::mutex> lock(module::GlobalModuleRegistry().getApplicationContext().getStreamLock());
+    std::lock_guard<std::mutex> lock(GlobalRadiantCore().getLogWriter().getStreamLock());
 
 	// We're ready to catch log output, register ourselves
-	applog::LogWriter::Instance().attach(this);
-
-	// Copy the temporary buffers over
-	if (applog::StringLogDevice::InstancePtr() != NULL)
-	{
-		applog::StringLogDevice& logger = *applog::StringLogDevice::InstancePtr();
-
-		for (int level = applog::SYS_VERBOSE;
-			 level < applog::SYS_NUM_LOGLEVELS;
-			 level++)
-		{
-            std::string bufferedText = logger.getString(static_cast<applog::ELogLevel>(level));
-
-            if (bufferedText.empty()) continue;
-
-            writeLog(bufferedText + "\n", static_cast<applog::ELogLevel>(level));
-		}
-	}
-
-	// Destruct the temporary buffer
-	applog::StringLogDevice::destroy();
+	GlobalRadiantCore().getLogWriter().attach(this);
 }
 
 Console::~Console()
@@ -59,7 +37,7 @@ Console::~Console()
 	// TODO - there might be more than one console instance handle this
 	GlobalCommandSystem().removeCommand("clear");
 
-	applog::LogWriter::Instance().detach(this);
+	GlobalRadiantCore().getLogWriter().detach(this);
 }
 
 void Console::clearCmd(const cmd::ArgumentList& args)
@@ -72,22 +50,22 @@ void Console::toggle(const cmd::ArgumentList& args)
 	GlobalGroupDialog().togglePage("console");
 }
 
-void Console::writeLog(const std::string& outputStr, applog::ELogLevel level)
+void Console::writeLog(const std::string& outputStr, applog::LogLevel level)
 {
 	switch (level)
 	{
-		case applog::SYS_VERBOSE:
-		case applog::SYS_STANDARD:
-			_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
-			break;
-		case applog::SYS_WARNING:
-			_view->appendText(outputStr, wxutil::ConsoleView::ModeWarning);
-			break;
-		case applog::SYS_ERROR:
-			_view->appendText(outputStr, wxutil::ConsoleView::ModeError);
-			break;
-		default:
-			_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
+	case applog::LogLevel::Verbose:
+	case applog::LogLevel::Standard:
+		_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
+		break;
+	case applog::LogLevel::Warning:
+		_view->appendText(outputStr, wxutil::ConsoleView::ModeWarning);
+		break;
+	case applog::LogLevel::Error:
+		_view->appendText(outputStr, wxutil::ConsoleView::ModeError);
+		break;
+	default:
+		_view->appendText(outputStr, wxutil::ConsoleView::ModeStandard);
 	};
 }
 

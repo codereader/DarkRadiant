@@ -18,11 +18,10 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 								 wxWindow* parent,
 								 const std::string& command) :
 	wxutil::DialogBase(title, parent),
-	_statusText(NULL),
-	_existingEventText(NULL),
-	_entry(NULL),
-	_commandName(command),
-	_event(GlobalEventManager().findEvent(_commandName))
+	_statusText(nullptr),
+	_existingEventText(nullptr),
+	_entry(nullptr),
+	_commandName(command)
 {
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	SetSizer(vbox);
@@ -33,7 +32,7 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 	_entry = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, 
 		wxDefaultSize, wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER);
 
-	_entry->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(ShortcutChooser::onShortcutKeyPress), NULL, this);
+	_entry->Bind(wxEVT_KEY_DOWN, &ShortcutChooser::onShortcutKeyPress, this);
 
 	// The widget to display the status text
 	_statusText = new wxStaticText(this, wxID_ANY, _("Note: This shortcut is already assigned to:"));
@@ -47,10 +46,10 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 
 	// Create the close button
 	wxButton* okButton = new wxButton(this, wxID_ANY, _("OK"));
-	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShortcutChooser::onOK), NULL, this);
+	okButton->Bind(wxEVT_BUTTON, &ShortcutChooser::onOK, this);
 	
 	wxButton* cancelButton = new wxButton(this, wxID_ANY, _("Cancel"));
-	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShortcutChooser::onCancel), NULL, this);
+	cancelButton->Bind(wxEVT_BUTTON, &ShortcutChooser::onCancel, this);
 
 	buttonHBox->Add(okButton, 0, wxRIGHT, 6);
 	buttonHBox->Add(cancelButton, 0);
@@ -77,26 +76,24 @@ void ShortcutChooser::onCancel(wxCommandEvent& ev)
 
 void ShortcutChooser::onShortcutKeyPress(wxKeyEvent& ev)
 {
-	std::string eventName("");
-
 	// Store the shortcut string representation into the Entry field
 	_entry->SetValue(GlobalEventManager().getEventStr(ev));
 
 	// Store this key/modifier combination for later use (UPPERCASE!)
 	_savedKeyEvent = ev;
 
-	IEventPtr foundEvent = GlobalEventManager().findEvent(ev);
+	auto currentlyBoundCommand = GlobalEventManager().findEventForAccelerator(ev);
 
-	// Only display the note if any event was found and it's not the "self" event
-	if (!foundEvent->empty() && foundEvent != _event)
+	// Display the note if the found command differs from the one we're editing
+	bool accelAlreadybound = !currentlyBoundCommand.empty() && currentlyBoundCommand != _commandName;
+
+	if (accelAlreadybound)
 	{
-		eventName = GlobalEventManager().getEventName(foundEvent);
+		_existingEventText->SetLabel(currentlyBoundCommand);
 	}
-
-	_existingEventText->SetLabel(eventName);
-
-	_statusText->Show(!eventName.empty());
-	_existingEventText->Show(!eventName.empty());
+	
+	_statusText->Show(accelAlreadybound);
+	_existingEventText->Show(accelAlreadybound);
 
 	Fit();
 	CenterOnParent();
@@ -123,19 +120,16 @@ bool ShortcutChooser::assignShortcut()
 	{
 		// Construct an eventkey structure to be passed to the EventManager query
 		// Try to lookup an existing command with the same shortcut
-		IEventPtr foundEvent = GlobalEventManager().findEvent(_savedKeyEvent);
+		auto currentlyBoundCommand = GlobalEventManager().findEventForAccelerator(_savedKeyEvent);
 
 		// Only react on non-empty and non-"self" events
-		if (!foundEvent->empty() && foundEvent != _event)
+		if (!currentlyBoundCommand.empty() && currentlyBoundCommand != _commandName)
 		{
 			// There is already a command connected to this shortcut, ask the user
-			const std::string foundEventName = GlobalEventManager().getEventName(foundEvent);
-
-			// Construct the message
 			std::string message =
 				fmt::format(_("The specified shortcut is already assigned to {0}"
 				"\nOverwrite the current setting and assign this shortcut to {1} instead?"),
-				foundEventName, _commandName);
+				currentlyBoundCommand, _commandName);
 
 			// Fire up the dialog to ask the user what action to take
 			IDialogPtr popup = GlobalDialogManager().createMessageBox(
@@ -145,12 +139,11 @@ bool ShortcutChooser::assignShortcut()
 			if (popup->run() == ui::IDialog::RESULT_YES)
 			{
 				// Disconnect both the found command and the new command
-				GlobalEventManager().disconnectAccelerator(foundEventName);
+				GlobalEventManager().disconnectAccelerator(currentlyBoundCommand);
 				GlobalEventManager().disconnectAccelerator(_commandName);
 
 				// Create a new accelerator and connect it to the selected command
-				IAccelerator& accel = GlobalEventManager().addAccelerator(_savedKeyEvent);
-				GlobalEventManager().connectAccelerator(accel, _commandName);
+				GlobalEventManager().connectAccelerator(_savedKeyEvent, _commandName);
 
 				shortcutsChanged = true;
 			}
@@ -163,8 +156,7 @@ bool ShortcutChooser::assignShortcut()
 			GlobalEventManager().disconnectAccelerator(_commandName);
 
 			// Create a new accelerator and connect it to the selected command
-			IAccelerator& accel = GlobalEventManager().addAccelerator(_savedKeyEvent);
-			GlobalEventManager().connectAccelerator(accel, _commandName);
+			GlobalEventManager().connectAccelerator(_savedKeyEvent, _commandName);
 
 			shortcutsChanged = true;
 		}

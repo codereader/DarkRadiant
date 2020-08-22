@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [2.8.0])
+AC_INIT([darkradiant], [2.9.0])
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 
@@ -350,16 +350,21 @@ AC_SUBST([CFLAGS])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([LDFLAGS])
 
+# Define the file name of the radiant core module without extension
+AC_DEFINE([CORE_MODULE_LIBRARY], ["libradiantcore"], ["Core module filename without extension, e.g. 'libradiantcore'"])
+
 # Generate output files
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  Makefile
                  radiant/Makefile
+                 radiantcore/Makefile
                  install/i18n/Makefile.in
                  doc/Makefile
                  libs/Makefile
                  libs/wxutil/Makefile
                  libs/math/Makefile
+                 libs/module/Makefile
                  libs/scene/Makefile
                  libs/xmlutil/Makefile
                  plugins/Makefile

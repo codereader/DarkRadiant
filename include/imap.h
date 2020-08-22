@@ -8,6 +8,11 @@
 // Registry setting for suppressing the map load progress dialog
 const char* const RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG = "user/ui/map/suppressMapLoadDialog";
 
+// Whether to load the most recently used map on app startup
+const char* const RKEY_LOAD_LAST_MAP = "user/ui/map/loadLastMap";
+
+const char* const LOAD_PREFAB_AT_CMD = "LoadPrefabAt";
+
 // Namespace forward declaration
 class INamespace;
 typedef std::shared_ptr<INamespace> INamespacePtr;
@@ -40,6 +45,8 @@ class IMapRootNode :
 {
 public:
     virtual ~IMapRootNode() {}
+
+	virtual void setName(const std::string& name) = 0;
 
     /**
      * greebo: Returns the namespace of this root.
@@ -125,6 +132,26 @@ public:
 	* Returns the name of the map.
 	*/
 	virtual std::string getMapName() const = 0;
+
+	/**
+	 * Signal fired when the name of this map is changing.
+	 */
+	virtual sigc::signal<void>& signal_mapNameChanged() = 0;
+
+	// Returns true if the map has unsaved changes.
+	virtual bool isModified() const = 0;
+
+	// Sets the modified status of this map
+	virtual void setModified(bool modifiedFlag) = 0;
+
+	/**
+	 * Signal fired when the modified status of this map has changed.
+	 */
+	virtual sigc::signal<void>& signal_modifiedChanged() = 0;
+
+	// Caution: this is upposed to be called on startup, since it doesn't ask the user
+	// whether to save the current map. Use the "NewMap" command for regular purposes.
+	virtual void createNewMap() = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

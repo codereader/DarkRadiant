@@ -14,16 +14,14 @@
 #include "imainframe.h"
 #include "itextstream.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "selectionlib.h"
+#include "scene/SelectionIndex.h"
 #include "scenelib.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/TreeModel.h"
 #include "xmlutil/Document.h"
-#include "map/Map.h"
-#include "selection/algorithm/Entity.h"
-#include "selection/algorithm/General.h"
 
 #include <map>
 #include <string>
@@ -403,7 +401,6 @@ void EntityInspector::initialiseModule(const ApplicationContext& ctx)
     );
 
     GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
-    GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");
 }
 
 void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor)
@@ -627,22 +624,13 @@ void EntityInspector::setPropertyFromEntries()
     _keyEntry->SetValue(key);
     _valEntry->SetValue(val);
 
-    UndoableCommand cmd("entitySetProperty");
-
     // Pass the call to the specialised routine
     applyKeyValueToSelection(key, val);
 }
 
 void EntityInspector::applyKeyValueToSelection(const std::string& key, const std::string& val)
 {
-    try
-    {
-        selection::algorithm::setEntityKeyvalue(key, val);
-    }
-    catch (std::runtime_error& ex)
-    {
-        wxutil::Messagebox::ShowError(ex.what());
-    }
+    GlobalCommandSystem().executeCommand("SetEntityKeyValue", key, val);
 }
 
 void EntityInspector::loadPropertyMap()
@@ -746,18 +734,8 @@ void EntityInspector::_onCopyKey()
         std::string key = iconAndName.GetText().ToStdString();
         std::string value = row[_columns.value];
 
-        _clipBoard.push_back(std::make_pair(key, value));
+        _clipBoard.emplace_back(key, value);
     }
-#if 0
-    std::string key = getSelectedKey();
-    std::string value = getListSelection(_columns.value);
-
-    if (!key.empty())
-    {
-        _clipBoard.key = key;
-        _clipBoard.value = value;
-    }
-#endif
 }
 
 bool EntityInspector::_testCopyKey()
@@ -1180,10 +1158,9 @@ void EntityInspector::getEntityFromSelectionSystem()
         changeSelectedEntity(selectedNode);
 
         // Just set the entity number
-        std::size_t ent(0), prim(0);
-        selection::algorithm::getSelectionIndex(ent, prim);
+        auto indices = scene::getNodeIndices(selectedNode);
 
-        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}"), ent));
+        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}"), indices.first));
     }
     else
     {
@@ -1191,10 +1168,9 @@ void EntityInspector::getEntityFromSelectionSystem()
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
         changeSelectedEntity(selectedNodeParent);
         
-        std::size_t ent(0), prim(0);
-        selection::algorithm::getSelectionIndex(ent, prim);
+        auto indices = scene::getNodeIndices(selectedNode);
 
-        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), ent, prim));
+        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), indices.first, indices.second));
     }
 }
 

@@ -15,7 +15,7 @@
 		<menuItem name="saveSelected" caption="&amp;Export selected as Map..." command="SaveSelected" />
 		<menuItem name="saveSelectedPrefab" caption="&amp;Export selected as Prefab..." command="SaveSelectedAsPrefab" />
 		<menuItem name="exportSelectedAsModel" caption="&amp;Export selected as Model..." command="ExportSelectedAsModelDialog" />
-		<menuItem name="createCM" caption="Export selected as Collision Model..." command="BrushExportCM" />
+		<menuItem name="createCM" caption="Export selected as Collision Model..." command="ExportCollisionModelDialog" />
 		<menuItem name="saveRegion" caption="Export &amp;Region..." command="SaveRegion" />
 		<menuSeparator />
 		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16red.png" />
@@ -43,6 +43,9 @@
 		<menuSeparator />
 		<menuItem name="duplicate" caption="&amp;Duplicate" command="CloneSelection" />
 		<menuItem name="delete" caption="D&amp;elete" command="DeleteSelection" />
+		<menuSeparator />
+		<menuItem name="groupSelected" caption="Group Selection" command="GroupSelected" icon="group_selection.png" />
+		<menuItem name="ungroupSelected" caption="Ungroup Selection" command="UngroupSelected" icon="ungroup_selection.png" />
 		<menuSeparator />
 		<menuItem name="parent" caption="Rep&amp;arent Primitives" command="ParentSelection" />
 		<menuItem name="parenttoworldspawn" caption="Reparent Primitives to &amp;Worldspawn" command="ParentSelectionToWorldspawn" />
@@ -207,6 +210,7 @@
 		<menuItem name="bindEntity" caption="&amp;Bind selected entities" command="BindSelection" />
 		<menuItem name="animviewer" caption="MD5 Animation Viewer" command="AnimationPreview" />
 		<menuItem name="entityclasstree" caption="Entity Class Tree..." command="EntityClassTree" icon="icon_classname.png" />
+		<menuItem name="particleEditor" caption="Particle Editor..." command="ParticlesEditor" icon="particle16.png" />
 	</subMenu>
 
 	<subMenu name="brush" caption="B&amp;rush">
@@ -242,7 +246,7 @@
 	</subMenu>
 
 	<subMenu name="patch" caption="&amp;Patch">
-		<menuItem name="simplePatch" caption="Create Simple Patch Mesh" command="SimplePatchMesh" />
+		<menuItem name="simplePatch" caption="Create Simple Patch Mesh" command="CreateSimplePatchDialog" />
 		<menuSeparator />
 		<menuItem name="endcap" caption="Create End cap" command="PatchEndCap" />
 		<menuItem name="bevel" caption="Create Bevel" command="PatchBevel" />
@@ -297,11 +301,11 @@
 		</subMenu>
 
 		<menuSeparator />
-		<menuItem name="thickenPatches" caption="Thicken Selected Patches" command="ThickenPatch" />
-		<menuItem name="capselection" caption="Cap Selection" command="CapCurrentCurve" icon="curve_cap.png" />
+		<menuItem name="thickenPatches" caption="Thicken Selected Patches..." command="ThickenPatchDialog" />
+		<menuItem name="capselection" caption="Cap Selection..." command="PatchCapDialog" icon="curve_cap.png" />
 		<menuSeparator />
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
-    <menuItem name="bulgePatch" caption="Bulge patch" command="BulgePatch" />
+    <menuItem name="bulgePatch" caption="Bulge Patch..." command="BulgePatchDialog" />
 	</subMenu>
 
 	<subMenu name="curve" caption="&amp;Curve">

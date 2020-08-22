@@ -27,6 +27,13 @@ public:
 	};
 
 	/**
+	 * Set the completed fraction of the progress bar.
+	 * If the user has clicked the Cancel button since the last update, this method
+	 * will throw an exception to indicate an aborted operation.
+	 */
+	void setFraction(double fraction);
+
+	/**
 	 * Set the text to display in the label, and pulse the progress bar. If the
 	 * user has clicked the Cancel button since the last update, this method
 	 * will throw an exception to indicate an aborted operation.

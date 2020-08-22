@@ -1,41 +1,35 @@
 #include "StartupMapLoader.h"
 
 #include "imodule.h"
+#include "imap.h"
 #include "igl.h"
 #include "irender.h"
 #include "iregistry.h"
+#include "icommandsystem.h"
+#include "igame.h"
 #include "iradiant.h"
-#include "Map.h"
-#include "ui/mru/MRU.h"
-#include "modulesystem/ModuleRegistry.h"
+#include "imru.h"
+#include "module/StaticModule.h"
 
 #include "os/path.h"
 #include "os/file.h"
+#include "registry/registry.h"
 
 namespace map 
 {
-
-StartupMapLoader::StartupMapLoader()
-{
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(*this, &StartupMapLoader::onRadiantStartup)
-	);
-	GlobalRadiant().signal_radiantShutdown().connect(
-		sigc::mem_fun(*this, &StartupMapLoader::onRadiantShutdown)
-	);
-}
 
 void StartupMapLoader::onRadiantStartup()
 {
 	std::string mapToLoad = "";
 
     const ApplicationContext::ArgumentList& args(
-        module::ModuleRegistry::Instance().getApplicationContext().getCmdLineArgs()
+        module::GlobalModuleRegistry().getApplicationContext().getCmdLineArgs()
     );
 
     for (const std::string& candidate : args)
     {
-		if (os::getExtension(candidate) != "map") continue;
+		if (os::getExtension(candidate) != "map" && 
+			os::getExtension(candidate) != "mapx") continue;
 
 		// We have a map file, check if it exists (and where)
 
@@ -46,7 +40,7 @@ void StartupMapLoader::onRadiantStartup()
 			break;
 		}
 
-		fs::path mapsPath = GlobalRegistry().get(RKEY_MAP_PATH);
+		fs::path mapsPath = GlobalGameManager().getMapPath();
 
 		fs::path fullMapPath = mapsPath / candidate;
 
@@ -62,18 +56,18 @@ void StartupMapLoader::onRadiantStartup()
 	{
 		loadMapSafe(mapToLoad);
 	}
-	else
+	else if (registry::getValue<bool>(RKEY_LOAD_LAST_MAP))
 	{
 		std::string lastMap = GlobalMRU().getLastMapName();
 
-		if (GlobalMRU().loadLastMap() && !lastMap.empty() && os::fileOrDirExists(lastMap))
+		if (!lastMap.empty() && os::fileOrDirExists(lastMap))
 		{
 			loadMapSafe(lastMap);
 		}
-		else
-		{
-			GlobalMap().createNew();
-		}
+	}
+	else
+	{
+		GlobalMapModule().createNewMap();
 	}
 }
 
@@ -82,20 +76,44 @@ void StartupMapLoader::loadMapSafe(const std::string& mapToLoad)
 	// Check if we have a valid openGL context, otherwise postpone the load
 	if (GlobalOpenGL().wxContextValid())
 	{
-		GlobalMap().load(mapToLoad);
+		GlobalCommandSystem().executeCommand("OpenMap", mapToLoad);
 		return;
 	}
 
 	// No valid context, subscribe to the extensionsInitialised signal
 	GlobalRenderSystem().signal_extensionsInitialised().connect([mapToLoad]()
 	{
-		GlobalMap().load(mapToLoad);
+		GlobalCommandSystem().executeCommand("OpenMap", mapToLoad);
 	});
 }
 
-void StartupMapLoader::onRadiantShutdown()
+const std::string& StartupMapLoader::getName() const
 {
-	GlobalMRU().saveRecentFiles();
+	static std::string _name("StartupMapLoader");
+	return _name;
 }
+
+const StringSet& StartupMapLoader::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_RADIANT_APP);
+	}
+
+	return _dependencies;
+}
+
+void StartupMapLoader::initialiseModule(const ApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(*this, &StartupMapLoader::onRadiantStartup)
+	);
+}
+
+module::StaticModule<StartupMapLoader> startupMapLoader;
 
 } // namespace map

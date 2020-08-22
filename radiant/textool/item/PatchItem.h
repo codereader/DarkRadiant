@@ -1,20 +1,20 @@
-#ifndef PATCHITEM_H_
-#define PATCHITEM_H_
+#pragma once
 
 #include "textool/TexToolItem.h"
 
-class Patch;
+class IPatch;
 
-namespace textool {
+namespace textool
+{
 
 class PatchItem :
 	public TexToolItem
 {
 	// The patch this control is referring to
-	Patch& _sourcePatch;
+	IPatch& _sourcePatch;
 
 public:
-	PatchItem(Patch& sourcePatch);
+	PatchItem(IPatch& sourcePatch);
 
 	// Renders this object's visual representation.
 	virtual void render();
@@ -32,6 +32,4 @@ public:
 	virtual void selectRelated();
 };
 
-} // namespace TexTool
-
-#endif /*PATCHITEM_H_*/
+} // namespace

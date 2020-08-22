@@ -3,8 +3,6 @@
 #include "itextstream.h"
 #include "i18n.h"
 #include "iuimanager.h"
-#include "ui/menu/FiltersMenu.h"
-#include "map/Map.h"
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
 #include <wx/menu.h>
@@ -92,11 +90,16 @@ wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
 	return (found != _toolbars.end()) ? found->second.get() : nullptr;
 }
 
+bool TopLevelFrame::Destroy()
+{
+	// Clear out any references to toolbars while the modules are still loaded
+	_toolbars.clear();
+
+	return wxFrame::Destroy();
+}
+
 wxMenuBar* TopLevelFrame::createMenuBar()
 {
-	// Create the Filter menu entries before adding the menu bar
-    FiltersMenu::addItemsToMainMenu();
-
     // Return the "main" menubar from the UIManager
 	return GlobalUIManager().getMenuManager().getMenuBar("main");
 }

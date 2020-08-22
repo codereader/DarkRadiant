@@ -124,6 +124,11 @@ public:
 		return _strValue;
 	}
 
+	bool getBoolean() const
+	{
+		return getInt() != 0;
+	}
+
 	int getInt() const
 	{
 		return _intValue;
@@ -235,6 +240,9 @@ public:
 	 */
 	virtual void addCommand(const std::string& name, Function func,
 							const Signature& signature = Signature()) = 0;
+
+	// Returns true if the named command exists
+	virtual bool commandExists(const std::string& name) = 0;
 
 	/**
 	 * Remove a named command.

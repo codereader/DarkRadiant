@@ -7,10 +7,9 @@
 #include <sigc++/signal.h>
 
 class RenderableCollector;
-namespace render { class View; }
 
 class ISelectable;
-
+class SelectionTest;
 
 namespace scene
 {
@@ -32,8 +31,9 @@ typedef sigc::slot<void, const ISelectable&> SelectionChangedSlot;
 
 class SelectionInfo;
 class Face;
+class IFace;
 class Brush;
-class Patch;
+class IPatch;
 
 namespace selection 
 { 
@@ -113,7 +113,7 @@ public:
 	*/
 	virtual Component* getActiveComponent() = 0;
 
-	virtual void testSelect(const render::View& view, const Matrix4& pivot2world) {}
+	virtual void testSelect(SelectionTest& test, const Matrix4& pivot2world) {}
 
 	// Renders the manipulator's visual representation to the scene
 	virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;
@@ -264,13 +264,20 @@ public:
 	 * Singly selected faces (those which have been selected in component mode) are 
 	 * considered as well by this method.
 	 */
-	virtual void foreachFace(const std::function<void(Face&)>& functor) = 0;
+	virtual void foreachFace(const std::function<void(IFace&)>& functor) = 0;
 
 	/**
 	 * Call the given functor for each selected patch. Selected group nodes like func_statics
 	 * are traversed recursively, invoking the functor for each visible patch in question.
 	 */
-	virtual void foreachPatch(const std::function<void(Patch&)>& functor) = 0;
+	virtual void foreachPatch(const std::function<void(IPatch&)>& functor) = 0;
+
+	// Returns the number of currently selected faces
+	virtual std::size_t getSelectedFaceCount() = 0;
+
+	// Returns the reference to the singly selected face 
+	// Calling this will cause an cmd::ExecutionFailure if getSelectedFaceCount() != 1
+	virtual IFace& getSingleSelectedFace() = 0;
 
     /// Signal emitted when the selection is changed
     virtual SelectionChangedSignal signal_selectionChanged() const = 0;
@@ -282,9 +289,10 @@ public:
 	virtual void onManipulationStart() = 0;
 	virtual void onManipulationChanged() = 0;
 	virtual void onManipulationEnd() = 0;
+	virtual void onManipulationCancelled() = 0;
 
-    virtual void SelectPoint(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;
-    virtual void SelectArea(const render::View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;
+	virtual void selectPoint(SelectionTest& test, EModifier modifier, bool face) = 0;
+	virtual void selectArea(SelectionTest& test, EModifier modifier, bool face) = 0;
     
 	/**
 	 * Returns the current "work zone", which is defined by the
@@ -298,6 +306,9 @@ public:
 	 * Note: the struct is defined in selectionlib.h.
 	 */
 	virtual const selection::WorkZone& getWorkZone() = 0;
+
+	// Returns the center point of the current selection
+	virtual Vector3 getCurrentSelectionCenter() = 0;
 };
 
 const char* const MODULE_SELECTIONSYSTEM("SelectionSystem");

@@ -4,13 +4,13 @@
 #include "i18n.h"
 #include "ientity.h"
 #include "iundo.h"
+#include "icommandsystem.h"
 
 #include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
-#include "wxutil/dialog/MessageBox.h"
 
-#include "selection/algorithm/Entity.h"
+#include "command/ExecutionFailure.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
 namespace ui
@@ -37,17 +37,8 @@ void ClassnamePropertyEditor::onBrowseButtonClick()
 	// Only apply if the classname has actually changed
 	if (!selection.empty() && selection != currentEclass)
 	{
-		UndoableCommand cmd("changeEntityClass");
-
-		try
-		{
-			// Apply the classname change to the entity, this requires some algorithm
-			selection::algorithm::setEntityClassname(selection);
-		}
-		catch (std::runtime_error& ex)
-		{
-			wxutil::Messagebox::ShowError(ex.what());
-		}
+		// Apply the classname change to the current selection, dispatch the command
+		GlobalCommandSystem().executeCommand("SetEntityKeyValue", _key, selection);
 	}
 }
 

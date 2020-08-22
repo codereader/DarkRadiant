@@ -140,7 +140,6 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
-    <ClInclude Include="..\..\libs\DirectoryArchiveTextFile.h" />
     <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h">
       <Filter>stream</Filter>
     </ClInclude>
@@ -185,6 +184,74 @@
       <Filter>string</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\maplib.h" />
+    <ClInclude Include="..\..\libs\GameConfigUtil.h" />
+    <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableCollectionWalker.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\command\ExecutionFailure.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\MapFileOperation.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\command\ExecutionNotPossible.h">
+      <Filter>command</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\TextureChanged.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\NotificationMessage.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\Rectangle.h" />
+    <ClInclude Include="..\..\libs\messages\AutomaticMapSaveRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\OccludeSelector.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\SingleItemSelector.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\Device.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\Pivot2World.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\BestPoint.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ApplicationShutdownRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\FileSelectionRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\time\StopWatch.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\time\Timer.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ApplicationIsActiveRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\time\ScopeTimer.h">
+      <Filter>time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -213,6 +280,18 @@
     </Filter>
     <Filter Include="generic">
       <UniqueIdentifier>{ac492ec5-988b-4dd5-8b6f-a1a23fbd0ce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="messages">
+      <UniqueIdentifier>{bc41bb46-8308-44d2-8380-e67d9e3945a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="command">
+      <UniqueIdentifier>{28a6f09d-36b0-4ff9-bbc6-7c6eb8c4a4f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="selection">
+      <UniqueIdentifier>{7ecd5188-5568-43ac-8a64-0ca4c7c751b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{ac5674ae-1705-4c6c-8b17-955f44c154c8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

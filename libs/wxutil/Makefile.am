@@ -39,6 +39,7 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
                        GLFont.cpp \
                        menu/PopupMenu.cpp \
                        PathEntry.cpp \
+                       Splitter.cpp \
                        TreeModel.cpp \
                        TreeView.cpp \
                        TreeModelFilter.cpp \
@@ -46,6 +47,5 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
                        MouseToolHandler.cpp \
                        SerialisableWidgets.cpp \
                        SourceView.cpp \
-                       clipboard.cpp \
                        DirChooser.cpp \
                        FileChooser.cpp

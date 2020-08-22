@@ -1,0 +1,85 @@
+#ifndef CLIPPER_H
+#define CLIPPER_H
+
+#include "iclipper.h"
+#include "iregistry.h"
+#include "icommandsystem.h"
+#include "ClipPoint.h"
+#include "math/AABB.h"
+
+namespace {
+	const unsigned int NUM_CLIP_POINTS = 3;
+}
+
+class Clipper : public IClipper
+{
+	// Hold the currently active xy view type
+	EViewType _viewType;
+
+	// The array holding the three possible clip points
+	ClipPoint _clipPoints[NUM_CLIP_POINTS];
+
+	// The pointer to the currently moved clip point
+	ClipPoint* _movingClip;
+
+	bool _switch;
+
+	// Whether to use the _caulkShader texture for new brush faces
+	bool _useCaulk;
+
+	// The shader name used for new faces when _useCaulk is true
+	std::string _caulkShader;
+
+private:
+	// Update the internally stored variables on registry key change
+	void keyChanged();
+
+public:
+	// Constructor
+	Clipper();
+
+	void constructPreferences();
+
+	EViewType getViewType() const;
+	void setViewType(EViewType viewType);
+	ClipPoint* getMovingClip();
+
+	Vector3& getMovingClipCoords();
+	void setMovingClip(ClipPoint* clipPoint);
+
+	bool useCaulkForNewFaces() const;
+	const std::string& getCaulkShader() const;
+
+	// greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
+	ClipPoint* find(const Vector3& point, EViewType viewtype, float scale);
+
+	// Returns true if at least two clip points are set
+	bool valid() const;
+	void draw(float scale);
+	void getPlanePoints(Vector3 planepts[3], const AABB& bounds) const;
+
+	void setClipPlane(const Plane3& plane);
+
+	void update();
+	void flipClip();
+	void reset();
+	void clip();
+
+	void splitClip();
+	bool clipMode() const;
+	void onClipMode(bool enabled);
+	void newClipPoint(const Vector3& point);
+
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+
+	// Command targets
+	void clipSelectionCmd(const cmd::ArgumentList& args);
+	void splitSelectedCmd(const cmd::ArgumentList& args);
+	void flipClipperCmd(const cmd::ArgumentList& args);
+
+}; // class Clipper
+
+#endif /* CLIPPER_H */

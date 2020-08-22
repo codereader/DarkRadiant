@@ -11,6 +11,8 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
+#include "scene/LayerUsageBreakdown.h"
+
 namespace ui
 {
 

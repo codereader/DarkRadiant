@@ -21,6 +21,7 @@ typedef std::shared_ptr<MenuElement> MenuElementPtr;
 typedef std::weak_ptr<MenuElement> MenuElementWeakPtr;
 
 class MenuElement :
+	public IMenuElement,
 	public std::enable_shared_from_this<MenuElement>
 {
 protected:
@@ -59,7 +60,7 @@ public:
 	~MenuElement();
 
 	// The name of this MenuElement
-	std::string getName() const;
+	const std::string& getName() const override;
 	void setName(const std::string& name);
 
 	void setIcon(const std::string& icon);
@@ -103,11 +104,21 @@ public:
 	std::size_t numChildren() const;
 
 	// Return / set the event name
-	std::string getEvent() const;
+	const std::string& getEvent() const override;
 	void setEvent(const std::string& eventName);
 
 	bool needsRefresh();
 	virtual void setNeedsRefresh(bool needsRefresh);
+
+	virtual void setAccelerator(const std::string& accelStr) override;
+
+	virtual bool isToggle() const override
+	{
+		return false;
+	}
+
+	virtual void setToggled(bool isToggled) override
+	{}
 
 	// Tries to (recursively) locate the MenuElement by looking up the path
 	MenuElementPtr find(const std::string& menuPath);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "icommandsystem.h"
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
@@ -25,6 +26,8 @@ public:
 	int getSelectedWidth();
 	int getSelectedHeight();
 	bool getRemoveSelectedBrush();
+
+	static void Show(const cmd::ArgumentList& args);
 };
 
 } // namespace ui

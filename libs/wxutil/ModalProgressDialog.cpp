@@ -12,6 +12,27 @@ ModalProgressDialog::ModalProgressDialog(const std::string& title, wxWindow* par
                      wxPD_CAN_ABORT | wxPD_APP_MODAL | wxPD_AUTO_HIDE)
 {}
 
+void ModalProgressDialog::setFraction(double fraction)
+{
+	if (WasCancelled())
+	{
+		throw OperationAbortedException(_("Operation cancelled by user"));
+	}
+
+	if (fraction < 0)
+	{
+		fraction = 0.0;
+	}
+	else if (fraction > 1.0)
+	{
+		fraction = 1.0;
+	}
+
+	int newValue = static_cast<int>(fraction * 100);
+
+	Update(newValue);
+}
+
 void ModalProgressDialog::setText(const std::string& text)
 {
 	// If the aborted flag is set, throw an exception here
@@ -42,6 +63,7 @@ void ModalProgressDialog::setTextAndFraction(const std::string& text, double fra
 	int newValue = static_cast<int>(fraction * 100);
 
 	Update(newValue, text);
+	Fit();
 }
 
 } // namespace

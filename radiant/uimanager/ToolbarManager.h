@@ -14,6 +14,7 @@
  * Obtain a loaded toolbar by calling getToolbar(<toolbarName>);
  */
 class wxToolBarToolBase;
+class wxWindowDestroyEvent;
 
 namespace ui {
 
@@ -50,9 +51,11 @@ private:
 	 * Checks the passed xmlNode for a recognized item (ToolButton, ToggleToolButton, Separator)
 	 * Returns the widget or NULL if nothing useful is found.
 	 */
-	wxToolBarToolBase* createToolItem(wxToolBar* toolbar, xml::Node& node);
+	wxToolBarToolBase* createToolItem(wxToolBar* toolbar, const xml::Node& node);
 
 	bool toolbarExists(const std::string& toolbarName);
+
+	void onToolbarDestroy(wxWindowDestroyEvent& ev);
 };
 
 } // namespace ui

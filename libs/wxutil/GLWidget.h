@@ -20,14 +20,14 @@ class GLWidget :
 	bool _registered;
 
 	// The attached client method to invoke to render this view
-	std::function<void()> _renderCallback;
+	std::function<bool()> _renderCallback;
 
 	// Some widgets have their own openGL context, 
 	// If it  is non-NULL _privateContext will be used. 
 	wxGLContext* _privateContext;
 
 public:
-    GLWidget(wxWindow *parent, const std::function<void()>& renderCallback, const std::string& name);
+    GLWidget(wxWindow *parent, const std::function<bool()>& renderCallback, const std::string& name);
 
 	// Call this to enable/disable the private GL context of this widget
 	void SetHasPrivateContext(bool hasPrivateContext);

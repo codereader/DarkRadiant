@@ -41,7 +41,7 @@ class RenderPreview :
 {
 private:
     void connectToolbarSignals();
-    void drawPreview();
+    bool drawPreview();
     void onGLScroll(wxMouseEvent& ev);
 	void onGLMouseClick(wxMouseEvent& ev);
     void onGLMouseRelease(wxMouseEvent& ev);
@@ -56,7 +56,7 @@ private:
     void onStepBackClick(wxCommandEvent& ev);
 
     void onSizeAllocate(wxSizeEvent& ev);
-    void filtersChanged();
+    void onFilterConfigChanged();
     void onRenderModeChanged(wxCommandEvent& ev);
 	void onGridButtonClick(wxCommandEvent& ev);
 

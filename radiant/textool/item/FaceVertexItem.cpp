@@ -21,7 +21,7 @@ namespace textool
 	}
 
 // Constructor, allocates all child FacItems
-FaceVertexItem::FaceVertexItem(Face& sourceFace, WindingVertex& windingVertex, FaceItem& parent) :
+FaceVertexItem::FaceVertexItem(IFace& sourceFace, WindingVertex& windingVertex, FaceItem& parent) :
 	_sourceFace(sourceFace),
 	_windingVertex(windingVertex),
 	_parent(parent)
@@ -41,10 +41,9 @@ Vector2 FaceVertexItem::getTexCentroid()
 {
 	Vector2 texCentroid(0,0);
 
-	for (Winding::const_iterator i = _sourceFace.getWinding().begin();
-		 i != _sourceFace.getWinding().end(); ++i)
+	for (const auto& vertex : _sourceFace.getWinding())
 	{
-		texCentroid += i->texcoord;
+		texCentroid += vertex.texcoord;
 	}
 
 	// Take the average value of all the winding texcoords to retrieve the centroid
@@ -57,10 +56,9 @@ AABB FaceVertexItem::getTexAABB()
 {
 	AABB aabb;
 
-	for (Winding::const_iterator i = _sourceFace.getWinding().begin();
-		 i != _sourceFace.getWinding().end(); ++i)
+	for (const auto& vertex : _sourceFace.getWinding())
 	{
-		aabb.includePoint(Vector3(i->texcoord.x(), i->texcoord.y(), 0));
+		aabb.includePoint(Vector3(vertex.texcoord.x(), vertex.texcoord.y(), 0));
 	}
 
 	return aabb;
@@ -113,16 +111,14 @@ void FaceVertexItem::transform(const Matrix4& matrix)
 	Matrix4 scale = Matrix4::getScale(Vector3(newDist.x()/dist.x(), newDist.y()/dist.y(), 0));
 
 	// Apply the matrices to the current texture transform, pre-multiplied in the correct order
-	Matrix4 texTransform = _sourceFace.getProjection().getTransform();
+	Matrix4 texTransform = _sourceFace.getProjectionMatrix();
 
 	texTransform.premultiplyBy(pivotToOrigin);
 	texTransform.premultiplyBy(scale);
 	texTransform.premultiplyBy(originToPivot);
 
 	// Save it back to the face
-	_sourceFace.getProjection().setTransform(1, 1, texTransform);
-
-	_sourceFace.texdefChanged();
+	_sourceFace.setProjectionMatrix(texTransform);
 }
 
 void FaceVertexItem::snapSelectedToGrid(float grid)

@@ -23,8 +23,6 @@ private:
 
     render::View _view;
 
-    SelectionSystem& _selectionSystem;
-
 	Matrix4 _pivot2worldStart;
 	bool _manipulationActive;
 
@@ -38,7 +36,7 @@ private:
 	ShaderPtr _pointShader;
 
 public:
-    ManipulateMouseTool(SelectionSystem& selectionSystem);
+    ManipulateMouseTool();
 
     const std::string& getName() override;
     const std::string& getDisplayName() override;

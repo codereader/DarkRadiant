@@ -1,5 +1,6 @@
 #pragma once
 
+#include "icommandsystem.h"
 #include "wxutil/dialog/DialogBase.h"
 
 class wxSpinCtrl;
@@ -25,11 +26,7 @@ private:
 	QuerySidesDialog(int numSidesMin, int numSidesMax);
 
 public:
-	/**
-	 * greebo: Shows the dialog, returns the number of sides as selected by the user.
-	 * Returns -1 on failure.
-	 */
-	static int QueryNumberOfSides(int numSidesMin, int numSidesMax);
+	static void Show(const cmd::ArgumentList& args);
 
 private:
 	// This is called to initialise the dialog window / create the widgets

@@ -23,14 +23,9 @@ FilterMenu::FilterMenu() :
 
 FilterMenu::~FilterMenu()
 {
-	for (auto i : _filterItems)
+	for (const auto& i : _filterItems)
 	{
-		IEventPtr event = GlobalEventManager().findEvent(i.first);
-
-		if (event)
-		{
-			event->disconnectMenuItem(i.second);
-		}
+		GlobalEventManager().unregisterMenuItem(i.first, i.second);
 	}
 
 	_menu = nullptr;
@@ -43,12 +38,7 @@ void FilterMenu::visitFilter(const std::string& filterName)
 
 	std::string eventName = GlobalFilterSystem().getFilterEventName(filterName);
 
-	IEventPtr event = GlobalEventManager().findEvent(eventName);
-
-	if (event)
-	{
-		event->connectMenuItem(item);
-	}
+	GlobalEventManager().registerMenuItem(eventName, item);
 
 	_filterItems.emplace(eventName, item);
 }

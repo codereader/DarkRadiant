@@ -91,7 +91,7 @@ ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 // Creates a new entity for the given entityclass
 ScriptSceneNode EntityInterface::createEntity(const ScriptEntityClass& eclass)
 {
-	scene::INodePtr node = GlobalEntityCreator().createEntity(eclass);
+	scene::INodePtr node = GlobalEntityModule().createEntity(eclass);
 
 	// Add the node to the buffer otherwise it will be deleted immediately,
 	// as ScriptSceneNodes are using weak_ptrs.
@@ -110,7 +110,7 @@ ScriptSceneNode EntityInterface::createEntity(const std::string& eclassName) {
 		return ScriptSceneNode(scene::INodePtr());
 	}
 
-	scene::INodePtr node = GlobalEntityCreator().createEntity(eclass);
+	scene::INodePtr node = GlobalEntityModule().createEntity(eclass);
 
 	// Add the node to the buffer otherwise it will be deleted immediately,
 	// as ScriptSceneNodes are using weak_ptrs.

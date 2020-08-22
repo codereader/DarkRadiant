@@ -15,7 +15,6 @@
 #include "ClassnamePropertyEditor.h"
 #include "AnglePropertyEditor.h"
 
-#include "modulesystem/ModuleRegistry.h"
 #include <regex>
 
 #include <wx/artprov.h>
@@ -39,7 +38,7 @@ void PropertyEditorFactory::registerClasses()
 	_peMap["mat"] = PropertyEditorPtr(new TexturePropertyEditor());
 	_peMap["skin"] = PropertyEditorPtr(new SkinPropertyEditor());
 
-	if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
+	if (module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
 	{
 		_peMap["sound"] = PropertyEditorPtr(new SoundPropertyEditor());
 	}

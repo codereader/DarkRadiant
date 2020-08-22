@@ -7,6 +7,8 @@
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
+#include "iorthoview.h"
+#include "icamera.h"
 
 #include <time.h>
 #include <fmt/format.h>
@@ -15,12 +17,11 @@
 #include "iselectiontest.h"
 #include "selectionlib.h"
 #include "gamelib.h"
-#include "map/Map.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
 #include "render/RenderStatistics.h"
-#include "render/frontend/RenderableCollectionWalker.h"
+#include "render/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"
@@ -40,9 +41,9 @@ namespace
 {
     const std::size_t MSEC_PER_FRAME = 16;
 
-    const std::string FAR_CLIP_IN_TEXT = "Move far clip plane closer";
-    const std::string FAR_CLIP_OUT_TEXT = "Move far clip plane further away";
-    const std::string FAR_CLIP_DISABLED_TEXT = " (currently disabled in preferences)";
+    const char* const FAR_CLIP_IN_TEXT = N_("Move far clip plane closer");
+    const char* const FAR_CLIP_OUT_TEXT = N_("Move far clip plane further away");
+    const char* const FAR_CLIP_DISABLED_TEXT = N_(" (currently disabled in preferences)");
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 }
 
@@ -147,35 +148,30 @@ CamWnd::CamWnd(wxWindow* parent) :
     _camera(&_view, Callback(std::bind(&CamWnd::queueDraw, this))),
     _cameraView(_camera, &_view, Callback(std::bind(&CamWnd::update, this))),
     _drawing(false),
-    _freeMoveEnabled(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
     _timerLock(false)
 {
-    Connect(wxEVT_TIMER, wxTimerEventHandler(CamWnd::onFrame), NULL, this);
+    Bind(wxEVT_TIMER, &CamWnd::onFrame, this);
 
     constructGUIComponents();
 
-    // Deactivate all commands, just to make sure
-    disableDiscreteMoveEvents();
-    disableFreeMoveEvents();
-
     // Connect the mouse button events
-    _wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
-    _wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
-    _wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &CamWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &CamWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_UP, &CamWnd::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &CamWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &CamWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_UP, &CamWnd::onGLMouseButtonRelease, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_DOWN, &CamWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_DCLICK, &CamWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_UP, &CamWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_DOWN, &CamWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_DCLICK, &CamWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_UP, &CamWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_DOWN, &CamWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_DCLICK, &CamWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_UP, &CamWnd::onGLMouseButtonRelease, this);
 
     // Now add the handlers for the non-freelook mode, the events are activated by this
     addHandlersMove();
@@ -302,8 +298,8 @@ void CamWnd::setFarClipButtonSensitivity()
     miscToolbar->EnableTool(clipPlaneOutButton->GetId(), enabled);
 
     // Update tooltips so users know why they are disabled
-    clipPlaneInButton->SetShortHelp(FAR_CLIP_IN_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT));
-    clipPlaneOutButton->SetShortHelp(FAR_CLIP_OUT_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT));
+    clipPlaneInButton->SetShortHelp(fmt::format("{0}{1}", _(FAR_CLIP_IN_TEXT), (enabled ? "" : _(FAR_CLIP_DISABLED_TEXT))));
+    clipPlaneOutButton->SetShortHelp(fmt::format("{0}{1}", _(FAR_CLIP_OUT_TEXT), (enabled ? "" : _(FAR_CLIP_DISABLED_TEXT))));
 }
 
 void CamWnd::constructGUIComponents()
@@ -327,7 +323,7 @@ CamWnd::~CamWnd()
     // Unsubscribe from the global scene graph update
     GlobalSceneGraph().removeSceneObserver(this);
 
-    if (_freeMoveEnabled) {
+    if (_camera.freeMoveEnabled) {
         disableFreeMove();
     }
 
@@ -346,7 +342,10 @@ SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
 
     // Copy the current view and constrain it to a small rectangle
     render::View scissored(_view);
-    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(point, deviceEpsilon));
+
+    auto rect = selection::Rectangle::ConstructFromPoint(point, deviceEpsilon);
+    scissored.EnableScissor(rect.min[0], rect.max[0],
+                            rect.min[1], rect.max[1]);
 
     return SelectionTestPtr(new SelectionVolume(scissored));
 }
@@ -494,7 +493,9 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
         AABB found = finder.getNode()->worldAABB();
 
         // Focus the view at the center of the found AABB
-        map::Map::focusViews(found.origin, getCameraAngles());
+        // Set the camera and the views to the given point
+        GlobalCameraView().focusCamera(found.origin, getCameraAngles());
+        GlobalXYWndManager().setOrigin(found.origin);
     }
 }
 
@@ -523,24 +524,20 @@ void CamWnd::changeFloor(const bool up) {
 
 void CamWnd::enableFreeMove()
 {
-    ASSERT_MESSAGE(!_freeMoveEnabled, "EnableFreeMove: free-move was already enabled");
-    _freeMoveEnabled = true;
+    ASSERT_MESSAGE(!_camera.freeMoveEnabled, "EnableFreeMove: free-move was already enabled");
+    _camera.freeMoveEnabled = true;
     _camera.clearMovementFlags(MOVE_ALL);
 
     removeHandlersMove();
-
-    enableFreeMoveEvents();
 
     update();
 }
 
 void CamWnd::disableFreeMove()
 {
-    ASSERT_MESSAGE(_freeMoveEnabled, "DisableFreeMove: free-move was not enabled");
-    _freeMoveEnabled = false;
+    ASSERT_MESSAGE(_camera.freeMoveEnabled, "DisableFreeMove: free-move was not enabled");
+    _camera.freeMoveEnabled = false;
     _camera.clearMovementFlags(MOVE_ALL);
-
-    disableFreeMoveEvents();
 
     addHandlersMove();
 
@@ -549,7 +546,7 @@ void CamWnd::disableFreeMove()
 
 bool CamWnd::freeMoveEnabled() const
 {
-    return _freeMoveEnabled;
+    return _camera.freeMoveEnabled;
 }
 
 void CamWnd::Cam_Draw()
@@ -743,7 +740,7 @@ void CamWnd::Cam_Draw()
 
     // draw the crosshair
 
-    if (_freeMoveEnabled) {
+    if (_camera.freeMoveEnabled) {
         glBegin( GL_LINES );
         glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f + 6 );
         glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f + 2 );
@@ -783,14 +780,9 @@ void CamWnd::Cam_Draw()
     glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-void CamWnd::onRender()
+bool CamWnd::onRender()
 {
-    draw();
-}
-
-void CamWnd::draw()
-{
-    if (_drawing) return;
+    if (_drawing) return false;
 
     util::ScopedBoolLock lock(_drawing);
 
@@ -801,7 +793,11 @@ void CamWnd::draw()
         Cam_Draw();
 
         debug::assertNoGlErrors();
+
+        return true;
     }
+
+    return false;
 }
 
 void CamWnd::benchmark()
@@ -830,83 +826,14 @@ void CamWnd::onSceneGraphChange()
 
 // ----------------------------------------------------------
 
-void CamWnd::enableFreeMoveEvents()
-{
-    GlobalEventManager().enableEvent("CameraFreeMoveForward");
-    GlobalEventManager().enableEvent("CameraFreeMoveBack");
-    GlobalEventManager().enableEvent("CameraFreeMoveLeft");
-    GlobalEventManager().enableEvent("CameraFreeMoveRight");
-    GlobalEventManager().enableEvent("CameraFreeMoveUp");
-    GlobalEventManager().enableEvent("CameraFreeMoveDown");
-}
-
-void CamWnd::disableFreeMoveEvents()
-{
-    GlobalEventManager().disableEvent("CameraFreeMoveForward");
-    GlobalEventManager().disableEvent("CameraFreeMoveBack");
-    GlobalEventManager().disableEvent("CameraFreeMoveLeft");
-    GlobalEventManager().disableEvent("CameraFreeMoveRight");
-    GlobalEventManager().disableEvent("CameraFreeMoveUp");
-    GlobalEventManager().disableEvent("CameraFreeMoveDown");
-}
-
-void CamWnd::enableDiscreteMoveEvents()
-{
-    GlobalEventManager().enableEvent("CameraForward");
-    GlobalEventManager().enableEvent("CameraBack");
-    GlobalEventManager().enableEvent("CameraLeft");
-    GlobalEventManager().enableEvent("CameraRight");
-    GlobalEventManager().enableEvent("CameraStrafeRight");
-    GlobalEventManager().enableEvent("CameraStrafeLeft");
-    GlobalEventManager().enableEvent("CameraUp");
-    GlobalEventManager().enableEvent("CameraDown");
-    GlobalEventManager().enableEvent("CameraAngleUp");
-    GlobalEventManager().enableEvent("CameraAngleDown");
-}
-
-void CamWnd::disableDiscreteMoveEvents()
-{
-    GlobalEventManager().disableEvent("CameraForward");
-    GlobalEventManager().disableEvent("CameraBack");
-    GlobalEventManager().disableEvent("CameraLeft");
-    GlobalEventManager().disableEvent("CameraRight");
-    GlobalEventManager().disableEvent("CameraStrafeRight");
-    GlobalEventManager().disableEvent("CameraStrafeLeft");
-    GlobalEventManager().disableEvent("CameraUp");
-    GlobalEventManager().disableEvent("CameraDown");
-    GlobalEventManager().disableEvent("CameraAngleUp");
-    GlobalEventManager().disableEvent("CameraAngleDown");
-}
-
 void CamWnd::addHandlersMove()
 {
-    _wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(CamWnd::onGLMouseMove), NULL, this);
-
-    // Enable either the free-look movement commands or the discrete ones,
-    // depending on the selection
-    if (getCameraSettings()->discreteMovement())
-    {
-        enableDiscreteMoveEvents();
-    }
-    else
-    {
-        enableFreeMoveEvents();
-    }
+    _wxGLWidget->Bind(wxEVT_MOTION, &CamWnd::onGLMouseMove, this);
 }
 
 void CamWnd::removeHandlersMove()
 {
-    _wxGLWidget->Disconnect(wxEVT_MOTION, wxMouseEventHandler(CamWnd::onGLMouseMove), NULL, this);
-
-    // Disable either the free-look movement commands or the discrete ones, depending on the selection
-    if (getCameraSettings()->discreteMovement())
-    {
-        disableDiscreteMoveEvents();
-    }
-    else
-    {
-        disableFreeMoveEvents();
-    }
+    _wxGLWidget->Unbind(wxEVT_MOTION, &CamWnd::onGLMouseMove, this);
 }
 
 void CamWnd::update()

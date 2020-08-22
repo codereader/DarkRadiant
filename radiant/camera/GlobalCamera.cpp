@@ -11,8 +11,9 @@
 #include "CameraSettings.h"
 
 #include "registry/registry.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 #include "wxutil/MouseButton.h"
+#include "string/case_conv.h"
 
 #include "tools/ShaderClipboardTools.h"
 #include "tools/JumpToObjectTool.h"
@@ -55,22 +56,17 @@ void GlobalCameraManager::registerCommands()
 
 	GlobalCommandSystem().addCommand("TogglePreview", std::bind(&GlobalCameraManager::toggleLightingMode, this, std::placeholders::_1));
 
+	GlobalCommandSystem().addCommand("MoveCamera", std::bind(&GlobalCameraManager::moveCameraCmd, this, std::placeholders::_1),
+		{ cmd::ARGTYPE_STRING, cmd::ARGTYPE_DOUBLE });
+
 	// Insert movement commands
-	GlobalCommandSystem().addCommand("CameraForward", std::bind(&GlobalCameraManager::moveForwardDiscrete, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("CameraBack", std::bind(&GlobalCameraManager::moveBackDiscrete, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("CameraLeft", std::bind(&GlobalCameraManager::rotateLeftDiscrete, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("CameraRight", std::bind(&GlobalCameraManager::rotateRightDiscrete, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CameraStrafeRight", std::bind(&GlobalCameraManager::moveRightDiscrete, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CameraStrafeLeft", std::bind(&GlobalCameraManager::moveLeftDiscrete, this, std::placeholders::_1));
 
-	GlobalCommandSystem().addCommand("CameraUp", std::bind(&GlobalCameraManager::moveUpDiscrete, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("CameraDown", std::bind(&GlobalCameraManager::moveDownDiscrete, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CameraAngleUp", std::bind(&GlobalCameraManager::pitchUpDiscrete, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CameraAngleDown", std::bind(&GlobalCameraManager::pitchDownDiscrete, this, std::placeholders::_1));
 
 	// Bind the events to the commands
-	GlobalEventManager().addCommand("CenterView", "CenterView");
-
 	GlobalEventManager().addToggle(
         "ToggleCubicClip",
         std::bind(&CameraSettings::toggleFarClip, getCameraSettings(), std::placeholders::_1)
@@ -78,67 +74,49 @@ void GlobalCameraManager::registerCommands()
 	// Set the default status of the cubic clip
 	GlobalEventManager().setToggled("ToggleCubicClip", getCameraSettings()->farClipEnabled());
 
-	GlobalEventManager().addCommand("CubicClipZoomIn", "CubicClipZoomIn");
-	GlobalEventManager().addCommand("CubicClipZoomOut", "CubicClipZoomOut");
-
-	GlobalEventManager().addCommand("UpFloor", "UpFloor");
-	GlobalEventManager().addCommand("DownFloor", "DownFloor");
-
 	GlobalEventManager().addWidgetToggle("ToggleCamera");
 	GlobalEventManager().setToggled("ToggleCamera", true);
 
-	// angua: increases and decreases the movement speed of the camera
-	GlobalEventManager().addCommand("CamIncreaseMoveSpeed", "CamIncreaseMoveSpeed");
-	GlobalEventManager().addCommand("CamDecreaseMoveSpeed", "CamDecreaseMoveSpeed");
-
-	GlobalEventManager().addCommand("TogglePreview", "TogglePreview");
-
-	// Insert movement commands
-	GlobalEventManager().addCommand("CameraForward", "CameraForward");
-	GlobalEventManager().addCommand("CameraBack", "CameraBack");
-	GlobalEventManager().addCommand("CameraLeft", "CameraLeft");
-	GlobalEventManager().addCommand("CameraRight", "CameraRight");
-	GlobalEventManager().addCommand("CameraStrafeRight", "CameraStrafeRight");
-	GlobalEventManager().addCommand("CameraStrafeLeft", "CameraStrafeLeft");
-
-	GlobalEventManager().addCommand("CameraUp", "CameraUp");
-	GlobalEventManager().addCommand("CameraDown", "CameraDown");
-	GlobalEventManager().addCommand("CameraAngleUp", "CameraAngleUp");
-	GlobalEventManager().addCommand("CameraAngleDown", "CameraAngleDown");
-
-	GlobalEventManager().addKeyEvent("CameraFreeMoveForward", std::bind(&GlobalCameraManager::onFreelookMoveForwardKey, this, std::placeholders::_1));
-	GlobalEventManager().addKeyEvent("CameraFreeMoveBack", std::bind(&GlobalCameraManager::onFreelookMoveBackKey, this, std::placeholders::_1));
-	GlobalEventManager().addKeyEvent("CameraFreeMoveLeft", std::bind(&GlobalCameraManager::onFreelookMoveLeftKey, this, std::placeholders::_1));
-	GlobalEventManager().addKeyEvent("CameraFreeMoveRight", std::bind(&GlobalCameraManager::onFreelookMoveRightKey, this, std::placeholders::_1));
-	GlobalEventManager().addKeyEvent("CameraFreeMoveUp", std::bind(&GlobalCameraManager::onFreelookMoveUpKey, this, std::placeholders::_1));
-	GlobalEventManager().addKeyEvent("CameraFreeMoveDown", std::bind(&GlobalCameraManager::onFreelookMoveDownKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveForward", std::bind(&GlobalCameraManager::onFreelookMoveForwardKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveBack", std::bind(&GlobalCameraManager::onFreelookMoveBackKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveLeft", std::bind(&GlobalCameraManager::onFreelookMoveLeftKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveRight", std::bind(&GlobalCameraManager::onFreelookMoveRightKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveUp", std::bind(&GlobalCameraManager::onFreelookMoveUpKey, this, std::placeholders::_1));
+	GlobalEventManager().addKeyEvent("CameraMoveDown", std::bind(&GlobalCameraManager::onFreelookMoveDownKey, this, std::placeholders::_1));
 }
 
-CamWndPtr GlobalCameraManager::getActiveCamWnd() {
+CamWndPtr GlobalCameraManager::getActiveCamWnd()
+{
 	// Sanity check in debug builds
-	assert(_cameras.find(_activeCam) != _cameras.end());
+	assert(_activeCam == -1 || _cameras.find(_activeCam) != _cameras.end());
+
+	if (_activeCam == -1) return CamWndPtr();
 
 	CamWndPtr cam = _cameras[_activeCam].lock();
 
-	if (cam == NULL) {
+	if (!cam)
+	{
 		// Camera is not used anymore, remove it
 		removeCamWnd(_activeCam);
 
 		// Find a new active camera
-		if (!_cameras.empty()) {
+		if (!_cameras.empty())
+		{
 			_activeCam = _cameras.begin()->first;
 		}
-		else {
+		else
+		{
 			// No more cameras available
 			_activeCam = -1;
 		}
 
-		if (_activeCam != -1) {
+		if (_activeCam != -1)
+		{
 			cam = _cameras[_activeCam].lock();
 		}
 	}
 
-	return (_activeCam != -1) ? cam : CamWndPtr();
+	return cam;
 }
 
 CamWndPtr GlobalCameraManager::createCamWnd(wxWindow* parent)
@@ -179,9 +157,9 @@ void GlobalCameraManager::removeCamWnd(int id) {
 FloatingCamWndPtr GlobalCameraManager::createFloatingWindow()
 {
 	// Create a new floating camera window widget and return it
-	FloatingCamWndPtr cam(new FloatingCamWnd);
+	auto cam = std::make_shared<FloatingCamWnd>();
 
-	_cameras.insert(CamWndMap::value_type(cam->getId(), cam));
+	_cameras.emplace(cam->getId(), cam);
 
 	if (_activeCam == -1)
 	{
@@ -193,14 +171,13 @@ FloatingCamWndPtr GlobalCameraManager::createFloatingWindow()
 
 void GlobalCameraManager::resetCameraAngles(const cmd::ArgumentList& args)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-
-	if (camWnd != NULL) {
+	doWithActiveCamWnd([](CamWnd& camWnd) 
+	{
 		Vector3 angles;
 		angles[CAMERA_ROLL] = angles[CAMERA_PITCH] = 0;
-		angles[CAMERA_YAW] = 22.5 * floor((camWnd->getCameraAngles()[CAMERA_YAW]+11)/22.5);
-		camWnd->setCameraAngles(angles);
-	}
+		angles[CAMERA_YAW] = 22.5 * floor((camWnd.getCameraAngles()[CAMERA_YAW] + 11) / 22.5);
+		camWnd.setCameraAngles(angles);
+	});
 }
 
 void GlobalCameraManager::increaseCameraSpeed(const cmd::ArgumentList& args) {
@@ -227,12 +204,9 @@ void GlobalCameraManager::decreaseCameraSpeed(const cmd::ArgumentList& args) {
 	registry::setValue(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
-void GlobalCameraManager::benchmark() {
-	CamWndPtr camWnd = getActiveCamWnd();
-
-	if (camWnd != NULL) {
-		camWnd->benchmark();
-	}
+void GlobalCameraManager::benchmark() 
+{
+	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.benchmark(); });
 }
 
 void GlobalCameraManager::update() {
@@ -269,20 +243,14 @@ void GlobalCameraManager::forceDraw()
     }
 }
 
-void GlobalCameraManager::changeFloorUp(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	// Pass the call to the currently active CamWnd
-	camWnd->changeFloor(true);
+void GlobalCameraManager::changeFloorUp(const cmd::ArgumentList& args)
+{
+	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.changeFloor(true); });
 }
 
-void GlobalCameraManager::changeFloorDown(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	// Pass the call to the currently active CamWnd
-	camWnd->changeFloor(false);
+void GlobalCameraManager::changeFloorDown(const cmd::ArgumentList& args)
+{
+	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.changeFloor(false); });
 }
 
 void GlobalCameraManager::addCameraObserver(CameraObserver* observer) {
@@ -292,9 +260,11 @@ void GlobalCameraManager::addCameraObserver(CameraObserver* observer) {
 	}
 }
 
-void GlobalCameraManager::removeCameraObserver(CameraObserver* observer) {
+void GlobalCameraManager::removeCameraObserver(CameraObserver* observer)
+{
 	// Cycle through the list of observers and call the moved method
-	for (CameraObserverList::iterator i = _cameraObservers.begin(); i != _cameraObservers.end(); i++) {
+	for (CameraObserverList::iterator i = _cameraObservers.begin(); i != _cameraObservers.end(); i++)
+	{
 		CameraObserver* registered = *i;
 
 		if (registered == observer) {
@@ -304,13 +274,13 @@ void GlobalCameraManager::removeCameraObserver(CameraObserver* observer) {
 	}
 }
 
-void GlobalCameraManager::movedNotify() {
-
+void GlobalCameraManager::movedNotify()
+{
 	// Cycle through the list of observers and call the moved method
-	for (CameraObserverList::iterator i = _cameraObservers.begin(); i != _cameraObservers.end(); i++) {
-		CameraObserver* observer = *i;
-
-		if (observer != NULL) {
+	for (CameraObserver* observer : _cameraObservers)
+	{
+		if (observer != nullptr)
+		{
 			observer->cameraMoved();
 		}
 	}
@@ -320,188 +290,147 @@ void GlobalCameraManager::toggleLightingMode(const cmd::ArgumentList& args) {
 	getCameraSettings()->toggleLightingMode();
 }
 
-void GlobalCameraManager::farClipPlaneIn(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->farClipPlaneIn();
+void GlobalCameraManager::farClipPlaneIn(const cmd::ArgumentList& args)
+{
+	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.farClipPlaneIn(); });
 }
 
-void GlobalCameraManager::farClipPlaneOut(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->farClipPlaneOut();
+void GlobalCameraManager::farClipPlaneOut(const cmd::ArgumentList& args)
+{
+	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.farClipPlaneOut(); });
 }
 
-void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angles) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
+void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angles)
+{
+	doWithActiveCamWnd([&](CamWnd& camWnd)
+	{
+		camWnd.setCameraOrigin(point);
+		camWnd.setCameraAngles(angles);
+	});
+}
 
-	camWnd->setCameraOrigin(point);
-	camWnd->setCameraAngles(angles);
+ICameraView& GlobalCameraManager::getActiveView()
+{
+	auto camWnd = getActiveCamWnd();
+
+	if (!camWnd) throw std::runtime_error("No active camera view present");
+
+	return *camWnd;
 }
 
 // --------------- Keyboard movement methods ------------------------------------------
 
-void GlobalCameraManager::onFreelookMoveForwardKey(ui::KeyEventType eventType)
+void GlobalCameraManager::moveCameraCmd(const cmd::ArgumentList& args)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
+	auto camWnd = getActiveCamWnd();
+	if (!camWnd) return;
 
-	if (eventType == ui::KeyPressed)
+	if (args.size() != 2)
 	{
-		camWnd->getCamera().setMovementFlags(MOVE_FORWARD);
+		rMessage() << "Usage: MoveCamera <up|down|forward|back|left|right> <units>" << std::endl;
+		rMessage() << "Example: MoveCamera forward '20' performs"
+			<< " a 20 unit move in the forward direction." << std::endl;
+		return;
+	}
+
+	std::string arg = string::to_lower_copy(args[0].getString());
+	double amount = args[1].getDouble();
+
+	if (amount <= 0)
+	{
+		rWarning() << "Unit amount must be > 0" << std::endl;
+		return;
+	}
+
+	if (arg == "up") 
+	{
+		camWnd->getCamera().moveUpDiscrete(amount);
+	}
+	else if (arg == "down") 
+	{
+		camWnd->getCamera().moveDownDiscrete(amount);
+	}
+	else if (arg == "left") 
+	{
+		camWnd->getCamera().moveLeftDiscrete(amount);
+	}
+	if (arg == "right") 
+	{
+		camWnd->getCamera().moveRightDiscrete(amount);
+	}
+	else if (arg == "forward")
+	{
+		camWnd->getCamera().moveForwardDiscrete(amount);
+	}
+	else if (arg == "back")
+	{
+		camWnd->getCamera().moveBackDiscrete(amount);
 	}
 	else
 	{
-		camWnd->getCamera().clearMovementFlags(MOVE_FORWARD);
+		rWarning() << "Unknown direction: " << arg << std::endl;
+		rMessage() << "Possible dDirections are: <up|down|forward|back|left|right>" << std::endl;
 	}
+}
+
+void GlobalCameraManager::doWithActiveCamWnd(const std::function<void(CamWnd&)>& action)
+{
+	auto camWnd = getActiveCamWnd();
+	
+	if (camWnd)
+	{
+		action(*camWnd);
+	}
+}
+
+void GlobalCameraManager::onFreelookMoveForwardKey(ui::KeyEventType eventType)
+{
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onForwardKey(eventType); });
 }
 
 void GlobalCameraManager::onFreelookMoveBackKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	if (eventType == ui::KeyPressed)
-	{
-		camWnd->getCamera().setMovementFlags(MOVE_BACK);
-	}
-	else
-	{
-		camWnd->getCamera().clearMovementFlags(MOVE_BACK);
-	}
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onBackwardKey(eventType); });
 }
 
 void GlobalCameraManager::onFreelookMoveLeftKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	if (eventType == ui::KeyPressed)
-	{
-		camWnd->getCamera().setMovementFlags(MOVE_STRAFELEFT);
-	}
-	else
-	{
-		camWnd->getCamera().clearMovementFlags(MOVE_STRAFELEFT);
-	}
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onLeftKey(eventType); });
 }
 
 void GlobalCameraManager::onFreelookMoveRightKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	if (eventType == ui::KeyPressed)
-	{
-		camWnd->getCamera().setMovementFlags(MOVE_STRAFERIGHT);
-	}
-	else
-	{
-		camWnd->getCamera().clearMovementFlags(MOVE_STRAFERIGHT);
-	}
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onRightKey(eventType); });
 }
 
 void GlobalCameraManager::onFreelookMoveUpKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	if (eventType == ui::KeyPressed)
-	{
-		camWnd->getCamera().setMovementFlags(MOVE_UP);
-	}
-	else
-	{
-		camWnd->getCamera().clearMovementFlags(MOVE_UP);
-	}
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onUpKey(eventType); });
 }
 
 void GlobalCameraManager::onFreelookMoveDownKey(ui::KeyEventType eventType)
 {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	if (eventType == ui::KeyPressed)
-	{
-		camWnd->getCamera().setMovementFlags(MOVE_DOWN);
-	}
-	else
-	{
-		camWnd->getCamera().clearMovementFlags(MOVE_DOWN);
-	}
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onDownKey(eventType); });
 }
 
-void GlobalCameraManager::moveForwardDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().moveForwardDiscrete();
+void GlobalCameraManager::moveLeftDiscrete(const cmd::ArgumentList& args)
+{
+	doWithActiveCamWnd([](CamWnd& cam) { cam.getCamera().moveLeftDiscrete(SPEED_MOVE); });
 }
 
-void GlobalCameraManager::moveBackDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().moveBackDiscrete();
+void GlobalCameraManager::moveRightDiscrete(const cmd::ArgumentList& args)
+{
+	doWithActiveCamWnd([](CamWnd& cam) { cam.getCamera().moveRightDiscrete(SPEED_MOVE); });
 }
 
-void GlobalCameraManager::moveUpDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().moveUpDiscrete();
+void GlobalCameraManager::pitchUpDiscrete(const cmd::ArgumentList& args)
+{
+	doWithActiveCamWnd([](CamWnd& cam) { cam.getCamera().pitchUpDiscrete(); });
 }
 
-void GlobalCameraManager::moveDownDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().moveDownDiscrete();
-}
-
-void GlobalCameraManager::moveLeftDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().moveLeftDiscrete();
-}
-
-void GlobalCameraManager::moveRightDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().moveRightDiscrete();
-}
-
-void GlobalCameraManager::rotateLeftDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().rotateLeftDiscrete();
-}
-
-void GlobalCameraManager::rotateRightDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().rotateRightDiscrete();
-}
-
-void GlobalCameraManager::pitchUpDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().pitchUpDiscrete();
-}
-
-void GlobalCameraManager::pitchDownDiscrete(const cmd::ArgumentList& args) {
-	CamWndPtr camWnd = getActiveCamWnd();
-	if (camWnd == NULL) return;
-
-	camWnd->getCamera().pitchDownDiscrete();
+void GlobalCameraManager::pitchDownDiscrete(const cmd::ArgumentList& args)
+{
+	doWithActiveCamWnd([](CamWnd& cam) { cam.getCamera().pitchDownDiscrete(); });
 }
 
 float GlobalCameraManager::getCameraStrafeSpeed()
@@ -628,5 +557,7 @@ module::StaticModule<GlobalCameraManager> cameraModule;
 // The accessor function to the GlobalCameraManager instance
 ui::GlobalCameraManager& GlobalCamera()
 {
-	return *ui::cameraModule.getModule();
+	return *std::static_pointer_cast<ui::GlobalCameraManager>(
+		module::GlobalModuleRegistry().getModule(MODULE_CAMERA)
+	);
 }

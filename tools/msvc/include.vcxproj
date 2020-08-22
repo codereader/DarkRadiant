@@ -103,6 +103,7 @@
     <ClInclude Include="..\..\include\ibrush.h" />
     <ClInclude Include="..\..\include\icamera.h" />
     <ClInclude Include="..\..\include\icameraview.h" />
+    <ClInclude Include="..\..\include\iclipboard.h" />
     <ClInclude Include="..\..\include\iclipper.h" />
     <ClInclude Include="..\..\include\icommandsystem.h" />
     <ClInclude Include="..\..\include\icounter.h" />
@@ -110,6 +111,7 @@
     <ClInclude Include="..\..\include\idatastream.h" />
     <ClInclude Include="..\..\include\idialogmanager.h" />
     <ClInclude Include="..\..\include\ieclass.h" />
+    <ClInclude Include="..\..\include\ieditstopwatch.h" />
     <ClInclude Include="..\..\include\ientity.h" />
     <ClInclude Include="..\..\include\ientityinspector.h" />
     <ClInclude Include="..\..\include\ieventmanager.h" />
@@ -132,6 +134,7 @@
     <ClInclude Include="..\..\include\ikeyvaluestore.h" />
     <ClInclude Include="..\..\include\ilayer.h" />
     <ClInclude Include="..\..\include\ilightnode.h" />
+    <ClInclude Include="..\..\include\ilogwriter.h" />
     <ClInclude Include="..\..\include\imainframe.h" />
     <ClInclude Include="..\..\include\imainframelayout.h" />
     <ClInclude Include="..\..\include\imap.h" />
@@ -142,6 +145,7 @@
     <ClInclude Include="..\..\include\imd5model.h" />
     <ClInclude Include="..\..\include\imediabrowser.h" />
     <ClInclude Include="..\..\include\imenu.h" />
+    <ClInclude Include="..\..\include\imessagebus.h" />
     <ClInclude Include="..\..\include\imodel.h" />
     <ClInclude Include="..\..\include\imodelcache.h" />
     <ClInclude Include="..\..\include\imodelsurface.h" />
@@ -149,6 +153,7 @@
     <ClInclude Include="..\..\include\imousetool.h" />
     <ClInclude Include="..\..\include\imousetoolevent.h" />
     <ClInclude Include="..\..\include\imousetoolmanager.h" />
+    <ClInclude Include="..\..\include\imru.h" />
     <ClInclude Include="..\..\include\inameobserver.h" />
     <ClInclude Include="..\..\include\inamespace.h" />
     <ClInclude Include="..\..\include\inode.h" />
@@ -161,6 +166,7 @@
     <ClInclude Include="..\..\include\ipath.h" />
     <ClInclude Include="..\..\include\ipreferencesystem.h" />
     <ClInclude Include="..\..\include\iradiant.h" />
+    <ClInclude Include="..\..\include\iregion.h" />
     <ClInclude Include="..\..\include\iregistry.h" />
     <ClInclude Include="..\..\include\irender.h" />
     <ClInclude Include="..\..\include\irenderable.h" />
@@ -174,13 +180,12 @@
     <ClInclude Include="..\..\include\iselectiontest.h" />
     <ClInclude Include="..\..\include\iselection.h" />
     <ClInclude Include="..\..\include\iselectionset.h" />
+    <ClInclude Include="..\..\include\ishaderclipboard.h" />
     <ClInclude Include="..\..\include\ishaderexpression.h" />
     <ClInclude Include="..\..\include\ishaders.h" />
     <ClInclude Include="..\..\include\isound.h" />
     <ClInclude Include="..\..\include\ispacepartition.h" />
-    <ClInclude Include="..\..\include\itexdef.h" />
     <ClInclude Include="..\..\include\itextstream.h" />
-    <ClInclude Include="..\..\include\ithread.h" />
     <ClInclude Include="..\..\include\itraceable.h" />
     <ClInclude Include="..\..\include\itransformable.h" />
     <ClInclude Include="..\..\include\itransformnode.h" />

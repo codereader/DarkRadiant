@@ -1,7 +1,5 @@
 #pragma once
 
-#include "layers/LayerUsageBreakdown.h"
-
 #include <wx/panel.h>
 #include "wxutil/TreeView.h"
 

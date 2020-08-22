@@ -1,11 +1,15 @@
 #include "RadiantApp.h"
 
 #include "i18n.h"
+#include "iradiant.h"
+#include "version.h"
 
-#include "log/LogFile.h"
-#include "log/LogStream.h"
 #include "log/PIDFile.h"
-#include "modulesystem/ModuleRegistry.h"
+#include "module/CoreModule.h"
+#include "messages/GameConfigNeededMessage.h"
+#include "ui/prefdialog/GameSetupDialog.h"
+#include "module/StaticModule.h"
+#include "settings/LocalisationProvider.h"
 
 #include <wx/wxprec.h>
 #include <wx/event.h>
@@ -16,14 +20,11 @@
 #include "ui/splash/Splash.h"
 #endif
 
-#ifndef POSIX
-#include "settings/LanguageManager.h"
-#endif
-
 #ifdef POSIX
 #include <libintl.h>
 #endif
 #include <exception>
+#include <iomanip>
 
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
 #include "crtdbg.h"
@@ -41,9 +42,6 @@ bool RadiantApp::OnInit()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	// Set the stream references for rMessage(), redirect std::cout, etc.
-	applog::LogStream::InitialiseStreams();
-
 	// Stop wx's unhelpful debug messages about missing keyboard accel
 	// strings from cluttering up the console
 	wxLog::SetLogLevel(wxLOG_Warning);
@@ -51,15 +49,27 @@ bool RadiantApp::OnInit()
 	// Initialise the context (application path / settings path, is
 	// OS-specific)
 	_context.initialise(wxApp::argc, wxApp::argv);
-	module::ModuleRegistry::Instance().setContext(_context);
 
-	// The settings path is set, start logging now
-	applog::LogFile::create("darkradiant.log");
+	try
+	{
+		_coreModule.reset(new module::CoreModule(_context));
 
-#ifndef POSIX
-	// Initialise the language based on the settings in the user settings folder
-	language::LanguageManager().init(_context);
-#endif
+		auto* radiant = _coreModule->get();
+
+		module::RegistryReference::Instance().setRegistry(radiant->getModuleRegistry());
+		module::initialiseStreams(radiant->getLogWriter());
+	}
+	catch (module::CoreModule::FailureException& ex)
+	{
+		// Streams are not yet initialised, so log to std::err at this point
+		std::cerr << ex.what() << std::endl;
+		return false;
+	}
+
+	// Register the localisation helper before initialising the modules
+	settings::LocalisationProvider::Initialise(_context);
+	auto& languageManager = _coreModule->get()->getLanguageManager();
+	languageManager.registerProvider(settings::LocalisationProvider::Instance());
 
 #if defined(POSIX) && !defined(__APPLE__)
 	// greebo: not sure if this is needed
@@ -77,7 +87,7 @@ bool RadiantApp::OnInit()
 	wxInitAllImageHandlers();
 
 	// Register to the start up signal
-	Bind(EV_RadiantStartup, sigc::mem_fun(*this, &RadiantApp::onStartupEvent));
+	Bind(EV_RadiantStartup, &RadiantApp::onStartupEvent, this);
 
 	// Activate the Popup Error Handler
 	_context.initErrorHandler();
@@ -92,9 +102,13 @@ int RadiantApp::OnExit()
 	// Issue a shutdown() call to all the modules
 	module::GlobalModuleRegistry().shutdownModules();
 
-	// Close the logfile
-	applog::LogFile::close();
-	applog::LogStream::ShutdownStreams();
+	auto& languageManager = _coreModule->get()->getLanguageManager();
+	languageManager.clearProvider();
+
+	// Clean up static resources
+	settings::LocalisationProvider::Cleanup();
+
+	_coreModule.reset();
 
 	return wxApp::OnExit();
 }
@@ -141,16 +155,43 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	ui::Splash::OnAppStartup();
 #endif
 
-    try
-    {
-        module::ModuleRegistry::Instance().loadAndInitialiseModules();
-    }
-    catch (const std::exception& e)
-    {
-        rConsole() << "Exception thrown while initialising ModuleRegistry: "
-                   << e.what() << std::endl;
-        abort();
-    }
+	// In first-startup scenarios the game configuration is not present
+	// in which case the GameManager will dispatch a message asking 
+	// for showing a dialog or similar. Connect the listener.
+	_coreModule->get()->getMessageBus().addListener(radiant::IMessage::Type::GameConfigNeeded,
+		radiant::TypeListener(ui::GameSetupDialog::HandleGameConfigMessage));
+	
+	// Pick up all the statically defined modules and register them
+	module::internal::StaticModuleList::RegisterModules();
+
+	// Register to the modules unloading event, we need to get notified
+	// before the DLLs/SOs are relased to give wxWidgets a chance to clean up
+	_modulesUnloadingHandler = _coreModule->get()->getModuleRegistry().signal_modulesUnloading()
+		.connect(sigc::mem_fun(this, &RadiantApp::onModulesUnloading));
+
+	try
+	{
+		// Startup the application
+		_coreModule->get()->startup();
+	}
+	catch (const radiant::IRadiant::StartupFailure& ex)
+	{
+		// An unhandled exception during module initialisation => display a popup and exit
+		rError() << "Unhandled Exception: " << ex.what() << std::endl;
+		wxutil::Messagebox::ShowFatalError(ex.what(), nullptr);
+	}
 
 	// Scope ends here, PIDFile is deleted by its destructor
+}
+
+void RadiantApp::onModulesUnloading()
+{
+	// We need to delete all pending objects before unloading modules
+	// wxWidgets needs a chance to delete them before memory access is denied
+	if (wxTheApp != nullptr)
+	{
+		wxTheApp->ProcessIdle();
+	}
+
+	_modulesUnloadingHandler.disconnect();
 }

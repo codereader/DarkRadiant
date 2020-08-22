@@ -55,9 +55,7 @@ void ModelInfoTab::populateTab()
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Populate the liststore with the entity count information
-    for (map::ModelBreakdown::Map::const_iterator i = _modelBreakdown.begin();
-		 i != _modelBreakdown.end();
-		 ++i)
+    for (auto i = _modelBreakdown.begin(); i != _modelBreakdown.end(); ++i)
 	{
 		wxutil::TreeModel::Row row = _listStore->AddItem();
 

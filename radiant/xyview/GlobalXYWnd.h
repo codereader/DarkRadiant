@@ -68,7 +68,6 @@ public:
 	bool showAxes() const;
 	bool showWorkzone() const;
 	bool showSizeInfo() const;
-	bool higherEntitySelectionPriority() const;
 
 	unsigned int defaultBlockSize() const;
 
@@ -104,6 +103,7 @@ public:
 
 	// Sets the origin of all available views
 	void setOrigin(const Vector3& origin) override;
+	Vector3 getActiveViewOrigin() override;
 
 	// Sets the scale of all available views
 	void setScale(float scale) override;
@@ -119,6 +119,9 @@ public:
 	// Returns the view type of the currently active view
 	EViewType getActiveViewType() const override;
 	void setActiveViewType(EViewType viewType) override;
+
+	IOrthoView& getActiveView() override;
+	IOrthoView& getViewByType(EViewType viewType) override;
 
 	void toggleActiveView(const cmd::ArgumentList& args);
 

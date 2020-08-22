@@ -9,24 +9,27 @@
 namespace ui
 {
 
-// Construct an accelerator out of the key/modifier plus a command
-Accelerator::Accelerator(const unsigned int key,
-                         const unsigned int modifiers,
-                         const IEventPtr& event) :
-                         _key(key),
-                         _modifiers(modifiers),
-                         _event(event)
+Accelerator::Accelerator() :
+    _key(0),
+    _modifiers(0),
+    _isEmpty(true)
 {}
 
-Accelerator::Accelerator(const Accelerator& other) :
-    IAccelerator(),
-    _key(other._key),
-    _modifiers(other._modifiers),
-    _event(other._event)
+// Construct an accelerator out of the key/modifier plus a command
+Accelerator::Accelerator(const int key,
+                         const unsigned int modifiers) :
+    _key(key),
+    _modifiers(modifiers),
+    _isEmpty(false)
 {}
+
+Accelerator Accelerator::CreateEmpty()
+{
+    return Accelerator();
+}
 
 // Returns true if the key/modifier combination matches this accelerator
-bool Accelerator::match(const unsigned int key, const unsigned int modifiers) const {
+bool Accelerator::match(const int key, const unsigned int modifiers) const {
     return (_key == key && _modifiers == modifiers);
 }
 
@@ -36,7 +39,7 @@ bool Accelerator::match(const IEventPtr& event) const
     return _event == event && !_event->empty();
 }
 
-unsigned int Accelerator::getKey() const {
+int Accelerator::getKey() const {
     return _key;
 }
 
@@ -44,8 +47,20 @@ unsigned int Accelerator::getModifiers() const {
     return _modifiers;
 }
 
-void Accelerator::setKey(const unsigned int key) {
+const std::string& Accelerator::getStatement() const
+{
+    return _statement;
+}
+
+void Accelerator::setStatement(const std::string& statement)
+{
+    _statement = statement;
+}
+
+void Accelerator::setKey(const int key)
+{
     _key = key;
+    _isEmpty = _key != 0;
 }
 
 // Make the accelerator use the specified accelerators
@@ -63,15 +78,12 @@ void Accelerator::setEvent(const IEventPtr& ev)
     _event = ev;
 }
 
-void Accelerator::keyUp() {
-    _event->keyUp();
+bool Accelerator::isEmpty() const
+{
+    return _isEmpty;
 }
 
-void Accelerator::keyDown() {
-    _event->keyDown();
-}
-
-std::string Accelerator::getAcceleratorString(bool forMenu)
+std::string Accelerator::getString(bool forMenu) const
 {
     const std::string keyStr = _key != 0 ? Accelerator::getNameFromKeyCode(_key) : "";
 
@@ -79,7 +91,7 @@ std::string Accelerator::getAcceleratorString(bool forMenu)
     {
         // Return a modifier string for a menu
         const std::string modifierStr = forMenu ?
-            wxutil::Modifier::GetModifierStringForMenu(_modifiers) :
+            wxutil::Modifier::GetLocalisedModifierString(_modifiers) :
             wxutil::Modifier::GetModifierString(_modifiers);
 
         const std::string connector = (forMenu) ? "~" : "+";

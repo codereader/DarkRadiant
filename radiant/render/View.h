@@ -55,7 +55,7 @@ public:
     VolumeIntersectionValue TestAABB(const AABB& aabb) const;
 	VolumeIntersectionValue TestAABB(const AABB& aabb, const Matrix4& localToWorld) const;
 
-	const Matrix4& GetViewMatrix() const;
+	const Matrix4& GetViewProjection() const;
 	const Matrix4& GetViewport() const;
 	const Matrix4& GetModelview() const;
 	const Matrix4& GetProjection() const;

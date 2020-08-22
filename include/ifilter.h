@@ -75,6 +75,12 @@ const char* const MODULE_FILTERSYSTEM = "FilterSystem";
 // Forward declaration
 class Entity;
 
+namespace filters
+{
+
+const char* const SELECT_OBJECTS_BY_FILTER_CMD = "SelectObjectsByFilter";
+const char* const DESELECT_OBJECTS_BY_FILTER_CMD = "DeselectObjectsByFilter";
+
 /**
  * \brief
  * Interface for the FilterSystem
@@ -82,13 +88,17 @@ class Entity;
  * The filter system provides a mechanism by which certain objects or materials
  * can be hidden from rendered views.
  */
-class FilterSystem :
+class IFilterSystem :
 	public RegisterableModule
 {
 public:
 
-    /// Signal emitted when the state of filters has changed
-    virtual sigc::signal<void> filtersChangedSignal() const = 0;
+	// Signal emitted when the state of filters has changed,
+	// filters have been added or removed, or when rules have been altered
+	virtual sigc::signal<void> filterConfigChangedSignal() const = 0;
+
+	// Signal emitted when filters are added, removed or renamed
+	virtual sigc::signal<void> filterCollectionChangedSignal() const = 0;
 
 	/**
 	 * greebo: Updates all the "Filtered" status of all Instances
@@ -102,13 +112,13 @@ public:
 	 */
 	virtual void updateSubgraph(const scene::INodePtr& root) = 0;
 
-	/** 
+	/**
 	 * Visit the available filters, passing each filter's text name to the visitor.
 	 *
 	 * @param visitor
 	 * Function object called with the filter name as argument.
 	 */
-	virtual void forEachFilter(const std::function<void(const std::string& name)>& func) = 0;
+	virtual void forEachFilter(const std::function<void(const std::string & name)>& func) = 0;
 
 	/** Set the state of the named filter.
 	 *
@@ -126,7 +136,7 @@ public:
 	 */
 	virtual bool getFilterState(const std::string& filter) = 0;
 
-	/** 
+	/**
 	 * Activates or deactivates all known filters.
 	 */
 	virtual void setAllFilterStates(bool state) = 0;
@@ -162,7 +172,7 @@ public:
 	 * @returns
 	 * true if the entity is visible, false otherwise.
 	 */
-	virtual bool isEntityVisible(const FilterRule::Type type, const Entity& entity) = 0;	
+	virtual bool isEntityVisible(const FilterRule::Type type, const Entity& entity) = 0;
 
 	// =====  API for Filter management and editing =====
 
@@ -202,15 +212,17 @@ public:
 	 * This applies to non-read-only filters only.
 	 *
 	 * @returns: TRUE on success, FALSE if filter not found or read-only.
- 	 */
+	 */
 	virtual bool setFilterRules(const std::string& filter, const FilterRules& ruleSet) = 0;
 };
 
-inline FilterSystem& GlobalFilterSystem() 
+}
+
+inline filters::IFilterSystem& GlobalFilterSystem()
 {
 	// Cache the reference locally
-	static FilterSystem& _filterSystem(
-		*std::static_pointer_cast<FilterSystem>(
+	static filters::IFilterSystem& _filterSystem(
+		*std::static_pointer_cast<filters::IFilterSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_FILTERSYSTEM)
 		)
 	);

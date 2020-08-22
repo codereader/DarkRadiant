@@ -1,5 +1,4 @@
 #include "RadiantModule.h"
-#include "RadiantThreadManager.h"
 
 #include <iostream>
 #include <ctime>
@@ -11,19 +10,16 @@
 #include "ieventmanager.h"
 #include "i18n.h"
 #include "imainframe.h"
+#include "ishaderclipboard.h"
 
 #include "scene/Node.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
-#include "ui/mru/MRU.h"
 
-#include "modulesystem/StaticModule.h"
-#include "selection/algorithm/General.h"
-#include "brush/csg/CSG.h"
+#include "module/StaticModule.h"
 
 #include "ui/modelselector/ModelSelector.h"
 #include "EventRateLimiter.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include <wx/app.h>
 
@@ -40,19 +36,8 @@ sigc::signal<void> RadiantModule::signal_radiantShutdown() const
     return _radiantShutdown;
 }
 
-ThreadManager& RadiantModule::getThreadManager()
-{
-    if (!_threadManager)
-    {
-        _threadManager.reset(new RadiantThreadManager);
-    }
-    return *_threadManager;
-}
-
 void RadiantModule::broadcastShutdownEvent()
 {
-	_threadManager.reset();
-
     _radiantShutdown.emit();
     _radiantShutdown.clear();
 }
@@ -66,7 +51,7 @@ void RadiantModule::broadcastStartupEvent()
 // RegisterableModule implementation
 const std::string& RadiantModule::getName() const
 {
-	static std::string _name(MODULE_RADIANT);
+	static std::string _name(MODULE_RADIANT_APP);
 	return _name;
 }
 
@@ -91,9 +76,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 	// Reset the node id count
   	scene::Node::resetIds();
 
-    selection::algorithm::registerCommands();
-	brush::algorithm::registerCommands();
-
     // Subscribe for the post-module init event
     module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
         sigc::mem_fun(this, &RadiantModule::postModuleInitialisation));
@@ -109,9 +91,6 @@ void RadiantModule::shutdownModule()
 
 void RadiantModule::postModuleInitialisation()
 {
-	// Construct the MRU commands and menu structure, load the recently used files
-	GlobalMRU().initialise();
-
     // Initialise the mainframe
     GlobalMainFrame().construct();
 
@@ -141,7 +120,9 @@ module::StaticModule<RadiantModule> radiantCoreModule;
 // Return the static Radiant module to other code within the main binary
 RadiantModulePtr getGlobalRadiant()
 {
-	return radiantCoreModule.getModule();
+	return std::static_pointer_cast<RadiantModule>(
+		module::GlobalModuleRegistry().getModule(MODULE_RADIANT_APP)
+	);
 }
 
 } // namespace radiant

@@ -36,7 +36,7 @@ void EmbeddedLayout::activate()
     wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 
     // Splitters
-    _horizPane = new Splitter(
+    _horizPane = new wxutil::Splitter(
         topLevelParent, RKEY_HORIZ_POS, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS,
         "EmbeddedHorizPane"
     );
@@ -47,7 +47,7 @@ void EmbeddedLayout::activate()
     XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, _horizPane);
 
     // CamGroup Pane
-    _groupCamPane = new Splitter(
+    _groupCamPane = new wxutil::Splitter(
         _horizPane, RKEY_VERT_POS, wxSP_LIVE_UPDATE | wxSP_3D | wxWANTS_CHARS,
         "EmbeddedVertPane"
     );

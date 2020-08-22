@@ -1,32 +1,31 @@
 #include "FaceItem.h"
 
+#include "igl.h"
 #include "math/FloatTools.h"
-#include "brush/Face.h"
-#include "brush/Winding.h"
 
 #include "FaceVertexItem.h"
 
-namespace textool {
+namespace textool
+{
 
-FaceItem::FaceItem(Face& sourceFace) :
+FaceItem::FaceItem(IFace& sourceFace) :
 	_sourceFace(sourceFace),
 	_winding(sourceFace.getWinding())
 {
 	// Allocate a vertex item for each winding vertex
-	for (Winding::iterator i = _winding.begin(); i != _winding.end(); ++i)
+	for (auto& vertex : _winding)
 	{
-		_children.push_back(
-			TexToolItemPtr(new FaceVertexItem(_sourceFace, *i, *this))
-		);
+		_children.emplace_back(new FaceVertexItem(_sourceFace, vertex, *this));
 	}
 }
 
-AABB FaceItem::getExtents() {
+AABB FaceItem::getExtents()
+{
 	AABB returnValue;
 
-	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	for (const auto& vertex : _winding)
 	{
-		returnValue.includePoint(Vector3(i->texcoord[0], i->texcoord[1], 0));
+		returnValue.includePoint(Vector3(vertex.texcoord[0], vertex.texcoord[1], 0));
 	}
 
 	return returnValue;
@@ -47,9 +46,9 @@ void FaceItem::render()
 
 	glBegin(GL_TRIANGLE_FAN);
 
-	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	for (const auto& vertex : _winding)
 	{
-		glVertex2d(i->texcoord[0], i->texcoord[1]);
+		glVertex2d(vertex.texcoord[0], vertex.texcoord[1]);
 	}
 
 	glEnd();
@@ -110,9 +109,9 @@ void FaceItem::transformSelected(const Matrix4& matrix)
 Vector2 FaceItem::getCentroid() const {
 	Vector2 texCentroid;
 
-	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	for (const auto& vertex : _winding)
 	{
-		texCentroid += i->texcoord;
+		texCentroid += vertex.texcoord;
 	}
 
 	// Take the average value of all the winding texcoords to retrieve the centroid
@@ -125,7 +124,7 @@ bool FaceItem::testSelect(const Rectangle& rectangle)
 {
 	Vector2 texCentroid;
 
-	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	for (const auto& vertex : _winding)
 	{
 		/*if (rectangle.contains(i->texcoord))
 		{
@@ -133,7 +132,7 @@ bool FaceItem::testSelect(const Rectangle& rectangle)
 		}*/
 
 		// Otherwise, just continue summing up the texcoords for the centroid check
-		texCentroid += i->texcoord;
+		texCentroid += vertex.texcoord;
 	}
 
 	// Take the average value of all the winding texcoords to retrieve the centroid

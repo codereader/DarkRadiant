@@ -4,6 +4,7 @@
 #include <regex>
 #include "i18n.h"
 #include "imodule.h"
+#include "iregistry.h"
 #include "itextstream.h"
 #include "igame.h"
 
@@ -17,6 +18,7 @@
 #include <wx/panel.h>
 
 #include "string/trim.h"
+#include "registry/registry.h"
 #include "string/encoding.h"
 #include "os/file.h"
 #include "os/path.h"
@@ -228,7 +230,7 @@ void GameSetupPageTdm::validateSettings()
             }
             catch (const std::system_error& ex)
             {
-                rWarning() << "[vfs] Skipping file " << string::to_utf8(path.filename().wstring()) <<
+                rWarning() << "[vfs] Skipping file " << string::unicode_to_utf8(path.filename().wstring()) <<
                     " - possibly unsupported characters in filename? " <<
                     "(Exception: " << ex.what() << ")" << std::endl;
             }

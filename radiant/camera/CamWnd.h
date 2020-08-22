@@ -19,7 +19,7 @@
 #include "RadiantCameraView.h"
 #include "Camera.h"
 
-#include "selection/Rectangle.h"
+#include "Rectangle.h"
 #include <memory>
 #include "util/Noncopyable.h"
 #include <sigc++/connection.h>
@@ -66,8 +66,6 @@ private:
     // Is true during an active drawing process
     bool _drawing;
 
-    bool _freeMoveEnabled;
-
     // The GL widget
     wxutil::GLWidget* _wxGLWidget;
 
@@ -97,7 +95,6 @@ public:
     void queueDraw() override;
     void forceRedraw() override;
 
-    void draw();
     void update();
 
     // The callback when the scene gets changed
@@ -115,8 +112,8 @@ public:
     Vector3 getUpVector() const override;
     Vector3 getForwardVector() const override;
 
-    Vector3 getCameraAngles() const;
-    void setCameraAngles(const Vector3& angles);
+    Vector3 getCameraAngles() const override;
+    void setCameraAngles(const Vector3& angles) override;
 
     const Frustum& getViewFrustum() const;
 
@@ -138,11 +135,6 @@ public:
     // Enables/disables the (ordinary) camera movement (non-freelook)
     void addHandlersMove();
     void removeHandlersMove();
-
-    void enableDiscreteMoveEvents();
-    void enableFreeMoveEvents();
-    void disableDiscreteMoveEvents();
-    void disableFreeMoveEvents();
 
     // Increases/decreases the far clip plane distance
     void farClipPlaneIn();
@@ -173,7 +165,7 @@ private:
     void updateToolbarVisibility();
 
     void Cam_Draw();
-    void onRender();
+    bool onRender();
     void drawTime();
 
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));

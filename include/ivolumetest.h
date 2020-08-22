@@ -52,6 +52,7 @@ public:
 
   virtual bool fill() const = 0;
 
+  virtual const Matrix4& GetViewProjection() const = 0;
   virtual const Matrix4& GetViewport() const = 0;
   virtual const Matrix4& GetProjection() const = 0;
   virtual const Matrix4& GetModelview() const = 0;

@@ -33,7 +33,7 @@ MenuElement::MenuElement(const MenuElementPtr& parent) :
 MenuElement::~MenuElement()
 {}
 
-std::string MenuElement::getName() const
+const std::string& MenuElement::getName() const
 {
 	return _name;
 }
@@ -122,7 +122,7 @@ void MenuElement::removeAllChildren()
 	_children.clear();
 }
 
-std::string MenuElement::getEvent() const
+const std::string& MenuElement::getEvent() const
 {
 	return _event;
 }
@@ -192,6 +192,9 @@ void MenuElement::setNeedsRefresh(bool needsRefresh)
 {
 	_needsRefresh = needsRefresh;
 }
+
+void MenuElement::setAccelerator(const std::string& accelStr)
+{}
 
 MenuElementPtr MenuElement::CreateFromNode(const xml::Node& node)
 {

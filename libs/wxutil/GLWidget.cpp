@@ -15,7 +15,7 @@ const int ATTRIBS [] = {
 	0
 };
 
-GLWidget::GLWidget(wxWindow *parent, const std::function<void()>& renderCallback, const std::string& name) :
+GLWidget::GLWidget(wxWindow *parent, const std::function<bool()>& renderCallback, const std::string& name) :
 	wxGLCanvas(parent, wxID_ANY, ATTRIBS, wxDefaultPosition, wxDefaultSize,
                wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS,
                wxString(name.c_str(), *wxConvCurrent)),
@@ -88,9 +88,12 @@ void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
 		SetCurrent(GlobalOpenGL().getwxGLContext());
 	}
 
-	_renderCallback();
-
-    SwapBuffers();
+	if (_renderCallback())
+	{
+		// Render callback returned true, so drawing took place 
+		// and we can swap the buffers
+		SwapBuffers();
+	}
 }
 
 } // namespace

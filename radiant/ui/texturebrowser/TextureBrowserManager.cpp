@@ -2,14 +2,16 @@
 #include "TextureBrowser.h"
 
 #include <list>
+#include <sigc++/functors/mem_fun.h>
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "ishaderclipboard.h"
 #include "icommandsystem.h"
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "iuimanager.h"
 #include "itextstream.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 namespace ui
 {
@@ -90,6 +92,7 @@ const StringSet& TextureBrowserManager::getDependencies() const
         _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_EVENTMANAGER);
         _dependencies.insert(MODULE_COMMANDSYSTEM);
+        _dependencies.insert(MODULE_SHADERCLIPBOARD);
     }
 
     return _dependencies;
@@ -101,9 +104,24 @@ void TextureBrowserManager::initialiseModule(const ApplicationContext& ctx)
 
     GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
     GlobalCommandSystem().addCommand("ViewTextures", TextureBrowserManager::toggleGroupDialogTexturesTab);
-    GlobalEventManager().addCommand("ViewTextures", "ViewTextures");
 
     registerPreferencePage();
+
+    _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
+        sigc::mem_fun(this, &TextureBrowserManager::onShaderClipboardSourceChanged)
+    );
+}
+
+void TextureBrowserManager::shutdownModule()
+{
+    _shaderClipboardConn.disconnect();
+}
+
+void TextureBrowserManager::onShaderClipboardSourceChanged()
+{
+    // Get the shaderclipboard shader and try to highlight it
+    // if the shader name is empty, it will unfocus the selection
+    setSelectedShader(GlobalShaderClipboard().getShaderName());
 }
 
 // Define the static module
@@ -111,7 +129,8 @@ module::StaticModule<TextureBrowserManager> texBrowserManagerModule;
 
 TextureBrowserManager& TextureBrowserManager::Instance()
 {
-    return *texBrowserManagerModule.getModule();
+    return *std::static_pointer_cast<TextureBrowserManager>(
+        module::GlobalModuleRegistry().getModule(MODULE_TEXTURE_BROWSER_MANAGER));
 }
 
 } // namespace

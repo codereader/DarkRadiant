@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodule.h"
+#include "icameraview.h"
 #include "math/Vector3.h"
 
 namespace ui
@@ -24,16 +25,20 @@ public:
 	 * greebo: Sets the camera origin to the given <point> using the given <angles>.
 	 */
 	virtual void focusCamera(const Vector3& point, const Vector3& angles) = 0;
+
+	// A reference to the currently active view. Will throw a std::runtime_error if no camera is present
+	virtual ICameraView& getActiveView() = 0;
 };
 typedef std::shared_ptr<ICamera> ICameraPtr;
 
 } // namespace
 
-const std::string MODULE_CAMERA("Camera");
+const char* const MODULE_CAMERA("Camera");
 
 // Accessor
 // (this is named CameraView to avoid name conflicts with the existing GlobalCamera() accessor)
-inline ui::ICamera& GlobalCameraView() {
+inline ui::ICamera& GlobalCameraView()
+{
 	// Cache the reference locally
     static ui::ICamera& _camera(
         *std::static_pointer_cast<ui::ICamera>(

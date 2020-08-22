@@ -6,7 +6,7 @@
 #include "imainframe.h"
 #include "icommandsystem.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include "FloatingLayout.h"
 #include "SplitPaneLayout.h"

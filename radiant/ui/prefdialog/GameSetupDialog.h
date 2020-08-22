@@ -3,6 +3,7 @@
 #include "icommandsystem.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "GameSetupPage.h"
+#include "messages/GameConfigNeededMessage.h"
 
 class wxChoicebook;
 class wxBookCtrlEvent;
@@ -36,7 +37,12 @@ public:
 	// greebo: The command target to show the Game settings preferences.
 	static void Show(const cmd::ArgumentList& args);
 
+	static void HandleGameConfigMessage(game::ConfigurationNeeded& message);
+
 private:
+	// The boolean in the pair is false if the dialog was cancelled
+	static void TryGetConfig(const std::function<void(const game::GameConfiguration&)>& onSuccess);
+
 	GameSetupPage* getSelectedPage();
 	GameSetupPage* getPage(int num);
 	void setSelectedPage(const std::string& name);

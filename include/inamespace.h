@@ -1,5 +1,4 @@
-#ifndef _INAMESPACE_H__
-#define _INAMESPACE_H__
+#pragma once
 
 #include "inode.h"
 #include "imodule.h"
@@ -146,7 +145,8 @@ public:
 };
 typedef std::shared_ptr<Namespaced> NamespacedPtr;
 
-inline NamespacedPtr Node_getNamespaced(scene::INodePtr node) {
+inline NamespacedPtr Node_getNamespaced(scene::INodePtr node)
+{
 	return std::dynamic_pointer_cast<Namespaced>(node);
 }
 
@@ -163,10 +163,11 @@ public:
 	virtual INamespacePtr createNamespace() = 0;
 };
 
-const std::string MODULE_NAMESPACE_FACTORY("NamespaceFactory");
+const char* const MODULE_NAMESPACE_FACTORY("NamespaceFactory");
 
 // Factory accessor
-inline INamespaceFactory& GlobalNamespaceFactory() {
+inline INamespaceFactory& GlobalNamespaceFactory()
+{
 	// Cache the reference locally
 	static INamespaceFactory& _namespaceFactory(
 		*std::static_pointer_cast<INamespaceFactory>(
@@ -175,5 +176,3 @@ inline INamespaceFactory& GlobalNamespaceFactory() {
 	);
 	return _namespaceFactory;
 }
-
-#endif /* _INAMESPACE_H__ */

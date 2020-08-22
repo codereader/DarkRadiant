@@ -4,7 +4,7 @@
  *
  * Use these methods to set/get the grid size of the xyviews
  */
-
+#include <stdexcept>
 #include "imodule.h"
 #include <sigc++/signal.h>
 
@@ -24,6 +24,31 @@ enum GridSize
 	GRID_256 = 8,
 };
 
+namespace grid
+{
+
+inline const char* getStringForSize(GridSize size)
+{
+	switch (size)
+	{
+	case GRID_0125: return "0.125";
+	case GRID_025:  return "0.25";
+	case GRID_05:  return "0.5";
+	case GRID_1:  return "1";
+	case GRID_2:  return "2";
+	case GRID_4:  return "4";
+	case GRID_8:  return "8";
+	case GRID_16:  return "16";
+	case GRID_32:  return "32";
+	case GRID_64:  return "64";
+	case GRID_128:  return "128";
+	case GRID_256:  return "256";
+	default:
+		throw new std::logic_error("Grid size not handled in switch!");
+	};
+}
+
+}
 
 // grid renderings
 enum GridLook

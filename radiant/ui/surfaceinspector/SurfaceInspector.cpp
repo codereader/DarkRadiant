@@ -11,6 +11,7 @@
 #include <wx/spinctrl.h>
 #include <wx/tglbtn.h>
 
+#include "iscenegraph.h"
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "iuimanager.h"
@@ -19,6 +20,7 @@
 
 #include "wxutil/ControlButton.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "wxutil/Button.h"
 
 #include "registry/Widgets.h"
 #include "selectionlib.h"
@@ -27,12 +29,6 @@
 
 #include "textool/TexTool.h"
 #include "ui/patch/PatchInspector.h"
-#include "brush/TextureProjection.h"
-#include "selection/algorithm/Primitives.h"
-#include "selection/algorithm/Shader.h"
-#include "brush/Face.h"
-#include "brush/Brush.h"
-#include "patch/Patch.h"
 
 namespace ui
 {
@@ -171,26 +167,26 @@ void SurfaceInspector::connectEvents()
 	// Connect the ToggleTexLock item to the according command
 	GlobalEventManager().findEvent("TogTexLock")->connectToggleButton(_texLockButton);
 
-	GlobalEventManager().findEvent("FlipTextureX")->connectButton(_flipTexture.flipX);
-	GlobalEventManager().findEvent("FlipTextureY")->connectButton(_flipTexture.flipY);
-	GlobalEventManager().findEvent("TextureNatural")->connectButton(_modifyTex.natural);
-	GlobalEventManager().findEvent("NormaliseTexture")->connectButton(_modifyTex.normalise);
-
-	GlobalEventManager().findEvent("TexAlignTop")->connectButton(_alignTexture.top);
-	GlobalEventManager().findEvent("TexAlignBottom")->connectButton(_alignTexture.bottom);
-	GlobalEventManager().findEvent("TexAlignRight")->connectButton(_alignTexture.right);
-	GlobalEventManager().findEvent("TexAlignLeft")->connectButton(_alignTexture.left);
-
-	GlobalEventManager().findEvent("TexShiftLeft")->connectButton(_manipulators[HSHIFT].smaller);
-	GlobalEventManager().findEvent("TexShiftRight")->connectButton(_manipulators[HSHIFT].larger);
-	GlobalEventManager().findEvent("TexShiftUp")->connectButton(_manipulators[VSHIFT].larger);
-	GlobalEventManager().findEvent("TexShiftDown")->connectButton(_manipulators[VSHIFT].smaller);
-	GlobalEventManager().findEvent("TexScaleLeft")->connectButton(_manipulators[HSCALE].smaller);
-	GlobalEventManager().findEvent("TexScaleRight")->connectButton(_manipulators[HSCALE].larger);
-	GlobalEventManager().findEvent("TexScaleUp")->connectButton(_manipulators[VSCALE].larger);
-	GlobalEventManager().findEvent("TexScaleDown")->connectButton(_manipulators[VSCALE].smaller);
-	GlobalEventManager().findEvent("TexRotateClock")->connectButton(_manipulators[ROTATION].larger);
-	GlobalEventManager().findEvent("TexRotateCounter")->connectButton(_manipulators[ROTATION].smaller);
+	wxutil::button::connectToCommand(_flipTexture.flipX, "FlipTextureX");
+	wxutil::button::connectToCommand(_flipTexture.flipY, "FlipTextureY");
+	wxutil::button::connectToCommand(_modifyTex.natural, "TextureNatural");
+	wxutil::button::connectToCommand(_modifyTex.normalise, "NormaliseTexture");
+	
+	wxutil::button::connectToCommand(_alignTexture.top, "TexAlignTop");
+	wxutil::button::connectToCommand(_alignTexture.bottom, "TexAlignBottom");
+	wxutil::button::connectToCommand(_alignTexture.right, "TexAlignRight");
+	wxutil::button::connectToCommand(_alignTexture.left, "TexAlignLeft");
+		
+	wxutil::button::connectToCommand(_manipulators[HSHIFT].smaller, "TexShiftLeft");
+	wxutil::button::connectToCommand(_manipulators[HSHIFT].larger, "TexShiftRight");
+	wxutil::button::connectToCommand(_manipulators[VSHIFT].larger, "TexShiftUp");
+	wxutil::button::connectToCommand(_manipulators[VSHIFT].smaller, "TexShiftDown");
+	wxutil::button::connectToCommand(_manipulators[HSCALE].smaller, "TexScaleLeft");
+	wxutil::button::connectToCommand(_manipulators[HSCALE].larger, "TexScaleRight");
+	wxutil::button::connectToCommand(_manipulators[VSCALE].larger, "TexScaleUp");
+	wxutil::button::connectToCommand(_manipulators[VSCALE].smaller, "TexScaleDown");
+	wxutil::button::connectToCommand(_manipulators[ROTATION].larger, "TexRotateClock");
+	wxutil::button::connectToCommand(_manipulators[ROTATION].smaller, "TexRotateCounter");
 }
 
 void SurfaceInspector::keyChanged()
@@ -468,7 +464,7 @@ SurfaceInspector& SurfaceInspector::Instance()
 void SurfaceInspector::emitShader()
 {
 	// Apply it to the selection
-	selection::algorithm::applyShaderToSelection(_shaderEntry->GetValue().ToStdString());
+	GlobalCommandSystem().executeCommand("SetShaderOnSelection", _shaderEntry->GetValue().ToStdString());
 
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
@@ -476,68 +472,55 @@ void SurfaceInspector::emitShader()
 
 void SurfaceInspector::emitTexDef()
 {
-	TexDef shiftScaleRotate;
+	ShiftScaleRotation shiftScaleRotate;
 
-	shiftScaleRotate._shift[0] = string::convert<float>(_manipulators[HSHIFT].value->GetValue().ToStdString());
-	shiftScaleRotate._shift[1] = string::convert<float>(_manipulators[VSHIFT].value->GetValue().ToStdString());
-	shiftScaleRotate._scale[0] = string::convert<float>(_manipulators[HSCALE].value->GetValue().ToStdString());
-	shiftScaleRotate._scale[1] = string::convert<float>(_manipulators[VSCALE].value->GetValue().ToStdString());
-	shiftScaleRotate._rotate = string::convert<float>(_manipulators[ROTATION].value->GetValue().ToStdString());
+	shiftScaleRotate.shift[0] = string::convert<float>(_manipulators[HSHIFT].value->GetValue().ToStdString());
+	shiftScaleRotate.shift[1] = string::convert<float>(_manipulators[VSHIFT].value->GetValue().ToStdString());
+	shiftScaleRotate.scale[0] = string::convert<float>(_manipulators[HSCALE].value->GetValue().ToStdString());
+	shiftScaleRotate.scale[1] = string::convert<float>(_manipulators[VSCALE].value->GetValue().ToStdString());
+	shiftScaleRotate.rotate = string::convert<float>(_manipulators[ROTATION].value->GetValue().ToStdString());
 
 	// Apply it to the selection
-	selection::algorithm::applyTexDefToFaces(shiftScaleRotate);
+	UndoableCommand undo("textureDefinitionSetSelected");
 
+	GlobalSelectionSystem().foreachFace([&](IFace& face)
+	{ 
+		face.setShiftScaleRotation(shiftScaleRotate); 
+	});
+
+	SceneChangeNotify();
+	
+	// Update the Texture Tools
+	radiant::TextureChangedMessage::Send();
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
 }
 
 void SurfaceInspector::updateTexDef()
 {
-    try
-    {
-        Face& face = selection::algorithm::getLastSelectedFace();
-
+	if (GlobalSelectionSystem().getSelectedFaceCount() == 1)
+	{
         // This call should return a meaningful value, since we only get here when only
         // a single face is selected
-        TextureProjection curProjection;
-        face.GetTexdef(curProjection);
+        auto& face = GlobalSelectionSystem().getSingleSelectedFace();
 
-        // Multiply the texture dimensions to the projection matrix such that 
-        // the shift/scale/rotation represent pixel values within the image.
-        Vector2 shaderDims(face.getFaceShader().getWidth(), face.getFaceShader().getHeight());
-
-        TextureMatrix bpTexDef= curProjection.matrix;
-        bpTexDef.applyShaderDimensions(static_cast<std::size_t>(shaderDims[0]), static_cast<std::size_t>(shaderDims[1]));
-
-	    // Calculate the "fake" texture properties (shift/scale/rotation)
-	    TexDef texdef = bpTexDef.getFakeTexCoords();
-
-	    if (shaderDims != Vector2(0,0))
-        {
-		    // normalize again to hide the ridiculously high scale values that get created when using texlock
-  		    texdef._shift[0] = float_mod(texdef._shift[0], shaderDims[0]);
-  		    texdef._shift[1] = float_mod(texdef._shift[1], shaderDims[1]);
-	    }
+		auto texdef = face.getShiftScaleRotation();
 
 	    // Snap the floating point variables to the max resolution to avoid things like "1.45e-14"
-	    texdef._shift[0] = float_snapped(texdef._shift[0], MAX_FLOAT_RESOLUTION);
-	    texdef._shift[1] = float_snapped(texdef._shift[1], MAX_FLOAT_RESOLUTION);
-	    texdef._scale[0] = float_snapped(texdef._scale[0], MAX_FLOAT_RESOLUTION);
-	    texdef._scale[1] = float_snapped(texdef._scale[1], MAX_FLOAT_RESOLUTION);
-	    texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
+	    texdef.shift[0] = float_snapped(texdef.shift[0], MAX_FLOAT_RESOLUTION);
+	    texdef.shift[1] = float_snapped(texdef.shift[1], MAX_FLOAT_RESOLUTION);
+	    texdef.scale[0] = float_snapped(texdef.scale[0], MAX_FLOAT_RESOLUTION);
+	    texdef.scale[1] = float_snapped(texdef.scale[1], MAX_FLOAT_RESOLUTION);
+	    texdef.rotate = float_snapped(texdef.rotate, MAX_FLOAT_RESOLUTION);
 
 	    // Load the values into the widgets
-	    _manipulators[HSHIFT].value->SetValue(string::to_string(texdef._shift[0]));
-	    _manipulators[VSHIFT].value->SetValue(string::to_string(texdef._shift[1]));
+	    _manipulators[HSHIFT].value->SetValue(string::to_string(texdef.shift[0]));
+	    _manipulators[VSHIFT].value->SetValue(string::to_string(texdef.shift[1]));
 
-	    _manipulators[HSCALE].value->SetValue(string::to_string(texdef._scale[0]));
-	    _manipulators[VSCALE].value->SetValue(string::to_string(texdef._scale[1]));
+	    _manipulators[HSCALE].value->SetValue(string::to_string(texdef.scale[0]));
+	    _manipulators[VSCALE].value->SetValue(string::to_string(texdef.scale[1]));
 
-	    _manipulators[ROTATION].value->SetValue(string::to_string(texdef._rotate));
-    }
-    catch (selection::InvalidSelectionException&)
-    {
-        rError() << "Can't update texdef, since more than one face is selected." << std::endl;
+	    _manipulators[ROTATION].value->SetValue(string::to_string(texdef.rotate));
     }
 }
 
@@ -574,7 +557,7 @@ void SurfaceInspector::doUpdate()
 	valueSensitivity = (selectionInfo.patchCount == 0 &&
 						selectionInfo.totalCount > 0 &&
 						selectionInfo.entityCount == 0 &&
-						selection::algorithm::selectedFaceCount() == 1);
+						GlobalSelectionSystem().getSelectedFaceCount() == 1);
 
 	_manipulators[HSHIFT].value->Enable(valueSensitivity);
 	_manipulators[VSHIFT].value->Enable(valueSensitivity);
@@ -607,7 +590,7 @@ void SurfaceInspector::doUpdate()
 	_modifyTex.normalise->Enable(applySensitivity);
 
 	// Current shader name
-	_shaderEntry->SetValue(selection::algorithm::getShaderFromSelection());
+	_shaderEntry->SetValue(selection::getShaderFromSelection());
 
 	if (valueSensitivity)
 	{
@@ -626,7 +609,7 @@ void SurfaceInspector::fitTexture()
 
 	if (repeatX > 0.0 && repeatY > 0.0)
 	{
-		selection::algorithm::fitTexture(repeatX, repeatY);
+		GlobalCommandSystem().executeCommand("FitTexture", repeatX, repeatY);
 	}
 	else
 	{
@@ -688,9 +671,10 @@ void SurfaceInspector::_preShow()
 
 	// Disconnect everything, in some cases we get two consecutive Show() calls in wxGTK
 	_selectionChanged.disconnect();
-	_brushFaceShaderChanged.disconnect();
-	_faceTexDefChanged.disconnect();
-	_patchTextureChanged.disconnect();
+
+	GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
+	_textureMessageHandler = 0;
+
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
 
@@ -703,18 +687,19 @@ void SurfaceInspector::_preShow()
 	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
 		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
 
-	// Get notified about face shader changes
-	_brushFaceShaderChanged = Brush::signal_faceShaderChanged().connect(
-		[this] { _updateNeeded = true; });
-
-	_faceTexDefChanged = Face::signal_texdefChanged().connect(
-		[this] { _updateNeeded = true; });
-
-	_patchTextureChanged = Patch::signal_patchTextureChanged().connect(
-		[this] { _updateNeeded = true; });
+	// Get notified about texture changes
+	_textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::IMessage::Type::TextureChanged,
+		radiant::TypeListener<radiant::TextureChangedMessage>(
+			sigc::mem_fun(this, &SurfaceInspector::handleTextureChangedMessage)));
 
 	// Re-scan the selection
 	doUpdate();
+}
+
+void SurfaceInspector::handleTextureChangedMessage(radiant::TextureChangedMessage& msg)
+{
+	_updateNeeded = true;
 }
 
 void SurfaceInspector::_postShow()
@@ -728,10 +713,10 @@ void SurfaceInspector::_preHide()
 {
 	TransientWindow::_preHide();
 
+	GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
+	_textureMessageHandler = 0;
+
 	_selectionChanged.disconnect();
-	_patchTextureChanged.disconnect();
-	_faceTexDefChanged.disconnect();
-	_brushFaceShaderChanged.disconnect();
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
 }

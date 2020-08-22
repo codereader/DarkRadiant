@@ -88,20 +88,16 @@
 		<shortcut command="UpFloor" key="Prior" />
 		<shortcut command="DownFloor" key="Next" />
 		<shortcut command="TogglePreview" key="F3" />
-		<shortcut command="CameraForward" key="Up" />
-		<shortcut command="CameraBack" key="Down" />
-		<shortcut command="CameraLeft" key="Left" />
-		<shortcut command="CameraRight" key="Right" />
+		<shortcut command="CameraMoveForward" key="Up" />
+		<shortcut command="CameraMoveBack" key="Down" />
+		<shortcut command="CameraMoveLeft" key="Left" />
+		<shortcut command="CameraMoveRight" key="Right" />
 		<shortcut command="CameraStrafeRight" key="period" />
 		<shortcut command="CameraStrafeLeft" key="comma" />
-		<shortcut command="CameraUp" key="D" />
-		<shortcut command="CameraDown" key="C" />
+		<shortcut command="CameraMoveUp" key="D" />
+		<shortcut command="CameraMoveDown" key="C" />
 		<shortcut command="CameraAngleUp" key="A" />
 		<shortcut command="CameraAngleDown" key="Z" />
-		<shortcut command="CameraFreeMoveForward" key="Up" />
-		<shortcut command="CameraFreeMoveBack" key="Down" />
-		<shortcut command="CameraFreeMoveLeft" key="Left" />
-		<shortcut command="CameraFreeMoveRight" key="Right" />
 		<shortcut command="Brush3Sided" key="3" modifiers="CONTROL" />
 		<shortcut command="Brush4Sided" key="4" modifiers="CONTROL" />
 		<shortcut command="Brush5Sided" key="5" modifiers="CONTROL" />
@@ -124,12 +120,12 @@
 		<shortcut command="PatchDeleteColumnEnd" key="KP_Subtract" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PatchDeleteRowEnd" key="KP_Subtract" modifiers="CONTROL" />
 		<shortcut command="TextureNatural" key="N" modifiers="CONTROL" />
-		<shortcut command="SimplePatchMesh" key="P" modifiers="SHIFT" />
+		<shortcut command="CreateSimplePatchDialog" key="P" modifiers="SHIFT" />
 		<shortcut command="InvertCurve" key="I" modifiers="CONTROL" />
 		<shortcut command="RedisperseRows" key="E" modifiers="CONTROL" />
 		<shortcut command="RedisperseCols" key="E" modifiers="SHIFT+CONTROL" />
 		<shortcut command="MatrixTranspose" key="M" modifiers="SHIFT+CONTROL" />
-		<shortcut command="CapCurrentCurve" key="C" modifiers="SHIFT" />
+		<shortcut command="PatchCapDialog" key="C" modifiers="SHIFT" />
 		<shortcut command="NextLeakSpot" key="K" modifiers="SHIFT+CONTROL" />
 		<shortcut command="PrevLeakSpot" key="L" modifiers="SHIFT+CONTROL" />
 		<shortcut command="SurfaceInspector" key="S" />
@@ -148,7 +144,7 @@
 		<shortcut command="DragVertices" key="V" />
 		<shortcut command="DragEdges" key="E" />
 		<shortcut command="DragFaces" key="F" />
-		<shortcut command="ThickenPatch" key="T" modifiers="CONTROL" />
+		<shortcut command="ThickenPatchDialog" key="T" modifiers="CONTROL" />
 		<shortcut command="ToggleShowAllLightRadii" key="F" modifiers="CONTROL+SHIFT+ALT" />
 		<shortcut command="ToggleClipper" key="X" />
 		<shortcut command="MouseTranslate" key="W" />
@@ -201,4 +197,13 @@
     <shortcut command="GroupSelected" key="G" modifiers="CONTROL+SHIFT" />
     <shortcut command="UngroupSelected" key="U" modifiers="CONTROL+SHIFT" />
 	</shortcuts>
+	<commandRemappings>
+		<!-- Commands that have been moved/renamed since 2.8.0 -->
+		<commandRemapping oldname="CameraForward" newname="CameraMoveForward" />
+		<commandRemapping oldname="CameraBack" newname="CameraMoveBack" />
+		<commandRemapping oldname="CameraLeft" newname="CameraMoveLeft" />
+		<commandRemapping oldname="CameraRight" newname="CameraMoveRight" />
+		<commandRemapping oldname="CameraUp" newname="CameraMoveUp" />
+		<commandRemapping oldname="CameraDown" newname="CameraMoveDown" />
+	</commandRemappings>
 </input>

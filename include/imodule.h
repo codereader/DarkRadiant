@@ -13,20 +13,11 @@
 #include <vector>
 
 #include "itextstream.h"
+#include "ilogwriter.h"
 
 /**
  * \defgroup module Module system
  */
-
-/** greebo: These registry keys can be used application-wide during runtime
- *          to retrieve the various paths.
- */
-const char* const RKEY_APP_PATH = "user/paths/appPath";
-const char* const RKEY_HOME_PATH = "user/paths/homePath";
-const char* const RKEY_SETTINGS_PATH = "user/paths/settingsPath";
-const char* const RKEY_BITMAPS_PATH = "user/paths/bitmapsPath";
-const char* const RKEY_MAP_PATH = "user/paths/mapPath";
-const char* const RKEY_PREFAB_PATH = "user/paths/prefabPath";
 
 /**
  * greebo: Compatibility level: a number inlined into all the modules and returned 
@@ -117,22 +108,6 @@ public:
 	virtual const ArgumentList& getCmdLineArgs() const = 0;
 
 	/**
-	 * Return the reference to the application's output/error streams.
-	 */
-	virtual std::ostream& getOutputStream() const = 0;
-	virtual std::ostream& getErrorStream() const = 0;
-	virtual std::ostream& getWarningStream() const = 0;
-
-    // Provides a single mutex object which should be locked by client code
-    // before writing to the any of the above streams.
-    virtual std::mutex& getStreamLock() const = 0;
-
-	/**
-	 * Sets up the paths and stores them into the registry.
-	 */
-	virtual void savePathsToRegistry() const = 0;
-
-	/**
 	 * Retrieve a function pointer which can handle assertions and runtime errors
 	 */
 	virtual const ErrorHandlingFunction& getErrorHandlingFunction() const = 0;
@@ -166,6 +141,10 @@ public:
 	RegisterableModule() :
 		_compatibilityLevel(MODULE_COMPATIBILITY_LEVEL)
 	{}
+
+	// Modules are not copyable
+	RegisterableModule(const RegisterableModule& other) = delete;
+	RegisterableModule& operator=(const RegisterableModule& other) = delete;
 
     /**
 	 * Destructor
@@ -299,10 +278,19 @@ public:
 	 */
 	virtual const ApplicationContext& getApplicationContext() const = 0;
 
+	/**
+	 * Callable during the module registration phase, this method attempts
+	 * to locate the default application log writer instance. It is usually
+	 * hosted in the IRadiant implementation, which is where this method 
+	 * will attempt to look for. If the core module happens to be unavailable
+	 * at the time this method is called, a std::runtime_error will be thrown.
+	 */
+	virtual applog::ILogWriter& getApplicationLogWriter() = 0;
+
     /**
      * Invoked when all modules have been initialised.
      */
-    virtual sigc::signal<void> signal_allModulesInitialised() const = 0;
+    virtual sigc::signal<void>& signal_allModulesInitialised() = 0;
 
 	/**
 	 * Progress function called during module loading and intialisation.
@@ -311,12 +299,18 @@ public:
 	 * will be in the range [0.0f..1.0f].
 	 */
 	typedef sigc::signal<void, const std::string&, float> ProgressSignal;
-	virtual ProgressSignal signal_moduleInitialisationProgress() const = 0;
+	virtual ProgressSignal& signal_moduleInitialisationProgress() = 0;
 
     /**
     * Invoked when all modules have been shut down (i.e. after shutdownModule()).
     */
-    virtual sigc::signal<void> signal_allModulesUninitialised() const = 0;
+    virtual sigc::signal<void>& signal_allModulesUninitialised() = 0;
+
+	/**
+	* Invoked right before the module binaries will be unloaded, which will
+	* trigger the destruction of any static instances in them.
+	*/
+	virtual sigc::signal<void>& signal_modulesUnloading() = 0;
 
 	// The compatibility level this Registry instance was compiled against.
 	// Old module registrations will be rejected by the registry anyway,
@@ -346,19 +340,27 @@ namespace module
 		IModuleRegistry* _registry;
 	public:
 		RegistryReference() :
-			_registry(NULL)
+			_registry(nullptr)
 		{}
 
-		inline void setRegistry(IModuleRegistry& registry) {
+		inline void setRegistry(IModuleRegistry& registry)
+		{
 			_registry = &registry;
 		}
 
-		inline IModuleRegistry& getRegistry() {
-			assert(_registry); // must not be NULL
+		inline IModuleRegistry& getRegistry() const
+		{
+			assert(_registry); // must not be empty
 			return *_registry;
 		}
 
-		static RegistryReference& Instance() {
+		inline bool isEmpty() const
+		{
+			return _registry == nullptr;
+		}
+
+		static RegistryReference& Instance()
+		{
 			static RegistryReference _registryRef;
 			return _registryRef;
 		}
@@ -370,6 +372,12 @@ namespace module
 	inline IModuleRegistry& GlobalModuleRegistry() 
 	{
 		return RegistryReference::Instance().getRegistry();
+	}
+
+	// Returns true if we have a registry instance known to this binary
+	inline bool IsGlobalModuleRegistryAvailable()
+	{
+		return !RegistryReference::Instance().isEmpty();
 	}
 
 	// Exception thrown if the module being loaded is incompatible with the main binary
@@ -384,21 +392,21 @@ namespace module
 
 	// greebo: This should be called once by each module at load time to initialise
 	// the OutputStreamHolders
-	inline void initialiseStreams(const ApplicationContext& ctx)
+	inline void initialiseStreams(applog::ILogWriter& logWriter)
 	{
-		GlobalOutputStream().setStream(ctx.getOutputStream());
-		GlobalWarningStream().setStream(ctx.getWarningStream());
-		GlobalErrorStream().setStream(ctx.getErrorStream());
+		GlobalOutputStream().setStream(logWriter.getLogStream(applog::LogLevel::Standard));
+		GlobalWarningStream().setStream(logWriter.getLogStream(applog::LogLevel::Warning));
+		GlobalErrorStream().setStream(logWriter.getLogStream(applog::LogLevel::Error));
 
 #ifndef NDEBUG
-		GlobalDebugStream().setStream(ctx.getOutputStream());
+		GlobalDebugStream().setStream(logWriter.getLogStream(applog::LogLevel::Verbose));
 #endif
 
 		// Set up the mutex for thread-safe logging
-		GlobalOutputStream().setLock(ctx.getStreamLock());
-		GlobalWarningStream().setLock(ctx.getStreamLock());
-		GlobalErrorStream().setLock(ctx.getStreamLock());
-		GlobalDebugStream().setLock(ctx.getStreamLock());
+		GlobalOutputStream().setLock(logWriter.getStreamLock());
+		GlobalWarningStream().setLock(logWriter.getStreamLock());
+		GlobalErrorStream().setLock(logWriter.getStreamLock());
+		GlobalDebugStream().setLock(logWriter.getStreamLock());
 	}
 
 	// Helper method initialising a few references and checking a module's
@@ -410,8 +418,8 @@ namespace module
 			throw ModuleCompatibilityException("Compatibility level mismatch");
 		}
 
-		// Initialise the streams using the given application context
-		initialiseStreams(registry.getApplicationContext());
+		// Initialise the streams using the central application log writer instance
+		initialiseStreams(registry.getApplicationLogWriter());
 
 		// Remember the reference to the ModuleRegistry
 		RegistryReference::Instance().setRegistry(registry);

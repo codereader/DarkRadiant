@@ -1,9 +1,9 @@
 #include "LayerOrthoContextMenuItem.h"
 
 #include "ilayer.h"
+#include "imap.h"
 #include "iuimanager.h"
 #include "selectionlib.h"
-#include "map/Map.h"
 
 namespace ui
 {
@@ -59,7 +59,7 @@ void LayerOrthoContextMenuItem::AddToLayer(int layerID)
 	DoWithMapLayerManager([=](scene::ILayerManager& manager)
 	{
 		manager.addSelectionToLayer(layerID);
-		GlobalMap().setModified(true);
+		GlobalMapModule().setModified(true);
 	});
 }
 
@@ -68,7 +68,7 @@ void LayerOrthoContextMenuItem::MoveToLayer(int layerID)
 	DoWithMapLayerManager([=](scene::ILayerManager& manager)
 	{
 		manager.moveSelectionToLayer(layerID);
-		GlobalMap().setModified(true);
+		GlobalMapModule().setModified(true);
 	});
 }
 
@@ -77,7 +77,7 @@ void LayerOrthoContextMenuItem::RemoveFromLayer(int layerID)
 	DoWithMapLayerManager([=](scene::ILayerManager& manager)
 	{
 		manager.removeSelectionFromLayer(layerID);
-		GlobalMap().setModified(true);
+		GlobalMapModule().setModified(true);
 	});
 }
 

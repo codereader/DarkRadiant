@@ -27,7 +27,6 @@ public:
 		static StringSet _dependencies;
 
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}
@@ -40,7 +39,6 @@ public:
 
 		// Add the callback event
 		GlobalCommandSystem().addCommand("ConversationEditor", ui::ConversationDialog::ShowDialog);
-		GlobalEventManager().addCommand("ConversationEditor", "ConversationEditor");
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();

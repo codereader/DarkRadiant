@@ -1,6 +1,7 @@
 #include "TransformDialog.h"
 
 #include "i18n.h"
+#include "icommandsystem.h"
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
@@ -9,14 +10,13 @@
 #include "registry/Widgets.h"
 
 #include "wxutil/ControlButton.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/artprov.h>
 #include <functional>
-
-#include "selection/algorithm/Transformation.h"
 
 namespace ui
 {
@@ -271,7 +271,7 @@ void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)
 		eulerXYZ[row->axis] = step * row->direction;
 
 		// Pass the call to the algorithm functions
-		selection::algorithm::rotateSelected(eulerXYZ);
+		GlobalCommandSystem().executeCommand("RotateSelectedEulerXYZ", eulerXYZ);
 	}
 	else
 	{
@@ -282,7 +282,7 @@ void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)
 		scaleXYZ[row->axis] = step;
 
 		// Pass the call to the algorithm functions
-		selection::algorithm::scaleSelected(scaleXYZ);
+		GlobalCommandSystem().executeCommand("ScaleSelected", scaleXYZ);
 	}
 }
 
@@ -301,18 +301,24 @@ void TransformDialog::onClickSmaller(wxCommandEvent& ev, EntryRow* row)
 		eulerXYZ[row->axis] = -step * row->direction;
 
 		// Pass the call to the algorithm functions
-		selection::algorithm::rotateSelected(eulerXYZ);
+		GlobalCommandSystem().executeCommand("RotateSelectedEulerXYZ", eulerXYZ);
 	}
 	else
 	{
 		// Do a scale
+		if (float_equal_epsilon(step, 0.0f, 0.0001f))
+		{
+			wxutil::Messagebox::ShowError(_("Cannot scale by zero or near-zero values"));
+			return;
+		}
+		
 		Vector3 scaleXYZ(1,1,1);
 
 		// Store the value into the right axis
 		scaleXYZ[row->axis] = 1/step;
 
 		// Pass the call to the algorithm functions
-		selection::algorithm::scaleSelected(scaleXYZ);
+		GlobalCommandSystem().executeCommand("ScaleSelected", scaleXYZ);
 	}
 }
 

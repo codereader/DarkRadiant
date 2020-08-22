@@ -52,7 +52,7 @@ private:
 	void _onCopyTexName();
 
 	// render callback
-	void _onRender();
+	bool _onRender();
 
 	// Refresh info table utility function
 	void refreshInfoTable();

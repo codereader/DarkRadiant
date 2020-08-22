@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IPATCH_H)
-#define INCLUDED_IPATCH_H
+#pragma once
 
 #include "imodule.h"
 
@@ -62,6 +40,17 @@ struct PatchMesh
 
     /// Geometry with normals and texture coordinates
 	std::vector<VertexNT> vertices;
+};
+
+struct PatchRenderIndices
+{
+	// The indices, arranged in the way it's expected by GL_QUAD_STRIPS
+	// The number of indices is (lenStrips*numStrips)
+	std::vector<unsigned int> indices;
+
+	// Strip index layout
+	std::size_t numStrips;
+	std::size_t lenStrips;
 };
 
 typedef BasicVector2<unsigned int> Subdivisions;
@@ -111,6 +100,9 @@ public:
 
 	// Returns a copy of the fully tesselated patch geometry (slow!)
 	virtual PatchMesh getTesselatedPatchMesh() const = 0;
+
+	// Returns a copy of the render indices which can be passed to GL_QUAD_STRIPS (slow)
+	virtual PatchRenderIndices getRenderIndices() const = 0;
 
 	/**
 	 * greebo: Inserts two columns before and after the column with index <colIndex>.
@@ -166,18 +158,115 @@ public:
 	 * @divisions: a two-component vector containing the desired subdivisions
 	 */
 	virtual void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) = 0;
+
+	virtual void undoSave() = 0;
+
+	// This translates the texture as much towards the origin in texture space as possible 
+	// without changing its appearance.
+	virtual void normaliseTexture() = 0;
+
+	// Flips the control point matrix such that the patch is facing the opposite direction
+	virtual void invertMatrix() = 0;
+
+	/**
+	 * greebo: This algorithm will transpose the patch matrix
+	 * such that the actual control vertex contents remain the same
+	 * but their indices in the patch matrix change.
+	 * Rows become columns and vice versa.
+	 */
+	virtual void transposeMatrix() = 0;
+
+	// Tries to rearrange the row vertices to be spaced out more evenly
+	virtual void redisperseRows() = 0;
+
+	// Tries to rearrange the column vertices to be spaced out more evenly
+	virtual void redisperseColumns() = 0;
+
+	// Insert or remove columns or rows at the beginning or at the end
+	virtual void insertRemove(bool insert, bool column, bool first) = 0;
+
+	virtual void translateTexture(float s, float t) = 0;
+
+	// Rotates the texture of the patch by the given angle (in degrees)
+	virtual void rotateTexture(float angle) = 0;
+
+	// Scales the patch texture by the given factors (pass 1.05 for a +0.05 scale)
+	virtual void scaleTexture(float s, float t) = 0;
+
+	virtual void fitTexture(float repeatS, float repeatT) = 0;
+
+	// Flips the texture by the given flipAxis (0 == x-axis, 1 == y-axis)
+	virtual void flipTexture(int axis) = 0;
+
+	// Applies the "natural" scale to this patch
+	virtual void scaleTextureNaturally() = 0;
+
+	enum class AlignEdge
+	{
+		Top,
+		Bottom,
+		Left,
+		Right,
+	};
+
+	// Alligns the assigned texture at the given edge (if possible)
+	virtual void alignTexture(AlignEdge type) = 0;
 };
 
-/* greebo: the abstract base class for a patch-creating class.
- * At the moment, the CommonPatchCreator, Doom3PatchCreator and Doom3PatchDef2Creator derive from this base class.
+namespace patch
+{
+
+// The cap types for a patch
+enum class CapType
+{
+	Nocap, // "None" was already #defined somewhere
+	Bevel,
+	EndCap,
+	InvertedBevel,
+	InvertedEndCap,
+	Cylinder,
+};
+
+enum class PatchEditVertexType : std::size_t
+{
+	Corners,
+	Inside,
+	NumberOfVertexTypes,
+};
+
+class IPatchSettings
+{
+public:
+	virtual ~IPatchSettings() {}
+
+	virtual const Vector3& getVertexColour(PatchEditVertexType type) const = 0;
+	virtual void setVertexColour(PatchEditVertexType type, const Vector3& value) = 0;
+
+	virtual sigc::signal<void>& signal_settingsChanged() = 0;
+};
+
+enum class PatchDefType
+{
+	Def2,
+	Def3,
+};
+
+/**
+ * Patch management module interface.
  */
-class PatchCreator :
+class IPatchModule :
 	public RegisterableModule
 {
 public:
+	virtual ~IPatchModule() {}
+
 	// Create a patch and return the sceneNode
-	virtual scene::INodePtr createPatch() = 0;
+	virtual scene::INodePtr createPatch(PatchDefType type) = 0;
+
+	virtual IPatchSettings& getSettings() = 0;
 };
+
+}
 
 class Patch;
 class IPatchNode
@@ -203,50 +292,38 @@ inline bool Node_isPatch(const scene::INodePtr& node)
 
 inline IPatch* Node_getIPatch(const scene::INodePtr& node)
 {
-	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+	auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
-	if (patchNode != NULL)
+	if (patchNode)
 	{
 		return &patchNode->getPatch();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 // Casts a node onto a patch
 inline Patch* Node_getPatch(const scene::INodePtr& node)
 {
-	IPatchNodePtr patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+	auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
 
-	if (patchNode != NULL)
+	if (patchNode)
 	{
 		return &patchNode->getPatchInternal();
 	}
 
-	return NULL;
+	return nullptr;
 }
 
-const char* const MODULE_PATCHDEF2 = "PatchModuleDef2";
-const char* const MODULE_PATCHDEF3 = "PatchModuleDef3";
+const char* const MODULE_PATCH = "PatchModule";
 
-enum class PatchDefType
+inline patch::IPatchModule& GlobalPatchModule()
 {
-	Def2,
-	Def3,
-};
-
-// Acquires the PatchCreator of the given type ("Def2", "Def3")
-inline PatchCreator& GlobalPatchCreator(PatchDefType type)
-{
-	std::shared_ptr<PatchCreator> _patchCreator(
-		std::static_pointer_cast<PatchCreator>(
-			module::GlobalModuleRegistry().getModule(
-				type == PatchDefType::Def2 ? MODULE_PATCHDEF2 : MODULE_PATCHDEF3
-			)
+	static patch::IPatchModule& _patchCreator(
+		*std::static_pointer_cast<patch::IPatchModule>(
+			module::GlobalModuleRegistry().getModule(MODULE_PATCH)
 		)
 	);
 
-	return *_patchCreator;
+	return _patchCreator;
 }
-
-#endif

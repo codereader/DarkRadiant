@@ -1,22 +1,22 @@
-libsdir = $(top_srcdir)/libs
+
 AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
               -DLOCALEDIR='"$(localedir)"' \
               -DHTMLDIR='"$(htmldir)"' \
               -I$(top_srcdir)/include \
-              -I$(libsdir) \
+              -I$(top_srcdir)/libs \
               $(LIBSIGC_CFLAGS) \
               $(XML_CFLAGS) \
               $(FTGL_CFLAGS)
 
 # Clusters of source files common to executable and tests
-VFS_SOURCES = vfs/DeflatedInputStream.cpp \
-              vfs/DirectoryArchive.cpp \
-              vfs/Doom3FileSystem.cpp \
-              vfs/ZipArchive.cpp
-SHADERS_SOURCES = shaders/Doom3ShaderLayer.cpp \
-                  shaders/TableDefinition.cpp \
-                  shaders/textures/GLTextureManager.cpp
+#VFS_SOURCES = vfs/DeflatedInputStream.cpp \
+#              vfs/DirectoryArchive.cpp \
+#              vfs/Doom3FileSystem.cpp \
+#              vfs/ZipArchive.cpp
+#SHADERS_SOURCES = shaders/Doom3ShaderLayer.cpp \
+#                  shaders/TableDefinition.cpp \
+#                  shaders/textures/GLTextureManager.cpp
 
 # DarkRadiant executable
 bin_PROGRAMS = darkradiant
@@ -37,67 +37,17 @@ darkradiant_LDFLAGS = $(XML_LIBS) \
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/wxutil/libwxutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
-                    $(top_builddir)/libs/math/libmath.la
+                    $(top_builddir)/libs/math/libmath.la \
+                    $(top_builddir)/libs/module/libmodule.la
 darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       RadiantModule.cpp \
-                      RadiantThreadManager.cpp \
-                      brush/Winding.cpp \
-                      brush/export/CollisionModel.cpp \
-                      brush/BrushModule.cpp \
-                      brush/FixedWinding.cpp \
-                      brush/BrushNode.cpp \
-                      brush/FaceInstance.cpp \
-                      brush/Brush.cpp \
-                      brush/TextureProjection.cpp \
-                      brush/Face.cpp \
-                      brush/TexDef.cpp \
-                      brush/TextureMatrix.cpp \
-                      brush/csg/BrushByPlaneClipper.cpp \
-                      brush/csg/CSG.cpp \
-                      brush/FacePlane.cpp \
                       camera/Camera.cpp \
                       camera/GlobalCamera.cpp \
                       camera/CameraSettings.cpp \
                       camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
-                      commandsystem/CommandSystem.cpp \
-                      eclassmgr/Doom3EntityClass.cpp \
-                      eclassmgr/EClassManager.cpp \
-                      entity/ShaderParms.cpp \
-                      entity/EntitySettings.cpp \
-                      entity/KeyValueObserver.cpp \
-                      entity/EntityNode.cpp \
-                      entity/RotationMatrix.cpp \
-                      entity/target/TargetManager.cpp \
-                      entity/target/TargetLineNode.cpp \
-                      entity/target/TargetKeyCollection.cpp \
-                      entity/target/TargetKey.cpp \
-                      entity/target/TargetableNode.cpp \
-                      entity/light/Renderables.cpp \
-                      entity/light/Light.cpp \
-                      entity/light/LightNode.cpp \
-                      entity/eclassmodel/EclassModelNode.cpp \
-                      entity/RotationKey.cpp \
-                      entity/NameKeyObserver.cpp \
-                      entity/doom3group/Doom3GroupNode.cpp \
-                      entity/doom3group/Doom3Group.cpp \
-                      entity/NamespaceManager.cpp \
-                      entity/precompiled.cpp \
-                      entity/generic/GenericEntity.cpp \
-                      entity/generic/GenericEntityNode.cpp \
-                      entity/speaker/SpeakerNode.cpp \
-                      entity/speaker/SpeakerRenderables.cpp \
-                      entity/Doom3Entity.cpp \
-                      entity/ModelKey.cpp \
-                      entity/KeyValue.cpp \
-                      entity/curve/CurveCatmullRom.cpp \
-                      entity/curve/Curve.cpp \
-                      entity/curve/CurveEditInstance.cpp \
-                      entity/curve/CurveNURBS.cpp \
-                      entity/AngleKey.cpp \
-                      entity/EntityCreator.cpp \
                       eventmanager/Accelerator.cpp \
                       eventmanager/EventManager.cpp \
                       eventmanager/GlobalKeyEventFilter.cpp \
@@ -106,120 +56,8 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Statement.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
-                      filetypes/FileTypeRegistry.cpp \
-                      filters/BasicFilterSystem.cpp \
-                      filters/XMLFilter.cpp \
-                      filters/XmlFilterEventAdapter.cpp \
-                      fonts/FontLoader.cpp \
-                      fonts/GlyphInfo.cpp \
-                      fonts/GlyphSet.cpp \
-                      fonts/FontManager.cpp \
-                      image/dds.cpp \
-                      image/ddslib.cpp \
-                      image/DDSImage.cpp \
-                      image/Doom3ImageLoader.cpp \
-                      image/ImageLoaderWx.cpp \
-                      image/TGALoader.cpp \
-                      map/MapModules.cpp \
-                      map/format/Quake3MapFormat.cpp \
-                      map/format/Quake4MapFormat.cpp \
-                      map/format/Doom3MapFormat.cpp \
-                      map/format/Doom3MapReader.cpp \
-                      map/format/Doom3PrefabFormat.cpp \
-                      map/format/portable/PortableMapFormat.cpp \
-                      map/format/portable/PortableMapWriter.cpp \
-                      map/format/portable/PortableMapReader.cpp \
-                      map/format/Quake3MapReader.cpp \
-                      map/format/Doom3MapWriter.cpp \
-                      map/format/primitiveparsers/PatchDef2.cpp \
-                      map/format/primitiveparsers/Patch.cpp \
-                      map/format/primitiveparsers/PatchDef3.cpp \
-                      map/format/primitiveparsers/BrushDef3.cpp \
-                      map/format/primitiveparsers/BrushDef.cpp \
-                      map/format/Quake4MapReader.cpp \
-                      map/aas/Doom3AasFileLoader.cpp \
-                      map/aas/Doom3AasFileSettings.cpp \
-                      map/aas/Doom3AasFile.cpp \
-                      md5model/MD5Skeleton.cpp \
-                      md5model/plugin.cpp \
-                      md5model/MD5Model.cpp \
-                      md5model/MD5ModelLoader.cpp \
-                      md5model/MD5AnimationCache.cpp \
-                      md5model/MD5Surface.cpp \
-                      md5model/MD5Anim.cpp \
-                      md5model/MD5ModelNode.cpp \
-                      modelfile/AseExporter.cpp \
-                      modelfile/Lwo2Chunk.cpp \
-                      modelfile/Lwo2Exporter.cpp \
-                      modelfile/PicoModelLoader.cpp \
-                      modelfile/PicoModelModule.cpp \
-                      modelfile/PicoModelNode.cpp \
-                      modelfile/RenderablePicoModel.cpp \
-                      modelfile/RenderablePicoSurface.cpp \
-                      modelfile/WavefrontExporter.cpp \
-                      modelfile/picomodel/pm_md3.c \
-                      modelfile/picomodel/pm_md2.c \
-                      modelfile/picomodel/pm_obj.c \
-                      modelfile/picomodel/picointernal.c \
-                      modelfile/picomodel/picomodules.c \
-                      modelfile/picomodel/pm_lwo.c \
-                      modelfile/picomodel/pm_mdc.c \
-                      modelfile/picomodel/pm_fm.c \
-                      modelfile/picomodel/pm_ase.c \
-                      modelfile/picomodel/picomodel.c \
-                      modelfile/picomodel/lwo/envelope.c \
-                      modelfile/picomodel/lwo/surface.c \
-                      modelfile/picomodel/lwo/clip.c \
-                      modelfile/picomodel/lwo/lwob.c \
-                      modelfile/picomodel/lwo/lwio.c \
-                      modelfile/picomodel/lwo/lwo2.c \
-                      modelfile/picomodel/lwo/list.c \
-                      modelfile/picomodel/lwo/pntspols.c \
-                      modelfile/picomodel/lwo/vmap.c \
-                      modelfile/picomodel/lwo/vecmath.c \
-                      modelfile/picomodel/pm_terrain.c \
-                      modelfile/picomodel/pm_ms3d.c \
-                      modelfile/picomodel/pm_3ds.c \
-                      namespace/ComplexName.cpp \
-                      namespace/Namespace.cpp \
-                      namespace/NamespaceFactory.cpp \
-                      particles/ParticleNode.cpp \
-                      particles/RenderableParticle.cpp \
-                      particles/RenderableParticleBunch.cpp \
-                      particles/ParticlesManager.cpp \
-                      particles/StageDef.cpp \
-                      particles/particles.cpp \
-                      particles/ParticleParameter.cpp \
-                      particles/editor/ParticleEditor.cpp \
-                      particles/RenderableParticleStage.cpp \
-                      particles/ParticleDef.cpp \
-                      render/backend/glprogram/ARBBumpProgram.cpp \
-                      render/backend/glprogram/ARBDepthFillProgram.cpp \
-					  render/backend/glprogram/GenericVFPProgram.cpp \
-                      render/backend/glprogram/GLSLBumpProgram.cpp \
-                      render/backend/glprogram/GLSLDepthFillProgram.cpp \
-                      render/backend/OpenGLShader.cpp \
-                      render/backend/GLProgramFactory.cpp \
-                      render/backend/OpenGLShaderPass.cpp \
-                      render/LinearLightList.cpp \
                       render/OpenGLModule.cpp \
-                      render/OpenGLRenderSystem.cpp \
-					  render/RenderSystemFactory.cpp \
-					  render/View.cpp \
-                      render/debug/SpacePartitionRenderer.cpp \
-                      scenegraph/SceneGraph.cpp \
-                      scenegraph/Octree.cpp \
-                      scenegraph/SceneGraphFactory.cpp \
-                      shaders/CameraCubeMapDecl.cpp \
-                      shaders/textures/TextureManipulator.cpp \
-                      $(SHADERS_SOURCES) \
-                      shaders/ShaderTemplate.cpp \
-                      shaders/MapExpression.cpp \
-                      shaders/CShader.cpp \
-                      shaders/Doom3ShaderSystem.cpp \
-                      shaders/ShaderLibrary.cpp \
-                      shaders/ShaderExpression.cpp \
-                      skins/Doom3SkinCache.cpp \
+                      render/View.cpp \
 					  ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
@@ -239,14 +77,15 @@ darkradiant_SOURCES = main.cpp \
                       ui/mapinfo/ModelInfoTab.cpp \
 					  ui/mapinfo/LayerInfoTab.cpp \
                       ui/mediabrowser/MediaBrowser.cpp \
+                      ui/particles/ParticleEditor.cpp \
                       ui/particles/ParticlesChooser.cpp \
                       ui/brush/QuerySidesDialog.cpp \
+                      ui/brush/FindBrush.cpp \
                       ui/overlay/OverlayDialog.cpp \
                       ui/overlay/Overlay.cpp \
                       ui/splash/Splash.cpp \
-					  ui/grid/GridManager.cpp \
-                      ui/mru/MRUMenuItem.cpp \
-                      ui/mru/MRU.cpp \
+					  ui/grid/GridUserInterface.cpp \
+                      ui/layers/CreateLayerDialog.cpp \
                       ui/layers/LayerControl.cpp \
                       ui/layers/LayerContextMenu.cpp \
                       ui/layers/LayerControlDialog.cpp \
@@ -280,7 +119,10 @@ darkradiant_SOURCES = main.cpp \
                       ui/common/MapPreview.cpp \
                       ui/filters/FilterContextMenu.cpp \
                       ui/filters/FilterOrthoContextMenuItem.cpp \
-                      ui/menu/FiltersMenu.cpp \
+                      ui/filters/FilterUserInterface.cpp \
+                      ui/filters/FiltersMainMenu.cpp \
+                      ui/filters/editor/FilterDialog.cpp \
+                      ui/filters/editor/FilterEditor.cpp \
                       ui/prefdialog/GameSetupDialog.cpp \
 					  ui/prefdialog/GameSetupPage.cpp \
                       ui/prefdialog/GameSetupPageIdTech.cpp \
@@ -300,8 +142,6 @@ darkradiant_SOURCES = main.cpp \
                       ui/lightinspector/LightInspector.cpp \
                       ui/commandlist/CommandList.cpp \
                       ui/commandlist/ShortcutChooser.cpp \
-                      ui/filterdialog/FilterDialog.cpp \
-                      ui/filterdialog/FilterEditor.cpp \
                       ui/mainframe/MainFrame.cpp \
                       ui/mainframe/MainFrameLayoutManager.cpp \
                       ui/mainframe/FloatingLayout.cpp \
@@ -311,11 +151,17 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
                       ui/mainframe/TopLevelFrame.cpp \
                       ui/modelexport/ExportAsModelDialog.cpp \
+                      ui/modelexport/ExportCollisionModelDialog.cpp \
                       ui/mousetool/BindToolDialog.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
-                      ui/widgets/Splitter.cpp \
+                      ui/aas/RenderableAasFile.cpp \
+                      ui/selectionset/SelectionSetToolmenu.cpp \
+                      ui/LongRunningOperationHandler.cpp \
+                      ui/MapCommands.cpp \
+                      ui/MapFileProgressHandler.cpp \
+                      ui/statusbar/EditingStopwatchStatus.cpp \
                       uimanager/SoundChooser.cpp \
                       uimanager/StatusBarManager.cpp \
                       uimanager/animationpreview/MD5AnimationChooser.cpp \
@@ -336,10 +182,6 @@ darkradiant_SOURCES = main.cpp \
                       uimanager/menu/MenuElement.cpp \
                       uimanager/UIManager.cpp \
                       uimanager/SoundShaderPreview.cpp \
-                      $(VFS_SOURCES) \
-                      vfs/Doom3FileSystemModule.cpp \
-                      xmlregistry/RegistryTree.cpp \
-                      xmlregistry/XMLRegistry.cpp \
                       xyview/tools/BrushCreatorTool.cpp \
                       xyview/tools/ClipperTool.cpp \
 					  xyview/tools/MeasurementTool.cpp \
@@ -353,112 +195,15 @@ darkradiant_SOURCES = main.cpp \
                       textool/item/PatchItem.cpp \
                       textool/item/PatchVertexItem.cpp \
                       textool/TexTool.cpp \
-					  layers/LayerInfoFileModule.cpp \
-                      layers/LayerModule.cpp \
-                      layers/LayerManager.cpp \
-					  layers/LayerUsageBreakdown.cpp \
-                      modulesystem/DynamicLibrary.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
-                      modulesystem/ModuleLoader.cpp \
-                      modulesystem/ModuleRegistry.cpp \
-                      selection/SelectedNodeList.cpp \
-					  selection/clipboard/Clipboard.cpp \
-                      selection/shaderclipboard/ShaderClipboard.cpp \
-                      selection/shaderclipboard/Texturable.cpp \
-					  selection/shaderclipboard/ClosestTexturableFinder.cpp \
-                      selection/selectionset/SelectionSetManager.cpp \
-                      selection/selectionset/SelectionSetToolmenu.cpp \
-					  selection/selectionset/SelectionSetInfoFileModule.cpp \
-                      selection/selectionset/SelectionSet.cpp \
-                      selection/selectionset/SelectionSetModule.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       selection/SelectionTest.cpp \
-                      selection/manipulators/ManipulatorBase.cpp \
-                      selection/TransformationVisitors.cpp \
-                      selection/algorithm/Transformation.cpp \
-                      selection/algorithm/GroupCycle.cpp \
-                      selection/algorithm/Curves.cpp \
-                      selection/algorithm/Entity.cpp \
-                      selection/algorithm/Shader.cpp \
-					  selection/algorithm/Patch.cpp \
-                      selection/algorithm/Primitives.cpp \
-                      selection/algorithm/Group.cpp \
-                      selection/algorithm/ModelFinder.cpp \
-                      selection/algorithm/General.cpp \
-					  selection/algorithm/Planes.cpp \
-                      selection/BestPoint.cpp \
-					  selection/ManipulationPivot.cpp \
-                      selection/manipulators/DragManipulator.cpp \
-                      selection/RadiantSelectionSystem.cpp \
-                      selection/manipulators/RotateManipulator.cpp \
-                      selection/manipulators/ManipulatorComponents.cpp \
-                      selection/manipulators/ScaleManipulator.cpp \
-					  selection/group/SelectionGroupModule.cpp \
-					  selection/group/SelectionGroupManager.cpp \
-					  selection/group/SelectionGroupInfoFileModule.cpp \
-                      selection/manipulators/TranslateManipulator.cpp \
-                      selection/manipulators/ModelScaleManipulator.cpp \
-                      settings/Game.cpp \
-                      settings/GameManager.cpp \
-                      settings/PreferenceSystem.cpp \
-					  settings/PreferencePage.cpp \
                       settings/Win32Registry.cpp \
-					  patch/algorithm/General.cpp \
-					  patch/algorithm/Prefab.cpp \
-                      patch/Patch.cpp \
-					  patch/PatchCreators.cpp \
-                      patch/PatchNode.cpp \
-                      patch/PatchModule.cpp \
-                      patch/PatchRenderables.cpp \
-                      patch/PatchTesselation.cpp \
-                      map/RootNode.cpp \
-                      map/MapPosition.cpp \
-                      map/EditingStopwatch.cpp \
-                      map/EditingStopwatchInfoFileModule.cpp \
-                      map/MapPropertyInfoFileModule.cpp \
-                      map/FindMapElements.cpp \
-					  map/infofile/InfoFileManager.cpp \
-					  map/infofile/InfoFile.cpp \
-					  map/infofile/InfoFileExporter.cpp \
-                      map/MapFileManager.cpp \
-					  map/algorithm/ChildPrimitives.cpp \
-                      map/algorithm/Skins.cpp \
-                      map/algorithm/Traverse.cpp \
-					  map/algorithm/MapExporter.cpp \
-                      map/algorithm/MapImporter.cpp \
-                      map/algorithm/Import.cpp \
-                      map/algorithm/Export.cpp \
-                      map/algorithm/Models.cpp \
-                      map/CounterManager.cpp \
-                      map/RegionManager.cpp \
-                      map/PointFile.cpp \
-                      map/MapPositionManager.cpp \
-                      map/MapResource.cpp \
-                      map/Map.cpp \
-                      map/AutoSaver.cpp \
+                      settings/LocalisationModule.cpp \
+                      settings/LocalisationProvider.cpp \
                       map/StartupMapLoader.cpp \
-                      map/MapResourceManager.cpp \
-                      map/MapFormatManager.cpp \
-					  map/AasFileManager.cpp \
-					  map/RenderableAasFile.cpp \
-                      clipper/ClipPoint.cpp \
-                      clipper/Clipper.cpp \
-                      log/Console.cpp \
-                      log/LogStream.cpp \
-                      log/LogWriter.cpp \
-                      log/COutRedirector.cpp \
-                      log/StringLogDevice.cpp \
-                      log/LogStreamBuf.cpp \
-                      log/LogFile.cpp \
-                      undo/UndoSystem.cpp \
-                      model/ModelCache.cpp \
-                      model/ModelScalePreserver.cpp \
-                      model/ModelExporter.cpp \
-					  model/ModelFormatManager.cpp \
-                      model/NullModel.cpp \
-					  model/ScaledModelExporter.cpp \
-                      model/NullModelNode.cpp 
+                      log/Console.cpp
 
 check_PROGRAMS = facePlaneTest vfsTest shadersTest
 TESTS = $(check_PROGRAMS)
@@ -467,8 +212,8 @@ facePlaneTest_SOURCES = test/facePlaneTest.cpp \
                         brush/FacePlane.cpp
 facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
 
-vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
-vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
+#vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
+#vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
 
-shadersTest_SOURCES = test/shadersTest.cpp $(SHADERS_SOURCES) $(VFS_SOURCES)
-shadersTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
+#shadersTest_SOURCES = test/shadersTest.cpp $(SHADERS_SOURCES) #$(VFS_SOURCES)
+#shadersTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)

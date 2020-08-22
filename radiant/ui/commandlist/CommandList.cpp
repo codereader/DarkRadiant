@@ -42,6 +42,9 @@ void CommandList::reloadList()
 	GlobalEventManager().foreachEvent(populator);
     
     _treeView->TriggerColumnSizeEvent();
+
+	_treeView->GetColumn(_columns.command.getColumnIndex())->SetSortOrder(true);
+	_treeView->GetModel()->Resort();
 }
 
 void CommandList::populateWindow()
@@ -55,9 +58,9 @@ void CommandList::populateWindow()
 	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore);
 	
 	_treeView->AppendTextColumn(_("Command"), _columns.command.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_SORTABLE | wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 	_treeView->AppendTextColumn(_("Key"), _columns.key.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+		wxDATAVIEW_CELL_INERT, wxCOL_SORTABLE | wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Connect the mouseclick event to catch the double clicks
 	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
@@ -109,15 +112,7 @@ std::string CommandList::getSelectedCommand()
 	{
 		wxutil::TreeModel::Row row(item, *_listStore);
 
-		const std::string commandName = row[_columns.command];
-
-		IEventPtr ev = GlobalEventManager().findEvent(commandName);
-
-		// Double check, if the command exists
-		if (ev != NULL)
-		{
-			return commandName;
-		}
+		return static_cast<std::string>(row[_columns.command]);
 	}
 
 	return "";

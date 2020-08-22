@@ -1,6 +1,6 @@
 #include "PathEntry.h"
 
-#include "iregistry.h"
+#include "imodule.h"
 #include "i18n.h"
 
 #include <wx/sizer.h>
@@ -50,7 +50,8 @@ PathEntry::PathEntry(wxWindow* parent, bool foldersOnly, bool open,
     });
 
 	// Generate browse button image
-	std::string fullFileName = GlobalRegistry().get(RKEY_BITMAPS_PATH) + "ellipsis.png";
+	const auto& appCtx = module::GlobalModuleRegistry().getApplicationContext();
+	std::string fullFileName = appCtx.getBitmapsPath() + "ellipsis.png";
 
 	wxImage image(fullFileName);
 

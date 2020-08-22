@@ -3,6 +3,7 @@
 #include "xmlutil/Node.h"
 #include "imodule.h"
 #include <list>
+#include <string>
 
 // String identifier for the game manager module
 const char* const MODULE_GAMEMANAGER("GameManager");
@@ -54,6 +55,28 @@ public:
 typedef std::shared_ptr<IGame> IGamePtr;
 
 /**
+* Represents the game configuration as specified by the user
+* in the Game Settings dialog, comprising Game name,
+* engine path, mod path, etc.
+*/
+struct GameConfiguration
+{
+	// The name of the current game, e.g. "Doom 3"
+	std::string gameType;
+
+	// The engine path (pointing to the game executable)
+	std::string enginePath;
+
+	// The "userengine" path (where the fs_game is stored)
+	// this is ~/.doom3/<fs_game> in linux, and <enginepath>/<fs_game> in Win32
+	std::string modBasePath;
+
+	// The "mod mod" path (where the fs_game_base is stored)
+	// this is ~/.doom3/<fs_game_base> in linux, and <enginepath>/<fs_game_base> in Win32
+	std::string modPath;
+};
+
+/**
  * \brief
  * Interface for the game management module.
  */
@@ -92,6 +115,16 @@ public:
 
 	typedef std::vector<IGamePtr> GameList;
 	virtual const GameList& getSortedGameList() = 0;
+
+	// Returns the absolute path where maps are going to be saved to
+	virtual const std::string& getMapPath() = 0;
+
+	// Returns the absolute path where prefabs are going to be saved to
+	virtual const std::string& getPrefabPath() = 0;
+
+	// Activates the given mod configuration
+	// Stores the given config, initialises VFS and constructs a few secondary paths
+	virtual void applyConfig(const GameConfiguration& config) = 0;
 };
 typedef std::shared_ptr<IGameManager> IGameManagerPtr;
 

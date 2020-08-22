@@ -317,34 +317,96 @@ public:
 };
 typedef std::shared_ptr<ITargetManager> ITargetManagerPtr;
 
-const std::string MODULE_ENTITYCREATOR("Doom3EntityCreator");
+enum class LightEditVertexType : std::size_t
+{
+    StartEndDeselected,
+    StartEndSelected,
+    Inactive,
+    Deselected,
+    Selected,
+    NumberOfVertexTypes,
+};
+
+const char* const RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
+const char* const RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
+const char* const RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
+const char* const RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
+const char* const RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
+const char* const RKEY_FREE_OBJECT_ROTATION = "user/ui/rotateObjectsIndependently";
+const char* const RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
+
+/**
+ * Global entity settings affecting appearance, render options, etc.
+ */
+class IEntitySettings
+{
+public:
+    virtual ~IEntitySettings() {}
+
+    virtual const Vector3& getLightVertexColour(LightEditVertexType type) const = 0;
+    virtual void setLightVertexColour(LightEditVertexType type, const Vector3& value) = 0;
+
+    virtual bool getRenderEntityNames() const = 0;
+    virtual void setRenderEntityNames(bool value) = 0;
+
+    virtual bool getShowAllSpeakerRadii() const = 0;
+    virtual void setShowAllSpeakerRadii(bool value) = 0;
+
+    virtual bool getShowAllLightRadii() const = 0;
+    virtual void setShowAllLightRadii(bool value) = 0;
+
+    virtual bool getDragResizeEntitiesSymmetrically() const = 0;
+    virtual void setDragResizeEntitiesSymmetrically(bool value) = 0;
+
+    virtual bool getAlwaysShowLightVertices() const = 0;
+    virtual void setAlwaysShowLightVertices(bool value) = 0;
+
+    virtual bool getFreeObjectRotation() const = 0;
+    virtual void setFreeObjectRotation(bool value) = 0;
+    
+    virtual bool getShowEntityAngles() const = 0;
+    virtual void setShowEntityAngles(bool value) = 0;
+
+    virtual sigc::signal<void>& signal_settingsChanged() = 0;
+};
+
+const char* const MODULE_ENTITY("EntityModule");
 
 /**
  * \brief
- * Interface for the entity creator module.
+ * Interface for the entity module.
  */
-class EntityCreator :
+class IEntityModule :
     public RegisterableModule
 {
 public:
-    virtual ~EntityCreator() {}
+    virtual ~IEntityModule() {}
 
     /// Create an entity node with the given entity class.
     virtual IEntityNodePtr createEntity(const IEntityClassPtr& eclass) = 0;
 
-    /// Connect the two given entity nodes using the "target" system.
-    virtual void connectEntities(const scene::INodePtr& source,
-                                 const scene::INodePtr& target) = 0;
-
     // Constructs a new targetmanager instance (used by root nodes)
     virtual ITargetManagerPtr createTargetManager() = 0;
+
+    // Access to the settings manager
+    virtual IEntitySettings& getSettings() = 0;
+
+    /**
+     * Create an instance of the given entity at the given position, and return
+     * the Node containing the new entity.
+     *
+     * @returns: the scene::IEntityNodePtr referring to the new entity.
+     * @throws: cmd::ExecutionFailure if anything goes wrong or the selection is not suitable.
+     */
+    virtual IEntityNodePtr createEntityFromSelection(const std::string& name, const Vector3& origin) = 0;
 };
 
-inline EntityCreator& GlobalEntityCreator() {
+inline IEntityModule& GlobalEntityModule()
+{
     // Cache the reference locally
-    static EntityCreator& _entityCreator(
-        *std::static_pointer_cast<EntityCreator>(
-            module::GlobalModuleRegistry().getModule(MODULE_ENTITYCREATOR)
+    static IEntityModule& _entityCreator(
+        *std::static_pointer_cast<IEntityModule>(
+            module::GlobalModuleRegistry().getModule(MODULE_ENTITY)
         )
     );
     return _entityCreator;

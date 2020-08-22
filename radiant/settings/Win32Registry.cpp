@@ -1,6 +1,7 @@
 #include "Win32Registry.h"
 
 #include <iostream>
+#include "itextstream.h"
 
 #if defined(WIN32)
 #include "windows.h"

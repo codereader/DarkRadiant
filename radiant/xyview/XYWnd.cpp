@@ -7,6 +7,7 @@
 #include "imainframe.h"
 #include "ientity.h"
 #include "igrid.h"
+#include "iregion.h"
 #include "iuimanager.h"
 
 #include "wxutil/MouseButton.h"
@@ -14,17 +15,12 @@
 #include "string/string.h"
 #include "selectionlib.h"
 
-#include "brush/TexDef.h"
 #include "ibrush.h"
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
 #include "ui/overlay/Overlay.h"
 #include "ui/texturebrowser/TextureBrowser.h"
-#include "map/RegionManager.h"
-#include "map/Map.h"
-#include "selection/algorithm/General.h"
-#include "selection/algorithm/Primitives.h"
 #include "registry/registry.h"
 #include "selection/Device.h"
 #include "selection/SelectionTest.h"
@@ -35,7 +31,7 @@
 #include "gamelib.h"
 #include "scenelib.h"
 #include "maplib.h"
-#include "render/frontend/RenderableCollectionWalker.h"
+#include "render/RenderableCollectionWalker.h"
 
 #include <fmt/format.h>
 #include <functional>
@@ -291,13 +287,15 @@ bool XYWnd::isActive() const {
     return _isActive;
 };
 
-const Vector3& XYWnd::getOrigin() {
+const Vector3& XYWnd::getOrigin() const 
+{
     return _origin;
 }
 
 void XYWnd::setOrigin(const Vector3& origin) {
     _origin = origin;
     updateModelview();
+    queueDraw();
 }
 
 void XYWnd::scroll(int x, int y)
@@ -603,9 +601,10 @@ Vector4 XYWnd::getWindowCoordinates() {
     double h = (_height / 2 / _scale);
 
     // Query the region minimum/maximum vectors
-    Vector3 regionMin;
-    Vector3 regionMax;
-    GlobalRegion().getMinMax(regionMin, regionMax);
+    auto regionBounds = GlobalRegionManager().getRegionBounds();
+
+    Vector3 regionMin = regionBounds.origin - regionBounds.extents;
+    Vector3 regionMax = regionBounds.origin + regionBounds.extents;
 
     double xb = _origin[nDim1] - w;
     // Constrain this value to the region minimum
@@ -1542,14 +1541,19 @@ void XYWnd::onGLResize(wxSizeEvent& ev)
 	ev.Skip();
 }
 
-void XYWnd::onRender()
+bool XYWnd::onRender()
 {
 	if (GlobalMainFrame().screenUpdatesEnabled())
 	{
         util::ScopedBoolLock drawLock(_drawing);
 
 		draw();
+
+        return true;
 	}
+    
+
+    return false; // nothing rendered
 }
 
 void XYWnd::onGLWindowScroll(wxMouseEvent& ev)

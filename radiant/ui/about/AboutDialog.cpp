@@ -13,7 +13,6 @@
 #include <wx/button.h>
 #include <wx/textctrl.h>
 
-#include "modulesystem/ModuleRegistry.h"
 #include <fmt/format.h>
 
 namespace ui {
@@ -89,20 +88,13 @@ void AboutDialog::populateWindow()
 
 	findNamedObject<wxTextCtrl>(this, "AboutDialogOpenGLExtensions")->SetValue(openGLExtensions);
 	
-	// DarkRadiant modules
-
-	std::string modules = module::ModuleRegistry::Instance().getModuleList(", ");
-	findNamedObject<wxTextCtrl>(this, "AboutDialogDarkRadiantModules")->SetValue(modules);
-
-	findNamedObject<wxButton>(this, "AboutDialogOkButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(AboutDialog::_onClose), NULL, this);
+	findNamedObject<wxButton>(this, "AboutDialogOkButton")->Bind(wxEVT_BUTTON, &AboutDialog::_onClose, this);
 
 	// Make all headers bold
 	wxFont bold = findNamedObject<wxStaticText>(this, "AboutDialogHeader1")->GetFont().Bold();
 	findNamedObject<wxStaticText>(this, "AboutDialogHeader1")->SetFont(bold);
 	findNamedObject<wxStaticText>(this, "AboutDialogHeader2")->SetFont(bold);
 	findNamedObject<wxStaticText>(this, "AboutDialogHeader3")->SetFont(bold);
-	findNamedObject<wxStaticText>(this, "AboutDialogHeader4")->SetFont(bold);
 }
 
 void AboutDialog::_onClose(wxCommandEvent& ev)

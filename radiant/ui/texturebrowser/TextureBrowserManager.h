@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <sigc++/connection.h>
 #include "imodule.h"
 #include "icommandsystem.h"
 
@@ -14,6 +15,7 @@ class TextureBrowserManager :
 {
 private:
     std::set<TextureBrowser*> _browsers;
+    sigc::connection _shaderClipboardConn;
 
 public:
     TextureBrowserManager();
@@ -34,10 +36,12 @@ public:
     const std::string& getName() const override;
     const StringSet& getDependencies() const override;
     void initialiseModule(const ApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 private:
     static void toggleGroupDialogTexturesTab(const cmd::ArgumentList& args);
     void registerPreferencePage();
+    void onShaderClipboardSourceChanged();
 };
 
 } // namespace

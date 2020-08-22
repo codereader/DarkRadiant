@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ieventmanager.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "wxutil/DeferredMotionDelta.h"
@@ -55,6 +56,8 @@ public:
 	bool m_strafe; // true when in strafemode toggled by the ctrl-key
 	bool m_strafe_forward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
 
+	bool freeMoveEnabled;
+
 	unsigned int movementflags;  // movement flags
 	wxStopWatch _keyControlTimer;
 
@@ -103,12 +106,19 @@ public:
 	void pitchDownDiscrete();
 	void rotateRightDiscrete();
 	void rotateLeftDiscrete();
-	void moveRightDiscrete();
-	void moveLeftDiscrete();
-	void moveDownDiscrete();
-	void moveUpDiscrete();
-	void moveBackDiscrete();
-	void moveForwardDiscrete();
+	void moveRightDiscrete(double units);
+	void moveLeftDiscrete(double units);
+	void moveDownDiscrete(double units);
+	void moveUpDiscrete(double units);
+	void moveBackDiscrete(double units);
+	void moveForwardDiscrete(double units);
+
+	void onForwardKey(KeyEventType eventType);
+	void onBackwardKey(KeyEventType eventType);
+	void onLeftKey(KeyEventType eventType);
+	void onRightKey(KeyEventType eventType);
+	void onUpKey(KeyEventType eventType);
+	void onDownKey(KeyEventType eventType);
 
 }; // class Camera
 

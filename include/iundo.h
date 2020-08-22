@@ -72,6 +72,9 @@ public:
 	virtual void redo() = 0;
 	virtual void clear() = 0;
 
+	// Returns true if an operation is already started
+	virtual bool operationStarted() const = 0;
+
 	// Emitted after an undo operation is fully completed, allows objects to refresh their state
 	virtual sigc::signal<void>& signal_postUndo() = 0;
 
@@ -116,15 +119,26 @@ inline IUndoSystem& GlobalUndoSystem()
 class UndoableCommand
 {
 	const std::string _command;
+	bool _shouldFinish;
 public:
 
 	UndoableCommand(const std::string& command) :
-		_command(command)
+		_command(command),
+		_shouldFinish(false)
 	{
-		GlobalUndoSystem().start();
+		// Avoid double-starting undo operations
+		if (!GlobalUndoSystem().operationStarted())
+		{
+			GlobalUndoSystem().start();
+			_shouldFinish = true;
+		}
 	}
 
-	~UndoableCommand() {
-		GlobalUndoSystem().finish(_command);
+	~UndoableCommand()
+	{
+		if (_shouldFinish)
+		{
+			GlobalUndoSystem().finish(_command);
+		}
 	}
 };

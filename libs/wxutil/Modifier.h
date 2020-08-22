@@ -139,7 +139,7 @@ public:
         return mod;
     }
 
-    static std::string GetModifierStringForMenu(unsigned int state, const std::string& separator = "+")
+    static std::string GetLocalisedModifierString(unsigned int state, const std::string& separator = "+")
     {
         std::string mod = "";
 

@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include <wx/event.h>
+#include <sigc++/connection.h>
 
 #include <map>
 #include <list>
@@ -22,8 +23,12 @@ private:
 	// Each command has a name, this is the map where the name->command association is stored
 	typedef std::map<const std::string, IEventPtr> EventMap;
 
-	// The list containing all registered accelerator objects
-	AcceleratorList _accelerators;
+	std::multimap<std::string, wxMenuItem*> _menuItems;
+	std::multimap<std::string, const wxToolBarToolBase*> _toolItems;
+
+	// The command-to-accelerator map containing all registered shortcuts
+	typedef std::map<std::string, Accelerator::Ptr> AcceleratorMap;
+	AcceleratorMap _accelerators;
 
 	// The map of all registered events
 	EventMap _events;
@@ -43,15 +48,10 @@ public:
 	// Constructor
 	EventManager();
 
-	Accelerator& addAccelerator(const std::string& key, const std::string& modifierStr) override;
-	Accelerator& addAccelerator(wxKeyEvent& ev) override;
-
 	IEventPtr findEvent(const std::string& name) override;
-	IEventPtr findEvent(wxKeyEvent& ev) override;
+	std::string findEventForAccelerator(wxKeyEvent& ev) override;
 
 	std::string getEventName(const IEventPtr& event) override;
-
-	std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) override;
 
 	void resetAcceleratorBindings() override;
 
@@ -68,8 +68,14 @@ public:
 
 	void setToggled(const std::string& name, const bool toggled) override;
 
+	void registerMenuItem(const std::string& eventName, wxMenuItem* item) override;
+	void unregisterMenuItem(const std::string& eventName, wxMenuItem* item) override;
+
+	void registerToolItem(const std::string& eventName, const wxToolBarToolBase* item) override;
+	void unregisterToolItem(const std::string& eventName, const wxToolBarToolBase* item) override;
+
 	// Connects the given accelerator to the given command (identified by the string)
-	void connectAccelerator(IAccelerator& accelerator, const std::string& command) override;
+	void connectAccelerator(wxKeyEvent& keyEvent, const std::string& command) override;
 	void disconnectAccelerator(const std::string& command) override;
 
 	void disableEvent(const std::string& eventName) override;
@@ -78,32 +84,36 @@ public:
 	void renameEvent(const std::string& oldEventName, const std::string& newEventName) override;
 	void removeEvent(const std::string& eventName) override;
 
-	void disconnectToolbar(wxToolBar* toolbar) override;
-
 	// Loads the default shortcuts from the registry
 	void loadAccelerators() override;
 
 	void foreachEvent(IEventVisitor& eventVisitor) override;
 
 	// Tries to locate an accelerator, that is connected to the given command
-	Accelerator& findAccelerator(const IEventPtr& event) override;
-    AcceleratorList findAccelerator(wxKeyEvent& ev);
+	Accelerator& findAccelerator(wxKeyEvent& ev);
+	bool handleKeyEvent(wxKeyEvent& keyEvent);
 
 	std::string getEventStr(wxKeyEvent& ev) override;
 
 private:
 	void saveEventListToRegistry();
 
-	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr);
+	Accelerator& connectAccelerator(int keyCode, unsigned int modifierFlags, const std::string& command);
 
-	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, const IEventPtr& event);
+	Accelerator& findAccelerator(const std::string& commandName);
+	Accelerator& findAccelerator(const std::string& key, const std::string& modifierStr);
 
-	// Returns the pointer to the accelerator for the given event, but convert the key to uppercase before passing it
-	AcceleratorList findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
+	// Returns the iterator to the mapping for the given key comob (convert the key to uppercase before passing it)
+	AcceleratorMap::iterator findAccelerator(unsigned int keyVal, const unsigned int modifierFlags);
 
 	void loadAcceleratorFromList(const xml::NodeList& shortcutList);
 
+	void setMenuItemAccelerator(const std::string& command, const std::string& acceleratorStr);
+	void setToolItemAccelerator(const std::string& command, const std::string& acceleratorStr);
+
 	bool isModifier(wxKeyEvent& ev);
+	void onToolItemClicked(wxCommandEvent& ev);
+	void onMenuItemClicked(wxCommandEvent& ev);
 };
 
 }

@@ -17,35 +17,45 @@ namespace ui
 class Accelerator :
     public IAccelerator
 {
+private:
     // The internally stored key/modifier combination
-    unsigned int _key;
+    int _key;
     unsigned int _modifiers;
 
     // The connected event
     IEventPtr _event;
 
+    // Alternative if event is null: the command to execute
+    std::string _statement;
+
+    bool _isEmpty;
+
+    // Private constructor creating an empty accelerator
+    Accelerator();
+
 public:
+    typedef std::shared_ptr<Accelerator> Ptr;
+
     // Construct an accelerator out of the key/modifier plus a command
-    Accelerator(const unsigned int key, const unsigned int modifiers, const IEventPtr& event);
-
-    // Copy Constructor
-    Accelerator(const Accelerator& other);
-
-    // Destructor
-    virtual ~Accelerator() {}
+    Accelerator(const int key, const unsigned int modifiers);
 
     // Returns true if the key/modifier combination matches this accelerator
-    bool match(const unsigned int key, const unsigned int modifiers) const;
+    bool match(const int key, const unsigned int modifiers) const;
 
     // Returns true if the event is attached to this Accelerator
     bool match(const IEventPtr& event) const;
 
     // Reads out the interal key/modifier combination of this Accelerator
-    unsigned int getKey() const override;
+    int getKey() const override;
     unsigned int getModifiers() const override;
 
+    // Returns the statement associated to this accelerator, or an empty string
+    // in case it's tied to an Event (check getEvent() in that case)
+    const std::string& getStatement() const;
+    void setStatement(const std::string& statement);
+
     // Make the accelerator use this key/modifier
-    void setKey(const unsigned int key) override;
+    void setKey(const int key) override;
     void setModifiers(const unsigned int modifiers) override;
 
     // Retrieve the contained event pointer
@@ -53,11 +63,9 @@ public:
     // Connect this modifier to the specified command
     void setEvent(const IEventPtr& ev);
 
-    // Call the connected event keyup/keydown callbacks
-    void keyUp();
-    void keyDown();
+    std::string getString(bool forMenu) const override;
 
-    std::string getAcceleratorString(bool forMenu);
+    bool isEmpty() const;
 
     /**
      * Converts a string representation of a key to the corresponding
@@ -78,8 +86,11 @@ public:
      * to its uppercase pendant if possible. 'a' => 'A'
      */
     static std::string getNameFromKeyCode(unsigned int keyCode);
+
+    // Create an empty accelerator
+    static Accelerator CreateEmpty();
 };
 
-typedef std::list<Accelerator> AcceleratorList;
+typedef std::list<Accelerator::Ptr> AcceleratorList;
 
 }

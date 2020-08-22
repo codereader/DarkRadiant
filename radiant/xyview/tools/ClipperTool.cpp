@@ -3,8 +3,8 @@
 #include "i18n.h"
 #include "igrid.h"
 #include "iclipper.h"
+#include "iselection.h"
 #include "imainframe.h"
-#include "selection/algorithm/General.h"
 #include "XYMouseToolEvent.h"
 
 namespace ui
@@ -123,7 +123,7 @@ bool ClipperTool::alwaysReceivesMoveEvents()
 void ClipperTool::dropClipPoint(XYMouseToolEvent& event)
 {
     Vector3 point = event.getWorldPos();
-    Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
+    Vector3 mid = GlobalSelectionSystem().getCurrentSelectionCenter();
 
     GlobalClipper().setViewType(static_cast<EViewType>(event.getViewType()));
     int nDim = (GlobalClipper().getViewType() == YZ) ? 0 : ((GlobalClipper().getViewType() == XZ) ? 1 : 2);

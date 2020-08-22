@@ -8,6 +8,8 @@
 #include <wx/toolbar.h>
 #include <regex>
 
+#include "string/replace.h"
+
 namespace ui
 {
 
@@ -61,25 +63,24 @@ public:
     virtual void connectMenuItem(wxMenuItem* item) {}
     virtual void disconnectMenuItem(wxMenuItem* item) {}
 
-    virtual void connectToolItem(wxToolBarToolBase* item) {}
-    virtual void disconnectToolItem(wxToolBarToolBase* item) {}
-
-    virtual void connectButton(wxButton* button) {}
-    virtual void disconnectButton(wxButton* button) {}
+    virtual void connectToolItem(const wxToolBarToolBase* item) {}
+    virtual void disconnectToolItem(const wxToolBarToolBase* item) {}
 
     virtual void connectToggleButton(wxToggleButton* button) {}
     virtual void disconnectToggleButton(wxToggleButton* button) {}
 
-    virtual void connectAccelerator(IAccelerator& accel) {}
-    virtual void disconnectAccelerators() {}
-
-protected:
+public:
     static void setMenuItemAccelerator(wxMenuItem* item, Accelerator& accel)
+    {
+        wxString accelText = accel.getString(true);
+
+        setMenuItemAccelerator(item, accelText);
+    }
+
+    static void setMenuItemAccelerator(wxMenuItem* item, const wxString& accelText)
     {
         // Cut off any existing accelerators
         wxString caption = item->GetItemLabel().BeforeFirst('\t');
-
-        wxString accelText = accel.getAcceleratorString(true);
 
         // greebo: Accelerators seem to globally catch the key events, add a space to fool wxWidgets
         item->SetItemLabel(caption + "\t " + accelText);
@@ -90,21 +91,29 @@ protected:
         item->SetItemLabel(item->GetItemLabel().BeforeFirst('\t'));
     }
 
-    static void setToolItemAccelerator(wxToolBarToolBase* tool, Accelerator& accel)
+    static void setToolItemAccelerator(const wxToolBarToolBase* tool, Accelerator& accel)
     {
-        wxString accelText = accel.getAcceleratorString(true);
-        std::replace(accelText.begin(), accelText.end(), '~', '-');
-
-        tool->SetShortHelp(getCleanToolItemHelpText(tool) + " (" + accelText + ")");
+        setToolItemAccelerator(tool, accel.getString(true));
     }
 
-    static void clearToolItemAccelerator(wxToolBarToolBase* tool)
+    static void setToolItemAccelerator(const wxToolBarToolBase* tool, const std::string& accelText)
+    {
+        if (tool->GetToolBar() == nullptr)
+        {
+            return;
+        }
+
+        tool->GetToolBar()->SetToolShortHelp(tool->GetId(), getCleanToolItemHelpText(tool) + 
+            (!accelText.empty() ? " (" + string::replace_all_copy(accelText, "~", "-") + ")" : ""));
+    }
+
+    static void clearToolItemAccelerator(const wxToolBarToolBase* tool)
     {
         // Remove the accelerator from this tool
-        tool->SetShortHelp(getCleanToolItemHelpText(tool));
+        tool->GetToolBar()->SetToolShortHelp(tool->GetId(), getCleanToolItemHelpText(tool));
     }
 
-    static std::string getCleanToolItemHelpText(wxToolBarToolBase* tool)
+    static std::string getCleanToolItemHelpText(const wxToolBarToolBase* tool)
     {
         std::string prevHelp = tool->GetShortHelp().ToStdString();
 

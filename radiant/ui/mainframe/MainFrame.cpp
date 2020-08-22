@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "RadiantModule.h"
 #include "igroupdialog.h"
+#include "imap.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "ipreferencesystem.h"
@@ -20,11 +21,12 @@
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/EmbeddedLayout.h"
 #include "ui/mainframe/TopLevelFrame.h"
-#include "map/Map.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
+#include "messages/ApplicationShutdownRequest.h"
 #include <functional>
 #include <fmt/format.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <wx/display.h>
 
@@ -70,6 +72,7 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
 		_dependencies.insert(MODULE_CAMERA);
+		_dependencies.insert(MODULE_MAP);
 	}
 
 	return _dependencies;
@@ -105,10 +108,8 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("ToggleFullScreenCamera",
 		std::bind(&MainFrame::toggleFullscreenCameraView, this, std::placeholders::_1)
 	);
-	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
 
 	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
-	GlobalEventManager().addCommand("Exit", "Exit");
 
 #ifdef WIN32
 	HMODULE lib = LoadLibrary(L"dwmapi.dll");
@@ -137,11 +138,22 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	// Load the value and act
 	setDesktopCompositionEnabled(!registry::getValue<bool>(RKEY_DISABLE_WIN_DESKTOP_COMP));
 #endif
+
+	_mapNameChangedConn = GlobalMapModule().signal_mapNameChanged().connect(
+		sigc::mem_fun(this, &MainFrame::updateTitle)
+	);
+
+	_mapModifiedChangedConn = GlobalMapModule().signal_modifiedChanged().connect(
+		sigc::mem_fun(this, &MainFrame::updateTitle)
+	);
 }
 
 void MainFrame::shutdownModule()
 {
 	rMessage() << "MainFrame::shutdownModule called." << std::endl;
+
+	_mapNameChangedConn.disconnect();
+	_mapModifiedChangedConn.disconnect();
 
 	disableScreenUpdates();
 }
@@ -263,13 +275,10 @@ void MainFrame::removeLayout()
 
 void MainFrame::preDestructionCleanup()
 {
-    // Unload the map (user has already been prompted to save, if appropriate)
-    GlobalMap().freeMap();
-
 	saveWindowPosition();
 
     // Free the layout
-    if (_currentLayout != NULL)
+    if (_currentLayout)
     {
         removeLayout();
     }
@@ -278,33 +287,55 @@ void MainFrame::preDestructionCleanup()
 	radiant::getGlobalRadiant()->broadcastShutdownEvent();
 }
 
+void MainFrame::updateTitle()
+{
+	if (_topLevelWindow == nullptr)
+	{
+		return;
+	}
+
+	std::string title = GlobalMapModule().getMapName();
+
+	if (GlobalMapModule().isModified())
+	{
+		title += " *";
+	}
+
+	_topLevelWindow->SetTitle(title);
+}
+
 void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 {
-    // If the event is vetoable, first check for unsaved data before closing
-    if (ev.CanVeto() && !GlobalMap().askForSave(_("Exit DarkRadiant")))
+    // If the event is vetoable, issue the shutdown message and get the green light
+    if (ev.CanVeto())
     {
-        // Do nothing
-        ev.Veto();
+		radiant::ApplicationShutdownRequest request;
+		GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+		if (request.isDenied())
+		{
+			// Keep running
+			ev.Veto();
+			return;
+		}
     }
-    else
-    {
-        wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
+    
+    wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
 
-        _topLevelWindow->Hide();
+    _topLevelWindow->Hide();
 
-        // Invoke cleanup code which still needs the GUI hierarchy to be
-        // present
-        preDestructionCleanup();
+    // Invoke cleanup code which still needs the GUI hierarchy to be
+    // present
+    preDestructionCleanup();
 
-        // Destroy the actual window
-        _topLevelWindow->Destroy();
+    // Destroy the actual window
+    _topLevelWindow->Destroy();
 
-        // wxWidgets is supposed to quit when the main window is destroyed, but
-        // it doesn't so we need to exit the main loop manually. Probably we
-        // are keeping some other window around internally which makes wx think
-        // that the application is still needed.
-        wxTheApp->ExitMainLoop();
-    }
+    // wxWidgets is supposed to quit when the main window is destroyed, but
+    // it doesn't so we need to exit the main loop manually. Probably we
+    // are keeping some other window around internally which makes wx think
+    // that the application is still needed.
+    wxTheApp->ExitMainLoop();
 }
 
 wxFrame* MainFrame::getWxTopLevelWindow()

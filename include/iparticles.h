@@ -54,6 +54,8 @@ public:
 	 */
 	virtual const std::string& getFilename() const = 0;
 
+	virtual void setFilename(const std::string& filename) = 0;
+
 	/**
 	 * Set/get the depth hack flag
 	 */
@@ -158,6 +160,13 @@ typedef std::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
  */
 typedef std::function< void (const IParticleDef&) > ParticleDefVisitor;
 
+/* CONSTANTS */
+namespace
+{
+	const char* PARTICLES_DIR = "particles/";
+	const char* PARTICLES_EXT = "prt";
+}
+
 /// Inteface for the particles manager
 class IParticlesManager :
 	public RegisterableModule
@@ -173,6 +182,12 @@ public:
     /// Return the definition object for the given named particle system
 	virtual IParticleDefPtr getDefByName(const std::string& name) = 0;
 
+	// Finds or creates the particle def with the given name, always returns non-NULL
+	virtual IParticleDefPtr findOrInsertParticleDef(const std::string& name) = 0;
+
+	// Removes the named particle definition from the storage
+	virtual void removeParticleDef(const std::string& name) = 0;
+
 	/**
 	 * Create a renderable particle, which is capable of compiling the
 	 * particle system into actual geometry usable for the backend rendersystem.
@@ -183,6 +198,23 @@ public:
 
     /// Create and return a particle node for the named particle system
 	virtual IParticleNodePtr createParticleNode(const std::string& name) = 0;
+
+	/**
+	 * Writes the named particle declaration to the file it is associated with,
+	 * replacing any existing declaration with the same name in that file.
+	 * Any other particle declarations that happen to be declared in the same file
+	 * will be preserved.
+	 *
+	 * If the associated file is stored in a PK4, a copy is written to the current
+	 * fs_game ("mod") folder and that file is used for the save operation.
+	 * No other particle declaration will be removed from the copied file.
+	 *
+	 * Note: this method does not check if the named particle system is already
+	 * defined in a different file.
+	 *
+	 * throws a std::runtime_error on any failure.
+	 */
+	virtual void saveParticleDef(const std::string& particle) = 0;
 
 	/**
      * \brief

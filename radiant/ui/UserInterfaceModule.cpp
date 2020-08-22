@@ -3,14 +3,28 @@
 #include "i18n.h"
 #include "ilayer.h"
 #include "ifilter.h"
+#include "ientity.h"
+#include "imru.h"
+#include "ibrush.h"
+#include "ipatch.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
+#include "imousetool.h"
+#include "imainframe.h"
+#include "ishaders.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "messages/TextureChanged.h"
+#include "string/string.h"
+#include "scene/Group.h"
+#include "command/ExecutionNotPossible.h"
 
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
+#include "MapCommands.h"
+#include "ui/aas/AasControlDialog.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
 #include "ui/layers/LayerControlDialog.h"
@@ -23,17 +37,29 @@
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/transform/TransformDialog.h"
 #include "ui/findshader/FindShader.h"
-#include "map/FindMapElements.h"
 #include "ui/mapinfo/MapInfoDialog.h"
 #include "ui/commandlist/CommandList.h"
-#include "ui/filterdialog/FilterDialog.h"
 #include "ui/mousetool/ToolMappingDialog.h"
 #include "ui/about/AboutDialog.h"
 #include "ui/eclasstree/EClassTree.h"
 #include "ui/entitylist/EntityList.h"
+#include "ui/particles/ParticleEditor.h"
+#include "ui/patch/CapDialog.h"
+#include "ui/patch/PatchThickenDialog.h"
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
+#include "modelexport/ExportCollisionModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
+#include "uimanager/colourscheme/ColourSchemeEditor.h"
+#include "ui/layers/CreateLayerDialog.h"
+#include "ui/patch/PatchCreateDialog.h"
+#include "ui/patch/BulgePatchDialog.h"
+#include "ui/selectionset/SelectionSetToolmenu.h"
+#include "ui/brush/QuerySidesDialog.h"
+#include "ui/brush/FindBrush.h"
+#include "ui/mousetool/RegistrationHelper.h"
+
+#include <wx/version.h>
 
 namespace ui
 {
@@ -67,6 +93,11 @@ const StringSet& UserInterfaceModule::getDependencies() const
 		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_FILTERSYSTEM);
+		_dependencies.insert(MODULE_ENTITY);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_RADIANT_CORE);
+		_dependencies.insert(MODULE_MRU_MANAGER);
+		_dependencies.insert(MODULE_MOUSETOOLMANAGER);
 	}
 
 	return _dependencies;
@@ -76,13 +107,19 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+	// Output the wxWidgets version to the logfile
+	std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
+	wxVersion += string::to_string(wxMINOR_VERSION) + ".";
+	wxVersion += string::to_string(wxRELEASE_NUMBER);
+
+	rMessage() << "wxWidgets Version: " << wxVersion << std::endl;
+
 	wxutil::MultiMonitor::printMonitorInfo();
 
 	registerUICommands();
 
 	// Register LayerControlDialog
 	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", LayerControlDialog::toggle);
-	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
 
 	// Create a new menu item connected to the CreateNewLayer command
 	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::CommandMenuItem>(
@@ -124,10 +161,183 @@ void UserInterfaceModule::initialiseModule(const ApplicationContext& ctx)
 			FilterOrthoContextMenuItem::DeselectByFilter),
 		IOrthoContextMenu::SECTION_FILTER
 	);
+
+	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
+		new wxutil::IconTextMenuItem(_("Group Selection"), "group_selection.png"),
+		[]() { selection::groupSelected(); },
+		[]() { return cmd::ExecutionNotPossible::ToBool(selection::checkGroupSelectedAvailable); }),
+		IOrthoContextMenu::SECTION_SELECTION_GROUPS);
+
+	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::MenuItem>(
+		new wxutil::IconTextMenuItem(_("Ungroup Selection"), "ungroup_selection.png"),
+		[]() { selection::ungroupSelected(); },
+		[]() { return cmd::ExecutionNotPossible::ToBool(selection::checkUngroupSelectedAvailable); }),
+		IOrthoContextMenu::SECTION_SELECTION_GROUPS);
+
+	_eClassColourManager.reset(new EntityClassColourManager);
+	_longOperationHandler.reset(new LongRunningOperationHandler);
+	_mapFileProgressHandler.reset(new MapFileProgressHandler);
+	_autoSaveRequestHandler.reset(new AutoSaveRequestHandler);
+	_fileSelectionRequestHandler.reset(new FileSelectionRequestHandler);
+
+	initialiseEntitySettings();
+
+	_execFailedListener = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::IMessage::Type::CommandExecutionFailed,
+		radiant::TypeListener<radiant::CommandExecutionFailedMessage>(
+			sigc::mem_fun(this, &UserInterfaceModule::handleCommandExecutionFailure)));
+
+	_textureChangedListener = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::IMessage::Type::TextureChanged,
+		radiant::TypeListener(UserInterfaceModule::HandleTextureChanged));
+
+	_notificationListener = GlobalRadiantCore().getMessageBus().addListener(
+		radiant::IMessage::Type::Notification,
+		radiant::TypeListener(UserInterfaceModule::HandleNotificationMessage));
+
+	// Initialise the AAS UI
+	AasControlDialog::Init();
+
+	SelectionSetToolmenu::Init();
+
+	_mruMenu.reset(new MRUMenu);
+	_shaderClipboardStatus.reset(new ShaderClipboardStatus);
+	_editStopwatchStatus.reset(new EditingStopwatchStatus);
+
+	MouseToolRegistrationHelper::RegisterTools();
+
+	wxTheApp->Bind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+	wxTheApp->Unbind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
+
+	GlobalRadiantCore().getMessageBus().removeListener(_textureChangedListener);
+	GlobalRadiantCore().getMessageBus().removeListener(_execFailedListener);
+	GlobalRadiantCore().getMessageBus().removeListener(_notificationListener);
+
+	_coloursUpdatedConn.disconnect();
+	_entitySettingsConn.disconnect();
+
+	_longOperationHandler.reset();
+	_eClassColourManager.reset();
+	_mapFileProgressHandler.reset();
+	_fileSelectionRequestHandler.reset();
+	_autoSaveRequestHandler.reset();
+	_shaderClipboardStatus.reset();
+	_editStopwatchStatus.reset();
+	
+	_mruMenu.reset();
+}
+
+void UserInterfaceModule::dispatch(const std::function<void()>& action)
+{
+	// Store this action in the event queue, it will be handled during the next event loop
+	wxTheApp->QueueEvent(new DispatchEvent(DISPATCH_EVENT, wxID_ANY, action));
+}
+
+void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)
+{
+	auto parentWindow = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
+		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
+
+	wxutil::Messagebox::ShowError(msg.getMessage(), parentWindow);
+}
+
+void UserInterfaceModule::HandleNotificationMessage(radiant::NotificationMessage& msg)
+{
+	auto parentWindow = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
+		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
+
+	switch (msg.getType())
+	{
+	case radiant::NotificationMessage::Information:
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Notification"), 
+			msg.getMessage(), IDialog::MessageType::MESSAGE_CONFIRM, parentWindow);
+		break;
+
+	case radiant::NotificationMessage::Warning:
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Warning"), 
+			msg.getMessage(), IDialog::MessageType::MESSAGE_WARNING, parentWindow);
+		break;
+
+	case radiant::NotificationMessage::Error:
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Error"), 
+			msg.getMessage(), IDialog::MessageType::MESSAGE_ERROR, parentWindow);
+		break;
+	};
+}
+
+void UserInterfaceModule::onDispatchEvent(DispatchEvent& evt)
+{
+	const auto& action = evt.GetAction();
+	action();
+}
+
+void UserInterfaceModule::initialiseEntitySettings()
+{
+	auto& settings = GlobalEntityModule().getSettings();
+
+	_entitySettingsConn = settings.signal_settingsChanged().connect(
+		[]() { GlobalMainFrame().updateAllWindows(); }
+	);
+
+	applyEntityVertexColours();
+	applyBrushVertexColours();
+	applyPatchVertexColours();
+
+	_coloursUpdatedConn = ColourSchemeEditor::signal_ColoursChanged().connect(
+		[this]() { 
+			applyEntityVertexColours(); 
+			applyBrushVertexColours(); 
+			applyPatchVertexColours();
+		}
+	);
+
+	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", RKEY_SHOW_ALL_LIGHT_RADII);
+	GlobalEventManager().addRegistryToggle("ToggleShowAllSpeakerRadii", RKEY_SHOW_ALL_SPEAKER_RADII);
+	GlobalEventManager().addRegistryToggle("ToggleDragResizeEntitiesSymmetrically", RKEY_DRAG_RESIZE_SYMMETRICALLY);
+}
+
+void UserInterfaceModule::applyBrushVertexColours()
+{
+	auto& settings = GlobalBrushCreator().getSettings();
+
+	settings.setVertexColour(ColourSchemes().getColour("brush_vertices"));
+}
+
+void UserInterfaceModule::applyPatchVertexColours()
+{
+	auto& settings = GlobalPatchModule().getSettings();
+
+	settings.setVertexColour(patch::PatchEditVertexType::Corners, ColourSchemes().getColour("patch_vertex_corner"));
+	settings.setVertexColour(patch::PatchEditVertexType::Inside, ColourSchemes().getColour("patch_vertex_inside"));
+}
+
+void UserInterfaceModule::applyEntityVertexColours()
+{
+	auto& settings = GlobalEntityModule().getSettings();
+
+	settings.setLightVertexColour(LightEditVertexType::StartEndDeselected, ColourSchemes().getColour("light_startend_deselected"));
+	settings.setLightVertexColour(LightEditVertexType::StartEndSelected, ColourSchemes().getColour("light_startend_selected"));
+	settings.setLightVertexColour(LightEditVertexType::Inactive, ColourSchemes().getColour("light_vertex_normal"));
+	settings.setLightVertexColour(LightEditVertexType::Deselected, ColourSchemes().getColour("light_vertex_deselected"));
+	settings.setLightVertexColour(LightEditVertexType::Selected, ColourSchemes().getColour("light_vertex_selected"));
+}
+
+void UserInterfaceModule::refreshShadersCmd(const cmd::ArgumentList& args)
+{
+	// Disable screen updates for the scope of this function
+	auto blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
+
+	// Reload the Shadersystem, this will also trigger an 
+	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
+	// is attached to this class as Observer
+	// We can't do this refresh() operation in a thread it seems due to context binding
+	GlobalMaterialManager().refresh();
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 void UserInterfaceModule::registerUICommands()
@@ -144,10 +354,9 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
 	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
 
-	GlobalCommandSystem().addCommand("FindBrush", DoFind);
+	GlobalCommandSystem().addCommand("FindBrush", FindBrushDialog::Show);
 
 	GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("EditFiltersDialog", FilterDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("FindReplaceTextures", FindAndReplaceShader::ShowDialog);
@@ -159,36 +368,47 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
-	// ----------------------- Bind Events ---------------------------------------
+	GlobalCommandSystem().addCommand("RefreshShaders",
+		std::bind(&UserInterfaceModule::refreshShadersCmd, this, std::placeholders::_1));
 
-	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
+	// Add the callback event
+	GlobalCommandSystem().addCommand("ParticlesEditor", ParticleEditor::DisplayDialog);
 
-	GlobalEventManager().addCommand("Preferences", "Preferences");
+	// Register the "create layer" command
+	GlobalCommandSystem().addCommand("CreateNewLayer", CreateLayerDialog::CreateNewLayer,
+		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
-	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
+	GlobalCommandSystem().addCommand("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd);
+	GlobalCommandSystem().addCommand("PatchCapDialog", PatchCapDialog::Show);
+	GlobalCommandSystem().addCommand("ThickenPatchDialog", PatchThickenDialog::Show);
+	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
 
-	GlobalEventManager().addCommand("ToggleLightInspector", "ToggleLightInspector");
-	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
-	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");
-	GlobalEventManager().addCommand("OverlayDialog", "OverlayDialog");
-	GlobalEventManager().addCommand("TransformDialog", "TransformDialog");
+	GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
+	GlobalCommandSystem().addCommand("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show, { cmd::ARGTYPE_INT });
 
-	GlobalEventManager().addCommand("FindBrush", "FindBrush");
+	// Set up the CloneSelection command to react on key up events only
+	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
 
-	GlobalEventManager().addCommand("MapInfo", "MapInfo");
-	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
-	GlobalEventManager().addCommand("MouseToolMappingDialog", "MouseToolMappingDialog");
+	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
+	GlobalEventManager().addRegistryToggle("ToggleSnapRotationPivot", "user/ui/snapRotationPivotToGrid");
+	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", "user/ui/offsetClonedObjects");
+	GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
 
-	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
-	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
-	GlobalEventManager().addCommand("About", "About");
-	GlobalEventManager().addCommand("ShowUserGuide", "ShowUserGuide");
-	GlobalEventManager().addCommand("ExportSelectedAsModelDialog", "ExportSelectedAsModelDialog");
-	GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
-	GlobalEventManager().addCommand("EntityList", "EntityList");
+	GlobalCommandSystem().addCommand("LoadPrefab", ui::loadPrefabDialog);
+}
+
+void UserInterfaceModule::HandleTextureChanged(radiant::TextureChangedMessage& msg)
+{
+	SurfaceInspector::update();
 }
 
 // Static module registration
 module::StaticModule<UserInterfaceModule> userInterfaceModule;
+
+UserInterfaceModule& GetUserInterfaceModule()
+{
+	return *std::static_pointer_cast<UserInterfaceModule>(
+		GlobalRadiantCore().getModuleRegistry().getModule("UserInterfaceModule"));
+}
 
 }

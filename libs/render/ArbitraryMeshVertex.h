@@ -2,6 +2,7 @@
 
 #include <cstddef>
 
+#include "math/Vector3.h"
 #include "Vertex3f.h"
 #include "TexCoord2f.h"
 #include "VertexTraits.h"

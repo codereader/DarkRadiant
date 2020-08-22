@@ -4,7 +4,7 @@
 #include "itextstream.h"
 #include "imainframe.h"
 #include "debugging/debugging.h"
-#include "modulesystem/StaticModule.h"
+#include "module/StaticModule.h"
 
 #include <string/convert.h>
 #include "wxutil/GLWidget.h"

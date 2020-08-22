@@ -156,7 +156,7 @@ private:
 	void updateInfoTable();
 
 	// callbacks
-	void onPreviewRender();
+	bool onPreviewRender();
 	void _onSelChange(wxDataViewEvent& ev);
 };
 

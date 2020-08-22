@@ -40,7 +40,7 @@ private:
 	wxCheckBox* _focusSelected;
 	wxCheckBox* _visibleOnly;
 
-	sigc::connection _filtersChangedConnection;
+	sigc::connection _filtersConfigChangedConn;
 
 	struct DataViewItemLess
 	{
@@ -76,7 +76,7 @@ private:
 	// Called by the graph tree model
 	void onTreeViewSelection(const wxDataViewItem& item, bool selected);
 
-	void filtersChanged();
+	void onFilterConfigChanged();
 
 	void onRowExpand(wxDataViewEvent& ev);
 

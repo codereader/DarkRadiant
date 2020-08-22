@@ -1,6 +1,6 @@
 #pragma once
 
-#include "map/ModelBreakdown.h"
+#include "scene/ModelBreakdown.h"
 
 #include <wx/panel.h>
 #include "wxutil/TreeView.h"
@@ -13,7 +13,7 @@ class ModelInfoTab :
 {
 private:
 	// The helper class counting the models in the map
-	map::ModelBreakdown _modelBreakdown;
+	scene::ModelBreakdown _modelBreakdown;
 
 	// Treemodel definition
 	struct ListColumns :

@@ -3,6 +3,7 @@
 #include "registry.h"
 
 #include <sigc++/bind.h>
+#include <sigc++/connection.h>
 
 namespace registry
 {
@@ -26,11 +27,11 @@ namespace detail
  * slot invoked when the value changes to true and the other invoked when the
  * value changes to false.
  */
-inline void observeBooleanKey(const std::string& key,
+inline sigc::connection observeBooleanKey(const std::string& key,
                               sigc::slot<void> trueCallback,
                               sigc::slot<void> falseCallback)
 {
-    GlobalRegistry().signalForKey(key).connect(
+    return GlobalRegistry().signalForKey(key).connect(
         sigc::bind(sigc::ptr_fun(&detail::invokeFromBoolean),
                    key,
                    trueCallback,

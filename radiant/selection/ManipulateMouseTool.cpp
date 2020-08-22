@@ -5,11 +5,10 @@
 #include "iundo.h"
 #include "iscenegraph.h"
 #include "registry/registry.h"
-#include "Device.h"
+#include "selection/Device.h"
 #include "Rectangle.h"
-#include "Pivot2World.h"
+#include "selection/Pivot2World.h"
 #include "SelectionTest.h"
-#include "SceneWalkers.h"
 #include <fmt/format.h>
 #include "string/split.h"
 
@@ -21,9 +20,8 @@ namespace
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 }
 
-ManipulateMouseTool::ManipulateMouseTool(SelectionSystem& selectionSystem) :
+ManipulateMouseTool::ManipulateMouseTool() :
     _selectEpsilon(registry::getValue<float>(RKEY_SELECT_EPSILON)),
-    _selectionSystem(selectionSystem),
 	_manipulationActive(false),
 	_undoBegun(false)
 {}
@@ -96,18 +94,19 @@ unsigned int ManipulateMouseTool::getRefreshMode()
 
 bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon)
 {
-	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
+	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 
 	assert(activeManipulator);
 	
-	bool dragComponentMode = activeManipulator->getType() == selection::Manipulator::Drag && _selectionSystem.Mode() == SelectionSystem::eComponent;
+	bool dragComponentMode = activeManipulator->getType() == selection::Manipulator::Drag && 
+		GlobalSelectionSystem().Mode() == SelectionSystem::eComponent;
 
 	if (!nothingSelected() || dragComponentMode)
 	{
 		// Unselect any currently selected manipulators to be sure
 		activeManipulator->setSelected(false);
 
-		const Matrix4& pivot2World = _selectionSystem.getPivot2World();
+		const Matrix4& pivot2World = GlobalSelectionSystem().getPivot2World();
 
 		// Test, if the current manipulator can be selected
 		if (!nothingSelected() || dragComponentMode)
@@ -115,14 +114,16 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 			render::View scissored(view);
 			ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
 
+			SelectionVolume test(scissored);
+
 			// The manipulator class checks on its own, if any of its components can be selected
-			activeManipulator->testSelect(scissored, pivot2World);
+			activeManipulator->testSelect(test, pivot2World);
 		}
 
 		// Save the pivot2world matrix
 		_pivot2worldStart = pivot2World;
 
-		_selectionSystem.onManipulationStart();
+		GlobalSelectionSystem().onManipulationStart();
 
 		// This is true, if a manipulator could be selected
 		_manipulationActive = activeManipulator->isSelected();
@@ -143,7 +144,7 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 
 void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector2& devicePoint)
 {
-	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
+	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 	assert(activeManipulator);
 
 	// Check if the active manipulator is selected in the first place
@@ -189,37 +190,22 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 	// and call the transform method
 	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, devicePoint, constraintFlag);
 
-	_selectionSystem.onManipulationChanged();
+	GlobalSelectionSystem().onManipulationChanged();
 }
 
 void ManipulateMouseTool::freezeTransforms()
 {
-	GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
-
-	_selectionSystem.onManipulationEnd();
+	GlobalSelectionSystem().onManipulationEnd();
 }
 
 void ManipulateMouseTool::endMove()
 {
 	freezeTransforms();
 
-	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
+	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 	assert(activeManipulator);
 
-	// greebo: Deselect all faces if we are in brush and drag mode
-	if ((_selectionSystem.Mode() == SelectionSystem::ePrimitive || _selectionSystem.Mode() == SelectionSystem::eGroupPart) &&
-		activeManipulator->getType() == selection::Manipulator::Drag)
-	{
-		SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
-		GlobalSceneGraph().root()->traverse(faceSelector);
-	}
-
-	// Remove all degenerated brushes from the scene graph (should emit a warning)
-	_selectionSystem.foreachSelected(RemoveDegenerateBrushWalker());
-
 	_manipulationActive = false;
-	_selectionSystem.pivotChanged();
-	activeManipulator->setSelected(false);
 
 	// Update the views
 	SceneChangeNotify();
@@ -262,48 +248,12 @@ void ManipulateMouseTool::endMove()
 
 void ManipulateMouseTool::cancelMove()
 {
-	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
+	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 	assert(activeManipulator);
 
-	// Unselect any currently selected manipulators to be sure
-	activeManipulator->setSelected(false);
-
-	// Tell all the scene objects to revert their transformations
-	_selectionSystem.foreachSelected([](const scene::INodePtr& node)
-	{
-		ITransformablePtr transform = Node_getTransformable(node);
-
-		if (transform)
-		{
-			transform->revertTransform();
-		}
-
-		// In case of entities, we need to inform the child nodes as well
-		if (Node_getEntity(node))
-		{
-			node->foreachNode([&](const scene::INodePtr& child)
-			{
-				ITransformablePtr transform = Node_getTransformable(child);
-
-				if (transform)
-				{
-					transform->revertTransform();
-				}
-
-				return true;
-			});
-		}
-	});
-
 	_manipulationActive = false;
-	_selectionSystem.pivotChanged();
 
-	// greebo: Deselect all faces if we are in brush and drag mode
-	if (_selectionSystem.Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::Manipulator::Drag)
-	{
-		SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
-		GlobalSceneGraph().root()->traverse(faceSelector);
-	}
+	GlobalSelectionSystem().onManipulationCancelled();
 
 	if (_undoBegun)
 	{
@@ -318,15 +268,15 @@ void ManipulateMouseTool::cancelMove()
 
 bool ManipulateMouseTool::nothingSelected() const
 {
-	switch (_selectionSystem.Mode())
+	switch (GlobalSelectionSystem().Mode())
 	{
 	case SelectionSystem::eComponent:
-		return _selectionSystem.countSelectedComponents() == 0;
+		return GlobalSelectionSystem().countSelectedComponents() == 0;
 
 	case SelectionSystem::eGroupPart:
 	case SelectionSystem::ePrimitive:
 	case SelectionSystem::eEntity:
-		return _selectionSystem.countSelected() == 0;
+		return GlobalSelectionSystem().countSelected() == 0;
 
 	default:
 		return false;

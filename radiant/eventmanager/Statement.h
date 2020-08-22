@@ -29,11 +29,8 @@ private:
     typedef std::set<wxMenuItem*> MenuItems;
     MenuItems _menuItems;
 
-    typedef std::set<wxToolBarToolBase*> ToolItems;
+    typedef std::set<const wxToolBarToolBase*> ToolItems;
     ToolItems _toolItems;
-
-    typedef std::set<wxButton*> Buttons;
-    Buttons _buttons;
 
 public:
     Statement(const std::string& statement, bool reactOnKeyUp = false);
@@ -51,22 +48,15 @@ public:
     virtual void connectMenuItem(wxMenuItem* item);
     virtual void disconnectMenuItem(wxMenuItem* item);
 
-    virtual void connectToolItem(wxToolBarToolBase* item);
-    virtual void disconnectToolItem(wxToolBarToolBase* item);
-
-    virtual void connectButton(wxButton* button);
-    virtual void disconnectButton(wxButton* button);
+    virtual void connectToolItem(const wxToolBarToolBase* item);
+    virtual void disconnectToolItem(const wxToolBarToolBase* item);
 
     virtual bool empty() const;
-
-    virtual void connectAccelerator(IAccelerator& accel);
-    virtual void disconnectAccelerators();
 
 private:
     // The allback methods that can be connected to a ToolButton or a MenuItem
     void onMenuItemClicked(wxCommandEvent& ev);
     void onToolItemClicked(wxCommandEvent& ev);
-    void onButtonClicked(wxCommandEvent& ev);
 
 }; // class Statement
 

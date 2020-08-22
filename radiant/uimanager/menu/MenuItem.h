@@ -18,6 +18,16 @@ public:
 
 	virtual wxMenuItem* getMenuItem();
 
+	void setAccelerator(const std::string& accelStr) override;
+
+	eMenuItemType getType() const override
+	{
+		return menuItem;
+	}
+
+	bool isToggle() const override;
+	void setToggled(bool isToggled) override;
+
 protected:
 	virtual void construct() override;
 	virtual void deconstruct() override;

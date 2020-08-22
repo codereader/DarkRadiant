@@ -12,6 +12,11 @@
 namespace ui
 {
 
+namespace
+{
+	const char* const CMD_VARIANT_NAME = "command";
+}
+
 int ToolbarManager::_nextToolItemId = 100;
 
 void ToolbarManager::initialise()
@@ -55,11 +60,11 @@ wxToolBar* ToolbarManager::getToolbar(const std::string& toolbarName, wxWindow* 
 	}
 }
 
-wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node& node)
+wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml::Node& node)
 {
 	const std::string nodeName = node.getName();
 
-	wxToolBarToolBase* toolItem = NULL;
+	wxToolBarToolBase* toolItem = nullptr;
 
 	if (nodeName == "separator")
 	{
@@ -95,19 +100,9 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, xml::Node&
 				tooltip, wxITEM_CHECK);
 		}
 
-		IEventPtr ev = GlobalEventManager().findEvent(action);
+		toolItem->SetClientData(new wxVariant(action, CMD_VARIANT_NAME));
 
-		if (!ev->empty())
-		{
-			ev->connectToolItem(toolItem);
-
-			// Tell the event to update the state of this button
-			ev->updateWidgets();
-		}
-		else
-		{
-			rError() << "ToolbarManager: Failed to lookup command " << action << std::endl;
-		}
+		GlobalEventManager().registerToolItem(action, toolItem);
 	}
 
 	return toolItem;
@@ -133,10 +128,10 @@ wxToolBar* ToolbarManager::createToolbar(xml::Node& node, wxWindow* parent)
         // this will not resize the actual icons, just the buttons
         toolbar->SetToolBitmapSize(wxSize(20, 20));
 
-		for (std::size_t i = 0; i < toolItemList.size(); ++i)
+		for (const auto& toolNode : toolItemList)
 		{
 			// Create and get the toolItem with the parsing
-			createToolItem(toolbar, toolItemList[i]);
+			createToolItem(toolbar, toolNode);
 		}
 
 		toolbar->Realize();
@@ -146,7 +141,35 @@ wxToolBar* ToolbarManager::createToolbar(xml::Node& node, wxWindow* parent)
 		throw std::runtime_error("No elements in toolbar.");
 	}
 
+	toolbar->Bind(wxEVT_DESTROY, &ToolbarManager::onToolbarDestroy, this);
+
 	return toolbar;
+}
+
+void ToolbarManager::onToolbarDestroy(wxWindowDestroyEvent& ev)
+{
+	auto toolbar = wxDynamicCast(ev.GetEventObject(), wxToolBar);
+
+	if (toolbar == nullptr)
+	{
+		return;
+	}
+
+	for (std::size_t tool = 0; tool < toolbar->GetToolsCount(); tool++)
+	{
+		auto toolItem = toolbar->GetToolByPos(tool);
+
+		auto cmdData = wxDynamicCast(toolItem->GetClientData(), wxVariant);
+
+		if (cmdData != nullptr && cmdData->GetName() == CMD_VARIANT_NAME)
+		{
+			GlobalEventManager().unregisterToolItem(cmdData->GetString().ToStdString(), toolItem);
+
+			// free the client data, the toolbar item doesn't delete it
+			toolbar->SetToolClientData(toolItem->GetId(), nullptr);
+			delete cmdData;
+		}
+	}
 }
 
 bool ToolbarManager::toolbarExists(const std::string& toolbarName)

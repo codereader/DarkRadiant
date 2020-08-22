@@ -5,19 +5,60 @@
 
 #include "math/Vector2.h"
 #include "math/Vector3.h"
+#include "math/Matrix4.h"
 #include <vector>
 
-class Matrix4;
 class Plane3;
 
 const std::string RKEY_ENABLE_TEXTURE_LOCK("user/ui/brush/textureLock");
+
+namespace brush
+{
+
+// Helper class hosting brush-related settings
+class IBrushSettings
+{
+public:
+	virtual ~IBrushSettings() {}
+
+	virtual const Vector3& getVertexColour() const = 0;
+
+	virtual void setVertexColour(const Vector3& colour) = 0;
+
+	virtual sigc::signal<void>& signal_settingsChanged() = 0;
+};
 
 class BrushCreator :
 	public RegisterableModule
 {
 public:
 	virtual scene::INodePtr createBrush() = 0;
+
+	virtual IBrushSettings& getSettings() = 0;
 };
+
+enum class PrefabType : int
+{
+	Cuboid = 0,
+	Prism,
+	Cone,
+	Sphere,
+	NumPrefabTypes,
+};
+
+// Public constants
+const std::size_t c_brush_maxFaces = 1024;
+
+const std::size_t PRISM_MIN_SIDES = 3;
+const std::size_t PRISM_MAX_SIDES = c_brush_maxFaces - 2;
+
+const std::size_t CONE_MIN_SIDES = 3;
+const std::size_t CONE_MAX_SIDES = 32;
+
+const std::size_t SPHERE_MIN_SIDES = 3;
+const std::size_t SPHERE_MAX_SIDES = 7;
+
+}
 
 // The structure defining a single corner point of an IWinding
 struct WindingVertex
@@ -43,6 +84,20 @@ struct WindingVertex
 // each of which holding information about a single corner point.
 typedef std::vector<WindingVertex> IWinding;
 
+/**
+ * greebo: The texture definition structure containing the scale,
+ * rotation and shift values of an applied texture.
+ * At some places this is referred to as "fake" texture coordinates.
+ * This is not what is actually saved to the .map file, but it makes
+ * texture manipulations in the Surface Inspector much more human-readable.
+ */
+struct ShiftScaleRotation
+{
+	double	shift[2];
+	double	rotate;
+	double	scale[2];
+};
+
 // Interface for a face plane
 class IFace
 {
@@ -53,12 +108,20 @@ public:
 	// Submits the current state to the UndoSystem, to make further actions undo-able
 	virtual void undoSave() = 0;
 
+	// Returns true if the texture of this face is not filtered out
+	// This doesn't take into account whether the owning brush is visible or not
+	virtual bool isVisible() const = 0;
+
 	// Shader accessors
 	virtual const std::string& getShader() const = 0;
 	virtual void setShader(const std::string& name) = 0;
 
 	// Shifts the texture by the given s,t amount in texture space
 	virtual void shiftTexdef(float s, float t) = 0;
+
+	// Convenience wrapper to shift the assigned texture by the given amount of pixels
+	// the passed values are scaled accordingly and passed on to shiftTexdef()
+	virtual void shiftTexdefByPixels(float s, float t) = 0;
 
 	// Scales the tex def by the given factors in texture space
 	virtual void scaleTexdef(float s, float t) = 0;
@@ -75,6 +138,17 @@ public:
 	// This translates the texture as much towards the origin in texture space as possible without changing the world appearance.
 	virtual void normaliseTexture() = 0;
 
+	enum class AlignEdge
+	{
+		Top,
+		Bottom,
+		Left,
+		Right,
+	};
+
+	// If possible, aligns the assigned texture at the given anchor edge
+	virtual void alignTexture(AlignEdge alignType) = 0;
+
 	// Get access to the actual Winding object
 	virtual IWinding& getWinding() = 0;
 	virtual const IWinding& getWinding() const = 0;
@@ -88,6 +162,42 @@ public:
 	 * tx and ty hold the shift
 	 */
 	virtual Matrix4 getTexDefMatrix() const = 0;
+
+	/**
+	 * The matrix used to project world coordinates to U/V space.
+	 */
+	virtual Matrix4 getProjectionMatrix() = 0;
+
+	virtual void setProjectionMatrix(const Matrix4& projection) = 0;
+
+	/**
+	 * Calculates and returns the texture definition as shift/scale/rotate.
+	 * This is not what is actually saved to the .map file, but it makes
+	 * texture manipulations in the Surface Inspector much more human-readable.
+	 */
+	virtual ShiftScaleRotation getShiftScaleRotation() = 0;
+	virtual void setShiftScaleRotation(const ShiftScaleRotation& scr) = 0;
+};
+
+// Plane classification info used by splitting and CSG algorithms
+struct BrushSplitType 
+{
+	std::size_t counts[3];
+
+	BrushSplitType()
+	{
+		counts[0] = 0;
+		counts[1] = 0;
+		counts[2] = 0;
+	}
+
+	BrushSplitType& operator+=(const BrushSplitType& other)
+	{
+		counts[0] += other.counts[0];
+		counts[1] += other.counts[1];
+		counts[2] += other.counts[2];
+		return *this;
+	}
 };
 
 // Brush Interface
@@ -158,6 +268,12 @@ public:
 	 * Q3-compatibility feature, set the detail/structural flag
 	 */
 	virtual void setDetailFlag(DetailFlag newValue) = 0;
+
+	// Classify this brush against the given plane, used by clipper and CSG algorithms
+	virtual BrushSplitType classifyPlane(const Plane3& plane) const = 0;
+
+	// Method used internally to recalculate the brush windings
+	virtual void evaluateBRep() const = 0;
 };
 
 // Forward-declare the Brush object, only accessible from main binary
@@ -202,13 +318,13 @@ inline IBrush* Node_getIBrush(const scene::INodePtr& node)
 	return NULL;
 }
 
-const std::string MODULE_BRUSHCREATOR("Doom3BrushCreator");
+const char* const MODULE_BRUSHCREATOR("Doom3BrushCreator");
 
-inline BrushCreator& GlobalBrushCreator()
+inline brush::BrushCreator& GlobalBrushCreator()
 {
 	// Cache the reference locally
-	static BrushCreator& _brushCreator(
-		*std::static_pointer_cast<BrushCreator>(
+	static brush::BrushCreator& _brushCreator(
+		*std::static_pointer_cast<brush::BrushCreator>(
 			module::GlobalModuleRegistry().getModule(MODULE_BRUSHCREATOR)
 		)
 	);

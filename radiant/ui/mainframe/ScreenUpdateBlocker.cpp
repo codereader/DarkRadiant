@@ -4,54 +4,22 @@
 #include "imainframe.h"
 
 #include <wx/app.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/panel.h>
-#include <wx/gauge.h>
+#include <wx/frame.h>
 
 namespace ui {
 
 ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::string& message, bool forceDisplay) :
-	TransientWindow(title, GlobalMainFrame().getWxTopLevelWindow()),
-	_gauge(NULL),
-	_pulseAllowed(true)
+	_dialog(nullptr),
+	_pulseAllowed(true),
+	_title(title)
 {
-	SetWindowStyleFlag(GetWindowStyleFlag() & ~(wxRESIZE_BORDER|wxCLOSE_BOX|wxMINIMIZE_BOX));
-
-	SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	wxPanel* panel = new wxPanel(this, wxID_ANY);
-	GetSizer()->Add(panel, 1, wxEXPAND);
-
-	panel->SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	panel->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 24);
-
-	_message = new wxStaticText(panel, wxID_ANY, message);
-	vbox->Add(_message, 0, wxALIGN_CENTER | wxBOTTOM, 12);
-
-	_gauge = new wxGauge(panel, wxID_ANY, 100);
-
-	vbox->Add(_gauge, 1, wxEXPAND | wxALL);
-
-	panel->Layout();
-	panel->Fit();
-	Layout();
-	Fit();
-	CenterOnParent();
-
 	// Set the "screen updates disabled" flag (also disables autosaver)
 	GlobalMainFrame().disableScreenUpdates();
 
 	// Connect the realize signal to remove the window decorations
 	if (GlobalMainFrame().isActiveApp() || forceDisplay)
 	{
-		// Show this window immediately
-		Show();
-
-		// Eat all window events
-		_disabler.reset(new wxWindowDisabler(this));
+		showModalProgressDialog();
 	}
 
 	// Process pending events to fully show the dialog
@@ -59,24 +27,33 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 
 	// Register for the "is-active" changed event, to display this dialog
 	// as soon as Radiant is getting the focus again
-	GlobalMainFrame().getWxTopLevelWindow()->Connect(
-		wxEVT_SET_FOCUS, wxFocusEventHandler(ScreenUpdateBlocker::onMainWindowFocus), NULL, this);
+	GlobalMainFrame().getWxTopLevelWindow()->Bind(wxEVT_SET_FOCUS, &ScreenUpdateBlocker::onMainWindowFocus, this);
+}
 
-	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(ScreenUpdateBlocker::onCloseEvent), NULL, this);
+void ScreenUpdateBlocker::showModalProgressDialog()
+{
+	_dialog = new wxutil::ModalProgressDialog(_title, GlobalMainFrame().getWxTopLevelWindow());
 
-    Bind(wxEVT_IDLE, [&](wxIdleEvent&)
-    {
-        pulse();
-    });
+	_dialog->Bind(wxEVT_CLOSE_WINDOW, &ScreenUpdateBlocker::onCloseEvent, this);
+
+	// Show this window immediately
+	_dialog->Show();
+
+	// Eat all window events
+	_disabler.reset(new wxWindowDisabler(_dialog));
 }
 
 ScreenUpdateBlocker::~ScreenUpdateBlocker()
 {
-	GlobalMainFrame().getWxTopLevelWindow()->Disconnect(
-		wxEVT_SET_FOCUS, wxFocusEventHandler(ScreenUpdateBlocker::onMainWindowFocus), NULL, this);
+	GlobalMainFrame().getWxTopLevelWindow()->Unbind(wxEVT_SET_FOCUS, &ScreenUpdateBlocker::onMainWindowFocus, this);
 
 	// Process pending events to flush keystroke buffer etc.
 	wxTheApp->Yield(true);
+
+	if (_dialog != nullptr)
+	{
+		_dialog->Destroy();
+	}
 
 	// Remove the event blocker, if appropriate
 	_disabler.reset();
@@ -86,53 +63,69 @@ ScreenUpdateBlocker::~ScreenUpdateBlocker()
 
     // Re-draw the scene to clear any artefacts in the buffer
     GlobalMainFrame().updateAllWindows();
+
+	// Run one idle event loop, to allow wxWidgets to clean up the
+	// modal progress dialog window
+	wxTheApp->ProcessIdle();
 }
 
 void ScreenUpdateBlocker::pulse()
 {
-	if (_pulseAllowed)
+	if (_pulseAllowed && _dialog != nullptr)
 	{
-		_gauge->Pulse();
+		_dialog->Pulse();
 	}
+}
+
+void ScreenUpdateBlocker::doSetProgress(float progress)
+{
+	if (_dialog != nullptr)
+	{
+		_dialog->setFraction(progress);
+	}
+
+	_pulseAllowed = false;
 }
 
 void ScreenUpdateBlocker::setProgress(float progress)
 {
-	if (progress < 0.0f) progress = 0.0f;
-	if (progress > 1.0f) progress = 1.0f;
+	doSetProgress(progress);
+}
 
-	_gauge->SetValue(static_cast<int>(progress * 100));
-
-	_pulseAllowed = false;
-
-	Refresh();
-	Update();
+void ScreenUpdateBlocker::doSetMessage(const std::string& message)
+{
+	if (_dialog != nullptr)
+	{
+		_dialog->setText(message);
+	}
 }
 
 void ScreenUpdateBlocker::setMessage(const std::string& message)
 {
-	std::size_t oldLength = _message->GetLabel().Length();
+	doSetMessage(message);
 
-	_message->SetLabel(message);
-
-	if (message.length() > oldLength)
-	{
-		Layout();
-		Fit();
-		CenterOnParent();
+	if (_dialog != nullptr)
+	{ 
+		_dialog->Refresh();
+		_dialog->Update();
 	}
+}
 
-	Refresh();
-	Update();
+void ScreenUpdateBlocker::setMessageAndProgress(const std::string& message, float progress)
+{
+	if (_dialog != nullptr)
+	{
+		_dialog->setTextAndFraction(message, progress);
+	}
 }
 
 void ScreenUpdateBlocker::onMainWindowFocus(wxFocusEvent& ev)
 {
 	// The Radiant main window has changed its active state, let's see if it became active
-	// and if yes, show this blocker dialog.
-	if (GlobalMainFrame().getWxTopLevelWindow()->IsActive() && !IsShownOnScreen())
+	// and if yes, show the blocker dialog.
+	if (GlobalMainFrame().getWxTopLevelWindow()->IsActive() && _dialog == nullptr)
 	{
-		Show();
+		showModalProgressDialog();
 	}
 }
 

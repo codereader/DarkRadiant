@@ -35,7 +35,7 @@ protected:
 	typedef std::set<wxMenuItem*> MenuItems;
 	MenuItems _menuItems;
 
-	typedef std::set<wxToolBarToolBase*> ToolItems;
+	typedef std::set<const wxToolBarToolBase*> ToolItems;
 	ToolItems _toolItems;
 
 	typedef std::set<wxToggleButton*> Buttons;
@@ -73,17 +73,14 @@ public:
 	virtual void connectMenuItem(wxMenuItem* item);
 	virtual void disconnectMenuItem(wxMenuItem* item);
 
-	virtual void connectToolItem(wxToolBarToolBase* item);
-	virtual void disconnectToolItem(wxToolBarToolBase* item);
+	virtual void connectToolItem(const wxToolBarToolBase* item);
+	virtual void disconnectToolItem(const wxToolBarToolBase* item);
 
 	virtual void connectToggleButton(wxToggleButton* button);
 	virtual void disconnectToggleButton(wxToggleButton* button);
 
 	// Invoke the registered callback and update/notify
 	virtual void toggle();
-
-    virtual void connectAccelerator(IAccelerator& accel);
-    virtual void disconnectAccelerators();
 
 protected:
 	virtual void onMenuItemClicked(wxCommandEvent& ev);

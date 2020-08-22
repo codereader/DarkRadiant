@@ -3,7 +3,6 @@
 #include "imainframe.h"
 #include "i18n.h"
 #include "igame.h"
-#include "modulesystem/ModuleRegistry.h"
 
 #include "wxutil/dialog/MessageBox.h"
 #include "registry/registry.h"
@@ -13,7 +12,6 @@
 #include <wx/choicebk.h>
 #include <wx/stattext.h>
 #include <wx/button.h>
-#include "settings/GameManager.h"
 
 namespace ui
 {
@@ -197,7 +195,7 @@ void GameSetupDialog::onPageChanged(wxBookCtrlEvent& ev)
 	}
 }
 
-void GameSetupDialog::Show(const cmd::ArgumentList& args)
+void GameSetupDialog::TryGetConfig(const std::function<void(const game::GameConfiguration&)>& onSuccess)
 {
 	// greebo: Check if the mainframe module is already "existing". It might be
 	// uninitialised if this dialog is shown during DarkRadiant startup
@@ -205,6 +203,7 @@ void GameSetupDialog::Show(const cmd::ArgumentList& args)
 		GlobalMainFrame().getWxTopLevelWindow() : nullptr;
 
 	GameSetupDialog* dialog = new GameSetupDialog(parent);
+	game::GameConfiguration config;
 
 	if (dialog->ShowModal() == wxID_OK)
 	{
@@ -212,14 +211,29 @@ void GameSetupDialog::Show(const cmd::ArgumentList& args)
 
 		assert(page != nullptr);
 
-		// Copy the values from the page instance to our result
-		const game::GameConfiguration& config = page->getConfiguration();
-
-		// Apply the configuration (don't use the GlobalGameManager accessor yet)
-		game::Manager::Instance().applyConfig(config);
+		// Pass the result to the functor
+		onSuccess(page->getConfiguration());
 	}
-	
+
 	dialog->Destroy();
+}
+
+void GameSetupDialog::Show(const cmd::ArgumentList& args)
+{
+	TryGetConfig([&](const game::GameConfiguration& config)
+	{
+		// Apply the configuration on success
+		GlobalGameManager().applyConfig(config);
+	});
+}
+
+void GameSetupDialog::HandleGameConfigMessage(game::ConfigurationNeeded& message)
+{
+	TryGetConfig([&](const game::GameConfiguration& config)
+	{
+		message.setConfig(config);
+		message.setHandled(true);
+	});
 }
 
 }

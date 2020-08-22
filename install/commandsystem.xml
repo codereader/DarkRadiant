@@ -12,9 +12,9 @@
 		<bind name="Brush9Sided" value="BrushMakeSided 9" readonly="1" />
 		<!-- Brush Prefab commands -->
 		<bind name="BrushCuboid" value="BrushMakePrefab 0" readonly="1" />
-		<bind name="BrushPrism" value="BrushMakePrefab 1" readonly="1" />
-		<bind name="BrushCone" value="BrushMakePrefab 2" readonly="1" />
-		<bind name="BrushSphere" value="BrushMakePrefab 3" readonly="1" />
+		<bind name="BrushPrism" value="QueryBrushPrefabSidesDialog 1" readonly="1" />
+		<bind name="BrushCone" value="QueryBrushPrefabSidesDialog 2" readonly="1" />
+		<bind name="BrushSphere" value="QueryBrushPrefabSidesDialog 3" readonly="1" />
 		<!-- Patch Prefab commands -->
 		<bind name="PatchCylinder" value="CreatePatchPrefab cylinder" readonly="1" />
 		<bind name="PatchDenseCylinder" value="CreatePatchPrefab densecylinder" readonly="1" />
@@ -83,5 +83,18 @@
 		<bind name="HideLayer7" value="HideLayer 7" readonly="1" />
 		<bind name="HideLayer8" value="HideLayer 8" readonly="1" />
 		<bind name="HideLayer9" value="HideLayer 9" readonly="1" />
+		<!-- Grid Size Shortcuts -->
+		<bind name="SetGrid0.125" value="SetGrid -3" readonly="1" />
+		<bind name="SetGrid0.25" value="SetGrid -2" readonly="1" />
+		<bind name="SetGrid0.5" value="SetGrid -1" readonly="1" />
+		<bind name="SetGrid1" value="SetGrid 0" readonly="1" />
+		<bind name="SetGrid2" value="SetGrid 1" readonly="1" />
+		<bind name="SetGrid4" value="SetGrid 2" readonly="1" />
+		<bind name="SetGrid8" value="SetGrid 3" readonly="1" />
+		<bind name="SetGrid16" value="SetGrid 4" readonly="1" />
+		<bind name="SetGrid32" value="SetGrid 5" readonly="1" />
+		<bind name="SetGrid64" value="SetGrid 6" readonly="1" />
+		<bind name="SetGrid128" value="SetGrid 7" readonly="1" />
+		<bind name="SetGrid256" value="SetGrid 8" readonly="1" />
 	</binds>
 </commandsystem>

@@ -5,16 +5,14 @@
 #include "imainframe.h"
 #include "igl.h"
 #include "iundo.h"
+#include "ibrush.h"
+#include "ipatch.h"
 #include "iuimanager.h"
 #include "itextstream.h"
 
 #include "registry/adaptors.h"
-#include "patch/PatchNode.h"
 #include "texturelib.h"
 #include "selectionlib.h"
-#include "brush/Face.h"
-#include "brush/BrushNode.h"
-#include "brush/Winding.h"
 #include "camera/GlobalCamera.h"
 #include "wxutil/GLWidget.h"
 
@@ -23,9 +21,6 @@
 #include "textool/item/PatchItem.h"
 #include "textool/item/BrushItem.h"
 #include "textool/item/FaceItem.h"
-
-#include "selection/algorithm/Primitives.h"
-#include "selection/algorithm/Shader.h"
 
 #include <wx/sizer.h>
 #include <wx/toolbar.h>
@@ -215,7 +210,7 @@ TexTool& TexTool::Instance()
 
 void TexTool::update()
 {
-	std::string selectedShader = selection::algorithm::getShaderFromSelection();
+	std::string selectedShader = selection::getShaderFromSelection();
 	_shader = GlobalMaterialManager().getMaterialForName(selectedShader);
 
 	// Clear the list to remove all the previously allocated items
@@ -224,46 +219,28 @@ void TexTool::update()
 	// Does the selection use one single shader?
 	if (!_shader->getName().empty())
 	{
-		if (_selectionInfo.patchCount > 0) {
-			// One single named shader, get the selection list
-			PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
-
-			for (std::size_t i = 0; i < patchList.size(); i++) {
-				// Allocate a new PatchItem on the heap (shared_ptr)
-				textool::TexToolItemPtr patchItem(
-					new textool::PatchItem(patchList[i]->getPatchInternal())
-				);
-
-				// Add it to the list
-				_items.push_back(patchItem);
-			}
+		if (GlobalSelectionSystem().countSelectedComponents() > 0)
+		{
+			// Check each selected face
+			GlobalSelectionSystem().foreachFace([&](IFace& face)
+			{
+				// Allocate a new FaceItem 
+				_items.emplace_back(new textool::FaceItem(face));
+			});
 		}
-
-		if (_selectionInfo.brushCount > 0) {
-			BrushPtrVector brushList = selection::algorithm::getSelectedBrushes();
-
-			for (std::size_t i = 0; i < brushList.size(); i++) {
-				// Allocate a new BrushItem on the heap (shared_ptr)
-				textool::TexToolItemPtr brushItem(
-					new textool::BrushItem(brushList[i]->getBrush())
-				);
-
-				// Add it to the list
-				_items.push_back(brushItem);
-			}
-		}
-
-		// Get the single selected faces
-		FacePtrVector faceList = selection::algorithm::getSelectedFaces();
-
-		for (std::size_t i = 0; i < faceList.size(); i++) {
-			// Allocate a new FaceItem on the heap (shared_ptr)
-			textool::TexToolItemPtr faceItem(
-				new textool::FaceItem(*faceList[i])
-			);
-
-			// Add it to the list
-			_items.push_back(faceItem);
+		else
+		{
+			GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+			{
+				if (Node_isBrush(node))
+				{
+					_items.emplace_back(new textool::BrushItem(*Node_getIBrush(node)));
+				}
+				else if (Node_isPatch(node))
+				{
+					_items.emplace_back(new textool::PatchItem(*Node_getIPatch(node)));
+				}
+			});
 		}
 	}
 
@@ -760,11 +737,11 @@ void TexTool::drawGrid()
 	}
 }
 
-void TexTool::onGLDraw()
+bool TexTool::onGLDraw()
 {
 	if (_updateNeeded)
 	{
-		return; // stop here, wait for the next idle event to refresh
+		return false; // stop here, wait for the next idle event to refresh
 	}
 
 	// Initialise the viewport
@@ -784,14 +761,15 @@ void TexTool::onGLDraw()
 	// Do nothing, if the shader name is empty
 	if (_shader == NULL || _shader->getName().empty())
 	{
-		return;
+		return true;
 	}
 
 	AABB& selAABB = getExtents();
 
 	// Is there a valid selection?
-	if (!selAABB.isValid()) {
-		return;
+	if (!selAABB.isValid())
+	{
+		return true;
 	}
 
 	AABB& texSpaceAABB = getVisibleTexSpace();
@@ -868,6 +846,8 @@ void TexTool::onGLDraw()
 		glEnd();
 		glDisable(GL_BLEND);
 	}
+
+	return true;
 }
 
 void TexTool::onGLResize(wxSizeEvent& ev)
@@ -1024,14 +1004,6 @@ void TexTool::registerCommands()
 	GlobalCommandSystem().addCommand("TexToolFlipT", TexTool::texToolFlipT);
 	GlobalCommandSystem().addCommand("TexToolSelectRelated", TexTool::selectRelated);
 
-	GlobalEventManager().addCommand("TextureTool", "TextureTool");
-	GlobalEventManager().addCommand("TexToolGridUp", "TexToolGridUp");
-	GlobalEventManager().addCommand("TexToolGridDown", "TexToolGridDown");
-	GlobalEventManager().addCommand("TexToolSnapToGrid", "TexToolSnapToGrid");
-	GlobalEventManager().addCommand("TexToolMergeItems", "TexToolMergeItems");
-	GlobalEventManager().addCommand("TexToolFlipS", "TexToolFlipS");
-	GlobalEventManager().addCommand("TexToolFlipT", "TexToolFlipT");
-	GlobalEventManager().addCommand("TexToolSelectRelated", "TexToolSelectRelated");
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 	GlobalEventManager().addRegistryToggle("TexToolToggleFaceVertexScalePivot", RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID);
 }

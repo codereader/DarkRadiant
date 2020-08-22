@@ -57,7 +57,6 @@ public:
 			"ObjectivesEditor",
 			objectives::ObjectivesEditor::DisplayDialog
 		);
-		GlobalEventManager().addCommand("ObjectivesEditor", "ObjectivesEditor");
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();

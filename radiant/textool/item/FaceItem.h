@@ -1,22 +1,20 @@
-#ifndef FACEITEM_H_
-#define FACEITEM_H_
+#pragma once
 
+#include "ibrush.h"
 #include "textool/TexToolItem.h"
 
-class Face;
-class Winding;
-
-namespace textool {
+namespace textool
+{
 
 class FaceItem :
 	public TexToolItem
 {
-	// The patch this control is referring to
-	Face& _sourceFace;
-	Winding& _winding;
+	// The objects this control is referring to
+	IFace& _sourceFace;
+	IWinding& _winding;
 
 public:
-	FaceItem(Face& _sourceFace);
+	FaceItem(IFace& _sourceFace);
 
 	virtual ~FaceItem() {}
 
@@ -57,6 +55,4 @@ private:
 	Vector2 getCentroid() const;
 };
 
-} // namespace TexTool
-
-#endif /*FACEITEM_H_*/
+} // namespace

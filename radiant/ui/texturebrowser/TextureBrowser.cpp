@@ -3,11 +3,13 @@
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "itextstream.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
 #include "iradiant.h"
 #include "ipreferencesystem.h"
 #include "imediabrowser.h"
+#include "ishaderclipboard.h"
 
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/GLWidget.h"
@@ -17,8 +19,6 @@
 
 #include "registry/registry.h"
 #include "shaderlib.h"
-#include "selection/algorithm/Shader.h"
-#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include "string/predicate.h"
 #include <functional>
@@ -346,12 +346,6 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 TextureBrowser::~TextureBrowser()
 {
     GlobalTextureBrowser().unregisterTextureBrowser(this);
-
-    if (_textureToolbar != nullptr)
-    {
-        GlobalEventManager().disconnectToolbar(_textureToolbar);
-        _textureToolbar = nullptr;
-    }
 }
 
 void TextureBrowser::observeKey(const std::string& key)
@@ -651,6 +645,11 @@ void TextureBrowser::onActiveShadersChanged()
 
 void TextureBrowser::focus(const std::string& name)
 {
+    if (name.empty())
+    {
+        return;
+    }
+
     for (const TextureTile& tile : _tiles)
     {
         // we have found when texdef->name and the shader name match
@@ -700,10 +699,10 @@ void TextureBrowser::selectTextureAt(int mx, int my)
         setSelectedShader(shader->getName());
 
         // Apply the shader to the current selection
-        selection::algorithm::applyShaderToSelection(shader->getName());
+        GlobalCommandSystem().executeCommand("SetShaderOnSelection", shader->getName());
 
 		// Copy the shader name to the clipboard too
-		GlobalShaderClipboard().setSource(shader->getName());
+		GlobalShaderClipboard().setSourceShader(shader->getName());
     }
 }
 
@@ -943,8 +942,13 @@ void TextureBrowser::onIdle(wxIdleEvent& ev)
     }
 }
 
-void TextureBrowser::onRender()
+bool TextureBrowser::onRender()
 {
+    if (!GlobalMainFrame().screenUpdatesEnabled())
+    {
+        return false;
+    }
+
 	debug::assertNoGlErrors();
 
     if (_updateNeeded)
@@ -955,6 +959,8 @@ void TextureBrowser::onRender()
     draw();
 
     debug::assertNoGlErrors();
+
+    return true;
 }
 
 } // namespace ui

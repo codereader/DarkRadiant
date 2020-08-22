@@ -5,7 +5,7 @@
 #include "imainframelayout.h"
 
 #include "camera/CamWnd.h"
-#include "ui/widgets/Splitter.h"
+#include "wxutil/Splitter.h"
 
 namespace ui
 {
@@ -22,8 +22,8 @@ private:
 	// The camera view
 	CamWndPtr _camWnd;
 
-	Splitter* _horizPane;
-	Splitter* _groupCamPane;
+	wxutil::Splitter* _horizPane;
+	wxutil::Splitter* _groupCamPane;
 
 	struct SavedPositions
 	{

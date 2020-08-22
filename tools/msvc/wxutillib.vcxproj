@@ -135,8 +135,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\libs\wxutil\Button.h" />
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
-    <ClInclude Include="..\..\libs\wxutil\clipboard.h" />
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\wxutil\ControlButton.h" />
     <ClInclude Include="..\..\libs\wxutil\DeferredMotionDelta.h" />
@@ -156,7 +156,6 @@
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
-    <ClInclude Include="..\..\libs\wxutil\MenuItemAccelerator.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\CommandMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\IconTextMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\MenuItem.h" />
@@ -178,6 +177,7 @@
     <ClInclude Include="..\..\libs\wxutil\ScrollWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />
     <ClInclude Include="..\..\libs\wxutil\SourceView.h" />
+    <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
     <ClInclude Include="..\..\libs\wxutil\TreeModel.h" />
     <ClInclude Include="..\..\libs\wxutil\TreeModelFilter.h" />
     <ClInclude Include="..\..\libs\wxutil\TreeView.h" />
@@ -187,7 +187,6 @@
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libs\wxutil\clipboard.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\Dialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\DialogBase.cpp" />
@@ -198,7 +197,6 @@
     <ClCompile Include="..\..\libs\wxutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
     <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\MenuItemAccelerator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\menu\PopupMenu.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ModalProgressDialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />
@@ -211,6 +209,7 @@
     <ClCompile Include="..\..\libs\wxutil\preview\RenderPreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeModel.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeModelFilter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />

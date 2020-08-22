@@ -69,7 +69,8 @@ public:
 
 	/** greebo: Sets the camera to the given point/angle.
 	 */
-	void focusCamera(const Vector3& point, const Vector3& angles);
+	void focusCamera(const Vector3& point, const Vector3& angles) override;
+	ICameraView& getActiveView() override;
 
 	// Toggles between lighting and solid rendering mode (passes the call to the CameraSettings class)
 	void toggleLightingMode(const cmd::ArgumentList& args);
@@ -102,14 +103,9 @@ public:
 	void movedNotify();
 
 	// Movement commands (the calls are passed on to the Camera class)
-	void moveForwardDiscrete(const cmd::ArgumentList& args);
-	void moveBackDiscrete(const cmd::ArgumentList& args);
-	void moveUpDiscrete(const cmd::ArgumentList& args);
-	void moveDownDiscrete(const cmd::ArgumentList& args);
+	void moveCameraCmd(const cmd::ArgumentList& args);
 	void moveLeftDiscrete(const cmd::ArgumentList& args);
 	void moveRightDiscrete(const cmd::ArgumentList& args);
-	void rotateLeftDiscrete(const cmd::ArgumentList& args);
-	void rotateRightDiscrete(const cmd::ArgumentList& args);
 	void pitchUpDiscrete(const cmd::ArgumentList& args);
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
 
@@ -141,6 +137,8 @@ private:
 	// greebo: The construct method registers all the commands
 	void registerCommands();
     void loadCameraStrafeDefinitions();
+
+	void doWithActiveCamWnd(const std::function<void(CamWnd&)>& action);
 };
 
 } // namespace

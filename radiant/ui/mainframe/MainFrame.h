@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <sigc++/connection.h>
 #include "icommandsystem.h"
 #include "imainframe.h"
 #include "imainframelayout.h"
@@ -24,9 +25,13 @@ private:
 	// The current layout object (NULL if no layout active)
 	IMainFrameLayoutPtr _currentLayout;
 
+	sigc::connection _mapNameChangedConn;
+	sigc::connection _mapModifiedChangedConn;
+
 private:
 	void keyChanged();
 	void preDestructionCleanup();
+	void updateTitle();
     void onTopLevelFrameClose(wxCloseEvent& ev);
 
 public:

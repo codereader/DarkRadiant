@@ -21,6 +21,7 @@ Camera::Camera(render::View* view, const Callback& update) :
 	color(0, 0, 0),
 	projection(Matrix4::getIdentity()),
 	modelview(Matrix4::getIdentity()),
+	freeMoveEnabled(false),
 	movementflags(0),
 	fieldOfView(75.0f),
 	m_mouseMove(std::bind(&Camera::onMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
@@ -301,37 +302,44 @@ void Camera::pitchDownDiscrete() {
 	setAngles(angles);
 }
 
-void Camera::moveForwardDiscrete() {
+void Camera::moveForwardDiscrete(double units)
+{
 	moveUpdateAxes();
-	setOrigin(getOrigin() + forward * SPEED_MOVE);
+	setOrigin(getOrigin() + forward * fabs(units));
 }
 
-void Camera::moveBackDiscrete() {
+void Camera::moveBackDiscrete(double units)
+{
 	moveUpdateAxes();
-	setOrigin(getOrigin() + forward * (-SPEED_MOVE));
+	setOrigin(getOrigin() + forward * (-fabs(units)));
 }
 
-void Camera::moveUpDiscrete() {
+void Camera::moveUpDiscrete(double units)
+{
 	Vector3 origin = getOrigin();
 
-	origin[2] += SPEED_MOVE;
+	origin[2] += fabs(units);
 
 	setOrigin(origin);
 }
 
-void Camera::moveDownDiscrete() {
+void Camera::moveDownDiscrete(double units)
+{
 	Vector3 origin = getOrigin();
-	origin[2] -= SPEED_MOVE;
+	origin[2] -= fabs(units);
 	setOrigin(origin);
 }
 
-void Camera::moveLeftDiscrete() {
+void Camera::moveLeftDiscrete(double units)
+{
 	moveUpdateAxes();
-	setOrigin(getOrigin() + right * (-SPEED_MOVE));
+	setOrigin(getOrigin() + right * (-fabs(units)));
 }
-void Camera::moveRightDiscrete() {
+
+void Camera::moveRightDiscrete(double units)
+{
 	moveUpdateAxes();
-	setOrigin(getOrigin() + right * (SPEED_MOVE));
+	setOrigin(getOrigin() + right * fabs(units));
 }
 
 void Camera::rotateLeftDiscrete() {
@@ -343,6 +351,120 @@ void Camera::rotateRightDiscrete() {
 	Vector3 angles = getAngles();
 	angles[CAMERA_YAW] -= SPEED_TURN;
 	setAngles(angles);
+}
+
+void Camera::onForwardKey(KeyEventType eventType)
+{
+	if (eventType == KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_FORWARD);
+		}
+		else
+		{
+			moveForwardDiscrete(SPEED_MOVE);
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_FORWARD);
+	}
+}
+
+void Camera::onBackwardKey(KeyEventType eventType)
+{
+	if (eventType == KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_BACK);
+		}
+		else
+		{
+			moveBackDiscrete(SPEED_MOVE);
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_BACK);
+	}
+}
+
+void Camera::onLeftKey(KeyEventType eventType)
+{
+	if (eventType == KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_STRAFELEFT);
+		}
+		else
+		{
+			rotateLeftDiscrete();
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_STRAFELEFT);
+	}
+}
+
+void Camera::onRightKey(KeyEventType eventType)
+{
+	if (eventType == KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_STRAFERIGHT);
+		}
+		else
+		{
+			rotateRightDiscrete();
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_STRAFERIGHT);
+	}
+}
+
+void Camera::onUpKey(KeyEventType eventType)
+{
+	if (eventType == KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_UP);
+		}
+		else
+		{
+			moveUpDiscrete(SPEED_MOVE);
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_UP);
+	}
+}
+
+void Camera::onDownKey(KeyEventType eventType)
+{
+	if (eventType == KeyEventType::KeyPressed)
+	{
+		if (freeMoveEnabled)
+		{
+			setMovementFlags(MOVE_DOWN);
+		}
+		else
+		{
+			moveDownDiscrete(SPEED_MOVE);
+		}
+	}
+	else if (freeMoveEnabled)
+	{
+		clearMovementFlags(MOVE_DOWN);
+	}
 }
 
 } // namespace

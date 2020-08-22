@@ -14,9 +14,6 @@ ScriptCommand::ScriptCommand(const std::string& name,
 {
 	// Register this with the command system
 	GlobalCommandSystem().addStatement(_name, "RunScriptCommand '" + _name + "'", false);
-
-	// Add an event as well (for keyboard shortcuts)
-	GlobalEventManager().addCommand(_name, _name);
 }
 
 ScriptCommand::~ScriptCommand()

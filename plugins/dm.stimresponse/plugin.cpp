@@ -35,7 +35,6 @@ public:
 
 		if (_dependencies.empty())
 		{
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}
@@ -49,7 +48,6 @@ public:
 
 		// Add the callback event
 		GlobalCommandSystem().addCommand("StimResponseEditor", ui::StimResponseEditor::ShowDialog);
-		GlobalEventManager().addCommand("StimResponseEditor", "StimResponseEditor");
 
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();

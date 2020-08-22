@@ -2,7 +2,6 @@
 
 #include "ifilter.h"
 #include "icommandsystem.h"
-#include "filters/BasicFilterSystem.h"
 
 namespace ui
 {

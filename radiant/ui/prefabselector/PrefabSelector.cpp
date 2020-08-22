@@ -25,7 +25,7 @@
 #include <wx/radiobut.h>
 
 #include "PrefabPopulator.h"
-#include "map/algorithm/WorldspawnArgFinder.h"
+#include "entitylib.h"
 
 #include "string/trim.h"
 #include "string/case_conv.h"
@@ -503,7 +503,7 @@ void PrefabSelector::handleSelectionChange()
 	if (_mapResource->load())
 	{
 		// Get the node from the resource
-        scene::IMapRootNodePtr root = _mapResource->getNode();
+        const auto& root = _mapResource->getRootNode();
 
 		assert(root);
 
@@ -539,13 +539,13 @@ void PrefabSelector::updateUsageInfo()
 {
 	std::string usage("");
 
-	if (_mapResource != NULL && _mapResource->getNode() != NULL)
+	if (_mapResource && _mapResource->getRootNode())
 	{
 		// Retrieve the root node
-		scene::INodePtr root = _mapResource->getNode();
+		const auto& root = _mapResource->getRootNode();
 
 		// Traverse the root to find the worldspawn
-		map::WorldspawnArgFinder finder("editor_description");
+		WorldspawnArgFinder finder("editor_description");
 		root->traverse(finder);
 
 		usage = finder.getFoundValue();

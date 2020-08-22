@@ -42,15 +42,6 @@ public:
     std::string getBitmapsPath() const override;
     const ArgumentList& getCmdLineArgs() const override;
 
-	// Return the global stream references
-    virtual std::ostream& getOutputStream() const override;
-    virtual std::ostream& getWarningStream() const override;
-    virtual std::ostream& getErrorStream() const override;
-    virtual std::mutex& getStreamLock() const override;
-
-	// Exports/deletes the paths to/from the registry
-    virtual void savePathsToRegistry() const override;
-
     virtual const ErrorHandlingFunction& getErrorHandlingFunction() const override;
 
 private:

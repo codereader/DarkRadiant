@@ -1,1 +1,1 @@
-SUBDIRS = math xmlutil scene wxutil
+SUBDIRS = math xmlutil scene wxutil module

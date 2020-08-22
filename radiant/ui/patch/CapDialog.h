@@ -2,7 +2,8 @@
 
 #include "wxutil/dialog/Dialog.h"
 #include <map>
-#include "patch/PatchConstants.h"
+#include "ipatch.h"
+#include "icommandsystem.h"
 
 class wxRadioButton;
 class wxFlexGridSizer;
@@ -17,9 +18,7 @@ class PatchCapDialog :
 	public wxutil::Dialog
 {
 private:
-	EPatchCap _selectedCapType;
-
-	typedef std::map<EPatchCap, wxRadioButton*> RadioButtons;
+	typedef std::map<patch::CapType, wxRadioButton*> RadioButtons;
 	RadioButtons _radioButtons;
 
 public:
@@ -27,10 +26,14 @@ public:
 	PatchCapDialog();
 
 	// Returns the selected cap type (only valid if dialog result == OK)
-	EPatchCap getSelectedCapType();
+	patch::CapType getSelectedCapType();
+
+	static void Show(const cmd::ArgumentList& args);
 
 private:
-	void addItemToTable(wxFlexGridSizer* sizer, const std::string& image, EPatchCap type);
+	std::string getSelectedCapTypeString();
+
+	void addItemToTable(wxFlexGridSizer* sizer, const std::string& image, patch::CapType type);
 };
 
 } // namespace ui

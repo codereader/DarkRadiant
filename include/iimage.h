@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IIMAGE_H)
-#define INCLUDED_IIMAGE_H
+#pragma once
 
 #include "igl.h"
 #include "imodule.h"
@@ -82,7 +60,7 @@ typedef std::shared_ptr<Image> ImagePtr;
 class ArchiveFile;
 
 /// Module responsible for loading images from VFS or disk filesystem
-class ImageLoader :
+class IImageLoader :
 	public RegisterableModule
 {
 public:
@@ -107,15 +85,15 @@ public:
 	virtual ImagePtr imageFromFile(const std::string& filename) const = 0;
 };
 
-typedef std::shared_ptr<ImageLoader> ImageLoaderPtr;
+const char* const MODULE_IMAGELOADER("ImageLoader");
 
-const std::string MODULE_IMAGELOADER("ImageLoader");
-
-inline const ImageLoader& GlobalImageLoader()
+inline const IImageLoader& GlobalImageLoader()
 {
-    return *std::static_pointer_cast<ImageLoader>(
-        module::GlobalModuleRegistry().getModule(MODULE_IMAGELOADER)
+    static IImageLoader& _imageLoader(
+        *std::static_pointer_cast<IImageLoader>(
+            module::GlobalModuleRegistry().getModule(MODULE_IMAGELOADER)
+        )
     );
-}
 
-#endif // _IIMAGE_H
+    return _imageLoader;
+}

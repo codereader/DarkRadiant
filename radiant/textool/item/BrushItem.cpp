@@ -6,18 +6,19 @@ namespace textool
 {
 
 // Constructor
-BrushItem::BrushItem(Brush& sourceBrush) :
+BrushItem::BrushItem(IBrush& sourceBrush) :
 	_sourceBrush(sourceBrush)
 {
 	// Visit all the brush faces with the FaceItemCreator
 	// that populates the _children vector
-    _sourceBrush.forEachFace([&](Face& face)
-    {
-        _children.push_back(std::make_shared<FaceItem>(face));
-    });
+	for (std::size_t i = 0; i < _sourceBrush.getNumFaces(); ++i)
+	{
+        _children.push_back(std::make_shared<FaceItem>(_sourceBrush.getFace(i)));
+	}
 }
 
-void BrushItem::beginTransformation() {
+void BrushItem::beginTransformation()
+{
 	_sourceBrush.undoSave();
 }
 

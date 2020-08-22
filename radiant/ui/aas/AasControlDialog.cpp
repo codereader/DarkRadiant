@@ -6,6 +6,7 @@
 #include "imainframe.h"
 #include "itextstream.h"
 #include "ieventmanager.h"
+#include "imap.h"
 
 #include <wx/button.h>
 #include <wx/tglbtn.h>
@@ -14,8 +15,6 @@
 #include <wx/scrolwin.h>
 
 #include "registry/Widgets.h"
-#include "map/Map.h"
-#include "map/RenderableAasFile.h"
 
 namespace ui
 {
@@ -109,7 +108,7 @@ void AasControlDialog::refresh()
 
 	// Find all available AAS files for the current map
     
-    std::list<map::AasFileInfo> aasFiles = GlobalAasFileManager().getAasFilesForMap(GlobalMap().getMapName());
+    std::list<map::AasFileInfo> aasFiles = GlobalAasFileManager().getAasFilesForMap(GlobalMapModule().getMapName());
 
     for (map::AasFileInfo& info : aasFiles)
     {
@@ -222,7 +221,6 @@ AasControlDialog& AasControlDialog::Instance()
 void AasControlDialog::Init()
 {
     GlobalCommandSystem().addCommand("ToggleAasControlDialog", AasControlDialog::Toggle);
-	GlobalEventManager().addCommand("ToggleAasControlDialog", "ToggleAasControlDialog");
 
     GlobalRadiant().signal_radiantStarted().connect(
         sigc::ptr_fun(&AasControlDialog::OnRadiantStartup)

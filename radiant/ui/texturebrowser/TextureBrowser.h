@@ -226,7 +226,7 @@ private:
 
 	// wx callbacks
     void onIdle(wxIdleEvent& ev);
-	void onRender();
+	bool onRender();
 	void onScrollChanged(wxScrollEvent& ev);
 	void onGLResize(wxSizeEvent& ev);
 	void onGLMouseScroll(wxMouseEvent& ev);

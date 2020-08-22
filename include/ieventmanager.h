@@ -22,7 +22,8 @@ class wxTopLevelWindow;
 /* greebo: Below are the actual events that are "read" by the views/observers to
  * interpret the mouseclicks. */
 
-namespace ui {
+namespace ui 
+{
 
 	// Enum used for events tracking the key state
 	enum KeyEventType
@@ -41,12 +42,18 @@ public:
     virtual ~IAccelerator() {}
 
     // Get/set the key value
-    virtual void setKey(const unsigned int key) = 0;
-    virtual unsigned int getKey() const = 0;
+    virtual void setKey(const int key) = 0;
+    virtual int getKey() const = 0;
 
     // Get/Set the modifier flags
     virtual void setModifiers(const unsigned int modifiers) = 0;
     virtual unsigned int getModifiers() const = 0;
+
+	// Returns a string representation of this accelerator.
+	// forMenu == true: returns the localised modifier strings
+	// and is using a different separator to prevent wxWidgets 
+	// from assigning accelerators on its own.
+	virtual std::string getString(bool forMenu) const = 0;
 };
 
 class IEvent
@@ -66,14 +73,11 @@ public:
 	virtual void connectTopLevelWindow(wxTopLevelWindow* widget) = 0;
 	virtual void disconnectTopLevelWindow(wxTopLevelWindow* widget) = 0;
 
-	virtual void connectToolItem(wxToolBarToolBase* item) = 0;
-	virtual void disconnectToolItem(wxToolBarToolBase* item) = 0;
+	virtual void connectToolItem(const wxToolBarToolBase* item) = 0;
+	virtual void disconnectToolItem(const wxToolBarToolBase* item) = 0;
 
 	virtual void connectMenuItem(wxMenuItem* item) = 0;
 	virtual void disconnectMenuItem(wxMenuItem* item) = 0;
-
-	virtual void connectButton(wxButton* button) = 0;
-	virtual void disconnectButton(wxButton* button) = 0;
 
 	virtual void connectToggleButton(wxToggleButton* button) = 0;
 	virtual void disconnectToggleButton(wxToggleButton* button) = 0;
@@ -90,25 +94,20 @@ public:
 
 	// Returns true, if this is any empty Event (no command attached)
 	virtual bool empty() const = 0;
-
-    // Associate an accelerator to this event (this can trigger an update of the associated widgets)
-    virtual void connectAccelerator(IAccelerator& accel) = 0;
-
-    // Signal to remove the accelerators from this event (might update associated widgets)
-    virtual void disconnectAccelerators() = 0;
 };
 typedef std::shared_ptr<IEvent> IEventPtr;
 
 // Event visitor class
-class IEventVisitor {
+class IEventVisitor
+{
 public:
     // destructor
 	virtual ~IEventVisitor() {}
 
-	virtual void visit(const std::string& eventName, const IEventPtr& event) = 0;
+	virtual void visit(const std::string& eventName, const IAccelerator& accel) = 0;
 };
 
-const std::string MODULE_EVENTMANAGER("EventManager");
+const char* const MODULE_EVENTMANAGER("EventManager");
 
 // The function object invoked when a ToggleEvent is changing states
 // The passed boolean indicates the new toggle state (true = active/toggled)
@@ -118,24 +117,11 @@ class IEventManager :
 	public RegisterableModule
 {
 public:
-	/* Create an accelerator using the given arguments and add it to the list
-	 *
-	 * @key: The symbolic name of the key, e.g. "A", "Esc"
-	 * @modifierStr: A string containing the modifiers, e.g. "Shift+Control" or "Shift"
-	 *
-	 * @returns: the pointer to the newly created accelerator object */
-	virtual IAccelerator& addAccelerator(const std::string& key, const std::string& modifierStr) = 0;
-
-	// The same as above, but with event values as argument (event->keyval, event->state)
-	virtual IAccelerator& addAccelerator(wxKeyEvent& ev) = 0;
-	virtual IAccelerator& findAccelerator(const IEventPtr& event) = 0;
-	virtual std::string getAcceleratorStr(const IEventPtr& event, bool forMenu) = 0;
-
 	// Loads all accelerator bindings from the defaults in the stock input.xml
 	virtual void resetAcceleratorBindings() = 0;
 
 	// Add a command and specify the statement to execute when triggered
-	virtual IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp = false) = 0;
+	virtual IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp) = 0;
 
 	// Creates a new keyevent that calls the given callback when invoked
 	virtual IEventPtr addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback) = 0;
@@ -150,18 +136,25 @@ public:
 
 	// Returns the pointer to the command specified by the <given> commandName
 	virtual IEventPtr findEvent(const std::string& name) = 0;
-	virtual IEventPtr findEvent(wxKeyEvent& ev) = 0;
+
+	// Returns the name of the event currently mapped to the given key combo
+	virtual std::string findEventForAccelerator(wxKeyEvent& ev) = 0;
 
 	// Retrieves the event name for the given IEventPtr
 	virtual std::string getEventName(const IEventPtr& event) = 0;
 
 	// Connects the given accelerator to the given command (identified by the string)
-	virtual void connectAccelerator(IAccelerator& accelerator, const std::string& command) = 0;
+	virtual void connectAccelerator(wxKeyEvent& keyEvent, const std::string& command) = 0;
 	// Disconnects the given command from any accelerators
 	virtual void disconnectAccelerator(const std::string& command) = 0;
 
-	// Before destruction, it's advisable to disconnect any events from a toolbar's items
-	virtual void disconnectToolbar(wxToolBar* toolbar) = 0;
+	// Register the given menu item with the given command. The event manager updates this item
+	// when the accelerator association changes
+	virtual void registerMenuItem(const std::string& eventName, wxMenuItem* item) = 0;
+	virtual void unregisterMenuItem(const std::string& eventName, wxMenuItem* item) = 0;
+
+	virtual void registerToolItem(const std::string& eventName, const wxToolBarToolBase* item) = 0;
+	virtual void unregisterToolItem(const std::string& eventName, const wxToolBarToolBase* item) = 0;
 
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;

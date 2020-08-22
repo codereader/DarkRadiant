@@ -16,9 +16,8 @@
 #include "registry/Widgets.h"
 #include "selectionlib.h"
 #include "wxutil/ControlButton.h"
+#include "util/ScopedBoolLock.h"
 
-#include "patch/PatchNode.h"
-#include "selection/algorithm/Primitives.h"
 #include <functional>
 
 namespace ui
@@ -40,15 +39,15 @@ namespace
 
 PatchInspector::PatchInspector() : 
 	TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
-	_rowCombo(NULL),
-	_colCombo(NULL),
+	_rowCombo(nullptr),
+	_colCombo(nullptr),
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
 	_patchRows(0),
 	_patchCols(0),
 	_updateActive(false),
 	_updateNeeded(false)
 {
-	Connect(wxEVT_IDLE, wxIdleEventHandler(PatchInspector::onIdle), NULL, this);
+	Bind(wxEVT_IDLE, &PatchInspector::onIdle, this);
 
 	// Create all the widgets and pack them into the window
 	populateWindow();
@@ -59,9 +58,9 @@ PatchInspector::PatchInspector() :
 	InitialiseWindowPosition(410, 480, RKEY_WINDOW_STATE);
 }
 
-PatchInspectorPtr& PatchInspector::InstancePtr()
+std::shared_ptr<PatchInspector>& PatchInspector::InstancePtr()
 {
-	static PatchInspectorPtr _instancePtr;
+	static std::shared_ptr<PatchInspector> _instancePtr;
 	return _instancePtr;
 }
 
@@ -81,9 +80,9 @@ void PatchInspector::onRadiantShutdown()
 
 PatchInspector& PatchInspector::Instance()
 {
-	PatchInspectorPtr& instancePtr = InstancePtr();
+	auto& instancePtr = InstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new PatchInspector);
@@ -201,17 +200,22 @@ void PatchInspector::queueUpdate()
 
 void PatchInspector::update()
 {
-	_updateActive = true;
+	util::ScopedBoolLock lock(_updateActive);
 
-	PatchNodePtr patch = _patch.lock();
+	_updateNeeded = false;
 
-	if (patch != NULL)
+	auto patch = _patch.lock();
+
+	if (patch)
 	{
 		// Check if the matrix size has changed
 		if (patch->getPatch().getWidth() != _patchCols ||
 			patch->getPatch().getHeight() != _patchRows)
 		{
 			// Patch matrix got changed
+			_patchRows = patch->getPatch().getHeight();
+			_patchCols = patch->getPatch().getWidth();
+
 			clearVertexChooser();
 			repopulateVertexChooser();
 		}
@@ -219,15 +223,13 @@ void PatchInspector::update()
 		// Load the data from the currently selected vertex
 		loadControlVertex();
 	}
-
-	_updateActive = false;
 }
 
 void PatchInspector::loadControlVertex()
 {
-	PatchNodePtr patch = _patch.lock();
+	auto patch = _patch.lock();
 
-	if (patch != NULL)
+	if (patch)
 	{
 		int row = _rowCombo->GetSelection();
 		int col = _colCombo->GetSelection();
@@ -253,7 +255,7 @@ void PatchInspector::_preHide()
 	TransientWindow::_preHide();
 
 	// Clear the patch, we don't need to observe it while hidden
-	setPatch(PatchNodePtr());
+	setPatch(IPatchNodePtr());
 
 	// A hidden PatchInspector doesn't need to listen for events
 	_undoHandler.disconnect();
@@ -301,12 +303,12 @@ void PatchInspector::clearVertexChooser()
 	_updateActive = false;
 }
 
-void PatchInspector::setPatch(const PatchNodePtr& newPatch)
+void PatchInspector::setPatch(const IPatchNodePtr& newPatch)
 {
 	// Detach if we had a previous patch
-	PatchNodePtr patch = _patch.lock();
+	auto patch = _patch.lock();
 
-	if (patch != NULL)
+	if (patch)
 	{
 		patch->getPatch().detachObserver(this);
 	}
@@ -316,7 +318,7 @@ void PatchInspector::setPatch(const PatchNodePtr& newPatch)
 
 	_patch = newPatch;
 
-	if (newPatch != NULL)
+	if (newPatch)
 	{
 		newPatch->getPatch().attachObserver(this);
 
@@ -345,41 +347,47 @@ void PatchInspector::rescanSelection()
 	findNamedObject<wxPanel>(this, "PatchInspectorTessPanel")->Enable(_selectionInfo.patchCount > 0);
 
 	// Clear the patch reference
-	setPatch(PatchNodePtr());
+	setPatch(IPatchNodePtr());
 
 	if (_selectionInfo.patchCount > 0)
 	{
-		// Get the list of selected patches
-		PatchPtrVector list = selection::algorithm::getSelectedPatches();
-
 		Subdivisions tess(UINT_MAX, UINT_MAX);
 		bool tessIsFixed = false;
+		bool continueSearching = true;
+		IPatchNodePtr patchNode;
 
 		// Try to find a pair of same tesselation values
-		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i)
-        {
-			IPatch& p = (*i)->getPatch();
+		GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+		{
+			if (!continueSearching || !Node_isPatch(node)) return;
+
+			auto& patch = *Node_getIPatch(node);
+
+			if (!patchNode)
+			{
+				patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+			}
 
 			if (tess.x() == UINT_MAX)
-            {
+			{
 				// Not initialised yet, take these values for starters
-				tessIsFixed = p.subdivisionsFixed();
-				tess = p.getSubdivisions();
+				tessIsFixed = patch.subdivisionsFixed();
+				tess = patch.getSubdivisions();
 			}
 			else
 			{
 				// We already have a pair of divisions, compare
-				Subdivisions otherTess = p.getSubdivisions();
+				Subdivisions otherTess = patch.getSubdivisions();
 
-				if (tessIsFixed != p.subdivisionsFixed() || otherTess != tess)
+				if (tessIsFixed != patch.subdivisionsFixed() || otherTess != tess)
 				{
 					// Our journey ends here, we cannot find a pair of tesselations
 					// for all selected patches or the same fixed/variable status
 					tessIsFixed = false;
-					break;
+					continueSearching = false;
 				}
 			}
-		}
+		});
 
 		_updateActive = true;
 
@@ -400,7 +408,7 @@ void PatchInspector::rescanSelection()
 
 		if (_selectionInfo.patchCount == 1)
 		{
-			setPatch(list[0]);
+			setPatch(patchNode);
 		}
 
 		_updateActive = false;
@@ -432,20 +440,20 @@ void PatchInspector::repopulateVertexChooser()
 
 void PatchInspector::emitCoords()
 {
-	PatchNodePtr patch = _patch.lock();
+	auto patch = _patch.lock();
 
-	if (patch == NULL) return;
+	if (!patch) return;
 
 	// Save the coords into the patch
 	UndoableCommand emitCoordsCmd("patchAdjustControlVertex");
 
-	patch->getPatchInternal().undoSave();
+	patch->getPatch().undoSave();
 
 	int row = _rowCombo->GetSelection();
 	int col = _colCombo->GetSelection();
 
 	// Retrieve the controlvertex
-	PatchControl& ctrl = patch->getPatchInternal().ctrlAt(row, col);
+	PatchControl& ctrl = patch->getPatch().ctrlAt(row, col);
 
 	ctrl.vertex[0] = string::convert<float>(_coords["x"].value->GetValue().ToStdString());
 	ctrl.vertex[1] = string::convert<float>(_coords["y"].value->GetValue().ToStdString());
@@ -454,7 +462,7 @@ void PatchInspector::emitCoords()
 	ctrl.texcoord[0] = string::convert<float>(_coords["s"].value->GetValue().ToStdString());
 	ctrl.texcoord[1] = string::convert<float>(_coords["t"].value->GetValue().ToStdString());
 
-	patch->getPatchInternal().controlPointsChanged();
+	patch->getPatch().controlPointsChanged();
 
 	GlobalMainFrame().updateAllWindows();
 }
@@ -474,7 +482,7 @@ void PatchInspector::emitTesselation()
 	bool fixed = findNamedObject<wxCheckBox>(this, "PatchInspectorFixedSubdivisions")->GetValue();
 
 	// Save the setting into the selected patch(es)
-	GlobalSelectionSystem().foreachPatch([&] (Patch& patch)
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch)
 	{
 		patch.setFixedSubdivisions(fixed, tess);
 	});

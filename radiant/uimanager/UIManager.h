@@ -10,6 +10,8 @@
 #include "StatusBarManager.h"
 #include "DialogManager.h"
 #include "colourscheme/ColourSchemeManager.h"
+#include "wxutil/event/SingleIdleCallback.h"
+#include <sigc++/connection.h>
 
 #include <memory>
 
@@ -20,7 +22,8 @@ class LocalBitmapArtProvider;
 
 class UIManager :
 	public IUIManager,
-	public std::enable_shared_from_this<UIManager>
+	public std::enable_shared_from_this<UIManager>,
+	protected wxutil::SingleIdleCallback
 {
     // Sub-manager classes, constructed in initialiseModule to avoid being
     // called before the main window is ready.
@@ -31,9 +34,12 @@ class UIManager :
 
 	LocalBitmapArtProvider* _bitmapArtProvider;
 
+	sigc::connection _selectionChangedConn;
+	sigc::connection _countersChangedConn;
+
 public:
 	UIManager() :
-		_bitmapArtProvider(NULL)
+		_bitmapArtProvider(nullptr)
 	{}
 
 	/** greebo: Retrieves the helper class to manipulate the menu.
@@ -62,7 +68,12 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
-}; // class UIManager
-typedef std::shared_ptr<ui::UIManager> UIManagerPtr;
+
+protected:
+	void onIdle() override;
+
+private:
+	void updateCounterStatusBar();
+};
 
 } // namespace ui

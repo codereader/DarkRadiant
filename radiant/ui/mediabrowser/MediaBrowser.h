@@ -97,6 +97,7 @@ private:
 
 	sigc::connection _materialDefsLoaded;
 	sigc::connection _materialDefsUnloaded;
+	sigc::connection _shaderClipboardConn;
 
 private:
 	void construct();
@@ -171,6 +172,8 @@ private:
 	void togglePage(const cmd::ArgumentList& args);
 
 	void setupTreeViewAndFilter();
+
+	void onShaderClipboardSourceChanged();
 };
 
 }
