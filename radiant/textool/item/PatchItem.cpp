@@ -1,5 +1,6 @@
 #include "PatchItem.h"
 
+#include "igl.h"
 #include "PatchVertexItem.h"
 
 namespace textool

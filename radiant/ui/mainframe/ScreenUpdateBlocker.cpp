@@ -4,6 +4,7 @@
 #include "imainframe.h"
 
 #include <wx/app.h>
+#include <wx/frame.h>
 
 namespace ui {
 

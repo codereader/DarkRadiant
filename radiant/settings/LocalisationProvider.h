@@ -1,6 +1,10 @@
 #pragma once
 
+#include <map>
+#include <memory>
 #include "i18n.h"
+
+class wxLocale;
 
 namespace settings
 {

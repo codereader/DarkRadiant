@@ -29,6 +29,7 @@ namespace
 		case patch::CapType::InvertedBevel: return _("Inverted Bevel");
 		case patch::CapType::InvertedEndCap: return _("Inverted Endcap");
 		case patch::CapType::Cylinder: return _("Cylinder");
+		default: return "";
 		};
 	}
 }
@@ -68,7 +69,7 @@ void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& i
 
 patch::CapType PatchCapDialog::getSelectedCapType()
 {
-	if (_result != RESULT_OK) return patch::CapType::None;
+	if (_result != RESULT_OK) return patch::CapType::Nocap;
 
 	for (const auto& pair : _radioButtons)
 	{
@@ -78,7 +79,7 @@ patch::CapType PatchCapDialog::getSelectedCapType()
 		}
 	}
 
-	return patch::CapType::None; // invalid
+	return patch::CapType::Nocap; // invalid
 }
 
 std::string PatchCapDialog::getSelectedCapTypeString()

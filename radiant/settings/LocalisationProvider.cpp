@@ -10,6 +10,8 @@
 #include "os/path.h"
 
 #include <wx/translation.h>
+#include <wx/intl.h>
+#include <wx/arrstr.h>
 
 namespace settings
 {

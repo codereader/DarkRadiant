@@ -1,5 +1,6 @@
 #include "ModelCache.h"
 
+#include "ieclass.h"
 #include "ifilesystem.h"
 #include "imodel.h"
 #include "imd5model.h"

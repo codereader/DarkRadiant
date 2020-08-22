@@ -2,6 +2,7 @@
 
 #include <list>
 #include "iregistry.h"
+#include "icommandsystem.h"
 #include "imru.h"
 
 #include "MRUList.h"

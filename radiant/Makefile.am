@@ -42,19 +42,6 @@ darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
 darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       RadiantModule.cpp \
-                      brush/Winding.cpp \
-                      brush/export/CollisionModel.cpp \
-                      brush/BrushModule.cpp \
-                      brush/FixedWinding.cpp \
-                      brush/BrushNode.cpp \
-                      brush/FaceInstance.cpp \
-                      brush/Brush.cpp \
-                      brush/TextureProjection.cpp \
-                      brush/Face.cpp \
-                      brush/TexDef.cpp \
-                      brush/TextureMatrix.cpp \
-                      brush/csg/CSG.cpp \
-                      brush/FacePlane.cpp \
                       camera/Camera.cpp \
                       camera/GlobalCamera.cpp \
                       camera/CameraSettings.cpp \
@@ -169,6 +156,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
+                      ui/aas/RenderableAasFile.cpp \
                       ui/selectionset/SelectionSetToolmenu.cpp \
                       ui/LongRunningOperationHandler.cpp \
                       ui/MapCommands.cpp \
@@ -215,13 +203,7 @@ darkradiant_SOURCES = main.cpp \
                       settings/LocalisationModule.cpp \
                       settings/LocalisationProvider.cpp \
                       map/StartupMapLoader.cpp \
-                      radiant/clipboard/ClipboardModule.cpp \
-                      clipper/ClipPoint.cpp \
-                      clipper/SplitAlgorithm.cpp \
-                      log/Console.cpp \
-                      model/ModelScalePreserver.cpp \
-                      model/ModelExporter.cpp \
-					  model/ScaledModelExporter.cpp
+                      log/Console.cpp
 
 check_PROGRAMS = facePlaneTest vfsTest shadersTest
 TESTS = $(check_PROGRAMS)

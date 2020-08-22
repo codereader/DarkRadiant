@@ -1,8 +1,10 @@
 #include "ShaderInfoTab.h"
 
 #include "i18n.h"
+#include "icommandsystem.h"
 
 #include "string/string.h"
+#include "string/convert.h"
 
 #include <functional>
 #include <wx/sizer.h>

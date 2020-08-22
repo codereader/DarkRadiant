@@ -22,10 +22,10 @@ private:
 
 public:
 	NopVolumeTest() :
-		_viewProjection(Matrix4::getIdentity()),
 		_viewPort(Matrix4::getIdentity()),
 		_projection(Matrix4::getIdentity()),
-		_modelView(Matrix4::getIdentity())
+		_modelView(Matrix4::getIdentity()),
+		_viewProjection(Matrix4::getIdentity())
 	{}
 
 	bool TestPoint(const Vector3& point) const

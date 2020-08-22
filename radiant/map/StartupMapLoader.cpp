@@ -5,6 +5,7 @@
 #include "igl.h"
 #include "irender.h"
 #include "iregistry.h"
+#include "icommandsystem.h"
 #include "igame.h"
 #include "iradiant.h"
 #include "imru.h"
@@ -12,6 +13,7 @@
 
 #include "os/path.h"
 #include "os/file.h"
+#include "registry/registry.h"
 
 namespace map 
 {

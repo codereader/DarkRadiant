@@ -1,5 +1,6 @@
 #pragma once
 
+#include "icommandsystem.h"
 #include "wxutil/dialog/Dialog.h"
 
 /**

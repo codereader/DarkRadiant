@@ -3,6 +3,7 @@
 #include <map>
 #include "imainframe.h"
 #include "igame.h"
+#include "iradiant.h"
 #include "ifiletypes.h"
 #include "messages/FileSelectionRequest.h"
 

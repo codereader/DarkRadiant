@@ -219,7 +219,7 @@ namespace patch
 // The cap types for a patch
 enum class CapType
 {
-	None,
+	Nocap, // "None" was already #defined somewhere
 	Bevel,
 	EndCap,
 	InvertedBevel,

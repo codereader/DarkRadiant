@@ -4,6 +4,7 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "iparticles.h"
+#include "iparticlestage.h"
 #include "igame.h"
 #include "itextstream.h"
 

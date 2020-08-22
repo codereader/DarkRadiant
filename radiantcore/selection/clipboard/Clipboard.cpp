@@ -1,5 +1,6 @@
 #include "Clipboard.h"
 
+#include "i18n.h"
 #include "iselection.h"
 #include "igrid.h"
 #include "icamera.h"

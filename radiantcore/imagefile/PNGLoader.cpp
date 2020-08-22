@@ -1,6 +1,7 @@
 #include "PNGLoader.h"
 
 #include <png.h>
+#include <cstring>
 #include "RGBAImage.h"
 #include "stream/ScopedArchiveBuffer.h"
 
@@ -26,7 +27,7 @@ void user_error_fn(png_structp png_ptr, png_const_charp error_msg)
 void user_read_data(png_structp png_ptr, png_bytep data, png_uint_32 length)
 {
 	png_bytep* p_p_fbuffer = (png_bytep*)png_get_io_ptr(png_ptr);
-	memcpy(data, *p_p_fbuffer, length);
+	std::memcpy(data, *p_p_fbuffer, length);
 	*p_p_fbuffer += length;
 }
 

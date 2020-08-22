@@ -5,6 +5,7 @@
 #include "iscenegraph.h"
 #include "itextstream.h"
 #include "icamera.h"
+#include "iorthoview.h"
 #include <fstream>
 #include <iostream>
 

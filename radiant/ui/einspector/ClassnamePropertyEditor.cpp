@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "ientity.h"
 #include "iundo.h"
+#include "icommandsystem.h"
 
 #include <wx/panel.h>
 #include <wx/button.h>

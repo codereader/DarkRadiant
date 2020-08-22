@@ -363,7 +363,6 @@ const StringSet& AutoMapSaver::getDependencies() const
 		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_MAINFRAME);
 		_dependencies.insert(MODULE_RADIANT_APP);
 	}
 

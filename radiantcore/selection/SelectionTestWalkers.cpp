@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "iselectable.h"
 #include "imodel.h"
+#include "igroupnode.h"
 #include "iselectiontest.h"
 #include "entitylib.h"
 #include "debugging/ScenegraphUtils.h"

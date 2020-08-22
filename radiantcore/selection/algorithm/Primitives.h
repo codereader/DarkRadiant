@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <vector>
 #include "iscenegraph.h"
+#include "ibrush.h"
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "ipatch.h"

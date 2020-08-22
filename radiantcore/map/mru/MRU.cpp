@@ -1,6 +1,7 @@
 #include "MRU.h"
 
 #include "i18n.h"
+#include "imap.h"
 #include "icommandsystem.h"
 #include "ipreferencesystem.h"
 

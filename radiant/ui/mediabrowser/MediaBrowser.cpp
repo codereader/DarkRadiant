@@ -20,6 +20,7 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/radiobut.h>
+#include <wx/frame.h>
 
 #include <iostream>
 #include <map>

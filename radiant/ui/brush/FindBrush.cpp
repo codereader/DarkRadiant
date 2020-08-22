@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "idialogmanager.h"
+#include "iselection.h"
 #include "scene/SelectionIndex.h"
 
 namespace ui

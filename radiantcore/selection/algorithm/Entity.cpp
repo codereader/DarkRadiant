@@ -6,6 +6,7 @@
 #include "selectionlib.h"
 #include "imainframe.h"
 #include "iregistry.h"
+#include "inamespace.h"
 #include "itextstream.h"
 #include "entitylib.h"
 #include "gamelib.h"

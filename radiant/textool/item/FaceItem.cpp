@@ -1,5 +1,6 @@
 #include "FaceItem.h"
 
+#include "igl.h"
 #include "math/FloatTools.h"
 
 #include "FaceVertexItem.h"

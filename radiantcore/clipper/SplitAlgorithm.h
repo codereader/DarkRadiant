@@ -1,5 +1,8 @@
 #pragma once
 
+#include "iclipper.h"
+#include "math/Vector3.h"
+
 class Plane3;
 
 namespace algorithm
