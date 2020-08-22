@@ -7,6 +7,7 @@
 #include "inode.h"
 #include "ientity.h"
 #include "map/Map.h"
+#include "selection/RadiantSelectionSystem.h"
 #include "modulesystem/StaticModule.h"
 #include <sigc++/signal.h>
 
@@ -173,6 +174,7 @@ const StringSet& GameConnection::getDependencies() const {
         _dependencies.insert(MODULE_COMMANDSYSTEM);
         _dependencies.insert(MODULE_MAP);
         _dependencies.insert(MODULE_SCENEGRAPH);
+        _dependencies.insert(MODULE_SELECTIONSYSTEM);
     }
     return _dependencies;
 }
@@ -186,7 +188,9 @@ module::StaticModule<GameConnection> gameConnectionModule;
 //-------------------------------------------------------------
 
 std::string GameConnection::composeConExecRequest(std::string consoleLine) {
-    assert(consoleLine.find('\n') == std::string::npos);
+    //remove trailing spaces/EOLs
+    while (!consoleLine.empty() && isspace(consoleLine.back()))
+        consoleLine.pop_back();
     return actionPreamble("conexec") + "content:\n" + consoleLine + "\n";
 }
 
@@ -303,6 +307,26 @@ void GameConnection::togglePauseGame() {
     std::string value = executeGetCvarValue("g_stopTime");
     std::string oppositeValue = (value == "0" ? "1" : "0");
     std::string text = composeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
+    executeRequest(text);
+}
+
+void GameConnection::respawnSelectedEntities() {
+    if (!connect())
+        return;
+    std::set<std::string> selectedEntityNames;
+    GlobalSelectionSystem().foreachSelected([&selectedEntityNames](const scene::INodePtr &node) -> void {
+        //Node_isEntity
+        if (Entity* entity = Node_getEntity(node)) {
+            const std::string &name = entity->getKeyValue("name");
+            if (!name.empty()) {
+                selectedEntityNames.insert(name);
+            }
+        }
+    });
+    std::string command;
+    for (const std::string &name : selectedEntityNames)
+        command += "respawn " + name + "\n";
+    std::string text = composeConExecRequest(command);
     executeRequest(text);
 }
 

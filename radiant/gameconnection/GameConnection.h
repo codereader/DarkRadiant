@@ -43,6 +43,8 @@ public:
 
 	//pause game if it is live, unpause if it is paused
 	void togglePauseGame();
+	//respawn all entities in the current selection set
+	void respawnSelectedEntities();
 
 	//ask TDM to reload .map file from disk
 	void reloadMap();
