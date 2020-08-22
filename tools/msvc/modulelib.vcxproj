@@ -146,11 +146,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\module\ApplicationContextBase.cpp" />
     <ClCompile Include="..\..\libs\module\CoreModule.cpp" />
     <ClCompile Include="..\..\libs\module\DynamicLibrary.cpp" />
     <ClCompile Include="..\..\libs\module\StaticModule.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\libs\module\ApplicationContextBase.h" />
     <ClInclude Include="..\..\libs\module\CoreModule.h" />
     <ClInclude Include="..\..\libs\module\DynamicLibrary.h" />
     <ClInclude Include="..\..\libs\module\StaticModule.h" />

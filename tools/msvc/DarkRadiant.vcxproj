@@ -275,7 +275,6 @@
     <ClCompile Include="..\..\radiant\camera\CamWnd.cpp" />
     <ClCompile Include="..\..\radiant\camera\FloatingCamWnd.cpp" />
     <ClCompile Include="..\..\radiant\camera\GlobalCamera.cpp" />
-    <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp" />
     <ClCompile Include="..\..\radiant\render\OpenGLModule.cpp" />
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp" />
     <ClCompile Include="..\..\radiant\textool\TexToolItem.cpp" />
@@ -464,7 +463,6 @@
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h" />
     <ClInclude Include="..\..\radiant\camera\GlobalCamera.h" />
     <ClInclude Include="..\..\radiant\camera\RadiantCameraView.h" />
-    <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h" />
     <ClInclude Include="..\..\radiant\render\OpenGLModule.h" />
     <ClInclude Include="..\..\radiant\textool\Rectangle.h" />
     <ClInclude Include="..\..\radiant\textool\RenderableItem.h" />

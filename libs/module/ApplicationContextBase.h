@@ -6,7 +6,7 @@
 namespace radiant
 {
 
-class ApplicationContextImpl :
+class ApplicationContextBase :
 	public ApplicationContext
 {
 	// The app + home paths

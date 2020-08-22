@@ -5,4 +5,5 @@ pkglib_LTLIBRARIES = libmodule.la
 libmodule_la_LDFLAGS = -release @PACKAGE_VERSION@
 libmodule_la_SOURCES = CoreModule.cpp \
                      DynamicLibrary.cpp \
+					 ApplicationContextBase.cpp \
 					 StaticModule.cpp

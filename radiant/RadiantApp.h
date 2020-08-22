@@ -2,7 +2,7 @@
 
 #include <wx/app.h>
 #include <sigc++/connection.h>
-#include "modulesystem/ApplicationContextImpl.h"
+#include "module/ApplicationContextBase.h"
 #include "module/CoreModule.h"
 
 /**
@@ -21,7 +21,7 @@ class RadiantApp :
 {
 	// The RadiantApp owns the ApplicationContext which is then passed to the
 	// ModuleRegistry as a reference.
-	radiant::ApplicationContextImpl _context;
+	radiant::ApplicationContextBase _context;
 
 	std::unique_ptr<module::CoreModule> _coreModule;
 

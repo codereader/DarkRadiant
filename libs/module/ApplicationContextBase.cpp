@@ -1,4 +1,4 @@
-#include "ApplicationContextImpl.h"
+#include "ApplicationContextBase.h"
 
 #include <locale>
 #include "string/string.h"
@@ -8,8 +8,9 @@
 #include "os/fs.h"
 #include "os/path.h"
 #include "os/dir.h"
+#if 0
 #include "log/PopupErrorHandler.h"
-
+#endif
 #if defined(WIN32)
 #include <windows.h>
 #endif
@@ -22,13 +23,13 @@ namespace radiant
 /**
  * Return the application path of the current Radiant instance.
  */
-std::string ApplicationContextImpl::getApplicationPath() const
+std::string ApplicationContextBase::getApplicationPath() const
 {
     //wxMessageOutputDebug().Output(wxString("Application Path is ") + _appPath);
 	return _appPath;
 }
 
-std::string ApplicationContextImpl::getLibraryPath() const
+std::string ApplicationContextBase::getLibraryPath() const
 {
 #if defined(__APPLE__)
     return _appPath;
@@ -43,7 +44,7 @@ std::string ApplicationContextImpl::getLibraryPath() const
 #endif
 }
 
-std::string ApplicationContextImpl::getRuntimeDataPath() const
+std::string ApplicationContextBase::getRuntimeDataPath() const
 {
 #if defined(__APPLE__)
     // The Resources are in the Bundle folder Contents/Resources/, whereas the
@@ -69,7 +70,7 @@ std::string ApplicationContextImpl::getRuntimeDataPath() const
 #endif
 }
 
-std::string ApplicationContextImpl::getHTMLPath() const
+std::string ApplicationContextBase::getHTMLPath() const
 {
 #if defined(POSIX)
 #if defined(HTMLDIR) && !defined(ENABLE_RELOCATION)
@@ -83,19 +84,19 @@ std::string ApplicationContextImpl::getHTMLPath() const
 #endif
 }
 
-std::string ApplicationContextImpl::getSettingsPath() const
+std::string ApplicationContextBase::getSettingsPath() const
 {
 	return _settingsPath;
 }
 
-std::string ApplicationContextImpl::getBitmapsPath() const
+std::string ApplicationContextBase::getBitmapsPath() const
 {
     //wxMessageOutputDebug().Output(wxString("RTD Path is ") + getRuntimeDataPath());
 	return getRuntimeDataPath() + "bitmaps/";
 }
 
 const ApplicationContext::ArgumentList&
-ApplicationContextImpl::getCmdLineArgs() const
+ApplicationContextBase::getCmdLineArgs() const
 {
 	return _cmdLineArgs;
 }
@@ -138,10 +139,10 @@ std::string getExecutablePath(char* argv[])
     }
 
     // Error, terminate the app
-    rConsoleError() << "ApplicationContextImpl: could not get app path: "
+    rConsoleError() << "ApplicationContextBase: could not get app path: "
         << strerror(errno) << std::endl;
 
-    throw std::runtime_error("ApplicationContextImpl: could not get app path");
+    throw std::runtime_error("ApplicationContextBase: could not get app path");
 }
 
 #else // generic POSIX
@@ -195,7 +196,7 @@ std::string getExecutablePath(char* argv[])
 
 }
 
-void ApplicationContextImpl::initialise(int argc, char* argv[])
+void ApplicationContextBase::initialise(int argc, char* argv[])
 {
 	// Give away unnecessary root privileges.
 	// Important: must be done before calling gtk_init().
@@ -228,7 +229,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 // ================ WIN32 ====================
 #elif defined(WIN32)
 
-void ApplicationContextImpl::initialise(int argc, char* argv[])
+void ApplicationContextBase::initialise(int argc, char* argv[])
 {
 	initArgs(argc, argv);
 
@@ -245,7 +246,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 	_homePath = appData + "\\DarkRadiant";
 	if (!os::makeDirectory(_homePath))
     {
-        rConsoleError() << "ApplicationContextImpl: could not create home directory "
+        rConsoleError() << "ApplicationContextBase: could not create home directory "
                   << "'" << _homePath << "'" << std::endl;
     }
 
@@ -278,7 +279,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[])
 
 // ============== OS-Specific Implementations end ===================
 
-void ApplicationContextImpl::initArgs(int argc, char* argv[])
+void ApplicationContextBase::initArgs(int argc, char* argv[])
 {
 	// Store the arguments locally, ignore the first one
 	for (int i = 1; i < argc; i++) {
@@ -286,7 +287,7 @@ void ApplicationContextImpl::initArgs(int argc, char* argv[])
 	}
 }
 
-void ApplicationContextImpl::initPaths()
+void ApplicationContextBase::initPaths()
 {
 	// Ensure that the homepath ends with a slash
 	_homePath = os::standardPathWithSlash(_homePath);
@@ -296,24 +297,26 @@ void ApplicationContextImpl::initPaths()
 	_settingsPath = _homePath;
 	if (!os::makeDirectory(_settingsPath))
     {
-        rConsoleError() << "ApplicationContextImpl: unable to create settings path '"
+        rConsoleError() << "ApplicationContextBase: unable to create settings path '"
                   << _settingsPath << "'" << std::endl;
     }
 }
 
-const ErrorHandlingFunction& ApplicationContextImpl::getErrorHandlingFunction() const
+const ErrorHandlingFunction& ApplicationContextBase::getErrorHandlingFunction() const
 {
 	return _errorHandler;
 }
 
-void ApplicationContextImpl::initErrorHandler()
+void ApplicationContextBase::initErrorHandler()
 {
+#if 0
 #ifdef _DEBUG
 	// Use the PopupErrorHandler, which displays a popup box
 	_errorHandler = radiant::PopupErrorHandler::HandleError;
 
 	// Initialise the function pointer in our binary's scope
 	GlobalErrorHandler() = _errorHandler;
+#endif
 #endif
 }
 

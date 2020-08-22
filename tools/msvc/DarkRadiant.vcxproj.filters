@@ -8,9 +8,6 @@
     <Filter Include="src\camera">
       <UniqueIdentifier>{ad6d0e12-fb85-4133-aecd-986e24357256}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\modulesystem">
-      <UniqueIdentifier>{2ab7bf93-24a1-444a-aa28-ae77c05ec366}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\render">
       <UniqueIdentifier>{53ac0d31-452b-4324-88e2-3790b4c41113}</UniqueIdentifier>
     </Filter>
@@ -195,9 +192,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\camera\GlobalCamera.cpp">
       <Filter>src\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\modulesystem\ApplicationContextImpl.cpp">
-      <Filter>src\modulesystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\render\OpenGLModule.cpp">
       <Filter>src\render</Filter>
@@ -704,9 +698,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\RadiantCameraView.h">
       <Filter>src\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\modulesystem\ApplicationContextImpl.h">
-      <Filter>src\modulesystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\OpenGLModule.h">
       <Filter>src\render</Filter>
