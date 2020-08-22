@@ -12,10 +12,10 @@
 namespace module
 {
 
-ModuleRegistry::ModuleRegistry() :
+ModuleRegistry::ModuleRegistry(const IApplicationContext& ctx) :
+	_context(ctx),
 	_modulesInitialised(false),
 	_modulesShutdown(false),
-    _context(nullptr),
 	_loader(new ModuleLoader(*this))
 {
 	rMessage() << "ModuleRegistry instantiated." << std::endl;
@@ -126,8 +126,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 		_progress);
 
 	// Initialise the module itself, now that the dependencies are ready
-    assert(_context);
-	module->initialiseModule(*_context);
+	module->initialiseModule(_context);
 }
 
 void ModuleRegistry::initialiseCoreModule()
@@ -145,7 +144,7 @@ void ModuleRegistry::initialiseCoreModule()
 	// We assume that the core module doesn't have any dependencies
 	assert(moduleIter->second->getDependencies().empty());
 
-	moduleIter->second->initialiseModule(*_context);
+	moduleIter->second->initialiseModule(_context);
 
 	_uninitialisedModules.erase(coreModuleName);
 }
@@ -162,7 +161,7 @@ void ModuleRegistry::loadAndInitialiseModules()
 	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
 
 	// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-	_loader->loadModules(_context->getLibraryPath());
+	_loader->loadModules(_context.getLibraryPath());
 
 	_progress = 0.1f;
 	_sigModuleInitialisationProgress.emit(_("Initialising Modules"), _progress);
@@ -239,8 +238,7 @@ RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
 
 const IApplicationContext& ModuleRegistry::getApplicationContext() const
 {
-    assert(_context);
-	return *_context;
+	return _context;
 }
 
 applog::ILogWriter& ModuleRegistry::getApplicationLogWriter()

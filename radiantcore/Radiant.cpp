@@ -31,8 +31,7 @@ Radiant::Radiant(IApplicationContext& context) :
 	// Attach the logfile to the logwriter
 	createLogFile();
 
-	_moduleRegistry.reset(new module::ModuleRegistry);
-	_moduleRegistry->setContext(_context);
+	_moduleRegistry.reset(new module::ModuleRegistry(_context));
 
 	_languageManager.reset(new language::LanguageManager);
 #if 0

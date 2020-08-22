@@ -20,6 +20,9 @@ class ModuleRegistry :
 	public IModuleRegistry
 {
 private:
+	// application context
+	const IApplicationContext& _context;
+
     typedef std::map<std::string, RegisterableModulePtr> ModulesMap;
 
 	// This is where the uninitialised modules go after registration
@@ -34,9 +37,6 @@ private:
 	// Set to TRUE after all modules have been shutdown
 	bool _modulesShutdown;
 
-    // Pointer to the application context
-	IApplicationContext* _context;
-
 	// For progress meter in the splash screen
 	float _progress;
 
@@ -50,7 +50,7 @@ private:
 	std::unique_ptr<ModuleLoader> _loader;
 
 public:
-	ModuleRegistry();
+	ModuleRegistry(const IApplicationContext& ctx);
 
     ~ModuleRegistry();
 
@@ -80,11 +80,6 @@ public:
     sigc::signal<void>& signal_modulesUnloading() override;
 
 	std::size_t getCompatibilityLevel() const override;
-
-	void setContext(IApplicationContext& context)
-    {
-        _context = &context;
-    }
 
 	// Returns a list of modules
 	std::string getModuleList(const std::string& separator = "\n");
