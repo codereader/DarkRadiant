@@ -26,6 +26,7 @@
 #include "MapCommands.h"
 #include "ui/aas/AasControlDialog.h"
 #include "ui/prefdialog/GameSetupDialog.h"
+#include "ui/modelselector/ModelSelector.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/overlay/OverlayDialog.h"
@@ -148,6 +149,11 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
 	GlobalRadiant().signal_radiantStarted().connect(
 		sigc::ptr_fun(LayerControlDialog::onRadiantStartup));
+
+	// Pre-load models
+	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
+		sigc::ptr_fun(ModelSelector::Populate)
+	);
 
 	// Add the filter actions
 	GlobalOrthoContextMenu().addItem(

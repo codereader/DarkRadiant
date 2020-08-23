@@ -10,18 +10,10 @@
 #include "ieventmanager.h"
 #include "i18n.h"
 #include "imainframe.h"
-#include "ishaderclipboard.h"
 
 #include "scene/Node.h"
 
-#include "ui/mainframe/ScreenUpdateBlocker.h"
-
 #include "module/StaticModule.h"
-
-#include "ui/modelselector/ModelSelector.h"
-#include "EventRateLimiter.h"
-
-#include <wx/app.h>
 
 namespace radiant
 {
@@ -58,14 +50,6 @@ const std::string& RadiantModule::getName() const
 const StringSet& RadiantModule::getDependencies() const
 {
 	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-    {
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-	}
-
 	return _dependencies;
 }
 
@@ -94,17 +78,11 @@ void RadiantModule::postModuleInitialisation()
     // Initialise the mainframe
     GlobalMainFrame().construct();
 
-	// Initialise the shaderclipboard
-	GlobalShaderClipboard().clear();
-
 	// Broadcast the startup event
     broadcastStartupEvent();
 
     // Load the shortcuts from the registry
     GlobalEventManager().loadAccelerators();
-
-    // Pre-load models
-    ui::ModelSelector::Populate();
 
 	// Show the top level window as late as possible
 	GlobalMainFrame().getWxTopLevelWindow()->Show();
@@ -115,7 +93,7 @@ void RadiantModule::postModuleInitialisation()
 }
 
 // Define the static Radiant module
-module::StaticModule<RadiantModule> radiantCoreModule;
+module::StaticModule<RadiantModule> radiantModule;
 
 // Return the static Radiant module to other code within the main binary
 RadiantModulePtr getGlobalRadiant()

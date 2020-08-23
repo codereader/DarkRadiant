@@ -222,6 +222,8 @@ void ShaderClipboard::initialiseModule(const IApplicationContext& ctx)
 
 	_mapEventConn = GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(this, &ShaderClipboard::onMapEvent));
+
+	clear();
 }
 
 void ShaderClipboard::shutdownModule()

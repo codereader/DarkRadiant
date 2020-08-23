@@ -48,6 +48,7 @@ void ModuleRegistry::unloadModules()
 
 	// Send out the signal that the DLLs/SOs will be unloaded
 	signal_modulesUnloading().emit();
+	signal_modulesUnloading().clear();
 
 	_loader->unloadModules();
 }
@@ -183,7 +184,9 @@ void ModuleRegistry::loadAndInitialiseModules()
 	_sigModuleInitialisationProgress.emit(_("Modules initialised"), _progress);
 
 	// Fire the signal now, this will destroy the Splash dialog as well
+	// This event only happens once, release the listeners afterwards
 	_sigAllModulesInitialised.emit();
+	_sigAllModulesInitialised.clear();
 }
 
 void ModuleRegistry::shutdownModules()
@@ -198,8 +201,9 @@ void ModuleRegistry::shutdownModules()
 		pair.second->shutdownModule();
 	}
 
-    // Fire the signal before unloading the modules
+    // Fire the signal before unloading the modules, clear the listeners afterwards
     _sigAllModulesUninitialised.emit();
+    _sigAllModulesUninitialised.clear();
 
 	// Free all the shared ptrs
 	unloadModules();
