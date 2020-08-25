@@ -1,7 +1,7 @@
 #include "MessageTcp.h"
 #include <assert.h>
 #include "itextstream.h"
-#include <zmq.hpp>
+#include <../libs/clsocket/ActiveSocket.h>
 
 
 namespace gameconn {
@@ -9,14 +9,8 @@ namespace gameconn {
 MessageTcp::~MessageTcp() {}
 MessageTcp::MessageTcp() {}
 
-void MessageTcp::init(std::unique_ptr<zmq::socket_t> &&connection) {
+void MessageTcp::init(std::unique_ptr<CActiveSocket> &&connection) {
 	tcp = std::move(connection);
-
-	assert(tcp->getsockopt<int>(ZMQ_TYPE) == ZMQ_STREAM);
-	uint8_t id [256];
-	size_t id_size = 256;
-	tcp->getsockopt(ZMQ_ROUTING_ID, id, &id_size);
-	zmq_id.assign(id, id + id_size);
 
 	inputBuffer.clear();
 	outputBuffer.clear();
@@ -25,7 +19,7 @@ void MessageTcp::init(std::unique_ptr<zmq::socket_t> &&connection) {
 }
 
 bool MessageTcp::isAlive() const {
-	return tcp.get() && (*tcp);	//TODO: IsAlive?
+	return tcp.get() && tcp->IsSocketValid();	//TODO: IsAlive?
 }
 
 bool MessageTcp::readMessage(std::vector<char> &message) {
@@ -129,25 +123,19 @@ void MessageTcp::think() {
 	static_assert(BUFFER_SIZE >= 256);	//ZeroMQ identity fits
 	char buffer[BUFFER_SIZE];
 	for (int iter = 0; ; iter++) {
-		int read = tcp->recv(buffer, BUFFER_SIZE, ZMQ_NOBLOCK);
+		int read = tcp->Receive(BUFFER_SIZE, (uint8*)buffer);
 		if (read == -1)
 			goto onerror;
 		if (read == 0)
 			break;
-		if (iter % 2 == 0 && read == zmq_id.size() && memcmp(buffer, zmq_id.data(), zmq_id.size()) == 0)
-			continue;	//skip "identity" added by ZeroMQ
 		inputBuffer.resize(inputBuffer.size() + read);
 		memcpy(inputBuffer.data() + inputBuffer.size() - read, buffer, read);
 	}
 
 	//push outcoming data to socket
 	while (outputPos < outputBuffer.size()) {
-		//send ZeroMQ identity frame
-		int idres = tcp->send(zmq_id.data(), zmq_id.size(), ZMQ_SNDMORE);	//note: block here!
-		if (idres != zmq_id.size())
-			goto onerror;
 		int remains = outputBuffer.size() - outputPos;
-		int written = tcp->send(&outputBuffer[outputPos], remains, ZMQ_NOBLOCK);
+		int written = tcp->Send((uint8*)&outputBuffer[outputPos], remains);
 		if (written == -1)
 			goto onerror;
 		if (written == 0)

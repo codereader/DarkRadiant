@@ -3,9 +3,7 @@
 #include <memory>
 #include <vector>
 
-namespace zmq {
-	class socket_t;
-}
+class CActiveSocket;
 
 namespace gameconn {
 
@@ -18,7 +16,7 @@ class MessageTcp {
 public:
 	MessageTcp();
 	~MessageTcp();
-	void init(std::unique_ptr<zmq::socket_t> &&connection);
+	void init(std::unique_ptr<CActiveSocket> &&connection);
 
 	bool readMessage(std::vector<char> &message);
 	void writeMessage(const char *message, int len);
@@ -27,8 +25,7 @@ public:
 	bool isAlive() const;
 
 private:
-	std::unique_ptr<zmq::socket_t> tcp;
-	std::vector<uint8_t> zmq_id;
+	std::unique_ptr<CActiveSocket> tcp;
 
 	std::vector<char> inputBuffer;
 	int inputPos;
