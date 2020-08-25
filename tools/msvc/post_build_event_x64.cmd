@@ -4,8 +4,6 @@ del ..\..\install\python*.zip
 copy ..\..\w64deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w64deps\openal\bin\wrap_oal.dll ..\..\install /Y
 copy ..\..\w64deps\glew\lib\glew32.dll ..\..\install /Y
-copy ..\..\w64deps\zeromq\bin\libzmq*.dll ..\..\install /Y
-copy ..\..\w64deps\zeromq\bin\libsodium*.dll ..\..\install /Y
 copy ..\..\w64deps\python\bin\python3*.dll ..\..\install /Y
 copy ..\..\w64deps\python\bin\python3*.zip ..\..\install /Y
 
