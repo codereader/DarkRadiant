@@ -194,6 +194,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\clsocket\ActiveSocket.cpp" />
+    <ClCompile Include="..\..\libs\clsocket\SimpleSocket.cpp" />
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
     <ClCompile Include="..\..\radiant\commandsystem\CommandSystem.cpp" />

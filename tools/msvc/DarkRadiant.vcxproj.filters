@@ -1627,6 +1627,12 @@
     <ClCompile Include="..\..\radiant\gameconnection\MapObserver.cpp">
       <Filter>src\gameconnection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\clsocket\ActiveSocket.cpp">
+      <Filter>src\gameconnection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\clsocket\SimpleSocket.cpp">
+      <Filter>src\gameconnection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\RadiantModule.h">
