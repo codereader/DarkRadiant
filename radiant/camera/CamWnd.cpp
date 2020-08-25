@@ -16,7 +16,6 @@
 #include "selectionlib.h"
 #include "gamelib.h"
 #include "map/Map.h"
-#include "CamRenderer.h"
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
 #include "render/RenderStatistics.h"
@@ -170,12 +169,12 @@ CamWnd::CamWnd(wxWindow* parent) :
     _wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
     _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
     _wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+    _wxGLWidget->Connect(wxEVT_AUX1_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+    _wxGLWidget->Connect(wxEVT_AUX1_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+    _wxGLWidget->Connect(wxEVT_AUX1_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
+    _wxGLWidget->Connect(wxEVT_AUX2_DOWN, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+    _wxGLWidget->Connect(wxEVT_AUX2_DCLICK, wxMouseEventHandler(CamWnd::onGLMouseButtonPress), NULL, this);
+    _wxGLWidget->Connect(wxEVT_AUX2_UP, wxMouseEventHandler(CamWnd::onGLMouseButtonRelease), NULL, this);
 
     // Now add the handlers for the non-freelook mode, the events are activated by this
     addHandlersMove();
@@ -552,6 +551,62 @@ bool CamWnd::freeMoveEnabled() const
     return _freeMoveEnabled;
 }
 
+namespace
+{
+
+// Implementation of RenderableCollector for the 3D camera view.
+class CamRenderer: public RenderableCollector
+{
+    // Highlight state
+    bool _highlightFaces = false;
+    bool _highlightPrimitives = false;
+
+    Shader& _highlightedPrimitiveShader;
+    Shader& _highlightedFaceShader;
+
+public:
+
+    // Initialise CamRenderer with the highlight shaders
+    CamRenderer(Shader& primHighlightShader, Shader& faceHighlightShader)
+    : _highlightedPrimitiveShader(primHighlightShader),
+      _highlightedFaceShader(faceHighlightShader)
+    {}
+
+    // RenderableCollector implementation
+
+    bool supportsFullMaterials() const override { return true; }
+
+    void setHighlightFlag(Highlight::Flags flags, bool enabled) override
+    {
+        if (flags & Highlight::Faces)
+        {
+            _highlightFaces = enabled;
+        }
+
+        if (flags & Highlight::Primitives)
+        {
+            _highlightPrimitives = enabled;
+        }
+    }
+
+    void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+                       const Matrix4& world, const LightSources* lights,
+                       const IRenderEntity* entity) override
+    {
+        if (_highlightPrimitives)
+            _highlightedPrimitiveShader.addRenderable(renderable, world,
+                                                      lights, entity);
+
+        if (_highlightFaces)
+            _highlightedFaceShader.addRenderable(renderable, world,
+                                                 lights, entity);
+
+        shader->addRenderable(renderable, world, lights, entity);
+    }
+};
+
+}
+
 void CamWnd::Cam_Draw()
 {
     wxSize glSize = _wxGLWidget->GetSize();
@@ -680,10 +735,10 @@ void CamWnd::Cam_Draw()
                             | RENDER_POLYGONSTIPPLE;
     }
 
+    // Main scene render
     {
-        CamRenderer renderer(allowedRenderFlags, _primitiveHighlightShader,
-                             _faceHighlightShader, _view.getViewer());
-
+        // Front end (renderable collection from scene)
+        CamRenderer renderer(*_primitiveHighlightShader, *_faceHighlightShader);
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
 
         // Render any active mousetools
@@ -692,7 +747,9 @@ void CamWnd::Cam_Draw()
             i.second->render(GlobalRenderSystem(), renderer, _view);
         }
 
-        renderer.render(_camera.modelview, _camera.projection);
+        // Backend (shader rendering)
+        GlobalRenderSystem().render(allowedRenderFlags, _camera.modelview,
+                                    _camera.projection, _view.getViewer());
     }
 
     // greebo: Draw the clipper's points (skipping the depth-test)
