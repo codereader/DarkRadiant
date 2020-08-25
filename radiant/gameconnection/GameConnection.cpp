@@ -114,8 +114,13 @@ bool GameConnection::connect() {
 
     //connection using clsocket
     std::unique_ptr<CActiveSocket> connection(new CActiveSocket());
+    if (!connection->Initialize())
+        return false;
+    if (!connection->SetNonblocking())
+        return false;
     //TODO: make post configurable, as it is in TDM?
-    connection->Open("localhost", 3879);
+    if (!connection->Open("localhost", 3879))
+        return false;
 
     _connection.reset(new MessageTcp());
     _connection->init(std::move(connection));
