@@ -99,7 +99,7 @@ public:
 		// greebo: Commented this out to avoid the point from being moved along with the view.
 		//Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
-		collector.addRenderable(_shader, *this, localToWorld);
+		collector.addRenderable(*_shader, *this, localToWorld);
 	}
 };
 

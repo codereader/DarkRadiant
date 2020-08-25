@@ -201,7 +201,7 @@ void Patch::renderSolid(RenderableCollector& collector, const VolumeTest& volume
     // Defer the tesselation calculation to the last minute
     const_cast<Patch&>(*this).updateTesselation();
 
-    collector.addRenderable(_shader.getGLShader(), _solidRenderable,
+    collector.addRenderable(*_shader.getGLShader(), _solidRenderable,
                             localToWorld, &lights, &entity);
 
 #if DEBUG_PATCH_NTB_VECTORS
@@ -214,7 +214,7 @@ void Patch::renderWireframe(RenderableCollector& collector, const VolumeTest& vo
     // Defer the tesselation calculation to the last minute
     const_cast<Patch&>(*this).updateTesselation();
 
-    collector.addRenderable(entity.getWireShader(), 
+    collector.addRenderable(*entity.getWireShader(), 
         _patchDef3 ? _fixedWireframeRenderable : _wireframeRenderable, localToWorld);
 }
 
@@ -226,8 +226,8 @@ void Patch::submitRenderablePoints(RenderableCollector& collector,
     // Defer the tesselation calculation to the last minute
     const_cast<Patch&>(*this).updateTesselation();
 
-    collector.addRenderable(_latticeShader, _renderableLattice, localToWorld);
-    collector.addRenderable(_pointShader, _renderableCtrlPoints, localToWorld);
+    collector.addRenderable(*_latticeShader, _renderableLattice, localToWorld);
+    collector.addRenderable(*_pointShader, _renderableCtrlPoints, localToWorld);
 }
 
 RenderSystemPtr Patch::getRenderSystem() const

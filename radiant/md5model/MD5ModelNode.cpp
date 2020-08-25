@@ -159,12 +159,12 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
             if (collector.supportsFullMaterials())
             {
                 assert(i->shader); // shader must be captured at this point
-                collector.addRenderable(i->shader, *i->surface, localToWorld,
+                collector.addRenderable(*i->shader, *i->surface, localToWorld,
                                         &(*j), &entity);
             }
             else
             {
-                collector.addRenderable(entity.getWireShader(), *i->surface,
+                collector.addRenderable(*entity.getWireShader(), *i->surface,
                                         localToWorld, nullptr, &entity);
             }
         }

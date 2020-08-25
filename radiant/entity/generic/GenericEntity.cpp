@@ -53,7 +53,7 @@ void GenericEntity::renderArrow(const ShaderPtr& shader, RenderableCollector& co
 {
 	if (EntitySettings::InstancePtr()->showEntityAngles())
 	{
-		collector.addRenderable(shader, m_arrow, localToWorld);
+		collector.addRenderable(*shader, m_arrow, localToWorld);
 	}
 }
 
@@ -64,14 +64,14 @@ void GenericEntity::renderSolid(RenderableCollector& collector,
 	const ShaderPtr& shader = _owner.getSolidAABBRenderMode() == GenericEntityNode::WireFrameOnly ?
 		_owner.getWireShader() : _owner.getFillShader();
 
-	collector.addRenderable(shader, m_aabb_solid, localToWorld);
+	collector.addRenderable(*shader, m_aabb_solid, localToWorld);
 	renderArrow(shader, collector, volume, localToWorld);
 }
 
 void GenericEntity::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	collector.addRenderable(_owner.getWireShader(), m_aabb_wire, localToWorld);
+	collector.addRenderable(*_owner.getWireShader(), m_aabb_wire, localToWorld);
 	renderArrow(_owner.getWireShader(), collector, volume, localToWorld);
 }
 

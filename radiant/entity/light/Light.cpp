@@ -539,18 +539,18 @@ void Light::renderProjectionPoints(RenderableCollector& collector,
     collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
     collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
 
-	collector.addRenderable(_rRight.getShader(), _rRight, localToWorld);
-	collector.addRenderable(_rUp.getShader(), _rUp, localToWorld);
-	collector.addRenderable(_rTarget.getShader(), _rTarget, localToWorld);
+	collector.addRenderable(*_rRight.getShader(), _rRight, localToWorld);
+	collector.addRenderable(*_rUp.getShader(), _rUp, localToWorld);
+	collector.addRenderable(*_rTarget.getShader(), _rTarget, localToWorld);
 
     if (m_useLightStart)
 	{
-		collector.addRenderable(_rStart.getShader(), _rStart, localToWorld);
+		collector.addRenderable(*_rStart.getShader(), _rStart, localToWorld);
     }
 
     if (m_useLightEnd)
 	{
-		collector.addRenderable(_rEnd.getShader(), _rEnd, localToWorld);
+		collector.addRenderable(*_rEnd.getShader(), _rEnd, localToWorld);
     }
 }
 
@@ -559,7 +559,7 @@ void Light::renderLightCentre(RenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const 
 {
-	collector.addRenderable(_rCentre.getShader(), _rCentre, localToWorld);
+	collector.addRenderable(*_rCentre.getShader(), _rCentre, localToWorld);
 }
 
 void Light::renderWireframe(RenderableCollector& collector,
@@ -568,7 +568,7 @@ void Light::renderWireframe(RenderableCollector& collector,
                             bool selected) const
 {
     // Main render, submit the diamond that represents the light entity
-    collector.addRenderable(_owner.getColourShader(), *this, localToWorld);
+    collector.addRenderable(*_owner.getColourShader(), *this, localToWorld);
 
     // Render bounding box if selected or the showAllLighRadii flag is set
     if (selected || EntitySettings::InstancePtr()->showAllLightRadii())
@@ -578,12 +578,12 @@ void Light::renderWireframe(RenderableCollector& collector,
             // greebo: This is not much of an performance impact as the
             // projection gets only recalculated when it has actually changed.
             updateProjection();
-            collector.addRenderable(_owner.getColourShader(), _renderableFrustum, localToWorld);
+            collector.addRenderable(*_owner.getColourShader(), _renderableFrustum, localToWorld);
         }
         else
         {
             updateRenderableRadius();
-            collector.addRenderable(_owner.getColourShader(), _renderableRadius, localToWorld);
+            collector.addRenderable(*_owner.getColourShader(), _renderableRadius, localToWorld);
         }
     }
 }

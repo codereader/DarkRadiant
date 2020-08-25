@@ -50,7 +50,7 @@ public:
         }
     }
 
-    void addRenderable(const ShaderPtr& shader,
+    void addRenderable(Shader& shader,
                        const OpenGLRenderable& renderable,
                        const Matrix4& world, const LightSources* lights,
                        const IRenderEntity* entity) override
@@ -64,7 +64,7 @@ public:
                 _selectedShader->addRenderable(renderable, world, lights, entity);
         }
 
-        shader->addRenderable(renderable, world, lights, entity);
+        shader.addRenderable(renderable, world, lights, entity);
     }
 
     void render(const Matrix4& modelview, const Matrix4& projection)

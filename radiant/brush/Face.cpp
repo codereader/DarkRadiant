@@ -228,14 +228,14 @@ void Face::renderSolid(RenderableCollector& collector,
                        const Matrix4& localToWorld, const IRenderEntity& entity,
                        const LightSources& lights) const
 {
-    collector.addRenderable(_shader.getGLShader(), m_winding, localToWorld,
+    collector.addRenderable(*_shader.getGLShader(), m_winding, localToWorld,
                             &lights, &entity);
 }
 
 void Face::renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
     const IRenderEntity& entity) const
 {
-    collector.addRenderable(entity.getWireShader(), m_winding, localToWorld,
+    collector.addRenderable(*entity.getWireShader(), m_winding, localToWorld,
                             nullptr, &entity);
 }
 

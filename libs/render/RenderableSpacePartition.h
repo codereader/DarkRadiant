@@ -41,7 +41,7 @@ public:
 	{
 		if (_shader != NULL)
 		{
-			collector.addRenderable(_shader, *this, Matrix4::getIdentity());
+			collector.addRenderable(*_shader, *this, Matrix4::getIdentity());
 		}
 	}
 
@@ -49,7 +49,7 @@ public:
 	{
 		if (_shader != NULL)
 		{
-			collector.addRenderable(_shader, *this, Matrix4::getIdentity());
+			collector.addRenderable(*_shader, *this, Matrix4::getIdentity());
 		}
 	}
 

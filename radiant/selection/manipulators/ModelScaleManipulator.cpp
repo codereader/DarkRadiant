@@ -89,10 +89,10 @@ void ModelScaleManipulator::render(RenderableCollector& collector, const VolumeT
 
 	for (const RenderableSolidAABB& aabb : _renderableAabbs)
 	{
-		collector.addRenderable(_lineShader, aabb, Matrix4::getIdentity());
+		collector.addRenderable(*_lineShader, aabb, Matrix4::getIdentity());
 	}
 
-	collector.addRenderable(_pointShader, _renderableCornerPoints, Matrix4::getIdentity());
+	collector.addRenderable(*_pointShader, _renderableCornerPoints, Matrix4::getIdentity());
 }
 
 void ModelScaleManipulator::foreachSelectedTransformable(

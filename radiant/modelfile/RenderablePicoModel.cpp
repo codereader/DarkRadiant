@@ -111,7 +111,7 @@ void RenderablePicoModel::renderSolid(RenderableCollector& rend,
     foreachVisibleSurface([&](const Surface& s)
     {
         // Submit the ordinary shader for material-based rendering
-        rend.addRenderable(s.shader, *s.surface, localToWorld,
+        rend.addRenderable(*s.shader, *s.surface, localToWorld,
                            &lights, &entity);
     });
 }
@@ -123,7 +123,7 @@ void RenderablePicoModel::renderWireframe(RenderableCollector& rend, const Matri
     foreachVisibleSurface([&](const Surface& s)
     {
         // Submit the wireframe shader for non-shaded renderers
-        rend.addRenderable(entity.getWireShader(), *s.surface, localToWorld,
+        rend.addRenderable(*entity.getWireShader(), *s.surface, localToWorld,
                            nullptr, &entity);
     });
 }

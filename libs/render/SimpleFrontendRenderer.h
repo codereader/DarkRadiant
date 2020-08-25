@@ -18,12 +18,12 @@ public:
     SimpleFrontendRenderer()
     {}
 
-    void addRenderable(const ShaderPtr& shader,
+    void addRenderable(Shader& shader,
                        const OpenGLRenderable& renderable,
                        const Matrix4& world, const LightSources* lights,
                        const IRenderEntity* entity) override
     {
-        shader->addRenderable(renderable, world, lights, entity);
+        shader.addRenderable(renderable, world, lights, entity);
     }
 
     bool supportsFullMaterials() const override

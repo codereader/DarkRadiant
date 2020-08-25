@@ -331,7 +331,7 @@ void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace)
 	{
 		evaluateViewDependent(volume, l2w);
-		collector.addRenderable(m_brush.m_state_point, _faceCentroidPointsCulled, l2w);
+		collector.addRenderable(*m_brush.m_state_point, _faceCentroidPointsCulled, l2w);
 	}
 	else
 	{
@@ -469,7 +469,7 @@ void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 
 	if (m_render_wireframe.m_size != 0)
 	{
-		collector.addRenderable(_renderEntity->getWireShader(), m_render_wireframe, localToWorld);
+		collector.addRenderable(*_renderEntity->getWireShader(), m_render_wireframe, localToWorld);
 	}
 
 	renderSelectedPoints(collector, volume, localToWorld);
@@ -501,7 +501,7 @@ void BrushNode::renderSelectedPoints(RenderableCollector& collector,
 	if (!_selectedPoints.empty())
     {
 		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-		collector.addRenderable(m_state_selpoint, _selectedPoints, localToWorld);
+		collector.addRenderable(*m_state_selpoint, _selectedPoints, localToWorld);
 	}
 }
 

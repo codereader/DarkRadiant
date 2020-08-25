@@ -136,25 +136,25 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
     // temp hack
     UpdateColours();
 
-    collector.addRenderable(_stateOuter, _circleScreen, _pivot2World._viewpointSpace);
-    collector.addRenderable(_stateOuter, _circleSphere, _pivot2World._viewpointSpace);
+    collector.addRenderable(*_stateOuter, _circleScreen, _pivot2World._viewpointSpace);
+    collector.addRenderable(*_stateOuter, _circleSphere, _pivot2World._viewpointSpace);
 
     if(_circleX_visible)
     {
-      collector.addRenderable(_stateOuter, _circleX, _local2worldX);
+      collector.addRenderable(*_stateOuter, _circleX, _local2worldX);
     }
     if(_circleY_visible)
     {
-      collector.addRenderable(_stateOuter, _circleY, _local2worldY);
+      collector.addRenderable(*_stateOuter, _circleY, _local2worldY);
     }
     if(_circleZ_visible)
     {
-      collector.addRenderable(_stateOuter, _circleZ, _local2worldZ);
+      collector.addRenderable(*_stateOuter, _circleZ, _local2worldZ);
     }
 
-	collector.addRenderable(_pivotPointShader, _pivotPoint, _pivot2World._worldSpace);
+	collector.addRenderable(*_pivotPointShader, _pivotPoint, _pivot2World._worldSpace);
 
-	collector.addRenderable(_pivotPointShader, *this, Matrix4::getIdentity());
+	collector.addRenderable(*_pivotPointShader, *this, Matrix4::getIdentity());
 }
 
 void RotateManipulator::render(const RenderInfo& info) const

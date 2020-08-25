@@ -254,13 +254,13 @@ void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCol
     switch (mode) 
 	{
         case SelectionSystem::eVertex:
-            collector.addRenderable(m_state_point, _uniqueVertexPoints, localToWorld);
+            collector.addRenderable(*m_state_point, _uniqueVertexPoints, localToWorld);
             break;
         case SelectionSystem::eEdge:
-            collector.addRenderable(m_state_point, _uniqueEdgePoints, localToWorld);
+            collector.addRenderable(*m_state_point, _uniqueEdgePoints, localToWorld);
             break;
         case SelectionSystem::eFace:
-            collector.addRenderable(m_state_point, _faceCentroidPoints, localToWorld);
+            collector.addRenderable(*m_state_point, _faceCentroidPoints, localToWorld);
             break;
         default:
             break;

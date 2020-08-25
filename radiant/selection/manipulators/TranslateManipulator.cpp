@@ -64,30 +64,30 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
 
     if(show_x)
     {
-      collector.addRenderable(_stateWire, _arrowX, _pivot2World._worldSpace);
+      collector.addRenderable(*_stateWire, _arrowX, _pivot2World._worldSpace);
     }
     if(show_y)
     {
-      collector.addRenderable(_stateWire, _arrowY, _pivot2World._worldSpace);
+      collector.addRenderable(*_stateWire, _arrowY, _pivot2World._worldSpace);
     }
     if(show_z)
     {
-      collector.addRenderable(_stateWire, _arrowZ, _pivot2World._worldSpace);
+      collector.addRenderable(*_stateWire, _arrowZ, _pivot2World._worldSpace);
     }
 
-    collector.addRenderable(_stateWire, _quadScreen, _pivot2World._viewplaneSpace);
+    collector.addRenderable(*_stateWire, _quadScreen, _pivot2World._viewplaneSpace);
 
     if(show_x)
     {
-      collector.addRenderable(_stateFill, _arrowHeadX, _pivot2World._worldSpace);
+      collector.addRenderable(*_stateFill, _arrowHeadX, _pivot2World._worldSpace);
     }
     if(show_y)
     {
-      collector.addRenderable(_stateFill, _arrowHeadY, _pivot2World._worldSpace);
+      collector.addRenderable(*_stateFill, _arrowHeadY, _pivot2World._worldSpace);
     }
     if(show_z)
     {
-      collector.addRenderable(_stateFill, _arrowHeadZ, _pivot2World._worldSpace);
+      collector.addRenderable(*_stateFill, _arrowHeadZ, _pivot2World._worldSpace);
     }
 }
 

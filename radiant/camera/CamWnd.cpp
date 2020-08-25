@@ -589,7 +589,7 @@ public:
         }
     }
 
-    void addRenderable(const ShaderPtr& shader, const OpenGLRenderable& renderable,
+    void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                        const Matrix4& world, const LightSources* lights,
                        const IRenderEntity* entity) override
     {
@@ -601,7 +601,7 @@ public:
             _highlightedFaceShader.addRenderable(renderable, world,
                                                  lights, entity);
 
-        shader->addRenderable(renderable, world, lights, entity);
+        shader.addRenderable(renderable, world, lights, entity);
     }
 };
 

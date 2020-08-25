@@ -170,7 +170,7 @@ void CurveEditInstance::updateSelected() const {
 void CurveEditInstance::renderComponents(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	collector.addRenderable(_shaders.controlsShader, m_controlsRender, localToWorld);
+	collector.addRenderable(*_shaders.controlsShader, m_controlsRender, localToWorld);
 }
 
 void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
@@ -179,7 +179,7 @@ void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
     updateSelected();
     if(!m_selectedRender.empty())
     {
-	  collector.addRenderable(_shaders.selectedShader, m_selectedRender, localToWorld);
+	  collector.addRenderable(*_shaders.selectedShader, m_selectedRender, localToWorld);
     }
 }
 

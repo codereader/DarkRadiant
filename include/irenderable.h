@@ -51,7 +51,7 @@ public:
     * Optional IRenderEntity exposing parameters which affect the rendering of
     * this Renderable.
     */
-    virtual void addRenderable(const ShaderPtr& shader,
+    virtual void addRenderable(Shader& shader,
                                const OpenGLRenderable& renderable,
                                const Matrix4& world,
                                const LightSources* lights = nullptr,

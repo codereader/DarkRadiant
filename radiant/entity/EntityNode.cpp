@@ -238,7 +238,7 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
 	// Submit renderable text name if required
 	if (EntitySettings::InstancePtr()->renderEntityNames())
     {
-		collector.addRenderable(getWireShader(), _renderableName, localToWorld());
+		collector.addRenderable(*getWireShader(), _renderableName, localToWorld());
 	}
 }
 
