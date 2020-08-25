@@ -1,6 +1,3 @@
-#include <zmq.hpp>
-#undef min
-#undef max
 #include "GameConnection.h"
 #include "MessageTCP.h"
 #include "Camera/GlobalCamera.h"
@@ -10,12 +7,7 @@
 #include "selection/RadiantSelectionSystem.h"
 #include "modulesystem/StaticModule.h"
 #include <sigc++/signal.h>
-
-
-//note: I have no idea where to put it
-//I guess if another user of ZeroMQ appears,
-//then this context should go to independent common place.
-zmq::context_t g_ZeroMqContext;
+#include <../libs/clsocket/ActiveSocket.h>
 
 
 namespace gameconn {
@@ -120,12 +112,13 @@ bool GameConnection::connect() {
     if (_mapEventListener)
         _mapEventListener.reset();
 
-    //connection using ZeroMQ socket
-    std::unique_ptr<zmq::socket_t> zmqConnection(new zmq::socket_t(g_ZeroMqContext, ZMQ_STREAM));
-    zmqConnection->connect(fmt::format("tcp://127.0.0.1:{}", 3879));
+    //connection using clsocket
+    std::unique_ptr<CActiveSocket> connection(new CActiveSocket());
+    //TODO: make post configurable, as it is in TDM?
+    connection->Open("localhost", 3879);
 
     _connection.reset(new MessageTcp());
-    _connection->init(std::move(zmqConnection));
+    _connection->init(std::move(connection));
     if (!_connection->isAlive())
         return false;
 
