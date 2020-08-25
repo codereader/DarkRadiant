@@ -124,10 +124,12 @@ void MessageTcp::think() {
 	char buffer[BUFFER_SIZE];
 	for (int iter = 0; ; iter++) {
 		int read = tcp->Receive(BUFFER_SIZE, (uint8*)buffer);
+		if (read == -1 && tcp->GetSocketError() == CSimpleSocket::SocketEwouldblock)
+			break;				//no more data 
 		if (read == -1)
-			goto onerror;
+			goto onerror;		//socket error
 		if (read == 0)
-			break;
+			goto onerror;		//connection closed on other side
 		inputBuffer.resize(inputBuffer.size() + read);
 		memcpy(inputBuffer.data() + inputBuffer.size() - read, buffer, read);
 	}
@@ -136,10 +138,12 @@ void MessageTcp::think() {
 	while (outputPos < outputBuffer.size()) {
 		int remains = outputBuffer.size() - outputPos;
 		int written = tcp->Send((uint8*)&outputBuffer[outputPos], remains);
+		if (written == -1 && tcp->GetSocketError() == CSimpleSocket::SocketEwouldblock)
+			break;				//no more data 
 		if (written == -1)
-			goto onerror;
+			goto onerror;		//socket error
 		if (written == 0)
-			break;
+			goto onerror;		//connection closed on other side
 		outputPos += written;
 	}
 
