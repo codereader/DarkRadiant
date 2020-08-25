@@ -52,7 +52,6 @@ private:
 	bool applicationIsActive();
 
 	void onMapEvent(IMap::MapEvent ev);
-	void onRadiantStartup();
 	void onIntervalReached();
 	void readFromMapProperties();
 	void writeToMapProperties(const scene::IMapRootNodePtr& root);

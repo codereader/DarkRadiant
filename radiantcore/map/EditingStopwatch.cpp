@@ -64,23 +64,14 @@ void EditingStopwatch::initialiseModule(const IApplicationContext& ctx)
 		sigc::mem_fun(this, &EditingStopwatch::onResourceExporting)
 	);
 
-	// Register the timer when the application has come up
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(*this, &EditingStopwatch::onRadiantStartup));
+	_timer.reset(new util::Timer(TIMER_INTERVAL_SECS * 1000,
+		sigc::mem_fun(*this, &EditingStopwatch::onIntervalReached)));
 }
 
 void EditingStopwatch::shutdownModule()
 {
 	stop();
 	_mapSignal.disconnect();
-}
-
-void EditingStopwatch::onRadiantStartup()
-{
-	_timer.reset(new util::Timer(TIMER_INTERVAL_SECS * 1000, 
-		sigc::mem_fun(*this, &EditingStopwatch::onIntervalReached)));
-
-	start();
 }
 
 void EditingStopwatch::onIntervalReached()
