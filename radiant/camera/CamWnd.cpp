@@ -560,9 +560,28 @@ class CamRenderer: public RenderableCollector
     // Highlight state
     bool _highlightFaces = false;
     bool _highlightPrimitives = false;
-
     Shader& _highlightedPrimitiveShader;
     Shader& _highlightedFaceShader;
+
+    // Associate a renderable with the lights which illuminate it
+    struct LitRenderable
+    {
+        const OpenGLRenderable& renderable;
+        const LightSources* lights = nullptr;
+        Matrix4 local2World;
+        const IRenderEntity* entity = nullptr;
+
+        LitRenderable(const OpenGLRenderable& r, const LightSources* l,
+                      const Matrix4& l2w, const IRenderEntity* e)
+        : renderable(r), lights(l), local2World(l2w), entity(e)
+        {}
+    };
+    using LitRenderables = std::vector<LitRenderable>;
+    using LitRenderablesPtr = std::unique_ptr<LitRenderables>;
+
+    // Main map of shaders to LitRenderables
+    using RenderablesByShader = std::map<Shader*, LitRenderablesPtr>;
+    RenderablesByShader _renderablesByShader;
 
 public:
 
@@ -571,6 +590,28 @@ public:
     : _highlightedPrimitiveShader(primHighlightShader),
       _highlightedFaceShader(faceHighlightShader)
     {}
+
+    // Instruct the CamRenderer to push its sorted renderables to their
+    // respective shaders and perform the actual render
+    void sendToShaders()
+    {
+        // For each shader in the map
+        for (auto i = _renderablesByShader.begin();
+             i != _renderablesByShader.end();
+             ++i)
+        {
+            // Iterate over the list of renderables for this shader, submitting
+            // each one
+            Shader* shader = i->first;
+            wxASSERT(shader);
+            for (auto j = i->second->begin(); j != i->second->end(); ++j)
+            {
+                const LitRenderable& lr = *j;
+                shader->addRenderable(lr.renderable, lr.local2World,
+                                      lr.lights, lr.entity);
+            }
+        }
+    }
 
     // RenderableCollector implementation
 
@@ -601,7 +642,29 @@ public:
             _highlightedFaceShader.addRenderable(renderable, world,
                                                  lights, entity);
 
-        shader.addRenderable(renderable, world, lights, entity);
+        // Construct an entry for this shader in the map if it is the first
+        // time we've seen it
+        auto iter = _renderablesByShader.find(&shader);
+        if (iter == _renderablesByShader.end())
+        {
+            // Add an entry for this shader, and pre-allocate some space in the
+            // vector to avoid too many expansions during scenegraph traversal.
+            auto litRenderables = std::make_unique<LitRenderables>();
+            litRenderables->reserve(1024);
+
+            auto result = _renderablesByShader.insert(
+                RenderablesByShader::value_type(&shader, std::move(litRenderables))
+            );
+            wxASSERT(result.second);
+            iter = result.first;
+        }
+        wxASSERT(iter != _renderablesByShader.end());
+
+        // Add the renderable and its lights to the list of lit renderables for
+        // this shader
+        wxASSERT(iter->first == &shader);
+        LitRenderablesPtr& lrp = iter->second;
+        lrp->emplace_back(renderable, lights, world, entity);
     }
 };
 
@@ -748,6 +811,7 @@ void CamWnd::Cam_Draw()
         }
 
         // Backend (shader rendering)
+        renderer.sendToShaders();
         GlobalRenderSystem().render(allowedRenderFlags, _camera.modelview,
                                     _camera.projection, _view.getViewer());
     }
