@@ -30,8 +30,11 @@ public:
 	//return false if failed to connect
 	bool connect();
 	//disconnect from TDM instance if connected
-	//note: blocks until pending requests are processed
-	void disconnect();
+	//if force = true, then it blocks until pending requests are finished
+	//if force = false, then all pending requests are dropped, no blocking for sure
+	void disconnect(bool force = false);
+	//returns false if connection is not yet established or has been closed for whatever reason
+	bool isAlive() const;
 
 	//flush all async commands (e.g. camera update) and wait until everything finishes
 	void finish();
@@ -63,6 +66,9 @@ public:
 
 private:
 	//connection to TDM game (i.e. the socket with custom message framing)
+	//it can be "dead" in two ways:
+	//  _connection is NULL --- no connection, all modes/observers disabled
+	//  *_connection is dead --- just lost connection, must call "disconnect" ASAP to disable modes/observers
 	std::unique_ptr<MessageTcp> _connection;
 	//when connected, this timer calls Think periodically
 	std::unique_ptr<wxTimer> _thinkTimer;

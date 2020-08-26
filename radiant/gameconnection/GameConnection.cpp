@@ -34,6 +34,8 @@ int GameConnection::newSeqno() {
 }
 
 void GameConnection::sendRequest(const std::string &request) {
+    if (!isAlive())
+        return; //connection is down, drop all requests
     assert(_seqnoInProgress == 0);
     int seqno = newSeqno();
     std::string fullMessage = seqnoPreamble(seqno) + request;
@@ -51,6 +53,8 @@ bool GameConnection::sendAnyPendingAsync() {
 }
 
 void GameConnection::think() {
+    if (!_connection)
+        return; //everything disabled, so just don't do anything
     _connection->think();
     if (_seqnoInProgress) {
         //check if full response is here
@@ -72,6 +76,10 @@ void GameConnection::think() {
         sentAsync = false;  //unused
     }
     _connection->think();
+    if (!_connection->isAlive()) {
+        //just lost connection: disable everything
+        disconnect(true);
+    }
 }
 
 void GameConnection::waitAction() {
@@ -101,16 +109,19 @@ std::string GameConnection::executeRequest(const std::string &request) {
     return std::string(_response.begin(), _response.end());
 }
 
+bool GameConnection::isAlive() const {
+    return _connection && _connection->isAlive();
+}
+
 bool GameConnection::connect() {
-    if (_connection && _connection->isAlive())
+    if (isAlive())
         return true;    //already connected
 
-    if (_connection)
-        _connection.reset();
-    if (_thinkTimer)
-        _thinkTimer.reset();
-    if (_mapEventListener)
-        _mapEventListener.reset();
+    if (_connection) {
+        //connection recently lost: disable everything
+        disconnect(true);
+        assert(!_connection);
+    }
 
     //connection using clsocket
     std::unique_ptr<CActiveSocket> connection(new CActiveSocket());
@@ -140,13 +151,22 @@ bool GameConnection::connect() {
     return true;
 }
 
-void GameConnection::disconnect() {
+void GameConnection::disconnect(bool force) {
+    setAutoReloadMapEnabled(false);
     setUpdateMapLevel(false, false);
     setCameraSyncEnabled(false);
-    if (_connection) {
-        finish();
-        _connection.reset();
+    if (force) {
+        //drop everything pending 
+        _seqnoInProgress = 0;
+        _mapObserver.clear();
+        _cameraOutPending = false;
     }
+    else {
+        //try to finish all pending
+        finish();
+    }
+    if (_connection)
+        _connection.reset();
     if (_thinkTimer) {
         _thinkTimer->Stop();
         _thinkTimer.reset();
@@ -156,7 +176,7 @@ void GameConnection::disconnect() {
 }
 
 GameConnection::~GameConnection() {
-    disconnect();
+    disconnect(true);
 };
 
 //-------------------------------------------------------------
@@ -179,7 +199,7 @@ const StringSet& GameConnection::getDependencies() const {
 void GameConnection::initialiseModule(const ApplicationContext& ctx) {
 }
 void GameConnection::shutdownModule() {
-    disconnect();
+    disconnect(true);
 }
 module::StaticModule<GameConnection> gameConnectionModule;
 
@@ -273,6 +293,8 @@ void GameConnection::setCameraSyncEnabled(bool enable) {
         _cameraObserver.reset();
     }
     if (enable) {
+        if (!connect())
+            return;
         if (!_cameraObserver) {
             _cameraObserver.reset(new GameConnection_CameraObserver(*this));
             GlobalCamera().addCameraObserver(_cameraObserver.get());
