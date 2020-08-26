@@ -11,37 +11,37 @@ namespace gameconn {
  */
 class MapObserver {
 public:
-	~MapObserver();
+    ~MapObserver();
 
-	//enable/disable the observer
-	void setEnabled(bool enabled);
+    //enable/disable the observer
+    void setEnabled(bool enabled);
 
-	//returns whether scene observer is enabled now
-	bool isEnabled() const;
+    //returns whether scene observer is enabled now
+    bool isEnabled() const;
 
-	//consider all pending changed "applied" right now
-	//(clears list of pending changes)
-	void clear();
+    //consider all pending changed "applied" right now
+    //(clears list of pending changes)
+    void clear();
 
-	//returns pending entity change since last clear (or since enabled)
-	const map::DiffEntityStatuses &getChanges() const;
+    //returns pending entity change since last clear (or since enabled)
+    const map::DiffEntityStatuses &getChanges() const;
 
 private:
-	//receives events about entity changes
-	void entityUpdated(const std::string &name, map::DiffStatus diff);
-	//add/remove entity observers on the set of entity nodes
-	void setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable);
+    //receives events about entity changes
+    void entityUpdated(const std::string &name, map::DiffStatus diff);
+    //add/remove entity observers on the set of entity nodes
+    void setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable);
 
-	//the observer put onto global scene
-	std::unique_ptr<scene::Graph::Observer> _sceneObserver;
-	//observers put on every entity on scene
-	std::map<IEntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
-	//set of entities with changes since last clear
-	map::DiffEntityStatuses _entityChanges;
+    //the observer put onto global scene
+    std::unique_ptr<scene::Graph::Observer> _sceneObserver;
+    //observers put on every entity on scene
+    std::map<IEntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
+    //set of entities with changes since last clear
+    map::DiffEntityStatuses _entityChanges;
 
-	//internal classes can call private methods
-	friend class MapObserver_EntityObserver;
-	friend class MapObserver_SceneObserver;
+    //internal classes can call private methods
+    friend class MapObserver_EntityObserver;
+    friend class MapObserver_SceneObserver;
 };
 
 }

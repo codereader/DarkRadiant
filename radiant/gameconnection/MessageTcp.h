@@ -14,23 +14,23 @@ namespace gameconn {
  */
 class MessageTcp {
 public:
-	MessageTcp();
-	~MessageTcp();
-	void init(std::unique_ptr<CActiveSocket> &&connection);
+    MessageTcp();
+    ~MessageTcp();
+    void init(std::unique_ptr<CActiveSocket> &&connection);
 
-	bool readMessage(std::vector<char> &message);
-	void writeMessage(const char *message, int len);
+    bool readMessage(std::vector<char> &message);
+    void writeMessage(const char *message, int len);
 
-	void think();
-	bool isAlive() const;
+    void think();
+    bool isAlive() const;
 
 private:
-	std::unique_ptr<CActiveSocket> tcp;
+    std::unique_ptr<CActiveSocket> tcp;
 
-	std::vector<char> inputBuffer;
-	int inputPos;
-	std::vector<char> outputBuffer;
-	int outputPos;
+    std::vector<char> inputBuffer;
+    int inputPos;
+    std::vector<char> outputBuffer;
+    int outputPos;
 };
 
 }
