@@ -28,6 +28,8 @@ private:
 	sigc::connection _mapNameChangedConn;
 	sigc::connection _mapModifiedChangedConn;
 
+	sigc::signal<void> _sigMainFrameConstructed;
+
 private:
 	void keyChanged();
 	void preDestructionCleanup();
@@ -58,6 +60,8 @@ public:
 
 	IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
 		const std::string& message, bool forceDisplay = false) override;
+
+	sigc::signal<void>& signal_MainFrameConstructed() override;
 
 	// Command to toggle the current layout's camera fullscreen mode
 	void toggleFullscreenCameraView(const cmd::ArgumentList& args);

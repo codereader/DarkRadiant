@@ -1,8 +1,9 @@
 #pragma once
 
 #include "imodule.h"
+#include <sigc++/signal.h>
 
-const std::string MODULE_MAINFRAME("MainFrame");
+const char* const MODULE_MAINFRAME("MainFrame");
 
 class wxFrame;
 class wxToolBar;
@@ -107,6 +108,15 @@ public:
 	 */
 	virtual IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
 		const std::string& message, bool forceDisplay = false) = 0;
+
+	/**
+	 * A signal emitted when the MainFrame window has been set up. Modules can
+	 * subscribe to this to register any UI parts that require a valid main window
+	 * or sub component like the group dialog to be constructed.
+	 * This is a one-time signal, after emission the subscribers will be 
+	 * automatically removed by this class.
+	 */
+	virtual sigc::signal<void>& signal_MainFrameConstructed() = 0;
 };
 
 // This is the accessor for the mainframe module

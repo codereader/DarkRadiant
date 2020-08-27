@@ -98,6 +98,7 @@ const StringSet& UserInterfaceModule::getDependencies() const
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_RADIANT_CORE);
 		_dependencies.insert(MODULE_MRU_MANAGER);
+		_dependencies.insert(MODULE_MAINFRAME);
 		_dependencies.insert(MODULE_MOUSETOOLMANAGER);
 	}
 
@@ -147,8 +148,8 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 		IOrthoContextMenu::SECTION_LAYER
 	);
 
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::ptr_fun(LayerControlDialog::onRadiantStartup));
+	GlobalMainFrame().signal_MainFrameConstructed().connect(
+		sigc::ptr_fun(LayerControlDialog::onMainFrameConstructed));
 
 	// Pre-load models
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(

@@ -214,7 +214,7 @@ void LayerControlDialog::toggle(const cmd::ArgumentList& args)
 	Instance().ToggleVisibility();
 }
 
-void LayerControlDialog::onRadiantStartup()
+void LayerControlDialog::onMainFrameConstructed()
 {
 	// Lookup the stored window information in the registry
 	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")

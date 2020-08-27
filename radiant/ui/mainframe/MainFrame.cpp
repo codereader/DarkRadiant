@@ -259,6 +259,11 @@ void MainFrame::construct()
 	// register the commands
 	GlobalMainFrameLayoutManager().registerCommands();
 
+	// Emit the "constructed" signal to give modules a chance to register
+	// their UI parts. Clear the signal afterwards.
+	signal_MainFrameConstructed().emit();
+	signal_MainFrameConstructed().clear();
+
 	enableScreenUpdates();
 
     updateAllWindows();
@@ -528,6 +533,11 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 		const std::string& message, bool forceDisplay)
 {
 	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
+}
+
+sigc::signal<void>& MainFrame::signal_MainFrameConstructed()
+{
+	return _sigMainFrameConstructed;
 }
 
 // Define the static MainFrame module

@@ -57,7 +57,7 @@ public:
 	static void toggle(const cmd::ArgumentList& args);
 
 	// Checks if dialog should be shown after startup
-	static void onRadiantStartup();
+	static void onMainFrameConstructed();
 
 	static LayerControlDialog& Instance();
 
