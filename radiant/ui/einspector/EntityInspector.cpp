@@ -327,7 +327,7 @@ void EntityInspector::createContextMenu()
     );
 }
 
-void EntityInspector::onRadiantStartup()
+void EntityInspector::onMainFrameConstructed()
 {
     // Add entity inspector to the group dialog
     IGroupDialog::PagePtr page(new IGroupDialog::Page);
@@ -393,8 +393,8 @@ void EntityInspector::initialiseModule(const IApplicationContext& ctx)
 {
     construct();
 
-    GlobalRadiant().signal_radiantStarted().connect(
-        sigc::mem_fun(this, &EntityInspector::onRadiantStartup)
+    GlobalMainFrame().signal_MainFrameConstructed().connect(
+        sigc::mem_fun(this, &EntityInspector::onMainFrameConstructed)
     );
     GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(this, &EntityInspector::onRadiantShutdown)

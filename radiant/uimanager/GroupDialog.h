@@ -116,7 +116,7 @@ private:
 	void onRadiantShutdown();
 
 	// Shows the most recently active page
-	void onRadiantStartup();
+	void onMainFrameConstructed();
 
 	// This is where the static shared_ptr of the singleton instance is held.
 	static GroupDialogPtr& InstancePtr();

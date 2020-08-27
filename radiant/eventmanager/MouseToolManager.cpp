@@ -30,7 +30,7 @@ const StringSet& MouseToolManager::getDependencies() const
 
     if (_dependencies.empty())
     {
-        _dependencies.insert(MODULE_RADIANT_APP);
+        _dependencies.insert(MODULE_MAINFRAME);
         _dependencies.insert(MODULE_UIMANAGER);
     }
 
@@ -39,8 +39,8 @@ const StringSet& MouseToolManager::getDependencies() const
 
 void MouseToolManager::initialiseModule(const IApplicationContext& ctx)
 {
-    GlobalRadiant().signal_radiantStarted().connect(
-        sigc::mem_fun(this, &MouseToolManager::onRadiantStartup));
+    GlobalMainFrame().signal_MainFrameConstructed().connect(
+        sigc::mem_fun(this, &MouseToolManager::onMainFrameConstructed));
 }
 
 void MouseToolManager::loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings)
@@ -101,7 +101,7 @@ void MouseToolManager::resetBindingsToDefault()
     loadToolMappings();
 }
 
-void MouseToolManager::onRadiantStartup()
+void MouseToolManager::onMainFrameConstructed()
 {
     loadToolMappings();
 }

@@ -562,7 +562,7 @@ bool MediaBrowser::isFavouriteSelected()
 	return row[_columns.isFavourite].getBool();
 }
 
-void MediaBrowser::onRadiantStartup()
+void MediaBrowser::onMainFrameConstructed()
 {
 	// Add the Media Browser page
 	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
@@ -984,6 +984,7 @@ const StringSet& MediaBrowser::getDependencies() const
 		_dependencies.insert(MODULE_SHADERSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_SHADERCLIPBOARD);
+		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;
@@ -1001,8 +1002,8 @@ void MediaBrowser::initialiseModule(const IApplicationContext& ctx)
 	construct();
 
 	// The startup event will add this page to the group dialog tab
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(*this, &MediaBrowser::onRadiantStartup)
+	GlobalMainFrame().signal_MainFrameConstructed().connect(
+		sigc::mem_fun(*this, &MediaBrowser::onMainFrameConstructed)
 	);
 
 	// Attach to the MaterialManager to get notified on unrealise/realise

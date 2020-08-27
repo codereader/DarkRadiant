@@ -163,8 +163,7 @@ private:
 	void onMaterialDefsUnloaded();
 	void onMaterialDefsLoaded();
 
-	// Radiant Event Listener
-	void onRadiantStartup();
+	void onMainFrameConstructed();
 
 	/**
 	* greebo: Command target for toggling the mediabrowser tab in the groupdialog.

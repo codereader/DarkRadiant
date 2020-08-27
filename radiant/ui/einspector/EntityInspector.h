@@ -234,7 +234,7 @@ public:
 	IPropertyEditorPtr getRegisteredPropertyEditor(const std::string& key);
 	void unregisterPropertyEditor(const std::string& key);
 
-	void onRadiantStartup();
+	void onMainFrameConstructed();
 	void onRadiantShutdown();
 
 	/* Entity::Observer implementation */

@@ -57,8 +57,8 @@ void GroupDialog::construct()
         sigc::mem_fun(*InstancePtr(), &GroupDialog::onRadiantShutdown)
     );
 
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(*InstancePtr(), &GroupDialog::onRadiantStartup)
+	GlobalMainFrame().signal_MainFrameConstructed().connect(
+		sigc::mem_fun(*InstancePtr(), &GroupDialog::onMainFrameConstructed)
 	);
 }
 
@@ -239,7 +239,7 @@ void GroupDialog::_postShow()
 	this->SetFocus();
 }
 
-void GroupDialog::onRadiantStartup()
+void GroupDialog::onMainFrameConstructed()
 {
 	std::string lastShownPage = registry::getValue<std::string>(RKEY_LAST_SHOWN_PAGE);	
 	

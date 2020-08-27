@@ -30,7 +30,6 @@ public:
     const StringSet& getDependencies() const;
     void initialiseModule(const IApplicationContext& ctx);
     void shutdownModule();
-    void onRadiantStartup();
 
     // Get the group defined by the given enum. This always succeeds, if the group
     // is not existing yet, a new one will be created internally.
@@ -46,6 +45,8 @@ public:
     void resetBindingsToDefault();
 
 private:
+    void onMainFrameConstructed();
+
     void loadToolMappings();
 	void loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings);
 
