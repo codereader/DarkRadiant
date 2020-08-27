@@ -641,6 +641,7 @@ const StringSet& OrthoContextMenu::getDependencies() const
         _dependencies.insert(MODULE_COMMANDSYSTEM);
         _dependencies.insert(MODULE_EVENTMANAGER);
         _dependencies.insert(MODULE_RADIANT_APP);
+        _dependencies.insert(MODULE_MAINFRAME);
     }
 
     return _dependencies;
@@ -648,7 +649,7 @@ const StringSet& OrthoContextMenu::getDependencies() const
 
 void OrthoContextMenu::initialiseModule(const IApplicationContext& ctx)
 {
-    GlobalRadiant().signal_radiantStarted().connect(
+    GlobalMainFrame().signal_MainFrameConstructed().connect(
         sigc::mem_fun(this, &OrthoContextMenu::constructMenu)
     );
 

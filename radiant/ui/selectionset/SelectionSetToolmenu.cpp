@@ -88,7 +88,7 @@ SelectionSetToolmenu::~SelectionSetToolmenu()
 
 void SelectionSetToolmenu::Init()
 {
-	GlobalRadiant().signal_radiantStarted().connect([&]()
+	GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
 	{
 		// Construct a new tool menu object on startup
 		_instance.reset(new SelectionSetToolmenu);
