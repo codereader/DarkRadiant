@@ -61,9 +61,12 @@ void RegionManager::disable()
     // Create a 64 unit border from the max world coord
     _bounds.extents -= Vector3(1,1,1)*64;
 
-    // Disable the exclude bit on all the scenegraph nodes
-    ExcludeAllWalker walker(false);
-    GlobalSceneGraph().root()->traverse(walker);
+    if (GlobalSceneGraph().root())
+    {
+        // Disable the exclude bit on all the scenegraph nodes
+        ExcludeAllWalker walker(false);
+        GlobalSceneGraph().root()->traverse(walker);
+    }
 }
 
 void RegionManager::enable() {
