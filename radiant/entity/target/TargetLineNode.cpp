@@ -48,7 +48,7 @@ std::size_t TargetLineNode::getHighlightFlags()
     return Highlight::NoHighlight;
 }
 
-const Vector3& TargetLineNode::getOwnerPosition() const
+Vector3 TargetLineNode::getOwnerPosition() const
 {
     try
     {
