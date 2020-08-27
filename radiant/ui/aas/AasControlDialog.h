@@ -44,11 +44,12 @@ public:
 
 	// Called during AAS module initialisation
 	static void Init();
-    static void OnRadiantStartup();
 
 	static AasControlDialog& Instance();
 
 private:
+    static void onMainFrameConstructed();
+
 	static AasControlDialogPtr& InstancePtr();
 
 	// TransientWindow events

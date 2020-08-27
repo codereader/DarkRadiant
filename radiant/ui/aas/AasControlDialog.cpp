@@ -162,7 +162,7 @@ void AasControlDialog::_preShow()
 	refresh();
 }
 
-void AasControlDialog::OnRadiantStartup()
+void AasControlDialog::onMainFrameConstructed()
 {
     // Lookup the stored window information in the registry
     if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
@@ -222,8 +222,8 @@ void AasControlDialog::Init()
 {
     GlobalCommandSystem().addCommand("ToggleAasControlDialog", AasControlDialog::Toggle);
 
-    GlobalRadiant().signal_radiantStarted().connect(
-        sigc::ptr_fun(&AasControlDialog::OnRadiantStartup)
+    GlobalMainFrame().signal_MainFrameConstructed().connect(
+        sigc::ptr_fun(&AasControlDialog::onMainFrameConstructed)
     );
 }
 

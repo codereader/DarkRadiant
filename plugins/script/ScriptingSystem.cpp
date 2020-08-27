@@ -408,6 +408,7 @@ const StringSet& ScriptingSystem::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;
@@ -418,7 +419,7 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Subscribe to get notified as soon as Radiant is fully initialised
-	GlobalRadiant().signal_radiantStarted().connect(
+	GlobalMainFrame().signal_MainFrameConstructed().connect(
 		sigc::mem_fun(this, &ScriptingSystem::initialise)
 	);
 
