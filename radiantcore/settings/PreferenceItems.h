@@ -30,7 +30,7 @@ public:
 
 class PreferenceEntry :
 	public PreferenceItemBase,
-	public virtual IPreferenceLabel
+	public virtual IPreferenceEntry
 {
 public:
 	PreferenceEntry(const std::string& label, const std::string& registryKey) :
