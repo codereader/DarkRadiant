@@ -1,18 +1,9 @@
 #include "RadiantModule.h"
 
-#include <iostream>
 #include <ctime>
-
-#include "iregistry.h"
-#include "icommandsystem.h"
 #include "itextstream.h"
-#include "iuimanager.h"
-#include "ieventmanager.h"
-#include "i18n.h"
-#include "imainframe.h"
 
 #include "scene/Node.h"
-
 #include "module/StaticModule.h"
 
 namespace radiant
@@ -75,17 +66,10 @@ void RadiantModule::shutdownModule()
 
 void RadiantModule::postModuleInitialisation()
 {
-    // Initialise the mainframe
-    GlobalMainFrame().construct();
-
-	// Broadcast the startup event
+    rMessage() << "All modules initialised, radiant started" << std::endl;
+	
+    // Broadcast the startup event
     broadcastStartupEvent();
-
-    // Load the shortcuts from the registry
-    GlobalEventManager().loadAccelerators();
-
-	// Show the top level window as late as possible
-	GlobalMainFrame().getWxTopLevelWindow()->Show();
 
     time_t localtime;
     time(&localtime);

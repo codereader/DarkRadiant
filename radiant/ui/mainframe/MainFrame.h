@@ -29,6 +29,7 @@ private:
 	sigc::connection _mapModifiedChangedConn;
 
 	sigc::signal<void> _sigMainFrameConstructed;
+	sigc::signal<void> _sigMainFrameReady;
 
 private:
 	void keyChanged();
@@ -62,6 +63,7 @@ public:
 		const std::string& message, bool forceDisplay = false) override;
 
 	sigc::signal<void>& signal_MainFrameConstructed() override;
+	sigc::signal<void>& signal_MainFrameReady() override;
 
 	// Command to toggle the current layout's camera fullscreen mode
 	void toggleFullscreenCameraView(const cmd::ArgumentList& args);
@@ -85,6 +87,9 @@ private:
 
 	// Creates the topmost application window
 	void createTopLevelWindow();
+
+	// Constructs the MainFrame and shows the Window
+	void onRadiantStarted();
 
 #ifdef WIN32
 	// Enables or disabled desktop composition, Windows-specific

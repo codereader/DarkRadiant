@@ -16,8 +16,8 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override;
 
 private:
-	// This gets called as soon as the mainframe starts up
-	void onRadiantStartup();
+	// This gets called as soon as the mainframe is shown
+	void onMainFrameReady();
 
 	void loadMapSafe(const std::string& map);
 };

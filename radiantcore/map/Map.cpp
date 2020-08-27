@@ -66,6 +66,7 @@ namespace
 
 Map::Map() :
     _lastCopyMapName(""),
+    _modified(false),
     _saveInProgress(false),
     _shutdownListener(0)
 {}
@@ -217,14 +218,14 @@ void Map::freeMap()
 
 bool Map::isModified() const
 {
-    return m_modified;
+    return _modified;
 }
 
 void Map::setModified(bool modifiedFlag)
 {
-    if (m_modified != modifiedFlag)
+    if (_modified != modifiedFlag)
     {
-        m_modified = modifiedFlag;
+        _modified = modifiedFlag;
 
         // when the map is modified, let the listeners now
         signal_modifiedChanged().emit();

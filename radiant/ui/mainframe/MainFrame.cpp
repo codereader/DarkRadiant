@@ -10,6 +10,7 @@
 #include "ientityinspector.h"
 #include "iorthoview.h"
 #include "iregistry.h"
+#include "iradiant.h"
 
 #include "log/Console.h"
 #include "xyview/GlobalXYWnd.h"
@@ -73,6 +74,7 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
 		_dependencies.insert(MODULE_CAMERA);
 		_dependencies.insert(MODULE_MAP);
+		_dependencies.insert(MODULE_RADIANT_APP);
 	}
 
 	return _dependencies;
@@ -146,6 +148,9 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 	_mapModifiedChangedConn = GlobalMapModule().signal_modifiedChanged().connect(
 		sigc::mem_fun(this, &MainFrame::updateTitle)
 	);
+
+	GlobalRadiant().signal_radiantStarted().connect(
+		sigc::mem_fun(this, &MainFrame::onRadiantStarted));
 }
 
 void MainFrame::shutdownModule()
@@ -166,6 +171,21 @@ void MainFrame::exitCmd(const cmd::ArgumentList& args)
 	{
 		getWxTopLevelWindow()->Close(false /* don't force */);
 	}
+}
+
+void MainFrame::onRadiantStarted()
+{
+	// Initialise the mainframe
+	construct();
+
+	// Load the shortcuts from the registry
+	GlobalEventManager().loadAccelerators();
+
+	// Show the top level window as late as possible
+	getWxTopLevelWindow()->Show();
+
+	signal_MainFrameReady().emit();
+	signal_MainFrameReady().clear();
 }
 
 void MainFrame::keyChanged()
@@ -538,6 +558,11 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()
 {
 	return _sigMainFrameConstructed;
+}
+
+sigc::signal<void>& MainFrame::signal_MainFrameReady()
+{
+	return _sigMainFrameReady;
 }
 
 // Define the static MainFrame module

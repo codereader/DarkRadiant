@@ -117,6 +117,14 @@ public:
 	 * automatically removed by this class.
 	 */
 	virtual sigc::signal<void>& signal_MainFrameConstructed() = 0;
+
+	/**
+	 * Signal fired after the MainFrame window is shown the first time
+	 * during application start up.
+	 * This is a one-time signal, after emission the subscribers will be 
+	 * automatically removed by this class.
+	 */
+	virtual sigc::signal<void>& signal_MainFrameReady() = 0;
 };
 
 // This is the accessor for the mainframe module

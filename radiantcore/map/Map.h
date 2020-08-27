@@ -42,7 +42,7 @@ class Map :
 	// Pointer to the resource for this map
 	IMapResourcePtr _resource;
 
-	bool m_modified;
+	bool _modified;
 
 	scene::INodePtr _worldSpawnNode; // "classname" "worldspawn" !
 

@@ -6,8 +6,9 @@
 #include "irender.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
+#include "itextstream.h"
 #include "igame.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "imru.h"
 #include "module/StaticModule.h"
 
@@ -18,7 +19,7 @@
 namespace map 
 {
 
-void StartupMapLoader::onRadiantStartup()
+void StartupMapLoader::onMainFrameReady()
 {
 	std::string mapToLoad = "";
 
@@ -99,7 +100,7 @@ const StringSet& StartupMapLoader::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_RADIANT_APP);
+		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;
@@ -109,8 +110,8 @@ void StartupMapLoader::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(*this, &StartupMapLoader::onRadiantStartup)
+	GlobalMainFrame().signal_MainFrameReady().connect(
+		sigc::mem_fun(*this, &StartupMapLoader::onMainFrameReady)
 	);
 }
 
