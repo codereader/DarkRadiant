@@ -56,7 +56,7 @@ public:
 	static AIEditingPanel& Instance();
 	static void Shutdown();
 
-	static void onRadiantStartup();
+	static void onMainFrameConstructed();
 
 	void onKeyInsert(const std::string& key, EntityKeyValue& value);
     void onKeyChange(const std::string& key, const std::string& val);

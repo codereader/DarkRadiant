@@ -74,8 +74,8 @@ public:
 			"MissionInfoEditDialog"
 		);
 
-		GlobalRadiant().signal_radiantStarted().connect(
-			sigc::ptr_fun(ui::AIEditingPanel::onRadiantStartup)
+		GlobalMainFrame().signal_MainFrameConstructed().connect(
+			sigc::ptr_fun(ui::AIEditingPanel::onMainFrameConstructed)
 		);	
 	}
 
@@ -94,5 +94,5 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	module::performDefaultInitialisation(registry);
 
-	registry.registerModule(EditingModulePtr(new EditingModule));
+	registry.registerModule(std::make_shared<EditingModule>());
 }

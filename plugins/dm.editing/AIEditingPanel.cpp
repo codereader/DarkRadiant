@@ -264,7 +264,7 @@ void AIEditingPanel::Shutdown()
 	}
 } 
 
-void AIEditingPanel::onRadiantStartup()
+void AIEditingPanel::onMainFrameConstructed()
 {
 	IGroupDialog::PagePtr page(new IGroupDialog::Page);
 

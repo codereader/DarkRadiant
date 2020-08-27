@@ -25,20 +25,20 @@
 #include "iuimanager.h"
 #include "iarchive.h"
 
-
 class GuiModule :
 	public RegisterableModule,
 	public std::enable_shared_from_this<GuiModule>
 {
 public:
 	// RegisterableModule implementation
-	virtual const std::string& getName() const
+	const std::string& getName() const override
 	{
 		static std::string _name("GUI Editing");
 		return _name;
 	}
 
-	virtual const StringSet& getDependencies() const {
+	const StringSet& getDependencies() const override
+	{
 		static StringSet _dependencies;
 
 		if (_dependencies.empty())
@@ -61,22 +61,23 @@ public:
 		return _dependencies;
 	}
 
-	virtual void initialiseModule(const IApplicationContext& ctx)
+	void initialiseModule(const IApplicationContext& ctx) override
 	{
 		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 		GlobalCommandSystem().addCommand("ReadableEditorDialog", ui::ReadableEditorDialog::RunDialog);
 		GlobalCommandSystem().addCommand("ReloadReadables", ui::ReadableReloader::run);
 
-		GlobalRadiant().signal_radiantStarted().connect(
-            sigc::mem_fun(this, &GuiModule::onRadiantStartup)
+		GlobalMainFrame().signal_MainFrameConstructed().connect(
+            sigc::mem_fun(this, &GuiModule::onMainFrameConstructed)
         );
 
 		// Create the Readable Editor Preferences
 		constructPreferences();
 	}
 
-	void onRadiantStartup()
+private:
+	void onMainFrameConstructed()
 	{
 		// Add menu items on radiant startup, to ensure that all menu items are existent at this point
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
@@ -119,6 +120,6 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	module::performDefaultInitialisation(registry);
 
-	registry.registerModule(GuiModulePtr(new GuiModule));
+	registry.registerModule(std::make_shared<GuiModule>());
 	registry.registerModule(std::make_shared<gui::GuiManager>());
 }
