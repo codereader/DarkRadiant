@@ -215,12 +215,12 @@ void StatusBarManager::rebuildStatusBar()
 	_statusBar->Show();
 }
 
-void StatusBarManager::onRadiantShutdown()
+void StatusBarManager::onMainFrameShuttingDown()
 {
     flushIdleCallback();
 
     _tempParent->Destroy();
-    _tempParent = NULL;
+    _tempParent = nullptr;
 }
 
 } // namespace ui

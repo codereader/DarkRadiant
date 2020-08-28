@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <sigc++/connection.h>
 #include "imap.h"
 #include "MapPosition.h"
 
@@ -15,8 +16,11 @@ private:
 
 	PositionMap _positions;
 
+	sigc::connection _mapEventConn;
+
 public:
 	MapPositionManager();
+	~MapPositionManager();
 
 private:
 	void convertLegacyPositions();

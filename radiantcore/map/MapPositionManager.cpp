@@ -103,7 +103,7 @@ namespace map
 
 MapPositionManager::MapPositionManager()
 {
-	GlobalMapModule().signal_mapEvent().connect(
+	_mapEventConn = GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(this, &MapPositionManager::onMapEvent)
 	);
 
@@ -127,6 +127,11 @@ MapPositionManager::MapPositionManager()
 			std::bind(&MapPosition::recall, _positions[i].get(), std::placeholders::_1)
 		);
 	}
+}
+
+MapPositionManager::~MapPositionManager()
+{
+	_mapEventConn.disconnect();
 }
 
 void MapPositionManager::convertLegacyPositions()

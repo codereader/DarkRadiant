@@ -53,8 +53,8 @@ void GroupDialog::construct()
 {
 	InstancePtr() = GroupDialogPtr(new GroupDialog);
 
-	GlobalRadiant().signal_radiantShutdown().connect(
-        sigc::mem_fun(*InstancePtr(), &GroupDialog::onRadiantShutdown)
+	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+        sigc::mem_fun(*InstancePtr(), &GroupDialog::onMainFrameShuttingDown)
     );
 
 	GlobalMainFrame().signal_MainFrameConstructed().connect(
@@ -249,7 +249,7 @@ void GroupDialog::onMainFrameConstructed()
 	}
 }
 
-void GroupDialog::onRadiantShutdown()
+void GroupDialog::onMainFrameShuttingDown()
 {
 	if (IsShownOnScreen())
 	{

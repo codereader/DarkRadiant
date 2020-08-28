@@ -80,7 +80,7 @@ private:
 									  const std::string& buttonLabel, const std::string& buttonIcon,
 									  const std::string& key);
 
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 	void onSelectionChanged(const ISelectable& selectable);
 
 	void rescanSelection();

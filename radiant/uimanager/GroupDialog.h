@@ -113,7 +113,7 @@ private:
 	/** greebo: Safely disconnects this window from
 	* 			the eventmanager and saves the window position.
 	*/
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 
 	// Shows the most recently active page
 	void onMainFrameConstructed();

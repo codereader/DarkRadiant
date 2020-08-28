@@ -58,14 +58,14 @@ IFilterMenuPtr UIManager::createFilterMenu()
 
 void UIManager::clear()
 {
-	_statusBarManager->onRadiantShutdown();
+	_statusBarManager->onMainFrameShuttingDown();
 
 	_menuManager->clear();
-	_dialogManager = DialogManagerPtr();
+	_dialogManager.reset();
 
 	wxFileSystem::CleanUpHandlers();
 	wxArtProvider::Delete(_bitmapArtProvider);
-	_bitmapArtProvider = NULL;
+	_bitmapArtProvider = nullptr;
 }
 
 const std::string& UIManager::ArtIdPrefix() const
@@ -116,7 +116,7 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
 	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
 
-	GlobalRadiant().signal_radiantShutdown().connect(
+	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &UIManager::clear)
     );
 

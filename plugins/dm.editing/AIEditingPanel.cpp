@@ -5,7 +5,7 @@
 #include "ieclass.h"
 #include "itextstream.h"
 #include "ientityinspector.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iundo.h"
 #include "igroupdialog.h"
 #include "iuimanager.h"
@@ -39,8 +39,8 @@ AIEditingPanel::AIEditingPanel() :
 
 	constructWidgets();
 
-	GlobalRadiant().signal_radiantShutdown().connect(
-		sigc::mem_fun(*this, &AIEditingPanel::onRadiantShutdown)
+	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+		sigc::mem_fun(*this, &AIEditingPanel::onMainFrameShuttingDown)
 	);	
 
 	_selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect(
@@ -288,7 +288,7 @@ void AIEditingPanel::onMainFrameConstructed()
 		sigc::mem_fun(Instance(), &AIEditingPanel::updateWidgetsFromSelection));
 }
 
-void AIEditingPanel::onRadiantShutdown()
+void AIEditingPanel::onMainFrameShuttingDown()
 {
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();

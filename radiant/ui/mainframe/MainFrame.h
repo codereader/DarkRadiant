@@ -91,7 +91,7 @@ private:
 	void createTopLevelWindow();
 
 	// Constructs the MainFrame and shows the Window
-	void onRadiantStarted();
+	void postModuleInitialisation();
 
 #ifdef WIN32
 	// Enables or disabled desktop composition, Windows-specific

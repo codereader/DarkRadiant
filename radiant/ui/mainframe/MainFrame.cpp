@@ -74,7 +74,6 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
 		_dependencies.insert(MODULE_CAMERA);
 		_dependencies.insert(MODULE_MAP);
-		_dependencies.insert(MODULE_RADIANT_APP);
 	}
 
 	return _dependencies;
@@ -149,8 +148,9 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 		sigc::mem_fun(this, &MainFrame::updateTitle)
 	);
 
-	GlobalRadiant().signal_radiantStarted().connect(
-		sigc::mem_fun(this, &MainFrame::onRadiantStarted));
+	// Subscribe for the post-module init event
+	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
+		sigc::mem_fun(this, &MainFrame::postModuleInitialisation));
 }
 
 void MainFrame::shutdownModule()
@@ -173,7 +173,7 @@ void MainFrame::exitCmd(const cmd::ArgumentList& args)
 	}
 }
 
-void MainFrame::onRadiantStarted()
+void MainFrame::postModuleInitialisation()
 {
 	// Initialise the mainframe
 	construct();
@@ -354,9 +354,6 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 	signal_MainFrameShuttingDown().emit();
 	signal_MainFrameShuttingDown().clear();
 	
-	// TODO: Remove this
-	radiant::getGlobalRadiant()->broadcastShutdownEvent();
-
     // Destroy the actual window
     _topLevelWindow->Destroy();
 

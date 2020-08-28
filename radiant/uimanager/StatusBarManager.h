@@ -98,7 +98,7 @@ public:
 	 */
     void setText(const std::string& name, const std::string& text, bool immediateUpdate) override;
 
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 
 protected:
 	// Gets called when the app is idle - this fills in the status text

@@ -60,6 +60,8 @@ void RadiantModule::shutdownModule()
 {
 	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
+    broadcastShutdownEvent();
+
 	_radiantStarted.clear();
     _radiantShutdown.clear();
 }
