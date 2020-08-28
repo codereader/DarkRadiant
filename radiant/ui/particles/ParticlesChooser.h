@@ -66,7 +66,7 @@ private:
 	void setSelectedParticle(const std::string& particleName);
 
 private:
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 	void reloadParticles();
 
 public:

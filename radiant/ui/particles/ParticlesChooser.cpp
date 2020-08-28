@@ -180,7 +180,7 @@ void ParticlesChooser::onTreeStorePopulationFinished(wxutil::TreeModel::Populati
 	_particlesLoader.reset();
 }
 
-void ParticlesChooser::onRadiantShutdown()
+void ParticlesChooser::onMainFrameShuttingDown()
 {
 	rMessage() << "ParticlesChooser shutting down." << std::endl;
 
@@ -214,8 +214,8 @@ ParticlesChooser& ParticlesChooser::getInstance()
 	{
 		instancePtr.reset(new ParticlesChooser);
 
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &ParticlesChooser::onRadiantShutdown)
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &ParticlesChooser::onMainFrameShuttingDown)
         );
 		GlobalParticlesManager().signal_particlesReloaded().connect(
             sigc::mem_fun(*instancePtr, &ParticlesChooser::reloadParticles)

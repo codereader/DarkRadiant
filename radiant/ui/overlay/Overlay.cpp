@@ -49,9 +49,9 @@ void Overlay::observeKey(const std::string& key)
     );
 }
 
-void Overlay::onRadiantShutdown()
+void Overlay::onMainFrameShuttingDown()
 {
-	_texture = TexturePtr();
+	_texture.reset();
 	destroyInstance();
 }
 
@@ -67,9 +67,9 @@ OverlayPtr& Overlay::InstancePtr()
 		// Not yet instantiated, do it now
 		_instancePtr = OverlayPtr(new Overlay);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*_instancePtr, &Overlay::onRadiantShutdown)
+		// Pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*_instancePtr, &Overlay::onMainFrameShuttingDown)
         );
 	}
 

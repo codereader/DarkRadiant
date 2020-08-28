@@ -75,8 +75,8 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 		sigc::mem_fun(*this, &SelectionSetToolmenu::onMapEvent)
 	);
 
-	GlobalRadiant().signal_radiantShutdown().connect(
-		sigc::mem_fun(*this, &SelectionSetToolmenu::onRadiantShutdown)
+	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+		sigc::mem_fun(*this, &SelectionSetToolmenu::onMainFrameShuttingDown)
 	);
 
 	connectToMapRoot();
@@ -95,7 +95,7 @@ void SelectionSetToolmenu::Init()
 	});
 }
 
-void SelectionSetToolmenu::onRadiantShutdown()
+void SelectionSetToolmenu::onMainFrameShuttingDown()
 {
 	if (_dropdownToolId != wxID_NONE)
 	{

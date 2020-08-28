@@ -155,9 +155,9 @@ ModelSelector& ModelSelector::Instance()
         // Not yet instantiated, do it now
         instancePtr.reset(new ModelSelector);
 
-        // Register this instance with GlobalRadiant() at once
-        GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &ModelSelector::onRadiantShutdown)
+        // Pre-destruction cleanup
+        GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &ModelSelector::onMainFrameShuttingDown)
         );
     }
 
@@ -170,7 +170,7 @@ ModelSelectorPtr& ModelSelector::InstancePtr()
     return _instancePtr;
 }
 
-void ModelSelector::onRadiantShutdown()
+void ModelSelector::onMainFrameShuttingDown()
 {
     rMessage() << "ModelSelector shutting down." << std::endl;
 

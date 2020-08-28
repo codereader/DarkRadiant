@@ -129,7 +129,7 @@ SurfaceInspectorPtr& SurfaceInspector::InstancePtr()
 	return _instancePtr;
 }
 
-void SurfaceInspector::onRadiantShutdown()
+void SurfaceInspector::onMainFrameShuttingDown()
 {
 	rMessage() << "SurfaceInspector shutting down." << std::endl;
 
@@ -452,9 +452,9 @@ SurfaceInspector& SurfaceInspector::Instance()
 		// Not yet instantiated, do it now
 		instancePtr.reset(new SurfaceInspector);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &SurfaceInspector::onRadiantShutdown)
+		// Pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &SurfaceInspector::onMainFrameShuttingDown)
         );
 	}
 

@@ -57,7 +57,7 @@ private:
 
 	static OverlayDialog& Instance();
 
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 
 	void _preShow();
 

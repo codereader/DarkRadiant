@@ -286,10 +286,10 @@ PrefabSelector& PrefabSelector::Instance()
 		// Not yet instantiated, do it now
 		instancePtr.reset(new PrefabSelector);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-			sigc::mem_fun(*instancePtr, &PrefabSelector::onRadiantShutdown)
-			);
+		// Pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+			sigc::mem_fun(*instancePtr, &PrefabSelector::onMainFrameShuttingDown)
+		);
 	}
 
 	return *instancePtr;
@@ -301,7 +301,7 @@ PrefabSelectorPtr& PrefabSelector::InstancePtr()
 	return _instancePtr;
 }
 
-void PrefabSelector::onRadiantShutdown()
+void PrefabSelector::onMainFrameShuttingDown()
 {
 	rMessage() << "PrefabSelector shutting down." << std::endl;
 

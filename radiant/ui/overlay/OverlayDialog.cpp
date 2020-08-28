@@ -132,7 +132,7 @@ void OverlayDialog::_preShow()
 	initialiseWidgets();
 }
 
-void OverlayDialog::onRadiantShutdown()
+void OverlayDialog::onMainFrameShuttingDown()
 {
     rMessage() << "OverlayDialog shutting down." << std::endl;
 
@@ -150,9 +150,9 @@ OverlayDialog& OverlayDialog::Instance()
         // Not yet instantiated, do it now
         instancePtr.reset(new OverlayDialog);
 
-        // Register this instance with GlobalRadiant() at once
-        GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &OverlayDialog::onRadiantShutdown)
+        // Pre-destruction cleanup
+        GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &OverlayDialog::onMainFrameShuttingDown)
         );
     }
 

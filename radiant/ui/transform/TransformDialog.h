@@ -79,6 +79,12 @@ private:
 	void onClickSmaller(wxCommandEvent& ev, EntryRow* row);
 	void onClickLarger(wxCommandEvent& ev, EntryRow* row);
 
+	/** 
+	 * greebo: Safely disconnects this dialog from all systems
+	 * and saves the window state to the registry.
+	 */
+	void onMainFrameShuttingDown();
+
 public:
 	// Constructor
 	TransformDialog();
@@ -87,11 +93,6 @@ public:
 	 * Constructs the instance and calls toggle() when invoked.
 	 */
 	static TransformDialog& Instance();
-
-	/** greebo: Safely disconnects this dialog from all systems
-	 * 			(EventManager) also saves the window state to the registry.
-	 */
-	void onRadiantShutdown();
 
 	/** greebo: The command target to connect to the EventManager.
 	 */

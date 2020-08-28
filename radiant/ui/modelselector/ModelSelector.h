@@ -166,6 +166,8 @@ private:
 
 	void onModelLoaded(const model::ModelNodePtr& modelNode);
 
+	void onMainFrameShuttingDown();
+
 protected:
 	void _onDeleteEvent(wxCloseEvent& ev);
 
@@ -187,8 +189,6 @@ public:
 
 	// Starts the background population thread
     static void Populate();
-
-	void onRadiantShutdown();
 };
 
 }

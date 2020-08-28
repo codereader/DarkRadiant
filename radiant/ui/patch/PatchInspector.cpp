@@ -64,7 +64,7 @@ std::shared_ptr<PatchInspector>& PatchInspector::InstancePtr()
 	return _instancePtr;
 }
 
-void PatchInspector::onRadiantShutdown()
+void PatchInspector::onMainFrameShuttingDown()
 {
 	rMessage() << "PatchInspector shutting down." << std::endl;
 
@@ -87,9 +87,9 @@ PatchInspector& PatchInspector::Instance()
 		// Not yet instantiated, do it now
 		instancePtr.reset(new PatchInspector);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &PatchInspector::onRadiantShutdown)
+		// Pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &PatchInspector::onMainFrameShuttingDown)
         );
 	}
 

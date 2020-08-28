@@ -113,9 +113,9 @@ public:
 	// Command target to toggle the dialog
 	static void toggle(const cmd::ArgumentList& args);
 
-	void onRadiantShutdown();
-
 private:
+	void onMainFrameShuttingDown();
+
 	void doUpdate();
 
 	// This is where the static shared_ptr of the singleton instance is held.

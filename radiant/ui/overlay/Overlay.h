@@ -63,6 +63,8 @@ private:
 
 	static OverlayPtr& InstancePtr();
 
+	void onMainFrameShuttingDown();
+
 public:
 	// Frees the static shared_ptr of the singleton instance
 	static void destroyInstance();
@@ -71,8 +73,6 @@ public:
 	 * Static method to retrieve the singleton Overlay instance.
 	 */
 	static Overlay& Instance();
-
-	void onRadiantShutdown();
 
 	// Sets the name of the image that should be loaded
 	void setImage(const std::string& imageName);

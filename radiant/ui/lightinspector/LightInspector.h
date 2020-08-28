@@ -92,6 +92,10 @@ private:
      */
     void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel& listStore);
 
+    // Safely disconnects this dialog from all the systems
+    // and saves the window size/position to the registry
+    void onMainFrameShuttingDown();
+
 public:
 
     /** Toggle the visibility of the dialog instance, constructing it if necessary.
@@ -104,10 +108,6 @@ public:
 
     // Update the sensitivity of the widgets
     void update();
-
-    // Safely disconnects this dialog from all the systems
-    // and saves the window size/position to the registry
-    void onRadiantShutdown();
 };
 
 } // namespace

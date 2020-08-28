@@ -82,7 +82,7 @@ LightInspectorPtr& LightInspector::InstancePtr()
     return _instancePtr;
 }
 
-void LightInspector::onRadiantShutdown()
+void LightInspector::onMainFrameShuttingDown()
 {
     if (IsShownOnScreen())
     {
@@ -270,9 +270,9 @@ LightInspector& LightInspector::Instance()
         // Not yet instantiated, do it now
         instancePtr.reset(new LightInspector);
 
-        // Register this instance with GlobalRadiant() at once
-        GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &LightInspector::onRadiantShutdown)
+        // Pre-destruction cleanup
+        GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &LightInspector::onMainFrameShuttingDown)
         );
     }
 

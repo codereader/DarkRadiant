@@ -61,7 +61,7 @@ TransformDialog::TransformDialog()
 	InitialiseWindowPosition(260, 314, RKEY_WINDOW_STATE);
 }
 
-void TransformDialog::onRadiantShutdown()
+void TransformDialog::onMainFrameShuttingDown()
 {
 	rMessage() << "TransformDialog shutting down." << std::endl;
 
@@ -84,9 +84,9 @@ TransformDialogPtr& TransformDialog::InstancePtr()
 		// Not yet instantiated, do it now
 		_instancePtr = TransformDialogPtr(new TransformDialog);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*_instancePtr, &TransformDialog::onRadiantShutdown)
+		// Pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*_instancePtr, &TransformDialog::onMainFrameShuttingDown)
         );
 	}
 

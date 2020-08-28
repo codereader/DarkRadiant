@@ -128,7 +128,7 @@ public:
 	 * (SelectionSystem, EventManager, ...)
 	 * Also saves the window state to the registry.
 	 */
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 
 	// Patch::Observer
 	void onPatchControlPointsChanged();

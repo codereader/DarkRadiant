@@ -41,7 +41,7 @@ private:
 	void onDeleteAllSetsClicked(wxCommandEvent& ev);
 
 	void onMapEvent(IMap::MapEvent ev);
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 
 	void connectToMapRoot();
 	void disconnectFromMapRoot();

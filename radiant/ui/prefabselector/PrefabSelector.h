@@ -127,8 +127,10 @@ private:
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 	void onRescanPrefabs(wxCommandEvent& ev);
 
+	void onMainFrameShuttingDown();
+
 public:
-	int ShowModal();
+	int ShowModal() override;
 
 	/**
 	* Display the Selector instance, constructing it on first use, and
@@ -139,8 +141,6 @@ public:
 	* the dialog was closed.
 	*/
 	static Result ChoosePrefab(const std::string& curPrefab = "");
-
-	void onRadiantShutdown();
 };
 
 }
