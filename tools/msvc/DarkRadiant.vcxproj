@@ -217,7 +217,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="..\..\radiant\RadiantApp.cpp" />
-    <ClCompile Include="..\..\radiant\RadiantModule.cpp" />
     <ClCompile Include="..\..\radiant\render\View.cpp" />
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
@@ -393,7 +392,6 @@
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantApp.h" />
-    <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h" />
     <ClInclude Include="..\..\radiant\render\View.h" />
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />

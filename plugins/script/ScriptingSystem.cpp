@@ -404,7 +404,6 @@ const StringSet& ScriptingSystem::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_RADIANT_APP);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_EVENTMANAGER);

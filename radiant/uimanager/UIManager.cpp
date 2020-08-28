@@ -87,7 +87,6 @@ const StringSet& UIManager::getDependencies() const
 	{
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_RADIANT_APP);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_COUNTER);

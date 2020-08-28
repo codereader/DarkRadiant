@@ -1,7 +1,6 @@
 #include "MainFrame.h"
 
 #include "i18n.h"
-#include "RadiantModule.h"
 #include "igroupdialog.h"
 #include "imap.h"
 #include "ieventmanager.h"

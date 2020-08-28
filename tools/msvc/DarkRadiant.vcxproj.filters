@@ -175,9 +175,6 @@
     <ClCompile Include="..\..\radiant\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\RadiantModule.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\camera\Camera.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
@@ -672,9 +669,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\RadiantModule.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\camera\Camera.h">
       <Filter>src\camera</Filter>
     </ClInclude>
