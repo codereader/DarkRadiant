@@ -301,8 +301,16 @@ public:
 	typedef sigc::signal<void, const std::string&, float> ProgressSignal;
 	virtual ProgressSignal& signal_moduleInitialisationProgress() = 0;
 
+	/**
+	 * Invoked right before all modules are going to uninitialised, at the
+	 * beginning of the radiant shutdown phase.
+	 * This is a fire-once signal which removes all subscribers after firing.
+	 */
+	virtual sigc::signal<void>& signal_modulesUninitialising() = 0;
+
     /**
     * Invoked when all modules have been shut down (i.e. after shutdownModule()).
+	* This is a fire-once signal which removes all subscribers after firing.
     */
     virtual sigc::signal<void>& signal_allModulesUninitialised() = 0;
 

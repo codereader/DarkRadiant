@@ -845,7 +845,6 @@ const StringSet& Map::getDependencies() const
 
     if (_dependencies.empty())
 	{
-        _dependencies.insert(MODULE_RADIANT_APP);
 		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
@@ -878,8 +877,9 @@ void Map::initialiseModule(const IApplicationContext& ctx)
         std::make_shared<MapPropertyInfoFileModule>()
     );
 
-    GlobalRadiant().signal_radiantShutdown().connect(
-        sigc::mem_fun(this, &Map::onRadiantShutdown)
+    // Free the map right before all modules are shut down
+    module::GlobalModuleRegistry().signal_modulesUninitialising().connect(
+        sigc::mem_fun(this, &Map::freeMap)
     );
 
     _shutdownListener = GlobalRadiantCore().getMessageBus().addListener(
@@ -906,11 +906,6 @@ void Map::handleShutdownRequest(radiant::ApplicationShutdownRequest& request)
     {
         request.deny();
     }
-}
-
-void Map::onRadiantShutdown()
-{
-    freeMap();
 }
 
 } // namespace map

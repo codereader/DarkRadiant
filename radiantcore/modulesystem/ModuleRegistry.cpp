@@ -196,6 +196,9 @@ void ModuleRegistry::shutdownModules()
 		throw std::logic_error("ModuleRegistry: shutdownModules called twice.");
 	}
 
+	_sigModulesUninitialising.emit();
+	_sigModulesUninitialising.clear();
+
 	for (ModulesMap::value_type& pair : _initialisedModules)
 	{
 		pair.second->shutdownModule();
@@ -268,6 +271,11 @@ sigc::signal<void>& ModuleRegistry::signal_allModulesInitialised()
 ModuleRegistry::ProgressSignal& ModuleRegistry::signal_moduleInitialisationProgress()
 {
 	return _sigModuleInitialisationProgress;
+}
+
+sigc::signal<void>& ModuleRegistry::signal_modulesUninitialising()
+{
+	return _sigModulesUninitialising;
 }
 
 sigc::signal<void>& ModuleRegistry::signal_allModulesUninitialised()

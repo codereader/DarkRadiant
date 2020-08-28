@@ -533,6 +533,9 @@ void MediaBrowser::construct()
 		if (ev.GetEventObject() == _mainWidget)
 		{
 			_treeView = nullptr;
+			_shaderClipboardConn.disconnect();
+			_materialDefsLoaded.disconnect();
+			_materialDefsUnloaded.disconnect();
 		}
 		ev.Skip();
 	});

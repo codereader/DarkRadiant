@@ -229,8 +229,6 @@ private:
 
 	void clearMapResource();
 
-	void onRadiantShutdown();
-
 }; // class Map
 
 } // namespace map

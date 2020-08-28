@@ -44,6 +44,7 @@ private:
     sigc::signal<void> _sigAllModulesInitialised;
 	sigc::signal<void> _sigAllModulesUninitialised;
 	sigc::signal<void> _sigModulesUnloading;
+	sigc::signal<void> _sigModulesUninitialising;
 	ProgressSignal _sigModuleInitialisationProgress;
 
 	// Dynamic library loader
@@ -76,6 +77,7 @@ public:
 
     sigc::signal<void>& signal_allModulesInitialised() override;
 	ProgressSignal& signal_moduleInitialisationProgress() override;
+    sigc::signal<void>& signal_modulesUninitialising() override;
     sigc::signal<void>& signal_allModulesUninitialised() override;
     sigc::signal<void>& signal_modulesUnloading() override;
 
