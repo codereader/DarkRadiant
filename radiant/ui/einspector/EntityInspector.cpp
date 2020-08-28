@@ -342,7 +342,7 @@ void EntityInspector::onMainFrameConstructed()
     GlobalGroupDialog().addPage(page);
 }
 
-void EntityInspector::onRadiantShutdown()
+void EntityInspector::onMainFrameShuttingDown()
 {
     _undoHandler.disconnect();
     _redoHandler.disconnect();
@@ -396,8 +396,8 @@ void EntityInspector::initialiseModule(const IApplicationContext& ctx)
     GlobalMainFrame().signal_MainFrameConstructed().connect(
         sigc::mem_fun(this, &EntityInspector::onMainFrameConstructed)
     );
-    GlobalRadiant().signal_radiantShutdown().connect(
-        sigc::mem_fun(this, &EntityInspector::onRadiantShutdown)
+    GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+        sigc::mem_fun(this, &EntityInspector::onMainFrameShuttingDown)
     );
 
     GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);

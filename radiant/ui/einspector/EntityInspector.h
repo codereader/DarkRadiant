@@ -235,7 +235,7 @@ public:
 	void unregisterPropertyEditor(const std::string& key);
 
 	void onMainFrameConstructed();
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 
 	/* Entity::Observer implementation */
     void onKeyInsert(const std::string& key, EntityKeyValue& value);

@@ -172,7 +172,7 @@ void AasControlDialog::onMainFrameConstructed()
     }
 }
 
-void AasControlDialog::onRadiantShutdown()
+void AasControlDialog::onMainFrameShuttingDown()
 {
 	rMessage() << "AasControlDialog shutting down." << std::endl;
 
@@ -209,9 +209,9 @@ AasControlDialog& AasControlDialog::Instance()
 		// Not yet instantiated, do it now
 		instancePtr.reset(new AasControlDialog);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &AasControlDialog::onRadiantShutdown)
+		// Register for the pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &AasControlDialog::onMainFrameShuttingDown)
         );
 	}
 

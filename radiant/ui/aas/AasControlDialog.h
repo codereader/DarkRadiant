@@ -49,6 +49,7 @@ public:
 
 private:
     static void onMainFrameConstructed();
+    void onMainFrameShuttingDown();
 
 	static AasControlDialogPtr& InstancePtr();
 
@@ -57,7 +58,6 @@ private:
 
 	void populateWindow();
     void createButtons();
-    void onRadiantShutdown();
 	void clearControls();
 
 	void onMapEvent(IMap::MapEvent ev);
