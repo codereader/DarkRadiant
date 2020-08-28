@@ -307,9 +307,6 @@ void MainFrame::preDestructionCleanup()
     {
         removeLayout();
     }
-
-	// Broadcast shutdown event to RadiantListeners
-	radiant::getGlobalRadiant()->broadcastShutdownEvent();
 }
 
 void MainFrame::updateTitle()
@@ -352,6 +349,13 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
     // Invoke cleanup code which still needs the GUI hierarchy to be
     // present
     preDestructionCleanup();
+
+	// Broadcast shutdown event
+	signal_MainFrameShuttingDown().emit();
+	signal_MainFrameShuttingDown().clear();
+	
+	// TODO: Remove this
+	radiant::getGlobalRadiant()->broadcastShutdownEvent();
 
     // Destroy the actual window
     _topLevelWindow->Destroy();
@@ -563,6 +567,11 @@ sigc::signal<void>& MainFrame::signal_MainFrameConstructed()
 sigc::signal<void>& MainFrame::signal_MainFrameReady()
 {
 	return _sigMainFrameReady;
+}
+
+sigc::signal<void>& MainFrame::signal_MainFrameShuttingDown()
+{
+	return _sigMainFrameShuttingDown;
 }
 
 // Define the static MainFrame module

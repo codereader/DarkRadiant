@@ -30,6 +30,7 @@ private:
 
 	sigc::signal<void> _sigMainFrameConstructed;
 	sigc::signal<void> _sigMainFrameReady;
+	sigc::signal<void> _sigMainFrameShuttingDown;
 
 private:
 	void keyChanged();
@@ -64,6 +65,7 @@ public:
 
 	sigc::signal<void>& signal_MainFrameConstructed() override;
 	sigc::signal<void>& signal_MainFrameReady() override;
+	sigc::signal<void>& signal_MainFrameShuttingDown() override;
 
 	// Command to toggle the current layout's camera fullscreen mode
 	void toggleFullscreenCameraView(const cmd::ArgumentList& args);

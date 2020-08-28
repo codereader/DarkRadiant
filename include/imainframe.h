@@ -125,6 +125,15 @@ public:
 	 * automatically removed by this class.
 	 */
 	virtual sigc::signal<void>& signal_MainFrameReady() = 0;
+
+	/**
+	 * Signal fired when the UI is shutting down, right before the MainFrame 
+	 * window will be destroyed. Dependant UI modules can listen to this
+	 * event to get a chance to clean up and save their state.
+	 * This is a one-time signal, after emission the subscribers will be
+	 * automatically removed by this class.
+	 */
+	virtual sigc::signal<void>& signal_MainFrameShuttingDown() = 0;
 };
 
 // This is the accessor for the mainframe module
