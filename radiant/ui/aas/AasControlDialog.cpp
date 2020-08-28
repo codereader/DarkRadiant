@@ -187,7 +187,7 @@ void AasControlDialog::onMainFrameShuttingDown()
         Hide();
     }
 
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window
 	SendDestroyEvent();
 
 	// Final step: clear the instance pointer

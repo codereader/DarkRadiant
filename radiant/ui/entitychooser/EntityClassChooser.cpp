@@ -176,9 +176,9 @@ EntityClassChooser& EntityClassChooser::Instance()
         // Not yet instantiated, do it now
         instancePtr.reset(new EntityClassChooser);
 
-        // Register this instance with GlobalRadiant() at once
-        GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &EntityClassChooser::onRadiantShutdown)
+        // Pre-destruction cleanup
+        GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &EntityClassChooser::onMainFrameShuttingDown)
         );
     }
 
@@ -191,7 +191,7 @@ EntityClassChooserPtr& EntityClassChooser::InstancePtr()
     return _instancePtr;
 }
 
-void EntityClassChooser::onRadiantShutdown()
+void EntityClassChooser::onMainFrameShuttingDown()
 {
     rMessage() << "EntityClassChooser shutting down." << std::endl;
 

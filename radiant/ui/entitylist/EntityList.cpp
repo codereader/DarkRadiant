@@ -213,14 +213,14 @@ void EntityList::toggle(const cmd::ArgumentList& args)
 	Instance().ToggleVisibility();
 }
 
-void EntityList::onRadiantShutdown()
+void EntityList::onMainFrameShuttingDown()
 {
 	if (IsShownOnScreen())
 	{
 		Hide();
 	}
 
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window
 	SendDestroyEvent();
 	InstancePtr().reset();
 }
@@ -236,11 +236,11 @@ EntityList& EntityList::Instance()
 	if (InstancePtr() == NULL)
 	{
 		// Not yet instantiated, do it now
-		InstancePtr() = EntityListPtr(new EntityList);
+		InstancePtr().reset(new EntityList);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*InstancePtr(), &EntityList::onRadiantShutdown)
+		// Pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*InstancePtr(), &EntityList::onMainFrameShuttingDown)
         );
 	}
 

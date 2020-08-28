@@ -224,7 +224,7 @@ void LayerControlDialog::onMainFrameConstructed()
 	}
 }
 
-void LayerControlDialog::onRadiantShutdown()
+void LayerControlDialog::onMainFrameShuttingDown()
 {
 	rMessage() << "LayerControlDialog shutting down." << std::endl;
 
@@ -237,7 +237,7 @@ void LayerControlDialog::onRadiantShutdown()
         Hide();
     }
 
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window
 	SendDestroyEvent();
 
 	// Final step: clear the instance pointer
@@ -259,9 +259,9 @@ LayerControlDialog& LayerControlDialog::Instance()
 		// Not yet instantiated, do it now
 		instancePtr.reset(new LayerControlDialog);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &LayerControlDialog::onRadiantShutdown));
+		// Pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &LayerControlDialog::onMainFrameShuttingDown));
 	}
 
 	return *instancePtr;

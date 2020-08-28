@@ -65,9 +65,6 @@ private:
 	// Widget creation functions
 	void populateWindow();
 
-	// Show the dialog and block until selection is made
-	std::string showAndBlock(const std::string& model, const std::string& prev);
-
 	// Populate the tree with skins
 	void populateSkins();
 
@@ -85,9 +82,9 @@ private:
     void setSelectedSkin(const std::string& skin);
 
     void handleSelectionChange();
+	void onMainFrameShuttingDown();
 
 public:
-	void onRadiantShutdown();
 
 	// Override Dialogbase
 	int ShowModal();

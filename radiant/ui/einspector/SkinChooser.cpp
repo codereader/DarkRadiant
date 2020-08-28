@@ -47,9 +47,9 @@ SkinChooser& SkinChooser::Instance()
 		// Not yet instantiated, do it now
 		instancePtr.reset(new SkinChooser);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &SkinChooser::onRadiantShutdown)
+		// Pre-destruction cleanup
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &SkinChooser::onMainFrameShuttingDown)
         );
 	}
 
@@ -288,13 +288,13 @@ std::string SkinChooser::chooseSkin(const std::string& model,
 	return Instance()._lastSkin;
 }
 
-void SkinChooser::onRadiantShutdown()
+void SkinChooser::onMainFrameShuttingDown()
 {
 	rMessage() << "SkinChooser shutting down." << std::endl;
 
 	_preview.reset();
 
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window
 	SendDestroyEvent();
 	InstancePtr().reset();
 }

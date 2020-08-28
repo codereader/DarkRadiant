@@ -202,10 +202,11 @@ private:
 public:
 	TexTool();
 
-	/** greebo: Some sort of "soft" destructor that de-registers
-	 * this class from the SelectionSystem, saves the window state, etc.
+	/** 
+	 * greebo: Shutdown listeners de-registering from 
+	 * the SelectionSystem, saving the window state, etc.
 	 */
-	void onRadiantShutdown();
+	void onMainFrameShuttingDown();
 
 	/** greebo: This is the static accessor method containing
 	 * the static instance of the TexTool class. Use this to access

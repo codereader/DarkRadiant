@@ -45,8 +45,6 @@ private:
 public:
 	LayerControlDialog();
 
-	void onRadiantShutdown();
-
 	// Re-populates the window
 	void refresh();
 
@@ -63,6 +61,8 @@ public:
 
 private:
 	static LayerControlDialogPtr& InstancePtr();
+
+	void onMainFrameShuttingDown();
 
 	// TransientWindow events
 	void _preShow() override;

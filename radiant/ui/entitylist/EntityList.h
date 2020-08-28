@@ -92,14 +92,15 @@ private:
 	void _preHide();
 	void _preShow();
 
+	/** 
+	 * greebo: Shuts down this dialog, safely disconnects it
+	 * from the SelectionSystem.
+	 * Saves the window information to the Registry.
+	 */
+	void onMainFrameShuttingDown();
+
 public:
     ~EntityList();
-    
-	/** greebo: Shuts down this dialog, safely disconnects it
-	 * 			from the EventManager and the SelectionSystem.
-	 * 			Saves the window information to the Registry.
-	 */
-	void onRadiantShutdown();
 
 	/** greebo: Toggles the window (command target).
 	 */

@@ -173,7 +173,7 @@ void TexTool::gridDown() {
 	}
 }
 
-void TexTool::onRadiantShutdown()
+void TexTool::onMainFrameShuttingDown()
 {
 	rMessage() << "TexTool shutting down." << std::endl;
 
@@ -185,7 +185,7 @@ void TexTool::onRadiantShutdown()
 		Hide();
 	}
 
-	// Destroy the window (after it has been disconnected from the Eventmanager)
+	// Destroy the window
 	SendDestroyEvent();
 	InstancePtr().reset();
 }
@@ -199,9 +199,9 @@ TexTool& TexTool::Instance()
 		// Not yet instantiated, do it now
 		instancePtr.reset(new TexTool);
 
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().signal_radiantShutdown().connect(
-            sigc::mem_fun(*instancePtr, &TexTool::onRadiantShutdown)
+		// Wire up the pre-destruction cleanup code
+		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+            sigc::mem_fun(*instancePtr, &TexTool::onMainFrameShuttingDown)
         );
 	}
 

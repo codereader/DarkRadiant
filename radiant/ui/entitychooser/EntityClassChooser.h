@@ -67,7 +67,6 @@ private:
 	EntityClassChooser();
 
     void setTreeViewModel();
-    void getEntityClassesFromLoader();
 	void loadEntityClasses();
 
 	// Widget construction helpers
@@ -86,6 +85,8 @@ private:
 	void onDeleteEvent(wxCloseEvent& ev);
 	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
+	void onMainFrameShuttingDown();
+
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityClassChooserPtr& InstancePtr();
 
@@ -99,7 +100,7 @@ public:
 	// Sets the tree selection to the given entity class
 	const std::string& getSelectedEntityClass() const;
 
-	virtual int ShowModal();
+	int ShowModal() override;
 
 	/**
 	 * Convenience function:
@@ -108,8 +109,6 @@ public:
 	 * selection is made, and empty string will be returned.
 	 */
 	static std::string chooseEntityClass(const std::string& preselectEclass = std::string());
-
-	void onRadiantShutdown();
 };
 
 } // namespace ui
