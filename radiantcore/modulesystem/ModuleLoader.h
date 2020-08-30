@@ -27,15 +27,13 @@ private:
 public:
 	ModuleLoader(IModuleRegistry& registry);
 
-	// Load algorithm, searches plugins/ and modules/ for .dll/.so files
-	void loadModules(const std::string& root);
+	// Load algorithm, searches the given folder for .dll/.so files
+	void loadModulesFromPath(const std::string& path);
 
 	// Frees the list of DLLs
 	void unloadModules();
 
 private:
-	void loadModulesFromPath(const std::string& path);
-
 	// File functor, gets called with each file's name in the searched folder
 	void processModuleFile(const fs::path& fileName);
 };

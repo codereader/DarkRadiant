@@ -165,7 +165,7 @@ void ModuleRegistry::loadAndInitialiseModules()
 	auto libraryPaths = _context.getLibraryPaths();
 	for (auto path : libraryPaths)
 	{
-		_loader->loadModules(path);
+		_loader->loadModulesFromPath(path);
 	}
 
 	_progress = 0.1f;

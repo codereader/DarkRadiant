@@ -1,4 +1,4 @@
-libradiantcoredir = $(pkglibdir)
+libradiantcoredir = $(pkglibdir)/modules
 libradiantcore_LTLIBRARIES = libradiantcore.la
 
 libradiantcore_la_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \

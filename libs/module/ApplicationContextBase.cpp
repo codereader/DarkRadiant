@@ -8,15 +8,21 @@
 #include "os/fs.h"
 #include "os/path.h"
 #include "os/dir.h"
-#if 0
-#include "log/PopupErrorHandler.h"
-#endif
-#if defined(WIN32)
+#include "string/encoding.h"
+
+#ifdef WIN32
+#define NOMINMAX
 #include <windows.h>
 #endif
 
 namespace radiant
 {
+
+namespace
+{
+	const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory
+	const std::string MODULES_DIR = "modules/"; ///< name of modules directory
+}
 
 /**
  * Return the application path of the current Radiant instance.
@@ -28,21 +34,33 @@ std::string ApplicationContextBase::getApplicationPath() const
 
 std::vector<std::string> ApplicationContextBase::getLibraryPaths() const
 {
-	std::vector<std::string> libPaths;
+	auto libBasePath = os::standardPathWithSlash(getLibraryBasePath());
+	
+#if defined(__APPLE__) && defined(DR_MODULES_NEXT_TO_APP)
+	// Xcode output goes to the application folder right now
+	return { libBasePath };
+#else
+	return 
+	{ 
+		libBasePath + MODULES_DIR, 
+		libBasePath + PLUGINS_DIR 
+	};
+#endif
+}
 
+std::string ApplicationContextBase::getLibraryBasePath() const
+{
 #if defined(__APPLE__)
-	libPaths.push_back(_appPath);
+	return _appPath;
 #elif defined(POSIX)
 #   if defined(PKGLIBDIR) && !defined(ENABLE_RELOCATION)
-	libPaths.push_back(PKGLIBDIR);
+	return PKGLIBDIR;
 #   else
-	libPaths.push_back(_appPath + "../lib/darkradiant/");
+	return _appPath + "../lib/darkradiant/";
 #   endif
 #else // !defined(POSIX)
-	libPaths.push_back(_appPath);
+	return _appPath;
 #endif
-
-	return libPaths;
 }
 
 std::string ApplicationContextBase::getRuntimeDataPath() const
@@ -263,7 +281,7 @@ void ApplicationContextBase::initialise(int argc, char* argv[])
 
 		// convert to std::string
 		std::wstring wide(filename);
-		std::string appPathNarrow(wide.begin(), wide.end());
+		std::string appPathNarrow = string::unicode_to_mb(wide);
 
 		// Make sure we have forward slashes
 		_appPath = os::standardPath(appPathNarrow);

@@ -45,6 +45,9 @@ public:
 protected:
 	void setErrorHandlingFunction(const ErrorHandlingFunction& function);
 
+	// The platform-specific path where any library folders like modules/ and plugins/ are stored
+	std::string getLibraryBasePath() const;
+
 private:
 	// Sets up the bitmap path and settings path
 	void initPaths();

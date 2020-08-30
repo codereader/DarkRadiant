@@ -16,9 +16,6 @@ namespace module
 
 namespace
 {
-	const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory
-	const std::string MODULES_DIR = "modules/"; ///< name of modules directory
-
 	// This is the name of the entry point symbol in the module
 	const char* const SYMBOL_REGISTER_MODULE = "RegisterModule";
 
@@ -91,10 +88,11 @@ void ModuleLoader::processModuleFile(const fs::path& file)
 	}
 }
 
-void ModuleLoader::loadModules(const std::string& root)
+#if 0
+void ModuleLoader::loadModules(const std::string& libraryPath)
 {
     // Get standardised paths
-    std::string stdRoot = os::standardPathWithSlash(root);
+    std::string stdRoot = os::standardPathWithSlash(libraryPath);
 
 #if defined(DR_MODULES_NEXT_TO_APP)
     // Xcode output goes to the application folder right now
@@ -105,7 +103,7 @@ void ModuleLoader::loadModules(const std::string& root)
     std::string pluginsPath = stdRoot + PLUGINS_DIR;
 #endif
 
-    rConsole() << "ModuleLoader: loading modules from " << root << std::endl;
+    rConsole() << "ModuleLoader: loading modules from " << libraryPath << std::endl;
 
     // Load modules first, then plugins
 	loadModulesFromPath(modulesPath);
@@ -116,13 +114,16 @@ void ModuleLoader::loadModules(const std::string& root)
 		loadModulesFromPath(pluginsPath);
     }
 }
+#endif
 
 void ModuleLoader::loadModulesFromPath(const std::string& path)
 {
+	rConsole() << "ModuleLoader: loading modules from " << path << std::endl;
+
 	// In case the folder is non-existent, catch the exception
 	try
 	{
-		os::foreachItemInDirectory(path, [&](const fs::path& file)
+		os::foreachItemInDirectory(os::standardPathWithSlash(path), [&](const fs::path& file)
 		{
 			processModuleFile(file);
 		});
