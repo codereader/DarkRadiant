@@ -18,11 +18,8 @@
 namespace radiant
 {
 
-namespace
-{
-	const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory
-	const std::string MODULES_DIR = "modules/"; ///< name of modules directory
-}
+const std::string ApplicationContextBase::PLUGINS_DIR = "plugins/"; ///< name of plugins directory
+const std::string ApplicationContextBase::MODULES_DIR = "modules/"; ///< name of modules directory
 
 /**
  * Return the application path of the current Radiant instance.

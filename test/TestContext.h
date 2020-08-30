@@ -32,6 +32,19 @@ public:
 	{
 		return _settingsFolder;
 	}
+
+	std::vector<std::string> getLibraryPaths() const override
+	{
+		auto libBasePath = os::standardPathWithSlash(getLibraryBasePath());
+
+		// Don't load modules from the plugins/ folder, as these
+		// are relying on a working UI. For the test environment
+		// we are only interested in non-UI modules, for now at least.
+		return
+		{
+			libBasePath + MODULES_DIR,
+		};
+	}
 };
 
 }

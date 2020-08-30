@@ -25,6 +25,10 @@ private:
 	// A function pointer to a global error handler, used for ASSERT_MESSAGE
 	ErrorHandlingFunction _errorHandler;
 
+protected:
+	static const std::string PLUGINS_DIR; ///< name of plugins directory
+	static const std::string MODULES_DIR; ///< name of modules directory
+
 public:
 	/**
 	 * Initialises the context with the arguments given to main().
