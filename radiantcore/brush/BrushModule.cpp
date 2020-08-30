@@ -7,7 +7,6 @@
 #include "ifilter.h"
 #include "igame.h"
 #include "ilayer.h"
-#include "ieventmanager.h"
 #include "brush/BrushNode.h"
 #include "brush/BrushClipPlane.h"
 #include "brush/BrushVisit.h"
@@ -99,7 +98,6 @@ const StringSet& BrushModuleImpl::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_GAMEMANAGER);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_UNDOSYSTEM);
