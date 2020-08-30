@@ -41,6 +41,7 @@ public:
 	radiant::IRadiant* get();
 
 private:
+	std::string findCoreModule(IApplicationContext& context);
 	void destroy();
 };
 

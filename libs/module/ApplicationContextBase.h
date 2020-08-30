@@ -33,7 +33,7 @@ public:
 
     /* ApplicationContext implementation */
     virtual std::string getApplicationPath() const override;
-    virtual std::string getLibraryPath() const override;
+    virtual std::vector<std::string> getLibraryPaths() const override;
     virtual std::string getRuntimeDataPath() const override;
     virtual std::string getHTMLPath() const override;
     virtual std::string getSettingsPath() const override;

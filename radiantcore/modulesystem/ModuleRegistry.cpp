@@ -162,7 +162,11 @@ void ModuleRegistry::loadAndInitialiseModules()
 	rMessage() << "ModuleRegistry Compatibility Level is " << getCompatibilityLevel() << std::endl;
 
 	// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-	_loader->loadModules(_context.getLibraryPath());
+	auto libraryPaths = _context.getLibraryPaths();
+	for (auto path : libraryPaths)
+	{
+		_loader->loadModules(path);
+	}
 
 	_progress = 0.1f;
 	_sigModuleInitialisationProgress.emit(_("Initialising Modules"), _progress);

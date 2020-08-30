@@ -72,13 +72,14 @@ public:
 	virtual std::string getApplicationPath() const = 0;
 
     /**
-     * Return the application library path, containing modules and plugins.
+     * Return the application library paths, each of these is searched
+	 * for any libraries containing modules and/or plugins.
      *
      * On Windows this is most likely the same as the application path. On
      * Linux it might be a hard-coded path like /usr/lib/darkradiant, or a
      * relocatable relative path like ../lib
      */
-    virtual std::string getLibraryPath() const = 0;
+    virtual std::vector<std::string> getLibraryPaths() const = 0;
 
     /**
      * Return the toplevel path contaning runtime data files, such as the GL

@@ -1,6 +1,7 @@
 #include "CoreModule.h"
 
 #include "DynamicLibrary.h"
+#include "string/join.h"
 
 // In Linux the CORE_MODULE_LIBRARY symbol is defined in config.h
 #ifdef HAVE_CONFIG_H
@@ -15,17 +16,9 @@ namespace module
 CoreModule::CoreModule(IApplicationContext& context) :
 	_instance(nullptr)
 {
-	std::string coreModuleFile = std::string(CORE_MODULE_LIBRARY) + MODULE_FILE_EXTENSION;
-
-	fs::path coreModulePath = context.getLibraryPath();
-	coreModulePath /= coreModuleFile;
-
-	if (!fs::exists(coreModulePath))
-	{
-		throw FailureException("Cannot find the main module " + coreModulePath.string());
-	}
-
-	_coreModuleLibrary.reset(new DynamicLibrary(coreModulePath.string()));
+	auto coreModulePath = findCoreModule(context);
+	
+	_coreModuleLibrary.reset(new DynamicLibrary(coreModulePath));
 
 	if (_coreModuleLibrary->failed())
 	{
@@ -48,6 +41,26 @@ CoreModule::CoreModule(IApplicationContext& context) :
 CoreModule::~CoreModule()
 {
 	destroy();
+}
+
+std::string CoreModule::findCoreModule(IApplicationContext& context)
+{
+	std::string coreModuleFile = std::string(CORE_MODULE_LIBRARY) + MODULE_FILE_EXTENSION;
+	auto libraryPaths = context.getLibraryPaths();
+
+	for (auto libPath : libraryPaths)
+	{
+		fs::path coreModulePath = libPath;
+		coreModulePath /= coreModuleFile;
+
+		if (fs::exists(coreModulePath))
+		{
+			return coreModulePath.string();
+		}
+	}
+
+	throw FailureException("Cannot find the main module in any of the paths: " + 
+		string::join(libraryPaths, "; "));
 }
 
 radiant::IRadiant* CoreModule::get()

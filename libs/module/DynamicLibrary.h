@@ -21,6 +21,7 @@ const char* const MODULE_FILE_EXTENSION = ".so";
  */
 #if defined(WIN32)
 
+#define NOMINMAX
 #include <windows.h>
 
 namespace module

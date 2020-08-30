@@ -26,19 +26,23 @@ std::string ApplicationContextBase::getApplicationPath() const
 	return _appPath;
 }
 
-std::string ApplicationContextBase::getLibraryPath() const
+std::vector<std::string> ApplicationContextBase::getLibraryPaths() const
 {
+	std::vector<std::string> libPaths;
+
 #if defined(__APPLE__)
-    return _appPath;
+	libPaths.push_back(_appPath);
 #elif defined(POSIX)
 #   if defined(PKGLIBDIR) && !defined(ENABLE_RELOCATION)
-    return PKGLIBDIR;
+	libPaths.push_back(PKGLIBDIR);
 #   else
-    return _appPath + "../lib/darkradiant/";
+	libPaths.push_back(_appPath + "../lib/darkradiant/");
 #   endif
 #else // !defined(POSIX)
-    return _appPath;
+	libPaths.push_back(_appPath);
 #endif
+
+	return libPaths;
 }
 
 std::string ApplicationContextBase::getRuntimeDataPath() const
