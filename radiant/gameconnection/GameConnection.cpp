@@ -1,16 +1,16 @@
 #include "GameConnection.h"
-#include "MessageTCP.h"
-#include "Camera/GlobalCamera.h"
+#include "MessageTcp.h"
+#include "camera/GlobalCamera.h"
 #include "inode.h"
 #include "ientity.h"
 #include "map/Map.h"
 #include "selection/RadiantSelectionSystem.h"
 #include "modulesystem/StaticModule.h"
 #include <sigc++/signal.h>
-#include <../libs/clsocket/ActiveSocket.h>
+#include "clsocket/ActiveSocket.h"
 
-
-namespace gameconn {
+namespace gameconn
+{
 
 //this is how often this class "thinks" when idle
 static const int THINK_INTERVAL = 123;

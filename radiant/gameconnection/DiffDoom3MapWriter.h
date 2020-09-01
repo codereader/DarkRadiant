@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "map/format/Doom3MapWriter.h"
 
 namespace map

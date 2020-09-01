@@ -1,15 +1,20 @@
+#pragma once
+
 #include "icommandsystem.h"
 #include "iscenegraph.h"
+#include "ientity.h"
 #include "DiffStatus.h"
 
-namespace gameconn {
+namespace gameconn
+{
 
 /**
  * Private for GameConnection class: do not use directly!
  * Observer for "update map" / "hot reload" feature.
  * It follows all changes done to the map, remembering entities to be included into diff on next map update.
  */
-class MapObserver {
+class MapObserver
+{
 public:
     ~MapObserver();
 

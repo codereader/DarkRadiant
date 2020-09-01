@@ -1,12 +1,16 @@
-#pragma
+#pragma once
 
-namespace map {
+#include <map>
+
+namespace map
+{
 
 /**
  * Represents the change of status of some object.
  * Used mainly to write map diff for hot reload feature.
  */
-class DiffStatus {
+class DiffStatus
+{
     //change in presence:
     // -1: removed
     //  1: added

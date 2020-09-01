@@ -1,6 +1,8 @@
 #include "DiffDoom3MapWriter.h"
 #include "DiffStatus.h"
 
+#include "ientity.h"
+
 namespace map
 {
 

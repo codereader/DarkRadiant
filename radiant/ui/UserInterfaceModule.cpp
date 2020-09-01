@@ -160,6 +160,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
+    // FIXME: should not dynamic_cast, required methods should be in the
+    // IGameConnection interface
 	if (GameConnection *gameconn = dynamic_cast<GameConnection*>(GlobalGameConnection())) {
 		GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
 			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(true); });

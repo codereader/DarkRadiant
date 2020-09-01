@@ -1,10 +1,10 @@
 #include "MessageTcp.h"
 #include <assert.h>
 #include "itextstream.h"
-#include <../libs/clsocket/ActiveSocket.h>
+#include "clsocket/ActiveSocket.h"
 
-
-namespace gameconn {
+namespace gameconn
+{
 
 MessageTcp::~MessageTcp() {}
 MessageTcp::MessageTcp() {}

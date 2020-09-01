@@ -1,8 +1,11 @@
+#pragma once
+
 #include "igameconnection.h"
 #include "icommandsystem.h"
 #include "iscenegraph.h"
 #include "MapObserver.h"
 
+#include <wx/timer.h>
 
 class CameraObserver;
 namespace sigc {
