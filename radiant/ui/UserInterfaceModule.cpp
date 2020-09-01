@@ -34,6 +34,7 @@
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
+#include "gameconnection/GameConnection.h"
 
 namespace ui
 {
@@ -159,6 +160,33 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
+	if (GameConnection *gameconn = dynamic_cast<GameConnection*>(GlobalGameConnection())) {
+		GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(true); });
+		GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(false); });
+		GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
+			[gameconn](const cmd::ArgumentList&) { gameconn->backSyncCamera(); });
+		GlobalCommandSystem().addCommand("GameConnectionReloadMap",
+			[gameconn](const cmd::ArgumentList&) { gameconn->reloadMap(); });
+		GlobalCommandSystem().addCommand("GameConnectionReloadMapAutoEnable",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setAutoReloadMapEnabled(true); });
+		GlobalCommandSystem().addCommand("GameConnectionReloadMapAutoDisable",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setAutoReloadMapEnabled(false); });
+		GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setUpdateMapLevel(false, false); });
+		GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setUpdateMapLevel(true, false); });
+		GlobalCommandSystem().addCommand("GameConnectionUpdateMapAlways",
+			[gameconn](const cmd::ArgumentList&) { gameconn->setUpdateMapLevel(true, true); });
+		GlobalCommandSystem().addCommand("GameConnectionUpdateMap",
+			[gameconn](const cmd::ArgumentList&) { gameconn->doUpdateMap(); });
+		GlobalCommandSystem().addCommand("GameConnectionPauseGame",
+			[gameconn](const cmd::ArgumentList&) { gameconn->togglePauseGame(); });
+		GlobalCommandSystem().addCommand("GameConnectionRespawnSelected",
+			[gameconn](const cmd::ArgumentList&) { gameconn->respawnSelectedEntities(); });
+	}
+
 	// ----------------------- Bind Events ---------------------------------------
 
 	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
@@ -186,6 +214,19 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addCommand("ExportSelectedAsModelDialog", "ExportSelectedAsModelDialog");
 	GlobalEventManager().addCommand("EntityClassTree", "EntityClassTree");
 	GlobalEventManager().addCommand("EntityList", "EntityList");
+
+	GlobalEventManager().addCommand("GameConnectionCameraSyncEnable", "GameConnectionCameraSyncEnable");
+	GlobalEventManager().addCommand("GameConnectionCameraSyncDisable", "GameConnectionCameraSyncDisable");
+	GlobalEventManager().addCommand("GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera");
+	GlobalEventManager().addCommand("GameConnectionReloadMap", "GameConnectionReloadMap");
+	GlobalEventManager().addCommand("GameConnectionReloadMapAutoEnable", "GameConnectionReloadMapAutoEnable");
+	GlobalEventManager().addCommand("GameConnectionReloadMapAutoDisable", "GameConnectionReloadMapAutoDisable");
+	GlobalEventManager().addCommand("GameConnectionUpdateMapOff", "GameConnectionUpdateMapOff");
+	GlobalEventManager().addCommand("GameConnectionUpdateMapOn", "GameConnectionUpdateMapOn");
+	GlobalEventManager().addCommand("GameConnectionUpdateMapAlways", "GameConnectionUpdateMapAlways");
+	GlobalEventManager().addCommand("GameConnectionUpdateMap", "GameConnectionUpdateMap");
+	GlobalEventManager().addCommand("GameConnectionPauseGame", "GameConnectionPauseGame");
+	GlobalEventManager().addCommand("GameConnectionRespawnSelected", "GameConnectionRespawnSelected");
 }
 
 // Static module registration
