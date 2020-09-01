@@ -728,6 +728,7 @@
     <ClCompile Include="..\..\radiant\model\ModelCache.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelExporter.cpp" />
     <ClCompile Include="..\..\radiant\model\ModelFormatManager.cpp" />
+    <ClCompile Include="..\..\radiant\model\ModelScalePreserver.cpp" />
     <ClCompile Include="..\..\radiant\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiant\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiant\model\ScaledModelExporter.cpp" />
@@ -1185,6 +1186,7 @@
     <ClInclude Include="..\..\radiant\model\ModelCache.h" />
     <ClInclude Include="..\..\radiant\model\ModelExporter.h" />
     <ClInclude Include="..\..\radiant\model\ModelFormatManager.h" />
+    <ClInclude Include="..\..\radiant\model\ModelScalePreserver.h" />
     <ClInclude Include="..\..\radiant\model\NullModel.h" />
     <ClInclude Include="..\..\radiant\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiant\model\NullModelNode.h" />

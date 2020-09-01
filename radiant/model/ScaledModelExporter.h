@@ -33,8 +33,8 @@ private:
 	std::string generateUniqueModelFilename(const fs::path& outputPath,
 		const fs::path& modelPath, const std::string& outputExtension);
 
-	void exportModel(const model::IModelExporterPtr& exporter, 
-		const fs::path& modelOutputPath, const std::string& modelFilename);
+	void onResourceExporting(const scene::IMapRootNodePtr& root);
+	void onResourceExported(const scene::IMapRootNodePtr& root);
 };
 
 }

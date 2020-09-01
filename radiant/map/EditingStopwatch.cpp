@@ -8,6 +8,7 @@
 #include "itextstream.h"
 #include "imainframe.h"
 #include "imap.h"
+#include "imapresource.h"
 #include "imapinfofile.h"
 
 #include <fmt/format.h>
@@ -43,6 +44,7 @@ const StringSet& EditingStopwatch::getDependencies() const
 	{
 		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
+		_dependencies.insert(MODULE_MAPRESOURCEMANAGER);
 		_dependencies.insert(MODULE_UIMANAGER);
 	}
 
@@ -59,6 +61,10 @@ void EditingStopwatch::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalMapInfoFileManager().registerInfoFileModule(
 		std::make_shared<EditingStopwatchInfoFileModule>()
+	);
+
+	GlobalMapResourceManager().signal_onResourceExporting().connect(
+		sigc::mem_fun(this, &EditingStopwatch::onResourceExporting)
 	);
 
 	// Register the timer when the application has come up
@@ -130,7 +136,8 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 
 	// We start/stop during save operations
 	case IMap::MapSaving:
-		writeToMapProperties();
+		// the timing is not written to the map root node here,
+		// but in the separate resource-exporting event
 		stop();
 		break;
 	case IMap::MapSaved:
@@ -140,6 +147,11 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 	default:
 		break;
 	};
+}
+
+void EditingStopwatch::onResourceExporting(const scene::IMapRootNodePtr& root)
+{
+	writeToMapProperties(root);
 }
 
 void EditingStopwatch::start()
@@ -182,10 +194,8 @@ void EditingStopwatch::readFromMapProperties()
 	}
 }
 
-void EditingStopwatch::writeToMapProperties()
+void EditingStopwatch::writeToMapProperties(const scene::IMapRootNodePtr& root)
 {
-	auto root = GlobalMapModule().getRoot();
-
 	if (root)
 	{
 		root->setProperty(MAP_PROPERTY_KEY, string::to_string(getTotalSecondsEdited()));

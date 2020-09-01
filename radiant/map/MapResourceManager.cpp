@@ -16,6 +16,16 @@ IMapResourcePtr MapResourceManager::loadFromPath(const std::string& path)
 	return std::make_shared<MapResource>(path);
 }
 
+MapResourceManager::ExportEvent& MapResourceManager::signal_onResourceExporting()
+{
+	return _resourceExporting;
+}
+
+MapResourceManager::ExportEvent& MapResourceManager::signal_onResourceExported()
+{
+	return _resourceExported;
+}
+
 // RegisterableModule implementation
 const std::string& MapResourceManager::getName() const
 {

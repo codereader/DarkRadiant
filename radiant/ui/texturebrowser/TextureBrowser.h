@@ -26,6 +26,7 @@ namespace ui
 namespace
 {
     const char* const RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
+    const char* const RKEY_TEXTURES_SHOW_OTHER_MATERIALS = "user/ui/textures/browser/showOtherMaterials";
     const char* const RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
     const char* const RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
     const char* const RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
@@ -103,6 +104,9 @@ class TextureBrowser :
     // if true, the texture window will only display in-use shaders
     // if false, all the shaders in memory are displayed
     bool _hideUnused;
+
+    // Whether materials not starting with "textures/" should be visible
+    bool _showOtherMaterials;
     
     // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
     int _uniformTextureSize;

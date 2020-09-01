@@ -51,7 +51,8 @@ private:
 	void onRadiantStartup();
 	void onIntervalReached(wxTimerEvent& ev);
 	void readFromMapProperties();
-	void writeToMapProperties();
+	void writeToMapProperties(const scene::IMapRootNodePtr& root);
+	void onResourceExporting(const scene::IMapRootNodePtr& root);
 };
 
 }

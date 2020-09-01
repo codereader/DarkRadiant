@@ -58,7 +58,8 @@
 		<menuItem name="selectInside" caption="Select i&amp;nside" command="SelectInside" icon="selection_selectinside.png" />
 		<menuItem name="selectTouching" caption="Select &amp;touching" command="SelectTouching" icon="selection_selecttouching.png" />
 		<menuItem name="selectionChildren" caption="Select Children" command="SelectChildren" />
-		<menuItem name="selectionEntities" caption="Expand selection to all Siblings" command="ExpandSelectionToEntities" />
+		<menuItem name="selectionParentEntity" caption="Select Parent Entities" command="SelectParentEntities" />
+		<menuItem name="selectionSiblings" caption="Expand selection to all Siblings" command="ExpandSelectionToSiblings" />
 		<menuItem name="selectalloftype" caption="Select all of type" command="SelectAllOfType" />
 		<menuSeparator />
 		<menuItem name="shortcuts" caption="Keyboard Shortcuts..." command="ShowCommandList" />

@@ -48,7 +48,7 @@ public:
 
 private:
 	void saveNode(const INodePtr& node);
-	void writeLayerNames(std::ostream& stream);
+	void clear();
 
 	void parseLayerNames(parser::DefTokeniser& tok);
 	void parseNodeToLayerMapping(parser::DefTokeniser& tok);

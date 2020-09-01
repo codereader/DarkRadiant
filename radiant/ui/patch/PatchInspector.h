@@ -75,10 +75,6 @@ private:
 	void _preShow();
 	void _preHide();
 
-	/** greebo: Saves the step values to the registry
-	 */
-	void saveToRegistry();
-
 	/** greebo: Helper method that imports the selected patch
 	 */
 	void rescanSelection();

@@ -333,22 +333,25 @@ void selectChildren(const cmd::ArgumentList& args) {
 
 /**
  * greebo: This walker traverses the entire subgraph,
- *         searching for entities with selected child primitives.
- *         If such an entity is found, it is traversed and all
- *         child primitives are selected.
+ * searching for entities with selected child primitives.
+ * If such an entity is found, it is traversed and all
+ * child primitives are selected.
  */
-class ExpandSelectionToEntitiesWalker :
+class ExpandSelectionToSiblingsWalker :
 	public scene::NodeVisitor
 {
 public:
-	bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& node) override
+	{
 		Entity* entity = Node_getEntity(node);
 
-		if (entity != NULL) {
+		if (entity != nullptr)
+		{
 			// We have an entity, traverse and select children if any child is selected
 			return entity->isContainer() && (Node_isSelected(node) || Node_hasSelectedChildNodes(node));
 		}
-		else if (Node_isPrimitive(node)) {
+		else if (Node_isPrimitive(node))
+		{
 			// We have a primitive, select it
 			Node_setSelected(node, true);
 			// Don't traverse any deeper
@@ -359,8 +362,51 @@ public:
 	}
 };
 
-void expandSelectionToEntities(const cmd::ArgumentList& args) {
-	ExpandSelectionToEntitiesWalker walker;
+void expandSelectionToSiblings(const cmd::ArgumentList& args)
+{
+	ExpandSelectionToSiblingsWalker walker;
+	GlobalSceneGraph().root()->traverse(walker);
+}
+
+/**
+ * greebo: This walker traverses the entire subgraph,
+ * searching for entities with selected child primitives.
+ * If such an entity is found, it will be selected in place
+ * of the child primitive.
+ */
+class PropagateSelectionToParentEntityWalker :
+	public scene::NodeVisitor
+{
+public:
+	bool pre(const scene::INodePtr& node) override
+	{
+		Entity* entity = Node_getEntity(node);
+
+		if (entity != nullptr)
+		{
+			if (entity->isContainer() && !entity->isWorldspawn() && Node_hasSelectedChildNodes(node))
+			{
+				// De-select all child primitives
+				node->foreachNode([](const scene::INodePtr& child)->bool
+				{
+					Node_setSelected(child, false);
+					return true;
+				});
+
+				// Select the entity instead
+				Node_setSelected(node, true);
+			}
+
+			return false; // don't traverse entities, that's covered by Node_hasSelectedChildNodes
+		}
+
+		return true;
+	}
+};
+
+void selectParentEntitiesOfSelected(const cmd::ArgumentList& args)
+{
+	PropagateSelectionToParentEntityWalker walker;
 	GlobalSceneGraph().root()->traverse(walker);
 }
 

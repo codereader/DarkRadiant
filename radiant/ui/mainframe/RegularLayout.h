@@ -33,6 +33,13 @@ class RegularLayout :
 	// Whether the cam is left or right
 	bool _regularLeft;
 
+	struct SavedPositions
+	{
+		int horizPanePosition;
+		int texCamPanePosition;
+	};
+	std::unique_ptr<SavedPositions> _savedPositions;
+
 	// Pass the exact type (left/right) to the constructor
 	RegularLayout(bool regularLeft);
 
@@ -49,9 +56,6 @@ public:
 	static RegularLayoutPtr CreateRegularInstance();
 
 private:
-	void maximiseCameraSize();
-	void restorePanePositions();
-
 	// Saves the state of this window layout to the given XMLRegistry path (without trailing slash)
 	void restoreStateFromPath(const std::string& path);
 	void saveStateToPath(const std::string& path);

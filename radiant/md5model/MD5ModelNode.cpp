@@ -45,6 +45,11 @@ bool MD5ModelNode::hasModifiedScale()
     return false; // not supported
 }
 
+Vector3 MD5ModelNode::getModelScale()
+{
+	return Vector3(1, 1, 1); // not supported
+}
+
 void MD5ModelNode::lightsChanged()
 {
     _lightList->setDirty();

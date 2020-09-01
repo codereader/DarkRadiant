@@ -57,6 +57,7 @@ private:
 	void saveNode(const scene::INodePtr& node, std::size_t entityNum, std::size_t primitiveNum);
 	void parseSelectionGroups(parser::DefTokeniser& tok);
 	void parseNodeMappings(parser::DefTokeniser& tok);
+	void clear();
 };
 
 }

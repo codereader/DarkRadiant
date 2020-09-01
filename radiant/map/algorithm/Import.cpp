@@ -307,7 +307,7 @@ private:
 
 public:
     SimpleMapImportFilter() :
-        _root(new scene::BasicRootNode)
+        _root(std::make_shared<scene::BasicRootNode>())
     {}
 
     const scene::IMapRootNodePtr& getRootNode() const

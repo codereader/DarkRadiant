@@ -649,7 +649,7 @@ void TexTool::foreachItem(textool::ItemVisitor& visitor) {
 
 void TexTool::drawGrid() 
 {
-	const float MAX_NUMBER_OF_GRID_LINES = 256;
+	const float MAX_NUMBER_OF_GRID_LINES = 1024;
 
 	AABB& texSpaceAABB = getVisibleTexSpace();
 

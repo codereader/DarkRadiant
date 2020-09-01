@@ -17,6 +17,11 @@
 namespace wxutil
 {
 
+namespace
+{
+	const char* const WILDCARD_EXTENSION = "*";
+}
+
 FileChooser::FileChooser(const std::string& title,
 						 bool open,
 						 const std::string& fileType,
@@ -61,78 +66,96 @@ void FileChooser::construct()
 	// Make default extension lowercase
 	string::to_lower(_defaultExt);
 
-	int defaultFormatIdx = 0;
-	int curFormatIdx = 0;
+	if (!_open && _fileType == filetype::TYPE_MAP_EXPORT)
+	{
+		assembleMapExportFileTypes();
+	}
+	else
+	{
+		assembleFileTypes();
+	}
 
-	// Add the filetype
+	// Add a final mask for All Files (*.*)
+	FileFilter wildCardFilter;
+
+	wildCardFilter.caption = _("All Files (*.*)");
+	wildCardFilter.filter = "*.*";
+	wildCardFilter.extension = WILDCARD_EXTENSION;
+
+	_fileFilters.push_back(wildCardFilter);
+	
+	std::string wildcard = "";
+
+	for (const FileFilter& filter : _fileFilters)
+	{
+		wildcard += wildcard.empty() ? "" : "|";
+		wildcard += filter.caption + "|" + filter.filter;
+	}
+
+	_dialog->SetWildcard(wildcard);
+
+	for (int i = 0; i < _fileFilters.size(); ++i)
+	{
+		if (_fileFilters[i].isDefaultFilter)
+		{
+			_dialog->SetFilterIndex(i);
+			break;
+		}
+	}
+}
+
+void FileChooser::assembleMapExportFileTypes()
+{
 	FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(_fileType);
 
 	for (const auto& pattern : patterns)
 	{
-		if (!_open &&  _fileType == filetype::TYPE_MAP_EXPORT)
-		{
-			auto formats = GlobalMapFormatManager().getMapFormatList(pattern.extension);
+		auto formats = GlobalMapFormatManager().getMapFormatList(pattern.extension);
 
-			// Pre-select take the default map format for this game type
-			map::MapFormatPtr defaultFormat = GlobalMapFormatManager().getMapFormatForGameType(
-				GlobalGameManager().currentGame()->getKeyValue("type"), pattern.extension
-			);
+		// Pre-select take the default map format for this game type
+		auto defaultFormat = GlobalMapFormatManager().getMapFormatForGameType(
+			GlobalGameManager().currentGame()->getKeyValue("type"), pattern.extension
+		);
 
-			for (const map::MapFormatPtr& format : formats)
-			{
-				FileFilter filter;
-
-				filter.caption = format->getMapFormatName() + " " + pattern.name + " (" + pattern.pattern + ")";
-				filter.filter = pattern.pattern;
-				filter.mapFormatName = format->getMapFormatName();
-
-				_fileFilters.push_back(filter);
-
-				if (format == defaultFormat)
-				{
-					defaultFormatIdx = curFormatIdx;
-				}
-
-                ++curFormatIdx;
-			}
-		}
-		else
+		for (const map::MapFormatPtr& format : formats)
 		{
 			FileFilter filter;
 
-			filter.caption = pattern.name + " (" + pattern.pattern + ")";
+			filter.caption = format->getMapFormatName() + " " + pattern.name + " (" + pattern.pattern + ")";
 			filter.filter = pattern.pattern;
-
-			// Pre-select the filter matching the default extension
-			if (pattern.extension == _defaultExt)
-			{
-				defaultFormatIdx = curFormatIdx;
-			}
+			filter.extension = pattern.extension;
+			filter.mapFormatName = format->getMapFormatName();
 
 			_fileFilters.push_back(filter);
 
-			++curFormatIdx;
+			if (format == defaultFormat)
+			{
+				filter.isDefaultFilter = true;
+			}
 		}
 	}
+}
 
-	// Add a final mask for All Files (*.*)
-	FileFilter filter;
+void FileChooser::assembleFileTypes()
+{
+	FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(_fileType);
 
-	filter.caption = _("All Files (*.*)");
-	filter.filter = "*.*";
-
-	_fileFilters.push_back(filter);
-	
-	std::string wildcard = "";
-
-	std::for_each(_fileFilters.begin(), _fileFilters.end(), [&] (const FileFilter& filter)
+	for (const auto& pattern : patterns)
 	{
-		wildcard += wildcard.empty() ? "" : "|";
-		wildcard += filter.caption + "|" + filter.filter;
-	});
+		FileFilter filter;
 
-	_dialog->SetWildcard(wildcard);
-	_dialog->SetFilterIndex(defaultFormatIdx);
+		filter.caption = pattern.name + " (" + pattern.pattern + ")";
+		filter.filter = pattern.pattern;
+		filter.extension = pattern.extension;
+
+		_fileFilters.push_back(filter);
+
+		// Pre-select the filter matching the default extension
+		if (pattern.extension == _defaultExt)
+		{
+			filter.isDefaultFilter = true;
+		}
+	}
 }
 
 long FileChooser::getStyle(bool open)
@@ -158,6 +181,7 @@ void FileChooser::setCurrentPath(const std::string& path)
 	if (!_file.empty())
 	{
 		_dialog->SetFilename(_file);
+		selectFilterIndexFromFilename(_file);
 	}
 }
 
@@ -168,6 +192,38 @@ void FileChooser::setCurrentFile(const std::string& file)
 	if (!_open)
 	{
 		_dialog->SetFilename(_file);
+		selectFilterIndexFromFilename(_file);
+	}
+}
+
+void FileChooser::selectFilterIndexFromFilename(const std::string& filename)
+{
+	if (filename.empty())
+	{
+		return;
+	}
+
+	auto ext = os::getExtension(filename);
+	std::size_t wildCardIndex = std::numeric_limits<std::size_t>::max();
+
+	for (std::size_t i = 0; i < _fileFilters.size(); ++i)
+	{
+		if (string::iequals(ext, _fileFilters[i].extension))
+		{
+			_dialog->SetFilterIndex(i);
+			return;
+		}
+
+		if (_fileFilters[i].extension == WILDCARD_EXTENSION)
+		{
+			wildCardIndex = i;
+		}
+	}
+
+	// Select the * extension if there's no better match
+	if (wildCardIndex < _fileFilters.size())
+	{
+		_dialog->SetFilterIndex(wildCardIndex);
 	}
 }
 
@@ -180,10 +236,9 @@ std::string FileChooser::getSelectedFileName()
 	if (!_open											// save operation
 	    && !fileName.empty() 							// valid filename
 	    && !_defaultExt.empty()							// non-empty default extension
-		&& os::getExtension(fileName).empty()			// no extension selected by the user
-	    && !string::iends_with(fileName, _defaultExt)) // no default extension
+		&& os::getExtension(fileName).empty())			// no extension selected by the user
 	{
-		fileName.append(_defaultExt);
+		fileName.append("." + _defaultExt);
 	}
 
 	return fileName;

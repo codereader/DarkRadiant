@@ -119,8 +119,6 @@ public:
 	sigc::signal<void> signal_nodeMembershipChanged() override;
 
 private:
-	void onMapEvent(IMap::MapEvent ev);
-
 	// Internal event emitter
 	void onLayersChanged();
 

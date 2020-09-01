@@ -31,12 +31,21 @@ std::string LayerInfoFileModule::getName()
 	return "Layer Mapping";
 }
 
-void LayerInfoFileModule::onInfoFileSaveStart()
+void LayerInfoFileModule::clear()
 {
 	_layerInfoCount = 0;
 	_output.str(std::string());
 	_output.clear();
+	_layerNameBuffer.str(std::string());
 	_layerNameBuffer.clear();
+
+	_layerNames.clear();
+	_layerMappings.clear();
+}
+
+void LayerInfoFileModule::onInfoFileSaveStart()
+{
+	clear();
 }
 
 void LayerInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
@@ -115,15 +124,12 @@ void LayerInfoFileModule::writeBlocks(std::ostream& stream)
 
 void LayerInfoFileModule::onInfoFileSaveFinished()
 {
-	_layerInfoCount = 0;
-	_output.str(std::string());
-	_output.clear();
+	clear();
 }
 
 void LayerInfoFileModule::onInfoFileLoadStart()
 {
-	_layerNames.clear();
-	_layerMappings.clear();
+	clear();
 }
 
 bool LayerInfoFileModule::canParseBlock(const std::string& blockName)
@@ -279,8 +285,7 @@ void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const ma
 
 void LayerInfoFileModule::onInfoFileLoadFinished()
 {
-	_layerNames.clear();
-	_layerMappings.clear();
+	clear();
 }
 
 }

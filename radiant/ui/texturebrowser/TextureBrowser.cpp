@@ -66,49 +66,12 @@ public:
 
     bool isVisible()
     {
-        if (!material)
-        {
-            return false;
-        }
-
-        if (!string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
-        {
-            return false;
-        }
-
-        if (_owner._hideUnused && !material->IsInUse())
-        {
-            return false;
-        }
-
-        if (!_owner.getFilter().empty())
-        {
-            std::string textureNameCache(material->getName());
-            std::string textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary material->getName() here
-
-            if (_owner._filterIgnoresTexturePath)
-            {
-				std::size_t lastSlash = textureName.find_last_of('/');
-
-                if (lastSlash != std::string::npos)
-                {
-					textureName.erase(0, lastSlash + 1);
-                }
-            }
-
-			string::to_lower(textureName);
-
-            // case insensitive substring match
-            if (textureName.find(string::to_lower_copy(_owner.getFilter())) == std::string::npos)
-                return false;
-        }
-
-        return true;
+        return _owner.materialIsVisible(material);
     }
 
     void render()
     {
-        if (!_owner.materialIsVisible(material))
+        if (!isVisible())
         {
             return;
         }
@@ -257,11 +220,13 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
+    _showOtherMaterials(registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
     _maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH)),
     _updateNeeded(true)
 {
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
+    observeKey(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     observeKey(RKEY_TEXTURE_UNIFORM_SIZE);
     observeKey(RKEY_TEXTURE_SHOW_SCROLLBAR);
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
@@ -423,6 +388,7 @@ void TextureBrowser::filterChanged()
 void TextureBrowser::keyChanged()
 {
     _hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
+    _showOtherMaterials = registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     _showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);
     _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
     _showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
@@ -446,6 +412,8 @@ void TextureBrowser::keyChanged()
     {
         _filter->Hide();
     }
+
+    Layout();
 
     queueUpdate();
     _originInvalid = true;
@@ -556,7 +524,7 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
         return false;
     }
 
-    if (!string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
+    if (!_showOtherMaterials && !string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
     {
         return false;
     }

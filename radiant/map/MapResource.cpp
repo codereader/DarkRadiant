@@ -504,7 +504,7 @@ bool MapResource::checkIsWriteable(const fs::path& path)
 	return true;
 }
 
-bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
+bool MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr& root,
 						   const GraphTraversalFunc& traverse, const std::string& filename)
 {
 	// Actual output file paths

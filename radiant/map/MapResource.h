@@ -43,7 +43,7 @@ public:
     void setNode(const scene::IMapRootNodePtr& node) override;
 
 	// Save the map contents to the given filename using the given MapFormat export module
-	static bool saveFile(const MapFormat& format, const scene::INodePtr& root,
+	static bool saveFile(const MapFormat& format, const scene::IMapRootNodePtr& root,
 						 const GraphTraversalFunc& traverse, const std::string& filename);
 
 private:

@@ -65,8 +65,8 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 	// where the label and combobox are supposed to be
 	label->Hide();
 	label->Show();
-	_toolMenu->Hide();
-	_toolMenu->Show();
+	_dropdown->Hide();
+	_dropdown->Show();
 #endif
 
 	_mapEventHandler = GlobalMapModule().signal_mapEvent().connect(

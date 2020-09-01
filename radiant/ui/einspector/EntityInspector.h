@@ -175,12 +175,12 @@ private:
     // callbacks
 	void _onEntryActivate(wxCommandEvent& ev);
 	void _onSetProperty(wxCommandEvent& ev);
-	void _onToggleShowInherited(wxCommandEvent& ev);
-	void _onToggleShowHelpIcons(wxCommandEvent& ev);
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
 	void _onContextMenu(wxDataViewEvent& ev);
 	void _onDataViewItemChanged(wxDataViewEvent& ev);
 
+	void handleShowInheritedChanged();
+	void handleShowHelpTextChanged();
 	void updateHelpText(const wxutil::TreeModel::Row& row);
     static std::string  cleanInputString( const std::string& );
 

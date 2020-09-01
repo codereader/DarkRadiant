@@ -125,7 +125,7 @@ if test "$wxWin" != 1; then
                 Please check that wx-config is in path, the directory
                 where wxWidgets libraries are installed (returned by
                 'wx-config --libs' command) is in LD_LIBRARY_PATH or
-                equivalent variable and wxWidgets version is 2.3.4 or above.
+                equivalent variable and wxWidgets version is 3.0.0 or above.
         ])
 fi
 

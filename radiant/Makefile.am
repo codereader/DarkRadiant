@@ -447,6 +447,7 @@ darkradiant_SOURCES = main.cpp \
                       log/LogFile.cpp \
                       undo/UndoSystem.cpp \
                       model/ModelCache.cpp \
+                      model/ModelScalePreserver.cpp \
                       model/ModelExporter.cpp \
 					  model/ModelFormatManager.cpp \
                       model/NullModel.cpp \

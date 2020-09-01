@@ -4,7 +4,8 @@
 #include "imap.h"
 #include "MapPosition.h"
 
-namespace map {
+namespace map
+{
 
 class MapPositionManager
 {
@@ -17,20 +18,24 @@ private:
 public:
 	MapPositionManager();
 
-	/** greebo: This loads/saves the positions from
-	 * the worldspawn entity. Call this on map load/save
-	 */
-	void loadPositions();
-	void savePositions();
-
-	/** greebo: This cleans the positions from the
-	 * worldspawn entity (should be called after a map load
-	 * to clean the entity manager from these entries).
-	 */
-	void removePositions();
-
 private:
+	void convertLegacyPositions();
+	void loadMapPositions();
+	void clearPositions();
+
+	/** 
+	* greebo: Sets the camera to the start position. This uses the 
+	* information stored in the worlspawn or the location of the 
+	* info_player_start entity. If neither of these two exist, 0,0,0 is used.
+	 */
+	void gotoLastCameraPosition();
+
+	void saveLastCameraPosition(const scene::IMapRootNodePtr& root);
+	void removeLegacyCameraPosition();
+
 	void onMapEvent(IMap::MapEvent ev);
+
+	void onPreMapExport(const scene::IMapRootNodePtr& root);
 };
 
 } // namespace map

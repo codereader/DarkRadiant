@@ -467,7 +467,9 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
 	scene::removeNodeFromParent(oldNode);
 
 	// Let the new node keep its layer information (#4710)
-	newNode->assignToLayers(oldNode->getLayers());
+    // Apply the layers to the whole subgraph (#5214)
+    scene::AssignNodeToLayersWalker layerWalker(oldNode->getLayers());
+    newNode->traverse(layerWalker);
 
 	// Insert the new entity to the parent
 	parent->addChildNode(newNode);

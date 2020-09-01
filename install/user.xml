@@ -91,6 +91,7 @@
         <contextMenuMouseEpsilon value="5" />
         <maxShadernameLength value="18" />
         <clampToUniformSize value="1" />
+        <showOtherMaterials value="0" />
       </browser>
       <defaultTextureScale value="0.5" />
       <quality value="3" />

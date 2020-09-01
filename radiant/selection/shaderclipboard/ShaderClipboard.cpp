@@ -1,6 +1,7 @@
 #include "ShaderClipboard.h"
 
 #include "i18n.h"
+#include "imap.h"
 #include "iselectiontest.h"
 #include "iscenegraph.h"
 #include "iuimanager.h"
@@ -14,6 +15,11 @@
 
 namespace selection 
 {
+
+namespace
+{
+	const char* const LAST_USED_MATERIAL_KEY = "LastShaderClipboardMaterial";
+}
 
 ShaderClipboard::ShaderClipboard() :
 	_updatesDisabled(false)
@@ -165,11 +171,37 @@ sigc::signal<void> ShaderClipboard::signal_sourceChanged() const
 
 void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IMap::MapUnloading || ev == IMap::MapLoaded)
+	switch (ev)
 	{
+	case IMap::MapUnloading:
 		// Clear the shaderclipboard, the references are most probably invalid now
 		clear();
-	}
+		break;
+
+	case IMap::MapSaving:
+		// Write the current value to the map properties on save
+		if (!_source.empty() && GlobalMapModule().getRoot())
+		{
+			GlobalMapModule().getRoot()->setProperty(LAST_USED_MATERIAL_KEY, _source.getShader());
+		}
+		break;
+
+	case IMap::MapLoaded:
+		// Try to load the last used material name from the properties
+		if (GlobalMapModule().getRoot())
+		{
+			auto shader = GlobalMapModule().getRoot()->getProperty(LAST_USED_MATERIAL_KEY);
+			
+			if (!shader.empty())
+			{
+				setSource(shader);
+				updateMediaBrowsers();
+				break;
+			}
+		}
+		clear();
+		break;
+	};
 }
 
 } // namespace selection

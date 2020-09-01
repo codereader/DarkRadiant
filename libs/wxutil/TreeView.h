@@ -28,6 +28,8 @@ protected:
 
 	std::vector<TreeModel::Column> _colsToSearch;
 
+	bool _collapseRecursively;
+
 	TreeView(wxWindow* parent, TreeModel::Ptr model, long style);
 
 public:
@@ -55,6 +57,9 @@ public:
 	// Expands the first level of all the top-level items
 	void ExpandTopLevelItems();
 
+	// When enabled, collapsing a single item will automatically collapse all child items too
+	void EnableRecursiveCollapse(bool enabled);
+
 	// Removes any sort keys
 	void ResetSortingOnAllColumns();
 
@@ -71,9 +76,12 @@ public:
 #endif
 
 private:
+	void CollapseChildren(const wxDataViewItem& item);
+
 	void CloseSearch();
 	void JumpToSearchMatch(const wxDataViewItem& item);
 
+	void _onItemCollapsing(wxDataViewEvent& ev);
 	void _onItemExpanded(wxDataViewEvent& ev);
 	void _onChar(wxKeyEvent& ev);
 	void _onItemActivated(wxDataViewEvent& ev);

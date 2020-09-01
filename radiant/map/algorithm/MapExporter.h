@@ -2,11 +2,14 @@
 
 #include "inode.h"
 #include "imapformat.h"
+#include "imap.h"
 #include "igame.h"
 
 #include "wxutil/ModalProgressDialog.h"
 #include "../infofile/InfoFileExporter.h"
 #include "EventRateLimiter.h"
+
+#include <sigc++/signal.h>
 
 namespace map
 {
@@ -36,7 +39,7 @@ private:
 	InfoFileExporterPtr _infoFileExporter;
 
 	// The root node of the subgraph to be exported
-	scene::INodePtr _root;
+	scene::IMapRootNodePtr _root;
 
 	// The progress dialog
 	wxutil::ModalProgressDialogPtr _dialog;
@@ -54,11 +57,11 @@ private:
 
 public:
 	// The constructor prepares the scene and the output stream
-	MapExporter(IMapWriter& writer, const scene::INodePtr& root, 
+	MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::size_t nodeCount = 0);
 
 	// Additional constructor allowed to write to the auxiliary .darkradiant file
-	MapExporter(IMapWriter& writer, const scene::INodePtr& root, 
+	MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::ostream& auxStream, std::size_t nodeCount = 0);
 
 	// Cleans up the scene on destruction
@@ -71,8 +74,8 @@ public:
 	void disableProgressDialog();
 
 	// NodeVisitor implementation, is called by the traversal func passed to MapResource
-	bool pre(const scene::INodePtr& node);
-	void post(const scene::INodePtr& node);
+	bool pre(const scene::INodePtr& node) override;
+	void post(const scene::INodePtr& node) override;
 
 private:
 	// Common code shared by the constructors

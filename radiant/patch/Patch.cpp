@@ -44,10 +44,6 @@ inline bool double_valid(double f) {
 
 // ====== Patch Implementation =========================================================================
 
-    namespace {
-        const std::size_t MAX_PATCH_SUBDIVISIONS = 32;
-    }
-
 // Constructor
 Patch::Patch(PatchNode& node) :
     _node(node),
@@ -2708,23 +2704,15 @@ void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions)
     _patchDef3 = isFixed;
     _subDivisions = divisions;
 
-    if (_subDivisions.x() == 0)
-    {
-        _subDivisions.x() = 4;
-    }
-    else if (_subDivisions.x() > MAX_PATCH_SUBDIVISIONS)
-    {
-        _subDivisions.x() = MAX_PATCH_SUBDIVISIONS;
-    }
+	if (_subDivisions.x() == 0)
+	{
+		_subDivisions.x() = 4;
+	}
 
-    if (_subDivisions.y() == 0)
-    {
-        _subDivisions.y() = 4;
-    }
-    else if (_subDivisions.y() > MAX_PATCH_SUBDIVISIONS)
-    {
-        _subDivisions.y() = MAX_PATCH_SUBDIVISIONS;
-    }
+	if (_subDivisions.y() == 0)
+	{
+		_subDivisions.y() = 4;
+	}
 
     SceneChangeNotify();
     textureChanged();

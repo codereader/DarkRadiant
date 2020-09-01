@@ -2,12 +2,19 @@
 
 #include "maplib.h"
 #include "ientity.h"
+#include "gamelib.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
+#include "imapresource.h"
 #include "icommandsystem.h"
 #include "string/string.h"
+#include "entitylib.h"
 #include <functional>
+
+#include "camera/GlobalCamera.h"
+#include "xyview/GlobalXYWnd.h"
+#include "map/Map.h"
 
 namespace map
 {
@@ -17,15 +24,93 @@ namespace map
 		const std::string SAVE_COMMAND_ROOT = "SavePosition";
 		const std::string LOAD_COMMAND_ROOT = "LoadPosition";
 
-		unsigned int MAX_POSITIONS = 10;
+		const char* const LAST_CAM_POSITION_KEY = "LastCameraPosition";
+		const char* const LAST_CAM_ANGLE_KEY = "LastCameraAngle";
+
+		const char* const GKEY_LAST_CAM_POSITION = "/mapFormat/lastCameraPositionKey";
+		const char* const GKEY_LAST_CAM_ANGLE = "/mapFormat/lastCameraAngleKey";
+		const char* const GKEY_PLAYER_START_ECLASS = "/mapFormat/playerStartPoint";
+		const char* const GKEY_PLAYER_HEIGHT = "/defaults/playerHeight";
+
+		const unsigned int MAX_POSITIONS = 10;
+
+		bool tryLoadLastPositionFromMapRoot(Vector3& origin, Vector3& angles)
+		{
+			auto mapRoot = GlobalMapModule().getRoot();
+
+			if (mapRoot)
+			{
+				const std::string savedOrigin = mapRoot->getProperty(LAST_CAM_POSITION_KEY);
+
+				if (!savedOrigin.empty())
+				{
+					// Construct the vector out of the std::string
+					origin = string::convert<Vector3>(savedOrigin);
+					angles = string::convert<Vector3>(mapRoot->getProperty(LAST_CAM_ANGLE_KEY));
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		bool tryLoadLastPositionFromWorldspawn(Vector3& origin, Vector3& angles)
+		{
+			const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+			const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
+
+			Entity* worldspawn = map::current::getWorldspawn();
+
+			if (worldspawn != nullptr)
+			{
+				// Try to find a saved "last camera position"
+				const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
+
+				if (!savedOrigin.empty())
+				{
+					// Construct the vector out of the std::string
+					origin = string::convert<Vector3>(savedOrigin);
+					angles = string::convert<Vector3>(worldspawn->getKeyValue(keyLastCamAngle));
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		bool tryGetStartPositionFromPlayerStart(Vector3& origin, Vector3& angles)
+		{
+			// Get the player start entity
+			const std::string eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
+			Entity* playerStart = Scene_FindEntityByClass(eClassPlayerStart);
+
+			if (playerStart != nullptr)
+			{
+				// Get the entity origin
+				origin = string::convert<Vector3>(playerStart->getKeyValue("origin"));
+
+				// angua: move the camera upwards a bit
+				origin.z() += game::current::getValue<float>(GKEY_PLAYER_HEIGHT);
+
+				// Check for an angle key, and use it if present
+				angles[ui::CAMERA_YAW] = string::convert<float>(playerStart->getKeyValue("angle"), 0);
+
+				return true;
+			}
+
+			return false;
+		}
 	}
 
-// Constructor
 MapPositionManager::MapPositionManager()
 {
 	GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(this, &MapPositionManager::onMapEvent)
 	);
+
+	GlobalMapResourceManager().signal_onResourceExporting().connect(sigc::mem_fun(
+		this, &MapPositionManager::onPreMapExport
+	));
 
 	// Create the MapPosition objects and add the commands to the eventmanager
 	for (unsigned int i = 1; i <= MAX_POSITIONS; i++)
@@ -55,72 +140,131 @@ MapPositionManager::MapPositionManager()
 	}
 }
 
-void MapPositionManager::loadPositions()
+void MapPositionManager::convertLegacyPositions()
 {
 	Entity* worldspawn = map::current::getWorldspawn();
+	auto mapRoot = GlobalMapModule().getRoot();
 
-	if (worldspawn != nullptr) 
+	if (worldspawn == nullptr || !mapRoot)
 	{
-		for (unsigned int i = 1; i <= MAX_POSITIONS; ++i)
-		{
-			if (_positions[i])
-			{
-				_positions[i]->load(worldspawn);
-			}
-		}
+		return; // no worldspawn or root
 	}
-	else
+		
+	for (unsigned int i = 1; i <= MAX_POSITIONS; i++)
 	{
-		rError() << "MapPositionManager: Could not locate worldspawn entity.\n";
-	}
-}
+		MapPosition pos(i);
 
-void MapPositionManager::savePositions()
-{
-    Entity* worldspawn = map::current::getWorldspawn();
+		pos.loadFrom(worldspawn);
 
-	for (unsigned int i = 1; i <= MAX_POSITIONS; ++i)
-	{
-		if (_positions[i])
+		if (!pos.empty() && mapRoot)
 		{
-			_positions[i]->save(worldspawn);
+			rMessage() << "Converting legacy map position #" << i << std::endl;
+			pos.saveTo(mapRoot);
+
+			pos.removeFrom(worldspawn);
 		}
 	}
 }
 
-void MapPositionManager::removePositions()
+void MapPositionManager::removeLegacyCameraPosition()
 {
-	// Find the worldspawn node
-    Entity* worldspawn = map::current::getWorldspawn();
+	const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+	const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
 
-	for (unsigned int i = 1; i <= MAX_POSITIONS; ++i) 
+	Entity* worldspawn = map::current::getWorldspawn();
+
+	if (worldspawn != nullptr)
 	{
-		if (_positions[i])
-		{
-			_positions[i]->remove(worldspawn);
-		}
+		worldspawn->setKeyValue(keyLastCamPos, "");
+		worldspawn->setKeyValue(keyLastCamAngle, "");
+	}
+}
+
+void MapPositionManager::saveLastCameraPosition(const scene::IMapRootNodePtr& root)
+{
+	auto camWnd = GlobalCamera().getActiveCamWnd();
+
+	if (!root || !camWnd)
+	{
+		return;
+	}
+
+	root->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camWnd->getCameraOrigin()));
+	root->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camWnd->getCameraAngles()));
+}
+
+void MapPositionManager::gotoLastCameraPosition()
+{
+	const std::string keyLastCamPos = game::current::getValue<std::string>(GKEY_LAST_CAM_POSITION);
+	const std::string keyLastCamAngle = game::current::getValue<std::string>(GKEY_LAST_CAM_ANGLE);
+	const std::string eClassPlayerStart = game::current::getValue<std::string>(GKEY_PLAYER_START_ECLASS);
+
+	Vector3 angles(0, 0, 0);
+	Vector3 origin(0, 0, 0);
+
+	if (tryLoadLastPositionFromMapRoot(origin, angles) ||
+		tryLoadLastPositionFromWorldspawn(origin, angles) ||
+		tryGetStartPositionFromPlayerStart(origin, angles))
+	{
+		// Focus the view with the given parameters
+		Map::focusViews(origin, angles);
+		return;
+	}
+}
+
+void MapPositionManager::loadMapPositions()
+{
+	auto mapRoot = GlobalMapModule().getRoot();
+
+	if (!mapRoot)
+	{
+		return;
+	}
+
+	for (const auto& position : _positions)
+	{
+		position.second->loadFrom(mapRoot);
+	}
+}
+
+void MapPositionManager::clearPositions()
+{
+	for (const auto& position : _positions)
+	{
+		position.second->clear();
 	}
 }
 
 void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 {
-	if (ev == IMap::MapSaving)
+	switch (ev)
 	{
-		// Store the map positions into the worldspawn spawnargs
-		savePositions();
-	}
-	else if (ev == IMap::MapSaved)
-	{
-		// Remove the map positions again after saving
-		removePositions();
-	}
-	else if (ev == IMap::MapLoaded)
-	{
-		// Load the stored map positions from the worldspawn entity
-		loadPositions();
-		// Remove them, so that the user doesn't get bothered with them
-		removePositions();
-	}
+	case IMap::MapLoaded:
+		// Load legacy positions from the worldspawn entity
+		// and move them, from now on everything
+		// will be stored to the root node's property bag
+		convertLegacyPositions();
+
+		// After converting the legacy ones, load the positions
+		// from the map root, these take precedence
+		loadMapPositions();
+
+		gotoLastCameraPosition();
+
+		// Remove any legacy keyvalues from worldspawn
+		removeLegacyCameraPosition();
+		break;
+
+	case IMap::MapUnloaded:
+		clearPositions();
+		break;
+	};
+}
+
+void MapPositionManager::onPreMapExport(const scene::IMapRootNodePtr& root)
+{
+	// Before any map is exported, save the last cam position to its root node
+	saveLastCameraPosition(root);
 }
 
 } // namespace map

@@ -6,6 +6,7 @@
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ientity.h"
+#include "imapresource.h"
 #include "imap.h"
 #include "igroupnode.h"
 #include "imainframe.h"
@@ -25,7 +26,7 @@ namespace map
 		const char* const RKEY_MAP_SAVE_STATUS_INTERLEAVE = "user/ui/map/saveStatusInterleave";
 	}
 
-MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::ostream& mapStream, std::size_t nodeCount) :
+MapExporter::MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root, std::ostream& mapStream, std::size_t nodeCount) :
 	_writer(writer),
 	_mapStream(mapStream),
 	_root(root),
@@ -38,7 +39,7 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::o
 	construct();
 }
 
-MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, 
+MapExporter::MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::ostream& auxStream, std::size_t nodeCount) :
 	_writer(writer),
 	_mapStream(mapStream),
@@ -258,10 +259,16 @@ void MapExporter::prepareScene()
 
 	// Re-evaluate all brushes, to update the Winding calculations
 	recalculateBrushWindings();
+
+	// Emit the pre-export event to give subscribers a chance to prepare the scene
+	GlobalMapResourceManager().signal_onResourceExporting().emit(_root);
 }
 
 void MapExporter::finishScene()
 {
+	// Emit the post-export event to give subscribers a chance to cleanup the scene
+	GlobalMapResourceManager().signal_onResourceExported().emit(_root);
+
 	addOriginToChildPrimitives(_root);
 
 	// Re-evaluate all brushes, to update the Winding calculations

@@ -258,4 +258,28 @@ public:
     }
 };
 
+// Copies all visibility flags from the source to the target
+inline void assignVisibilityFlagsFromNode(INode& target, const INode& source)
+{
+    if (source.checkStateFlag(scene::Node::eHidden))
+    {
+        target.enable(scene::Node::eHidden);
+    }
+
+    if (source.checkStateFlag(scene::Node::eFiltered))
+    {
+        target.enable(scene::Node::eFiltered);
+    }
+
+    if (source.checkStateFlag(scene::Node::eExcluded))
+    {
+        target.enable(scene::Node::eExcluded);
+    }
+
+    if (source.checkStateFlag(scene::Node::eLayered))
+    {
+        target.enable(scene::Node::eLayered);
+    }
+}
+
 } // namespace scene

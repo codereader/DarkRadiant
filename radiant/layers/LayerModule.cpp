@@ -4,6 +4,7 @@
 #include "icommandsystem.h"
 #include "itextstream.h"
 #include "imapinfofile.h"
+#include "imap.h"
 
 #include "modulesystem/StaticModule.h"
 #include "LayerManager.h"
@@ -113,10 +114,6 @@ public:
 			{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 		GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
 
-		GlobalMapModule().signal_mapEvent().connect(
-			sigc::mem_fun(*this, &LayerModule::onMapEvent)
-		);
-
 		GlobalMapInfoFileManager().registerInfoFileModule(
 			std::make_shared<LayerInfoFileModule>()
 		);
@@ -128,11 +125,6 @@ public:
 	}
 
 private:
-	void onMapEvent(IMap::MapEvent ev)
-	{
-		// TODO
-	}
-
 	// Command target
 	void createLayerCmd(const cmd::ArgumentList& args)
 	{

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "wxutil/PanedPosition.h"
 #include "imainframelayout.h"
 
@@ -24,6 +25,13 @@ private:
 	Splitter* _horizPane;
 	Splitter* _groupCamPane;
 
+	struct SavedPositions
+	{
+		int horizSashPosition;
+		int groupCamSashPosition;
+	};
+	std::unique_ptr<SavedPositions> _savedPositions;
+
 public:
 	// IMainFrameLayout implementation
 	std::string getName() override;
@@ -34,10 +42,6 @@ public:
 
 	// The creation function, needed by the mainframe layout manager
 	static EmbeddedLayoutPtr CreateInstance();
-
-private:
-	void maximiseCameraSize();
-	void restorePanePositions();
 };
 
 } // namespace ui
