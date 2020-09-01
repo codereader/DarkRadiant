@@ -6,7 +6,14 @@
 class IGameConnection : public RegisterableModule
 {
 public:
-    //TODO: to be determined...
+    virtual void setCameraSyncEnabled(bool enable) = 0;
+    virtual void backSyncCamera() = 0;
+    virtual void reloadMap() = 0;
+    virtual void setAutoReloadMapEnabled(bool enable) = 0;
+    virtual void setUpdateMapLevel(bool on, bool always) = 0;
+    virtual void doUpdateMap() = 0;
+    virtual void togglePauseGame() = 0;
+    virtual void respawnSelectedEntities() = 0;
 };
 
 const char* const MODULE_GAMECONNECTION = "GameConnection";

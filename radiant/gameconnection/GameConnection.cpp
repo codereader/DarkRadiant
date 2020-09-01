@@ -24,9 +24,11 @@ static std::string messagePreamble(std::string type) {
 static std::string actionPreamble(std::string type) {
     return messagePreamble("action") + fmt::format("action \"{}\"\n", type);
 }
+#if 0
 static std::string queryPreamble(std::string type) {
     return messagePreamble("query") + fmt::format("query \"{}\"\n", type);
 }
+#endif
 
 
 int GameConnection::newSeqno() {
@@ -62,7 +64,7 @@ void GameConnection::think() {
             //validate and remove preamble
             int responseSeqno, lineLen;
             int ret = sscanf(_response.data(), "response %d\n%n", &responseSeqno, &lineLen);
-            assert(ret == 1); ret;
+            assert(ret == 1);
             assert(responseSeqno == _seqnoInProgress);
             _response.erase(_response.begin(), _response.begin() + lineLen);
             //mark request as "no longer in progress"
@@ -72,8 +74,7 @@ void GameConnection::think() {
     }
     else {
         //doing nothing now: send async command if present
-        bool sentAsync = sendAnyPendingAsync();
-        sentAsync = false;  //unused
+        sendAnyPendingAsync();
     }
     _connection->think();
     if (!_connection->isAlive()) {

@@ -162,7 +162,7 @@ void UserInterfaceModule::registerUICommands()
 
     // FIXME: should not dynamic_cast, required methods should be in the
     // IGameConnection interface
-	if (GameConnection *gameconn = dynamic_cast<GameConnection*>(GlobalGameConnection())) {
+	if (IGameConnection *gameconn = GlobalGameConnection()) {
 		GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
 			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(true); });
 		GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable",
