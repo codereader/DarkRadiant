@@ -556,11 +556,17 @@ namespace
 // Implementation of RenderableCollector for the 3D camera view.
 class CamRenderer: public RenderableCollector
 {
+    // Render statistics
+    render::RenderStatistics& _renderStats;
+
     // Highlight state
     bool _highlightFaces = false;
     bool _highlightPrimitives = false;
     Shader& _highlightedPrimitiveShader;
     Shader& _highlightedFaceShader;
+
+    // All lights we have received from the scene
+    std::list<const RendererLight*> _sceneLights;
 
     // Associate a renderable with the lights which illuminate it
     struct LitRenderable
@@ -585,8 +591,10 @@ class CamRenderer: public RenderableCollector
 public:
 
     // Initialise CamRenderer with the highlight shaders
-    CamRenderer(Shader& primHighlightShader, Shader& faceHighlightShader)
-    : _highlightedPrimitiveShader(primHighlightShader),
+    CamRenderer(Shader& primHighlightShader, Shader& faceHighlightShader,
+                render::RenderStatistics& stats)
+    : _renderStats(stats),
+      _highlightedPrimitiveShader(primHighlightShader),
       _highlightedFaceShader(faceHighlightShader)
     {}
 
@@ -629,8 +637,14 @@ public:
         }
     }
 
-    void addLight(const RendererLight& /* light */) override
-    {}
+    void addLight(const RendererLight& light) override
+    {
+        // Store the light in our list of scene lights
+        _sceneLights.push_back(&light);
+
+        // Count the light for the stats display
+        _renderStats.addLight();
+    }
 
     void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                        const Matrix4& world, const LightSources* lights,
@@ -804,7 +818,8 @@ void CamWnd::Cam_Draw()
     // Main scene render
     {
         // Front end (renderable collection from scene)
-        CamRenderer renderer(*_primitiveHighlightShader, *_faceHighlightShader);
+        CamRenderer renderer(*_primitiveHighlightShader, *_faceHighlightShader,
+                             _renderStats);
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
 
         // Render any active mousetools
