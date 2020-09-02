@@ -18,7 +18,6 @@
 #include "map/Map.h"
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
-#include "render/RenderStatistics.h"
 #include "render/frontend/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"
@@ -705,7 +704,8 @@ void CamWnd::Cam_Draw()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    render::RenderStatistics::Instance().resetStats();
+    // Reset statistics for this frame
+    _renderStats.resetStats();
 
     render::View::resetCullStats();
 
@@ -882,7 +882,7 @@ void CamWnd::Cam_Draw()
 
     glRasterPos3f(1.0f, static_cast<float>(_camera.height) - 1.0f, 0.0f);
 
-    GlobalOpenGL().drawString(render::RenderStatistics::Instance().getStatString());
+    GlobalOpenGL().drawString(_renderStats.getStatString());
 
     glRasterPos3f(1.0f, static_cast<float>(_camera.height) - 11.0f, 0.0f);
 

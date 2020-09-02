@@ -24,6 +24,7 @@
 #include "util/Noncopyable.h"
 #include <sigc++/connection.h>
 #include "tools/CameraMouseToolEvent.h"
+#include "render/RenderStatistics.h"
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
@@ -33,6 +34,7 @@ class SelectionTest;
 namespace ui
 {
 
+/// Main 3D view widget
 class CamWnd :
     public ICameraView,
     public scene::Graph::Observer,
@@ -42,7 +44,6 @@ class CamWnd :
     public wxEvtHandler,
     protected wxutil::MouseToolHandler
 {
-private:
     // Overall panel including toolbar and GL widget
     wxPanel* _mainWxWidget;
 
@@ -73,12 +74,16 @@ private:
 
     std::size_t _mapValidHandle;
 
+    // Timer for animation
     wxTimer _timer;
     bool _timerLock; // to avoid double-timer-firings
 
     sigc::connection _glExtensionsInitialisedNotifier;
 
     wxutil::KeyEventFilterPtr _escapeListener;
+
+    // Render statistics for display in the window (frame render time etc)
+    render::RenderStatistics _renderStats;
 
 public:
     // Constructor and destructor

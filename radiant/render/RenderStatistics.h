@@ -6,40 +6,25 @@
 namespace render
 {
 
+/// Storage class for per-frame render statistics
 class RenderStatistics
 {
-	std::string _statStr;
+    // Timer for measuring render time
+    wxStopWatch _timer;
 
-	std::size_t _countPrims;
-	std::size_t _countStates;
-	std::size_t _countTransforms;
-
-	wxStopWatch _timer;
 public:
-	const std::string& getStatString()
+
+    /// Return the constructed string for display
+    std::string getStatString()
     {
-        _statStr = "prims: " + string::to_string(_countPrims) +
-				  " | states: " + string::to_string(_countStates) +
-				  " | transforms: "	+ string::to_string(_countTransforms) +
-				  " | msec: " + string::to_string(_timer.Time());
+        return "msec: " + std::to_string(_timer.Time());
+    }
 
-		return _statStr;
-	}
-
-	void resetStats() 
+    /// Reset statistics at the beginning of a frame render
+    void resetStats()
     {
-		_countPrims = 0;
-		_countStates = 0;
-		_countTransforms = 0;
-
-		_timer.Start();
-	}
-
-	static RenderStatistics& Instance()
-    {
-		static RenderStatistics _instance;
-		return _instance;
-	}
+        _timer.Start();
+    }
 };
 
 } // namespace render
