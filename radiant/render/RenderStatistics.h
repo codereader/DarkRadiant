@@ -17,7 +17,9 @@ public:
     /// Return the constructed string for display
     std::string getStatString()
     {
-        return "msec: " + std::to_string(_timer.Time());
+        long msec = _timer.Time();
+        return "msec: " + std::to_string(msec)
+             + " | fps: " + (msec > 0 ? std::to_string(1000 / msec) : "-");
     }
 
     /// Reset statistics at the beginning of a frame render
