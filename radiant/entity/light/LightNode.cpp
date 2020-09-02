@@ -267,15 +267,19 @@ void LightNode::selectedChangedComponent(const ISelectable& selectable) {
  */
 void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	EntityNode::renderSolid(collector, volume);
+    // Submit self to the renderer as an actual light source
+    collector.addLight(*this);
 
-	// Re-use the same method as in wireframe rendering for the moment
-	const bool lightIsSelected = isSelected();
-	_light.renderWireframe(
-		collector, volume, localToWorld(), lightIsSelected
-	);
+    // Render the visible representation of the light entity (origin, bounds etc)
+    EntityNode::renderSolid(collector, volume);
 
-	renderInactiveComponents(collector, volume, lightIsSelected);
+    // Re-use the same method as in wireframe rendering for the moment
+    const bool lightIsSelected = isSelected();
+    _light.renderWireframe(
+        collector, volume, localToWorld(), lightIsSelected
+    );
+
+    renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
 void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const

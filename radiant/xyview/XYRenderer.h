@@ -2,8 +2,8 @@
 
 #include "irenderable.h"
 
-class XYRenderer :
-    public RenderableCollector
+/// RenderableCollector implementation for the ortho view
+class XYRenderer: public RenderableCollector
 {
     // State type structure
     struct State
@@ -49,6 +49,9 @@ public:
             _state.highlightAsGroupMember = enabled;
         }
     }
+
+    // Ortho view never processes lights
+    void addLight(const RendererLight&) override {}
 
     void addRenderable(Shader& shader,
                        const OpenGLRenderable& renderable,

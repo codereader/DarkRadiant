@@ -630,6 +630,9 @@ public:
         }
     }
 
+    void addLight(const RendererLight& /* light */) override
+    {}
+
     void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                        const Matrix4& world, const LightSources* lights,
                        const IRenderEntity* entity) override

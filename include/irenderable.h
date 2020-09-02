@@ -12,6 +12,7 @@ class OpenGLRenderable;
 class LightSources;
 class Matrix4;
 class IRenderEntity;
+class RendererLight;
 
 /**
  * \brief
@@ -25,7 +26,6 @@ class IRenderEntity;
  * Renderable model class may submit each of its material surfaces separately
  * with different shaders.
  */
-
 class RenderableCollector
 {
 public:
@@ -59,6 +59,17 @@ public:
 
     /**
      * \brief
+     * Submit a light source for the render operation.
+     *
+     * This is the entry point for lights into the render front-end. Each light
+     * in the scene graph must be submitted through this method in order to
+     * provide light for the final render. If the render is in wireframe mode,
+     * light sources can still be submitted but they will not have any effect.
+     */
+    virtual void addLight(const RendererLight& light) = 0;
+
+    /**
+     * \brief
      * Determine if this RenderableCollector can accept renderables for full
      * materials rendering, or just wireframe rendering.
      *
@@ -84,18 +95,19 @@ public:
 
 class VolumeTest;
 
-/** Interface class for Renderable objects. All objects which wish to be
- * rendered need to implement this interface. During the scenegraph traversal
- * for rendering, each Renderable object is passed a RenderableCollector object
- * which it can use to submit its geometry and state parameters.
+/**
+ * \brief
+ * Main interface for Renderable scene objects.
+ *
+ * All objects which wish to be rendered need to implement this interface.
+ * During the scenegraph traversal for rendering, each Renderable object is
+ * passed a RenderableCollector object which it can use to submit its geometry
+ * and state parameters.
  */
-
 class Renderable
 {
 public:
-    /**
-     * Destructor
-     */
+    /// Destroy the Renderable
     virtual ~Renderable() {}
 
     /**
@@ -104,14 +116,11 @@ public:
      */
     virtual void setRenderSystem(const RenderSystemPtr& renderSystem) = 0;
 
-    /** Submit renderable geometry when rendering takes place in Solid mode.
-     */
+    /// Submit renderable geometry when rendering in Solid mode.
     virtual void renderSolid(RenderableCollector& collector,
                              const VolumeTest& volume) const = 0;
 
-    /** Submit renderable geometry when rendering takes place in Wireframe
-     * mode.
-     */
+    /// Submit renderable geometry when rendering in Wireframe mode.
     virtual void renderWireframe(RenderableCollector& collector,
                                  const VolumeTest& volume) const = 0;
 

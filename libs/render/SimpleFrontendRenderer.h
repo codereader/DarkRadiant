@@ -26,6 +26,8 @@ public:
         shader.addRenderable(renderable, world, lights, entity);
     }
 
+    void addLight(const RendererLight&) override {}
+
     bool supportsFullMaterials() const override
     {
         return true;
