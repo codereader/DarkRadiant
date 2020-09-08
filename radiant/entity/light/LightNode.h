@@ -121,6 +121,7 @@ public:
     Matrix4 getLightTextureTransformation() const override;
     const ShaderPtr& getShader() const override;
 	bool intersectsAABB(const AABB& other) const override;
+    AABB lightAABB() const override { return _light.lightAABB(); }
 
 	Vector3 getLightOrigin() const override;
 	const Matrix4& rotation() const;

@@ -191,7 +191,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 }
 
 wxWindow* CamWnd::getMainWidget() const
-{ 
+{
     return _mainWxWidget;
 }
 
@@ -219,13 +219,13 @@ void CamWnd::constructToolbar()
     updateActiveRenderModeButton();
 
     // Connect button signals
-    _mainWxWidget->GetParent()->Connect(wireframeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+    _mainWxWidget->GetParent()->Connect(wireframeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED,
         wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-    _mainWxWidget->GetParent()->Connect(flatShadeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+    _mainWxWidget->GetParent()->Connect(flatShadeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED,
         wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-    _mainWxWidget->GetParent()->Connect(texturedBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+    _mainWxWidget->GetParent()->Connect(texturedBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED,
         wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-    _mainWxWidget->GetParent()->Connect(lightingBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+    _mainWxWidget->GetParent()->Connect(lightingBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED,
         wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
 
     // Far clip buttons.
@@ -234,9 +234,9 @@ void CamWnd::constructToolbar()
     const wxToolBarToolBase* clipPlaneInButton = getToolBarToolByLabel(miscToolbar, "clipPlaneInButton");
     const wxToolBarToolBase* clipPlaneOutButton = getToolBarToolByLabel(miscToolbar, "clipPlaneOutButton");
 
-    _mainWxWidget->GetParent()->Connect(clipPlaneInButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+    _mainWxWidget->GetParent()->Connect(clipPlaneInButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED,
         wxCommandEventHandler(CamWnd::onFarClipPlaneInClick), NULL, this);
-    _mainWxWidget->GetParent()->Connect(clipPlaneOutButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+    _mainWxWidget->GetParent()->Connect(clipPlaneOutButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED,
         wxCommandEventHandler(CamWnd::onFarClipPlaneOutClick), NULL, this);
 
     setFarClipButtonSensitivity();
@@ -248,9 +248,9 @@ void CamWnd::constructToolbar()
     const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(miscToolbar, "startTimeButton");
     const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(miscToolbar, "stopTimeButton");
 
-    _mainWxWidget->GetParent()->Connect(startTimeButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+    _mainWxWidget->GetParent()->Connect(startTimeButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED,
         wxCommandEventHandler(CamWnd::onStartTimeButtonClick), NULL, this);
-    _mainWxWidget->GetParent()->Connect(stopTimeButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
+    _mainWxWidget->GetParent()->Connect(stopTimeButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED,
         wxCommandEventHandler(CamWnd::onStopTimeButtonClick), NULL, this);
 
     // Stop time, initially
@@ -291,9 +291,9 @@ void CamWnd::setFarClipButtonSensitivity()
 
     wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
 
-    wxToolBarToolBase* clipPlaneInButton = 
+    wxToolBarToolBase* clipPlaneInButton =
         const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(miscToolbar, "clipPlaneInButton"));
-    wxToolBarToolBase* clipPlaneOutButton = 
+    wxToolBarToolBase* clipPlaneOutButton =
         const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(miscToolbar, "clipPlaneOutButton"));
 
     miscToolbar->EnableTool(clipPlaneInButton->GetId(), enabled);
@@ -314,7 +314,7 @@ void CamWnd::constructGUIComponents()
     _wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
     _wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
 
-    _mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND); 
+    _mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 }
 
 CamWnd::~CamWnd()
@@ -396,8 +396,8 @@ void CamWnd::onStopTimeButtonClick(wxCommandEvent& ev)
 
 void CamWnd::onFrame(wxTimerEvent& ev)
 {
-    // Calling wxTheApp->Yield() might cause another timer callback if enough 
-    // time has passed during rendering. Calling Yield() within Yield() 
+    // Calling wxTheApp->Yield() might cause another timer callback if enough
+    // time has passed during rendering. Calling Yield() within Yield()
     // might in the end cause stack overflows and is caught by wxWidgets.
     if (!_timerLock)
     {
@@ -556,6 +556,9 @@ namespace
 // Implementation of RenderableCollector for the 3D camera view.
 class CamRenderer: public RenderableCollector
 {
+    // The View object for object culling
+    const render::View& _view;
+
     // Render statistics
     render::RenderStatistics& _renderStats;
 
@@ -591,16 +594,18 @@ class CamRenderer: public RenderableCollector
 public:
 
     // Initialise CamRenderer with the highlight shaders
-    CamRenderer(Shader& primHighlightShader, Shader& faceHighlightShader,
-                render::RenderStatistics& stats)
-    : _renderStats(stats),
+    CamRenderer(const render::View& view, Shader& primHighlightShader,
+                Shader& faceHighlightShader, render::RenderStatistics& stats)
+    : _view(view),
+      _renderStats(stats),
       _highlightedPrimitiveShader(primHighlightShader),
       _highlightedFaceShader(faceHighlightShader)
     {}
 
     // Instruct the CamRenderer to push its sorted renderables to their
     // respective shaders and perform the actual render
-    void sendToShaders()
+    void backendRender(RenderStateFlags allowedFlags, const Matrix4& modelView,
+                       const Matrix4& projection)
     {
         // For each shader in the map
         for (auto i = _renderablesByShader.begin();
@@ -618,6 +623,10 @@ public:
                                       lr.lights, lr.entity);
             }
         }
+
+        // Tell the render system to render its shaders and renderables
+        GlobalRenderSystem().render(allowedFlags, modelView, projection,
+                                    _view.getViewer());
     }
 
     // RenderableCollector implementation
@@ -639,11 +648,21 @@ public:
 
     void addLight(const RendererLight& light) override
     {
-        // Store the light in our list of scene lights
-        _sceneLights.push_back(&light);
+        // Determine if this light is visible within the view frustum
+        VolumeIntersectionValue viv = _view.TestAABB(light.lightAABB());
+        if (viv == VOLUME_OUTSIDE)
+        {
+            // Not interested
+            _renderStats.addLight(false);
+        }
+        else
+        {
+            // Store the light in our list of scene lights
+            _sceneLights.push_back(&light);
 
-        // Count the light for the stats display
-        _renderStats.addLight();
+            // Count the light for the stats display
+            _renderStats.addLight(true);
+        }
     }
 
     void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
@@ -709,7 +728,7 @@ void CamWnd::Cam_Draw()
 
     Vector3 clearColour(0, 0, 0);
 
-    if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING) 
+    if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING)
     {
         clearColour = ColourSchemes().getColour("camera_background");
     }
@@ -818,8 +837,8 @@ void CamWnd::Cam_Draw()
     // Main scene render
     {
         // Front end (renderable collection from scene)
-        CamRenderer renderer(*_primitiveHighlightShader, *_faceHighlightShader,
-                             _renderStats);
+        CamRenderer renderer(_view, *_primitiveHighlightShader,
+                             *_faceHighlightShader, _renderStats);
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
 
         // Render any active mousetools
@@ -829,9 +848,8 @@ void CamWnd::Cam_Draw()
         }
 
         // Backend (shader rendering)
-        renderer.sendToShaders();
-        GlobalRenderSystem().render(allowedRenderFlags, _camera.modelview,
-                                    _camera.projection, _view.getViewer());
+        renderer.backendRender(allowedRenderFlags, _camera.modelview,
+                               _camera.projection);
     }
 
     // greebo: Draw the clipper's points (skipping the depth-test)
@@ -1120,17 +1138,17 @@ const Frustum& CamWnd::getViewFrustum() const
     return _view.getFrustum();
 }
 
-void CamWnd::onFarClipPlaneOutClick(wxCommandEvent& ev) 
+void CamWnd::onFarClipPlaneOutClick(wxCommandEvent& ev)
 {
     farClipPlaneOut();
 }
 
-void CamWnd::onFarClipPlaneInClick(wxCommandEvent& ev) 
+void CamWnd::onFarClipPlaneInClick(wxCommandEvent& ev)
 {
     farClipPlaneIn();
 }
 
-void CamWnd::farClipPlaneOut() 
+void CamWnd::farClipPlaneOut()
 {
     getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() + 1 );
 
@@ -1138,7 +1156,7 @@ void CamWnd::farClipPlaneOut()
     update();
 }
 
-void CamWnd::farClipPlaneIn() 
+void CamWnd::farClipPlaneIn()
 {
     getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() - 1 );
 
@@ -1229,14 +1247,14 @@ void CamWnd::startCapture(const ui::MouseToolPtr& tool)
 
     _freezePointer.startCapture(_wxGLWidget,
         [&](int x, int y, int mouseState) // Motion Functor
-        { 
-            MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState); 
+        {
+            MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState);
 
             if (freeMoveEnabled())
             {
                 handleGLMouseMoveFreeMoveDelta(x, y, mouseState);
             }
-        }, 
+        },
         [&, tool]() { MouseToolHandler::handleCaptureLost(tool); }, // called when the capture is lost.
         (pointerMode & MouseTool::PointerMode::Freeze) != 0,
         (pointerMode & MouseTool::PointerMode::Hidden) != 0,

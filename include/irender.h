@@ -188,6 +188,21 @@ public:
 
     /**
      * \brief
+     * Return the AABB of the illuminated volume.
+     *
+     * This AABB represents the boundaries of the volume which are illuminated
+     * by this light. Anything outside of this volume does not need to be
+     * considered for shading by this light.
+     *
+     * Note that for omni lights, dragging the light center point outside of
+     * the light volume does not expand the lightAABB() value, because the
+     * light center only affects the direction of the light rays, not the size
+     * of the illuminated volume.
+     */
+    virtual AABB lightAABB() const = 0;
+
+    /**
+     * \brief
      * Return the light origin in world space.
      *
      * The light origin is the point from which the light rays are considered to

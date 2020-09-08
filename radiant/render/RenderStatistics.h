@@ -12,8 +12,9 @@ class RenderStatistics
     // Timer for measuring render time
     wxStopWatch _timer;
 
-    // Count of lights
-    int _lights = 0;
+    // Count of lights (visible and culled)
+    int _visibleLights = 0;
+    int _culledLights = 0;
 
 public:
 
@@ -21,21 +22,25 @@ public:
     std::string getStatString()
     {
         long msec = _timer.Time();
-        return "lights: " + std::to_string(_lights)
+        return "lights: " + std::to_string(_visibleLights)
+             + " / " + std::to_string(_visibleLights + _culledLights)
              + " | msec: " + std::to_string(msec)
              + " | fps: " + (msec > 0 ? std::to_string(1000 / msec) : "-");
     }
 
     /// Increment the light count
-    void addLight()
+    void addLight(bool visible)
     {
-        ++_lights;
+        if (visible)
+            ++_visibleLights;
+        else
+            ++_culledLights;
     }
 
     /// Reset statistics at the beginning of a frame render
     void resetStats()
     {
-        _lights = 0;
+        _visibleLights = _culledLights = 0;
 
         _timer.Start();
     }
