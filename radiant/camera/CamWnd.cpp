@@ -895,13 +895,14 @@ void CamWnd::Cam_Draw()
         glEnd();
     }
 
-    glRasterPos3f(1.0f, static_cast<float>(_camera.height) - 1.0f, 0.0f);
-
-    GlobalOpenGL().drawString(_renderStats.getStatString());
-
-    glRasterPos3f(1.0f, static_cast<float>(_camera.height) - 11.0f, 0.0f);
-
-    GlobalOpenGL().drawString(render::View::getCullStats());
+    // Render the stats and timing text. This may include culling stats in
+    // debug builds.
+    glRasterPos3f(4.0f, static_cast<float>(_camera.height) - 4.0f, 0.0f);
+    std::string statString = render::View::getCullStats();
+    if (!statString.empty())
+        statString += " | ";
+    statString += _renderStats.getStatString();
+    GlobalOpenGL().drawString(statString);
 
     drawTime();
 
