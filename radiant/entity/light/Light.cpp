@@ -1010,6 +1010,11 @@ const ShaderPtr& Light::getShader() const
     return m_shader.get();
 }
 
+const IRenderEntity& Light::getLightEntity() const
+{
+	return _owner;
+}
+
 const Vector3& Light::worldOrigin() const
 {
     // return the absolute world origin

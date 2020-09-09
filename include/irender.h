@@ -151,12 +151,22 @@ typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
  * \brief
  * Interface for a light source in the renderer.
  */
-class RendererLight :
-	public virtual IRenderEntity
+class RendererLight
 {
 public:
     virtual ~RendererLight() {}
 
+    /**
+     * \brief
+     * Return the render entity associated with this light
+     *
+     * The IRenderEntity is used to evaluate possible shader expressions in the
+     * shader returned by getShader(). The light object itself may be its own
+     * render entity (so getLightEntity() can just return *this).
+     */
+    virtual const IRenderEntity& getLightEntity() const = 0;
+
+    /// Return the shader for this light
     virtual const ShaderPtr& getShader() const = 0;
 
     /**

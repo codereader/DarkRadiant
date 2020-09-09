@@ -13,6 +13,7 @@ namespace entity
 class LightNode;
 typedef std::shared_ptr<LightNode> LightNodePtr;
 
+/// Scenegraph node representing a light
 class LightNode :
 	public EntityNode,
 	public ILightNode,
@@ -20,10 +21,8 @@ class LightNode :
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
-	public PlaneSelectable,
-	public RendererLight
+	public PlaneSelectable
 {
-private:
 	Light _light;
 
 	// The (draggable) light center instance
@@ -112,18 +111,8 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-
-  	// Renders the components of this light instance
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
-	// RendererLight implementation
-    const Vector3& worldOrigin() const override;
-    Matrix4 getLightTextureTransformation() const override;
-    const ShaderPtr& getShader() const override;
-	bool intersectsAABB(const AABB& other) const override;
-    AABB lightAABB() const override { return _light.lightAABB(); }
-
-	Vector3 getLightOrigin() const override;
 	const Matrix4& rotation() const;
 
     // Returns the original "origin" value
