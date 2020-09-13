@@ -1293,6 +1293,9 @@
     <ClInclude Include="..\..\radiant\ui\ManipulatorToggle.h">
       <Filter>src\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\SelectionModeToggle.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

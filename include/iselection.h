@@ -193,6 +193,9 @@ public:
   virtual void SetComponentMode(EComponentMode mode) = 0;
   virtual EComponentMode ComponentMode() const = 0;
 
+	virtual sigc::signal<void, EMode>& signal_selectionModeChanged() = 0;
+	virtual sigc::signal<void, EComponentMode>& signal_componentModeChanged() = 0;
+
   virtual std::size_t countSelected() const = 0;
   virtual std::size_t countSelectedComponents() const = 0;
   virtual void onSelectedChanged(const scene::INodePtr& node, const ISelectable& selectable) = 0;

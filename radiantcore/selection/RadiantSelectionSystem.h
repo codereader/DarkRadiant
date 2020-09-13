@@ -69,6 +69,8 @@ private:
 	bool nothingSelected() const;
 
 	sigc::signal<void, selection::Manipulator::Type> _sigActiveManipulatorChanged;
+	sigc::signal<void, EMode> _sigSelectionModeChanged;
+	sigc::signal<void, EComponentMode> _sigComponentModeChanged;
 
 public:
 
@@ -94,6 +96,9 @@ public:
 
 	void SetComponentMode(EComponentMode mode) override;
 	EComponentMode ComponentMode() const override;
+
+	sigc::signal<void, EMode>& signal_selectionModeChanged() override;
+	sigc::signal<void, EComponentMode>& signal_componentModeChanged() override;
 
 	// Returns the ID of the registered manipulator
 	std::size_t registerManipulator(const ManipulatorPtr& manipulator) override;
@@ -190,10 +195,11 @@ private:
 
 	void activateDefaultMode();
 
-	void toggleEntityMode(bool newState);
-	void toggleGroupPartMode(bool newState);
+	void toggleEntityMode(const cmd::ArgumentList& args);
+	void toggleGroupPartMode(const cmd::ArgumentList& args);
 
-	void toggleComponentMode(EComponentMode mode, bool newState);
+	void toggleComponentMode(EComponentMode mode);
+	void toggleComponentModeCmd(const cmd::ArgumentList& args);
 
 	void onManipulatorModeChanged();
 	void onComponentModeChanged();

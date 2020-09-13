@@ -211,6 +211,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	_shaderClipboardStatus.reset(new ShaderClipboardStatus);
 	_editStopwatchStatus.reset(new EditingStopwatchStatus);
 	_manipulatorToggle.reset(new ManipulatorToggle);
+	_selectionModeToggle.reset(new SelectionModeToggle);
 
 	MouseToolRegistrationHelper::RegisterTools();
 
@@ -236,6 +237,7 @@ void UserInterfaceModule::shutdownModule()
 	_shaderClipboardStatus.reset();
 	_editStopwatchStatus.reset();
 	_manipulatorToggle.reset();
+	_selectionModeToggle.reset();
 	
 	_mruMenu.reset();
 }

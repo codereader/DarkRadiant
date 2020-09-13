@@ -17,6 +17,7 @@
 #include "SceneWalkers.h"
 #include "SelectionTestWalkers.h"
 #include "command/ExecutionFailure.h"
+#include "string/case_conv.h"
 
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
@@ -186,11 +187,15 @@ bool RadiantSelectionSystem::higherEntitySelectionPriority() const
 }
 
 // Sets the current selection mode (Entity, Component or Primitive)
-void RadiantSelectionSystem::SetMode(SelectionSystem::EMode mode) {
+void RadiantSelectionSystem::SetMode(SelectionSystem::EMode mode)
+{
     // Only change something if the mode has actually changed
-    if (_mode != mode) {
+    if (_mode != mode)
+    {
         _mode = mode;
         pivotChanged();
+
+        _sigSelectionModeChanged.emit(_mode);
     }
 }
 
@@ -200,13 +205,29 @@ SelectionSystem::EMode RadiantSelectionSystem::Mode() const {
 }
 
 // Set the current component mode to <mode>
-void RadiantSelectionSystem::SetComponentMode(EComponentMode mode) {
-    _componentMode = mode;
+void RadiantSelectionSystem::SetComponentMode(EComponentMode mode)
+{
+    if (_componentMode != mode)
+    {
+        _componentMode = mode;
+
+        _sigComponentModeChanged.emit(_componentMode);
+    }
 }
 
 // returns the current component mode
 SelectionSystem::EComponentMode RadiantSelectionSystem::ComponentMode() const {
     return _componentMode;
+}
+
+sigc::signal<void, SelectionSystem::EMode>& RadiantSelectionSystem::signal_selectionModeChanged()
+{
+    return _sigSelectionModeChanged;
+}
+
+sigc::signal<void, SelectionSystem::EComponentMode>& RadiantSelectionSystem::signal_componentModeChanged()
+{
+    return _sigComponentModeChanged;
 }
 
 std::size_t RadiantSelectionSystem::registerManipulator(const ManipulatorPtr& manipulator)
@@ -596,60 +617,6 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
     }
 }
 
-#if 0
-/* greebo: This gets called by SelectObserver if the user just clicks into the scene (without dragging)
- * It checks for any possible targets (in the "line of click") and takes the actions according
- * to the modifiers that are held down (Alt-Shift, etc.)
- */
-void RadiantSelectionSystem::SelectPoint(const render::View& view,
-                                         const Vector2& device_point,
-                                         const Vector2& device_epsilon,
-                                         SelectionSystem::EModifier modifier,
-                                         bool face)
-{
-    // If the user is holding the replace modifiers (default: Alt-Shift), deselect the current selection
-    if (modifier == SelectionSystem::eReplace) {
-        if (face) {
-            setSelectedAllComponents(false);
-        }
-        else {
-            deselectAll();
-        }
-    }
-
-    {
-        render::View scissored(view);
-        // Construct a selection test according to a small box with 2*epsilon edge length
-        ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
-
-        // Create a new SelectionPool instance and fill it with possible candidates
-        SelectionVolume volume(scissored);
-        // The possible candidates are stored in the SelectablesSet
-        SelectablesList candidates;
-
-        if (face)
-        {
-            SelectionPool selector;
-
-            ComponentSelector selectionTester(selector, volume, eFace);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(scissored, selectionTester);
-
-            // Load them all into the vector
-            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
-            {
-                candidates.push_back(i->second);
-            }
-        }
-        else {
-            testSelectScene(candidates, volume, scissored, Mode(), ComponentMode());
-        }
-
-        // Was the selection test successful (have we found anything to select)?
-		performPointSelection(candidates, modifier);
-    }
-}
-#endif
-
 namespace algorithm
 {
 
@@ -740,70 +707,6 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 			break;
 	};
 }
-
-#if 0
-/* greebo: This gets called by the SelectObserver if the user drags a box and holds down
- * any of the selection modifiers. Possible selection candidates are determined and selected/deselected
- */
-void RadiantSelectionSystem::SelectArea(const render::View& view,
-                                        const Vector2& device_point,
-                                        const Vector2& device_delta,
-                                        SelectionSystem::EModifier modifier, bool face)
-{
-    // If we are in replace mode, deselect all the components or previous selections
-    if (modifier == SelectionSystem::eReplace) {
-        if (face) {
-            setSelectedAllComponents(false);
-        }
-        else {
-            deselectAll();
-        }
-    }
-
-    {
-        // Construct the selection test according to the area the user covered with his drag
-        render::View scissored(view);
-        ConstructSelectionTest(scissored, Rectangle::ConstructFromArea(device_point, device_delta));
-
-        SelectionVolume volume(scissored);
-        // The posssible candidates go here
-        SelectionPool pool;
-
-        SelectablesList candidates;
-
-        if (face)
-        {
-            ComponentSelector selectionTester(pool, volume, eFace);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(scissored, selectionTester);
-
-            // Load them all into the vector
-            for (SelectionPool::const_iterator i = pool.begin(); i != pool.end(); ++i)
-            {
-                candidates.push_back(i->second);
-            }
-        }
-        else {
-            testSelectScene(candidates, volume, scissored, Mode(), ComponentMode());
-        }
-
-		// Since toggling a selectable might trigger a group-selection
-		// we need to keep track of the desired state of each selectable 
-		typedef std::map<ISelectable*, bool> SelectablesMap;
-		SelectablesMap selectableStates;
-
-		for (ISelectable* selectable : candidates)
-		{
-			bool desiredState = !(modifier == SelectionSystem::eToggle && selectable->isSelected());
-			selectableStates.insert(SelectablesMap::value_type(selectable, desiredState));
-		}
-
-		for (const SelectablesMap::value_type& state : selectableStates)
-		{
-			algorithm::setSelectionStatus(state.first, state.second);
-		}
-    }
-}
-#endif
 
 void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EModifier modifier, bool face)
 {
@@ -1038,8 +941,8 @@ void RadiantSelectionSystem::onSceneBoundsChanged()
     _requestWorkZoneRecalculation = true;
 }
 
-// RegisterableModule implementation
-const std::string& RadiantSelectionSystem::getName() const {
+const std::string& RadiantSelectionSystem::getName() const
+{
     static std::string _name(MODULE_SELECTIONSYSTEM);
     return _name;
 }
@@ -1051,7 +954,6 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
     if (_dependencies.empty())
 	{
         _dependencies.insert(MODULE_RENDERSYSTEM);
-        _dependencies.insert(MODULE_EVENTMANAGER);
         _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_GRID);
         _dependencies.insert(MODULE_SCENEGRAPH);
@@ -1095,20 +997,14 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
         sigc::mem_fun(this, &RadiantSelectionSystem::pivotChanged)
     );
 
-    GlobalCommandSystem().addCommand("ToggleManipulatorMode", 
+    GlobalCommandSystem().addCommand("ToggleManipulatorMode",
         std::bind(&RadiantSelectionSystem::toggleManipulatorModeCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
-
-	GlobalEventManager().addToggle("DragVertices", std::bind(&RadiantSelectionSystem::toggleComponentMode, this, eVertex, std::placeholders::_1));
-	GlobalEventManager().addToggle("DragEdges", std::bind(&RadiantSelectionSystem::toggleComponentMode, this, eEdge, std::placeholders::_1));
-	GlobalEventManager().addToggle("DragFaces", std::bind(&RadiantSelectionSystem::toggleComponentMode, this, eFace, std::placeholders::_1));
-	GlobalEventManager().addToggle("DragEntities", std::bind(&RadiantSelectionSystem::toggleEntityMode, this, std::placeholders::_1));
-	GlobalEventManager().addToggle("SelectionModeGroupPart", std::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, std::placeholders::_1));
-
-	GlobalEventManager().setToggled("DragVertices", false);
-	GlobalEventManager().setToggled("DragEdges", false);
-	GlobalEventManager().setToggled("DragFaces", false);
-	GlobalEventManager().setToggled("DragEntities", false);
-	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
+    
+    GlobalCommandSystem().addCommand("ToggleEntitySelectionMode", std::bind(&RadiantSelectionSystem::toggleEntityMode, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("ToggleGroupPartSelectionMode", std::bind(&RadiantSelectionSystem::toggleEntityMode, this, std::placeholders::_1));
+    
+    GlobalCommandSystem().addCommand("ToggleComponentSelectionMode",
+        std::bind(&RadiantSelectionSystem::toggleComponentModeCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 
     selection::algorithm::registerCommands();
     brush::algorithm::registerCommands();
@@ -1225,29 +1121,29 @@ void RadiantSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentList& a
         return;
     }
 
-    auto manip = args[0].getString();
+    auto manip = string::to_lower_copy(args[0].getString());
 
-    if (manip == "Drag")
+    if (manip == "drag")
     {
         toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Drag));
     }
-    else if (manip == "Translate")
+    else if (manip == "translate")
     {
         toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Translate));
     }
-    else if (manip == "Rotate")
+    else if (manip == "rotate")
     {
         toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Rotate));
     }
-    else if (manip == "Scale")
+    else if (manip == "scale")
     {
         toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Drag));
     }
-    else if (manip == "Clip")
+    else if (manip == "clip")
     {
         toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Clip));
     }
-    else if (manip == "ModelScale")
+    else if (manip == "modelscale")
     {
         toggleManipulatorModeById(getManipulatorIdForType(Manipulator::ModelScale));
     }
@@ -1286,7 +1182,7 @@ void RadiantSelectionSystem::activateDefaultMode()
 	SceneChangeNotify();
 }
 
-void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode, bool newState)
+void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode)
 {
 	if (Mode() == eComponent && ComponentMode() == mode)
 	{
@@ -1308,7 +1204,35 @@ void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode, bool newSt
 	onComponentModeChanged();
 }
 
-void RadiantSelectionSystem::toggleEntityMode(bool newState)
+void RadiantSelectionSystem::toggleComponentModeCmd(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        rWarning() << "Usage: ToggleComponentSelectionMode <mode>" << std::endl;
+        rWarning() << " with <mode> being one of the following: " << std::endl;
+        rWarning() << "      Vertex" << std::endl;
+        rWarning() << "      Edge" << std::endl;
+        rWarning() << "      Face" << std::endl;
+        return;
+    }
+
+    auto mode = string::to_lower_copy(args[0].getString());
+
+    if (mode == "vertex")
+    {
+        toggleComponentMode(eVertex);
+    }
+    else if (mode == "edge")
+    {
+        toggleComponentMode(eEdge);
+    }
+    else if (mode == "face")
+    {
+        toggleComponentMode(eFace);
+    }
+}
+
+void RadiantSelectionSystem::toggleEntityMode(const cmd::ArgumentList& args)
 {
 	if (Mode() == eEntity)
 	{
@@ -1324,7 +1248,7 @@ void RadiantSelectionSystem::toggleEntityMode(bool newState)
 	onComponentModeChanged();
 }
 
-void RadiantSelectionSystem::toggleGroupPartMode(bool newState)
+void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
 {
 	if (Mode() == eGroupPart)
 	{
@@ -1376,12 +1300,6 @@ void RadiantSelectionSystem::onManipulatorModeChanged()
 
 void RadiantSelectionSystem::onComponentModeChanged()
 {
-	GlobalEventManager().setToggled("DragVertices", Mode() == eComponent && ComponentMode() == eVertex);
-	GlobalEventManager().setToggled("DragEdges", Mode() == eComponent && ComponentMode() == eEdge);
-	GlobalEventManager().setToggled("DragFaces", Mode() == eComponent && ComponentMode() == eFace);
-	GlobalEventManager().setToggled("DragEntities", Mode() == eEntity && ComponentMode() == eDefault);
-	GlobalEventManager().setToggled("SelectionModeGroupPart", Mode() == eGroupPart && ComponentMode() == eDefault);
-
 	SceneChangeNotify();
 }
 
