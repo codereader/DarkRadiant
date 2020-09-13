@@ -142,8 +142,6 @@ void BrushModuleImpl::shutdownModule()
 
 void BrushModuleImpl::registerBrushCommands()
 {
-	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
-
 	GlobalCommandSystem().addCommand("BrushMakePrefab", selection::algorithm::brushMakePrefab, { cmd::ARGTYPE_INT, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 	GlobalCommandSystem().addCommand("BrushMakeSided", selection::algorithm::brushMakeSided, { cmd::ARGTYPE_INT });
 

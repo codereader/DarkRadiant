@@ -405,6 +405,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", "user/ui/offsetClonedObjects");
 	GlobalEventManager().addRegistryToggle("ToggleFreeObjectRotation", RKEY_FREE_OBJECT_ROTATION);
 
+	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
+
 	GlobalCommandSystem().addCommand("LoadPrefab", ui::loadPrefabDialog);
 }
 
