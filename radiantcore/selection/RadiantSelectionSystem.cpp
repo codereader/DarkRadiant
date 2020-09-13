@@ -295,6 +295,11 @@ void RadiantSelectionSystem::setActiveManipulator(Manipulator::Type manipulatorT
 	rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
 }
 
+sigc::signal<void, selection::Manipulator::Type>& RadiantSelectionSystem::signal_activeManipulatorChanged()
+{
+    return _sigActiveManipulatorChanged;
+}
+
 // return the number of selected primitives
 std::size_t RadiantSelectionSystem::countSelected() const {
     return _countPrimitive;
@@ -1090,12 +1095,8 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
         sigc::mem_fun(this, &RadiantSelectionSystem::pivotChanged)
     );
 
-	GlobalEventManager().addToggle("ToggleClipper", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Clip, std::placeholders::_1));
-	GlobalEventManager().addToggle("MouseTranslate", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Translate, std::placeholders::_1));
-	GlobalEventManager().addToggle("MouseRotate", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Rotate, std::placeholders::_1));
-	GlobalEventManager().addToggle("MouseDrag", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::Drag, std::placeholders::_1));
-	GlobalEventManager().addToggle("ToggleModelScaleManipulator", std::bind(&RadiantSelectionSystem::toggleManipulatorMode, this, Manipulator::ModelScale, std::placeholders::_1));
-	GlobalEventManager().setToggled("MouseDrag", true);
+    GlobalCommandSystem().addCommand("ToggleManipulatorMode", 
+        std::bind(&RadiantSelectionSystem::toggleManipulatorModeCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 
 	GlobalEventManager().addToggle("DragVertices", std::bind(&RadiantSelectionSystem::toggleComponentMode, this, eVertex, std::placeholders::_1));
 	GlobalEventManager().addToggle("DragEdges", std::bind(&RadiantSelectionSystem::toggleComponentMode, this, eEdge, std::placeholders::_1));
@@ -1166,7 +1167,7 @@ std::size_t RadiantSelectionSystem::getManipulatorIdForType(Manipulator::Type ty
 {
 	for (const Manipulators::value_type& pair : _manipulators)
 	{
-		if (pair.second->getType() == _defaultManipulatorType)
+		if (pair.second->getType() == type)
 		{
 			return pair.first;
 		}
@@ -1175,7 +1176,7 @@ std::size_t RadiantSelectionSystem::getManipulatorIdForType(Manipulator::Type ty
 	return 0;
 }
 
-void RadiantSelectionSystem::toggleManipulatorModeById(std::size_t manipId, bool newState)
+void RadiantSelectionSystem::toggleManipulatorModeById(std::size_t manipId)
 {
 	std::size_t defaultManipId = getManipulatorIdForType(_defaultManipulatorType);
 
@@ -1187,7 +1188,7 @@ void RadiantSelectionSystem::toggleManipulatorModeById(std::size_t manipId, bool
 	// Switch back to the default mode if we're already in <mode>
 	if (_activeManipulator->getId() == manipId && defaultManipId != manipId)
 	{
-		toggleManipulatorModeById(defaultManipId, true);
+		toggleManipulatorModeById(defaultManipId);
 	}
 	else // we're not in <mode> yet
 	{
@@ -1209,12 +1210,55 @@ void RadiantSelectionSystem::toggleManipulatorModeById(std::size_t manipId, bool
 	}
 }
 
-void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type, bool newState)
+void RadiantSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        rWarning() << "Usage: ToggleManipulatorMode <manipulator>" << std::endl;
+        rWarning() << " with <manipulator> being one of the following: " << std::endl;
+        rWarning() << "      Drag" << std::endl;
+        rWarning() << "      Translate" << std::endl;
+        rWarning() << "      Rotate" << std::endl;
+        rWarning() << "      Scale" << std::endl;
+        rWarning() << "      Clip" << std::endl;
+        rWarning() << "      ModelScale" << std::endl;
+        return;
+    }
+
+    auto manip = args[0].getString();
+
+    if (manip == "Drag")
+    {
+        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Drag));
+    }
+    else if (manip == "Translate")
+    {
+        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Translate));
+    }
+    else if (manip == "Rotate")
+    {
+        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Rotate));
+    }
+    else if (manip == "Scale")
+    {
+        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Drag));
+    }
+    else if (manip == "Clip")
+    {
+        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Clip));
+    }
+    else if (manip == "ModelScale")
+    {
+        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::ModelScale));
+    }
+}
+
+void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type)
 {
 	// Switch back to the default mode if we're already in <mode>
 	if (_activeManipulator->getType() == type && _defaultManipulatorType != type)
 	{
-		toggleManipulatorMode(_defaultManipulatorType, true);
+		toggleManipulatorMode(_defaultManipulatorType);
 	}
 	else // we're not in <mode> yet
 	{
@@ -1254,7 +1298,7 @@ void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode, bool newSt
 	{
 		if (!_activeManipulator->supportsComponentManipulation())
 		{
-			toggleManipulatorMode(_defaultManipulatorType, true);
+			toggleManipulatorMode(_defaultManipulatorType);
 		}
 
 		SetMode(eComponent);
@@ -1326,13 +1370,7 @@ void RadiantSelectionSystem::toggleGroupPartMode(bool newState)
 
 void RadiantSelectionSystem::onManipulatorModeChanged()
 {
-	GlobalEventManager().setToggled("ToggleClipper", GlobalClipper().clipMode());
-	
-	GlobalEventManager().setToggled("MouseTranslate", _activeManipulator->getType() == Manipulator::Translate);
-	GlobalEventManager().setToggled("MouseRotate", _activeManipulator->getType() == Manipulator::Rotate);
-	GlobalEventManager().setToggled("MouseDrag", _activeManipulator->getType() == Manipulator::Drag);
-	GlobalEventManager().setToggled("ToggleModelScaleManipulator", _activeManipulator->getType() == Manipulator::ModelScale);
-
+    _sigActiveManipulatorChanged.emit(getActiveManipulatorType());
 	SceneChangeNotify();
 }
 

@@ -12,6 +12,7 @@
 #include "FileSelectionRequestHandler.h"
 #include "AutoSaveRequestHandler.h"
 #include "MapFileProgressHandler.h"
+#include "ManipulatorToggle.h"
 #include "shaderclipboard/ShaderClipboardStatus.h"
 #include "statusbar/EditingStopwatchStatus.h"
 #include "messages/CommandExecutionFailed.h"
@@ -42,6 +43,7 @@ private:
 	std::unique_ptr<FileSelectionRequestHandler> _fileSelectionRequestHandler;
 	std::unique_ptr<ShaderClipboardStatus> _shaderClipboardStatus;
 	std::unique_ptr<EditingStopwatchStatus> _editStopwatchStatus;
+	std::unique_ptr<ManipulatorToggle> _manipulatorToggle;
 
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;

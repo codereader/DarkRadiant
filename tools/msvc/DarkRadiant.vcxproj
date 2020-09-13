@@ -448,6 +448,7 @@
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
+    <ClInclude Include="..\..\radiant\ui\ManipulatorToggle.h" />
     <ClInclude Include="..\..\radiant\ui\MapCommands.h" />
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />

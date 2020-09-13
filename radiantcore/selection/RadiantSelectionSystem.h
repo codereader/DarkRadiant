@@ -68,6 +68,8 @@ private:
 
 	bool nothingSelected() const;
 
+	sigc::signal<void, selection::Manipulator::Type> _sigActiveManipulatorChanged;
+
 public:
 
 	RadiantSelectionSystem();
@@ -101,6 +103,7 @@ public:
 	const ManipulatorPtr& getActiveManipulator() override;
 	void setActiveManipulator(std::size_t manipulatorId) override;
 	void setActiveManipulator(Manipulator::Type manipulatorType) override;
+	sigc::signal<void, selection::Manipulator::Type>& signal_activeManipulatorChanged() override;
 
 	std::size_t countSelected() const override;
 	std::size_t countSelectedComponents() const override;
@@ -181,8 +184,9 @@ private:
 	std::size_t getManipulatorIdForType(Manipulator::Type type);
 
 	// Command targets used to connect to the event system
-	void toggleManipulatorMode(Manipulator::Type type, bool newState);
-	void toggleManipulatorModeById(std::size_t manipId, bool newState);
+	void toggleManipulatorModeCmd(const cmd::ArgumentList& args);
+	void toggleManipulatorMode(Manipulator::Type type);
+	void toggleManipulatorModeById(std::size_t manipId);
 
 	void activateDefaultMode();
 

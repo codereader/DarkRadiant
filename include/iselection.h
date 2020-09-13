@@ -184,6 +184,8 @@ public:
 	virtual void setActiveManipulator(std::size_t manipulatorId) = 0;
 	virtual void setActiveManipulator(selection::Manipulator::Type manipulatorType) = 0;
 
+	virtual sigc::signal<void, selection::Manipulator::Type>& signal_activeManipulatorChanged() = 0;
+
 	virtual const SelectionInfo& getSelectionInfo() = 0;
 
   virtual void SetMode(EMode mode) = 0;
