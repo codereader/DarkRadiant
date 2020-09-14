@@ -232,6 +232,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 rendersystem/LinearLightList.cpp \
                 rendersystem/OpenGLRenderSystem.cpp \
                 rendersystem/RenderSystemFactory.cpp \
+                rendersystem/SharedOpenGLContextModule.cpp \
                 rendersystem/debug/SpacePartitionRenderer.cpp \
                 scenegraph/SceneGraph.cpp \
                 scenegraph/Octree.cpp \

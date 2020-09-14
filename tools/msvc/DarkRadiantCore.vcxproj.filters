@@ -988,6 +988,9 @@
     <ClCompile Include="..\..\radiantcore\selection\SelectionTestWalkers.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.cpp">
+      <Filter>src\rendersystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2018,6 +2021,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\SelectionTestWalkers.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.h">
+      <Filter>src\rendersystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -620,6 +620,7 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\LinearLightList.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\RenderSystemFactory.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.cpp" />
     <ClCompile Include="..\..\radiantcore\scenegraph\Octree.cpp" />
     <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraph.cpp" />
     <ClCompile Include="..\..\radiantcore\scenegraph\SceneGraphFactory.cpp" />
@@ -936,6 +937,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\LinearLightList.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\RenderSystemFactory.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\Octree.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\OctreeNode.h" />
     <ClInclude Include="..\..\radiantcore\scenegraph\SceneGraph.h" />
