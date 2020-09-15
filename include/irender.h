@@ -228,9 +228,10 @@ public:
 };
 typedef std::shared_ptr<RendererLight> RendererLightPtr;
 
+/// Debug stream insertion for RendererLight
 inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
 {
-    return os << "RendererLight { worldOrigin = " << l.worldOrigin() << " }";
+    return os << "RendererLight(origin=" << l.worldOrigin() << ")";
 }
 
 /**
@@ -285,6 +286,35 @@ public:
     /// Invoke a callback on all contained lights.
     virtual void forEachLight(const RendererLightCallback& callback) const = 0;
 };
+
+/// Debug stream insertion for LightSources
+inline std::ostream& operator<< (std::ostream& s, const LightSources& ls)
+{
+    s << "LightSources(";
+
+    // Insert comma-separated list of RendererLights
+    bool addComma = false;
+    ls.forEachLight(
+        [&](const RendererLight& l)
+        {
+            if (addComma)
+                s << ", ";
+            s << l;
+            addComma = true;
+        }
+    );
+
+    return s << ")";
+}
+
+/// Debug stream insertion for possibly null LightSources pointer
+inline std::ostream& operator<< (std::ostream& s, const LightSources* ls)
+{
+    if (ls)
+        return s << *ls;
+    else
+        return s << "[no lightsources]";
+}
 
 /**
  * \brief
