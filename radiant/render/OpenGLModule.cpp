@@ -15,9 +15,6 @@
 
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
-	_wxSharedContext(NULL),
-	_contextValid(false),
-	_wxContextValid(false),
     _shaderProgramsAvailable(false)
 {}
 
@@ -58,25 +55,6 @@ void OpenGLModule::assertNoErrors()
 
 void OpenGLModule::sharedContextCreated()
 {
-	// report OpenGL information
-	rMessage() << "GL_VENDOR: "
-		<< reinterpret_cast<const char*>(glGetString(GL_VENDOR)) << std::endl;
-	rMessage() << "GL_RENDERER: "
-		<< reinterpret_cast<const char*>(glGetString(GL_RENDERER)) << std::endl;
-	rMessage() << "GL_VERSION: "
-		<< reinterpret_cast<const char*>(glGetString(GL_VERSION)) << std::endl;
-	rMessage() << "GL_EXTENSIONS: "
-		<< reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)) << std::endl;
-
-	GLenum err = glewInit();
-
-	if (err != GLEW_OK)
-	{
-		// glewInit failed
-		rError() << "GLEW error: " <<
-			reinterpret_cast<const char*>(glewGetErrorString(err));
-	}
-
 	// Initialise the font before firing the extension initialised signal
 	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 12));
 
@@ -90,11 +68,6 @@ void OpenGLModule::sharedContextDestroyed()
 	GlobalRenderSystem().unrealise();
 }
 
-wxGLContext& OpenGLModule::getwxGLContext()
-{
-	return *_wxSharedContext;
-}
-
 bool OpenGLModule::shaderProgramsAvailable() const
 {
     return _shaderProgramsAvailable;
@@ -105,53 +78,6 @@ bool OpenGLModule::shaderProgramsAvailable() const
 void OpenGLModule::setShaderProgramsAvailable(bool available)
 {
     _shaderProgramsAvailable = available;
-}
-
-void OpenGLModule::registerGLCanvas(wxutil::GLWidget* widget)
-{
-	std::pair<wxGLWidgets::iterator, bool> result = _wxGLWidgets.insert(widget);
-
-	if (result.second && _wxGLWidgets.size() == 1)
-	{
-		// First non-duplicated widget registered, take this as context holder
-		_wxSharedContext = new wxGLContext(widget);
-
-		// Create a context
-		widget->SetCurrent(*_wxSharedContext);
-        assertNoErrors();
-
-		_wxContextValid = true;
-
-		sharedContextCreated();
-	}
-}
-
-void OpenGLModule::unregisterGLCanvas(wxutil::GLWidget* widget)
-{
-	wxGLWidgets::iterator found = _wxGLWidgets.find(widget);
-
-	assert(found != _wxGLWidgets.end());
-
-	if (found != _wxGLWidgets.end())
-	{
-		if (_wxGLWidgets.size() == 1)
-		{
-			// This is the last active GL widget
-			_wxContextValid = false;
-
-			sharedContextDestroyed();
-
-			delete _wxSharedContext;
-			_wxSharedContext = NULL;
-		}
-
-		_wxGLWidgets.erase(found);
-	}
-}
-
-bool OpenGLModule::wxContextValid() const
-{
-	return _wxContextValid;
 }
 
 void OpenGLModule::drawString(const std::string& string) const
@@ -170,19 +96,39 @@ int OpenGLModule::getFontHeight()
 	return _font->getPixelHeight();
 }
 
-// RegisterableModule implementation
-const std::string& OpenGLModule::getName() const {
+const std::string& OpenGLModule::getName() const
+{
 	static std::string _name(MODULE_OPENGL);
 	return _name;
 }
 
-const StringSet& OpenGLModule::getDependencies() const {
-	static StringSet _dependencies; // no dependencies
+const StringSet& OpenGLModule::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_SHARED_GL_CONTEXT);
+	}
+
 	return _dependencies;
 }
 
-void OpenGLModule::initialiseModule(const IApplicationContext& ctx) {
-	rMessage() << "OpenGL::initialiseModule called.\n";
+void OpenGLModule::initialiseModule(const IApplicationContext& ctx)
+{
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+	_contextCreated = GlobalOpenGLContext().signal_sharedContextCreated().connect(
+		sigc::mem_fun(this, &OpenGLModule::sharedContextCreated));
+
+	_contextDestroyed = GlobalOpenGLContext().signal_sharedContextDestroyed().connect(
+		sigc::mem_fun(this, &OpenGLModule::sharedContextDestroyed));
+}
+
+void OpenGLModule::shutdownModule()
+{
+	_contextCreated.disconnect();
+	_contextDestroyed.disconnect();
 }
 
 // Define the static OpenGLModule module

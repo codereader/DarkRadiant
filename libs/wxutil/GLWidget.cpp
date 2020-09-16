@@ -2,6 +2,9 @@
 
 #include "igl.h"
 #include "itextstream.h"
+#include "iwxgl.h"
+
+#include "GLContext.h"
 
 #include <wx/dcclient.h>
 
@@ -21,9 +24,9 @@ GLWidget::GLWidget(wxWindow *parent, const std::function<bool()>& renderCallback
                wxString(name.c_str(), *wxConvCurrent)),
 	_registered(false),
 	_renderCallback(renderCallback),
-	_privateContext(NULL)
+	_privateContext(nullptr)
 {
-	Connect(wxEVT_PAINT, wxPaintEventHandler(GLWidget::OnPaint), NULL, this);
+	Bind(wxEVT_PAINT, &GLWidget::OnPaint, this);
 }
 
 void GLWidget::SetHasPrivateContext(bool hasPrivateContext)
@@ -40,10 +43,10 @@ void GLWidget::SetHasPrivateContext(bool hasPrivateContext)
 
 void GLWidget::DestroyPrivateContext()
 {
-	if (_privateContext != NULL)
+	if (_privateContext != nullptr)
 	{
 		_privateContext->UnRef();
-		_privateContext = NULL;
+		_privateContext = nullptr;
 	}
 }
 
@@ -53,7 +56,7 @@ GLWidget::~GLWidget()
 
 	if (_registered)
 	{
-		GlobalOpenGL().unregisterGLCanvas(this);
+		GlobalWxGlWidgetManager().unregisterGLWidget(this);
 	}
 }
 
@@ -70,22 +73,26 @@ void GLWidget::OnPaint(wxPaintEvent& WXUNUSED(event))
 	{
 		_registered = true;
 
-		GlobalOpenGL().registerGLCanvas(this);
+		GlobalWxGlWidgetManager().registerGLWidget(this);
 	}
 
     // This is required even though dc is not used otherwise.
     wxPaintDC dc(this);
 
-	// Grab the contex for this widget
-	if (_privateContext != NULL)
+	// Grab the context for this widget
+	if (_privateContext != nullptr)
 	{
 		// Use the private context for this widget
 		SetCurrent(*_privateContext);
 	}
 	else
 	{
-		// Use the globally shared context
-		SetCurrent(GlobalOpenGL().getwxGLContext());
+		// Use the globally shared context, we rely on this being of type GLContext
+		const auto& context = GlobalOpenGLContext().getSharedContext();
+		assert(std::dynamic_pointer_cast<GLContext>(context));
+
+		auto wxContext = std::static_pointer_cast<GLContext>(context);
+		SetCurrent(wxContext->get());
 	}
 
 	if (_renderCallback())

@@ -3,6 +3,7 @@
 #include "igl.h"
 #include <map>
 #include <string>
+#include <sigc++/connection.h>
 
 #include "wxutil/GLFont.h"
 #include "wxutil/GLWidget.h"
@@ -16,37 +17,28 @@ private:
 
 	wxutil::GLFontPtr _font;
 
-	wxGLContext* _wxSharedContext;
-
-	typedef std::set<wxutil::GLWidget*> wxGLWidgets;
-	wxGLWidgets _wxGLWidgets;
-
-	bool _contextValid;
-	bool _wxContextValid;
-
     bool _shaderProgramsAvailable;
+
+	sigc::connection _contextCreated;
+	sigc::connection _contextDestroyed;
 
 public:
 	OpenGLModule();
 
-	virtual void assertNoErrors() override;
+	void assertNoErrors() override;
 
-	virtual void drawString(const std::string& string) const override;
-	virtual void drawChar(char character) const override;
-	virtual int getFontHeight() override;
+	void drawString(const std::string& string) const override;
+	void drawChar(char character) const override;
+	int getFontHeight() override;
 
-    virtual wxGLContext& getwxGLContext() override;
-    virtual void registerGLCanvas(wxutil::GLWidget* widget) override;
-    virtual void unregisterGLCanvas(wxutil::GLWidget* widget) override;
-	virtual bool wxContextValid() const override;
-
-    virtual bool shaderProgramsAvailable() const override;
-    virtual void setShaderProgramsAvailable(bool available) override;
+    bool shaderProgramsAvailable() const override;
+    void setShaderProgramsAvailable(bool available) override;
 
 	// RegisterableModule implementation
-    virtual const std::string& getName() const override;
-    virtual const StringSet& getDependencies() const override;
-    virtual void initialiseModule(const IApplicationContext& ctx) override;
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 private:
 	void sharedContextCreated();

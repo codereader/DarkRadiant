@@ -75,7 +75,7 @@ void StartupMapLoader::onMainFrameReady()
 void StartupMapLoader::loadMapSafe(const std::string& mapToLoad)
 {
 	// Check if we have a valid openGL context, otherwise postpone the load
-	if (GlobalOpenGL().wxContextValid())
+	if (GlobalOpenGLContext().getSharedContext())
 	{
 		GlobalCommandSystem().executeCommand("OpenMap", mapToLoad);
 		return;

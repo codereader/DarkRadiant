@@ -1,6 +1,6 @@
 #pragma once
 
-#include "igl.h"
+#include "imodule.h"
 
 namespace wxutil { class GLWidget; }
 

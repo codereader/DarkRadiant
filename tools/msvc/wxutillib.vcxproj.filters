@@ -104,6 +104,7 @@
     <ClInclude Include="..\..\libs\wxutil\ScrollWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\Button.h" />
     <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
+    <ClInclude Include="..\..\libs\wxutil\GLContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

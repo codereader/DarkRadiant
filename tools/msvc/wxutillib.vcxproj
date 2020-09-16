@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\libs\wxutil\event\SingleIdleCallback.h" />
     <ClInclude Include="..\..\libs\wxutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\wxutil\FreezePointer.h" />
+    <ClInclude Include="..\..\libs\wxutil\GLContext.h" />
     <ClInclude Include="..\..\libs\wxutil\GLFont.h" />
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />

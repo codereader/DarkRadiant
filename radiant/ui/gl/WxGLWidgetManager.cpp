@@ -1,6 +1,10 @@
 #include "WxGLWidgetManager.h"
 
+#include "igl.h"
 #include "module/StaticModule.h"
+
+#include "wxutil/GLWidget.h"
+#include "wxutil/GLContext.h"
 
 namespace ui
 {
@@ -11,19 +15,9 @@ void WxGLWidgetManager::registerGLWidget(wxutil::GLWidget* widget)
 
 	if (result.second && _wxGLWidgets.size() == 1)
 	{
-		// TODO
-#if 0
-		// First non-duplicated widget registered, take this as context holder
-		_wxSharedContext = new wxGLContext(widget);
+		auto context = std::make_shared<wxutil::GLContext>(widget);
 
-		// Create a context
-		widget->SetCurrent(*_wxSharedContext);
-		assertNoErrors();
-
-		_wxContextValid = true;
-
-		sharedContextCreated();
-#endif
+		GlobalOpenGLContext().setSharedContext(context);
 	}
 }
 
@@ -35,15 +29,7 @@ void WxGLWidgetManager::unregisterGLWidget(wxutil::GLWidget* widget)
 
 	if (_wxGLWidgets.empty())
 	{
-#if 0
-		// This is the last active GL widget
-		_wxContextValid = false;
-
-		sharedContextDestroyed();
-
-		delete _wxSharedContext;
-		_wxSharedContext = NULL;
-#endif
+		GlobalOpenGLContext().setSharedContext(gl::IGLContext::Ptr());
 	}
 }
 

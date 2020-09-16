@@ -62,8 +62,8 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
     // If the openGL module is already initialised and a shared context is created
     // trigger a call to extensionsInitialised().
-    if (module::GlobalModuleRegistry().moduleExists(MODULE_OPENGL) &&
-        GlobalOpenGL().wxContextValid())
+    if (GlobalRadiantCore().getModuleRegistry().moduleExists(MODULE_SHARED_GL_CONTEXT) &&
+        GlobalOpenGLContext().getSharedContext())
 	{
         extensionsInitialised();
 	}
@@ -251,9 +251,9 @@ void OpenGLRenderSystem::unrealise()
         sp->unrealise();
     }
 
-	if (GlobalOpenGL().wxContextValid()
-        && GlobalOpenGL().shaderProgramsAvailable()
-        && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
+	if (GlobalOpenGLContext().getSharedContext() && 
+        GlobalOpenGL().shaderProgramsAvailable() && 
+        getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
 		// Unrealise the GLPrograms
         _glProgramFactory->unrealise();

@@ -88,18 +88,6 @@ public:
 	// Normally, you want to use the debug::assertNoGlErrors() wrapper which does nothing in release builds
     virtual void assertNoErrors() = 0;
 
-	/// Returns the shared context widget holding the GL context
-    virtual wxGLContext& getwxGLContext() = 0;
-
-    /// Registers a GL widget, storing the shared context if necessary
-    virtual void registerGLCanvas(wxutil::GLWidget* widget) = 0;
-
-    /// Notifies the GL module that a GLWidget has been destroyed
-    virtual void unregisterGLCanvas(wxutil::GLWidget* widget) = 0;
-
-	/// \brief Is true if the global shared OpenGL context is valid.
-    virtual bool wxContextValid() const = 0;
-
     // Returns true if openGL supports ARB or GLSL lighting
     virtual bool shaderProgramsAvailable() const = 0;
 
