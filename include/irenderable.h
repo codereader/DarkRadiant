@@ -13,6 +13,7 @@ class LightSources;
 class Matrix4;
 class IRenderEntity;
 class RendererLight;
+class LitObject;
 
 /**
  * \brief
@@ -56,6 +57,33 @@ public:
                                const Matrix4& world,
                                const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
+
+    /**
+     * \brief
+     * Submit a renderable object to be illuminated by scene lights.
+     *
+     * This method allows renderable geometry to be submitted under the control
+     * of a LitObject which will determine whether and how the renderable is
+     * illuminated by scene lights. Each objected submitted with this method
+     * will be considered for lighting by the lights which are submitted to the
+     * same RenderableCollector using addLight().
+     *
+     * Most of the parameters have identical meanings to those in
+     * addRenderable().
+     *
+     * \param litObject
+     * A LitObject determining lighting interactions for this renderable. This
+     * may or may not be the same actual object as the OpenGLRenderable,
+     * depending on how the object tree is set up. If a single LitObject
+     * contains multiple renderables, a separate call to this method must be
+     * made for each renderable (with the same litObject parameter).
+     *
+     */
+    virtual void addLitRenderable(Shader& shader,
+                                  OpenGLRenderable& renderable,
+                                  const Matrix4& localToWorld,
+                                  const LitObject& litObject,
+                                  const IRenderEntity* entity = nullptr) = 0;
 
     /**
      * \brief

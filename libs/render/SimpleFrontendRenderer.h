@@ -26,6 +26,16 @@ public:
         shader.addRenderable(renderable, world, lights, entity);
     }
 
+    void addLitRenderable(Shader& shader,
+                          OpenGLRenderable& renderable,
+                          const Matrix4& localToWorld,
+                          const LitObject& litObject,
+                          const IRenderEntity* entity = nullptr) override
+    {
+        std::cerr << "FIXME: SimpleFrontendRenderer::addLitRenderable() unimplemented\n";
+        shader.addRenderable(renderable, localToWorld, nullptr, entity);
+    }
+
     void addLight(const RendererLight&) override {}
 
     bool supportsFullMaterials() const override

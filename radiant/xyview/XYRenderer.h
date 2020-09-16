@@ -70,6 +70,15 @@ public:
         shader.addRenderable(renderable, world, lights, entity);
     }
 
+    void addLitRenderable(Shader& shader,
+                          OpenGLRenderable& renderable,
+                          const Matrix4& localToWorld,
+                          const LitObject& /* litObject */,
+                          const IRenderEntity* entity = nullptr) override
+    {
+        shader.addRenderable(renderable, localToWorld, nullptr, entity);
+    }
+
     void render(const Matrix4& modelview, const Matrix4& projection)
     {
         GlobalRenderSystem().render(_globalstate, modelview, projection);
