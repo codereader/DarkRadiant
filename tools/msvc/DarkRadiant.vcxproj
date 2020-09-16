@@ -259,6 +259,7 @@
     <ClCompile Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FiltersMainMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterUserInterface.cpp" />
+    <ClCompile Include="..\..\radiant\ui\gl\WxGLWidgetManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp" />
@@ -444,6 +445,7 @@
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FiltersMainMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterUserInterface.h" />
+    <ClInclude Include="..\..\radiant\ui\gl\WxGLWidgetManager.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h" />
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />

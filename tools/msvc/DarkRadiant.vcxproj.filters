@@ -170,6 +170,9 @@
     <Filter Include="src\ui\statusbar">
       <UniqueIdentifier>{ef5c6dc4-3f56-434e-b371-f2804f9088ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\gl">
+      <UniqueIdentifier>{360f8d9f-f078-4296-9633-913d79de1b79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -666,6 +669,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\settings\LocalisationModule.cpp">
       <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\gl\WxGLWidgetManager.cpp">
+      <Filter>src\ui\gl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1295,6 +1301,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\SelectionModeToggle.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\gl\WxGLWidgetManager.h">
+      <Filter>src\ui\gl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

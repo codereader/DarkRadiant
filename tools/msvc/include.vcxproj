@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\include\iuimanager.h" />
     <ClInclude Include="..\..\include\iundo.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
+    <ClInclude Include="..\..\include\iwxgl.h" />
     <ClInclude Include="..\..\include\mapfile.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
     <ClInclude Include="..\..\include\ModResource.h" />

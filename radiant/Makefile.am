@@ -122,6 +122,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/filters/FiltersMainMenu.cpp \
                       ui/filters/editor/FilterDialog.cpp \
                       ui/filters/editor/FilterEditor.cpp \
+                      ui/gl/WxGLWidgetManager.cpp \
                       ui/prefdialog/GameSetupDialog.cpp \
 					  ui/prefdialog/GameSetupPage.cpp \
                       ui/prefdialog/GameSetupPageIdTech.cpp \
