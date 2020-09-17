@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodule.h"
+#include <sigc++/signal.h>
 
 // Forward-declare the stuff in <pybind11/pybind11.h>
 namespace pybind11 { class module; class dict; }
@@ -34,6 +35,17 @@ public:
 };
 typedef std::shared_ptr<IScriptInterface> IScriptInterfacePtr;
 
+// Represents a named, executable .py script file
+class IScriptCommand
+{
+public:
+	virtual ~IScriptCommand() {}
+
+	virtual const std::string& getName() const = 0;
+	virtual const std::string& getFilename() const = 0;
+	virtual const std::string& getDisplayName() const = 0;
+};
+
 /**
  * DarkRadiant's Scripting System, based on pybind11. It's possible
  * to expose additional interfaces by using the addInterface() method.
@@ -61,6 +73,16 @@ public:
 	 * @returns: the result object.
 	 */
 	virtual script::ExecutionResultPtr executeString(const std::string& scriptString) = 0;
+
+	/**
+	 * Iterate over all available script commands, invoking the given functor.
+	 */
+	virtual void foreachScriptCommand(const std::function<void(const IScriptCommand&)>& functor) = 0;
+
+	/**
+	 * Signal fired when the available set of scripts has been reloaded
+	 */
+	virtual sigc::signal<void>& signal_onScriptsReloaded() = 0;
 };
 typedef std::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
 

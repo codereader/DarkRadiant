@@ -8,7 +8,7 @@
 class wxCommandEvent;
 namespace wxutil { class PythonSourceViewCtrl; }
 
-namespace script
+namespace ui
 {
 
 class ScriptWindow;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iscript.h"
 #include <string>
 #include <map>
 #include <memory>
@@ -10,8 +11,10 @@ namespace script
 // Forward decl.
 class ScriptingSystem;
 
-class ScriptCommand
+class ScriptCommand :
+	public IScriptCommand
 {
+private:
 	// The name of this command
 	std::string _name;
 
@@ -26,19 +29,19 @@ public:
 				  const std::string& displayName,
 				  const std::string& scriptFilename);
 
-	~ScriptCommand();
+	virtual ~ScriptCommand();
 
-    const std::string& getName()
+    const std::string& getName() const override
     {
         return _name;
     }
 
-	const std::string& getFilename()
+	const std::string& getFilename() const override
     {
 		return _scriptFilename;
 	}
 
-	const std::string& getDisplayName()
+	const std::string& getDisplayName() const override
     {
 		return _displayName;
 	}

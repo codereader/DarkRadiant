@@ -56,7 +56,6 @@
     <Import Project="properties\DarkRadiant Module DLL.props" />
     <Import Project="properties\Python.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -64,7 +63,6 @@
     <Import Project="properties\DarkRadiant Module DLL.props" />
     <Import Project="properties\Python.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -72,7 +70,6 @@
     <Import Project="properties\DarkRadiant Module DLL.props" />
     <Import Project="properties\Python.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -80,7 +77,6 @@
     <Import Project="properties\DarkRadiant Module DLL.props" />
     <Import Project="properties\Python.props" />
     <Import Project="properties\GLEW.props" />
-    <Import Project="properties\wxWidgets.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -115,7 +111,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <DataExecutionPrevention>
@@ -146,7 +142,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <DataExecutionPrevention>
@@ -173,7 +169,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <FixedBaseAddress>
@@ -204,7 +200,7 @@
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <FixedBaseAddress>
@@ -227,8 +223,6 @@
     <ClInclude Include="..\..\plugins\script\SceneNodeBuffer.h" />
     <ClInclude Include="..\..\plugins\script\ScriptCommand.h" />
     <ClInclude Include="..\..\plugins\script\ScriptingSystem.h" />
-    <ClInclude Include="..\..\plugins\script\ScriptMenu.h" />
-    <ClInclude Include="..\..\plugins\script\ScriptWindow.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\BrushInterface.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\CommandSystemInterface.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\DialogInterface.h" />
@@ -263,9 +257,7 @@
     <ClCompile Include="..\..\plugins\script\SceneNodeBuffer.cpp" />
     <ClCompile Include="..\..\plugins\script\ScriptCommand.cpp" />
     <ClCompile Include="..\..\plugins\script\ScriptingSystem.cpp" />
-    <ClCompile Include="..\..\plugins\script\ScriptMenu.cpp" />
     <ClCompile Include="..\..\plugins\script\ScriptModule.cpp" />
-    <ClCompile Include="..\..\plugins\script\ScriptWindow.cpp" />
     <ClCompile Include="..\..\plugins\script\interfaces\BrushInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\interfaces\CommandSystemInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\interfaces\DialogInterface.cpp" />

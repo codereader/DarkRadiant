@@ -173,6 +173,9 @@
     <Filter Include="src\ui\gl">
       <UniqueIdentifier>{360f8d9f-f078-4296-9633-913d79de1b79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\script">
+      <UniqueIdentifier>{28ae583f-8545-491c-abcc-5e459c3d357b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -672,6 +675,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\gl\WxGLWidgetManager.cpp">
       <Filter>src\ui\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\script\ScriptMenu.cpp">
+      <Filter>src\ui\script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\script\ScriptWindow.cpp">
+      <Filter>src\ui\script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\script\ScriptUserInterfaceModule.cpp">
+      <Filter>src\ui\script</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1304,6 +1316,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\gl\WxGLWidgetManager.h">
       <Filter>src\ui\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\script\ScriptMenu.h">
+      <Filter>src\ui\script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\script\ScriptWindow.h">
+      <Filter>src\ui\script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

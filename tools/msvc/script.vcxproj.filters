@@ -22,12 +22,6 @@
     <ClInclude Include="..\..\plugins\script\ScriptingSystem.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\script\ScriptMenu.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\script\ScriptWindow.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\script\interfaces\BrushInterface.h">
       <Filter>src\interfaces</Filter>
     </ClInclude>
@@ -108,13 +102,7 @@
     <ClCompile Include="..\..\plugins\script\ScriptingSystem.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\script\ScriptMenu.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\script\ScriptModule.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\script\ScriptWindow.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\script\interfaces\BrushInterface.cpp">

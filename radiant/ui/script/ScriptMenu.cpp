@@ -1,6 +1,7 @@
 #include "ScriptMenu.h"
 
 #include "iuimanager.h"
+#include "iscript.h"
 #include "i18n.h"
 #include <map>
 
@@ -12,7 +13,7 @@ const std::string SCRIPT_MENU_NAME = "scripts";
 const std::string SCRIPT_MENU_INSERT_POINT = "main/help";
 const std::string SCRIPT_MENU_PATH = "main/scripts";
 
-ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
+ScriptMenu::ScriptMenu()
 {
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
@@ -26,28 +27,26 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 		""
 	);
 
-	if (!commands.empty())
+	// Let's sort the commands by display name, map display name => name
+	typedef std::multimap<std::string, std::string> SortedCommands;
+	SortedCommands sortedCommands;
+
+	GlobalScriptingSystem().foreachScriptCommand([&](const IScriptCommand& cmd)
 	{
-        // Let's sort the commands by display name
-        typedef std::multimap<std::string, script::ScriptCommandPtr> SortedCommands;
-        SortedCommands sortedCommands;
+		sortedCommands.insert(std::make_pair(cmd.getDisplayName(), cmd.getName()));
+	});
 
-        for (script::ScriptCommandMap::value_type pair : commands)
-        {
-            if (pair.first == "Example") continue; // skip the example script
-
-            sortedCommands.insert(script::ScriptCommandMap::value_type(pair.second->getDisplayName(), pair.second));
-        }
-
-		for (SortedCommands::value_type pair : sortedCommands)
+	if (!sortedCommands.empty())
+	{
+		for (const auto& pair : sortedCommands)
 		{
 			menuManager.add(
 				SCRIPT_MENU_PATH,
-				"script" + pair.second->getName(),
+				"script" + pair.second,
 				menuItem,
-				pair.second->getDisplayName(),
+				pair.first,
 				"",
-				pair.second->getName()
+				pair.second
 			);
 		}
 	}

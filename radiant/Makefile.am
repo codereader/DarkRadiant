@@ -154,6 +154,9 @@ darkradiant_SOURCES = main.cpp \
                       ui/modelexport/ExportCollisionModelDialog.cpp \
                       ui/mousetool/BindToolDialog.cpp \
                       ui/mousetool/ToolMappingDialog.cpp \
+                      ui/script/ScriptMenu.cpp \
+                      ui/script/ScriptWindow.cpp \
+                      ui/script/ScriptUserInterfaceModule.cpp \
 					  ui/aas/AasControl.cpp \
 					  ui/aas/AasControlDialog.cpp \
                       ui/aas/RenderableAasFile.cpp \

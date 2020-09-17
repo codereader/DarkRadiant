@@ -14,7 +14,7 @@
 
 #include "string/replace.h"
 
-namespace script
+namespace ui
 {
 
 ScriptWindow::ScriptWindow(wxWindow* parent) :

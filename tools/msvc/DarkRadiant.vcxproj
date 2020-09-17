@@ -342,6 +342,9 @@
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp" />
+    <ClCompile Include="..\..\radiant\ui\script\ScriptMenu.cpp" />
+    <ClCompile Include="..\..\radiant\ui\script\ScriptUserInterfaceModule.cpp" />
+    <ClCompile Include="..\..\radiant\ui\script\ScriptWindow.cpp" />
     <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp" />
@@ -543,6 +546,8 @@
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItem.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />
+    <ClInclude Include="..\..\radiant\ui\script\ScriptMenu.h" />
+    <ClInclude Include="..\..\radiant\ui\script\ScriptWindow.h" />
     <ClInclude Include="..\..\radiant\ui\SelectionModeToggle.h" />
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h" />
     <ClInclude Include="..\..\radiant\ui\shaderclipboard\ShaderClipboardStatus.h" />

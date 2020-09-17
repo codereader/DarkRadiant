@@ -1,7 +1,4 @@
-#ifndef _SCRIPT_MENU_H_
-#define _SCRIPT_MENU_H_
-
-#include "ScriptCommand.h"
+#pragma once
 
 namespace ui
 {
@@ -12,12 +9,10 @@ namespace ui
 class ScriptMenu
 {
 public:
-	ScriptMenu(const script::ScriptCommandMap& commands);
+	ScriptMenu();
 
 	~ScriptMenu();
 };
 typedef std::shared_ptr<ScriptMenu> ScriptMenuPtr;
 
 } // namespace ui
-
-#endif /* _SCRIPT_MENU_H_ */

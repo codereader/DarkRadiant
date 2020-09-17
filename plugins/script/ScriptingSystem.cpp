@@ -45,10 +45,7 @@
 
 #include "PythonModule.h"
 
-#include "ScriptWindow.h"
 #include "SceneNodeBuffer.h"
-
-#include <wx/frame.h>
 
 #include "os/fs.h"
 #include "os/file.h"
@@ -173,6 +170,21 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 	return result;
 }
 
+void ScriptingSystem::foreachScriptCommand(const std::function<void(const IScriptCommand&)>& functor)
+{
+	for (const auto& pair : _commands)
+	{
+		if (pair.first == "Example") continue; // skip the example script
+
+		functor(*pair.second);
+	}
+}
+
+sigc::signal<void>& ScriptingSystem::signal_onScriptsReloaded()
+{
+	return _sigScriptsReloaded;
+}
+
 void ScriptingSystem::addInterfacesToModule(py::module& mod, py::dict& globals)
 {
 	// Add the registered interfaces
@@ -232,18 +244,6 @@ void ScriptingSystem::initialise()
 
 	// Search script folder for commands
 	reloadScripts();
-
-	// Add the scripting widget to the groupdialog
-	IGroupDialog::PagePtr page(new IGroupDialog::Page);
-
-	page->name = "ScriptWindow";
-	page->windowLabel = _("Script");
-	page->page = new ScriptWindow(GlobalMainFrame().getWxTopLevelWindow());
-	page->tabIcon = "icon_script.png";
-	page->tabLabel = _("Script");
-	page->position = IGroupDialog::Page::Position::Console - 10; // insert before console
-
-	GlobalGroupDialog().addPage(page);
 }
 
 void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args)
@@ -324,12 +324,10 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 			}
 
 			// Successfully retrieved the command
-			ScriptCommandPtr cmd = std::make_shared<ScriptCommand>(cmdName, cmdDisplayName, scriptFilename);
+			auto cmd = std::make_shared<ScriptCommand>(cmdName, cmdDisplayName, scriptFilename);
 
 			// Try to register this named command
-			std::pair<ScriptCommandMap::iterator, bool> result = _commands.insert(
-				ScriptCommandMap::value_type(cmdName, cmd)
-			);
+			auto result = _commands.insert(std::make_pair(cmdName, cmd));
 
 			// Result.second is TRUE if the insert succeeded
 			if (result.second) 
@@ -385,10 +383,7 @@ void ScriptingSystem::reloadScripts()
 
 	rMessage() << "ScriptModule: Found " << _commands.size() << " commands." << std::endl;
 
-	// Re-create the script menu
-	_scriptMenu.reset();
-
-	_scriptMenu = std::make_shared<ui::ScriptMenu>(_commands);
+	_sigScriptsReloaded.emit();
 }
 
 // RegisterableModule implementation
@@ -405,9 +400,6 @@ const StringSet& ScriptingSystem::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;
@@ -418,9 +410,8 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Subscribe to get notified as soon as Radiant is fully initialised
-	GlobalMainFrame().signal_MainFrameConstructed().connect(
-		sigc::mem_fun(this, &ScriptingSystem::initialise)
-	);
+	module::GlobalModuleRegistry().signal_allModulesInitialised()
+		.connect(sigc::mem_fun(this, &ScriptingSystem::initialise));
 
 	// Construct the script path
 #if defined(POSIX) && defined(PKGLIBDIR)
@@ -473,15 +464,6 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 		{ cmd::ARGTYPE_STRING }
 	);
 
-	// Bind the reloadscripts command to the menu
-	IMenuManager& mm = GlobalUIManager().getMenuManager();
-	mm.insert("main/file/refreshShaders", 	// menu location path
-			"ReloadScripts", // name
-			ui::menuItem,	// type
-			_("Reload Scripts"),	// caption
-			"",	// icon
-			"ReloadScripts"); // event name
-
 	SceneNodeBuffer::Instance().clear();
 }
 
@@ -489,7 +471,7 @@ void ScriptingSystem::shutdownModule()
 {
 	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
-	_scriptMenu.reset();
+	_sigScriptsReloaded.clear();
 
 	_initialised = false;
 

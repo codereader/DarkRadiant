@@ -9,7 +9,6 @@
 #include "icommandsystem.h"
 
 #include "ScriptCommand.h"
-#include "ScriptMenu.h"
 
 namespace py = pybind11;
 
@@ -42,7 +41,7 @@ private:
 	// All named script commands (pointing to .py files)
 	ScriptCommandMap _commands;
 
-	ui::ScriptMenuPtr _scriptMenu;
+	sigc::signal<void> _sigScriptsReloaded;
 
 public:
 	ScriptingSystem();
@@ -73,6 +72,10 @@ public:
 
 	// Execute the given python script string
 	ExecutionResultPtr executeString(const std::string& scriptString) override;
+
+	void foreachScriptCommand(const std::function<void(const IScriptCommand&)>& functor) override;
+
+	sigc::signal<void>& signal_onScriptsReloaded() override;
 
 	// Runs the named command (or rather the .py file behind it)
 	void executeCommand(const std::string& name);
