@@ -30,8 +30,11 @@ protected:
 protected:
 	RadiantTest()
 	{
-		// Initialise the context
-		_context.initialise(0, nullptr);
+		// Initialise the context, disable the sound player
+		std::string exePath("ignored");
+		std::string arg("--disable-sound");
+		char* args[] = { exePath.data(), arg.data() };
+		_context.initialise(2, args);
 
 		try
 		{

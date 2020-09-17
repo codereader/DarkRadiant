@@ -1,9 +1,9 @@
 #include "ScriptCommand.h"
 
 #include "icommandsystem.h"
-#include "ieventmanager.h"
 
-namespace script {
+namespace script
+{
 
 ScriptCommand::ScriptCommand(const std::string& name,
 							 const std::string& displayName,
@@ -18,9 +18,6 @@ ScriptCommand::ScriptCommand(const std::string& name,
 
 ScriptCommand::~ScriptCommand()
 {
-	// Add an event as well (for keyboard shortcuts)
-	GlobalEventManager().removeEvent(_name);
-
 	GlobalCommandSystem().removeCommand(_name);
 }
 
