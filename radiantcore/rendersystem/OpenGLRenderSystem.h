@@ -53,6 +53,8 @@ private:
 
 	sigc::connection _materialDefsLoaded;
 	sigc::connection _materialDefsUnloaded;
+	sigc::connection _sharedContextCreated;
+	sigc::connection _sharedContextDestroyed;
 
 private:
 	void propagateLightChangedFlagToAllLights();

@@ -493,7 +493,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 	if (_dependencies.empty()) 
 	{
 		_dependencies.insert(MODULE_SHADERSYSTEM);
-		_dependencies.insert(MODULE_OPENGL);
+		_dependencies.insert(MODULE_SHARED_GL_CONTEXT);
 	}
 
 	return _dependencies;
@@ -516,10 +516,17 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 	// greebo: Don't realise the module yet, this must wait
 	// until the shared GL context has been created (this
 	// happens as soon as the first GL widget has been realised).
+    _sharedContextCreated = GlobalOpenGLContext().signal_sharedContextCreated()
+        .connect(sigc::mem_fun(this, &OpenGLRenderSystem::extensionsInitialised));
+
+    _sharedContextDestroyed = GlobalOpenGLContext().signal_sharedContextDestroyed()
+        .connect(sigc::mem_fun(this, &OpenGLRenderSystem::unrealise));
 }
 
 void OpenGLRenderSystem::shutdownModule()
 {
+    _sharedContextCreated.disconnect();
+    _sharedContextDestroyed.disconnect();
 	_materialDefsLoaded.disconnect();
 	_materialDefsUnloaded.disconnect();
 }
