@@ -7,7 +7,6 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
-#include "imousetoolmanager.h"
 #include "SelectionPool.h"
 #include "module/StaticModule.h"
 #include "brush/csg/CSG.h"
@@ -957,7 +956,6 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
         _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_GRID);
         _dependencies.insert(MODULE_SCENEGRAPH);
-        _dependencies.insert(MODULE_MOUSETOOLMANAGER);
 		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
     }
