@@ -35,7 +35,6 @@ public:
 
 	~Search();
 
-	void OnIntervalReached(wxTimerEvent& ev);
 
 	void HandleKeyEvent(wxKeyEvent& ev);
 
@@ -46,6 +45,8 @@ public:
 
 private:
 	void HighlightMatch(const wxDataViewItem& item);
+	void _onIntervalReached(wxTimerEvent& ev);
+	void _onTreeViewCharHook(wxKeyEvent& keyEvent);
 };
 
 TreeView::TreeView(wxWindow* parent, TreeModel::Ptr model, long style) :
@@ -367,7 +368,7 @@ private:
 			_owner.Close();
 		}
 	}
-	
+
 	void _onParentMoved(wxMoveEvent&)
 	{
 		Reposition();
@@ -397,7 +398,8 @@ TreeView::Search::Search(TreeView& treeView) :
 	_popup->Show();
 	_curSearchMatch = wxDataViewItem();
 
-	Bind(wxEVT_TIMER, std::bind(&Search::OnIntervalReached, this, std::placeholders::_1));
+	_treeView.Bind(wxEVT_CHAR_HOOK, &Search::_onTreeViewCharHook, this);
+	Bind(wxEVT_TIMER, &Search::_onIntervalReached, this);
 
 	_closeTimer.Start(MSECS_TO_AUTO_CLOSE_POPUP);
 }
@@ -405,6 +407,9 @@ TreeView::Search::Search(TreeView& treeView) :
 TreeView::Search::~Search()
 {
 	_closeTimer.Stop();
+
+	_treeView.Unbind(wxEVT_CHAR_HOOK, &Search::_onTreeViewCharHook, this);
+	Unbind(wxEVT_TIMER, &Search::_onIntervalReached, this);
 
 	// Always hide popup windows before destroying them, otherwise the
 	// wx-internal wxCurrentPopupWindow pointer doesn't get cleared (in MSW at least)
@@ -414,7 +419,20 @@ TreeView::Search::~Search()
 	_curSearchMatch = wxDataViewItem();
 }
 
-void TreeView::Search::OnIntervalReached(wxTimerEvent& ev)
+void TreeView::Search::_onTreeViewCharHook(wxKeyEvent& ev)
+{
+	if (ev.GetKeyCode() == WXK_ESCAPE)
+	{
+		// The parent dialog listens to ESC keys to close the window
+		// While this search window is alive, eat the event and close the popup instead
+		_treeView.CloseSearch();
+		return;
+	}
+
+	ev.Skip();
+}
+
+void TreeView::Search::_onIntervalReached(wxTimerEvent& ev)
 {
 	// Disconnect the timing event
 	_closeTimer.Stop();
