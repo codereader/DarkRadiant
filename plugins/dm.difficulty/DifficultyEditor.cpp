@@ -5,6 +5,7 @@
 
 #include "wxutil/TreeView.h"
 #include "wxutil/ChoiceHelper.h"
+#include "wxutil/dialog/MessageBox.h"
 
 #include <wx/panel.h>
 #include <wx/choice.h>
@@ -200,9 +201,23 @@ void DifficultyEditor::saveSetting()
 	difficulty::SettingPtr setting(new difficulty::Setting);
 
 	// Load the widget contents
-	setting->className = _classCombo->GetStringSelection();
+	setting->className = _classCombo->GetValue();
+
+	if (setting->className.empty())
+	{
+		wxutil::Messagebox::ShowError(_("Classname cannot be left empty"), wxGetTopLevelParent(_classCombo));
+		return;
+	}
+
 	setting->spawnArg = _spawnArgEntry->GetValue();
 	setting->argument = _argumentEntry->GetValue();
+
+	if (setting->spawnArg.empty() || setting->argument.empty())
+	{
+		wxutil::Messagebox::ShowError(_("Spawnarg name and value cannot be left empty"), 
+			wxGetTopLevelParent(_spawnArgEntry));
+		return;
+	}
 
 	// Get the apptype from the dropdown list
 	setting->appType = difficulty::Setting::EAssign;
