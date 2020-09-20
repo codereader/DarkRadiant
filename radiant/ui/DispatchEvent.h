@@ -16,27 +16,18 @@ private:
     std::function<void()> _action;
 
 public:
-    DispatchEvent(wxEventType eventType, int winid, const std::function<void()>& action) :
-        wxEvent(winid, eventType),
-        _action(action)
-    {}
+    DispatchEvent(wxEventType eventType, int winid, const std::function<void()>& action);
 
     DispatchEvent(const DispatchEvent& other) = default;
 
-    const std::function<void()>& GetAction() const 
-    {
-        return _action; 
-    }
+    const std::function<void()>& GetAction() const;
 
     // implement the base class pure virtual
-    virtual wxEvent* Clone() const 
-    { 
-        return new DispatchEvent(*this);
-    }
+    virtual wxEvent* Clone() const;
 };
 
 #define DispatchEventHandler(func) (&func)
 
-wxDEFINE_EVENT(DISPATCH_EVENT, DispatchEvent);
+wxDECLARE_EVENT(DISPATCH_EVENT, DispatchEvent);
 
 }

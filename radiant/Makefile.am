@@ -163,6 +163,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/selectionset/SelectionSetToolmenu.cpp \
                       ui/LongRunningOperationHandler.cpp \
                       ui/MapCommands.cpp \
+                      ui/DispatchEvent.cpp \
                       ui/MapFileProgressHandler.cpp \
                       ui/statusbar/EditingStopwatchStatus.cpp \
                       uimanager/SoundChooser.cpp \

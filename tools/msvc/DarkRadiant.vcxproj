@@ -247,6 +247,7 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\FindBrush.cpp" />
+    <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp" />
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp" />

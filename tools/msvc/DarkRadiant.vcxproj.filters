@@ -685,6 +685,9 @@
     <ClCompile Include="..\..\radiant\ui\script\ScriptUserInterfaceModule.cpp">
       <Filter>src\ui\script</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\Camera.h">
