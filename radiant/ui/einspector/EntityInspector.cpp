@@ -687,33 +687,41 @@ bool EntityInspector::_testAddKey()
 
 void EntityInspector::_onDeleteKey()
 {
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
+
+    if (selectedItems.Count() == 0) return;
+
     assert(!_selectedEntity.expired());
+    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
-    std::string key = getSelectedKey();
+    std::unique_ptr<UndoableCommand> cmd;
 
-    if (!key.empty())
+    for (const wxDataViewItem& item : selectedItems)
     {
-        UndoableCommand cmd("deleteProperty");
-        
-        Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        if (!isItemDeletable(row))
+        {
+            continue;
+        }
+
+        if (!cmd)
+        {
+            cmd.reset(new UndoableCommand("deleteProperty"));
+        }
+
+        auto iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+        auto key = iconAndName.GetText().ToStdString();
+
+        // Clear the key after copying
         selectedEntity->setKeyValue(key, "");
     }
 }
 
 bool EntityInspector::_testDeleteKey()
 {
-    if (_selectedEntity.expired()) return false;
-
-    auto selectedKey = getSelectedKey();
-
-    if (selectedKey.empty() || selectedKey == "classname")
-    {
-        return false;
-    }
-
-    // Make sure the Delete item is only available for explicit
-    // (non-inherited) properties
-    return !getListSelectionBool(_columns.isInherited);
+    return _testNonEmptyAndDeletableSelection();
 }
 
 void EntityInspector::_onCopyKey()
@@ -754,33 +762,51 @@ void EntityInspector::_onCutKey()
     Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
     _clipBoard.clear();
+    std::unique_ptr<UndoableCommand> cmd;
 
     for (const wxDataViewItem& item : selectedItems)
     {
         wxutil::TreeModel::Row row(item, *_kvStore);
 
-        wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+        if (!isItemDeletable(row))
+        {
+            continue;
+        }
 
-        std::string key = iconAndName.GetText().ToStdString();
-        std::string value = row[_columns.value];
+        if (!cmd)
+        {
+            cmd.reset(new UndoableCommand("cutProperty"));
+        }
 
-        _clipBoard.push_back(std::make_pair(key, value));
+        auto iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+        auto key = iconAndName.GetText().ToStdString();
+        auto value = row[_columns.value];
 
-        // We don't delete any inherited key values
-        if (row[_columns.isInherited].getBool()) continue;
-        
-        // Don't delete any classnames either
-        if (key == "classname") continue;
-
-        UndoableCommand cmd("cutProperty");
+        _clipBoard.emplace_back(key, value);
 
         // Clear the key after copying
         selectedEntity->setKeyValue(key, "");
     }
 }
 
-bool EntityInspector::_testCutKey()
+bool EntityInspector::isItemDeletable(const wxutil::TreeModel::Row& row)
 {
+    auto iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+    auto key = iconAndName.GetText().ToStdString();
+
+    // We don't delete any inherited key values
+    if (row[_columns.isInherited].getBool()) return false;
+
+    // Don't delete any classnames either
+    if (key == "classname") return false;
+
+    return true;
+}
+
+bool EntityInspector::_testNonEmptyAndDeletableSelection()
+{
+    if (_selectedEntity.expired()) return false;
+    
     wxDataViewItemArray selectedItems;
     _keyValueTreeView->GetSelections(selectedItems);
 
@@ -788,16 +814,19 @@ bool EntityInspector::_testCutKey()
     {
         wxutil::TreeModel::Row row(item, *_kvStore);
 
-        wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
-        std::string key = iconAndName.GetText().ToStdString();
-
-        if (!row[_columns.isInherited].getBool() && key != "classname")
+        if (isItemDeletable(row))
         {
             return true; // we have at least one non-inherited value that is not "classname"
         }
     }
 
+    // Either all keys are inherited or classname, or nothing selected at all
     return false;
+}
+
+bool EntityInspector::_testCutKey()
+{
+    return _testNonEmptyAndDeletableSelection();
 }
 
 void EntityInspector::_onPasteKey()

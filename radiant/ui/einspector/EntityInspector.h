@@ -172,6 +172,10 @@ private:
 	bool _testCutKey();
 	bool _testPasteKey();
 
+	// Shared by cut and delete keys
+	bool _testNonEmptyAndDeletableSelection();
+	bool isItemDeletable(const wxutil::TreeModel::Row& row);
+
     // callbacks
 	void _onEntryActivate(wxCommandEvent& ev);
 	void _onSetProperty(wxCommandEvent& ev);
