@@ -6,6 +6,8 @@
 
 #include "imessagebus.h"
 #include "iradiant.h"
+#include "imap.h"
+#include "icommandsystem.h"
 
 #include "TestContext.h"
 #include "module/CoreModule.h"
@@ -50,7 +52,10 @@ protected:
 			// Streams are not yet initialised, so log to std::err at this point
 			std::cerr << ex.what() << std::endl;
 		}
+	}
 
+	void SetUp() override
+	{
 		// Set up the test game environment
 		setupGameFolder();
 
@@ -73,20 +78,28 @@ protected:
 		}
 	}
 
-	~RadiantTest()
+	void TearDown() override
 	{
 		_coreModule->get()->getMessageBus().removeListener(_gameSetupListener);
 
 		// Issue a shutdown() call to all the modules
 		module::GlobalModuleRegistry().shutdownModules();
+	}
 
+	~RadiantTest()
+	{
 		_coreModule.reset();
 	}
 
-private:
-	void setupGameFolder()
+protected:
+	virtual void setupGameFolder()
 	{
+		
+	}
 
+	virtual void loadMap(const std::string& modRelativePath)
+	{
+		GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
 	}
 
 	void handleGameConfigMessage(game::ConfigurationNeeded& message)
@@ -94,6 +107,7 @@ private:
 		game::GameConfiguration config;
 
 		config.gameType = "The Dark Mod 2.0 (Standalone)";
+		config.enginePath = _context.getTestResourcePath();
 
 		message.setConfig(config);
 		message.setHandled(true);

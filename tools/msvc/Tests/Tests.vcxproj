@@ -55,6 +55,7 @@
     <ClInclude Include="..\..\..\test\TestContext.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\test\CSG.cpp" />
     <ClCompile Include="..\..\..\test\test.cpp" />
   </ItemGroup>
   <ItemDefinitionGroup />

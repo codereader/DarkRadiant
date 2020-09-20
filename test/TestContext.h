@@ -22,10 +22,27 @@ public:
 		// Set up the temporary settings folder
 		auto settingsFolder = os::getTemporaryPath() / "dr_temp_settings";
 
-		_settingsFolder = settingsFolder.string();
+		_settingsFolder = os::standardPathWithSlash(settingsFolder.string());
 
 		os::removeDirectory(_settingsFolder);
 		os::makeDirectory(_settingsFolder);
+	}
+
+	~TestContext()
+	{
+		if (!_settingsFolder.empty())
+		{
+			os::removeDirectory(_settingsFolder);
+		}
+	}
+
+	// Returns the path to the test/resources/ folder shipped with the DR sources
+	virtual std::string getTestResourcePath() const
+	{
+		fs::path applicationPath = getApplicationPath();
+		applicationPath /= "../test/resources/tdm/";
+
+		return os::standardPathWithSlash(applicationPath.string());
 	}
 
 	std::string getSettingsPath() const override
