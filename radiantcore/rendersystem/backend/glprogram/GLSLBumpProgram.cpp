@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "igame.h"
 #include "string/convert.h"
+#include "debugging/gl.h"
 #include "math/Matrix4.h"
 
 namespace render

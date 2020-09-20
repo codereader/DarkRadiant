@@ -26,6 +26,7 @@
 #include "selection/Device.h"
 #include "selection/SelectionTest.h"
 #include "util/ScopedBoolLock.h"
+#include "debugging/gl.h"
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"

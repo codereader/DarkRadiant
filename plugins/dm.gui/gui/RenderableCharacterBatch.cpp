@@ -1,6 +1,7 @@
 #include "RenderableCharacterBatch.h"
 
 #include "render.h"
+#include "debugging/gl.h"
 
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 

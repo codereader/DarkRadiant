@@ -1,6 +1,6 @@
 #include "CameraCubeMapDecl.h"
 #include "textures/CubeMapTexture.h"
-
+#include "debugging/gl.h"
 #include "itextstream.h"
 #include <stdexcept>
 

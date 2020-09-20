@@ -1,5 +1,6 @@
 #include "GLSLDepthFillProgram.h"
 #include "../GLProgramFactory.h"
+#include "debugging/gl.h"
 
 #include "itextstream.h"
 

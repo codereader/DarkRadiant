@@ -2,13 +2,7 @@
 
 #include "irender.h"
 #include "itextstream.h"
-#include "imainframe.h"
-#include "debugging/debugging.h"
 #include "module/StaticModule.h"
-
-#include <string/convert.h>
-#include "wxutil/GLWidget.h"
-#include "wxutil/dialog/MessageBox.h"
 
 #include <stdexcept>
 #include <FTGL/ftgl.h>
@@ -16,41 +10,6 @@
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error.")
 {}
-
-void OpenGLModule::assertNoErrors()
-{
-#ifdef _DEBUG
-    // Return if no error
-    GLenum error = glGetError();
-
-    if (error == GL_NO_ERROR)
-    {
-        return;
-    }
-
-    // Build list of all GL errors
-    std::string allErrString = "GL errors encountered: ";
-	int maxErrors = 100;
-
-    for ( ; error != GL_NO_ERROR; error = glGetError())
-    {
-        const char* strErr = reinterpret_cast<const char*>(
-            gluErrorString(error)
-        );
-        allErrString += string::to_string(error);
-        allErrString += " (" + std::string(strErr) + ") ";
-
-		if (--maxErrors <= 0)
-		{
-			allErrString += "---> Maximum number of GL errors reached, maybe there is a problem with the GL context?";
-			break;
-		}
-	}
-
-    // Show the error message and terminate
-	wxutil::Messagebox::ShowFatalError(allErrString);
-#endif
-}
 
 void OpenGLModule::sharedContextCreated()
 {

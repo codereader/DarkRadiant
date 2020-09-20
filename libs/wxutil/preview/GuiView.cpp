@@ -3,6 +3,7 @@
 #include "igl.h"
 #include "math/Matrix4.h"
 #include <functional>
+#include "debugging/gl.h"
 
 namespace wxutil
 {

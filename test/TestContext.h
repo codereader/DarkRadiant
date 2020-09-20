@@ -3,6 +3,7 @@
 #include "module/ApplicationContextBase.h"
 #include "os/fs.h"
 #include "os/dir.h"
+#include "debugging/debugging.h"
 
 namespace radiant
 {
@@ -26,6 +27,12 @@ public:
 
 		os::removeDirectory(_settingsFolder);
 		os::makeDirectory(_settingsFolder);
+
+		setErrorHandlingFunction([&](const std::string& title, const std::string& message)
+		{
+			std::cerr << "Fatal error " << title << "\n" << message << std::endl;
+			DEBUGGER_BREAKPOINT();
+		});
 	}
 
 	~TestContext()

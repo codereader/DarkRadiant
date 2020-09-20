@@ -9,6 +9,7 @@
 #include "iglprogram.h"
 
 #include "debugging/render.h"
+#include "debugging/gl.h"
 
 namespace render
 {

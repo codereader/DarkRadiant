@@ -29,6 +29,7 @@
 #include "selection/SelectionTest.h"
 
 #include "debugging/debugging.h"
+#include "debugging/gl.h"
 #include <wx/sizer.h>
 #include "util/ScopedBoolLock.h"
 #include <functional>

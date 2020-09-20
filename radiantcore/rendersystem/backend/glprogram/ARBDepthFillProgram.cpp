@@ -1,5 +1,6 @@
 #include "ARBDepthFillProgram.h"
 #include "../GLProgramFactory.h"
+#include "debugging/gl.h"
 
 namespace render
 {

@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "BasicTexture2D.h"
+#include "debugging/gl.h"
 
 TexturePtr DDSImage::bindTexture(const std::string& name) const
 {

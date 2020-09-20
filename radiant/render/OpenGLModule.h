@@ -23,8 +23,6 @@ private:
 public:
 	OpenGLModule();
 
-	void assertNoErrors() override;
-
 	void drawString(const std::string& string) const override;
 	void drawChar(char character) const override;
 	int getFontHeight() override;

@@ -145,6 +145,7 @@
     <ClInclude Include="..\..\libs\command\ExecutionFailure.h" />
     <ClInclude Include="..\..\libs\command\ExecutionNotPossible.h" />
     <ClInclude Include="..\..\libs\debugging\debugging.h" />
+    <ClInclude Include="..\..\libs\debugging\gl.h" />
     <ClInclude Include="..\..\libs\debugging\render.h" />
     <ClInclude Include="..\..\libs\debugging\ScenegraphUtils.h" />
     <ClInclude Include="..\..\libs\debugging\ScopedDebugTimer.h" />

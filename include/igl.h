@@ -69,10 +69,6 @@ class OpenGLBinding :
 public:
     virtual ~OpenGLBinding() {}
 
-    /// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
-	// Normally, you want to use the debug::assertNoGlErrors() wrapper which does nothing in release builds
-    virtual void assertNoErrors() = 0;
-
     virtual int getFontHeight() = 0;
 
     /// \brief Renders \p string at the current raster-position of the current context.
@@ -92,16 +88,3 @@ inline OpenGLBinding& GlobalOpenGL()
     );
     return _openGL;
 }
-
-namespace debug
-{
-
-inline void assertNoGlErrors()
-{
-#ifdef _DEBUG
-	GlobalOpenGL().assertNoErrors();
-#endif
-}
-
-}
-

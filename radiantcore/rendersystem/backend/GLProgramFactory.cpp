@@ -12,6 +12,7 @@
 #include "os/file.h"
 #include "string/convert.h"
 #include "debugging/debugging.h"
+#include "debugging/gl.h"
 
 #include <fstream>
 

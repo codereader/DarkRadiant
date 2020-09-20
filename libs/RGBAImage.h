@@ -5,6 +5,7 @@
 #include "BasicTexture2D.h"
 #include <memory>
 #include "util/Noncopyable.h"
+#include "debugging/gl.h"
 
 struct RGBAPixel
 {

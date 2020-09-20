@@ -32,6 +32,7 @@
 #include <wx/sizer.h>
 
 #include "string/case_conv.h"
+#include "debugging/gl.h"
 #include "TextureBrowserManager.h"
 
 namespace ui
