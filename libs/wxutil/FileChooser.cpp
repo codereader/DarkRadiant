@@ -12,6 +12,7 @@
 #include "dialog/MessageBox.h"
 #include "string/predicate.h"
 #include "string/case_conv.h"
+#include "string/trim.h"
 #include <wx/app.h>
 
 namespace wxutil
@@ -63,8 +64,9 @@ void FileChooser::construct()
 		_title = _open ? _("Open File") : _("Save File");
 	}
 
-	// Make default extension lowercase
+	// Make default extension lowercase, and cut off any dots at the beginning
 	string::to_lower(_defaultExt);
+	string::trim_left(_defaultExt, ".");
 
 	if (!_open && _fileType == filetype::TYPE_MAP_EXPORT)
 	{
