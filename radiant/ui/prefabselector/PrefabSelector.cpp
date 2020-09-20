@@ -29,6 +29,7 @@
 
 #include "string/trim.h"
 #include "string/case_conv.h"
+#include "util/ScopedBoolLock.h"
 #include <functional>
 
 namespace ui
@@ -63,7 +64,8 @@ PrefabSelector::PrefabSelector() :
     _useRecentPath(nullptr),
     _recentPathSelector(nullptr),
     _customPath(nullptr),
-	_insertAsGroupBox(nullptr)
+	_insertAsGroupBox(nullptr),
+	_handlingSelectionChange(false)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -466,7 +468,14 @@ void PrefabSelector::clearPreview()
 
 void PrefabSelector::handleSelectionChange()
 {
-    wxDataViewItem item = _treeView->GetSelection();
+	if (_handlingSelectionChange)
+	{
+		return;
+	}
+
+	util::ScopedBoolLock lock(_handlingSelectionChange);
+	
+	wxDataViewItem item = _treeView->GetSelection();
 
     if (!item.IsOk())
     {

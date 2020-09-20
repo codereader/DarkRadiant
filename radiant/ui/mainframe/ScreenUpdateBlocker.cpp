@@ -22,9 +22,6 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 		showModalProgressDialog();
 	}
 
-	// Process pending events to fully show the dialog
-	wxTheApp->Yield(true);
-
 	// Register for the "is-active" changed event, to display this dialog
 	// as soon as Radiant is getting the focus again
 	GlobalMainFrame().getWxTopLevelWindow()->Bind(wxEVT_SET_FOCUS, &ScreenUpdateBlocker::onMainWindowFocus, this);
@@ -41,6 +38,9 @@ void ScreenUpdateBlocker::showModalProgressDialog()
 
 	// Eat all window events
 	_disabler.reset(new wxWindowDisabler(_dialog));
+
+	// Process pending events to fully show the dialog
+	wxTheApp->Yield(true);
 }
 
 ScreenUpdateBlocker::~ScreenUpdateBlocker()

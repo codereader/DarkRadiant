@@ -91,6 +91,8 @@ private:
 
     std::list<std::string> _recentPaths;
 
+	bool _handlingSelectionChange;
+
 private:
 	// Private constructor, creates widgets
 	PrefabSelector();

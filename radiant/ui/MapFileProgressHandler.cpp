@@ -53,6 +53,11 @@ void MapFileProgressHandler::dispatchWithLockAndCatch(const std::function<void()
 
 void MapFileProgressHandler::handleFileOperation(map::FileOperation& msg)
 {
+	if (registry::getValue<bool>(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG))
+	{
+		return; // no progress dialog enabled
+	}
+
 	auto lock = std::make_unique< std::lock_guard<std::mutex> >(_lock);
 
 	// A previous _blocker update might indicate a cancel operation, propagate this info
@@ -75,8 +80,7 @@ void MapFileProgressHandler::handleFileOperation(map::FileOperation& msg)
 			dispatchWithLockAndCatch([title, this]()
 			{
 				// Level might have been decreased in the meantime, check it
-				if (_level > 0 && GlobalMainFrame().isActiveApp() && 
-					!registry::getValue<bool>(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG))
+				if (_level > 0 && GlobalMainFrame().isActiveApp())
 				{
 					_blocker.reset(new ScreenUpdateBlocker(title, _("Processing..."), true));
 				}
@@ -129,7 +133,7 @@ void MapFileProgressHandler::handleFileOperation(map::FileOperation& msg)
 	// Release the lock, and give the UI a chance to process
 	lock.reset();
 
-	wxTheApp->Yield();
+	wxTheApp->ProcessPendingEvents();
 }
 
 }
