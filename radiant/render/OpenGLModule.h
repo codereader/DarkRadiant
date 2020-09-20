@@ -17,8 +17,6 @@ private:
 
 	wxutil::GLFontPtr _font;
 
-    bool _shaderProgramsAvailable;
-
 	sigc::connection _contextCreated;
 	sigc::connection _contextDestroyed;
 
@@ -30,9 +28,6 @@ public:
 	void drawString(const std::string& string) const override;
 	void drawChar(char character) const override;
 	int getFontHeight() override;
-
-    bool shaderProgramsAvailable() const override;
-    void setShaderProgramsAvailable(bool available) override;
 
 	// RegisterableModule implementation
     const std::string& getName() const override;

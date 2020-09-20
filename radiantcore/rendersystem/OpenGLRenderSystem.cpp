@@ -39,6 +39,7 @@ namespace {
  */
 OpenGLRenderSystem::OpenGLRenderSystem() :
 	_realised(false),
+    _shaderProgramsAvailable(false),
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
 	_currentShaderProgram(SHADER_PROGRAM_NONE),
 	_time(0),
@@ -217,8 +218,7 @@ void OpenGLRenderSystem::realise()
 
     _realised = true;
 
-    if (GlobalOpenGL().shaderProgramsAvailable()
-        && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
+    if (shaderProgramsAvailable() && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
         // Realise the GLPrograms
         _glProgramFactory->realise();
@@ -252,7 +252,7 @@ void OpenGLRenderSystem::unrealise()
     }
 
 	if (GlobalOpenGLContext().getSharedContext() && 
-        GlobalOpenGL().shaderProgramsAvailable() && 
+        shaderProgramsAvailable() && 
         getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
 		// Unrealise the GLPrograms
@@ -333,7 +333,7 @@ void OpenGLRenderSystem::extensionsInitialised()
     bool shaderProgramsAvailable = glslLightingAvailable || arbLightingAvailable;
 
     // Set the flag in the openGL module
-    GlobalOpenGL().setShaderProgramsAvailable(shaderProgramsAvailable);
+    setShaderProgramsAvailable(shaderProgramsAvailable);
 
     // Inform the user of missing extensions
     if (!shaderProgramsAvailable)
@@ -384,6 +384,16 @@ void OpenGLRenderSystem::extensionsInitialised()
 sigc::signal<void> OpenGLRenderSystem::signal_extensionsInitialised()
 {
 	return _sigExtensionsInitialised;
+}
+
+bool OpenGLRenderSystem::shaderProgramsAvailable() const
+{
+    return _shaderProgramsAvailable;
+}
+
+void OpenGLRenderSystem::setShaderProgramsAvailable(bool available)
+{
+    _shaderProgramsAvailable = available;
 }
 
 LightList& OpenGLRenderSystem::attachLitObject(LitObject& object)

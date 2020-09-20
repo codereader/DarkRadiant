@@ -213,7 +213,7 @@ void RenderPreview::initialisePreview()
     glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
     glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);
 
-    if (GlobalOpenGL().shaderProgramsAvailable())
+    if (_renderSystem->shaderProgramsAvailable())
     {
         setLightingModeEnabled(false);
     }

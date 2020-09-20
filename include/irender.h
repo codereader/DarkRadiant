@@ -646,6 +646,12 @@ public:
   	// Initialises the OpenGL extensions
     virtual void extensionsInitialised() = 0;
 
+    // Returns true if openGL supports ARB or GLSL lighting
+    virtual bool shaderProgramsAvailable() const = 0;
+
+    // Sets the flag whether shader programs are available. 
+    virtual void setShaderProgramsAvailable(bool available) = 0;
+
 	// Subscription to get notified as soon as the openGL extensions have been initialised
 	virtual sigc::signal<void> signal_extensionsInitialised() = 0;
 };

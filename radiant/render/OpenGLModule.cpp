@@ -14,8 +14,7 @@
 #include <FTGL/ftgl.h>
 
 OpenGLModule::OpenGLModule() :
-	_unknownError("Unknown error."),
-    _shaderProgramsAvailable(false)
+	_unknownError("Unknown error.")
 {}
 
 void OpenGLModule::assertNoErrors()
@@ -62,18 +61,6 @@ void OpenGLModule::sharedContextCreated()
 void OpenGLModule::sharedContextDestroyed()
 {
 	_font.reset();
-}
-
-bool OpenGLModule::shaderProgramsAvailable() const
-{
-    return _shaderProgramsAvailable;
-}
-
-// Sets the flag whether shader programs are available. 
-// This is set by the RenderSystem once the extensions are initialised
-void OpenGLModule::setShaderProgramsAvailable(bool available)
-{
-    _shaderProgramsAvailable = available;
 }
 
 void OpenGLModule::drawString(const std::string& string) const

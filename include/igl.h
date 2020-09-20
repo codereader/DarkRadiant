@@ -73,13 +73,6 @@ public:
 	// Normally, you want to use the debug::assertNoGlErrors() wrapper which does nothing in release builds
     virtual void assertNoErrors() = 0;
 
-    // Returns true if openGL supports ARB or GLSL lighting
-    virtual bool shaderProgramsAvailable() const = 0;
-
-    // Sets the flag whether shader programs are available. 
-    // This is set by the RenderSystem once the extensions are initialised
-    virtual void setShaderProgramsAvailable(bool available) = 0;
-
     virtual int getFontHeight() = 0;
 
     /// \brief Renders \p string at the current raster-position of the current context.

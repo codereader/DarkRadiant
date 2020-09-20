@@ -31,6 +31,8 @@ private:
 	// whether this module has been realised
 	bool _realised;
 
+	bool _shaderProgramsAvailable;
+
     // The GL program manager to acquire vfps
     GLProgramFactoryPtr _glProgramFactory;
 
@@ -88,6 +90,9 @@ public:
 
 	void extensionsInitialised() override;
 	sigc::signal<void> signal_extensionsInitialised() override;
+
+	bool shaderProgramsAvailable() const override;
+	void setShaderProgramsAvailable(bool available) override;
 
 	LightList& attachLitObject(LitObject& cullable) override;
 	void detachLitObject(LitObject& cullable) override;
