@@ -9,6 +9,7 @@
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "ifilesystem.h"
+#include "ifiletypes.h"
 #include "iarchive.h"
 #include "igame.h"
 #include "i18n.h"
@@ -220,6 +221,7 @@ const StringSet& ParticlesManager::getDependencies() const
 	{
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_FILETYPES);
 	}
 
 	return _dependencies;
@@ -235,6 +237,9 @@ void ParticlesManager::initialiseModule(const IApplicationContext& ctx)
 
 	// Register the "ReloadParticles" commands
 	GlobalCommandSystem().addCommand("ReloadParticles", std::bind(&ParticlesManager::reloadParticleDefs, this));
+
+	// Register the particle file extension
+	GlobalFiletypes().registerPattern("particle", FileTypePattern(_("Particle File"), "prt", "*.prt"));
 }
 
 void ParticlesManager::reloadParticleDefs()
