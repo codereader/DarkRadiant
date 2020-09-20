@@ -529,13 +529,7 @@
     <ClCompile Include="..\..\radiant\uimanager\UIManager.cpp">
       <Filter>src\uimanager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourScheme.cpp">
-      <Filter>src\uimanager\colourscheme</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp">
-      <Filter>src\uimanager\colourscheme</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeManager.cpp">
       <Filter>src\uimanager\colourscheme</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp">
@@ -1122,13 +1116,7 @@
     <ClInclude Include="..\..\radiant\uimanager\UIManager.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourScheme.h">
-      <Filter>src\uimanager\colourscheme</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.h">
-      <Filter>src\uimanager\colourscheme</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeManager.h">
       <Filter>src\uimanager\colourscheme</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.h">

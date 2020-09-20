@@ -227,9 +227,7 @@
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourScheme.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeManager.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\GroupDialog.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\menu\MenuBar.cpp" />
@@ -408,9 +406,7 @@
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.h" />
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.h" />
-    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourScheme.h" />
     <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.h" />
-    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeManager.h" />
     <ClInclude Include="..\..\radiant\uimanager\DialogManager.h" />
     <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h" />
     <ClInclude Include="..\..\radiant\uimanager\LocalBitmapArtProvider.h" />

@@ -3,7 +3,7 @@
 #include "igl.h"
 #include "ibrush.h"
 #include "iclipper.h"
-#include "iuimanager.h"
+#include "icolourscheme.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
@@ -574,7 +574,7 @@ void CamWnd::Cam_Draw()
 
     if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING) 
     {
-        clearColour = ColourSchemes().getColour("camera_background");
+        clearColour = GlobalColourSchemeManager().getColour("camera_background");
     }
 
     glClearColor(clearColour[0], clearColour[1], clearColour[2], 0);

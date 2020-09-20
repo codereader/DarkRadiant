@@ -3,7 +3,7 @@
 #include <sigc++/functors/mem_fun.h>
 #include <sigc++/connection.h>
 #include "ieclass.h"
-#include "iuimanager.h"
+#include "icolourscheme.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
 namespace ui
@@ -43,8 +43,8 @@ private:
 	void applyColourScheme()
 	{
 		// greebo: Override the eclass colours of two special entityclasses
-		Vector3 worlspawnColour = ColourSchemes().getColour("default_brush");
-		Vector3 lightColour = ColourSchemes().getColour("light_volumes");
+		Vector3 worlspawnColour = GlobalColourSchemeManager().getColour("default_brush");
+		Vector3 lightColour = GlobalColourSchemeManager().getColour("light_volumes");
 
 		auto light = GlobalEntityClassManager().findClass("light");
 

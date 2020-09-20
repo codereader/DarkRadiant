@@ -3,7 +3,7 @@
 #include "GLProgramFactory.h"
 #include "../OpenGLRenderSystem.h"
 
-#include "iuimanager.h"
+#include "icolourscheme.h"
 #include "ishaders.h"
 #include "ifilter.h"
 #include "irender.h"
@@ -647,7 +647,7 @@ void OpenGLShader::construct(const std::string& name)
 {
 	// Retrieve the highlight colour from the colourschemes (once)
 	const static Colour4 highLightColour(
-        ColourSchemes().getColour("selected_brush_camera"), 0.3f
+        GlobalColourSchemeManager().getColour("selected_brush_camera"), 0.3f
     );
 
     // Check the first character of the name to see if this is a special built-in
@@ -803,7 +803,7 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$XY_OVERLAY")
             {
-              Vector3 colorSelBrushes = ColourSchemes().getColour("selected_brush");
+              Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_brush");
               state.setColour(colorSelBrushes[0],
                               colorSelBrushes[1],
                               colorSelBrushes[2],
@@ -815,7 +815,7 @@ void OpenGLShader::construct(const std::string& name)
             }
 			else if (name == "$XY_OVERLAY_GROUP")
 			{
-				Vector3 colorSelBrushes = ColourSchemes().getColour("selected_group_items");
+				Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_group_items");
 				state.setColour(colorSelBrushes[0],
 					colorSelBrushes[1],
 					colorSelBrushes[2],
@@ -885,7 +885,7 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$CLIPPER_OVERLAY")
             {
-              state.setColour(ColourSchemes().getColour("clipper"));
+              state.setColour(GlobalColourSchemeManager().getColour("clipper"));
               state.setRenderFlags(RENDER_CULLFACE
                                  | RENDER_DEPTHWRITE
                                  | RENDER_FILL

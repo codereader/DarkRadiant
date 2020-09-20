@@ -657,6 +657,8 @@
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\Texturable.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\TransformationVisitors.cpp" />
+    <ClCompile Include="..\..\radiantcore\settings\ColourScheme.cpp" />
+    <ClCompile Include="..\..\radiantcore\settings\ColourSchemeManager.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\Game.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\GameManager.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\LanguageManager.cpp" />
@@ -982,6 +984,8 @@
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.h" />
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\Texturable.h" />
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h" />
+    <ClInclude Include="..\..\radiantcore\settings\ColourScheme.h" />
+    <ClInclude Include="..\..\radiantcore\settings\ColourSchemeManager.h" />
     <ClInclude Include="..\..\radiantcore\settings\Game.h" />
     <ClInclude Include="..\..\radiantcore\settings\GameManager.h" />
     <ClInclude Include="..\..\radiantcore\settings\LanguageManager.h" />

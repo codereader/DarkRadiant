@@ -991,6 +991,12 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.cpp">
       <Filter>src\rendersystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\settings\ColourScheme.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\settings\ColourSchemeManager.cpp">
+      <Filter>src\settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2024,6 +2030,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.h">
       <Filter>src\rendersystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\settings\ColourScheme.h">
+      <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\settings\ColourSchemeManager.h">
+      <Filter>src\settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

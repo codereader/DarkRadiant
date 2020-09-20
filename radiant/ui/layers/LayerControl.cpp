@@ -4,6 +4,7 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "idialogmanager.h"
+#include "icolourscheme.h"
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/EntryAbortedException.h"
@@ -40,7 +41,7 @@ LayerControl::LayerControl(wxWindow* parent, int layerID) :
 	_toggle->SetMaxSize(wxSize(30, -1));
 	_toggle->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(LayerControl::onToggle), NULL, this);
 
-	Vector3 selColour = ColourSchemes().getColour("selected_brush");
+	Vector3 selColour = GlobalColourSchemeManager().getColour("selected_brush");
 	_activeColour = wxColour(static_cast<unsigned char>(selColour[0] * 255),
 		static_cast<unsigned char>(selColour[1] * 255),
 		static_cast<unsigned char>(selColour[2] * 255));

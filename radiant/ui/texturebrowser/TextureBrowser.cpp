@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "imainframe.h"
 #include "iuimanager.h"
+#include "icolourscheme.h"
 #include "igroupdialog.h"
 #include "iradiant.h"
 #include "ipreferencesystem.h"
@@ -717,7 +718,7 @@ void TextureBrowser::draw()
 
     debug::assertNoGlErrors();
 
-    Vector3 colorBackground = ColourSchemes().getColour("texture_background");
+    Vector3 colorBackground = GlobalColourSchemeManager().getColour("texture_background");
     glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
     glViewport(0, 0, _viewportSize.x(), _viewportSize.y());
     

@@ -1,19 +1,11 @@
 #pragma once
 
-#include "math/Vector3.h"
 #include "imodule.h"
 
 // Forward declarations
 class wxWindow;
 class wxToolBar;
 class wxMenuBar;
-
-class IColourSchemeManager {
-public:
-    virtual ~IColourSchemeManager() {}
-	// greebo: Returns the named colour, returns <0,0,0> if not found
-	virtual Vector3 getColour(const std::string& colourName) = 0;
-};
 
 namespace ui
 {
@@ -209,7 +201,7 @@ typedef std::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
 } // namespace ui
 
-const std::string MODULE_UIMANAGER("UIManager");
+const char* const MODULE_UIMANAGER("UIManager");
 
 /** greebo: The UI Manager abstract base class.
  *
@@ -222,7 +214,6 @@ class IUIManager :
 public:
 	virtual IMenuManager& getMenuManager() = 0;
 	virtual IToolbarManager& getToolbarManager() = 0;
-	virtual IColourSchemeManager& getColourSchemeManager() = 0;
 	virtual IGroupDialog& getGroupDialog() = 0;
 	virtual IStatusBarManager& getStatusBarManager() = 0;
 	virtual ui::IDialogManager& getDialogManager() = 0;
@@ -245,11 +236,6 @@ inline IUIManager& GlobalUIManager()
 		)
 	);
 	return _uiManager;
-}
-
-// Shortcut accessors
-inline IColourSchemeManager& ColourSchemes() {
-	return GlobalUIManager().getColourSchemeManager();
 }
 
 inline IGroupDialog& GlobalGroupDialog() {

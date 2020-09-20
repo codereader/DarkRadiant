@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 
-namespace ui
+namespace colours
 {
 
 ColourScheme::ColourScheme() 
@@ -37,14 +37,27 @@ ColourScheme::ColourScheme(const xml::Node& schemeNode)
 	}
 }
 
-ColourItemMap& ColourScheme::getColourMap()
+void ColourScheme::foreachColour(
+	const std::function<void(const std::string& name, IColourItem& colour)>& functor)
 {
-	return _colours;
+	for (auto& pair : _colours)
+	{
+		functor(pair.first, pair.second);
+	}
+}
+
+void ColourScheme::foreachColour(
+	const std::function<void(const std::string& name, const IColourItem& colour)>& functor) const
+{
+	for (auto& pair : _colours)
+	{
+		functor(pair.first, pair.second);
+	}
 }
 
 ColourItem& ColourScheme::getColour(const std::string& colourName)
 {
-	ColourItemMap::iterator it = _colours.find(colourName);
+	auto it = _colours.find(colourName);
 
 	if (it != _colours.end())
 	{
@@ -71,16 +84,16 @@ void ColourScheme::setReadOnly(bool isReadOnly)
 	_readOnly = isReadOnly;
 }
 
-void ColourScheme::mergeMissingItemsFromScheme(const ColourScheme& other)
+void ColourScheme::mergeMissingItemsFromScheme(const IColourScheme& other)
 {
-	for (const ColourItemMap::value_type& otherPair : other._colours)
+	other.foreachColour([&](const std::string& name, const colours::IColourItem& colour)
 	{
-		// Insert any ColourItems from the other mapping into this scheme
-		if (_colours.find(otherPair.first) == _colours.end())
+		// Insert any missing ColourItems from the other mapping into this scheme
+		if (_colours.find(name) == _colours.end())
 		{
-			_colours.insert(otherPair);
+			_colours.emplace(name, ColourItem(colour));
 		}
-	}
+	});
 }
 
-} // namespace ui
+} // namespace

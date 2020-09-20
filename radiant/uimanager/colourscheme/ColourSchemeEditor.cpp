@@ -1,6 +1,5 @@
 #include "ColourSchemeEditor.h"
 
-#include "ColourSchemeManager.h"
 #include "iregistry.h"
 #include "imainframe.h"
 #include "iscenegraph.h"
@@ -44,21 +43,16 @@ ColourSchemeEditor::ColourSchemeEditor() :
 	CenterOnParent();
 }
 
-/*	Loads all the scheme items into the list
- */
 void ColourSchemeEditor::populateTree()
 {
-	ColourSchemeMap allSchemes = ColourSchemeManager::Instance().getSchemeList();
-
-	for (ColourSchemeMap::iterator scheme = allSchemes.begin();
-		 scheme != allSchemes.end(); ++scheme)
+	GlobalColourSchemeManager().foreachScheme([&](const std::string& name, colours::IColourScheme&)
 	{
 		wxutil::TreeModel::Row row = _listStore->AddItem();
 
-		row[_columns.name] = scheme->first;
+		row[_columns.name] = name;
 
 		row.SendItemAdded();
-	}
+	});
 }
 
 void ColourSchemeEditor::constructWindow()
@@ -106,7 +100,7 @@ void ColourSchemeEditor::constructWindow()
 void ColourSchemeEditor::selectActiveScheme()
 {
 	wxDataViewItem found = _listStore->FindString(
-		ColourSchemeManager::Instance().getActiveScheme().getName(), _columns.name);
+		GlobalColourSchemeManager().getActiveScheme().getName(), _columns.name);
 
 	_treeView->Select(found);
 	selectionChanged();
@@ -144,7 +138,7 @@ std::string ColourSchemeEditor::getSelectedScheme()
 	return "";
 }
 
-wxSizer* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const std::string& name)
+wxSizer* ColourSchemeEditor::constructColourSelector(colours::IColourItem& colour, const std::string& name)
 {
 	// Get the description of this colour item from the registry
 	std::string descriptionPath = std::string("user/ui/colourschemes/descriptions/") + name;
@@ -155,7 +149,7 @@ wxSizer* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const s
 
 	// Create a new colour button
 	wxColour tempColour;
-	Vector3 tempColourVector = colour;
+	Vector3 tempColourVector = colour.getColour();
 	tempColour.Set(tempColourVector[0] * 255, tempColourVector[1] * 255, tempColourVector[2] * 255);
 
 	// Create the colour button
@@ -190,17 +184,13 @@ void ColourSchemeEditor::updateColourSelectors()
 	_colourFrame->SetSizer(new wxGridSizer(3, 12, 12));
 
 	// Get the selected scheme
-	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(getSelectedScheme());
+	auto& scheme = GlobalColourSchemeManager().getColourScheme(getSelectedScheme());
 
-	// Retrieve the list with all the ColourItems of this scheme
-	ColourItemMap& colourMap = scheme.getColourMap();
-
-	// Cycle through all the ColourItems and save them into the registry
-	for (ColourItemMap::iterator it = colourMap.begin(); it != colourMap.end(); ++it)
+	scheme.foreachColour([&](const std::string& name, colours::IColourItem& item)
 	{
-		wxSizer* colourSelector = constructColourSelector(it->second, it->first);
+		wxSizer* colourSelector = constructColourSelector(item, name);
 		_colourFrame->GetSizer()->Add(colourSelector, 0);
-	}
+	});
 
 	_colourFrame->Layout();
 	_colourFrame->Fit();
@@ -223,11 +213,11 @@ void ColourSchemeEditor::selectionChanged()
 	updateColourSelectors();
 
 	// Check, if the currently selected scheme is read-only
-	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(activeScheme);
+	auto& scheme = GlobalColourSchemeManager().getColourScheme(activeScheme);
 	_deleteButton->Enable(!scheme.isReadOnly());
 
 	// Set the active Scheme, so that the views are updated accordingly
-	ColourSchemeManager::Instance().setActive(activeScheme);
+	GlobalColourSchemeManager().setActive(activeScheme);
 
 	updateWindows();
 }
@@ -236,12 +226,12 @@ void ColourSchemeEditor::deleteScheme()
 {
 	std::string name = getSelectedScheme();
 	// Get the selected scheme
-	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(name);
+	auto& scheme = GlobalColourSchemeManager().getColourScheme(name);
 
 	if (!scheme.isReadOnly())
 	{
 		// Remove the actual scheme from the ColourSchemeManager
-		ColourSchemeManager::Instance().deleteScheme(name);
+		GlobalColourSchemeManager().deleteScheme(name);
 
 		// Remove the selected item from the GtkListStore
 		deleteSchemeFromList();
@@ -275,15 +265,15 @@ void ColourSchemeEditor::copyScheme()
 	}
 
 	// greebo: Check if the new name is already existing
-	if (ColourSchemeManager::Instance().schemeExists(newName))
+	if (GlobalColourSchemeManager().schemeExists(newName))
 	{
 		wxutil::Messagebox::ShowError(_("A Scheme with that name already exists."), this);
 		return;
 	}
 
 	// Copy the scheme
-	ColourSchemeManager::Instance().copyScheme(name, newName);
-	ColourSchemeManager::Instance().setActive(newName);
+	GlobalColourSchemeManager().copyScheme(name, newName);
+	GlobalColourSchemeManager().setActive(newName);
 
 	// Add the new list item to the ListStore
 	wxutil::TreeModel::Row row = _listStore->AddItem();
@@ -304,15 +294,16 @@ void ColourSchemeEditor::callbackDelete(wxCommandEvent& ev)
 	deleteScheme();
 }
 
-void ColourSchemeEditor::callbackColorChanged(wxColourPickerEvent& ev, ColourItem& item)
+void ColourSchemeEditor::callbackColorChanged(wxColourPickerEvent& ev, colours::IColourItem& item)
 {
-	wxColourPickerCtrl* colourPicker = dynamic_cast<wxColourPickerCtrl*>(ev.GetEventObject());
-	wxColour colour = colourPicker->GetColour();
+	auto* colourPicker = dynamic_cast<wxColourPickerCtrl*>(ev.GetEventObject());
+	auto colour = colourPicker->GetColour();
 
 	// Update the colourItem class
-	item.set(static_cast<double>(colour.Red()) / 255.0, 
-		     static_cast<double>(colour.Green()) / 255.0,
-			 static_cast<double>(colour.Blue()) / 255.0);
+	item.getColour().set(
+		static_cast<double>(colour.Red()) / 255.0, 
+		static_cast<double>(colour.Green()) / 255.0,
+		static_cast<double>(colour.Blue()) / 255.0);
 
 	// Call the update, so all colours can be previewed
 	updateWindows();
@@ -330,13 +321,13 @@ int ColourSchemeEditor::ShowModal()
 	
 	if (returnCode == wxID_OK)
 	{
-		ColourSchemeManager::Instance().setActive(getSelectedScheme());
-		ColourSchemeManager::Instance().saveColourSchemes();
+		GlobalColourSchemeManager().setActive(getSelectedScheme());
+		GlobalColourSchemeManager().saveColourSchemes();
 	}
 	else
 	{
 		// Restore all the colour settings from the XMLRegistry, changes get lost
-		ColourSchemeManager::Instance().restoreColourSchemes();
+		GlobalColourSchemeManager().restoreColourSchemes();
 	}
 
 	// Call the update, so all colours are displayed

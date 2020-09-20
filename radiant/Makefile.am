@@ -172,8 +172,6 @@ darkradiant_SOURCES = main.cpp \
                       uimanager/animationpreview/AnimationPreview.cpp \
                       uimanager/animationpreview/MD5AnimationViewer.cpp \
                       uimanager/colourscheme/ColourSchemeEditor.cpp \
-                      uimanager/colourscheme/ColourSchemeManager.cpp \
-                      uimanager/colourscheme/ColourScheme.cpp \
                       uimanager/ToolbarManager.cpp \
                       uimanager/DialogManager.cpp \
                       ui/filters/FilterMenu.cpp \

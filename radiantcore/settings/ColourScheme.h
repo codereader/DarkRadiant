@@ -1,11 +1,11 @@
 #pragma once
 
 #include <map>
-#include "math/Vector3.h"
+#include "icolourscheme.h"
 #include "string/convert.h"
 #include "xmlutil/Node.h"
 
-namespace ui
+namespace colours
 {
 
 /* The ColourItem represents a single colour. This ia a simple derivative of
@@ -14,28 +14,53 @@ namespace ui
  */
 
 class ColourItem : 
-	public Vector3
+	public IColourItem
 {
-public:
+private:
+    Vector3 _colour;
 
+public:
     /** Default constructor. Creates a black colour.
      */
     ColourItem() : 
-		Vector3(0, 0, 0)
+        _colour(0, 0, 0)
     {}
+
+    // Copy ctor
+    ColourItem(const IColourItem& other) :
+        _colour(other.getColour())
+    {}
+
+    ColourItem& operator=(const IColourItem& other)
+    {
+        _colour = other.getColour();
+        return *this;
+    }
 
     /** Construct a ColourItem from an XML Node.
      */
     ColourItem(const xml::Node& colourNode) : 
-		Vector3(string::convert<Vector3>(colourNode.getAttributeValue("value")))
+        _colour(string::convert<Vector3>(colourNode.getAttributeValue("value")))
     {}
+
+    const Vector3& getColour() const override
+    {
+        return _colour;
+    }
+
+    Vector3& getColour() override
+    {
+        return _colour;
+    }
+
 };
 
 typedef std::map<std::string, ColourItem> ColourItemMap;
 
 /*  A colourscheme is basically a collection of ColourItems
  */
-class ColourScheme
+class ColourScheme :
+    public IColourScheme
 {
 private:
     // The name of this scheme
@@ -58,23 +83,23 @@ public:
     // Constructs a ColourScheme from a given xml::node
     ColourScheme(const xml::Node& schemeNode);
 
-    // Returns the list of ColourItems
-	ColourItemMap& getColourMap();
+    void foreachColour(const std::function<void(const std::string& name, IColourItem& colour)>& functor) override;
+    void foreachColour(const std::function<void(const std::string& name, const IColourItem& colour)>& functor) const override;
 
     // Returns the requested colour object
-    ColourItem& getColour(const std::string& colourName);
+    ColourItem& getColour(const std::string& colourName) override;
 
     // returns the name of this colour scheme
-	const std::string& getName() const;
+	const std::string& getName() const override;
 
     // returns true if the scheme is read-only
-	bool isReadOnly() const;
+	bool isReadOnly() const override;
 
     // set the read-only status of this scheme
-	void setReadOnly(bool isReadOnly);
+	void setReadOnly(bool isReadOnly) override;
 
 	// Tries to add any missing items from the given scheme into this one
-	void mergeMissingItemsFromScheme(const ColourScheme& other);
+	void mergeMissingItemsFromScheme(const IColourScheme& other) override;
 };
 
-} // namespace ui
+} // namespace

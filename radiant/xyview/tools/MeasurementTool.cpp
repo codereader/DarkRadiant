@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "iclipper.h"
-#include "iuimanager.h"
+#include "icolourscheme.h"
 #include "math/Matrix4.h"
 #include "XYMouseToolEvent.h"
 #include "selectionlib.h"
@@ -146,7 +146,7 @@ void MeasurementTool::ensureShaders(RenderSystem& renderSystem)
 {
 	if (!_wireShader)
 	{
-		Vector3 colour = ColourSchemes().getColour("drag_selection");
+		Vector3 colour = GlobalColourSchemeManager().getColour("drag_selection");
 
 		_colour.x() = colour.x();
 		_colour.y() = colour.y();

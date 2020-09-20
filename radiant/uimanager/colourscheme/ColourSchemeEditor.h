@@ -3,7 +3,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include <string>
 #include "icommandsystem.h"
-#include "ColourScheme.h"
+#include "icolourscheme.h"
 
 #include "wxutil/TreeModel.h"
 
@@ -61,7 +61,7 @@ private:
 	// private helper functions
 	void populateTree();
 	void constructWindow();
-	wxSizer* constructColourSelector(ColourItem& colour, const std::string& name);
+	wxSizer* constructColourSelector(colours::IColourItem& colour, const std::string& name);
 	void updateColourSelectors();
 
 	// Queries the user for a string and returns it
@@ -86,7 +86,7 @@ private:
 
 	// Callbacks
 	void callbackSelChanged(wxDataViewEvent& ev);
-	void callbackColorChanged(wxColourPickerEvent& ev, ColourItem& item);
+	void callbackColorChanged(wxColourPickerEvent& ev, colours::IColourItem& item);
 	void callbackDelete(wxCommandEvent& ev);
 	void callbackCopy(wxCommandEvent& ev);
 

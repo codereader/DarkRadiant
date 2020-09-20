@@ -2,7 +2,7 @@
 
 #include "iscenegraph.h"
 #include "i18n.h"
-#include "iuimanager.h"
+#include "icolourscheme.h"
 #include "registry/registry.h"
 #include "selection/Device.h"
 #include "Rectangle.h"
@@ -98,7 +98,7 @@ void DragSelectionMouseTool::renderOverlay()
     glBlendColor(0, 0, 0, 0.2f);
     glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 
-    Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
+    Vector3 dragBoxColour = GlobalColourSchemeManager().getColour("drag_selection");
     glColor3dv(dragBoxColour);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 

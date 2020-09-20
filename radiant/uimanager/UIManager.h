@@ -9,7 +9,6 @@
 #include "ToolbarManager.h"
 #include "StatusBarManager.h"
 #include "DialogManager.h"
-#include "colourscheme/ColourSchemeManager.h"
 #include "wxutil/event/SingleIdleCallback.h"
 #include <sigc++/connection.h>
 
@@ -47,8 +46,6 @@ public:
 	IMenuManager& getMenuManager();
 
 	IToolbarManager& getToolbarManager();
-
-	IColourSchemeManager& getColourSchemeManager();
 
 	IGroupDialog& getGroupDialog();
 

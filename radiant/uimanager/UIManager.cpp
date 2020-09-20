@@ -39,10 +39,6 @@ IToolbarManager& UIManager::getToolbarManager() {
 	return *_toolbarManager;
 }
 
-IColourSchemeManager& UIManager::getColourSchemeManager() {
-	return ColourSchemeManager::Instance();
-}
-
 IGroupDialog& UIManager::getGroupDialog() {
 	return GroupDialog::Instance();
 }
@@ -109,8 +105,6 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 
     _toolbarManager = std::make_shared<ToolbarManager>();
 	_toolbarManager->initialise();
-
-	ColourSchemeManager::Instance().loadColourSchemes();
 
 	GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
 	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);

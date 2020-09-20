@@ -270,6 +270,8 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 selection/SelectedNodeList.cpp \
                 selection/SelectionTestWalkers.cpp \
                 selection/TransformationVisitors.cpp \
+                settings/ColourScheme.cpp \
+                settings/ColourSchemeManager.cpp \
                 settings/Game.cpp \
                 settings/GameManager.cpp \
                 settings/LanguageManager.cpp \

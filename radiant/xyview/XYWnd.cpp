@@ -5,6 +5,7 @@
 #include "iundo.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "icolourscheme.h"
 #include "ientity.h"
 #include "igrid.h"
 #include "iregion.h"
@@ -680,9 +681,9 @@ void XYWnd::drawGrid()
 
     if (GlobalXYWnd().showGrid())
     {
-        Vector3 colourGridBack = ColourSchemes().getColour("grid_background");
-        Vector3 colourGridMinor = ColourSchemes().getColour("grid_minor");
-        Vector3 colourGridMajor = ColourSchemes().getColour("grid_major");
+        Vector3 colourGridBack = GlobalColourSchemeManager().getColour("grid_background");
+        Vector3 colourGridMinor = GlobalColourSchemeManager().getColour("grid_minor");
+        Vector3 colourGridMajor = GlobalColourSchemeManager().getColour("grid_major");
 
         // run grid rendering twice, first run is minor grid, then major
         // NOTE: with a bit more work, we can have variable number of grids
@@ -841,7 +842,7 @@ void XYWnd::drawGrid()
     {
         char text[32];
 
-        glColor3dv(ColourSchemes().getColour("grid_text"));
+        glColor3dv(GlobalColourSchemeManager().getColour("grid_text"));
 
         double offx = _origin[nDim2] + h - 12 / _scale;
         double offy = _origin[nDim1] - w + 1 / _scale;
@@ -862,7 +863,7 @@ void XYWnd::drawGrid()
 
         if (isActive())
         {
-            glColor3dv(ColourSchemes().getColour("active_view_name"));
+            glColor3dv(GlobalColourSchemeManager().getColour("active_view_name"));
         }
 
         // we do this part (the old way) only if show_axis is disabled
@@ -880,8 +881,8 @@ void XYWnd::drawGrid()
 
         const std::string colourNameX = (_viewType == YZ) ? "axis_y" : "axis_x";
         const std::string colourNameY = (_viewType == XY) ? "axis_y" : "axis_z";
-        const Vector3& colourX = ColourSchemes().getColour(colourNameX);
-        const Vector3& colourY = ColourSchemes().getColour(colourNameY);
+        const Vector3& colourX = GlobalColourSchemeManager().getColour(colourNameX);
+        const Vector3& colourY = GlobalColourSchemeManager().getColour(colourNameY);
 
         // draw two lines with corresponding axis colors to highlight current view
         // horizontal line: nDim1 color
@@ -921,7 +922,7 @@ void XYWnd::drawGrid()
 
         if (wz.bounds.isValid())
         {
-            glColor3dv( ColourSchemes().getColour("workzone") );
+            glColor3dv(GlobalColourSchemeManager().getColour("workzone"));
             glBegin( GL_LINES );
 
             glVertex2f( xb, wz.min[nDim2] );
@@ -973,7 +974,7 @@ void XYWnd::drawBlockGrid()
 
     // draw major blocks
 
-    glColor3dv(ColourSchemes().getColour("grid_block"));
+    glColor3dv(GlobalColourSchemeManager().getColour("grid_block"));
     glLineWidth (2);
 
     glBegin (GL_LINES);
@@ -1031,7 +1032,7 @@ void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
         a = degrees_to_radians(angles[CAMERA_PITCH]);
     }
 
-    glColor3dv(ColourSchemes().getColour("camera_icon"));
+    glColor3dv(GlobalColourSchemeManager().getColour("camera_icon"));
     glBegin(GL_LINE_STRIP);
     glVertex3f (x-box,y,0);
     glVertex3f (x,y+(box/2),0);
@@ -1061,7 +1062,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
   Vector3 vSize(vMaxBounds - vMinBounds);
 
-  glColor3dv(ColourSchemes().getColour("brush_size_info"));
+  glColor3dv(GlobalColourSchemeManager().getColour("brush_size_info"));
 
   std::ostringstream dimensions;
 
@@ -1265,7 +1266,7 @@ void XYWnd::draw()
 {
     // clear
     glViewport(0, 0, _width, _height);
-    Vector3 colourGridBack = ColourSchemes().getColour("grid_background");
+    Vector3 colourGridBack = GlobalColourSchemeManager().getColour("grid_background");
     glClearColor (colourGridBack[0], colourGridBack[1], colourGridBack[2], 0);
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -1371,7 +1372,7 @@ void XYWnd::draw()
     }
 
     if (xyWndManager.showCrossHairs()) {
-        Vector3 colour = ColourSchemes().getColour("xyview_crosshairs");
+        Vector3 colour = GlobalColourSchemeManager().getColour("xyview_crosshairs");
         glColor4d(colour[0], colour[1], colour[2], 0.8f);
         glBegin (GL_LINES);
         if (_viewType == XY) {
@@ -1397,7 +1398,7 @@ void XYWnd::draw()
 
     // greebo: Draw the clipper's control points
     {
-        glColor3dv(ColourSchemes().getColour("clipper"));
+        glColor3dv(GlobalColourSchemeManager().getColour("clipper"));
         glPointSize(4);
 
         if (GlobalClipper().clipMode()) {
@@ -1446,13 +1447,13 @@ void XYWnd::draw()
 
             switch (_viewType) {
                 case YZ:
-                    glColor3dv(ColourSchemes().getColour("axis_x"));
+                    glColor3dv(GlobalColourSchemeManager().getColour("axis_x"));
                     break;
                 case XZ:
-                    glColor3dv(ColourSchemes().getColour("axis_y"));
+                    glColor3dv(GlobalColourSchemeManager().getColour("axis_y"));
                     break;
                 case XY:
-                    glColor3dv(ColourSchemes().getColour("axis_z"));
+                    glColor3dv(GlobalColourSchemeManager().getColour("axis_z"));
                     break;
             }
 

@@ -315,26 +315,26 @@ void UserInterfaceModule::applyBrushVertexColours()
 {
 	auto& settings = GlobalBrushCreator().getSettings();
 
-	settings.setVertexColour(ColourSchemes().getColour("brush_vertices"));
+	settings.setVertexColour(GlobalColourSchemeManager().getColour("brush_vertices"));
 }
 
 void UserInterfaceModule::applyPatchVertexColours()
 {
 	auto& settings = GlobalPatchModule().getSettings();
 
-	settings.setVertexColour(patch::PatchEditVertexType::Corners, ColourSchemes().getColour("patch_vertex_corner"));
-	settings.setVertexColour(patch::PatchEditVertexType::Inside, ColourSchemes().getColour("patch_vertex_inside"));
+	settings.setVertexColour(patch::PatchEditVertexType::Corners, GlobalColourSchemeManager().getColour("patch_vertex_corner"));
+	settings.setVertexColour(patch::PatchEditVertexType::Inside, GlobalColourSchemeManager().getColour("patch_vertex_inside"));
 }
 
 void UserInterfaceModule::applyEntityVertexColours()
 {
 	auto& settings = GlobalEntityModule().getSettings();
 
-	settings.setLightVertexColour(LightEditVertexType::StartEndDeselected, ColourSchemes().getColour("light_startend_deselected"));
-	settings.setLightVertexColour(LightEditVertexType::StartEndSelected, ColourSchemes().getColour("light_startend_selected"));
-	settings.setLightVertexColour(LightEditVertexType::Inactive, ColourSchemes().getColour("light_vertex_normal"));
-	settings.setLightVertexColour(LightEditVertexType::Deselected, ColourSchemes().getColour("light_vertex_deselected"));
-	settings.setLightVertexColour(LightEditVertexType::Selected, ColourSchemes().getColour("light_vertex_selected"));
+	settings.setLightVertexColour(LightEditVertexType::StartEndDeselected, GlobalColourSchemeManager().getColour("light_startend_deselected"));
+	settings.setLightVertexColour(LightEditVertexType::StartEndSelected, GlobalColourSchemeManager().getColour("light_startend_selected"));
+	settings.setLightVertexColour(LightEditVertexType::Inactive, GlobalColourSchemeManager().getColour("light_vertex_normal"));
+	settings.setLightVertexColour(LightEditVertexType::Deselected, GlobalColourSchemeManager().getColour("light_vertex_deselected"));
+	settings.setLightVertexColour(LightEditVertexType::Selected, GlobalColourSchemeManager().getColour("light_vertex_selected"));
 }
 
 void UserInterfaceModule::refreshShadersCmd(const cmd::ArgumentList& args)
