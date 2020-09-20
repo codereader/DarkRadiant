@@ -10,6 +10,7 @@
 #include "icommandsystem.h"
 
 #include "TestContext.h"
+#include "HeadlessOpenGLContext.h"
 #include "module/CoreModule.h"
 #include "messages/GameConfigNeededMessage.h"
 
@@ -28,6 +29,8 @@ protected:
 	std::unique_ptr<module::CoreModule> _coreModule;
 
 	std::size_t _gameSetupListener;
+
+	std::shared_ptr<gl::HeadlessOpenGLContextModule> _glContextModule;
 
 protected:
 	RadiantTest()
@@ -58,6 +61,7 @@ protected:
 	{
 		// Set up the test game environment
 		setupGameFolder();
+		setupOpenGLContext();
 
 		// Wire up the game-config-needed handler, we need to respond
 		_gameSetupListener = _coreModule->get()->getMessageBus().addListener(
@@ -76,6 +80,8 @@ protected:
 			rError() << "Unhandled Exception: " << ex.what() << std::endl;
 			abort();
 		}
+
+		_glContextModule->createContext();
 	}
 
 	void TearDown() override
@@ -93,8 +99,12 @@ protected:
 
 protected:
 	virtual void setupGameFolder()
+	{}
+
+	virtual void setupOpenGLContext()
 	{
-		
+		_glContextModule = std::make_shared<gl::HeadlessOpenGLContextModule>();
+		_coreModule->get()->getModuleRegistry().registerModule(_glContextModule);
 	}
 
 	virtual void loadMap(const std::string& modRelativePath)

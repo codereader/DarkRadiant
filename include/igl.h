@@ -18,21 +18,6 @@ public:
     virtual ~IGLContext() {}
 };
 
-// An IGLContextProvider implementation must be able
-// to create a valid context and return it as an object
-// deriving from IGLContext
-// Only one IGLContextProvider-implementing module is 
-// allowed in a given set of modules.
-class IGLContextProvider :
-    public RegisterableModule
-{
-public:
-    virtual ~IGLContextProvider() {}
-
-    // Create a GL context and return it
-    virtual IGLContext::Ptr createContext() = 0;
-};
-
 // Interface of the module holding the shared GL context
 // of this application. When the shared GL context has been
 // created or destroyed, the corresponding events are fired.
