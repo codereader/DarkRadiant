@@ -404,7 +404,7 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 
 	if (brushes.size() < 2)
 	{
-		throw cmd::ExecutionNotPossible("CSG Merge: At least two brushes have to be selected.");
+		throw cmd::ExecutionNotPossible(_("CSG Merge: At least two brushes have to be selected."));
 	}
 
 	rMessage() << "CSG Merge: Merging " << brushes.size() << " brushes." << std::endl;
