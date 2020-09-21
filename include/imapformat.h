@@ -23,7 +23,7 @@ typedef std::shared_ptr<IEntityNode> IEntityNodePtr;
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
  */
-typedef void (*GraphTraversalFunc) (const scene::INodePtr& root, scene::NodeVisitor& nodeExporter);
+typedef std::function<void(const scene::INodePtr& root, scene::NodeVisitor& nodeExporter)> GraphTraversalFunc;
 
 namespace map
 {

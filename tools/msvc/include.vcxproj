@@ -120,6 +120,7 @@
     <ClInclude Include="..\..\include\ifiltermenu.h" />
     <ClInclude Include="..\..\include\ifonts.h" />
     <ClInclude Include="..\..\include\igame.h" />
+    <ClInclude Include="..\..\include\igameconnection.h" />
     <ClInclude Include="..\..\include\igl.h" />
     <ClInclude Include="..\..\include\iglprogram.h" />
     <ClInclude Include="..\..\include\iglrender.h" />

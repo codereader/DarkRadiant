@@ -194,6 +194,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\clsocket\ActiveSocket.cpp" />
+    <ClCompile Include="..\..\libs\clsocket\SimpleSocket.cpp" />
     <ClCompile Include="..\..\radiant\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
     <ClCompile Include="..\..\radiant\commandsystem\CommandSystem.cpp" />
@@ -248,6 +250,10 @@
     <ClCompile Include="..\..\radiant\fonts\FontManager.cpp" />
     <ClCompile Include="..\..\radiant\fonts\GlyphInfo.cpp" />
     <ClCompile Include="..\..\radiant\fonts\GlyphSet.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\GameConnection.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\MapObserver.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\MessageTcp.cpp" />
     <ClCompile Include="..\..\radiant\image\dds.cpp" />
     <ClCompile Include="..\..\radiant\image\DDSImage.cpp" />
     <ClCompile Include="..\..\radiant\image\ddslib.cpp" />
@@ -1109,6 +1115,11 @@
     <ClInclude Include="..\..\radiant\fonts\FontManager.h" />
     <ClInclude Include="..\..\radiant\fonts\GlyphInfo.h" />
     <ClInclude Include="..\..\radiant\fonts\GlyphSet.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\DiffStatus.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\GameConnection.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\MapObserver.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\MessageTcp.h" />
     <ClInclude Include="..\..\radiant\image\dds.h" />
     <ClInclude Include="..\..\radiant\image\DDSImage.h" />
     <ClInclude Include="..\..\radiant\image\ddslib.h" />

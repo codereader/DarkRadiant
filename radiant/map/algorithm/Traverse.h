@@ -12,4 +12,8 @@ void traverse(const scene::INodePtr& root, scene::NodeVisitor& nodeExporter);
  */
 void traverseSelected(const scene::INodePtr& root, scene::NodeVisitor& nodeExporter);
 
+/** stgatilov: Returns traverser, which traverses only specified set of items (and their ancestors/descendants)
+ */
+std::function<void(const scene::INodePtr&, scene::NodeVisitor&)> traverseSubset(const std::set<scene::INode*> &nodes);
+
 } // namespace map

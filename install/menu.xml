@@ -319,4 +319,22 @@
 		<menuItem name="about" caption="&amp;About" command="About" />
 		<menuItem name="userGuide" caption="&amp;User Guide" command="ShowUserGuide" />
 	</subMenu>
+
+	<subMenu name="gamecon" caption="Connection">
+		<menuItem name="cameraSyncEnable" caption="Enable camera synchronization" command="GameConnectionCameraSyncEnable" />
+		<menuItem name="cameraSyncDisable" caption="Disable camera synchronization" command="GameConnectionCameraSyncDisable" />
+		<menuItem name="backSyncCamera" caption="Sync camera back now" command="GameConnectionBackSyncCamera" />
+		<menuSeparator />
+		<menuItem name="reloadMap" caption="Reload map from .map file" command="GameConnectionReloadMap" />
+		<menuItem name="reloadMapAutoEnable" caption="Enable automation .map reload on save" command="GameConnectionReloadMapAutoEnable" />
+		<menuItem name="reloadMapAutoDisable" caption="Disable automation .map reload on save" command="GameConnectionReloadMapAutoDisable" />
+		<menuSeparator />
+		<menuItem name="updateMapOff" caption="Disable map update mode" command="GameConnectionUpdateMapOff" />
+		<menuItem name="updateMapOn" caption="Enable map update mode" command="GameConnectionUpdateMapOn" />
+		<menuItem name="updateMapAlways" caption="Always update map immediately after change" command="GameConnectionUpdateMapAlways" />
+		<menuItem name="updateMap" caption="Update map right now" command="GameConnectionUpdateMap" />
+		<menuSeparator />
+		<menuItem name="pauseGame" caption="Pause game" command="GameConnectionPauseGame" />
+		<menuItem name="respawnSelected" caption="Respawn selected entities" command="GameConnectionRespawnSelected" />
+	</subMenu>
 </menu>

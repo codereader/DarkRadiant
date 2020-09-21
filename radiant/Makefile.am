@@ -113,6 +113,13 @@ darkradiant_SOURCES = main.cpp \
                       fonts/GlyphInfo.cpp \
                       fonts/GlyphSet.cpp \
                       fonts/FontManager.cpp \
+                      gameconnection/DiffDoom3MapWriter.cpp \
+                      gameconnection/GameConnection.cpp \
+                      gameconnection/MapObserver.cpp \
+                      gameconnection/MessageTcp.cpp \
+                      gameconnection/clsocket/ActiveSocket.cpp \
+                      gameconnection/clsocket/PassiveSocket.cpp \
+                      gameconnection/clsocket/SimpleSocket.cpp \
                       image/dds.cpp \
                       image/ddslib.cpp \
                       image/Doom3ImageLoader.cpp \
