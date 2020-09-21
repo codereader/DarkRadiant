@@ -50,10 +50,10 @@ inline ui::ICamera& GlobalCameraView()
 
 class Matrix4;
 
-class CameraView
+class IRadiantCameraView
 {
 public:
-  virtual ~CameraView() {}
+  virtual ~IRadiantCameraView() {}
   virtual void setModelview(const Matrix4& modelview) = 0;
   virtual void setFieldOfView(float fieldOfView) = 0;
 };

@@ -37,7 +37,7 @@ inline Matrix4 projection_for_camera(float near_z, float far_z, float fieldOfVie
   );
 }
 
-class RadiantCameraView : public CameraView
+class RadiantCameraView : public IRadiantCameraView
 {
   Camera& m_camera;
   render::View* m_view;
