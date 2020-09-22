@@ -2,6 +2,7 @@
 
 #include "iscenegraph.h"
 #include "iorthoview.h"
+#include "icamera.h"
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
@@ -13,7 +14,6 @@
 #include <wx/cursor.h>
 #include <wx/stopwatch.h>
 
-#include "camera/CameraObserver.h"
 #include "render/View.h"
 #include "imousetool.h"
 #include "tools/XYMouseToolEvent.h"

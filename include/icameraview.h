@@ -9,6 +9,8 @@ class ICameraView :
     public IInteractiveView
 {
 public:
+    using Ptr = std::shared_ptr<ICameraView>;
+
     virtual ~ICameraView() {}
 
 	// Move the camera's origin
@@ -26,4 +28,10 @@ public:
     virtual void enableFreeMove() = 0;
     virtual void disableFreeMove() = 0;
     virtual bool freeMoveEnabled() const = 0;
+
+    /// Get the camera angles
+    virtual Vector3 getCameraAngles() const = 0;
+
+    /// Set the camera angles
+    virtual void setCameraAngles(const Vector3& angles) = 0;
 };

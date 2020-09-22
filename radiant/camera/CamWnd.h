@@ -120,8 +120,8 @@ public:
     Vector3 getUpVector() const override;
     Vector3 getForwardVector() const override;
 
-    Vector3 getCameraAngles() const;
-    void setCameraAngles(const Vector3& angles);
+    Vector3 getCameraAngles() const override;
+    void setCameraAngles(const Vector3& angles) override;
 
     const Frustum& getViewFrustum() const;
 

@@ -6,7 +6,7 @@
 #include "igame.h"
 
 #include "wxutil/ModalProgressDialog.h"
-#include "../infofile/InfoFileExporter.h"
+#include "InfoFileExporter.h"
 #include "EventRateLimiter.h"
 
 #include <sigc++/signal.h>

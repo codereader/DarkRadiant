@@ -113,13 +113,6 @@ darkradiant_SOURCES = main.cpp \
                       fonts/GlyphInfo.cpp \
                       fonts/GlyphSet.cpp \
                       fonts/FontManager.cpp \
-                      gameconnection/DiffDoom3MapWriter.cpp \
-                      gameconnection/GameConnection.cpp \
-                      gameconnection/MapObserver.cpp \
-                      gameconnection/MessageTcp.cpp \
-                      gameconnection/clsocket/ActiveSocket.cpp \
-                      gameconnection/clsocket/PassiveSocket.cpp \
-                      gameconnection/clsocket/SimpleSocket.cpp \
                       image/dds.cpp \
                       image/ddslib.cpp \
                       image/Doom3ImageLoader.cpp \
@@ -420,13 +413,8 @@ darkradiant_SOURCES = main.cpp \
                       map/MapPropertyInfoFileModule.cpp \
                       map/FindMapElements.cpp \
 					  map/infofile/InfoFileManager.cpp \
-					  map/infofile/InfoFile.cpp \
-					  map/infofile/InfoFileExporter.cpp \
                       map/MapFileManager.cpp \
-					  map/algorithm/ChildPrimitives.cpp \
                       map/algorithm/Skins.cpp \
-                      map/algorithm/Traverse.cpp \
-					  map/algorithm/MapExporter.cpp \
                       map/algorithm/MapImporter.cpp \
                       map/algorithm/Import.cpp \
                       map/algorithm/Export.cpp \

@@ -3,7 +3,7 @@
 
 #include "ientity.h"
 
-namespace map
+namespace gameconn
 {
 
 DiffDoom3MapWriter::DiffDoom3MapWriter() {}
@@ -41,11 +41,25 @@ void DiffDoom3MapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ost
     stream << "{" << std::endl;
 
     // Entity key values
-    writeEntityKeyValues(entity, stream);
+    entity->getEntity().forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        stream << "\"" << key << "\" \"" << value << "\"" << std::endl;
+    });
 }
 void DiffDoom3MapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) {
     stream << "}" << std::endl;
-    _primitiveCount = 0;
 }
+
+void DiffDoom3MapWriter::beginWriteBrush(const IBrushNodePtr&, std::ostream&)
+{}
+
+void DiffDoom3MapWriter::endWriteBrush(const IBrushNodePtr&, std::ostream&)
+{}
+
+void DiffDoom3MapWriter::beginWritePatch(const IPatchNodePtr&, std::ostream&)
+{}
+
+void DiffDoom3MapWriter::endWritePatch(const IPatchNodePtr&, std::ostream&)
+{}
 
 }

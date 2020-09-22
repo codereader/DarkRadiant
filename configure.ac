@@ -90,6 +90,7 @@ then
     conv_plugin="dm.conversation"
     gui_plugin="dm.gui"
     editing_plugin="dm.editing"
+    gameconn_plugin="dm.gameconnection"
 fi
 AC_SUBST([sr_plugin])
 AC_SUBST([obj_plugin])
@@ -97,6 +98,7 @@ AC_SUBST([difficulty_plugin])
 AC_SUBST([conv_plugin])
 AC_SUBST([gui_plugin])
 AC_SUBST([editing_plugin])
+AC_SUBST([gameconn_plugin])
 
 # Check for required libraries
 
@@ -370,6 +372,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  plugins/dm.difficulty/Makefile
                  plugins/dm.gui/Makefile
                  plugins/dm.editing/Makefile
+                 plugins/dm.gameconnection/Makefile
                  plugins/dm.conversation/Makefile])
 
 AC_OUTPUT

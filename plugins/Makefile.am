@@ -9,4 +9,5 @@ SUBDIRS += @sr_plugin@ \
            @difficulty_plugin@ \
            @conv_plugin@ \
            @gui_plugin@ \
-           @editing_plugin@
+           @editing_plugin@ \
+           @gameconn_plugin@

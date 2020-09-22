@@ -8,7 +8,6 @@
 
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
-#include "CameraObserver.h"
 
 class wxWindow;
 
@@ -45,14 +44,21 @@ public:
 	// Constructor
 	GlobalCameraManager();
 
-	/**
-	 * Returns the currently active CamWnd or NULL if none is active.
-	 */
+    /* ICamera interface */
+
+    std::shared_ptr<ICameraView> getActiveCameraView() override
+    {
+        return getActiveCamWnd();
+    }
+	void addCameraObserver(CameraObserver* observer) override;
+	void removeCameraObserver(CameraObserver* observer) override;
+
+    /* Local methods */
+
+	// Returns the currently active CamWnd or NULL if none is active.
 	CamWndPtr getActiveCamWnd();
 
-	/**
-	 * Create a new camera window, ready for packing into a parent widget.
-	 */
+    // Create a new camera window, ready for packing into a parent widget.
 	CamWndPtr createCamWnd(wxWindow* parent);
 
 	// Remove the camwnd with the given ID
@@ -93,10 +99,6 @@ public:
 
 	void update();
     void forceDraw();
-
-	// Add a "CameraMoved" callback to the signal member
-	void addCameraObserver(CameraObserver* observer);
-	void removeCameraObserver(CameraObserver* observer);
 
 	// Notify the attached "CameraMoved" callbacks
 	void movedNotify();

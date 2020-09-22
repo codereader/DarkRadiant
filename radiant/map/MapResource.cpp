@@ -22,21 +22,21 @@
 #include "os/path.h"
 #include "os/file.h"
 #include "os/fs.h"
-#include "map/algorithm/Traverse.h"
 #include "stream/TextFileInputStream.h"
 #include "scenelib.h"
 
 #include <functional>
 #include <fmt/format.h>
 
-#include "infofile/InfoFile.h"
+#include "scene/InfoFile.h"
+#include "scene/InfoFileExporter.h"
+#include "scene/MapExporter.h"
+#include "scene/ChildPrimitives.h"
+#include "scene/Traverse.h"
 #include "string/string.h"
 
 #include "algorithm/MapImporter.h"
-#include "algorithm/MapExporter.h"
 #include "algorithm/Import.h"
-#include "infofile/InfoFileExporter.h"
-#include "algorithm/ChildPrimitives.h"
 
 namespace map
 {

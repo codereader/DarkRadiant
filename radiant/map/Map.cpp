@@ -41,8 +41,9 @@
 #include "map/MapResource.h"
 #include "map/algorithm/Import.h"
 #include "map/algorithm/Export.h"
-#include "map/algorithm/Traverse.h"
-#include "map/algorithm/MapExporter.h"
+#include "scene/Traverse.h"
+#include "scene/MapExporter.h"
+#include "scene/ChildPrimitives.h"
 #include "model/ModelExporter.h"
 #include "model/ModelScalePreserver.h"
 #include "map/algorithm/Skins.h"
@@ -58,10 +59,6 @@
 #include "MapPropertyInfoFileModule.h"
 
 #include <fmt/format.h>
-#include "algorithm/ChildPrimitives.h"
-
-#include "gameconnection/DiffDoom3MapWriter.h"
-#include "gameconnection/DiffStatus.h"
 
 namespace map 
 {
@@ -408,40 +405,6 @@ bool Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
     _saveInProgress = false;
 
     return result;
-}
-
-std::string Map::saveMapDiff(const DiffEntityStatuses &entityStatuses) {
-    if (_saveInProgress) return "";     // fail if during proper map save
-
-    scene::IMapRootNodePtr root = GlobalSceneGraph().root();
-
-    std::set<scene::INode*> subsetNodes;
-    root->foreachNode([&](const scene::INodePtr &node) -> bool {
-        if (entityStatuses.count(node->name()))
-            subsetNodes.insert(node.get());
-        return true;
-    });
-
-    std::ostringstream outStream;
-    outStream << "// diff " << entityStatuses.size() << std::endl;
-
-    DiffDoom3MapWriter writer;
-    writer.setStatuses(entityStatuses);
-
-    //write removal stubs (no actual spawnargs)
-    for (const auto &pNS : entityStatuses) {
-        const std::string &name = pNS.first;
-        DiffStatus status = pNS.second;
-        assert(status.isModified());    //(don't put untouched entities into map)
-        if (status.isRemoved())
-            writer.writeRemoveEntityStub(pNS.first, outStream);
-    }
-
-    //write added/modified entities as usual
-    MapExporterPtr exporter(new MapExporter(writer, root, outStream, 0));
-    exporter->exportMap(root, traverseSubset(subsetNodes));
-
-    return outStream.str();
 }
 
 bool Map::saveSelected(const std::string& filename, const MapFormatPtr& mapFormat)

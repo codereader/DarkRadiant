@@ -11,7 +11,7 @@
 #include "ientity.h"
 #include "iscenegraph.h"
 #include "scene/BasicRootNode.h"
-#include "map/algorithm/ChildPrimitives.h"
+#include "scene/ChildPrimitives.h"
 #include "map/Map.h"
 #include "scenelib.h"
 #include "entitylib.h"

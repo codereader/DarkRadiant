@@ -5,6 +5,7 @@
 #include "ifilter.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
+#include "igameconnection.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"
@@ -34,7 +35,6 @@
 #include "textool/TexTool.h"
 #include "modelexport/ExportAsModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
-#include "gameconnection/GameConnection.h"
 
 namespace ui
 {
@@ -160,8 +160,6 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
-    // FIXME: should not dynamic_cast, required methods should be in the
-    // IGameConnection interface
 	if (IGameConnection *gameconn = GlobalGameConnection()) {
 		GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
 			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(true); });

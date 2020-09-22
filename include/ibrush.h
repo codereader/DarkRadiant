@@ -158,6 +158,8 @@ public:
 	 * Q3-compatibility feature, set the detail/structural flag
 	 */
 	virtual void setDetailFlag(DetailFlag newValue) = 0;
+
+	virtual void evaluateBRep() const = 0;
 };
 
 // Forward-declare the Brush object, only accessible from main binary

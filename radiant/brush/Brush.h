@@ -209,7 +209,7 @@ public:
 	DetailFlag getDetailFlag() const;
 	void setDetailFlag(DetailFlag newValue);
 
-	void evaluateBRep() const;
+	void evaluateBRep() const override;
 
     void transformChanged();
     void evaluateTransform();

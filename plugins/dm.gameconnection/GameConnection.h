@@ -3,11 +3,12 @@
 #include "igameconnection.h"
 #include "icommandsystem.h"
 #include "iscenegraph.h"
+#include "icamera.h"
+
 #include "MapObserver.h"
 
 #include <wx/timer.h>
 
-class CameraObserver;
 namespace sigc {
     struct connection;
 }
@@ -91,7 +92,7 @@ private:
     //data for camera position (setviewpos format: X Y Z -pitch yaw roll)
     Vector3 _cameraOutData[2];
     //the observer put onto global camera when camera sync is enabled
-    std::unique_ptr<CameraObserver> _cameraObserver;
+    std::unique_ptr<ui::CameraObserver> _cameraObserver;
 
     //observes over changes to map data
     MapObserver _mapObserver;

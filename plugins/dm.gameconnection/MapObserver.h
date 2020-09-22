@@ -29,11 +29,11 @@ public:
     void clear();
 
     //returns pending entity change since last clear (or since enabled)
-    const map::DiffEntityStatuses &getChanges() const;
+    const gameconn::DiffEntityStatuses &getChanges() const;
 
 private:
     //receives events about entity changes
-    void entityUpdated(const std::string &name, map::DiffStatus diff);
+    void entityUpdated(const std::string &name, gameconn::DiffStatus diff);
     //add/remove entity observers on the set of entity nodes
     void setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable);
 
@@ -42,7 +42,7 @@ private:
     //observers put on every entity on scene
     std::map<IEntityNode*, Entity::Observer*> _entityObservers;		//note: values owned
     //set of entities with changes since last clear
-    map::DiffEntityStatuses _entityChanges;
+    gameconn::DiffEntityStatuses _entityChanges;
 
     //internal classes can call private methods
     friend class MapObserver_EntityObserver;

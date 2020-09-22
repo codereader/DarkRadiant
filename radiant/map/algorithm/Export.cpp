@@ -15,7 +15,7 @@
 #include "string/case_conv.h"
 #include "model/ModelExporter.h"
 #include "registry/registry.h"
-#include "Traverse.h"
+#include "scene/Traverse.h"
 #include "Models.h"
 
 namespace map

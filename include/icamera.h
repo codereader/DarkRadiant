@@ -1,7 +1,9 @@
 #pragma once
 
 #include "imodule.h"
+#include "icameraview.h"
 #include "math/Vector3.h"
+#include <list>
 
 namespace ui
 {
@@ -12,6 +14,19 @@ enum
     CAMERA_YAW = 1, // left / right
     CAMERA_ROLL = 2, // fall over
 };
+
+/// Observer interface for ICamera
+class CameraObserver
+{
+public:
+    // destructor
+	virtual ~CameraObserver() {}
+	// This gets called as soon as the camera is moved
+	virtual void cameraMoved() = 0;
+
+}; // class CameraObserver
+
+typedef std::list<CameraObserver*> CameraObserverList;
 
 /**
  * The "global" interface of DarkRadiant's camera module.
@@ -24,6 +39,15 @@ public:
 	 * greebo: Sets the camera origin to the given <point> using the given <angles>.
 	 */
 	virtual void focusCamera(const Vector3& point, const Vector3& angles) = 0;
+
+    /// Get the active camera view
+	virtual ICameraView::Ptr getActiveCameraView() = 0;
+
+    /// Add an observer for camera events
+	virtual void addCameraObserver(CameraObserver* observer) = 0;
+
+    /// Remove a camera observer
+	virtual void removeCameraObserver(CameraObserver* observer) = 0;
 };
 typedef std::shared_ptr<ICamera> ICameraPtr;
 

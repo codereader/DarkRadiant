@@ -1,13 +1,19 @@
 #include "GameConnection.h"
 #include "MessageTcp.h"
-#include "camera/GlobalCamera.h"
+#include "DiffStatus.h"
+#include "DiffDoom3MapWriter.h"
+#include "clsocket/ActiveSocket.h"
+
+#include "icamera.h"
 #include "inode.h"
 #include "ientity.h"
-#include "map/Map.h"
-#include "selection/RadiantSelectionSystem.h"
-#include "modulesystem/StaticModule.h"
+#include "iselection.h"
+
+#include "scene/MapExporter.h"
+#include "scene/Traverse.h"
+
 #include <sigc++/signal.h>
-#include "clsocket/ActiveSocket.h"
+#include <sigc++/connection.h>
 
 namespace gameconn
 {
@@ -144,7 +150,7 @@ bool GameConnection::connect() {
     _thinkTimer->Start(THINK_INTERVAL);
 
     _mapEventListener.reset(new sigc::connection(
-        GlobalMap().signal_mapEvent().connect(
+        GlobalMapModule().signal_mapEvent().connect(
             sigc::mem_fun(*this, &GameConnection::onMapEvent)
         )
     ));
@@ -202,7 +208,6 @@ void GameConnection::initialiseModule(const ApplicationContext& ctx) {
 void GameConnection::shutdownModule() {
     disconnect(true);
 }
-module::StaticModule<GameConnection> gameConnectionModule;
 
 //-------------------------------------------------------------
 
@@ -258,7 +263,7 @@ std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std
 
 void GameConnection::updateCamera() {
     connect();
-    if (auto camWnd = GlobalCamera().getActiveCamWnd()) {
+    if (auto camWnd = GlobalCameraView().getActiveCameraView()) {
         Vector3 orig = camWnd->getCameraOrigin(), angles = camWnd->getCameraAngles();
         _cameraOutData[0] = orig;
         _cameraOutData[1] = angles;
@@ -280,7 +285,9 @@ bool GameConnection::sendPendingCameraUpdate() {
     }
     return false;
 }
-class GameConnection_CameraObserver : public CameraObserver {
+
+class GameConnection_CameraObserver : public ui::CameraObserver
+{
     GameConnection &_owner;
 public:
     GameConnection_CameraObserver(GameConnection &owner) : _owner(owner) {}
@@ -288,9 +295,10 @@ public:
         _owner.updateCamera();
     }
 };
+
 void GameConnection::setCameraSyncEnabled(bool enable) {
     if (!enable && _cameraObserver) {
-        GlobalCamera().removeCameraObserver(_cameraObserver.get());
+        GlobalCameraView().removeCameraObserver(_cameraObserver.get());
         _cameraObserver.reset();
     }
     if (enable) {
@@ -298,7 +306,7 @@ void GameConnection::setCameraSyncEnabled(bool enable) {
             return;
         if (!_cameraObserver) {
             _cameraObserver.reset(new GameConnection_CameraObserver(*this));
-            GlobalCamera().addCameraObserver(_cameraObserver.get());
+            GlobalCameraView().addCameraObserver(_cameraObserver.get());
         }
         executeSetTogglableFlag("god", true, "OFF");
         executeSetTogglableFlag("noclip", true, "OFF");
@@ -314,7 +322,7 @@ void GameConnection::backSyncCamera() {
     std::string text = executeRequest(composeConExecRequest("getviewpos"));
     Vector3 orig, angles;
     if (sscanf(text.c_str(), "%lf%lf%lf%lf%lf%lf", &orig.x(), &orig.y(), &orig.z(), &angles.x(), &angles.y(), &angles.z()) == 6) {
-        if (auto camWnd = GlobalCamera().getActiveCamWnd()) {
+        if (auto camWnd = GlobalCameraView().getActiveCameraView()) {
             angles.x() *= -1.0;
             camWnd->setCameraOrigin(orig);
             camWnd->setCameraAngles(angles);
@@ -378,10 +386,51 @@ void GameConnection::setUpdateMapLevel(bool on, bool always) {
     _mapObserver.setEnabled(on);
     _updateMapAlways = always;
 }
+
+/**
+ * stgatilov: Saves only entities with specified names to in-memory map patch.
+ * This diff is intended to be consumed by TheDarkMod automation for HotReload purposes.
+ * TODO: What about patches and brushes?
+ */
+std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
+{
+    //if (_saveInProgress) return "";     // fail if during proper map save
+
+    scene::IMapRootNodePtr root = GlobalSceneGraph().root();
+
+    std::set<scene::INode*> subsetNodes;
+    root->foreachNode([&](const scene::INodePtr &node) -> bool {
+        if (entityStatuses.count(node->name()))
+            subsetNodes.insert(node.get());
+        return true;
+    });
+
+    std::ostringstream outStream;
+    outStream << "// diff " << entityStatuses.size() << std::endl;
+
+    DiffDoom3MapWriter writer;
+    writer.setStatuses(entityStatuses);
+
+    //write removal stubs (no actual spawnargs)
+    for (const auto &pNS : entityStatuses) {
+        const std::string &name = pNS.first;
+        DiffStatus status = pNS.second;
+        assert(status.isModified());    //(don't put untouched entities into map)
+        if (status.isRemoved())
+            writer.writeRemoveEntityStub(pNS.first, outStream);
+    }
+
+    //write added/modified entities as usual
+    map::MapExporterPtr exporter(new map::MapExporter(writer, root, outStream, 0));
+    exporter->exportMap(root, map::traverseSubset(subsetNodes));
+
+    return outStream.str();
+}
+
 void GameConnection::doUpdateMap() {
     if (!connect())
         return;
-    std::string diff = GlobalMap().saveMapDiff(_mapObserver.getChanges());
+    std::string diff = saveMapDiff(_mapObserver.getChanges());
     if (diff.empty()) {
         return; //TODO: fail
     }
@@ -390,4 +439,10 @@ void GameConnection::doUpdateMap() {
         _mapObserver.clear();
 }
 
+}
+
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	module::performDefaultInitialisation(registry);
+	registry.registerModule(std::make_shared<GameConnection>());
 }
