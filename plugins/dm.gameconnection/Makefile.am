@@ -9,4 +9,7 @@ dm_gameconnection_la_LDFLAGS = -module -avoid-version $(WX_LIBS) $(XML_LIBS)
 dm_gameconnection_la_SOURCES = DiffDoom3MapWriter.cpp \
                                GameConnection.cpp \
                                MapObserver.cpp \
-                               MessageTcp.cpp
+                               MessageTcp.cpp \
+                               clsocket/ActiveSocket.cpp \
+                               clsocket/PassiveSocket.cpp \
+                               clsocket/SimpleSocket.cpp
