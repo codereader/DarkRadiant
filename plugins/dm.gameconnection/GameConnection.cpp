@@ -8,6 +8,8 @@
 #include "inode.h"
 #include "ientity.h"
 #include "iselection.h"
+#include "iuimanager.h"
+#include "ieventmanager.h"
 
 #include "scene/MapExporter.h"
 #include "scene/Traverse.h"
@@ -188,24 +190,94 @@ GameConnection::~GameConnection() {
 
 //-------------------------------------------------------------
 
-const std::string& GameConnection::getName() const {
+const std::string& GameConnection::getName() const
+{
     static std::string _name = MODULE_GAMECONNECTION;
     return _name;
 }
-const StringSet& GameConnection::getDependencies() const {
-    static StringSet _dependencies;
-    if (_dependencies.empty()) {
-        _dependencies.insert(MODULE_CAMERA);
-        _dependencies.insert(MODULE_COMMANDSYSTEM);
-        _dependencies.insert(MODULE_MAP);
-        _dependencies.insert(MODULE_SCENEGRAPH);
-        _dependencies.insert(MODULE_SELECTIONSYSTEM);
-    }
+
+const StringSet& GameConnection::getDependencies() const
+{
+    static StringSet _dependencies {
+        MODULE_CAMERA, MODULE_COMMANDSYSTEM, MODULE_MAP, MODULE_SCENEGRAPH,
+        MODULE_SELECTIONSYSTEM, MODULE_EVENTMANAGER, MODULE_UIMANAGER
+    };
     return _dependencies;
 }
-void GameConnection::initialiseModule(const ApplicationContext& ctx) {
+
+void GameConnection::initialiseModule(const ApplicationContext& ctx)
+{
+    // Add commands
+    GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
+        [this](const cmd::ArgumentList&) { setCameraSyncEnabled(true); });
+    GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable",
+        [this](const cmd::ArgumentList&) { setCameraSyncEnabled(false); });
+    GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
+        [this](const cmd::ArgumentList&) { backSyncCamera(); });
+    GlobalCommandSystem().addCommand("GameConnectionReloadMap",
+        [this](const cmd::ArgumentList&) { reloadMap(); });
+    GlobalCommandSystem().addCommand("GameConnectionReloadMapAutoEnable",
+        [this](const cmd::ArgumentList&) { setAutoReloadMapEnabled(true); });
+    GlobalCommandSystem().addCommand("GameConnectionReloadMapAutoDisable",
+        [this](const cmd::ArgumentList&) { setAutoReloadMapEnabled(false); });
+    GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff",
+        [this](const cmd::ArgumentList&) { setUpdateMapLevel(false, false); });
+    GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn",
+        [this](const cmd::ArgumentList&) { setUpdateMapLevel(true, false); });
+    GlobalCommandSystem().addCommand("GameConnectionUpdateMapAlways",
+        [this](const cmd::ArgumentList&) { setUpdateMapLevel(true, true); });
+    GlobalCommandSystem().addCommand("GameConnectionUpdateMap",
+        [this](const cmd::ArgumentList&) { doUpdateMap(); });
+    GlobalCommandSystem().addCommand("GameConnectionPauseGame",
+        [this](const cmd::ArgumentList&) { togglePauseGame(); });
+    GlobalCommandSystem().addCommand("GameConnectionRespawnSelected",
+        [this](const cmd::ArgumentList&) { respawnSelectedEntities(); });
+
+    // Add events
+    GlobalEventManager().addCommand("GameConnectionCameraSyncEnable", "GameConnectionCameraSyncEnable");
+    GlobalEventManager().addCommand("GameConnectionCameraSyncDisable", "GameConnectionCameraSyncDisable");
+    GlobalEventManager().addCommand("GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera");
+    GlobalEventManager().addCommand("GameConnectionReloadMap", "GameConnectionReloadMap");
+    GlobalEventManager().addCommand("GameConnectionReloadMapAutoEnable", "GameConnectionReloadMapAutoEnable");
+    GlobalEventManager().addCommand("GameConnectionReloadMapAutoDisable", "GameConnectionReloadMapAutoDisable");
+    GlobalEventManager().addCommand("GameConnectionUpdateMapOff", "GameConnectionUpdateMapOff");
+    GlobalEventManager().addCommand("GameConnectionUpdateMapOn", "GameConnectionUpdateMapOn");
+    GlobalEventManager().addCommand("GameConnectionUpdateMapAlways", "GameConnectionUpdateMapAlways");
+    GlobalEventManager().addCommand("GameConnectionUpdateMap", "GameConnectionUpdateMap");
+    GlobalEventManager().addCommand("GameConnectionPauseGame", "GameConnectionPauseGame");
+    GlobalEventManager().addCommand("GameConnectionRespawnSelected", "GameConnectionRespawnSelected");
+
+    // Add menu items
+    IMenuManager& mm = GlobalUIManager().getMenuManager();
+    mm.add("main", "connection", ui::menuFolder, "Connection", "", "");
+    mm.add("main/connection", "cameraSyncEnable", ui::menuItem,
+           "Enable camera synchronization", "", "GameConnectionCameraSyncEnable");
+    mm.add("main/connection", "cameraSyncDisable", ui::menuItem,
+           "Disable camera synchronization", "", "GameConnectionCameraSyncDisable");
+    mm.add("main/connection", "backSyncCamera", ui::menuItem,
+           "Sync camera back now", "", "GameConnectionBackSyncCamera");
+    mm.add("main/connection", "reloadMap", ui::menuItem,
+           "Reload map from .map file", "", "GameConnectionReloadMap");
+    mm.add("main/connection", "reloadMapAutoEnable", ui::menuItem,
+           "Enable automation .map reload on save", "", "GameConnectionReloadMapAutoEnable");
+    mm.add("main/connection", "reloadMapAutoDisable", ui::menuItem,
+           "Disable automation .map reload on save", "", "GameConnectionReloadMapAutoDisable");
+    mm.add("main/connection", "updateMapOff", ui::menuItem,
+           "Disable map update mode", "", "GameConnectionUpdateMapOff");
+    mm.add("main/connection", "updateMapOn", ui::menuItem,
+           "Enable map update mode", "", "GameConnectionUpdateMapOn");
+    mm.add("main/connection", "updateMapAlways", ui::menuItem,
+           "Always update map immediately after change", "", "GameConnectionUpdateMapAlways");
+    mm.add("main/connection", "updateMap", ui::menuItem,
+           "Update map right now", "", "GameConnectionUpdateMap");
+    mm.add("main/connection", "pauseGame", ui::menuItem,
+           "Pause game", "", "GameConnectionPauseGame");
+    mm.add("main/connection", "respawnSelected", ui::menuItem,
+           "Respawn selected entities", "", "GameConnectionRespawnSelected");
 }
-void GameConnection::shutdownModule() {
+
+void GameConnection::shutdownModule()
+{
     disconnect(true);
 }
 
