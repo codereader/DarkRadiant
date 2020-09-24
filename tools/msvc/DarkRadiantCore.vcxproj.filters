@@ -188,6 +188,9 @@
     <Filter Include="src\map\mru">
       <UniqueIdentifier>{7a86f93f-fdd1-4b5a-b298-8f9b515d26c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\camera">
+      <UniqueIdentifier>{b17ee1c1-2993-4dfd-8dfb-799552f45b5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -996,6 +999,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\settings\ColourSchemeManager.cpp">
       <Filter>src\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\camera\GlobalCameraManager.cpp">
+      <Filter>src\camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2036,6 +2042,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\settings\ColourSchemeManager.h">
       <Filter>src\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\camera\GlobalCameraManager.h">
+      <Filter>src\camera</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

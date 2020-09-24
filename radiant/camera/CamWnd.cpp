@@ -19,7 +19,7 @@
 #include "gamelib.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"
-#include "GlobalCamera.h"
+#include "GlobalCameraWndManager.h"
 #include "render/RenderStatistics.h"
 #include "render/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"

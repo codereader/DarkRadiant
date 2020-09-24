@@ -11,7 +11,7 @@
 #include "registry/registry.h"
 
 #include "camera/CamWnd.h"
-#include "camera/GlobalCamera.h"
+#include "camera/GlobalCameraWndManager.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
 #include <wx/splitter.h>

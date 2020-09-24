@@ -32,6 +32,7 @@
     <ClCompile Include="..\..\radiantcore\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiantcore\brush\TextureProjection.cpp" />
     <ClCompile Include="..\..\radiantcore\brush\Winding.cpp" />
+    <ClCompile Include="..\..\radiantcore\camera\GlobalCameraManager.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\BrushByPlaneClipper.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\Clipper.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\ClipPoint.cpp" />
@@ -709,6 +710,7 @@
     <ClInclude Include="..\..\radiantcore\brush\VertexInstance.h" />
     <ClInclude Include="..\..\radiantcore\brush\VertexSelection.h" />
     <ClInclude Include="..\..\radiantcore\brush\Winding.h" />
+    <ClInclude Include="..\..\radiantcore\camera\GlobalCameraManager.h" />
     <ClInclude Include="..\..\radiantcore\clipper\BrushByPlaneClipper.h" />
     <ClInclude Include="..\..\radiantcore\clipper\Clipper.h" />
     <ClInclude Include="..\..\radiantcore\clipper\ClipPoint.h" />

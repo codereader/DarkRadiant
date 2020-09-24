@@ -2,7 +2,7 @@
 
 #include "ieventmanager.h"
 #include "iregistry.h"
-#include "GlobalCamera.h"
+#include "GlobalCameraWndManager.h"
 #include "CameraSettings.h"
 #include <functional>
 

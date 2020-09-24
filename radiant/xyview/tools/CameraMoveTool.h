@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "imousetool.h"
 #include "iorthoview.h"
-#include "camera/GlobalCamera.h"
+#include "camera/GlobalCameraWndManager.h"
 
 namespace ui
 {

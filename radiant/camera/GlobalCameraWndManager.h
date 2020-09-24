@@ -22,7 +22,7 @@ namespace ui
  * as well as some methods that are passed to the currently active CamWnd, like
  * resetCameraAngles() or lookThroughSelected().
  **/
-class GlobalCameraManager :
+class GlobalCameraWndManager :
 	public ICamera
 {
 private:
@@ -43,7 +43,7 @@ private:
 
 public:
 	// Constructor
-	GlobalCameraManager();
+	GlobalCameraWndManager();
 
 	/**
 	 * Returns the currently active CamWnd or NULL if none is active.
@@ -144,4 +144,4 @@ private:
 } // namespace
 
 // The accessor function that contains the static instance of the GlobalCameraManager class
-ui::GlobalCameraManager& GlobalCamera();
+ui::GlobalCameraWndManager& GlobalCamera();

@@ -195,6 +195,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
+    <ClCompile Include="..\..\radiant\camera\GlobalCameraWndManager.cpp" />
     <ClCompile Include="..\..\radiant\clipboard\ClipboardModule.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\EventManager.cpp" />
@@ -273,7 +274,6 @@
     <ClCompile Include="..\..\radiant\camera\CameraSettings.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamWnd.cpp" />
     <ClCompile Include="..\..\radiant\camera\FloatingCamWnd.cpp" />
-    <ClCompile Include="..\..\radiant\camera\GlobalCamera.cpp" />
     <ClCompile Include="..\..\radiant\render\OpenGLModule.cpp" />
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp" />
     <ClCompile Include="..\..\radiant\textool\TexToolItem.cpp" />
@@ -374,6 +374,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\ApplicationContext.h" />
+    <ClInclude Include="..\..\radiant\camera\GlobalCameraWndManager.h" />
     <ClInclude Include="..\..\radiant\camera\tools\CameraMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\camera\tools\FreeMoveTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
@@ -463,7 +464,6 @@
     <ClInclude Include="..\..\radiant\camera\CamRenderer.h" />
     <ClInclude Include="..\..\radiant\camera\CamWnd.h" />
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h" />
-    <ClInclude Include="..\..\radiant\camera\GlobalCamera.h" />
     <ClInclude Include="..\..\radiant\camera\RadiantCameraView.h" />
     <ClInclude Include="..\..\radiant\render\OpenGLModule.h" />
     <ClInclude Include="..\..\radiant\textool\Rectangle.h" />

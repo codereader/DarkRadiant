@@ -43,6 +43,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 brush/Winding.cpp \
                 brush/csg/CSG.cpp \
                 brush/export/CollisionModel.cpp \
+                camera/GlobalCameraManager.cpp \
                 clipper/BrushByPlaneClipper.cpp \
                 clipper/ClipPoint.cpp \
                 clipper/Clipper.cpp \

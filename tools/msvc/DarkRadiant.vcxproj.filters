@@ -193,9 +193,6 @@
     <ClCompile Include="..\..\radiant\camera\FloatingCamWnd.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\camera\GlobalCamera.cpp">
-      <Filter>src\camera</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\render\OpenGLModule.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
@@ -682,6 +679,9 @@
     <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\camera\GlobalCameraWndManager.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\Camera.h">
@@ -700,9 +700,6 @@
       <Filter>src\camera</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h">
-      <Filter>src\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\camera\GlobalCamera.h">
       <Filter>src\camera</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\RadiantCameraView.h">
@@ -1313,6 +1310,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\script\ScriptWindow.h">
       <Filter>src\ui\script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\GlobalCameraWndManager.h">
+      <Filter>src\camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

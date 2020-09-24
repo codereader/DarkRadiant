@@ -17,7 +17,7 @@
 #include "selectionlib.h"
 
 #include "ibrush.h"
-#include "camera/GlobalCamera.h"
+#include "camera/GlobalCameraWndManager.h"
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
 #include "ui/overlay/Overlay.h"

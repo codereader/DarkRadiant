@@ -12,7 +12,7 @@
 #include <wx/splitter.h>
 #include <functional>
 
-#include "camera/GlobalCamera.h"
+#include "camera/GlobalCameraWndManager.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
 

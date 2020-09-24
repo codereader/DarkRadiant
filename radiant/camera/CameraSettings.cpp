@@ -5,7 +5,7 @@
 #include "ipreferencesystem.h"
 
 #include "registry/registry.h"
-#include "GlobalCamera.h"
+#include "GlobalCameraWndManager.h"
 
 namespace ui
 {

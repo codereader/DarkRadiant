@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imodule.h"
 #include "iinteractiveview.h"
 #include "math/Vector3.h"
 
@@ -29,4 +30,13 @@ public:
     virtual void enableFreeMove() = 0;
     virtual void disableFreeMove() = 0;
     virtual bool freeMoveEnabled() const = 0;
+};
+
+class ICameraViewManager :
+	public RegisterableModule
+{
+public:
+	virtual ~ICameraViewManager() {}
+
+
 };

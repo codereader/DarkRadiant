@@ -42,7 +42,7 @@ darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
 darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       camera/Camera.cpp \
-                      camera/GlobalCamera.cpp \
+                      camera/GlobalCameraWndManager.cpp \
                       camera/CameraSettings.cpp \
                       camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
