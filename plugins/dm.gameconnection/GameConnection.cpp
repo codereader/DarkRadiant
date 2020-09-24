@@ -183,7 +183,7 @@ GameConnection::~GameConnection() {
 
 const std::string& GameConnection::getName() const
 {
-    static std::string _name = MODULE_GAMECONNECTION;
+    static std::string _name("GameConnection");
     return _name;
 }
 
@@ -466,4 +466,10 @@ void GameConnection::doUpdateMap() {
         _mapObserver.clear();
 }
 
+}
+
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+    module::performDefaultInitialisation(registry);
+    registry.registerModule(std::make_shared<gameconn::GameConnection>());
 }
