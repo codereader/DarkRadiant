@@ -5,7 +5,6 @@
 #include "ifilter.h"
 #include "iorthocontextmenu.h"
 #include "ieventmanager.h"
-#include "igameconnection.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"

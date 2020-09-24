@@ -1,6 +1,5 @@
 #pragma once
 
-#include "igameconnection.h"
 #include "icommandsystem.h"
 #include "iscenegraph.h"
 #include "icamera.h"
@@ -13,7 +12,8 @@ namespace sigc {
     struct connection;
 }
 
-namespace gameconn {
+namespace gameconn
+{
 
 class MessageTcp;
 
@@ -24,7 +24,7 @@ class MessageTcp;
  *  - updating edited entities in game immediately (aka "hot reload")
  */
 class GameConnection :
-    public IGameConnection,
+    public RegisterableModule,
     public wxEvtHandler			//note: everything before this base must have no data members!
 {
 public:
@@ -140,5 +140,3 @@ private:
 };
 
 }
-
-using gameconn::GameConnection;
