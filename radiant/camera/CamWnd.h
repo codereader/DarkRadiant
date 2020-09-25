@@ -103,14 +103,14 @@ public:
 
     Camera& getCamera();
 
-    Vector3 getCameraOrigin() const override;
+    const Vector3& getCameraOrigin() const override;
     void setCameraOrigin(const Vector3& origin) override;
 
-    Vector3 getRightVector() const override;
-    Vector3 getUpVector() const override;
-    Vector3 getForwardVector() const override;
+    const Vector3& getRightVector() const override;
+    const Vector3& getUpVector() const override;
+    const Vector3& getForwardVector() const override;
 
-    Vector3 getCameraAngles() const override;
+    const Vector3& getCameraAngles() const override;
     void setCameraAngles(const Vector3& angles) override;
 
     const Frustum& getViewFrustum() const;

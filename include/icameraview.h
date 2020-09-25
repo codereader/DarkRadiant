@@ -15,18 +15,18 @@ public:
 	virtual ~ICameraView() {}
 
 	// Move the camera's origin
-	virtual Vector3 getCameraOrigin() const = 0;
+	virtual const Vector3& getCameraOrigin() const = 0;
 	virtual void setCameraOrigin(const Vector3& newOrigin) = 0;
 
-	virtual Vector3 getCameraAngles() const = 0;
+	virtual const Vector3& getCameraAngles() const = 0;
 	virtual void setCameraAngles(const Vector3& newAngles) = 0;
 
 	// Returns the vector pointing to the "right"
-	virtual Vector3 getRightVector() const = 0;
+	virtual const Vector3& getRightVector() const = 0;
 	// Returns the vector pointing "up"
-	virtual Vector3 getUpVector() const = 0;
+	virtual const Vector3& getUpVector() const = 0;
 	// Returns the vector pointing "forward"
-	virtual Vector3 getForwardVector() const = 0;
+	virtual const Vector3& getForwardVector() const = 0;
 };
 
 class IFreeMoveView :

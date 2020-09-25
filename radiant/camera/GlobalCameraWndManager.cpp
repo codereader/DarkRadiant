@@ -489,7 +489,7 @@ void GlobalCameraWndManager::loadCameraStrafeDefinitions()
 
 // RegisterableModule implementation
 const std::string& GlobalCameraWndManager::getName() const {
-	static std::string _name("CameraWndManager");
+	static std::string _name(MODULE_CAMERA_MANAGER);
 	return _name;
 }
 
@@ -558,6 +558,6 @@ module::StaticModule<GlobalCameraWndManager> cameraWndManagerModule;
 ui::GlobalCameraWndManager& GlobalCamera()
 {
 	return *std::static_pointer_cast<ui::GlobalCameraWndManager>(
-		module::GlobalModuleRegistry().getModule("CameraWndManager")
+		module::GlobalModuleRegistry().getModule(MODULE_CAMERA_MANAGER)
 	);
 }

@@ -1,16 +1,19 @@
 #include "Camera.h"
 
+#include <functional>
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "GlobalCameraWndManager.h"
 #include "CameraSettings.h"
-#include <functional>
+#include "selection/SelectionTest.h"
 
 namespace ui
 {
 
 namespace
 {
+	const std::string RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+
 	const Matrix4 g_radiant2opengl = Matrix4::byColumns(
 		0, -1, 0, 0,
 		0, 0, 1, 0,
@@ -44,9 +47,11 @@ namespace
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
 
-Camera::Camera(render::View& view, const Callback& update) :
+Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& forceRedraw) :
 	_origin(_prevOrigin), // Use previous origin for camera position
 	_angles(_prevAngles),
+	_queueDraw(queueDraw),
+	_forceRedraw(forceRedraw),
 	width(0),
 	height(0),
 	timing(false),
@@ -57,8 +62,7 @@ Camera::Camera(render::View& view, const Callback& update) :
 	movementflags(0),
 	fieldOfView(75.0f),
 	m_mouseMove(std::bind(&Camera::onMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
-	_view(view),
-	m_update(update)
+	_view(view)
 {
 	_moveTimer.Connect(wxEVT_TIMER, wxTimerEventHandler(Camera::camera_keymove), NULL, this);
 }
@@ -144,7 +148,7 @@ void Camera::keyMove()
 
 	keyControl(time_seconds * 5.0f);
 
-	m_update();
+	queueDraw();
 	GlobalCamera().movedNotify();
 }
 
@@ -184,7 +188,7 @@ void Camera::freemoveUpdateAxes() {
 void Camera::mouseMove(int x, int y) {
 	//rMessage() << "mousemove... ";
 	freeMove(-x, -y);
-	m_update();
+	queueDraw();
 	GlobalCamera().movedNotify();
 }
 
@@ -252,32 +256,90 @@ void Camera::mouseControl(int x, int y) {
 	updateModelview();
 }
 
-void Camera::setAngles(const Vector3& newAngles)
+const Vector3& Camera::getCameraOrigin() const
 {
-	_angles = newAngles;
-	_prevAngles = _angles;
-
-	updateModelview();
-	m_update();
-	GlobalCamera().movedNotify();
+	return _origin;
 }
 
-const Vector3& Camera::getAngles() const {
-	return _angles;
-}
-
-void Camera::setOrigin(const Vector3& newOrigin)
+void Camera::setCameraOrigin(const Vector3& newOrigin)
 {
 	_origin = newOrigin;
 	_prevOrigin = _origin;
 
 	updateModelview();
-	m_update();
+	queueDraw();
 	GlobalCamera().movedNotify();
 }
 
-const Vector3& Camera::getOrigin() const {
-	return _origin;
+const Vector3& Camera::getCameraAngles() const
+{
+	return _angles;
+}
+
+void Camera::setCameraAngles(const Vector3& newAngles)
+{
+	_angles = newAngles;
+	_prevAngles = _angles;
+
+	updateModelview();
+	queueDraw();
+	GlobalCamera().movedNotify();
+}
+
+const Vector3& Camera::getRightVector() const
+{
+	return vright;
+}
+
+const Vector3& Camera::getUpVector() const
+{
+	return vup;
+}
+
+const Vector3& Camera::getForwardVector() const
+{
+	return vpn;
+}
+
+int Camera::getDeviceWidth() const
+{
+	return width;
+}
+
+int Camera::getDeviceHeight() const
+{
+	return height;
+}
+
+SelectionTestPtr Camera::createSelectionTestForPoint(const Vector2& point)
+{
+	float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
+
+	// Get the mouse position
+	Vector2 deviceEpsilon(selectEpsilon / getDeviceWidth(), selectEpsilon / getDeviceHeight());
+
+	// Copy the current view and constrain it to a small rectangle
+	render::View scissored(_view);
+
+	auto rect = selection::Rectangle::ConstructFromPoint(point, deviceEpsilon);
+	scissored.EnableScissor(rect.min[0], rect.max[0], rect.min[1], rect.max[1]);
+
+	return SelectionTestPtr(new SelectionVolume(scissored));
+}
+
+const VolumeTest& Camera::getVolumeTest() const
+{
+	return _view;
+}
+
+void Camera::queueDraw()
+{
+	_queueDraw();
+}
+
+void Camera::forceRedraw()
+{
+	_forceRedraw();
 }
 
 void Camera::moveUpdateAxes() {
@@ -314,75 +376,80 @@ void Camera::onMotionDelta(int x, int y)
 	mouseMove(x, y);
 }
 
-void Camera::pitchUpDiscrete() {
-	Vector3 angles = getAngles();
+void Camera::pitchUpDiscrete()
+{
+	Vector3 angles = getCameraAngles();
 
 	angles[camera::CAMERA_PITCH] += SPEED_TURN;
 	if (angles[camera::CAMERA_PITCH] > 90)
 		angles[camera::CAMERA_PITCH] = 90;
 
-	setAngles(angles);
+	setCameraAngles(angles);
 }
 
-void Camera::pitchDownDiscrete() {
-	Vector3 angles = getAngles();
+void Camera::pitchDownDiscrete()
+{
+	Vector3 angles = getCameraAngles();
 
 	angles[camera::CAMERA_PITCH] -= SPEED_TURN;
 	if (angles[camera::CAMERA_PITCH] < -90)
 		angles[camera::CAMERA_PITCH] = -90;
 
-	setAngles(angles);
+	setCameraAngles(angles);
 }
 
 void Camera::moveForwardDiscrete(double units)
 {
 	moveUpdateAxes();
-	setOrigin(getOrigin() + forward * fabs(units));
+	setCameraOrigin(getCameraOrigin() + forward * fabs(units));
 }
 
 void Camera::moveBackDiscrete(double units)
 {
 	moveUpdateAxes();
-	setOrigin(getOrigin() + forward * (-fabs(units)));
+	setCameraOrigin(getCameraOrigin() + forward * (-fabs(units)));
 }
 
 void Camera::moveUpDiscrete(double units)
 {
-	Vector3 origin = getOrigin();
+	Vector3 origin = getCameraOrigin();
 
 	origin[2] += fabs(units);
 
-	setOrigin(origin);
+	setCameraOrigin(origin);
 }
 
 void Camera::moveDownDiscrete(double units)
 {
-	Vector3 origin = getOrigin();
+	Vector3 origin = getCameraOrigin();
 	origin[2] -= fabs(units);
-	setOrigin(origin);
+	setCameraOrigin(origin);
 }
 
 void Camera::moveLeftDiscrete(double units)
 {
 	moveUpdateAxes();
-	setOrigin(getOrigin() + right * (-fabs(units)));
+	setCameraOrigin(getCameraOrigin() + right * (-fabs(units)));
 }
 
 void Camera::moveRightDiscrete(double units)
 {
 	moveUpdateAxes();
-	setOrigin(getOrigin() + right * fabs(units));
+	setCameraOrigin(getCameraOrigin() + right * fabs(units));
 }
 
-void Camera::rotateLeftDiscrete() {
-	Vector3 angles = getAngles();
+void Camera::rotateLeftDiscrete()
+{
+	Vector3 angles = getCameraAngles();
 	angles[camera::CAMERA_YAW] += SPEED_TURN;
-	setAngles(angles);
+	setCameraAngles(angles);
 }
-void Camera::rotateRightDiscrete() {
-	Vector3 angles = getAngles();
+
+void Camera::rotateRightDiscrete()
+{
+	Vector3 angles = getCameraAngles();
 	angles[camera::CAMERA_YAW] -= SPEED_TURN;
-	setAngles(angles);
+	setCameraAngles(angles);
 }
 
 void Camera::onForwardKey(KeyEventType eventType)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "icameraview.h"
 #include "ieventmanager.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
@@ -29,7 +30,8 @@ const unsigned int MOVE_PITCHDOWN = 1 << 9;
 const unsigned int MOVE_ALL = MOVE_FORWARD|MOVE_BACK|MOVE_ROTRIGHT|MOVE_ROTLEFT|MOVE_STRAFERIGHT|MOVE_STRAFELEFT|MOVE_UP|MOVE_DOWN|MOVE_PITCHUP|MOVE_PITCHDOWN;
 
 class Camera :
-	public wxEvtHandler
+	public wxEvtHandler,
+	public ICameraView
 {
 	static Vector3 _prevOrigin;
 	static Vector3 _prevAngles;
@@ -39,6 +41,9 @@ class Camera :
 
 	// Triggers camera movement with a certain rate per second
 	wxTimer _moveTimer;
+
+	Callback _queueDraw;
+	Callback _forceRedraw;
 
 public:
 	int width, height;
@@ -71,9 +76,8 @@ public:
 	void camera_keymove(wxTimerEvent& ev);
 
 	render::View& _view;
-	Callback m_update;
 
-	Camera(render::View& view, const Callback& update);
+	Camera(render::View& view, const Callback& queueDraw, const Callback& forceRedraw);
 	Camera(const Camera& other) = delete;
 	Camera& operator=(const Camera& other) = delete;
 
@@ -94,11 +98,24 @@ public:
 	void freemoveUpdateAxes();
 	void moveUpdateAxes();
 
-	const Vector3& getOrigin() const;
-	void setOrigin(const Vector3& newOrigin);
+	const Vector3& getCameraOrigin() const override;
+	void setCameraOrigin(const Vector3& newOrigin) override;
 
-	const Vector3& getAngles() const;
-	void setAngles(const Vector3& newAngles);
+	const Vector3& getCameraAngles() const override;
+	void setCameraAngles(const Vector3& newAngles) override;
+
+	const Vector3& getRightVector() const override;
+	const Vector3& getUpVector() const override;
+	const Vector3& getForwardVector() const override;
+
+	int getDeviceWidth() const override;
+	int getDeviceHeight() const override;
+
+	SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
+	const VolumeTest& getVolumeTest() const override;
+
+	void queueDraw() override;
+	void forceRedraw() override;
 
 	void mouseMove(int x, int y);
 	void freeMove(int dx, int dy);

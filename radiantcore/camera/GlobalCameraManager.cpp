@@ -32,6 +32,7 @@ ICameraView& CameraManager::getActiveView()
 	throw std::runtime_error("Not implemented");
 }
 
-module::StaticModule<CameraManager> cameraManagerModule;
+// disabled for now:  
+// module::StaticModule<CameraManager> cameraManagerModule;
 
 }

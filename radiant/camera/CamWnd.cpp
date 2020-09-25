@@ -45,7 +45,6 @@ namespace
     const char* const FAR_CLIP_IN_TEXT = N_("Move far clip plane closer");
     const char* const FAR_CLIP_OUT_TEXT = N_("Move far clip plane further away");
     const char* const FAR_CLIP_DISABLED_TEXT = N_(" (currently disabled in preferences)");
-    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 }
 
 class ObjectFinder :
@@ -146,7 +145,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
-    _camera(_view, Callback(std::bind(&CamWnd::queueDraw, this))),
+    _camera(_view, std::bind(&CamWnd::queueDraw, this), std::bind(&CamWnd::forceRedraw, this)),
     _drawing(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
@@ -327,19 +326,7 @@ CamWnd::~CamWnd()
 
 SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
 {
-    float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
-
-    // Get the mouse position
-    Vector2 deviceEpsilon(selectEpsilon / getCamera().width, selectEpsilon / getCamera().height);
-
-    // Copy the current view and constrain it to a small rectangle
-    render::View scissored(_view);
-
-    auto rect = selection::Rectangle::ConstructFromPoint(point, deviceEpsilon);
-    scissored.EnableScissor(rect.min[0], rect.max[0],
-                            rect.min[1], rect.max[1]);
-
-    return SelectionTestPtr(new SelectionVolume(scissored));
+    return _camera.createSelectionTestForPoint(point);
 }
 
 const VolumeTest& CamWnd::getVolumeTest() const
@@ -492,7 +479,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 }
 
 void CamWnd::changeFloor(const bool up) {
-    float current = _camera.getOrigin()[2] - 48;
+    float current = _camera.getCameraOrigin()[2] - 48;
     float bestUp;
     float bestDown;
     FloorHeightWalker walker(current, bestUp, bestDown);
@@ -506,8 +493,8 @@ void CamWnd::changeFloor(const bool up) {
         current = bestDown;
     }
 
-    const Vector3& org = _camera.getOrigin();
-    _camera.setOrigin(Vector3(org[0], org[1], current + 48));
+    const Vector3& org = _camera.getCameraOrigin();
+    _camera.setCameraOrigin(Vector3(org[0], org[1], current + 48));
 
     _camera.updateModelview();
     update();
@@ -859,39 +846,39 @@ void CamWnd::queueDraw()
     _wxGLWidget->Refresh(false);
 }
 
-Vector3 CamWnd::getCameraOrigin() const
+const Vector3& CamWnd::getCameraOrigin() const
 {
-    return _camera.getOrigin();
+    return _camera.getCameraOrigin();
 }
 
 void CamWnd::setCameraOrigin(const Vector3& origin)
 {
-    _camera.setOrigin(origin);
+    _camera.setCameraOrigin(origin);
 }
 
-Vector3 CamWnd::getRightVector() const
+const Vector3& CamWnd::getRightVector() const
 {
     return _camera.vright;
 }
 
-Vector3 CamWnd::getUpVector() const
+const Vector3& CamWnd::getUpVector() const
 {
     return _camera.vup;
 }
 
-Vector3 CamWnd::getForwardVector() const
+const Vector3& CamWnd::getForwardVector() const
 {
     return _camera.vpn;
 }
 
-Vector3 CamWnd::getCameraAngles() const
+const Vector3& CamWnd::getCameraAngles() const
 {
-    return _camera.getAngles();
+    return _camera.getCameraAngles();
 }
 
 void CamWnd::setCameraAngles(const Vector3& angles)
 {
-    _camera.setAngles(angles);
+    _camera.setCameraAngles(angles);
 }
 
 const Frustum& CamWnd::getViewFrustum() const
