@@ -1020,17 +1020,17 @@ void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
     if (_viewType == XY) {
         x = origin[0];
         y = origin[1];
-        a = degrees_to_radians(angles[CAMERA_YAW]);
+        a = degrees_to_radians(angles[camera::CAMERA_YAW]);
     }
     else if (_viewType == YZ) {
         x = origin[1];
         y = origin[2];
-        a = degrees_to_radians(angles[CAMERA_PITCH]);
+        a = degrees_to_radians(angles[camera::CAMERA_PITCH]);
     }
     else {
         x = origin[0];
         y = origin[2];
-        a = degrees_to_radians(angles[CAMERA_PITCH]);
+        a = degrees_to_radians(angles[camera::CAMERA_PITCH]);
     }
 
     glColor3dv(GlobalColourSchemeManager().getColour("camera_icon"));

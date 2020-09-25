@@ -171,12 +171,12 @@ void RegionManager::addRegionBrushes()
 
     try
     {
-        auto& camView = GlobalCameraView().getActiveView();
+        auto& camView = GlobalCameraManager().getActiveView();
 
         // Obtain the camera origin = player start point
         Vector3 camOrigin = camView.getCameraOrigin();
         // Get the start angle of the player start point
-        auto angle = camView.getCameraAngles()[ui::CAMERA_YAW];
+        auto angle = camView.getCameraAngles()[camera::CAMERA_YAW];
 
         // Check if the camera origin is within the region
         if (!_bounds.intersects(camOrigin))

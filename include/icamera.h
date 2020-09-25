@@ -4,7 +4,7 @@
 #include "icameraview.h"
 #include "math/Vector3.h"
 
-namespace ui
+namespace camera
 {
 
 enum 
@@ -17,7 +17,7 @@ enum
 /**
  * The "global" interface of DarkRadiant's camera module.
  */
-class ICamera :
+class ICameraManager :
 	public RegisterableModule
 {
 public:
@@ -29,20 +29,19 @@ public:
 	// A reference to the currently active view. Will throw a std::runtime_error if no camera is present
 	virtual ICameraView& getActiveView() = 0;
 };
-typedef std::shared_ptr<ICamera> ICameraPtr;
+typedef std::shared_ptr<ICameraManager> ICameraPtr;
 
 } // namespace
 
-const char* const MODULE_CAMERA("Camera");
+const char* const MODULE_CAMERA_MANAGER("CameraManager");
 
-// Accessor
-// (this is named CameraView to avoid name conflicts with the existing GlobalCamera() accessor)
-inline ui::ICamera& GlobalCameraView()
+// Module accessor
+inline camera::ICameraManager& GlobalCameraManager()
 {
 	// Cache the reference locally
-    static ui::ICamera& _camera(
-        *std::static_pointer_cast<ui::ICamera>(
-			module::GlobalModuleRegistry().getModule(MODULE_CAMERA)
+    static camera::ICameraManager& _camera(
+        *std::static_pointer_cast<camera::ICameraManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_CAMERA_MANAGER)
 		)
 	);
 	return _camera;

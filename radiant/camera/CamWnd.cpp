@@ -486,7 +486,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 
         // Focus the view at the center of the found AABB
         // Set the camera and the views to the given point
-        GlobalCameraView().focusCamera(found.origin, getCameraAngles());
+        GlobalCameraManager().focusCamera(found.origin, getCameraAngles());
         GlobalXYWndManager().setOrigin(found.origin);
     }
 }
@@ -799,9 +799,9 @@ void CamWnd::benchmark()
     for (int i=0 ; i < 100 ; i++)
     {
         Vector3 angles;
-        angles[CAMERA_ROLL] = 0;
-        angles[CAMERA_PITCH] = 0;
-        angles[CAMERA_YAW] = static_cast<double>(i * (360.0 / 100.0));
+        angles[camera::CAMERA_ROLL] = 0;
+        angles[camera::CAMERA_PITCH] = 0;
+        angles[camera::CAMERA_YAW] = static_cast<double>(i * (360.0 / 100.0));
         setCameraAngles(angles);
     }
 

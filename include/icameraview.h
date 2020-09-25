@@ -10,6 +10,8 @@ class ICameraView :
 	public virtual IInteractiveView
 {
 public:
+	typedef std::shared_ptr<ICameraView> Ptr;
+
 	virtual ~ICameraView() {}
 
 	// Move the camera's origin

@@ -98,7 +98,7 @@ private:
         int n1 = (xyEvent.getViewType() == XY) ? 1 : 2;
         int n2 = (xyEvent.getViewType() == YZ) ? 1 : 0;
 
-        int nAngle = (xyEvent.getViewType() == XY) ? CAMERA_YAW : CAMERA_PITCH;
+        int nAngle = (xyEvent.getViewType() == XY) ? camera::CAMERA_YAW : camera::CAMERA_PITCH;
 
         if (point[n1] || point[n2])
         {

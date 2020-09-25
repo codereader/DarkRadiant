@@ -129,7 +129,7 @@ void PointFile::advance(bool forward)
 
 	try
 	{
-		auto& cam = GlobalCameraView().getActiveView();
+		auto& cam = GlobalCameraManager().getActiveView();
 
 		cam.setCameraOrigin(_points[_curPos].vertex);
 
@@ -139,8 +139,8 @@ void PointFile::advance(bool forward)
 			Vector3 dir((_points[_curPos + 1].vertex - cam.getCameraOrigin()).getNormalised());
 			Vector3 angles(cam.getCameraAngles());
 
-			angles[ui::CAMERA_YAW] = radians_to_degrees(atan2(dir[1], dir[0]));
-			angles[ui::CAMERA_PITCH] = radians_to_degrees(asin(dir[2]));
+			angles[camera::CAMERA_YAW] = radians_to_degrees(atan2(dir[1], dir[0]));
+			angles[camera::CAMERA_PITCH] = radians_to_degrees(asin(dir[2]));
 
 			cam.setCameraAngles(angles);
 		}

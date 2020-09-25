@@ -174,8 +174,8 @@ void GlobalCameraWndManager::resetCameraAngles(const cmd::ArgumentList& args)
 	doWithActiveCamWnd([](CamWnd& camWnd) 
 	{
 		Vector3 angles;
-		angles[CAMERA_ROLL] = angles[CAMERA_PITCH] = 0;
-		angles[CAMERA_YAW] = 22.5 * floor((camWnd.getCameraAngles()[CAMERA_YAW] + 11) / 22.5);
+		angles[camera::CAMERA_ROLL] = angles[camera::CAMERA_PITCH] = 0;
+		angles[camera::CAMERA_YAW] = 22.5 * floor((camWnd.getCameraAngles()[camera::CAMERA_YAW] + 11) / 22.5);
 		camWnd.setCameraAngles(angles);
 	});
 }
@@ -489,7 +489,7 @@ void GlobalCameraWndManager::loadCameraStrafeDefinitions()
 
 // RegisterableModule implementation
 const std::string& GlobalCameraWndManager::getName() const {
-	static std::string _name(MODULE_CAMERA);
+	static std::string _name("CameraWndManager");
 	return _name;
 }
 
@@ -558,6 +558,6 @@ module::StaticModule<GlobalCameraWndManager> cameraWndManagerModule;
 ui::GlobalCameraWndManager& GlobalCamera()
 {
 	return *std::static_pointer_cast<ui::GlobalCameraWndManager>(
-		module::GlobalModuleRegistry().getModule(MODULE_CAMERA)
+		module::GlobalModuleRegistry().getModule("CameraWndManager")
 	);
 }

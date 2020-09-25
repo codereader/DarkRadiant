@@ -92,7 +92,7 @@ namespace map
 				origin.z() += game::current::getValue<float>(GKEY_PLAYER_HEIGHT);
 
 				// Check for an angle key, and use it if present
-				angles[ui::CAMERA_YAW] = string::convert<float>(playerStart->getKeyValue("angle"), 0);
+				angles[camera::CAMERA_YAW] = string::convert<float>(playerStart->getKeyValue("angle"), 0);
 
 				return true;
 			}
@@ -183,7 +183,7 @@ void MapPositionManager::saveLastCameraPosition(const scene::IMapRootNodePtr& ro
 
 	try
 	{
-		auto& camView = GlobalCameraView().getActiveView();
+		auto& camView = GlobalCameraManager().getActiveView();
 
 		root->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camView.getCameraOrigin()));
 		root->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camView.getCameraAngles()));

@@ -115,7 +115,7 @@ void MapPosition::store(const cmd::ArgumentList& args)
     
     try
     {
-        auto& cameraView = GlobalCameraView().getActiveView();
+        auto& cameraView = GlobalCameraManager().getActiveView();
 
         _position = cameraView.getCameraOrigin();
         _angle = cameraView.getCameraAngles();

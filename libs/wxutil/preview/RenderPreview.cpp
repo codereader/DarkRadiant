@@ -330,7 +330,7 @@ Matrix4 RenderPreview::calculateModelViewMatrix()
 
     // Rotate the view like a human would turn their head. Due to the radiant2openGL transform
     // the axes are used differently. Pitch is rotating around y instead of x, for example.
-    Vector3 radiant_eulerXYZ(0, _viewAngles[ui::CAMERA_PITCH], -_viewAngles[ui::CAMERA_YAW]);
+    Vector3 radiant_eulerXYZ(0, _viewAngles[camera::CAMERA_PITCH], -_viewAngles[camera::CAMERA_YAW]);
     modelview.rotateByEulerXYZDegrees(radiant_eulerXYZ);
 
     // As last step apply the radiant2openGL transform which rotates first around z, then around y
@@ -570,18 +570,18 @@ void RenderPreview::onGLMotionDelta(int x, int y, unsigned int mouseState)
     const float dtime = 0.1f;
     const float angleSpeed = 3; // camerasettings::anglespeed
 
-    _viewAngles[ui::CAMERA_PITCH] += y * dtime * angleSpeed;
-    _viewAngles[ui::CAMERA_YAW] += x * dtime * angleSpeed;
+    _viewAngles[camera::CAMERA_PITCH] += y * dtime * angleSpeed;
+    _viewAngles[camera::CAMERA_YAW] += x * dtime * angleSpeed;
 
-    if (_viewAngles[ui::CAMERA_PITCH] > 90)
-        _viewAngles[ui::CAMERA_PITCH] = 90;
-    else if (_viewAngles[ui::CAMERA_PITCH] < -90)
-        _viewAngles[ui::CAMERA_PITCH] = -90;
+    if (_viewAngles[camera::CAMERA_PITCH] > 90)
+        _viewAngles[camera::CAMERA_PITCH] = 90;
+    else if (_viewAngles[camera::CAMERA_PITCH] < -90)
+        _viewAngles[camera::CAMERA_PITCH] = -90;
 
-    if (_viewAngles[ui::CAMERA_YAW] >= 360)
-        _viewAngles[ui::CAMERA_YAW] -= 360;
-    else if (_viewAngles[ui::CAMERA_YAW] <= 0)
-        _viewAngles[ui::CAMERA_YAW] += 360;
+    if (_viewAngles[camera::CAMERA_YAW] >= 360)
+        _viewAngles[camera::CAMERA_YAW] -= 360;
+    else if (_viewAngles[camera::CAMERA_YAW] <= 0)
+        _viewAngles[camera::CAMERA_YAW] += 360;
 
     updateModelViewMatrix();
 

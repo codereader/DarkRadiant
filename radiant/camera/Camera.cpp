@@ -69,18 +69,18 @@ void Camera::keyControl(float dtime) {
 
 	// Update angles
 	if (movementflags & MOVE_ROTLEFT)
-		_angles[CAMERA_YAW] += 15 * dtime* angleSpeed;
+		_angles[camera::CAMERA_YAW] += 15 * dtime* angleSpeed;
 	if (movementflags & MOVE_ROTRIGHT)
-		_angles[CAMERA_YAW] -= 15 * dtime * angleSpeed;
+		_angles[camera::CAMERA_YAW] -= 15 * dtime * angleSpeed;
 	if (movementflags & MOVE_PITCHUP) {
-		_angles[CAMERA_PITCH] += 15 * dtime* angleSpeed;
-		if (_angles[CAMERA_PITCH] > 90)
-			_angles[CAMERA_PITCH] = 90;
+		_angles[camera::CAMERA_PITCH] += 15 * dtime* angleSpeed;
+		if (_angles[camera::CAMERA_PITCH] > 90)
+			_angles[camera::CAMERA_PITCH] = 90;
 	}
 	if (movementflags & MOVE_PITCHDOWN) {
-		_angles[CAMERA_PITCH] -= 15 * dtime * angleSpeed;
-		if (_angles[CAMERA_PITCH] < -90)
-			_angles[CAMERA_PITCH] = -90;
+		_angles[camera::CAMERA_PITCH] -= 15 * dtime * angleSpeed;
+		if (_angles[camera::CAMERA_PITCH] < -90)
+			_angles[camera::CAMERA_PITCH] = -90;
 	}
 
 	updateModelview();
@@ -156,7 +156,7 @@ void Camera::updateModelview()
 	modelview = Matrix4::getIdentity();
 
 	// roll, pitch, yaw
-	Vector3 radiant_eulerXYZ(0, -_angles[CAMERA_PITCH], _angles[CAMERA_YAW]);
+	Vector3 radiant_eulerXYZ(0, -_angles[camera::CAMERA_PITCH], _angles[camera::CAMERA_YAW]);
 
 	modelview.translateBy(_origin);
 	modelview.rotateByEulerXYZDegrees(radiant_eulerXYZ);
@@ -208,19 +208,19 @@ void Camera::freeMove(int dx, int dy) {
 
 		const float zAxisFactor = getCameraSettings()->invertMouseVerticalAxis() ? -1.0f : 1.0f;
 
-		_angles[CAMERA_PITCH] += dy * dtime * angleSpeed * zAxisFactor;
+		_angles[camera::CAMERA_PITCH] += dy * dtime * angleSpeed * zAxisFactor;
 
-		_angles[CAMERA_YAW] += dx * dtime * angleSpeed;
+		_angles[camera::CAMERA_YAW] += dx * dtime * angleSpeed;
 
-		if (_angles[CAMERA_PITCH] > 90)
-			_angles[CAMERA_PITCH] = 90;
-		else if (_angles[CAMERA_PITCH] < -90)
-			_angles[CAMERA_PITCH] = -90;
+		if (_angles[camera::CAMERA_PITCH] > 90)
+			_angles[camera::CAMERA_PITCH] = 90;
+		else if (_angles[camera::CAMERA_PITCH] < -90)
+			_angles[camera::CAMERA_PITCH] = -90;
 
-		if (_angles[CAMERA_YAW] >= 360)
-			_angles[CAMERA_YAW] -=360;
-		else if (_angles[CAMERA_YAW] <= 0)
-			_angles[CAMERA_YAW] +=360;
+		if (_angles[camera::CAMERA_YAW] >= 360)
+			_angles[camera::CAMERA_YAW] -=360;
+		else if (_angles[camera::CAMERA_YAW] <= 0)
+			_angles[camera::CAMERA_YAW] +=360;
 	}
 
 	updateModelview();
@@ -247,7 +247,7 @@ void Camera::mouseControl(int x, int y) {
 	}
 
 	_origin += forward * (yf * 0.1f* movementSpeed);
-	_angles[CAMERA_YAW] += xf * -0.1f * movementSpeed;
+	_angles[camera::CAMERA_YAW] += xf * -0.1f * movementSpeed;
 
 	updateModelview();
 }
@@ -281,7 +281,7 @@ const Vector3& Camera::getOrigin() const {
 }
 
 void Camera::moveUpdateAxes() {
-	double ya = degrees_to_radians(_angles[CAMERA_YAW]);
+	double ya = degrees_to_radians(_angles[camera::CAMERA_YAW]);
 
 	// the movement matrix is kept 2d
 	forward[0] = static_cast<float>(cos(ya));
@@ -317,9 +317,9 @@ void Camera::onMotionDelta(int x, int y)
 void Camera::pitchUpDiscrete() {
 	Vector3 angles = getAngles();
 
-	angles[CAMERA_PITCH] += SPEED_TURN;
-	if (angles[CAMERA_PITCH] > 90)
-		angles[CAMERA_PITCH] = 90;
+	angles[camera::CAMERA_PITCH] += SPEED_TURN;
+	if (angles[camera::CAMERA_PITCH] > 90)
+		angles[camera::CAMERA_PITCH] = 90;
 
 	setAngles(angles);
 }
@@ -327,9 +327,9 @@ void Camera::pitchUpDiscrete() {
 void Camera::pitchDownDiscrete() {
 	Vector3 angles = getAngles();
 
-	angles[CAMERA_PITCH] -= SPEED_TURN;
-	if (angles[CAMERA_PITCH] < -90)
-		angles[CAMERA_PITCH] = -90;
+	angles[camera::CAMERA_PITCH] -= SPEED_TURN;
+	if (angles[camera::CAMERA_PITCH] < -90)
+		angles[camera::CAMERA_PITCH] = -90;
 
 	setAngles(angles);
 }
@@ -376,12 +376,12 @@ void Camera::moveRightDiscrete(double units)
 
 void Camera::rotateLeftDiscrete() {
 	Vector3 angles = getAngles();
-	angles[CAMERA_YAW] += SPEED_TURN;
+	angles[camera::CAMERA_YAW] += SPEED_TURN;
 	setAngles(angles);
 }
 void Camera::rotateRightDiscrete() {
 	Vector3 angles = getAngles();
-	angles[CAMERA_YAW] -= SPEED_TURN;
+	angles[camera::CAMERA_YAW] -= SPEED_TURN;
 	setAngles(angles);
 }
 
