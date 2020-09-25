@@ -9,6 +9,38 @@
 namespace ui
 {
 
+namespace
+{
+	const Matrix4 g_radiant2opengl = Matrix4::byColumns(
+		0, -1, 0, 0,
+		0, 0, 1, 0,
+		-1, 0, 0, 0,
+		0, 0, 0, 1
+	);
+
+	const Matrix4 g_opengl2radiant = Matrix4::byColumns(
+		0, 0, -1, 0,
+		-1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 0, 1
+	);
+
+	inline Matrix4 projection_for_camera(float near_z, float far_z, float fieldOfView, int width, int height)
+	{
+		const float half_width = near_z * tan(degrees_to_radians(fieldOfView * 0.5f));
+		const float half_height = half_width * (static_cast<float>(height) / static_cast<float>(width));
+
+		return Matrix4::getProjectionForFrustum(
+			-half_width,
+			half_width,
+			-half_height,
+			half_height,
+			near_z,
+			far_z
+		);
+	}
+}
+
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
 

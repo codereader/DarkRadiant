@@ -16,7 +16,6 @@
 #include <wx/timer.h>
 #include "render/View.h"
 
-#include "RadiantCameraView.h"
 #include "Camera.h"
 
 #include "Rectangle.h"
@@ -55,8 +54,6 @@ private:
 
     // The contained camera
     Camera _camera;
-
-    RadiantCameraView _cameraView;
 
     static ShaderPtr _faceHighlightShader;
     static ShaderPtr _primitiveHighlightShader;

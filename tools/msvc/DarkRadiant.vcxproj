@@ -464,7 +464,6 @@
     <ClInclude Include="..\..\radiant\camera\CamRenderer.h" />
     <ClInclude Include="..\..\radiant\camera\CamWnd.h" />
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h" />
-    <ClInclude Include="..\..\radiant\camera\RadiantCameraView.h" />
     <ClInclude Include="..\..\radiant\render\OpenGLModule.h" />
     <ClInclude Include="..\..\radiant\textool\Rectangle.h" />
     <ClInclude Include="..\..\radiant\textool\RenderableItem.h" />

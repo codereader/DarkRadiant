@@ -47,13 +47,3 @@ inline ui::ICamera& GlobalCameraView()
 	);
 	return _camera;
 }
-
-class Matrix4;
-
-class IRadiantCameraView
-{
-public:
-  virtual ~IRadiantCameraView() {}
-  virtual void setModelview(const Matrix4& modelview) = 0;
-  virtual void setFieldOfView(float fieldOfView) = 0;
-};

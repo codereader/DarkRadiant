@@ -702,9 +702,6 @@
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h">
       <Filter>src\camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\camera\RadiantCameraView.h">
-      <Filter>src\camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\render\OpenGLModule.h">
       <Filter>src\render</Filter>
     </ClInclude>

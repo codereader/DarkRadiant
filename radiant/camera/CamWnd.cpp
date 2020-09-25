@@ -147,7 +147,6 @@ CamWnd::CamWnd(wxWindow* parent) :
     _id(++_maxId),
     _view(true),
     _camera(&_view, Callback(std::bind(&CamWnd::queueDraw, this))),
-    _cameraView(_camera, &_view, Callback(std::bind(&CamWnd::update, this))),
     _drawing(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
