@@ -34,10 +34,10 @@ public:
 	{
 		try
 		{
-			CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
+			auto& freeMoveView = dynamic_cast<IFreeMoveView&>(ev.getInteractiveView());
 
 			// Don't operate when the camera is already in free look mode
-			if (camEvent.getView().freeMoveEnabled())
+			if (freeMoveView.freeMoveEnabled())
 			{
 				return Result::Ignored;
 			}

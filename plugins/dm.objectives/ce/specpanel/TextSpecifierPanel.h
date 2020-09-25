@@ -23,8 +23,8 @@ namespace ce
  * SpecifierPanels which register themselves correctly for a given SPEC_* type.
  */
 class TextSpecifierPanel :
-	public SpecifierPanel,
-	public wxEvtHandler
+	public wxEvtHandler,
+	public SpecifierPanel
 {
 protected:
 	wxTextCtrl* _entry;

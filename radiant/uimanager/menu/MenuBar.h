@@ -8,8 +8,8 @@ namespace ui
 {
 
 class MenuBar :
-	public MenuElement,
-	public wxEvtHandler
+	public wxEvtHandler,
+	public MenuElement
 {
 private:
 	wxMenuBar* _menuBar;

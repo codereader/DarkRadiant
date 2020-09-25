@@ -32,8 +32,8 @@ class TexturePreviewCombo;
  * into the texture window or applying directly to map geometry.
  */
 class MediaBrowser : 
-	public IMediaBrowser,
-	public wxEvtHandler
+	public wxEvtHandler,
+	public IMediaBrowser
 {
 public:
 	struct TreeColumns :

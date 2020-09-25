@@ -16,8 +16,8 @@ namespace ui
  * Connect the statement to a wxToolBarToolBase / wxButton / wxMenuItem via the connectWidget method.
  */
 class Statement :
-    public Event,
-    public wxEvtHandler
+    public wxEvtHandler,
+    public Event
 {
 private:
     // The statement to execute

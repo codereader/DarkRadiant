@@ -34,27 +34,27 @@ public:
     {
         try
         {
-            CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
+            auto& freeMoveView = dynamic_cast<IFreeMoveView&>(ev.getInteractiveView());
 
             if (getCameraSettings()->toggleFreelook())
             {
                 // Invert the current freelook status in toggle mode
-                if (!camEvent.getView().freeMoveEnabled())
+                if (!freeMoveView.freeMoveEnabled())
                 {
-                    camEvent.getView().enableFreeMove();
+                    freeMoveView.enableFreeMove();
                     return Result::Activated; // stay active
                 }
                 else
                 {
-                    camEvent.getView().disableFreeMove();
+                    freeMoveView.disableFreeMove();
                     return Result::Finished;
                 }
             }
             
             // Non-toggle mode, just check if we can activate freelook
-            if (!camEvent.getView().freeMoveEnabled())
+            if (!freeMoveView.freeMoveEnabled())
             {
-                camEvent.getView().enableFreeMove();
+                freeMoveView.enableFreeMove();
             }
 
             return Result::Activated; // we might already be in freelook mode, so let's report activated in all cases
@@ -75,13 +75,13 @@ public:
     {
         try
         {
-            CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
+            auto& freeMoveView = dynamic_cast<IFreeMoveView&>(ev.getInteractiveView());
 
             // MouseUp events are ignored when in toggle mode
             // In non-toggle mode, we just reset the freelook status to disabled
-            if (!getCameraSettings()->toggleFreelook() && camEvent.getView().freeMoveEnabled())
+            if (!getCameraSettings()->toggleFreelook() && freeMoveView.freeMoveEnabled())
             {
-                camEvent.getView().disableFreeMove();
+                freeMoveView.disableFreeMove();
                 return Result::Finished;
             }
 
@@ -99,11 +99,11 @@ public:
     {
         try
         {
-            ICameraView& camView = dynamic_cast<ICameraView&>(view);
+            auto& freeMoveView = dynamic_cast<IFreeMoveView&>(view);
 
-            if (camView.freeMoveEnabled())
+            if (freeMoveView.freeMoveEnabled())
             {
-                camView.disableFreeMove();
+                freeMoveView.disableFreeMove();
             }
         }
         catch (std::bad_cast&)

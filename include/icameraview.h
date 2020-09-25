@@ -7,10 +7,10 @@
 // Abstract class used when handling mouse events
 // see also: class IOrthoView in iorthoview.h
 class ICameraView :
-    public IInteractiveView
+	public virtual IInteractiveView
 {
 public:
-    virtual ~ICameraView() {}
+	virtual ~ICameraView() {}
 
 	// Move the camera's origin
 	virtual Vector3 getCameraOrigin() const = 0;
@@ -25,6 +25,13 @@ public:
 	virtual Vector3 getUpVector() const = 0;
 	// Returns the vector pointing "forward"
 	virtual Vector3 getForwardVector() const = 0;
+};
+
+class IFreeMoveView :
+	public virtual IInteractiveView
+{
+public:
+	virtual ~IFreeMoveView() {}
 
     // Freemove mode
     virtual void enableFreeMove() = 0;

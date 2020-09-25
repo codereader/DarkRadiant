@@ -28,8 +28,8 @@ typedef std::shared_ptr<PropertyEditor> PropertyEditorPtr;
  * held by the base class and destroyed along with the base class.
  */
 class PropertyEditor :
-	public IPropertyEditor,
-	public wxEvtHandler
+	public wxEvtHandler,
+	public IPropertyEditor
 {
 private:
 	// The main widget, should be set by the subclass using setMainWidget()

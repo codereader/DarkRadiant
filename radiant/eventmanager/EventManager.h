@@ -16,8 +16,8 @@ namespace ui
 {
 
 class EventManager :
-	public IEventManager,
-	public wxEvtHandler
+	public wxEvtHandler,
+	public IEventManager
 {
 private:
 	// Each command has a name, this is the map where the name->command association is stored

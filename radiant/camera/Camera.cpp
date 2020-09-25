@@ -44,7 +44,7 @@ namespace
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
 
-Camera::Camera(render::View* view, const Callback& update) :
+Camera::Camera(render::View& view, const Callback& update) :
 	_origin(_prevOrigin), // Use previous origin for camera position
 	_angles(_prevAngles),
 	width(0),
@@ -57,7 +57,7 @@ Camera::Camera(render::View* view, const Callback& update) :
 	movementflags(0),
 	fieldOfView(75.0f),
 	m_mouseMove(std::bind(&Camera::onMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
-	m_view(view),
+	_view(view),
 	m_update(update)
 {
 	_moveTimer.Connect(wxEVT_TIMER, wxTimerEventHandler(Camera::camera_keymove), NULL, this);
@@ -165,7 +165,7 @@ void Camera::updateModelview()
 
 	updateVectors();
 
-	m_view->Construct(projection, modelview, width, height);
+	_view.Construct(projection, modelview, width, height);
 }
 
 void Camera::updateVectors() {
@@ -306,7 +306,7 @@ void Camera::updateProjection()
 	float farClip = getFarClipPlane();
 	projection = projection_for_camera(farClip / 4096.0f, farClip, fieldOfView, width, height);
 
-	m_view->Construct(projection, modelview, width, height);
+	_view.Construct(projection, modelview, width, height);
 }
 
 void Camera::onMotionDelta(int x, int y)

@@ -23,10 +23,10 @@ namespace ui
 {
 
 class XYWnd :
+    public wxEvtHandler,
     public IOrthoView,
     public CameraObserver,
     public scene::Graph::Observer,
-    public wxEvtHandler,
     protected wxutil::MouseToolHandler
 {
 protected:

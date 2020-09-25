@@ -24,9 +24,9 @@ class SpawnargLinkedCheckbox;
 class SpawnargLinkedSpinButton;
 
 class AIEditingPanel : 
+	public wxEvtHandler,
 	public Entity::Observer,
-	public sigc::trackable,
-	public wxEvtHandler
+	public sigc::trackable
 {
 private:
 	sigc::connection _selectionChangedSignal;

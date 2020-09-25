@@ -24,8 +24,8 @@ namespace ui
  * the connected widgets.
  */
 class Toggle :
-	public Event,
-	public wxEvtHandler
+	public wxEvtHandler,
+	public Event
 {
 private:
 	// The callback to be performed on toggle()

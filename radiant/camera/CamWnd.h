@@ -33,12 +33,13 @@ namespace ui
 {
 
 class CamWnd :
+    public wxEvtHandler,
     public ICameraView,
+    public IFreeMoveView,
     public scene::Graph::Observer,
     public util::Noncopyable,
     public sigc::trackable,
     private wxutil::XmlResourceBasedWidget,
-    public wxEvtHandler,
     protected wxutil::MouseToolHandler
 {
 private:

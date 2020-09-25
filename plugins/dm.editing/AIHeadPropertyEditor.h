@@ -12,9 +12,9 @@ namespace ui
 	}
 
 class AIHeadPropertyEditor :
+	public wxEvtHandler,
 	public IPropertyEditor,
-	public IPropertyEditorDialog,
-	public wxEvtHandler
+	public IPropertyEditorDialog
 {
 private:
 	// The top-level widget

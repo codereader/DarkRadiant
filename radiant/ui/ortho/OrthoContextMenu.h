@@ -19,8 +19,8 @@ namespace ui
  * and is hidden and displayed as appropriate.
  */
 class OrthoContextMenu :
-	public IOrthoContextMenu,
 	public wxEvtHandler,
+	public IOrthoContextMenu,
 	public std::enable_shared_from_this<OrthoContextMenu>
 {
 	// The wxWidget representing the menu

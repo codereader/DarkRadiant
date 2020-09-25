@@ -146,7 +146,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
-    _camera(&_view, Callback(std::bind(&CamWnd::queueDraw, this))),
+    _camera(_view, Callback(std::bind(&CamWnd::queueDraw, this))),
     _drawing(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
@@ -217,14 +217,10 @@ void CamWnd::constructToolbar()
     updateActiveRenderModeButton();
 
     // Connect button signals
-    _mainWxWidget->GetParent()->Connect(wireframeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
-        wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-    _mainWxWidget->GetParent()->Connect(flatShadeBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
-        wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-    _mainWxWidget->GetParent()->Connect(texturedBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
-        wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
-    _mainWxWidget->GetParent()->Connect(lightingBtn->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
-        wxCommandEventHandler(CamWnd::onRenderModeButtonsChanged), NULL, this);
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, wireframeBtn->GetId());
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED,&CamWnd::onRenderModeButtonsChanged, this, flatShadeBtn->GetId());
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, texturedBtn->GetId());
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, lightingBtn->GetId());
 
     // Far clip buttons.
     wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
@@ -232,10 +228,8 @@ void CamWnd::constructToolbar()
     const wxToolBarToolBase* clipPlaneInButton = getToolBarToolByLabel(miscToolbar, "clipPlaneInButton");
     const wxToolBarToolBase* clipPlaneOutButton = getToolBarToolByLabel(miscToolbar, "clipPlaneOutButton");
 
-    _mainWxWidget->GetParent()->Connect(clipPlaneInButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
-        wxCommandEventHandler(CamWnd::onFarClipPlaneInClick), NULL, this);
-    _mainWxWidget->GetParent()->Connect(clipPlaneOutButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
-        wxCommandEventHandler(CamWnd::onFarClipPlaneOutClick), NULL, this);
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onFarClipPlaneInClick, this, clipPlaneInButton->GetId());
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onFarClipPlaneOutClick, this, clipPlaneOutButton->GetId());
 
     setFarClipButtonSensitivity();
 
@@ -246,10 +240,8 @@ void CamWnd::constructToolbar()
     const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(miscToolbar, "startTimeButton");
     const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(miscToolbar, "stopTimeButton");
 
-    _mainWxWidget->GetParent()->Connect(startTimeButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
-        wxCommandEventHandler(CamWnd::onStartTimeButtonClick), NULL, this);
-    _mainWxWidget->GetParent()->Connect(stopTimeButton->GetId(), wxEVT_COMMAND_TOOL_CLICKED, 
-        wxCommandEventHandler(CamWnd::onStopTimeButtonClick), NULL, this);
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onStartTimeButtonClick, this, startTimeButton->GetId());
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onStopTimeButtonClick, this, stopTimeButton->GetId());
 
     // Stop time, initially
     stopRenderTime();
@@ -309,8 +301,8 @@ void CamWnd::constructGUIComponents()
     // Set up wxGL widget
     _wxGLWidget->SetCanFocus(false);
     _wxGLWidget->SetMinClientSize(wxSize(CAMWND_MINSIZE_X, CAMWND_MINSIZE_Y));
-    _wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(CamWnd::onGLResize), NULL, this);
-    _wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(CamWnd::onMouseScroll), NULL, this);
+    _wxGLWidget->Bind(wxEVT_SIZE, &CamWnd::onGLResize, this);
+    _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &CamWnd::onMouseScroll, this);
 
     _mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND); 
 }
@@ -970,7 +962,7 @@ void CamWnd::onMouseScroll(wxMouseEvent& ev)
     }
 }
 
-ui::CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Vector2& delta)
+CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Vector2& delta)
 {
     // When freeMove is enabled, snap the mouse coordinates to the center of the view widget
     Vector2 actualPoint = freeMoveEnabled() ? windowvector_for_widget_centre(*_wxGLWidget) : point;
@@ -978,7 +970,7 @@ ui::CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Ve
     Vector2 normalisedDeviceCoords = device_constrained(
         window_to_normalised_device(actualPoint, _camera.width, _camera.height));
 
-    return ui::CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
+    return CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
 }
 
 MouseTool::Result CamWnd::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)

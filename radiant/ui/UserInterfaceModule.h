@@ -33,8 +33,8 @@ namespace ui
  * the main binary, so there's still work left to do.
  */
 class UserInterfaceModule :
-	public RegisterableModule,
-	public wxEvtHandler
+	public wxEvtHandler,
+	public RegisterableModule
 {
 private:
 	std::unique_ptr<EntityClassColourManager> _eClassColourManager;

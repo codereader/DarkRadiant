@@ -70,10 +70,12 @@ public:
 
 	void camera_keymove(wxTimerEvent& ev);
 
-	render::View* m_view;
+	render::View& _view;
 	Callback m_update;
 
-	Camera(render::View* view, const Callback& update);
+	Camera(render::View& view, const Callback& update);
+	Camera(const Camera& other) = delete;
+	Camera& operator=(const Camera& other) = delete;
 
 	void keyControl(float dtime);
 	void setMovementFlags(unsigned int mask);
