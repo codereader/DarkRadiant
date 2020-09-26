@@ -315,7 +315,7 @@ ICameraView& GlobalCameraWndManager::getActiveView()
 
 	if (!camWnd) throw std::runtime_error("No active camera view present");
 
-	return *camWnd;
+	return camWnd->getCamera();
 }
 
 // --------------- Keyboard movement methods ------------------------------------------

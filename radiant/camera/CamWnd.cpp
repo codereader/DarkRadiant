@@ -396,7 +396,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest)
 
         // Focus the view at the center of the found AABB
         // Set the camera and the views to the given point
-        GlobalCameraManager().focusCamera(found.origin, getCameraAngles());
+        GlobalCameraManager().focusCamera(found.origin, _camera.getCameraAngles());
         GlobalXYWndManager().setOrigin(found.origin);
     }
 }
@@ -810,7 +810,7 @@ void CamWnd::benchmark()
         angles[camera::CAMERA_ROLL] = 0;
         angles[camera::CAMERA_PITCH] = 0;
         angles[camera::CAMERA_YAW] = static_cast<double>(i * (360.0 / 100.0));
-        setCameraAngles(angles);
+        _camera.setCameraAngles(angles);
     }
 
     double dEnd = clock() / 1000.0;
@@ -875,21 +875,6 @@ const Vector3& CamWnd::getCameraOrigin() const
 void CamWnd::setCameraOrigin(const Vector3& origin)
 {
     _camera.setCameraOrigin(origin);
-}
-
-const Vector3& CamWnd::getRightVector() const
-{
-    return _camera.vright;
-}
-
-const Vector3& CamWnd::getUpVector() const
-{
-    return _camera.vup;
-}
-
-const Vector3& CamWnd::getForwardVector() const
-{
-    return _camera.vpn;
 }
 
 const Vector3& CamWnd::getCameraAngles() const
@@ -961,12 +946,12 @@ void CamWnd::onMouseScroll(wxMouseEvent& ev)
     if (ev.GetWheelRotation() > 0)
     {
         getCamera().freemoveUpdateAxes();
-        setCameraOrigin(getCameraOrigin() + getCamera().forward * movementSpeed);
+        _camera.setCameraOrigin(_camera.getCameraOrigin() + getCamera().forward * movementSpeed);
     }
     else if (ev.GetWheelRotation() < 0)
     {
         getCamera().freemoveUpdateAxes();
-        setCameraOrigin(getCameraOrigin() + getCamera().forward * -movementSpeed);
+        _camera.setCameraOrigin(_camera.getCameraOrigin() + getCamera().forward * -movementSpeed);
     }
 }
 
@@ -978,7 +963,7 @@ CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Vector
     Vector2 normalisedDeviceCoords = device_constrained(
         window_to_normalised_device(actualPoint, _camera.width, _camera.height));
 
-    return CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
+    return CameraMouseToolEvent(_camera, normalisedDeviceCoords, delta);
 }
 
 MouseTool::Result CamWnd::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
