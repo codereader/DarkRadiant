@@ -69,7 +69,9 @@ CamWnd::CamWnd(wxWindow* parent) :
     _timerLock(false),
     _freeMoveFlags(0),
     _freeMoveTimer(this),
-    _deferredMotionDelta(std::bind(&CamWnd::onDeferredMotionDelta, this, std::placeholders::_1, std::placeholders::_2))
+    _deferredMotionDelta(std::bind(&CamWnd::onDeferredMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
+    _strafe(false),
+    _strafeForward(false)
 {
     Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
     Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
@@ -542,9 +544,55 @@ bool CamWnd::freeMoveEnabled() const
     return _camera.freeMoveEnabled;
 }
 
+void CamWnd::performFreeMove(int dx, int dy)
+{
+    int angleSpeed = getCameraSettings()->angleSpeed();
+
+    auto origin = _camera.getCameraOrigin();
+    auto angles = _camera.getCameraAngles();
+
+    // free strafe mode, toggled by the keyboard modifiers
+    if (_strafe)
+    {
+        const float strafespeed = GlobalCamera().getCameraStrafeSpeed();
+        const float forwardStrafeFactor = GlobalCamera().getCameraForwardStrafeFactor();
+
+        origin -= _camera.getRightVector() * strafespeed * dx;
+
+        if (_strafeForward)
+        {
+            origin += _camera.getForwardVector() * strafespeed * dy * forwardStrafeFactor;
+        }
+        else {
+            origin += _camera.getForwardVector() * strafespeed * dy;
+        }
+    }
+    else // free rotation
+    {
+        const float dtime = 0.1f;
+        const float zAxisFactor = getCameraSettings()->invertMouseVerticalAxis() ? -1.0f : 1.0f;
+
+        angles[camera::CAMERA_PITCH] += dy * dtime * angleSpeed * zAxisFactor;
+        angles[camera::CAMERA_YAW] += dx * dtime * angleSpeed;
+
+        if (angles[camera::CAMERA_PITCH] > 90)
+            angles[camera::CAMERA_PITCH] = 90;
+        else if (angles[camera::CAMERA_PITCH] < -90)
+            angles[camera::CAMERA_PITCH] = -90;
+
+        if (angles[camera::CAMERA_YAW] >= 360)
+            angles[camera::CAMERA_YAW] -= 360;
+        else if (angles[camera::CAMERA_YAW] <= 0)
+            angles[camera::CAMERA_YAW] += 360;
+    }
+
+    _camera.setCameraOrigin(origin);
+    _camera.setCameraAngles(angles);
+}
+
 void CamWnd::onDeferredMotionDelta(int x, int y)
 {
-    _camera.freeMove(-x, -y);
+    performFreeMove(-x, -y);
     queueDraw();
     GlobalCamera().movedNotify();
 }
@@ -1069,16 +1117,16 @@ void CamWnd::handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
 
     unsigned int strafeFlags = GlobalCamera().getStrafeModifierFlags();
 
-    _camera.m_strafe = (state & strafeFlags) == strafeFlags;
+    _strafe = (state & strafeFlags) == strafeFlags;
 
-    if (_camera.m_strafe)
+    if (_strafe)
     {
         unsigned int strafeForwardFlags = GlobalCamera().getStrafeForwardModifierFlags();
-        _camera.m_strafe_forward = (state & strafeForwardFlags) == strafeForwardFlags;
+        _strafeForward = (state & strafeForwardFlags) == strafeForwardFlags;
     }
     else
     {
-        _camera.m_strafe_forward = false;
+        _strafeForward = false;
     }
 }
 

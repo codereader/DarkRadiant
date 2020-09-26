@@ -47,9 +47,6 @@ public:
 	Matrix4 projection;
 	Matrix4 modelview;
 
-	bool m_strafe; // true when in strafemode toggled by the ctrl-key
-	bool m_strafe_forward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
-
 	bool freeMoveEnabled;
 
 	render::View& _view;
@@ -89,7 +86,6 @@ public:
 	void queueDraw() override;
 	void forceRedraw() override;
 
-	void freeMove(int dx, int dy);
 	void mouseControl(int x, int y);
 
 	void pitchUpDiscrete();

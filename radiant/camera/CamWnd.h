@@ -85,6 +85,9 @@ private:
 
     wxutil::DeferredMotionDelta _deferredMotionDelta;
 
+    bool _strafe; // true when in strafemode toggled by the ctrl-key
+    bool _strafeForward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
+
 public:
     // Constructor and destructor
     CamWnd(wxWindow* parent);
@@ -204,6 +207,7 @@ private:
     void clearFreeMoveFlags(unsigned int mask);
     // Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
     void onDeferredMotionDelta(int x, int y);
+    void performFreeMove(int dx, int dy);
 };
 
 /**

@@ -94,45 +94,6 @@ void Camera::freemoveUpdateAxes() {
 	forward = -vpn;
 }
 
-void Camera::freeMove(int dx, int dy) {
-	int angleSpeed = getCameraSettings()->angleSpeed();
-
-	// free strafe mode, toggled by the keyboard modifiers
-	if (m_strafe) {
-		const float strafespeed = GlobalCamera().getCameraStrafeSpeed();
-        const float forwardStrafeFactor = GlobalCamera().getCameraForwardStrafeFactor();
-
-		_origin -= vright * strafespeed * dx;
-
-		if (m_strafe_forward) {
-			_origin += vpn * strafespeed * dy * forwardStrafeFactor;
-		} else {
-			_origin += vup * strafespeed * dy;
-		}
-	} else { // free rotation
-		const float dtime = 0.1f;
-
-		const float zAxisFactor = getCameraSettings()->invertMouseVerticalAxis() ? -1.0f : 1.0f;
-
-		_angles[camera::CAMERA_PITCH] += dy * dtime * angleSpeed * zAxisFactor;
-
-		_angles[camera::CAMERA_YAW] += dx * dtime * angleSpeed;
-
-		if (_angles[camera::CAMERA_PITCH] > 90)
-			_angles[camera::CAMERA_PITCH] = 90;
-		else if (_angles[camera::CAMERA_PITCH] < -90)
-			_angles[camera::CAMERA_PITCH] = -90;
-
-		if (_angles[camera::CAMERA_YAW] >= 360)
-			_angles[camera::CAMERA_YAW] -=360;
-		else if (_angles[camera::CAMERA_YAW] <= 0)
-			_angles[camera::CAMERA_YAW] +=360;
-	}
-
-	updateModelview();
-	freemoveUpdateAxes();
-}
-
 void Camera::mouseControl(int x, int y) {
 	int movementSpeed = getCameraSettings()->movementSpeed();
 
