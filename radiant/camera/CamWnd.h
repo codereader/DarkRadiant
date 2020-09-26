@@ -37,6 +37,7 @@ namespace ui
 
 class CamWnd :
     public wxEvtHandler,
+    public ICameraView,
     public IFreeMoveView,
     public scene::Graph::Observer,
     public util::Noncopyable,
@@ -115,11 +116,15 @@ public:
 
     Camera& getCamera();
 
-    const Vector3& getCameraOrigin() const;
-    void setCameraOrigin(const Vector3& origin);
+    const Vector3& getCameraOrigin() const override;
+    void setCameraOrigin(const Vector3& origin) override;
 
-    const Vector3& getCameraAngles() const;
-    void setCameraAngles(const Vector3& angles);
+    const Vector3& getRightVector() const override;
+    const Vector3& getUpVector() const override;
+    const Vector3& getForwardVector() const override;
+
+    const Vector3& getCameraAngles() const override;
+    void setCameraAngles(const Vector3& angles) override;
 
     const Frustum& getViewFrustum() const;
 
