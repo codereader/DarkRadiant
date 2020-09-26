@@ -141,7 +141,16 @@ public:
     void startRenderTime();
     void stopRenderTime();
 
+    void onForwardKey(KeyEventType eventType);
+    void onBackwardKey(KeyEventType eventType);
+    void onLeftKey(KeyEventType eventType);
+    void onRightKey(KeyEventType eventType);
+    void onUpKey(KeyEventType eventType);
+    void onDownKey(KeyEventType eventType);
+
 protected:
+    void handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movementFlags);
+
     // Required overrides being a MouseToolHandler
     virtual MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
     virtual MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;

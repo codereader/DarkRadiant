@@ -385,32 +385,32 @@ void GlobalCameraWndManager::doWithActiveCamWnd(const std::function<void(CamWnd&
 
 void GlobalCameraWndManager::onFreelookMoveForwardKey(ui::KeyEventType eventType)
 {
-	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onForwardKey(eventType); });
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.onForwardKey(eventType); });
 }
 
 void GlobalCameraWndManager::onFreelookMoveBackKey(ui::KeyEventType eventType)
 {
-	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onBackwardKey(eventType); });
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.onBackwardKey(eventType); });
 }
 
 void GlobalCameraWndManager::onFreelookMoveLeftKey(ui::KeyEventType eventType)
 {
-	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onLeftKey(eventType); });
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.onLeftKey(eventType); });
 }
 
 void GlobalCameraWndManager::onFreelookMoveRightKey(ui::KeyEventType eventType)
 {
-	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onRightKey(eventType); });
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.onRightKey(eventType); });
 }
 
 void GlobalCameraWndManager::onFreelookMoveUpKey(ui::KeyEventType eventType)
 {
-	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onUpKey(eventType); });
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.onUpKey(eventType); });
 }
 
 void GlobalCameraWndManager::onFreelookMoveDownKey(ui::KeyEventType eventType)
 {
-	doWithActiveCamWnd([&](CamWnd& cam) { cam.getCamera().onDownKey(eventType); });
+	doWithActiveCamWnd([&](CamWnd& cam) { cam.onDownKey(eventType); });
 }
 
 void GlobalCameraWndManager::moveLeftDiscrete(const cmd::ArgumentList& args)

@@ -1117,6 +1117,90 @@ void CamWnd::drawTime()
     GlobalOpenGL().drawString(fmt::format("Time: {0:.3f} sec.", (time * 0.001f)));
 }
 
+void CamWnd::handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movementFlags)
+{
+    if (eventType == KeyEventType::KeyPressed)
+    {
+        _camera.setMovementFlags(movementFlags);
+    }
+    else
+    {
+        _camera.clearMovementFlags(movementFlags);
+    }
+}
+
+void CamWnd::onForwardKey(KeyEventType eventType)
+{
+    if (freeMoveEnabled())
+    {
+        handleFreeMoveKeyEvent(eventType, MOVE_FORWARD);
+    }
+    else if (eventType == KeyEventType::KeyPressed)
+    {
+        _camera.moveForwardDiscrete(SPEED_MOVE);
+    }
+}
+
+void CamWnd::onBackwardKey(KeyEventType eventType)
+{
+    if (freeMoveEnabled())
+    {
+        handleFreeMoveKeyEvent(eventType, MOVE_BACK);
+    }
+    else if (eventType == KeyEventType::KeyPressed)
+    {
+        _camera.moveBackDiscrete(SPEED_MOVE);
+    }
+}
+
+void CamWnd::onLeftKey(KeyEventType eventType)
+{
+    if (freeMoveEnabled())
+    {
+        handleFreeMoveKeyEvent(eventType, MOVE_STRAFELEFT);
+    }
+    else if (eventType == KeyEventType::KeyPressed)
+    {
+        _camera.rotateLeftDiscrete();
+    }
+}
+
+void CamWnd::onRightKey(KeyEventType eventType)
+{
+    if (freeMoveEnabled())
+    {
+        handleFreeMoveKeyEvent(eventType, MOVE_STRAFERIGHT);
+    }
+    else if (eventType == KeyEventType::KeyPressed)
+    {
+        _camera.rotateRightDiscrete();
+    }
+}
+
+void CamWnd::onUpKey(KeyEventType eventType)
+{
+    if (freeMoveEnabled())
+    {
+        handleFreeMoveKeyEvent(eventType, MOVE_UP);
+    }
+    else if (eventType == KeyEventType::KeyPressed)
+    {
+        _camera.moveUpDiscrete(SPEED_MOVE);
+    }
+}
+
+void CamWnd::onDownKey(KeyEventType eventType)
+{
+    if (freeMoveEnabled())
+    {
+        handleFreeMoveKeyEvent(eventType, MOVE_DOWN);
+    }
+    else if (eventType == KeyEventType::KeyPressed)
+    {
+        _camera.moveDownDiscrete(SPEED_MOVE);
+    }
+}
+
 // -------------------------------------------------------------------------------
 
 ShaderPtr CamWnd::_faceHighlightShader;

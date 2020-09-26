@@ -132,13 +132,6 @@ public:
 	void moveBackDiscrete(double units);
 	void moveForwardDiscrete(double units);
 
-	void onForwardKey(KeyEventType eventType);
-	void onBackwardKey(KeyEventType eventType);
-	void onLeftKey(KeyEventType eventType);
-	void onRightKey(KeyEventType eventType);
-	void onUpKey(KeyEventType eventType);
-	void onDownKey(KeyEventType eventType);
-
 }; // class Camera
 
 } // namespace ui
