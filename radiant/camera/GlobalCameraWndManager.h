@@ -120,12 +120,12 @@ public:
 
 public:
 	// Callbacks for the named camera KeyEvents
-	void onFreelookMoveForwardKey(ui::KeyEventType eventType);
-	void onFreelookMoveBackKey(ui::KeyEventType eventType);
-	void onFreelookMoveLeftKey(ui::KeyEventType eventType);
-	void onFreelookMoveRightKey(ui::KeyEventType eventType);
-	void onFreelookMoveUpKey(ui::KeyEventType eventType);
-	void onFreelookMoveDownKey(ui::KeyEventType eventType);
+	void onMoveForwardKey(ui::KeyEventType eventType);
+	void onMoveBackKey(ui::KeyEventType eventType);
+	void onMoveLeftKey(ui::KeyEventType eventType);
+	void onMoveRightKey(ui::KeyEventType eventType);
+	void onMoveUpKey(ui::KeyEventType eventType);
+	void onMoveDownKey(ui::KeyEventType eventType);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
