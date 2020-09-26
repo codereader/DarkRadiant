@@ -3,6 +3,7 @@
 #include "iscenegraph.h"
 #include "imousetool.h"
 #include "icameraview.h"
+#include "ieventmanager.h"
 #include "irender.h"
 #include "wxutil/GLWidget.h"
 #include "wxutil/FreezePointer.h"
@@ -14,6 +15,7 @@
 #include <wx/wxprec.h>
 #include <wx/glcanvas.h>
 #include <wx/timer.h>
+#include <wx/stopwatch.h>
 #include "render/View.h"
 
 #include "Camera.h"
@@ -79,6 +81,7 @@ private:
     // Remembering the free movement type while holding down a key
     unsigned int _freeMoveFlags;
     wxTimer _freeMoveTimer;
+    wxStopWatch _keyControlTimer;
 
 public:
     // Constructor and destructor

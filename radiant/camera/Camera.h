@@ -1,14 +1,11 @@
 #pragma once
 
 #include "icameraview.h"
-#include "ieventmanager.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "wxutil/DeferredMotionDelta.h"
 #include "generic/callback.h"
 #include "render/View.h"
-#include <wx/timer.h>
-#include <wx/stopwatch.h>
 
 namespace ui
 {
@@ -30,7 +27,6 @@ const unsigned int MOVE_PITCHDOWN = 1 << 9;
 const unsigned int MOVE_ALL = MOVE_FORWARD|MOVE_BACK|MOVE_ROTRIGHT|MOVE_ROTLEFT|MOVE_STRAFERIGHT|MOVE_STRAFELEFT|MOVE_UP|MOVE_DOWN|MOVE_PITCHUP|MOVE_PITCHDOWN;
 
 class Camera :
-	public wxEvtHandler,
 	public ICameraView
 {
 	static Vector3 _prevOrigin;
@@ -38,9 +34,6 @@ class Camera :
 
 	Vector3 _origin;
 	Vector3 _angles;
-
-	// Triggers camera movement with a certain rate per second
-	wxTimer _moveTimer;
 
 	Callback _queueDraw;
 	Callback _forceRedraw;
@@ -63,9 +56,6 @@ public:
 
 	bool freeMoveEnabled;
 
-	unsigned int movementflags;  // movement flags
-	wxStopWatch _keyControlTimer;
-
 	float fieldOfView;
 
 	wxutil::DeferredMotionDelta m_mouseMove;
@@ -73,20 +63,11 @@ public:
 	// Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
 	void onMotionDelta(int x, int y);
 
-	void camera_keymove(wxTimerEvent& ev);
-
 	render::View& _view;
 
 	Camera(render::View& view, const Callback& queueDraw, const Callback& forceRedraw);
 	Camera(const Camera& other) = delete;
 	Camera& operator=(const Camera& other) = delete;
-
-	void keyControl(float dtime);
-#if 0
-	void setMovementFlags(unsigned int mask);
-	void clearMovementFlags(unsigned int mask);
-#endif
-	void keyMove();
 
 	void updateVectors();
 	void updateModelview();

@@ -59,111 +59,10 @@ Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& fo
 	projection(Matrix4::getIdentity()),
 	modelview(Matrix4::getIdentity()),
 	freeMoveEnabled(false),
-	movementflags(0),
 	fieldOfView(75.0f),
 	m_mouseMove(std::bind(&Camera::onMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
 	_view(view)
-{
-#if 0
-	_moveTimer.Connect(wxEVT_TIMER, wxTimerEventHandler(Camera::camera_keymove), NULL, this);
-#endif
-}
-
-void Camera::keyControl(float dtime) 
-{
-#if 0
-	int angleSpeed = getCameraSettings()->angleSpeed();
-	int movementSpeed = getCameraSettings()->movementSpeed();
-
-	// Update angles
-	if (movementflags & MOVE_ROTLEFT)
-		_angles[camera::CAMERA_YAW] += 15 * dtime* angleSpeed;
-	if (movementflags & MOVE_ROTRIGHT)
-		_angles[camera::CAMERA_YAW] -= 15 * dtime * angleSpeed;
-	if (movementflags & MOVE_PITCHUP) {
-		_angles[camera::CAMERA_PITCH] += 15 * dtime* angleSpeed;
-		if (_angles[camera::CAMERA_PITCH] > 90)
-			_angles[camera::CAMERA_PITCH] = 90;
-	}
-	if (movementflags & MOVE_PITCHDOWN) {
-		_angles[camera::CAMERA_PITCH] -= 15 * dtime * angleSpeed;
-		if (_angles[camera::CAMERA_PITCH] < -90)
-			_angles[camera::CAMERA_PITCH] = -90;
-	}
-
-	updateModelview();
-	freemoveUpdateAxes();
-
-	// Update position
-	if (movementflags & MOVE_FORWARD)
-		_origin += forward * (dtime * movementSpeed);
-	if (movementflags & MOVE_BACK)
-		_origin += forward * (-dtime * movementSpeed);
-	if (movementflags & MOVE_STRAFELEFT)
-		_origin += right * (-dtime * movementSpeed);
-	if (movementflags & MOVE_STRAFERIGHT)
-		_origin += right * (dtime * movementSpeed);
-	if (movementflags & MOVE_UP)
-		_origin += g_vector3_axis_z * (dtime * movementSpeed);
-	if (movementflags & MOVE_DOWN)
-		_origin += g_vector3_axis_z * (-dtime * movementSpeed);
-
-	updateModelview();
-#endif
-}
-
-void Camera::camera_keymove(wxTimerEvent& ev)
-{
-#if 0
-	keyMove();
-#endif
-}
-
-#if 0
-void Camera::setMovementFlags(unsigned int mask)
-{
-	if ((~movementflags & mask) != 0 && movementflags == 0)
-	{
-		_moveTimer.Start(10);
-	}
-
-	movementflags |= mask;
-}
-#endif
-
-#if 0
-void Camera::clearMovementFlags(unsigned int mask)
-{
-	if ((movementflags & ~mask) == 0 && movementflags != 0)
-	{
-		_moveTimer.Stop();
-	}
-
-	movementflags &= ~mask;
-}
-#endif
-
-void Camera::keyMove() 
-{
-#if 0
-	m_mouseMove.flush();
-
-	//rMessage() << "keymove... ";
-    float time_seconds = _keyControlTimer.Time() / static_cast<float>(1000);
-
-    _keyControlTimer.Start();
-
-	if (time_seconds > 0.05f)
-    {
-		time_seconds = 0.05f; // 20fps
-	}
-
-	keyControl(time_seconds * 5.0f);
-
-	queueDraw();
-	GlobalCamera().movedNotify();
-#endif
-}
+{}
 
 void Camera::updateModelview()
 {
@@ -295,6 +194,7 @@ void Camera::setCameraAngles(const Vector3& newAngles)
 	_prevAngles = _angles;
 
 	updateModelview();
+	freemoveUpdateAxes();
 	queueDraw();
 	GlobalCamera().movedNotify();
 }

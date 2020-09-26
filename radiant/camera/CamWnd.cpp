@@ -556,9 +556,6 @@ void CamWnd::handleFreeMovement(float timePassed)
 
     _camera.setCameraAngles(angles);
 
-    _camera.updateModelview();
-    _camera.freemoveUpdateAxes();
-
     // Update position
     auto origin = _camera.getCameraOrigin();
 
@@ -576,18 +573,15 @@ void CamWnd::handleFreeMovement(float timePassed)
         origin += g_vector3_axis_z * (-timePassed * movementSpeed);
     
     _camera.setCameraOrigin(origin);
-
-    _camera.updateModelview();
 }
 
 void CamWnd::onFreeMoveTimer(wxTimerEvent& ev)
 {
     _camera.m_mouseMove.flush();
 
-    //rMessage() << "keymove... ";
-    float time_seconds = _camera._keyControlTimer.Time() / static_cast<float>(1000);
+    float time_seconds = _keyControlTimer.Time() / static_cast<float>(1000);
 
-    _camera._keyControlTimer.Start();
+    _keyControlTimer.Start();
 
     if (time_seconds > 0.05f)
     {
