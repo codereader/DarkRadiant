@@ -28,6 +28,7 @@
 #include "selection/Device.h"
 #include "selection/SelectionTest.h"
 #include "FloorHeightWalker.h"
+#include "ObjectFinder.h"
 
 #include "debugging/debugging.h"
 #include "debugging/gl.h"
@@ -48,53 +49,10 @@ namespace
     const char* const FAR_CLIP_DISABLED_TEXT = N_(" (currently disabled in preferences)");
 }
 
-class ObjectFinder :
-    public scene::NodeVisitor
-{
-    scene::INodePtr _node;
-    SelectionTest& _selectionTest;
-
-    // To store the best intersection candidate
-    SelectionIntersection _bestIntersection;
-public:
-    // Constructor
-    ObjectFinder(SelectionTest& test) :
-        _selectionTest(test)
-    {}
-
-    // Return the found node
-    const scene::INodePtr& getNode() const {
-        return _node;
-    }
-
-    // The visitor function
-    bool pre(const scene::INodePtr& node) {
-        // Check if the node is filtered
-        if (node->visible()) {
-            SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-
-            if (selectionTestable != NULL) {
-                bool occluded;
-                selection::OccludeSelector selector(_bestIntersection, occluded);
-                selectionTestable->testSelect(selector, _selectionTest);
-
-                if (occluded) {
-                    _node = node;
-                }
-            }
-        }
-        else {
-            return false; // don't traverse filtered nodes
-        }
-
-        return true;
-    }
-};
-
 inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
 {
     wxSize size = widget.GetSize();
-    return Vector2(static_cast<float>(size.GetWidth() / 2), static_cast<float>(size.GetHeight() / 2));
+    return Vector2(static_cast<Vector2::ElementType>(size.GetWidth() / 2), static_cast<Vector2::ElementType>(size.GetHeight() / 2));
 }
 
 // ---------- CamWnd Implementation --------------------------------------------------
@@ -425,12 +383,14 @@ int CamWnd::getId()
     return _id;
 }
 
-void CamWnd::jumpToObject(SelectionTest& selectionTest) {
+void CamWnd::jumpToObject(SelectionTest& selectionTest)
+{
     // Find a suitable target node
-    ObjectFinder finder(selectionTest);
+    camera::ObjectFinder finder(selectionTest);
     GlobalSceneGraph().root()->traverse(finder);
 
-    if (finder.getNode() != NULL) {
+    if (finder.getNode())
+    {
         // A node has been found, get the bounding box
         AABB found = finder.getNode()->worldAABB();
 
