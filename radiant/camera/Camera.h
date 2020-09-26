@@ -3,7 +3,6 @@
 #include "icameraview.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
-#include "wxutil/DeferredMotionDelta.h"
 #include "generic/callback.h"
 #include "render/View.h"
 
@@ -57,11 +56,6 @@ public:
 	bool freeMoveEnabled;
 
 	float fieldOfView;
-
-	wxutil::DeferredMotionDelta m_mouseMove;
-
-	// Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
-	void onMotionDelta(int x, int y);
 
 	render::View& _view;
 

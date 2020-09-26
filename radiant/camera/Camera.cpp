@@ -60,7 +60,6 @@ Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& fo
 	modelview(Matrix4::getIdentity()),
 	freeMoveEnabled(false),
 	fieldOfView(75.0f),
-	m_mouseMove(std::bind(&Camera::onMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
 	_view(view)
 {}
 
@@ -282,11 +281,6 @@ void Camera::updateProjection()
 	projection = projection_for_camera(farClip / 4096.0f, farClip, fieldOfView, width, height);
 
 	_view.Construct(projection, modelview, width, height);
-}
-
-void Camera::onMotionDelta(int x, int y)
-{
-	mouseMove(x, y);
 }
 
 void Camera::pitchUpDiscrete()

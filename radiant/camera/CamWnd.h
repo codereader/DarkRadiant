@@ -11,6 +11,7 @@
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/event/KeyEventFilter.h"
 #include "wxutil/MouseToolHandler.h"
+#include "wxutil/DeferredMotionDelta.h"
 
 #include <wx/wxprec.h>
 #include <wx/glcanvas.h>
@@ -82,6 +83,8 @@ private:
     unsigned int _freeMoveFlags;
     wxTimer _freeMoveTimer;
     wxStopWatch _keyControlTimer;
+
+    wxutil::DeferredMotionDelta _deferredMotionDelta;
 
 public:
     // Constructor and destructor
@@ -204,6 +207,8 @@ private:
     void handleFreeMovement(float timePassed);
     void setFreeMoveFlags(unsigned int mask);
     void clearFreeMoveFlags(unsigned int mask);
+    // Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
+    void onDeferredMotionDelta(int x, int y);
 };
 
 /**

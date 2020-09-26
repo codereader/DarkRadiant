@@ -151,7 +151,8 @@ CamWnd::CamWnd(wxWindow* parent) :
     _timer(this),
     _timerLock(false),
     _freeMoveFlags(0),
-    _freeMoveTimer(this)
+    _freeMoveTimer(this),
+    _deferredMotionDelta(std::bind(&CamWnd::onDeferredMotionDelta, this, std::placeholders::_1, std::placeholders::_2))
 {
     Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
     Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
@@ -577,7 +578,7 @@ void CamWnd::handleFreeMovement(float timePassed)
 
 void CamWnd::onFreeMoveTimer(wxTimerEvent& ev)
 {
-    _camera.m_mouseMove.flush();
+    _deferredMotionDelta.flush();
 
     float time_seconds = _keyControlTimer.Time() / static_cast<float>(1000);
 
@@ -619,6 +620,13 @@ void CamWnd::disableFreeMove()
 bool CamWnd::freeMoveEnabled() const
 {
     return _camera.freeMoveEnabled;
+}
+
+void CamWnd::onDeferredMotionDelta(int x, int y)
+{
+    _camera.freeMove(-x, -y);
+    queueDraw();
+    GlobalCamera().movedNotify();
 }
 
 void CamWnd::Cam_Draw()
@@ -1152,7 +1160,7 @@ void CamWnd::onGLMouseMove(wxMouseEvent& ev)
 
 void CamWnd::handleGLMouseMoveFreeMoveDelta(int x, int y, unsigned int state)
 {
-    _camera.m_mouseMove.onMouseMotionDelta(x, y, state);
+    _deferredMotionDelta.onMouseMotionDelta(x, y, state);
 
     unsigned int strafeFlags = GlobalCamera().getStrafeModifierFlags();
 
