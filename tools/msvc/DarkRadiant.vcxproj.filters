@@ -610,9 +610,6 @@
     <ClCompile Include="..\..\radiant\ui\filters\editor\FilterEditor.cpp">
       <Filter>src\ui\filters\editor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\render\View.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\particles\ParticleEditor.cpp">
       <Filter>src\ui\particles</Filter>
     </ClCompile>
@@ -1217,9 +1214,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\ShortcutSaver.h">
       <Filter>src\eventmanager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\View.h">
-      <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h">
       <Filter>src\render</Filter>
