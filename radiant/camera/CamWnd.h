@@ -76,6 +76,10 @@ private:
 
     wxutil::KeyEventFilterPtr _escapeListener;
 
+    // Remembering the free movement type while holding down a key
+    unsigned int _freeMoveFlags;
+    wxTimer _freeMoveTimer;
+
 public:
     // Constructor and destructor
     CamWnd(wxWindow* parent);
@@ -192,6 +196,11 @@ private:
     void onGLExtensionsInitialised();
 
     void onFrame(wxTimerEvent& ev);
+    void onFreeMoveTimer(wxTimerEvent& ev);
+
+    void handleFreeMovement(float timePassed);
+    void setFreeMoveFlags(unsigned int mask);
+    void clearFreeMoveFlags(unsigned int mask);
 };
 
 /**

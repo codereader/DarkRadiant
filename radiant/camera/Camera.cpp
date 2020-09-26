@@ -64,10 +64,14 @@ Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& fo
 	m_mouseMove(std::bind(&Camera::onMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
 	_view(view)
 {
+#if 0
 	_moveTimer.Connect(wxEVT_TIMER, wxTimerEventHandler(Camera::camera_keymove), NULL, this);
+#endif
 }
 
-void Camera::keyControl(float dtime) {
+void Camera::keyControl(float dtime) 
+{
+#if 0
 	int angleSpeed = getCameraSettings()->angleSpeed();
 	int movementSpeed = getCameraSettings()->movementSpeed();
 
@@ -105,13 +109,17 @@ void Camera::keyControl(float dtime) {
 		_origin += g_vector3_axis_z * (-dtime * movementSpeed);
 
 	updateModelview();
+#endif
 }
 
 void Camera::camera_keymove(wxTimerEvent& ev)
 {
+#if 0
 	keyMove();
+#endif
 }
 
+#if 0
 void Camera::setMovementFlags(unsigned int mask)
 {
 	if ((~movementflags & mask) != 0 && movementflags == 0)
@@ -121,7 +129,9 @@ void Camera::setMovementFlags(unsigned int mask)
 
 	movementflags |= mask;
 }
+#endif
 
+#if 0
 void Camera::clearMovementFlags(unsigned int mask)
 {
 	if ((movementflags & ~mask) == 0 && movementflags != 0)
@@ -131,9 +141,11 @@ void Camera::clearMovementFlags(unsigned int mask)
 
 	movementflags &= ~mask;
 }
+#endif
 
 void Camera::keyMove() 
 {
+#if 0
 	m_mouseMove.flush();
 
 	//rMessage() << "keymove... ";
@@ -150,6 +162,7 @@ void Camera::keyMove()
 
 	queueDraw();
 	GlobalCamera().movedNotify();
+#endif
 }
 
 void Camera::updateModelview()

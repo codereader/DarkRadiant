@@ -82,8 +82,10 @@ public:
 	Camera& operator=(const Camera& other) = delete;
 
 	void keyControl(float dtime);
+#if 0
 	void setMovementFlags(unsigned int mask);
 	void clearMovementFlags(unsigned int mask);
+#endif
 	void keyMove();
 
 	void updateVectors();

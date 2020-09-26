@@ -149,9 +149,12 @@ CamWnd::CamWnd(wxWindow* parent) :
     _drawing(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
-    _timerLock(false)
+    _timerLock(false),
+    _freeMoveFlags(0),
+    _freeMoveTimer(this)
 {
-    Bind(wxEVT_TIMER, &CamWnd::onFrame, this);
+    Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
+    Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
 
     constructGUIComponents();
 
@@ -501,11 +504,107 @@ void CamWnd::changeFloor(const bool up) {
     GlobalCamera().movedNotify();
 }
 
+void CamWnd::setFreeMoveFlags(unsigned int mask)
+{
+    if ((~_freeMoveFlags & mask) != 0 && _freeMoveFlags == 0)
+    {
+        _freeMoveTimer.Start(10);
+    }
+
+    _freeMoveFlags |= mask;
+}
+
+void CamWnd::clearFreeMoveFlags(unsigned int mask)
+{
+    if ((_freeMoveFlags & ~mask) == 0 && _freeMoveFlags != 0)
+    {
+        _freeMoveTimer.Stop();
+    }
+
+    _freeMoveFlags &= ~mask;
+}
+
+void CamWnd::handleFreeMovement(float timePassed)
+{
+    int angleSpeed = getCameraSettings()->angleSpeed();
+    int movementSpeed = getCameraSettings()->movementSpeed();
+
+    auto angles = _camera.getCameraAngles();
+
+    // Update angles
+    if (_freeMoveFlags & MOVE_ROTLEFT)
+        angles[camera::CAMERA_YAW] += 15 * timePassed * angleSpeed;
+
+    if (_freeMoveFlags & MOVE_ROTRIGHT)
+        angles[camera::CAMERA_YAW] -= 15 * timePassed * angleSpeed;
+
+    if (_freeMoveFlags & MOVE_PITCHUP)
+    {
+        angles[camera::CAMERA_PITCH] += 15 * timePassed * angleSpeed;
+
+        if (angles[camera::CAMERA_PITCH] > 90)
+            angles[camera::CAMERA_PITCH] = 90;
+    }
+
+    if (_freeMoveFlags & MOVE_PITCHDOWN)
+    {
+        angles[camera::CAMERA_PITCH] -= 15 * timePassed * angleSpeed;
+
+        if (angles[camera::CAMERA_PITCH] < -90)
+            angles[camera::CAMERA_PITCH] = -90;
+    }
+
+    _camera.setCameraAngles(angles);
+
+    _camera.updateModelview();
+    _camera.freemoveUpdateAxes();
+
+    // Update position
+    auto origin = _camera.getCameraOrigin();
+
+    if (_freeMoveFlags & MOVE_FORWARD)
+        origin += -_camera.getForwardVector() * (timePassed * movementSpeed);
+    if (_freeMoveFlags & MOVE_BACK)
+        origin += -_camera.getForwardVector() * (-timePassed * movementSpeed);
+    if (_freeMoveFlags & MOVE_STRAFELEFT)
+        origin += _camera.getRightVector() * (-timePassed * movementSpeed);
+    if (_freeMoveFlags & MOVE_STRAFERIGHT)
+        origin += _camera.getRightVector() * (timePassed * movementSpeed);
+    if (_freeMoveFlags & MOVE_UP)
+        origin += g_vector3_axis_z * (timePassed * movementSpeed);
+    if (_freeMoveFlags & MOVE_DOWN)
+        origin += g_vector3_axis_z * (-timePassed * movementSpeed);
+    
+    _camera.setCameraOrigin(origin);
+
+    _camera.updateModelview();
+}
+
+void CamWnd::onFreeMoveTimer(wxTimerEvent& ev)
+{
+    _camera.m_mouseMove.flush();
+
+    //rMessage() << "keymove... ";
+    float time_seconds = _camera._keyControlTimer.Time() / static_cast<float>(1000);
+
+    _camera._keyControlTimer.Start();
+
+    if (time_seconds > 0.05f)
+    {
+        time_seconds = 0.05f; // 20fps
+    }
+
+    handleFreeMovement(time_seconds * 5.0f);
+
+    queueDraw();
+    GlobalCamera().movedNotify();
+}
+
 void CamWnd::enableFreeMove()
 {
     ASSERT_MESSAGE(!_camera.freeMoveEnabled, "EnableFreeMove: free-move was already enabled");
     _camera.freeMoveEnabled = true;
-    _camera.clearMovementFlags(MOVE_ALL);
+    clearFreeMoveFlags(MOVE_ALL);
 
     removeHandlersMove();
 
@@ -516,7 +615,7 @@ void CamWnd::disableFreeMove()
 {
     ASSERT_MESSAGE(_camera.freeMoveEnabled, "DisableFreeMove: free-move was not enabled");
     _camera.freeMoveEnabled = false;
-    _camera.clearMovementFlags(MOVE_ALL);
+    clearFreeMoveFlags(MOVE_ALL);
 
     addHandlersMove();
 
@@ -1121,11 +1220,11 @@ void CamWnd::handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movemen
 {
     if (eventType == KeyEventType::KeyPressed)
     {
-        _camera.setMovementFlags(movementFlags);
+        setFreeMoveFlags(movementFlags);
     }
     else
     {
-        _camera.clearMovementFlags(movementFlags);
+        clearFreeMoveFlags(movementFlags);
     }
 }
 
