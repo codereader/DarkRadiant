@@ -25,6 +25,7 @@ class Camera :
 	Callback _forceRedraw;
 
 	float _fieldOfView;
+	float _farClipPlane;
 	int _width;
 	int _height;
 
@@ -43,12 +44,9 @@ public:
 
 	void updateVectors();
 	void updateModelview();
-	void updateProjection();
 
-	float getFarClipPlane() const;
-
-	// Returns true if cubic clipping is "on"
-	bool farClipEnabled() const;
+	float getFarClipPlaneDistance() const override;
+	void setFarClipPlaneDistance(float distance) override;
 
 	void freemoveUpdateAxes();
 	void moveUpdateAxes();
@@ -67,9 +65,8 @@ public:
 	const Matrix4& getProjection() const override;
 
 	int getDeviceWidth() const override;
-	void setDeviceWidth(int width);
 	int getDeviceHeight() const override;
-	void setDeviceHeight(int height);
+	void setDeviceDimensions(int width, int height) override;
 
 	SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
 	const VolumeTest& getVolumeTest() const override;
@@ -87,6 +84,9 @@ public:
 	void moveUpDiscrete(double units);
 	void moveBackDiscrete(double units);
 	void moveForwardDiscrete(double units);
+
+private:
+	void updateProjection();
 };
 
 } // namespace

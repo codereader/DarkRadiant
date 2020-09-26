@@ -157,7 +157,7 @@ void CameraSettings::keyChanged()
 			// Reconnect the new handlers
 			cam->addHandlersMove();
 
-			cam->getCamera().updateProjection();
+			cam->updateFarClipPlane();
 
             if (freeMovedWasEnabled)
             {

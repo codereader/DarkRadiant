@@ -59,6 +59,11 @@ namespace
     const unsigned int MOVE_PITCHUP = 1 << 8;
     const unsigned int MOVE_PITCHDOWN = 1 << 9;
     const unsigned int MOVE_ALL = MOVE_FORWARD | MOVE_BACK | MOVE_ROTRIGHT | MOVE_ROTLEFT | MOVE_STRAFERIGHT | MOVE_STRAFELEFT | MOVE_UP | MOVE_DOWN | MOVE_PITCHUP | MOVE_PITCHDOWN;
+
+    inline float calculateFarPlaneDistance(int cubicScale)
+    {
+        return pow(2.0, (cubicScale + 7) / 2.0);
+    }
 }
 
 inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
@@ -88,6 +93,8 @@ CamWnd::CamWnd(wxWindow* parent) :
 {
     Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
     Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
+
+    updateFarClipPlane();
 
     constructGUIComponents();
 
@@ -279,6 +286,11 @@ int CamWnd::getDeviceWidth() const
 int CamWnd::getDeviceHeight() const
 {
     return _camera.getDeviceHeight();
+}
+
+void CamWnd::setDeviceDimensions(int width, int height)
+{
+    _camera.setDeviceDimensions(width, height);
 }
 
 void CamWnd::startRenderTime()
@@ -598,9 +610,7 @@ void CamWnd::Cam_Draw()
 
     if (_camera.getDeviceWidth() != glSize.GetWidth() || _camera.getDeviceHeight() != glSize.GetHeight())
     {
-        _camera.setDeviceWidth(glSize.GetWidth());
-        _camera.setDeviceHeight(glSize.GetHeight());
-        _camera.updateProjection();
+        _camera.setDeviceDimensions(glSize.GetWidth(), glSize.GetHeight());
     }
 
     int height = _camera.getDeviceHeight();
@@ -974,28 +984,42 @@ void CamWnd::onFarClipPlaneInClick(wxCommandEvent& ev)
 
 void CamWnd::farClipPlaneOut() 
 {
-    getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() + 1 );
+    auto newCubicScale = getCameraSettings()->cubicScale() + 1;
+    getCameraSettings()->setCubicScale(newCubicScale);
 
-    _camera.updateProjection();
+    _camera.setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
     update();
 }
 
 void CamWnd::farClipPlaneIn() 
 {
-    getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() - 1 );
+    auto newCubicScale = getCameraSettings()->cubicScale() - 1;
+    getCameraSettings()->setCubicScale(newCubicScale);
 
-    _camera.updateProjection();
+    _camera.setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
     update();
+}
+
+void CamWnd::updateFarClipPlane()
+{
+    _camera.setFarClipPlaneDistance(calculateFarPlaneDistance(getCameraSettings()->cubicScale()));
+}
+
+float CamWnd::getFarClipPlaneDistance() const
+{
+    return _camera.getFarClipPlaneDistance();
+}
+
+void CamWnd::setFarClipPlaneDistance(float distance)
+{
+    _camera.setFarClipPlaneDistance(distance);
 }
 
 void CamWnd::onGLResize(wxSizeEvent& ev)
 {
-    getCamera().setDeviceWidth(ev.GetSize().GetWidth());
-    getCamera().setDeviceHeight(ev.GetSize().GetHeight());
-    getCamera().updateProjection();
+    getCamera().setDeviceDimensions(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
 
     queueDraw();
-
     ev.Skip();
 }
 

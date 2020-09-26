@@ -53,6 +53,7 @@ Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& fo
 	_queueDraw(queueDraw),
 	_forceRedraw(forceRedraw),
 	_fieldOfView(75.0f),
+	_farClipPlane(32768),
 	_width(0),
 	_height(0),
 	_projection(Matrix4::getIdentity()),
@@ -162,14 +163,11 @@ int Camera::getDeviceHeight() const
 	return _height;
 }
 
-void Camera::setDeviceWidth(int width)
+void Camera::setDeviceDimensions(int width, int height)
 {
 	_width = width;
-}
-
-void Camera::setDeviceHeight(int height)
-{
 	_height = height;
+	updateProjection();
 }
 
 SelectionTestPtr Camera::createSelectionTestForPoint(const Vector2& point)
@@ -214,19 +212,20 @@ void Camera::moveUpdateAxes() {
 	_right[1] = -_forward[0];
 }
 
-bool Camera::farClipEnabled() const
+float Camera::getFarClipPlaneDistance() const
 {
-	return getCameraSettings()->farClipEnabled();
+	return _farClipPlane;
 }
 
-float Camera::getFarClipPlane() const
+void Camera::setFarClipPlaneDistance(float distance)
 {
-	return (farClipEnabled()) ? pow(2.0, (getCameraSettings()->cubicScale() + 7) / 2.0) : 32768.0f;
+	_farClipPlane = distance;
+	updateProjection();
 }
 
 void Camera::updateProjection()
 {
-	float farClip = getFarClipPlane();
+	auto farClip = getFarClipPlaneDistance();
 	_projection = projection_for_camera(farClip / 4096.0f, farClip, _fieldOfView, _width, _height);
 
 	_view.Construct(_projection, _modelview, _width, _height);

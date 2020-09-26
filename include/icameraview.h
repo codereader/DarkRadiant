@@ -17,6 +17,9 @@ public:
 
 	virtual ~ICameraView() {}
 
+	// Sets the device width and height, updates the projection
+	virtual void setDeviceDimensions(int width, int height) = 0;
+
 	// Move the camera's origin
 	virtual const Vector3& getCameraOrigin() const = 0;
 	virtual void setCameraOrigin(const Vector3& newOrigin) = 0;
@@ -33,6 +36,10 @@ public:
 
 	virtual const Matrix4& getModelView() const = 0;
 	virtual const Matrix4& getProjection() const = 0;
+
+	// Cubic clipping
+	virtual float getFarClipPlaneDistance() const = 0;
+	virtual void setFarClipPlaneDistance(float distance) = 0;
 };
 
 class IFreeMoveView :

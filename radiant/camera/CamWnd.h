@@ -107,6 +107,9 @@ public:
     void queueDraw() override;
     void forceRedraw() override;
 
+    // Note: this only updates the GL viewport size, it doesn't resize the GL widget itself
+    void setDeviceDimensions(int width, int height);
+
     void update();
 
     // The callback when the scene gets changed
@@ -152,6 +155,9 @@ public:
     // Increases/decreases the far clip plane distance
     void farClipPlaneIn();
     void farClipPlaneOut();
+    void updateFarClipPlane();
+    float getFarClipPlaneDistance() const override;
+    void setFarClipPlaneDistance(float distance) override;
 
     void startRenderTime();
     void stopRenderTime();
