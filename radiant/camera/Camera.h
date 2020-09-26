@@ -37,12 +37,9 @@ class Camera :
 	Callback _queueDraw;
 	Callback _forceRedraw;
 
+	float _fieldOfView;
 public:
 	int width, height;
-
-	bool timing;
-
-	Vector3 color;   // background
 
 	Vector3 forward, right; // move matrix (TTimo: used to have up but it was not updated)
 	Vector3 vup, vpn, vright; // view matrix (taken from the modelview matrix)
@@ -54,8 +51,6 @@ public:
 	bool m_strafe_forward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
 
 	bool freeMoveEnabled;
-
-	float fieldOfView;
 
 	render::View& _view;
 
@@ -94,7 +89,6 @@ public:
 	void queueDraw() override;
 	void forceRedraw() override;
 
-	void mouseMove(int x, int y);
 	void freeMove(int dx, int dy);
 	void mouseControl(int x, int y);
 

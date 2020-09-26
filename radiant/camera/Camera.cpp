@@ -52,14 +52,12 @@ Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& fo
 	_angles(_prevAngles),
 	_queueDraw(queueDraw),
 	_forceRedraw(forceRedraw),
+	_fieldOfView(75.0f),
 	width(0),
 	height(0),
-	timing(false),
-	color(0, 0, 0),
 	projection(Matrix4::getIdentity()),
 	modelview(Matrix4::getIdentity()),
 	freeMoveEnabled(false),
-	fieldOfView(75.0f),
 	_view(view)
 {}
 
@@ -94,13 +92,6 @@ void Camera::updateVectors() {
 void Camera::freemoveUpdateAxes() {
 	right = vright;
 	forward = -vpn;
-}
-
-void Camera::mouseMove(int x, int y) {
-	//rMessage() << "mousemove... ";
-	freeMove(-x, -y);
-	queueDraw();
-	GlobalCamera().movedNotify();
 }
 
 void Camera::freeMove(int dx, int dy) {
@@ -278,7 +269,7 @@ float Camera::getFarClipPlane() const
 void Camera::updateProjection()
 {
 	float farClip = getFarClipPlane();
-	projection = projection_for_camera(farClip / 4096.0f, farClip, fieldOfView, width, height);
+	projection = projection_for_camera(farClip / 4096.0f, farClip, _fieldOfView, width, height);
 
 	_view.Construct(projection, modelview, width, height);
 }
