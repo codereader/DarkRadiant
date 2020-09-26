@@ -77,8 +77,6 @@ public:
 	void queueDraw() override;
 	void forceRedraw() override;
 
-	void mouseControl(int x, int y);
-
 	void pitchUpDiscrete();
 	void pitchDownDiscrete();
 	void rotateRightDiscrete();
