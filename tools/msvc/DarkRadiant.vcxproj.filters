@@ -1308,8 +1308,8 @@
     <ClInclude Include="..\..\radiant\camera\FloorHeightWalker.h">
       <Filter>src\camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\camera\ObjectFinder.h">
-      <Filter>src\camera</Filter>
+    <ClInclude Include="..\..\radiant\camera\tools\ObjectFinder.h">
+      <Filter>src\camera\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

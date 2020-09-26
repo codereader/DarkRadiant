@@ -145,8 +145,6 @@ public:
     void disableFreeMove() override;
     bool freeMoveEnabled() const override;
 
-    void jumpToObject(SelectionTest& selectionTest);
-
     // Enables/disables the (ordinary) camera movement (non-freelook)
     void addHandlersMove();
     void removeHandlersMove();

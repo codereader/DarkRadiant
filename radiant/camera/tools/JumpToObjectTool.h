@@ -1,8 +1,11 @@
 #pragma once
 
 #include "imousetool.h"
+#include "iscenegraph.h"
+#include "iorthoview.h"
 #include "i18n.h"
 #include "../GlobalCameraWndManager.h"
+#include "ObjectFinder.h"
 
 namespace ui
 {
@@ -27,15 +30,23 @@ public:
     {
         try
         {
-            CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
+            auto& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
 
-            SelectionTestPtr selectionTest = camEvent.getView().createSelectionTestForPoint(camEvent.getDevicePosition());
+            auto selectionTest = camEvent.getView().createSelectionTestForPoint(camEvent.getDevicePosition());
 
-            CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+            // Find a suitable target node
+            camera::ObjectFinder finder(*selectionTest);
+            GlobalSceneGraph().root()->traverse(finder);
 
-            if (cam != NULL)
+            if (finder.getNode())
             {
-                cam->jumpToObject(*selectionTest);
+                // A node has been found, get the bounding box
+                auto found = finder.getNode()->worldAABB();
+
+                // Focus the view at the center of the found AABB
+                // Set the camera and the views to the given point
+                GlobalCameraManager().focusCamera(found.origin, camEvent.getView().getCameraAngles());
+                GlobalXYWndManager().setOrigin(found.origin);
             }
 
             return Result::Finished;
@@ -45,7 +56,6 @@ public:
         }
 
         return Result::Ignored; // not handled
-
     }
 
     Result onMouseMove(Event& ev) override

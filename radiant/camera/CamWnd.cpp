@@ -28,7 +28,6 @@
 #include "selection/Device.h"
 #include "selection/SelectionTest.h"
 #include "FloorHeightWalker.h"
-#include "ObjectFinder.h"
 
 #include "debugging/debugging.h"
 #include "debugging/gl.h"
@@ -400,24 +399,6 @@ int CamWnd::getId()
     return _id;
 }
 
-void CamWnd::jumpToObject(SelectionTest& selectionTest)
-{
-    // Find a suitable target node
-    camera::ObjectFinder finder(selectionTest);
-    GlobalSceneGraph().root()->traverse(finder);
-
-    if (finder.getNode())
-    {
-        // A node has been found, get the bounding box
-        AABB found = finder.getNode()->worldAABB();
-
-        // Focus the view at the center of the found AABB
-        // Set the camera and the views to the given point
-        GlobalCameraManager().focusCamera(found.origin, _camera.getCameraAngles());
-        GlobalXYWndManager().setOrigin(found.origin);
-    }
-}
-
 void CamWnd::changeFloor(const bool up)
 {
     float current = _camera.getCameraOrigin()[2] - 48;
@@ -437,7 +418,6 @@ void CamWnd::changeFloor(const bool up)
     const Vector3& org = _camera.getCameraOrigin();
     _camera.setCameraOrigin(Vector3(org[0], org[1], current + 48));
 
-    _camera.updateModelview();
     update();
     GlobalCamera().movedNotify();
 }
