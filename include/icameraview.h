@@ -2,7 +2,10 @@
 
 #include "imodule.h"
 #include "iinteractiveview.h"
-#include "math/Vector3.h"
+
+template<typename Element>class BasicVector3;
+typedef BasicVector3<double> Vector3;
+class Matrix4;
 
 // Abstract class used when handling mouse events
 // see also: class IOrthoView in iorthoview.h
@@ -27,6 +30,9 @@ public:
 	virtual const Vector3& getUpVector() const = 0;
 	// Returns the vector pointing "forward"
 	virtual const Vector3& getForwardVector() const = 0;
+
+	virtual const Matrix4& getModelView() const = 0;
+	virtual const Matrix4& getProjection() const = 0;
 };
 
 class IFreeMoveView :

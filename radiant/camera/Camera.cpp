@@ -53,10 +53,10 @@ Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& fo
 	_queueDraw(queueDraw),
 	_forceRedraw(forceRedraw),
 	_fieldOfView(75.0f),
-	width(0),
-	height(0),
-	projection(Matrix4::getIdentity()),
-	modelview(Matrix4::getIdentity()),
+	_width(0),
+	_height(0),
+	_projection(Matrix4::getIdentity()),
+	_modelview(Matrix4::getIdentity()),
 	_view(view)
 {}
 
@@ -65,41 +65,45 @@ void Camera::updateModelview()
 	_prevAngles = _angles;
 	_prevOrigin = _origin;
 
-	modelview = Matrix4::getIdentity();
+	_modelview = Matrix4::getIdentity();
 
 	// roll, pitch, yaw
 	Vector3 radiant_eulerXYZ(0, -_angles[camera::CAMERA_PITCH], _angles[camera::CAMERA_YAW]);
 
-	modelview.translateBy(_origin);
-	modelview.rotateByEulerXYZDegrees(radiant_eulerXYZ);
-	modelview.multiplyBy(g_radiant2opengl);
-	modelview.invert();
+	_modelview.translateBy(_origin);
+	_modelview.rotateByEulerXYZDegrees(radiant_eulerXYZ);
+	_modelview.multiplyBy(g_radiant2opengl);
+	_modelview.invert();
 
 	updateVectors();
 
-	_view.Construct(projection, modelview, width, height);
+	_view.Construct(_projection, _modelview, _width, _height);
 }
 
-void Camera::updateVectors() {
-	for (int i=0 ; i<3 ; i++) {
-		vright[i] = modelview[(i<<2)+0];
-		vup[i] = modelview[(i<<2)+1];
-		vpn[i] = modelview[(i<<2)+2];
+void Camera::updateVectors()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		_vright[i] = _modelview[(i<<2)+0];
+		_vup[i] = _modelview[(i<<2)+1];
+		_vpn[i] = _modelview[(i<<2)+2];
 	}
 }
 
-void Camera::freemoveUpdateAxes() {
-	right = vright;
-	forward = -vpn;
+void Camera::freemoveUpdateAxes() 
+{
+	_right = _vright;
+	_forward = -_vpn;
 }
 
-void Camera::mouseControl(int x, int y) {
+void Camera::mouseControl(int x, int y)
+{
 	int movementSpeed = getCameraSettings()->movementSpeed();
 
 	float xf, yf;
 
-	xf = (float)(x - width/2) / (width/2);
-	yf = (float)(y - height/2) / (height/2);
+	xf = (float)(x - _width/2) / (_width/2);
+	yf = (float)(y - _height/2) / (_height/2);
 
 	xf *= 1.0f - fabsf(yf);
 	if (xf < 0) {
@@ -112,7 +116,7 @@ void Camera::mouseControl(int x, int y) {
 			xf = 0;
 	}
 
-	_origin += forward * (yf * 0.1f* movementSpeed);
+	_origin += _forward * (yf * 0.1f* movementSpeed);
 	_angles[camera::CAMERA_YAW] += xf * -0.1f * movementSpeed;
 
 	updateModelview();
@@ -151,27 +155,47 @@ void Camera::setCameraAngles(const Vector3& newAngles)
 
 const Vector3& Camera::getRightVector() const
 {
-	return vright;
+	return _vright;
 }
 
 const Vector3& Camera::getUpVector() const
 {
-	return vup;
+	return _vup;
 }
 
 const Vector3& Camera::getForwardVector() const
 {
-	return vpn;
+	return _vpn;
+}
+
+const Matrix4& Camera::getModelView() const
+{
+	return _modelview;
+}
+
+const Matrix4& Camera::getProjection() const
+{
+	return _projection;
 }
 
 int Camera::getDeviceWidth() const
 {
-	return width;
+	return _width;
 }
 
 int Camera::getDeviceHeight() const
 {
-	return height;
+	return _height;
+}
+
+void Camera::setDeviceWidth(int width)
+{
+	_width = width;
+}
+
+void Camera::setDeviceHeight(int height)
+{
+	_height = height;
 }
 
 SelectionTestPtr Camera::createSelectionTestForPoint(const Vector2& point)
@@ -209,11 +233,11 @@ void Camera::moveUpdateAxes() {
 	double ya = degrees_to_radians(_angles[camera::CAMERA_YAW]);
 
 	// the movement matrix is kept 2d
-	forward[0] = static_cast<float>(cos(ya));
-	forward[1] = static_cast<float>(sin(ya));
-	forward[2] = 0;
-	right[0] = forward[1];
-	right[1] = -forward[0];
+	_forward[0] = static_cast<float>(cos(ya));
+	_forward[1] = static_cast<float>(sin(ya));
+	_forward[2] = 0;
+	_right[0] = _forward[1];
+	_right[1] = -_forward[0];
 }
 
 bool Camera::farClipEnabled() const
@@ -229,9 +253,9 @@ float Camera::getFarClipPlane() const
 void Camera::updateProjection()
 {
 	float farClip = getFarClipPlane();
-	projection = projection_for_camera(farClip / 4096.0f, farClip, _fieldOfView, width, height);
+	_projection = projection_for_camera(farClip / 4096.0f, farClip, _fieldOfView, _width, _height);
 
-	_view.Construct(projection, modelview, width, height);
+	_view.Construct(_projection, _modelview, _width, _height);
 }
 
 void Camera::pitchUpDiscrete()
@@ -259,13 +283,13 @@ void Camera::pitchDownDiscrete()
 void Camera::moveForwardDiscrete(double units)
 {
 	moveUpdateAxes();
-	setCameraOrigin(getCameraOrigin() + forward * fabs(units));
+	setCameraOrigin(getCameraOrigin() + _forward * fabs(units));
 }
 
 void Camera::moveBackDiscrete(double units)
 {
 	moveUpdateAxes();
-	setCameraOrigin(getCameraOrigin() + forward * (-fabs(units)));
+	setCameraOrigin(getCameraOrigin() + _forward * (-fabs(units)));
 }
 
 void Camera::moveUpDiscrete(double units)
@@ -287,13 +311,13 @@ void Camera::moveDownDiscrete(double units)
 void Camera::moveLeftDiscrete(double units)
 {
 	moveUpdateAxes();
-	setCameraOrigin(getCameraOrigin() + right * (-fabs(units)));
+	setCameraOrigin(getCameraOrigin() + _right * (-fabs(units)));
 }
 
 void Camera::moveRightDiscrete(double units)
 {
 	moveUpdateAxes();
-	setCameraOrigin(getCameraOrigin() + right * fabs(units));
+	setCameraOrigin(getCameraOrigin() + _right * fabs(units));
 }
 
 void Camera::rotateLeftDiscrete()

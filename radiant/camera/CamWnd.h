@@ -127,6 +127,9 @@ public:
     const Vector3& getCameraAngles() const override;
     void setCameraAngles(const Vector3& angles) override;
 
+    virtual const Matrix4& getModelView() const override;
+    virtual const Matrix4& getProjection() const override;
+
     const Frustum& getViewFrustum() const;
 
     // greebo: This measures the rendering time during a 360° turn of the camera.

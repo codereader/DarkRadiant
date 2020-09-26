@@ -47,6 +47,19 @@ namespace
     const char* const FAR_CLIP_IN_TEXT = N_("Move far clip plane closer");
     const char* const FAR_CLIP_OUT_TEXT = N_("Move far clip plane further away");
     const char* const FAR_CLIP_DISABLED_TEXT = N_(" (currently disabled in preferences)");
+
+    const unsigned int MOVE_NONE = 0;
+    const unsigned int MOVE_FORWARD = 1 << 0;
+    const unsigned int MOVE_BACK = 1 << 1;
+    const unsigned int MOVE_ROTRIGHT = 1 << 2;
+    const unsigned int MOVE_ROTLEFT = 1 << 3;
+    const unsigned int MOVE_STRAFERIGHT = 1 << 4;
+    const unsigned int MOVE_STRAFELEFT = 1 << 5;
+    const unsigned int MOVE_UP = 1 << 6;
+    const unsigned int MOVE_DOWN = 1 << 7;
+    const unsigned int MOVE_PITCHUP = 1 << 8;
+    const unsigned int MOVE_PITCHDOWN = 1 << 9;
+    const unsigned int MOVE_ALL = MOVE_FORWARD | MOVE_BACK | MOVE_ROTRIGHT | MOVE_ROTLEFT | MOVE_STRAFERIGHT | MOVE_STRAFELEFT | MOVE_UP | MOVE_DOWN | MOVE_PITCHUP | MOVE_PITCHDOWN;
 }
 
 inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
@@ -261,12 +274,12 @@ const VolumeTest& CamWnd::getVolumeTest() const
 
 int CamWnd::getDeviceWidth() const
 {
-    return _camera.width;
+    return _camera.getDeviceWidth();
 }
 
 int CamWnd::getDeviceHeight() const
 {
-    return _camera.height;
+    return _camera.getDeviceHeight();
 }
 
 void CamWnd::startRenderTime()
@@ -603,19 +616,22 @@ void CamWnd::Cam_Draw()
 {
     wxSize glSize = _wxGLWidget->GetSize();
 
-    if (_camera.width != glSize.GetWidth() || _camera.height != glSize.GetHeight())
+    if (_camera.getDeviceWidth() != glSize.GetWidth() || _camera.getDeviceHeight() != glSize.GetHeight())
     {
-        _camera.width = glSize.GetWidth();
-        _camera.height = glSize.GetHeight();
+        _camera.setDeviceWidth(glSize.GetWidth());
+        _camera.setDeviceHeight(glSize.GetHeight());
         _camera.updateProjection();
     }
 
-    if (_camera.height == 0 || _camera.width == 0)
+    int height = _camera.getDeviceHeight();
+    int width = _camera.getDeviceWidth();
+
+    if (width == 0 || height == 0)
     {
         return; // otherwise we'll receive OpenGL errors in ortho rendering below
     }
 
-    glViewport(0, 0, _camera.width, _camera.height);
+    glViewport(0, 0, width, height);
 
     // enable depth buffer writes
     glDepthMask(GL_TRUE);
@@ -636,12 +652,10 @@ void CamWnd::Cam_Draw()
     render::View::resetCullStats();
 
     glMatrixMode(GL_PROJECTION);
-
-    glLoadMatrixd(_camera.projection);
+    glLoadMatrixd(_camera.getProjection());
 
     glMatrixMode(GL_MODELVIEW);
-
-    glLoadMatrixd(_camera.modelview);
+    glLoadMatrixd(_camera.getModelView());
 
     // one directional light source directly behind the viewer
     {
@@ -654,9 +668,10 @@ void CamWnd::Cam_Draw()
         //material[0] = material[1] = material[2] = 0.8f;
         //material[3] = 1.0f;
 
-        inverse_cam_dir[0] = _camera.vpn[0];
-        inverse_cam_dir[1] = _camera.vpn[1];
-        inverse_cam_dir[2] = _camera.vpn[2];
+        const auto& forward = _camera.getForwardVector();
+        inverse_cam_dir[0] = forward[0];
+        inverse_cam_dir[1] = forward[1];
+        inverse_cam_dir[2] = forward[2];
         inverse_cam_dir[3] = 0;
 
         glLightfv(GL_LIGHT0, GL_POSITION, inverse_cam_dir);
@@ -739,7 +754,7 @@ void CamWnd::Cam_Draw()
             i.second->render(GlobalRenderSystem(), renderer, _view);
         }
 
-        renderer.render(_camera.modelview, _camera.projection);
+        renderer.render(_camera.getModelView(), _camera.getProjection());
     }
 
     // greebo: Draw the clipper's points (skipping the depth-test)
@@ -763,10 +778,10 @@ void CamWnd::Cam_Draw()
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, (float)_camera.width, 0, (float)_camera.height, -100, 100);
+    glOrtho(0, (float)width, 0, (float)height, -100, 100);
 
     glScalef(1, -1, 1);
-    glTranslatef(0, -(float)_camera.height, 0);
+    glTranslatef(0, -(float)height, 0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -792,22 +807,22 @@ void CamWnd::Cam_Draw()
     if (_freeMoveEnabled)
     {
         glBegin( GL_LINES );
-        glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f + 6 );
-        glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f + 2 );
-        glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f - 6 );
-        glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f - 2 );
-        glVertex2f( (float)_camera.width / 2.f + 6, (float)_camera.height / 2.f );
-        glVertex2f( (float)_camera.width / 2.f + 2, (float)_camera.height / 2.f );
-        glVertex2f( (float)_camera.width / 2.f - 6, (float)_camera.height / 2.f );
-        glVertex2f( (float)_camera.width / 2.f - 2, (float)_camera.height / 2.f );
+        glVertex2f( (float)width / 2.f, (float)height / 2.f + 6 );
+        glVertex2f( (float)width / 2.f, (float)height / 2.f + 2 );
+        glVertex2f( (float)width / 2.f, (float)height / 2.f - 6 );
+        glVertex2f( (float)width / 2.f, (float)height / 2.f - 2 );
+        glVertex2f( (float)width / 2.f + 6, (float)height / 2.f );
+        glVertex2f( (float)width / 2.f + 2, (float)height / 2.f );
+        glVertex2f( (float)width / 2.f - 6, (float)height / 2.f );
+        glVertex2f( (float)width / 2.f - 2, (float)height / 2.f );
         glEnd();
     }
 
-    glRasterPos3f(1.0f, static_cast<float>(_camera.height) - 1.0f, 0.0f);
+    glRasterPos3f(1.0f, static_cast<float>(height) - 1.0f, 0.0f);
 
     GlobalOpenGL().drawString(render::RenderStatistics::Instance().getStatString());
 
-    glRasterPos3f(1.0f, static_cast<float>(_camera.height) - 11.0f, 0.0f);
+    glRasterPos3f(1.0f, static_cast<float>(height) - 11.0f, 0.0f);
 
     GlobalOpenGL().drawString(render::View::getCullStats());
 
@@ -817,7 +832,7 @@ void CamWnd::Cam_Draw()
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0, (float)_camera.width, 0, (float)_camera.height, -100, 100);
+        glOrtho(0, (float)width, 0, (float)height, -100, 100);
 
         for (const ActiveMouseTools::value_type& i : _activeMouseTools)
         {
@@ -952,6 +967,16 @@ void CamWnd::setCameraAngles(const Vector3& angles)
     _camera.setCameraAngles(angles);
 }
 
+const Matrix4& CamWnd::getModelView() const
+{
+    return _camera.getModelView();
+}
+
+const Matrix4& CamWnd::getProjection() const
+{
+    return _camera.getProjection();
+}
+
 const Frustum& CamWnd::getViewFrustum() const
 {
     return _view.getFrustum();
@@ -985,8 +1010,8 @@ void CamWnd::farClipPlaneIn()
 
 void CamWnd::onGLResize(wxSizeEvent& ev)
 {
-    getCamera().width = ev.GetSize().GetWidth();
-    getCamera().height = ev.GetSize().GetHeight();
+    getCamera().setDeviceWidth(ev.GetSize().GetWidth());
+    getCamera().setDeviceHeight(ev.GetSize().GetHeight());
     getCamera().updateProjection();
 
     queueDraw();
@@ -1011,12 +1036,12 @@ void CamWnd::onMouseScroll(wxMouseEvent& ev)
     if (ev.GetWheelRotation() > 0)
     {
         getCamera().freemoveUpdateAxes();
-        _camera.setCameraOrigin(_camera.getCameraOrigin() + getCamera().forward * movementSpeed);
+        _camera.setCameraOrigin(_camera.getCameraOrigin() - getCamera().getForwardVector() * movementSpeed);
     }
     else if (ev.GetWheelRotation() < 0)
     {
         getCamera().freemoveUpdateAxes();
-        _camera.setCameraOrigin(_camera.getCameraOrigin() + getCamera().forward * -movementSpeed);
+        _camera.setCameraOrigin(_camera.getCameraOrigin() - getCamera().getForwardVector() * -movementSpeed);
     }
 }
 
@@ -1026,7 +1051,7 @@ CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Vector
     Vector2 actualPoint = freeMoveEnabled() ? windowvector_for_widget_centre(*_wxGLWidget) : point;
 
     Vector2 normalisedDeviceCoords = device_constrained(
-        window_to_normalised_device(actualPoint, _camera.width, _camera.height));
+        window_to_normalised_device(actualPoint, _camera.getDeviceWidth(), _camera.getDeviceHeight()));
 
     return CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
 }
@@ -1154,12 +1179,15 @@ void CamWnd::drawTime()
         return;
     }
 
+    auto width = _camera.getDeviceWidth();
+    auto height = _camera.getDeviceHeight();
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, static_cast<float>(_camera.width), 0, static_cast<float>(_camera.height), -100, 100);
+    glOrtho(0, static_cast<float>(width), 0, static_cast<float>(height), -100, 100);
 
     glScalef(1, -1, 1);
-    glTranslatef(static_cast<float>(_camera.width) - 90, -static_cast<float>(_camera.height), 0);
+    glTranslatef(static_cast<float>(width) - 90, -static_cast<float>(height), 0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -1182,7 +1210,7 @@ void CamWnd::drawTime()
     glColor3f(1.f, 1.f, 1.f);
     glLineWidth(1);
 
-    glRasterPos3f(1.0f, static_cast<float>(_camera.height) - 1.0f, 0.0f);
+    glRasterPos3f(1.0f, static_cast<float>(height) - 1.0f, 0.0f);
 
     std::size_t time = GlobalRenderSystem().getTime();
     GlobalOpenGL().drawString(fmt::format("Time: {0:.3f} sec.", (time * 0.001f)));

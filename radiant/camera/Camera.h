@@ -12,19 +12,6 @@ namespace ui
 #define SPEED_MOVE 32
 #define SPEED_TURN 22.5
 
-const unsigned int MOVE_NONE = 0;
-const unsigned int MOVE_FORWARD = 1 << 0;
-const unsigned int MOVE_BACK = 1 << 1;
-const unsigned int MOVE_ROTRIGHT = 1 << 2;
-const unsigned int MOVE_ROTLEFT = 1 << 3;
-const unsigned int MOVE_STRAFERIGHT = 1 << 4;
-const unsigned int MOVE_STRAFELEFT = 1 << 5;
-const unsigned int MOVE_UP = 1 << 6;
-const unsigned int MOVE_DOWN = 1 << 7;
-const unsigned int MOVE_PITCHUP = 1 << 8;
-const unsigned int MOVE_PITCHDOWN = 1 << 9;
-const unsigned int MOVE_ALL = MOVE_FORWARD|MOVE_BACK|MOVE_ROTRIGHT|MOVE_ROTLEFT|MOVE_STRAFERIGHT|MOVE_STRAFELEFT|MOVE_UP|MOVE_DOWN|MOVE_PITCHUP|MOVE_PITCHDOWN;
-
 class Camera :
 	public ICameraView
 {
@@ -38,17 +25,18 @@ class Camera :
 	Callback _forceRedraw;
 
 	float _fieldOfView;
-public:
-	int width, height;
+	int _width;
+	int _height;
 
-	Vector3 forward, right; // move matrix (TTimo: used to have up but it was not updated)
-	Vector3 vup, vpn, vright; // view matrix (taken from the modelview matrix)
+	Vector3 _forward, _right; // move matrix (TTimo: used to have up but it was not updated)
+	Vector3 _vup, _vpn, _vright; // view matrix (taken from the modelview matrix)
 
-	Matrix4 projection;
-	Matrix4 modelview;
+	Matrix4 _projection;
+	Matrix4 _modelview;
 
 	render::View& _view;
 
+public:
 	Camera(render::View& view, const Callback& queueDraw, const Callback& forceRedraw);
 	Camera(const Camera& other) = delete;
 	Camera& operator=(const Camera& other) = delete;
@@ -75,8 +63,13 @@ public:
 	const Vector3& getUpVector() const override;
 	const Vector3& getForwardVector() const override;
 
+	const Matrix4& getModelView() const override;
+	const Matrix4& getProjection() const override;
+
 	int getDeviceWidth() const override;
+	void setDeviceWidth(int width);
 	int getDeviceHeight() const override;
+	void setDeviceHeight(int height);
 
 	SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
 	const VolumeTest& getVolumeTest() const override;
@@ -96,7 +89,6 @@ public:
 	void moveUpDiscrete(double units);
 	void moveBackDiscrete(double units);
 	void moveForwardDiscrete(double units);
+};
 
-}; // class Camera
-
-} // namespace ui
+} // namespace
