@@ -1129,76 +1129,46 @@ void CamWnd::handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movemen
     }
 }
 
-void CamWnd::onForwardKey(KeyEventType eventType)
+void CamWnd::handleKeyEvent(KeyEventType eventType, unsigned int freeMoveFlags, const std::function<void()>& discreteMovement)
 {
     if (freeMoveEnabled())
     {
-        handleFreeMoveKeyEvent(eventType, MOVE_FORWARD);
+        handleFreeMoveKeyEvent(eventType, freeMoveFlags);
     }
     else if (eventType == KeyEventType::KeyPressed)
     {
-        _camera.moveForwardDiscrete(SPEED_MOVE);
+        discreteMovement();
     }
+}
+
+void CamWnd::onForwardKey(KeyEventType eventType)
+{
+    handleKeyEvent(eventType, MOVE_FORWARD, [this]() { _camera.moveForwardDiscrete(SPEED_MOVE); });
 }
 
 void CamWnd::onBackwardKey(KeyEventType eventType)
 {
-    if (freeMoveEnabled())
-    {
-        handleFreeMoveKeyEvent(eventType, MOVE_BACK);
-    }
-    else if (eventType == KeyEventType::KeyPressed)
-    {
-        _camera.moveBackDiscrete(SPEED_MOVE);
-    }
+    handleKeyEvent(eventType, MOVE_BACK, [this]() { _camera.moveBackDiscrete(SPEED_MOVE); });
 }
 
 void CamWnd::onLeftKey(KeyEventType eventType)
 {
-    if (freeMoveEnabled())
-    {
-        handleFreeMoveKeyEvent(eventType, MOVE_STRAFELEFT);
-    }
-    else if (eventType == KeyEventType::KeyPressed)
-    {
-        _camera.rotateLeftDiscrete();
-    }
+    handleKeyEvent(eventType, MOVE_STRAFELEFT, [this]() { _camera.rotateLeftDiscrete(); });
 }
 
 void CamWnd::onRightKey(KeyEventType eventType)
 {
-    if (freeMoveEnabled())
-    {
-        handleFreeMoveKeyEvent(eventType, MOVE_STRAFERIGHT);
-    }
-    else if (eventType == KeyEventType::KeyPressed)
-    {
-        _camera.rotateRightDiscrete();
-    }
+    handleKeyEvent(eventType, MOVE_STRAFERIGHT, [this]() { _camera.rotateRightDiscrete(); });
 }
 
 void CamWnd::onUpKey(KeyEventType eventType)
 {
-    if (freeMoveEnabled())
-    {
-        handleFreeMoveKeyEvent(eventType, MOVE_UP);
-    }
-    else if (eventType == KeyEventType::KeyPressed)
-    {
-        _camera.moveUpDiscrete(SPEED_MOVE);
-    }
+    handleKeyEvent(eventType, MOVE_UP, [this]() { _camera.moveUpDiscrete(SPEED_MOVE); });
 }
 
 void CamWnd::onDownKey(KeyEventType eventType)
 {
-    if (freeMoveEnabled())
-    {
-        handleFreeMoveKeyEvent(eventType, MOVE_DOWN);
-    }
-    else if (eventType == KeyEventType::KeyPressed)
-    {
-        _camera.moveDownDiscrete(SPEED_MOVE);
-    }
+    handleKeyEvent(eventType, MOVE_DOWN, [this]() { _camera.moveDownDiscrete(SPEED_MOVE); });
 }
 
 // -------------------------------------------------------------------------------

@@ -150,6 +150,7 @@ public:
 
 protected:
     void handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movementFlags);
+    void handleKeyEvent(KeyEventType eventType, unsigned int freeMoveFlags, const std::function<void()>& discreteMovement);
 
     // Required overrides being a MouseToolHandler
     virtual MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
