@@ -47,8 +47,6 @@ public:
 	Matrix4 projection;
 	Matrix4 modelview;
 
-	bool freeMoveEnabled;
-
 	render::View& _view;
 
 	Camera(render::View& view, const Callback& queueDraw, const Callback& forceRedraw);

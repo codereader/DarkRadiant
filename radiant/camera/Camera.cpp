@@ -57,7 +57,6 @@ Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& fo
 	height(0),
 	projection(Matrix4::getIdentity()),
 	modelview(Matrix4::getIdentity()),
-	freeMoveEnabled(false),
 	_view(view)
 {}
 

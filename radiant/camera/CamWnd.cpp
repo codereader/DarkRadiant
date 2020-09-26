@@ -67,6 +67,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
     _timerLock(false),
+    _freeMoveEnabled(false),
     _freeMoveFlags(0),
     _freeMoveTimer(this),
     _deferredMotionDelta(std::bind(&CamWnd::onDeferredMotionDelta, this, std::placeholders::_1, std::placeholders::_2)),
@@ -237,7 +238,8 @@ CamWnd::~CamWnd()
     // Unsubscribe from the global scene graph update
     GlobalSceneGraph().removeSceneObserver(this);
 
-    if (_camera.freeMoveEnabled) {
+    if (_freeMoveEnabled)
+    {
         disableFreeMove();
     }
 
@@ -519,8 +521,8 @@ void CamWnd::onFreeMoveTimer(wxTimerEvent& ev)
 
 void CamWnd::enableFreeMove()
 {
-    ASSERT_MESSAGE(!_camera.freeMoveEnabled, "EnableFreeMove: free-move was already enabled");
-    _camera.freeMoveEnabled = true;
+    ASSERT_MESSAGE(!_freeMoveEnabled, "EnableFreeMove: free-move was already enabled");
+    _freeMoveEnabled = true;
     clearFreeMoveFlags(MOVE_ALL);
 
     removeHandlersMove();
@@ -530,8 +532,8 @@ void CamWnd::enableFreeMove()
 
 void CamWnd::disableFreeMove()
 {
-    ASSERT_MESSAGE(_camera.freeMoveEnabled, "DisableFreeMove: free-move was not enabled");
-    _camera.freeMoveEnabled = false;
+    ASSERT_MESSAGE(_freeMoveEnabled, "DisableFreeMove: free-move was not enabled");
+    _freeMoveEnabled = false;
     clearFreeMoveFlags(MOVE_ALL);
 
     addHandlersMove();
@@ -541,7 +543,7 @@ void CamWnd::disableFreeMove()
 
 bool CamWnd::freeMoveEnabled() const
 {
-    return _camera.freeMoveEnabled;
+    return _freeMoveEnabled;
 }
 
 void CamWnd::performFreeMove(int dx, int dy)
@@ -786,9 +788,9 @@ void CamWnd::Cam_Draw()
     glColor3f( 1.f, 1.f, 1.f );
     glLineWidth(1);
 
-    // draw the crosshair
-
-    if (_camera.freeMoveEnabled) {
+    // draw the crosshair in free move mode
+    if (_freeMoveEnabled)
+    {
         glBegin( GL_LINES );
         glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f + 6 );
         glVertex2f( (float)_camera.width / 2.f, (float)_camera.height / 2.f + 2 );

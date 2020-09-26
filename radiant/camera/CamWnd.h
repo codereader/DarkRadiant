@@ -80,6 +80,7 @@ private:
     wxutil::KeyEventFilterPtr _escapeListener;
 
     // Remembering the free movement type while holding down a key
+    bool _freeMoveEnabled;
     unsigned int _freeMoveFlags;
     wxTimer _freeMoveTimer;
     wxStopWatch _keyControlTimer;
