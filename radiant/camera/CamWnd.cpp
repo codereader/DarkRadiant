@@ -27,6 +27,7 @@
 #include "selection/OccludeSelector.h"
 #include "selection/Device.h"
 #include "selection/SelectionTest.h"
+#include "FloorHeightWalker.h"
 
 #include "debugging/debugging.h"
 #include "debugging/gl.h"
@@ -95,48 +96,6 @@ inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
     wxSize size = widget.GetSize();
     return Vector2(static_cast<float>(size.GetWidth() / 2), static_cast<float>(size.GetHeight() / 2));
 }
-
-class FloorHeightWalker :
-    public scene::NodeVisitor
-{
-    float _current;
-    float& _bestUp;
-    float& _bestDown;
-
-public:
-    FloorHeightWalker(float current, float& bestUp, float& bestDown) :
-        _current(current),
-        _bestUp(bestUp),
-        _bestDown(bestDown)
-    {
-        _bestUp = game::current::getValue<float>("/defaults/maxWorldCoord");
-        _bestDown = -game::current::getValue<float>("/defaults/maxWorldCoord");
-    }
-
-    bool pre(const scene::INodePtr& node) {
-
-        if (!node->visible()) return false; // don't traverse hidden nodes
-
-        if (Node_isBrush(node)) // this node is a floor
-        {
-            const AABB& aabb = node->worldAABB();
-
-            float floorHeight = aabb.origin.z() + aabb.extents.z();
-
-            if (floorHeight > _current && floorHeight < _bestUp) {
-                _bestUp = floorHeight;
-            }
-
-            if (floorHeight < _current && floorHeight > _bestDown) {
-                _bestDown = floorHeight;
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-};
 
 // ---------- CamWnd Implementation --------------------------------------------------
 
@@ -482,11 +441,12 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
     }
 }
 
-void CamWnd::changeFloor(const bool up) {
+void CamWnd::changeFloor(const bool up)
+{
     float current = _camera.getCameraOrigin()[2] - 48;
     float bestUp;
     float bestDown;
-    FloorHeightWalker walker(current, bestUp, bestDown);
+    camera::FloorHeightWalker walker(current, bestUp, bestDown);
     GlobalSceneGraph().root()->traverse(walker);
 
     if (up && bestUp != game::current::getValue<float>("/defaults/maxWorldCoord")) {

@@ -374,6 +374,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\ApplicationContext.h" />
+    <ClInclude Include="..\..\radiant\camera\FloorHeightWalker.h" />
     <ClInclude Include="..\..\radiant\camera\GlobalCameraWndManager.h" />
     <ClInclude Include="..\..\radiant\camera\tools\CameraMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\camera\tools\FreeMoveTool.h" />

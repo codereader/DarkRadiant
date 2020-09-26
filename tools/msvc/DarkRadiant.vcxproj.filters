@@ -1311,6 +1311,9 @@
     <ClInclude Include="..\..\radiant\camera\GlobalCameraWndManager.h">
       <Filter>src\camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\camera\FloorHeightWalker.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
