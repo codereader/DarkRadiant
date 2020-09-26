@@ -74,17 +74,6 @@ public:
 	void queueDraw() override;
 	void forceRedraw() override;
 
-	void pitchUpDiscrete();
-	void pitchDownDiscrete();
-	void rotateRightDiscrete();
-	void rotateLeftDiscrete();
-	void moveRightDiscrete(double units);
-	void moveLeftDiscrete(double units);
-	void moveDownDiscrete(double units);
-	void moveUpDiscrete(double units);
-	void moveBackDiscrete(double units);
-	void moveForwardDiscrete(double units);
-
 private:
 	void updateProjection();
 };

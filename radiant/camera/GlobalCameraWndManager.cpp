@@ -344,27 +344,27 @@ void GlobalCameraWndManager::moveCameraCmd(const cmd::ArgumentList& args)
 
 	if (arg == "up") 
 	{
-		camWnd->getCamera().moveUpDiscrete(amount);
+		camWnd->moveUpDiscrete(amount);
 	}
 	else if (arg == "down") 
 	{
-		camWnd->getCamera().moveDownDiscrete(amount);
+		camWnd->moveDownDiscrete(amount);
 	}
 	else if (arg == "left") 
 	{
-		camWnd->getCamera().moveLeftDiscrete(amount);
+		camWnd->moveLeftDiscrete(amount);
 	}
 	if (arg == "right") 
 	{
-		camWnd->getCamera().moveRightDiscrete(amount);
+		camWnd->moveRightDiscrete(amount);
 	}
 	else if (arg == "forward")
 	{
-		camWnd->getCamera().moveForwardDiscrete(amount);
+		camWnd->moveForwardDiscrete(amount);
 	}
 	else if (arg == "back")
 	{
-		camWnd->getCamera().moveBackDiscrete(amount);
+		camWnd->moveBackDiscrete(amount);
 	}
 	else
 	{
@@ -415,22 +415,22 @@ void GlobalCameraWndManager::onMoveDownKey(ui::KeyEventType eventType)
 
 void GlobalCameraWndManager::moveLeftDiscrete(const cmd::ArgumentList& args)
 {
-	doWithActiveCamWnd([](CamWnd& cam) { cam.getCamera().moveLeftDiscrete(SPEED_MOVE); });
+	doWithActiveCamWnd([](CamWnd& cam) { cam.moveLeftDiscrete(SPEED_MOVE); });
 }
 
 void GlobalCameraWndManager::moveRightDiscrete(const cmd::ArgumentList& args)
 {
-	doWithActiveCamWnd([](CamWnd& cam) { cam.getCamera().moveRightDiscrete(SPEED_MOVE); });
+	doWithActiveCamWnd([](CamWnd& cam) { cam.moveRightDiscrete(SPEED_MOVE); });
 }
 
 void GlobalCameraWndManager::pitchUpDiscrete(const cmd::ArgumentList& args)
 {
-	doWithActiveCamWnd([](CamWnd& cam) { cam.getCamera().pitchUpDiscrete(); });
+	doWithActiveCamWnd([](CamWnd& cam) { cam.pitchUpDiscrete(); });
 }
 
 void GlobalCameraWndManager::pitchDownDiscrete(const cmd::ArgumentList& args)
 {
-	doWithActiveCamWnd([](CamWnd& cam) { cam.getCamera().pitchDownDiscrete(); });
+	doWithActiveCamWnd([](CamWnd& cam) { cam.pitchDownDiscrete(); });
 }
 
 float GlobalCameraWndManager::getCameraStrafeSpeed()

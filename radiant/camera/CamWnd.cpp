@@ -1246,32 +1246,108 @@ void CamWnd::handleKeyEvent(KeyEventType eventType, unsigned int freeMoveFlags, 
 
 void CamWnd::onForwardKey(KeyEventType eventType)
 {
-    handleKeyEvent(eventType, MOVE_FORWARD, [this]() { _camera.moveForwardDiscrete(SPEED_MOVE); });
+    handleKeyEvent(eventType, MOVE_FORWARD, [this]() { moveForwardDiscrete(SPEED_MOVE); });
 }
 
 void CamWnd::onBackwardKey(KeyEventType eventType)
 {
-    handleKeyEvent(eventType, MOVE_BACK, [this]() { _camera.moveBackDiscrete(SPEED_MOVE); });
+    handleKeyEvent(eventType, MOVE_BACK, [this]() { moveBackDiscrete(SPEED_MOVE); });
 }
 
 void CamWnd::onLeftKey(KeyEventType eventType)
 {
-    handleKeyEvent(eventType, MOVE_STRAFELEFT, [this]() { _camera.rotateLeftDiscrete(); });
+    handleKeyEvent(eventType, MOVE_STRAFELEFT, [this]() { rotateLeftDiscrete(); });
 }
 
 void CamWnd::onRightKey(KeyEventType eventType)
 {
-    handleKeyEvent(eventType, MOVE_STRAFERIGHT, [this]() { _camera.rotateRightDiscrete(); });
+    handleKeyEvent(eventType, MOVE_STRAFERIGHT, [this]() { rotateRightDiscrete(); });
 }
 
 void CamWnd::onUpKey(KeyEventType eventType)
 {
-    handleKeyEvent(eventType, MOVE_UP, [this]() { _camera.moveUpDiscrete(SPEED_MOVE); });
+    handleKeyEvent(eventType, MOVE_UP, [this]() { moveUpDiscrete(SPEED_MOVE); });
 }
 
 void CamWnd::onDownKey(KeyEventType eventType)
 {
-    handleKeyEvent(eventType, MOVE_DOWN, [this]() { _camera.moveDownDiscrete(SPEED_MOVE); });
+    handleKeyEvent(eventType, MOVE_DOWN, [this]() { moveDownDiscrete(SPEED_MOVE); });
+}
+
+void CamWnd::pitchUpDiscrete()
+{
+    Vector3 angles = getCameraAngles();
+
+    angles[camera::CAMERA_PITCH] += SPEED_TURN;
+    if (angles[camera::CAMERA_PITCH] > 90)
+        angles[camera::CAMERA_PITCH] = 90;
+
+    setCameraAngles(angles);
+}
+
+void CamWnd::pitchDownDiscrete()
+{
+    Vector3 angles = getCameraAngles();
+
+    angles[camera::CAMERA_PITCH] -= SPEED_TURN;
+    if (angles[camera::CAMERA_PITCH] < -90)
+        angles[camera::CAMERA_PITCH] = -90;
+
+    setCameraAngles(angles);
+}
+
+void CamWnd::moveForwardDiscrete(double units)
+{
+    //moveUpdateAxes();
+    setCameraOrigin(getCameraOrigin() - _camera.getForwardVector() * fabs(units));
+}
+
+void CamWnd::moveBackDiscrete(double units)
+{
+    //moveUpdateAxes();
+    setCameraOrigin(getCameraOrigin() + _camera.getForwardVector() * fabs(units));
+}
+
+void CamWnd::moveUpDiscrete(double units)
+{
+    Vector3 origin = getCameraOrigin();
+
+    origin[2] += fabs(units);
+
+    setCameraOrigin(origin);
+}
+
+void CamWnd::moveDownDiscrete(double units)
+{
+    Vector3 origin = getCameraOrigin();
+    origin[2] -= fabs(units);
+    setCameraOrigin(origin);
+}
+
+void CamWnd::moveLeftDiscrete(double units)
+{
+    //moveUpdateAxes();
+    setCameraOrigin(getCameraOrigin() - _camera.getRightVector() * fabs(units));
+}
+
+void CamWnd::moveRightDiscrete(double units)
+{
+    //moveUpdateAxes();
+    setCameraOrigin(getCameraOrigin() + _camera.getRightVector() * fabs(units));
+}
+
+void CamWnd::rotateLeftDiscrete()
+{
+    Vector3 angles = getCameraAngles();
+    angles[camera::CAMERA_YAW] += SPEED_TURN;
+    setCameraAngles(angles);
+}
+
+void CamWnd::rotateRightDiscrete()
+{
+    Vector3 angles = getCameraAngles();
+    angles[camera::CAMERA_YAW] -= SPEED_TURN;
+    setCameraAngles(angles);
 }
 
 // -------------------------------------------------------------------------------

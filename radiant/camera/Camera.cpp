@@ -201,7 +201,8 @@ void Camera::forceRedraw()
 	_forceRedraw();
 }
 
-void Camera::moveUpdateAxes() {
+void Camera::moveUpdateAxes()
+{
 	double ya = degrees_to_radians(_angles[camera::CAMERA_YAW]);
 
 	// the movement matrix is kept 2d
@@ -229,82 +230,6 @@ void Camera::updateProjection()
 	_projection = projection_for_camera(farClip / 4096.0f, farClip, _fieldOfView, _width, _height);
 
 	_view.Construct(_projection, _modelview, _width, _height);
-}
-
-void Camera::pitchUpDiscrete()
-{
-	Vector3 angles = getCameraAngles();
-
-	angles[camera::CAMERA_PITCH] += SPEED_TURN;
-	if (angles[camera::CAMERA_PITCH] > 90)
-		angles[camera::CAMERA_PITCH] = 90;
-
-	setCameraAngles(angles);
-}
-
-void Camera::pitchDownDiscrete()
-{
-	Vector3 angles = getCameraAngles();
-
-	angles[camera::CAMERA_PITCH] -= SPEED_TURN;
-	if (angles[camera::CAMERA_PITCH] < -90)
-		angles[camera::CAMERA_PITCH] = -90;
-
-	setCameraAngles(angles);
-}
-
-void Camera::moveForwardDiscrete(double units)
-{
-	moveUpdateAxes();
-	setCameraOrigin(getCameraOrigin() + _forward * fabs(units));
-}
-
-void Camera::moveBackDiscrete(double units)
-{
-	moveUpdateAxes();
-	setCameraOrigin(getCameraOrigin() + _forward * (-fabs(units)));
-}
-
-void Camera::moveUpDiscrete(double units)
-{
-	Vector3 origin = getCameraOrigin();
-
-	origin[2] += fabs(units);
-
-	setCameraOrigin(origin);
-}
-
-void Camera::moveDownDiscrete(double units)
-{
-	Vector3 origin = getCameraOrigin();
-	origin[2] -= fabs(units);
-	setCameraOrigin(origin);
-}
-
-void Camera::moveLeftDiscrete(double units)
-{
-	moveUpdateAxes();
-	setCameraOrigin(getCameraOrigin() + _right * (-fabs(units)));
-}
-
-void Camera::moveRightDiscrete(double units)
-{
-	moveUpdateAxes();
-	setCameraOrigin(getCameraOrigin() + _right * fabs(units));
-}
-
-void Camera::rotateLeftDiscrete()
-{
-	Vector3 angles = getCameraAngles();
-	angles[camera::CAMERA_YAW] += SPEED_TURN;
-	setCameraAngles(angles);
-}
-
-void Camera::rotateRightDiscrete()
-{
-	Vector3 angles = getCameraAngles();
-	angles[camera::CAMERA_YAW] -= SPEED_TURN;
-	setCameraAngles(angles);
 }
 
 } // namespace

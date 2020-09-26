@@ -169,6 +169,17 @@ public:
     void onUpKey(KeyEventType eventType);
     void onDownKey(KeyEventType eventType);
 
+    void pitchUpDiscrete();
+    void pitchDownDiscrete();
+    void rotateRightDiscrete();
+    void rotateLeftDiscrete();
+    void moveRightDiscrete(double units);
+    void moveLeftDiscrete(double units);
+    void moveDownDiscrete(double units);
+    void moveUpDiscrete(double units);
+    void moveBackDiscrete(double units);
+    void moveForwardDiscrete(double units);
+
 protected:
     void handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movementFlags);
     void handleKeyEvent(KeyEventType eventType, unsigned int freeMoveFlags, const std::function<void()>& discreteMovement);
