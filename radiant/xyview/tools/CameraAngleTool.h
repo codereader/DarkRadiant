@@ -4,7 +4,7 @@
 #include "imousetool.h"
 #include "math/Vector3.h"
 #include "iorthoview.h"
-#include "camera/GlobalCameraWndManager.h"
+#include "icameraview.h"
 
 namespace ui
 {
@@ -83,33 +83,35 @@ public:
 private:
     void orientCamera(XYMouseToolEvent& xyEvent)
     {
-        CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-
-        if (!cam)
+        try
         {
-            return;
+            auto& camView = GlobalCameraManager().getActiveView();
+
+            Vector3 point = xyEvent.getWorldPos();
+            xyEvent.getView().snapToGrid(point);
+
+            point -= camView.getCameraOrigin();
+
+            int n1 = (xyEvent.getViewType() == XY) ? 1 : 2;
+            int n2 = (xyEvent.getViewType() == YZ) ? 1 : 0;
+
+            int nAngle = (xyEvent.getViewType() == XY) ? camera::CAMERA_YAW : camera::CAMERA_PITCH;
+
+            if (point[n1] || point[n2])
+            {
+                Vector3 angles(camView.getCameraAngles());
+
+                angles[nAngle] = radians_to_degrees(atan2(point[n1], point[n2]));
+
+                camView.setCameraAngles(angles);
+            }
+
+            xyEvent.getView().queueDraw();
         }
-
-        Vector3 point = xyEvent.getWorldPos();
-        xyEvent.getView().snapToGrid(point);
-
-        point -= cam->getCameraOrigin();
-
-        int n1 = (xyEvent.getViewType() == XY) ? 1 : 2;
-        int n2 = (xyEvent.getViewType() == YZ) ? 1 : 0;
-
-        int nAngle = (xyEvent.getViewType() == XY) ? camera::CAMERA_YAW : camera::CAMERA_PITCH;
-
-        if (point[n1] || point[n2])
+        catch (const std::runtime_error&)
         {
-            Vector3 angles(cam->getCameraAngles());
-
-            angles[nAngle] = static_cast<float>(radians_to_degrees(atan2(point[n1], point[n2])));
-
-            cam->setCameraAngles(angles);
+            // no camera present
         }
-
-        xyEvent.getView().queueDraw();
     }
 };
 

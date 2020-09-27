@@ -121,7 +121,6 @@ public:
     Vector4 getWindowCoordinates();
 
     void draw();
-    void drawCameraIcon(const Vector3& origin, const Vector3& angles);
     void drawBlockGrid();
     void drawGrid();
 
@@ -170,6 +169,7 @@ private:
 
     void onContextMenu();
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
+    void drawCameraIcon();
 
     // callbacks
     bool checkChaseMouse(unsigned int state);

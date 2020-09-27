@@ -8,7 +8,7 @@
 #include "imainframe.h"
 #include "itextstream.h"
 #include "iorthoview.h"
-#include "icamera.h"
+#include "icameraview.h"
 
 #include <time.h>
 #include <fmt/format.h>

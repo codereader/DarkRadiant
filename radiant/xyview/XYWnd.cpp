@@ -17,7 +17,6 @@
 #include "selectionlib.h"
 
 #include "ibrush.h"
-#include "camera/GlobalCameraWndManager.h"
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
 #include "ui/overlay/Overlay.h"
@@ -1010,45 +1009,57 @@ void XYWnd::drawBlockGrid()
     glColor4f(0, 0, 0, 0);
 }
 
-void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
+void XYWnd::drawCameraIcon()
 {
-    float   x, y, fov, box;
-    float a;
+    try
+    {
+        auto& camera = GlobalCameraManager().getActiveView();
 
-    fov = 48 / _scale;
-    box = 16 / _scale;
+        const auto& origin = camera.getCameraOrigin();
+        const auto& angles = camera.getCameraAngles();
 
-    if (_viewType == XY) {
-        x = origin[0];
-        y = origin[1];
-        a = degrees_to_radians(angles[camera::CAMERA_YAW]);
+        float x, y, fov, box;
+        float a;
+
+        fov = 48 / _scale;
+        box = 16 / _scale;
+
+        if (_viewType == XY) {
+            x = origin[0];
+            y = origin[1];
+            a = degrees_to_radians(angles[camera::CAMERA_YAW]);
+        }
+        else if (_viewType == YZ) {
+            x = origin[1];
+            y = origin[2];
+            a = degrees_to_radians(angles[camera::CAMERA_PITCH]);
+        }
+        else {
+            x = origin[0];
+            y = origin[2];
+            a = degrees_to_radians(angles[camera::CAMERA_PITCH]);
+        }
+
+        glColor3dv(GlobalColourSchemeManager().getColour("camera_icon"));
+        glBegin(GL_LINE_STRIP);
+        glVertex3f(x - box, y, 0);
+        glVertex3f(x, y + (box / 2), 0);
+        glVertex3f(x + box, y, 0);
+        glVertex3f(x, y - (box / 2), 0);
+        glVertex3f(x - box, y, 0);
+        glVertex3f(x + box, y, 0);
+        glEnd();
+
+        glBegin(GL_LINE_STRIP);
+        glVertex3f(x + static_cast<float>(fov * cos(a + c_pi / 4)), y + static_cast<float>(fov * sin(a + c_pi / 4)), 0);
+        glVertex3f(x, y, 0);
+        glVertex3f(x + static_cast<float>(fov * cos(a - c_pi / 4)), y + static_cast<float>(fov * sin(a - c_pi / 4)), 0);
+        glEnd();
     }
-    else if (_viewType == YZ) {
-        x = origin[1];
-        y = origin[2];
-        a = degrees_to_radians(angles[camera::CAMERA_PITCH]);
+    catch (const std::runtime_error&)
+    {
+        return; // no camera present
     }
-    else {
-        x = origin[0];
-        y = origin[2];
-        a = degrees_to_radians(angles[camera::CAMERA_PITCH]);
-    }
-
-    glColor3dv(GlobalColourSchemeManager().getColour("camera_icon"));
-    glBegin(GL_LINE_STRIP);
-    glVertex3f (x-box,y,0);
-    glVertex3f (x,y+(box/2),0);
-    glVertex3f (x+box,y,0);
-    glVertex3f (x,y-(box/2),0);
-    glVertex3f (x-box,y,0);
-    glVertex3f (x+box,y,0);
-    glEnd();
-
-    glBegin(GL_LINE_STRIP);
-    glVertex3f (x + static_cast<float>(fov*cos(a+c_pi/4)), y + static_cast<float>(fov*sin(a+c_pi/4)), 0);
-    glVertex3f (x, y, 0);
-    glVertex3f (x + static_cast<float>(fov*cos(a-c_pi/4)), y + static_cast<float>(fov*sin(a-c_pi/4)), 0);
-    glEnd();
 }
 
 // can be greatly simplified but per usual i am in a hurry
@@ -1417,11 +1428,7 @@ void XYWnd::draw()
     glScalef(_scale, _scale, 1);
     glTranslatef(-_origin[nDim1], -_origin[nDim2], 0);
 
-    CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-
-    if (cam != NULL) {
-        drawCameraIcon(cam->getCameraOrigin(), cam->getCameraAngles());
-    }
+    drawCameraIcon();
 
     if (!_activeMouseTools.empty())
     {

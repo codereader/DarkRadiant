@@ -12,7 +12,6 @@
 #include "i18n.h"
 #include "iarchive.h"
 #include "ibrush.h"
-#include "icamera.h"
 #include "icameraview.h"
 #include "iclipper.h"
 #include "icommandsystem.h"

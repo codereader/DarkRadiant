@@ -3,7 +3,7 @@
 #include "ifilter.h"
 #include "i18n.h"
 #include "igl.h"
-#include "icamera.h"
+#include "icameraview.h"
 #include "iscenegraphfactory.h"
 #include "irendersystemfactory.h"
 #include "iuimanager.h"

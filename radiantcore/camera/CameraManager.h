@@ -1,7 +1,6 @@
 #pragma once
 
 #include <list>
-#include "icamera.h"
 #include "icameraview.h"
 
 namespace camera

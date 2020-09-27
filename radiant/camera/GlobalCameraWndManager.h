@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include "icamera.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
 #include "imousetoolmanager.h"
@@ -22,7 +21,7 @@ namespace ui
  * resetCameraAngles() or lookThroughSelected().
  **/
 class GlobalCameraWndManager :
-	public camera::ICameraManager
+	public RegisterableModule
 {
 private:
 	typedef std::map<int, CamWndWeakPtr> CamWndMap;

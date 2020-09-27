@@ -5,7 +5,7 @@
 #include <fstream>
 #include "itextstream.h"
 #include "iscenegraph.h"
-#include "icamera.h"
+#include "icameraview.h"
 #include "imainframe.h"
 #include "idialogmanager.h"
 #include "ieventmanager.h"

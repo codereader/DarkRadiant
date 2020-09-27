@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "imousetool.h"
 #include "iorthoview.h"
-#include "camera/GlobalCameraWndManager.h"
+#include "icameraview.h"
 
 namespace ui
 {
@@ -81,32 +81,34 @@ public:
 private:
     void positionCamera(XYMouseToolEvent& xyEvent)
     {
-        CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
-
-        if (!camwnd)
+        try
         {
-            return;
+            auto& camera = GlobalCameraManager().getActiveView();
+
+            Vector3 origin = xyEvent.getWorldPos();
+
+            switch (xyEvent.getViewType())
+            {
+            case XY:
+                origin[2] = camera.getCameraOrigin()[2];
+                break;
+            case YZ:
+                origin[0] = camera.getCameraOrigin()[0];
+                break;
+            case XZ:
+                origin[1] = camera.getCameraOrigin()[1];
+                break;
+            };
+
+            xyEvent.getView().snapToGrid(origin);
+            camera.setCameraOrigin(origin);
+
+            xyEvent.getView().queueDraw();
         }
-
-        Vector3 origin = xyEvent.getWorldPos();
-
-        switch (xyEvent.getViewType())
+        catch (const std::runtime_error&)
         {
-        case XY:
-            origin[2] = camwnd->getCameraOrigin()[2];
-            break;
-        case YZ:
-            origin[0] = camwnd->getCameraOrigin()[0];
-            break;
-        case XZ:
-            origin[1] = camwnd->getCameraOrigin()[1];
-            break;
-        };
-
-        xyEvent.getView().snapToGrid(origin);
-        camwnd->setCameraOrigin(origin);
-
-        xyEvent.getView().queueDraw();
+            // no camera present
+        }
     }
 };
 
