@@ -133,7 +133,10 @@ void PointFile::advance(bool forward)
 
 		cam.setCameraOrigin(_points[_curPos].vertex);
 
-		GlobalXYWndManager().setOrigin(_points[_curPos].vertex);
+		if (module::GlobalModuleRegistry().moduleExists(MODULE_ORTHOVIEWMANAGER))
+		{
+			GlobalXYWndManager().setOrigin(_points[_curPos].vertex);
+		}
 
 		{
 			Vector3 dir((_points[_curPos + 1].vertex - cam.getCameraOrigin()).getNormalised());

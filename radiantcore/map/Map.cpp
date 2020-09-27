@@ -245,7 +245,12 @@ void Map::focusViews(const Vector3& point, const Vector3& angles)
 {
     // Set the camera and the views to the given point
     GlobalCameraManager().focusAllCameras(point, angles);
-    GlobalXYWndManager().setOrigin(point);
+
+    // ortho views might not be present in headless mode
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_ORTHOVIEWMANAGER))
+    {
+        GlobalXYWndManager().setOrigin(point);
+    }
 }
 
 scene::INodePtr Map::findWorldspawn()

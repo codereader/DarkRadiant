@@ -267,6 +267,11 @@ void RegionManager::setRegionXY(const cmd::ArgumentList& args)
 {
     try
     {
+        if (!module::GlobalModuleRegistry().moduleExists(MODULE_ORTHOVIEWMANAGER))
+        {
+            throw std::runtime_error("No ortho view module loaded.");
+        }
+
         // Obtain the current XY orthoview, if there is one
         auto& xyWnd = GlobalXYWndManager().getViewByType(XY);
         const auto& origin = xyWnd.getOrigin();
