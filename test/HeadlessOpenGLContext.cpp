@@ -14,20 +14,25 @@ class HeadlessOpenGLContext :
 private:
 	HGLRC _context;
 	static HGLRC _tempContext;
+
+	WNDCLASS _wc;
 public:
 	HeadlessOpenGLContext()
 	{
 		MSG msg = { 0 };
-		WNDCLASS wc = { 0 };
-		wc.lpfnWndProc = WndProc;
-		wc.hInstance = ::GetModuleHandle(nullptr);
-		wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
-		wc.lpszClassName = L"testwindow";
-		wc.style = CS_OWNDC;
+		_wc = { 0 };
+		_wc.lpfnWndProc = WndProc;
+		_wc.hInstance = ::GetModuleHandle(nullptr);
+		_wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
+		_wc.lpszClassName = L"HeadlessOpenGLContext";
+		_wc.style = CS_OWNDC;
 
-		if (!RegisterClass(&wc)) throw std::runtime_error("Failed to register the window class");
+		if (!GetClassInfo(_wc.hInstance, _wc.lpszClassName, &_wc))
+		{
+			if (!RegisterClass(&_wc)) throw std::runtime_error("Failed to register the window class");
+		}
 
-		CreateWindowW(wc.lpszClassName, L"testwindow", WS_OVERLAPPEDWINDOW, 0, 0, 640, 480, 0, 0, wc.hInstance, 0);
+		CreateWindowW(_wc.lpszClassName, L"HeadlessOpenGLContext", WS_OVERLAPPEDWINDOW, 0, 0, 640, 480, 0, 0, _wc.hInstance, 0);
 
 		while (_tempContext == nullptr && PeekMessage(&msg, NULL, 0, 0, 0) > 0)
 		{

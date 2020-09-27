@@ -94,6 +94,12 @@ public:
     {
         return *_streamLock;
     }
+
+    void reset()
+    {
+        _outputStream = &_tempOutputStream;
+        _streamLock = &_nullLock;
+    }
 };
 
 // With multiple threads writing against a single thread-unsafe std::ostream

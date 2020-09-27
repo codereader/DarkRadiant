@@ -69,6 +69,8 @@ void SharedOpenGLContextModule::shutdownModule()
 {
 	_sigSharedContextCreated.clear();
 	_sigSharedContextDestroyed.clear();
+
+	_sharedContext.reset();
 }
 
 module::StaticModule<SharedOpenGLContextModule> sharedContextModule;

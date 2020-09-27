@@ -94,6 +94,7 @@ protected:
 
 	~RadiantTest()
 	{
+		module::shutdownStreams();
 		_coreModule.reset();
 	}
 

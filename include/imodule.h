@@ -418,6 +418,18 @@ namespace module
 		GlobalDebugStream().setLock(logWriter.getStreamLock());
 	}
 
+	// Should be called when shutting down the application to be sure that no dangling 
+	// references remain in the output stream holders
+	inline void shutdownStreams()
+	{
+		GlobalOutputStream().reset();
+		GlobalWarningStream().reset();
+		GlobalErrorStream().reset();
+#ifndef NDEBUG
+		GlobalDebugStream().reset();
+#endif
+	}
+
 	// Helper method initialising a few references and checking a module's
 	// compatibility level with the one reported by the ModuleRegistry
 	inline void performDefaultInitialisation(IModuleRegistry& registry)
