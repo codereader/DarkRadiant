@@ -101,11 +101,6 @@ const char* const MODULE_CAMERA_MANAGER("CameraManager");
 // Module accessor
 inline camera::ICameraViewManager& GlobalCameraManager()
 {
-	// Cache the reference locally
-	static camera::ICameraViewManager& _instance(
-		*std::static_pointer_cast<camera::ICameraViewManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_CAMERA_MANAGER)
-		)
-	);
-	return _instance;
+	static module::InstanceReference<camera::ICameraViewManager> _reference(MODULE_CAMERA_MANAGER);
+	return _reference;
 }

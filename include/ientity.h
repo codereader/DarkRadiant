@@ -403,11 +403,6 @@ public:
 
 inline IEntityModule& GlobalEntityModule()
 {
-    // Cache the reference locally
-    static IEntityModule& _entityCreator(
-        *std::static_pointer_cast<IEntityModule>(
-            module::GlobalModuleRegistry().getModule(MODULE_ENTITY)
-        )
-    );
-    return _entityCreator;
+    static module::InstanceReference<IEntityModule> _reference(MODULE_ENTITY);
+    return _reference;
 }

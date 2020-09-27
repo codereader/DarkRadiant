@@ -153,10 +153,6 @@ const char* const MODULE_AASFILEMANAGER("ZAasFileManager");
 // Application-wide Accessor to the global AAS file manager
 inline map::IAasFileManager& GlobalAasFileManager()
 {
-	// Cache the reference locally
-	static map::IAasFileManager& _manager(
-		*std::static_pointer_cast<map::IAasFileManager>(
-		module::GlobalModuleRegistry().getModule(MODULE_AASFILEMANAGER))
-	);
-	return _manager;
+    static module::InstanceReference<map::IAasFileManager> _reference(MODULE_AASFILEMANAGER);
+	return _reference;
 }

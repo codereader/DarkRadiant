@@ -26,11 +26,6 @@ const char* const MODULE_REGION_MANAGER = "RegionManager";
 
 inline map::IRegionManager& GlobalRegionManager()
 {
-	// Cache the reference locally
-	static map::IRegionManager& _module(
-		*std::static_pointer_cast<map::IRegionManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_REGION_MANAGER)
-		)
-	);
-	return _module;
+	static module::InstanceReference<map::IRegionManager> _reference(MODULE_REGION_MANAGER);
+	return _reference;
 }

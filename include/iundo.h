@@ -107,13 +107,8 @@ public:
 // The accessor function
 inline IUndoSystem& GlobalUndoSystem() 
 {
-	// Cache the reference locally
-	static IUndoSystem& _undoSystem(
-		*std::static_pointer_cast<IUndoSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_UNDOSYSTEM)
-		)
-	);
-	return _undoSystem;
+	static module::InstanceReference<IUndoSystem> _reference(MODULE_UNDOSYSTEM);
+	return _reference;
 }
 
 class UndoableCommand

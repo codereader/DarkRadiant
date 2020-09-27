@@ -43,7 +43,7 @@ typedef std::shared_ptr<SkinnedModel> SkinnedModelPtr;
 // Model skinlist typedef
 typedef std::vector<std::string> StringList;
 
-const std::string MODULE_MODELSKINCACHE("ModelSkinCache");
+const char* const MODULE_MODELSKINCACHE("ModelSkinCache");
 
 /**
  * Interface class for the skin manager.
@@ -88,10 +88,6 @@ public:
 
 inline ModelSkinCache& GlobalModelSkinCache()
 {
-	std::shared_ptr<ModelSkinCache> _skinCache(
-		std::static_pointer_cast<ModelSkinCache>(
-			module::GlobalModuleRegistry().getModule(MODULE_MODELSKINCACHE)
-		)
-	);
-	return *_skinCache;
+	static module::InstanceReference<ModelSkinCache> _reference(MODULE_MODELSKINCACHE);
+	return _reference;
 }

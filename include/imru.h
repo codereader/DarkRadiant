@@ -38,11 +38,6 @@ const char* const MODULE_MRU_MANAGER = "MRUManager";
 
 inline map::IMRUManager& GlobalMRU()
 {
-	// Cache the reference locally
-	static map::IMRUManager& _manager(
-		*std::static_pointer_cast<map::IMRUManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_MRU_MANAGER)
-		)
-	);
-	return _manager;
+	static module::InstanceReference<map::IMRUManager> _reference(MODULE_MRU_MANAGER);
+	return _reference;
 }

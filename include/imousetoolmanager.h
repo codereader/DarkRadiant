@@ -122,11 +122,6 @@ const char* const MODULE_MOUSETOOLMANAGER = "MouseToolManager";
 
 inline ui::IMouseToolManager& GlobalMouseToolManager()
 {
-    // Cache the reference locally
-    static ui::IMouseToolManager& _mtManager(
-        *std::static_pointer_cast<ui::IMouseToolManager>(
-            module::GlobalModuleRegistry().getModule(MODULE_MOUSETOOLMANAGER)
-        )
-    );
-    return _mtManager;
+    static module::InstanceReference<ui::IMouseToolManager> _reference(MODULE_MOUSETOOLMANAGER);
+    return _reference;
 }

@@ -76,11 +76,6 @@ public:
 
 inline radiant::IRadiant& GlobalRadiantCore()
 {
-    // Cache the reference locally
-    static radiant::IRadiant& _radiant(
-        *std::static_pointer_cast<radiant::IRadiant>(
-            module::GlobalModuleRegistry().getModule(MODULE_RADIANT_CORE)
-        )
-    );
-    return _radiant;
+    static module::InstanceReference<radiant::IRadiant> _reference(MODULE_RADIANT_CORE);
+    return _reference;
 }

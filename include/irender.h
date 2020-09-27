@@ -499,7 +499,7 @@ public:
  */
 typedef std::shared_ptr<Shader> ShaderPtr;
 
-const std::string MODULE_RENDERSYSTEM("ShaderCache");
+const char* const MODULE_RENDERSYSTEM("ShaderCache");
 
 /**
  * \brief
@@ -664,11 +664,6 @@ typedef std::weak_ptr<RenderSystem> RenderSystemWeakPtr;
  */
 inline RenderSystem& GlobalRenderSystem()
 {
-	// Cache the reference locally
-	static RenderSystem& _instance(
-		*std::static_pointer_cast<RenderSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)
-		)
-	);
-	return _instance;
+    static module::InstanceReference<RenderSystem> _reference(MODULE_RENDERSYSTEM);
+    return _reference;
 }

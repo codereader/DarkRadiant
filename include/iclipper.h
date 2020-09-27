@@ -73,11 +73,6 @@ public:
 // The accessor for the clipper module
 inline IClipper& GlobalClipper() 
 {
-	// Cache the reference locally
-	static IClipper&  _clipper(
-		*std::static_pointer_cast<IClipper>(
-			module::GlobalModuleRegistry().getModule(MODULE_CLIPPER)
-		)
-	);
-	return _clipper;
+	static module::InstanceReference<IClipper> _reference(MODULE_CLIPPER);
+	return _reference;
 }

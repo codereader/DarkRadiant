@@ -168,11 +168,6 @@ const char* const MODULE_NAMESPACE_FACTORY("NamespaceFactory");
 // Factory accessor
 inline INamespaceFactory& GlobalNamespaceFactory()
 {
-	// Cache the reference locally
-	static INamespaceFactory& _namespaceFactory(
-		*std::static_pointer_cast<INamespaceFactory>(
-			module::GlobalModuleRegistry().getModule(MODULE_NAMESPACE_FACTORY)
-		)
-	);
-	return _namespaceFactory;
+	static module::InstanceReference<INamespaceFactory> _reference(MODULE_NAMESPACE_FACTORY);
+	return _reference;
 }

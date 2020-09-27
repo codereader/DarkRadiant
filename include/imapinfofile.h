@@ -159,10 +159,6 @@ const char* const MODULE_MAPINFOFILEMANAGER("MapInfoFileManager");
 // Application-wide Accessor to the global map info file manager
 inline map::IMapInfoFileManager& GlobalMapInfoFileManager()
 {
-	// Cache the reference locally
-	static map::IMapInfoFileManager& _manager(
-		*std::static_pointer_cast<map::IMapInfoFileManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_MAPINFOFILEMANAGER))
-	);
-	return _manager;
+	static module::InstanceReference<map::IMapInfoFileManager> _reference(MODULE_MAPINFOFILEMANAGER);
+	return _reference;
 }

@@ -179,12 +179,8 @@ public:
 typedef std::shared_ptr<IEventManager> IEventManagerPtr;
 
 // This is the accessor for the event manager
-inline IEventManager& GlobalEventManager() {
-	// Cache the reference locally
-	static IEventManager& _eventManager(
-		*std::static_pointer_cast<IEventManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_EVENTMANAGER)
-		)
-	);
-	return _eventManager;
+inline IEventManager& GlobalEventManager()
+{
+	static module::InstanceReference<IEventManager> _reference(MODULE_EVENTMANAGER);
+	return _reference;
 }

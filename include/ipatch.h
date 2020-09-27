@@ -319,11 +319,6 @@ const char* const MODULE_PATCH = "PatchModule";
 
 inline patch::IPatchModule& GlobalPatchModule()
 {
-	static patch::IPatchModule& _patchCreator(
-		*std::static_pointer_cast<patch::IPatchModule>(
-			module::GlobalModuleRegistry().getModule(MODULE_PATCH)
-		)
-	);
-
-	return _patchCreator;
+	static module::InstanceReference<patch::IPatchModule> _reference(MODULE_PATCH);
+	return _reference;
 }

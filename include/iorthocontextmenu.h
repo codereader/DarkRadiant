@@ -43,11 +43,6 @@ const char* const MODULE_ORTHOCONTEXTMENU = "OrthoContextMenu";
 
 inline ui::IOrthoContextMenu& GlobalOrthoContextMenu()
 {
-	// Cache the reference locally
-	static ui::IOrthoContextMenu& _menu(
-		*std::static_pointer_cast<ui::IOrthoContextMenu>(
-			module::GlobalModuleRegistry().getModule(MODULE_ORTHOCONTEXTMENU)
-		)
-	);
-	return _menu;
+	static module::InstanceReference<ui::IOrthoContextMenu> _reference(MODULE_ORTHOCONTEXTMENU);
+	return _reference;
 }

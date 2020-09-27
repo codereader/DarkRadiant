@@ -89,11 +89,6 @@ public:
 // This is the accessor for the grid module
 inline IGridManager& GlobalGrid()
 {
-	// Cache the reference locally
-	static IGridManager& _grid(
-		*std::static_pointer_cast<IGridManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_GRID)
-		)
-	);
-	return _grid;
+	static module::InstanceReference<IGridManager> _reference(MODULE_GRID);
+	return _reference;
 }

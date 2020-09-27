@@ -7,8 +7,9 @@
 #include <sigc++/slot.h>
 #include <sigc++/signal.h>
 
-namespace {
-	const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
+namespace
+{
+	const char* const RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
 }
 
 /**
@@ -16,7 +17,7 @@ namespace {
  */
 
 // String identifier for the registry module
-const std::string MODULE_XMLREGISTRY("XMLRegistry");
+const char* const MODULE_XMLREGISTRY("XMLRegistry");
 
 /**
  * Abstract base class for the registry module.
@@ -107,12 +108,8 @@ public:
 typedef std::shared_ptr<Registry> RegistryPtr;
 
 // This is the accessor for the registry
-inline Registry& GlobalRegistry() {
-	// Cache the reference locally
-	static Registry& _registry(
-		*std::static_pointer_cast<Registry>(
-			module::GlobalModuleRegistry().getModule(MODULE_XMLREGISTRY)
-		)
-	);
-	return _registry;
+inline Registry& GlobalRegistry() 
+{
+	static module::InstanceReference<Registry> _reference(MODULE_XMLREGISTRY);
+	return _reference;
 }

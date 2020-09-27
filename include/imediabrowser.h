@@ -47,11 +47,6 @@ const char* const MODULE_MEDIABROWSER = "MediaBrowser";
 
 inline ui::IMediaBrowser& GlobalMediaBrowser()
 {
-	// Cache the reference locally
-	static ui::IMediaBrowser& _mediaBrowser(
-		*std::static_pointer_cast<ui::IMediaBrowser>(
-			module::GlobalModuleRegistry().getModule(MODULE_MEDIABROWSER)
-		)
-	);
-	return _mediaBrowser;
+	static module::InstanceReference<ui::IMediaBrowser> _reference(MODULE_MEDIABROWSER);
+	return _reference;
 }

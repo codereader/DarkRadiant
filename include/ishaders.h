@@ -448,11 +448,6 @@ public:
 
 inline MaterialManager& GlobalMaterialManager()
 {
-	// Cache the reference locally
-	static MaterialManager& _shaderSystem(
-		*std::static_pointer_cast<MaterialManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM)
-		)
-	);
-	return _shaderSystem;
+	static module::InstanceReference<MaterialManager> _reference(MODULE_SHADERSYSTEM);
+	return _reference;
 }

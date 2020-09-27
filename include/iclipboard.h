@@ -33,11 +33,6 @@ const char* const MODULE_CLIPBOARD("Clipboard");
 
 inline radiant::IClipboard& GlobalClipboard()
 {
-    // Cache the reference locally
-    static radiant::IClipboard& _instance(
-        *std::static_pointer_cast<radiant::IClipboard>(
-            module::GlobalModuleRegistry().getModule(MODULE_CLIPBOARD)
-        )
-    );
-    return _instance;
+    static module::InstanceReference<radiant::IClipboard> _reference(MODULE_CLIPBOARD);
+    return _reference;
 }

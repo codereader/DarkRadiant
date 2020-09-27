@@ -133,11 +133,6 @@ typedef std::shared_ptr<IGameManager> IGameManagerPtr;
 // This is the accessor for the game manager
 inline game::IGameManager& GlobalGameManager()
 {
-	// Cache the reference locally
-	static game::IGameManager& _gameManager(
-		*std::static_pointer_cast<game::IGameManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_GAMEMANAGER)
-		)
-	);
-	return _gameManager;
+	static module::InstanceReference<game::IGameManager> _reference(MODULE_GAMEMANAGER);
+	return _reference;
 }

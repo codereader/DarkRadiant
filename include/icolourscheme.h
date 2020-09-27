@@ -82,11 +82,6 @@ const char* const MODULE_COLOURSCHEME_MANAGER("ColourSchemeManager");
 
 inline colours::IColourSchemeManager& GlobalColourSchemeManager()
 {
-	// Cache the reference locally
-	static colours::IColourSchemeManager& _instance(
-		*std::static_pointer_cast<colours::IColourSchemeManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_COLOURSCHEME_MANAGER)
-		)
-	);
-	return _instance;
+	static module::InstanceReference<colours::IColourSchemeManager> _reference(MODULE_COLOURSCHEME_MANAGER);
+	return _reference;
 }

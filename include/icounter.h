@@ -44,11 +44,6 @@ public:
 
 inline ICounterManager& GlobalCounters()
 {
-	// Cache the reference locally
-	static ICounterManager& _counters(
-		*std::static_pointer_cast<ICounterManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_COUNTER)
-		)
-	);
-	return _counters;
+	static module::InstanceReference<ICounterManager> _reference(MODULE_COUNTER);
+	return _reference;
 }

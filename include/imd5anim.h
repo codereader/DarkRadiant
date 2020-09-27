@@ -106,11 +106,6 @@ const char* const MODULE_ANIMATIONCACHE("MD5AnimationCache");
 
 inline md5::IAnimationCache& GlobalAnimationCache()
 {
-	// Cache the reference locally
-	static md5::IAnimationCache& _animationCache(
-		*std::static_pointer_cast<md5::IAnimationCache>(
-			module::GlobalModuleRegistry().getModule(md5::MODULE_ANIMATIONCACHE)
-		)
-	);
-	return _animationCache;
+	static module::InstanceReference<md5::IAnimationCache> _reference(md5::MODULE_ANIMATIONCACHE);
+	return _reference;
 }

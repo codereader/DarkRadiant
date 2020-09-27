@@ -83,6 +83,8 @@ public:
 
 	std::size_t getCompatibilityLevel() const override;
 
+	InstanceId getInstanceId() const override;
+
 	// Returns a list of modules
 	std::string getModuleList(const std::string& separator = "\n");
 

@@ -446,12 +446,8 @@ public:
  *
  * \ingroup eclass
  */
-inline IEntityClassManager& GlobalEntityClassManager() {
-    // Cache the reference locally
-    static IEntityClassManager& _eclassMgr(
-        *std::static_pointer_cast<IEntityClassManager>(
-            module::GlobalModuleRegistry().getModule(MODULE_ECLASSMANAGER)
-        )
-    );
-    return _eclassMgr;
+inline IEntityClassManager& GlobalEntityClassManager()
+{
+    static module::InstanceReference<IEntityClassManager> _reference(MODULE_ECLASSMANAGER);
+    return _reference;
 }

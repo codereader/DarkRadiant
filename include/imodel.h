@@ -246,10 +246,6 @@ const char* const MODULE_MODELFORMATMANAGER("ModelFormatManager");
 
 inline model::IModelFormatManager& GlobalModelFormatManager()
 {
-	std::shared_ptr<model::IModelFormatManager> _modelFormatManager(
-		std::static_pointer_cast<model::IModelFormatManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_MODELFORMATMANAGER)
-			)
-	);
-	return *_modelFormatManager;
+	static module::InstanceReference<model::IModelFormatManager> _reference(MODULE_MODELFORMATMANAGER);
+	return _reference;
 }

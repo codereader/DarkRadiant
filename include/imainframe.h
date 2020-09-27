@@ -139,11 +139,6 @@ public:
 // This is the accessor for the mainframe module
 inline IMainFrame& GlobalMainFrame()
 {
-	// Cache the reference locally
-	static IMainFrame& _mainFrame(
-		*std::static_pointer_cast<IMainFrame>(
-			module::GlobalModuleRegistry().getModule(MODULE_MAINFRAME)
-		)
-	);
-	return _mainFrame;
+	static module::InstanceReference<IMainFrame> _reference(MODULE_MAINFRAME);
+	return _reference;
 }

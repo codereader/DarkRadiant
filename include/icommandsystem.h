@@ -319,11 +319,6 @@ const char* const MODULE_COMMANDSYSTEM("CommandSystem");
 // This is the accessor for the commandsystem
 inline cmd::ICommandSystem& GlobalCommandSystem()
 {
-	// Cache the reference locally
-	static cmd::ICommandSystem& _cmdSystem(
-		*std::static_pointer_cast<cmd::ICommandSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_COMMANDSYSTEM)
-		)
-	);
-	return _cmdSystem;
+	static module::InstanceReference<cmd::ICommandSystem> _reference(MODULE_COMMANDSYSTEM);
+	return _reference;
 }

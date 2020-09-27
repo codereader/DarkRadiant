@@ -322,11 +322,6 @@ const char* const MODULE_BRUSHCREATOR("Doom3BrushCreator");
 
 inline brush::BrushCreator& GlobalBrushCreator()
 {
-	// Cache the reference locally
-	static brush::BrushCreator& _brushCreator(
-		*std::static_pointer_cast<brush::BrushCreator>(
-			module::GlobalModuleRegistry().getModule(MODULE_BRUSHCREATOR)
-		)
-	);
-	return _brushCreator;
+	static module::InstanceReference<brush::BrushCreator> _reference(MODULE_BRUSHCREATOR);
+	return _reference;
 }

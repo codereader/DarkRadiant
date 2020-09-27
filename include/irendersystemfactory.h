@@ -1,5 +1,4 @@
-#ifndef _IRENDERSYSTEM_FACTORY_H_
-#define _IRENDERSYSTEM_FACTORY_H_
+#pragma once
 
 #include "imodule.h"
 #include "irender.h"
@@ -34,13 +33,6 @@ const char* const MODULE_RENDERSYSTEMFACTORY = "RenderSystemFactory";
 // Global accessor to the rendersystem factory module
 inline render::IRenderSystemFactory& GlobalRenderSystemFactory()
 {
-	// Cache the reference locally
-	static render::IRenderSystemFactory& _instance(
-		*std::static_pointer_cast<render::IRenderSystemFactory>(
-			module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEMFACTORY)
-		)
-	);
-	return _instance;
+	static module::InstanceReference<render::IRenderSystemFactory> _reference(MODULE_RENDERSYSTEMFACTORY);
+	return _reference;
 }
-
-#endif /* _IRENDERSYSTEM_FACTORY_H_ */

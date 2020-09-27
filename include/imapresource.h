@@ -81,11 +81,6 @@ public:
 
 inline IMapResourceManager& GlobalMapResourceManager()
 {
-	// Cache the reference locally
-	static IMapResourceManager& _mapResourceManager(
-		*std::static_pointer_cast<IMapResourceManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_MAPRESOURCEMANAGER)
-		)
-	);
-	return _mapResourceManager;
+	static module::InstanceReference<IMapResourceManager> _reference(MODULE_MAPRESOURCEMANAGER);
+	return _reference;
 }

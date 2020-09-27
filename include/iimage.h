@@ -89,11 +89,6 @@ const char* const MODULE_IMAGELOADER("ImageLoader");
 
 inline const IImageLoader& GlobalImageLoader()
 {
-    static IImageLoader& _imageLoader(
-        *std::static_pointer_cast<IImageLoader>(
-            module::GlobalModuleRegistry().getModule(MODULE_IMAGELOADER)
-        )
-    );
-
-    return _imageLoader;
+    static module::InstanceReference<IImageLoader> _reference(MODULE_IMAGELOADER);
+    return _reference;
 }

@@ -49,13 +49,8 @@ const char* const MODULE_SHARED_GL_CONTEXT("SharedGLContextHolder");
 
 inline gl::ISharedGLContextHolder& GlobalOpenGLContext()
 {
-    // Cache the reference locally
-    static gl::ISharedGLContextHolder& _instance(
-        *std::static_pointer_cast<gl::ISharedGLContextHolder>(
-            module::GlobalModuleRegistry().getModule(MODULE_SHARED_GL_CONTEXT)
-        )
-    );
-    return _instance;
+    static module::InstanceReference<gl::ISharedGLContextHolder> _reference(MODULE_SHARED_GL_CONTEXT);
+    return _reference;
 }
 
 const char* const MODULE_OPENGL("OpenGL");
@@ -80,11 +75,6 @@ public:
 
 inline OpenGLBinding& GlobalOpenGL() 
 {
-    // Cache the reference locally
-    static OpenGLBinding& _openGL(
-        *std::static_pointer_cast<OpenGLBinding>(
-            module::GlobalModuleRegistry().getModule(MODULE_OPENGL)
-        )
-    );
-    return _openGL;
+    static module::InstanceReference<OpenGLBinding> _reference(MODULE_OPENGL);
+    return _reference;
 }

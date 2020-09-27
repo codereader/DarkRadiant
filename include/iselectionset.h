@@ -112,11 +112,6 @@ const char* const MODULE_SELECTIONSETS = "SelectionSetModule";
 
 inline selection::ISelectionSetModule& GlobalSelectionSetModule()
 {
-	// Cache the reference locally
-	static selection::ISelectionSetModule& _module(
-		*std::static_pointer_cast<selection::ISelectionSetModule>(
-			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONSETS)
-		)
-	);
-	return _module;
+	static module::InstanceReference<selection::ISelectionSetModule> _reference(MODULE_SELECTIONSETS);
+	return _reference;
 }

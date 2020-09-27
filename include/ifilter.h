@@ -220,11 +220,6 @@ public:
 
 inline filters::IFilterSystem& GlobalFilterSystem()
 {
-	// Cache the reference locally
-	static filters::IFilterSystem& _filterSystem(
-		*std::static_pointer_cast<filters::IFilterSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_FILTERSYSTEM)
-		)
-	);
-	return _filterSystem;
+	static module::InstanceReference<filters::IFilterSystem> _reference(MODULE_FILTERSYSTEM);
+	return _reference;
 }

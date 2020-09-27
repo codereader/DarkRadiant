@@ -31,11 +31,6 @@ const char* const MODULE_SCENEGRAPHFACTORY = "SceneGraphFactory";
 // Global accessor to the rendersystem factory module
 inline scene::ISceneGraphFactory& GlobalSceneGraphFactory()
 {
-	// Cache the reference locally
-	static scene::ISceneGraphFactory& _instance(
-		*std::static_pointer_cast<scene::ISceneGraphFactory>(
-			module::GlobalModuleRegistry().getModule(MODULE_SCENEGRAPHFACTORY)
-		)
-	);
-	return _instance;
+	static module::InstanceReference<scene::ISceneGraphFactory> _reference(MODULE_SCENEGRAPHFACTORY);
+	return _reference;
 }

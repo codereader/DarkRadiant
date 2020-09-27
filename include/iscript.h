@@ -92,11 +92,6 @@ const char* const MODULE_SCRIPTING_SYSTEM("ScriptingSystem");
 // This is the accessor for the scripting system
 inline IScriptingSystem& GlobalScriptingSystem()
 {
-	// Cache the reference locally
-	static IScriptingSystem& _scriptingSystem(
-		*std::static_pointer_cast<IScriptingSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_SCRIPTING_SYSTEM)
-		)
-	);
-	return _scriptingSystem;
+	static module::InstanceReference<IScriptingSystem> _reference(MODULE_SCRIPTING_SYSTEM);
+	return _reference;
 }

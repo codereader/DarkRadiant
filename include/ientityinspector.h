@@ -110,15 +110,10 @@ public:
 
 } // namespace ui
 
-const std::string MODULE_ENTITYINSPECTOR("EntityInspector");
+const char* const MODULE_ENTITYINSPECTOR("EntityInspector");
 
 inline ui::IEntityInspector& GlobalEntityInspector()
 {
-	// Cache the reference locally
-	static ui::IEntityInspector& _inspector(
-		*std::static_pointer_cast<ui::IEntityInspector>(
-			module::GlobalModuleRegistry().getModule(MODULE_ENTITYINSPECTOR)
-		)
-	);
-	return _inspector;
+	static module::InstanceReference<ui::IEntityInspector> _reference(MODULE_ENTITYINSPECTOR);
+	return _reference;
 }

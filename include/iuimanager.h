@@ -229,13 +229,8 @@ public:
 // This is the accessor for the UI manager
 inline IUIManager& GlobalUIManager()
 {
-	// Cache the reference locally
-	static IUIManager& _uiManager(
-		*std::static_pointer_cast<IUIManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_UIMANAGER)
-		)
-	);
-	return _uiManager;
+	static module::InstanceReference<IUIManager> _reference(MODULE_UIMANAGER);
+	return _reference;
 }
 
 inline IGroupDialog& GlobalGroupDialog() {

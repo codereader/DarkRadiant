@@ -110,11 +110,6 @@ const char* const MODULE_ORTHOVIEWMANAGER = "OrthoviewManager";
 // This is the accessor for the xy window manager module
 inline ui::IXWndManager& GlobalXYWndManager()
 {
-	// Cache the reference locally
-	static ui::IXWndManager& _xyWndManager(
-		*std::static_pointer_cast<ui::IXWndManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_ORTHOVIEWMANAGER)
-		)
-	);
-	return _xyWndManager;
+    static module::InstanceReference<ui::IXWndManager> _reference(MODULE_ORTHOVIEWMANAGER);
+    return _reference;
 }

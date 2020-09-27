@@ -326,6 +326,12 @@ public:
 	// on top of that they can actively query this number from the registry
 	// to check whether they are being loaded into an incompatible binary.
 	virtual std::size_t getCompatibilityLevel() const = 0;
+
+	typedef std::uintptr_t InstanceId;
+
+	// Returns the instance ID of this registry. This is a numeric type used by
+	// InstanceReference classes to check if their references are still valid.
+	virtual InstanceId getInstanceId() const = 0;
 };
 
 namespace module
@@ -336,6 +342,50 @@ namespace module
 	 *
 	 * \ingroup module
 	 */
+
+	// Reference container to hold the cached module references.
+	// It automatically invalidates its reference as soon as the IModuleRegistry
+	// changes its instance ID.
+	template<typename ModuleType>
+	class InstanceReference
+	{
+	private:
+		const char* const _moduleName;
+		ModuleType* _instancePtr;
+		IModuleRegistry::InstanceId _registryInstanceId;
+	public:
+		InstanceReference(const char* const moduleName) :
+			_moduleName(moduleName),
+			_instancePtr(nullptr),
+			_registryInstanceId(0)
+		{
+			acquireReference();
+		}
+
+		// Cast-operator used to access the module reference
+		inline operator ModuleType&()
+		{
+#ifdef MODULE_REFERENCES_SUPPORT_INVALIDATION
+			// Check if we have an instance or if it is outdated
+			if (_instancePtr == nullptr ||
+				_registryInstanceId != GlobalModuleRegistry().getInstanceId())
+			{
+				acquireReference();
+			}
+#endif
+			return *_instancePtr;
+		}
+
+	private:
+		void acquireReference()
+		{
+			_instancePtr = std::dynamic_pointer_cast<ModuleType>(
+				GlobalModuleRegistry().getModule(_moduleName)).get();
+			// Save the instance ID of the registry - if this ever changes 
+			// the above reference is treated as invalid
+			_registryInstanceId = GlobalModuleRegistry().getInstanceId();
+		}
+	};
 
 	/** greebo: This is a container holding a reference to the registry.
 	 *          The getRegistry() symbol above is not exported to the

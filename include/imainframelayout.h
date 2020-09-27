@@ -1,5 +1,4 @@
-#ifndef IMAINFRAME_LAYOUT_H_
-#define IMAINFRAME_LAYOUT_H_
+#pragma once
 
 #include "imodule.h"
 #include <functional>
@@ -53,7 +52,7 @@ typedef std::shared_ptr<IMainFrameLayout> IMainFrameLayoutPtr;
  */
 typedef std::function<IMainFrameLayoutPtr()> CreateMainFrameLayoutFunc;
 
-const std::string MODULE_MAINFRAME_LAYOUT_MANAGER("MainFrameLayoutManager");
+const char* const MODULE_MAINFRAME_LAYOUT_MANAGER("MainFrameLayoutManager");
 
 class IMainFrameLayoutManager :
 	public RegisterableModule
@@ -76,14 +75,8 @@ public:
 };
 
 // This is the accessor for the mainframe module
-inline IMainFrameLayoutManager& GlobalMainFrameLayoutManager() {
-	// Cache the reference locally
-	static IMainFrameLayoutManager& _mainFrameLayoutManager(
-		*std::static_pointer_cast<IMainFrameLayoutManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_MAINFRAME_LAYOUT_MANAGER)
-		)
-	);
-	return _mainFrameLayoutManager;
+inline IMainFrameLayoutManager& GlobalMainFrameLayoutManager()
+{
+	static module::InstanceReference<IMainFrameLayoutManager> _reference(MODULE_MAINFRAME_LAYOUT_MANAGER);
+	return _reference;
 }
-
-#endif /* IMAINFRAME_LAYOUT_H_ */

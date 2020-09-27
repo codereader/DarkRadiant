@@ -28,11 +28,6 @@ const char* const MODULE_WXGLWIDGET_MANAGER("wxGLWidgetManager");
 
 inline ui::IWxGLWidgetManager& GlobalWxGlWidgetManager()
 {
-    // Cache the reference locally
-    static ui::IWxGLWidgetManager& _instance(
-        *std::static_pointer_cast<ui::IWxGLWidgetManager>(
-            module::GlobalModuleRegistry().getModule(MODULE_WXGLWIDGET_MANAGER)
-        )
-    );
-    return _instance;
+    static module::InstanceReference<ui::IWxGLWidgetManager> _reference(MODULE_WXGLWIDGET_MANAGER);
+    return _reference;
 }

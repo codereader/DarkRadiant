@@ -136,15 +136,10 @@ public:
 
 }
 
-const std::string MODULE_FONTMANAGER("FontManager");
+const char* const MODULE_FONTMANAGER("FontManager");
 
 inline fonts::IFontManager& GlobalFontManager()
 {
-	// Cache the reference locally
-	static fonts::IFontManager& _fontManager(
-		*std::static_pointer_cast<fonts::IFontManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_FONTMANAGER)
-		)
-	);
-	return _fontManager;
+	static module::InstanceReference<fonts::IFontManager> _reference(MODULE_FONTMANAGER);
+	return _reference;
 }

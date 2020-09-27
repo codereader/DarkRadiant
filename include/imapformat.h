@@ -288,11 +288,6 @@ const char* const MODULE_MAPFORMATMANAGER("MapFormatManager");
 // Application-wide Accessor to the global map format manager
 inline map::IMapFormatManager& GlobalMapFormatManager()
 {
-	// Cache the reference locally
-	static map::IMapFormatManager& _mapFormatManager(
-		*std::static_pointer_cast<map::IMapFormatManager>(
-		module::GlobalModuleRegistry().getModule(MODULE_MAPFORMATMANAGER)
-		)
-	);
-	return _mapFormatManager;
+	static module::InstanceReference<map::IMapFormatManager> _reference(MODULE_MAPFORMATMANAGER);
+	return _reference;
 }

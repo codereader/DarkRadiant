@@ -160,12 +160,7 @@ const char* const MODULE_MAP("Map");
 // Application-wide Accessor to the currently active map
 inline IMap& GlobalMapModule()
 {
-	// Cache the reference locally
-	static IMap& _mapModule(
-		*std::static_pointer_cast<IMap>(
-			module::GlobalModuleRegistry().getModule(MODULE_MAP)
-		)
-	);
-	return _mapModule;
+	static module::InstanceReference<IMap> _reference(MODULE_MAP);
+	return _reference;
 }
 

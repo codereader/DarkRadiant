@@ -389,10 +389,6 @@ const char* const MODULE_GUIMANAGER("GuiManager");
 // Application-wide Accessor to the global GUI manager
 inline gui::IGuiManager& GlobalGuiManager()
 {
-	// Cache the reference locally
-	static gui::IGuiManager& _manager(
-		*std::static_pointer_cast<gui::IGuiManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_GUIMANAGER))
-	);
-	return _manager;
+	static module::InstanceReference<gui::IGuiManager> _reference(MODULE_GUIMANAGER);
+	return _reference;
 }

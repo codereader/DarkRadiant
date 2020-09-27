@@ -318,12 +318,8 @@ public:
 
 const char* const MODULE_SELECTIONSYSTEM("SelectionSystem");
 
-inline SelectionSystem& GlobalSelectionSystem() {
-	// Cache the reference locally
-	static SelectionSystem& _selectionSystem(
-		*std::static_pointer_cast<SelectionSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONSYSTEM)
-		)
-	);
-	return _selectionSystem;
+inline SelectionSystem& GlobalSelectionSystem()
+{
+	static module::InstanceReference<SelectionSystem> _reference(MODULE_SELECTIONSYSTEM);
+	return _reference;
 }

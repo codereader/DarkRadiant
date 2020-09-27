@@ -195,11 +195,6 @@ public:
 
 inline IPreferenceSystem& GlobalPreferenceSystem()
 {
-	// Cache the reference locally
-	static IPreferenceSystem& _prefSystem(
-		*std::static_pointer_cast<IPreferenceSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_PREFERENCESYSTEM)
-		)
-	);
-	return _prefSystem;
+	static module::InstanceReference<IPreferenceSystem> _reference(MODULE_PREFERENCESYSTEM);
+	return _reference;
 }

@@ -239,11 +239,6 @@ const char* const MODULE_PARTICLESMANAGER = "ParticlesManager";
 // Accessor
 inline particles::IParticlesManager& GlobalParticlesManager()
 {
-	// Cache the reference locally
-	static particles::IParticlesManager& _particlesManager(
-		*std::static_pointer_cast<particles::IParticlesManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_PARTICLESMANAGER)
-		)
-	);
-	return _particlesManager;
+	static module::InstanceReference<particles::IParticlesManager> _reference(MODULE_PARTICLESMANAGER);
+	return _reference;
 }

@@ -55,10 +55,6 @@ const char* const MODULE_MODELCACHE("ModelCache");
 
 inline model::IModelCache& GlobalModelCache()
 {
-	static model::IModelCache& _modelCache(
-		*std::static_pointer_cast<model::IModelCache>(
-			module::GlobalModuleRegistry().getModule(MODULE_MODELCACHE)
-		)
-	);
-	return _modelCache;
+	static module::InstanceReference<model::IModelCache> _reference(MODULE_MODELCACHE);
+	return _reference;
 }

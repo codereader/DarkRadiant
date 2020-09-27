@@ -16,7 +16,7 @@
  */
 
 // String identifier for the registry module
-const std::string MODULE_SCENEGRAPH("SceneGraph");
+const char* const MODULE_SCENEGRAPH("SceneGraph");
 
 class VolumeTest;
 
@@ -134,13 +134,8 @@ typedef std::shared_ptr<Cloneable> CloneablePtr;
 // Accessor to the singleton scenegraph, used for the main map
 inline scene::Graph& GlobalSceneGraph()
 {
-	// Cache the reference locally
-	static scene::Graph& _sceneGraph(
-		*std::dynamic_pointer_cast<scene::Graph>(
-			module::GlobalModuleRegistry().getModule(MODULE_SCENEGRAPH)
-		)
-	);
-	return _sceneGraph;
+	static module::InstanceReference<scene::Graph> _reference(MODULE_SCENEGRAPH);
+	return _reference;
 }
 
 inline void SceneChangeNotify()

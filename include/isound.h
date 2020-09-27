@@ -118,11 +118,6 @@ public:
 // Accessor method
 inline ISoundManager& GlobalSoundManager() 
 {
-    // Cache the reference locally
-    static ISoundManager& _soundManager(
-        *std::static_pointer_cast<ISoundManager>(
-            module::GlobalModuleRegistry().getModule(MODULE_SOUNDMANAGER)
-        )
-    );
-    return _soundManager;
+    static module::InstanceReference<ISoundManager> _reference(MODULE_SOUNDMANAGER);
+    return _reference;
 }

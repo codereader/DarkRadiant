@@ -219,11 +219,6 @@ const char* const MODULE_LAYERS("LayerModule");
 
 inline scene::ILayerModule& GlobalLayerModule()
 {
-	// Cache the reference locally
-	static scene::ILayerModule& _layerModule(
-		*std::static_pointer_cast<scene::ILayerModule>(
-			module::GlobalModuleRegistry().getModule(MODULE_LAYERS)
-		)
-	);
-	return _layerModule;
+	static module::InstanceReference<scene::ILayerModule> _reference(MODULE_LAYERS);
+	return _reference;
 }

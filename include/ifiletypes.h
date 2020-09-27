@@ -84,11 +84,6 @@ const char* const TYPE_MODEL_EXPORT = "modelexport";
 
 inline IFileTypeRegistry& GlobalFiletypes()
 {
-	// Cache the reference locally
-	static IFileTypeRegistry& _fileTypes(
-		*std::static_pointer_cast<IFileTypeRegistry>(
-			module::GlobalModuleRegistry().getModule(MODULE_FILETYPES)
-		)
-	);
-	return _fileTypes;
+	static module::InstanceReference<IFileTypeRegistry> _reference(MODULE_FILETYPES);
+	return _reference;
 }

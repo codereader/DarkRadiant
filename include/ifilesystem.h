@@ -200,11 +200,6 @@ const char* const MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
 
 inline vfs::VirtualFileSystem& GlobalFileSystem()
 {
-	// Cache the reference locally
-	static vfs::VirtualFileSystem& _vfs(
-		*std::static_pointer_cast<vfs::VirtualFileSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_VIRTUALFILESYSTEM)
-		)
-	);
-	return _vfs;
+	static module::InstanceReference<vfs::VirtualFileSystem> _reference(MODULE_VIRTUALFILESYSTEM);
+	return _reference;
 }

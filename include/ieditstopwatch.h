@@ -48,11 +48,6 @@ const char* const MODULE_EDITING_STOPWATCH("EditingStopwatch");
 
 inline map::IMapEditStopwatch& GlobalMapEditStopwatch()
 {
-	// Cache the reference locally
-	static map::IMapEditStopwatch& _instance(
-		*std::static_pointer_cast<map::IMapEditStopwatch>(
-			module::GlobalModuleRegistry().getModule(MODULE_EDITING_STOPWATCH)
-		)
-	);
-	return _instance;
+	static module::InstanceReference<map::IMapEditStopwatch> _reference(MODULE_EDITING_STOPWATCH);
+	return _reference;
 }

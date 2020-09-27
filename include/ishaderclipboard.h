@@ -83,11 +83,6 @@ const char* const MODULE_SHADERCLIPBOARD("ShaderClipboard");
 
 inline selection::IShaderClipboard& GlobalShaderClipboard()
 {
-	// Cache the reference locally
-	static selection::IShaderClipboard& _clipboard(
-		*std::static_pointer_cast<selection::IShaderClipboard>(
-			module::GlobalModuleRegistry().getModule(MODULE_SHADERCLIPBOARD)
-		)
-	);
-	return _clipboard;
+	static module::InstanceReference<selection::IShaderClipboard> _reference(MODULE_SHADERCLIPBOARD);
+	return _reference;
 }
