@@ -47,11 +47,10 @@ namespace
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
 
-Camera::Camera(render::IRenderView& view, const Callback& queueDraw, const Callback& forceRedraw) :
+Camera::Camera(render::IRenderView& view, const std::function<void(bool)>& requestRedraw) :
 	_origin(_prevOrigin), // Use previous origin for camera position
 	_angles(_prevAngles),
-	_queueDraw(queueDraw),
-	_forceRedraw(forceRedraw),
+	_requestRedraw(requestRedraw),
 	_fieldOfView(75.0f),
 	_farClipPlane(32768),
 	_width(0),
@@ -193,12 +192,12 @@ const VolumeTest& Camera::getVolumeTest() const
 
 void Camera::queueDraw()
 {
-	_queueDraw();
+	_requestRedraw(false);
 }
 
 void Camera::forceRedraw()
 {
-	_forceRedraw();
+	_requestRedraw(true);
 }
 
 void Camera::moveUpdateAxes()

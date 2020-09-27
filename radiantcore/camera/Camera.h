@@ -17,8 +17,7 @@ class Camera :
 	Vector3 _origin;
 	Vector3 _angles;
 
-	Callback _queueDraw;
-	Callback _forceRedraw;
+	std::function<void(bool)> _requestRedraw;
 
 	float _fieldOfView;
 	float _farClipPlane;
@@ -34,7 +33,7 @@ class Camera :
 	render::IRenderView& _view;
 
 public:
-	Camera(render::IRenderView& view, const Callback& queueDraw, const Callback& forceRedraw);
+	Camera(render::IRenderView& view, const std::function<void(bool)>& requestRedraw);
 	Camera(const Camera& other) = delete;
 	Camera& operator=(const Camera& other) = delete;
 

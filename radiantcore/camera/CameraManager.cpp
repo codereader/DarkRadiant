@@ -23,10 +23,15 @@ void CameraManager::initialiseModule(const IApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
-ICameraView::Ptr CameraManager::createCamera(render::IRenderView& view,
-	const std::function<void()>& queueDraw, const std::function<void()>& forceRedraw)
+ICameraView::Ptr CameraManager::createCamera(render::IRenderView& view, const std::function<void(bool)>& requestRedraw)
 {
-	return std::make_shared<Camera>(view, queueDraw, forceRedraw);
+	_cameras.emplace_back(std::make_shared<Camera>(view, requestRedraw));
+	return _cameras.back();
+}
+
+void CameraManager::destroyCamera(const ICameraView::Ptr& camera)
+{
+	_cameras.remove(camera);
 }
 
 sigc::signal<void>& CameraManager::signal_cameraChanged()

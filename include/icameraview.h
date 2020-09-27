@@ -64,8 +64,15 @@ class ICameraViewManager :
 public:
 	virtual ~ICameraViewManager() {}
 
-	virtual ICameraView::Ptr createCamera(render::IRenderView& view, 
-		const std::function<void()>& queueDraw, const std::function<void()>& forceRedraw) = 0;
+	// Create a new camera instance. The ICameraViewManager is keeping a reference to this
+	// object for broadcasting the focusCamera() calls, so be sure to notify the manager
+	// if this camera is no longer in use by invoking destroyCamera().
+	// The requestRedraw takes a bool indicating whether the redraw should be queued (false)
+	// or a redraw should be forced (true)
+	virtual ICameraView::Ptr createCamera(render::IRenderView& view, const std::function<void(bool)>& requestRedraw) = 0;
+
+	// Releases this camera instance, clearing any internal references to it
+	virtual void destroyCamera(const ICameraView::Ptr& camera) = 0;
 
 	// Signal emitted when any camera position or angles changed
 	virtual sigc::signal<void>& signal_cameraChanged() = 0;

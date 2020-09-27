@@ -79,7 +79,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
-    _camera(GlobalCameraManager().createCamera(_view, std::bind(&CamWnd::queueDraw, this), std::bind(&CamWnd::forceRedraw, this))),
+    _camera(GlobalCameraManager().createCamera(_view, std::bind(&CamWnd::requestRedraw, this, std::placeholders::_1))),
     _drawing(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
@@ -263,6 +263,9 @@ CamWnd::~CamWnd()
     }
 
     removeHandlersMove();
+
+    // Release the camera instance
+    GlobalCameraManager().destroyCamera(_camera);
 
     // Notify the camera manager about our destruction
     GlobalCamera().removeCamWnd(_id);
@@ -1129,6 +1132,18 @@ void CamWnd::forceRedraw()
 
     _wxGLWidget->Refresh(false);
     _wxGLWidget->Update();
+}
+
+void CamWnd::requestRedraw(bool force)
+{
+    if (force)
+    {
+        forceRedraw();
+    }
+    else
+    {
+        queueDraw();
+    }
 }
 
 void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)

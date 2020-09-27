@@ -208,6 +208,7 @@ private:
     void Cam_Draw();
     bool onRender();
     void drawTime();
+    void requestRedraw(bool force);
 
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
