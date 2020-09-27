@@ -9,6 +9,9 @@
     <Link>
       <AdditionalDependencies>scenelib.lib;mathlib.lib;xmlutillib.lib;modulelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>MODULE_REFERENCES_SUPPORT_INVALIDATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
