@@ -22,18 +22,6 @@
 
 namespace entity {
 
-/* greebo: This is the actual light class. It contains the information about the geometry
- * of the light and the actual render functions.
- *
- * This class owns all the keyObserver callbacks, that get invoked as soon as the entity key/values get
- * changed by the user.
- *
- * The subclass Doom3LightRadius contains some variables like the light radius and light center coordinates,
- * and there are some "onChanged" callbacks for the light radius and light center.
- *
- * Note: All the selection stuff is handled by the LightInstance class. This is just the bare bone light.
- */
-
 void light_vertices(const AABB& aabb_light, Vector3 points[6]);
 void light_draw(const AABB& aabb_light, RenderStateFlags state);
 
@@ -43,10 +31,28 @@ inline void default_extents(Vector3& extents) {
 
 class LightNode;
 
+/**
+ * \brief
+ * Main implementation of a light in the scene
+ *
+ * greebo: This is the actual light class. It contains the information about
+ * the geometry of the light and the actual render functions.
+ *
+ * This class owns all the keyObserver callbacks, that get invoked as soon as
+ * the entity key/values get changed by the user.
+ *
+ * The subclass Doom3LightRadius contains some variables like the light radius
+ * and light center coordinates, and there are some "onChanged" callbacks for
+ * the light radius and light center.
+ *
+ * Note: All the selection stuff is handled by the LightInstance class. This is
+ * just the bare bone light.
+ */
 class Light :
-	public OpenGLRenderable,
-	public Bounded,
-	public Snappable
+    public OpenGLRenderable,
+    public Bounded,
+    public Snappable,
+    public RendererLight
 {
 	friend class LightNode;
 
@@ -59,7 +65,7 @@ class Light :
 	// The "working" version of the origin
 	Vector3 _originTransformed;
 
-  RotationKey m_rotationKey;
+    RotationKey m_rotationKey;
     RotationMatrix m_rotation;
 
 	Doom3LightRadius m_doom3Radius;
@@ -78,7 +84,7 @@ class Light :
 	RenderableLightTarget _rEnd;
 
     RotationMatrix m_lightRotation;
-  bool m_useLightRotation;
+    bool m_useLightRotation;
 
 	// These are the vectors that define a projected light
 	Vector3 _lightTarget;
@@ -253,14 +259,14 @@ public:
     void updateProjection() const;
 
     // RendererLight implementation
-    const Vector3& worldOrigin() const;
+    const IRenderEntity& getLightEntity() const override;
+    const Vector3& worldOrigin() const override;
+    Matrix4 getLightTextureTransformation() const override;
+    bool intersectsAABB(const AABB& other) const override;
+    Vector3 getLightOrigin() const override;
+    const ShaderPtr& getShader() const override;
 
-    Matrix4 getLightTextureTransformation() const;
-  	bool intersectsAABB(const AABB& other) const;
 	const Matrix4& rotation() const;
-	Vector3 getLightOrigin() const;
-	const Vector3& colour() const;
-    const ShaderPtr& getShader() const;
 
 	Vector3& target();
 	Vector3& targetTransformed();

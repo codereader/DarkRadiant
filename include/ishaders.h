@@ -327,16 +327,24 @@ public:
 
 typedef std::shared_ptr<Material> MaterialPtr;
 
-/**
- * Stream insertion of Material for debugging purposes.
- */
+/// Stream insertion of Material for debugging purposes.
 inline
-std::ostream& operator<< (std::ostream& os, const Material& shader) {
-	os << "Material { name = " << shader.getName()
-	   << ", filename = " << shader.getShaderFileName()
-	   << ", firstlayer = " << shader.firstLayer()
-	   << " }";
+std::ostream& operator<< (std::ostream& os, const Material& shader)
+{
+	os << "Material(name=" << shader.getName()
+	   << ", filename=" << shader.getShaderFileName()
+	   << ", firstlayer=" << shader.firstLayer()
+	   << ")";
 	return os;
+}
+
+/// Debug stream insertion of possibly null material pointer
+inline std::ostream& operator<< (std::ostream& os, const Material* m)
+{
+    if (m)
+        return os << *m;
+    else
+        return os << "[no material]";
 }
 
 typedef std::function<void(const std::string&)> ShaderNameCallback;

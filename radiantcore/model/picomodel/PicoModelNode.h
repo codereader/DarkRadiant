@@ -30,7 +30,7 @@ private:
 
 	// Vector of RendererLight references which illuminate this instance, set
 	// with addLight() and clearLights()
-    render::lib::VectorLightList _lights;
+    render::lib::VectorLightList _intersectingLights;
 
 	// The light list from the shader cache when we attach
 	LightList& _lightList;

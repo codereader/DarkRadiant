@@ -6,40 +6,59 @@
 namespace render
 {
 
+/// Storage class for per-frame render statistics
 class RenderStatistics
 {
-	std::string _statStr;
+    // Timer for measuring render time
+    wxStopWatch _timer;
 
-	std::size_t _countPrims;
-	std::size_t _countStates;
-	std::size_t _countTransforms;
+    // Time for the render front-end only
+    long _feTime = 0;
 
-	wxStopWatch _timer;
+    // Count of lights (visible and culled)
+    int _visibleLights = 0;
+    int _culledLights = 0;
+
 public:
-	const std::string& getStatString()
+
+    /// Return the constructed string for display
+    std::string getStatString()
     {
-        _statStr = "prims: " + string::to_string(_countPrims) +
-				  " | states: " + string::to_string(_countStates) +
-				  " | transforms: "	+ string::to_string(_countTransforms) +
-				  " | msec: " + string::to_string(_timer.Time());
+        // Calculate times for render front-end and back-end
+        long totTime = _timer.Time();
+        long beTime = totTime - _feTime;
 
-		return _statStr;
-	}
+        return "lights: " + std::to_string(_visibleLights)
+             + " / " + std::to_string(_visibleLights + _culledLights)
+             + " | f/e: " + std::to_string(_feTime) + " ms"
+             + " | b/e: " + std::to_string(beTime) + " ms"
+             + " | tot: " + std::to_string(totTime) + " ms"
+             + " | fps: " + (totTime > 0 ? std::to_string(1000 / totTime) : "-");
+    }
 
-	void resetStats() 
+    /// Mark the front-end render stage as completed, storing the time internally
+    void frontEndComplete()
     {
-		_countPrims = 0;
-		_countStates = 0;
-		_countTransforms = 0;
+        _feTime = _timer.Time();
+    }
 
-		_timer.Start();
-	}
-
-	static RenderStatistics& Instance()
+    /// Increment the light count
+    void addLight(bool visible)
     {
-		static RenderStatistics _instance;
-		return _instance;
-	}
+        if (visible)
+            ++_visibleLights;
+        else
+            ++_culledLights;
+    }
+
+    /// Reset statistics at the beginning of a frame render
+    void resetStats()
+    {
+        _visibleLights = _culledLights = 0;
+
+        _feTime = 0;
+        _timer.Start();
+    }
 };
 
 } // namespace render

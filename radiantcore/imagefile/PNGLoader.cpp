@@ -140,7 +140,7 @@ RGBAImagePtr LoadPNGBuff(unsigned char* fbuffer)
 
 	for (int i = 0; i < height; i++)
 	{
-		row_pointers[i] = (png_byte*)(image->getMipMapPixels(0)) + i * 4 * (width);
+		row_pointers[i] = (png_byte*)(image->getPixels()) + i * 4 * (width);
 	}
 
 	// actual read

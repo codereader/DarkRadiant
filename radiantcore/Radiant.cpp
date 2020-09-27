@@ -95,7 +95,7 @@ void Radiant::startup()
 
 void Radiant::createLogFile()
 {
-	_logFile.reset(new applog::LogFile(_context.getSettingsPath() + "darkradiant.log"));
+	_logFile.reset(new applog::LogFile(_context.getCacheDataPath() + "darkradiant.log"));
 
 	if (_logFile->isOpen())
 	{

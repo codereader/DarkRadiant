@@ -83,7 +83,6 @@
     <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\BMPLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp" />
-    <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\ImageLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\imagefile\JPEGLoader.cpp" />
@@ -611,8 +610,6 @@
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleRegistry.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.cpp" />
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBBumpProgram.cpp" />
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBDepthFillProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.cpp" />
@@ -781,7 +778,6 @@
     <ClInclude Include="..\..\radiantcore\grid\GridManager.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\BMPLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\dds.h" />
-    <ClInclude Include="..\..\radiantcore\imagefile\DDSImage.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ImageLoader.h" />
     <ClInclude Include="..\..\radiantcore\imagefile\ImageTypeLoader.h" />
@@ -930,8 +926,6 @@
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleRegistry.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBBumpProgram.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBDepthFillProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.h" />

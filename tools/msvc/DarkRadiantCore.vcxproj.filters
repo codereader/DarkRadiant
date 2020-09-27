@@ -283,9 +283,6 @@
     <ClCompile Include="..\..\radiantcore\imagefile\dds.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\imagefile\DDSImage.cpp">
-      <Filter>src\imagefile</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\imagefile\ddslib.cpp">
       <Filter>src\imagefile</Filter>
     </ClCompile>
@@ -372,12 +369,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.cpp">
       <Filter>src\rendersystem\backend</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBBumpProgram.cpp">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBDepthFillProgram.cpp">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
@@ -1167,9 +1158,6 @@
     <ClInclude Include="..\..\radiantcore\imagefile\dds.h">
       <Filter>src\imagefile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\imagefile\DDSImage.h">
-      <Filter>src\imagefile</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\imagefile\ddslib.h">
       <Filter>src\imagefile</Filter>
     </ClInclude>
@@ -1298,12 +1286,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateManager.h">
       <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBBumpProgram.h">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ARBDepthFillProgram.h">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>

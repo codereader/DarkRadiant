@@ -194,7 +194,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
     <ClCompile Include="..\..\radiant\camera\GlobalCameraWndManager.cpp" />
     <ClCompile Include="..\..\radiant\clipboard\ClipboardModule.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp" />
@@ -307,8 +306,6 @@
     <ClCompile Include="..\..\radiant\ui\einspector\SoundPropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\TexturePropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\Vector3PropertyEditor.cpp" />
-    <ClCompile Include="..\..\radiant\ui\entitychooser\EntityClassChooser.cpp" />
-    <ClCompile Include="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\findshader\FindShader.cpp" />
     <ClCompile Include="..\..\radiant\ui\lightinspector\LightInspector.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\EntityInfoTab.cpp" />
@@ -456,7 +453,6 @@
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h" />
-    <ClInclude Include="..\..\radiant\camera\CamRenderer.h" />
     <ClInclude Include="..\..\radiant\camera\CamWnd.h" />
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h" />
     <ClInclude Include="..\..\radiant\render\OpenGLModule.h" />
@@ -500,8 +496,6 @@
     <ClInclude Include="..\..\radiant\ui\einspector\SoundPropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\TexturePropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\Vector3PropertyEditor.h" />
-    <ClInclude Include="..\..\radiant\ui\entitychooser\EntityClassChooser.h" />
-    <ClInclude Include="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.h" />
     <ClInclude Include="..\..\radiant\ui\findshader\FindShader.h" />
     <ClInclude Include="..\..\radiant\ui\lightinspector\LightInspector.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\EntityInfoTab.h" />

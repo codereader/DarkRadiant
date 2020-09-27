@@ -51,12 +51,12 @@ void RenderableAasFile::renderSolid(RenderableCollector& collector, const Volume
 			continue;
 		}
 
-		collector.addRenderable(_normalShader, aabb, Matrix4::getIdentity());
+		collector.addRenderable(*_normalShader, aabb, Matrix4::getIdentity());
 	}
 
 	if (_renderNumbers)
 	{
-		collector.addRenderable(_normalShader, *this, Matrix4::getIdentity());
+		collector.addRenderable(*_normalShader, *this, Matrix4::getIdentity());
 	}
 }
 

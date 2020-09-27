@@ -213,7 +213,7 @@ public:
 
 /// Interface for a INode subclass that contains an Entity
 class IEntityNode :
-    public virtual IRenderEntity,
+    public IRenderEntity,
     public virtual scene::INode
 {
 public:

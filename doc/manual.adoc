@@ -808,6 +808,59 @@ needs to align across all of the brushes, regardless of how they are moved or
 resized), you will want to disable *Texture Lock*.
 |===
 
+==== Using the shader clipboard
+
+While constructing a map it will frequently be necessary to apply the same
+texture to several different surfaces such that they appear seamless in game. In
+order to assist with this, DarkRadiant provides a *shader clipboard* which
+allows shaders to be copied and pasted between primitives, and is independent of
+the main clipboard used for copying and pasting other objects.
+
+===== Copying a shader
+
+There are two ways to copy a shader to the shader clipboard.
+
+1. Select a _single face_ (not an entire brush) with *Ctrl + Shift + Left click*
+ in the 3D view, then choose *Edit -> Copy shader*.
+2. Directly *Middle click* the face in the 3D view (there is no need to select
+it first).
+
+In both cases, the *ShaderClipboard* section of the bottom status bar will
+update to show the new value of the shader clipboard. If the *Media* or
+*Textures* tab is visible, their contents will also update to view the selected
+shader.
+
+NOTE: Selecting a texture explicitly in the *Media* or *Textures* tabs will also
+update the shader clipboard with the selected shader.
+
+===== Pasting a shader
+
+Once a shader is on the shader clipboard, it can be pasted onto another surface
+in a number of ways:
+
+1. Select the destination face with *Ctrl + Shift + Left click*, then choose
+*Edit -> Paste shader* or *Edit -> Paste shader (natural)*.
+2. Directly *Middle click* the destination face while holding down either *Ctrl*
+(to paste the shader with projected coordinates) or *Shift* (to paste the shader
+with natural coordinates).
+
+.Natural or projected pasting
+****
+The difference between natural and projected coordinates is apparent when
+pasting a shader onto a curved patch.
+
+With *projected* coordinates (*Ctrl + Middle click*) the texture on the patch
+will be aligned identically to the texture on the source face, which might
+result in a stretched texture depending on the angle between the patch and the
+source face.
+
+With *natural* coordinates (*Shift + Middle click*) the texture will flow over
+the curved surface in a more natural manner.
+
+When pasting a shader onto a flat brush face, there may be little or no
+difference between the two options.
+****
+
 === Working with entities
 
 If brushes are the bricks and mortar of a map (often literally), entities are
@@ -1107,6 +1160,26 @@ selected an entity or a primitive within that entity, using the text above the
 list of entity properties. If an entire entity is selected, the text will appear
 similar to `Entity&nbsp;1`, whereas with a primitive selected it will read
 `Entity&nbsp;1,&nbsp;Primitive&nbsp;1`.
+
+==== Adding or removing primitives
+
+Once you have created a *func_static* or similar entity from a number of
+primitives, you can add or remove primitives without needing to create a new
+entity from scratch.
+
+*Adding a primitive*:: Select the entity, then expand the selection (i.e. using
+ *Shift + Left click*) to include one or more existing primitives to add to this
+ entity. Then choose *Edit -> Reparent primitives*.
+
+*Removing a primitive*:: Use the *TAB* key to select the individual primitive to
+ remove (you must do this even if there is only one primitive in the entity),
+ then choose *Edit -> Reparent primitives to worldspawn*. The removed primitive
+ will still exist in the map but it will be a regular worldspawn brush or patch,
+ not parented to any other entity.
+
+*Unparenting all primitives*:: With the entity selected, simply right-click in
+ the 2D view and choose *Revert to worldspawn* to turn all of the primitives
+ back into worldspawn.
 
 === Compiling a map
 
@@ -1503,11 +1576,12 @@ removing a particular enemy type's ability to relight torches.
 .The Difficulty editor, showing a modified property on a particular entity class
 image::DifficultyEditor.png[align="center"]
 
-The Difficulty editor consists of a tabbed widget, where each tab contains the
-settings which correspond to a particular difficulty level. The difficulty names
-are shown for the current map — normally these will be the default values of
-"Easy", "Medium" and "Difficult", but if the current map has customised
-difficulty names DarkRadiant will adjust the tab names accordingly.
+The Difficulty editor shows the names of the available difficulty levels in a
+dropdown widget, beneath which are the settings for the selected difficulty
+level. The difficulty names are customisable on a per-map basis — normally these
+will be the default values of "Easy", "Medium" and "Difficult", but if the
+current map has customised difficulty names DarkRadiant will adjust the tab
+names accordingly.
 
 On the left is a tree view showing all of the property overrides for the current
 difficulty level. Each top-level item is a particular entity class, which
@@ -1529,9 +1603,14 @@ all enemies of this particular type will not be able to relight torches.
  assignments from the list; to remove all of the assignments for a particular
  entity class, you must select and delete each one individually.
 
+*Editing the difficulty name*:: To edit the name of the current difficulty
+ level, click the edit button to the right of the dropdown, and enter a new name
+ in the text box. The modified name will be written into a property on the
+ `worldspawn` entity and reflected both in game and in DarkRadiant.
+
 TIP: For details of more advanced difficulty-dependent changes, such as
 modifying the behaviour of a *single* entity (rather than an entire entity
-class), or changing the names of difficulty settings, consult the Dark Mod Wiki.
+class), consult the Dark Mod Wiki.
 
 == Command reference
 

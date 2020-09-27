@@ -96,15 +96,15 @@ ImagePtr MapExpression::getResampled(const ImagePtr& input, std::size_t width, s
 	}
 
 	// Check if the dimensions differ from the desired ones
-	if (width != input->getWidth(0) || height != input->getHeight(0)) {
+	if (width != input->getWidth() || height != input->getHeight()) {
 		// Allocate a new image buffer
 		ImagePtr resampled (new RGBAImage(width, height));
 
 		// Resample the texture to match the dimensions of the first image
 		TextureManipulator::instance().resampleTexture(
-			input->getMipMapPixels(0),
-			input->getWidth(0), input->getHeight(0),
-			resampled->getMipMapPixels(0),
+			input->getPixels(),
+			input->getWidth(), input->getHeight(),
+			resampled->getPixels(),
 			width, height, 4
 		);
 		return resampled;
@@ -159,8 +159,8 @@ ImagePtr AddNormalsExpression::getImage() const {
 
     if (imgOne == NULL) return ImagePtr();
 
-    std::size_t width = imgOne->getWidth(0);
-    std::size_t height = imgOne->getHeight(0);
+    std::size_t width = imgOne->getWidth();
+    std::size_t height = imgOne->getHeight();
 
     ImagePtr imgTwo = mapExpTwo->getImage();
 
@@ -177,9 +177,9 @@ ImagePtr AddNormalsExpression::getImage() const {
 
     ImagePtr result (new RGBAImage(width, height));
 
-    byte* pixOne = imgOne->getMipMapPixels(0);
-    byte* pixTwo = imgTwo->getMipMapPixels(0);
-    byte* pixOut = result->getMipMapPixels(0);
+    byte* pixOne = imgOne->getPixels();
+    byte* pixTwo = imgTwo->getPixels();
+    byte* pixOut = result->getPixels();
 
     // iterate through the pixels
     for( std::size_t y = 0; y < height; y++ )
@@ -238,13 +238,13 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 		return normalMap;
 	}
 
-	std::size_t width = normalMap->getWidth(0);
-	std::size_t height = normalMap->getHeight(0);
+	std::size_t width = normalMap->getWidth();
+	std::size_t height = normalMap->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
-	byte* in = normalMap->getMipMapPixels(0);
-	byte* out = result->getMipMapPixels(0);
+	byte* in = normalMap->getPixels();
+	byte* out = result->getPixels();
 
 	struct KernelElement {
 		// offset to the current pixel
@@ -315,8 +315,8 @@ ImagePtr AddExpression::getImage() const {
 
     if (imgOne == NULL) return ImagePtr();
 
-    std::size_t width = imgOne->getWidth(0);
-    std::size_t height = imgOne->getHeight(0);
+    std::size_t width = imgOne->getWidth();
+    std::size_t height = imgOne->getHeight();
 
 	ImagePtr imgTwo = mapExpTwo->getImage();
 
@@ -333,9 +333,9 @@ ImagePtr AddExpression::getImage() const {
 
     ImagePtr result (new RGBAImage(width, height));
 
-    byte* pixOne = imgOne->getMipMapPixels(0);
-    byte* pixTwo = imgTwo->getMipMapPixels(0);
-    byte* pixOut = result->getMipMapPixels(0);
+    byte* pixOne = imgOne->getPixels();
+    byte* pixTwo = imgTwo->getPixels();
+    byte* pixOut = result->getPixels();
 
     // iterate through the pixels
     for( std::size_t y = 0; y < height; y++)
@@ -394,8 +394,8 @@ ImagePtr ScaleExpression::getImage() const {
 		return img;
 	}
 
-    std::size_t width = img->getWidth(0);
-    std::size_t height = img->getHeight(0);
+    std::size_t width = img->getWidth();
+    std::size_t height = img->getHeight();
 
     if (scaleRed < 0 || scaleGreen < 0 || scaleBlue < 0 || scaleAlpha < 0) {
         rConsole() << "[shaders] ScaleExpression: Invalid scale values found." << std::endl;
@@ -404,8 +404,8 @@ ImagePtr ScaleExpression::getImage() const {
 
     ImagePtr result (new RGBAImage(width, height));
 
-    byte* in = img->getMipMapPixels(0);
-    byte* out = result->getMipMapPixels(0);
+    byte* in = img->getPixels();
+    byte* out = result->getPixels();
 
     // iterate through the pixels
     for( std::size_t y = 0; y < height; ++y)
@@ -456,13 +456,13 @@ ImagePtr InvertAlphaExpression::getImage() const {
 		return img;
 	}
 
-	std::size_t width = img->getWidth(0);
-	std::size_t height = img->getHeight(0);
+	std::size_t width = img->getWidth();
+	std::size_t height = img->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
-	byte* in = img->getMipMapPixels(0);
-	byte* out = result->getMipMapPixels(0);
+	byte* in = img->getPixels();
+	byte* out = result->getPixels();
 
 	// iterate through the pixels
 	for( std::size_t y = 0; y < height; ++y)
@@ -506,13 +506,13 @@ ImagePtr InvertColorExpression::getImage() const {
 		return img;
 	}
 
-	std::size_t width = img->getWidth(0);
-	std::size_t height = img->getHeight(0);
+	std::size_t width = img->getWidth();
+	std::size_t height = img->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
-	byte* in = img->getMipMapPixels(0);
-	byte* out = result->getMipMapPixels(0);
+	byte* in = img->getPixels();
+	byte* out = result->getPixels();
 
 	// iterate through the pixels
 	for( std::size_t y = 0; y < height; y++) {
@@ -554,13 +554,13 @@ ImagePtr MakeIntensityExpression::getImage() const {
 		return img;
 	}
 
-	std::size_t width = img->getWidth(0);
-	std::size_t height = img->getHeight(0);
+	std::size_t width = img->getWidth();
+	std::size_t height = img->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
-	byte* in = img->getMipMapPixels(0);
-	byte* out = result->getMipMapPixels(0);
+	byte* in = img->getPixels();
+	byte* out = result->getPixels();
 
 	// iterate through the pixels
 	for( std::size_t y = 0; y < height; ++y)
@@ -604,13 +604,13 @@ ImagePtr MakeAlphaExpression::getImage() const {
 		return img;
 	}
 
-	std::size_t width = img->getWidth(0);
-	std::size_t height = img->getHeight(0);
+	std::size_t width = img->getWidth();
+	std::size_t height = img->getHeight();
 
 	ImagePtr result (new RGBAImage(width, height));
 
-	byte* in = img->getMipMapPixels(0);
-	byte* out = result->getMipMapPixels(0);
+	byte* in = img->getPixels();
+	byte* out = result->getPixels();
 
 	// iterate through the pixels
 	for( std::size_t y = 0; y < height; y++)

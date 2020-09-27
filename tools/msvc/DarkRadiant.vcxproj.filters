@@ -32,9 +32,6 @@
     <Filter Include="src\ui\einspector">
       <UniqueIdentifier>{c1386db6-338d-4275-a9dd-dc418cfd4f49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ui\entitychooser">
-      <UniqueIdentifier>{1b2078f7-dc84-4f23-977a-c201f6497cb6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\findshader">
       <UniqueIdentifier>{a67a7c88-b49d-40c0-a8b8-4d30506c37af}</UniqueIdentifier>
     </Filter>
@@ -298,12 +295,6 @@
     <ClCompile Include="..\..\radiant\ui\einspector\Vector3PropertyEditor.cpp">
       <Filter>src\ui\einspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\entitychooser\EntityClassChooser.cpp">
-      <Filter>src\ui\entitychooser</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.cpp">
-      <Filter>src\ui\entitychooser</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\findshader\FindShader.cpp">
       <Filter>src\ui\findshader</Filter>
     </ClCompile>
@@ -417,9 +408,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\log\Console.cpp">
       <Filter>src\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp">
-      <Filter>src\camera</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <Filter>src</Filter>
@@ -678,9 +666,6 @@
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
       <Filter>src\camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\camera\CamRenderer.h">
-      <Filter>src\camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\camera\CamWnd.h">
       <Filter>src\camera</Filter>
     </ClInclude>
@@ -809,12 +794,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\einspector\Vector3PropertyEditor.h">
       <Filter>src\ui\einspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\entitychooser\EntityClassChooser.h">
-      <Filter>src\ui\entitychooser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.h">
-      <Filter>src\ui\entitychooser</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\findshader\FindShader.h">
       <Filter>src\ui\findshader</Filter>

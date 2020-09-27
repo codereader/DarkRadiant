@@ -105,7 +105,7 @@ public:
 
 	// Frontend render methods for submitting the face winding
 	void renderSolid(RenderableCollector& collector, const Matrix4& localToWorld,
-		const IRenderEntity& entity, const LightList& lights) const;
+		const IRenderEntity& entity, const LightSources& lights) const;
 	void renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
 		const IRenderEntity& entity) const;
 

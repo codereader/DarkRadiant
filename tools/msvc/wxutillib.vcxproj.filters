@@ -105,6 +105,7 @@
     <ClInclude Include="..\..\libs\wxutil\Button.h" />
     <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
     <ClInclude Include="..\..\libs\wxutil\GLContext.h" />
+    <ClInclude Include="..\..\libs\wxutil\EntityClassChooser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -156,6 +157,7 @@
       <Filter>dialog</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\EntityClassChooser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\libs\wxutil\Makefile.am" />

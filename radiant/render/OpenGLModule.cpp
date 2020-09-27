@@ -14,7 +14,7 @@ OpenGLModule::OpenGLModule() :
 void OpenGLModule::sharedContextCreated()
 {
 	// Initialise the font before firing the extension initialised signal
-	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 12));
+	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 14));
 }
 
 void OpenGLModule::sharedContextDestroyed()

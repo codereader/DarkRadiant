@@ -43,7 +43,6 @@ darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
                       camera/GlobalCameraWndManager.cpp \
                       camera/CameraSettings.cpp \
-                      camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
                       eventmanager/Accelerator.cpp \
@@ -57,8 +56,6 @@ darkradiant_SOURCES = main.cpp \
                       render/OpenGLModule.cpp \
 					  ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \
-                      ui/entitychooser/EntityClassChooser.cpp \
-                      ui/entitychooser/EntityClassTreePopulator.cpp \
                       ui/eclasstree/EClassTree.cpp \
                       ui/eclasstree/EClassTreeBuilder.cpp \
                       ui/entitylist/EntityList.cpp \

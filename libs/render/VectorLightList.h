@@ -9,12 +9,19 @@ namespace lib
 {
 
 /**
- * Implementation of the LightList interface using a std::vector of pointers.
+ * \brief
+ * A simple container of lights
+ *
+ * This is used by particular object types to store the list of intersecting
+ * lights passed into LitObject::insertLight() as a result of an earlier call
+ * to LightList::calculateIntersectingLights().
+ *
+ * Objects may use their insertLight() method to perform additional
+ * optimisations to exclude lights for object-specific reasons, then store the
+ * minimised light list in a VectorLightList for subsequent rendering.
  */
-class VectorLightList : 
-	public LightList
+class VectorLightList: public LightSources
 {
-private:
     // Vector of lights
     typedef std::vector<const RendererLight*> Lights;
     Lights _lights;
@@ -33,11 +40,8 @@ public:
         _lights.clear();
     }
 
-    void calculateIntersectingLights() const { }
-
-    void setDirty() { }
-
-    void forEachLight(const RendererLightCallback& callback) const
+    // LightSources implementation
+    void forEachLight(const RendererLightCallback& callback) const override
     {
         for (const RendererLight* light : _lights)
         {

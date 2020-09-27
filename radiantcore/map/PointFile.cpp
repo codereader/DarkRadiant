@@ -63,7 +63,7 @@ void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 {
 	if (isVisible())
 	{
-		collector.addRenderable(_renderstate, _points, Matrix4::getIdentity());
+		collector.addRenderable(*_renderstate, _points, Matrix4::getIdentity());
 	}
 }
 

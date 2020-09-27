@@ -31,26 +31,26 @@ class DifficultyEditor :
     difficulty::DifficultySettingsPtr _settings;
 
     // GtkNotebook-related widgets
-    wxPanel* _editor;
+    wxPanel* _editor = nullptr;
 
-    wxutil::TreeView* _settingsView;
+    wxutil::TreeView* _settingsView = nullptr;
 
     // The classname dropdown entry field
-    wxComboBox* _classCombo;
-    wxTextCtrl* _spawnArgEntry;
-    wxTextCtrl* _argumentEntry;
-    wxChoice* _appTypeCombo;
+    wxTextCtrl* _classEntry = nullptr;
+    wxTextCtrl* _spawnArgEntry = nullptr;
+    wxTextCtrl* _argumentEntry = nullptr;
+    wxChoice* _appTypeCombo = nullptr;
 
-    wxButton* _saveSettingButton;
-    wxButton* _deleteSettingButton;
-    wxButton* _createSettingButton;
-    wxButton* _refreshButton;
+    wxButton* _saveSettingButton = nullptr;
+    wxButton* _deleteSettingButton = nullptr;
+    wxButton* _createSettingButton = nullptr;
+    wxButton* _refreshButton = nullptr;
 
     // A label containing notes to the user
-    wxStaticText* _noteText;
+    wxStaticText* _noteText = nullptr;
 
     // Mutex for avoiding loopbacks
-    bool _updateActive;
+    bool _updateActive = false;
 
 public:
     /**
@@ -92,6 +92,7 @@ private:
     void onSettingSave(wxCommandEvent& ev);
     void onSettingDelete(wxCommandEvent& ev);
     void onRefresh(wxCommandEvent& ev);
+    void chooseEntityClass();
 
     void onAppTypeChange(wxCommandEvent& ev);
 };

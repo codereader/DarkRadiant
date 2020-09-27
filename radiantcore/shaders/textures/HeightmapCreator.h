@@ -17,13 +17,13 @@ inline byte* getPixel(byte* pixels, std::size_t width, std::size_t height, std::
 ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 	assert(heightMap);
 
-	std::size_t width = heightMap->getWidth(0);
-	std::size_t height = heightMap->getHeight(0);
+	std::size_t width = heightMap->getWidth();
+	std::size_t height = heightMap->getHeight();
 
 	ImagePtr normalMap (new RGBAImage(width, height));
 
-	byte* in = heightMap->getMipMapPixels(0);
-	byte* out = normalMap->getMipMapPixels(0);
+	byte* in = heightMap->getPixels();
+	byte* out = normalMap->getPixels();
 
 	struct KernelElement
 	{

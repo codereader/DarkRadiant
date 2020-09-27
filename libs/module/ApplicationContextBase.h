@@ -14,6 +14,7 @@ private:
 	std::string _appPath;
 	std::string _homePath;
 	std::string _settingsPath;
+	std::string _cachePath;
 	std::string _bitmapsPath;
 
 	// The path where the .map files are stored
@@ -41,6 +42,7 @@ public:
     virtual std::string getRuntimeDataPath() const override;
     virtual std::string getHTMLPath() const override;
     virtual std::string getSettingsPath() const override;
+	virtual std::string getCacheDataPath() const override;
     virtual std::string getBitmapsPath() const override;
     const ArgumentList& getCmdLineArgs() const override;
 

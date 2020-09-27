@@ -569,25 +569,30 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
 // Add a Renderable to this bucket
 void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
-                                      const Matrix4& modelview,
-                                      const RendererLight* light)
+                                     const Matrix4& modelview,
+                                     const RendererLight* light,
+                                     const IRenderEntity* entity)
 {
-    _renderablesWithoutEntity.push_back(TransformedRenderable(renderable, modelview, light, NULL));
-}
-
-void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
-                                      const Matrix4& modelview,
-                                      const IRenderEntity& entity,
-                                      const RendererLight* light)
-{
-    RenderablesByEntity::iterator i = _renderables.find(&entity);
-
-    if (i == _renderables.end())
+    if (entity)
     {
-        i = _renderables.insert(RenderablesByEntity::value_type(&entity, Renderables())).first;
-    }
+        // Find or insert the render entity in our map
+        auto i = _renderables.find(entity);
+        if (i == _renderables.end())
+        {
+            i = _renderables.insert(std::make_pair(entity, Renderables())).first;
+        }
 
-    i->second.push_back(TransformedRenderable(renderable, modelview, light, &entity));
+        // Add this renderable to the list of renderables associated with the entity
+        i->second.push_back(
+            TransformedRenderable(renderable, modelview, light, entity)
+        );
+    }
+    else
+    {
+        _renderablesWithoutEntity.push_back(
+            TransformedRenderable(renderable, modelview, light, nullptr)
+        );
+    }
 }
 
 // Render the bucket contents
@@ -648,7 +653,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 
     // Get the light shader and examine its first (and only valid) layer
     const MaterialPtr& lightShader = light->getShader()->getMaterial();
-    ShaderLayer* layer = lightShader->firstLayer();
+    ShaderLayer* layer = lightShader ? lightShader->firstLayer() : nullptr;
     if (!layer) return;
 
     // Calculate viewer location in object space
@@ -656,7 +661,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     Vector3 osViewer = inverseObjTransform.transformPoint(viewer);
 
     // Calculate all dynamic values in the layer
-    layer->evaluateExpressions(time, *light);
+    layer->evaluateExpressions(time, light->getLightEntity());
 
     // Get the XY and Z falloff texture numbers.
     GLuint attenuation_xy = layer->getTexture()->getGLTexNum();

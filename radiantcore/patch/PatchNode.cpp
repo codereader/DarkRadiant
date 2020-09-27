@@ -369,7 +369,7 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	if (!m_render_selected.empty())
     {
 		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-		collector.addRenderable(m_state_selpoint, m_render_selected, localToWorld());
+		collector.addRenderable(*m_state_selpoint, m_render_selected, localToWorld());
 	}
 }
 

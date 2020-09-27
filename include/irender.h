@@ -94,7 +94,9 @@ const unsigned RENDER_TEXTURE_CUBEMAP = 1 << 18;
 /**
  * Normal map information will be used during rendering. If enabled, objects
  * should submit normal/tangent/bitangent vertex attributes to enable normal
- * mapping.
+ * mapping. Also used by shader passes to signal that they care about lighting
+ * (and need to be provided with a list of incident lights along with
+ * renderable objects).
  */
 const unsigned RENDER_BUMP = 1 << 19;
 
@@ -149,12 +151,22 @@ typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
  * \brief
  * Interface for a light source in the renderer.
  */
-class RendererLight :
-	public virtual IRenderEntity
+class RendererLight
 {
 public:
     virtual ~RendererLight() {}
 
+    /**
+     * \brief
+     * Return the render entity associated with this light
+     *
+     * The IRenderEntity is used to evaluate possible shader expressions in the
+     * shader returned by getShader(). The light object itself may be its own
+     * render entity (so getLightEntity() can just return *this).
+     */
+    virtual const IRenderEntity& getLightEntity() const = 0;
+
+    /// Return the shader for this light
     virtual const ShaderPtr& getShader() const = 0;
 
     /**
@@ -186,6 +198,21 @@ public:
 
     /**
      * \brief
+     * Return the AABB of the illuminated volume.
+     *
+     * This AABB represents the boundaries of the volume which are illuminated
+     * by this light. Anything outside of this volume does not need to be
+     * considered for shading by this light.
+     *
+     * Note that for omni lights, dragging the light center point outside of
+     * the light volume does not expand the lightAABB() value, because the
+     * light center only affects the direction of the light rays, not the size
+     * of the illuminated volume.
+     */
+    virtual AABB lightAABB() const = 0;
+
+    /**
+     * \brief
      * Return the light origin in world space.
      *
      * The light origin is the point from which the light rays are considered to
@@ -201,9 +228,10 @@ public:
 };
 typedef std::shared_ptr<RendererLight> RendererLightPtr;
 
+/// Debug stream insertion for RendererLight
 inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
 {
-    return os << "RendererLight { worldOrigin = " << l.worldOrigin() << " }";
+    return os << "RendererLight(origin=" << l.worldOrigin() << ")";
 }
 
 /**
@@ -245,19 +273,65 @@ typedef std::function<void(const RendererLight&)> RendererLightCallback;
 
 /**
  * \brief
- * A list of lights which may intersect an object
+ * Simple container of light sources
+ *
+ * This is a storage class used to represent all light sources which fall upon
+ * a particular object. It is passed to the RenderSystem at render time to
+ * provide the list of lights which intersect the Renderable being submitted.
+ */
+class LightSources
+{
+public:
+
+    /// Invoke a callback on all contained lights.
+    virtual void forEachLight(const RendererLightCallback& callback) const = 0;
+};
+
+/// Debug stream insertion for LightSources
+inline std::ostream& operator<< (std::ostream& s, const LightSources& ls)
+{
+    s << "LightSources(";
+
+    // Insert comma-separated list of RendererLights
+    bool addComma = false;
+    ls.forEachLight(
+        [&](const RendererLight& l)
+        {
+            if (addComma)
+                s << ", ";
+            s << l;
+            addComma = true;
+        }
+    );
+
+    return s << ")";
+}
+
+/// Debug stream insertion for possibly null LightSources pointer
+inline std::ostream& operator<< (std::ostream& s, const LightSources* ls)
+{
+    if (ls)
+        return s << *ls;
+    else
+        return s << "[no lightsources]";
+}
+
+/**
+ * \brief
+ * A list of lights which might (but don't necessarily) intersect a LitObject
  *
  * A LightList is responsible for calculating which lights intersect a
  * particular object. Although there is nothing exposed in the interface, the
  * LightList holds a reference to a single lit object, and it is the
  * intersection with this object which is calculated.
  *
- * \internal
- * This interface doesn't really make any sense, and its purpose is not clear.
- * It seems to be basically a set of callback functions which need to be invoked
- * at the right time during the render process, but these shouldn't really be
- * the responsibility of anything outside the renderer itself.
+ * LightLists are constructed by the RenderSystem and returned to each
+ * LitObject as the result of calling RenderSystem::attachLitObject(). The
+ * LitObject is then responsible for storing the LightList and passing it (or a
+ * more optimised LightSources container based on additional tests) to the
+ * RenderableCollector at render time.
  *
+ * \internal
  * As of 2011-01-09/r6927 the calling sequence seems to be as follows:
  *
  * 1. Illuminated object (e.g. patch, brush) adds itself to the RenderSystem
@@ -304,18 +378,28 @@ typedef std::function<void(const RendererLight&)> RendererLightCallback;
  * were multiple lights illuminating it.
  */
 class LightList
+: public LightSources
 {
 public:
     virtual ~LightList() {}
 
-    /// Trigger the LightList to recalculate which lights intersect its object
+    /**
+     * \brief
+     * Trigger the LightList to recalculate which lights intersect its object
+     *
+     * For each light, this method will call the LitObject::intersectsLight()
+     * method to test whether the light intersects the contained lit object. If
+     * the light does intersect, it will be passed to the object's
+     * insertLight() method for internal storage (and possibly further
+     * intersection tests). The LightList will also store all the intersecting
+     * lights internally, and expose them through its own forEachLight()
+     * method, for objects which do not wish to perform additional tests but
+     * just return the LightList to the renderer directly.
+     */
     virtual void calculateIntersectingLights() const = 0;
 
     /// Set the dirty flag, informing the LightList that an update is required
     virtual void setDirty() = 0;
-
-    /// Invoke a callback on all contained lights.
-    virtual void forEachLight(const RendererLightCallback& callback) const = 0;
 };
 
 const int c_attr_TexCoord0 = 1;
@@ -431,30 +515,27 @@ public:
     virtual ~Shader() {}
 
 	/**
+     * \brief
 	 * Attach a renderable object to this Shader, which will be rendered using
 	 * this Shader when the render backend is activated.
 	 *
-	 * @param renderable
+	 * \param renderable
 	 * The OpenGLRenderable object to add.
 	 *
-	 * @param modelview
+	 * \param modelview
 	 * The modelview transform for this object.
 	 *
-	 * @param lights
-	 * A LightList containing all of the lights which should illuminate this
-	 * object.
+	 * \param lights
+     * Optional LightSources containing all of the lights which illuminate this
+     * object.
+     *
+     * \param entity
+     * Optional IRenderEntity exposing entity-related render parameters.
 	 */
 	virtual void addRenderable(const OpenGLRenderable& renderable,
 							   const Matrix4& modelview,
-							   const LightList* lights = 0) = 0;
-
-	/**
-	 * Like above, but taking an additional IRenderEntity argument.
-	 */
-	virtual void addRenderable(const OpenGLRenderable& renderable,
-							   const Matrix4& modelview,
-							   const IRenderEntity& entity,
-							   const LightList* lights = 0) = 0;
+							   const LightSources* lights = nullptr,
+                               const IRenderEntity* entity = nullptr) = 0;
 
     /**
      * \brief
@@ -635,13 +716,13 @@ public:
 
     /**
      * \brief
-     * Indicate that the given light source has been modified.
+     * Indicate that the scene lights have changed.
      */
-    virtual void lightChanged(RendererLight& light) = 0;
+    virtual void lightChanged() = 0;
 
-  virtual void attachRenderable(const Renderable& renderable) = 0;
-  virtual void detachRenderable(const Renderable& renderable) = 0;
-  virtual void forEachRenderable(const RenderableCallback& callback) const = 0;
+    virtual void attachRenderable(const Renderable& renderable) = 0;
+    virtual void detachRenderable(const Renderable& renderable) = 0;
+    virtual void forEachRenderable(const RenderableCallback& callback) const = 0;
 
   	// Initialises the OpenGL extensions
     virtual void extensionsInitialised() = 0;

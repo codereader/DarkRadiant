@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [2.9.0])
+AC_INIT([darkradiant], [2.8.1])
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 
@@ -332,8 +332,8 @@ LDFLAGS="$USER_LDFLAGS $LIBSIGC_LIBS $FMTLIB_LDFLAGS"
 if test "$debug_build" != 'no'
 then
     CPPFLAGS="-D_DEBUG $CPPFLAGS"
-    CFLAGS="-g -O0 $CFLAGS"
-    CXXFLAGS="-g -O0 $CXXFLAGS"
+    CFLAGS="-g -Og $CFLAGS"
+    CXXFLAGS="-g -Og $CXXFLAGS"
 else
     CFLAGS="-g -O2 -DNDEBUG $CFLAGS"
     CXXFLAGS="-g -O2 -DNDEBUG $CXXFLAGS"

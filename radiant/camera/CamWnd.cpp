@@ -17,10 +17,8 @@
 #include "iselectiontest.h"
 #include "selectionlib.h"
 #include "gamelib.h"
-#include "CamRenderer.h"
 #include "CameraSettings.h"
 #include "GlobalCameraWndManager.h"
-#include "render/RenderStatistics.h"
 #include "render/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"
@@ -35,6 +33,7 @@
 #include "util/ScopedBoolLock.h"
 #include <functional>
 #include <sigc++/retype_return.h>
+#include "render/VectorLightList.h"
 
 namespace ui
 {
@@ -131,7 +130,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 }
 
 wxWindow* CamWnd::getMainWidget() const
-{ 
+{
     return _mainWxWidget;
 }
 
@@ -223,9 +222,9 @@ void CamWnd::setFarClipButtonSensitivity()
 
     wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
 
-    wxToolBarToolBase* clipPlaneInButton = 
+    wxToolBarToolBase* clipPlaneInButton =
         const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(miscToolbar, "clipPlaneInButton"));
-    wxToolBarToolBase* clipPlaneOutButton = 
+    wxToolBarToolBase* clipPlaneOutButton =
         const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(miscToolbar, "clipPlaneOutButton"));
 
     miscToolbar->EnableTool(clipPlaneInButton->GetId(), enabled);
@@ -246,7 +245,7 @@ void CamWnd::constructGUIComponents()
     _wxGLWidget->Bind(wxEVT_SIZE, &CamWnd::onGLResize, this);
     _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &CamWnd::onMouseScroll, this);
 
-    _mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND); 
+    _mainWxWidget->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 }
 
 CamWnd::~CamWnd()
@@ -328,8 +327,8 @@ void CamWnd::onStopTimeButtonClick(wxCommandEvent& ev)
 
 void CamWnd::onFrame(wxTimerEvent& ev)
 {
-    // Calling wxTheApp->Yield() might cause another timer callback if enough 
-    // time has passed during rendering. Calling Yield() within Yield() 
+    // Calling wxTheApp->Yield() might cause another timer callback if enough
+    // time has passed during rendering. Calling Yield() within Yield()
     // might in the end cause stack overflows and is caught by wxWidgets.
     if (!_timerLock)
     {
@@ -552,6 +551,242 @@ bool CamWnd::freeMoveEnabled() const
     return _freeMoveEnabled;
 }
 
+namespace
+{
+
+// Implementation of RenderableCollector for the 3D camera view.
+class CamRenderer: public RenderableCollector
+{
+    // The View object for object culling
+    const render::View& _view;
+
+    // Render statistics
+    render::RenderStatistics& _renderStats;
+
+    // Highlight state
+    bool _highlightFaces = false;
+    bool _highlightPrimitives = false;
+    Shader& _highlightedPrimitiveShader;
+    Shader& _highlightedFaceShader;
+
+    // All lights we have received from the scene
+    std::list<const RendererLight*> _sceneLights;
+
+    // Legacy lit renderable which provided its own LightSources to
+    // addRenderable()
+    struct LegacyLitRenderable
+    {
+        const OpenGLRenderable& renderable;
+        const LightSources* lights = nullptr;
+        Matrix4 local2World;
+        const IRenderEntity* entity = nullptr;
+
+        LegacyLitRenderable(const OpenGLRenderable& r, const LightSources* l,
+                            const Matrix4& l2w, const IRenderEntity* e)
+        : renderable(r), lights(l), local2World(l2w), entity(e)
+        {}
+    };
+    using LegacyLitRenderables = std::vector<LegacyLitRenderable>;
+
+    // Legacy renderables with their own light lists. No processing needed;
+    // just store them until it's time to submit to shaders.
+    using LegacyRenderablesByShader = std::map<Shader*, LegacyLitRenderables>;
+    LegacyRenderablesByShader _legacyRenderables;
+
+    // Lit renderable provided via addLitRenderable(), for which we construct
+    // the light list with lights received via addLight().
+    struct LitRenderable
+    {
+        // Renderable information submitted with addLitObject()
+        const OpenGLRenderable& renderable;
+        const LitObject& litObject;
+        Matrix4 local2World;
+        const IRenderEntity* entity = nullptr;
+
+        // Calculated list of intersecting lights (initially empty)
+        render::lib::VectorLightList lights;
+    };
+    using LitRenderables = std::vector<LitRenderable>;
+
+    // Renderables added with addLitObject() need to be stored until their
+    // light lists can be calculated, which can't happen until all the lights
+    // are submitted too.
+    std::map<Shader*, LitRenderables> _litRenderables;
+
+    // Intersect all received renderables wiith lights
+    void calculateLightIntersections()
+    {
+        // For each shader
+        for (auto i = _litRenderables.begin(); i != _litRenderables.end(); ++i)
+        {
+            // For each renderable associated with this shader
+            for (auto j = i->second.begin(); j != i->second.end(); ++j)
+            {
+                // Test intersection between the LitObject and each light in
+                // the scene
+                for (const RendererLight* l: _sceneLights)
+                {
+                    if (j->litObject.intersectsLight(*l))
+                        j->lights.addLight(*l);
+                }
+            }
+        }
+    }
+
+public:
+
+    // Initialise CamRenderer with the highlight shaders
+    CamRenderer(const render::View& view, Shader& primHighlightShader,
+                Shader& faceHighlightShader, render::RenderStatistics& stats)
+    : _view(view),
+      _renderStats(stats),
+      _highlightedPrimitiveShader(primHighlightShader),
+      _highlightedFaceShader(faceHighlightShader)
+    {}
+
+    // Instruct the CamRenderer to push its sorted renderables to their
+    // respective shaders and perform the actual render
+    void backendRender(RenderStateFlags allowedFlags, const Matrix4& modelView,
+                       const Matrix4& projection)
+    {
+        // Calculate intersections between lights and renderables we have received
+        calculateLightIntersections();
+
+        // For each shader in the map
+        for (auto i = _legacyRenderables.begin();
+             i != _legacyRenderables.end();
+             ++i)
+        {
+            // Iterate over the list of renderables for this shader, submitting
+            // each one
+            Shader* shader = i->first;
+            wxASSERT(shader);
+            for (auto j = i->second.begin(); j != i->second.end(); ++j)
+            {
+                const LegacyLitRenderable& lr = *j;
+                shader->addRenderable(lr.renderable, lr.local2World,
+                                      lr.lights, lr.entity);
+            }
+        }
+
+        // Tell the render system to render its shaders and renderables
+        GlobalRenderSystem().render(allowedFlags, modelView, projection,
+                                    _view.getViewer());
+    }
+
+    // RenderableCollector implementation
+
+    bool supportsFullMaterials() const override { return true; }
+
+    void setHighlightFlag(Highlight::Flags flags, bool enabled) override
+    {
+        if (flags & Highlight::Faces)
+        {
+            _highlightFaces = enabled;
+        }
+
+        if (flags & Highlight::Primitives)
+        {
+            _highlightPrimitives = enabled;
+        }
+    }
+
+    void addLight(const RendererLight& light) override
+    {
+        // Determine if this light is visible within the view frustum
+        VolumeIntersectionValue viv = _view.TestAABB(light.lightAABB());
+        if (viv == VOLUME_OUTSIDE)
+        {
+            // Not interested
+            _renderStats.addLight(false);
+        }
+        else
+        {
+            // Store the light in our list of scene lights
+            _sceneLights.push_back(&light);
+
+            // Count the light for the stats display
+            _renderStats.addLight(true);
+        }
+    }
+
+    void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
+                       const Matrix4& world, const LightSources* lights,
+                       const IRenderEntity* entity) override
+    {
+        if (_highlightPrimitives)
+            _highlightedPrimitiveShader.addRenderable(renderable, world,
+                                                      lights, entity);
+
+        if (_highlightFaces)
+            _highlightedFaceShader.addRenderable(renderable, world,
+                                                 lights, entity);
+
+        // Construct an entry for this shader in the map if it is the first
+        // time we've seen it
+        auto iter = _legacyRenderables.find(&shader);
+        if (iter == _legacyRenderables.end())
+        {
+            // Add an entry for this shader, and pre-allocate some space in the
+            // vector to avoid too many expansions during scenegraph traversal.
+            LegacyLitRenderables emptyList;
+            emptyList.reserve(1024);
+
+            auto result = _legacyRenderables.insert(
+                std::make_pair(&shader, std::move(emptyList))
+            );
+            wxASSERT(result.second);
+            iter = result.first;
+        }
+        wxASSERT(iter != _legacyRenderables.end());
+
+        // Add the renderable and its lights to the list of lit renderables for
+        // this shader
+        wxASSERT(iter->first == &shader);
+        iter->second.emplace_back(renderable, lights, world, entity);
+    }
+
+    void addLitRenderable(Shader& shader,
+                          OpenGLRenderable& renderable,
+                          const Matrix4& localToWorld,
+                          const LitObject& litObject,
+                          const IRenderEntity* entity = nullptr) override
+    {
+        if (_highlightPrimitives)
+            _highlightedPrimitiveShader.addRenderable(renderable, localToWorld,
+                                                      nullptr, entity);
+
+        if (_highlightFaces)
+            _highlightedFaceShader.addRenderable(renderable, localToWorld,
+                                                 nullptr, entity);
+
+        // Construct an entry for this shader in the map if it is the first
+        // time we've seen it
+        auto iter = _litRenderables.find(&shader);
+        if (iter == _litRenderables.end())
+        {
+            // Add an entry for this shader, and pre-allocate some space in the
+            // vector to avoid too many expansions during scenegraph traversal.
+            LitRenderables emptyList;
+            emptyList.reserve(1024);
+
+            auto result = _litRenderables.insert(
+                std::make_pair(&shader, std::move(emptyList))
+            );
+            wxASSERT(result.second);
+            iter = result.first;
+        }
+        wxASSERT(iter != _litRenderables.end());
+        wxASSERT(iter->first == &shader);
+
+        // Store a LitRenderable object for this renderable
+        LitRenderable lr { renderable, litObject, localToWorld, entity };
+        iter->second.push_back(std::move(lr));
+    }
+};
+
+}
+
 void CamWnd::performFreeMove(int dx, int dy)
 {
     int angleSpeed = getCameraSettings()->angleSpeed();
@@ -627,7 +862,7 @@ void CamWnd::Cam_Draw()
 
     Vector3 clearColour(0, 0, 0);
 
-    if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING) 
+    if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING)
     {
         clearColour = GlobalColourSchemeManager().getColour("camera_background");
     }
@@ -636,7 +871,8 @@ void CamWnd::Cam_Draw()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    render::RenderStatistics::Instance().resetStats();
+    // Reset statistics for this frame
+    _renderStats.resetStats();
 
     _view.resetCullStats();
 
@@ -731,11 +967,13 @@ void CamWnd::Cam_Draw()
                             | RENDER_POLYGONSTIPPLE;
     }
 
+    // Main scene render
     {
-        CamRenderer renderer(allowedRenderFlags, _primitiveHighlightShader,
-                             _faceHighlightShader, _view.getViewer());
-
+        // Front end (renderable collection from scene)
+        CamRenderer renderer(_view, *_primitiveHighlightShader,
+                             *_faceHighlightShader, _renderStats);
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
+        _renderStats.frontEndComplete();
 
         // Render any active mousetools
         for (const ActiveMouseTools::value_type& i : _activeMouseTools)
@@ -743,7 +981,9 @@ void CamWnd::Cam_Draw()
             i.second->render(GlobalRenderSystem(), renderer, _view);
         }
 
-        renderer.render(_camera->getModelView(), _camera->getProjection());
+        // Backend (shader rendering)
+        renderer.backendRender(allowedRenderFlags, _camera->getModelView(),
+                               _camera->getProjection());
     }
 
     // greebo: Draw the clipper's points (skipping the depth-test)
@@ -807,13 +1047,14 @@ void CamWnd::Cam_Draw()
         glEnd();
     }
 
-    glRasterPos3f(1.0f, static_cast<float>(height) - 1.0f, 0.0f);
-
-    GlobalOpenGL().drawString(render::RenderStatistics::Instance().getStatString());
-
-    glRasterPos3f(1.0f, static_cast<float>(height) - 11.0f, 0.0f);
-
-    GlobalOpenGL().drawString(_view.getCullStats());
+    // Render the stats and timing text. This may include culling stats in
+    // debug builds.
+    glRasterPos3f(4.0f, static_cast<float>(_camera->getDeviceHeight()) - 4.0f, 0.0f);
+    std::string statString = _view.getCullStats();
+    if (!statString.empty())
+        statString += " | ";
+    statString += _renderStats.getStatString();
+    GlobalOpenGL().drawString(statString);
 
     drawTime();
 
@@ -976,17 +1217,17 @@ const Frustum& CamWnd::getViewFrustum() const
     return _view.getFrustum();
 }
 
-void CamWnd::onFarClipPlaneOutClick(wxCommandEvent& ev) 
+void CamWnd::onFarClipPlaneOutClick(wxCommandEvent& ev)
 {
     farClipPlaneOut();
 }
 
-void CamWnd::onFarClipPlaneInClick(wxCommandEvent& ev) 
+void CamWnd::onFarClipPlaneInClick(wxCommandEvent& ev)
 {
     farClipPlaneIn();
 }
 
-void CamWnd::farClipPlaneOut() 
+void CamWnd::farClipPlaneOut()
 {
     auto newCubicScale = getCameraSettings()->cubicScale() + 1;
     getCameraSettings()->setCubicScale(newCubicScale);
@@ -995,7 +1236,7 @@ void CamWnd::farClipPlaneOut()
     update();
 }
 
-void CamWnd::farClipPlaneIn() 
+void CamWnd::farClipPlaneIn()
 {
     auto newCubicScale = getCameraSettings()->cubicScale() - 1;
     getCameraSettings()->setCubicScale(newCubicScale);
@@ -1097,14 +1338,14 @@ void CamWnd::startCapture(const ui::MouseToolPtr& tool)
 
     _freezePointer.startCapture(_wxGLWidget,
         [&](int x, int y, int mouseState) // Motion Functor
-        { 
-            MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState); 
+        {
+            MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState);
 
             if (freeMoveEnabled())
             {
                 handleGLMouseMoveFreeMoveDelta(x, y, mouseState);
             }
-        }, 
+        },
         [&, tool]() { MouseToolHandler::handleCaptureLost(tool); }, // called when the capture is lost.
         (pointerMode & MouseTool::PointerMode::Freeze) != 0,
         (pointerMode & MouseTool::PointerMode::Hidden) != 0,

@@ -26,7 +26,7 @@ const std::string ApplicationContextBase::MODULES_DIR = "modules/"; ///< name of
  */
 std::string ApplicationContextBase::getApplicationPath() const
 {
-	return _appPath;
+    return _appPath;
 }
 
 std::vector<std::string> ApplicationContextBase::getLibraryPaths() const
@@ -102,17 +102,22 @@ std::string ApplicationContextBase::getHTMLPath() const
 
 std::string ApplicationContextBase::getSettingsPath() const
 {
-	return _settingsPath;
+    return _settingsPath;
+}
+
+std::string ApplicationContextBase::getCacheDataPath() const
+{
+    return _cachePath;
 }
 
 std::string ApplicationContextBase::getBitmapsPath() const
 {
-	return getRuntimeDataPath() + "bitmaps/";
+    return getRuntimeDataPath() + "bitmaps/";
 }
 
 const IApplicationContext::ArgumentList& ApplicationContextBase::getCmdLineArgs() const
 {
-	return _cmdLineArgs;
+    return _cmdLineArgs;
 }
 
 // ============== OS-Specific Implementations go here ===================
@@ -174,70 +179,102 @@ std::string getExecutablePath(char* argv[])
 {
     char buf[PATH_MAX];
 
-	// Now read the symbolic link
-	int ret = readlink(LINK_NAME, buf, PATH_MAX);
+    // Now read the symbolic link
+    int ret = readlink(LINK_NAME, buf, PATH_MAX);
 
-	if (ret == -1)
+    if (ret == -1)
     {
-		rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'\n";
+        rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'\n";
 
-		const char* path = realpath(argv[0], buf);
+        const char* path = realpath(argv[0], buf);
 
-		if (path == nullptr)
+        if (path == nullptr)
         {
-			// In case of an error, leave the handling up to the caller
-			return std::string();
-		}
-	}
+            // In case of an error, leave the handling up to the caller
+            return std::string();
+        }
+    }
 
-	/* Ensure proper NUL termination */
-	buf[ret] = '\0';
+    /* Ensure proper NUL termination */
+    buf[ret] = '\0';
 
-	/* delete the program name */
-	*(strrchr(buf, '/')) = '\0';
+    /* delete the program name */
+    *(strrchr(buf, '/')) = '\0';
 
-	// NOTE: we build app path with a trailing '/'
-	// it's a general convention in Radiant to have the slash at the end of directories
-	if (buf[strlen(buf)-1] != '/')
+    // NOTE: we build app path with a trailing '/'
+    // it's a general convention in Radiant to have the slash at the end of directories
+    if (buf[strlen(buf)-1] != '/')
     {
-		strcat(buf, "/");
-	}
+        strcat(buf, "/");
+    }
 
-	return std::string(buf);
+    return std::string(buf);
 }
 
 #endif
 
+// Get an environment variable as a string (because getenv() can return nullptr
+// and it is not safe to construct a string from a nullptr)
+std::string strenv(const std::string& key)
+{
+    const char* v = getenv(key.c_str());
+    return v ? std::string(v) : std::string();
 }
 
-void ApplicationContextBase::initialise(int argc, char* argv[])
+// Get an XDG path, checking the respective environment variable first, then
+// falling back to a default in $HOME
+std::string getXDGPath(const std::string& envVar, const std::string& fallback)
 {
-	// Give away unnecessary root privileges.
-	// Important: must be done before calling gtk_init().
-	char *loginname;
-	struct passwd *pw;
-	seteuid(getuid());
+    std::string xdgVar = strenv(envVar);
+    if (xdgVar.empty())
+    {
+        // Use default path within $HOME/fallback
+        static const std::string HOME_DIR = strenv("HOME");
+        return os::standardPathWithSlash(HOME_DIR) + fallback + "/darkradiant/";
+    }
+    else
+    {
+        return os::standardPathWithSlash(xdgVar);
+    }
+}
 
-	if (geteuid() == 0 &&
-		(loginname = getlogin()) != 0 &&
-		(pw = getpwnam(loginname)) != 0)
-	{
-		setuid(pw->pw_uid);
-	}
+} // namespace
 
-	initArgs(argc, argv);
+void ApplicationContextImpl::initialise(int argc, char* argv[])
+{
+    // Give away unnecessary root privileges.
+    // Important: must be done before calling gtk_init().
+    char *loginname;
+    struct passwd *pw;
+    seteuid(getuid());
+
+    if (geteuid() == 0 &&
+        (loginname = getlogin()) != 0 &&
+        (pw = getpwnam(loginname)) != 0)
+    {
+        setuid(pw->pw_uid);
+    }
+
+    initArgs(argc, argv);
 
     // Initialise the home directory path
-    std::string homedir = getenv("HOME");
-    std::string home = os::standardPathWithSlash(homedir) + ".darkradiant/";
-    os::makeDirectory(home);
-    _homePath = home;
+    _homePath = getXDGPath("XDG_CONFIG_HOME", ".config");
+    os::makeDirectory(_homePath);
 
-	_appPath = getExecutablePath(argv);
+    // Initialise the cache path. Same as _homePath on Mac, whereas on Linux we
+    // want to follow the FreeDesktop standard.
+#if defined(__linux__)
+    _cachePath = getXDGPath("XDG_CACHE_HOME", ".cache");
+#else
+    _cachePath = _homePath;
+#endif
+    os::makeDirectory(_cachePath);
+
+    _appPath = getExecutablePath(argv);
     ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
 
-	// Initialise the relative paths
-	initPaths();
+    // Initialise the relative paths
+    initPaths();
 }
 
 // ================ WIN32 ====================
@@ -245,46 +282,48 @@ void ApplicationContextBase::initialise(int argc, char* argv[])
 
 void ApplicationContextBase::initialise(int argc, char* argv[])
 {
-	initArgs(argc, argv);
+    initArgs(argc, argv);
 
     // Get application data directory from environment
-	std::string appData = getenv("APPDATA");
-	if (appData.empty())
+    std::string appData = getenv("APPDATA");
+    if (appData.empty())
     {
-		throw std::runtime_error(
+        throw std::runtime_error(
             "Critical: cannot find APPDATA environment variable."
         );
-	}
+    }
 
     // Construct DarkRadiant home directory
-	_homePath = appData + "\\DarkRadiant";
-	if (!os::makeDirectory(_homePath))
+    _homePath = appData + "\\DarkRadiant";
+    if (!os::makeDirectory(_homePath))
     {
         rConsoleError() << "ApplicationContextBase: could not create home directory "
                   << "'" << _homePath << "'" << std::endl;
     }
 
-	{
-		// get path to the editor
-		wchar_t filename[MAX_PATH+1];
-		GetModuleFileName(0, filename, MAX_PATH);
-		wchar_t* last_separator = wcsrchr(filename, '\\');
-		if (last_separator != 0) {
-			*(last_separator+1) = '\0';
-		}
-		else {
-			filename[0] = '\0';
-		}
+    _cachePath = _settingsPath;
+
+    {
+        // get path to the editor
+        wchar_t filename[MAX_PATH+1];
+        GetModuleFileName(0, filename, MAX_PATH);
+        wchar_t* last_separator = wcsrchr(filename, '\\');
+        if (last_separator != 0) {
+            *(last_separator+1) = '\0';
+        }
+        else {
+            filename[0] = '\0';
+        }
 
 		// convert to std::string
 		std::wstring wide(filename);
 		std::string appPathNarrow = string::unicode_to_mb(wide);
 
-		// Make sure we have forward slashes
-		_appPath = os::standardPath(appPathNarrow);
-	}
-	// Initialise the relative paths
-	initPaths();
+        // Make sure we have forward slashes
+        _appPath = os::standardPath(appPathNarrow);
+    }
+    // Initialise the relative paths
+    initPaths();
 }
 
 #else
@@ -295,21 +334,21 @@ void ApplicationContextBase::initialise(int argc, char* argv[])
 
 void ApplicationContextBase::initArgs(int argc, char* argv[])
 {
-	// Store the arguments locally, ignore the first one
-	for (int i = 1; i < argc; i++) {
-		_cmdLineArgs.push_back(argv[i]);
-	}
+    // Store the arguments locally, ignore the first one
+    for (int i = 1; i < argc; i++) {
+        _cmdLineArgs.push_back(argv[i]);
+    }
 }
 
 void ApplicationContextBase::initPaths()
 {
-	// Ensure that the homepath ends with a slash
-	_homePath = os::standardPathWithSlash(_homePath);
-	_appPath = os::standardPathWithSlash(_appPath);
+    // Ensure that the homepath ends with a slash
+    _homePath = os::standardPathWithSlash(_homePath);
+    _appPath = os::standardPathWithSlash(_appPath);
 
-	// Make sure the home/settings folder exists (attempt to create it)
-	_settingsPath = _homePath;
-	if (!os::makeDirectory(_settingsPath))
+    // Make sure the home/settings folder exists (attempt to create it)
+    _settingsPath = _homePath;
+    if (!os::makeDirectory(_settingsPath))
     {
         rConsoleError() << "ApplicationContextBase: unable to create settings path '"
                   << _settingsPath << "'" << std::endl;
@@ -318,7 +357,7 @@ void ApplicationContextBase::initPaths()
 
 const ErrorHandlingFunction& ApplicationContextBase::getErrorHandlingFunction() const
 {
-	return _errorHandler;
+    return _errorHandler;
 }
 
 void ApplicationContextBase::setErrorHandlingFunction(const ErrorHandlingFunction& function)

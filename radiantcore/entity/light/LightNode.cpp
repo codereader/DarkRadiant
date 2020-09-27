@@ -72,7 +72,7 @@ AABB LightNode::getSelectAABB() const
 }
 
 void LightNode::lightChanged() {
-	GlobalRenderSystem().lightChanged(*this);
+	GlobalRenderSystem().lightChanged();
 }
 
 const AABB& LightNode::localAABB() const {
@@ -89,7 +89,7 @@ void LightNode::onInsertIntoScene(scene::IMapRootNode& root)
 	// Call the base class first
 	EntityNode::onInsertIntoScene(root);
 
-	GlobalRenderSystem().attachLight(*this);
+	GlobalRenderSystem().attachLight(_light);
 }
 
 void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
@@ -97,7 +97,7 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 	// Call the base class first
 	EntityNode::onRemoveFromScene(root);
 
-	GlobalRenderSystem().detachLight(*this);
+	GlobalRenderSystem().detachLight(_light);
 
 	// De-select all child components as well
 	setSelectedComponents(false, SelectionSystem::eVertex);
@@ -267,15 +267,19 @@ void LightNode::selectedChangedComponent(const ISelectable& selectable) {
  */
 void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	EntityNode::renderSolid(collector, volume);
+    // Submit self to the renderer as an actual light source
+    collector.addLight(_light);
 
-	// Re-use the same method as in wireframe rendering for the moment
-	const bool lightIsSelected = isSelected();
-	_light.renderWireframe(
-		collector, volume, localToWorld(), lightIsSelected
-	);
+    // Render the visible representation of the light entity (origin, bounds etc)
+    EntityNode::renderSolid(collector, volume);
 
-	renderInactiveComponents(collector, volume, lightIsSelected);
+    // Re-use the same method as in wireframe rendering for the moment
+    const bool lightIsSelected = isSelected();
+    _light.renderWireframe(
+        collector, volume, localToWorld(), lightIsSelected
+    );
+
+    renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
 void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
@@ -476,30 +480,6 @@ void LightNode::evaluateTransform()
 			_light.setLightRadius(_dragPlanes.evaluateResize(getTranslation(), rotation()));
 		}
 	}
-}
-
-const Vector3& LightNode::worldOrigin() const
-{
-    return _light.worldOrigin();
-}
-
-Matrix4 LightNode::getLightTextureTransformation() const
-{
-    return _light.getLightTextureTransformation();
-}
-
-const ShaderPtr& LightNode::getShader() const
-{
-	return _light.getShader();
-}
-
-bool LightNode::intersectsAABB(const AABB& aabb) const
-{
-	return _light.intersectsAABB(aabb);
-}
-
-Vector3 LightNode::getLightOrigin() const {
-	return _light.getLightOrigin();
 }
 
 const Matrix4& LightNode::rotation() const {

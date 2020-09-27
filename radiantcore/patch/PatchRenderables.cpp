@@ -155,5 +155,5 @@ void RenderablePatchVectorsNTB::render(const RenderInfo& info) const
 void RenderablePatchVectorsNTB::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-	collector.addRenderable(_shader, *this, localToWorld);
+	collector.addRenderable(*_shader, *this, localToWorld);
 }

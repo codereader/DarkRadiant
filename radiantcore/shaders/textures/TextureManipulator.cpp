@@ -62,7 +62,7 @@ void TextureManipulator::keyChanged()
 
 Vector3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
 	// Calculate the number of pixels in this image
-	std::size_t numPixels = input->getWidth(0) * input->getHeight(0);
+	std::size_t numPixels = input->getWidth() * input->getHeight();
 
 	// Calculate the pixel step value, ensuring it is greater than 0
 	int incr = static_cast<int>(static_cast<float>(numPixels) / 20.0f);
@@ -70,7 +70,7 @@ Vector3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
 		incr = 1;
 
 	// Set the pixel pointer to the very first pixel
-	byte* pixels = input->getMipMapPixels(0);
+	byte* pixels = input->getPixels();
 
 	Vector3 returnValue;
 	int pixelCount = 0;
@@ -108,9 +108,9 @@ ImagePtr TextureManipulator::getProcessedImage(const ImagePtr& input) {
 
 ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 
-	std::size_t width = input->getWidth(0);
-	std::size_t height = input->getHeight(0);
-	byte* sourcePixels = input->getMipMapPixels(0);
+	std::size_t width = input->getWidth();
+	std::size_t height = input->getHeight();
+	byte* sourcePixels = input->getPixels();
 
 	ImagePtr output;
 
@@ -131,7 +131,7 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 
 		// Resample the texture into the allocated image
 		resampleTexture(sourcePixels, width, height,
-						output->getMipMapPixels(0), gl_width, gl_height, 4);
+						output->getPixels(), gl_width, gl_height, 4);
 	}
 	else {
 		// Nothing to do, return the source image
@@ -159,7 +159,7 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 	// Reduce the image to the next smaller power of two until it fits the openGL max texture size
 	while (gl_width > targetWidth || gl_height > targetHeight)
 	{
-		mipReduce(output->getMipMapPixels(0), output->getMipMapPixels(0),
+		mipReduce(output->getPixels(), output->getPixels(),
 				  gl_width, gl_height, targetWidth, targetHeight);
 
 		if (gl_width > targetWidth)
@@ -180,10 +180,10 @@ ImagePtr TextureManipulator::processGamma(const ImagePtr& input) {
 	}
 
 	// Calculate the number of pixels in this image
-	std::size_t numPixels = input->getWidth(0) * input->getHeight(0);
+	std::size_t numPixels = input->getWidth() * input->getHeight();
 
 	// Set the pixel pointer to the very first pixel
-	byte* pixels = input->getMipMapPixels(0);
+	byte* pixels = input->getPixels();
 
 	// Go over all the pixels and change their value accordingly
 	for (std::size_t i = 0; i < (numPixels*4); i += 4)

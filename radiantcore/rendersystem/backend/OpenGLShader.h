@@ -81,13 +81,8 @@ public:
     // Shader implementation
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
-					   const LightList* lights) override;
-
-	void addRenderable(const OpenGLRenderable& renderable,
-					   const Matrix4& modelview,
-					   const IRenderEntity& entity,
-					   const LightList* lights) override;
-
+					   const LightSources* lights,
+                       const IRenderEntity* entity) override;
     void setVisible(bool visible) override;
     bool isVisible() const override;
     void incrementUsed() override;

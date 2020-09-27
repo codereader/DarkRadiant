@@ -348,11 +348,11 @@ static RGBAImagePtr LoadJPGBuff_(const void* src_buffer, int src_size)
         jpeg_read_scanlines(&cinfo, buffer, 1);
 
         if (cinfo.out_color_components == 4)
-            j_putRGBAScanline(buffer[0], cinfo.output_width, image->getMipMapPixels(0), cinfo.output_scanline - 1);
+            j_putRGBAScanline(buffer[0], cinfo.output_width, image->getPixels(), cinfo.output_scanline - 1);
         else if (cinfo.out_color_components == 3)
-            j_putRGBScanline(buffer[0], cinfo.output_width, image->getMipMapPixels(0), cinfo.output_scanline - 1);
+            j_putRGBScanline(buffer[0], cinfo.output_width, image->getPixels(), cinfo.output_scanline - 1);
         else if (cinfo.out_color_components == 1)
-            j_putGrayScanlineToRGB(buffer[0], cinfo.output_width, image->getMipMapPixels(0), cinfo.output_scanline - 1);
+            j_putGrayScanlineToRGB(buffer[0], cinfo.output_width, image->getPixels(), cinfo.output_scanline - 1);
     }
 
     jpeg_finish_decompress(&cinfo);

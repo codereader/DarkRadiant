@@ -68,7 +68,7 @@ public:
 		// If we hold any objects now, add us as renderable
 		if (!empty())
         {
-			collector.addRenderable(shader, *this, Matrix4::getIdentity());
+			collector.addRenderable(*shader, *this, Matrix4::getIdentity());
 		}
 	}
 

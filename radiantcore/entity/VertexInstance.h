@@ -89,7 +89,7 @@ public:
     {
 		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 		collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-		collector.addRenderable(_shader, *this, localToWorld);
+		collector.addRenderable(*_shader, *this, localToWorld);
 	}
 
 	// GL render function (backend)

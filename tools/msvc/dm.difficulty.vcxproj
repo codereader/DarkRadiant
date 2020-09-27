@@ -115,7 +115,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w32deps/gtk2\lib;$(SolutionDir)\..\..\w32deps/boost\lib;$(SolutionDir)\..\..\w32deps\gtkmm\lib;$(SolutionDir)\..\..\w32deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -147,7 +147,7 @@
       </BrowseInformation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w64deps/gtk2\lib;$(SolutionDir)\..\..\w64deps/boost\lib;$(SolutionDir)\..\..\w64deps\gtkmm\lib;$(SolutionDir)\..\..\w64deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
@@ -175,7 +175,7 @@
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <FixedBaseAddress>
@@ -206,7 +206,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <FixedBaseAddress>
