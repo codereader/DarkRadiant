@@ -28,6 +28,9 @@ public:
 	virtual const Vector3& getCameraAngles() const = 0;
 	virtual void setCameraAngles(const Vector3& newAngles) = 0;
 
+	// Combined setter for position and angles - triggers only one callback to potential observers
+	virtual void setOriginAndAngles(const Vector3& newOrigin, const Vector3& newAngles) = 0;
+
 	// Returns the vector pointing to the "right"
 	virtual const Vector3& getRightVector() const = 0;
 	// Returns the vector pointing "up"
@@ -73,6 +76,9 @@ public:
 
 	// Releases this camera instance, clearing any internal references to it
 	virtual void destroyCamera(const ICameraView::Ptr& camera) = 0;
+
+	// Sets the position and angles of all active cameras to the given values
+	virtual void focusAllCameras(const Vector3& position, const Vector3& angles) = 0;
 
 	// Signal emitted when any camera position or angles changed
 	virtual sigc::signal<void>& signal_cameraChanged() = 0;

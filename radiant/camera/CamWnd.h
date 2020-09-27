@@ -131,6 +131,8 @@ public:
     const Vector3& getCameraAngles() const override;
     void setCameraAngles(const Vector3& angles) override;
 
+    void setOriginAndAngles(const Vector3& newOrigin, const Vector3& newAngles) override;
+
     virtual const Matrix4& getModelView() const override;
     virtual const Matrix4& getProjection() const override;
 

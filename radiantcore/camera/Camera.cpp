@@ -103,10 +103,8 @@ const Vector3& Camera::getCameraOrigin() const
 
 void Camera::setCameraOrigin(const Vector3& newOrigin)
 {
-	_origin = newOrigin;
-	_prevOrigin = _origin;
-
-	updateModelview();
+	doSetOrigin(newOrigin, true);
+	
 	queueDraw();
 	CameraManager::GetInstanceInternal().onCameraViewChanged();
 }
@@ -118,11 +116,44 @@ const Vector3& Camera::getCameraAngles() const
 
 void Camera::setCameraAngles(const Vector3& newAngles)
 {
-	_angles = newAngles;
+	doSetAngles(newAngles, true);
+	
+	queueDraw();
+	CameraManager::GetInstanceInternal().onCameraViewChanged();
+}
+
+void Camera::doSetOrigin(const Vector3& origin, bool updateModelView)
+{
+	_origin = origin;
+	_prevOrigin = _origin;
+
+	if (updateModelView)
+	{
+		updateModelview();
+		queueDraw();
+	}
+}
+
+void Camera::doSetAngles(const Vector3& angles, bool updateModelView)
+{
+	_angles = angles;
 	_prevAngles = _angles;
+
+	if (updateModelView)
+	{
+		updateModelview();
+		freemoveUpdateAxes();
+	}
+}
+
+void Camera::setOriginAndAngles(const Vector3& newOrigin, const Vector3& newAngles)
+{
+	doSetOrigin(newOrigin, false); // hold back matrix recalculation
+	doSetAngles(newAngles, false); // hold back matrix recalculation
 
 	updateModelview();
 	freemoveUpdateAxes();
+
 	queueDraw();
 	CameraManager::GetInstanceInternal().onCameraViewChanged();
 }

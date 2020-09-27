@@ -28,6 +28,8 @@ public:
 
 	void destroyCamera(const ICameraView::Ptr& camera) override;
 
+	void focusAllCameras(const Vector3& position, const Vector3& angles) override;
+
 	sigc::signal<void>& signal_cameraChanged() override;
 
 	void onCameraViewChanged();

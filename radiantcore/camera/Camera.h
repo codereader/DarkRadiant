@@ -52,6 +52,8 @@ public:
 	const Vector3& getCameraAngles() const override;
 	void setCameraAngles(const Vector3& newAngles) override;
 
+	void setOriginAndAngles(const Vector3& newOrigin, const Vector3& newAngles) override;
+
 	const Vector3& getRightVector() const override;
 	const Vector3& getUpVector() const override;
 	const Vector3& getForwardVector() const override;
@@ -70,6 +72,9 @@ public:
 	void forceRedraw() override;
 
 private:
+	// Set the origin without triggering any nofifications
+	void doSetOrigin(const Vector3& origin, bool updateModelView);
+	void doSetAngles(const Vector3& angles, bool updateModelView);
 	void updateProjection();
 };
 

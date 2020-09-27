@@ -594,8 +594,7 @@ void CamWnd::performFreeMove(int dx, int dy)
             angles[camera::CAMERA_YAW] += 360;
     }
 
-    _camera->setCameraOrigin(origin);
-    _camera->setCameraAngles(angles);
+    _camera->setOriginAndAngles(origin, angles);
 }
 
 void CamWnd::onDeferredMotionDelta(int x, int y)
@@ -955,6 +954,11 @@ const Vector3& CamWnd::getCameraAngles() const
 void CamWnd::setCameraAngles(const Vector3& angles)
 {
     _camera->setCameraAngles(angles);
+}
+
+void CamWnd::setOriginAndAngles(const Vector3& newOrigin, const Vector3& newAngles)
+{
+    _camera->setOriginAndAngles(newOrigin, newAngles);
 }
 
 const Matrix4& CamWnd::getModelView() const

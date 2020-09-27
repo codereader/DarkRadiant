@@ -270,8 +270,7 @@ void GlobalCameraWndManager::focusCamera(const Vector3& point, const Vector3& an
 {
 	doWithActiveCamWnd([&](CamWnd& camWnd)
 	{
-		camWnd.setCameraOrigin(point);
-		camWnd.setCameraAngles(angles);
+		camWnd.setOriginAndAngles(point, angles);
 	});
 }
 

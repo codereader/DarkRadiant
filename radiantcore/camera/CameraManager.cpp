@@ -34,6 +34,14 @@ void CameraManager::destroyCamera(const ICameraView::Ptr& camera)
 	_cameras.remove(camera);
 }
 
+void CameraManager::focusAllCameras(const Vector3& position, const Vector3& angles)
+{
+	for (const auto& camera : _cameras)
+	{
+		camera->setOriginAndAngles(position, angles);
+	}
+}
+
 sigc::signal<void>& CameraManager::signal_cameraChanged()
 {
 	return _sigCameraChanged;
