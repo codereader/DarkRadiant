@@ -7,7 +7,7 @@
 #include "registry/Widgets.h"
 #include "entitylib.h"
 #include "iselectable.h"
-#include "icamera.h"
+#include "icameraview.h"
 #include "i18n.h"
 
 #include "wxutil/TreeView.h"
@@ -343,7 +343,7 @@ void EntityList::onSelection(wxDataViewEvent& ev)
 				Vector3 angles(0, 0, 0);
 				angles[camera::CAMERA_PITCH] = -30;
 
-				GlobalCameraWndManager().focusCamera(origin, angles);
+				GlobalCameraManager().focusAllCameras(origin, angles);
 			}
 
 			// Now reactivate the callbacks

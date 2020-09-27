@@ -244,7 +244,7 @@ sigc::signal<void>& Map::signal_modifiedChanged()
 void Map::focusViews(const Vector3& point, const Vector3& angles)
 {
     // Set the camera and the views to the given point
-    GlobalCameraWndManager().focusCamera(point, angles);
+    GlobalCameraManager().focusAllCameras(point, angles);
     GlobalXYWndManager().setOrigin(point);
 }
 

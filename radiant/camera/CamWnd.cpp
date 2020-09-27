@@ -895,7 +895,7 @@ void CamWnd::update()
     queueDraw();
 }
 
-ICameraView& CamWnd::getCamera()
+camera::ICameraView& CamWnd::getCamera()
 {
     return *_camera;
 }

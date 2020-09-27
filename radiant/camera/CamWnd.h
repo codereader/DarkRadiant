@@ -38,8 +38,8 @@ namespace ui
 
 class CamWnd :
     public wxEvtHandler,
-    public ICameraView,
-    public IFreeMoveView,
+    public camera::ICameraView,
+    public camera::IFreeMoveView,
     public scene::Graph::Observer,
     public util::Noncopyable,
     public sigc::trackable,
@@ -119,7 +119,7 @@ public:
     static void captureStates();
     static void releaseStates();
 
-    ICameraView& getCamera();
+    camera::ICameraView& getCamera();
 
     const Vector3& getCameraOrigin() const override;
     void setCameraOrigin(const Vector3& origin) override;

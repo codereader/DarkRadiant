@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "iselection.h"
 #include "igrid.h"
-#include "icamera.h"
+#include "icameraview.h"
 #include "imapformat.h"
 #include "iclipboard.h"
 
@@ -73,7 +73,7 @@ void pasteToCamera(const cmd::ArgumentList& args)
 {
 	try
 	{
-		auto& camWnd = GlobalCameraWndManager().getActiveView();
+		auto& camWnd = GlobalCameraManager().getActiveView();
 
 		UndoableCommand undo("pasteToCamera");
 		pasteToMap();

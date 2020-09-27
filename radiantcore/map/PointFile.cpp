@@ -4,7 +4,7 @@
 #include "igl.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
-#include "icamera.h"
+#include "icameraview.h"
 #include "iorthoview.h"
 #include <fstream>
 #include <iostream>
@@ -129,7 +129,7 @@ void PointFile::advance(bool forward)
 
 	try
 	{
-		auto& cam = GlobalCameraWndManager().getActiveView();
+		auto& cam = GlobalCameraManager().getActiveView();
 
 		cam.setCameraOrigin(_points[_curPos].vertex);
 

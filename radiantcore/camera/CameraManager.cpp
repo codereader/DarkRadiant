@@ -42,6 +42,16 @@ void CameraManager::focusAllCameras(const Vector3& position, const Vector3& angl
 	}
 }
 
+camera::ICameraView& CameraManager::getActiveView()
+{
+	if (_cameras.empty())
+	{
+		throw std::runtime_error("No active camera view present");
+	}
+
+	return *_cameras.front();
+}
+
 sigc::signal<void>& CameraManager::signal_cameraChanged()
 {
 	return _sigCameraChanged;

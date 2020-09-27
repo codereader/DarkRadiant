@@ -30,6 +30,8 @@ public:
 
 	void focusAllCameras(const Vector3& position, const Vector3& angles) override;
 
+	ICameraView& getActiveView() override;
+
 	sigc::signal<void>& signal_cameraChanged() override;
 
 	void onCameraViewChanged();

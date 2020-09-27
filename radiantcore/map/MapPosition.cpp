@@ -1,7 +1,7 @@
 #include "MapPosition.h"
 
 #include "ientity.h"
-#include "icamera.h"
+#include "icameraview.h"
 #include "itextstream.h"
 #include "string/string.h"
 #include "map/Map.h"
@@ -115,7 +115,7 @@ void MapPosition::store(const cmd::ArgumentList& args)
     
     try
     {
-        auto& cameraView = GlobalCameraWndManager().getActiveView();
+        auto& cameraView = GlobalCameraManager().getActiveView();
 
         _position = cameraView.getCameraOrigin();
         _angle = cameraView.getCameraAngles();

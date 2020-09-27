@@ -266,23 +266,6 @@ void GlobalCameraWndManager::farClipPlaneOut(const cmd::ArgumentList& args)
 	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.farClipPlaneOut(); });
 }
 
-void GlobalCameraWndManager::focusCamera(const Vector3& point, const Vector3& angles)
-{
-	doWithActiveCamWnd([&](CamWnd& camWnd)
-	{
-		camWnd.setOriginAndAngles(point, angles);
-	});
-}
-
-ICameraView& GlobalCameraWndManager::getActiveView()
-{
-	auto camWnd = getActiveCamWnd();
-
-	if (!camWnd) throw std::runtime_error("No active camera view present");
-
-	return camWnd->getCamera();
-}
-
 // --------------- Keyboard movement methods ------------------------------------------
 
 void GlobalCameraWndManager::moveCameraCmd(const cmd::ArgumentList& args)

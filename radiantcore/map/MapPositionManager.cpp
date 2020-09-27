@@ -2,7 +2,7 @@
 
 #include "maplib.h"
 #include "ientity.h"
-#include "icamera.h"
+#include "icameraview.h"
 #include "gamelib.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
@@ -183,7 +183,7 @@ void MapPositionManager::saveLastCameraPosition(const scene::IMapRootNodePtr& ro
 
 	try
 	{
-		auto& camView = GlobalCameraWndManager().getActiveView();
+		auto& camView = GlobalCameraManager().getActiveView();
 
 		root->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camView.getCameraOrigin()));
 		root->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camView.getCameraAngles()));

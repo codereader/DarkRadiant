@@ -34,7 +34,7 @@ public:
     {
         try
         {
-            auto& freeMoveView = dynamic_cast<IFreeMoveView&>(ev.getInteractiveView());
+            auto& freeMoveView = dynamic_cast<camera::IFreeMoveView&>(ev.getInteractiveView());
 
             if (getCameraSettings()->toggleFreelook())
             {
@@ -75,7 +75,7 @@ public:
     {
         try
         {
-            auto& freeMoveView = dynamic_cast<IFreeMoveView&>(ev.getInteractiveView());
+            auto& freeMoveView = dynamic_cast<camera::IFreeMoveView&>(ev.getInteractiveView());
 
             // MouseUp events are ignored when in toggle mode
             // In non-toggle mode, we just reset the freelook status to disabled
@@ -99,7 +99,7 @@ public:
     {
         try
         {
-            auto& freeMoveView = dynamic_cast<IFreeMoveView&>(view);
+            auto& freeMoveView = dynamic_cast<camera::IFreeMoveView&>(view);
 
             if (freeMoveView.freeMoveEnabled())
             {

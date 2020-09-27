@@ -34,7 +34,7 @@ public:
 	{
 		try
 		{
-			auto& freeMoveView = dynamic_cast<IFreeMoveView&>(ev.getInteractiveView());
+			auto& freeMoveView = dynamic_cast<camera::IFreeMoveView&>(ev.getInteractiveView());
 
 			// Don't operate when the camera is already in free look mode
 			if (freeMoveView.freeMoveEnabled())
@@ -57,7 +57,7 @@ public:
 		{
 			// We use capture mode, so xy event will contain the delta only
 			CameraMouseToolEvent& camEvent = dynamic_cast<CameraMouseToolEvent&>(ev);
-			ICameraView& view = camEvent.getView();
+			auto& view = camEvent.getView();
 
 			const float strafespeed = GlobalCamera().getCameraStrafeSpeed();
 

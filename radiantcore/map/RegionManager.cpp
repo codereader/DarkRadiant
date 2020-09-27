@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "brush/TexDef.h"
 #include "ibrush.h"
-#include "icamera.h"
+#include "icameraview.h"
 #include "iorthoview.h"
 #include "ientity.h"
 #include "ieclass.h"
@@ -171,7 +171,7 @@ void RegionManager::addRegionBrushes()
 
     try
     {
-        auto& camView = GlobalCameraWndManager().getActiveView();
+        auto& camView = GlobalCameraManager().getActiveView();
 
         // Obtain the camera origin = player start point
         Vector3 camOrigin = camView.getCameraOrigin();

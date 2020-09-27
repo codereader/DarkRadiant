@@ -8,6 +8,16 @@ template<typename Element>class BasicVector3;
 typedef BasicVector3<double> Vector3;
 class Matrix4;
 
+namespace camera
+{
+
+enum
+{
+	CAMERA_PITCH = 0, // up / down
+	CAMERA_YAW = 1, // left / right
+	CAMERA_ROLL = 2, // fall over
+};
+
 // Abstract class used when handling mouse events
 // see also: class IOrthoView in iorthoview.h
 class ICameraView :
@@ -58,9 +68,6 @@ public:
     virtual bool freeMoveEnabled() const = 0;
 };
 
-namespace camera
-{
-
 class ICameraViewManager :
 	public RegisterableModule
 {
@@ -79,6 +86,9 @@ public:
 
 	// Sets the position and angles of all active cameras to the given values
 	virtual void focusAllCameras(const Vector3& position, const Vector3& angles) = 0;
+
+	// A reference to the currently active view. Will throw a std::runtime_error if no camera is present
+	virtual ICameraView& getActiveView() = 0;
 
 	// Signal emitted when any camera position or angles changed
 	virtual sigc::signal<void>& signal_cameraChanged() = 0;
