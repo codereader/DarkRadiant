@@ -36,6 +36,7 @@
 #include "render/RenderableCollectionWalker.h"
 
 #include <fmt/format.h>
+#include <sigc++/functors/mem_fun.h>
 #include <functional>
 
 namespace ui
@@ -136,7 +137,8 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
     GlobalSceneGraph().addSceneObserver(this);
 
     // greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
-    GlobalCamera().addCameraObserver(this);
+    _sigCameraChanged = GlobalCameraManager().signal_cameraChanged().connect(
+        sigc::mem_fun(this, &XYWnd::onCameraMoved));
 }
 
 // Destructor
@@ -163,9 +165,7 @@ void XYWnd::destroyXYView()
     // Remove <self> from the scene change callback list
     GlobalSceneGraph().removeSceneObserver(this);
 
-    // greebo: Remove <self> as CameraObserver from the CamWindow.
-    GlobalCamera().removeCameraObserver(this);
-
+    _sigCameraChanged.disconnect();
     _wxGLWidget = nullptr;
 }
 
@@ -431,9 +431,10 @@ void XYWnd::setCursorType(CursorType type)
     };
 }
 
-// Callback that gets invoked on camera move
-void XYWnd::cameraMoved() {
-    if (GlobalXYWnd().camXYUpdate()) {
+void XYWnd::onCameraMoved()
+{
+    if (GlobalXYWnd().camXYUpdate())
+    {
         queueDraw();
     }
 }

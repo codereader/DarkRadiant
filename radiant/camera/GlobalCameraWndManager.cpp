@@ -252,39 +252,6 @@ void GlobalCameraWndManager::changeFloorDown(const cmd::ArgumentList& args)
 	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.changeFloor(false); });
 }
 
-void GlobalCameraWndManager::addCameraObserver(CameraObserver* observer) {
-	if (observer != NULL) {
-		// Add the passed observer to the list
-		_cameraObservers.push_back(observer);
-	}
-}
-
-void GlobalCameraWndManager::removeCameraObserver(CameraObserver* observer)
-{
-	// Cycle through the list of observers and call the moved method
-	for (CameraObserverList::iterator i = _cameraObservers.begin(); i != _cameraObservers.end(); i++)
-	{
-		CameraObserver* registered = *i;
-
-		if (registered == observer) {
-			_cameraObservers.erase(i++);
-			return; // Don't continue the loop, the iterator is obsolete
-		}
-	}
-}
-
-void GlobalCameraWndManager::movedNotify()
-{
-	// Cycle through the list of observers and call the moved method
-	for (CameraObserver* observer : _cameraObservers)
-	{
-		if (observer != nullptr)
-		{
-			observer->cameraMoved();
-		}
-	}
-}
-
 void GlobalCameraWndManager::toggleLightingMode(const cmd::ArgumentList& args) {
 	getCameraSettings()->toggleLightingMode();
 }

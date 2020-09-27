@@ -675,9 +675,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\camera\CameraObserver.h">
-      <Filter>src\camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
       <Filter>src\camera</Filter>
     </ClInclude>

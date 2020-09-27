@@ -9,6 +9,9 @@ namespace camera
 class CameraManager :
 	public ICameraViewManager
 {
+private:
+	sigc::signal<void> _sigCameraChanged;
+
 public:
 	// RegisterableModule
 	const std::string& getName() const override;
@@ -18,6 +21,8 @@ public:
 	// ICameraManager
 	ICameraView::Ptr createCamera(render::IRenderView& view,
 		const std::function<void()>& queueDraw, const std::function<void()>& forceRedraw) override;
+
+	sigc::signal<void>& signal_cameraChanged() override;
 
 	void onCameraViewChanged();
 

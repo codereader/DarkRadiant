@@ -8,7 +8,6 @@
 
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
-#include "CameraObserver.h"
 
 class wxWindow;
 
@@ -31,9 +30,6 @@ private:
 
 	// The currently active camera window (-1 if no cam active)
 	int _activeCam;
-
-	// The connected callbacks (get invoked when movedNotify() is called)
-	CameraObserverList _cameraObservers;
 
     unsigned int _toggleStrafeModifierFlags;
     unsigned int _toggleStrafeForwardModifierFlags;
@@ -94,13 +90,6 @@ public:
 
 	void update();
     void forceDraw();
-
-	// Add a "CameraMoved" callback to the signal member
-	void addCameraObserver(CameraObserver* observer);
-	void removeCameraObserver(CameraObserver* observer);
-
-	// Notify the attached "CameraMoved" callbacks
-	void movedNotify();
 
 	// Movement commands (the calls are passed on to the Camera class)
 	void moveCameraCmd(const cmd::ArgumentList& args);

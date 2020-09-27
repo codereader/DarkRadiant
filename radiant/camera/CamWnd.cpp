@@ -431,7 +431,6 @@ void CamWnd::changeFloor(const bool up)
     _camera->setCameraOrigin(Vector3(org[0], org[1], current + 48));
 
     update();
-    GlobalCamera().movedNotify();
 }
 
 void CamWnd::setFreeMoveFlags(unsigned int mask)
@@ -521,7 +520,6 @@ void CamWnd::onFreeMoveTimer(wxTimerEvent& ev)
     handleFreeMovement(time_seconds * 5.0f);
 
     queueDraw();
-    GlobalCamera().movedNotify();
 }
 
 void CamWnd::enableFreeMove()
@@ -601,7 +599,6 @@ void CamWnd::onDeferredMotionDelta(int x, int y)
 {
     performFreeMove(-x, -y);
     queueDraw();
-    GlobalCamera().movedNotify();
 }
 
 void CamWnd::Cam_Draw()

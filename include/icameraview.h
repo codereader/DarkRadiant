@@ -66,6 +66,9 @@ public:
 
 	virtual ICameraView::Ptr createCamera(render::IRenderView& view, 
 		const std::function<void()>& queueDraw, const std::function<void()>& forceRedraw) = 0;
+
+	// Signal emitted when any camera position or angles changed
+	virtual sigc::signal<void>& signal_cameraChanged() = 0;
 };
 
 }

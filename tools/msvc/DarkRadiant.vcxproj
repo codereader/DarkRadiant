@@ -455,7 +455,6 @@
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
-    <ClInclude Include="..\..\radiant\camera\CameraObserver.h" />
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h" />
     <ClInclude Include="..\..\radiant\camera\CamRenderer.h" />
     <ClInclude Include="..\..\radiant\camera\CamWnd.h" />

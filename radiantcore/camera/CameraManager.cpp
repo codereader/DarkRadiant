@@ -29,9 +29,14 @@ ICameraView::Ptr CameraManager::createCamera(render::IRenderView& view,
 	return std::make_shared<Camera>(view, queueDraw, forceRedraw);
 }
 
+sigc::signal<void>& CameraManager::signal_cameraChanged()
+{
+	return _sigCameraChanged;
+}
+
 void CameraManager::onCameraViewChanged()
 {
-	// TODO
+	_sigCameraChanged.emit();
 }
 
 CameraManager& CameraManager::GetInstanceInternal()

@@ -12,8 +12,8 @@
 
 #include <wx/cursor.h>
 #include <wx/stopwatch.h>
+#include <sigc++/connection.h>
 
-#include "camera/CameraObserver.h"
 #include "render/View.h"
 #include "imousetool.h"
 #include "tools/XYMouseToolEvent.h"
@@ -25,7 +25,6 @@ namespace ui
 class XYWnd :
     public wxEvtHandler,
     public IOrthoView,
-    public CameraObserver,
     public scene::Graph::Observer,
     protected wxutil::MouseToolHandler
 {
@@ -84,6 +83,8 @@ protected:
 
     int _width;
     int _height;
+
+    sigc::connection _sigCameraChanged;
 
 public:
     // Constructor, this allocates the GL widget
@@ -149,9 +150,6 @@ public:
     int getWidth() const override;
     int getHeight() const override;
 
-    // greebo: CameraObserver implementation; gets called when the camera is moved
-    void cameraMoved() override;
-
     // greebo: This gets called upon scene change
     void onSceneGraphChange() override;
 
@@ -177,6 +175,7 @@ private:
     bool checkChaseMouse(unsigned int state);
     void performChaseMouse();
     void onIdle(wxIdleEvent& ev);
+    void onCameraMoved();
 
     // The method responsible for mouseMove situations according to <event>
     void handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta);
