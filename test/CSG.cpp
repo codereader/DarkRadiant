@@ -81,7 +81,109 @@ TEST_F(RadiantTest, CSGMergeFourRegularWorldspawnBrushes)
     ASSERT_TRUE(Node_getIBrush(brushWithMaterial1)->getNumFaces() == 6);
 }
 
-// Issue #5336: Crash when using CSG Merge on brushes that are entities
+TEST_F(RadiantTest, CSGMergeTwoFuncStaticBrushes)
+{
+    loadMap("csg_merge.map");
+
+    // Locate the func_static in the map
+    EntityNodeFindByClassnameWalker walker("func_static");
+    GlobalSceneGraph().root()->traverse(walker);
+
+    auto entity = walker.getEntityNode();
+
+    // Try to merge the two brushes with the "1" and "2" materials
+    auto firstBrush = test::algorithm::findFirstBrushWithMaterial(entity, "1");
+    auto secondBrush = test::algorithm::findFirstBrushWithMaterial(entity, "2");
+
+    ASSERT_TRUE(Node_getIBrush(firstBrush)->getNumFaces() == 5);
+    ASSERT_TRUE(Node_getIBrush(secondBrush)->getNumFaces() == 5);
+
+    // Select the brushes and merge them
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(firstBrush, true);
+    Node_setSelected(secondBrush, true);
+
+    // CSG merge
+    GlobalCommandSystem().executeCommand("CSGMerge");
+
+    // The two brushes should be gone, replaced by a new one
+    ASSERT_TRUE(firstBrush->getParent() == nullptr);
+    ASSERT_TRUE(secondBrush->getParent() == nullptr);
+    
+    // The merged brush will carry both materials
+    auto brushWithMaterial1 = test::algorithm::findFirstBrushWithMaterial(entity, "1");
+    auto brushWithMaterial2 = test::algorithm::findFirstBrushWithMaterial(entity, "2");
+
+    ASSERT_TRUE(brushWithMaterial1 == brushWithMaterial2);
+    ASSERT_TRUE(Node_getIBrush(brushWithMaterial1)->getNumFaces() == 6);
+
+    // They should still be children of the same entity
+    ASSERT_TRUE(brushWithMaterial1->getParent() == entity);
+    ASSERT_TRUE(brushWithMaterial2->getParent() == entity);
+}
+
+// #5344: Check that selecting a couple of brushes will only merge those
+// which share the same parent entity
+TEST_F(RadiantTest, CSGMergeBrushesOfMixedEntitySelection)
+{
+    loadMap("csg_merge.map");
+
+    // Locate the func_static in the map
+    EntityNodeFindByClassnameWalker walker("func_static");
+    GlobalSceneGraph().root()->traverse(walker);
+
+    auto entity = walker.getEntityNode();
+    auto worldspawn = GlobalMapModule().getWorldspawn();
+
+    // Select the mergeable brushes of both entities carrying the "1" and "2" materials
+    std::vector<scene::INodePtr> brushes = {
+        test::algorithm::findFirstBrushWithMaterial(entity, "1"),
+        test::algorithm::findFirstBrushWithMaterial(entity, "2"),
+        test::algorithm::findFirstBrushWithMaterial(worldspawn, "1"),
+        test::algorithm::findFirstBrushWithMaterial(worldspawn, "2")
+    };
+
+    // Check the correct setup
+    for (const auto& brush : brushes)
+    {
+        ASSERT_TRUE(Node_getIBrush(brush)->getNumFaces() == 5);
+    }
+
+    // Select the brushes and merge them
+    GlobalSelectionSystem().setSelectedAll(false);
+
+    for (const auto& brush : brushes)
+    {
+        Node_setSelected(brush, true);
+    }
+
+    // CSG merge
+    GlobalCommandSystem().executeCommand("CSGMerge");
+
+    // All brushes should be gone, replaced by TWO new ones
+    for (const auto& brush : brushes)
+    {
+        ASSERT_TRUE(brush->getParent() == nullptr);
+    }
+
+    // The merged brush will carry both materials
+    auto funcBrush1 = test::algorithm::findFirstBrushWithMaterial(entity, "1");
+    auto funcBrush2 = test::algorithm::findFirstBrushWithMaterial(entity, "2");
+
+    ASSERT_TRUE(funcBrush1);
+    ASSERT_TRUE(funcBrush1 == funcBrush2);
+    ASSERT_TRUE(Node_getIBrush(funcBrush1)->getNumFaces() == 6);
+
+    // Same for the worldspawn entity
+    auto worldBrush1 = test::algorithm::findFirstBrushWithMaterial(worldspawn, "1");
+    auto worldBrush2 = test::algorithm::findFirstBrushWithMaterial(worldspawn, "2");
+
+    ASSERT_TRUE(worldBrush1);
+    ASSERT_TRUE(worldBrush1 == worldBrush2);
+    ASSERT_TRUE(Node_getIBrush(worldBrush1)->getNumFaces() == 6);
+}
+
+// Issue #5336: Crash when using CSG Merge on brushes that are part of worldspawn and a func_static
 TEST_F(RadiantTest, CSGMergeWithFuncStatic)
 {
     loadMap("csg_merge_with_func_static.map");
