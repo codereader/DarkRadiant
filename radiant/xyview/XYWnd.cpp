@@ -24,7 +24,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "registry/registry.h"
 #include "selection/Device.h"
-#include "selection/SelectionTest.h"
+#include "selection/SelectionVolume.h"
 #include "util/ScopedBoolLock.h"
 #include "debugging/gl.h"
 
@@ -1201,7 +1201,7 @@ void XYWnd::updateProjection() {
 
     _projection[15] = 1.0f;
 
-    _view.Construct(_projection, _modelView, _width, _height);
+    _view.construct(_projection, _modelView, _width, _height);
 }
 
 // note: modelview matrix must have a uniform scale, otherwise strange things happen when rendering the rotation manipulator.
@@ -1260,7 +1260,7 @@ void XYWnd::updateModelview() {
     _modelView[3] = _modelView[7] = _modelView[11] = 0;
     _modelView[15] = 1;
 
-    _view.Construct(_projection, _modelView, _width, _height);
+    _view.construct(_projection, _modelView, _width, _height);
 }
 
 void XYWnd::draw()

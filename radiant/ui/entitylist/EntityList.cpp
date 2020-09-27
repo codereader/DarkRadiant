@@ -343,7 +343,7 @@ void EntityList::onSelection(wxDataViewEvent& ev)
 				Vector3 angles(0, 0, 0);
 				angles[camera::CAMERA_PITCH] = -30;
 
-				GlobalCameraManager().focusCamera(origin, angles);
+				GlobalCameraWndManager().focusCamera(origin, angles);
 			}
 
 			// Now reactivate the callbacks

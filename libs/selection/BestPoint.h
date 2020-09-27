@@ -98,7 +98,7 @@ inline void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersecti
     {
         Segment3D segment(normalised[0], normalised[1]);
         Vector3 point = segment_closest_point_to_point(segment, Vector3(0, 0, 0));
-        best.assignIfCloser(SelectionIntersection(point.z(), 0));
+        best.assignIfCloser(SelectionIntersection(static_cast<float>(point.z()), 0));
     }
     else if (count > 2 && !point_test_polygon_2d(Vector3(0, 0, 0), normalised, normalised + count))
     {
@@ -110,9 +110,9 @@ inline void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersecti
             Vector3 point = segment_closest_point_to_point(segment, Vector3(0, 0, 0));
             double depth = point.z();
             point.z() = 0;
-            double distance = point.getLengthSquared();
+            auto distance = point.getLengthSquared();
 
-            best.assignIfCloser(SelectionIntersection(depth, distance));
+            best.assignIfCloser(SelectionIntersection(static_cast<float>(depth), distance));
         }
     }
     else if (count > 2)

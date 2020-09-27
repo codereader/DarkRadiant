@@ -26,7 +26,7 @@
 #include "registry/adaptors.h"
 #include "selection/OccludeSelector.h"
 #include "selection/Device.h"
-#include "selection/SelectionTest.h"
+#include "selection/SelectionVolume.h"
 #include "FloorHeightWalker.h"
 
 #include "debugging/debugging.h"
@@ -79,7 +79,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
-    _camera(_view, std::bind(&CamWnd::queueDraw, this), std::bind(&CamWnd::forceRedraw, this)),
+    _camera(GlobalCameraManager().createCamera(_view, std::bind(&CamWnd::queueDraw, this), std::bind(&CamWnd::forceRedraw, this))),
     _drawing(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
@@ -270,7 +270,7 @@ CamWnd::~CamWnd()
 
 SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
 {
-    return _camera.createSelectionTestForPoint(point);
+    return _camera->createSelectionTestForPoint(point);
 }
 
 const VolumeTest& CamWnd::getVolumeTest() const
@@ -280,17 +280,17 @@ const VolumeTest& CamWnd::getVolumeTest() const
 
 int CamWnd::getDeviceWidth() const
 {
-    return _camera.getDeviceWidth();
+    return _camera->getDeviceWidth();
 }
 
 int CamWnd::getDeviceHeight() const
 {
-    return _camera.getDeviceHeight();
+    return _camera->getDeviceHeight();
 }
 
 void CamWnd::setDeviceDimensions(int width, int height)
 {
-    _camera.setDeviceDimensions(width, height);
+    _camera->setDeviceDimensions(width, height);
 }
 
 void CamWnd::startRenderTime()
@@ -413,7 +413,7 @@ int CamWnd::getId()
 
 void CamWnd::changeFloor(const bool up)
 {
-    float current = _camera.getCameraOrigin()[2] - 48;
+    float current = _camera->getCameraOrigin()[2] - 48;
     float bestUp;
     float bestDown;
     camera::FloorHeightWalker walker(current, bestUp, bestDown);
@@ -427,8 +427,8 @@ void CamWnd::changeFloor(const bool up)
         current = bestDown;
     }
 
-    const Vector3& org = _camera.getCameraOrigin();
-    _camera.setCameraOrigin(Vector3(org[0], org[1], current + 48));
+    const Vector3& org = _camera->getCameraOrigin();
+    _camera->setCameraOrigin(Vector3(org[0], org[1], current + 48));
 
     update();
     GlobalCamera().movedNotify();
@@ -459,7 +459,7 @@ void CamWnd::handleFreeMovement(float timePassed)
     int angleSpeed = getCameraSettings()->angleSpeed();
     int movementSpeed = getCameraSettings()->movementSpeed();
 
-    auto angles = _camera.getCameraAngles();
+    auto angles = _camera->getCameraAngles();
 
     // Update angles
     if (_freeMoveFlags & MOVE_ROTLEFT)
@@ -484,25 +484,25 @@ void CamWnd::handleFreeMovement(float timePassed)
             angles[camera::CAMERA_PITCH] = -90;
     }
 
-    _camera.setCameraAngles(angles);
+    _camera->setCameraAngles(angles);
 
     // Update position
-    auto origin = _camera.getCameraOrigin();
+    auto origin = _camera->getCameraOrigin();
 
     if (_freeMoveFlags & MOVE_FORWARD)
-        origin += -_camera.getForwardVector() * (timePassed * movementSpeed);
+        origin += -_camera->getForwardVector() * (timePassed * movementSpeed);
     if (_freeMoveFlags & MOVE_BACK)
-        origin += -_camera.getForwardVector() * (-timePassed * movementSpeed);
+        origin += -_camera->getForwardVector() * (-timePassed * movementSpeed);
     if (_freeMoveFlags & MOVE_STRAFELEFT)
-        origin += _camera.getRightVector() * (-timePassed * movementSpeed);
+        origin += _camera->getRightVector() * (-timePassed * movementSpeed);
     if (_freeMoveFlags & MOVE_STRAFERIGHT)
-        origin += _camera.getRightVector() * (timePassed * movementSpeed);
+        origin += _camera->getRightVector() * (timePassed * movementSpeed);
     if (_freeMoveFlags & MOVE_UP)
         origin += g_vector3_axis_z * (timePassed * movementSpeed);
     if (_freeMoveFlags & MOVE_DOWN)
         origin += g_vector3_axis_z * (-timePassed * movementSpeed);
     
-    _camera.setCameraOrigin(origin);
+    _camera->setCameraOrigin(origin);
 }
 
 void CamWnd::onFreeMoveTimer(wxTimerEvent& ev)
@@ -555,8 +555,8 @@ void CamWnd::performFreeMove(int dx, int dy)
 {
     int angleSpeed = getCameraSettings()->angleSpeed();
 
-    auto origin = _camera.getCameraOrigin();
-    auto angles = _camera.getCameraAngles();
+    auto origin = _camera->getCameraOrigin();
+    auto angles = _camera->getCameraAngles();
 
     // free strafe mode, toggled by the keyboard modifiers
     if (_strafe)
@@ -564,14 +564,14 @@ void CamWnd::performFreeMove(int dx, int dy)
         const float strafespeed = GlobalCamera().getCameraStrafeSpeed();
         const float forwardStrafeFactor = GlobalCamera().getCameraForwardStrafeFactor();
 
-        origin -= _camera.getRightVector() * strafespeed * dx;
+        origin -= _camera->getRightVector() * strafespeed * dx;
 
         if (_strafeForward)
         {
-            origin += _camera.getForwardVector() * strafespeed * dy * forwardStrafeFactor;
+            origin += _camera->getForwardVector() * strafespeed * dy * forwardStrafeFactor;
         }
         else {
-            origin += _camera.getForwardVector() * strafespeed * dy;
+            origin += _camera->getForwardVector() * strafespeed * dy;
         }
     }
     else // free rotation
@@ -593,8 +593,8 @@ void CamWnd::performFreeMove(int dx, int dy)
             angles[camera::CAMERA_YAW] += 360;
     }
 
-    _camera.setCameraOrigin(origin);
-    _camera.setCameraAngles(angles);
+    _camera->setCameraOrigin(origin);
+    _camera->setCameraAngles(angles);
 }
 
 void CamWnd::onDeferredMotionDelta(int x, int y)
@@ -608,13 +608,13 @@ void CamWnd::Cam_Draw()
 {
     wxSize glSize = _wxGLWidget->GetSize();
 
-    if (_camera.getDeviceWidth() != glSize.GetWidth() || _camera.getDeviceHeight() != glSize.GetHeight())
+    if (_camera->getDeviceWidth() != glSize.GetWidth() || _camera->getDeviceHeight() != glSize.GetHeight())
     {
-        _camera.setDeviceDimensions(glSize.GetWidth(), glSize.GetHeight());
+        _camera->setDeviceDimensions(glSize.GetWidth(), glSize.GetHeight());
     }
 
-    int height = _camera.getDeviceHeight();
-    int width = _camera.getDeviceWidth();
+    int height = _camera->getDeviceHeight();
+    int width = _camera->getDeviceWidth();
 
     if (width == 0 || height == 0)
     {
@@ -642,10 +642,10 @@ void CamWnd::Cam_Draw()
     _view.resetCullStats();
 
     glMatrixMode(GL_PROJECTION);
-    glLoadMatrixd(_camera.getProjection());
+    glLoadMatrixd(_camera->getProjection());
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixd(_camera.getModelView());
+    glLoadMatrixd(_camera->getModelView());
 
     // one directional light source directly behind the viewer
     {
@@ -658,7 +658,7 @@ void CamWnd::Cam_Draw()
         //material[0] = material[1] = material[2] = 0.8f;
         //material[3] = 1.0f;
 
-        const auto& forward = _camera.getForwardVector();
+        const auto& forward = _camera->getForwardVector();
         inverse_cam_dir[0] = forward[0];
         inverse_cam_dir[1] = forward[1];
         inverse_cam_dir[2] = forward[2];
@@ -744,7 +744,7 @@ void CamWnd::Cam_Draw()
             i.second->render(GlobalRenderSystem(), renderer, _view);
         }
 
-        renderer.render(_camera.getModelView(), _camera.getProjection());
+        renderer.render(_camera->getModelView(), _camera->getProjection());
     }
 
     // greebo: Draw the clipper's points (skipping the depth-test)
@@ -865,7 +865,7 @@ void CamWnd::benchmark()
         angles[camera::CAMERA_ROLL] = 0;
         angles[camera::CAMERA_PITCH] = 0;
         angles[camera::CAMERA_YAW] = static_cast<double>(i * (360.0 / 100.0));
-        _camera.setCameraAngles(angles);
+        _camera->setCameraAngles(angles);
     }
 
     double dEnd = clock() / 1000.0;
@@ -896,9 +896,9 @@ void CamWnd::update()
     queueDraw();
 }
 
-Camera& CamWnd::getCamera()
+ICameraView& CamWnd::getCamera()
 {
-    return _camera;
+    return *_camera;
 }
 
 void CamWnd::captureStates()
@@ -924,47 +924,47 @@ void CamWnd::queueDraw()
 
 const Vector3& CamWnd::getCameraOrigin() const
 {
-    return _camera.getCameraOrigin();
+    return _camera->getCameraOrigin();
 }
 
 void CamWnd::setCameraOrigin(const Vector3& origin)
 {
-    _camera.setCameraOrigin(origin);
+    _camera->setCameraOrigin(origin);
 }
 
 const Vector3& CamWnd::getRightVector() const
 {
-    return _camera.getRightVector();
+    return _camera->getRightVector();
 }
 
 const Vector3& CamWnd::getUpVector() const
 {
-    return _camera.getUpVector();
+    return _camera->getUpVector();
 }
 
 const Vector3& CamWnd::getForwardVector() const
 {
-    return _camera.getForwardVector();
+    return _camera->getForwardVector();
 }
 
 const Vector3& CamWnd::getCameraAngles() const
 {
-    return _camera.getCameraAngles();
+    return _camera->getCameraAngles();
 }
 
 void CamWnd::setCameraAngles(const Vector3& angles)
 {
-    _camera.setCameraAngles(angles);
+    _camera->setCameraAngles(angles);
 }
 
 const Matrix4& CamWnd::getModelView() const
 {
-    return _camera.getModelView();
+    return _camera->getModelView();
 }
 
 const Matrix4& CamWnd::getProjection() const
 {
-    return _camera.getProjection();
+    return _camera->getProjection();
 }
 
 const Frustum& CamWnd::getViewFrustum() const
@@ -987,7 +987,7 @@ void CamWnd::farClipPlaneOut()
     auto newCubicScale = getCameraSettings()->cubicScale() + 1;
     getCameraSettings()->setCubicScale(newCubicScale);
 
-    _camera.setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
+    _camera->setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
     update();
 }
 
@@ -996,23 +996,23 @@ void CamWnd::farClipPlaneIn()
     auto newCubicScale = getCameraSettings()->cubicScale() - 1;
     getCameraSettings()->setCubicScale(newCubicScale);
 
-    _camera.setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
+    _camera->setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
     update();
 }
 
 void CamWnd::updateFarClipPlane()
 {
-    _camera.setFarClipPlaneDistance(calculateFarPlaneDistance(getCameraSettings()->cubicScale()));
+    _camera->setFarClipPlaneDistance(calculateFarPlaneDistance(getCameraSettings()->cubicScale()));
 }
 
 float CamWnd::getFarClipPlaneDistance() const
 {
-    return _camera.getFarClipPlaneDistance();
+    return _camera->getFarClipPlaneDistance();
 }
 
 void CamWnd::setFarClipPlaneDistance(float distance)
 {
-    _camera.setFarClipPlaneDistance(distance);
+    _camera->setFarClipPlaneDistance(distance);
 }
 
 void CamWnd::onGLResize(wxSizeEvent& ev)
@@ -1039,13 +1039,11 @@ void CamWnd::onMouseScroll(wxMouseEvent& ev)
     // Determine the direction we are moving.
     if (ev.GetWheelRotation() > 0)
     {
-        getCamera().freemoveUpdateAxes();
-        _camera.setCameraOrigin(_camera.getCameraOrigin() - getCamera().getForwardVector() * movementSpeed);
+        _camera->setCameraOrigin(_camera->getCameraOrigin() - getCamera().getForwardVector() * movementSpeed);
     }
     else if (ev.GetWheelRotation() < 0)
     {
-        getCamera().freemoveUpdateAxes();
-        _camera.setCameraOrigin(_camera.getCameraOrigin() - getCamera().getForwardVector() * -movementSpeed);
+        _camera->setCameraOrigin(_camera->getCameraOrigin() - getCamera().getForwardVector() * -movementSpeed);
     }
 }
 
@@ -1055,7 +1053,7 @@ CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Vector
     Vector2 actualPoint = freeMoveEnabled() ? windowvector_for_widget_centre(*_wxGLWidget) : point;
 
     Vector2 normalisedDeviceCoords = device_constrained(
-        window_to_normalised_device(actualPoint, _camera.getDeviceWidth(), _camera.getDeviceHeight()));
+        window_to_normalised_device(actualPoint, _camera->getDeviceWidth(), _camera->getDeviceHeight()));
 
     return CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
 }
@@ -1183,8 +1181,8 @@ void CamWnd::drawTime()
         return;
     }
 
-    auto width = _camera.getDeviceWidth();
-    auto height = _camera.getDeviceHeight();
+    auto width = _camera->getDeviceWidth();
+    auto height = _camera->getDeviceHeight();
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -1299,13 +1297,13 @@ void CamWnd::pitchDownDiscrete()
 void CamWnd::moveForwardDiscrete(double units)
 {
     //moveUpdateAxes();
-    setCameraOrigin(getCameraOrigin() - _camera.getForwardVector() * fabs(units));
+    setCameraOrigin(getCameraOrigin() - _camera->getForwardVector() * fabs(units));
 }
 
 void CamWnd::moveBackDiscrete(double units)
 {
     //moveUpdateAxes();
-    setCameraOrigin(getCameraOrigin() + _camera.getForwardVector() * fabs(units));
+    setCameraOrigin(getCameraOrigin() + _camera->getForwardVector() * fabs(units));
 }
 
 void CamWnd::moveUpDiscrete(double units)
@@ -1327,13 +1325,13 @@ void CamWnd::moveDownDiscrete(double units)
 void CamWnd::moveLeftDiscrete(double units)
 {
     //moveUpdateAxes();
-    setCameraOrigin(getCameraOrigin() - _camera.getRightVector() * fabs(units));
+    setCameraOrigin(getCameraOrigin() - _camera->getRightVector() * fabs(units));
 }
 
 void CamWnd::moveRightDiscrete(double units)
 {
     //moveUpdateAxes();
-    setCameraOrigin(getCameraOrigin() + _camera.getRightVector() * fabs(units));
+    setCameraOrigin(getCameraOrigin() + _camera->getRightVector() * fabs(units));
 }
 
 void CamWnd::rotateLeftDiscrete()

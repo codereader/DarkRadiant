@@ -41,7 +41,6 @@ darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/module/libmodule.la
 darkradiant_SOURCES = main.cpp \
                       RadiantApp.cpp \
-                      camera/Camera.cpp \
                       camera/GlobalCameraWndManager.cpp \
                       camera/CameraSettings.cpp \
                       camera/CamRenderer.cpp \
@@ -199,7 +198,6 @@ darkradiant_SOURCES = main.cpp \
                       modulesystem/ApplicationContextImpl.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
-                      selection/SelectionTest.cpp \
                       settings/Win32Registry.cpp \
                       settings/LocalisationModule.cpp \
                       settings/LocalisationProvider.cpp \

@@ -73,7 +73,7 @@ void pasteToCamera(const cmd::ArgumentList& args)
 {
 	try
 	{
-		auto& camWnd = GlobalCameraManager().getActiveView();
+		auto& camWnd = GlobalCameraWndManager().getActiveView();
 
 		UndoableCommand undo("pasteToCamera");
 		pasteToMap();

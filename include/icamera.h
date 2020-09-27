@@ -33,15 +33,15 @@ typedef std::shared_ptr<ICameraManager> ICameraPtr;
 
 } // namespace
 
-const char* const MODULE_CAMERA_MANAGER("CameraManager");
+const char* const MODULE_CAMERA_WND_MANAGER("CameraWndManager");
 
 // Module accessor
-inline camera::ICameraManager& GlobalCameraManager()
+inline camera::ICameraManager& GlobalCameraWndManager()
 {
 	// Cache the reference locally
     static camera::ICameraManager& _camera(
         *std::static_pointer_cast<camera::ICameraManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_CAMERA_MANAGER)
+			module::GlobalModuleRegistry().getModule(MODULE_CAMERA_WND_MANAGER)
 		)
 	);
 	return _camera;

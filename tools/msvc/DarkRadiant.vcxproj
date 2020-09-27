@@ -220,7 +220,6 @@
     <ClCompile Include="..\..\radiant\RadiantApp.cpp" />
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
-    <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp" />
     <ClCompile Include="..\..\radiant\settings\LocalisationModule.cpp" />
     <ClCompile Include="..\..\radiant\settings\LocalisationProvider.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
@@ -269,7 +268,6 @@
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
-    <ClCompile Include="..\..\radiant\camera\Camera.cpp" />
     <ClCompile Include="..\..\radiant\camera\CameraSettings.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamWnd.cpp" />
     <ClCompile Include="..\..\radiant\camera\FloatingCamWnd.cpp" />
@@ -400,7 +398,6 @@
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h" />
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
-    <ClInclude Include="..\..\radiant\selection\SelectionTest.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationModule.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationProvider.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
@@ -458,7 +455,6 @@
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
-    <ClInclude Include="..\..\radiant\camera\Camera.h" />
     <ClInclude Include="..\..\radiant\camera\CameraObserver.h" />
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h" />
     <ClInclude Include="..\..\radiant\camera\CamRenderer.h" />

@@ -183,7 +183,7 @@ void MapPositionManager::saveLastCameraPosition(const scene::IMapRootNodePtr& ro
 
 	try
 	{
-		auto& camView = GlobalCameraManager().getActiveView();
+		auto& camView = GlobalCameraWndManager().getActiveView();
 
 		root->setProperty(LAST_CAM_POSITION_KEY, string::to_string(camView.getCameraOrigin()));
 		root->setProperty(LAST_CAM_ANGLE_KEY, string::to_string(camView.getCameraAngles()));

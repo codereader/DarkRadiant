@@ -258,6 +258,9 @@
     <ClInclude Include="..\..\libs\render\View.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\selection\SelectionVolume.h">
+      <Filter>selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -171,7 +171,7 @@ void RegionManager::addRegionBrushes()
 
     try
     {
-        auto& camView = GlobalCameraManager().getActiveView();
+        auto& camView = GlobalCameraWndManager().getActiveView();
 
         // Obtain the camera origin = player start point
         Vector3 camOrigin = camView.getCameraOrigin();

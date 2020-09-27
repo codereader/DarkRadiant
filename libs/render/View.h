@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ivolumetest.h"
+#include "irenderview.h"
 
 #include "math/Frustum.h"
 #include "math/ViewProjection.h"
@@ -23,7 +23,7 @@ namespace render
 
 /// \brief View-volume culling and transformations.
 class View : 
-	public VolumeTest
+	public IRenderView
 {
 private:
 	/// modelview matrix
@@ -76,7 +76,7 @@ public:
 		construct();
 	}
 
-	void Construct(const Matrix4& projection, const Matrix4& modelview, std::size_t width, std::size_t height)
+	void construct(const Matrix4& projection, const Matrix4& modelview, std::size_t width, std::size_t height) override
 	{
 		// modelview
 		_modelview = modelview;
@@ -96,13 +96,13 @@ public:
 		construct();
 	}
 
-	void EnableScissor(float min_x, float max_x, float min_y, float max_y)
+	void EnableScissor(double min_x, double max_x, double min_y, double max_y)
 	{
 		_scissor = Matrix4::getIdentity();
-		_scissor[0] = (max_x - min_x) * 0.5f;
-		_scissor[5] = (max_y - min_y) * 0.5f;
-		_scissor[12] = (min_x + max_x) * 0.5f;
-		_scissor[13] = (min_y + max_y) * 0.5f;
+		_scissor[0] = (max_x - min_x) * 0.5;
+		_scissor[5] = (max_y - min_y) * 0.5;
+		_scissor[12] = (min_x + max_x) * 0.5;
+		_scissor[13] = (min_y + max_y) * 0.5;
 		_scissor.invertFull();
 
 		construct();
@@ -174,17 +174,17 @@ public:
 		return _fill;
 	}
 	
-	const Vector3& getViewer() const
+	const Vector3& getViewer() const override
 	{
 		return _viewer.getVector3();
 	}
 
-    const Frustum& getFrustum() const
+    const Frustum& getFrustum() const override
 	{
 		return _frustum;
 	}
 	
-	std::string getCullStats() const
+	std::string getCullStats() const override
 	{
 		std::string stats;
 

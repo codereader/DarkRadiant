@@ -19,8 +19,6 @@
 #include <wx/stopwatch.h>
 #include "render/View.h"
 
-#include "Camera.h"
-
 #include "Rectangle.h"
 #include <memory>
 #include "util/Noncopyable.h"
@@ -29,6 +27,9 @@
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
+
+#define SPEED_MOVE 32
+#define SPEED_TURN 22.5
 
 class SelectionTest;
 
@@ -57,7 +58,7 @@ private:
     render::View _view;
 
     // The contained camera
-    Camera _camera;
+    ICameraView::Ptr _camera;
 
     static ShaderPtr _faceHighlightShader;
     static ShaderPtr _primitiveHighlightShader;
@@ -118,7 +119,7 @@ public:
     static void captureStates();
     static void releaseStates();
 
-    Camera& getCamera();
+    ICameraView& getCamera();
 
     const Vector3& getCameraOrigin() const override;
     void setCameraOrigin(const Vector3& origin) override;

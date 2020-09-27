@@ -1,13 +1,13 @@
 #include "Camera.h"
 
 #include <functional>
-#include "ieventmanager.h"
 #include "iregistry.h"
-#include "GlobalCameraWndManager.h"
-#include "CameraSettings.h"
-#include "selection/SelectionTest.h"
+#include "CameraManager.h"
+#include "render/View.h"
+#include "selection/SelectionVolume.h"
+#include "Rectangle.h"
 
-namespace ui
+namespace camera
 {
 
 namespace
@@ -30,8 +30,8 @@ namespace
 
 	inline Matrix4 projection_for_camera(float near_z, float far_z, float fieldOfView, int width, int height)
 	{
-		const float half_width = near_z * tan(degrees_to_radians(fieldOfView * 0.5f));
-		const float half_height = half_width * (static_cast<float>(height) / static_cast<float>(width));
+		const auto half_width = near_z * tan(degrees_to_radians(fieldOfView * 0.5));
+		const auto half_height = half_width * (static_cast<double>(height) / static_cast<double>(width));
 
 		return Matrix4::getProjectionForFrustum(
 			-half_width,
@@ -47,7 +47,7 @@ namespace
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
 
-Camera::Camera(render::View& view, const Callback& queueDraw, const Callback& forceRedraw) :
+Camera::Camera(render::IRenderView& view, const Callback& queueDraw, const Callback& forceRedraw) :
 	_origin(_prevOrigin), // Use previous origin for camera position
 	_angles(_prevAngles),
 	_queueDraw(queueDraw),
@@ -78,7 +78,7 @@ void Camera::updateModelview()
 
 	updateVectors();
 
-	_view.Construct(_projection, _modelview, _width, _height);
+	_view.construct(_projection, _modelview, _width, _height);
 }
 
 void Camera::updateVectors()
@@ -109,7 +109,7 @@ void Camera::setCameraOrigin(const Vector3& newOrigin)
 
 	updateModelview();
 	queueDraw();
-	GlobalCamera().movedNotify();
+	CameraManager::GetInstanceInternal().onCameraViewChanged();
 }
 
 const Vector3& Camera::getCameraAngles() const
@@ -125,7 +125,7 @@ void Camera::setCameraAngles(const Vector3& newAngles)
 	updateModelview();
 	freemoveUpdateAxes();
 	queueDraw();
-	GlobalCamera().movedNotify();
+	CameraManager::GetInstanceInternal().onCameraViewChanged();
 }
 
 const Vector3& Camera::getRightVector() const
@@ -229,7 +229,7 @@ void Camera::updateProjection()
 	auto farClip = getFarClipPlaneDistance();
 	_projection = projection_for_camera(farClip / 4096.0f, farClip, _fieldOfView, _width, _height);
 
-	_view.Construct(_projection, _modelview, _width, _height);
+	_view.construct(_projection, _modelview, _width, _height);
 }
 
 } // namespace

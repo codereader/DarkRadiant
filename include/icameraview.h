@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "iinteractiveview.h"
+#include "irenderview.h"
 
 template<typename Element>class BasicVector3;
 typedef BasicVector3<double> Vector3;
@@ -54,11 +55,31 @@ public:
     virtual bool freeMoveEnabled() const = 0;
 };
 
+namespace camera
+{
+
 class ICameraViewManager :
 	public RegisterableModule
 {
 public:
 	virtual ~ICameraViewManager() {}
 
-
+	virtual ICameraView::Ptr createCamera(render::IRenderView& view, 
+		const std::function<void()>& queueDraw, const std::function<void()>& forceRedraw) = 0;
 };
+
+}
+
+const char* const MODULE_CAMERA_MANAGER("CameraManager");
+
+// Module accessor
+inline camera::ICameraViewManager& GlobalCameraManager()
+{
+	// Cache the reference locally
+	static camera::ICameraViewManager& _instance(
+		*std::static_pointer_cast<camera::ICameraViewManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_CAMERA_MANAGER)
+		)
+	);
+	return _instance;
+}

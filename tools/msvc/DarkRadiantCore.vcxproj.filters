@@ -1000,7 +1000,10 @@
     <ClCompile Include="..\..\radiantcore\settings\ColourSchemeManager.cpp">
       <Filter>src\settings</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\camera\GlobalCameraManager.cpp">
+    <ClCompile Include="..\..\radiantcore\camera\Camera.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\camera\CameraManager.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2043,7 +2046,10 @@
     <ClInclude Include="..\..\radiantcore\settings\ColourSchemeManager.h">
       <Filter>src\settings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\camera\GlobalCameraManager.h">
+    <ClInclude Include="..\..\radiantcore\camera\Camera.h">
+      <Filter>src\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\camera\CameraManager.h">
       <Filter>src\camera</Filter>
     </ClInclude>
   </ItemGroup>

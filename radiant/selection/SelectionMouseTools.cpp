@@ -6,7 +6,7 @@
 #include "registry/registry.h"
 #include "selection/Device.h"
 #include "Rectangle.h"
-#include "selection/SelectionTest.h"
+#include "selection/SelectionVolume.h"
 #include "igl.h"
 
 namespace ui

@@ -181,9 +181,6 @@
     <ClCompile Include="..\..\radiant\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\camera\Camera.cpp">
-      <Filter>src\camera</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\camera\CameraSettings.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
@@ -634,9 +631,6 @@
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\selection\SelectionTest.cpp">
-      <Filter>src\selection</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp">
       <Filter>src\ui\aas</Filter>
     </ClCompile>
@@ -681,9 +675,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\radiant\camera\Camera.h">
-      <Filter>src\camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\camera\CameraObserver.h">
       <Filter>src\camera</Filter>
     </ClInclude>
@@ -1249,9 +1240,6 @@
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\selection\SelectionTest.h">
       <Filter>src\selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mousetool\RegistrationHelper.h">

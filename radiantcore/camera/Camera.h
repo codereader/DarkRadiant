@@ -4,13 +4,9 @@
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "generic/callback.h"
-#include "render/View.h"
 
-namespace ui
+namespace camera
 {
-
-#define SPEED_MOVE 32
-#define SPEED_TURN 22.5
 
 class Camera :
 	public ICameraView
@@ -35,10 +31,10 @@ class Camera :
 	Matrix4 _projection;
 	Matrix4 _modelview;
 
-	render::View& _view;
+	render::IRenderView& _view;
 
 public:
-	Camera(render::View& view, const Callback& queueDraw, const Callback& forceRedraw);
+	Camera(render::IRenderView& view, const Callback& queueDraw, const Callback& forceRedraw);
 	Camera(const Camera& other) = delete;
 	Camera& operator=(const Camera& other) = delete;
 

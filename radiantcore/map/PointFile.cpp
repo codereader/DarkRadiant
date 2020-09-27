@@ -129,7 +129,7 @@ void PointFile::advance(bool forward)
 
 	try
 	{
-		auto& cam = GlobalCameraManager().getActiveView();
+		auto& cam = GlobalCameraWndManager().getActiveView();
 
 		cam.setCameraOrigin(_points[_curPos].vertex);
 

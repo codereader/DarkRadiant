@@ -45,7 +45,7 @@ public:
 
                 // Focus the view at the center of the found AABB
                 // Set the camera and the views to the given point
-                GlobalCameraManager().focusCamera(found.origin, camEvent.getView().getCameraAngles());
+                GlobalCameraWndManager().focusCamera(found.origin, camEvent.getView().getCameraAngles());
                 GlobalXYWndManager().setOrigin(found.origin);
             }
 

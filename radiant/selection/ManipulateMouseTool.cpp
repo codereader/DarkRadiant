@@ -8,7 +8,7 @@
 #include "selection/Device.h"
 #include "Rectangle.h"
 #include "selection/Pivot2World.h"
-#include "SelectionTest.h"
+#include "selection/SelectionVolume.h"
 #include <fmt/format.h>
 #include "string/split.h"
 

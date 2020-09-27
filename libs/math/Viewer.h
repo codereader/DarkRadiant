@@ -17,7 +17,7 @@ public:
 		Vector4(other)
 	{}
 
-	Viewer(const Vector3& vec3, float w) :
+	Viewer(const Vector3& vec3, ElementType w) :
 		Vector4(vec3, w)
 	{}
 
