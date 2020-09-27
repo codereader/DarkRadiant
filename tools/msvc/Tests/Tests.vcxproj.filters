@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\test\CSG.cpp" />
+    <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
+    <ClCompile Include="..\..\..\test\test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
+    <ClInclude Include="..\..\..\test\RadiantTest.h" />
+    <ClInclude Include="..\..\..\test\TestContext.h" />
+    <ClInclude Include="..\..\..\test\algorithm\Scene.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="algorithm">
+      <UniqueIdentifier>{519b0a02-8afc-4b67-9fa3-aeed09412562}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

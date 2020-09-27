@@ -55,6 +55,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
     <ClInclude Include="..\..\..\test\RadiantTest.h" />
     <ClInclude Include="..\..\..\test\TestContext.h" />
