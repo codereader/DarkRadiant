@@ -204,6 +204,13 @@
     <ClCompile Include="..\..\radiant\eventmanager\Statement.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Toggle.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\clsocket\ActiveSocket.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\clsocket\PassiveSocket.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\clsocket\SimpleSocket.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\GameConnection.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\MapObserver.cpp" />
+    <ClCompile Include="..\..\radiant\gameconnection\MessageTcp.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp" />
     <ClCompile Include="..\..\radiant\precompiled.cpp">
@@ -389,6 +396,16 @@
     <ClInclude Include="..\..\radiant\eventmanager\Statement.h" />
     <ClInclude Include="..\..\radiant\eventmanager\Toggle.h" />
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\ActiveSocket.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\Host.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\PassiveSocket.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\SimpleSocket.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\StatTimer.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\DiffStatus.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\GameConnection.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\MapObserver.h" />
+    <ClInclude Include="..\..\radiant\gameconnection\MessageTcp.h" />
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantApp.h" />
@@ -634,6 +651,9 @@
   <ItemGroup>
     <None Include="..\innosetup\darkradiant.iss" />
     <None Include="..\innosetup\darkradiant.x64.iss" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\radiant\gameconnection\clsocket\readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

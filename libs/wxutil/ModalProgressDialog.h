@@ -3,6 +3,7 @@
 #include <wx/progdlg.h>
 #include <string>
 #include <memory>
+#include <stdexcept>
 
 namespace wxutil
 {

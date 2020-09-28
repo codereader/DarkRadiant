@@ -27,4 +27,8 @@ void foreachVisibleFace(const std::function<void(IFace&)>& functor);
  */
 void foreachVisiblePatch(const std::function<void(const IPatchNodePtr&)>& functor);
 
+/** stgatilov: Returns traverser, which traverses only specified set of items (and their ancestors/descendants)
+ */
+std::function<void(const scene::INodePtr&, scene::NodeVisitor&)> traverseSubset(const std::set<scene::INode*>& nodes);
+
 } // namespace

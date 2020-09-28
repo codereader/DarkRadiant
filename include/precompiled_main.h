@@ -5,6 +5,14 @@
  */
 #pragma once
 
+#ifdef _WIN32
+//stgatilov: use winsock2.h instead of winsock.h (that's what ZeroMQ needs)
+//must be defined before first include of windows.h
+#include <winsock2.h>
+#undef min
+#undef max
+#endif
+
 #ifdef DR_PRECOMPILED_WXWIDGETS
 	#include <wx/wx.h>
 	#include <wx/artprov.h>

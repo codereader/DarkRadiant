@@ -173,6 +173,12 @@
     <Filter Include="src\ui\script">
       <UniqueIdentifier>{28ae583f-8545-491c-abcc-5e459c3d357b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\gameconnection">
+      <UniqueIdentifier>{7863bf5e-8086-4cac-b64d-4f8a6746d006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\gameconnection\clsocket">
+      <UniqueIdentifier>{d80152a9-a9a2-48d5-afeb-0e6677aadc1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -660,6 +666,27 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\camera\GlobalCameraWndManager.cpp">
       <Filter>src\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\GameConnection.cpp">
+      <Filter>src\gameconnection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\MessageTcp.cpp">
+      <Filter>src\gameconnection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.cpp">
+      <Filter>src\gameconnection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\MapObserver.cpp">
+      <Filter>src\gameconnection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\clsocket\ActiveSocket.cpp">
+      <Filter>src\gameconnection\clsocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\clsocket\PassiveSocket.cpp">
+      <Filter>src\gameconnection\clsocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\gameconnection\clsocket\SimpleSocket.cpp">
+      <Filter>src\gameconnection\clsocket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1275,6 +1302,36 @@
     <ClInclude Include="..\..\radiant\camera\tools\ObjectFinder.h">
       <Filter>src\camera\tools</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\GameConnection.h">
+      <Filter>src\gameconnection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\MessageTcp.h">
+      <Filter>src\gameconnection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\DiffDoom3MapWriter.h">
+      <Filter>src\gameconnection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\MapObserver.h">
+      <Filter>src\gameconnection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\DiffStatus.h">
+      <Filter>src\gameconnection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\ActiveSocket.h">
+      <Filter>src\gameconnection\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\Host.h">
+      <Filter>src\gameconnection\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\PassiveSocket.h">
+      <Filter>src\gameconnection\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\SimpleSocket.h">
+      <Filter>src\gameconnection\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\gameconnection\clsocket\StatTimer.h">
+      <Filter>src\gameconnection\clsocket</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
@@ -1306,5 +1363,10 @@
     <None Include="..\innosetup\darkradiant.x64.iss">
       <Filter>innosetup</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\radiant\gameconnection\clsocket\readme.txt">
+      <Filter>src\gameconnection\clsocket</Filter>
+    </Text>
   </ItemGroup>
 </Project>
