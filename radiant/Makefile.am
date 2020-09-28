@@ -53,13 +53,6 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Statement.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
-                      gameconnection/DiffDoom3MapWriter.cpp \
-                      gameconnection/GameConnection.cpp \
-                      gameconnection/MapObserver.cpp \
-                      gameconnection/MessageTcp.cpp \
-                      gameconnection/clsocket/ActiveSocket.cpp \
-                      gameconnection/clsocket/PassiveSocket.cpp \
-                      gameconnection/clsocket/SimpleSocket.cpp \
                       render/OpenGLModule.cpp \
 					  ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \

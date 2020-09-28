@@ -382,8 +382,7 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("RefreshShaders",
 		std::bind(&UserInterfaceModule::refreshShadersCmd, this, std::placeholders::_1));
-    // FIXME: should not dynamic_cast, required methods should be in the
-    // IGameConnection interface
+
 	if (IGameConnection *gameconn = GlobalGameConnection()) {
 		GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
 			[gameconn](const cmd::ArgumentList&) { gameconn->setCameraSyncEnabled(true); });
