@@ -1,10 +1,10 @@
 #pragma once
 
+#include "imapformat.h"
+
 #include <map>
 
-#include "map/format/Doom3MapWriter.h"
-
-namespace map
+namespace gameconn
 {
 
 class DiffStatus;
@@ -14,30 +14,30 @@ class DiffStatus;
  *
  * Creates plaintext representation of changes in .map file.
  */
-class DiffDoom3MapWriter : public map::Doom3MapWriter
+class DiffDoom3MapWriter : public map::IMapWriter
 {
-    const std::map<std::string, DiffStatus> *_entityStatuses = nullptr;
+    const std::map<std::string, DiffStatus>* _entityStatuses = nullptr;
 
-    void writeEntityPreamble(const std::string &name, std::ostream& stream);
+    void writeEntityPreamble(const std::string& name, std::ostream& stream);
 public:
     DiffDoom3MapWriter();
-    void setStatuses(const std::map<std::string, DiffStatus> &entityStatuses);
+    void setStatuses(const std::map<std::string, DiffStatus>& entityStatuses);
 
-    virtual void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
-    virtual void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
+    void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
+    void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
 
     // Entity export methods
-    virtual void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
-    virtual void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
-    void writeRemoveEntityStub(const std::string &name, std::ostream& stream);
+    void beginWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
+    void endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) override;
+    void writeRemoveEntityStub(const std::string& name, std::ostream& stream);
 
-    /*// Brush export methods
-    virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override;
-    virtual void endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override;
+    // Brush export methods
+    void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override;
+    void endWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override;
 
     // Patch export methods
-    virtual void beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override;
-    virtual void endWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override;*/
+    void beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override;
+    void endWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override;
 };
 
 }

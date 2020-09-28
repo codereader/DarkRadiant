@@ -51,7 +51,6 @@
 #include "modelexport/ExportAsModelDialog.h"
 #include "modelexport/ExportCollisionModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
-#include "gameconnection/GameConnection.h"
 #include "uimanager/colourscheme/ColourSchemeEditor.h"
 #include "ui/layers/CreateLayerDialog.h"
 #include "ui/patch/PatchCreateDialog.h"

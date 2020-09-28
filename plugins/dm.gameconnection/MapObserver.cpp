@@ -5,7 +5,7 @@
 
 namespace gameconn {
 
-static std::vector<IEntityNodePtr> getEntitiesInNode(const scene::INodePtr &node) {
+static std::vector<IEntityNodePtr> getEntitiesInNode(const scene::INodePtr& node) {
     struct MyVisitor : scene::NodeVisitor {
         std::set<IEntityNodePtr> v;
         virtual bool pre(const scene::INodePtr& node) override {
@@ -22,12 +22,12 @@ static std::vector<IEntityNodePtr> getEntitiesInNode(const scene::INodePtr &node
 }
 
 class MapObserver_EntityObserver : public Entity::Observer {
-    MapObserver &_owner;
+    MapObserver& _owner;
     std::string _entityName;
     bool _enabled = false;
 
 public:
-    MapObserver_EntityObserver(MapObserver &owner) : _owner(owner) {}
+    MapObserver_EntityObserver(MapObserver& owner) : _owner(owner) {}
     void enable() {
         _enabled = true;
     }
@@ -35,51 +35,51 @@ public:
         if (key == "name")
             _entityName = value.get();      //happens when installing observer
         if (_enabled)
-            _owner.entityUpdated(_entityName, map::DiffStatus::modified());
+            _owner.entityUpdated(_entityName, DiffStatus::modified());
     }
     virtual void onKeyChange(const std::string& key, const std::string& val) override {
         if (_enabled) {
             if (key == "name") {
                 //renaming is equivalent to deleting old entity and adding new
-                _owner.entityUpdated(_entityName, map::DiffStatus::removed());
-                _owner.entityUpdated(val, map::DiffStatus::added());
+                _owner.entityUpdated(_entityName, DiffStatus::removed());
+                _owner.entityUpdated(val, DiffStatus::added());
             }
             else {
-                _owner.entityUpdated(_entityName, map::DiffStatus::modified());
+                _owner.entityUpdated(_entityName, DiffStatus::modified());
             }
         }
     }
     virtual void onKeyErase(const std::string& key, EntityKeyValue& value) override {
         if (_enabled)
-            _owner.entityUpdated(_entityName, map::DiffStatus::modified());
+            _owner.entityUpdated(_entityName, DiffStatus::modified());
     }
 };
 
 class MapObserver_SceneObserver : public scene::Graph::Observer {
-    MapObserver &_owner;
+    MapObserver& _owner;
 
 public:
-    MapObserver_SceneObserver(MapObserver &owner) : _owner(owner) {}
+    MapObserver_SceneObserver(MapObserver& owner) : _owner(owner) {}
     virtual void onSceneNodeInsert(const scene::INodePtr& node) override {
         auto entityNodes = getEntitiesInNode(node);
-        for (const IEntityNodePtr &entNode : entityNodes)
-            _owner.entityUpdated(entNode->name(), map::DiffStatus::added());
+        for (const IEntityNodePtr& entNode : entityNodes)
+            _owner.entityUpdated(entNode->name(), DiffStatus::added());
         _owner.setEntityObservers(entityNodes, true);
     }
     virtual void onSceneNodeErase(const scene::INodePtr& node) override {
         auto entityNodes = getEntitiesInNode(node);
         _owner.setEntityObservers(entityNodes, false);
-        for (const IEntityNodePtr &entNode : entityNodes)
-            _owner.entityUpdated(entNode->name(), map::DiffStatus::removed());
+        for (const IEntityNodePtr& entNode : entityNodes)
+            _owner.entityUpdated(entNode->name(), DiffStatus::removed());
     }
 };
 
-void MapObserver::setEntityObservers(const std::vector<IEntityNodePtr> &entityNodes, bool enable) {
+void MapObserver::setEntityObservers(const std::vector<IEntityNodePtr>& entityNodes, bool enable) {
     if (enable) {
         for (auto entNode : entityNodes) {
             if (_entityObservers.count(entNode.get()))
                 continue;   //already tracked
-            MapObserver_EntityObserver *observer = new MapObserver_EntityObserver(*this);
+            MapObserver_EntityObserver* observer = new MapObserver_EntityObserver(*this);
             entNode->getEntity().attachObserver(observer);
             _entityObservers[entNode.get()] = observer;
             observer->enable();
@@ -130,12 +130,12 @@ MapObserver::~MapObserver() {
     setEnabled(false);
 }
 
-void MapObserver::entityUpdated(const std::string &name, map::DiffStatus diff) {
-    map::DiffStatus &status = _entityChanges[name];
+void MapObserver::entityUpdated(const std::string& name, DiffStatus diff) {
+    DiffStatus& status = _entityChanges[name];
     status = status.combine(diff);
 }
 
-const map::DiffEntityStatuses &MapObserver::getChanges() const {
+const DiffEntityStatuses& MapObserver::getChanges() const {
     return _entityChanges;
 }
 

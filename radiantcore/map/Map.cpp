@@ -56,9 +56,6 @@
 #include <fmt/format.h>
 #include "scene/ChildPrimitives.h"
 
-#include "gameconnection/DiffDoom3MapWriter.h"
-#include "gameconnection/DiffStatus.h"
-
 namespace map 
 {
 
@@ -439,40 +436,6 @@ void Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
     }
 
     _saveInProgress = false;
-}
-
-std::string Map::saveMapDiff(const DiffEntityStatuses &entityStatuses) {
-    if (_saveInProgress) return "";     // fail if during proper map save
-
-    scene::IMapRootNodePtr root = GlobalSceneGraph().root();
-
-    std::set<scene::INode*> subsetNodes;
-    root->foreachNode([&](const scene::INodePtr &node) -> bool {
-        if (entityStatuses.count(node->name()))
-            subsetNodes.insert(node.get());
-        return true;
-    });
-
-    std::ostringstream outStream;
-    outStream << "// diff " << entityStatuses.size() << std::endl;
-
-    DiffDoom3MapWriter writer;
-    writer.setStatuses(entityStatuses);
-
-    //write removal stubs (no actual spawnargs)
-    for (const auto &pNS : entityStatuses) {
-        const std::string &name = pNS.first;
-        DiffStatus status = pNS.second;
-        assert(status.isModified());    //(don't put untouched entities into map)
-        if (status.isRemoved())
-            writer.writeRemoveEntityStub(pNS.first, outStream);
-    }
-
-    //write added/modified entities as usual
-    MapExporterPtr exporter(new MapExporter(writer, root, outStream, 0));
-    exporter->exportMap(root, traverseSubset(subsetNodes));
-
-    return outStream.str();
 }
 
 void Map::saveSelected(const std::string& filename, const MapFormatPtr& mapFormat)

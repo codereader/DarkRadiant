@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{e7c35755-1aba-4a65-9f09-7acd96c0164f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\clsocket">
+      <UniqueIdentifier>{38bdeb75-9ef4-4473-950e-e535f9b61c10}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\ActiveSocket.cpp">
+      <Filter>src\clsocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\PassiveSocket.cpp">
+      <Filter>src\clsocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\SimpleSocket.cpp">
+      <Filter>src\clsocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\DiffDoom3MapWriter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\GameConnection.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\MapObserver.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\MessageTcp.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\ActiveSocket.h">
+      <Filter>src\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\Host.h">
+      <Filter>src\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\PassiveSocket.h">
+      <Filter>src\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\SimpleSocket.h">
+      <Filter>src\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\StatTimer.h">
+      <Filter>src\clsocket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\DiffDoom3MapWriter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\DiffStatus.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\GameConnection.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\MapObserver.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\MessageTcp.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\plugins\dm.gameconnection\clsocket\readme.txt">
+      <Filter>src\clsocket</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

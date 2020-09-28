@@ -43,6 +43,7 @@
 #ifndef __CSTATTIMER_H__
 #define __CSTATTIMER_H__
 
+#include <cstdint>
 #include <string.h>
 
 #if WIN32

@@ -1,15 +1,18 @@
 #include "GameConnection.h"
 #include "MessageTcp.h"
+#include "DiffStatus.h"
+#include "DiffDoom3MapWriter.h"
+#include "clsocket/ActiveSocket.h"
+
 #include "icameraview.h"
 #include "inode.h"
 #include "ientity.h"
-#include "imap.h"
 #include "iselection.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
 
 #include <sigc++/signal.h>
-#include "clsocket/ActiveSocket.h"
+#include <sigc++/connection.h>
 
 namespace gameconn
 {
@@ -190,13 +193,13 @@ const std::string& GameConnection::getName() const
 const StringSet& GameConnection::getDependencies() const
 {
     static StringSet _dependencies {
-        MODULE_CAMERA, MODULE_COMMANDSYSTEM, MODULE_MAP, MODULE_SCENEGRAPH,
+        MODULE_CAMERA_MANAGER, MODULE_COMMANDSYSTEM, MODULE_MAP, MODULE_SCENEGRAPH,
         MODULE_SELECTIONSYSTEM, MODULE_EVENTMANAGER, MODULE_UIMANAGER
     };
     return _dependencies;
 }
 
-void GameConnection::initialiseModule(const ApplicationContext& ctx)
+void GameConnection::initialiseModule(const IApplicationContext& ctx)
 {
     // Add commands
     GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
@@ -223,20 +226,6 @@ void GameConnection::initialiseModule(const ApplicationContext& ctx)
         [this](const cmd::ArgumentList&) { togglePauseGame(); });
     GlobalCommandSystem().addCommand("GameConnectionRespawnSelected",
         [this](const cmd::ArgumentList&) { respawnSelectedEntities(); });
-
-    // Add events
-    GlobalEventManager().addCommand("GameConnectionCameraSyncEnable", "GameConnectionCameraSyncEnable");
-    GlobalEventManager().addCommand("GameConnectionCameraSyncDisable", "GameConnectionCameraSyncDisable");
-    GlobalEventManager().addCommand("GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera");
-    GlobalEventManager().addCommand("GameConnectionReloadMap", "GameConnectionReloadMap");
-    GlobalEventManager().addCommand("GameConnectionReloadMapAutoEnable", "GameConnectionReloadMapAutoEnable");
-    GlobalEventManager().addCommand("GameConnectionReloadMapAutoDisable", "GameConnectionReloadMapAutoDisable");
-    GlobalEventManager().addCommand("GameConnectionUpdateMapOff", "GameConnectionUpdateMapOff");
-    GlobalEventManager().addCommand("GameConnectionUpdateMapOn", "GameConnectionUpdateMapOn");
-    GlobalEventManager().addCommand("GameConnectionUpdateMapAlways", "GameConnectionUpdateMapAlways");
-    GlobalEventManager().addCommand("GameConnectionUpdateMap", "GameConnectionUpdateMap");
-    GlobalEventManager().addCommand("GameConnectionPauseGame", "GameConnectionPauseGame");
-    GlobalEventManager().addCommand("GameConnectionRespawnSelected", "GameConnectionRespawnSelected");
 
     // Add menu items
     IMenuManager& mm = GlobalUIManager().getMenuManager();
@@ -271,7 +260,6 @@ void GameConnection::shutdownModule()
 {
     disconnect(true);
 }
-module::StaticModule<GameConnection> gameConnectionModule;
 
 //-------------------------------------------------------------
 
@@ -454,10 +442,52 @@ void GameConnection::setUpdateMapLevel(bool on, bool always) {
     _mapObserver.setEnabled(on);
     _updateMapAlways = always;
 }
+
+
+/**
+ * stgatilov: Saves only entities with specified names to in-memory map patch.
+ * This diff is intended to be consumed by TheDarkMod automation for HotReload purposes.
+ * TODO: What about patches and brushes?
+ */
+std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
+{
+    //if (_saveInProgress) return "";     // fail if during proper map save
+
+    scene::IMapRootNodePtr root = GlobalSceneGraph().root();
+
+    std::set<scene::INode*> subsetNodes;
+    root->foreachNode([&](const scene::INodePtr& node) -> bool {
+        if (entityStatuses.count(node->name()))
+            subsetNodes.insert(node.get());
+        return true;
+    });
+
+    std::ostringstream outStream;
+    outStream << "// diff " << entityStatuses.size() << std::endl;
+
+    DiffDoom3MapWriter writer;
+    writer.setStatuses(entityStatuses);
+
+    //write removal stubs (no actual spawnargs)
+    for (const auto& pNS : entityStatuses) {
+        const std::string& name = pNS.first;
+        DiffStatus status = pNS.second;
+        assert(status.isModified());    //(don't put untouched entities into map)
+        if (status.isRemoved())
+            writer.writeRemoveEntityStub(pNS.first, outStream);
+    }
+
+    //write added/modified entities as usual
+    //TODO map::MapExporterPtr exporter(new map::MapExporter(writer, root, outStream, 0));
+    //TODO exporter->exportMap(root, map::traverseSubset(subsetNodes));
+
+    return outStream.str();
+}
+
 void GameConnection::doUpdateMap() {
     if (!connect())
         return;
-    std::string diff = GlobalMap().saveMapDiff(_mapObserver.getChanges());
+    std::string diff = saveMapDiff(_mapObserver.getChanges());
     if (diff.empty()) {
         return; //TODO: fail
     }

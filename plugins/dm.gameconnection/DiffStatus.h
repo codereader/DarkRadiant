@@ -2,7 +2,7 @@
 
 #include <map>
 
-namespace map
+namespace gameconn
 {
 
 /**
