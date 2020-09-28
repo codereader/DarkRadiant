@@ -172,6 +172,9 @@ public:
 	// greebo: Creates a new, empty map file.
 	void createNewMap() override;
 
+	IMapExporter::Ptr createMapExporter(IMapWriter& writer,
+		const scene::IMapRootNodePtr& root, std::ostream& mapStream) override;
+
 	// Accessor methods for the worldspawn node
 	void setWorldspawn(const scene::INodePtr& node);
 

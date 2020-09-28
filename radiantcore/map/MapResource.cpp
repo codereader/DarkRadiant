@@ -513,14 +513,15 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 	// and the destructor will clean it up afterwards. That way
 	// we ensure a nice and tidy scene when exceptions are thrown.
 	MapExporterPtr exporter;
-		
+	auto mapWriter = format.getMapWriter();
+
 	if (format.allowInfoFileCreation())
 	{
-		exporter.reset(new MapExporter(format, root, outFileStream, *auxFileStream, counter.getCount()));
+		exporter.reset(new MapExporter(*mapWriter, root, outFileStream, *auxFileStream, counter.getCount()));
 	}
 	else
 	{
-		exporter.reset(new MapExporter(format, root, outFileStream, counter.getCount())); // no aux stream
+		exporter.reset(new MapExporter(*mapWriter, root, outFileStream, counter.getCount())); // no aux stream
 	}
 
 	try

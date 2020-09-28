@@ -1,6 +1,7 @@
 #pragma once
 
 #include "inode.h"
+#include "imapexporter.h"
 #include "imapformat.h"
 #include "imap.h"
 #include "igame.h"
@@ -25,11 +26,12 @@ namespace map
  * the calling code needs to be able to handle that.
  */
 class MapExporter :
+	public IMapExporter,
 	public scene::NodeVisitor
 {
 private:
-	// The map format exporter
-	IMapWriterPtr _writer;
+	// For writing nodes to the stream
+	IMapWriter& _writer;
 
 	// The stream we're writing to
 	std::ostream& _mapStream;
@@ -53,18 +55,18 @@ private:
 
 public:
 	// The constructor prepares the scene and the output stream
-	MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& root,
+	MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::size_t nodeCount = 0);
 
 	// Additional constructor allowed to write to the auxiliary .darkradiant file
-	MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& root,
+	MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::ostream& auxStream, std::size_t nodeCount = 0);
 
 	// Cleans up the scene on destruction
 	~MapExporter();
 
 	// Entry point for traversing the given root node using the given traversal function
-	void exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse);
+	void exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse) override;
 
 	// NodeVisitor implementation, is called by the traversal func passed to MapResource
 	bool pre(const scene::INodePtr& node) override;

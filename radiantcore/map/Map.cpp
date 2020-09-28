@@ -377,6 +377,12 @@ void Map::createNewMap()
     focusViews(Vector3(0,0,0), Vector3(0,0,0));
 }
 
+IMapExporter::Ptr Map::createMapExporter(IMapWriter& writer,
+    const scene::IMapRootNodePtr& root, std::ostream& mapStream)
+{
+    return std::make_shared<MapExporter>(writer, root, mapStream, 0);
+}
+
 bool Map::import(const std::string& filename)
 {
     radiant::ScopedLongRunningOperation blocker(_("Importing..."));
@@ -819,7 +825,7 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     assert(format);
 
     // Create our main MapExporter walker for traversal
-    MapExporter exporter(*format, GlobalSceneGraph().root(), out);
+    MapExporter exporter(*format->getMapWriter(), GlobalSceneGraph().root(), out);
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);

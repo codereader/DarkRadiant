@@ -2,6 +2,8 @@
 
 #include "imodule.h"
 #include "inode.h"
+#include "imapexporter.h"
+#include "imapformat.h"
 #include "ikeyvaluestore.h"
 #include <sigc++/signal.h>
 
@@ -152,6 +154,12 @@ public:
 	// Caution: this is upposed to be called on startup, since it doesn't ask the user
 	// whether to save the current map. Use the "NewMap" command for regular purposes.
 	virtual void createNewMap() = 0;
+
+	// Create a MapExporter instance which can be used to export a scene,
+	// including the necessary preparation, info-file handling, etc.
+	// This is mainly a service method for external code, like the gameconnection.
+	virtual map::IMapExporter::Ptr createMapExporter(map::IMapWriter& writer, 
+		const scene::IMapRootNodePtr& root, std::ostream& mapStream) = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

@@ -25,8 +25,8 @@ namespace map
 		const char* const RKEY_MAP_SAVE_STATUS_INTERLEAVE = "user/ui/map/saveStatusInterleave";
 	}
 
-MapExporter::MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& root, std::ostream& mapStream, std::size_t nodeCount) :
-	_writer(format.getMapWriter()),
+MapExporter::MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root, std::ostream& mapStream, std::size_t nodeCount) :
+	_writer(writer),
 	_mapStream(mapStream),
 	_root(root),
 	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
@@ -38,9 +38,9 @@ MapExporter::MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& 
 	construct();
 }
 
-MapExporter::MapExporter(const MapFormat& format, const scene::IMapRootNodePtr& root,
+MapExporter::MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
 				std::ostream& mapStream, std::ostream& auxStream, std::size_t nodeCount) :
-	_writer(format.getMapWriter()),
+	_writer(writer),
 	_mapStream(mapStream),
 	_infoFileExporter(new InfoFileExporter(auxStream)),
 	_root(root),
@@ -93,7 +93,7 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 			throw std::logic_error("Map node is not a scene::IMapRootNode");
 		}
 
-		_writer->beginWriteMap(mapRoot, _mapStream);
+		_writer.beginWriteMap(mapRoot, _mapStream);
 
 		if (_infoFileExporter)
 		{
@@ -117,7 +117,7 @@ void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFun
 			throw std::logic_error("Map node is not a scene::IMapRootNode");
 		}
 
-		_writer->endWriteMap(mapRoot, _mapStream);
+		_writer.endWriteMap(mapRoot, _mapStream);
 
 		if (_infoFileExporter)
 		{
@@ -143,7 +143,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			// Progress dialog handling
 			onNodeProgress();
 			
-			_writer->beginWriteEntity(entity, _mapStream);
+			_writer.beginWriteEntity(entity, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitEntity(node, _entityNum);
 
@@ -157,7 +157,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			// Progress dialog handling
 			onNodeProgress();
 
-			_writer->beginWriteBrush(brush, _mapStream);
+			_writer.beginWriteBrush(brush, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
@@ -171,7 +171,7 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			// Progress dialog handling
 			onNodeProgress();
 
-			_writer->beginWritePatch(patch, _mapStream);
+			_writer.beginWritePatch(patch, _mapStream);
 
 			if (_infoFileExporter) _infoFileExporter->visitPrimitive(node, _entityNum, _primitiveNum);
 
@@ -194,7 +194,7 @@ void MapExporter::post(const scene::INodePtr& node)
 
 		if (entity)
 		{
-			_writer->endWriteEntity(entity, _mapStream);
+			_writer.endWriteEntity(entity, _mapStream);
 
 			_entityNum++;
 			return;
@@ -204,7 +204,7 @@ void MapExporter::post(const scene::INodePtr& node)
 
 		if (brush && brush->getIBrush().hasContributingFaces())
 		{
-			_writer->endWriteBrush(brush, _mapStream);
+			_writer.endWriteBrush(brush, _mapStream);
 			_primitiveNum++;
 			return;
 		}
@@ -213,7 +213,7 @@ void MapExporter::post(const scene::INodePtr& node)
 
 		if (patch)
 		{
-			_writer->endWritePatch(patch, _mapStream);
+			_writer.endWritePatch(patch, _mapStream);
 			_primitiveNum++;
 			return;
 		}

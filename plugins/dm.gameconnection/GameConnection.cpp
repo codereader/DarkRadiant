@@ -11,6 +11,8 @@
 #include "iuimanager.h"
 #include "ieventmanager.h"
 
+#include "scene/Traverse.h"
+
 #include <sigc++/signal.h>
 #include <sigc++/connection.h>
 
@@ -478,8 +480,13 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
     }
 
     //write added/modified entities as usual
-    //TODO map::MapExporterPtr exporter(new map::MapExporter(writer, root, outStream, 0));
-    //TODO exporter->exportMap(root, map::traverseSubset(subsetNodes));
+    {
+        // Get a scoped exporter class
+        auto exporter = GlobalMapModule().createMapExporter(writer, root, outStream);
+        exporter->exportMap(root, scene::traverseSubset(subsetNodes));
+
+        // end the life of the exporter instance here to finish the scene
+    }
 
     return outStream.str();
 }
