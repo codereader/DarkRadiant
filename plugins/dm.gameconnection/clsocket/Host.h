@@ -44,6 +44,7 @@
 #ifndef __HOST_H__
 #define __HOST_H__
 
+#include <cstdint> // this will define UINT8_MAX, so we don't need the re-defines below
 #include <limits.h>
 
 #ifdef __cplusplus
@@ -220,6 +221,14 @@ extern "C"
     //#define FWRITE(a,b,c,d)     fwrite(a, b, c, d)
 #define STAT_BLK_SIZE(x)    ((x).st_blksize)
 
+// greebo: Use these defines to fix C4496
+#ifdef WIN32
+#define LSEEK(x, y, z)             _lseek(x, y, z)
+#define FREAD(x, y, z)             _read(x, y, z)
+#elif defined(__linux__) || defined(_DARWIN)
+#define LSEEK(x, y, z)             lseek(x, y, z)
+#define FREAD(x, y, z)             read(x, y, z)
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */

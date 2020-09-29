@@ -27,8 +27,8 @@ bool MessageTcp::readMessage(std::vector<char> &message) {
     think();
 
     const char *buffer = inputBuffer.data() + inputPos;
-    int remains = inputBuffer.size() - inputPos;
-    auto pull = [&](void *ptr, int size) -> void {
+    auto remains = inputBuffer.size() - inputPos;
+    auto pull = [&](void* ptr, std::size_t size) -> void {
         assert(size <= remains);
         memcpy(ptr, buffer, size);
         buffer += size;
@@ -81,9 +81,9 @@ zomg:
 }
 
 void MessageTcp::writeMessage(const char *message, int len) {
-    int where = outputBuffer.size();
+    auto where = outputBuffer.size();
     outputBuffer.resize(where + len + 24);
-    auto push = [&](const void *ptr, int size) -> void {
+    auto push = [&](const void *ptr, std::size_t size) -> void {
         memcpy(&outputBuffer[where], ptr, size);
         where += size;
     };
@@ -108,8 +108,8 @@ void MessageTcp::think() {
     static const int BUFFER_SIZE = 1024;
 
     //if data in buffer is too far from start, then it is moved to the beginning
-    auto compactBuffer = [](std::vector<char> &vec, int &pos) -> void {
-        int remains = vec.size() - pos;
+    auto compactBuffer = [](std::vector<char>& vec, std::size_t& pos) -> void {
+        auto remains = vec.size() - pos;
         if (pos > remains + BUFFER_SIZE) {
             memcpy(vec.data(), vec.data() + pos, remains);
             vec.resize(remains);
@@ -136,7 +136,7 @@ void MessageTcp::think() {
 
     //push outcoming data to socket
     while (outputPos < outputBuffer.size()) {
-        int remains = outputBuffer.size() - outputPos;
+        auto remains = outputBuffer.size() - outputPos;
         int written = tcp->Send((uint8*)&outputBuffer[outputPos], remains);
         if (written == -1 && tcp->GetSocketError() == CSimpleSocket::SocketEwouldblock)
             break;				//no more data 

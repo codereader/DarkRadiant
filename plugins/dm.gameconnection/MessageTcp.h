@@ -28,9 +28,9 @@ private:
     std::unique_ptr<CActiveSocket> tcp;
 
     std::vector<char> inputBuffer;
-    int inputPos;
+    std::size_t inputPos;
     std::vector<char> outputBuffer;
-    int outputPos;
+    std::size_t outputPos;
 };
 
 }
