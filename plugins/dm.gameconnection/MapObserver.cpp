@@ -12,7 +12,14 @@ public:
     std::vector<IEntityNodePtr> foundEntities;
     
     bool pre(const scene::INodePtr& node) override {
-        if (auto ptr = std::dynamic_pointer_cast<IEntityNode>(node)) {
+        if (auto ptr = std::dynamic_pointer_cast<IEntityNode>(node))
+        {
+            // Ignore worldspawn entities
+            if (ptr->getEntity().isWorldspawn())
+            {
+                return false;
+            }
+
             foundEntities.push_back(ptr);
             return false;
         }
@@ -23,7 +30,10 @@ public:
 static std::vector<IEntityNodePtr> getEntitiesInSubgraph(const scene::INodePtr& node)
 {
     EntityNodeCollector visitor;
-    node->traverse(visitor);
+    if (node)
+    {
+        node->traverse(visitor);
+    }
     return visitor.foundEntities;
 }
 
@@ -66,13 +76,19 @@ class MapObserver_SceneObserver : public scene::Graph::Observer {
 
 public:
     MapObserver_SceneObserver(MapObserver& owner) : _owner(owner) {}
-    virtual void onSceneNodeInsert(const scene::INodePtr& node) override {
+    virtual void onSceneNodeInsert(const scene::INodePtr& node) override
+    {
+        if (node->isRoot()) return; // ignore the map root
+
         auto entityNodes = getEntitiesInSubgraph(node);
         for (const IEntityNodePtr& entNode : entityNodes)
             _owner.entityUpdated(entNode->name(), DiffStatus::added());
         _owner.enableEntityObservers(entityNodes);
     }
-    virtual void onSceneNodeErase(const scene::INodePtr& node) override {
+    virtual void onSceneNodeErase(const scene::INodePtr& node) override
+    {
+        if (node->isRoot()) return; // ignore the map root
+
         auto entityNodes = getEntitiesInSubgraph(node);
         _owner.disableEntityObservers(entityNodes);
         for (const IEntityNodePtr& entNode : entityNodes)
@@ -82,7 +98,8 @@ public:
 
 void MapObserver::enableEntityObservers(const std::vector<IEntityNodePtr>& entityNodes)
 {
-    for (auto entNode : entityNodes) {
+    for (auto entNode : entityNodes)
+    {
         if (_entityObservers.count(entNode.get()))
             continue;   //already tracked
         auto* observer = new MapObserver_EntityObserver(*this);
@@ -94,7 +111,8 @@ void MapObserver::enableEntityObservers(const std::vector<IEntityNodePtr>& entit
 
 void MapObserver::disableEntityObservers(const std::vector<IEntityNodePtr>& entityNodes)
 {
-    for (auto entNode : entityNodes) {
+    for (auto entNode : entityNodes)
+    {
         if (!_entityObservers.count(entNode.get()))
             continue;   //not tracked
         Entity::Observer* observer = _entityObservers[entNode.get()];
