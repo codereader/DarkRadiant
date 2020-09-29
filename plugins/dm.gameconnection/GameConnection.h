@@ -80,10 +80,10 @@ private:
     //signal listener for when map is saved, loaded, unloaded, etc.
     sigc::connection _mapEventListener;
     //sequence number of the last sent request (incremented sequentally)
-    int _seqno = 0;
+    std::size_t _seqno = 0;
 
     //nonzero: request with this seqno sent to game, response not recieved yet
-    int _seqnoInProgress = 0;
+    std::size_t _seqnoInProgress = 0;
     //response from current in-progress request will be saved here
     std::vector<char> _response;
 
@@ -103,7 +103,7 @@ private:
 
     
     //every request should get unique seqno, otherwise we won't be able to distinguish their responses
-    int newSeqno();
+    std::size_t generateNewSequenceNumber();
     //prepend seqno to specified request and send it to game
     void sendRequest(const std::string &request);
     //if there are any pending async commands (camera update), send one now

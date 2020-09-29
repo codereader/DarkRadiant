@@ -4,6 +4,7 @@
 #include "DiffDoom3MapWriter.h"
 #include "clsocket/ActiveSocket.h"
 
+#include "i18n.h"
 #include "icameraview.h"
 #include "inode.h"
 #include "ientity.h"
@@ -19,26 +20,33 @@
 namespace gameconn
 {
 
-//this is how often this class "thinks" when idle
-static const int THINK_INTERVAL = 123;
+namespace
+{
+    //this is how often this class "thinks" when idle
+    const int THINK_INTERVAL = 123;
+    const char* const DEFAULT_HOST = "localhost";
+    const int DEFAULT_PORT = 3879;
 
-static std::string seqnoPreamble(int seq) {
-    return fmt::format("seqno {}\n", seq);
-}
-static std::string messagePreamble(std::string type) {
-    return fmt::format("message \"{}\"\n", type);
-}
-static std::string actionPreamble(std::string type) {
-    return messagePreamble("action") + fmt::format("action \"{}\"\n", type);
-}
+    inline std::string seqnoPreamble(std::size_t seq) {
+        return fmt::format("seqno {0}\n", seq);
+    }
+
+    inline std::string messagePreamble(const std::string& type) {
+        return fmt::format("message \"{}\"\n", type);
+    }
+
+    inline std::string actionPreamble(const std::string& type) {
+        return messagePreamble("action") + fmt::format("action \"{0}\"\n", type);
+    }
+
 #if 0
-static std::string queryPreamble(std::string type) {
-    return messagePreamble("query") + fmt::format("query \"{}\"\n", type);
-}
+    inline std::string queryPreamble(std::string type) {
+        return messagePreamble("query") + fmt::format("query \"{}\"\n", type);
+    }
 #endif
+}
 
-
-int GameConnection::newSeqno() {
+std::size_t GameConnection::generateNewSequenceNumber() {
     return ++_seqno;
 }
 
@@ -46,7 +54,7 @@ void GameConnection::sendRequest(const std::string &request) {
     if (!isAlive())
         return; //connection is down, drop all requests
     assert(_seqnoInProgress == 0);
-    int seqno = newSeqno();
+    auto seqno = generateNewSequenceNumber();
     std::string fullMessage = seqnoPreamble(seqno) + request;
     _connection->writeMessage(fullMessage.data(), fullMessage.size());
     _seqnoInProgress = seqno;
@@ -95,12 +103,14 @@ void GameConnection::waitAction() {
         think();
 }
 
-void GameConnection::finish() {
-    //wait for current request in progress to finish
-    waitAction();
-    //send pending async commands and wait for them to finish
-    while (sendAnyPendingAsync())
+void GameConnection::finish()
+{
+    do
+    {
+        //wait for current request in progress to finish
         waitAction();
+        //send pending async commands and wait for them to finish
+    } while (sendAnyPendingAsync());
 }
 
 std::string GameConnection::executeRequest(const std::string &request) {
@@ -137,8 +147,8 @@ bool GameConnection::connect() {
         return false;
     if (!connection->SetNonblocking())
         return false;
-    //TODO: make post configurable, as it is in TDM?
-    if (!connection->Open("localhost", 3879))
+    //TODO: make port configurable, as it is in TDM?
+    if (!connection->Open(DEFAULT_HOST, DEFAULT_PORT))
         return false;
 
     _connection.reset(new MessageTcp());
@@ -147,7 +157,7 @@ bool GameConnection::connect() {
         return false;
 
     _thinkTimer.reset(new wxTimer());
-    _thinkTimer->Connect(wxEVT_TIMER, wxTimerEventHandler(GameConnection::onTimerEvent), NULL, this);
+    _thinkTimer->Bind(wxEVT_TIMER, &GameConnection::onTimerEvent, this);
     _thinkTimer->Start(THINK_INTERVAL);
 
     _mapEventListener = GlobalMapModule().signal_mapEvent().connect(
@@ -231,31 +241,31 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
 
     // Add menu items
     IMenuManager& mm = GlobalUIManager().getMenuManager();
-    mm.add("main", "connection", ui::menuFolder, "Connection", "", "");
+    mm.add("main", "connection", ui::menuFolder, _("Connection"), "", "");
     mm.add("main/connection", "cameraSyncEnable", ui::menuItem,
-           "Enable camera synchronization", "", "GameConnectionCameraSyncEnable");
+           _("Enable camera synchronization"), "", "GameConnectionCameraSyncEnable");
     mm.add("main/connection", "cameraSyncDisable", ui::menuItem,
-           "Disable camera synchronization", "", "GameConnectionCameraSyncDisable");
+           _("Disable camera synchronization"), "", "GameConnectionCameraSyncDisable");
     mm.add("main/connection", "backSyncCamera", ui::menuItem,
-           "Sync camera back now", "", "GameConnectionBackSyncCamera");
+           _("Sync camera back now"), "", "GameConnectionBackSyncCamera");
     mm.add("main/connection", "reloadMap", ui::menuItem,
-           "Reload map from .map file", "", "GameConnectionReloadMap");
+           _("Reload map from .map file"), "", "GameConnectionReloadMap");
     mm.add("main/connection", "reloadMapAutoEnable", ui::menuItem,
-           "Enable automation .map reload on save", "", "GameConnectionReloadMapAutoEnable");
+           _("Enable automation .map reload on save"), "", "GameConnectionReloadMapAutoEnable");
     mm.add("main/connection", "reloadMapAutoDisable", ui::menuItem,
-           "Disable automation .map reload on save", "", "GameConnectionReloadMapAutoDisable");
+           _("Disable automation .map reload on save"), "", "GameConnectionReloadMapAutoDisable");
     mm.add("main/connection", "updateMapOff", ui::menuItem,
-           "Disable map update mode", "", "GameConnectionUpdateMapOff");
+           _("Disable map update mode"), "", "GameConnectionUpdateMapOff");
     mm.add("main/connection", "updateMapOn", ui::menuItem,
-           "Enable map update mode", "", "GameConnectionUpdateMapOn");
+           _("Enable map update mode"), "", "GameConnectionUpdateMapOn");
     mm.add("main/connection", "updateMapAlways", ui::menuItem,
-           "Always update map immediately after change", "", "GameConnectionUpdateMapAlways");
+           _("Always update map immediately after change"), "", "GameConnectionUpdateMapAlways");
     mm.add("main/connection", "updateMap", ui::menuItem,
-           "Update map right now", "", "GameConnectionUpdateMap");
+           _("Update map right now"), "", "GameConnectionUpdateMap");
     mm.add("main/connection", "pauseGame", ui::menuItem,
-           "Pause game", "", "GameConnectionPauseGame");
+           _("Pause game"), "", "GameConnectionPauseGame");
     mm.add("main/connection", "respawnSelected", ui::menuItem,
-           "Respawn selected entities", "", "GameConnectionRespawnSelected");
+           _("Respawn selected entities"), "", "GameConnectionRespawnSelected");
 }
 
 void GameConnection::shutdownModule()
@@ -295,13 +305,13 @@ std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std
     //parse response (imagine how easy that would be with regex...)
     while (response.size() && isspace(response.back()))
         response.pop_back();
-    std::string expLeft = fmt::format("\"{}\" is:\"", cvarName);
+    std::string expLeft = fmt::format("\"{0}\" is:\"", cvarName);
     std::string expMid = "\" default:\"";
     std::string expRight = "\"";
     int posLeft = response.find(expLeft);
     int posMid = response.find(expMid);
     if (posLeft < 0 || posMid < 0) {
-        rError() << fmt::format("ExecuteGetCvarValue: can't parse value of {}", cvarName);
+        rError() << fmt::format("ExecuteGetCvarValue: can't parse value of {0}", cvarName);
         return "";
     }
     int posLeftEnd = posLeft + expLeft.size();
@@ -335,6 +345,7 @@ void GameConnection::updateCamera() {
     }
     think();
 }
+
 bool GameConnection::sendPendingCameraUpdate() {
     if (_cameraOutPending) {
         std::string text = composeConExecRequest(fmt::format(
@@ -368,6 +379,7 @@ void GameConnection::setCameraSyncEnabled(bool enable) {
         finish();
     }
 }
+
 void GameConnection::backSyncCamera() {
     if (!connect())
         return;
@@ -401,7 +413,7 @@ void GameConnection::respawnSelectedEntities() {
     if (!connect())
         return;
     std::set<std::string> selectedEntityNames;
-    GlobalSelectionSystem().foreachSelected([&selectedEntityNames](const scene::INodePtr &node) -> void {
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr &node) {
         //Node_isEntity
         if (Entity* entity = Node_getEntity(node)) {
             const std::string &name = entity->getKeyValue("name");
@@ -423,6 +435,7 @@ void GameConnection::reloadMap() {
     std::string text = composeConExecRequest("reloadMap nocheck");
     executeRequest(text);
 }
+
 void GameConnection::onMapEvent(IMap::MapEvent ev) {
     if (ev == IMap::MapSaved && _autoReloadMap) {
         reloadMap();
@@ -432,9 +445,11 @@ void GameConnection::onMapEvent(IMap::MapEvent ev) {
         disconnect();
     }
 }
+
 void GameConnection::setAutoReloadMapEnabled(bool enable) {
     _autoReloadMap = enable;
 }
+
 void GameConnection::setUpdateMapLevel(bool on, bool always) {
     if (on && !_mapObserver.isEnabled()) {
         //save map to file, and reload from file, to ensure DR and TDM are in sync
@@ -444,7 +459,6 @@ void GameConnection::setUpdateMapLevel(bool on, bool always) {
     _mapObserver.setEnabled(on);
     _updateMapAlways = always;
 }
-
 
 /**
  * stgatilov: Saves only entities with specified names to in-memory map patch.
@@ -472,8 +486,8 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
 
     //write removal stubs (no actual spawnargs)
     for (const auto& pNS : entityStatuses) {
-        const std::string& name = pNS.first;
-        DiffStatus status = pNS.second;
+        const auto& name = pNS.first;
+        const auto& status = pNS.second;
         assert(status.isModified());    //(don't put untouched entities into map)
         if (status.isRemoved())
             writer.writeRemoveEntityStub(pNS.first, outStream);
