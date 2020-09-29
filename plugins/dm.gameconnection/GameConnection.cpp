@@ -241,7 +241,7 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
 
     // Add menu items
     IMenuManager& mm = GlobalUIManager().getMenuManager();
-    mm.add("main", "connection", ui::menuFolder, _("Connection"), "", "");
+    mm.insert("main/help", "connection", ui::menuFolder, _("Connection"), "", "");
     mm.add("main/connection", "cameraSyncEnable", ui::menuItem,
            _("Enable camera synchronization"), "", "GameConnectionCameraSyncEnable");
     mm.add("main/connection", "cameraSyncDisable", ui::menuItem,
@@ -490,7 +490,7 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
         const auto& status = pNS.second;
         assert(status.isModified());    //(don't put untouched entities into map)
         if (status.isRemoved())
-            writer.writeRemoveEntityStub(pNS.first, outStream);
+            writer.writeRemoveEntityStub(name, outStream);
     }
 
     //write added/modified entities as usual
