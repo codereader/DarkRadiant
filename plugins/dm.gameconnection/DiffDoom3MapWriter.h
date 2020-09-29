@@ -16,12 +16,11 @@ class DiffStatus;
  */
 class DiffDoom3MapWriter : public map::IMapWriter
 {
-    const std::map<std::string, DiffStatus>* _entityStatuses = nullptr;
+    const std::map<std::string, DiffStatus>& _entityStatuses;
 
     void writeEntityPreamble(const std::string& name, std::ostream& stream);
 public:
-    DiffDoom3MapWriter();
-    void setStatuses(const std::map<std::string, DiffStatus>& entityStatuses);
+    DiffDoom3MapWriter(const std::map<std::string, DiffStatus>& statuses);
 
     void beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;
     void endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) override;

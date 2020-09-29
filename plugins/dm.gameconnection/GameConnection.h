@@ -7,11 +7,6 @@
 #include <sigc++/connection.h>
 #include <wx/timer.h>
 
-class CameraObserver;
-namespace sigc {
-    struct connection;
-}
-
 namespace gameconn
 {
 
@@ -24,8 +19,8 @@ class MessageTcp;
  *  - updating edited entities in game immediately (aka "hot reload")
  */
 class GameConnection :
-    public RegisterableModule,
-    public wxEvtHandler			//note: everything before this base must have no data members!
+    public wxEvtHandler, //note: must be inherited first, according to wxWidgets docs
+    public RegisterableModule
 {
 public:
     ~GameConnection();
@@ -63,10 +58,10 @@ public:
     void doUpdateMap();
 
     //RegisterableModule implementation
-    virtual const std::string& getName() const override;
-    virtual const StringSet& getDependencies() const override;
-    virtual void initialiseModule(const IApplicationContext& ctx) override;
-    virtual void shutdownModule() override;
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 private:
     //connection to TDM game (i.e. the socket with custom message framing)
@@ -76,7 +71,9 @@ private:
     std::unique_ptr<MessageTcp> _connection;
     //when connected, this timer calls Think periodically
     std::unique_ptr<wxTimer> _thinkTimer;
+
     void onTimerEvent(wxTimerEvent& ev) { think(); }
+
     //signal listener for when map is saved, loaded, unloaded, etc.
     sigc::connection _mapEventListener;
     //sequence number of the last sent request (incremented sequentally)
@@ -134,9 +131,6 @@ private:
 
     //signal observer on map saving
     void onMapEvent(IMap::MapEvent ev);
-
-    //friend zone:
-    friend class GameConnection_CameraObserver;
 };
 
 }

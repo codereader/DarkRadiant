@@ -467,12 +467,10 @@ void GameConnection::setUpdateMapLevel(bool on, bool always) {
  */
 std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
 {
-    //if (_saveInProgress) return "";     // fail if during proper map save
-
-    scene::IMapRootNodePtr root = GlobalSceneGraph().root();
+    auto root = GlobalSceneGraph().root();
 
     std::set<scene::INode*> subsetNodes;
-    root->foreachNode([&](const scene::INodePtr& node) -> bool {
+    root->foreachNode([&](const scene::INodePtr& node) {
         if (entityStatuses.count(node->name()))
             subsetNodes.insert(node.get());
         return true;
@@ -481,8 +479,7 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
     std::ostringstream outStream;
     outStream << "// diff " << entityStatuses.size() << std::endl;
 
-    DiffDoom3MapWriter writer;
-    writer.setStatuses(entityStatuses);
+    DiffDoom3MapWriter writer(entityStatuses);
 
     //write removal stubs (no actual spawnargs)
     for (const auto& pNS : entityStatuses) {

@@ -6,17 +6,18 @@
 namespace gameconn
 {
 
-DiffDoom3MapWriter::DiffDoom3MapWriter() {}
+DiffDoom3MapWriter::DiffDoom3MapWriter(const std::map<std::string, DiffStatus>& statuses) :
+    _entityStatuses(statuses)
+{}
 
-void DiffDoom3MapWriter::setStatuses(const std::map<std::string, DiffStatus>& entityStatuses) {
-    _entityStatuses = &entityStatuses;
-}
+void DiffDoom3MapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream)
+{}
 
-void DiffDoom3MapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) {}
-void DiffDoom3MapWriter::endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream) {}
+void DiffDoom3MapWriter::endWriteMap(const scene::IMapRootNodePtr& root, std::ostream& stream)
+{}
 
 void DiffDoom3MapWriter::writeEntityPreamble(const std::string& name, std::ostream& stream) {
-    DiffStatus status = _entityStatuses->at(name);
+    DiffStatus status = _entityStatuses.at(name);
     assert(status.isModified());
     const char* statusWord = "modify";
     if (status.needsRespawn())
@@ -46,6 +47,7 @@ void DiffDoom3MapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ost
         stream << "\"" << key << "\" \"" << value << "\"" << std::endl;
     });
 }
+
 void DiffDoom3MapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostream& stream) {
     stream << "}" << std::endl;
 }

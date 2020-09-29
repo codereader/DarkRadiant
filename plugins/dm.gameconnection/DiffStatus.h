@@ -53,7 +53,7 @@ public:
         return res;
     }
 
-    DiffStatus combine(DiffStatus laterChange) const {
+    DiffStatus combine(const DiffStatus& laterChange) const {
         DiffStatus res;
         res._delta = _delta + laterChange._delta;
         if (std::abs(res._delta) > 1) {
