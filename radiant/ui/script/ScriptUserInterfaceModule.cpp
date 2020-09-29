@@ -1,8 +1,11 @@
 #include <sigc++/connection.h>
+#include <wx/frame.h>
 
 #include "iscript.h"
 #include "iuimanager.h"
 #include "imainframe.h"
+#include "i18n.h"
+#include "igroupdialog.h"
 #include "module/StaticModule.h"
 
 #include "ScriptMenu.h"

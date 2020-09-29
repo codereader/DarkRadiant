@@ -4,6 +4,8 @@
 #include "iuimanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
+#include "imainframe.h"
+
 #include "string/convert.h"
 #include "string/join.h"
 #include "wxutil/MouseButton.h"

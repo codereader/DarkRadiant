@@ -1,5 +1,7 @@
 #include "Overlay.h"
 
+#include "imainframe.h"
+
 #include "registry/registry.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"

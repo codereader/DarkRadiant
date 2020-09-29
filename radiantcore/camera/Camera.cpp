@@ -2,6 +2,7 @@
 
 #include <functional>
 #include "iregistry.h"
+#include "registry/registry.h"
 #include "CameraManager.h"
 #include "render/View.h"
 #include "selection/SelectionVolume.h"

@@ -216,7 +216,7 @@ CActiveSocket *CPassiveSocket::Accept()
 {
     uint32         nSockLen;
     CActiveSocket *pClientSocket = NULL;
-    SOCKET         socket = UINT_PTR(CSimpleSocket::SocketError);
+    SOCKET         socket{CSimpleSocket::SocketError};
 
     if (m_nSocketType != CSimpleSocket::SocketTypeTcp)
     {

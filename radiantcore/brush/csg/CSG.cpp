@@ -7,6 +7,7 @@
 #include "iundo.h"
 #include "igrid.h"
 #include "iselection.h"
+#include "ientity.h"
 
 #include "scenelib.h"
 #include "shaderlib.h"

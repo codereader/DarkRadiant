@@ -340,50 +340,6 @@ namespace module
      * \ingroup module
      */
 
-	// Reference container to hold the cached module references.
-	// It automatically invalidates its reference as soon as the IModuleRegistry
-	// changes its instance ID.
-	template<typename ModuleType>
-	class InstanceReference
-	{
-	private:
-		const char* const _moduleName;
-		ModuleType* _instancePtr;
-		IModuleRegistry::InstanceId _registryInstanceId;
-	public:
-		InstanceReference(const char* const moduleName) :
-			_moduleName(moduleName),
-			_instancePtr(nullptr),
-			_registryInstanceId(0)
-		{
-			acquireReference();
-		}
-
-		// Cast-operator used to access the module reference
-		inline operator ModuleType&()
-		{
-#ifdef MODULE_REFERENCES_SUPPORT_INVALIDATION
-			// Check if we have an instance or if it is outdated
-			if (_instancePtr == nullptr ||
-				_registryInstanceId != GlobalModuleRegistry().getInstanceId())
-			{
-				acquireReference();
-			}
-#endif
-			return *_instancePtr;
-		}
-
-	private:
-		void acquireReference()
-		{
-			_instancePtr = std::dynamic_pointer_cast<ModuleType>(
-				GlobalModuleRegistry().getModule(_moduleName)).get();
-			// Save the instance ID of the registry - if this ever changes 
-			// the above reference is treated as invalid
-			_registryInstanceId = GlobalModuleRegistry().getInstanceId();
-		}
-	};
-
 	/** greebo: This is a container holding a reference to the registry.
 	 *          The getRegistry() symbol above is not exported to the
 	 *          modules in Win32 compiles. That's why this structure
@@ -435,6 +391,50 @@ namespace module
 	{
 		return !RegistryReference::Instance().isEmpty();
 	}
+
+	// Reference container to hold the cached module references.
+	// It automatically invalidates its reference as soon as the IModuleRegistry
+	// changes its instance ID.
+	template<typename ModuleType>
+	class InstanceReference
+	{
+	private:
+		const char* const _moduleName;
+		ModuleType* _instancePtr;
+		IModuleRegistry::InstanceId _registryInstanceId;
+	public:
+		InstanceReference(const char* const moduleName) :
+			_moduleName(moduleName),
+			_instancePtr(nullptr),
+			_registryInstanceId(0)
+		{
+			acquireReference();
+		}
+
+		// Cast-operator used to access the module reference
+		inline operator ModuleType&()
+		{
+#ifdef MODULE_REFERENCES_SUPPORT_INVALIDATION
+			// Check if we have an instance or if it is outdated
+			if (_instancePtr == nullptr ||
+				_registryInstanceId != GlobalModuleRegistry().getInstanceId())
+			{
+				acquireReference();
+			}
+#endif
+			return *_instancePtr;
+		}
+
+	private:
+		void acquireReference()
+		{
+			_instancePtr = std::dynamic_pointer_cast<ModuleType>(
+				GlobalModuleRegistry().getModule(_moduleName)).get();
+			// Save the instance ID of the registry - if this ever changes 
+			// the above reference is treated as invalid
+			_registryInstanceId = GlobalModuleRegistry().getInstanceId();
+		}
+	};
 
 	// Exception thrown if the module being loaded is incompatible with the main binary
 	class ModuleCompatibilityException : 

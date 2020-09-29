@@ -1,6 +1,9 @@
 #pragma once
 
 #include "iselection.h"
+#include "ieventmanager.h"
+#include "iclipper.h"
+
 #include <sigc++/connection.h>
 
 namespace ui

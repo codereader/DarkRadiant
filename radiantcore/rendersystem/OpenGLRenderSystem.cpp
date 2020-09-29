@@ -3,6 +3,8 @@
 #include "ishaders.h"
 #include "igl.h"
 #include "itextstream.h"
+#include "iradiant.h"
+
 #include "math/Matrix4.h"
 #include "module/StaticModule.h"
 #include "backend/GLProgramFactory.h"

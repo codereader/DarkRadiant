@@ -192,7 +192,6 @@ darkradiant_SOURCES = main.cpp \
                       textool/item/PatchItem.cpp \
                       textool/item/PatchVertexItem.cpp \
                       textool/TexTool.cpp \
-                      modulesystem/ApplicationContextImpl.cpp \
                       selection/ManipulateMouseTool.cpp \
                       selection/SelectionMouseTools.cpp \
                       settings/Win32Registry.cpp \

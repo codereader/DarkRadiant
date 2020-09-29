@@ -96,7 +96,6 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 imagefile/BMPLoader.cpp \
                 imagefile/dds.cpp \
                 imagefile/ddslib.cpp \
-                imagefile/DDSImage.cpp \
                 imagefile/ImageLoader.cpp \
                 imagefile/JPEGLoader.cpp \
                 imagefile/PNGLoader.cpp \
@@ -223,8 +222,6 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 patch/PatchTesselation.cpp \
                 patch/algorithm/General.cpp \
                 patch/algorithm/Prefab.cpp \
-                rendersystem/backend/glprogram/ARBBumpProgram.cpp \
-                rendersystem/backend/glprogram/ARBDepthFillProgram.cpp \
                 rendersystem/backend/glprogram/GenericVFPProgram.cpp \
                 rendersystem/backend/glprogram/GLSLBumpProgram.cpp \
                 rendersystem/backend/glprogram/GLSLDepthFillProgram.cpp \

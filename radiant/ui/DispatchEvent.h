@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/event.h>
+#include <functional>
 
 namespace ui
 {

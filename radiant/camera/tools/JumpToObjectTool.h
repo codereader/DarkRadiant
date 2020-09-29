@@ -7,6 +7,8 @@
 #include "../GlobalCameraWndManager.h"
 #include "ObjectFinder.h"
 
+#include "math/AABB.h"
+
 namespace ui
 {
 

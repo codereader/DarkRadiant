@@ -34,6 +34,7 @@
 #include "maplib.h"
 #include "render/RenderableCollectionWalker.h"
 
+#include <wx/frame.h>
 #include <fmt/format.h>
 #include <sigc++/functors/mem_fun.h>
 #include <functional>

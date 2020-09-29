@@ -128,6 +128,8 @@ const IApplicationContext::ArgumentList& ApplicationContextBase::getCmdLineArgs(
 #include <stdlib.h>
 #include <pwd.h>
 #include <unistd.h>
+#include <limits.h>
+
 #ifdef __APPLE__
 #include <libproc.h>
 #endif
@@ -240,7 +242,7 @@ std::string getXDGPath(const std::string& envVar, const std::string& fallback)
 
 } // namespace
 
-void ApplicationContextImpl::initialise(int argc, char* argv[])
+void ApplicationContextBase::initialise(int argc, char* argv[])
 {
     // Give away unnecessary root privileges.
     // Important: must be done before calling gtk_init().
