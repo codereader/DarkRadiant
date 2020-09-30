@@ -35,9 +35,9 @@ class IncludeSelectedWalker :
 public:
 	IncludeSelectedWalker(scene::NodeVisitor& walker) :
 		m_walker(walker),
+		m_subsetOverride(nullptr),
 		m_selected(0),
-		m_skip(false),
-		m_subsetOverride(nullptr)
+		m_skip(false)
 	{}
 
 	//stgatilov: override subset of selected nodes
