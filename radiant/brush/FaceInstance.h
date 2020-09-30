@@ -111,8 +111,6 @@ public:
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Frontend render methods for submitting the face to the given collector
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume,
-		const IRenderEntity& entity) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
 		const IRenderEntity& entity) const;
 

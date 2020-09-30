@@ -441,24 +441,39 @@ void BrushNode::renderSolid(RenderableCollector& collector,
                             const VolumeTest& volume,
                             const Matrix4& localToWorld) const
 {
-	m_lightList->calculateIntersectingLights();
+    m_lightList->calculateIntersectingLights();
 
-	assert(_renderEntity); // brushes rendered without parent entity - no way!
+    assert(_renderEntity); // brushes rendered without parent entity - no way!
 
-	// Check for the override status of this brush
-	bool forceVisible = isForcedVisible();
+    // Check for the override status of this brush
+    bool forceVisible = isForcedVisible();
 
     // Submit the lights and renderable geometry for each face
-	for (const FaceInstance& face : m_faceInstances)
+    for (const FaceInstance& faceInst : m_faceInstances)
     {
-		// Skip invisible faces before traversing further
-		if (!forceVisible && !face.faceIsVisible()) continue;
+        // Skip invisible faces before traversing further
+        if (!forceVisible && !faceInst.faceIsVisible()) continue;
 
-		// greebo: BrushNodes have always an identity l2w, don't do any transforms
-		face.renderSolid(collector, volume, *_renderEntity);
+        //faceInst.renderSolid(collector, volume, *_renderEntity);
+        const Face& face = faceInst.getFace();
+        if (face.intersectVolume(volume))
+        {
+            bool highlight = faceInst.selectedComponents();
+            if (highlight)
+                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
+
+            // greebo: BrushNodes have always an identity l2w, don't do any transforms
+            collector.addLitRenderable(
+                *face.getFaceShader().getGLShader(), face.getWinding(),
+                Matrix4::getIdentity(), *this, _renderEntity
+            );
+
+            if (highlight)
+                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+        }
     }
 
-	renderSelectedPoints(collector, volume, localToWorld);
+    renderSelectedPoints(collector, volume, localToWorld);
 }
 
 void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
