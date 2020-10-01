@@ -103,10 +103,18 @@ MouseTool::Result BrushCreatorTool::onMouseMove(Event& ev)
                 auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
                 scene::addNodeToContainer(_brush, worldspawn);
             }
+
+            // Make sure the brush is selected
+            Node_setSelected(_brush, true);
         }
 
-        // Make sure the brush is selected
-        Node_setSelected(_brush, true);
+        // It's possible that the brush we created has been deleted in the meantime
+        // check the brush object for validity
+        if (!_brush->getParent() || GlobalSelectionSystem().countSelected() == 0)
+        {
+            _brush.reset();
+            return Result::Finished;
+        }
 
         // Dispatch the command
         GlobalCommandSystem().executeCommand("ResizeSelectedBrushesToBounds", 
@@ -132,6 +140,7 @@ MouseTool::Result BrushCreatorTool::onMouseUp(Event& ev)
         dynamic_cast<XYMouseToolEvent&>(ev).getScale();
 
         GlobalUndoSystem().finish("brushDragNew");
+        _brush.reset();
 
         return Result::Finished;
     }
