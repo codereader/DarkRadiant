@@ -61,17 +61,27 @@ public:
 
 	std::string getName()
 	{
-		return (_shader != NULL) ? _shader->getName() : "";
+		return _shader ? _shader->getName() : "";
 	}
 
 	ScriptSoundRadii getRadii()
 	{
-		return (_shader != NULL) ? ScriptSoundRadii(_shader->getRadii()) : ScriptSoundRadii();
+		return _shader ? ScriptSoundRadii(_shader->getRadii()) : ScriptSoundRadii();
 	}
 
 	SoundFileList getSoundFileList()
 	{
-		return (_shader != NULL) ? _shader->getSoundFileList() : SoundFileList();
+		return _shader ? _shader->getSoundFileList() : SoundFileList();
+	}
+
+	std::string getShaderFilePath()
+	{
+		return _shader ? _shader->getShaderFilePath() : std::string();
+	}
+
+	std::string getDefinition()
+	{
+		return _shader ? _shader->getDefinition() : std::string();
 	}
 
 	bool isNull() const {

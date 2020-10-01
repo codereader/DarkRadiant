@@ -40,6 +40,8 @@ void SoundManagerInterface::registerInterface(py::module& scope, py::dict& globa
 	shader.def("getName", &ScriptSoundShader::getName);
 	shader.def("getRadii", &ScriptSoundShader::getRadii);
 	shader.def("getSoundFileList", &ScriptSoundShader::getSoundFileList);
+	shader.def("getShaderFilePath", &ScriptSoundShader::getShaderFilePath);
+	shader.def("getDefinition", &ScriptSoundShader::getDefinition);
 
 	// Add the module declaration to the given python namespace
 	py::class_<SoundManagerInterface> soundManager(scope, "SoundManager");
