@@ -32,6 +32,10 @@ private:
 	wxButton* _stopButton;
 	wxStaticText* _statusLabel;
 
+	wxSizer* _shaderDescriptionSizer;
+	wxStaticText* _shaderNameLabel;
+	wxStaticText* _shaderFileLabel;
+
 	// The currently "previewed" soundshader
 	std::string _soundShader;
 

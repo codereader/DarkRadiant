@@ -6,6 +6,7 @@
 #include "iuimanager.h"
 #include <iostream>
 #include <cstdlib>
+#include <fmt/format.h>
 
 #include <wx/artprov.h>
 #include <wx/stattext.h>
@@ -29,13 +30,27 @@ SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Connect the "changed" signal
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(SoundShaderPreview::onSelectionChanged), NULL, this);
+	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundShaderPreview::onSelectionChanged, this);
+	_treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundShaderPreview::onItemActivated, this);
 
-	_treeView->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED,
-		wxDataViewEventHandler(SoundShaderPreview::onItemActivated), NULL, this);
+	_shaderFileLabel = new wxStaticText(this, wxID_ANY, "");
+	_shaderFileLabel->SetFont(_shaderFileLabel->GetFont().Bold());
 
-	GetSizer()->Add(_treeView, 1, wxEXPAND);
+	_shaderNameLabel = new wxStaticText(this, wxID_ANY, "");
+	_shaderNameLabel->SetFont(_shaderNameLabel->GetFont().Bold());
+
+	_shaderDescriptionSizer = new wxBoxSizer(wxHORIZONTAL);
+
+	_shaderDescriptionSizer->Add(new wxStaticText(this, wxID_ANY, _("Sound Shader ")), 0, wxALIGN_CENTER_VERTICAL, 0);
+	_shaderDescriptionSizer->Add(_shaderNameLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
+	_shaderDescriptionSizer->Add(new wxStaticText(this, wxID_ANY, _(" defined in ")), 0, wxALIGN_CENTER_VERTICAL, 0);
+	_shaderDescriptionSizer->Add(_shaderFileLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
+
+	auto* vbox = new wxBoxSizer(wxVERTICAL);
+	vbox->Add(_shaderDescriptionSizer, 0, wxEXPAND|wxTOP|wxBOTTOM, 6);
+	vbox->Add(_treeView, 1, wxEXPAND);
+
+	GetSizer()->Add(vbox, 1, wxEXPAND);
 	GetSizer()->Add(createControlPanel(this), 0, wxALIGN_BOTTOM | wxLEFT, 12);
 
 	// Attach to the close event
@@ -63,9 +78,9 @@ wxSizer* SoundShaderPreview::createControlPanel(wxWindow* parent)
 	_stopButton = new wxButton(parent, wxID_ANY, _("Stop"));
 	_stopButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-stop.png"));
 
-	_playButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SoundShaderPreview::onPlay), NULL, this);
-	_playLoopedButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SoundShaderPreview::onPlayLooped), NULL, this);
-	_stopButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SoundShaderPreview::onStop), NULL, this);
+	_playButton->Bind(wxEVT_BUTTON, &SoundShaderPreview::onPlay, this);
+	_playLoopedButton->Bind(wxEVT_BUTTON, &SoundShaderPreview::onPlayLooped, this);
+	_stopButton->Bind(wxEVT_BUTTON, &SoundShaderPreview::onStop, this);
 
 	_playButton->SetMinSize(wxSize(120, -1));
 	_playLoopedButton->SetMinSize(wxSize(120, -1));
@@ -119,16 +134,16 @@ void SoundShaderPreview::update()
 		// We have a sound shader, update the liststore
 
 		// Get the list of sound files associated to this shader
-		const ISoundShaderPtr& shader = GlobalSoundManager().getSoundShader(_soundShader);
+		const auto& shader = GlobalSoundManager().getSoundShader(_soundShader);
 
 		if (!shader->getName().empty())
 		{
 			// Retrieve the list of associated filenames (VFS paths)
-			SoundFileList list = shader->getSoundFileList();
+			auto list = shader->getSoundFileList();
 
 			for (std::size_t i = 0; i < list.size(); ++i)
 			{
-				wxutil::TreeModel::Row row = _listStore->AddItem();
+				auto row = _listStore->AddItem();
 
 				row[_columns.shader] = list[i];
 
@@ -141,12 +156,20 @@ void SoundShaderPreview::update()
 				}
 			}
 
+			_shaderNameLabel->SetLabel(shader->getName());
+			_shaderFileLabel->SetLabel(shader->getShaderFilePath());
+			_shaderDescriptionSizer->Layout();
+
 			handleSelectionChange();
 		}
 		else
 		{
 			// Not a valid soundshader, switch to inactive
 			Enable(false);
+
+			_shaderNameLabel->SetLabel("-");
+			_shaderFileLabel->SetLabel("-");
+			_shaderDescriptionSizer->Layout();
 		}
 	}
 }
