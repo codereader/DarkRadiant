@@ -1197,9 +1197,17 @@ void EntityInspector::getEntityFromSelectionSystem()
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
         changeSelectedEntity(selectedNodeParent);
         
-        auto indices = scene::getNodeIndices(selectedNode);
+        try
+        {
+            auto indices = scene::getNodeIndices(selectedNode);
 
-        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), indices.first, indices.second));
+            _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), indices.first, indices.second));
+        }
+        catch (const std::out_of_range& ex)
+        {
+            rWarning() << ex.what() << std::endl;
+            _primitiveNumLabel->SetLabelText("-");
+        }
     }
 }
 

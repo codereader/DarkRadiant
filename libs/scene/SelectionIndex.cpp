@@ -115,18 +115,24 @@ std::pair<std::size_t, std::size_t> getNodeIndices(const scene::INodePtr& node)
 	}
 	else if (Node_isPrimitive(node))
 	{
-		scene::INodePtr parent = node->getParent();
+		auto parent = node->getParent();
 
-		// Node is a primitive, find parent entity and child index
-		EntityFindIndexWalker walker(parent);
-		GlobalSceneGraph().root()->traverse(walker);
+		// In rare cases, such as when a drag-selection brush is deleted
+		// but still selected, we might reach this point with a primitive
+		// node without a parent. At least we shouldn't crash.
+		if (parent)
+		{
+			// Node is a primitive, find parent entity and child index
+			EntityFindIndexWalker walker(parent);
+			GlobalSceneGraph().root()->traverse(walker);
 
-		result.first = walker.getIndex(); // might throw
+			result.first = walker.getIndex(); // might throw
 
-		PrimitiveFindIndexWalker brushWalker(node);
-		parent->traverse(brushWalker);
+			PrimitiveFindIndexWalker brushWalker(node);
+			parent->traverse(brushWalker);
 
-		result.second = walker.getIndex(); // might throw
+			result.second = walker.getIndex(); // might throw
+		}
 	}
 	else
 	{
