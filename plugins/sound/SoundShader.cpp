@@ -22,9 +22,11 @@ struct SoundShader::ParsedContents
 
 SoundShader::SoundShader(const std::string& name,
                          const std::string& blockContents,
+                         const vfs::FileInfo& fileInfo,
                          const std::string& modName)
 :	_name(name),
     _blockContents(blockContents),
+	_fileInfo(fileInfo),
     _modName(modName)
 { }
 
@@ -91,5 +93,14 @@ const std::string& SoundShader::getDisplayFolder() const
     return _contents->displayFolder;
 }
 
+std::string SoundShader::getShaderFilePath() const
+{
+	return _fileInfo.fullPath();
+}
+
+std::string SoundShader::getDefinition() const
+{
+	return _blockContents;
+}
 
 } // namespace sound

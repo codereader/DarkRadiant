@@ -61,6 +61,7 @@ class ISoundShader :
     public ModResource
 {
 public:
+    virtual ~ISoundShader() {}
 
     /// Get the name of the shader
     virtual std::string getName() const = 0;
@@ -73,6 +74,12 @@ public:
 
 	// angua: get the display folder for sorting the sounds in the sound chooser window
 	virtual const std::string& getDisplayFolder() const = 0;
+
+    // Returns the mod-relative path to the file this shader is defined in
+    virtual std::string getShaderFilePath() const = 0;
+
+    // Returns the raw sound shader definition text
+    virtual std::string getDefinition() const = 0;
 
 };
 typedef std::shared_ptr<ISoundShader> ISoundShaderPtr;

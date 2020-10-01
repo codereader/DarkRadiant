@@ -14,7 +14,7 @@ namespace sound
 // Constructor
 SoundManager::SoundManager() :
     _defLoader(std::bind(&SoundManager::loadShadersFromFilesystem, this)),
-	_emptyShader(new SoundShader("", ""))
+	_emptyShader(new SoundShader("", "", vfs::FileInfo(), ""))
 {}
 
 // Enumerate shaders
@@ -123,7 +123,7 @@ const StringSet& SoundManager::getDependencies() const
 
 void SoundManager::loadShadersFromFilesystem()
 {
-    ShaderMapPtr foundShaders = std::make_shared<ShaderMap>();
+    auto foundShaders = std::make_shared<ShaderMap>();
 
 	// Pass a SoundFileLoader to the filesystem
     SoundFileLoader loader(*foundShaders);
@@ -131,7 +131,7 @@ void SoundManager::loadShadersFromFilesystem()
     GlobalFileSystem().forEachFile(
         SOUND_FOLDER,			// directory
         "sndshd", 				// required extension
-        [&](const vfs::FileInfo& fileInfo) { loader(fileInfo.name); },	// loader callback
+        std::bind(&SoundFileLoader::parseShaderFile, loader, std::placeholders::_1),	// loader callback
         99						// max depth
     );
 

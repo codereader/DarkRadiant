@@ -16,7 +16,7 @@ class SoundManager : public ISoundManager
 public: /* TYPES */
 
 	// Map of named sound shaders
-	typedef std::map<std::string, SoundShaderPtr> ShaderMap;
+	typedef std::map<std::string, SoundShader::Ptr> ShaderMap;
     typedef std::shared_ptr<ShaderMap> ShaderMapPtr;
 
 private: /* FIELDS */
@@ -28,7 +28,7 @@ private: /* FIELDS */
     // takes care of the worker thread
     util::ThreadedDefLoader<void> _defLoader;
 
-	SoundShaderPtr _emptyShader;
+	SoundShader::Ptr _emptyShader;
 
 	// The helper class for playing the sounds
 	std::shared_ptr<SoundPlayer> _soundPlayer;

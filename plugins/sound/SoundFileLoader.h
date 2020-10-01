@@ -41,7 +41,7 @@ private:
 	}
 
     // Accept a stream of shaders to parse
-    void parseShadersFromStream(std::istream& contents,
+    void parseShadersFromStream(std::istream& contents, const vfs::FileInfo& fileInfo,
                                 const std::string& modName)
     {
         // Construct a DefTokeniser to tokenise the string into sound shader
@@ -54,12 +54,8 @@ private:
             parser::BlockTokeniser::Block block = tok.nextBlock();
 
             // Create a new shader with this name
-            std::pair<SoundManager::ShaderMap::iterator, bool> result;
-            result = _shaders.insert(
-                SoundManager::ShaderMap::value_type(
-                    block.name,
-                    std::make_shared<SoundShader>(block.name, block.contents, modName)
-                )
+            auto result = _shaders.emplace(block.name,
+				std::make_shared<SoundShader>(block.name, block.contents, fileInfo, modName)
             );
 
             if (!result.second) {
@@ -81,31 +77,29 @@ public:
 	/**
 	 * Functor operator.
 	 */
-	void operator()(const std::string& filename)
+	void parseShaderFile(const vfs::FileInfo& fileInfo)
 	{
 		// Open the .sndshd file and get its contents as a std::string
-		ArchiveTextFilePtr file =
-			GlobalFileSystem().openTextFile(SOUND_FOLDER + filename);
+		auto file = GlobalFileSystem().openTextFile(SOUND_FOLDER + fileInfo.name);
 
 		// Parse contents of file if it was opened successfully
-		if (file)
-        {
-			std::istream is(&(file->getInputStream()));
-
-			try
-            {
-				parseShadersFromStream(is, file->getModName());
-			}
-			catch (parser::ParseException& ex) 
-            {
-				rError() << "[sound]: Error while parsing " << filename <<
-					": " << ex.what() << std::endl;
-			}
-		}
-		else 
+		if (!file)
         {
 			rWarning() << "[sound] Warning: unable to open \""
-					  << filename << "\"" << std::endl;
+					  << fileInfo.name << "\"" << std::endl;
+			return;
+		}
+
+		std::istream is(&(file->getInputStream()));
+
+		try
+		{
+			parseShadersFromStream(is, fileInfo, file->getModName());
+		}
+		catch (parser::ParseException & ex)
+		{
+			rError() << "[sound]: Error while parsing " << fileInfo.name <<
+				": " << ex.what() << std::endl;
 		}
 	}
 };

@@ -1,14 +1,16 @@
 #pragma once
 
-#include "isound.h"
-
 #include <memory>
+
+#include "isound.h"
+#include "ifilesystem.h"
 
 namespace sound
 {
 
 /// Representation of a single sound shader.
-class SoundShader : public ISoundShader
+class SoundShader : 
+	public ISoundShader
 {
 	// Name of the shader
 	std::string _name;
@@ -20,6 +22,8 @@ class SoundShader : public ISoundShader
     struct ParsedContents;
     mutable std::unique_ptr<ParsedContents> _contents;
 
+	vfs::FileInfo _fileInfo;
+
 	// The modname (ModResource implementation)
 	std::string _modName;
 
@@ -28,24 +32,24 @@ private:
 	void parseDefinition() const;
 
 public:
+	using Ptr = std::shared_ptr<SoundShader>;
 
 	/// Constructor.
 	SoundShader(const std::string& name,
 				const std::string& blockContents,
+				const vfs::FileInfo& fileInfo,
 				const std::string& modName = "base");
-    ~SoundShader();
+
+    virtual ~SoundShader();
 
     // ISoundShader implementation
-	SoundRadii getRadii() const;
-	std::string getName() const { return _name; }
-	SoundFileList getSoundFileList() const;
-	std::string getModName() const { return _modName; }
-	const std::string& getDisplayFolder() const;
+	SoundRadii getRadii() const override;
+	std::string getName() const override { return _name; }
+	SoundFileList getSoundFileList() const override;
+	std::string getModName() const override { return _modName; }
+	const std::string& getDisplayFolder() const override;
+	std::string getShaderFilePath() const override;
+	std::string getDefinition() const override;
 };
-
-/**
- * Shared pointer type.
- */
-typedef std::shared_ptr<SoundShader> SoundShaderPtr;
 
 }
