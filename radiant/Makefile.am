@@ -108,6 +108,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/common/ShaderChooser.cpp \
                       ui/common/DefinitionView.cpp \
                       ui/common/MaterialDefinitionView.cpp \
+                      ui/common/SoundShaderDefinitionView.cpp \
                       ui/common/RenderableAABB.cpp \
                       ui/common/CommandEntry.cpp \
                       ui/common/EntityChooser.cpp \

@@ -23,7 +23,7 @@ private:
 	wxutil::SourceViewCtrl* _view;
 
 public:
-	DefinitionView(const std::string& title);
+	DefinitionView(const std::string& title, wxWindow* parent = nullptr);
 
 	int ShowModal() override;
 

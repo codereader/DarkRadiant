@@ -245,6 +245,7 @@
     <ClCompile Include="..\..\radiant\ui\brush\FindBrush.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp" />
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
@@ -425,6 +426,7 @@
     <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h" />
     <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialDefinitionView.h" />
+    <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\DispatchEvent.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />

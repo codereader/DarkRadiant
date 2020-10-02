@@ -4,6 +4,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/TreeModel.h"
 #include "wxutil/TreeView.h"
+#include "wxutil/menu/PopupMenu.h"
 
 #include "SoundShaderPreview.h"
 #include <memory>
@@ -54,6 +55,9 @@ private:
     // For memorising what we need to pre-select once the population is done
     std::string _shaderToSelect;
 
+	// Context menu
+	wxutil::PopupMenuPtr _popupMenu;
+
     bool _loadingShaders;
 
 private:
@@ -69,6 +73,10 @@ private:
 	void _onSelectionChange(wxDataViewEvent& ev);
 	void _onItemActivated(wxDataViewEvent& ev);
     void _onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
+	void _onContextMenu(wxDataViewEvent& ev);
+
+	void onShowShaderDefinition();
+	bool testShowShaderDefinition();
 
 public:
 

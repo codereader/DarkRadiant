@@ -1,20 +1,20 @@
 #pragma once
 
-#include "ishaders.h"
+#include "isound.h"
 #include "DefinitionView.h"
 
 namespace ui
 {
 
-class MaterialDefinitionView:
+class SoundShaderDefinitionView :
 	public DefinitionView
 {
 private:
-	// The material which should be previewed
-	MaterialPtr _material;
+	// The shader which should be previewed
+	ISoundShaderPtr _shader;
 
 public:
-	MaterialDefinitionView(const std::string& shaderName, wxWindow* parent = nullptr);
+	SoundShaderDefinitionView(const std::string& shaderName, wxWindow* parent = nullptr);
 
 	void setShader(const std::string& shader);
 

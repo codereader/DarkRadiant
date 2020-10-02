@@ -12,8 +12,8 @@
 namespace ui
 {
 
-DefinitionView::DefinitionView(const std::string& title) :
-	wxutil::DialogBase(title),
+DefinitionView::DefinitionView(const std::string& title, wxWindow* parent) :
+	wxutil::DialogBase(title, parent),
 	_view(nullptr)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));

@@ -6,7 +6,9 @@
 #include "imainframe.h"
 
 #include "wxutil/VFSTreePopulator.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 #include "debugging/ScopedDebugTimer.h"
+#include "ui/common/SoundShaderDefinitionView.h"
 
 #include <wx/sizer.h>
 #include <wx/artprov.h>
@@ -20,6 +22,9 @@ namespace
 {
 	const char* const SHADER_ICON = "icon_sound.png";
 	const char* const FOLDER_ICON = "folder16.png";
+
+    const char* const SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
+    const char* const SHOW_SHADER_DEF_ICON = "icon_script.png";
 }
 
 /**
@@ -149,11 +154,18 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     GetSizer()->Add(_preview, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 
+    _popupMenu.reset(new wxutil::PopupMenu);
+
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_(SHOW_SHADER_DEF_TEXT), SHOW_SHADER_DEF_ICON),
+        std::bind(&SoundChooser::onShowShaderDefinition, this),
+        std::bind(&SoundChooser::testShowShaderDefinition, this)
+    );
+
 	FitToScreen(0.5f, 0.5f);
 
     // Connect the finish callback to load the treestore
-    Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
-            TreeModelPopulationFinishedHandler(SoundChooser::_onTreeStorePopulationFinished), NULL, this);
+    Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &SoundChooser::_onTreeStorePopulationFinished, this);
 
     // Load the shaders
     loadSoundShaders();
@@ -174,10 +186,9 @@ wxWindow* SoundChooser::createTreeView(wxWindow* parent)
 	_treeView->AddSearchColumn(_columns.displayName);
 
 	// Get selection and connect the changed callback
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(SoundChooser::_onSelectionChange), NULL, this);
-	_treeView->Connect(wxEVT_DATAVIEW_ITEM_ACTIVATED,
-		wxDataViewEventHandler(SoundChooser::_onItemActivated), NULL, this);
+	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);
+	_treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundChooser::_onItemActivated, this);
+    _treeView->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &SoundChooser::_onContextMenu, this);
 
 	return _treeView;
 }
@@ -308,6 +319,23 @@ void SoundChooser::_onTreeStorePopulationFinished(wxutil::TreeModel::PopulationF
 
     _treeStore = ev.GetTreeModel();
     setTreeViewModel();
+}
+
+void SoundChooser::_onContextMenu(wxDataViewEvent& ev)
+{
+    _popupMenu->show(_treeView);
+}
+
+void SoundChooser::onShowShaderDefinition()
+{
+    auto* view = new SoundShaderDefinitionView(getSelectedShader(), this);
+    view->ShowModal();
+    view->Destroy();
+}
+
+bool SoundChooser::testShowShaderDefinition()
+{
+    return !_selectedShader.empty();
 }
 
 int SoundChooser::ShowModal()

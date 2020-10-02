@@ -5,8 +5,8 @@
 namespace ui
 {
 
-MaterialDefinitionView::MaterialDefinitionView(const std::string& shaderName) :
-	DefinitionView(_("View Shader Definition"))
+MaterialDefinitionView::MaterialDefinitionView(const std::string& shaderName, wxWindow* parent) :
+	DefinitionView(_("View Shader Definition"), parent)
 {
 	addSourceView(new wxutil::D3MaterialSourceViewCtrl(getMainPanel()));
 	_material = GlobalMaterialManager().getMaterialForName(shaderName);
