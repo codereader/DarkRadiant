@@ -1,4 +1,5 @@
 # Some interface tests
+import darkradiant as dr
 
 # Test the Registry interface
 value = GlobalRegistry.get('user/paths/appPath')
@@ -40,7 +41,7 @@ for anim in modelDef.anims:
 #GlobalEntityClassManager.forEachModelDef(modelDefVisitor)
 
 # Test traversing the scenegraph
-class SceneWalker(SceneNodeVisitor) :
+class SceneWalker(dr.SceneNodeVisitor) :
 	def pre(self, node):
 		print(node.getNodeType())
 
@@ -58,7 +59,7 @@ walker = SceneWalker()
 GlobalSceneGraph.root().traverse(walker)
 
 # Test traversing the current selection
-class Walker(SelectionVisitor) :
+class Walker(dr.SelectionVisitor) :
 	def visit(self, node):
 		# Try to "cast" the node to a brush
 		brush = node.getBrush()
@@ -104,7 +105,7 @@ else:
 	print('There is no worldspawn in this map yet')
 
 # Test the entity visitor interface
-class TestEntityVisitor(EntityVisitor) :
+class TestEntityVisitor(dr.EntityVisitor) :
 	def visit(self, key, value):
 		print('Worldspawn has spawnarg: ' + key + ' = ' + value)
 
@@ -138,7 +139,7 @@ for path in vfsPaths:
 	print(path)
 
 # Test FileSystem (VFS)
-class TestFileVisitor(FileVisitor) :
+class TestFileVisitor(dr.FileVisitor) :
 	def visit(self, filename):
 		print('Found file: ' + filename)
 
@@ -152,13 +153,14 @@ print(filecontents)
 print('Current grid size = ' + str(GlobalGrid.getGridSize()))
 
 # Test the ShaderSystem interface
-class TestShaderVisitor(ShaderVisitor) :
+class TestShaderVisitor(dr.ShaderVisitor) :
 	def visit(self, shader):
 		if not shader.isNull():
 			print('Found shader: ' + shader.getName() + ' defined in ' + shader.getShaderFileName())
 
-shadervisitor = TestShaderVisitor()
-GlobalMaterialManager.foreachShader(shadervisitor)
+# Disabled code, takes very long in TDM
+# shadervisitor = TestShaderVisitor()
+# GlobalMaterialManager.foreachShader(shadervisitor)
 
 shader = GlobalMaterialManager.getMaterialForName('bc_rat')
 
@@ -166,7 +168,7 @@ if not shader.isNull():
 	print('Shader ' + shader.getName() + ' is defined in ' + shader.getShaderFileName())
 
 # Test finding a model
-class ModelFinder(SceneNodeVisitor) :
+class ModelFinder(dr.SceneNodeVisitor) :
 	def pre(self, node):
 		# Try to get a model from this node
 		model = node.getModel()
@@ -213,12 +215,12 @@ GlobalSceneGraph.root().traverse(walker)
 #	modelskin = GlobalModelSkinCache.capture(skin)
 #	print('Skin found: ' + modelskin.getName())
 
-v = Vector3(6,6,6)
-v += Vector3(10,10,10)
+v = dr.Vector3(6,6,6)
+v += dr.Vector3(10,10,10)
 print(v)
 
 # Test patch manipulation
-class PatchManipulator(SceneNodeVisitor) :
+class PatchManipulator(dr.SceneNodeVisitor) :
 	def pre(self, node):
 		# Try to get a patch from this node
 		patch = node.getPatch()
@@ -233,7 +235,7 @@ class PatchManipulator(SceneNodeVisitor) :
 				while h < patch.getHeight():
 					# Push the vertex around a bit
 					ctrl = patch.ctrlAt(h,w)
-					ctrl.vertex += Vector3(0,0,10*(h-w))
+					ctrl.vertex += dr.Vector3(0,0,10*(h-w))
 					h += 1
 				w += 1
 
@@ -245,7 +247,7 @@ walker = PatchManipulator()
 GlobalSceneGraph.root().traverse(walker)
 
 # Test the SelectionSetManager interface
-class SelectionSetWalker(SelectionSetVisitor) :
+class SelectionSetWalker(dr.SelectionSetVisitor) :
 	def visit(self, selectionset):
 		print(selectionset.getName())
 
@@ -288,7 +290,7 @@ group = GlobalSelectionGroupManager.createSelectionGroup()
 print('Created group with ID: ' + str(group.getId()))
 
 # Test traversing the current selection
-class GroupAdder(SelectionVisitor) :
+class GroupAdder(dr.SelectionVisitor) :
 	def visit(self, node):
 		group.addNode(node)
 
@@ -301,9 +303,13 @@ print('The group contains now ' + str(group.size()) + ' items')
 GlobalSelectionGroupManager.setGroupSelected(group.getId(), 0)
 
 # List nodes in this group
-class SelectionGroupWalker(SelectionGroupVisitor) :
+class SelectionGroupWalker(dr.SelectionGroupVisitor) :
 	def visit(self, node):
 		print('Group Member: ' + node.getNodeType())
 
 gropWalker = SelectionGroupWalker();
 group.foreachNode(gropWalker)
+
+camview = GlobalCameraManager.getActiveView()
+print(camview.getCameraOrigin())
+camview.setCameraOrigin(dr.Vector3(50,0,50))
