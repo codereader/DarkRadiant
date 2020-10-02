@@ -312,6 +312,9 @@ public:
 	 * given entity class name. className is treated case-sensitively.
 	 */
 	virtual bool isOfType(const std::string& className) = 0;
+
+    // Returns the mod-relative path to the file this DEF was declared in
+    virtual std::string getDefFileName() = 0;
 };
 
 /**

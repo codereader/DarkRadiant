@@ -77,15 +77,15 @@ public:
     void reloadDefs() override;
 
     // RegisterableModule implementation
-	virtual const std::string& getName() const override;
-    virtual const StringSet& getDependencies() const override;
-    virtual void initialiseModule(const IApplicationContext& ctx) override;
-    virtual void shutdownModule() override;
-
-	// Method loading the DEF files
-    void parseFile(const std::string& filename);
+	const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 private:
+	// Method loading the DEF files
+    void parseFile(const vfs::FileInfo& fileInfo);
+
     // Since loading is happening in a worker thread, we need to ensure
     // that it's done loading before accessing any defs or models.
     void ensureDefsLoaded();
@@ -99,7 +99,7 @@ private:
     Doom3EntityClassPtr findInternal(const std::string& name);
 
 	// Parses the given inputstream for DEFs.
-	void parse(TextInputStream& inStr, const std::string& modDir);
+	void parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo, const std::string& modDir);
 
 	// Recursively resolves the inheritance of the model defs
 	void resolveModelInheritance(const std::string& name, const Doom3ModelDefPtr& model);

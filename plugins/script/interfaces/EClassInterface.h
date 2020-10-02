@@ -22,26 +22,35 @@ public:
 		_emptyAttribute("text", "", "")
 	{}
 
-	operator const IEntityClassPtr&() const {
+	operator const IEntityClassPtr&() const
+	{
 		return _eclass;
 	}
 
 	// Returns a specific spawnarg from this entityDef, or "" if not found
-	const EntityClassAttribute& getAttribute(const std::string& name) {
-		if (_eclass == NULL) {
+	const EntityClassAttribute& getAttribute(const std::string& name)
+	{
+		if (!_eclass)
+		{
 			return _emptyAttribute;
 		}
 
 		return _eclass->getAttribute(name);
 	}
 
-	bool isNull() const {
-		return _eclass == NULL;
+	bool isNull() const
+	{
+		return !_eclass;
 	}
 
 	bool isOfType(const std::string& className)
 	{
-		return _eclass == NULL ? false : _eclass->isOfType(className);
+		return !_eclass ? false : _eclass->isOfType(className);
+	}
+
+	std::string getDefFileName()
+	{
+		return _eclass ? _eclass->getDefFileName() : std::string();
 	}
 };
 

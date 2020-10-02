@@ -71,7 +71,7 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
 Doom3EntityClassPtr EClassManager::findInternal(const std::string& name)
 {
     // Find the EntityClass in the map.
-    EntityClasses::const_iterator i = _entityClasses.find(name);
+    auto i = _entityClasses.find(name);
 
     return i != _entityClasses.end() ? i->second : Doom3EntityClassPtr();
 }
@@ -79,9 +79,7 @@ Doom3EntityClassPtr EClassManager::findInternal(const std::string& name)
 Doom3EntityClassPtr EClassManager::insertUnique(const Doom3EntityClassPtr& eclass)
 {
 	// Try to insert the eclass
-    std::pair<EntityClasses::iterator, bool> i = _entityClasses.insert(
-    	EntityClasses::value_type(eclass->getName(), eclass)
-    );
+    auto i = _entityClasses.emplace(eclass->getName(), eclass);
 
     // Return the pointer to the inserted eclass
     return i.first->second;
@@ -135,7 +133,7 @@ void EClassManager::parseDefFiles()
 		ScopedDebugTimer timer("EntityDefs parsed: ");
         GlobalFileSystem().forEachFile(
             "def/", "def",
-            [&](const vfs::FileInfo& fileInfo) { parseFile(fileInfo.name); }
+            [&](const vfs::FileInfo& fileInfo) { parseFile(fileInfo); }
         );
 	}
 }
@@ -336,7 +334,7 @@ void EClassManager::onFileSystemShutdown()
 
 // Parse the provided stream containing the contents of a single .def file.
 // Extract all entitydefs and create objects accordingly.
-void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
+void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo, const std::string& modDir)
 {
 	// Construct a tokeniser for the stream
 	std::istream is(&inStr);
@@ -355,16 +353,12 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
 
 			// Ensure that an Entity class with this name already exists
 			// When reloading entityDef declarations, most names will already be registered
-			EntityClasses::iterator i = _entityClasses.find(sName);
+			auto i = _entityClasses.find(sName);
 
 			if (i == _entityClasses.end())
 			{
 				// Not existing yet, allocate a new class
-        		Doom3EntityClassPtr entityClass(new eclass::Doom3EntityClass(sName));
-
-				std::pair<EntityClasses::iterator, bool> result = _entityClasses.insert(
-					EntityClasses::value_type(sName, entityClass)
-				);
+				auto result = _entityClasses.emplace(sName, std::make_shared<Doom3EntityClass>(sName, fileInfo));
 
 				i = result.first;
 			}
@@ -430,22 +424,20 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
     }
 }
 
-void EClassManager::parseFile(const std::string& filename)
+void EClassManager::parseFile(const vfs::FileInfo& fileInfo)
 {
-	const std::string fullname = "def/" + filename;
-
-	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullname);
+	auto file = GlobalFileSystem().openTextFile(fileInfo.fullPath());
 
 	if (!file) return;
 
 	try
     {
 		// Parse entity defs from the file
-		parse(file->getInputStream(), file->getModName());
+		parse(file->getInputStream(), fileInfo, file->getModName());
 	}
     catch (parser::ParseException& e)
     {
-		rError() << "[eclassmgr] failed to parse " << filename
+		rError() << "[eclassmgr] failed to parse " << fileInfo.fullPath()
 				 << " (" << e.what() << ")" << std::endl;
 	}
 }

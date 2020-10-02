@@ -2,6 +2,7 @@
 
 #include "ieclass.h"
 #include "irender.h"
+#include "ifilesystem.h"
 
 #include "math/Vector3.h"
 #include "math/AABB.h"
@@ -44,6 +45,9 @@ class Doom3EntityClass
 
     // The name of this entity class
     std::string _name;
+
+    // Source file information
+    vfs::FileInfo _fileInfo;
 
     // Parent class pointer (or NULL)
     IEntityClass* _parent;
@@ -114,7 +118,6 @@ private:
     void setIsLight(bool val);
 
 public:
-
     /**
      * Static function to create a default entity class.
      *
@@ -134,7 +137,7 @@ public:
      *
      * This eclass will have isFixedSize set to false.
      */
-    Doom3EntityClass(const std::string& name);
+    Doom3EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
 
     /**
      * Constructor.
@@ -145,9 +148,9 @@ public:
      * @param fixedSize
      * whether this entity has a fixed size.
      */
-    Doom3EntityClass(const std::string& name, bool fixedSize);
+    Doom3EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
 
-    ~Doom3EntityClass();
+    virtual ~Doom3EntityClass();
 
     /// Add a new attribute
     void addAttribute(const EntityClassAttribute& attribute);
@@ -173,6 +176,8 @@ public:
     const std::string& getSkin() const override { return _skin; }
 
 	bool isOfType(const std::string& className) override;
+
+    std::string getDefFileName() override;
 
     /// Set a model on this entity class.
     void setModelPath(const std::string& path) {

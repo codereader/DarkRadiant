@@ -59,6 +59,7 @@ void EClassManagerInterface::registerInterface(py::module& scope, py::dict& glob
 	eclass.def("isNull", &ScriptEntityClass::isNull);
 	eclass.def("isOfType", &ScriptEntityClass::isOfType);
 	eclass.def("getAttribute", &ScriptEntityClass::getAttribute, py::return_value_policy::reference);
+	eclass.def("getDefFileName", &ScriptEntityClass::getDefFileName);
 
 	// Expose the entityclass visitor interface
 	py::class_<EntityClassVisitor, EntityClassVisitorWrapper> eclassVisitor(scope, "EntityClassVisitor");
