@@ -11,6 +11,7 @@
 #include "wxutil/PanedPosition.h"
 
 #include <memory>
+#include <sigc++/connection.h>
 
 namespace wxutil
 {
@@ -61,6 +62,8 @@ private:
     wxutil::ModelPreviewPtr _modelPreview;
 
     wxutil::PanedPosition _panedPosition;
+
+    sigc::connection _defsReloaded;
 
 private:
     // Constructor. Creates the GTK widgets.
