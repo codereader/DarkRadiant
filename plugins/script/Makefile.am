@@ -25,6 +25,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
                interfaces/DialogInterface.cpp \
                interfaces/EClassInterface.cpp \
                interfaces/BrushInterface.cpp \
+               interfaces/CameraInterface.cpp \
                interfaces/RadiantInterface.cpp \
                interfaces/PatchInterface.cpp \
                interfaces/SelectionInterface.cpp \

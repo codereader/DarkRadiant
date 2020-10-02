@@ -42,6 +42,7 @@
 #include "interfaces/DialogInterface.h"
 #include "interfaces/SelectionSetInterface.h"
 #include "interfaces/SelectionGroupInterface.h"
+#include "interfaces/CameraInterface.h"
 
 #include "PythonModule.h"
 
@@ -446,6 +447,7 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 	addInterface("DialogInterface", std::make_shared<DialogManagerInterface>());
 	addInterface("SelectionSetInterface", std::make_shared<SelectionSetInterface>());
 	addInterface("SelectionGroupInterface", std::make_shared<SelectionGroupInterface>());
+	addInterface("CameraInterface", std::make_shared<CameraInterface>());
 
 	GlobalCommandSystem().addCommand(
 		"RunScript",
