@@ -29,7 +29,7 @@
 #include "shaderlib.h"
 #include "string/string.h"
 #include "ui/texturebrowser/TextureBrowser.h"
-#include "ui/common/ShaderDefinitionView.h"
+#include "ui/common/MaterialDefinitionView.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/common/TexturePreviewCombo.h"
 
@@ -837,7 +837,9 @@ void MediaBrowser::_onShowShaderDefinition()
 	std::string shaderName = getSelection();
 
 	// Construct a shader view and pass the shader name
-	ShaderDefinitionView::ShowDialog(shaderName);
+	auto view = new MaterialDefinitionView(shaderName);
+	view->ShowModal();
+	view->Destroy();
 }
 
 void MediaBrowser::_onSelectItems(bool select)

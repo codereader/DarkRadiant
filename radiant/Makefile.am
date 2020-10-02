@@ -106,7 +106,8 @@ darkradiant_SOURCES = main.cpp \
                       ui/common/TexturePreviewCombo.cpp \
                       ui/common/ShaderSelector.cpp \
                       ui/common/ShaderChooser.cpp \
-                      ui/common/ShaderDefinitionView.cpp \
+                      ui/common/DefinitionView.cpp \
+                      ui/common/MaterialDefinitionView.cpp \
                       ui/common/RenderableAABB.cpp \
                       ui/common/CommandEntry.cpp \
                       ui/common/EntityChooser.cpp \

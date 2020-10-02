@@ -243,6 +243,8 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\FindBrush.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp" />
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
@@ -286,7 +288,6 @@
     <ClCompile Include="..\..\radiant\ui\common\MapPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\RenderableAABB.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ShaderChooser.cpp" />
-    <ClCompile Include="..\..\radiant\ui\common\ShaderDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ShaderSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\TexturePreviewCombo.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\AddPropertyDialog.cpp" />
@@ -422,6 +423,8 @@
     <ClInclude Include="..\..\radiant\ui\aas\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiant\ui\AutoSaveRequestHandler.h" />
     <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h" />
+    <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h" />
+    <ClInclude Include="..\..\radiant\ui\common\MaterialDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\DispatchEvent.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
@@ -476,7 +479,6 @@
     <ClInclude Include="..\..\radiant\ui\common\MapPreview.h" />
     <ClInclude Include="..\..\radiant\ui\common\RenderableAABB.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h" />
-    <ClInclude Include="..\..\radiant\ui\common\ShaderDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\TexturePreviewCombo.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\AddPropertyDialog.h" />
