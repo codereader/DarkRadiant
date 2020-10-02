@@ -14,7 +14,12 @@ class XYMouseToolEvent;
 class ClipperTool :
     public MouseTool
 {
+private:
+    bool _crossHairEnabled;
+
 public:
+    ClipperTool();
+
     const std::string& getName() override;
     const std::string& getDisplayName() override;
 

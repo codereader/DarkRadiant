@@ -10,6 +10,10 @@
 namespace ui
 {
 
+ClipperTool::ClipperTool() :
+    _crossHairEnabled(false)
+{}
+
 const std::string& ClipperTool::getName()
 {
     static std::string name("ClipperTool");
@@ -37,7 +41,7 @@ MouseTool::Result ClipperTool::onMouseDown(Event& ev)
 
             GlobalClipper().setMovingClip(foundClipPoint);
 
-            if (foundClipPoint == NULL)
+            if (foundClipPoint == nullptr)
             {
                 dropClipPoint(xyEvent);
             }
@@ -61,6 +65,13 @@ MouseTool::Result ClipperTool::onMouseMove(Event& ev)
 
         if (!GlobalClipper().clipMode())
         {
+            // Check if we need to clean up the XY cursor state
+            if (_crossHairEnabled)
+            {
+                xyEvent.getView().setCursorType(IOrthoView::CursorType::Default);
+                _crossHairEnabled = false;
+            }
+
             return Result::Ignored;
         }
 
@@ -80,11 +91,14 @@ MouseTool::Result ClipperTool::onMouseMove(Event& ev)
         if (GlobalClipper().find(xyEvent.getWorldPos(), xyEvent.getViewType(), xyEvent.getScale()) != NULL)
         {
             xyEvent.getView().setCursorType(IOrthoView::CursorType::Crosshair);
+            // Remember to clean up the cursor when clip mode is deactivated
+            _crossHairEnabled = true;
             return Result::Continued;
         }
         else
         {
             xyEvent.getView().setCursorType(IOrthoView::CursorType::Default);
+            _crossHairEnabled = false;
             return Result::Continued;
         }
     }

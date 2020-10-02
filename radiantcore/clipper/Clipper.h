@@ -1,5 +1,4 @@
-#ifndef CLIPPER_H
-#define CLIPPER_H
+#pragma once
 
 #include "iclipper.h"
 #include "iregistry.h"
@@ -7,12 +6,15 @@
 #include "ClipPoint.h"
 #include "math/AABB.h"
 
-namespace {
+namespace
+{
 	const unsigned int NUM_CLIP_POINTS = 3;
 }
 
-class Clipper : public IClipper
+class Clipper : 
+	public IClipper
 {
+private:
 	// Hold the currently active xy view type
 	EViewType _viewType;
 
@@ -40,40 +42,40 @@ public:
 
 	void constructPreferences();
 
-	EViewType getViewType() const;
-	void setViewType(EViewType viewType);
-	ClipPoint* getMovingClip();
+	EViewType getViewType() const override;
+	void setViewType(EViewType viewType) override;
+	ClipPoint* getMovingClip() override;
 
-	Vector3& getMovingClipCoords();
-	void setMovingClip(ClipPoint* clipPoint);
+	Vector3& getMovingClipCoords() override;
+	void setMovingClip(ClipPoint* clipPoint) override;
 
-	bool useCaulkForNewFaces() const;
-	const std::string& getCaulkShader() const;
+	bool useCaulkForNewFaces() const override;
+	const std::string& getCaulkShader() const override;
 
 	// greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
-	ClipPoint* find(const Vector3& point, EViewType viewtype, float scale);
+	ClipPoint* find(const Vector3& point, EViewType viewtype, float scale) override;
 
 	// Returns true if at least two clip points are set
 	bool valid() const;
-	void draw(float scale);
+	void draw(float scale) override;
 	void getPlanePoints(Vector3 planepts[3], const AABB& bounds) const;
 
 	void setClipPlane(const Plane3& plane);
 
-	void update();
-	void flipClip();
+	void update() override;
+	void flipClip() override;
 	void reset();
-	void clip();
+	void clip() override;
 
-	void splitClip();
-	bool clipMode() const;
-	void onClipMode(bool enabled);
-	void newClipPoint(const Vector3& point);
+	void splitClip() override;
+	bool clipMode() const override;
+	void onClipMode(bool enabled) override;
+	void newClipPoint(const Vector3& point) override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const IApplicationContext& ctx);
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
 
 	// Command targets
 	void clipSelectionCmd(const cmd::ArgumentList& args);
@@ -82,4 +84,3 @@ public:
 
 }; // class Clipper
 
-#endif /* CLIPPER_H */
