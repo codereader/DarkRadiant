@@ -115,14 +115,36 @@ public:
 };
 
 /**
+ * A base class providing highlighting for the Doom 3
+ * declaration syntax, loosely based on C++ highlighting.
+ */
+class D3DeclarationViewCtrl :
+	public SourceViewCtrl
+{
+public:
+	D3DeclarationViewCtrl(wxWindow* parent);
+};
+
+/**
  * A special class providing highlighting for the Doom 3
  * material syntax.
  */
 class D3MaterialSourceViewCtrl :
-	public SourceViewCtrl
+	public D3DeclarationViewCtrl
 {
 public:
 	D3MaterialSourceViewCtrl(wxWindow* parent);
+};
+
+/**
+ * A special class providing highlighting for the Doom 3
+ * sound shader syntax.
+ */
+class D3SoundShaderSourceViewCtrl :
+	public D3DeclarationViewCtrl
+{
+public:
+	D3SoundShaderSourceViewCtrl(wxWindow* parent);
 };
 
 } // namespace

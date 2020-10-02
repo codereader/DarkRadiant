@@ -91,9 +91,9 @@ PythonSourceViewCtrl::PythonSourceViewCtrl(wxWindow* parent) :
 		"print raise return try while with yield");
 };
 
-// D3 materials
+// D3 declarations
 
-D3MaterialSourceViewCtrl::D3MaterialSourceViewCtrl(wxWindow* parent) :
+D3DeclarationViewCtrl::D3DeclarationViewCtrl(wxWindow* parent) :
 	SourceViewCtrl(parent)
 {
 	// Set up styling for C++
@@ -120,7 +120,13 @@ D3MaterialSourceViewCtrl::D3MaterialSourceViewCtrl(wxWindow* parent) :
 	SetStyleMapping(16, Keyword2);
 	SetStyleMapping(17, Keyword1);
 	SetStyleMapping(18, Error);
+};
 
+// D3 materials
+
+D3MaterialSourceViewCtrl::D3MaterialSourceViewCtrl(wxWindow* parent) :
+	D3DeclarationViewCtrl(parent)
+{
 	SetKeyWords(0, "diffusemap qer_editorimage bumpmap specularmap map if description polygonOffset "
 		"noshadows noselfshadow forceshadows nooverlays forceoverlays translucent clamp zeroclamp "
 		"alphazeroclamp forceopaque twosided backsided mirror nofog unsmoothedTangents guisurf sort "
@@ -141,6 +147,19 @@ D3MaterialSourceViewCtrl::D3MaterialSourceViewCtrl(wxWindow* parent) :
 		"gl_src_color gl_one_minus_src_color add filter modulate none heightmap addnormals smoothnormals "
 		"add scale invertAlpha invertColor makeIntensity makeAlpha parm0 parm1 parm2 parm3 parm4 parm5 "
 		"parm6 parm7 parm8 parm9 parm10 parm11 global0 global1 global2 global3 global4 global5 global6 global7 ");
+};
+
+// D3 sound shader
+
+D3SoundShaderSourceViewCtrl::D3SoundShaderSourceViewCtrl(wxWindow* parent) :
+	D3DeclarationViewCtrl(parent)
+{
+	SetKeyWords(0, "minDistance maxDistance editor_displayFolder volume no_dups no_occlusion "
+		"minSamples description shakes leadinVolume mask_center mask_left mask_right "
+		"mask_backleft mask_backright mask_lfe soundClass altSound no_flicker looping private "
+		"global unclamped omnidirectional leadin no_efx ");
+
+	SetKeyWords(1, "");
 };
 
 } // namespace

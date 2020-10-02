@@ -8,7 +8,7 @@ namespace ui
 SoundShaderDefinitionView::SoundShaderDefinitionView(const std::string& shaderName, wxWindow* parent) :
 	DefinitionView(_("View Sound Shader Definition"), parent)
 {
-	addSourceView(new wxutil::D3MaterialSourceViewCtrl(getMainPanel()));
+	addSourceView(new wxutil::D3SoundShaderSourceViewCtrl(getMainPanel()));
 
 	if (module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
 	{
