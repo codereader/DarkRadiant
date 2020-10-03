@@ -2,6 +2,7 @@
 
 #include <list>
 #include "icameraview.h"
+#include "icommandsystem.h"
 
 namespace camera
 {
@@ -37,6 +38,10 @@ public:
 
 	// Module-internal accessor
 	static CameraManager& GetInstanceInternal();
+
+private:
+	void setActiveCameraPosition(const cmd::ArgumentList& args);
+	void setActiveCameraAngles(const cmd::ArgumentList& args);
 };
 
 }
