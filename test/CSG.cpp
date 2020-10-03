@@ -5,6 +5,9 @@
 #include "entitylib.h"
 #include "algorithm/Scene.h"
 
+namespace test
+{
+
 TEST_F(RadiantTest, CSGMergeTwoRegularWorldspawnBrushes)
 {
     loadMap("csg_merge.map");
@@ -13,8 +16,8 @@ TEST_F(RadiantTest, CSGMergeTwoRegularWorldspawnBrushes)
     auto worldspawn = GlobalMapModule().getWorldspawn();
 
     // Try to merge the two brushes with the "1" and "2" materials
-    auto firstBrush = test::algorithm::findFirstBrushWithMaterial(worldspawn, "1");
-    auto secondBrush = test::algorithm::findFirstBrushWithMaterial(worldspawn, "2");
+    auto firstBrush = algorithm::findFirstBrushWithMaterial(worldspawn, "1");
+    auto secondBrush = algorithm::findFirstBrushWithMaterial(worldspawn, "2");
 
     ASSERT_TRUE(Node_getIBrush(firstBrush)->getNumFaces() == 5);
     ASSERT_TRUE(Node_getIBrush(secondBrush)->getNumFaces() == 5);
@@ -32,8 +35,8 @@ TEST_F(RadiantTest, CSGMergeTwoRegularWorldspawnBrushes)
     ASSERT_TRUE(secondBrush->getParent() == nullptr);
 
     // The merged brush will carry both materials
-    auto brushWithMaterial1 = test::algorithm::findFirstBrushWithMaterial(worldspawn, "1");
-    auto brushWithMaterial2 = test::algorithm::findFirstBrushWithMaterial(worldspawn, "2");
+    auto brushWithMaterial1 = algorithm::findFirstBrushWithMaterial(worldspawn, "1");
+    auto brushWithMaterial2 = algorithm::findFirstBrushWithMaterial(worldspawn, "2");
 
     ASSERT_TRUE(brushWithMaterial1 == brushWithMaterial2);
     ASSERT_TRUE(Node_getIBrush(brushWithMaterial1)->getNumFaces() == 6);
@@ -48,10 +51,10 @@ TEST_F(RadiantTest, CSGMergeFourRegularWorldspawnBrushes)
 
     // Try to merge the two brushes with the "1" and "2" materials
     std::vector<scene::INodePtr> brushes = {
-        test::algorithm::findFirstBrushWithMaterial(worldspawn, "1"),
-        test::algorithm::findFirstBrushWithMaterial(worldspawn, "2"),
-        test::algorithm::findFirstBrushWithMaterial(worldspawn, "3"),
-        test::algorithm::findFirstBrushWithMaterial(worldspawn, "4")
+        algorithm::findFirstBrushWithMaterial(worldspawn, "1"),
+        algorithm::findFirstBrushWithMaterial(worldspawn, "2"),
+        algorithm::findFirstBrushWithMaterial(worldspawn, "3"),
+        algorithm::findFirstBrushWithMaterial(worldspawn, "4")
     };
 
     // Check the correct setup
@@ -77,7 +80,7 @@ TEST_F(RadiantTest, CSGMergeFourRegularWorldspawnBrushes)
     }
 
     // The combined brush should be a 6-sided cuboid
-    auto brushWithMaterial1 = test::algorithm::findFirstBrushWithMaterial(worldspawn, "1");
+    auto brushWithMaterial1 = algorithm::findFirstBrushWithMaterial(worldspawn, "1");
     ASSERT_TRUE(Node_getIBrush(brushWithMaterial1)->getNumFaces() == 6);
 }
 
@@ -92,8 +95,8 @@ TEST_F(RadiantTest, CSGMergeTwoFuncStaticBrushes)
     auto entity = walker.getEntityNode();
 
     // Try to merge the two brushes with the "1" and "2" materials
-    auto firstBrush = test::algorithm::findFirstBrushWithMaterial(entity, "1");
-    auto secondBrush = test::algorithm::findFirstBrushWithMaterial(entity, "2");
+    auto firstBrush = algorithm::findFirstBrushWithMaterial(entity, "1");
+    auto secondBrush = algorithm::findFirstBrushWithMaterial(entity, "2");
 
     ASSERT_TRUE(Node_getIBrush(firstBrush)->getNumFaces() == 5);
     ASSERT_TRUE(Node_getIBrush(secondBrush)->getNumFaces() == 5);
@@ -109,10 +112,10 @@ TEST_F(RadiantTest, CSGMergeTwoFuncStaticBrushes)
     // The two brushes should be gone, replaced by a new one
     ASSERT_TRUE(firstBrush->getParent() == nullptr);
     ASSERT_TRUE(secondBrush->getParent() == nullptr);
-    
+
     // The merged brush will carry both materials
-    auto brushWithMaterial1 = test::algorithm::findFirstBrushWithMaterial(entity, "1");
-    auto brushWithMaterial2 = test::algorithm::findFirstBrushWithMaterial(entity, "2");
+    auto brushWithMaterial1 = algorithm::findFirstBrushWithMaterial(entity, "1");
+    auto brushWithMaterial2 = algorithm::findFirstBrushWithMaterial(entity, "2");
 
     ASSERT_TRUE(brushWithMaterial1 == brushWithMaterial2);
     ASSERT_TRUE(Node_getIBrush(brushWithMaterial1)->getNumFaces() == 6);
@@ -137,10 +140,10 @@ TEST_F(RadiantTest, CSGMergeBrushesOfMixedEntitySelection)
 
     // Select the mergeable brushes of both entities carrying the "1" and "2" materials
     std::vector<scene::INodePtr> brushes = {
-        test::algorithm::findFirstBrushWithMaterial(entity, "1"),
-        test::algorithm::findFirstBrushWithMaterial(entity, "2"),
-        test::algorithm::findFirstBrushWithMaterial(worldspawn, "1"),
-        test::algorithm::findFirstBrushWithMaterial(worldspawn, "2")
+        algorithm::findFirstBrushWithMaterial(entity, "1"),
+        algorithm::findFirstBrushWithMaterial(entity, "2"),
+        algorithm::findFirstBrushWithMaterial(worldspawn, "1"),
+        algorithm::findFirstBrushWithMaterial(worldspawn, "2")
     };
 
     // Check the correct setup
@@ -167,16 +170,16 @@ TEST_F(RadiantTest, CSGMergeBrushesOfMixedEntitySelection)
     }
 
     // The merged brush will carry both materials
-    auto funcBrush1 = test::algorithm::findFirstBrushWithMaterial(entity, "1");
-    auto funcBrush2 = test::algorithm::findFirstBrushWithMaterial(entity, "2");
+    auto funcBrush1 = algorithm::findFirstBrushWithMaterial(entity, "1");
+    auto funcBrush2 = algorithm::findFirstBrushWithMaterial(entity, "2");
 
     ASSERT_TRUE(funcBrush1);
     ASSERT_TRUE(funcBrush1 == funcBrush2);
     ASSERT_TRUE(Node_getIBrush(funcBrush1)->getNumFaces() == 6);
 
     // Same for the worldspawn entity
-    auto worldBrush1 = test::algorithm::findFirstBrushWithMaterial(worldspawn, "1");
-    auto worldBrush2 = test::algorithm::findFirstBrushWithMaterial(worldspawn, "2");
+    auto worldBrush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "1");
+    auto worldBrush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "2");
 
     ASSERT_TRUE(worldBrush1);
     ASSERT_TRUE(worldBrush1 == worldBrush2);
@@ -189,7 +192,7 @@ TEST_F(RadiantTest, CSGMergeWithFuncStatic)
     loadMap("csg_merge_with_func_static.map");
 
     // Locate the first worldspawn brush
-    auto firstBrush = test::algorithm::getNthChild(GlobalMapModule().getWorldspawn(), 0);
+    auto firstBrush = algorithm::getNthChild(GlobalMapModule().getWorldspawn(), 0);
     ASSERT_TRUE(firstBrush);
 
     // Locate the func_static in the map
@@ -210,11 +213,13 @@ TEST_F(RadiantTest, CSGMergeWithFuncStatic)
     // No merge should have happened since the brushes 
     // are not part of the same entity
     // So assume the scene didn't change
-    ASSERT_TRUE(test::algorithm::getNthChild(GlobalMapModule().getWorldspawn(), 0) == firstBrush);
+    ASSERT_TRUE(algorithm::getNthChild(GlobalMapModule().getWorldspawn(), 0) == firstBrush);
 
     EntityNodeFindByClassnameWalker walker2("func_static");
     GlobalSceneGraph().root()->traverse(walker2);
 
     ASSERT_TRUE(walker.getEntityNode());
     ASSERT_TRUE(walker.getEntityNode()->hasChildNodes());
+}
+
 }

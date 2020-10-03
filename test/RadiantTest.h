@@ -14,6 +14,9 @@
 #include "module/CoreModule.h"
 #include "messages/GameConfigNeededMessage.h"
 
+namespace test
+{
+
 /**
  * Test fixture setting up the application context and
  * the radiant core module.
@@ -66,8 +69,8 @@ protected:
 		// Wire up the game-config-needed handler, we need to respond
 		_gameSetupListener = _coreModule->get()->getMessageBus().addListener(
 			radiant::IMessage::Type::GameConfigNeeded,
-				radiant::TypeListener<game::ConfigurationNeeded>(
-					sigc::mem_fun(this, &RadiantTest::handleGameConfigMessage)));
+			radiant::TypeListener<game::ConfigurationNeeded>(
+				sigc::mem_fun(this, &RadiantTest::handleGameConfigMessage)));
 
 		try
 		{
@@ -124,3 +127,5 @@ protected:
 		message.setHandled(true);
 	}
 };
+
+}

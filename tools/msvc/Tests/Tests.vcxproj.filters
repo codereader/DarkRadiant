@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\test\CSG.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
+    <ClCompile Include="..\..\..\test\Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
