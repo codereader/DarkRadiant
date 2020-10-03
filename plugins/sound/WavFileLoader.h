@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdexcept>
+#include "idatastream.h"
+
 #ifdef __APPLE__
 #include <OpenAL/al.h>
 #else
@@ -22,11 +24,13 @@ class WavFileLoader
 public:
 
 	/**
-	 * greebo: Loads a WAV file from a stream into OpenAL.
+	 * greebo: Loads a WAV file from a stream into OpenAL,
+     * returns the openAL buffer handle.
 	 *
 	 * @throws: std::runtime_error if an error occurs.
 	 */
-	static ALuint LoadFromStream(InputStream& stream) {
+	static ALuint LoadFromStream(InputStream& stream)
+    {
 		// buffers
 		char magic[5];
 		magic[4] = '\0';

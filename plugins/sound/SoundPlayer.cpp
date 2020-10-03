@@ -18,15 +18,11 @@
 #include <unistd.h>
 #endif
 
-#include "OggFileStream.h"
 #include "WavFileLoader.h"
+#include "OggFileLoader.h"
 
-namespace sound {
-
-	namespace {
-		typedef std::vector<char> DecodeBuffer;
-		typedef std::shared_ptr<DecodeBuffer> DecodeBufferPtr;
-	}
+namespace sound
+{
 
 // Constructor
 SoundPlayer::SoundPlayer() :
@@ -202,84 +198,17 @@ void SoundPlayer::createBufferDataFromWav(ArchiveFile& file)
 
 void SoundPlayer::createBufferDataFromOgg(ArchiveFile& file)
 {
-	// Convert the file into a buffer, self-destructs at end of scope
-	archive::ScopedArchiveBuffer buffer(file);
-
-	// This is an OGG Vorbis file, decode it
-	vorbis_info* vorbisInfo;
-	OggVorbis_File oggFile;
-
-	// Initialise the wrapper class
-	OggFileStream stream(buffer);
-
-	// Setup the callbacks and point them to the helper class
-	ov_callbacks callbacks;
-	callbacks.read_func = OggFileStream::oggReadFunc;
-	callbacks.seek_func = OggFileStream::oggSeekFunc;
-	callbacks.close_func = OggFileStream::oggCloseFunc;
-	callbacks.tell_func = OggFileStream::oggTellFunc;
-
-	// Open the OGG data stream using the custom callbacks
-	int res = ov_open_callbacks(static_cast<void*>(&stream), &oggFile, nullptr, 0, callbacks);
-
-	if (res == 0)
-	{
-		// Open successful
-
-		// Get some information about the OGG file
-		vorbisInfo = ov_info(&oggFile, -1);
-
-		// Check the number of channels
-		ALenum format = (vorbisInfo->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-
-		// Get the sample Rate
-		ALsizei freq = static_cast<ALsizei>(vorbisInfo->rate);
-		//rConsole() << "Sample rate is " << freq << std::endl;
-
-		long bytes;
-		char smallBuffer[4096];
-		DecodeBufferPtr largeBuffer(new DecodeBuffer());
-
-		do 
-		{
-			int bitStream;
-			// Read a chunk of decoded data from the vorbis file
-			bytes = ov_read(&oggFile, smallBuffer, sizeof(smallBuffer), 0, 2, 1, &bitStream);
-
-			if (bytes == OV_HOLE) 
-			{
-				rError() << "SoundPlayer: Error decoding OGG: OV_HOLE.\n";
-			}
-			else if (bytes == OV_EBADLINK)
-			{
-				rError() << "SoundPlayer: Error decoding OGG: OV_EBADLINK.\n";
-			}
-			else
-			{
-				// Stuff this into the variable-sized buffer
-				largeBuffer->insert(largeBuffer->end(), smallBuffer, smallBuffer + bytes);
-			}
-		} while (bytes > 0);
-
-		// Allocate a new buffer
-		alGenBuffers(1, &_buffer);
-
-		DecodeBuffer& bufferRef = *largeBuffer;
-
-		// Upload sound data to buffer
-		alBufferData(_buffer,
-			format,
-			&bufferRef[0],
-			static_cast<ALsizei>(bufferRef.size()),
-			freq);
-
-		// Clean up the OGG routines
-		ov_clear(&oggFile);
-	}
-	else
-	{
-		rError() << "SoundPlayer: Error opening OGG file.\n";
-	}
+    // Must be an OGG file
+    try
+    {
+        // Create an AL sound buffer directly from the buffer in memory
+        _buffer = OggFileLoader::LoadFromFile(file);
+    }
+    catch (std::runtime_error & e)
+    {
+        rError() << "SoundPlayer: Error opening OGG file: " << e.what() << std::endl;
+        _buffer = 0;
+    }
 }
 
 } // namespace sound

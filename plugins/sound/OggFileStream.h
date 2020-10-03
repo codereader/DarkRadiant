@@ -1,5 +1,4 @@
-#ifndef OGGFILESTREAM_H_
-#define OGGFILESTREAM_H_
+#pragma once
 
 #include "stream/ScopedArchiveBuffer.h"
 
@@ -14,12 +13,12 @@ namespace sound {
 
 class OggFileStream
 {
-	archive::ScopedArchiveBuffer& _source;
+	archive::ScopedArchiveBuffer _source;
 
 	unsigned char* _curPtr;
 public:
-	OggFileStream(archive::ScopedArchiveBuffer& source) :
-		_source(source)
+	OggFileStream(ArchiveFile& file) :
+		_source(file)
 	{
 		// Set the pointer to the beginning of the buffer
 		_curPtr = _source.buffer;
@@ -90,5 +89,3 @@ public:
 };
 
 } // namespace sound
-
-#endif /*OGGFILESTREAM_H_*/

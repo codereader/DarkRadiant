@@ -220,6 +220,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\sound\OggFileLoader.h" />
     <ClInclude Include="..\..\plugins\sound\OggFileStream.h" />
     <ClInclude Include="..\..\plugins\sound\SoundFileLoader.h" />
     <ClInclude Include="..\..\plugins\sound\SoundManager.h" />
