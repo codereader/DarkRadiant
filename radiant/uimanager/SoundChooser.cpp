@@ -9,9 +9,11 @@
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "ui/common/SoundShaderDefinitionView.h"
+#include "ui/UserInterfaceModule.h"
 
 #include <wx/sizer.h>
 #include <wx/artprov.h>
+#include <sigc++/functors/mem_fun.h>
 
 #include <functional>
 
@@ -143,16 +145,22 @@ public:
 // Constructor
 SoundChooser::SoundChooser(wxWindow* parent) :
 	DialogBase(_("Choose sound"), parent),
-	_treeStore(NULL),
-	_treeView(NULL),
+	_treeStore(nullptr),
+	_treeView(nullptr),
 	_preview(new SoundShaderPreview(this)),
     _loadingShaders(false)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 	
+    auto* buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
+    auto* reloadButton = new wxButton(this, wxID_ANY, _("Reload Sounds"));
+    reloadButton->Bind(wxEVT_BUTTON, &SoundChooser::_onReloadSounds, this);
+
+    buttonSizer->Prepend(reloadButton, 0, wxRIGHT, 32);
+
 	GetSizer()->Add(createTreeView(this), 1, wxEXPAND | wxALL, 12);
     GetSizer()->Add(_preview, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
-	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+	GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 
     _popupMenu.reset(new wxutil::PopupMenu);
 
@@ -340,6 +348,9 @@ bool SoundChooser::testShowShaderDefinition()
 
 int SoundChooser::ShowModal()
 {
+    _shadersReloaded = GlobalSoundManager().signal_soundShadersReloaded()
+        .connect(sigc::mem_fun(this, &SoundChooser::onShadersReloaded));
+
 	int returnCode = DialogBase::ShowModal();
 
 	if (returnCode != wxID_OK)
@@ -348,6 +359,31 @@ int SoundChooser::ShowModal()
 	}
 
 	return returnCode;
+}
+
+void SoundChooser::_onReloadSounds(wxCommandEvent& ev)
+{
+    _preview->setSoundShader(std::string());
+
+    GlobalCommandSystem().executeCommand("ReloadSounds");
+
+    _treeStore->Clear();
+
+    wxutil::TreeModel::Row row = _treeStore->AddItem();
+    row[_columns.displayName] = wxVariant(wxDataViewIconText(_("Loading...")));
+    row[_columns.shaderName] = wxString();
+    row[_columns.isFolder] = false;
+
+    row.SendItemAdded();
+}
+
+void SoundChooser::onShadersReloaded()
+{
+    // This signal is fired by the SoundManager, possibly from a non-UI thread
+    GetUserInterfaceModule().dispatch([this]()
+    {
+        loadSoundShaders();
+    });
 }
 
 std::string SoundChooser::chooseResource(const std::string& preselected)
@@ -369,6 +405,7 @@ std::string SoundChooser::chooseResource(const std::string& preselected)
 
 void SoundChooser::destroyDialog()
 {
+    _shadersReloaded.disconnect();
 	Destroy();
 }
 

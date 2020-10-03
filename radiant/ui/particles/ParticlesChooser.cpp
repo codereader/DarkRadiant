@@ -155,7 +155,7 @@ void ParticlesChooser::populateParticleList()
 
 	wxutil::TreeModel::Row row = _particlesList->AddItem();
 
-	row[COLUMNS().name] = "Loading...";
+	row[COLUMNS().name] = _("Loading...");
 	row.SendItemAdded();
 	
 	_particlesLoader->Run();

@@ -141,6 +141,8 @@ void SoundManager::loadShadersFromFilesystem()
     _shaders.swap(*foundShaders);
 
     rMessage() << _shaders.size() << " sound shaders found." << std::endl;
+
+    _sigSoundShadersReloaded.emit();
 }
 
 void SoundManager::ensureShadersLoaded()

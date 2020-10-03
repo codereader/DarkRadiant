@@ -9,6 +9,7 @@
 #include "SoundShaderPreview.h"
 #include <memory>
 #include <string>
+#include <sigc++/connection.h>
 
 namespace ui
 {
@@ -60,6 +61,8 @@ private:
 
     bool _loadingShaders;
 
+    sigc::connection _shadersReloaded;
+
 private:
 
 	// Widget construction
@@ -74,9 +77,12 @@ private:
 	void _onItemActivated(wxDataViewEvent& ev);
     void _onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 	void _onContextMenu(wxDataViewEvent& ev);
+    void _onReloadSounds(wxCommandEvent& ev);
 
 	void onShowShaderDefinition();
 	bool testShowShaderDefinition();
+
+    void onShadersReloaded();
 
 public:
 

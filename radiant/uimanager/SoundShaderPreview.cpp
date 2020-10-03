@@ -172,6 +172,10 @@ void SoundShaderPreview::update()
 			_shaderDescriptionSizer->Layout();
 		}
 	}
+    else
+    {
+        GlobalSoundManager().stopSound();
+    }
 }
 
 std::string SoundShaderPreview::getSelectedSoundFile()
