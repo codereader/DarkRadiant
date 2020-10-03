@@ -24,6 +24,7 @@
 		<menuItem name="refreshShaders" caption="Reload Materials" command="RefreshShaders" icon="texwindow_flushandreload.png" />
 		<menuItem name="reloadDefs" caption="Reload Defs" command="ReloadDefs" />
 		<menuItem name="reloadParticles" caption="Reload Particles" command="ReloadParticles" icon="particle16.png" />
+		<menuItem name="reloadSounds" caption="Reload Sounds" command="ReloadSounds" icon="icon_sound.png" />
 		<menuSeparator />
 		<menuItem name="gameSelector" caption="&amp;Game/Project Setup..." command="ProjectSettings" />
 		<menuSeparator />

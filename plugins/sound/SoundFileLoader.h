@@ -96,7 +96,7 @@ public:
 		{
 			parseShadersFromStream(is, fileInfo, file->getModName());
 		}
-		catch (parser::ParseException & ex)
+		catch (parser::ParseException& ex)
 		{
 			rError() << "[sound]: Error while parsing " << fileInfo.name <<
 				": " << ex.what() << std::endl;

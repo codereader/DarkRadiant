@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <functional>
+#include <sigc++/signal.h>
 
 // A list of sound files associated to a shader
 typedef std::vector<std::string> SoundFileList;
@@ -91,7 +92,6 @@ class ISoundManager :
     public RegisterableModule
 {
 public:
-
     /// Invoke a function for each sound shader
     virtual void forEachShader(std::function<void(const ISoundShader&)>) = 0;
 
@@ -120,6 +120,12 @@ public:
     /** greebo: Stops the currently played sound.
      */
     virtual void stopSound() = 0;
+
+    // Reloads all sound shader definitions from the VFS
+    virtual void reloadSounds() = 0;
+
+    // Fired after the sound shaders have been (re-)parsed from disk
+    virtual sigc::signal<void>& signal_soundShadersReloaded() = 0;
 };
 
 // Accessor method

@@ -2,6 +2,7 @@
 #include "SoundFileLoader.h"
 
 #include "ifilesystem.h"
+#include "icommandsystem.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -22,7 +23,7 @@ void SoundManager::forEachShader(std::function<void(const ISoundShader&)> f)
 {
     ensureShadersLoaded();
 
-	for (const ShaderMap::value_type& pair : _shaders)
+	for (const auto& pair : _shaders)
 	{
 		f(*pair.second);
 	}
@@ -94,11 +95,16 @@ void SoundManager::stopSound()
 	if (_soundPlayer) _soundPlayer->stop();
 }
 
+sigc::signal<void>& SoundManager::signal_soundShadersReloaded()
+{
+    return _sigSoundShadersReloaded;
+}
+
 ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName)
 {
     ensureShadersLoaded();
 
-	ShaderMap::const_iterator found = _shaders.find(shaderName);
+	auto found = _shaders.find(shaderName);
 
     // If the name was found, return it, otherwise return an empty shader object
 	return found != _shaders.end() ? found->second : _emptyShader;
@@ -112,12 +118,9 @@ const std::string& SoundManager::getName() const
 
 const StringSet& SoundManager::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-	}
-
+    static StringSet _dependencies { 
+        MODULE_VIRTUALFILESYSTEM, MODULE_COMMANDSYSTEM
+    };
 	return _dependencies;
 }
 
@@ -147,23 +150,35 @@ void SoundManager::ensureShadersLoaded()
 
 void SoundManager::initialiseModule(const IApplicationContext& ctx)
 {
+    GlobalCommandSystem().addCommand("ReloadSounds", 
+        std::bind(&SoundManager::reloadSoundsCmd, this, std::placeholders::_1));
+
     // Create the SoundPlayer if sound is not disabled
     const auto& args = ctx.getCmdLineArgs();
     auto found = std::find(args.begin(), args.end(), "--disable-sound");
 
     if (found == args.end())
     {
-        rMessage() << "SoundManager: initialising sound playback"
-                             << std::endl;
-        _soundPlayer = std::shared_ptr<SoundPlayer>(new SoundPlayer);
+        rMessage() << "SoundManager: initialising sound playback" << std::endl;
+        _soundPlayer.reset(new SoundPlayer);
     }
     else
     {
-        rMessage() << "SoundManager: sound output disabled"
-                             << std::endl;
+        rMessage() << "SoundManager: sound output disabled" << std::endl;
     }
 
     _defLoader.start();
+}
+
+void SoundManager::reloadSounds()
+{
+    _defLoader.reset();
+    _defLoader.start();
+}
+
+void SoundManager::reloadSoundsCmd(const cmd::ArgumentList& args)
+{
+    reloadSounds();
 }
 
 } // namespace sound

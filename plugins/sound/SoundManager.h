@@ -4,6 +4,7 @@
 #include "SoundPlayer.h"
 
 #include "isound.h"
+#include "icommandsystem.h"
 
 #include "ThreadedDefLoader.h"
 #include <map>
@@ -11,13 +12,12 @@
 namespace sound {
 
 /// SoundManager implementing class.
-class SoundManager : public ISoundManager
+class SoundManager : 
+    public ISoundManager
 {
 public: /* TYPES */
-
 	// Map of named sound shaders
 	typedef std::map<std::string, SoundShader::Ptr> ShaderMap;
-    typedef std::shared_ptr<ShaderMap> ShaderMapPtr;
 
 private: /* FIELDS */
 
@@ -31,11 +31,14 @@ private: /* FIELDS */
 	SoundShader::Ptr _emptyShader;
 
 	// The helper class for playing the sounds
-	std::shared_ptr<SoundPlayer> _soundPlayer;
+	std::unique_ptr<SoundPlayer> _soundPlayer;
+
+    sigc::signal<void> _sigSoundShadersReloaded;
 
 private:
     void loadShadersFromFilesystem();
     void ensureShadersLoaded();
+    void reloadSoundsCmd(const cmd::ArgumentList& args);
 
 public:
 	SoundManager();
@@ -43,15 +46,16 @@ public:
     // ISoundManager implementation
 	void forEachShader(std::function<void(const ISoundShader&)>) override;
 	ISoundShaderPtr getSoundShader(const std::string& shaderName) override;
-	virtual bool playSound(const std::string& fileName) override;
-	virtual bool playSound(const std::string& fileName, bool loopSound) override;
-	virtual void stopSound() override;
+	bool playSound(const std::string& fileName) override;
+	bool playSound(const std::string& fileName, bool loopSound) override;
+	void stopSound() override;
+    void reloadSounds() override;
+    sigc::signal<void>& signal_soundShadersReloaded() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const override;
-	virtual const StringSet& getDependencies() const override;
-	virtual void initialiseModule(const IApplicationContext& ctx) override;
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
 };
-typedef std::shared_ptr<SoundManager> SoundManagerPtr;
 
 }
