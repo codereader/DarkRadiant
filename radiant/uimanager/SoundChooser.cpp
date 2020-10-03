@@ -363,8 +363,13 @@ int SoundChooser::ShowModal()
 
 void SoundChooser::_onReloadSounds(wxCommandEvent& ev)
 {
+    // Remember the last selected shader
+    _shaderToSelect = getSelectedShader();
+
     _preview->setSoundShader(std::string());
 
+    // Send the command to the SoundManager
+    // After parsing it will fire the sounds reloaded signal => onShadersReloaded()
     GlobalCommandSystem().executeCommand("ReloadSounds");
 
     _treeStore->Clear();
