@@ -188,13 +188,20 @@ float SoundManager::getSoundFileDuration(const std::string& vfsPath)
 
     auto extension = string::to_lower_copy(os::getExtension(file->getName()));
 
-    if (extension == "wav")
+    try
     {
-        return WavFileLoader::GetDuration(file->getInputStream());
+        if (extension == "wav")
+        {
+            return WavFileLoader::GetDuration(file->getInputStream());
+        }
+        else if (extension == "ogg")
+        {
+            return 23.45f;
+        }
     }
-    else if (extension == "ogg")
+    catch (const std::runtime_error& ex)
     {
-        return 23.45f;
+        rError() << "Error determining sound file duration " << ex.what() << std::endl;
     }
 
     return 0.0f;
