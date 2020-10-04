@@ -378,6 +378,7 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
+	GlobalCommandSystem().addCommand("RefreshShaders", std::bind(&UserInterfaceModule::refreshShadersCmd, this, std::placeholders::_1));
 
 	// ----------------------- Bind Events ---------------------------------------
 
