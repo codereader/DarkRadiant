@@ -56,7 +56,7 @@ void WavefrontExporter::exportToStream(std::ostream& stream)
 			const Vector2& uv = meshVertex.texcoord;
 
 			vertexBuf << "v " << vert.x() << " " << vert.y() << " " << vert.z() << "\n";
-			texCoordBuf << "vt " << uv.x() << " " << uv.y() << "\n";
+			texCoordBuf << "vt " << uv.x() << " " << -uv.y() << "\n"; // invert the V coordinate
 
 			vertexCount++;
 		}
