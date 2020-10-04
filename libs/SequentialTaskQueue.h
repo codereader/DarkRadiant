@@ -8,7 +8,15 @@
 namespace util
 {
 
-class TaskQueue
+/**
+ * Queueing helper, allowing to run queued tasks one after the other,
+ * each of which will be run asynchronously (by means of std::async).
+ * No task will be started before a previous one is completed.
+ *
+ * Destroying this object will remove all unstarted tasks from the queue,
+ * but will block until the currently running task is done.
+ */
+class SequentialTaskQueue
 {
 private:
     mutable std::mutex _queueLock;
@@ -19,7 +27,7 @@ private:
     std::future<void> _finished;
 
 public:
-    ~TaskQueue()
+    ~SequentialTaskQueue()
     {
         clear();
     }

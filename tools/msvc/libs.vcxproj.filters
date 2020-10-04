@@ -261,7 +261,7 @@
     <ClInclude Include="..\..\libs\selection\SelectionVolume.h">
       <Filter>selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\TaskQueue.h" />
+    <ClInclude Include="..\..\libs\SequentialTaskQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

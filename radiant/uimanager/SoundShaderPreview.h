@@ -6,7 +6,7 @@
 #include <memory>
 #include "wxutil/TreeModel.h"
 #include "wxutil/TreeView.h"
-#include "TaskQueue.h"
+#include "SequentialTaskQueue.h"
 
 #include <wx/panel.h>
 
@@ -63,7 +63,7 @@ private:
     std::map<std::string, float> _durations;
 
     // Sound file lengths are queried asynchronously
-    util::TaskQueue _durationQueries;
+    util::SequentialTaskQueue _durationQueries;
 
     bool _isShuttingDown;
 
