@@ -39,15 +39,20 @@ public:
         }
     }
 
+    // Removes all tasks that have not been processed yet
+    // Doesn't affect the currently running one
+    void clearPendingTasks()
+    {
+        // Lock the queue and remove any tasks such that no new ones are added
+        std::lock_guard<std::mutex> lock(_queueLock);
+        _queue.clear();
+    }
+
     // Clears the queue. This might block waiting for any currently 
-    // active taks to finish
+    // active task to finish
     void clear()
     {
-        {
-            // Lock the queue and remove any tasks such that no new ones are added
-            std::lock_guard<std::mutex> lock(_queueLock);
-            _queue.clear();
-        }
+        clearPendingTasks();
 
         _current = std::future<void>();
         _finished = std::future<void>();
