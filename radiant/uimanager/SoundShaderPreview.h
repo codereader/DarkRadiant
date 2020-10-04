@@ -65,8 +65,12 @@ private:
     // Sound file lengths are queried asynchronously
     util::TaskQueue _durationQueries;
 
+    bool _isShuttingDown;
+
 public:
 	SoundShaderPreview(wxWindow* parent);
+
+    ~SoundShaderPreview();
 
 	/** greebo: Sets the soundshader to preview.
 	 * 			This updates the preview liststore and treeview.

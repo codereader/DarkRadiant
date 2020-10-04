@@ -29,7 +29,8 @@ namespace
 SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 	wxPanel(parent, wxID_ANY),
 	_listStore(new wxutil::TreeModel(_columns, true)),
-	_soundShader("")
+	_soundShader(""),
+    _isShuttingDown(false)
 {
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -74,6 +75,12 @@ SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 
 	// Trigger the initial update of the widgets
 	update();
+}
+
+SoundShaderPreview::~SoundShaderPreview()
+{
+    _isShuttingDown = true;
+    _durationQueries.clear();
 }
 
 wxSizer* SoundShaderPreview::createControlPanel(wxWindow* parent)
@@ -138,7 +145,7 @@ void SoundShaderPreview::update()
 	// Clear the current treeview model
 	_listStore->Clear();
 
-    _durationQueries.clear();
+    _durationQueries.clearPendingTasks();
 
 	// If the soundshader string is empty, desensitise the widgets
 	Enable(!_soundShader.empty());
@@ -286,13 +293,34 @@ void SoundShaderPreview::loadFileDurationAsync(const std::string& soundFile)
     {
         try
         {
-            // Query
-            auto duration = GlobalSoundManager().getSoundFileDuration(soundFile);
-
-            // Store the duration in the local cache
+            // In case the duration has been calculated in the meantime
+            // check if there's still need for this task to run
+            float duration = -1.0f;
             {
                 std::lock_guard<std::mutex> lock(_durationsLock);
+
+                auto existing = _durations.find(soundFile);
+                
+                if (existing != _durations.end())
+                {
+                    duration = existing->second;
+                }
+            }
+
+            if (duration < 0)
+            {
+                // Duration still unknown, run the query
+                duration = GlobalSoundManager().getSoundFileDuration(soundFile);
+
+                // Store the duration in the local cache
+                std::lock_guard<std::mutex> lock(_durationsLock);
                 _durations[soundFile] = duration;
+            }
+
+            if (_isShuttingDown)
+            {
+                // Don't dispatch anything if we're shutting down
+                return;
             }
 
             // Dispatch to UI thread when we're done
