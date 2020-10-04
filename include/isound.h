@@ -121,6 +121,10 @@ public:
      */
     virtual void stopSound() = 0;
 
+    // Returns the duration of the given sound file in seconds
+    // Will throw a std::out_of_range exception if the path cannot be resolved
+    virtual float getSoundFileDuration(const std::string& vfsPath) = 0;
+
     // Reloads all sound shader definitions from the VFS
     virtual void reloadSounds() = 0;
 

@@ -22,6 +22,10 @@ namespace sound {
 class WavFileLoader
 {
 public:
+    static float GetDuration(InputStream& stream)
+    {
+        return -1.0f;
+    }
 
 	/**
 	 * greebo: Loads a WAV file from a stream into OpenAL,
@@ -94,37 +98,13 @@ public:
 		unsigned short bps = 0;
 		stream.read(reinterpret_cast<byte*>(&bps), 2);
 
-		//int bufferSize = 0;
-
-		if (channels == 1) {
-			if (bps == 8) {
-				format = AL_FORMAT_MONO8;
-				// Set BufferSize to 250ms (Frequency divided by 4 (quarter of a second))
-				//bufferSize = freq / 4;
-			}
-			else {
-				format = AL_FORMAT_MONO16;
-				// Set BufferSize to 250ms (Frequency * 2 (16bit) divided by 4 (quarter of a second))
-				//bufferSize = freq >> 1;
-				// IMPORTANT : The Buffer Size must be an exact multiple of the BlockAlignment ...
-				//bufferSize -= (bufferSize % 2);
-			}
+		if (channels == 1)
+        {
+            format = bps == 8 ? AL_FORMAT_MONO8 : AL_FORMAT_MONO16;
 		}
-		else {
-			if (bps == 8) {
-				format = AL_FORMAT_STEREO16;
-				// Set BufferSize to 250ms (Frequency * 2 (8bit stereo) divided by 4 (quarter of a second))
-				//bufferSize = freq >> 1;
-				// IMPORTANT : The Buffer Size must be an exact multiple of the BlockAlignment ...
-				//bufferSize -= (bufferSize % 2);
-			}
-			else {
-				format = AL_FORMAT_STEREO16;
-				// Set BufferSize to 250ms (Frequency * 4 (16bit stereo) divided by 4 (quarter of a second))
-				//bufferSize = freq;
-				// IMPORTANT : The Buffer Size must be an exact multiple of the BlockAlignment ...
-				//bufferSize -= (bufferSize % 4);
-			}
+		else
+        {
+			format = bps == 8 ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO16;
 		}
 
 		// check 'data' sub chunk (2)

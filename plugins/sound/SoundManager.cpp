@@ -5,12 +5,60 @@
 #include "icommandsystem.h"
 
 #include "debugging/ScopedDebugTimer.h"
+#include "os/path.h"
+#include "string/case_conv.h"
 
 #include <algorithm>
 #include "itextstream.h"
 
+#include "WavFileLoader.h"
+
 namespace sound
 {
+
+namespace
+{
+
+// Load the given file, trying different extensions (first OGG, then WAV) as fallback
+ArchiveFilePtr openSoundFile(const std::string& fileName)
+{
+    // Make a copy of the filename
+    std::string name = fileName;
+
+    // Try to open the file as it is
+    auto file = GlobalFileSystem().openFile(name);
+
+    if (file)
+    {
+        // File found, play it
+        return file;
+    }
+
+    std::string root = name;
+
+    // File not found, try to strip the extension
+    if (name.rfind(".") != std::string::npos)
+    {
+        root = name.substr(0, name.rfind("."));
+    }
+
+    // Try to open the .ogg variant
+    name = root + ".ogg";
+
+    file = GlobalFileSystem().openFile(name);
+
+    if (file)
+    {
+        return file;
+    }
+
+    // Try to open the file with .wav extension
+    name = root + ".wav";
+
+    return GlobalFileSystem().openFile(name);
+}
+
+}
 
 // Constructor
 SoundManager::SoundManager() :
@@ -36,58 +84,15 @@ bool SoundManager::playSound(const std::string& fileName)
 
 bool SoundManager::playSound(const std::string& fileName, bool loopSound)
 {
-	// Make a copy of the filename
-	std::string name = fileName;
+    auto file = openSoundFile(fileName);
 
-	// Try to open the file as it is
-	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
-    rConsole() << "Trying: " << name << std::endl;
-
-	if (file) 
+	if (file && _soundPlayer)
 	{
-		// File found, play it
-        rConsole() << "Found file: " << name << std::endl;
-		if (_soundPlayer) _soundPlayer->play(*file, loopSound);
+		_soundPlayer->play(*file, loopSound);
 		return true;
 	}
 
-	std::string root = name;
-
-	// File not found, try to strip the extension
-	if (name.rfind(".") != std::string::npos)
-	{
-		root = name.substr(0, name.rfind("."));
-	}
-
-	// Try to open the .ogg variant
-	name = root + ".ogg";
-
-    rConsole() << "Trying: " << name << std::endl;
-
-	file = GlobalFileSystem().openFile(name);
-
-	if (file) 
-	{
-        rConsole() << "Found file: " << name << std::endl;
-		if (_soundPlayer) _soundPlayer->play(*file, loopSound);
-		return true;
-	}
-
-	// Try to open the file with .wav extension
-	name = root + ".wav";
-    rConsole() << "Trying: " << name << std::endl;
-
-	file = GlobalFileSystem().openFile(name);
-
-	if (file)
-	{
-        rConsole() << "Found file: " << name << std::endl;
-		if (_soundPlayer) _soundPlayer->play(*file, loopSound);
-		return true;
-	}
-
-	// File not found
-	return false;
+    return false;
 }
 
 void SoundManager::stopSound()
@@ -170,6 +175,29 @@ void SoundManager::initialiseModule(const IApplicationContext& ctx)
     }
 
     _defLoader.start();
+}
+
+float SoundManager::getSoundFileDuration(const std::string& vfsPath)
+{
+    auto file = openSoundFile(vfsPath);
+
+    if (!file)
+    {
+        throw std::out_of_range("Could not resolve sound file " + vfsPath);
+    }
+
+    auto extension = string::to_lower_copy(os::getExtension(file->getName()));
+
+    if (extension == "wav")
+    {
+        return WavFileLoader::GetDuration(file->getInputStream());
+    }
+    else if (extension == "ogg")
+    {
+        return 23.45f;
+    }
+
+    return 0.0f;
 }
 
 void SoundManager::reloadSounds()

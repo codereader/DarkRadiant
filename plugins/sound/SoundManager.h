@@ -50,6 +50,7 @@ public:
 	bool playSound(const std::string& fileName, bool loopSound) override;
 	void stopSound() override;
     void reloadSounds() override;
+    float getSoundFileDuration(const std::string& vfsPath) override;
     sigc::signal<void>& signal_soundShadersReloaded() override;
 
 	// RegisterableModule implementation

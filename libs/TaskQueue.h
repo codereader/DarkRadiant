@@ -11,11 +11,12 @@ namespace util
 class TaskQueue
 {
 private:
-    std::mutex _lock;
-
+    mutable std::mutex _queueLock;
     std::list<std::function<void()>> _queue;
 
+    mutable std::mutex _currentLock;
     std::future<void> _current;
+    std::future<void> _finished;
 
 public:
     ~TaskQueue()
@@ -28,7 +29,7 @@ public:
     void enqueue(const std::function<void()>& task)
     {
         {
-            std::lock_guard<std::mutex> lock(_lock);
+            std::lock_guard<std::mutex> lock(_queueLock);
             _queue.push_front(task);
         }
 
@@ -44,38 +45,60 @@ public:
     {
         {
             // Lock the queue and remove any tasks such that no new ones are added
-            std::lock_guard<std::mutex> lock(_lock);
+            std::lock_guard<std::mutex> lock(_queueLock);
             _queue.clear();
         }
 
-        // Clear (and possibly) wait for the currently active future object
         _current = std::future<void>();
+        _finished = std::future<void>();
     }
 
 private:
     bool isIdle() const
     {
-        return !_current.valid() || 
-            _current.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+        std::lock_guard<std::mutex> lock(_currentLock);
+        return !_current.valid() || _current.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
     }
 
-    void startNextTask()
+    std::function<void()> dequeueOne()
     {
-        std::lock_guard<std::mutex> lock(_lock);
+        std::lock_guard<std::mutex> lock(_queueLock);
 
         if (_queue.empty())
         {
-            return;
+            return std::function<void()>();
         }
 
         // No active task, dispatch a new one
         auto frontOfQueue = _queue.front();
         _queue.pop_front();
 
-        // Wrap the given task in our own lambda to start the next task right afterwards
-        _current = std::async(std::launch::async, [this, frontOfQueue]()
+        return frontOfQueue;
+    }
+
+    void startNextTask()
+    {
+        auto task = dequeueOne();
+
+        if (!task)
         {
-            frontOfQueue();
+            return;
+        }
+
+        // Wrap the given task in our own lambda to start the next task right afterwards
+        std::lock_guard<std::mutex> lock(_currentLock);
+        _current = std::async(std::launch::async, [this, task]()
+        {
+            task();
+
+            {
+                // Move our own task to the finished lane, 
+                // to avoid blocking when assigning a new future
+                std::lock_guard<std::mutex> lock(_currentLock);
+                _finished = std::move(_current);
+            }
+
+            // _current is now empty, so we can start a new task
             startNextTask();
         });
     }

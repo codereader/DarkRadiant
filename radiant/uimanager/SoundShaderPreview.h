@@ -1,9 +1,12 @@
 #pragma once
 
 #include <string>
+#include <mutex>
+#include <map>
 #include <memory>
 #include "wxutil/TreeModel.h"
 #include "wxutil/TreeView.h"
+#include "TaskQueue.h"
 
 #include <wx/panel.h>
 
@@ -44,13 +47,23 @@ private:
 		public wxutil::TreeModel::ColumnRecord
 	{
 		SoundListColumns() : 
-			shader(add(wxutil::TreeModel::Column::String))
+            soundFile(add(wxutil::TreeModel::Column::String)),
+			duration(add(wxutil::TreeModel::Column::String))
 		{}
 
-		wxutil::TreeModel::Column shader; // soundshader name
+		wxutil::TreeModel::Column soundFile; // soundFile path
+		wxutil::TreeModel::Column duration; // duration
 	};
 
 	SoundListColumns _columns;
+
+    std::mutex _durationsLock;
+
+    // Already known durations
+    std::map<std::string, float> _durations;
+
+    // Sound file lengths are queried asynchronously
+    util::TaskQueue _durationQueries;
 
 public:
 	SoundShaderPreview(wxWindow* parent);
@@ -90,6 +103,9 @@ private:
 
 	void playSelectedFile(bool loop);
 	void handleSelectionChange();
+
+    void loadFileDurationAsync(const std::string& soundFile);
+    std::string getDurationOrPlaceholder(const std::string& soundFile);
 };
 
 } // namespace ui

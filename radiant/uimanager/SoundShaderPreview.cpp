@@ -13,8 +13,18 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
+#include "ui/UserInterfaceModule.h"
+
 namespace ui
 {
+
+namespace
+{
+    inline std::string getDurationString(float durationInSeconds)
+    {
+        return fmt::format("{0:0.2f}s", durationInSeconds);
+    }
+}
 
 SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 	wxPanel(parent, wxID_ANY),
@@ -26,8 +36,10 @@ SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore);
 	_treeView->SetMinClientSize(wxSize(-1, 130));
 
-	_treeView->AppendTextColumn(_("Sound Files"), _columns.shader.getColumnIndex(), 
+	_treeView->AppendTextColumn(_("Sound Files"), _columns.soundFile.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    _treeView->AppendTextColumn(_("Duration"), _columns.duration.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Connect the "changed" signal
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundShaderPreview::onSelectionChanged, this);
@@ -126,6 +138,8 @@ void SoundShaderPreview::update()
 	// Clear the current treeview model
 	_listStore->Clear();
 
+    _durationQueries.clear();
+
 	// If the soundshader string is empty, desensitise the widgets
 	Enable(!_soundShader.empty());
 
@@ -144,8 +158,10 @@ void SoundShaderPreview::update()
 			for (std::size_t i = 0; i < list.size(); ++i)
 			{
 				auto row = _listStore->AddItem();
+                const auto& soundFile = list[i];
 
-				row[_columns.shader] = list[i];
+				row[_columns.soundFile] = soundFile;
+				row[_columns.duration] = getDurationOrPlaceholder(soundFile);
 
 				row.SendItemAdded();
 
@@ -185,7 +201,7 @@ std::string SoundShaderPreview::getSelectedSoundFile()
 	if (item.IsOk())
 	{
 		wxutil::TreeModel::Row row(item, *_listStore);
-		return row[_columns.shader];
+		return row[_columns.soundFile];
 	}
 	else
 	{
@@ -244,6 +260,61 @@ void SoundShaderPreview::onStop(wxCommandEvent& ev)
 	GlobalSoundManager().stopSound();
 
 	_statusLabel->SetLabel("");
+}
+
+std::string SoundShaderPreview::getDurationOrPlaceholder(const std::string& soundFile)
+{
+    {
+        std::lock_guard<std::mutex> lock(_durationsLock);
+
+        auto found = _durations.find(soundFile);
+
+        if (found != _durations.end())
+        {
+            return getDurationString(found->second);
+        }
+    }
+
+    // No duration known yet, queue a task
+    loadFileDurationAsync(soundFile);
+    return "--:--";
+}
+
+void SoundShaderPreview::loadFileDurationAsync(const std::string& soundFile)
+{
+    _durationQueries.enqueue([this, soundFile] // copy strings into lambda
+    {
+        try
+        {
+            // Query
+            auto duration = GlobalSoundManager().getSoundFileDuration(soundFile);
+
+            // Store the duration in the local cache
+            {
+                std::lock_guard<std::mutex> lock(_durationsLock);
+                _durations[soundFile] = duration;
+            }
+
+            // Dispatch to UI thread when we're done
+            GetUserInterfaceModule().dispatch([this, soundFile, duration]()
+            {
+                // Load into treeview
+                auto item = _listStore->FindString(soundFile, _columns.soundFile);
+
+                if (item.IsOk())
+                {
+                    wxutil::TreeModel::Row row(item, *_listStore);
+                    row[_columns.duration] = getDurationString(duration);
+                    row.SendItemChanged();
+                }
+            });
+        }
+        catch (const std::out_of_range& ex)
+        {
+            rError() << "Cannot query sound file duration of " << soundFile 
+                << ": " << ex.what() << std::endl;
+        }
+    });
 }
 
 } // namespace ui
