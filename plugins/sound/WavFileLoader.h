@@ -56,9 +56,7 @@ private:
 
 public:
     /**
-     * greebo: Loads a WAV file from a stream into OpenAL,
-     * returns the openAL buffer handle.
-     *
+     * greebo: Determines the WAV file length in seconds.
      * @throws: std::runtime_error if an error occurs.
      */
     static float GetDuration(InputStream& stream)

@@ -12,6 +12,7 @@
 #include "itextstream.h"
 
 #include "WavFileLoader.h"
+#include "OggFileLoader.h"
 
 namespace sound
 {
@@ -196,7 +197,7 @@ float SoundManager::getSoundFileDuration(const std::string& vfsPath)
         }
         else if (extension == "ogg")
         {
-            return 23.45f;
+            return OggFileLoader::GetDuration(*file);
         }
     }
     catch (const std::runtime_error& ex)
