@@ -161,8 +161,14 @@ public:
 	virtual void addPolygons(const std::string& materialName, 
 		const std::vector<ModelPolygon>& polys, const Matrix4& localToWorld) = 0;
 
-	// Export the model file to the given stream
-	virtual void exportToStream(std::ostream& stream) = 0;
+    // Export to the given file in the given path (which must be absolute).
+    // If writing to multiple files (like .obj+.mtl), the implementation
+    // may deduct the alternative file paths from this one. 
+    // Note: the user will already have confirmed to overwrite any existing
+    // file with that path, but hasn't explicitly confirmed overwriting 
+    // secondary or tertiary output files.
+    // Throws std::runtime_error in case of failures.
+    virtual void exportToPath(const std::string& outputPath, const std::string& filename) = 0;
 };
 
 /**

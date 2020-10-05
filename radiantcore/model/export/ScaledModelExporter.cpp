@@ -132,7 +132,7 @@ void ScaledModelExporter::saveScaledModel(const scene::INodePtr& entityNode, con
 	// Export to temporary file and rename afterwards
 	try
 	{
-		model::ModelExporter::ExportToPath(exporter, targetPath.string(), modelFilename);
+        exporter->exportToPath(targetPath.string(), modelFilename);
 
 		std::string newModelKey = os::standardPath(modelPath.string());
 		entity->setKeyValue("model", newModelKey);

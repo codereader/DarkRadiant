@@ -62,16 +62,6 @@ public:
 	// moving the model parts towards the world origin
 	const Matrix4& getCenterTransform();
 
-	/**
-	 * Performs the actual export using the given exporter (which has 
-	 * already accumulated all geometry to be exported).
-	 * The file is written to a temporary file and renamed afterwards.
-	 *
-	 * throws std::runtime_error in case of failures.
-	 */
-	static void ExportToPath(const model::IModelExporterPtr& exporter,
-		const std::string& outputPath, const std::string& filename);
-
 private:
 	AABB calculateModelBounds();
 

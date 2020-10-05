@@ -1,10 +1,17 @@
 #pragma once
 
+#include <fstream>
+#include <map>
+#include <fmt/format.h>
+
+#include "i18n.h"
 #include "imodel.h"
 #include "imodelsurface.h"
-#include <map>
+
 #include "render.h"
 #include "math/Matrix4.h"
+#include "os/fs.h"
+#include "os/path.h"
 
 namespace model
 {
@@ -132,6 +139,74 @@ public:
 			surface.indices.push_back(indexStart + 2);
 		}
 	}
+
+    virtual void exportToPath(const std::string& outputPath, const std::string& filename) override
+    {
+        if (!path_is_absolute(outputPath.c_str()))
+        {
+            throw std::runtime_error(fmt::format(_("Export path is not absolute: {0}"), outputPath));
+        }
+
+        fs::path targetPath = outputPath;
+
+        // Open a temporary file (leading underscore)
+        fs::path tempFile = targetPath / ("_" + filename);
+
+        std::ofstream::openmode mode = std::ofstream::out;
+
+        if (getFileFormat() == IModelExporter::Format::Binary)
+        {
+            mode |= std::ios::binary;
+        }
+
+        std::ofstream tempStream(tempFile.string().c_str(), mode);
+
+        if (!tempStream.is_open())
+        {
+            throw std::runtime_error(
+                fmt::format(_("Cannot open file for writing: {0}"), tempFile.string()));
+        }
+
+        exportToStream(tempStream);
+
+        tempStream.close();
+
+        // The full OS path to the output file
+        targetPath /= filename;
+
+        if (fs::exists(targetPath))
+        {
+            try
+            {
+                fs::rename(targetPath, targetPath.string() + ".bak");
+            }
+            catch (fs::filesystem_error & e)
+            {
+                rError() << "Could not rename the existing file to .bak: " << targetPath.string() << std::endl
+                    << e.what() << std::endl;
+
+                throw std::runtime_error(
+                    fmt::format(_("Could not rename the existing file to .bak: {0}"), tempFile.string()));
+            }
+        }
+
+        try
+        {
+            fs::rename(tempFile, targetPath);
+        }
+        catch (fs::filesystem_error & e)
+        {
+            rError() << "Could not rename the temporary file " << tempFile.string() << std::endl
+                << e.what() << std::endl;
+
+            throw std::runtime_error(
+                fmt::format(_("Could not rename the temporary file: {0}"), tempFile.string()));
+        }
+    }
+
+protected:
+    // Write to the given stream
+    virtual void exportToStream(std::ostream& stream) = 0;
 
 private:
 	Surface& ensureSurface(const std::string& materialName)

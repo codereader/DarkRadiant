@@ -99,7 +99,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
 	rMessage() << "Exporting selection to file " << outputPath << outputFile << std::endl;
 
-	model::ModelExporter::ExportToPath(expFormat, outputPath, outputFile);
+    expFormat->exportToPath(outputPath, outputFile);
 
 	if (!options.replaceSelectionWithModel)
 	{
