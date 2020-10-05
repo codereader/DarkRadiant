@@ -220,6 +220,7 @@
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h" />
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />
+    <ClInclude Include="..\..\libs\stream\ExportStream.h" />
     <ClInclude Include="..\..\libs\stream\FileInputStream.h" />
     <ClInclude Include="..\..\libs\stream\PointerInputStream.h" />
     <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h" />

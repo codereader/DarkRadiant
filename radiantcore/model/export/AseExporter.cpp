@@ -9,9 +9,6 @@
 namespace model
 {
 
-AseExporter::AseExporter()
-{}
-
 IModelExporterPtr AseExporter::clone()
 {
 	return std::make_shared<AseExporter>();
@@ -27,6 +24,16 @@ const std::string& AseExporter::getExtension() const
 {
 	static std::string _extension("ASE");
 	return _extension;
+}
+
+void AseExporter::exportToPath(const std::string& outputPath, const std::string& filename)
+{
+    // Open the stream to the output file
+    stream::ExportStream output(outputPath, filename, stream::ExportStream::Mode::Text);
+
+    exportToStream(output.getStream());
+
+    output.close();
 }
 
 void AseExporter::exportToStream(std::ostream& stream)

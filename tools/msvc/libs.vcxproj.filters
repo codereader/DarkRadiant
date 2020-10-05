@@ -262,6 +262,9 @@
       <Filter>selection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\SequentialTaskQueue.h" />
+    <ClInclude Include="..\..\libs\stream\ExportStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

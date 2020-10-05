@@ -62,9 +62,6 @@ void writeString(std::ostream& stream, const std::string& str)
 namespace model
 {
 
-Lwo2Exporter::Lwo2Exporter()
-{}
-
 IModelExporterPtr Lwo2Exporter::clone()
 {
 	return std::make_shared<Lwo2Exporter>();
@@ -80,6 +77,16 @@ const std::string& Lwo2Exporter::getExtension() const
 {
 	static std::string _extension("LWO");
 	return _extension;
+}
+
+void Lwo2Exporter::exportToPath(const std::string& outputPath, const std::string& filename)
+{
+    // Open the stream to the output file
+    stream::ExportStream output(outputPath, filename, stream::ExportStream::Mode::Binary);
+
+    exportToStream(output.getStream());
+
+    output.close();
 }
 
 void Lwo2Exporter::exportToStream(std::ostream& stream)

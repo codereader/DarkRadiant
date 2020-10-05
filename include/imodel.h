@@ -135,14 +135,6 @@ public:
 	// can create a fresh instance of this exporter on demand.
 	virtual IModelExporterPtr clone() = 0;
 
-	enum class Format
-	{
-		Text,	// Exporter writes text-based format
-		Binary, // Exporter exports to a binary stream
-	};
-
-	virtual Format getFileFormat() const = 0;
-
 	// The display name for referencing this exporter in the GUI
 	virtual const std::string& getDisplayName() const = 0;
 

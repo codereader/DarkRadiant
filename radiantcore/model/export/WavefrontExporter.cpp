@@ -7,9 +7,6 @@
 namespace model
 {
 
-WavefrontExporter::WavefrontExporter()
-{}
-
 IModelExporterPtr WavefrontExporter::clone()
 {
 	return std::make_shared<WavefrontExporter>();
@@ -25,6 +22,16 @@ const std::string& WavefrontExporter::getExtension() const
 {
 	static std::string _extension("OBJ");
 	return _extension;
+}
+
+void WavefrontExporter::exportToPath(const std::string& outputPath, const std::string& filename)
+{
+    // Open the stream to the output file
+    stream::ExportStream output(outputPath, filename, stream::ExportStream::Mode::Text);
+
+    exportToStream(output.getStream());
+
+    output.close();
 }
 
 void WavefrontExporter::exportToStream(std::ostream& stream)
