@@ -25,16 +25,13 @@ public:
   	/// The symmetrical extents in 3 dimensions.
   	Vector3 extents;
 
-	/** Construct an AABB with default origin and invalid extents.
-	 */
+	/// Construct an AABB with default origin and invalid extents.
 	AABB() : 
 		origin(0, 0, 0), 
 		extents(-1,-1,-1)
 	{}
 
-	/** Construct an AABB with the provided origin and extents
-	 * vectors.
-	 */
+	/// Construct an AABB with the provided origin and extents vectors.
 	AABB(const Vector3& origin_, const Vector3& extents_) : 
 		origin(origin_), 
 		extents(extents_)
@@ -97,20 +94,10 @@ public:
 	 */
 	float getRadius() const;
 
-	/** Expand this AABB in-place to include the given point in
-	 * world space.
-	 *
-	 * @param point
-	 * Vector3 representing the point to include.
-	 */
+	/// Expand this AABB in-place to include the given point
 	void includePoint(const Vector3& point);
 
-	/** Expand this AABB in-place to include the given AABB in
-	 * world space.
-	 *
-	 * @param other
-	 * The other AABB to include.
-	 */
+	/// Expand this AABB in-place to include the given AABB
 	void includeAABB(const AABB& other);
 
 	/**

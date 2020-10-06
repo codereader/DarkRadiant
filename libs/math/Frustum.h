@@ -7,6 +7,7 @@
 
 #include "math/Matrix4.h"
 #include "math/Segment.h"
+#include "math/AABB.h"
 
 #include "VolumeIntersectionValue.h"
 
@@ -109,6 +110,23 @@ public:
         // All cases should be handled above
         assert(false);
         return Vector3();
+    }
+
+    /// Return an AABB enclosing this frustum
+    AABB getAABB() const
+    {
+        // The AABB of a frustum is simply the AABB which includes all eight
+        // corner points.
+        AABB result;
+        result.includePoint(getCornerPoint(FRONT, TOP_LEFT));
+        result.includePoint(getCornerPoint(FRONT, BOTTOM_LEFT));
+        result.includePoint(getCornerPoint(FRONT, TOP_RIGHT));
+        result.includePoint(getCornerPoint(FRONT, BOTTOM_RIGHT));
+        result.includePoint(getCornerPoint(BACK, TOP_LEFT));
+        result.includePoint(getCornerPoint(BACK, BOTTOM_LEFT));
+        result.includePoint(getCornerPoint(BACK, TOP_RIGHT));
+        result.includePoint(getCornerPoint(BACK, BOTTOM_RIGHT));
+        return result;
     }
 
     /// Returns true if the given point is contained in this frustum.
