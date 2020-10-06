@@ -4,6 +4,7 @@
 #include <functional>
 
 #include "math/Vector3.h"
+#include "math/AABB.h"
 
 #include "ShaderLayer.h"
 #include <sigc++/signal.h>
@@ -231,7 +232,8 @@ typedef std::shared_ptr<RendererLight> RendererLightPtr;
 /// Debug stream insertion for RendererLight
 inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
 {
-    return os << "RendererLight(origin=" << l.worldOrigin() << ")";
+    return os << "RendererLight(origin=" << l.worldOrigin()
+              << ", lightAABB=" << l.lightAABB() << ")";
 }
 
 /**

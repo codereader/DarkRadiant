@@ -299,8 +299,7 @@ inline void AABB::getPlanes(Plane3 planes[6]) const
  */
 inline std::ostream& operator<< (std::ostream& os, const AABB& aabb)
 {
-	os << "AABB { origin=" << aabb.getOrigin() << ", extents=" << aabb.getExtents() << " }";
-
+	os << "AABB(origin=" << aabb.getOrigin() << ", extents=" << aabb.getExtents() << ")";
 	return os;
 }
 
