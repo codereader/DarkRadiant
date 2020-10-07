@@ -230,5 +230,17 @@ TexturePtr Doom3ShaderLayer::getFragmentMap(int index)
 	return GetTextureManager().getBinding(_fragmentMaps[index]);
 }
 
+std::string Doom3ShaderLayer::getMapImageFilename()
+{
+    auto image = std::dynamic_pointer_cast<ImageExpression>(_bindableTex);
+
+    if (image)
+    {
+        return image->getIdentifier();
+    }
+     
+    return std::string();
+}
+
 }
 

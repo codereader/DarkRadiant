@@ -257,6 +257,11 @@ public:
 	 * Stage-specific polygon offset, overriding the "global" one defined on the material.
 	 */
 	virtual float getPrivatePolygonOffset() = 0;
+
+    // If this stage is referring to a single image file, this will return 
+    // the VFS path to it with the file extension removed.
+    // If this layer doesn't refer to a single image file, an empty string is returned
+    virtual std::string getMapImageFilename() = 0;
 };
 
 /**

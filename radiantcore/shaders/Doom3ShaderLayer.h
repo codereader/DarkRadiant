@@ -504,6 +504,8 @@ public:
     {
         _privatePolygonOffset = value;
     }
+
+    std::string getMapImageFilename() override;
 };
 
 /**
