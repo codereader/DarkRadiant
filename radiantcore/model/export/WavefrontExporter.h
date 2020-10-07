@@ -21,7 +21,8 @@ public:
 
 private:
 	// Export the model file to the given stream
-	void exportToStream(std::ostream& stream);
+	void writeObjFile(std::ostream& stream, const std::string& mtlFilename);
+	void writeMaterialLib(std::ostream& stream);
 };
 
 }
