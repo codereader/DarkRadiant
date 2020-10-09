@@ -2,6 +2,7 @@
 
 #include "scene/ModelBreakdown.h"
 
+#include "wxutil/menu/PopupMenu.h"
 #include <wx/panel.h>
 #include "wxutil/TreeView.h"
 
@@ -38,6 +39,8 @@ private:
 	wxutil::TreeModel::Ptr _listStore;
 	wxutil::TreeView* _treeView;
 
+    wxutil::PopupMenuPtr _popupMenu;
+
 public:
 	// Constructor
 	ModelInfoTab(wxWindow* parent);
@@ -48,6 +51,10 @@ public:
 private:
 	// This is called to create the widgets
 	void populateTab();
+
+    void _onSelectItems(bool select);
+    bool _testSelectItems();
+    void _onContextMenu(wxDataViewEvent& ev);
 
 }; // class ModelInfoTab
 
