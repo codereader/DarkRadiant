@@ -1,0 +1,10 @@
+model just_a_model
+{
+	mesh                       just_an_md5.md5mesh
+}
+
+entityDef dr:entity_using_modeldef
+{
+	"model"			"just_a_model"
+	"random"		"1"
+}
